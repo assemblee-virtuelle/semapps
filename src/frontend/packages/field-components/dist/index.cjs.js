@@ -1,26 +1,28 @@
-var $drrcw$reactjsxruntime = require("react/jsx-runtime");
-var $drrcw$react = require("react");
-var $drrcw$reactadmin = require("react-admin");
-var $drrcw$muimaterial = require("@mui/material");
-var $drrcw$muistylesmakeStyles = require("@mui/styles/makeStyles");
-var $drrcw$muiiconsmaterialLaunch = require("@mui/icons-material/Launch");
-var $drrcw$reacthookform = require("react-hook-form");
-var $drrcw$muiiconsmaterialAdd = require("@mui/icons-material/Add");
-var $drrcw$semappssemanticdataprovider = require("@semapps/semantic-data-provider");
-var $drrcw$lodashdebounce = require("lodash.debounce");
-var $drrcw$muiiconsmaterialVisibility = require("@mui/icons-material/Visibility");
-var $drrcw$muiiconsmaterialError = require("@mui/icons-material/Error");
-var $drrcw$muiiconsmaterialLanguage = require("@mui/icons-material/Language");
-var $drrcw$muiiconsmaterialFacebook = require("@mui/icons-material/Facebook");
-var $drrcw$muiiconsmaterialGitHub = require("@mui/icons-material/GitHub");
-var $drrcw$muiiconsmaterialTwitter = require("@mui/icons-material/Twitter");
-var $drrcw$muiiconsmaterialInstagram = require("@mui/icons-material/Instagram");
-var $drrcw$muiiconsmaterialYouTube = require("@mui/icons-material/YouTube");
-var $drrcw$reacticonsfi = require("react-icons/fi");
+var $gJbUX$reactjsxruntime = require("react/jsx-runtime");
+var $gJbUX$react = require("react");
+var $gJbUX$reactadmin = require("react-admin");
+var $gJbUX$muimaterial = require("@mui/material");
+var $gJbUX$muistylesmakeStyles = require("@mui/styles/makeStyles");
+var $gJbUX$muiiconsmaterialLaunch = require("@mui/icons-material/Launch");
+var $gJbUX$reacthookform = require("react-hook-form");
+var $gJbUX$muiiconsmaterialAdd = require("@mui/icons-material/Add");
+var $gJbUX$semappssemanticdataprovider = require("@semapps/semantic-data-provider");
+var $gJbUX$lodashdebounce = require("lodash.debounce");
+var $gJbUX$muiiconsmaterialVisibility = require("@mui/icons-material/Visibility");
+var $gJbUX$muiiconsmaterialError = require("@mui/icons-material/Error");
+var $gJbUX$muiiconsmaterialLanguage = require("@mui/icons-material/Language");
+var $gJbUX$muiiconsmaterialFacebook = require("@mui/icons-material/Facebook");
+var $gJbUX$muiiconsmaterialGitHub = require("@mui/icons-material/GitHub");
+var $gJbUX$muiiconsmaterialTwitter = require("@mui/icons-material/Twitter");
+var $gJbUX$muiiconsmaterialInstagram = require("@mui/icons-material/Instagram");
+var $gJbUX$muiiconsmaterialYouTube = require("@mui/icons-material/YouTube");
+var $gJbUX$reacticonsfi = require("react-icons/fi");
+
 
 function $parcel$export(e, n, v, s) {
   Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
 }
+
 function $parcel$interopDefault(a) {
   return a && a.__esModule ? a.default : a;
 }
@@ -37,7 +39,7 @@ $parcel$export(module.exports, "SeparatedListField", () => $43c570e3fbe4d9a0$exp
 
 
 
-const $4e17293ac0574285$var$useStyles = (0, ($parcel$interopDefault($drrcw$muistylesmakeStyles)))((theme)=>({
+const $4e17293ac0574285$var$useStyles = (0, ($parcel$interopDefault($gJbUX$muistylesmakeStyles)))((theme)=>({
         parent: (props)=>({
                 position: "relative",
                 ...props.parent
@@ -79,16 +81,16 @@ const $4e17293ac0574285$var$useStyles = (0, ($parcel$interopDefault($drrcw$muist
 const $4e17293ac0574285$var$handleClick = ()=>{};
 const $4e17293ac0574285$var$AvatarWithLabelField = ({ label: label, defaultLabel: defaultLabel, image: image, fallback: fallback, externalLink: externalLink, labelColor: labelColor, classes: classes, ...rest })=>{
     classes = $4e17293ac0574285$var$useStyles(classes);
-    const record = (0, $drrcw$reactadmin.useRecordContext)();
+    const record = (0, $gJbUX$reactadmin.useRecordContext)();
     const computedLabel = (typeof label === "function" ? label(record) : record[label]) || defaultLabel;
     const computedImage = typeof image === "function" ? image(record) : record[image];
     const computedFallback = typeof fallback === "function" ? fallback(record) : fallback;
-    return /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsxs)((0, $drrcw$muimaterial.Box), {
+    return /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsxs)((0, $gJbUX$muimaterial.Box), {
         className: classes.parent,
         children: [
-            /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)("div", {
+            /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)("div", {
                 className: classes.square,
-                children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.Avatar), {
+                children: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.Avatar), {
                     src: computedImage || computedFallback,
                     alt: computedLabel,
                     fallback: computedFallback,
@@ -96,16 +98,16 @@ const $4e17293ac0574285$var$AvatarWithLabelField = ({ label: label, defaultLabel
                     className: classes.avatar
                 })
             }),
-            !computedLabel ? null : externalLink ? /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.Chip), {
+            !computedLabel ? null : externalLink ? /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.Chip), {
                 color: labelColor,
                 className: classes.chip,
                 size: "small",
                 label: computedLabel,
-                deleteIcon: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, ($parcel$interopDefault($drrcw$muiiconsmaterialLaunch))), {
+                deleteIcon: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, ($parcel$interopDefault($gJbUX$muiiconsmaterialLaunch))), {
                     className: classes.launchIcon
                 }),
                 onDelete: $4e17293ac0574285$var$handleClick
-            }) : /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.Chip), {
+            }) : /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.Chip), {
                 color: labelColor,
                 className: classes.chip,
                 size: "small",
@@ -125,16 +127,16 @@ var $4e17293ac0574285$export$2e2bcd8739ae039 = $4e17293ac0574285$var$AvatarWithL
 
 
 const $b6ed9e2776cb4ba3$var$ReferenceArrayField = ({ source: source, ...otherProps })=>{
-    const record = (0, $drrcw$reactadmin.useRecordContext)();
+    const record = (0, $gJbUX$reactadmin.useRecordContext)();
     if (record?.[source]) {
         if (!Array.isArray(record[source])) record[source] = [
             record[source]
         ];
         record[source] = record[source].map((i)=>i["@id"] || i.id || i);
     }
-    return /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$reactadmin.RecordContextProvider), {
+    return /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$reactadmin.RecordContextProvider), {
         value: record,
-        children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$reactadmin.ReferenceArrayField), {
+        children: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$reactadmin.ReferenceArrayField), {
             source: source,
             ...otherProps
         })
@@ -147,13 +149,13 @@ var $b6ed9e2776cb4ba3$export$2e2bcd8739ae039 = $b6ed9e2776cb4ba3$var$ReferenceAr
 
 
 const $387e8196d8654c58$var$ReferenceField = ({ source: source, ...otherProps })=>{
-    const record = (0, $drrcw$reactadmin.useRecordContext)();
+    const record = (0, $gJbUX$reactadmin.useRecordContext)();
     if (record[source]) {
         if (typeof record[source] === "object") record[source] = record[source]["@id"] || record[source].id;
     }
-    return /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$reactadmin.RecordContextProvider), {
+    return /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$reactadmin.RecordContextProvider), {
         value: record,
-        children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$reactadmin.ReferenceField), {
+        children: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$reactadmin.ReferenceField), {
             record: record,
             source: source,
             ...otherProps
@@ -185,7 +187,7 @@ var $387e8196d8654c58$export$2e2bcd8739ae039 = $387e8196d8654c58$var$ReferenceFi
 
 
 
-const $c7e6f337903f861b$var$useStyles = (0, ($parcel$interopDefault($drrcw$muistylesmakeStyles)))((theme)=>({
+const $c7e6f337903f861b$var$useStyles = (0, ($parcel$interopDefault($gJbUX$muistylesmakeStyles)))((theme)=>({
         root: {
             width: "100%",
             maxWidth: "100%",
@@ -207,21 +209,21 @@ const $c7e6f337903f861b$var$getServerName = (resourceUri, dataServers)=>{
 };
 const $c7e6f337903f861b$var$ResultsList = ({ keyword: keyword, source: source, reference: reference, appendLink: appendLink, switchToCreate: switchToCreate })=>{
     const classes = $c7e6f337903f861b$var$useStyles();
-    const [loading, setLoading] = (0, $drrcw$react.useState)(false);
-    const [loaded, setLoaded] = (0, $drrcw$react.useState)(false);
-    const [results, setResults] = (0, $drrcw$react.useState)([]);
-    const translate = (0, $drrcw$reactadmin.useTranslate)();
-    const dataProvider = (0, $drrcw$reactadmin.useDataProvider)();
-    const dataServers = (0, $drrcw$semappssemanticdataprovider.useDataServers)();
-    const record = (0, $drrcw$reactadmin.useRecordContext)();
-    const createPath = (0, $drrcw$reactadmin.useCreatePath)();
-    const referenceDefinition = (0, $drrcw$reactadmin.useResourceDefinition)({
+    const [loading, setLoading] = (0, $gJbUX$react.useState)(false);
+    const [loaded, setLoaded] = (0, $gJbUX$react.useState)(false);
+    const [results, setResults] = (0, $gJbUX$react.useState)([]);
+    const translate = (0, $gJbUX$reactadmin.useTranslate)();
+    const dataProvider = (0, $gJbUX$reactadmin.useDataProvider)();
+    const dataServers = (0, $gJbUX$semappssemanticdataprovider.useDataServers)();
+    const record = (0, $gJbUX$reactadmin.useRecordContext)();
+    const createPath = (0, $gJbUX$reactadmin.useCreatePath)();
+    const referenceDefinition = (0, $gJbUX$reactadmin.useResourceDefinition)({
         resource: reference
     });
-    const getResourceLabel = (0, $drrcw$reactadmin.useGetResourceLabel)();
-    const dataModel = (0, $drrcw$semappssemanticdataprovider.useDataModel)(reference);
+    const getResourceLabel = (0, $gJbUX$reactadmin.useGetResourceLabel)();
+    const dataModel = (0, $gJbUX$semappssemanticdataprovider.useDataModel)(reference);
     if (dataModel && Object.keys(dataModel).length > 0 && !dataModel?.fieldsMapping?.title) throw new Error(`No fieldsMapping.title config found for ${reference} dataModel`);
-    const search = (0, $drrcw$react.useMemo)(()=>(0, ($parcel$interopDefault($drrcw$lodashdebounce)))((keyword)=>{
+    const search = (0, $gJbUX$react.useMemo)(()=>(0, ($parcel$interopDefault($gJbUX$lodashdebounce)))((keyword)=>{
             dataProvider.getList(reference, {
                 pagination: {
                     page: 1,
@@ -259,7 +261,7 @@ const $c7e6f337903f861b$var$ResultsList = ({ keyword: keyword, source: source, r
         setLoading,
         setLoaded
     ]);
-    (0, $drrcw$react.useEffect)(()=>{
+    (0, $gJbUX$react.useEffect)(()=>{
         if (!keyword) return undefined;
         setLoading(true);
         setLoaded(false);
@@ -271,29 +273,29 @@ const $c7e6f337903f861b$var$ResultsList = ({ keyword: keyword, source: source, r
         setLoading
     ]);
     if (!keyword) return null;
-    return /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsxs)((0, $drrcw$muimaterial.List), {
+    return /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsxs)((0, $gJbUX$muimaterial.List), {
         dense: true,
         className: classes.root,
         children: [
-            loaded && results.map((resource)=>/*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsxs)((0, $drrcw$muimaterial.ListItem), {
+            loaded && results.map((resource)=>/*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsxs)((0, $gJbUX$muimaterial.ListItem), {
                     button: true,
                     onClick: ()=>appendLink(resource.id),
                     children: [
-                        /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.ListItemAvatar), {
-                            children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.Avatar), {
-                                children: /*#__PURE__*/ (0, ($parcel$interopDefault($drrcw$react))).createElement(referenceDefinition.icon)
+                        /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.ListItemAvatar), {
+                            children: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.Avatar), {
+                                children: /*#__PURE__*/ (0, ($parcel$interopDefault($gJbUX$react))).createElement(referenceDefinition.icon)
                             })
                         }),
-                        /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.ListItemText), {
+                        /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.ListItemText), {
                             className: classes.primaryText,
                             primary: resource[dataModel.fieldsMapping.title]
                         }),
-                        /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.ListItemText), {
+                        /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.ListItemText), {
                             className: classes.secondaryText,
                             primary: $c7e6f337903f861b$var$getServerName(resource.id, dataServers)
                         }),
-                        /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.ListItemSecondaryAction), {
-                            children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)("a", {
+                        /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.ListItemSecondaryAction), {
+                            children: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)("a", {
                                 href: createPath({
                                     resource: reference,
                                     id: resource.id,
@@ -301,38 +303,38 @@ const $c7e6f337903f861b$var$ResultsList = ({ keyword: keyword, source: source, r
                                 }),
                                 target: "_blank",
                                 rel: "noopener noreferrer",
-                                children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.IconButton), {
+                                children: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.IconButton), {
                                     edge: "end",
                                     size: "large",
-                                    children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, ($parcel$interopDefault($drrcw$muiiconsmaterialVisibility))), {})
+                                    children: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, ($parcel$interopDefault($gJbUX$muiiconsmaterialVisibility))), {})
                                 })
                             })
                         })
                     ]
                 }, resource.id)),
-            loaded && results.length === 0 && /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsxs)((0, $drrcw$muimaterial.ListItem), {
+            loaded && results.length === 0 && /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsxs)((0, $gJbUX$muimaterial.ListItem), {
                 children: [
-                    /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.ListItemAvatar), {
-                        children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.Avatar), {
-                            children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, ($parcel$interopDefault($drrcw$muiiconsmaterialError))), {})
+                    /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.ListItemAvatar), {
+                        children: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.Avatar), {
+                            children: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, ($parcel$interopDefault($gJbUX$muiiconsmaterialError))), {})
                         })
                     }),
-                    /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.ListItemText), {
+                    /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.ListItemText), {
                         className: classes.primaryText,
                         primary: translate("ra.navigation.no_results")
                     })
                 ]
             }),
-            loaded && referenceDefinition.hasCreate && /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsxs)((0, $drrcw$muimaterial.ListItem), {
+            loaded && referenceDefinition.hasCreate && /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsxs)((0, $gJbUX$muimaterial.ListItem), {
                 button: true,
                 onClick: switchToCreate,
                 children: [
-                    /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.ListItemAvatar), {
-                        children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.Avatar), {
-                            children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, ($parcel$interopDefault($drrcw$muiiconsmaterialAdd))), {})
+                    /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.ListItemAvatar), {
+                        children: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.Avatar), {
+                            children: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, ($parcel$interopDefault($gJbUX$muiiconsmaterialAdd))), {})
                         })
                     }),
-                    /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.ListItemText), {
+                    /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.ListItemText), {
                         className: classes.primaryText,
                         primary: translate("ra.page.create", {
                             name: getResourceLabel(reference, 1)
@@ -340,12 +342,12 @@ const $c7e6f337903f861b$var$ResultsList = ({ keyword: keyword, source: source, r
                     })
                 ]
             }),
-            loading && /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.Box), {
+            loading && /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.Box), {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 height: 150,
-                children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.CircularProgress), {
+                children: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.CircularProgress), {
                     size: 60,
                     thickness: 6
                 })
@@ -356,7 +358,7 @@ const $c7e6f337903f861b$var$ResultsList = ({ keyword: keyword, source: source, r
 var $c7e6f337903f861b$export$2e2bcd8739ae039 = $c7e6f337903f861b$var$ResultsList;
 
 
-const $9ac0ba4780250906$var$useStyles = (0, ($parcel$interopDefault($drrcw$muistylesmakeStyles)))(()=>({
+const $9ac0ba4780250906$var$useStyles = (0, ($parcel$interopDefault($gJbUX$muistylesmakeStyles)))(()=>({
         title: {
             paddingBottom: 8
         },
@@ -376,17 +378,17 @@ const $9ac0ba4780250906$var$useStyles = (0, ($parcel$interopDefault($drrcw$muist
     }));
 const $9ac0ba4780250906$var$QuickAppendDialog = ({ open: open, onClose: onClose, subjectUri: subjectUri, source: source, reference: reference })=>{
     const classes = $9ac0ba4780250906$var$useStyles();
-    const { resource: resource } = (0, $drrcw$reactadmin.useShowContext)();
-    const [keyword, setKeyword] = (0, $drrcw$react.useState)("");
-    const [panel, setPanel] = (0, $drrcw$react.useState)("find");
-    const dataProvider = (0, $drrcw$reactadmin.useDataProvider)();
-    const translate = (0, $drrcw$reactadmin.useTranslate)();
-    const refresh = (0, $drrcw$reactadmin.useRefresh)();
-    const notify = (0, $drrcw$reactadmin.useNotify)();
-    const getResourceLabel = (0, $drrcw$reactadmin.useGetResourceLabel)();
-    const dataModel = (0, $drrcw$semappssemanticdataprovider.useDataModel)(reference);
-    const { register: register, setValue: setValue, handleSubmit: handleSubmit } = (0, $drrcw$reacthookform.useForm)();
-    const appendLink = (0, $drrcw$react.useCallback)(async (objectUri)=>{
+    const { resource: resource } = (0, $gJbUX$reactadmin.useShowContext)();
+    const [keyword, setKeyword] = (0, $gJbUX$react.useState)("");
+    const [panel, setPanel] = (0, $gJbUX$react.useState)("find");
+    const dataProvider = (0, $gJbUX$reactadmin.useDataProvider)();
+    const translate = (0, $gJbUX$reactadmin.useTranslate)();
+    const refresh = (0, $gJbUX$reactadmin.useRefresh)();
+    const notify = (0, $gJbUX$reactadmin.useNotify)();
+    const getResourceLabel = (0, $gJbUX$reactadmin.useGetResourceLabel)();
+    const dataModel = (0, $gJbUX$semappssemanticdataprovider.useDataModel)(reference);
+    const { register: register, setValue: setValue, handleSubmit: handleSubmit } = (0, $gJbUX$reacthookform.useForm)();
+    const appendLink = (0, $gJbUX$react.useCallback)(async (objectUri)=>{
         // Get the freshest data so that the put operation doesn't overwrite anything
         const { data: data } = await dataProvider.getOne(resource, {
             id: subjectUri
@@ -415,14 +417,14 @@ const $9ac0ba4780250906$var$QuickAppendDialog = ({ open: open, onClose: onClose,
         refresh,
         onClose
     ]);
-    const create = (0, $drrcw$react.useCallback)(async (values)=>{
+    const create = (0, $gJbUX$react.useCallback)(async (values)=>{
         const { data: data } = await dataProvider.create(reference, {
             data: {
                 [dataModel.fieldsMapping.title]: values.title
             }
         });
         await appendLink(data.id);
-        notify(`La resource "${values.title}" a été créée`, {
+        notify(`La resource "${values.title}" a \xe9t\xe9 cr\xe9\xe9e`, {
             type: "success"
         });
     }, [
@@ -432,21 +434,21 @@ const $9ac0ba4780250906$var$QuickAppendDialog = ({ open: open, onClose: onClose,
         reference,
         notify
     ]);
-    return /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.Dialog), {
+    return /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.Dialog), {
         fullWidth: true,
         open: open,
         onClose: onClose,
-        children: panel === "find" ? /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsxs)((0, $drrcw$reactjsxruntime.Fragment), {
+        children: panel === "find" ? /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsxs)((0, $gJbUX$reactjsxruntime.Fragment), {
             children: [
-                /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.DialogTitle), {
+                /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.DialogTitle), {
                     className: classes.title,
                     children: "Ajouter une relation"
                 }),
-                /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.DialogContent), {
+                /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.DialogContent), {
                     className: classes.addForm,
-                    children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.TextField), {
+                    children: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.TextField), {
                         autoFocus: true,
-                        label: `Rechercher ou créer des ${getResourceLabel(reference, 2).toLowerCase()}`,
+                        label: `Rechercher ou cr\xe9er des ${getResourceLabel(reference, 2).toLowerCase()}`,
                         variant: "filled",
                         margin: "dense",
                         value: keyword,
@@ -454,9 +456,9 @@ const $9ac0ba4780250906$var$QuickAppendDialog = ({ open: open, onClose: onClose,
                         fullWidth: true
                     })
                 }),
-                /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.DialogContent), {
+                /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.DialogContent), {
                     className: classes.listForm,
-                    children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $c7e6f337903f861b$export$2e2bcd8739ae039), {
+                    children: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $c7e6f337903f861b$export$2e2bcd8739ae039), {
                         keyword: keyword,
                         source: source,
                         reference: reference,
@@ -467,27 +469,27 @@ const $9ac0ba4780250906$var$QuickAppendDialog = ({ open: open, onClose: onClose,
                         }
                     })
                 }),
-                /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.DialogActions), {
+                /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.DialogActions), {
                     className: classes.actions,
-                    children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$reactadmin.Button), {
+                    children: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$reactadmin.Button), {
                         label: "ra.action.close",
                         variant: "text",
                         onClick: onClose
                     })
                 })
             ]
-        }) : /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsxs)("form", {
+        }) : /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsxs)("form", {
             onSubmit: handleSubmit(create),
             children: [
-                /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.DialogTitle), {
+                /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.DialogTitle), {
                     className: classes.title,
                     children: translate("ra.page.create", {
                         name: getResourceLabel(reference, 1)
                     })
                 }),
-                /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.DialogContent), {
+                /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.DialogContent), {
                     className: classes.addForm,
-                    children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.TextField), {
+                    children: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.TextField), {
                         ...register("title"),
                         autoFocus: true,
                         label: "Titre",
@@ -496,16 +498,16 @@ const $9ac0ba4780250906$var$QuickAppendDialog = ({ open: open, onClose: onClose,
                         fullWidth: true
                     })
                 }),
-                /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsxs)((0, $drrcw$muimaterial.DialogActions), {
+                /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsxs)((0, $gJbUX$muimaterial.DialogActions), {
                     className: classes.actions,
                     children: [
-                        /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$reactadmin.Button), {
+                        /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$reactadmin.Button), {
                             label: "ra.action.create",
                             variant: "contained",
-                            startIcon: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, ($parcel$interopDefault($drrcw$muiiconsmaterialAdd))), {}),
+                            startIcon: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, ($parcel$interopDefault($gJbUX$muiiconsmaterialAdd))), {}),
                             type: "submit"
                         }),
-                        /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$reactadmin.Button), {
+                        /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$reactadmin.Button), {
                             label: "ra.action.close",
                             variant: "text",
                             onClick: onClose
@@ -520,27 +522,27 @@ var $9ac0ba4780250906$export$2e2bcd8739ae039 = $9ac0ba4780250906$var$QuickAppend
 
 
 const $6a1cce6d258bf615$var$QuickAppendReferenceArrayField = ({ reference: reference, source: source, resource: resource, children: children, ...otherProps })=>{
-    const record = (0, $drrcw$reactadmin.useRecordContext)();
-    const [showDialog, setShowDialog] = (0, $drrcw$react.useState)(false);
-    const { permissions: permissions } = (0, $drrcw$reactadmin.usePermissions)(record.id);
-    const canAppend = (0, $drrcw$react.useMemo)(()=>!!permissions && permissions.some((p)=>[
+    const record = (0, $gJbUX$reactadmin.useRecordContext)();
+    const [showDialog, setShowDialog] = (0, $gJbUX$react.useState)(false);
+    const { permissions: permissions } = (0, $gJbUX$reactadmin.usePermissions)(record.id);
+    const canAppend = (0, $gJbUX$react.useMemo)(()=>!!permissions && permissions.some((p)=>[
                 "acl:Append",
                 "acl:Write",
                 "acl:Control"
             ].includes(p["acl:mode"])), [
         permissions
     ]);
-    return /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsxs)((0, $drrcw$reactjsxruntime.Fragment), {
+    return /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsxs)((0, $gJbUX$reactjsxruntime.Fragment), {
         children: [
-            /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $b6ed9e2776cb4ba3$export$2e2bcd8739ae039), {
+            /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $b6ed9e2776cb4ba3$export$2e2bcd8739ae039), {
                 reference: reference,
                 source: source,
                 ...otherProps,
-                children: (0, ($parcel$interopDefault($drrcw$react))).Children.only(children) && /*#__PURE__*/ (0, ($parcel$interopDefault($drrcw$react))).cloneElement(children, {
+                children: (0, ($parcel$interopDefault($gJbUX$react))).Children.only(children) && /*#__PURE__*/ (0, ($parcel$interopDefault($gJbUX$react))).cloneElement(children, {
                     appendLink: canAppend ? ()=>setShowDialog(true) : undefined
                 })
             }),
-            canAppend && showDialog && /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $9ac0ba4780250906$export$2e2bcd8739ae039), {
+            canAppend && showDialog && /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $9ac0ba4780250906$export$2e2bcd8739ae039), {
                 open: showDialog,
                 onClose: ()=>setShowDialog(false),
                 subjectUri: record.id,
@@ -569,19 +571,19 @@ var $6a1cce6d258bf615$export$2e2bcd8739ae039 = $6a1cce6d258bf615$var$QuickAppend
 const $732a429355ed7119$var$defaultdomainMapping = {
     "github.com": {
         label: "GitHub",
-        icon: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, ($parcel$interopDefault($drrcw$muiiconsmaterialGitHub))), {}),
+        icon: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, ($parcel$interopDefault($gJbUX$muiiconsmaterialGitHub))), {}),
         color: "black",
         contrastText: "white"
     },
     "gitlab.com": {
         label: "GitLab",
-        icon: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$reacticonsfi.FiGitlab), {}),
+        icon: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$reacticonsfi.FiGitlab), {}),
         color: "orange",
         contrastText: "black"
     },
     "opencollective.com": {
         label: "Open Collective",
-        icon: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.Avatar), {
+        icon: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.Avatar), {
             component: "span",
             src: "https://opencollective.com/static/images/opencollective-icon.svg"
         }),
@@ -590,30 +592,30 @@ const $732a429355ed7119$var$defaultdomainMapping = {
     },
     "facebook.com": {
         label: "Facebook",
-        icon: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, ($parcel$interopDefault($drrcw$muiiconsmaterialFacebook))), {}),
+        icon: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, ($parcel$interopDefault($gJbUX$muiiconsmaterialFacebook))), {}),
         color: "#4267B2",
         contrastText: "white"
     },
     "twitter.com": {
         label: "Twitter",
-        icon: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, ($parcel$interopDefault($drrcw$muiiconsmaterialTwitter))), {}),
+        icon: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, ($parcel$interopDefault($gJbUX$muiiconsmaterialTwitter))), {}),
         color: "#00ACEE",
         contrastText: "white"
     },
     "instagram.com": {
         label: "Instagram",
-        icon: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, ($parcel$interopDefault($drrcw$muiiconsmaterialInstagram))), {}),
+        icon: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, ($parcel$interopDefault($gJbUX$muiiconsmaterialInstagram))), {}),
         color: "#8a3ab9",
         contrastText: "white"
     },
     "youtube.com": {
         label: "YouTube",
-        icon: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, ($parcel$interopDefault($drrcw$muiiconsmaterialYouTube))), {}),
+        icon: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, ($parcel$interopDefault($gJbUX$muiiconsmaterialYouTube))), {}),
         color: "#FF0000",
         contrastText: "white"
     }
 };
-const $732a429355ed7119$var$useStyles = (0, ($parcel$interopDefault($drrcw$muistylesmakeStyles)))(()=>({
+const $732a429355ed7119$var$useStyles = (0, ($parcel$interopDefault($gJbUX$muistylesmakeStyles)))(()=>({
         link: {
             textDecoration: "unset",
             "& :hover": {
@@ -635,7 +637,7 @@ const $732a429355ed7119$var$MultiUrlField = ({ source: source, domainMapping: do
         ...$732a429355ed7119$var$defaultdomainMapping,
         ...domainMapping
     };
-    const record = (0, $drrcw$reactadmin.useRecordContext)();
+    const record = (0, $gJbUX$reactadmin.useRecordContext)();
     const classes = $732a429355ed7119$var$useStyles();
     const urlArray = record[source] ? Array.isArray(record[source]) ? record[source] : [
         record[source]
@@ -646,18 +648,18 @@ const $732a429355ed7119$var$MultiUrlField = ({ source: source, domainMapping: do
         if (!parsedUrl) return null;
         const chip = newDomainMapping[parsedUrl.hostname] || {
             label: "Site web",
-            icon: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, ($parcel$interopDefault($drrcw$muiiconsmaterialLanguage))), {}),
+            icon: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, ($parcel$interopDefault($gJbUX$muiiconsmaterialLanguage))), {}),
             color: "#ea",
             contrastText: "black"
         };
-        return /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)("a", {
+        return /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)("a", {
             href: url,
             target: "_blank",
             rel: "noopener noreferrer",
             className: classes.link,
-            children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.Chip), {
+            children: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.Chip), {
                 component: "span",
-                icon: /*#__PURE__*/ (0, ($parcel$interopDefault($drrcw$react))).cloneElement(chip.icon, {
+                icon: /*#__PURE__*/ (0, ($parcel$interopDefault($gJbUX$react))).cloneElement(chip.icon, {
                     style: {
                         color: chip.contrastText,
                         width: 18,
@@ -693,14 +695,14 @@ const $43c570e3fbe4d9a0$var$stopPropagation = (e)=>e.stopPropagation();
 const $43c570e3fbe4d9a0$var$handleClick = ()=>{};
 const $43c570e3fbe4d9a0$var$SeparatedListField = (props)=>{
     let { children: children, link: link = "edit", linkType: linkType, separator: separator = ",\xa0" } = props;
-    const { data: data, isLoading: isLoading, resource: resource } = (0, $drrcw$reactadmin.useListContext)(props);
-    const createPath = (0, $drrcw$reactadmin.useCreatePath)();
+    const { data: data, isLoading: isLoading, resource: resource } = (0, $gJbUX$reactadmin.useListContext)(props);
+    const createPath = (0, $gJbUX$reactadmin.useCreatePath)();
     if (linkType !== undefined) {
         console.warn("The 'linkType' prop is deprecated and should be named to 'link' in <SeparatedListField />");
         link = linkType;
     }
-    if (isLoading) return /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.LinearProgress), {});
-    return /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$reactjsxruntime.Fragment), {
+    if (isLoading) return /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.LinearProgress), {});
+    return /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$reactjsxruntime.Fragment), {
         children: data.map((record, i)=>{
             if (!record.id) return null;
             const resourceLinkPath = link !== false && (typeof link === "function" ? link(record.id) : createPath({
@@ -708,12 +710,12 @@ const $43c570e3fbe4d9a0$var$SeparatedListField = (props)=>{
                 id: record.id,
                 type: link
             }));
-            if (resourceLinkPath) return /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsxs)("span", {
+            if (resourceLinkPath) return /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsxs)("span", {
                 children: [
-                    /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$reactadmin.Link), {
+                    /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$reactadmin.Link), {
                         to: resourceLinkPath,
                         onClick: $43c570e3fbe4d9a0$var$stopPropagation,
-                        children: /*#__PURE__*/ (0, $drrcw$react.cloneElement)((0, $drrcw$react.Children).only(children), {
+                        children: /*#__PURE__*/ (0, $gJbUX$react.cloneElement)((0, $gJbUX$react.Children).only(children), {
                             // Workaround to force ChipField to be clickable
                             onClick: $43c570e3fbe4d9a0$var$handleClick
                         })
@@ -721,9 +723,9 @@ const $43c570e3fbe4d9a0$var$SeparatedListField = (props)=>{
                     i < data.length - 1 && separator
                 ]
             }, record.id);
-            return /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsxs)("span", {
+            return /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsxs)("span", {
                 children: [
-                    /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$reactadmin.RecordContextProvider), {
+                    /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$reactadmin.RecordContextProvider), {
                         value: record,
                         children: children
                     }),

@@ -13,9 +13,11 @@ var $3RhHq$muistylesmakeStyles = require("@mui/styles/makeStyles");
 var $3RhHq$reactrouterdom = require("react-router-dom");
 var $3RhHq$fullcalendarlist = require("@fullcalendar/list");
 
+
 function $parcel$export(e, n, v, s) {
   Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
 }
+
 function $parcel$interopDefault(a) {
   return a && a.__esModule ? a.default : a;
 }
@@ -61,7 +63,7 @@ const $c332daa71b957685$var$Picker = ({ PickerComponent: PickerComponent, label:
             }),
             isRequired && /*#__PURE__*/ (0, $3RhHq$reactjsxruntime.jsx)("span", {
                 "aria-hidden": "true",
-                children: " *"
+                children: "\u2009*"
             })
         ]
     });

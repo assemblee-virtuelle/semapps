@@ -1,26 +1,28 @@
-var $02DsL$reactjsxruntime = require("react/jsx-runtime");
-var $02DsL$react = require("react");
-var $02DsL$reactadmin = require("react-admin");
-var $02DsL$muimaterial = require("@mui/material");
-var $02DsL$muimaterialAutocomplete = require("@mui/material/Autocomplete");
-var $02DsL$muiiconsmaterialLocationOn = require("@mui/icons-material/LocationOn");
-var $02DsL$autosuggesthighlightmatch = require("autosuggest-highlight/match");
-var $02DsL$autosuggesthighlightparse = require("autosuggest-highlight/parse");
-var $02DsL$lodashthrottle = require("lodash.throttle");
-var $02DsL$muisystem = require("@mui/system");
-var $02DsL$reactrouterdom = require("react-router-dom");
-var $02DsL$muistylesmakeStyles = require("@mui/styles/makeStyles");
-var $02DsL$muimaterialCircularProgress = require("@mui/material/CircularProgress");
+var $CiwlJ$reactjsxruntime = require("react/jsx-runtime");
+var $CiwlJ$react = require("react");
+var $CiwlJ$reactadmin = require("react-admin");
+var $CiwlJ$muimaterial = require("@mui/material");
+var $CiwlJ$muimaterialAutocomplete = require("@mui/material/Autocomplete");
+var $CiwlJ$muiiconsmaterialLocationOn = require("@mui/icons-material/LocationOn");
+var $CiwlJ$autosuggesthighlightmatch = require("autosuggest-highlight/match");
+var $CiwlJ$autosuggesthighlightparse = require("autosuggest-highlight/parse");
+var $CiwlJ$lodashthrottle = require("lodash.throttle");
+var $CiwlJ$muisystem = require("@mui/system");
+var $CiwlJ$reactrouterdom = require("react-router-dom");
+var $CiwlJ$muistylesmakeStyles = require("@mui/styles/makeStyles");
+var $CiwlJ$muimaterialCircularProgress = require("@mui/material/CircularProgress");
 require("leaflet-defaulticon-compatibility");
-var $02DsL$reactleaflet = require("react-leaflet");
-var $02DsL$leaflet = require("leaflet");
-var $02DsL$reactleafletcore = require("@react-leaflet/core");
+var $CiwlJ$reactleaflet = require("react-leaflet");
+var $CiwlJ$leaflet = require("leaflet");
+var $CiwlJ$reactleafletcore = require("@react-leaflet/core");
 require("leaflet.markercluster");
-var $02DsL$muiiconsmaterialClear = require("@mui/icons-material/Clear");
+var $CiwlJ$muiiconsmaterialClear = require("@mui/icons-material/Clear");
+
 
 function $parcel$export(e, n, v, s) {
   Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
 }
+
 function $parcel$interopDefault(a) {
   return a && a.__esModule ? a.default : a;
 }
@@ -46,7 +48,7 @@ var $afab6c0f6ffa522c$export$2e2bcd8739ae039 = $afab6c0f6ffa522c$var$extractCont
 
 
 
-const $7a57fad6c56283a6$var$StyledLocationOnIcon = (0, $02DsL$muisystem.styled)((0, ($parcel$interopDefault($02DsL$muiiconsmaterialLocationOn))))(({ theme: theme })=>({
+const $7a57fad6c56283a6$var$StyledLocationOnIcon = (0, $CiwlJ$muisystem.styled)((0, ($parcel$interopDefault($CiwlJ$muiiconsmaterialLocationOn))))(({ theme: theme })=>({
         color: theme.palette.text.secondary,
         marginRight: theme.spacing(2)
     }));
@@ -58,19 +60,19 @@ const $7a57fad6c56283a6$var$selectOptionText = (option, optionText)=>{
 const $7a57fad6c56283a6$var$LocationInput = ({ mapboxConfig: mapboxConfig, source: source, label: label, parse: parse, optionText: optionText, helperText: helperText, ...rest })=>{
     if (!mapboxConfig) throw new Error("@semapps/geo-components : No mapbox configuration");
     if (!mapboxConfig.access_token) throw new Error("@semapps/geo-components : No access token in mapbox configuration");
-    const record = (0, $02DsL$reactadmin.useRecordContext)();
-    const resource = (0, $02DsL$reactadmin.useResourceContext)();
-    const locale = (0, $02DsL$reactadmin.useLocale)();
-    const translate = (0, $02DsL$reactadmin.useTranslate)();
-    const [keyword, setKeyword] = (0, $02DsL$react.useState)(""); // Typed keywords
-    const [options, setOptions] = (0, $02DsL$react.useState)([]); // Options returned by MapBox
+    const record = (0, $CiwlJ$reactadmin.useRecordContext)();
+    const resource = (0, $CiwlJ$reactadmin.useResourceContext)();
+    const locale = (0, $CiwlJ$reactadmin.useLocale)();
+    const translate = (0, $CiwlJ$reactadmin.useTranslate)();
+    const [keyword, setKeyword] = (0, $CiwlJ$react.useState)(""); // Typed keywords
+    const [options, setOptions] = (0, $CiwlJ$react.useState)([]); // Options returned by MapBox
     // Do not pass the `parse` prop to useInput, as we manually call it on the onChange prop below
-    const { field: { value: value, onChange: onChange, onBlur: onBlur /* , onFocus */  }, isRequired: isRequired, fieldState: { error: error, isTouched: /* submitError, */ isTouched } } = (0, $02DsL$reactadmin.useInput)({
+    const { field: { value: value, onChange: onChange, onBlur: onBlur /* , onFocus */  }, isRequired: isRequired, fieldState: { error: error, isTouched: /* submitError, */ isTouched } } = (0, $CiwlJ$reactadmin.useInput)({
         resource: resource,
         source: source,
         ...rest
     });
-    const fetchMapbox = (0, $02DsL$react.useMemo)(()=>(0, ($parcel$interopDefault($02DsL$lodashthrottle)))((keyword, callback)=>{
+    const fetchMapbox = (0, $CiwlJ$react.useMemo)(()=>(0, ($parcel$interopDefault($CiwlJ$lodashthrottle)))((keyword, callback)=>{
             const fetchUrl = new URL(`https://api.mapbox.com/geocoding/v5/mapbox.places/${keyword}.json`);
             // Use locale as default language
             if (!mapboxConfig.language) mapboxConfig.language = locale;
@@ -85,7 +87,7 @@ const $7a57fad6c56283a6$var$LocationInput = ({ mapboxConfig: mapboxConfig, sourc
         mapboxConfig,
         locale
     ]);
-    (0, $02DsL$react.useEffect)(()=>{
+    (0, $CiwlJ$react.useEffect)(()=>{
         // Do not trigger search if text input is empty or if it is the same as the current value
         if (!keyword || keyword === $7a57fad6c56283a6$var$selectOptionText(value, optionText)) return undefined;
         fetchMapbox(keyword, (results)=>setOptions(results.features));
@@ -94,7 +96,7 @@ const $7a57fad6c56283a6$var$LocationInput = ({ mapboxConfig: mapboxConfig, sourc
         keyword,
         fetchMapbox
     ]);
-    return /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, ($parcel$interopDefault($02DsL$muimaterialAutocomplete))), {
+    return /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, ($parcel$interopDefault($CiwlJ$muimaterialAutocomplete))), {
         autoComplete: true,
         value: value || null,
         // We must include the current value as an option, to avoid this error
@@ -122,7 +124,7 @@ const $7a57fad6c56283a6$var$LocationInput = ({ mapboxConfig: mapboxConfig, sourc
             // Autocomplete=off doesn't work anymore in modern browsers
             // https://stackoverflow.com/a/40791726/7900695
             params.inputProps.autoComplete = "new-password";
-            return /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, $02DsL$muimaterial.TextField), {
+            return /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$muimaterial.TextField), {
                 ...params,
                 inputProps: {
                     ...params.inputProps,
@@ -137,14 +139,14 @@ const $7a57fad6c56283a6$var$LocationInput = ({ mapboxConfig: mapboxConfig, sourc
                 }
               } */ 
                 },
-                label: label !== "" && label !== false && /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, $02DsL$reactadmin.FieldTitle), {
+                label: label !== "" && label !== false && /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactadmin.FieldTitle), {
                     label: label,
                     source: source,
                     resource: resource,
                     isRequired: isRequired
                 }),
                 error: !!(isTouched && error),
-                helperText: /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, $02DsL$reactadmin.InputHelperText), {
+                helperText: /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactadmin.InputHelperText), {
                     touched: isTouched,
                     error: error /* || submitError */ ,
                     helperText: helperText
@@ -153,29 +155,29 @@ const $7a57fad6c56283a6$var$LocationInput = ({ mapboxConfig: mapboxConfig, sourc
             });
         },
         renderOption: (props, option, state)=>{
-            const matches = (0, ($parcel$interopDefault($02DsL$autosuggesthighlightmatch)))(option.text, keyword);
-            const parts = (0, ($parcel$interopDefault($02DsL$autosuggesthighlightparse)))(option.text, matches);
-            return /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)("li", {
+            const matches = (0, ($parcel$interopDefault($CiwlJ$autosuggesthighlightmatch)))(option.text, keyword);
+            const parts = (0, ($parcel$interopDefault($CiwlJ$autosuggesthighlightparse)))(option.text, matches);
+            return /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)("li", {
                 ...props,
-                children: /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsxs)((0, $02DsL$muimaterial.Grid), {
+                children: /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsxs)((0, $CiwlJ$muimaterial.Grid), {
                     container: true,
                     alignItems: "center",
                     children: [
-                        /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, $02DsL$muimaterial.Grid), {
+                        /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$muimaterial.Grid), {
                             item: true,
-                            children: /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)($7a57fad6c56283a6$var$StyledLocationOnIcon, {})
+                            children: /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)($7a57fad6c56283a6$var$StyledLocationOnIcon, {})
                         }),
-                        /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsxs)((0, $02DsL$muimaterial.Grid), {
+                        /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsxs)((0, $CiwlJ$muimaterial.Grid), {
                             item: true,
                             xs: true,
                             children: [
-                                typeof parts === "string" ? parts : parts.map((part, index)=>/*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)("span", {
+                                typeof parts === "string" ? parts : parts.map((part, index)=>/*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)("span", {
                                         style: {
                                             fontWeight: part.highlight ? 700 : 400
                                         },
                                         children: part.text
                                     }, index)),
-                                /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, $02DsL$muimaterial.Typography), {
+                                /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$muimaterial.Typography), {
                                     variant: "body2",
                                     color: "textSecondary",
                                     children: option.place_name
@@ -214,7 +216,7 @@ function $7390fd757b2ce4b0$var$createMarkerCluster({ children: _c, ...props }, c
     const clusterEvents = {};
     // Splitting props and events to different objects
     Object.entries(props).forEach(([propName, prop])=>propName.startsWith("on") ? clusterEvents[propName] = prop : clusterProps[propName] = prop);
-    const instance = new (0, ($parcel$interopDefault($02DsL$leaflet))).MarkerClusterGroup(clusterProps);
+    const instance = new (0, ($parcel$interopDefault($CiwlJ$leaflet))).MarkerClusterGroup(clusterProps);
     // Initializing event listeners
     Object.entries(clusterEvents).forEach(([eventAsProp, callback])=>{
         const clusterEvent = `cluster${eventAsProp.substring(2).toLowerCase()}`;
@@ -228,7 +230,7 @@ function $7390fd757b2ce4b0$var$createMarkerCluster({ children: _c, ...props }, c
         }
     };
 }
-const $7390fd757b2ce4b0$var$MarkerClusterGroup = (0, $02DsL$reactleafletcore.createPathComponent)($7390fd757b2ce4b0$var$createMarkerCluster);
+const $7390fd757b2ce4b0$var$MarkerClusterGroup = (0, $CiwlJ$reactleafletcore.createPathComponent)($7390fd757b2ce4b0$var$createMarkerCluster);
 var $7390fd757b2ce4b0$export$2e2bcd8739ae039 = $7390fd757b2ce4b0$var$MarkerClusterGroup;
 
 
@@ -237,20 +239,20 @@ var $7390fd757b2ce4b0$export$2e2bcd8739ae039 = $7390fd757b2ce4b0$var$MarkerClust
 
 
 const $e9a08b6b577904d6$var$DefaultPopupContent = ()=>{
-    const record = (0, $02DsL$reactadmin.useRecordContext)();
-    const resourceDefinition = (0, $02DsL$reactadmin.useResourceDefinition)({});
+    const record = (0, $CiwlJ$reactadmin.useRecordContext)();
+    const resourceDefinition = (0, $CiwlJ$reactadmin.useResourceDefinition)({});
     if (!record) return null;
-    return /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsxs)((0, $02DsL$reactjsxruntime.Fragment), {
+    return /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsxs)((0, $CiwlJ$reactjsxruntime.Fragment), {
         children: [
-            record.label && /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, $02DsL$muimaterial.Typography), {
+            record.label && /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$muimaterial.Typography), {
                 variant: "h5",
                 children: record.label
             }),
-            record.description && /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, $02DsL$muimaterial.Typography), {
+            record.description && /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$muimaterial.Typography), {
                 children: record.description.length > 150 ? `${record.description.substring(0, 150)}...` : record.description
             }),
-            resourceDefinition.hasShow && /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, $02DsL$reactadmin.ShowButton), {}),
-            resourceDefinition.hasEdit && /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, $02DsL$reactadmin.EditButton), {})
+            resourceDefinition.hasShow && /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactadmin.ShowButton), {}),
+            resourceDefinition.hasEdit && /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactadmin.EditButton), {})
         ]
     });
 };
@@ -261,8 +263,8 @@ var $e9a08b6b577904d6$export$2e2bcd8739ae039 = $e9a08b6b577904d6$var$DefaultPopu
 
 // Keep the zoom and center in query string, so that when we navigate back to the page, it stays focused on the same area
 const $4340bf725cfbb626$var$QueryStringUpdater = ()=>{
-    const [searchParams, setSearchParams] = (0, $02DsL$reactrouterdom.useSearchParams)();
-    (0, $02DsL$reactleaflet.useMapEvents)({
+    const [searchParams, setSearchParams] = (0, $CiwlJ$reactrouterdom.useSearchParams)();
+    (0, $CiwlJ$reactleaflet.useMapEvents)({
         moveend: (test)=>{
             setSearchParams((params)=>({
                     ...Object.fromEntries(params),
@@ -290,7 +292,7 @@ var $4340bf725cfbb626$export$2e2bcd8739ae039 = $4340bf725cfbb626$var$QueryString
 
 
 
-const $31c59492060af504$var$useStyles = (0, ($parcel$interopDefault($02DsL$muistylesmakeStyles)))(()=>({
+const $31c59492060af504$var$useStyles = (0, ($parcel$interopDefault($CiwlJ$muistylesmakeStyles)))(()=>({
         closeButton: {
             position: "absolute",
             zIndex: 1400,
@@ -300,9 +302,9 @@ const $31c59492060af504$var$useStyles = (0, ($parcel$interopDefault($02DsL$muist
     }));
 const $31c59492060af504$var$MobileDrawer = ({ popupContent: popupContent, onClose: onClose })=>{
     const classes = $31c59492060af504$var$useStyles();
-    const record = (0, $02DsL$reactadmin.useRecordContext)();
-    const map = (0, $02DsL$reactleaflet.useMap)();
-    (0, $02DsL$react.useEffect)(()=>{
+    const record = (0, $CiwlJ$reactadmin.useRecordContext)();
+    const map = (0, $CiwlJ$reactleaflet.useMap)();
+    (0, $CiwlJ$react.useEffect)(()=>{
         if (record) map.setView([
             record.latitude,
             record.longitude
@@ -311,21 +313,21 @@ const $31c59492060af504$var$MobileDrawer = ({ popupContent: popupContent, onClos
         record,
         map
     ]);
-    return /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, $02DsL$muimaterial.Drawer), {
+    return /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$muimaterial.Drawer), {
         anchor: "bottom",
         open: !!record,
         onClose: onClose,
-        children: /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsxs)((0, $02DsL$muimaterial.Box), {
+        children: /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsxs)((0, $CiwlJ$muimaterial.Box), {
             p: 1,
             position: "relative",
             children: [
-                /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, $02DsL$muimaterial.IconButton), {
+                /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$muimaterial.IconButton), {
                     onClick: onClose,
                     className: classes.closeButton,
                     size: "large",
-                    children: /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, ($parcel$interopDefault($02DsL$muiiconsmaterialClear))), {})
+                    children: /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, ($parcel$interopDefault($CiwlJ$muiiconsmaterialClear))), {})
                 }),
-                /*#__PURE__*/ (0, ($parcel$interopDefault($02DsL$react))).createElement(popupContent)
+                /*#__PURE__*/ (0, ($parcel$interopDefault($CiwlJ$react))).createElement(popupContent)
             ]
         })
     });
@@ -333,7 +335,7 @@ const $31c59492060af504$var$MobileDrawer = ({ popupContent: popupContent, onClos
 var $31c59492060af504$export$2e2bcd8739ae039 = $31c59492060af504$var$MobileDrawer;
 
 
-const $3929b9df2dd76406$var$useStyles = (0, ($parcel$interopDefault($02DsL$muistylesmakeStyles)))(()=>({
+const $3929b9df2dd76406$var$useStyles = (0, ($parcel$interopDefault($CiwlJ$muistylesmakeStyles)))(()=>({
         isLoading: {
             zIndex: 1000,
             position: "absolute",
@@ -347,14 +349,14 @@ const $3929b9df2dd76406$var$useStyles = (0, ($parcel$interopDefault($02DsL$muist
         }
     }));
 const $3929b9df2dd76406$var$MapList = ({ latitude: latitude, longitude: longitude, label: label, description: description, popupContent: popupContent, height: height, center: center, zoom: zoom, groupClusters: groupClusters, boundToMarkers: boundToMarkers, connectMarkers: connectMarkers, ...otherProps })=>{
-    const { data: data, isLoading: isLoading } = (0, $02DsL$reactadmin.useListContext)();
-    const xs = (0, $02DsL$muimaterial.useMediaQuery)((theme)=>theme.breakpoints.down("sm"), {
+    const { data: data, isLoading: isLoading } = (0, $CiwlJ$reactadmin.useListContext)();
+    const xs = (0, $CiwlJ$muimaterial.useMediaQuery)((theme)=>theme.breakpoints.down("sm"), {
         noSsr: true
     });
-    const [drawerRecord, setDrawerRecord] = (0, $02DsL$react.useState)(null);
+    const [drawerRecord, setDrawerRecord] = (0, $CiwlJ$react.useState)(null);
     const classes = $3929b9df2dd76406$var$useStyles();
     // Get the zoom and center from query string, if available
-    const location = (0, $02DsL$reactrouterdom.useLocation)();
+    const location = (0, $CiwlJ$reactrouterdom.useLocation)();
     const query = new URLSearchParams(location.search);
     center = query.has("lat") && query.has("lng") ? [
         query.get("lat"),
@@ -376,9 +378,9 @@ const $3929b9df2dd76406$var$MapList = ({ latitude: latitude, longitude: longitud
     // Do not display anything if the bounds are not ready, otherwise the MapContainer will not be initialized correctly
     if (boundToMarkers && !bounds) return null;
     const markers = records.map((record, i)=>{
-        const marker = /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsxs)((0, ($parcel$interopDefault($02DsL$react))).Fragment, {
+        const marker = /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsxs)((0, ($parcel$interopDefault($CiwlJ$react))).Fragment, {
             children: [
-                /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, $02DsL$reactleaflet.Marker), {
+                /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactleaflet.Marker), {
                     position: [
                         record.latitude,
                         record.longitude
@@ -386,14 +388,14 @@ const $3929b9df2dd76406$var$MapList = ({ latitude: latitude, longitude: longitud
                     eventHandlers: xs ? {
                         click: ()=>setDrawerRecord(record)
                     } : undefined,
-                    children: !xs && /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, $02DsL$reactleaflet.Popup), {
-                        children: /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, $02DsL$reactadmin.RecordContextProvider), {
+                    children: !xs && /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactleaflet.Popup), {
+                        children: /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactadmin.RecordContextProvider), {
                             value: record,
-                            children: /*#__PURE__*/ (0, ($parcel$interopDefault($02DsL$react))).createElement(popupContent)
+                            children: /*#__PURE__*/ (0, ($parcel$interopDefault($CiwlJ$react))).createElement(popupContent)
                         })
                     })
                 }),
-                connectMarkers && previousRecord && /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, $02DsL$reactleaflet.Polyline), {
+                connectMarkers && previousRecord && /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactleaflet.Polyline), {
                     positions: [
                         [
                             previousRecord.latitude,
@@ -411,7 +413,7 @@ const $3929b9df2dd76406$var$MapList = ({ latitude: latitude, longitude: longitud
         previousRecord = record;
         return marker;
     });
-    return /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsxs)((0, $02DsL$reactleaflet.MapContainer), {
+    return /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsxs)((0, $CiwlJ$reactleaflet.MapContainer), {
         style: {
             height: height
         },
@@ -420,26 +422,26 @@ const $3929b9df2dd76406$var$MapList = ({ latitude: latitude, longitude: longitud
         bounds: bounds,
         ...otherProps,
         children: [
-            /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, $02DsL$reactleaflet.TileLayer), {
+            /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactleaflet.TileLayer), {
                 attribution: '\xa9 <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
                 url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             }),
-            isLoading && /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, $02DsL$muimaterial.Box), {
+            isLoading && /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$muimaterial.Box), {
                 alignItems: "center",
                 className: classes.isLoading,
-                children: /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, ($parcel$interopDefault($02DsL$muimaterialCircularProgress))), {
+                children: /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, ($parcel$interopDefault($CiwlJ$muimaterialCircularProgress))), {
                     size: 60,
                     thickness: 6
                 })
             }),
-            groupClusters ? /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, $7390fd757b2ce4b0$export$2e2bcd8739ae039), {
+            groupClusters ? /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $7390fd757b2ce4b0$export$2e2bcd8739ae039), {
                 showCoverageOnHover: false,
                 children: markers
             }) : markers,
-            /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, $4340bf725cfbb626$export$2e2bcd8739ae039), {}),
-            /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, $02DsL$reactadmin.RecordContextProvider), {
+            /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $4340bf725cfbb626$export$2e2bcd8739ae039), {}),
+            /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactadmin.RecordContextProvider), {
                 value: drawerRecord,
-                children: /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, $31c59492060af504$export$2e2bcd8739ae039), {
+                children: /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $31c59492060af504$export$2e2bcd8739ae039), {
                     popupContent: popupContent,
                     onClose: ()=>setDrawerRecord(null)
                 })
@@ -470,7 +472,7 @@ var $3929b9df2dd76406$export$2e2bcd8739ae039 = $3929b9df2dd76406$var$MapList;
 
 
 const $a907502a25565c32$var$ChangeView = ({ center: center, zoom: zoom })=>{
-    const map = (0, $02DsL$reactleaflet.useMap)();
+    const map = (0, $CiwlJ$reactleaflet.useMap)();
     map.setView(center, zoom);
     return null;
 };
@@ -478,38 +480,38 @@ var $a907502a25565c32$export$2e2bcd8739ae039 = $a907502a25565c32$var$ChangeView;
 
 
 const $7855b7e2551c6d96$var$MapField = ({ latitude: latitude, longitude: longitude, address: address, height: height, typographyProps: typographyProps, ...rest })=>{
-    const record = (0, $02DsL$reactadmin.useRecordContext)();
+    const record = (0, $CiwlJ$reactadmin.useRecordContext)();
     const position = [
         latitude(record),
         longitude(record)
     ];
     // Do not display the component if it has no latitude or longitude
     if (!position[0] || !position[1]) return null;
-    return /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsxs)((0, $02DsL$muimaterial.Box), {
+    return /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsxs)((0, $CiwlJ$muimaterial.Box), {
         children: [
-            address && /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, $02DsL$muimaterial.Box), {
+            address && /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$muimaterial.Box), {
                 mt: 1,
                 mb: 1,
-                children: /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, $02DsL$muimaterial.Typography), {
+                children: /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$muimaterial.Typography), {
                     ...typographyProps,
                     children: address(record)
                 })
             }),
-            /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsxs)((0, $02DsL$reactleaflet.MapContainer), {
+            /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsxs)((0, $CiwlJ$reactleaflet.MapContainer), {
                 style: {
                     height: height
                 },
                 center: position,
                 ...rest,
                 children: [
-                    /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, $a907502a25565c32$export$2e2bcd8739ae039), {
+                    /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $a907502a25565c32$export$2e2bcd8739ae039), {
                         center: position
                     }),
-                    /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, $02DsL$reactleaflet.TileLayer), {
+                    /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactleaflet.TileLayer), {
                         attribution: '\xa9 <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
                         url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     }),
-                    /*#__PURE__*/ (0, $02DsL$reactjsxruntime.jsx)((0, $02DsL$reactleaflet.Marker), {
+                    /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactleaflet.Marker), {
                         position: position
                     })
                 ]

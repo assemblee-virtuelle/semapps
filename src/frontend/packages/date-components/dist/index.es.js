@@ -48,7 +48,7 @@ const $610808f89222f9cc$var$Picker = ({ PickerComponent: PickerComponent, label:
             }),
             isRequired && /*#__PURE__*/ (0, $5Ihaz$jsx)("span", {
                 "aria-hidden": "true",
-                children: " *"
+                children: "\u2009*"
             })
         ]
     });

@@ -1,19 +1,19 @@
-import {jsxs as $e5Hbp$jsxs, jsx as $e5Hbp$jsx, Fragment as $e5Hbp$Fragment} from "react/jsx-runtime";
-import $e5Hbp$react, {useState as $e5Hbp$useState, useCallback as $e5Hbp$useCallback, forwardRef as $e5Hbp$forwardRef, useMemo as $e5Hbp$useMemo, useEffect as $e5Hbp$useEffect, createElement as $e5Hbp$createElement} from "react";
-import {useCreateSuggestionContext as $e5Hbp$useCreateSuggestionContext, useResourceContext as $e5Hbp$useResourceContext, useCreate as $e5Hbp$useCreate, useLocale as $e5Hbp$useLocale, useTranslate as $e5Hbp$useTranslate, useNotify as $e5Hbp$useNotify, useInput as $e5Hbp$useInput, FieldTitle as $e5Hbp$FieldTitle, InputHelperText as $e5Hbp$InputHelperText, SimpleForm as $e5Hbp$SimpleForm, TextInput as $e5Hbp$TextInput, RadioButtonGroupInput as $e5Hbp$RadioButtonGroupInput, useDataProvider as $e5Hbp$useDataProvider, useRedirect as $e5Hbp$useRedirect, useSaveContext as $e5Hbp$useSaveContext, required as $e5Hbp$required} from "react-admin";
-import {Dialog as $e5Hbp$Dialog, DialogContent as $e5Hbp$DialogContent, DialogActions as $e5Hbp$DialogActions, Button as $e5Hbp$Button, TextField as $e5Hbp$TextField, Grid as $e5Hbp$Grid, Typography as $e5Hbp$Typography, useMediaQuery as $e5Hbp$useMediaQuery, Box as $e5Hbp$Box, Tabs as $e5Hbp$Tabs, Tab as $e5Hbp$Tab, Divider as $e5Hbp$Divider} from "@mui/material";
-import $e5Hbp$muistylesmakeStyles from "@mui/styles/makeStyles";
-import $e5Hbp$muimaterialAutocomplete from "@mui/material/Autocomplete";
-import $e5Hbp$muiiconsmaterialLanguage from "@mui/icons-material/Language";
-import $e5Hbp$muiiconsmaterialAdd from "@mui/icons-material/Add";
-import $e5Hbp$autosuggesthighlightmatch from "autosuggest-highlight/match";
-import $e5Hbp$autosuggesthighlightparse from "autosuggest-highlight/parse";
-import $e5Hbp$lodashthrottle from "lodash.throttle";
-import {useFormContext as $e5Hbp$useFormContext} from "react-hook-form";
-import {useContainers as $e5Hbp$useContainers, useDataModel as $e5Hbp$useDataModel} from "@semapps/semantic-data-provider";
-import {ReferenceInput as $e5Hbp$ReferenceInput, MultiServerAutocompleteInput as $e5Hbp$MultiServerAutocompleteInput} from "@semapps/input-components";
-import $e5Hbp$urljoin from "url-join";
-import $e5Hbp$muiiconsmaterialStarBorder from "@mui/icons-material/StarBorder";
+import {jsxs as $4od2P$jsxs, jsx as $4od2P$jsx, Fragment as $4od2P$Fragment} from "react/jsx-runtime";
+import $4od2P$react, {useState as $4od2P$useState, useCallback as $4od2P$useCallback, forwardRef as $4od2P$forwardRef, useMemo as $4od2P$useMemo, useEffect as $4od2P$useEffect, createElement as $4od2P$createElement} from "react";
+import {useCreateSuggestionContext as $4od2P$useCreateSuggestionContext, useResourceContext as $4od2P$useResourceContext, useCreate as $4od2P$useCreate, useLocale as $4od2P$useLocale, useTranslate as $4od2P$useTranslate, useNotify as $4od2P$useNotify, useInput as $4od2P$useInput, FieldTitle as $4od2P$FieldTitle, InputHelperText as $4od2P$InputHelperText, SimpleForm as $4od2P$SimpleForm, TextInput as $4od2P$TextInput, RadioButtonGroupInput as $4od2P$RadioButtonGroupInput, useDataProvider as $4od2P$useDataProvider, useRedirect as $4od2P$useRedirect, useSaveContext as $4od2P$useSaveContext, required as $4od2P$required} from "react-admin";
+import {Dialog as $4od2P$Dialog, DialogContent as $4od2P$DialogContent, DialogActions as $4od2P$DialogActions, Button as $4od2P$Button, TextField as $4od2P$TextField, Grid as $4od2P$Grid, Typography as $4od2P$Typography, useMediaQuery as $4od2P$useMediaQuery, Box as $4od2P$Box, Tabs as $4od2P$Tabs, Tab as $4od2P$Tab, Divider as $4od2P$Divider} from "@mui/material";
+import $4od2P$muistylesmakeStyles from "@mui/styles/makeStyles";
+import $4od2P$muimaterialAutocomplete from "@mui/material/Autocomplete";
+import $4od2P$muiiconsmaterialLanguage from "@mui/icons-material/Language";
+import $4od2P$muiiconsmaterialAdd from "@mui/icons-material/Add";
+import $4od2P$autosuggesthighlightmatch from "autosuggest-highlight/match";
+import $4od2P$autosuggesthighlightparse from "autosuggest-highlight/parse";
+import $4od2P$lodashthrottle from "lodash.throttle";
+import {useFormContext as $4od2P$useFormContext} from "react-hook-form";
+import {useContainers as $4od2P$useContainers, useDataModel as $4od2P$useDataModel} from "@semapps/semantic-data-provider";
+import {ReferenceInput as $4od2P$ReferenceInput, MultiServerAutocompleteInput as $4od2P$MultiServerAutocompleteInput} from "@semapps/input-components";
+import $4od2P$urljoin from "url-join";
+import $4od2P$muiiconsmaterialStarBorder from "@mui/icons-material/StarBorder";
 
 // Dialogs
 
@@ -31,7 +31,7 @@ import $e5Hbp$muiiconsmaterialStarBorder from "@mui/icons-material/StarBorder";
 
 
 
-const $b16cb081b32ae4c7$var$useStyles = (0, $e5Hbp$muistylesmakeStyles)((theme)=>({
+const $b16cb081b32ae4c7$var$useStyles = (0, $4od2P$muistylesmakeStyles)((theme)=>({
         icon: {
             color: theme.palette.text.secondary,
             marginRight: theme.spacing(2)
@@ -44,21 +44,21 @@ const $b16cb081b32ae4c7$var$selectOptionText = (option, optionText)=>{
     if (typeof optionText === "function") return optionText(option);
 };
 const $b16cb081b32ae4c7$var$capitalizeFirstLetter = (string)=>string && string.charAt(0).toUpperCase() + string.slice(1);
-const $b16cb081b32ae4c7$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $e5Hbp$forwardRef)(({ fetchLexicon: fetchLexicon, source: source, defaultValue: defaultValue, label: label, parse: parse, optionText: optionText, helperText: helperText, ...rest }, ref)=>{
-    const resource = (0, $e5Hbp$useResourceContext)();
+const $b16cb081b32ae4c7$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $4od2P$forwardRef)(({ fetchLexicon: fetchLexicon, source: source, defaultValue: defaultValue, label: label, parse: parse, optionText: optionText, helperText: helperText, ...rest }, ref)=>{
+    const resource = (0, $4od2P$useResourceContext)();
     const classes = $b16cb081b32ae4c7$var$useStyles();
-    const locale = (0, $e5Hbp$useLocale)();
-    const translate = (0, $e5Hbp$useTranslate)();
-    const notify = (0, $e5Hbp$useNotify)();
+    const locale = (0, $4od2P$useLocale)();
+    const translate = (0, $4od2P$useTranslate)();
+    const notify = (0, $4od2P$useNotify)();
     // Do not pass the `parse` prop to useInput, as we manually call it on the onChange prop below
-    const { field: { value: value, onChange: onChange, onBlur: onBlur }, fieldState: { isTouched: isTouched, error: error }, formState: { submitError: submitError }, isRequired: isRequired } = (0, $e5Hbp$useInput)({
+    const { field: { value: value, onChange: onChange, onBlur: onBlur }, fieldState: { isTouched: isTouched, error: error }, formState: { submitError: submitError }, isRequired: isRequired } = (0, $4od2P$useInput)({
         source: source,
         defaultValue: defaultValue,
         ...rest
     });
-    const [keyword, setKeyword] = (0, $e5Hbp$useState)(defaultValue); // Typed keywords
-    const [options, setOptions] = (0, $e5Hbp$useState)([]); // Options returned by MapBox
-    const throttledFetchLexicon = (0, $e5Hbp$useMemo)(()=>(0, $e5Hbp$lodashthrottle)((keyword, callback)=>{
+    const [keyword, setKeyword] = (0, $4od2P$useState)(defaultValue); // Typed keywords
+    const [options, setOptions] = (0, $4od2P$useState)([]); // Options returned by MapBox
+    const throttledFetchLexicon = (0, $4od2P$useMemo)(()=>(0, $4od2P$lodashthrottle)((keyword, callback)=>{
             fetchLexicon({
                 keyword: keyword,
                 locale: locale
@@ -70,7 +70,7 @@ const $b16cb081b32ae4c7$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $e5Hbp$
         fetchLexicon,
         notify
     ]);
-    (0, $e5Hbp$useEffect)(()=>{
+    (0, $4od2P$useEffect)(()=>{
         // Do not trigger search if text input is empty
         if (!keyword) return undefined;
         throttledFetchLexicon(keyword, (results)=>setOptions(results));
@@ -79,7 +79,7 @@ const $b16cb081b32ae4c7$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $e5Hbp$
         keyword,
         throttledFetchLexicon
     ]);
-    return /*#__PURE__*/ (0, $e5Hbp$jsx)((0, $e5Hbp$muimaterialAutocomplete), {
+    return /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$muimaterialAutocomplete), {
         fullWidth: true,
         freeSolo: true,
         autoComplete: true,
@@ -100,7 +100,7 @@ const $b16cb081b32ae4c7$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $e5Hbp$
             if (keyword) options.push({
                 label: $b16cb081b32ae4c7$var$capitalizeFirstLetter(keyword),
                 summary: `Ajouter "${$b16cb081b32ae4c7$var$capitalizeFirstLetter(keyword)}" au dictionnaire`,
-                icon: (0, $e5Hbp$muiiconsmaterialAdd)
+                icon: (0, $4od2P$muiiconsmaterialAdd)
             });
             return options;
         },
@@ -122,7 +122,7 @@ const $b16cb081b32ae4c7$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $e5Hbp$
             // Autocomplete=off doesn't work anymore in modern browsers
             // https://stackoverflow.com/a/40791726/7900695
             params.inputProps.autoComplete = "new-password";
-            return /*#__PURE__*/ (0, $e5Hbp$jsx)((0, $e5Hbp$TextField), {
+            return /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$TextField), {
                 ...params,
                 autoFocus: true,
                 inputProps: {
@@ -135,14 +135,14 @@ const $b16cb081b32ae4c7$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $e5Hbp$
                         if (params.inputProps.onFocus) params.inputProps.onFocus(e);
                     }
                 },
-                label: label !== "" && label !== false && /*#__PURE__*/ (0, $e5Hbp$jsx)((0, $e5Hbp$FieldTitle), {
+                label: label !== "" && label !== false && /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$FieldTitle), {
                     label: label,
                     source: source,
                     resource: resource,
                     isRequired: isRequired
                 }),
                 error: !!(isTouched && (error || submitError)),
-                helperText: /*#__PURE__*/ (0, $e5Hbp$jsx)((0, $e5Hbp$InputHelperText), {
+                helperText: /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$InputHelperText), {
                     touched: isTouched,
                     error: error || submitError,
                     helperText: helperText
@@ -150,31 +150,31 @@ const $b16cb081b32ae4c7$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $e5Hbp$
             });
         },
         renderOption: (props, option)=>{
-            const matches = (0, $e5Hbp$autosuggesthighlightmatch)(option.label, keyword);
-            const parts = (0, $e5Hbp$autosuggesthighlightparse)(option.label, matches);
-            return /*#__PURE__*/ (0, $e5Hbp$createElement)((0, $e5Hbp$Grid), {
+            const matches = (0, $4od2P$autosuggesthighlightmatch)(option.label, keyword);
+            const parts = (0, $4od2P$autosuggesthighlightparse)(option.label, matches);
+            return /*#__PURE__*/ (0, $4od2P$createElement)((0, $4od2P$Grid), {
                 container: true,
                 alignItems: "center",
                 ...props,
                 key: option.uri || "create",
                 children: [
-                    /*#__PURE__*/ (0, $e5Hbp$jsx)((0, $e5Hbp$Grid), {
+                    /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$Grid), {
                         item: true,
-                        children: /*#__PURE__*/ (0, $e5Hbp$react).createElement(option.icon || (0, $e5Hbp$muiiconsmaterialLanguage), {
+                        children: /*#__PURE__*/ (0, $4od2P$react).createElement(option.icon || (0, $4od2P$muiiconsmaterialLanguage), {
                             className: classes.icon
                         })
                     }),
-                    /*#__PURE__*/ (0, $e5Hbp$jsxs)((0, $e5Hbp$Grid), {
+                    /*#__PURE__*/ (0, $4od2P$jsxs)((0, $4od2P$Grid), {
                         item: true,
                         xs: true,
                         children: [
-                            typeof parts === "string" ? parts : parts.map((part, index)=>/*#__PURE__*/ (0, $e5Hbp$jsx)("span", {
+                            typeof parts === "string" ? parts : parts.map((part, index)=>/*#__PURE__*/ (0, $4od2P$jsx)("span", {
                                     style: {
                                         fontWeight: part.highlight ? 700 : 400
                                     },
                                     children: part.text
                                 }, index)),
-                            /*#__PURE__*/ (0, $e5Hbp$jsx)((0, $e5Hbp$Typography), {
+                            /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$Typography), {
                                 variant: "body2",
                                 color: "textSecondary",
                                 children: option.summary
@@ -193,18 +193,18 @@ var $b16cb081b32ae4c7$export$2e2bcd8739ae039 = $b16cb081b32ae4c7$var$LexiconAuto
 
 
 const $a792efd53d1a9e0e$var$LexiconCreateDialog = ({ fetchLexicon: fetchLexicon, selectData: selectData })=>{
-    const { filter: filter, onCancel: onCancel, onCreate: onCreate } = (0, $e5Hbp$useCreateSuggestionContext)();
-    const resource = (0, $e5Hbp$useResourceContext)();
-    const [value, setValue] = (0, $e5Hbp$useState)(filter || "");
-    const [create] = (0, $e5Hbp$useCreate)();
-    const onClose = (0, $e5Hbp$useCallback)(()=>{
+    const { filter: filter, onCancel: onCancel, onCreate: onCreate } = (0, $4od2P$useCreateSuggestionContext)();
+    const resource = (0, $4od2P$useResourceContext)();
+    const [value, setValue] = (0, $4od2P$useState)(filter || "");
+    const [create] = (0, $4od2P$useCreate)();
+    const onClose = (0, $4od2P$useCallback)(()=>{
         setValue("");
         onCancel();
     }, [
         setValue,
         onCancel
     ]);
-    const onSubmit = (0, $e5Hbp$useCallback)(()=>{
+    const onSubmit = (0, $4od2P$useCallback)(()=>{
         // If we have no URI, it means we are creating a new definition
         // Delete the summary as it is "Ajouter XXX au dictionaire"
         if (!value.uri) delete value.summary;
@@ -225,14 +225,14 @@ const $a792efd53d1a9e0e$var$LexiconCreateDialog = ({ fetchLexicon: fetchLexicon,
         setValue,
         resource
     ]);
-    return /*#__PURE__*/ (0, $e5Hbp$jsxs)((0, $e5Hbp$Dialog), {
+    return /*#__PURE__*/ (0, $4od2P$jsxs)((0, $4od2P$Dialog), {
         open: true,
         onClose: onClose,
         fullWidth: true,
         maxWidth: "sm",
         children: [
-            /*#__PURE__*/ (0, $e5Hbp$jsx)((0, $e5Hbp$DialogContent), {
-                children: /*#__PURE__*/ (0, $e5Hbp$jsx)((0, $b16cb081b32ae4c7$export$2e2bcd8739ae039), {
+            /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$DialogContent), {
+                children: /*#__PURE__*/ (0, $4od2P$jsx)((0, $b16cb081b32ae4c7$export$2e2bcd8739ae039), {
                     source: "lexicon",
                     label: "Titre",
                     fetchLexicon: fetchLexicon,
@@ -241,13 +241,13 @@ const $a792efd53d1a9e0e$var$LexiconCreateDialog = ({ fetchLexicon: fetchLexicon,
                     onChange: setValue
                 })
             }),
-            /*#__PURE__*/ (0, $e5Hbp$jsxs)((0, $e5Hbp$DialogActions), {
+            /*#__PURE__*/ (0, $4od2P$jsxs)((0, $4od2P$DialogActions), {
                 children: [
-                    /*#__PURE__*/ (0, $e5Hbp$jsx)((0, $e5Hbp$Button), {
+                    /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$Button), {
                         onClick: onClose,
                         children: "Annuler"
                     }),
-                    /*#__PURE__*/ (0, $e5Hbp$jsx)((0, $e5Hbp$Button), {
+                    /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$Button), {
                         variant: "contained",
                         color: "primary",
                         onClick: onSubmit,
@@ -275,10 +275,10 @@ var $a792efd53d1a9e0e$export$2e2bcd8739ae039 = $a792efd53d1a9e0e$var$LexiconCrea
 
 
 const $bcde5854a56da897$var$useFork = (resourceId)=>{
-    const dataProvider = (0, $e5Hbp$useDataProvider)();
-    const redirect = (0, $e5Hbp$useRedirect)();
-    const notify = (0, $e5Hbp$useNotify)();
-    return (0, $e5Hbp$useCallback)(async (remoteRecordUri, stripProperties = [])=>{
+    const dataProvider = (0, $4od2P$useDataProvider)();
+    const redirect = (0, $4od2P$useRedirect)();
+    const notify = (0, $4od2P$useNotify)();
+    return (0, $4od2P$useCallback)(async (remoteRecordUri, stripProperties = [])=>{
         const { data: remoteData } = await dataProvider.getOne(resourceId, {
             id: remoteRecordUri
         });
@@ -311,10 +311,10 @@ var $bcde5854a56da897$export$2e2bcd8739ae039 = $bcde5854a56da897$var$useFork;
 
 
 const $319fb528511df085$var$useSync = (resourceId)=>{
-    const dataProvider = (0, $e5Hbp$useDataProvider)();
-    const notify = (0, $e5Hbp$useNotify)();
-    const redirect = (0, $e5Hbp$useRedirect)();
-    return (0, $e5Hbp$useCallback)(async (remoteRecordUri)=>{
+    const dataProvider = (0, $4od2P$useDataProvider)();
+    const notify = (0, $4od2P$useNotify)();
+    const redirect = (0, $4od2P$useRedirect)();
+    return (0, $4od2P$useCallback)(async (remoteRecordUri)=>{
         await dataProvider.create(resourceId, {
             id: remoteRecordUri
         });
@@ -332,27 +332,27 @@ var $319fb528511df085$export$2e2bcd8739ae039 = $319fb528511df085$var$useSync;
 
 
 const $7c1a5d2f905b4d36$var$ImportFormInputs = ()=>{
-    const resource = (0, $e5Hbp$useResourceContext)();
-    const containers = (0, $e5Hbp$useContainers)(resource, "@remote");
-    const dataModel = (0, $e5Hbp$useDataModel)(resource);
-    const { watch: watch, setValue: setValue } = (0, $e5Hbp$useFormContext)();
+    const resource = (0, $4od2P$useResourceContext)();
+    const containers = (0, $4od2P$useContainers)(resource, "@remote");
+    const dataModel = (0, $4od2P$useDataModel)(resource);
+    const { watch: watch, setValue: setValue } = (0, $4od2P$useFormContext)();
     const watchRemoteUri = watch("remoteUri");
     const watchPlainUri = watch("plainUri");
-    (0, $e5Hbp$useEffect)(()=>{
+    (0, $4od2P$useEffect)(()=>{
         if (watchRemoteUri) setValue("plainUri", watchRemoteUri);
     }, [
         watchRemoteUri
     ]);
-    (0, $e5Hbp$useEffect)(()=>{
+    (0, $4od2P$useEffect)(()=>{
         if (watchPlainUri && watchPlainUri !== watchRemoteUri) setValue("remoteUri", null);
     }, [
         watchRemoteUri,
         watchPlainUri
     ]);
     if (!dataModel) return null;
-    return /*#__PURE__*/ (0, $e5Hbp$jsxs)((0, $e5Hbp$Fragment), {
+    return /*#__PURE__*/ (0, $4od2P$jsxs)((0, $4od2P$Fragment), {
         children: [
-            containers && Object.keys(containers).length > 0 && /*#__PURE__*/ (0, $e5Hbp$jsx)((0, $e5Hbp$ReferenceInput), {
+            containers && Object.keys(containers).length > 0 && /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$ReferenceInput), {
                 source: "remoteUri",
                 reference: resource,
                 filter: {
@@ -362,7 +362,7 @@ const $7c1a5d2f905b4d36$var$ImportFormInputs = ()=>{
                     ]
                 },
                 enableGetChoices: ({ q: q })=>!!(q && q.length > 1),
-                children: /*#__PURE__*/ (0, $e5Hbp$jsx)((0, $e5Hbp$MultiServerAutocompleteInput), {
+                children: /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$MultiServerAutocompleteInput), {
                     optionText: dataModel?.fieldsMapping?.title,
                     shouldRenderSuggestions: (value)=>value.length > 1,
                     noOptionsText: "Tapez au moins deux lettres",
@@ -371,12 +371,12 @@ const $7c1a5d2f905b4d36$var$ImportFormInputs = ()=>{
                     fullWidth: true
                 })
             }),
-            /*#__PURE__*/ (0, $e5Hbp$jsx)((0, $e5Hbp$TextInput), {
+            /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$TextInput), {
                 source: "plainUri",
                 label: "URL de la ressource distante",
                 fullWidth: true
             }),
-            /*#__PURE__*/ (0, $e5Hbp$jsx)((0, $e5Hbp$RadioButtonGroupInput), {
+            /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$RadioButtonGroupInput), {
                 source: "method",
                 label: "M\xe9thode d'importation",
                 choices: [
@@ -394,10 +394,10 @@ const $7c1a5d2f905b4d36$var$ImportFormInputs = ()=>{
     });
 };
 const $7c1a5d2f905b4d36$var$ImportForm = ({ stripProperties: stripProperties })=>{
-    const resource = (0, $e5Hbp$useResourceContext)();
+    const resource = (0, $4od2P$useResourceContext)();
     const fork = (0, $bcde5854a56da897$export$2e2bcd8739ae039)(resource);
     const sync = (0, $319fb528511df085$export$2e2bcd8739ae039)(resource);
-    const onSubmit = (0, $e5Hbp$useCallback)(async ({ plainUri: plainUri, method: method })=>{
+    const onSubmit = (0, $4od2P$useCallback)(async ({ plainUri: plainUri, method: method })=>{
         if (method === "fork") await fork(plainUri, stripProperties);
         else await sync(plainUri);
     }, [
@@ -405,56 +405,56 @@ const $7c1a5d2f905b4d36$var$ImportForm = ({ stripProperties: stripProperties })=
         sync,
         stripProperties
     ]);
-    return /*#__PURE__*/ (0, $e5Hbp$jsx)((0, $e5Hbp$SimpleForm), {
+    return /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$SimpleForm), {
         onSubmit: onSubmit,
         defaultValues: {
             method: "sync"
         },
-        children: /*#__PURE__*/ (0, $e5Hbp$jsx)($7c1a5d2f905b4d36$var$ImportFormInputs, {})
+        children: /*#__PURE__*/ (0, $4od2P$jsx)($7c1a5d2f905b4d36$var$ImportFormInputs, {})
     });
 };
 var $7c1a5d2f905b4d36$export$2e2bcd8739ae039 = $7c1a5d2f905b4d36$var$ImportForm;
 
 
-const $aa427a7c321e4045$var$useStyles = (0, $e5Hbp$muistylesmakeStyles)(()=>({
+const $aa427a7c321e4045$var$useStyles = (0, $4od2P$muistylesmakeStyles)(()=>({
         tab: {
             maxWidth: "unset",
             padding: "6px 24px"
         }
     }));
 const $aa427a7c321e4045$var$CreateOrImportForm = ({ stripProperties: stripProperties, ...rest })=>{
-    const [tab, setTab] = (0, $e5Hbp$useState)(0);
+    const [tab, setTab] = (0, $4od2P$useState)(0);
     const classes = $aa427a7c321e4045$var$useStyles();
-    const xs = (0, $e5Hbp$useMediaQuery)((theme)=>theme.breakpoints.down("sm"), {
+    const xs = (0, $4od2P$useMediaQuery)((theme)=>theme.breakpoints.down("sm"), {
         noSsr: true
     });
-    return /*#__PURE__*/ (0, $e5Hbp$jsxs)((0, $e5Hbp$Fragment), {
+    return /*#__PURE__*/ (0, $4od2P$jsxs)((0, $4od2P$Fragment), {
         children: [
-            /*#__PURE__*/ (0, $e5Hbp$jsxs)((0, $e5Hbp$Box), {
+            /*#__PURE__*/ (0, $4od2P$jsxs)((0, $4od2P$Box), {
                 pb: 2,
                 children: [
-                    /*#__PURE__*/ (0, $e5Hbp$jsxs)((0, $e5Hbp$Tabs), {
+                    /*#__PURE__*/ (0, $4od2P$jsxs)((0, $4od2P$Tabs), {
                         value: tab,
                         onChange: (_, v)=>setTab(v),
                         indicatorColor: "primary",
                         children: [
-                            /*#__PURE__*/ (0, $e5Hbp$jsx)((0, $e5Hbp$Tab), {
+                            /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$Tab), {
                                 className: classes.tab,
                                 label: "Cr\xe9er"
                             }),
-                            /*#__PURE__*/ (0, $e5Hbp$jsx)((0, $e5Hbp$Tab), {
+                            /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$Tab), {
                                 className: classes.tab,
                                 label: xs ? "Importer" : "Importer une ressource distante"
                             })
                         ]
                     }),
-                    /*#__PURE__*/ (0, $e5Hbp$jsx)((0, $e5Hbp$Divider), {})
+                    /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$Divider), {})
                 ]
             }),
-            tab === 0 && /*#__PURE__*/ (0, $e5Hbp$jsx)((0, $e5Hbp$SimpleForm), {
+            tab === 0 && /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$SimpleForm), {
                 ...rest
             }),
-            tab === 1 && /*#__PURE__*/ (0, $e5Hbp$jsx)((0, $7c1a5d2f905b4d36$export$2e2bcd8739ae039), {
+            tab === 1 && /*#__PURE__*/ (0, $4od2P$jsx)((0, $7c1a5d2f905b4d36$export$2e2bcd8739ae039), {
                 stripProperties: stripProperties || [],
                 ...rest
             })
@@ -470,8 +470,8 @@ var $aa427a7c321e4045$export$2e2bcd8739ae039 = $aa427a7c321e4045$var$CreateOrImp
 
 
 const $fd906af5bca60fe2$var$LexiconImportForm = ({ fetchLexicon: fetchLexicon, selectData: selectData })=>{
-    const { save: save } = (0, $e5Hbp$useSaveContext)();
-    const onSubmit = (0, $e5Hbp$useCallback)(async ({ lexicon: lexicon })=>{
+    const { save: save } = (0, $4od2P$useSaveContext)();
+    const onSubmit = (0, $4od2P$useCallback)(async ({ lexicon: lexicon })=>{
         // If we have no URI, it means we are creating a new definition
         // Delete the summary as it is "Ajouter XXX au dictionaire"
         if (!lexicon.uri) delete lexicon.summary;
@@ -484,13 +484,13 @@ const $fd906af5bca60fe2$var$LexiconImportForm = ({ fetchLexicon: fetchLexicon, s
         selectData,
         save
     ]);
-    return /*#__PURE__*/ (0, $e5Hbp$jsx)((0, $e5Hbp$SimpleForm), {
+    return /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$SimpleForm), {
         onSubmit: onSubmit,
-        children: /*#__PURE__*/ (0, $e5Hbp$jsx)((0, $b16cb081b32ae4c7$export$2e2bcd8739ae039), {
+        children: /*#__PURE__*/ (0, $4od2P$jsx)((0, $b16cb081b32ae4c7$export$2e2bcd8739ae039), {
             label: "Titre",
             source: "lexicon",
             fetchLexicon: fetchLexicon,
-            validate: (0, $e5Hbp$required)()
+            validate: (0, $4od2P$required)()
         })
     });
 };
@@ -508,7 +508,7 @@ const $905596cc8646669c$var$fetchWikidata = (apiUrl = "https://www.wikidata.org/
                     uri: r.concepturi,
                     label: $905596cc8646669c$var$capitalize(r.match.text),
                     summary: $905596cc8646669c$var$capitalize(r.description),
-                    icon: (0, $e5Hbp$muiiconsmaterialLanguage)
+                    icon: (0, $4od2P$muiiconsmaterialLanguage)
                 }));
         }
         throw new Error("Failed to fetch Wikidata server");
@@ -520,13 +520,13 @@ var $905596cc8646669c$export$2e2bcd8739ae039 = $905596cc8646669c$var$fetchWikida
 
 const $1cadde849f110c85$var$capitalize = (s)=>s && s[0].toUpperCase() + s.slice(1) || "";
 const $1cadde849f110c85$var$fetchESCO = (apiUrl = "https://ec.europa.eu/esco/api", type = "skill")=>async ({ keyword: keyword, locale: locale })=>{
-        const response = await fetch((0, $e5Hbp$urljoin)(apiUrl, `suggest2?text=${encodeURIComponent(keyword)}&language=${locale}&type=${type}&isInScheme=&facet=&offset=&limit=&full=&selectedVersion=&viewObsolete=`));
+        const response = await fetch((0, $4od2P$urljoin)(apiUrl, `suggest2?text=${encodeURIComponent(keyword)}&language=${locale}&type=${type}&isInScheme=&facet=&offset=&limit=&full=&selectedVersion=&viewObsolete=`));
         if (response.ok) {
             const json = await response.json();
             return json._embedded.results.map((r)=>({
                     uri: r.uri,
-                    label: $1cadde849f110c85$var$capitalize(r.title.replace("’", "'")),
-                    icon: (0, $e5Hbp$muiiconsmaterialStarBorder)
+                    label: $1cadde849f110c85$var$capitalize(r.title.replace("\u2019", "'")),
+                    icon: (0, $4od2P$muiiconsmaterialStarBorder)
                 }));
         }
         throw new Error("Failed to fetch ESCO server");
