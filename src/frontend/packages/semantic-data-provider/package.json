@@ -4,7 +4,7 @@
   "description": "React-Admin data provider for LDP servers",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
-  "source": "src/index.js",
+  "source": "src/index.ts",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
   "files": [
@@ -33,5 +33,6 @@
     "access": "public"
   },
   "devDependencies": {},
-  "gitHead": "4fa70690c5932b8c9d9cb5eb4c36a10f687703ff"
+  "gitHead": "4fa70690c5932b8c9d9cb5eb4c36a10f687703ff",
+  "types": "dist/index.d.ts"
 }

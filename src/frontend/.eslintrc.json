@@ -15,9 +15,7 @@
   },
   "ignorePatterns": ["*.cjs", "*.es.js", "*.cjs.js", "*.d.ts"],
   "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "project": true
-  },
+  "parserOptions": {},
   "plugins": [
     "jsdoc",
     // "@typescript-eslint",
