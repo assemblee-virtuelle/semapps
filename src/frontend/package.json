@@ -4,7 +4,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "bootstrap": "lerna bootstrap",
-    "build": "nx run-many --target=build --all",
+    "build": "nx run-many --target=build --all && yarn yalc:publish",
     "version": "lerna version --force-publish='*' --exact --tag-version-prefix='frontend-v'",
     "yalc:publish": "lerna exec --parallel --scope @semapps/** -- yalc publish --push --changed",
     "publish": "lerna publish from-package --dist-tag latest",
