@@ -1,22 +1,22 @@
-import {jsxs as $iSi6A$jsxs, jsx as $iSi6A$jsx, Fragment as $iSi6A$Fragment} from "react/jsx-runtime";
-import $iSi6A$react, {useState as $iSi6A$useState, useMemo as $iSi6A$useMemo, useCallback as $iSi6A$useCallback, useEffect as $iSi6A$useEffect, cloneElement as $iSi6A$cloneElement, Children as $iSi6A$Children} from "react";
-import {useRecordContext as $iSi6A$useRecordContext, RecordContextProvider as $iSi6A$RecordContextProvider, ReferenceArrayField as $iSi6A$ReferenceArrayField, ReferenceField as $iSi6A$ReferenceField, usePermissions as $iSi6A$usePermissions, useShowContext as $iSi6A$useShowContext, useDataProvider as $iSi6A$useDataProvider, useTranslate as $iSi6A$useTranslate, useRefresh as $iSi6A$useRefresh, useNotify as $iSi6A$useNotify, useGetResourceLabel as $iSi6A$useGetResourceLabel, Button as $iSi6A$Button, useCreatePath as $iSi6A$useCreatePath, useResourceDefinition as $iSi6A$useResourceDefinition, useListContext as $iSi6A$useListContext, Link as $iSi6A$Link} from "react-admin";
-import {Box as $iSi6A$Box, Avatar as $iSi6A$Avatar, Chip as $iSi6A$Chip, Dialog as $iSi6A$Dialog, DialogTitle as $iSi6A$DialogTitle, DialogContent as $iSi6A$DialogContent, TextField as $iSi6A$TextField, DialogActions as $iSi6A$DialogActions, List as $iSi6A$List, ListItem as $iSi6A$ListItem, ListItemAvatar as $iSi6A$ListItemAvatar, ListItemText as $iSi6A$ListItemText, ListItemSecondaryAction as $iSi6A$ListItemSecondaryAction, IconButton as $iSi6A$IconButton, CircularProgress as $iSi6A$CircularProgress, LinearProgress as $iSi6A$LinearProgress} from "@mui/material";
-import $iSi6A$muistylesmakeStyles from "@mui/styles/makeStyles";
-import $iSi6A$muiiconsmaterialLaunch from "@mui/icons-material/Launch";
-import {useForm as $iSi6A$useForm} from "react-hook-form";
-import $iSi6A$muiiconsmaterialAdd from "@mui/icons-material/Add";
-import {useDataModel as $iSi6A$useDataModel, useDataServers as $iSi6A$useDataServers} from "@semapps/semantic-data-provider";
-import $iSi6A$lodashdebounce from "lodash.debounce";
-import $iSi6A$muiiconsmaterialVisibility from "@mui/icons-material/Visibility";
-import $iSi6A$muiiconsmaterialError from "@mui/icons-material/Error";
-import $iSi6A$muiiconsmaterialLanguage from "@mui/icons-material/Language";
-import $iSi6A$muiiconsmaterialFacebook from "@mui/icons-material/Facebook";
-import $iSi6A$muiiconsmaterialGitHub from "@mui/icons-material/GitHub";
-import $iSi6A$muiiconsmaterialTwitter from "@mui/icons-material/Twitter";
-import $iSi6A$muiiconsmaterialInstagram from "@mui/icons-material/Instagram";
-import $iSi6A$muiiconsmaterialYouTube from "@mui/icons-material/YouTube";
-import {FiGitlab as $iSi6A$FiGitlab} from "react-icons/fi";
+import {jsxs as $9pxSs$jsxs, jsx as $9pxSs$jsx, Fragment as $9pxSs$Fragment} from "react/jsx-runtime";
+import $9pxSs$react, {useState as $9pxSs$useState, useMemo as $9pxSs$useMemo, useCallback as $9pxSs$useCallback, useEffect as $9pxSs$useEffect, cloneElement as $9pxSs$cloneElement, Children as $9pxSs$Children} from "react";
+import {useRecordContext as $9pxSs$useRecordContext, RecordContextProvider as $9pxSs$RecordContextProvider, ReferenceArrayField as $9pxSs$ReferenceArrayField, ReferenceField as $9pxSs$ReferenceField, usePermissions as $9pxSs$usePermissions, useShowContext as $9pxSs$useShowContext, useDataProvider as $9pxSs$useDataProvider, useTranslate as $9pxSs$useTranslate, useRefresh as $9pxSs$useRefresh, useNotify as $9pxSs$useNotify, useGetResourceLabel as $9pxSs$useGetResourceLabel, Button as $9pxSs$Button, useCreatePath as $9pxSs$useCreatePath, useResourceDefinition as $9pxSs$useResourceDefinition, useListContext as $9pxSs$useListContext, Link as $9pxSs$Link} from "react-admin";
+import {Box as $9pxSs$Box, Avatar as $9pxSs$Avatar, Chip as $9pxSs$Chip, Dialog as $9pxSs$Dialog, DialogTitle as $9pxSs$DialogTitle, DialogContent as $9pxSs$DialogContent, TextField as $9pxSs$TextField, DialogActions as $9pxSs$DialogActions, List as $9pxSs$List, ListItem as $9pxSs$ListItem, ListItemAvatar as $9pxSs$ListItemAvatar, ListItemText as $9pxSs$ListItemText, ListItemSecondaryAction as $9pxSs$ListItemSecondaryAction, IconButton as $9pxSs$IconButton, CircularProgress as $9pxSs$CircularProgress, LinearProgress as $9pxSs$LinearProgress} from "@mui/material";
+import $9pxSs$muistylesmakeStyles from "@mui/styles/makeStyles";
+import $9pxSs$muiiconsmaterialLaunch from "@mui/icons-material/Launch";
+import {useForm as $9pxSs$useForm} from "react-hook-form";
+import $9pxSs$muiiconsmaterialAdd from "@mui/icons-material/Add";
+import {useDataModel as $9pxSs$useDataModel, useDataServers as $9pxSs$useDataServers} from "@semapps/semantic-data-provider";
+import $9pxSs$lodashdebounce from "lodash.debounce";
+import $9pxSs$muiiconsmaterialVisibility from "@mui/icons-material/Visibility";
+import $9pxSs$muiiconsmaterialError from "@mui/icons-material/Error";
+import $9pxSs$muiiconsmaterialLanguage from "@mui/icons-material/Language";
+import $9pxSs$muiiconsmaterialFacebook from "@mui/icons-material/Facebook";
+import $9pxSs$muiiconsmaterialGitHub from "@mui/icons-material/GitHub";
+import $9pxSs$muiiconsmaterialTwitter from "@mui/icons-material/Twitter";
+import $9pxSs$muiiconsmaterialInstagram from "@mui/icons-material/Instagram";
+import $9pxSs$muiiconsmaterialYouTube from "@mui/icons-material/YouTube";
+import {FiGitlab as $9pxSs$FiGitlab} from "react-icons/fi";
 
 
 
@@ -24,7 +24,7 @@ import {FiGitlab as $iSi6A$FiGitlab} from "react-icons/fi";
 
 
 
-const $548fb3c4c04d834a$var$useStyles = (0, $iSi6A$muistylesmakeStyles)((theme)=>({
+const $548fb3c4c04d834a$var$useStyles = (0, $9pxSs$muistylesmakeStyles)((theme)=>({
         parent: (props)=>({
                 position: "relative",
                 ...props.parent
@@ -66,16 +66,16 @@ const $548fb3c4c04d834a$var$useStyles = (0, $iSi6A$muistylesmakeStyles)((theme)=
 const $548fb3c4c04d834a$var$handleClick = ()=>{};
 const $548fb3c4c04d834a$var$AvatarWithLabelField = ({ label: label, defaultLabel: defaultLabel, image: image, fallback: fallback, externalLink: externalLink, labelColor: labelColor, classes: classes, ...rest })=>{
     classes = $548fb3c4c04d834a$var$useStyles(classes);
-    const record = (0, $iSi6A$useRecordContext)();
+    const record = (0, $9pxSs$useRecordContext)();
     const computedLabel = (typeof label === "function" ? label(record) : record[label]) || defaultLabel;
     const computedImage = typeof image === "function" ? image(record) : record[image];
     const computedFallback = typeof fallback === "function" ? fallback(record) : fallback;
-    return /*#__PURE__*/ (0, $iSi6A$jsxs)((0, $iSi6A$Box), {
+    return /*#__PURE__*/ (0, $9pxSs$jsxs)((0, $9pxSs$Box), {
         className: classes.parent,
         children: [
-            /*#__PURE__*/ (0, $iSi6A$jsx)("div", {
+            /*#__PURE__*/ (0, $9pxSs$jsx)("div", {
                 className: classes.square,
-                children: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$Avatar), {
+                children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Avatar), {
                     src: computedImage || computedFallback,
                     alt: computedLabel,
                     fallback: computedFallback,
@@ -83,16 +83,16 @@ const $548fb3c4c04d834a$var$AvatarWithLabelField = ({ label: label, defaultLabel
                     className: classes.avatar
                 })
             }),
-            !computedLabel ? null : externalLink ? /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$Chip), {
+            !computedLabel ? null : externalLink ? /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Chip), {
                 color: labelColor,
                 className: classes.chip,
                 size: "small",
                 label: computedLabel,
-                deleteIcon: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$muiiconsmaterialLaunch), {
+                deleteIcon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialLaunch), {
                     className: classes.launchIcon
                 }),
                 onDelete: $548fb3c4c04d834a$var$handleClick
-            }) : /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$Chip), {
+            }) : /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Chip), {
                 color: labelColor,
                 className: classes.chip,
                 size: "small",
@@ -112,16 +112,16 @@ var $548fb3c4c04d834a$export$2e2bcd8739ae039 = $548fb3c4c04d834a$var$AvatarWithL
 
 
 const $867e5374e5f64b17$var$ReferenceArrayField = ({ source: source, ...otherProps })=>{
-    const record = (0, $iSi6A$useRecordContext)();
+    const record = (0, $9pxSs$useRecordContext)();
     if (record?.[source]) {
         if (!Array.isArray(record[source])) record[source] = [
             record[source]
         ];
         record[source] = record[source].map((i)=>i["@id"] || i.id || i);
     }
-    return /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$RecordContextProvider), {
+    return /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$RecordContextProvider), {
         value: record,
-        children: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$ReferenceArrayField), {
+        children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$ReferenceArrayField), {
             source: source,
             ...otherProps
         })
@@ -134,13 +134,13 @@ var $867e5374e5f64b17$export$2e2bcd8739ae039 = $867e5374e5f64b17$var$ReferenceAr
 
 
 const $e253ae5050c248a7$var$ReferenceField = ({ source: source, ...otherProps })=>{
-    const record = (0, $iSi6A$useRecordContext)();
+    const record = (0, $9pxSs$useRecordContext)();
     if (record[source]) {
         if (typeof record[source] === "object") record[source] = record[source]["@id"] || record[source].id;
     }
-    return /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$RecordContextProvider), {
+    return /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$RecordContextProvider), {
         value: record,
-        children: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$ReferenceField), {
+        children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$ReferenceField), {
             record: record,
             source: source,
             ...otherProps
@@ -172,7 +172,7 @@ var $e253ae5050c248a7$export$2e2bcd8739ae039 = $e253ae5050c248a7$var$ReferenceFi
 
 
 
-const $6bf8168f746430d4$var$useStyles = (0, $iSi6A$muistylesmakeStyles)((theme)=>({
+const $6bf8168f746430d4$var$useStyles = (0, $9pxSs$muistylesmakeStyles)((theme)=>({
         root: {
             width: "100%",
             maxWidth: "100%",
@@ -194,21 +194,21 @@ const $6bf8168f746430d4$var$getServerName = (resourceUri, dataServers)=>{
 };
 const $6bf8168f746430d4$var$ResultsList = ({ keyword: keyword, source: source, reference: reference, appendLink: appendLink, switchToCreate: switchToCreate })=>{
     const classes = $6bf8168f746430d4$var$useStyles();
-    const [loading, setLoading] = (0, $iSi6A$useState)(false);
-    const [loaded, setLoaded] = (0, $iSi6A$useState)(false);
-    const [results, setResults] = (0, $iSi6A$useState)([]);
-    const translate = (0, $iSi6A$useTranslate)();
-    const dataProvider = (0, $iSi6A$useDataProvider)();
-    const dataServers = (0, $iSi6A$useDataServers)();
-    const record = (0, $iSi6A$useRecordContext)();
-    const createPath = (0, $iSi6A$useCreatePath)();
-    const referenceDefinition = (0, $iSi6A$useResourceDefinition)({
+    const [loading, setLoading] = (0, $9pxSs$useState)(false);
+    const [loaded, setLoaded] = (0, $9pxSs$useState)(false);
+    const [results, setResults] = (0, $9pxSs$useState)([]);
+    const translate = (0, $9pxSs$useTranslate)();
+    const dataProvider = (0, $9pxSs$useDataProvider)();
+    const dataServers = (0, $9pxSs$useDataServers)();
+    const record = (0, $9pxSs$useRecordContext)();
+    const createPath = (0, $9pxSs$useCreatePath)();
+    const referenceDefinition = (0, $9pxSs$useResourceDefinition)({
         resource: reference
     });
-    const getResourceLabel = (0, $iSi6A$useGetResourceLabel)();
-    const dataModel = (0, $iSi6A$useDataModel)(reference);
+    const getResourceLabel = (0, $9pxSs$useGetResourceLabel)();
+    const dataModel = (0, $9pxSs$useDataModel)(reference);
     if (dataModel && Object.keys(dataModel).length > 0 && !dataModel?.fieldsMapping?.title) throw new Error(`No fieldsMapping.title config found for ${reference} dataModel`);
-    const search = (0, $iSi6A$useMemo)(()=>(0, $iSi6A$lodashdebounce)((keyword)=>{
+    const search = (0, $9pxSs$useMemo)(()=>(0, $9pxSs$lodashdebounce)((keyword)=>{
             dataProvider.getList(reference, {
                 pagination: {
                     page: 1,
@@ -246,7 +246,7 @@ const $6bf8168f746430d4$var$ResultsList = ({ keyword: keyword, source: source, r
         setLoading,
         setLoaded
     ]);
-    (0, $iSi6A$useEffect)(()=>{
+    (0, $9pxSs$useEffect)(()=>{
         if (!keyword) return undefined;
         setLoading(true);
         setLoaded(false);
@@ -258,29 +258,29 @@ const $6bf8168f746430d4$var$ResultsList = ({ keyword: keyword, source: source, r
         setLoading
     ]);
     if (!keyword) return null;
-    return /*#__PURE__*/ (0, $iSi6A$jsxs)((0, $iSi6A$List), {
+    return /*#__PURE__*/ (0, $9pxSs$jsxs)((0, $9pxSs$List), {
         dense: true,
         className: classes.root,
         children: [
-            loaded && results.map((resource)=>/*#__PURE__*/ (0, $iSi6A$jsxs)((0, $iSi6A$ListItem), {
+            loaded && results.map((resource)=>/*#__PURE__*/ (0, $9pxSs$jsxs)((0, $9pxSs$ListItem), {
                     button: true,
                     onClick: ()=>appendLink(resource.id),
                     children: [
-                        /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$ListItemAvatar), {
-                            children: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$Avatar), {
-                                children: /*#__PURE__*/ (0, $iSi6A$react).createElement(referenceDefinition.icon)
+                        /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$ListItemAvatar), {
+                            children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Avatar), {
+                                children: /*#__PURE__*/ (0, $9pxSs$react).createElement(referenceDefinition.icon)
                             })
                         }),
-                        /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$ListItemText), {
+                        /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$ListItemText), {
                             className: classes.primaryText,
                             primary: resource[dataModel.fieldsMapping.title]
                         }),
-                        /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$ListItemText), {
+                        /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$ListItemText), {
                             className: classes.secondaryText,
                             primary: $6bf8168f746430d4$var$getServerName(resource.id, dataServers)
                         }),
-                        /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$ListItemSecondaryAction), {
-                            children: /*#__PURE__*/ (0, $iSi6A$jsx)("a", {
+                        /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$ListItemSecondaryAction), {
+                            children: /*#__PURE__*/ (0, $9pxSs$jsx)("a", {
                                 href: createPath({
                                     resource: reference,
                                     id: resource.id,
@@ -288,38 +288,38 @@ const $6bf8168f746430d4$var$ResultsList = ({ keyword: keyword, source: source, r
                                 }),
                                 target: "_blank",
                                 rel: "noopener noreferrer",
-                                children: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$IconButton), {
+                                children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$IconButton), {
                                     edge: "end",
                                     size: "large",
-                                    children: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$muiiconsmaterialVisibility), {})
+                                    children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialVisibility), {})
                                 })
                             })
                         })
                     ]
                 }, resource.id)),
-            loaded && results.length === 0 && /*#__PURE__*/ (0, $iSi6A$jsxs)((0, $iSi6A$ListItem), {
+            loaded && results.length === 0 && /*#__PURE__*/ (0, $9pxSs$jsxs)((0, $9pxSs$ListItem), {
                 children: [
-                    /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$ListItemAvatar), {
-                        children: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$Avatar), {
-                            children: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$muiiconsmaterialError), {})
+                    /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$ListItemAvatar), {
+                        children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Avatar), {
+                            children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialError), {})
                         })
                     }),
-                    /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$ListItemText), {
+                    /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$ListItemText), {
                         className: classes.primaryText,
                         primary: translate("ra.navigation.no_results")
                     })
                 ]
             }),
-            loaded && referenceDefinition.hasCreate && /*#__PURE__*/ (0, $iSi6A$jsxs)((0, $iSi6A$ListItem), {
+            loaded && referenceDefinition.hasCreate && /*#__PURE__*/ (0, $9pxSs$jsxs)((0, $9pxSs$ListItem), {
                 button: true,
                 onClick: switchToCreate,
                 children: [
-                    /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$ListItemAvatar), {
-                        children: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$Avatar), {
-                            children: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$muiiconsmaterialAdd), {})
+                    /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$ListItemAvatar), {
+                        children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Avatar), {
+                            children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialAdd), {})
                         })
                     }),
-                    /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$ListItemText), {
+                    /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$ListItemText), {
                         className: classes.primaryText,
                         primary: translate("ra.page.create", {
                             name: getResourceLabel(reference, 1)
@@ -327,12 +327,12 @@ const $6bf8168f746430d4$var$ResultsList = ({ keyword: keyword, source: source, r
                     })
                 ]
             }),
-            loading && /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$Box), {
+            loading && /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Box), {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 height: 150,
-                children: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$CircularProgress), {
+                children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$CircularProgress), {
                     size: 60,
                     thickness: 6
                 })
@@ -343,7 +343,7 @@ const $6bf8168f746430d4$var$ResultsList = ({ keyword: keyword, source: source, r
 var $6bf8168f746430d4$export$2e2bcd8739ae039 = $6bf8168f746430d4$var$ResultsList;
 
 
-const $3d5bffcd1289119f$var$useStyles = (0, $iSi6A$muistylesmakeStyles)(()=>({
+const $3d5bffcd1289119f$var$useStyles = (0, $9pxSs$muistylesmakeStyles)(()=>({
         title: {
             paddingBottom: 8
         },
@@ -363,17 +363,17 @@ const $3d5bffcd1289119f$var$useStyles = (0, $iSi6A$muistylesmakeStyles)(()=>({
     }));
 const $3d5bffcd1289119f$var$QuickAppendDialog = ({ open: open, onClose: onClose, subjectUri: subjectUri, source: source, reference: reference })=>{
     const classes = $3d5bffcd1289119f$var$useStyles();
-    const { resource: resource } = (0, $iSi6A$useShowContext)();
-    const [keyword, setKeyword] = (0, $iSi6A$useState)("");
-    const [panel, setPanel] = (0, $iSi6A$useState)("find");
-    const dataProvider = (0, $iSi6A$useDataProvider)();
-    const translate = (0, $iSi6A$useTranslate)();
-    const refresh = (0, $iSi6A$useRefresh)();
-    const notify = (0, $iSi6A$useNotify)();
-    const getResourceLabel = (0, $iSi6A$useGetResourceLabel)();
-    const dataModel = (0, $iSi6A$useDataModel)(reference);
-    const { register: register, setValue: setValue, handleSubmit: handleSubmit } = (0, $iSi6A$useForm)();
-    const appendLink = (0, $iSi6A$useCallback)(async (objectUri)=>{
+    const { resource: resource } = (0, $9pxSs$useShowContext)();
+    const [keyword, setKeyword] = (0, $9pxSs$useState)("");
+    const [panel, setPanel] = (0, $9pxSs$useState)("find");
+    const dataProvider = (0, $9pxSs$useDataProvider)();
+    const translate = (0, $9pxSs$useTranslate)();
+    const refresh = (0, $9pxSs$useRefresh)();
+    const notify = (0, $9pxSs$useNotify)();
+    const getResourceLabel = (0, $9pxSs$useGetResourceLabel)();
+    const dataModel = (0, $9pxSs$useDataModel)(reference);
+    const { register: register, setValue: setValue, handleSubmit: handleSubmit } = (0, $9pxSs$useForm)();
+    const appendLink = (0, $9pxSs$useCallback)(async (objectUri)=>{
         // Get the freshest data so that the put operation doesn't overwrite anything
         const { data: data } = await dataProvider.getOne(resource, {
             id: subjectUri
@@ -402,14 +402,14 @@ const $3d5bffcd1289119f$var$QuickAppendDialog = ({ open: open, onClose: onClose,
         refresh,
         onClose
     ]);
-    const create = (0, $iSi6A$useCallback)(async (values)=>{
+    const create = (0, $9pxSs$useCallback)(async (values)=>{
         const { data: data } = await dataProvider.create(reference, {
             data: {
                 [dataModel.fieldsMapping.title]: values.title
             }
         });
         await appendLink(data.id);
-        notify(`La resource "${values.title}" a été créée`, {
+        notify(`La resource "${values.title}" a \xe9t\xe9 cr\xe9\xe9e`, {
             type: "success"
         });
     }, [
@@ -419,21 +419,21 @@ const $3d5bffcd1289119f$var$QuickAppendDialog = ({ open: open, onClose: onClose,
         reference,
         notify
     ]);
-    return /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$Dialog), {
+    return /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Dialog), {
         fullWidth: true,
         open: open,
         onClose: onClose,
-        children: panel === "find" ? /*#__PURE__*/ (0, $iSi6A$jsxs)((0, $iSi6A$Fragment), {
+        children: panel === "find" ? /*#__PURE__*/ (0, $9pxSs$jsxs)((0, $9pxSs$Fragment), {
             children: [
-                /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$DialogTitle), {
+                /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$DialogTitle), {
                     className: classes.title,
                     children: "Ajouter une relation"
                 }),
-                /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$DialogContent), {
+                /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$DialogContent), {
                     className: classes.addForm,
-                    children: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$TextField), {
+                    children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$TextField), {
                         autoFocus: true,
-                        label: `Rechercher ou créer des ${getResourceLabel(reference, 2).toLowerCase()}`,
+                        label: `Rechercher ou cr\xe9er des ${getResourceLabel(reference, 2).toLowerCase()}`,
                         variant: "filled",
                         margin: "dense",
                         value: keyword,
@@ -441,9 +441,9 @@ const $3d5bffcd1289119f$var$QuickAppendDialog = ({ open: open, onClose: onClose,
                         fullWidth: true
                     })
                 }),
-                /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$DialogContent), {
+                /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$DialogContent), {
                     className: classes.listForm,
-                    children: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $6bf8168f746430d4$export$2e2bcd8739ae039), {
+                    children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $6bf8168f746430d4$export$2e2bcd8739ae039), {
                         keyword: keyword,
                         source: source,
                         reference: reference,
@@ -454,27 +454,27 @@ const $3d5bffcd1289119f$var$QuickAppendDialog = ({ open: open, onClose: onClose,
                         }
                     })
                 }),
-                /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$DialogActions), {
+                /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$DialogActions), {
                     className: classes.actions,
-                    children: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$Button), {
+                    children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Button), {
                         label: "ra.action.close",
                         variant: "text",
                         onClick: onClose
                     })
                 })
             ]
-        }) : /*#__PURE__*/ (0, $iSi6A$jsxs)("form", {
+        }) : /*#__PURE__*/ (0, $9pxSs$jsxs)("form", {
             onSubmit: handleSubmit(create),
             children: [
-                /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$DialogTitle), {
+                /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$DialogTitle), {
                     className: classes.title,
                     children: translate("ra.page.create", {
                         name: getResourceLabel(reference, 1)
                     })
                 }),
-                /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$DialogContent), {
+                /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$DialogContent), {
                     className: classes.addForm,
-                    children: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$TextField), {
+                    children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$TextField), {
                         ...register("title"),
                         autoFocus: true,
                         label: "Titre",
@@ -483,16 +483,16 @@ const $3d5bffcd1289119f$var$QuickAppendDialog = ({ open: open, onClose: onClose,
                         fullWidth: true
                     })
                 }),
-                /*#__PURE__*/ (0, $iSi6A$jsxs)((0, $iSi6A$DialogActions), {
+                /*#__PURE__*/ (0, $9pxSs$jsxs)((0, $9pxSs$DialogActions), {
                     className: classes.actions,
                     children: [
-                        /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$Button), {
+                        /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Button), {
                             label: "ra.action.create",
                             variant: "contained",
-                            startIcon: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$muiiconsmaterialAdd), {}),
+                            startIcon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialAdd), {}),
                             type: "submit"
                         }),
-                        /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$Button), {
+                        /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Button), {
                             label: "ra.action.close",
                             variant: "text",
                             onClick: onClose
@@ -507,27 +507,27 @@ var $3d5bffcd1289119f$export$2e2bcd8739ae039 = $3d5bffcd1289119f$var$QuickAppend
 
 
 const $c6e9301cf3cc37bc$var$QuickAppendReferenceArrayField = ({ reference: reference, source: source, resource: resource, children: children, ...otherProps })=>{
-    const record = (0, $iSi6A$useRecordContext)();
-    const [showDialog, setShowDialog] = (0, $iSi6A$useState)(false);
-    const { permissions: permissions } = (0, $iSi6A$usePermissions)(record.id);
-    const canAppend = (0, $iSi6A$useMemo)(()=>!!permissions && permissions.some((p)=>[
+    const record = (0, $9pxSs$useRecordContext)();
+    const [showDialog, setShowDialog] = (0, $9pxSs$useState)(false);
+    const { permissions: permissions } = (0, $9pxSs$usePermissions)(record.id);
+    const canAppend = (0, $9pxSs$useMemo)(()=>!!permissions && permissions.some((p)=>[
                 "acl:Append",
                 "acl:Write",
                 "acl:Control"
             ].includes(p["acl:mode"])), [
         permissions
     ]);
-    return /*#__PURE__*/ (0, $iSi6A$jsxs)((0, $iSi6A$Fragment), {
+    return /*#__PURE__*/ (0, $9pxSs$jsxs)((0, $9pxSs$Fragment), {
         children: [
-            /*#__PURE__*/ (0, $iSi6A$jsx)((0, $867e5374e5f64b17$export$2e2bcd8739ae039), {
+            /*#__PURE__*/ (0, $9pxSs$jsx)((0, $867e5374e5f64b17$export$2e2bcd8739ae039), {
                 reference: reference,
                 source: source,
                 ...otherProps,
-                children: (0, $iSi6A$react).Children.only(children) && /*#__PURE__*/ (0, $iSi6A$react).cloneElement(children, {
+                children: (0, $9pxSs$react).Children.only(children) && /*#__PURE__*/ (0, $9pxSs$react).cloneElement(children, {
                     appendLink: canAppend ? ()=>setShowDialog(true) : undefined
                 })
             }),
-            canAppend && showDialog && /*#__PURE__*/ (0, $iSi6A$jsx)((0, $3d5bffcd1289119f$export$2e2bcd8739ae039), {
+            canAppend && showDialog && /*#__PURE__*/ (0, $9pxSs$jsx)((0, $3d5bffcd1289119f$export$2e2bcd8739ae039), {
                 open: showDialog,
                 onClose: ()=>setShowDialog(false),
                 subjectUri: record.id,
@@ -556,19 +556,19 @@ var $c6e9301cf3cc37bc$export$2e2bcd8739ae039 = $c6e9301cf3cc37bc$var$QuickAppend
 const $3964a2ca9e598444$var$defaultdomainMapping = {
     "github.com": {
         label: "GitHub",
-        icon: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$muiiconsmaterialGitHub), {}),
+        icon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialGitHub), {}),
         color: "black",
         contrastText: "white"
     },
     "gitlab.com": {
         label: "GitLab",
-        icon: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$FiGitlab), {}),
+        icon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$FiGitlab), {}),
         color: "orange",
         contrastText: "black"
     },
     "opencollective.com": {
         label: "Open Collective",
-        icon: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$Avatar), {
+        icon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Avatar), {
             component: "span",
             src: "https://opencollective.com/static/images/opencollective-icon.svg"
         }),
@@ -577,30 +577,30 @@ const $3964a2ca9e598444$var$defaultdomainMapping = {
     },
     "facebook.com": {
         label: "Facebook",
-        icon: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$muiiconsmaterialFacebook), {}),
+        icon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialFacebook), {}),
         color: "#4267B2",
         contrastText: "white"
     },
     "twitter.com": {
         label: "Twitter",
-        icon: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$muiiconsmaterialTwitter), {}),
+        icon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialTwitter), {}),
         color: "#00ACEE",
         contrastText: "white"
     },
     "instagram.com": {
         label: "Instagram",
-        icon: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$muiiconsmaterialInstagram), {}),
+        icon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialInstagram), {}),
         color: "#8a3ab9",
         contrastText: "white"
     },
     "youtube.com": {
         label: "YouTube",
-        icon: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$muiiconsmaterialYouTube), {}),
+        icon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialYouTube), {}),
         color: "#FF0000",
         contrastText: "white"
     }
 };
-const $3964a2ca9e598444$var$useStyles = (0, $iSi6A$muistylesmakeStyles)(()=>({
+const $3964a2ca9e598444$var$useStyles = (0, $9pxSs$muistylesmakeStyles)(()=>({
         link: {
             textDecoration: "unset",
             "& :hover": {
@@ -622,7 +622,7 @@ const $3964a2ca9e598444$var$MultiUrlField = ({ source: source, domainMapping: do
         ...$3964a2ca9e598444$var$defaultdomainMapping,
         ...domainMapping
     };
-    const record = (0, $iSi6A$useRecordContext)();
+    const record = (0, $9pxSs$useRecordContext)();
     const classes = $3964a2ca9e598444$var$useStyles();
     const urlArray = record[source] ? Array.isArray(record[source]) ? record[source] : [
         record[source]
@@ -633,18 +633,18 @@ const $3964a2ca9e598444$var$MultiUrlField = ({ source: source, domainMapping: do
         if (!parsedUrl) return null;
         const chip = newDomainMapping[parsedUrl.hostname] || {
             label: "Site web",
-            icon: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$muiiconsmaterialLanguage), {}),
+            icon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialLanguage), {}),
             color: "#ea",
             contrastText: "black"
         };
-        return /*#__PURE__*/ (0, $iSi6A$jsx)("a", {
+        return /*#__PURE__*/ (0, $9pxSs$jsx)("a", {
             href: url,
             target: "_blank",
             rel: "noopener noreferrer",
             className: classes.link,
-            children: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$Chip), {
+            children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Chip), {
                 component: "span",
-                icon: /*#__PURE__*/ (0, $iSi6A$react).cloneElement(chip.icon, {
+                icon: /*#__PURE__*/ (0, $9pxSs$react).cloneElement(chip.icon, {
                     style: {
                         color: chip.contrastText,
                         width: 18,
@@ -680,14 +680,14 @@ const $ae119a539bc2f2b9$var$stopPropagation = (e)=>e.stopPropagation();
 const $ae119a539bc2f2b9$var$handleClick = ()=>{};
 const $ae119a539bc2f2b9$var$SeparatedListField = (props)=>{
     let { children: children, link: link = "edit", linkType: linkType, separator: separator = ",\xa0" } = props;
-    const { data: data, isLoading: isLoading, resource: resource } = (0, $iSi6A$useListContext)(props);
-    const createPath = (0, $iSi6A$useCreatePath)();
+    const { data: data, isLoading: isLoading, resource: resource } = (0, $9pxSs$useListContext)(props);
+    const createPath = (0, $9pxSs$useCreatePath)();
     if (linkType !== undefined) {
         console.warn("The 'linkType' prop is deprecated and should be named to 'link' in <SeparatedListField />");
         link = linkType;
     }
-    if (isLoading) return /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$LinearProgress), {});
-    return /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$Fragment), {
+    if (isLoading) return /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$LinearProgress), {});
+    return /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Fragment), {
         children: data.map((record, i)=>{
             if (!record.id) return null;
             const resourceLinkPath = link !== false && (typeof link === "function" ? link(record.id) : createPath({
@@ -695,12 +695,12 @@ const $ae119a539bc2f2b9$var$SeparatedListField = (props)=>{
                 id: record.id,
                 type: link
             }));
-            if (resourceLinkPath) return /*#__PURE__*/ (0, $iSi6A$jsxs)("span", {
+            if (resourceLinkPath) return /*#__PURE__*/ (0, $9pxSs$jsxs)("span", {
                 children: [
-                    /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$Link), {
+                    /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Link), {
                         to: resourceLinkPath,
                         onClick: $ae119a539bc2f2b9$var$stopPropagation,
-                        children: /*#__PURE__*/ (0, $iSi6A$cloneElement)((0, $iSi6A$Children).only(children), {
+                        children: /*#__PURE__*/ (0, $9pxSs$cloneElement)((0, $9pxSs$Children).only(children), {
                             // Workaround to force ChipField to be clickable
                             onClick: $ae119a539bc2f2b9$var$handleClick
                         })
@@ -708,9 +708,9 @@ const $ae119a539bc2f2b9$var$SeparatedListField = (props)=>{
                     i < data.length - 1 && separator
                 ]
             }, record.id);
-            return /*#__PURE__*/ (0, $iSi6A$jsxs)("span", {
+            return /*#__PURE__*/ (0, $9pxSs$jsxs)("span", {
                 children: [
-                    /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$RecordContextProvider), {
+                    /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$RecordContextProvider), {
                         value: record,
                         children: children
                     }),

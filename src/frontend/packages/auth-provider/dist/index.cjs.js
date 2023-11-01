@@ -1,31 +1,33 @@
-var $2O4Ek$jwtdecode = require("jwt-decode");
-var $2O4Ek$urljoin = require("url-join");
-var $2O4Ek$reactjsxruntime = require("react/jsx-runtime");
-var $2O4Ek$react = require("react");
-var $2O4Ek$reactadmin = require("react-admin");
-var $2O4Ek$semappssemanticdataprovider = require("@semapps/semantic-data-provider");
-var $2O4Ek$muiiconsmaterialShare = require("@mui/icons-material/Share");
-var $2O4Ek$muimaterial = require("@mui/material");
-var $2O4Ek$muistylesmakeStyles = require("@mui/styles/makeStyles");
-var $2O4Ek$muimaterialAutocomplete = require("@mui/material/Autocomplete");
-var $2O4Ek$muiiconsmaterialPerson = require("@mui/icons-material/Person");
-var $2O4Ek$muisystem = require("@mui/system");
-var $2O4Ek$muiiconsmaterialEdit = require("@mui/icons-material/Edit");
-var $2O4Ek$muiiconsmaterialCheck = require("@mui/icons-material/Check");
-var $2O4Ek$muiiconsmaterialPublic = require("@mui/icons-material/Public");
-var $2O4Ek$muiiconsmaterialVpnLock = require("@mui/icons-material/VpnLock");
-var $2O4Ek$muiiconsmaterialGroup = require("@mui/icons-material/Group");
-var $2O4Ek$reactrouterdom = require("react-router-dom");
-var $2O4Ek$muimaterialstyles = require("@mui/material/styles");
-var $2O4Ek$muiiconsmaterialLock = require("@mui/icons-material/Lock");
-var $2O4Ek$speakingurl = require("speakingurl");
-var $2O4Ek$muistyles = require("@mui/styles");
-var $2O4Ek$muiiconsmaterialAccountCircle = require("@mui/icons-material/AccountCircle");
-var $2O4Ek$lodashisEqual = require("lodash/isEqual");
+var $4Uj5b$jwtdecode = require("jwt-decode");
+var $4Uj5b$urljoin = require("url-join");
+var $4Uj5b$reactjsxruntime = require("react/jsx-runtime");
+var $4Uj5b$react = require("react");
+var $4Uj5b$reactadmin = require("react-admin");
+var $4Uj5b$semappssemanticdataprovider = require("@semapps/semantic-data-provider");
+var $4Uj5b$muiiconsmaterialShare = require("@mui/icons-material/Share");
+var $4Uj5b$muimaterial = require("@mui/material");
+var $4Uj5b$muistylesmakeStyles = require("@mui/styles/makeStyles");
+var $4Uj5b$muimaterialAutocomplete = require("@mui/material/Autocomplete");
+var $4Uj5b$muiiconsmaterialPerson = require("@mui/icons-material/Person");
+var $4Uj5b$muisystem = require("@mui/system");
+var $4Uj5b$muiiconsmaterialEdit = require("@mui/icons-material/Edit");
+var $4Uj5b$muiiconsmaterialCheck = require("@mui/icons-material/Check");
+var $4Uj5b$muiiconsmaterialPublic = require("@mui/icons-material/Public");
+var $4Uj5b$muiiconsmaterialVpnLock = require("@mui/icons-material/VpnLock");
+var $4Uj5b$muiiconsmaterialGroup = require("@mui/icons-material/Group");
+var $4Uj5b$reactrouterdom = require("react-router-dom");
+var $4Uj5b$muimaterialstyles = require("@mui/material/styles");
+var $4Uj5b$muiiconsmaterialLock = require("@mui/icons-material/Lock");
+var $4Uj5b$speakingurl = require("speakingurl");
+var $4Uj5b$muistyles = require("@mui/styles");
+var $4Uj5b$muiiconsmaterialAccountCircle = require("@mui/icons-material/AccountCircle");
+var $4Uj5b$lodashisEqual = require("lodash/isEqual");
+
 
 function $parcel$export(e, n, v, s) {
   Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
 }
+
 function $parcel$interopDefault(a) {
   return a && a.__esModule ? a.default : a;
 }
@@ -68,7 +70,7 @@ const $2d06940433ec0c6c$export$dca4f48302963835 = (value)=>!value ? undefined : 
     ];
 const $2d06940433ec0c6c$export$4450a74bced1b745 = (resourceUri)=>{
     const parsedUrl = new URL(resourceUri);
-    return (0, ($parcel$interopDefault($2O4Ek$urljoin)))(parsedUrl.origin, "_acl", parsedUrl.pathname);
+    return (0, ($parcel$interopDefault($4Uj5b$urljoin)))(parsedUrl.origin, "_acl", parsedUrl.pathname);
 };
 const $2d06940433ec0c6c$export$4d54b642c3d13c34 = (baseUri)=>({
         "@base": baseUri,
@@ -114,7 +116,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
             if (authType === $6a92eb32301846ac$var$AUTH_TYPE_LOCAL) {
                 const { username: username, password: password } = params;
                 try {
-                    const { json: json } = await dataProvider.fetch((0, ($parcel$interopDefault($2O4Ek$urljoin)))(authServerUrl, "auth/login"), {
+                    const { json: json } = await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, "auth/login"), {
                         method: "POST",
                         body: JSON.stringify({
                             username: username.trim(),
@@ -134,7 +136,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
             } else {
                 let redirectUrl = `${new URL(window.location.href).origin}/login?login=true`;
                 if (params.redirect) redirectUrl += `&redirect=${encodeURIComponent(params.redirect)}`;
-                window.location.href = (0, ($parcel$interopDefault($2O4Ek$urljoin)))(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
+                window.location.href = (0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
             }
         },
         handleCallback: async ()=>{
@@ -143,7 +145,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
             if (!token) throw new Error("auth.message.no_token_returned");
             let webId;
             try {
-                ({ webId: webId } = (0, ($parcel$interopDefault($2O4Ek$jwtdecode)))(token));
+                ({ webId: webId } = (0, ($parcel$interopDefault($4Uj5b$jwtdecode)))(token));
             } catch (e) {
                 throw new Error("auth.message.invalid_token_returned");
             }
@@ -159,7 +161,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
             if (authType === $6a92eb32301846ac$var$AUTH_TYPE_LOCAL) {
                 const { username: username, email: email, password: password, domain: domain, ...profileData } = params;
                 try {
-                    const { json: json } = await dataProvider.fetch((0, ($parcel$interopDefault($2O4Ek$urljoin)))(authServerUrl, "auth/signup"), {
+                    const { json: json } = await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, "auth/signup"), {
                         method: "POST",
                         body: JSON.stringify({
                             username: username.trim(),
@@ -173,7 +175,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                     });
                     const { token: token } = json;
                     localStorage.setItem("token", token);
-                    const { webId: webId } = (0, ($parcel$interopDefault($2O4Ek$jwtdecode)))(token);
+                    const { webId: webId } = (0, ($parcel$interopDefault($4Uj5b$jwtdecode)))(token);
                     return webId;
                 } catch (e) {
                     if (e.message === "email.already.exists") throw new Error("auth.message.user_email_exist");
@@ -183,7 +185,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                 }
             } else {
                 const redirectUrl = `${new URL(window.location.href).origin}/login?login=true`;
-                window.location.href = (0, ($parcel$interopDefault($2O4Ek$urljoin)))(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
+                window.location.href = (0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
             }
         },
         logout: async ()=>{
@@ -199,17 +201,17 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                     {
                         const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
                         const baseUrl = new URL(window.location.href).origin;
-                        return (0, ($parcel$interopDefault($2O4Ek$urljoin)))(authServerUrl, `auth/logout?redirectUrl=${encodeURIComponent(`${(0, ($parcel$interopDefault($2O4Ek$urljoin)))(baseUrl, "login")}?logout=true`)}`);
+                        return (0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, `auth/logout?redirectUrl=${encodeURIComponent(`${(0, ($parcel$interopDefault($4Uj5b$urljoin)))(baseUrl, "login")}?logout=true`)}`);
                     }
                 case $6a92eb32301846ac$var$AUTH_TYPE_POD:
                     {
                         const token = localStorage.getItem("token");
                         if (token) {
-                            const { webId: webId } = (0, ($parcel$interopDefault($2O4Ek$jwtdecode)))(token);
+                            const { webId: webId } = (0, ($parcel$interopDefault($4Uj5b$jwtdecode)))(token);
                             // Delete token but also any other value in local storage
                             localStorage.clear();
                             // Redirect to the POD provider
-                            return `${(0, ($parcel$interopDefault($2O4Ek$urljoin)))(webId, "openApp")}?type=${encodeURIComponent("http://www.w3.org/ns/solid/interop#ApplicationRegistration")}`;
+                            return `${(0, ($parcel$interopDefault($4Uj5b$urljoin)))(webId, "openApp")}?type=${encodeURIComponent("http://www.w3.org/ns/solid/interop#ApplicationRegistration")}`;
                         }
                         break;
                     }
@@ -287,7 +289,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
         getIdentity: async ()=>{
             const token = localStorage.getItem("token");
             if (token) {
-                const { webId: webId } = (0, ($parcel$interopDefault($2O4Ek$jwtdecode)))(token);
+                const { webId: webId } = (0, ($parcel$interopDefault($4Uj5b$jwtdecode)))(token);
                 const { json: webIdData } = await dataProvider.fetch(webId);
                 const { json: profileData } = webIdData.url ? await dataProvider.fetch(webIdData.url) : {};
                 return {
@@ -302,7 +304,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
             const { email: email } = params;
             const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
             try {
-                await dataProvider.fetch((0, ($parcel$interopDefault($2O4Ek$urljoin)))(authServerUrl, "auth/reset_password"), {
+                await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, "auth/reset_password"), {
                     method: "POST",
                     body: JSON.stringify({
                         email: email.trim()
@@ -319,7 +321,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
             const { email: email, token: token, password: password } = params;
             const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
             try {
-                await dataProvider.fetch((0, ($parcel$interopDefault($2O4Ek$urljoin)))(authServerUrl, "auth/new_password"), {
+                await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, "auth/new_password"), {
                     method: "POST",
                     body: JSON.stringify({
                         email: email.trim(),
@@ -337,7 +339,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
         getAccountSettings: async (params)=>{
             const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
             try {
-                const { json: json } = await dataProvider.fetch((0, ($parcel$interopDefault($2O4Ek$urljoin)))(authServerUrl, "auth/account"));
+                const { json: json } = await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, "auth/account"));
                 return json;
             } catch (e) {
                 throw new Error("auth.notification.get_settings_error");
@@ -347,7 +349,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
             const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
             try {
                 const { email: email, currentPassword: currentPassword, newPassword: newPassword } = params;
-                await dataProvider.fetch((0, ($parcel$interopDefault($2O4Ek$urljoin)))(authServerUrl, "auth/account"), {
+                await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, "auth/account"), {
                     method: "POST",
                     body: JSON.stringify({
                         currentPassword: currentPassword,
@@ -442,11 +444,11 @@ const $09162138eadab4b9$export$edca379024d80309 = {
 
 
 const $673a0cc190160362$var$useCheckPermissions = (uri, mode, redirectUrl = "/")=>{
-    const { identity: identity, isLoading: isLoading } = (0, $2O4Ek$reactadmin.useGetIdentity)();
-    const { permissions: permissions } = (0, $2O4Ek$reactadmin.usePermissions)(uri);
-    const notify = (0, $2O4Ek$reactadmin.useNotify)();
-    const redirect = (0, $2O4Ek$reactadmin.useRedirect)();
-    (0, $2O4Ek$react.useEffect)(()=>{
+    const { identity: identity, isLoading: isLoading } = (0, $4Uj5b$reactadmin.useGetIdentity)();
+    const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)(uri);
+    const notify = (0, $4Uj5b$reactadmin.useNotify)();
+    const redirect = (0, $4Uj5b$reactadmin.useRedirect)();
+    (0, $4Uj5b$react.useEffect)(()=>{
         if (!isLoading && identity && permissions && !permissions.some((p)=>(0, $09162138eadab4b9$export$cae945d60b6cbe50)[mode].includes(p["acl:mode"]))) {
             notify((0, $09162138eadab4b9$export$12e6e8e71d10a4bb)[mode], {
                 type: "error"
@@ -466,15 +468,15 @@ var $673a0cc190160362$export$2e2bcd8739ae039 = $673a0cc190160362$var$useCheckPer
 
 
 const $7c87aa71409e289a$var$CreateWithPermissions = (props)=>{
-    const resource = (0, $2O4Ek$reactadmin.useResourceContext)();
-    const createContainerUri = (0, $2O4Ek$semappssemanticdataprovider.useCreateContainer)(resource);
+    const resource = (0, $4Uj5b$reactadmin.useResourceContext)();
+    const createContainerUri = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainer)(resource);
     (0, $673a0cc190160362$export$2e2bcd8739ae039)(createContainerUri, "create");
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Create), {
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Create), {
         ...props
     });
 };
 $7c87aa71409e289a$var$CreateWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.CreateActions), {})
+    actions: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.CreateActions), {})
 };
 var $7c87aa71409e289a$export$2e2bcd8739ae039 = $7c87aa71409e289a$var$CreateWithPermissions;
 
@@ -503,7 +505,7 @@ var $7c87aa71409e289a$export$2e2bcd8739ae039 = $7c87aa71409e289a$var$CreateWithP
 
 
 
-const $a613ad42a03b1bc4$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))(()=>({
+const $a613ad42a03b1bc4$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))(()=>({
         list: {
             padding: 0,
             width: "100%"
@@ -514,11 +516,11 @@ const $a613ad42a03b1bc4$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
     }));
 const $a613ad42a03b1bc4$var$AddPermissionsForm = ({ agents: agents, addPermission: addPermission })=>{
     const classes = $a613ad42a03b1bc4$var$useStyles();
-    const translate = (0, $2O4Ek$reactadmin.useTranslate)();
-    const [value, setValue] = (0, $2O4Ek$react.useState)(null);
-    const [inputValue, setInputValue] = (0, $2O4Ek$react.useState)("");
-    const [options, setOptions] = (0, $2O4Ek$react.useState)([]);
-    const { data: data } = (0, $2O4Ek$reactadmin.useGetList)("Person", {
+    const translate = (0, $4Uj5b$reactadmin.useTranslate)();
+    const [value, setValue] = (0, $4Uj5b$react.useState)(null);
+    const [inputValue, setInputValue] = (0, $4Uj5b$react.useState)("");
+    const [options, setOptions] = (0, $4Uj5b$react.useState)([]);
+    const { data: data } = (0, $4Uj5b$reactadmin.useGetList)("Person", {
         pagination: {
             page: 1,
             perPage: 100
@@ -533,12 +535,12 @@ const $a613ad42a03b1bc4$var$AddPermissionsForm = ({ agents: agents, addPermissio
     }, {
         enabled: inputValue.length > 0
     });
-    (0, $2O4Ek$react.useEffect)(()=>{
+    (0, $4Uj5b$react.useEffect)(()=>{
         setOptions(data?.length > 0 ? Object.values(data) : []);
     }, [
         data
     ]);
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muimaterialAutocomplete))), {
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muimaterialAutocomplete))), {
         classes: {
             option: classes.option
         },
@@ -561,27 +563,27 @@ const $a613ad42a03b1bc4$var$AddPermissionsForm = ({ agents: agents, addPermissio
         onInputChange: (event, newInputValue)=>{
             setInputValue(newInputValue);
         },
-        renderInput: (params)=>/*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.TextField), {
+        renderInput: (params)=>/*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.TextField), {
                 ...params,
                 label: translate("auth.input.agent_select"),
                 variant: "filled",
                 margin: "dense",
                 fullWidth: true
             }),
-        renderOption: (props, option)=>/*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.List), {
+        renderOption: (props, option)=>/*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.List), {
                 dense: true,
                 className: classes.list,
                 ...props,
-                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.ListItem), {
+                children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.ListItem), {
                     button: true,
                     children: [
-                        /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemAvatar), {
-                            children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Avatar), {
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemAvatar), {
+                            children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Avatar), {
                                 src: option.image,
-                                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialPerson))), {})
+                                children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialPerson))), {})
                             })
                         }),
-                        /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemText), {
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemText), {
                             primary: option["pair:label"]
                         })
                     ]
@@ -614,11 +616,11 @@ var $a613ad42a03b1bc4$export$2e2bcd8739ae039 = $a613ad42a03b1bc4$var$AddPermissi
 const $9f58b72d42a695d9$var$AgentIcon = ({ agent: agent })=>{
     switch(agent.predicate){
         case 0, $09162138eadab4b9$export$2703254089a859eb:
-            return agent.id === (0, $09162138eadab4b9$export$83ae1bc0992a6335) ? /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialPublic))), {}) : /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialVpnLock))), {});
+            return agent.id === (0, $09162138eadab4b9$export$83ae1bc0992a6335) ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialPublic))), {}) : /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialVpnLock))), {});
         case 0, $09162138eadab4b9$export$97a08a1bb7ee0545:
-            return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialPerson))), {});
+            return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialPerson))), {});
         case 0, $09162138eadab4b9$export$f07ccbe0773f2c7:
-            return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialGroup))), {});
+            return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialGroup))), {});
         default:
             throw new Error(`Unknown agent predicate: ${agent.predicate}`);
     }
@@ -626,7 +628,7 @@ const $9f58b72d42a695d9$var$AgentIcon = ({ agent: agent })=>{
 var $9f58b72d42a695d9$export$2e2bcd8739ae039 = $9f58b72d42a695d9$var$AgentIcon;
 
 
-const $7a8c6187e6c69fdd$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))(()=>({
+const $7a8c6187e6c69fdd$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))(()=>({
         listItem: {
             paddingLeft: 4,
             paddingRight: 36
@@ -646,13 +648,13 @@ const $7a8c6187e6c69fdd$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
     }));
 const $7a8c6187e6c69fdd$var$AgentItem = ({ isContainer: isContainer, agent: agent, addPermission: addPermission, removePermission: removePermission })=>{
     const classes = $7a8c6187e6c69fdd$var$useStyles();
-    const translate = (0, $2O4Ek$reactadmin.useTranslate)();
-    const dataProvider = (0, $2O4Ek$reactadmin.useDataProvider)();
-    const [anchorEl, setAnchorEl] = (0, ($parcel$interopDefault($2O4Ek$react))).useState(null);
-    const [user, setUser] = (0, $2O4Ek$react.useState)();
-    const [loading, setLoading] = (0, $2O4Ek$react.useState)(true);
-    const [error, setError] = (0, $2O4Ek$react.useState)();
-    (0, $2O4Ek$react.useEffect)(()=>{
+    const translate = (0, $4Uj5b$reactadmin.useTranslate)();
+    const dataProvider = (0, $4Uj5b$reactadmin.useDataProvider)();
+    const [anchorEl, setAnchorEl] = (0, ($parcel$interopDefault($4Uj5b$react))).useState(null);
+    const [user, setUser] = (0, $4Uj5b$react.useState)();
+    const [loading, setLoading] = (0, $4Uj5b$react.useState)(true);
+    const [error, setError] = (0, $4Uj5b$react.useState)();
+    (0, $4Uj5b$react.useEffect)(()=>{
         if (agent.predicate === (0, $09162138eadab4b9$export$97a08a1bb7ee0545)) dataProvider.getOne("Person", {
             id: agent.id
         }).then(({ data: data })=>{
@@ -672,52 +674,52 @@ const $7a8c6187e6c69fdd$var$AgentItem = ({ isContainer: isContainer, agent: agen
     const openMenu = (event)=>setAnchorEl(event.currentTarget);
     const closeMenu = ()=>setAnchorEl(null);
     const labels = isContainer ? (0, $09162138eadab4b9$export$edca379024d80309) : (0, $09162138eadab4b9$export$2e9571c4ccdeb6a9);
-    if (loading) return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Loading), {});
-    if (error) return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Error), {});
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.ListItem), {
+    if (loading) return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Loading), {});
+    if (error) return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Error), {});
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.ListItem), {
         className: classes.listItem,
         children: [
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemAvatar), {
-                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Avatar), {
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemAvatar), {
+                children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Avatar), {
                     src: user?.image,
-                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $9f58b72d42a695d9$export$2e2bcd8739ae039), {
+                    children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $9f58b72d42a695d9$export$2e2bcd8739ae039), {
                         agent: agent
                     })
                 })
             }),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemText), {
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemText), {
                 className: classes.primaryText,
                 primary: user ? user["pair:label"] : translate(agent.id === (0, $09162138eadab4b9$export$83ae1bc0992a6335) ? "auth.agent.anonymous" : "auth.agent.authenticated")
             }),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemText), {
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemText), {
                 className: classes.secondaryText,
                 primary: agent.permissions && agent.permissions.map((p)=>translate(labels[p])).join(", ")
             }),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.ListItemSecondaryAction), {
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.ListItemSecondaryAction), {
                 children: [
-                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.IconButton), {
+                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.IconButton), {
                         onClick: openMenu,
                         size: "large",
-                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialEdit))), {})
+                        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialEdit))), {})
                     }),
-                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Menu), {
+                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Menu), {
                         anchorEl: anchorEl,
                         keepMounted: true,
                         open: Boolean(anchorEl),
                         onClose: closeMenu,
                         children: Object.entries(labels).map(([rightKey, rightLabel])=>{
                             const hasPermission = agent.permissions && agent.permissions.includes(rightKey);
-                            return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.MenuItem), {
+                            return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.MenuItem), {
                                 onClick: ()=>{
                                     if (hasPermission) removePermission(agent.id, agent.predicate, rightKey);
                                     else addPermission(agent.id, agent.predicate, rightKey);
                                     closeMenu();
                                 },
                                 children: [
-                                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemIcon), {
-                                        children: hasPermission ? /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialCheck))), {}) : null
+                                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemIcon), {
+                                        children: hasPermission ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialCheck))), {}) : null
                                     }),
-                                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemText), {
+                                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemText), {
                                         primary: translate(rightLabel)
                                     })
                                 ]
@@ -732,15 +734,15 @@ const $7a8c6187e6c69fdd$var$AgentItem = ({ isContainer: isContainer, agent: agen
 var $7a8c6187e6c69fdd$export$2e2bcd8739ae039 = $7a8c6187e6c69fdd$var$AgentItem;
 
 
-const $6bcadc28bc94109b$var$StyledList = (0, $2O4Ek$muisystem.styled)((0, $2O4Ek$muimaterial.List))(({ theme: theme })=>({
+const $6bcadc28bc94109b$var$StyledList = (0, $4Uj5b$muisystem.styled)((0, $4Uj5b$muimaterial.List))(({ theme: theme })=>({
         width: "100%",
         maxWidth: "100%",
         backgroundColor: theme.palette.background.paper
     }));
 const $6bcadc28bc94109b$var$EditPermissionsForm = ({ isContainer: isContainer, agents: agents, addPermission: addPermission, removePermission: removePermission })=>{
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)($6bcadc28bc94109b$var$StyledList, {
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($6bcadc28bc94109b$var$StyledList, {
         dense: true,
-        children: Object.entries(agents).map(([agentId, agent])=>/*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $7a8c6187e6c69fdd$export$2e2bcd8739ae039), {
+        children: Object.entries(agents).map(([agentId, agent])=>/*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $7a8c6187e6c69fdd$export$2e2bcd8739ae039), {
                 isContainer: isContainer,
                 agent: agent,
                 addPermission: addPermission,
@@ -756,11 +758,11 @@ var $6bcadc28bc94109b$export$2e2bcd8739ae039 = $6bcadc28bc94109b$var$EditPermiss
 
 
 const $780e01b2b2982de2$var$useAgents = (uri)=>{
-    const { permissions: permissions } = (0, $2O4Ek$reactadmin.usePermissions)(uri);
-    const authProvider = (0, $2O4Ek$reactadmin.useAuthProvider)();
-    const [agents, setAgents] = (0, $2O4Ek$react.useState)({});
+    const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)(uri);
+    const authProvider = (0, $4Uj5b$reactadmin.useAuthProvider)();
+    const [agents, setAgents] = (0, $4Uj5b$react.useState)({});
     // Format list of authorized agents, based on the permissions returned for the resource
-    (0, $2O4Ek$react.useEffect)(()=>{
+    (0, $4Uj5b$react.useEffect)(()=>{
         const result = {
             [(0, $09162138eadab4b9$export$83ae1bc0992a6335)]: {
                 id: (0, $09162138eadab4b9$export$83ae1bc0992a6335),
@@ -794,7 +796,7 @@ const $780e01b2b2982de2$var$useAgents = (uri)=>{
     }, [
         permissions
     ]);
-    const addPermission = (0, $2O4Ek$react.useCallback)((agentId, predicate, mode)=>{
+    const addPermission = (0, $4Uj5b$react.useCallback)((agentId, predicate, mode)=>{
         const prevAgents = {
             ...agents
         };
@@ -821,7 +823,7 @@ const $780e01b2b2982de2$var$useAgents = (uri)=>{
         uri,
         authProvider
     ]);
-    const removePermission = (0, $2O4Ek$react.useCallback)((agentId, predicate, mode)=>{
+    const removePermission = (0, $4Uj5b$react.useCallback)((agentId, predicate, mode)=>{
         const prevAgents = {
             ...agents
         };
@@ -852,7 +854,7 @@ const $780e01b2b2982de2$var$useAgents = (uri)=>{
 var $780e01b2b2982de2$export$2e2bcd8739ae039 = $780e01b2b2982de2$var$useAgents;
 
 
-const $eb7f8a6f7bf44740$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))(()=>({
+const $eb7f8a6f7bf44740$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))(()=>({
         title: {
             paddingBottom: 8
         },
@@ -871,36 +873,36 @@ const $eb7f8a6f7bf44740$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
     }));
 const $eb7f8a6f7bf44740$var$PermissionsDialog = ({ open: open, onClose: onClose, uri: uri, isContainer: isContainer })=>{
     const classes = $eb7f8a6f7bf44740$var$useStyles();
-    const translate = (0, $2O4Ek$reactadmin.useTranslate)();
+    const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     const { agents: agents, addPermission: addPermission, removePermission: removePermission } = (0, $780e01b2b2982de2$export$2e2bcd8739ae039)(uri);
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Dialog), {
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Dialog), {
         fullWidth: true,
         open: open,
         onClose: onClose,
         children: [
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.DialogTitle), {
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.DialogTitle), {
                 className: classes.title,
                 children: translate(isContainer ? "auth.dialog.container_permissions" : "auth.dialog.resource_permissions")
             }),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.DialogContent), {
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.DialogContent), {
                 className: classes.addForm,
-                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $a613ad42a03b1bc4$export$2e2bcd8739ae039), {
+                children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $a613ad42a03b1bc4$export$2e2bcd8739ae039), {
                     agents: agents,
                     addPermission: addPermission
                 })
             }),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.DialogContent), {
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.DialogContent), {
                 className: classes.listForm,
-                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $6bcadc28bc94109b$export$2e2bcd8739ae039), {
+                children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $6bcadc28bc94109b$export$2e2bcd8739ae039), {
                     isContainer: isContainer,
                     agents: agents,
                     addPermission: addPermission,
                     removePermission: removePermission
                 })
             }),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.DialogActions), {
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.DialogActions), {
                 className: classes.actions,
-                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Button), {
+                children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Button), {
                     label: "ra.action.close",
                     variant: "text",
                     onClick: onClose
@@ -913,19 +915,19 @@ var $eb7f8a6f7bf44740$export$2e2bcd8739ae039 = $eb7f8a6f7bf44740$var$Permissions
 
 
 const $49d4f2fbe6f28cfd$var$PermissionsButton = ({ isContainer: isContainer })=>{
-    const record = (0, $2O4Ek$reactadmin.useRecordContext)();
-    const resource = (0, $2O4Ek$reactadmin.useResourceContext)();
-    const [showDialog, setShowDialog] = (0, $2O4Ek$react.useState)(false);
-    const createContainer = (0, $2O4Ek$semappssemanticdataprovider.useCreateContainer)(resource);
+    const record = (0, $4Uj5b$reactadmin.useRecordContext)();
+    const resource = (0, $4Uj5b$reactadmin.useResourceContext)();
+    const [showDialog, setShowDialog] = (0, $4Uj5b$react.useState)(false);
+    const createContainer = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainer)(resource);
     const uri = isContainer ? createContainer : record.id || record["@id"];
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$reactjsxruntime.Fragment), {
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
         children: [
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Button), {
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Button), {
                 label: "auth.action.permissions",
                 onClick: ()=>setShowDialog(true),
-                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialShare))), {})
+                children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialShare))), {})
             }),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $eb7f8a6f7bf44740$export$2e2bcd8739ae039), {
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $eb7f8a6f7bf44740$export$2e2bcd8739ae039), {
                 uri: uri,
                 isContainer: isContainer,
                 open: showDialog,
@@ -942,14 +944,14 @@ var $49d4f2fbe6f28cfd$export$2e2bcd8739ae039 = $49d4f2fbe6f28cfd$var$Permissions
 
 
 const $4076d0aea1b9e239$var$EditActionsWithPermissions = ()=>{
-    const { hasList: hasList, hasShow: hasShow } = (0, $2O4Ek$reactadmin.useResourceDefinition)();
-    const record = (0, $2O4Ek$reactadmin.useRecordContext)();
-    const { permissions: permissions } = (0, $2O4Ek$reactadmin.usePermissionsOptimized)(record?.id);
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$reactadmin.TopToolbar), {
+    const { hasList: hasList, hasShow: hasShow } = (0, $4Uj5b$reactadmin.useResourceDefinition)();
+    const record = (0, $4Uj5b$reactadmin.useRecordContext)();
+    const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissionsOptimized)(record?.id);
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactadmin.TopToolbar), {
         children: [
-            hasList && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.ListButton), {}),
-            hasShow && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.ShowButton), {}),
-            !!permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {})
+            hasList && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ListButton), {}),
+            hasShow && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ShowButton), {}),
+            !!permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {})
         ]
     });
 };
@@ -965,9 +967,9 @@ var $4076d0aea1b9e239$export$2e2bcd8739ae039 = $4076d0aea1b9e239$var$EditActions
 
 
 const $79bac4913d414938$var$DeleteButtonWithPermissions = (props)=>{
-    const recordId = (0, $2O4Ek$reactadmin.useGetRecordId)();
-    const { permissions: permissions, isLoading: isLoading } = (0, $2O4Ek$reactadmin.usePermissions)(recordId);
-    if (!isLoading && permissions?.some((p)=>(0, $09162138eadab4b9$export$ac7b0367c0f9031e).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.DeleteButton), {
+    const recordId = (0, $4Uj5b$reactadmin.useGetRecordId)();
+    const { permissions: permissions, isLoading: isLoading } = (0, $4Uj5b$reactadmin.usePermissions)(recordId);
+    if (!isLoading && permissions?.some((p)=>(0, $09162138eadab4b9$export$ac7b0367c0f9031e).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.DeleteButton), {
         ...props
     });
     return null;
@@ -975,7 +977,7 @@ const $79bac4913d414938$var$DeleteButtonWithPermissions = (props)=>{
 var $79bac4913d414938$export$2e2bcd8739ae039 = $79bac4913d414938$var$DeleteButtonWithPermissions;
 
 
-const $f1baa8bd5325fac3$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))(()=>({
+const $f1baa8bd5325fac3$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))(()=>({
         toolbar: {
             flex: 1,
             display: "flex",
@@ -984,12 +986,12 @@ const $f1baa8bd5325fac3$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
     }));
 const $f1baa8bd5325fac3$var$EditToolbarWithPermissions = (props)=>{
     const classes = $f1baa8bd5325fac3$var$useStyles();
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$reactadmin.Toolbar), {
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactadmin.Toolbar), {
         ...props,
         className: classes.toolbar,
         children: [
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.SaveButton), {}),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $79bac4913d414938$export$2e2bcd8739ae039), {
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.SaveButton), {}),
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $79bac4913d414938$export$2e2bcd8739ae039), {
                 mutationMode: "undoable"
             })
         ]
@@ -1000,19 +1002,19 @@ var $f1baa8bd5325fac3$export$2e2bcd8739ae039 = $f1baa8bd5325fac3$var$EditToolbar
 
 
 const $6f1389d03e4735d1$var$EditWithPermissions = (props)=>{
-    const recordId = (0, $2O4Ek$reactadmin.useGetRecordId)();
+    const recordId = (0, $4Uj5b$reactadmin.useGetRecordId)();
     (0, $673a0cc190160362$export$2e2bcd8739ae039)(recordId, "edit");
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Edit), {
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Edit), {
         ...props,
-        children: /*#__PURE__*/ (0, ($parcel$interopDefault($2O4Ek$react))).cloneElement(props.children, {
-            toolbar: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $f1baa8bd5325fac3$export$2e2bcd8739ae039), {}),
+        children: /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(props.children, {
+            toolbar: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $f1baa8bd5325fac3$export$2e2bcd8739ae039), {}),
             // Allow to override toolbar
             ...props.children.props
         })
     });
 };
 $6f1389d03e4735d1$var$EditWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $4076d0aea1b9e239$export$2e2bcd8739ae039), {})
+    actions: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4076d0aea1b9e239$export$2e2bcd8739ae039), {})
 };
 var $6f1389d03e4735d1$export$2e2bcd8739ae039 = $6f1389d03e4735d1$var$EditWithPermissions;
 
@@ -1024,9 +1026,9 @@ var $6f1389d03e4735d1$export$2e2bcd8739ae039 = $6f1389d03e4735d1$var$EditWithPer
 
 
 const $496e40eed9f00a2c$var$EditButtonWithPermissions = (props)=>{
-    const recordId = (0, $2O4Ek$reactadmin.useGetRecordId)();
-    const { permissions: permissions, isLoading: isLoading } = (0, $2O4Ek$reactadmin.usePermissions)(recordId);
-    if (!isLoading && permissions?.some((p)=>(0, $09162138eadab4b9$export$b9d0f5f3ab5e453b).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.EditButton), {
+    const recordId = (0, $4Uj5b$reactadmin.useGetRecordId)();
+    const { permissions: permissions, isLoading: isLoading } = (0, $4Uj5b$reactadmin.usePermissions)(recordId);
+    if (!isLoading && permissions?.some((p)=>(0, $09162138eadab4b9$export$b9d0f5f3ab5e453b).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.EditButton), {
         ...props
     });
     return null;
@@ -1047,30 +1049,30 @@ var $496e40eed9f00a2c$export$2e2bcd8739ae039 = $496e40eed9f00a2c$var$EditButtonW
 
 // Do not show Export and Refresh buttons on mobile
 const $6452f20f9b47ebd6$var$ListActionsWithPermissions = ({ bulkActions: bulkActions, sort: sort, displayedFilters: displayedFilters, exporter: exporter, filters: filters, filterValues: filterValues, onUnselectItems: onUnselectItems, selectedIds: selectedIds, showFilter: showFilter, total: total })=>{
-    const resource = (0, $2O4Ek$reactadmin.useResourceContext)();
-    const xs = (0, $2O4Ek$muimaterial.useMediaQuery)((theme)=>theme.breakpoints.down("xs"));
-    const resourceDefinition = (0, $2O4Ek$reactadmin.useResourceDefinition)();
-    const createContainerUri = (0, $2O4Ek$semappssemanticdataprovider.useCreateContainer)(resource);
-    const { permissions: permissions } = (0, $2O4Ek$reactadmin.usePermissions)(createContainerUri);
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$reactadmin.TopToolbar), {
+    const resource = (0, $4Uj5b$reactadmin.useResourceContext)();
+    const xs = (0, $4Uj5b$muimaterial.useMediaQuery)((theme)=>theme.breakpoints.down("xs"));
+    const resourceDefinition = (0, $4Uj5b$reactadmin.useResourceDefinition)();
+    const createContainerUri = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainer)(resource);
+    const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)(createContainerUri);
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactadmin.TopToolbar), {
         children: [
-            filters && /*#__PURE__*/ (0, ($parcel$interopDefault($2O4Ek$react))).cloneElement(filters, {
+            filters && /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(filters, {
                 showFilter: showFilter,
                 displayedFilters: displayedFilters,
                 filterValues: filterValues,
                 context: "button"
             }),
-            resourceDefinition.hasCreate && permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$65615a101bd6f5ca).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.CreateButton), {}),
-            permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {
+            resourceDefinition.hasCreate && permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$65615a101bd6f5ca).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.CreateButton), {}),
+            permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {
                 isContainer: true
             }),
-            !xs && exporter !== false && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.ExportButton), {
+            !xs && exporter !== false && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ExportButton), {
                 disabled: total === 0,
                 sort: sort,
                 filter: filterValues,
                 exporter: exporter
             }),
-            bulkActions && /*#__PURE__*/ (0, ($parcel$interopDefault($2O4Ek$react))).cloneElement(bulkActions, {
+            bulkActions && /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(bulkActions, {
                 filterValues: filterValues,
                 selectedIds: selectedIds,
                 onUnselectItems: onUnselectItems
@@ -1081,11 +1083,11 @@ const $6452f20f9b47ebd6$var$ListActionsWithPermissions = ({ bulkActions: bulkAct
 var $6452f20f9b47ebd6$export$2e2bcd8739ae039 = $6452f20f9b47ebd6$var$ListActionsWithPermissions;
 
 
-const $15811bcd3a3eb59f$var$ListWithPermissions = (props)=>/*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.List), {
+const $15811bcd3a3eb59f$var$ListWithPermissions = (props)=>/*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.List), {
         ...props
     });
 $15811bcd3a3eb59f$var$ListWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $6452f20f9b47ebd6$export$2e2bcd8739ae039), {})
+    actions: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $6452f20f9b47ebd6$export$2e2bcd8739ae039), {})
 };
 var $15811bcd3a3eb59f$export$2e2bcd8739ae039 = $15811bcd3a3eb59f$var$ListWithPermissions;
 
@@ -1100,14 +1102,14 @@ var $15811bcd3a3eb59f$export$2e2bcd8739ae039 = $15811bcd3a3eb59f$var$ListWithPer
 
 
 const $83b0bd683a7f3aa8$var$ShowActionsWithPermissions = ()=>{
-    const { hasList: hasList, hasEdit: hasEdit } = (0, $2O4Ek$reactadmin.useResourceDefinition)();
-    const record = (0, $2O4Ek$reactadmin.useRecordContext)();
-    const { permissions: permissions } = (0, $2O4Ek$reactadmin.usePermissions)(record?.id);
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$reactadmin.TopToolbar), {
+    const { hasList: hasList, hasEdit: hasEdit } = (0, $4Uj5b$reactadmin.useResourceDefinition)();
+    const record = (0, $4Uj5b$reactadmin.useRecordContext)();
+    const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)(record?.id);
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactadmin.TopToolbar), {
         children: [
-            hasList && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.ListButton), {}),
-            hasEdit && permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$b9d0f5f3ab5e453b).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.EditButton), {}),
-            permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {})
+            hasList && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ListButton), {}),
+            hasEdit && permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$b9d0f5f3ab5e453b).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.EditButton), {}),
+            permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {})
         ]
     });
 };
@@ -1116,14 +1118,14 @@ var $83b0bd683a7f3aa8$export$2e2bcd8739ae039 = $83b0bd683a7f3aa8$var$ShowActions
 
 
 const $773eb052716d0fa7$var$ShowWithPermissions = (props)=>{
-    const recordId = (0, $2O4Ek$reactadmin.useGetRecordId)();
+    const recordId = (0, $4Uj5b$reactadmin.useGetRecordId)();
     (0, $673a0cc190160362$export$2e2bcd8739ae039)(recordId, "show");
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Show), {
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Show), {
         ...props
     });
 };
 $773eb052716d0fa7$var$ShowWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $83b0bd683a7f3aa8$export$2e2bcd8739ae039), {})
+    actions: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $83b0bd683a7f3aa8$export$2e2bcd8739ae039), {})
 };
 var $773eb052716d0fa7$export$2e2bcd8739ae039 = $773eb052716d0fa7$var$ShowWithPermissions;
 
@@ -1135,28 +1137,28 @@ var $773eb052716d0fa7$export$2e2bcd8739ae039 = $773eb052716d0fa7$var$ShowWithPer
 
 
 const $4e0bf9be00aaa242$var$AuthDialog = ({ open: open, onClose: onClose, title: title, message: message, redirect: redirect, ...rest })=>{
-    const login = (0, $2O4Ek$reactadmin.useLogin)();
-    const translate = (0, $2O4Ek$reactadmin.useTranslate)();
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Dialog), {
+    const login = (0, $4Uj5b$reactadmin.useLogin)();
+    const translate = (0, $4Uj5b$reactadmin.useTranslate)();
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Dialog), {
         open: open,
         onClose: onClose,
         ...rest,
         children: [
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.DialogTitle), {
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.DialogTitle), {
                 children: translate(title)
             }),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.DialogContent), {
-                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.DialogContentText), {
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.DialogContent), {
+                children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.DialogContentText), {
                     children: translate(message)
                 })
             }),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.DialogActions), {
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.DialogActions), {
                 children: [
-                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Button), {
+                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
                         onClick: onClose,
                         children: translate("ra.action.cancel")
                     }),
-                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Button), {
+                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
                         onClick: ()=>login({
                                 redirect: redirect || window.location.pathname + window.location.search
                             }),
@@ -1187,16 +1189,16 @@ var $4e0bf9be00aaa242$export$2e2bcd8739ae039 = $4e0bf9be00aaa242$var$AuthDialog;
 const $0af8eee27f6a6e9f$var$delay = async (t)=>new Promise((resolve)=>setTimeout(resolve, t));
 // Inspired from https://github.com/marmelab/react-admin/blob/master/packages/ra-ui-materialui/src/auth/Login.tsx
 const $0af8eee27f6a6e9f$var$SsoLoginPage = ({ children: children, backgroundImage: backgroundImage, buttons: buttons, userResource: userResource, propertiesExist: propertiesExist, text: text, ...rest })=>{
-    const containerRef = (0, $2O4Ek$react.useRef)();
+    const containerRef = (0, $4Uj5b$react.useRef)();
     let backgroundImageLoaded = false;
-    const navigate = (0, $2O4Ek$reactrouterdom.useNavigate)();
-    const [searchParams] = (0, $2O4Ek$reactrouterdom.useSearchParams)();
-    const { identity: identity, isLoading: isLoading } = (0, $2O4Ek$reactadmin.useGetIdentity)();
-    const notify = (0, $2O4Ek$reactadmin.useNotify)();
-    const login = (0, $2O4Ek$reactadmin.useLogin)();
-    const dataProvider = (0, $2O4Ek$reactadmin.useDataProvider)();
-    const authProvider = (0, $2O4Ek$reactadmin.useAuthProvider)();
-    (0, $2O4Ek$react.useEffect)(()=>{
+    const navigate = (0, $4Uj5b$reactrouterdom.useNavigate)();
+    const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
+    const { identity: identity, isLoading: isLoading } = (0, $4Uj5b$reactadmin.useGetIdentity)();
+    const notify = (0, $4Uj5b$reactadmin.useNotify)();
+    const login = (0, $4Uj5b$reactadmin.useLogin)();
+    const dataProvider = (0, $4Uj5b$reactadmin.useDataProvider)();
+    const authProvider = (0, $4Uj5b$reactadmin.useAuthProvider)();
+    (0, $4Uj5b$react.useEffect)(()=>{
         if (!isLoading && identity?.id) // Already authenticated, redirect to the home page
         navigate(searchParams.get("redirect") || "/");
     }, [
@@ -1205,7 +1207,7 @@ const $0af8eee27f6a6e9f$var$SsoLoginPage = ({ children: children, backgroundImag
         navigate,
         searchParams
     ]);
-    (0, $2O4Ek$react.useEffect)(()=>{
+    (0, $4Uj5b$react.useEffect)(()=>{
         (async ()=>{
             if (searchParams.has("login")) {
                 if (searchParams.has("error")) {
@@ -1218,7 +1220,7 @@ const $0af8eee27f6a6e9f$var$SsoLoginPage = ({ children: children, backgroundImag
                     });
                 } else if (searchParams.has("token")) {
                     const token = searchParams.get("token");
-                    const { webId: webId } = (0, ($parcel$interopDefault($2O4Ek$jwtdecode)))(token);
+                    const { webId: webId } = (0, ($parcel$interopDefault($4Uj5b$jwtdecode)))(token);
                     localStorage.setItem("token", token);
                     let userData;
                     ({ data: userData } = await dataProvider.getOne(userResource, {
@@ -1288,29 +1290,29 @@ const $0af8eee27f6a6e9f$var$SsoLoginPage = ({ children: children, backgroundImag
             img.src = backgroundImage;
         }
     };
-    (0, $2O4Ek$react.useEffect)(()=>{
+    (0, $4Uj5b$react.useEffect)(()=>{
         if (!backgroundImageLoaded) lazyLoadBackgroundImage();
     });
     if (isLoading) return null;
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)($0af8eee27f6a6e9f$var$Root, {
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($0af8eee27f6a6e9f$var$Root, {
         ...rest,
         ref: containerRef,
-        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Card), {
+        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Card), {
             className: $0af8eee27f6a6e9f$export$388de65c72fa74b4.card,
             children: [
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)("div", {
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)("div", {
                     className: $0af8eee27f6a6e9f$export$388de65c72fa74b4.avatar,
-                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Avatar), {
+                    children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Avatar), {
                         className: $0af8eee27f6a6e9f$export$388de65c72fa74b4.icon,
-                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialLock))), {})
+                        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialLock))), {})
                     })
                 }),
-                text && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Typography), {
+                text && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
                     variant: "body2" /* className={classes.text} */ ,
                     children: text
                 }),
-                buttons?.map((button, i)=>/*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.CardActions), {
-                        children: /*#__PURE__*/ (0, ($parcel$interopDefault($2O4Ek$react))).cloneElement(button, {
+                buttons?.map((button, i)=>/*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.CardActions), {
+                        children: /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(button, {
                             fullWidth: true,
                             variant: "outlined",
                             type: "submit",
@@ -1328,7 +1330,7 @@ const $0af8eee27f6a6e9f$export$388de65c72fa74b4 = {
     icon: `${$0af8eee27f6a6e9f$var$PREFIX}-icon`,
     switch: `${$0af8eee27f6a6e9f$var$PREFIX}-switch`
 };
-const $0af8eee27f6a6e9f$var$Root = (0, $2O4Ek$muimaterialstyles.styled)("div", {
+const $0af8eee27f6a6e9f$var$Root = (0, $4Uj5b$muimaterialstyles.styled)("div", {
     name: $0af8eee27f6a6e9f$var$PREFIX,
     overridesResolver: (props, styles)=>styles.root
 })(({ theme: theme })=>({
@@ -1363,8 +1365,8 @@ $0af8eee27f6a6e9f$var$SsoLoginPage.defaultProps = {
     propertiesExist: [],
     // TODO deprecate this
     buttons: [
-        /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Button), {
-            startIcon: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Avatar), {
+        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
+            startIcon: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Avatar), {
                 src: "/lescommuns.jpg"
             }),
             children: "Les Communs"
@@ -1392,8 +1394,8 @@ var $0af8eee27f6a6e9f$export$2e2bcd8739ae039 = $0af8eee27f6a6e9f$var$SsoLoginPag
 
 
 const $19e4629c708b7a3e$var$useSignup = ()=>{
-    const authProvider = (0, $2O4Ek$reactadmin.useAuthProvider)();
-    return (0, $2O4Ek$react.useCallback)((params = {})=>authProvider.signup(params), [
+    const authProvider = (0, $4Uj5b$reactadmin.useAuthProvider)();
+    return (0, $4Uj5b$react.useCallback)((params = {})=>authProvider.signup(params), [
         authProvider
     ]);
 };
@@ -1499,15 +1501,15 @@ function $bd29744006fdc23c$export$2e2bcd8739ae039(props) {
     };
     const fade = Math.max(0, Math.min(1, (currentVal - minVal) / (maxVal - minVal)));
     const currentColor = $bd29744006fdc23c$var$colorGradient(fade, color1, color2);
-    const StyledLinearProgress = (0, $2O4Ek$muistyles.withStyles)({
+    const StyledLinearProgress = (0, $4Uj5b$muistyles.withStyles)({
         colorPrimary: {
             backgroundColor: "#e0e0e0"
         },
         barColorPrimary: {
             backgroundColor: currentColor
         }
-    })((0, $2O4Ek$muimaterial.LinearProgress));
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)(StyledLinearProgress, {
+    })((0, $4Uj5b$muimaterial.LinearProgress));
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)(StyledLinearProgress, {
         ...restProps,
         value: 100 * fade,
         variant: "determinate"
@@ -1518,7 +1520,7 @@ function $bd29744006fdc23c$export$2e2bcd8739ae039(props) {
 
 function $edfec7f9e9fd7881$export$2e2bcd8739ae039({ scorer: scorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8), password: password, ...restProps }) {
     const strength = scorer.scoreFn(password);
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $bd29744006fdc23c$export$2e2bcd8739ae039), {
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $bd29744006fdc23c$export$2e2bcd8739ae039), {
         currentVal: strength,
         minVal: 0,
         maxVal: scorer.maxScore,
@@ -1544,7 +1546,7 @@ const $cd7709c431b14d14$var$getSearchParamsRest = (searchParams)=>{
 var $cd7709c431b14d14$export$2e2bcd8739ae039 = $cd7709c431b14d14$var$getSearchParamsRest;
 
 
-const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))((theme)=>({
+const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))((theme)=>({
         content: {
             width: 450
         },
@@ -1562,14 +1564,14 @@ const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
  *  passwordStrength's `defaultScorer`.
  * @returns
  */ const $5f70c240e5b0340c$var$SignupForm = ({ redirectTo: redirectTo, passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8), postSignupRedirect: postSignupRedirect, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect })=>{
-    const [loading, setLoading] = (0, $2O4Ek$reactadmin.useSafeSetState)(false);
+    const [loading, setLoading] = (0, $4Uj5b$reactadmin.useSafeSetState)(false);
     const signup = (0, $19e4629c708b7a3e$export$2e2bcd8739ae039)();
-    const translate = (0, $2O4Ek$reactadmin.useTranslate)();
-    const notify = (0, $2O4Ek$reactadmin.useNotify)();
+    const translate = (0, $4Uj5b$reactadmin.useTranslate)();
+    const notify = (0, $4Uj5b$reactadmin.useNotify)();
     const classes = $5f70c240e5b0340c$var$useStyles();
-    const [searchParams] = (0, $2O4Ek$reactrouterdom.useSearchParams)();
-    const [locale] = (0, $2O4Ek$reactadmin.useLocaleState)();
-    const [password, setPassword] = $2O4Ek$react.useState("");
+    const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
+    const [locale] = (0, $4Uj5b$reactadmin.useLocaleState)();
+    const [password, setPassword] = $4Uj5b$react.useState("");
     const submit = (values)=>{
         setLoading(true);
         signup({
@@ -1599,24 +1601,24 @@ const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
             });
         });
     };
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Form), {
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Form), {
         onSubmit: submit,
         noValidate: true,
         defaultValues: {
             email: searchParams.get("email")
         },
-        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.CardContent), {
+        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
             className: classes.content,
             children: [
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
                     autoFocus: true,
                     source: "username",
                     label: translate("auth.input.username"),
                     autoComplete: "username",
                     fullWidth: true,
                     disabled: loading,
-                    validate: (0, $2O4Ek$reactadmin.required)(),
-                    format: (value)=>value ? (0, ($parcel$interopDefault($2O4Ek$speakingurl)))(value, {
+                    validate: (0, $4Uj5b$reactadmin.required)(),
+                    format: (value)=>value ? (0, ($parcel$interopDefault($4Uj5b$speakingurl)))(value, {
                             lang: locale || "fr",
                             separator: "_",
                             custom: [
@@ -1635,20 +1637,20 @@ const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
                             ]
                         }) : ""
                 }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
                     source: "email",
                     label: translate("auth.input.email"),
                     autoComplete: "email",
                     fullWidth: true,
                     disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
                     validate: [
-                        (0, $2O4Ek$reactadmin.required)(),
-                        (0, $2O4Ek$reactadmin.email)()
+                        (0, $4Uj5b$reactadmin.required)(),
+                        (0, $4Uj5b$reactadmin.email)()
                     ]
                 }),
-                passwordScorer && password && !(searchParams.has("email") && searchParams.has("force-email")) && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$reactjsxruntime.Fragment), {
+                passwordScorer && password && !(searchParams.has("email") && searchParams.has("force-email")) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
                     children: [
-                        /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Typography), {
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Typography), {
                             variant: "caption",
                             style: {
                                 marginBottom: 3
@@ -1659,7 +1661,7 @@ const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
                                 " "
                             ]
                         }),
-                        /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $edfec7f9e9fd7881$export$2e2bcd8739ae039), {
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $edfec7f9e9fd7881$export$2e2bcd8739ae039), {
                             password: password,
                             scorer: passwordScorer,
                             sx: {
@@ -1668,7 +1670,7 @@ const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
                         })
                     ]
                 }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
                     source: "password",
                     type: "password",
                     value: password,
@@ -1678,18 +1680,18 @@ const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
                     fullWidth: true,
                     disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
                     validate: [
-                        (0, $2O4Ek$reactadmin.required)(),
+                        (0, $4Uj5b$reactadmin.required)(),
                         (0, $eab41bc89667b2c6$export$2e2bcd8739ae039)(passwordScorer)
                     ]
                 }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Button), {
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
                     variant: "contained",
                     type: "submit",
                     color: "primary",
                     disabled: loading,
                     fullWidth: true,
                     className: classes.button,
-                    children: loading ? /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.CircularProgress), {
+                    children: loading ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.CircularProgress), {
                         className: classes.icon,
                         size: 19,
                         thickness: 3
@@ -1712,7 +1714,7 @@ var $5f70c240e5b0340c$export$2e2bcd8739ae039 = $5f70c240e5b0340c$var$SignupForm;
 
 
 
-const $8a2df01c9f2675bb$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))((theme)=>({
+const $8a2df01c9f2675bb$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))((theme)=>({
         content: {
             width: 450
         },
@@ -1721,12 +1723,12 @@ const $8a2df01c9f2675bb$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
         }
     }));
 const $8a2df01c9f2675bb$var$LoginForm = ({ redirectTo: redirectTo, allowUsername: allowUsername })=>{
-    const [loading, setLoading] = (0, $2O4Ek$reactadmin.useSafeSetState)(false);
-    const login = (0, $2O4Ek$reactadmin.useLogin)();
-    const translate = (0, $2O4Ek$reactadmin.useTranslate)();
-    const notify = (0, $2O4Ek$reactadmin.useNotify)();
+    const [loading, setLoading] = (0, $4Uj5b$reactadmin.useSafeSetState)(false);
+    const login = (0, $4Uj5b$reactadmin.useLogin)();
+    const translate = (0, $4Uj5b$reactadmin.useTranslate)();
+    const notify = (0, $4Uj5b$reactadmin.useNotify)();
     const classes = $8a2df01c9f2675bb$var$useStyles();
-    const location = (0, $2O4Ek$reactrouterdom.useLocation)();
+    const location = (0, $4Uj5b$reactrouterdom.useLocation)();
     const searchParams = new URLSearchParams(location.search);
     const submit = (values)=>{
         setLoading(true);
@@ -1742,16 +1744,16 @@ const $8a2df01c9f2675bb$var$LoginForm = ({ redirectTo: redirectTo, allowUsername
             });
         });
     };
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Form), {
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Form), {
         onSubmit: submit,
         noValidate: true,
         defaultValues: {
             email: searchParams.get("email")
         },
-        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.CardContent), {
+        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
             className: classes.content,
             children: [
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
                     source: "username",
                     label: translate(allowUsername ? "auth.input.username_or_email" : "auth.input.email"),
                     autoComplete: "email",
@@ -1759,29 +1761,29 @@ const $8a2df01c9f2675bb$var$LoginForm = ({ redirectTo: redirectTo, allowUsername
                     disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
                     format: (value)=>value ? value.toLowerCase() : "",
                     validate: allowUsername ? [
-                        (0, $2O4Ek$reactadmin.required)()
+                        (0, $4Uj5b$reactadmin.required)()
                     ] : [
-                        (0, $2O4Ek$reactadmin.required)(),
-                        (0, $2O4Ek$reactadmin.email)()
+                        (0, $4Uj5b$reactadmin.required)(),
+                        (0, $4Uj5b$reactadmin.email)()
                     ]
                 }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
                     source: "password",
                     type: "password",
                     label: translate("ra.auth.password"),
                     autoComplete: "current-password",
                     fullWidth: true,
                     disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
-                    validate: (0, $2O4Ek$reactadmin.required)()
+                    validate: (0, $4Uj5b$reactadmin.required)()
                 }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Button), {
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
                     variant: "contained",
                     type: "submit",
                     color: "primary",
                     disabled: loading,
                     fullWidth: true,
                     className: classes.button,
-                    children: loading ? /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.CircularProgress), {
+                    children: loading ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.CircularProgress), {
                         className: classes.icon,
                         size: 19,
                         thickness: 3
@@ -1807,7 +1809,7 @@ var $8a2df01c9f2675bb$export$2e2bcd8739ae039 = $8a2df01c9f2675bb$var$LoginForm;
 
 
 
-const $176df6bd8edc5f4d$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))((theme)=>({
+const $176df6bd8edc5f4d$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))((theme)=>({
         icon: {
             margin: theme.spacing(0.3)
         }
@@ -1820,15 +1822,15 @@ const $176df6bd8edc5f4d$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
  *  passwordStrength's `defaultScorer`.
  * @returns
  */ const $176df6bd8edc5f4d$var$NewPasswordForm = ({ redirectTo: redirectTo, passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8) })=>{
-    const location = (0, $2O4Ek$reactrouterdom.useLocation)();
+    const location = (0, $4Uj5b$reactrouterdom.useLocation)();
     const searchParams = new URLSearchParams(location.search);
     const token = searchParams.get("token");
-    const [loading, setLoading] = (0, $2O4Ek$reactadmin.useSafeSetState)(false);
-    const authProvider = (0, $2O4Ek$reactadmin.useAuthProvider)();
-    const translate = (0, $2O4Ek$reactadmin.useTranslate)();
-    const notify = (0, $2O4Ek$reactadmin.useNotify)();
+    const [loading, setLoading] = (0, $4Uj5b$reactadmin.useSafeSetState)(false);
+    const authProvider = (0, $4Uj5b$reactadmin.useAuthProvider)();
+    const translate = (0, $4Uj5b$reactadmin.useTranslate)();
+    const notify = (0, $4Uj5b$reactadmin.useNotify)();
     const classes = $176df6bd8edc5f4d$var$useStyles();
-    const [newPassword, setNewPassword] = (0, $2O4Ek$react.useState)("");
+    const [newPassword, setNewPassword] = (0, $4Uj5b$react.useState)("");
     const submit = (values)=>{
         setLoading(true);
         authProvider.setNewPassword({
@@ -1850,28 +1852,28 @@ const $176df6bd8edc5f4d$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
             });
         });
     };
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Form), {
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Form), {
         onSubmit: submit,
         noValidate: true,
         defaultValues: {
             email: searchParams.get("email")
         },
-        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.CardContent), {
+        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
             className: classes.content,
             children: [
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
                     autoFocus: true,
                     source: "email",
                     label: translate("auth.input.email"),
                     autoComplete: "email",
                     fullWidth: true,
                     disabled: loading,
-                    validate: (0, $2O4Ek$reactadmin.required)(),
+                    validate: (0, $4Uj5b$reactadmin.required)(),
                     format: (value)=>value ? value.toLowerCase() : ""
                 }),
-                passwordScorer && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$reactjsxruntime.Fragment), {
+                passwordScorer && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
                     children: [
-                        /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Typography), {
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Typography), {
                             variant: "caption",
                             style: {
                                 marginBottom: 3
@@ -1882,7 +1884,7 @@ const $176df6bd8edc5f4d$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
                                 " "
                             ]
                         }),
-                        /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $edfec7f9e9fd7881$export$2e2bcd8739ae039), {
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $edfec7f9e9fd7881$export$2e2bcd8739ae039), {
                             password: newPassword,
                             scorer: passwordScorer,
                             sx: {
@@ -1891,7 +1893,7 @@ const $176df6bd8edc5f4d$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
                         })
                     ]
                 }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
                     autoFocus: true,
                     type: "password",
                     source: "password",
@@ -1901,13 +1903,13 @@ const $176df6bd8edc5f4d$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
                     fullWidth: true,
                     disabled: loading,
                     validate: [
-                        (0, $2O4Ek$reactadmin.required)(),
+                        (0, $4Uj5b$reactadmin.required)(),
                         (0, $eab41bc89667b2c6$export$2e2bcd8739ae039)(passwordScorer)
                     ],
                     onChange: (e)=>setNewPassword(e.target.value),
                     format: (value)=>value ? value.toLowerCase() : ""
                 }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
                     autoFocus: true,
                     type: "password",
                     source: "confirm-password",
@@ -1915,17 +1917,17 @@ const $176df6bd8edc5f4d$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
                     autoComplete: "current-password",
                     fullWidth: true,
                     disabled: loading,
-                    validate: (0, $2O4Ek$reactadmin.required)(),
+                    validate: (0, $4Uj5b$reactadmin.required)(),
                     format: (value)=>value ? value.toLowerCase() : ""
                 }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Button), {
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
                     variant: "contained",
                     type: "submit",
                     color: "primary",
                     disabled: loading,
                     fullWidth: true,
                     className: classes.button,
-                    children: loading ? /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.CircularProgress), {
+                    children: loading ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.CircularProgress), {
                         className: classes.icon,
                         size: 19,
                         thickness: 3
@@ -1943,16 +1945,16 @@ var $176df6bd8edc5f4d$export$2e2bcd8739ae039 = $176df6bd8edc5f4d$var$NewPassword
 
 
 
-const $a04debd4e4af2a01$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))((theme)=>({
+const $a04debd4e4af2a01$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))((theme)=>({
         icon: {
             margin: theme.spacing(0.3)
         }
     }));
 const $a04debd4e4af2a01$var$ResetPasswordForm = ()=>{
-    const [loading, setLoading] = (0, $2O4Ek$reactadmin.useSafeSetState)(false);
-    const authProvider = (0, $2O4Ek$reactadmin.useAuthProvider)();
-    const translate = (0, $2O4Ek$reactadmin.useTranslate)();
-    const notify = (0, $2O4Ek$reactadmin.useNotify)();
+    const [loading, setLoading] = (0, $4Uj5b$reactadmin.useSafeSetState)(false);
+    const authProvider = (0, $4Uj5b$reactadmin.useAuthProvider)();
+    const translate = (0, $4Uj5b$reactadmin.useTranslate)();
+    const notify = (0, $4Uj5b$reactadmin.useNotify)();
     const classes = $a04debd4e4af2a01$var$useStyles();
     const submit = (values)=>{
         setLoading(true);
@@ -1971,29 +1973,29 @@ const $a04debd4e4af2a01$var$ResetPasswordForm = ()=>{
             });
         });
     };
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Form), {
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Form), {
         onSubmit: submit,
-        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.CardContent), {
+        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
             className: classes.content,
             children: [
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
                     autoFocus: true,
                     source: "email",
                     label: translate("auth.input.email"),
                     autoComplete: "email",
                     fullWidth: true,
                     disabled: loading,
-                    validate: (0, $2O4Ek$reactadmin.required)(),
+                    validate: (0, $4Uj5b$reactadmin.required)(),
                     format: (value)=>value ? value.toLowerCase() : ""
                 }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Button), {
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
                     variant: "contained",
                     type: "submit",
                     color: "primary",
                     disabled: loading,
                     fullWidth: true,
                     className: classes.button,
-                    children: loading ? /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.CircularProgress), {
+                    children: loading ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.CircularProgress), {
                         className: classes.icon,
                         size: 19,
                         thickness: 3
@@ -2011,7 +2013,7 @@ var $a04debd4e4af2a01$export$2e2bcd8739ae039 = $a04debd4e4af2a01$var$ResetPasswo
 
 
 
-const $d6b5c702311394c4$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))((theme)=>({
+const $d6b5c702311394c4$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))((theme)=>({
         "@global": {
             body: {
                 backgroundColor: theme.palette.secondary.main
@@ -2041,35 +2043,35 @@ const $d6b5c702311394c4$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
     }));
 const $d6b5c702311394c4$var$SimpleBox = ({ title: title, icon: icon, text: text, children: children })=>{
     const classes = $d6b5c702311394c4$var$useStyles();
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Box), {
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Box), {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         className: classes.root,
         children: [
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Card), {
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Card), {
                 className: classes.card,
                 children: [
-                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Box), {
+                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Box), {
                         p: 2,
                         display: "flex",
                         justifyContent: "start",
                         children: [
-                            icon && /*#__PURE__*/ (0, ($parcel$interopDefault($2O4Ek$react))).cloneElement(icon, {
+                            icon && /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(icon, {
                                 fontSize: "large",
                                 className: classes.icon
                             }),
-                            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Typography), {
+                            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
                                 variant: "h4",
                                 className: classes.title,
                                 children: title
                             })
                         ]
                     }),
-                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Box), {
+                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Box), {
                         pl: 2,
                         pr: 2,
-                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Typography), {
+                        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
                             variant: "body1",
                             children: text
                         })
@@ -2077,7 +2079,7 @@ const $d6b5c702311394c4$var$SimpleBox = ({ title: title, icon: icon, text: text,
                     children
                 ]
             }),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Notification), {})
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Notification), {})
         ]
     });
 };
@@ -2086,7 +2088,7 @@ var $d6b5c702311394c4$export$2e2bcd8739ae039 = $d6b5c702311394c4$var$SimpleBox;
 
 
 
-const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))(()=>({
+const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))(()=>({
         switch: {
             marginBottom: "1em",
             display: "flex",
@@ -2107,16 +2109,20 @@ const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
  * @returns
  */ const $4c56dbfbda0fa20c$var$LocalLoginPage = ({ hasSignup: hasSignup, allowUsername: allowUsername, postSignupRedirect: postSignupRedirect, postLoginRedirect: postLoginRedirect, additionalSignupValues: additionalSignupValues, passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8) })=>{
     const classes = $4c56dbfbda0fa20c$var$useStyles();
-    const navigate = (0, $2O4Ek$reactrouterdom.useNavigate)();
-    const translate = (0, $2O4Ek$reactadmin.useTranslate)();
-    const [searchParams] = (0, $2O4Ek$reactrouterdom.useSearchParams)();
+    const navigate = (0, $4Uj5b$reactrouterdom.useNavigate)();
+    const translate = (0, $4Uj5b$reactadmin.useTranslate)();
+    const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
     const isSignup = hasSignup && searchParams.has("signup");
+    // Remaining search params as string:
+    const searchStr = [
+        ...searchParams.entries()
+    ].filter((entry)=>entry[0] !== "signup").map((entry)=>entry.join("=")).join("&");
     const isResetPassword = searchParams.has("reset_password");
     const isNewPassword = searchParams.has("new_password");
     const isLogin = !isSignup && !isResetPassword && !isNewPassword;
     const redirectTo = searchParams.get("redirect");
-    const { identity: identity, isLoading: isLoading } = (0, $2O4Ek$reactadmin.useGetIdentity)();
-    (0, $2O4Ek$react.useEffect)(()=>{
+    const { identity: identity, isLoading: isLoading } = (0, $4Uj5b$reactadmin.useGetIdentity)();
+    (0, $4Uj5b$react.useEffect)(()=>{
         if (!isLoading && identity?.id) {
             if (postLoginRedirect) navigate(`${postLoginRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}`);
             else if (redirectTo && redirectTo.startsWith("http")) window.location.href = redirectTo;
@@ -2130,7 +2136,7 @@ const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
         redirectTo,
         postLoginRedirect
     ]);
-    const [title, text] = (0, $2O4Ek$react.useMemo)(()=>{
+    const [title, text] = (0, $4Uj5b$react.useMemo)(()=>{
         if (isSignup) return [
             "auth.action.signup",
             "auth.helper.signup"
@@ -2155,53 +2161,53 @@ const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
     ]);
     if (isLoading || identity?.id) return null;
     if (isLoading || identity?.id) return null;
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $d6b5c702311394c4$export$2e2bcd8739ae039), {
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $d6b5c702311394c4$export$2e2bcd8739ae039), {
         title: translate(title),
         text: translate(text),
-        icon: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialLock))), {}),
-        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Card), {
+        icon: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialLock))), {}),
+        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Card), {
             children: [
-                isSignup && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $5f70c240e5b0340c$export$2e2bcd8739ae039), {
+                isSignup && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $5f70c240e5b0340c$export$2e2bcd8739ae039), {
                     redirectTo: redirectTo,
                     delayBeforeRedirect: 4000,
                     postSignupRedirect: postSignupRedirect,
                     additionalSignupValues: additionalSignupValues,
                     passwordScorer: passwordScorer
                 }),
-                isResetPassword && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $a04debd4e4af2a01$export$2e2bcd8739ae039), {}),
-                isNewPassword && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $176df6bd8edc5f4d$export$2e2bcd8739ae039), {
+                isResetPassword && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $a04debd4e4af2a01$export$2e2bcd8739ae039), {}),
+                isNewPassword && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $176df6bd8edc5f4d$export$2e2bcd8739ae039), {
                     redirectTo: redirectTo,
                     passwordScorer: passwordScorer
                 }),
-                isLogin && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $8a2df01c9f2675bb$export$2e2bcd8739ae039), {
+                isLogin && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $8a2df01c9f2675bb$export$2e2bcd8739ae039), {
                     redirectTo: redirectTo,
                     allowUsername: allowUsername
                 }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)("div", {
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("div", {
                     className: classes.switch,
                     children: [
-                        isSignup && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactrouterdom.Link), {
-                            to: "/login",
-                            children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Typography), {
+                        isSignup && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactrouterdom.Link), {
+                            to: "/login?" + searchStr,
+                            children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
                                 variant: "body2",
                                 children: translate("auth.action.login")
                             })
                         }),
-                        isLogin && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$reactjsxruntime.Fragment), {
+                        isLogin && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
                             children: [
-                                hasSignup && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)("div", {
-                                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactrouterdom.Link), {
-                                        to: "/login?signup=true",
-                                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Typography), {
+                                hasSignup && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)("div", {
+                                    children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactrouterdom.Link), {
+                                        to: "/login?signup=true&" + searchStr,
+                                        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
                                             variant: "body2",
                                             children: translate("auth.action.signup")
                                         })
                                     })
                                 }),
-                                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)("div", {
-                                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactrouterdom.Link), {
+                                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)("div", {
+                                    children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactrouterdom.Link), {
                                         to: `/login?reset_password=true&${searchParams.toString()}`,
-                                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Typography), {
+                                        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
                                             variant: "body2",
                                             children: translate("auth.action.reset_password")
                                         })
@@ -2230,9 +2236,9 @@ var $4c56dbfbda0fa20c$export$2e2bcd8739ae039 = $4c56dbfbda0fa20c$var$LocalLoginP
 
 // Not used for now. The ListWithPermissions component will handle the conditional display of the Create button.
 const $0973974d3aa8078b$var$ResourceWithPermission = ({ name: name, create: create, ...rest })=>{
-    const createContainer = (0, $2O4Ek$semappssemanticdataprovider.useCreateContainer)(name);
-    const { permissions: permissions } = (0, $2O4Ek$reactadmin.usePermissions)(createContainer);
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Resource), {
+    const createContainer = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainer)(name);
+    const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)(createContainer);
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Resource), {
         ...rest,
         name: name,
         create: permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$65615a101bd6f5ca).includes(p["acl:mode"])) ? create : undefined
@@ -2249,11 +2255,11 @@ var $0973974d3aa8078b$export$2e2bcd8739ae039 = $0973974d3aa8078b$var$ResourceWit
 
 
 // It's important to pass the ref to allow Material UI to manage the keyboard navigation
-const $9734e84907c0d5dd$var$UserMenuItem = /*#__PURE__*/ (0, $2O4Ek$react.forwardRef)(({ label: label, icon: icon, to: to, ...rest }, ref)=>{
-    const { onClose: onClose } = (0, $2O4Ek$reactadmin.useUserMenu)();
-    const translate = (0, $2O4Ek$reactadmin.useTranslate)();
-    const navigate = (0, $2O4Ek$reactrouterdom.useNavigate)();
-    const onClick = (0, $2O4Ek$react.useCallback)(()=>{
+const $9734e84907c0d5dd$var$UserMenuItem = /*#__PURE__*/ (0, $4Uj5b$react.forwardRef)(({ label: label, icon: icon, to: to, ...rest }, ref)=>{
+    const { onClose: onClose } = (0, $4Uj5b$reactadmin.useUserMenu)();
+    const translate = (0, $4Uj5b$reactadmin.useTranslate)();
+    const navigate = (0, $4Uj5b$reactrouterdom.useNavigate)();
+    const onClick = (0, $4Uj5b$react.useCallback)(()=>{
         navigate(to);
         onClose();
     }, [
@@ -2261,46 +2267,46 @@ const $9734e84907c0d5dd$var$UserMenuItem = /*#__PURE__*/ (0, $2O4Ek$react.forwar
         onClose,
         navigate
     ]);
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.MenuItem), {
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.MenuItem), {
         onClick: onClick,
         ref: ref,
         ...rest,
         children: [
-            icon && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemIcon), {
-                children: /*#__PURE__*/ (0, ($parcel$interopDefault($2O4Ek$react))).cloneElement(icon, {
+            icon && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemIcon), {
+                children: /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(icon, {
                     fontSize: "small"
                 })
             }),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemText), {
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemText), {
                 children: translate(label)
             })
         ]
     });
 });
 const $9734e84907c0d5dd$var$UserMenu = ({ logout: logout, profileResource: profileResource, ...otherProps })=>{
-    const { identity: identity } = (0, $2O4Ek$reactadmin.useGetIdentity)();
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.UserMenu), {
+    const { identity: identity } = (0, $4Uj5b$reactadmin.useGetIdentity)();
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.UserMenu), {
         ...otherProps,
         children: identity && identity.id !== "" ? [
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)($9734e84907c0d5dd$var$UserMenuItem, {
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($9734e84907c0d5dd$var$UserMenuItem, {
                 label: "auth.action.view_my_profile",
-                icon: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialAccountCircle))), {}),
+                icon: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialAccountCircle))), {}),
                 to: `/${profileResource}/${encodeURIComponent(identity?.profileData?.id || identity.id)}/show`
             }, "view"),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)($9734e84907c0d5dd$var$UserMenuItem, {
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($9734e84907c0d5dd$var$UserMenuItem, {
                 label: "auth.action.edit_my_profile",
-                icon: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialEdit))), {}),
+                icon: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialEdit))), {}),
                 to: `/${profileResource}/${encodeURIComponent(identity?.profileData?.id || identity.id)}`
             }, "edit"),
-            /*#__PURE__*/ (0, ($parcel$interopDefault($2O4Ek$react))).cloneElement(logout, {
+            /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(logout, {
                 key: "logout"
             })
         ] : [
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)($9734e84907c0d5dd$var$UserMenuItem, {
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($9734e84907c0d5dd$var$UserMenuItem, {
                 label: "auth.action.signup",
                 to: "/login?signup=true"
             }, "signup"),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)($9734e84907c0d5dd$var$UserMenuItem, {
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($9734e84907c0d5dd$var$UserMenuItem, {
                 label: "auth.action.login",
                 to: "/login"
             }, "login")
@@ -2308,7 +2314,7 @@ const $9734e84907c0d5dd$var$UserMenu = ({ logout: logout, profileResource: profi
     });
 };
 $9734e84907c0d5dd$var$UserMenu.defaultProps = {
-    logout: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Logout), {}),
+    logout: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Logout), {}),
     profileResource: "Person"
 };
 var $9734e84907c0d5dd$export$2e2bcd8739ae039 = $9734e84907c0d5dd$var$UserMenu;
@@ -2319,11 +2325,11 @@ var $9734e84907c0d5dd$export$2e2bcd8739ae039 = $9734e84907c0d5dd$var$UserMenu;
 
 
 const $84db3891236a263f$var$useCheckAuthenticated = (message)=>{
-    const { identity: identity, isLoading: isLoading } = (0, $2O4Ek$reactadmin.useGetIdentity)();
-    const notify = (0, $2O4Ek$reactadmin.useNotify)();
-    const redirect = (0, $2O4Ek$reactadmin.useRedirect)();
-    const location = (0, $2O4Ek$reactrouterdom.useLocation)();
-    (0, $2O4Ek$react.useEffect)(()=>{
+    const { identity: identity, isLoading: isLoading } = (0, $4Uj5b$reactadmin.useGetIdentity)();
+    const notify = (0, $4Uj5b$reactadmin.useNotify)();
+    const redirect = (0, $4Uj5b$reactadmin.useRedirect)();
+    const location = (0, $4Uj5b$reactrouterdom.useLocation)();
+    (0, $4Uj5b$react.useEffect)(()=>{
         if (!isLoading && !identity?.id) {
             notify(message || "ra.auth.auth_check_error", {
                 type: "error"
@@ -2358,12 +2364,12 @@ const $80da6dcda9baa28b$var$alreadyFetchedPermissions = {
 // Fork of usePermissionsOptimized, with a refetch option
 const $80da6dcda9baa28b$var$usePermissionsWithRefetch = (params = $80da6dcda9baa28b$var$emptyParams)=>{
     const key = JSON.stringify(params);
-    const [state, setState] = (0, $2O4Ek$reactadmin.useSafeSetState)({
+    const [state, setState] = (0, $4Uj5b$reactadmin.useSafeSetState)({
         permissions: $80da6dcda9baa28b$var$alreadyFetchedPermissions[key]
     });
-    const getPermissions = (0, $2O4Ek$reactadmin.useGetPermissions)();
-    const fetchPermissions = (0, $2O4Ek$react.useCallback)(()=>getPermissions(params).then((permissions)=>{
-            if (!(0, ($parcel$interopDefault($2O4Ek$lodashisEqual)))(permissions, state.permissions)) {
+    const getPermissions = (0, $4Uj5b$reactadmin.useGetPermissions)();
+    const fetchPermissions = (0, $4Uj5b$react.useCallback)(()=>getPermissions(params).then((permissions)=>{
+            if (!(0, ($parcel$interopDefault($4Uj5b$lodashisEqual)))(permissions, state.permissions)) {
                 $80da6dcda9baa28b$var$alreadyFetchedPermissions[key] = permissions;
                 setState({
                     permissions: permissions
@@ -2378,7 +2384,7 @@ const $80da6dcda9baa28b$var$usePermissionsWithRefetch = (params = $80da6dcda9baa
         params,
         getPermissions
     ]);
-    (0, $2O4Ek$react.useEffect)(()=>{
+    (0, $4Uj5b$react.useEffect)(()=>{
         fetchPermissions();
     }, [
         key

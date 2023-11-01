@@ -1,27 +1,27 @@
-import $4oW5r$jwtdecode from "jwt-decode";
-import $4oW5r$urljoin from "url-join";
-import {jsx as $4oW5r$jsx, jsxs as $4oW5r$jsxs, Fragment as $4oW5r$Fragment} from "react/jsx-runtime";
-import $4oW5r$react, {useEffect as $4oW5r$useEffect, useState as $4oW5r$useState, useCallback as $4oW5r$useCallback, useRef as $4oW5r$useRef, useMemo as $4oW5r$useMemo, forwardRef as $4oW5r$forwardRef} from "react";
-import {useResourceContext as $4oW5r$useResourceContext, Create as $4oW5r$Create, CreateActions as $4oW5r$CreateActions, useGetIdentity as $4oW5r$useGetIdentity, usePermissions as $4oW5r$usePermissions, useNotify as $4oW5r$useNotify, useRedirect as $4oW5r$useRedirect, useGetRecordId as $4oW5r$useGetRecordId, Edit as $4oW5r$Edit, useResourceDefinition as $4oW5r$useResourceDefinition, useRecordContext as $4oW5r$useRecordContext, usePermissionsOptimized as $4oW5r$usePermissionsOptimized, TopToolbar as $4oW5r$TopToolbar, ListButton as $4oW5r$ListButton, ShowButton as $4oW5r$ShowButton, Button as $4oW5r$Button, useTranslate as $4oW5r$useTranslate, useGetList as $4oW5r$useGetList, useDataProvider as $4oW5r$useDataProvider, Loading as $4oW5r$Loading, Error as $4oW5r$Error, useAuthProvider as $4oW5r$useAuthProvider, Toolbar as $4oW5r$Toolbar, SaveButton as $4oW5r$SaveButton, DeleteButton as $4oW5r$DeleteButton, EditButton as $4oW5r$EditButton, List as $4oW5r$List1, CreateButton as $4oW5r$CreateButton, ExportButton as $4oW5r$ExportButton, Show as $4oW5r$Show, useLogin as $4oW5r$useLogin, useSafeSetState as $4oW5r$useSafeSetState, useLocaleState as $4oW5r$useLocaleState, Form as $4oW5r$Form, TextInput as $4oW5r$TextInput, required as $4oW5r$required, email as $4oW5r$email, Notification as $4oW5r$Notification, Resource as $4oW5r$Resource, useUserMenu as $4oW5r$useUserMenu, UserMenu as $4oW5r$UserMenu, Logout as $4oW5r$Logout, useGetPermissions as $4oW5r$useGetPermissions} from "react-admin";
-import {useCreateContainer as $4oW5r$useCreateContainer} from "@semapps/semantic-data-provider";
-import $4oW5r$muiiconsmaterialShare from "@mui/icons-material/Share";
-import {Dialog as $4oW5r$Dialog, DialogTitle as $4oW5r$DialogTitle, DialogContent as $4oW5r$DialogContent, DialogActions as $4oW5r$DialogActions, TextField as $4oW5r$TextField, List as $4oW5r$List, ListItem as $4oW5r$ListItem, ListItemAvatar as $4oW5r$ListItemAvatar, Avatar as $4oW5r$Avatar, ListItemText as $4oW5r$ListItemText, ListItemSecondaryAction as $4oW5r$ListItemSecondaryAction, IconButton as $4oW5r$IconButton, Menu as $4oW5r$Menu, MenuItem as $4oW5r$MenuItem, ListItemIcon as $4oW5r$ListItemIcon, useMediaQuery as $4oW5r$useMediaQuery, DialogContentText as $4oW5r$DialogContentText, Button as $4oW5r$Button1, Card as $4oW5r$Card, Typography as $4oW5r$Typography, CardActions as $4oW5r$CardActions, CardContent as $4oW5r$CardContent, CircularProgress as $4oW5r$CircularProgress, LinearProgress as $4oW5r$LinearProgress, Box as $4oW5r$Box} from "@mui/material";
-import $4oW5r$muistylesmakeStyles from "@mui/styles/makeStyles";
-import $4oW5r$muimaterialAutocomplete from "@mui/material/Autocomplete";
-import $4oW5r$muiiconsmaterialPerson from "@mui/icons-material/Person";
-import {styled as $4oW5r$styled} from "@mui/system";
-import $4oW5r$muiiconsmaterialEdit from "@mui/icons-material/Edit";
-import $4oW5r$muiiconsmaterialCheck from "@mui/icons-material/Check";
-import $4oW5r$muiiconsmaterialPublic from "@mui/icons-material/Public";
-import $4oW5r$muiiconsmaterialVpnLock from "@mui/icons-material/VpnLock";
-import $4oW5r$muiiconsmaterialGroup from "@mui/icons-material/Group";
-import {useNavigate as $4oW5r$useNavigate, useSearchParams as $4oW5r$useSearchParams, Link as $4oW5r$Link, useLocation as $4oW5r$useLocation} from "react-router-dom";
-import {styled as $4oW5r$styled1} from "@mui/material/styles";
-import $4oW5r$muiiconsmaterialLock from "@mui/icons-material/Lock";
-import $4oW5r$speakingurl from "speakingurl";
-import {withStyles as $4oW5r$withStyles} from "@mui/styles";
-import $4oW5r$muiiconsmaterialAccountCircle from "@mui/icons-material/AccountCircle";
-import $4oW5r$lodashisEqual from "lodash/isEqual";
+import $1obPJ$jwtdecode from "jwt-decode";
+import $1obPJ$urljoin from "url-join";
+import {jsx as $1obPJ$jsx, jsxs as $1obPJ$jsxs, Fragment as $1obPJ$Fragment} from "react/jsx-runtime";
+import $1obPJ$react, {useEffect as $1obPJ$useEffect, useState as $1obPJ$useState, useCallback as $1obPJ$useCallback, useRef as $1obPJ$useRef, useMemo as $1obPJ$useMemo, forwardRef as $1obPJ$forwardRef} from "react";
+import {useResourceContext as $1obPJ$useResourceContext, Create as $1obPJ$Create, CreateActions as $1obPJ$CreateActions, useGetIdentity as $1obPJ$useGetIdentity, usePermissions as $1obPJ$usePermissions, useNotify as $1obPJ$useNotify, useRedirect as $1obPJ$useRedirect, useGetRecordId as $1obPJ$useGetRecordId, Edit as $1obPJ$Edit, useResourceDefinition as $1obPJ$useResourceDefinition, useRecordContext as $1obPJ$useRecordContext, usePermissionsOptimized as $1obPJ$usePermissionsOptimized, TopToolbar as $1obPJ$TopToolbar, ListButton as $1obPJ$ListButton, ShowButton as $1obPJ$ShowButton, Button as $1obPJ$Button, useTranslate as $1obPJ$useTranslate, useGetList as $1obPJ$useGetList, useDataProvider as $1obPJ$useDataProvider, Loading as $1obPJ$Loading, Error as $1obPJ$Error, useAuthProvider as $1obPJ$useAuthProvider, Toolbar as $1obPJ$Toolbar, SaveButton as $1obPJ$SaveButton, DeleteButton as $1obPJ$DeleteButton, EditButton as $1obPJ$EditButton, List as $1obPJ$List1, CreateButton as $1obPJ$CreateButton, ExportButton as $1obPJ$ExportButton, Show as $1obPJ$Show, useLogin as $1obPJ$useLogin, useSafeSetState as $1obPJ$useSafeSetState, useLocaleState as $1obPJ$useLocaleState, Form as $1obPJ$Form, TextInput as $1obPJ$TextInput, required as $1obPJ$required, email as $1obPJ$email, Notification as $1obPJ$Notification, Resource as $1obPJ$Resource, useUserMenu as $1obPJ$useUserMenu, UserMenu as $1obPJ$UserMenu, Logout as $1obPJ$Logout, useGetPermissions as $1obPJ$useGetPermissions} from "react-admin";
+import {useCreateContainer as $1obPJ$useCreateContainer} from "@semapps/semantic-data-provider";
+import $1obPJ$muiiconsmaterialShare from "@mui/icons-material/Share";
+import {Dialog as $1obPJ$Dialog, DialogTitle as $1obPJ$DialogTitle, DialogContent as $1obPJ$DialogContent, DialogActions as $1obPJ$DialogActions, TextField as $1obPJ$TextField, List as $1obPJ$List, ListItem as $1obPJ$ListItem, ListItemAvatar as $1obPJ$ListItemAvatar, Avatar as $1obPJ$Avatar, ListItemText as $1obPJ$ListItemText, ListItemSecondaryAction as $1obPJ$ListItemSecondaryAction, IconButton as $1obPJ$IconButton, Menu as $1obPJ$Menu, MenuItem as $1obPJ$MenuItem, ListItemIcon as $1obPJ$ListItemIcon, useMediaQuery as $1obPJ$useMediaQuery, DialogContentText as $1obPJ$DialogContentText, Button as $1obPJ$Button1, Card as $1obPJ$Card, Typography as $1obPJ$Typography, CardActions as $1obPJ$CardActions, CardContent as $1obPJ$CardContent, CircularProgress as $1obPJ$CircularProgress, LinearProgress as $1obPJ$LinearProgress, Box as $1obPJ$Box} from "@mui/material";
+import $1obPJ$muistylesmakeStyles from "@mui/styles/makeStyles";
+import $1obPJ$muimaterialAutocomplete from "@mui/material/Autocomplete";
+import $1obPJ$muiiconsmaterialPerson from "@mui/icons-material/Person";
+import {styled as $1obPJ$styled} from "@mui/system";
+import $1obPJ$muiiconsmaterialEdit from "@mui/icons-material/Edit";
+import $1obPJ$muiiconsmaterialCheck from "@mui/icons-material/Check";
+import $1obPJ$muiiconsmaterialPublic from "@mui/icons-material/Public";
+import $1obPJ$muiiconsmaterialVpnLock from "@mui/icons-material/VpnLock";
+import $1obPJ$muiiconsmaterialGroup from "@mui/icons-material/Group";
+import {useNavigate as $1obPJ$useNavigate, useSearchParams as $1obPJ$useSearchParams, Link as $1obPJ$Link, useLocation as $1obPJ$useLocation} from "react-router-dom";
+import {styled as $1obPJ$styled1} from "@mui/material/styles";
+import $1obPJ$muiiconsmaterialLock from "@mui/icons-material/Lock";
+import $1obPJ$speakingurl from "speakingurl";
+import {withStyles as $1obPJ$withStyles} from "@mui/styles";
+import $1obPJ$muiiconsmaterialAccountCircle from "@mui/icons-material/AccountCircle";
+import $1obPJ$lodashisEqual from "lodash/isEqual";
 
 
 
@@ -31,7 +31,7 @@ const $47a3fad69bcb0083$export$dca4f48302963835 = (value)=>!value ? undefined : 
     ];
 const $47a3fad69bcb0083$export$4450a74bced1b745 = (resourceUri)=>{
     const parsedUrl = new URL(resourceUri);
-    return (0, $4oW5r$urljoin)(parsedUrl.origin, "_acl", parsedUrl.pathname);
+    return (0, $1obPJ$urljoin)(parsedUrl.origin, "_acl", parsedUrl.pathname);
 };
 const $47a3fad69bcb0083$export$4d54b642c3d13c34 = (baseUri)=>({
         "@base": baseUri,
@@ -77,7 +77,7 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
             if (authType === $1d8606895ce3b768$var$AUTH_TYPE_LOCAL) {
                 const { username: username, password: password } = params;
                 try {
-                    const { json: json } = await dataProvider.fetch((0, $4oW5r$urljoin)(authServerUrl, "auth/login"), {
+                    const { json: json } = await dataProvider.fetch((0, $1obPJ$urljoin)(authServerUrl, "auth/login"), {
                         method: "POST",
                         body: JSON.stringify({
                             username: username.trim(),
@@ -97,7 +97,7 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
             } else {
                 let redirectUrl = `${new URL(window.location.href).origin}/login?login=true`;
                 if (params.redirect) redirectUrl += `&redirect=${encodeURIComponent(params.redirect)}`;
-                window.location.href = (0, $4oW5r$urljoin)(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
+                window.location.href = (0, $1obPJ$urljoin)(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
             }
         },
         handleCallback: async ()=>{
@@ -106,7 +106,7 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
             if (!token) throw new Error("auth.message.no_token_returned");
             let webId;
             try {
-                ({ webId: webId } = (0, $4oW5r$jwtdecode)(token));
+                ({ webId: webId } = (0, $1obPJ$jwtdecode)(token));
             } catch (e) {
                 throw new Error("auth.message.invalid_token_returned");
             }
@@ -122,7 +122,7 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
             if (authType === $1d8606895ce3b768$var$AUTH_TYPE_LOCAL) {
                 const { username: username, email: email, password: password, domain: domain, ...profileData } = params;
                 try {
-                    const { json: json } = await dataProvider.fetch((0, $4oW5r$urljoin)(authServerUrl, "auth/signup"), {
+                    const { json: json } = await dataProvider.fetch((0, $1obPJ$urljoin)(authServerUrl, "auth/signup"), {
                         method: "POST",
                         body: JSON.stringify({
                             username: username.trim(),
@@ -136,7 +136,7 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
                     });
                     const { token: token } = json;
                     localStorage.setItem("token", token);
-                    const { webId: webId } = (0, $4oW5r$jwtdecode)(token);
+                    const { webId: webId } = (0, $1obPJ$jwtdecode)(token);
                     return webId;
                 } catch (e) {
                     if (e.message === "email.already.exists") throw new Error("auth.message.user_email_exist");
@@ -146,7 +146,7 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
                 }
             } else {
                 const redirectUrl = `${new URL(window.location.href).origin}/login?login=true`;
-                window.location.href = (0, $4oW5r$urljoin)(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
+                window.location.href = (0, $1obPJ$urljoin)(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
             }
         },
         logout: async ()=>{
@@ -162,17 +162,17 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
                     {
                         const authServerUrl = await (0, $47a3fad69bcb0083$export$274217e117cdbc7b)(dataProvider);
                         const baseUrl = new URL(window.location.href).origin;
-                        return (0, $4oW5r$urljoin)(authServerUrl, `auth/logout?redirectUrl=${encodeURIComponent(`${(0, $4oW5r$urljoin)(baseUrl, "login")}?logout=true`)}`);
+                        return (0, $1obPJ$urljoin)(authServerUrl, `auth/logout?redirectUrl=${encodeURIComponent(`${(0, $1obPJ$urljoin)(baseUrl, "login")}?logout=true`)}`);
                     }
                 case $1d8606895ce3b768$var$AUTH_TYPE_POD:
                     {
                         const token = localStorage.getItem("token");
                         if (token) {
-                            const { webId: webId } = (0, $4oW5r$jwtdecode)(token);
+                            const { webId: webId } = (0, $1obPJ$jwtdecode)(token);
                             // Delete token but also any other value in local storage
                             localStorage.clear();
                             // Redirect to the POD provider
-                            return `${(0, $4oW5r$urljoin)(webId, "openApp")}?type=${encodeURIComponent("http://www.w3.org/ns/solid/interop#ApplicationRegistration")}`;
+                            return `${(0, $1obPJ$urljoin)(webId, "openApp")}?type=${encodeURIComponent("http://www.w3.org/ns/solid/interop#ApplicationRegistration")}`;
                         }
                         break;
                     }
@@ -250,7 +250,7 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
         getIdentity: async ()=>{
             const token = localStorage.getItem("token");
             if (token) {
-                const { webId: webId } = (0, $4oW5r$jwtdecode)(token);
+                const { webId: webId } = (0, $1obPJ$jwtdecode)(token);
                 const { json: webIdData } = await dataProvider.fetch(webId);
                 const { json: profileData } = webIdData.url ? await dataProvider.fetch(webIdData.url) : {};
                 return {
@@ -265,7 +265,7 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
             const { email: email } = params;
             const authServerUrl = await (0, $47a3fad69bcb0083$export$274217e117cdbc7b)(dataProvider);
             try {
-                await dataProvider.fetch((0, $4oW5r$urljoin)(authServerUrl, "auth/reset_password"), {
+                await dataProvider.fetch((0, $1obPJ$urljoin)(authServerUrl, "auth/reset_password"), {
                     method: "POST",
                     body: JSON.stringify({
                         email: email.trim()
@@ -282,7 +282,7 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
             const { email: email, token: token, password: password } = params;
             const authServerUrl = await (0, $47a3fad69bcb0083$export$274217e117cdbc7b)(dataProvider);
             try {
-                await dataProvider.fetch((0, $4oW5r$urljoin)(authServerUrl, "auth/new_password"), {
+                await dataProvider.fetch((0, $1obPJ$urljoin)(authServerUrl, "auth/new_password"), {
                     method: "POST",
                     body: JSON.stringify({
                         email: email.trim(),
@@ -300,7 +300,7 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
         getAccountSettings: async (params)=>{
             const authServerUrl = await (0, $47a3fad69bcb0083$export$274217e117cdbc7b)(dataProvider);
             try {
-                const { json: json } = await dataProvider.fetch((0, $4oW5r$urljoin)(authServerUrl, "auth/account"));
+                const { json: json } = await dataProvider.fetch((0, $1obPJ$urljoin)(authServerUrl, "auth/account"));
                 return json;
             } catch (e) {
                 throw new Error("auth.notification.get_settings_error");
@@ -310,7 +310,7 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
             const authServerUrl = await (0, $47a3fad69bcb0083$export$274217e117cdbc7b)(dataProvider);
             try {
                 const { email: email, currentPassword: currentPassword, newPassword: newPassword } = params;
-                await dataProvider.fetch((0, $4oW5r$urljoin)(authServerUrl, "auth/account"), {
+                await dataProvider.fetch((0, $1obPJ$urljoin)(authServerUrl, "auth/account"), {
                     method: "POST",
                     body: JSON.stringify({
                         currentPassword: currentPassword,
@@ -405,11 +405,11 @@ const $3ecc2efd72c45a68$export$edca379024d80309 = {
 
 
 const $abd69a52484f41d9$var$useCheckPermissions = (uri, mode, redirectUrl = "/")=>{
-    const { identity: identity, isLoading: isLoading } = (0, $4oW5r$useGetIdentity)();
-    const { permissions: permissions } = (0, $4oW5r$usePermissions)(uri);
-    const notify = (0, $4oW5r$useNotify)();
-    const redirect = (0, $4oW5r$useRedirect)();
-    (0, $4oW5r$useEffect)(()=>{
+    const { identity: identity, isLoading: isLoading } = (0, $1obPJ$useGetIdentity)();
+    const { permissions: permissions } = (0, $1obPJ$usePermissions)(uri);
+    const notify = (0, $1obPJ$useNotify)();
+    const redirect = (0, $1obPJ$useRedirect)();
+    (0, $1obPJ$useEffect)(()=>{
         if (!isLoading && identity && permissions && !permissions.some((p)=>(0, $3ecc2efd72c45a68$export$cae945d60b6cbe50)[mode].includes(p["acl:mode"]))) {
             notify((0, $3ecc2efd72c45a68$export$12e6e8e71d10a4bb)[mode], {
                 type: "error"
@@ -429,15 +429,15 @@ var $abd69a52484f41d9$export$2e2bcd8739ae039 = $abd69a52484f41d9$var$useCheckPer
 
 
 const $f2c5683e04dee28c$var$CreateWithPermissions = (props)=>{
-    const resource = (0, $4oW5r$useResourceContext)();
-    const createContainerUri = (0, $4oW5r$useCreateContainer)(resource);
+    const resource = (0, $1obPJ$useResourceContext)();
+    const createContainerUri = (0, $1obPJ$useCreateContainer)(resource);
     (0, $abd69a52484f41d9$export$2e2bcd8739ae039)(createContainerUri, "create");
-    return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Create), {
+    return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Create), {
         ...props
     });
 };
 $f2c5683e04dee28c$var$CreateWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$CreateActions), {})
+    actions: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$CreateActions), {})
 };
 var $f2c5683e04dee28c$export$2e2bcd8739ae039 = $f2c5683e04dee28c$var$CreateWithPermissions;
 
@@ -466,7 +466,7 @@ var $f2c5683e04dee28c$export$2e2bcd8739ae039 = $f2c5683e04dee28c$var$CreateWithP
 
 
 
-const $38698ff0e415f88b$var$useStyles = (0, $4oW5r$muistylesmakeStyles)(()=>({
+const $38698ff0e415f88b$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
         list: {
             padding: 0,
             width: "100%"
@@ -477,11 +477,11 @@ const $38698ff0e415f88b$var$useStyles = (0, $4oW5r$muistylesmakeStyles)(()=>({
     }));
 const $38698ff0e415f88b$var$AddPermissionsForm = ({ agents: agents, addPermission: addPermission })=>{
     const classes = $38698ff0e415f88b$var$useStyles();
-    const translate = (0, $4oW5r$useTranslate)();
-    const [value, setValue] = (0, $4oW5r$useState)(null);
-    const [inputValue, setInputValue] = (0, $4oW5r$useState)("");
-    const [options, setOptions] = (0, $4oW5r$useState)([]);
-    const { data: data } = (0, $4oW5r$useGetList)("Person", {
+    const translate = (0, $1obPJ$useTranslate)();
+    const [value, setValue] = (0, $1obPJ$useState)(null);
+    const [inputValue, setInputValue] = (0, $1obPJ$useState)("");
+    const [options, setOptions] = (0, $1obPJ$useState)([]);
+    const { data: data } = (0, $1obPJ$useGetList)("Person", {
         pagination: {
             page: 1,
             perPage: 100
@@ -496,12 +496,12 @@ const $38698ff0e415f88b$var$AddPermissionsForm = ({ agents: agents, addPermissio
     }, {
         enabled: inputValue.length > 0
     });
-    (0, $4oW5r$useEffect)(()=>{
+    (0, $1obPJ$useEffect)(()=>{
         setOptions(data?.length > 0 ? Object.values(data) : []);
     }, [
         data
     ]);
-    return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muimaterialAutocomplete), {
+    return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$muimaterialAutocomplete), {
         classes: {
             option: classes.option
         },
@@ -524,27 +524,27 @@ const $38698ff0e415f88b$var$AddPermissionsForm = ({ agents: agents, addPermissio
         onInputChange: (event, newInputValue)=>{
             setInputValue(newInputValue);
         },
-        renderInput: (params)=>/*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$TextField), {
+        renderInput: (params)=>/*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextField), {
                 ...params,
                 label: translate("auth.input.agent_select"),
                 variant: "filled",
                 margin: "dense",
                 fullWidth: true
             }),
-        renderOption: (props, option)=>/*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$List), {
+        renderOption: (props, option)=>/*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$List), {
                 dense: true,
                 className: classes.list,
                 ...props,
-                children: /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$ListItem), {
+                children: /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$ListItem), {
                     button: true,
                     children: [
-                        /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListItemAvatar), {
-                            children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Avatar), {
+                        /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ListItemAvatar), {
+                            children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Avatar), {
                                 src: option.image,
-                                children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialPerson), {})
+                                children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$muiiconsmaterialPerson), {})
                             })
                         }),
-                        /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListItemText), {
+                        /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ListItemText), {
                             primary: option["pair:label"]
                         })
                     ]
@@ -577,11 +577,11 @@ var $38698ff0e415f88b$export$2e2bcd8739ae039 = $38698ff0e415f88b$var$AddPermissi
 const $2a38cfa58fd59a9e$var$AgentIcon = ({ agent: agent })=>{
     switch(agent.predicate){
         case 0, $3ecc2efd72c45a68$export$2703254089a859eb:
-            return agent.id === (0, $3ecc2efd72c45a68$export$83ae1bc0992a6335) ? /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialPublic), {}) : /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialVpnLock), {});
+            return agent.id === (0, $3ecc2efd72c45a68$export$83ae1bc0992a6335) ? /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$muiiconsmaterialPublic), {}) : /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$muiiconsmaterialVpnLock), {});
         case 0, $3ecc2efd72c45a68$export$97a08a1bb7ee0545:
-            return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialPerson), {});
+            return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$muiiconsmaterialPerson), {});
         case 0, $3ecc2efd72c45a68$export$f07ccbe0773f2c7:
-            return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialGroup), {});
+            return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$muiiconsmaterialGroup), {});
         default:
             throw new Error(`Unknown agent predicate: ${agent.predicate}`);
     }
@@ -589,7 +589,7 @@ const $2a38cfa58fd59a9e$var$AgentIcon = ({ agent: agent })=>{
 var $2a38cfa58fd59a9e$export$2e2bcd8739ae039 = $2a38cfa58fd59a9e$var$AgentIcon;
 
 
-const $e8b8e6301988112e$var$useStyles = (0, $4oW5r$muistylesmakeStyles)(()=>({
+const $e8b8e6301988112e$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
         listItem: {
             paddingLeft: 4,
             paddingRight: 36
@@ -609,13 +609,13 @@ const $e8b8e6301988112e$var$useStyles = (0, $4oW5r$muistylesmakeStyles)(()=>({
     }));
 const $e8b8e6301988112e$var$AgentItem = ({ isContainer: isContainer, agent: agent, addPermission: addPermission, removePermission: removePermission })=>{
     const classes = $e8b8e6301988112e$var$useStyles();
-    const translate = (0, $4oW5r$useTranslate)();
-    const dataProvider = (0, $4oW5r$useDataProvider)();
-    const [anchorEl, setAnchorEl] = (0, $4oW5r$react).useState(null);
-    const [user, setUser] = (0, $4oW5r$useState)();
-    const [loading, setLoading] = (0, $4oW5r$useState)(true);
-    const [error, setError] = (0, $4oW5r$useState)();
-    (0, $4oW5r$useEffect)(()=>{
+    const translate = (0, $1obPJ$useTranslate)();
+    const dataProvider = (0, $1obPJ$useDataProvider)();
+    const [anchorEl, setAnchorEl] = (0, $1obPJ$react).useState(null);
+    const [user, setUser] = (0, $1obPJ$useState)();
+    const [loading, setLoading] = (0, $1obPJ$useState)(true);
+    const [error, setError] = (0, $1obPJ$useState)();
+    (0, $1obPJ$useEffect)(()=>{
         if (agent.predicate === (0, $3ecc2efd72c45a68$export$97a08a1bb7ee0545)) dataProvider.getOne("Person", {
             id: agent.id
         }).then(({ data: data })=>{
@@ -635,52 +635,52 @@ const $e8b8e6301988112e$var$AgentItem = ({ isContainer: isContainer, agent: agen
     const openMenu = (event)=>setAnchorEl(event.currentTarget);
     const closeMenu = ()=>setAnchorEl(null);
     const labels = isContainer ? (0, $3ecc2efd72c45a68$export$edca379024d80309) : (0, $3ecc2efd72c45a68$export$2e9571c4ccdeb6a9);
-    if (loading) return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Loading), {});
-    if (error) return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Error), {});
-    return /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$ListItem), {
+    if (loading) return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Loading), {});
+    if (error) return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Error), {});
+    return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$ListItem), {
         className: classes.listItem,
         children: [
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListItemAvatar), {
-                children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Avatar), {
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ListItemAvatar), {
+                children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Avatar), {
                     src: user?.image,
-                    children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $2a38cfa58fd59a9e$export$2e2bcd8739ae039), {
+                    children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $2a38cfa58fd59a9e$export$2e2bcd8739ae039), {
                         agent: agent
                     })
                 })
             }),
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListItemText), {
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ListItemText), {
                 className: classes.primaryText,
                 primary: user ? user["pair:label"] : translate(agent.id === (0, $3ecc2efd72c45a68$export$83ae1bc0992a6335) ? "auth.agent.anonymous" : "auth.agent.authenticated")
             }),
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListItemText), {
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ListItemText), {
                 className: classes.secondaryText,
                 primary: agent.permissions && agent.permissions.map((p)=>translate(labels[p])).join(", ")
             }),
-            /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$ListItemSecondaryAction), {
+            /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$ListItemSecondaryAction), {
                 children: [
-                    /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$IconButton), {
+                    /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$IconButton), {
                         onClick: openMenu,
                         size: "large",
-                        children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialEdit), {})
+                        children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$muiiconsmaterialEdit), {})
                     }),
-                    /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Menu), {
+                    /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Menu), {
                         anchorEl: anchorEl,
                         keepMounted: true,
                         open: Boolean(anchorEl),
                         onClose: closeMenu,
                         children: Object.entries(labels).map(([rightKey, rightLabel])=>{
                             const hasPermission = agent.permissions && agent.permissions.includes(rightKey);
-                            return /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$MenuItem), {
+                            return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$MenuItem), {
                                 onClick: ()=>{
                                     if (hasPermission) removePermission(agent.id, agent.predicate, rightKey);
                                     else addPermission(agent.id, agent.predicate, rightKey);
                                     closeMenu();
                                 },
                                 children: [
-                                    /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListItemIcon), {
-                                        children: hasPermission ? /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialCheck), {}) : null
+                                    /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ListItemIcon), {
+                                        children: hasPermission ? /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$muiiconsmaterialCheck), {}) : null
                                     }),
-                                    /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListItemText), {
+                                    /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ListItemText), {
                                         primary: translate(rightLabel)
                                     })
                                 ]
@@ -695,15 +695,15 @@ const $e8b8e6301988112e$var$AgentItem = ({ isContainer: isContainer, agent: agen
 var $e8b8e6301988112e$export$2e2bcd8739ae039 = $e8b8e6301988112e$var$AgentItem;
 
 
-const $c8acba773a123777$var$StyledList = (0, $4oW5r$styled)((0, $4oW5r$List))(({ theme: theme })=>({
+const $c8acba773a123777$var$StyledList = (0, $1obPJ$styled)((0, $1obPJ$List))(({ theme: theme })=>({
         width: "100%",
         maxWidth: "100%",
         backgroundColor: theme.palette.background.paper
     }));
 const $c8acba773a123777$var$EditPermissionsForm = ({ isContainer: isContainer, agents: agents, addPermission: addPermission, removePermission: removePermission })=>{
-    return /*#__PURE__*/ (0, $4oW5r$jsx)($c8acba773a123777$var$StyledList, {
+    return /*#__PURE__*/ (0, $1obPJ$jsx)($c8acba773a123777$var$StyledList, {
         dense: true,
-        children: Object.entries(agents).map(([agentId, agent])=>/*#__PURE__*/ (0, $4oW5r$jsx)((0, $e8b8e6301988112e$export$2e2bcd8739ae039), {
+        children: Object.entries(agents).map(([agentId, agent])=>/*#__PURE__*/ (0, $1obPJ$jsx)((0, $e8b8e6301988112e$export$2e2bcd8739ae039), {
                 isContainer: isContainer,
                 agent: agent,
                 addPermission: addPermission,
@@ -719,11 +719,11 @@ var $c8acba773a123777$export$2e2bcd8739ae039 = $c8acba773a123777$var$EditPermiss
 
 
 const $7ad577d9c9c71db0$var$useAgents = (uri)=>{
-    const { permissions: permissions } = (0, $4oW5r$usePermissions)(uri);
-    const authProvider = (0, $4oW5r$useAuthProvider)();
-    const [agents, setAgents] = (0, $4oW5r$useState)({});
+    const { permissions: permissions } = (0, $1obPJ$usePermissions)(uri);
+    const authProvider = (0, $1obPJ$useAuthProvider)();
+    const [agents, setAgents] = (0, $1obPJ$useState)({});
     // Format list of authorized agents, based on the permissions returned for the resource
-    (0, $4oW5r$useEffect)(()=>{
+    (0, $1obPJ$useEffect)(()=>{
         const result = {
             [(0, $3ecc2efd72c45a68$export$83ae1bc0992a6335)]: {
                 id: (0, $3ecc2efd72c45a68$export$83ae1bc0992a6335),
@@ -757,7 +757,7 @@ const $7ad577d9c9c71db0$var$useAgents = (uri)=>{
     }, [
         permissions
     ]);
-    const addPermission = (0, $4oW5r$useCallback)((agentId, predicate, mode)=>{
+    const addPermission = (0, $1obPJ$useCallback)((agentId, predicate, mode)=>{
         const prevAgents = {
             ...agents
         };
@@ -784,7 +784,7 @@ const $7ad577d9c9c71db0$var$useAgents = (uri)=>{
         uri,
         authProvider
     ]);
-    const removePermission = (0, $4oW5r$useCallback)((agentId, predicate, mode)=>{
+    const removePermission = (0, $1obPJ$useCallback)((agentId, predicate, mode)=>{
         const prevAgents = {
             ...agents
         };
@@ -815,7 +815,7 @@ const $7ad577d9c9c71db0$var$useAgents = (uri)=>{
 var $7ad577d9c9c71db0$export$2e2bcd8739ae039 = $7ad577d9c9c71db0$var$useAgents;
 
 
-const $827412a5ced0d5cd$var$useStyles = (0, $4oW5r$muistylesmakeStyles)(()=>({
+const $827412a5ced0d5cd$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
         title: {
             paddingBottom: 8
         },
@@ -834,36 +834,36 @@ const $827412a5ced0d5cd$var$useStyles = (0, $4oW5r$muistylesmakeStyles)(()=>({
     }));
 const $827412a5ced0d5cd$var$PermissionsDialog = ({ open: open, onClose: onClose, uri: uri, isContainer: isContainer })=>{
     const classes = $827412a5ced0d5cd$var$useStyles();
-    const translate = (0, $4oW5r$useTranslate)();
+    const translate = (0, $1obPJ$useTranslate)();
     const { agents: agents, addPermission: addPermission, removePermission: removePermission } = (0, $7ad577d9c9c71db0$export$2e2bcd8739ae039)(uri);
-    return /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Dialog), {
+    return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Dialog), {
         fullWidth: true,
         open: open,
         onClose: onClose,
         children: [
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$DialogTitle), {
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$DialogTitle), {
                 className: classes.title,
                 children: translate(isContainer ? "auth.dialog.container_permissions" : "auth.dialog.resource_permissions")
             }),
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$DialogContent), {
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$DialogContent), {
                 className: classes.addForm,
-                children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $38698ff0e415f88b$export$2e2bcd8739ae039), {
+                children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $38698ff0e415f88b$export$2e2bcd8739ae039), {
                     agents: agents,
                     addPermission: addPermission
                 })
             }),
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$DialogContent), {
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$DialogContent), {
                 className: classes.listForm,
-                children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $c8acba773a123777$export$2e2bcd8739ae039), {
+                children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $c8acba773a123777$export$2e2bcd8739ae039), {
                     isContainer: isContainer,
                     agents: agents,
                     addPermission: addPermission,
                     removePermission: removePermission
                 })
             }),
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$DialogActions), {
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$DialogActions), {
                 className: classes.actions,
-                children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Button), {
+                children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Button), {
                     label: "ra.action.close",
                     variant: "text",
                     onClick: onClose
@@ -876,19 +876,19 @@ var $827412a5ced0d5cd$export$2e2bcd8739ae039 = $827412a5ced0d5cd$var$Permissions
 
 
 const $7dac2771cc5eb38b$var$PermissionsButton = ({ isContainer: isContainer })=>{
-    const record = (0, $4oW5r$useRecordContext)();
-    const resource = (0, $4oW5r$useResourceContext)();
-    const [showDialog, setShowDialog] = (0, $4oW5r$useState)(false);
-    const createContainer = (0, $4oW5r$useCreateContainer)(resource);
+    const record = (0, $1obPJ$useRecordContext)();
+    const resource = (0, $1obPJ$useResourceContext)();
+    const [showDialog, setShowDialog] = (0, $1obPJ$useState)(false);
+    const createContainer = (0, $1obPJ$useCreateContainer)(resource);
     const uri = isContainer ? createContainer : record.id || record["@id"];
-    return /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Fragment), {
+    return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Fragment), {
         children: [
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Button), {
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Button), {
                 label: "auth.action.permissions",
                 onClick: ()=>setShowDialog(true),
-                children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialShare), {})
+                children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$muiiconsmaterialShare), {})
             }),
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $827412a5ced0d5cd$export$2e2bcd8739ae039), {
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $827412a5ced0d5cd$export$2e2bcd8739ae039), {
                 uri: uri,
                 isContainer: isContainer,
                 open: showDialog,
@@ -905,14 +905,14 @@ var $7dac2771cc5eb38b$export$2e2bcd8739ae039 = $7dac2771cc5eb38b$var$Permissions
 
 
 const $62be5dcee9954341$var$EditActionsWithPermissions = ()=>{
-    const { hasList: hasList, hasShow: hasShow } = (0, $4oW5r$useResourceDefinition)();
-    const record = (0, $4oW5r$useRecordContext)();
-    const { permissions: permissions } = (0, $4oW5r$usePermissionsOptimized)(record?.id);
-    return /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$TopToolbar), {
+    const { hasList: hasList, hasShow: hasShow } = (0, $1obPJ$useResourceDefinition)();
+    const record = (0, $1obPJ$useRecordContext)();
+    const { permissions: permissions } = (0, $1obPJ$usePermissionsOptimized)(record?.id);
+    return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$TopToolbar), {
         children: [
-            hasList && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListButton), {}),
-            hasShow && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ShowButton), {}),
-            !!permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $7dac2771cc5eb38b$export$2e2bcd8739ae039), {})
+            hasList && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ListButton), {}),
+            hasShow && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ShowButton), {}),
+            !!permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $7dac2771cc5eb38b$export$2e2bcd8739ae039), {})
         ]
     });
 };
@@ -928,9 +928,9 @@ var $62be5dcee9954341$export$2e2bcd8739ae039 = $62be5dcee9954341$var$EditActions
 
 
 const $7efdcbe4be05bfd5$var$DeleteButtonWithPermissions = (props)=>{
-    const recordId = (0, $4oW5r$useGetRecordId)();
-    const { permissions: permissions, isLoading: isLoading } = (0, $4oW5r$usePermissions)(recordId);
-    if (!isLoading && permissions?.some((p)=>(0, $3ecc2efd72c45a68$export$ac7b0367c0f9031e).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$DeleteButton), {
+    const recordId = (0, $1obPJ$useGetRecordId)();
+    const { permissions: permissions, isLoading: isLoading } = (0, $1obPJ$usePermissions)(recordId);
+    if (!isLoading && permissions?.some((p)=>(0, $3ecc2efd72c45a68$export$ac7b0367c0f9031e).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$DeleteButton), {
         ...props
     });
     return null;
@@ -938,7 +938,7 @@ const $7efdcbe4be05bfd5$var$DeleteButtonWithPermissions = (props)=>{
 var $7efdcbe4be05bfd5$export$2e2bcd8739ae039 = $7efdcbe4be05bfd5$var$DeleteButtonWithPermissions;
 
 
-const $701198930c0b0c72$var$useStyles = (0, $4oW5r$muistylesmakeStyles)(()=>({
+const $701198930c0b0c72$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
         toolbar: {
             flex: 1,
             display: "flex",
@@ -947,12 +947,12 @@ const $701198930c0b0c72$var$useStyles = (0, $4oW5r$muistylesmakeStyles)(()=>({
     }));
 const $701198930c0b0c72$var$EditToolbarWithPermissions = (props)=>{
     const classes = $701198930c0b0c72$var$useStyles();
-    return /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Toolbar), {
+    return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Toolbar), {
         ...props,
         className: classes.toolbar,
         children: [
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$SaveButton), {}),
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $7efdcbe4be05bfd5$export$2e2bcd8739ae039), {
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$SaveButton), {}),
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $7efdcbe4be05bfd5$export$2e2bcd8739ae039), {
                 mutationMode: "undoable"
             })
         ]
@@ -963,19 +963,19 @@ var $701198930c0b0c72$export$2e2bcd8739ae039 = $701198930c0b0c72$var$EditToolbar
 
 
 const $28fa6ad821327921$var$EditWithPermissions = (props)=>{
-    const recordId = (0, $4oW5r$useGetRecordId)();
+    const recordId = (0, $1obPJ$useGetRecordId)();
     (0, $abd69a52484f41d9$export$2e2bcd8739ae039)(recordId, "edit");
-    return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Edit), {
+    return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Edit), {
         ...props,
-        children: /*#__PURE__*/ (0, $4oW5r$react).cloneElement(props.children, {
-            toolbar: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $701198930c0b0c72$export$2e2bcd8739ae039), {}),
+        children: /*#__PURE__*/ (0, $1obPJ$react).cloneElement(props.children, {
+            toolbar: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $701198930c0b0c72$export$2e2bcd8739ae039), {}),
             // Allow to override toolbar
             ...props.children.props
         })
     });
 };
 $28fa6ad821327921$var$EditWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $62be5dcee9954341$export$2e2bcd8739ae039), {})
+    actions: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $62be5dcee9954341$export$2e2bcd8739ae039), {})
 };
 var $28fa6ad821327921$export$2e2bcd8739ae039 = $28fa6ad821327921$var$EditWithPermissions;
 
@@ -987,9 +987,9 @@ var $28fa6ad821327921$export$2e2bcd8739ae039 = $28fa6ad821327921$var$EditWithPer
 
 
 const $c78c2d7e17f60b2f$var$EditButtonWithPermissions = (props)=>{
-    const recordId = (0, $4oW5r$useGetRecordId)();
-    const { permissions: permissions, isLoading: isLoading } = (0, $4oW5r$usePermissions)(recordId);
-    if (!isLoading && permissions?.some((p)=>(0, $3ecc2efd72c45a68$export$b9d0f5f3ab5e453b).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$EditButton), {
+    const recordId = (0, $1obPJ$useGetRecordId)();
+    const { permissions: permissions, isLoading: isLoading } = (0, $1obPJ$usePermissions)(recordId);
+    if (!isLoading && permissions?.some((p)=>(0, $3ecc2efd72c45a68$export$b9d0f5f3ab5e453b).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$EditButton), {
         ...props
     });
     return null;
@@ -1010,30 +1010,30 @@ var $c78c2d7e17f60b2f$export$2e2bcd8739ae039 = $c78c2d7e17f60b2f$var$EditButtonW
 
 // Do not show Export and Refresh buttons on mobile
 const $e6071424a1ba88d9$var$ListActionsWithPermissions = ({ bulkActions: bulkActions, sort: sort, displayedFilters: displayedFilters, exporter: exporter, filters: filters, filterValues: filterValues, onUnselectItems: onUnselectItems, selectedIds: selectedIds, showFilter: showFilter, total: total })=>{
-    const resource = (0, $4oW5r$useResourceContext)();
-    const xs = (0, $4oW5r$useMediaQuery)((theme)=>theme.breakpoints.down("xs"));
-    const resourceDefinition = (0, $4oW5r$useResourceDefinition)();
-    const createContainerUri = (0, $4oW5r$useCreateContainer)(resource);
-    const { permissions: permissions } = (0, $4oW5r$usePermissions)(createContainerUri);
-    return /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$TopToolbar), {
+    const resource = (0, $1obPJ$useResourceContext)();
+    const xs = (0, $1obPJ$useMediaQuery)((theme)=>theme.breakpoints.down("xs"));
+    const resourceDefinition = (0, $1obPJ$useResourceDefinition)();
+    const createContainerUri = (0, $1obPJ$useCreateContainer)(resource);
+    const { permissions: permissions } = (0, $1obPJ$usePermissions)(createContainerUri);
+    return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$TopToolbar), {
         children: [
-            filters && /*#__PURE__*/ (0, $4oW5r$react).cloneElement(filters, {
+            filters && /*#__PURE__*/ (0, $1obPJ$react).cloneElement(filters, {
                 showFilter: showFilter,
                 displayedFilters: displayedFilters,
                 filterValues: filterValues,
                 context: "button"
             }),
-            resourceDefinition.hasCreate && permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$65615a101bd6f5ca).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$CreateButton), {}),
-            permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $7dac2771cc5eb38b$export$2e2bcd8739ae039), {
+            resourceDefinition.hasCreate && permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$65615a101bd6f5ca).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$CreateButton), {}),
+            permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $7dac2771cc5eb38b$export$2e2bcd8739ae039), {
                 isContainer: true
             }),
-            !xs && exporter !== false && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ExportButton), {
+            !xs && exporter !== false && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ExportButton), {
                 disabled: total === 0,
                 sort: sort,
                 filter: filterValues,
                 exporter: exporter
             }),
-            bulkActions && /*#__PURE__*/ (0, $4oW5r$react).cloneElement(bulkActions, {
+            bulkActions && /*#__PURE__*/ (0, $1obPJ$react).cloneElement(bulkActions, {
                 filterValues: filterValues,
                 selectedIds: selectedIds,
                 onUnselectItems: onUnselectItems
@@ -1044,11 +1044,11 @@ const $e6071424a1ba88d9$var$ListActionsWithPermissions = ({ bulkActions: bulkAct
 var $e6071424a1ba88d9$export$2e2bcd8739ae039 = $e6071424a1ba88d9$var$ListActionsWithPermissions;
 
 
-const $a4ded8260cc90dad$var$ListWithPermissions = (props)=>/*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$List1), {
+const $a4ded8260cc90dad$var$ListWithPermissions = (props)=>/*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$List1), {
         ...props
     });
 $a4ded8260cc90dad$var$ListWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $e6071424a1ba88d9$export$2e2bcd8739ae039), {})
+    actions: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $e6071424a1ba88d9$export$2e2bcd8739ae039), {})
 };
 var $a4ded8260cc90dad$export$2e2bcd8739ae039 = $a4ded8260cc90dad$var$ListWithPermissions;
 
@@ -1063,14 +1063,14 @@ var $a4ded8260cc90dad$export$2e2bcd8739ae039 = $a4ded8260cc90dad$var$ListWithPer
 
 
 const $d1f54fc03225e8ee$var$ShowActionsWithPermissions = ()=>{
-    const { hasList: hasList, hasEdit: hasEdit } = (0, $4oW5r$useResourceDefinition)();
-    const record = (0, $4oW5r$useRecordContext)();
-    const { permissions: permissions } = (0, $4oW5r$usePermissions)(record?.id);
-    return /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$TopToolbar), {
+    const { hasList: hasList, hasEdit: hasEdit } = (0, $1obPJ$useResourceDefinition)();
+    const record = (0, $1obPJ$useRecordContext)();
+    const { permissions: permissions } = (0, $1obPJ$usePermissions)(record?.id);
+    return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$TopToolbar), {
         children: [
-            hasList && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListButton), {}),
-            hasEdit && permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$b9d0f5f3ab5e453b).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$EditButton), {}),
-            permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $7dac2771cc5eb38b$export$2e2bcd8739ae039), {})
+            hasList && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ListButton), {}),
+            hasEdit && permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$b9d0f5f3ab5e453b).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$EditButton), {}),
+            permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $7dac2771cc5eb38b$export$2e2bcd8739ae039), {})
         ]
     });
 };
@@ -1079,14 +1079,14 @@ var $d1f54fc03225e8ee$export$2e2bcd8739ae039 = $d1f54fc03225e8ee$var$ShowActions
 
 
 const $561bb436d5af917c$var$ShowWithPermissions = (props)=>{
-    const recordId = (0, $4oW5r$useGetRecordId)();
+    const recordId = (0, $1obPJ$useGetRecordId)();
     (0, $abd69a52484f41d9$export$2e2bcd8739ae039)(recordId, "show");
-    return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Show), {
+    return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Show), {
         ...props
     });
 };
 $561bb436d5af917c$var$ShowWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $d1f54fc03225e8ee$export$2e2bcd8739ae039), {})
+    actions: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $d1f54fc03225e8ee$export$2e2bcd8739ae039), {})
 };
 var $561bb436d5af917c$export$2e2bcd8739ae039 = $561bb436d5af917c$var$ShowWithPermissions;
 
@@ -1098,28 +1098,28 @@ var $561bb436d5af917c$export$2e2bcd8739ae039 = $561bb436d5af917c$var$ShowWithPer
 
 
 const $c2eef7602bbbff5e$var$AuthDialog = ({ open: open, onClose: onClose, title: title, message: message, redirect: redirect, ...rest })=>{
-    const login = (0, $4oW5r$useLogin)();
-    const translate = (0, $4oW5r$useTranslate)();
-    return /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Dialog), {
+    const login = (0, $1obPJ$useLogin)();
+    const translate = (0, $1obPJ$useTranslate)();
+    return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Dialog), {
         open: open,
         onClose: onClose,
         ...rest,
         children: [
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$DialogTitle), {
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$DialogTitle), {
                 children: translate(title)
             }),
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$DialogContent), {
-                children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$DialogContentText), {
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$DialogContent), {
+                children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$DialogContentText), {
                     children: translate(message)
                 })
             }),
-            /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$DialogActions), {
+            /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$DialogActions), {
                 children: [
-                    /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Button1), {
+                    /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Button1), {
                         onClick: onClose,
                         children: translate("ra.action.cancel")
                     }),
-                    /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Button1), {
+                    /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Button1), {
                         onClick: ()=>login({
                                 redirect: redirect || window.location.pathname + window.location.search
                             }),
@@ -1150,16 +1150,16 @@ var $c2eef7602bbbff5e$export$2e2bcd8739ae039 = $c2eef7602bbbff5e$var$AuthDialog;
 const $479961b7e298304b$var$delay = async (t)=>new Promise((resolve)=>setTimeout(resolve, t));
 // Inspired from https://github.com/marmelab/react-admin/blob/master/packages/ra-ui-materialui/src/auth/Login.tsx
 const $479961b7e298304b$var$SsoLoginPage = ({ children: children, backgroundImage: backgroundImage, buttons: buttons, userResource: userResource, propertiesExist: propertiesExist, text: text, ...rest })=>{
-    const containerRef = (0, $4oW5r$useRef)();
+    const containerRef = (0, $1obPJ$useRef)();
     let backgroundImageLoaded = false;
-    const navigate = (0, $4oW5r$useNavigate)();
-    const [searchParams] = (0, $4oW5r$useSearchParams)();
-    const { identity: identity, isLoading: isLoading } = (0, $4oW5r$useGetIdentity)();
-    const notify = (0, $4oW5r$useNotify)();
-    const login = (0, $4oW5r$useLogin)();
-    const dataProvider = (0, $4oW5r$useDataProvider)();
-    const authProvider = (0, $4oW5r$useAuthProvider)();
-    (0, $4oW5r$useEffect)(()=>{
+    const navigate = (0, $1obPJ$useNavigate)();
+    const [searchParams] = (0, $1obPJ$useSearchParams)();
+    const { identity: identity, isLoading: isLoading } = (0, $1obPJ$useGetIdentity)();
+    const notify = (0, $1obPJ$useNotify)();
+    const login = (0, $1obPJ$useLogin)();
+    const dataProvider = (0, $1obPJ$useDataProvider)();
+    const authProvider = (0, $1obPJ$useAuthProvider)();
+    (0, $1obPJ$useEffect)(()=>{
         if (!isLoading && identity?.id) // Already authenticated, redirect to the home page
         navigate(searchParams.get("redirect") || "/");
     }, [
@@ -1168,7 +1168,7 @@ const $479961b7e298304b$var$SsoLoginPage = ({ children: children, backgroundImag
         navigate,
         searchParams
     ]);
-    (0, $4oW5r$useEffect)(()=>{
+    (0, $1obPJ$useEffect)(()=>{
         (async ()=>{
             if (searchParams.has("login")) {
                 if (searchParams.has("error")) {
@@ -1181,7 +1181,7 @@ const $479961b7e298304b$var$SsoLoginPage = ({ children: children, backgroundImag
                     });
                 } else if (searchParams.has("token")) {
                     const token = searchParams.get("token");
-                    const { webId: webId } = (0, $4oW5r$jwtdecode)(token);
+                    const { webId: webId } = (0, $1obPJ$jwtdecode)(token);
                     localStorage.setItem("token", token);
                     let userData;
                     ({ data: userData } = await dataProvider.getOne(userResource, {
@@ -1251,29 +1251,29 @@ const $479961b7e298304b$var$SsoLoginPage = ({ children: children, backgroundImag
             img.src = backgroundImage;
         }
     };
-    (0, $4oW5r$useEffect)(()=>{
+    (0, $1obPJ$useEffect)(()=>{
         if (!backgroundImageLoaded) lazyLoadBackgroundImage();
     });
     if (isLoading) return null;
-    return /*#__PURE__*/ (0, $4oW5r$jsx)($479961b7e298304b$var$Root, {
+    return /*#__PURE__*/ (0, $1obPJ$jsx)($479961b7e298304b$var$Root, {
         ...rest,
         ref: containerRef,
-        children: /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Card), {
+        children: /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Card), {
             className: $479961b7e298304b$export$388de65c72fa74b4.card,
             children: [
-                /*#__PURE__*/ (0, $4oW5r$jsx)("div", {
+                /*#__PURE__*/ (0, $1obPJ$jsx)("div", {
                     className: $479961b7e298304b$export$388de65c72fa74b4.avatar,
-                    children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Avatar), {
+                    children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Avatar), {
                         className: $479961b7e298304b$export$388de65c72fa74b4.icon,
-                        children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialLock), {})
+                        children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$muiiconsmaterialLock), {})
                     })
                 }),
-                text && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Typography), {
+                text && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Typography), {
                     variant: "body2" /* className={classes.text} */ ,
                     children: text
                 }),
-                buttons?.map((button, i)=>/*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$CardActions), {
-                        children: /*#__PURE__*/ (0, $4oW5r$react).cloneElement(button, {
+                buttons?.map((button, i)=>/*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$CardActions), {
+                        children: /*#__PURE__*/ (0, $1obPJ$react).cloneElement(button, {
                             fullWidth: true,
                             variant: "outlined",
                             type: "submit",
@@ -1291,7 +1291,7 @@ const $479961b7e298304b$export$388de65c72fa74b4 = {
     icon: `${$479961b7e298304b$var$PREFIX}-icon`,
     switch: `${$479961b7e298304b$var$PREFIX}-switch`
 };
-const $479961b7e298304b$var$Root = (0, $4oW5r$styled1)("div", {
+const $479961b7e298304b$var$Root = (0, $1obPJ$styled1)("div", {
     name: $479961b7e298304b$var$PREFIX,
     overridesResolver: (props, styles)=>styles.root
 })(({ theme: theme })=>({
@@ -1326,8 +1326,8 @@ $479961b7e298304b$var$SsoLoginPage.defaultProps = {
     propertiesExist: [],
     // TODO deprecate this
     buttons: [
-        /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Button1), {
-            startIcon: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Avatar), {
+        /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Button1), {
+            startIcon: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Avatar), {
                 src: "/lescommuns.jpg"
             }),
             children: "Les Communs"
@@ -1355,8 +1355,8 @@ var $479961b7e298304b$export$2e2bcd8739ae039 = $479961b7e298304b$var$SsoLoginPag
 
 
 const $fb967e2c34f56644$var$useSignup = ()=>{
-    const authProvider = (0, $4oW5r$useAuthProvider)();
-    return (0, $4oW5r$useCallback)((params = {})=>authProvider.signup(params), [
+    const authProvider = (0, $1obPJ$useAuthProvider)();
+    return (0, $1obPJ$useCallback)((params = {})=>authProvider.signup(params), [
         authProvider
     ]);
 };
@@ -1462,15 +1462,15 @@ function $bab067faa4d10954$export$2e2bcd8739ae039(props) {
     };
     const fade = Math.max(0, Math.min(1, (currentVal - minVal) / (maxVal - minVal)));
     const currentColor = $bab067faa4d10954$var$colorGradient(fade, color1, color2);
-    const StyledLinearProgress = (0, $4oW5r$withStyles)({
+    const StyledLinearProgress = (0, $1obPJ$withStyles)({
         colorPrimary: {
             backgroundColor: "#e0e0e0"
         },
         barColorPrimary: {
             backgroundColor: currentColor
         }
-    })((0, $4oW5r$LinearProgress));
-    return /*#__PURE__*/ (0, $4oW5r$jsx)(StyledLinearProgress, {
+    })((0, $1obPJ$LinearProgress));
+    return /*#__PURE__*/ (0, $1obPJ$jsx)(StyledLinearProgress, {
         ...restProps,
         value: 100 * fade,
         variant: "determinate"
@@ -1481,7 +1481,7 @@ function $bab067faa4d10954$export$2e2bcd8739ae039(props) {
 
 function $a8046307c9dfa483$export$2e2bcd8739ae039({ scorer: scorer = (0, $646d64648a630b24$export$19dcdb21c6965fb8), password: password, ...restProps }) {
     const strength = scorer.scoreFn(password);
-    return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $bab067faa4d10954$export$2e2bcd8739ae039), {
+    return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $bab067faa4d10954$export$2e2bcd8739ae039), {
         currentVal: strength,
         minVal: 0,
         maxVal: scorer.maxScore,
@@ -1507,7 +1507,7 @@ const $2dfd781b793256e6$var$getSearchParamsRest = (searchParams)=>{
 var $2dfd781b793256e6$export$2e2bcd8739ae039 = $2dfd781b793256e6$var$getSearchParamsRest;
 
 
-const $e011da92680cf1fe$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=>({
+const $e011da92680cf1fe$var$useStyles = (0, $1obPJ$muistylesmakeStyles)((theme)=>({
         content: {
             width: 450
         },
@@ -1525,14 +1525,14 @@ const $e011da92680cf1fe$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
  *  passwordStrength's `defaultScorer`.
  * @returns
  */ const $e011da92680cf1fe$var$SignupForm = ({ redirectTo: redirectTo, passwordScorer: passwordScorer = (0, $646d64648a630b24$export$19dcdb21c6965fb8), postSignupRedirect: postSignupRedirect, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect })=>{
-    const [loading, setLoading] = (0, $4oW5r$useSafeSetState)(false);
+    const [loading, setLoading] = (0, $1obPJ$useSafeSetState)(false);
     const signup = (0, $fb967e2c34f56644$export$2e2bcd8739ae039)();
-    const translate = (0, $4oW5r$useTranslate)();
-    const notify = (0, $4oW5r$useNotify)();
+    const translate = (0, $1obPJ$useTranslate)();
+    const notify = (0, $1obPJ$useNotify)();
     const classes = $e011da92680cf1fe$var$useStyles();
-    const [searchParams] = (0, $4oW5r$useSearchParams)();
-    const [locale] = (0, $4oW5r$useLocaleState)();
-    const [password, setPassword] = $4oW5r$useState("");
+    const [searchParams] = (0, $1obPJ$useSearchParams)();
+    const [locale] = (0, $1obPJ$useLocaleState)();
+    const [password, setPassword] = $1obPJ$useState("");
     const submit = (values)=>{
         setLoading(true);
         signup({
@@ -1562,24 +1562,24 @@ const $e011da92680cf1fe$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
             });
         });
     };
-    return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Form), {
+    return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Form), {
         onSubmit: submit,
         noValidate: true,
         defaultValues: {
             email: searchParams.get("email")
         },
-        children: /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$CardContent), {
+        children: /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$CardContent), {
             className: classes.content,
             children: [
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$TextInput), {
+                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
                     autoFocus: true,
                     source: "username",
                     label: translate("auth.input.username"),
                     autoComplete: "username",
                     fullWidth: true,
                     disabled: loading,
-                    validate: (0, $4oW5r$required)(),
-                    format: (value)=>value ? (0, $4oW5r$speakingurl)(value, {
+                    validate: (0, $1obPJ$required)(),
+                    format: (value)=>value ? (0, $1obPJ$speakingurl)(value, {
                             lang: locale || "fr",
                             separator: "_",
                             custom: [
@@ -1598,20 +1598,20 @@ const $e011da92680cf1fe$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
                             ]
                         }) : ""
                 }),
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$TextInput), {
+                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
                     source: "email",
                     label: translate("auth.input.email"),
                     autoComplete: "email",
                     fullWidth: true,
                     disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
                     validate: [
-                        (0, $4oW5r$required)(),
-                        (0, $4oW5r$email)()
+                        (0, $1obPJ$required)(),
+                        (0, $1obPJ$email)()
                     ]
                 }),
-                passwordScorer && password && !(searchParams.has("email") && searchParams.has("force-email")) && /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Fragment), {
+                passwordScorer && password && !(searchParams.has("email") && searchParams.has("force-email")) && /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Fragment), {
                     children: [
-                        /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Typography), {
+                        /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Typography), {
                             variant: "caption",
                             style: {
                                 marginBottom: 3
@@ -1622,7 +1622,7 @@ const $e011da92680cf1fe$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
                                 " "
                             ]
                         }),
-                        /*#__PURE__*/ (0, $4oW5r$jsx)((0, $a8046307c9dfa483$export$2e2bcd8739ae039), {
+                        /*#__PURE__*/ (0, $1obPJ$jsx)((0, $a8046307c9dfa483$export$2e2bcd8739ae039), {
                             password: password,
                             scorer: passwordScorer,
                             sx: {
@@ -1631,7 +1631,7 @@ const $e011da92680cf1fe$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
                         })
                     ]
                 }),
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$TextInput), {
+                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
                     source: "password",
                     type: "password",
                     value: password,
@@ -1641,18 +1641,18 @@ const $e011da92680cf1fe$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
                     fullWidth: true,
                     disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
                     validate: [
-                        (0, $4oW5r$required)(),
+                        (0, $1obPJ$required)(),
                         (0, $7a0bbe6824860dfe$export$2e2bcd8739ae039)(passwordScorer)
                     ]
                 }),
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Button1), {
+                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Button1), {
                     variant: "contained",
                     type: "submit",
                     color: "primary",
                     disabled: loading,
                     fullWidth: true,
                     className: classes.button,
-                    children: loading ? /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$CircularProgress), {
+                    children: loading ? /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$CircularProgress), {
                         className: classes.icon,
                         size: 19,
                         thickness: 3
@@ -1675,7 +1675,7 @@ var $e011da92680cf1fe$export$2e2bcd8739ae039 = $e011da92680cf1fe$var$SignupForm;
 
 
 
-const $e2a34b2d647a5391$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=>({
+const $e2a34b2d647a5391$var$useStyles = (0, $1obPJ$muistylesmakeStyles)((theme)=>({
         content: {
             width: 450
         },
@@ -1684,12 +1684,12 @@ const $e2a34b2d647a5391$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
         }
     }));
 const $e2a34b2d647a5391$var$LoginForm = ({ redirectTo: redirectTo, allowUsername: allowUsername })=>{
-    const [loading, setLoading] = (0, $4oW5r$useSafeSetState)(false);
-    const login = (0, $4oW5r$useLogin)();
-    const translate = (0, $4oW5r$useTranslate)();
-    const notify = (0, $4oW5r$useNotify)();
+    const [loading, setLoading] = (0, $1obPJ$useSafeSetState)(false);
+    const login = (0, $1obPJ$useLogin)();
+    const translate = (0, $1obPJ$useTranslate)();
+    const notify = (0, $1obPJ$useNotify)();
     const classes = $e2a34b2d647a5391$var$useStyles();
-    const location = (0, $4oW5r$useLocation)();
+    const location = (0, $1obPJ$useLocation)();
     const searchParams = new URLSearchParams(location.search);
     const submit = (values)=>{
         setLoading(true);
@@ -1705,16 +1705,16 @@ const $e2a34b2d647a5391$var$LoginForm = ({ redirectTo: redirectTo, allowUsername
             });
         });
     };
-    return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Form), {
+    return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Form), {
         onSubmit: submit,
         noValidate: true,
         defaultValues: {
             email: searchParams.get("email")
         },
-        children: /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$CardContent), {
+        children: /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$CardContent), {
             className: classes.content,
             children: [
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$TextInput), {
+                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
                     source: "username",
                     label: translate(allowUsername ? "auth.input.username_or_email" : "auth.input.email"),
                     autoComplete: "email",
@@ -1722,29 +1722,29 @@ const $e2a34b2d647a5391$var$LoginForm = ({ redirectTo: redirectTo, allowUsername
                     disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
                     format: (value)=>value ? value.toLowerCase() : "",
                     validate: allowUsername ? [
-                        (0, $4oW5r$required)()
+                        (0, $1obPJ$required)()
                     ] : [
-                        (0, $4oW5r$required)(),
-                        (0, $4oW5r$email)()
+                        (0, $1obPJ$required)(),
+                        (0, $1obPJ$email)()
                     ]
                 }),
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$TextInput), {
+                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
                     source: "password",
                     type: "password",
                     label: translate("ra.auth.password"),
                     autoComplete: "current-password",
                     fullWidth: true,
                     disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
-                    validate: (0, $4oW5r$required)()
+                    validate: (0, $1obPJ$required)()
                 }),
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Button1), {
+                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Button1), {
                     variant: "contained",
                     type: "submit",
                     color: "primary",
                     disabled: loading,
                     fullWidth: true,
                     className: classes.button,
-                    children: loading ? /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$CircularProgress), {
+                    children: loading ? /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$CircularProgress), {
                         className: classes.icon,
                         size: 19,
                         thickness: 3
@@ -1770,7 +1770,7 @@ var $e2a34b2d647a5391$export$2e2bcd8739ae039 = $e2a34b2d647a5391$var$LoginForm;
 
 
 
-const $b403c35bd8d76c50$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=>({
+const $b403c35bd8d76c50$var$useStyles = (0, $1obPJ$muistylesmakeStyles)((theme)=>({
         icon: {
             margin: theme.spacing(0.3)
         }
@@ -1783,15 +1783,15 @@ const $b403c35bd8d76c50$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
  *  passwordStrength's `defaultScorer`.
  * @returns
  */ const $b403c35bd8d76c50$var$NewPasswordForm = ({ redirectTo: redirectTo, passwordScorer: passwordScorer = (0, $646d64648a630b24$export$19dcdb21c6965fb8) })=>{
-    const location = (0, $4oW5r$useLocation)();
+    const location = (0, $1obPJ$useLocation)();
     const searchParams = new URLSearchParams(location.search);
     const token = searchParams.get("token");
-    const [loading, setLoading] = (0, $4oW5r$useSafeSetState)(false);
-    const authProvider = (0, $4oW5r$useAuthProvider)();
-    const translate = (0, $4oW5r$useTranslate)();
-    const notify = (0, $4oW5r$useNotify)();
+    const [loading, setLoading] = (0, $1obPJ$useSafeSetState)(false);
+    const authProvider = (0, $1obPJ$useAuthProvider)();
+    const translate = (0, $1obPJ$useTranslate)();
+    const notify = (0, $1obPJ$useNotify)();
     const classes = $b403c35bd8d76c50$var$useStyles();
-    const [newPassword, setNewPassword] = (0, $4oW5r$useState)("");
+    const [newPassword, setNewPassword] = (0, $1obPJ$useState)("");
     const submit = (values)=>{
         setLoading(true);
         authProvider.setNewPassword({
@@ -1813,28 +1813,28 @@ const $b403c35bd8d76c50$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
             });
         });
     };
-    return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Form), {
+    return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Form), {
         onSubmit: submit,
         noValidate: true,
         defaultValues: {
             email: searchParams.get("email")
         },
-        children: /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$CardContent), {
+        children: /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$CardContent), {
             className: classes.content,
             children: [
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$TextInput), {
+                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
                     autoFocus: true,
                     source: "email",
                     label: translate("auth.input.email"),
                     autoComplete: "email",
                     fullWidth: true,
                     disabled: loading,
-                    validate: (0, $4oW5r$required)(),
+                    validate: (0, $1obPJ$required)(),
                     format: (value)=>value ? value.toLowerCase() : ""
                 }),
-                passwordScorer && /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Fragment), {
+                passwordScorer && /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Fragment), {
                     children: [
-                        /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Typography), {
+                        /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Typography), {
                             variant: "caption",
                             style: {
                                 marginBottom: 3
@@ -1845,7 +1845,7 @@ const $b403c35bd8d76c50$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
                                 " "
                             ]
                         }),
-                        /*#__PURE__*/ (0, $4oW5r$jsx)((0, $a8046307c9dfa483$export$2e2bcd8739ae039), {
+                        /*#__PURE__*/ (0, $1obPJ$jsx)((0, $a8046307c9dfa483$export$2e2bcd8739ae039), {
                             password: newPassword,
                             scorer: passwordScorer,
                             sx: {
@@ -1854,7 +1854,7 @@ const $b403c35bd8d76c50$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
                         })
                     ]
                 }),
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$TextInput), {
+                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
                     autoFocus: true,
                     type: "password",
                     source: "password",
@@ -1864,13 +1864,13 @@ const $b403c35bd8d76c50$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
                     fullWidth: true,
                     disabled: loading,
                     validate: [
-                        (0, $4oW5r$required)(),
+                        (0, $1obPJ$required)(),
                         (0, $7a0bbe6824860dfe$export$2e2bcd8739ae039)(passwordScorer)
                     ],
                     onChange: (e)=>setNewPassword(e.target.value),
                     format: (value)=>value ? value.toLowerCase() : ""
                 }),
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$TextInput), {
+                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
                     autoFocus: true,
                     type: "password",
                     source: "confirm-password",
@@ -1878,17 +1878,17 @@ const $b403c35bd8d76c50$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
                     autoComplete: "current-password",
                     fullWidth: true,
                     disabled: loading,
-                    validate: (0, $4oW5r$required)(),
+                    validate: (0, $1obPJ$required)(),
                     format: (value)=>value ? value.toLowerCase() : ""
                 }),
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Button1), {
+                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Button1), {
                     variant: "contained",
                     type: "submit",
                     color: "primary",
                     disabled: loading,
                     fullWidth: true,
                     className: classes.button,
-                    children: loading ? /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$CircularProgress), {
+                    children: loading ? /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$CircularProgress), {
                         className: classes.icon,
                         size: 19,
                         thickness: 3
@@ -1906,16 +1906,16 @@ var $b403c35bd8d76c50$export$2e2bcd8739ae039 = $b403c35bd8d76c50$var$NewPassword
 
 
 
-const $8d415f03f06df877$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=>({
+const $8d415f03f06df877$var$useStyles = (0, $1obPJ$muistylesmakeStyles)((theme)=>({
         icon: {
             margin: theme.spacing(0.3)
         }
     }));
 const $8d415f03f06df877$var$ResetPasswordForm = ()=>{
-    const [loading, setLoading] = (0, $4oW5r$useSafeSetState)(false);
-    const authProvider = (0, $4oW5r$useAuthProvider)();
-    const translate = (0, $4oW5r$useTranslate)();
-    const notify = (0, $4oW5r$useNotify)();
+    const [loading, setLoading] = (0, $1obPJ$useSafeSetState)(false);
+    const authProvider = (0, $1obPJ$useAuthProvider)();
+    const translate = (0, $1obPJ$useTranslate)();
+    const notify = (0, $1obPJ$useNotify)();
     const classes = $8d415f03f06df877$var$useStyles();
     const submit = (values)=>{
         setLoading(true);
@@ -1934,29 +1934,29 @@ const $8d415f03f06df877$var$ResetPasswordForm = ()=>{
             });
         });
     };
-    return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Form), {
+    return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Form), {
         onSubmit: submit,
-        children: /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$CardContent), {
+        children: /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$CardContent), {
             className: classes.content,
             children: [
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$TextInput), {
+                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
                     autoFocus: true,
                     source: "email",
                     label: translate("auth.input.email"),
                     autoComplete: "email",
                     fullWidth: true,
                     disabled: loading,
-                    validate: (0, $4oW5r$required)(),
+                    validate: (0, $1obPJ$required)(),
                     format: (value)=>value ? value.toLowerCase() : ""
                 }),
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Button1), {
+                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Button1), {
                     variant: "contained",
                     type: "submit",
                     color: "primary",
                     disabled: loading,
                     fullWidth: true,
                     className: classes.button,
-                    children: loading ? /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$CircularProgress), {
+                    children: loading ? /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$CircularProgress), {
                         className: classes.icon,
                         size: 19,
                         thickness: 3
@@ -1974,7 +1974,7 @@ var $8d415f03f06df877$export$2e2bcd8739ae039 = $8d415f03f06df877$var$ResetPasswo
 
 
 
-const $1b78e27e3e92a798$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=>({
+const $1b78e27e3e92a798$var$useStyles = (0, $1obPJ$muistylesmakeStyles)((theme)=>({
         "@global": {
             body: {
                 backgroundColor: theme.palette.secondary.main
@@ -2004,35 +2004,35 @@ const $1b78e27e3e92a798$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
     }));
 const $1b78e27e3e92a798$var$SimpleBox = ({ title: title, icon: icon, text: text, children: children })=>{
     const classes = $1b78e27e3e92a798$var$useStyles();
-    return /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Box), {
+    return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Box), {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         className: classes.root,
         children: [
-            /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Card), {
+            /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Card), {
                 className: classes.card,
                 children: [
-                    /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Box), {
+                    /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Box), {
                         p: 2,
                         display: "flex",
                         justifyContent: "start",
                         children: [
-                            icon && /*#__PURE__*/ (0, $4oW5r$react).cloneElement(icon, {
+                            icon && /*#__PURE__*/ (0, $1obPJ$react).cloneElement(icon, {
                                 fontSize: "large",
                                 className: classes.icon
                             }),
-                            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Typography), {
+                            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Typography), {
                                 variant: "h4",
                                 className: classes.title,
                                 children: title
                             })
                         ]
                     }),
-                    /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Box), {
+                    /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Box), {
                         pl: 2,
                         pr: 2,
-                        children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Typography), {
+                        children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Typography), {
                             variant: "body1",
                             children: text
                         })
@@ -2040,7 +2040,7 @@ const $1b78e27e3e92a798$var$SimpleBox = ({ title: title, icon: icon, text: text,
                     children
                 ]
             }),
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Notification), {})
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Notification), {})
         ]
     });
 };
@@ -2049,7 +2049,7 @@ var $1b78e27e3e92a798$export$2e2bcd8739ae039 = $1b78e27e3e92a798$var$SimpleBox;
 
 
 
-const $23fea069f5d2d834$var$useStyles = (0, $4oW5r$muistylesmakeStyles)(()=>({
+const $23fea069f5d2d834$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
         switch: {
             marginBottom: "1em",
             display: "flex",
@@ -2070,16 +2070,20 @@ const $23fea069f5d2d834$var$useStyles = (0, $4oW5r$muistylesmakeStyles)(()=>({
  * @returns
  */ const $23fea069f5d2d834$var$LocalLoginPage = ({ hasSignup: hasSignup, allowUsername: allowUsername, postSignupRedirect: postSignupRedirect, postLoginRedirect: postLoginRedirect, additionalSignupValues: additionalSignupValues, passwordScorer: passwordScorer = (0, $646d64648a630b24$export$19dcdb21c6965fb8) })=>{
     const classes = $23fea069f5d2d834$var$useStyles();
-    const navigate = (0, $4oW5r$useNavigate)();
-    const translate = (0, $4oW5r$useTranslate)();
-    const [searchParams] = (0, $4oW5r$useSearchParams)();
+    const navigate = (0, $1obPJ$useNavigate)();
+    const translate = (0, $1obPJ$useTranslate)();
+    const [searchParams] = (0, $1obPJ$useSearchParams)();
     const isSignup = hasSignup && searchParams.has("signup");
+    // Remaining search params as string:
+    const searchStr = [
+        ...searchParams.entries()
+    ].filter((entry)=>entry[0] !== "signup").map((entry)=>entry.join("=")).join("&");
     const isResetPassword = searchParams.has("reset_password");
     const isNewPassword = searchParams.has("new_password");
     const isLogin = !isSignup && !isResetPassword && !isNewPassword;
     const redirectTo = searchParams.get("redirect");
-    const { identity: identity, isLoading: isLoading } = (0, $4oW5r$useGetIdentity)();
-    (0, $4oW5r$useEffect)(()=>{
+    const { identity: identity, isLoading: isLoading } = (0, $1obPJ$useGetIdentity)();
+    (0, $1obPJ$useEffect)(()=>{
         if (!isLoading && identity?.id) {
             if (postLoginRedirect) navigate(`${postLoginRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}${(0, $2dfd781b793256e6$export$2e2bcd8739ae039)(searchParams)}`);
             else if (redirectTo && redirectTo.startsWith("http")) window.location.href = redirectTo;
@@ -2093,7 +2097,7 @@ const $23fea069f5d2d834$var$useStyles = (0, $4oW5r$muistylesmakeStyles)(()=>({
         redirectTo,
         postLoginRedirect
     ]);
-    const [title, text] = (0, $4oW5r$useMemo)(()=>{
+    const [title, text] = (0, $1obPJ$useMemo)(()=>{
         if (isSignup) return [
             "auth.action.signup",
             "auth.helper.signup"
@@ -2118,53 +2122,53 @@ const $23fea069f5d2d834$var$useStyles = (0, $4oW5r$muistylesmakeStyles)(()=>({
     ]);
     if (isLoading || identity?.id) return null;
     if (isLoading || identity?.id) return null;
-    return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $1b78e27e3e92a798$export$2e2bcd8739ae039), {
+    return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1b78e27e3e92a798$export$2e2bcd8739ae039), {
         title: translate(title),
         text: translate(text),
-        icon: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialLock), {}),
-        children: /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Card), {
+        icon: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$muiiconsmaterialLock), {}),
+        children: /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Card), {
             children: [
-                isSignup && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $e011da92680cf1fe$export$2e2bcd8739ae039), {
+                isSignup && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $e011da92680cf1fe$export$2e2bcd8739ae039), {
                     redirectTo: redirectTo,
                     delayBeforeRedirect: 4000,
                     postSignupRedirect: postSignupRedirect,
                     additionalSignupValues: additionalSignupValues,
                     passwordScorer: passwordScorer
                 }),
-                isResetPassword && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $8d415f03f06df877$export$2e2bcd8739ae039), {}),
-                isNewPassword && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $b403c35bd8d76c50$export$2e2bcd8739ae039), {
+                isResetPassword && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $8d415f03f06df877$export$2e2bcd8739ae039), {}),
+                isNewPassword && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $b403c35bd8d76c50$export$2e2bcd8739ae039), {
                     redirectTo: redirectTo,
                     passwordScorer: passwordScorer
                 }),
-                isLogin && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $e2a34b2d647a5391$export$2e2bcd8739ae039), {
+                isLogin && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $e2a34b2d647a5391$export$2e2bcd8739ae039), {
                     redirectTo: redirectTo,
                     allowUsername: allowUsername
                 }),
-                /*#__PURE__*/ (0, $4oW5r$jsxs)("div", {
+                /*#__PURE__*/ (0, $1obPJ$jsxs)("div", {
                     className: classes.switch,
                     children: [
-                        isSignup && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Link), {
-                            to: "/login",
-                            children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Typography), {
+                        isSignup && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Link), {
+                            to: "/login?" + searchStr,
+                            children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Typography), {
                                 variant: "body2",
                                 children: translate("auth.action.login")
                             })
                         }),
-                        isLogin && /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Fragment), {
+                        isLogin && /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Fragment), {
                             children: [
-                                hasSignup && /*#__PURE__*/ (0, $4oW5r$jsx)("div", {
-                                    children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Link), {
-                                        to: "/login?signup=true",
-                                        children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Typography), {
+                                hasSignup && /*#__PURE__*/ (0, $1obPJ$jsx)("div", {
+                                    children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Link), {
+                                        to: "/login?signup=true&" + searchStr,
+                                        children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Typography), {
                                             variant: "body2",
                                             children: translate("auth.action.signup")
                                         })
                                     })
                                 }),
-                                /*#__PURE__*/ (0, $4oW5r$jsx)("div", {
-                                    children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Link), {
+                                /*#__PURE__*/ (0, $1obPJ$jsx)("div", {
+                                    children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Link), {
                                         to: `/login?reset_password=true&${searchParams.toString()}`,
-                                        children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Typography), {
+                                        children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Typography), {
                                             variant: "body2",
                                             children: translate("auth.action.reset_password")
                                         })
@@ -2193,9 +2197,9 @@ var $23fea069f5d2d834$export$2e2bcd8739ae039 = $23fea069f5d2d834$var$LocalLoginP
 
 // Not used for now. The ListWithPermissions component will handle the conditional display of the Create button.
 const $9594dfbc217337d0$var$ResourceWithPermission = ({ name: name, create: create, ...rest })=>{
-    const createContainer = (0, $4oW5r$useCreateContainer)(name);
-    const { permissions: permissions } = (0, $4oW5r$usePermissions)(createContainer);
-    return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Resource), {
+    const createContainer = (0, $1obPJ$useCreateContainer)(name);
+    const { permissions: permissions } = (0, $1obPJ$usePermissions)(createContainer);
+    return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Resource), {
         ...rest,
         name: name,
         create: permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$65615a101bd6f5ca).includes(p["acl:mode"])) ? create : undefined
@@ -2212,11 +2216,11 @@ var $9594dfbc217337d0$export$2e2bcd8739ae039 = $9594dfbc217337d0$var$ResourceWit
 
 
 // It's important to pass the ref to allow Material UI to manage the keyboard navigation
-const $5ef2eaf62f09ff2c$var$UserMenuItem = /*#__PURE__*/ (0, $4oW5r$forwardRef)(({ label: label, icon: icon, to: to, ...rest }, ref)=>{
-    const { onClose: onClose } = (0, $4oW5r$useUserMenu)();
-    const translate = (0, $4oW5r$useTranslate)();
-    const navigate = (0, $4oW5r$useNavigate)();
-    const onClick = (0, $4oW5r$useCallback)(()=>{
+const $5ef2eaf62f09ff2c$var$UserMenuItem = /*#__PURE__*/ (0, $1obPJ$forwardRef)(({ label: label, icon: icon, to: to, ...rest }, ref)=>{
+    const { onClose: onClose } = (0, $1obPJ$useUserMenu)();
+    const translate = (0, $1obPJ$useTranslate)();
+    const navigate = (0, $1obPJ$useNavigate)();
+    const onClick = (0, $1obPJ$useCallback)(()=>{
         navigate(to);
         onClose();
     }, [
@@ -2224,46 +2228,46 @@ const $5ef2eaf62f09ff2c$var$UserMenuItem = /*#__PURE__*/ (0, $4oW5r$forwardRef)(
         onClose,
         navigate
     ]);
-    return /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$MenuItem), {
+    return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$MenuItem), {
         onClick: onClick,
         ref: ref,
         ...rest,
         children: [
-            icon && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListItemIcon), {
-                children: /*#__PURE__*/ (0, $4oW5r$react).cloneElement(icon, {
+            icon && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ListItemIcon), {
+                children: /*#__PURE__*/ (0, $1obPJ$react).cloneElement(icon, {
                     fontSize: "small"
                 })
             }),
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListItemText), {
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ListItemText), {
                 children: translate(label)
             })
         ]
     });
 });
 const $5ef2eaf62f09ff2c$var$UserMenu = ({ logout: logout, profileResource: profileResource, ...otherProps })=>{
-    const { identity: identity } = (0, $4oW5r$useGetIdentity)();
-    return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$UserMenu), {
+    const { identity: identity } = (0, $1obPJ$useGetIdentity)();
+    return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$UserMenu), {
         ...otherProps,
         children: identity && identity.id !== "" ? [
-            /*#__PURE__*/ (0, $4oW5r$jsx)($5ef2eaf62f09ff2c$var$UserMenuItem, {
+            /*#__PURE__*/ (0, $1obPJ$jsx)($5ef2eaf62f09ff2c$var$UserMenuItem, {
                 label: "auth.action.view_my_profile",
-                icon: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialAccountCircle), {}),
+                icon: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$muiiconsmaterialAccountCircle), {}),
                 to: `/${profileResource}/${encodeURIComponent(identity?.profileData?.id || identity.id)}/show`
             }, "view"),
-            /*#__PURE__*/ (0, $4oW5r$jsx)($5ef2eaf62f09ff2c$var$UserMenuItem, {
+            /*#__PURE__*/ (0, $1obPJ$jsx)($5ef2eaf62f09ff2c$var$UserMenuItem, {
                 label: "auth.action.edit_my_profile",
-                icon: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialEdit), {}),
+                icon: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$muiiconsmaterialEdit), {}),
                 to: `/${profileResource}/${encodeURIComponent(identity?.profileData?.id || identity.id)}`
             }, "edit"),
-            /*#__PURE__*/ (0, $4oW5r$react).cloneElement(logout, {
+            /*#__PURE__*/ (0, $1obPJ$react).cloneElement(logout, {
                 key: "logout"
             })
         ] : [
-            /*#__PURE__*/ (0, $4oW5r$jsx)($5ef2eaf62f09ff2c$var$UserMenuItem, {
+            /*#__PURE__*/ (0, $1obPJ$jsx)($5ef2eaf62f09ff2c$var$UserMenuItem, {
                 label: "auth.action.signup",
                 to: "/login?signup=true"
             }, "signup"),
-            /*#__PURE__*/ (0, $4oW5r$jsx)($5ef2eaf62f09ff2c$var$UserMenuItem, {
+            /*#__PURE__*/ (0, $1obPJ$jsx)($5ef2eaf62f09ff2c$var$UserMenuItem, {
                 label: "auth.action.login",
                 to: "/login"
             }, "login")
@@ -2271,7 +2275,7 @@ const $5ef2eaf62f09ff2c$var$UserMenu = ({ logout: logout, profileResource: profi
     });
 };
 $5ef2eaf62f09ff2c$var$UserMenu.defaultProps = {
-    logout: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Logout), {}),
+    logout: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Logout), {}),
     profileResource: "Person"
 };
 var $5ef2eaf62f09ff2c$export$2e2bcd8739ae039 = $5ef2eaf62f09ff2c$var$UserMenu;
@@ -2282,11 +2286,11 @@ var $5ef2eaf62f09ff2c$export$2e2bcd8739ae039 = $5ef2eaf62f09ff2c$var$UserMenu;
 
 
 const $a18ea4963428dd85$var$useCheckAuthenticated = (message)=>{
-    const { identity: identity, isLoading: isLoading } = (0, $4oW5r$useGetIdentity)();
-    const notify = (0, $4oW5r$useNotify)();
-    const redirect = (0, $4oW5r$useRedirect)();
-    const location = (0, $4oW5r$useLocation)();
-    (0, $4oW5r$useEffect)(()=>{
+    const { identity: identity, isLoading: isLoading } = (0, $1obPJ$useGetIdentity)();
+    const notify = (0, $1obPJ$useNotify)();
+    const redirect = (0, $1obPJ$useRedirect)();
+    const location = (0, $1obPJ$useLocation)();
+    (0, $1obPJ$useEffect)(()=>{
         if (!isLoading && !identity?.id) {
             notify(message || "ra.auth.auth_check_error", {
                 type: "error"
@@ -2321,12 +2325,12 @@ const $26b16c415d19fb4a$var$alreadyFetchedPermissions = {
 // Fork of usePermissionsOptimized, with a refetch option
 const $26b16c415d19fb4a$var$usePermissionsWithRefetch = (params = $26b16c415d19fb4a$var$emptyParams)=>{
     const key = JSON.stringify(params);
-    const [state, setState] = (0, $4oW5r$useSafeSetState)({
+    const [state, setState] = (0, $1obPJ$useSafeSetState)({
         permissions: $26b16c415d19fb4a$var$alreadyFetchedPermissions[key]
     });
-    const getPermissions = (0, $4oW5r$useGetPermissions)();
-    const fetchPermissions = (0, $4oW5r$useCallback)(()=>getPermissions(params).then((permissions)=>{
-            if (!(0, $4oW5r$lodashisEqual)(permissions, state.permissions)) {
+    const getPermissions = (0, $1obPJ$useGetPermissions)();
+    const fetchPermissions = (0, $1obPJ$useCallback)(()=>getPermissions(params).then((permissions)=>{
+            if (!(0, $1obPJ$lodashisEqual)(permissions, state.permissions)) {
                 $26b16c415d19fb4a$var$alreadyFetchedPermissions[key] = permissions;
                 setState({
                     permissions: permissions
@@ -2341,7 +2345,7 @@ const $26b16c415d19fb4a$var$usePermissionsWithRefetch = (params = $26b16c415d19f
         params,
         getPermissions
     ]);
-    (0, $4oW5r$useEffect)(()=>{
+    (0, $1obPJ$useEffect)(()=>{
         fetchPermissions();
     }, [
         key

@@ -1,22 +1,24 @@
-var $jwOeV$reactjsxruntime = require("react/jsx-runtime");
-var $jwOeV$react = require("react");
-var $jwOeV$reactadmin = require("react-admin");
-var $jwOeV$rainputrichtext = require("ra-input-rich-text");
-var $jwOeV$tiptapextensionplaceholder = require("@tiptap/extension-placeholder");
-var $jwOeV$muimaterial = require("@mui/material");
-var $jwOeV$muistylesmakeStyles = require("@mui/styles/makeStyles");
-var $jwOeV$muiiconsmaterialSend = require("@mui/icons-material/Send");
-var $jwOeV$semappssemanticdataprovider = require("@semapps/semantic-data-provider");
-var $jwOeV$semappsauthprovider = require("@semapps/auth-provider");
-var $jwOeV$tiptapcore = require("@tiptap/core");
-var $jwOeV$tiptapextensionmention = require("@tiptap/extension-mention");
-var $jwOeV$semappsfieldcomponents = require("@semapps/field-components");
-var $jwOeV$tiptapreact = require("@tiptap/react");
-var $jwOeV$tippyjs = require("tippy.js");
+var $583VT$reactjsxruntime = require("react/jsx-runtime");
+var $583VT$react = require("react");
+var $583VT$reactadmin = require("react-admin");
+var $583VT$rainputrichtext = require("ra-input-rich-text");
+var $583VT$tiptapextensionplaceholder = require("@tiptap/extension-placeholder");
+var $583VT$muimaterial = require("@mui/material");
+var $583VT$muistylesmakeStyles = require("@mui/styles/makeStyles");
+var $583VT$muiiconsmaterialSend = require("@mui/icons-material/Send");
+var $583VT$semappssemanticdataprovider = require("@semapps/semantic-data-provider");
+var $583VT$semappsauthprovider = require("@semapps/auth-provider");
+var $583VT$tiptapcore = require("@tiptap/core");
+var $583VT$tiptapextensionmention = require("@tiptap/extension-mention");
+var $583VT$semappsfieldcomponents = require("@semapps/field-components");
+var $583VT$tiptapreact = require("@tiptap/react");
+var $583VT$tippyjs = require("tippy.js");
+
 
 function $parcel$export(e, n, v, s) {
   Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
 }
+
 function $parcel$interopDefault(a) {
   return a && a.__esModule ? a.default : a;
 }
@@ -105,22 +107,22 @@ const $ebea823cebb2f44b$export$4d8d554031975581 = "https://www.w3.org/ns/activit
 
 
 const $decfdd34cc00b80e$var$useOutbox = ()=>{
-    const { identity: identity } = (0, $jwOeV$reactadmin.useGetIdentity)();
-    const outboxUrl = (0, $jwOeV$react.useMemo)(()=>{
+    const { identity: identity } = (0, $583VT$reactadmin.useGetIdentity)();
+    const outboxUrl = (0, $583VT$react.useMemo)(()=>{
         if (identity?.webIdData) return identity?.webIdData?.outbox;
     }, [
         identity
     ]);
-    const sparqlEndpoint = (0, $jwOeV$react.useMemo)(()=>{
+    const sparqlEndpoint = (0, $583VT$react.useMemo)(()=>{
         if (identity?.webIdData) return identity?.webIdData?.endpoints?.["void:sparqlEndpoint"] || `${identity?.id}/sparql`;
     }, [
         identity
     ]);
     // Post an activity to the logged user's outbox and return its URI
-    const post = (0, $jwOeV$react.useCallback)(async (activity)=>{
+    const post = (0, $583VT$react.useCallback)(async (activity)=>{
         if (!outboxUrl) throw new Error("Cannot post to outbox before user identity is loaded. Please use the loaded argument of useOutbox");
         const token = localStorage.getItem("token");
-        const { headers: headers } = await (0, $jwOeV$reactadmin.fetchUtils).fetchJson(outboxUrl, {
+        const { headers: headers } = await (0, $583VT$reactadmin.fetchUtils).fetchJson(outboxUrl, {
             method: "POST",
             body: JSON.stringify({
                 "@context": "https://www.w3.org/ns/activitystreams",
@@ -135,10 +137,10 @@ const $decfdd34cc00b80e$var$useOutbox = ()=>{
     }, [
         outboxUrl
     ]);
-    const fetch = (0, $jwOeV$react.useCallback)(async ()=>{
+    const fetch = (0, $583VT$react.useCallback)(async ()=>{
         if (!sparqlEndpoint || !outboxUrl) return;
         const token = localStorage.getItem("token");
-        const blankNodesQuery = (0, $jwOeV$semappssemanticdataprovider.buildBlankNodesQuery)([
+        const blankNodesQuery = (0, $583VT$semappssemanticdataprovider.buildBlankNodesQuery)([
             "as:object"
         ]);
         const query = `
@@ -153,7 +155,7 @@ const $decfdd34cc00b80e$var$useOutbox = ()=>{
         ${blankNodesQuery.where}
       }
     `;
-        const { json: json } = await (0, $jwOeV$reactadmin.fetchUtils).fetchJson(sparqlEndpoint, {
+        const { json: json } = await (0, $583VT$reactadmin.fetchUtils).fetchJson(sparqlEndpoint, {
             method: "POST",
             body: query,
             headers: new Headers({
@@ -183,11 +185,11 @@ var $decfdd34cc00b80e$export$2e2bcd8739ae039 = $decfdd34cc00b80e$var$useOutbox;
 // Fix a bug in the current version of the mention extension
 // (The { id, label } object is located inside the id property)
 // See https://github.com/ueberdosis/tiptap/pull/1322
-const $9b1343b281972d72$var$CustomMention = (0, ($parcel$interopDefault($jwOeV$tiptapextensionmention))).extend({
+const $9b1343b281972d72$var$CustomMention = (0, ($parcel$interopDefault($583VT$tiptapextensionmention))).extend({
     renderHTML ({ node: node, HTMLAttributes: HTMLAttributes }) {
         return [
             "span",
-            (0, $jwOeV$tiptapcore.mergeAttributes)(this.options.HTMLAttributes, HTMLAttributes),
+            (0, $583VT$tiptapcore.mergeAttributes)(this.options.HTMLAttributes, HTMLAttributes),
             `@${node.attrs.id.label}`
         ];
     },
@@ -227,7 +229,7 @@ const $9b1343b281972d72$var$CustomMention = (0, ($parcel$interopDefault($jwOeV$t
 var $9b1343b281972d72$export$2e2bcd8739ae039 = $9b1343b281972d72$var$CustomMention;
 
 
-const $703eba3e46be7ee5$var$useStyles = (0, ($parcel$interopDefault($jwOeV$muistylesmakeStyles)))((theme)=>({
+const $703eba3e46be7ee5$var$useStyles = (0, ($parcel$interopDefault($583VT$muistylesmakeStyles)))((theme)=>({
         form: {
             marginTop: -12 // Negative margin to keep the form close to the label
         },
@@ -275,15 +277,15 @@ const $703eba3e46be7ee5$var$useStyles = (0, ($parcel$interopDefault($jwOeV$muist
     }));
 const $703eba3e46be7ee5$var$EmptyToolbar = ()=>null;
 const $703eba3e46be7ee5$var$PostCommentForm = ({ context: context, placeholder: placeholder, helperText: helperText, mentions: mentions, userResource: userResource, addItem: addItem, removeItem: removeItem })=>{
-    const record = (0, $jwOeV$reactadmin.useRecordContext)();
-    const { identity: identity, isLoading: isLoading } = (0, $jwOeV$reactadmin.useGetIdentity)();
-    const userDataModel = (0, $jwOeV$semappssemanticdataprovider.useDataModel)(userResource);
+    const record = (0, $583VT$reactadmin.useRecordContext)();
+    const { identity: identity, isLoading: isLoading } = (0, $583VT$reactadmin.useGetIdentity)();
+    const userDataModel = (0, $583VT$semappssemanticdataprovider.useDataModel)(userResource);
     const classes = $703eba3e46be7ee5$var$useStyles();
-    const notify = (0, $jwOeV$reactadmin.useNotify)();
+    const notify = (0, $583VT$reactadmin.useNotify)();
     const outbox = (0, $decfdd34cc00b80e$export$2e2bcd8739ae039)();
-    const [expanded, setExpanded] = (0, $jwOeV$react.useState)(false);
-    const [openAuth, setOpenAuth] = (0, $jwOeV$react.useState)(false);
-    const onSubmit = (0, $jwOeV$react.useCallback)(async (values)=>{
+    const [expanded, setExpanded] = (0, $583VT$react.useState)(false);
+    const [openAuth, setOpenAuth] = (0, $583VT$react.useState)(false);
+    const onSubmit = (0, $583VT$react.useCallback)(async (values)=>{
         const document = new DOMParser().parseFromString(values.comment, "text/html");
         const mentions = Array.from(document.body.getElementsByClassName("mention"));
         const mentionedUsersUris = [];
@@ -340,7 +342,7 @@ const $703eba3e46be7ee5$var$PostCommentForm = ({ context: context, placeholder: 
         addItem,
         removeItem
     ]);
-    const openAuthIfDisconnected = (0, $jwOeV$react.useCallback)(()=>{
+    const openAuthIfDisconnected = (0, $583VT$react.useCallback)(()=>{
         if (!identity?.id) setOpenAuth(true);
     }, [
         identity,
@@ -348,35 +350,35 @@ const $703eba3e46be7ee5$var$PostCommentForm = ({ context: context, placeholder: 
     ]);
     // Don't init the editor options until mentions and identity are loaded, as they can only be initialized once
     if (mentions && !mentions.items || isLoading) return null;
-    return /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsxs)((0, $jwOeV$reactjsxruntime.Fragment), {
+    return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsxs)((0, $583VT$reactjsxruntime.Fragment), {
         children: [
-            /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)((0, $jwOeV$reactadmin.Form), {
+            /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$reactadmin.Form), {
                 onSubmit: onSubmit,
                 className: classes.form,
-                children: /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsxs)((0, $jwOeV$muimaterial.Box), {
+                children: /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsxs)((0, $583VT$muimaterial.Box), {
                     className: classes.container,
                     onClick: openAuthIfDisconnected,
                     children: [
-                        /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)((0, $jwOeV$muimaterial.Avatar), {
+                        /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$muimaterial.Avatar), {
                             src: identity?.webIdData?.[userDataModel?.fieldsMapping?.image] || identity?.profileData?.[userDataModel?.fieldsMapping?.image],
                             className: classes.avatar
                         }),
-                        /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)((0, $jwOeV$rainputrichtext.RichTextInput), {
+                        /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$rainputrichtext.RichTextInput), {
                             source: "comment",
                             label: " ",
-                            toolbar: /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)($703eba3e46be7ee5$var$EmptyToolbar, {}),
+                            toolbar: /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)($703eba3e46be7ee5$var$EmptyToolbar, {}),
                             fullWidth: true,
                             classes: {
                                 editorContent: classes.editorContent
                             },
                             editorOptions: {
-                                ...(0, $jwOeV$rainputrichtext.DefaultEditorOptions),
+                                ...(0, $583VT$rainputrichtext.DefaultEditorOptions),
                                 onFocus () {
                                     setExpanded(true);
                                 },
                                 extensions: [
-                                    ...(0, $jwOeV$rainputrichtext.DefaultEditorOptions).extensions,
-                                    placeholder ? (0, ($parcel$interopDefault($jwOeV$tiptapextensionplaceholder))).configure({
+                                    ...(0, $583VT$rainputrichtext.DefaultEditorOptions).extensions,
+                                    placeholder ? (0, ($parcel$interopDefault($583VT$tiptapextensionplaceholder))).configure({
                                         placeholder: placeholder
                                     }) : null,
                                     mentions ? (0, $9b1343b281972d72$export$2e2bcd8739ae039).configure({
@@ -391,19 +393,19 @@ const $703eba3e46be7ee5$var$PostCommentForm = ({ context: context, placeholder: 
                             },
                             helperText: helperText
                         }),
-                        expanded && /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)((0, $jwOeV$muimaterial.Button), {
+                        expanded && /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$muimaterial.Button), {
                             type: "submit",
                             size: "small",
                             variant: "contained",
                             color: "primary",
-                            endIcon: /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)((0, ($parcel$interopDefault($jwOeV$muiiconsmaterialSend))), {}),
+                            endIcon: /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, ($parcel$interopDefault($583VT$muiiconsmaterialSend))), {}),
                             className: classes.button,
                             children: "Envoyer"
                         })
                     ]
                 })
             }),
-            /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)((0, $jwOeV$semappsauthprovider.AuthDialog), {
+            /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$semappsauthprovider.AuthDialog), {
                 open: openAuth,
                 onClose: ()=>setOpenAuth(false),
                 message: "Pour poster un commentaire, vous devez \xeatre connect\xe9."
@@ -421,7 +423,7 @@ var $703eba3e46be7ee5$export$2e2bcd8739ae039 = $703eba3e46be7ee5$var$PostComment
 
 
 
-const $d68cd57b2d06b6d5$var$useStyles = (0, ($parcel$interopDefault($jwOeV$muistylesmakeStyles)))(()=>({
+const $d68cd57b2d06b6d5$var$useStyles = (0, ($parcel$interopDefault($583VT$muistylesmakeStyles)))(()=>({
         container: {
             paddingLeft: 80,
             marginTop: 8,
@@ -467,44 +469,44 @@ const $d68cd57b2d06b6d5$var$useStyles = (0, ($parcel$interopDefault($jwOeV$muist
     }));
 const $d68cd57b2d06b6d5$var$CommentsList = ({ comments: comments, userResource: userResource, loading: loading })=>{
     const classes = $d68cd57b2d06b6d5$var$useStyles();
-    const userDataModel = (0, $jwOeV$semappssemanticdataprovider.useDataModel)(userResource);
-    return /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsxs)((0, $jwOeV$muimaterial.Box), {
+    const userDataModel = (0, $583VT$semappssemanticdataprovider.useDataModel)(userResource);
+    return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsxs)((0, $583VT$muimaterial.Box), {
         position: "relative",
         children: [
-            comments && comments.sort((a, b)=>new Date(b.published) - new Date(a.published)).map((comment)=>/*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsxs)((0, $jwOeV$muimaterial.Box), {
+            comments && comments.sort((a, b)=>new Date(b.published) - new Date(a.published)).map((comment)=>/*#__PURE__*/ (0, $583VT$reactjsxruntime.jsxs)((0, $583VT$muimaterial.Box), {
                     className: classes.container,
                     children: [
-                        /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)((0, $jwOeV$muimaterial.Box), {
+                        /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$muimaterial.Box), {
                             className: classes.avatar,
-                            children: /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)((0, $jwOeV$semappsfieldcomponents.ReferenceField), {
+                            children: /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$semappsfieldcomponents.ReferenceField), {
                                 record: comment,
                                 reference: userResource,
                                 source: "attributedTo",
                                 linkType: "show",
-                                children: /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)((0, $jwOeV$semappsfieldcomponents.AvatarWithLabelField), {
+                                children: /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$semappsfieldcomponents.AvatarWithLabelField), {
                                     image: userDataModel?.fieldsMapping?.image
                                 })
                             })
                         }),
-                        /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsxs)((0, $jwOeV$muimaterial.Box), {
+                        /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsxs)((0, $583VT$muimaterial.Box), {
                             className: classes.text,
                             children: [
-                                /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsxs)((0, $jwOeV$muimaterial.Typography), {
+                                /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsxs)((0, $583VT$muimaterial.Typography), {
                                     variant: "body2",
                                     children: [
-                                        /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)((0, $jwOeV$semappsfieldcomponents.ReferenceField), {
+                                        /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$semappsfieldcomponents.ReferenceField), {
                                             record: comment,
                                             reference: userResource,
                                             source: "attributedTo",
                                             linkType: "show",
-                                            children: /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)((0, $jwOeV$reactadmin.TextField), {
+                                            children: /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$reactadmin.TextField), {
                                                 variant: "body2",
                                                 source: userDataModel?.fieldsMapping?.title,
                                                 className: classes.label
                                             })
                                         }),
-                                        "\xa0•\xa0",
-                                        /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)((0, $jwOeV$reactadmin.DateField), {
+                                        "\xa0\u2022\xa0",
+                                        /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$reactadmin.DateField), {
                                             record: comment,
                                             variant: "body2",
                                             source: "published",
@@ -512,7 +514,7 @@ const $d68cd57b2d06b6d5$var$CommentsList = ({ comments: comments, userResource: 
                                         })
                                     ]
                                 }),
-                                /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)((0, $jwOeV$reactadmin.RichTextField), {
+                                /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$reactadmin.RichTextField), {
                                     record: comment,
                                     variant: "body1",
                                     source: "content",
@@ -522,12 +524,12 @@ const $d68cd57b2d06b6d5$var$CommentsList = ({ comments: comments, userResource: 
                         })
                     ]
                 }, comment.id)),
-            loading && /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)((0, $jwOeV$muimaterial.Box), {
+            loading && /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$muimaterial.Box), {
                 minHeight: 200,
-                children: /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)((0, $jwOeV$muimaterial.Box), {
+                children: /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$muimaterial.Box), {
                     alignItems: "center",
                     className: classes.loading,
-                    children: /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)((0, $jwOeV$muimaterial.CircularProgress), {
+                    children: /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$muimaterial.CircularProgress), {
                         size: 60,
                         thickness: 6
                     })
@@ -542,12 +544,12 @@ var $d68cd57b2d06b6d5$export$2e2bcd8739ae039 = $d68cd57b2d06b6d5$var$CommentsLis
 
 
 const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl)=>{
-    const { identity: identity, isLoading: identityLoading } = (0, $jwOeV$reactadmin.useGetIdentity)();
-    const [items, setItems] = (0, $jwOeV$react.useState)([]);
-    const [loading, setLoading] = (0, $jwOeV$react.useState)(false);
-    const [loaded, setLoaded] = (0, $jwOeV$react.useState)(false);
-    const [error, setError] = (0, $jwOeV$react.useState)(false);
-    const collectionUrl = (0, $jwOeV$react.useMemo)(()=>{
+    const { identity: identity, isLoading: identityLoading } = (0, $583VT$reactadmin.useGetIdentity)();
+    const [items, setItems] = (0, $583VT$react.useState)([]);
+    const [loading, setLoading] = (0, $583VT$react.useState)(false);
+    const [loaded, setLoaded] = (0, $583VT$react.useState)(false);
+    const [error, setError] = (0, $583VT$react.useState)(false);
+    const collectionUrl = (0, $583VT$react.useMemo)(()=>{
         if (predicateOrUrl) {
             if (predicateOrUrl.startsWith("http")) return predicateOrUrl;
             if (identity?.webIdData) return identity?.webIdData?.[predicateOrUrl];
@@ -556,7 +558,7 @@ const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl)=>{
         identity,
         predicateOrUrl
     ]);
-    const fetch = (0, $jwOeV$react.useCallback)(async ()=>{
+    const fetch = (0, $583VT$react.useCallback)(async ()=>{
         if (!collectionUrl) return;
         setLoading(true);
         const headers = new Headers({
@@ -567,7 +569,7 @@ const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl)=>{
         const collectionOrigin = new URL(collectionUrl).origin;
         const token = localStorage.getItem("token");
         if (identityOrigin === collectionOrigin && token) headers.set("Authorization", `Bearer ${token}`);
-        (0, $jwOeV$reactadmin.fetchUtils).fetchJson(collectionUrl, {
+        (0, $583VT$reactadmin.fetchUtils).fetchJson(collectionUrl, {
             headers: headers
         }).then(({ json: json })=>{
             if (json && json.items) setItems(json.items);
@@ -589,7 +591,7 @@ const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl)=>{
         collectionUrl,
         identity
     ]);
-    (0, $jwOeV$react.useEffect)(()=>{
+    (0, $583VT$react.useEffect)(()=>{
         if (!identityLoading && !loading && !loaded && !error) fetch();
     }, [
         fetch,
@@ -598,7 +600,7 @@ const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl)=>{
         loaded,
         error
     ]);
-    const addItem = (0, $jwOeV$react.useCallback)((item)=>{
+    const addItem = (0, $583VT$react.useCallback)((item)=>{
         setItems((oldItems)=>[
                 ...oldItems,
                 item
@@ -606,7 +608,7 @@ const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl)=>{
     }, [
         setItems
     ]);
-    const removeItem = (0, $jwOeV$react.useCallback)((itemId)=>{
+    const removeItem = (0, $583VT$react.useCallback)((itemId)=>{
         setItems((oldItems)=>oldItems.filter((item)=>typeof item === "string" ? item !== itemId : item.id !== itemId));
     }, [
         setItems
@@ -626,12 +628,12 @@ var $2b75a2f49c9ef165$export$2e2bcd8739ae039 = $2b75a2f49c9ef165$var$useCollecti
 
 
 const $2e5504cc4159ca8d$var$CommentsField = ({ source: source, context: context, helperText: helperText, placeholder: placeholder, userResource: userResource, mentions: mentions })=>{
-    const record = (0, $jwOeV$reactadmin.useRecordContext)();
+    const record = (0, $583VT$reactadmin.useRecordContext)();
     const { items: comments, loading: loading, addItem: addItem, removeItem: removeItem } = (0, $2b75a2f49c9ef165$export$2e2bcd8739ae039)(record.replies);
     if (!userResource) throw new Error("No userResource defined for CommentsField");
-    return /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsxs)((0, $jwOeV$reactjsxruntime.Fragment), {
+    return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsxs)((0, $583VT$reactjsxruntime.Fragment), {
         children: [
-            /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)((0, $703eba3e46be7ee5$export$2e2bcd8739ae039), {
+            /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $703eba3e46be7ee5$export$2e2bcd8739ae039), {
                 context: context,
                 helperText: helperText,
                 userResource: userResource,
@@ -640,7 +642,7 @@ const $2e5504cc4159ca8d$var$CommentsField = ({ source: source, context: context,
                 addItem: addItem,
                 removeItem: removeItem
             }),
-            /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)((0, $d68cd57b2d06b6d5$export$2e2bcd8739ae039), {
+            /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $d68cd57b2d06b6d5$export$2e2bcd8739ae039), {
                 comments: comments,
                 loading: loading,
                 userResource: userResource
@@ -662,19 +664,19 @@ var $2e5504cc4159ca8d$export$2e2bcd8739ae039 = $2e5504cc4159ca8d$var$CommentsFie
 
 
 const $505d598a33288aad$var$CollectionList = ({ collectionUrl: collectionUrl, resource: resource, children: children, ...rest })=>{
-    if ((0, ($parcel$interopDefault($jwOeV$react))).Children.count(children) !== 1) throw new Error("<CollectionList> only accepts a single child");
+    if ((0, ($parcel$interopDefault($583VT$react))).Children.count(children) !== 1) throw new Error("<CollectionList> only accepts a single child");
     // TODO use a simple fetch call, as the resource is not good and it is useless
-    const { data: collection, isLoading: isLoading } = (0, $jwOeV$reactadmin.useGetOne)(resource, collectionUrl, {
+    const { data: collection, isLoading: isLoading } = (0, $583VT$reactadmin.useGetOne)(resource, collectionUrl, {
         enabled: !!collectionUrl
     });
-    if (isLoading) return /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)("div", {
+    if (isLoading) return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)("div", {
         style: {
             marginTop: 8
         },
-        children: /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)((0, $jwOeV$reactadmin.LinearProgress), {})
+        children: /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$reactadmin.LinearProgress), {})
     });
     if (!collection) return null;
-    return /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)((0, $jwOeV$semappsfieldcomponents.ReferenceArrayField), {
+    return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$semappsfieldcomponents.ReferenceArrayField), {
         reference: resource,
         record: collection,
         source: "items",
@@ -689,9 +691,9 @@ var $505d598a33288aad$export$2e2bcd8739ae039 = $505d598a33288aad$var$CollectionL
 
 
 const $b0c94a9bdea99da5$var$ReferenceCollectionField = ({ source: source, record: record, reference: reference, children: children, ...rest })=>{
-    if ((0, ($parcel$interopDefault($jwOeV$react))).Children.count(children) !== 1) throw new Error("<ReferenceCollectionField> only accepts a single child");
+    if ((0, ($parcel$interopDefault($583VT$react))).Children.count(children) !== 1) throw new Error("<ReferenceCollectionField> only accepts a single child");
     if (!record || !record[source]) return null;
-    return /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)((0, $505d598a33288aad$export$2e2bcd8739ae039), {
+    return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $505d598a33288aad$export$2e2bcd8739ae039), {
         resource: reference,
         collectionUrl: record[source],
         ...rest,
@@ -706,21 +708,21 @@ var $b0c94a9bdea99da5$export$2e2bcd8739ae039 = $b0c94a9bdea99da5$var$ReferenceCo
 
 
 const $97664763db3c0a46$var$useInbox = ()=>{
-    const { identity: identity } = (0, $jwOeV$reactadmin.useGetIdentity)();
-    const inboxUrl = (0, $jwOeV$react.useMemo)(()=>{
+    const { identity: identity } = (0, $583VT$reactadmin.useGetIdentity)();
+    const inboxUrl = (0, $583VT$react.useMemo)(()=>{
         if (identity?.webIdData) return identity?.webIdData?.inbox;
     }, [
         identity
     ]);
-    const sparqlEndpoint = (0, $jwOeV$react.useMemo)(()=>{
+    const sparqlEndpoint = (0, $583VT$react.useMemo)(()=>{
         if (identity?.webIdData) return identity?.webIdData?.endpoints?.["void:sparqlEndpoint"] || `${identity?.id}/sparql`;
     }, [
         identity
     ]);
-    const fetch = (0, $jwOeV$react.useCallback)(async ({ filters: filters })=>{
+    const fetch = (0, $583VT$react.useCallback)(async ({ filters: filters })=>{
         if (!sparqlEndpoint || !inboxUrl) return;
         const token = localStorage.getItem("token");
-        const blankNodesQuery = (0, $jwOeV$semappssemanticdataprovider.buildBlankNodesQuery)([
+        const blankNodesQuery = (0, $583VT$semappssemanticdataprovider.buildBlankNodesQuery)([
             "as:object"
         ]);
         let filtersWhereQuery = "";
@@ -744,7 +746,7 @@ const $97664763db3c0a46$var$useInbox = ()=>{
           ${blankNodesQuery.where}
         }
       `;
-        const { json: json } = await (0, $jwOeV$reactadmin.fetchUtils).fetchJson(sparqlEndpoint, {
+        const { json: json } = await (0, $583VT$reactadmin.fetchUtils).fetchJson(sparqlEndpoint, {
             method: "POST",
             body: query,
             headers: new Headers({
@@ -772,14 +774,14 @@ var $97664763db3c0a46$export$2e2bcd8739ae039 = $97664763db3c0a46$var$useInbox;
 
 const $5b61553556e35016$var$useWebfinger = ()=>{
     // Post an activity to the logged user's outbox and return its URI
-    const fetch = (0, $jwOeV$react.useCallback)(async (id)=>{
+    const fetch = (0, $583VT$react.useCallback)(async (id)=>{
         // eslint-disable-next-line
         const [_, username, host] = id.split("@");
         if (host) {
             const protocol = host.includes(":") ? "http" : "https"; // If the host has a port, we are most likely on localhost
             const webfingerUrl = `${protocol}://${host}/.well-known/webfinger?resource=acct:${username}@${host}`;
             try {
-                const { json: json } = await (0, $jwOeV$reactadmin.fetchUtils).fetchJson(webfingerUrl);
+                const { json: json } = await (0, $583VT$reactadmin.fetchUtils).fetchJson(webfingerUrl);
                 const link = json.links.find((l)=>l.type === "application/activity+json");
                 return link ? link.href : null;
             } catch (e) {
@@ -802,7 +804,7 @@ var $5b61553556e35016$export$2e2bcd8739ae039 = $5b61553556e35016$var$useWebfinge
 
 
 
-const $27d3788851661769$var$useStyles = (0, ($parcel$interopDefault($jwOeV$muistylesmakeStyles)))((theme)=>({
+const $27d3788851661769$var$useStyles = (0, ($parcel$interopDefault($583VT$muistylesmakeStyles)))((theme)=>({
         items: {
             background: "#fff",
             borderRadius: "0.5rem",
@@ -827,8 +829,8 @@ const $27d3788851661769$var$useStyles = (0, ($parcel$interopDefault($jwOeV$muist
             }
         }
     }));
-var $27d3788851661769$export$2e2bcd8739ae039 = /*#__PURE__*/ (0, $jwOeV$react.forwardRef)((props, ref)=>{
-    const [selectedIndex, setSelectedIndex] = (0, $jwOeV$react.useState)(0);
+var $27d3788851661769$export$2e2bcd8739ae039 = /*#__PURE__*/ (0, $583VT$react.forwardRef)((props, ref)=>{
+    const [selectedIndex, setSelectedIndex] = (0, $583VT$react.useState)(0);
     const classes = $27d3788851661769$var$useStyles();
     const selectItem = (index)=>{
         const item = props.items[index];
@@ -845,10 +847,10 @@ var $27d3788851661769$export$2e2bcd8739ae039 = /*#__PURE__*/ (0, $jwOeV$react.fo
     const enterHandler = ()=>{
         selectItem(selectedIndex);
     };
-    (0, $jwOeV$react.useEffect)(()=>setSelectedIndex(0), [
+    (0, $583VT$react.useEffect)(()=>setSelectedIndex(0), [
         props.items
     ]);
-    (0, $jwOeV$react.useImperativeHandle)(ref, ()=>({
+    (0, $583VT$react.useImperativeHandle)(ref, ()=>({
             onKeyDown: ({ event: event })=>{
                 if (event.key === "ArrowUp") {
                     upHandler();
@@ -865,13 +867,13 @@ var $27d3788851661769$export$2e2bcd8739ae039 = /*#__PURE__*/ (0, $jwOeV$react.fo
                 return false;
             }
         }));
-    return /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)("div", {
+    return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)("div", {
         className: classes.items,
-        children: props.items.length ? props.items.map((item, index)=>/*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)("button", {
+        children: props.items.length ? props.items.map((item, index)=>/*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)("button", {
                 className: classes.item + (index === selectedIndex ? " selected" : ""),
                 onClick: ()=>selectItem(index),
                 children: item.label
-            }, index)) : /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)("div", {
+            }, index)) : /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)("div", {
             className: classes.item,
             children: "Aucun r\xe9sultat"
         })
@@ -884,11 +886,11 @@ const $7b7f4b18327176f8$var$renderMentions = ()=>{
     let popup;
     return {
         onStart: (props)=>{
-            component = new (0, $jwOeV$tiptapreact.ReactRenderer)((0, $27d3788851661769$export$2e2bcd8739ae039), {
+            component = new (0, $583VT$tiptapreact.ReactRenderer)((0, $27d3788851661769$export$2e2bcd8739ae039), {
                 props: props,
                 editor: props.editor
             });
-            popup = (0, ($parcel$interopDefault($jwOeV$tippyjs)))("body", {
+            popup = (0, ($parcel$interopDefault($583VT$tippyjs)))("body", {
                 getReferenceClientRect: props.clientRect,
                 appendTo: ()=>document.body,
                 content: component.element,
@@ -921,8 +923,8 @@ var $7b7f4b18327176f8$export$2e2bcd8739ae039 = $7b7f4b18327176f8$var$renderMenti
 
 
 const $968ea07fb81eda0b$var$useMentions = (userResource)=>{
-    const userDataModel = (0, $jwOeV$semappssemanticdataprovider.useDataModel)(userResource);
-    const { data: data } = (0, $jwOeV$reactadmin.useGetList)(userResource, {
+    const userDataModel = (0, $583VT$semappssemanticdataprovider.useDataModel)(userResource);
+    const { data: data } = (0, $583VT$reactadmin.useGetList)(userResource, {
         filter: {
             _predicates: [
                 userDataModel?.fieldsMapping?.title
@@ -932,7 +934,7 @@ const $968ea07fb81eda0b$var$useMentions = (userResource)=>{
     }, {
         enabled: !!userDataModel?.fieldsMapping?.title
     });
-    const availableMentions = (0, $jwOeV$react.useMemo)(()=>{
+    const availableMentions = (0, $583VT$react.useMemo)(()=>{
         if (data) return data.map((item)=>({
                 id: item.id,
                 label: item[userDataModel?.fieldsMapping?.title]
@@ -940,7 +942,7 @@ const $968ea07fb81eda0b$var$useMentions = (userResource)=>{
     }, [
         data
     ]);
-    const items = (0, $jwOeV$react.useMemo)(()=>{
+    const items = (0, $583VT$react.useMemo)(()=>{
         if (availableMentions) return ({ query: query })=>{
             return availableMentions.filter(({ label: label })=>label.toLowerCase().startsWith(query.toLowerCase())).slice(0, 5);
         };

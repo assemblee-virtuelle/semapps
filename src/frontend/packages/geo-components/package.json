@@ -4,7 +4,7 @@
   "description": "React-Admin component for geographic data display and input",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
-  "source": "src/index.js",
+  "source": "src/index.ts",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
   "files": [
@@ -35,5 +35,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "types": "dist/index.d.ts"
 }

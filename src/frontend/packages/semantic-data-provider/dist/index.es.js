@@ -1,15 +1,15 @@
-import $7bWYI$urljoin from "url-join";
-import $7bWYI$jsonld from "jsonld";
-import $7bWYI$speakingurl from "speakingurl";
-import $7bWYI$isobject from "isobject";
-import $7bWYI$rdfjsdatamodel, {triple as $7bWYI$triple, variable as $7bWYI$variable, namedNode as $7bWYI$namedNode} from "@rdfjs/data-model";
-import {Generator as $7bWYI$Generator} from "sparqljs";
-import $7bWYI$cryptojsmd5 from "crypto-js/md5";
-import $7bWYI$jwtdecode from "jwt-decode";
-import {fetchUtils as $7bWYI$fetchUtils, DataProviderContext as $7bWYI$DataProviderContext, useGetList as $7bWYI$useGetList, ArrayInput as $7bWYI$ArrayInput, SimpleFormIterator as $7bWYI$SimpleFormIterator, TextInput as $7bWYI$TextInput} from "react-admin";
-import $7bWYI$react, {useContext as $7bWYI$useContext, useMemo as $7bWYI$useMemo, useCallback as $7bWYI$useCallback, useState as $7bWYI$useState, useEffect as $7bWYI$useEffect} from "react";
-import {jsx as $7bWYI$jsx, Fragment as $7bWYI$Fragment, jsxs as $7bWYI$jsxs} from "react/jsx-runtime";
-import $7bWYI$muistylesmakeStyles from "@mui/styles/makeStyles";
+import $fj9kP$urljoin from "url-join";
+import $fj9kP$jsonld from "jsonld";
+import $fj9kP$speakingurl from "speakingurl";
+import $fj9kP$isobject from "isobject";
+import $fj9kP$rdfjsdatamodel, {triple as $fj9kP$triple, variable as $fj9kP$variable, namedNode as $fj9kP$namedNode} from "@rdfjs/data-model";
+import {Generator as $fj9kP$Generator} from "sparqljs";
+import $fj9kP$cryptojsmd5 from "crypto-js/md5";
+import $fj9kP$jwtdecode from "jwt-decode";
+import {fetchUtils as $fj9kP$fetchUtils, DataProviderContext as $fj9kP$DataProviderContext, useGetList as $fj9kP$useGetList, ArrayInput as $fj9kP$ArrayInput, SimpleFormIterator as $fj9kP$SimpleFormIterator, TextInput as $fj9kP$TextInput} from "react-admin";
+import $fj9kP$react, {useContext as $fj9kP$useContext, useMemo as $fj9kP$useMemo, useCallback as $fj9kP$useCallback, useState as $fj9kP$useState, useEffect as $fj9kP$useEffect} from "react";
+import {jsx as $fj9kP$jsx, Fragment as $fj9kP$Fragment, jsxs as $fj9kP$jsxs} from "react/jsx-runtime";
+import $fj9kP$muistylesmakeStyles from "@mui/styles/makeStyles";
 
 
 
@@ -20,7 +20,7 @@ const $336b7edf722fe53e$var$fetchResource = async (resourceUri, config)=>{
     data.id = data.id || data["@id"];
     // We compact only if the context is different between the frontend and the middleware
     // TODO deep compare if the context is an object
-    if (data["@context"] !== jsonContext) data = await (0, $7bWYI$jsonld).compact(data, jsonContext);
+    if (data["@context"] !== jsonContext) data = await (0, $fj9kP$jsonld).compact(data, jsonContext);
     return data;
 };
 var $336b7edf722fe53e$export$2e2bcd8739ae039 = $336b7edf722fe53e$var$fetchResource;
@@ -71,14 +71,14 @@ const $749174ce56cb8a3b$export$190bcb5b6b4f794f = (fileName)=>{
         fileExtension = splitFileName.pop();
         fileName = splitFileName.join(".");
     }
-    return `${(0, $7bWYI$speakingurl)(fileName, {
+    return `${(0, $fj9kP$speakingurl)(fileName, {
         lang: "fr"
     })}.${fileExtension}`;
 };
 const $749174ce56cb8a3b$export$be78b3111c50efdd = (o)=>o?.rawFile && o.rawFile instanceof File;
 const $749174ce56cb8a3b$var$getUploadsContainerUri = (config)=>{
     const serverKey = Object.keys(config.dataServers).find((key)=>config.dataServers[key].uploadsContainer);
-    if (serverKey) return (0, $7bWYI$urljoin)(config.dataServers[serverKey].baseUrl, config.dataServers[serverKey].uploadsContainer);
+    if (serverKey) return (0, $fj9kP$urljoin)(config.dataServers[serverKey].baseUrl, config.dataServers[serverKey].uploadsContainer);
 };
 const $749174ce56cb8a3b$var$uploadFile = async (rawFile, config)=>{
     const uploadsContainerUri = $749174ce56cb8a3b$var$getUploadsContainerUri(config);
@@ -162,7 +162,7 @@ const $973dc9d98aeab64f$var$findContainersWithTypes = (types, serverKeys, dataSe
         Object.keys(dataServers[key1].containers).forEach((key2)=>{
             if (!serverKeys || serverKeys.includes(key2)) Object.keys(dataServers[key1].containers[key2]).forEach((type)=>{
                 if (types.includes(type)) dataServers[key1].containers[key2][type].map((path)=>{
-                    const containerUri = (0, $7bWYI$urljoin)(dataServers[key2].baseUrl, path);
+                    const containerUri = (0, $fj9kP$urljoin)(dataServers[key2].baseUrl, path);
                     // Avoid returning the same container several times
                     if (!existingContainers.includes(containerUri)) {
                         existingContainers.push(containerUri);
@@ -187,7 +187,7 @@ const $5a7a2f7583392866$var$createMethod = (config)=>async (resourceId, params)=
         let serverKey;
         if (dataModel.create?.container) {
             serverKey = Object.keys(dataModel.create.container)[0];
-            containerUri = (0, $7bWYI$urljoin)(dataServers[serverKey].baseUrl, Object.values(dataModel.create.container)[0]);
+            containerUri = (0, $fj9kP$urljoin)(dataServers[serverKey].baseUrl, Object.values(dataModel.create.container)[0]);
         } else {
             serverKey = dataModel.create?.server || Object.keys(dataServers).find((key)=>dataServers[key].default === true);
             if (!serverKey) throw new Error("You must define a server for the creation, or a container, or a default server");
@@ -305,7 +305,7 @@ const $3aeefa4731ce9a96$var$fetchContainers = async (containers, resourceId, par
     const fetchPromises = Object.keys(containersServers).map((containerUri)=>httpClient(containerUri).then(({ json: json })=>{
             // If container's context is different, compact it to have an uniform result
             // TODO deep compare if the context is an object
-            if (json["@context"] !== jsonContext) return (0, $7bWYI$jsonld).compact(json, jsonContext);
+            if (json["@context"] !== jsonContext) return (0, $fj9kP$jsonld).compact(json, jsonContext);
             return json;
         }).then((json)=>{
             if ($3aeefa4731ce9a96$export$26b9f946b448f23e("ldp:Container", json)) return json["ldp:contains"];
@@ -333,7 +333,7 @@ const $3aeefa4731ce9a96$var$fetchContainers = async (containers, resourceId, par
         if (Object.keys(params.filter).length > 0) returnData = returnData.filter((resource)=>{
             return Object.entries(params.filter).every(([k, v])=>{
                 if (k == "q") return Object.entries(resource).some(([kr, vr])=>{
-                    if (!(0, $7bWYI$isobject)(vr)) {
+                    if (!(0, $fj9kP$isobject)(vr)) {
                         const arrayValues = Array.isArray(vr) ? vr : [
                             vr
                         ];
@@ -412,11 +412,11 @@ const $47d734d7812e6861$var$defaultToArray = (value)=>!value ? [] : Array.isArra
         value
     ];
 // We need to always include the type or React-Admin will not work properly
-const $47d734d7812e6861$var$typeQuery = (0, $7bWYI$triple)((0, $7bWYI$variable)("s1"), (0, $7bWYI$namedNode)("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), (0, $7bWYI$variable)("type"));
+const $47d734d7812e6861$var$typeQuery = (0, $fj9kP$triple)((0, $fj9kP$variable)("s1"), (0, $fj9kP$namedNode)("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), (0, $fj9kP$variable)("type"));
 const $47d734d7812e6861$var$buildBaseQuery = (predicates, ontologies)=>{
     let baseTriples;
     if (predicates) {
-        baseTriples = $47d734d7812e6861$var$defaultToArray(predicates).map((predicate, i)=>(0, $7bWYI$triple)((0, $7bWYI$variable)("s1"), (0, $7bWYI$namedNode)((0, $564e5d81f6496048$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $7bWYI$variable)(`o${i + 1}`)));
+        baseTriples = $47d734d7812e6861$var$defaultToArray(predicates).map((predicate, i)=>(0, $fj9kP$triple)((0, $fj9kP$variable)("s1"), (0, $fj9kP$namedNode)((0, $564e5d81f6496048$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $fj9kP$variable)(`o${i + 1}`)));
         return {
             construct: [
                 $47d734d7812e6861$var$typeQuery,
@@ -434,7 +434,7 @@ const $47d734d7812e6861$var$buildBaseQuery = (predicates, ontologies)=>{
         };
     }
     baseTriples = [
-        (0, $7bWYI$triple)((0, $7bWYI$variable)("s1"), (0, $7bWYI$variable)("p1"), (0, $7bWYI$variable)("o1"))
+        (0, $fj9kP$triple)((0, $fj9kP$variable)("s1"), (0, $fj9kP$variable)("p1"), (0, $fj9kP$variable)("o1"))
     ];
     return {
         construct: baseTriples,
@@ -458,7 +458,7 @@ const $865f630cc944e818$var$extractNodes = (blankNodes)=>{
     }
     return nodes;
 };
-const $865f630cc944e818$var$generateSparqlVarName = (node)=>(0, $7bWYI$cryptojsmd5)(node);
+const $865f630cc944e818$var$generateSparqlVarName = (node)=>(0, $fj9kP$cryptojsmd5)(node);
 const $865f630cc944e818$var$getParentNode = (node)=>node.includes("/") && node.split("/")[0];
 const $865f630cc944e818$var$getPredicate = (node)=>node.includes("/") ? node.split("/")[1] : node;
 const $865f630cc944e818$var$buildUnionQuery = (queries)=>queries.map((q)=>{
@@ -480,8 +480,8 @@ const $865f630cc944e818$var$buildBlankNodesQuery = (blankNodes, baseQuery, ontol
             const varName = $865f630cc944e818$var$generateSparqlVarName(node);
             const parentVarName = parentNode ? $865f630cc944e818$var$generateSparqlVarName(parentNode) : "1";
             const query = [
-                (0, $7bWYI$triple)((0, $7bWYI$variable)(`s${parentVarName}`), (0, $7bWYI$namedNode)((0, $564e5d81f6496048$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $7bWYI$variable)(`s${varName}`)),
-                (0, $7bWYI$triple)((0, $7bWYI$variable)(`s${varName}`), (0, $7bWYI$variable)(`p${varName}`), (0, $7bWYI$variable)(`o${varName}`))
+                (0, $fj9kP$triple)((0, $fj9kP$variable)(`s${parentVarName}`), (0, $fj9kP$namedNode)((0, $564e5d81f6496048$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $fj9kP$variable)(`s${varName}`)),
+                (0, $fj9kP$triple)((0, $fj9kP$variable)(`s${varName}`), (0, $fj9kP$variable)(`p${varName}`), (0, $fj9kP$variable)(`o${varName}`))
             ];
             queries.push({
                 node: node,
@@ -521,7 +521,7 @@ const $efbe3fa6f1479c06$var$buildAutoDetectBlankNodesQuery = (depth, baseQuery)=
             baseQuery.where
         ]);
         for(let i = 1; i <= depth; i++){
-            construct.push((0, $7bWYI$triple)((0, $7bWYI$variable)(`o${i}`), (0, $7bWYI$variable)(`p${i + 1}`), (0, $7bWYI$variable)(`o${i + 1}`)));
+            construct.push((0, $fj9kP$triple)((0, $fj9kP$variable)(`o${i}`), (0, $fj9kP$variable)(`p${i + 1}`), (0, $fj9kP$variable)(`o${i + 1}`)));
             whereQueries.push([
                 ...whereQueries[whereQueries.length - 1],
                 {
@@ -530,11 +530,11 @@ const $efbe3fa6f1479c06$var$buildAutoDetectBlankNodesQuery = (depth, baseQuery)=
                         type: "operation",
                         operator: "isblank",
                         args: [
-                            (0, $7bWYI$variable)(`o${i}`)
+                            (0, $fj9kP$variable)(`o${i}`)
                         ]
                     }
                 },
-                (0, $7bWYI$triple)((0, $7bWYI$variable)(`o${i}`), (0, $7bWYI$variable)(`p${i + 1}`), (0, $7bWYI$variable)(`o${i + 1}`))
+                (0, $fj9kP$triple)((0, $fj9kP$variable)(`o${i}`), (0, $fj9kP$variable)(`p${i + 1}`), (0, $fj9kP$variable)(`o${i + 1}`))
             ]);
         }
         where = {
@@ -552,8 +552,8 @@ var $efbe3fa6f1479c06$export$2e2bcd8739ae039 = $efbe3fa6f1479c06$var$buildAutoDe
 
 
 
-const { literal: $6cde9a8fbbde3ffb$var$literal, namedNode: $6cde9a8fbbde3ffb$var$namedNode, triple: $6cde9a8fbbde3ffb$var$triple, variable: $6cde9a8fbbde3ffb$var$variable } = (0, $7bWYI$rdfjsdatamodel);
-const $6cde9a8fbbde3ffb$var$generator = new (0, $7bWYI$Generator)({
+const { literal: $6cde9a8fbbde3ffb$var$literal, namedNode: $6cde9a8fbbde3ffb$var$namedNode, triple: $6cde9a8fbbde3ffb$var$triple, variable: $6cde9a8fbbde3ffb$var$variable } = (0, $fj9kP$rdfjsdatamodel);
+const $6cde9a8fbbde3ffb$var$generator = new (0, $fj9kP$Generator)({
 });
 const $6cde9a8fbbde3ffb$var$reservedFilterKeys = [
     "q",
@@ -749,7 +749,7 @@ const $05a1b4063d50f1b7$var$fetchSparqlEndpoints = async (containers, resourceId
                     "@type": dataModel.types
                 };
                 // omitGraph option force results to be in a @graph, even if we have a single result
-                return (0, $7bWYI$jsonld).frame(json, frame, {
+                return (0, $fj9kP$jsonld).frame(json, frame, {
                     omitGraph: false
                 });
             }).then((compactJson)=>{
@@ -802,7 +802,7 @@ const $4a0be4f601906b75$var$findContainersWithPaths = (paths, dataServers)=>{
         if (dataServers[serverKey]) {
             containers[serverKey] = [];
             paths[serverKey].forEach((path)=>{
-                containers[serverKey].push((0, $7bWYI$urljoin)(dataServers[serverKey].baseUrl, path));
+                containers[serverKey].push((0, $fj9kP$urljoin)(dataServers[serverKey].baseUrl, path));
             });
         } else throw new Error(`No server found with key ${serverKey}`);
     });
@@ -894,7 +894,7 @@ const $81a8da127161495a$var$fetchUserConfig = async (config)=>{
     const authServerKey = (0, $8326b88c1a913ca9$export$2e2bcd8739ae039)("authServer", dataServers);
     // If the user is logged in
     if (token) {
-        const { webId: webId } = (0, $7bWYI$jwtdecode)(token);
+        const { webId: webId } = (0, $fj9kP$jwtdecode)(token);
         let userData;
         try {
             const { json: json } = await httpClient(webId);
@@ -911,8 +911,8 @@ const $81a8da127161495a$var$fetchUserConfig = async (config)=>{
             // Fill the config provided to the data provider
             // We must modify the config object directly
             config.dataServers[podKey].name = "My Pod";
-            config.dataServers[podKey].baseUrl = (0, $7bWYI$urljoin)(webId, "data"); // TODO find POD URI from user profile
-            config.dataServers[podKey].sparqlEndpoint = userData.endpoints?.["void:sparqlEndpoint"] || (0, $7bWYI$urljoin)(webId, "sparql");
+            config.dataServers[podKey].baseUrl = (0, $fj9kP$urljoin)(webId, "data"); // TODO find POD URI from user profile
+            config.dataServers[podKey].sparqlEndpoint = userData.endpoints?.["void:sparqlEndpoint"] || (0, $fj9kP$urljoin)(webId, "sparql");
         }
         if (authServerKey) // Fill the config provided to the data provider
         // We must modify the config object directly
@@ -1019,7 +1019,7 @@ var $47e21ee81eed09a6$export$2e2bcd8739ae039 = $47e21ee81eed09a6$var$getServerKe
                 else formData.append("body", options.body);
             }
             // Post to proxy endpoint with multipart/form-data format
-            return (0, $7bWYI$fetchUtils).fetchJson(dataServers[authServerKey].proxyUrl, {
+            return (0, $fj9kP$fetchUtils).fetchJson(dataServers[authServerKey].proxyUrl, {
                 method: "POST",
                 headers: new Headers({
                     Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -1032,7 +1032,7 @@ var $47e21ee81eed09a6$export$2e2bcd8739ae039 = $47e21ee81eed09a6$var$getServerKe
             const token = localStorage.getItem("token");
             if (token) options.headers.set("Authorization", `Bearer ${token}`);
         }
-        return (0, $7bWYI$fetchUtils).fetchJson(url, options);
+        return (0, $fj9kP$fetchUtils).fetchJson(url, options);
     };
 var $22b4895a4ca7d626$export$2e2bcd8739ae039 = $22b4895a4ca7d626$var$httpClient;
 
@@ -1084,9 +1084,9 @@ const $87656edf926c0f1f$var$compute = (externalLinks, record)=>typeof externalLi
 const $87656edf926c0f1f$var$isURL = (url)=>typeof url === "string" && url.startsWith("http");
 const $87656edf926c0f1f$var$useGetExternalLink = (componentExternalLinks)=>{
     // Since the externalLinks config is defined only locally, we don't need to wait for VOID endpoints fetching
-    const dataProvider = (0, $7bWYI$useContext)((0, $7bWYI$DataProviderContext));
+    const dataProvider = (0, $fj9kP$useContext)((0, $fj9kP$DataProviderContext));
     const dataServers = dataProvider.getLocalDataServers();
-    const serversExternalLinks = (0, $7bWYI$useMemo)(()=>{
+    const serversExternalLinks = (0, $fj9kP$useMemo)(()=>{
         if (dataServers) return Object.fromEntries(Object.values(dataServers).map((server)=>{
             // If externalLinks is not defined in the data server, use external links for non-default servers
             const externalLinks = server.externalLinks !== undefined ? server.externalLinks : !server.default;
@@ -1098,7 +1098,7 @@ const $87656edf926c0f1f$var$useGetExternalLink = (componentExternalLinks)=>{
     }, [
         dataServers
     ]);
-    return (0, $7bWYI$useCallback)((record)=>{
+    return (0, $fj9kP$useCallback)((record)=>{
         const computedComponentExternalLinks = $87656edf926c0f1f$var$compute(componentExternalLinks, record);
         // If the component explicitly asks not to display as external links, use an internal link
         if (computedComponentExternalLinks === false) return false;
@@ -1125,9 +1125,9 @@ var $87656edf926c0f1f$export$2e2bcd8739ae039 = $87656edf926c0f1f$var$useGetExter
 
 const $a87bd51acf378e49$var$useDataModel = (resourceId)=>{
     // Get the raw data provider, since useDataProvider returns a wrapper
-    const dataProvider = (0, $7bWYI$useContext)((0, $7bWYI$DataProviderContext));
-    const [dataModel, setDataModel] = (0, $7bWYI$useState)();
-    (0, $7bWYI$useEffect)(()=>{
+    const dataProvider = (0, $fj9kP$useContext)((0, $fj9kP$DataProviderContext));
+    const [dataModel, setDataModel] = (0, $fj9kP$useState)();
+    (0, $fj9kP$useEffect)(()=>{
         dataProvider.getDataModels().then((results)=>setDataModel(results[resourceId]));
     }, [
         dataProvider,
@@ -1143,9 +1143,9 @@ var $a87bd51acf378e49$export$2e2bcd8739ae039 = $a87bd51acf378e49$var$useDataMode
 
 const $11b469d0a927fb46$var$useDataServers = ()=>{
     // Get the raw data provider, since useDataProvider returns a wrapper
-    const dataProvider = (0, $7bWYI$useContext)((0, $7bWYI$DataProviderContext));
-    const [dataServers, setDataServers] = (0, $7bWYI$useState)();
-    (0, $7bWYI$useEffect)(()=>{
+    const dataProvider = (0, $fj9kP$useContext)((0, $fj9kP$DataProviderContext));
+    const [dataServers, setDataServers] = (0, $fj9kP$useState)();
+    (0, $fj9kP$useEffect)(()=>{
         dataProvider.getDataServers().then((results)=>setDataServers(results));
     }, [
         dataProvider,
@@ -1160,8 +1160,8 @@ var $11b469d0a927fb46$export$2e2bcd8739ae039 = $11b469d0a927fb46$var$useDataServ
 const $e514fb4f70cfea08$var$useContainers = (resourceId, serverKeys = "@all")=>{
     const dataModel = (0, $a87bd51acf378e49$export$2e2bcd8739ae039)(resourceId);
     const dataServers = (0, $11b469d0a927fb46$export$2e2bcd8739ae039)();
-    const [containers, setContainers] = (0, $7bWYI$useState)();
-    (0, $7bWYI$useEffect)(()=>{
+    const [containers, setContainers] = (0, $fj9kP$useState)();
+    (0, $fj9kP$useEffect)(()=>{
         if (dataModel && dataServers) setContainers((0, $973dc9d98aeab64f$export$2e2bcd8739ae039)(dataModel.types, serverKeys, dataServers));
     }, [
         dataModel,
@@ -1182,7 +1182,7 @@ const $a6f9067f89a63589$var$findCreateContainerWithTypes = (types, createServerK
     const containers = [];
     if (Object.keys(dataServers[createServerKey].containers[createServerKey]).length > 0) Object.keys(dataServers[createServerKey].containers[createServerKey]).forEach((type)=>{
         if (types.includes(type)) dataServers[createServerKey].containers[createServerKey][type].map((path)=>{
-            const containerUri = (0, $7bWYI$urljoin)(dataServers[createServerKey].baseUrl, path);
+            const containerUri = (0, $fj9kP$urljoin)(dataServers[createServerKey].baseUrl, path);
             if (!containers.includes(containerUri)) containers.push(containerUri);
         });
     });
@@ -1197,13 +1197,13 @@ var $a6f9067f89a63589$export$2e2bcd8739ae039 = $a6f9067f89a63589$var$findCreateC
 const $7bd037d7ec9d51f8$var$useCreateContainer = (resourceId)=>{
     const dataModel = (0, $a87bd51acf378e49$export$2e2bcd8739ae039)(resourceId);
     const dataServers = (0, $11b469d0a927fb46$export$2e2bcd8739ae039)();
-    const [createContainer, setCreateContainer] = (0, $7bWYI$useState)();
-    (0, $7bWYI$useEffect)(()=>{
+    const [createContainer, setCreateContainer] = (0, $fj9kP$useState)();
+    (0, $fj9kP$useEffect)(()=>{
         if (dataModel && dataServers) {
             if (dataModel.create?.container) {
                 const [serverKey, path] = Object.entries(dataModel.create.container)[0];
                 if (!serverKey || !dataServers[serverKey]) throw new Error(`Wrong key for the dataModel.create.container config of resource ${resourceId}`);
-                setCreateContainer((0, $7bWYI$urljoin)(dataServers[serverKey].baseUrl, path));
+                setCreateContainer((0, $fj9kP$urljoin)(dataServers[serverKey].baseUrl, path));
             } else if (dataModel.create?.server) setCreateContainer((0, $a6f9067f89a63589$export$2e2bcd8739ae039)(dataModel.types, dataModel.create?.server, dataServers));
             else {
                 const defaultServerKey = (0, $8326b88c1a913ca9$export$2e2bcd8739ae039)("default", dataServers);
@@ -1225,9 +1225,9 @@ var $7bd037d7ec9d51f8$export$2e2bcd8739ae039 = $7bd037d7ec9d51f8$var$useCreateCo
 
 const $349fed82907088e5$var$useDataModels = ()=>{
     // Get the raw data provider, since useDataProvider returns a wrapper
-    const dataProvider = (0, $7bWYI$useContext)((0, $7bWYI$DataProviderContext));
-    const [dataModels, setDataModels] = (0, $7bWYI$useState)();
-    (0, $7bWYI$useEffect)(()=>{
+    const dataProvider = (0, $fj9kP$useContext)((0, $fj9kP$DataProviderContext));
+    const [dataModels, setDataModels] = (0, $fj9kP$useState)();
+    (0, $fj9kP$useEffect)(()=>{
         dataProvider.getDataModels().then((results)=>setDataModels(results));
     }, [
         dataProvider,
@@ -1255,8 +1255,8 @@ var $349fed82907088e5$export$2e2bcd8739ae039 = $349fed82907088e5$var$useDataMode
  *   </FilterHandler>
  * </Show>
  */ const $406574efa35ec6f1$var$FilterHandler = ({ children: children, record: record, filter: filter, source: source, ...otherProps })=>{
-    const [filtered, setFiltered] = (0, $7bWYI$useState)();
-    (0, $7bWYI$useEffect)(()=>{
+    const [filtered, setFiltered] = (0, $fj9kP$useState)();
+    (0, $fj9kP$useEffect)(()=>{
         if (record && source && Array.isArray(record?.[source])) {
             const filteredData = record?.[source].filter((r)=>{
                 let eq = true;
@@ -1280,9 +1280,9 @@ var $349fed82907088e5$export$2e2bcd8739ae039 = $349fed82907088e5$var$useDataMode
         source,
         filter
     ]);
-    return /*#__PURE__*/ (0, $7bWYI$jsx)((0, $7bWYI$Fragment), {
-        children: (0, $7bWYI$react).Children.map(children, (child, i)=>{
-            return /*#__PURE__*/ (0, $7bWYI$react).cloneElement(child, {
+    return /*#__PURE__*/ (0, $fj9kP$jsx)((0, $fj9kP$Fragment), {
+        children: (0, $fj9kP$react).Children.map(children, (child, i)=>{
+            return /*#__PURE__*/ (0, $fj9kP$react).cloneElement(child, {
                 ...otherProps,
                 record: filtered,
                 source: source
@@ -1358,21 +1358,21 @@ var $406574efa35ec6f1$export$2e2bcd8739ae039 = $406574efa35ec6f1$var$FilterHandl
  *
  *
  */ const $1d8c1cbe606a94ae$var$GroupedReferenceHandler = ({ children: children, groupReference: groupReference, groupLabel: groupLabel, groupHeader: groupHeader, filterProperty: filterProperty, ...otherProps })=>{
-    const { data: data } = (0, $7bWYI$useGetList)({
+    const { data: data } = (0, $fj9kP$useGetList)({
         resource: groupReference,
         payload: {}
     });
-    return /*#__PURE__*/ (0, $7bWYI$jsx)((0, $7bWYI$Fragment), {
+    return /*#__PURE__*/ (0, $fj9kP$jsx)((0, $fj9kP$Fragment), {
         children: data?.map((data, index)=>{
             const filter = {};
             filter[filterProperty] = data.id;
-            return /*#__PURE__*/ (0, $7bWYI$jsxs)((0, $7bWYI$Fragment), {
+            return /*#__PURE__*/ (0, $fj9kP$jsxs)((0, $fj9kP$Fragment), {
                 children: [
                     groupHeader && groupHeader({
                         ...otherProps,
                         group: data
                     }),
-                    /*#__PURE__*/ (0, $7bWYI$jsx)((0, $406574efa35ec6f1$export$2e2bcd8739ae039), {
+                    /*#__PURE__*/ (0, $fj9kP$jsx)((0, $406574efa35ec6f1$export$2e2bcd8739ae039), {
                         ...otherProps,
                         filter: filter,
                         label: data[groupLabel],
@@ -1390,7 +1390,7 @@ var $1d8c1cbe606a94ae$export$2e2bcd8739ae039 = $1d8c1cbe606a94ae$var$GroupedRefe
 
 
 
-const $6844bbce0ad66151$var$useReferenceInputStyles = (0, $7bWYI$muistylesmakeStyles)({
+const $6844bbce0ad66151$var$useReferenceInputStyles = (0, $fj9kP$muistylesmakeStyles)({
     form: {
         display: "flex"
     },
@@ -1398,7 +1398,7 @@ const $6844bbce0ad66151$var$useReferenceInputStyles = (0, $7bWYI$muistylesmakeSt
         paddingRight: "20px"
     }
 });
-const $6844bbce0ad66151$var$useHideInputStyles = (0, $7bWYI$muistylesmakeStyles)({
+const $6844bbce0ad66151$var$useHideInputStyles = (0, $fj9kP$muistylesmakeStyles)({
     root: {
         display: "none"
     }
@@ -1407,19 +1407,19 @@ const $6844bbce0ad66151$var$ReificationArrayInput = (props)=>{
     const { reificationClass: reificationClass, children: children, ...otherProps } = props;
     const flexFormClasses = $6844bbce0ad66151$var$useReferenceInputStyles();
     const hideInputStyles = $6844bbce0ad66151$var$useHideInputStyles();
-    return /*#__PURE__*/ (0, $7bWYI$jsx)((0, $7bWYI$ArrayInput), {
+    return /*#__PURE__*/ (0, $fj9kP$jsx)((0, $fj9kP$ArrayInput), {
         ...otherProps,
-        children: /*#__PURE__*/ (0, $7bWYI$jsxs)((0, $7bWYI$SimpleFormIterator), {
+        children: /*#__PURE__*/ (0, $fj9kP$jsxs)((0, $fj9kP$SimpleFormIterator), {
             classes: {
                 form: flexFormClasses.form
             },
             children: [
-                (0, $7bWYI$react).Children.map(props.children, (child, i)=>{
-                    return /*#__PURE__*/ (0, $7bWYI$react).cloneElement(child, {
+                (0, $fj9kP$react).Children.map(props.children, (child, i)=>{
+                    return /*#__PURE__*/ (0, $fj9kP$react).cloneElement(child, {
                         className: flexFormClasses.input
                     });
                 }),
-                /*#__PURE__*/ (0, $7bWYI$jsx)((0, $7bWYI$TextInput), {
+                /*#__PURE__*/ (0, $fj9kP$jsx)((0, $fj9kP$TextInput), {
                     className: hideInputStyles.root,
                     source: "type",
                     initialValue: reificationClass
