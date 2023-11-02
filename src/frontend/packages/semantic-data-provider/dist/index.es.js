@@ -736,10 +736,10 @@ const $05a1b4063d50f1b7$var$fetchSparqlEndpoints = async (containers, resourceId
                 method: "POST",
                 body: sparqlQuery
             }).then(({ json: json })=>{
-                // By default, embed only the blank nodes we explicitly asked to dereference
-                // Otherwise we may have same-type resources embedded in other resources
+                // If we declared the blank nodes to dereference, embed only those blank nodes
+                // This solve problems which can occur when same-type resources are embedded in other resources
                 // To increase performances, you can set explicitEmbedOnFraming to false (make sure the result is still OK)
-                const frame = dataModel.list?.explicitEmbedOnFraming !== false ? {
+                const frame = blankNodes && dataModel.list?.explicitEmbedOnFraming !== false ? {
                     "@context": jsonContext,
                     "@type": dataModel.types,
                     "@embed": "@never",
@@ -1123,10 +1123,10 @@ var $87656edf926c0f1f$export$2e2bcd8739ae039 = $87656edf926c0f1f$var$useGetExter
 
 
 
-const $a87bd51acf378e49$var$useDataModel = (resourceId)=>{
+const $e5a0eacd756fd1d5$var$useDataModel = (resourceId)=>{
     // Get the raw data provider, since useDataProvider returns a wrapper
     const dataProvider = (0, $fj9kP$useContext)((0, $fj9kP$DataProviderContext));
-    const [dataModel, setDataModel] = (0, $fj9kP$useState)();
+    const [dataModel, setDataModel] = (0, $fj9kP$useState)(undefined);
     (0, $fj9kP$useEffect)(()=>{
         dataProvider.getDataModels().then((results)=>setDataModel(results[resourceId]));
     }, [
@@ -1136,7 +1136,7 @@ const $a87bd51acf378e49$var$useDataModel = (resourceId)=>{
     ]);
     return dataModel;
 };
-var $a87bd51acf378e49$export$2e2bcd8739ae039 = $a87bd51acf378e49$var$useDataModel;
+var $e5a0eacd756fd1d5$export$2e2bcd8739ae039 = $e5a0eacd756fd1d5$var$useDataModel;
 
 
 
@@ -1157,12 +1157,37 @@ var $11b469d0a927fb46$export$2e2bcd8739ae039 = $11b469d0a927fb46$var$useDataServ
 
 
 
-const $e514fb4f70cfea08$var$useContainers = (resourceId, serverKeys = "@all")=>{
-    const dataModel = (0, $a87bd51acf378e49$export$2e2bcd8739ae039)(resourceId);
+
+const $15b841e67a1ba752$var$findContainersWithTypes = (types, serverKeys, dataServers)=>{
+    const containers = {};
+    const existingContainers = [];
+    const parsedServerKeys = (0, $64441f6e76bd15b6$export$2e2bcd8739ae039)(serverKeys, dataServers);
+    Object.keys(dataServers).forEach((key1)=>{
+        Object.keys(dataServers[key1].containers).forEach((key2)=>{
+            if (!parsedServerKeys || parsedServerKeys.includes(key2)) Object.keys(dataServers[key1].containers[key2]).forEach((type)=>{
+                if (types.includes(type)) dataServers[key1].containers[key2][type].map((path)=>{
+                    const containerUri = (0, $fj9kP$urljoin)(dataServers[key2].baseUrl, path);
+                    // Avoid returning the same container several times
+                    if (!existingContainers.includes(containerUri)) {
+                        existingContainers.push(containerUri);
+                        if (!containers[key1]) containers[key1] = [];
+                        containers[key1].push(containerUri);
+                    }
+                });
+            });
+        });
+    });
+    return containers;
+};
+var $15b841e67a1ba752$export$2e2bcd8739ae039 = $15b841e67a1ba752$var$findContainersWithTypes;
+
+
+const $586fa0ea9d02fa12$var$useContainers = (resourceId, serverKeys = "@all")=>{
+    const dataModel = (0, $e5a0eacd756fd1d5$export$2e2bcd8739ae039)(resourceId);
     const dataServers = (0, $11b469d0a927fb46$export$2e2bcd8739ae039)();
-    const [containers, setContainers] = (0, $fj9kP$useState)();
+    const [containers, setContainers] = (0, $fj9kP$useState)(undefined);
     (0, $fj9kP$useEffect)(()=>{
-        if (dataModel && dataServers) setContainers((0, $973dc9d98aeab64f$export$2e2bcd8739ae039)(dataModel.types, serverKeys, dataServers));
+        if (dataModel && dataServers) setContainers((0, $15b841e67a1ba752$export$2e2bcd8739ae039)(dataModel.types, serverKeys, dataServers));
     }, [
         dataModel,
         dataServers,
@@ -1170,7 +1195,7 @@ const $e514fb4f70cfea08$var$useContainers = (resourceId, serverKeys = "@all")=>{
     ]);
     return containers;
 };
-var $e514fb4f70cfea08$export$2e2bcd8739ae039 = $e514fb4f70cfea08$var$useContainers;
+var $586fa0ea9d02fa12$export$2e2bcd8739ae039 = $586fa0ea9d02fa12$var$useContainers;
 
 
 
@@ -1195,7 +1220,7 @@ var $a6f9067f89a63589$export$2e2bcd8739ae039 = $a6f9067f89a63589$var$findCreateC
 
 
 const $7bd037d7ec9d51f8$var$useCreateContainer = (resourceId)=>{
-    const dataModel = (0, $a87bd51acf378e49$export$2e2bcd8739ae039)(resourceId);
+    const dataModel = (0, $e5a0eacd756fd1d5$export$2e2bcd8739ae039)(resourceId);
     const dataServers = (0, $11b469d0a927fb46$export$2e2bcd8739ae039)();
     const [createContainer, setCreateContainer] = (0, $fj9kP$useState)();
     (0, $fj9kP$useEffect)(()=>{
@@ -1433,5 +1458,5 @@ var $6844bbce0ad66151$export$2e2bcd8739ae039 = $6844bbce0ad66151$var$Reification
 
 
 
-export {$243bf28fbb1b868f$export$2e2bcd8739ae039 as dataProvider, $6cde9a8fbbde3ffb$export$2e2bcd8739ae039 as buildSparqlQuery, $865f630cc944e818$export$2e2bcd8739ae039 as buildBlankNodesQuery, $87656edf926c0f1f$export$2e2bcd8739ae039 as useGetExternalLink, $e514fb4f70cfea08$export$2e2bcd8739ae039 as useContainers, $7bd037d7ec9d51f8$export$2e2bcd8739ae039 as useCreateContainer, $a87bd51acf378e49$export$2e2bcd8739ae039 as useDataModel, $349fed82907088e5$export$2e2bcd8739ae039 as useDataModels, $11b469d0a927fb46$export$2e2bcd8739ae039 as useDataServers, $406574efa35ec6f1$export$2e2bcd8739ae039 as FilterHandler, $1d8c1cbe606a94ae$export$2e2bcd8739ae039 as GroupedReferenceHandler, $6844bbce0ad66151$export$2e2bcd8739ae039 as ReificationArrayInput};
+export {$243bf28fbb1b868f$export$2e2bcd8739ae039 as dataProvider, $6cde9a8fbbde3ffb$export$2e2bcd8739ae039 as buildSparqlQuery, $865f630cc944e818$export$2e2bcd8739ae039 as buildBlankNodesQuery, $87656edf926c0f1f$export$2e2bcd8739ae039 as useGetExternalLink, $586fa0ea9d02fa12$export$2e2bcd8739ae039 as useContainers, $7bd037d7ec9d51f8$export$2e2bcd8739ae039 as useCreateContainer, $e5a0eacd756fd1d5$export$2e2bcd8739ae039 as useDataModel, $349fed82907088e5$export$2e2bcd8739ae039 as useDataModels, $11b469d0a927fb46$export$2e2bcd8739ae039 as useDataServers, $406574efa35ec6f1$export$2e2bcd8739ae039 as FilterHandler, $1d8c1cbe606a94ae$export$2e2bcd8739ae039 as GroupedReferenceHandler, $6844bbce0ad66151$export$2e2bcd8739ae039 as ReificationArrayInput};
 //# sourceMappingURL=index.es.js.map

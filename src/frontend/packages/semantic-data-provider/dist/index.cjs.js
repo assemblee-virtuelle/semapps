@@ -24,9 +24,9 @@ $parcel$export(module.exports, "dataProvider", () => $7f6a16d0025dc83a$export$2e
 $parcel$export(module.exports, "buildSparqlQuery", () => $33c37185da3771a9$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "buildBlankNodesQuery", () => $64d4ce40c79d1509$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useGetExternalLink", () => $85e9a897c6d7c14a$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "useContainers", () => $c2f8a77958c288fd$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useContainers", () => $3158e0dc13ffffaa$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useCreateContainer", () => $99ed32cbdb76cb50$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "useDataModel", () => $404991bb01c2ceff$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useDataModel", () => $63a32f1a35c6f80e$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useDataModels", () => $8d622cbd05acb834$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useDataServers", () => $9b817943cd488c90$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "FilterHandler", () => $f763906f9b20f2d8$export$2e2bcd8739ae039);
@@ -757,10 +757,10 @@ const $1e7a94d745f8597b$var$fetchSparqlEndpoints = async (containers, resourceId
                 method: "POST",
                 body: sparqlQuery
             }).then(({ json: json })=>{
-                // By default, embed only the blank nodes we explicitly asked to dereference
-                // Otherwise we may have same-type resources embedded in other resources
+                // If we declared the blank nodes to dereference, embed only those blank nodes
+                // This solve problems which can occur when same-type resources are embedded in other resources
                 // To increase performances, you can set explicitEmbedOnFraming to false (make sure the result is still OK)
-                const frame = dataModel.list?.explicitEmbedOnFraming !== false ? {
+                const frame = blankNodes && dataModel.list?.explicitEmbedOnFraming !== false ? {
                     "@context": jsonContext,
                     "@type": dataModel.types,
                     "@embed": "@never",
@@ -1144,10 +1144,10 @@ var $85e9a897c6d7c14a$export$2e2bcd8739ae039 = $85e9a897c6d7c14a$var$useGetExter
 
 
 
-const $404991bb01c2ceff$var$useDataModel = (resourceId)=>{
+const $63a32f1a35c6f80e$var$useDataModel = (resourceId)=>{
     // Get the raw data provider, since useDataProvider returns a wrapper
     const dataProvider = (0, $bkNnK$react.useContext)((0, $bkNnK$reactadmin.DataProviderContext));
-    const [dataModel, setDataModel] = (0, $bkNnK$react.useState)();
+    const [dataModel, setDataModel] = (0, $bkNnK$react.useState)(undefined);
     (0, $bkNnK$react.useEffect)(()=>{
         dataProvider.getDataModels().then((results)=>setDataModel(results[resourceId]));
     }, [
@@ -1157,7 +1157,7 @@ const $404991bb01c2ceff$var$useDataModel = (resourceId)=>{
     ]);
     return dataModel;
 };
-var $404991bb01c2ceff$export$2e2bcd8739ae039 = $404991bb01c2ceff$var$useDataModel;
+var $63a32f1a35c6f80e$export$2e2bcd8739ae039 = $63a32f1a35c6f80e$var$useDataModel;
 
 
 
@@ -1178,12 +1178,37 @@ var $9b817943cd488c90$export$2e2bcd8739ae039 = $9b817943cd488c90$var$useDataServ
 
 
 
-const $c2f8a77958c288fd$var$useContainers = (resourceId, serverKeys = "@all")=>{
-    const dataModel = (0, $404991bb01c2ceff$export$2e2bcd8739ae039)(resourceId);
+
+const $047a107b0d203793$var$findContainersWithTypes = (types, serverKeys, dataServers)=>{
+    const containers = {};
+    const existingContainers = [];
+    const parsedServerKeys = (0, $982f4f2fb185d606$export$2e2bcd8739ae039)(serverKeys, dataServers);
+    Object.keys(dataServers).forEach((key1)=>{
+        Object.keys(dataServers[key1].containers).forEach((key2)=>{
+            if (!parsedServerKeys || parsedServerKeys.includes(key2)) Object.keys(dataServers[key1].containers[key2]).forEach((type)=>{
+                if (types.includes(type)) dataServers[key1].containers[key2][type].map((path)=>{
+                    const containerUri = (0, ($parcel$interopDefault($bkNnK$urljoin)))(dataServers[key2].baseUrl, path);
+                    // Avoid returning the same container several times
+                    if (!existingContainers.includes(containerUri)) {
+                        existingContainers.push(containerUri);
+                        if (!containers[key1]) containers[key1] = [];
+                        containers[key1].push(containerUri);
+                    }
+                });
+            });
+        });
+    });
+    return containers;
+};
+var $047a107b0d203793$export$2e2bcd8739ae039 = $047a107b0d203793$var$findContainersWithTypes;
+
+
+const $3158e0dc13ffffaa$var$useContainers = (resourceId, serverKeys = "@all")=>{
+    const dataModel = (0, $63a32f1a35c6f80e$export$2e2bcd8739ae039)(resourceId);
     const dataServers = (0, $9b817943cd488c90$export$2e2bcd8739ae039)();
-    const [containers, setContainers] = (0, $bkNnK$react.useState)();
+    const [containers, setContainers] = (0, $bkNnK$react.useState)(undefined);
     (0, $bkNnK$react.useEffect)(()=>{
-        if (dataModel && dataServers) setContainers((0, $fd693d31e1c2e54f$export$2e2bcd8739ae039)(dataModel.types, serverKeys, dataServers));
+        if (dataModel && dataServers) setContainers((0, $047a107b0d203793$export$2e2bcd8739ae039)(dataModel.types, serverKeys, dataServers));
     }, [
         dataModel,
         dataServers,
@@ -1191,7 +1216,7 @@ const $c2f8a77958c288fd$var$useContainers = (resourceId, serverKeys = "@all")=>{
     ]);
     return containers;
 };
-var $c2f8a77958c288fd$export$2e2bcd8739ae039 = $c2f8a77958c288fd$var$useContainers;
+var $3158e0dc13ffffaa$export$2e2bcd8739ae039 = $3158e0dc13ffffaa$var$useContainers;
 
 
 
@@ -1216,7 +1241,7 @@ var $b32fd11d6aa83d1c$export$2e2bcd8739ae039 = $b32fd11d6aa83d1c$var$findCreateC
 
 
 const $99ed32cbdb76cb50$var$useCreateContainer = (resourceId)=>{
-    const dataModel = (0, $404991bb01c2ceff$export$2e2bcd8739ae039)(resourceId);
+    const dataModel = (0, $63a32f1a35c6f80e$export$2e2bcd8739ae039)(resourceId);
     const dataServers = (0, $9b817943cd488c90$export$2e2bcd8739ae039)();
     const [createContainer, setCreateContainer] = (0, $bkNnK$react.useState)();
     (0, $bkNnK$react.useEffect)(()=>{
