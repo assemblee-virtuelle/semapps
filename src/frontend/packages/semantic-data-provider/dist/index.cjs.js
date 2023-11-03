@@ -175,13 +175,13 @@ const $982f4f2fb185d606$var$parseServerKeys = (serverKeys, dataServers)=>{
 var $982f4f2fb185d606$export$2e2bcd8739ae039 = $982f4f2fb185d606$var$parseServerKeys;
 
 
-const $fd693d31e1c2e54f$var$findContainersWithTypes = (types, serverKeys, dataServers)=>{
+const $047a107b0d203793$var$findContainersWithTypes = (types, serverKeys, dataServers)=>{
     const containers = {};
     const existingContainers = [];
-    serverKeys = (0, $982f4f2fb185d606$export$2e2bcd8739ae039)(serverKeys, dataServers);
+    const parsedServerKeys = (0, $982f4f2fb185d606$export$2e2bcd8739ae039)(serverKeys, dataServers);
     Object.keys(dataServers).filter((key1)=>dataServers[key1].containers).forEach((key1)=>{
         Object.keys(dataServers[key1].containers).forEach((key2)=>{
-            if (!serverKeys || serverKeys.includes(key2)) Object.keys(dataServers[key1].containers[key2]).forEach((type)=>{
+            if (!parsedServerKeys || parsedServerKeys.includes(key2)) Object.keys(dataServers[key1].containers[key2]).forEach((type)=>{
                 if (types.includes(type)) dataServers[key1].containers[key2][type].map((path)=>{
                     const containerUri = (0, ($parcel$interopDefault($bkNnK$urljoin)))(dataServers[key2].baseUrl, path);
                     // Avoid returning the same container several times
@@ -196,7 +196,7 @@ const $fd693d31e1c2e54f$var$findContainersWithTypes = (types, serverKeys, dataSe
     });
     return containers;
 };
-var $fd693d31e1c2e54f$export$2e2bcd8739ae039 = $fd693d31e1c2e54f$var$findContainersWithTypes;
+var $047a107b0d203793$export$2e2bcd8739ae039 = $047a107b0d203793$var$findContainersWithTypes;
 
 
 const $907cbc087f6529e2$var$createMethod = (config)=>async (resourceId, params)=>{
@@ -212,7 +212,7 @@ const $907cbc087f6529e2$var$createMethod = (config)=>async (resourceId, params)=
         } else {
             serverKey = dataModel.create?.server || Object.keys(dataServers).find((key)=>dataServers[key].default === true);
             if (!serverKey) throw new Error("You must define a server for the creation, or a container, or a default server");
-            const containers = (0, $fd693d31e1c2e54f$export$2e2bcd8739ae039)(dataModel.types, [
+            const containers = (0, $047a107b0d203793$export$2e2bcd8739ae039)(dataModel.types, [
                 serverKey
             ], dataServers);
             // Extract the containerUri from the results (and ensure there is only one)
@@ -842,7 +842,7 @@ const $b6ed253f3374f5d4$var$getListMethod = (config)=>async (resourceId, params 
             // If containers are set explicitly, use them
             containers = (0, $e3a78b3d48a0a0fb$export$2e2bcd8739ae039)(dataModel.list.containers, dataServers);
         } else // Otherwise find the container URIs on the given servers (either in the filter or the data model)
-        containers = (0, $fd693d31e1c2e54f$export$2e2bcd8739ae039)(dataModel.types, params.filter?._servers || dataModel.list?.servers, dataServers);
+        containers = (0, $047a107b0d203793$export$2e2bcd8739ae039)(dataModel.types, params.filter?._servers || dataModel.list?.servers, dataServers);
         if (dataModel.list?.fetchContainer) return (0, $6e66f3a2f960b9ca$export$2e2bcd8739ae039)(containers, resourceId, params, config);
         return (0, $1e7a94d745f8597b$export$2e2bcd8739ae039)(containers, resourceId, params, config);
     };
@@ -1176,31 +1176,6 @@ const $9b817943cd488c90$var$useDataServers = ()=>{
 };
 var $9b817943cd488c90$export$2e2bcd8739ae039 = $9b817943cd488c90$var$useDataServers;
 
-
-
-
-const $047a107b0d203793$var$findContainersWithTypes = (types, serverKeys, dataServers)=>{
-    const containers = {};
-    const existingContainers = [];
-    const parsedServerKeys = (0, $982f4f2fb185d606$export$2e2bcd8739ae039)(serverKeys, dataServers);
-    Object.keys(dataServers).forEach((key1)=>{
-        Object.keys(dataServers[key1].containers).forEach((key2)=>{
-            if (!parsedServerKeys || parsedServerKeys.includes(key2)) Object.keys(dataServers[key1].containers[key2]).forEach((type)=>{
-                if (types.includes(type)) dataServers[key1].containers[key2][type].map((path)=>{
-                    const containerUri = (0, ($parcel$interopDefault($bkNnK$urljoin)))(dataServers[key2].baseUrl, path);
-                    // Avoid returning the same container several times
-                    if (!existingContainers.includes(containerUri)) {
-                        existingContainers.push(containerUri);
-                        if (!containers[key1]) containers[key1] = [];
-                        containers[key1].push(containerUri);
-                    }
-                });
-            });
-        });
-    });
-    return containers;
-};
-var $047a107b0d203793$export$2e2bcd8739ae039 = $047a107b0d203793$var$findContainersWithTypes;
 
 
 const $3158e0dc13ffffaa$var$useContainers = (resourceId, serverKeys = "@all")=>{
