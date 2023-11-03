@@ -29,10 +29,10 @@ function evaluate_linter_results {
         echo "================================================================="
         exit 1
     elif [ $? -ge 2 ]; then
-        echo "==============================================================================="
-        echo "Something went wrong running the linter. Have you bootstrapped the project yet?"
+        echo "==================================================================="
+        echo "Something went wrong running the linter. Have you run \`yarn\` yet?"
         echo "You can skip pre-commit checks by setting \$SKIP_PRECOMMIT_CHECKS"
-        echo "==============================================================================="
+        echo "==================================================================="
         exit 1
     fi
 }

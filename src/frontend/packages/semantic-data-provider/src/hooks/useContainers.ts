@@ -3,10 +3,12 @@ import useDataModel from './useDataModel';
 import useDataServers from './useDataServers';
 import findContainersWithTypes from '../dataProvider/utils/findContainersWithTypes';
 
+type DataServerId = string;
+
 const useContainers = (resourceId, serverKeys = '@all') => {
   const dataModel = useDataModel(resourceId);
   const dataServers = useDataServers();
-  const [containers, setContainers] = useState();
+  const [containers, setContainers] = useState(undefined as undefined | Record<DataServerId, string[]>);
 
   useEffect(() => {
     if (dataModel && dataServers) {

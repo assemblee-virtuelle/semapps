@@ -4,14 +4,14 @@
   "description": "React-Admin components to handle interoperability between SemApps instances",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
-  "source": "src/index.js",
+  "source": "src/index.ts",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "parcel build && yalc publish --push --changed",
+    "build": "tsc --noEmit && parcel build && yalc publish --push --changed",
     "watch": "nodemon --watch src --exec 'yarn build'"
   },
   "dependencies": {
@@ -32,5 +32,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "types": "dist/index.d.ts"
 }

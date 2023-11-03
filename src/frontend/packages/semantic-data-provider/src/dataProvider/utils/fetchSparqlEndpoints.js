@@ -42,11 +42,11 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
           body: sparqlQuery
         })
           .then(({ json }) => {
-            // By default, embed only the blank nodes we explicitly asked to dereference
-            // Otherwise we may have same-type resources embedded in other resources
+            // If we declared the blank nodes to dereference, embed only those blank nodes
+            // This solve problems which can occur when same-type resources are embedded in other resources
             // To increase performances, you can set explicitEmbedOnFraming to false (make sure the result is still OK)
             const frame =
-              dataModel.list?.explicitEmbedOnFraming !== false
+              blankNodes && dataModel.list?.explicitEmbedOnFraming !== false
                 ? {
                     '@context': jsonContext,
                     '@type': dataModel.types,

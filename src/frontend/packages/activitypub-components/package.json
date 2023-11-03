@@ -4,14 +4,15 @@
   "description": "React-Admin components for ActivityPub display",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
-  "source": "src/index.js",
+  "source": "src/index.ts",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "parcel build && yalc publish --push --changed",
+    "build": "tsc --noEmit && parcel build && yalc publish --push --changed",
     "watch": "nodemon --watch src --exec 'yarn build'"
   },
   "dependencies": {
