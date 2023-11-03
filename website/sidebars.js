@@ -1,5 +1,5 @@
 module.exports = {
-  guides: ['guides/ldp-server','guides/dms','guides/activitypub'],
+  guides: ['guides/ldp-server', 'guides/dms', 'guides/activitypub'],
   middleware: [
     'middleware/index',
     'middleware/core',
@@ -10,10 +10,7 @@ module.exports = {
         type: 'doc',
         id: 'middleware/activitypub/index'
       },
-      items: [
-        'middleware/activitypub/activities-handler',
-        'middleware/activitypub/activity-mapping',
-      ],
+      items: ['middleware/activitypub/activities-handler', 'middleware/activitypub/activity-mapping']
     },
     'middleware/auth',
     'middleware/backup',
@@ -24,10 +21,7 @@ module.exports = {
         type: 'doc',
         id: 'middleware/signature/index'
       },
-      items: [
-        'middleware/signature/keypair',
-        'middleware/signature/proxy',
-      ],
+      items: ['middleware/signature/keypair', 'middleware/signature/proxy']
     },
     {
       type: 'category',
@@ -44,8 +38,8 @@ module.exports = {
         'middleware/importer/jotform',
         'middleware/importer/mobilizon',
         'middleware/importer/prestashop',
-        'middleware/importer/yeswiki',
-      ],
+        'middleware/importer/yeswiki'
+      ]
     },
     'middleware/inference',
     'middleware/jsonld',
@@ -61,10 +55,11 @@ module.exports = {
         'middleware/ldp/container',
         'middleware/ldp/controlled-container',
         'middleware/ldp/document-tagger',
-        'middleware/ldp/image-processor',
-      ],
+        'middleware/ldp/image-processor'
+      ]
     },
     'middleware/migration',
+    'middleware/nodeinfo',
     {
       type: 'category',
       label: 'Notifications',
@@ -72,10 +67,7 @@ module.exports = {
         type: 'doc',
         id: 'middleware/notifications/index'
       },
-      items: [
-        'middleware/notifications/digest',
-        'middleware/notifications/single-mail',
-      ],
+      items: ['middleware/notifications/digest', 'middleware/notifications/single-mail']
     },
     'middleware/sparql-endpoint',
     {
@@ -89,8 +81,8 @@ module.exports = {
         'middleware/sync/objects-watcher',
         'middleware/sync/aggregator',
         'middleware/sync/mirror',
-        'middleware/sync/synchronizer',
-      ],
+        'middleware/sync/synchronizer'
+      ]
     },
     {
       type: 'category',
@@ -99,9 +91,7 @@ module.exports = {
         type: 'doc',
         id: 'middleware/triplestore/index'
       },
-      items: [
-        'middleware/triplestore/dataset',
-      ],
+      items: ['middleware/triplestore/dataset']
     },
     'middleware/void',
     {
@@ -115,8 +105,8 @@ module.exports = {
         'middleware/webacl/resource',
         'middleware/webacl/group',
         'middleware/webacl/authorizer',
-        'middleware/webacl/groups-manager',
-      ],
+        'middleware/webacl/groups-manager'
+      ]
     },
     'middleware/webfinger',
     'middleware/webhooks',
@@ -131,10 +121,7 @@ module.exports = {
         type: 'doc',
         id: 'frontend/semantic-data-provider/index'
       },
-      items: [
-        'frontend/semantic-data-provider/data-servers',
-        'frontend/semantic-data-provider/data-model',
-      ],
+      items: ['frontend/semantic-data-provider/data-servers', 'frontend/semantic-data-provider/data-model']
     },
     'frontend/auth-provider',
     'frontend/activitypub-components',
@@ -146,13 +133,9 @@ module.exports = {
     'frontend/list-components',
     'frontend/markdown-components'
   ],
-  triplestore: [
-    'triplestore/index',
-    'triplestore/migrating-datasets',
-    'triplestore/compacting-datasets'
-  ],
+  triplestore: ['triplestore/index', 'triplestore/migrating-datasets', 'triplestore/compacting-datasets'],
   contribute: {
-    'SemApps core': ['contribute/code','contribute/coding-conventions'],
-    Documentation: ['contribute/documentation','contribute/style-guide']
+    'SemApps core': ['contribute/code', 'contribute/coding-conventions'],
+    Documentation: ['contribute/documentation', 'contribute/style-guide']
   }
 };
