@@ -12,7 +12,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc --noEmit && parcel build && yalc publish --push --changed",
+    "build": "parcel build && yalc publish --push --changed",
     "watch": "nodemon --watch src --exec 'yarn build'",
     "typecheck": "tsc --noEmit"
   },
