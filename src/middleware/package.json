@@ -3,7 +3,6 @@
   "private": true,
   "license": "Apache-2.0",
   "scripts": {
-    "bootstrap": "lerna bootstrap",
     "version": "lerna version --force-publish='*' --exact --tag-version-prefix='middleware-v'",
     "publish": "lerna publish from-package --dist-tag latest",
     "prettier": "prettier --write '**/*.{js,ts,json}'",
