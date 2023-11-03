@@ -18,6 +18,7 @@
   "devDependencies": {
     "@parcel/packager-ts": "^2.10.0",
     "@parcel/transformer-typescript-types": "^2.10.0",
+    "@parcel/validator-typescript": "^2.10.2",
     "@types/react": "^18.2.14",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
@@ -25,6 +26,7 @@
     "eslint-config-airbnb": "19.0.4",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-import-typescript": "^0.0.4",
     "eslint-plugin-jsdoc": "^46.4.4",
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-prettier": "^5.0.0",
