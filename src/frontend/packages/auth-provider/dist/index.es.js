@@ -2074,10 +2074,6 @@ const $23fea069f5d2d834$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
     const translate = (0, $1obPJ$useTranslate)();
     const [searchParams] = (0, $1obPJ$useSearchParams)();
     const isSignup = hasSignup && searchParams.has("signup");
-    // Remaining search params as string:
-    const searchStr = [
-        ...searchParams.entries()
-    ].filter((entry)=>entry[0] !== "signup").map((entry)=>entry.join("=")).join("&");
     const isResetPassword = searchParams.has("reset_password");
     const isNewPassword = searchParams.has("new_password");
     const isLogin = !isSignup && !isResetPassword && !isNewPassword;
@@ -2148,7 +2144,7 @@ const $23fea069f5d2d834$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
                     className: classes.switch,
                     children: [
                         isSignup && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Link), {
-                            to: "/login?" + searchStr,
+                            to: "/login",
                             children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Typography), {
                                 variant: "body2",
                                 children: translate("auth.action.login")
@@ -2158,7 +2154,7 @@ const $23fea069f5d2d834$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
                             children: [
                                 hasSignup && /*#__PURE__*/ (0, $1obPJ$jsx)("div", {
                                     children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Link), {
-                                        to: "/login?signup=true&" + searchStr,
+                                        to: "/login?signup=true",
                                         children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Typography), {
                                             variant: "body2",
                                             children: translate("auth.action.signup")

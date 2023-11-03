@@ -2113,10 +2113,6 @@ const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
     const isSignup = hasSignup && searchParams.has("signup");
-    // Remaining search params as string:
-    const searchStr = [
-        ...searchParams.entries()
-    ].filter((entry)=>entry[0] !== "signup").map((entry)=>entry.join("=")).join("&");
     const isResetPassword = searchParams.has("reset_password");
     const isNewPassword = searchParams.has("new_password");
     const isLogin = !isSignup && !isResetPassword && !isNewPassword;
@@ -2187,7 +2183,7 @@ const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
                     className: classes.switch,
                     children: [
                         isSignup && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactrouterdom.Link), {
-                            to: "/login?" + searchStr,
+                            to: "/login",
                             children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
                                 variant: "body2",
                                 children: translate("auth.action.login")
@@ -2197,7 +2193,7 @@ const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
                             children: [
                                 hasSignup && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)("div", {
                                     children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactrouterdom.Link), {
-                                        to: "/login?signup=true&" + searchStr,
+                                        to: "/login?signup=true",
                                         children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
                                             variant: "body2",
                                             children: translate("auth.action.signup")
