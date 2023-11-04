@@ -84,8 +84,7 @@ var $9020b8e3f4a4c1a1$export$2e2bcd8739ae039 = $9020b8e3f4a4c1a1$var$getOneMetho
 
 
 
-
-const $58dec60cb6361eb9$export$c14a9fcbe4547ffc = (fileName)=>{
+const $b25e308d395234ef$export$c14a9fcbe4547ffc = (fileName)=>{
     const splitFileName = fileName.split(".");
     if (splitFileName.length > 1) {
         const extension = splitFileName.pop();
@@ -93,19 +92,22 @@ const $58dec60cb6361eb9$export$c14a9fcbe4547ffc = (fileName)=>{
     }
     return (0, $bkNnK$uuid.v4)();
 };
-const $58dec60cb6361eb9$export$be78b3111c50efdd = (o)=>o?.rawFile && o.rawFile instanceof File;
-const $58dec60cb6361eb9$var$getUploadsContainerUri = (config)=>{
+const $b25e308d395234ef$export$be78b3111c50efdd = (o)=>o?.rawFile && o.rawFile instanceof File;
+const $b25e308d395234ef$var$getUploadsContainerUri = (config)=>{
     const serverKey = Object.keys(config.dataServers).find((key)=>config.dataServers[key].uploadsContainer);
-    if (serverKey) return (0, ($parcel$interopDefault($bkNnK$urljoin)))(config.dataServers[serverKey].baseUrl, config.dataServers[serverKey].uploadsContainer);
+    if (serverKey && config.dataServers[serverKey].uploadsContainer) {
+        const url = new URL(config.dataServers[serverKey].uploadsContainer, config.dataServers[serverKey].baseUrl).href;
+        return url;
+    }
 };
-const $58dec60cb6361eb9$var$uploadFile = async (rawFile, config)=>{
-    const uploadsContainerUri = $58dec60cb6361eb9$var$getUploadsContainerUri(config);
+const $b25e308d395234ef$var$uploadFile = async (rawFile, config)=>{
+    const uploadsContainerUri = $b25e308d395234ef$var$getUploadsContainerUri(config);
     if (!uploadsContainerUri) throw new Error("You must define an uploadsContainer in one of the server's configuration");
     const response = await config.httpClient(uploadsContainerUri, {
         method: "POST",
         body: rawFile,
         headers: new Headers({
-            Slug: $58dec60cb6361eb9$export$c14a9fcbe4547ffc(rawFile.name),
+            Slug: $b25e308d395234ef$export$c14a9fcbe4547ffc(rawFile.name),
             "Content-Type": rawFile.type
         })
     });
@@ -114,16 +116,16 @@ const $58dec60cb6361eb9$var$uploadFile = async (rawFile, config)=>{
 /*
  * Look for raw files in the record data.
  * If there are any, upload them and replace the file by its URL.
- */ const $58dec60cb6361eb9$var$uploadAllFiles = async (record, config)=>{
-    for(const property in record)if (Object.prototype.hasOwnProperty.call(record, property)) {
-        if (Array.isArray(record[property])) {
-            for(let i = 0; i < record[property].length; i++)if ($58dec60cb6361eb9$export$be78b3111c50efdd(record[property][i])) record[property][i] = await $58dec60cb6361eb9$var$uploadFile(record[property][i].rawFile, config);
-        } else if ($58dec60cb6361eb9$export$be78b3111c50efdd(record[property])) record[property] = await $58dec60cb6361eb9$var$uploadFile(record[property].rawFile, config);
+ */ const $b25e308d395234ef$var$uploadAllFiles = async (record, config)=>{
+    for (const property of Object.keys(record)){
+        const value = record[property];
+        if (Array.isArray(value)) {
+            for(let i = 0; i < value.length; i++)if ($b25e308d395234ef$export$be78b3111c50efdd(value[i])) record[property][i] = await $b25e308d395234ef$var$uploadFile(record[property][i].rawFile, config);
+        } else if ($b25e308d395234ef$export$be78b3111c50efdd(record[property])) record[property] = await $b25e308d395234ef$var$uploadFile(record[property].rawFile, config);
     }
     return record;
 };
-var $58dec60cb6361eb9$export$2e2bcd8739ae039 = $58dec60cb6361eb9$var$uploadAllFiles;
-
+var $b25e308d395234ef$export$2e2bcd8739ae039 = $b25e308d395234ef$var$uploadAllFiles;
 
 
 const $8f44b7c15b8b8e1d$var$getServerKeyFromType = (type, dataServers)=>{
@@ -177,7 +179,7 @@ const $047a107b0d203793$var$findContainersWithTypes = (types, serverKeys, dataSe
         Object.keys(dataServers[key1].containers).forEach((key2)=>{
             if (!parsedServerKeys || parsedServerKeys.includes(key2)) Object.keys(dataServers[key1].containers[key2]).forEach((type)=>{
                 if (types.includes(type)) dataServers[key1].containers[key2][type].map((path)=>{
-                    const containerUri = (0, ($parcel$interopDefault($bkNnK$urljoin)))(dataServers[key2].baseUrl, path);
+                    const containerUri = new URL(path, dataServers[key2].baseUrl).href;
                     // Avoid returning the same container several times
                     if (!existingContainers.includes(containerUri)) {
                         existingContainers.push(containerUri);
@@ -221,7 +223,7 @@ const $907cbc087f6529e2$var$createMethod = (config)=>async (resourceId, params)=
                 else headers.set("Slug", params.data[dataModel.fieldsMapping.title]);
             }
             // Upload files, if there are any
-            params.data = await (0, $58dec60cb6361eb9$export$2e2bcd8739ae039)(params.data, config);
+            params.data = await (0, $b25e308d395234ef$export$2e2bcd8739ae039)(params.data, config);
             const { headers: responseHeaders } = await httpClient(containerUri, {
                 method: "POST",
                 headers: headers,
@@ -884,7 +886,7 @@ var $e5e279a608b8e6b1$export$2e2bcd8739ae039 = $e5e279a608b8e6b1$var$getManyRefe
 const $17541daf7ea3b8f0$var$updateMethod = (config)=>async (resourceId, params)=>{
         const { httpClient: httpClient, jsonContext: jsonContext } = config;
         // Upload files, if there are any
-        params.data = await (0, $58dec60cb6361eb9$export$2e2bcd8739ae039)(params.data, config);
+        params.data = await (0, $b25e308d395234ef$export$2e2bcd8739ae039)(params.data, config);
         await httpClient(params.id, {
             method: "PUT",
             body: JSON.stringify({
@@ -1141,7 +1143,7 @@ var $85e9a897c6d7c14a$export$2e2bcd8739ae039 = $85e9a897c6d7c14a$var$useGetExter
 const $63a32f1a35c6f80e$var$useDataModel = (resourceId)=>{
     // Get the raw data provider, since useDataProvider returns a wrapper
     const dataProvider = (0, $bkNnK$react.useContext)((0, $bkNnK$reactadmin.DataProviderContext));
-    const [dataModel, setDataModel] = (0, $bkNnK$react.useState)(undefined);
+    const [dataModel, setDataModel] = (0, $bkNnK$react.useState)(undefined); // TODO: Type this object
     (0, $bkNnK$react.useEffect)(()=>{
         dataProvider.getDataModels().then((results)=>setDataModel(results[resourceId]));
     }, [
@@ -1175,7 +1177,7 @@ var $9b817943cd488c90$export$2e2bcd8739ae039 = $9b817943cd488c90$var$useDataServ
 const $3158e0dc13ffffaa$var$useContainers = (resourceId, serverKeys = "@all")=>{
     const dataModel = (0, $63a32f1a35c6f80e$export$2e2bcd8739ae039)(resourceId);
     const dataServers = (0, $9b817943cd488c90$export$2e2bcd8739ae039)();
-    const [containers, setContainers] = (0, $bkNnK$react.useState)(undefined);
+    const [containers, setContainers] = (0, $bkNnK$react.useState)();
     (0, $bkNnK$react.useEffect)(()=>{
         if (dataModel && dataServers) setContainers((0, $047a107b0d203793$export$2e2bcd8739ae039)(dataModel.types, serverKeys, dataServers));
     }, [
@@ -1446,7 +1448,6 @@ const $030f1232f6810456$var$ReificationArrayInput = (props)=>{
 var $030f1232f6810456$export$2e2bcd8739ae039 = $030f1232f6810456$var$ReificationArrayInput;
 
 
-console.log("-- Semantic-data-provider --");
 
 
 //# sourceMappingURL=index.cjs.js.map

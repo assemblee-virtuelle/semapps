@@ -1,12 +1,12 @@
-import urlJoin from 'url-join';
+import { Configuration, DataServerKey } from '../types';
 import parseServerKeys from './parseServerKeys';
 
 const findContainersWithTypes = (
   types: string[],
   serverKeys: string | string[] | undefined,
-  dataServers: Record<string, any>
+  dataServers: Configuration['dataServers']
 ) => {
-  const containers = {} as Record<string, string[]>;
+  const containers = {} as Record<DataServerKey, string[]>;
   const existingContainers: string[] = [];
 
   const parsedServerKeys = parseServerKeys(serverKeys, dataServers);
@@ -19,7 +19,7 @@ const findContainersWithTypes = (
           Object.keys(dataServers[key1].containers[key2]).forEach(type => {
             if (types.includes(type)) {
               dataServers[key1].containers[key2][type].map(path => {
-                const containerUri = urlJoin(dataServers[key2].baseUrl, path);
+                const containerUri = new URL(path, dataServers[key2].baseUrl).href;
 
                 // Avoid returning the same container several times
                 if (!existingContainers.includes(containerUri)) {
