@@ -1,14 +1,13 @@
-import createSlug from 'speakingurl';
 import urlJoin from 'url-join';
+import { v4 as uuidv4 } from 'uuid';
 
-export const getSlugWithExtension = fileName => {
-  let fileExtension = '';
+export const getRandomNameWithExtension = fileName => {
   const splitFileName = fileName.split('.');
   if (splitFileName.length > 1) {
-    fileExtension = splitFileName.pop();
-    fileName = splitFileName.join('.');
+    const extension = splitFileName.pop();
+    return `${uuidv4()}.${extension?.toLowerCase()}`;
   }
-  return `${createSlug(fileName, { lang: 'fr' })}.${fileExtension}`;
+  return uuidv4();
 };
 
 export const isFile = o => o?.rawFile && o.rawFile instanceof File;
@@ -28,10 +27,7 @@ const uploadFile = async (rawFile, config) => {
     method: 'POST',
     body: rawFile,
     headers: new Headers({
-      // We must sluggify the file name, because we can't use non-ASCII characters in the header
-      // However we keep the extension apart (if it exists) so that it is not replaced with a -
-      // TODO let the middleware guess the extension based on the content type
-      Slug: getSlugWithExtension(rawFile.name),
+      Slug: getRandomNameWithExtension(rawFile.name),
       'Content-Type': rawFile.type
     })
   });
