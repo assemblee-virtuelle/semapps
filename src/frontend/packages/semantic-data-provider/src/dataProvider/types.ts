@@ -45,4 +45,7 @@ type HttpClientOptions = {
 export type Configuration = {
   dataServers: DataServersConfig;
   httpClient: (url: string, options: HttpClientOptions) => ReturnType<typeof fetchUtils.fetchJson>;
+
+  /** Context from ontologies { prefix: IRI } or IRI */
+  jsonContext: string | Record<string, string>;
 };
