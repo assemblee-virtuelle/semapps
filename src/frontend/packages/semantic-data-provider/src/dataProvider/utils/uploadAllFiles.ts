@@ -1,17 +1,7 @@
 import { RaRecord } from 'react-admin';
-import { v4 as uuidv4 } from 'uuid';
 import { Configuration } from '../types';
 
-export const getRandomNameWithExtension = (fileName: string) => {
-  const splitFileName = fileName.split('.');
-  if (splitFileName.length > 1) {
-    const extension = splitFileName.pop();
-    return `${uuidv4()}.${extension?.toLowerCase()}`;
-  }
-  return uuidv4();
-};
-
-export const isFile = (o: any) => o?.rawFile && o.rawFile instanceof File;
+const isFile = (o: any) => o?.rawFile && o.rawFile instanceof File;
 
 const getUploadsContainerUri = (config: Configuration) => {
   const serverKey = Object.keys(config.dataServers).find(key => config.dataServers[key].uploadsContainer);
@@ -29,7 +19,6 @@ const uploadFile = async (rawFile: File, config: Configuration) => {
     method: 'POST',
     body: rawFile,
     headers: new Headers({
-      Slug: getRandomNameWithExtension(rawFile.name),
       'Content-Type': rawFile.type
     })
   });

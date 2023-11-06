@@ -21,8 +21,7 @@
     "jsonld": "^5.2.0",
     "jwt-decode": "^3.0.0",
     "sparqljs": "^3.5.1",
-    "url-join": "^4.0.1",
-    "uuid": "^9.0.1"
+    "url-join": "^4.0.1"
   },
   "peerDependencies": {
     "@mui/styles": "^5.13.1",
@@ -32,9 +31,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "devDependencies": {
-    "@types/uuid": "^9.0.6"
-  },
+  "devDependencies": {},
   "gitHead": "4fa70690c5932b8c9d9cb5eb4c36a10f687703ff",
   "types": "dist/index.d.ts"
 }
