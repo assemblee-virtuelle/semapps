@@ -48,24 +48,21 @@ const buildFiltersQuery = filters => {
   let where = '';
   if (filters) {
     Object.keys(filters).forEach((predicate, i) => {
+      if (!predicate.startsWith('http')) throw new Error('The predicates of filters must be full URIs');
       if (filters[predicate]) {
         where += `
-          FILTER EXISTS { ?s1 ${predicate.startsWith('http') ? `<${predicate}>` : predicate} ${
+          FILTER EXISTS { ?s1 <${predicate}> ${
             filters[predicate].startsWith('http') ? `<${filters[predicate]}>` : `"${filters[predicate]}"`
           } } .
         `;
       } else {
         where += `
-          FILTER NOT EXISTS { ?s1 ${predicate.startsWith('http') ? `<${predicate}>` : predicate} ?unwanted${i} } .
+          FILTER NOT EXISTS { ?s1 <${predicate}> ?unwanted${i} } .
         `;
       }
     });
   }
   return { where };
-};
-
-const getPrefixRdf = ontologies => {
-  return ontologies.map(ontology => `PREFIX ${ontology.prefix}: <${ontology.url}>`).join('\n');
 };
 
 const getPrefixJSON = ontologies => {
@@ -164,7 +161,6 @@ const waitForResource = async (delayMs, fieldNames, maxTries, callback) => {
 module.exports = {
   buildBlankNodesQuery,
   buildFiltersQuery,
-  getPrefixRdf,
   getPrefixJSON,
   usePrefix,
   useFullURI,

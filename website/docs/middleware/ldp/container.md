@@ -70,15 +70,17 @@ The following service actions are available:
 ### `get`
 
 - Get all resources attached to a container
-- Use the LDP ontology of direct containers
+- Use the LDP ontology of basic containers
 
 ##### Parameters
 
-| Property       | Type     | Default             | Description                                                                      |
-| -------------- | -------- | ------------------- | -------------------------------------------------------------------------------- |
-| `containerUri` | `String` | **required**        | URI of container                                                                 |
-| `accept`       | `string` | **required**        | Type to return (`application/ld+json`, `text/turtle` or `application/n-triples`) |
-| `webId`        | `string` | Logged user's webId | User doing the action                                                            |
+| Property       | Type                          | Default             | Description                                                                                             |
+| -------------- | ----------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------- |
+| `containerUri` | `String`                      | **required**        | URI of container                                                                                        |
+| `accept`       | `String`                      | **required**        | Type to return (`application/ld+json`, `text/turtle` or `application/n-triples`)                        |
+| `webId`        | `String`                      | Logged user's webId | User doing the action                                                                                   |
+| `filters`      | `Object`                      |                     | Filter resources with a keypair filter of type "predicate : value". Full URIs must used for predicates. |
+| `jsonContext`  | `Object`, `Array` or `String` |                     | JSON context to use to format results                                                                   |
 
 You can also pass parameters defined in the [container options](index.md#container-options).
 

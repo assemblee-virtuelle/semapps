@@ -1,6 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
 const {
-  getPrefixRdf,
   getPrefixJSON,
   buildBlankNodesQuery,
   buildFiltersQuery,
@@ -38,7 +37,6 @@ module.exports = {
     if (accept === MIME_TYPES.JSON) {
       let result = await ctx.call('triplestore.query', {
         query: `
-          ${getPrefixRdf(this.settings.ontologies)}
           CONSTRUCT  {
             <${containerUri}>
               a ?containerType ;
@@ -121,22 +119,21 @@ module.exports = {
 
       return await ctx.call('triplestore.query', {
         query: `
-            ${getPrefixRdf(this.settings.ontologies)}
-            CONSTRUCT  {
-              <${containerUri}>
-                a ?containerType ;
-                ldp:contains ?s1 .
-              ${blankNodesQuery.construct}
+          CONSTRUCT  {
+            <${containerUri}>
+              a ?containerType ;
+              <http://www.w3.org/ns/ldp#contains> ?s1 .
+            ${blankNodesQuery.construct}
+          }
+          WHERE {
+            <${containerUri}> a <http://www.w3.org/ns/ldp#Container>, ?containerType .
+            OPTIONAL {
+              <${containerUri}> <http://www.w3.org/ns/ldp#contains> ?s1 .
+              ${blankNodesQuery.where}
+              ${filtersQuery.where}
             }
-            WHERE {
-              <${containerUri}> a ldp:Container, ?containerType .
-              OPTIONAL {
-                <${containerUri}> ldp:contains ?s1 .
-                ${blankNodesQuery.where}
-                ${filtersQuery.where}
-              }
-            }
-          `,
+          }
+        `,
         accept,
         webId
       });
