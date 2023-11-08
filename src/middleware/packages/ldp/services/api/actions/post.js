@@ -1,5 +1,7 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { v4: uuidv4 } = require('uuid');
+const mime = require('mime-types');
 
 module.exports = async function post(ctx) {
   try {
@@ -25,9 +27,13 @@ module.exports = async function post(ctx) {
         if (ctx.params.files.length > 1) {
           throw new MoleculerError(`Multiple file upload not supported`, 400, 'BAD_REQUEST');
         }
+
+        const extension = mime.extension(ctx.params.files[0].mimetype);
+        const slug = extension ? `${uuidv4()}.${extension}}` : uuidv4();
+
         resourceUri = await ctx.call(controlledActions.post || 'ldp.container.post', {
           containerUri: uri,
-          slug: ctx.meta.headers.slug || ctx.params.files[0].filename,
+          slug,
           file: ctx.params.files[0],
           contentType: MIME_TYPES.JSON
         });

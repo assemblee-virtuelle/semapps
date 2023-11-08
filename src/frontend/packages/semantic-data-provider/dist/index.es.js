@@ -1,6 +1,5 @@
 import $fj9kP$urljoin from 'url-join';
 import $fj9kP$jsonld from 'jsonld';
-import $fj9kP$speakingurl from 'speakingurl';
 import $fj9kP$isobject from 'isobject';
 import $fj9kP$rdfjsdatamodel, {
   triple as $fj9kP$triple,
@@ -74,34 +73,21 @@ const $ed447224dd38ce82$var$getOneMethod = config => async (resourceId, params) 
 };
 var $ed447224dd38ce82$export$2e2bcd8739ae039 = $ed447224dd38ce82$var$getOneMethod;
 
-const $749174ce56cb8a3b$export$190bcb5b6b4f794f = fileName => {
-  let fileExtension = '';
-  const splitFileName = fileName.split('.');
-  if (splitFileName.length > 1) {
-    fileExtension = splitFileName.pop();
-    fileName = splitFileName.join('.');
-  }
-  return `${(0, $fj9kP$speakingurl)(fileName, {
-    lang: 'fr'
-  })}.${fileExtension}`;
-};
-const $749174ce56cb8a3b$export$be78b3111c50efdd = o => o?.rawFile && o.rawFile instanceof File;
-const $749174ce56cb8a3b$var$getUploadsContainerUri = config => {
+const $70ad39a4fce59f08$var$isFile = o => o?.rawFile && o.rawFile instanceof File;
+const $70ad39a4fce59f08$var$getUploadsContainerUri = config => {
   const serverKey = Object.keys(config.dataServers).find(key => config.dataServers[key].uploadsContainer);
-  if (serverKey)
-    return (0, $fj9kP$urljoin)(config.dataServers[serverKey].baseUrl, config.dataServers[serverKey].uploadsContainer);
+  if (serverKey && config.dataServers[serverKey].uploadsContainer) {
+    const url = new URL(config.dataServers[serverKey].uploadsContainer, config.dataServers[serverKey].baseUrl).href;
+    return url;
+  }
 };
-const $749174ce56cb8a3b$var$uploadFile = async (rawFile, config) => {
-  const uploadsContainerUri = $749174ce56cb8a3b$var$getUploadsContainerUri(config);
+const $70ad39a4fce59f08$var$uploadFile = async (rawFile, config) => {
+  const uploadsContainerUri = $70ad39a4fce59f08$var$getUploadsContainerUri(config);
   if (!uploadsContainerUri) throw new Error("You must define an uploadsContainer in one of the server's configuration");
   const response = await config.httpClient(uploadsContainerUri, {
     method: 'POST',
     body: rawFile,
     headers: new Headers({
-      // We must sluggify the file name, because we can't use non-ASCII characters in the header
-      // However we keep the extension apart (if it exists) so that it is not replaced with a -
-      // TODO let the middleware guess the extension based on the content type
-      Slug: $749174ce56cb8a3b$export$190bcb5b6b4f794f(rawFile.name),
       'Content-Type': rawFile.type
     })
   });
@@ -110,19 +96,19 @@ const $749174ce56cb8a3b$var$uploadFile = async (rawFile, config) => {
 /*
  * Look for raw files in the record data.
  * If there are any, upload them and replace the file by its URL.
- */ const $749174ce56cb8a3b$var$uploadAllFiles = async (record, config) => {
-  for (const property in record)
-    if (Object.prototype.hasOwnProperty.call(record, property)) {
-      if (Array.isArray(record[property])) {
-        for (let i = 0; i < record[property].length; i++)
-          if ($749174ce56cb8a3b$export$be78b3111c50efdd(record[property][i]))
-            record[property][i] = await $749174ce56cb8a3b$var$uploadFile(record[property][i].rawFile, config);
-      } else if ($749174ce56cb8a3b$export$be78b3111c50efdd(record[property]))
-        record[property] = await $749174ce56cb8a3b$var$uploadFile(record[property].rawFile, config);
-    }
+ */ const $70ad39a4fce59f08$var$uploadAllFiles = async (record, config) => {
+  for (const property of Object.keys(record)) {
+    const value = record[property];
+    if (Array.isArray(value)) {
+      for (let i = 0; i < value.length; i++)
+        if ($70ad39a4fce59f08$var$isFile(value[i]))
+          record[property][i] = await $70ad39a4fce59f08$var$uploadFile(record[property][i].rawFile, config);
+    } else if ($70ad39a4fce59f08$var$isFile(record[property]))
+      record[property] = await $70ad39a4fce59f08$var$uploadFile(record[property].rawFile, config);
+  }
   return record;
 };
-var $749174ce56cb8a3b$export$2e2bcd8739ae039 = $749174ce56cb8a3b$var$uploadAllFiles;
+var $70ad39a4fce59f08$export$2e2bcd8739ae039 = $70ad39a4fce59f08$var$uploadAllFiles;
 
 const $8326b88c1a913ca9$var$getServerKeyFromType = (type, dataServers) => {
   return Object.keys(dataServers).find(key => {
@@ -175,7 +161,7 @@ const $15b841e67a1ba752$var$findContainersWithTypes = (types, serverKeys, dataSe
           Object.keys(dataServers[key1].containers[key2]).forEach(type => {
             if (types.includes(type))
               dataServers[key1].containers[key2][type].map(path => {
-                const containerUri = (0, $fj9kP$urljoin)(dataServers[key2].baseUrl, path);
+                const containerUri = new URL(path, dataServers[key2].baseUrl).href;
                 // Avoid returning the same container several times
                 if (!existingContainers.includes(containerUri)) {
                   existingContainers.push(containerUri);
@@ -221,7 +207,7 @@ const $5a7a2f7583392866$var$createMethod = config => async (resourceId, params) 
       else headers.set('Slug', params.data[dataModel.fieldsMapping.title]);
     }
     // Upload files, if there are any
-    params.data = await (0, $749174ce56cb8a3b$export$2e2bcd8739ae039)(params.data, config);
+    params.data = await (0, $70ad39a4fce59f08$export$2e2bcd8739ae039)(params.data, config);
     const { headers: responseHeaders } = await httpClient(containerUri, {
       method: 'POST',
       headers: headers,
@@ -946,7 +932,7 @@ var $b5979a9678f57756$export$2e2bcd8739ae039 = $b5979a9678f57756$var$getManyRefe
 const $3e88ccd9de6ca662$var$updateMethod = config => async (resourceId, params) => {
   const { httpClient: httpClient, jsonContext: jsonContext } = config;
   // Upload files, if there are any
-  params.data = await (0, $749174ce56cb8a3b$export$2e2bcd8739ae039)(params.data, config);
+  params.data = await (0, $70ad39a4fce59f08$export$2e2bcd8739ae039)(params.data, config);
   await httpClient(params.id, {
     method: 'PUT',
     body: JSON.stringify({
@@ -1201,7 +1187,7 @@ var $87656edf926c0f1f$export$2e2bcd8739ae039 = $87656edf926c0f1f$var$useGetExter
 const $e5a0eacd756fd1d5$var$useDataModel = resourceId => {
   // Get the raw data provider, since useDataProvider returns a wrapper
   const dataProvider = (0, $fj9kP$useContext)((0, $fj9kP$DataProviderContext));
-  const [dataModel, setDataModel] = (0, $fj9kP$useState)(undefined);
+  const [dataModel, setDataModel] = (0, $fj9kP$useState)(undefined); // TODO: Type this object
   (0, $fj9kP$useEffect)(() => {
     dataProvider.getDataModels().then(results => setDataModel(results[resourceId]));
   }, [dataProvider, resourceId, setDataModel]);
@@ -1223,7 +1209,7 @@ var $11b469d0a927fb46$export$2e2bcd8739ae039 = $11b469d0a927fb46$var$useDataServ
 const $586fa0ea9d02fa12$var$useContainers = (resourceId, serverKeys = '@all') => {
   const dataModel = (0, $e5a0eacd756fd1d5$export$2e2bcd8739ae039)(resourceId);
   const dataServers = (0, $11b469d0a927fb46$export$2e2bcd8739ae039)();
-  const [containers, setContainers] = (0, $fj9kP$useState)(undefined);
+  const [containers, setContainers] = (0, $fj9kP$useState)();
   (0, $fj9kP$useEffect)(() => {
     if (dataModel && dataServers)
       setContainers((0, $15b841e67a1ba752$export$2e2bcd8739ae039)(dataModel.types, serverKeys, dataServers));

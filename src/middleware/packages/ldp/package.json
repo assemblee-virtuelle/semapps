@@ -9,6 +9,7 @@
     "@semapps/middlewares": "0.6.0-alpha.2",
     "@semapps/mime-types": "0.6.0-alpha.2",
     "@semapps/triplestore": "0.6.0-alpha.2",
+    "mime-types": "^2.1.35",
     "moleculer": "^0.14.17",
     "moleculer-schedule": "^0.2.3",
     "node-fetch": "^2.6.6",

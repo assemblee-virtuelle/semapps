@@ -1,13 +1,13 @@
 import { useContext, useState, useEffect } from 'react';
 import { DataProviderContext } from 'react-admin';
 
-const useDataModel = resourceId => {
+const useDataModel = (resourceId: string) => {
   // Get the raw data provider, since useDataProvider returns a wrapper
   const dataProvider = useContext(DataProviderContext);
-  const [dataModel, setDataModel] = useState(undefined as any);
+  const [dataModel, setDataModel] = useState<any>(undefined); // TODO: Type this object
 
   useEffect(() => {
-    dataProvider.getDataModels().then(results => setDataModel(results[resourceId]));
+    dataProvider.getDataModels().then((results: any) => setDataModel(results[resourceId]));
   }, [dataProvider, resourceId, setDataModel]);
 
   return dataModel;

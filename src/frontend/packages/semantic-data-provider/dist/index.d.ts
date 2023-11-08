@@ -41,9 +41,9 @@ export function dataProvider(config: any): {
   fetch: (...arg: any[]) => Promise<any>;
 };
 export function useGetExternalLink(componentExternalLinks: any): (record: any) => any;
-export const useDataModel: (resourceId: any) => any;
+export const useDataModel: (resourceId: string) => any;
 export function useDataServers(): undefined;
-export const useContainers: (resourceId: any, serverKeys?: string) => Record<string, string[]> | undefined;
+export const useContainers: (resourceId: string, serverKeys?: string) => Record<string, string[]> | undefined;
 export function useCreateContainer(resourceId: any): undefined;
 export function useDataModels(): undefined;
 /**
