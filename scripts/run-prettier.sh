@@ -4,9 +4,7 @@
 # This is called by `.git-hooks/pre-commit`
 
 
-echo "========================"
 echo "=== Running prettier ==="
-echo "========================"
 
 FILES="$@"
 
@@ -24,13 +22,11 @@ echo "$FRONTEND_FILES" | xargs npx prettier --write --ignore-unknown
 cd "$ROOT_DIR"
 
 if [ $? != 0 ]; then
-    echo "========================================================================"
-    echo "Something went wrong running prettier. Have you run \`npm install\` yet?"
-    echo "You can skip pre-commit checks by setting \$SKIP_PRECOMMIT_CHECKS"
-    echo "========================================================================"
+    echo "⛔ Something went wrong running prettier. Have you run \`npm install\` yet?"
+    echo "   You can skip pre-commit checks by setting \$SKIP_PRECOMMIT_CHECKS"
     exit 1
 fi
 
-echo "==== Prettier done ====="
+echo "✅ Prettier done!"
 
 exit 0
