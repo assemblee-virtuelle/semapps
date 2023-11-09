@@ -40,7 +40,7 @@ module.exports = {
       await ctx.call('ldp.container.detach', { containerUri, resourceUri, webId: 'system' });
     }
 
-    if (oldData['@type'] === 'semapps:File') {
+    if (oldData['type'] === 'semapps:File') {
       fs.unlinkSync(oldData['semapps:localPath']);
     }
 

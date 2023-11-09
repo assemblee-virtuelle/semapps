@@ -1,4 +1,7 @@
-export function ImageInput(props: any): import('react/jsx-runtime').JSX.Element;
+import { FunctionComponent } from 'react';
+import { ImageInputProps } from 'react-admin';
+type Props = ImageInputProps;
+export const ImageInput: FunctionComponent<Props>;
 export function MultiServerAutocompleteArrayInput({
   optionText,
   ...rest
