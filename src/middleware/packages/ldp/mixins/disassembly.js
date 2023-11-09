@@ -73,19 +73,19 @@ module.exports = {
         const newDisassemblyValue = defaultToArray(newData[disassemblyConfig.path]) || [];
 
         const resourcesToAdd = newDisassemblyValue.filter(
-          t1 => !oldDisassemblyValue.some(t2 => (t1.id || t1['@id']) === (t2.id || t2['@id']))
+          t1 => !oldDisassemblyValue.some(t2 => (t1.id || t1['@id']) === t2)
         );
         const resourcesToRemove = oldDisassemblyValue.filter(
-          t1 => !newDisassemblyValue.some(t2 => (t1.id || t1['@id']) === (t2.id || t2['@id']))
+          t1 => !newDisassemblyValue.some(t2 => t1 === (t2.id || t2['@id']))
         );
-        const resourcesToKeep = oldDisassemblyValue.filter(t1 =>
-          newDisassemblyValue.some(t2 => (t1.id || t1['@id']) === (t2.id || t2['@id']))
+
+        const resourcesToKeep = newDisassemblyValue.filter(t1 =>
+          oldDisassemblyValue.some(t2 => (t1.id || t1['@id']) === t2)
         );
 
         if (resourcesToAdd) {
           for (const resource of resourcesToAdd) {
             delete resource.id;
-
             const newResourceUri = await ctx.call('ldp.container.post', {
               containerUri: disassemblyConfig.container,
               resource: {
@@ -95,21 +95,40 @@ module.exports = {
               contentType: MIME_TYPES.JSON,
               webId: 'system'
             });
-            uriAdded.push({ '@id': newResourceUri, '@type': '@id' });
+            uriAdded.push({ '@id': newResourceUri, '@type': '@id' })
           }
         }
 
         if (resourcesToRemove) {
           for (const resource of resourcesToRemove) {
-            await ctx.call('ldp.resource.delete', {
-              resourceUri: resource['@id'] || resource.id || resource,
-              webId: 'system'
-            });
+            try {
+              await ctx.call('ldp.resource.delete', {
+                resourceUri: resource['@id'] || resource.id || resource,
+                webId: 'system'
+              });
+            } catch (error) {
+              this.logger.warn(`${resource} Not found during disassembly`)
+            }
             uriRemoved.push({ '@id': resource['@id'] || resource.id || resource, '@type': '@id' });
           }
         }
 
         if (resourcesToKeep) {
+          for (const resource of resourcesToKeep) {
+            try {
+              await ctx.call('ldp.resource.put', {
+                resourceUri: resource['@id'] || resource.id || resource,
+                resource: {
+                  '@context': newData['@context'],
+                  ...resource
+                },
+                contentType: MIME_TYPES.JSON,
+                webId: 'system'
+              });
+            } catch (error) {
+              this.logger.warn(`${resource} Not found during disassembly`)
+            }
+          }
           uriKept = resourcesToKeep.map(r => ({ '@id': r['@id'] || r.id || r, '@type': '@id' }));
         }
 
