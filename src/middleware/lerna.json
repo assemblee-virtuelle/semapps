@@ -1,12 +1,18 @@
 {
-  "version": "0.6.0-alpha.2",
+  "version": "0.6.0-alpha.3",
   "npmClient": "yarn",
   "useWorkspaces": true,
   "useNx": true,
-  "packages": ["packages/*", "tests"],
+  "packages": [
+    "packages/*",
+    "tests"
+  ],
   "command": {
     "version": {
-      "allowBranch": ["master", "next"]
+      "allowBranch": [
+        "master",
+        "next"
+      ]
     }
   }
 }
