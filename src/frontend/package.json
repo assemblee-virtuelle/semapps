@@ -7,7 +7,7 @@
     "version": "lerna version --force-publish='*' --exact --tag-version-prefix='frontend-v'",
     "yalc:publish": "lerna exec --parallel --scope @semapps/** -- yalc publish --push --changed",
     "publish": "lerna publish from-package --dist-tag latest",
-    "prettier": "prettier --write '**/*.{js,ts,json}'",
+    "prettier": "prettier --write '**/*.{js,ts,json,tsx,jsx}'",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "lint-files": "eslint --ext .js,.jsx,.ts,.tsx",
     "typecheck": "tsc --noEmit",
