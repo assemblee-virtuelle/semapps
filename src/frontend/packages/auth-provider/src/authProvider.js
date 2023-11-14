@@ -1,5 +1,6 @@
 import jwtDecode from 'jwt-decode';
 import urlJoin from 'url-join';
+import * as oauth from 'oauth4webapi';
 import { defaultToArray, getAclUri, getAclContext, getAuthServerUrl } from './utils';
 
 const AUTH_TYPE_SSO = 'sso';
@@ -40,24 +41,77 @@ const authProvider = ({ dataProvider, authType, allowAnonymous = true, checkUser
       const { searchParams } = new URL(window.location);
 
       const token = searchParams.get('token');
-      if (!token) throw new Error('auth.message.no_token_returned');
+      const code = searchParams.get('code');
 
-      let webId;
-      try {
-        ({ webId } = jwtDecode(token));
-      } catch (e) {
-        throw new Error('auth.message.invalid_token_returned');
+      if (token) {
+        let webId;
+        try {
+          ({ webId } = jwtDecode(token));
+        } catch (e) {
+          throw new Error('auth.message.invalid_token_returned');
+        }
+        const { json } = await dataProvider.fetch(webId);
+
+        if (!json) throw new Error('auth.message.unable_to_fetch_user_data');
+
+        if (checkUser && !checkUser(json)) throw new Error('auth.message.user_not_allowed_to_login');
+
+        localStorage.setItem('token', token);
+
+        // Reload to ensure the dataServer config is reset
+        window.location.href = '/';
+      } else if (code) {
+        const issuer = new URL(searchParams.get('iss'));
+        const as = await oauth
+          .discoveryRequest(issuer)
+          .then(response => oauth.processDiscoveryResponse(issuer, response));
+
+        const client = {
+          client_id: 'http://localhost:3001/actors/app',
+          token_endpoint_auth_method: 'none' // We don't have a client secret
+        };
+
+        const currentUrl = new URL(window.location.href);
+        const params = oauth.validateAuthResponse(as, client, currentUrl, oauth.expectNoState);
+        if (oauth.isOAuth2Error(params)) {
+          console.log('error', params);
+          throw new Error(); // Handle OAuth 2.0 redirect error
+        }
+
+        const codeVerifier = localStorage.getItem('code_verifier');
+
+        const response = await oauth.authorizationCodeGrantRequest(
+          as,
+          client,
+          params,
+          `${window.location.origin}/auth-callback`,
+          codeVerifier
+        );
+
+        console.log('end response', response);
+
+        const challenges = oauth.parseWwwAuthenticateChallenges(response);
+        if (challenges) {
+          for (const challenge of challenges) {
+            console.log('challenge', challenge);
+          }
+          throw new Error(); // Handle www-authenticate challenges as needed
+        }
+
+        const result = await oauth.processAuthorizationCodeOpenIDResponse(as, client, response);
+        if (oauth.isOAuth2Error(result)) {
+          console.log('error', result);
+          throw new Error(); // Handle OAuth 2.0 response body error
+        }
+
+        console.log('result', result);
+        const { access_token } = result;
+        const claims = oauth.getValidatedIdTokenClaims(result);
+        console.log('ID Token Claims', claims);
+        const { sub } = claims;
+      } else {
+        throw new Error('auth.message.no_token_returned');
       }
-      const { json } = await dataProvider.fetch(webId);
-
-      if (!json) throw new Error('auth.message.unable_to_fetch_user_data');
-
-      if (checkUser && !checkUser(json)) throw new Error('auth.message.user_not_allowed_to_login');
-
-      localStorage.setItem('token', token);
-
-      // Reload to ensure the dataServer config is reset
-      window.location.href = '/';
     },
     signup: async params => {
       const authServerUrl = await getAuthServerUrl(dataProvider);
