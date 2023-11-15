@@ -1,6 +1,5 @@
 var $4Uj5b$jwtdecode = require("jwt-decode");
 var $4Uj5b$urljoin = require("url-join");
-var $4Uj5b$oauth4webapi = require("oauth4webapi");
 var $4Uj5b$reactjsxruntime = require("react/jsx-runtime");
 var $4Uj5b$react = require("react");
 var $4Uj5b$reactadmin = require("react-admin");
@@ -63,7 +62,6 @@ $parcel$export(module.exports, "defaultPasswordScorerOptions", () => $d1ca1e1d21
 $parcel$export(module.exports, "createPasswordScorer", () => $d1ca1e1d215e32ca$export$a1d713a9155d58fc);
 $parcel$export(module.exports, "englishMessages", () => $be2fdde9f3e3137d$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "frenchMessages", () => $6dbc362c3d93e01d$export$2e2bcd8739ae039);
-
 
 
 
@@ -144,52 +142,19 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
         handleCallback: async ()=>{
             const { searchParams: searchParams } = new URL(window.location);
             const token = searchParams.get("token");
-            const code = searchParams.get("code");
-            if (token) {
-                let webId;
-                try {
-                    ({ webId: webId } = (0, ($parcel$interopDefault($4Uj5b$jwtdecode)))(token));
-                } catch (e) {
-                    throw new Error("auth.message.invalid_token_returned");
-                }
-                const { json: json } = await dataProvider.fetch(webId);
-                if (!json) throw new Error("auth.message.unable_to_fetch_user_data");
-                if (checkUser && !checkUser(json)) throw new Error("auth.message.user_not_allowed_to_login");
-                localStorage.setItem("token", token);
-                // Reload to ensure the dataServer config is reset
-                window.location.href = "/";
-            } else if (code) {
-                const issuer = new URL(searchParams.get("iss"));
-                const as = await $4Uj5b$oauth4webapi.discoveryRequest(issuer).then((response)=>$4Uj5b$oauth4webapi.processDiscoveryResponse(issuer, response));
-                const client = {
-                    client_id: "http://localhost:3001/actors/app",
-                    token_endpoint_auth_method: "none" // We don't have a client secret
-                };
-                const currentUrl = new URL(window.location.href);
-                const params = $4Uj5b$oauth4webapi.validateAuthResponse(as, client, currentUrl, $4Uj5b$oauth4webapi.expectNoState);
-                if ($4Uj5b$oauth4webapi.isOAuth2Error(params)) {
-                    console.log("error", params);
-                    throw new Error(); // Handle OAuth 2.0 redirect error
-                }
-                const codeVerifier = localStorage.getItem("code_verifier");
-                const response = await $4Uj5b$oauth4webapi.authorizationCodeGrantRequest(as, client, params, `${window.location.origin}/auth-callback`, codeVerifier);
-                console.log("end response", response);
-                const challenges = $4Uj5b$oauth4webapi.parseWwwAuthenticateChallenges(response);
-                if (challenges) {
-                    for (const challenge of challenges)console.log("challenge", challenge);
-                    throw new Error(); // Handle www-authenticate challenges as needed
-                }
-                const result = await $4Uj5b$oauth4webapi.processAuthorizationCodeOpenIDResponse(as, client, response);
-                if ($4Uj5b$oauth4webapi.isOAuth2Error(result)) {
-                    console.log("error", result);
-                    throw new Error(); // Handle OAuth 2.0 response body error
-                }
-                console.log("result", result);
-                const { access_token: access_token } = result;
-                const claims = $4Uj5b$oauth4webapi.getValidatedIdTokenClaims(result);
-                console.log("ID Token Claims", claims);
-                const { sub: sub } = claims;
-            } else throw new Error("auth.message.no_token_returned");
+            if (!token) throw new Error("auth.message.no_token_returned");
+            let webId;
+            try {
+                ({ webId: webId } = (0, ($parcel$interopDefault($4Uj5b$jwtdecode)))(token));
+            } catch (e) {
+                throw new Error("auth.message.invalid_token_returned");
+            }
+            const { json: json } = await dataProvider.fetch(webId);
+            if (!json) throw new Error("auth.message.unable_to_fetch_user_data");
+            if (checkUser && !checkUser(json)) throw new Error("auth.message.user_not_allowed_to_login");
+            localStorage.setItem("token", token);
+            // Reload to ensure the dataServer config is reset
+            window.location.href = "/";
         },
         signup: async (params)=>{
             const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);

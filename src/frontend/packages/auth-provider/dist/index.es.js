@@ -1,6 +1,5 @@
 import $1obPJ$jwtdecode from "jwt-decode";
 import $1obPJ$urljoin from "url-join";
-import {discoveryRequest as $1obPJ$discoveryRequest, processDiscoveryResponse as $1obPJ$processDiscoveryResponse, validateAuthResponse as $1obPJ$validateAuthResponse, expectNoState as $1obPJ$expectNoState, isOAuth2Error as $1obPJ$isOAuth2Error, authorizationCodeGrantRequest as $1obPJ$authorizationCodeGrantRequest, parseWwwAuthenticateChallenges as $1obPJ$parseWwwAuthenticateChallenges, processAuthorizationCodeOpenIDResponse as $1obPJ$processAuthorizationCodeOpenIDResponse, getValidatedIdTokenClaims as $1obPJ$getValidatedIdTokenClaims} from "oauth4webapi";
 import {jsx as $1obPJ$jsx, jsxs as $1obPJ$jsxs, Fragment as $1obPJ$Fragment} from "react/jsx-runtime";
 import $1obPJ$react, {useEffect as $1obPJ$useEffect, useState as $1obPJ$useState, useCallback as $1obPJ$useCallback, useRef as $1obPJ$useRef, useMemo as $1obPJ$useMemo, forwardRef as $1obPJ$forwardRef} from "react";
 import {useResourceContext as $1obPJ$useResourceContext, Create as $1obPJ$Create, CreateActions as $1obPJ$CreateActions, useGetIdentity as $1obPJ$useGetIdentity, usePermissions as $1obPJ$usePermissions, useNotify as $1obPJ$useNotify, useRedirect as $1obPJ$useRedirect, useGetRecordId as $1obPJ$useGetRecordId, Edit as $1obPJ$Edit, useResourceDefinition as $1obPJ$useResourceDefinition, useRecordContext as $1obPJ$useRecordContext, usePermissionsOptimized as $1obPJ$usePermissionsOptimized, TopToolbar as $1obPJ$TopToolbar, ListButton as $1obPJ$ListButton, ShowButton as $1obPJ$ShowButton, Button as $1obPJ$Button, useTranslate as $1obPJ$useTranslate, useGetList as $1obPJ$useGetList, useDataProvider as $1obPJ$useDataProvider, Loading as $1obPJ$Loading, Error as $1obPJ$Error, useAuthProvider as $1obPJ$useAuthProvider, Toolbar as $1obPJ$Toolbar, SaveButton as $1obPJ$SaveButton, DeleteButton as $1obPJ$DeleteButton, EditButton as $1obPJ$EditButton, List as $1obPJ$List1, CreateButton as $1obPJ$CreateButton, ExportButton as $1obPJ$ExportButton, Show as $1obPJ$Show, useLogin as $1obPJ$useLogin, useSafeSetState as $1obPJ$useSafeSetState, useLocaleState as $1obPJ$useLocaleState, Form as $1obPJ$Form, TextInput as $1obPJ$TextInput, required as $1obPJ$required, email as $1obPJ$email, Notification as $1obPJ$Notification, Resource as $1obPJ$Resource, useUserMenu as $1obPJ$useUserMenu, UserMenu as $1obPJ$UserMenu, Logout as $1obPJ$Logout, useGetPermissions as $1obPJ$useGetPermissions} from "react-admin";
@@ -23,7 +22,6 @@ import $1obPJ$speakingurl from "speakingurl";
 import {withStyles as $1obPJ$withStyles} from "@mui/styles";
 import $1obPJ$muiiconsmaterialAccountCircle from "@mui/icons-material/AccountCircle";
 import $1obPJ$lodashisEqual from "lodash/isEqual";
-
 
 
 
@@ -105,52 +103,19 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
         handleCallback: async ()=>{
             const { searchParams: searchParams } = new URL(window.location);
             const token = searchParams.get("token");
-            const code = searchParams.get("code");
-            if (token) {
-                let webId;
-                try {
-                    ({ webId: webId } = (0, $1obPJ$jwtdecode)(token));
-                } catch (e) {
-                    throw new Error("auth.message.invalid_token_returned");
-                }
-                const { json: json } = await dataProvider.fetch(webId);
-                if (!json) throw new Error("auth.message.unable_to_fetch_user_data");
-                if (checkUser && !checkUser(json)) throw new Error("auth.message.user_not_allowed_to_login");
-                localStorage.setItem("token", token);
-                // Reload to ensure the dataServer config is reset
-                window.location.href = "/";
-            } else if (code) {
-                const issuer = new URL(searchParams.get("iss"));
-                const as = await $1obPJ$discoveryRequest(issuer).then((response)=>$1obPJ$processDiscoveryResponse(issuer, response));
-                const client = {
-                    client_id: "http://localhost:3001/actors/app",
-                    token_endpoint_auth_method: "none" // We don't have a client secret
-                };
-                const currentUrl = new URL(window.location.href);
-                const params = $1obPJ$validateAuthResponse(as, client, currentUrl, $1obPJ$expectNoState);
-                if ($1obPJ$isOAuth2Error(params)) {
-                    console.log("error", params);
-                    throw new Error(); // Handle OAuth 2.0 redirect error
-                }
-                const codeVerifier = localStorage.getItem("code_verifier");
-                const response = await $1obPJ$authorizationCodeGrantRequest(as, client, params, `${window.location.origin}/auth-callback`, codeVerifier);
-                console.log("end response", response);
-                const challenges = $1obPJ$parseWwwAuthenticateChallenges(response);
-                if (challenges) {
-                    for (const challenge of challenges)console.log("challenge", challenge);
-                    throw new Error(); // Handle www-authenticate challenges as needed
-                }
-                const result = await $1obPJ$processAuthorizationCodeOpenIDResponse(as, client, response);
-                if ($1obPJ$isOAuth2Error(result)) {
-                    console.log("error", result);
-                    throw new Error(); // Handle OAuth 2.0 response body error
-                }
-                console.log("result", result);
-                const { access_token: access_token } = result;
-                const claims = $1obPJ$getValidatedIdTokenClaims(result);
-                console.log("ID Token Claims", claims);
-                const { sub: sub } = claims;
-            } else throw new Error("auth.message.no_token_returned");
+            if (!token) throw new Error("auth.message.no_token_returned");
+            let webId;
+            try {
+                ({ webId: webId } = (0, $1obPJ$jwtdecode)(token));
+            } catch (e) {
+                throw new Error("auth.message.invalid_token_returned");
+            }
+            const { json: json } = await dataProvider.fetch(webId);
+            if (!json) throw new Error("auth.message.unable_to_fetch_user_data");
+            if (checkUser && !checkUser(json)) throw new Error("auth.message.user_not_allowed_to_login");
+            localStorage.setItem("token", token);
+            // Reload to ensure the dataServer config is reset
+            window.location.href = "/";
         },
         signup: async (params)=>{
             const authServerUrl = await (0, $47a3fad69bcb0083$export$274217e117cdbc7b)(dataProvider);

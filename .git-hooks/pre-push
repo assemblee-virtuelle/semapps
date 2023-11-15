@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Skip pre-push checks if SKIP_PREPUSH_CHECKS is set.
+if [ "$SKIP_PREPUSH_CHECKS" = true ] || [ "$SKIP_PREPUSH_CHECKS" = 1 ] ; then
+  echo "=== Skipping pre-push checks ==="
+  exit 0
+fi
+
+cd "$ROOT_DIR"
+
+./scripts/run-typecheck.sh
