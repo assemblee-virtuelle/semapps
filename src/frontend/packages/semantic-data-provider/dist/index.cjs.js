@@ -82,14 +82,12 @@ const $9020b8e3f4a4c1a1$var$getOneMethod = (config)=>async (resourceId, params)=
 var $9020b8e3f4a4c1a1$export$2e2bcd8739ae039 = $9020b8e3f4a4c1a1$var$getOneMethod;
 
 
+
 const $6fcb30f76390d142$var$isFile = (o)=>o?.rawFile && o.rawFile instanceof File;
 const $6fcb30f76390d142$var$isFileToDelete = (o)=>o?.fileToDelete !== undefined && o?.fileToDelete !== null;
 const $6fcb30f76390d142$var$getUploadsContainerUri = (config)=>{
     const serverKey = Object.keys(config.dataServers).find((key)=>config.dataServers[key].uploadsContainer);
-    if (serverKey && config.dataServers[serverKey].uploadsContainer) {
-        const url = new URL(config.dataServers[serverKey].uploadsContainer, config.dataServers[serverKey].baseUrl).href;
-        return url;
-    }
+    if (serverKey && config.dataServers[serverKey].uploadsContainer) return (0, ($parcel$interopDefault($bkNnK$urljoin)))(config.dataServers[serverKey].baseUrl, config.dataServers[serverKey].uploadsContainer);
     return null;
 };
 const $6fcb30f76390d142$var$uploadFile = async (rawFile, config)=>{
@@ -149,6 +147,7 @@ var $6fcb30f76390d142$export$2e2bcd8739ae039 = {
 };
 
 
+
 const $8f44b7c15b8b8e1d$var$getServerKeyFromType = (type, dataServers)=>{
     return Object.keys(dataServers).find((key)=>{
         return dataServers[key][type];
@@ -200,7 +199,7 @@ const $047a107b0d203793$var$findContainersWithTypes = (types, serverKeys, dataSe
         Object.keys(dataServers[key1].containers).forEach((key2)=>{
             if (!parsedServerKeys || parsedServerKeys.includes(key2)) Object.keys(dataServers[key1].containers[key2]).forEach((type)=>{
                 if (types.includes(type)) dataServers[key1].containers[key2][type].map((path)=>{
-                    const containerUri = new URL(path, dataServers[key2].baseUrl).href;
+                    const containerUri = (0, ($parcel$interopDefault($bkNnK$urljoin)))(dataServers[key2].baseUrl, path);
                     // Avoid returning the same container several times
                     if (!existingContainers.includes(containerUri)) {
                         existingContainers.push(containerUri);

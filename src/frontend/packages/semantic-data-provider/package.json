@@ -23,6 +23,9 @@
     "sparqljs": "^3.5.1",
     "url-join": "^4.0.1"
   },
+  "devDependencies": {
+    "@types/url-join": "^4.0.1"
+  },
   "peerDependencies": {
     "@mui/styles": "^5.13.1",
     "react": "^18.2.0",
