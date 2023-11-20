@@ -1,3 +1,4 @@
+import urlJoin from 'url-join';
 import { RaRecord } from 'react-admin';
 import { Configuration } from '../types';
 
@@ -8,8 +9,7 @@ const isFileToDelete = (o: any): o is { fileToDelete: string } =>
 const getUploadsContainerUri = (config: Configuration) => {
   const serverKey = Object.keys(config.dataServers).find(key => config.dataServers[key].uploadsContainer);
   if (serverKey && config.dataServers[serverKey].uploadsContainer) {
-    const url = new URL(config.dataServers[serverKey].uploadsContainer!, config.dataServers[serverKey].baseUrl).href;
-    return url;
+    return urlJoin(config.dataServers[serverKey].baseUrl, config.dataServers[serverKey].uploadsContainer!);
   }
   return null;
 };
