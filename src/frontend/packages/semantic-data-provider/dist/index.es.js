@@ -61,14 +61,12 @@ const $ed447224dd38ce82$var$getOneMethod = (config)=>async (resourceId, params)=
 var $ed447224dd38ce82$export$2e2bcd8739ae039 = $ed447224dd38ce82$var$getOneMethod;
 
 
+
 const $b17c43e3301545ca$var$isFile = (o)=>o?.rawFile && o.rawFile instanceof File;
 const $b17c43e3301545ca$var$isFileToDelete = (o)=>o?.fileToDelete !== undefined && o?.fileToDelete !== null;
 const $b17c43e3301545ca$var$getUploadsContainerUri = (config)=>{
     const serverKey = Object.keys(config.dataServers).find((key)=>config.dataServers[key].uploadsContainer);
-    if (serverKey && config.dataServers[serverKey].uploadsContainer) {
-        const url = new URL(config.dataServers[serverKey].uploadsContainer, config.dataServers[serverKey].baseUrl).href;
-        return url;
-    }
+    if (serverKey && config.dataServers[serverKey].uploadsContainer) return (0, $fj9kP$urljoin)(config.dataServers[serverKey].baseUrl, config.dataServers[serverKey].uploadsContainer);
     return null;
 };
 const $b17c43e3301545ca$var$uploadFile = async (rawFile, config)=>{
@@ -128,6 +126,7 @@ var $b17c43e3301545ca$export$2e2bcd8739ae039 = {
 };
 
 
+
 const $8326b88c1a913ca9$var$getServerKeyFromType = (type, dataServers)=>{
     return Object.keys(dataServers).find((key)=>{
         return dataServers[key][type];
@@ -179,7 +178,7 @@ const $15b841e67a1ba752$var$findContainersWithTypes = (types, serverKeys, dataSe
         Object.keys(dataServers[key1].containers).forEach((key2)=>{
             if (!parsedServerKeys || parsedServerKeys.includes(key2)) Object.keys(dataServers[key1].containers[key2]).forEach((type)=>{
                 if (types.includes(type)) dataServers[key1].containers[key2][type].map((path)=>{
-                    const containerUri = new URL(path, dataServers[key2].baseUrl).href;
+                    const containerUri = (0, $fj9kP$urljoin)(dataServers[key2].baseUrl, path);
                     // Avoid returning the same container several times
                     if (!existingContainers.includes(containerUri)) {
                         existingContainers.push(containerUri);
