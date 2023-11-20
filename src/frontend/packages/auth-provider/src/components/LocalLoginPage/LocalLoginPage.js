@@ -80,7 +80,6 @@ const LocalLoginPage = ({
   }, [isSignup, isLogin, isResetPassword, isNewPassword]);
 
   if (isLoading || identity?.id) return null;
-  if (isLoading || identity?.id) return null;
 
   return (
     <SimpleBox title={translate(title)} text={translate(text)} icon={<LockIcon />}>
