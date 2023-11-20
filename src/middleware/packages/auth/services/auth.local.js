@@ -40,7 +40,7 @@ const AuthLocalService = {
   },
   actions: {
     async signup(ctx) {
-      const { username, email, password, ...rest } = ctx.params;
+      const { username, email, password, interactionId, ...rest } = ctx.params;
 
       let accountData = await ctx.call('auth.account.create', {
         username,
@@ -55,26 +55,29 @@ const AuthLocalService = {
       // Link the webId with the account
       accountData = await ctx.call('auth.account.attachWebId', { accountUri: accountData['@id'], webId });
 
-      ctx.emit('auth.registered', { webId, profileData, accountData });
+      ctx.emit('auth.registered', { webId, profileData, accountData, interactionId });
 
       const token = await ctx.call('auth.jwt.generateToken', { payload: { webId } });
 
       return { token, webId, newUser: true };
     },
     async login(ctx) {
-      const { username, password } = ctx.params;
+      const { username, password, interactionId } = ctx.params;
 
       const accountData = await ctx.call('auth.account.verify', { username, password });
 
-      ctx.emit('auth.connected', { webId: accountData.webId, accountData }, { meta: { webId: null, dataset: null } });
+      ctx.emit(
+        'auth.connected',
+        { webId: accountData.webId, accountData, interactionId },
+        { meta: { webId: null, dataset: null } }
+      );
 
       const token = await ctx.call('auth.jwt.generateToken', { payload: { webId: accountData.webId } });
 
       return { token, webId: accountData.webId, newUser: false };
     },
     async logout(ctx) {
-      ctx.meta.$statusCode = 302;
-      ctx.meta.$location = ctx.params.redirectUrl || this.settings.formUrl;
+      ctx.emit('auth.disconnected', { webId: ctx.meta.webId });
     },
     async redirectToForm(ctx) {
       if (this.settings.formUrl) {
@@ -122,13 +125,11 @@ const AuthLocalService = {
     getStrategy() {
       return new Strategy(
         {
-          usernameField: 'username',
-          passwordField: 'password',
           passReqToCallback: true // We want to have access to req below
         },
         (req, username, password, done) => {
           req.$ctx
-            .call('auth.login', { username, password })
+            .call('auth.login', req.$params)
             .then(returnedData => {
               done(null, returnedData);
             })
@@ -153,7 +154,7 @@ const AuthLocalService = {
         path: '/auth/logout',
         name: 'auth-logout',
         aliases: {
-          'GET /': 'auth.logout'
+          'POST /': 'auth.logout'
         }
       };
 
