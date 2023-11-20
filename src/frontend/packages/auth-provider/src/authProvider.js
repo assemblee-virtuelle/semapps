@@ -98,8 +98,7 @@ const authProvider = ({
         const currentUrl = new URL(window.location.href);
         const params = oauth.validateAuthResponse(as, client, currentUrl, oauth.expectNoState);
         if (oauth.isOAuth2Error(params)) {
-          console.log('error', params);
-          throw new Error(); // Handle OAuth 2.0 redirect error
+          throw new Error(`OAuth error: ${params.error} (${params.error_description})`);
         }
 
         // Retrieve code verifier set during login
@@ -113,27 +112,14 @@ const authProvider = ({
           codeVerifier
         );
 
-        const challenges = oauth.parseWwwAuthenticateChallenges(response);
-        if (challenges) {
-          for (const challenge of challenges) {
-            console.log('challenge', challenge);
-          }
-          throw new Error(); // Handle www-authenticate challenges as needed
-        }
-
         const result = await oauth.processAuthorizationCodeOpenIDResponse(as, client, response);
         if (oauth.isOAuth2Error(result)) {
-          console.log('error', result);
-          throw new Error(); // Handle OAuth 2.0 response body error
+          throw new Error(`OAuth error: ${params.error} (${params.error_description})`);
         }
-
-        const { access_token, id_token } = result;
-        // const claims = oauth.getValidatedIdTokenClaims(result);
-        // const { webid, sub } = claims;
 
         // Until DPoP is implemented, use the ID token to log into local Pod
         // And the proxy endpoint to log into remote Pods
-        localStorage.setItem('token', id_token);
+        localStorage.setItem('token', result.id_token);
 
         // Remove code verifier now we don't need it anymore
         localStorage.removeItem('code_verifier');

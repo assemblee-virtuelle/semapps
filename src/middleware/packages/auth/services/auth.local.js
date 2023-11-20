@@ -77,6 +77,8 @@ const AuthLocalService = {
       return { token, webId: accountData.webId, newUser: false };
     },
     async logout(ctx) {
+      ctx.meta.$statusCode = 302;
+      ctx.meta.$location = ctx.params.redirectUrl || this.settings.formUrl;
       ctx.emit('auth.disconnected', { webId: ctx.meta.webId });
     },
     async redirectToForm(ctx) {
@@ -154,7 +156,7 @@ const AuthLocalService = {
         path: '/auth/logout',
         name: 'auth-logout',
         aliases: {
-          'POST /': 'auth.logout'
+          'GET /': 'auth.logout'
         }
       };
 

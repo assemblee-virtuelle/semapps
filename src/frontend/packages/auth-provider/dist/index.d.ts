@@ -16,7 +16,7 @@ export function authProvider({
   login: (params: any) => Promise<void>;
   handleCallback: () => Promise<void>;
   signup: (params: any) => Promise<any>;
-  logout: () => Promise<any>;
+  logout: () => Promise<string | undefined>;
   checkAuth: () => Promise<void>;
   checkUser: (userData: any) => any;
   checkError: (error: any) => Promise<void>;
