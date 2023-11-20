@@ -1,37 +1,81 @@
 import jwtDecode from 'jwt-decode';
 import urlJoin from 'url-join';
 import * as oauth from 'oauth4webapi';
-import { defaultToArray, getAclUri, getAclContext, getAuthServerUrl } from './utils';
+import { defaultToArray, getAclUri, getAclContext, getAuthServerUrl, delay } from './utils';
 
 const AUTH_TYPE_SSO = 'sso';
 const AUTH_TYPE_LOCAL = 'local';
 const AUTH_TYPE_POD = 'pod';
+const AUTH_TYPE_SOLID_OIDC = 'solid-oidc';
 
-const authProvider = ({ dataProvider, authType, allowAnonymous = true, checkUser, checkPermissions = false }) => {
-  if (![AUTH_TYPE_SSO, AUTH_TYPE_LOCAL, AUTH_TYPE_POD].includes(authType))
+const authProvider = ({
+  dataProvider,
+  authType,
+  allowAnonymous = true,
+  checkUser,
+  checkPermissions = false,
+  clientId
+}) => {
+  if (![AUTH_TYPE_SSO, AUTH_TYPE_LOCAL, AUTH_TYPE_POD, AUTH_TYPE_SOLID_OIDC].includes(authType))
     throw new Error('The authType parameter is missing from the auth provider');
+  if (authType === AUTH_TYPE_SOLID_OIDC && !clientId)
+    throw new Error('The clientId parameter is required for solid-oidc authentication');
   return {
     login: async params => {
-      const authServerUrl = await getAuthServerUrl(dataProvider);
-      if (authType === AUTH_TYPE_LOCAL) {
-        const { username, password } = params;
+      if (authType === AUTH_TYPE_SOLID_OIDC) {
+        const { webId, issuer } = params;
+
+        if (webId && !issuer) {
+          // TODO find issuer from webId
+        }
+
+        const as = await oauth
+          .discoveryRequest(new URL(issuer))
+          .then(response => oauth.processDiscoveryResponse(new URL(issuer), response));
+
+        const codeVerifier = oauth.generateRandomCodeVerifier();
+        const codeChallenge = await oauth.calculatePKCECodeChallenge(codeVerifier);
+        const codeChallengeMethod = 'S256';
+
+        // Save to use on handleCallback method
+        localStorage.setItem('code_verifier', codeVerifier);
+
+        const authorizationUrl = new URL(as.authorization_endpoint);
+        authorizationUrl.searchParams.set('response_type', 'code');
+        authorizationUrl.searchParams.set('client_id', clientId);
+        authorizationUrl.searchParams.set('code_challenge', codeChallenge);
+        authorizationUrl.searchParams.set('code_challenge_method', codeChallengeMethod);
+        authorizationUrl.searchParams.set('redirect_uri', `${window.location.origin}/auth-callback`);
+        authorizationUrl.searchParams.set('scope', 'openid webid offline_access');
+
+        window.location = authorizationUrl;
+      } else if (authType === AUTH_TYPE_LOCAL) {
+        const { username, password, interactionId, redirectTo } = params;
+        const authServerUrl = await getAuthServerUrl(dataProvider);
         try {
           const { json } = await dataProvider.fetch(urlJoin(authServerUrl, 'auth/login'), {
             method: 'POST',
             body: JSON.stringify({
               username: username.trim(),
-              password: password.trim()
+              password: password.trim(),
+              interactionId
             }),
             headers: new Headers({ 'Content-Type': 'application/json' })
           });
           const { token } = json;
           localStorage.setItem('token', token);
-          // Reload to ensure the dataServer config is reset
-          window.location.reload();
+          if (redirectTo) {
+            if (interactionId) await delay(3000); // Ensure the interactionId has been received and processed
+            window.location.href = redirectTo;
+          } else {
+            // Reload to ensure the dataServer config is reset
+            window.location.reload();
+          }
         } catch (e) {
           throw new Error('ra.auth.sign_in_error');
         }
-      } else {
+      } else if (authType === AUTH_TYPE_SSO) {
+        const authServerUrl = await getAuthServerUrl(dataProvider);
         let redirectUrl = `${new URL(window.location.href).origin}/login?login=true`;
         if (params.redirect) redirectUrl += `&redirect=${encodeURIComponent(params.redirect)}`;
         window.location.href = urlJoin(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
@@ -40,10 +84,66 @@ const authProvider = ({ dataProvider, authType, allowAnonymous = true, checkUser
     handleCallback: async () => {
       const { searchParams } = new URL(window.location);
 
-      const token = searchParams.get('token');
-      const code = searchParams.get('code');
+      if (authType === AUTH_TYPE_SOLID_OIDC) {
+        const issuer = new URL(searchParams.get('iss'));
+        const as = await oauth
+          .discoveryRequest(issuer)
+          .then(response => oauth.processDiscoveryResponse(issuer, response));
 
-      if (token) {
+        const client = {
+          client_id: clientId,
+          token_endpoint_auth_method: 'none' // We don't have a client secret
+        };
+
+        const currentUrl = new URL(window.location.href);
+        const params = oauth.validateAuthResponse(as, client, currentUrl, oauth.expectNoState);
+        if (oauth.isOAuth2Error(params)) {
+          console.log('error', params);
+          throw new Error(); // Handle OAuth 2.0 redirect error
+        }
+
+        // Retrieve code verifier set during login
+        const codeVerifier = localStorage.getItem('code_verifier');
+
+        const response = await oauth.authorizationCodeGrantRequest(
+          as,
+          client,
+          params,
+          `${window.location.origin}/auth-callback`,
+          codeVerifier
+        );
+
+        const challenges = oauth.parseWwwAuthenticateChallenges(response);
+        if (challenges) {
+          for (const challenge of challenges) {
+            console.log('challenge', challenge);
+          }
+          throw new Error(); // Handle www-authenticate challenges as needed
+        }
+
+        const result = await oauth.processAuthorizationCodeOpenIDResponse(as, client, response);
+        if (oauth.isOAuth2Error(result)) {
+          console.log('error', result);
+          throw new Error(); // Handle OAuth 2.0 response body error
+        }
+
+        const { access_token, id_token } = result;
+        // const claims = oauth.getValidatedIdTokenClaims(result);
+        // const { webid, sub } = claims;
+
+        // Until DPoP is implemented, use the ID token to log into local Pod
+        // And the proxy endpoint to log into remote Pods
+        localStorage.setItem('token', id_token);
+
+        // Remove code verifier now we don't need it anymore
+        localStorage.removeItem('code_verifier');
+
+        // Reload to ensure the dataServer config is reset
+        window.location.href = '/';
+      } else {
+        const token = searchParams.get('token');
+        if (!token) throw new Error('auth.message.no_token_returned');
+
         let webId;
         try {
           ({ webId } = jwtDecode(token));
@@ -60,63 +160,12 @@ const authProvider = ({ dataProvider, authType, allowAnonymous = true, checkUser
 
         // Reload to ensure the dataServer config is reset
         window.location.href = '/';
-      } else if (code) {
-        const issuer = new URL(searchParams.get('iss'));
-        const as = await oauth
-          .discoveryRequest(issuer)
-          .then(response => oauth.processDiscoveryResponse(issuer, response));
-
-        const client = {
-          client_id: 'http://localhost:3001/actors/app',
-          token_endpoint_auth_method: 'none' // We don't have a client secret
-        };
-
-        const currentUrl = new URL(window.location.href);
-        const params = oauth.validateAuthResponse(as, client, currentUrl, oauth.expectNoState);
-        if (oauth.isOAuth2Error(params)) {
-          console.log('error', params);
-          throw new Error(); // Handle OAuth 2.0 redirect error
-        }
-
-        const codeVerifier = localStorage.getItem('code_verifier');
-
-        const response = await oauth.authorizationCodeGrantRequest(
-          as,
-          client,
-          params,
-          `${window.location.origin}/auth-callback`,
-          codeVerifier
-        );
-
-        console.log('end response', response);
-
-        const challenges = oauth.parseWwwAuthenticateChallenges(response);
-        if (challenges) {
-          for (const challenge of challenges) {
-            console.log('challenge', challenge);
-          }
-          throw new Error(); // Handle www-authenticate challenges as needed
-        }
-
-        const result = await oauth.processAuthorizationCodeOpenIDResponse(as, client, response);
-        if (oauth.isOAuth2Error(result)) {
-          console.log('error', result);
-          throw new Error(); // Handle OAuth 2.0 response body error
-        }
-
-        console.log('result', result);
-        const { access_token } = result;
-        const claims = oauth.getValidatedIdTokenClaims(result);
-        console.log('ID Token Claims', claims);
-        const { sub } = claims;
-      } else {
-        throw new Error('auth.message.no_token_returned');
       }
     },
     signup: async params => {
       const authServerUrl = await getAuthServerUrl(dataProvider);
       if (authType === AUTH_TYPE_LOCAL) {
-        const { username, email, password, domain, ...profileData } = params;
+        const { username, email, password, domain, interactionId, ...profileData } = params;
         try {
           const { json } = await dataProvider.fetch(urlJoin(authServerUrl, 'auth/signup'), {
             method: 'POST',
@@ -124,6 +173,7 @@ const authProvider = ({ dataProvider, authType, allowAnonymous = true, checkUser
               username: username.trim(),
               email: email.trim(),
               password: password.trim(),
+              interactionId,
               ...profileData
             }),
             headers: new Headers({ 'Content-Type': 'application/json' })
@@ -151,11 +201,24 @@ const authProvider = ({ dataProvider, authType, allowAnonymous = true, checkUser
     logout: async () => {
       switch (authType) {
         case AUTH_TYPE_LOCAL: {
+          const authServerUrl = await getAuthServerUrl(dataProvider);
+
           // Delete token but also any other value in local storage
           localStorage.clear();
-          // Reload to ensure the dataServer config is reset
-          window.location.reload();
-          window.location.href = '/';
+
+          const { status, json: oidcConfig } = await dataProvider.fetch(
+            urlJoin(authServerUrl, '.well-known/openid-configuration')
+          );
+
+          if (status === 200) {
+            // Redirect to OIDC endpoint if it exists
+            window.location.href = oidcConfig.end_session_endpoint;
+          } else {
+            // Reload to ensure the dataServer config is reset
+            window.location.reload();
+            window.location.href = '/';
+          }
+
           break;
         }
 
@@ -174,6 +237,22 @@ const authProvider = ({ dataProvider, authType, allowAnonymous = true, checkUser
             const { webId } = jwtDecode(token);
             // Delete token but also any other value in local storage
             localStorage.clear();
+            // Redirect to the POD provider
+            return `${urlJoin(webId, 'openApp')}?type=${encodeURIComponent(
+              'http://www.w3.org/ns/solid/interop#ApplicationRegistration'
+            )}`;
+          }
+          break;
+        }
+
+        case AUTH_TYPE_SOLID_OIDC: {
+          const token = localStorage.getItem('token');
+          if (token) {
+            const { webid: webId } = jwtDecode(token); // Not webId !!
+
+            // Delete token but also any other value in local storage
+            localStorage.clear();
+
             // Redirect to the POD provider
             return `${urlJoin(webId, 'openApp')}?type=${encodeURIComponent(
               'http://www.w3.org/ns/solid/interop#ApplicationRegistration'
@@ -271,7 +350,10 @@ const authProvider = ({ dataProvider, authType, allowAnonymous = true, checkUser
     getIdentity: async () => {
       const token = localStorage.getItem('token');
       if (token) {
-        const { webId } = jwtDecode(token);
+        const payload = jwtDecode(token);
+        const webId = payload.webId || payload.webid; // Currently we must deal with both formats
+
+        if (!webId) throw new Error('No webId found on provided token !');
 
         const { json: webIdData } = await dataProvider.fetch(webId);
         const { json: profileData } = webIdData.url ? await dataProvider.fetch(webIdData.url) : {};

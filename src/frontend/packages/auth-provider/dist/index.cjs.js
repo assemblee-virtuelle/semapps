@@ -1,5 +1,6 @@
 var $4Uj5b$jwtdecode = require("jwt-decode");
 var $4Uj5b$urljoin = require("url-join");
+var $4Uj5b$oauth4webapi = require("oauth4webapi");
 var $4Uj5b$reactjsxruntime = require("react/jsx-runtime");
 var $4Uj5b$react = require("react");
 var $4Uj5b$reactadmin = require("react-admin");
@@ -65,6 +66,7 @@ $parcel$export(module.exports, "frenchMessages", () => $6dbc362c3d93e01d$export$
 
 
 
+
 const $2d06940433ec0c6c$export$dca4f48302963835 = (value)=>!value ? undefined : Array.isArray(value) ? value : [
         value
     ];
@@ -99,28 +101,50 @@ const $2d06940433ec0c6c$export$274217e117cdbc7b = async (dataProvider)=>{
     // If the server is a POD, return the root URL instead of https://domain.com/user/data
     return authServer.pod ? new URL(authServer.baseUrl).origin : authServer.baseUrl;
 };
+const $2d06940433ec0c6c$export$1391212d75b2ee65 = async (t)=>new Promise((resolve)=>setTimeout(resolve, t));
 
 
 const $6a92eb32301846ac$var$AUTH_TYPE_SSO = "sso";
 const $6a92eb32301846ac$var$AUTH_TYPE_LOCAL = "local";
 const $6a92eb32301846ac$var$AUTH_TYPE_POD = "pod";
-const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authType: authType, allowAnonymous: allowAnonymous = true, checkUser: checkUser, checkPermissions: checkPermissions = false })=>{
+const $6a92eb32301846ac$var$AUTH_TYPE_SOLID_OIDC = "solid-oidc";
+const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authType: authType, allowAnonymous: allowAnonymous = true, checkUser: checkUser, checkPermissions: checkPermissions = false, clientId: clientId })=>{
     if (![
         $6a92eb32301846ac$var$AUTH_TYPE_SSO,
         $6a92eb32301846ac$var$AUTH_TYPE_LOCAL,
-        $6a92eb32301846ac$var$AUTH_TYPE_POD
+        $6a92eb32301846ac$var$AUTH_TYPE_POD,
+        $6a92eb32301846ac$var$AUTH_TYPE_SOLID_OIDC
     ].includes(authType)) throw new Error("The authType parameter is missing from the auth provider");
+    if (authType === $6a92eb32301846ac$var$AUTH_TYPE_SOLID_OIDC && !clientId) throw new Error("The clientId parameter is required for solid-oidc authentication");
     return {
         login: async (params)=>{
-            const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
-            if (authType === $6a92eb32301846ac$var$AUTH_TYPE_LOCAL) {
-                const { username: username, password: password } = params;
+            if (authType === $6a92eb32301846ac$var$AUTH_TYPE_SOLID_OIDC) {
+                const { webId: webId, issuer: issuer } = params;
+                webId && issuer;
+                const as = await $4Uj5b$oauth4webapi.discoveryRequest(new URL(issuer)).then((response)=>$4Uj5b$oauth4webapi.processDiscoveryResponse(new URL(issuer), response));
+                const codeVerifier = $4Uj5b$oauth4webapi.generateRandomCodeVerifier();
+                const codeChallenge = await $4Uj5b$oauth4webapi.calculatePKCECodeChallenge(codeVerifier);
+                const codeChallengeMethod = "S256";
+                // Save to use on handleCallback method
+                localStorage.setItem("code_verifier", codeVerifier);
+                const authorizationUrl = new URL(as.authorization_endpoint);
+                authorizationUrl.searchParams.set("response_type", "code");
+                authorizationUrl.searchParams.set("client_id", clientId);
+                authorizationUrl.searchParams.set("code_challenge", codeChallenge);
+                authorizationUrl.searchParams.set("code_challenge_method", codeChallengeMethod);
+                authorizationUrl.searchParams.set("redirect_uri", `${window.location.origin}/auth-callback`);
+                authorizationUrl.searchParams.set("scope", "openid webid offline_access");
+                window.location = authorizationUrl;
+            } else if (authType === $6a92eb32301846ac$var$AUTH_TYPE_LOCAL) {
+                const { username: username, password: password, interactionId: interactionId, redirectTo: redirectTo } = params;
+                const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
                 try {
                     const { json: json } = await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, "auth/login"), {
                         method: "POST",
                         body: JSON.stringify({
                             username: username.trim(),
-                            password: password.trim()
+                            password: password.trim(),
+                            interactionId: interactionId
                         }),
                         headers: new Headers({
                             "Content-Type": "application/json"
@@ -128,12 +152,16 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                     });
                     const { token: token } = json;
                     localStorage.setItem("token", token);
-                    // Reload to ensure the dataServer config is reset
+                    if (redirectTo) {
+                        if (interactionId) await (0, $2d06940433ec0c6c$export$1391212d75b2ee65)(3000); // Ensure the interactionId has been received and processed
+                        window.location.href = redirectTo;
+                    } else // Reload to ensure the dataServer config is reset
                     window.location.reload();
                 } catch (e) {
                     throw new Error("ra.auth.sign_in_error");
                 }
-            } else {
+            } else if (authType === $6a92eb32301846ac$var$AUTH_TYPE_SSO) {
+                const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
                 let redirectUrl = `${new URL(window.location.href).origin}/login?login=true`;
                 if (params.redirect) redirectUrl += `&redirect=${encodeURIComponent(params.redirect)}`;
                 window.location.href = (0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
@@ -141,25 +169,63 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
         },
         handleCallback: async ()=>{
             const { searchParams: searchParams } = new URL(window.location);
-            const token = searchParams.get("token");
-            if (!token) throw new Error("auth.message.no_token_returned");
-            let webId;
-            try {
-                ({ webId: webId } = (0, ($parcel$interopDefault($4Uj5b$jwtdecode)))(token));
-            } catch (e) {
-                throw new Error("auth.message.invalid_token_returned");
+            if (authType === $6a92eb32301846ac$var$AUTH_TYPE_SOLID_OIDC) {
+                const issuer = new URL(searchParams.get("iss"));
+                const as = await $4Uj5b$oauth4webapi.discoveryRequest(issuer).then((response)=>$4Uj5b$oauth4webapi.processDiscoveryResponse(issuer, response));
+                const client = {
+                    client_id: clientId,
+                    token_endpoint_auth_method: "none" // We don't have a client secret
+                };
+                const currentUrl = new URL(window.location.href);
+                const params = $4Uj5b$oauth4webapi.validateAuthResponse(as, client, currentUrl, $4Uj5b$oauth4webapi.expectNoState);
+                if ($4Uj5b$oauth4webapi.isOAuth2Error(params)) {
+                    console.log("error", params);
+                    throw new Error(); // Handle OAuth 2.0 redirect error
+                }
+                // Retrieve code verifier set during login
+                const codeVerifier = localStorage.getItem("code_verifier");
+                const response = await $4Uj5b$oauth4webapi.authorizationCodeGrantRequest(as, client, params, `${window.location.origin}/auth-callback`, codeVerifier);
+                const challenges = $4Uj5b$oauth4webapi.parseWwwAuthenticateChallenges(response);
+                if (challenges) {
+                    for (const challenge of challenges)console.log("challenge", challenge);
+                    throw new Error(); // Handle www-authenticate challenges as needed
+                }
+                const result = await $4Uj5b$oauth4webapi.processAuthorizationCodeOpenIDResponse(as, client, response);
+                if ($4Uj5b$oauth4webapi.isOAuth2Error(result)) {
+                    console.log("error", result);
+                    throw new Error(); // Handle OAuth 2.0 response body error
+                }
+                const { access_token: access_token, id_token: id_token } = result;
+                // const claims = oauth.getValidatedIdTokenClaims(result);
+                // const { webid, sub } = claims;
+                // Until DPoP is implemented, use the ID token to log into local Pod
+                // And the proxy endpoint to log into remote Pods
+                localStorage.setItem("token", id_token);
+                // Remove code verifier now we don't need it anymore
+                localStorage.removeItem("code_verifier");
+                // Reload to ensure the dataServer config is reset
+                window.location.href = "/";
+            } else {
+                const token = searchParams.get("token");
+                if (!token) throw new Error("auth.message.no_token_returned");
+                let webId;
+                try {
+                    ({ webId: webId } = (0, ($parcel$interopDefault($4Uj5b$jwtdecode)))(token));
+                } catch (e) {
+                    throw new Error("auth.message.invalid_token_returned");
+                }
+                const { json: json } = await dataProvider.fetch(webId);
+                if (!json) throw new Error("auth.message.unable_to_fetch_user_data");
+                if (checkUser && !checkUser(json)) throw new Error("auth.message.user_not_allowed_to_login");
+                localStorage.setItem("token", token);
+                // Reload to ensure the dataServer config is reset
+                window.location.href = "/";
             }
-            const { json: json } = await dataProvider.fetch(webId);
-            if (!json) throw new Error("auth.message.unable_to_fetch_user_data");
-            if (checkUser && !checkUser(json)) throw new Error("auth.message.user_not_allowed_to_login");
-            localStorage.setItem("token", token);
-            // Reload to ensure the dataServer config is reset
-            window.location.href = "/";
         },
         signup: async (params)=>{
             const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
             if (authType === $6a92eb32301846ac$var$AUTH_TYPE_LOCAL) {
-                const { username: username, email: email, password: password, domain: domain, ...profileData } = params;
+                const { username: username, email: email, password: password, domain: domain, interactionId: interactionId, ...profileData } = params;
                 try {
                     const { json: json } = await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, "auth/signup"), {
                         method: "POST",
@@ -167,6 +233,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                             username: username.trim(),
                             email: email.trim(),
                             password: password.trim(),
+                            interactionId: interactionId,
                             ...profileData
                         }),
                         headers: new Headers({
@@ -191,12 +258,20 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
         logout: async ()=>{
             switch(authType){
                 case $6a92eb32301846ac$var$AUTH_TYPE_LOCAL:
-                    // Delete token but also any other value in local storage
-                    localStorage.clear();
-                    // Reload to ensure the dataServer config is reset
-                    window.location.reload();
-                    window.location.href = "/";
-                    break;
+                    {
+                        const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
+                        // Delete token but also any other value in local storage
+                        localStorage.clear();
+                        const { status: status, json: oidcConfig } = await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, ".well-known/openid-configuration"));
+                        if (status === 200) // Redirect to OIDC endpoint if it exists
+                        window.location.href = oidcConfig.end_session_endpoint;
+                        else {
+                            // Reload to ensure the dataServer config is reset
+                            window.location.reload();
+                            window.location.href = "/";
+                        }
+                        break;
+                    }
                 case $6a92eb32301846ac$var$AUTH_TYPE_SSO:
                     {
                         const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
@@ -208,6 +283,18 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                         const token = localStorage.getItem("token");
                         if (token) {
                             const { webId: webId } = (0, ($parcel$interopDefault($4Uj5b$jwtdecode)))(token);
+                            // Delete token but also any other value in local storage
+                            localStorage.clear();
+                            // Redirect to the POD provider
+                            return `${(0, ($parcel$interopDefault($4Uj5b$urljoin)))(webId, "openApp")}?type=${encodeURIComponent("http://www.w3.org/ns/solid/interop#ApplicationRegistration")}`;
+                        }
+                        break;
+                    }
+                case $6a92eb32301846ac$var$AUTH_TYPE_SOLID_OIDC:
+                    {
+                        const token = localStorage.getItem("token");
+                        if (token) {
+                            const { webid: webId } = (0, ($parcel$interopDefault($4Uj5b$jwtdecode)))(token); // Not webId !!
                             // Delete token but also any other value in local storage
                             localStorage.clear();
                             // Redirect to the POD provider
@@ -289,7 +376,9 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
         getIdentity: async ()=>{
             const token = localStorage.getItem("token");
             if (token) {
-                const { webId: webId } = (0, ($parcel$interopDefault($4Uj5b$jwtdecode)))(token);
+                const payload = (0, ($parcel$interopDefault($4Uj5b$jwtdecode)))(token);
+                const webId = payload.webId || payload.webid; // Currently we must deal with both formats
+                if (!webId) throw new Error("No webId found on provided token !");
                 const { json: webIdData } = await dataProvider.fetch(webId);
                 const { json: profileData } = webIdData.url ? await dataProvider.fetch(webIdData.url) : {};
                 return {
@@ -1534,14 +1623,13 @@ const $cd7709c431b14d14$var$USED_SEARCH_PARAMS = [
     "signup",
     "reset_password",
     "new_password",
-    "redirect",
     "email",
     "force-email"
 ];
 const $cd7709c431b14d14$var$getSearchParamsRest = (searchParams)=>{
     const rest = [];
     for (const [key, value] of searchParams.entries())if (!$cd7709c431b14d14$var$USED_SEARCH_PARAMS.includes(key)) rest.push(`${key}=${encodeURIComponent(value)}`);
-    return rest.length > 0 ? `&${rest.join("&")}` : "";
+    return rest.length > 0 ? rest.join("&") : "";
 };
 var $cd7709c431b14d14$export$2e2bcd8739ae039 = $cd7709c431b14d14$var$getSearchParamsRest;
 
@@ -1563,31 +1651,34 @@ const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
  *  Set to `null` or `false`, if you don't want password strength checks. Default is
  *  passwordStrength's `defaultScorer`.
  * @returns
- */ const $5f70c240e5b0340c$var$SignupForm = ({ redirectTo: redirectTo, passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8), postSignupRedirect: postSignupRedirect, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect })=>{
+ */ const $5f70c240e5b0340c$var$SignupForm = ({ passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8), postSignupRedirect: postSignupRedirect, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect })=>{
     const [loading, setLoading] = (0, $4Uj5b$reactadmin.useSafeSetState)(false);
     const signup = (0, $19e4629c708b7a3e$export$2e2bcd8739ae039)();
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
     const classes = $5f70c240e5b0340c$var$useStyles();
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
+    const interactionId = searchParams.get("interaction_id");
+    const redirectTo = searchParams.get("redirect");
     const [locale] = (0, $4Uj5b$reactadmin.useLocaleState)();
     const [password, setPassword] = $4Uj5b$react.useState("");
     const submit = (values)=>{
         setLoading(true);
         signup({
             ...values,
+            interactionId: interactionId,
             ...additionalSignupValues
-        }).then((webId)=>{
+        }).then(()=>{
             if (delayBeforeRedirect) setTimeout(()=>{
                 // Reload to ensure the dataServer config is reset
                 window.location.reload();
-                window.location.href = postSignupRedirect ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}` : redirectTo || "/";
+                window.location.href = postSignupRedirect ? `${postSignupRedirect}?${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}` : redirectTo || "/";
                 setLoading(false);
             }, delayBeforeRedirect);
             else {
                 // Reload to ensure the dataServer config is reset
                 window.location.reload();
-                window.location.href = postSignupRedirect ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}` : redirectTo || "/";
+                window.location.href = postSignupRedirect ? `${postSignupRedirect}?${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}` : redirectTo || "/";
                 setLoading(false);
             }
             notify("auth.message.new_user_created", {
@@ -1714,6 +1805,7 @@ var $5f70c240e5b0340c$export$2e2bcd8739ae039 = $5f70c240e5b0340c$var$SignupForm;
 
 
 
+
 const $8a2df01c9f2675bb$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))((theme)=>({
         content: {
             width: 450
@@ -1722,7 +1814,7 @@ const $8a2df01c9f2675bb$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
             margin: theme.spacing(0.3)
         }
     }));
-const $8a2df01c9f2675bb$var$LoginForm = ({ redirectTo: redirectTo, allowUsername: allowUsername })=>{
+const $8a2df01c9f2675bb$var$LoginForm = ({ postLoginRedirect: postLoginRedirect, allowUsername: allowUsername })=>{
     const [loading, setLoading] = (0, $4Uj5b$reactadmin.useSafeSetState)(false);
     const login = (0, $4Uj5b$reactadmin.useLogin)();
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
@@ -1730,9 +1822,15 @@ const $8a2df01c9f2675bb$var$LoginForm = ({ redirectTo: redirectTo, allowUsername
     const classes = $8a2df01c9f2675bb$var$useStyles();
     const location = (0, $4Uj5b$reactrouterdom.useLocation)();
     const searchParams = new URLSearchParams(location.search);
+    const redirectTo = postLoginRedirect ? `${postLoginRedirect}?${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}` : searchParams.get("redirect");
+    const interactionId = searchParams.get("interaction_id");
     const submit = (values)=>{
         setLoading(true);
-        login(values, redirectTo).then(()=>{
+        login({
+            ...values,
+            redirectTo: redirectTo,
+            interactionId: interactionId
+        }).then(()=>{
             setLoading(false);
         }).catch((error)=>{
             setLoading(false);
@@ -2120,7 +2218,7 @@ const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
     const { identity: identity, isLoading: isLoading } = (0, $4Uj5b$reactadmin.useGetIdentity)();
     (0, $4Uj5b$react.useEffect)(()=>{
         if (!isLoading && identity?.id) {
-            if (postLoginRedirect) navigate(`${postLoginRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}`);
+            if (postLoginRedirect) navigate(`${postLoginRedirect}?${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}`);
             else if (redirectTo && redirectTo.startsWith("http")) window.location.href = redirectTo;
             else navigate(redirectTo || "/");
         }
@@ -2164,7 +2262,6 @@ const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
         children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Card), {
             children: [
                 isSignup && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $5f70c240e5b0340c$export$2e2bcd8739ae039), {
-                    redirectTo: redirectTo,
                     delayBeforeRedirect: 4000,
                     postSignupRedirect: postSignupRedirect,
                     additionalSignupValues: additionalSignupValues,
@@ -2176,14 +2273,14 @@ const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
                     passwordScorer: passwordScorer
                 }),
                 isLogin && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $8a2df01c9f2675bb$export$2e2bcd8739ae039), {
-                    redirectTo: redirectTo,
+                    postLoginRedirect: postLoginRedirect,
                     allowUsername: allowUsername
                 }),
                 /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("div", {
                     className: classes.switch,
                     children: [
                         isSignup && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactrouterdom.Link), {
-                            to: "/login",
+                            to: `/login?${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}`,
                             children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
                                 variant: "body2",
                                 children: translate("auth.action.login")
@@ -2193,7 +2290,7 @@ const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
                             children: [
                                 hasSignup && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)("div", {
                                     children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactrouterdom.Link), {
-                                        to: "/login?signup=true",
+                                        to: `/login?signup=true&${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}`,
                                         children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
                                             variant: "body2",
                                             children: translate("auth.action.signup")
@@ -2202,7 +2299,7 @@ const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
                                 }),
                                 /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)("div", {
                                     children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactrouterdom.Link), {
-                                        to: `/login?reset_password=true&${searchParams.toString()}`,
+                                        to: `/login?reset_password=true&${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}`,
                                         children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
                                             variant: "body2",
                                             children: translate("auth.action.reset_password")
