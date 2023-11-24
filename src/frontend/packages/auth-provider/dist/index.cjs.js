@@ -15,8 +15,8 @@ var $4Uj5b$muiiconsmaterialCheck = require("@mui/icons-material/Check");
 var $4Uj5b$muiiconsmaterialPublic = require("@mui/icons-material/Public");
 var $4Uj5b$muiiconsmaterialVpnLock = require("@mui/icons-material/VpnLock");
 var $4Uj5b$muiiconsmaterialGroup = require("@mui/icons-material/Group");
-var $4Uj5b$reactrouterdom = require("react-router-dom");
 var $4Uj5b$muimaterialstyles = require("@mui/material/styles");
+var $4Uj5b$reactrouterdom = require("react-router-dom");
 var $4Uj5b$muiiconsmaterialLock = require("@mui/icons-material/Lock");
 var $4Uj5b$speakingurl = require("speakingurl");
 var $4Uj5b$muistyles = require("@mui/styles");
@@ -36,7 +36,7 @@ $parcel$export(module.exports, "authProvider", () => $6a92eb32301846ac$export$2e
 $parcel$export(module.exports, "CreateWithPermissions", () => $7c87aa71409e289a$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "EditWithPermissions", () => $6f1389d03e4735d1$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "EditActionsWithPermissions", () => $4076d0aea1b9e239$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "EditToolbarWithPermissions", () => $f1baa8bd5325fac3$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "EditToolbarWithPermissions", () => $41feb0ed0192b62e$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "EditButtonWithPermissions", () => $496e40eed9f00a2c$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "DeleteButtonWithPermissions", () => $79bac4913d414938$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "ListWithPermissions", () => $15811bcd3a3eb59f$export$2e2bcd8739ae039);
@@ -977,27 +977,19 @@ const $79bac4913d414938$var$DeleteButtonWithPermissions = (props)=>{
 var $79bac4913d414938$export$2e2bcd8739ae039 = $79bac4913d414938$var$DeleteButtonWithPermissions;
 
 
-const $f1baa8bd5325fac3$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))(()=>({
-        toolbar: {
-            flex: 1,
-            display: "flex",
-            justifyContent: "space-between"
-        }
+const $41feb0ed0192b62e$var$StyledToolbar = (0, $4Uj5b$muimaterialstyles.styled)((0, $4Uj5b$reactadmin.Toolbar))(()=>({
+        flex: 1,
+        display: "flex",
+        justifyContent: "space-between"
     }));
-const $f1baa8bd5325fac3$var$EditToolbarWithPermissions = (props)=>{
-    const classes = $f1baa8bd5325fac3$var$useStyles();
-    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactadmin.Toolbar), {
+const $41feb0ed0192b62e$var$EditToolbarWithPermissions = (props)=>/*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)($41feb0ed0192b62e$var$StyledToolbar, {
         ...props,
-        className: classes.toolbar,
         children: [
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.SaveButton), {}),
-            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $79bac4913d414938$export$2e2bcd8739ae039), {
-                mutationMode: "undoable"
-            })
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $79bac4913d414938$export$2e2bcd8739ae039), {})
         ]
     });
-};
-var $f1baa8bd5325fac3$export$2e2bcd8739ae039 = $f1baa8bd5325fac3$var$EditToolbarWithPermissions;
+var $41feb0ed0192b62e$export$2e2bcd8739ae039 = $41feb0ed0192b62e$var$EditToolbarWithPermissions;
 
 
 
@@ -1007,7 +999,7 @@ const $6f1389d03e4735d1$var$EditWithPermissions = (props)=>{
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Edit), {
         ...props,
         children: /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(props.children, {
-            toolbar: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $f1baa8bd5325fac3$export$2e2bcd8739ae039), {}),
+            toolbar: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $41feb0ed0192b62e$export$2e2bcd8739ae039), {}),
             // Allow to override toolbar
             ...props.children.props
         })
