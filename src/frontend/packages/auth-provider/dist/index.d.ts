@@ -1,3 +1,5 @@
+import React from 'react';
+import { ToolbarProps } from 'react-admin';
 export function authProvider({
   dataProvider,
   authType,
@@ -74,7 +76,7 @@ declare namespace PermissionsButton {
 }
 export function EditActionsWithPermissions(): import('react/jsx-runtime').JSX.Element;
 export function DeleteButtonWithPermissions(props: any): import('react/jsx-runtime').JSX.Element | null;
-export function EditToolbarWithPermissions(props: any): import('react/jsx-runtime').JSX.Element;
+export const EditToolbarWithPermissions: React.FunctionComponent<ToolbarProps>;
 export function EditWithPermissions(props: any): import('react/jsx-runtime').JSX.Element;
 declare namespace EditWithPermissions {
   namespace defaultProps {

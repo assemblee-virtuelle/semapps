@@ -16,8 +16,8 @@ import $1obPJ$muiiconsmaterialCheck from "@mui/icons-material/Check";
 import $1obPJ$muiiconsmaterialPublic from "@mui/icons-material/Public";
 import $1obPJ$muiiconsmaterialVpnLock from "@mui/icons-material/VpnLock";
 import $1obPJ$muiiconsmaterialGroup from "@mui/icons-material/Group";
-import {useNavigate as $1obPJ$useNavigate, useSearchParams as $1obPJ$useSearchParams, Link as $1obPJ$Link, useLocation as $1obPJ$useLocation} from "react-router-dom";
 import {styled as $1obPJ$styled1} from "@mui/material/styles";
+import {useNavigate as $1obPJ$useNavigate, useSearchParams as $1obPJ$useSearchParams, Link as $1obPJ$Link, useLocation as $1obPJ$useLocation} from "react-router-dom";
 import $1obPJ$muiiconsmaterialLock from "@mui/icons-material/Lock";
 import $1obPJ$speakingurl from "speakingurl";
 import {withStyles as $1obPJ$withStyles} from "@mui/styles";
@@ -1013,27 +1013,19 @@ const $7efdcbe4be05bfd5$var$DeleteButtonWithPermissions = (props)=>{
 var $7efdcbe4be05bfd5$export$2e2bcd8739ae039 = $7efdcbe4be05bfd5$var$DeleteButtonWithPermissions;
 
 
-const $701198930c0b0c72$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
-        toolbar: {
-            flex: 1,
-            display: "flex",
-            justifyContent: "space-between"
-        }
+const $6b0c1a175ed94bdf$var$StyledToolbar = (0, $1obPJ$styled1)((0, $1obPJ$Toolbar))(()=>({
+        flex: 1,
+        display: "flex",
+        justifyContent: "space-between"
     }));
-const $701198930c0b0c72$var$EditToolbarWithPermissions = (props)=>{
-    const classes = $701198930c0b0c72$var$useStyles();
-    return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Toolbar), {
+const $6b0c1a175ed94bdf$var$EditToolbarWithPermissions = (props)=>/*#__PURE__*/ (0, $1obPJ$jsxs)($6b0c1a175ed94bdf$var$StyledToolbar, {
         ...props,
-        className: classes.toolbar,
         children: [
             /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$SaveButton), {}),
-            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $7efdcbe4be05bfd5$export$2e2bcd8739ae039), {
-                mutationMode: "undoable"
-            })
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $7efdcbe4be05bfd5$export$2e2bcd8739ae039), {})
         ]
     });
-};
-var $701198930c0b0c72$export$2e2bcd8739ae039 = $701198930c0b0c72$var$EditToolbarWithPermissions;
+var $6b0c1a175ed94bdf$export$2e2bcd8739ae039 = $6b0c1a175ed94bdf$var$EditToolbarWithPermissions;
 
 
 
@@ -1043,7 +1035,7 @@ const $28fa6ad821327921$var$EditWithPermissions = (props)=>{
     return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Edit), {
         ...props,
         children: /*#__PURE__*/ (0, $1obPJ$react).cloneElement(props.children, {
-            toolbar: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $701198930c0b0c72$export$2e2bcd8739ae039), {}),
+            toolbar: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $6b0c1a175ed94bdf$export$2e2bcd8739ae039), {}),
             // Allow to override toolbar
             ...props.children.props
         })
@@ -2622,5 +2614,5 @@ var $509b6323d7902699$export$2e2bcd8739ae039 = $509b6323d7902699$var$frenchMessa
 
 
 
-export {$1d8606895ce3b768$export$2e2bcd8739ae039 as authProvider, $f2c5683e04dee28c$export$2e2bcd8739ae039 as CreateWithPermissions, $28fa6ad821327921$export$2e2bcd8739ae039 as EditWithPermissions, $62be5dcee9954341$export$2e2bcd8739ae039 as EditActionsWithPermissions, $701198930c0b0c72$export$2e2bcd8739ae039 as EditToolbarWithPermissions, $c78c2d7e17f60b2f$export$2e2bcd8739ae039 as EditButtonWithPermissions, $7efdcbe4be05bfd5$export$2e2bcd8739ae039 as DeleteButtonWithPermissions, $a4ded8260cc90dad$export$2e2bcd8739ae039 as ListWithPermissions, $e6071424a1ba88d9$export$2e2bcd8739ae039 as ListActionsWithPermissions, $561bb436d5af917c$export$2e2bcd8739ae039 as ShowWithPermissions, $d1f54fc03225e8ee$export$2e2bcd8739ae039 as ShowActionsWithPermissions, $7dac2771cc5eb38b$export$2e2bcd8739ae039 as PermissionsButton, $c2eef7602bbbff5e$export$2e2bcd8739ae039 as AuthDialog, $479961b7e298304b$export$2e2bcd8739ae039 as SsoLoginPage, $479961b7e298304b$export$2e2bcd8739ae039 as LoginPage, $23fea069f5d2d834$export$2e2bcd8739ae039 as LocalLoginPage, $9594dfbc217337d0$export$2e2bcd8739ae039 as ResourceWithPermissions, $5ef2eaf62f09ff2c$export$2e2bcd8739ae039 as UserMenu, $7ad577d9c9c71db0$export$2e2bcd8739ae039 as useAgents, $a18ea4963428dd85$export$2e2bcd8739ae039 as useCheckAuthenticated, $abd69a52484f41d9$export$2e2bcd8739ae039 as useCheckPermissions, $26b16c415d19fb4a$export$2e2bcd8739ae039 as usePermissionsWithRefetch, $fb967e2c34f56644$export$2e2bcd8739ae039 as useSignup, $a8046307c9dfa483$export$2e2bcd8739ae039 as PasswordStrengthIndicator, $7a0bbe6824860dfe$export$2e2bcd8739ae039 as validatePasswordStrength, $646d64648a630b24$export$19dcdb21c6965fb8 as defaultPasswordScorer, $646d64648a630b24$export$ba43bf67f3d48107 as defaultPasswordScorerOptions, $646d64648a630b24$export$a1d713a9155d58fc as createPasswordScorer, $22afd1c81635c9d9$export$2e2bcd8739ae039 as englishMessages, $509b6323d7902699$export$2e2bcd8739ae039 as frenchMessages};
+export {$1d8606895ce3b768$export$2e2bcd8739ae039 as authProvider, $f2c5683e04dee28c$export$2e2bcd8739ae039 as CreateWithPermissions, $28fa6ad821327921$export$2e2bcd8739ae039 as EditWithPermissions, $62be5dcee9954341$export$2e2bcd8739ae039 as EditActionsWithPermissions, $6b0c1a175ed94bdf$export$2e2bcd8739ae039 as EditToolbarWithPermissions, $c78c2d7e17f60b2f$export$2e2bcd8739ae039 as EditButtonWithPermissions, $7efdcbe4be05bfd5$export$2e2bcd8739ae039 as DeleteButtonWithPermissions, $a4ded8260cc90dad$export$2e2bcd8739ae039 as ListWithPermissions, $e6071424a1ba88d9$export$2e2bcd8739ae039 as ListActionsWithPermissions, $561bb436d5af917c$export$2e2bcd8739ae039 as ShowWithPermissions, $d1f54fc03225e8ee$export$2e2bcd8739ae039 as ShowActionsWithPermissions, $7dac2771cc5eb38b$export$2e2bcd8739ae039 as PermissionsButton, $c2eef7602bbbff5e$export$2e2bcd8739ae039 as AuthDialog, $479961b7e298304b$export$2e2bcd8739ae039 as SsoLoginPage, $479961b7e298304b$export$2e2bcd8739ae039 as LoginPage, $23fea069f5d2d834$export$2e2bcd8739ae039 as LocalLoginPage, $9594dfbc217337d0$export$2e2bcd8739ae039 as ResourceWithPermissions, $5ef2eaf62f09ff2c$export$2e2bcd8739ae039 as UserMenu, $7ad577d9c9c71db0$export$2e2bcd8739ae039 as useAgents, $a18ea4963428dd85$export$2e2bcd8739ae039 as useCheckAuthenticated, $abd69a52484f41d9$export$2e2bcd8739ae039 as useCheckPermissions, $26b16c415d19fb4a$export$2e2bcd8739ae039 as usePermissionsWithRefetch, $fb967e2c34f56644$export$2e2bcd8739ae039 as useSignup, $a8046307c9dfa483$export$2e2bcd8739ae039 as PasswordStrengthIndicator, $7a0bbe6824860dfe$export$2e2bcd8739ae039 as validatePasswordStrength, $646d64648a630b24$export$19dcdb21c6965fb8 as defaultPasswordScorer, $646d64648a630b24$export$ba43bf67f3d48107 as defaultPasswordScorerOptions, $646d64648a630b24$export$a1d713a9155d58fc as createPasswordScorer, $22afd1c81635c9d9$export$2e2bcd8739ae039 as englishMessages, $509b6323d7902699$export$2e2bcd8739ae039 as frenchMessages};
 //# sourceMappingURL=index.es.js.map
