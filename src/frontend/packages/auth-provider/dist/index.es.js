@@ -1,5 +1,6 @@
 import $1obPJ$jwtdecode from "jwt-decode";
 import $1obPJ$urljoin from "url-join";
+import {discoveryRequest as $1obPJ$discoveryRequest, processDiscoveryResponse as $1obPJ$processDiscoveryResponse, generateRandomCodeVerifier as $1obPJ$generateRandomCodeVerifier, calculatePKCECodeChallenge as $1obPJ$calculatePKCECodeChallenge, validateAuthResponse as $1obPJ$validateAuthResponse, expectNoState as $1obPJ$expectNoState, isOAuth2Error as $1obPJ$isOAuth2Error, authorizationCodeGrantRequest as $1obPJ$authorizationCodeGrantRequest, processAuthorizationCodeOpenIDResponse as $1obPJ$processAuthorizationCodeOpenIDResponse} from "oauth4webapi";
 import {jsx as $1obPJ$jsx, jsxs as $1obPJ$jsxs, Fragment as $1obPJ$Fragment} from "react/jsx-runtime";
 import $1obPJ$react, {useEffect as $1obPJ$useEffect, useState as $1obPJ$useState, useCallback as $1obPJ$useCallback, useRef as $1obPJ$useRef, useMemo as $1obPJ$useMemo, forwardRef as $1obPJ$forwardRef} from "react";
 import {useResourceContext as $1obPJ$useResourceContext, Create as $1obPJ$Create, CreateActions as $1obPJ$CreateActions, useGetIdentity as $1obPJ$useGetIdentity, usePermissions as $1obPJ$usePermissions, useNotify as $1obPJ$useNotify, useRedirect as $1obPJ$useRedirect, useGetRecordId as $1obPJ$useGetRecordId, Edit as $1obPJ$Edit, useResourceDefinition as $1obPJ$useResourceDefinition, useRecordContext as $1obPJ$useRecordContext, usePermissionsOptimized as $1obPJ$usePermissionsOptimized, TopToolbar as $1obPJ$TopToolbar, ListButton as $1obPJ$ListButton, ShowButton as $1obPJ$ShowButton, Button as $1obPJ$Button, useTranslate as $1obPJ$useTranslate, useGetList as $1obPJ$useGetList, useDataProvider as $1obPJ$useDataProvider, Loading as $1obPJ$Loading, Error as $1obPJ$Error, useAuthProvider as $1obPJ$useAuthProvider, Toolbar as $1obPJ$Toolbar, SaveButton as $1obPJ$SaveButton, DeleteButton as $1obPJ$DeleteButton, EditButton as $1obPJ$EditButton, List as $1obPJ$List1, CreateButton as $1obPJ$CreateButton, ExportButton as $1obPJ$ExportButton, Show as $1obPJ$Show, useLogin as $1obPJ$useLogin, useSafeSetState as $1obPJ$useSafeSetState, useLocaleState as $1obPJ$useLocaleState, Form as $1obPJ$Form, TextInput as $1obPJ$TextInput, required as $1obPJ$required, email as $1obPJ$email, Notification as $1obPJ$Notification, Resource as $1obPJ$Resource, useUserMenu as $1obPJ$useUserMenu, UserMenu as $1obPJ$UserMenu, Logout as $1obPJ$Logout, useGetPermissions as $1obPJ$useGetPermissions} from "react-admin";
@@ -22,6 +23,7 @@ import $1obPJ$speakingurl from "speakingurl";
 import {withStyles as $1obPJ$withStyles} from "@mui/styles";
 import $1obPJ$muiiconsmaterialAccountCircle from "@mui/icons-material/AccountCircle";
 import $1obPJ$lodashisEqual from "lodash/isEqual";
+
 
 
 
@@ -60,28 +62,50 @@ const $47a3fad69bcb0083$export$274217e117cdbc7b = async (dataProvider)=>{
     // If the server is a POD, return the root URL instead of https://domain.com/user/data
     return authServer.pod ? new URL(authServer.baseUrl).origin : authServer.baseUrl;
 };
+const $47a3fad69bcb0083$export$1391212d75b2ee65 = async (t)=>new Promise((resolve)=>setTimeout(resolve, t));
 
 
 const $1d8606895ce3b768$var$AUTH_TYPE_SSO = "sso";
 const $1d8606895ce3b768$var$AUTH_TYPE_LOCAL = "local";
 const $1d8606895ce3b768$var$AUTH_TYPE_POD = "pod";
-const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authType: authType, allowAnonymous: allowAnonymous = true, checkUser: checkUser, checkPermissions: checkPermissions = false })=>{
+const $1d8606895ce3b768$var$AUTH_TYPE_SOLID_OIDC = "solid-oidc";
+const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authType: authType, allowAnonymous: allowAnonymous = true, checkUser: checkUser, checkPermissions: checkPermissions = false, clientId: clientId })=>{
     if (![
         $1d8606895ce3b768$var$AUTH_TYPE_SSO,
         $1d8606895ce3b768$var$AUTH_TYPE_LOCAL,
-        $1d8606895ce3b768$var$AUTH_TYPE_POD
+        $1d8606895ce3b768$var$AUTH_TYPE_POD,
+        $1d8606895ce3b768$var$AUTH_TYPE_SOLID_OIDC
     ].includes(authType)) throw new Error("The authType parameter is missing from the auth provider");
+    if (authType === $1d8606895ce3b768$var$AUTH_TYPE_SOLID_OIDC && !clientId) throw new Error("The clientId parameter is required for solid-oidc authentication");
     return {
         login: async (params)=>{
-            const authServerUrl = await (0, $47a3fad69bcb0083$export$274217e117cdbc7b)(dataProvider);
-            if (authType === $1d8606895ce3b768$var$AUTH_TYPE_LOCAL) {
-                const { username: username, password: password } = params;
+            if (authType === $1d8606895ce3b768$var$AUTH_TYPE_SOLID_OIDC) {
+                const { webId: webId, issuer: issuer } = params;
+                webId && issuer;
+                const as = await $1obPJ$discoveryRequest(new URL(issuer)).then((response)=>$1obPJ$processDiscoveryResponse(new URL(issuer), response));
+                const codeVerifier = $1obPJ$generateRandomCodeVerifier();
+                const codeChallenge = await $1obPJ$calculatePKCECodeChallenge(codeVerifier);
+                const codeChallengeMethod = "S256";
+                // Save to use on handleCallback method
+                localStorage.setItem("code_verifier", codeVerifier);
+                const authorizationUrl = new URL(as.authorization_endpoint);
+                authorizationUrl.searchParams.set("response_type", "code");
+                authorizationUrl.searchParams.set("client_id", clientId);
+                authorizationUrl.searchParams.set("code_challenge", codeChallenge);
+                authorizationUrl.searchParams.set("code_challenge_method", codeChallengeMethod);
+                authorizationUrl.searchParams.set("redirect_uri", `${window.location.origin}/auth-callback`);
+                authorizationUrl.searchParams.set("scope", "openid webid offline_access");
+                window.location = authorizationUrl;
+            } else if (authType === $1d8606895ce3b768$var$AUTH_TYPE_LOCAL) {
+                const { username: username, password: password, interactionId: interactionId, redirectTo: redirectTo } = params;
+                const authServerUrl = await (0, $47a3fad69bcb0083$export$274217e117cdbc7b)(dataProvider);
                 try {
                     const { json: json } = await dataProvider.fetch((0, $1obPJ$urljoin)(authServerUrl, "auth/login"), {
                         method: "POST",
                         body: JSON.stringify({
                             username: username.trim(),
-                            password: password.trim()
+                            password: password.trim(),
+                            interactionId: interactionId
                         }),
                         headers: new Headers({
                             "Content-Type": "application/json"
@@ -89,12 +113,16 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
                     });
                     const { token: token } = json;
                     localStorage.setItem("token", token);
-                    // Reload to ensure the dataServer config is reset
+                    if (redirectTo) {
+                        if (interactionId) await (0, $47a3fad69bcb0083$export$1391212d75b2ee65)(3000); // Ensure the interactionId has been received and processed
+                        window.location.href = redirectTo;
+                    } else // Reload to ensure the dataServer config is reset
                     window.location.reload();
                 } catch (e) {
                     throw new Error("ra.auth.sign_in_error");
                 }
-            } else {
+            } else if (authType === $1d8606895ce3b768$var$AUTH_TYPE_SSO) {
+                const authServerUrl = await (0, $47a3fad69bcb0083$export$274217e117cdbc7b)(dataProvider);
                 let redirectUrl = `${new URL(window.location.href).origin}/login?login=true`;
                 if (params.redirect) redirectUrl += `&redirect=${encodeURIComponent(params.redirect)}`;
                 window.location.href = (0, $1obPJ$urljoin)(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
@@ -102,25 +130,49 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
         },
         handleCallback: async ()=>{
             const { searchParams: searchParams } = new URL(window.location);
-            const token = searchParams.get("token");
-            if (!token) throw new Error("auth.message.no_token_returned");
-            let webId;
-            try {
-                ({ webId: webId } = (0, $1obPJ$jwtdecode)(token));
-            } catch (e) {
-                throw new Error("auth.message.invalid_token_returned");
+            if (authType === $1d8606895ce3b768$var$AUTH_TYPE_SOLID_OIDC) {
+                const issuer = new URL(searchParams.get("iss"));
+                const as = await $1obPJ$discoveryRequest(issuer).then((response)=>$1obPJ$processDiscoveryResponse(issuer, response));
+                const client = {
+                    client_id: clientId,
+                    token_endpoint_auth_method: "none" // We don't have a client secret
+                };
+                const currentUrl = new URL(window.location.href);
+                const params = $1obPJ$validateAuthResponse(as, client, currentUrl, $1obPJ$expectNoState);
+                if ($1obPJ$isOAuth2Error(params)) throw new Error(`OAuth error: ${params.error} (${params.error_description})`);
+                // Retrieve code verifier set during login
+                const codeVerifier = localStorage.getItem("code_verifier");
+                const response = await $1obPJ$authorizationCodeGrantRequest(as, client, params, `${window.location.origin}/auth-callback`, codeVerifier);
+                const result = await $1obPJ$processAuthorizationCodeOpenIDResponse(as, client, response);
+                if ($1obPJ$isOAuth2Error(result)) throw new Error(`OAuth error: ${params.error} (${params.error_description})`);
+                // Until DPoP is implemented, use the ID token to log into local Pod
+                // And the proxy endpoint to log into remote Pods
+                localStorage.setItem("token", result.id_token);
+                // Remove code verifier now we don't need it anymore
+                localStorage.removeItem("code_verifier");
+                // Reload to ensure the dataServer config is reset
+                window.location.href = "/";
+            } else {
+                const token = searchParams.get("token");
+                if (!token) throw new Error("auth.message.no_token_returned");
+                let webId;
+                try {
+                    ({ webId: webId } = (0, $1obPJ$jwtdecode)(token));
+                } catch (e) {
+                    throw new Error("auth.message.invalid_token_returned");
+                }
+                const { json: json } = await dataProvider.fetch(webId);
+                if (!json) throw new Error("auth.message.unable_to_fetch_user_data");
+                if (checkUser && !checkUser(json)) throw new Error("auth.message.user_not_allowed_to_login");
+                localStorage.setItem("token", token);
+                // Reload to ensure the dataServer config is reset
+                window.location.href = "/";
             }
-            const { json: json } = await dataProvider.fetch(webId);
-            if (!json) throw new Error("auth.message.unable_to_fetch_user_data");
-            if (checkUser && !checkUser(json)) throw new Error("auth.message.user_not_allowed_to_login");
-            localStorage.setItem("token", token);
-            // Reload to ensure the dataServer config is reset
-            window.location.href = "/";
         },
         signup: async (params)=>{
             const authServerUrl = await (0, $47a3fad69bcb0083$export$274217e117cdbc7b)(dataProvider);
             if (authType === $1d8606895ce3b768$var$AUTH_TYPE_LOCAL) {
-                const { username: username, email: email, password: password, domain: domain, ...profileData } = params;
+                const { username: username, email: email, password: password, domain: domain, interactionId: interactionId, ...profileData } = params;
                 try {
                     const { json: json } = await dataProvider.fetch((0, $1obPJ$urljoin)(authServerUrl, "auth/signup"), {
                         method: "POST",
@@ -128,6 +180,7 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
                             username: username.trim(),
                             email: email.trim(),
                             password: password.trim(),
+                            interactionId: interactionId,
                             ...profileData
                         }),
                         headers: new Headers({
@@ -152,12 +205,20 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
         logout: async ()=>{
             switch(authType){
                 case $1d8606895ce3b768$var$AUTH_TYPE_LOCAL:
-                    // Delete token but also any other value in local storage
-                    localStorage.clear();
-                    // Reload to ensure the dataServer config is reset
-                    window.location.reload();
-                    window.location.href = "/";
-                    break;
+                    {
+                        const authServerUrl = await (0, $47a3fad69bcb0083$export$274217e117cdbc7b)(dataProvider);
+                        // Delete token but also any other value in local storage
+                        localStorage.clear();
+                        const { status: status, json: oidcConfig } = await dataProvider.fetch((0, $1obPJ$urljoin)(authServerUrl, ".well-known/openid-configuration"));
+                        if (status === 200) // Redirect to OIDC endpoint if it exists
+                        window.location.href = oidcConfig.end_session_endpoint;
+                        else {
+                            // Reload to ensure the dataServer config is reset
+                            window.location.reload();
+                            window.location.href = "/";
+                        }
+                        break;
+                    }
                 case $1d8606895ce3b768$var$AUTH_TYPE_SSO:
                     {
                         const authServerUrl = await (0, $47a3fad69bcb0083$export$274217e117cdbc7b)(dataProvider);
@@ -169,6 +230,18 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
                         const token = localStorage.getItem("token");
                         if (token) {
                             const { webId: webId } = (0, $1obPJ$jwtdecode)(token);
+                            // Delete token but also any other value in local storage
+                            localStorage.clear();
+                            // Redirect to the POD provider
+                            return `${(0, $1obPJ$urljoin)(webId, "openApp")}?type=${encodeURIComponent("http://www.w3.org/ns/solid/interop#ApplicationRegistration")}`;
+                        }
+                        break;
+                    }
+                case $1d8606895ce3b768$var$AUTH_TYPE_SOLID_OIDC:
+                    {
+                        const token = localStorage.getItem("token");
+                        if (token) {
+                            const { webid: webId } = (0, $1obPJ$jwtdecode)(token); // Not webId !!
                             // Delete token but also any other value in local storage
                             localStorage.clear();
                             // Redirect to the POD provider
@@ -250,7 +323,9 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
         getIdentity: async ()=>{
             const token = localStorage.getItem("token");
             if (token) {
-                const { webId: webId } = (0, $1obPJ$jwtdecode)(token);
+                const payload = (0, $1obPJ$jwtdecode)(token);
+                const webId = payload.webId || payload.webid; // Currently we must deal with both formats
+                if (!webId) throw new Error("No webId found on provided token !");
                 const { json: webIdData } = await dataProvider.fetch(webId);
                 const { json: profileData } = webIdData.url ? await dataProvider.fetch(webIdData.url) : {};
                 return {
@@ -1487,14 +1562,13 @@ const $2dfd781b793256e6$var$USED_SEARCH_PARAMS = [
     "signup",
     "reset_password",
     "new_password",
-    "redirect",
     "email",
     "force-email"
 ];
 const $2dfd781b793256e6$var$getSearchParamsRest = (searchParams)=>{
     const rest = [];
     for (const [key, value] of searchParams.entries())if (!$2dfd781b793256e6$var$USED_SEARCH_PARAMS.includes(key)) rest.push(`${key}=${encodeURIComponent(value)}`);
-    return rest.length > 0 ? `&${rest.join("&")}` : "";
+    return rest.length > 0 ? rest.join("&") : "";
 };
 var $2dfd781b793256e6$export$2e2bcd8739ae039 = $2dfd781b793256e6$var$getSearchParamsRest;
 
@@ -1516,31 +1590,34 @@ const $e011da92680cf1fe$var$useStyles = (0, $1obPJ$muistylesmakeStyles)((theme)=
  *  Set to `null` or `false`, if you don't want password strength checks. Default is
  *  passwordStrength's `defaultScorer`.
  * @returns
- */ const $e011da92680cf1fe$var$SignupForm = ({ redirectTo: redirectTo, passwordScorer: passwordScorer = (0, $646d64648a630b24$export$19dcdb21c6965fb8), postSignupRedirect: postSignupRedirect, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect })=>{
+ */ const $e011da92680cf1fe$var$SignupForm = ({ passwordScorer: passwordScorer = (0, $646d64648a630b24$export$19dcdb21c6965fb8), postSignupRedirect: postSignupRedirect, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect })=>{
     const [loading, setLoading] = (0, $1obPJ$useSafeSetState)(false);
     const signup = (0, $fb967e2c34f56644$export$2e2bcd8739ae039)();
     const translate = (0, $1obPJ$useTranslate)();
     const notify = (0, $1obPJ$useNotify)();
     const classes = $e011da92680cf1fe$var$useStyles();
     const [searchParams] = (0, $1obPJ$useSearchParams)();
+    const interactionId = searchParams.get("interaction_id");
+    const redirectTo = searchParams.get("redirect");
     const [locale] = (0, $1obPJ$useLocaleState)();
     const [password, setPassword] = $1obPJ$useState("");
     const submit = (values)=>{
         setLoading(true);
         signup({
             ...values,
+            interactionId: interactionId,
             ...additionalSignupValues
-        }).then((webId)=>{
+        }).then(()=>{
             if (delayBeforeRedirect) setTimeout(()=>{
                 // Reload to ensure the dataServer config is reset
                 window.location.reload();
-                window.location.href = postSignupRedirect ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}${(0, $2dfd781b793256e6$export$2e2bcd8739ae039)(searchParams)}` : redirectTo || "/";
+                window.location.href = postSignupRedirect ? `${postSignupRedirect}?${(0, $2dfd781b793256e6$export$2e2bcd8739ae039)(searchParams)}` : redirectTo || "/";
                 setLoading(false);
             }, delayBeforeRedirect);
             else {
                 // Reload to ensure the dataServer config is reset
                 window.location.reload();
-                window.location.href = postSignupRedirect ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}${(0, $2dfd781b793256e6$export$2e2bcd8739ae039)(searchParams)}` : redirectTo || "/";
+                window.location.href = postSignupRedirect ? `${postSignupRedirect}?${(0, $2dfd781b793256e6$export$2e2bcd8739ae039)(searchParams)}` : redirectTo || "/";
                 setLoading(false);
             }
             notify("auth.message.new_user_created", {
@@ -1667,6 +1744,7 @@ var $e011da92680cf1fe$export$2e2bcd8739ae039 = $e011da92680cf1fe$var$SignupForm;
 
 
 
+
 const $e2a34b2d647a5391$var$useStyles = (0, $1obPJ$muistylesmakeStyles)((theme)=>({
         content: {
             width: 450
@@ -1675,7 +1753,7 @@ const $e2a34b2d647a5391$var$useStyles = (0, $1obPJ$muistylesmakeStyles)((theme)=
             margin: theme.spacing(0.3)
         }
     }));
-const $e2a34b2d647a5391$var$LoginForm = ({ redirectTo: redirectTo, allowUsername: allowUsername })=>{
+const $e2a34b2d647a5391$var$LoginForm = ({ postLoginRedirect: postLoginRedirect, allowUsername: allowUsername })=>{
     const [loading, setLoading] = (0, $1obPJ$useSafeSetState)(false);
     const login = (0, $1obPJ$useLogin)();
     const translate = (0, $1obPJ$useTranslate)();
@@ -1683,9 +1761,15 @@ const $e2a34b2d647a5391$var$LoginForm = ({ redirectTo: redirectTo, allowUsername
     const classes = $e2a34b2d647a5391$var$useStyles();
     const location = (0, $1obPJ$useLocation)();
     const searchParams = new URLSearchParams(location.search);
+    const redirectTo = postLoginRedirect ? `${postLoginRedirect}?${(0, $2dfd781b793256e6$export$2e2bcd8739ae039)(searchParams)}` : searchParams.get("redirect");
+    const interactionId = searchParams.get("interaction_id");
     const submit = (values)=>{
         setLoading(true);
-        login(values, redirectTo).then(()=>{
+        login({
+            ...values,
+            redirectTo: redirectTo,
+            interactionId: interactionId
+        }).then(()=>{
             setLoading(false);
         }).catch((error)=>{
             setLoading(false);
@@ -2073,7 +2157,7 @@ const $23fea069f5d2d834$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
     const { identity: identity, isLoading: isLoading } = (0, $1obPJ$useGetIdentity)();
     (0, $1obPJ$useEffect)(()=>{
         if (!isLoading && identity?.id) {
-            if (postLoginRedirect) navigate(`${postLoginRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}${(0, $2dfd781b793256e6$export$2e2bcd8739ae039)(searchParams)}`);
+            if (postLoginRedirect) navigate(`${postLoginRedirect}?${(0, $2dfd781b793256e6$export$2e2bcd8739ae039)(searchParams)}`);
             else if (redirectTo && redirectTo.startsWith("http")) window.location.href = redirectTo;
             else navigate(redirectTo || "/");
         }
@@ -2109,7 +2193,6 @@ const $23fea069f5d2d834$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
         isNewPassword
     ]);
     if (isLoading || identity?.id) return null;
-    if (isLoading || identity?.id) return null;
     return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1b78e27e3e92a798$export$2e2bcd8739ae039), {
         title: translate(title),
         text: translate(text),
@@ -2117,7 +2200,6 @@ const $23fea069f5d2d834$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
         children: /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Card), {
             children: [
                 isSignup && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $e011da92680cf1fe$export$2e2bcd8739ae039), {
-                    redirectTo: redirectTo,
                     delayBeforeRedirect: 4000,
                     postSignupRedirect: postSignupRedirect,
                     additionalSignupValues: additionalSignupValues,
@@ -2129,14 +2211,14 @@ const $23fea069f5d2d834$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
                     passwordScorer: passwordScorer
                 }),
                 isLogin && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $e2a34b2d647a5391$export$2e2bcd8739ae039), {
-                    redirectTo: redirectTo,
+                    postLoginRedirect: postLoginRedirect,
                     allowUsername: allowUsername
                 }),
                 /*#__PURE__*/ (0, $1obPJ$jsxs)("div", {
                     className: classes.switch,
                     children: [
                         isSignup && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Link), {
-                            to: "/login",
+                            to: `/login?${(0, $2dfd781b793256e6$export$2e2bcd8739ae039)(searchParams)}`,
                             children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Typography), {
                                 variant: "body2",
                                 children: translate("auth.action.login")
@@ -2146,7 +2228,7 @@ const $23fea069f5d2d834$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
                             children: [
                                 hasSignup && /*#__PURE__*/ (0, $1obPJ$jsx)("div", {
                                     children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Link), {
-                                        to: "/login?signup=true",
+                                        to: `/login?signup=true&${(0, $2dfd781b793256e6$export$2e2bcd8739ae039)(searchParams)}`,
                                         children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Typography), {
                                             variant: "body2",
                                             children: translate("auth.action.signup")
@@ -2155,7 +2237,7 @@ const $23fea069f5d2d834$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
                                 }),
                                 /*#__PURE__*/ (0, $1obPJ$jsx)("div", {
                                     children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Link), {
-                                        to: `/login?reset_password=true&${searchParams.toString()}`,
+                                        to: `/login?reset_password=true&${(0, $2dfd781b793256e6$export$2e2bcd8739ae039)(searchParams)}`,
                                         children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Typography), {
                                             variant: "body2",
                                             children: translate("auth.action.reset_password")

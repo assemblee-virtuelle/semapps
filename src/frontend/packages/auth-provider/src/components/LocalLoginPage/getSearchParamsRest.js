@@ -1,4 +1,4 @@
-const USED_SEARCH_PARAMS = ['signup', 'reset_password', 'new_password', 'redirect', 'email', 'force-email'];
+const USED_SEARCH_PARAMS = ['signup', 'reset_password', 'new_password', 'email', 'force-email'];
 
 const getSearchParamsRest = searchParams => {
   const rest = [];
@@ -7,7 +7,7 @@ const getSearchParamsRest = searchParams => {
       rest.push(`${key}=${encodeURIComponent(value)}`);
     }
   }
-  return rest.length > 0 ? `&${rest.join('&')}` : '';
+  return rest.length > 0 ? rest.join('&') : '';
 };
 
 export default getSearchParamsRest;

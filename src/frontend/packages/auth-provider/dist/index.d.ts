@@ -5,18 +5,20 @@ export function authProvider({
   authType,
   allowAnonymous,
   checkUser,
-  checkPermissions
+  checkPermissions,
+  clientId
 }: {
   dataProvider: any;
   authType: any;
   allowAnonymous?: boolean | undefined;
   checkUser: any;
   checkPermissions?: boolean | undefined;
+  clientId: any;
 }): {
   login: (params: any) => Promise<void>;
   handleCallback: () => Promise<void>;
   signup: (params: any) => Promise<any>;
-  logout: () => Promise<any>;
+  logout: () => Promise<string | undefined>;
   checkAuth: () => Promise<void>;
   checkUser: (userData: any) => any;
   checkError: (error: any) => Promise<void>;

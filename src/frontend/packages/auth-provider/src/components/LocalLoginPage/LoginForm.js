@@ -3,6 +3,7 @@ import { Form, useTranslate, useNotify, useSafeSetState, TextInput, required, em
 import { useLocation } from 'react-router-dom';
 import { Button, CardContent, CircularProgress } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import getSearchParamsRest from './getSearchParamsRest';
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -13,7 +14,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const LoginForm = ({ redirectTo, allowUsername }) => {
+const LoginForm = ({ postLoginRedirect, allowUsername }) => {
   const [loading, setLoading] = useSafeSetState(false);
   const login = useLogin();
   const translate = useTranslate();
@@ -21,10 +22,14 @@ const LoginForm = ({ redirectTo, allowUsername }) => {
   const classes = useStyles();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
+  const redirectTo = postLoginRedirect
+    ? `${postLoginRedirect}?${getSearchParamsRest(searchParams)}`
+    : searchParams.get('redirect');
+  const interactionId = searchParams.get('interaction_id');
 
   const submit = values => {
     setLoading(true);
-    login(values, redirectTo)
+    login({ ...values, redirectTo, interactionId })
       .then(() => {
         setLoading(false);
       })

@@ -55,9 +55,7 @@ const LocalLoginPage = ({
   useEffect(() => {
     if (!isLoading && identity?.id) {
       if (postLoginRedirect) {
-        navigate(
-          `${postLoginRedirect}?redirect=${encodeURIComponent(redirectTo || '/')}${getSearchParamsRest(searchParams)}`
-        );
+        navigate(`${postLoginRedirect}?${getSearchParamsRest(searchParams)}`);
       } else if (redirectTo && redirectTo.startsWith('http')) {
         window.location.href = redirectTo;
       } else {
@@ -82,14 +80,12 @@ const LocalLoginPage = ({
   }, [isSignup, isLogin, isResetPassword, isNewPassword]);
 
   if (isLoading || identity?.id) return null;
-  if (isLoading || identity?.id) return null;
 
   return (
     <SimpleBox title={translate(title)} text={translate(text)} icon={<LockIcon />}>
       <Card>
         {isSignup && (
           <SignupForm
-            redirectTo={redirectTo}
             delayBeforeRedirect={4000}
             postSignupRedirect={postSignupRedirect}
             additionalSignupValues={additionalSignupValues}
@@ -98,10 +94,10 @@ const LocalLoginPage = ({
         )}
         {isResetPassword && <ResetPasswordForm />}
         {isNewPassword && <NewPasswordForm redirectTo={redirectTo} passwordScorer={passwordScorer} />}
-        {isLogin && <LoginForm redirectTo={redirectTo} allowUsername={allowUsername} />}
+        {isLogin && <LoginForm postLoginRedirect={postLoginRedirect} allowUsername={allowUsername} />}
         <div className={classes.switch}>
           {isSignup && (
-            <Link to="/login">
+            <Link to={`/login?${getSearchParamsRest(searchParams)}`}>
               <Typography variant="body2">{translate('auth.action.login')}</Typography>
             </Link>
           )}
@@ -109,13 +105,13 @@ const LocalLoginPage = ({
             <>
               {hasSignup && (
                 <div>
-                  <Link to="/login?signup=true">
+                  <Link to={`/login?signup=true&${getSearchParamsRest(searchParams)}`}>
                     <Typography variant="body2">{translate('auth.action.signup')}</Typography>
                   </Link>
                 </div>
               )}
               <div>
-                <Link to={`/login?reset_password=true&${searchParams.toString()}`}>
+                <Link to={`/login?reset_password=true&${getSearchParamsRest(searchParams)}`}>
                   <Typography variant="body2">{translate('auth.action.reset_password')}</Typography>
                 </Link>
               </div>

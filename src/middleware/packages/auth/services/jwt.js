@@ -74,6 +74,15 @@ module.exports = {
       } catch (err) {
         return false;
       }
+    },
+    // Warning, this does NOT verify if signature is valid
+    async decodeToken(ctx) {
+      const { token } = ctx.params;
+      try {
+        return jwt.decode(token);
+      } catch (err) {
+        return false;
+      }
     }
   }
 };

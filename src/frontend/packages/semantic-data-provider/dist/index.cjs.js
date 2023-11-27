@@ -937,7 +937,8 @@ const $3cfb23eead135e3f$var$fetchUserConfig = async (config)=>{
     const authServerKey = (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("authServer", dataServers);
     // If the user is logged in
     if (token) {
-        const { webId: webId } = (0, ($parcel$interopDefault($bkNnK$jwtdecode)))(token);
+        const payload = (0, ($parcel$interopDefault($bkNnK$jwtdecode)))(token);
+        const webId = payload.webId || payload.webid; // Currently we must deal with both formats
         let userData;
         try {
             const { json: json } = await httpClient(webId);

@@ -39,7 +39,6 @@ const useStyles = makeStyles(theme => ({
  * @returns
  */
 const SignupForm = ({
-  redirectTo,
   passwordScorer = defaultScorer,
   postSignupRedirect,
   additionalSignupValues,
@@ -51,6 +50,8 @@ const SignupForm = ({
   const notify = useNotify();
   const classes = useStyles();
   const [searchParams] = useSearchParams();
+  const interactionId = searchParams.get('interaction_id');
+  const redirectTo = searchParams.get('redirect');
   const [locale] = useLocaleState();
   const [password, setPassword] = React.useState('');
 
@@ -58,17 +59,16 @@ const SignupForm = ({
     setLoading(true);
     signup({
       ...values,
+      interactionId,
       ...additionalSignupValues
     })
-      .then(webId => {
+      .then(() => {
         if (delayBeforeRedirect) {
           setTimeout(() => {
             // Reload to ensure the dataServer config is reset
             window.location.reload();
             window.location.href = postSignupRedirect
-              ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || '/')}${getSearchParamsRest(
-                  searchParams
-                )}`
+              ? `${postSignupRedirect}?${getSearchParamsRest(searchParams)}`
               : redirectTo || '/';
             setLoading(false);
           }, delayBeforeRedirect);
@@ -76,9 +76,7 @@ const SignupForm = ({
           // Reload to ensure the dataServer config is reset
           window.location.reload();
           window.location.href = postSignupRedirect
-            ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || '/')}${getSearchParamsRest(
-                searchParams
-              )}`
+            ? `${postSignupRedirect}?${getSearchParamsRest(searchParams)}`
             : redirectTo || '/';
           setLoading(false);
         }

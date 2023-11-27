@@ -10,7 +10,8 @@ const fetchUserConfig = async config => {
 
   // If the user is logged in
   if (token) {
-    const { webId } = jwtDecode(token);
+    const payload = jwtDecode(token);
+    const webId = payload.webId || payload.webid; // Currently we must deal with both formats
     let userData;
 
     try {
