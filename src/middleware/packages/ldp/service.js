@@ -1,6 +1,8 @@
+const { TripleStoreAdapter } = require('@semapps/triplestore');
 const LdpApiService = require('./services/api');
 const LdpContainerService = require('./services/container');
 const LdpCacheService = require('./services/cache');
+const LdpOntologiesService = require('./services/ontologies');
 const LdpRegistryService = require('./services/registry');
 const LdpRemoteService = require('./services/remote');
 const LdpResourceService = require('./services/resource');
@@ -15,7 +17,8 @@ module.exports = {
     mirrorGraphName: 'http://semapps.org/mirror',
     defaultContainerOptions: {},
     preferredViewForResource: null,
-    resourcesWithContainerPath: true
+    resourcesWithContainerPath: true,
+    settingsDataset: 'settings'
   },
   dependencies: ['ldp.container', 'ldp.resource', 'ldp.registry'],
   async created() {
@@ -27,7 +30,8 @@ module.exports = {
       defaultContainerOptions,
       mirrorGraphName,
       preferredViewForResource,
-      resourcesWithContainerPath
+      resourcesWithContainerPath,
+      settingsDataset
     } = this.settings;
 
     await this.broker.createService(LdpContainerService, {
@@ -75,6 +79,11 @@ module.exports = {
         baseUrl,
         podProvider
       }
+    });
+
+    await this.broker.createService(LdpOntologiesService, {
+      adapter: new TripleStoreAdapter({ type: 'Ontology', dataset: settingsDataset }),
+      settings: {}
     });
 
     // Only create this service if a cacher is defined

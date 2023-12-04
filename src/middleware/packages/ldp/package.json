@@ -11,6 +11,7 @@
     "@semapps/triplestore": "0.6.0-alpha.4",
     "mime-types": "^2.1.35",
     "moleculer": "^0.14.17",
+    "moleculer-db": "^0.8.16",
     "moleculer-schedule": "^0.2.3",
     "node-fetch": "^2.6.6",
     "path-to-regexp": "^6.2.0",

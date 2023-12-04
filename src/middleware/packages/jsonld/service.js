@@ -15,7 +15,6 @@ module.exports = {
     localContextFiles: [],
     remoteContextFiles: []
   },
-  dependencies: ['api'],
   async started() {
     this.jsonld = jsonld;
     this.jsonld.documentLoader = this.documentLoaderWithCache;
@@ -26,36 +25,43 @@ module.exports = {
       }
     });
 
-    for (const contextFile of this.settings.localContextFiles) {
-      const contextFileContent = await fsPromises.readFile(contextFile.file);
-      const contextJson = JSON.parse(contextFileContent);
-      const contextUri = urlJoin(this.settings.baseUri, contextFile.path);
+    if (this.settings.localContextFiles.length > 0) {
+      if (!this.settings.baseUri) throw new Error(`The baseUri setting is required if you define localContextFiles`);
 
-      // Cache immediately this context, in case it is called before the API is activated
-      cache.set(contextUri, {
-        contextUrl: null,
-        documentUrl: contextUri,
-        document: contextJson
-      });
+      // We are dependant on the ApiService only if there are localContextFiles
+      await this.broker.waitForServices(['api']);
 
-      this.broker.call('api.addRoute', {
-        route: {
-          path: contextFile.path,
-          name: `context-${contextFile.path.replace(new RegExp('/', 'g'), '-')}`,
-          bodyParsers: {
-            json: true
-          },
-          aliases: {
-            'GET /': [
-              (req, res, next) => {
-                req.$params.uri = contextUri;
-                next();
-              },
-              'jsonld.getCachedContext'
-            ]
+      for (const contextFile of this.settings.localContextFiles) {
+        const contextFileContent = await fsPromises.readFile(contextFile.file);
+        const contextJson = JSON.parse(contextFileContent);
+        const contextUri = urlJoin(this.settings.baseUri, contextFile.path);
+
+        // Cache immediately this context, in case it is called before the API is activated
+        cache.set(contextUri, {
+          contextUrl: null,
+          documentUrl: contextUri,
+          document: contextJson
+        });
+
+        this.broker.call('api.addRoute', {
+          route: {
+            path: contextFile.path,
+            name: `context-${contextFile.path.replace(new RegExp('/', 'g'), '-')}`,
+            bodyParsers: {
+              json: true
+            },
+            aliases: {
+              'GET /': [
+                (req, res, next) => {
+                  req.$params.uri = contextUri;
+                  next();
+                },
+                'jsonld.getCachedContext'
+              ]
+            }
           }
-        }
-      });
+        });
+      }
     }
 
     for (const contextFile of this.settings.remoteContextFiles) {
