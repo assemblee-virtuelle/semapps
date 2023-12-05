@@ -14,35 +14,23 @@ module.exports = {
   async handler(ctx) {
     let { prefix, url, owl, jsonldContext, overwrite } = ctx.params;
 
-    let ontology;
-
-    try {
-      ontology = await this.actions.getOne({ prefix, url }, { parentCtx: ctx });
-    } catch (e) {
-      console.error(e);
-      throw new Error(e);
-    }
+    const ontology = await this.actions.getByPrefix({ prefix, url }, { parentCtx: ctx });
 
     // Check that jsonldContext doesn't conflict with existing context
     if (jsonldContext) {
       const existingContext = await this.actions.getJsonLdContext({}, { parentCtx: ctx });
-      let newContext;
 
-      if (Array.isArray(existingContext)) {
-        newContext = [...existingContext, jsonldContext];
-      } else if (
-        (typeof jsonldContext === 'string' || jsonldContext instanceof String) &&
-        jsonldContext.startsWith('http')
-      ) {
-        newContext = [existingContext, jsonldContext];
-      } else {
-        newContext = {
-          ...existingContext,
-          ...jsonldContext
-        };
-      }
+      // We do not use jsonld.mergeContexts because we don't want object properties to be overwritten
+      const newContext = Array.isArray(existingContext)
+        ? [...existingContext, jsonldContext]
+        : [existingContext, jsonldContext];
+
+      const isValid = await ctx.call('jsonld.validate', { context: newContext });
+
+      if (!isValid) throw new Error('The ontology JSON-LD context is in conflict with the existing JSON-LD context');
     }
 
+    // Stringify JSON-LD context if it is not an URL
     if (typeof jsonldContext !== 'string' && !(jsonldContext instanceof String)) {
       jsonldContext = JSON.stringify(jsonldContext);
     }

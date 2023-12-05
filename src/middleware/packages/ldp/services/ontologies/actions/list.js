@@ -2,13 +2,15 @@ module.exports = {
   visibility: 'public',
   params: {},
   async handler(ctx) {
-    const ontologies = await this._list(ctx, {});
-    return ontologies.rows.map(ontology => {
-      if (!ontology.jsonldContext.startsWith('http')) {
+    const ontologies = await this._list(ctx, { sort: 'prefix' });
+
+    return ontologies.rows.map(({ prefix, url, owl, jsonldContext }) => {
+      if (!jsonldContext.startsWith('http')) {
         // If the jsonldContext is not an URL, it is an object to be parsed
-        ontology.jsonldContext = JSON.parse(ontology.jsonldContext);
+        jsonldContext = JSON.parse(jsonldContext);
       }
-      return ontology;
+
+      return { prefix, url, owl, jsonldContext };
     });
   }
 };

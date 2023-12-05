@@ -8,7 +8,7 @@ module.exports = {
   async handler(ctx) {
     const { url } = ctx.params;
 
-    const response = await fetch(`http://prefix.cc/?q=${encodeURIComponent(url)}`);
+    const response = await fetch(`http://prefix.cc/?q=${encodeURIComponent(url)}`, { redirect: 'manual' });
 
     if (response.status === 302) {
       const redirectUrl = response.headers.get('Location');

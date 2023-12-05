@@ -4,6 +4,9 @@ const fsPromises = require('fs').promises;
 const LRU = require('lru-cache');
 const { JsonLdParser } = require('jsonld-streaming-parser');
 const streamifyString = require('streamify-string');
+const { ContextParser } = require('jsonld-context-parser');
+const mergeContextsAction = require('./actions/mergeContexts');
+const validateAction = require('./actions/validate');
 
 const defaultDocumentLoader = jsonld.documentLoaders.node();
 const cache = new LRU({ max: 500 });
@@ -18,6 +21,12 @@ module.exports = {
   async started() {
     this.jsonld = jsonld;
     this.jsonld.documentLoader = this.documentLoaderWithCache;
+
+    this.contextParser = new ContextParser({
+      documentLoader: {
+        load: url => this.documentLoaderWithCache(url).then(context => context.document)
+      }
+    });
 
     this.jsonLdParser = new JsonLdParser({
       documentLoader: {
@@ -132,7 +141,9 @@ module.exports = {
       const { predicate, context } = ctx.params;
       const result = await this.actions.expand({ input: { '@context': context, [predicate]: '' } }, { parentCtx: ctx });
       return Object.keys(result[0])[0];
-    }
+    },
+    mergeContexts: mergeContextsAction,
+    validate: validateAction
   },
   methods: {
     async documentLoaderWithCache(url, options) {

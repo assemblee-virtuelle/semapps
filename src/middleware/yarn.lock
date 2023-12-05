@@ -7323,6 +7323,17 @@ jsonfile@^6.0.1:
   optionalDependencies:
     graceful-fs "^4.1.6"
 
+jsonld-context-parser@2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/jsonld-context-parser/-/jsonld-context-parser-2.4.0.tgz#fae15a56c5ceabd1c4520ab1a9cc12c9a0a8b67d"
+  integrity sha512-ZYOfvh525SdPd9ReYY58dxB3E2RUEU4DJ6ZibO8AitcowPeBH4L5rCAitE2om5G1P+HMEgYEYEr4EZKbVN4tpA==
+  dependencies:
+    "@types/http-link-header" "^1.0.1"
+    "@types/node" "^18.0.0"
+    cross-fetch "^3.0.6"
+    http-link-header "^1.0.2"
+    relative-to-absolute-iri "^1.0.5"
+
 jsonld-context-parser@^2.0.0, jsonld-context-parser@^2.1.2:
   version "2.1.5"
   resolved "https://registry.npmjs.org/jsonld-context-parser/-/jsonld-context-parser-2.1.5.tgz"

@@ -1,10 +1,11 @@
 const DbService = require('moleculer-db');
 const { TripleStoreAdapter } = require('@semapps/triplestore');
 const findPrefixAction = require('./actions/findPrefix');
-const getOneAction = require('./actions/getOne');
+const getByPrefixAction = require('./actions/getByPrefix');
+const getJsonLdContextAction = require('./actions/getJsonLdContext');
+const getRdfPrefixesAction = require('./actions/getRdfPrefixes');
 const listAction = require('./actions/list');
 const registerAction = require('./actions/register');
-const getJsonLdContextAction = require('./actions/getJsonLdContext');
 
 module.exports = {
   name: 'ldp.ontologies',
@@ -22,8 +23,9 @@ module.exports = {
   },
   actions: {
     findPrefix: findPrefixAction,
-    getOne: getOneAction,
+    getByPrefix: getByPrefixAction,
     getJsonLdContext: getJsonLdContextAction,
+    getRdfPrefixes: getRdfPrefixesAction,
     list: listAction,
     register: registerAction
   }

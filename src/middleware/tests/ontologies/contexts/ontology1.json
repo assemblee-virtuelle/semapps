@@ -1,0 +1,5 @@
+{
+  "@context": {
+    "ont1": "https://www.w3.org/ns/ontology1#"
+  }
+}
