@@ -11,15 +11,16 @@ import {
 import { useCreateContainerUri } from '@semapps/semantic-data-provider';
 import PermissionsButton from '../../components/PermissionsButton/PermissionsButton';
 import { rightsToControl, rightsToList, rightsToShow } from '../../constants';
+import { Permissions } from '../../types';
 
 const EditActionsWithPermissions = () => {
   const { hasList, hasShow } = useResourceDefinition();
   const record = useRecordContext();
-  const { permissions } = usePermissions(record?.id);
+  const { permissions } = usePermissions<Permissions | undefined>(record?.id);
 
   const resource = useResourceContext();
   const containerUri = useCreateContainerUri()(resource);
-  const { permissions: containerPermissions } = usePermissions(containerUri);
+  const { permissions: containerPermissions } = usePermissions<Permissions | undefined>(containerUri);
 
   return (
     <TopToolbar>

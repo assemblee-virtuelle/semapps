@@ -36,14 +36,14 @@ function $parcel$interopDefault(a) {
 $parcel$export(module.exports, "authProvider", () => $6a92eb32301846ac$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "CreateWithPermissions", () => $7c87aa71409e289a$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "EditWithPermissions", () => $6f1389d03e4735d1$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "EditActionsWithPermissions", () => $4076d0aea1b9e239$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "EditActionsWithPermissions", () => $87767302443de17c$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "EditToolbarWithPermissions", () => $41feb0ed0192b62e$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "EditButtonWithPermissions", () => $496e40eed9f00a2c$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "DeleteButtonWithPermissions", () => $79bac4913d414938$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "ListWithPermissions", () => $15811bcd3a3eb59f$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "ListActionsWithPermissions", () => $6452f20f9b47ebd6$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "ShowWithPermissions", () => $773eb052716d0fa7$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "ShowActionsWithPermissions", () => $83b0bd683a7f3aa8$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "ShowActionsWithPermissions", () => $43f4d313e20b20c2$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "PermissionsButton", () => $49d4f2fbe6f28cfd$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "AuthDialog", () => $4e0bf9be00aaa242$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "SsoLoginPage", () => $0af8eee27f6a6e9f$export$2e2bcd8739ae039);
@@ -53,7 +53,7 @@ $parcel$export(module.exports, "ResourceWithPermissions", () => $0973974d3aa8078
 $parcel$export(module.exports, "UserMenu", () => $9734e84907c0d5dd$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useAgents", () => $780e01b2b2982de2$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useCheckAuthenticated", () => $84db3891236a263f$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "useCheckPermissions", () => $673a0cc190160362$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useCheckPermissions", () => $715d0a876ac5de8e$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "usePermissionsWithRefetch", () => $80da6dcda9baa28b$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useSignup", () => $19e4629c708b7a3e$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "PasswordStrengthIndicator", () => $edfec7f9e9fd7881$export$2e2bcd8739ae039);
@@ -491,53 +491,53 @@ var $6a92eb32301846ac$export$2e2bcd8739ae039 = $6a92eb32301846ac$var$authProvide
 
 
 
-const $09162138eadab4b9$export$66a34090010a35b3 = "acl:Read";
-const $09162138eadab4b9$export$7c883503ccedfe0e = "acl:Append";
-const $09162138eadab4b9$export$2e56ecf100ca4ba6 = "acl:Write";
-const $09162138eadab4b9$export$5581cb2c55de143a = "acl:Control";
-const $09162138eadab4b9$export$97a08a1bb7ee0545 = "acl:agent";
-const $09162138eadab4b9$export$f07ccbe0773f2c7 = "acl:agentGroup";
-const $09162138eadab4b9$export$2703254089a859eb = "acl:agentClass";
-const $09162138eadab4b9$export$83ae1bc0992a6335 = "foaf:Agent";
-const $09162138eadab4b9$export$546c01a3ffdabe3a = "acl:AuthenticatedAgent";
-const $09162138eadab4b9$export$d37f0098bcf84c55 = [
-    $09162138eadab4b9$export$66a34090010a35b3,
-    $09162138eadab4b9$export$7c883503ccedfe0e,
-    $09162138eadab4b9$export$2e56ecf100ca4ba6,
-    $09162138eadab4b9$export$5581cb2c55de143a
+const $09c536abc6cea017$export$66a34090010a35b3 = "acl:Read";
+const $09c536abc6cea017$export$7c883503ccedfe0e = "acl:Append";
+const $09c536abc6cea017$export$2e56ecf100ca4ba6 = "acl:Write";
+const $09c536abc6cea017$export$5581cb2c55de143a = "acl:Control";
+const $09c536abc6cea017$export$97a08a1bb7ee0545 = "acl:agent";
+const $09c536abc6cea017$export$f07ccbe0773f2c7 = "acl:agentGroup";
+const $09c536abc6cea017$export$2703254089a859eb = "acl:agentClass";
+const $09c536abc6cea017$export$83ae1bc0992a6335 = "foaf:Agent";
+const $09c536abc6cea017$export$546c01a3ffdabe3a = "acl:AuthenticatedAgent";
+const $09c536abc6cea017$export$d37f0098bcf84c55 = [
+    $09c536abc6cea017$export$66a34090010a35b3,
+    $09c536abc6cea017$export$7c883503ccedfe0e,
+    $09c536abc6cea017$export$2e56ecf100ca4ba6,
+    $09c536abc6cea017$export$5581cb2c55de143a
 ];
-const $09162138eadab4b9$export$dc3840a4e2a72b8c = [
-    $09162138eadab4b9$export$66a34090010a35b3,
-    $09162138eadab4b9$export$7c883503ccedfe0e,
-    $09162138eadab4b9$export$2e56ecf100ca4ba6,
-    $09162138eadab4b9$export$5581cb2c55de143a
+const $09c536abc6cea017$export$dc3840a4e2a72b8c = [
+    $09c536abc6cea017$export$66a34090010a35b3,
+    $09c536abc6cea017$export$7c883503ccedfe0e,
+    $09c536abc6cea017$export$2e56ecf100ca4ba6,
+    $09c536abc6cea017$export$5581cb2c55de143a
 ];
-const $09162138eadab4b9$export$65615a101bd6f5ca = [
-    $09162138eadab4b9$export$7c883503ccedfe0e,
-    $09162138eadab4b9$export$2e56ecf100ca4ba6,
-    $09162138eadab4b9$export$5581cb2c55de143a
+const $09c536abc6cea017$export$65615a101bd6f5ca = [
+    $09c536abc6cea017$export$7c883503ccedfe0e,
+    $09c536abc6cea017$export$2e56ecf100ca4ba6,
+    $09c536abc6cea017$export$5581cb2c55de143a
 ];
-const $09162138eadab4b9$export$b9d0f5f3ab5e453b = [
-    $09162138eadab4b9$export$7c883503ccedfe0e,
-    $09162138eadab4b9$export$2e56ecf100ca4ba6,
-    $09162138eadab4b9$export$5581cb2c55de143a
+const $09c536abc6cea017$export$b9d0f5f3ab5e453b = [
+    $09c536abc6cea017$export$7c883503ccedfe0e,
+    $09c536abc6cea017$export$2e56ecf100ca4ba6,
+    $09c536abc6cea017$export$5581cb2c55de143a
 ];
-const $09162138eadab4b9$export$ac7b0367c0f9031e = [
-    $09162138eadab4b9$export$2e56ecf100ca4ba6,
-    $09162138eadab4b9$export$5581cb2c55de143a
+const $09c536abc6cea017$export$ac7b0367c0f9031e = [
+    $09c536abc6cea017$export$2e56ecf100ca4ba6,
+    $09c536abc6cea017$export$5581cb2c55de143a
 ];
-const $09162138eadab4b9$export$22242524f7d0624 = [
-    $09162138eadab4b9$export$5581cb2c55de143a
+const $09c536abc6cea017$export$22242524f7d0624 = [
+    $09c536abc6cea017$export$5581cb2c55de143a
 ];
-const $09162138eadab4b9$export$cae945d60b6cbe50 = {
-    show: $09162138eadab4b9$export$d37f0098bcf84c55,
-    list: $09162138eadab4b9$export$dc3840a4e2a72b8c,
-    create: $09162138eadab4b9$export$65615a101bd6f5ca,
-    edit: $09162138eadab4b9$export$b9d0f5f3ab5e453b,
-    delete: $09162138eadab4b9$export$ac7b0367c0f9031e,
-    control: $09162138eadab4b9$export$22242524f7d0624
+const $09c536abc6cea017$export$cae945d60b6cbe50 = {
+    show: $09c536abc6cea017$export$d37f0098bcf84c55,
+    list: $09c536abc6cea017$export$dc3840a4e2a72b8c,
+    create: $09c536abc6cea017$export$65615a101bd6f5ca,
+    edit: $09c536abc6cea017$export$b9d0f5f3ab5e453b,
+    delete: $09c536abc6cea017$export$ac7b0367c0f9031e,
+    control: $09c536abc6cea017$export$22242524f7d0624
 };
-const $09162138eadab4b9$export$12e6e8e71d10a4bb = {
+const $09c536abc6cea017$export$12e6e8e71d10a4bb = {
     show: "auth.message.resource_show_forbidden",
     edit: "auth.message.resource_edit_forbidden",
     delete: "auth.message.resource_delete_forbidden",
@@ -545,26 +545,26 @@ const $09162138eadab4b9$export$12e6e8e71d10a4bb = {
     list: "auth.message.container_list_forbidden",
     create: "auth.message.container_create_forbidden"
 };
-const $09162138eadab4b9$export$2e9571c4ccdeb6a9 = {
-    [$09162138eadab4b9$export$66a34090010a35b3]: "auth.right.resource.read",
-    [$09162138eadab4b9$export$7c883503ccedfe0e]: "auth.right.resource.append",
-    [$09162138eadab4b9$export$2e56ecf100ca4ba6]: "auth.right.resource.write",
-    [$09162138eadab4b9$export$5581cb2c55de143a]: "auth.right.resource.control"
+const $09c536abc6cea017$export$2e9571c4ccdeb6a9 = {
+    [$09c536abc6cea017$export$66a34090010a35b3]: "auth.right.resource.read",
+    [$09c536abc6cea017$export$7c883503ccedfe0e]: "auth.right.resource.append",
+    [$09c536abc6cea017$export$2e56ecf100ca4ba6]: "auth.right.resource.write",
+    [$09c536abc6cea017$export$5581cb2c55de143a]: "auth.right.resource.control"
 };
-const $09162138eadab4b9$export$edca379024d80309 = {
-    [$09162138eadab4b9$export$66a34090010a35b3]: "auth.right.container.read",
-    [$09162138eadab4b9$export$2e56ecf100ca4ba6]: "auth.right.container.write",
-    [$09162138eadab4b9$export$5581cb2c55de143a]: "auth.right.container.control"
+const $09c536abc6cea017$export$edca379024d80309 = {
+    [$09c536abc6cea017$export$66a34090010a35b3]: "auth.right.container.read",
+    [$09c536abc6cea017$export$2e56ecf100ca4ba6]: "auth.right.container.write",
+    [$09c536abc6cea017$export$5581cb2c55de143a]: "auth.right.container.control"
 };
 
 
-const $673a0cc190160362$var$useCheckPermissions = (uri, mode, redirectUrl = "/")=>{
+const $715d0a876ac5de8e$var$useCheckPermissions = (uri, mode, redirectUrl = "/")=>{
     const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)(uri);
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
     const redirect = (0, $4Uj5b$reactadmin.useRedirect)();
     (0, $4Uj5b$react.useEffect)(()=>{
-        if (permissions && !permissions.some((p)=>(0, $09162138eadab4b9$export$cae945d60b6cbe50)[mode].includes(p["acl:mode"]))) {
-            notify((0, $09162138eadab4b9$export$12e6e8e71d10a4bb)[mode], {
+        if (permissions && !permissions.some((p)=>(0, $09c536abc6cea017$export$cae945d60b6cbe50)[mode].includes(p["acl:mode"]))) {
+            notify((0, $09c536abc6cea017$export$12e6e8e71d10a4bb)[mode], {
                 type: "error"
             });
             redirect(redirectUrl);
@@ -576,13 +576,13 @@ const $673a0cc190160362$var$useCheckPermissions = (uri, mode, redirectUrl = "/")
     ]);
     return permissions;
 };
-var $673a0cc190160362$export$2e2bcd8739ae039 = $673a0cc190160362$var$useCheckPermissions;
+var $715d0a876ac5de8e$export$2e2bcd8739ae039 = $715d0a876ac5de8e$var$useCheckPermissions;
 
 
 const $7c87aa71409e289a$var$CreateWithPermissions = (props)=>{
     const resource = (0, $4Uj5b$reactadmin.useResourceContext)();
     const createContainerUri = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainer)(resource);
-    (0, $673a0cc190160362$export$2e2bcd8739ae039)(createContainerUri, "create");
+    (0, $715d0a876ac5de8e$export$2e2bcd8739ae039)(createContainerUri, "create");
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Create), {
         ...props
     });
@@ -668,7 +668,7 @@ const $a613ad42a03b1bc4$var$AddPermissionsForm = ({ agents: agents, addPermissio
         disableClearable: true,
         value: value,
         onChange: (event, record)=>{
-            addPermission(record.id || record["@id"], (0, $09162138eadab4b9$export$97a08a1bb7ee0545), (0, $09162138eadab4b9$export$66a34090010a35b3));
+            addPermission(record.id || record["@id"], (0, $09c536abc6cea017$export$97a08a1bb7ee0545), (0, $09c536abc6cea017$export$66a34090010a35b3));
             setValue(null);
             setInputValue("");
             setOptions([]);
@@ -728,11 +728,11 @@ var $a613ad42a03b1bc4$export$2e2bcd8739ae039 = $a613ad42a03b1bc4$var$AddPermissi
 
 const $9f58b72d42a695d9$var$AgentIcon = ({ agent: agent })=>{
     switch(agent.predicate){
-        case 0, $09162138eadab4b9$export$2703254089a859eb:
-            return agent.id === (0, $09162138eadab4b9$export$83ae1bc0992a6335) ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialPublic))), {}) : /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialVpnLock))), {});
-        case 0, $09162138eadab4b9$export$97a08a1bb7ee0545:
+        case 0, $09c536abc6cea017$export$2703254089a859eb:
+            return agent.id === (0, $09c536abc6cea017$export$83ae1bc0992a6335) ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialPublic))), {}) : /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialVpnLock))), {});
+        case 0, $09c536abc6cea017$export$97a08a1bb7ee0545:
             return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialPerson))), {});
-        case 0, $09162138eadab4b9$export$f07ccbe0773f2c7:
+        case 0, $09c536abc6cea017$export$f07ccbe0773f2c7:
             return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialGroup))), {});
         default:
             throw new Error(`Unknown agent predicate: ${agent.predicate}`);
@@ -768,7 +768,7 @@ const $7a8c6187e6c69fdd$var$AgentItem = ({ isContainer: isContainer, agent: agen
     const [loading, setLoading] = (0, $4Uj5b$react.useState)(true);
     const [error, setError] = (0, $4Uj5b$react.useState)();
     (0, $4Uj5b$react.useEffect)(()=>{
-        if (agent.predicate === (0, $09162138eadab4b9$export$97a08a1bb7ee0545)) dataProvider.getOne("Person", {
+        if (agent.predicate === (0, $09c536abc6cea017$export$97a08a1bb7ee0545)) dataProvider.getOne("Person", {
             id: agent.id
         }).then(({ data: data })=>{
             setUser(data);
@@ -783,10 +783,10 @@ const $7a8c6187e6c69fdd$var$AgentItem = ({ isContainer: isContainer, agent: agen
         agent.predicate
     ]);
     // For now, do not display groups
-    if (agent.predicate === (0, $09162138eadab4b9$export$f07ccbe0773f2c7)) return null;
+    if (agent.predicate === (0, $09c536abc6cea017$export$f07ccbe0773f2c7)) return null;
     const openMenu = (event)=>setAnchorEl(event.currentTarget);
     const closeMenu = ()=>setAnchorEl(null);
-    const labels = isContainer ? (0, $09162138eadab4b9$export$edca379024d80309) : (0, $09162138eadab4b9$export$2e9571c4ccdeb6a9);
+    const labels = isContainer ? (0, $09c536abc6cea017$export$edca379024d80309) : (0, $09c536abc6cea017$export$2e9571c4ccdeb6a9);
     if (loading) return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Loading), {});
     if (error) return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Error), {});
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.ListItem), {
@@ -802,7 +802,7 @@ const $7a8c6187e6c69fdd$var$AgentItem = ({ isContainer: isContainer, agent: agen
             }),
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemText), {
                 className: classes.primaryText,
-                primary: user ? user["pair:label"] : translate(agent.id === (0, $09162138eadab4b9$export$83ae1bc0992a6335) ? "auth.agent.anonymous" : "auth.agent.authenticated")
+                primary: user ? user["pair:label"] : translate(agent.id === (0, $09c536abc6cea017$export$83ae1bc0992a6335) ? "auth.agent.anonymous" : "auth.agent.authenticated")
             }),
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemText), {
                 className: classes.secondaryText,
@@ -877,14 +877,14 @@ const $780e01b2b2982de2$var$useAgents = (uri)=>{
     // Format list of authorized agents, based on the permissions returned for the resource
     (0, $4Uj5b$react.useEffect)(()=>{
         const result = {
-            [(0, $09162138eadab4b9$export$83ae1bc0992a6335)]: {
-                id: (0, $09162138eadab4b9$export$83ae1bc0992a6335),
-                predicate: (0, $09162138eadab4b9$export$2703254089a859eb),
+            [(0, $09c536abc6cea017$export$83ae1bc0992a6335)]: {
+                id: (0, $09c536abc6cea017$export$83ae1bc0992a6335),
+                predicate: (0, $09c536abc6cea017$export$2703254089a859eb),
                 permissions: []
             },
-            [(0, $09162138eadab4b9$export$546c01a3ffdabe3a)]: {
-                id: (0, $09162138eadab4b9$export$546c01a3ffdabe3a),
-                predicate: (0, $09162138eadab4b9$export$2703254089a859eb),
+            [(0, $09c536abc6cea017$export$546c01a3ffdabe3a)]: {
+                id: (0, $09c536abc6cea017$export$546c01a3ffdabe3a),
+                predicate: (0, $09c536abc6cea017$export$2703254089a859eb),
                 permissions: []
             }
         };
@@ -900,9 +900,9 @@ const $780e01b2b2982de2$var$useAgents = (uri)=>{
         };
         if (permissions) {
             for (const p of permissions){
-                if (p[0, $09162138eadab4b9$export$2703254089a859eb]) (0, $2d06940433ec0c6c$export$dca4f48302963835)(p[0, $09162138eadab4b9$export$2703254089a859eb]).forEach((agentId)=>appendPermission(agentId, (0, $09162138eadab4b9$export$2703254089a859eb), p["acl:mode"]));
-                if (p[0, $09162138eadab4b9$export$97a08a1bb7ee0545]) (0, $2d06940433ec0c6c$export$dca4f48302963835)(p[0, $09162138eadab4b9$export$97a08a1bb7ee0545]).forEach((userUri)=>appendPermission(userUri, (0, $09162138eadab4b9$export$97a08a1bb7ee0545), p["acl:mode"]));
-                if (p[0, $09162138eadab4b9$export$f07ccbe0773f2c7]) (0, $2d06940433ec0c6c$export$dca4f48302963835)(p[0, $09162138eadab4b9$export$f07ccbe0773f2c7]).forEach((groupUri)=>appendPermission(groupUri, (0, $09162138eadab4b9$export$f07ccbe0773f2c7), p["acl:mode"]));
+                if (p[0, $09c536abc6cea017$export$2703254089a859eb]) (0, $2d06940433ec0c6c$export$dca4f48302963835)(p[0, $09c536abc6cea017$export$2703254089a859eb]).forEach((agentId)=>appendPermission(agentId, (0, $09c536abc6cea017$export$2703254089a859eb), p["acl:mode"]));
+                if (p[0, $09c536abc6cea017$export$97a08a1bb7ee0545]) (0, $2d06940433ec0c6c$export$dca4f48302963835)(p[0, $09c536abc6cea017$export$97a08a1bb7ee0545]).forEach((userUri)=>appendPermission(userUri, (0, $09c536abc6cea017$export$97a08a1bb7ee0545), p["acl:mode"]));
+                if (p[0, $09c536abc6cea017$export$f07ccbe0773f2c7]) (0, $2d06940433ec0c6c$export$dca4f48302963835)(p[0, $09c536abc6cea017$export$f07ccbe0773f2c7]).forEach((groupUri)=>appendPermission(groupUri, (0, $09c536abc6cea017$export$f07ccbe0773f2c7), p["acl:mode"]));
             }
             setAgents(result);
         }
@@ -947,7 +947,7 @@ const $780e01b2b2982de2$var$useAgents = (uri)=>{
                 agent
             ];
         })// Remove agents if they have no permissions (except if they are class agents)
-        .filter(([_, agent])=>agent.predicate === (0, $09162138eadab4b9$export$2703254089a859eb) || agent.permissions.length > 0)));
+        .filter(([_, agent])=>agent.predicate === (0, $09c536abc6cea017$export$2703254089a859eb) || agent.permissions.length > 0)));
         authProvider.removePermission(uri, agentId, predicate, mode).catch((e)=>{
             // If there was an error, revert the optimistic update
             setAgents(prevAgents);
@@ -1056,7 +1056,7 @@ var $49d4f2fbe6f28cfd$export$2e2bcd8739ae039 = $49d4f2fbe6f28cfd$var$Permissions
 
 
 
-const $4076d0aea1b9e239$var$EditActionsWithPermissions = ()=>{
+const $87767302443de17c$var$EditActionsWithPermissions = ()=>{
     const { hasList: hasList, hasShow: hasShow } = (0, $4Uj5b$reactadmin.useResourceDefinition)();
     const record = (0, $4Uj5b$reactadmin.useRecordContext)();
     const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)(record?.id);
@@ -1065,13 +1065,13 @@ const $4076d0aea1b9e239$var$EditActionsWithPermissions = ()=>{
     const { permissions: containerPermissions } = (0, $4Uj5b$reactadmin.usePermissions)(containerUri);
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactadmin.TopToolbar), {
         children: [
-            hasList && containerPermissions && containerPermissions.some((p)=>(0, $09162138eadab4b9$export$dc3840a4e2a72b8c).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ListButton), {}),
-            hasShow && permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$d37f0098bcf84c55).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ShowButton), {}),
-            permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {})
+            hasList && containerPermissions && containerPermissions.some((p)=>(0, $09c536abc6cea017$export$dc3840a4e2a72b8c).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ListButton), {}),
+            hasShow && permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$d37f0098bcf84c55).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ShowButton), {}),
+            permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {})
         ]
     });
 };
-var $4076d0aea1b9e239$export$2e2bcd8739ae039 = $4076d0aea1b9e239$var$EditActionsWithPermissions;
+var $87767302443de17c$export$2e2bcd8739ae039 = $87767302443de17c$var$EditActionsWithPermissions;
 
 
 
@@ -1085,7 +1085,7 @@ var $4076d0aea1b9e239$export$2e2bcd8739ae039 = $4076d0aea1b9e239$var$EditActions
 const $79bac4913d414938$var$DeleteButtonWithPermissions = (props)=>{
     const recordId = (0, $4Uj5b$reactadmin.useGetRecordId)();
     const { permissions: permissions, isLoading: isLoading } = (0, $4Uj5b$reactadmin.usePermissions)(recordId);
-    if (!isLoading && permissions?.some((p)=>(0, $09162138eadab4b9$export$ac7b0367c0f9031e).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.DeleteButton), {
+    if (!isLoading && permissions?.some((p)=>(0, $09c536abc6cea017$export$ac7b0367c0f9031e).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.DeleteButton), {
         ...props
     });
     return null;
@@ -1111,7 +1111,7 @@ var $41feb0ed0192b62e$export$2e2bcd8739ae039 = $41feb0ed0192b62e$var$EditToolbar
 
 const $6f1389d03e4735d1$var$EditWithPermissions = (props)=>{
     const recordId = (0, $4Uj5b$reactadmin.useGetRecordId)();
-    (0, $673a0cc190160362$export$2e2bcd8739ae039)(recordId, "edit");
+    (0, $715d0a876ac5de8e$export$2e2bcd8739ae039)(recordId, "edit");
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Edit), {
         ...props,
         children: /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(props.children, {
@@ -1122,7 +1122,7 @@ const $6f1389d03e4735d1$var$EditWithPermissions = (props)=>{
     });
 };
 $6f1389d03e4735d1$var$EditWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4076d0aea1b9e239$export$2e2bcd8739ae039), {})
+    actions: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $87767302443de17c$export$2e2bcd8739ae039), {})
 };
 var $6f1389d03e4735d1$export$2e2bcd8739ae039 = $6f1389d03e4735d1$var$EditWithPermissions;
 
@@ -1136,7 +1136,7 @@ var $6f1389d03e4735d1$export$2e2bcd8739ae039 = $6f1389d03e4735d1$var$EditWithPer
 const $496e40eed9f00a2c$var$EditButtonWithPermissions = (props)=>{
     const recordId = (0, $4Uj5b$reactadmin.useGetRecordId)();
     const { permissions: permissions, isLoading: isLoading } = (0, $4Uj5b$reactadmin.usePermissions)(recordId);
-    if (!isLoading && permissions?.some((p)=>(0, $09162138eadab4b9$export$b9d0f5f3ab5e453b).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.EditButton), {
+    if (!isLoading && permissions?.some((p)=>(0, $09c536abc6cea017$export$b9d0f5f3ab5e453b).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.EditButton), {
         ...props
     });
     return null;
@@ -1170,8 +1170,8 @@ const $6452f20f9b47ebd6$var$ListActionsWithPermissions = ({ bulkActions: bulkAct
                 filterValues: filterValues,
                 context: "button"
             }),
-            resourceDefinition.hasCreate && permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$65615a101bd6f5ca).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.CreateButton), {}),
-            permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {
+            resourceDefinition.hasCreate && permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$65615a101bd6f5ca).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.CreateButton), {}),
+            permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {
                 isContainer: true
             }),
             !xs && exporter !== false && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ExportButton), {
@@ -1210,7 +1210,7 @@ var $15811bcd3a3eb59f$export$2e2bcd8739ae039 = $15811bcd3a3eb59f$var$ListWithPer
 
 
 
-const $83b0bd683a7f3aa8$var$ShowActionsWithPermissions = ()=>{
+const $43f4d313e20b20c2$var$ShowActionsWithPermissions = ()=>{
     const { hasList: hasList, hasEdit: hasEdit } = (0, $4Uj5b$reactadmin.useResourceDefinition)();
     const record = (0, $4Uj5b$reactadmin.useRecordContext)();
     const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)(record?.id);
@@ -1219,25 +1219,25 @@ const $83b0bd683a7f3aa8$var$ShowActionsWithPermissions = ()=>{
     const { permissions: containerPermissions } = (0, $4Uj5b$reactadmin.usePermissions)(containerUri);
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactadmin.TopToolbar), {
         children: [
-            hasList && containerPermissions && containerPermissions.some((p)=>(0, $09162138eadab4b9$export$dc3840a4e2a72b8c).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ListButton), {}),
-            hasEdit && permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$b9d0f5f3ab5e453b).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.EditButton), {}),
-            permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {})
+            hasList && containerPermissions && containerPermissions.some((p)=>(0, $09c536abc6cea017$export$dc3840a4e2a72b8c).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ListButton), {}),
+            hasEdit && permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$b9d0f5f3ab5e453b).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.EditButton), {}),
+            permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {})
         ]
     });
 };
-var $83b0bd683a7f3aa8$export$2e2bcd8739ae039 = $83b0bd683a7f3aa8$var$ShowActionsWithPermissions;
+var $43f4d313e20b20c2$export$2e2bcd8739ae039 = $43f4d313e20b20c2$var$ShowActionsWithPermissions;
 
 
 
 const $773eb052716d0fa7$var$ShowWithPermissions = (props)=>{
     const recordId = (0, $4Uj5b$reactadmin.useGetRecordId)();
-    (0, $673a0cc190160362$export$2e2bcd8739ae039)(recordId, "show");
+    (0, $715d0a876ac5de8e$export$2e2bcd8739ae039)(recordId, "show");
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Show), {
         ...props
     });
 };
 $773eb052716d0fa7$var$ShowWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $83b0bd683a7f3aa8$export$2e2bcd8739ae039), {})
+    actions: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $43f4d313e20b20c2$export$2e2bcd8739ae039), {})
 };
 var $773eb052716d0fa7$export$2e2bcd8739ae039 = $773eb052716d0fa7$var$ShowWithPermissions;
 
@@ -2378,7 +2378,7 @@ const $0973974d3aa8078b$var$ResourceWithPermission = ({ name: name, create: crea
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Resource), {
         ...rest,
         name: name,
-        create: permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$65615a101bd6f5ca).includes(p["acl:mode"])) ? create : undefined
+        create: permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$65615a101bd6f5ca).includes(p["acl:mode"])) ? create : undefined
     });
 };
 var $0973974d3aa8078b$export$2e2bcd8739ae039 = $0973974d3aa8078b$var$ResourceWithPermission;

@@ -452,53 +452,53 @@ var $1d8606895ce3b768$export$2e2bcd8739ae039 = $1d8606895ce3b768$var$authProvide
 
 
 
-const $3ecc2efd72c45a68$export$66a34090010a35b3 = "acl:Read";
-const $3ecc2efd72c45a68$export$7c883503ccedfe0e = "acl:Append";
-const $3ecc2efd72c45a68$export$2e56ecf100ca4ba6 = "acl:Write";
-const $3ecc2efd72c45a68$export$5581cb2c55de143a = "acl:Control";
-const $3ecc2efd72c45a68$export$97a08a1bb7ee0545 = "acl:agent";
-const $3ecc2efd72c45a68$export$f07ccbe0773f2c7 = "acl:agentGroup";
-const $3ecc2efd72c45a68$export$2703254089a859eb = "acl:agentClass";
-const $3ecc2efd72c45a68$export$83ae1bc0992a6335 = "foaf:Agent";
-const $3ecc2efd72c45a68$export$546c01a3ffdabe3a = "acl:AuthenticatedAgent";
-const $3ecc2efd72c45a68$export$d37f0098bcf84c55 = [
-    $3ecc2efd72c45a68$export$66a34090010a35b3,
-    $3ecc2efd72c45a68$export$7c883503ccedfe0e,
-    $3ecc2efd72c45a68$export$2e56ecf100ca4ba6,
-    $3ecc2efd72c45a68$export$5581cb2c55de143a
+const $dd9154ee844248d7$export$66a34090010a35b3 = "acl:Read";
+const $dd9154ee844248d7$export$7c883503ccedfe0e = "acl:Append";
+const $dd9154ee844248d7$export$2e56ecf100ca4ba6 = "acl:Write";
+const $dd9154ee844248d7$export$5581cb2c55de143a = "acl:Control";
+const $dd9154ee844248d7$export$97a08a1bb7ee0545 = "acl:agent";
+const $dd9154ee844248d7$export$f07ccbe0773f2c7 = "acl:agentGroup";
+const $dd9154ee844248d7$export$2703254089a859eb = "acl:agentClass";
+const $dd9154ee844248d7$export$83ae1bc0992a6335 = "foaf:Agent";
+const $dd9154ee844248d7$export$546c01a3ffdabe3a = "acl:AuthenticatedAgent";
+const $dd9154ee844248d7$export$d37f0098bcf84c55 = [
+    $dd9154ee844248d7$export$66a34090010a35b3,
+    $dd9154ee844248d7$export$7c883503ccedfe0e,
+    $dd9154ee844248d7$export$2e56ecf100ca4ba6,
+    $dd9154ee844248d7$export$5581cb2c55de143a
 ];
-const $3ecc2efd72c45a68$export$dc3840a4e2a72b8c = [
-    $3ecc2efd72c45a68$export$66a34090010a35b3,
-    $3ecc2efd72c45a68$export$7c883503ccedfe0e,
-    $3ecc2efd72c45a68$export$2e56ecf100ca4ba6,
-    $3ecc2efd72c45a68$export$5581cb2c55de143a
+const $dd9154ee844248d7$export$dc3840a4e2a72b8c = [
+    $dd9154ee844248d7$export$66a34090010a35b3,
+    $dd9154ee844248d7$export$7c883503ccedfe0e,
+    $dd9154ee844248d7$export$2e56ecf100ca4ba6,
+    $dd9154ee844248d7$export$5581cb2c55de143a
 ];
-const $3ecc2efd72c45a68$export$65615a101bd6f5ca = [
-    $3ecc2efd72c45a68$export$7c883503ccedfe0e,
-    $3ecc2efd72c45a68$export$2e56ecf100ca4ba6,
-    $3ecc2efd72c45a68$export$5581cb2c55de143a
+const $dd9154ee844248d7$export$65615a101bd6f5ca = [
+    $dd9154ee844248d7$export$7c883503ccedfe0e,
+    $dd9154ee844248d7$export$2e56ecf100ca4ba6,
+    $dd9154ee844248d7$export$5581cb2c55de143a
 ];
-const $3ecc2efd72c45a68$export$b9d0f5f3ab5e453b = [
-    $3ecc2efd72c45a68$export$7c883503ccedfe0e,
-    $3ecc2efd72c45a68$export$2e56ecf100ca4ba6,
-    $3ecc2efd72c45a68$export$5581cb2c55de143a
+const $dd9154ee844248d7$export$b9d0f5f3ab5e453b = [
+    $dd9154ee844248d7$export$7c883503ccedfe0e,
+    $dd9154ee844248d7$export$2e56ecf100ca4ba6,
+    $dd9154ee844248d7$export$5581cb2c55de143a
 ];
-const $3ecc2efd72c45a68$export$ac7b0367c0f9031e = [
-    $3ecc2efd72c45a68$export$2e56ecf100ca4ba6,
-    $3ecc2efd72c45a68$export$5581cb2c55de143a
+const $dd9154ee844248d7$export$ac7b0367c0f9031e = [
+    $dd9154ee844248d7$export$2e56ecf100ca4ba6,
+    $dd9154ee844248d7$export$5581cb2c55de143a
 ];
-const $3ecc2efd72c45a68$export$22242524f7d0624 = [
-    $3ecc2efd72c45a68$export$5581cb2c55de143a
+const $dd9154ee844248d7$export$22242524f7d0624 = [
+    $dd9154ee844248d7$export$5581cb2c55de143a
 ];
-const $3ecc2efd72c45a68$export$cae945d60b6cbe50 = {
-    show: $3ecc2efd72c45a68$export$d37f0098bcf84c55,
-    list: $3ecc2efd72c45a68$export$dc3840a4e2a72b8c,
-    create: $3ecc2efd72c45a68$export$65615a101bd6f5ca,
-    edit: $3ecc2efd72c45a68$export$b9d0f5f3ab5e453b,
-    delete: $3ecc2efd72c45a68$export$ac7b0367c0f9031e,
-    control: $3ecc2efd72c45a68$export$22242524f7d0624
+const $dd9154ee844248d7$export$cae945d60b6cbe50 = {
+    show: $dd9154ee844248d7$export$d37f0098bcf84c55,
+    list: $dd9154ee844248d7$export$dc3840a4e2a72b8c,
+    create: $dd9154ee844248d7$export$65615a101bd6f5ca,
+    edit: $dd9154ee844248d7$export$b9d0f5f3ab5e453b,
+    delete: $dd9154ee844248d7$export$ac7b0367c0f9031e,
+    control: $dd9154ee844248d7$export$22242524f7d0624
 };
-const $3ecc2efd72c45a68$export$12e6e8e71d10a4bb = {
+const $dd9154ee844248d7$export$12e6e8e71d10a4bb = {
     show: "auth.message.resource_show_forbidden",
     edit: "auth.message.resource_edit_forbidden",
     delete: "auth.message.resource_delete_forbidden",
@@ -506,26 +506,26 @@ const $3ecc2efd72c45a68$export$12e6e8e71d10a4bb = {
     list: "auth.message.container_list_forbidden",
     create: "auth.message.container_create_forbidden"
 };
-const $3ecc2efd72c45a68$export$2e9571c4ccdeb6a9 = {
-    [$3ecc2efd72c45a68$export$66a34090010a35b3]: "auth.right.resource.read",
-    [$3ecc2efd72c45a68$export$7c883503ccedfe0e]: "auth.right.resource.append",
-    [$3ecc2efd72c45a68$export$2e56ecf100ca4ba6]: "auth.right.resource.write",
-    [$3ecc2efd72c45a68$export$5581cb2c55de143a]: "auth.right.resource.control"
+const $dd9154ee844248d7$export$2e9571c4ccdeb6a9 = {
+    [$dd9154ee844248d7$export$66a34090010a35b3]: "auth.right.resource.read",
+    [$dd9154ee844248d7$export$7c883503ccedfe0e]: "auth.right.resource.append",
+    [$dd9154ee844248d7$export$2e56ecf100ca4ba6]: "auth.right.resource.write",
+    [$dd9154ee844248d7$export$5581cb2c55de143a]: "auth.right.resource.control"
 };
-const $3ecc2efd72c45a68$export$edca379024d80309 = {
-    [$3ecc2efd72c45a68$export$66a34090010a35b3]: "auth.right.container.read",
-    [$3ecc2efd72c45a68$export$2e56ecf100ca4ba6]: "auth.right.container.write",
-    [$3ecc2efd72c45a68$export$5581cb2c55de143a]: "auth.right.container.control"
+const $dd9154ee844248d7$export$edca379024d80309 = {
+    [$dd9154ee844248d7$export$66a34090010a35b3]: "auth.right.container.read",
+    [$dd9154ee844248d7$export$2e56ecf100ca4ba6]: "auth.right.container.write",
+    [$dd9154ee844248d7$export$5581cb2c55de143a]: "auth.right.container.control"
 };
 
 
-const $abd69a52484f41d9$var$useCheckPermissions = (uri, mode, redirectUrl = "/")=>{
+const $3246c5a1f284b82d$var$useCheckPermissions = (uri, mode, redirectUrl = "/")=>{
     const { permissions: permissions } = (0, $1obPJ$usePermissions)(uri);
     const notify = (0, $1obPJ$useNotify)();
     const redirect = (0, $1obPJ$useRedirect)();
     (0, $1obPJ$useEffect)(()=>{
-        if (permissions && !permissions.some((p)=>(0, $3ecc2efd72c45a68$export$cae945d60b6cbe50)[mode].includes(p["acl:mode"]))) {
-            notify((0, $3ecc2efd72c45a68$export$12e6e8e71d10a4bb)[mode], {
+        if (permissions && !permissions.some((p)=>(0, $dd9154ee844248d7$export$cae945d60b6cbe50)[mode].includes(p["acl:mode"]))) {
+            notify((0, $dd9154ee844248d7$export$12e6e8e71d10a4bb)[mode], {
                 type: "error"
             });
             redirect(redirectUrl);
@@ -537,13 +537,13 @@ const $abd69a52484f41d9$var$useCheckPermissions = (uri, mode, redirectUrl = "/")
     ]);
     return permissions;
 };
-var $abd69a52484f41d9$export$2e2bcd8739ae039 = $abd69a52484f41d9$var$useCheckPermissions;
+var $3246c5a1f284b82d$export$2e2bcd8739ae039 = $3246c5a1f284b82d$var$useCheckPermissions;
 
 
 const $f2c5683e04dee28c$var$CreateWithPermissions = (props)=>{
     const resource = (0, $1obPJ$useResourceContext)();
     const createContainerUri = (0, $1obPJ$useCreateContainer)(resource);
-    (0, $abd69a52484f41d9$export$2e2bcd8739ae039)(createContainerUri, "create");
+    (0, $3246c5a1f284b82d$export$2e2bcd8739ae039)(createContainerUri, "create");
     return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Create), {
         ...props
     });
@@ -629,7 +629,7 @@ const $38698ff0e415f88b$var$AddPermissionsForm = ({ agents: agents, addPermissio
         disableClearable: true,
         value: value,
         onChange: (event, record)=>{
-            addPermission(record.id || record["@id"], (0, $3ecc2efd72c45a68$export$97a08a1bb7ee0545), (0, $3ecc2efd72c45a68$export$66a34090010a35b3));
+            addPermission(record.id || record["@id"], (0, $dd9154ee844248d7$export$97a08a1bb7ee0545), (0, $dd9154ee844248d7$export$66a34090010a35b3));
             setValue(null);
             setInputValue("");
             setOptions([]);
@@ -689,11 +689,11 @@ var $38698ff0e415f88b$export$2e2bcd8739ae039 = $38698ff0e415f88b$var$AddPermissi
 
 const $2a38cfa58fd59a9e$var$AgentIcon = ({ agent: agent })=>{
     switch(agent.predicate){
-        case 0, $3ecc2efd72c45a68$export$2703254089a859eb:
-            return agent.id === (0, $3ecc2efd72c45a68$export$83ae1bc0992a6335) ? /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$muiiconsmaterialPublic), {}) : /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$muiiconsmaterialVpnLock), {});
-        case 0, $3ecc2efd72c45a68$export$97a08a1bb7ee0545:
+        case 0, $dd9154ee844248d7$export$2703254089a859eb:
+            return agent.id === (0, $dd9154ee844248d7$export$83ae1bc0992a6335) ? /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$muiiconsmaterialPublic), {}) : /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$muiiconsmaterialVpnLock), {});
+        case 0, $dd9154ee844248d7$export$97a08a1bb7ee0545:
             return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$muiiconsmaterialPerson), {});
-        case 0, $3ecc2efd72c45a68$export$f07ccbe0773f2c7:
+        case 0, $dd9154ee844248d7$export$f07ccbe0773f2c7:
             return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$muiiconsmaterialGroup), {});
         default:
             throw new Error(`Unknown agent predicate: ${agent.predicate}`);
@@ -729,7 +729,7 @@ const $e8b8e6301988112e$var$AgentItem = ({ isContainer: isContainer, agent: agen
     const [loading, setLoading] = (0, $1obPJ$useState)(true);
     const [error, setError] = (0, $1obPJ$useState)();
     (0, $1obPJ$useEffect)(()=>{
-        if (agent.predicate === (0, $3ecc2efd72c45a68$export$97a08a1bb7ee0545)) dataProvider.getOne("Person", {
+        if (agent.predicate === (0, $dd9154ee844248d7$export$97a08a1bb7ee0545)) dataProvider.getOne("Person", {
             id: agent.id
         }).then(({ data: data })=>{
             setUser(data);
@@ -744,10 +744,10 @@ const $e8b8e6301988112e$var$AgentItem = ({ isContainer: isContainer, agent: agen
         agent.predicate
     ]);
     // For now, do not display groups
-    if (agent.predicate === (0, $3ecc2efd72c45a68$export$f07ccbe0773f2c7)) return null;
+    if (agent.predicate === (0, $dd9154ee844248d7$export$f07ccbe0773f2c7)) return null;
     const openMenu = (event)=>setAnchorEl(event.currentTarget);
     const closeMenu = ()=>setAnchorEl(null);
-    const labels = isContainer ? (0, $3ecc2efd72c45a68$export$edca379024d80309) : (0, $3ecc2efd72c45a68$export$2e9571c4ccdeb6a9);
+    const labels = isContainer ? (0, $dd9154ee844248d7$export$edca379024d80309) : (0, $dd9154ee844248d7$export$2e9571c4ccdeb6a9);
     if (loading) return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Loading), {});
     if (error) return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Error), {});
     return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$ListItem), {
@@ -763,7 +763,7 @@ const $e8b8e6301988112e$var$AgentItem = ({ isContainer: isContainer, agent: agen
             }),
             /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ListItemText), {
                 className: classes.primaryText,
-                primary: user ? user["pair:label"] : translate(agent.id === (0, $3ecc2efd72c45a68$export$83ae1bc0992a6335) ? "auth.agent.anonymous" : "auth.agent.authenticated")
+                primary: user ? user["pair:label"] : translate(agent.id === (0, $dd9154ee844248d7$export$83ae1bc0992a6335) ? "auth.agent.anonymous" : "auth.agent.authenticated")
             }),
             /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ListItemText), {
                 className: classes.secondaryText,
@@ -838,14 +838,14 @@ const $7ad577d9c9c71db0$var$useAgents = (uri)=>{
     // Format list of authorized agents, based on the permissions returned for the resource
     (0, $1obPJ$useEffect)(()=>{
         const result = {
-            [(0, $3ecc2efd72c45a68$export$83ae1bc0992a6335)]: {
-                id: (0, $3ecc2efd72c45a68$export$83ae1bc0992a6335),
-                predicate: (0, $3ecc2efd72c45a68$export$2703254089a859eb),
+            [(0, $dd9154ee844248d7$export$83ae1bc0992a6335)]: {
+                id: (0, $dd9154ee844248d7$export$83ae1bc0992a6335),
+                predicate: (0, $dd9154ee844248d7$export$2703254089a859eb),
                 permissions: []
             },
-            [(0, $3ecc2efd72c45a68$export$546c01a3ffdabe3a)]: {
-                id: (0, $3ecc2efd72c45a68$export$546c01a3ffdabe3a),
-                predicate: (0, $3ecc2efd72c45a68$export$2703254089a859eb),
+            [(0, $dd9154ee844248d7$export$546c01a3ffdabe3a)]: {
+                id: (0, $dd9154ee844248d7$export$546c01a3ffdabe3a),
+                predicate: (0, $dd9154ee844248d7$export$2703254089a859eb),
                 permissions: []
             }
         };
@@ -861,9 +861,9 @@ const $7ad577d9c9c71db0$var$useAgents = (uri)=>{
         };
         if (permissions) {
             for (const p of permissions){
-                if (p[0, $3ecc2efd72c45a68$export$2703254089a859eb]) (0, $47a3fad69bcb0083$export$dca4f48302963835)(p[0, $3ecc2efd72c45a68$export$2703254089a859eb]).forEach((agentId)=>appendPermission(agentId, (0, $3ecc2efd72c45a68$export$2703254089a859eb), p["acl:mode"]));
-                if (p[0, $3ecc2efd72c45a68$export$97a08a1bb7ee0545]) (0, $47a3fad69bcb0083$export$dca4f48302963835)(p[0, $3ecc2efd72c45a68$export$97a08a1bb7ee0545]).forEach((userUri)=>appendPermission(userUri, (0, $3ecc2efd72c45a68$export$97a08a1bb7ee0545), p["acl:mode"]));
-                if (p[0, $3ecc2efd72c45a68$export$f07ccbe0773f2c7]) (0, $47a3fad69bcb0083$export$dca4f48302963835)(p[0, $3ecc2efd72c45a68$export$f07ccbe0773f2c7]).forEach((groupUri)=>appendPermission(groupUri, (0, $3ecc2efd72c45a68$export$f07ccbe0773f2c7), p["acl:mode"]));
+                if (p[0, $dd9154ee844248d7$export$2703254089a859eb]) (0, $47a3fad69bcb0083$export$dca4f48302963835)(p[0, $dd9154ee844248d7$export$2703254089a859eb]).forEach((agentId)=>appendPermission(agentId, (0, $dd9154ee844248d7$export$2703254089a859eb), p["acl:mode"]));
+                if (p[0, $dd9154ee844248d7$export$97a08a1bb7ee0545]) (0, $47a3fad69bcb0083$export$dca4f48302963835)(p[0, $dd9154ee844248d7$export$97a08a1bb7ee0545]).forEach((userUri)=>appendPermission(userUri, (0, $dd9154ee844248d7$export$97a08a1bb7ee0545), p["acl:mode"]));
+                if (p[0, $dd9154ee844248d7$export$f07ccbe0773f2c7]) (0, $47a3fad69bcb0083$export$dca4f48302963835)(p[0, $dd9154ee844248d7$export$f07ccbe0773f2c7]).forEach((groupUri)=>appendPermission(groupUri, (0, $dd9154ee844248d7$export$f07ccbe0773f2c7), p["acl:mode"]));
             }
             setAgents(result);
         }
@@ -908,7 +908,7 @@ const $7ad577d9c9c71db0$var$useAgents = (uri)=>{
                 agent
             ];
         })// Remove agents if they have no permissions (except if they are class agents)
-        .filter(([_, agent])=>agent.predicate === (0, $3ecc2efd72c45a68$export$2703254089a859eb) || agent.permissions.length > 0)));
+        .filter(([_, agent])=>agent.predicate === (0, $dd9154ee844248d7$export$2703254089a859eb) || agent.permissions.length > 0)));
         authProvider.removePermission(uri, agentId, predicate, mode).catch((e)=>{
             // If there was an error, revert the optimistic update
             setAgents(prevAgents);
@@ -1017,7 +1017,7 @@ var $7dac2771cc5eb38b$export$2e2bcd8739ae039 = $7dac2771cc5eb38b$var$Permissions
 
 
 
-const $62be5dcee9954341$var$EditActionsWithPermissions = ()=>{
+const $1d084bfeb799eb8d$var$EditActionsWithPermissions = ()=>{
     const { hasList: hasList, hasShow: hasShow } = (0, $1obPJ$useResourceDefinition)();
     const record = (0, $1obPJ$useRecordContext)();
     const { permissions: permissions } = (0, $1obPJ$usePermissions)(record?.id);
@@ -1026,13 +1026,13 @@ const $62be5dcee9954341$var$EditActionsWithPermissions = ()=>{
     const { permissions: containerPermissions } = (0, $1obPJ$usePermissions)(containerUri);
     return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$TopToolbar), {
         children: [
-            hasList && containerPermissions && containerPermissions.some((p)=>(0, $3ecc2efd72c45a68$export$dc3840a4e2a72b8c).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ListButton), {}),
-            hasShow && permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$d37f0098bcf84c55).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ShowButton), {}),
-            permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $7dac2771cc5eb38b$export$2e2bcd8739ae039), {})
+            hasList && containerPermissions && containerPermissions.some((p)=>(0, $dd9154ee844248d7$export$dc3840a4e2a72b8c).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ListButton), {}),
+            hasShow && permissions && permissions.some((p)=>(0, $dd9154ee844248d7$export$d37f0098bcf84c55).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ShowButton), {}),
+            permissions && permissions.some((p)=>(0, $dd9154ee844248d7$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $7dac2771cc5eb38b$export$2e2bcd8739ae039), {})
         ]
     });
 };
-var $62be5dcee9954341$export$2e2bcd8739ae039 = $62be5dcee9954341$var$EditActionsWithPermissions;
+var $1d084bfeb799eb8d$export$2e2bcd8739ae039 = $1d084bfeb799eb8d$var$EditActionsWithPermissions;
 
 
 
@@ -1046,7 +1046,7 @@ var $62be5dcee9954341$export$2e2bcd8739ae039 = $62be5dcee9954341$var$EditActions
 const $7efdcbe4be05bfd5$var$DeleteButtonWithPermissions = (props)=>{
     const recordId = (0, $1obPJ$useGetRecordId)();
     const { permissions: permissions, isLoading: isLoading } = (0, $1obPJ$usePermissions)(recordId);
-    if (!isLoading && permissions?.some((p)=>(0, $3ecc2efd72c45a68$export$ac7b0367c0f9031e).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$DeleteButton), {
+    if (!isLoading && permissions?.some((p)=>(0, $dd9154ee844248d7$export$ac7b0367c0f9031e).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$DeleteButton), {
         ...props
     });
     return null;
@@ -1072,7 +1072,7 @@ var $6b0c1a175ed94bdf$export$2e2bcd8739ae039 = $6b0c1a175ed94bdf$var$EditToolbar
 
 const $28fa6ad821327921$var$EditWithPermissions = (props)=>{
     const recordId = (0, $1obPJ$useGetRecordId)();
-    (0, $abd69a52484f41d9$export$2e2bcd8739ae039)(recordId, "edit");
+    (0, $3246c5a1f284b82d$export$2e2bcd8739ae039)(recordId, "edit");
     return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Edit), {
         ...props,
         children: /*#__PURE__*/ (0, $1obPJ$react).cloneElement(props.children, {
@@ -1083,7 +1083,7 @@ const $28fa6ad821327921$var$EditWithPermissions = (props)=>{
     });
 };
 $28fa6ad821327921$var$EditWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $62be5dcee9954341$export$2e2bcd8739ae039), {})
+    actions: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1d084bfeb799eb8d$export$2e2bcd8739ae039), {})
 };
 var $28fa6ad821327921$export$2e2bcd8739ae039 = $28fa6ad821327921$var$EditWithPermissions;
 
@@ -1097,7 +1097,7 @@ var $28fa6ad821327921$export$2e2bcd8739ae039 = $28fa6ad821327921$var$EditWithPer
 const $c78c2d7e17f60b2f$var$EditButtonWithPermissions = (props)=>{
     const recordId = (0, $1obPJ$useGetRecordId)();
     const { permissions: permissions, isLoading: isLoading } = (0, $1obPJ$usePermissions)(recordId);
-    if (!isLoading && permissions?.some((p)=>(0, $3ecc2efd72c45a68$export$b9d0f5f3ab5e453b).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$EditButton), {
+    if (!isLoading && permissions?.some((p)=>(0, $dd9154ee844248d7$export$b9d0f5f3ab5e453b).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$EditButton), {
         ...props
     });
     return null;
@@ -1131,8 +1131,8 @@ const $e6071424a1ba88d9$var$ListActionsWithPermissions = ({ bulkActions: bulkAct
                 filterValues: filterValues,
                 context: "button"
             }),
-            resourceDefinition.hasCreate && permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$65615a101bd6f5ca).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$CreateButton), {}),
-            permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $7dac2771cc5eb38b$export$2e2bcd8739ae039), {
+            resourceDefinition.hasCreate && permissions && permissions.some((p)=>(0, $dd9154ee844248d7$export$65615a101bd6f5ca).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$CreateButton), {}),
+            permissions && permissions.some((p)=>(0, $dd9154ee844248d7$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $7dac2771cc5eb38b$export$2e2bcd8739ae039), {
                 isContainer: true
             }),
             !xs && exporter !== false && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ExportButton), {
@@ -1171,7 +1171,7 @@ var $a4ded8260cc90dad$export$2e2bcd8739ae039 = $a4ded8260cc90dad$var$ListWithPer
 
 
 
-const $d1f54fc03225e8ee$var$ShowActionsWithPermissions = ()=>{
+const $acd67d211d146755$var$ShowActionsWithPermissions = ()=>{
     const { hasList: hasList, hasEdit: hasEdit } = (0, $1obPJ$useResourceDefinition)();
     const record = (0, $1obPJ$useRecordContext)();
     const { permissions: permissions } = (0, $1obPJ$usePermissions)(record?.id);
@@ -1180,25 +1180,25 @@ const $d1f54fc03225e8ee$var$ShowActionsWithPermissions = ()=>{
     const { permissions: containerPermissions } = (0, $1obPJ$usePermissions)(containerUri);
     return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$TopToolbar), {
         children: [
-            hasList && containerPermissions && containerPermissions.some((p)=>(0, $3ecc2efd72c45a68$export$dc3840a4e2a72b8c).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ListButton), {}),
-            hasEdit && permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$b9d0f5f3ab5e453b).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$EditButton), {}),
-            permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $7dac2771cc5eb38b$export$2e2bcd8739ae039), {})
+            hasList && containerPermissions && containerPermissions.some((p)=>(0, $dd9154ee844248d7$export$dc3840a4e2a72b8c).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ListButton), {}),
+            hasEdit && permissions && permissions.some((p)=>(0, $dd9154ee844248d7$export$b9d0f5f3ab5e453b).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$EditButton), {}),
+            permissions && permissions.some((p)=>(0, $dd9154ee844248d7$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $7dac2771cc5eb38b$export$2e2bcd8739ae039), {})
         ]
     });
 };
-var $d1f54fc03225e8ee$export$2e2bcd8739ae039 = $d1f54fc03225e8ee$var$ShowActionsWithPermissions;
+var $acd67d211d146755$export$2e2bcd8739ae039 = $acd67d211d146755$var$ShowActionsWithPermissions;
 
 
 
 const $561bb436d5af917c$var$ShowWithPermissions = (props)=>{
     const recordId = (0, $1obPJ$useGetRecordId)();
-    (0, $abd69a52484f41d9$export$2e2bcd8739ae039)(recordId, "show");
+    (0, $3246c5a1f284b82d$export$2e2bcd8739ae039)(recordId, "show");
     return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Show), {
         ...props
     });
 };
 $561bb436d5af917c$var$ShowWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $d1f54fc03225e8ee$export$2e2bcd8739ae039), {})
+    actions: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $acd67d211d146755$export$2e2bcd8739ae039), {})
 };
 var $561bb436d5af917c$export$2e2bcd8739ae039 = $561bb436d5af917c$var$ShowWithPermissions;
 
@@ -2339,7 +2339,7 @@ const $9594dfbc217337d0$var$ResourceWithPermission = ({ name: name, create: crea
     return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Resource), {
         ...rest,
         name: name,
-        create: permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$65615a101bd6f5ca).includes(p["acl:mode"])) ? create : undefined
+        create: permissions && permissions.some((p)=>(0, $dd9154ee844248d7$export$65615a101bd6f5ca).includes(p["acl:mode"])) ? create : undefined
     });
 };
 var $9594dfbc217337d0$export$2e2bcd8739ae039 = $9594dfbc217337d0$var$ResourceWithPermission;
@@ -2681,5 +2681,5 @@ var $509b6323d7902699$export$2e2bcd8739ae039 = $509b6323d7902699$var$frenchMessa
 
 
 
-export {$1d8606895ce3b768$export$2e2bcd8739ae039 as authProvider, $f2c5683e04dee28c$export$2e2bcd8739ae039 as CreateWithPermissions, $28fa6ad821327921$export$2e2bcd8739ae039 as EditWithPermissions, $62be5dcee9954341$export$2e2bcd8739ae039 as EditActionsWithPermissions, $6b0c1a175ed94bdf$export$2e2bcd8739ae039 as EditToolbarWithPermissions, $c78c2d7e17f60b2f$export$2e2bcd8739ae039 as EditButtonWithPermissions, $7efdcbe4be05bfd5$export$2e2bcd8739ae039 as DeleteButtonWithPermissions, $a4ded8260cc90dad$export$2e2bcd8739ae039 as ListWithPermissions, $e6071424a1ba88d9$export$2e2bcd8739ae039 as ListActionsWithPermissions, $561bb436d5af917c$export$2e2bcd8739ae039 as ShowWithPermissions, $d1f54fc03225e8ee$export$2e2bcd8739ae039 as ShowActionsWithPermissions, $7dac2771cc5eb38b$export$2e2bcd8739ae039 as PermissionsButton, $c2eef7602bbbff5e$export$2e2bcd8739ae039 as AuthDialog, $479961b7e298304b$export$2e2bcd8739ae039 as SsoLoginPage, $479961b7e298304b$export$2e2bcd8739ae039 as LoginPage, $23fea069f5d2d834$export$2e2bcd8739ae039 as LocalLoginPage, $9594dfbc217337d0$export$2e2bcd8739ae039 as ResourceWithPermissions, $5ef2eaf62f09ff2c$export$2e2bcd8739ae039 as UserMenu, $7ad577d9c9c71db0$export$2e2bcd8739ae039 as useAgents, $a18ea4963428dd85$export$2e2bcd8739ae039 as useCheckAuthenticated, $abd69a52484f41d9$export$2e2bcd8739ae039 as useCheckPermissions, $26b16c415d19fb4a$export$2e2bcd8739ae039 as usePermissionsWithRefetch, $fb967e2c34f56644$export$2e2bcd8739ae039 as useSignup, $a8046307c9dfa483$export$2e2bcd8739ae039 as PasswordStrengthIndicator, $7a0bbe6824860dfe$export$2e2bcd8739ae039 as validatePasswordStrength, $646d64648a630b24$export$19dcdb21c6965fb8 as defaultPasswordScorer, $646d64648a630b24$export$ba43bf67f3d48107 as defaultPasswordScorerOptions, $646d64648a630b24$export$a1d713a9155d58fc as createPasswordScorer, $22afd1c81635c9d9$export$2e2bcd8739ae039 as englishMessages, $509b6323d7902699$export$2e2bcd8739ae039 as frenchMessages};
+export {$1d8606895ce3b768$export$2e2bcd8739ae039 as authProvider, $f2c5683e04dee28c$export$2e2bcd8739ae039 as CreateWithPermissions, $28fa6ad821327921$export$2e2bcd8739ae039 as EditWithPermissions, $1d084bfeb799eb8d$export$2e2bcd8739ae039 as EditActionsWithPermissions, $6b0c1a175ed94bdf$export$2e2bcd8739ae039 as EditToolbarWithPermissions, $c78c2d7e17f60b2f$export$2e2bcd8739ae039 as EditButtonWithPermissions, $7efdcbe4be05bfd5$export$2e2bcd8739ae039 as DeleteButtonWithPermissions, $a4ded8260cc90dad$export$2e2bcd8739ae039 as ListWithPermissions, $e6071424a1ba88d9$export$2e2bcd8739ae039 as ListActionsWithPermissions, $561bb436d5af917c$export$2e2bcd8739ae039 as ShowWithPermissions, $acd67d211d146755$export$2e2bcd8739ae039 as ShowActionsWithPermissions, $7dac2771cc5eb38b$export$2e2bcd8739ae039 as PermissionsButton, $c2eef7602bbbff5e$export$2e2bcd8739ae039 as AuthDialog, $479961b7e298304b$export$2e2bcd8739ae039 as SsoLoginPage, $479961b7e298304b$export$2e2bcd8739ae039 as LoginPage, $23fea069f5d2d834$export$2e2bcd8739ae039 as LocalLoginPage, $9594dfbc217337d0$export$2e2bcd8739ae039 as ResourceWithPermissions, $5ef2eaf62f09ff2c$export$2e2bcd8739ae039 as UserMenu, $7ad577d9c9c71db0$export$2e2bcd8739ae039 as useAgents, $a18ea4963428dd85$export$2e2bcd8739ae039 as useCheckAuthenticated, $3246c5a1f284b82d$export$2e2bcd8739ae039 as useCheckPermissions, $26b16c415d19fb4a$export$2e2bcd8739ae039 as usePermissionsWithRefetch, $fb967e2c34f56644$export$2e2bcd8739ae039 as useSignup, $a8046307c9dfa483$export$2e2bcd8739ae039 as PasswordStrengthIndicator, $7a0bbe6824860dfe$export$2e2bcd8739ae039 as validatePasswordStrength, $646d64648a630b24$export$19dcdb21c6965fb8 as defaultPasswordScorer, $646d64648a630b24$export$ba43bf67f3d48107 as defaultPasswordScorerOptions, $646d64648a630b24$export$a1d713a9155d58fc as createPasswordScorer, $22afd1c81635c9d9$export$2e2bcd8739ae039 as englishMessages, $509b6323d7902699$export$2e2bcd8739ae039 as frenchMessages};
 //# sourceMappingURL=index.es.js.map
