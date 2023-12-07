@@ -3,8 +3,8 @@ import $1obPJ$urljoin from "url-join";
 import {discoveryRequest as $1obPJ$discoveryRequest, processDiscoveryResponse as $1obPJ$processDiscoveryResponse, generateRandomCodeVerifier as $1obPJ$generateRandomCodeVerifier, calculatePKCECodeChallenge as $1obPJ$calculatePKCECodeChallenge, validateAuthResponse as $1obPJ$validateAuthResponse, expectNoState as $1obPJ$expectNoState, isOAuth2Error as $1obPJ$isOAuth2Error, authorizationCodeGrantRequest as $1obPJ$authorizationCodeGrantRequest, processAuthorizationCodeOpenIDResponse as $1obPJ$processAuthorizationCodeOpenIDResponse} from "oauth4webapi";
 import {jsx as $1obPJ$jsx, jsxs as $1obPJ$jsxs, Fragment as $1obPJ$Fragment} from "react/jsx-runtime";
 import $1obPJ$react, {useEffect as $1obPJ$useEffect, useState as $1obPJ$useState, useCallback as $1obPJ$useCallback, useRef as $1obPJ$useRef, useMemo as $1obPJ$useMemo, forwardRef as $1obPJ$forwardRef} from "react";
-import {useResourceContext as $1obPJ$useResourceContext, Create as $1obPJ$Create, CreateActions as $1obPJ$CreateActions, useGetIdentity as $1obPJ$useGetIdentity, usePermissions as $1obPJ$usePermissions, useNotify as $1obPJ$useNotify, useRedirect as $1obPJ$useRedirect, useGetRecordId as $1obPJ$useGetRecordId, Edit as $1obPJ$Edit, useResourceDefinition as $1obPJ$useResourceDefinition, useRecordContext as $1obPJ$useRecordContext, usePermissionsOptimized as $1obPJ$usePermissionsOptimized, TopToolbar as $1obPJ$TopToolbar, ListButton as $1obPJ$ListButton, ShowButton as $1obPJ$ShowButton, Button as $1obPJ$Button, useTranslate as $1obPJ$useTranslate, useGetList as $1obPJ$useGetList, useDataProvider as $1obPJ$useDataProvider, Loading as $1obPJ$Loading, Error as $1obPJ$Error, useAuthProvider as $1obPJ$useAuthProvider, Toolbar as $1obPJ$Toolbar, SaveButton as $1obPJ$SaveButton, DeleteButton as $1obPJ$DeleteButton, EditButton as $1obPJ$EditButton, List as $1obPJ$List1, CreateButton as $1obPJ$CreateButton, ExportButton as $1obPJ$ExportButton, Show as $1obPJ$Show, useLogin as $1obPJ$useLogin, useSafeSetState as $1obPJ$useSafeSetState, useLocaleState as $1obPJ$useLocaleState, Form as $1obPJ$Form, TextInput as $1obPJ$TextInput, required as $1obPJ$required, minLength as $1obPJ$minLength, email as $1obPJ$email, Notification as $1obPJ$Notification, Resource as $1obPJ$Resource, useUserMenu as $1obPJ$useUserMenu, UserMenu as $1obPJ$UserMenu, Logout as $1obPJ$Logout, useGetPermissions as $1obPJ$useGetPermissions} from "react-admin";
-import {useCreateContainer as $1obPJ$useCreateContainer} from "@semapps/semantic-data-provider";
+import {useResourceContext as $1obPJ$useResourceContext, Create as $1obPJ$Create, CreateActions as $1obPJ$CreateActions, usePermissions as $1obPJ$usePermissions, useNotify as $1obPJ$useNotify, useRedirect as $1obPJ$useRedirect, useGetRecordId as $1obPJ$useGetRecordId, Edit as $1obPJ$Edit, useResourceDefinition as $1obPJ$useResourceDefinition, useRecordContext as $1obPJ$useRecordContext, TopToolbar as $1obPJ$TopToolbar, ListButton as $1obPJ$ListButton, ShowButton as $1obPJ$ShowButton, Button as $1obPJ$Button, useTranslate as $1obPJ$useTranslate, useGetList as $1obPJ$useGetList, useDataProvider as $1obPJ$useDataProvider, Loading as $1obPJ$Loading, Error as $1obPJ$Error, useAuthProvider as $1obPJ$useAuthProvider, Toolbar as $1obPJ$Toolbar, SaveButton as $1obPJ$SaveButton, DeleteButton as $1obPJ$DeleteButton, EditButton as $1obPJ$EditButton, List as $1obPJ$List1, CreateButton as $1obPJ$CreateButton, ExportButton as $1obPJ$ExportButton, Show as $1obPJ$Show, useLogin as $1obPJ$useLogin, useGetIdentity as $1obPJ$useGetIdentity, useSafeSetState as $1obPJ$useSafeSetState, useLocaleState as $1obPJ$useLocaleState, Form as $1obPJ$Form, TextInput as $1obPJ$TextInput, required as $1obPJ$required, minLength as $1obPJ$minLength, email as $1obPJ$email, Notification as $1obPJ$Notification, Resource as $1obPJ$Resource, useUserMenu as $1obPJ$useUserMenu, UserMenu as $1obPJ$UserMenu, Logout as $1obPJ$Logout, useGetPermissions as $1obPJ$useGetPermissions} from "react-admin";
+import {useCreateContainer as $1obPJ$useCreateContainer, useCreateContainerUri as $1obPJ$useCreateContainerUri} from "@semapps/semantic-data-provider";
 import $1obPJ$muiiconsmaterialShare from "@mui/icons-material/Share";
 import {Dialog as $1obPJ$Dialog, DialogTitle as $1obPJ$DialogTitle, DialogContent as $1obPJ$DialogContent, DialogActions as $1obPJ$DialogActions, TextField as $1obPJ$TextField, List as $1obPJ$List, ListItem as $1obPJ$ListItem, ListItemAvatar as $1obPJ$ListItemAvatar, Avatar as $1obPJ$Avatar, ListItemText as $1obPJ$ListItemText, ListItemSecondaryAction as $1obPJ$ListItemSecondaryAction, IconButton as $1obPJ$IconButton, Menu as $1obPJ$Menu, MenuItem as $1obPJ$MenuItem, ListItemIcon as $1obPJ$ListItemIcon, useMediaQuery as $1obPJ$useMediaQuery, DialogContentText as $1obPJ$DialogContentText, Button as $1obPJ$Button1, Card as $1obPJ$Card, Typography as $1obPJ$Typography, CardActions as $1obPJ$CardActions, CardContent as $1obPJ$CardContent, CircularProgress as $1obPJ$CircularProgress, LinearProgress as $1obPJ$LinearProgress, Box as $1obPJ$Box} from "@mui/material";
 import $1obPJ$muistylesmakeStyles from "@mui/styles/makeStyles";
@@ -520,12 +520,11 @@ const $3ecc2efd72c45a68$export$edca379024d80309 = {
 
 
 const $abd69a52484f41d9$var$useCheckPermissions = (uri, mode, redirectUrl = "/")=>{
-    const { data: identity, isLoading: isLoading } = (0, $1obPJ$useGetIdentity)();
     const { permissions: permissions } = (0, $1obPJ$usePermissions)(uri);
     const notify = (0, $1obPJ$useNotify)();
     const redirect = (0, $1obPJ$useRedirect)();
     (0, $1obPJ$useEffect)(()=>{
-        if (!isLoading && identity && permissions && !permissions.some((p)=>(0, $3ecc2efd72c45a68$export$cae945d60b6cbe50)[mode].includes(p["acl:mode"]))) {
+        if (permissions && !permissions.some((p)=>(0, $3ecc2efd72c45a68$export$cae945d60b6cbe50)[mode].includes(p["acl:mode"]))) {
             notify((0, $3ecc2efd72c45a68$export$12e6e8e71d10a4bb)[mode], {
                 type: "error"
             });
@@ -533,10 +532,8 @@ const $abd69a52484f41d9$var$useCheckPermissions = (uri, mode, redirectUrl = "/")
         }
     }, [
         permissions,
-        identity,
         redirect,
-        notify,
-        isLoading
+        notify
     ]);
     return permissions;
 };
@@ -555,6 +552,7 @@ $f2c5683e04dee28c$var$CreateWithPermissions.defaultProps = {
     actions: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$CreateActions), {})
 };
 var $f2c5683e04dee28c$export$2e2bcd8739ae039 = $f2c5683e04dee28c$var$CreateWithPermissions;
+
 
 
 
@@ -1022,12 +1020,15 @@ var $7dac2771cc5eb38b$export$2e2bcd8739ae039 = $7dac2771cc5eb38b$var$Permissions
 const $62be5dcee9954341$var$EditActionsWithPermissions = ()=>{
     const { hasList: hasList, hasShow: hasShow } = (0, $1obPJ$useResourceDefinition)();
     const record = (0, $1obPJ$useRecordContext)();
-    const { permissions: permissions } = (0, $1obPJ$usePermissionsOptimized)(record?.id);
+    const { permissions: permissions } = (0, $1obPJ$usePermissions)(record?.id);
+    const resource = (0, $1obPJ$useResourceContext)();
+    const containerUri = (0, $1obPJ$useCreateContainerUri)()(resource);
+    const { permissions: containerPermissions } = (0, $1obPJ$usePermissions)(containerUri);
     return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$TopToolbar), {
         children: [
-            hasList && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ListButton), {}),
-            hasShow && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ShowButton), {}),
-            !!permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $7dac2771cc5eb38b$export$2e2bcd8739ae039), {})
+            hasList && containerPermissions && containerPermissions.some((p)=>(0, $3ecc2efd72c45a68$export$dc3840a4e2a72b8c).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ListButton), {}),
+            hasShow && permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$d37f0098bcf84c55).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ShowButton), {}),
+            permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $7dac2771cc5eb38b$export$2e2bcd8739ae039), {})
         ]
     });
 };
@@ -1169,13 +1170,17 @@ var $a4ded8260cc90dad$export$2e2bcd8739ae039 = $a4ded8260cc90dad$var$ListWithPer
 
 
 
+
 const $d1f54fc03225e8ee$var$ShowActionsWithPermissions = ()=>{
     const { hasList: hasList, hasEdit: hasEdit } = (0, $1obPJ$useResourceDefinition)();
     const record = (0, $1obPJ$useRecordContext)();
     const { permissions: permissions } = (0, $1obPJ$usePermissions)(record?.id);
+    const resource = (0, $1obPJ$useResourceContext)();
+    const containerUri = (0, $1obPJ$useCreateContainerUri)()(resource);
+    const { permissions: containerPermissions } = (0, $1obPJ$usePermissions)(containerUri);
     return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$TopToolbar), {
         children: [
-            hasList && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ListButton), {}),
+            hasList && containerPermissions && containerPermissions.some((p)=>(0, $3ecc2efd72c45a68$export$dc3840a4e2a72b8c).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ListButton), {}),
             hasEdit && permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$b9d0f5f3ab5e453b).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$EditButton), {}),
             permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $7dac2771cc5eb38b$export$2e2bcd8739ae039), {})
         ]

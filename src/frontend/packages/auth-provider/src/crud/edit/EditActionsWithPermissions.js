@@ -1,24 +1,33 @@
 import React from 'react';
 import {
-  usePermissionsOptimized,
   ShowButton,
   ListButton,
   TopToolbar,
+  usePermissions,
   useResourceDefinition,
-  useRecordContext
+  useRecordContext,
+  useResourceContext
 } from 'react-admin';
+import { useCreateContainerUri } from '@semapps/semantic-data-provider';
 import PermissionsButton from '../../components/PermissionsButton/PermissionsButton';
-import { rightsToControl } from '../../constants';
+import { rightsToControl, rightsToList, rightsToShow } from '../../constants';
 
 const EditActionsWithPermissions = () => {
   const { hasList, hasShow } = useResourceDefinition();
   const record = useRecordContext();
-  const { permissions } = usePermissionsOptimized(record?.id);
+  const { permissions } = usePermissions(record?.id);
+
+  const resource = useResourceContext();
+  const containerUri = useCreateContainerUri()(resource);
+  const { permissions: containerPermissions } = usePermissions(containerUri);
+
   return (
     <TopToolbar>
-      {hasList && <ListButton />}
-      {hasShow && <ShowButton />}
-      {!!permissions && permissions.some(p => rightsToControl.includes(p['acl:mode'])) && <PermissionsButton />}
+      {hasList && containerPermissions && containerPermissions.some(p => rightsToList.includes(p['acl:mode'])) && (
+        <ListButton />
+      )}
+      {hasShow && permissions && permissions.some(p => rightsToShow.includes(p['acl:mode'])) && <ShowButton />}
+      {permissions && permissions.some(p => rightsToControl.includes(p['acl:mode'])) && <PermissionsButton />}
     </TopToolbar>
   );
 };

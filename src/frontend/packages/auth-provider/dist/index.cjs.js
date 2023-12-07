@@ -559,12 +559,11 @@ const $09162138eadab4b9$export$edca379024d80309 = {
 
 
 const $673a0cc190160362$var$useCheckPermissions = (uri, mode, redirectUrl = "/")=>{
-    const { data: identity, isLoading: isLoading } = (0, $4Uj5b$reactadmin.useGetIdentity)();
     const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)(uri);
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
     const redirect = (0, $4Uj5b$reactadmin.useRedirect)();
     (0, $4Uj5b$react.useEffect)(()=>{
-        if (!isLoading && identity && permissions && !permissions.some((p)=>(0, $09162138eadab4b9$export$cae945d60b6cbe50)[mode].includes(p["acl:mode"]))) {
+        if (permissions && !permissions.some((p)=>(0, $09162138eadab4b9$export$cae945d60b6cbe50)[mode].includes(p["acl:mode"]))) {
             notify((0, $09162138eadab4b9$export$12e6e8e71d10a4bb)[mode], {
                 type: "error"
             });
@@ -572,10 +571,8 @@ const $673a0cc190160362$var$useCheckPermissions = (uri, mode, redirectUrl = "/")
         }
     }, [
         permissions,
-        identity,
         redirect,
-        notify,
-        isLoading
+        notify
     ]);
     return permissions;
 };
@@ -594,6 +591,7 @@ $7c87aa71409e289a$var$CreateWithPermissions.defaultProps = {
     actions: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.CreateActions), {})
 };
 var $7c87aa71409e289a$export$2e2bcd8739ae039 = $7c87aa71409e289a$var$CreateWithPermissions;
+
 
 
 
@@ -1061,12 +1059,15 @@ var $49d4f2fbe6f28cfd$export$2e2bcd8739ae039 = $49d4f2fbe6f28cfd$var$Permissions
 const $4076d0aea1b9e239$var$EditActionsWithPermissions = ()=>{
     const { hasList: hasList, hasShow: hasShow } = (0, $4Uj5b$reactadmin.useResourceDefinition)();
     const record = (0, $4Uj5b$reactadmin.useRecordContext)();
-    const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissionsOptimized)(record?.id);
+    const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)(record?.id);
+    const resource = (0, $4Uj5b$reactadmin.useResourceContext)();
+    const containerUri = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainerUri)()(resource);
+    const { permissions: containerPermissions } = (0, $4Uj5b$reactadmin.usePermissions)(containerUri);
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactadmin.TopToolbar), {
         children: [
-            hasList && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ListButton), {}),
-            hasShow && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ShowButton), {}),
-            !!permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {})
+            hasList && containerPermissions && containerPermissions.some((p)=>(0, $09162138eadab4b9$export$dc3840a4e2a72b8c).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ListButton), {}),
+            hasShow && permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$d37f0098bcf84c55).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ShowButton), {}),
+            permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {})
         ]
     });
 };
@@ -1208,13 +1209,17 @@ var $15811bcd3a3eb59f$export$2e2bcd8739ae039 = $15811bcd3a3eb59f$var$ListWithPer
 
 
 
+
 const $83b0bd683a7f3aa8$var$ShowActionsWithPermissions = ()=>{
     const { hasList: hasList, hasEdit: hasEdit } = (0, $4Uj5b$reactadmin.useResourceDefinition)();
     const record = (0, $4Uj5b$reactadmin.useRecordContext)();
     const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)(record?.id);
+    const resource = (0, $4Uj5b$reactadmin.useResourceContext)();
+    const containerUri = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainerUri)()(resource);
+    const { permissions: containerPermissions } = (0, $4Uj5b$reactadmin.usePermissions)(containerUri);
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactadmin.TopToolbar), {
         children: [
-            hasList && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ListButton), {}),
+            hasList && containerPermissions && containerPermissions.some((p)=>(0, $09162138eadab4b9$export$dc3840a4e2a72b8c).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ListButton), {}),
             hasEdit && permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$b9d0f5f3ab5e453b).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.EditButton), {}),
             permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {})
         ]
