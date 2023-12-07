@@ -24,6 +24,7 @@ $parcel$export(module.exports, "buildBlankNodesQuery", () => $64d4ce40c79d1509$e
 $parcel$export(module.exports, "useGetExternalLink", () => $85e9a897c6d7c14a$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useContainers", () => $3158e0dc13ffffaa$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useCreateContainer", () => $99ed32cbdb76cb50$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useCreateContainerUri", () => $6d454d5c0170c248$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useDataModel", () => $63a32f1a35c6f80e$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useDataModels", () => $8d622cbd05acb834$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useDataServers", () => $9b817943cd488c90$export$2e2bcd8739ae039);
@@ -1295,7 +1296,7 @@ var $b32fd11d6aa83d1c$export$2e2bcd8739ae039 = $b32fd11d6aa83d1c$var$findCreateC
 
 
 
-const $99ed32cbdb76cb50$var$useCreateContainer = (resourceId)=>{
+/** @deprecated Use "useCreateContainerUri" instead */ const $99ed32cbdb76cb50$var$useCreateContainer = (resourceId)=>{
     const dataModel = (0, $63a32f1a35c6f80e$export$2e2bcd8739ae039)(resourceId);
     const dataServers = (0, $9b817943cd488c90$export$2e2bcd8739ae039)();
     const [createContainer, setCreateContainer] = (0, $bkNnK$react.useState)();
@@ -1324,6 +1325,10 @@ var $99ed32cbdb76cb50$export$2e2bcd8739ae039 = $99ed32cbdb76cb50$var$useCreateCo
 
 
 
+
+
+
+
 const $8d622cbd05acb834$var$useDataModels = ()=>{
     // Get the raw data provider, since useDataProvider returns a wrapper
     const dataProvider = (0, $bkNnK$react.useContext)((0, $bkNnK$reactadmin.DataProviderContext));
@@ -1337,6 +1342,32 @@ const $8d622cbd05acb834$var$useDataModels = ()=>{
     return dataModels;
 };
 var $8d622cbd05acb834$export$2e2bcd8739ae039 = $8d622cbd05acb834$var$useDataModels;
+
+
+const $6d454d5c0170c248$var$useCreateContainerUri = ()=>{
+    const dataModels = (0, $8d622cbd05acb834$export$2e2bcd8739ae039)();
+    const dataServers = (0, $9b817943cd488c90$export$2e2bcd8739ae039)();
+    const getContainerUri = (0, $bkNnK$react.useCallback)((resourceId)=>{
+        if (!dataModels || !dataServers || !dataModels[resourceId]) return undefined;
+        const dataModel = dataModels[resourceId];
+        if (dataModel.create?.container) {
+            const [serverKey, path] = Object.entries(dataModel.create.container)[0];
+            if (!serverKey || !dataServers[serverKey]) throw new Error(`Wrong key for the dataModel.create.container config of resource ${resourceId}`);
+            return (0, ($parcel$interopDefault($bkNnK$urljoin)))(dataServers[serverKey].baseUrl, path);
+        }
+        if (dataModel.create?.server) return (0, $b32fd11d6aa83d1c$export$2e2bcd8739ae039)(dataModel.types, dataModel.create?.server, dataServers);
+        const defaultServerKey = (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("default", dataServers);
+        if (!defaultServerKey) throw new Error(`No default dataServer found. You can set explicitly one setting the "default" attribute to true`);
+        return (0, $b32fd11d6aa83d1c$export$2e2bcd8739ae039)(dataModel.types, defaultServerKey, dataServers);
+    }, [
+        dataModels,
+        dataServers
+    ]);
+    return getContainerUri;
+};
+var $6d454d5c0170c248$export$2e2bcd8739ae039 = $6d454d5c0170c248$var$useCreateContainerUri;
+
+
 
 
 

@@ -37,8 +37,10 @@ export function useGetExternalLink(componentExternalLinks: any): (record: any) =
 export const useDataModel: (resourceId: string) => any;
 export function useDataServers(): undefined;
 export const useContainers: (resourceId: string, serverKeys?: string) => Record<DataServerKey, string[]> | undefined;
+/** @deprecated Use "useCreateContainerUri" instead */
 export function useCreateContainer(resourceId: any): undefined;
 export function useDataModels(): undefined;
+export function useCreateContainerUri(): (resourceId: any) => any;
 /**
  * @example
  * <Show>

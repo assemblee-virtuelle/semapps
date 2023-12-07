@@ -1274,7 +1274,7 @@ var $a6f9067f89a63589$export$2e2bcd8739ae039 = $a6f9067f89a63589$var$findCreateC
 
 
 
-const $7bd037d7ec9d51f8$var$useCreateContainer = (resourceId)=>{
+/** @deprecated Use "useCreateContainerUri" instead */ const $7bd037d7ec9d51f8$var$useCreateContainer = (resourceId)=>{
     const dataModel = (0, $e5a0eacd756fd1d5$export$2e2bcd8739ae039)(resourceId);
     const dataServers = (0, $11b469d0a927fb46$export$2e2bcd8739ae039)();
     const [createContainer, setCreateContainer] = (0, $fj9kP$useState)();
@@ -1303,6 +1303,10 @@ var $7bd037d7ec9d51f8$export$2e2bcd8739ae039 = $7bd037d7ec9d51f8$var$useCreateCo
 
 
 
+
+
+
+
 const $349fed82907088e5$var$useDataModels = ()=>{
     // Get the raw data provider, since useDataProvider returns a wrapper
     const dataProvider = (0, $fj9kP$useContext)((0, $fj9kP$DataProviderContext));
@@ -1316,6 +1320,32 @@ const $349fed82907088e5$var$useDataModels = ()=>{
     return dataModels;
 };
 var $349fed82907088e5$export$2e2bcd8739ae039 = $349fed82907088e5$var$useDataModels;
+
+
+const $ecd88f09deedce53$var$useCreateContainerUri = ()=>{
+    const dataModels = (0, $349fed82907088e5$export$2e2bcd8739ae039)();
+    const dataServers = (0, $11b469d0a927fb46$export$2e2bcd8739ae039)();
+    const getContainerUri = (0, $fj9kP$useCallback)((resourceId)=>{
+        if (!dataModels || !dataServers || !dataModels[resourceId]) return undefined;
+        const dataModel = dataModels[resourceId];
+        if (dataModel.create?.container) {
+            const [serverKey, path] = Object.entries(dataModel.create.container)[0];
+            if (!serverKey || !dataServers[serverKey]) throw new Error(`Wrong key for the dataModel.create.container config of resource ${resourceId}`);
+            return (0, $fj9kP$urljoin)(dataServers[serverKey].baseUrl, path);
+        }
+        if (dataModel.create?.server) return (0, $a6f9067f89a63589$export$2e2bcd8739ae039)(dataModel.types, dataModel.create?.server, dataServers);
+        const defaultServerKey = (0, $8326b88c1a913ca9$export$2e2bcd8739ae039)("default", dataServers);
+        if (!defaultServerKey) throw new Error(`No default dataServer found. You can set explicitly one setting the "default" attribute to true`);
+        return (0, $a6f9067f89a63589$export$2e2bcd8739ae039)(dataModel.types, defaultServerKey, dataServers);
+    }, [
+        dataModels,
+        dataServers
+    ]);
+    return getContainerUri;
+};
+var $ecd88f09deedce53$export$2e2bcd8739ae039 = $ecd88f09deedce53$var$useCreateContainerUri;
+
+
 
 
 
@@ -1512,5 +1542,5 @@ var $6844bbce0ad66151$export$2e2bcd8739ae039 = $6844bbce0ad66151$var$Reification
 
 
 
-export {$243bf28fbb1b868f$export$2e2bcd8739ae039 as dataProvider, $6cde9a8fbbde3ffb$export$2e2bcd8739ae039 as buildSparqlQuery, $865f630cc944e818$export$2e2bcd8739ae039 as buildBlankNodesQuery, $87656edf926c0f1f$export$2e2bcd8739ae039 as useGetExternalLink, $586fa0ea9d02fa12$export$2e2bcd8739ae039 as useContainers, $7bd037d7ec9d51f8$export$2e2bcd8739ae039 as useCreateContainer, $e5a0eacd756fd1d5$export$2e2bcd8739ae039 as useDataModel, $349fed82907088e5$export$2e2bcd8739ae039 as useDataModels, $11b469d0a927fb46$export$2e2bcd8739ae039 as useDataServers, $406574efa35ec6f1$export$2e2bcd8739ae039 as FilterHandler, $1d8c1cbe606a94ae$export$2e2bcd8739ae039 as GroupedReferenceHandler, $6844bbce0ad66151$export$2e2bcd8739ae039 as ReificationArrayInput};
+export {$243bf28fbb1b868f$export$2e2bcd8739ae039 as dataProvider, $6cde9a8fbbde3ffb$export$2e2bcd8739ae039 as buildSparqlQuery, $865f630cc944e818$export$2e2bcd8739ae039 as buildBlankNodesQuery, $87656edf926c0f1f$export$2e2bcd8739ae039 as useGetExternalLink, $586fa0ea9d02fa12$export$2e2bcd8739ae039 as useContainers, $7bd037d7ec9d51f8$export$2e2bcd8739ae039 as useCreateContainer, $ecd88f09deedce53$export$2e2bcd8739ae039 as useCreateContainerUri, $e5a0eacd756fd1d5$export$2e2bcd8739ae039 as useDataModel, $349fed82907088e5$export$2e2bcd8739ae039 as useDataModels, $11b469d0a927fb46$export$2e2bcd8739ae039 as useDataServers, $406574efa35ec6f1$export$2e2bcd8739ae039 as FilterHandler, $1d8c1cbe606a94ae$export$2e2bcd8739ae039 as GroupedReferenceHandler, $6844bbce0ad66151$export$2e2bcd8739ae039 as ReificationArrayInput};
 //# sourceMappingURL=index.es.js.map
