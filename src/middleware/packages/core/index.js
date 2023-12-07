@@ -1,5 +1,6 @@
 module.exports = {
   CoreService: require('./service'),
-  defaultContext: require('./config/context.json'),
-  defaultOntologies: require('./config/ontologies.json')
+  coreOntologies: require('./ontologies/core'),
+  customOntologies: require('./ontologies/custom'),
+  solidOntologies: require('./ontologies/solid')
 };

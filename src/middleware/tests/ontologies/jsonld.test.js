@@ -114,7 +114,7 @@ const testCases = {
 };
 
 test.each(Object.keys(testCases))('Merging %s JSON-LD contexts', async key => {
-  const newContext = await broker.call('jsonld.mergeContexts', {
+  const newContext = await broker.call('jsonld.context.merge', {
     a: testCases[key].a,
     b: testCases[key].b
   });

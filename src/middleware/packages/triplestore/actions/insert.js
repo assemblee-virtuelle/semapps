@@ -32,7 +32,7 @@ module.exports = {
 
     const rdf =
       contentType === MIME_TYPES.JSON
-        ? await ctx.call('jsonld.toRDF', {
+        ? await ctx.call('jsonld.parser.toRDF', {
             input: resource,
             options: {
               format: 'application/n-quads'

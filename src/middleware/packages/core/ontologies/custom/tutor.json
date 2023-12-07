@@ -1,0 +1,25 @@
+{
+  "prefix": "tutor",
+  "url": "http://virtual-assembly.org/ontologies/pair-tutor#",
+  "owl": "https://raw.githubusercontent.com/reconnexion/minicourses/master/ontology/pair-tutor.owl",
+  "jsonldContext": {
+    "tutor:currentLesson": {
+      "@type": "@id"
+    },
+    "tutor:hasRegistration": {
+      "@type": "@id"
+    },
+    "tutor:registeredFor": {
+      "@type": "@id"
+    },
+    "tutor:registrant": {
+      "@type": "@id"
+    },
+    "tutor:registrationFor": {
+      "@type": "@id"
+    },
+    "tutor:lessonStarted": {
+      "@type": "xsd:dateTime"
+    }
+  }
+}

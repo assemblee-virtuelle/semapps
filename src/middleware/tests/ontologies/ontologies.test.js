@@ -1,4 +1,7 @@
+const fetch = require('node-fetch');
+const urlJoin = require('url-join');
 const initialize = require('./initialize');
+const CONFIG = require('../config');
 
 jest.setTimeout(10000);
 let broker;
@@ -124,13 +127,49 @@ describe('Ontologies registration', () => {
   });
 
   test('Get JSON-LD context', async () => {
-    const context = await broker.call('ldp.ontologies.getJsonLdContext');
+    const context = await broker.call('jsonld.context.get');
 
     expect(context).toEqual(
       expect.arrayContaining([ont1.jsonldContext, ont2.jsonldContext, expect.objectContaining(ont3.jsonldContext)])
     );
 
     // Note: Other tests for JSON-LD contexts are made on jsonld.test.js
+  });
+
+  test('Get parsed JSON-LD context', async () => {
+    const context = await broker.call('jsonld.context.get', { parse: true });
+
+    expect(context).toMatchObject({
+      ont1: 'https://www.w3.org/ns/ontology1#',
+      ont2: 'https://www.w3.org/ns/ontology2#',
+      ont3: 'https://www.w3.org/ns/ontology3#',
+      label: { '@id': 'https://www.w3.org/ns/ontology1#label' },
+      friend: {
+        '@id': 'https://www.w3.org/ns/ontology3#friend',
+        '@type': '@id',
+        '@protected': true
+      }
+    });
+  });
+
+  test('Local context endpoint', async () => {
+    const res = await fetch(urlJoin(CONFIG.HOME_URL, 'context.json'));
+
+    expect(res.ok).toBeTruthy();
+
+    const context = await res.json();
+
+    expect(context).toMatchObject({
+      ont1: 'https://www.w3.org/ns/ontology1#',
+      ont2: 'https://www.w3.org/ns/ontology2#',
+      ont3: 'https://www.w3.org/ns/ontology3#',
+      label: { '@id': 'https://www.w3.org/ns/ontology1#label' },
+      friend: {
+        '@id': 'https://www.w3.org/ns/ontology3#friend',
+        '@type': '@id',
+        '@protected': true
+      }
+    });
   });
 
   test('Get RDF prefixes', async () => {

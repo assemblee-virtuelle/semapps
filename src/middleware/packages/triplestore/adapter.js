@@ -63,7 +63,7 @@ class TripleStoreAdapter {
         dataset: this.dataset
       })
       .then(result => {
-        return this.broker.call('jsonld.frame', {
+        return this.broker.call('jsonld.parser.frame', {
           input: result,
           frame: {
             '@context': { '@vocab': this.ontology }
@@ -107,7 +107,7 @@ class TripleStoreAdapter {
         dataset: this.dataset
       })
       .then(result => {
-        return this.broker.call('jsonld.frame', {
+        return this.broker.call('jsonld.parser.frame', {
           input: result,
           frame: {
             '@context': { '@vocab': this.ontology },

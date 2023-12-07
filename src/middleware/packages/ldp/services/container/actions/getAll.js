@@ -1,5 +1,4 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getPrefixRdf } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
@@ -9,7 +8,7 @@ module.exports = {
   async handler(ctx) {
     const result = await ctx.call('triplestore.query', {
       query: `
-        ${getPrefixRdf(this.settings.ontologies)}
+        PREFIX ldp: <http://www.w3.org/ns/ldp#>
         SELECT ?containerUri
         WHERE {
           ?containerUri a ldp:Container .

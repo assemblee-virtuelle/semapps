@@ -70,7 +70,7 @@ The following service actions are available:
 ### `get`
 
 - Get all resources attached to a container
-- Use the LDP ontology of direct containers
+- Use the LDP ontology of BasicContainers
 
 ##### Parameters
 

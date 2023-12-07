@@ -5,7 +5,7 @@ const { DataFactory, Writer } = require('n3');
 
 const { quad, namedNode, literal, blankNode } = DataFactory;
 const { MoleculerError } = require('moleculer').Errors;
-const { getPrefixJSON, createFragmentURL, regexProtocolAndHostAndPort, defaultToArray } = require('@semapps/ldp');
+const { createFragmentURL, regexProtocolAndHostAndPort, defaultToArray } = require('@semapps/ldp');
 const { parseHeader } = require('@semapps/middlewares');
 
 const prefixes = {
@@ -151,7 +151,6 @@ module.exports = {
   settings: {
     baseUrl: null,
     mirrorGraphName: 'http://semapps.org/mirror',
-    ontologies: [],
     title: null,
     description: null,
     license: null
@@ -184,15 +183,12 @@ module.exports = {
     get: {
       visibility: 'public',
       params: {
-        accept: { type: 'string', optional: true },
-        webId: { type: 'string', optional: true }
+        accept: { type: 'string', optional: true }
       },
       async handler(ctx) {
-        let { webId, accept } = ctx.params;
-        webId = webId || ctx.meta.webId || 'anon';
+        const accept = ctx.params.accept || MIME_TYPES.TURTLE;
 
-        accept = accept || MIME_TYPES.TURTLE;
-
+        const ontologies = await ctx.call('ldp.ontologies.list');
         const partitions = await this.getContainers(ctx);
 
         const url = urlJoin(this.settings.baseUrl, '.well-known/void');
@@ -261,11 +257,11 @@ module.exports = {
           p: namedNode('http://rdfs.org/ns/void#rootResource'),
           o: namedNode(this.settings.baseUrl)
         });
-        for (const onto of this.settings.ontologies) {
+        for (const ontology of ontologies) {
           graph.push({
             s: namedNode(thisServer),
             p: namedNode('http://rdfs.org/ns/void#vocabulary'),
-            o: namedNode(onto.url)
+            o: namedNode(ontology.url)
           });
         }
 
@@ -380,9 +376,9 @@ module.exports = {
       return res;
     },
     async formatOutput(ctx, output, voidUrl, jsonLD) {
-      const prefix = getPrefixJSON(this.settings.ontologies);
+      const prefix = await ctx.call('ldp.ontologies.getJsonLdPrefixes');
       if (!jsonLD) {
-        const turtle = await new Promise((resolve, reject) => {
+        const turtle = await new Promise(resolve => {
           const writer = new Writer({
             prefixes: { ...prefixes, ...prefix, '': `${voidUrl}#` },
             format: 'Turtle'
@@ -432,7 +428,7 @@ module.exports = {
 
       const jsonLd = JSON.parse(await streamToString(mySerializer));
 
-      const compactJsonLd = await ctx.call('jsonld.frame', {
+      const compactJsonLd = await ctx.call('jsonld.parser.frame', {
         input: jsonLd,
         frame: {
           '@context': jsonldContext,

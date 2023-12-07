@@ -11,7 +11,7 @@ const { TripleStoreService } = require('@semapps/triplestore');
 const { VoidService } = require('@semapps/void');
 const { WebAclService } = require('@semapps/webacl');
 const { WebfingerService } = require('@semapps/webfinger');
-const defaultOntologies = require('./config/ontologies.json');
+const coreOntologies = require('./ontologies/core');
 
 const botsContainer = {
   path: '/bots',
@@ -140,7 +140,7 @@ const CoreService = {
         mixins: [DocumentTaggerMixin],
         settings: {
           baseUrl,
-          ontologies: ontologies || defaultOntologies,
+          ontologies: ontologies || coreOntologies,
           containers: containers || (this.settings.mirror !== false ? [botsContainer] : []),
           ...this.settings.ldp,
           defaultContainerOptions: {
@@ -197,7 +197,6 @@ const CoreService = {
       this.broker.createService(VoidService, {
         settings: {
           baseUrl,
-          ontologies: ontologies || defaultOntologies,
           ...this.settings.void
         }
       });

@@ -1,5 +1,8 @@
 {
   "@context": {
-    "ont1": "https://www.w3.org/ns/ontology1#"
+    "ont1": "https://www.w3.org/ns/ontology1#",
+    "label": {
+      "@id": "ont1:label"
+    }
   }
 }

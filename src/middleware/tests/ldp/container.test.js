@@ -1,4 +1,3 @@
-const { getPrefixJSON } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const CONFIG = require('../config');
 const ontologies = require('../ontologies.json');
@@ -66,7 +65,6 @@ describe('LDP container tests', () => {
         accept: MIME_TYPES.JSON
       })
     ).resolves.toMatchObject({
-      '@context': getPrefixJSON(ontologies),
       '@id': `${CONFIG.HOME_URL}resources`,
       '@type': ['ldp:Container', 'ldp:BasicContainer'],
       'ldp:contains': [
@@ -194,7 +192,6 @@ describe('LDP container tests', () => {
         accept: MIME_TYPES.JSON
       })
     ).resolves.toMatchObject({
-      '@context': getPrefixJSON(ontologies),
       '@id': `${CONFIG.HOME_URL}resources`,
       '@type': ['ldp:Container', 'ldp:BasicContainer'],
       'ldp:contains': [

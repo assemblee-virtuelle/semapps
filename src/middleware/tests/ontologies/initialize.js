@@ -1,5 +1,6 @@
 const path = require('path');
 const { ServiceBroker } = require('moleculer');
+const ApiGatewayService = require('moleculer-web');
 const { JsonLdService } = require('@semapps/jsonld');
 const { LdpOntologiesService } = require('@semapps/ldp');
 const { TripleStoreAdapter, TripleStoreService } = require('@semapps/triplestore');
@@ -20,6 +21,8 @@ module.exports = async () => {
 
   await broker.createService(JsonLdService, {
     settings: {
+      baseUri: CONFIG.HOME_URL,
+      localContextPath: 'context.json',
       // Fake contexts to avoid validation errors
       remoteContextFiles: [
         {
@@ -42,9 +45,12 @@ module.exports = async () => {
       mainDataset: CONFIG.MAIN_DATASET
     }
   });
+
   await broker.createService(LdpOntologiesService, {
     adapter: new TripleStoreAdapter({ type: 'Ontology', dataset: CONFIG.SETTINGS_DATASET })
   });
+
+  await broker.createService(ApiGatewayService);
 
   await broker.start();
 

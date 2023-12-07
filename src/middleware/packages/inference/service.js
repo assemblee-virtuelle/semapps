@@ -147,7 +147,7 @@ module.exports = {
   events: {
     async 'ldp.resource.created'(ctx) {
       let { newData } = ctx.params;
-      newData = await ctx.call('jsonld.expand', { input: newData });
+      newData = await ctx.call('jsonld.parser.expand', { input: newData });
 
       let triplesToAdd = this.generateInverseTriplesFromResource(newData[0]);
 
@@ -176,7 +176,7 @@ module.exports = {
     },
     async 'ldp.resource.deleted'(ctx) {
       let { oldData } = ctx.params;
-      oldData = await ctx.call('jsonld.expand', { input: oldData });
+      oldData = await ctx.call('jsonld.parser.expand', { input: oldData });
 
       const triplesToRemove = this.generateInverseTriplesFromResource(oldData[0]);
 
@@ -201,8 +201,8 @@ module.exports = {
     },
     async 'ldp.resource.updated'(ctx) {
       let { oldData, newData } = ctx.params;
-      oldData = await ctx.call('jsonld.expand', { input: oldData });
-      newData = await ctx.call('jsonld.expand', { input: newData });
+      oldData = await ctx.call('jsonld.parser.expand', { input: oldData });
+      newData = await ctx.call('jsonld.parser.expand', { input: newData });
 
       const triplesToRemove = this.generateInverseTriplesFromResource(oldData[0]);
       const triplesToAdd = this.generateInverseTriplesFromResource(newData[0]);

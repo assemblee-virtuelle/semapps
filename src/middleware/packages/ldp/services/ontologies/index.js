@@ -2,7 +2,7 @@ const DbService = require('moleculer-db');
 const { TripleStoreAdapter } = require('@semapps/triplestore');
 const findPrefixAction = require('./actions/findPrefix');
 const getByPrefixAction = require('./actions/getByPrefix');
-const getJsonLdContextAction = require('./actions/getJsonLdContext');
+const getJsonLdPrefixesAction = require('./actions/getJsonLdPrefixes');
 const getRdfPrefixesAction = require('./actions/getRdfPrefixes');
 const listAction = require('./actions/list');
 const registerAction = require('./actions/register');
@@ -15,7 +15,6 @@ module.exports = {
     idField: '@id',
     ontologies: []
   },
-  dependencies: ['jsonld'],
   async started() {
     for (const ontology of this.settings.ontologies) {
       await this.actions.register({ ...ontology, overwrite: true });
@@ -24,7 +23,7 @@ module.exports = {
   actions: {
     findPrefix: findPrefixAction,
     getByPrefix: getByPrefixAction,
-    getJsonLdContext: getJsonLdContextAction,
+    getJsonLdPrefixes: getJsonLdPrefixesAction,
     getRdfPrefixes: getRdfPrefixesAction,
     list: listAction,
     register: registerAction

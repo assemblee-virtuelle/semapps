@@ -14,18 +14,18 @@ module.exports = {
   async handler(ctx) {
     let { prefix, url, owl, jsonldContext, overwrite } = ctx.params;
 
-    const ontology = await this.actions.getByPrefix({ prefix, url }, { parentCtx: ctx });
+    const ontology = await this.actions.getByPrefix({ prefix }, { parentCtx: ctx });
 
     // Check that jsonldContext doesn't conflict with existing context
     if (jsonldContext) {
-      const existingContext = await this.actions.getJsonLdContext({}, { parentCtx: ctx });
+      const existingContext = await ctx.call('jsonld.context.get');
 
       // We do not use jsonld.mergeContexts because we don't want object properties to be overwritten
       const newContext = Array.isArray(existingContext)
         ? [...existingContext, jsonldContext]
         : [existingContext, jsonldContext];
 
-      const isValid = await ctx.call('jsonld.validate', { context: newContext });
+      const isValid = await ctx.call('jsonld.context.validate', { context: newContext });
 
       if (!isValid) throw new Error('The ontology JSON-LD context is in conflict with the existing JSON-LD context');
     }
@@ -54,5 +54,12 @@ module.exports = {
         jsonldContext
       });
     }
+
+    // TODO cache the new local context (use events ?)
+    //   // cache.set(contextUri, {
+    //   //   contextUrl: null,
+    //   //   documentUrl: contextUri,
+    //   //   document: contextJson
+    //   // });
   }
 };

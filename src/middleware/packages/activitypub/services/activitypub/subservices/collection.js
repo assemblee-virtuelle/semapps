@@ -278,7 +278,7 @@ const CollectionService = {
       }
 
       if (jsonContext) {
-        returnData = await ctx.call('jsonld.compact', {
+        returnData = await ctx.call('jsonld.parser.compact', {
           input: returnData,
           context: jsonContext
         });

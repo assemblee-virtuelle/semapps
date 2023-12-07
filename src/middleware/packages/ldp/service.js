@@ -37,7 +37,6 @@ module.exports = {
     await this.broker.createService(LdpContainerService, {
       settings: {
         baseUrl,
-        ontologies,
         podProvider,
         mirrorGraphName
       },
@@ -47,7 +46,6 @@ module.exports = {
     await this.broker.createService(LdpResourceService, {
       settings: {
         baseUrl,
-        ontologies,
         podProvider,
         mirrorGraphName,
         preferredViewForResource,
@@ -59,7 +57,6 @@ module.exports = {
     await this.broker.createService(LdpRemoteService, {
       settings: {
         baseUrl,
-        ontologies,
         podProvider,
         mirrorGraphName
       }
@@ -83,7 +80,9 @@ module.exports = {
 
     await this.broker.createService(LdpOntologiesService, {
       adapter: new TripleStoreAdapter({ type: 'Ontology', dataset: settingsDataset }),
-      settings: {}
+      settings: {
+        ontologies
+      }
     });
 
     // Only create this service if a cacher is defined

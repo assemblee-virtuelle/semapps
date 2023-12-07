@@ -49,7 +49,7 @@ module.exports = {
         }
       }
 
-      [expandedResource] = await ctx.call('jsonld.expand', { input: resource });
+      [expandedResource] = await ctx.call('jsonld.parser.expand', { input: resource });
       isContainer = expandedResource['@type'].includes('http://www.w3.org/ns/ldp#Container');
 
       if (isContainer) {

@@ -1,6 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getPrefixRdf, getPrefixJSON, buildBlankNodesQuery } = require('../../../utils');
+const { buildBlankNodesQuery } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
@@ -42,7 +42,7 @@ module.exports = {
 
       let result = await ctx.call('triplestore.query', {
         query: `
-          ${getPrefixRdf(this.settings.ontologies)}
+          ${await ctx.call('ldp.ontologies.getRdfPrefixes')}
           CONSTRUCT  {
             ${blankNodesQuery.construct}
           }
@@ -60,10 +60,10 @@ module.exports = {
 
       // If we asked for JSON-LD, frame it using the correct context in order to have clean, consistent results
       if (accept === MIME_TYPES.JSON) {
-        result = await ctx.call('jsonld.frame', {
+        result = await ctx.call('jsonld.parser.frame', {
           input: result,
           frame: {
-            '@context': jsonContext || getPrefixJSON(this.settings.ontologies),
+            '@context': jsonContext || (await ctx.call('jsonld.context.get')),
             '@id': resourceUri
           }
         });

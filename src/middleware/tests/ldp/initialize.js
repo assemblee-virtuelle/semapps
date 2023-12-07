@@ -7,10 +7,8 @@ const { WebAclMiddleware } = require('@semapps/webacl');
 const { AuthLocalService } = require('@semapps/auth');
 const { WebIdService } = require('@semapps/webid');
 const path = require('path');
-const { getPrefixJSON } = require('@semapps/ldp');
 const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
-const ontologies = require('../ontologies.json');
 const { clearDataset } = require('../utils');
 
 // Give write permission on all containers to anonymous users
@@ -76,8 +74,6 @@ const initialize = async () => {
         password: CONFIG.JENA_PASSWORD,
         mainDataset: CONFIG.MAIN_DATASET
       },
-      ontologies,
-      jsonContext: getPrefixJSON(ontologies),
       containers,
       activitypub: false,
       mirror: false,
