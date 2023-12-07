@@ -10,7 +10,7 @@ const useCreateContainerUri = () => {
   const dataServers = useDataServers();
 
   const getContainerUri = useCallback(
-    resourceId => {
+    (resourceId: string) => {
       if (!dataModels || !dataServers || !dataModels[resourceId]) {
         return undefined;
       }
