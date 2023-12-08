@@ -1,4 +1,3 @@
-const DbService = require('moleculer-db');
 const { TripleStoreAdapter } = require('@semapps/triplestore');
 const findPrefixAction = require('./actions/findPrefix');
 const getByPrefixAction = require('./actions/getByPrefix');
@@ -9,15 +8,16 @@ const registerAction = require('./actions/register');
 
 module.exports = {
   name: 'ldp.ontologies',
-  mixins: [DbService],
-  adapter: new TripleStoreAdapter({ type: 'Ontology', dataset: 'settings' }),
   settings: {
     idField: '@id',
-    ontologies: []
+    ontologies: [],
+    dynamicRegistration: false
   },
   async started() {
-    for (const ontology of this.settings.ontologies) {
-      await this.actions.register({ ...ontology, overwrite: true });
+    if (this.settings.dynamicRegistration) {
+      for (const ontology of this.settings.ontologies) {
+        await this.actions.register({ ...ontology, overwrite: true });
+      }
     }
   },
   actions: {

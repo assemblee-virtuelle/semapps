@@ -1,0 +1,6 @@
+{
+  "prefix": "ont1",
+  "url": "https://www.w3.org/ns/ontology1#",
+  "jsonldContext": "https://www.w3.org/ns/ontology1.jsonld",
+  "preserveContextUri": true
+}

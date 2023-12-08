@@ -71,16 +71,17 @@ module.exports = {
 
 ## Settings
 
-| Property                     | Type       | Default                     | Description                                                              |
-| ---------------------------- | ---------- | --------------------------- | ------------------------------------------------------------------------ |
-| `baseUrl`                    | `String`   | **required**                | Base URL of the LDP server                                               |
-| `ontologies`                 | `[Array]`  | **required**                | List of ontology used ([format](../ldp/ontologies))                      |
-| `containers`                 | `[Object]` | **required**                | List of containers to set up, with their options (see below)             |
-| `defaultContainerOptions`    | `[Object]` |                             | Default options for all containers (see below)                           |
-| `mirrorGraphName`            | `String`   | "http://semapps.org/mirror" | Name of the RDF graph where to store mirrored data                       |
-| `podProvider`                | `Boolean`  | false                       | Set to true if your server is a POD provider                             |
-| `preferredViewForResource`   | `Function` |                             | Function called to generate a redirect to the preferred view (see below) |
-| `resourcesWithContainerPath` | `Boolean`  | true                        | If true, the URI of all new resources will include the container path    |
+| Property                        | Type       | Default                     | Description                                                                                                |
+| ------------------------------- | ---------- | --------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `baseUrl`                       | `String`   | **required**                | Base URL of the LDP server                                                                                 |
+| `ontologies`                    | `[Array]`  |                             | List of ontology used ([format](../ldp/ontologies)). Required if `dynamicOntologiesRegistration` is false. |
+| `dynamicOntologiesRegistration` | `Boolean`  | false                       | If true, ontologies can be registered dynamically using the `ldp.ontologies.register` action               |
+| `containers`                    | `[Object]` | **required**                | List of containers to set up, with their options (see below)                                               |
+| `defaultContainerOptions`       | `[Object]` |                             | Default options for all containers (see below)                                                             |
+| `mirrorGraphName`               | `String`   | "http://semapps.org/mirror" | Name of the RDF graph where to store mirrored data                                                         |
+| `podProvider`                   | `Boolean`  | false                       | Set to true if your server is a POD provider                                                               |
+| `preferredViewForResource`      | `Function` |                             | Function called to generate a redirect to the preferred view (see below)                                   |
+| `resourcesWithContainerPath`    | `Boolean`  | true                        | If true, the URI of all new resources will include the container path                                      |
 
 ## Container options
 

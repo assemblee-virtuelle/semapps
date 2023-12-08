@@ -17,6 +17,10 @@ module.exports = {
   async handler(ctx) {
     let { prefix, url, owl, jsonldContext, preserveContextUri, overwrite } = ctx.params;
 
+    if (!this.settings.dynamicRegistration) {
+      throw new Error('The register action is available only if dynamicRegistration is true');
+    }
+
     const ontology = await this.actions.getByPrefix({ prefix }, { parentCtx: ctx });
 
     if (preserveContextUri === true) {

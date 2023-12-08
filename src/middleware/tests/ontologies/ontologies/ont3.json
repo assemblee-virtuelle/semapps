@@ -1,0 +1,11 @@
+{
+  "prefix": "ont3",
+  "url": "https://www.w3.org/ns/ontology3#",
+  "jsonldContext": {
+    "friend": {
+      "@id": "ont3:friend",
+      "@type": "@id",
+      "@protected": true
+    }
+  }
+}

@@ -2,7 +2,6 @@ const path = require('path');
 const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
 const { JsonLdService } = require('@semapps/jsonld');
-const { CacherMiddleware } = require('@semapps/webacl');
 const { LdpOntologiesService } = require('@semapps/ldp');
 const { TripleStoreAdapter, TripleStoreService } = require('@semapps/triplestore');
 const CONFIG = require('../config');
@@ -48,13 +47,7 @@ module.exports = async cacher => {
     }
   });
 
-  await broker.createService(LdpOntologiesService, {
-    adapter: new TripleStoreAdapter({ type: 'Ontology', dataset: CONFIG.SETTINGS_DATASET })
-  });
-
   await broker.createService(ApiGatewayService);
-
-  await broker.start();
 
   return broker;
 };

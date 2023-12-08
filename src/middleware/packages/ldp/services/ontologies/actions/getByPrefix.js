@@ -9,19 +9,23 @@ module.exports = {
   async handler(ctx) {
     let { prefix } = ctx.params;
 
-    const [ontology] = await this._find(ctx, { query: { prefix } });
+    if (this.settings.dynamicRegistration) {
+      const [ontology] = await this._find(ctx, { query: { prefix } });
 
-    // If the jsonldContext is not an URL, it is an object to be parsed
-    if (ontology?.jsonldContext && !isURL(ontology.jsonldContext)) {
-      ontology.jsonldContext = JSON.parse(ontology.jsonldContext);
+      // If the jsonldContext is not an URL, it is an object to be parsed
+      if (ontology?.jsonldContext && !isURL(ontology.jsonldContext)) {
+        ontology.jsonldContext = JSON.parse(ontology.jsonldContext);
+      }
+
+      if (ontology?.preserveContextUri === 'true') {
+        ontology.preserveContextUri = true;
+      } else if (ontology?.preserveContextUri === 'false') {
+        ontology.preserveContextUri = false;
+      }
+
+      return ontology;
+    } else {
+      return this.settings.ontologies.find(o => o.prefix === prefix);
     }
-
-    if (ontology?.preserveContextUri === 'true') {
-      ontology.preserveContextUri = true;
-    } else if (ontology?.preserveContextUri === 'false') {
-      ontology.preserveContextUri = false;
-    }
-
-    return ontology;
   }
 };

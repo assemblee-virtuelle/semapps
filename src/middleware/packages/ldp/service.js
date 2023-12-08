@@ -1,3 +1,4 @@
+const DbService = require('moleculer-db');
 const { TripleStoreAdapter } = require('@semapps/triplestore');
 const LdpApiService = require('./services/api');
 const LdpContainerService = require('./services/container');
@@ -12,6 +13,7 @@ module.exports = {
   settings: {
     baseUrl: null,
     ontologies: [],
+    dynamicOntologiesRegistration: false,
     containers: [],
     podProvider: false,
     mirrorGraphName: 'http://semapps.org/mirror',
@@ -26,6 +28,7 @@ module.exports = {
       baseUrl,
       containers,
       ontologies,
+      dynamicOntologiesRegistration,
       podProvider,
       defaultContainerOptions,
       mirrorGraphName,
@@ -79,9 +82,13 @@ module.exports = {
     });
 
     await this.broker.createService(LdpOntologiesService, {
-      adapter: new TripleStoreAdapter({ type: 'Ontology', dataset: settingsDataset }),
+      mixins: dynamicOntologiesRegistration ? [DbService] : [],
+      adapter: dynamicOntologiesRegistration
+        ? new TripleStoreAdapter({ type: 'Ontology', dataset: settingsDataset })
+        : undefined,
       settings: {
-        ontologies
+        ontologies,
+        dynamicRegistration: dynamicOntologiesRegistration
       }
     });
 

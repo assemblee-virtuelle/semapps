@@ -1,54 +1,30 @@
 const fetch = require('node-fetch');
 const urlJoin = require('url-join');
+const DbService = require('moleculer-db');
+const { LdpOntologiesService } = require('@semapps/ldp');
+const { TripleStoreAdapter } = require('@semapps/triplestore');
 const initialize = require('./initialize');
 const CONFIG = require('../config');
+const ont1 = require('./ontologies/ont1.json');
+const ont2 = require('./ontologies/ont2.json');
+const ont3 = require('./ontologies/ont3.json');
+const ont4 = require('./ontologies/ont4.json');
 
 jest.setTimeout(10000);
 
-const ont1 = {
-  prefix: 'ont1',
-  url: 'https://www.w3.org/ns/ontology1#',
-  jsonldContext: 'https://www.w3.org/ns/ontology1.jsonld',
-  preserveContextUri: true
-};
-
-const ont2 = {
-  prefix: 'ont2',
-  url: 'https://www.w3.org/ns/ontology2#',
-  jsonldContext: 'https://www.w3.org/ns/ontology2.jsonld'
-};
-
-const ont3 = {
-  prefix: 'ont3',
-  url: 'https://www.w3.org/ns/ontology3#',
-  jsonldContext: {
-    friend: {
-      '@id': 'ont3:friend',
-      '@type': '@id',
-      '@protected': true
-    }
-  }
-};
-
-const ont4 = {
-  prefix: 'ont4',
-  url: 'https://www.w3.org/ns/ontology4#',
-  jsonldContext: {
-    ont4: 'https://www.w3.org/ns/ontology4#',
-    friend: {
-      '@id': 'ont4:friend',
-      '@type': '@id'
-    }
-  }
-};
-
 const localContextUri = urlJoin(CONFIG.HOME_URL, 'context.json');
 
-describe.each([false, true])('Ontologies registration with cacher %s', cacher => {
+describe.each([false, true])('Dynamic ontologies with cacher %s', cacher => {
   let broker;
 
   beforeAll(async () => {
     broker = await initialize(cacher);
+    await broker.createService(LdpOntologiesService, {
+      mixins: [DbService],
+      adapter: new TripleStoreAdapter({ type: 'Ontology', dataset: CONFIG.SETTINGS_DATASET }),
+      settings: { dynamicRegistration: true }
+    });
+    await broker.start();
   });
   afterAll(async () => {
     if (broker) await broker.stop();
