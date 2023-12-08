@@ -1,7 +1,14 @@
+const divider = {
+  type: 'html',
+  value: '<hr style="margin: 7px 0 5px 0;" />',
+  defaultStyle: true
+};
+
 module.exports = {
   guides: ['guides/ldp-server', 'guides/dms', 'guides/activitypub'],
   middleware: [
     'middleware/index',
+    divider,
     'middleware/core',
     {
       type: 'category',
@@ -13,35 +20,16 @@ module.exports = {
       items: ['middleware/activitypub/activities-handler', 'middleware/activitypub/activity-mapping']
     },
     'middleware/auth',
-    'middleware/backup',
+
     {
       type: 'category',
-      label: 'HTTP & LD Signature',
+      label: 'HTTP Signature',
       link: {
         type: 'doc',
         id: 'middleware/signature/index'
       },
       items: ['middleware/signature/keypair', 'middleware/signature/proxy']
     },
-    {
-      type: 'category',
-      label: 'Importer',
-      link: {
-        type: 'doc',
-        id: 'middleware/importer/index'
-      },
-      items: [
-        'middleware/importer/discourse',
-        'middleware/importer/drupal',
-        'middleware/importer/gogocarto',
-        'middleware/importer/humhub',
-        'middleware/importer/jotform',
-        'middleware/importer/mobilizon',
-        'middleware/importer/prestashop',
-        'middleware/importer/yeswiki'
-      ]
-    },
-    'middleware/inference',
     {
       type: 'category',
       label: 'JSON-LD',
@@ -67,32 +55,8 @@ module.exports = {
         'middleware/ldp/image-processor'
       ]
     },
-    'middleware/migration',
     'middleware/nodeinfo',
-    {
-      type: 'category',
-      label: 'Notifications',
-      link: {
-        type: 'doc',
-        id: 'middleware/notifications/index'
-      },
-      items: ['middleware/notifications/digest', 'middleware/notifications/single-mail']
-    },
     'middleware/sparql-endpoint',
-    {
-      type: 'category',
-      label: 'Sync',
-      link: {
-        type: 'doc',
-        id: 'middleware/sync/index'
-      },
-      items: [
-        'middleware/sync/objects-watcher',
-        'middleware/sync/aggregator',
-        'middleware/sync/mirror',
-        'middleware/sync/synchronizer'
-      ]
-    },
     {
       type: 'category',
       label: 'Triplestore',
@@ -118,8 +82,53 @@ module.exports = {
       ]
     },
     'middleware/webfinger',
-    'middleware/webhooks',
-    'middleware/webid'
+    'middleware/webid',
+    divider,
+    'middleware/backup',
+    {
+      type: 'category',
+      label: 'Importer',
+      link: {
+        type: 'doc',
+        id: 'middleware/importer/index'
+      },
+      items: [
+        'middleware/importer/discourse',
+        'middleware/importer/drupal',
+        'middleware/importer/gogocarto',
+        'middleware/importer/humhub',
+        'middleware/importer/jotform',
+        'middleware/importer/mobilizon',
+        'middleware/importer/prestashop',
+        'middleware/importer/yeswiki'
+      ]
+    },
+    'middleware/inference',
+    'middleware/migration',
+    {
+      type: 'category',
+      label: 'Notifications',
+      link: {
+        type: 'doc',
+        id: 'middleware/notifications/index'
+      },
+      items: ['middleware/notifications/digest', 'middleware/notifications/single-mail']
+    },
+    {
+      type: 'category',
+      label: 'Sync',
+      link: {
+        type: 'doc',
+        id: 'middleware/sync/index'
+      },
+      items: [
+        'middleware/sync/objects-watcher',
+        'middleware/sync/aggregator',
+        'middleware/sync/mirror',
+        'middleware/sync/synchronizer'
+      ]
+    },
+    'middleware/webhooks'
   ],
   frontend: [
     'frontend/index',
