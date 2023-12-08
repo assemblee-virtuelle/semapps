@@ -2,7 +2,7 @@ const DbService = require('moleculer-db');
 const { TripleStoreAdapter } = require('@semapps/triplestore');
 const findPrefixAction = require('./actions/findPrefix');
 const getByPrefixAction = require('./actions/getByPrefix');
-const getJsonLdPrefixesAction = require('./actions/getJsonLdPrefixes');
+const getPrefixesAction = require('./actions/getPrefixes');
 const getRdfPrefixesAction = require('./actions/getRdfPrefixes');
 const listAction = require('./actions/list');
 const registerAction = require('./actions/register');
@@ -23,7 +23,7 @@ module.exports = {
   actions: {
     findPrefix: findPrefixAction,
     getByPrefix: getByPrefixAction,
-    getJsonLdPrefixes: getJsonLdPrefixesAction,
+    getPrefixes: getPrefixesAction,
     getRdfPrefixes: getRdfPrefixesAction,
     list: listAction,
     register: registerAction

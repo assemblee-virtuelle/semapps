@@ -42,7 +42,15 @@ module.exports = {
       ]
     },
     'middleware/inference',
-    'middleware/jsonld',
+    {
+      type: 'category',
+      label: 'JSON-LD',
+      link: {
+        type: 'doc',
+        id: 'middleware/jsonld/index'
+      },
+      items: ['middleware/jsonld/parser', 'middleware/jsonld/context']
+    },
     {
       type: 'category',
       label: 'LDP',
@@ -53,6 +61,7 @@ module.exports = {
       items: [
         'middleware/ldp/resource',
         'middleware/ldp/container',
+        'middleware/ldp/ontologies',
         'middleware/ldp/controlled-container',
         'middleware/ldp/document-tagger',
         'middleware/ldp/image-processor'

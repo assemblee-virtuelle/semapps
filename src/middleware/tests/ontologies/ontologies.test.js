@@ -162,10 +162,10 @@ describe.each([false, true])('Ontologies registration with cacher %s', cacher =>
     );
   });
 
-  test('Get JSON-LD prefixes', async () => {
-    const jsonldPrefixes = await broker.call('ldp.ontologies.getJsonLdPrefixes');
+  test('Get prefixes', async () => {
+    const prefixes = await broker.call('ldp.ontologies.getPrefixes');
 
-    expect(jsonldPrefixes).toEqual({
+    expect(prefixes).toEqual({
       ont1: 'https://www.w3.org/ns/ontology1#',
       ont2: 'https://www.w3.org/ns/ontology2#',
       ont3: 'https://www.w3.org/ns/ontology3#'

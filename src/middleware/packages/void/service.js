@@ -376,7 +376,7 @@ module.exports = {
       return res;
     },
     async formatOutput(ctx, output, voidUrl, jsonLD) {
-      const prefix = await ctx.call('ldp.ontologies.getJsonLdPrefixes');
+      const prefix = await ctx.call('ldp.ontologies.getPrefixes');
       if (!jsonLD) {
         const turtle = await new Promise(resolve => {
           const writer = new Writer({

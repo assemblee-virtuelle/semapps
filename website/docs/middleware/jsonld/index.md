@@ -1,0 +1,58 @@
+---
+title: JSON-LD
+---
+
+This service allows you to manage [JSON-LD](https://json-ld.org/) formatted data.
+
+## Features
+
+- Manipulate JSON-LD data (frame, compact, expand...)
+- Manipulate JSON-LD contexts (parse, validate...)
+- Automaticaly generate a local JSON-LD context
+
+## Dependencies
+
+- [LdpOntologiesService](../ldp/ontologies)
+- [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html) (if a local context file is defined)
+
+## Sub-services
+
+- [JsonLdParserService](parser)
+- [JsonLdContextService](context)
+- JsonLdDocumentLoaderService
+- JsonLdApiService
+
+## Install
+
+```bash
+$ yarn add @semapps/jsonld
+```
+
+## Usage
+
+```js
+const path = require('path');
+const { JsonLdService } = require('@semapps/jsonld');
+
+module.exports = {
+  mixins: [JsonLdService],
+  settings: {
+    baseUri: 'http://localhost:3000',
+    localContextPath: 'context.json',
+    remoteContextFiles: [
+      {
+        uri: 'https://www.w3.org/ns/activitystreams',
+        file: path.resolve(__dirname, './config/context-as.json')
+      }
+    ]
+  }
+};
+```
+
+## Service settings
+
+| Property             | Type       | Default | Description                                                         |
+| -------------------- | ---------- | ------- | ------------------------------------------------------------------- |
+| `baseUri`            | `String`   |         | Base URL of the LDP server. Required if `localContextPath`` is set. |
+| `localContextPath`   | `String`   |         | Path of the automatically generated local JSON-LD context file      |
+| `remoteContextFiles` | `[Object]` |         | Remote context files to put in cache (see example above)            |
