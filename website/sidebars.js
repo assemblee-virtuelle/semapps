@@ -49,7 +49,7 @@ module.exports = {
       items: [
         'middleware/ldp/resource',
         'middleware/ldp/container',
-        'middleware/ldp/ontologies',
+        'middleware/ldp/ontology',
         'middleware/ldp/controlled-container',
         'middleware/ldp/document-tagger',
         'middleware/ldp/image-processor'

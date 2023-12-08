@@ -12,7 +12,7 @@ This service allows you to manage [JSON-LD](https://json-ld.org/) formatted data
 
 ## Dependencies
 
-- [LdpOntologyService](../ldp/ontologies)
+- [LdpOntologyService](../ldp/ontology)
 - [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html) (if a local context file is defined)
 
 ## Sub-services
@@ -38,7 +38,7 @@ module.exports = {
   mixins: [JsonLdService],
   settings: {
     baseUri: 'http://localhost:3000',
-    localContextPath: 'context.json',
+    localContextPath: '/.well-known/context.jsonld',
     cachedContextFiles: [
       {
         uri: 'https://www.w3.org/ns/activitystreams',
@@ -51,8 +51,8 @@ module.exports = {
 
 ## Service settings
 
-| Property             | Type       | Default | Description                                                         |
-| -------------------- | ---------- | ------- | ------------------------------------------------------------------- |
-| `baseUri`            | `String`   |         | Base URL of the LDP server. Required if `localContextPath`` is set. |
-| `localContextPath`   | `String`   |         | Path of the automatically generated local JSON-LD context file      |
-| `cachedContextFiles` | `[Object]` |         | Context files to put in cache (see example above)                   |
+| Property             | Type       | Default                       | Description                                                    |
+| -------------------- | ---------- | ----------------------------- | -------------------------------------------------------------- |
+| `baseUri`            | `String`   | **required**                  | Base URL of the server.                                        |
+| `localContextPath`   | `String`   | "/.well-known/context.jsonld" | Path of the automatically generated local JSON-LD context file |
+| `cachedContextFiles` | `[Object]` |                               | Context files to put in cache on start (see example above)     |

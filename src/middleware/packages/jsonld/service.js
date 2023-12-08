@@ -8,37 +8,35 @@ module.exports = {
   name: 'jsonld',
   settings: {
     baseUri: null,
-    localContextPath: null,
+    localContextPath: '.well-known/context.jsonld',
     cachedContextFiles: []
   },
   async created() {
     const { baseUri, localContextPath, cachedContextFiles } = this.settings;
 
-    if (localContextPath && !baseUri) {
-      throw new Error('If localContextPath is set, you must also set baseUri');
+    if (!baseUri || !localContextPath) {
+      throw new Error('The baseUri and localContextPath settings are required');
     }
 
     await this.broker.createService(JsonLdDocumentLoaderService, {
       settings: {
         cachedContextFiles,
-        localContextUri: localContextPath && urlJoin(baseUri, localContextPath)
+        localContextUri: urlJoin(baseUri, localContextPath)
       }
     });
 
     await this.broker.createService(JsonLdContextService, {
       settings: {
-        localContextUri: localContextPath && urlJoin(baseUri, localContextPath)
+        localContextUri: urlJoin(baseUri, localContextPath)
       }
     });
 
     await this.broker.createService(JsonLdParserService);
 
-    if (localContextPath) {
-      await this.broker.createService(JsonLdApiService, {
-        settings: {
-          localContextPath
-        }
-      });
-    }
+    await this.broker.createService(JsonLdApiService, {
+      settings: {
+        localContextPath
+      }
+    });
   }
 };

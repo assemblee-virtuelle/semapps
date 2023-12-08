@@ -10,7 +10,7 @@ The following service actions are available:
 
 ### `get`
 
-Get a context which combines all contexts of the registered [ontologies](../ldp/ontologies).
+Get a context which combines all contexts of the registered [ontologies](../ldp/ontology).
 
 ##### Return
 
@@ -18,7 +18,7 @@ The combined context
 
 ### `getLocal`
 
-Get the local context, which combines a parsed version of all the registered [ontologies](../ldp/ontologies), except those with `preserveContextUri: true`.
+Get the local context, which combines a parsed version of all the registered [ontologies](../ldp/ontology), except those with `preserveContextUri: true`.
 
 ##### Return
 

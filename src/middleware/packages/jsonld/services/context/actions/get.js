@@ -13,12 +13,10 @@ module.exports = {
       }
     }
 
-    if (this.settings.localContextUri) {
-      const localContext = await this.actions.getLocal({}, { parentCtx: ctx });
-      // Include the local context only if it is not empty
-      if (Object.keys(localContext['@context']).length > 0) {
-        context = context.concat(this.settings.localContextUri);
-      }
+    const localContext = await this.actions.getLocal({}, { parentCtx: ctx });
+    // Include the local context only if it is not empty
+    if (Object.keys(localContext['@context']).length > 0) {
+      context = context.concat(this.settings.localContextUri);
     }
 
     return context;
