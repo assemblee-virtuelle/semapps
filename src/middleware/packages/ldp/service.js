@@ -3,7 +3,7 @@ const { TripleStoreAdapter } = require('@semapps/triplestore');
 const LdpApiService = require('./services/api');
 const LdpContainerService = require('./services/container');
 const LdpCacheService = require('./services/cache');
-const LdpOntologiesService = require('./services/ontologies');
+const LdpOntologyService = require('./services/ontology');
 const LdpRegistryService = require('./services/registry');
 const LdpRemoteService = require('./services/remote');
 const LdpResourceService = require('./services/resource');
@@ -81,7 +81,7 @@ module.exports = {
       }
     });
 
-    await this.broker.createService(LdpOntologiesService, {
+    await this.broker.createService(LdpOntologyService, {
       mixins: dynamicOntologiesRegistration ? [DbService] : [],
       adapter: dynamicOntologiesRegistration
         ? new TripleStoreAdapter({ type: 'Ontology', dataset: settingsDataset })

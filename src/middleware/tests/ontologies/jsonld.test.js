@@ -5,6 +5,7 @@ let broker;
 
 beforeAll(async () => {
   broker = await initialize();
+  await broker.start();
 });
 afterAll(async () => {
   if (broker) await broker.stop();

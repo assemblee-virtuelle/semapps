@@ -12,7 +12,7 @@ This service allows you to manage [JSON-LD](https://json-ld.org/) formatted data
 
 ## Dependencies
 
-- [LdpOntologiesService](../ldp/ontologies)
+- [LdpOntologyService](../ldp/ontologies)
 - [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html) (if a local context file is defined)
 
 ## Sub-services

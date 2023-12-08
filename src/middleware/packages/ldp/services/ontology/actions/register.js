@@ -69,7 +69,7 @@ module.exports = {
     }
 
     if (this.broker.cacher) {
-      this.broker.cacher.clean('ldp.ontologies.**');
+      this.broker.cacher.clean('ldp.ontology.**');
       this.broker.cacher.clean('jsonld.context.**');
     }
   }

@@ -36,7 +36,7 @@ module.exports = {
     if (accept === MIME_TYPES.JSON) {
       let result = await ctx.call('triplestore.query', {
         query: `
-          ${await ctx.call('ldp.ontologies.getRdfPrefixes')}
+          ${await ctx.call('ldp.ontology.getRdfPrefixes')}
           CONSTRUCT  {
             <${containerUri}>
               a ?containerType ;
@@ -119,7 +119,7 @@ module.exports = {
 
       return await ctx.call('triplestore.query', {
         query: `
-          ${await ctx.call('ldp.ontologies.getRdfPrefixes')}
+          ${await ctx.call('ldp.ontology.getRdfPrefixes')}
           CONSTRUCT  {
             <${containerUri}>
               a ?containerType ;

@@ -19,7 +19,7 @@ This package allows you to setup [LDP](https://www.w3.org/TR/ldp-primer/) contai
 
 - [LdpResourceService](resource.md)
 - [LdpContainerService](container.md)
-- [LdpOntologiesService](ontologies.md)
+- [LdpOntologyService](ontologies.md)
 - LdpRegistryService
 - LdpApiService
 - LdpCacheService
@@ -75,7 +75,7 @@ module.exports = {
 | ------------------------------- | ---------- | --------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | `baseUrl`                       | `String`   | **required**                | Base URL of the LDP server                                                                                 |
 | `ontologies`                    | `[Array]`  |                             | List of ontology used ([format](../ldp/ontologies)). Required if `dynamicOntologiesRegistration` is false. |
-| `dynamicOntologiesRegistration` | `Boolean`  | false                       | If true, ontologies can be registered dynamically using the `ldp.ontologies.register` action               |
+| `dynamicOntologiesRegistration` | `Boolean`  | false                       | If true, ontologies can be registered dynamically using the `ldp.ontology.register` action                 |
 | `containers`                    | `[Object]` | **required**                | List of containers to set up, with their options (see below)                                               |
 | `defaultContainerOptions`       | `[Object]` |                             | Default options for all containers (see below)                                                             |
 | `mirrorGraphName`               | `String`   | "http://semapps.org/mirror" | Name of the RDF graph where to store mirrored data                                                         |

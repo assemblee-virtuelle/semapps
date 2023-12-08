@@ -7,7 +7,7 @@ const listAction = require('./actions/list');
 const registerAction = require('./actions/register');
 
 module.exports = {
-  name: 'ldp.ontologies',
+  name: 'ldp.ontology',
   settings: {
     idField: '@id',
     ontologies: [],

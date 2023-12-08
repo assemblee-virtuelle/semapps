@@ -1,8 +1,8 @@
 ---
-title: LdpOntologiesService
+title: LdpOntologyService
 ---
 
-This service is automatically created by the [LdpService](index) with the key `ldp.ontologies`.
+This service is automatically created by the [LdpService](index) with the key `ldp.ontology`.
 
 It loads a list of ontologies that follow this format:
 

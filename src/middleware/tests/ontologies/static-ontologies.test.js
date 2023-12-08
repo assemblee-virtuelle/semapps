@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 const urlJoin = require('url-join');
-const { LdpOntologiesService } = require('@semapps/ldp');
+const { LdpOntologyService } = require('@semapps/ldp');
 const initialize = require('./initialize');
 const CONFIG = require('../config');
 const ont1 = require('./ontologies/ont1.json');
@@ -23,29 +23,29 @@ describe.each([false, true])('Static ontologies with cacher %s', cacher => {
   });
 
   test('Single static ontology', async () => {
-    await broker.createService(LdpOntologiesService, {
+    await broker.createService(LdpOntologyService, {
       settings: { ontologies: [ont1] }
     });
     await broker.start();
 
-    await expect(broker.call('ldp.ontologies.getByPrefix', { prefix: 'ont1' })).resolves.toMatchObject(ont1);
+    await expect(broker.call('ldp.ontology.getByPrefix', { prefix: 'ont1' })).resolves.toMatchObject(ont1);
 
-    await expect(broker.call('ldp.ontologies.list')).resolves.toEqual(
+    await expect(broker.call('ldp.ontology.list')).resolves.toEqual(
       expect.arrayContaining([expect.objectContaining(ont1)])
     );
 
-    await expect(broker.call('ldp.ontologies.register', ont1)).rejects.toThrow(
+    await expect(broker.call('ldp.ontology.register', ont1)).rejects.toThrow(
       `The register action is available only if dynamicRegistration is true`
     );
   });
 
   test('Two static ontologies', async () => {
-    await broker.createService(LdpOntologiesService, {
+    await broker.createService(LdpOntologyService, {
       settings: { ontologies: [ont1, ont2] }
     });
     await broker.start();
 
-    await expect(broker.call('ldp.ontologies.list')).resolves.toEqual(
+    await expect(broker.call('ldp.ontology.list')).resolves.toEqual(
       expect.arrayContaining([expect.objectContaining(ont1), expect.objectContaining(ont2)])
     );
 
@@ -59,12 +59,12 @@ describe.each([false, true])('Static ontologies with cacher %s', cacher => {
   });
 
   test('Three static ontologies', async () => {
-    await broker.createService(LdpOntologiesService, {
+    await broker.createService(LdpOntologyService, {
       settings: { ontologies: [ont1, ont2, ont3] }
     });
     await broker.start();
 
-    await expect(broker.call('ldp.ontologies.list')).resolves.toEqual(
+    await expect(broker.call('ldp.ontology.list')).resolves.toEqual(
       expect.arrayContaining([
         expect.objectContaining(ont1),
         expect.objectContaining(ont2),
@@ -89,7 +89,7 @@ describe.each([false, true])('Static ontologies with cacher %s', cacher => {
   });
 
   test('Four static ontologies with conflicts', async () => {
-    await broker.createService(LdpOntologiesService, {
+    await broker.createService(LdpOntologyService, {
       settings: { ontologies: [ont1, ont2, ont3, ont4] }
     });
     await broker.start();
