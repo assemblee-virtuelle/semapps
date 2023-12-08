@@ -1,6 +1,6 @@
 module.exports = {
   visibility: 'public',
-  params: {},
+  cache: true,
   async handler(ctx) {
     const ontologies = await this.actions.list({}, { parentCtx: ctx });
     return Object.fromEntries(

@@ -2,7 +2,7 @@ const { isURL } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
-  params: {},
+  cache: true,
   async handler(ctx) {
     const ontologies = await this._list(ctx, {});
 

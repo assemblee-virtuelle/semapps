@@ -64,12 +64,9 @@ module.exports = {
       });
     }
 
-    await ctx.emit('ldp.ontologies.registered', {
-      prefix,
-      url,
-      owl,
-      jsonldContext,
-      preserveContextUri
-    });
+    if (this.broker.cacher) {
+      this.broker.cacher.clean('ldp.ontologies.**');
+      this.broker.cacher.clean('jsonld.context.**');
+    }
   }
 };

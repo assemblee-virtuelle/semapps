@@ -2,12 +2,13 @@ const path = require('path');
 const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
 const { JsonLdService } = require('@semapps/jsonld');
+const { CacherMiddleware } = require('@semapps/webacl');
 const { LdpOntologiesService } = require('@semapps/ldp');
 const { TripleStoreAdapter, TripleStoreService } = require('@semapps/triplestore');
 const CONFIG = require('../config');
 const { clearDataset } = require('../utils');
 
-module.exports = async () => {
+module.exports = async cacher => {
   await clearDataset(CONFIG.SETTINGS_DATASET);
 
   const broker = new ServiceBroker({
@@ -16,7 +17,8 @@ module.exports = async () => {
       options: {
         level: 'warn'
       }
-    }
+    },
+    cacher // If true, will use Moleculer MemoryCacher
   });
 
   await broker.createService(JsonLdService, {

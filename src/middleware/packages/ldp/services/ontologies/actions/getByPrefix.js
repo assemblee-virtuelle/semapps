@@ -5,6 +5,7 @@ module.exports = {
   params: {
     prefix: 'string'
   },
+  cache: true,
   async handler(ctx) {
     let { prefix } = ctx.params;
 

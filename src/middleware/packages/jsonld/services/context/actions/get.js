@@ -1,5 +1,6 @@
 module.exports = {
   visibility: 'public',
+  cache: true,
   async handler(ctx) {
     let context = [];
 

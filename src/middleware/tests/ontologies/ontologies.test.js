@@ -4,14 +4,6 @@ const initialize = require('./initialize');
 const CONFIG = require('../config');
 
 jest.setTimeout(10000);
-let broker;
-
-beforeAll(async () => {
-  broker = await initialize();
-});
-afterAll(async () => {
-  if (broker) await broker.stop();
-});
 
 const ont1 = {
   prefix: 'ont1',
@@ -30,7 +22,6 @@ const ont3 = {
   prefix: 'ont3',
   url: 'https://www.w3.org/ns/ontology3#',
   jsonldContext: {
-    ont3: 'https://www.w3.org/ns/ontology3#',
     friend: {
       '@id': 'ont3:friend',
       '@type': '@id',
@@ -53,7 +44,16 @@ const ont4 = {
 
 const localContextUri = urlJoin(CONFIG.HOME_URL, 'context.json');
 
-describe('Ontologies registration', () => {
+describe.each([false, true])('Ontologies registration with cacher %s', cacher => {
+  let broker;
+
+  beforeAll(async () => {
+    broker = await initialize(cacher);
+  });
+  afterAll(async () => {
+    if (broker) await broker.stop();
+  });
+
   test('Register a new ontology', async () => {
     await broker.call('ldp.ontologies.register', { ...ont1 });
 
@@ -88,6 +88,8 @@ describe('Ontologies registration', () => {
         })
       ])
     );
+
+    await expect(broker.call('jsonld.context.get')).resolves.toEqual([ont1.jsonldContext]);
   });
 
   test('Register a 2nd ontology', async () => {
@@ -98,6 +100,14 @@ describe('Ontologies registration', () => {
     await expect(broker.call('ldp.ontologies.list')).resolves.toEqual(
       expect.arrayContaining([expect.objectContaining(ont1), expect.objectContaining(ont2)])
     );
+
+    await expect(broker.call('jsonld.context.get')).resolves.toEqual([ont1.jsonldContext, localContextUri]);
+
+    await expect(fetch(localContextUri).then(res => res.json())).resolves.toEqual({
+      '@context': {
+        ont2: 'https://www.w3.org/ns/ontology2#'
+      }
+    });
   });
 
   test('Register a 3nd ontology', async () => {
@@ -112,6 +122,21 @@ describe('Ontologies registration', () => {
         expect.objectContaining(ont3)
       ])
     );
+
+    await expect(broker.call('jsonld.context.get')).resolves.toEqual([ont1.jsonldContext, localContextUri]);
+
+    // Only the ontologies 2 and 3 should be included
+    await expect(fetch(localContextUri).then(res => res.json())).resolves.toEqual({
+      '@context': {
+        ont2: 'https://www.w3.org/ns/ontology2#',
+        ont3: 'https://www.w3.org/ns/ontology3#',
+        friend: {
+          '@id': 'https://www.w3.org/ns/ontology3#friend',
+          '@type': '@id',
+          '@protected': true
+        }
+      }
+    });
   });
 
   test('Register a 4th ontology with JSON-LD conflicts', async () => {
@@ -129,40 +154,21 @@ describe('Ontologies registration', () => {
     expect(result).toBeNull();
   });
 
-  test('Get JSON-LD context', async () => {
-    const context = await broker.call('jsonld.context.get');
-
-    expect(context).toEqual(expect.arrayContaining([ont1.jsonldContext, localContextUri]));
-
-    // Note: Other tests for JSON-LD contexts are made on jsonld.test.js
-  });
-
-  test('Get local JSON-LD context', async () => {
-    const res = await fetch(localContextUri);
-
-    expect(res.ok).toBeTruthy();
-
-    const context = await res.json();
-
-    // Only the ontologies 2 and 3 should be included
-    expect(context).toEqual({
-      '@context': {
-        ont2: 'https://www.w3.org/ns/ontology2#',
-        ont3: 'https://www.w3.org/ns/ontology3#',
-        friend: {
-          '@id': 'https://www.w3.org/ns/ontology3#friend',
-          '@type': '@id',
-          '@protected': true
-        }
-      }
-    });
-  });
-
   test('Get RDF prefixes', async () => {
     const rdfPrefixes = await broker.call('ldp.ontologies.getRdfPrefixes');
 
     expect(rdfPrefixes).toBe(
       'PREFIX ont1: <https://www.w3.org/ns/ontology1#>\nPREFIX ont2: <https://www.w3.org/ns/ontology2#>\nPREFIX ont3: <https://www.w3.org/ns/ontology3#>'
     );
+  });
+
+  test('Get JSON-LD prefixes', async () => {
+    const jsonldPrefixes = await broker.call('ldp.ontologies.getJsonLdPrefixes');
+
+    expect(jsonldPrefixes).toEqual({
+      ont1: 'https://www.w3.org/ns/ontology1#',
+      ont2: 'https://www.w3.org/ns/ontology2#',
+      ont3: 'https://www.w3.org/ns/ontology3#'
+    });
   });
 });
