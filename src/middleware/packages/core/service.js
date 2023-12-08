@@ -124,7 +124,7 @@ const CoreService = {
                   file: path.resolve(__dirname, './config/context.json')
                 }
               ],
-          remoteContextFiles: [
+          cachedContextFiles: [
             {
               uri: 'https://www.w3.org/ns/activitystreams',
               file: path.resolve(__dirname, './config/context-as.json')

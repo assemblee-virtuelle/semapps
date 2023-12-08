@@ -25,7 +25,7 @@ module.exports = async cacher => {
       baseUri: CONFIG.HOME_URL,
       localContextPath: 'context.json',
       // Fake contexts to avoid validation errors
-      remoteContextFiles: [
+      cachedContextFiles: [
         {
           uri: 'https://www.w3.org/ns/ontology1.jsonld',
           file: path.resolve(__dirname, './contexts/ontology1.json')

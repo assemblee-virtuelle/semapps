@@ -9,10 +9,10 @@ module.exports = {
   settings: {
     baseUri: null,
     localContextPath: null,
-    remoteContextFiles: []
+    cachedContextFiles: []
   },
   async created() {
-    const { baseUri, localContextPath, remoteContextFiles } = this.settings;
+    const { baseUri, localContextPath, cachedContextFiles } = this.settings;
 
     if (localContextPath && !baseUri) {
       throw new Error('If localContextPath is set, you must also set baseUri');
@@ -20,7 +20,7 @@ module.exports = {
 
     await this.broker.createService(JsonLdDocumentLoaderService, {
       settings: {
-        remoteContextFiles,
+        cachedContextFiles,
         localContextUri: localContextPath && urlJoin(baseUri, localContextPath)
       }
     });

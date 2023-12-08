@@ -8,11 +8,11 @@ const cache = new LRU({ max: 500 });
 module.exports = {
   name: 'jsonld.document-loader',
   settings: {
-    remoteContextFiles: [],
+    cachedContextFiles: [],
     localContextUri: null
   },
   async started() {
-    for (const contextFile of this.settings.remoteContextFiles) {
+    for (const contextFile of this.settings.cachedContextFiles) {
       const contextFileContent = await fsPromises.readFile(contextFile.file);
       const contextJson = JSON.parse(contextFileContent);
       cache.set(contextFile.uri, {

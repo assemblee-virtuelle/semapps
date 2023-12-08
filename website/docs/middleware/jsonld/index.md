@@ -39,7 +39,7 @@ module.exports = {
   settings: {
     baseUri: 'http://localhost:3000',
     localContextPath: 'context.json',
-    remoteContextFiles: [
+    cachedContextFiles: [
       {
         uri: 'https://www.w3.org/ns/activitystreams',
         file: path.resolve(__dirname, './config/context-as.json')
@@ -55,4 +55,4 @@ module.exports = {
 | -------------------- | ---------- | ------- | ------------------------------------------------------------------- |
 | `baseUri`            | `String`   |         | Base URL of the LDP server. Required if `localContextPath`` is set. |
 | `localContextPath`   | `String`   |         | Path of the automatically generated local JSON-LD context file      |
-| `remoteContextFiles` | `[Object]` |         | Remote context files to put in cache (see example above)            |
+| `cachedContextFiles` | `[Object]` |         | Context files to put in cache (see example above)                   |
