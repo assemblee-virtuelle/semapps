@@ -8,7 +8,8 @@ const cache = new LRU({ max: 500 });
 module.exports = {
   name: 'jsonld.document-loader',
   settings: {
-    remoteContextFiles: []
+    remoteContextFiles: [],
+    localContextUri: null
   },
   async started() {
     for (const contextFile of this.settings.remoteContextFiles) {
@@ -24,6 +25,15 @@ module.exports = {
   actions: {
     async loadWithCache(ctx) {
       const { url, options } = ctx.params;
+      if (url === this.settings.localContextUri) {
+        // For local context, get it directly as it is frequently updated
+        // We will use the Redis cache to avoid compiling it every time
+        return {
+          contextUrl: null,
+          documentUrl: url,
+          document: await ctx.call('jsonld.context.getLocal')
+        };
+      }
       if (cache.has(url)) {
         return cache.get(url);
       }

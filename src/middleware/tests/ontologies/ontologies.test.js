@@ -16,7 +16,8 @@ afterAll(async () => {
 const ont1 = {
   prefix: 'ont1',
   url: 'https://www.w3.org/ns/ontology1#',
-  jsonldContext: 'https://www.w3.org/ns/ontology1.jsonld'
+  jsonldContext: 'https://www.w3.org/ns/ontology1.jsonld',
+  preserveContextUri: true
 };
 
 const ont2 = {
@@ -49,6 +50,8 @@ const ont4 = {
     }
   }
 };
+
+const localContextUri = urlJoin(CONFIG.HOME_URL, 'context.json');
 
 describe('Ontologies registration', () => {
   test('Register a new ontology', async () => {
@@ -129,45 +132,28 @@ describe('Ontologies registration', () => {
   test('Get JSON-LD context', async () => {
     const context = await broker.call('jsonld.context.get');
 
-    expect(context).toEqual(
-      expect.arrayContaining([ont1.jsonldContext, ont2.jsonldContext, expect.objectContaining(ont3.jsonldContext)])
-    );
+    expect(context).toEqual(expect.arrayContaining([ont1.jsonldContext, localContextUri]));
 
     // Note: Other tests for JSON-LD contexts are made on jsonld.test.js
   });
 
-  test('Get parsed JSON-LD context', async () => {
-    const context = await broker.call('jsonld.context.get', { parse: true });
-
-    expect(context).toMatchObject({
-      ont1: 'https://www.w3.org/ns/ontology1#',
-      ont2: 'https://www.w3.org/ns/ontology2#',
-      ont3: 'https://www.w3.org/ns/ontology3#',
-      label: { '@id': 'https://www.w3.org/ns/ontology1#label' },
-      friend: {
-        '@id': 'https://www.w3.org/ns/ontology3#friend',
-        '@type': '@id',
-        '@protected': true
-      }
-    });
-  });
-
-  test('Local context endpoint', async () => {
-    const res = await fetch(urlJoin(CONFIG.HOME_URL, 'context.json'));
+  test('Get local JSON-LD context', async () => {
+    const res = await fetch(localContextUri);
 
     expect(res.ok).toBeTruthy();
 
     const context = await res.json();
 
-    expect(context).toMatchObject({
-      ont1: 'https://www.w3.org/ns/ontology1#',
-      ont2: 'https://www.w3.org/ns/ontology2#',
-      ont3: 'https://www.w3.org/ns/ontology3#',
-      label: { '@id': 'https://www.w3.org/ns/ontology1#label' },
-      friend: {
-        '@id': 'https://www.w3.org/ns/ontology3#friend',
-        '@type': '@id',
-        '@protected': true
+    // Only the ontologies 2 and 3 should be included
+    expect(context).toEqual({
+      '@context': {
+        ont2: 'https://www.w3.org/ns/ontology2#',
+        ont3: 'https://www.w3.org/ns/ontology3#',
+        friend: {
+          '@id': 'https://www.w3.org/ns/ontology3#friend',
+          '@type': '@id',
+          '@protected': true
+        }
       }
     });
   });

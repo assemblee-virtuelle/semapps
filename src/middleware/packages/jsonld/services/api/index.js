@@ -21,7 +21,7 @@ module.exports = {
   actions: {
     async getContext(ctx) {
       ctx.meta.$responseType = 'application/ld+json';
-      return await ctx.call('jsonld.context.get', { parse: true });
+      return await ctx.call('jsonld.context.getLocal');
     }
   }
 };

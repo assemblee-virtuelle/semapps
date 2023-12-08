@@ -16,8 +16,22 @@ const mergeObjectInArray = (obj, arr) => {
   return result.sort((a, b) => (isURL(a) ? (isURL(b) ? 0 : -1) : isURL(b) ? 1 : 0));
 };
 
+const arrayOf = value => {
+  // If the field is null-ish, we suppose there are no values.
+  if (!value) {
+    return [];
+  }
+  // Return as is.
+  if (Array.isArray(value)) {
+    return value;
+  }
+  // Single value is made an array.
+  return [value];
+};
+
 module.exports = {
   isURL,
   isObject,
-  mergeObjectInArray
+  mergeObjectInArray,
+  arrayOf
 };

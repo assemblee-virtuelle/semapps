@@ -1,3 +1,5 @@
+const { isURL } = require('../../../utils');
+
 module.exports = {
   visibility: 'public',
   params: {
@@ -9,8 +11,14 @@ module.exports = {
     const [ontology] = await this._find(ctx, { query: { prefix } });
 
     // If the jsonldContext is not an URL, it is an object to be parsed
-    if (ontology?.jsonldContext && !ontology.jsonldContext.startsWith('http')) {
+    if (ontology?.jsonldContext && !isURL(ontology.jsonldContext)) {
       ontology.jsonldContext = JSON.parse(ontology.jsonldContext);
+    }
+
+    if (ontology?.preserveContextUri === 'true') {
+      ontology.preserveContextUri = true;
+    } else if (ontology?.preserveContextUri === 'false') {
+      ontology.preserveContextUri = false;
     }
 
     return ontology;

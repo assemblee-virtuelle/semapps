@@ -72,6 +72,8 @@ const useFullURI = (prefixedUri, ontologies) => {
   return prefixedUri.replace(`${ontology.prefix}:`, ontology.url);
 };
 
+const isURL = value => (typeof value === 'string' || value instanceof String) && value.startsWith('http');
+
 const isObject = value => typeof value === 'object' && !Array.isArray(value) && value !== null;
 
 const getSlugFromUri = uri => uri.match(new RegExp(`.*/(.*)`))[1];
@@ -150,6 +152,7 @@ module.exports = {
   buildBlankNodesQuery,
   buildFiltersQuery,
   useFullURI,
+  isURL,
   isObject,
   getSlugFromUri,
   getContainerFromUri,

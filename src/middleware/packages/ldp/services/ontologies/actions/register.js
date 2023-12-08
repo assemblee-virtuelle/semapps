@@ -1,3 +1,5 @@
+const { isURL, arrayOf } = require('../../../utils');
+
 module.exports = {
   visibility: 'public',
   params: {
@@ -9,21 +11,26 @@ module.exports = {
       rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
       optional: true
     },
+    preserveContextUri: { type: 'boolean', default: false },
     overwrite: { type: 'boolean', default: false }
   },
   async handler(ctx) {
-    let { prefix, url, owl, jsonldContext, overwrite } = ctx.params;
+    let { prefix, url, owl, jsonldContext, preserveContextUri, overwrite } = ctx.params;
 
     const ontology = await this.actions.getByPrefix({ prefix }, { parentCtx: ctx });
+
+    if (preserveContextUri === true) {
+      if (!jsonldContext || !arrayOf(jsonldContext).every(context => isURL(context))) {
+        throw new Error('If preserveContextUri is true, jsonldContext must be one or more URI');
+      }
+    }
 
     // Check that jsonldContext doesn't conflict with existing context
     if (jsonldContext) {
       const existingContext = await ctx.call('jsonld.context.get');
 
-      // We do not use jsonld.mergeContexts because we don't want object properties to be overwritten
-      const newContext = Array.isArray(existingContext)
-        ? [...existingContext, jsonldContext]
-        : [existingContext, jsonldContext];
+      // Do not use the jsonld.context.merge action to avoid object properties being overwritten
+      const newContext = [].concat(existingContext, jsonldContext);
 
       const isValid = await ctx.call('jsonld.context.validate', { context: newContext });
 
@@ -40,26 +47,29 @@ module.exports = {
     }
 
     if (ontology) {
-      return await this._update(ctx, {
+      await this._update(ctx, {
         '@id': ontology['@id'],
         url,
         owl,
-        jsonldContext
+        jsonldContext,
+        preserveContextUri
       });
     } else {
-      return await this._create(ctx, {
+      await this._create(ctx, {
         prefix,
         url,
         owl,
-        jsonldContext
+        jsonldContext,
+        preserveContextUri
       });
     }
 
-    // TODO cache the new local context (use events ?)
-    //   // cache.set(contextUri, {
-    //   //   contextUrl: null,
-    //   //   documentUrl: contextUri,
-    //   //   document: contextJson
-    //   // });
+    await ctx.emit('ldp.ontologies.registered', {
+      prefix,
+      url,
+      owl,
+      jsonldContext,
+      preserveContextUri
+    });
   }
 };
