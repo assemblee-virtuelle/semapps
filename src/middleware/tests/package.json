@@ -15,6 +15,7 @@
     "@semapps/ldp": "0.6.0-alpha.4",
     "@semapps/middlewares": "0.6.0-alpha.4",
     "@semapps/mime-types": "0.6.0-alpha.4",
+    "@semapps/ontologies": "0.6.0-alpha.4",
     "@semapps/sync": "0.6.0-alpha.4",
     "@semapps/webacl": "0.6.0-alpha.4",
     "@semapps/webid": "0.6.0-alpha.4",

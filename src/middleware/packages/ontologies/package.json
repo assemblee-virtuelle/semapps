@@ -1,0 +1,13 @@
+{
+  "name": "@semapps/ontologies",
+  "version": "0.6.0-alpha.4",
+  "description": "SemApps ontologies",
+  "license": "Apache-2.0",
+  "author": "Virtual Assembly",
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=14"
+  }
+}

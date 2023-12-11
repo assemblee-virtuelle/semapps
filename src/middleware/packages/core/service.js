@@ -40,7 +40,6 @@ const CoreService = {
     },
     // Optional
     containers: undefined,
-    jsonContext: undefined,
     ontologies: undefined,
     // Services configurations
     activitypub: {},
@@ -54,17 +53,13 @@ const CoreService = {
     webfinger: {}
   },
   created() {
-    const { baseUrl, baseDir, triplestore, containers, jsonContext, ontologies } = this.settings;
-
-    // If an external JSON context is not provided, we will use a local one
-    const defaultJsonContext = urlJoin(baseUrl, 'context.json');
+    const { baseUrl, baseDir, triplestore, containers, ontologies } = this.settings;
 
     if (this.settings.activitypub !== false) {
       this.broker.createService(ActivityPubService, {
         // Type support for settings could be given, once moleculer type definitions improve...
         settings: {
           baseUri: baseUrl,
-          jsonContext: jsonContext || defaultJsonContext,
           ...this.settings.activitypub
         }
       });
@@ -116,14 +111,6 @@ const CoreService = {
       this.broker.createService(JsonLdService, {
         settings: {
           baseUri: baseUrl,
-          localContextFiles: jsonContext
-            ? undefined
-            : [
-                {
-                  path: 'context.json',
-                  file: path.resolve(__dirname, './config/context.json')
-                }
-              ],
           cachedContextFiles: [
             {
               uri: 'https://www.w3.org/ns/activitystreams',
@@ -142,11 +129,7 @@ const CoreService = {
           baseUrl,
           ontologies: ontologies || coreOntologies,
           containers: containers || (this.settings.mirror !== false ? [botsContainer] : []),
-          ...this.settings.ldp,
-          defaultContainerOptions: {
-            jsonContext: jsonContext || defaultJsonContext,
-            ...this.settings.ldp.defaultContainerOptions
-          }
+          ...this.settings.ldp
         }
       });
     }

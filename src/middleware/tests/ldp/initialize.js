@@ -3,6 +3,7 @@ const fs = require('fs');
 const urlJoin = require('url-join');
 const { join: pathJoin } = require('path');
 const { CoreService } = require('@semapps/core');
+const { coreOntologies, pair } = require('@semapps/ontologies');
 const { WebAclMiddleware } = require('@semapps/webacl');
 const { AuthLocalService } = require('@semapps/auth');
 const { WebIdService } = require('@semapps/webid');
@@ -75,6 +76,7 @@ const initialize = async () => {
         mainDataset: CONFIG.MAIN_DATASET
       },
       containers,
+      ontologies: [...coreOntologies, pair],
       activitypub: false,
       mirror: false,
       void: false,

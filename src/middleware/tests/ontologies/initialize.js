@@ -2,8 +2,7 @@ const path = require('path');
 const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
 const { JsonLdService } = require('@semapps/jsonld');
-const { LdpOntologyService } = require('@semapps/ldp');
-const { TripleStoreAdapter, TripleStoreService } = require('@semapps/triplestore');
+const { TripleStoreService } = require('@semapps/triplestore');
 const CONFIG = require('../config');
 const { clearDataset } = require('../utils');
 

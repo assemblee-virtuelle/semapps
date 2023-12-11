@@ -11,7 +11,6 @@ export interface CoreServiceSettings extends ServiceSettingSchema {
   };
   // Optional
   containers?: string;
-  jsonContext?: string;
   ontologies?: string;
   // Services configurations, no typings yet.
   activitypub: object;

@@ -1,0 +1,42 @@
+{
+  "prefix": "syreen",
+  "url": "http://syreen.fr/ns/core#",
+  "jsonldContext": {
+    "syreen:hasPart": {
+      "@type": "@id"
+    },
+    "syreen:actor": {
+      "@type": "@id"
+    },
+    "syreen:partOf": {
+      "@type": "@id"
+    },
+    "syreen:depictedBy": {
+      "@type": "@id"
+    },
+    "syreen:hasLocation": {
+      "@type": "@id"
+    },
+    "syreen:hasCategory": {
+      "@type": "@id"
+    },
+    "syreen:hasBatiprixCategory": {
+      "@type": "@id"
+    },
+    "syreen:hasUnit": {
+      "@type": "@id"
+    },
+    "syreen:hasStage": {
+      "@type": "@id"
+    },
+    "syreen:hasProjectType": {
+      "@type": "@id"
+    },
+    "syreen:startDate": {
+      "@type": "xsd:dateTime"
+    },
+    "syreen:endDate": {
+      "@type": "xsd:dateTime"
+    }
+  }
+}
