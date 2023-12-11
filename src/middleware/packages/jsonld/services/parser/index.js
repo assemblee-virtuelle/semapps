@@ -61,7 +61,7 @@ module.exports = {
           .on('end', () => resolve(res));
       });
     },
-    // TODO move to ldp.ontologies service ??
+    // TODO move to ontologies service ??
     async expandPredicate(ctx) {
       const { predicate, context } = ctx.params;
       const result = await this.actions.expand({ input: { '@context': context, [predicate]: '' } }, { parentCtx: ctx });

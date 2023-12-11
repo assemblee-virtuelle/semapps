@@ -49,13 +49,13 @@ module.exports = {
       items: [
         'middleware/ldp/resource',
         'middleware/ldp/container',
-        'middleware/ldp/ontology',
         'middleware/ldp/controlled-container',
         'middleware/ldp/document-tagger',
         'middleware/ldp/image-processor'
       ]
     },
     'middleware/nodeinfo',
+    'middleware/ontologies',
     'middleware/sparql-endpoint',
     {
       type: 'category',

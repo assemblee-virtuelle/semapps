@@ -40,7 +40,7 @@ module.exports = {
 
       let result = await ctx.call('triplestore.query', {
         query: `
-          ${await ctx.call('ldp.ontology.getRdfPrefixes')}
+          ${await ctx.call('ontologies.getRdfPrefixes')}
           CONSTRUCT  {
             ${blankNodesQuery.construct}
           }

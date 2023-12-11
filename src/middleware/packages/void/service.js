@@ -188,7 +188,7 @@ module.exports = {
       async handler(ctx) {
         const accept = ctx.params.accept || MIME_TYPES.TURTLE;
 
-        const ontologies = await ctx.call('ldp.ontology.list');
+        const ontologies = await ctx.call('ontologies.list');
         const partitions = await this.getContainers(ctx);
 
         const url = urlJoin(this.settings.baseUrl, '.well-known/void');
@@ -376,7 +376,7 @@ module.exports = {
       return res;
     },
     async formatOutput(ctx, output, voidUrl, jsonLD) {
-      const prefix = await ctx.call('ldp.ontology.getPrefixes');
+      const prefix = await ctx.call('ontologies.getPrefixes');
       if (!jsonLD) {
         const turtle = await new Promise(resolve => {
           const writer = new Writer({

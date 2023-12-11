@@ -6,7 +6,7 @@ module.exports = {
   async handler(ctx) {
     let context = [];
 
-    const ontologies = await ctx.call('ldp.ontology.list');
+    const ontologies = await ctx.call('ontologies.list');
 
     for (const ontology of ontologies) {
       // Do not include in local contexts URIs we want to preserve explicitely

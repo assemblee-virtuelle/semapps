@@ -11,6 +11,7 @@ module.exports = {
     localContextPath: '.well-known/context.jsonld',
     cachedContextFiles: []
   },
+  dependencies: ['ontologies'],
   async created() {
     const { baseUri, localContextPath, cachedContextFiles } = this.settings;
 

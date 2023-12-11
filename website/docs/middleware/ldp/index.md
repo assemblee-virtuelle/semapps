@@ -13,13 +13,14 @@ This package allows you to setup [LDP](https://www.w3.org/TR/ldp-primer/) contai
 ## Dependencies
 
 - [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
+- [JsonLDService](../jsonld)
+- [OntologiesService](../ontologies)
 - [TripleStoreService](../triplestore)
 
 ## Sub-services
 
 - [LdpResourceService](resource.md)
 - [LdpContainerService](container.md)
-- [LdpOntologyService](ontology.md)
 - LdpRegistryService
 - LdpApiService
 - LdpCacheService
@@ -46,16 +47,6 @@ module.exports = {
   mixins: [LdpService],
   settings: {
     baseUrl: 'http://localhost:3000/',
-    ontologies: [
-      {
-        prefix: 'rdf',
-        url: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
-      },
-      {
-        prefix: 'ldp',
-        url: 'http://www.w3.org/ns/ldp#'
-      }
-    ],
     containers: [
       {
         path: '/resources'
@@ -71,18 +62,15 @@ module.exports = {
 
 ## Settings
 
-| Property                        | Type       | Default                     | Description                                                                                              |
-| ------------------------------- | ---------- | --------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `baseUrl`                       | `String`   | **required**                | Base URL of the LDP server                                                                               |
-| `ontologies`                    | `[Array]`  |                             | List of ontology used ([format](../ldp/ontology)). Required if `dynamicOntologiesRegistration` is false. |
-| `dynamicOntologiesRegistration` | `Boolean`  | false                       | If true, ontologies can be registered dynamically using the `ldp.ontology.register` action               |
-| `containers`                    | `[Object]` | **required**                | List of containers to set up, with their options (see below)                                             |
-| `defaultContainerOptions`       | `[Object]` |                             | Default options for all containers (see below)                                                           |
-| `mirrorGraphName`               | `String`   | "http://semapps.org/mirror" | Name of the RDF graph where to store mirrored data                                                       |
-| `podProvider`                   | `Boolean`  | false                       | Set to true if your server is a POD provider                                                             |
-| `preferredViewForResource`      | `Function` |                             | Function called to generate a redirect to the preferred view (see below)                                 |
-| `resourcesWithContainerPath`    | `Boolean`  | true                        | If true, the URI of all new resources will include the container path                                    |
-| `setingsDataset`                | `String`   | "settings"                  | The dataset where to persist ontologies (if `dynamicOntologiesRegistration` is true )                    |
+| Property                     | Type       | Default                     | Description                                                              |
+| ---------------------------- | ---------- | --------------------------- | ------------------------------------------------------------------------ |
+| `baseUrl`                    | `String`   | **required**                | Base URL of the LDP server                                               |
+| `containers`                 | `[Object]` | **required**                | List of containers to set up, with their options (see below)             |
+| `defaultContainerOptions`    | `[Object]` |                             | Default options for all containers (see below)                           |
+| `mirrorGraphName`            | `String`   | "http://semapps.org/mirror" | Name of the RDF graph where to store mirrored data                       |
+| `podProvider`                | `Boolean`  | false                       | Set to true if your server is a POD provider                             |
+| `preferredViewForResource`   | `Function` |                             | Function called to generate a redirect to the preferred view (see below) |
+| `resourcesWithContainerPath` | `Boolean`  | true                        | If true, the URI of all new resources will include the container path    |
 
 ## Container options
 
@@ -113,15 +101,6 @@ These catch-all routes are automatically added to the `ApiGateway` service.
 | `DELETE *` | `ldp.resource.delete` | `ldp.container.delete` | -                                         |
 
 > Note: If the `readOnly` container option is set (see above), only `GET` routes are added.
-
-## Dynamic ontologies registration
-
-If you wish other services to register new ontologies dynamically, you must set the `dynamicOntologiesRegistration` setting to `true`.
-
-You can then call the [`ldp.ontology.register`](./ontology#register) action.
-
-They will be persisted by default to a dataset named `settings` (the same used by the `auth.account` service).
-If you wish to use another dataset name, you can change the `settingsDataset` setting.
 
 ## Redirecting to a frontend app
 

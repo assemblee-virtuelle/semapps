@@ -1,10 +1,10 @@
 const path = require('path');
-const urlJoin = require('url-join');
 const ApiGatewayService = require('moleculer-web');
 const { Errors: E } = require('moleculer-web');
 const { ActivityPubService } = require('@semapps/activitypub');
 const { JsonLdService } = require('@semapps/jsonld');
 const { LdpService, DocumentTaggerMixin } = require('@semapps/ldp');
+const { OntologiesService } = require('@semapps/ontologies');
 const { SignatureService } = require('@semapps/signature');
 const { SparqlEndpointService } = require('@semapps/sparql-endpoint');
 const { TripleStoreService } = require('@semapps/triplestore');
@@ -121,6 +121,12 @@ const CoreService = {
         }
       });
     }
+
+    this.broker.createService(OntologiesService, {
+      settings: {
+        ontologies: ontologies || coreOntologies
+      }
+    });
 
     if (this.settings.ldp !== false) {
       this.broker.createService(LdpService, {

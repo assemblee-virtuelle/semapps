@@ -1,4 +1,5 @@
 const { TripleStoreAdapter } = require('@semapps/triplestore');
+const OntologiesRegistryService = require('./sub-services/registry');
 const findPrefixAction = require('./actions/findPrefix');
 const getByPrefixAction = require('./actions/getByPrefix');
 const getPrefixesAction = require('./actions/getPrefixes');
@@ -7,17 +8,21 @@ const listAction = require('./actions/list');
 const registerAction = require('./actions/register');
 
 module.exports = {
-  name: 'ldp.ontology',
+  name: 'ontologies',
   settings: {
-    idField: '@id',
     ontologies: [],
-    dynamicRegistration: false
+    dynamicRegistration: false,
+    settingsDataset: 'settings'
   },
-  async started() {
-    if (this.settings.dynamicRegistration) {
-      for (const ontology of this.settings.ontologies) {
-        await this.actions.register({ ...ontology, overwrite: true });
-      }
+  async created() {
+    const { ontologies, dynamicRegistration, settingsDataset } = this.settings;
+    if (dynamicRegistration) {
+      await this.broker.createService(OntologiesRegistryService, {
+        adapter: new TripleStoreAdapter({ type: 'Ontology', dataset: settingsDataset }),
+        settings: {
+          ontologies
+        }
+      });
     }
   },
   actions: {

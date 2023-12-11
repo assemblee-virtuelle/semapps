@@ -1,8 +1,6 @@
 const fetch = require('node-fetch');
 const urlJoin = require('url-join');
-const DbService = require('moleculer-db');
-const { LdpOntologyService } = require('@semapps/ldp');
-const { TripleStoreAdapter } = require('@semapps/triplestore');
+const { OntologiesService } = require('@semapps/ontologies');
 const initialize = require('./initialize');
 const CONFIG = require('../config');
 const ont1 = require('./ontologies/ont1.json');
@@ -19,10 +17,12 @@ describe.each([false, true])('Dynamic ontologies with cacher %s', cacher => {
 
   beforeAll(async () => {
     broker = await initialize(cacher);
-    await broker.createService(LdpOntologyService, {
-      mixins: [DbService],
-      adapter: new TripleStoreAdapter({ type: 'Ontology', dataset: CONFIG.SETTINGS_DATASET }),
-      settings: { dynamicRegistration: true }
+    await broker.createService(OntologiesService, {
+      settings: {
+        ontologies: [],
+        dynamicRegistration: true,
+        settingsDataset: CONFIG.SETTINGS_DATASET
+      }
     });
     await broker.start();
   });
@@ -31,32 +31,32 @@ describe.each([false, true])('Dynamic ontologies with cacher %s', cacher => {
   });
 
   test('Register a new ontology', async () => {
-    await broker.call('ldp.ontology.register', { ...ont1 });
+    await broker.call('ontologies.register', { ...ont1 });
 
-    await expect(broker.call('ldp.ontology.getByPrefix', { prefix: 'ont1' })).resolves.toMatchObject(ont1);
+    await expect(broker.call('ontologies.getByPrefix', { prefix: 'ont1' })).resolves.toMatchObject(ont1);
 
-    await expect(broker.call('ldp.ontology.list')).resolves.toEqual(
+    await expect(broker.call('ontologies.list')).resolves.toEqual(
       expect.arrayContaining([expect.objectContaining(ont1)])
     );
   });
 
   test('Register the same ontology with overwrite = false', async () => {
-    await expect(broker.call('ldp.ontology.register', { ...ont1, overwrite: false })).rejects.toThrow();
+    await expect(broker.call('ontologies.register', { ...ont1, overwrite: false })).rejects.toThrow();
   });
 
   test('Register the same ontology with overwrite = true', async () => {
-    await broker.call('ldp.ontology.register', {
+    await broker.call('ontologies.register', {
       ...ont1,
       owl: 'https://www.w3.org/ns/ontology1.ttl',
       overwrite: true
     });
 
-    await expect(broker.call('ldp.ontology.getByPrefix', { prefix: 'ont1' })).resolves.toMatchObject({
+    await expect(broker.call('ontologies.getByPrefix', { prefix: 'ont1' })).resolves.toMatchObject({
       ...ont1,
       owl: 'https://www.w3.org/ns/ontology1.ttl'
     });
 
-    await expect(broker.call('ldp.ontology.list')).resolves.toEqual(
+    await expect(broker.call('ontologies.list')).resolves.toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           ...ont1,
@@ -69,11 +69,11 @@ describe.each([false, true])('Dynamic ontologies with cacher %s', cacher => {
   });
 
   test('Register a 2nd ontology', async () => {
-    await broker.call('ldp.ontology.register', { ...ont2 });
+    await broker.call('ontologies.register', { ...ont2 });
 
-    await expect(broker.call('ldp.ontology.getByPrefix', { prefix: 'ont2' })).resolves.toMatchObject(ont2);
+    await expect(broker.call('ontologies.getByPrefix', { prefix: 'ont2' })).resolves.toMatchObject(ont2);
 
-    await expect(broker.call('ldp.ontology.list')).resolves.toEqual(
+    await expect(broker.call('ontologies.list')).resolves.toEqual(
       expect.arrayContaining([expect.objectContaining(ont1), expect.objectContaining(ont2)])
     );
 
@@ -87,11 +87,11 @@ describe.each([false, true])('Dynamic ontologies with cacher %s', cacher => {
   });
 
   test('Register a 3nd ontology', async () => {
-    await broker.call('ldp.ontology.register', { ...ont3 });
+    await broker.call('ontologies.register', { ...ont3 });
 
-    await expect(broker.call('ldp.ontology.getByPrefix', { prefix: 'ont3' })).resolves.toMatchObject(ont3);
+    await expect(broker.call('ontologies.getByPrefix', { prefix: 'ont3' })).resolves.toMatchObject(ont3);
 
-    await expect(broker.call('ldp.ontology.list')).resolves.toEqual(
+    await expect(broker.call('ontologies.list')).resolves.toEqual(
       expect.arrayContaining([
         expect.objectContaining(ont1),
         expect.objectContaining(ont2),
@@ -116,22 +116,22 @@ describe.each([false, true])('Dynamic ontologies with cacher %s', cacher => {
   });
 
   test('Register a 4th ontology with JSON-LD conflicts', async () => {
-    await expect(broker.call('ldp.ontology.register', { ...ont4 })).rejects.toThrow();
+    await expect(broker.call('ontologies.register', { ...ont4 })).rejects.toThrow();
   });
 
   test('Find prefixes with prefix.cc', async () => {
-    let result = await broker.call('ldp.ontology.findPrefix', { url: 'http://xmlns.com/foaf/0.1/name' });
+    let result = await broker.call('ontologies.findPrefix', { url: 'http://xmlns.com/foaf/0.1/name' });
     expect(result).toBe('foaf');
 
-    result = await broker.call('ldp.ontology.findPrefix', { url: 'http://xmlns.com/foaf/0.1/' });
+    result = await broker.call('ontologies.findPrefix', { url: 'http://xmlns.com/foaf/0.1/' });
     expect(result).toBe('foaf');
 
-    result = await broker.call('ldp.ontology.findPrefix', { url: 'http://xmlns.com/foaf' });
+    result = await broker.call('ontologies.findPrefix', { url: 'http://xmlns.com/foaf' });
     expect(result).toBeNull();
   });
 
   test('Get RDF prefixes', async () => {
-    const rdfPrefixes = await broker.call('ldp.ontology.getRdfPrefixes');
+    const rdfPrefixes = await broker.call('ontologies.getRdfPrefixes');
 
     expect(rdfPrefixes).toBe(
       'PREFIX ont1: <https://www.w3.org/ns/ontology1#>\nPREFIX ont2: <https://www.w3.org/ns/ontology2#>\nPREFIX ont3: <https://www.w3.org/ns/ontology3#>'
@@ -139,7 +139,7 @@ describe.each([false, true])('Dynamic ontologies with cacher %s', cacher => {
   });
 
   test('Get prefixes', async () => {
-    const prefixes = await broker.call('ldp.ontology.getPrefixes');
+    const prefixes = await broker.call('ontologies.getPrefixes');
 
     expect(prefixes).toEqual({
       ont1: 'https://www.w3.org/ns/ontology1#',
