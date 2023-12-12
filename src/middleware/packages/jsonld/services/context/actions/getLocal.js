@@ -13,10 +13,10 @@ module.exports = {
       if (ontology.preserveContextUri !== true) {
         if (!ontology.jsonldContext) {
           // If no context is defined for the ontology, simply add its prefix
-          ontology.jsonldContext = { [ontology.prefix]: ontology.url };
+          ontology.jsonldContext = { [ontology.prefix]: ontology.namespace };
         } else if (isObject(ontology.jsonldContext)) {
           // If the context is an object, ensure the prefix is included
-          ontology.jsonldContext[ontology.prefix] = ontology.url;
+          ontology.jsonldContext[ontology.prefix] = ontology.namespace;
         }
 
         context = [].concat(context, ontology.jsonldContext);

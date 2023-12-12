@@ -1,6 +1,6 @@
 {
   "prefix": "dc",
-  "url": "http://purl.org/dc/terms/",
+  "namespace": "http://purl.org/dc/terms/",
   "jsonldContext": {
     "dc:created": {
       "@type": "xsd:dateTime"

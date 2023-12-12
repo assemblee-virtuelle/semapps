@@ -1,6 +1,6 @@
 {
   "prefix": "apods",
-  "url": "http://activitypods.org/ns/core#",
+  "namespace": "http://activitypods.org/ns/core#",
   "jsonldContext": {
     "apods:closingTime": {
       "@type": "xsd:dateTime"

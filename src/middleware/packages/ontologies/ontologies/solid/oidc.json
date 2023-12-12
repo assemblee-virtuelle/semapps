@@ -1,6 +1,6 @@
 {
   "prefix": "oidc",
-  "url": "http://www.w3.org/ns/solid/oidc#",
+  "namespace": "http://www.w3.org/ns/solid/oidc#",
   "jsonldContext": {
     "oidc:client_uri": {
       "@type": "@id"

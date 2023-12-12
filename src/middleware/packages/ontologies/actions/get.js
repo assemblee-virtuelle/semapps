@@ -6,10 +6,11 @@ module.exports = {
   cache: true,
   async handler(ctx) {
     let { prefix } = ctx.params;
-    if (this.settings.dynamicRegistration) {
+
+    if (this.settings.persistRegistry) {
       return await ctx.call('ontologies.registry.getByPrefix', { prefix });
     } else {
-      return this.settings.ontologies.find(o => o.prefix === prefix);
+      return this.ontologies[prefix];
     }
   }
 };

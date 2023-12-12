@@ -261,7 +261,7 @@ module.exports = {
           graph.push({
             s: namedNode(thisServer),
             p: namedNode('http://rdfs.org/ns/void#vocabulary'),
-            o: namedNode(ontology.url)
+            o: namedNode(ontology.namespace)
           });
         }
 

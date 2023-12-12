@@ -1,6 +1,6 @@
 {
   "prefix": "as",
-  "url": "https://www.w3.org/ns/activitystreams#",
+  "namespace": "https://www.w3.org/ns/activitystreams#",
   "jsonldContext": "https://www.w3.org/ns/activitystreams",
   "preserveContextUri": true
 }

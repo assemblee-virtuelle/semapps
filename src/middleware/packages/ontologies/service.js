@@ -1,7 +1,7 @@
 const { TripleStoreAdapter } = require('@semapps/triplestore');
 const OntologiesRegistryService = require('./sub-services/registry');
 const findPrefixAction = require('./actions/findPrefix');
-const getByPrefixAction = require('./actions/getByPrefix');
+const getAction = require('./actions/get');
 const getPrefixesAction = require('./actions/getPrefixes');
 const getRdfPrefixesAction = require('./actions/getRdfPrefixes');
 const listAction = require('./actions/list');
@@ -11,27 +11,26 @@ module.exports = {
   name: 'ontologies',
   settings: {
     ontologies: [],
-    dynamicRegistration: false,
+    persistRegistry: false,
     settingsDataset: 'settings'
   },
   async created() {
-    const { ontologies, dynamicRegistration, settingsDataset } = this.settings;
-    if (dynamicRegistration) {
+    const { persistRegistry, settingsDataset } = this.settings;
+    if (persistRegistry) {
       await this.broker.createService(OntologiesRegistryService, {
-        adapter: new TripleStoreAdapter({ type: 'Ontology', dataset: settingsDataset }),
-        settings: {
-          ontologies
-        }
+        adapter: new TripleStoreAdapter({ type: 'Ontology', dataset: settingsDataset })
       });
     }
   },
   async started() {
+    if (!this.settings.persistRegistry) this.ontologies = {};
+
     // Do not await to avoid circular dependency with jsonld service
     this.registerAll();
   },
   actions: {
     findPrefix: findPrefixAction,
-    getByPrefix: getByPrefixAction,
+    get: getAction,
     getPrefixes: getPrefixesAction,
     getRdfPrefixes: getRdfPrefixesAction,
     list: listAction,

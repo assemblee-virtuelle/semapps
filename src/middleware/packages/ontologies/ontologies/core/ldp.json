@@ -1,4 +1,4 @@
 {
   "prefix": "ldp",
-  "url": "http://www.w3.org/ns/ldp#"
+  "namespace": "http://www.w3.org/ns/ldp#"
 }

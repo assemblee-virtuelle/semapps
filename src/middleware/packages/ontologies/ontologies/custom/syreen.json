@@ -1,6 +1,6 @@
 {
   "prefix": "syreen",
-  "url": "http://syreen.fr/ns/core#",
+  "namespace": "http://syreen.fr/ns/core#",
   "jsonldContext": {
     "syreen:hasPart": {
       "@type": "@id"

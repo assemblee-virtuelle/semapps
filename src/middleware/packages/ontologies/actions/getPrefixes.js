@@ -6,7 +6,7 @@ module.exports = {
     return Object.fromEntries(
       ontologies
         .sort((a, b) => (a.prefix < b.prefix ? -1 : a.prefix > b.prefix ? 1 : 0))
-        .map(ontology => [ontology.prefix, ontology.url])
+        .map(ontology => [ontology.prefix, ontology.namespace])
     );
   }
 };

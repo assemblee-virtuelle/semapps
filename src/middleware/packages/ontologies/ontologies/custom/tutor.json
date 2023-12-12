@@ -1,6 +1,6 @@
 {
   "prefix": "tutor",
-  "url": "http://virtual-assembly.org/ontologies/pair-tutor#",
+  "namespace": "http://virtual-assembly.org/ontologies/pair-tutor#",
   "owl": "https://raw.githubusercontent.com/reconnexion/minicourses/master/ontology/pair-tutor.owl",
   "jsonldContext": {
     "tutor:currentLesson": {

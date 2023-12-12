@@ -2,11 +2,12 @@ const path = require('path');
 const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
 const { JsonLdService } = require('@semapps/jsonld');
+const { OntologiesService } = require('@semapps/ontologies');
 const { TripleStoreService } = require('@semapps/triplestore');
 const CONFIG = require('../config');
 const { clearDataset } = require('../utils');
 
-module.exports = async cacher => {
+module.exports = async (cacher, persistRegistry) => {
   await clearDataset(CONFIG.SETTINGS_DATASET);
 
   const broker = new ServiceBroker({
@@ -47,6 +48,15 @@ module.exports = async cacher => {
   });
 
   await broker.createService(ApiGatewayService);
+
+  await broker.createService(OntologiesService, {
+    settings: {
+      persistRegistry,
+      settingsDataset: CONFIG.SETTINGS_DATASET
+    }
+  });
+
+  await broker.start();
 
   return broker;
 };

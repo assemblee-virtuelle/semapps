@@ -1,4 +1,4 @@
 {
   "prefix": "semapps",
-  "url": "http://semapps.org/ns/core#"
+  "namespace": "http://semapps.org/ns/core#"
 }

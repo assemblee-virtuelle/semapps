@@ -1,6 +1,6 @@
 {
   "prefix": "vcard",
-  "url": "http://www.w3.org/2006/vcard/ns#",
+  "namespace": "http://www.w3.org/2006/vcard/ns#",
   "jsonldContext": {
     "vcard:hasAddress": {
       "@type": "@id"

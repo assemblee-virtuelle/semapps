@@ -1,6 +1,6 @@
 {
   "prefix": "skos",
-  "url": "http://www.w3.org/2004/02/skos/core#",
+  "namespace": "http://www.w3.org/2004/02/skos/core#",
   "owl": "https://raw.githubusercontent.com/openlink/rdf-editor/develop/app/data/skos.ttl",
   "jsonldContext": {
     "skos:broader": {

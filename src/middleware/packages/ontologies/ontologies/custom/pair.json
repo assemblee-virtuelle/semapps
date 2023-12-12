@@ -1,6 +1,6 @@
 {
   "prefix": "pair",
-  "url": "http://virtual-assembly.org/ontologies/pair#",
+  "namespace": "http://virtual-assembly.org/ontologies/pair#",
   "owl": "http://virtual-assembly.org/ontologies/pair-2021-summer/ontology.ttl",
   "jsonldContext": {
     "pair:image": {

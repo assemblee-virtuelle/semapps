@@ -42,28 +42,30 @@ module.exports = {
         preserveContextUri: false // If true, the jsonldContext won't be merged in the local context file
       }
     ],
-    dynamicRegistration: false,
+    persistRegistry: false,
     setingsDataset: 'settings'
   }
 };
 ```
 
-### Dynamic ontologies registration
+### Persisting registry
 
-If you wish other services to register new ontologies dynamically, you must set the `dynamicRegistration` setting to `true`.
+Any services can call the [`register`](#register) action to add new ontologies.
 
-These services can then call the [`ontologies.register`](#register) action.
+By default, the ontologies registry is not persisted. It is kept in memory and so the `register` action must be called again on every restart.
 
-They will be persisted by default to a dataset named `settings` (the same used by the `auth.account` service).
+If you wish ontologies to be persisted, you must set the `persistRegistry` setting to `true`.
+
+By default, they will be persisted in a dataset named `settings` (the same used by the `auth.account` service).
 If you wish to use another dataset name, you can change the `settingsDataset` setting.
 
 ## Settings
 
-| Property              | Type      | Default    | Description                                                                   |
-| --------------------- | --------- | ---------- | ----------------------------------------------------------------------------- |
-| `ontologies`          | `[Array]` |            | List of ontology used (see above for format).                                 |
-| `dynamicRegistration` | `Boolean` | false      | If true, ontologies can be registered with the [`register`](#register) action |
-| `settingsDataset`     | `String`  | "settings" | The dataset where to persist ontologies (if `dynamicRegistration` is true )   |
+| Property          | Type      | Default    | Description                                                             |
+| ----------------- | --------- | ---------- | ----------------------------------------------------------------------- |
+| `ontologies`      | `[Array]` |            | List of ontology used (see above for format).                           |
+| `persistRegistry` | `Boolean` | false      | If true, ontologies will be persisted in a dataset                      |
+| `settingsDataset` | `String`  | "settings" | The dataset where to persist ontologies (if `persistRegistry` is true ) |
 
 ## Core ontologies
 
@@ -104,7 +106,7 @@ Fetch [prefix.cc](https://prefix.cc) to find the prefix of the provided URI.
 
 The prefix, or `null` if no prefix was found.
 
-### `getByPrefix`
+### `get`
 
 Return a registered ontology by its prefix
 
@@ -116,7 +118,7 @@ Return a registered ontology by its prefix
 
 ##### Return
 
-The ontology, or `null` if no ontology with this prefix was registered.
+The ontology, or `null` if no ontology with this prefix or namespace was registered.
 
 ### `getPrefixes`
 
@@ -151,8 +153,8 @@ Register a new ontology.
 | Property             | Type                          | Default      | Description                                                                                                                           |
 | -------------------- | ----------------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
 | `prefix`             | `String`                      | **required** | Prefix of the ontology                                                                                                                |
-| `url`                | `String`                      | **required** | URL of the ontology                                                                                                                   |
+| `namespace`          | `String`                      | **required** | Namespace of the ontology                                                                                                             |
 | `owl`                | `String`                      |              | URL of the OWL file (used by the [InferenceService](./inference.md))                                                                  |
-| `jsonldContext`      | `String`, `Array` or `Object` |              | JSON-LD context associated with the ontology. Can be an URL, a array of URLs or an object                                             |
+| `jsonldContext`      | `String`, `Array` or `Object` |              | JSON-LD context associated with the ontology. Can be an URL, a array or an object                                                     |
 | `preserveContextUri` | `Boolean`                     | false        | If true, the `jsonldContext` will not be merged in the local context file. Works only if jsonldContext is an URL or an array of URLs. |
 | `overwrite`          | `Boolean`                     | false        | If true, any existing ontology with the same prefix and URL will be overwritten                                                       |

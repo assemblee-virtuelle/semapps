@@ -1,8 +1,10 @@
+const { isURL, arrayOf } = require('../utils');
+
 module.exports = {
   visibility: 'public',
   params: {
     prefix: 'string',
-    url: 'string',
+    namespace: 'string',
     owl: { type: 'string', optional: true },
     jsonldContext: {
       type: 'multi',
@@ -13,10 +15,49 @@ module.exports = {
     overwrite: { type: 'boolean', default: false }
   },
   async handler(ctx) {
-    if (this.settings.dynamicRegistration) {
-      return await ctx.call('ontologies.registry.register', ctx.params);
+    let { prefix, namespace, owl, jsonldContext, preserveContextUri, overwrite } = ctx.params;
+
+    const ontology = await this.actions.get({ prefix }, { parentCtx: ctx });
+
+    if (!overwrite && ontology) {
+      throw new Error('An ontology with this prefix is already registered');
+    }
+
+    if (preserveContextUri === true) {
+      if (!jsonldContext || !arrayOf(jsonldContext).every(context => isURL(context))) {
+        throw new Error('If preserveContextUri is true, jsonldContext must be one or more URI');
+      }
+    }
+
+    // Check that jsonldContext doesn't conflict with existing context
+    if (jsonldContext) {
+      const existingContext = await ctx.call('jsonld.context.get');
+      const newContext = [].concat(existingContext, jsonldContext);
+      const isValid = await ctx.call('jsonld.context.validate', { context: newContext });
+      if (!isValid) throw new Error('The ontology JSON-LD context is in conflict with the existing JSON-LD context');
+    }
+
+    if (this.settings.persistRegistry) {
+      await ctx.call('ontologies.registry.updateOrCreate', {
+        prefix,
+        namespace,
+        owl,
+        jsonldContext,
+        preserveContextUri
+      });
     } else {
-      throw new Error('The register action is available only if dynamicRegistration is true');
+      this.ontologies[prefix] = {
+        prefix,
+        namespace,
+        owl,
+        jsonldContext,
+        preserveContextUri
+      };
+    }
+
+    if (this.broker.cacher) {
+      this.broker.cacher.clean('ontologies.**');
+      this.broker.cacher.clean('jsonld.context.**');
     }
   }
 };

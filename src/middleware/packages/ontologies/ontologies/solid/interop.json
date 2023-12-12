@@ -1,6 +1,6 @@
 {
   "prefix": "interop",
-  "url": "http://www.w3.org/ns/solid/interop#",
+  "namespace": "http://www.w3.org/ns/solid/interop#",
   "jsonldContext": {
     "interop:accessNecessity": {
       "@type": "@id"

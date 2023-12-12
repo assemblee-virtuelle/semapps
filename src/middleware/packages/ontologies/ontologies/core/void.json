@@ -1,6 +1,6 @@
 {
   "prefix": "void",
-  "url": "http://rdfs.org/ns/void#",
+  "namespace": "http://rdfs.org/ns/void#",
   "jsonldContext": {
     "void:sparqlEndpoint": {
       "@type": "@id"

@@ -1,4 +1,4 @@
 {
   "prefix": "schema",
-  "url": "http://schema.org/"
+  "namespace": "http://schema.org/"
 }

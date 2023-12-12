@@ -1,6 +1,6 @@
 {
   "prefix": "ont4",
-  "url": "https://www.w3.org/ns/ontology4#",
+  "namespace": "https://www.w3.org/ns/ontology4#",
   "jsonldContext": {
     "ont4": "https://www.w3.org/ns/ontology4#",
     "friend": {
