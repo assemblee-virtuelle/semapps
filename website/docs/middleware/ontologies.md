@@ -36,7 +36,7 @@ module.exports = {
     ontologies: [
       {
         prefix: 'ont1',
-        url: 'https://www.w3.org/ns/ontology1#',
+        namespace: 'https://www.w3.org/ns/ontology1#',
         owl: 'https://www.w3.org/ns/ontology1.ttl',
         jsonldContext: 'https://www.w3.org/ns/ontology1.ttl', // Can also be a array or an object
         preserveContextUri: false // If true, the jsonldContext won't be merged in the local context file
