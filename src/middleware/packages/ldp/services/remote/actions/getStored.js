@@ -15,12 +15,12 @@ module.exports = {
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
-    const { resourceUri } = ctx.params;
+    const { resourceUri, jsonContext } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     // No options will be returned by ldp.registry.getByUri unless the resource is in a local container (this is the case for activities)
     // TODO Store the context of the original resource ?
-    const { accept, jsonContext } = {
+    const { accept } = {
       ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
       ...ctx.params
     };
@@ -29,13 +29,6 @@ module.exports = {
 
     // If resource exists
     if (graphName !== false) {
-      // TODO Get options from type if it exists or return default options
-      // const types = await ctx.call('ldp.resource.getTypes', { resourceUri }, { meta: { dataset: getDatasetFromUri(resourceUri) }});
-      // const containerOptions = await ctx.call('ldp.registry.getByType', { type: types });
-      // const { jsonContext } = containerOptions
-      //   ? { ...this.settings.defaultOptions, ...containerOptions }
-      //   : this.settings.defaultOptions;
-
       const blankNodesQuery = buildBlankNodesQuery(4);
 
       let result = await ctx.call('triplestore.query', {
@@ -55,7 +48,7 @@ module.exports = {
         webId
       });
 
-      // If we asked for JSON-LD, frame it using the correct context in order to have clean, consistent results
+      // If we asked for JSON-LD, frame it in order to have clean, consistent results
       if (accept === MIME_TYPES.JSON) {
         result = await ctx.call('jsonld.parser.frame', {
           input: result,

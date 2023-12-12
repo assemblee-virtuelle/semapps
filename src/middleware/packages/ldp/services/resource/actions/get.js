@@ -23,14 +23,14 @@ module.exports = {
     keys: ['resourceUri', 'accept', 'jsonContext']
   },
   async handler(ctx) {
-    const { resourceUri, aclVerified } = ctx.params;
+    const { resourceUri, aclVerified, jsonContext } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (this.isRemoteUri(resourceUri, ctx.meta.dataset)) {
       return await ctx.call('ldp.remote.get', ctx.params);
     }
 
-    const { accept, jsonContext } = {
+    const { accept } = {
       ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
       ...ctx.params
     };

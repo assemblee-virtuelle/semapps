@@ -36,9 +36,8 @@ module.exports = {
     if (!file) {
       // Adds the default context, if it is missing
       if (contentType === MIME_TYPES.JSON && !resource['@context']) {
-        const { jsonContext } = await ctx.call('ldp.registry.getByUri', { containerUri });
         resource = {
-          '@context': jsonContext || (await ctx.call('jsonld.context.get')),
+          '@context': await ctx.call('jsonld.context.get'),
           ...resource
         };
       }

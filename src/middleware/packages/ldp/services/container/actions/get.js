@@ -20,11 +20,11 @@ module.exports = {
     keys: ['containerUri', 'accept', 'filters', 'jsonContext', 'webId', '#webId']
   },
   async handler(ctx) {
-    const { containerUri, filters } = ctx.params;
+    const { containerUri, filters, jsonContext } = ctx.params;
     let { webId } = ctx.params;
     webId = webId || ctx.meta.webId || 'anon';
 
-    const { accept, jsonContext } = {
+    const { accept } = {
       ...(await ctx.call('ldp.registry.getByUri', { containerUri })),
       ...ctx.params
     };

@@ -1,6 +1,5 @@
 module.exports = {
   accept: 'text/turtle',
-  jsonContext: null,
   readOnly: false,
   excludeFromMirror: false,
   newResourcesPermissions: webId => {

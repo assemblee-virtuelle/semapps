@@ -8,7 +8,6 @@ module.exports = {
     path: { type: 'string' },
     name: { type: 'string', optional: true },
     accept: { type: 'string', optional: true },
-    jsonContext: { type: 'multi', rules: [{ type: 'string' }, { type: 'object' }, { type: 'array' }], optional: true },
     permissions: { type: 'object', optional: true },
     excludeFromMirror: { type: 'boolean', optional: true },
     newResourcesPermissions: { type: 'multi', rules: [{ type: 'object' }, { type: 'function' }], optional: true },
@@ -19,6 +18,10 @@ module.exports = {
     let { path, fullPath, name, podsContainer, ...options } = ctx.params;
     if (!fullPath) fullPath = path;
     if (!name) name = path;
+
+    if (options.jsonContext) {
+      throw new Error('The jsonContext container option has been deprecated, please remove it');
+    }
 
     // Ignore undefined options
     Object.keys(options).forEach(key => (options[key] === undefined || options[key] === null) && delete options[key]);

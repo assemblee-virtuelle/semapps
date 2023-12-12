@@ -83,6 +83,7 @@ module.exports = {
       ...ldp,
       overwrite: true
     });
+    // Used by binaries
     await this.broker.call('ontologies.register', {
       ...semapps,
       overwrite: true

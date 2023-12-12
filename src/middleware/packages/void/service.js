@@ -413,6 +413,7 @@ module.exports = {
       }
       const jsonldContext = { ...jsonContext, ...prefix };
 
+      // TODO put this in jsonld service
       const mySerializer = new JsonLdSerializer({
         context: jsonldContext,
         baseIRI: voidUrl
