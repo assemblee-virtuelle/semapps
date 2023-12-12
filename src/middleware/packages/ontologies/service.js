@@ -25,6 +25,10 @@ module.exports = {
       });
     }
   },
+  async started() {
+    // Do not await to avoid circular dependency with jsonld service
+    this.registerAll();
+  },
   actions: {
     findPrefix: findPrefixAction,
     getByPrefix: getByPrefixAction,
@@ -32,5 +36,12 @@ module.exports = {
     getRdfPrefixes: getRdfPrefixesAction,
     list: listAction,
     register: registerAction
+  },
+  methods: {
+    async registerAll() {
+      for (const ontology of this.settings.ontologies) {
+        await this.actions.register({ ...ontology, overwrite: true });
+      }
+    }
   }
 };

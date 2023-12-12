@@ -7,13 +7,7 @@ module.exports = {
   mixins: [DbService],
   adapter: new TripleStoreAdapter({ type: 'Ontology', dataset: 'settings' }),
   settings: {
-    idField: '@id',
-    ontologies: []
-  },
-  async started() {
-    for (const ontology of this.settings.ontologies) {
-      await this.actions.register({ ...ontology, overwrite: true });
-    }
+    idField: '@id'
   },
   actions: {
     async getByPrefix(ctx) {
@@ -54,12 +48,12 @@ module.exports = {
 
         // Check that jsonldContext doesn't conflict with existing context
         if (jsonldContext) {
-          // const existingContext = await ctx.call('jsonld.context.get');
-          // // Do not use the jsonld.context.merge action to avoid object properties being overwritten
-          // const newContext = [].concat(existingContext, jsonldContext);
-          // const isValid = await ctx.call('jsonld.context.validate', { context: newContext });
-          // if (!isValid)
-          //   throw new Error('The ontology JSON-LD context is in conflict with the existing JSON-LD context');
+          const existingContext = await ctx.call('jsonld.context.get');
+          // Do not use the jsonld.context.merge action to avoid object properties being overwritten
+          const newContext = [].concat(existingContext, jsonldContext);
+          const isValid = await ctx.call('jsonld.context.validate', { context: newContext });
+          if (!isValid)
+            throw new Error('The ontology JSON-LD context is in conflict with the existing JSON-LD context');
         }
 
         // Stringify JSON-LD context if it is not an URL
