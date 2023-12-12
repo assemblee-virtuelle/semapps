@@ -1,5 +1,6 @@
 const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { void: voidOntology } = require('@semapps/ontologies');
 const { JsonLdSerializer } = require('jsonld-streaming-serializer');
 const { DataFactory, Writer } = require('n3');
 
@@ -11,7 +12,8 @@ const { parseHeader } = require('@semapps/middlewares');
 const prefixes = {
   dc: 'http://purl.org/dc/terms/',
   void: 'http://rdfs.org/ns/void#',
-  semapps: 'http://semapps.org/ns/core#'
+  semapps: 'http://semapps.org/ns/core#',
+  xsd: 'http://www.w3.org/2001/XMLSchema#'
 };
 
 function streamToString(stream) {
@@ -155,7 +157,13 @@ module.exports = {
     description: null,
     license: null
   },
-  dependencies: ['ldp.registry', 'api', 'triplestore', 'jsonld'],
+  dependencies: ['ldp.registry', 'api', 'triplestore', 'ontologies', 'jsonld'],
+  async started() {
+    await this.broker.call('ontologies.register', {
+      ...voidOntology,
+      overwrite: true
+    });
+  },
   actions: {
     getRemote: {
       visibility: 'public',

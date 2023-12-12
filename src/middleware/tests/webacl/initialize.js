@@ -2,10 +2,10 @@ const path = require('path');
 const urlJoin = require('url-join');
 const { ServiceBroker } = require('moleculer');
 const { CoreService } = require('@semapps/core');
+const { pair } = require('@semapps/ontologies');
 const { WebAclMiddleware } = require('@semapps/webacl');
 const { AuthLocalService } = require('@semapps/auth');
 const { WebIdService } = require('@semapps/webid');
-const ontologies = require('../ontologies.json');
 const CONFIG = require('../config');
 
 const initialize = async () => {
@@ -29,7 +29,7 @@ const initialize = async () => {
         password: CONFIG.JENA_PASSWORD,
         mainDataset: CONFIG.MAIN_DATASET
       },
-      ontologies,
+      ontologies: [pair],
       containers: ['/resources'],
       activitypub: false,
       mirror: false,

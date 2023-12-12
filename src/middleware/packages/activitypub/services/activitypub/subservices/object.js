@@ -60,7 +60,6 @@ const ObjectService = {
 
           objectUri = await ctx.call('ldp.container.post', {
             containerUri,
-            slug: ctx.meta.headers && ctx.meta.headers.slug,
             resource: activity.object,
             contentType: MIME_TYPES.JSON,
             webId: actorUri
@@ -71,6 +70,8 @@ const ObjectService = {
         case ACTIVITY_TYPES.UPDATE: {
           // If the object passed is an URI, this is an announcement and there is nothing to process
           if (typeof activity.object === 'string') break;
+
+          console.log('ACTIVITY UPDATE', activity.object);
 
           await ctx.call('ldp.resource.put', {
             resource: activity.object,

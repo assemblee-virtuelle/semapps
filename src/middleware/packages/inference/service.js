@@ -10,8 +10,7 @@ module.exports = {
   settings: {
     baseUrl: null,
     acceptFromRemoteServers: false,
-    offerToRemoteServers: false,
-    ontologies: []
+    offerToRemoteServers: false
   },
   dependencies: ['triplestore', 'ldp', 'jsonld'],
   created() {
@@ -28,7 +27,8 @@ module.exports = {
   },
   async started() {
     this.inverseRelations = {};
-    for (const ontology of this.settings.ontologies) {
+    // Note: Inverse relationships are also calculated when ontologies.registered events are received (see below)
+    for (const ontology of await this.broker.call('ontologies.list')) {
       if (ontology.owl) {
         const result = await this.findInverseRelations(ontology.owl);
         this.logger.info(`Found ${Object.keys(result).length} inverse relations in ${ontology.owl}`);
@@ -307,6 +307,14 @@ module.exports = {
             add: false
           });
         }
+      }
+    },
+    async 'ontologies.registered'(ctx) {
+      const { owl } = ctx.params;
+      if (owl) {
+        const result = await this.findInverseRelations(owl);
+        this.logger.info(`Found ${Object.keys(result).length} inverse relations in ${owl}`);
+        this.inverseRelations = { ...this.inverseRelations, ...result };
       }
     }
   }

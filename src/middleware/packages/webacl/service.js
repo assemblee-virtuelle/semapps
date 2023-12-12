@@ -1,3 +1,4 @@
+const { acl, vcard, rdfs } = require('@semapps/ontologies');
 const WebAclResourceService = require('./services/resource');
 const WebAclGroupService = require('./services/group');
 const WebAclCacheService = require('./services/cache');
@@ -11,7 +12,7 @@ module.exports = {
     podProvider: false,
     superAdmins: []
   },
-  dependencies: ['api'],
+  dependencies: ['api', 'ontologies'],
   async created() {
     const { baseUrl, graphName, podProvider, superAdmins } = this.settings;
 
@@ -61,5 +62,18 @@ module.exports = {
     for (const route of getRoutes()) {
       await this.broker.call('api.addRoute', { route });
     }
+
+    await this.broker.call('ontologies.register', {
+      ...acl,
+      overwrite: true
+    });
+    await this.broker.call('ontologies.register', {
+      ...vcard,
+      overwrite: true
+    });
+    await this.broker.call('ontologies.register', {
+      ...rdfs,
+      overwrite: true
+    });
   }
 };

@@ -113,9 +113,7 @@ describe('Resource CRUD operations', () => {
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
-      'pair:affiliates': {
-        '@id': 'http://localhost:3000/users/pierre'
-      },
+      'pair:affiliates': 'http://localhost:3000/users/pierre',
       'pair:hasLocation': {
         'pair:label': 'Nantes'
       }
@@ -157,9 +155,7 @@ describe('Resource CRUD operations', () => {
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
-      'pair:affiliates': {
-        '@id': 'http://localhost:3000/users/pierre'
-      },
+      'pair:affiliates': 'http://localhost:3000/users/pierre',
       'pair:hasLocation': [
         {
           'pair:label': 'Nantes'
@@ -191,9 +187,7 @@ describe('Resource CRUD operations', () => {
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
-      'pair:affiliates': {
-        '@id': 'http://localhost:3000/users/pierre'
-      },
+      'pair:affiliates': 'http://localhost:3000/users/pierre',
       'pair:hasLocation': {
         'pair:label': 'Compiegne'
       }
@@ -224,9 +218,7 @@ describe('Resource CRUD operations', () => {
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
-      'pair:affiliates': {
-        '@id': 'http://localhost:3000/users/pierre'
-      },
+      'pair:affiliates': 'http://localhost:3000/users/pierre',
       'pair:hasLocation': [
         {
           'pair:label': 'Compiegne'
@@ -265,9 +257,7 @@ describe('Resource CRUD operations', () => {
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
-      'pair:affiliates': {
-        '@id': 'http://localhost:3000/users/pierre'
-      },
+      'pair:affiliates': 'http://localhost:3000/users/pierre',
       'pair:hasLocation': {
         'pair:label': 'Compiegne'
       }
@@ -297,9 +287,7 @@ describe('Resource CRUD operations', () => {
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
-      'pair:affiliates': {
-        '@id': 'http://localhost:3000/users/pierre'
-      },
+      'pair:affiliates': 'http://localhost:3000/users/pierre',
       'pair:hasLocation': [
         {
           'pair:label': 'Compiegne',

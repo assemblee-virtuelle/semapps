@@ -31,6 +31,7 @@ module.exports = {
 
     // Check that jsonldContext doesn't conflict with existing context
     if (jsonldContext) {
+      await this.broker.waitForServices(['jsonld'], 15000);
       const existingContext = await ctx.call('jsonld.context.get');
       const newContext = [].concat(existingContext, jsonldContext);
       const isValid = await ctx.call('jsonld.context.validate', { context: newContext });
@@ -59,5 +60,7 @@ module.exports = {
       this.broker.cacher.clean('ontologies.**');
       this.broker.cacher.clean('jsonld.context.**');
     }
+
+    ctx.emit('ontologies.registered', { prefix, namespace, owl, jsonldContext, preserveContextUri });
   }
 };

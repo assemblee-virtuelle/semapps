@@ -1,18 +1,22 @@
 const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { foaf } = require('@semapps/ontologies');
 
 const WebIdService = {
   name: 'webid',
   settings: {
     baseUrl: null,
     usersContainer: null,
-    context: {
-      foaf: 'http://xmlns.com/foaf/0.1/'
-    },
     defaultAccept: 'text/turtle',
     podProvider: false
   },
-  dependencies: ['ldp.resource'],
+  dependencies: ['ldp.resource', 'ontologies'],
+  async started() {
+    await this.broker.call('ontologies.register', {
+      ...foaf,
+      overwrite: true
+    });
+  },
   actions: {
     /**
      * This should only be called after the user has been authenticated
@@ -28,7 +32,7 @@ const WebIdService = {
 
       const resource = {
         '@context': {
-          '@vocab': 'http://xmlns.com/foaf/0.1/'
+          '@vocab': foaf.namespace
         },
         '@type': 'Person',
         nick,
@@ -64,7 +68,6 @@ const WebIdService = {
       const newPerson = await ctx.call('ldp.resource.get', {
         resourceUri: webId,
         accept: MIME_TYPES.JSON,
-        jsonContext: this.settings.context,
         webId: 'system'
       });
 
@@ -78,7 +81,6 @@ const WebIdService = {
         return await ctx.call('ldp.resource.get', {
           resourceUri: webId,
           accept: MIME_TYPES.JSON,
-          jsonContext: this.settings.context,
           webId
         });
       }
@@ -90,7 +92,7 @@ const WebIdService = {
       return await ctx.call('ldp.resource.put', {
         resource: {
           '@context': {
-            '@vocab': 'http://xmlns.com/foaf/0.1/'
+            '@vocab': foaf.namespace
           },
           '@type': 'Person',
           '@id': webId,

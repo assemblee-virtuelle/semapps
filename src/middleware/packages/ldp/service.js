@@ -1,3 +1,4 @@
+const { ldp, semapps } = require('@semapps/ontologies');
 const LdpApiService = require('./services/api');
 const LdpContainerService = require('./services/container');
 const LdpCacheService = require('./services/cache');
@@ -76,5 +77,15 @@ module.exports = {
     if (this.broker.cacher) {
       await this.broker.createService(LdpCacheService);
     }
+  },
+  async started() {
+    await this.broker.call('ontologies.register', {
+      ...ldp,
+      overwrite: true
+    });
+    await this.broker.call('ontologies.register', {
+      ...semapps,
+      overwrite: true
+    });
   }
 };

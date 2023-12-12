@@ -194,14 +194,6 @@ const FollowService = {
       }
     }
   },
-  events: {
-    'activitypub.follow.added'() {
-      // Do nothing. We must define one event listener for EventsWatcher middleware to act correctly.
-    },
-    'activitypub.follow.removed'() {
-      // Do nothing. We must define one event listener for EventsWatcher middleware to act correctly.
-    }
-  },
   methods: {
     isLocalActor(uri) {
       return uri.startsWith(this.settings.baseUri);

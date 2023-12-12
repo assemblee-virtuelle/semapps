@@ -2,6 +2,7 @@
   "prefix": "interop",
   "namespace": "http://www.w3.org/ns/solid/interop#",
   "jsonldContext": {
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
     "interop:accessNecessity": {
       "@type": "@id"
     },

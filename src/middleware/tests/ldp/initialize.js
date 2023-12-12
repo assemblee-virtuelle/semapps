@@ -3,12 +3,11 @@ const fs = require('fs');
 const urlJoin = require('url-join');
 const { join: pathJoin } = require('path');
 const { CoreService } = require('@semapps/core');
-const { coreOntologies, pair } = require('@semapps/ontologies');
+const { pair, petr } = require('@semapps/ontologies');
 const { WebAclMiddleware } = require('@semapps/webacl');
 const { AuthLocalService } = require('@semapps/auth');
 const { WebIdService } = require('@semapps/webid');
 const path = require('path');
-const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
 const { clearDataset } = require('../utils');
 
@@ -56,7 +55,7 @@ const initialize = async () => {
   }
 
   const broker = new ServiceBroker({
-    middlewares: [EventsWatcher, WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
+    middlewares: [WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
     logger: {
       type: 'Console',
       options: {
@@ -76,7 +75,7 @@ const initialize = async () => {
         mainDataset: CONFIG.MAIN_DATASET
       },
       containers,
-      ontologies: [...coreOntologies, pair],
+      ontologies: [pair, petr],
       activitypub: false,
       mirror: false,
       void: false,

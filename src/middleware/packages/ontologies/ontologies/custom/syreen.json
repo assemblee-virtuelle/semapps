@@ -2,6 +2,7 @@
   "prefix": "syreen",
   "namespace": "http://syreen.fr/ns/core#",
   "jsonldContext": {
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
     "syreen:hasPart": {
       "@type": "@id"
     },

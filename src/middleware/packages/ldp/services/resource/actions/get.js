@@ -60,7 +60,6 @@ module.exports = {
 
       // If we asked for JSON-LD, frame it using the correct context in order to have clean, consistent results
       if (accept === MIME_TYPES.JSON) {
-        console.log('CONTEXT RESOURCE.GET', jsonContext || (await ctx.call('jsonld.context.get')));
         result = await ctx.call('jsonld.parser.frame', {
           input: result,
           frame: {

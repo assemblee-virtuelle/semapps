@@ -1,4 +1,5 @@
 const QueueService = require('moleculer-bull');
+const { as, sec } = require('@semapps/ontologies');
 const ActorService = require('./subservices/actor');
 const ActivityService = require('./subservices/activity');
 const CollectionService = require('./subservices/collection');
@@ -30,7 +31,7 @@ const ActivityPubService = {
       attachToObjectTypes: null
     }
   },
-  dependencies: ['api'],
+  dependencies: ['api', 'ontologies'],
   created() {
     const { baseUri, jsonContext, podProvider, selectActorData, queueServiceUrl, reply, like, follow } = this.settings;
 
@@ -108,6 +109,16 @@ const ActivityPubService = {
         jsonContext,
         podProvider
       }
+    });
+  },
+  async started() {
+    await this.broker.call('ontologies.register', {
+      ...as,
+      overwrite: true
+    });
+    await this.broker.call('ontologies.register', {
+      ...sec,
+      overwrite: true
     });
   }
 };

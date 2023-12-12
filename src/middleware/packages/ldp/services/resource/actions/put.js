@@ -46,9 +46,9 @@ module.exports = {
     });
 
     // Adds the default context, if it is missing
-    if (contentType === MIME_TYPES.JSON && !resource['@context'] && jsonContext) {
+    if (contentType === MIME_TYPES.JSON && !resource['@context']) {
       resource = {
-        '@context': jsonContext,
+        '@context': jsonContext || (await ctx.call('jsonld.context.get')),
         ...resource
       };
     }

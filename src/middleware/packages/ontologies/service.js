@@ -38,6 +38,7 @@ module.exports = {
   },
   methods: {
     async registerAll() {
+      if (this.settings.persistRegistry) await this.broker.waitForServices(['ontologies.registry']);
       for (const ontology of this.settings.ontologies) {
         await this.actions.register({ ...ontology, overwrite: true });
       }

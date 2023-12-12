@@ -3,6 +3,7 @@
   "namespace": "http://virtual-assembly.org/ontologies/pair#",
   "owl": "http://virtual-assembly.org/ontologies/pair-2021-summer/ontology.ttl",
   "jsonldContext": {
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
     "pair:image": {
       "@type": "@id"
     },

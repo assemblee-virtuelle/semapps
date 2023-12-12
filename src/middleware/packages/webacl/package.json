@@ -19,6 +19,7 @@
     "@semapps/ldp": "0.6.0-alpha.4",
     "@semapps/middlewares": "0.6.0-alpha.4",
     "@semapps/mime-types": "0.6.0-alpha.4",
+    "@semapps/ontologies": "0.6.0-alpha.4",
     "@semapps/triplestore": "0.6.0-alpha.4",
     "ioredis": "^4.17.3",
     "jsonld-streaming-serializer": "^1.2.0",

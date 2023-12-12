@@ -2,6 +2,7 @@
   "prefix": "dc",
   "namespace": "http://purl.org/dc/terms/",
   "jsonldContext": {
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
     "dc:created": {
       "@type": "xsd:dateTime"
     },

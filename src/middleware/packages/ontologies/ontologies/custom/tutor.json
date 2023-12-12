@@ -3,6 +3,7 @@
   "namespace": "http://virtual-assembly.org/ontologies/pair-tutor#",
   "owl": "https://raw.githubusercontent.com/reconnexion/minicourses/master/ontology/pair-tutor.owl",
   "jsonldContext": {
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
     "tutor:currentLesson": {
       "@type": "@id"
     },

@@ -2,6 +2,7 @@
   "prefix": "apods",
   "namespace": "http://activitypods.org/ns/core#",
   "jsonldContext": {
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
     "apods:closingTime": {
       "@type": "xsd:dateTime"
     },

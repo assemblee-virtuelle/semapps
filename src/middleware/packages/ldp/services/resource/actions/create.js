@@ -33,16 +33,10 @@ module.exports = {
 
     // Adds the default context, if it is missing
     if (contentType === MIME_TYPES.JSON && !resource['@context']) {
-      if (jsonContext) {
-        resource = {
-          '@context': jsonContext,
-          ...resource
-        };
-      } else {
-        this.logger.warn(
-          `JSON-LD context was missing when creating to ${resourceUri} but no default context was found on LDP registry`
-        );
-      }
+      resource = {
+        '@context': jsonContext || (await ctx.call('jsonld.context.get')),
+        ...resource
+      };
     }
 
     if (contentType !== MIME_TYPES.JSON && !resource.body)

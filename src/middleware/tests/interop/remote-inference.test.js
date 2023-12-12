@@ -1,4 +1,4 @@
-const { triple, namedNode, blankNode, literal } = require('rdf-data-model');
+const { triple, namedNode } = require('rdf-data-model');
 const waitForExpect = require('wait-for-expect');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const initialize = require('./initialize');
