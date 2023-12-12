@@ -16,7 +16,6 @@ const ActivityPubService = {
   name: 'activitypub',
   settings: {
     baseUri: null,
-    jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
     podProvider: false,
     selectActorData: null,
     queueServiceUrl: null,
@@ -33,11 +32,10 @@ const ActivityPubService = {
   },
   dependencies: ['api', 'ontologies'],
   created() {
-    const { baseUri, jsonContext, podProvider, selectActorData, queueServiceUrl, reply, like, follow } = this.settings;
+    const { baseUri, podProvider, selectActorData, queueServiceUrl, reply, like, follow } = this.settings;
 
     this.broker.createService(CollectionService, {
       settings: {
-        jsonContext,
         podProvider
       }
     });
@@ -45,7 +43,6 @@ const ActivityPubService = {
     this.broker.createService(RegistryService, {
       settings: {
         baseUri,
-        jsonContext,
         podProvider
       }
     });
@@ -53,7 +50,6 @@ const ActivityPubService = {
     this.broker.createService(ActorService, {
       settings: {
         baseUri,
-        jsonContext,
         selectActorData,
         podProvider
       }
@@ -68,8 +64,7 @@ const ActivityPubService = {
 
     this.broker.createService(ActivityService, {
       settings: {
-        baseUri,
-        jsonContext
+        baseUri
       }
     });
 
@@ -106,7 +101,6 @@ const ActivityPubService = {
       mixins: queueServiceUrl ? [QueueService(queueServiceUrl)] : undefined,
       settings: {
         baseUri,
-        jsonContext,
         podProvider
       }
     });

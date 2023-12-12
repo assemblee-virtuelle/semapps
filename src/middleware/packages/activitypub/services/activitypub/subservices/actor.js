@@ -10,7 +10,6 @@ const ActorService = {
   dependencies: ['activitypub.collection', 'ldp', 'signature'],
   settings: {
     baseUri: null,
-    jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
     selectActorData: null,
     podProvider: false
   },

@@ -12,7 +12,6 @@ const ActivityService = {
     path: '/activities',
     acceptedTypes: Object.values(ACTIVITY_TYPES),
     accept: MIME_TYPES.JSON,
-    jsonContext: null,
     permissions: {},
     newResourcesPermissions: {},
     readOnly: true,

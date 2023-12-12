@@ -4,7 +4,6 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 const CollectionService = {
   name: 'activitypub.collection',
   settings: {
-    jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
     podProvider: false
   },
   dependencies: ['triplestore', 'ldp.resource'],
@@ -207,7 +206,7 @@ const CollectionService = {
         // Pagination is enabled but no page is selected, return the collection
         // OR the first page is selected but there is no item, return an empty page
         returnData = {
-          '@context': this.settings.jsonContext,
+          '@context': 'https://www.w3.org/ns/activitystreams',
           id: collectionUri,
           type: this.isOrderedCollection(collection) ? 'OrderedCollection' : 'Collection',
           summary: collection.summary,
@@ -233,7 +232,7 @@ const CollectionService = {
                 await ctx.call('ldp.resource.get', {
                   resourceUri: itemUri,
                   accept: MIME_TYPES.JSON,
-                  jsonContext: this.settings.jsonContext,
+                  jsonContext: 'https://www.w3.org/ns/activitystreams',
                   webId
                 })
               );
@@ -255,7 +254,7 @@ const CollectionService = {
 
         if (itemsPerPage) {
           returnData = {
-            '@context': this.settings.jsonContext,
+            '@context': 'https://www.w3.org/ns/activitystreams',
             id: `${collectionUri}?page=${page}`,
             type: this.isOrderedCollection(collection) ? 'OrderedCollectionPage' : 'CollectionPage',
             partOf: collectionUri,
@@ -267,7 +266,7 @@ const CollectionService = {
         } else {
           // No pagination, return the collection
           returnData = {
-            '@context': this.settings.jsonContext,
+            '@context': 'https://www.w3.org/ns/activitystreams',
             id: collectionUri,
             type: this.isOrderedCollection(collection) ? 'OrderedCollection' : 'Collection',
             summary: collection.summary,
@@ -277,14 +276,10 @@ const CollectionService = {
         }
       }
 
-      if (jsonContext) {
-        returnData = await ctx.call('jsonld.parser.compact', {
-          input: returnData,
-          context: jsonContext
-        });
-      }
-
-      return returnData;
+      return await ctx.call('jsonld.parser.compact', {
+        input: returnData,
+        context: jsonContext || (await ctx.call('jsonld.context.get'))
+      });
     },
     /*
      * Empty the collection, deleting all items it contains.

@@ -8,7 +8,6 @@ const RegistryService = {
   name: 'activitypub.registry',
   settings: {
     baseUri: null,
-    jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
     podProvider: false,
     defaultCollectionOptions: {
       attachToTypes: [],

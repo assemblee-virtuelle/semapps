@@ -123,7 +123,7 @@ describe('Handle collections', () => {
       id: collectionUri,
       type: 'Collection',
       summary: 'My non-ordered collection',
-      items: [items[0]],
+      items: items[0],
       totalItems: 1
     });
 
@@ -136,14 +136,12 @@ describe('Handle collections', () => {
       id: collectionUri,
       type: 'Collection',
       summary: 'My non-ordered collection',
-      items: [
-        {
-          id: items[0],
-          type: 'Note',
-          content: 'Contenu de ma note #0',
-          name: 'Note #0'
-        }
-      ],
+      items: {
+        id: items[0],
+        type: 'Note',
+        content: 'Contenu de ma note #0',
+        name: 'Note #0'
+      },
       totalItems: 1
     });
   });
@@ -241,7 +239,6 @@ describe('Handle collections', () => {
       id: `${collectionUri}?page=1`,
       type: 'CollectionPage',
       partOf: collectionUri,
-      prev: undefined,
       next: `${collectionUri}?page=2`,
       totalItems: 10
     });

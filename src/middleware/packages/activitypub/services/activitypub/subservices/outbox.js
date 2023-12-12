@@ -46,7 +46,7 @@ const OutboxService = {
       }
 
       if (!activity['@context']) {
-        activity['@context'] = this.settings.jsonContext;
+        activity['@context'] = await ctx.call('jsonld.context.get');
       }
 
       // Process object create, update or delete
