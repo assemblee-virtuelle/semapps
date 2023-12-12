@@ -65,8 +65,6 @@ describe('Create/Update/Delete objects', () => {
 
     objectUri = createActivity.object.id;
 
-    console.log('objectUri', objectUri);
-
     // Check the object has been created in the container
     const object = await broker.call('ldp.resource.get', {
       resourceUri: objectUri,

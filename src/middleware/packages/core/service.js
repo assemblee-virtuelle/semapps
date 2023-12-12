@@ -110,12 +110,6 @@ const CoreService = {
       this.broker.createService(JsonLdService, {
         settings: {
           baseUri: baseUrl,
-          cachedContextFiles: [
-            {
-              uri: 'https://www.w3.org/ns/activitystreams',
-              file: path.resolve(__dirname, './config/context-as.json')
-            }
-          ],
           ...this.settings.jsonld
         }
       });

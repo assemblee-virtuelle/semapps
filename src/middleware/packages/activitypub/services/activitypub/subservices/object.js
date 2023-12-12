@@ -71,8 +71,6 @@ const ObjectService = {
           // If the object passed is an URI, this is an announcement and there is nothing to process
           if (typeof activity.object === 'string') break;
 
-          console.log('ACTIVITY UPDATE', activity.object);
-
           await ctx.call('ldp.resource.put', {
             resource: activity.object,
             contentType: MIME_TYPES.JSON,

@@ -9,7 +9,7 @@ const ont4 = require('./ontologies/ont4.json');
 
 jest.setTimeout(10000);
 
-const localContextUri = urlJoin(CONFIG.HOME_URL, 'context.json');
+const localContextUri = urlJoin(CONFIG.HOME_URL, '.well-known/context.jsonld');
 
 describe.each([false, true])('Register ontologies with persistRegistry %s', persistRegistry => {
   describe.each([false, true])('and with cacher %s', cacher => {

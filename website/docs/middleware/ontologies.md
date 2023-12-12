@@ -7,9 +7,9 @@ This package provides [ontologies](https://www.ontotext.com/knowledgehub/fundame
 ## Features
 
 - Manage ontologies with prefixes, OWL files and JSON-LD contexts
-- Allow static (hard-coded) or dynamic ontologies registration
+- Allow services to register the ontologies they need
+- Allow to persist ontologies if they must be kept on server restart
 - Allow to find ontologies prefixes through [prefix.cc](https://prefix.cc)
-- Integrate core ontologies used by SemApps services
 
 ## Dependencies
 
@@ -50,7 +50,7 @@ module.exports = {
 
 ### Persisting registry
 
-Any services can call the [`register`](#register) action to add new ontologies.
+Any services may call the [`register`](#register) action to add new ontologies. That's how most core services register the ontologies they need.
 
 By default, the ontologies registry is not persisted. It is kept in memory and so the `register` action must be called again on every restart.
 
@@ -63,13 +63,13 @@ If you wish to use another dataset name, you can change the `settingsDataset` se
 
 | Property          | Type      | Default    | Description                                                             |
 | ----------------- | --------- | ---------- | ----------------------------------------------------------------------- |
-| `ontologies`      | `[Array]` |            | List of ontology used (see above for format).                           |
-| `persistRegistry` | `Boolean` | false      | If true, ontologies will be persisted in a dataset                      |
+| `ontologies`      | `[Array]` |            | List of (custom) ontologies to be registered                            |
+| `persistRegistry` | `Boolean` | false      | If true, registered ontologies will be persisted in a dataset           |
 | `settingsDataset` | `String`  | "settings" | The dataset where to persist ontologies (if `persistRegistry` is true ) |
 
 ## Core ontologies
 
-These ontologies can be imported individually using their prefixes, or as `coreOntologies`.
+These ontologies can be imported individually using their prefixes, or as a whole with `coreOntologies`.
 
 | Prefix    | Namespace                                   |
 | --------- | ------------------------------------------- |
@@ -80,10 +80,8 @@ These ontologies can be imported individually using their prefixes, or as `coreO
 | `ldp`     | http://www.w3.org/ns/ldp#                   |
 | `rdf`     | http://www.w3.org/1999/02/22-rdf-syntax-ns# |
 | `rdfs`    | http://www.w3.org/2000/01/rdf-schema#       |
-| `schema`  | http://schema.org/                          |
 | `sec`     | https://w3id.org/security#                  |
 | `semapps` | http://semapps.org/ns/core#                 |
-| `skos`    | http://www.w3.org/2004/02/skos/core#        |
 | `vcard`   | http://www.w3.org/2006/vcard/ns#            |
 | `void`    | http://rdfs.org/ns/void#                    |
 | `xsd`     | http://www.w3.org/2001/XMLSchema#           |
