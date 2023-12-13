@@ -23,7 +23,11 @@ module.exports = {
     }
   },
   async started() {
-    if (!this.settings.persistRegistry) this.ontologies = {};
+    if (this.settings.persistRegistry) {
+      await this.broker.waitForServices(['ontologies.registry']);
+    } else {
+      this.ontologies = {};
+    }
 
     // Do not await to avoid circular dependency with jsonld service
     this.registerAll();
@@ -38,7 +42,6 @@ module.exports = {
   },
   methods: {
     async registerAll() {
-      if (this.settings.persistRegistry) await this.broker.waitForServices(['ontologies.registry']);
       for (const ontology of this.settings.ontologies) {
         await this.actions.register({ ...ontology, overwrite: true });
       }
