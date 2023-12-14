@@ -92,7 +92,7 @@
     "no-case-declarations": "warn",
     "no-continue": "off",
     "no-else-return": "off",
-    "no-lonely-if": "warn",
+    "no-lonely-if": "off",
     "no-loop-func": "warn",
     "no-nested-ternary": "warn",
     "no-new": "warn",
