@@ -89,11 +89,11 @@ Add a new mapper. This action is called on start if the `mappers` settings is se
 
 ##### Parameters
 
-| Property   | Type                 | Default      | Description                                                                                                                                      |
-| ---------- | -------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `match`    | `Object \| Function` | **required** | Pattern that is checked against the activity. May be a function that receives the `activity` as parameter and returns `true`, if a match occurs. |
-| `mapping`  | `Object`             | **required** | Desired mapping of the new object (see above)                                                                                                    |
-| `priority` | `Integer`            | 1            | Priority given to this mapper over other mappers                                                                                                 |
+| Property   | Type                 | Default      | Description                                                                                                                                           |
+| ---------- | -------------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `match`    | `Object \| Function` | **required** | Pattern that is checked against the activity. May be a function that receives (`ctx`, `activity`) as parameter and returns `true`, if a match occurs. |
+| `mapping`  | `Object`             | **required** | Desired mapping of the new object (see above)                                                                                                         |
+| `priority` | `Integer`            | 1            | Priority given to this mapper over other mappers                                                                                                      |
 
 ### `map`
 

@@ -60,6 +60,7 @@ const ActivitiesHandlerMixin = {
               ctx.meta.dataset = await ctx.call('auth.account.findDatasetByWebId', { webId: recipientUri });
 
               // TODO in non-POD config, dereference activity only once ?
+              // TODO: The code may have to be refactored since matchActivity now supports `match` to be a function (There may be some ctx-binding issues to investigate). ~@Laurin-W 2023-12-14
               const dereferencedActivity =
                 typeof activityHandler.match === 'object'
                   ? await this.matchActivity(ctx, activityHandler.match, activity)

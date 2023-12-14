@@ -2,11 +2,12 @@ const { defaultToArray } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 
 /**
- * @param {object} ctx The moleculer context
- * @param {(activity) => boolean | object} matcher An activity object pattern or a function that returns true upon match.
- * @param {object} activityOrObject The activity to match for.
  * Match an activity against a pattern
  * If there is a match, return the activity dereferenced according to the pattern
+ * @param {object} ctx The moleculer context
+ * @param {(ctx, activity) => boolean | object} matcher An activity object pattern or a function that returns true upon match.
+ * @param {object} activityOrObject The activity to match for.
+ * @returns {object} The dereferenced activity / object.
  */
 const matchActivity = async (ctx, matcher, activityOrObject) => {
   let dereferencedActivityOrObject;
@@ -34,7 +35,7 @@ const matchActivity = async (ctx, matcher, activityOrObject) => {
 
   // If the matcher is a function, call it.
   if (typeof matcher === 'function') {
-    if (matcher(activityOrObject)) {
+    if (matcher(ctx, activityOrObject)) {
       return dereferencedActivityOrObject;
     } else {
       return false;
