@@ -98,7 +98,7 @@ Fetch [prefix.cc](https://prefix.cc) to find the prefix of the provided URI.
 
 | Property | Type     | Default      | Description                           |
 | -------- | -------- | ------------ | ------------------------------------- |
-| `url`    | `String` | **required** | URI of the ontology or of a predicate |
+| `uri`    | `String` | **required** | URI of the ontology or of a predicate |
 
 ##### Return
 
@@ -106,17 +106,19 @@ The prefix, or `null` if no prefix was found.
 
 ### `get`
 
-Return a registered ontology by its prefix
+Return a registered ontology by its prefix, namespace or URI.
 
 ##### Parameters
 
-| Property | Type     | Default      | Description            |
-| -------- | -------- | ------------ | ---------------------- |
-| `prefix` | `String` | **required** | Prefix of the ontology |
+| Property    | Type     | Default | Description                                     |
+| ----------- | -------- | ------- | ----------------------------------------------- |
+| `prefix`    | `String` |         | Prefix of the ontology                          |
+| `namespace` | `String` |         | Namespace of the ontology                       |
+| `uri`       | `String` |         | URI to match with the namespace of the ontology |
 
 ##### Return
 
-The ontology, or `null` if no ontology with this prefix or namespace was registered.
+The ontology, or `null` if no registered ontology was found.
 
 ### `getPrefixes`
 

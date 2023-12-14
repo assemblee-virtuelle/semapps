@@ -15,6 +15,11 @@ module.exports = {
       const [ontology] = await this._find(ctx, { query: { prefix } });
       return this.parse(ontology);
     },
+    async getByNamespace(ctx) {
+      const { namespace } = ctx.params;
+      const [ontology] = await this._find(ctx, { query: { namespace } });
+      return this.parse(ontology);
+    },
     async list(ctx) {
       const ontologies = await this._list(ctx, {});
       return ontologies.rows.map(({ prefix, namespace, owl, jsonldContext, preserveContextUri }) => {
