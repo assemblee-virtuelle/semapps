@@ -7,6 +7,7 @@
   "dependencies": {
     "@semapps/ldp": "0.6.0-alpha.4",
     "@semapps/mime-types": "0.6.0-alpha.4",
+    "@semapps/ontologies": "0.6.0-alpha.4",
     "url-join": "^4.0.1"
   },
   "publishConfig": {

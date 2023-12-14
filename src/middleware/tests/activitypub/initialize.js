@@ -7,7 +7,6 @@ const { CoreService } = require('@semapps/core');
 const { WebAclMiddleware } = require('@semapps/webacl');
 const { containers } = require('@semapps/activitypub');
 const { WebIdService } = require('@semapps/webid');
-const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
 const { clearDataset } = require('../utils');
 
@@ -18,7 +17,7 @@ const initialize = async (port, mainDataset, accountsDataset) => {
   const baseUrl = `http://localhost:${port}/`;
 
   const broker = new ServiceBroker({
-    middlewares: [EventsWatcher, WebAclMiddleware({ baseUrl })],
+    middlewares: [WebAclMiddleware({ baseUrl })],
     logger: {
       type: 'Console',
       options: {

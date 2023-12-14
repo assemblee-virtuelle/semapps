@@ -38,17 +38,15 @@ module.exports = {
       url: 'http://localhost:3030/',
       user: 'admin',
       password: 'admin',
-      mainDataset: 'localData',
+      mainDataset: 'localData'
     },
     containers: [], // See the LdpService docs for the expected format
-    // Optional. If not set, default values will be used
-    jsonContext: null,
-    ontologies: null,
+    ontologies: [] // If you use custom ontologies, you can add it here
   }
 };
 ```
 
-Additionally, you can pass custom configurations to the sub-services by using their name as a key (`activitypub`, `ldp`, etc.). 
+Additionally, you can pass custom configurations to the sub-services by using their name as a key (`activitypub`, `ldp`, etc.).
 If you do not wish not to instantiate a particular service, you can pass `false`.
 
 ### Setup the WebAclMiddleware

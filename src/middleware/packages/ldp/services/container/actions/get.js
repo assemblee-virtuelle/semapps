@@ -1,7 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
 const {
-  getPrefixRdf,
-  getPrefixJSON,
   buildBlankNodesQuery,
   buildFiltersQuery,
   isContainer,
@@ -22,11 +20,11 @@ module.exports = {
     keys: ['containerUri', 'accept', 'filters', 'jsonContext', 'webId', '#webId']
   },
   async handler(ctx) {
-    const { containerUri, filters } = ctx.params;
+    const { containerUri, filters, jsonContext } = ctx.params;
     let { webId } = ctx.params;
     webId = webId || ctx.meta.webId || 'anon';
 
-    const { accept, jsonContext } = {
+    const { accept } = {
       ...(await ctx.call('ldp.registry.getByUri', { containerUri })),
       ...ctx.params
     };
@@ -38,7 +36,7 @@ module.exports = {
     if (accept === MIME_TYPES.JSON) {
       let result = await ctx.call('triplestore.query', {
         query: `
-          ${getPrefixRdf(this.settings.ontologies)}
+          ${await ctx.call('ontologies.getRdfPrefixes')}
           CONSTRUCT  {
             <${containerUri}>
               a ?containerType ;
@@ -96,7 +94,7 @@ module.exports = {
         }
       }
 
-      result = await ctx.call('jsonld.compact', {
+      result = await ctx.call('jsonld.parser.compact', {
         input: {
           '@id': containerUri,
           '@type': ['http://www.w3.org/ns/ldp#Container', 'http://www.w3.org/ns/ldp#BasicContainer'],
@@ -104,7 +102,7 @@ module.exports = {
           'http://purl.org/dc/terms/description': result.description,
           'http://www.w3.org/ns/ldp#contains': resources
         },
-        context: jsonContext || getPrefixJSON(this.settings.ontologies)
+        context: jsonContext || (await ctx.call('jsonld.context.get'))
       });
 
       // If the ldp:contains is a single object, wrap it in an array for easier handling on the front side
@@ -121,22 +119,22 @@ module.exports = {
 
       return await ctx.call('triplestore.query', {
         query: `
-            ${getPrefixRdf(this.settings.ontologies)}
-            CONSTRUCT  {
-              <${containerUri}>
-                a ?containerType ;
-                ldp:contains ?s1 .
-              ${blankNodesQuery.construct}
+          ${await ctx.call('ontologies.getRdfPrefixes')}
+          CONSTRUCT  {
+            <${containerUri}>
+              a ?containerType ;
+              ldp:contains ?s1 .
+            ${blankNodesQuery.construct}
+          }
+          WHERE {
+            <${containerUri}> a ldp:Container, ?containerType .
+            OPTIONAL {
+              <${containerUri}> ldp:contains ?s1 .
+              ${blankNodesQuery.where}
+              ${filtersQuery.where}
             }
-            WHERE {
-              <${containerUri}> a ldp:Container, ?containerType .
-              OPTIONAL {
-                <${containerUri}> ldp:contains ?s1 .
-                ${blankNodesQuery.where}
-                ${filtersQuery.where}
-              }
-            }
-          `,
+          }
+        `,
         accept,
         webId
       });

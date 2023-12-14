@@ -13,7 +13,6 @@ module.exports = {
   mixins: [Schedule],
   settings: {
     baseUrl: null,
-    ontologies: [],
     podProvider: false,
     mirrorGraphName: null
   },

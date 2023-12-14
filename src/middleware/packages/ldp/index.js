@@ -2,6 +2,7 @@ const utils = require('./utils');
 
 module.exports = {
   LdpService: require('./service'),
+  LdpCacheService: require('./services/cache'),
   LdpContainerService: require('./services/container'),
   LdpRegistryService: require('./services/registry'),
   LdpResourceService: require('./services/resource'),

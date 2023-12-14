@@ -18,7 +18,6 @@ module.exports = {
   name: 'ldp.container',
   settings: {
     baseUrl: null,
-    ontologies: [],
     podProvider: false,
     mirrorGraphName: null
   },

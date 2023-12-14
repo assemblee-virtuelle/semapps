@@ -1,3 +1,4 @@
+const { dc } = require('@semapps/ontologies');
 const { getDatasetFromUri } = require('../utils');
 
 module.exports = {
@@ -7,6 +8,12 @@ module.exports = {
       updated: 'http://purl.org/dc/terms/modified',
       creator: 'http://purl.org/dc/terms/creator'
     }
+  },
+  async started() {
+    await this.broker.call('ontologies.register', {
+      ...dc,
+      overwrite: true
+    });
   },
   actions: {
     async tagCreatedResource(ctx) {

@@ -11,7 +11,6 @@ module.exports = {
 
     await ctx.call('triplestore.update', {
       query: `
-        PREFIX as: <https://www.w3.org/ns/activitystreams#> 
         PREFIX ldp: <http://www.w3.org/ns/ldp#>
         DELETE {
           ?container ldp:contains ?s1 .

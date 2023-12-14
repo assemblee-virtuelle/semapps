@@ -6,6 +6,7 @@ const { ACTOR_TYPES, RelayService } = require('@semapps/activitypub');
 const { AuthLocalService } = require('@semapps/auth');
 const { CoreService, defaultOntologies } = require('@semapps/core');
 const { InferenceService } = require('@semapps/inference');
+const { pair } = require('@semapps/ontologies');
 const { MirrorService, ObjectsWatcherMiddleware } = require('@semapps/sync');
 const { WebAclMiddleware } = require('@semapps/webacl');
 const { WebIdService } = require('@semapps/webid');
@@ -67,6 +68,7 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
         mainDataset
       },
       containers,
+      ontologies: [pair],
       api: {
         port
       },

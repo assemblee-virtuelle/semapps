@@ -36,20 +36,13 @@ module.exports = {
     if (!file) {
       // Adds the default context, if it is missing
       if (contentType === MIME_TYPES.JSON && !resource['@context']) {
-        const { jsonContext } = await ctx.call('ldp.registry.getByUri', { containerUri });
-        if (jsonContext) {
-          resource = {
-            '@context': jsonContext,
-            ...resource
-          };
-        } else {
-          this.logger.warn(
-            `JSON-LD context was missing when posting to ${containerUri} but no default context was found on LDP registry`
-          );
-        }
+        resource = {
+          '@context': await ctx.call('jsonld.context.get'),
+          ...resource
+        };
       }
 
-      [expandedResource] = await ctx.call('jsonld.expand', { input: resource });
+      [expandedResource] = await ctx.call('jsonld.parser.expand', { input: resource });
       isContainer = expandedResource['@type'].includes('http://www.w3.org/ns/ldp#Container');
 
       if (isContainer) {

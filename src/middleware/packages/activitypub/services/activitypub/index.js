@@ -1,4 +1,5 @@
 const QueueService = require('moleculer-bull');
+const { as, sec } = require('@semapps/ontologies');
 const ActorService = require('./subservices/actor');
 const ActivityService = require('./subservices/activity');
 const CollectionService = require('./subservices/collection');
@@ -15,7 +16,6 @@ const ActivityPubService = {
   name: 'activitypub',
   settings: {
     baseUri: null,
-    jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
     podProvider: false,
     selectActorData: null,
     queueServiceUrl: null,
@@ -30,13 +30,12 @@ const ActivityPubService = {
       attachToObjectTypes: null
     }
   },
-  dependencies: ['api'],
+  dependencies: ['api', 'ontologies'],
   created() {
-    const { baseUri, jsonContext, podProvider, selectActorData, queueServiceUrl, reply, like, follow } = this.settings;
+    const { baseUri, podProvider, selectActorData, queueServiceUrl, reply, like, follow } = this.settings;
 
     this.broker.createService(CollectionService, {
       settings: {
-        jsonContext,
         podProvider
       }
     });
@@ -44,7 +43,6 @@ const ActivityPubService = {
     this.broker.createService(RegistryService, {
       settings: {
         baseUri,
-        jsonContext,
         podProvider
       }
     });
@@ -52,7 +50,6 @@ const ActivityPubService = {
     this.broker.createService(ActorService, {
       settings: {
         baseUri,
-        jsonContext,
         selectActorData,
         podProvider
       }
@@ -67,8 +64,7 @@ const ActivityPubService = {
 
     this.broker.createService(ActivityService, {
       settings: {
-        baseUri,
-        jsonContext
+        baseUri
       }
     });
 
@@ -105,9 +101,18 @@ const ActivityPubService = {
       mixins: queueServiceUrl ? [QueueService(queueServiceUrl)] : undefined,
       settings: {
         baseUri,
-        jsonContext,
         podProvider
       }
+    });
+  },
+  async started() {
+    await this.broker.call('ontologies.register', {
+      ...as,
+      overwrite: true
+    });
+    await this.broker.call('ontologies.register', {
+      ...sec,
+      overwrite: true
     });
   }
 };

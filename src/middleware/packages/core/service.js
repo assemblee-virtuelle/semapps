@@ -1,17 +1,16 @@
 const path = require('path');
-const urlJoin = require('url-join');
 const ApiGatewayService = require('moleculer-web');
 const { Errors: E } = require('moleculer-web');
 const { ActivityPubService } = require('@semapps/activitypub');
 const { JsonLdService } = require('@semapps/jsonld');
 const { LdpService, DocumentTaggerMixin } = require('@semapps/ldp');
+const { OntologiesService } = require('@semapps/ontologies');
 const { SignatureService } = require('@semapps/signature');
 const { SparqlEndpointService } = require('@semapps/sparql-endpoint');
 const { TripleStoreService } = require('@semapps/triplestore');
 const { VoidService } = require('@semapps/void');
 const { WebAclService } = require('@semapps/webacl');
 const { WebfingerService } = require('@semapps/webfinger');
-const defaultOntologies = require('./config/ontologies.json');
 
 const botsContainer = {
   path: '/bots',
@@ -40,8 +39,7 @@ const CoreService = {
     },
     // Optional
     containers: undefined,
-    jsonContext: undefined,
-    ontologies: undefined,
+    ontologies: [],
     // Services configurations
     activitypub: {},
     api: {},
@@ -54,17 +52,13 @@ const CoreService = {
     webfinger: {}
   },
   created() {
-    const { baseUrl, baseDir, triplestore, containers, jsonContext, ontologies } = this.settings;
-
-    // If an external JSON context is not provided, we will use a local one
-    const defaultJsonContext = urlJoin(baseUrl, 'context.json');
+    const { baseUrl, baseDir, triplestore, containers, ontologies } = this.settings;
 
     if (this.settings.activitypub !== false) {
       this.broker.createService(ActivityPubService, {
         // Type support for settings could be given, once moleculer type definitions improve...
         settings: {
           baseUri: baseUrl,
-          jsonContext: jsonContext || defaultJsonContext,
           ...this.settings.activitypub
         }
       });
@@ -116,37 +110,24 @@ const CoreService = {
       this.broker.createService(JsonLdService, {
         settings: {
           baseUri: baseUrl,
-          localContextFiles: jsonContext
-            ? undefined
-            : [
-                {
-                  path: 'context.json',
-                  file: path.resolve(__dirname, './config/context.json')
-                }
-              ],
-          remoteContextFiles: [
-            {
-              uri: 'https://www.w3.org/ns/activitystreams',
-              file: path.resolve(__dirname, './config/context-as.json')
-            }
-          ],
           ...this.settings.jsonld
         }
       });
     }
+
+    this.broker.createService(OntologiesService, {
+      settings: {
+        ontologies
+      }
+    });
 
     if (this.settings.ldp !== false) {
       this.broker.createService(LdpService, {
         mixins: [DocumentTaggerMixin],
         settings: {
           baseUrl,
-          ontologies: ontologies || defaultOntologies,
           containers: containers || (this.settings.mirror !== false ? [botsContainer] : []),
-          ...this.settings.ldp,
-          defaultContainerOptions: {
-            jsonContext: jsonContext || defaultJsonContext,
-            ...this.settings.ldp.defaultContainerOptions
-          }
+          ...this.settings.ldp
         }
       });
     }
@@ -197,7 +178,6 @@ const CoreService = {
       this.broker.createService(VoidService, {
         settings: {
           baseUrl,
-          ontologies: ontologies || defaultOntologies,
           ...this.settings.void
         }
       });

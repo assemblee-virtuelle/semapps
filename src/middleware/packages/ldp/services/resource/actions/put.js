@@ -30,13 +30,6 @@ module.exports = {
     if (this.isRemoteUri(resourceUri, ctx.meta.dataset))
       throw new MoleculerError('Remote resources cannot be modified', 403, 'FORBIDDEN');
 
-    const { jsonContext } = {
-      ...(await ctx.call('ldp.registry.getByUri', {
-        resourceUri
-      })),
-      ...ctx.params
-    };
-
     // Save the current data, to be able to send it through the event
     // If the resource does not exist, it will throw a 404 error
     const oldData = await ctx.call('ldp.resource.get', {
@@ -46,9 +39,9 @@ module.exports = {
     });
 
     // Adds the default context, if it is missing
-    if (contentType === MIME_TYPES.JSON && !resource['@context'] && jsonContext) {
+    if (contentType === MIME_TYPES.JSON && !resource['@context']) {
       resource = {
-        '@context': jsonContext,
+        '@context': await ctx.call('jsonld.context.get'),
         ...resource
       };
     }

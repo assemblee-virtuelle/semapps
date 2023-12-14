@@ -1,0 +1,6 @@
+{
+  "prefix": "sec",
+  "namespace": "https://w3id.org/security#",
+  "jsonldContext": "https://w3id.org/security/v1",
+  "preserveContextUri": true
+}

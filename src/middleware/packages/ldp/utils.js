@@ -64,23 +64,6 @@ const buildFiltersQuery = filters => {
   return { where };
 };
 
-const getPrefixRdf = ontologies => {
-  return ontologies.map(ontology => `PREFIX ${ontology.prefix}: <${ontology.url}>`).join('\n');
-};
-
-const getPrefixJSON = ontologies => {
-  const pattern = {};
-  ontologies.forEach(ontology => (pattern[ontology.prefix] = ontology.url));
-  return pattern;
-};
-
-// Replace a full URI with a prefix
-const usePrefix = (uri, ontologies) => {
-  if (!uri.startsWith('http')) return uri; // If it is already prefixed
-  const ontology = ontologies.find(o => uri.startsWith(o.url));
-  return uri.replace(ontology.url, `${ontology.prefix}:`);
-};
-
 // Replace a full URI with a prefix
 const useFullURI = (prefixedUri, ontologies) => {
   if (prefixedUri.startsWith('http')) return prefixedUri; // If it is already a full URI
@@ -88,6 +71,10 @@ const useFullURI = (prefixedUri, ontologies) => {
   const ontology = ontologies.find(o => o.prefix === prefix);
   return prefixedUri.replace(`${ontology.prefix}:`, ontology.url);
 };
+
+const isURL = value => (typeof value === 'string' || value instanceof String) && value.startsWith('http');
+
+const isObject = value => typeof value === 'object' && !Array.isArray(value) && value !== null;
 
 const getSlugFromUri = uri => uri.match(new RegExp(`.*/(.*)`))[1];
 
@@ -164,10 +151,9 @@ const waitForResource = async (delayMs, fieldNames, maxTries, callback) => {
 module.exports = {
   buildBlankNodesQuery,
   buildFiltersQuery,
-  getPrefixRdf,
-  getPrefixJSON,
-  usePrefix,
   useFullURI,
+  isURL,
+  isObject,
   getSlugFromUri,
   getContainerFromUri,
   getParentContainerUri,

@@ -21,7 +21,7 @@ module.exports = {
     if (this.isRemoteUri(resourceUri, ctx.meta.dataset))
       throw new MoleculerError('Remote resources cannot be created', 403, 'FORBIDDEN');
 
-    const { jsonContext, controlledActions } = {
+    const { controlledActions } = {
       ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
       ...ctx.params
     };
@@ -33,16 +33,10 @@ module.exports = {
 
     // Adds the default context, if it is missing
     if (contentType === MIME_TYPES.JSON && !resource['@context']) {
-      if (jsonContext) {
-        resource = {
-          '@context': jsonContext,
-          ...resource
-        };
-      } else {
-        this.logger.warn(
-          `JSON-LD context was missing when creating to ${resourceUri} but no default context was found on LDP registry`
-        );
-      }
+      resource = {
+        '@context': await ctx.call('jsonld.context.get'),
+        ...resource
+      };
     }
 
     if (contentType !== MIME_TYPES.JSON && !resource.body)

@@ -4,7 +4,6 @@ const { ServiceBroker } = require('moleculer');
 const { CoreService } = require('@semapps/core');
 const { WebIdService } = require('@semapps/webid');
 const CONFIG = require('../config');
-const ontologies = require('../ontologies.json');
 const { clearDataset } = require('../utils');
 
 jest.setTimeout(20000);
@@ -30,7 +29,6 @@ beforeAll(async () => {
         password: CONFIG.JENA_PASSWORD,
         mainDataset: CONFIG.MAIN_DATASET
       },
-      ontologies,
       containers: ['/users'],
       activitypub: false,
       mirror: false,

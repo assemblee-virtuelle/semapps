@@ -3,14 +3,12 @@ const fs = require('fs');
 const urlJoin = require('url-join');
 const { join: pathJoin } = require('path');
 const { CoreService } = require('@semapps/core');
+const { pair, petr } = require('@semapps/ontologies');
 const { WebAclMiddleware } = require('@semapps/webacl');
 const { AuthLocalService } = require('@semapps/auth');
 const { WebIdService } = require('@semapps/webid');
 const path = require('path');
-const { getPrefixJSON } = require('@semapps/ldp');
-const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
-const ontologies = require('../ontologies.json');
 const { clearDataset } = require('../utils');
 
 // Give write permission on all containers to anonymous users
@@ -57,7 +55,7 @@ const initialize = async () => {
   }
 
   const broker = new ServiceBroker({
-    middlewares: [EventsWatcher, WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
+    middlewares: [WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
     logger: {
       type: 'Console',
       options: {
@@ -76,9 +74,8 @@ const initialize = async () => {
         password: CONFIG.JENA_PASSWORD,
         mainDataset: CONFIG.MAIN_DATASET
       },
-      ontologies,
-      jsonContext: getPrefixJSON(ontologies),
       containers,
+      ontologies: [pair, petr],
       activitypub: false,
       mirror: false,
       void: false,

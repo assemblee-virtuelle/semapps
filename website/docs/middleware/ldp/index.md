@@ -13,6 +13,8 @@ This package allows you to setup [LDP](https://www.w3.org/TR/ldp-primer/) contai
 ## Dependencies
 
 - [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
+- [JsonLDService](../jsonld)
+- [OntologiesService](../ontologies)
 - [TripleStoreService](../triplestore)
 
 ## Sub-services
@@ -45,26 +47,16 @@ module.exports = {
   mixins: [LdpService],
   settings: {
     baseUrl: 'http://localhost:3000/',
-    ontologies: [
-      {
-        prefix: 'rdf',
-        url: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-      },
-      {
-        prefix: 'ldp',
-        url: 'http://www.w3.org/ns/ldp#',
-      },
-    ],
     containers: [
       {
-        path: '/resources',
+        path: '/resources'
         // Specific container options (See below)
-      },
+      }
     ],
     defaultContainerOptions: {
       // See below
-    },
-  },
+    }
+  }
 };
 ```
 
@@ -73,7 +65,6 @@ module.exports = {
 | Property                     | Type       | Default                     | Description                                                              |
 | ---------------------------- | ---------- | --------------------------- | ------------------------------------------------------------------------ |
 | `baseUrl`                    | `String`   | **required**                | Base URL of the LDP server                                               |
-| `ontologies`                 | `[Array]`  | **required**                | List of ontology used (see example above)                                |
 | `containers`                 | `[Object]` | **required**                | List of containers to set up, with their options (see below)             |
 | `defaultContainerOptions`    | `[Object]` |                             | Default options for all containers (see below)                           |
 | `mirrorGraphName`            | `String`   | "http://semapps.org/mirror" | Name of the RDF graph where to store mirrored data                       |
@@ -90,7 +81,6 @@ The following options can be set for each container, or they can be set in the `
 | `accept`                  | `String`               | "text/turtle" | Type to return (`application/ld+json`, `text/turtle` or `application/n-triples`)                                                                       |
 | `acceptedTypes`           | `Array`                |               | RDF classes accepted in this container. This is not enforced but used by some services to identify containers.                                         |
 | `excludeFromMirror`       | `Boolean`              | false         | If true, other servers will not be able to [mirror](../sync/mirror) this container.                                                                    |
-| `jsonContext`             | `Any`                  |               | JSON context to use to format results                                                                                                                  |
 | `permissions`             | `Object` or `Function` |               | If the WebACL service is activated, permissions of the container itself                                                                                |
 | `newResourcesPermissions` | `Object` or `Function` |               | If the WebACL service is activated, permissions for new resources. [See the docs here](../webacl/index.md#default-permissions-for-new-resources)       |
 | `readOnly`                | `Boolean`              | false         | Do not set `POST`, `PATCH`, `PUT` and `DELETE` routes for the container and its resources                                                              |

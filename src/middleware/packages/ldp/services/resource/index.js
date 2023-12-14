@@ -16,7 +16,6 @@ module.exports = {
   name: 'ldp.resource',
   settings: {
     baseUrl: null,
-    ontologies: [],
     podProvider: false,
     mirrorGraphName: null,
     preferredViewForResource: null

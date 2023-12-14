@@ -1,0 +1,23 @@
+{
+  "prefix": "void",
+  "namespace": "http://rdfs.org/ns/void#",
+  "jsonldContext": {
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "void:feature": {
+      "@type": "@id"
+    },
+    "void:sparqlEndpoint": {
+      "@type": "@id"
+    },
+    "void:rootResource": {
+      "@type": "@id"
+    },
+    "void:vocabulary": {
+      "@type": "@id"
+    },
+    "void:entities": { "@type": "xsd:integer" },
+    "void:doNotMirror": { "@type": "xsd:boolean" },
+    "void:class": { "@type": "@id" },
+    "void:classPartition": { "@type": "@id" }
+  }
+}

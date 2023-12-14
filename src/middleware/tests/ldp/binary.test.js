@@ -3,6 +3,7 @@ const fs = require('fs');
 const { join: pathJoin } = require('path');
 const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { getSlugFromUri } = require('@semapps/ldp');
 const { fetchServer } = require('../utils');
 const initialize = require('./initialize');
 const CONFIG = require('../config');
@@ -19,6 +20,8 @@ afterAll(async () => {
 
 describe('Binary handling of LDP server', () => {
   let fileUri;
+  let filePath;
+  let fileName;
 
   test('Post image to container', async () => {
     const readStream = fs.createReadStream(pathJoin(__dirname, 'av-icon.png'));
@@ -27,7 +30,6 @@ describe('Binary handling of LDP server', () => {
       method: 'POST',
       body: readStream,
       headers: new fetch.Headers({
-        Slug: 'av-icon.png',
         'Content-Type': 'image/png'
       })
     });
@@ -35,7 +37,10 @@ describe('Binary handling of LDP server', () => {
     fileUri = headers.get('Location');
     expect(fileUri).not.toBeNull();
 
-    expect(fs.existsSync(pathJoin(__dirname, '../uploads/files/av-icon.png'))).toBeTruthy();
+    filePath = fileUri.replace(CONFIG.HOME_URL, '');
+    fileName = getSlugFromUri(fileUri);
+
+    expect(fs.existsSync(pathJoin(__dirname, '../uploads', filePath))).toBeTruthy();
   });
 
   test('Get container', async () => {
@@ -46,8 +51,8 @@ describe('Binary handling of LDP server', () => {
           {
             '@id': fileUri,
             '@type': 'semapps:File',
-            'semapps:fileName': 'av-icon.png',
-            'semapps:localPath': 'uploads/files/av-icon.png',
+            'semapps:fileName': fileName,
+            'semapps:localPath': `uploads/${filePath}`,
             'semapps:mimeType': 'image/png'
           }
         ]
@@ -74,8 +79,8 @@ describe('Binary handling of LDP server', () => {
     ).resolves.toMatchObject({
       '@id': fileUri,
       '@type': 'semapps:File',
-      'semapps:fileName': 'av-icon.png',
-      'semapps:localPath': 'uploads/files/av-icon.png',
+      'semapps:fileName': fileName,
+      'semapps:localPath': `uploads/${filePath}`,
       'semapps:mimeType': 'image/png'
     });
   });

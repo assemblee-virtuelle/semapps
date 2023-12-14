@@ -16,7 +16,7 @@ module.exports = {
   },
   async bodyToTriples(body, contentType) {
     if (contentType === MIME_TYPES.JSON) {
-      return await this.broker.call('jsonld.toQuads', { input: body });
+      return await this.broker.call('jsonld.parser.toQuads', { input: body });
     }
     if (!(typeof body === 'string')) throw new MoleculerError('no body provided', 400, 'BAD_REQUEST');
     return new Promise((resolve, reject) => {

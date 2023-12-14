@@ -146,7 +146,7 @@ const SynchronizerService = {
       async onReceive(ctx, activity, recipientUri) {
         if (this.settings.synchronizeContainers) {
           if (await this.isValid(activity, recipientUri)) {
-            const predicate = await ctx.call('jsonld.expandPredicate', {
+            const predicate = await ctx.call('jsonld.parser.expandPredicate', {
               predicate: activity.object.object.relationship,
               context: activity['@context']
             });
@@ -174,7 +174,7 @@ const SynchronizerService = {
       async onReceive(ctx, activity, recipientUri) {
         if (this.settings.synchronizeContainers) {
           if (await this.isValid(activity, recipientUri)) {
-            const predicate = await ctx.call('jsonld.expandPredicate', {
+            const predicate = await ctx.call('jsonld.parser.expandPredicate', {
               predicate: activity.object.object.relationship,
               context: activity['@context']
             });

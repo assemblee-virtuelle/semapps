@@ -1,0 +1,15 @@
+{
+  "prefix": "vcard",
+  "namespace": "http://www.w3.org/2006/vcard/ns#",
+  "jsonldContext": {
+    "vcard:hasAddress": {
+      "@type": "@id"
+    },
+    "vcard:hasGeo": {
+      "@type": "@id"
+    },
+    "vcard:photo": {
+      "@type": "@id"
+    }
+  }
+}

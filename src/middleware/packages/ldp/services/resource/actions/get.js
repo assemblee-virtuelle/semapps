@@ -1,6 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getPrefixRdf, getPrefixJSON, buildBlankNodesQuery } = require('../../../utils');
+const { buildBlankNodesQuery } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
@@ -23,14 +23,14 @@ module.exports = {
     keys: ['resourceUri', 'accept', 'jsonContext']
   },
   async handler(ctx) {
-    const { resourceUri, aclVerified } = ctx.params;
+    const { resourceUri, aclVerified, jsonContext } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (this.isRemoteUri(resourceUri, ctx.meta.dataset)) {
       return await ctx.call('ldp.remote.get', ctx.params);
     }
 
-    const { accept, jsonContext } = {
+    const { accept } = {
       ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
       ...ctx.params
     };
@@ -42,7 +42,7 @@ module.exports = {
 
       let result = await ctx.call('triplestore.query', {
         query: `
-          ${getPrefixRdf(this.settings.ontologies)}
+          ${await ctx.call('ontologies.getRdfPrefixes')}
           CONSTRUCT  {
             ${blankNodesQuery.construct}
           }
@@ -60,10 +60,10 @@ module.exports = {
 
       // If we asked for JSON-LD, frame it using the correct context in order to have clean, consistent results
       if (accept === MIME_TYPES.JSON) {
-        result = await ctx.call('jsonld.frame', {
+        result = await ctx.call('jsonld.parser.frame', {
           input: result,
           frame: {
-            '@context': jsonContext || getPrefixJSON(this.settings.ontologies),
+            '@context': jsonContext || (await ctx.call('jsonld.context.get')),
             '@id': resourceUri
           }
         });

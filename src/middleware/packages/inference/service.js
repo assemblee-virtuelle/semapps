@@ -10,8 +10,7 @@ module.exports = {
   settings: {
     baseUrl: null,
     acceptFromRemoteServers: false,
-    offerToRemoteServers: false,
-    ontologies: []
+    offerToRemoteServers: false
   },
   dependencies: ['triplestore', 'ldp', 'jsonld'],
   created() {
@@ -28,7 +27,8 @@ module.exports = {
   },
   async started() {
     this.inverseRelations = {};
-    for (const ontology of this.settings.ontologies) {
+    // Note: Inverse relationships are also calculated when ontologies.registered events are received (see below)
+    for (const ontology of await this.broker.call('ontologies.list')) {
       if (ontology.owl) {
         const result = await this.findInverseRelations(ontology.owl);
         this.logger.info(`Found ${Object.keys(result).length} inverse relations in ${ontology.owl}`);
@@ -147,7 +147,7 @@ module.exports = {
   events: {
     async 'ldp.resource.created'(ctx) {
       let { newData } = ctx.params;
-      newData = await ctx.call('jsonld.expand', { input: newData });
+      newData = await ctx.call('jsonld.parser.expand', { input: newData });
 
       let triplesToAdd = this.generateInverseTriplesFromResource(newData[0]);
 
@@ -176,7 +176,7 @@ module.exports = {
     },
     async 'ldp.resource.deleted'(ctx) {
       let { oldData } = ctx.params;
-      oldData = await ctx.call('jsonld.expand', { input: oldData });
+      oldData = await ctx.call('jsonld.parser.expand', { input: oldData });
 
       const triplesToRemove = this.generateInverseTriplesFromResource(oldData[0]);
 
@@ -201,8 +201,8 @@ module.exports = {
     },
     async 'ldp.resource.updated'(ctx) {
       let { oldData, newData } = ctx.params;
-      oldData = await ctx.call('jsonld.expand', { input: oldData });
-      newData = await ctx.call('jsonld.expand', { input: newData });
+      oldData = await ctx.call('jsonld.parser.expand', { input: oldData });
+      newData = await ctx.call('jsonld.parser.expand', { input: newData });
 
       const triplesToRemove = this.generateInverseTriplesFromResource(oldData[0]);
       const triplesToAdd = this.generateInverseTriplesFromResource(newData[0]);
@@ -307,6 +307,14 @@ module.exports = {
             add: false
           });
         }
+      }
+    },
+    async 'ontologies.registered'(ctx) {
+      const { owl } = ctx.params;
+      if (owl) {
+        const result = await this.findInverseRelations(owl);
+        this.logger.info(`Found ${Object.keys(result).length} inverse relations in ${owl}`);
+        this.inverseRelations = { ...this.inverseRelations, ...result };
       }
     }
   }

@@ -76,7 +76,7 @@ async function formatOutput(ctx, output, resourceAclUri, jsonLD) {
 
   const jsonLd = JSON.parse(await streamToString(mySerializer));
 
-  const compactJsonLd = await ctx.call('jsonld.frame', {
+  const compactJsonLd = await ctx.call('jsonld.parser.frame', {
     input: jsonLd,
     frame: {
       '@context': webAclContext,
