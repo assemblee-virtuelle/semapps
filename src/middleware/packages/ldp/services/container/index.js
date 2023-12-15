@@ -8,6 +8,7 @@ const existAction = require('./actions/exist');
 const isEmptyAction = require('./actions/isEmpty');
 const getAction = require('./actions/get');
 const getAllAction = require('./actions/getAll');
+const getPathAction = require('./actions/getPath');
 const getUrisAction = require('./actions/getUris');
 const includesAction = require('./actions/includes');
 const postAction = require('./actions/post');
@@ -31,6 +32,7 @@ module.exports = {
     exist: existAction,
     get: getAction,
     getAll: getAllAction,
+    getPath: getPathAction,
     getUris: getUrisAction,
     includes: includesAction,
     isEmpty: isEmptyAction,
