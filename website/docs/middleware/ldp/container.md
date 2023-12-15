@@ -94,6 +94,22 @@ Triples, Turtle or JSON-LD depending on `accept` type.
 
 Array of URIs
 
+### `getPath`
+
+Get the container path based on the provided resourceType.
+For example, if you pass `pair:ProjectType`, it will return `/pair/project-type`.
+Ontologies must be previously [registered](../ontologies#register) or the action will throw an error.
+
+##### Parameters
+
+| Property       | Type     | Default      | Description                   |
+| -------------- | -------- | ------------ | ----------------------------- |
+| `resourceType` | `String` | **required** | URI or prefixed resource type |
+
+##### Return
+
+The path of the container
+
 ### `getUris`
 
 - Get the list of all resources within a container
