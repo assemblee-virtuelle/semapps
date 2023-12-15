@@ -1,6 +1,7 @@
 /* eslint-disable class-methods-use-this */
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { v4: uuidv4 } = require('uuid');
+const { frame } = require('jsonld');
 
 class TripleStoreAdapter {
   constructor({ type, dataset, baseUri, ontology = 'http://semapps.org/ns/core#' }) {
@@ -16,7 +17,7 @@ class TripleStoreAdapter {
   }
 
   async connect() {
-    await this.broker.waitForServices(['triplestore', 'jsonld'], 120000);
+    await this.broker.waitForServices(['triplestore'], 120000);
 
     await this.broker.call('triplestore.dataset.create', {
       dataset: this.dataset,
@@ -63,11 +64,8 @@ class TripleStoreAdapter {
         dataset: this.dataset
       })
       .then(result => {
-        return this.broker.call('jsonld.parser.frame', {
-          input: result,
-          frame: {
-            '@context': { '@vocab': this.ontology }
-          }
+        return frame(result, {
+          '@context': { '@vocab': this.ontology }
         });
       })
       .then(result => {
@@ -107,12 +105,9 @@ class TripleStoreAdapter {
         dataset: this.dataset
       })
       .then(result => {
-        return this.broker.call('jsonld.parser.frame', {
-          input: result,
-          frame: {
-            '@context': { '@vocab': this.ontology },
-            '@id': _id
-          }
+        return frame(result, {
+          '@context': { '@vocab': this.ontology },
+          '@id': _id
         });
       });
   }

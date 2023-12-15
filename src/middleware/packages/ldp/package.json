@@ -11,7 +11,6 @@
     "@semapps/ontologies": "0.6.0-alpha.5",
     "@semapps/triplestore": "0.6.0-alpha.5",
     "dashify": "^2.0.0",
-    "jsonld-context-parser": "2.4.0",
     "mime-types": "^2.1.35",
     "moleculer": "^0.14.17",
     "moleculer-db": "^0.8.16",
