@@ -88,5 +88,10 @@ module.exports = {
       ...semapps,
       overwrite: true
     });
+  },
+  actions: {
+    getBaseUrl() {
+      return this.settings.baseUrl;
+    }
   }
 };
