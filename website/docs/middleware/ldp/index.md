@@ -132,3 +132,15 @@ function preferredViewForResource(resourceUri, containerPreferredView) {
 ```
 
 The function should return the redirect link. It can be async. Return `resourceUri` if you want to cancel the redirect.
+
+## Actions
+
+The following service actions are available:
+
+### `getBaseUrl`
+
+Allow other services to get access to the `baseUrl` setting of the LDP server.
+
+##### Return values
+
+The `baseUrl` setting.

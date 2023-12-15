@@ -104,6 +104,20 @@ Fetch [prefix.cc](https://prefix.cc) to find the prefix of the provided URI.
 
 The prefix, or `null` if no prefix was found.
 
+### `findNamespace`
+
+Fetch [prefix.cc](https://prefix.cc) to find the namespace associated with a prefix.
+
+##### Parameters
+
+| Property | Type     | Default      | Description            |
+| -------- | -------- | ------------ | ---------------------- |
+| `prefix` | `String` | **required** | Prefix of the ontology |
+
+##### Return
+
+The namespace, or `null` if the prefix doesn't exist in prefix.cc.
+
 ### `get`
 
 Return a registered ontology by its prefix, namespace or URI.

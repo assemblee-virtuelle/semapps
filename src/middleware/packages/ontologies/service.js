@@ -1,6 +1,7 @@
 const { TripleStoreAdapter } = require('@semapps/triplestore');
 const OntologiesRegistryService = require('./sub-services/registry');
 const findPrefixAction = require('./actions/findPrefix');
+const findNamespaceAction = require('./actions/findNamespace');
 const getAction = require('./actions/get');
 const getPrefixesAction = require('./actions/getPrefixes');
 const getRdfPrefixesAction = require('./actions/getRdfPrefixes');
@@ -30,6 +31,7 @@ module.exports = {
   },
   actions: {
     findPrefix: findPrefixAction,
+    findNamespace: findNamespaceAction,
     get: getAction,
     getPrefixes: getPrefixesAction,
     getRdfPrefixes: getRdfPrefixesAction,
