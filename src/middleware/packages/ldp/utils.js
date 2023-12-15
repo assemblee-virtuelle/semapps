@@ -83,6 +83,8 @@ const getContainerFromUri = uri => uri.match(new RegExp(`(.*)/.*`))[1];
 
 const getParentContainerUri = uri => uri.match(new RegExp(`(.*)/.*`))[1];
 
+const getParentContainerPath = path => path.match(new RegExp(`(.*)/.*`))[1];
+
 // Transforms "http://localhost:3000/dataset/data" to "dataset"
 const getDatasetFromUri = uri => {
   const path = new URL(uri).pathname;
@@ -157,6 +159,7 @@ module.exports = {
   getSlugFromUri,
   getContainerFromUri,
   getParentContainerUri,
+  getParentContainerPath,
   getDatasetFromUri,
   hasType,
   isContainer,

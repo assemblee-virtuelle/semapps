@@ -5,7 +5,7 @@ const getUriAction = require('./actions/getUri');
 const listAction = require('./actions/list');
 const registerAction = require('./actions/register');
 const defaultOptions = require('./defaultOptions');
-const { getParentContainerUri } = require('../../utils');
+const { getParentContainerUri, getParentContainerPath } = require('../../utils');
 
 module.exports = {
   name: 'ldp.registry',
@@ -51,6 +51,8 @@ module.exports = {
         // This will avoid WebACL error, in case the container is fetched before
         if (containerPath !== '/') {
           let parentContainerUri = getParentContainerUri(containerUri);
+          let parentContainerPath = getParentContainerPath(containerPath) || '/';
+
           // if it is the root container, add a trailing slash
           if (urlJoin(parentContainerUri, '/') === urlJoin(this.settings.baseUrl, '/')) {
             parentContainerUri = urlJoin(parentContainerUri, '/');
@@ -60,13 +62,17 @@ module.exports = {
             containerUri: parentContainerUri,
             webId: 'system'
           });
-          if (parentExists) {
-            await ctx.call('ldp.container.attach', {
-              containerUri: parentContainerUri,
-              resourceUri: containerUri,
-              webId: 'system'
-            });
+
+          if (!parentExists) {
+            // Recursively create the parent containers, without options
+            await this.createAndAttachContainer(ctx, parentContainerUri, parentContainerPath, {});
           }
+
+          await ctx.call('ldp.container.attach', {
+            containerUri: parentContainerUri,
+            resourceUri: containerUri,
+            webId: 'system'
+          });
         }
       }
     }

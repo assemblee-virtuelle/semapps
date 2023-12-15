@@ -14,7 +14,7 @@ module.exports = {
   },
   dependencies: ['ldp'],
   async started() {
-    await this.broker.call('ldp.registry.register', {
+    const registration = await this.broker.call('ldp.registry.register', {
       path: this.settings.path,
       name: this.name,
       acceptedTypes: this.settings.acceptedTypes,
@@ -34,6 +34,9 @@ module.exports = {
       },
       readOnly: this.settings.readOnly
     });
+
+    // If no path was defined in the settings, set the automatically generated path (so that it can be used below)
+    if (!this.settings.path) this.settings.path = registration.path;
   },
   actions: {
     async post(ctx) {
