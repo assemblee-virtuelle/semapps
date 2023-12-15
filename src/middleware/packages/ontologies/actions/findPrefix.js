@@ -3,12 +3,12 @@ const fetch = require('node-fetch');
 module.exports = {
   visibility: 'public',
   params: {
-    url: 'string'
+    uri: 'string'
   },
   async handler(ctx) {
-    const { url } = ctx.params;
+    const { uri } = ctx.params;
 
-    const response = await fetch(`http://prefix.cc/?q=${encodeURIComponent(url)}`, { redirect: 'manual' });
+    const response = await fetch(`http://prefix.cc/?q=${encodeURIComponent(uri)}`, { redirect: 'manual' });
 
     if (response.status === 302) {
       const redirectUrl = response.headers.get('Location');

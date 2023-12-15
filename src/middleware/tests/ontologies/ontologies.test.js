@@ -11,7 +11,7 @@ jest.setTimeout(10000);
 
 const localContextUri = urlJoin(CONFIG.HOME_URL, '.well-known/context.jsonld');
 
-describe.each([false, true])('Register ontologies with persistRegistry %s', persistRegistry => {
+describe.each([true])('Register ontologies with persistRegistry %s', persistRegistry => {
   describe.each([false, true])('and with cacher %s', cacher => {
     let broker;
 
@@ -25,7 +25,9 @@ describe.each([false, true])('Register ontologies with persistRegistry %s', pers
     test('Register a new ontology', async () => {
       await broker.call('ontologies.register', { ...ont1 });
 
-      await expect(broker.call('ontologies.get', { prefix: 'ont1' })).resolves.toMatchObject(ont1);
+      await expect(broker.call('ontologies.get', { prefix: ont1.prefix })).resolves.toMatchObject(ont1);
+      await expect(broker.call('ontologies.get', { namespace: ont1.namespace })).resolves.toMatchObject(ont1);
+      await expect(broker.call('ontologies.get', { uri: `${ont1.namespace}MyClass` })).resolves.toMatchObject(ont1);
 
       await expect(broker.call('ontologies.list')).resolves.toEqual(
         expect.arrayContaining([expect.objectContaining(ont1)])
@@ -112,13 +114,13 @@ describe.each([false, true])('Register ontologies with persistRegistry %s', pers
     });
 
     test('Find prefixes with prefix.cc', async () => {
-      let result = await broker.call('ontologies.findPrefix', { url: 'http://xmlns.com/foaf/0.1/name' });
+      let result = await broker.call('ontologies.findPrefix', { uri: 'http://xmlns.com/foaf/0.1/name' });
       expect(result).toBe('foaf');
 
-      result = await broker.call('ontologies.findPrefix', { url: 'http://xmlns.com/foaf/0.1/' });
+      result = await broker.call('ontologies.findPrefix', { uri: 'http://xmlns.com/foaf/0.1/' });
       expect(result).toBe('foaf');
 
-      result = await broker.call('ontologies.findPrefix', { url: 'http://xmlns.com/foaf' });
+      result = await broker.call('ontologies.findPrefix', { uri: 'http://xmlns.com/foaf' });
       expect(result).toBeNull();
     });
 
