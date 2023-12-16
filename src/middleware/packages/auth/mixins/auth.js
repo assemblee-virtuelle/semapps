@@ -17,7 +17,7 @@ const AuthMixin = {
     webIdSelection: [],
     accountSelection: [],
     accountsDataset: 'settings',
-    podProvider: null
+    podProvider: false
   },
   dependencies: ['api', 'webid'],
   async created() {
