@@ -1728,8 +1728,8 @@ const $5f70c240e5b0340c$var$useStyles = (0, $parcel$interopDefault($4Uj5b$muisty
           typeof error === 'string'
             ? error
             : typeof error === 'undefined' || !error.message
-            ? 'ra.auth.sign_in_error'
-            : error.message,
+              ? 'ra.auth.sign_in_error'
+              : error.message,
           {
             type: 'warning',
             _: typeof error === 'string' ? error : error && error.message ? error.message : undefined
@@ -1864,8 +1864,8 @@ const $8a2df01c9f2675bb$var$LoginForm = ({ postLoginRedirect: postLoginRedirect,
           typeof error === 'string'
             ? error
             : typeof error === 'undefined' || !error.message
-            ? 'ra.auth.sign_in_error'
-            : error.message,
+              ? 'ra.auth.sign_in_error'
+              : error.message,
           {
             type: 'warning',
             messageArgs: {
@@ -1976,8 +1976,8 @@ const $176df6bd8edc5f4d$var$useStyles = (0, $parcel$interopDefault($4Uj5b$muisty
           typeof error === 'string'
             ? error
             : typeof error === 'undefined' || !error.message
-            ? 'auth.notification.reset_password_error'
-            : error.message,
+              ? 'auth.notification.reset_password_error'
+              : error.message,
           {
             type: 'warning',
             messageArgs: {
@@ -2099,8 +2099,8 @@ const $a04debd4e4af2a01$var$ResetPasswordForm = () => {
           typeof error === 'string'
             ? error
             : typeof error === 'undefined' || !error.message
-            ? 'auth.notification.reset_password_error'
-            : error.message,
+              ? 'auth.notification.reset_password_error'
+              : error.message,
           {
             type: 'warning',
             messageArgs: {

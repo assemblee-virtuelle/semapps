@@ -1736,8 +1736,8 @@ const $e011da92680cf1fe$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(theme =>
           typeof error === 'string'
             ? error
             : typeof error === 'undefined' || !error.message
-            ? 'ra.auth.sign_in_error'
-            : error.message,
+              ? 'ra.auth.sign_in_error'
+              : error.message,
           {
             type: 'warning',
             _: typeof error === 'string' ? error : error && error.message ? error.message : undefined
@@ -1872,8 +1872,8 @@ const $e2a34b2d647a5391$var$LoginForm = ({ postLoginRedirect: postLoginRedirect,
           typeof error === 'string'
             ? error
             : typeof error === 'undefined' || !error.message
-            ? 'ra.auth.sign_in_error'
-            : error.message,
+              ? 'ra.auth.sign_in_error'
+              : error.message,
           {
             type: 'warning',
             messageArgs: {
@@ -1982,8 +1982,8 @@ const $b403c35bd8d76c50$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(theme =>
           typeof error === 'string'
             ? error
             : typeof error === 'undefined' || !error.message
-            ? 'auth.notification.reset_password_error'
-            : error.message,
+              ? 'auth.notification.reset_password_error'
+              : error.message,
           {
             type: 'warning',
             messageArgs: {
@@ -2105,8 +2105,8 @@ const $8d415f03f06df877$var$ResetPasswordForm = () => {
           typeof error === 'string'
             ? error
             : typeof error === 'undefined' || !error.message
-            ? 'auth.notification.reset_password_error'
-            : error.message,
+              ? 'auth.notification.reset_password_error'
+              : error.message,
           {
             type: 'warning',
             messageArgs: {
