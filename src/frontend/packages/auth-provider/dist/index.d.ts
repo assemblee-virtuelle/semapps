@@ -39,24 +39,50 @@ export function authProvider({
   getAccountSettings: (params: any) => Promise<any>;
   updateAccountSettings: (params: any) => Promise<void>;
 };
-export declare namespace rights {
-  export { rightsToShow as show };
-  export { rightsToList as list };
-  export { rightsToCreate as create };
-  export { rightsToEdit as edit };
-  export { rightsToDelete as delete };
-  export { rightsToControl as control };
-}
-export declare namespace forbiddenErrors {
-  export let show: string;
-  export let edit: string;
-  let _delete: string;
-  export { _delete as delete };
-  export let control: string;
-  export let list: string;
-  export let create: string;
-}
-export function useCheckPermissions(uri: any, mode: any, redirectUrl?: string): any;
+type AclMode = 'acl:Read' | 'acl:Append' | 'acl:Write' | 'acl:Control';
+/** foaf:Agent = anonymous, acl:AuthenticatedAgent = logged */
+type AclClass = 'foaf:Agent' | 'acl:AuthenticatedAgent';
+type BasePermission = {
+  /** '#Control' | '#Read' | '#Write' | custom string */
+  '@id': string;
+  '@type': 'acl:Authorization';
+  'acl:mode': AclMode;
+} & (
+  | {
+      /** Related resource URI */
+      'acl:accessTo'?: string;
+    }
+  | {
+      /** Parent resource URI */
+      'acl:default': string;
+    }
+);
+type UserPermission = BasePermission & {
+  /** User resource URI */
+  'acl:agent': string;
+};
+type GroupPermission = BasePermission & {
+  /** ACL Group resource URI */
+  'acl:agentGroup': string;
+};
+type ClassPermission = BasePermission & {
+  'acl:agentClass': AclClass | AclClass[];
+};
+type Permission = UserPermission | GroupPermission | ClassPermission;
+type Permissions = Permission[];
+declare const rights: {
+  show: AclMode[];
+  list: AclMode[];
+  create: AclMode[];
+  edit: AclMode[];
+  delete: AclMode[];
+  control: AclMode[];
+};
+export const useCheckPermissions: (
+  uri: string,
+  mode: keyof typeof rights,
+  redirectUrl?: string
+) => Permissions | undefined;
 export function CreateWithPermissions(props: any): import('react/jsx-runtime').JSX.Element;
 declare namespace CreateWithPermissions {
   namespace defaultProps {
@@ -74,7 +100,7 @@ declare namespace PermissionsButton {
     let isContainer: boolean;
   }
 }
-export function EditActionsWithPermissions(): import('react/jsx-runtime').JSX.Element;
+export const EditActionsWithPermissions: () => import('react/jsx-runtime').JSX.Element;
 export function DeleteButtonWithPermissions(props: any): import('react/jsx-runtime').JSX.Element | null;
 export const EditToolbarWithPermissions: React.FunctionComponent<ToolbarProps>;
 export function EditWithPermissions(props: any): import('react/jsx-runtime').JSX.Element;
@@ -113,7 +139,7 @@ declare namespace ListWithPermissions {
     let actions: import('react/jsx-runtime').JSX.Element;
   }
 }
-export function ShowActionsWithPermissions(): import('react/jsx-runtime').JSX.Element;
+export const ShowActionsWithPermissions: () => import('react/jsx-runtime').JSX.Element;
 export function ShowWithPermissions(props: any): import('react/jsx-runtime').JSX.Element;
 declare namespace ShowWithPermissions {
   namespace defaultProps {

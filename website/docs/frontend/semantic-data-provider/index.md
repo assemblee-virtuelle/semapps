@@ -32,6 +32,7 @@ const App = () => (
 ```
 
 The semantic data provider rely on two important configuration:
+
 - The [Data Servers](data-servers.md), which describes the servers to which we want to connect and what they contain.
 - The [Data Model](data-model.md), which describes how we want the data to be displayed in React-Admin.
 
@@ -63,7 +64,7 @@ const ontologies = [
   },
   {
     prefix: 'ldp',
-    url: 'http://www.w3.org/ns/ldp#',
+    url: 'http://www.w3.org/ns/ldp#'
   }
 ];
 ```
@@ -74,13 +75,11 @@ All SPARQL results returned will be framed with this context.
 
 If it is not set, the ontologies set above will be used.
 
-
 ### `returnFailedResources`
 
-If true, the `getMany` method will not fail completely if one resource is missing. 
+If true, the `getMany` method will not fail completely if one resource is missing.
 
 Missing resources will be returned with their `id` and `_error: true`.
-
 
 ## Filters
 
@@ -124,37 +123,37 @@ Here's an example to fetch ActivityStreams events after a given date:
 {
   sparqlWhere: [
     {
-      type: "bgp",
+      type: 'bgp',
       triples: [
         {
-          "subject": { termType: "Variable", value: "s1" },
-          "predicate": { termType: "NameNode", value: "https://www.w3.org/ns/activitystreams#startTime" },
-          "object": { termType: "Variable", value: "startTime" }
+          subject: { termType: 'Variable', value: 's1' },
+          predicate: { termType: 'NameNode', value: 'https://www.w3.org/ns/activitystreams#startTime' },
+          object: { termType: 'Variable', value: 'startTime' }
         }
       ]
     },
     {
-      type: "filter",
-      expression:{
-        type: "operation",
-        operator: ">",
+      type: 'filter',
+      expression: {
+        type: 'operation',
+        operator: '>',
         args: [
           {
-            termType: "Variable",
-            value: "startTime"
+            termType: 'Variable',
+            value: 'startTime'
           },
           {
-            termType: "Literal",
+            termType: 'Literal',
             datatype: {
-              termType: "NamedNode",
-              value:"http://www.w3.org/2001/XMLSchema#dateTime"
+              termType: 'NamedNode',
+              value: 'http://www.w3.org/2001/XMLSchema#dateTime'
             },
-            value: "2022-11-17T10:20:13+05:30"
+            value: '2022-11-17T10:20:13+05:30'
           }
         ]
       }
     }
-  ]
+  ];
 }
 ```
 
@@ -173,14 +172,13 @@ const containers = useContainers(resourceId, serverKeys);
 #### Parameters
 
 | Property     | Type                | Default      | Description                          |
-|--------------|---------------------|--------------|--------------------------------------|
+| ------------ | ------------------- | ------------ | ------------------------------------ |
 | `resourceId` | `String`            | **required** | React-Admin resource ID              |
 | `serverKeys` | `Array` or `String` | "@all"       | The servers where the containers are |
 
 #### Return value
 
 Array of containers URIs.
-
 
 ### useCreateContainer
 
@@ -192,14 +190,30 @@ const createContainerUri = useCreateContainer(resourceId);
 
 #### Parameters
 
-| Property     | Type                | Default      | Description                          |
-|--------------|---------------------|--------------|--------------------------------------|
-| `resourceId` | `String`            | **required** | React-Admin resource ID              |
+| Property     | Type     | Default      | Description             |
+| ------------ | -------- | ------------ | ----------------------- |
+| `resourceId` | `String` | **required** | React-Admin resource ID |
 
 #### Return value
 
 URI of the container where to create a new resource.
 
+### useCreateContainerUri
+
+Get the URI of the container where to create a new resource.
+
+```js
+const getContainerUri = useCreateContainer();
+const createContainerUri = getContainerUri(resourceId);
+```
+
+#### Return value
+
+Function to get the URI of the container where to create a new resource
+
+| Property     | Type     | Default      | Description             |
+| ------------ | -------- | ------------ | ----------------------- |
+| `resourceId` | `String` | **required** | React-Admin resource ID |
 
 ### useDataModel
 
@@ -211,14 +225,13 @@ const dataModel = useDataModel(resourceId);
 
 #### Parameters
 
-| Property     | Type       | Default      | Description                          |
-|--------------|------------|--------------|--------------------------------------|
-| `resourceId` | `String`   | **required** | React-Admin resource ID              |
+| Property     | Type     | Default      | Description             |
+| ------------ | -------- | ------------ | ----------------------- |
+| `resourceId` | `String` | **required** | React-Admin resource ID |
 
 #### Return value
 
 The [data model](data-model) config of the given resource.
-
 
 ### useDataModels
 

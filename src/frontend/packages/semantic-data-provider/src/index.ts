@@ -6,6 +6,7 @@ export { default as buildBlankNodesQuery } from './dataProvider/utils/buildBlank
 export { default as useGetExternalLink } from './hooks/useGetExternalLink';
 export { default as useContainers } from './hooks/useContainers';
 export { default as useCreateContainer } from './hooks/useCreateContainer';
+export { default as useCreateContainerUri } from './hooks/useCreateContainerUri';
 export { default as useDataModel } from './hooks/useDataModel';
 export { default as useDataModels } from './hooks/useDataModels';
 export { default as useDataServers } from './hooks/useDataServers';

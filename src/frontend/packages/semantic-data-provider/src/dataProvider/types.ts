@@ -1,4 +1,5 @@
-import { fetchUtils } from 'react-admin';
+/* eslint-disable @typescript-eslint/no-redundant-type-constituents */
+import { DataProvider as RaDataProvider, fetchUtils } from 'react-admin';
 
 export type DataServerKey = string;
 
@@ -34,12 +35,53 @@ type DataServerConfig = {
   blankNodes: any; // TODO: Type this object
 };
 
-type DataServersConfig = Record<DataServerKey, DataServerConfig>;
+export type DataServersConfig = Record<DataServerKey, DataServerConfig>;
 
 type HttpClientOptions = {
   headers?: Headers;
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   body?: string | File;
+};
+
+export type DataModel = {
+  /** Type(s) of resources to fetch or create (example: [pair:Organization]) */
+  types: string | string[];
+  list?: {
+    /** The servers where to fetch the resource. Default to @all */
+    servers?: DataServerKey[] | DataServerKey | '@all' | '@remote' | '@default' | '@auth' | '@pod';
+
+    /** URL(s) of the container(s) to fetch. If specified, will bypass the list.servers config */
+    containers?: Record<DataServerKey, string[]>;
+
+    /** Predicates listed are blank nodes and will be dereferenced in SPARQL queries. Automatically set if Void endpoints are found */
+    blankNodes?: string[];
+
+    /** @deprecated Predicates listed will be turned to arrays if they are simple strings. Used by for reified relationship */
+    forceArray?: [];
+
+    /** Will only fetch the given predicates (and the @type) */
+    predicates?: string[];
+
+    /** React-Admin permanent filter applied to all requests */
+    filter?: Record<string, unknown>;
+
+    /** If true, the data provider will fetch the LDP containers instead of doing a SPARQL request */
+    fetchContainer?: boolean;
+
+    /** If false, improve performances by not including the @embed rule in post-request JSON-LD framing */
+    explicitEmbedOnFraming?: boolean;
+  };
+  create?: {
+    /** The server where to create new resources. Default to @default */
+    server?: '@default' | '@auth' | '@pod' | DataServerKey;
+
+    /** URL of the container where to create new resources. If specified, will bypass the create.server config */
+    container?: Record<DataServerKey, string>;
+  };
+  fieldsMapping?: {
+    /** The predicate of the title */
+    title: string;
+  };
 };
 
 export type Configuration = {
@@ -48,4 +90,11 @@ export type Configuration = {
 
   /** Context from ontologies { prefix: IRI } or IRI */
   jsonContext: string | Record<string, string>;
+
+  resources: Record<string, DataModel>;
+};
+
+export type DataProvider = RaDataProvider & {
+  getDataModels: () => Promise<Record<string, DataModel>>;
+  getDataServers: () => Promise<DataServersConfig>;
 };

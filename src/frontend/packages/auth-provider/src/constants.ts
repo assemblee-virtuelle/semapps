@@ -1,21 +1,23 @@
-export const ACL_READ = 'acl:Read';
-export const ACL_APPEND = 'acl:Append';
-export const ACL_WRITE = 'acl:Write';
-export const ACL_CONTROL = 'acl:Control';
+import { AclClass, AclMode } from './types';
+
+export const ACL_READ: AclMode = 'acl:Read';
+export const ACL_APPEND: AclMode = 'acl:Append';
+export const ACL_WRITE: AclMode = 'acl:Write';
+export const ACL_CONTROL: AclMode = 'acl:Control';
 
 export const USER_AGENT = 'acl:agent';
 export const GROUP_AGENT = 'acl:agentGroup';
 export const CLASS_AGENT = 'acl:agentClass';
 
-export const ANONYMOUS_AGENT = 'foaf:Agent';
-export const AUTHENTICATED_AGENT = 'acl:AuthenticatedAgent';
+export const ANONYMOUS_AGENT: AclClass = 'foaf:Agent';
+export const AUTHENTICATED_AGENT: AclClass = 'acl:AuthenticatedAgent';
 
-export const rightsToShow = [ACL_READ, ACL_APPEND, ACL_WRITE, ACL_CONTROL];
-export const rightsToList = [ACL_READ, ACL_APPEND, ACL_WRITE, ACL_CONTROL];
-export const rightsToCreate = [ACL_APPEND, ACL_WRITE, ACL_CONTROL];
-export const rightsToEdit = [ACL_APPEND, ACL_WRITE, ACL_CONTROL];
-export const rightsToDelete = [ACL_WRITE, ACL_CONTROL];
-export const rightsToControl = [ACL_CONTROL];
+export const rightsToShow: AclMode[] = [ACL_READ, ACL_APPEND, ACL_WRITE, ACL_CONTROL];
+export const rightsToList: AclMode[] = [ACL_READ, ACL_APPEND, ACL_WRITE, ACL_CONTROL];
+export const rightsToCreate: AclMode[] = [ACL_APPEND, ACL_WRITE, ACL_CONTROL];
+export const rightsToEdit: AclMode[] = [ACL_APPEND, ACL_WRITE, ACL_CONTROL];
+export const rightsToDelete: AclMode[] = [ACL_WRITE, ACL_CONTROL];
+export const rightsToControl: AclMode[] = [ACL_CONTROL];
 
 export const rights = {
   show: rightsToShow,
