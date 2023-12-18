@@ -166,7 +166,7 @@ module.exports = {
         addPublicRead,
         addDefaultPublicRead
       };
-      ctx.emit('webacl.resource.updated', returnValues, { meta: { webId: null, dataset: null } });
+      ctx.emit('webacl.resource.updated', returnValues, { meta: { webId: null } });
       return returnValues;
     }
   }

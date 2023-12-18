@@ -37,7 +37,7 @@ module.exports = {
           ctx.emit(
             'webacl.resource.updated',
             { uri: containerUri, isContainer: true, removePublicRead, removeDefaultPublicRead },
-            { meta: { webId: null, dataset: null } }
+            { meta: { webId: null } }
           );
         }
       }

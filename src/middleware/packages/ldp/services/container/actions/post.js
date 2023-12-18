@@ -111,7 +111,7 @@ module.exports = {
         resourceUri,
         fromContainerPost: true
       },
-      { meta: { webId: null, dataset: null } }
+      { meta: { webId: null } }
     );
 
     return resourceUri;

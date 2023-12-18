@@ -41,7 +41,7 @@ module.exports = {
           containerUri,
           resourceUri
         },
-        { meta: { webId: null, dataset: null } }
+        { meta: { webId: null } }
       );
   }
 };

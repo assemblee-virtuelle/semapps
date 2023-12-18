@@ -122,8 +122,7 @@ module.exports = {
         },
         {
           meta: {
-            webId: null,
-            dataset: null
+            webId: null
           }
         }
       );
