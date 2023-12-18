@@ -32,6 +32,21 @@ module.exports = {
         webId: 'system'
       });
     },
+    async moveResourcesToContainer(ctx) {
+      const { oldContainerUri, newContainerUri, dataset } = ctx.params;
+
+      const resourcesUris = await ctx.call('ldp.container.getUris', { containerUri: oldContainerUri });
+
+      for (let oldResourceUri of resourcesUris) {
+        const newResourceUri = oldResourceUri.replace(oldContainerUri, newContainerUri);
+
+        await this.actions.moveResource({ oldResourceUri, newResourceUri, dataset }, { parentCtx: ctx });
+
+        this.logger.info(
+          `All resources moved. You should consider deleting the old container with this command: call ldp.container.delete --containerUri ${oldContainerUri} --webId system`
+        );
+      }
+    },
     async moveResource(ctx) {
       const { oldResourceUri, newResourceUri, dataset } = ctx.params;
 

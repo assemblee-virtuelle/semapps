@@ -77,14 +77,13 @@ const arrayOf = value => {
   return [value];
 };
 
-/**
+/*
  * Call a callback and expect the result object to have all properties in `fieldNames`.
  * If not, try again after `delayMs` until `maxTries` is reached.
  * If `fieldNames` is `undefined`, the return value of `callback` is expected to not be
  * `undefined`.
- *
  * @type {import("./utilTypes").waitForResource}
- **/
+ */
 const waitForResource = async (delayMs, fieldNames, maxTries, callback) => {
   for (let i = 0; i < maxTries; i += 1) {
     const result = await callback();

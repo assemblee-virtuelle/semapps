@@ -71,7 +71,7 @@ module.exports = {
 
       return result;
     } else {
-      throw new MoleculerError('Resource Not found', 404, 'NOT_FOUND');
+      throw new MoleculerError(`Resource not found ${resourceUri}`, 404, 'NOT_FOUND');
     }
   }
 };

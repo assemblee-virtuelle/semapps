@@ -2,11 +2,11 @@ const { ACTOR_TYPES, OBJECT_TYPES } = require('./constants');
 
 module.exports = [
   {
-    path: '/actors',
+    path: '/as/actor',
     acceptedTypes: Object.values(ACTOR_TYPES)
   },
   {
-    path: '/objects',
+    path: '/as/object',
     acceptedTypes: Object.values(OBJECT_TYPES)
   }
 ];
