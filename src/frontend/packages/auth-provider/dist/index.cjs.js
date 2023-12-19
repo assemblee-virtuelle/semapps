@@ -248,9 +248,14 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                         const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
                         // Delete token but also any other value in local storage
                         localStorage.clear();
-                        const { status: status, json: oidcConfig } = await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, ".well-known/openid-configuration"));
-                        if (status === 200) // Redirect to OIDC endpoint if it exists
-                        window.location.href = oidcConfig.end_session_endpoint;
+                        let result = {};
+                        try {
+                            result = await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, ".well-known/openid-configuration"));
+                        } catch (e) {
+                        // Do nothing if it fails
+                        }
+                        if (result.status === 200 && result.json) // Redirect to OIDC endpoint if it exists
+                        window.location.href = result.json.end_session_endpoint;
                         else {
                             // Reload to ensure the dataServer config is reset
                             window.location.reload();
