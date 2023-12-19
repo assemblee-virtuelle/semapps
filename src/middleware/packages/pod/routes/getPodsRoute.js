@@ -37,7 +37,7 @@ function getPodsRoute() {
 
   return {
     name: 'pods',
-    path: '/:username',
+    path: '/:username([^/.][^/]+)',
     // Disable the body parsers so that we can parse the body ourselves
     // (Moleculer-web doesn't handle non-JSON bodies, so we must do it)
     bodyParsers: false,

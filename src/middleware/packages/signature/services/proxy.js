@@ -30,7 +30,7 @@ const ProxyService = {
     };
 
     if (this.settings.podProvider) {
-      await this.broker.call('api.addRoute', { route: { path: '/:username/proxy', ...routeConfig } });
+      await this.broker.call('api.addRoute', { route: { path: '/:username([^/.][^/]+)/proxy', ...routeConfig } });
     } else {
       await this.broker.call('api.addRoute', { route: { path: '/proxy', ...routeConfig } });
     }
