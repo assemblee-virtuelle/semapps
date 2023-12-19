@@ -5,7 +5,7 @@ const { MIME_TYPES } = require('@semapps/mime-types');
  * Match an activity against a pattern
  * If there is a match, return the activity dereferenced according to the pattern
  * @param {object} ctx The moleculer context
- * @param {object | (ctx, activity) => boolean} matcher An activity object pattern or a function that returns true upon match.
+ * @param {object | (ctx, dereferencedActivity) => Promise<boolean>} matcher An activity object pattern or an async function that returns true upon match.
  * @param {object} activityOrObject The activity to match for.
  * @returns {object} The dereferenced activity / object.
  */
@@ -36,7 +36,7 @@ const matchActivity = async (ctx, matcher, activityOrObject) => {
 
   // If the matcher is a function, call it.
   if (typeof matcher === 'function') {
-    if (matcher(ctx, activityOrObject)) {
+    if (await matcher(ctx, dereferencedActivityOrObject)) {
       return dereferencedActivityOrObject;
     } else {
       return false;
