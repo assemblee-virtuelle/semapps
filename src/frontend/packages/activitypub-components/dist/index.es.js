@@ -522,8 +522,23 @@ var $be88b298220210d1$export$2e2bcd8739ae039 = $be88b298220210d1$var$CommentsLis
 
 
 
+const $e4e1b14e0441184d$export$e57ff0f701c44363 = (value)=>{
+    // If the field is null-ish, we suppose there are no values.
+    if (!value) return [];
+    // Return as is.
+    if (Array.isArray(value)) return value;
+    // Single value is made an array.
+    return [
+        value
+    ];
+};
+var $e4e1b14e0441184d$export$2e2bcd8739ae039 = {
+    arrayOf: $e4e1b14e0441184d$export$e57ff0f701c44363
+};
+
+
 const $c1e897431d8c5742$var$useCollection = (predicateOrUrl)=>{
-    const { identity: identity, isLoading: identityLoading } = (0, $85cNH$useGetIdentity)();
+    const { data: identity, isLoading: identityLoading } = (0, $85cNH$useGetIdentity)();
     const [items, setItems] = (0, $85cNH$useState)([]);
     const [loading, setLoading] = (0, $85cNH$useState)(false);
     const [loaded, setLoaded] = (0, $85cNH$useState)(false);
@@ -551,8 +566,8 @@ const $c1e897431d8c5742$var$useCollection = (predicateOrUrl)=>{
         (0, $85cNH$fetchUtils).fetchJson(collectionUrl, {
             headers: headers
         }).then(({ json: json })=>{
-            if (json && json.items) setItems(json.items);
-            else if (json && json.orderedItems) setItems(json.orderedItems);
+            if (json && json.items) setItems((0, $e4e1b14e0441184d$export$e57ff0f701c44363)(json.items));
+            else if (json && json.orderedItems) setItems((0, $e4e1b14e0441184d$export$e57ff0f701c44363)(json.orderedItems));
             else setItems([]);
             setError(false);
             setLoaded(true);
