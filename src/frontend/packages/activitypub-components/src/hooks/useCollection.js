@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { useGetIdentity, fetchUtils } from 'react-admin';
+import { arrayOf } from '../utils';
 
 const useCollection = predicateOrUrl => {
   const { identity, loaded: identityLoaded } = useGetIdentity();
@@ -37,9 +38,9 @@ const useCollection = predicateOrUrl => {
       .fetchJson(collectionUrl, { headers })
       .then(({ json }) => {
         if (json && json.items) {
-          setItems(json.items);
+          setItems(arrayOf(json.items));
         } else if (json && json.orderedItems) {
-          setItems(json.orderedItems);
+          setItems(arrayOf(json.orderedItems));
         } else {
           setItems([]);
         }
