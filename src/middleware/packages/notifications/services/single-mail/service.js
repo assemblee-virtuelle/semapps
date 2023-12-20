@@ -30,27 +30,31 @@ const SingleMailNotificationsService = {
       for (const recipientUri of recipients) {
         const account = await ctx.call('auth.account.findByWebId', { webId: recipientUri });
 
-        ctx.meta.webId = recipientUri;
-        ctx.meta.dataset = account.podUri && getSlugFromUri(recipientUri); // If no Pod config, will be undefined
+        if (account) {
+          ctx.meta.webId = recipientUri;
+          ctx.meta.dataset = account?.podUri && getSlugFromUri(recipientUri); // If no Pod config, will be undefined
 
-        const locale = account.preferredLocale || this.settings.defaultLocale;
-        const notification = await ctx.call('activity-mapping.map', { activity, locale });
+          const locale = account?.preferredLocale || this.settings.defaultLocale;
+          const notification = await ctx.call('activity-mapping.map', { activity, locale });
 
-        if (notification && (await this.filterNotification(notification, activity, recipientUri))) {
-          if (notification.actionLink)
-            notification.actionLink = await this.formatLink(notification.actionLink, recipientUri);
+          if (notification && (await this.filterNotification(notification, activity, recipientUri))) {
+            if (notification.actionLink)
+              notification.actionLink = await this.formatLink(notification.actionLink, recipientUri);
 
-          await this.queueMail(ctx, notification.key, {
-            to: account.email,
-            locale,
-            data: {
-              ...notification,
-              color: this.settings.color,
-              descriptionWithBr: notification.description
-                ? notification.description.replace(/\r\n|\r|\n/g, '<br />')
-                : undefined
-            }
-          });
+            await this.queueMail(ctx, notification.key, {
+              to: account.email,
+              locale,
+              data: {
+                ...notification,
+                color: this.settings.color,
+                descriptionWithBr: notification.description
+                  ? notification.description.replace(/\r\n|\r|\n/g, '<br />')
+                  : undefined
+              }
+            });
+          }
+        } else {
+          this.logger.warn(`No account found for local recipient ${recipientUri}`);
         }
       }
     }

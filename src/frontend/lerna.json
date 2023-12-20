@@ -1,17 +1,11 @@
 {
-  "version": "0.6.0-alpha.3",
+  "version": "0.6.0-alpha.4",
   "npmClient": "yarn",
   "useNx": true,
-  "packages": [
-    "packages/*",
-    "templates/**"
-  ],
+  "packages": ["packages/*", "templates/**"],
   "command": {
     "version": {
-      "allowBranch": [
-        "master",
-        "next"
-      ]
+      "allowBranch": ["master", "next"]
     }
   }
 }
