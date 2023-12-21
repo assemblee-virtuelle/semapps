@@ -18,11 +18,19 @@ module.exports = {
 
     // Save the current data, to be able to send it through the event
     // If the resource does not exist, it will throw a 404 error
-    const oldData = await ctx.call('ldp.resource.get', {
-      resourceUri,
-      accept: MIME_TYPES.JSON,
-      webId
-    });
+    const oldData = await ctx.call(
+      'ldp.resource.get',
+      {
+        resourceUri,
+        accept: MIME_TYPES.JSON,
+        webId
+      },
+      {
+        meta: {
+          $cache: false
+        }
+      }
+    );
 
     await ctx.call('triplestore.update', {
       query: `
@@ -40,19 +48,20 @@ module.exports = {
       await ctx.call('ldp.container.detach', { containerUri, resourceUri, webId: 'system' });
     }
 
-    if (oldData['type'] === 'semapps:File') {
+    if (oldData.type === 'semapps:File') {
       fs.unlinkSync(oldData['semapps:localPath']);
     }
 
     const returnValues = {
       resourceUri,
       oldData,
-      webId
+      webId,
+      dataset: ctx.meta.dataset
     };
 
     ctx.call('triplestore.deleteOrphanBlankNodes');
 
-    ctx.emit('ldp.resource.deleted', returnValues, { meta: { webId: null } });
+    ctx.emit('ldp.resource.deleted', returnValues, { meta: { webId: null, dataset: null } });
 
     return returnValues;
   }
