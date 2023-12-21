@@ -57,7 +57,7 @@ const addRightsToNewUser = async (ctx, userUri) => {
 /**
  * Check, if an URI is attached to `ctx.authorization.capability`.
  * If the capability is valid and enables access to the resource, return true.
- * @param {string} mode The `acl:Mode` to check for (e.g. `acl:Read`).
+ * @param {string} mode The `acl:mode` to check for (e.g. `acl:Read`).
  * @returns {Promise<boolean>} true, if capability enables access to the resource, false otherwise.
  */
 const hasValidCapability = async (capDocument, resourceUri, mode) => {
@@ -65,8 +65,8 @@ const hasValidCapability = async (capDocument, resourceUri, mode) => {
   if (
     capDocument &&
     arrayOf(capDocument.type).includes('acl:Authorization') &&
-    arrayOf(capDocument['acl:Mode']).includes(mode) &&
-    arrayOf(capDocument['acl:AccessTo']).includes(resourceUri)
+    arrayOf(capDocument['acl:mode']).includes(mode) &&
+    arrayOf(capDocument['acl:accessTo']).includes(resourceUri)
   ) {
     return true;
   }

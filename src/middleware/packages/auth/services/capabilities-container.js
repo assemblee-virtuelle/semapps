@@ -49,8 +49,8 @@ const CapabilitiesService = {
             containerUri: capContainerUri,
             resource: {
               '@type': 'acl:Authorization',
-              'acl:AccessTo': accessTo,
-              'acl:Mode': mode
+              'acl:accessTo': accessTo,
+              'acl:mode': mode
             },
             contentType: MIME_TYPES.JSON,
             webId
