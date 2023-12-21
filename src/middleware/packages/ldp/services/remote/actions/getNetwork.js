@@ -17,7 +17,7 @@ module.exports = {
   async handler(ctx) {
     const { resourceUri, accept, jsonContext } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-    const headers = new Headers({ accept });
+    const headers = new fetch.Headers({ accept });
     if (jsonContext) headers.set('JsonLdContext', JSON.stringify(jsonContext));
 
     if (!this.isRemoteUri(resourceUri, webId)) {
