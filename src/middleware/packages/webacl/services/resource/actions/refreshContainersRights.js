@@ -36,8 +36,14 @@ module.exports = {
             !containerRights.default || !containerRights.default.anon || !containerRights.default.anon.read;
           ctx.emit(
             'webacl.resource.updated',
-            { uri: containerUri, isContainer: true, removePublicRead, removeDefaultPublicRead },
-            { meta: { webId: null } }
+            {
+              uri: containerUri,
+              isContainer: true,
+              removePublicRead,
+              removeDefaultPublicRead,
+              dataset: ctx.meta.dataset
+            },
+            { meta: { webId: null, dataset: null } }
           );
         }
       }

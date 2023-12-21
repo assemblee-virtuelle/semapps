@@ -138,6 +138,7 @@ module.exports = {
       const returnValues = {
         uri: resourceUri,
         webId,
+        dataset: ctx.meta.dataset,
         created: false,
         isContainer,
         defaultRightsUpdated,
@@ -146,7 +147,7 @@ module.exports = {
         addDefaultPublicRead,
         removeDefaultPublicRead
       };
-      ctx.emit('webacl.resource.updated', returnValues, { meta: { webId: null } });
+      ctx.emit('webacl.resource.updated', returnValues, { meta: { webId: null, dataset: null } });
       return returnValues;
     }
   }

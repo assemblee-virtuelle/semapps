@@ -116,10 +116,11 @@ module.exports = {
       resourceUri,
       triplesAdded: triplesToAdd,
       triplesRemoved: triplesToRemove,
-      webId
+      webId,
+      dataset: ctx.meta.dataset
     };
 
-    ctx.emit('ldp.resource.patched', returnValues, { meta: { webId: null } });
+    ctx.emit('ldp.resource.patched', returnValues, { meta: { webId: null, dataset: null } });
 
     return returnValues;
   }
