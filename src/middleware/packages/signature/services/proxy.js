@@ -30,7 +30,7 @@ const ProxyService = {
     };
 
     if (this.settings.podProvider) {
-      await this.broker.call('api.addRoute', { route: { path: '/:username/proxy', ...routeConfig } });
+      await this.broker.call('api.addRoute', { route: { path: '/:username([^/.][^/]+)/proxy', ...routeConfig } });
     } else {
       await this.broker.call('api.addRoute', { route: { path: '/proxy', ...routeConfig } });
     }
@@ -89,7 +89,12 @@ const ProxyService = {
       });
 
       // Convert Headers object if necessary (otherwise we can't destructure it below)
-      if (headers && typeof headers === 'object' && headers.constructor.name === 'Headers') {
+      // Note: if we use NodeJS built-in Headers instead of node-fetch Headers, the constructor name is _Headers
+      if (
+        headers &&
+        typeof headers === 'object' &&
+        (headers.constructor.name === 'Headers' || headers.constructor.name === '_Headers')
+      ) {
         headers = Object.fromEntries(headers);
       }
 

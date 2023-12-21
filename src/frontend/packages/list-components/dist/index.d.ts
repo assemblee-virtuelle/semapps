@@ -43,7 +43,11 @@ export const ReferenceFilter: <ReferenceType extends RaRecord<Identifier>>({
   icon,
   showCounters
 }: Props) => import('react/jsx-runtime').JSX.Element;
-export const ListViewContext: any;
+export const ListViewContext: React.Context<{
+  views: null;
+  currentView: null;
+  setView: () => null;
+}>;
 export function ViewsButtons(): import('react/jsx-runtime').JSX.Element[] | null;
 export function ListActionsWithViews({
   bulkActions,

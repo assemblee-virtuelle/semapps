@@ -89,6 +89,7 @@ module.exports = {
     'import/order': 'warn',
     'jsdoc/require-jsdoc': 'off',
     'jsdoc/require-param': 'off',
+    'jsdoc/require-param-type': 'off',
     'jsdoc/require-returns': 'off',
     'jsx-a11y/anchor-is-valid': 'off',
     'no-await-in-loop': 'warn',
@@ -141,6 +142,7 @@ module.exports = {
     'spaced-comment': 'warn',
     'vars-on-top': 'warn'
   },
+  // For javascript, rules need to be different (less strict mostly).
   overrides: [
     {
       files: '*.js',

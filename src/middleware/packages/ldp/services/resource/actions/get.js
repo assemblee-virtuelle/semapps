@@ -35,7 +35,7 @@ module.exports = {
       ...ctx.params
     };
 
-    const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId });
+    const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId: aclVerified ? 'system' : webId });
 
     if (resourceExist) {
       const blankNodesQuery = buildBlankNodesQuery(4);
@@ -71,7 +71,7 @@ module.exports = {
 
       return result;
     } else {
-      throw new MoleculerError('Resource Not found', 404, 'NOT_FOUND');
+      throw new MoleculerError(`Resource not found ${resourceUri}`, 404, 'NOT_FOUND');
     }
   }
 };

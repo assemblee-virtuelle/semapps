@@ -26,6 +26,7 @@ const negotiateContentType = (req, res, next) => {
   }
 };
 
+/** @type {(msg: string) => never} */
 const throw403 = msg => {
   throw new MoleculerError('Forbidden', 403, 'ACCESS_DENIED', { status: 'Forbidden', text: msg });
 };
@@ -155,8 +156,8 @@ const parseFile = (req, res, next) => {
 };
 
 const addContainerUriMiddleware = containerUri => (req, res, next) => {
-  if (containerUri.includes('/:username')) {
-    req.$params.containerUri = containerUri.replace(':username', req.$params.username).replace(/\/$/, '');
+  if (containerUri.includes('/:username([^/.][^/]+)')) {
+    req.$params.containerUri = containerUri.replace(':username([^/.][^/]+)', req.$params.username).replace(/\/$/, '');
   } else {
     req.$params.containerUri = containerUri;
   }

@@ -6,6 +6,7 @@ const getAction = require('./actions/get');
 const getPrefixesAction = require('./actions/getPrefixes');
 const getRdfPrefixesAction = require('./actions/getRdfPrefixes');
 const listAction = require('./actions/list');
+const prefixToUriAction = require('./actions/prefixToUri');
 const registerAction = require('./actions/register');
 
 module.exports = {
@@ -36,6 +37,7 @@ module.exports = {
     getPrefixes: getPrefixesAction,
     getRdfPrefixes: getRdfPrefixesAction,
     list: listAction,
+    prefixToUri: prefixToUriAction,
     register: registerAction
   },
   methods: {

@@ -57,6 +57,9 @@ export function useOutbox(): {
   loaded: boolean;
   owner: import('react-admin').Identifier | undefined;
 };
+declare namespace _default {
+  export { arrayOf };
+}
 export function useCollection(predicateOrUrl: any): {
   items: never[];
   loading: boolean;
