@@ -138,8 +138,12 @@ module.exports = {
     async findDatasetByWebId(ctx) {
       const { webId } = ctx.meta;
       const account = await ctx.call('auth.account.findByWebId', { webId });
-      // If no Pod config, will return undefined
-      return account.podUri && getSlugFromUri(webId);
+      // If podUri is set, it means the dataset is for a Pod
+      if (account?.podUri) {
+        return account.username;
+      } else {
+        this.logger.warn(`No podUri set for webid ${webId}`);
+      }
     },
     async findSettingsByWebId(ctx) {
       const { webId } = ctx.meta;
