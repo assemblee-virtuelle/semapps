@@ -57,6 +57,7 @@ import {
   Form as $1obPJ$Form,
   TextInput as $1obPJ$TextInput,
   required as $1obPJ$required,
+  minLength as $1obPJ$minLength,
   email as $1obPJ$email,
   Notification as $1obPJ$Notification,
   Resource as $1obPJ$Resource,
@@ -1764,7 +1765,7 @@ const $e011da92680cf1fe$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(theme =>
           autoComplete: 'username',
           fullWidth: true,
           disabled: loading,
-          validate: (0, $1obPJ$required)(),
+          validate: [(0, $1obPJ$required)(), (0, $1obPJ$minLength)(2)],
           format: value =>
             value
               ? (0, $1obPJ$speakingurl)(value, {

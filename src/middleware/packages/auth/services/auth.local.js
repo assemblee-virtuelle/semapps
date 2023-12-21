@@ -42,6 +42,10 @@ const AuthLocalService = {
     async signup(ctx) {
       const { username, email, password, interactionId, ...rest } = ctx.params;
 
+      if (username && username.length < 2) {
+        throw new Error('The username must be at least 2 characters long');
+      }
+
       let accountData = await ctx.call('auth.account.create', {
         username,
         email,

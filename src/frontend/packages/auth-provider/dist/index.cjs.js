@@ -1758,7 +1758,7 @@ const $5f70c240e5b0340c$var$useStyles = (0, $parcel$interopDefault($4Uj5b$muisty
           autoComplete: 'username',
           fullWidth: true,
           disabled: loading,
-          validate: (0, $4Uj5b$reactadmin.required)(),
+          validate: [(0, $4Uj5b$reactadmin.required)(), (0, $4Uj5b$reactadmin.minLength)(2)],
           format: value =>
             value
               ? (0, $parcel$interopDefault($4Uj5b$speakingurl))(value, {
