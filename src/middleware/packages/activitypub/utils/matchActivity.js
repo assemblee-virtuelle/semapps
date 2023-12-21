@@ -11,9 +11,14 @@ const { MIME_TYPES } = require('@semapps/mime-types');
  */
 const matchActivity = async (ctx, matcher, activityOrObject) => {
   if (!matcher) return false;
-  let dereferencedActivityOrObject;
+
+  // If the matcher is a function, call it
+  if (typeof matcher === 'function') {
+    return await matcher(ctx, activityOrObject);
+  }
 
   // Check if we need to dereference the activity or object
+  let dereferencedActivityOrObject;
   if (typeof activityOrObject === 'string') {
     try {
       dereferencedActivityOrObject = await ctx.call('ldp.resource.get', {
@@ -32,15 +37,6 @@ const matchActivity = async (ctx, matcher, activityOrObject) => {
   } else {
     // Copy the object to a new object
     dereferencedActivityOrObject = { ...activityOrObject };
-  }
-
-  // If the matcher is a function, call it.
-  if (typeof matcher === 'function') {
-    if (await matcher(ctx, dereferencedActivityOrObject)) {
-      return dereferencedActivityOrObject;
-    } else {
-      return false;
-    }
   }
 
   for (const key of Object.keys(matcher)) {
