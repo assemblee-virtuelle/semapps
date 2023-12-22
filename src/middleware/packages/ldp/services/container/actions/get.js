@@ -60,7 +60,11 @@ module.exports = {
       });
 
       if (Object.keys(result).length === 1 && result['@context']) {
-        throw new MoleculerError(`Container not found ${containerUri}`, 404, 'NOT_FOUND');
+        throw new MoleculerError(
+          `Container not found ${containerUri} (webId ${webId} / dataset ${ctx.meta.dataset})`,
+          404,
+          'NOT_FOUND'
+        );
       }
 
       // Request each resources
