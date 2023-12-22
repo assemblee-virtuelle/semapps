@@ -35,7 +35,7 @@ const SsoLoginPage = ({ children, backgroundImage, buttons, userResource, proper
           if (searchParams.get('error') === 'registration.not-allowed') {
             notify('auth.message.user_email_not_found', { type: 'error' });
           } else {
-            notify('auth.message.bad_request', { type: 'error', error: searchParams.get('error') });
+            notify('auth.message.bad_request', { type: 'error', messageArgs: { error: searchParams.get('error') } });
           }
         } else if (searchParams.has('token')) {
           const token = searchParams.get('token');

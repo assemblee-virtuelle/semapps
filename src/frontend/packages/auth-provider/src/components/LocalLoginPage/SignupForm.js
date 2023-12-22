@@ -6,6 +6,7 @@ import {
   useNotify,
   useSafeSetState,
   TextInput,
+  minLength,
   required,
   email,
   useLocaleState
@@ -88,8 +89,8 @@ const SignupForm = ({
           typeof error === 'string'
             ? error
             : typeof error === 'undefined' || !error.message
-            ? 'ra.auth.sign_in_error'
-            : error.message,
+              ? 'ra.auth.sign_in_error'
+              : error.message,
           {
             type: 'warning',
             _: typeof error === 'string' ? error : error && error.message ? error.message : undefined
@@ -108,7 +109,7 @@ const SignupForm = ({
           autoComplete="username"
           fullWidth
           disabled={loading}
-          validate={required()}
+          validate={[required(), minLength(2)]}
           format={value =>
             value
               ? createSlug(value, {

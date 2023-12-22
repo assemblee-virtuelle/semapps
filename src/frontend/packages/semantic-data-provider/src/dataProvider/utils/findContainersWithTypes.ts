@@ -13,21 +13,21 @@ const findContainersWithTypes = (
   const parsedServerKeys = parseServerKeys(serverKeys, dataServers);
 
   Object.keys(dataServers)
-    .filter(key1 => dataServers[key1].containers)
-    .forEach(key1 => {
-      Object.keys(dataServers[key1].containers).forEach(key2 => {
-        if (!parsedServerKeys || parsedServerKeys.includes(key2)) {
-          Object.keys(dataServers[key1].containers[key2]).forEach(type => {
+    .filter(dataServerKey => dataServers[dataServerKey].containers)
+    .forEach(dataServerKey => {
+      Object.keys(dataServers[dataServerKey].containers).forEach(containerKey => {
+        if (!parsedServerKeys || parsedServerKeys.includes(containerKey)) {
+          Object.keys(dataServers[dataServerKey].containers[containerKey]).forEach(type => {
             if (types.includes(type)) {
-              dataServers[key1].containers[key2][type].map(path => {
-                const containerUri = urlJoin(dataServers[key2].baseUrl, path);
+              dataServers[dataServerKey].containers[containerKey][type].map(path => {
+                const containerUri = urlJoin(dataServers[containerKey].baseUrl, path);
 
                 // Avoid returning the same container several times
                 if (!existingContainers.includes(containerUri)) {
                   existingContainers.push(containerUri);
 
-                  if (!containers[key1]) containers[key1] = [];
-                  containers[key1].push(containerUri);
+                  if (!containers[dataServerKey]) containers[dataServerKey] = [];
+                  containers[dataServerKey].push(containerUri);
                 }
               });
             }

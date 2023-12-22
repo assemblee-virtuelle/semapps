@@ -30,10 +30,11 @@ module.exports = {
 
     const returnValues = {
       containerUri,
+      dataset: ctx.meta.dataset,
       webId
     };
 
-    ctx.emit('ldp.container.deleted', returnValues, { meta: { webId: null } });
+    ctx.emit('ldp.container.deleted', returnValues, { meta: { webId: null, dataset: null } });
 
     return returnValues;
   }

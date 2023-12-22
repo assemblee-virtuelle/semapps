@@ -163,6 +163,18 @@ module.exports = {
       ...voidOntology,
       overwrite: true
     });
+    await this.broker.call('api.addRoute', {
+      route: {
+        path: '/.well-known/void',
+        name: 'void-endpoint',
+        bodyParsers: false,
+        authorization: false,
+        authentication: true,
+        aliases: {
+          'GET /': [parseHeader, 'void.api_get']
+        }
+      }
+    });
   },
   actions: {
     getRemote: {
@@ -345,20 +357,6 @@ module.exports = {
         accept: accept
       });
     }
-  },
-  async started() {
-    await this.broker.call('api.addRoute', {
-      route: {
-        path: '/.well-known/void',
-        name: 'void-endpoint',
-        bodyParsers: false,
-        authorization: false,
-        authentication: true,
-        aliases: {
-          'GET /': [parseHeader, 'void.api_get']
-        }
-      }
-    });
   },
   methods: {
     async getContainers(ctx) {

@@ -1,5 +1,6 @@
 const urlJoin = require('url-join');
 const fetch = require('node-fetch');
+const waitForExpect = require('wait-for-expect');
 const { fetchServer } = require('../utils');
 const CONFIG = require('../config');
 const initialize = require('./initialize');
@@ -321,8 +322,10 @@ describe('LDP handling through API', () => {
       status: 204
     });
 
-    await expect(fetchServer(subContainerUri)).resolves.toMatchObject({
-      status: 404
+    await waitForExpect(async () => {
+      await expect(fetchServer(subContainerUri)).resolves.toMatchObject({
+        status: 404
+      });
     });
 
     await expect(fetchServer(containerUri)).resolves.toMatchObject({

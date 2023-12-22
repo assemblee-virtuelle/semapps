@@ -44,7 +44,7 @@ const NewPasswordForm = ({ redirectTo, passwordScorer = defaultScorer }) => {
           window.location.href = `/login${redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : ''}`;
           setLoading(false);
         }, 2000);
-        notify('auth.notification.password_changed', 'info');
+        notify('auth.notification.password_changed', { type: 'info' });
       })
       .catch(error => {
         setLoading(false);
@@ -52,8 +52,8 @@ const NewPasswordForm = ({ redirectTo, passwordScorer = defaultScorer }) => {
           typeof error === 'string'
             ? error
             : typeof error === 'undefined' || !error.message
-            ? 'auth.notification.reset_password_error'
-            : error.message,
+              ? 'auth.notification.reset_password_error'
+              : error.message,
           {
             type: 'warning',
             messageArgs: {

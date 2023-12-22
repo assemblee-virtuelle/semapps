@@ -55,7 +55,7 @@ module.exports = {
       }
 
       // TODO see if we can base ourselves on a general config for the POD data path
-      fullPath = pathJoin('/:username', 'data', path);
+      fullPath = pathJoin('/:username([^/.][^/]+)', 'data', path);
     } else {
       // Ensure the container has been created
       const containerUri = urlJoin(this.settings.baseUrl, path);

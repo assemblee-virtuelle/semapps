@@ -1,4 +1,4 @@
-export const LexiconAutocompleteInput: import('react').ForwardRefExoticComponent<import('react').RefAttributes<any>>;
+export const LexiconAutocompleteInput: React.ForwardRefExoticComponent<React.RefAttributes<any>>;
 export function LexiconCreateDialog({
   fetchLexicon,
   selectData
