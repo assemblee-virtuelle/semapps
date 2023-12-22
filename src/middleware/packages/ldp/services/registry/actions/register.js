@@ -51,10 +51,8 @@ module.exports = {
     // Save the options
     this.registeredContainers[name] = { path, fullPath, pathRegex, name, ...options };
 
-    ctx.emit(
-      'ldp.registry.registered',
-      { container: this.registeredContainers[name] },
-      { meta: { webId: null, dataset: null } }
-    );
+    ctx.emit('ldp.registry.registered', { container: this.registeredContainers[name] }, { meta: { webId: null } });
+
+    return this.registeredContainers[name];
   }
 };

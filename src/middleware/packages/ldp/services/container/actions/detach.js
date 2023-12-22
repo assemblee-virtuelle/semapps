@@ -39,7 +39,8 @@ module.exports = {
         'ldp.container.detached',
         {
           containerUri,
-          resourceUri
+          resourceUri,
+          dataset: ctx.meta.dataset
         },
         { meta: { webId: null, dataset: null } }
       );

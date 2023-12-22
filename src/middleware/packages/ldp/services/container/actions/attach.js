@@ -33,20 +33,15 @@ module.exports = {
       graphName: isRemoteContainer ? this.settings.mirrorGraphName : undefined
     });
 
-    if (!isRemoteContainer)
-      ctx.emit(
-        'ldp.container.attached',
-        {
-          containerUri,
-          resourceUri
-        },
-        { meta: { webId: null } }
-      );
-
-    return {
+    const returnValues = {
       containerUri,
       resourceUri,
-      webId
+      webId,
+      dataset: ctx.meta.dataset
     };
+
+    if (!isRemoteContainer) ctx.emit('ldp.container.attached', returnValues, { meta: { webId: null, dataset: null } });
+
+    return returnValues;
   }
 };

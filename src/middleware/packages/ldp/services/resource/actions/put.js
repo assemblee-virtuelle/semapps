@@ -32,11 +32,19 @@ module.exports = {
 
     // Save the current data, to be able to send it through the event
     // If the resource does not exist, it will throw a 404 error
-    const oldData = await ctx.call('ldp.resource.get', {
-      resourceUri,
-      accept: MIME_TYPES.JSON,
-      webId
-    });
+    const oldData = await ctx.call(
+      'ldp.resource.get',
+      {
+        resourceUri,
+        accept: MIME_TYPES.JSON,
+        webId
+      },
+      {
+        meta: {
+          $cache: false
+        }
+      }
+    );
 
     // Adds the default context, if it is missing
     if (contentType === MIME_TYPES.JSON && !resource['@context']) {
@@ -118,7 +126,8 @@ module.exports = {
           resourceUri,
           oldData,
           newData,
-          webId
+          webId,
+          dataset: ctx.meta.dataset
         },
         {
           meta: {

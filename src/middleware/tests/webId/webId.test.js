@@ -13,7 +13,8 @@ const broker = new ServiceBroker({
     options: {
       level: 'warn'
     }
-  }
+  },
+  cacher: CONFIG.ACTIVATE_CACHE
 });
 
 beforeAll(async () => {

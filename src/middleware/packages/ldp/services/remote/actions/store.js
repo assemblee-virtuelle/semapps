@@ -72,8 +72,8 @@ module.exports = {
 
     ctx.emit(
       'ldp.remote.stored',
-      { resourceUri, resource, mirrorGraph, keepInSync, webId },
-      { meta: { webId: null, dataset: null } }
+      { resourceUri, resource, dataset, mirrorGraph, keepInSync, webId },
+      { meta: { webId: null, dataset } }
     );
 
     return resource;

@@ -4,7 +4,7 @@ const urlJoin = require('url-join');
 const { join: pathJoin } = require('path');
 const { CoreService } = require('@semapps/core');
 const { pair, petr } = require('@semapps/ontologies');
-const { WebAclMiddleware } = require('@semapps/webacl');
+const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
 const { AuthLocalService } = require('@semapps/auth');
 const { WebIdService } = require('@semapps/webid');
 const path = require('path');
@@ -55,7 +55,7 @@ const initialize = async () => {
   }
 
   const broker = new ServiceBroker({
-    middlewares: [WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
+    middlewares: [CacherMiddleware(CONFIG.ACTIVATE_CACHE), WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
     logger: {
       type: 'Console',
       options: {

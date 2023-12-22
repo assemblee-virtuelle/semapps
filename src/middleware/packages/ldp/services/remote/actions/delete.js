@@ -41,7 +41,11 @@ module.exports = {
         graphName
       });
 
-      ctx.emit('ldp.remote.deleted', { resourceUri, webId }, { meta: { webId: null } });
+      ctx.emit(
+        'ldp.remote.deleted',
+        { resourceUri, webId, dataset: ctx.meta.dataset },
+        { meta: { webId: null, dataset: null } }
+      );
     }
   }
 };

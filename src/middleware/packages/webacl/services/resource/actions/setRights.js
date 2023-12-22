@@ -138,6 +138,7 @@ module.exports = {
       const returnValues = {
         uri: resourceUri,
         webId,
+        dataset: ctx.meta.dataset,
         created: false,
         isContainer,
         defaultRightsUpdated,
