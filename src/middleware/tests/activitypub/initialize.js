@@ -58,7 +58,7 @@ const initialize = async (port, mainDataset, accountsDataset) => {
 
   broker.createService(WebIdService, {
     settings: {
-      usersContainer: urlJoin(baseUrl, 'actors')
+      usersContainer: urlJoin(baseUrl, 'as/actor')
     }
   });
 
@@ -67,7 +67,7 @@ const initialize = async (port, mainDataset, accountsDataset) => {
   // setting some write permission on the containers for anonymous user, which is the one that will be used in the tests.
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    resourceUri: `${baseUrl}objects`,
+    resourceUri: urlJoin(baseUrl, 'as/object'),
     additionalRights: {
       anon: {
         write: true
@@ -76,7 +76,7 @@ const initialize = async (port, mainDataset, accountsDataset) => {
   });
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    resourceUri: `${baseUrl}actors`,
+    resourceUri: urlJoin(baseUrl, 'as/actor'),
     additionalRights: {
       anon: {
         write: true
@@ -85,7 +85,7 @@ const initialize = async (port, mainDataset, accountsDataset) => {
   });
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    resourceUri: `${baseUrl}activities`,
+    resourceUri: urlJoin(baseUrl, 'as/activity'),
     additionalRights: {
       anon: {
         write: true

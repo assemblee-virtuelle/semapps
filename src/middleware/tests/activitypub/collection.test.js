@@ -1,3 +1,4 @@
+const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const initialize = require('./initialize');
 const CONFIG = require('../config');
@@ -22,7 +23,7 @@ describe('Handle collections', () => {
     for (let i = 0; i < 10; i++) {
       items.push(
         await broker.call('ldp.container.post', {
-          containerUri: `${CONFIG.HOME_URL}objects`,
+          containerUri: urlJoin(CONFIG.HOME_URL, 'as/object'),
           resource: {
             '@context': 'https://www.w3.org/ns/activitystreams',
             '@type': 'Note',

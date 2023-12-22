@@ -4,7 +4,7 @@ const urlJoin = require('url-join');
 const { ServiceBroker } = require('moleculer');
 const { ACTOR_TYPES, RelayService } = require('@semapps/activitypub');
 const { AuthLocalService } = require('@semapps/auth');
-const { CoreService, defaultOntologies } = require('@semapps/core');
+const { CoreService } = require('@semapps/core');
 const { InferenceService } = require('@semapps/inference');
 const { pair } = require('@semapps/ontologies');
 const { MirrorService, ObjectsWatcherMiddleware } = require('@semapps/sync');
@@ -25,12 +25,12 @@ const containers = [
     newResourcesPermissions: {}
   },
   {
-    path: '/actors',
+    path: '/as/actor',
     acceptedTypes: [ACTOR_TYPES.PERSON],
     excludeFromMirror: true
   },
   {
-    path: '/applications',
+    path: '/as/application',
     acceptedTypes: [ACTOR_TYPES.APPLICATION],
     excludeFromMirror: true
   }
@@ -100,7 +100,7 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
 
   await broker.createService(WebIdService, {
     settings: {
-      usersContainer: urlJoin(baseUrl, 'actors')
+      usersContainer: urlJoin(baseUrl, 'as/actor')
     }
   });
 
@@ -108,8 +108,7 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
     settings: {
       baseUrl,
       acceptFromRemoteServers: true,
-      offerToRemoteServers: true,
-      ontologies: defaultOntologies
+      offerToRemoteServers: true
     }
   });
 
@@ -117,25 +116,25 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
 
   // setting some write permission on the containers for anonymous user, which is the one that will be used in the tests.
   await broker.call('webacl.resource.addRights', {
-    webId: 'system',
-    resourceUri: `${baseUrl}resources`,
+    resourceUri: urlJoin(baseUrl, 'resources'),
     additionalRights: {
       anon: {
         read: true,
         write: true
       }
-    }
+    },
+    webId: 'system'
   });
 
   await broker.call('webacl.resource.addRights', {
-    webId: 'system',
-    resourceUri: `${baseUrl}applications`,
+    resourceUri: urlJoin(baseUrl, 'as/application'),
     additionalRights: {
       anon: {
         read: true,
         write: true
       }
-    }
+    },
+    webId: 'system'
   });
 
   return broker;
