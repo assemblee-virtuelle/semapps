@@ -4,7 +4,7 @@ const urlJoin = require('url-join');
 const { ServiceBroker } = require('moleculer');
 const { AuthLocalService } = require('@semapps/auth');
 const { CoreService } = require('@semapps/core');
-const { WebAclMiddleware } = require('@semapps/webacl');
+const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
 const { containers } = require('@semapps/activitypub');
 const { WebIdService } = require('@semapps/webid');
 const CONFIG = require('../config');
@@ -17,7 +17,7 @@ const initialize = async (port, mainDataset, accountsDataset) => {
   const baseUrl = `http://localhost:${port}/`;
 
   const broker = new ServiceBroker({
-    middlewares: [WebAclMiddleware({ baseUrl })],
+    middlewares: [CacherMiddleware(CONFIG.ACTIVATE_CACHE), WebAclMiddleware({ baseUrl })],
     logger: {
       type: 'Console',
       options: {

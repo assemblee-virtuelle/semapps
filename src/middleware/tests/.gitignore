@@ -1,6 +1,8 @@
 /data
 /uploads
 
+.env.local
+
 */actors/*.key
 */actors/*.key.pub
 */jwt/*.key
