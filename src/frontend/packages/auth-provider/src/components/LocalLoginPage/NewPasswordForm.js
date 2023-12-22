@@ -44,7 +44,7 @@ const NewPasswordForm = ({ redirectTo, passwordScorer = defaultScorer }) => {
           window.location.href = `/login${redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : ''}`;
           setLoading(false);
         }, 2000);
-        notify('auth.notification.password_changed', 'info');
+        notify('auth.notification.password_changed', { type: 'info' });
       })
       .catch(error => {
         setLoading(false);

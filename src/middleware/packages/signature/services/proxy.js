@@ -89,7 +89,12 @@ const ProxyService = {
       });
 
       // Convert Headers object if necessary (otherwise we can't destructure it below)
-      if (headers && typeof headers === 'object' && headers.constructor.name === 'Headers') {
+      // Note: if we use NodeJS built-in Headers instead of node-fetch Headers, the constructor name is _Headers
+      if (
+        headers &&
+        typeof headers === 'object' &&
+        (headers.constructor.name === 'Headers' || headers.constructor.name === '_Headers')
+      ) {
         headers = Object.fromEntries(headers);
       }
 

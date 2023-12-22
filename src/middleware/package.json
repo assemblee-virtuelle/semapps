@@ -24,10 +24,10 @@
     "eslint-plugin-jsdoc": "^46.5.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^5.0.0",
-    "lerna": "^3.19.0",
-    "nx": "16.5.1",
-    "prettier": "^3.0.3",
-    "typescript": "^5.1.6"
+    "lerna": "^8.0.1",
+    "nx": "17.2.5",
+    "prettier": "^3.1.1",
+    "typescript": "^5.3.3"
   },
   "workspaces": [
     "packages/*",

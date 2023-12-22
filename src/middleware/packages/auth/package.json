@@ -6,6 +6,7 @@
   "author": "Virtual Assembly",
   "dependencies": {
     "@semapps/ldp": "0.6.0-alpha.5",
+    "@semapps/middlewares": "0.6.0-alpha.5",
     "@semapps/mime-types": "0.6.0-alpha.5",
     "@semapps/triplestore": "0.6.0-alpha.5",
     "bcrypt": "^5.0.1",

@@ -58,7 +58,6 @@ describe('Handle collections', () => {
       id: collectionUri,
       type: 'Collection',
       summary: 'My non-ordered collection',
-      items: [],
       totalItems: 0
     });
   });
@@ -73,7 +72,6 @@ describe('Handle collections', () => {
       '@id': collectionUri,
       '@type': 'as:Collection',
       'as:summary': 'My non-ordered collection',
-      'as:items': [],
       'as:totalItems': expect.objectContaining({
         '@value': 0
       })
@@ -104,7 +102,6 @@ describe('Handle collections', () => {
       id: orderedCollectionUri,
       type: 'OrderedCollection',
       summary: 'My ordered collection',
-      orderedItems: [],
       totalItems: 0
     });
   });
@@ -160,7 +157,6 @@ describe('Handle collections', () => {
       id: collectionUri,
       type: 'Collection',
       summary: 'My non-ordered collection',
-      items: [],
       totalItems: 0
     });
   });
