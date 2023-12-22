@@ -6,27 +6,14 @@ module.exports = {
   },
   async handler(ctx) {
     let { containerUri, webId } = ctx.params;
-    // Matches container with or without trailing slash
-    containerUri = containerUri.replace(/\/+$/, '');
 
-    await ctx.call('triplestore.update', {
-      query: `
-        PREFIX ldp: <http://www.w3.org/ns/ldp#>
-        DELETE {
-          ?container ldp:contains ?s1 .
-          ?s1 ?p1 ?o1 .
-        }
-        WHERE { 
-          FILTER(?container IN (<${containerUri}>, <${`${containerUri}/`}>)) .
-          ?container ldp:contains ?s1 .
-          OPTIONAL { ?s1 ?p1 ?o1 . } 
-        } 
-      `,
-      webId
-    });
+    const resourcesUris = await this.actions.getUris({ containerUri }, { parentCtx: ctx });
 
-    // TODO: emit an event that will be handled by mirror service.
+    this.logger.info(`Deleting ${resourcesUris.length} resources...`);
 
-    ctx.call('triplestore.deleteOrphanBlankNodes');
+    for (let resourceUri of resourcesUris) {
+      this.logger.info(`Deleting ${resourceUri}...`);
+      await ctx.call('ldp.resource.delete', { resourceUri, webId });
+    }
   }
 };

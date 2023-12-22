@@ -1,4 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { MoleculerError } = require('moleculer').Errors;
 const {
   buildBlankNodesQuery,
   buildFiltersQuery,
@@ -57,6 +58,10 @@ module.exports = {
         accept,
         webId
       });
+
+      if (Object.keys(result).length === 1 && result['@context']) {
+        throw new MoleculerError(`Container not found ${containerUri}`, 404, 'NOT_FOUND');
+      }
 
       // Request each resources
       const resources = [];
