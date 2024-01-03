@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkwebsite=self.webpackChunkwebsite||[]).push([[9354],{2813:function(s){s.exports=JSON.parse('{"label":"semapps","permalink":"/semapps/blog/tags/semapps","allTagsPath":"/semapps/blog/tags","count":2}')}}]);

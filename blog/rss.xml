@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
     <channel>
         <title>SemApps Blog</title>
-        <link>https://assemblee-virtuelle.github.io/semapps/blog</link>
+        <link>https://semapps.org/blog</link>
         <description>SemApps Blog</description>
         <lastBuildDate>Fri, 12 Nov 2021 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
@@ -10,7 +10,7 @@
         <language>en</language>
         <item>
             <title><![CDATA[SemApps News N°2]]></title>
-            <link>https://assemblee-virtuelle.github.io/semapps/blog/semapps-news-2</link>
+            <link>https://semapps.org/blog/semapps-news-2</link>
             <guid>semapps-news-2</guid>
             <pubDate>Fri, 12 Nov 2021 00:00:00 GMT</pubDate>
             <description><![CDATA[It has been over a year since we wrote a newsletter. It is not because nothing was happening, but on the contrary: we were thoroughly on many subjects in parallel and we had trouble making time!]]></description>
@@ -26,7 +26,7 @@ A <a href="https://scenaristeur.github.io/booklice" target="_blank" rel="noopene
         </item>
         <item>
             <title><![CDATA[SemApps News N°1]]></title>
-            <link>https://assemblee-virtuelle.github.io/semapps/blog/semapps-news-1</link>
+            <link>https://semapps.org/blog/semapps-news-1</link>
             <guid>semapps-news-1</guid>
             <pubDate>Wed, 25 Sep 2019 00:00:00 GMT</pubDate>
             <description><![CDATA[Welcome to this first SemApps newsletter, designed to keep you informed of our progress, in a synthetic and accessible way. The SemApps team plans to publish it on a regular basis, every 2-3 months.]]></description>

@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkwebsite=self.webpackChunkwebsite||[]).push([[2535],{5641:function(e){e.exports=JSON.parse('{"title":"Recent posts","items":[{"title":"SemApps News N\xb02","permalink":"/semapps/blog/semapps-news-2"},{"title":"SemApps News N\xb01","permalink":"/semapps/blog/semapps-news-1"}]}')}}]);
