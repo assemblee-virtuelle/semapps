@@ -2,7 +2,7 @@ module.exports = {
   title: 'SemApps',
   tagline: 'A toolbox for semantic web applications',
   url: 'https://assemblee-virtuelle.github.io',
-  baseUrl: '/semapps',
+  baseUrl: '/semapps/',
   favicon: 'img/favicon.ico',
   organizationName: 'assemblee-virtuelle', // Usually your GitHub org/user name.
   projectName: 'semapps', // Usually your repo name.
