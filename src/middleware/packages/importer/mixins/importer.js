@@ -213,19 +213,24 @@ module.exports = {
                 )
               : {};
 
-          await ctx.call('ldp.resource.put', {
-            resource: {
-              '@id': destUri,
-              ...resource,
-              ...oldDataToKeep,
-              'dc:source': sourceUri,
-              'dc:created': resource['dc:created'] || this.getField('created', data),
-              'dc:modified': resource['dc:modified'] || this.getField('updated', data),
-              'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri
-            },
-            contentType: MIME_TYPES.JSON,
-            webId: 'system'
-          });
+          try {
+            await ctx.call('ldp.resource.put', {
+              resource: {
+                '@id': destUri,
+                ...resource,
+                ...oldDataToKeep,
+                'dc:source': sourceUri,
+                'dc:created': resource['dc:created'] || this.getField('created', data),
+                'dc:modified': resource['dc:modified'] || this.getField('updated', data),
+                'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri
+              },
+              contentType: MIME_TYPES.JSON,
+              webId: 'system'
+            });
+          } catch (e) {
+            this.logger.warn(`Unable to update ${destUri} (Error message: ${e.message})`);
+            return false;
+          }
         } else {
           this.logger.info(`Skipping ${sourceUri} (not changed)...`);
           return true; // True = skipping
@@ -237,19 +242,24 @@ module.exports = {
           throw new Error(`Cannot import as dest.containerUri setting is not defined`);
         }
 
-        destUri = await ctx.call('ldp.container.post', {
-          containerUri: this.settings.dest.containerUri,
-          slug: this.getField('slug', data),
-          resource: {
-            ...resource,
-            'dc:source': sourceUri,
-            'dc:created': resource['dc:created'] || this.getField('created', data),
-            'dc:modified': resource['dc:modified'] || this.getField('updated', data),
-            'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri
-          },
-          contentType: MIME_TYPES.JSON,
-          webId: 'system'
-        });
+        try {
+          destUri = await ctx.call('ldp.container.post', {
+            containerUri: this.settings.dest.containerUri,
+            slug: this.getField('slug', data),
+            resource: {
+              ...resource,
+              'dc:source': sourceUri,
+              'dc:created': resource['dc:created'] || this.getField('created', data),
+              'dc:modified': resource['dc:modified'] || this.getField('updated', data),
+              'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri
+            },
+            contentType: MIME_TYPES.JSON,
+            webId: 'system'
+          });
+        } catch (e) {
+          this.logger.warn(`Unable to import ${sourceUri} (Error message: ${e.message})`);
+          return false;
+        }
 
         this.logger.info(`Done! Resource URL: ${destUri}`);
       }
