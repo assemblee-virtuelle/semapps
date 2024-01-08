@@ -11,6 +11,9 @@
     },
     "dc:creator": {
       "@type": "@id"
+    },
+    "dc:source": {
+      "@type": "@id"
     }
   }
 }
