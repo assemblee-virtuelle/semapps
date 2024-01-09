@@ -6,6 +6,7 @@
   "author": "Virtual Assembly",
   "dependencies": {
     "@semapps/activitypub": "0.6.0-alpha.8",
+    "@semapps/ldp": "0.6.0-alpha.8",
     "@semapps/mime-types": "0.6.0-alpha.8",
     "cron-parser": "^4.2.1",
     "google-libphonenumber": "^3.2.26",

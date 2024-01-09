@@ -100,6 +100,7 @@ module.exports = {
         'middleware/importer/jotform',
         'middleware/importer/mobilizon',
         'middleware/importer/prestashop',
+        'middleware/importer/wordpress',
         'middleware/importer/yeswiki'
       ]
     },

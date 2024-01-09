@@ -8,5 +8,6 @@ module.exports = {
   MobilizonImporterMixin: require('./mixins/mobilizon'),
   PrestaShopImporterMixin: require('./mixins/prestashop'),
   YesWikiImporterMixin: require('./mixins/yeswiki'),
+  WordpressImporterMixin: require('./mixins/wordpress'),
   ...require('./utils')
 };
