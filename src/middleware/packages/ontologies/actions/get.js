@@ -8,25 +8,33 @@ module.exports = {
   cache: true,
   async handler(ctx) {
     let { prefix, namespace, uri } = ctx.params;
+    let ontology;
+
     if (!prefix && !namespace && !uri) throw new Error('You must provide a prefix, namespace or uri parameter');
 
     if (this.settings.persistRegistry) {
       if (prefix) {
-        return await ctx.call('ontologies.registry.getByPrefix', { prefix });
+        ontology = await ctx.call('ontologies.registry.getByPrefix', { prefix });
       } else if (namespace) {
-        return await ctx.call('ontologies.registry.getByNamespace', { namespace });
+        ontology = await ctx.call('ontologies.registry.getByNamespace', { namespace });
       } else if (uri) {
         const ontologies = await ctx.call('ontologies.registry.list');
-        return ontologies.find(o => uri.startsWith(o.namespace));
+        ontology = ontologies.find(o => uri.startsWith(o.namespace));
       }
     } else {
       if (prefix) {
-        return this.ontologies[prefix];
+        ontology = this.ontologies[prefix] || false;
       } else if (namespace) {
-        return Object.values(this.ontologies).find(o => o.namespace === namespace);
+        ontology = Object.values(this.ontologies).find(o => o.namespace === namespace);
       } else if (uri) {
-        return Object.values(this.ontologies).find(o => uri.startsWith(o.namespace));
+        ontology = Object.values(this.ontologies).find(o => uri.startsWith(o.namespace));
       }
     }
+
+    // Must return null if no results, because the cache JsonSerializer cannot handle undefined values
+    // https://moleculer.services/docs/0.14/networking.html#JSON-serializer
+    if (ontology === undefined) ontology = null;
+
+    return ontology;
   }
 };

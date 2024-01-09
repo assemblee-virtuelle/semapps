@@ -13,9 +13,6 @@ const ActorService = {
     selectActorData: null,
     podProvider: false
   },
-  // started() {
-  //   this.remoteActorsCache = {};
-  // },
   actions: {
     async get(ctx) {
       const { actorUri, webId } = ctx.params;
@@ -29,15 +26,10 @@ const ActorService = {
           return false;
         }
       } else {
-        // if (this.remoteActorsCache[actorUri]) {
-        //   return this.remoteActorsCache[actorUri];
-        // } else {
         const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
         if (!response.ok) return false;
         const actor = await response.json();
-        // this.remoteActorsCache[actorUri] = actor;
         return actor;
-        // }
       }
     },
     async getProfile(ctx) {
@@ -172,9 +164,6 @@ const ActorService = {
         for (const actor of containerData['ldp:contains']) {
           const actorUri = actor.id || actor['@id'];
           await this.actions.appendActorData({ actorUri, userData: actor }, { parentCtx: ctx });
-          if (!actor.inbox) {
-            await this.actions.attachCollections({ actorUri }, { parentCtx: ctx });
-          }
           if (!actor.publicKey) {
             await this.actions.generateKeyPair({ actorUri }, { parentCtx: ctx });
           }

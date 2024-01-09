@@ -1,5 +1,5 @@
 {
-  "version": "0.6.0-alpha.5",
+  "version": "0.6.0-alpha.8",
   "npmClient": "yarn",
   "useNx": true,
   "packages": ["packages/*", "tests"],

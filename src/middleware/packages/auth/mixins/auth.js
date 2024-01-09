@@ -4,7 +4,7 @@ const { TripleStoreAdapter } = require('@semapps/triplestore');
 const urlJoin = require('url-join');
 const AuthAccountService = require('../services/account');
 const AuthJWTService = require('../services/jwt');
-const CapabilitiesContainerService = require('../services/capabilities-container');
+const CapabilitiesService = require('../services/capabilities');
 
 /** @type {import('moleculer').ServiceSchema} */
 const AuthMixin = {
@@ -21,7 +21,7 @@ const AuthMixin = {
   },
   dependencies: ['api', 'webid'],
   async created() {
-    const { jwtPath, reservedUsernames, accountsDataset } = this.settings;
+    const { jwtPath, reservedUsernames, accountsDataset, podProvider } = this.settings;
 
     this.broker.createService(AuthJWTService, {
       settings: { jwtPath }
@@ -32,7 +32,9 @@ const AuthMixin = {
       adapter: new TripleStoreAdapter({ type: 'AuthAccount', dataset: accountsDataset })
     });
 
-    this.broker.createService(CapabilitiesContainerService, { settings: { path: this.settings.capabilitiesPath } });
+    if (podProvider) {
+      this.broker.createService(CapabilitiesService, { settings: { path: this.settings.capabilitiesPath } });
+    }
   },
   async started() {
     if (!this.passportId) throw new Error('this.passportId must be set in the service creation.');
