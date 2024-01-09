@@ -2,14 +2,15 @@ const urlJoin = require('url-join');
 const { MoleculerError } = require('moleculer').Errors;
 const addRights = require('./actions/addRights');
 const awaitReadRight = require('./actions/awaitReadRight');
+const deleteAllRights = require('./actions/deleteAllRights');
+const getLink = require('./actions/getLink');
 const getRights = require('./actions/getRights');
-const setRights = require('./actions/setRights');
+const getUsersWithReadRights = require('./actions/getUsersWithReadRights');
 const hasRights = require('./actions/hasRights');
 const isPublic = require('./actions/isPublic');
-const getUsersWithReadRights = require('./actions/getUsersWithReadRights');
-const deleteAllRights = require('./actions/deleteAllRights');
 const refreshContainersRights = require('./actions/refreshContainersRights');
 const removeRights = require('./actions/removeRights');
+const setRights = require('./actions/setRights');
 const {
   getAuthorizationNode,
   getAclUriFromResourceUri,
@@ -32,11 +33,16 @@ module.exports = {
     graphName: null,
     podProvider: false
   },
-  dependencies: ['triplestore', 'jsonld'],
+  dependencies: ['triplestore', 'jsonld', 'ldp.link'],
+  started() {
+    // Register so that HEAD requests to LDP resources & containers may return links to ACL
+    this.broker.call('ldp.link.register', { action: 'webacl.resource.getLink' });
+  },
   actions: {
     addRights: addRights.action,
     awaitReadRight: awaitReadRight.action,
     deleteAllRights: deleteAllRights.action,
+    getLink: getLink.action,
     getRights: getRights.action,
     hasRights: hasRights.action,
     isPublic: isPublic.action,

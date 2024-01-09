@@ -1,18 +1,14 @@
-const { getAclUriFromResourceUri } = require('../../../utils');
-
 module.exports = async function patch(ctx) {
   try {
     const { username, slugParts } = ctx.params;
-
     const uri = this.getUriFromSlugParts(slugParts, username);
 
-    // TODO put the following code in webacl service, but first ensure webacl are activated
-    const aclUri = getAclUriFromResourceUri(this.settings.baseUrl, uri);
+    const links = await ctx('ldp.link.get', { uri });
 
     ctx.meta.$statusCode = 200;
     ctx.meta.$statusMessage = 'OK';
     ctx.meta.$responseHeaders = {
-      Link: `<${aclUri}>; rel="acl"`,
+      Link: links,
       'Content-Length': 0
     };
   } catch (e) {
