@@ -1,5 +1,6 @@
 const urlJoin = require('url-join');
 const fetch = require('node-fetch');
+const { getSlugFromUri, delay } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const ImporterMixin = require('./importer');
 
@@ -44,8 +45,8 @@ module.exports = {
       let page = 1;
 
       while (true) {
-        this.logger.info(`Getting 10 results of page ${page}...`);
-        const results = await this.fetch(`${url}?per_page=10&page=${page}`);
+        this.logger.info(`Getting 30 results of page ${page}...`);
+        const results = await this.fetch(`${url}?per_page=30&page=${page}`);
         if (results) {
           data.push(...results);
           page++;
@@ -54,21 +55,47 @@ module.exports = {
         }
       }
     },
-    async retrieveMedia(mediaUri) {
-      const mediaData = await this.fetch(mediaUri);
+    async retrieveMedia(mediaId) {
+      let mediaData;
+      let attempts = 1;
+
+      const mediaUrl = urlJoin(this.settings.source.wordpress.baseUrl, 'wp-json/wp/v2/media', `${mediaId}`);
+
+      do {
+        try {
+          mediaData = await this.fetch(mediaUrl);
+        } catch (e) {
+          if (attempts <= 10) {
+            attempts += 1;
+            this.logger.warn(`Could not get ${mediaUrl}. Trying again in 30 seconds...`);
+            await delay(30000);
+          } else {
+            throw new Error(e);
+          }
+        }
+      } while (!mediaData);
 
       if (mediaData) {
         const imageUrl = mediaData.guid?.rendered;
+        const imageName = getSlugFromUri(imageUrl);
 
         const response = await fetch(imageUrl);
-        const file = new File(await response.arrayBuffer(), mediaData.slug, { type: mediaData.mime_type });
 
-        return await this.broker.call('ldp.container.post', {
-          containerUri: this.settings.dest.filesContainerUri,
-          slug: mediaData.slug,
-          file,
-          contentType: MIME_TYPES.JSON
-        });
+        if (response.ok) {
+          return await this.broker.call('ldp.container.post', {
+            containerUri: this.settings.dest.filesContainerUri,
+            slug: imageName,
+            file: {
+              filename: imageName,
+              readableStream: response.body,
+              mimetype: mediaData.mime_type
+            },
+            contentType: MIME_TYPES.JSON,
+            webId: 'system'
+          });
+        } else {
+          this.logger.warn(`Could not retrieve image ${imageUrl}`);
+        }
       }
     }
   }
