@@ -39,19 +39,15 @@ module.exports = {
   methods: {
     async createAndAttachContainer(ctx, containerUri, containerPath, options) {
       const exists = await ctx.call('ldp.container.exist', { containerUri, webId: 'system' });
-      if (!exists) {
-        // Then create the container
-        await ctx.call('ldp.container.create', {
-          containerUri,
-          options, // Used by WebACL middleware if it exists
-          webId: 'system'
-        });
 
-        // First attach the container to its parent container
-        // This will avoid WebACL error, in case the container is fetched before
+      if (!exists) {
+        let parentContainerUri;
+        let parentContainerPath;
+
+        // Create the parent container, if it doesn't exist yet
         if (containerPath !== '/') {
-          let parentContainerUri = getParentContainerUri(containerUri);
-          let parentContainerPath = getParentContainerPath(containerPath) || '/';
+          parentContainerUri = getParentContainerUri(containerUri);
+          parentContainerPath = getParentContainerPath(containerPath) || '/';
 
           // if it is the root container, add a trailing slash
           if (urlJoin(parentContainerUri, '/') === urlJoin(this.settings.baseUrl, '/')) {
@@ -67,7 +63,17 @@ module.exports = {
             // Recursively create the parent containers, without options
             await this.createAndAttachContainer(ctx, parentContainerUri, parentContainerPath, {});
           }
+        }
 
+        // Then create the container
+        await ctx.call('ldp.container.create', {
+          containerUri,
+          options, // Used by WebACL middleware if it exists
+          webId: 'system'
+        });
+
+        // Then attach the container to its parent container
+        if (parentContainerUri) {
           await ctx.call('ldp.container.attach', {
             containerUri: parentContainerUri,
             resourceUri: containerUri,
