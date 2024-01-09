@@ -158,7 +158,8 @@ const AuthMixin = {
         const baseUrlTrailing = urlJoin(this.settings.baseUrl, '/');
         webId = webId || baseUrlTrailing + username;
 
-        if (!webId?.startsWith(baseUrlTrailing) || !capabilityUri?.startsWith(webId)) {
+        // Check if capabilityUri is within the resource owner's pod
+        if (!webId?.startsWith(baseUrlTrailing) || !capabilityUri?.startsWith(urlJoin(webId, 'data'))) {
           return undefined;
         }
 
@@ -170,11 +171,18 @@ const AuthMixin = {
           return undefined;
         }
 
-        // Check, if provided capabilitiesUri is within the resource owner's cap container.
-        const resourceCapContainer = await ctx.call('capabilities.getContainerUri', {
+        // Check if capabilityUri is within the resource owner's cap container.
+        const resourceCapContainerUri = await ctx.call('capabilities.getContainerUri', {
           webId
         });
-        if (!capabilityUri.startsWith(resourceCapContainer)) {
+
+        if (
+          !(await ctx.call('ldp.container.includes', {
+            containerUri: resourceCapContainerUri,
+            resourceUri: capabilityUri,
+            webId: 'system'
+          }))
+        ) {
           return undefined;
         }
 
