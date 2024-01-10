@@ -113,6 +113,11 @@ const CollectionService = {
         resource: `<${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>`,
         webId: 'system'
       });
+
+      await ctx.emit('activitypub.collection.added', {
+        collectionUri,
+        itemUri
+      });
     },
     /*
      * Detach an object from a collection
@@ -134,6 +139,11 @@ const CollectionService = {
           { <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}> }
         `,
         webId: 'system'
+      });
+
+      await ctx.emit('activitypub.collection.removed', {
+        collectionUri,
+        itemUri
       });
     },
     /*
