@@ -13,9 +13,8 @@ const { WebAclService } = require('@semapps/webacl');
 const { WebfingerService } = require('@semapps/webfinger');
 
 const botsContainer = {
-  path: '/bots',
+  path: '/as/application',
   acceptedTypes: ['Application'],
-  dereference: ['sec:publicKey'],
   readOnly: true
 };
 

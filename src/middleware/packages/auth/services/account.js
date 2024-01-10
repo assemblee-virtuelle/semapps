@@ -88,6 +88,11 @@ module.exports = {
       const accounts = await this._find(ctx, { query: { email } });
       return accounts.length > 0;
     },
+    async findByUsername(ctx) {
+      const { username } = ctx.params;
+      const accounts = await this._find(ctx, { query: { username } });
+      return accounts.length > 0 ? accounts[0] : null;
+    },
     async findByWebId(ctx) {
       const { webId } = ctx.params;
       const accounts = await this._find(ctx, { query: { webId } });

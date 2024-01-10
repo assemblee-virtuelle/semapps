@@ -17,6 +17,7 @@ const ActivityPubService = {
   settings: {
     baseUri: null,
     podProvider: false,
+    activitiesPath: '/as/activity',
     selectActorData: null,
     queueServiceUrl: null,
     like: {
@@ -32,7 +33,8 @@ const ActivityPubService = {
   },
   dependencies: ['api', 'ontologies'],
   created() {
-    const { baseUri, podProvider, selectActorData, queueServiceUrl, reply, like, follow } = this.settings;
+    const { baseUri, podProvider, activitiesPath, selectActorData, queueServiceUrl, reply, like, follow } =
+      this.settings;
 
     this.broker.createService(CollectionService, {
       settings: {
@@ -64,7 +66,8 @@ const ActivityPubService = {
 
     this.broker.createService(ActivityService, {
       settings: {
-        baseUri
+        baseUri,
+        path: activitiesPath
       }
     });
 

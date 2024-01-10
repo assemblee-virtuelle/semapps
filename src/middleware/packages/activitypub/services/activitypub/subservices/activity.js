@@ -9,7 +9,7 @@ const ActivityService = {
   mixins: [ControlledContainerMixin],
   settings: {
     baseUri: null,
-    path: '/activities',
+    path: '/as/activity',
     acceptedTypes: Object.values(ACTIVITY_TYPES),
     accept: MIME_TYPES.JSON,
     permissions: {},
