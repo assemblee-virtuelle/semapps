@@ -49,6 +49,7 @@ module.exports = {
       items: [
         'middleware/ldp/resource',
         'middleware/ldp/container',
+        'middleware/ldp/link-header',
         'middleware/ldp/controlled-container',
         'middleware/ldp/document-tagger',
         'middleware/ldp/image-processor'

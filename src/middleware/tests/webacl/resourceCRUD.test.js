@@ -1,4 +1,7 @@
+const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { getSlugFromUri } = require('@semapps/ldp');
+const { fetchServer } = require('../utils');
 const CONFIG = require('../config');
 const initialize = require('./initialize');
 
@@ -15,7 +18,7 @@ afterAll(async () => {
 });
 
 describe('middleware CRUD resource with perms', () => {
-  test('Ensure a call to ldp.container.post fails if anonymous user, because container access denied', async () => {
+  test('A call to ldp.container.post fails if anonymous user, because container access denied', async () => {
     // this is because containers only get Read perms for anonymous users.
 
     try {
@@ -31,7 +34,7 @@ describe('middleware CRUD resource with perms', () => {
         contentType: MIME_TYPES.JSON,
         containerUri: `${CONFIG.HOME_URL}resources`
       };
-      const resourceUri = await broker.call('ldp.container.post', urlParamsPost, { meta: { webId: 'anon' } });
+      await broker.call('ldp.container.post', urlParamsPost, { meta: { webId: 'anon' } });
     } catch (e) {
       expect(e.code).toEqual(403);
     }
@@ -39,7 +42,7 @@ describe('middleware CRUD resource with perms', () => {
 
   let resourceUri;
 
-  test('Ensure a call to ldp.container.post creates some default permissions', async () => {
+  test('A call to ldp.container.post creates some default permissions', async () => {
     try {
       const urlParamsPost = {
         resource: {
@@ -81,7 +84,25 @@ describe('middleware CRUD resource with perms', () => {
     }
   }, 20000);
 
-  test('Ensure a call to ldp.resource.delete removes all its permissions', async () => {
+  test('The ACL URI is returned in headers of GET and HEAD calls', async () => {
+    let result = await fetchServer(resourceUri, {
+      method: 'GET'
+    });
+
+    expect(result.headers.get('Link')).toMatch(
+      `<${urlJoin(CONFIG.HOME_URL, '_acl', 'resources', getSlugFromUri(resourceUri))}>; rel=acl`
+    );
+
+    result = await fetchServer(resourceUri, {
+      method: 'HEAD'
+    });
+
+    expect(result.headers.get('Link')).toMatch(
+      `<${urlJoin(CONFIG.HOME_URL, '_acl', 'resources', getSlugFromUri(resourceUri))}>; rel=acl`
+    );
+  }, 20000);
+
+  test('A call to ldp.resource.delete removes all its permissions', async () => {
     try {
       const urlParamsPost = {
         resourceUri,

@@ -1,9 +1,5 @@
 const urlJoin = require('url-join');
 
-function getAclUriFromResourceUri(baseUrl, resourceUri) {
-  return urlJoin(baseUrl, resourceUri.replace(baseUrl, baseUrl.endsWith('/') ? '_acl/' : '_acl'));
-}
-
 const regexPrefix = new RegExp('^@prefix ([\\w-]*: +<.*>) .', 'gm');
 
 const regexProtocolAndHostAndPort = new RegExp('^http(s)?:\\/\\/([\\w-\\.:]*)');
@@ -158,7 +154,6 @@ module.exports = {
   delay,
   cleanUndefined,
   parseJson,
-  getAclUriFromResourceUri,
   isMirror,
   createFragmentURL,
   regexPrefix,

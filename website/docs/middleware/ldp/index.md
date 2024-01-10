@@ -21,6 +21,7 @@ This package allows you to setup [LDP](https://www.w3.org/TR/ldp-primer/) contai
 
 - [LdpResourceService](resource.md)
 - [LdpContainerService](container.md)
+- [LdpLinkHeaderService](link-header.md)
 - LdpRegistryService
 - LdpApiService
 - LdpCacheService
