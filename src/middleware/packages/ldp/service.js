@@ -2,7 +2,7 @@ const { ldp, semapps } = require('@semapps/ontologies');
 const LdpApiService = require('./services/api');
 const LdpContainerService = require('./services/container');
 const LdpCacheService = require('./services/cache');
-const LdpLinkService = require('./services/link');
+const LdpLinkHeaderService = require('./services/link-header');
 const LdpRegistryService = require('./services/registry');
 const LdpRemoteService = require('./services/remote');
 const LdpResourceService = require('./services/resource');
@@ -74,7 +74,7 @@ module.exports = {
       }
     });
 
-    await this.broker.createService(LdpLinkService);
+    await this.broker.createService(LdpLinkHeaderService);
 
     // Only create this service if a cacher is defined
     if (this.broker.cacher) {

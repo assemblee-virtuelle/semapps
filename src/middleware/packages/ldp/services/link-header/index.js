@@ -2,12 +2,12 @@ const getAction = require('./actions/get');
 const registerAction = require('./actions/register');
 
 module.exports = {
-  name: 'ldp.link',
+  name: 'ldp.link-header',
   actions: {
     get: getAction,
     register: registerAction
   },
   async started() {
-    this.registeredLinks = [];
+    this.registeredActionNames = [];
   }
 };

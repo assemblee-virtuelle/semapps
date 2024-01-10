@@ -33,10 +33,10 @@ module.exports = {
     graphName: null,
     podProvider: false
   },
-  dependencies: ['triplestore', 'jsonld', 'ldp.link'],
+  dependencies: ['triplestore', 'jsonld', 'ldp.link-header'],
   started() {
     // Register so that HEAD requests to LDP resources & containers may return links to ACL
-    this.broker.call('ldp.link.register', { action: 'webacl.resource.getLink' });
+    this.broker.call('ldp.link-header.register', { actionName: 'webacl.resource.getLink' });
   },
   actions: {
     addRights: addRights.action,

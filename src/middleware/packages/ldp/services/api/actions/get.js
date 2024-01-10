@@ -9,6 +9,8 @@ module.exports = async function get(ctx) {
     const uri = this.getUriFromSlugParts(slugParts, username);
     const types = await ctx.call('ldp.resource.getTypes', { resourceUri: uri });
 
+    let res;
+
     if (types.includes('http://www.w3.org/ns/ldp#Container')) {
       /*
        * LDP CONTAINER
@@ -19,7 +21,7 @@ module.exports = async function get(ctx) {
         ...ctx.meta.headers
       };
 
-      const res = await ctx.call(
+      res = await ctx.call(
         controlledActions?.list || 'ldp.container.get',
         cleanUndefined({
           containerUri: uri,
@@ -28,7 +30,6 @@ module.exports = async function get(ctx) {
         })
       );
       ctx.meta.$responseType = ctx.meta.$responseType || accept;
-      return res;
     } else if (types.includes('https://www.w3.org/ns/activitystreams#Collection')) {
       /*
        * AS COLLECTION
@@ -36,7 +37,7 @@ module.exports = async function get(ctx) {
 
       const { controlledActions } = await ctx.call('activitypub.registry.getByUri', { collectionUri: uri });
 
-      const res = await ctx.call(
+      res = await ctx.call(
         controlledActions?.get || 'activitypub.collection.get',
         cleanUndefined({
           collectionUri: uri,
@@ -45,7 +46,6 @@ module.exports = async function get(ctx) {
         })
       );
       ctx.meta.$responseType = 'application/ld+json';
-      return res;
     } else {
       /*
        * LDP RESOURCE
@@ -71,7 +71,7 @@ module.exports = async function get(ctx) {
         }
       }
 
-      const resource = await ctx.call(
+      res = await ctx.call(
         controlledActions.get || 'ldp.resource.get',
         cleanUndefined({
           resourceUri: uri,
@@ -82,8 +82,8 @@ module.exports = async function get(ctx) {
 
       if (types.includes('http://semapps.org/ns/core#File')) {
         try {
-          const file = fs.readFileSync(resource['semapps:localPath']);
-          ctx.meta.$responseType = resource['semapps:mimeType'];
+          const file = fs.readFileSync(res['semapps:localPath']);
+          ctx.meta.$responseType = res['semapps:mimeType'];
           // Since files are currently immutable, we set a maximum browser cache age
           // We do that after the file is read, otherwise the error 404 will be cached by the browser
           ctx.meta.$responseHeaders = {
@@ -95,9 +95,13 @@ module.exports = async function get(ctx) {
         }
       } else {
         ctx.meta.$responseType = ctx.meta.$responseType || accept;
-        return resource;
       }
     }
+
+    if (!ctx.meta.$responseHeaders) ctx.meta.$responseHeaders = {};
+    ctx.meta.$responseHeaders.Link = await ctx.call('ldp.link-header.get', { uri });
+
+    return res;
   } catch (e) {
     if (e.code !== 404 && e.code !== 403) console.error(e);
     ctx.meta.$statusCode = e.code || 500;

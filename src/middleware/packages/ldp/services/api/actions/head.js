@@ -1,14 +1,14 @@
-module.exports = async function patch(ctx) {
+module.exports = async function head(ctx) {
   try {
     const { username, slugParts } = ctx.params;
     const uri = this.getUriFromSlugParts(slugParts, username);
 
-    const links = await ctx('ldp.link.get', { uri });
+    const linkHeader = await ctx.call('ldp.link-header.get', { uri });
 
     ctx.meta.$statusCode = 200;
     ctx.meta.$statusMessage = 'OK';
     ctx.meta.$responseHeaders = {
-      Link: links,
+      Link: linkHeader,
       'Content-Length': 0
     };
   } catch (e) {

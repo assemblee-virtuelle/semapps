@@ -8,10 +8,9 @@ module.exports = {
     },
     handler(ctx) {
       const { uri } = ctx.params;
-      const link = getAclUriFromResourceUri(this.settings.baseUrl, uri);
       return {
-        link,
-        params: { rel: 'acl' }
+        uri: getAclUriFromResourceUri(this.settings.baseUrl, uri),
+        rel: 'acl'
       };
     }
   }
