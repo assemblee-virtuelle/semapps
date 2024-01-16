@@ -15,10 +15,11 @@ module.exports = {
     excludeFromMirror: { type: 'boolean', optional: true },
     newResourcesPermissions: { type: 'multi', rules: [{ type: 'object' }, { type: 'function' }], optional: true },
     controlledActions: { type: 'object', optional: true },
-    readOnly: { type: 'boolean', optional: true }
+    readOnly: { type: 'boolean', optional: true },
+    dataset: { type: 'string', optional: true }
   },
   async handler(ctx) {
-    let { path, acceptedTypes, fullPath, name, podsContainer, ...options } = ctx.params;
+    let { path, acceptedTypes, fullPath, name, podsContainer, dataset, ...options } = ctx.params;
     acceptedTypes = arrayOf(acceptedTypes);
 
     // If no path is provided, automatically find it based on the acceptedTypes
@@ -45,13 +46,22 @@ module.exports = {
     if (podsContainer === true) {
       // Skip container creation for the root PODs container (it is not a real LDP container since no dataset have these data)
     } else if (this.settings.podProvider) {
-      // 1. Ensure the container has been created for each user
-      const accounts = await ctx.call('auth.account.find');
-      for (const account of accounts) {
+      if (dataset && dataset !== '*') {
+        const account = await ctx.call('auth.account.findByUsername', { username: dataset });
+        if (!account) throw new Error(`No pod found with username ${dataset}`);
         if (!account.podUri) throw new Error(`The podUri is not defined for account ${account.username}`);
         ctx.meta.dataset = account.username;
         const containerUri = urlJoin(account.podUri, path);
         await this.createAndAttachContainer(ctx, containerUri, path, options);
+      } else {
+        // 1. Ensure the container has been created for each user
+        const accounts = await ctx.call('auth.account.find');
+        for (const account of accounts) {
+          if (!account.podUri) throw new Error(`The podUri is not defined for account ${account.username}`);
+          ctx.meta.dataset = account.username;
+          const containerUri = urlJoin(account.podUri, path);
+          await this.createAndAttachContainer(ctx, containerUri, path, options);
+        }
       }
 
       // TODO see if we can base ourselves on a general config for the POD data path
@@ -65,14 +75,15 @@ module.exports = {
     const pathRegex = pathToRegexp(fullPath);
 
     // Save the options
-    this.registeredContainers[name] = { path, fullPath, pathRegex, name, acceptedTypes, ...options };
+    if (!this.registeredContainers[dataset || '*']) this.registeredContainers[dataset || '*'] = {};
+    this.registeredContainers[dataset || '*'][name] = { path, fullPath, pathRegex, name, acceptedTypes, ...options };
 
     ctx.emit(
       'ldp.registry.registered',
-      { container: this.registeredContainers[name] },
+      { container: this.registeredContainers[dataset || '*'][name], dataset },
       { meta: { webId: null, dataset: null } }
     );
 
-    return this.registeredContainers[name];
+    return this.registeredContainers[dataset || '*'][name];
   }
 };

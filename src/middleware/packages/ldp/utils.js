@@ -73,11 +73,24 @@ const getParentContainerUri = uri => uri.match(new RegExp(`(.*)/.*`))[1];
 
 const getParentContainerPath = path => path.match(new RegExp(`(.*)/.*`))[1];
 
+const getPathFromUri = uri => {
+  try {
+    const urlObject = new URL(uri);
+    return urlObject.pathname;
+  } catch (e) {
+    return false;
+  }
+};
+
 // Transforms "http://localhost:3000/dataset/data" to "dataset"
 const getDatasetFromUri = uri => {
-  const path = new URL(uri).pathname;
-  const parts = path.split('/');
-  if (parts.length > 1) return parts[1];
+  const path = getPathFromUri(uri);
+  if (path) {
+    const parts = path.split('/');
+    if (parts.length > 1) return parts[1];
+  } else {
+    throw new Error(`${uri} is not a valid URL`);
+  }
 };
 
 const hasType = (resource, type) => {

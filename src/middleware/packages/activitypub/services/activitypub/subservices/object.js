@@ -1,4 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { getSlugFromUri } = require('@semapps/ldp');
 const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../../../constants');
 
 const ObjectService = {
@@ -45,8 +46,10 @@ const ObjectService = {
           // If the object passed is an URI, this is an announcement and there is nothing to process
           if (typeof activity.object === 'string') break;
 
+          // In Pod provider config, we need to find the container of the specific Pod
           const container = await ctx.call('ldp.registry.getByType', {
-            type: activity.object.type || activity.object['@type']
+            type: activity.object.type || activity.object['@type'],
+            dataset: this.settings.podProvider ? getSlugFromUri(actorUri) : undefined
           });
 
           if (!container)

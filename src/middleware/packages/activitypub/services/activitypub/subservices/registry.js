@@ -250,11 +250,14 @@ const RegistryService = {
       }
     },
     async 'ldp.registry.registered'(ctx) {
-      const { container } = ctx.params;
+      const { container, dataset } = ctx.params;
 
-      // Register the container locally
-      // Avoid race conditions, if this event is called while the register action is still running
-      this.registeredContainers[container.name] = container;
+      // Don't register pod-specific containers for now (this service will be deprecated anyway)
+      if (!dataset) {
+        // Register the container locally
+        // Avoid race conditions, if this event is called while the register action is still running
+        this.registeredContainers[container.name] = container;
+      }
     }
   }
 };
