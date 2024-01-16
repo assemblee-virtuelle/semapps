@@ -42,8 +42,9 @@ module.exports = {
               return this.actions.getNetwork(cleanUndefined({ resourceUri, webId, accept, jsonContext }), {
                 parentCtx: ctx
               });
+            } else {
+              throw e;
             }
-            throw e;
           });
 
       case 'networkFirst':
@@ -54,8 +55,9 @@ module.exports = {
               return this.actions.getStored(cleanUndefined({ resourceUri, webId, accept, jsonContext, ...rest }), {
                 parentCtx: ctx
               });
+            } else {
+              throw e;
             }
-            throw e;
           });
 
       case 'cacheOnly':
