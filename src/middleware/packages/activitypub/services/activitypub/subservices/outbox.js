@@ -31,8 +31,10 @@ const OutboxService = {
         throw new MoleculerError(`Collection not found:${collectionUri}`, 404, 'NOT_FOUND');
       }
 
-      // Ensure logged user is posting to his own outbox
       const actorUri = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'outbox' });
+      if (!actorUri) throw new MoleculerError('The collection is not a valid ActivityPub outbox', 400);
+
+      // Ensure logged user is posting to his own outbox
       if (ctx.meta.webId && ctx.meta.webId !== 'system' && actorUri !== ctx.meta.webId) {
         throw new MoleculerError(
           `Forbidden to post to the outbox ${collectionUri} (webId ${ctx.meta.webId})`,

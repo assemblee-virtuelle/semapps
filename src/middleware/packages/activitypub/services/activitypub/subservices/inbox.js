@@ -44,6 +44,9 @@ const InboxService = {
       }
 
       if (!ctx.meta.skipSignatureValidation) {
+        if (!ctx.meta.rawBody || !ctx.meta.headers)
+          throw new Error(`Cannot validate HTTP signature because of missing meta (rawBody or headers)`);
+
         const validDigest = await ctx.call('signature.verifyDigest', {
           body: ctx.meta.rawBody, // Stored by parseJson middleware
           headers: ctx.meta.headers
