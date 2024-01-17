@@ -29,6 +29,7 @@ module.exports = {
           'If no path is set for the ControlledContainerMixin, you must set one (and only one) acceptedTypes'
         );
       }
+      // If the resource type is invalid, an error will be thrown here
       path = await ctx.call('ldp.container.getPath', { resourceType: acceptedTypes[0] });
       this.logger.debug(`Automatically generated the path ${path} for resource type ${acceptedTypes[0]}`);
     }

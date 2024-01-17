@@ -50,6 +50,7 @@ module.exports = {
         'middleware/ldp/resource',
         'middleware/ldp/container',
         'middleware/ldp/link-header',
+        'middleware/ldp/registry',
         'middleware/ldp/controlled-container',
         'middleware/ldp/document-tagger',
         'middleware/ldp/image-processor'
