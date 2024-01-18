@@ -44,6 +44,7 @@ module.exports = {
       if (triples.length > 0) {
         await ctx.call('triplestore.insert', {
           resource: triples.join('\n'),
+          dataset: this.settings.podProvider && !ctx.meta.dataset ? getDatasetFromUri(resourceUri) : undefined,
           webId: 'system'
         });
       }
@@ -59,6 +60,7 @@ module.exports = {
           }> "${now.toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> }
           WHERE { <${resourceUri}> <${this.settings.documentPredicates.updated}> ?updated }
         `,
+        dataset: this.settings.podProvider && !ctx.meta.dataset ? getDatasetFromUri(resourceUri) : undefined,
         webId: 'system'
       });
     }
@@ -75,15 +77,6 @@ module.exports = {
     async 'ldp.resource.patched'(ctx) {
       const { resourceUri } = ctx.params;
       this.actions.tagUpdatedResource({ resourceUri }, { parentCtx: ctx });
-    }
-  },
-  hooks: {
-    before: {
-      '*'(ctx) {
-        if (this.settings.podProvider && !ctx.meta.dataset) {
-          ctx.meta.dataset = getDatasetFromUri(ctx.params.resourceUri);
-        }
-      }
     }
   }
 };

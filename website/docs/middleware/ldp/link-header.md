@@ -2,7 +2,7 @@
 title: LdpLinkHeaderService
 ---
 
-This service is automatically created by the [LdpService](index) with the key `ldp.link-header`. It allows other services to add custom [Link header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Link) to GET and HEAD calls on LDP resources and containers.
+This service is automatically created by the [LdpService](index.md) with the key `ldp.link-header`. It allows other services to add custom [Link header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Link) to GET and HEAD calls on LDP resources and containers.
 
 ## Actions
 
