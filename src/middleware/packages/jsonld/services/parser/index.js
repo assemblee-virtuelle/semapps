@@ -1,6 +1,7 @@
 const jsonld = require('jsonld');
 const { JsonLdParser } = require('jsonld-streaming-parser');
 const streamifyString = require('streamify-string');
+const { arrayOf, isURL } = require('../../utils');
 
 module.exports = {
   name: 'jsonld.parser',
@@ -64,8 +65,21 @@ module.exports = {
     // TODO move to ontologies service ??
     async expandPredicate(ctx) {
       const { predicate, context } = ctx.params;
+      if (isURL(predicate)) return predicate;
       const result = await this.actions.expand({ input: { '@context': context, [predicate]: '' } }, { parentCtx: ctx });
       return Object.keys(result[0])[0];
+    },
+    async expandTypes(ctx) {
+      let { types, context } = ctx.params;
+
+      // If types are already full URIs, return them immediately
+      if (arrayOf(types).every(type => isURL(type))) return types;
+
+      // If no context is provided, use default context
+      if (!context) context = await ctx.call('jsonld.context.get');
+
+      const result = await this.actions.expand({ input: { '@context': context, '@type': types } }, { parentCtx: ctx });
+      return result?.[0]?.['@type'];
     }
   }
 };

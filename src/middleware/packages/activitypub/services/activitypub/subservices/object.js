@@ -46,18 +46,20 @@ const ObjectService = {
           // If the object passed is an URI, this is an announcement and there is nothing to process
           if (typeof activity.object === 'string') break;
 
-          // In Pod provider config, we need to find the container of the specific Pod
+          const types = await ctx.call('jsonld.parser.expandTypes', {
+            types: activity.object.type || activity.object['@type'],
+            context: activity['@context']
+          });
+
+          // Get the first matching container
+          // TODO: attach to all matching containers
           const container = await ctx.call('ldp.registry.getByType', {
-            type: activity.object.type || activity.object['@type'],
+            type: types,
             dataset: this.settings.podProvider ? getSlugFromUri(actorUri) : undefined
           });
 
           if (!container)
-            throw new Error(
-              `Cannot create resource of type "${
-                activity.object.type || activity.object['@type']
-              }", no matching containers were found!`
-            );
+            throw new Error(`Cannot create resource of type "${types.join(', ')}", no matching containers were found!`);
 
           const containerUri = await ctx.call('ldp.registry.getUri', { path: container.path, webId: actorUri });
 
