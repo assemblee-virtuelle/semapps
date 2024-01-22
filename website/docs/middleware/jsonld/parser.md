@@ -23,3 +23,18 @@ See [the examples](https://github.com/digitalbazaar/jsonld.js#examples) to see h
 ### `toQuads`
 
 Same as `toRDF` but returns quads formatted according to the [RDF.JS data model](https://github.com/rdfjs/data-model-spec)
+
+### `expandTypes`
+
+Return the expanded types based on a given context.
+
+##### Parameters
+
+| Property  | Type                | Default         | Description          |
+| --------- | ------------------- | --------------- | -------------------- |
+| `types`   | `String` or `Array` | **required**    | Type(s) to expand    |
+| `context` | `String`            | Default context | Context to be parsed |
+
+##### Return
+
+An array of types

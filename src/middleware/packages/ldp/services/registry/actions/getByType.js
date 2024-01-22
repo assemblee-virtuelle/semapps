@@ -6,7 +6,7 @@ module.exports = {
   },
   async handler(ctx) {
     const { type, dataset } = ctx.params;
-    const types = Array.isArray(type) ? type : [type];
+    const types = await ctx.call('jsonld.parser.expandTypes', { types: type });
     const registeredContainers = await this.actions.list({ dataset }, { parentCtx: ctx });
 
     return Object.values(registeredContainers).find(container =>

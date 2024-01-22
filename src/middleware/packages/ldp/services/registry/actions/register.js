@@ -20,11 +20,12 @@ module.exports = {
   },
   async handler(ctx) {
     let { path, acceptedTypes, fullPath, name, podsContainer, dataset, ...options } = ctx.params;
-    acceptedTypes = arrayOf(acceptedTypes);
+
+    acceptedTypes = acceptedTypes && (await ctx.call('jsonld.parser.expandTypes', { types: acceptedTypes }));
 
     // If no path is provided, automatically find it based on the acceptedTypes
     if (!path) {
-      if (acceptedTypes.length !== 1) {
+      if (!acceptedTypes || acceptedTypes.length !== 1) {
         throw new Error(
           'If no path is set for the ControlledContainerMixin, you must set one (and only one) acceptedTypes'
         );
