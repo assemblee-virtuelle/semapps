@@ -1,7 +1,6 @@
 const urlJoin = require('url-join');
 const pathJoin = require('path').join;
 const { pathToRegexp } = require('path-to-regexp');
-const { arrayOf } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
