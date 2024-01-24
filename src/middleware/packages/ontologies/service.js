@@ -44,6 +44,9 @@ module.exports = {
     async registerAll() {
       if (this.settings.persistRegistry) await this.broker.waitForServices(['ontologies.registry']);
       for (const ontology of this.settings.ontologies) {
+        if (!ontology || !ontology.prefix || !ontology.namespace) {
+          throw new Error(`Cannot register ontologies ! At least one ontology is incorrect.`);
+        }
         await this.actions.register({ ...ontology, overwrite: true });
       }
     }
