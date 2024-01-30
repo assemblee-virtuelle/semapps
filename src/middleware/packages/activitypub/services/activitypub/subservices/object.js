@@ -63,7 +63,7 @@ const ObjectService = {
 
           const containerUri = await ctx.call('ldp.registry.getUri', { path: container.path, webId: actorUri });
 
-          objectUri = await ctx.call('ldp.container.post', {
+          objectUri = await ctx.call(container.controlledActions?.post || 'ldp.container.post', {
             containerUri,
             resource: activity.object,
             contentType: MIME_TYPES.JSON,
@@ -76,12 +76,16 @@ const ObjectService = {
           // If the object passed is an URI, this is an announcement and there is nothing to process
           if (typeof activity.object === 'string') break;
 
-          await ctx.call('ldp.resource.put', {
+          objectUri = activity.object['@id'] || activity.object.id;
+
+          const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri: objectUri });
+
+          await ctx.call(controlledActions?.put || 'ldp.resource.put', {
             resource: activity.object,
             contentType: MIME_TYPES.JSON,
             webId: actorUri
           });
-          objectUri = activity.object['@id'] || activity.object.id;
+
           break;
         }
 
@@ -90,7 +94,9 @@ const ObjectService = {
             const resourceUri = typeof activity.object === 'string' ? activity.object : activity.object.id;
             // If the resource is already deleted, it means it was an announcement
             if (await ctx.call('ldp.resource.exist', { resourceUri, webId: actorUri })) {
-              await ctx.call('ldp.resource.delete', { resourceUri, webId: actorUri });
+              const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri });
+
+              await ctx.call(controlledActions?.delete || 'ldp.resource.delete', { resourceUri, webId: actorUri });
             }
           } else {
             this.logger.warn('Cannot delete object as it is undefined');
