@@ -108,9 +108,9 @@ const ProxyService = {
       });
 
       if (response.ok) {
-        let body = await response.text();
+        let responseBody = await response.text();
         try {
-          body = JSON.parse(body);
+          responseBody = JSON.parse(responseBody);
         } catch (e) {
           // Do nothing if body is not JSON
         }
@@ -120,7 +120,7 @@ const ProxyService = {
         response.headers.delete('connection');
 
         return {
-          body,
+          body: responseBody,
           headers: Object.fromEntries(response.headers.entries()),
           status: response.status,
           statusText: response.statusText
