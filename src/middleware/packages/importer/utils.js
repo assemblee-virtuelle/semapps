@@ -1,3 +1,4 @@
+const { promises: fsPromises } = require('fs');
 const sanitizeHtml = require('sanitize-html');
 const PNF = require('google-libphonenumber').PhoneNumberFormat;
 const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
@@ -43,10 +44,22 @@ const frenchAddressReverseSearch = async (lat, lon) => {
 
 const removeHtmlTags = text => sanitizeHtml(text, { allowedTags: [] }).trim();
 
+const isDir = async path => {
+  try {
+    const stat = await fsPromises.lstat(path);
+    const value = stat.isDirectory();
+    return value;
+  } catch (e) {
+    // lstatSync throws an error if path doesn't exist
+    return false;
+  }
+};
+
 module.exports = {
   convertToIsoString,
   formatPhoneNumber,
   frenchAddressSearch,
   frenchAddressReverseSearch,
-  removeHtmlTags
+  removeHtmlTags,
+  isDir
 };

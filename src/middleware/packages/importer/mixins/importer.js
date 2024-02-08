@@ -3,6 +3,7 @@ const cronParser = require('cron-parser');
 const { promises: fsPromises } = require('fs');
 const { ACTIVITY_TYPES, PUBLIC_URI } = require('@semapps/activitypub');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { isDir } = require('../utils');
 
 module.exports = {
   settings: {
@@ -315,8 +316,7 @@ module.exports = {
           return await response.json();
         }
         return false;
-      }
-      if (param.startsWith('http')) {
+      } else if (param.startsWith('http')) {
         // Parameter is an URL
         const headers = { ...this.settings.source.headers, ...this.settings.source.fetchOptions.headers };
         const response = await fetch(param, { ...this.settings.source.fetchOptions, headers });
@@ -324,14 +324,34 @@ module.exports = {
           return await response.json();
         }
         return false;
-      }
-      // Parameter is a file
-      try {
-        const file = await fsPromises.readFile(param);
-        return JSON.parse(file.toString());
-      } catch (e) {
-        this.logger.warn(`Could not read file ${param}`);
-        return false;
+      } else if (await isDir(param)) {
+        // Parameter is a directory
+        const filenames = await fsPromises.readdir(param);
+        let files = [];
+        for (const filename of filenames) {
+          try {
+            let content = await fsPromises.readFile(`${param}/${filename}`, { encoding: 'utf-8' });
+            // Parse file if it is JSON
+            try {
+              content = JSON.parse(content);
+            } catch (e) {
+              // Ignore, we will provide the raw content
+            }
+            files.push(content);
+          } catch (e) {
+            this.logger.warn(`Could not read file ${param}/${filename}`);
+          }
+        }
+        return files;
+      } else {
+        // Parameter is a file
+        try {
+          const file = await fsPromises.readFile(param);
+          return JSON.parse(file.toString());
+        } catch (e) {
+          this.logger.warn(`Could not read file ${param}`);
+          return false;
+        }
       }
     },
     async postActivity(type, resourceUri) {
