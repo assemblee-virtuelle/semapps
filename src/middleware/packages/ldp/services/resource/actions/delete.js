@@ -49,7 +49,11 @@ module.exports = {
     }
 
     if (oldData.type === 'semapps:File') {
-      fs.unlinkSync(oldData['semapps:localPath']);
+      try {
+        fs.unlinkSync(oldData['semapps:localPath']);
+      } catch (e) {
+        // Ignore errors (file may have been deleted already)
+      }
     }
 
     const returnValues = {
