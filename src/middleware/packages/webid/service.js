@@ -1,6 +1,6 @@
 const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { foaf } = require('@semapps/ontologies');
+const { foaf, schema } = require('@semapps/ontologies');
 
 const WebIdService = {
   name: 'webid',
@@ -16,13 +16,17 @@ const WebIdService = {
       ...foaf,
       overwrite: true
     });
+    await this.broker.call('ontologies.register', {
+      ...schema,
+      overwrite: true
+    });
   },
   actions: {
     /**
      * This should only be called after the user has been authenticated
      */
     async create(ctx) {
-      let { email, nick, name, familyName, homepage } = ctx.params;
+      let { email, nick, name, familyName, homepage, ...rest } = ctx.params;
 
       if (!nick && email) {
         nick = email.split('@')[0].toLowerCase();
@@ -31,15 +35,13 @@ const WebIdService = {
       let webId;
 
       const resource = {
-        '@context': {
-          '@vocab': foaf.namespace
-        },
-        '@type': 'Person',
-        nick,
-        email,
-        name,
-        familyName,
-        homepage
+        '@type': 'foaf:Person',
+        'foaf:nick': nick,
+        'foaf:email': email,
+        'foaf:name': name,
+        'foaf:familyName': familyName,
+        'foaf:homepage': homepage,
+        ...rest
       };
 
       // Create profile with system webId
