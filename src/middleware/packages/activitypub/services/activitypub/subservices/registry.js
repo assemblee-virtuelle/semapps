@@ -94,11 +94,19 @@ const RegistryService = {
         });
 
         // Attach it to the object
-        await ctx.call('ldp.resource.patch', {
-          resourceUri: objectUri,
-          triplesToAdd: [quad(namedNode(objectUri), namedNode(collection.attachPredicate), namedNode(collectionUri))],
-          webId: 'system'
-        });
+        await ctx.call(
+          'ldp.resource.patch',
+          {
+            resourceUri: objectUri,
+            triplesToAdd: [quad(namedNode(objectUri), namedNode(collection.attachPredicate), namedNode(collectionUri))],
+            webId: 'system'
+          },
+          {
+            meta: {
+              skipObjectsWatcher: true // We don't want to trigger an Update
+            }
+          }
+        );
 
         // Now the collection has been created, we can remove it (this way we don't use too much memory)
         this.collectionsInCreation = this.collectionsInCreation.filter(c => c !== collectionUri);
