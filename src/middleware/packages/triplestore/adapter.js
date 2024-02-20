@@ -138,6 +138,11 @@ class TripleStoreAdapter {
     const { slug, ...resource } = entity;
     resource['@id'] = this.baseUri + (slug || uuidv4());
 
+    // Ensure no predicates include an ontology
+    const keyWithOntology = Object.keys(resource).find(key => key.includes(':'));
+    if (keyWithOntology)
+      throw new Error(`Cannot create a ${this.type} with key ${keyWithOntology} (no ontology allowed)`);
+
     return this.broker
       .call('triplestore.insert', {
         resource: {
