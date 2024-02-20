@@ -209,16 +209,19 @@ const AuthMixin = {
     pickWebIdData(data) {
       if (this.settings.webIdSelection.length > 0) {
         return Object.fromEntries(this.settings.webIdSelection.filter(key => key in data).map(key => [key, data[key]]));
+      } else {
+        // TODO do not return anything if webIdSelection is empty, to conform with pickAccountData
+        return data || {};
       }
-      return data;
     },
     pickAccountData(data) {
       if (this.settings.accountSelection.length > 0) {
         return Object.fromEntries(
           this.settings.accountSelection.filter(key => key in data).map(key => [key, data[key]])
         );
+      } else {
+        return {};
       }
-      return data || {};
     }
   }
 };
