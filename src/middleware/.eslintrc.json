@@ -70,7 +70,7 @@
     "camelcase": "warn",
     "class-methods-use-this": "warn",
     "consistent-return": "warn",
-    "default-case": "warn",
+    "default-case": "off",
     "dot-notation": "warn",
     "eqeqeq": "warn",
     "global-require": "warn",

@@ -20,12 +20,14 @@ module.exports = {
     const ontology = await this.actions.get({ prefix }, { parentCtx: ctx });
 
     if (!overwrite && ontology) {
-      throw new Error('An ontology with this prefix is already registered');
+      throw new Error(`Cannot register ${prefix} ontology. An ontology with the prefix is already registered`);
     }
 
     if (preserveContextUri === true) {
       if (!jsonldContext || !arrayOf(jsonldContext).every(context => isURL(context))) {
-        throw new Error('If preserveContextUri is true, jsonldContext must be one or more URI');
+        throw new Error(
+          `Cannot register ${prefix} ontology. If preserveContextUri is true, jsonldContext must be one or more URI`
+        );
       }
     }
 
@@ -35,7 +37,10 @@ module.exports = {
       const existingContext = await ctx.call('jsonld.context.get');
       const newContext = [].concat(existingContext, jsonldContext);
       const isValid = await ctx.call('jsonld.context.validate', { context: newContext });
-      if (!isValid) throw new Error('The ontology JSON-LD context is in conflict with the existing JSON-LD context');
+      if (!isValid)
+        throw new Error(
+          `Cannot register ${prefix} ontology. The ontology's JSON-LD context is in conflict with the existing JSON-LD context`
+        );
     }
 
     if (this.settings.persistRegistry) {
