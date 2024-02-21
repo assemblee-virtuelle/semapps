@@ -142,7 +142,8 @@ const ObjectsWatcherMiddleware = (config = {}) => {
                 webId: 'system'
               });
               if (containerExist) {
-                containerUri = ctx.params.resourceUri;
+                // We don't want to announce containers right changes
+                return await next(ctx);
               } else {
                 resourceUri = ctx.params.resourceUri;
               }
