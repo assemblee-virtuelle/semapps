@@ -33,24 +33,21 @@ const SynchronizerService = {
     }
   },
   activities: {
-    announceCreate: {
+    create: {
       match: {
-        type: ACTIVITY_TYPES.ANNOUNCE,
-        object: {
-          type: ACTIVITY_TYPES.CREATE
-        }
+        type: ACTIVITY_TYPES.CREATE
       },
       async onReceive(ctx, activity, recipientUri) {
         if (await this.isValid(activity, recipientUri)) {
-          for (const resourceUri of defaultToArray(activity.object.object)) {
+          for (const resourceUri of defaultToArray(activity.object)) {
             const object = await ctx.call('ldp.remote.store', {
               resourceUri,
               mirrorGraph: this.settings.mirrorGraph,
               webId: recipientUri
             });
 
-            if (activity.object.target && this.settings.synchronizeContainers) {
-              for (const containerUri of defaultToArray(activity.object.target)) {
+            if (activity.target && this.settings.synchronizeContainers) {
+              for (const containerUri of defaultToArray(activity.target)) {
                 await ctx.call('ldp.container.attach', {
                   containerUri,
                   resourceUri,
@@ -85,16 +82,13 @@ const SynchronizerService = {
         }
       }
     },
-    announceUpdate: {
+    update: {
       match: {
-        type: ACTIVITY_TYPES.ANNOUNCE,
-        object: {
-          type: ACTIVITY_TYPES.UPDATE
-        }
+        type: ACTIVITY_TYPES.UPDATE
       },
       async onReceive(ctx, activity, recipientUri) {
         if (await this.isValid(activity, recipientUri)) {
-          for (const resourceUri of defaultToArray(activity.object.object)) {
+          for (const resourceUri of defaultToArray(activity.object)) {
             await ctx.call('ldp.remote.store', {
               resourceUri,
               mirrorGraph: this.settings.mirrorGraph,
@@ -104,24 +98,21 @@ const SynchronizerService = {
         }
       }
     },
-    announceDelete: {
+    delete: {
       match: {
-        type: ACTIVITY_TYPES.ANNOUNCE,
-        object: {
-          type: ACTIVITY_TYPES.DELETE
-        }
+        type: ACTIVITY_TYPES.DELETE
       },
       async onReceive(ctx, activity, recipientUri) {
         if (await this.isValid(activity, recipientUri)) {
-          for (const resourceUri of defaultToArray(activity.object.object)) {
+          for (const resourceUri of defaultToArray(activity.object)) {
             // If the remote resource is attached to a local container, it will be automatically detached
             await ctx.call('ldp.remote.delete', {
               resourceUri,
               webId: recipientUri
             });
 
-            if (activity.object.target && this.settings.synchronizeContainers) {
-              for (const containerUri of defaultToArray(activity.object.target)) {
+            if (activity.target && this.settings.synchronizeContainers) {
+              for (const containerUri of defaultToArray(activity.target)) {
                 await ctx.call('ldp.container.detach', {
                   containerUri,
                   resourceUri,
@@ -135,25 +126,22 @@ const SynchronizerService = {
     },
     announceAddToContainer: {
       match: {
-        type: ACTIVITY_TYPES.ANNOUNCE,
+        type: ACTIVITY_TYPES.ADD,
         object: {
-          type: ACTIVITY_TYPES.ADD,
-          object: {
-            type: OBJECT_TYPES.RELATIONSHIP
-          }
+          type: OBJECT_TYPES.RELATIONSHIP
         }
       },
       async onReceive(ctx, activity, recipientUri) {
         if (this.settings.synchronizeContainers) {
           if (await this.isValid(activity, recipientUri)) {
             const predicate = await ctx.call('jsonld.parser.expandPredicate', {
-              predicate: activity.object.object.relationship,
+              predicate: activity.object.relationship,
               context: activity['@context']
             });
             if (predicate === 'http://www.w3.org/ns/ldp#contains') {
               await ctx.call('ldp.container.attach', {
-                containerUri: activity.object.object.subject,
-                resourceUri: activity.object.object.object,
+                containerUri: activity.object.subject,
+                resourceUri: activity.object.object,
                 webId: recipientUri
               });
             }
@@ -163,25 +151,22 @@ const SynchronizerService = {
     },
     announceRemoveFromContainer: {
       match: {
-        type: ACTIVITY_TYPES.ANNOUNCE,
+        type: ACTIVITY_TYPES.REMOVE,
         object: {
-          type: ACTIVITY_TYPES.REMOVE,
-          object: {
-            type: OBJECT_TYPES.RELATIONSHIP
-          }
+          type: OBJECT_TYPES.RELATIONSHIP
         }
       },
       async onReceive(ctx, activity, recipientUri) {
         if (this.settings.synchronizeContainers) {
           if (await this.isValid(activity, recipientUri)) {
             const predicate = await ctx.call('jsonld.parser.expandPredicate', {
-              predicate: activity.object.object.relationship,
+              predicate: activity.object.relationship,
               context: activity['@context']
             });
             if (predicate === 'http://www.w3.org/ns/ldp#contains') {
               await ctx.call('ldp.container.detach', {
-                containerUri: activity.object.object.subject,
-                resourceUri: activity.object.object.object,
+                containerUri: activity.object.subject,
+                resourceUri: activity.object.object,
                 webId: recipientUri
               });
             }
