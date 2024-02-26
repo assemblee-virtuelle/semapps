@@ -17,19 +17,26 @@ const SynchronizerService = {
     }
   },
   methods: {
-    async isValid(activity, recipient) {
+    async isValid(activity, recipientUri) {
       if (this.settings.podProvider) {
-        // TODO Check that emitter is in contacts ?
-        return true;
-      }
-      // Check that the recipient is the relay actor
-      if (recipient !== this.relayActor.id) return false;
+        const podExist = await this.broker.call('pod.exist', { webId: recipientUri });
+        if (!podExist) {
+          this.logger.warn(`No local Pod found for webId ${recipientUri}`);
+          return false;
+        } else {
+          // TODO Check that emitter is in contacts ?
+          return true;
+        }
+      } else {
+        // Check that the recipient is the relay actor
+        if (recipientUri !== this.relayActor.id) return false;
 
-      // Check that the activity emitter is being followed by the relay actor
-      return await this.broker.call('activitypub.follow.isFollowing', {
-        follower: recipient,
-        following: activity.actor
-      });
+        // Check that the activity emitter is being followed by the relay actor
+        return await this.broker.call('activitypub.follow.isFollowing', {
+          follower: recipientUri,
+          following: activity.actor
+        });
+      }
     }
   },
   activities: {

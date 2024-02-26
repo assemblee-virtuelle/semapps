@@ -90,7 +90,16 @@ const OutboxService = {
       // Post to remote recipients
       for (const recipientUri of recipients) {
         if (this.isLocalActor(recipientUri)) {
-          localRecipients.push(recipientUri);
+          if (this.settings.podProvider) {
+            const podExist = await this.broker.call('pod.exist', { webId: recipientUri });
+            if (podExist) {
+              localRecipients.push(recipientUri);
+            } else {
+              this.logger.warn(`No local Pod found with webId ${recipientUri}`);
+            }
+          } else {
+            localRecipients.push(recipientUri);
+          }
         } else {
           // If the QueueService mixin is available, use it
           if (this.createJob) {
@@ -139,6 +148,11 @@ const OutboxService = {
       for (const recipientUri of recipients) {
         try {
           const dataset = this.settings.podProvider ? getSlugFromUri(recipientUri) : undefined;
+
+          if (this.settings.podProvider) {
+            const podExist = await this.broker.call('pod.exist', { username: dataset });
+            if (!podExist) throw new Error(`No Pod found with username ${dataset}`);
+          }
 
           const recipientInbox = await this.broker.call(
             'activitypub.actor.getCollectionUri',

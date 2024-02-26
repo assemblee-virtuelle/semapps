@@ -1,5 +1,6 @@
 const urlJoin = require('url-join');
 const { ACTOR_TYPES } = require('@semapps/activitypub');
+const { getSlugFromUri } = require('@semapps/ldp');
 const getPodsRoute = require('./routes/getPodsRoute');
 
 module.exports = {
@@ -61,12 +62,25 @@ module.exports = {
     },
     list() {
       return this.registeredPods;
+    },
+    exist(ctx) {
+      let { username, webId } = ctx.params;
+      if (!username) {
+        if (webId) {
+          username = getSlugFromUri(webId);
+        } else {
+          throw new Error(`No username or webId passed to pod.exist action`);
+        }
+      }
+      return !!this.registeredPods[username];
     }
   },
   events: {
     async 'auth.registered'(ctx) {
       const { webId, accountData } = ctx.params;
-      const { podUri } = accountData;
+      const { podUri, username } = accountData;
+
+      this.registeredPods.push(username);
 
       // Give full rights to user on his pod
       await ctx.call('webacl.resource.addRights', {
