@@ -127,7 +127,9 @@ const ProxyService = {
         };
       } else {
         this.logger.warn(
-          `Could not fetch ${url} through proxy of ${actorUri} (Error ${response.status}: ${response.statusText})`
+          `Could not ${method || 'GET'} ${url} through proxy of ${actorUri} (Error ${response.status}: ${
+            response.statusText
+          })`
         );
         throw new MoleculerError(response.statusText, response.status);
       }

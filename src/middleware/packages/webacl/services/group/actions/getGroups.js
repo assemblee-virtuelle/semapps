@@ -1,5 +1,6 @@
 module.exports = {
   api: async function api(ctx) {
+    if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;
     return await ctx.call('webacl.group.getGroups', {});
   },
   action: {
@@ -20,13 +21,17 @@ module.exports = {
             PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
             PREFIX acl: <http://www.w3.org/ns/auth/acl#>
             PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-            SELECT ?g WHERE { GRAPH <${this.settings.graphName}>
-            { ?g a vcard:Group.
+            SELECT ?g 
+            WHERE 
+            { GRAPH <${this.settings.graphName}>
+              { ?g a vcard:Group.
               ?auth a acl:Authorization;
                 acl:mode acl:Read;
                 acl:accessTo ?g;
                 ${agentSelector}
-            } }`,
+              } 
+            }
+          `,
           webId: 'system'
         });
 
@@ -34,9 +39,14 @@ module.exports = {
         // and also the groups with acl:AuthenticatedAgent
       } else {
         groups = await ctx.call('triplestore.query', {
-          query: `PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
-            SELECT ?g WHERE { GRAPH <${this.settings.graphName}>
-            { ?g a vcard:Group } }`,
+          query: `
+            PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+            SELECT ?g 
+            WHERE { 
+              GRAPH <${this.settings.graphName}>
+              { ?g a vcard:Group } 
+            }
+          `,
           webId: 'system'
         });
       }

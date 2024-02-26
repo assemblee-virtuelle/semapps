@@ -59,7 +59,7 @@ module.exports = {
       }
     }
 
-    for (const route of getRoutes()) {
+    for (const route of getRoutes(this.settings.podProvider)) {
       await this.broker.call('api.addRoute', { route });
     }
 
