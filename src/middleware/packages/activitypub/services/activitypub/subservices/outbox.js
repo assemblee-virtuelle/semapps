@@ -51,9 +51,11 @@ const OutboxService = {
         activity['@context'] = await ctx.call('jsonld.context.get');
       }
 
-      // Process object create, update or delete
-      // and return an activity with the object ID
-      activity = await ctx.call('activitypub.object.process', { activity, actorUri });
+      if (!ctx.meta.doNotProcessObject) {
+        // Process object create, update or delete
+        // and return an activity with the object ID
+        activity = await ctx.call('activitypub.object.process', { activity, actorUri });
+      }
 
       if (!activity.actor) {
         activity.actor = actorUri;

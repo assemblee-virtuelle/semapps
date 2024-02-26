@@ -80,7 +80,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
           ...activity,
           to: recipients
         },
-        { meta: { webId: actor.id } }
+        { meta: { webId: actor.id, doNotProcessObject: true } }
       );
     }
   };
