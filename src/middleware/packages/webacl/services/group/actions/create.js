@@ -1,7 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
 const createSlug = require('speakingurl');
 const urlJoin = require('url-join');
-const { getSlugFromUri } = require('@semapps/ldp');
 const { sanitizeSPARQL } = require('../../../utils');
 
 module.exports = {
@@ -36,15 +35,6 @@ module.exports = {
         groupSlug = createSlug(groupSlug, { lang: 'fr', custom: { '.': '.', '/': '/' } });
         groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
       }
-
-      // if (this.settings.podProvider) {
-      //   const username = getSlugFromUri(webId);
-      //   const baseGroupUrl = urlJoin(this.settings.baseUrl, '_groups', username);
-
-      //   if (!groupUri.startsWith(`${baseGroupUrl}/`)) {
-      //     throw new Error(`Cannot create group ${groupUri} with webId ${webId}`);
-      //   }
-      // }
 
       await sanitizeSPARQL(groupUri);
 
