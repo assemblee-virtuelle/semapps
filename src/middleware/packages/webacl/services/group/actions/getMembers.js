@@ -4,8 +4,9 @@ const { sanitizeSPARQL } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
+    if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;
     return await ctx.call('webacl.group.getMembers', {
-      groupSlug: ctx.params.id
+      groupSlug: this.settings.podProvider ? `${ctx.params.username}/${ctx.params.id}` : ctx.params.id
     });
   },
   action: {
@@ -40,9 +41,14 @@ module.exports = {
       }
 
       const members = await ctx.call('triplestore.query', {
-        query: `PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
-          SELECT ?m WHERE { GRAPH <${this.settings.graphName}>
-          { <${groupUri}> vcard:hasMember ?m } }`,
+        query: `
+          PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+          SELECT ?m 
+          WHERE { 
+            GRAPH <${this.settings.graphName}>
+            { <${groupUri}> vcard:hasMember ?m } 
+          }
+        `,
         webId: 'system'
       });
 

@@ -4,8 +4,9 @@ const { removeAgentGroupOrAgentFromAuthorizations, sanitizeSPARQL } = require('.
 
 module.exports = {
   api: async function api(ctx) {
+    if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;
     await ctx.call('webacl.group.delete', {
-      groupSlug: ctx.params.id
+      groupSlug: this.settings.podProvider ? `${ctx.params.username}/${ctx.params.id}` : ctx.params.id
     });
 
     ctx.meta.$statusCode = 204;

@@ -8,7 +8,7 @@ const onError = (req, res, err) => {
   res.end(JSON.stringify({ type, code, message, data, name }));
 };
 
-const getRoutes = () => {
+const getRoutes = podProvider => {
   const middlewares = [parseHeader, parseJson, negotiateContentType, negotiateAccept];
 
   return [
@@ -49,17 +49,17 @@ const getRoutes = () => {
       onError
     },
     {
-      path: '/_groups',
+      path: podProvider ? '/_groups/:username([^/._][^/]+)' : '/_groups',
       name: 'acl-groups',
       authorization: false,
       authentication: true,
       aliases: {
-        'PATCH /:id': ['webacl.group.api_addMember'],
-        'POST /': ['webacl.group.api_create'],
+        'POST /': [parseHeader, 'webacl.group.api_create'],
         'GET /:id': ['webacl.group.api_getMembers'],
         'GET /': ['webacl.group.api_getGroups'],
         'DELETE /:id': ['webacl.group.api_delete'],
-        'POST /:id': ['webacl.group.api_removeMember']
+        'PATCH /:id': ['webacl.group.api_addMember'],
+        'PUT /:id': ['webacl.group.api_removeMember']
       },
       bodyParsers: {
         json: true
