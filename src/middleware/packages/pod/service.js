@@ -17,7 +17,10 @@ module.exports = {
       path: '/',
       podsContainer: true,
       acceptedTypes: [ACTOR_TYPES.PERSON],
-      excludeFromMirror: true
+      excludeFromMirror: true,
+      controlledActions: {
+        get: 'pod.getActor'
+      }
     });
 
     // API routes to actors (and their collections) are added manually
@@ -73,6 +76,9 @@ module.exports = {
         }
       }
       return !!this.registeredPods[username];
+    },
+    getActor(ctx) {
+      return ctx.call('ldp.resource.get', ctx.params);
     }
   },
   events: {
