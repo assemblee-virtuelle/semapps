@@ -29,7 +29,10 @@ module.exports = async function get(ctx) {
           jsonContext: parseJson(ctx.meta.headers?.jsonldcontext)
         })
       );
+
       ctx.meta.$responseType = ctx.meta.$responseType || accept;
+      if (ctx.meta.$responseType === 'application/ld+json')
+        ctx.meta.$responseType = `application/ld+json; profile="https://www.w3.org/ns/activitystreams"`;
     } else if (types.includes('https://www.w3.org/ns/activitystreams#Collection')) {
       /*
        * AS COLLECTION
@@ -45,7 +48,7 @@ module.exports = async function get(ctx) {
           jsonContext: parseJson(ctx.meta.headers?.jsonldcontext)
         })
       );
-      ctx.meta.$responseType = 'application/ld+json';
+      ctx.meta.$responseType = `application/ld+json; profile="https://www.w3.org/ns/activitystreams"`;
     } else {
       /*
        * LDP RESOURCE
@@ -55,7 +58,7 @@ module.exports = async function get(ctx) {
         ...ctx.meta.headers
       };
 
-      if (ctx.meta.accepts && ctx.meta.accepts.includes('text/html') && this.settings.preferredViewForResource) {
+      if (ctx.meta.originalHeaders?.accept?.includes('text/html') && this.settings.preferredViewForResource) {
         const webId = ctx.meta.webId || 'anon';
         const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri: uri, webId });
         if (resourceExist) {
@@ -95,6 +98,8 @@ module.exports = async function get(ctx) {
         }
       } else {
         ctx.meta.$responseType = ctx.meta.$responseType || accept;
+        if (ctx.meta.$responseType === 'application/ld+json')
+          ctx.meta.$responseType = `application/ld+json; profile="https://www.w3.org/ns/activitystreams"`;
       }
     }
 

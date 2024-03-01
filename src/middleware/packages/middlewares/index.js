@@ -4,7 +4,9 @@ const Busboy = require('busboy');
 const streams = require('memory-streams');
 
 const parseHeader = async (req, res, next) => {
-  req.$ctx.meta.headers = req.headers || {};
+  req.$ctx.meta.headers = req.headers ? { ...req.headers } : {};
+  // Also remember original headers (needed for HTTP signatures verification and files type negociation)
+  req.$ctx.meta.originalHeaders = req.headers ? { ...req.headers } : {};
   next();
 };
 
@@ -37,8 +39,6 @@ const throw500 = msg => {
 
 const negotiateAccept = (req, res, next) => {
   if (!req.$ctx.meta.headers) req.$ctx.meta.headers = {};
-  // we keep the full list for further use
-  req.$ctx.meta.accepts = req.headers.accept;
   if (req.headers.accept === '*/*') {
     delete req.headers.accept;
   }
