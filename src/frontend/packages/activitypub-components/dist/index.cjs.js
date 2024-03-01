@@ -562,9 +562,11 @@ var $3ff23aa25753c478$export$2e2bcd8739ae039 = {
 const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl)=>{
     const { data: identity, isLoading: identityLoading } = (0, $583VT$reactadmin.useGetIdentity)();
     const [items, setItems] = (0, $583VT$react.useState)([]);
+    const [totalItems, setTotalItems] = (0, $583VT$react.useState)(0);
     const [loading, setLoading] = (0, $583VT$react.useState)(false);
     const [loaded, setLoaded] = (0, $583VT$react.useState)(false);
     const [error, setError] = (0, $583VT$react.useState)(false);
+    const dataProvider = (0, $583VT$reactadmin.useDataProvider)();
     const collectionUrl = (0, $583VT$react.useMemo)(()=>{
         if (predicateOrUrl) {
             if (predicateOrUrl.startsWith("http")) return predicateOrUrl;
@@ -575,7 +577,6 @@ const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl)=>{
         predicateOrUrl
     ]);
     const fetch = (0, $583VT$react.useCallback)(async ()=>{
-        if (!collectionUrl) return;
         setLoading(true);
         const headers = new Headers({
             Accept: "application/ld+json"
@@ -585,12 +586,21 @@ const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl)=>{
         const collectionOrigin = new URL(collectionUrl).origin;
         const token = localStorage.getItem("token");
         if (identityOrigin === collectionOrigin && token) headers.set("Authorization", `Bearer ${token}`);
-        (0, $583VT$reactadmin.fetchUtils).fetchJson(collectionUrl, {
+        dataProvider.fetch(collectionUrl, {
             headers: headers
+        }).then(({ json: json })=>{
+            // If pagination is activated, load the first page
+            if (json.type === "OrderedCollection" && json.first) return dataProvider.fetch(json.first, {
+                headers: headers
+            });
+            return {
+                json: json
+            };
         }).then(({ json: json })=>{
             if (json && json.items) setItems((0, $3ff23aa25753c478$export$e57ff0f701c44363)(json.items));
             else if (json && json.orderedItems) setItems((0, $3ff23aa25753c478$export$e57ff0f701c44363)(json.orderedItems));
             else setItems([]);
+            setTotalItems(json.totalItems);
             setError(false);
             setLoaded(true);
             setLoading(false);
@@ -601,16 +611,19 @@ const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl)=>{
         });
     }, [
         setItems,
+        setTotalItems,
         setLoaded,
         setLoading,
         setError,
         collectionUrl,
-        identity
+        identity,
+        dataProvider
     ]);
     (0, $583VT$react.useEffect)(()=>{
-        if (!identityLoading && !loading && !loaded && !error) fetch();
+        if (collectionUrl && !identityLoading && !loading && !loaded && !error) fetch();
     }, [
         fetch,
+        collectionUrl,
         identityLoading,
         loading,
         loaded,
@@ -631,6 +644,7 @@ const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl)=>{
     ]);
     return {
         items: items,
+        totalItems: totalItems,
         loading: loading,
         loaded: loaded,
         error: error,

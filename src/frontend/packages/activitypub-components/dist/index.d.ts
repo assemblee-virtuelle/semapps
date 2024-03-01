@@ -62,6 +62,7 @@ declare namespace _default {
 }
 export function useCollection(predicateOrUrl: any): {
   items: never[];
+  totalItems: number;
   loading: boolean;
   loaded: boolean;
   error: boolean;

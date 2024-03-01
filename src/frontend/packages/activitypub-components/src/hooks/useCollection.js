@@ -1,13 +1,15 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
-import { useGetIdentity, fetchUtils } from 'react-admin';
+import { useGetIdentity, useDataProvider } from 'react-admin';
 import { arrayOf } from '../utils';
 
 const useCollection = predicateOrUrl => {
   const { data: identity, isLoading: identityLoading } = useGetIdentity();
   const [items, setItems] = useState([]);
+  const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
+  const dataProvider = useDataProvider();
 
   const collectionUrl = useMemo(() => {
     if (predicateOrUrl) {
@@ -21,8 +23,6 @@ const useCollection = predicateOrUrl => {
   }, [identity, predicateOrUrl]);
 
   const fetch = useCallback(async () => {
-    if (!collectionUrl) return;
-
     setLoading(true);
 
     const headers = new Headers({ Accept: 'application/ld+json' });
@@ -35,8 +35,15 @@ const useCollection = predicateOrUrl => {
       headers.set('Authorization', `Bearer ${token}`);
     }
 
-    fetchUtils
-      .fetchJson(collectionUrl, { headers })
+    dataProvider
+      .fetch(collectionUrl, { headers })
+      .then(({ json }) => {
+        // If pagination is activated, load the first page
+        if (json.type === 'OrderedCollection' && json.first) {
+          return dataProvider.fetch(json.first, { headers });
+        }
+        return { json };
+      })
       .then(({ json }) => {
         if (json && json.items) {
           setItems(arrayOf(json.items));
@@ -45,6 +52,7 @@ const useCollection = predicateOrUrl => {
         } else {
           setItems([]);
         }
+        setTotalItems(json.totalItems);
         setError(false);
         setLoaded(true);
         setLoading(false);
@@ -54,13 +62,13 @@ const useCollection = predicateOrUrl => {
         setLoaded(true);
         setLoading(false);
       });
-  }, [setItems, setLoaded, setLoading, setError, collectionUrl, identity]);
+  }, [setItems, setTotalItems, setLoaded, setLoading, setError, collectionUrl, identity, dataProvider]);
 
   useEffect(() => {
-    if (!identityLoading && !loading && !loaded && !error) {
+    if (collectionUrl && !identityLoading && !loading && !loaded && !error) {
       fetch();
     }
-  }, [fetch, identityLoading, loading, loaded, error]);
+  }, [fetch, collectionUrl, identityLoading, loading, loaded, error]);
 
   const addItem = useCallback(
     item => {
@@ -76,7 +84,7 @@ const useCollection = predicateOrUrl => {
     [setItems]
   );
 
-  return { items, loading, loaded, error, refetch: fetch, addItem, removeItem, url: collectionUrl };
+  return { items, totalItems, loading, loaded, error, refetch: fetch, addItem, removeItem, url: collectionUrl };
 };
 
 export default useCollection;

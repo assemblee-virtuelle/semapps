@@ -1,6 +1,6 @@
 import {jsxs as $85cNH$jsxs, Fragment as $85cNH$Fragment, jsx as $85cNH$jsx} from "react/jsx-runtime";
 import $85cNH$react, {useState as $85cNH$useState, useCallback as $85cNH$useCallback, useMemo as $85cNH$useMemo, useEffect as $85cNH$useEffect, forwardRef as $85cNH$forwardRef, useImperativeHandle as $85cNH$useImperativeHandle} from "react";
-import {useRecordContext as $85cNH$useRecordContext, useGetIdentity as $85cNH$useGetIdentity, useNotify as $85cNH$useNotify, Form as $85cNH$Form, fetchUtils as $85cNH$fetchUtils, TextField as $85cNH$TextField, DateField as $85cNH$DateField, RichTextField as $85cNH$RichTextField, useGetOne as $85cNH$useGetOne, LinearProgress as $85cNH$LinearProgress, useGetList as $85cNH$useGetList} from "react-admin";
+import {useRecordContext as $85cNH$useRecordContext, useGetIdentity as $85cNH$useGetIdentity, useNotify as $85cNH$useNotify, Form as $85cNH$Form, fetchUtils as $85cNH$fetchUtils, TextField as $85cNH$TextField, DateField as $85cNH$DateField, RichTextField as $85cNH$RichTextField, useDataProvider as $85cNH$useDataProvider, useGetOne as $85cNH$useGetOne, LinearProgress as $85cNH$LinearProgress, useGetList as $85cNH$useGetList} from "react-admin";
 import {RichTextInput as $85cNH$RichTextInput, DefaultEditorOptions as $85cNH$DefaultEditorOptions} from "ra-input-rich-text";
 import $85cNH$tiptapextensionplaceholder from "@tiptap/extension-placeholder";
 import {Box as $85cNH$Box, Avatar as $85cNH$Avatar, Button as $85cNH$Button, Typography as $85cNH$Typography, CircularProgress as $85cNH$CircularProgress} from "@mui/material";
@@ -540,9 +540,11 @@ var $e4e1b14e0441184d$export$2e2bcd8739ae039 = {
 const $c1e897431d8c5742$var$useCollection = (predicateOrUrl)=>{
     const { data: identity, isLoading: identityLoading } = (0, $85cNH$useGetIdentity)();
     const [items, setItems] = (0, $85cNH$useState)([]);
+    const [totalItems, setTotalItems] = (0, $85cNH$useState)(0);
     const [loading, setLoading] = (0, $85cNH$useState)(false);
     const [loaded, setLoaded] = (0, $85cNH$useState)(false);
     const [error, setError] = (0, $85cNH$useState)(false);
+    const dataProvider = (0, $85cNH$useDataProvider)();
     const collectionUrl = (0, $85cNH$useMemo)(()=>{
         if (predicateOrUrl) {
             if (predicateOrUrl.startsWith("http")) return predicateOrUrl;
@@ -553,7 +555,6 @@ const $c1e897431d8c5742$var$useCollection = (predicateOrUrl)=>{
         predicateOrUrl
     ]);
     const fetch = (0, $85cNH$useCallback)(async ()=>{
-        if (!collectionUrl) return;
         setLoading(true);
         const headers = new Headers({
             Accept: "application/ld+json"
@@ -563,12 +564,21 @@ const $c1e897431d8c5742$var$useCollection = (predicateOrUrl)=>{
         const collectionOrigin = new URL(collectionUrl).origin;
         const token = localStorage.getItem("token");
         if (identityOrigin === collectionOrigin && token) headers.set("Authorization", `Bearer ${token}`);
-        (0, $85cNH$fetchUtils).fetchJson(collectionUrl, {
+        dataProvider.fetch(collectionUrl, {
             headers: headers
+        }).then(({ json: json })=>{
+            // If pagination is activated, load the first page
+            if (json.type === "OrderedCollection" && json.first) return dataProvider.fetch(json.first, {
+                headers: headers
+            });
+            return {
+                json: json
+            };
         }).then(({ json: json })=>{
             if (json && json.items) setItems((0, $e4e1b14e0441184d$export$e57ff0f701c44363)(json.items));
             else if (json && json.orderedItems) setItems((0, $e4e1b14e0441184d$export$e57ff0f701c44363)(json.orderedItems));
             else setItems([]);
+            setTotalItems(json.totalItems);
             setError(false);
             setLoaded(true);
             setLoading(false);
@@ -579,16 +589,19 @@ const $c1e897431d8c5742$var$useCollection = (predicateOrUrl)=>{
         });
     }, [
         setItems,
+        setTotalItems,
         setLoaded,
         setLoading,
         setError,
         collectionUrl,
-        identity
+        identity,
+        dataProvider
     ]);
     (0, $85cNH$useEffect)(()=>{
-        if (!identityLoading && !loading && !loaded && !error) fetch();
+        if (collectionUrl && !identityLoading && !loading && !loaded && !error) fetch();
     }, [
         fetch,
+        collectionUrl,
         identityLoading,
         loading,
         loaded,
@@ -609,6 +622,7 @@ const $c1e897431d8c5742$var$useCollection = (predicateOrUrl)=>{
     ]);
     return {
         items: items,
+        totalItems: totalItems,
         loading: loading,
         loaded: loaded,
         error: error,
