@@ -44,18 +44,18 @@ const InboxService = {
       }
 
       if (!ctx.meta.skipSignatureValidation) {
-        if (!ctx.meta.rawBody || !ctx.meta.headers)
-          throw new Error(`Cannot validate HTTP signature because of missing meta (rawBody or headers)`);
+        if (!ctx.meta.rawBody || !ctx.meta.originalHeaders)
+          throw new Error(`Cannot validate HTTP signature because of missing meta (rawBody or originalHeaders)`);
 
         const validDigest = await ctx.call('signature.verifyDigest', {
           body: ctx.meta.rawBody, // Stored by parseJson middleware
-          headers: ctx.meta.headers
+          headers: ctx.meta.originalHeaders
         });
 
         const { isValid: validSignature } = await ctx.call('signature.verifyHttpSignature', {
           url: collectionUri,
           method: 'POST',
-          headers: ctx.meta.headers
+          headers: ctx.meta.originalHeaders
         });
 
         if (!validDigest || !validSignature) {
