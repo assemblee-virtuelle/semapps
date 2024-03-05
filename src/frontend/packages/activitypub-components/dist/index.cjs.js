@@ -586,17 +586,14 @@ const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl)=>{
         const collectionOrigin = new URL(collectionUrl).origin;
         const token = localStorage.getItem("token");
         if (identityOrigin === collectionOrigin && token) headers.set("Authorization", `Bearer ${token}`);
-        dataProvider.fetch(collectionUrl, {
-            headers: headers
-        }).then(({ json: json })=>{
-            // If pagination is activated, load the first page
-            if (json.type === "OrderedCollection" && json.first) return dataProvider.fetch(json.first, {
+        try {
+            let { json: json } = await dataProvider.fetch(collectionUrl, {
                 headers: headers
             });
-            return {
-                json: json
-            };
-        }).then(({ json: json })=>{
+            if (json.type === "OrderedCollection" && json.first) // Fetch the first page
+            ({ json: json } = await dataProvider.fetch(json.first, {
+                headers: headers
+            }));
             if (json && json.items) setItems((0, $3ff23aa25753c478$export$e57ff0f701c44363)(json.items));
             else if (json && json.orderedItems) setItems((0, $3ff23aa25753c478$export$e57ff0f701c44363)(json.orderedItems));
             else setItems([]);
@@ -604,11 +601,11 @@ const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl)=>{
             setError(false);
             setLoaded(true);
             setLoading(false);
-        }).catch(()=>{
+        } catch (e) {
             setError(true);
             setLoaded(true);
             setLoading(false);
-        });
+        }
     }, [
         setItems,
         setTotalItems,
@@ -693,24 +690,25 @@ var $2e5504cc4159ca8d$export$2e2bcd8739ae039 = $2e5504cc4159ca8d$var$CommentsFie
 
 
 
-const $505d598a33288aad$var$CollectionList = ({ collectionUrl: collectionUrl, resource: resource, children: children, ...rest })=>{
+const $505d598a33288aad$var$CollectionList = ({ collectionUrl: collectionUrl, resource: resource, children: children })=>{
     if ((0, ($parcel$interopDefault($583VT$react))).Children.count(children) !== 1) throw new Error("<CollectionList> only accepts a single child");
-    // TODO use a simple fetch call, as the resource is not good and it is useless
-    const { data: collection, isLoading: isLoading } = (0, $583VT$reactadmin.useGetOne)(resource, collectionUrl, {
-        enabled: !!collectionUrl
+    const { items: actorsUris } = (0, $2b75a2f49c9ef165$export$2e2bcd8739ae039)(collectionUrl);
+    console.log("actorsUris", actorsUris);
+    const { data: data, isLoading: isLoading, isFetching: isFetching } = (0, $583VT$reactadmin.useGetMany)(resource, {
+        ids: Array.isArray(actorsUris) ? actorsUris : [
+            actorsUris
+        ]
+    }, {
+        enabled: !!actorsUris
     });
-    if (isLoading) return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)("div", {
-        style: {
-            marginTop: 8
-        },
-        children: /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$reactadmin.LinearProgress), {})
+    console.log("data", data);
+    const listContext = (0, $583VT$reactadmin.useList)({
+        data: data,
+        isLoading: isLoading,
+        isFetching: isFetching
     });
-    if (!collection) return null;
-    return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$semappsfieldcomponents.ReferenceArrayField), {
-        reference: resource,
-        record: collection,
-        source: "items",
-        ...rest,
+    return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$reactadmin.ListContextProvider), {
+        value: listContext,
         children: children
     });
 };

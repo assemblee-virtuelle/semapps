@@ -35,33 +35,30 @@ const useCollection = predicateOrUrl => {
       headers.set('Authorization', `Bearer ${token}`);
     }
 
-    dataProvider
-      .fetch(collectionUrl, { headers })
-      .then(({ json }) => {
-        // If pagination is activated, load the first page
-        if (json.type === 'OrderedCollection' && json.first) {
-          return dataProvider.fetch(json.first, { headers });
-        }
-        return { json };
-      })
-      .then(({ json }) => {
-        if (json && json.items) {
-          setItems(arrayOf(json.items));
-        } else if (json && json.orderedItems) {
-          setItems(arrayOf(json.orderedItems));
-        } else {
-          setItems([]);
-        }
-        setTotalItems(json.totalItems);
-        setError(false);
-        setLoaded(true);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError(true);
-        setLoaded(true);
-        setLoading(false);
-      });
+    try {
+      let { json } = await dataProvider.fetch(collectionUrl, { headers });
+
+      if (json.type === 'OrderedCollection' && json.first) {
+        // Fetch the first page
+        ({ json } = await dataProvider.fetch(json.first, { headers }));
+      }
+
+      if (json && json.items) {
+        setItems(arrayOf(json.items));
+      } else if (json && json.orderedItems) {
+        setItems(arrayOf(json.orderedItems));
+      } else {
+        setItems([]);
+      }
+      setTotalItems(json.totalItems);
+      setError(false);
+      setLoaded(true);
+      setLoading(false);
+    } catch (e) {
+      setError(true);
+      setLoaded(true);
+      setLoading(false);
+    }
   }, [setItems, setTotalItems, setLoaded, setLoading, setError, collectionUrl, identity, dataProvider]);
 
   useEffect(() => {

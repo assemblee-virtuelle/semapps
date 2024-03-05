@@ -97,14 +97,12 @@ declare namespace CommentsField {
 export function CollectionList({
   collectionUrl,
   resource,
-  children,
-  ...rest
+  children
 }: {
-  [x: string]: any;
   collectionUrl: any;
   resource: any;
   children: any;
-}): import('react/jsx-runtime').JSX.Element | null;
+}): import('react/jsx-runtime').JSX.Element;
 export function ReferenceCollectionField({
   source,
   record,

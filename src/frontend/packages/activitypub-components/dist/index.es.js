@@ -1,6 +1,6 @@
 import {jsxs as $85cNH$jsxs, Fragment as $85cNH$Fragment, jsx as $85cNH$jsx} from "react/jsx-runtime";
 import $85cNH$react, {useState as $85cNH$useState, useCallback as $85cNH$useCallback, useMemo as $85cNH$useMemo, useEffect as $85cNH$useEffect, forwardRef as $85cNH$forwardRef, useImperativeHandle as $85cNH$useImperativeHandle} from "react";
-import {useRecordContext as $85cNH$useRecordContext, useGetIdentity as $85cNH$useGetIdentity, useNotify as $85cNH$useNotify, Form as $85cNH$Form, fetchUtils as $85cNH$fetchUtils, TextField as $85cNH$TextField, DateField as $85cNH$DateField, RichTextField as $85cNH$RichTextField, useDataProvider as $85cNH$useDataProvider, useGetOne as $85cNH$useGetOne, LinearProgress as $85cNH$LinearProgress, useGetList as $85cNH$useGetList} from "react-admin";
+import {useRecordContext as $85cNH$useRecordContext, useGetIdentity as $85cNH$useGetIdentity, useNotify as $85cNH$useNotify, Form as $85cNH$Form, fetchUtils as $85cNH$fetchUtils, TextField as $85cNH$TextField, DateField as $85cNH$DateField, RichTextField as $85cNH$RichTextField, useDataProvider as $85cNH$useDataProvider, useGetMany as $85cNH$useGetMany, useList as $85cNH$useList, ListContextProvider as $85cNH$ListContextProvider, useGetList as $85cNH$useGetList} from "react-admin";
 import {RichTextInput as $85cNH$RichTextInput, DefaultEditorOptions as $85cNH$DefaultEditorOptions} from "ra-input-rich-text";
 import $85cNH$tiptapextensionplaceholder from "@tiptap/extension-placeholder";
 import {Box as $85cNH$Box, Avatar as $85cNH$Avatar, Button as $85cNH$Button, Typography as $85cNH$Typography, CircularProgress as $85cNH$CircularProgress} from "@mui/material";
@@ -10,7 +10,7 @@ import {useDataModel as $85cNH$useDataModel, buildBlankNodesQuery as $85cNH$buil
 import {AuthDialog as $85cNH$AuthDialog} from "@semapps/auth-provider";
 import {mergeAttributes as $85cNH$mergeAttributes} from "@tiptap/core";
 import $85cNH$tiptapextensionmention from "@tiptap/extension-mention";
-import {ReferenceField as $85cNH$ReferenceField, AvatarWithLabelField as $85cNH$AvatarWithLabelField, ReferenceArrayField as $85cNH$ReferenceArrayField} from "@semapps/field-components";
+import {ReferenceField as $85cNH$ReferenceField, AvatarWithLabelField as $85cNH$AvatarWithLabelField} from "@semapps/field-components";
 import {ReactRenderer as $85cNH$ReactRenderer} from "@tiptap/react";
 import $85cNH$tippyjs from "tippy.js";
 
@@ -564,17 +564,14 @@ const $c1e897431d8c5742$var$useCollection = (predicateOrUrl)=>{
         const collectionOrigin = new URL(collectionUrl).origin;
         const token = localStorage.getItem("token");
         if (identityOrigin === collectionOrigin && token) headers.set("Authorization", `Bearer ${token}`);
-        dataProvider.fetch(collectionUrl, {
-            headers: headers
-        }).then(({ json: json })=>{
-            // If pagination is activated, load the first page
-            if (json.type === "OrderedCollection" && json.first) return dataProvider.fetch(json.first, {
+        try {
+            let { json: json } = await dataProvider.fetch(collectionUrl, {
                 headers: headers
             });
-            return {
-                json: json
-            };
-        }).then(({ json: json })=>{
+            if (json.type === "OrderedCollection" && json.first) // Fetch the first page
+            ({ json: json } = await dataProvider.fetch(json.first, {
+                headers: headers
+            }));
             if (json && json.items) setItems((0, $e4e1b14e0441184d$export$e57ff0f701c44363)(json.items));
             else if (json && json.orderedItems) setItems((0, $e4e1b14e0441184d$export$e57ff0f701c44363)(json.orderedItems));
             else setItems([]);
@@ -582,11 +579,11 @@ const $c1e897431d8c5742$var$useCollection = (predicateOrUrl)=>{
             setError(false);
             setLoaded(true);
             setLoading(false);
-        }).catch(()=>{
+        } catch (e) {
             setError(true);
             setLoaded(true);
             setLoading(false);
-        });
+        }
     }, [
         setItems,
         setTotalItems,
@@ -671,24 +668,25 @@ var $7ce737d4a1c88e63$export$2e2bcd8739ae039 = $7ce737d4a1c88e63$var$CommentsFie
 
 
 
-const $d3be168cd1e7aaae$var$CollectionList = ({ collectionUrl: collectionUrl, resource: resource, children: children, ...rest })=>{
+const $d3be168cd1e7aaae$var$CollectionList = ({ collectionUrl: collectionUrl, resource: resource, children: children })=>{
     if ((0, $85cNH$react).Children.count(children) !== 1) throw new Error("<CollectionList> only accepts a single child");
-    // TODO use a simple fetch call, as the resource is not good and it is useless
-    const { data: collection, isLoading: isLoading } = (0, $85cNH$useGetOne)(resource, collectionUrl, {
-        enabled: !!collectionUrl
+    const { items: actorsUris } = (0, $c1e897431d8c5742$export$2e2bcd8739ae039)(collectionUrl);
+    console.log("actorsUris", actorsUris);
+    const { data: data, isLoading: isLoading, isFetching: isFetching } = (0, $85cNH$useGetMany)(resource, {
+        ids: Array.isArray(actorsUris) ? actorsUris : [
+            actorsUris
+        ]
+    }, {
+        enabled: !!actorsUris
     });
-    if (isLoading) return /*#__PURE__*/ (0, $85cNH$jsx)("div", {
-        style: {
-            marginTop: 8
-        },
-        children: /*#__PURE__*/ (0, $85cNH$jsx)((0, $85cNH$LinearProgress), {})
+    console.log("data", data);
+    const listContext = (0, $85cNH$useList)({
+        data: data,
+        isLoading: isLoading,
+        isFetching: isFetching
     });
-    if (!collection) return null;
-    return /*#__PURE__*/ (0, $85cNH$jsx)((0, $85cNH$ReferenceArrayField), {
-        reference: resource,
-        record: collection,
-        source: "items",
-        ...rest,
+    return /*#__PURE__*/ (0, $85cNH$jsx)((0, $85cNH$ListContextProvider), {
+        value: listContext,
         children: children
     });
 };
