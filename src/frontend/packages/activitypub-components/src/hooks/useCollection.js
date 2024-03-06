@@ -1,14 +1,11 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { useGetIdentity, useDataProvider } from 'react-admin';
-import { arrayOf } from '../utils';
+import { useInfiniteQuery } from 'react-query';
 
 const useCollection = predicateOrUrl => {
-  const { data: identity, isLoading: identityLoading } = useGetIdentity();
-  const [items, setItems] = useState([]);
-  const [totalItems, setTotalItems] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [loaded, setLoaded] = useState(false);
-  const [error, setError] = useState(false);
+  const { data: identity } = useGetIdentity();
+  const [items, setItems] = useState();
+  const [totalItems, setTotalItems] = useState();
   const dataProvider = useDataProvider();
 
   const collectionUrl = useMemo(() => {
@@ -22,50 +19,33 @@ const useCollection = predicateOrUrl => {
     }
   }, [identity, predicateOrUrl]);
 
-  const fetch = useCallback(async () => {
-    setLoading(true);
-
-    const headers = new Headers({ Accept: 'application/ld+json' });
-
-    // Add authorization token if it is set and if the user is on the same server as the collection
-    const identityOrigin = identity.id && new URL(identity.id).origin;
-    const collectionOrigin = new URL(collectionUrl).origin;
-    const token = localStorage.getItem('token');
-    if (identityOrigin === collectionOrigin && token) {
-      headers.set('Authorization', `Bearer ${token}`);
-    }
-
-    try {
-      let { json } = await dataProvider.fetch(collectionUrl, { headers });
+  const fetchCollection = useCallback(
+    async ({ pageParam: nextPageUrl }) => {
+      let { json } = await dataProvider.fetch(nextPageUrl || collectionUrl);
+      if (json.totalItems) setTotalItems(json.totalItems);
 
       if (json.type === 'OrderedCollection' && json.first) {
         // Fetch the first page
-        ({ json } = await dataProvider.fetch(json.first, { headers }));
+        ({ json } = await dataProvider.fetch(json.first));
       }
 
-      if (json && json.items) {
-        setItems(arrayOf(json.items));
-      } else if (json && json.orderedItems) {
-        setItems(arrayOf(json.orderedItems));
-      } else {
-        setItems([]);
-      }
-      setTotalItems(json.totalItems);
-      setError(false);
-      setLoaded(true);
-      setLoading(false);
-    } catch (e) {
-      setError(true);
-      setLoaded(true);
-      setLoading(false);
-    }
-  }, [setItems, setTotalItems, setLoaded, setLoading, setError, collectionUrl, identity, dataProvider]);
+      return json;
+    },
+    [dataProvider, collectionUrl, identity, setTotalItems]
+  );
+
+  const { data, error, fetchNextPage, refetch, hasNextPage, isLoading, isFetching, isFetchingNextPage, status } =
+    useInfiniteQuery(['Collection', { collectionUrl }], fetchCollection, {
+      enabled: !!(collectionUrl && identity?.id),
+      getNextPageParam: lastPage => lastPage.next,
+      getPreviousPageParam: firstPage => firstPage.prev
+    });
 
   useEffect(() => {
-    if (collectionUrl && !identityLoading && !loading && !loaded && !error) {
-      fetch();
+    if (data?.pages) {
+      setItems([].concat(...data.pages.map(p => p.orderedItems || p.items)));
     }
-  }, [fetch, collectionUrl, identityLoading, loading, loaded, error]);
+  }, [data, setItems]);
 
   const addItem = useCallback(
     item => {
@@ -81,7 +61,21 @@ const useCollection = predicateOrUrl => {
     [setItems]
   );
 
-  return { items, totalItems, loading, loaded, error, refetch: fetch, addItem, removeItem, url: collectionUrl };
+  return {
+    items,
+    totalItems,
+    error,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isLoading,
+    isFetching,
+    isFetchingNextPage,
+    status,
+    addItem,
+    removeItem,
+    url: collectionUrl
+  };
 };
 
 export default useCollection;

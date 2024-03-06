@@ -11,6 +11,7 @@ import {AuthDialog as $85cNH$AuthDialog} from "@semapps/auth-provider";
 import {mergeAttributes as $85cNH$mergeAttributes} from "@tiptap/core";
 import $85cNH$tiptapextensionmention from "@tiptap/extension-mention";
 import {ReferenceField as $85cNH$ReferenceField, AvatarWithLabelField as $85cNH$AvatarWithLabelField} from "@semapps/field-components";
+import {useInfiniteQuery as $85cNH$useInfiniteQuery} from "react-query";
 import {ReactRenderer as $85cNH$ReactRenderer} from "@tiptap/react";
 import $85cNH$tippyjs from "tippy.js";
 
@@ -522,28 +523,11 @@ var $be88b298220210d1$export$2e2bcd8739ae039 = $be88b298220210d1$var$CommentsLis
 
 
 
-const $e4e1b14e0441184d$export$e57ff0f701c44363 = (value)=>{
-    // If the field is null-ish, we suppose there are no values.
-    if (!value) return [];
-    // Return as is.
-    if (Array.isArray(value)) return value;
-    // Single value is made an array.
-    return [
-        value
-    ];
-};
-var $e4e1b14e0441184d$export$2e2bcd8739ae039 = {
-    arrayOf: $e4e1b14e0441184d$export$e57ff0f701c44363
-};
-
 
 const $c1e897431d8c5742$var$useCollection = (predicateOrUrl)=>{
-    const { data: identity, isLoading: identityLoading } = (0, $85cNH$useGetIdentity)();
-    const [items, setItems] = (0, $85cNH$useState)([]);
-    const [totalItems, setTotalItems] = (0, $85cNH$useState)(0);
-    const [loading, setLoading] = (0, $85cNH$useState)(false);
-    const [loaded, setLoaded] = (0, $85cNH$useState)(false);
-    const [error, setError] = (0, $85cNH$useState)(false);
+    const { data: identity } = (0, $85cNH$useGetIdentity)();
+    const [items, setItems] = (0, $85cNH$useState)();
+    const [totalItems, setTotalItems] = (0, $85cNH$useState)();
     const dataProvider = (0, $85cNH$useDataProvider)();
     const collectionUrl = (0, $85cNH$useMemo)(()=>{
         if (predicateOrUrl) {
@@ -554,55 +538,33 @@ const $c1e897431d8c5742$var$useCollection = (predicateOrUrl)=>{
         identity,
         predicateOrUrl
     ]);
-    const fetch = (0, $85cNH$useCallback)(async ()=>{
-        setLoading(true);
-        const headers = new Headers({
-            Accept: "application/ld+json"
-        });
-        // Add authorization token if it is set and if the user is on the same server as the collection
-        const identityOrigin = identity.id && new URL(identity.id).origin;
-        const collectionOrigin = new URL(collectionUrl).origin;
-        const token = localStorage.getItem("token");
-        if (identityOrigin === collectionOrigin && token) headers.set("Authorization", `Bearer ${token}`);
-        try {
-            let { json: json } = await dataProvider.fetch(collectionUrl, {
-                headers: headers
-            });
-            if (json.type === "OrderedCollection" && json.first) // Fetch the first page
-            ({ json: json } = await dataProvider.fetch(json.first, {
-                headers: headers
-            }));
-            if (json && json.items) setItems((0, $e4e1b14e0441184d$export$e57ff0f701c44363)(json.items));
-            else if (json && json.orderedItems) setItems((0, $e4e1b14e0441184d$export$e57ff0f701c44363)(json.orderedItems));
-            else setItems([]);
-            setTotalItems(json.totalItems);
-            setError(false);
-            setLoaded(true);
-            setLoading(false);
-        } catch (e) {
-            setError(true);
-            setLoaded(true);
-            setLoading(false);
-        }
+    const fetchCollection = (0, $85cNH$useCallback)(async ({ pageParam: nextPageUrl })=>{
+        let { json: json } = await dataProvider.fetch(nextPageUrl || collectionUrl);
+        if (json.totalItems) setTotalItems(json.totalItems);
+        if (json.type === "OrderedCollection" && json.first) // Fetch the first page
+        ({ json: json } = await dataProvider.fetch(json.first));
+        return json;
     }, [
-        setItems,
-        setTotalItems,
-        setLoaded,
-        setLoading,
-        setError,
+        dataProvider,
         collectionUrl,
         identity,
-        dataProvider
+        setTotalItems
     ]);
+    const { data: data, error: error, fetchNextPage: fetchNextPage, refetch: refetch, hasNextPage: hasNextPage, isLoading: isLoading, isFetching: isFetching, isFetchingNextPage: isFetchingNextPage, status: status } = (0, $85cNH$useInfiniteQuery)([
+        "Collection",
+        {
+            collectionUrl: collectionUrl
+        }
+    ], fetchCollection, {
+        enabled: !!(collectionUrl && identity?.id),
+        getNextPageParam: (lastPage)=>lastPage.next,
+        getPreviousPageParam: (firstPage)=>firstPage.prev
+    });
     (0, $85cNH$useEffect)(()=>{
-        if (collectionUrl && !identityLoading && !loading && !loaded && !error) fetch();
+        if (data?.pages) setItems([].concat(...data.pages.map((p)=>p.orderedItems || p.items)));
     }, [
-        fetch,
-        collectionUrl,
-        identityLoading,
-        loading,
-        loaded,
-        error
+        data,
+        setItems
     ]);
     const addItem = (0, $85cNH$useCallback)((item)=>{
         setItems((oldItems)=>[
@@ -620,10 +582,14 @@ const $c1e897431d8c5742$var$useCollection = (predicateOrUrl)=>{
     return {
         items: items,
         totalItems: totalItems,
-        loading: loading,
-        loaded: loaded,
         error: error,
-        refetch: fetch,
+        refetch: refetch,
+        fetchNextPage: fetchNextPage,
+        hasNextPage: hasNextPage,
+        isLoading: isLoading,
+        isFetching: isFetching,
+        isFetchingNextPage: isFetchingNextPage,
+        status: status,
         addItem: addItem,
         removeItem: removeItem,
         url: collectionUrl
@@ -671,7 +637,6 @@ var $7ce737d4a1c88e63$export$2e2bcd8739ae039 = $7ce737d4a1c88e63$var$CommentsFie
 const $d3be168cd1e7aaae$var$CollectionList = ({ collectionUrl: collectionUrl, resource: resource, children: children })=>{
     if ((0, $85cNH$react).Children.count(children) !== 1) throw new Error("<CollectionList> only accepts a single child");
     const { items: actorsUris } = (0, $c1e897431d8c5742$export$2e2bcd8739ae039)(collectionUrl);
-    console.log("actorsUris", actorsUris);
     const { data: data, isLoading: isLoading, isFetching: isFetching } = (0, $85cNH$useGetMany)(resource, {
         ids: Array.isArray(actorsUris) ? actorsUris : [
             actorsUris
@@ -679,7 +644,6 @@ const $d3be168cd1e7aaae$var$CollectionList = ({ collectionUrl: collectionUrl, re
     }, {
         enabled: !!actorsUris
     });
-    console.log("data", data);
     const listContext = (0, $85cNH$useList)({
         data: data,
         isLoading: isLoading,

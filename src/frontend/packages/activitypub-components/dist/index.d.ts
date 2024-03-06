@@ -57,16 +57,21 @@ export function useOutbox(): {
   loaded: boolean;
   owner: import('react-admin').Identifier | undefined;
 };
-declare namespace _default {
-  export { arrayOf };
-}
 export function useCollection(predicateOrUrl: any): {
-  items: never[];
-  totalItems: number;
-  loading: boolean;
-  loaded: boolean;
-  error: boolean;
-  refetch: () => Promise<void>;
+  items: undefined;
+  totalItems: undefined;
+  error: unknown;
+  refetch: <TPageData>(
+    options?: (import('react-query').RefetchOptions & import('react-query').RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<import('react-query').QueryObserverResult<import('react-query').InfiniteData<any>, unknown>>;
+  fetchNextPage: (
+    options?: import('react-query').FetchNextPageOptions | undefined
+  ) => Promise<import('react-query').InfiniteQueryObserverResult<any, unknown>>;
+  hasNextPage: boolean | undefined;
+  isLoading: boolean;
+  isFetching: boolean;
+  isFetchingNextPage: boolean;
+  status: 'success' | 'error' | 'loading' | 'idle';
   addItem: (item: any) => void;
   removeItem: (itemId: any) => void;
   url: any;
