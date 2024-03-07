@@ -1,12 +1,13 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { useGetIdentity, useDataProvider } from 'react-admin';
-import { useInfiniteQuery } from 'react-query';
+import { useInfiniteQuery, useQueryClient } from 'react-query';
 
 const useCollection = predicateOrUrl => {
   const { data: identity } = useGetIdentity();
   const [items, setItems] = useState();
   const [totalItems, setTotalItems] = useState();
   const dataProvider = useDataProvider();
+  const queryClient = useQueryClient();
 
   const collectionUrl = useMemo(() => {
     if (predicateOrUrl) {
@@ -50,15 +51,33 @@ const useCollection = predicateOrUrl => {
   const addItem = useCallback(
     item => {
       setItems(oldItems => [...oldItems, item]);
+      // TODO use queryClient.setQueryData to update items directly in react-query cache
+      setTimeout(
+        () =>
+          queryClient.refetchQueries(['Collection', { collectionUrl }], {
+            active: true,
+            exact: true
+          }),
+        2000
+      );
     },
-    [setItems]
+    [setItems, queryClient, collectionUrl]
   );
 
   const removeItem = useCallback(
     itemId => {
       setItems(oldItems => oldItems.filter(item => (typeof item === 'string' ? item !== itemId : item.id !== itemId)));
+      // TODO use queryClient.setQueryData to update items directly in react-query cache
+      setTimeout(
+        () =>
+          queryClient.refetchQueries(['Collection', { collectionUrl }], {
+            active: true,
+            exact: true
+          }),
+        2000
+      );
     },
-    [setItems]
+    [setItems, queryClient, collectionUrl]
   );
 
   return {

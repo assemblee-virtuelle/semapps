@@ -551,6 +551,7 @@ const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl)=>{
     const [items, setItems] = (0, $583VT$react.useState)();
     const [totalItems, setTotalItems] = (0, $583VT$react.useState)();
     const dataProvider = (0, $583VT$reactadmin.useDataProvider)();
+    const queryClient = (0, $583VT$reactquery.useQueryClient)();
     const collectionUrl = (0, $583VT$react.useMemo)(()=>{
         if (predicateOrUrl) {
             if (predicateOrUrl.startsWith("http")) return predicateOrUrl;
@@ -593,13 +594,37 @@ const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl)=>{
                 ...oldItems,
                 item
             ]);
+        // TODO use queryClient.setQueryData to update items directly in react-query cache
+        setTimeout(()=>queryClient.refetchQueries([
+                "Collection",
+                {
+                    collectionUrl: collectionUrl
+                }
+            ], {
+                active: true,
+                exact: true
+            }), 2000);
     }, [
-        setItems
+        setItems,
+        queryClient,
+        collectionUrl
     ]);
     const removeItem = (0, $583VT$react.useCallback)((itemId)=>{
         setItems((oldItems)=>oldItems.filter((item)=>typeof item === "string" ? item !== itemId : item.id !== itemId));
+        // TODO use queryClient.setQueryData to update items directly in react-query cache
+        setTimeout(()=>queryClient.refetchQueries([
+                "Collection",
+                {
+                    collectionUrl: collectionUrl
+                }
+            ], {
+                active: true,
+                exact: true
+            }), 2000);
     }, [
-        setItems
+        setItems,
+        queryClient,
+        collectionUrl
     ]);
     return {
         items: items,

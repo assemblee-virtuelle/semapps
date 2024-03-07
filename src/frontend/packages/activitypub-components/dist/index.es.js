@@ -11,7 +11,7 @@ import {AuthDialog as $85cNH$AuthDialog} from "@semapps/auth-provider";
 import {mergeAttributes as $85cNH$mergeAttributes} from "@tiptap/core";
 import $85cNH$tiptapextensionmention from "@tiptap/extension-mention";
 import {ReferenceField as $85cNH$ReferenceField, AvatarWithLabelField as $85cNH$AvatarWithLabelField} from "@semapps/field-components";
-import {useInfiniteQuery as $85cNH$useInfiniteQuery} from "react-query";
+import {useQueryClient as $85cNH$useQueryClient, useInfiniteQuery as $85cNH$useInfiniteQuery} from "react-query";
 import {ReactRenderer as $85cNH$ReactRenderer} from "@tiptap/react";
 import $85cNH$tippyjs from "tippy.js";
 
@@ -529,6 +529,7 @@ const $c1e897431d8c5742$var$useCollection = (predicateOrUrl)=>{
     const [items, setItems] = (0, $85cNH$useState)();
     const [totalItems, setTotalItems] = (0, $85cNH$useState)();
     const dataProvider = (0, $85cNH$useDataProvider)();
+    const queryClient = (0, $85cNH$useQueryClient)();
     const collectionUrl = (0, $85cNH$useMemo)(()=>{
         if (predicateOrUrl) {
             if (predicateOrUrl.startsWith("http")) return predicateOrUrl;
@@ -571,13 +572,37 @@ const $c1e897431d8c5742$var$useCollection = (predicateOrUrl)=>{
                 ...oldItems,
                 item
             ]);
+        // TODO use queryClient.setQueryData to update items directly in react-query cache
+        setTimeout(()=>queryClient.refetchQueries([
+                "Collection",
+                {
+                    collectionUrl: collectionUrl
+                }
+            ], {
+                active: true,
+                exact: true
+            }), 2000);
     }, [
-        setItems
+        setItems,
+        queryClient,
+        collectionUrl
     ]);
     const removeItem = (0, $85cNH$useCallback)((itemId)=>{
         setItems((oldItems)=>oldItems.filter((item)=>typeof item === "string" ? item !== itemId : item.id !== itemId));
+        // TODO use queryClient.setQueryData to update items directly in react-query cache
+        setTimeout(()=>queryClient.refetchQueries([
+                "Collection",
+                {
+                    collectionUrl: collectionUrl
+                }
+            ], {
+                active: true,
+                exact: true
+            }), 2000);
     }, [
-        setItems
+        setItems,
+        queryClient,
+        collectionUrl
     ]);
     return {
         items: items,
