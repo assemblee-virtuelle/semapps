@@ -11,13 +11,17 @@ module.exports = {
     controlledActions: {},
     readOnly: false,
     excludeFromMirror: false,
-    activateTombstones: true
+    activateTombstones: true,
+    podsContainer: false,
+    podProvider: false
   },
   dependencies: ['ldp'],
   async started() {
     const registration = await this.broker.call('ldp.registry.register', {
       path: this.settings.path,
       name: this.name,
+      podsContainer: this.settings.podsContainer,
+      podProvider: this.settings.podProvider,
       acceptedTypes: this.settings.acceptedTypes,
       accept: this.settings.accept,
       permissions: this.settings.permissions,

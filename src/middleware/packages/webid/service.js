@@ -1,16 +1,24 @@
 const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { foaf, schema } = require('@semapps/ontologies');
+const { ControlledContainerMixin, ControlledContainerDereferenceMixin } = require('@semapps/ldp');
 
+/** @type {import('moleculer').ServiceSchema} */
 const WebIdService = {
   name: 'webid',
   settings: {
+    path: '/',
     baseUrl: null,
     usersContainer: null,
     defaultAccept: 'text/turtle',
-    podProvider: false
+    podProvider: false,
+    podsContainer: false,
+    dereferencePlan: {
+      p: 'publicKey'
+    }
   },
   dependencies: ['ldp.resource', 'ontologies'],
+  mixins: [ControlledContainerMixin, ControlledContainerDereferenceMixin],
   async started() {
     await this.broker.call('ontologies.register', {
       ...foaf,
@@ -77,7 +85,8 @@ const WebIdService = {
 
       return webId;
     },
-    async view(ctx) {
+    /* This should be handled by controlled container...
+    async get(ctx) {
       const webId = await this.getWebId(ctx);
       if (webId) {
         return await ctx.call('ldp.resource.get', {
@@ -88,6 +97,7 @@ const WebIdService = {
       }
       ctx.meta.$statusCode = 404;
     },
+    */
     async edit(ctx) {
       const { userId, ...profileData } = ctx.params;
       const webId = await this.getWebId(ctx);
