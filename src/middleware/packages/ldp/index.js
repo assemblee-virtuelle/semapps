@@ -10,6 +10,7 @@ module.exports = {
   LdpResourceService: require('./services/resource'),
   // Mixins
   ControlledContainerMixin: require('./mixins/controlled-container'),
+  ControlledContainerDereferenceMixin: require('./mixins/controlled-container-dereference'),
   ImageProcessorMixin: require('./mixins/image-processor'),
   DocumentTaggerMixin: require('./mixins/document-tagger'),
   DisassemblyMixin: require('./mixins/disassembly'),
