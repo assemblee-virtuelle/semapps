@@ -8,6 +8,7 @@ module.exports = {
   rdfs: require('./rdfs.json'),
   sec: require('./sec.json'),
   semapps: require('./semapps.json'),
+  skos: require('./skos.json'),
   vcard: require('./vcard.json'),
   void: require('./void.json'),
   xsd: require('./xsd.json')
