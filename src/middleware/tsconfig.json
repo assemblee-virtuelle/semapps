@@ -9,7 +9,8 @@
     "noLib": false,
     "skipLibCheck": true,
     "sourceMap": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "moduleResolution": "NodeNext"
   },
   "include": ["**/*.js", "**/*.ts"],
   "exclude": ["node_modules"]
