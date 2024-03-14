@@ -71,10 +71,10 @@ const SignatureService = {
       if (!keyId) return false;
       const [actorUri] = keyId.split('#');
 
-      const publicKey = await ctx.call('signature.keypair.getRemotePublicKey', { actorUri });
-      if (!publicKey) return false;
+      const publicKeys = await ctx.call('keys.getRemotePublicKeys', { actorUri });
+      if (!publicKeys) return false;
 
-      const isValid = verifySignature(parsedSignature, publicKey);
+      const isValid = verifySignature(parsedSignature, publicKeys);
       return { isValid, actorUri };
     },
     // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication

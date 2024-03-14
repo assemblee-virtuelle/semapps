@@ -5,11 +5,17 @@ const { generateKeyPair } = require('crypto');
 const { namedNode, blankNode, literal, triple } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
 
+/**
+ * Deprecated Service.
+ * This service is only left here for migration purposes from the old key management system.
+ * It is here, to read keys from file and move them to the ldp-based keys service.
+ */
 const SignatureService = {
   name: 'signature.keypair',
   settings: {
     actorsKeyPairsDir: null
   },
+  // TODO: Dependency to keys service
   created() {
     this.remoteActorPublicKeyCache = {};
     if (!this.settings.actorsKeyPairsDir) {
@@ -17,6 +23,7 @@ const SignatureService = {
     } else if (!fs.existsSync(this.settings.actorsKeyPairsDir)) {
       throw new Error(`The actorsKeyPairsDir (${this.settings.actorsKeyPairsDir}) does not exist! Please create it.`);
     }
+    this.actions.runMigration();
   },
   actions: {
     async generate(ctx) {
@@ -91,6 +98,7 @@ const SignatureService = {
         });
       }
     },
+
     async getPaths(ctx) {
       const { actorUri } = ctx.params;
 
