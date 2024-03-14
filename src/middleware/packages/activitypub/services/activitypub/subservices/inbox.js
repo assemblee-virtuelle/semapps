@@ -66,25 +66,37 @@ const InboxService = {
 
       // TODO check activity is valid
 
-      // Save the remote activity in the local triple store
-      await ctx.call('ldp.remote.store', {
-        resource: objectIdToCurrent(activity),
-        mirrorGraph: false, // Store in default graph as activity may not be public
-        keepInSync: false, // Activities are immutable
-        webId: actorUri
-      });
+      // If this is a transient activity, we have no way to retrieve it
+      // so do not store it in the inbox (Mastodon works the same way)
+      if (activity.id && !activity.id.includes('#')) {
+        // Save the remote activity in the local triple store
+        await ctx.call('ldp.remote.store', {
+          resource: objectIdToCurrent(activity),
+          mirrorGraph: false, // Store in default graph as activity may not be public
+          keepInSync: false, // Activities are immutable
+          webId: actorUri
+        });
 
-      // Attach the activity to the activities container, in order to use the container options
-      await ctx.call('activitypub.activity.attach', {
-        resourceUri: activity.id,
-        webId: this.settings.podProvider ? actorUri : 'system'
-      });
+        // Attach the activity to the activities container, in order to use the container options
+        await ctx.call('activitypub.activity.attach', {
+          resourceUri: activity.id,
+          webId: this.settings.podProvider ? actorUri : 'system'
+        });
 
-      // Attach the activity to the inbox
-      await ctx.call('activitypub.collection.attach', {
-        collectionUri,
-        item: activity
-      });
+        // Attach the activity to the inbox
+        await ctx.call('activitypub.collection.attach', {
+          collectionUri,
+          item: activity
+        });
+      } else {
+        // If the activity cannot be retrieved, pass the full object
+        // This will be used in particular for Solid notifications
+        // which will send the full activity to the listeners
+        await ctx.emit('activitypub.collection.added', {
+          collectionUri,
+          item: activity
+        });
+      }
 
       ctx.emit(
         'activitypub.inbox.received',

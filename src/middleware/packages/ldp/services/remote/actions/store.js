@@ -35,6 +35,9 @@ module.exports = {
     }
 
     if (!dataset && this.settings.podProvider) {
+      if (!webId) {
+        throw new Error(`In Pod provider config, a webId or dataset param must be provided to ldp.remote.store`);
+      }
       const account = await ctx.call('auth.account.findByWebId', { webId });
       dataset = account.username;
     }

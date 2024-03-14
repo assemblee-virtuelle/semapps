@@ -163,6 +163,15 @@ const FollowService = {
           type: ACTIVITY_TYPES.FOLLOW
         }
       },
+      async onEmit(ctx, activity) {
+        await this.actions.removeFollower(
+          {
+            follower: activity.object.actor || activity.actor,
+            following: activity.object.object
+          },
+          { parentCtx: ctx }
+        );
+      },
       async onReceive(ctx, activity) {
         await this.actions.removeFollower(
           {
