@@ -69,7 +69,9 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
                 '@graph': [rest]
               };
             }
-            resolve(compactJson['@graph'] || []);
+            resolve(
+              compactJson['@graph'].map(resource => ({ '@context': compactJson['@context'], ...resource })) || []
+            );
           })
           .catch(e => reject(e));
       })
