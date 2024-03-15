@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { useGetIdentity, useDataProvider } from 'react-admin';
 import { useInfiniteQuery, useQueryClient } from 'react-query';
+import { arrayOf } from '../utils';
 
 const useCollection = predicateOrUrl => {
   const { data: identity } = useGetIdentity();
@@ -25,9 +26,18 @@ const useCollection = predicateOrUrl => {
       let { json } = await dataProvider.fetch(nextPageUrl || collectionUrl);
       if (json.totalItems) setTotalItems(json.totalItems);
 
-      if (json.type === 'OrderedCollection' && json.first) {
-        // Fetch the first page
-        ({ json } = await dataProvider.fetch(json.first));
+      if ((json.type === 'OrderedCollection' || json.type === 'Collection') && json.first) {
+        if (json.first?.items) {
+          if (json.first?.items.length === 0 && json.first?.next) {
+            // Special case where the first property is an object without items
+            ({ json } = await dataProvider.fetch(json.first?.next));
+          } else {
+            json = json.first;
+          }
+        } else {
+          // Fetch the first page
+          ({ json } = await dataProvider.fetch(json.first));
+        }
       }
 
       return json;
@@ -44,7 +54,7 @@ const useCollection = predicateOrUrl => {
 
   useEffect(() => {
     if (data?.pages) {
-      setItems([].concat(...data.pages.map(p => p.orderedItems || p.items)));
+      setItems([].concat(...data.pages.map(p => arrayOf(p.orderedItems || p.items))));
     }
   }, [data, setItems]);
 

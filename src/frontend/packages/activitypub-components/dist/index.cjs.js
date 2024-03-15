@@ -546,6 +546,21 @@ var $d68cd57b2d06b6d5$export$2e2bcd8739ae039 = $d68cd57b2d06b6d5$var$CommentsLis
 
 
 
+const $3ff23aa25753c478$export$e57ff0f701c44363 = (value)=>{
+    // If the field is null-ish, we suppose there are no values.
+    if (!value) return [];
+    // Return as is.
+    if (Array.isArray(value)) return value;
+    // Single value is made an array.
+    return [
+        value
+    ];
+};
+var $3ff23aa25753c478$export$2e2bcd8739ae039 = {
+    arrayOf: $3ff23aa25753c478$export$e57ff0f701c44363
+};
+
+
 const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl)=>{
     const { data: identity } = (0, $583VT$reactadmin.useGetIdentity)();
     const [items, setItems] = (0, $583VT$react.useState)();
@@ -564,8 +579,14 @@ const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl)=>{
     const fetchCollection = (0, $583VT$react.useCallback)(async ({ pageParam: nextPageUrl })=>{
         let { json: json } = await dataProvider.fetch(nextPageUrl || collectionUrl);
         if (json.totalItems) setTotalItems(json.totalItems);
-        if (json.type === "OrderedCollection" && json.first) // Fetch the first page
-        ({ json: json } = await dataProvider.fetch(json.first));
+        if ((json.type === "OrderedCollection" || json.type === "Collection") && json.first) {
+            if (json.first?.items) {
+                if (json.first?.items.length === 0 && json.first?.next) // Special case where the first property is an object without items
+                ({ json: json } = await dataProvider.fetch(json.first?.next));
+                else json = json.first;
+            } else // Fetch the first page
+            ({ json: json } = await dataProvider.fetch(json.first));
+        }
         return json;
     }, [
         dataProvider,
@@ -584,7 +605,7 @@ const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl)=>{
         getPreviousPageParam: (firstPage)=>firstPage.prev
     });
     (0, $583VT$react.useEffect)(()=>{
-        if (data?.pages) setItems([].concat(...data.pages.map((p)=>p.orderedItems || p.items)));
+        if (data?.pages) setItems([].concat(...data.pages.map((p)=>(0, $3ff23aa25753c478$export$e57ff0f701c44363)(p.orderedItems || p.items))));
     }, [
         data,
         setItems
