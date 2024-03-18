@@ -229,7 +229,7 @@ const authProvider = ({
             localStorage.clear();
             // Redirect to the POD provider
             return `${urlJoin(webId, 'openApp')}?type=${encodeURIComponent(
-              'http://www.w3.org/ns/solid/interop#ApplicationRegistration'
+              'http://activitypods.org/ns/core#FrontAppRegistration'
             )}`;
           }
           break;
