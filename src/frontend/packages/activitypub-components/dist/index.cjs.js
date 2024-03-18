@@ -11,6 +11,7 @@ var $583VT$semappsauthprovider = require("@semapps/auth-provider");
 var $583VT$tiptapcore = require("@tiptap/core");
 var $583VT$tiptapextensionmention = require("@tiptap/extension-mention");
 var $583VT$semappsfieldcomponents = require("@semapps/field-components");
+var $583VT$reactquery = require("react-query");
 var $583VT$tiptapreact = require("@tiptap/react");
 var $583VT$tippyjs = require("tippy.js");
 
@@ -544,6 +545,7 @@ var $d68cd57b2d06b6d5$export$2e2bcd8739ae039 = $d68cd57b2d06b6d5$var$CommentsLis
 
 
 
+
 const $3ff23aa25753c478$export$e57ff0f701c44363 = (value)=>{
     // If the field is null-ish, we suppose there are no values.
     if (!value) return [];
@@ -559,12 +561,13 @@ var $3ff23aa25753c478$export$2e2bcd8739ae039 = {
 };
 
 
-const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl)=>{
-    const { data: identity, isLoading: identityLoading } = (0, $583VT$reactadmin.useGetIdentity)();
-    const [items, setItems] = (0, $583VT$react.useState)([]);
-    const [loading, setLoading] = (0, $583VT$react.useState)(false);
-    const [loaded, setLoaded] = (0, $583VT$react.useState)(false);
-    const [error, setError] = (0, $583VT$react.useState)(false);
+const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl, options = {})=>{
+    const { dereferenceItems: dereferenceItems = false } = options;
+    const { data: identity } = (0, $583VT$reactadmin.useGetIdentity)();
+    const [items, setItems] = (0, $583VT$react.useState)();
+    const [totalItems, setTotalItems] = (0, $583VT$react.useState)();
+    const dataProvider = (0, $583VT$reactadmin.useDataProvider)();
+    const queryClient = (0, $583VT$reactquery.useQueryClient)();
     const collectionUrl = (0, $583VT$react.useMemo)(()=>{
         if (predicateOrUrl) {
             if (predicateOrUrl.startsWith("http")) return predicateOrUrl;
@@ -574,67 +577,99 @@ const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl)=>{
         identity,
         predicateOrUrl
     ]);
-    const fetch = (0, $583VT$react.useCallback)(async ()=>{
-        if (!collectionUrl) return;
-        setLoading(true);
-        const headers = new Headers({
-            Accept: "application/ld+json"
-        });
-        // Add authorization token if it is set and if the user is on the same server as the collection
-        const identityOrigin = identity.id && new URL(identity.id).origin;
-        const collectionOrigin = new URL(collectionUrl).origin;
-        const token = localStorage.getItem("token");
-        if (identityOrigin === collectionOrigin && token) headers.set("Authorization", `Bearer ${token}`);
-        (0, $583VT$reactadmin.fetchUtils).fetchJson(collectionUrl, {
-            headers: headers
-        }).then(({ json: json })=>{
-            if (json && json.items) setItems((0, $3ff23aa25753c478$export$e57ff0f701c44363)(json.items));
-            else if (json && json.orderedItems) setItems((0, $3ff23aa25753c478$export$e57ff0f701c44363)(json.orderedItems));
-            else setItems([]);
-            setError(false);
-            setLoaded(true);
-            setLoading(false);
-        }).catch(()=>{
-            setError(true);
-            setLoaded(true);
-            setLoading(false);
-        });
+    const fetchCollection = (0, $583VT$react.useCallback)(async ({ pageParam: nextPageUrl })=>{
+        let { json: json } = await dataProvider.fetch(nextPageUrl || collectionUrl);
+        if (json.totalItems) setTotalItems(json.totalItems);
+        if ((json.type === "OrderedCollection" || json.type === "Collection") && json.first) {
+            if (json.first?.items) {
+                if (json.first?.items.length === 0 && json.first?.next) // Special case where the first property is an object without items
+                ({ json: json } = await dataProvider.fetch(json.first?.next));
+                else json = json.first;
+            } else // Fetch the first page
+            ({ json: json } = await dataProvider.fetch(json.first));
+        }
+        // Force dereference of items
+        if (dereferenceItems) {
+            const itemPredicate = json.items ? "items" : "orderedItems";
+            json[itemPredicate] = json[itemPredicate] && await Promise.all((0, $3ff23aa25753c478$export$e57ff0f701c44363)(json[itemPredicate]).map(async (item)=>{
+                if (typeof item === "string") {
+                    const { json: json } = await dataProvider.fetch(item);
+                    return json;
+                }
+                return item;
+            }));
+        }
+        return json;
     }, [
-        setItems,
-        setLoaded,
-        setLoading,
-        setError,
+        dataProvider,
         collectionUrl,
-        identity
+        identity,
+        setTotalItems
     ]);
+    const { data: data, error: error, fetchNextPage: fetchNextPage, refetch: refetch, hasNextPage: hasNextPage, isLoading: isLoading, isFetching: isFetching, isFetchingNextPage: isFetchingNextPage, status: status } = (0, $583VT$reactquery.useInfiniteQuery)([
+        "Collection",
+        {
+            collectionUrl: collectionUrl
+        }
+    ], fetchCollection, {
+        enabled: !!(collectionUrl && identity?.id),
+        getNextPageParam: (lastPage)=>lastPage.next,
+        getPreviousPageParam: (firstPage)=>firstPage.prev
+    });
     (0, $583VT$react.useEffect)(()=>{
-        if (!identityLoading && !loading && !loaded && !error) fetch();
+        if (data?.pages) setItems([].concat(...data.pages.map((p)=>(0, $3ff23aa25753c478$export$e57ff0f701c44363)(p.orderedItems || p.items))));
     }, [
-        fetch,
-        identityLoading,
-        loading,
-        loaded,
-        error
+        data,
+        setItems
     ]);
     const addItem = (0, $583VT$react.useCallback)((item)=>{
         setItems((oldItems)=>[
                 ...oldItems,
                 item
             ]);
+        // TODO use queryClient.setQueryData to update items directly in react-query cache
+        setTimeout(()=>queryClient.refetchQueries([
+                "Collection",
+                {
+                    collectionUrl: collectionUrl
+                }
+            ], {
+                active: true,
+                exact: true
+            }), 2000);
     }, [
-        setItems
+        setItems,
+        queryClient,
+        collectionUrl
     ]);
     const removeItem = (0, $583VT$react.useCallback)((itemId)=>{
         setItems((oldItems)=>oldItems.filter((item)=>typeof item === "string" ? item !== itemId : item.id !== itemId));
+        // TODO use queryClient.setQueryData to update items directly in react-query cache
+        setTimeout(()=>queryClient.refetchQueries([
+                "Collection",
+                {
+                    collectionUrl: collectionUrl
+                }
+            ], {
+                active: true,
+                exact: true
+            }), 2000);
     }, [
-        setItems
+        setItems,
+        queryClient,
+        collectionUrl
     ]);
     return {
         items: items,
-        loading: loading,
-        loaded: loaded,
+        totalItems: totalItems,
         error: error,
-        refetch: fetch,
+        refetch: refetch,
+        fetchNextPage: fetchNextPage,
+        hasNextPage: hasNextPage,
+        isLoading: isLoading,
+        isFetching: isFetching,
+        isFetchingNextPage: isFetchingNextPage,
+        status: status,
         addItem: addItem,
         removeItem: removeItem,
         url: collectionUrl
@@ -679,24 +714,23 @@ var $2e5504cc4159ca8d$export$2e2bcd8739ae039 = $2e5504cc4159ca8d$var$CommentsFie
 
 
 
-const $505d598a33288aad$var$CollectionList = ({ collectionUrl: collectionUrl, resource: resource, children: children, ...rest })=>{
+const $505d598a33288aad$var$CollectionList = ({ collectionUrl: collectionUrl, resource: resource, children: children })=>{
     if ((0, ($parcel$interopDefault($583VT$react))).Children.count(children) !== 1) throw new Error("<CollectionList> only accepts a single child");
-    // TODO use a simple fetch call, as the resource is not good and it is useless
-    const { data: collection, isLoading: isLoading } = (0, $583VT$reactadmin.useGetOne)(resource, collectionUrl, {
-        enabled: !!collectionUrl
+    const { items: actorsUris } = (0, $2b75a2f49c9ef165$export$2e2bcd8739ae039)(collectionUrl);
+    const { data: data, isLoading: isLoading, isFetching: isFetching } = (0, $583VT$reactadmin.useGetMany)(resource, {
+        ids: Array.isArray(actorsUris) ? actorsUris : [
+            actorsUris
+        ]
+    }, {
+        enabled: !!actorsUris
     });
-    if (isLoading) return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)("div", {
-        style: {
-            marginTop: 8
-        },
-        children: /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$reactadmin.LinearProgress), {})
+    const listContext = (0, $583VT$reactadmin.useList)({
+        data: data,
+        isLoading: isLoading,
+        isFetching: isFetching
     });
-    if (!collection) return null;
-    return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$semappsfieldcomponents.ReferenceArrayField), {
-        reference: resource,
-        record: collection,
-        source: "items",
-        ...rest,
+    return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$reactadmin.ListContextProvider), {
+        value: listContext,
         children: children
     });
 };

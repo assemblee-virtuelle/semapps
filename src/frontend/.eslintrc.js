@@ -95,7 +95,7 @@ module.exports = {
     'no-await-in-loop': 'warn',
     'no-bitwise': 'warn',
     'no-case-declarations': 'warn',
-    'no-else-return': 'warn',
+    'no-else-return': 'off',
     'no-lonely-if': 'warn',
     'no-loop-func': 'warn',
     'no-nested-ternary': 'warn',

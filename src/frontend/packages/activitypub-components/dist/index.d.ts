@@ -60,12 +60,24 @@ export function useOutbox(): {
 declare namespace _default {
   export { arrayOf };
 }
-export function useCollection(predicateOrUrl: any): {
-  items: never[];
-  loading: boolean;
-  loaded: boolean;
-  error: boolean;
-  refetch: () => Promise<void>;
+export function useCollection(
+  predicateOrUrl: any,
+  options?: {}
+): {
+  items: undefined;
+  totalItems: undefined;
+  error: unknown;
+  refetch: <TPageData>(
+    options?: (import('react-query').RefetchOptions & import('react-query').RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<import('react-query').QueryObserverResult<import('react-query').InfiniteData<any>, unknown>>;
+  fetchNextPage: (
+    options?: import('react-query').FetchNextPageOptions | undefined
+  ) => Promise<import('react-query').InfiniteQueryObserverResult<any, unknown>>;
+  hasNextPage: boolean | undefined;
+  isLoading: boolean;
+  isFetching: boolean;
+  isFetchingNextPage: boolean;
+  status: 'success' | 'error' | 'loading' | 'idle';
   addItem: (item: any) => void;
   removeItem: (itemId: any) => void;
   url: any;
@@ -96,14 +108,12 @@ declare namespace CommentsField {
 export function CollectionList({
   collectionUrl,
   resource,
-  children,
-  ...rest
+  children
 }: {
-  [x: string]: any;
   collectionUrl: any;
   resource: any;
   children: any;
-}): import('react/jsx-runtime').JSX.Element | null;
+}): import('react/jsx-runtime').JSX.Element;
 export function ReferenceCollectionField({
   source,
   record,

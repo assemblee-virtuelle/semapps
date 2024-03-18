@@ -1,13 +1,15 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
-import { useGetIdentity, fetchUtils } from 'react-admin';
+import { useGetIdentity, useDataProvider } from 'react-admin';
+import { useInfiniteQuery, useQueryClient } from 'react-query';
 import { arrayOf } from '../utils';
 
-const useCollection = predicateOrUrl => {
-  const { data: identity, isLoading: identityLoading } = useGetIdentity();
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [loaded, setLoaded] = useState(false);
-  const [error, setError] = useState(false);
+const useCollection = (predicateOrUrl, options = {}) => {
+  const { dereferenceItems = false } = options;
+  const { data: identity } = useGetIdentity();
+  const [items, setItems] = useState();
+  const [totalItems, setTotalItems] = useState();
+  const dataProvider = useDataProvider();
+  const queryClient = useQueryClient();
 
   const collectionUrl = useMemo(() => {
     if (predicateOrUrl) {
@@ -20,63 +22,106 @@ const useCollection = predicateOrUrl => {
     }
   }, [identity, predicateOrUrl]);
 
-  const fetch = useCallback(async () => {
-    if (!collectionUrl) return;
+  const fetchCollection = useCallback(
+    async ({ pageParam: nextPageUrl }) => {
+      let { json } = await dataProvider.fetch(nextPageUrl || collectionUrl);
+      if (json.totalItems) setTotalItems(json.totalItems);
 
-    setLoading(true);
-
-    const headers = new Headers({ Accept: 'application/ld+json' });
-
-    // Add authorization token if it is set and if the user is on the same server as the collection
-    const identityOrigin = identity.id && new URL(identity.id).origin;
-    const collectionOrigin = new URL(collectionUrl).origin;
-    const token = localStorage.getItem('token');
-    if (identityOrigin === collectionOrigin && token) {
-      headers.set('Authorization', `Bearer ${token}`);
-    }
-
-    fetchUtils
-      .fetchJson(collectionUrl, { headers })
-      .then(({ json }) => {
-        if (json && json.items) {
-          setItems(arrayOf(json.items));
-        } else if (json && json.orderedItems) {
-          setItems(arrayOf(json.orderedItems));
+      if ((json.type === 'OrderedCollection' || json.type === 'Collection') && json.first) {
+        if (json.first?.items) {
+          if (json.first?.items.length === 0 && json.first?.next) {
+            // Special case where the first property is an object without items
+            ({ json } = await dataProvider.fetch(json.first?.next));
+          } else {
+            json = json.first;
+          }
         } else {
-          setItems([]);
+          // Fetch the first page
+          ({ json } = await dataProvider.fetch(json.first));
         }
-        setError(false);
-        setLoaded(true);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError(true);
-        setLoaded(true);
-        setLoading(false);
-      });
-  }, [setItems, setLoaded, setLoading, setError, collectionUrl, identity]);
+      }
+
+      // Force dereference of items
+      if (dereferenceItems) {
+        const itemPredicate = json.items ? 'items' : 'orderedItems';
+        json[itemPredicate] =
+          json[itemPredicate] &&
+          (await Promise.all(
+            arrayOf(json[itemPredicate]).map(async item => {
+              if (typeof item === 'string') {
+                const { json } = await dataProvider.fetch(item);
+                return json;
+              }
+              return item;
+            })
+          ));
+      }
+
+      return json;
+    },
+    [dataProvider, collectionUrl, identity, setTotalItems]
+  );
+
+  const { data, error, fetchNextPage, refetch, hasNextPage, isLoading, isFetching, isFetchingNextPage, status } =
+    useInfiniteQuery(['Collection', { collectionUrl }], fetchCollection, {
+      enabled: !!(collectionUrl && identity?.id),
+      getNextPageParam: lastPage => lastPage.next,
+      getPreviousPageParam: firstPage => firstPage.prev
+    });
 
   useEffect(() => {
-    if (!identityLoading && !loading && !loaded && !error) {
-      fetch();
+    if (data?.pages) {
+      setItems([].concat(...data.pages.map(p => arrayOf(p.orderedItems || p.items))));
     }
-  }, [fetch, identityLoading, loading, loaded, error]);
+  }, [data, setItems]);
 
   const addItem = useCallback(
     item => {
       setItems(oldItems => [...oldItems, item]);
+      // TODO use queryClient.setQueryData to update items directly in react-query cache
+      setTimeout(
+        () =>
+          queryClient.refetchQueries(['Collection', { collectionUrl }], {
+            active: true,
+            exact: true
+          }),
+        2000
+      );
     },
-    [setItems]
+    [setItems, queryClient, collectionUrl]
   );
 
   const removeItem = useCallback(
     itemId => {
       setItems(oldItems => oldItems.filter(item => (typeof item === 'string' ? item !== itemId : item.id !== itemId)));
+      // TODO use queryClient.setQueryData to update items directly in react-query cache
+      setTimeout(
+        () =>
+          queryClient.refetchQueries(['Collection', { collectionUrl }], {
+            active: true,
+            exact: true
+          }),
+        2000
+      );
     },
-    [setItems]
+    [setItems, queryClient, collectionUrl]
   );
 
-  return { items, loading, loaded, error, refetch: fetch, addItem, removeItem, url: collectionUrl };
+  return {
+    items,
+    totalItems,
+    error,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isLoading,
+    isFetching,
+    isFetchingNextPage,
+    status,
+    addItem,
+    removeItem,
+    url: collectionUrl
+  };
 };
 
 export default useCollection;
