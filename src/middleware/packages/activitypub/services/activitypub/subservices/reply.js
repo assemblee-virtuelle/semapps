@@ -54,11 +54,21 @@ const ReplyService = {
           activity
         );
       },
-      async onEmit(ctx, activity, emitterUri) {
-        await this.actions.addReply(
-          { objectUri: activity.object.inReplyTo.id, replyUri: activity.object.id },
-          { parentCtx: ctx }
-        );
+      async onEmit(ctx, activity) {
+        if (this.isLocalObject(activity.object.inReplyTo.id)) {
+          await this.actions.addReply(
+            { objectUri: activity.object.inReplyTo.id, replyUri: activity.object.id },
+            { parentCtx: ctx }
+          );
+        }
+      },
+      async onReceive(ctx, activity) {
+        if (this.isLocalObject(activity.object.inReplyTo.id)) {
+          await this.actions.addReply(
+            { objectUri: activity.object.inReplyTo.id, replyUri: activity.object.id },
+            { parentCtx: ctx }
+          );
+        }
       }
     },
     deleteReply: {
@@ -83,6 +93,11 @@ const ReplyService = {
           { parentCtx: ctx }
         );
       }
+    }
+  },
+  methods: {
+    isLocalObject(uri) {
+      return uri.startsWith(this.settings.baseUri);
     }
   }
 };
