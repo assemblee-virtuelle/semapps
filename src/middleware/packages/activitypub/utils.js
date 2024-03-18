@@ -96,6 +96,8 @@ const waitForResource = async (delayMs, fieldNames, maxTries, callback) => {
   throw new Error('Waiting for resource failed. No results after ' + maxTries + ' tries');
 };
 
+const objectDepth = o => (Object(o) === o ? 1 + Math.max(-1, ...Object.values(o).map(objectDepth)) : 0);
+
 module.exports = {
   objectCurrentToId,
   objectIdToCurrent,
@@ -105,5 +107,6 @@ module.exports = {
   getContainerFromUri,
   delay,
   arrayOf,
-  waitForResource
+  waitForResource,
+  objectDepth
 };

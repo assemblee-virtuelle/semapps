@@ -2,6 +2,7 @@ const constants = require('./constants');
 
 module.exports = {
   ActivityPubService: require('./services/activitypub'),
+  ActivitiesWatcherService: require('./services/activities-watcher'),
   ActivityMappingService: require('./services/activity-mapping'),
   RelayService: require('./services/relay'),
   // Mixins

@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 const N3 = require('n3');
-const { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin } = require('@semapps/activitypub');
+const { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin, matchActivity } = require('@semapps/activitypub');
 const urlJoin = require('url-join');
 
 const { DataFactory } = N3;
@@ -97,7 +97,7 @@ module.exports = {
     offerInference: {
       async match(ctx, activity) {
         return (
-          (await this.matchActivity(
+          (await matchActivity(
             ctx,
             {
               type: ACTIVITY_TYPES.OFFER,
@@ -110,7 +110,7 @@ module.exports = {
             },
             activity
           )) ||
-          (await this.matchActivity(
+          (await matchActivity(
             ctx,
             {
               type: ACTIVITY_TYPES.OFFER,
