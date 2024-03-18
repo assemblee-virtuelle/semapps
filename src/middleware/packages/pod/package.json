@@ -1,12 +1,12 @@
 {
   "name": "@semapps/pod",
-  "version": "0.6.0-alpha.8",
+  "version": "0.6.0-alpha.9",
   "description": "SemApps module to enable a POD provider",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "@semapps/activitypub": "0.6.0-alpha.8",
-    "@semapps/middlewares": "0.6.0-alpha.8",
+    "@semapps/activitypub": "0.6.0-alpha.9",
+    "@semapps/middlewares": "0.6.0-alpha.9",
     "url-join": "^4.0.1"
   },
   "publishConfig": {
