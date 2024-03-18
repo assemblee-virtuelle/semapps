@@ -75,7 +75,8 @@ module.exports = {
           throw new Error(`No username or webId passed to pod.exist action`);
         }
       }
-      return !!this.registeredPods[username];
+
+      return this.registeredPods.includes(username);
     },
     getActor(ctx) {
       return ctx.call('ldp.resource.get', ctx.params);
