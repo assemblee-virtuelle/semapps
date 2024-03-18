@@ -561,7 +561,8 @@ var $3ff23aa25753c478$export$2e2bcd8739ae039 = {
 };
 
 
-const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl)=>{
+const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl, options = {})=>{
+    const { dereferenceItems: dereferenceItems = false } = options;
     const { data: identity } = (0, $583VT$reactadmin.useGetIdentity)();
     const [items, setItems] = (0, $583VT$react.useState)();
     const [totalItems, setTotalItems] = (0, $583VT$react.useState)();
@@ -586,6 +587,17 @@ const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl)=>{
                 else json = json.first;
             } else // Fetch the first page
             ({ json: json } = await dataProvider.fetch(json.first));
+        }
+        // Force dereference of items
+        if (dereferenceItems) {
+            const itemPredicate = json.items ? "items" : "orderedItems";
+            json[itemPredicate] = json[itemPredicate] && await Promise.all((0, $3ff23aa25753c478$export$e57ff0f701c44363)(json[itemPredicate]).map(async (item)=>{
+                if (typeof item === "string") {
+                    const { json: json } = await dataProvider.fetch(item);
+                    return json;
+                }
+                return item;
+            }));
         }
         return json;
     }, [

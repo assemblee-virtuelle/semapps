@@ -539,7 +539,8 @@ var $e4e1b14e0441184d$export$2e2bcd8739ae039 = {
 };
 
 
-const $c1e897431d8c5742$var$useCollection = (predicateOrUrl)=>{
+const $c1e897431d8c5742$var$useCollection = (predicateOrUrl, options = {})=>{
+    const { dereferenceItems: dereferenceItems = false } = options;
     const { data: identity } = (0, $85cNH$useGetIdentity)();
     const [items, setItems] = (0, $85cNH$useState)();
     const [totalItems, setTotalItems] = (0, $85cNH$useState)();
@@ -564,6 +565,17 @@ const $c1e897431d8c5742$var$useCollection = (predicateOrUrl)=>{
                 else json = json.first;
             } else // Fetch the first page
             ({ json: json } = await dataProvider.fetch(json.first));
+        }
+        // Force dereference of items
+        if (dereferenceItems) {
+            const itemPredicate = json.items ? "items" : "orderedItems";
+            json[itemPredicate] = json[itemPredicate] && await Promise.all((0, $e4e1b14e0441184d$export$e57ff0f701c44363)(json[itemPredicate]).map(async (item)=>{
+                if (typeof item === "string") {
+                    const { json: json } = await dataProvider.fetch(item);
+                    return json;
+                }
+                return item;
+            }));
         }
         return json;
     }, [

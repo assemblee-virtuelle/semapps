@@ -60,7 +60,10 @@ export function useOutbox(): {
 declare namespace _default {
   export { arrayOf };
 }
-export function useCollection(predicateOrUrl: any): {
+export function useCollection(
+  predicateOrUrl: any,
+  options?: {}
+): {
   items: undefined;
   totalItems: undefined;
   error: unknown;

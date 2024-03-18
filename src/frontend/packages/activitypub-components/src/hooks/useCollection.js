@@ -3,7 +3,8 @@ import { useGetIdentity, useDataProvider } from 'react-admin';
 import { useInfiniteQuery, useQueryClient } from 'react-query';
 import { arrayOf } from '../utils';
 
-const useCollection = predicateOrUrl => {
+const useCollection = (predicateOrUrl, options = {}) => {
+  const { dereferenceItems = false } = options;
   const { data: identity } = useGetIdentity();
   const [items, setItems] = useState();
   const [totalItems, setTotalItems] = useState();
@@ -38,6 +39,22 @@ const useCollection = predicateOrUrl => {
           // Fetch the first page
           ({ json } = await dataProvider.fetch(json.first));
         }
+      }
+
+      // Force dereference of items
+      if (dereferenceItems) {
+        const itemPredicate = json.items ? 'items' : 'orderedItems';
+        json[itemPredicate] =
+          json[itemPredicate] &&
+          (await Promise.all(
+            arrayOf(json[itemPredicate]).map(async item => {
+              if (typeof item === 'string') {
+                const { json } = await dataProvider.fetch(item);
+                return json;
+              }
+              return item;
+            })
+          ));
       }
 
       return json;
