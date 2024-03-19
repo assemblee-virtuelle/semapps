@@ -25,11 +25,11 @@ module.exports = {
   themeConfig: {
     docs: {
       sidebar: {
-        autoCollapseCategories: true,
-      },
+        autoCollapseCategories: true
+      }
     },
     prism: {
-      theme: require('prism-react-renderer/themes/shadesOfPurple'),
+      theme: require('prism-react-renderer/themes/shadesOfPurple')
     },
     colorMode: {
       defaultMode: 'light',
@@ -44,25 +44,25 @@ module.exports = {
       },
       */
       items: [
-        {to: 'team', label: 'Team', position: 'left'},
-        {to: 'docs/guides/ldp-server', label: 'Guides', position: 'left'},
-        {to: 'docs/middleware', label: 'Middleware', position: 'left'},
-        {to: 'docs/frontend', label: 'Frontend', position: 'left'},
-        {to: 'docs/triplestore', label: 'Triple Store', position: 'left'},
-        {to: 'docs/contribute/code', label: 'How to contribute', position: 'left'},
-        {to: 'blog', label: 'Blog', position: 'left'},
+        { to: 'team', label: 'Team', position: 'left' },
+        { to: 'docs/guides/ldp-server', label: 'Guides', position: 'left' },
+        { to: 'docs/middleware', label: 'Middleware', position: 'left' },
+        { to: 'docs/frontend', label: 'Frontend', position: 'left' },
+        { to: 'docs/triplestore', label: 'Triple Store', position: 'left' },
+        { to: 'docs/contribute/code', label: 'How to contribute', position: 'left' },
+        { to: 'blog', label: 'Blog', position: 'left' },
         {
           href: 'https://github.com/assemblee-virtuelle/semapps',
           label: 'GitHub',
-          position: 'right',
-        },
+          position: 'right'
+        }
         /*
         {
           type: 'localeDropdown',
           position: 'right',
         },
         */
-      ],
+      ]
     },
     footer: {
       links: [
@@ -71,47 +71,47 @@ module.exports = {
           items: [
             {
               label: 'Create your first LDP server',
-              to: 'docs/guides/ldp-server',
+              to: 'docs/guides/ldp-server'
             },
             {
               label: 'Add a Data Management System',
-              to: 'docs/guides/dms',
+              to: 'docs/guides/dms'
             },
             {
               label: 'Create an ActivityPub server',
-              to: 'docs/guides/activitypub',
+              to: 'docs/guides/activitypub'
             }
-          ],
+          ]
         },
         {
           title: 'Community',
           items: [
             {
               label: 'Discourse (French)',
-              href: 'https://forums.assemblee-virtuelle.org/c/projets/semapps/11',
+              href: 'https://forums.assemblee-virtuelle.org/c/projets/semapps/11'
             },
             {
               label: 'Chatroom',
-              href: 'https://chat.lescommuns.org/channel/semapps_dev',
+              href: 'https://chat.lescommuns.org/channel/semapps_dev'
             },
             {
               label: 'Contact',
               href: 'https://chat.lescommuns.org/channel/Semapps_accueil'
             }
-          ],
+          ]
         },
         {
           title: 'Social',
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/assemblee-virtuelle/semapps',
+              href: 'https://github.com/assemblee-virtuelle/semapps'
             }
-          ],
-        },
+          ]
+        }
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Virtual Assembly`,
-    },
+      copyright: `Copyright © ${new Date().getFullYear()} Virtual Assembly`
+    }
   },
   presets: [
     [
@@ -119,14 +119,13 @@ module.exports = {
       {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl:
-            'https://github.com/assemblee-virtuelle/semapps/edit/master/website/',
+          editUrl: 'https://github.com/assemblee-virtuelle/semapps/edit/master/website/'
         },
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
-        },
-      },
-    ],
+          customCss: require.resolve('./src/css/custom.css')
+        }
+      }
+    ]
   ],
-  plugins: ['docusaurus-plugin-sass'],
+  plugins: ['docusaurus-plugin-sass']
 };

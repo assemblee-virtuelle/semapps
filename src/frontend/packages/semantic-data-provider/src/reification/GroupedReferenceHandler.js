@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGetList } from 'react-admin';
+import { useGetList, useRecordContext } from 'react-admin';
 import { default as FilterHandler } from './FilterHandler';
 
 /*
@@ -71,10 +71,8 @@ const GroupedReferenceHandler = ({
   filterProperty,
   ...otherProps
 }) => {
-  const { data } = useGetList({
-    resource: groupReference,
-    payload: {}
-  });
+  const record = useRecordContext();
+  const { data } = useGetList(groupReference);
 
   return (
     <>
@@ -84,7 +82,7 @@ const GroupedReferenceHandler = ({
         return (
           <>
             {groupHeader && groupHeader({ ...otherProps, group: data })}
-            <FilterHandler {...otherProps} filter={filter} label={data[groupLabel]}>
+            <FilterHandler {...otherProps} record={record} filter={filter} label={data[groupLabel]}>
               {children}
             </FilterHandler>
           </>

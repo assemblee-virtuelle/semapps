@@ -1,9 +1,10 @@
 import DataFactory from '@rdfjs/data-model';
-import { Generator as SparqlGenerator } from 'sparqljs';
 import buildBaseQuery from './buildBaseQuery';
 import buildBlankNodesQuery from './buildBlankNodesQuery';
 import buildAutoDetectBlankNodesQuery from './buildAutoDetectBlankNodesQuery';
 import resolvePrefix from './resolvePrefix';
+
+const SparqlGenerator = require('sparqljs').Generator;
 
 const { literal, namedNode, triple, variable } = DataFactory;
 
@@ -51,7 +52,7 @@ const buildSparqlQuery = ({ containers, params, dataModel, ontologies }) => {
     const hasFullTextSearch = filter.q && filter.q.length > 0;
 
     if (hasSPARQLFilter) {
-      /* 
+      /*
         Example of usage :
         {
           "sparqlWhere": {
