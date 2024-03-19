@@ -85,12 +85,9 @@ describe('Resource on server1 is shared with user on server2', () => {
 
       expect(inbox).not.toBeNull();
       expect(inbox.orderedItems[0]).toMatchObject({
-        type: ACTIVITY_TYPES.ANNOUNCE,
+        type: ACTIVITY_TYPES.CREATE,
         actor: relay1,
-        object: {
-          type: ACTIVITY_TYPES.CREATE,
-          object: resourceUri
-        },
+        object: resourceUri,
         to: user2.id
       });
     });
@@ -117,12 +114,9 @@ describe('Resource on server1 is shared with user on server2', () => {
 
       expect(inbox).not.toBeNull();
       expect(inbox.orderedItems[0]).toMatchObject({
-        type: ACTIVITY_TYPES.ANNOUNCE,
+        type: ACTIVITY_TYPES.DELETE,
         actor: relay1,
-        object: {
-          type: ACTIVITY_TYPES.DELETE,
-          object: resourceUri
-        },
+        object: resourceUri,
         to: user2.id
       });
     });
