@@ -1,9 +1,9 @@
 const { isObject } = require('@semapps/ldp');
-const { objectDepth } = require('../utils');
-const matchActivity = require('../utils/matchActivity');
+const { objectDepth } = require('../../../utils');
+const matchActivity = require('../../../utils/matchActivity');
 
 module.exports = {
-  name: 'activities-watcher',
+  name: 'activitypub.activities-watcher',
   async started() {
     this.handlers = [];
   },
