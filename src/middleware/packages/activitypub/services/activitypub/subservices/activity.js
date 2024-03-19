@@ -1,7 +1,7 @@
 const { ControlledContainerMixin } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { Errors: E } = require('moleculer-web');
-const { objectCurrentToId, objectIdToCurrent, defaultToArray } = require('../../../utils');
+const { objectCurrentToId, objectIdToCurrent, arrayOf } = require('../../../utils');
 const { PUBLIC_URI, ACTIVITY_TYPES } = require('../../../constants');
 
 const ActivityService = {
@@ -9,11 +9,9 @@ const ActivityService = {
   mixins: [ControlledContainerMixin],
   settings: {
     baseUri: null,
-    path: '/activities',
+    path: '/as/activity',
     acceptedTypes: Object.values(ACTIVITY_TYPES),
     accept: MIME_TYPES.JSON,
-    jsonContext: null,
-    dereference: ['as:object/as:object'],
     permissions: {},
     newResourcesPermissions: {},
     readOnly: true,
@@ -38,7 +36,7 @@ const ActivityService = {
 
       for (const predicates of ['to', 'bto', 'cc', 'bcc']) {
         if (activity[predicates]) {
-          for (const recipient of defaultToArray(activity[predicates])) {
+          for (const recipient of arrayOf(activity[predicates])) {
             switch (recipient) {
               // Skip public URI
               case PUBLIC_URI:
@@ -55,7 +53,7 @@ const ActivityService = {
                     collectionUri: recipient,
                     webId: activity.actor
                   });
-                  if (collection && collection.items) output.push(...defaultToArray(collection.items));
+                  if (collection && collection.items) output.push(...arrayOf(collection.items));
                 }
                 break;
 
@@ -79,8 +77,8 @@ const ActivityService = {
       const { activity } = ctx.params;
       // We accept all three representations, as required by https://www.w3.org/TR/activitypub/#public-addressing
       const publicRepresentations = [PUBLIC_URI, 'Public', 'as:Public'];
-      return defaultToArray(activity.to)
-        ? defaultToArray(activity.to).some(r => publicRepresentations.includes(r))
+      return arrayOf(activity.to).length > 0
+        ? arrayOf(activity.to).some(r => publicRepresentations.includes(r))
         : false;
     }
   },

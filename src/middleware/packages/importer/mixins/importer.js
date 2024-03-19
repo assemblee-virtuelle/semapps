@@ -3,6 +3,7 @@ const cronParser = require('cron-parser');
 const { promises: fsPromises } = require('fs');
 const { ACTIVITY_TYPES, PUBLIC_URI } = require('@semapps/activitypub');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { isDir } = require('../utils');
 
 module.exports = {
   settings: {
@@ -213,19 +214,24 @@ module.exports = {
                 )
               : {};
 
-          await ctx.call('ldp.resource.put', {
-            resource: {
-              '@id': destUri,
-              ...resource,
-              ...oldDataToKeep,
-              'dc:source': sourceUri,
-              'dc:created': resource['dc:created'] || this.getField('created', data),
-              'dc:modified': resource['dc:modified'] || this.getField('updated', data),
-              'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri
-            },
-            contentType: MIME_TYPES.JSON,
-            webId: 'system'
-          });
+          try {
+            await ctx.call('ldp.resource.put', {
+              resource: {
+                '@id': destUri,
+                ...resource,
+                ...oldDataToKeep,
+                'dc:source': sourceUri,
+                'dc:created': resource['dc:created'] || this.getField('created', data),
+                'dc:modified': resource['dc:modified'] || this.getField('updated', data),
+                'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri
+              },
+              contentType: MIME_TYPES.JSON,
+              webId: 'system'
+            });
+          } catch (e) {
+            this.logger.warn(`Unable to update ${destUri} (Error message: ${e.message})`);
+            return false;
+          }
         } else {
           this.logger.info(`Skipping ${sourceUri} (not changed)...`);
           return true; // True = skipping
@@ -237,19 +243,24 @@ module.exports = {
           throw new Error(`Cannot import as dest.containerUri setting is not defined`);
         }
 
-        destUri = await ctx.call('ldp.container.post', {
-          containerUri: this.settings.dest.containerUri,
-          slug: this.getField('slug', data),
-          resource: {
-            ...resource,
-            'dc:source': sourceUri,
-            'dc:created': resource['dc:created'] || this.getField('created', data),
-            'dc:modified': resource['dc:modified'] || this.getField('updated', data),
-            'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri
-          },
-          contentType: MIME_TYPES.JSON,
-          webId: 'system'
-        });
+        try {
+          destUri = await ctx.call('ldp.container.post', {
+            containerUri: this.settings.dest.containerUri,
+            slug: this.getField('slug', data),
+            resource: {
+              ...resource,
+              'dc:source': sourceUri,
+              'dc:created': resource['dc:created'] || this.getField('created', data),
+              'dc:modified': resource['dc:modified'] || this.getField('updated', data),
+              'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri
+            },
+            contentType: MIME_TYPES.JSON,
+            webId: 'system'
+          });
+        } catch (e) {
+          this.logger.warn(`Unable to import ${sourceUri} (Error message: ${e.message})`);
+          return false;
+        }
 
         this.logger.info(`Done! Resource URL: ${destUri}`);
       }
@@ -305,8 +316,7 @@ module.exports = {
           return await response.json();
         }
         return false;
-      }
-      if (param.startsWith('http')) {
+      } else if (param.startsWith('http')) {
         // Parameter is an URL
         const headers = { ...this.settings.source.headers, ...this.settings.source.fetchOptions.headers };
         const response = await fetch(param, { ...this.settings.source.fetchOptions, headers });
@@ -314,14 +324,34 @@ module.exports = {
           return await response.json();
         }
         return false;
-      }
-      // Parameter is a file
-      try {
-        const file = await fsPromises.readFile(param);
-        return JSON.parse(file.toString());
-      } catch (e) {
-        this.logger.warn(`Could not read file ${param}`);
-        return false;
+      } else if (await isDir(param)) {
+        // Parameter is a directory
+        const filenames = await fsPromises.readdir(param);
+        let files = [];
+        for (const filename of filenames) {
+          try {
+            let content = await fsPromises.readFile(`${param}/${filename}`, { encoding: 'utf-8' });
+            // Parse file if it is JSON
+            try {
+              content = JSON.parse(content);
+            } catch (e) {
+              // Ignore, we will provide the raw content
+            }
+            files.push(content);
+          } catch (e) {
+            this.logger.warn(`Could not read file ${param}/${filename}`);
+          }
+        }
+        return files;
+      } else {
+        // Parameter is a file
+        try {
+          const file = await fsPromises.readFile(param);
+          return JSON.parse(file.toString());
+        } catch (e) {
+          this.logger.warn(`Could not read file ${param}`);
+          return false;
+        }
       }
     },
     async postActivity(type, resourceUri) {

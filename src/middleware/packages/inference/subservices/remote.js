@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 const N3 = require('n3');
-const { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin } = require('@semapps/activitypub');
+const { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin, matchActivity } = require('@semapps/activitypub');
 const urlJoin = require('url-join');
 
 const { DataFactory } = N3;
@@ -66,7 +66,7 @@ module.exports = {
                 if (ctx.params.add) {
                   json[ctx.params.predicate] = { id: ctx.params.object };
                 } else {
-                  const expanded_resource = await ctx.call('jsonld.expand', { input: json });
+                  const expanded_resource = await ctx.call('jsonld.parser.expand', { input: json });
                   delete expanded_resource[0]?.[ctx.params.predicate];
                   json = await ctx.call('jsonld.compact', { input: expanded_resource, context: json['@context'] });
                 }
@@ -97,7 +97,7 @@ module.exports = {
     offerInference: {
       async match(ctx, activity) {
         return (
-          (await this.matchActivity(
+          (await matchActivity(
             ctx,
             {
               type: ACTIVITY_TYPES.OFFER,
@@ -110,7 +110,7 @@ module.exports = {
             },
             activity
           )) ||
-          (await this.matchActivity(
+          (await matchActivity(
             ctx,
             {
               type: ACTIVITY_TYPES.OFFER,
@@ -135,7 +135,7 @@ module.exports = {
             }
 
             // Remove prefix from predicate if it exists
-            relationship.relationship = await ctx.call('jsonld.expandPredicate', {
+            relationship.relationship = await ctx.call('jsonld.parser.expandPredicate', {
               predicate: relationship.relationship,
               context: activity['@context']
             });

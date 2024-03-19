@@ -70,9 +70,10 @@ export const MyEdit = (props) => (
 
 #### Props
 
-| Property     | Type       | Default     | Description                                    |
-|--------------|------------|-------------|------------------------------------------------|
-| `locale`     | `Function` | (English)   | Locale to format the date and time             |
+| Property       | Type       | Default     | Description                                    |
+|----------------|------------|-------------|------------------------------------------------|
+| `locale`       | `Function` | (English)   | Locale to format the date and time             |
+| `translations` | `Function` | (English)   | Locale to format picker translations           |
 
 
 ##### `locale`
@@ -82,4 +83,13 @@ If you want a locale other than english, you can pass the `locale` prop:
 ```jsx
 import frLocale from "date-fns/locale/fr";
 <DateInput source="date" label="Date in French!" locale={frLocale} />
+```
+
+##### `translations`
+
+If you want to translate picker texts other than english, you can pass the `translations` prop:
+
+```jsx
+import { frFR } from "@mui/x-date-pickers/locales";
+<DateInput source="date" label="Texts in French!" translations={frFR} />
 ```

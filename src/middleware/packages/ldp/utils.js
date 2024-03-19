@@ -1,9 +1,4 @@
 const urlJoin = require('url-join');
-const crypto = require('crypto');
-
-function getAclUriFromResourceUri(baseUrl, resourceUri) {
-  return urlJoin(baseUrl, resourceUri.replace(baseUrl, baseUrl.endsWith('/') ? '_acl/' : '_acl'));
-}
 
 const regexPrefix = new RegExp('^@prefix ([\\w-]*: +<.*>) .', 'gm');
 
@@ -21,72 +16,28 @@ const isMirror = (resourceUri, baseUrl) => {
   return !urlJoin(resourceUri, '/').startsWith(baseUrl);
 };
 
-// Transform ['ont:predicate1/ont:predicate2'] to ['ont:predicate1', 'ont:predicate1/ont:predicate2']
-const extractNodes = predicates => {
-  const nodes = [];
-  if (predicates) {
-    for (const predicate of predicates) {
-      if (predicate.includes('/')) {
-        const nodeNames = predicate.split('/');
-        for (let i = 1; i <= nodeNames.length; i++) {
-          nodes.push(nodeNames.slice(0, i).join('/'));
-        }
-      } else {
-        nodes.push(predicate);
-      }
+const buildBlankNodesQuery = depth => {
+  const BASE_QUERY = '?s1 ?p1 ?o1 .';
+  let construct = BASE_QUERY;
+  let where = '';
+  if (depth > 0) {
+    let whereQueries = [];
+    whereQueries.push([BASE_QUERY]);
+    for (let i = 1; i <= depth; i++) {
+      construct += `\r\n?o${i} ?p${i + 1} ?o${i + 1} .`;
+      whereQueries.push([
+        ...whereQueries[whereQueries.length - 1],
+        `FILTER((isBLANK(?o${i}))) .`,
+        `?o${i} ?p${i + 1} ?o${i + 1} .`
+      ]);
     }
+    where = `{\r\n${whereQueries.map(q1 => q1.join('\r\n')).join('\r\n} UNION {\r\n')}\r\n}`;
+  } else if (depth === 0) {
+    where = BASE_QUERY;
+  } else {
+    throw new Error('The depth of buildBlankNodesQuery should be 0 or more');
   }
-  return nodes;
-};
-
-const generateSparqlVarName = node => crypto.createHash('md5').update(node).digest('hex');
-
-const getParentNode = node => node.includes('/') && node.split('/')[0];
-
-const getPredicate = node => (node.includes('/') ? node.split('/')[1] : node);
-
-const buildOptionalQuery = (queries, parentNode = false) =>
-  queries
-    .filter(q => q.parentNode === parentNode)
-    .map(
-      q => `
-      OPTIONAL { 
-        ${q.query}
-        ${q.filter}
-        ${buildOptionalQuery(queries, q.node)}
-      }
-    `
-    )
-    .join('\n');
-
-const buildDereferenceQuery = predicates => {
-  const queries = [];
-  const nodes = extractNodes(predicates);
-
-  if (nodes && nodes.length) {
-    for (const node of nodes) {
-      const parentNode = getParentNode(node);
-      const predicate = getPredicate(node);
-      const varName = generateSparqlVarName(node);
-      const parentVarName = parentNode ? generateSparqlVarName(parentNode) : '1';
-
-      queries.push({
-        node,
-        parentNode,
-        query: `?s${parentVarName} ${predicate} ?s${varName} .\n?s${varName} ?p${varName} ?o${varName} .`,
-        filter: `FILTER(isBLANK(?s${varName})) .`
-      });
-    }
-
-    return {
-      construct: queries.map(q => q.query).join('\n'),
-      where: buildOptionalQuery(queries)
-    };
-  }
-  return {
-    construct: '',
-    where: ''
-  };
+  return { construct, where };
 };
 
 const buildFiltersQuery = filters => {
@@ -109,40 +60,37 @@ const buildFiltersQuery = filters => {
   return { where };
 };
 
-const getPrefixRdf = ontologies => {
-  return ontologies.map(ontology => `PREFIX ${ontology.prefix}: <${ontology.url}>`).join('\n');
-};
+const isURL = value => (typeof value === 'string' || value instanceof String) && value.startsWith('http');
 
-const getPrefixJSON = ontologies => {
-  const pattern = {};
-  ontologies.forEach(ontology => (pattern[ontology.prefix] = ontology.url));
-  return pattern;
-};
-
-// Replace a full URI with a prefix
-const usePrefix = (uri, ontologies) => {
-  if (!uri.startsWith('http')) return uri; // If it is already prefixed
-  const ontology = ontologies.find(o => uri.startsWith(o.url));
-  return uri.replace(ontology.url, `${ontology.prefix}:`);
-};
-
-// Replace a full URI with a prefix
-const useFullURI = (prefixedUri, ontologies) => {
-  if (prefixedUri.startsWith('http')) return prefixedUri; // If it is already a full URI
-  const [prefix] = prefixedUri.split(':');
-  const ontology = ontologies.find(o => o.prefix === prefix);
-  return prefixedUri.replace(`${ontology.prefix}:`, ontology.url);
-};
+const isObject = value => typeof value === 'object' && !Array.isArray(value) && value !== null;
 
 const getSlugFromUri = uri => uri.match(new RegExp(`.*/(.*)`))[1];
 
+/** @deprecated Use the ldp.resource.getContainers action instead */
 const getContainerFromUri = uri => uri.match(new RegExp(`(.*)/.*`))[1];
+
+const getParentContainerUri = uri => uri.match(new RegExp(`(.*)/.*`))[1];
+
+const getParentContainerPath = path => path.match(new RegExp(`(.*)/.*`))[1];
+
+const getPathFromUri = uri => {
+  try {
+    const urlObject = new URL(uri);
+    return urlObject.pathname;
+  } catch (e) {
+    return false;
+  }
+};
 
 // Transforms "http://localhost:3000/dataset/data" to "dataset"
 const getDatasetFromUri = uri => {
-  const path = new URL(uri).pathname;
-  const parts = path.split('/');
-  if (parts.length > 1) return parts[1];
+  const path = getPathFromUri(uri);
+  if (path) {
+    const parts = path.split('/');
+    if (parts.length > 1) return parts[1];
+  } else {
+    throw new Error(`${uri} is not a valid URL`);
+  }
 };
 
 const hasType = (resource, type) => {
@@ -156,23 +104,73 @@ const defaultToArray = value => (!value ? undefined : Array.isArray(value) ? val
 
 const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
+// Remove undefined values from object
+const cleanUndefined = obj =>
+  Object.keys(obj).reduce((acc, key) => (obj[key] === undefined ? acc : { ...acc, [key]: obj[key] }), {});
+
+const parseJson = json => {
+  try {
+    if (json) {
+      return JSON.parse(json);
+    }
+  } catch (e) {
+    // Ignore parse error. Assume it is a simple string.
+  }
+  return json;
+};
+
+const arrayOf = value => {
+  // If the field is null-ish, we suppose there are no values.
+  if (!value) {
+    return [];
+  }
+  // Return as is.
+  if (Array.isArray(value)) {
+    return value;
+  }
+  // Single value is made an array.
+  return [value];
+};
+
+/**
+ * Call a callback and expect the result object to have all properties in `fieldNames`.
+ * If not, try again after `delayMs` until `maxTries` is reached.
+ * If `fieldNames` is `undefined`, the return value of `callback` is expected to not be
+ * `undefined`.
+ * @type {import("./utilTypes").waitForResource}
+ */
+const waitForResource = async (delayMs, fieldNames, maxTries, callback) => {
+  for (let i = 0; i < maxTries; i += 1) {
+    const result = await callback();
+    // If a result (and the expected field, if required) is present, return.
+    if (result !== undefined && arrayOf(fieldNames).every(fieldName => Object.keys(result).includes(fieldName))) {
+      return result;
+    }
+    await delay(delayMs);
+  }
+  throw new Error(`Waiting for resource failed. No results after ${maxTries} tries`);
+};
+
 module.exports = {
-  buildDereferenceQuery,
+  buildBlankNodesQuery,
   buildFiltersQuery,
-  getPrefixRdf,
-  getPrefixJSON,
-  usePrefix,
-  useFullURI,
+  isURL,
+  isObject,
   getSlugFromUri,
   getContainerFromUri,
+  getParentContainerUri,
+  getParentContainerPath,
   getDatasetFromUri,
   hasType,
   isContainer,
   defaultToArray,
   delay,
-  getAclUriFromResourceUri,
+  cleanUndefined,
+  parseJson,
   isMirror,
   createFragmentURL,
   regexPrefix,
-  regexProtocolAndHostAndPort
+  regexProtocolAndHostAndPort,
+  waitForResource,
+  arrayOf
 };

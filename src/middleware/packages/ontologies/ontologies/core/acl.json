@@ -1,0 +1,25 @@
+{
+  "prefix": "acl",
+  "namespace": "http://www.w3.org/ns/auth/acl#",
+  "jsonldContext": {
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "acl:accessTo": {
+      "@type": "@id"
+    },
+    "acl:agent": {
+      "@type": "@id"
+    },
+    "acl:agentGroup": {
+      "@type": "@id"
+    },
+    "acl:agentClass": {
+      "@type": "@id"
+    },
+    "acl:default": {
+      "@type": "@id"
+    },
+    "acl:mode": {
+      "@type": "@id"
+    }
+  }
+}

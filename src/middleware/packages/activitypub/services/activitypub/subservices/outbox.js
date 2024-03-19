@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 const ControlledCollectionMixin = require('../../../mixins/controlled-collection');
-const { collectionPermissionsWithAnonRead, getSlugFromUri, delay, objectIdToCurrent } = require('../../../utils');
+const { collectionPermissionsWithAnonRead, getSlugFromUri, objectIdToCurrent } = require('../../../utils');
 const { ACTOR_TYPES } = require('../../../constants');
 
 const OutboxService = {
@@ -31,8 +31,10 @@ const OutboxService = {
         throw new MoleculerError(`Collection not found:${collectionUri}`, 404, 'NOT_FOUND');
       }
 
-      // Ensure logged user is posting to his own outbox
       const actorUri = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'outbox' });
+      if (!actorUri) throw new MoleculerError('The collection is not a valid ActivityPub outbox', 400);
+
+      // Ensure logged user is posting to his own outbox
       if (ctx.meta.webId && ctx.meta.webId !== 'system' && actorUri !== ctx.meta.webId) {
         throw new MoleculerError(
           `Forbidden to post to the outbox ${collectionUri} (webId ${ctx.meta.webId})`,
@@ -46,12 +48,14 @@ const OutboxService = {
       }
 
       if (!activity['@context']) {
-        activity['@context'] = this.settings.jsonContext;
+        activity['@context'] = await ctx.call('jsonld.context.get');
       }
 
-      // Process object create, update or delete
-      // and return an activity with the object ID
-      activity = await ctx.call('activitypub.object.process', { activity, actorUri });
+      if (!ctx.meta.doNotProcessObject) {
+        // Process object create, update or delete
+        // and return an activity with the object ID
+        activity = await ctx.call('activitypub.object.process', { activity, actorUri });
+      }
 
       if (!activity.actor) {
         activity.actor = actorUri;
@@ -86,7 +90,16 @@ const OutboxService = {
       // Post to remote recipients
       for (const recipientUri of recipients) {
         if (this.isLocalActor(recipientUri)) {
-          localRecipients.push(recipientUri);
+          if (this.settings.podProvider) {
+            const podExist = await this.broker.call('pod.exist', { webId: recipientUri });
+            if (podExist) {
+              localRecipients.push(recipientUri);
+            } else {
+              this.logger.warn(`No local Pod found with webId ${recipientUri}`);
+            }
+          } else {
+            localRecipients.push(recipientUri);
+          }
         } else {
           // If the QueueService mixin is available, use it
           if (this.createJob) {
@@ -121,7 +134,6 @@ const OutboxService = {
 
       ctx.meta.$statusCode = 201;
 
-      // TODO do not return activity when calling through API calls
       return activity;
     }
   },
@@ -136,6 +148,11 @@ const OutboxService = {
       for (const recipientUri of recipients) {
         try {
           const dataset = this.settings.podProvider ? getSlugFromUri(recipientUri) : undefined;
+
+          if (this.settings.podProvider) {
+            const podExist = await this.broker.call('pod.exist', { username: dataset });
+            if (!podExist) throw new Error(`No Pod found with username ${dataset}`);
+          }
 
           const recipientInbox = await this.broker.call(
             'activitypub.actor.getCollectionUri',
@@ -225,9 +242,10 @@ const OutboxService = {
 
         if (response.ok) {
           return true;
+        } else {
+          this.logger.warn(`Error when posting activity to remote actor ${recipientUri}: ${response.statusText}`);
+          return false;
         }
-        this.logger.warn(`Error when posting activity to remote actor ${recipientUri}: ${response.statusText}`);
-        return false;
       } catch (e) {
         console.error(e);
         this.logger.warn(`Error when posting activity to remote actor ${recipientUri}: ${e.message}`);

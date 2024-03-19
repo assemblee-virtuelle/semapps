@@ -9,6 +9,8 @@ import LoginForm from './LoginForm';
 import NewPasswordForm from './NewPasswordForm';
 import ResetPasswordForm from './ResetPasswordForm';
 import SimpleBox from './SimpleBox';
+import { defaultScorer } from '../../passwordScorer';
+import getSearchParamsRest from './getSearchParamsRest';
 
 const useStyles = makeStyles(() => ({
   switch: {
@@ -19,7 +21,26 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const LocalLoginPage = ({ hasSignup }) => {
+/**
+ * @param {object} props Props
+ * @param {boolean} props.hasSignup If to show signup form.
+ * @param {boolean} props.allowUsername Indicates, if login is allowed with username (instead of email).
+ * @param {string} props.postSignupRedirect Location to redirect to after signup.
+ * @param {string} props.postLoginRedirect Location to redirect to after login.
+ * @param {object} props.additionalSignupValues
+ * @param {object} props.passwordScorer Scorer to evaluate and indicate password strength.
+ *  Set to `null` or `false`, if you don't want password strength checks. Default is
+ *  passwordStrength's `defaultScorer`.
+ * @returns
+ */
+const LocalLoginPage = ({
+  hasSignup,
+  allowUsername,
+  postSignupRedirect,
+  postLoginRedirect,
+  additionalSignupValues,
+  passwordScorer = defaultScorer
+}) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const translate = useTranslate();
@@ -33,14 +54,15 @@ const LocalLoginPage = ({ hasSignup }) => {
 
   useEffect(() => {
     if (!isLoading && identity?.id) {
-      // Already authenticated, redirect to the home page
-      if (redirectTo && redirectTo.startsWith('http')) {
+      if (postLoginRedirect) {
+        navigate(`${postLoginRedirect}?${getSearchParamsRest(searchParams)}`);
+      } else if (redirectTo && redirectTo.startsWith('http')) {
         window.location.href = redirectTo;
       } else {
         navigate(redirectTo || '/');
       }
     }
-  }, [identity, isLoading, navigate, redirectTo]);
+  }, [identity, isLoading, navigate, searchParams, redirectTo, postLoginRedirect]);
 
   const [title, text] = useMemo(() => {
     if (isSignup) {
@@ -62,13 +84,20 @@ const LocalLoginPage = ({ hasSignup }) => {
   return (
     <SimpleBox title={translate(title)} text={translate(text)} icon={<LockIcon />}>
       <Card>
-        {isSignup && <SignupForm redirectTo={redirectTo} delayBeforeRedirect={3000} />}
+        {isSignup && (
+          <SignupForm
+            delayBeforeRedirect={4000}
+            postSignupRedirect={postSignupRedirect}
+            additionalSignupValues={additionalSignupValues}
+            passwordScorer={passwordScorer}
+          />
+        )}
         {isResetPassword && <ResetPasswordForm />}
-        {isNewPassword && <NewPasswordForm redirectTo={redirectTo} />}
-        {isLogin && <LoginForm redirectTo={redirectTo} />}
+        {isNewPassword && <NewPasswordForm redirectTo={redirectTo} passwordScorer={passwordScorer} />}
+        {isLogin && <LoginForm postLoginRedirect={postLoginRedirect} allowUsername={allowUsername} />}
         <div className={classes.switch}>
           {isSignup && (
-            <Link to="/login">
+            <Link to={`/login?${getSearchParamsRest(searchParams)}`}>
               <Typography variant="body2">{translate('auth.action.login')}</Typography>
             </Link>
           )}
@@ -76,13 +105,13 @@ const LocalLoginPage = ({ hasSignup }) => {
             <>
               {hasSignup && (
                 <div>
-                  <Link to="/login?signup=true">
+                  <Link to={`/login?signup=true&${getSearchParamsRest(searchParams)}`}>
                     <Typography variant="body2">{translate('auth.action.signup')}</Typography>
                   </Link>
                 </div>
               )}
               <div>
-                <Link to={`/login?reset_password=true&${searchParams.toString()}`}>
+                <Link to={`/login?reset_password=true&${getSearchParamsRest(searchParams)}`}>
                   <Typography variant="body2">{translate('auth.action.reset_password')}</Typography>
                 </Link>
               </div>
@@ -95,7 +124,9 @@ const LocalLoginPage = ({ hasSignup }) => {
 };
 
 LocalLoginPage.defaultProps = {
-  hasSignup: true
+  hasSignup: true,
+  allowUsername: false,
+  additionalSignupValues: {}
 };
 
 export default LocalLoginPage;

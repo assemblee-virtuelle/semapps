@@ -1,5 +1,7 @@
+/* eslint-disable class-methods-use-this */
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { ObjectID } = require('bson');
+const { v4: uuidv4 } = require('uuid');
+const { frame } = require('jsonld');
 
 class TripleStoreAdapter {
   constructor({ type, dataset, baseUri, ontology = 'http://semapps.org/ns/core#' }) {
@@ -15,7 +17,7 @@ class TripleStoreAdapter {
   }
 
   async connect() {
-    await this.broker.waitForServices(['triplestore', 'jsonld'], 120000);
+    await this.broker.waitForServices(['triplestore'], 120000);
 
     await this.broker.call('triplestore.dataset.create', {
       dataset: this.dataset,
@@ -62,11 +64,8 @@ class TripleStoreAdapter {
         dataset: this.dataset
       })
       .then(result => {
-        return this.broker.call('jsonld.frame', {
-          input: result,
-          frame: {
-            '@context': { '@vocab': this.ontology }
-          }
+        return frame(result, {
+          '@context': { '@vocab': this.ontology }
         });
       })
       .then(result => {
@@ -106,12 +105,9 @@ class TripleStoreAdapter {
         dataset: this.dataset
       })
       .then(result => {
-        return this.broker.call('jsonld.frame', {
-          input: result,
-          frame: {
-            '@context': { '@vocab': this.ontology },
-            '@id': _id
-          }
+        return frame(result, {
+          '@context': { '@vocab': this.ontology },
+          '@id': _id
         });
       });
   }
@@ -140,7 +136,12 @@ class TripleStoreAdapter {
    */
   insert(entity) {
     const { slug, ...resource } = entity;
-    resource['@id'] = this.baseUri + (slug || new ObjectID().toString());
+    resource['@id'] = this.baseUri + (slug || uuidv4());
+
+    // Ensure no predicates include an ontology
+    const keyWithOntology = Object.keys(resource).find(key => key.includes(':'));
+    if (keyWithOntology)
+      throw new Error(`Cannot create a ${this.type} with key ${keyWithOntology} (no ontology allowed)`);
 
     return this.broker
       .call('triplestore.insert', {

@@ -10,7 +10,10 @@ const RESOURCE_CONTAINERS_QUERY = resource => `SELECT ?container
 
 const getSlugFromUri = str => str.match(new RegExp(`.*/(.*)`))[1];
 
-const getContainerFromUri = str => str.match(new RegExp(`(.*)/.*`))[1];
+const hasType = (resource, type) => {
+  const resourceType = resource.type || resource['@type'];
+  return Array.isArray(resourceType) ? resourceType.includes(type) : resourceType === type;
+};
 
 // Transforms "http://localhost:3000/dataset/data" to "dataset"
 const getDatasetFromUri = uri => {
@@ -303,7 +306,7 @@ const isRemoteUri = (uri, dataset, { baseUrl, podProvider }) => {
 
 module.exports = {
   getSlugFromUri,
-  getContainerFromUri,
+  hasType,
   getDatasetFromUri,
   getAuthorizationNode,
   checkAgentPresent,

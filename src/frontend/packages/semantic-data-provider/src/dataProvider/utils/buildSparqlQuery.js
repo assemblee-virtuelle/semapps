@@ -1,6 +1,7 @@
 import DataFactory from '@rdfjs/data-model';
 import buildBaseQuery from './buildBaseQuery';
 import buildBlankNodesQuery from './buildBlankNodesQuery';
+import buildAutoDetectBlankNodesQuery from './buildAutoDetectBlankNodesQuery';
 import resolvePrefix from './resolvePrefix';
 
 const SparqlGenerator = require('sparqljs').Generator;
@@ -11,9 +12,13 @@ const generator = new SparqlGenerator({
   /* prefixes, baseIRI, factory, sparqlStar */
 });
 
-const reservedFilterKeys = ['q', 'sparqlWhere', 'blankNodes', '_servers', '_predicates'];
+const reservedFilterKeys = ['q', 'sparqlWhere', 'blankNodes', 'blankNodesDepth', '_servers', '_predicates'];
 
-const buildSparqlQuery = ({ containers, params: { filter }, blankNodes, predicates, ontologies }) => {
+const buildSparqlQuery = ({ containers, params, dataModel, ontologies }) => {
+  const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes;
+  const predicates = params.filter?._predicates || dataModel.list?.predicates;
+  const blankNodesDepth = params.filter?.blankNodesDepth ?? dataModel.list?.blankNodesDepth ?? 2;
+  const filter = { ...dataModel.list?.filter, ...params.filter };
   const baseQuery = buildBaseQuery(predicates, ontologies);
 
   const sparqlJsParams = {
@@ -21,13 +26,13 @@ const buildSparqlQuery = ({ containers, params: { filter }, blankNodes, predicat
     template: baseQuery.construct,
     where: [],
     type: 'query',
-    prefixes: Object.fromEntries(ontologies.map((ontology) => [ontology.prefix, ontology.url])),
+    prefixes: Object.fromEntries(ontologies.map(ontology => [ontology.prefix, ontology.url]))
   };
 
   const containerWhere = [
     {
       type: 'values',
-      values: containers.map((containerUri) => ({ '?containerUri': namedNode(containerUri) })),
+      values: containers.map(containerUri => ({ '?containerUri': namedNode(containerUri) }))
     },
     triple(variable('containerUri'), namedNode('http://www.w3.org/ns/ldp#contains'), variable('s1')),
     {
@@ -35,9 +40,9 @@ const buildSparqlQuery = ({ containers, params: { filter }, blankNodes, predicat
       expression: {
         type: 'operation',
         operator: 'isiri',
-        args: [variable('s1')],
-      },
-    },
+        args: [variable('s1')]
+      }
+    }
   ];
 
   let resourceWhere = [];
@@ -61,7 +66,7 @@ const buildSparqlQuery = ({ containers, params: { filter }, blankNodes, predicat
         }
       */
       // initialize array in case of single value :
-      [].concat(filter.sparqlWhere).forEach((sw) => {
+      [].concat(filter.sparqlWhere).forEach(sw => {
         resourceWhere.push(sw);
       });
     }
@@ -80,8 +85,8 @@ const buildSparqlQuery = ({ containers, params: { filter }, blankNodes, predicat
                 expression: {
                   type: 'operation',
                   operator: 'isliteral',
-                  args: [variable('o1')],
-                },
+                  args: [variable('o1')]
+                }
               },
               {
                 type: 'filter',
@@ -96,18 +101,18 @@ const buildSparqlQuery = ({ containers, params: { filter }, blankNodes, predicat
                         {
                           type: 'operation',
                           operator: 'str',
-                          args: [variable('o1')],
-                        },
-                      ],
+                          args: [variable('o1')]
+                        }
+                      ]
                     },
-                    literal(filter.q.toLowerCase(), '', namedNode('http://www.w3.org/2001/XMLSchema#string')),
-                  ],
-                },
-              },
+                    literal(filter.q.toLowerCase(), '', namedNode('http://www.w3.org/2001/XMLSchema#string'))
+                  ]
+                }
+              }
             ],
-            type: 'query',
-          },
-        ],
+            type: 'query'
+          }
+        ]
       });
     }
 
@@ -120,15 +125,18 @@ const buildSparqlQuery = ({ containers, params: { filter }, blankNodes, predicat
           triple(
             variable('s1'),
             namedNode(resolvePrefix(predicate, ontologies)),
-            namedNode(resolvePrefix(object, ontologies)),
-          ),
+            namedNode(resolvePrefix(object, ontologies))
+          )
         );
       }
     });
   }
 
   // Blank nodes
-  const blankNodesQuery = buildBlankNodesQuery(blankNodes, baseQuery, ontologies);
+  const blankNodesQuery = blankNodes
+    ? buildBlankNodesQuery(blankNodes, baseQuery, ontologies)
+    : buildAutoDetectBlankNodesQuery(blankNodesDepth, baseQuery);
+
   if (blankNodesQuery && blankNodesQuery.construct) {
     resourceWhere = resourceWhere.concat(blankNodesQuery.where);
     sparqlJsParams.template = sparqlJsParams.template.concat(blankNodesQuery.construct);
@@ -144,9 +152,9 @@ const buildSparqlQuery = ({ containers, params: { filter }, blankNodes, predicat
         {
           type: 'graph',
           name: namedNode('http://semapps.org/mirror'),
-          patterns: containerWhere,
-        },
-      ],
+          patterns: containerWhere
+        }
+      ]
     },
     {
       type: 'union',
@@ -155,10 +163,10 @@ const buildSparqlQuery = ({ containers, params: { filter }, blankNodes, predicat
         {
           type: 'graph',
           name: namedNode('http://semapps.org/mirror'),
-          patterns: resourceWhere,
-        },
-      ],
-    },
+          patterns: resourceWhere
+        }
+      ]
+    }
   );
 
   return generator.stringify(sparqlJsParams);

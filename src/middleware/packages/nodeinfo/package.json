@@ -1,0 +1,16 @@
+{
+  "name": "@semapps/nodeinfo",
+  "version": "0.6.0-alpha.9",
+  "description": "Nodeinfo extension for SemApps",
+  "license": "Apache-2.0",
+  "author": "Virtual Assembly",
+  "dependencies": {
+    "url-join": "^4.0.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=14"
+  }
+}

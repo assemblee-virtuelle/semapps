@@ -5,15 +5,19 @@ title: Auth
 This service allows you to authenticate users with an OIDC or CAS server, or with a local account.
 
 ## Features
+
 - Handle OIDC, CAS or local authentication in a single package
 - Integrate easily with Moleculer's ApiGateway
 
 ## Dependencies
+
 - [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
 - [WebIdService](webid.md)
 
 ## Sub-services
+
 - AuthAccountService
+- AuthCapabilitiesService
 - AuthJWTService
 - AuthMailService
 
@@ -34,7 +38,7 @@ const path = require('path');
 module.exports = {
   mixins: [AuthLocalService],
   settings: {
-    baseUrl: "http://localhost:3000",
+    baseUrl: 'http://localhost:3000',
     // Path where the JWT keypair will be saved
     jwtPath: path.resolve(__dirname, '../jwt'),
     // Usernames you don't want users to signup with
@@ -45,6 +49,8 @@ module.exports = {
     registrationAllowed: true,
     // Dataset where the account data will be stored (email, hashed password...)
     accountsDataset: 'settings',
+    // If true, a capabilities service is created and capabilities auth is enabled
+    podProvider: false
   }
 };
 ```
@@ -59,15 +65,15 @@ module.exports = {
   mixins: [AuthOIDCService],
   settings: {
     // See above for the descriptions
-    baseUrl: "http://localhost:3000",
+    baseUrl: 'http://localhost:3000',
     jwtPath: path.resolve(__dirname, '../jwt'),
     reservedUsernames: [],
     webIdSelection: [],
     registrationAllowed: true,
     // OIDC-specific settings
-    issuer: "https://myissuer.com/auth/realms/master",
-    clientId: "myClientId",
-    clientSecret: "myClientSecret",
+    issuer: 'https://myissuer.com/auth/realms/master',
+    clientId: 'myClientId',
+    clientSecret: 'myClientSecret',
     // Return data for the creation of the webId profile (FOAF Person).
     // Available fields: uuid, nick, name, familyName, email, homepage
     selectSsoData: authData => ({
@@ -77,6 +83,8 @@ module.exports = {
     }),
     // Dataset where the account data will be stored (email)
     accountsDataset: 'settings',
+    // If true, a capabilities service is created and capabilities auth is enabled
+    podProvider: false
   }
 };
 ```
@@ -91,13 +99,13 @@ module.exports = {
   mixins: [AuthCasService],
   settings: {
     // See above for the descriptions
-    baseUrl: "http://localhost:3000",
+    baseUrl: 'http://localhost:3000',
     jwtPath: path.resolve(__dirname, '../jwt'),
     reservedUsernames: [],
     webIdSelection: [],
     registrationAllowed: true,
     // CAS-specific settings
-    casUrl: "https://my-cas-server.com/cas",
+    casUrl: 'https://my-cas-server.com/cas',
     // Return data for the creation of the webId profile (FOAF Person).
     // Available fields: uuid, nick, name, familyName, email, homepage
     selectSsoData: authData => ({
@@ -107,6 +115,8 @@ module.exports = {
     }),
     // Dataset where the account data will be stored (email)
     accountsDataset: 'settings',
+    // If true, a capabilities service is created and capabilities auth is enabled
+    podProvider: false
   }
 };
 ```
@@ -128,7 +138,7 @@ module.exports = {
       return ctx.call('auth.authorize', { route, req, res });
     }
   }
-}
+};
 ```
 
 For more information, please see the official Moleculer documentation about [authorization](https://moleculer.services/docs/0.14/moleculer-web.html#Authorization) and [authentication](https://moleculer.services/docs/0.14/moleculer-web.html#Authentication).
@@ -144,12 +154,12 @@ http://localhost:3000/auth/?redirectUrl=...
 After login, the user will be redirected to the provided `redirectUrl`, and to this URL will be added the JWT token as a query string. You should store it and remove it like this:
 
 ```js
-  const url = new URL(window.location);
-  if (url.searchParams.has('token')) {
-    localStorage.setItem('token', url.searchParams.get('token'));
-    url.searchParams.delete('token');
-    window.location.href = url.toString();
-  }
+const url = new URL(window.location);
+if (url.searchParams.has('token')) {
+  localStorage.setItem('token', url.searchParams.get('token'));
+  url.searchParams.delete('token');
+  window.location.href = url.toString();
+}
 ```
 
 ## Client logout
@@ -162,7 +172,7 @@ If you wish to logout the user remotely (on the SSO), you can do:
 
 http://localhost:3000/auth/logout?global=true&redirectUrl...
 
-## Actions 
+## Actions
 
 The following service actions are available:
 
@@ -171,11 +181,13 @@ The following service actions are available:
 Generate a JWT token for a given user.
 
 ##### Parameters
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `webId` | `String`| **required** | URI of the user to impersonate |
+
+| Property | Type     | Default      | Description                    |
+| -------- | -------- | ------------ | ------------------------------ |
+| `webId`  | `String` | **required** | URI of the user to impersonate |
 
 ##### Return
+
 A JWT token you can use in your app.
 
 ## Events
@@ -185,8 +197,9 @@ A JWT token you can use in your app.
 Sent when a new user registers.
 
 ##### Payload
+
 | Property      | Type     | Description     |
-|---------------|----------|-----------------|
+| ------------- | -------- | --------------- |
 | `webId`       | `String` | URI of the user |
 | `profileData` | `Object` | User's data     |
 
@@ -195,6 +208,7 @@ Sent when a new user registers.
 Sent when an user logins.
 
 ##### Payload
+
 | Property | Type     | Description     |
-|----------|----------|-----------------|
+| -------- | -------- | --------------- |
 | `webId`  | `String` | URI of the user |

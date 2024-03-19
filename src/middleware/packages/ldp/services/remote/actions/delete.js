@@ -17,31 +17,41 @@ module.exports = {
     }
 
     const graphName = await this.actions.getGraph({ resourceUri }, { parentCtx: ctx });
+    if (graphName === false) throw new Error(`No graph found with resource ${resourceUri} (webId: ${webId})`);
 
-    if (graphName !== false) {
-      await ctx.call('triplestore.update', {
-        query: `
-          DELETE
-          WHERE { 
-            ${graphName ? `GRAPH <${graphName}> {` : ''}
-              <${resourceUri}> ?p1 ?o1 .
-            ${graphName ? '}' : ''}
-          }
-        `,
-        webId: 'system'
-      });
+    const oldData = await this.actions.getStored({ resourceUri, webId }, { parentCtx: ctx });
 
-      // Detach from all containers with the mirrored resource
-      const containers = await ctx.call('ldp.resource.getContainers', { resourceUri });
-      for (const containerUri of containers) {
-        await ctx.call('ldp.container.detach', { containerUri, resourceUri, webId: 'system' });
-      }
+    await ctx.call('triplestore.update', {
+      query: `
+        DELETE
+        WHERE { 
+          ${graphName ? `GRAPH <${graphName}> {` : ''}
+            <${resourceUri}> ?p1 ?o1 .
+          ${graphName ? '}' : ''}
+        }
+      `,
+      webId: 'system'
+    });
 
-      ctx.call('triplestore.deleteOrphanBlankNodes', {
-        graphName
-      });
-
-      ctx.emit('ldp.remote.deleted', { resourceUri, webId }, { meta: { webId: null } });
+    // Detach from all containers with the mirrored resource
+    const containers = await ctx.call('ldp.resource.getContainers', { resourceUri });
+    for (const containerUri of containers) {
+      await ctx.call('ldp.container.detach', { containerUri, resourceUri, webId: 'system' });
     }
+
+    ctx.call('triplestore.deleteOrphanBlankNodes', {
+      graphName
+    });
+
+    const returnValues = {
+      resourceUri,
+      oldData,
+      webId,
+      dataset: ctx.meta.dataset
+    };
+
+    ctx.emit('ldp.remote.deleted', returnValues, { meta: { webId: null, dataset: null } });
+
+    return returnValues;
   }
 };

@@ -1,43 +1,65 @@
 const { ServiceBroker } = require('moleculer');
+const fs = require('fs');
+const urlJoin = require('url-join');
+const { join: pathJoin } = require('path');
 const { CoreService } = require('@semapps/core');
-const { WebAclMiddleware } = require('@semapps/webacl');
+const { pair, petr } = require('@semapps/ontologies');
+const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
 const { AuthLocalService } = require('@semapps/auth');
 const { WebIdService } = require('@semapps/webid');
 const path = require('path');
-const { getPrefixJSON } = require('@semapps/ldp');
-const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
-const ontologies = require('../ontologies');
+const { clearDataset } = require('../utils');
+
+// Give write permission on all containers to anonymous users
+const permissions = {
+  anon: {
+    read: true,
+    write: true
+  }
+};
 
 const containers = [
   {
     path: '/resources',
-    dereference: ['pair:hasLocation', 'pair:hasTopic', 'petr:openingTimesDay']
+    permissions
   },
   {
     path: '/resources2',
-    dereference: ['pair:hasLocation/pair:hasPostalAddress', 'pair:hasTopic', 'petr:openingTimesDay']
+    permissions
   },
   {
     path: '/organizations',
-    dereference: ['pair:hasLocation/pair:hasPostalAddress'],
-    disassembly: [{ path: 'pair:hasLocation', container: `${CONFIG.HOME_URL}places` }]
+    permissions
   },
   {
-    path: '/places'
+    path: '/places',
+    permissions
   },
   {
-    path: '/themes'
+    path: '/themes',
+    permissions
+  },
+  {
+    path: '/files',
+    permissions
   }
 ];
 
 const initialize = async () => {
+  await clearDataset(CONFIG.MAIN_DATASET);
+
+  const uploadsPath = pathJoin(__dirname, '../uploads');
+  if (fs.existsSync(uploadsPath)) {
+    fs.readdirSync(uploadsPath).forEach(f => fs.rmSync(`${uploadsPath}/${f}`, { recursive: true, force: true }));
+  }
+
   const broker = new ServiceBroker({
-    middlewares: [EventsWatcher, WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
+    middlewares: [CacherMiddleware(CONFIG.ACTIVATE_CACHE), WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
     logger: {
       type: 'Console',
       options: {
-        level: 'error'
+        level: 'warn'
       }
     }
   });
@@ -52,9 +74,8 @@ const initialize = async () => {
         password: CONFIG.JENA_PASSWORD,
         mainDataset: CONFIG.MAIN_DATASET
       },
-      ontologies,
-      jsonContext: getPrefixJSON(ontologies),
       containers,
+      ontologies: [pair, petr],
       activitypub: false,
       mirror: false,
       void: false,
@@ -72,65 +93,11 @@ const initialize = async () => {
 
   await broker.createService(WebIdService, {
     settings: {
-      usersContainer: `${CONFIG.HOME_URL}users`
+      usersContainer: urlJoin(CONFIG.HOME_URL, 'users')
     }
   });
 
-  // Drop all existing triples, then restart broker so that default containers are recreated
   await broker.start();
-  await broker.call('triplestore.dropAll', { webId: 'system' });
-  await broker.stop();
-  await broker.start();
-
-  // setting some write permission on the container for anonymous user, which is the one that will be used in the tests.
-  await broker.call('webacl.resource.addRights', {
-    webId: 'system',
-    resourceUri: `${CONFIG.HOME_URL}resources`,
-    additionalRights: {
-      anon: {
-        write: true
-      }
-    }
-  });
-  await broker.call('webacl.resource.addRights', {
-    webId: 'system',
-    resourceUri: `${CONFIG.HOME_URL}resources2`,
-    additionalRights: {
-      anon: {
-        write: true
-      }
-    }
-  });
-
-  await broker.call('webacl.resource.addRights', {
-    webId: 'system',
-    resourceUri: `${CONFIG.HOME_URL}organizations`,
-    additionalRights: {
-      anon: {
-        write: true
-      }
-    }
-  });
-
-  await broker.call('webacl.resource.addRights', {
-    webId: 'system',
-    resourceUri: `${CONFIG.HOME_URL}places`,
-    additionalRights: {
-      anon: {
-        write: true
-      }
-    }
-  });
-
-  await broker.call('webacl.resource.addRights', {
-    webId: 'system',
-    resourceUri: `${CONFIG.HOME_URL}themes`,
-    additionalRights: {
-      anon: {
-        write: true
-      }
-    }
-  });
 
   return broker;
 };

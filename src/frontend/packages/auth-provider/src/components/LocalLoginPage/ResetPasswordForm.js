@@ -22,7 +22,7 @@ const ResetPasswordForm = () => {
       .resetPassword({ ...values })
       .then(res => {
         setLoading(false);
-        notify('auth.notification.reset_password_submitted', 'info');
+        notify('auth.notification.reset_password_submitted', { type: 'info' });
       })
       .catch(error => {
         setLoading(false);
@@ -30,8 +30,8 @@ const ResetPasswordForm = () => {
           typeof error === 'string'
             ? error
             : typeof error === 'undefined' || !error.message
-            ? 'auth.notification.reset_password_error'
-            : error.message,
+              ? 'auth.notification.reset_password_error'
+              : error.message,
           {
             type: 'warning',
             messageArgs: {

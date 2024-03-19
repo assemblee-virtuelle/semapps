@@ -9,6 +9,7 @@ module.exports = {
   ControlledCollectionMixin: require('./mixins/controlled-collection'),
   ActivitiesHandlerMixin: require('./mixins/activities-handler'),
   // Misc.
+  matchActivity: require('./utils/matchActivity'),
   containers: require('./containers'),
   ...constants
 };

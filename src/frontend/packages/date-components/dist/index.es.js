@@ -1,2 +1,223 @@
-import e,{useCallback as t,useMemo as r}from"react";import{useInput as n,FieldTitle as o,InputHelperText as a,useListContext as i,useCreatePath as l}from"react-admin";import{LocalizationProvider as u}from"@mui/x-date-pickers/LocalizationProvider";import{AdapterDateFns as c}from"@mui/x-date-pickers/AdapterDateFns";import{DatePicker as p}from"@mui/x-date-pickers/DatePicker";import{TimePicker as f}from"@mui/x-date-pickers/TimePicker";import{DateTimePicker as m}from"@mui/x-date-pickers/DateTimePicker";import s from"@fullcalendar/react";import d from"@fullcalendar/daygrid";import{useTheme as y}from"@mui/material";import g from"@mui/styles/makeStyles";import{useSearchParams as b,useNavigate as v}from"react-router-dom";import h from"@fullcalendar/list";function O(e,t){var r=Object.keys(e);if(Object.getOwnPropertySymbols){var n=Object.getOwnPropertySymbols(e);t&&(n=n.filter((function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable}))),r.push.apply(r,n)}return r}function w(e){for(var t=1;t<arguments.length;t++){var r=null!=arguments[t]?arguments[t]:{};t%2?O(Object(r),!0).forEach((function(t){k(e,t,r[t])})):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(r)):O(Object(r)).forEach((function(t){Object.defineProperty(e,t,Object.getOwnPropertyDescriptor(r,t))}))}return e}function k(e,t,r){return t in e?Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}):e[t]=r,e}function P(){return(P=Object.assign?Object.assign.bind():function(e){for(var t=1;t<arguments.length;t++){var r=arguments[t];for(var n in r)Object.prototype.hasOwnProperty.call(r,n)&&(e[n]=r[n])}return e}).apply(this,arguments)}function C(e,t){if(null==e)return{};var r,n,o=function(e,t){if(null==e)return{};var r,n,o={},a=Object.keys(e);for(n=0;n<a.length;n++)r=a[n],t.indexOf(r)>=0||(o[r]=e[r]);return o}(e,t);if(Object.getOwnPropertySymbols){var a=Object.getOwnPropertySymbols(e);for(n=0;n<a.length;n++)r=a[n],t.indexOf(r)>=0||Object.prototype.propertyIsEnumerable.call(e,r)&&(o[r]=e[r])}return o}function S(e,t){return function(e){if(Array.isArray(e))return e}(e)||function(e,t){var r=null==e?null:"undefined"!=typeof Symbol&&e[Symbol.iterator]||e["@@iterator"];if(null==r)return;var n,o,a=[],i=!0,l=!1;try{for(r=r.call(e);!(i=(n=r.next()).done)&&(a.push(n.value),!t||a.length!==t);i=!0);}catch(e){l=!0,o=e}finally{try{i||null==r.return||r.return()}finally{if(l)throw o}}return a}(e,t)||function(e,t){if(!e)return;if("string"==typeof e)return j(e,t);var r=Object.prototype.toString.call(e).slice(8,-1);"Object"===r&&e.constructor&&(r=e.constructor.name);if("Map"===r||"Set"===r)return Array.from(e);if("Arguments"===r||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r))return j(e,t)}(e,t)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function j(e,t){(null==t||t>e.length)&&(t=e.length);for(var r=0,n=new Array(t);r<t;r++)n[r]=e[r];return n}var D=function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:2;return function(t){return("0".repeat(e)+t).slice(-e)}},T=D(4),x=D(2),E=/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/,V=function(e){if(!(e instanceof Date)||isNaN(e.getDate()))return"";var t=T(e.getFullYear()),r=x(e.getMonth()+1),n=x(e.getDate()),o=x(e.getHours()),a=x(e.getMinutes());return"".concat(t,"-").concat(r,"-").concat(n,"T").concat(o,":").concat(a)},F=function(e){return null==e||""===e?"":e instanceof Date?V(e):E.test(e)?e:V(new Date(e))},A=function(e){return e?new Date(e):""},I=["PickerComponent","format","label","source","helperText","onBlur","onChange","onFocus","parse","validate","defaultValue","locale","pickerVariant","stringFormat","allowClear"],B=["allowEmpty","alwaysOn","component","defaultValue","format","formClassName","initialValue","initializeForm","input","isRequired","label","limitChoicesToValue","locale","meta","options","optionText","optionValue","parse","source","textAlign","translate","translateChoice","labelTime"],M=function(r){var i=r.PickerComponent,l=r.format,p=void 0===l?F:l,f=r.label,m=r.source,s=r.helperText,d=r.onBlur,y=r.onChange,g=r.onFocus,b=r.parse,v=void 0===b?A:b,h=r.validate;r.defaultValue;var O=r.locale;r.pickerVariant;var k=r.stringFormat,S=void 0===k?"ISO":k;r.allowClear;var j=C(r,I),D=n(w({format:p,onBlur:d,onChange:y,onFocus:g,parse:v,source:m,validate:h},j)),T=D.field,x=D.isRequired,E=D.fieldState,V=E.error,B=E.isTouched,M=t((function(e){Date.parse(e)?T.onChange("ISO"===S?e.toISOString():e.toString()):T.onChange(null)}),[]);return e.createElement(u,{dateAdapter:c,adapterLocale:O},e.createElement(i,P({label:e.createElement(o,{label:f,source:m,isRequired:x}),error:!(!B||!V),slotProps:{textField:{helperText:e.createElement(a,{touched:B,error:V,helperText:s})}}},R(j),{value:T.value?new Date(T.value):null,onChange:M,onBlur:function(){return T.onBlur(T.value?"ISO"===S?new Date(T.value).toISOString():new Date(T.value).toString():null)}})))};M.defaultProps={isRequired:!1,meta:{isTouched:!1,error:!1},locale:void 0,parse:function(e){return""===e?null:e}};var R=function(e){return e.allowEmpty,e.alwaysOn,e.component,e.defaultValue,e.format,e.formClassName,e.initialValue,e.initializeForm,e.input,e.isRequired,e.label,e.limitChoicesToValue,e.locale,e.meta,e.options,e.optionText,e.optionValue,e.parse,e.source,e.textAlign,e.translate,e.translateChoice,e.labelTime,C(e,B)},q=function(e){var n=e.label,o=e.startDate,a=e.endDate,u=e.linkType,c=i(),p=c.data,f=c.isLoading,m=c.resource,s=S(b(),2);s[0];var d=s[1],y=v(),g=l(),h=new URLSearchParams(location.search),O=t((function(e){var t=e.event;e.jsEvent.preventDefault(),y(t.url)}),[]),k=t((function(e){var t=e.view;d((function(e){return w(w({},e),{},{month:t.currentStart.getMonth()+1,year:t.currentStart.getFullYear()})}))}),[d]),P=r((function(){return!f&&p.filter((function(e){return e})).map((function(e){return{id:e.id,title:"string"==typeof n?e[n]:n(e),start:"string"==typeof o?e[o]:o(e),end:"string"==typeof a?e[a]:a(e),url:g({resource:m,id:e.id,type:u})}}))}),[f,p,m,g]);return{initialDate:h.has("month")?new Date(h.get("year"),h.get("month")-1):new Date,events:P,datesSet:k,eventClick:O}},L=g((function(e){return{"@global":{".fc-button":{backgroundColor:e.palette.primary.main+" !important",border:"none !important",opacity:"1 !important"},".fc-day-today":{backgroundColor:e.palette.secondary.light+" !important"},"a.fc-daygrid-dot-event":{color:"black !important"}}}})),N=function(t){var r=y(),n=q(t);return L(),e.createElement(s,P({plugins:[d],locale:t.locale,initialView:"dayGridMonth",eventBackgroundColor:r.palette.primary.main},n))};N.defaultProps={linkType:"edit"};var z=g((function(e){return{"@global":{".fc-button":{backgroundColor:e.palette.primary.main+" !important",border:"none !important",opacity:"1 !important"}}}})),U=function(t){var r=q(t);return z(),e.createElement(s,P({plugins:[h],locale:t.locale,initialView:"listMonth"},r))};U.defaultProps={linkType:"edit"};var Y=function(t){return e.createElement(M,P({PickerComponent:p},t))},$=function(t){return e.createElement(M,P({PickerComponent:f},t))},G=function(t){return e.createElement(M,P({PickerComponent:m},t))};export{N as CalendarList,Y as DateInput,G as DateTimeInput,U as DaysList,$ as TimeInput,q as useFullCalendarProps};
+import {jsx as $5Ihaz$jsx, jsxs as $5Ihaz$jsxs} from "react/jsx-runtime";
+import {DatePicker as $5Ihaz$DatePicker} from "@mui/x-date-pickers/DatePicker";
+import {TimePicker as $5Ihaz$TimePicker} from "@mui/x-date-pickers/TimePicker";
+import {DateTimePicker as $5Ihaz$DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
+import {useCallback as $5Ihaz$useCallback, useMemo as $5Ihaz$useMemo} from "react";
+import {useInput as $5Ihaz$useInput, useTranslateLabel as $5Ihaz$useTranslateLabel, InputHelperText as $5Ihaz$InputHelperText, useListContext as $5Ihaz$useListContext, useCreatePath as $5Ihaz$useCreatePath} from "react-admin";
+import {LocalizationProvider as $5Ihaz$LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
+import {AdapterDateFns as $5Ihaz$AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
+import $5Ihaz$fullcalendarreact from "@fullcalendar/react";
+import $5Ihaz$fullcalendardaygrid from "@fullcalendar/daygrid";
+import {useTheme as $5Ihaz$useTheme} from "@mui/material";
+import $5Ihaz$muistylesmakeStyles from "@mui/styles/makeStyles";
+import {useSearchParams as $5Ihaz$useSearchParams, useNavigate as $5Ihaz$useNavigate} from "react-router-dom";
+import $5Ihaz$fullcalendarlist from "@fullcalendar/list";
+
+/* eslint-disable react/react-in-jsx-scope */ /* eslint-disable react/jsx-props-no-spreading */ 
+
+
+
+/* eslint-disable react/react-in-jsx-scope */ /* eslint-disable react/require-default-props */ 
+
+
+
+
+const $610808f89222f9cc$var$Picker = ({ PickerComponent: PickerComponent, label: label, source: source, helperText: helperText, fullWidth: fullWidth, onBlur: onBlur, onChange: onChange, format: format, parse: parse, validate: validate, defaultValue: defaultValue, locale: locale, translations: translations, stringFormat: stringFormat = "ISO", ...rest })=>{
+    const { field: field, isRequired: isRequired, fieldState: { error: error, isTouched: isTouched, invalid: invalid }, formState: { isSubmitted: isSubmitted } } = (0, $5Ihaz$useInput)({
+        format: format,
+        onBlur: onBlur,
+        onChange: onChange,
+        parse: parse,
+        source: source,
+        validate: validate,
+        defaultValue: defaultValue
+    });
+    const handleChange = (0, $5Ihaz$useCallback)((value)=>{
+        if (value instanceof Date) field.onChange(stringFormat === "ISO" ? value.toISOString() : value.toString());
+        else field.onChange(null);
+    }, [
+        field,
+        stringFormat
+    ]);
+    const translateLabel = (0, $5Ihaz$useTranslateLabel)();
+    const translatedLabel = /*#__PURE__*/ (0, $5Ihaz$jsxs)("span", {
+        children: [
+            translateLabel({
+                label: label,
+                source: source
+            }),
+            isRequired && /*#__PURE__*/ (0, $5Ihaz$jsx)("span", {
+                "aria-hidden": "true",
+                children: "\u2009*"
+            })
+        ]
+    });
+    return /*#__PURE__*/ (0, $5Ihaz$jsx)((0, $5Ihaz$LocalizationProvider), {
+        dateAdapter: (0, $5Ihaz$AdapterDateFns),
+        adapterLocale: locale,
+        localeText: translations?.components.MuiLocalizationProvider.defaultProps.localeText,
+        children: /*#__PURE__*/ (0, $5Ihaz$jsx)(PickerComponent, {
+            label: translatedLabel,
+            slotProps: {
+                textField: {
+                    error: (isTouched || isSubmitted) && invalid,
+                    size: "small",
+                    fullWidth: fullWidth,
+                    helperText: /*#__PURE__*/ (0, $5Ihaz$jsx)((0, $5Ihaz$InputHelperText), {
+                        touched: isTouched || isSubmitted,
+                        error: error?.message,
+                        helperText: helperText
+                    })
+                }
+            },
+            value: field.value ? new Date(field.value) : null,
+            onChange: handleChange,
+            ...rest
+        })
+    });
+};
+var $610808f89222f9cc$export$2e2bcd8739ae039 = $610808f89222f9cc$var$Picker;
+
+
+
+
+
+
+
+
+
+
+
+const $37245c02f9b1b006$var$useFullCalendarProps = ({ label: label, startDate: startDate, endDate: endDate, linkType: linkType })=>{
+    const { data: data, isLoading: isLoading, resource: resource } = (0, $5Ihaz$useListContext)();
+    const [searchParams, setSearchParams] = (0, $5Ihaz$useSearchParams)();
+    const navigate = (0, $5Ihaz$useNavigate)();
+    const createPath = (0, $5Ihaz$useCreatePath)();
+    const query = new URLSearchParams(location.search);
+    // Bypass the link in order to use React-Router
+    const eventClick = (0, $5Ihaz$useCallback)(({ event: event, jsEvent: jsEvent })=>{
+        jsEvent.preventDefault();
+        navigate(event.url);
+    }, []);
+    // Change the query string when month change
+    const datesSet = (0, $5Ihaz$useCallback)(({ view: view })=>{
+        setSearchParams((params)=>({
+                ...params,
+                month: view.currentStart.getMonth() + 1,
+                year: view.currentStart.getFullYear()
+            }));
+    }, [
+        setSearchParams
+    ]);
+    const events = (0, $5Ihaz$useMemo)(()=>!isLoading && data.filter((record)=>record).map((record)=>({
+                id: record.id,
+                title: typeof label === "string" ? record[label] : label(record),
+                start: typeof startDate === "string" ? record[startDate] : startDate(record),
+                end: typeof endDate === "string" ? record[endDate] : endDate(record),
+                url: createPath({
+                    resource: resource,
+                    id: record.id,
+                    type: linkType
+                })
+            })), [
+        isLoading,
+        data,
+        resource,
+        createPath
+    ]);
+    return {
+        initialDate: query.has("month") ? new Date(query.get("year"), query.get("month") - 1) : new Date(),
+        events: events,
+        datesSet: datesSet,
+        eventClick: eventClick
+    };
+};
+var $37245c02f9b1b006$export$2e2bcd8739ae039 = $37245c02f9b1b006$var$useFullCalendarProps;
+
+
+const $abbcc02f55461290$var$useGlobalStyles = (0, $5Ihaz$muistylesmakeStyles)((theme)=>({
+        "@global": {
+            ".fc-button": {
+                backgroundColor: `${theme.palette.primary.main} !important`,
+                border: "none !important",
+                opacity: "1 !important"
+            },
+            ".fc-day-today": {
+                backgroundColor: `${theme.palette.secondary.light} !important`
+            },
+            // Overwrite violet color of links
+            "a.fc-daygrid-dot-event": {
+                color: "black !important"
+            }
+        }
+    }));
+const $abbcc02f55461290$var$CalendarList = (props)=>{
+    const theme = (0, $5Ihaz$useTheme)();
+    const fullCalendarProps = (0, $37245c02f9b1b006$export$2e2bcd8739ae039)(props);
+    $abbcc02f55461290$var$useGlobalStyles();
+    return /*#__PURE__*/ (0, $5Ihaz$jsx)((0, $5Ihaz$fullcalendarreact), {
+        plugins: [
+            (0, $5Ihaz$fullcalendardaygrid)
+        ],
+        locale: props.locale,
+        initialView: "dayGridMonth",
+        eventBackgroundColor: theme.palette.primary.main,
+        ...fullCalendarProps
+    });
+};
+$abbcc02f55461290$var$CalendarList.defaultProps = {
+    linkType: "edit"
+};
+var $abbcc02f55461290$export$2e2bcd8739ae039 = $abbcc02f55461290$var$CalendarList;
+
+
+
+
+
+
+
+
+const $69d9f850452774a2$var$useGlobalStyles = (0, $5Ihaz$muistylesmakeStyles)((theme)=>({
+        "@global": {
+            ".fc-button": {
+                backgroundColor: `${theme.palette.primary.main} !important`,
+                border: "none !important",
+                opacity: "1 !important"
+            }
+        }
+    }));
+const $69d9f850452774a2$var$DaysList = (props)=>{
+    const fullCalendarProps = (0, $37245c02f9b1b006$export$2e2bcd8739ae039)(props);
+    $69d9f850452774a2$var$useGlobalStyles();
+    return /*#__PURE__*/ (0, $5Ihaz$jsx)((0, $5Ihaz$fullcalendarreact), {
+        plugins: [
+            (0, $5Ihaz$fullcalendarlist)
+        ],
+        locale: props.locale,
+        initialView: "listMonth",
+        ...fullCalendarProps
+    });
+};
+$69d9f850452774a2$var$DaysList.defaultProps = {
+    linkType: "edit"
+};
+var $69d9f850452774a2$export$2e2bcd8739ae039 = $69d9f850452774a2$var$DaysList;
+
+
+
+const $582746363a8b71b9$export$7edc06cf1783b30f = (props)=>/*#__PURE__*/ (0, $5Ihaz$jsx)((0, $610808f89222f9cc$export$2e2bcd8739ae039), {
+        PickerComponent: (0, $5Ihaz$DatePicker),
+        ...props
+    });
+const $582746363a8b71b9$export$a1af6f79df847fac = (props)=>/*#__PURE__*/ (0, $5Ihaz$jsx)((0, $610808f89222f9cc$export$2e2bcd8739ae039), {
+        PickerComponent: (0, $5Ihaz$TimePicker),
+        ...props
+    });
+const $582746363a8b71b9$export$183478aa40b5df1 = (props)=>/*#__PURE__*/ (0, $5Ihaz$jsx)((0, $610808f89222f9cc$export$2e2bcd8739ae039), {
+        PickerComponent: (0, $5Ihaz$DateTimePicker),
+        ...props
+    });
+
+
+export {$582746363a8b71b9$export$7edc06cf1783b30f as DateInput, $582746363a8b71b9$export$a1af6f79df847fac as TimeInput, $582746363a8b71b9$export$183478aa40b5df1 as DateTimeInput, $abbcc02f55461290$export$2e2bcd8739ae039 as CalendarList, $69d9f850452774a2$export$2e2bcd8739ae039 as DaysList, $37245c02f9b1b006$export$2e2bcd8739ae039 as useFullCalendarProps};
 //# sourceMappingURL=index.es.js.map

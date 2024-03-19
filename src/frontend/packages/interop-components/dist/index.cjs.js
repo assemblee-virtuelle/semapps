@@ -1,4 +1,559 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});var e=require("react"),t=require("react-admin"),r=require("@mui/material"),n=require("@mui/styles/makeStyles"),o=require("@mui/material/Autocomplete"),i=require("@mui/icons-material/Language"),a=require("@mui/icons-material/Add"),u=require("react-hook-form"),c=require("@semapps/semantic-data-provider"),l=require("@semapps/input-components"),s=require("@mui/icons-material/StarBorder");function f(e){return e&&"object"==typeof e&&"default"in e?e:{default:e}}var p=f(e),h=f(n),d=f(o),m=f(i),v=f(a),y=f(s);function g(e,t){var r=Object.keys(e);if(Object.getOwnPropertySymbols){var n=Object.getOwnPropertySymbols(e);t&&(n=n.filter((function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable}))),r.push.apply(r,n)}return r}function x(e){for(var t=1;t<arguments.length;t++){var r=null!=arguments[t]?arguments[t]:{};t%2?g(Object(r),!0).forEach((function(t){O(e,t,r[t])})):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(r)):g(Object(r)).forEach((function(t){Object.defineProperty(e,t,Object.getOwnPropertyDescriptor(r,t))}))}return e}function b(){
-/*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
-b=function(){return e};var e={},t=Object.prototype,r=t.hasOwnProperty,n="function"==typeof Symbol?Symbol:{},o=n.iterator||"@@iterator",i=n.asyncIterator||"@@asyncIterator",a=n.toStringTag||"@@toStringTag";function u(e,t,r){return Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}),e[t]}try{u({},"")}catch(e){u=function(e,t,r){return e[t]=r}}function c(e,t,r,n){var o=t&&t.prototype instanceof f?t:f,i=Object.create(o.prototype),a=new j(n||[]);return i._invoke=function(e,t,r){var n="suspendedStart";return function(o,i){if("executing"===n)throw new Error("Generator is already running");if("completed"===n){if("throw"===o)throw i;return S()}for(r.method=o,r.arg=i;;){var a=r.delegate;if(a){var u=w(a,r);if(u){if(u===s)continue;return u}}if("next"===r.method)r.sent=r._sent=r.arg;else if("throw"===r.method){if("suspendedStart"===n)throw n="completed",r.arg;r.dispatchException(r.arg)}else"return"===r.method&&r.abrupt("return",r.arg);n="executing";var c=l(e,t,r);if("normal"===c.type){if(n=r.done?"completed":"suspendedYield",c.arg===s)continue;return{value:c.arg,done:r.done}}"throw"===c.type&&(n="completed",r.method="throw",r.arg=c.arg)}}}(e,r,a),i}function l(e,t,r){try{return{type:"normal",arg:e.call(t,r)}}catch(e){return{type:"throw",arg:e}}}e.wrap=c;var s={};function f(){}function p(){}function h(){}var d={};u(d,o,(function(){return this}));var m=Object.getPrototypeOf,v=m&&m(m(k([])));v&&v!==t&&r.call(v,o)&&(d=v);var y=h.prototype=f.prototype=Object.create(d);function g(e){["next","throw","return"].forEach((function(t){u(e,t,(function(e){return this._invoke(t,e)}))}))}function x(e,t){var n;this._invoke=function(o,i){function a(){return new t((function(n,a){!function n(o,i,a,u){var c=l(e[o],e,i);if("throw"!==c.type){var s=c.arg,f=s.value;return f&&"object"==typeof f&&r.call(f,"__await")?t.resolve(f.__await).then((function(e){n("next",e,a,u)}),(function(e){n("throw",e,a,u)})):t.resolve(f).then((function(e){s.value=e,a(s)}),(function(e){return n("throw",e,a,u)}))}u(c.arg)}(o,i,n,a)}))}return n=n?n.then(a,a):a()}}function w(e,t){var r=e.iterator[t.method];if(void 0===r){if(t.delegate=null,"throw"===t.method){if(e.iterator.return&&(t.method="return",t.arg=void 0,w(e,t),"throw"===t.method))return s;t.method="throw",t.arg=new TypeError("The iterator does not provide a 'throw' method")}return s}var n=l(r,e.iterator,t.arg);if("throw"===n.type)return t.method="throw",t.arg=n.arg,t.delegate=null,s;var o=n.arg;return o?o.done?(t[e.resultName]=o.value,t.next=e.nextLoc,"return"!==t.method&&(t.method="next",t.arg=void 0),t.delegate=null,s):o:(t.method="throw",t.arg=new TypeError("iterator result is not an object"),t.delegate=null,s)}function E(e){var t={tryLoc:e[0]};1 in e&&(t.catchLoc=e[1]),2 in e&&(t.finallyLoc=e[2],t.afterLoc=e[3]),this.tryEntries.push(t)}function O(e){var t=e.completion||{};t.type="normal",delete t.arg,e.completion=t}function j(e){this.tryEntries=[{tryLoc:"root"}],e.forEach(E,this),this.reset(!0)}function k(e){if(e){var t=e[o];if(t)return t.call(e);if("function"==typeof e.next)return e;if(!isNaN(e.length)){var n=-1,i=function t(){for(;++n<e.length;)if(r.call(e,n))return t.value=e[n],t.done=!1,t;return t.value=void 0,t.done=!0,t};return i.next=i}}return{next:S}}function S(){return{value:void 0,done:!0}}return p.prototype=h,u(y,"constructor",h),u(h,"constructor",p),p.displayName=u(h,a,"GeneratorFunction"),e.isGeneratorFunction=function(e){var t="function"==typeof e&&e.constructor;return!!t&&(t===p||"GeneratorFunction"===(t.displayName||t.name))},e.mark=function(e){return Object.setPrototypeOf?Object.setPrototypeOf(e,h):(e.__proto__=h,u(e,a,"GeneratorFunction")),e.prototype=Object.create(y),e},e.awrap=function(e){return{__await:e}},g(x.prototype),u(x.prototype,i,(function(){return this})),e.AsyncIterator=x,e.async=function(t,r,n,o,i){void 0===i&&(i=Promise);var a=new x(c(t,r,n,o),i);return e.isGeneratorFunction(r)?a:a.next().then((function(e){return e.done?e.value:a.next()}))},g(y),u(y,a,"Generator"),u(y,o,(function(){return this})),u(y,"toString",(function(){return"[object Generator]"})),e.keys=function(e){var t=[];for(var r in e)t.push(r);return t.reverse(),function r(){for(;t.length;){var n=t.pop();if(n in e)return r.value=n,r.done=!1,r}return r.done=!0,r}},e.values=k,j.prototype={constructor:j,reset:function(e){if(this.prev=0,this.next=0,this.sent=this._sent=void 0,this.done=!1,this.delegate=null,this.method="next",this.arg=void 0,this.tryEntries.forEach(O),!e)for(var t in this)"t"===t.charAt(0)&&r.call(this,t)&&!isNaN(+t.slice(1))&&(this[t]=void 0)},stop:function(){this.done=!0;var e=this.tryEntries[0].completion;if("throw"===e.type)throw e.arg;return this.rval},dispatchException:function(e){if(this.done)throw e;var t=this;function n(r,n){return a.type="throw",a.arg=e,t.next=r,n&&(t.method="next",t.arg=void 0),!!n}for(var o=this.tryEntries.length-1;o>=0;--o){var i=this.tryEntries[o],a=i.completion;if("root"===i.tryLoc)return n("end");if(i.tryLoc<=this.prev){var u=r.call(i,"catchLoc"),c=r.call(i,"finallyLoc");if(u&&c){if(this.prev<i.catchLoc)return n(i.catchLoc,!0);if(this.prev<i.finallyLoc)return n(i.finallyLoc)}else if(u){if(this.prev<i.catchLoc)return n(i.catchLoc,!0)}else{if(!c)throw new Error("try statement without catch or finally");if(this.prev<i.finallyLoc)return n(i.finallyLoc)}}}},abrupt:function(e,t){for(var n=this.tryEntries.length-1;n>=0;--n){var o=this.tryEntries[n];if(o.tryLoc<=this.prev&&r.call(o,"finallyLoc")&&this.prev<o.finallyLoc){var i=o;break}}i&&("break"===e||"continue"===e)&&i.tryLoc<=t&&t<=i.finallyLoc&&(i=null);var a=i?i.completion:{};return a.type=e,a.arg=t,i?(this.method="next",this.next=i.finallyLoc,s):this.complete(a)},complete:function(e,t){if("throw"===e.type)throw e.arg;return"break"===e.type||"continue"===e.type?this.next=e.arg:"return"===e.type?(this.rval=this.arg=e.arg,this.method="return",this.next="end"):"normal"===e.type&&t&&(this.next=t),s},finish:function(e){for(var t=this.tryEntries.length-1;t>=0;--t){var r=this.tryEntries[t];if(r.finallyLoc===e)return this.complete(r.completion,r.afterLoc),O(r),s}},catch:function(e){for(var t=this.tryEntries.length-1;t>=0;--t){var r=this.tryEntries[t];if(r.tryLoc===e){var n=r.completion;if("throw"===n.type){var o=n.arg;O(r)}return o}}throw new Error("illegal catch attempt")},delegateYield:function(e,t,r){return this.delegate={iterator:k(e),resultName:t,nextLoc:r},"next"===this.method&&(this.arg=void 0),s}},e}function w(e,t,r,n,o,i,a){try{var u=e[i](a),c=u.value}catch(e){return void r(e)}u.done?t(c):Promise.resolve(c).then(n,o)}function E(e){return function(){var t=this,r=arguments;return new Promise((function(n,o){var i=e.apply(t,r);function a(e){w(i,n,o,a,u,"next",e)}function u(e){w(i,n,o,a,u,"throw",e)}a(void 0)}))}}function O(e,t,r){return t in e?Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}):e[t]=r,e}function j(){return(j=Object.assign?Object.assign.bind():function(e){for(var t=1;t<arguments.length;t++){var r=arguments[t];for(var n in r)Object.prototype.hasOwnProperty.call(r,n)&&(e[n]=r[n])}return e}).apply(this,arguments)}function k(e,t){if(null==e)return{};var r,n,o=function(e,t){if(null==e)return{};var r,n,o={},i=Object.keys(e);for(n=0;n<i.length;n++)r=i[n],t.indexOf(r)>=0||(o[r]=e[r]);return o}(e,t);if(Object.getOwnPropertySymbols){var i=Object.getOwnPropertySymbols(e);for(n=0;n<i.length;n++)r=i[n],t.indexOf(r)>=0||Object.prototype.propertyIsEnumerable.call(e,r)&&(o[r]=e[r])}return o}function S(e,t){return function(e){if(Array.isArray(e))return e}(e)||function(e,t){var r=null==e?null:"undefined"!=typeof Symbol&&e[Symbol.iterator]||e["@@iterator"];if(null==r)return;var n,o,i=[],a=!0,u=!1;try{for(r=r.call(e);!(a=(n=r.next()).done)&&(i.push(n.value),!t||i.length!==t);a=!0);}catch(e){u=!0,o=e}finally{try{a||null==r.return||r.return()}finally{if(u)throw o}}return i}(e,t)||C(e,t)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function A(e){return function(e){if(Array.isArray(e))return T(e)}(e)||function(e){if("undefined"!=typeof Symbol&&null!=e[Symbol.iterator]||null!=e["@@iterator"])return Array.from(e)}(e)||C(e)||function(){throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function C(e,t){if(e){if("string"==typeof e)return T(e,t);var r=Object.prototype.toString.call(e).slice(8,-1);return"Object"===r&&e.constructor&&(r=e.constructor.name),"Map"===r||"Set"===r?Array.from(e):"Arguments"===r||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r)?T(e,t):void 0}}function T(e,t){(null==t||t>e.length)&&(t=e.length);for(var r=0,n=new Array(t);r<t;r++)n[r]=e[r];return n}var I="undefined"!=typeof globalThis?globalThis:"undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:{};function L(e,t){return e(t={exports:{}},t.exports),t.exports}var P=L((function(e,t){var r,n;e.exports=(r={772:(e,t,r)=>{const n=r(826).remove,o=/[.*+?^${}()|[\]\\]/g,i=/[a-z0-9_]/i,a=/\s+/;e.exports=function(e,t,r){var u,c;c={insideWords:!1,findAllOccurrences:!1,requireMatchAll:!1},u=(u=r)||{},Object.keys(u).forEach(e=>{c[e]=!!u[e]}),r=c;const l=Array.from(e).map(e=>n(e));let s=l.join("");return(t=n(t)).trim().split(a).filter(e=>e.length>0).reduce((e,t)=>{const n=t.length,a=!r.insideWords&&i.test(t[0])?"\\b":"",u=new RegExp(a+t.replace(o,"\\$&"),"i");let c,f;if(c=u.exec(s),r.requireMatchAll&&null===c)return s="",[];for(;c;){f=c.index;const t=n-l.slice(f,f+n).join("").length,o=f-l.slice(0,f).join("").length,i=[f+o,f+n+o+t];if(i[0]!==i[1]&&e.push(i),s=s.slice(0,f)+new Array(n+1).join(" ")+s.slice(f+n),!r.findAllOccurrences)break;c=u.exec(s)}return e},[]).sort((e,t)=>e[0]-t[0])}},826:e=>{var t={"À":"A","Á":"A","Â":"A","Ã":"A","Ä":"A","Å":"A","Ấ":"A","Ắ":"A","Ẳ":"A","Ẵ":"A","Ặ":"A","Æ":"AE","Ầ":"A","Ằ":"A","Ȃ":"A","Ç":"C","Ḉ":"C","È":"E","É":"E","Ê":"E","Ë":"E","Ế":"E","Ḗ":"E","Ề":"E","Ḕ":"E","Ḝ":"E","Ȇ":"E","Ì":"I","Í":"I","Î":"I","Ï":"I","Ḯ":"I","Ȋ":"I","Ð":"D","Ñ":"N","Ò":"O","Ó":"O","Ô":"O","Õ":"O","Ö":"O","Ø":"O","Ố":"O","Ṍ":"O","Ṓ":"O","Ȏ":"O","Ù":"U","Ú":"U","Û":"U","Ü":"U","Ý":"Y","à":"a","á":"a","â":"a","ã":"a","ä":"a","å":"a","ấ":"a","ắ":"a","ẳ":"a","ẵ":"a","ặ":"a","æ":"ae","ầ":"a","ằ":"a","ȃ":"a","ç":"c","ḉ":"c","è":"e","é":"e","ê":"e","ë":"e","ế":"e","ḗ":"e","ề":"e","ḕ":"e","ḝ":"e","ȇ":"e","ì":"i","í":"i","î":"i","ï":"i","ḯ":"i","ȋ":"i","ð":"d","ñ":"n","ò":"o","ó":"o","ô":"o","õ":"o","ö":"o","ø":"o","ố":"o","ṍ":"o","ṓ":"o","ȏ":"o","ù":"u","ú":"u","û":"u","ü":"u","ý":"y","ÿ":"y","Ā":"A","ā":"a","Ă":"A","ă":"a","Ą":"A","ą":"a","Ć":"C","ć":"c","Ĉ":"C","ĉ":"c","Ċ":"C","ċ":"c","Č":"C","č":"c","C̆":"C","c̆":"c","Ď":"D","ď":"d","Đ":"D","đ":"d","Ē":"E","ē":"e","Ĕ":"E","ĕ":"e","Ė":"E","ė":"e","Ę":"E","ę":"e","Ě":"E","ě":"e","Ĝ":"G","Ǵ":"G","ĝ":"g","ǵ":"g","Ğ":"G","ğ":"g","Ġ":"G","ġ":"g","Ģ":"G","ģ":"g","Ĥ":"H","ĥ":"h","Ħ":"H","ħ":"h","Ḫ":"H","ḫ":"h","Ĩ":"I","ĩ":"i","Ī":"I","ī":"i","Ĭ":"I","ĭ":"i","Į":"I","į":"i","İ":"I","ı":"i","Ĳ":"IJ","ĳ":"ij","Ĵ":"J","ĵ":"j","Ķ":"K","ķ":"k","Ḱ":"K","ḱ":"k","K̆":"K","k̆":"k","Ĺ":"L","ĺ":"l","Ļ":"L","ļ":"l","Ľ":"L","ľ":"l","Ŀ":"L","ŀ":"l","Ł":"l","ł":"l","Ḿ":"M","ḿ":"m","M̆":"M","m̆":"m","Ń":"N","ń":"n","Ņ":"N","ņ":"n","Ň":"N","ň":"n","ŉ":"n","N̆":"N","n̆":"n","Ō":"O","ō":"o","Ŏ":"O","ŏ":"o","Ő":"O","ő":"o","Œ":"OE","œ":"oe","P̆":"P","p̆":"p","Ŕ":"R","ŕ":"r","Ŗ":"R","ŗ":"r","Ř":"R","ř":"r","R̆":"R","r̆":"r","Ȓ":"R","ȓ":"r","Ś":"S","ś":"s","Ŝ":"S","ŝ":"s","Ş":"S","Ș":"S","ș":"s","ş":"s","Š":"S","š":"s","Ţ":"T","ţ":"t","ț":"t","Ț":"T","Ť":"T","ť":"t","Ŧ":"T","ŧ":"t","T̆":"T","t̆":"t","Ũ":"U","ũ":"u","Ū":"U","ū":"u","Ŭ":"U","ŭ":"u","Ů":"U","ů":"u","Ű":"U","ű":"u","Ų":"U","ų":"u","Ȗ":"U","ȗ":"u","V̆":"V","v̆":"v","Ŵ":"W","ŵ":"w","Ẃ":"W","ẃ":"w","X̆":"X","x̆":"x","Ŷ":"Y","ŷ":"y","Ÿ":"Y","Y̆":"Y","y̆":"y","Ź":"Z","ź":"z","Ż":"Z","ż":"z","Ž":"Z","ž":"z","ſ":"s","ƒ":"f","Ơ":"O","ơ":"o","Ư":"U","ư":"u","Ǎ":"A","ǎ":"a","Ǐ":"I","ǐ":"i","Ǒ":"O","ǒ":"o","Ǔ":"U","ǔ":"u","Ǖ":"U","ǖ":"u","Ǘ":"U","ǘ":"u","Ǚ":"U","ǚ":"u","Ǜ":"U","ǜ":"u","Ứ":"U","ứ":"u","Ṹ":"U","ṹ":"u","Ǻ":"A","ǻ":"a","Ǽ":"AE","ǽ":"ae","Ǿ":"O","ǿ":"o","Þ":"TH","þ":"th","Ṕ":"P","ṕ":"p","Ṥ":"S","ṥ":"s","X́":"X","x́":"x","Ѓ":"Г","ѓ":"г","Ќ":"К","ќ":"к","A̋":"A","a̋":"a","E̋":"E","e̋":"e","I̋":"I","i̋":"i","Ǹ":"N","ǹ":"n","Ồ":"O","ồ":"o","Ṑ":"O","ṑ":"o","Ừ":"U","ừ":"u","Ẁ":"W","ẁ":"w","Ỳ":"Y","ỳ":"y","Ȁ":"A","ȁ":"a","Ȅ":"E","ȅ":"e","Ȉ":"I","ȉ":"i","Ȍ":"O","ȍ":"o","Ȑ":"R","ȑ":"r","Ȕ":"U","ȕ":"u","B̌":"B","b̌":"b","Č̣":"C","č̣":"c","Ê̌":"E","ê̌":"e","F̌":"F","f̌":"f","Ǧ":"G","ǧ":"g","Ȟ":"H","ȟ":"h","J̌":"J","ǰ":"j","Ǩ":"K","ǩ":"k","M̌":"M","m̌":"m","P̌":"P","p̌":"p","Q̌":"Q","q̌":"q","Ř̩":"R","ř̩":"r","Ṧ":"S","ṧ":"s","V̌":"V","v̌":"v","W̌":"W","w̌":"w","X̌":"X","x̌":"x","Y̌":"Y","y̌":"y","A̧":"A","a̧":"a","B̧":"B","b̧":"b","Ḑ":"D","ḑ":"d","Ȩ":"E","ȩ":"e","Ɛ̧":"E","ɛ̧":"e","Ḩ":"H","ḩ":"h","I̧":"I","i̧":"i","Ɨ̧":"I","ɨ̧":"i","M̧":"M","m̧":"m","O̧":"O","o̧":"o","Q̧":"Q","q̧":"q","U̧":"U","u̧":"u","X̧":"X","x̧":"x","Z̧":"Z","z̧":"z"},r=Object.keys(t).join("|"),n=new RegExp(r,"g"),o=new RegExp(r,""),i=function(e){return e.replace(n,(function(e){return t[e]}))};e.exports=i,e.exports.has=function(e){return!!e.match(o)},e.exports.remove=i}},n={},function e(t){var o=n[t];if(void 0!==o)return o.exports;var i=n[t]={exports:{}};return r[t](i,i.exports,e),i.exports}(772))}));P.AutosuggestHighlightMatch;var U=L((function(e,t){var r,n;e.exports=(r={705:e=>{e.exports=function(e,t){const r=[];return 0===t.length?r.push({text:e,highlight:!1}):t[0][0]>0&&r.push({text:e.slice(0,t[0][0]),highlight:!1}),t.forEach((n,o)=>{const i=n[0],a=n[1];r.push({text:e.slice(i,a),highlight:!0}),o===t.length-1?a<e.length&&r.push({text:e.slice(a,e.length),highlight:!1}):a<t[o+1][0]&&r.push({text:e.slice(a,t[o+1][0]),highlight:!1})}),r}}},n={},function e(t){var o=n[t];if(void 0!==o)return o.exports;var i=n[t]={exports:{}};return r[t](i,i.exports,e),i.exports}(705))}));U.AutosuggestHighlightParse;var R=/^\s+|\s+$/g,F=/^[-+]0x[0-9a-f]+$/i,N=/^0b[01]+$/i,q=/^0o[0-7]+$/i,_=parseInt,M="object"==typeof I&&I&&I.Object===Object&&I,D="object"==typeof self&&self&&self.Object===Object&&self,G=M||D||Function("return this")(),W=Object.prototype.toString,B=Math.max,$=Math.min,V=function(){return G.Date.now()};function H(e,t,r){var n,o,i,a,u,c,l=0,s=!1,f=!1,p=!0;if("function"!=typeof e)throw new TypeError("Expected a function");function h(t){var r=n,i=o;return n=o=void 0,l=t,a=e.apply(i,r)}function d(e){return l=e,u=setTimeout(v,t),s?h(e):a}function m(e){var r=e-c;return void 0===c||r>=t||r<0||f&&e-l>=i}function v(){var e=V();if(m(e))return y(e);u=setTimeout(v,function(e){var r=t-(e-c);return f?$(r,i-(e-l)):r}(e))}function y(e){return u=void 0,p&&n?h(e):(n=o=void 0,a)}function g(){var e=V(),r=m(e);if(n=arguments,o=this,c=e,r){if(void 0===u)return d(c);if(f)return u=setTimeout(v,t),h(c)}return void 0===u&&(u=setTimeout(v,t)),a}return t=X(t)||0,Y(r)&&(s=!!r.leading,i=(f="maxWait"in r)?B(X(r.maxWait)||0,t):i,p="trailing"in r?!!r.trailing:p),g.cancel=function(){void 0!==u&&clearTimeout(u),l=0,n=c=o=u=void 0},g.flush=function(){return void 0===u?a:y(V())},g}function Y(e){var t=typeof e;return!!e&&("object"==t||"function"==t)}function X(e){if("number"==typeof e)return e;if(function(e){return"symbol"==typeof e||function(e){return!!e&&"object"==typeof e}(e)&&"[object Symbol]"==W.call(e)}(e))return NaN;if(Y(e)){var t="function"==typeof e.valueOf?e.valueOf():e;e=Y(t)?t+"":t}if("string"!=typeof e)return 0===e?e:+e;e=e.replace(R,"");var r=N.test(e);return r||q.test(e)?_(e.slice(2),r?2:8):F.test(e)?NaN:+e}var z=function(e,t,r){var n=!0,o=!0;if("function"!=typeof e)throw new TypeError("Expected a function");return Y(r)&&(n="leading"in r?!!r.leading:n,o="trailing"in r?!!r.trailing:o),H(e,t,{leading:n,maxWait:t,trailing:o})},K=["fetchLexicon","source","defaultValue","label","parse","optionText","helperText"],Q=h.default((function(e){return{icon:{color:e.palette.text.secondary,marginRight:e.spacing(2)}}})),Z=function(e,t){return"string"==typeof e?e:e.label?e.label:"string"==typeof t?e[t]:"function"==typeof t?t(e):void 0},J=function(e){return e&&e.charAt(0).toUpperCase()+e.slice(1)},ee=e.forwardRef((function(n,o){var i=n.fetchLexicon,a=n.source,u=n.defaultValue,c=n.label,l=n.parse,s=n.optionText,f=n.helperText,h=k(n,K),y=t.useResourceContext(),g=Q(),b=t.useLocale(),w=t.useTranslate(),E=t.useNotify(),O=t.useInput(x({source:a,defaultValue:u},h)),C=O.field,T=C.value,I=C.onChange,L=C.onBlur,R=O.fieldState,F=R.isTouched,N=R.error,q=O.formState.submitError,_=O.isRequired,M=S(e.useState(u),2),D=M[0],G=M[1],W=S(e.useState([]),2),B=W[0],$=W[1],V=e.useMemo((function(){return z((function(e,t){i({keyword:e,locale:b}).then((function(e){return t(e)})).catch((function(e){return E(e.message,{type:"error"})}))}),200)}),[b,i,E]);return e.useEffect((function(){D&&V(D,(function(e){return $(e)}))}),[T,D,V]),p.default.createElement(d.default,{fullWidth:!0,freeSolo:!0,autoComplete:!0,value:T||null,ref:o,openOnFocus:!!u,options:T?[T].concat(A(B)):B,filterSelectedOptions:!0,filterOptions:function(e,t){return D&&e.push({label:J(D),summary:'Ajouter "'.concat(J(D),'" au dictionnaire'),icon:v.default}),e},clearOnBlur:!0,selectOnFocus:!0,handleHomeEndKeys:!0,getOptionLabel:function(e){return Z(e,s)},isOptionEqualToValue:function(e,t){return Z(e,s)===Z(t,s)},onChange:function(e,t){t&&l&&(t=l(t)),I(t),$([])},onInputChange:function(e,t){return G(t)},noOptionsText:w("ra.navigation.no_results"),renderInput:function(e){return e.inputProps.autoComplete="new-password",p.default.createElement(r.TextField,j({},e,{autoFocus:!0,inputProps:x(x({},e.inputProps),{},{onBlur:function(t){L(t),e.inputProps.onBlur&&e.inputProps.onBlur(t)},onFocus:function(t){e.inputProps.onFocus&&e.inputProps.onFocus(t)}}),label:""!==c&&!1!==c&&p.default.createElement(t.FieldTitle,{label:c,source:a,resource:y,isRequired:_}),error:!(!F||!N&&!q),helperText:p.default.createElement(t.InputHelperText,{touched:F,error:N||q,helperText:f})}))},renderOption:function(e,t){var n=P(t.label,D),o=U(t.label,n);return p.default.createElement(r.Grid,j({container:!0,alignItems:"center"},e,{key:t.uri||"create"}),p.default.createElement(r.Grid,{item:!0},p.default.createElement(t.icon||m.default,{className:g.icon})),p.default.createElement(r.Grid,{item:!0,xs:!0},"string"==typeof o?o:o.map((function(e,t){return p.default.createElement("span",{key:t,style:{fontWeight:e.highlight?700:400}},e.text)})),p.default.createElement(r.Typography,{variant:"body2",color:"textSecondary"},t.summary)))}})}));ee.defaultProps={optionText:"label"};var te=function(r){var n=t.useDataProvider(),o=t.useRedirect(),i=t.useNotify();return e.useCallback(function(){var e=E(b().mark((function e(t){var a,u,c,l,s,f,p=arguments;return b().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return a=p.length>1&&void 0!==p[1]?p[1]:[],e.next=3,n.getOne(r,{id:t});case 3:return u=e.sent,c=u.data,(l=x({},c))["http://www.w3.org/ns/prov#wasDerivedFrom"]=l.id,delete l.id,delete l["@context"],a.forEach((function(e){delete l[e]})),e.next=12,n.create(r,{data:l});case 12:s=e.sent,f=s.data,o("/"+r+"/"+encodeURIComponent(f.id)+"/show"),i("La ressource a bien été copiée",{type:"success"});case 16:case"end":return e.stop()}}),e)})));return function(t){return e.apply(this,arguments)}}(),[r,n,o,i])},re=function(r){var n=t.useDataProvider(),o=t.useNotify(),i=t.useRedirect();return e.useCallback(function(){var e=E(b().mark((function e(t){return b().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return e.next=2,n.create(r,{id:t});case 2:i("/"+r+"/"+encodeURIComponent(t)+"/show"),o("La ressource a bien été importée",{type:"success"});case 4:case"end":return e.stop()}}),e)})));return function(t){return e.apply(this,arguments)}}(),[n,i,o])},ne=function(){var r,n,o=t.useResourceContext(),i=c.useContainers(o,"@remote"),a=c.useDataModel(o),s=u.useFormContext(),f=s.watch,h=s.setValue,d=f("remoteUri"),m=f("plainUri");return e.useEffect((function(){d&&h("plainUri",d)}),[d]),e.useEffect((function(){m&&m!==d&&h("remoteUri",null)}),[d,m]),a?p.default.createElement(p.default.Fragment,null,i&&Object.keys(i).length>0&&p.default.createElement(l.ReferenceInput,{source:"remoteUri",reference:o,filter:{_servers:"@remote",_predicates:[null==a||null===(r=a.fieldsMapping)||void 0===r?void 0:r.title]},enableGetChoices:function(e){var t=e.q;return!!(t&&t.length>1)}},p.default.createElement(l.MultiServerAutocompleteInput,{optionText:null==a||null===(n=a.fieldsMapping)||void 0===n?void 0:n.title,shouldRenderSuggestions:function(e){return e.length>1},noOptionsText:"Tapez au moins deux lettres",emptyText:"Rechercher...",label:"Resource distante",fullWidth:!0})),p.default.createElement(t.TextInput,{source:"plainUri",label:"URL de la ressource distante",fullWidth:!0}),p.default.createElement(t.RadioButtonGroupInput,{source:"method",label:"Méthode d'importation",choices:[{id:"sync",name:"Garder la ressource locale synchronisée avec la ressource distante"},{id:"fork",name:"Créer une nouvelle version de la ressource (fork)"}]})):null},oe=function(r){var n=r.stripProperties,o=t.useResourceContext(),i=te(o),a=re(o),u=e.useCallback(function(){var e=E(b().mark((function e(t){var r;return b().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:if(r=t.plainUri,"fork"!==t.method){e.next=6;break}return e.next=4,i(r,n);case 4:e.next=8;break;case 6:return e.next=8,a(r);case 8:case"end":return e.stop()}}),e)})));return function(t){return e.apply(this,arguments)}}(),[i,a,n]);return p.default.createElement(t.SimpleForm,{onSubmit:u,defaultValues:{method:"sync"}},p.default.createElement(ne,null))},ie=["stripProperties"],ae=h.default((function(){return{tab:{maxWidth:"unset",padding:"6px 24px"}}})),ue=function(e){return e&&e[0].toUpperCase()+e.slice(1)||""},ce=L((function(e){var t,r;t=I,r=function(){function e(e){var t=[];if(0===e.length)return"";if("string"!=typeof e[0])throw new TypeError("Url must be a string. Received "+e[0]);if(e[0].match(/^[^/:]+:\/*$/)&&e.length>1){var r=e.shift();e[0]=r+e[0]}e[0].match(/^file:\/\/\//)?e[0]=e[0].replace(/^([^/:]+):\/*/,"$1:///"):e[0]=e[0].replace(/^([^/:]+):\/*/,"$1://");for(var n=0;n<e.length;n++){var o=e[n];if("string"!=typeof o)throw new TypeError("Url must be a string. Received "+o);""!==o&&(n>0&&(o=o.replace(/^[\/]+/,"")),o=n<e.length-1?o.replace(/[\/]+$/,""):o.replace(/[\/]+$/,"/"),t.push(o))}var i=t.join("/"),a=(i=i.replace(/\/(\?|&|#[^!])/g,"$1")).split("?");return i=a.shift()+(a.length>0?"?":"")+a.join("&")}return function(){return e("object"==typeof arguments[0]?arguments[0]:[].slice.call(arguments))}},e.exports?e.exports=r():t.urljoin=r()})),le=function(e){return e&&e[0].toUpperCase()+e.slice(1)||""};exports.CreateOrImportForm=function(n){var o=n.stripProperties,i=k(n,ie),a=S(e.useState(0),2),u=a[0],c=a[1],l=ae(),s=r.useMediaQuery((function(e){return e.breakpoints.down("sm")}),{noSsr:!0});return p.default.createElement(p.default.Fragment,null,p.default.createElement(r.Box,{pb:2},p.default.createElement(r.Tabs,{value:u,onChange:function(e,t){return c(t)},indicatorColor:"primary"},p.default.createElement(r.Tab,{className:l.tab,label:"Créer"}),p.default.createElement(r.Tab,{className:l.tab,label:s?"Importer":"Importer une ressource distante"})),p.default.createElement(r.Divider,null)),0===u&&p.default.createElement(t.SimpleForm,i),1===u&&p.default.createElement(oe,j({stripProperties:o||[]},i)))},exports.ImportForm=oe,exports.LexiconAutocompleteInput=ee,exports.LexiconCreateDialog=function(n){var o=n.fetchLexicon,i=n.selectData,a=t.useCreateSuggestionContext(),u=a.filter,c=a.onCancel,l=a.onCreate,s=t.useResourceContext(),f=S(e.useState(u||""),2),h=f[0],d=f[1],m=S(t.useCreate(),1)[0],v=e.useCallback((function(){d(""),c()}),[d,c]),y=e.useCallback((function(){h.uri||delete h.summary,m(s,{data:i(h)},{onSuccess:function(e){console.log("onSuccess",e),d(""),l(e)}})}),[m,l,i,h,d,s]);return p.default.createElement(r.Dialog,{open:!0,onClose:v,fullWidth:!0,maxWidth:"sm"},p.default.createElement(r.DialogContent,null,p.default.createElement(ee,{source:"lexicon",label:"Titre",fetchLexicon:o,defaultValue:u,value:h,onChange:d})),p.default.createElement(r.DialogActions,null,p.default.createElement(r.Button,{onClick:v},"Annuler"),p.default.createElement(r.Button,{variant:"contained",color:"primary",onClick:y},"Ajouter")))},exports.LexiconImportForm=function(r){var n=r.fetchLexicon,o=r.selectData,i=t.useSaveContext().save,a=e.useCallback(function(){var e=E(b().mark((function e(t){var r;return b().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return(r=t.lexicon).uri||delete r.summary,"string"==typeof r&&(r={label:r}),e.next=5,i(o(r));case 5:case"end":return e.stop()}}),e)})));return function(t){return e.apply(this,arguments)}}(),[o,i]);return p.default.createElement(t.SimpleForm,{onSubmit:a},p.default.createElement(ee,{label:"Titre",source:"lexicon",fetchLexicon:n,validate:t.required()}))},exports.fetchESCO=function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"https://ec.europa.eu/esco/api",t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:"skill";return function(){var r=E(b().mark((function r(n){var o,i,a,u;return b().wrap((function(r){for(;;)switch(r.prev=r.next){case 0:return o=n.keyword,i=n.locale,r.next=3,fetch(ce(e,"suggest2?text=".concat(encodeURIComponent(o),"&language=").concat(i,"&type=").concat(t,"&isInScheme=&facet=&offset=&limit=&full=&selectedVersion=&viewObsolete=")));case 3:if(!(a=r.sent).ok){r.next=11;break}return r.next=7,a.json();case 7:return u=r.sent,r.abrupt("return",u._embedded.results.map((function(e){return{uri:e.uri,label:le(e.title.replace("’","'")),icon:y.default}})));case 11:throw new Error("Failed to fetch ESCO server");case 12:case"end":return r.stop()}}),r)})));return function(e){return r.apply(this,arguments)}}()},exports.fetchWikidata=function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"https://www.wikidata.org/w/api.php";return function(){var t=E(b().mark((function t(r){var n,o,i,a;return b().wrap((function(t){for(;;)switch(t.prev=t.next){case 0:return n=r.keyword,o=r.locale,t.next=3,fetch("".concat(e,"?action=wbsearchentities&format=json&language=").concat(o,"&uselang=").concat(o,"&type=item&limit=10&origin=*&search=").concat(encodeURIComponent(n)));case 3:if(!(i=t.sent).ok){t.next=11;break}return t.next=7,i.json();case 7:return a=t.sent,t.abrupt("return",a.search.map((function(e){return{uri:e.concepturi,label:ue(e.match.text),summary:ue(e.description),icon:m.default}})));case 11:throw new Error("Failed to fetch Wikidata server");case 12:case"end":return t.stop()}}),t)})));return function(e){return t.apply(this,arguments)}}()},exports.useFork=te,exports.useSync=re;
+var $as47w$reactjsxruntime = require("react/jsx-runtime");
+var $as47w$react = require("react");
+var $as47w$reactadmin = require("react-admin");
+var $as47w$muimaterial = require("@mui/material");
+var $as47w$muistylesmakeStyles = require("@mui/styles/makeStyles");
+var $as47w$muimaterialAutocomplete = require("@mui/material/Autocomplete");
+var $as47w$muiiconsmaterialLanguage = require("@mui/icons-material/Language");
+var $as47w$muiiconsmaterialAdd = require("@mui/icons-material/Add");
+var $as47w$autosuggesthighlightmatch = require("autosuggest-highlight/match");
+var $as47w$autosuggesthighlightparse = require("autosuggest-highlight/parse");
+var $as47w$lodashthrottle = require("lodash.throttle");
+var $as47w$reacthookform = require("react-hook-form");
+var $as47w$semappssemanticdataprovider = require("@semapps/semantic-data-provider");
+var $as47w$semappsinputcomponents = require("@semapps/input-components");
+var $as47w$urljoin = require("url-join");
+var $as47w$muiiconsmaterialStarBorder = require("@mui/icons-material/StarBorder");
+
+
+function $parcel$export(e, n, v, s) {
+  Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
+}
+
+function $parcel$interopDefault(a) {
+  return a && a.__esModule ? a.default : a;
+}
+
+$parcel$export(module.exports, "LexiconCreateDialog", () => $af88cd35a927a884$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "CreateOrImportForm", () => $fb5291a8e3f7cfea$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "ImportForm", () => $eaef283c22eb901e$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "LexiconImportForm", () => $80075ef971c3d1de$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "LexiconAutocompleteInput", () => $3a4b4c603fe6b68b$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "fetchWikidata", () => $32077f9119e727a8$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "fetchESCO", () => $17a31747492cb646$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useFork", () => $3722be33fafb3622$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useSync", () => $c0bd6c85f68e28e0$export$2e2bcd8739ae039);
+// Dialogs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const $3a4b4c603fe6b68b$var$useStyles = (0, ($parcel$interopDefault($as47w$muistylesmakeStyles)))((theme)=>({
+        icon: {
+            color: theme.palette.text.secondary,
+            marginRight: theme.spacing(2)
+        }
+    }));
+const $3a4b4c603fe6b68b$var$selectOptionText = (option, optionText)=>{
+    if (typeof option === "string") return option;
+    if (option.label) return option.label;
+    if (typeof optionText === "string") return option[optionText];
+    if (typeof optionText === "function") return optionText(option);
+};
+const $3a4b4c603fe6b68b$var$capitalizeFirstLetter = (string)=>string && string.charAt(0).toUpperCase() + string.slice(1);
+const $3a4b4c603fe6b68b$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $as47w$react.forwardRef)(({ fetchLexicon: fetchLexicon, source: source, defaultValue: defaultValue, label: label, parse: parse, optionText: optionText, helperText: helperText, ...rest }, ref)=>{
+    const resource = (0, $as47w$reactadmin.useResourceContext)();
+    const classes = $3a4b4c603fe6b68b$var$useStyles();
+    const locale = (0, $as47w$reactadmin.useLocale)();
+    const translate = (0, $as47w$reactadmin.useTranslate)();
+    const notify = (0, $as47w$reactadmin.useNotify)();
+    // Do not pass the `parse` prop to useInput, as we manually call it on the onChange prop below
+    const { field: { value: value, onChange: onChange, onBlur: onBlur }, fieldState: { isTouched: isTouched, error: error }, formState: { submitError: submitError }, isRequired: isRequired } = (0, $as47w$reactadmin.useInput)({
+        source: source,
+        defaultValue: defaultValue,
+        ...rest
+    });
+    const [keyword, setKeyword] = (0, $as47w$react.useState)(defaultValue); // Typed keywords
+    const [options, setOptions] = (0, $as47w$react.useState)([]); // Options returned by MapBox
+    const throttledFetchLexicon = (0, $as47w$react.useMemo)(()=>(0, ($parcel$interopDefault($as47w$lodashthrottle)))((keyword, callback)=>{
+            fetchLexicon({
+                keyword: keyword,
+                locale: locale
+            }).then((data)=>callback(data)).catch((e)=>notify(e.message, {
+                    type: "error"
+                }));
+        }, 200), [
+        locale,
+        fetchLexicon,
+        notify
+    ]);
+    (0, $as47w$react.useEffect)(()=>{
+        // Do not trigger search if text input is empty
+        if (!keyword) return undefined;
+        throttledFetchLexicon(keyword, (results)=>setOptions(results));
+    }, [
+        value,
+        keyword,
+        throttledFetchLexicon
+    ]);
+    return /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, ($parcel$interopDefault($as47w$muimaterialAutocomplete))), {
+        fullWidth: true,
+        freeSolo: true,
+        autoComplete: true,
+        value: value || null,
+        ref: ref,
+        openOnFocus: !!defaultValue,
+        // We must include the current value as an option, to avoid this error
+        // https://github.com/mui-org/material-ui/issues/18514#issuecomment-636096386
+        options: value ? [
+            value,
+            ...options
+        ] : options,
+        // Do not show the current value as an option (this would break renderOptions)
+        filterSelectedOptions: true,
+        // For some reasons, this prop has to be passed
+        filterOptions: (options, params)=>{
+            // Suggest the creation of a new value
+            if (keyword) options.push({
+                label: $3a4b4c603fe6b68b$var$capitalizeFirstLetter(keyword),
+                summary: `Ajouter "${$3a4b4c603fe6b68b$var$capitalizeFirstLetter(keyword)}" au dictionnaire`,
+                icon: (0, ($parcel$interopDefault($as47w$muiiconsmaterialAdd)))
+            });
+            return options;
+        },
+        clearOnBlur: true,
+        selectOnFocus: true,
+        handleHomeEndKeys: true,
+        getOptionLabel: (option)=>$3a4b4c603fe6b68b$var$selectOptionText(option, optionText),
+        isOptionEqualToValue: (option, value)=>$3a4b4c603fe6b68b$var$selectOptionText(option, optionText) === $3a4b4c603fe6b68b$var$selectOptionText(value, optionText),
+        // This function is called when the user selects an option
+        onChange: (event, newValue)=>{
+            // Parse only if the value is not null (happens if the user clears the value)
+            if (newValue && parse) newValue = parse(newValue);
+            onChange(newValue);
+            setOptions([]);
+        },
+        onInputChange: (event, newKeyword)=>setKeyword(newKeyword),
+        noOptionsText: translate("ra.navigation.no_results"),
+        renderInput: (params)=>{
+            // Autocomplete=off doesn't work anymore in modern browsers
+            // https://stackoverflow.com/a/40791726/7900695
+            params.inputProps.autoComplete = "new-password";
+            return /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $as47w$muimaterial.TextField), {
+                ...params,
+                autoFocus: true,
+                inputProps: {
+                    ...params.inputProps,
+                    onBlur: (e)=>{
+                        onBlur(e);
+                        if (params.inputProps.onBlur) params.inputProps.onBlur(e);
+                    },
+                    onFocus: (e)=>{
+                        if (params.inputProps.onFocus) params.inputProps.onFocus(e);
+                    }
+                },
+                label: label !== "" && label !== false && /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $as47w$reactadmin.FieldTitle), {
+                    label: label,
+                    source: source,
+                    resource: resource,
+                    isRequired: isRequired
+                }),
+                error: !!(isTouched && (error || submitError)),
+                helperText: /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $as47w$reactadmin.InputHelperText), {
+                    touched: isTouched,
+                    error: error || submitError,
+                    helperText: helperText
+                })
+            });
+        },
+        renderOption: (props, option)=>{
+            const matches = (0, ($parcel$interopDefault($as47w$autosuggesthighlightmatch)))(option.label, keyword);
+            const parts = (0, ($parcel$interopDefault($as47w$autosuggesthighlightparse)))(option.label, matches);
+            return /*#__PURE__*/ (0, $as47w$react.createElement)((0, $as47w$muimaterial.Grid), {
+                container: true,
+                alignItems: "center",
+                ...props,
+                key: option.uri || "create",
+                children: [
+                    /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $as47w$muimaterial.Grid), {
+                        item: true,
+                        children: /*#__PURE__*/ (0, ($parcel$interopDefault($as47w$react))).createElement(option.icon || (0, ($parcel$interopDefault($as47w$muiiconsmaterialLanguage))), {
+                            className: classes.icon
+                        })
+                    }),
+                    /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsxs)((0, $as47w$muimaterial.Grid), {
+                        item: true,
+                        xs: true,
+                        children: [
+                            typeof parts === "string" ? parts : parts.map((part, index)=>/*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)("span", {
+                                    style: {
+                                        fontWeight: part.highlight ? 700 : 400
+                                    },
+                                    children: part.text
+                                }, index)),
+                            /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $as47w$muimaterial.Typography), {
+                                variant: "body2",
+                                color: "textSecondary",
+                                children: option.summary
+                            })
+                        ]
+                    })
+                ]
+            });
+        }
+    });
+});
+$3a4b4c603fe6b68b$var$LexiconAutocompleteInput.defaultProps = {
+    optionText: "label"
+};
+var $3a4b4c603fe6b68b$export$2e2bcd8739ae039 = $3a4b4c603fe6b68b$var$LexiconAutocompleteInput;
+
+
+const $af88cd35a927a884$var$LexiconCreateDialog = ({ fetchLexicon: fetchLexicon, selectData: selectData })=>{
+    const { filter: filter, onCancel: onCancel, onCreate: onCreate } = (0, $as47w$reactadmin.useCreateSuggestionContext)();
+    const resource = (0, $as47w$reactadmin.useResourceContext)();
+    const [value, setValue] = (0, $as47w$react.useState)(filter || "");
+    const [create] = (0, $as47w$reactadmin.useCreate)();
+    const onClose = (0, $as47w$react.useCallback)(()=>{
+        setValue("");
+        onCancel();
+    }, [
+        setValue,
+        onCancel
+    ]);
+    const onSubmit = (0, $as47w$react.useCallback)(()=>{
+        // If we have no URI, it means we are creating a new definition
+        // Delete the summary as it is "Ajouter XXX au dictionaire"
+        if (!value.uri) delete value.summary;
+        create(resource, {
+            data: selectData(value)
+        }, {
+            onSuccess: (data)=>{
+                console.log("onSuccess", data);
+                setValue("");
+                onCreate(data);
+            }
+        });
+    }, [
+        create,
+        onCreate,
+        selectData,
+        value,
+        setValue,
+        resource
+    ]);
+    return /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsxs)((0, $as47w$muimaterial.Dialog), {
+        open: true,
+        onClose: onClose,
+        fullWidth: true,
+        maxWidth: "sm",
+        children: [
+            /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $as47w$muimaterial.DialogContent), {
+                children: /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $3a4b4c603fe6b68b$export$2e2bcd8739ae039), {
+                    source: "lexicon",
+                    label: "Titre",
+                    fetchLexicon: fetchLexicon,
+                    defaultValue: filter,
+                    value: value,
+                    onChange: setValue
+                })
+            }),
+            /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsxs)((0, $as47w$muimaterial.DialogActions), {
+                children: [
+                    /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $as47w$muimaterial.Button), {
+                        onClick: onClose,
+                        children: "Annuler"
+                    }),
+                    /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $as47w$muimaterial.Button), {
+                        variant: "contained",
+                        color: "primary",
+                        onClick: onSubmit,
+                        children: "Ajouter"
+                    })
+                ]
+            })
+        ]
+    });
+};
+var $af88cd35a927a884$export$2e2bcd8739ae039 = $af88cd35a927a884$var$LexiconCreateDialog;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const $3722be33fafb3622$var$useFork = (resourceId)=>{
+    const dataProvider = (0, $as47w$reactadmin.useDataProvider)();
+    const redirect = (0, $as47w$reactadmin.useRedirect)();
+    const notify = (0, $as47w$reactadmin.useNotify)();
+    return (0, $as47w$react.useCallback)(async (remoteRecordUri, stripProperties = [])=>{
+        const { data: remoteData } = await dataProvider.getOne(resourceId, {
+            id: remoteRecordUri
+        });
+        const strippedData = {
+            ...remoteData
+        };
+        strippedData["http://www.w3.org/ns/prov#wasDerivedFrom"] = strippedData.id;
+        delete strippedData.id;
+        delete strippedData["@context"];
+        stripProperties.forEach((prop)=>{
+            delete strippedData[prop];
+        });
+        const { data: localData } = await dataProvider.create(resourceId, {
+            data: strippedData
+        });
+        redirect(`/${resourceId}/${encodeURIComponent(localData.id)}/show`);
+        notify("La ressource a bien \xe9t\xe9 copi\xe9e", {
+            type: "success"
+        });
+    }, [
+        resourceId,
+        dataProvider,
+        redirect,
+        notify
+    ]);
+};
+var $3722be33fafb3622$export$2e2bcd8739ae039 = $3722be33fafb3622$var$useFork;
+
+
+
+
+const $c0bd6c85f68e28e0$var$useSync = (resourceId)=>{
+    const dataProvider = (0, $as47w$reactadmin.useDataProvider)();
+    const notify = (0, $as47w$reactadmin.useNotify)();
+    const redirect = (0, $as47w$reactadmin.useRedirect)();
+    return (0, $as47w$react.useCallback)(async (remoteRecordUri)=>{
+        await dataProvider.create(resourceId, {
+            id: remoteRecordUri
+        });
+        redirect(`/${resourceId}/${encodeURIComponent(remoteRecordUri)}/show`);
+        notify("La ressource a bien \xe9t\xe9 import\xe9e", {
+            type: "success"
+        });
+    }, [
+        dataProvider,
+        redirect,
+        notify
+    ]);
+};
+var $c0bd6c85f68e28e0$export$2e2bcd8739ae039 = $c0bd6c85f68e28e0$var$useSync;
+
+
+const $eaef283c22eb901e$var$ImportFormInputs = ()=>{
+    const resource = (0, $as47w$reactadmin.useResourceContext)();
+    const containers = (0, $as47w$semappssemanticdataprovider.useContainers)(resource, "@remote");
+    const dataModel = (0, $as47w$semappssemanticdataprovider.useDataModel)(resource);
+    const { watch: watch, setValue: setValue } = (0, $as47w$reacthookform.useFormContext)();
+    const watchRemoteUri = watch("remoteUri");
+    const watchPlainUri = watch("plainUri");
+    (0, $as47w$react.useEffect)(()=>{
+        if (watchRemoteUri) setValue("plainUri", watchRemoteUri);
+    }, [
+        watchRemoteUri
+    ]);
+    (0, $as47w$react.useEffect)(()=>{
+        if (watchPlainUri && watchPlainUri !== watchRemoteUri) setValue("remoteUri", null);
+    }, [
+        watchRemoteUri,
+        watchPlainUri
+    ]);
+    if (!dataModel) return null;
+    return /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsxs)((0, $as47w$reactjsxruntime.Fragment), {
+        children: [
+            containers && Object.keys(containers).length > 0 && /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $as47w$semappsinputcomponents.ReferenceInput), {
+                source: "remoteUri",
+                reference: resource,
+                filter: {
+                    _servers: "@remote",
+                    _predicates: [
+                        dataModel?.fieldsMapping?.title
+                    ]
+                },
+                enableGetChoices: ({ q: q })=>!!(q && q.length > 1),
+                children: /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $as47w$semappsinputcomponents.MultiServerAutocompleteInput), {
+                    optionText: dataModel?.fieldsMapping?.title,
+                    shouldRenderSuggestions: (value)=>value.length > 1,
+                    noOptionsText: "Tapez au moins deux lettres",
+                    emptyText: "Rechercher...",
+                    label: "Resource distante",
+                    fullWidth: true
+                })
+            }),
+            /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $as47w$reactadmin.TextInput), {
+                source: "plainUri",
+                label: "URL de la ressource distante",
+                fullWidth: true
+            }),
+            /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $as47w$reactadmin.RadioButtonGroupInput), {
+                source: "method",
+                label: "M\xe9thode d'importation",
+                choices: [
+                    {
+                        id: "sync",
+                        name: "Garder la ressource locale synchronis\xe9e avec la ressource distante"
+                    },
+                    {
+                        id: "fork",
+                        name: "Cr\xe9er une nouvelle version de la ressource (fork)"
+                    }
+                ]
+            })
+        ]
+    });
+};
+const $eaef283c22eb901e$var$ImportForm = ({ stripProperties: stripProperties })=>{
+    const resource = (0, $as47w$reactadmin.useResourceContext)();
+    const fork = (0, $3722be33fafb3622$export$2e2bcd8739ae039)(resource);
+    const sync = (0, $c0bd6c85f68e28e0$export$2e2bcd8739ae039)(resource);
+    const onSubmit = (0, $as47w$react.useCallback)(async ({ plainUri: plainUri, method: method })=>{
+        if (method === "fork") await fork(plainUri, stripProperties);
+        else await sync(plainUri);
+    }, [
+        fork,
+        sync,
+        stripProperties
+    ]);
+    return /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $as47w$reactadmin.SimpleForm), {
+        onSubmit: onSubmit,
+        defaultValues: {
+            method: "sync"
+        },
+        children: /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)($eaef283c22eb901e$var$ImportFormInputs, {})
+    });
+};
+var $eaef283c22eb901e$export$2e2bcd8739ae039 = $eaef283c22eb901e$var$ImportForm;
+
+
+const $fb5291a8e3f7cfea$var$useStyles = (0, ($parcel$interopDefault($as47w$muistylesmakeStyles)))(()=>({
+        tab: {
+            maxWidth: "unset",
+            padding: "6px 24px"
+        }
+    }));
+const $fb5291a8e3f7cfea$var$CreateOrImportForm = ({ stripProperties: stripProperties, ...rest })=>{
+    const [tab, setTab] = (0, $as47w$react.useState)(0);
+    const classes = $fb5291a8e3f7cfea$var$useStyles();
+    const xs = (0, $as47w$muimaterial.useMediaQuery)((theme)=>theme.breakpoints.down("sm"), {
+        noSsr: true
+    });
+    return /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsxs)((0, $as47w$reactjsxruntime.Fragment), {
+        children: [
+            /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsxs)((0, $as47w$muimaterial.Box), {
+                pb: 2,
+                children: [
+                    /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsxs)((0, $as47w$muimaterial.Tabs), {
+                        value: tab,
+                        onChange: (_, v)=>setTab(v),
+                        indicatorColor: "primary",
+                        children: [
+                            /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $as47w$muimaterial.Tab), {
+                                className: classes.tab,
+                                label: "Cr\xe9er"
+                            }),
+                            /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $as47w$muimaterial.Tab), {
+                                className: classes.tab,
+                                label: xs ? "Importer" : "Importer une ressource distante"
+                            })
+                        ]
+                    }),
+                    /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $as47w$muimaterial.Divider), {})
+                ]
+            }),
+            tab === 0 && /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $as47w$reactadmin.SimpleForm), {
+                ...rest
+            }),
+            tab === 1 && /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $eaef283c22eb901e$export$2e2bcd8739ae039), {
+                stripProperties: stripProperties || [],
+                ...rest
+            })
+        ]
+    });
+};
+var $fb5291a8e3f7cfea$export$2e2bcd8739ae039 = $fb5291a8e3f7cfea$var$CreateOrImportForm;
+
+
+
+
+
+
+
+const $80075ef971c3d1de$var$LexiconImportForm = ({ fetchLexicon: fetchLexicon, selectData: selectData })=>{
+    const { save: save } = (0, $as47w$reactadmin.useSaveContext)();
+    const onSubmit = (0, $as47w$react.useCallback)(async ({ lexicon: lexicon })=>{
+        // If we have no URI, it means we are creating a new definition
+        // Delete the summary as it is "Ajouter XXX au dictionaire"
+        if (!lexicon.uri) delete lexicon.summary;
+        // If the user doesn't select any option, use the text as the label
+        if (typeof lexicon === "string") lexicon = {
+            label: lexicon
+        };
+        await save(selectData(lexicon));
+    }, [
+        selectData,
+        save
+    ]);
+    return /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $as47w$reactadmin.SimpleForm), {
+        onSubmit: onSubmit,
+        children: /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $3a4b4c603fe6b68b$export$2e2bcd8739ae039), {
+            label: "Titre",
+            source: "lexicon",
+            fetchLexicon: fetchLexicon,
+            validate: (0, $as47w$reactadmin.required)()
+        })
+    });
+};
+var $80075ef971c3d1de$export$2e2bcd8739ae039 = $80075ef971c3d1de$var$LexiconImportForm;
+
+
+
+
+const $32077f9119e727a8$var$capitalize = (s)=>s && s[0].toUpperCase() + s.slice(1) || "";
+const $32077f9119e727a8$var$fetchWikidata = (apiUrl = "https://www.wikidata.org/w/api.php")=>async ({ keyword: keyword, locale: locale })=>{
+        const response = await fetch(`${apiUrl}?action=wbsearchentities&format=json&language=${locale}&uselang=${locale}&type=item&limit=10&origin=*&search=${encodeURIComponent(keyword)}`);
+        if (response.ok) {
+            const json = await response.json();
+            return json.search.map((r)=>({
+                    uri: r.concepturi,
+                    label: $32077f9119e727a8$var$capitalize(r.match.text),
+                    summary: $32077f9119e727a8$var$capitalize(r.description),
+                    icon: (0, ($parcel$interopDefault($as47w$muiiconsmaterialLanguage)))
+                }));
+        }
+        throw new Error("Failed to fetch Wikidata server");
+    };
+var $32077f9119e727a8$export$2e2bcd8739ae039 = $32077f9119e727a8$var$fetchWikidata;
+
+
+
+
+const $17a31747492cb646$var$capitalize = (s)=>s && s[0].toUpperCase() + s.slice(1) || "";
+const $17a31747492cb646$var$fetchESCO = (apiUrl = "https://ec.europa.eu/esco/api", type = "skill")=>async ({ keyword: keyword, locale: locale })=>{
+        const response = await fetch((0, ($parcel$interopDefault($as47w$urljoin)))(apiUrl, `suggest2?text=${encodeURIComponent(keyword)}&language=${locale}&type=${type}&isInScheme=&facet=&offset=&limit=&full=&selectedVersion=&viewObsolete=`));
+        if (response.ok) {
+            const json = await response.json();
+            return json._embedded.results.map((r)=>({
+                    uri: r.uri,
+                    label: $17a31747492cb646$var$capitalize(r.title.replace("\u2019", "'")),
+                    icon: (0, ($parcel$interopDefault($as47w$muiiconsmaterialStarBorder)))
+                }));
+        }
+        throw new Error("Failed to fetch ESCO server");
+    };
+var $17a31747492cb646$export$2e2bcd8739ae039 = $17a31747492cb646$var$fetchESCO;
+
+
+
+
+
+
 //# sourceMappingURL=index.cjs.js.map

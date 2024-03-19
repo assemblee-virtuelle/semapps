@@ -26,9 +26,11 @@ module.exports = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
-    if (typeof query === 'object') query = this.generateSparqlQuery(query);
-
     if (!dataset) throw new Error(`No dataset defined for triplestore query: ${query}`);
+    if (!(await ctx.call('triplestore.dataset.exist', { dataset })))
+      throw new Error(`The dataset ${dataset} doesn't exist`);
+
+    if (typeof query === 'object') query = this.generateSparqlQuery(query);
 
     const acceptNegotiatedType = negotiateType(accept);
     const acceptType = acceptNegotiatedType.mime;

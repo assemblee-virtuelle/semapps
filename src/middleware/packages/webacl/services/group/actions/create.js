@@ -1,17 +1,24 @@
 const { MoleculerError } = require('moleculer').Errors;
 const createSlug = require('speakingurl');
 const urlJoin = require('url-join');
-const { aclGroupExists, sanitizeSPARQL } = require('../../../utils');
+const { sanitizeSPARQL } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
-    if (!ctx.params.slug) throw new MoleculerError('needs a slug in your POST (json)', 400, 'BAD_REQUEST');
+    if (!ctx.meta.headers?.slug) throw new MoleculerError('needs a slug in your POST (json)', 400, 'BAD_REQUEST');
+    if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;
 
-    await ctx.call('webacl.group.create', {
-      groupSlug: ctx.params.slug
+    const { groupUri } = await ctx.call('webacl.group.create', {
+      groupSlug: this.settings.podProvider ? `${ctx.params.username}/${ctx.meta.headers.slug}` : ctx.meta.headers.slug
     });
 
-    ctx.meta.$statusCode = 204;
+    ctx.meta.$responseHeaders = {
+      Location: groupUri,
+      'Content-Length': 0
+    };
+    // We need to set this also here (in addition to above) or we get a Moleculer warning
+    ctx.meta.$location = groupUri;
+    ctx.meta.$statusCode = 201;
   },
   action: {
     visibility: 'public',
@@ -67,8 +74,6 @@ module.exports = {
         webId: 'system'
       });
 
-      // ctx.meta.$statusCode = 200;
-      // ctx.meta.$responseType = 'application/json'
       return { groupUri };
     }
   }

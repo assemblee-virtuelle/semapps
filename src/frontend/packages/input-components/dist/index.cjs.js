@@ -1,2 +1,200 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});var e=require("react"),t=require("react-admin"),r=require("@semapps/semantic-data-provider"),n=require("react-hook-form");function o(e){return e&&"object"==typeof e&&"default"in e?e:{default:e}}var u=o(e);function a(e){return(a="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e})(e)}function i(){return(i=Object.assign?Object.assign.bind():function(e){for(var t=1;t<arguments.length;t++){var r=arguments[t];for(var n in r)Object.prototype.hasOwnProperty.call(r,n)&&(e[n]=r[n])}return e}).apply(this,arguments)}function c(e,t){if(null==e)return{};var r,n,o=function(e,t){if(null==e)return{};var r,n,o={},u=Object.keys(e);for(n=0;n<u.length;n++)r=u[n],t.indexOf(r)>=0||(o[r]=e[r]);return o}(e,t);if(Object.getOwnPropertySymbols){var u=Object.getOwnPropertySymbols(e);for(n=0;n<u.length;n++)r=u[n],t.indexOf(r)>=0||Object.prototype.propertyIsEnumerable.call(e,r)&&(o[r]=e[r])}return o}var l=function(e){return"string"==typeof e?{src:e}:Array.isArray(e)?e.map((function(e){return"string"==typeof e?{src:e}:e})):e},f=function e(t){return t instanceof File?{rawFile:r=t,src:URL.createObjectURL(r),title:r.name}:t&&t.src&&!t.rawFile?t.src:Array.isArray(t)?t.map((function(t){return e(t)})):t;var r},s=function(e){var r=e.optionText,n=e.dataServers,o=t.useRecordContext(),a=n&&Object.values(n).find((function(e){return o.id.startsWith(e.baseUrl)}));return u.default.createElement("span",null,o[r],a&&u.default.createElement("em",{className:"serverName",style:{color:"grey"}}," (",a.name,")"))},p=["optionText"],m=["optionText"],y=["children"],d=function(e){return e&&"object"===a(e)?e.id||e["@id"]:e};exports.ImageInput=function(e){return u.default.createElement(t.ImageInput,i({},e,{format:l,parse:f}))},exports.MultiLinesInput=function(e){return u.default.createElement(t.TextInput,i({multiline:!0,minRows:2,format:function(e){return e?Array.isArray(e)?e.join("\n"):e:""},parse:function(e){return e.split(/\r?\n/)}},e))},exports.MultiServerAutocompleteArrayInput=function(n){var o=n.optionText,a=c(n,p),l=r.useDataServers(),f=e.useCallback((function(e,t){return t[o].toLowerCase().match(e.toLowerCase())}),[o]);return u.default.createElement(t.AutocompleteArrayInput,i({matchSuggestion:f,optionText:u.default.createElement(s,{optionText:o,dataServers:l}),inputText:function(e){return e[o]}},a))},exports.MultiServerAutocompleteInput=function(n){var o=n.optionText,a=c(n,m),l=r.useDataServers(),f=e.useCallback((function(e){if(e&&l){var t=Object.values(l).find((function(t){return e.id.startsWith(t.baseUrl)}));return e[o]+(t?" (".concat(t.name,")"):"")}}),[o,l]);return u.default.createElement(t.AutocompleteInput,i({optionText:f},a))},exports.ReferenceArrayInput=function(r){var o=n.useController({name:r.source}).field,a=o.value,i=o.onChange;return e.useEffect((function(){a&&!Array.isArray(a)&&i([a])}),[a,i]),a&&!Array.isArray(a)?null:u.default.createElement(t.ReferenceArrayInput,r)},exports.ReferenceInput=function(e){var r=e.children,n=c(e,y),o=u.default.Children.only(r);return u.default.createElement(t.ReferenceInput,n,u.default.cloneElement(o,{format:d}))};
+var $3asgq$reactjsxruntime = require("react/jsx-runtime");
+var $3asgq$reactadmin = require("react-admin");
+var $3asgq$react = require("react");
+var $3asgq$semappssemanticdataprovider = require("@semapps/semantic-data-provider");
+var $3asgq$reacthookform = require("react-hook-form");
+
+
+function $parcel$export(e, n, v, s) {
+  Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
+}
+
+function $parcel$interopDefault(a) {
+  return a && a.__esModule ? a.default : a;
+}
+
+$parcel$export(module.exports, "ImageInput", () => $cdabe6ba421df206$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "MultiServerAutocompleteArrayInput", () => $bb612fb8f67b03e0$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "MultiServerAutocompleteInput", () => $6c505c4dc3e51ff8$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "MultiLinesInput", () => $9aa37fe333ef760c$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "ReferenceArrayInput", () => $83ac3fff69969204$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "ReferenceInput", () => $6fb40d62998d2ee1$export$2e2bcd8739ae039);
+/* eslint-disable react/react-in-jsx-scope */ 
+
+// Since we overwrite FileInput default parse, we must transform the file
+// See https://github.com/marmelab/react-admin/blob/2d6a1982981b0f1882e52dd1a974a60eef333e59/packages/ra-ui-materialui/src/input/FileInput.tsx#L57
+const $cdabe6ba421df206$var$transformFile = (file, oldValue)=>{
+    const preview = URL.createObjectURL(file);
+    return {
+        rawFile: file,
+        src: preview,
+        title: file.name,
+        fileToDelete: oldValue
+    };
+};
+const $cdabe6ba421df206$var$format = (v)=>{
+    if (typeof v === "string") return {
+        src: v
+    };
+    if (Array.isArray(v)) return v.map((e)=>typeof e === "string" ? {
+            src: e
+        } : e);
+    return v;
+};
+const $cdabe6ba421df206$var$parse = (oldValue)=>(v)=>{
+        if (Array.isArray(v)) return v.map((e)=>$cdabe6ba421df206$var$parse(oldValue)(e));
+        if (v instanceof File) return $cdabe6ba421df206$var$transformFile(v, oldValue);
+        if (v && v.src) return v.src;
+        if (!v && oldValue) return {
+            fileToDelete: oldValue
+        };
+        return null;
+    };
+const $cdabe6ba421df206$var$ImageInput = ({ source: source, ...otherProps })=>{
+    const record = (0, $3asgq$reactadmin.useRecordContext)();
+    const previousValue = record ? record[source] : null;
+    return /*#__PURE__*/ (0, $3asgq$reactjsxruntime.jsx)((0, $3asgq$reactadmin.ImageInput), {
+        source: source,
+        format: $cdabe6ba421df206$var$format,
+        parse: $cdabe6ba421df206$var$parse(previousValue),
+        ...otherProps
+    });
+};
+var $cdabe6ba421df206$export$2e2bcd8739ae039 = $cdabe6ba421df206$var$ImageInput;
+
+
+
+
+
+
+
+
+
+const $a3ccd82fa8860009$var$OptionRenderer = ({ optionText: optionText, dataServers: dataServers })=>{
+    const record = (0, $3asgq$reactadmin.useRecordContext)();
+    const server = dataServers && Object.values(dataServers).find((server)=>record.id.startsWith(server.baseUrl));
+    return /*#__PURE__*/ (0, $3asgq$reactjsxruntime.jsxs)("span", {
+        children: [
+            record[optionText],
+            server && /*#__PURE__*/ (0, $3asgq$reactjsxruntime.jsxs)("em", {
+                className: "serverName",
+                style: {
+                    color: "grey"
+                },
+                children: [
+                    "\xa0(",
+                    server.name,
+                    ")"
+                ]
+            })
+        ]
+    });
+};
+var $a3ccd82fa8860009$export$2e2bcd8739ae039 = $a3ccd82fa8860009$var$OptionRenderer;
+
+
+const $bb612fb8f67b03e0$var$MultiServerAutocompleteArrayInput = ({ optionText: optionText, ...rest })=>{
+    const dataServers = (0, $3asgq$semappssemanticdataprovider.useDataServers)();
+    const matchSuggestion = (0, $3asgq$react.useCallback)((filterValue, choice)=>choice[optionText].toLowerCase().match(filterValue.toLowerCase()), [
+        optionText
+    ]);
+    return /*#__PURE__*/ (0, $3asgq$reactjsxruntime.jsx)((0, $3asgq$reactadmin.AutocompleteArrayInput), {
+        matchSuggestion: matchSuggestion,
+        optionText: /*#__PURE__*/ (0, $3asgq$reactjsxruntime.jsx)((0, $a3ccd82fa8860009$export$2e2bcd8739ae039), {
+            optionText: optionText,
+            dataServers: dataServers
+        }),
+        inputText: (choice)=>choice[optionText],
+        ...rest
+    });
+};
+var $bb612fb8f67b03e0$export$2e2bcd8739ae039 = $bb612fb8f67b03e0$var$MultiServerAutocompleteArrayInput;
+
+
+
+
+
+
+const $6c505c4dc3e51ff8$var$MultiServerAutocompleteInput = ({ optionText: optionText, ...rest })=>{
+    const dataServers = (0, $3asgq$semappssemanticdataprovider.useDataServers)();
+    // We cannot use OptionRenderer like MultiServerAutocompleteArrayInput because there is a bug with AutocompleteInput
+    const optionTextWithServerName = (0, $3asgq$react.useCallback)((record)=>{
+        if (record && dataServers) {
+            const server = Object.values(dataServers).find((server)=>record.id.startsWith(server.baseUrl));
+            return record[optionText] + (server ? ` (${server.name})` : "");
+        }
+    }, [
+        optionText,
+        dataServers
+    ]);
+    return /*#__PURE__*/ (0, $3asgq$reactjsxruntime.jsx)((0, $3asgq$reactadmin.AutocompleteInput), {
+        optionText: optionTextWithServerName,
+        ...rest
+    });
+};
+var $6c505c4dc3e51ff8$export$2e2bcd8739ae039 = $6c505c4dc3e51ff8$var$MultiServerAutocompleteInput;
+
+
+
+
+
+const $9aa37fe333ef760c$var$MultiLinesInput = (props)=>/*#__PURE__*/ (0, $3asgq$reactjsxruntime.jsx)((0, $3asgq$reactadmin.TextInput), {
+        multiline: true,
+        minRows: 2,
+        format: (value)=>value ? Array.isArray(value) ? value.join("\n") : value : "",
+        parse: (value)=>value.split(/\r?\n/),
+        ...props
+    });
+var $9aa37fe333ef760c$export$2e2bcd8739ae039 = $9aa37fe333ef760c$var$MultiLinesInput;
+
+
+
+
+
+
+const $83ac3fff69969204$var$ReferenceArrayInput = (props)=>{
+    const { field: { value: value, onChange: onChange } } = (0, $3asgq$reacthookform.useController)({
+        name: props.source
+    });
+    (0, $3asgq$react.useEffect)(()=>{
+        if (value && !Array.isArray(value)) onChange([
+            value
+        ]);
+    }, [
+        value,
+        onChange
+    ]);
+    // Wait for change to be effective before rendering component
+    // Otherwise it will be wrongly initialized and it won't work
+    if (value && !Array.isArray(value)) return null;
+    return /*#__PURE__*/ (0, $3asgq$reactjsxruntime.jsx)((0, $3asgq$reactadmin.ReferenceArrayInput), {
+        ...props
+    });
+};
+var $83ac3fff69969204$export$2e2bcd8739ae039 = $83ac3fff69969204$var$ReferenceArrayInput;
+
+
+
+
+
+const $6fb40d62998d2ee1$var$format = (value)=>{
+    // If there is no value, return immediately
+    if (!value) return value;
+    // If the value is an object with an @id field, return the uri
+    return typeof value === "object" ? value.id || value["@id"] : value;
+};
+const $6fb40d62998d2ee1$var$ReferenceInput = ({ children: children, ...rest })=>{
+    const child = (0, ($parcel$interopDefault($3asgq$react))).Children.only(children);
+    return /*#__PURE__*/ (0, $3asgq$reactjsxruntime.jsx)((0, $3asgq$reactadmin.ReferenceInput), {
+        ...rest,
+        children: /*#__PURE__*/ (0, ($parcel$interopDefault($3asgq$react))).cloneElement(child, {
+            format: $6fb40d62998d2ee1$var$format
+        })
+    });
+};
+var $6fb40d62998d2ee1$export$2e2bcd8739ae039 = $6fb40d62998d2ee1$var$ReferenceInput;
+
+
+
+
 //# sourceMappingURL=index.cjs.js.map

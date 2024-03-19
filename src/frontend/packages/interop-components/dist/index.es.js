@@ -1,4 +1,542 @@
-import e,{forwardRef as t,useState as r,useMemo as n,useEffect as o,useCallback as i}from"react";import{useResourceContext as a,useLocale as c,useTranslate as u,useNotify as l,useInput as s,FieldTitle as f,InputHelperText as p,useCreateSuggestionContext as h,useCreate as m,useDataProvider as d,useRedirect as v,SimpleForm as y,TextInput as g,RadioButtonGroupInput as b,useSaveContext as x,required as w}from"react-admin";import{TextField as E,Grid as O,Typography as j,Dialog as A,DialogContent as k,DialogActions as L,Button as S,useMediaQuery as T,Box as U,Tabs as I,Tab as P,Divider as C}from"@mui/material";import R from"@mui/styles/makeStyles";import N from"@mui/material/Autocomplete";import _ from"@mui/icons-material/Language";import F from"@mui/icons-material/Add";import{useFormContext as W}from"react-hook-form";import{useContainers as G,useDataModel as M}from"@semapps/semantic-data-provider";import{ReferenceInput as $,MultiServerAutocompleteInput as D}from"@semapps/input-components";import V from"@mui/icons-material/StarBorder";function q(e,t){var r=Object.keys(e);if(Object.getOwnPropertySymbols){var n=Object.getOwnPropertySymbols(e);t&&(n=n.filter((function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable}))),r.push.apply(r,n)}return r}function B(e){for(var t=1;t<arguments.length;t++){var r=null!=arguments[t]?arguments[t]:{};t%2?q(Object(r),!0).forEach((function(t){z(e,t,r[t])})):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(r)):q(Object(r)).forEach((function(t){Object.defineProperty(e,t,Object.getOwnPropertyDescriptor(r,t))}))}return e}function Y(){
-/*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
-Y=function(){return e};var e={},t=Object.prototype,r=t.hasOwnProperty,n="function"==typeof Symbol?Symbol:{},o=n.iterator||"@@iterator",i=n.asyncIterator||"@@asyncIterator",a=n.toStringTag||"@@toStringTag";function c(e,t,r){return Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}),e[t]}try{c({},"")}catch(e){c=function(e,t,r){return e[t]=r}}function u(e,t,r,n){var o=t&&t.prototype instanceof f?t:f,i=Object.create(o.prototype),a=new O(n||[]);return i._invoke=function(e,t,r){var n="suspendedStart";return function(o,i){if("executing"===n)throw new Error("Generator is already running");if("completed"===n){if("throw"===o)throw i;return A()}for(r.method=o,r.arg=i;;){var a=r.delegate;if(a){var c=x(a,r);if(c){if(c===s)continue;return c}}if("next"===r.method)r.sent=r._sent=r.arg;else if("throw"===r.method){if("suspendedStart"===n)throw n="completed",r.arg;r.dispatchException(r.arg)}else"return"===r.method&&r.abrupt("return",r.arg);n="executing";var u=l(e,t,r);if("normal"===u.type){if(n=r.done?"completed":"suspendedYield",u.arg===s)continue;return{value:u.arg,done:r.done}}"throw"===u.type&&(n="completed",r.method="throw",r.arg=u.arg)}}}(e,r,a),i}function l(e,t,r){try{return{type:"normal",arg:e.call(t,r)}}catch(e){return{type:"throw",arg:e}}}e.wrap=u;var s={};function f(){}function p(){}function h(){}var m={};c(m,o,(function(){return this}));var d=Object.getPrototypeOf,v=d&&d(d(j([])));v&&v!==t&&r.call(v,o)&&(m=v);var y=h.prototype=f.prototype=Object.create(m);function g(e){["next","throw","return"].forEach((function(t){c(e,t,(function(e){return this._invoke(t,e)}))}))}function b(e,t){var n;this._invoke=function(o,i){function a(){return new t((function(n,a){!function n(o,i,a,c){var u=l(e[o],e,i);if("throw"!==u.type){var s=u.arg,f=s.value;return f&&"object"==typeof f&&r.call(f,"__await")?t.resolve(f.__await).then((function(e){n("next",e,a,c)}),(function(e){n("throw",e,a,c)})):t.resolve(f).then((function(e){s.value=e,a(s)}),(function(e){return n("throw",e,a,c)}))}c(u.arg)}(o,i,n,a)}))}return n=n?n.then(a,a):a()}}function x(e,t){var r=e.iterator[t.method];if(void 0===r){if(t.delegate=null,"throw"===t.method){if(e.iterator.return&&(t.method="return",t.arg=void 0,x(e,t),"throw"===t.method))return s;t.method="throw",t.arg=new TypeError("The iterator does not provide a 'throw' method")}return s}var n=l(r,e.iterator,t.arg);if("throw"===n.type)return t.method="throw",t.arg=n.arg,t.delegate=null,s;var o=n.arg;return o?o.done?(t[e.resultName]=o.value,t.next=e.nextLoc,"return"!==t.method&&(t.method="next",t.arg=void 0),t.delegate=null,s):o:(t.method="throw",t.arg=new TypeError("iterator result is not an object"),t.delegate=null,s)}function w(e){var t={tryLoc:e[0]};1 in e&&(t.catchLoc=e[1]),2 in e&&(t.finallyLoc=e[2],t.afterLoc=e[3]),this.tryEntries.push(t)}function E(e){var t=e.completion||{};t.type="normal",delete t.arg,e.completion=t}function O(e){this.tryEntries=[{tryLoc:"root"}],e.forEach(w,this),this.reset(!0)}function j(e){if(e){var t=e[o];if(t)return t.call(e);if("function"==typeof e.next)return e;if(!isNaN(e.length)){var n=-1,i=function t(){for(;++n<e.length;)if(r.call(e,n))return t.value=e[n],t.done=!1,t;return t.value=void 0,t.done=!0,t};return i.next=i}}return{next:A}}function A(){return{value:void 0,done:!0}}return p.prototype=h,c(y,"constructor",h),c(h,"constructor",p),p.displayName=c(h,a,"GeneratorFunction"),e.isGeneratorFunction=function(e){var t="function"==typeof e&&e.constructor;return!!t&&(t===p||"GeneratorFunction"===(t.displayName||t.name))},e.mark=function(e){return Object.setPrototypeOf?Object.setPrototypeOf(e,h):(e.__proto__=h,c(e,a,"GeneratorFunction")),e.prototype=Object.create(y),e},e.awrap=function(e){return{__await:e}},g(b.prototype),c(b.prototype,i,(function(){return this})),e.AsyncIterator=b,e.async=function(t,r,n,o,i){void 0===i&&(i=Promise);var a=new b(u(t,r,n,o),i);return e.isGeneratorFunction(r)?a:a.next().then((function(e){return e.done?e.value:a.next()}))},g(y),c(y,a,"Generator"),c(y,o,(function(){return this})),c(y,"toString",(function(){return"[object Generator]"})),e.keys=function(e){var t=[];for(var r in e)t.push(r);return t.reverse(),function r(){for(;t.length;){var n=t.pop();if(n in e)return r.value=n,r.done=!1,r}return r.done=!0,r}},e.values=j,O.prototype={constructor:O,reset:function(e){if(this.prev=0,this.next=0,this.sent=this._sent=void 0,this.done=!1,this.delegate=null,this.method="next",this.arg=void 0,this.tryEntries.forEach(E),!e)for(var t in this)"t"===t.charAt(0)&&r.call(this,t)&&!isNaN(+t.slice(1))&&(this[t]=void 0)},stop:function(){this.done=!0;var e=this.tryEntries[0].completion;if("throw"===e.type)throw e.arg;return this.rval},dispatchException:function(e){if(this.done)throw e;var t=this;function n(r,n){return a.type="throw",a.arg=e,t.next=r,n&&(t.method="next",t.arg=void 0),!!n}for(var o=this.tryEntries.length-1;o>=0;--o){var i=this.tryEntries[o],a=i.completion;if("root"===i.tryLoc)return n("end");if(i.tryLoc<=this.prev){var c=r.call(i,"catchLoc"),u=r.call(i,"finallyLoc");if(c&&u){if(this.prev<i.catchLoc)return n(i.catchLoc,!0);if(this.prev<i.finallyLoc)return n(i.finallyLoc)}else if(c){if(this.prev<i.catchLoc)return n(i.catchLoc,!0)}else{if(!u)throw new Error("try statement without catch or finally");if(this.prev<i.finallyLoc)return n(i.finallyLoc)}}}},abrupt:function(e,t){for(var n=this.tryEntries.length-1;n>=0;--n){var o=this.tryEntries[n];if(o.tryLoc<=this.prev&&r.call(o,"finallyLoc")&&this.prev<o.finallyLoc){var i=o;break}}i&&("break"===e||"continue"===e)&&i.tryLoc<=t&&t<=i.finallyLoc&&(i=null);var a=i?i.completion:{};return a.type=e,a.arg=t,i?(this.method="next",this.next=i.finallyLoc,s):this.complete(a)},complete:function(e,t){if("throw"===e.type)throw e.arg;return"break"===e.type||"continue"===e.type?this.next=e.arg:"return"===e.type?(this.rval=this.arg=e.arg,this.method="return",this.next="end"):"normal"===e.type&&t&&(this.next=t),s},finish:function(e){for(var t=this.tryEntries.length-1;t>=0;--t){var r=this.tryEntries[t];if(r.finallyLoc===e)return this.complete(r.completion,r.afterLoc),E(r),s}},catch:function(e){for(var t=this.tryEntries.length-1;t>=0;--t){var r=this.tryEntries[t];if(r.tryLoc===e){var n=r.completion;if("throw"===n.type){var o=n.arg;E(r)}return o}}throw new Error("illegal catch attempt")},delegateYield:function(e,t,r){return this.delegate={iterator:j(e),resultName:t,nextLoc:r},"next"===this.method&&(this.arg=void 0),s}},e}function H(e,t,r,n,o,i,a){try{var c=e[i](a),u=c.value}catch(e){return void r(e)}c.done?t(u):Promise.resolve(u).then(n,o)}function X(e){return function(){var t=this,r=arguments;return new Promise((function(n,o){var i=e.apply(t,r);function a(e){H(i,n,o,a,c,"next",e)}function c(e){H(i,n,o,a,c,"throw",e)}a(void 0)}))}}function z(e,t,r){return t in e?Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}):e[t]=r,e}function K(){return(K=Object.assign?Object.assign.bind():function(e){for(var t=1;t<arguments.length;t++){var r=arguments[t];for(var n in r)Object.prototype.hasOwnProperty.call(r,n)&&(e[n]=r[n])}return e}).apply(this,arguments)}function Z(e,t){if(null==e)return{};var r,n,o=function(e,t){if(null==e)return{};var r,n,o={},i=Object.keys(e);for(n=0;n<i.length;n++)r=i[n],t.indexOf(r)>=0||(o[r]=e[r]);return o}(e,t);if(Object.getOwnPropertySymbols){var i=Object.getOwnPropertySymbols(e);for(n=0;n<i.length;n++)r=i[n],t.indexOf(r)>=0||Object.prototype.propertyIsEnumerable.call(e,r)&&(o[r]=e[r])}return o}function J(e,t){return function(e){if(Array.isArray(e))return e}(e)||function(e,t){var r=null==e?null:"undefined"!=typeof Symbol&&e[Symbol.iterator]||e["@@iterator"];if(null==r)return;var n,o,i=[],a=!0,c=!1;try{for(r=r.call(e);!(a=(n=r.next()).done)&&(i.push(n.value),!t||i.length!==t);a=!0);}catch(e){c=!0,o=e}finally{try{a||null==r.return||r.return()}finally{if(c)throw o}}return i}(e,t)||ee(e,t)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function Q(e){return function(e){if(Array.isArray(e))return te(e)}(e)||function(e){if("undefined"!=typeof Symbol&&null!=e[Symbol.iterator]||null!=e["@@iterator"])return Array.from(e)}(e)||ee(e)||function(){throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function ee(e,t){if(e){if("string"==typeof e)return te(e,t);var r=Object.prototype.toString.call(e).slice(8,-1);return"Object"===r&&e.constructor&&(r=e.constructor.name),"Map"===r||"Set"===r?Array.from(e):"Arguments"===r||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r)?te(e,t):void 0}}function te(e,t){(null==t||t>e.length)&&(t=e.length);for(var r=0,n=new Array(t);r<t;r++)n[r]=e[r];return n}var re="undefined"!=typeof globalThis?globalThis:"undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:{};function ne(e,t){return e(t={exports:{}},t.exports),t.exports}var oe=ne((function(e,t){var r,n;e.exports=(r={772:(e,t,r)=>{const n=r(826).remove,o=/[.*+?^${}()|[\]\\]/g,i=/[a-z0-9_]/i,a=/\s+/;e.exports=function(e,t,r){var c,u;u={insideWords:!1,findAllOccurrences:!1,requireMatchAll:!1},c=(c=r)||{},Object.keys(c).forEach(e=>{u[e]=!!c[e]}),r=u;const l=Array.from(e).map(e=>n(e));let s=l.join("");return(t=n(t)).trim().split(a).filter(e=>e.length>0).reduce((e,t)=>{const n=t.length,a=!r.insideWords&&i.test(t[0])?"\\b":"",c=new RegExp(a+t.replace(o,"\\$&"),"i");let u,f;if(u=c.exec(s),r.requireMatchAll&&null===u)return s="",[];for(;u;){f=u.index;const t=n-l.slice(f,f+n).join("").length,o=f-l.slice(0,f).join("").length,i=[f+o,f+n+o+t];if(i[0]!==i[1]&&e.push(i),s=s.slice(0,f)+new Array(n+1).join(" ")+s.slice(f+n),!r.findAllOccurrences)break;u=c.exec(s)}return e},[]).sort((e,t)=>e[0]-t[0])}},826:e=>{var t={"À":"A","Á":"A","Â":"A","Ã":"A","Ä":"A","Å":"A","Ấ":"A","Ắ":"A","Ẳ":"A","Ẵ":"A","Ặ":"A","Æ":"AE","Ầ":"A","Ằ":"A","Ȃ":"A","Ç":"C","Ḉ":"C","È":"E","É":"E","Ê":"E","Ë":"E","Ế":"E","Ḗ":"E","Ề":"E","Ḕ":"E","Ḝ":"E","Ȇ":"E","Ì":"I","Í":"I","Î":"I","Ï":"I","Ḯ":"I","Ȋ":"I","Ð":"D","Ñ":"N","Ò":"O","Ó":"O","Ô":"O","Õ":"O","Ö":"O","Ø":"O","Ố":"O","Ṍ":"O","Ṓ":"O","Ȏ":"O","Ù":"U","Ú":"U","Û":"U","Ü":"U","Ý":"Y","à":"a","á":"a","â":"a","ã":"a","ä":"a","å":"a","ấ":"a","ắ":"a","ẳ":"a","ẵ":"a","ặ":"a","æ":"ae","ầ":"a","ằ":"a","ȃ":"a","ç":"c","ḉ":"c","è":"e","é":"e","ê":"e","ë":"e","ế":"e","ḗ":"e","ề":"e","ḕ":"e","ḝ":"e","ȇ":"e","ì":"i","í":"i","î":"i","ï":"i","ḯ":"i","ȋ":"i","ð":"d","ñ":"n","ò":"o","ó":"o","ô":"o","õ":"o","ö":"o","ø":"o","ố":"o","ṍ":"o","ṓ":"o","ȏ":"o","ù":"u","ú":"u","û":"u","ü":"u","ý":"y","ÿ":"y","Ā":"A","ā":"a","Ă":"A","ă":"a","Ą":"A","ą":"a","Ć":"C","ć":"c","Ĉ":"C","ĉ":"c","Ċ":"C","ċ":"c","Č":"C","č":"c","C̆":"C","c̆":"c","Ď":"D","ď":"d","Đ":"D","đ":"d","Ē":"E","ē":"e","Ĕ":"E","ĕ":"e","Ė":"E","ė":"e","Ę":"E","ę":"e","Ě":"E","ě":"e","Ĝ":"G","Ǵ":"G","ĝ":"g","ǵ":"g","Ğ":"G","ğ":"g","Ġ":"G","ġ":"g","Ģ":"G","ģ":"g","Ĥ":"H","ĥ":"h","Ħ":"H","ħ":"h","Ḫ":"H","ḫ":"h","Ĩ":"I","ĩ":"i","Ī":"I","ī":"i","Ĭ":"I","ĭ":"i","Į":"I","į":"i","İ":"I","ı":"i","Ĳ":"IJ","ĳ":"ij","Ĵ":"J","ĵ":"j","Ķ":"K","ķ":"k","Ḱ":"K","ḱ":"k","K̆":"K","k̆":"k","Ĺ":"L","ĺ":"l","Ļ":"L","ļ":"l","Ľ":"L","ľ":"l","Ŀ":"L","ŀ":"l","Ł":"l","ł":"l","Ḿ":"M","ḿ":"m","M̆":"M","m̆":"m","Ń":"N","ń":"n","Ņ":"N","ņ":"n","Ň":"N","ň":"n","ŉ":"n","N̆":"N","n̆":"n","Ō":"O","ō":"o","Ŏ":"O","ŏ":"o","Ő":"O","ő":"o","Œ":"OE","œ":"oe","P̆":"P","p̆":"p","Ŕ":"R","ŕ":"r","Ŗ":"R","ŗ":"r","Ř":"R","ř":"r","R̆":"R","r̆":"r","Ȓ":"R","ȓ":"r","Ś":"S","ś":"s","Ŝ":"S","ŝ":"s","Ş":"S","Ș":"S","ș":"s","ş":"s","Š":"S","š":"s","Ţ":"T","ţ":"t","ț":"t","Ț":"T","Ť":"T","ť":"t","Ŧ":"T","ŧ":"t","T̆":"T","t̆":"t","Ũ":"U","ũ":"u","Ū":"U","ū":"u","Ŭ":"U","ŭ":"u","Ů":"U","ů":"u","Ű":"U","ű":"u","Ų":"U","ų":"u","Ȗ":"U","ȗ":"u","V̆":"V","v̆":"v","Ŵ":"W","ŵ":"w","Ẃ":"W","ẃ":"w","X̆":"X","x̆":"x","Ŷ":"Y","ŷ":"y","Ÿ":"Y","Y̆":"Y","y̆":"y","Ź":"Z","ź":"z","Ż":"Z","ż":"z","Ž":"Z","ž":"z","ſ":"s","ƒ":"f","Ơ":"O","ơ":"o","Ư":"U","ư":"u","Ǎ":"A","ǎ":"a","Ǐ":"I","ǐ":"i","Ǒ":"O","ǒ":"o","Ǔ":"U","ǔ":"u","Ǖ":"U","ǖ":"u","Ǘ":"U","ǘ":"u","Ǚ":"U","ǚ":"u","Ǜ":"U","ǜ":"u","Ứ":"U","ứ":"u","Ṹ":"U","ṹ":"u","Ǻ":"A","ǻ":"a","Ǽ":"AE","ǽ":"ae","Ǿ":"O","ǿ":"o","Þ":"TH","þ":"th","Ṕ":"P","ṕ":"p","Ṥ":"S","ṥ":"s","X́":"X","x́":"x","Ѓ":"Г","ѓ":"г","Ќ":"К","ќ":"к","A̋":"A","a̋":"a","E̋":"E","e̋":"e","I̋":"I","i̋":"i","Ǹ":"N","ǹ":"n","Ồ":"O","ồ":"o","Ṑ":"O","ṑ":"o","Ừ":"U","ừ":"u","Ẁ":"W","ẁ":"w","Ỳ":"Y","ỳ":"y","Ȁ":"A","ȁ":"a","Ȅ":"E","ȅ":"e","Ȉ":"I","ȉ":"i","Ȍ":"O","ȍ":"o","Ȑ":"R","ȑ":"r","Ȕ":"U","ȕ":"u","B̌":"B","b̌":"b","Č̣":"C","č̣":"c","Ê̌":"E","ê̌":"e","F̌":"F","f̌":"f","Ǧ":"G","ǧ":"g","Ȟ":"H","ȟ":"h","J̌":"J","ǰ":"j","Ǩ":"K","ǩ":"k","M̌":"M","m̌":"m","P̌":"P","p̌":"p","Q̌":"Q","q̌":"q","Ř̩":"R","ř̩":"r","Ṧ":"S","ṧ":"s","V̌":"V","v̌":"v","W̌":"W","w̌":"w","X̌":"X","x̌":"x","Y̌":"Y","y̌":"y","A̧":"A","a̧":"a","B̧":"B","b̧":"b","Ḑ":"D","ḑ":"d","Ȩ":"E","ȩ":"e","Ɛ̧":"E","ɛ̧":"e","Ḩ":"H","ḩ":"h","I̧":"I","i̧":"i","Ɨ̧":"I","ɨ̧":"i","M̧":"M","m̧":"m","O̧":"O","o̧":"o","Q̧":"Q","q̧":"q","U̧":"U","u̧":"u","X̧":"X","x̧":"x","Z̧":"Z","z̧":"z"},r=Object.keys(t).join("|"),n=new RegExp(r,"g"),o=new RegExp(r,""),i=function(e){return e.replace(n,(function(e){return t[e]}))};e.exports=i,e.exports.has=function(e){return!!e.match(o)},e.exports.remove=i}},n={},function e(t){var o=n[t];if(void 0!==o)return o.exports;var i=n[t]={exports:{}};return r[t](i,i.exports,e),i.exports}(772))}));oe.AutosuggestHighlightMatch;var ie=ne((function(e,t){var r,n;e.exports=(r={705:e=>{e.exports=function(e,t){const r=[];return 0===t.length?r.push({text:e,highlight:!1}):t[0][0]>0&&r.push({text:e.slice(0,t[0][0]),highlight:!1}),t.forEach((n,o)=>{const i=n[0],a=n[1];r.push({text:e.slice(i,a),highlight:!0}),o===t.length-1?a<e.length&&r.push({text:e.slice(a,e.length),highlight:!1}):a<t[o+1][0]&&r.push({text:e.slice(a,t[o+1][0]),highlight:!1})}),r}}},n={},function e(t){var o=n[t];if(void 0!==o)return o.exports;var i=n[t]={exports:{}};return r[t](i,i.exports,e),i.exports}(705))}));ie.AutosuggestHighlightParse;var ae=/^\s+|\s+$/g,ce=/^[-+]0x[0-9a-f]+$/i,ue=/^0b[01]+$/i,le=/^0o[0-7]+$/i,se=parseInt,fe="object"==typeof re&&re&&re.Object===Object&&re,pe="object"==typeof self&&self&&self.Object===Object&&self,he=fe||pe||Function("return this")(),me=Object.prototype.toString,de=Math.max,ve=Math.min,ye=function(){return he.Date.now()};function ge(e,t,r){var n,o,i,a,c,u,l=0,s=!1,f=!1,p=!0;if("function"!=typeof e)throw new TypeError("Expected a function");function h(t){var r=n,i=o;return n=o=void 0,l=t,a=e.apply(i,r)}function m(e){return l=e,c=setTimeout(v,t),s?h(e):a}function d(e){var r=e-u;return void 0===u||r>=t||r<0||f&&e-l>=i}function v(){var e=ye();if(d(e))return y(e);c=setTimeout(v,function(e){var r=t-(e-u);return f?ve(r,i-(e-l)):r}(e))}function y(e){return c=void 0,p&&n?h(e):(n=o=void 0,a)}function g(){var e=ye(),r=d(e);if(n=arguments,o=this,u=e,r){if(void 0===c)return m(u);if(f)return c=setTimeout(v,t),h(u)}return void 0===c&&(c=setTimeout(v,t)),a}return t=xe(t)||0,be(r)&&(s=!!r.leading,i=(f="maxWait"in r)?de(xe(r.maxWait)||0,t):i,p="trailing"in r?!!r.trailing:p),g.cancel=function(){void 0!==c&&clearTimeout(c),l=0,n=u=o=c=void 0},g.flush=function(){return void 0===c?a:y(ye())},g}function be(e){var t=typeof e;return!!e&&("object"==t||"function"==t)}function xe(e){if("number"==typeof e)return e;if(function(e){return"symbol"==typeof e||function(e){return!!e&&"object"==typeof e}(e)&&"[object Symbol]"==me.call(e)}(e))return NaN;if(be(e)){var t="function"==typeof e.valueOf?e.valueOf():e;e=be(t)?t+"":t}if("string"!=typeof e)return 0===e?e:+e;e=e.replace(ae,"");var r=ue.test(e);return r||le.test(e)?se(e.slice(2),r?2:8):ce.test(e)?NaN:+e}var we=function(e,t,r){var n=!0,o=!0;if("function"!=typeof e)throw new TypeError("Expected a function");return be(r)&&(n="leading"in r?!!r.leading:n,o="trailing"in r?!!r.trailing:o),ge(e,t,{leading:n,maxWait:t,trailing:o})},Ee=["fetchLexicon","source","defaultValue","label","parse","optionText","helperText"],Oe=R((function(e){return{icon:{color:e.palette.text.secondary,marginRight:e.spacing(2)}}})),je=function(e,t){return"string"==typeof e?e:e.label?e.label:"string"==typeof t?e[t]:"function"==typeof t?t(e):void 0},Ae=function(e){return e&&e.charAt(0).toUpperCase()+e.slice(1)},ke=t((function(t,i){var h=t.fetchLexicon,m=t.source,d=t.defaultValue,v=t.label,y=t.parse,g=t.optionText,b=t.helperText,x=Z(t,Ee),w=a(),A=Oe(),k=c(),L=u(),S=l(),T=s(B({source:m,defaultValue:d},x)),U=T.field,I=U.value,P=U.onChange,C=U.onBlur,R=T.fieldState,W=R.isTouched,G=R.error,M=T.formState.submitError,$=T.isRequired,D=J(r(d),2),V=D[0],q=D[1],Y=J(r([]),2),H=Y[0],X=Y[1],z=n((function(){return we((function(e,t){h({keyword:e,locale:k}).then((function(e){return t(e)})).catch((function(e){return S(e.message,{type:"error"})}))}),200)}),[k,h,S]);return o((function(){V&&z(V,(function(e){return X(e)}))}),[I,V,z]),e.createElement(N,{fullWidth:!0,freeSolo:!0,autoComplete:!0,value:I||null,ref:i,openOnFocus:!!d,options:I?[I].concat(Q(H)):H,filterSelectedOptions:!0,filterOptions:function(e,t){return V&&e.push({label:Ae(V),summary:'Ajouter "'.concat(Ae(V),'" au dictionnaire'),icon:F}),e},clearOnBlur:!0,selectOnFocus:!0,handleHomeEndKeys:!0,getOptionLabel:function(e){return je(e,g)},isOptionEqualToValue:function(e,t){return je(e,g)===je(t,g)},onChange:function(e,t){t&&y&&(t=y(t)),P(t),X([])},onInputChange:function(e,t){return q(t)},noOptionsText:L("ra.navigation.no_results"),renderInput:function(t){return t.inputProps.autoComplete="new-password",e.createElement(E,K({},t,{autoFocus:!0,inputProps:B(B({},t.inputProps),{},{onBlur:function(e){C(e),t.inputProps.onBlur&&t.inputProps.onBlur(e)},onFocus:function(e){t.inputProps.onFocus&&t.inputProps.onFocus(e)}}),label:""!==v&&!1!==v&&e.createElement(f,{label:v,source:m,resource:w,isRequired:$}),error:!(!W||!G&&!M),helperText:e.createElement(p,{touched:W,error:G||M,helperText:b})}))},renderOption:function(t,r){var n=oe(r.label,V),o=ie(r.label,n);return e.createElement(O,K({container:!0,alignItems:"center"},t,{key:r.uri||"create"}),e.createElement(O,{item:!0},e.createElement(r.icon||_,{className:A.icon})),e.createElement(O,{item:!0,xs:!0},"string"==typeof o?o:o.map((function(t,r){return e.createElement("span",{key:r,style:{fontWeight:t.highlight?700:400}},t.text)})),e.createElement(j,{variant:"body2",color:"textSecondary"},r.summary)))}})}));ke.defaultProps={optionText:"label"};var Le=function(t){var n=t.fetchLexicon,o=t.selectData,c=h(),u=c.filter,l=c.onCancel,s=c.onCreate,f=a(),p=J(r(u||""),2),d=p[0],v=p[1],y=J(m(),1)[0],g=i((function(){v(""),l()}),[v,l]),b=i((function(){d.uri||delete d.summary,y(f,{data:o(d)},{onSuccess:function(e){console.log("onSuccess",e),v(""),s(e)}})}),[y,s,o,d,v,f]);return e.createElement(A,{open:!0,onClose:g,fullWidth:!0,maxWidth:"sm"},e.createElement(k,null,e.createElement(ke,{source:"lexicon",label:"Titre",fetchLexicon:n,defaultValue:u,value:d,onChange:v})),e.createElement(L,null,e.createElement(S,{onClick:g},"Annuler"),e.createElement(S,{variant:"contained",color:"primary",onClick:b},"Ajouter")))},Se=function(e){var t=d(),r=v(),n=l();return i(function(){var o=X(Y().mark((function o(i){var a,c,u,l,s,f,p=arguments;return Y().wrap((function(o){for(;;)switch(o.prev=o.next){case 0:return a=p.length>1&&void 0!==p[1]?p[1]:[],o.next=3,t.getOne(e,{id:i});case 3:return c=o.sent,u=c.data,(l=B({},u))["http://www.w3.org/ns/prov#wasDerivedFrom"]=l.id,delete l.id,delete l["@context"],a.forEach((function(e){delete l[e]})),o.next=12,t.create(e,{data:l});case 12:s=o.sent,f=s.data,r("/"+e+"/"+encodeURIComponent(f.id)+"/show"),n("La ressource a bien été copiée",{type:"success"});case 16:case"end":return o.stop()}}),o)})));return function(e){return o.apply(this,arguments)}}(),[e,t,r,n])},Te=function(e){var t=d(),r=l(),n=v();return i(function(){var o=X(Y().mark((function o(i){return Y().wrap((function(o){for(;;)switch(o.prev=o.next){case 0:return o.next=2,t.create(e,{id:i});case 2:n("/"+e+"/"+encodeURIComponent(i)+"/show"),r("La ressource a bien été importée",{type:"success"});case 4:case"end":return o.stop()}}),o)})));return function(e){return o.apply(this,arguments)}}(),[t,n,r])},Ue=function(){var t,r,n=a(),i=G(n,"@remote"),c=M(n),u=W(),l=u.watch,s=u.setValue,f=l("remoteUri"),p=l("plainUri");return o((function(){f&&s("plainUri",f)}),[f]),o((function(){p&&p!==f&&s("remoteUri",null)}),[f,p]),c?e.createElement(e.Fragment,null,i&&Object.keys(i).length>0&&e.createElement($,{source:"remoteUri",reference:n,filter:{_servers:"@remote",_predicates:[null==c||null===(t=c.fieldsMapping)||void 0===t?void 0:t.title]},enableGetChoices:function(e){var t=e.q;return!!(t&&t.length>1)}},e.createElement(D,{optionText:null==c||null===(r=c.fieldsMapping)||void 0===r?void 0:r.title,shouldRenderSuggestions:function(e){return e.length>1},noOptionsText:"Tapez au moins deux lettres",emptyText:"Rechercher...",label:"Resource distante",fullWidth:!0})),e.createElement(g,{source:"plainUri",label:"URL de la ressource distante",fullWidth:!0}),e.createElement(b,{source:"method",label:"Méthode d'importation",choices:[{id:"sync",name:"Garder la ressource locale synchronisée avec la ressource distante"},{id:"fork",name:"Créer une nouvelle version de la ressource (fork)"}]})):null},Ie=function(t){var r=t.stripProperties,n=a(),o=Se(n),c=Te(n),u=i(function(){var e=X(Y().mark((function e(t){var n;return Y().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:if(n=t.plainUri,"fork"!==t.method){e.next=6;break}return e.next=4,o(n,r);case 4:e.next=8;break;case 6:return e.next=8,c(n);case 8:case"end":return e.stop()}}),e)})));return function(t){return e.apply(this,arguments)}}(),[o,c,r]);return e.createElement(y,{onSubmit:u,defaultValues:{method:"sync"}},e.createElement(Ue,null))},Pe=["stripProperties"],Ce=R((function(){return{tab:{maxWidth:"unset",padding:"6px 24px"}}})),Re=function(t){var n=t.stripProperties,o=Z(t,Pe),i=J(r(0),2),a=i[0],c=i[1],u=Ce(),l=T((function(e){return e.breakpoints.down("sm")}),{noSsr:!0});return e.createElement(e.Fragment,null,e.createElement(U,{pb:2},e.createElement(I,{value:a,onChange:function(e,t){return c(t)},indicatorColor:"primary"},e.createElement(P,{className:u.tab,label:"Créer"}),e.createElement(P,{className:u.tab,label:l?"Importer":"Importer une ressource distante"})),e.createElement(C,null)),0===a&&e.createElement(y,o),1===a&&e.createElement(Ie,K({stripProperties:n||[]},o)))},Ne=function(t){var r=t.fetchLexicon,n=t.selectData,o=x().save,a=i(function(){var e=X(Y().mark((function e(t){var r;return Y().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return(r=t.lexicon).uri||delete r.summary,"string"==typeof r&&(r={label:r}),e.next=5,o(n(r));case 5:case"end":return e.stop()}}),e)})));return function(t){return e.apply(this,arguments)}}(),[n,o]);return e.createElement(y,{onSubmit:a},e.createElement(ke,{label:"Titre",source:"lexicon",fetchLexicon:r,validate:w()}))},_e=function(e){return e&&e[0].toUpperCase()+e.slice(1)||""},Fe=function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"https://www.wikidata.org/w/api.php";return function(){var t=X(Y().mark((function t(r){var n,o,i,a;return Y().wrap((function(t){for(;;)switch(t.prev=t.next){case 0:return n=r.keyword,o=r.locale,t.next=3,fetch("".concat(e,"?action=wbsearchentities&format=json&language=").concat(o,"&uselang=").concat(o,"&type=item&limit=10&origin=*&search=").concat(encodeURIComponent(n)));case 3:if(!(i=t.sent).ok){t.next=11;break}return t.next=7,i.json();case 7:return a=t.sent,t.abrupt("return",a.search.map((function(e){return{uri:e.concepturi,label:_e(e.match.text),summary:_e(e.description),icon:_}})));case 11:throw new Error("Failed to fetch Wikidata server");case 12:case"end":return t.stop()}}),t)})));return function(e){return t.apply(this,arguments)}}()},We=ne((function(e){var t,r;t=re,r=function(){function e(e){var t=[];if(0===e.length)return"";if("string"!=typeof e[0])throw new TypeError("Url must be a string. Received "+e[0]);if(e[0].match(/^[^/:]+:\/*$/)&&e.length>1){var r=e.shift();e[0]=r+e[0]}e[0].match(/^file:\/\/\//)?e[0]=e[0].replace(/^([^/:]+):\/*/,"$1:///"):e[0]=e[0].replace(/^([^/:]+):\/*/,"$1://");for(var n=0;n<e.length;n++){var o=e[n];if("string"!=typeof o)throw new TypeError("Url must be a string. Received "+o);""!==o&&(n>0&&(o=o.replace(/^[\/]+/,"")),o=n<e.length-1?o.replace(/[\/]+$/,""):o.replace(/[\/]+$/,"/"),t.push(o))}var i=t.join("/"),a=(i=i.replace(/\/(\?|&|#[^!])/g,"$1")).split("?");return i=a.shift()+(a.length>0?"?":"")+a.join("&")}return function(){return e("object"==typeof arguments[0]?arguments[0]:[].slice.call(arguments))}},e.exports?e.exports=r():t.urljoin=r()})),Ge=function(e){return e&&e[0].toUpperCase()+e.slice(1)||""},Me=function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"https://ec.europa.eu/esco/api",t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:"skill";return function(){var r=X(Y().mark((function r(n){var o,i,a,c;return Y().wrap((function(r){for(;;)switch(r.prev=r.next){case 0:return o=n.keyword,i=n.locale,r.next=3,fetch(We(e,"suggest2?text=".concat(encodeURIComponent(o),"&language=").concat(i,"&type=").concat(t,"&isInScheme=&facet=&offset=&limit=&full=&selectedVersion=&viewObsolete=")));case 3:if(!(a=r.sent).ok){r.next=11;break}return r.next=7,a.json();case 7:return c=r.sent,r.abrupt("return",c._embedded.results.map((function(e){return{uri:e.uri,label:Ge(e.title.replace("’","'")),icon:V}})));case 11:throw new Error("Failed to fetch ESCO server");case 12:case"end":return r.stop()}}),r)})));return function(e){return r.apply(this,arguments)}}()};export{Re as CreateOrImportForm,Ie as ImportForm,ke as LexiconAutocompleteInput,Le as LexiconCreateDialog,Ne as LexiconImportForm,Me as fetchESCO,Fe as fetchWikidata,Se as useFork,Te as useSync};
+import {jsxs as $4od2P$jsxs, jsx as $4od2P$jsx, Fragment as $4od2P$Fragment} from "react/jsx-runtime";
+import $4od2P$react, {useState as $4od2P$useState, useCallback as $4od2P$useCallback, forwardRef as $4od2P$forwardRef, useMemo as $4od2P$useMemo, useEffect as $4od2P$useEffect, createElement as $4od2P$createElement} from "react";
+import {useCreateSuggestionContext as $4od2P$useCreateSuggestionContext, useResourceContext as $4od2P$useResourceContext, useCreate as $4od2P$useCreate, useLocale as $4od2P$useLocale, useTranslate as $4od2P$useTranslate, useNotify as $4od2P$useNotify, useInput as $4od2P$useInput, FieldTitle as $4od2P$FieldTitle, InputHelperText as $4od2P$InputHelperText, SimpleForm as $4od2P$SimpleForm, TextInput as $4od2P$TextInput, RadioButtonGroupInput as $4od2P$RadioButtonGroupInput, useDataProvider as $4od2P$useDataProvider, useRedirect as $4od2P$useRedirect, useSaveContext as $4od2P$useSaveContext, required as $4od2P$required} from "react-admin";
+import {Dialog as $4od2P$Dialog, DialogContent as $4od2P$DialogContent, DialogActions as $4od2P$DialogActions, Button as $4od2P$Button, TextField as $4od2P$TextField, Grid as $4od2P$Grid, Typography as $4od2P$Typography, useMediaQuery as $4od2P$useMediaQuery, Box as $4od2P$Box, Tabs as $4od2P$Tabs, Tab as $4od2P$Tab, Divider as $4od2P$Divider} from "@mui/material";
+import $4od2P$muistylesmakeStyles from "@mui/styles/makeStyles";
+import $4od2P$muimaterialAutocomplete from "@mui/material/Autocomplete";
+import $4od2P$muiiconsmaterialLanguage from "@mui/icons-material/Language";
+import $4od2P$muiiconsmaterialAdd from "@mui/icons-material/Add";
+import $4od2P$autosuggesthighlightmatch from "autosuggest-highlight/match";
+import $4od2P$autosuggesthighlightparse from "autosuggest-highlight/parse";
+import $4od2P$lodashthrottle from "lodash.throttle";
+import {useFormContext as $4od2P$useFormContext} from "react-hook-form";
+import {useContainers as $4od2P$useContainers, useDataModel as $4od2P$useDataModel} from "@semapps/semantic-data-provider";
+import {ReferenceInput as $4od2P$ReferenceInput, MultiServerAutocompleteInput as $4od2P$MultiServerAutocompleteInput} from "@semapps/input-components";
+import $4od2P$urljoin from "url-join";
+import $4od2P$muiiconsmaterialStarBorder from "@mui/icons-material/StarBorder";
+
+// Dialogs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const $b16cb081b32ae4c7$var$useStyles = (0, $4od2P$muistylesmakeStyles)((theme)=>({
+        icon: {
+            color: theme.palette.text.secondary,
+            marginRight: theme.spacing(2)
+        }
+    }));
+const $b16cb081b32ae4c7$var$selectOptionText = (option, optionText)=>{
+    if (typeof option === "string") return option;
+    if (option.label) return option.label;
+    if (typeof optionText === "string") return option[optionText];
+    if (typeof optionText === "function") return optionText(option);
+};
+const $b16cb081b32ae4c7$var$capitalizeFirstLetter = (string)=>string && string.charAt(0).toUpperCase() + string.slice(1);
+const $b16cb081b32ae4c7$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $4od2P$forwardRef)(({ fetchLexicon: fetchLexicon, source: source, defaultValue: defaultValue, label: label, parse: parse, optionText: optionText, helperText: helperText, ...rest }, ref)=>{
+    const resource = (0, $4od2P$useResourceContext)();
+    const classes = $b16cb081b32ae4c7$var$useStyles();
+    const locale = (0, $4od2P$useLocale)();
+    const translate = (0, $4od2P$useTranslate)();
+    const notify = (0, $4od2P$useNotify)();
+    // Do not pass the `parse` prop to useInput, as we manually call it on the onChange prop below
+    const { field: { value: value, onChange: onChange, onBlur: onBlur }, fieldState: { isTouched: isTouched, error: error }, formState: { submitError: submitError }, isRequired: isRequired } = (0, $4od2P$useInput)({
+        source: source,
+        defaultValue: defaultValue,
+        ...rest
+    });
+    const [keyword, setKeyword] = (0, $4od2P$useState)(defaultValue); // Typed keywords
+    const [options, setOptions] = (0, $4od2P$useState)([]); // Options returned by MapBox
+    const throttledFetchLexicon = (0, $4od2P$useMemo)(()=>(0, $4od2P$lodashthrottle)((keyword, callback)=>{
+            fetchLexicon({
+                keyword: keyword,
+                locale: locale
+            }).then((data)=>callback(data)).catch((e)=>notify(e.message, {
+                    type: "error"
+                }));
+        }, 200), [
+        locale,
+        fetchLexicon,
+        notify
+    ]);
+    (0, $4od2P$useEffect)(()=>{
+        // Do not trigger search if text input is empty
+        if (!keyword) return undefined;
+        throttledFetchLexicon(keyword, (results)=>setOptions(results));
+    }, [
+        value,
+        keyword,
+        throttledFetchLexicon
+    ]);
+    return /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$muimaterialAutocomplete), {
+        fullWidth: true,
+        freeSolo: true,
+        autoComplete: true,
+        value: value || null,
+        ref: ref,
+        openOnFocus: !!defaultValue,
+        // We must include the current value as an option, to avoid this error
+        // https://github.com/mui-org/material-ui/issues/18514#issuecomment-636096386
+        options: value ? [
+            value,
+            ...options
+        ] : options,
+        // Do not show the current value as an option (this would break renderOptions)
+        filterSelectedOptions: true,
+        // For some reasons, this prop has to be passed
+        filterOptions: (options, params)=>{
+            // Suggest the creation of a new value
+            if (keyword) options.push({
+                label: $b16cb081b32ae4c7$var$capitalizeFirstLetter(keyword),
+                summary: `Ajouter "${$b16cb081b32ae4c7$var$capitalizeFirstLetter(keyword)}" au dictionnaire`,
+                icon: (0, $4od2P$muiiconsmaterialAdd)
+            });
+            return options;
+        },
+        clearOnBlur: true,
+        selectOnFocus: true,
+        handleHomeEndKeys: true,
+        getOptionLabel: (option)=>$b16cb081b32ae4c7$var$selectOptionText(option, optionText),
+        isOptionEqualToValue: (option, value)=>$b16cb081b32ae4c7$var$selectOptionText(option, optionText) === $b16cb081b32ae4c7$var$selectOptionText(value, optionText),
+        // This function is called when the user selects an option
+        onChange: (event, newValue)=>{
+            // Parse only if the value is not null (happens if the user clears the value)
+            if (newValue && parse) newValue = parse(newValue);
+            onChange(newValue);
+            setOptions([]);
+        },
+        onInputChange: (event, newKeyword)=>setKeyword(newKeyword),
+        noOptionsText: translate("ra.navigation.no_results"),
+        renderInput: (params)=>{
+            // Autocomplete=off doesn't work anymore in modern browsers
+            // https://stackoverflow.com/a/40791726/7900695
+            params.inputProps.autoComplete = "new-password";
+            return /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$TextField), {
+                ...params,
+                autoFocus: true,
+                inputProps: {
+                    ...params.inputProps,
+                    onBlur: (e)=>{
+                        onBlur(e);
+                        if (params.inputProps.onBlur) params.inputProps.onBlur(e);
+                    },
+                    onFocus: (e)=>{
+                        if (params.inputProps.onFocus) params.inputProps.onFocus(e);
+                    }
+                },
+                label: label !== "" && label !== false && /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$FieldTitle), {
+                    label: label,
+                    source: source,
+                    resource: resource,
+                    isRequired: isRequired
+                }),
+                error: !!(isTouched && (error || submitError)),
+                helperText: /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$InputHelperText), {
+                    touched: isTouched,
+                    error: error || submitError,
+                    helperText: helperText
+                })
+            });
+        },
+        renderOption: (props, option)=>{
+            const matches = (0, $4od2P$autosuggesthighlightmatch)(option.label, keyword);
+            const parts = (0, $4od2P$autosuggesthighlightparse)(option.label, matches);
+            return /*#__PURE__*/ (0, $4od2P$createElement)((0, $4od2P$Grid), {
+                container: true,
+                alignItems: "center",
+                ...props,
+                key: option.uri || "create",
+                children: [
+                    /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$Grid), {
+                        item: true,
+                        children: /*#__PURE__*/ (0, $4od2P$react).createElement(option.icon || (0, $4od2P$muiiconsmaterialLanguage), {
+                            className: classes.icon
+                        })
+                    }),
+                    /*#__PURE__*/ (0, $4od2P$jsxs)((0, $4od2P$Grid), {
+                        item: true,
+                        xs: true,
+                        children: [
+                            typeof parts === "string" ? parts : parts.map((part, index)=>/*#__PURE__*/ (0, $4od2P$jsx)("span", {
+                                    style: {
+                                        fontWeight: part.highlight ? 700 : 400
+                                    },
+                                    children: part.text
+                                }, index)),
+                            /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$Typography), {
+                                variant: "body2",
+                                color: "textSecondary",
+                                children: option.summary
+                            })
+                        ]
+                    })
+                ]
+            });
+        }
+    });
+});
+$b16cb081b32ae4c7$var$LexiconAutocompleteInput.defaultProps = {
+    optionText: "label"
+};
+var $b16cb081b32ae4c7$export$2e2bcd8739ae039 = $b16cb081b32ae4c7$var$LexiconAutocompleteInput;
+
+
+const $a792efd53d1a9e0e$var$LexiconCreateDialog = ({ fetchLexicon: fetchLexicon, selectData: selectData })=>{
+    const { filter: filter, onCancel: onCancel, onCreate: onCreate } = (0, $4od2P$useCreateSuggestionContext)();
+    const resource = (0, $4od2P$useResourceContext)();
+    const [value, setValue] = (0, $4od2P$useState)(filter || "");
+    const [create] = (0, $4od2P$useCreate)();
+    const onClose = (0, $4od2P$useCallback)(()=>{
+        setValue("");
+        onCancel();
+    }, [
+        setValue,
+        onCancel
+    ]);
+    const onSubmit = (0, $4od2P$useCallback)(()=>{
+        // If we have no URI, it means we are creating a new definition
+        // Delete the summary as it is "Ajouter XXX au dictionaire"
+        if (!value.uri) delete value.summary;
+        create(resource, {
+            data: selectData(value)
+        }, {
+            onSuccess: (data)=>{
+                console.log("onSuccess", data);
+                setValue("");
+                onCreate(data);
+            }
+        });
+    }, [
+        create,
+        onCreate,
+        selectData,
+        value,
+        setValue,
+        resource
+    ]);
+    return /*#__PURE__*/ (0, $4od2P$jsxs)((0, $4od2P$Dialog), {
+        open: true,
+        onClose: onClose,
+        fullWidth: true,
+        maxWidth: "sm",
+        children: [
+            /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$DialogContent), {
+                children: /*#__PURE__*/ (0, $4od2P$jsx)((0, $b16cb081b32ae4c7$export$2e2bcd8739ae039), {
+                    source: "lexicon",
+                    label: "Titre",
+                    fetchLexicon: fetchLexicon,
+                    defaultValue: filter,
+                    value: value,
+                    onChange: setValue
+                })
+            }),
+            /*#__PURE__*/ (0, $4od2P$jsxs)((0, $4od2P$DialogActions), {
+                children: [
+                    /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$Button), {
+                        onClick: onClose,
+                        children: "Annuler"
+                    }),
+                    /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$Button), {
+                        variant: "contained",
+                        color: "primary",
+                        onClick: onSubmit,
+                        children: "Ajouter"
+                    })
+                ]
+            })
+        ]
+    });
+};
+var $a792efd53d1a9e0e$export$2e2bcd8739ae039 = $a792efd53d1a9e0e$var$LexiconCreateDialog;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const $bcde5854a56da897$var$useFork = (resourceId)=>{
+    const dataProvider = (0, $4od2P$useDataProvider)();
+    const redirect = (0, $4od2P$useRedirect)();
+    const notify = (0, $4od2P$useNotify)();
+    return (0, $4od2P$useCallback)(async (remoteRecordUri, stripProperties = [])=>{
+        const { data: remoteData } = await dataProvider.getOne(resourceId, {
+            id: remoteRecordUri
+        });
+        const strippedData = {
+            ...remoteData
+        };
+        strippedData["http://www.w3.org/ns/prov#wasDerivedFrom"] = strippedData.id;
+        delete strippedData.id;
+        delete strippedData["@context"];
+        stripProperties.forEach((prop)=>{
+            delete strippedData[prop];
+        });
+        const { data: localData } = await dataProvider.create(resourceId, {
+            data: strippedData
+        });
+        redirect(`/${resourceId}/${encodeURIComponent(localData.id)}/show`);
+        notify("La ressource a bien \xe9t\xe9 copi\xe9e", {
+            type: "success"
+        });
+    }, [
+        resourceId,
+        dataProvider,
+        redirect,
+        notify
+    ]);
+};
+var $bcde5854a56da897$export$2e2bcd8739ae039 = $bcde5854a56da897$var$useFork;
+
+
+
+
+const $319fb528511df085$var$useSync = (resourceId)=>{
+    const dataProvider = (0, $4od2P$useDataProvider)();
+    const notify = (0, $4od2P$useNotify)();
+    const redirect = (0, $4od2P$useRedirect)();
+    return (0, $4od2P$useCallback)(async (remoteRecordUri)=>{
+        await dataProvider.create(resourceId, {
+            id: remoteRecordUri
+        });
+        redirect(`/${resourceId}/${encodeURIComponent(remoteRecordUri)}/show`);
+        notify("La ressource a bien \xe9t\xe9 import\xe9e", {
+            type: "success"
+        });
+    }, [
+        dataProvider,
+        redirect,
+        notify
+    ]);
+};
+var $319fb528511df085$export$2e2bcd8739ae039 = $319fb528511df085$var$useSync;
+
+
+const $7c1a5d2f905b4d36$var$ImportFormInputs = ()=>{
+    const resource = (0, $4od2P$useResourceContext)();
+    const containers = (0, $4od2P$useContainers)(resource, "@remote");
+    const dataModel = (0, $4od2P$useDataModel)(resource);
+    const { watch: watch, setValue: setValue } = (0, $4od2P$useFormContext)();
+    const watchRemoteUri = watch("remoteUri");
+    const watchPlainUri = watch("plainUri");
+    (0, $4od2P$useEffect)(()=>{
+        if (watchRemoteUri) setValue("plainUri", watchRemoteUri);
+    }, [
+        watchRemoteUri
+    ]);
+    (0, $4od2P$useEffect)(()=>{
+        if (watchPlainUri && watchPlainUri !== watchRemoteUri) setValue("remoteUri", null);
+    }, [
+        watchRemoteUri,
+        watchPlainUri
+    ]);
+    if (!dataModel) return null;
+    return /*#__PURE__*/ (0, $4od2P$jsxs)((0, $4od2P$Fragment), {
+        children: [
+            containers && Object.keys(containers).length > 0 && /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$ReferenceInput), {
+                source: "remoteUri",
+                reference: resource,
+                filter: {
+                    _servers: "@remote",
+                    _predicates: [
+                        dataModel?.fieldsMapping?.title
+                    ]
+                },
+                enableGetChoices: ({ q: q })=>!!(q && q.length > 1),
+                children: /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$MultiServerAutocompleteInput), {
+                    optionText: dataModel?.fieldsMapping?.title,
+                    shouldRenderSuggestions: (value)=>value.length > 1,
+                    noOptionsText: "Tapez au moins deux lettres",
+                    emptyText: "Rechercher...",
+                    label: "Resource distante",
+                    fullWidth: true
+                })
+            }),
+            /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$TextInput), {
+                source: "plainUri",
+                label: "URL de la ressource distante",
+                fullWidth: true
+            }),
+            /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$RadioButtonGroupInput), {
+                source: "method",
+                label: "M\xe9thode d'importation",
+                choices: [
+                    {
+                        id: "sync",
+                        name: "Garder la ressource locale synchronis\xe9e avec la ressource distante"
+                    },
+                    {
+                        id: "fork",
+                        name: "Cr\xe9er une nouvelle version de la ressource (fork)"
+                    }
+                ]
+            })
+        ]
+    });
+};
+const $7c1a5d2f905b4d36$var$ImportForm = ({ stripProperties: stripProperties })=>{
+    const resource = (0, $4od2P$useResourceContext)();
+    const fork = (0, $bcde5854a56da897$export$2e2bcd8739ae039)(resource);
+    const sync = (0, $319fb528511df085$export$2e2bcd8739ae039)(resource);
+    const onSubmit = (0, $4od2P$useCallback)(async ({ plainUri: plainUri, method: method })=>{
+        if (method === "fork") await fork(plainUri, stripProperties);
+        else await sync(plainUri);
+    }, [
+        fork,
+        sync,
+        stripProperties
+    ]);
+    return /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$SimpleForm), {
+        onSubmit: onSubmit,
+        defaultValues: {
+            method: "sync"
+        },
+        children: /*#__PURE__*/ (0, $4od2P$jsx)($7c1a5d2f905b4d36$var$ImportFormInputs, {})
+    });
+};
+var $7c1a5d2f905b4d36$export$2e2bcd8739ae039 = $7c1a5d2f905b4d36$var$ImportForm;
+
+
+const $aa427a7c321e4045$var$useStyles = (0, $4od2P$muistylesmakeStyles)(()=>({
+        tab: {
+            maxWidth: "unset",
+            padding: "6px 24px"
+        }
+    }));
+const $aa427a7c321e4045$var$CreateOrImportForm = ({ stripProperties: stripProperties, ...rest })=>{
+    const [tab, setTab] = (0, $4od2P$useState)(0);
+    const classes = $aa427a7c321e4045$var$useStyles();
+    const xs = (0, $4od2P$useMediaQuery)((theme)=>theme.breakpoints.down("sm"), {
+        noSsr: true
+    });
+    return /*#__PURE__*/ (0, $4od2P$jsxs)((0, $4od2P$Fragment), {
+        children: [
+            /*#__PURE__*/ (0, $4od2P$jsxs)((0, $4od2P$Box), {
+                pb: 2,
+                children: [
+                    /*#__PURE__*/ (0, $4od2P$jsxs)((0, $4od2P$Tabs), {
+                        value: tab,
+                        onChange: (_, v)=>setTab(v),
+                        indicatorColor: "primary",
+                        children: [
+                            /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$Tab), {
+                                className: classes.tab,
+                                label: "Cr\xe9er"
+                            }),
+                            /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$Tab), {
+                                className: classes.tab,
+                                label: xs ? "Importer" : "Importer une ressource distante"
+                            })
+                        ]
+                    }),
+                    /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$Divider), {})
+                ]
+            }),
+            tab === 0 && /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$SimpleForm), {
+                ...rest
+            }),
+            tab === 1 && /*#__PURE__*/ (0, $4od2P$jsx)((0, $7c1a5d2f905b4d36$export$2e2bcd8739ae039), {
+                stripProperties: stripProperties || [],
+                ...rest
+            })
+        ]
+    });
+};
+var $aa427a7c321e4045$export$2e2bcd8739ae039 = $aa427a7c321e4045$var$CreateOrImportForm;
+
+
+
+
+
+
+
+const $fd906af5bca60fe2$var$LexiconImportForm = ({ fetchLexicon: fetchLexicon, selectData: selectData })=>{
+    const { save: save } = (0, $4od2P$useSaveContext)();
+    const onSubmit = (0, $4od2P$useCallback)(async ({ lexicon: lexicon })=>{
+        // If we have no URI, it means we are creating a new definition
+        // Delete the summary as it is "Ajouter XXX au dictionaire"
+        if (!lexicon.uri) delete lexicon.summary;
+        // If the user doesn't select any option, use the text as the label
+        if (typeof lexicon === "string") lexicon = {
+            label: lexicon
+        };
+        await save(selectData(lexicon));
+    }, [
+        selectData,
+        save
+    ]);
+    return /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$SimpleForm), {
+        onSubmit: onSubmit,
+        children: /*#__PURE__*/ (0, $4od2P$jsx)((0, $b16cb081b32ae4c7$export$2e2bcd8739ae039), {
+            label: "Titre",
+            source: "lexicon",
+            fetchLexicon: fetchLexicon,
+            validate: (0, $4od2P$required)()
+        })
+    });
+};
+var $fd906af5bca60fe2$export$2e2bcd8739ae039 = $fd906af5bca60fe2$var$LexiconImportForm;
+
+
+
+
+const $905596cc8646669c$var$capitalize = (s)=>s && s[0].toUpperCase() + s.slice(1) || "";
+const $905596cc8646669c$var$fetchWikidata = (apiUrl = "https://www.wikidata.org/w/api.php")=>async ({ keyword: keyword, locale: locale })=>{
+        const response = await fetch(`${apiUrl}?action=wbsearchentities&format=json&language=${locale}&uselang=${locale}&type=item&limit=10&origin=*&search=${encodeURIComponent(keyword)}`);
+        if (response.ok) {
+            const json = await response.json();
+            return json.search.map((r)=>({
+                    uri: r.concepturi,
+                    label: $905596cc8646669c$var$capitalize(r.match.text),
+                    summary: $905596cc8646669c$var$capitalize(r.description),
+                    icon: (0, $4od2P$muiiconsmaterialLanguage)
+                }));
+        }
+        throw new Error("Failed to fetch Wikidata server");
+    };
+var $905596cc8646669c$export$2e2bcd8739ae039 = $905596cc8646669c$var$fetchWikidata;
+
+
+
+
+const $1cadde849f110c85$var$capitalize = (s)=>s && s[0].toUpperCase() + s.slice(1) || "";
+const $1cadde849f110c85$var$fetchESCO = (apiUrl = "https://ec.europa.eu/esco/api", type = "skill")=>async ({ keyword: keyword, locale: locale })=>{
+        const response = await fetch((0, $4od2P$urljoin)(apiUrl, `suggest2?text=${encodeURIComponent(keyword)}&language=${locale}&type=${type}&isInScheme=&facet=&offset=&limit=&full=&selectedVersion=&viewObsolete=`));
+        if (response.ok) {
+            const json = await response.json();
+            return json._embedded.results.map((r)=>({
+                    uri: r.uri,
+                    label: $1cadde849f110c85$var$capitalize(r.title.replace("\u2019", "'")),
+                    icon: (0, $4od2P$muiiconsmaterialStarBorder)
+                }));
+        }
+        throw new Error("Failed to fetch ESCO server");
+    };
+var $1cadde849f110c85$export$2e2bcd8739ae039 = $1cadde849f110c85$var$fetchESCO;
+
+
+
+
+
+
+export {$a792efd53d1a9e0e$export$2e2bcd8739ae039 as LexiconCreateDialog, $aa427a7c321e4045$export$2e2bcd8739ae039 as CreateOrImportForm, $7c1a5d2f905b4d36$export$2e2bcd8739ae039 as ImportForm, $fd906af5bca60fe2$export$2e2bcd8739ae039 as LexiconImportForm, $b16cb081b32ae4c7$export$2e2bcd8739ae039 as LexiconAutocompleteInput, $905596cc8646669c$export$2e2bcd8739ae039 as fetchWikidata, $1cadde849f110c85$export$2e2bcd8739ae039 as fetchESCO, $bcde5854a56da897$export$2e2bcd8739ae039 as useFork, $319fb528511df085$export$2e2bcd8739ae039 as useSync};
 //# sourceMappingURL=index.es.js.map

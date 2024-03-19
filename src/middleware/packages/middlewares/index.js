@@ -4,15 +4,18 @@ const Busboy = require('busboy');
 const streams = require('memory-streams');
 
 const parseHeader = async (req, res, next) => {
-  req.$ctx.meta.headers = req.headers || {};
+  req.$ctx.meta.headers = req.headers ? { ...req.headers } : {};
+  // Also remember original headers (needed for HTTP signatures verification and files type negociation)
+  req.$ctx.meta.originalHeaders = req.headers ? { ...req.headers } : {};
   next();
 };
 
 const negotiateContentType = (req, res, next) => {
-  if (!req.$ctx.meta.headers) req.$ctx.meta.headers = {};
-  if (req.headers['content-type'] !== undefined && req.method !== 'DELETE') {
+  if (!req.$ctx.meta.headers)
+    throw new Error(`The parseHeader middleware must be added before the negotiateContentType middleware`);
+  if (req.$ctx.meta.headers['content-type'] !== undefined && req.method !== 'DELETE') {
     try {
-      req.$ctx.meta.headers['content-type'] = negotiateTypeMime(req.headers['content-type']);
+      req.$ctx.meta.headers['content-type'] = negotiateTypeMime(req.$ctx.meta.headers['content-type']);
       next();
     } catch (e) {
       next();
@@ -26,6 +29,7 @@ const negotiateContentType = (req, res, next) => {
   }
 };
 
+/** @type {(msg: string) => never} */
 const throw403 = msg => {
   throw new MoleculerError('Forbidden', 403, 'ACCESS_DENIED', { status: 'Forbidden', text: msg });
 };
@@ -35,18 +39,17 @@ const throw500 = msg => {
 };
 
 const negotiateAccept = (req, res, next) => {
-  if (!req.$ctx.meta.headers) req.$ctx.meta.headers = {};
-  // we keep the full list for further use
-  req.$ctx.meta.accepts = req.headers.accept;
-  if (req.headers.accept === '*/*') {
-    delete req.headers.accept;
+  if (!req.$ctx.meta.headers)
+    throw new Error(`The parseHeader middleware must be added before the negotiateAccept middleware`);
+  if (req.$ctx.meta.headers.accept === '*/*') {
+    delete req.$ctx.meta.headers.accept;
   }
-  if (req.headers.accept !== undefined) {
+  if (req.$ctx.meta.headers.accept !== undefined) {
     try {
-      req.$ctx.meta.headers.accept = negotiateTypeMime(req.headers.accept);
+      req.$ctx.meta.headers.accept = negotiateTypeMime(req.$ctx.meta.headers.accept);
       next();
     } catch (e) {
-      next(new MoleculerError(`Accept not supported : ${req.headers.accept}`, 400, 'ACCEPT_NOT_SUPPORTED'));
+      next(new MoleculerError(`Accept not supported : ${req.$ctx.meta.headers.accept}`, 400, 'ACCEPT_NOT_SUPPORTED'));
     }
   } else {
     next();
@@ -66,10 +69,12 @@ const getRawBody = req => {
 };
 
 const parseSparql = async (req, res, next) => {
+  if (!req.$ctx.meta.headers)
+    throw new Error(`The parseHeader middleware must be added before the parseSparql middleware`);
   if (
     !req.$ctx.meta.parser &&
     (req.originalUrl.includes('/sparql') ||
-      (req.headers['content-type'] && req.headers['content-type'].includes('sparql')))
+      (req.$ctx.meta.headers['content-type'] && req.$ctx.meta.headers['content-type'].includes('sparql')))
   ) {
     req.$ctx.meta.parser = 'sparql';
     // TODO Store in req.$ctx.meta.rawBody
@@ -79,7 +84,13 @@ const parseSparql = async (req, res, next) => {
 };
 
 const parseTurtle = async (req, res, next) => {
-  if (!req.$ctx.meta.parser && req.headers['content-type'] && req.headers['content-type'].includes('turtle')) {
+  if (!req.$ctx.meta.headers)
+    throw new Error(`The parseHeader middleware must be added before the parseTurtle middleware`);
+  if (
+    !req.$ctx.meta.parser &&
+    req.$ctx.meta.headers['content-type'] &&
+    req.$ctx.meta.headers['content-type'].includes('turtle')
+  ) {
     req.$ctx.meta.parser = 'turtle';
     // TODO Store in req.$ctx.meta.rawBody
     req.$params.body = await getRawBody(req);
@@ -88,10 +99,12 @@ const parseTurtle = async (req, res, next) => {
 };
 
 const parseJson = async (req, res, next) => {
+  if (!req.$ctx.meta.headers)
+    throw new Error(`The parseHeader middleware must be added before the parseJson middleware`);
   let mimeType = null;
   try {
-    if (req.headers['content-type']) {
-      mimeType = negotiateTypeMime(req.headers['content-type']);
+    if (req.$ctx.meta.headers['content-type']) {
+      mimeType = negotiateTypeMime(req.$ctx.meta.headers['content-type']);
     }
   } catch (e) {
     // Do nothing if mime type is not found
@@ -115,9 +128,14 @@ const parseJson = async (req, res, next) => {
 };
 
 const parseFile = (req, res, next) => {
+  if (!req.$ctx.meta.headers)
+    throw new Error(`The parseHeader middleware must be added before the parseFile middleware`);
   if (!req.$ctx.meta.parser && (req.method === 'POST' || req.method === 'PUT')) {
-    if (req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data')) {
-      const busboy = new Busboy({ headers: req.headers });
+    if (
+      req.$ctx.meta.headers['content-type'] &&
+      req.$ctx.meta.headers['content-type'].includes('multipart/form-data')
+    ) {
+      const busboy = new Busboy({ headers: req.$ctx.meta.headers });
       const files = [];
       busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
         const readableStream = new streams.ReadableStream();
@@ -143,7 +161,7 @@ const parseFile = (req, res, next) => {
       req.$params.files = [
         {
           readableStream: req,
-          mimetype: req.headers['content-type']
+          mimetype: req.$ctx.meta.headers['content-type']
         }
       ];
       req.$ctx.meta.parser = 'file';
@@ -155,8 +173,8 @@ const parseFile = (req, res, next) => {
 };
 
 const addContainerUriMiddleware = containerUri => (req, res, next) => {
-  if (containerUri.includes('/:username')) {
-    req.$params.containerUri = containerUri.replace(':username', req.$params.username).replace(/\/$/, '');
+  if (containerUri.includes('/:username([^/.][^/]+)')) {
+    req.$params.containerUri = containerUri.replace(':username([^/.][^/]+)', req.$params.username).replace(/\/$/, '');
   } else {
     req.$params.containerUri = containerUri;
   }

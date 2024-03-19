@@ -2,13 +2,13 @@ const defaultToArray = value => (!value ? undefined : Array.isArray(value) ? val
 
 const fetchVoidEndpoints = async config => {
   const fetchPromises = Object.entries(config.dataServers)
-    .filter(([key, server]) => server.pod !== true)
+    .filter(([key, server]) => server.pod !== true && server.void !== false)
     .map(([key, server]) =>
       config
         .httpClient(new URL('/.well-known/void', server.baseUrl).toString())
         .then(result => ({ key, datasets: result.json['@graph'] }))
         .catch(e => {
-          if (e.status === 404 || e.status === 401) {
+          if (e.status === 404 || e.status === 401 || e.status === 500) {
             return { key, error: e };
           }
           throw e;
@@ -56,14 +56,6 @@ const fetchVoidEndpoints = async config => {
                 config.dataServers[result.key].containers[datasetServerKey][type].push(path);
               } else {
                 config.dataServers[result.key].containers[datasetServerKey][type] = [path];
-              }
-
-              // Set blank nodes by containers
-              const blankNodes = defaultToArray(partition['semapps:blankNodes']);
-              if (blankNodes) {
-                config.dataServers[result.key].blankNodes[partition['void:uriSpace']] = defaultToArray(
-                  partition['semapps:blankNodes']
-                );
               }
             }
           }

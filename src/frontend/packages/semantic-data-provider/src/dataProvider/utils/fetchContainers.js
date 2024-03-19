@@ -30,7 +30,7 @@ const fetchContainers = async (containers, resourceId, params, config) => {
       })
       .then(json => {
         if (isType('ldp:Container', json)) {
-          return json['ldp:contains'];
+          return json['ldp:contains'].map(resource => ({ '@context': json['@context'], ...resource }));
         }
         throw new Error(`${containerUri} is not a LDP container`);
       })

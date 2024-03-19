@@ -7,8 +7,10 @@ lerna-debug.log
 /.idea
 /data
 *.swp
+.parcel-cache
 .classpath
 .project
 .settings
 # conflict
 *.orig
+.nx

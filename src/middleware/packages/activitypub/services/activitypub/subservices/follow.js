@@ -163,6 +163,15 @@ const FollowService = {
           type: ACTIVITY_TYPES.FOLLOW
         }
       },
+      async onEmit(ctx, activity) {
+        await this.actions.removeFollower(
+          {
+            follower: activity.object.actor || activity.actor,
+            following: activity.object.object
+          },
+          { parentCtx: ctx }
+        );
+      },
       async onReceive(ctx, activity) {
         await this.actions.removeFollower(
           {
@@ -192,14 +201,6 @@ const FollowService = {
           { parentCtx: ctx }
         );
       }
-    }
-  },
-  events: {
-    'activitypub.follow.added'() {
-      // Do nothing. We must define one event listener for EventsWatcher middleware to act correctly.
-    },
-    'activitypub.follow.removed'() {
-      // Do nothing. We must define one event listener for EventsWatcher middleware to act correctly.
     }
   },
   methods: {

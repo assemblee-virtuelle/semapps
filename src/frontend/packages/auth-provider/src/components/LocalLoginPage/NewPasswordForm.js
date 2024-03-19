@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Form, useTranslate, useNotify, useSafeSetState, useAuthProvider, TextInput, required } from 'react-admin';
 import { useLocation } from 'react-router-dom';
-import { Button, CardContent, CircularProgress } from '@mui/material';
+import { Button, CardContent, CircularProgress, Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import PasswordStrengthIndicator from './PasswordStrengthIndicator';
+import validatePasswordStrength from './validatePasswordStrength';
+import { defaultScorer } from '../../passwordScorer';
 
 const useStyles = makeStyles(theme => ({
   icon: {
@@ -10,7 +13,15 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const NewPasswordForm = ({ redirectTo }) => {
+/**
+ *
+ * @param {string} redirectTo
+ * @param {Object} passwordScorer Scorer to evaluate and indicate password strength.
+ *  Set to `null` or `false`, if you don't want password strength checks. Default is
+ *  passwordStrength's `defaultScorer`.
+ * @returns
+ */
+const NewPasswordForm = ({ redirectTo, passwordScorer = defaultScorer }) => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const token = searchParams.get('token');
@@ -22,6 +33,8 @@ const NewPasswordForm = ({ redirectTo }) => {
   const notify = useNotify();
   const classes = useStyles();
 
+  const [newPassword, setNewPassword] = useState('');
+
   const submit = values => {
     setLoading(true);
     authProvider
@@ -31,7 +44,7 @@ const NewPasswordForm = ({ redirectTo }) => {
           window.location.href = `/login${redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : ''}`;
           setLoading(false);
         }, 2000);
-        notify('auth.notification.password_changed', 'info');
+        notify('auth.notification.password_changed', { type: 'info' });
       })
       .catch(error => {
         setLoading(false);
@@ -39,8 +52,8 @@ const NewPasswordForm = ({ redirectTo }) => {
           typeof error === 'string'
             ? error
             : typeof error === 'undefined' || !error.message
-            ? 'auth.notification.reset_password_error'
-            : error.message,
+              ? 'auth.notification.reset_password_error'
+              : error.message,
           {
             type: 'warning',
             messageArgs: {
@@ -64,15 +77,26 @@ const NewPasswordForm = ({ redirectTo }) => {
           validate={required()}
           format={value => (value ? value.toLowerCase() : '')}
         />
+        {passwordScorer && (
+          <>
+            <Typography variant="caption" style={{ marginBottom: 3 }}>
+              {translate('auth.input.password_strength')}:{' '}
+            </Typography>
+
+            <PasswordStrengthIndicator password={newPassword} scorer={passwordScorer} sx={{ width: '100%' }} />
+          </>
+        )}
         <TextInput
           autoFocus
           type="password"
           source="password"
+          value={newPassword}
           label={translate('auth.input.new_password')}
           autoComplete="current-password"
           fullWidth
           disabled={loading}
-          validate={required()}
+          validate={[required(), validatePasswordStrength(passwordScorer)]}
+          onChange={e => setNewPassword(e.target.value)}
           format={value => (value ? value.toLowerCase() : '')}
         />
         <TextInput

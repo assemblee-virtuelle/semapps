@@ -6,11 +6,11 @@ See the [dedicated page on the SemApps website](https://semapps.org/docs/fronten
 
 ## Development
 
-### `yarn run pre-publish`
+### `yarn run build`
 
 Build the library in CommonJS and ES mode.
 This command should always be run before publishing.
 
-### `yarn run dev`
+### `yarn run watch`
 
 Develop mode. Any change you make to a file in the `/src` directory will be immediately compiled.

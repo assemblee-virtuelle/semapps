@@ -1,2 +1,492 @@
-import*as e from"react";import t,{useEffect as r,useState as n}from"react";import{useListContext as a,useCreatePath as l,sanitizeListRestProps as i,RecordContextProvider as o,ChipField as c,Link as s,useGetList as u,useResourceDefinition as m,useResourceContext as d,FilterList as f,FilterListItem as p,Button as v,TopToolbar as y,CreateButton as h,ExportButton as g,List as E}from"react-admin";import{LinearProgress as b,Grid as k,Card as w,CardActionArea as x,CardMedia as C,CardContent as L,CardActions as P,useMediaQuery as O}from"@mui/material";import j from"@mui/styles/makeStyles";import N from"@mui/icons-material/AddCircle";import I from"@mui/icons-material/Launch";import{useGetExternalLink as F,useDataModel as S,useContainers as V}from"@semapps/semantic-data-provider";import T from"react-masonry-css";import{useLocation as A}from"react-router";function U(){return(U=Object.assign?Object.assign.bind():function(e){for(var t=1;t<arguments.length;t++){var r=arguments[t];for(var n in r)Object.prototype.hasOwnProperty.call(r,n)&&(e[n]=r[n])}return e}).apply(this,arguments)}function _(e,t){if(null==e)return{};var r,n,a=function(e,t){if(null==e)return{};var r,n,a={},l=Object.keys(e);for(n=0;n<l.length;n++)r=l[n],t.indexOf(r)>=0||(a[r]=e[r]);return a}(e,t);if(Object.getOwnPropertySymbols){var l=Object.getOwnPropertySymbols(e);for(n=0;n<l.length;n++)r=l[n],t.indexOf(r)>=0||Object.prototype.propertyIsEnumerable.call(e,r)&&(a[r]=e[r])}return a}function R(e,t){return function(e){if(Array.isArray(e))return e}(e)||function(e,t){var r=null==e?null:"undefined"!=typeof Symbol&&e[Symbol.iterator]||e["@@iterator"];if(null==r)return;var n,a,l=[],i=!0,o=!1;try{for(r=r.call(e);!(i=(n=r.next()).done)&&(l.push(n.value),!t||l.length!==t);i=!0);}catch(e){o=!0,a=e}finally{try{i||null==r.return||r.return()}finally{if(o)throw a}}return l}(e,t)||function(e,t){if(!e)return;if("string"==typeof e)return W(e,t);var r=Object.prototype.toString.call(e).slice(8,-1);"Object"===r&&e.constructor&&(r=e.constructor.name);if("Map"===r||"Set"===r)return Array.from(e);if("Arguments"===r||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r))return W(e,t)}(e,t)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function W(e,t){(null==t||t>e.length)&&(t=e.length);for(var r=0,n=new Array(t);r<t;r++)n[r]=e[r];return n}var B=["classes","className","children","linkType","component","primaryText","appendLink","externalLinks"],D=j((function(){return{root:{display:"flex",flexWrap:"wrap"},link:{textDecoration:"none",maxWidth:"100%"},chipField:{maxWidth:"100%"},addIcon:{cursor:"pointer",fontSize:35,position:"relative",top:2},launchIcon:{width:20,paddingRight:6,marginLeft:-10}}})),z=function(e){return e.stopPropagation()},M=function(){},$=function(e){e.classes,e.className,e.children;var r=e.linkType,n=void 0===r?"edit":r,u=e.component,m=void 0===u?"div":u,d=e.primaryText,f=e.appendLink,p=e.externalLinks,v=void 0!==p&&p,y=_(e,B),h=a(e),g=h.data,E=h.isLoading,k=h.resource,w=F(v),x=l(),C=D(e),L=m;return E?t.createElement(b,null):t.createElement(L,U({className:C.root},i(y)),g.map((function(e){if(!e||e._error)return null;var r=w(e);return r?t.createElement(o,{value:e,key:e.id},t.createElement("a",{href:r,target:"_blank",rel:"noopener noreferrer",className:C.link,onClick:z},t.createElement(c,{source:d,className:C.chipField,color:"secondary",deleteIcon:t.createElement(I,{className:C.launchIcon}),onClick:M,onDelete:M}))):n?t.createElement(o,{value:e,key:e.id},t.createElement(s,{className:C.link,to:x({resource:k,id:e.id,type:n}),onClick:z},t.createElement(c,{source:d,className:C.chipField,color:"secondary",onClick:M}))):t.createElement(o,{value:e,key:e.id},t.createElement(c,{source:d,className:C.chipField,color:"secondary",onClick:M}))})),f&&t.createElement(N,{color:"primary",className:C.addIcon,onClick:f}))},q=function(e){return e.stopPropagation()},G=function(){},H=function(t){var r=t.children,n=t.linkType,i=t.externalLinks,c=t.spacing,u=t.xs,m=t.sm,d=t.md,f=t.lg,p=t.xl,v=a(),y=v.data,h=v.resource,g=v.isLoading,E=F(i),b=l();return g||!y?null:e.createElement(k,{container:!0,spacing:c},y.map((function(t){if(!t||t._error)return null;var a,l=E(t);return a=l?e.createElement("a",{href:l,target:"_blank",rel:"noopener noreferrer",onClick:q},e.cloneElement(e.Children.only(r),{externalLink:!0,onClick:G})):n?e.createElement(s,{to:b({resource:h,id:t.id,type:n}),onClick:q},e.cloneElement(e.Children.only(r),{onClick:G})):r,e.createElement(k,{item:!0,key:t.id,xs:u,sm:m,md:d,lg:f,xl:p},e.createElement(o,{value:t},a))})))};H.defaultProps={xs:6,spacing:3,linkType:"edit",externalLinks:!1};var J=j((function(){return{grid:{display:"flex",marginLeft:-20,marginBottom:-20,width:"auto"},column:{paddingLeft:20,backgroundClip:"padding-box"},card:{marginBottom:20},media:{height:0,paddingTop:"56.25%"}}})),K=function(e){var r=e.image,n=e.content,i=e.actions,c=e.breakpointCols,u=e.linkType,m=J(),d=a(),f=d.data,p=d.resource,v=l();return t.createElement(T,{breakpointCols:c,className:m.grid,columnClassName:m.column},f.map((function(e){if(!e||e._error)return null;var a="function"==typeof r?r(e):r;return t.createElement(o,{value:e},t.createElement(w,{key:e.id,className:m.card},t.createElement(s,{to:v({resource:p,id:e.id,type:u})},t.createElement(x,null,a&&t.createElement(C,{className:m.media,image:a}),n&&t.createElement(L,null,n(e)))),i&&t.createElement(P,null,i.map((function(e){return t.createElement(e)})))))})))};K.defaultProps={breakpointCols:{default:3,1050:2,700:1},linkType:"edit"};var Q=function(e){var r=e.source,n=e.id,a=d(),l=u(a),i=l.data,o=l.isLoading;return t.createElement(t.Fragment,null," ",!o&&t.createElement("span",{className:"filter-count"},"("+Object.values(i).filter((function(e){return[].concat(e[r]).includes(n)})).length+")"))},X=function(e){var n,l=e.reference,i=e.source,o=e.inverseSource,c=e.limit,s=e.sort,v=e.filter,y=e.label,h=e.icon,g=e.showCounters,E=u(l,{page:1,perPage:c},s,v),b=E.data,k=E.isLoading,w=m({resource:l}),x=d();S(x);var C=V(x),L=a();L.displayedFilters,L.filterValues;var P=L.setFilters;L.hideFilter,r((function(){var e=new URLSearchParams(window.location.search);Object.fromEntries(e.entries()).filter||k||P({})}),[]);return t.createElement(f,{label:y||(null==w||null===(n=w.options)||void 0===n?void 0:n.label)||"",icon:h||null!=w&&w.icon?t.createElement(w.icon):void 0},b&&b.filter((function(e){return function(e){if(!o)return!0;if(!C||!e)return!1;var t=!1;return Object.values(C).forEach((function(r){r.forEach((function(r){[].concat(e[o]).forEach((function(e){null!=e&&e.startsWith(r)&&(t=!0)}))}))})),t}(e)})).map((function(e){return t.createElement(p,{key:e.id,label:t.createElement("span",{className:"filter-label"},e["pair:label"],g&&t.createElement(Q,{source:i,id:e.id})),value:(r={},n=i,a=e.id,n in r?Object.defineProperty(r,n,{value:a,enumerable:!0,configurable:!0,writable:!0}):r[n]=a,r)});var r,n,a})))};X.defaultProps={limit:25,showCounters:!0};var Y=t.createContext({views:null,currentView:null,setView:function(){return null}}),Z=function(){var e=new URLSearchParams(A().search),r=t.useContext(Y),n=r.views,a=r.currentView,l=r.setView;return n?Object.entries(n).filter((function(e){return R(e,1)[0]!==a})).map((function(r){var n=R(r,2),a=n[0],i=n[1];return e.set("view",a),e.set("page",1),e.set("perPage",i.perPage),i.sort&&(e.set("sort",i.sort.field),e.set("order",i.sort.order)),t.createElement(s,{key:a,to:"?"+e.toString()},t.createElement(v,{onClick:function(){return l(a)},label:i.label},t.createElement(i.icon)))})):null},ee=["bulkActions","basePath","sort","displayedFilters","exporter","filters","filterValues","onUnselectItems","selectedIds","showFilter","total"],te=function(e){var r=e.bulkActions;e.basePath;var n=e.sort,a=e.displayedFilters,l=e.exporter,i=e.filters,o=e.filterValues,c=e.onUnselectItems,s=e.selectedIds,u=e.showFilter,d=e.total,f=_(e,ee),p=O((function(e){return e.breakpoints.down("sm")})),v=m(f);return t.createElement(y,null,t.createElement(Z,null),i&&t.cloneElement(i,{showFilter:u,displayedFilters:a,filterValues:o,context:"button"}),v.hasCreate&&t.createElement(h,null),!p&&!1!==l&&t.createElement(g,{disabled:0===d,sort:n,filter:o,exporter:l}),r&&t.cloneElement(r,{filterValues:o,selectedIds:s,onUnselectItems:c}))},re=["children","actions","views","ListComponent"],ne=function(e){e.children;var r=e.actions,a=e.views,l=e.ListComponent,i=_(e,re),o=new URLSearchParams(A().search),c=o.has("view")?o.get("view"):Object.keys(a)[0],s=R(n(c),2),u=s[0],m=s[1];return t.createElement(Y.Provider,{value:{views:a,currentView:u,setView:m}},t.createElement(l,U({actions:r,pagination:a[u].pagination,perPage:a[c].perPage,sort:a[c].sort},i),a[u].list))};ne.defaultProps={actions:t.createElement(te,null),ListComponent:E};export{$ as ChipList,H as GridList,te as ListActionsWithViews,Y as ListViewContext,K as MasonryList,ne as MultiViewsList,X as ReferenceFilter,Z as ViewsButtons};
+import {jsx as $2An97$jsx, jsxs as $2An97$jsxs, Fragment as $2An97$Fragment} from "react/jsx-runtime";
+import $2An97$react, {cloneElement as $2An97$cloneElement, Children as $2An97$Children, useEffect as $2An97$useEffect, createElement as $2An97$createElement, useState as $2An97$useState} from "react";
+import {useListContext as $2An97$useListContext, useCreatePath as $2An97$useCreatePath, sanitizeListRestProps as $2An97$sanitizeListRestProps, RecordContextProvider as $2An97$RecordContextProvider, ChipField as $2An97$ChipField, Link as $2An97$Link, useResourceContext as $2An97$useResourceContext, useGetList as $2An97$useGetList, useResourceDefinition as $2An97$useResourceDefinition, FilterList as $2An97$FilterList, FilterListItem as $2An97$FilterListItem, List as $2An97$List, TopToolbar as $2An97$TopToolbar, CreateButton as $2An97$CreateButton, ExportButton as $2An97$ExportButton, Button as $2An97$Button} from "react-admin";
+import {LinearProgress as $2An97$LinearProgress, Grid as $2An97$Grid, Card as $2An97$Card, CardActionArea as $2An97$CardActionArea, CardMedia as $2An97$CardMedia, CardContent as $2An97$CardContent, CardActions as $2An97$CardActions, useMediaQuery as $2An97$useMediaQuery} from "@mui/material";
+import $2An97$muistylesmakeStyles from "@mui/styles/makeStyles";
+import $2An97$muiiconsmaterialAddCircle from "@mui/icons-material/AddCircle";
+import $2An97$muiiconsmaterialLaunch from "@mui/icons-material/Launch";
+import {useGetExternalLink as $2An97$useGetExternalLink, useContainers as $2An97$useContainers} from "@semapps/semantic-data-provider";
+import $2An97$reactmasonrycss from "react-masonry-css";
+import {useLocation as $2An97$useLocation} from "react-router";
+
+
+
+
+
+
+
+
+
+const $a854ae8777f8f757$var$useStyles = (0, $2An97$muistylesmakeStyles)(()=>({
+        root: {
+            display: "flex",
+            flexWrap: "wrap"
+        },
+        link: {
+            textDecoration: "none",
+            maxWidth: "100%"
+        },
+        chipField: {
+            maxWidth: "100%"
+        },
+        addIcon: {
+            cursor: "pointer",
+            fontSize: 35,
+            position: "relative",
+            top: 2
+        },
+        launchIcon: {
+            width: 20,
+            paddingRight: 6,
+            marginLeft: -10
+        }
+    }));
+const $a854ae8777f8f757$var$stopPropagation = (e)=>e.stopPropagation();
+// Our handleClick does nothing as we wrap the children inside a Link but it is
+// required by ChipField, which uses a Chip from material-ui.
+// The material-ui Chip requires an onClick handler to behave like a clickable element.
+const $a854ae8777f8f757$var$handleClick = ()=>{};
+const $a854ae8777f8f757$var$ChipList = (props)=>{
+    const { classes: classesOverride, className: className, children: children, linkType: linkType = "edit", component: component = "div", primaryText: primaryText, appendLink: appendLink, externalLinks: externalLinks = false, ...rest } = props;
+    const { data: data, isLoading: isLoading, resource: resource } = (0, $2An97$useListContext)(props);
+    const getExternalLink = (0, $2An97$useGetExternalLink)(externalLinks);
+    const createPath = (0, $2An97$useCreatePath)();
+    const classes = $a854ae8777f8f757$var$useStyles(props);
+    const Component = component;
+    if (isLoading) return /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$LinearProgress), {});
+    return /*#__PURE__*/ (0, $2An97$jsxs)(Component, {
+        className: classes.root,
+        ...(0, $2An97$sanitizeListRestProps)(rest),
+        children: [
+            data.map((record)=>{
+                if (!record || record._error) return null;
+                const externalLink = getExternalLink(record);
+                if (externalLink) return /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$RecordContextProvider), {
+                    value: record,
+                    children: /*#__PURE__*/ (0, $2An97$jsx)("a", {
+                        href: externalLink,
+                        target: "_blank",
+                        rel: "noopener noreferrer",
+                        className: classes.link,
+                        onClick: $a854ae8777f8f757$var$stopPropagation,
+                        children: /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$ChipField), {
+                            source: primaryText,
+                            className: classes.chipField,
+                            color: "secondary",
+                            deleteIcon: /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$muiiconsmaterialLaunch), {
+                                className: classes.launchIcon
+                            }),
+                            // Workaround to force ChipField to be clickable
+                            onClick: $a854ae8777f8f757$var$handleClick,
+                            // Required to display the delete icon
+                            onDelete: $a854ae8777f8f757$var$handleClick
+                        })
+                    })
+                }, record.id);
+                if (linkType) return /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$RecordContextProvider), {
+                    value: record,
+                    children: /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$Link), {
+                        className: classes.link,
+                        to: createPath({
+                            resource: resource,
+                            id: record.id,
+                            type: linkType
+                        }),
+                        onClick: $a854ae8777f8f757$var$stopPropagation,
+                        children: /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$ChipField), {
+                            source: primaryText,
+                            className: classes.chipField,
+                            color: "secondary",
+                            // Workaround to force ChipField to be clickable
+                            onClick: $a854ae8777f8f757$var$handleClick
+                        })
+                    })
+                }, record.id);
+                return /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$RecordContextProvider), {
+                    value: record,
+                    children: /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$ChipField), {
+                        source: primaryText,
+                        className: classes.chipField,
+                        color: "secondary",
+                        // Workaround to force ChipField to be clickable
+                        onClick: $a854ae8777f8f757$var$handleClick
+                    })
+                }, record.id);
+            }),
+            appendLink && /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$muiiconsmaterialAddCircle), {
+                color: "primary",
+                className: classes.addIcon,
+                onClick: appendLink
+            })
+        ]
+    });
+};
+var $a854ae8777f8f757$export$2e2bcd8739ae039 = $a854ae8777f8f757$var$ChipList;
+
+
+
+
+
+
+
+// useful to prevent click bubbling in a datagrid with rowClick
+const $e54e9a9f27806c4d$var$stopPropagation = (e)=>e.stopPropagation();
+// Our handleClick does nothing as we wrap the children inside a Link but it is
+// required by ChipField, which uses a Chip from material-ui.
+// The material-ui Chip requires an onClick handler to behave like a clickable element.
+const $e54e9a9f27806c4d$var$handleClick = ()=>{};
+const $e54e9a9f27806c4d$var$GridList = ({ children: children, linkType: linkType, externalLinks: externalLinks, spacing: spacing, xs: xs, sm: sm, md: md, lg: lg, xl: xl })=>{
+    const { data: data, resource: resource, isLoading: isLoading } = (0, $2An97$useListContext)();
+    const getExternalLink = (0, $2An97$useGetExternalLink)(externalLinks);
+    const createPath = (0, $2An97$useCreatePath)();
+    if (isLoading || !data) return null;
+    return /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$Grid), {
+        container: true,
+        spacing: spacing,
+        children: data.map((record)=>{
+            if (!record || record._error) return null;
+            const externalLink = getExternalLink(record);
+            let child;
+            if (externalLink) child = /*#__PURE__*/ (0, $2An97$jsx)("a", {
+                href: externalLink,
+                target: "_blank",
+                rel: "noopener noreferrer",
+                onClick: $e54e9a9f27806c4d$var$stopPropagation,
+                children: /*#__PURE__*/ $2An97$cloneElement($2An97$Children.only(children), {
+                    externalLink: true,
+                    // Workaround to force ChipField to be clickable
+                    onClick: $e54e9a9f27806c4d$var$handleClick
+                })
+            });
+            else if (linkType) child = /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$Link), {
+                to: createPath({
+                    resource: resource,
+                    id: record.id,
+                    type: linkType
+                }),
+                onClick: $e54e9a9f27806c4d$var$stopPropagation,
+                children: /*#__PURE__*/ $2An97$cloneElement($2An97$Children.only(children), {
+                    // Workaround to force ChipField to be clickable
+                    onClick: $e54e9a9f27806c4d$var$handleClick
+                })
+            });
+            else child = children;
+            return /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$Grid), {
+                item: true,
+                xs: xs,
+                sm: sm,
+                md: md,
+                lg: lg,
+                xl: xl,
+                children: /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$RecordContextProvider), {
+                    value: record,
+                    children: child
+                })
+            }, record.id);
+        })
+    });
+};
+$e54e9a9f27806c4d$var$GridList.defaultProps = {
+    xs: 6,
+    spacing: 3,
+    linkType: "edit",
+    externalLinks: false
+};
+var $e54e9a9f27806c4d$export$2e2bcd8739ae039 = $e54e9a9f27806c4d$var$GridList;
+
+
+
+
+
+
+
+
+const $8cf7b8f98f373d84$var$useStyles = (0, $2An97$muistylesmakeStyles)(()=>({
+        grid: {
+            display: "flex",
+            marginLeft: -20,
+            marginBottom: -20,
+            width: "auto"
+        },
+        column: {
+            paddingLeft: 20,
+            backgroundClip: "padding-box"
+        },
+        card: {
+            marginBottom: 20
+        },
+        media: {
+            height: 0,
+            paddingTop: "56.25%" // 16:9
+        }
+    }));
+/**
+ * @example
+ * <List component="div" perPage={50} {...props}>
+ *   <MasonryList
+ *     image={record => record.image}
+ *     content={record => (
+ *       <>
+ *         <Typography variant="subtitle1">{record.title}</Typography>
+ *         <Typography variant="body2" color="textSecondary" component="p">{record.description}</Typography>
+ *       </>
+ *     )}
+ *     linkType="show"
+ *   />
+ * </List>
+ */ const $8cf7b8f98f373d84$var$MasonryList = ({ image: image, content: content, actions: actions, breakpointCols: breakpointCols, linkType: linkType })=>{
+    const classes = $8cf7b8f98f373d84$var$useStyles();
+    const { data: data, resource: resource } = (0, $2An97$useListContext)();
+    const createPath = (0, $2An97$useCreatePath)();
+    return /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$reactmasonrycss), {
+        breakpointCols: breakpointCols,
+        className: classes.grid,
+        columnClassName: classes.column,
+        children: data.map((record)=>{
+            if (!record || record._error) return null;
+            const imageUrl = typeof image === "function" ? image(record) : image;
+            return /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$RecordContextProvider), {
+                value: record,
+                children: /*#__PURE__*/ (0, $2An97$jsxs)((0, $2An97$Card), {
+                    className: classes.card,
+                    children: [
+                        /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$Link), {
+                            to: createPath({
+                                resource: resource,
+                                id: record.id,
+                                type: linkType
+                            }),
+                            children: /*#__PURE__*/ (0, $2An97$jsxs)((0, $2An97$CardActionArea), {
+                                children: [
+                                    imageUrl && /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$CardMedia), {
+                                        className: classes.media,
+                                        image: imageUrl
+                                    }),
+                                    content && /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$CardContent), {
+                                        children: content(record)
+                                    })
+                                ]
+                            })
+                        }),
+                        actions && /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$CardActions), {
+                            children: actions.map((action)=>/*#__PURE__*/ (0, $2An97$react).createElement(action))
+                        })
+                    ]
+                }, record.id)
+            });
+        })
+    });
+};
+$8cf7b8f98f373d84$var$MasonryList.defaultProps = {
+    breakpointCols: {
+        default: 3,
+        1050: 2,
+        700: 1
+    },
+    linkType: "edit"
+};
+var $8cf7b8f98f373d84$export$2e2bcd8739ae039 = $8cf7b8f98f373d84$var$MasonryList;
+
+
+/* eslint-disable react/react-in-jsx-scope */ /* eslint-disable react/require-default-props */ 
+
+
+
+/**
+ * @example
+ * const FilterAside = () => (
+ *   <Card>
+ *     <CardContent>
+ *       <FilterLiveSearch source="pair:label" />
+ *       <ReferenceFilter reference="Theme" source="pair:hasTopic" inverseSource="pair:topicOf" />
+ *       <ReferenceFilter reference="Skill" source="pair:offers" inverseSource="pair:offeredBy" />
+ *     </CardContent>
+ *   </Card>
+ * );
+ */ // Converts an element to array or returns it if it's already an array
+const $5ced1203870db4f6$var$toArray = (e)=>[].concat(e);
+const $5ced1203870db4f6$var$ReferenceFilterCounter = ({ source: source, id: id })=>{
+    const resourceContext = (0, $2An97$useResourceContext)();
+    const { data: data } = (0, $2An97$useGetList)(resourceContext, {
+        pagination: {
+            page: 1,
+            perPage: Infinity
+        }
+    });
+    return /*#__PURE__*/ (0, $2An97$jsxs)((0, $2An97$Fragment), {
+        children: [
+            "\xa0",
+            data && /*#__PURE__*/ (0, $2An97$jsx)("span", {
+                className: "filter-count",
+                children: `(${data.filter((d)=>$5ced1203870db4f6$var$toArray(d[source]).includes(id)).length})`
+            })
+        ]
+    });
+};
+const $5ced1203870db4f6$var$ReferenceFilter = ({ reference: reference, source: source, inverseSource: inverseSource, limit: limit = 25, sort: sort, filter: filter, label: label, icon: icon, showCounters: showCounters = true })=>{
+    const { data: data, isLoading: isLoading } = (0, $2An97$useGetList)(reference, {
+        pagination: {
+            page: 1,
+            perPage: limit
+        },
+        sort: sort,
+        filter: filter
+    });
+    const currentResource = (0, $2An97$useResourceDefinition)({
+        resource: reference
+    });
+    const resourceContext = (0, $2An97$useResourceContext)();
+    const resourceContextContainers = (0, $2An97$useContainers)(resourceContext);
+    const { setFilters: setFilters } = (0, $2An97$useListContext)();
+    (0, $2An97$useEffect)(()=>{
+        // Needed when filter item is active and its last relation is removed
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        if (!urlSearchParams.get("filter") && !isLoading) setFilters({}, []);
+    }, [
+        isLoading,
+        setFilters
+    ]);
+    const itemIsUsed = (itemData)=>{
+        if (!inverseSource) return true;
+        if (!resourceContextContainers || !itemData) return false;
+        return Object.values(resourceContextContainers).flat().some((containerUrl)=>{
+            if (!itemData[inverseSource]) return false;
+            return $5ced1203870db4f6$var$toArray(itemData[inverseSource]).some((inverseSourceData)=>{
+                return inverseSourceData?.startsWith(containerUrl);
+            });
+        });
+    };
+    return /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$FilterList), {
+        label: label || currentResource?.options?.label || "",
+        icon: icon || currentResource?.icon ? /*#__PURE__*/ (0, $2An97$createElement)(currentResource.icon) : undefined,
+        children: data && data.filter((itemData)=>itemIsUsed(itemData)).map((itemData)=>/*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$FilterListItem), {
+                label: /*#__PURE__*/ (0, $2An97$jsxs)("span", {
+                    className: "filter-label",
+                    children: [
+                        itemData["pair:label"],
+                        showCounters && /*#__PURE__*/ (0, $2An97$jsx)($5ced1203870db4f6$var$ReferenceFilterCounter, {
+                            source: source,
+                            id: itemData.id
+                        })
+                    ]
+                }),
+                value: {
+                    [source]: itemData.id
+                }
+            }, itemData.id))
+    });
+};
+var $5ced1203870db4f6$export$2e2bcd8739ae039 = $5ced1203870db4f6$var$ReferenceFilter;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const $4d3421bb798b6c78$var$ListViewContext = /*#__PURE__*/ (0, $2An97$react).createContext({
+    views: null,
+    currentView: null,
+    setView: ()=>null
+});
+var $4d3421bb798b6c78$export$2e2bcd8739ae039 = $4d3421bb798b6c78$var$ListViewContext;
+
+
+const $5a39d2966c9779bd$var$ViewsButtons = ()=>{
+    const query = new URLSearchParams((0, $2An97$useLocation)().search);
+    const { views: views, currentView: currentView, setView: setView } = (0, $2An97$react).useContext((0, $4d3421bb798b6c78$export$2e2bcd8739ae039));
+    return views ? Object.entries(views).filter(([key])=>key !== currentView).map(([key, view])=>{
+        query.set("view", key);
+        query.set("page", 1);
+        query.set("perPage", view.perPage);
+        if (view.sort) {
+            query.set("sort", view.sort.field);
+            query.set("order", view.sort.order);
+        }
+        return /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$Link), {
+            to: `?${query.toString()}`,
+            children: /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$Button), {
+                onClick: ()=>setView(key),
+                label: view.label,
+                children: /*#__PURE__*/ (0, $2An97$react).createElement(view.icon)
+            })
+        }, key);
+    }) : null;
+};
+var $5a39d2966c9779bd$export$2e2bcd8739ae039 = $5a39d2966c9779bd$var$ViewsButtons;
+
+
+const $032ebd19dd4d05d7$var$ListActionsWithViews = ({ bulkActions: bulkActions, basePath: basePath, sort: sort, displayedFilters: displayedFilters, exporter: exporter, filters: filters, filterValues: filterValues, onUnselectItems: onUnselectItems, selectedIds: selectedIds, showFilter: showFilter, total: total, ...rest })=>{
+    const xs = (0, $2An97$useMediaQuery)((theme)=>theme.breakpoints.down("sm"));
+    const resourceDefinition = (0, $2An97$useResourceDefinition)(rest);
+    return /*#__PURE__*/ (0, $2An97$jsxs)((0, $2An97$TopToolbar), {
+        children: [
+            /*#__PURE__*/ (0, $2An97$jsx)((0, $5a39d2966c9779bd$export$2e2bcd8739ae039), {}),
+            filters && /*#__PURE__*/ (0, $2An97$react).cloneElement(filters, {
+                showFilter: showFilter,
+                displayedFilters: displayedFilters,
+                filterValues: filterValues,
+                context: "button"
+            }),
+            resourceDefinition.hasCreate && /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$CreateButton), {}),
+            !xs && exporter !== false && /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$ExportButton), {
+                disabled: total === 0,
+                sort: sort,
+                filter: filterValues,
+                exporter: exporter
+            }),
+            bulkActions && /*#__PURE__*/ (0, $2An97$react).cloneElement(bulkActions, {
+                filterValues: filterValues,
+                selectedIds: selectedIds,
+                onUnselectItems: onUnselectItems
+            })
+        ]
+    });
+};
+var $032ebd19dd4d05d7$export$2e2bcd8739ae039 = $032ebd19dd4d05d7$var$ListActionsWithViews;
+
+
+
+const $5bd09179d1367bb7$var$MultiViewsList = ({ children: children, actions: actions, views: views, ListComponent: ListComponent, ...otherProps })=>{
+    const query = new URLSearchParams((0, $2An97$useLocation)().search);
+    const initialView = query.has("view") ? query.get("view") : Object.keys(views)[0];
+    const [currentView, setView] = (0, $2An97$useState)(initialView);
+    return /*#__PURE__*/ (0, $2An97$jsx)((0, $4d3421bb798b6c78$export$2e2bcd8739ae039).Provider, {
+        value: {
+            views: views,
+            currentView: currentView,
+            setView: setView
+        },
+        children: /*#__PURE__*/ (0, $2An97$jsx)(ListComponent, {
+            actions: actions,
+            pagination: views[currentView].pagination,
+            // Set initial values, but use the query string to change these values to avoid a complete refresh
+            perPage: views[initialView].perPage,
+            sort: views[initialView].sort,
+            ...otherProps,
+            children: views[currentView].list
+        })
+    });
+};
+$5bd09179d1367bb7$var$MultiViewsList.defaultProps = {
+    actions: /*#__PURE__*/ (0, $2An97$jsx)((0, $032ebd19dd4d05d7$export$2e2bcd8739ae039), {}),
+    ListComponent: (0, $2An97$List)
+};
+var $5bd09179d1367bb7$export$2e2bcd8739ae039 = $5bd09179d1367bb7$var$MultiViewsList;
+
+
+
+
+
+
+
+export {$a854ae8777f8f757$export$2e2bcd8739ae039 as ChipList, $e54e9a9f27806c4d$export$2e2bcd8739ae039 as GridList, $8cf7b8f98f373d84$export$2e2bcd8739ae039 as MasonryList, $5ced1203870db4f6$export$2e2bcd8739ae039 as ReferenceFilter, $5bd09179d1367bb7$export$2e2bcd8739ae039 as MultiViewsList, $032ebd19dd4d05d7$export$2e2bcd8739ae039 as ListActionsWithViews, $4d3421bb798b6c78$export$2e2bcd8739ae039 as ListViewContext, $5a39d2966c9779bd$export$2e2bcd8739ae039 as ViewsButtons};
 //# sourceMappingURL=index.es.js.map

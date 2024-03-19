@@ -1,13 +1,11 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { delay, getContainerFromUri } = require('../utils');
+const { delay, getParentContainerUri } = require('../utils');
 
 module.exports = {
   settings: {
     path: null,
     acceptedTypes: null,
     accept: MIME_TYPES.JSON,
-    jsonContext: null,
-    dereference: null,
     permissions: null,
     newResourcesPermissions: null,
     controlledActions: {},
@@ -16,13 +14,11 @@ module.exports = {
   },
   dependencies: ['ldp'],
   async started() {
-    await this.broker.call('ldp.registry.register', {
+    const registration = await this.broker.call('ldp.registry.register', {
       path: this.settings.path,
       name: this.name,
       acceptedTypes: this.settings.acceptedTypes,
       accept: this.settings.accept,
-      jsonContext: this.settings.jsonContext,
-      dereference: this.settings.dereference,
       permissions: this.settings.permissions,
       excludeFromMirror: this.settings.excludeFromMirror,
       newResourcesPermissions: this.settings.newResourcesPermissions,
@@ -38,6 +34,9 @@ module.exports = {
       },
       readOnly: this.settings.readOnly
     });
+
+    // If no path was defined in the settings, set the automatically generated path (so that it can be used below)
+    if (!this.settings.path) this.settings.path = registration.path;
   },
   actions: {
     async post(ctx) {
@@ -65,11 +64,8 @@ module.exports = {
       return ctx.call('ldp.container.detach', ctx.params);
     },
     get(ctx) {
-      const { accept, dereference, jsonContext } = this.settings;
       const containerParams = {};
-      if (accept) containerParams.accept = accept;
-      if (dereference) containerParams.dereference = dereference;
-      if (jsonContext) containerParams.jsonContext = jsonContext;
+      if (this.settings.accept) containerParams.accept = this.settings.accept;
       return ctx.call('ldp.resource.get', {
         ...containerParams,
         ...ctx.params
@@ -88,7 +84,7 @@ module.exports = {
       return ctx.call('ldp.resource.delete', ctx.params);
     },
     getContainerUri(ctx) {
-      return ctx.call('ldp.registry.getUri', { path: this.settings.path, webId: ctx.params.webId || ctx.meta.webId });
+      return ctx.call('ldp.registry.getUri', { path: this.settings.path, webId: ctx.params?.webId || ctx.meta?.webId });
     },
     async waitForContainerCreation(ctx) {
       const { containerUri } = ctx.params;
@@ -100,7 +96,7 @@ module.exports = {
         containerExist = await ctx.call('ldp.container.exist', { containerUri, webId: 'system' });
       } while (!containerExist);
 
-      const parentContainerUri = getContainerFromUri(containerUri);
+      const parentContainerUri = getParentContainerUri(containerUri);
       const parentContainerExist = await ctx.call('ldp.container.exist', {
         containerUri: parentContainerUri,
         webId: 'system'

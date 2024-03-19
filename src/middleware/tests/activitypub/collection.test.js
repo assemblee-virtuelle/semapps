@@ -1,3 +1,4 @@
+const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const initialize = require('./initialize');
 const CONFIG = require('../config');
@@ -22,7 +23,7 @@ describe('Handle collections', () => {
     for (let i = 0; i < 10; i++) {
       items.push(
         await broker.call('ldp.container.post', {
-          containerUri: `${CONFIG.HOME_URL}objects`,
+          containerUri: urlJoin(CONFIG.HOME_URL, 'as/object'),
           resource: {
             '@context': 'https://www.w3.org/ns/activitystreams',
             '@type': 'Note',
@@ -40,8 +41,10 @@ describe('Handle collections', () => {
   test('Create collection', async () => {
     await broker.call('activitypub.collection.create', {
       collectionUri,
-      ordered: false,
-      summary: 'My non-ordered collection'
+      config: {
+        ordered: false,
+        summary: 'My non-ordered collection'
+      }
     });
 
     const collectionExist = await broker.call('activitypub.collection.exist', {
@@ -56,16 +59,33 @@ describe('Handle collections', () => {
       id: collectionUri,
       type: 'Collection',
       summary: 'My non-ordered collection',
-      items: [],
       totalItems: 0
+    });
+  });
+
+  test('Get collection with custom jsonContext', async () => {
+    const collection = await broker.call('activitypub.collection.get', {
+      collectionUri,
+      jsonContext: { as: 'https://www.w3.org/ns/activitystreams#' }
+    });
+
+    expect(collection).toMatchObject({
+      '@id': collectionUri,
+      '@type': 'as:Collection',
+      'as:summary': 'My non-ordered collection',
+      'as:totalItems': expect.objectContaining({
+        '@value': 0
+      })
     });
   });
 
   test('Create ordered collection', async () => {
     await broker.call('activitypub.collection.create', {
       collectionUri: orderedCollectionUri,
-      ordered: true,
-      summary: 'My ordered collection'
+      config: {
+        ordered: true,
+        summary: 'My ordered collection'
+      }
     });
 
     const collectionExist = await broker.call('activitypub.collection.exist', {
@@ -83,7 +103,6 @@ describe('Handle collections', () => {
       id: orderedCollectionUri,
       type: 'OrderedCollection',
       summary: 'My ordered collection',
-      orderedItems: [],
       totalItems: 0
     });
   });
@@ -102,7 +121,7 @@ describe('Handle collections', () => {
       id: collectionUri,
       type: 'Collection',
       summary: 'My non-ordered collection',
-      items: [items[0]],
+      items: items[0],
       totalItems: 1
     });
 
@@ -115,14 +134,12 @@ describe('Handle collections', () => {
       id: collectionUri,
       type: 'Collection',
       summary: 'My non-ordered collection',
-      items: [
-        {
-          id: items[0],
-          type: 'Note',
-          content: 'Contenu de ma note #0',
-          name: 'Note #0'
-        }
-      ],
+      items: {
+        id: items[0],
+        type: 'Note',
+        content: 'Contenu de ma note #0',
+        name: 'Note #0'
+      },
       totalItems: 1
     });
   });
@@ -141,7 +158,6 @@ describe('Handle collections', () => {
       id: collectionUri,
       type: 'Collection',
       summary: 'My non-ordered collection',
-      items: [],
       totalItems: 0
     });
   });
@@ -220,7 +236,6 @@ describe('Handle collections', () => {
       id: `${collectionUri}?page=1`,
       type: 'CollectionPage',
       partOf: collectionUri,
-      prev: undefined,
       next: `${collectionUri}?page=2`,
       totalItems: 10
     });

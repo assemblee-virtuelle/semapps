@@ -1,0 +1,5 @@
+{
+  "prefix": "ont2",
+  "namespace": "https://www.w3.org/ns/ontology2#",
+  "jsonldContext": "https://www.w3.org/ns/ontology2.jsonld"
+}

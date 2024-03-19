@@ -1,7 +1,7 @@
-const { negotiateAccept, parseSparql, saveDatasetMeta } = require('@semapps/middlewares');
+const { parseHeader, negotiateAccept, parseSparql, saveDatasetMeta } = require('@semapps/middlewares');
 
 function getRoute(path) {
-  const middlewares = [parseSparql, negotiateAccept, saveDatasetMeta];
+  const middlewares = [parseHeader, parseSparql, negotiateAccept, saveDatasetMeta];
   return {
     path,
     name: 'sparql-endpoint',

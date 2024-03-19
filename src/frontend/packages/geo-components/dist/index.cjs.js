@@ -1,2 +1,531 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});var e=require("react"),t=require("react-admin"),r=require("@mui/material"),n=require("@mui/material/Autocomplete"),o=require("@mui/icons-material/LocationOn"),a=require("lodash.throttle"),u=require("@mui/system"),i=require("react-router-dom"),l=require("@mui/styles/makeStyles"),c=require("@mui/material/CircularProgress");require("leaflet-defaulticon-compatibility");var s=require("react-leaflet"),f=require("leaflet"),p=require("@react-leaflet/core");require("leaflet.markercluster");var d=require("@mui/icons-material/Clear");function m(e){return e&&"object"==typeof e&&"default"in e?e:{default:e}}var g=m(e),h=m(n),y=m(o),b=m(a),v=m(l),E=m(c),x=m(f),O=m(d);function C(e,t){var r=Object.keys(e);if(Object.getOwnPropertySymbols){var n=Object.getOwnPropertySymbols(e);t&&(n=n.filter((function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable}))),r.push.apply(r,n)}return r}function w(e){for(var t=1;t<arguments.length;t++){var r=null!=arguments[t]?arguments[t]:{};t%2?C(Object(r),!0).forEach((function(t){A(e,t,r[t])})):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(r)):C(Object(r)).forEach((function(t){Object.defineProperty(e,t,Object.getOwnPropertyDescriptor(r,t))}))}return e}function A(e,t,r){return t in e?Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}):e[t]=r,e}function j(){return(j=Object.assign?Object.assign.bind():function(e){for(var t=1;t<arguments.length;t++){var r=arguments[t];for(var n in r)Object.prototype.hasOwnProperty.call(r,n)&&(e[n]=r[n])}return e}).apply(this,arguments)}function P(e,t){if(null==e)return{};var r,n,o=function(e,t){if(null==e)return{};var r,n,o={},a=Object.keys(e);for(n=0;n<a.length;n++)r=a[n],t.indexOf(r)>=0||(o[r]=e[r]);return o}(e,t);if(Object.getOwnPropertySymbols){var a=Object.getOwnPropertySymbols(e);for(n=0;n<a.length;n++)r=a[n],t.indexOf(r)>=0||Object.prototype.propertyIsEnumerable.call(e,r)&&(o[r]=e[r])}return o}function I(e,t){return function(e){if(Array.isArray(e))return e}(e)||function(e,t){var r=null==e?null:"undefined"!=typeof Symbol&&e[Symbol.iterator]||e["@@iterator"];if(null==r)return;var n,o,a=[],u=!0,i=!1;try{for(r=r.call(e);!(u=(n=r.next()).done)&&(a.push(n.value),!t||a.length!==t);u=!0);}catch(e){i=!0,o=e}finally{try{u||null==r.return||r.return()}finally{if(i)throw o}}return a}(e,t)||T(e,t)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function S(e){return function(e){if(Array.isArray(e))return M(e)}(e)||function(e){if("undefined"!=typeof Symbol&&null!=e[Symbol.iterator]||null!=e["@@iterator"])return Array.from(e)}(e)||T(e)||function(){throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function T(e,t){if(e){if("string"==typeof e)return M(e,t);var r=Object.prototype.toString.call(e).slice(8,-1);return"Object"===r&&e.constructor&&(r=e.constructor.name),"Map"===r||"Set"===r?Array.from(e):"Arguments"===r||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r)?M(e,t):void 0}}function M(e,t){(null==t||t>e.length)&&(t=e.length);for(var r=0,n=new Array(t);r<t;r++)n[r]=e[r];return n}"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self&&self;function k(e,t){return e(t={exports:{}},t.exports),t.exports}var U=k((function(e,t){var r,n;e.exports=(r={772:(e,t,r)=>{const n=r(826).remove,o=/[.*+?^${}()|[\]\\]/g,a=/[a-z0-9_]/i,u=/\s+/;e.exports=function(e,t,r){var i,l;l={insideWords:!1,findAllOccurrences:!1,requireMatchAll:!1},i=(i=r)||{},Object.keys(i).forEach(e=>{l[e]=!!i[e]}),r=l;const c=Array.from(e).map(e=>n(e));let s=c.join("");return(t=n(t)).trim().split(u).filter(e=>e.length>0).reduce((e,t)=>{const n=t.length,u=!r.insideWords&&a.test(t[0])?"\\b":"",i=new RegExp(u+t.replace(o,"\\$&"),"i");let l,f;if(l=i.exec(s),r.requireMatchAll&&null===l)return s="",[];for(;l;){f=l.index;const t=n-c.slice(f,f+n).join("").length,o=f-c.slice(0,f).join("").length,a=[f+o,f+n+o+t];if(a[0]!==a[1]&&e.push(a),s=s.slice(0,f)+new Array(n+1).join(" ")+s.slice(f+n),!r.findAllOccurrences)break;l=i.exec(s)}return e},[]).sort((e,t)=>e[0]-t[0])}},826:e=>{var t={"À":"A","Á":"A","Â":"A","Ã":"A","Ä":"A","Å":"A","Ấ":"A","Ắ":"A","Ẳ":"A","Ẵ":"A","Ặ":"A","Æ":"AE","Ầ":"A","Ằ":"A","Ȃ":"A","Ç":"C","Ḉ":"C","È":"E","É":"E","Ê":"E","Ë":"E","Ế":"E","Ḗ":"E","Ề":"E","Ḕ":"E","Ḝ":"E","Ȇ":"E","Ì":"I","Í":"I","Î":"I","Ï":"I","Ḯ":"I","Ȋ":"I","Ð":"D","Ñ":"N","Ò":"O","Ó":"O","Ô":"O","Õ":"O","Ö":"O","Ø":"O","Ố":"O","Ṍ":"O","Ṓ":"O","Ȏ":"O","Ù":"U","Ú":"U","Û":"U","Ü":"U","Ý":"Y","à":"a","á":"a","â":"a","ã":"a","ä":"a","å":"a","ấ":"a","ắ":"a","ẳ":"a","ẵ":"a","ặ":"a","æ":"ae","ầ":"a","ằ":"a","ȃ":"a","ç":"c","ḉ":"c","è":"e","é":"e","ê":"e","ë":"e","ế":"e","ḗ":"e","ề":"e","ḕ":"e","ḝ":"e","ȇ":"e","ì":"i","í":"i","î":"i","ï":"i","ḯ":"i","ȋ":"i","ð":"d","ñ":"n","ò":"o","ó":"o","ô":"o","õ":"o","ö":"o","ø":"o","ố":"o","ṍ":"o","ṓ":"o","ȏ":"o","ù":"u","ú":"u","û":"u","ü":"u","ý":"y","ÿ":"y","Ā":"A","ā":"a","Ă":"A","ă":"a","Ą":"A","ą":"a","Ć":"C","ć":"c","Ĉ":"C","ĉ":"c","Ċ":"C","ċ":"c","Č":"C","č":"c","C̆":"C","c̆":"c","Ď":"D","ď":"d","Đ":"D","đ":"d","Ē":"E","ē":"e","Ĕ":"E","ĕ":"e","Ė":"E","ė":"e","Ę":"E","ę":"e","Ě":"E","ě":"e","Ĝ":"G","Ǵ":"G","ĝ":"g","ǵ":"g","Ğ":"G","ğ":"g","Ġ":"G","ġ":"g","Ģ":"G","ģ":"g","Ĥ":"H","ĥ":"h","Ħ":"H","ħ":"h","Ḫ":"H","ḫ":"h","Ĩ":"I","ĩ":"i","Ī":"I","ī":"i","Ĭ":"I","ĭ":"i","Į":"I","į":"i","İ":"I","ı":"i","Ĳ":"IJ","ĳ":"ij","Ĵ":"J","ĵ":"j","Ķ":"K","ķ":"k","Ḱ":"K","ḱ":"k","K̆":"K","k̆":"k","Ĺ":"L","ĺ":"l","Ļ":"L","ļ":"l","Ľ":"L","ľ":"l","Ŀ":"L","ŀ":"l","Ł":"l","ł":"l","Ḿ":"M","ḿ":"m","M̆":"M","m̆":"m","Ń":"N","ń":"n","Ņ":"N","ņ":"n","Ň":"N","ň":"n","ŉ":"n","N̆":"N","n̆":"n","Ō":"O","ō":"o","Ŏ":"O","ŏ":"o","Ő":"O","ő":"o","Œ":"OE","œ":"oe","P̆":"P","p̆":"p","Ŕ":"R","ŕ":"r","Ŗ":"R","ŗ":"r","Ř":"R","ř":"r","R̆":"R","r̆":"r","Ȓ":"R","ȓ":"r","Ś":"S","ś":"s","Ŝ":"S","ŝ":"s","Ş":"S","Ș":"S","ș":"s","ş":"s","Š":"S","š":"s","Ţ":"T","ţ":"t","ț":"t","Ț":"T","Ť":"T","ť":"t","Ŧ":"T","ŧ":"t","T̆":"T","t̆":"t","Ũ":"U","ũ":"u","Ū":"U","ū":"u","Ŭ":"U","ŭ":"u","Ů":"U","ů":"u","Ű":"U","ű":"u","Ų":"U","ų":"u","Ȗ":"U","ȗ":"u","V̆":"V","v̆":"v","Ŵ":"W","ŵ":"w","Ẃ":"W","ẃ":"w","X̆":"X","x̆":"x","Ŷ":"Y","ŷ":"y","Ÿ":"Y","Y̆":"Y","y̆":"y","Ź":"Z","ź":"z","Ż":"Z","ż":"z","Ž":"Z","ž":"z","ſ":"s","ƒ":"f","Ơ":"O","ơ":"o","Ư":"U","ư":"u","Ǎ":"A","ǎ":"a","Ǐ":"I","ǐ":"i","Ǒ":"O","ǒ":"o","Ǔ":"U","ǔ":"u","Ǖ":"U","ǖ":"u","Ǘ":"U","ǘ":"u","Ǚ":"U","ǚ":"u","Ǜ":"U","ǜ":"u","Ứ":"U","ứ":"u","Ṹ":"U","ṹ":"u","Ǻ":"A","ǻ":"a","Ǽ":"AE","ǽ":"ae","Ǿ":"O","ǿ":"o","Þ":"TH","þ":"th","Ṕ":"P","ṕ":"p","Ṥ":"S","ṥ":"s","X́":"X","x́":"x","Ѓ":"Г","ѓ":"г","Ќ":"К","ќ":"к","A̋":"A","a̋":"a","E̋":"E","e̋":"e","I̋":"I","i̋":"i","Ǹ":"N","ǹ":"n","Ồ":"O","ồ":"o","Ṑ":"O","ṑ":"o","Ừ":"U","ừ":"u","Ẁ":"W","ẁ":"w","Ỳ":"Y","ỳ":"y","Ȁ":"A","ȁ":"a","Ȅ":"E","ȅ":"e","Ȉ":"I","ȉ":"i","Ȍ":"O","ȍ":"o","Ȑ":"R","ȑ":"r","Ȕ":"U","ȕ":"u","B̌":"B","b̌":"b","Č̣":"C","č̣":"c","Ê̌":"E","ê̌":"e","F̌":"F","f̌":"f","Ǧ":"G","ǧ":"g","Ȟ":"H","ȟ":"h","J̌":"J","ǰ":"j","Ǩ":"K","ǩ":"k","M̌":"M","m̌":"m","P̌":"P","p̌":"p","Q̌":"Q","q̌":"q","Ř̩":"R","ř̩":"r","Ṧ":"S","ṧ":"s","V̌":"V","v̌":"v","W̌":"W","w̌":"w","X̌":"X","x̌":"x","Y̌":"Y","y̌":"y","A̧":"A","a̧":"a","B̧":"B","b̧":"b","Ḑ":"D","ḑ":"d","Ȩ":"E","ȩ":"e","Ɛ̧":"E","ɛ̧":"e","Ḩ":"H","ḩ":"h","I̧":"I","i̧":"i","Ɨ̧":"I","ɨ̧":"i","M̧":"M","m̧":"m","O̧":"O","o̧":"o","Q̧":"Q","q̧":"q","U̧":"U","u̧":"u","X̧":"X","x̧":"x","Z̧":"Z","z̧":"z"},r=Object.keys(t).join("|"),n=new RegExp(r,"g"),o=new RegExp(r,""),a=function(e){return e.replace(n,(function(e){return t[e]}))};e.exports=a,e.exports.has=function(e){return!!e.match(o)},e.exports.remove=a}},n={},function e(t){var o=n[t];if(void 0!==o)return o.exports;var a=n[t]={exports:{}};return r[t](a,a.exports,e),a.exports}(772))}));U.AutosuggestHighlightMatch;var q=k((function(e,t){var r,n;e.exports=(r={705:e=>{e.exports=function(e,t){const r=[];return 0===t.length?r.push({text:e,highlight:!1}):t[0][0]>0&&r.push({text:e.slice(0,t[0][0]),highlight:!1}),t.forEach((n,o)=>{const a=n[0],u=n[1];r.push({text:e.slice(a,u),highlight:!0}),o===t.length-1?u<e.length&&r.push({text:e.slice(u,e.length),highlight:!1}):u<t[o+1][0]&&r.push({text:e.slice(u,t[o+1][0]),highlight:!1})}),r}}},n={},function e(t){var o=n[t];if(void 0!==o)return o.exports;var a=n[t]={exports:{}};return r[t](a,a.exports,e),a.exports}(705))}));q.AutosuggestHighlightParse;var z=["mapboxConfig","source","label","parse","optionText","helperText"],R=u.styled(y.default)((function(e){var t=e.theme;return{color:t.palette.text.secondary,marginRight:t.spacing(2)}})),L=function(e,t){return e.place_name?e.place_name:"string"==typeof t?e[t]:"function"==typeof t?t(e):void 0},B=function(n){var o=n.mapboxConfig,a=n.source,u=n.label,i=n.parse,l=n.optionText,c=n.helperText,s=P(n,z);if(!o)throw new Error("@semapps/geo-components : No mapbox configuration");if(!o.access_token)throw new Error("@semapps/geo-components : No access token in mapbox configuration");t.useRecordContext();var f=t.useResourceContext(),p=t.useLocale(),d=t.useTranslate(),m=I(e.useState(""),2),y=m[0],v=m[1],E=I(e.useState([]),2),x=E[0],O=E[1],C=t.useInput(w({resource:f,source:a},s)),A=C.field,T=A.value,M=A.onChange,k=A.onBlur,B=C.isRequired,H=C.fieldState,N=H.error,W=H.isTouched,D=e.useMemo((function(){return b.default((function(e,t){var r=new URL("https://api.mapbox.com/geocoding/v5/mapbox.places/".concat(e,".json"));o.language||(o.language=p),Object.entries(o).forEach((function(e){var t=I(e,2),n=t[0],o=t[1];Array.isArray(o)?o=o.join(","):"boolean"==typeof o&&(o=o?"true":"false"),r.searchParams.set(n,o)})),fetch(r.toString()).then((function(e){return e.json()})).then((function(e){return t(e)}))}),200)}),[o,p]);return e.useEffect((function(){y&&y!==L(T,l)&&D(y,(function(e){return O(e.features)}))}),[T,y,D]),g.default.createElement(h.default,j({autoComplete:!0,value:T||null,options:T?[T].concat(S(x)):x,filterSelectedOptions:!0,filterOptions:function(e){return e},getOptionLabel:function(e){return L(e,l)},isOptionEqualToValue:function(e,t){return L(e,l)===L(t,l)},onChange:function(e,t){t&&i&&(t=i(t)),M(t),O([])},onInputChange:function(e,t){return v(t)},noOptionsText:d("ra.navigation.no_results"),renderInput:function(e){return e.inputProps.autoComplete="new-password",g.default.createElement(r.TextField,j({},e,{inputProps:w(w({},e.inputProps),{},{onBlur:function(t){k(t),e.inputProps.onBlur&&e.inputProps.onBlur(t)}}),label:""!==u&&!1!==u&&g.default.createElement(t.FieldTitle,{label:u,source:a,resource:f,isRequired:B}),error:!(!W||!N),helperText:g.default.createElement(t.InputHelperText,{touched:W,error:N,helperText:c})},s))},renderOption:function(e,t,n){var o=U(t.text,y),a=q(t.text,o);return g.default.createElement("li",e,g.default.createElement(r.Grid,{container:!0,alignItems:"center"},g.default.createElement(r.Grid,{item:!0},g.default.createElement(R,null)),g.default.createElement(r.Grid,{item:!0,xs:!0},"string"==typeof a?a:a.map((function(e,t){return g.default.createElement("span",{key:t,style:{fontWeight:e.highlight?700:400}},e.text)})),g.default.createElement(r.Typography,{variant:"body2",color:"textSecondary"},t.place_name))))}},s))};B.defaultProps={variant:"outlined",size:"small"};var H=["children"];var N=p.createPathComponent((function(e,t){e.children;var r=P(e,H),n={},o={};Object.entries(r).forEach((function(e){var t=I(e,2),r=t[0],a=t[1];return r.startsWith("on")?o[r]=a:n[r]=a}));var a=new x.default.MarkerClusterGroup(n);return Object.entries(o).forEach((function(e){var t=I(e,2),r=t[0],n=t[1],o="cluster".concat(r.substring(2).toLowerCase());a.on(o,n)})),{instance:a,context:w(w({},t),{},{layerContainer:a})}})),W=function(){var e=I(i.useSearchParams(),2);e[0];var t=e[1];return s.useMapEvents({moveend:function(e){t((function(t){return w(w({},Object.fromEntries(t)),{},{lat:e.target.getCenter().lat,lng:e.target.getCenter().lng,zoom:e.target.getZoom()})}))},zoomend:function(e){t((function(t){return w(w({},Object.fromEntries(t)),{},{zoom:e.target.getZoom()})}))}}),null},D=v.default((function(){return{closeButton:{position:"absolute",zIndex:1400,top:0,right:0}}})),G=function(n){var o=n.popupContent,a=n.onClose,u=D(),i=t.useRecordContext(),l=s.useMap();return e.useEffect((function(){i&&l.setView([i.latitude,i.longitude])}),[i,l]),g.default.createElement(r.Drawer,{anchor:"bottom",open:!!i,onClose:a},g.default.createElement(r.Box,{p:1,position:"relative"},g.default.createElement(r.IconButton,{onClick:a,className:u.closeButton,size:"large"},g.default.createElement(O.default,null)),g.default.createElement(o)))},X=["latitude","longitude","label","description","popupContent","height","center","zoom","groupClusters","boundToMarkers","connectMarkers"],Y=v.default((function(){return{isLoading:{zIndex:1e3,position:"absolute",top:0,left:0,right:0,bottom:0,display:"flex",alignItems:"center",justifyContent:"center"}}})),Z=function(n){var o,a=n.latitude,u=n.longitude,l=n.label,c=n.description,f=n.popupContent,p=n.height,d=n.center,m=n.zoom,h=n.groupClusters,y=n.boundToMarkers,b=n.connectMarkers,v=P(n,X),x=t.useListContext(),O=x.data,C=x.isLoading,A=r.useMediaQuery((function(e){return e.breakpoints.down("sm")}),{noSsr:!0}),S=I(e.useState(null),2),T=S[0],M=S[1],k=Y(),U=i.useLocation(),q=new URLSearchParams(U.search);d=q.has("lat")&&q.has("lng")?[q.get("lat"),q.get("lng")]:d,m=q.has("zoom")?q.get("zoom"):m;var z=C?[]:O.map((function(e){return w(w({},e),{},{latitude:a&&a(e),longitude:u&&u(e),label:l&&l(e),description:c&&c(e)})})).filter((function(e){return e.latitude&&e.longitude})),R=y&&z.length>0?z.map((function(e){return[e.latitude,e.longitude]})):void 0;if(y&&!R)return null;var L=z.map((function(e,r){var n=g.default.createElement(g.default.Fragment,{key:r},g.default.createElement(s.Marker,{position:[e.latitude,e.longitude],eventHandlers:A?{click:function(){return M(e)}}:void 0},!A&&g.default.createElement(s.Popup,null,g.default.createElement(t.RecordContextProvider,{value:e},g.default.createElement(f)))),b&&o&&g.default.createElement(s.Polyline,{positions:[[o.latitude,o.longitude],[e.latitude,e.longitude]]}));return o=e,n}));return g.default.createElement(s.MapContainer,j({style:{height:p},center:y?void 0:d,zoom:y?void 0:m,bounds:R},v),g.default.createElement(s.TileLayer,{attribution:'© <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',url:"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}),C&&g.default.createElement(r.Box,{alignItems:"center",className:k.isLoading},g.default.createElement(E.default,{size:60,thickness:6})),h?g.default.createElement(N,{showCoverageOnHover:!1},L):L,g.default.createElement(W,null),g.default.createElement(t.RecordContextProvider,{value:T},g.default.createElement(G,{popupContent:f,onClose:function(){return M(null)}})))};Z.defaultProps={height:700,center:[47,2.213749],zoom:6,groupClusters:!0,connectMarkers:!1,scrollWheelZoom:!1,popupContent:function(){var e=t.useRecordContext(),n=t.useResourceDefinition({});return e?g.default.createElement(g.default.Fragment,null,e.label&&g.default.createElement(r.Typography,{variant:"h5"},e.label),e.description&&g.default.createElement(r.Typography,null,e.description.length>150?e.description.substring(0,150)+"...":e.description),n.hasShow&&g.default.createElement(t.ShowButton,null),n.hasEdit&&g.default.createElement(t.EditButton,null)):null}};var _=function(e){var t=e.center,r=e.zoom;return s.useMap().setView(t,r),null},F=["latitude","longitude","address","height","typographyProps"],V=function(e){var n=e.latitude,o=e.longitude,a=e.address,u=e.height,i=e.typographyProps,l=P(e,F),c=t.useRecordContext(),f=[n(c),o(c)];return f[0]&&f[1]?g.default.createElement(r.Box,null,a&&g.default.createElement(r.Box,{mt:1,mb:1},g.default.createElement(r.Typography,i,a(c))),g.default.createElement(s.MapContainer,j({style:{height:u},center:f},l),g.default.createElement(_,{center:f}),g.default.createElement(s.TileLayer,{attribution:'© <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',url:"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}),g.default.createElement(s.Marker,{position:f}))):null};V.defaultProps={height:400,zoom:11},exports.LocationInput=B,exports.MapField=V,exports.MapList=Z,exports.extractContext=function(e,t){var r=e.find((function(e){return e.id.startsWith(t+".")}));if(r)return r.text};
+var $CiwlJ$reactjsxruntime = require("react/jsx-runtime");
+var $CiwlJ$react = require("react");
+var $CiwlJ$reactadmin = require("react-admin");
+var $CiwlJ$muimaterial = require("@mui/material");
+var $CiwlJ$muimaterialAutocomplete = require("@mui/material/Autocomplete");
+var $CiwlJ$muiiconsmaterialLocationOn = require("@mui/icons-material/LocationOn");
+var $CiwlJ$autosuggesthighlightmatch = require("autosuggest-highlight/match");
+var $CiwlJ$autosuggesthighlightparse = require("autosuggest-highlight/parse");
+var $CiwlJ$lodashthrottle = require("lodash.throttle");
+var $CiwlJ$muisystem = require("@mui/system");
+var $CiwlJ$reactrouterdom = require("react-router-dom");
+var $CiwlJ$muistylesmakeStyles = require("@mui/styles/makeStyles");
+var $CiwlJ$muimaterialCircularProgress = require("@mui/material/CircularProgress");
+require("leaflet-defaulticon-compatibility");
+var $CiwlJ$reactleaflet = require("react-leaflet");
+var $CiwlJ$leaflet = require("leaflet");
+var $CiwlJ$reactleafletcore = require("@react-leaflet/core");
+require("leaflet.markercluster");
+var $CiwlJ$muiiconsmaterialClear = require("@mui/icons-material/Clear");
+
+
+function $parcel$export(e, n, v, s) {
+  Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
+}
+
+function $parcel$interopDefault(a) {
+  return a && a.__esModule ? a.default : a;
+}
+
+$parcel$export(module.exports, "extractContext", () => $afab6c0f6ffa522c$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "LocationInput", () => $7a57fad6c56283a6$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "MapList", () => $3929b9df2dd76406$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "MapField", () => $7855b7e2551c6d96$export$2e2bcd8739ae039);
+const $afab6c0f6ffa522c$var$extractContext = (context, key)=>{
+    const property = context.find((property)=>property.id.startsWith(`${key}.`));
+    if (property) return property.text;
+};
+var $afab6c0f6ffa522c$export$2e2bcd8739ae039 = $afab6c0f6ffa522c$var$extractContext;
+
+
+
+
+
+
+
+
+
+
+
+
+const $7a57fad6c56283a6$var$StyledLocationOnIcon = (0, $CiwlJ$muisystem.styled)((0, ($parcel$interopDefault($CiwlJ$muiiconsmaterialLocationOn))))(({ theme: theme })=>({
+        color: theme.palette.text.secondary,
+        marginRight: theme.spacing(2)
+    }));
+const $7a57fad6c56283a6$var$selectOptionText = (option, optionText)=>{
+    if (option.place_name) return option.place_name;
+    if (typeof optionText === "string") return option[optionText];
+    if (typeof optionText === "function") return optionText(option);
+};
+const $7a57fad6c56283a6$var$LocationInput = ({ mapboxConfig: mapboxConfig, source: source, label: label, parse: parse, optionText: optionText, helperText: helperText, ...rest })=>{
+    if (!mapboxConfig) throw new Error("@semapps/geo-components : No mapbox configuration");
+    if (!mapboxConfig.access_token) throw new Error("@semapps/geo-components : No access token in mapbox configuration");
+    const record = (0, $CiwlJ$reactadmin.useRecordContext)();
+    const resource = (0, $CiwlJ$reactadmin.useResourceContext)();
+    const locale = (0, $CiwlJ$reactadmin.useLocale)();
+    const translate = (0, $CiwlJ$reactadmin.useTranslate)();
+    const [keyword, setKeyword] = (0, $CiwlJ$react.useState)(""); // Typed keywords
+    const [options, setOptions] = (0, $CiwlJ$react.useState)([]); // Options returned by MapBox
+    // Do not pass the `parse` prop to useInput, as we manually call it on the onChange prop below
+    const { field: { value: value, onChange: onChange, onBlur: onBlur /* , onFocus */  }, isRequired: isRequired, fieldState: { error: error, isTouched: /* submitError, */ isTouched } } = (0, $CiwlJ$reactadmin.useInput)({
+        resource: resource,
+        source: source,
+        ...rest
+    });
+    const fetchMapbox = (0, $CiwlJ$react.useMemo)(()=>(0, ($parcel$interopDefault($CiwlJ$lodashthrottle)))((keyword, callback)=>{
+            const fetchUrl = new URL(`https://api.mapbox.com/geocoding/v5/mapbox.places/${keyword}.json`);
+            // Use locale as default language
+            if (!mapboxConfig.language) mapboxConfig.language = locale;
+            // All options available at https://docs.mapbox.com/api/search/geocoding/#forward-geocoding
+            Object.entries(mapboxConfig).forEach(([key, value])=>{
+                if (Array.isArray(value)) value = value.join(",");
+                else if (typeof value === "boolean") value = value ? "true" : "false";
+                fetchUrl.searchParams.set(key, value);
+            });
+            fetch(fetchUrl.toString()).then((res)=>res.json()).then((json)=>callback(json));
+        }, 200), [
+        mapboxConfig,
+        locale
+    ]);
+    (0, $CiwlJ$react.useEffect)(()=>{
+        // Do not trigger search if text input is empty or if it is the same as the current value
+        if (!keyword || keyword === $7a57fad6c56283a6$var$selectOptionText(value, optionText)) return undefined;
+        fetchMapbox(keyword, (results)=>setOptions(results.features));
+    }, [
+        value,
+        keyword,
+        fetchMapbox
+    ]);
+    return /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, ($parcel$interopDefault($CiwlJ$muimaterialAutocomplete))), {
+        autoComplete: true,
+        value: value || null,
+        // We must include the current value as an option, to avoid this error
+        // https://github.com/mui-org/material-ui/issues/18514#issuecomment-636096386
+        options: value ? [
+            value,
+            ...options
+        ] : options,
+        // Do not show the current value as an option (this would break renderOptions)
+        filterSelectedOptions: true,
+        // For some reasons, this prop has to be passed
+        filterOptions: (x)=>x,
+        getOptionLabel: (option)=>$7a57fad6c56283a6$var$selectOptionText(option, optionText),
+        isOptionEqualToValue: (option, value)=>$7a57fad6c56283a6$var$selectOptionText(option, optionText) === $7a57fad6c56283a6$var$selectOptionText(value, optionText),
+        // This function is called when the user selects an option
+        onChange: (event, newValue)=>{
+            // Parse only if the value is not null (happens if the user clears the value)
+            if (newValue && parse) newValue = parse(newValue);
+            onChange(newValue);
+            setOptions([]);
+        },
+        onInputChange: (event, newKeyword)=>setKeyword(newKeyword),
+        noOptionsText: translate("ra.navigation.no_results"),
+        renderInput: (params)=>{
+            // Autocomplete=off doesn't work anymore in modern browsers
+            // https://stackoverflow.com/a/40791726/7900695
+            params.inputProps.autoComplete = "new-password";
+            return /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$muimaterial.TextField), {
+                ...params,
+                inputProps: {
+                    ...params.inputProps,
+                    onBlur: (e)=>{
+                        onBlur(e);
+                        if (params.inputProps.onBlur) params.inputProps.onBlur(e);
+                    } /* ,
+              onFocus: e => {
+                onFocus(e);
+                if (params.inputProps.onFocus) {
+                  params.inputProps.onFocus(e);
+                }
+              } */ 
+                },
+                label: label !== "" && label !== false && /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactadmin.FieldTitle), {
+                    label: label,
+                    source: source,
+                    resource: resource,
+                    isRequired: isRequired
+                }),
+                error: !!(isTouched && error),
+                helperText: /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactadmin.InputHelperText), {
+                    touched: isTouched,
+                    error: error /* || submitError */ ,
+                    helperText: helperText
+                }),
+                ...rest
+            });
+        },
+        renderOption: (props, option, state)=>{
+            const matches = (0, ($parcel$interopDefault($CiwlJ$autosuggesthighlightmatch)))(option.text, keyword);
+            const parts = (0, ($parcel$interopDefault($CiwlJ$autosuggesthighlightparse)))(option.text, matches);
+            return /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)("li", {
+                ...props,
+                children: /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsxs)((0, $CiwlJ$muimaterial.Grid), {
+                    container: true,
+                    alignItems: "center",
+                    children: [
+                        /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$muimaterial.Grid), {
+                            item: true,
+                            children: /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)($7a57fad6c56283a6$var$StyledLocationOnIcon, {})
+                        }),
+                        /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsxs)((0, $CiwlJ$muimaterial.Grid), {
+                            item: true,
+                            xs: true,
+                            children: [
+                                typeof parts === "string" ? parts : parts.map((part, index)=>/*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)("span", {
+                                        style: {
+                                            fontWeight: part.highlight ? 700 : 400
+                                        },
+                                        children: part.text
+                                    }, index)),
+                                /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$muimaterial.Typography), {
+                                    variant: "body2",
+                                    color: "textSecondary",
+                                    children: option.place_name
+                                })
+                            ]
+                        })
+                    ]
+                })
+            });
+        },
+        ...rest
+    });
+};
+$7a57fad6c56283a6$var$LocationInput.defaultProps = {
+    variant: "outlined",
+    size: "small"
+};
+var $7a57fad6c56283a6$export$2e2bcd8739ae039 = $7a57fad6c56283a6$var$LocationInput;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Taken from https://github.com/changey/react-leaflet-markercluster/blob/60992857087c181ada1e8e6659a6666a13c1f868/src/react-leaflet-markercluster.js
+function $7390fd757b2ce4b0$var$createMarkerCluster({ children: _c, ...props }, context) {
+    const clusterProps = {};
+    const clusterEvents = {};
+    // Splitting props and events to different objects
+    Object.entries(props).forEach(([propName, prop])=>propName.startsWith("on") ? clusterEvents[propName] = prop : clusterProps[propName] = prop);
+    const instance = new (0, ($parcel$interopDefault($CiwlJ$leaflet))).MarkerClusterGroup(clusterProps);
+    // Initializing event listeners
+    Object.entries(clusterEvents).forEach(([eventAsProp, callback])=>{
+        const clusterEvent = `cluster${eventAsProp.substring(2).toLowerCase()}`;
+        instance.on(clusterEvent, callback);
+    });
+    return {
+        instance: instance,
+        context: {
+            ...context,
+            layerContainer: instance
+        }
+    };
+}
+const $7390fd757b2ce4b0$var$MarkerClusterGroup = (0, $CiwlJ$reactleafletcore.createPathComponent)($7390fd757b2ce4b0$var$createMarkerCluster);
+var $7390fd757b2ce4b0$export$2e2bcd8739ae039 = $7390fd757b2ce4b0$var$MarkerClusterGroup;
+
+
+
+
+
+
+const $e9a08b6b577904d6$var$DefaultPopupContent = ()=>{
+    const record = (0, $CiwlJ$reactadmin.useRecordContext)();
+    const resourceDefinition = (0, $CiwlJ$reactadmin.useResourceDefinition)({});
+    if (!record) return null;
+    return /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsxs)((0, $CiwlJ$reactjsxruntime.Fragment), {
+        children: [
+            record.label && /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$muimaterial.Typography), {
+                variant: "h5",
+                children: record.label
+            }),
+            record.description && /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$muimaterial.Typography), {
+                children: record.description.length > 150 ? `${record.description.substring(0, 150)}...` : record.description
+            }),
+            resourceDefinition.hasShow && /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactadmin.ShowButton), {}),
+            resourceDefinition.hasEdit && /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactadmin.EditButton), {})
+        ]
+    });
+};
+var $e9a08b6b577904d6$export$2e2bcd8739ae039 = $e9a08b6b577904d6$var$DefaultPopupContent;
+
+
+
+
+// Keep the zoom and center in query string, so that when we navigate back to the page, it stays focused on the same area
+const $4340bf725cfbb626$var$QueryStringUpdater = ()=>{
+    const [searchParams, setSearchParams] = (0, $CiwlJ$reactrouterdom.useSearchParams)();
+    (0, $CiwlJ$reactleaflet.useMapEvents)({
+        moveend: (test)=>{
+            setSearchParams((params)=>({
+                    ...Object.fromEntries(params),
+                    lat: test.target.getCenter().lat,
+                    lng: test.target.getCenter().lng,
+                    zoom: test.target.getZoom()
+                }));
+        },
+        zoomend: (test)=>{
+            setSearchParams((params)=>({
+                    ...Object.fromEntries(params),
+                    zoom: test.target.getZoom()
+                }));
+        }
+    });
+    return null;
+};
+var $4340bf725cfbb626$export$2e2bcd8739ae039 = $4340bf725cfbb626$var$QueryStringUpdater;
+
+
+
+
+
+
+
+
+
+const $31c59492060af504$var$useStyles = (0, ($parcel$interopDefault($CiwlJ$muistylesmakeStyles)))(()=>({
+        closeButton: {
+            position: "absolute",
+            zIndex: 1400,
+            top: 0,
+            right: 0
+        }
+    }));
+const $31c59492060af504$var$MobileDrawer = ({ popupContent: popupContent, onClose: onClose })=>{
+    const classes = $31c59492060af504$var$useStyles();
+    const record = (0, $CiwlJ$reactadmin.useRecordContext)();
+    const map = (0, $CiwlJ$reactleaflet.useMap)();
+    (0, $CiwlJ$react.useEffect)(()=>{
+        if (record) map.setView([
+            record.latitude,
+            record.longitude
+        ]);
+    }, [
+        record,
+        map
+    ]);
+    return /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$muimaterial.Drawer), {
+        anchor: "bottom",
+        open: !!record,
+        onClose: onClose,
+        children: /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsxs)((0, $CiwlJ$muimaterial.Box), {
+            p: 1,
+            position: "relative",
+            children: [
+                /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$muimaterial.IconButton), {
+                    onClick: onClose,
+                    className: classes.closeButton,
+                    size: "large",
+                    children: /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, ($parcel$interopDefault($CiwlJ$muiiconsmaterialClear))), {})
+                }),
+                /*#__PURE__*/ (0, ($parcel$interopDefault($CiwlJ$react))).createElement(popupContent)
+            ]
+        })
+    });
+};
+var $31c59492060af504$export$2e2bcd8739ae039 = $31c59492060af504$var$MobileDrawer;
+
+
+const $3929b9df2dd76406$var$useStyles = (0, ($parcel$interopDefault($CiwlJ$muistylesmakeStyles)))(()=>({
+        isLoading: {
+            zIndex: 1000,
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+        }
+    }));
+const $3929b9df2dd76406$var$MapList = ({ latitude: latitude, longitude: longitude, label: label, description: description, popupContent: popupContent, height: height, center: center, zoom: zoom, groupClusters: groupClusters, boundToMarkers: boundToMarkers, connectMarkers: connectMarkers, ...otherProps })=>{
+    const { data: data, isLoading: isLoading } = (0, $CiwlJ$reactadmin.useListContext)();
+    const xs = (0, $CiwlJ$muimaterial.useMediaQuery)((theme)=>theme.breakpoints.down("sm"), {
+        noSsr: true
+    });
+    const [drawerRecord, setDrawerRecord] = (0, $CiwlJ$react.useState)(null);
+    const classes = $3929b9df2dd76406$var$useStyles();
+    // Get the zoom and center from query string, if available
+    const location = (0, $CiwlJ$reactrouterdom.useLocation)();
+    const query = new URLSearchParams(location.search);
+    center = query.has("lat") && query.has("lng") ? [
+        query.get("lat"),
+        query.get("lng")
+    ] : center;
+    zoom = query.has("zoom") ? query.get("zoom") : zoom;
+    let previousRecord;
+    const records = isLoading ? [] : data.map((record)=>({
+            ...record,
+            latitude: latitude && latitude(record),
+            longitude: longitude && longitude(record),
+            label: label && label(record),
+            description: description && description(record)
+        })).filter((record)=>record.latitude && record.longitude);
+    const bounds = boundToMarkers && records.length > 0 ? records.map((record)=>[
+            record.latitude,
+            record.longitude
+        ]) : undefined;
+    // Do not display anything if the bounds are not ready, otherwise the MapContainer will not be initialized correctly
+    if (boundToMarkers && !bounds) return null;
+    const markers = records.map((record, i)=>{
+        const marker = /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsxs)((0, ($parcel$interopDefault($CiwlJ$react))).Fragment, {
+            children: [
+                /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactleaflet.Marker), {
+                    position: [
+                        record.latitude,
+                        record.longitude
+                    ],
+                    eventHandlers: xs ? {
+                        click: ()=>setDrawerRecord(record)
+                    } : undefined,
+                    children: !xs && /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactleaflet.Popup), {
+                        children: /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactadmin.RecordContextProvider), {
+                            value: record,
+                            children: /*#__PURE__*/ (0, ($parcel$interopDefault($CiwlJ$react))).createElement(popupContent)
+                        })
+                    })
+                }),
+                connectMarkers && previousRecord && /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactleaflet.Polyline), {
+                    positions: [
+                        [
+                            previousRecord.latitude,
+                            previousRecord.longitude
+                        ],
+                        [
+                            record.latitude,
+                            record.longitude
+                        ]
+                    ]
+                })
+            ]
+        }, i);
+        // Save record so that we can trace lines
+        previousRecord = record;
+        return marker;
+    });
+    return /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsxs)((0, $CiwlJ$reactleaflet.MapContainer), {
+        style: {
+            height: height
+        },
+        center: !boundToMarkers ? center : undefined,
+        zoom: !boundToMarkers ? zoom : undefined,
+        bounds: bounds,
+        ...otherProps,
+        children: [
+            /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactleaflet.TileLayer), {
+                attribution: '\xa9 <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+                url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            }),
+            isLoading && /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$muimaterial.Box), {
+                alignItems: "center",
+                className: classes.isLoading,
+                children: /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, ($parcel$interopDefault($CiwlJ$muimaterialCircularProgress))), {
+                    size: 60,
+                    thickness: 6
+                })
+            }),
+            groupClusters ? /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $7390fd757b2ce4b0$export$2e2bcd8739ae039), {
+                showCoverageOnHover: false,
+                children: markers
+            }) : markers,
+            /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $4340bf725cfbb626$export$2e2bcd8739ae039), {}),
+            /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactadmin.RecordContextProvider), {
+                value: drawerRecord,
+                children: /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $31c59492060af504$export$2e2bcd8739ae039), {
+                    popupContent: popupContent,
+                    onClose: ()=>setDrawerRecord(null)
+                })
+            })
+        ]
+    });
+};
+$3929b9df2dd76406$var$MapList.defaultProps = {
+    height: 700,
+    center: [
+        47,
+        2.213749
+    ],
+    zoom: 6,
+    groupClusters: true,
+    connectMarkers: false,
+    scrollWheelZoom: false,
+    popupContent: (0, $e9a08b6b577904d6$export$2e2bcd8739ae039)
+};
+var $3929b9df2dd76406$export$2e2bcd8739ae039 = $3929b9df2dd76406$var$MapList;
+
+
+
+
+
+
+
+
+
+const $a907502a25565c32$var$ChangeView = ({ center: center, zoom: zoom })=>{
+    const map = (0, $CiwlJ$reactleaflet.useMap)();
+    map.setView(center, zoom);
+    return null;
+};
+var $a907502a25565c32$export$2e2bcd8739ae039 = $a907502a25565c32$var$ChangeView;
+
+
+const $7855b7e2551c6d96$var$MapField = ({ latitude: latitude, longitude: longitude, address: address, height: height, typographyProps: typographyProps, ...rest })=>{
+    const record = (0, $CiwlJ$reactadmin.useRecordContext)();
+    const position = [
+        latitude(record),
+        longitude(record)
+    ];
+    // Do not display the component if it has no latitude or longitude
+    if (!position[0] || !position[1]) return null;
+    return /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsxs)((0, $CiwlJ$muimaterial.Box), {
+        children: [
+            address && /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$muimaterial.Box), {
+                mt: 1,
+                mb: 1,
+                children: /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$muimaterial.Typography), {
+                    ...typographyProps,
+                    children: address(record)
+                })
+            }),
+            /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsxs)((0, $CiwlJ$reactleaflet.MapContainer), {
+                style: {
+                    height: height
+                },
+                center: position,
+                ...rest,
+                children: [
+                    /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $a907502a25565c32$export$2e2bcd8739ae039), {
+                        center: position
+                    }),
+                    /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactleaflet.TileLayer), {
+                        attribution: '\xa9 <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+                        url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    }),
+                    /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactleaflet.Marker), {
+                        position: position
+                    })
+                ]
+            })
+        ]
+    });
+};
+$7855b7e2551c6d96$var$MapField.defaultProps = {
+    height: 400,
+    zoom: 11
+};
+var $7855b7e2551c6d96$export$2e2bcd8739ae039 = $7855b7e2551c6d96$var$MapField;
+
+
+
+
 //# sourceMappingURL=index.cjs.js.map

@@ -1,5 +1,7 @@
 const QueueService = require('moleculer-bull');
+const { as, sec } = require('@semapps/ontologies');
 const ActorService = require('./subservices/actor');
+const ActivitiesWatcherService = require('./subservices/activities-watcher');
 const ActivityService = require('./subservices/activity');
 const CollectionService = require('./subservices/collection');
 const FollowService = require('./subservices/follow');
@@ -15,8 +17,8 @@ const ActivityPubService = {
   name: 'activitypub',
   settings: {
     baseUri: null,
-    jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
     podProvider: false,
+    activitiesPath: '/as/activity',
     selectActorData: null,
     queueServiceUrl: null,
     like: {
@@ -30,13 +32,15 @@ const ActivityPubService = {
       attachToObjectTypes: null
     }
   },
-  dependencies: ['api'],
+  dependencies: ['api', 'ontologies'],
   created() {
-    const { baseUri, jsonContext, podProvider, selectActorData, queueServiceUrl, reply, like, follow } = this.settings;
+    const { baseUri, podProvider, activitiesPath, selectActorData, queueServiceUrl, reply, like, follow } =
+      this.settings;
+
+    this.broker.createService(ActivitiesWatcherService);
 
     this.broker.createService(CollectionService, {
       settings: {
-        jsonContext,
         podProvider
       }
     });
@@ -44,7 +48,6 @@ const ActivityPubService = {
     this.broker.createService(RegistryService, {
       settings: {
         baseUri,
-        jsonContext,
         podProvider
       }
     });
@@ -52,7 +55,6 @@ const ActivityPubService = {
     this.broker.createService(ActorService, {
       settings: {
         baseUri,
-        jsonContext,
         selectActorData,
         podProvider
       }
@@ -68,7 +70,7 @@ const ActivityPubService = {
     this.broker.createService(ActivityService, {
       settings: {
         baseUri,
-        jsonContext
+        path: activitiesPath
       }
     });
 
@@ -105,9 +107,18 @@ const ActivityPubService = {
       mixins: queueServiceUrl ? [QueueService(queueServiceUrl)] : undefined,
       settings: {
         baseUri,
-        jsonContext,
         podProvider
       }
+    });
+  },
+  async started() {
+    await this.broker.call('ontologies.register', {
+      ...as,
+      overwrite: true
+    });
+    await this.broker.call('ontologies.register', {
+      ...sec,
+      overwrite: true
     });
   }
 };

@@ -1,7 +1,6 @@
-const { getPrefixJSON } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const waitForExpect = require('wait-for-expect');
 const CONFIG = require('../config');
-const ontologies = require('../ontologies');
 const initialize = require('./initialize');
 
 jest.setTimeout(20000);
@@ -66,7 +65,6 @@ describe('LDP container tests', () => {
         accept: MIME_TYPES.JSON
       })
     ).resolves.toMatchObject({
-      '@context': getPrefixJSON(ontologies),
       '@id': `${CONFIG.HOME_URL}resources`,
       '@type': ['ldp:Container', 'ldp:BasicContainer'],
       'ldp:contains': [
@@ -194,7 +192,6 @@ describe('LDP container tests', () => {
         accept: MIME_TYPES.JSON
       })
     ).resolves.toMatchObject({
-      '@context': getPrefixJSON(ontologies),
       '@id': `${CONFIG.HOME_URL}resources`,
       '@type': ['ldp:Container', 'ldp:BasicContainer'],
       'ldp:contains': [
@@ -211,11 +208,13 @@ describe('LDP container tests', () => {
     });
 
     // Container should now be empty
-    const container = await broker.call('ldp.container.get', {
-      containerUri: `${CONFIG.HOME_URL}resources`,
-      accept: MIME_TYPES.JSON
-    });
+    await waitForExpect(async () => {
+      const container = await broker.call('ldp.container.get', {
+        containerUri: `${CONFIG.HOME_URL}resources`,
+        accept: MIME_TYPES.JSON
+      });
 
-    expect(container['ldp:contains']).toHaveLength(0);
+      expect(container['ldp:contains']).toHaveLength(0);
+    });
   });
 });

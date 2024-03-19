@@ -1,7 +1,6 @@
 import jsonld from 'jsonld';
 import getEmbedFrame from './getEmbedFrame';
 import buildSparqlQuery from './buildSparqlQuery';
-import getBlankNodesFromDataServers from './getBlankNodesFromDataServers';
 
 const compare = (a, b) => {
   switch (typeof a) {
@@ -22,12 +21,7 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
   const sparqlQueryPromises = Object.keys(containers).map(
     serverKey =>
       new Promise((resolve, reject) => {
-        const blankNodes =
-          params.filter?.blankNodes ||
-          dataModel.list?.blankNodes ||
-          getBlankNodesFromDataServers(containers[serverKey], dataServers);
-
-        const predicates = params.filter?._predicates || dataModel.list?.predicates;
+        const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes;
 
         // When the SPARQL request comes from the browser's URL, it comes as JSON string which must must be parsed
         if (
@@ -38,9 +32,8 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
         }
         const sparqlQuery = buildSparqlQuery({
           containers: containers[serverKey],
-          params: { ...params, filter: { ...dataModel.list?.filter, ...params.filter } },
-          blankNodes,
-          predicates,
+          params,
+          dataModel,
           ontologies
         });
 
@@ -49,11 +42,11 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
           body: sparqlQuery
         })
           .then(({ json }) => {
-            // By default, embed only the blank nodes we explicitly asked to dereference
-            // Otherwise we may have same-type resources embedded in other resources
+            // If we declared the blank nodes to dereference, embed only those blank nodes
+            // This solve problems which can occur when same-type resources are embedded in other resources
             // To increase performances, you can set explicitEmbedOnFraming to false (make sure the result is still OK)
             const frame =
-              dataModel.list?.explicitEmbedOnFraming !== false
+              blankNodes && dataModel.list?.explicitEmbedOnFraming !== false
                 ? {
                     '@context': jsonContext,
                     '@type': dataModel.types,
@@ -76,7 +69,9 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
                 '@graph': [rest]
               };
             }
-            resolve(compactJson['@graph'] || []);
+            resolve(
+              compactJson['@graph'].map(resource => ({ '@context': compactJson['@context'], ...resource })) || []
+            );
           })
           .catch(e => reject(e));
       })

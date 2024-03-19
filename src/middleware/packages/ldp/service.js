@@ -1,5 +1,8 @@
+const { ldp, semapps } = require('@semapps/ontologies');
+const LdpApiService = require('./services/api');
 const LdpContainerService = require('./services/container');
 const LdpCacheService = require('./services/cache');
+const LdpLinkHeaderService = require('./services/link-header');
 const LdpRegistryService = require('./services/registry');
 const LdpRemoteService = require('./services/remote');
 const LdpResourceService = require('./services/resource');
@@ -8,29 +11,28 @@ module.exports = {
   name: 'ldp',
   settings: {
     baseUrl: null,
-    ontologies: [],
     containers: [],
     podProvider: false,
     mirrorGraphName: 'http://semapps.org/mirror',
     defaultContainerOptions: {},
-    preferredViewForResource: null
+    preferredViewForResource: null,
+    resourcesWithContainerPath: true
   },
-  dependencies: ['ldp.container', 'ldp.resource', 'ldp.registry'],
+  dependencies: ['ldp.container', 'ldp.resource', 'ldp.registry', 'ontologies', 'jsonld'],
   async created() {
     const {
       baseUrl,
       containers,
-      ontologies,
       podProvider,
       defaultContainerOptions,
       mirrorGraphName,
-      preferredViewForResource
+      preferredViewForResource,
+      resourcesWithContainerPath
     } = this.settings;
 
     await this.broker.createService(LdpContainerService, {
       settings: {
         baseUrl,
-        ontologies,
         podProvider,
         mirrorGraphName
       },
@@ -40,10 +42,10 @@ module.exports = {
     await this.broker.createService(LdpResourceService, {
       settings: {
         baseUrl,
-        ontologies,
         podProvider,
         mirrorGraphName,
-        preferredViewForResource
+        preferredViewForResource,
+        resourcesWithContainerPath
       },
       hooks: this.schema.hooksResource || {}
     });
@@ -51,7 +53,6 @@ module.exports = {
     await this.broker.createService(LdpRemoteService, {
       settings: {
         baseUrl,
-        ontologies,
         podProvider,
         mirrorGraphName
       }
@@ -66,9 +67,34 @@ module.exports = {
       }
     });
 
+    await this.broker.createService(LdpApiService, {
+      settings: {
+        baseUrl,
+        podProvider
+      }
+    });
+
+    await this.broker.createService(LdpLinkHeaderService);
+
     // Only create this service if a cacher is defined
     if (this.broker.cacher) {
       await this.broker.createService(LdpCacheService);
+    }
+  },
+  async started() {
+    await this.broker.call('ontologies.register', {
+      ...ldp,
+      overwrite: true
+    });
+    // Used by binaries
+    await this.broker.call('ontologies.register', {
+      ...semapps,
+      overwrite: true
+    });
+  },
+  actions: {
+    getBaseUrl() {
+      return this.settings.baseUrl;
     }
   }
 };

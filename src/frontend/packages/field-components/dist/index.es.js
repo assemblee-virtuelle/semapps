@@ -1,4 +1,729 @@
-import*as e from"react";import t,{useState as r,useMemo as n,useEffect as o,useCallback as a,cloneElement as i,Children as c}from"react";import{useRecordContext as l,RecordContextProvider as u,ReferenceArrayField as s,ReferenceField as f,useTranslate as m,useDataProvider as p,useCreatePath as d,useResourceDefinition as h,useGetResourceLabel as y,useShowContext as v,useRefresh as g,useNotify as b,Button as E,usePermissions as w,useListContext as x,Link as k}from"react-admin";import{Box as O,Avatar as L,Chip as j,List as T,ListItem as N,ListItemAvatar as S,ListItemText as C,ListItemSecondaryAction as A,IconButton as P,CircularProgress as F,Dialog as _,DialogTitle as I,DialogContent as G,TextField as z,DialogActions as M,LinearProgress as B}from"@mui/material";import R from"@mui/styles/makeStyles";import W from"@mui/icons-material/Launch";import{useForm as D}from"react-hook-form";import U from"@mui/icons-material/Add";import Y from"lodash.debounce";import q from"@mui/icons-material/Visibility";import H from"@mui/icons-material/Error";import{useDataServers as V,useDataModel as $}from"@semapps/semantic-data-provider";import J from"@mui/icons-material/Language";import K from"@mui/icons-material/Facebook";import Q from"@mui/icons-material/GitHub";import X from"@mui/icons-material/Twitter";import Z from"@mui/icons-material/Instagram";import ee from"@mui/icons-material/YouTube";function te(e,t){var r=Object.keys(e);if(Object.getOwnPropertySymbols){var n=Object.getOwnPropertySymbols(e);t&&(n=n.filter((function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable}))),r.push.apply(r,n)}return r}function re(e){for(var t=1;t<arguments.length;t++){var r=null!=arguments[t]?arguments[t]:{};t%2?te(Object(r),!0).forEach((function(t){ce(e,t,r[t])})):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(r)):te(Object(r)).forEach((function(t){Object.defineProperty(e,t,Object.getOwnPropertyDescriptor(r,t))}))}return e}function ne(){
-/*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
-ne=function(){return e};var e={},t=Object.prototype,r=t.hasOwnProperty,n="function"==typeof Symbol?Symbol:{},o=n.iterator||"@@iterator",a=n.asyncIterator||"@@asyncIterator",i=n.toStringTag||"@@toStringTag";function c(e,t,r){return Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}),e[t]}try{c({},"")}catch(e){c=function(e,t,r){return e[t]=r}}function l(e,t,r,n){var o=t&&t.prototype instanceof f?t:f,a=Object.create(o.prototype),i=new k(n||[]);return a._invoke=function(e,t,r){var n="suspendedStart";return function(o,a){if("executing"===n)throw new Error("Generator is already running");if("completed"===n){if("throw"===o)throw a;return L()}for(r.method=o,r.arg=a;;){var i=r.delegate;if(i){var c=E(i,r);if(c){if(c===s)continue;return c}}if("next"===r.method)r.sent=r._sent=r.arg;else if("throw"===r.method){if("suspendedStart"===n)throw n="completed",r.arg;r.dispatchException(r.arg)}else"return"===r.method&&r.abrupt("return",r.arg);n="executing";var l=u(e,t,r);if("normal"===l.type){if(n=r.done?"completed":"suspendedYield",l.arg===s)continue;return{value:l.arg,done:r.done}}"throw"===l.type&&(n="completed",r.method="throw",r.arg=l.arg)}}}(e,r,i),a}function u(e,t,r){try{return{type:"normal",arg:e.call(t,r)}}catch(e){return{type:"throw",arg:e}}}e.wrap=l;var s={};function f(){}function m(){}function p(){}var d={};c(d,o,(function(){return this}));var h=Object.getPrototypeOf,y=h&&h(h(O([])));y&&y!==t&&r.call(y,o)&&(d=y);var v=p.prototype=f.prototype=Object.create(d);function g(e){["next","throw","return"].forEach((function(t){c(e,t,(function(e){return this._invoke(t,e)}))}))}function b(e,t){var n;this._invoke=function(o,a){function i(){return new t((function(n,i){!function n(o,a,i,c){var l=u(e[o],e,a);if("throw"!==l.type){var s=l.arg,f=s.value;return f&&"object"==typeof f&&r.call(f,"__await")?t.resolve(f.__await).then((function(e){n("next",e,i,c)}),(function(e){n("throw",e,i,c)})):t.resolve(f).then((function(e){s.value=e,i(s)}),(function(e){return n("throw",e,i,c)}))}c(l.arg)}(o,a,n,i)}))}return n=n?n.then(i,i):i()}}function E(e,t){var r=e.iterator[t.method];if(void 0===r){if(t.delegate=null,"throw"===t.method){if(e.iterator.return&&(t.method="return",t.arg=void 0,E(e,t),"throw"===t.method))return s;t.method="throw",t.arg=new TypeError("The iterator does not provide a 'throw' method")}return s}var n=u(r,e.iterator,t.arg);if("throw"===n.type)return t.method="throw",t.arg=n.arg,t.delegate=null,s;var o=n.arg;return o?o.done?(t[e.resultName]=o.value,t.next=e.nextLoc,"return"!==t.method&&(t.method="next",t.arg=void 0),t.delegate=null,s):o:(t.method="throw",t.arg=new TypeError("iterator result is not an object"),t.delegate=null,s)}function w(e){var t={tryLoc:e[0]};1 in e&&(t.catchLoc=e[1]),2 in e&&(t.finallyLoc=e[2],t.afterLoc=e[3]),this.tryEntries.push(t)}function x(e){var t=e.completion||{};t.type="normal",delete t.arg,e.completion=t}function k(e){this.tryEntries=[{tryLoc:"root"}],e.forEach(w,this),this.reset(!0)}function O(e){if(e){var t=e[o];if(t)return t.call(e);if("function"==typeof e.next)return e;if(!isNaN(e.length)){var n=-1,a=function t(){for(;++n<e.length;)if(r.call(e,n))return t.value=e[n],t.done=!1,t;return t.value=void 0,t.done=!0,t};return a.next=a}}return{next:L}}function L(){return{value:void 0,done:!0}}return m.prototype=p,c(v,"constructor",p),c(p,"constructor",m),m.displayName=c(p,i,"GeneratorFunction"),e.isGeneratorFunction=function(e){var t="function"==typeof e&&e.constructor;return!!t&&(t===m||"GeneratorFunction"===(t.displayName||t.name))},e.mark=function(e){return Object.setPrototypeOf?Object.setPrototypeOf(e,p):(e.__proto__=p,c(e,i,"GeneratorFunction")),e.prototype=Object.create(v),e},e.awrap=function(e){return{__await:e}},g(b.prototype),c(b.prototype,a,(function(){return this})),e.AsyncIterator=b,e.async=function(t,r,n,o,a){void 0===a&&(a=Promise);var i=new b(l(t,r,n,o),a);return e.isGeneratorFunction(r)?i:i.next().then((function(e){return e.done?e.value:i.next()}))},g(v),c(v,i,"Generator"),c(v,o,(function(){return this})),c(v,"toString",(function(){return"[object Generator]"})),e.keys=function(e){var t=[];for(var r in e)t.push(r);return t.reverse(),function r(){for(;t.length;){var n=t.pop();if(n in e)return r.value=n,r.done=!1,r}return r.done=!0,r}},e.values=O,k.prototype={constructor:k,reset:function(e){if(this.prev=0,this.next=0,this.sent=this._sent=void 0,this.done=!1,this.delegate=null,this.method="next",this.arg=void 0,this.tryEntries.forEach(x),!e)for(var t in this)"t"===t.charAt(0)&&r.call(this,t)&&!isNaN(+t.slice(1))&&(this[t]=void 0)},stop:function(){this.done=!0;var e=this.tryEntries[0].completion;if("throw"===e.type)throw e.arg;return this.rval},dispatchException:function(e){if(this.done)throw e;var t=this;function n(r,n){return i.type="throw",i.arg=e,t.next=r,n&&(t.method="next",t.arg=void 0),!!n}for(var o=this.tryEntries.length-1;o>=0;--o){var a=this.tryEntries[o],i=a.completion;if("root"===a.tryLoc)return n("end");if(a.tryLoc<=this.prev){var c=r.call(a,"catchLoc"),l=r.call(a,"finallyLoc");if(c&&l){if(this.prev<a.catchLoc)return n(a.catchLoc,!0);if(this.prev<a.finallyLoc)return n(a.finallyLoc)}else if(c){if(this.prev<a.catchLoc)return n(a.catchLoc,!0)}else{if(!l)throw new Error("try statement without catch or finally");if(this.prev<a.finallyLoc)return n(a.finallyLoc)}}}},abrupt:function(e,t){for(var n=this.tryEntries.length-1;n>=0;--n){var o=this.tryEntries[n];if(o.tryLoc<=this.prev&&r.call(o,"finallyLoc")&&this.prev<o.finallyLoc){var a=o;break}}a&&("break"===e||"continue"===e)&&a.tryLoc<=t&&t<=a.finallyLoc&&(a=null);var i=a?a.completion:{};return i.type=e,i.arg=t,a?(this.method="next",this.next=a.finallyLoc,s):this.complete(i)},complete:function(e,t){if("throw"===e.type)throw e.arg;return"break"===e.type||"continue"===e.type?this.next=e.arg:"return"===e.type?(this.rval=this.arg=e.arg,this.method="return",this.next="end"):"normal"===e.type&&t&&(this.next=t),s},finish:function(e){for(var t=this.tryEntries.length-1;t>=0;--t){var r=this.tryEntries[t];if(r.finallyLoc===e)return this.complete(r.completion,r.afterLoc),x(r),s}},catch:function(e){for(var t=this.tryEntries.length-1;t>=0;--t){var r=this.tryEntries[t];if(r.tryLoc===e){var n=r.completion;if("throw"===n.type){var o=n.arg;x(r)}return o}}throw new Error("illegal catch attempt")},delegateYield:function(e,t,r){return this.delegate={iterator:O(e),resultName:t,nextLoc:r},"next"===this.method&&(this.arg=void 0),s}},e}function oe(e){return(oe="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e})(e)}function ae(e,t,r,n,o,a,i){try{var c=e[a](i),l=c.value}catch(e){return void r(e)}c.done?t(l):Promise.resolve(l).then(n,o)}function ie(e){return function(){var t=this,r=arguments;return new Promise((function(n,o){var a=e.apply(t,r);function i(e){ae(a,n,o,i,c,"next",e)}function c(e){ae(a,n,o,i,c,"throw",e)}i(void 0)}))}}function ce(e,t,r){return t in e?Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}):e[t]=r,e}function le(){return(le=Object.assign?Object.assign.bind():function(e){for(var t=1;t<arguments.length;t++){var r=arguments[t];for(var n in r)Object.prototype.hasOwnProperty.call(r,n)&&(e[n]=r[n])}return e}).apply(this,arguments)}function ue(e,t){if(null==e)return{};var r,n,o=function(e,t){if(null==e)return{};var r,n,o={},a=Object.keys(e);for(n=0;n<a.length;n++)r=a[n],t.indexOf(r)>=0||(o[r]=e[r]);return o}(e,t);if(Object.getOwnPropertySymbols){var a=Object.getOwnPropertySymbols(e);for(n=0;n<a.length;n++)r=a[n],t.indexOf(r)>=0||Object.prototype.propertyIsEnumerable.call(e,r)&&(o[r]=e[r])}return o}function se(e,t){return function(e){if(Array.isArray(e))return e}(e)||function(e,t){var r=null==e?null:"undefined"!=typeof Symbol&&e[Symbol.iterator]||e["@@iterator"];if(null==r)return;var n,o,a=[],i=!0,c=!1;try{for(r=r.call(e);!(i=(n=r.next()).done)&&(a.push(n.value),!t||a.length!==t);i=!0);}catch(e){c=!0,o=e}finally{try{i||null==r.return||r.return()}finally{if(c)throw o}}return a}(e,t)||me(e,t)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function fe(e){return function(e){if(Array.isArray(e))return pe(e)}(e)||function(e){if("undefined"!=typeof Symbol&&null!=e[Symbol.iterator]||null!=e["@@iterator"])return Array.from(e)}(e)||me(e)||function(){throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function me(e,t){if(e){if("string"==typeof e)return pe(e,t);var r=Object.prototype.toString.call(e).slice(8,-1);return"Object"===r&&e.constructor&&(r=e.constructor.name),"Map"===r||"Set"===r?Array.from(e):"Arguments"===r||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r)?pe(e,t):void 0}}function pe(e,t){(null==t||t>e.length)&&(t=e.length);for(var r=0,n=new Array(t);r<t;r++)n[r]=e[r];return n}var de=["label","defaultLabel","image","fallback","externalLink","labelColor","classes"],he=R((function(e){return{parent:function(e){return re({position:"relative"},e.parent)},square:{width:"100%",paddingBottom:"100%",position:"relative"},avatar:{position:"absolute",top:0,bottom:0,width:"100%",height:"100%",borderRadius:"50%","& svg":{width:"55%",height:"55%"}},chip:{position:"absolute",bottom:-10,left:0,right:0,paddingTop:3,paddingBottom:3,paddingLeft:6,paddingRight:6,marginBottom:10,cursor:"pointer"},launchIcon:{width:14}}})),ye=function(){},ve=function(e){var r=e.label,n=e.defaultLabel,o=e.image,a=e.fallback,i=e.externalLink,c=e.labelColor,u=e.classes,s=ue(e,de);u=he(u);var f=l(),m=("function"==typeof r?r(f):f[r])||n,p="function"==typeof o?o(f):f[o],d="function"==typeof a?a(f):a;return t.createElement(O,{className:u.parent},t.createElement("div",{className:u.square},t.createElement(L,le({src:p||d,alt:m,fallback:d},s,{className:u.avatar}))),m?i?t.createElement(j,{color:c,className:u.chip,size:"small",label:m,deleteIcon:t.createElement(W,{className:u.launchIcon}),onDelete:ye}):t.createElement(j,{color:c,className:u.chip,size:"small",label:m}):null)};ve.defaultProps={labelColor:"secondary",externalLink:!1};var ge=["source"],be=function(e){var r=e.source,n=ue(e,ge),o=l();return null!=o&&o[r]&&(Array.isArray(o[r])||(o[r]=[o[r]]),o[r]=o[r].map((function(e){return e["@id"]||e.id||e}))),t.createElement(u,{value:o},t.createElement(s,le({source:r},n)))},Ee=["source"],we=function(e){var r=e.source,n=ue(e,Ee),o=l();return o[r]&&"object"===oe(o[r])&&(o[r]=o[r]["@id"]||o[r].id),t.createElement(u,{value:o},t.createElement(f,le({record:o,source:r},n)))},xe=R((function(e){return{root:{width:"100%",maxWidth:"100%",backgroundColor:e.palette.background.paper,paddingTop:0,paddingBottom:0},primaryText:{width:"30%"},secondaryText:{fontStyle:"italic",color:"grey"}}})),ke=function(e,t){var r=t&&Object.values(t).find((function(t){return e.startsWith(t.baseUrl)}));return r?r.name:"Inconnu"},Oe=function(e){var a,i=e.keyword,c=e.source,u=e.reference,s=e.appendLink,f=e.switchToCreate,v=xe(),g=se(r(!1),2),b=g[0],E=g[1],w=se(r(!1),2),x=w[0],k=w[1],j=se(r([]),2),_=j[0],I=j[1],G=m(),z=p(),M=V(),B=l(),R=d(),W=h({resource:u}),D=y(),J=$(u);if(J&&Object.keys(J).length>0&&(null==J||null===(a=J.fieldsMapping)||void 0===a||!a.title))throw new Error("No fieldsMapping.title config found for ".concat(u," dataModel"));var K=n((function(){return Y((function(e){var t;z.getList(u,{pagination:{page:1,perPage:100},sort:{field:null==J||null===(t=J.fieldsMapping)||void 0===t?void 0:t.title,order:"ASC"},filter:{q:e,_predicates:[J.fieldsMapping.title],_servers:"@all"}}).then((function(e){var t=e.data,r=B[c]?Array.isArray(B[c])?B[c]:[B[c]]:[],n=t.filter((function(e){return!r.includes(e.id)}));I(n),k(!0),E(!1)})).catch((function(e){E(!1)}))}),700)}),[z,J,B,c,u,I,E,k]);return o((function(){if(i)return E(!0),k(!1),K(i),function(){return K.cancel()}}),[i,K,E]),i?t.createElement(T,{dense:!0,className:v.root},x&&_.map((function(e){return t.createElement(N,{key:e.id,button:!0,onClick:function(){return s(e.id)}},t.createElement(S,null,t.createElement(L,null,t.createElement(W.icon))),t.createElement(C,{className:v.primaryText,primary:e[J.fieldsMapping.title]}),t.createElement(C,{className:v.secondaryText,primary:ke(e.id,M)}),t.createElement(A,null,t.createElement("a",{href:R({resource:u,id:e.id,type:"show"}),target:"_blank",rel:"noopener noreferrer"},t.createElement(P,{edge:"end",size:"large"},t.createElement(q,null)))))})),x&&0===_.length&&t.createElement(N,null,t.createElement(S,null,t.createElement(L,null,t.createElement(H,null))),t.createElement(C,{className:v.primaryText,primary:G("ra.navigation.no_results")})),x&&W.hasCreate&&t.createElement(N,{button:!0,onClick:f},t.createElement(S,null,t.createElement(L,null,t.createElement(U,null))),t.createElement(C,{className:v.primaryText,primary:G("ra.page.create",{name:D(u,1)})})),b&&t.createElement(O,{display:"flex",alignItems:"center",justifyContent:"center",height:150},t.createElement(F,{size:60,thickness:6}))):null},Le=R((function(){return{title:{paddingBottom:8},actions:{padding:15},addForm:{paddingTop:0},listForm:{paddingLeft:8,paddingRight:8,paddingTop:0,paddingBottom:0,maxHeight:210}}})),je=function(e){var n=e.open,o=e.onClose,i=e.subjectUri,c=e.source,l=e.reference,u=Le(),s=v().resource,f=se(r(""),2),d=f[0],h=f[1],w=se(r("find"),2),x=w[0],k=w[1],O=p(),L=m(),j=g(),T=b(),N=y(),S=$(l),C=D(),A=C.register,P=C.setValue,F=C.handleSubmit,B=a(function(){var e=ie(ne().mark((function e(t){var r,n;return ne().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return e.next=2,O.getOne(s,{id:i});case 2:return r=e.sent,n=r.data,e.next=6,O.update(s,{id:i,data:re(re({},n),{},ce({},c,n[c]?Array.isArray(n[c])?[].concat(fe(n[c]),[t]):[n[c],t]:t)),previousData:n});case 6:j(),o();case 8:case"end":return e.stop()}}),e)})));return function(t){return e.apply(this,arguments)}}(),[O,i,s,c,j,o]),R=a(function(){var e=ie(ne().mark((function e(t){var r,n;return ne().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return e.next=2,O.create(l,{data:ce({},S.fieldsMapping.title,t.title)});case 2:return r=e.sent,n=r.data,e.next=6,B(n.id);case 6:T('La resource "'.concat(t.title,'" a été créée'),{type:"success"});case 7:case"end":return e.stop()}}),e)})));return function(t){return e.apply(this,arguments)}}(),[O,S,B,l,T]);return t.createElement(_,{fullWidth:!0,open:n,onClose:o},"find"===x?t.createElement(t.Fragment,null,t.createElement(I,{className:u.title},"Ajouter une relation"),t.createElement(G,{className:u.addForm},t.createElement(z,{autoFocus:!0,label:"Rechercher ou créer des "+N(l,2).toLowerCase(),variant:"filled",margin:"dense",value:d,onChange:function(e){return h(e.target.value)},fullWidth:!0})),t.createElement(G,{className:u.listForm},t.createElement(Oe,{keyword:d,source:c,reference:l,appendLink:B,switchToCreate:function(){P("title",d),k("create")}})),t.createElement(M,{className:u.actions},t.createElement(E,{label:"ra.action.close",variant:"text",onClick:o}))):t.createElement("form",{onSubmit:F(R)},t.createElement(I,{className:u.title},L("ra.page.create",{name:N(l,1)})),t.createElement(G,{className:u.addForm},t.createElement(z,le({},A("title"),{autoFocus:!0,label:"Titre",variant:"filled",margin:"dense",fullWidth:!0}))),t.createElement(M,{className:u.actions},t.createElement(E,{label:"ra.action.create",variant:"contained",startIcon:t.createElement(U,null),type:"submit"}),t.createElement(E,{label:"ra.action.close",variant:"text",onClick:o}))))},Te=["reference","source","resource","children"],Ne=function(e){var o=e.reference,a=e.source,i=e.resource,c=e.children,u=ue(e,Te),s=l(),f=se(r(!1),2),m=f[0],p=f[1],d=w(s.id).permissions,h=n((function(){return!!d&&d.some((function(e){return["acl:Append","acl:Write","acl:Control"].includes(e["acl:mode"])}))}),[d]);return t.createElement(t.Fragment,null,t.createElement(be,le({reference:o,source:a},u),t.Children.only(c)&&t.cloneElement(c,{appendLink:h?function(){return p(!0)}:void 0})),h&&m&&t.createElement(je,{open:m,onClose:function(){return p(!1)},subjectUri:s.id,resource:i,source:a,reference:o}))},Se={color:void 0,size:void 0,className:void 0,style:void 0,attr:void 0},Ce=t.createContext&&t.createContext(Se),Ae=function(){return(Ae=Object.assign||function(e){for(var t,r=1,n=arguments.length;r<n;r++)for(var o in t=arguments[r])Object.prototype.hasOwnProperty.call(t,o)&&(e[o]=t[o]);return e}).apply(this,arguments)},Pe=function(e,t){var r={};for(var n in e)Object.prototype.hasOwnProperty.call(e,n)&&t.indexOf(n)<0&&(r[n]=e[n]);if(null!=e&&"function"==typeof Object.getOwnPropertySymbols){var o=0;for(n=Object.getOwnPropertySymbols(e);o<n.length;o++)t.indexOf(n[o])<0&&Object.prototype.propertyIsEnumerable.call(e,n[o])&&(r[n[o]]=e[n[o]])}return r};function Fe(e){return function(r){return t.createElement(_e,Ae({attr:Ae({},e.attr)},r),function e(r){return r&&r.map((function(r,n){return t.createElement(r.tag,Ae({key:n},r.attr),e(r.child))}))}(e.child))}}function _e(e){var r=function(r){var n,o=e.attr,a=e.size,i=e.title,c=Pe(e,["attr","size","title"]),l=a||r.size||"1em";return r.className&&(n=r.className),e.className&&(n=(n?n+" ":"")+e.className),t.createElement("svg",Ae({stroke:"currentColor",fill:"currentColor",strokeWidth:"0"},r.attr,o,c,{className:n,style:Ae(Ae({color:e.color||r.color},r.style),e.style),height:l,width:l,xmlns:"http://www.w3.org/2000/svg"}),i&&t.createElement("title",null,i),e.children)};return void 0!==Ce?t.createElement(Ce.Consumer,null,(function(e){return r(e)})):r(Se)}function Ie(e){return Fe({tag:"svg",attr:{viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:"2",strokeLinecap:"round",strokeLinejoin:"round"},child:[{tag:"path",attr:{d:"M22.65 14.39L12 22.13 1.35 14.39a.84.84 0 0 1-.3-.94l1.22-3.78 2.44-7.51A.42.42 0 0 1 4.82 2a.43.43 0 0 1 .58 0 .42.42 0 0 1 .11.18l2.44 7.49h8.1l2.44-7.51A.42.42 0 0 1 18.6 2a.43.43 0 0 1 .58 0 .42.42 0 0 1 .11.18l2.44 7.51L23 13.45a.84.84 0 0 1-.35.94z"}}]})(e)}var Ge={"github.com":{label:"GitHub",icon:t.createElement(Q,null),color:"black",contrastText:"white"},"gitlab.com":{label:"GitLab",icon:t.createElement(Ie,null),color:"orange",contrastText:"black"},"opencollective.com":{label:"Open Collective",icon:t.createElement(L,{component:"span",src:"https://opencollective.com/static/images/opencollective-icon.svg"}),color:"white",contrastText:"#297EFF"},"facebook.com":{label:"Facebook",icon:t.createElement(K,null),color:"#4267B2",contrastText:"white"},"twitter.com":{label:"Twitter",icon:t.createElement(X,null),color:"#00ACEE",contrastText:"white"},"instagram.com":{label:"Instagram",icon:t.createElement(Z,null),color:"#8a3ab9",contrastText:"white"},"youtube.com":{label:"YouTube",icon:t.createElement(ee,null),color:"#FF0000",contrastText:"white"}},ze=R((function(){return{link:{textDecoration:"unset","& :hover":{cursor:"pointer"}},chip:{paddingLeft:5,paddingRight:5,marginRight:5,marginBottom:5},label:{marginTop:-1}}})),Me=function(e){var r=e.source,n=e.domainMapping,o=re(re({},Ge),n),a=l(),i=ze();return(a[r]?Array.isArray(a[r])?a[r]:[a[r]]:[]).map((function(e,r){e.startsWith("http")||(e="https://"+e);var n=new URL(e);if(!n)return null;var a=o[n.hostname]||{label:"Site web",icon:t.createElement(J,null),color:"#ea",contrastText:"black"};return t.createElement("a",{href:e,target:"_blank",rel:"noopener noreferrer",className:i.link,key:r},t.createElement(j,{component:"span",icon:t.cloneElement(a.icon,{style:{color:a.contrastText,width:18,height:18}}),size:"small",label:a.label,classes:{root:i.chip,label:i.label},style:{color:a.contrastText,backgroundColor:a.color}}))}))},Be=function(e){return e.stopPropagation()},Re=function(){},We=function(t){var r=t.children,n=t.link,o=void 0===n?"edit":n,a=t.linkType,l=t.separator,s=void 0===l?", ":l,f=x(t),m=f.data,p=f.isLoading,h=f.resource,y=d();return void 0!==a&&(console.warn("The 'linkType' prop is deprecated and should be named to 'link' in <SeparatedListField />"),o=a),p?e.createElement(B,null):e.createElement(e.Fragment,null,m.map((function(t,n){if(!t.id)return null;var a=!1!==o&&("function"==typeof o?o(t.id):y({resource:h,id:t.id,type:o}));return a?e.createElement("span",{key:t.id},e.createElement(k,{to:a,onClick:Be},i(c.only(r),{onClick:Re})),n<m.length-1&&s):e.createElement("span",{key:t.id},e.createElement(u,{value:t},r),n<m.length-1&&s)})))};export{ve as AvatarWithLabelField,Me as MultiUrlField,Ne as QuickAppendReferenceArrayField,be as ReferenceArrayField,we as ReferenceField,We as SeparatedListField};
+import {jsxs as $9pxSs$jsxs, jsx as $9pxSs$jsx, Fragment as $9pxSs$Fragment} from "react/jsx-runtime";
+import $9pxSs$react, {useState as $9pxSs$useState, useMemo as $9pxSs$useMemo, useCallback as $9pxSs$useCallback, useEffect as $9pxSs$useEffect, cloneElement as $9pxSs$cloneElement, Children as $9pxSs$Children} from "react";
+import {useRecordContext as $9pxSs$useRecordContext, RecordContextProvider as $9pxSs$RecordContextProvider, ReferenceArrayField as $9pxSs$ReferenceArrayField, ReferenceField as $9pxSs$ReferenceField, usePermissions as $9pxSs$usePermissions, useShowContext as $9pxSs$useShowContext, useDataProvider as $9pxSs$useDataProvider, useTranslate as $9pxSs$useTranslate, useRefresh as $9pxSs$useRefresh, useNotify as $9pxSs$useNotify, useGetResourceLabel as $9pxSs$useGetResourceLabel, Button as $9pxSs$Button, useCreatePath as $9pxSs$useCreatePath, useResourceDefinition as $9pxSs$useResourceDefinition, useListContext as $9pxSs$useListContext, Link as $9pxSs$Link} from "react-admin";
+import {Box as $9pxSs$Box, Avatar as $9pxSs$Avatar, Chip as $9pxSs$Chip, Dialog as $9pxSs$Dialog, DialogTitle as $9pxSs$DialogTitle, DialogContent as $9pxSs$DialogContent, TextField as $9pxSs$TextField, DialogActions as $9pxSs$DialogActions, List as $9pxSs$List, ListItem as $9pxSs$ListItem, ListItemAvatar as $9pxSs$ListItemAvatar, ListItemText as $9pxSs$ListItemText, ListItemSecondaryAction as $9pxSs$ListItemSecondaryAction, IconButton as $9pxSs$IconButton, CircularProgress as $9pxSs$CircularProgress, LinearProgress as $9pxSs$LinearProgress} from "@mui/material";
+import $9pxSs$muistylesmakeStyles from "@mui/styles/makeStyles";
+import $9pxSs$muiiconsmaterialLaunch from "@mui/icons-material/Launch";
+import {useForm as $9pxSs$useForm} from "react-hook-form";
+import $9pxSs$muiiconsmaterialAdd from "@mui/icons-material/Add";
+import {useDataModel as $9pxSs$useDataModel, useDataServers as $9pxSs$useDataServers} from "@semapps/semantic-data-provider";
+import $9pxSs$lodashdebounce from "lodash.debounce";
+import $9pxSs$muiiconsmaterialVisibility from "@mui/icons-material/Visibility";
+import $9pxSs$muiiconsmaterialError from "@mui/icons-material/Error";
+import $9pxSs$muiiconsmaterialLanguage from "@mui/icons-material/Language";
+import $9pxSs$muiiconsmaterialFacebook from "@mui/icons-material/Facebook";
+import $9pxSs$muiiconsmaterialGitHub from "@mui/icons-material/GitHub";
+import $9pxSs$muiiconsmaterialTwitter from "@mui/icons-material/Twitter";
+import $9pxSs$muiiconsmaterialInstagram from "@mui/icons-material/Instagram";
+import $9pxSs$muiiconsmaterialYouTube from "@mui/icons-material/YouTube";
+import {FiGitlab as $9pxSs$FiGitlab} from "react-icons/fi";
+
+
+
+
+
+
+
+const $548fb3c4c04d834a$var$useStyles = (0, $9pxSs$muistylesmakeStyles)((theme)=>({
+        parent: (props)=>({
+                position: "relative",
+                ...props.parent
+            }),
+        square: {
+            width: "100%",
+            paddingBottom: "100%",
+            position: "relative"
+        },
+        avatar: {
+            position: "absolute",
+            top: 0,
+            bottom: 0,
+            width: "100%",
+            height: "100%",
+            borderRadius: "50%",
+            // backgroundColor: theme.palette.primary.main,
+            "& svg": {
+                width: "55%",
+                height: "55%"
+            }
+        },
+        chip: {
+            position: "absolute",
+            bottom: -10,
+            left: 0,
+            right: 0,
+            paddingTop: 3,
+            paddingBottom: 3,
+            paddingLeft: 6,
+            paddingRight: 6,
+            marginBottom: 10,
+            cursor: "pointer"
+        },
+        launchIcon: {
+            width: 14
+        }
+    }));
+const $548fb3c4c04d834a$var$handleClick = ()=>{};
+const $548fb3c4c04d834a$var$AvatarWithLabelField = ({ label: label, defaultLabel: defaultLabel, image: image, fallback: fallback, externalLink: externalLink, labelColor: labelColor, classes: classes, ...rest })=>{
+    classes = $548fb3c4c04d834a$var$useStyles(classes);
+    const record = (0, $9pxSs$useRecordContext)();
+    const computedLabel = (typeof label === "function" ? label(record) : record[label]) || defaultLabel;
+    const computedImage = typeof image === "function" ? image(record) : record[image];
+    const computedFallback = typeof fallback === "function" ? fallback(record) : fallback;
+    return /*#__PURE__*/ (0, $9pxSs$jsxs)((0, $9pxSs$Box), {
+        className: classes.parent,
+        children: [
+            /*#__PURE__*/ (0, $9pxSs$jsx)("div", {
+                className: classes.square,
+                children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Avatar), {
+                    src: computedImage || computedFallback,
+                    alt: computedLabel,
+                    fallback: computedFallback,
+                    ...rest,
+                    className: classes.avatar
+                })
+            }),
+            !computedLabel ? null : externalLink ? /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Chip), {
+                color: labelColor,
+                className: classes.chip,
+                size: "small",
+                label: computedLabel,
+                deleteIcon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialLaunch), {
+                    className: classes.launchIcon
+                }),
+                onDelete: $548fb3c4c04d834a$var$handleClick
+            }) : /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Chip), {
+                color: labelColor,
+                className: classes.chip,
+                size: "small",
+                label: computedLabel
+            })
+        ]
+    });
+};
+$548fb3c4c04d834a$var$AvatarWithLabelField.defaultProps = {
+    labelColor: "secondary",
+    externalLink: false
+};
+var $548fb3c4c04d834a$export$2e2bcd8739ae039 = $548fb3c4c04d834a$var$AvatarWithLabelField;
+
+
+
+
+
+const $867e5374e5f64b17$var$ReferenceArrayField = ({ source: source, ...otherProps })=>{
+    const record = (0, $9pxSs$useRecordContext)();
+    if (record?.[source]) {
+        if (!Array.isArray(record[source])) record[source] = [
+            record[source]
+        ];
+        record[source] = record[source].map((i)=>i["@id"] || i.id || i);
+    }
+    return /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$RecordContextProvider), {
+        value: record,
+        children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$ReferenceArrayField), {
+            source: source,
+            ...otherProps
+        })
+    });
+};
+var $867e5374e5f64b17$export$2e2bcd8739ae039 = $867e5374e5f64b17$var$ReferenceArrayField;
+
+
+
+
+
+const $e253ae5050c248a7$var$ReferenceField = ({ source: source, ...otherProps })=>{
+    const record = (0, $9pxSs$useRecordContext)();
+    if (record[source]) {
+        if (typeof record[source] === "object") record[source] = record[source]["@id"] || record[source].id;
+    }
+    return /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$RecordContextProvider), {
+        value: record,
+        children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$ReferenceField), {
+            record: record,
+            source: source,
+            ...otherProps
+        })
+    });
+};
+var $e253ae5050c248a7$export$2e2bcd8739ae039 = $e253ae5050c248a7$var$ReferenceField;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const $6bf8168f746430d4$var$useStyles = (0, $9pxSs$muistylesmakeStyles)((theme)=>({
+        root: {
+            width: "100%",
+            maxWidth: "100%",
+            backgroundColor: theme.palette.background.paper,
+            paddingTop: 0,
+            paddingBottom: 0
+        },
+        primaryText: {
+            width: "30%"
+        },
+        secondaryText: {
+            fontStyle: "italic",
+            color: "grey"
+        }
+    }));
+const $6bf8168f746430d4$var$getServerName = (resourceUri, dataServers)=>{
+    const server = dataServers && Object.values(dataServers).find((server)=>resourceUri.startsWith(server.baseUrl));
+    return server ? server.name : "Inconnu";
+};
+const $6bf8168f746430d4$var$ResultsList = ({ keyword: keyword, source: source, reference: reference, appendLink: appendLink, switchToCreate: switchToCreate })=>{
+    const classes = $6bf8168f746430d4$var$useStyles();
+    const [loading, setLoading] = (0, $9pxSs$useState)(false);
+    const [loaded, setLoaded] = (0, $9pxSs$useState)(false);
+    const [results, setResults] = (0, $9pxSs$useState)([]);
+    const translate = (0, $9pxSs$useTranslate)();
+    const dataProvider = (0, $9pxSs$useDataProvider)();
+    const dataServers = (0, $9pxSs$useDataServers)();
+    const record = (0, $9pxSs$useRecordContext)();
+    const createPath = (0, $9pxSs$useCreatePath)();
+    const referenceDefinition = (0, $9pxSs$useResourceDefinition)({
+        resource: reference
+    });
+    const getResourceLabel = (0, $9pxSs$useGetResourceLabel)();
+    const dataModel = (0, $9pxSs$useDataModel)(reference);
+    if (dataModel && Object.keys(dataModel).length > 0 && !dataModel?.fieldsMapping?.title) throw new Error(`No fieldsMapping.title config found for ${reference} dataModel`);
+    const search = (0, $9pxSs$useMemo)(()=>(0, $9pxSs$lodashdebounce)((keyword)=>{
+            dataProvider.getList(reference, {
+                pagination: {
+                    page: 1,
+                    perPage: 100
+                },
+                sort: {
+                    field: dataModel?.fieldsMapping?.title,
+                    order: "ASC"
+                },
+                filter: {
+                    q: keyword,
+                    _predicates: [
+                        dataModel.fieldsMapping.title
+                    ],
+                    _servers: "@all"
+                }
+            }).then(({ data: data })=>{
+                const existingLinks = record[source] ? Array.isArray(record[source]) ? record[source] : [
+                    record[source]
+                ] : [];
+                const newLinks = data.filter((record)=>!existingLinks.includes(record.id));
+                setResults(newLinks);
+                setLoaded(true);
+                setLoading(false);
+            }).catch((e)=>{
+                setLoading(false);
+            });
+        }, 700), [
+        dataProvider,
+        dataModel,
+        record,
+        source,
+        reference,
+        setResults,
+        setLoading,
+        setLoaded
+    ]);
+    (0, $9pxSs$useEffect)(()=>{
+        if (!keyword) return undefined;
+        setLoading(true);
+        setLoaded(false);
+        search(keyword);
+        return ()=>search.cancel();
+    }, [
+        keyword,
+        search,
+        setLoading
+    ]);
+    if (!keyword) return null;
+    return /*#__PURE__*/ (0, $9pxSs$jsxs)((0, $9pxSs$List), {
+        dense: true,
+        className: classes.root,
+        children: [
+            loaded && results.map((resource)=>/*#__PURE__*/ (0, $9pxSs$jsxs)((0, $9pxSs$ListItem), {
+                    button: true,
+                    onClick: ()=>appendLink(resource.id),
+                    children: [
+                        /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$ListItemAvatar), {
+                            children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Avatar), {
+                                children: /*#__PURE__*/ (0, $9pxSs$react).createElement(referenceDefinition.icon)
+                            })
+                        }),
+                        /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$ListItemText), {
+                            className: classes.primaryText,
+                            primary: resource[dataModel.fieldsMapping.title]
+                        }),
+                        /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$ListItemText), {
+                            className: classes.secondaryText,
+                            primary: $6bf8168f746430d4$var$getServerName(resource.id, dataServers)
+                        }),
+                        /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$ListItemSecondaryAction), {
+                            children: /*#__PURE__*/ (0, $9pxSs$jsx)("a", {
+                                href: createPath({
+                                    resource: reference,
+                                    id: resource.id,
+                                    type: "show"
+                                }),
+                                target: "_blank",
+                                rel: "noopener noreferrer",
+                                children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$IconButton), {
+                                    edge: "end",
+                                    size: "large",
+                                    children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialVisibility), {})
+                                })
+                            })
+                        })
+                    ]
+                }, resource.id)),
+            loaded && results.length === 0 && /*#__PURE__*/ (0, $9pxSs$jsxs)((0, $9pxSs$ListItem), {
+                children: [
+                    /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$ListItemAvatar), {
+                        children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Avatar), {
+                            children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialError), {})
+                        })
+                    }),
+                    /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$ListItemText), {
+                        className: classes.primaryText,
+                        primary: translate("ra.navigation.no_results")
+                    })
+                ]
+            }),
+            loaded && referenceDefinition.hasCreate && /*#__PURE__*/ (0, $9pxSs$jsxs)((0, $9pxSs$ListItem), {
+                button: true,
+                onClick: switchToCreate,
+                children: [
+                    /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$ListItemAvatar), {
+                        children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Avatar), {
+                            children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialAdd), {})
+                        })
+                    }),
+                    /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$ListItemText), {
+                        className: classes.primaryText,
+                        primary: translate("ra.page.create", {
+                            name: getResourceLabel(reference, 1)
+                        })
+                    })
+                ]
+            }),
+            loading && /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Box), {
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: 150,
+                children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$CircularProgress), {
+                    size: 60,
+                    thickness: 6
+                })
+            })
+        ]
+    });
+};
+var $6bf8168f746430d4$export$2e2bcd8739ae039 = $6bf8168f746430d4$var$ResultsList;
+
+
+const $3d5bffcd1289119f$var$useStyles = (0, $9pxSs$muistylesmakeStyles)(()=>({
+        title: {
+            paddingBottom: 8
+        },
+        actions: {
+            padding: 15
+        },
+        addForm: {
+            paddingTop: 0
+        },
+        listForm: {
+            paddingLeft: 8,
+            paddingRight: 8,
+            paddingTop: 0,
+            paddingBottom: 0,
+            maxHeight: 210
+        }
+    }));
+const $3d5bffcd1289119f$var$QuickAppendDialog = ({ open: open, onClose: onClose, subjectUri: subjectUri, source: source, reference: reference })=>{
+    const classes = $3d5bffcd1289119f$var$useStyles();
+    const { resource: resource } = (0, $9pxSs$useShowContext)();
+    const [keyword, setKeyword] = (0, $9pxSs$useState)("");
+    const [panel, setPanel] = (0, $9pxSs$useState)("find");
+    const dataProvider = (0, $9pxSs$useDataProvider)();
+    const translate = (0, $9pxSs$useTranslate)();
+    const refresh = (0, $9pxSs$useRefresh)();
+    const notify = (0, $9pxSs$useNotify)();
+    const getResourceLabel = (0, $9pxSs$useGetResourceLabel)();
+    const dataModel = (0, $9pxSs$useDataModel)(reference);
+    const { register: register, setValue: setValue, handleSubmit: handleSubmit } = (0, $9pxSs$useForm)();
+    const appendLink = (0, $9pxSs$useCallback)(async (objectUri)=>{
+        // Get the freshest data so that the put operation doesn't overwrite anything
+        const { data: data } = await dataProvider.getOne(resource, {
+            id: subjectUri
+        });
+        await dataProvider.update(resource, {
+            id: subjectUri,
+            data: {
+                ...data,
+                [source]: data[source] ? Array.isArray(data[source]) ? [
+                    ...data[source],
+                    objectUri
+                ] : [
+                    data[source],
+                    objectUri
+                ] : objectUri
+            },
+            previousData: data
+        });
+        refresh();
+        onClose();
+    }, [
+        dataProvider,
+        subjectUri,
+        resource,
+        source,
+        refresh,
+        onClose
+    ]);
+    const create = (0, $9pxSs$useCallback)(async (values)=>{
+        const { data: data } = await dataProvider.create(reference, {
+            data: {
+                [dataModel.fieldsMapping.title]: values.title
+            }
+        });
+        await appendLink(data.id);
+        notify(`La resource "${values.title}" a \xe9t\xe9 cr\xe9\xe9e`, {
+            type: "success"
+        });
+    }, [
+        dataProvider,
+        dataModel,
+        appendLink,
+        reference,
+        notify
+    ]);
+    return /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Dialog), {
+        fullWidth: true,
+        open: open,
+        onClose: onClose,
+        children: panel === "find" ? /*#__PURE__*/ (0, $9pxSs$jsxs)((0, $9pxSs$Fragment), {
+            children: [
+                /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$DialogTitle), {
+                    className: classes.title,
+                    children: "Ajouter une relation"
+                }),
+                /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$DialogContent), {
+                    className: classes.addForm,
+                    children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$TextField), {
+                        autoFocus: true,
+                        label: `Rechercher ou cr\xe9er des ${getResourceLabel(reference, 2).toLowerCase()}`,
+                        variant: "filled",
+                        margin: "dense",
+                        value: keyword,
+                        onChange: (e)=>setKeyword(e.target.value),
+                        fullWidth: true
+                    })
+                }),
+                /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$DialogContent), {
+                    className: classes.listForm,
+                    children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $6bf8168f746430d4$export$2e2bcd8739ae039), {
+                        keyword: keyword,
+                        source: source,
+                        reference: reference,
+                        appendLink: appendLink,
+                        switchToCreate: ()=>{
+                            setValue("title", keyword);
+                            setPanel("create");
+                        }
+                    })
+                }),
+                /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$DialogActions), {
+                    className: classes.actions,
+                    children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Button), {
+                        label: "ra.action.close",
+                        variant: "text",
+                        onClick: onClose
+                    })
+                })
+            ]
+        }) : /*#__PURE__*/ (0, $9pxSs$jsxs)("form", {
+            onSubmit: handleSubmit(create),
+            children: [
+                /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$DialogTitle), {
+                    className: classes.title,
+                    children: translate("ra.page.create", {
+                        name: getResourceLabel(reference, 1)
+                    })
+                }),
+                /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$DialogContent), {
+                    className: classes.addForm,
+                    children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$TextField), {
+                        ...register("title"),
+                        autoFocus: true,
+                        label: "Titre",
+                        variant: "filled",
+                        margin: "dense",
+                        fullWidth: true
+                    })
+                }),
+                /*#__PURE__*/ (0, $9pxSs$jsxs)((0, $9pxSs$DialogActions), {
+                    className: classes.actions,
+                    children: [
+                        /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Button), {
+                            label: "ra.action.create",
+                            variant: "contained",
+                            startIcon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialAdd), {}),
+                            type: "submit"
+                        }),
+                        /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Button), {
+                            label: "ra.action.close",
+                            variant: "text",
+                            onClick: onClose
+                        })
+                    ]
+                })
+            ]
+        })
+    });
+};
+var $3d5bffcd1289119f$export$2e2bcd8739ae039 = $3d5bffcd1289119f$var$QuickAppendDialog;
+
+
+const $c6e9301cf3cc37bc$var$QuickAppendReferenceArrayField = ({ reference: reference, source: source, resource: resource, children: children, ...otherProps })=>{
+    const record = (0, $9pxSs$useRecordContext)();
+    const [showDialog, setShowDialog] = (0, $9pxSs$useState)(false);
+    const { permissions: permissions } = (0, $9pxSs$usePermissions)(record.id);
+    const canAppend = (0, $9pxSs$useMemo)(()=>!!permissions && permissions.some((p)=>[
+                "acl:Append",
+                "acl:Write",
+                "acl:Control"
+            ].includes(p["acl:mode"])), [
+        permissions
+    ]);
+    return /*#__PURE__*/ (0, $9pxSs$jsxs)((0, $9pxSs$Fragment), {
+        children: [
+            /*#__PURE__*/ (0, $9pxSs$jsx)((0, $867e5374e5f64b17$export$2e2bcd8739ae039), {
+                reference: reference,
+                source: source,
+                ...otherProps,
+                children: (0, $9pxSs$react).Children.only(children) && /*#__PURE__*/ (0, $9pxSs$react).cloneElement(children, {
+                    appendLink: canAppend ? ()=>setShowDialog(true) : undefined
+                })
+            }),
+            canAppend && showDialog && /*#__PURE__*/ (0, $9pxSs$jsx)((0, $3d5bffcd1289119f$export$2e2bcd8739ae039), {
+                open: showDialog,
+                onClose: ()=>setShowDialog(false),
+                subjectUri: record.id,
+                resource: resource,
+                source: source,
+                reference: reference
+            })
+        ]
+    });
+};
+var $c6e9301cf3cc37bc$export$2e2bcd8739ae039 = $c6e9301cf3cc37bc$var$QuickAppendReferenceArrayField;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const $3964a2ca9e598444$var$defaultdomainMapping = {
+    "github.com": {
+        label: "GitHub",
+        icon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialGitHub), {}),
+        color: "black",
+        contrastText: "white"
+    },
+    "gitlab.com": {
+        label: "GitLab",
+        icon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$FiGitlab), {}),
+        color: "orange",
+        contrastText: "black"
+    },
+    "opencollective.com": {
+        label: "Open Collective",
+        icon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Avatar), {
+            component: "span",
+            src: "https://opencollective.com/static/images/opencollective-icon.svg"
+        }),
+        color: "white",
+        contrastText: "#297EFF"
+    },
+    "facebook.com": {
+        label: "Facebook",
+        icon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialFacebook), {}),
+        color: "#4267B2",
+        contrastText: "white"
+    },
+    "twitter.com": {
+        label: "Twitter",
+        icon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialTwitter), {}),
+        color: "#00ACEE",
+        contrastText: "white"
+    },
+    "instagram.com": {
+        label: "Instagram",
+        icon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialInstagram), {}),
+        color: "#8a3ab9",
+        contrastText: "white"
+    },
+    "youtube.com": {
+        label: "YouTube",
+        icon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialYouTube), {}),
+        color: "#FF0000",
+        contrastText: "white"
+    }
+};
+const $3964a2ca9e598444$var$useStyles = (0, $9pxSs$muistylesmakeStyles)(()=>({
+        link: {
+            textDecoration: "unset",
+            "& :hover": {
+                cursor: "pointer"
+            }
+        },
+        chip: {
+            paddingLeft: 5,
+            paddingRight: 5,
+            marginRight: 5,
+            marginBottom: 5
+        },
+        label: {
+            marginTop: -1
+        }
+    }));
+const $3964a2ca9e598444$var$MultiUrlField = ({ source: source, domainMapping: domainMapping })=>{
+    const newDomainMapping = {
+        ...$3964a2ca9e598444$var$defaultdomainMapping,
+        ...domainMapping
+    };
+    const record = (0, $9pxSs$useRecordContext)();
+    const classes = $3964a2ca9e598444$var$useStyles();
+    const urlArray = record[source] ? Array.isArray(record[source]) ? record[source] : [
+        record[source]
+    ] : [];
+    return urlArray.map((url, index)=>{
+        if (!url.startsWith("http")) url = `https://${url}`;
+        const parsedUrl = new URL(url);
+        if (!parsedUrl) return null;
+        const chip = newDomainMapping[parsedUrl.hostname] || {
+            label: "Site web",
+            icon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialLanguage), {}),
+            color: "#ea",
+            contrastText: "black"
+        };
+        return /*#__PURE__*/ (0, $9pxSs$jsx)("a", {
+            href: url,
+            target: "_blank",
+            rel: "noopener noreferrer",
+            className: classes.link,
+            children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Chip), {
+                component: "span",
+                icon: /*#__PURE__*/ (0, $9pxSs$react).cloneElement(chip.icon, {
+                    style: {
+                        color: chip.contrastText,
+                        width: 18,
+                        height: 18
+                    }
+                }),
+                size: "small",
+                label: chip.label,
+                classes: {
+                    root: classes.chip,
+                    label: classes.label
+                },
+                style: {
+                    color: chip.contrastText,
+                    backgroundColor: chip.color
+                }
+            })
+        }, index);
+    });
+};
+var $3964a2ca9e598444$export$2e2bcd8739ae039 = $3964a2ca9e598444$var$MultiUrlField;
+
+
+
+
+
+
+// useful to prevent click bubbling in a datagrid with rowClick
+const $ae119a539bc2f2b9$var$stopPropagation = (e)=>e.stopPropagation();
+// Our handleClick does nothing as we wrap the children inside a Link but it is
+// required by ChipField, which uses a Chip from material-ui.
+// The material-ui Chip requires an onClick handler to behave like a clickable element.
+const $ae119a539bc2f2b9$var$handleClick = ()=>{};
+const $ae119a539bc2f2b9$var$SeparatedListField = (props)=>{
+    let { children: children, link: link = "edit", linkType: linkType, separator: separator = ",\xa0" } = props;
+    const { data: data, isLoading: isLoading, resource: resource } = (0, $9pxSs$useListContext)(props);
+    const createPath = (0, $9pxSs$useCreatePath)();
+    if (linkType !== undefined) {
+        console.warn("The 'linkType' prop is deprecated and should be named to 'link' in <SeparatedListField />");
+        link = linkType;
+    }
+    if (isLoading) return /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$LinearProgress), {});
+    return /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Fragment), {
+        children: data.map((record, i)=>{
+            if (!record.id) return null;
+            const resourceLinkPath = link !== false && (typeof link === "function" ? link(record.id) : createPath({
+                resource: resource,
+                id: record.id,
+                type: link
+            }));
+            if (resourceLinkPath) return /*#__PURE__*/ (0, $9pxSs$jsxs)("span", {
+                children: [
+                    /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Link), {
+                        to: resourceLinkPath,
+                        onClick: $ae119a539bc2f2b9$var$stopPropagation,
+                        children: /*#__PURE__*/ (0, $9pxSs$cloneElement)((0, $9pxSs$Children).only(children), {
+                            // Workaround to force ChipField to be clickable
+                            onClick: $ae119a539bc2f2b9$var$handleClick
+                        })
+                    }),
+                    i < data.length - 1 && separator
+                ]
+            }, record.id);
+            return /*#__PURE__*/ (0, $9pxSs$jsxs)("span", {
+                children: [
+                    /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$RecordContextProvider), {
+                        value: record,
+                        children: children
+                    }),
+                    i < data.length - 1 && separator
+                ]
+            }, record.id);
+        })
+    });
+};
+var $ae119a539bc2f2b9$export$2e2bcd8739ae039 = $ae119a539bc2f2b9$var$SeparatedListField;
+
+
+
+
+export {$548fb3c4c04d834a$export$2e2bcd8739ae039 as AvatarWithLabelField, $867e5374e5f64b17$export$2e2bcd8739ae039 as ReferenceArrayField, $e253ae5050c248a7$export$2e2bcd8739ae039 as ReferenceField, $c6e9301cf3cc37bc$export$2e2bcd8739ae039 as QuickAppendReferenceArrayField, $3964a2ca9e598444$export$2e2bcd8739ae039 as MultiUrlField, $ae119a539bc2f2b9$export$2e2bcd8739ae039 as SeparatedListField};
 //# sourceMappingURL=index.es.js.map

@@ -40,7 +40,7 @@ describe('Permissions are correctly set on inbox', () => {
 
     expect(sebastien).toMatchObject({
       id: sebastienUri,
-      type: ['Person', 'foaf:Person'],
+      type: expect.arrayContaining(['Person', 'foaf:Person']),
       preferredUsername: 'srosset81',
       'foaf:nick': 'srosset81',
       inbox: `${sebastienUri}/inbox`,

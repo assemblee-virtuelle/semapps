@@ -1,6 +1,6 @@
 import urlJoin from 'url-join';
 import getOne from './getOne';
-import uploadAllFiles from '../utils/uploadAllFiles';
+import handleFiles from '../utils/handleFiles';
 import findContainersWithTypes from '../utils/findContainersWithTypes';
 
 const createMethod = config => async (resourceId, params) => {
@@ -43,7 +43,8 @@ const createMethod = config => async (resourceId, params) => {
     }
 
     // Upload files, if there are any
-    params.data = await uploadAllFiles(params.data, config);
+    const { updatedRecord } = await handleFiles.upload(params.data, config);
+    params.data = updatedRecord;
 
     const { headers: responseHeaders } = await httpClient(containerUri, {
       method: 'POST',

@@ -1,5 +1,7 @@
 const urlJoin = require('url-join');
 const { ACTOR_TYPES } = require('@semapps/activitypub');
+const { getSlugFromUri } = require('@semapps/ldp');
+const getPodsRoute = require('./routes/getPodsRoute');
 
 module.exports = {
   name: 'pod',
@@ -9,14 +11,20 @@ module.exports = {
   dependencies: ['triplestore', 'ldp', 'auth.account', 'api'],
   async started() {
     // Container with actors
+    // The `podsContainer: true` config will register the container but not create LDP containers on a dataset
     await this.broker.call('ldp.registry.register', {
+      name: 'pods',
       path: '/',
       podsContainer: true,
       acceptedTypes: [ACTOR_TYPES.PERSON],
       excludeFromMirror: true,
-      dereference: ['sec:publicKey', 'as:endpoints']
-      // newResourcesPermissions: {}
+      controlledActions: {
+        get: 'pod.getActor'
+      }
     });
+
+    // API routes to actors (and their collections) are added manually
+    await this.broker.call('api.addRoute', { route: getPodsRoute() });
 
     // Root container for the POD (/:username/data/)
     await this.broker.call('ldp.registry.register', {
@@ -47,8 +55,9 @@ module.exports = {
 
       // Attach the POD URI to the user's account
       const accounts = await ctx.call('auth.account.find', { query: { username } });
+
       await ctx.call('auth.account.update', {
-        '@id': accounts[0]['@id'],
+        id: accounts[0]['@id'],
         podUri
       });
 
@@ -56,12 +65,29 @@ module.exports = {
     },
     list() {
       return this.registeredPods;
+    },
+    exist(ctx) {
+      let { username, webId } = ctx.params;
+      if (!username) {
+        if (webId) {
+          username = getSlugFromUri(webId);
+        } else {
+          throw new Error(`No username or webId passed to pod.exist action`);
+        }
+      }
+
+      return this.registeredPods.includes(username);
+    },
+    getActor(ctx) {
+      return ctx.call('ldp.resource.get', ctx.params);
     }
   },
   events: {
     async 'auth.registered'(ctx) {
       const { webId, accountData } = ctx.params;
-      const { podUri } = accountData;
+      const { podUri, username } = accountData;
+
+      this.registeredPods.push(username);
 
       // Give full rights to user on his pod
       await ctx.call('webacl.resource.addRights', {

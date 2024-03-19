@@ -1,6 +1,7 @@
 const ActivitiesHandlerMixin = require('../../../mixins/activities-handler');
 const { ACTIVITY_TYPES, OBJECT_TYPES } = require('../../../constants');
 const { collectionPermissionsWithAnonRead } = require('../../../utils');
+const matchActivity = require('../../../utils/matchActivity');
 
 const ReplyService = {
   name: 'activitypub.reply',
@@ -40,7 +41,7 @@ const ReplyService = {
   activities: {
     postReply: {
       match(ctx, activity) {
-        return this.matchActivity(
+        return matchActivity(
           ctx,
           {
             type: ACTIVITY_TYPES.CREATE,
@@ -54,16 +55,26 @@ const ReplyService = {
           activity
         );
       },
-      async onEmit(ctx, activity, emitterUri) {
-        await this.actions.addReply(
-          { objectUri: activity.object.inReplyTo.id, replyUri: activity.object.id },
-          { parentCtx: ctx }
-        );
+      async onEmit(ctx, activity) {
+        if (this.isLocalObject(activity.object.inReplyTo.id)) {
+          await this.actions.addReply(
+            { objectUri: activity.object.inReplyTo.id, replyUri: activity.object.id },
+            { parentCtx: ctx }
+          );
+        }
+      },
+      async onReceive(ctx, activity) {
+        if (this.isLocalObject(activity.object.inReplyTo.id)) {
+          await this.actions.addReply(
+            { objectUri: activity.object.inReplyTo.id, replyUri: activity.object.id },
+            { parentCtx: ctx }
+          );
+        }
       }
     },
     deleteReply: {
       match(ctx, activity) {
-        return this.matchActivity(
+        return matchActivity(
           ctx,
           {
             type: ACTIVITY_TYPES.DELETE,
@@ -83,6 +94,11 @@ const ReplyService = {
           { parentCtx: ctx }
         );
       }
+    }
+  },
+  methods: {
+    isLocalObject(uri) {
+      return uri.startsWith(this.settings.baseUri);
     }
   }
 };

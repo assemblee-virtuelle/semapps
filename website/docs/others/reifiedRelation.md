@@ -14,15 +14,14 @@ ReifiedClass can use ObjectProperty reifiedClassToClass1 and reifiedClassToClass
 
 
 # Use
-## 1 : configure LDP container : disassembly and dereference
-Reified RElation wwill be send in only one object from React-Admin to LDP server. Server have to extract embended subjects (reified relation), create thos in specified container and link main subject to extracted subjects. Dereference setting have to be set to provide reified subbject instead uri during ldp get.
+## 1 : configure LDP container
+Reified RElation wwill be send in only one object from React-Admin to LDP server. Server have to extract embended subjects (reified relation), create thos in specified container and link main subject to extracted subjects.
 **ldp.service.js -> settings**
 ```
 containers :[
   {
     path: '/classe1',
     acceptedTypes: ['onto:Class1'],
-    dereference: ['onto:class1ToReifiedClass'],
     disassembly: [{ path: 'onto:class1ToReifiedClass', container: 'mySettingsBaseUrl/reifiedClass' }]
   },
   {

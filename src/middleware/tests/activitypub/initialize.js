@@ -1,19 +1,23 @@
 const fse = require('fs-extra');
 const path = require('path');
+const urlJoin = require('url-join');
 const { ServiceBroker } = require('moleculer');
 const { AuthLocalService } = require('@semapps/auth');
 const { CoreService } = require('@semapps/core');
-const { WebAclMiddleware } = require('@semapps/webacl');
+const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
 const { containers } = require('@semapps/activitypub');
 const { WebIdService } = require('@semapps/webid');
-const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
+const { clearDataset } = require('../utils');
 
 const initialize = async (port, mainDataset, accountsDataset) => {
+  await clearDataset(mainDataset);
+  await clearDataset(accountsDataset);
+
   const baseUrl = `http://localhost:${port}/`;
 
   const broker = new ServiceBroker({
-    middlewares: [EventsWatcher, WebAclMiddleware({ baseUrl })],
+    middlewares: [CacherMiddleware(CONFIG.ACTIVATE_CACHE), WebAclMiddleware({ baseUrl })],
     logger: {
       type: 'Console',
       options: {
@@ -54,21 +58,16 @@ const initialize = async (port, mainDataset, accountsDataset) => {
 
   broker.createService(WebIdService, {
     settings: {
-      usersContainer: `${baseUrl}actors/`
+      usersContainer: urlJoin(baseUrl, 'as/actor')
     }
   });
 
-  // Drop all existing triples, then restart broker so that default containers are recreated
-  await broker.start();
-  await broker.call('triplestore.dropAll', { webId: 'system' });
-  await broker.call('triplestore.dropAll', { dataset: accountsDataset, webId: 'system' });
-  await broker.stop();
   await broker.start();
 
   // setting some write permission on the containers for anonymous user, which is the one that will be used in the tests.
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    resourceUri: `${baseUrl}objects`,
+    resourceUri: urlJoin(baseUrl, 'as/object'),
     additionalRights: {
       anon: {
         write: true
@@ -77,7 +76,7 @@ const initialize = async (port, mainDataset, accountsDataset) => {
   });
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    resourceUri: `${baseUrl}actors`,
+    resourceUri: urlJoin(baseUrl, 'as/actor'),
     additionalRights: {
       anon: {
         write: true
@@ -86,7 +85,7 @@ const initialize = async (port, mainDataset, accountsDataset) => {
   });
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    resourceUri: `${baseUrl}activities`,
+    resourceUri: urlJoin(baseUrl, 'as/activity'),
     additionalRights: {
       anon: {
         write: true

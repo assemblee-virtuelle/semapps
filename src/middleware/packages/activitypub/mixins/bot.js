@@ -32,7 +32,7 @@ const BotMixin = {
     });
 
     if (!actorExist) {
-      console.log(`BotService > Actor ${actorSettings.name} does not exist yet, creating it...`);
+      this.logger.info(`BotService > Actor ${actorSettings.name} does not exist yet, creating it...`);
 
       const account = await this.broker.call(
         'auth.account.create',

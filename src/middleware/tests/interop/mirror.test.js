@@ -1,7 +1,6 @@
 const urlJoin = require('url-join');
 const waitForExpect = require('wait-for-expect');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { ACTIVITY_TYPES } = require('@semapps/activitypub');
 const initialize = require('./initialize');
 
 jest.setTimeout(50000);
@@ -9,8 +8,8 @@ jest.setTimeout(50000);
 let server1;
 let server2;
 
-const relay1 = 'http://localhost:3001/applications/relay';
-const relay2 = 'http://localhost:3002/applications/relay';
+const relay1 = 'http://localhost:3001/as/application/relay';
+const relay2 = 'http://localhost:3002/as/application/relay';
 
 beforeAll(async () => {
   server1 = await initialize(3001, 'testData', 'settings');

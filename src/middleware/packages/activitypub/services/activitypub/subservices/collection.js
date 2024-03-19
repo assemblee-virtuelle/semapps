@@ -1,9 +1,9 @@
+const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 
 const CollectionService = {
   name: 'activitypub.collection',
   settings: {
-    jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
     podProvider: false
   },
   dependencies: ['triplestore', 'ldp.resource'],
@@ -11,14 +11,12 @@ const CollectionService = {
     /*
      * Create a persisted collection
      * @param collectionUri The full URI of the collection
-     * @param summary An optional description of the collection
+     * @param config.ordered If true, an OrderedCollection will be created
+     * @param config.summary An optional description of the collection
      */
     async create(ctx) {
-      const { collectionUri } = ctx.params;
-      const { ordered, summary } = {
-        ...(await ctx.call('activitypub.registry.getByUri', { collectionUri })),
-        ...ctx.params
-      };
+      const { collectionUri, config } = ctx.params;
+      const { ordered, summary } = config || {};
       await ctx.call('triplestore.insert', {
         resource: {
           '@context': 'https://www.w3.org/ns/activitystreams',
@@ -115,6 +113,11 @@ const CollectionService = {
         resource: `<${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>`,
         webId: 'system'
       });
+
+      await ctx.emit('activitypub.collection.added', {
+        collectionUri,
+        itemUri
+      });
     },
     /*
      * Detach an object from a collection
@@ -137,6 +140,11 @@ const CollectionService = {
         `,
         webId: 'system'
       });
+
+      await ctx.emit('activitypub.collection.removed', {
+        collectionUri,
+        itemUri
+      });
     },
     /*
      * Returns a JSON-LD formatted collection stored in the triple store
@@ -144,10 +152,11 @@ const CollectionService = {
      * @param dereferenceItems Should we dereference the items in the collection ?
      * @param page Page number. If none are defined, display the collection.
      * @param itemsPerPage Number of items to show per page
+     * @param jsonContext JSON-LD context to format the whole result
      * @param sort Object with `predicate` and `order` properties to sort ordered collections
      */
     async get(ctx) {
-      const { collectionUri, page } = ctx.params;
+      const { collectionUri, page, jsonContext } = ctx.params;
       const webId = ctx.params.webId || ctx.meta.webId || 'anon';
       const { dereferenceItems, itemsPerPage, sort } = {
         ...(await ctx.call('activitypub.registry.getByUri', { collectionUri })),
@@ -172,8 +181,7 @@ const CollectionService = {
 
       // No persisted collection found
       if (!collection['@id']) {
-        ctx.meta.$statusCode = 404;
-        return null;
+        throw new MoleculerError('Collection Not found', 404, 'NOT_FOUND');
       }
 
       if (this.isOrderedCollection(collection) && !sort) {
@@ -203,15 +211,12 @@ const CollectionService = {
       let returnData = null;
 
       if (page > 1 && page > numPages) {
-        // The collection page does not exist
-        ctx.meta.$statusCode = 404;
-        return;
-      }
-      if ((itemsPerPage && !page) || (page === 1 && allItems.length === 0)) {
+        throw new MoleculerError('Collection Not found', 404, 'NOT_FOUND');
+      } else if ((itemsPerPage && !page) || (page === 1 && allItems.length === 0)) {
         // Pagination is enabled but no page is selected, return the collection
         // OR the first page is selected but there is no item, return an empty page
         returnData = {
-          '@context': this.settings.jsonContext,
+          '@context': 'https://www.w3.org/ns/activitystreams',
           id: collectionUri,
           type: this.isOrderedCollection(collection) ? 'OrderedCollection' : 'Collection',
           summary: collection.summary,
@@ -234,10 +239,11 @@ const CollectionService = {
           for (const itemUri of selectedItemsUris) {
             try {
               selectedItems.push(
-                await ctx.call('activitypub.object.get', {
-                  objectUri: itemUri,
-                  actorUri: webId,
-                  jsonContext: this.settings.jsonContext
+                await ctx.call('ldp.resource.get', {
+                  resourceUri: itemUri,
+                  accept: MIME_TYPES.JSON,
+                  jsonContext: 'https://www.w3.org/ns/activitystreams',
+                  webId
                 })
               );
             } catch (e) {
@@ -258,7 +264,7 @@ const CollectionService = {
 
         if (itemsPerPage) {
           returnData = {
-            '@context': this.settings.jsonContext,
+            '@context': 'https://www.w3.org/ns/activitystreams',
             id: `${collectionUri}?page=${page}`,
             type: this.isOrderedCollection(collection) ? 'OrderedCollectionPage' : 'CollectionPage',
             partOf: collectionUri,
@@ -270,7 +276,7 @@ const CollectionService = {
         } else {
           // No pagination, return the collection
           returnData = {
-            '@context': this.settings.jsonContext,
+            '@context': 'https://www.w3.org/ns/activitystreams',
             id: collectionUri,
             type: this.isOrderedCollection(collection) ? 'OrderedCollection' : 'Collection',
             summary: collection.summary,
@@ -280,8 +286,10 @@ const CollectionService = {
         }
       }
 
-      ctx.meta.$responseType = 'application/ld+json';
-      return returnData;
+      return await ctx.call('jsonld.parser.compact', {
+        input: returnData,
+        context: jsonContext || (await ctx.call('jsonld.context.get'))
+      });
     },
     /*
      * Empty the collection, deleting all items it contains.

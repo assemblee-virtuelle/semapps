@@ -1,17 +1,19 @@
 const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { void: voidOntology } = require('@semapps/ontologies');
 const { JsonLdSerializer } = require('jsonld-streaming-serializer');
 const { DataFactory, Writer } = require('n3');
 
 const { quad, namedNode, literal, blankNode } = DataFactory;
 const { MoleculerError } = require('moleculer').Errors;
-const { getPrefixJSON, createFragmentURL, regexProtocolAndHostAndPort, defaultToArray } = require('@semapps/ldp');
+const { createFragmentURL, regexProtocolAndHostAndPort, defaultToArray } = require('@semapps/ldp');
 const { parseHeader } = require('@semapps/middlewares');
 
 const prefixes = {
   dc: 'http://purl.org/dc/terms/',
   void: 'http://rdfs.org/ns/void#',
-  semapps: 'http://semapps.org/ns/core#'
+  semapps: 'http://semapps.org/ns/core#',
+  xsd: 'http://www.w3.org/2001/XMLSchema#'
 };
 
 function streamToString(stream) {
@@ -43,10 +45,7 @@ const jsonContext = {
   'void:entities': { '@type': 'xsd:integer' },
   'void:doNotMirror': { '@type': 'xsd:boolean' },
   'void:class': { '@type': '@id' },
-  'void:classPartition': { '@type': '@id' },
-  'semapps:blankNodes': {
-    '@type': '@id'
-  }
+  'void:classPartition': { '@type': '@id' }
 };
 
 const addClassPartition = (serverUrl, partition, graph, scalar) => {
@@ -69,12 +68,6 @@ const addClassPartition = (serverUrl, partition, graph, scalar) => {
       )
     }
   ];
-  if (partition['http://semapps.org/ns/core#blankNodes'])
-    blank.data.push({
-      s: blankNode(`b${scalar}`),
-      p: namedNode('http://semapps.org/ns/core#blankNodes'),
-      o: partition['http://semapps.org/ns/core#blankNodes'].map(bn => namedNode(bn))
-    });
   if (partition['http://semapps.org/ns/core#doNotMirror'])
     blank.data.push({
       s: blankNode(`b${scalar}`),
@@ -145,11 +138,6 @@ const addMirrorServer = async (
       'http://rdfs.org/ns/void#class': types.map(type => type.t.value)
     };
 
-    const dereference = partitionsMap[p];
-    if (dereference) {
-      partition['http://semapps.org/ns/core#blankNodes'] = defaultToArray(dereference['semapps:blankNodes']);
-    }
-
     const count = await ctx.call('triplestore.query', {
       query: `SELECT (COUNT (?o) as ?count) FROM <${mirrorGraph}> { <${p}> <http://www.w3.org/ns/ldp#contains> ?o }`
     });
@@ -165,12 +153,29 @@ module.exports = {
   settings: {
     baseUrl: null,
     mirrorGraphName: 'http://semapps.org/mirror',
-    ontologies: [],
     title: null,
     description: null,
     license: null
   },
-  dependencies: ['ldp.registry', 'api', 'triplestore', 'jsonld'],
+  dependencies: ['ldp.registry', 'api', 'triplestore', 'ontologies', 'jsonld'],
+  async started() {
+    await this.broker.call('ontologies.register', {
+      ...voidOntology,
+      overwrite: true
+    });
+    await this.broker.call('api.addRoute', {
+      route: {
+        path: '/.well-known/void',
+        name: 'void-endpoint',
+        bodyParsers: false,
+        authorization: false,
+        authentication: true,
+        aliases: {
+          'GET /': [parseHeader, 'void.api_get']
+        }
+      }
+    });
+  },
   actions: {
     getRemote: {
       visibility: 'public',
@@ -198,15 +203,12 @@ module.exports = {
     get: {
       visibility: 'public',
       params: {
-        accept: { type: 'string', optional: true },
-        webId: { type: 'string', optional: true }
+        accept: { type: 'string', optional: true }
       },
       async handler(ctx) {
-        let { webId, accept } = ctx.params;
-        webId = webId || ctx.meta.webId || 'anon';
+        const accept = ctx.params.accept || MIME_TYPES.TURTLE;
 
-        accept = accept || MIME_TYPES.TURTLE;
-
+        const ontologies = await ctx.call('ontologies.list');
         const partitions = await this.getContainers(ctx);
 
         const url = urlJoin(this.settings.baseUrl, '.well-known/void');
@@ -275,11 +277,11 @@ module.exports = {
           p: namedNode('http://rdfs.org/ns/void#rootResource'),
           o: namedNode(this.settings.baseUrl)
         });
-        for (const onto of this.settings.ontologies) {
+        for (const ontology of ontologies) {
           graph.push({
             s: namedNode(thisServer),
             p: namedNode('http://rdfs.org/ns/void#vocabulary'),
-            o: namedNode(onto.url)
+            o: namedNode(ontology.namespace)
           });
         }
 
@@ -356,20 +358,6 @@ module.exports = {
       });
     }
   },
-  async started() {
-    await this.broker.call('api.addRoute', {
-      route: {
-        path: '/.well-known/void',
-        name: 'void-endpoint',
-        bodyParsers: false,
-        authorization: false,
-        authentication: true,
-        aliases: {
-          'GET /': [parseHeader, 'void.api_get']
-        }
-      }
-    });
-  },
   methods: {
     async getContainers(ctx) {
       const { baseUrl } = this.settings;
@@ -383,7 +371,6 @@ module.exports = {
               'http://rdfs.org/ns/void#uriSpace': urlJoin(baseUrl, c.path),
               'http://rdfs.org/ns/void#class': defaultToArray(c.acceptedTypes)
             };
-            if (c.dereference) partition['http://semapps.org/ns/core#blankNodes'] = c.dereference;
             if (c.excludeFromMirror) partition['http://semapps.org/ns/core#doNotMirror'] = true;
             const count = await ctx.call('triplestore.query', {
               query: `SELECT (COUNT (?o) as ?count) { <${partition['http://rdfs.org/ns/void#uriSpace']}> <http://www.w3.org/ns/ldp#contains> ?o }`
@@ -395,9 +382,9 @@ module.exports = {
       return res;
     },
     async formatOutput(ctx, output, voidUrl, jsonLD) {
-      const prefix = getPrefixJSON(this.settings.ontologies);
+      const prefix = await ctx.call('ontologies.getPrefixes');
       if (!jsonLD) {
-        const turtle = await new Promise((resolve, reject) => {
+        const turtle = await new Promise(resolve => {
           const writer = new Writer({
             prefixes: { ...prefixes, ...prefix, '': `${voidUrl}#` },
             format: 'Turtle'
@@ -424,6 +411,7 @@ module.exports = {
       }
       const jsonldContext = { ...jsonContext, ...prefix };
 
+      // TODO put this in jsonld service
       const mySerializer = new JsonLdSerializer({
         context: jsonldContext,
         baseIRI: voidUrl
@@ -447,7 +435,7 @@ module.exports = {
 
       const jsonLd = JSON.parse(await streamToString(mySerializer));
 
-      const compactJsonLd = await ctx.call('jsonld.frame', {
+      const compactJsonLd = await ctx.call('jsonld.parser.frame', {
         input: jsonLd,
         frame: {
           '@context': jsonldContext,

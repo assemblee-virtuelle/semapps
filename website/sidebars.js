@@ -1,7 +1,14 @@
+const divider = {
+  type: 'html',
+  value: '<hr style="margin: 7px 0 5px 0;" />',
+  defaultStyle: true
+};
+
 module.exports = {
-  guides: ['guides/ldp-server','guides/dms','guides/activitypub'],
+  guides: ['guides/ldp-server', 'guides/dms', 'guides/activitypub'],
   middleware: [
     'middleware/index',
+    divider,
     'middleware/core',
     {
       type: 'category',
@@ -10,25 +17,76 @@ module.exports = {
         type: 'doc',
         id: 'middleware/activitypub/index'
       },
-      items: [
-        'middleware/activitypub/activities-handler',
-        'middleware/activitypub/activity-mapping',
-      ],
+      items: ['middleware/activitypub/activities-handler', 'middleware/activitypub/activity-mapping']
     },
     'middleware/auth',
-    'middleware/backup',
+
     {
       type: 'category',
-      label: 'HTTP & LD Signature',
+      label: 'HTTP Signature',
       link: {
         type: 'doc',
         id: 'middleware/signature/index'
       },
-      items: [
-        'middleware/signature/keypair',
-        'middleware/signature/proxy',
-      ],
+      items: ['middleware/signature/keypair', 'middleware/signature/proxy']
     },
+    {
+      type: 'category',
+      label: 'JSON-LD',
+      link: {
+        type: 'doc',
+        id: 'middleware/jsonld/index'
+      },
+      items: ['middleware/jsonld/parser', 'middleware/jsonld/context']
+    },
+    {
+      type: 'category',
+      label: 'LDP',
+      link: {
+        type: 'doc',
+        id: 'middleware/ldp/index'
+      },
+      items: [
+        'middleware/ldp/resource',
+        'middleware/ldp/container',
+        'middleware/ldp/link-header',
+        'middleware/ldp/registry',
+        'middleware/ldp/controlled-container',
+        'middleware/ldp/document-tagger',
+        'middleware/ldp/image-processor'
+      ]
+    },
+    'middleware/nodeinfo',
+    'middleware/ontologies',
+    'middleware/sparql-endpoint',
+    {
+      type: 'category',
+      label: 'Triplestore',
+      link: {
+        type: 'doc',
+        id: 'middleware/triplestore/index'
+      },
+      items: ['middleware/triplestore/dataset']
+    },
+    'middleware/void',
+    {
+      type: 'category',
+      label: 'WebACL',
+      link: {
+        type: 'doc',
+        id: 'middleware/webacl/index'
+      },
+      items: [
+        'middleware/webacl/resource',
+        'middleware/webacl/group',
+        'middleware/webacl/authorizer',
+        'middleware/webacl/groups-manager'
+      ]
+    },
+    'middleware/webfinger',
+    'middleware/webid',
+    divider,
+    'middleware/backup',
     {
       type: 'category',
       label: 'Importer',
@@ -44,26 +102,11 @@ module.exports = {
         'middleware/importer/jotform',
         'middleware/importer/mobilizon',
         'middleware/importer/prestashop',
-        'middleware/importer/yeswiki',
-      ],
+        'middleware/importer/wordpress',
+        'middleware/importer/yeswiki'
+      ]
     },
     'middleware/inference',
-    'middleware/jsonld',
-    {
-      type: 'category',
-      label: 'LDP',
-      link: {
-        type: 'doc',
-        id: 'middleware/ldp/index'
-      },
-      items: [
-        'middleware/ldp/resource',
-        'middleware/ldp/container',
-        'middleware/ldp/controlled-container',
-        'middleware/ldp/document-tagger',
-        'middleware/ldp/image-processor',
-      ],
-    },
     'middleware/migration',
     {
       type: 'category',
@@ -72,12 +115,8 @@ module.exports = {
         type: 'doc',
         id: 'middleware/notifications/index'
       },
-      items: [
-        'middleware/notifications/digest',
-        'middleware/notifications/single-mail',
-      ],
+      items: ['middleware/notifications/digest', 'middleware/notifications/single-mail']
     },
-    'middleware/sparql-endpoint',
     {
       type: 'category',
       label: 'Sync',
@@ -89,38 +128,10 @@ module.exports = {
         'middleware/sync/objects-watcher',
         'middleware/sync/aggregator',
         'middleware/sync/mirror',
-        'middleware/sync/synchronizer',
-      ],
+        'middleware/sync/synchronizer'
+      ]
     },
-    {
-      type: 'category',
-      label: 'Triplestore',
-      link: {
-        type: 'doc',
-        id: 'middleware/triplestore/index'
-      },
-      items: [
-        'middleware/triplestore/dataset',
-      ],
-    },
-    'middleware/void',
-    {
-      type: 'category',
-      label: 'WebACL',
-      link: {
-        type: 'doc',
-        id: 'middleware/webacl/index'
-      },
-      items: [
-        'middleware/webacl/resource',
-        'middleware/webacl/group',
-        'middleware/webacl/authorizer',
-        'middleware/webacl/groups-manager',
-      ],
-    },
-    'middleware/webfinger',
-    'middleware/webhooks',
-    'middleware/webid'
+    'middleware/webhooks'
   ],
   frontend: [
     'frontend/index',
@@ -131,10 +142,7 @@ module.exports = {
         type: 'doc',
         id: 'frontend/semantic-data-provider/index'
       },
-      items: [
-        'frontend/semantic-data-provider/data-servers',
-        'frontend/semantic-data-provider/data-model',
-      ],
+      items: ['frontend/semantic-data-provider/data-servers', 'frontend/semantic-data-provider/data-model']
     },
     'frontend/auth-provider',
     'frontend/activitypub-components',
@@ -146,13 +154,9 @@ module.exports = {
     'frontend/list-components',
     'frontend/markdown-components'
   ],
-  triplestore: [
-    'triplestore/index',
-    'triplestore/migrating-datasets',
-    'triplestore/compacting-datasets'
-  ],
+  triplestore: ['triplestore/index', 'triplestore/migrating-datasets', 'triplestore/compacting-datasets'],
   contribute: {
-    'SemApps core': ['contribute/code','contribute/coding-conventions'],
-    Documentation: ['contribute/documentation','contribute/style-guide']
+    'SemApps core': ['contribute/code', 'contribute/coding-conventions'],
+    Documentation: ['contribute/documentation', 'contribute/style-guide']
   }
 };

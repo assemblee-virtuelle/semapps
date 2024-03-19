@@ -41,7 +41,9 @@ const englishMessages = {
       username_or_email: 'User ID or email address',
       current_password: 'Current password',
       new_password: 'New password',
-      confirm_new_password: 'Confirm new password'
+      confirm_new_password: 'Confirm new password',
+      password_strength: 'Password strength',
+      password_too_weak: 'Password too weak. Increase length or add special characters.'
     },
     helper: {
       login: 'Sign in to your account',
@@ -56,6 +58,9 @@ const englishMessages = {
       resource_control_forbidden: 'You are not allowed to control this resource',
       container_create_forbidden: 'You are not allowed to create new resource',
       container_list_forbidden: 'You are not allowed to list these resources',
+      unable_to_fetch_user_data: 'Unable to fetch user data',
+      no_token_returned: 'No token returned',
+      invalid_token_returned: 'Invalid token returned',
       user_not_allowed_to_login: 'You are not allowed to login with this account',
       user_email_not_found: 'No account found with this email address',
       user_email_exist: 'An account already exist with this email address',

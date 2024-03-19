@@ -29,7 +29,7 @@ describe('Create/Update/Delete objects', () => {
 
     sebastien = await broker.call('activitypub.actor.awaitCreateComplete', { actorUri: sebastienUri });
 
-    expect(sebastienUri).toBe(`${CONFIG.HOME_URL}actors/srosset81`);
+    expect(sebastienUri).toBe(`${CONFIG.HOME_URL}as/actor/srosset81`);
   });
 
   test('Create object', async () => {

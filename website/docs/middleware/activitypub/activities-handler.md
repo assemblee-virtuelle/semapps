@@ -4,11 +4,10 @@ title: ActivitiesHandlerMixin
 
 Watch for ActivityPub activities matching certain patterns and easily handle side effects.
 
-
 ## Usage
 
 ```js
-const { ActivitiesHandlerMixin, ACTIVITY_TYPES, OBJECT_TYPES } = require('@semapps/activitypub');
+const { ActivitiesHandlerMixin, ACTIVITY_TYPES, OBJECT_TYPES, matchActivity } = require('@semapps/activitypub');
 
 module.exports = {
   mixins: [ActivitiesHandlerMixin],
@@ -32,7 +31,7 @@ module.exports = {
         if (activity.actor !== 'http://localhost:3000/myself') {
           return false;
         } else {
-          const dereferenceActivityOrFalse = await this.matchActivity(ctx, { type: ACTIVITY_TYPES.ANNOUNCE }, activity);
+          const dereferenceActivityOrFalse = await matchActivity(ctx, { type: ACTIVITY_TYPES.ANNOUNCE }, activity);
           return dereferenceActivityOrFalse;
         }
       },

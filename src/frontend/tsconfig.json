@@ -6,7 +6,12 @@
     "noLib": false,
     "skipLibCheck": true,
     "sourceMap": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "isolatedModules": true,
+    "noImplicitAny": true,
+    "esModuleInterop": true,
+    "jsx": "react-jsx",
+    "lib": ["ESNext", "dom"]
   },
   "exclude": ["node_modules", "*.es.js", "*.cjs", "*.cjs.js"]
 }

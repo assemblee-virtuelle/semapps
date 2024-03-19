@@ -41,7 +41,9 @@ const frenchMessages = {
       username_or_email: 'Identifiant ou adresse e-mail',
       current_password: 'Mot de passe actuel',
       new_password: 'Nouveau mot de passe',
-      confirm_new_password: 'Confirmer le nouveau mot de passe'
+      confirm_new_password: 'Confirmer le nouveau mot de passe',
+      password_strength: 'Force du mot de passe',
+      password_too_weak: 'Mot de passe trop faible. Augmenter la longueur ou ajouter des caractères spéciaux.'
     },
     helper: {
       login: 'Connectez-vous à votre compte.',
@@ -57,6 +59,9 @@ const frenchMessages = {
       resource_control_forbidden: "Vous n'avez pas la permission d'administrer cette ressource",
       container_create_forbidden: "Vous n'avez pas la permission de créer des ressources",
       container_list_forbidden: "Vous n'avez pas la permission de voir ces ressources",
+      unable_to_fetch_user_data: 'Impossible de récupérer les données du profil',
+      no_token_returned: 'Aucun token a été retourné',
+      invalid_token_returned: 'Token invalide',
       user_not_allowed_to_login: "Vous n'avez pas le droit de vous connecter avec ce compte",
       user_email_not_found: 'Aucun compte trouvé avec cette adresse mail',
       user_email_exist: 'Un compte existe déjà avec cette adresse mail',

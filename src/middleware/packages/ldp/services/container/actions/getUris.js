@@ -2,6 +2,9 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 
 module.exports = {
   visibility: 'public',
+  params: {
+    containerUri: { type: 'string', optional: true }
+  },
   async handler(ctx) {
     const { containerUri } = ctx.params;
 

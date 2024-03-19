@@ -1,9 +1,9 @@
-const { triple, namedNode, blankNode, literal } = require('rdf-data-model');
+const { triple, namedNode } = require('rdf-data-model');
 const waitForExpect = require('wait-for-expect');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const initialize = require('./initialize');
 
-jest.setTimeout(50000);
+jest.setTimeout(70000);
 
 let server1;
 let server2;

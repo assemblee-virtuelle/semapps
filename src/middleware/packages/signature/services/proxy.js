@@ -30,7 +30,7 @@ const ProxyService = {
     };
 
     if (this.settings.podProvider) {
-      await this.broker.call('api.addRoute', { route: { path: '/:username/proxy', ...routeConfig } });
+      await this.broker.call('api.addRoute', { route: { path: '/:username([^/.][^/]+)/proxy', ...routeConfig } });
     } else {
       await this.broker.call('api.addRoute', { route: { path: '/proxy', ...routeConfig } });
     }
@@ -89,7 +89,12 @@ const ProxyService = {
       });
 
       // Convert Headers object if necessary (otherwise we can't destructure it below)
-      if (headers && typeof headers === 'object' && headers.constructor.name === 'Headers') {
+      // Note: if we use NodeJS built-in Headers instead of node-fetch Headers, the constructor name is _Headers
+      if (
+        headers &&
+        typeof headers === 'object' &&
+        (headers.constructor.name === 'Headers' || headers.constructor.name === '_Headers')
+      ) {
         headers = Object.fromEntries(headers);
       }
 
@@ -103,9 +108,9 @@ const ProxyService = {
       });
 
       if (response.ok) {
-        let body = await response.text();
+        let responseBody = await response.text();
         try {
-          body = JSON.parse(body);
+          responseBody = JSON.parse(responseBody);
         } catch (e) {
           // Do nothing if body is not JSON
         }
@@ -115,14 +120,19 @@ const ProxyService = {
         response.headers.delete('connection');
 
         return {
-          body,
+          body: responseBody,
           headers: Object.fromEntries(response.headers.entries()),
           status: response.status,
           statusText: response.statusText
         };
+      } else {
+        this.logger.warn(
+          `Could not ${method || 'GET'} ${url} through proxy of ${actorUri} (Error ${response.status}: ${
+            response.statusText
+          })`
+        );
+        throw new MoleculerError(response.statusText, response.status);
       }
-      this.logger.warn(`Could not fetch ${url} through proxy of ${actorUri}`);
-      throw new MoleculerError(response.statusText, response.status);
     }
   },
   events: {

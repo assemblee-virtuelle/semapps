@@ -27,3 +27,5 @@ export const getAuthServerUrl = async dataProvider => {
   // If the server is a POD, return the root URL instead of https://domain.com/user/data
   return authServer.pod ? new URL(authServer.baseUrl).origin : authServer.baseUrl;
 };
+
+export const delay = async t => new Promise(resolve => setTimeout(resolve, t));

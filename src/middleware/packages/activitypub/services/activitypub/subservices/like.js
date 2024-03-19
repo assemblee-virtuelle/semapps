@@ -1,6 +1,7 @@
 const ActivitiesHandlerMixin = require('../../../mixins/activities-handler');
-const { ACTIVITY_TYPES, ACTOR_TYPES, OBJECT_TYPES } = require('../../../constants');
+const { ACTIVITY_TYPES } = require('../../../constants');
 const { collectionPermissionsWithAnonRead } = require('../../../utils');
+const matchActivity = require('../../../utils/matchActivity');
 
 const LikeService = {
   name: 'activitypub.like',
@@ -85,7 +86,7 @@ const LikeService = {
   activities: {
     likeObject: {
       match(ctx, activity) {
-        return this.matchActivity(
+        return matchActivity(
           ctx,
           {
             type: ACTIVITY_TYPES.LIKE,
@@ -102,7 +103,7 @@ const LikeService = {
     },
     unlikeObject: {
       match(ctx, activity) {
-        return this.matchActivity(
+        return matchActivity(
           ctx,
           {
             type: ACTIVITY_TYPES.UNDO,

@@ -1,5 +1,3 @@
-const { MoleculerError } = require('moleculer').Errors;
-
 module.exports = {
   action: {
     visibility: 'public',
@@ -23,7 +21,11 @@ module.exports = {
         webId: 'system'
       });
 
-      ctx.emit('webacl.resource.deleted', { uri: resourceUri, isContainer }, { meta: { webId: null, dataset: null } });
+      ctx.emit(
+        'webacl.resource.deleted',
+        { uri: resourceUri, dataset: ctx.meta.dataset, isContainer },
+        { meta: { webId: null, dataset: null } }
+      );
     }
   }
 };

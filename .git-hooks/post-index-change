@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Catch cases where the work dir changed after a git command.
+# In that cases, run ./scripts/on-workdir-changed.sh
+
+
+function in_rebase {
+  git_dir=$(git rev-parse --git-dir)
+  # Check if git_dir/rebase-merge or /rebase_apply exist.
+  # Then return the result
+  return $([ -d "$git_dir/rebase-merge" ] || [ -d "$git_dir/rebase-apply" ])
+}
+
+ROOT_DIR=$(git rev-parse --show-toplevel)
+cd "$ROOT_DIR"
+
+# If in rebase, this hook is called multiple times.
+# Skip here and wait for post-rewrite to have been called.
+if in_rebase; then
+  exit 0
+fi
+
+
+# Get first argument. If it is 1, this indicates, working dir files have changed.
+if [ "$1" = 1 ] ; then
+  ./scripts/on-workdir-changed.sh
+fi
+
+
+
+
+
+
+
+
+

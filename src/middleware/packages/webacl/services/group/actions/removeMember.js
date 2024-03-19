@@ -6,9 +6,10 @@ module.exports = {
   api: async function api(ctx) {
     if (!ctx.params.deleteUserUri)
       throw new MoleculerError('needs a deleteUserUri in your POST (json)', 400, 'BAD_REQUEST');
+    if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;
 
     await ctx.call('webacl.group.removeMember', {
-      groupSlug: ctx.params.id,
+      groupSlug: this.settings.podProvider ? `${ctx.params.username}/${ctx.params.id}` : ctx.params.id,
       memberUri: ctx.params.deleteUserUri
     });
 
