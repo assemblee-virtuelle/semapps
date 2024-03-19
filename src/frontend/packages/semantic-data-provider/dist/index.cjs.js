@@ -435,7 +435,6 @@ var $e5241bff9fc0c9d7$export$2e2bcd8739ae039 = $e5241bff9fc0c9d7$var$getEmbedFra
 
 
 
-
 const $761c677606459117$var$resolvePrefix = (item, ontologies)=>{
     if (item.startsWith("http://") || item.startsWith("https://")) // Already resolved, return the URI
     return item;
@@ -595,8 +594,10 @@ var $3b137d792e8838ac$export$2e2bcd8739ae039 = $3b137d792e8838ac$var$buildAutoDe
 
 
 
+
+var $33c37185da3771a9$require$SparqlGenerator = $bkNnK$sparqljs.Generator;
 const { literal: $33c37185da3771a9$var$literal, namedNode: $33c37185da3771a9$var$namedNode, triple: $33c37185da3771a9$var$triple, variable: $33c37185da3771a9$var$variable } = (0, ($parcel$interopDefault($bkNnK$rdfjsdatamodel)));
-const $33c37185da3771a9$var$generator = new (0, $bkNnK$sparqljs.Generator)({
+const $33c37185da3771a9$var$generator = new $33c37185da3771a9$require$SparqlGenerator({
 });
 const $33c37185da3771a9$var$reservedFilterKeys = [
     "q",
@@ -648,7 +649,7 @@ const $33c37185da3771a9$var$buildSparqlQuery = ({ containers: containers, params
     if (filter && Object.keys(filter).length > 0) {
         const hasSPARQLFilter = filter.sparqlWhere && Object.keys(filter.sparqlWhere).length > 0;
         const hasFullTextSearch = filter.q && filter.q.length > 0;
-        if (hasSPARQLFilter) /* 
+        if (hasSPARQLFilter) /*
         Example of usage :
         {
           "sparqlWhere": {
@@ -1408,10 +1409,8 @@ var $f763906f9b20f2d8$export$2e2bcd8739ae039 = $f763906f9b20f2d8$var$FilterHandl
  *
  *
  */ const $b4703fef6d6af456$var$GroupedReferenceHandler = ({ children: children, groupReference: groupReference, groupLabel: groupLabel, groupHeader: groupHeader, filterProperty: filterProperty, ...otherProps })=>{
-    const { data: data } = (0, $bkNnK$reactadmin.useGetList)({
-        resource: groupReference,
-        payload: {}
-    });
+    const record = (0, $bkNnK$reactadmin.useRecordContext)();
+    const { data: data } = (0, $bkNnK$reactadmin.useGetList)(groupReference);
     return /*#__PURE__*/ (0, $bkNnK$reactjsxruntime.jsx)((0, $bkNnK$reactjsxruntime.Fragment), {
         children: data?.map((data, index)=>{
             const filter = {};
@@ -1424,6 +1423,7 @@ var $f763906f9b20f2d8$export$2e2bcd8739ae039 = $f763906f9b20f2d8$var$FilterHandl
                     }),
                     /*#__PURE__*/ (0, $bkNnK$reactjsxruntime.jsx)((0, $f763906f9b20f2d8$export$2e2bcd8739ae039), {
                         ...otherProps,
+                        record: record,
                         filter: filter,
                         label: data[groupLabel],
                         children: children

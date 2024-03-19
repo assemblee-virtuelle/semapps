@@ -5,7 +5,7 @@ import $fj9kP$rdfjsdatamodel, {triple as $fj9kP$triple, variable as $fj9kP$varia
 import {Generator as $fj9kP$Generator} from "sparqljs";
 import $fj9kP$cryptojsmd5 from "crypto-js/md5";
 import $fj9kP$jwtdecode from "jwt-decode";
-import {fetchUtils as $fj9kP$fetchUtils, DataProviderContext as $fj9kP$DataProviderContext, useGetList as $fj9kP$useGetList, ArrayInput as $fj9kP$ArrayInput, SimpleFormIterator as $fj9kP$SimpleFormIterator, TextInput as $fj9kP$TextInput} from "react-admin";
+import {fetchUtils as $fj9kP$fetchUtils, DataProviderContext as $fj9kP$DataProviderContext, useRecordContext as $fj9kP$useRecordContext, useGetList as $fj9kP$useGetList, ArrayInput as $fj9kP$ArrayInput, SimpleFormIterator as $fj9kP$SimpleFormIterator, TextInput as $fj9kP$TextInput} from "react-admin";
 import $fj9kP$react, {useContext as $fj9kP$useContext, useMemo as $fj9kP$useMemo, useCallback as $fj9kP$useCallback, useState as $fj9kP$useState, useEffect as $fj9kP$useEffect} from "react";
 import {jsx as $fj9kP$jsx, Fragment as $fj9kP$Fragment, jsxs as $fj9kP$jsxs} from "react/jsx-runtime";
 import $fj9kP$muistylesmakeStyles from "@mui/styles/makeStyles";
@@ -414,7 +414,6 @@ var $3007d5479dd82d51$export$2e2bcd8739ae039 = $3007d5479dd82d51$var$getEmbedFra
 
 
 
-
 const $564e5d81f6496048$var$resolvePrefix = (item, ontologies)=>{
     if (item.startsWith("http://") || item.startsWith("https://")) // Already resolved, return the URI
     return item;
@@ -574,8 +573,10 @@ var $efbe3fa6f1479c06$export$2e2bcd8739ae039 = $efbe3fa6f1479c06$var$buildAutoDe
 
 
 
+
+var $6cde9a8fbbde3ffb$require$SparqlGenerator = $fj9kP$Generator;
 const { literal: $6cde9a8fbbde3ffb$var$literal, namedNode: $6cde9a8fbbde3ffb$var$namedNode, triple: $6cde9a8fbbde3ffb$var$triple, variable: $6cde9a8fbbde3ffb$var$variable } = (0, $fj9kP$rdfjsdatamodel);
-const $6cde9a8fbbde3ffb$var$generator = new (0, $fj9kP$Generator)({
+const $6cde9a8fbbde3ffb$var$generator = new $6cde9a8fbbde3ffb$require$SparqlGenerator({
 });
 const $6cde9a8fbbde3ffb$var$reservedFilterKeys = [
     "q",
@@ -627,7 +628,7 @@ const $6cde9a8fbbde3ffb$var$buildSparqlQuery = ({ containers: containers, params
     if (filter && Object.keys(filter).length > 0) {
         const hasSPARQLFilter = filter.sparqlWhere && Object.keys(filter.sparqlWhere).length > 0;
         const hasFullTextSearch = filter.q && filter.q.length > 0;
-        if (hasSPARQLFilter) /* 
+        if (hasSPARQLFilter) /*
         Example of usage :
         {
           "sparqlWhere": {
@@ -1387,10 +1388,8 @@ var $406574efa35ec6f1$export$2e2bcd8739ae039 = $406574efa35ec6f1$var$FilterHandl
  *
  *
  */ const $1d8c1cbe606a94ae$var$GroupedReferenceHandler = ({ children: children, groupReference: groupReference, groupLabel: groupLabel, groupHeader: groupHeader, filterProperty: filterProperty, ...otherProps })=>{
-    const { data: data } = (0, $fj9kP$useGetList)({
-        resource: groupReference,
-        payload: {}
-    });
+    const record = (0, $fj9kP$useRecordContext)();
+    const { data: data } = (0, $fj9kP$useGetList)(groupReference);
     return /*#__PURE__*/ (0, $fj9kP$jsx)((0, $fj9kP$Fragment), {
         children: data?.map((data, index)=>{
             const filter = {};
@@ -1403,6 +1402,7 @@ var $406574efa35ec6f1$export$2e2bcd8739ae039 = $406574efa35ec6f1$var$FilterHandl
                     }),
                     /*#__PURE__*/ (0, $fj9kP$jsx)((0, $406574efa35ec6f1$export$2e2bcd8739ae039), {
                         ...otherProps,
+                        record: record,
                         filter: filter,
                         label: data[groupLabel],
                         children: children
