@@ -25,17 +25,17 @@ module.exports = {
       const emitterUri = activity.actor;
 
       for (const handler of this.handlers) {
-        if (handler.boxTypes.includes('outbox')) {
-          const dereferencedActivity =
-            typeof handler.matcher === 'object'
-              ? await this.matchActivity(ctx, handler.matcher, activity)
-              : await handler.matcher(ctx, activity);
+        ctx.meta.webId = emitterUri;
+        ctx.meta.dataset = await ctx.call('auth.account.findDatasetByWebId', { webId: emitterUri });
 
-          if (dereferencedActivity) {
+        const dereferencedActivity =
+          typeof handler.matcher === 'object'
+            ? await this.matchActivity(ctx, handler.matcher, activity)
+            : await handler.matcher(ctx, activity);
+
+        if (dereferencedActivity) {
+          if (handler.boxTypes.includes('outbox')) {
             this.logger.info(`Emission of activity "${handler.key}" by ${emitterUri} detected`);
-
-            ctx.meta.webId = emitterUri;
-            ctx.meta.dataset = await ctx.call('auth.account.findDatasetByWebId', { webId: emitterUri });
 
             await ctx.call(handler.actionName, {
               key: handler.key,
@@ -43,23 +43,24 @@ module.exports = {
               dereferencedActivity,
               actorUri: emitterUri
             });
+          }
 
-            // Once the outbox handler(s) are processed, immediately call the inbox handler(s) for local recipients
-            // We don't use the activitypub.inbox.received event since we have a match, and because activitypub.inbox.received is sent immediately
-            if (handler.boxTypes.includes('inbox')) {
-              const localRecipients = await ctx.call('activitypub.activity.getLocalRecipients', { activity });
-              for (const recipientUri of localRecipients) {
-                ctx.meta.webId = recipientUri;
-                ctx.meta.dataset = await ctx.call('auth.account.findDatasetByWebId', { webId: recipientUri });
-                this.logger.info(`Reception of activity "${handler.key}" by ${recipientUri} detected`);
+          // Once the outbox handler(s) are processed, immediately call the inbox handler(s) for local recipients
+          // We don't use the activitypub.inbox.received event since we have a match, and because activitypub.inbox.received is sent immediately
+          if (handler.boxTypes.includes('inbox')) {
+            const localRecipients = await ctx.call('activitypub.activity.getLocalRecipients', { activity });
+            for (const recipientUri of localRecipients) {
+              this.logger.info(`Reception of activity "${handler.key}" by ${recipientUri} detected`);
 
-                await ctx.call(handler.actionName, {
-                  key: handler.key,
-                  boxType: 'inbox',
-                  dereferencedActivity,
-                  actorUri: recipientUri
-                });
-              }
+              ctx.meta.webId = recipientUri;
+              ctx.meta.dataset = await ctx.call('auth.account.findDatasetByWebId', { webId: recipientUri });
+
+              await ctx.call(handler.actionName, {
+                key: handler.key,
+                boxType: 'inbox',
+                dereferencedActivity,
+                actorUri: recipientUri
+              });
             }
           }
         }
@@ -71,7 +72,7 @@ module.exports = {
       // For local exchanges, we use activitypub.outbox.posted above
       if (!local) {
         for (const handler of this.handlers) {
-          if (handler.boxTypes.includes('outbox')) {
+          if (handler.boxTypes.includes('inbox')) {
             for (const recipientUri of recipients) {
               ctx.meta.webId = recipientUri;
               ctx.meta.dataset = await ctx.call('auth.account.findDatasetByWebId', { webId: recipientUri });
