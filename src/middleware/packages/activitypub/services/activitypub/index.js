@@ -1,6 +1,7 @@
 const QueueService = require('moleculer-bull');
 const { as, sec } = require('@semapps/ontologies');
 const ActorService = require('./subservices/actor');
+const ActivitiesWatcherService = require('./subservices/activities-watcher');
 const ActivityService = require('./subservices/activity');
 const CollectionService = require('./subservices/collection');
 const FollowService = require('./subservices/follow');
@@ -35,6 +36,8 @@ const ActivityPubService = {
   created() {
     const { baseUri, podProvider, activitiesPath, selectActorData, queueServiceUrl, reply, like, follow } =
       this.settings;
+
+    this.broker.createService(ActivitiesWatcherService);
 
     this.broker.createService(CollectionService, {
       settings: {

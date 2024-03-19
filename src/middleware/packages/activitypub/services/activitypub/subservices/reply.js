@@ -1,6 +1,7 @@
 const ActivitiesHandlerMixin = require('../../../mixins/activities-handler');
 const { ACTIVITY_TYPES, OBJECT_TYPES } = require('../../../constants');
 const { collectionPermissionsWithAnonRead } = require('../../../utils');
+const matchActivity = require('../../../utils/matchActivity');
 
 const ReplyService = {
   name: 'activitypub.reply',
@@ -40,7 +41,7 @@ const ReplyService = {
   activities: {
     postReply: {
       match(ctx, activity) {
-        return this.matchActivity(
+        return matchActivity(
           ctx,
           {
             type: ACTIVITY_TYPES.CREATE,
@@ -73,7 +74,7 @@ const ReplyService = {
     },
     deleteReply: {
       match(ctx, activity) {
-        return this.matchActivity(
+        return matchActivity(
           ctx,
           {
             type: ACTIVITY_TYPES.DELETE,
