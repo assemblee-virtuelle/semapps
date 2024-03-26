@@ -46,12 +46,24 @@ const SynchronizerService = {
       },
       async onReceive(ctx, activity, recipientUri) {
         if (await this.isValid(activity, recipientUri)) {
-          for (const resourceUri of defaultToArray(activity.object)) {
-            const object = await ctx.call('ldp.remote.store', {
-              resourceUri,
-              mirrorGraph: this.settings.mirrorGraph,
-              webId: recipientUri
-            });
+          for (let resource of defaultToArray(activity.object)) {
+            resource = await ctx.call(
+              'ldp.remote.store',
+              typeof resource === 'string'
+                ? {
+                    resourceUri: resource,
+                    mirrorGraph: this.settings.mirrorGraph,
+                    webId: recipientUri
+                  }
+                : {
+                    resource,
+                    mirrorGraph: this.settings.mirrorGraph,
+                    webId: recipientUri
+                  }
+            );
+
+            const resourceUri = resource['@id'] || resource.id;
+            const type = resource['@type'] || resource.type;
 
             if (activity.target && this.settings.synchronizeContainers) {
               for (const containerUri of defaultToArray(activity.target)) {
@@ -64,8 +76,6 @@ const SynchronizerService = {
             }
 
             if (this.settings.attachToLocalContainers) {
-              const resourceUri = object['@id'] || object.id;
-              const type = object['@type'] || object.type;
               const container = await ctx.call('ldp.registry.getByType', { type });
               if (container) {
                 try {
@@ -95,12 +105,21 @@ const SynchronizerService = {
       },
       async onReceive(ctx, activity, recipientUri) {
         if (await this.isValid(activity, recipientUri)) {
-          for (const resourceUri of defaultToArray(activity.object)) {
-            await ctx.call('ldp.remote.store', {
-              resourceUri,
-              mirrorGraph: this.settings.mirrorGraph,
-              webId: recipientUri
-            });
+          for (const resource of defaultToArray(activity.object)) {
+            await ctx.call(
+              'ldp.remote.store',
+              typeof resource === 'string'
+                ? {
+                    resourceUri: resource,
+                    mirrorGraph: this.settings.mirrorGraph,
+                    webId: recipientUri
+                  }
+                : {
+                    resource,
+                    mirrorGraph: this.settings.mirrorGraph,
+                    webId: recipientUri
+                  }
+            );
           }
         }
       }
@@ -111,12 +130,18 @@ const SynchronizerService = {
       },
       async onReceive(ctx, activity, recipientUri) {
         if (await this.isValid(activity, recipientUri)) {
-          for (const resourceUri of defaultToArray(activity.object)) {
+          for (const resource of defaultToArray(activity.object)) {
+            const resourceUri = typeof resource === 'string' ? resource : resource.id || resource['@id'];
+
             // If the remote resource is attached to a local container, it will be automatically detached
-            await ctx.call('ldp.remote.delete', {
-              resourceUri,
-              webId: recipientUri
-            });
+            try {
+              await ctx.call('ldp.remote.delete', {
+                resourceUri,
+                webId: recipientUri
+              });
+            } catch (e) {
+              this.logger.warn(`Remote resource ${resourceUri} not deleted as it was not found on local dataset`);
+            }
 
             if (activity.target && this.settings.synchronizeContainers) {
               for (const containerUri of defaultToArray(activity.target)) {
