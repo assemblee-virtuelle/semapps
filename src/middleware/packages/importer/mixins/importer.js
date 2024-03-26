@@ -245,7 +245,10 @@ module.exports = {
 
         try {
           destUri = await ctx.call('ldp.container.post', {
-            containerUri: this.settings.dest.containerUri,
+            containerUri:
+              typeof this.settings.dest.containerUri === 'string'
+                ? this.settings.dest.containerUri
+                : this.settings.dest.containerUri(resource),
             slug: this.getField('slug', data),
             resource: {
               ...resource,
