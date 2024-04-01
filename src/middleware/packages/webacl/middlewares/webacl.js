@@ -176,13 +176,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
           }
 
           case 'activitypub.collection.create': {
-            // On start, collection options are passed as parameters because the registry is not up yet
-            if (!ctx.params.options) {
-              ctx.params.options = await ctx.call('activitypub.registry.getByUri', {
-                collectionUri: ctx.params.collectionUri
-              });
-            }
-            const rights = ctx.params.options?.permissions || defaultCollectionRights;
+            const rights = ctx.params.permissions || defaultCollectionRights;
 
             // We must add the permissions before inserting the collection
             await ctx.call('webacl.resource.addRights', {

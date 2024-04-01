@@ -16,13 +16,17 @@ const CollectionService = {
      */
     async create(ctx) {
       const { collectionUri, config } = ctx.params;
-      const { ordered, summary } = config || {};
+      const { ordered, summary, dereferenceItems, itemsPerPage, sortPredicate, sortOrder } = config || {};
       await ctx.call('triplestore.insert', {
         resource: {
           '@context': 'https://www.w3.org/ns/activitystreams',
           id: collectionUri,
           type: ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
-          summary
+          summary,
+          dereferenceItems,
+          itemsPerPage,
+          sortPredicate,
+          sortOrder
         },
         contentType: MIME_TYPES.JSON,
         webId: 'system'
@@ -149,43 +153,43 @@ const CollectionService = {
     /*
      * Returns a JSON-LD formatted collection stored in the triple store
      * @param collectionUri The full URI of the collection
-     * @param dereferenceItems Should we dereference the items in the collection ?
      * @param page Page number. If none are defined, display the collection.
-     * @param itemsPerPage Number of items to show per page
      * @param jsonContext JSON-LD context to format the whole result
-     * @param sort Object with `predicate` and `order` properties to sort ordered collections
      */
     async get(ctx) {
       const { collectionUri, page, jsonContext } = ctx.params;
       const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-      const { dereferenceItems, itemsPerPage, sort } = {
-        ...(await ctx.call('activitypub.registry.getByUri', { collectionUri })),
-        ...ctx.params
-      };
 
       const collection = await ctx.call('triplestore.query', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           CONSTRUCT {
-            <${collectionUri}> a as:Collection, ?collectionType .
-            <${collectionUri}> as:summary ?summary .
+            <${collectionUri}> 
+               a as:Collection, ?collectionType ;
+               as:summary ?summary ;
+               as:dereferenceItems ?dereferenceItems ;
+               as:itemsPerPage ?itemsPerPage ;
+               as:sortPredicate ?sortPredicate ;
+               as:sortOrder ?sortOrder .
           }
           WHERE {
             <${collectionUri}> a as:Collection, ?collectionType .
             OPTIONAL { <${collectionUri}> as:summary ?summary . }
+            OPTIONAL { <${collectionUri}> as:dereferenceItems ?dereferenceItems . }
+            OPTIONAL { <${collectionUri}> as:itemsPerPage ?itemsPerPage . }
+            OPTIONAL { <${collectionUri}> as:sortPredicate ?sortPredicate . }
+            OPTIONAL { <${collectionUri}> as:sortOrder ?sortOrder . }
           }
         `,
         accept: MIME_TYPES.JSON,
         webId
       });
 
+      const ordered = this.isOrderedCollection(collection);
+
       // No persisted collection found
       if (!collection['@id']) {
         throw new MoleculerError('Collection Not found', 404, 'NOT_FOUND');
-      }
-
-      if (this.isOrderedCollection(collection) && !sort) {
-        throw new Error('A sort parameter must be provided for ordered collections');
       }
 
       // Caution: we must do a select query, because construct queries cannot be sorted
@@ -197,22 +201,26 @@ const CollectionService = {
             <${collectionUri}> a as:Collection .
             OPTIONAL { 
               <${collectionUri}> as:items ?itemUri . 
-              ${sort ? `OPTIONAL { ?itemUri ${sort.predicate} ?order . }` : ''}
+              ${ordered ? `OPTIONAL { ?itemUri ${collection.sortPredicate} ?order . }` : ''}
             }
           }
-          ${sort ? `ORDER BY ${sort.order}( ?order )` : ''}
+          ${ordered ? `ORDER BY ${collection.sortOrder === 'DescOrder' ? 'DESC' : 'ASC'}( ?order )` : ''}
         `,
         accept: MIME_TYPES.JSON,
         webId
       });
 
       const allItems = result.filter(node => node.itemUri).map(node => node.itemUri.value);
-      const numPages = !itemsPerPage ? 1 : allItems.length > 0 ? Math.ceil(allItems.length / itemsPerPage) : 0;
+      const numPages = !collection.itemsPerPage
+        ? 1
+        : allItems.length > 0
+          ? Math.ceil(allItems.length / collection.itemsPerPage)
+          : 0;
       let returnData = null;
 
       if (page > 1 && page > numPages) {
         throw new MoleculerError('Collection Not found', 404, 'NOT_FOUND');
-      } else if ((itemsPerPage && !page) || (page === 1 && allItems.length === 0)) {
+      } else if ((collection.itemsPerPage && !page) || (page === 1 && allItems.length === 0)) {
         // Pagination is enabled but no page is selected, return the collection
         // OR the first page is selected but there is no item, return an empty page
         returnData = {
@@ -230,12 +238,12 @@ const CollectionService = {
         const itemsProp = this.isOrderedCollection(collection) ? 'orderedItems' : 'items';
 
         // If pagination is enabled, return a slice of the items
-        if (itemsPerPage) {
-          const start = (page - 1) * itemsPerPage;
-          selectedItemsUris = allItems.slice(start, start + itemsPerPage);
+        if (collection.itemsPerPage) {
+          const start = (page - 1) * collection.itemsPerPage;
+          selectedItemsUris = allItems.slice(start, start + collection.itemsPerPage);
         }
 
-        if (dereferenceItems) {
+        if (collection.dereferenceItems) {
           for (const itemUri of selectedItemsUris) {
             try {
               selectedItems.push(
@@ -262,7 +270,7 @@ const CollectionService = {
           selectedItems = selectedItemsUris;
         }
 
-        if (itemsPerPage) {
+        if (collection.itemsPerPage) {
           returnData = {
             '@context': 'https://www.w3.org/ns/activitystreams',
             id: `${collectionUri}?page=${page}`,
