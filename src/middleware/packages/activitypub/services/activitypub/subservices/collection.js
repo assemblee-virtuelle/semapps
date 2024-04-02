@@ -1,55 +1,70 @@
 const { MoleculerError } = require('moleculer').Errors;
+const { ControlledContainerMixin, arrayOf } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { Errors: E } = require('moleculer-web');
 
 const CollectionService = {
   name: 'activitypub.collection',
+  mixins: [ControlledContainerMixin],
   settings: {
-    podProvider: false
+    podProvider: false,
+    // ControlledContainerMixin settings
+    path: '/as/collection',
+    acceptedTypes: ['Collection', 'OrderedCollection'],
+    accept: MIME_TYPES.JSON,
+    permissions: {},
+    newResourcesPermissions: webId => {
+      switch (webId) {
+        case 'anon':
+        case 'system':
+          return {
+            anon: {
+              read: true
+            }
+          };
+
+        default:
+          return {
+            user: {
+              uri: webId,
+              read: true,
+              write: true,
+              control: true
+            }
+          };
+      }
+    },
+    excludeFromMirror: true
   },
   dependencies: ['triplestore', 'ldp.resource'],
   actions: {
-    /*
-     * Create a persisted collection
-     * @param collectionUri The full URI of the collection
-     * @param config.ordered If true, an OrderedCollection will be created
-     * @param config.summary An optional description of the collection
-     */
-    async create(ctx) {
-      const { collectionUri, config } = ctx.params;
-      const { ordered, summary, dereferenceItems, itemsPerPage, sortPredicate, sortOrder } = config || {};
-      await ctx.call('triplestore.insert', {
-        resource: {
-          '@context': 'https://www.w3.org/ns/activitystreams',
-          id: collectionUri,
-          type: ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
-          summary,
-          dereferenceItems,
-          itemsPerPage,
-          sortPredicate,
-          sortOrder
-        },
-        contentType: MIME_TYPES.JSON,
-        webId: 'system'
-      });
+    put() {
+      throw new E.ForbiddenError();
     },
-    /*
-     * Checks if the collection exists
-     * @param collectionUri The full URI of the collection
-     * @return true if the collection exists
-     */
-    async exist(ctx) {
-      const { collectionUri } = ctx.params;
-      return await ctx.call('triplestore.query', {
-        query: `
-          PREFIX as: <https://www.w3.org/ns/activitystreams#>
-          ASK
-          WHERE {
-            <${collectionUri}> a as:Collection .
-          }
-        `,
-        accept: MIME_TYPES.JSON,
-        webId: 'system'
-      });
+    patch() {
+      // Handle PATCH
+    },
+    async post(ctx) {
+      if (!ctx.params.containerUri) {
+        ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
+      }
+
+      const ordered = arrayOf(ctx.params.resource.type).includes('OrderedCollection');
+
+      // TODO Use ShEx to check collection validity
+      if (!ordered && (ctx.params.resource['semapps:sortPredicate'] || ctx.params.resource['semapps:sortOrder'])) {
+        throw new Error(`Non-ordered collections cannot include semapps:sortPredicate or semapps:sortOrder predicates`);
+      }
+
+      // Set default values
+      if (!ctx.params.resource['semapps:dereferenceItems']) ctx.params.resource['semapps:dereferenceItems'] = false;
+      if (ordered) {
+        if (!ctx.params.resource['semapps:sortPredicate'])
+          ctx.params.resource['semapps:sortPredicate'] = 'as:published';
+        if (!ctx.params.resource['semapps:sortOrder']) ctx.params.resource['semapps:sortOrder'] = 'semapps:DescOrder';
+      }
+
+      return await ctx.call('ldp.container.post', ctx.params);
     },
     /*
      * Checks if the collection is empty
@@ -99,17 +114,17 @@ const CollectionService = {
      * @param collectionUri The full URI of the collection
      * @param item The resource to add to the collection
      */
-    async attach(ctx) {
+    async add(ctx) {
       let { collectionUri, item, itemUri } = ctx.params;
       if (!itemUri && item) itemUri = typeof item === 'object' ? item.id || item['@id'] : item;
-      if (!itemUri) throw new Error('No valid item URI provided for activitypub.collection.attach');
+      if (!itemUri) throw new Error('No valid item URI provided for activitypub.collection.add');
 
       // TODO also check external resources
       // const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri: itemUri });
       // if (!resourceExist) throw new Error('Cannot attach a non-existing resource !')
 
       // TODO check why thrown error is lost and process is stopped
-      const collectionExist = await ctx.call('activitypub.collection.exist', { collectionUri });
+      const collectionExist = await ctx.call('activitypub.collection.exist', { resourceUri: collectionUri });
       if (!collectionExist)
         throw new Error(`Cannot attach to a non-existing collection: ${collectionUri} (dataset: ${ctx.meta.dataset})`);
 
@@ -128,12 +143,12 @@ const CollectionService = {
      * @param collectionUri The full URI of the collection
      * @param item The resource to remove from the collection
      */
-    async detach(ctx) {
+    async remove(ctx) {
       let { collectionUri, item, itemUri } = ctx.params;
       if (!itemUri && item) itemUri = typeof item === 'object' ? item.id || item['@id'] : item;
-      if (!itemUri) throw new Error('No valid item URI provided for activitypub.collection.detach');
+      if (!itemUri) throw new Error('No valid item URI provided for activitypub.collection.remove');
 
-      const collectionExist = await ctx.call('activitypub.collection.exist', { collectionUri });
+      const collectionExist = await ctx.call('activitypub.collection.exist', { resourceUri: collectionUri });
       if (!collectionExist) throw new Error(`Cannot detach from a non-existing collection: ${collectionUri}`);
 
       await ctx.call('triplestore.update', {
@@ -150,47 +165,48 @@ const CollectionService = {
         itemUri
       });
     },
-    /*
-     * Returns a JSON-LD formatted collection stored in the triple store
-     * @param collectionUri The full URI of the collection
-     * @param page Page number. If none are defined, display the collection.
-     * @param jsonContext JSON-LD context to format the whole result
-     */
     async get(ctx) {
-      const { collectionUri, page, jsonContext } = ctx.params;
+      const { resourceUri: collectionUri, jsonContext } = ctx.params;
+      const page = ctx.params.page || ctx.meta.queryString?.page;
       const webId = ctx.params.webId || ctx.meta.webId || 'anon';
+      const localContext = await ctx.call('jsonld.context.get');
 
-      const collection = await ctx.call('triplestore.query', {
+      const results = await ctx.call('triplestore.query', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
-          CONSTRUCT {
-            <${collectionUri}> 
-               a as:Collection, ?collectionType ;
-               as:summary ?summary ;
-               as:dereferenceItems ?dereferenceItems ;
-               as:itemsPerPage ?itemsPerPage ;
-               as:sortPredicate ?sortPredicate ;
-               as:sortOrder ?sortOrder .
-          }
+          PREFIX semapps: <http://semapps.org/ns/core#>
+          SELECT ?ordered ?summary ?dereferenceItems ?itemsPerPage ?sortPredicate ?sortOrder
           WHERE {
-            <${collectionUri}> a as:Collection, ?collectionType .
+            BIND (EXISTS{<${collectionUri}> a <https://www.w3.org/ns/activitystreams#OrderedCollection>} AS ?ordered)
             OPTIONAL { <${collectionUri}> as:summary ?summary . }
-            OPTIONAL { <${collectionUri}> as:dereferenceItems ?dereferenceItems . }
-            OPTIONAL { <${collectionUri}> as:itemsPerPage ?itemsPerPage . }
-            OPTIONAL { <${collectionUri}> as:sortPredicate ?sortPredicate . }
-            OPTIONAL { <${collectionUri}> as:sortOrder ?sortOrder . }
+            OPTIONAL { <${collectionUri}> semapps:dereferenceItems ?dereferenceItems . }
+            OPTIONAL { <${collectionUri}> semapps:itemsPerPage ?itemsPerPage . }
+            OPTIONAL { <${collectionUri}> semapps:sortPredicate ?sortPredicate . }
+            OPTIONAL { <${collectionUri}> semapps:sortOrder ?sortOrder . }
           }
         `,
         accept: MIME_TYPES.JSON,
         webId
       });
 
-      const ordered = this.isOrderedCollection(collection);
-
-      // No persisted collection found
-      if (!collection['@id']) {
+      if (!results.length === 0) {
         throw new MoleculerError('Collection Not found', 404, 'NOT_FOUND');
       }
+
+      const options = Object.fromEntries(
+        Object.entries(results[0]).map(([key, val]) => [
+          key,
+          val.datatype?.value === 'http://www.w3.org/2001/XMLSchema#boolean' ? val.value === 'true' : val.value
+        ])
+      );
+
+      const collectionOptions = {
+        summary: options.summary,
+        'semapps:dereferenceItems': options.dereferenceItems,
+        'semapps:itemsPerPage': options.itemsPerPage,
+        'semapps:sortPredicate': options.sortPredicate,
+        'semapps:sortOrder': options.sortOrder
+      };
 
       // Caution: we must do a select query, because construct queries cannot be sorted
       const result = await ctx.call('triplestore.query', {
@@ -201,33 +217,37 @@ const CollectionService = {
             <${collectionUri}> a as:Collection .
             OPTIONAL { 
               <${collectionUri}> as:items ?itemUri . 
-              ${ordered ? `OPTIONAL { ?itemUri ${collection.sortPredicate} ?order . }` : ''}
+              ${options.ordered ? `OPTIONAL { ?itemUri <${options.sortPredicate}> ?order . }` : ''}
             }
           }
-          ${ordered ? `ORDER BY ${collection.sortOrder === 'DescOrder' ? 'DESC' : 'ASC'}( ?order )` : ''}
+          ${
+            options.ordered
+              ? `ORDER BY ${options.sortOrder === 'http://semapps.org/ns/core#DescOrder' ? 'DESC' : 'ASC'}( ?order )`
+              : ''
+          }
         `,
         accept: MIME_TYPES.JSON,
         webId
       });
 
       const allItems = result.filter(node => node.itemUri).map(node => node.itemUri.value);
-      const numPages = !collection.itemsPerPage
+      const numPages = !options.itemsPerPage
         ? 1
         : allItems.length > 0
-          ? Math.ceil(allItems.length / collection.itemsPerPage)
+          ? Math.ceil(allItems.length / options.itemsPerPage)
           : 0;
       let returnData = null;
 
       if (page > 1 && page > numPages) {
         throw new MoleculerError('Collection Not found', 404, 'NOT_FOUND');
-      } else if ((collection.itemsPerPage && !page) || (page === 1 && allItems.length === 0)) {
+      } else if ((options.itemsPerPage && !page) || (page === 1 && allItems.length === 0)) {
         // Pagination is enabled but no page is selected, return the collection
         // OR the first page is selected but there is no item, return an empty page
         returnData = {
-          '@context': 'https://www.w3.org/ns/activitystreams',
+          '@context': localContext,
           id: collectionUri,
-          type: this.isOrderedCollection(collection) ? 'OrderedCollection' : 'Collection',
-          summary: collection.summary,
+          type: options.ordered ? 'OrderedCollection' : 'Collection',
+          ...collectionOptions,
           first: numPages > 0 ? `${collectionUri}?page=1` : undefined,
           last: numPages > 0 ? `${collectionUri}?page=${numPages}` : undefined,
           totalItems: allItems ? allItems.length : 0
@@ -235,15 +255,15 @@ const CollectionService = {
       } else {
         let selectedItemsUris = allItems;
         let selectedItems = [];
-        const itemsProp = this.isOrderedCollection(collection) ? 'orderedItems' : 'items';
+        const itemsProp = options.ordered ? 'orderedItems' : 'items';
 
         // If pagination is enabled, return a slice of the items
-        if (collection.itemsPerPage) {
-          const start = (page - 1) * collection.itemsPerPage;
-          selectedItemsUris = allItems.slice(start, start + collection.itemsPerPage);
+        if (options.itemsPerPage) {
+          const start = (page - 1) * options.itemsPerPage;
+          selectedItemsUris = allItems.slice(start, start + options.itemsPerPage);
         }
 
-        if (collection.dereferenceItems) {
+        if (options.dereferenceItems) {
           for (const itemUri of selectedItemsUris) {
             try {
               selectedItems.push(
@@ -257,7 +277,7 @@ const CollectionService = {
             } catch (e) {
               if (e.code === 404 || e.code === 403) {
                 // Ignore resource if it is not found
-                this.logger.warn(`Resource not found with URI: ${itemUri}`);
+                this.logger.warn(`Item not found with URI: ${itemUri}`);
               } else {
                 throw e;
               }
@@ -270,11 +290,11 @@ const CollectionService = {
           selectedItems = selectedItemsUris;
         }
 
-        if (collection.itemsPerPage) {
+        if (options.itemsPerPage) {
           returnData = {
-            '@context': 'https://www.w3.org/ns/activitystreams',
+            '@context': localContext,
             id: `${collectionUri}?page=${page}`,
-            type: this.isOrderedCollection(collection) ? 'OrderedCollectionPage' : 'CollectionPage',
+            type: options.ordered ? 'OrderedCollectionPage' : 'CollectionPage',
             partOf: collectionUri,
             prev: page > 1 ? `${collectionUri}?page=${parseInt(page) - 1}` : undefined,
             next: page < numPages ? `${collectionUri}?page=${parseInt(page) + 1}` : undefined,
@@ -284,10 +304,10 @@ const CollectionService = {
         } else {
           // No pagination, return the collection
           returnData = {
-            '@context': 'https://www.w3.org/ns/activitystreams',
+            '@context': localContext,
             id: collectionUri,
-            type: this.isOrderedCollection(collection) ? 'OrderedCollection' : 'Collection',
-            summary: collection.summary,
+            type: options.ordered ? 'OrderedCollection' : 'Collection',
+            ...collectionOptions,
             [itemsProp]: selectedItems,
             totalItems: allItems ? allItems.length : 0
           };
@@ -296,7 +316,7 @@ const CollectionService = {
 
       return await ctx.call('jsonld.parser.compact', {
         input: returnData,
-        context: jsonContext || (await ctx.call('jsonld.context.get'))
+        context: jsonContext || localContext
       });
     },
     /*
@@ -325,22 +345,6 @@ const CollectionService = {
      * The items are not deleted, for this call the clear action.
      * @param collectionUri The full URI of the collection
      */
-    async remove(ctx) {
-      const collectionUri = ctx.params.collectionUri.replace(/\/+$/, '');
-      await ctx.call('triplestore.update', {
-        query: `
-          PREFIX as: <https://www.w3.org/ns/activitystreams#> 
-          DELETE {
-            ?s1 ?p1 ?o1 .
-          }
-          WHERE { 
-            FILTER(?s1 IN (<${collectionUri}>, <${`${collectionUri}/`}>)) .
-            ?s1 ?p1 ?o1 .
-          }
-        `,
-        webId: 'system'
-      });
-    },
     async getOwner(ctx) {
       const { collectionUri, collectionKey } = ctx.params;
 
@@ -366,7 +370,7 @@ const CollectionService = {
   hooks: {
     before: {
       '*'(ctx) {
-        // If we have a pod provider, guess the dataset from the container URI
+        // If we have a pod provider, guess the dataset from the collection URI
         if (this.settings.podProvider && ctx.params.collectionUri) {
           const collectionPath = new URL(ctx.params.collectionUri).pathname;
           const parts = collectionPath.split('/');
@@ -375,14 +379,6 @@ const CollectionService = {
           }
         }
       }
-    }
-  },
-  methods: {
-    isOrderedCollection(collection) {
-      return (
-        collection['@type'] === 'as:OrderedCollection' ||
-        (Array.isArray(collection['@type']) && collection['@type'].includes('as:OrderedCollection'))
-      );
     }
   }
 };

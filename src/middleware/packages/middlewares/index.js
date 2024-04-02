@@ -3,6 +3,13 @@ const { negotiateTypeMime, MIME_TYPES } = require('@semapps/mime-types');
 const Busboy = require('busboy');
 const streams = require('memory-streams');
 
+// Put query string in meta so that services may use them independently
+// Set here https://github.com/moleculerjs/moleculer-web/blob/c6ec80056a64ea15c57d6e2b946ce978d673ae92/src/index.js#L151-L161
+const parseQueryString = async (req, res, next) => {
+  req.$ctx.meta.queryString = req.query;
+  next();
+};
+
 const parseHeader = async (req, res, next) => {
   req.$ctx.meta.headers = req.headers ? { ...req.headers } : {};
   // Also remember original headers (needed for HTTP signatures verification and files type negociation)
@@ -187,6 +194,7 @@ const saveDatasetMeta = (req, res, next) => {
 };
 
 module.exports = {
+  parseQueryString,
   parseHeader,
   parseSparql,
   negotiateContentType,

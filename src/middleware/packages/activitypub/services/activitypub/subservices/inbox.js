@@ -37,7 +37,7 @@ const InboxService = {
       // Remember inbox owner (used by WebACL middleware)
       const actorUri = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'inbox' });
 
-      const collectionExists = await ctx.call('activitypub.collection.exist', { collectionUri });
+      const collectionExists = await ctx.call('activitypub.collection.exist', { resourceUri: collectionUri });
       if (!collectionExists) {
         ctx.meta.$statusCode = 404;
         return;
@@ -84,7 +84,7 @@ const InboxService = {
         });
 
         // Attach the activity to the inbox
-        await ctx.call('activitypub.collection.attach', {
+        await ctx.call('activitypub.collection.add', {
           collectionUri,
           item: activity
         });

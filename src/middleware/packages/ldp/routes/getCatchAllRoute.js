@@ -1,4 +1,5 @@
 const {
+  parseQueryString,
   parseHeader,
   parseSparql,
   negotiateContentType,
@@ -11,6 +12,7 @@ const {
 
 function getCatchAllRoute(podProvider) {
   const middlewares = [
+    parseQueryString,
     parseHeader,
     negotiateContentType,
     negotiateAccept,

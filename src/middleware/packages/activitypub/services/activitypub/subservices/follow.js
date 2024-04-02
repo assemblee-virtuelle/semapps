@@ -38,7 +38,7 @@ const FollowService = {
       if (this.isLocalActor(following)) {
         const actor = await ctx.call('activitypub.actor.get', { actorUri: following });
         if (actor.followers) {
-          await ctx.call('activitypub.collection.attach', {
+          await ctx.call('activitypub.collection.add', {
             collectionUri: actor.followers,
             item: follower
           });
@@ -49,7 +49,7 @@ const FollowService = {
       if (this.isLocalActor(follower)) {
         const actor = await ctx.call('activitypub.actor.get', { actorUri: follower });
         if (actor.following) {
-          await ctx.call('activitypub.collection.attach', {
+          await ctx.call('activitypub.collection.add', {
             collectionUri: actor.following,
             item: following
           });
@@ -64,7 +64,7 @@ const FollowService = {
       if (this.isLocalActor(following)) {
         const actor = await ctx.call('activitypub.actor.get', { actorUri: following });
         if (actor.followers) {
-          await ctx.call('activitypub.collection.detach', {
+          await ctx.call('activitypub.collection.remove', {
             collectionUri: actor.followers,
             item: follower
           });
@@ -75,7 +75,7 @@ const FollowService = {
       if (this.isLocalActor(follower)) {
         const actor = await ctx.call('activitypub.actor.get', { actorUri: follower });
         if (actor.following) {
-          await ctx.call('activitypub.collection.detach', {
+          await ctx.call('activitypub.collection.remove', {
             collectionUri: actor.following,
             item: following
           });
@@ -100,14 +100,14 @@ const FollowService = {
       const { collectionUri } = ctx.params;
 
       return await ctx.call('activitypub.collection.get', {
-        collectionUri
+        resourceUri: collectionUri
       });
     },
     async listFollowing(ctx) {
       const { collectionUri } = ctx.params;
 
       return await ctx.call('activitypub.collection.get', {
-        collectionUri
+        resourceUri: collectionUri
       });
     }
   },

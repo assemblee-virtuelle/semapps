@@ -83,6 +83,9 @@ module.exports = {
     delete(ctx) {
       return ctx.call('ldp.resource.delete', ctx.params);
     },
+    exist(ctx) {
+      return ctx.call('ldp.resource.exist', ctx.params);
+    },
     getContainerUri(ctx) {
       return ctx.call('ldp.registry.getUri', { path: this.settings.path, webId: ctx.params?.webId || ctx.meta?.webId });
     },

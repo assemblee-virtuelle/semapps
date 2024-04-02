@@ -50,7 +50,7 @@ const ActivityService = {
                 // TODO Fetch remote followers list ?
                 if (recipient.startsWith(this.settings.baseUri)) {
                   const collection = await ctx.call('activitypub.collection.get', {
-                    collectionUri: recipient,
+                    resourceUri: recipient,
                     webId: activity.actor
                   });
                   if (collection && collection.items) output.push(...arrayOf(collection.items));

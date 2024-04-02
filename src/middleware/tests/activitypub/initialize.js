@@ -52,7 +52,8 @@ const initialize = async (port, mainDataset, accountsDataset) => {
     settings: {
       baseUrl,
       jwtPath: path.resolve(__dirname, './jwt'),
-      accountsDataset
+      accountsDataset,
+      mail: false
     }
   });
 
@@ -86,6 +87,15 @@ const initialize = async (port, mainDataset, accountsDataset) => {
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
     resourceUri: urlJoin(baseUrl, 'as/activity'),
+    additionalRights: {
+      anon: {
+        write: true
+      }
+    }
+  });
+  await broker.call('webacl.resource.addRights', {
+    webId: 'system',
+    resourceUri: urlJoin(baseUrl, 'as/collection'),
     additionalRights: {
       anon: {
         write: true

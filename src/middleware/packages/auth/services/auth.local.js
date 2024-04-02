@@ -32,11 +32,13 @@ const AuthLocalService = {
 
     this.passportId = 'local';
 
-    await this.broker.createService(AuthMailService, {
-      settings: {
-        ...mail
-      }
-    });
+    if (mail !== false) {
+      await this.broker.createService(AuthMailService, {
+        settings: {
+          ...mail
+        }
+      });
+    }
   },
   actions: {
     async signup(ctx) {

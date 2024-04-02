@@ -42,7 +42,7 @@ const LikeService = {
 
       // If a liked collection is attached to the actor, attach the object
       if (actor.liked) {
-        await ctx.call('activitypub.collection.attach', {
+        await ctx.call('activitypub.collection.add', {
           collectionUri: actor.liked,
           item: objectUri
         });
@@ -50,7 +50,7 @@ const LikeService = {
 
       // If a likes collection is attached to the object, attach the actor
       if (object.likes) {
-        await ctx.call('activitypub.collection.attach', {
+        await ctx.call('activitypub.collection.add', {
           collectionUri: object.likes,
           item: actorUri
         });
@@ -66,7 +66,7 @@ const LikeService = {
 
       // If a liked collection is attached to the actor, detach the object
       if (actor.liked) {
-        await ctx.call('activitypub.collection.detach', {
+        await ctx.call('activitypub.collection.remove', {
           collectionUri: actor.liked,
           item: objectUri
         });
@@ -74,7 +74,7 @@ const LikeService = {
 
       // If a likes collection is attached to the object, detach the actor
       if (object.likes) {
-        await ctx.call('activitypub.collection.detach', {
+        await ctx.call('activitypub.collection.remove', {
           collectionUri: object.likes,
           item: actorUri
         });

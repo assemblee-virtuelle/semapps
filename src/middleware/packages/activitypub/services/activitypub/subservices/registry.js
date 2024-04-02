@@ -1,7 +1,7 @@
 const urlJoin = require('url-join');
 const { quad, namedNode } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { defaultToArray } = require('../../../utils');
+const { defaultToArray, getSlugFromUri } = require('../../../utils');
 const { ACTOR_TYPES, FULL_ACTOR_TYPES, AS_PREFIX } = require('../../../constants');
 
 const RegistryService = {
@@ -78,19 +78,28 @@ const RegistryService = {
     },
     async createAndAttachCollection(ctx) {
       const { objectUri, collection, webId } = ctx.params;
-      const collectionUri = urlJoin(objectUri, collection.path);
+      const { path, attachPredicate, ordered, summary, dereferenceItems, itemsPerPage, sortPredicate, sortOrder } =
+        collection || {};
+      const collectionUri = urlJoin(objectUri, path);
 
-      const exists = await ctx.call('activitypub.collection.exist', { collectionUri });
+      const exists = await ctx.call('activitypub.collection.exist', { resourceUri: collectionUri });
       if (!exists && !this.collectionsInCreation.includes(collectionUri)) {
         // Prevent race conditions by keeping the collections being created in memory
         this.collectionsInCreation.push(collectionUri);
 
         // Create the collection
-        await ctx.call('activitypub.collection.create', {
-          collectionUri,
-          config: { ordered: collection?.ordered, summary: collection?.summary },
-          options: collection, // Used by WebACL middleware if it exists
-          webId
+        await ctx.call('activitypub.collection.post', {
+          resource: {
+            type: ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
+            summary,
+            'semapps:dereferenceItems': dereferenceItems,
+            'semapps:itemsPerPage': itemsPerPage,
+            'semapps:sortPredicate': sortPredicate,
+            'semapps:sortOrder': sortOrder
+          },
+          contentType: MIME_TYPES.JSON,
+          slug: path ? getSlugFromUri(objectUri) + path : undefined,
+          webId: 'system'
         });
 
         // Attach it to the object
@@ -98,8 +107,8 @@ const RegistryService = {
           'ldp.resource.patch',
           {
             resourceUri: objectUri,
-            triplesToAdd: [quad(namedNode(objectUri), namedNode(collection.attachPredicate), namedNode(collectionUri))],
-            webId: 'system'
+            triplesToAdd: [quad(namedNode(objectUri), namedNode(attachPredicate), namedNode(collectionUri))],
+            webId
           },
           {
             meta: {
@@ -114,12 +123,12 @@ const RegistryService = {
     },
     async deleteCollection(ctx) {
       const { objectUri, collection } = ctx.params;
-      const collectionUri = urlJoin(objectUri, collection.path);
+      const resourceUri = urlJoin(objectUri, collection.path);
 
-      const exists = await ctx.call('activitypub.collection.exist', { collectionUri, webId: 'system' });
+      const exists = await ctx.call('activitypub.collection.exist', { resourceUri, webId: 'system' });
       if (exists) {
         // Delete the collection
-        await ctx.call('activitypub.collection.remove', { collectionUri, webId: 'system' });
+        await ctx.call('activitypub.collection.delete', { resourceUri, webId: 'system' });
       }
     },
     async createAndAttachMissingCollections(ctx) {

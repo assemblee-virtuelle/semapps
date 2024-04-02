@@ -26,7 +26,7 @@ const OutboxService = {
     async post(ctx) {
       let { collectionUri, ...activity } = ctx.params;
 
-      const collectionExists = await ctx.call('activitypub.collection.exist', { collectionUri });
+      const collectionExists = await ctx.call('activitypub.collection.exist', { resourceUri: collectionUri });
       if (!collectionExists) {
         throw new MoleculerError(`Collection not found:${collectionUri}`, 404, 'NOT_FOUND');
       }
@@ -79,7 +79,7 @@ const OutboxService = {
       activity = await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' });
 
       // Attach the newly-created activity to the outbox
-      await ctx.call('activitypub.collection.attach', {
+      await ctx.call('activitypub.collection.add', {
         collectionUri,
         item: activity
       });
@@ -166,7 +166,7 @@ const OutboxService = {
 
           // Attach activity to the inbox of the recipient
           await this.broker.call(
-            'activitypub.collection.attach',
+            'activitypub.collection.add',
             {
               collectionUri: recipientInbox,
               item: activity

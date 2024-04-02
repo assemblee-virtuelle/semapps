@@ -1,12 +1,11 @@
 const { throw403 } = require('@semapps/middlewares');
 const { arrayOf } = require('@semapps/ldp');
 const { isRemoteUri, getSlugFromUri } = require('../utils');
-const { defaultContainerRights, defaultCollectionRights } = require('../defaultRights');
+const { defaultContainerRights } = require('../defaultRights');
 
 const modifyActions = [
   'ldp.resource.create',
   'ldp.container.create',
-  'activitypub.collection.create',
   'activitypub.activity.create',
   'activitypub.activity.attach',
   'webid.create',
@@ -175,18 +174,6 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
             break;
           }
 
-          case 'activitypub.collection.create': {
-            const rights = ctx.params.permissions || defaultCollectionRights;
-
-            // We must add the permissions before inserting the collection
-            await ctx.call('webacl.resource.addRights', {
-              resourceUri: ctx.params.collectionUri,
-              newRights: typeof rights === 'function' ? rights(webId) : rights,
-              webId: 'system'
-            });
-            break;
-          }
-
           default:
             break;
         }
@@ -210,13 +197,6 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
               await ctx.call(
                 'webacl.resource.deleteAllRights',
                 { resourceUri: ctx.params.containerUri },
-                { meta: { webId: 'system' } }
-              );
-              break;
-            case 'activitypub.collection.create':
-              await ctx.call(
-                'webacl.resource.deleteAllRights',
-                { resourceUri: ctx.params.collectionUri },
                 { meta: { webId: 'system' } }
               );
               break;

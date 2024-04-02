@@ -43,8 +43,7 @@ module.exports = async function get(ctx) {
       res = await ctx.call(
         controlledActions?.get || 'activitypub.collection.get',
         cleanUndefined({
-          collectionUri: uri,
-          page: ctx.params.page,
+          resourceUri: uri,
           jsonContext: parseJson(ctx.meta.headers?.jsonldcontext)
         })
       );

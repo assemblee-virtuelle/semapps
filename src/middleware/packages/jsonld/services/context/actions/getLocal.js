@@ -1,5 +1,3 @@
-const { isObject } = require('../../../utils');
-
 module.exports = {
   visibility: 'public',
   cache: true,
@@ -10,20 +8,16 @@ module.exports = {
 
     for (const ontology of ontologies) {
       // Do not include in local contexts URIs we want to preserve explicitely
-      if (ontology.preserveContextUri !== true) {
-        if (!ontology.jsonldContext) {
-          // If no context is defined for the ontology, simply add its prefix
-          ontology.jsonldContext = { [ontology.prefix]: ontology.namespace };
-        } else if (isObject(ontology.jsonldContext)) {
-          // If the context is an object, ensure the prefix is included
-          ontology.jsonldContext[ontology.prefix] = ontology.namespace;
-        }
-
-        context = [].concat(context, ontology.jsonldContext);
+      if (ontology.jsonldContext && ontology.preserveContextUri !== true) {
+        context = [].concat(ontology.jsonldContext, context);
       }
     }
 
-    context = await ctx.call('jsonld.context.parse', { context });
+    const prefixes = Object.fromEntries(ontologies.map(ont => [ont.prefix, ont.namespace]));
+
+    context = await ctx.call('jsonld.context.parse', {
+      context: [...context, prefixes]
+    });
 
     return {
       '@context': context

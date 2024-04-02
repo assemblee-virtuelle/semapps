@@ -28,14 +28,14 @@ const ReplyService = {
 
       const object = await ctx.call('activitypub.object.get', { objectUri });
 
-      await ctx.call('activitypub.collection.attach', { collectionUri: object.replies, item: replyUri });
+      await ctx.call('activitypub.collection.add', { collectionUri: object.replies, item: replyUri });
     },
     async removeReply(ctx) {
       const { objectUri, replyUri } = ctx.params;
 
       const object = await ctx.call('activitypub.object.get', { objectUri });
 
-      await ctx.call('activitypub.collection.detach', { collectionUri: object.replies, item: replyUri });
+      await ctx.call('activitypub.collection.remove', { collectionUri: object.replies, item: replyUri });
     }
   },
   activities: {
