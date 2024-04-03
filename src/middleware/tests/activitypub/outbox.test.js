@@ -61,7 +61,7 @@ describe('Permissions are correctly set on outbox', () => {
     // Get outbox as self
     await waitForExpect(async () => {
       const outbox = await broker.call('activitypub.collection.get', {
-        collectionUri: sebastien.outbox,
+        resourceUri: sebastien.outbox,
         page: 1,
         webId: sebastien.id
       });
@@ -79,7 +79,7 @@ describe('Permissions are correctly set on outbox', () => {
     // Get outbox as anonymous
     await waitForExpect(async () => {
       const outbox = await broker.call('activitypub.collection.get', {
-        collectionUri: sebastien.outbox,
+        resourceUri: sebastien.outbox,
         page: 1,
         webId: 'anon'
       });
@@ -99,7 +99,7 @@ describe('Permissions are correctly set on outbox', () => {
     // Get outbox as friend
     await waitForExpect(async () => {
       const outbox = await broker.call('activitypub.collection.get', {
-        collectionUri: sebastien.outbox,
+        resourceUri: sebastien.outbox,
         page: 1,
         webId: simon.id
       });
@@ -117,7 +117,7 @@ describe('Permissions are correctly set on outbox', () => {
     // Get outbox as anonymous
     await waitForExpect(async () => {
       const outbox = await broker.call('activitypub.collection.get', {
-        collectionUri: sebastien.outbox,
+        resourceUri: sebastien.outbox,
         page: 1,
         webId: 'anon'
       });
@@ -137,7 +137,7 @@ describe('Permissions are correctly set on outbox', () => {
     // Get outbox as friend
     await waitForExpect(async () => {
       const outbox = await broker.call('activitypub.collection.get', {
-        collectionUri: sebastien.outbox,
+        resourceUri: sebastien.outbox,
         page: 1,
         webId: simon.id
       });
@@ -155,7 +155,7 @@ describe('Permissions are correctly set on outbox', () => {
     // Get outbox as anonymous
     await waitForExpect(async () => {
       const outbox = await broker.call('activitypub.collection.get', {
-        collectionUri: sebastien.outbox,
+        resourceUri: sebastien.outbox,
         page: 1,
         webId: 'anon'
       });

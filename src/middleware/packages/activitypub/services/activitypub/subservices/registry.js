@@ -1,7 +1,7 @@
 const urlJoin = require('url-join');
 const { quad, namedNode } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { defaultToArray, getSlugFromUri } = require('../../../utils');
+const { defaultToArray } = require('../../../utils');
 const { ACTOR_TYPES, FULL_ACTOR_TYPES, AS_PREFIX } = require('../../../constants');
 
 const RegistryService = {
@@ -88,19 +88,27 @@ const RegistryService = {
         this.collectionsInCreation.push(collectionUri);
 
         // Create the collection
-        await ctx.call('activitypub.collection.post', {
-          resource: {
-            type: ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
-            summary,
-            'semapps:dereferenceItems': dereferenceItems,
-            'semapps:itemsPerPage': itemsPerPage,
-            'semapps:sortPredicate': sortPredicate,
-            'semapps:sortOrder': sortOrder
+        await ctx.call(
+          'activitypub.collection.post',
+          {
+            resource: {
+              type: ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
+              summary,
+              'semapps:dereferenceItems': dereferenceItems,
+              'semapps:itemsPerPage': itemsPerPage,
+              'semapps:sortPredicate': sortPredicate,
+              'semapps:sortOrder': sortOrder
+            },
+            contentType: MIME_TYPES.JSON,
+            webId: 'system'
           },
-          contentType: MIME_TYPES.JSON,
-          slug: path ? getSlugFromUri(objectUri) + path : undefined,
-          webId: 'system'
-        });
+          {
+            meta: {
+              // Bypass the automatic URI generation
+              forcedResourceUri: path ? urlJoin(objectUri, path) : undefined
+            }
+          }
+        );
 
         // Attach it to the object
         await ctx.call(

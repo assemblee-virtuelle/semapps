@@ -55,7 +55,10 @@ module.exports = {
       }
     }
 
-    const resourceUri = await ctx.call('ldp.resource.generateId', { containerUri, slug, isContainer });
+    // The forcedResourceUri meta allows Moleculer service to bypass URI generation
+    // It is used by ActivityStreams collections to provide URIs like {actorUri}/inbox
+    const resourceUri =
+      ctx.meta.forcedResourceUri || (await ctx.call('ldp.resource.generateId', { containerUri, slug, isContainer }));
 
     const containerExist = await ctx.call('ldp.container.exist', { containerUri, webId });
     if (!containerExist) {

@@ -64,7 +64,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
 
     await waitForExpect(async () => {
       const inbox = await bob.call('activitypub.collection.get', {
-        collectionUri: bob.inbox,
+        resourceUri: bob.inbox,
         page: 1,
         webId: bob.id
       });
@@ -99,7 +99,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
 
     await waitForExpect(async () => {
       const inbox = await bob.call('activitypub.collection.get', {
-        collectionUri: bob.inbox,
+        resourceUri: bob.inbox,
         page: 1,
         webId: bob.id
       });
