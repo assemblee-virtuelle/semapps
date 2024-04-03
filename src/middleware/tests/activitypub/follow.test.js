@@ -53,7 +53,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
       actor: bob.id,
       type: ACTIVITY_TYPES.FOLLOW,
       object: alice.id,
-      to: [alice.id, `${bob.id}/followers`]
+      to: alice.id
     });
 
     await waitForExpect(async () => {

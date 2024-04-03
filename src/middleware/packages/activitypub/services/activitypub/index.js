@@ -3,6 +3,7 @@ const { as, sec } = require('@semapps/ontologies');
 const ActorService = require('./subservices/actor');
 const ActivitiesWatcherService = require('./subservices/activities-watcher');
 const ActivityService = require('./subservices/activity');
+const ApiService = require('./subservices/api');
 const CollectionService = require('./subservices/collection');
 const FollowService = require('./subservices/follow');
 const InboxService = require('./subservices/inbox');
@@ -56,6 +57,13 @@ const ActivityPubService = {
       settings: {
         baseUri,
         selectActorData,
+        podProvider
+      }
+    });
+
+    this.broker.createService(ApiService, {
+      settings: {
+        baseUri,
         podProvider
       }
     });

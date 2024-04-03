@@ -1,5 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { MoleculerError } = require('moleculer').Errors;
+const { Errors: E } = require('moleculer-web');
 const { objectIdToCurrent, collectionPermissionsWithAnonRead } = require('../../../utils');
 const ControlledCollectionMixin = require('../../../mixins/controlled-collection');
 const { ACTOR_TYPES } = require('../../../constants');
@@ -24,11 +24,14 @@ const InboxService = {
     async post(ctx) {
       const { collectionUri, ...activity } = ctx.params;
 
+      if (!collectionUri || !collectionUri.startsWith('http')) {
+        throw new Error(`The collectionUri ${collectionUri} is not a valid URL`);
+      }
+
       // Ensure the actor in the activity is the same as the posting actor
       // (When posting, the webId is the one of the poster)
       if (activity.actor !== ctx.meta.webId) {
-        ctx.meta.$statusMessage = 'Activity actor is not the same as the posting actor';
-        ctx.meta.$statusCode = 401;
+        throw new E.UnAuthorizedError('INVALID_ACTOR', 'Activity actor is not the same as the posting actor');
       }
 
       // We want the next operations to be done by the system
@@ -39,8 +42,7 @@ const InboxService = {
 
       const collectionExists = await ctx.call('activitypub.collection.exist', { resourceUri: collectionUri });
       if (!collectionExists) {
-        ctx.meta.$statusCode = 404;
-        return;
+        throw new E.NotFoundError();
       }
 
       if (!ctx.meta.skipSignatureValidation) {
@@ -59,8 +61,7 @@ const InboxService = {
         });
 
         if (!validDigest || !validSignature) {
-          ctx.meta.$statusCode = 401;
-          return;
+          throw new E.UnAuthorizedError('INVALID_SIGNATURE');
         }
       }
 
@@ -107,8 +108,6 @@ const InboxService = {
         },
         { meta: { webId: null, dataset: null } }
       );
-
-      ctx.meta.$statusCode = 202;
     },
     async getByDates(ctx) {
       const { collectionUri, fromDate, toDate } = ctx.params;

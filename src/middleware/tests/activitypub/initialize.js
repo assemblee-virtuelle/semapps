@@ -57,7 +57,7 @@ const initialize = async (port, mainDataset, accountsDataset) => {
     }
   });
 
-  broker.createService(WebIdService, {
+  await broker.createService(WebIdService, {
     settings: {
       usersContainer: urlJoin(baseUrl, 'as/actor')
     }

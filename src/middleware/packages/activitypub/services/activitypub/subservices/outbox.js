@@ -1,5 +1,5 @@
 const fetch = require('node-fetch');
-const { MoleculerError } = require('moleculer').Errors;
+const { Errors: E } = require('moleculer-web');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const ControlledCollectionMixin = require('../../../mixins/controlled-collection');
 const { collectionPermissionsWithAnonRead, getSlugFromUri, objectIdToCurrent } = require('../../../utils');
@@ -28,18 +28,19 @@ const OutboxService = {
 
       const collectionExists = await ctx.call('activitypub.collection.exist', { resourceUri: collectionUri });
       if (!collectionExists) {
-        throw new MoleculerError(`Collection not found:${collectionUri}`, 404, 'NOT_FOUND');
+        throw E.NotFoundError();
       }
 
       const actorUri = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'outbox' });
-      if (!actorUri) throw new MoleculerError('The collection is not a valid ActivityPub outbox', 400);
+      if (!actorUri) {
+        throw new E.BadRequestError('INVALID_COLLECTION', 'The collection is not a valid ActivityPub outbox');
+      }
 
       // Ensure logged user is posting to his own outbox
       if (ctx.meta.webId && ctx.meta.webId !== 'system' && actorUri !== ctx.meta.webId) {
-        throw new MoleculerError(
-          `Forbidden to post to the outbox ${collectionUri} (webId ${ctx.meta.webId})`,
-          403,
-          'FORBIDDEN'
+        throw new E.UnAuthorizedError(
+          'UNAUTHORIZED',
+          `Forbidden to post to the outbox ${collectionUri} (webId ${ctx.meta.webId})`
         );
       }
 
@@ -124,15 +125,6 @@ const OutboxService = {
           this.localPost(localRecipients, activity);
         }
       }
-
-      // TODO identify API calls so that we only set these headers if necessary
-      // (They can enter into conflict with an usage of ctx.meta.$location)
-      ctx.meta.$responseHeaders = {
-        Location: activityUri,
-        'Content-Length': 0
-      };
-
-      ctx.meta.$statusCode = 201;
 
       return activity;
     }

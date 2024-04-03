@@ -3,9 +3,10 @@ const { negotiateTypeMime, MIME_TYPES } = require('@semapps/mime-types');
 const Busboy = require('busboy');
 const streams = require('memory-streams');
 
-// Put query string in meta so that services may use them independently
+// Put requested URL and query string in meta so that services may use them independently
 // Set here https://github.com/moleculerjs/moleculer-web/blob/c6ec80056a64ea15c57d6e2b946ce978d673ae92/src/index.js#L151-L161
-const parseQueryString = async (req, res, next) => {
+const parseUrl = async (req, res, next) => {
+  req.$ctx.meta.requestUrl = req.parsedUrl;
   req.$ctx.meta.queryString = req.query;
   next();
 };
@@ -179,22 +180,13 @@ const parseFile = (req, res, next) => {
   }
 };
 
-const addContainerUriMiddleware = containerUri => (req, res, next) => {
-  if (containerUri.includes('/:username([^/.][^/]+)')) {
-    req.$params.containerUri = containerUri.replace(':username([^/.][^/]+)', req.$params.username).replace(/\/$/, '');
-  } else {
-    req.$params.containerUri = containerUri;
-  }
-  next();
-};
-
 const saveDatasetMeta = (req, res, next) => {
   req.$ctx.meta.dataset = req.$params.username;
   next();
 };
 
 module.exports = {
-  parseQueryString,
+  parseUrl,
   parseHeader,
   parseSparql,
   negotiateContentType,
@@ -202,7 +194,6 @@ module.exports = {
   parseJson,
   parseTurtle,
   parseFile,
-  addContainerUriMiddleware,
   saveDatasetMeta,
   throw403,
   throw500

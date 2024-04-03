@@ -3,6 +3,8 @@ const { JsonLdParser } = require('jsonld-streaming-parser');
 const streamifyString = require('streamify-string');
 const { arrayOf, isURL } = require('../../utils');
 
+const delay = t => new Promise(resolve => setTimeout(resolve, t));
+
 module.exports = {
   name: 'jsonld.parser',
   dependencies: ['jsonld.document-loader'],
@@ -79,7 +81,17 @@ module.exports = {
       if (!context) context = await ctx.call('jsonld.context.get');
 
       const result = await this.actions.expand({ input: { '@context': context, '@type': types } }, { parentCtx: ctx });
-      return result?.[0]?.['@type'];
+
+      const expandedTypes = result?.[0]?.['@type'];
+
+      if (!arrayOf(expandedTypes).every(type => isURL(type))) {
+        throw new Error(`
+          Could not expand all types (${expandedTypes.join(', ')}).
+          Is an ontology missing or not registered yet on the local context ?
+        `);
+      }
+
+      return expandedTypes;
     }
   }
 };

@@ -1,4 +1,5 @@
 const {
+  parseUrl,
   parseHeader,
   parseSparql,
   negotiateContentType,
@@ -24,6 +25,7 @@ const transformRouteParamsToSlugParts = (req, res, next) => {
 
 function getPodsRoute() {
   const middlewares = [
+    parseUrl,
     parseHeader,
     negotiateContentType,
     negotiateAccept,
@@ -47,7 +49,7 @@ function getPodsRoute() {
       'GET /': [...middlewares, 'ldp.api.get'],
       'HEAD /': [transformRouteParamsToSlugParts, 'ldp.api.head'],
       'GET /:collection': [...middlewares, 'ldp.api.get'],
-      'POST /:collection': [...middlewares, 'ldp.api.post']
+      'PATCH /:collection': [...middlewares, 'ldp.api.patch']
     },
     // Handle this route after other routes. Requires a modification of the ApiGateway.
     // See https://github.com/moleculerjs/moleculer-web/issues/335
