@@ -93,10 +93,23 @@ const waitForResource = async (delayMs, fieldNames, maxTries, callback) => {
     }
     await delay(delayMs);
   }
-  throw new Error('Waiting for resource failed. No results after ' + maxTries + ' tries');
+  throw new Error(`Waiting for resource failed. No results after ${maxTries} tries`);
 };
 
 const objectDepth = o => (Object(o) === o ? 1 + Math.max(-1, ...Object.values(o).map(objectDepth)) : 0);
+
+const getValueFromDataType = result => {
+  switch (result.datatype?.value) {
+    case 'http://www.w3.org/2001/XMLSchema#boolean':
+      return result.value === 'true';
+
+    case 'http://www.w3.org/2001/XMLSchema#integer':
+      return parseInt(result.value, 10);
+
+    default:
+      return result.value;
+  }
+};
 
 module.exports = {
   objectCurrentToId,
@@ -108,5 +121,6 @@ module.exports = {
   delay,
   arrayOf,
   waitForResource,
-  objectDepth
+  objectDepth,
+  getValueFromDataType
 };

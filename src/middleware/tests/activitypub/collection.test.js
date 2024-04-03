@@ -14,7 +14,7 @@ afterAll(async () => {
   if (broker) await broker.stop();
 });
 
-describe('Handle collections', () => {
+describe('Collections', () => {
   const items = [];
   let collectionUri;
   let orderedCollectionUri;
