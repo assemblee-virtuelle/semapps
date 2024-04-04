@@ -38,7 +38,6 @@ This service allows you to create an ActivityPub server with data stored in a tr
 ## Mixins
 
 - [ActivitiesHandlerMixin](activities-handler.md)
-- ControlledCollectionMixin
 - BotMixin
 
 ## Install

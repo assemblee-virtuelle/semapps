@@ -33,21 +33,6 @@ module.exports = async function get(ctx) {
       ctx.meta.$responseType = ctx.meta.$responseType || accept;
       if (ctx.meta.$responseType === 'application/ld+json')
         ctx.meta.$responseType = `application/ld+json; profile="https://www.w3.org/ns/activitystreams"`;
-    } else if (types.includes('https://www.w3.org/ns/activitystreams#Collection')) {
-      /*
-       * AS COLLECTION
-       */
-
-      const { controlledActions } = await ctx.call('activitypub.registry.getByUri', { collectionUri: uri });
-
-      res = await ctx.call(
-        controlledActions?.get || 'activitypub.collection.get',
-        cleanUndefined({
-          resourceUri: uri,
-          jsonContext: parseJson(ctx.meta.headers?.jsonldcontext)
-        })
-      );
-      ctx.meta.$responseType = `application/ld+json; profile="https://www.w3.org/ns/activitystreams"`;
     } else {
       /*
        * LDP RESOURCE

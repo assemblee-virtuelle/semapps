@@ -1,27 +1,28 @@
 const fetch = require('node-fetch');
 const { Errors: E } = require('moleculer-web');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const ControlledCollectionMixin = require('../../../mixins/controlled-collection');
 const { collectionPermissionsWithAnonRead, getSlugFromUri, objectIdToCurrent } = require('../../../utils');
 const { ACTOR_TYPES } = require('../../../constants');
 
 const OutboxService = {
   name: 'activitypub.outbox',
-  mixins: [ControlledCollectionMixin],
   settings: {
     baseUri: null,
-    podProvider: false,
-    // ControlledCollectionMixin settings
-    path: '/outbox',
-    attachToTypes: Object.values(ACTOR_TYPES),
-    attachPredicate: 'https://www.w3.org/ns/activitystreams#outbox',
-    ordered: true,
-    itemsPerPage: 10,
-    dereferenceItems: true,
-    sort: { predicate: 'as:published', order: 'DESC' },
-    permissions: collectionPermissionsWithAnonRead
+    podProvider: false
   },
-  dependencies: ['activitypub.object', 'activitypub.collection'],
+  dependencies: ['activitypub.object', 'activitypub.collection', 'activitypub.registry'],
+  async started() {
+    await this.broker.call('activitypub.registry.register', {
+      path: '/outbox',
+      attachToTypes: Object.values(ACTOR_TYPES),
+      attachPredicate: 'https://www.w3.org/ns/activitystreams#outbox',
+      ordered: true,
+      itemsPerPage: 10,
+      dereferenceItems: true,
+      sort: { predicate: 'as:published', order: 'DESC' },
+      permissions: collectionPermissionsWithAnonRead
+    });
+  },
   actions: {
     async post(ctx) {
       let { collectionUri, ...activity } = ctx.params;

@@ -1,25 +1,27 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { Errors: E } = require('moleculer-web');
 const { objectIdToCurrent, collectionPermissionsWithAnonRead } = require('../../../utils');
-const ControlledCollectionMixin = require('../../../mixins/controlled-collection');
 const { ACTOR_TYPES } = require('../../../constants');
 
 /** @type {import('moleculer').ServiceSchema} */
 const InboxService = {
   name: 'activitypub.inbox',
-  mixins: [ControlledCollectionMixin],
   settings: {
-    path: '/inbox',
-    attachToTypes: Object.values(ACTOR_TYPES),
-    attachPredicate: 'http://www.w3.org/ns/ldp#inbox',
-    ordered: true,
-    itemsPerPage: 10,
-    dereferenceItems: true,
-    sort: { predicate: 'as:published', order: 'DESC' },
-    permissions: collectionPermissionsWithAnonRead,
     podProvider: false
   },
-  dependencies: ['activitypub.collection', 'triplestore'],
+  dependencies: ['activitypub.collection', 'activitypub.registry'],
+  async started() {
+    await this.broker.call('activitypub.registry.register', {
+      path: '/inbox',
+      attachToTypes: Object.values(ACTOR_TYPES),
+      attachPredicate: 'http://www.w3.org/ns/ldp#inbox',
+      ordered: true,
+      itemsPerPage: 10,
+      dereferenceItems: true,
+      sort: { predicate: 'as:published', order: 'DESC' },
+      permissions: collectionPermissionsWithAnonRead
+    });
+  },
   actions: {
     async post(ctx) {
       const { collectionUri, ...activity } = ctx.params;

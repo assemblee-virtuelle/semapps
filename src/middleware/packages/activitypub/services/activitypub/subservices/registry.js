@@ -21,17 +21,7 @@ const RegistryService = {
   dependencies: ['triplestore', 'ldp'],
   async started() {
     this.registeredCollections = [];
-    this.registeredContainers = {};
     this.collectionsInCreation = [];
-
-    this.registeredContainers['*'] = await this.broker.call('ldp.registry.list');
-
-    if (this.settings.podProvider) {
-      await this.broker.waitForServices(['pod']);
-      for (let dataset of await this.broker.call('pod.list')) {
-        this.registeredContainers[dataset] = await this.broker.call('ldp.registry.list', { dataset });
-      }
-    }
   },
   actions: {
     async register(ctx) {
@@ -46,35 +36,6 @@ const RegistryService = {
     },
     list() {
       return this.registeredCollections;
-    },
-    listLocalContainers() {
-      return this.registeredContainers;
-    },
-    async getByUri(ctx) {
-      const { collectionUri } = ctx.params;
-
-      if (!collectionUri) {
-        throw new Error('The param collectionUri must be provided to activitypub.registry.getByUri');
-      }
-
-      // TODO put in cache
-      const result = await ctx.call('triplestore.query', {
-        query: `
-          SELECT ?predicate
-          WHERE {
-            ?resource ?predicate <${collectionUri}> .
-          }
-        `,
-        accept: MIME_TYPES.JSON,
-        webId: 'system'
-      });
-
-      return {
-        ...this.settings.defaultCollectionOptions,
-        ...this.registeredCollections.find(collection =>
-          result.some(node => collection.attachPredicate === node.predicate.value)
-        )
-      };
     },
     async createAndAttachCollection(ctx) {
       const { objectUri, collection, webId } = ctx.params;
@@ -146,38 +107,25 @@ const RegistryService = {
         const datasets = this.settings.podProvider ? await this.broker.call('pod.list') : ['*'];
         for (let dataset of datasets) {
           // Find all containers where we want to attach this collection
-          const containers = this.getContainersByType(collection.attachToTypes, dataset);
-          if (containers) {
-            // Go through each container
-            for (const container of Object.values(containers)) {
-              const containerUri = urlJoin(this.settings.baseUri, container.fullPath);
-              this.logger.info(`Looking for resources in container ${containerUri}`);
-              const resources = await ctx.call('ldp.container.getUris', { containerUri });
-              for (const resourceUri of resources) {
-                await this.actions.createAndAttachCollection(
-                  {
-                    objectUri: resourceUri,
-                    collection,
-                    webId: 'system'
-                  },
-                  { parentCtx: ctx }
-                );
-              }
+          const containers = await ctx.call('ldp.registry.getByType', { type: collection.attachToTypes, dataset });
+          for (const container of Object.values(containers)) {
+            const containerUri = urlJoin(this.settings.baseUri, container.fullPath);
+            this.logger.info(`Looking for resources in container ${containerUri}`);
+            const resources = await ctx.call('ldp.container.getUris', { containerUri });
+            for (const resourceUri of resources) {
+              await this.actions.createAndAttachCollection(
+                {
+                  objectUri: resourceUri,
+                  collection,
+                  webId: 'system'
+                },
+                { parentCtx: ctx }
+              );
             }
           }
         }
       }
     }
-    // async getUri(ctx) {
-    //   const { path, webId } = ctx.params;
-    //
-    //   if (this.settings.podProvider) {
-    //     const account = await ctx.call('auth.account.findByWebId', { webId });
-    //     return urlJoin(account.podUri, path);
-    //   } else {
-    //     return urlJoin(this.settings.baseUrl, path);
-    //   }
-    // }
   },
   methods: {
     // Get the collections attached to the given type
@@ -194,22 +142,6 @@ const RegistryService = {
               )
           )
         : [];
-    },
-    // Get the containers with resources of the given type
-    // Same action as ldp.registry.getByType, but search through locally registered containers to avoid race conditions
-    getContainersByType(types, dataset) {
-      const containers =
-        !dataset || dataset === '*'
-          ? this.registeredContainers['*']
-          : { ...this.registeredContainers['*'], ...this.registeredContainers[dataset] };
-
-      return Object.values(containers).filter(container =>
-        defaultToArray(types).some(type =>
-          Array.isArray(container.acceptedTypes)
-            ? container.acceptedTypes.includes(type)
-            : container.acceptedTypes === type
-        )
-      );
     },
     isActor(types) {
       return defaultToArray(types).some(type =>
@@ -291,14 +223,6 @@ const RegistryService = {
           { parentCtx: ctx }
         );
       }
-    },
-    async 'ldp.registry.registered'(ctx) {
-      const { container, dataset } = ctx.params;
-
-      // Register the container locally
-      // Avoid race conditions, if this event is called while the register action is still running
-      if (!this.registeredContainers[dataset || '*']) this.registeredContainers[dataset || '*'] = {};
-      this.registeredContainers[dataset || '*'][container.name] = container;
     }
   }
 };
