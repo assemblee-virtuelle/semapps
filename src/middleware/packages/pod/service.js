@@ -1,5 +1,5 @@
 const urlJoin = require('url-join');
-const { ACTOR_TYPES } = require('@semapps/activitypub');
+const { FULL_ACTOR_TYPES } = require('@semapps/activitypub');
 const { getSlugFromUri } = require('@semapps/ldp');
 const getPodsRoute = require('./routes/getPodsRoute');
 
@@ -16,7 +16,7 @@ module.exports = {
       name: 'pods',
       path: '/',
       podsContainer: true,
-      acceptedTypes: [ACTOR_TYPES.PERSON],
+      acceptedTypes: [FULL_ACTOR_TYPES.PERSON],
       excludeFromMirror: true,
       controlledActions: {
         get: 'pod.getActor'

@@ -4,11 +4,13 @@ module.exports = {
   async handler(ctx) {
     let context = [];
 
-    const ontologies = await ctx.call('ontologies.list');
+    let ontologies = await ctx.call('ontologies.list');
+
+    // Do not include ontologies which want to preserve their context URI
+    ontologies = ontologies.filter(ont => ont.preserveContextUri !== true);
 
     for (const ontology of ontologies) {
-      // Do not include in local contexts URIs we want to preserve explicitely
-      if (ontology.jsonldContext && ontology.preserveContextUri !== true) {
+      if (ontology.jsonldContext) {
         context = [].concat(ontology.jsonldContext, context);
       }
     }
