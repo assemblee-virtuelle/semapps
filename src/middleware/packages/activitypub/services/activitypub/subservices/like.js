@@ -1,7 +1,6 @@
 const ActivitiesHandlerMixin = require('../../../mixins/activities-handler');
 const { ACTIVITY_TYPES } = require('../../../constants');
 const { collectionPermissionsWithAnonRead } = require('../../../utils');
-const matchActivity = require('../../../utils/matchActivity');
 
 const LikeService = {
   name: 'activitypub.like',
@@ -9,11 +8,17 @@ const LikeService = {
   settings: {
     baseUri: null,
     attachToActorTypes: null,
-    attachToObjectTypes: null
+    likesCollectionOptions: {
+      path: '/likes',
+      attachPredicate: 'https://www.w3.org/ns/activitystreams#likes',
+      ordered: false,
+      dereferenceItems: false,
+      permissions: collectionPermissionsWithAnonRead
+    }
   },
   dependencies: ['activitypub.outbox', 'activitypub.collection'],
   async started() {
-    const { attachToActorTypes, attachToObjectTypes } = this.settings;
+    const { attachToActorTypes } = this.settings;
 
     await this.broker.call('activitypub.registry.register', {
       path: '/liked',
@@ -23,35 +28,33 @@ const LikeService = {
       dereferenceItems: false,
       permissions: collectionPermissionsWithAnonRead
     });
-
-    await this.broker.call('activitypub.registry.register', {
-      path: '/likes',
-      attachToTypes: attachToObjectTypes,
-      attachPredicate: 'https://www.w3.org/ns/activitystreams#likes',
-      ordered: false,
-      dereferenceItems: false,
-      permissions: collectionPermissionsWithAnonRead
-    });
   },
   actions: {
     async addLike(ctx) {
       const { actorUri, objectUri } = ctx.params;
 
-      const actor = await ctx.call('activitypub.actor.get', { actorUri });
-      const object = await ctx.call('activitypub.object.get', { objectUri, actorUri });
+      if (this.isLocal(actorUri)) {
+        const actor = await ctx.call('activitypub.actor.get', { actorUri });
 
-      // If a liked collection is attached to the actor, attach the object
-      if (actor.liked) {
-        await ctx.call('activitypub.collection.add', {
-          collectionUri: actor.liked,
-          item: objectUri
-        });
+        // If a liked collection is attached to the actor, attach the object
+        if (actor.liked) {
+          await ctx.call('activitypub.collection.add', {
+            collectionUri: actor.liked,
+            item: objectUri
+          });
+        }
       }
 
-      // If a likes collection is attached to the object, attach the actor
-      if (object.likes) {
+      if (this.isLocal(objectUri)) {
+        // Create the /likes collection and attach it to the object, unless it already exists
+        const likesCollectionUri = await ctx.call('activitypub.registry.createAndAttachCollection', {
+          objectUri,
+          collection: this.settings.likesCollectionOptions,
+          webId: 'system'
+        });
+
         await ctx.call('activitypub.collection.add', {
-          collectionUri: object.likes,
+          collectionUri: likesCollectionUri,
           item: actorUri
         });
       }
@@ -61,23 +64,27 @@ const LikeService = {
     async removeLike(ctx) {
       const { actorUri, objectUri } = ctx.params;
 
-      const actor = await ctx.call('activitypub.actor.get', { actorUri });
-      const object = await ctx.call('activitypub.object.get', { objectUri, actorUri });
+      if (this.isLocal(actorUri)) {
+        const actor = await ctx.call('activitypub.actor.get', { actorUri });
 
-      // If a liked collection is attached to the actor, detach the object
-      if (actor.liked) {
-        await ctx.call('activitypub.collection.remove', {
-          collectionUri: actor.liked,
-          item: objectUri
-        });
+        // If a liked collection is attached to the actor, detach the object
+        if (actor.liked) {
+          await ctx.call('activitypub.collection.remove', {
+            collectionUri: actor.liked,
+            item: objectUri
+          });
+        }
       }
 
-      // If a likes collection is attached to the object, detach the actor
-      if (object.likes) {
-        await ctx.call('activitypub.collection.remove', {
-          collectionUri: object.likes,
-          item: actorUri
-        });
+      if (this.isLocal(objectUri)) {
+        const object = await ctx.call('activitypub.object.get', { objectUri, actorUri });
+        // If a likes collection is attached to the object, detach the actor
+        if (object.likes) {
+          await ctx.call('activitypub.collection.remove', {
+            collectionUri: object.likes,
+            item: actorUri
+          });
+        }
       }
 
       ctx.emit('activitypub.like.removed', { actorUri, objectUri }, { meta: { webId: null, dataset: null } });
@@ -85,44 +92,40 @@ const LikeService = {
   },
   activities: {
     likeObject: {
-      match(ctx, activity) {
-        return matchActivity(
-          ctx,
-          {
-            type: ACTIVITY_TYPES.LIKE,
-            object: {
-              type: this.settings.attachToObjectTypes
-            }
-          },
-          activity
-        );
+      match: {
+        type: ACTIVITY_TYPES.LIKE
       },
       async onEmit(ctx, activity) {
+        await this.actions.addLike({ actorUri: activity.actor, objectUri: activity.object }, { parentCtx: ctx });
+      },
+      async onReceive(ctx, activity) {
         await this.actions.addLike({ actorUri: activity.actor, objectUri: activity.object }, { parentCtx: ctx });
       }
     },
     unlikeObject: {
-      match(ctx, activity) {
-        return matchActivity(
-          ctx,
-          {
-            type: ACTIVITY_TYPES.UNDO,
-            object: {
-              type: ACTIVITY_TYPES.LIKE,
-              object: {
-                type: this.settings.attachToObjectTypes
-              }
-            }
-          },
-          activity
-        );
+      match: {
+        type: ACTIVITY_TYPES.UNDO,
+        object: {
+          type: ACTIVITY_TYPES.LIKE
+        }
       },
       async onEmit(ctx, activity) {
         await this.actions.removeLike(
           { actorUri: activity.actor, objectUri: activity.object.object },
           { parentCtx: ctx }
         );
+      },
+      async onReceive(ctx, activity) {
+        await this.actions.removeLike(
+          { actorUri: activity.actor, objectUri: activity.object.object },
+          { parentCtx: ctx }
+        );
       }
+    }
+  },
+  methods: {
+    isLocal(uri) {
+      return uri.startsWith(this.settings.baseUri);
     }
   }
 };

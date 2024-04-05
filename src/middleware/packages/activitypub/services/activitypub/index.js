@@ -12,7 +12,7 @@ const ObjectService = require('./subservices/object');
 const OutboxService = require('./subservices/outbox');
 const RegistryService = require('./subservices/registry');
 const ReplyService = require('./subservices/reply');
-const { OBJECT_TYPES, ACTOR_TYPES } = require('../../constants');
+const { ACTOR_TYPES } = require('../../constants');
 
 const ActivityPubService = {
   name: 'activitypub',
@@ -24,7 +24,6 @@ const ActivityPubService = {
     selectActorData: null,
     queueServiceUrl: null,
     like: {
-      attachToObjectTypes: null,
       attachToActorTypes: null
     },
     follow: {
@@ -97,7 +96,6 @@ const ActivityPubService = {
     this.broker.createService(LikeService, {
       settings: {
         baseUri,
-        attachToObjectTypes: like.attachToObjectTypes || Object.values(OBJECT_TYPES),
         attachToActorTypes: like.attachToActorTypes || Object.values(ACTOR_TYPES)
       }
     });
