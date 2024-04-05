@@ -8,7 +8,7 @@ This service allows you to create an ActivityPub server with data stored in a tr
 
 - Store activities, actors and objects in the triple store
 - Allow to create actors when new [WebIDs](../webid.md) are created
-- Side effects are supported for `Create`, `Update`, `Delete`, `Follow`, `Like`
+- Side effects are supported for `Create`, `Update`, `Delete`, `Follow`, `Like` activities, as well replies
 
 ## Dependencies
 
@@ -20,20 +20,22 @@ This service allows you to create an ActivityPub server with data stored in a tr
 ## Sub-services
 
 - ActivityService
+- ActivitiesWatcherService
 - ActorService
+- ApiService
 - CollectionService
 - FollowService
 - InboxService
 - LikeService
 - ObjectService
 - OutboxService
-- RelayService
-- ReplyService
 - RegistryService
+- ReplyService
 
 ## Other services
 
 - [ActivityMappingService](activity-mapping.md)
+- RelayService
 
 ## Mixins
 
@@ -56,6 +58,7 @@ module.exports = {
   settings: {
     baseUri: 'http://localhost:3000/',
     queueServiceUrl: null,
+    activateTombestones: true,
     like: {
       attachToActorTypes: null
     },
