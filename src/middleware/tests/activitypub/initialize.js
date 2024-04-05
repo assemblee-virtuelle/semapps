@@ -21,7 +21,7 @@ const initialize = async (port, mainDataset, accountsDataset) => {
     logger: {
       type: 'Console',
       options: {
-        level: 'error'
+        level: 'warn'
       }
     }
   });

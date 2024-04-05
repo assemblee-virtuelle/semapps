@@ -321,7 +321,7 @@ const CollectionService = {
                 await ctx.call('ldp.resource.get', {
                   resourceUri: itemUri,
                   accept: MIME_TYPES.JSON,
-                  jsonContext: 'https://www.w3.org/ns/activitystreams',
+                  jsonContext,
                   webId
                 })
               );
@@ -365,10 +365,12 @@ const CollectionService = {
         }
       }
 
-      return await ctx.call('jsonld.parser.compact', {
+      const test = await ctx.call('jsonld.parser.compact', {
         input: returnData,
         context: jsonContext || localContext
       });
+
+      return test;
     },
     /*
      * Empty the collection, deleting all items it contains.

@@ -1,5 +1,6 @@
 const { throw403 } = require('@semapps/middlewares');
-const { arrayOf } = require('@semapps/ldp');
+const { arrayOf, hasType } = require('@semapps/ldp');
+const { ACTIVITY_TYPES } = require('@semapps/activitypub');
 const { isRemoteUri, getSlugFromUri } = require('../utils');
 const { defaultContainerRights } = require('../defaultRights');
 
@@ -281,6 +282,19 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
                 },
                 webId: 'system'
               });
+              // If this is a Create activity, also give rights to the object
+              if (action.name === 'activitypub.activity.create' && hasType(activity, ACTIVITY_TYPES.CREATE)) {
+                await ctx.call('webacl.resource.addRights', {
+                  resourceUri: typeof activity.object === 'string' ? activity.object : activity.object.id,
+                  additionalRights: {
+                    user: {
+                      uri: recipient,
+                      read: true
+                    }
+                  },
+                  webId: 'system'
+                });
+              }
             }
 
             // If activity is public, give anonymous read right
@@ -294,6 +308,18 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
                 },
                 webId: 'system'
               });
+              // If this is a Create activity, also give rights to the object
+              if (action.name === 'activitypub.activity.create' && hasType(activity, ACTIVITY_TYPES.CREATE)) {
+                await ctx.call('webacl.resource.addRights', {
+                  resourceUri: typeof activity.object === 'string' ? activity.object : activity.object.id,
+                  additionalRights: {
+                    anon: {
+                      read: true
+                    }
+                  },
+                  webId: 'system'
+                });
+              }
             }
             break;
           }

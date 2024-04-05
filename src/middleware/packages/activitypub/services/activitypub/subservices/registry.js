@@ -8,15 +8,7 @@ const RegistryService = {
   name: 'activitypub.registry',
   settings: {
     baseUri: null,
-    podProvider: false,
-    defaultCollectionOptions: {
-      attachToTypes: [],
-      attachPredicate: null,
-      ordered: false,
-      itemsPerPage: null,
-      dereferenceItems: false,
-      sort: { predicate: 'as:published', order: 'DESC' }
-    }
+    podProvider: false
   },
   dependencies: ['triplestore', 'ldp'],
   async started() {
@@ -31,7 +23,7 @@ const RegistryService = {
       // Ignore undefined options
       Object.keys(options).forEach(key => (options[key] === undefined || options[key] === null) && delete options[key]);
 
-      // Save the collection locally
+      // Persist the collection in memory
       this.registeredCollections.push({ path, name, attachToTypes, ...options });
     },
     list() {
@@ -89,6 +81,8 @@ const RegistryService = {
         // Now the collection has been created, we can remove it (this way we don't use too much memory)
         this.collectionsInCreation = this.collectionsInCreation.filter(c => c !== collectionUri);
       }
+
+      return collectionUri;
     },
     async deleteCollection(ctx) {
       const { objectUri, collection } = ctx.params;

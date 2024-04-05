@@ -8,91 +8,110 @@ const ReplyService = {
   mixins: [ActivitiesHandlerMixin],
   settings: {
     baseUri: null,
-    attachToObjectTypes: null
-  },
-  dependencies: ['activitypub.outbox', 'activitypub.collection'],
-  async started() {
-    const { attachToObjectTypes } = this.settings;
-    await this.broker.call('activitypub.registry.register', {
+    collectionOptions: {
       path: '/replies',
-      attachToTypes: attachToObjectTypes,
       attachPredicate: 'https://www.w3.org/ns/activitystreams#replies',
       ordered: false,
       dereferenceItems: true,
       permissions: collectionPermissionsWithAnonRead
-    });
+    }
   },
+  dependencies: ['activitypub.outbox', 'activitypub.collection'],
   actions: {
     async addReply(ctx) {
       const { objectUri, replyUri } = ctx.params;
 
-      const object = await ctx.call('activitypub.object.get', { objectUri });
+      // Create the /replies collection and attach it to the object, unless it already exists
+      const collectionUri = await ctx.call('activitypub.registry.createAndAttachCollection', {
+        objectUri,
+        collection: this.settings.collectionOptions,
+        webId: 'system'
+      });
 
-      await ctx.call('activitypub.collection.add', { collectionUri: object.replies, item: replyUri });
+      await ctx.call('activitypub.collection.add', { collectionUri, item: replyUri });
     },
     async removeReply(ctx) {
       const { objectUri, replyUri } = ctx.params;
 
       const object = await ctx.call('activitypub.object.get', { objectUri });
 
-      await ctx.call('activitypub.collection.remove', { collectionUri: object.replies, item: replyUri });
+      // Remove the reply only if a /replies collection was attached to the object
+      if (object.replies) {
+        await ctx.call('activitypub.collection.remove', { collectionUri: object.replies, item: replyUri });
+      }
     }
   },
   activities: {
     postReply: {
-      match(ctx, activity) {
-        return matchActivity(
+      async match(ctx, activity) {
+        const dereferencedActivity = await matchActivity(
           ctx,
           {
             type: ACTIVITY_TYPES.CREATE,
             object: {
-              type: OBJECT_TYPES.NOTE,
-              inReplyTo: {
-                type: this.settings.attachToObjectTypes
-              }
+              type: OBJECT_TYPES.NOTE
             }
           },
           activity
         );
+        // We have a match only if there is a inReplyTo predicate to the object
+        if (dereferencedActivity && dereferencedActivity.object.inReplyTo) {
+          return dereferencedActivity;
+        } else {
+          return false;
+        }
       },
       async onEmit(ctx, activity) {
-        if (this.isLocalObject(activity.object.inReplyTo.id)) {
+        if (this.isLocalObject(activity.object.inReplyTo)) {
           await this.actions.addReply(
-            { objectUri: activity.object.inReplyTo.id, replyUri: activity.object.id },
+            { objectUri: activity.object.inReplyTo, replyUri: activity.object.id },
             { parentCtx: ctx }
           );
         }
       },
       async onReceive(ctx, activity) {
-        if (this.isLocalObject(activity.object.inReplyTo.id)) {
+        if (this.isLocalObject(activity.object.inReplyTo)) {
           await this.actions.addReply(
-            { objectUri: activity.object.inReplyTo.id, replyUri: activity.object.id },
+            { objectUri: activity.object.inReplyTo, replyUri: activity.object.id },
             { parentCtx: ctx }
           );
         }
       }
     },
     deleteReply: {
-      match(ctx, activity) {
-        return matchActivity(
+      async match(ctx, activity) {
+        const dereferencedActivity = await matchActivity(
           ctx,
           {
             type: ACTIVITY_TYPES.DELETE,
             object: {
-              type: OBJECT_TYPES.NOTE,
-              inReplyTo: {
-                type: this.settings.attachToObjectTypes
-              }
+              type: OBJECT_TYPES.NOTE
             }
           },
           activity
         );
+        // We have a match only if there is a inReplyTo predicate to the object
+        if (dereferencedActivity && dereferencedActivity.object.inReplyTo) {
+          return dereferencedActivity;
+        } else {
+          return false;
+        }
       },
-      async onEmit(ctx, activity, emitterUri) {
-        await this.actions.removeReply(
-          { objectUri: activity.object.inReplyTo.id, replyUri: activity.object.id },
-          { parentCtx: ctx }
-        );
+      async onEmit(ctx, activity) {
+        if (this.isLocalObject(activity.object.inReplyTo)) {
+          await this.actions.removeReply(
+            { objectUri: activity.object.inReplyTo, replyUri: activity.object.id },
+            { parentCtx: ctx }
+          );
+        }
+      },
+      async onReceive(ctx, activity) {
+        if (this.isLocalObject(activity.object.inReplyTo)) {
+          await this.actions.removeReply(
+            { objectUri: activity.object.inReplyTo, replyUri: activity.object.id },
+            { parentCtx: ctx }
+          );
+        }
       }
     }
   },

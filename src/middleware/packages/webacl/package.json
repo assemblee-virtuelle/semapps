@@ -16,6 +16,7 @@
     "url": "https://github.com/assemblee-virtuelle/semapps/issues"
   },
   "dependencies": {
+    "@semapps/activitypub": "0.6.2",
     "@semapps/ldp": "0.6.2",
     "@semapps/middlewares": "0.6.2",
     "@semapps/mime-types": "0.6.2",

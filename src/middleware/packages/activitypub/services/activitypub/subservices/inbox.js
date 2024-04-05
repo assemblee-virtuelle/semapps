@@ -1,4 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { getDatasetFromUri } = require('@semapps/ldp');
 const { Errors: E } = require('moleculer-web');
 const { objectIdToCurrent, collectionPermissionsWithAnonRead } = require('../../../utils');
 const { ACTOR_TYPES } = require('../../../constants');
@@ -25,6 +26,10 @@ const InboxService = {
   actions: {
     async post(ctx) {
       const { collectionUri, ...activity } = ctx.params;
+
+      if (this.settings.podProvider) {
+        ctx.meta.dataset = getDatasetFromUri(collectionUri);
+      }
 
       if (!collectionUri || !collectionUri.startsWith('http')) {
         throw new Error(`The collectionUri ${collectionUri} is not a valid URL`);
