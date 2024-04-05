@@ -9,6 +9,7 @@ const modifyActions = [
   'ldp.container.create',
   'activitypub.activity.create',
   'activitypub.activity.attach',
+  'activitypub.object.createTombstone',
   'webid.create',
   'ldp.remote.store',
   'ldp.remote.delete',
@@ -229,6 +230,19 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
 
           case 'webid.create':
             await addRightsToNewUser(ctx, actionReturnValue);
+            break;
+
+          case 'activitypub.object.createTombstone':
+            // Tombstones should be public
+            await ctx.call('webacl.resource.addRights', {
+              resourceUri: ctx.params.resourceUri,
+              additionalRights: {
+                anon: {
+                  read: true
+                }
+              },
+              webId: 'system'
+            });
             break;
 
           case 'ldp.remote.store': {

@@ -127,7 +127,11 @@ describe('Create/Update/Delete objects', () => {
           resourceUri: objectUri,
           accept: MIME_TYPES.JSON
         })
-      ).rejects.toThrow(`Cannot get permissions of non-existing container or resource ${objectUri}`);
+      ).resolves.toMatchObject({
+        type: OBJECT_TYPES.TOMBSTONE,
+        formerType: 'as:Article',
+        deleted: expect.anything()
+      });
     });
   });
 });

@@ -39,6 +39,23 @@ const ReplyService = {
       if (object.replies) {
         await ctx.call('activitypub.collection.remove', { collectionUri: object.replies, item: replyUri });
       }
+    },
+    async removeFromAllRepliesCollections(ctx) {
+      const { objectUri } = ctx.params;
+
+      await ctx.call('triplestore.update', {
+        query: `
+          PREFIX as: <https://www.w3.org/ns/activitystreams#>
+          DELETE {
+            ?collection as:items <${objectUri}> .
+          } 
+          WHERE {
+            ?collection as:items <${objectUri}> .
+            ?collection a as:Collection .
+            ?object as:replies ?collection .
+          }
+        `
+      });
     }
   },
   activities: {
@@ -78,40 +95,19 @@ const ReplyService = {
         }
       }
     },
-    deleteReply: {
-      async match(ctx, activity) {
-        const dereferencedActivity = await matchActivity(
-          ctx,
-          {
-            type: ACTIVITY_TYPES.DELETE,
-            object: {
-              type: OBJECT_TYPES.NOTE
-            }
-          },
-          activity
-        );
-        // We have a match only if there is a inReplyTo predicate to the object
-        if (dereferencedActivity && dereferencedActivity.object.inReplyTo) {
-          return dereferencedActivity;
-        } else {
-          return false;
+    deleteNote: {
+      match: {
+        type: ACTIVITY_TYPES.DELETE,
+        object: {
+          type: OBJECT_TYPES.TOMBSTONE,
+          formerType: 'as:Note' // JSON-LD doesn't remove prefixes for subjects
         }
       },
       async onEmit(ctx, activity) {
-        if (this.isLocalObject(activity.object.inReplyTo)) {
-          await this.actions.removeReply(
-            { objectUri: activity.object.inReplyTo, replyUri: activity.object.id },
-            { parentCtx: ctx }
-          );
-        }
+        await this.actions.removeFromAllRepliesCollections({ objectUri: activity.object.id }, { parentCtx: ctx });
       },
       async onReceive(ctx, activity) {
-        if (this.isLocalObject(activity.object.inReplyTo)) {
-          await this.actions.removeReply(
-            { objectUri: activity.object.inReplyTo, replyUri: activity.object.id },
-            { parentCtx: ctx }
-          );
-        }
+        await this.actions.removeFromAllRepliesCollections({ objectUri: activity.object.id }, { parentCtx: ctx });
       }
     }
   },

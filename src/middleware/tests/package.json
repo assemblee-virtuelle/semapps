@@ -3,7 +3,7 @@
   "private": true,
   "description": "SemApps integration tests",
   "scripts": {
-    "test": "jest --detectOpenHandles --verbose true --silent false activitypub/message"
+    "test": "jest --detectOpenHandles --verbose true --silent false"
   },
   "author": "SemApps Team",
   "license": "Apache-2.0",

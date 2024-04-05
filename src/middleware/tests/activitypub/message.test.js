@@ -133,7 +133,11 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
           resourceUri: bobMessageUri,
           accept: MIME_TYPES.JSON
         })
-      ).rejects.toThrow();
+      ).resolves.toMatchObject({
+        type: OBJECT_TYPES.TOMBSTONE,
+        formerType: 'as:Note',
+        deleted: expect.anything()
+      });
     });
 
     await waitForExpect(async () => {

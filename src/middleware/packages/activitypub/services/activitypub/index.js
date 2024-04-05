@@ -20,6 +20,7 @@ const ActivityPubService = {
     baseUri: null,
     podProvider: false,
     activitiesPath: '/as/activity',
+    activateTombstones: true,
     selectActorData: null,
     queueServiceUrl: null,
     like: {
@@ -28,14 +29,11 @@ const ActivityPubService = {
     },
     follow: {
       attachToActorTypes: null
-    },
-    reply: {
-      attachToObjectTypes: null
     }
   },
   dependencies: ['api', 'ontologies'],
   created() {
-    const { baseUri, podProvider, activitiesPath, selectActorData, queueServiceUrl, reply, like, follow } =
+    const { baseUri, podProvider, activitiesPath, selectActorData, queueServiceUrl, activateTombstones, like, follow } =
       this.settings;
 
     this.broker.createService(ActivitiesWatcherService);
@@ -71,7 +69,8 @@ const ActivityPubService = {
     this.broker.createService(ObjectService, {
       settings: {
         baseUri,
-        podProvider
+        podProvider,
+        activateTombstones
       }
     });
 
@@ -105,8 +104,7 @@ const ActivityPubService = {
 
     this.broker.createService(ReplyService, {
       settings: {
-        baseUri,
-        attachToObjectTypes: reply.attachToObjectTypes || Object.values(OBJECT_TYPES)
+        baseUri
       }
     });
 
