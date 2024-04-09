@@ -49,8 +49,7 @@ const LikeService = {
         // Create the /likes collection and attach it to the object, unless it already exists
         const likesCollectionUri = await ctx.call('activitypub.registry.createAndAttachCollection', {
           objectUri,
-          collection: this.settings.likesCollectionOptions,
-          webId: 'system'
+          collection: this.settings.likesCollectionOptions
         });
 
         await ctx.call('activitypub.collection.add', {

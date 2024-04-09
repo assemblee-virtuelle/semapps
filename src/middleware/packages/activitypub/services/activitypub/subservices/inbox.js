@@ -42,12 +42,16 @@ const InboxService = {
       }
 
       // We want the next operations to be done by the system
+      // TODO check if we can avoid this, as this is a bad practice
       ctx.meta.webId = 'system';
 
       // Remember inbox owner (used by WebACL middleware)
       const actorUri = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'inbox' });
 
-      const collectionExists = await ctx.call('activitypub.collection.exist', { resourceUri: collectionUri });
+      const collectionExists = await ctx.call('activitypub.collection.exist', {
+        resourceUri: collectionUri,
+        webId: 'system'
+      });
       if (!collectionExists) {
         throw new E.NotFoundError();
       }
@@ -100,10 +104,14 @@ const InboxService = {
         // If the activity cannot be retrieved, pass the full object
         // This will be used in particular for Solid notifications
         // which will send the full activity to the listeners
-        await ctx.emit('activitypub.collection.added', {
-          collectionUri,
-          item: activity
-        });
+        ctx.emit(
+          'activitypub.collection.added',
+          {
+            collectionUri,
+            item: activity
+          },
+          { meta: { webId: null, dataset: null } }
+        );
       }
 
       ctx.emit(

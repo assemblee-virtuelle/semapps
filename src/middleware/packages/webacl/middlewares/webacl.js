@@ -189,18 +189,12 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
           // Remove the permissions which were added just before
           switch (action.name) {
             case 'ldp.resource.create':
-              await ctx.call(
-                'webacl.resource.deleteAllRights',
-                { resourceUri: ctx.params.resource['@id'] || ctx.params.resource.id },
-                { meta: { webId: 'system' } }
-              );
+              await ctx.call('webacl.resource.deleteAllRights', {
+                resourceUri: ctx.params.resource['@id'] || ctx.params.resource.id
+              });
               break;
             case 'ldp.container.create':
-              await ctx.call(
-                'webacl.resource.deleteAllRights',
-                { resourceUri: ctx.params.containerUri },
-                { meta: { webId: 'system' } }
-              );
+              await ctx.call('webacl.resource.deleteAllRights', { resourceUri: ctx.params.containerUri });
               break;
             default:
               break;
@@ -213,19 +207,11 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
          */
         switch (action.name) {
           case 'ldp.resource.delete':
-            await ctx.call(
-              'webacl.resource.deleteAllRights',
-              { resourceUri: ctx.params.resourceUri },
-              { meta: { webId: 'system' } }
-            );
+            await ctx.call('webacl.resource.deleteAllRights', { resourceUri: ctx.params.resourceUri });
             break;
 
           case 'ldp.remote.delete':
-            await ctx.call(
-              'webacl.resource.deleteAllRights',
-              { resourceUri: ctx.params.resourceUri },
-              { meta: { webId: 'system' } }
-            );
+            await ctx.call('webacl.resource.deleteAllRights', { resourceUri: ctx.params.resourceUri });
             break;
 
           case 'webid.create':
@@ -278,7 +264,8 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
             const recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
 
             // When a new activity is created, ensure the emitter has read rights also
-            if (action.name === 'activitypub.activity.create') {
+            // Don't do that on podProvider config, because the Pod owner already has all rights
+            if (action.name === 'activitypub.activity.create' && !podProvider) {
               if (!recipients.includes(activity.actor)) recipients.push(activity.actor);
             }
 
@@ -296,7 +283,8 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
                 },
                 webId: 'system'
               });
-              // If this is a Create activity, also give rights to the object
+
+              // If this is a Create activity, also give rights to the created object
               if (action.name === 'activitypub.activity.create' && hasType(activity, ACTIVITY_TYPES.CREATE)) {
                 await ctx.call('webacl.resource.addRights', {
                   resourceUri: typeof activity.object === 'string' ? activity.object : activity.object.id,
@@ -322,7 +310,8 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
                 },
                 webId: 'system'
               });
-              // If this is a Create activity, also give rights to the object
+
+              // If this is a Create activity, also give rights to the created object
               if (action.name === 'activitypub.activity.create' && hasType(activity, ACTIVITY_TYPES.CREATE)) {
                 await ctx.call('webacl.resource.addRights', {
                   resourceUri: typeof activity.object === 'string' ? activity.object : activity.object.id,

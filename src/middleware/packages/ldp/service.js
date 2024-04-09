@@ -95,6 +95,10 @@ module.exports = {
   actions: {
     getBaseUrl() {
       return this.settings.baseUrl;
+    },
+    getSetting(ctx) {
+      const { key } = ctx.params;
+      return this.settings[key];
     }
   }
 };

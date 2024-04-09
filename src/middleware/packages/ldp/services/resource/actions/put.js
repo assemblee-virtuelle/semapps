@@ -28,7 +28,11 @@ module.exports = {
     const resourceUri = resource.id || resource['@id'];
 
     if (this.isRemoteUri(resourceUri, ctx.meta.dataset))
-      throw new MoleculerError('Remote resources cannot be modified', 403, 'FORBIDDEN');
+      throw new MoleculerError(
+        `Remote resource ${resourceUri} cannot be modified (dataset: ${ctx.meta.dataset})`,
+        403,
+        'FORBIDDEN'
+      );
 
     // Save the current data, to be able to send it through the event
     // If the resource does not exist, it will throw a 404 error

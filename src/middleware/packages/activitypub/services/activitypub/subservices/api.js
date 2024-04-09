@@ -19,16 +19,19 @@ const ApiService = {
     baseUri: null,
     podProvider: false
   },
-  dependencies: ['api', 'ldp.registry'],
+  dependencies: ['api', 'ldp', 'ldp.registry'],
   async started() {
+    const resourcesWithContainerPath = await this.broker.call('ldp.getSetting', { key: 'resourcesWithContainerPath' });
     if (this.settings.podProvider) {
       await this.broker.call('api.addRoute', { route: this.getBoxesRoute('/:username([^/.][^/]+)') });
+    } else if (!resourcesWithContainerPath) {
+      await this.broker.call('api.addRoute', { route: this.getBoxesRoute(`/:actorSlug`) });
     } else {
       // If some actor containers are already registered, add the corresponding API routes
       const registeredContainers = await this.broker.call('ldp.registry.list');
       for (const container of Object.values(registeredContainers)) {
         if (arrayOf(container.acceptedTypes).some(type => Object.values(FULL_ACTOR_TYPES).includes(type))) {
-          await this.broker.call('api.addRoute', { route: this.getBoxesRoute(container.fullPath) });
+          await this.broker.call('api.addRoute', { route: this.getBoxesRoute(`${container.fullPath}/:actorSlug`) });
         }
       }
     }
@@ -63,13 +66,16 @@ const ApiService = {
   },
   events: {
     async 'ldp.registry.registered'(ctx) {
-      // TODO ensure that no events of this kind are sent before the service start, or routes may be missing
       const { container } = ctx.params;
+      const resourcesWithContainerPath = await this.broker.call('ldp.getSetting', {
+        key: 'resourcesWithContainerPath'
+      });
       if (
         !this.settings.podProvider &&
+        resourcesWithContainerPath &&
         arrayOf(container.acceptedTypes).some(type => Object.values(FULL_ACTOR_TYPES).includes(type))
       ) {
-        await ctx.call('api.addRoute', { route: this.getBoxesRoute(container.fullPath) });
+        await ctx.call('api.addRoute', { route: this.getBoxesRoute(`${container.fullPath}/:actorSlug`) });
       }
     }
   },
@@ -96,8 +102,8 @@ const ApiService = {
         authorization: false,
         authentication: true,
         aliases: {
-          'POST /:actorSlug/inbox': [...middlewares, 'activitypub.api.inbox'],
-          'POST /:actorSlug/outbox': [...middlewares, 'activitypub.api.outbox']
+          'POST /inbox': [...middlewares, 'activitypub.api.inbox'],
+          'POST /outbox': [...middlewares, 'activitypub.api.outbox']
         }
       };
     }

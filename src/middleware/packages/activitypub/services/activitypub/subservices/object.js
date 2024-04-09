@@ -64,12 +64,20 @@ const ObjectService = {
 
           const containerUri = await ctx.call('ldp.registry.getUri', { path: container.path, webId: actorUri });
 
-          objectUri = await ctx.call(container.controlledActions?.post || 'ldp.container.post', {
-            containerUri,
-            resource: activity.object,
-            contentType: MIME_TYPES.JSON,
-            webId: actorUri
-          });
+          objectUri = await ctx.call(
+            container.controlledActions?.post || 'ldp.container.post',
+            {
+              containerUri,
+              resource: activity.object,
+              contentType: MIME_TYPES.JSON,
+              webId: actorUri
+            },
+            {
+              meta: {
+                skipObjectsWatcher: true // We don't want to trigger another Create action
+              }
+            }
+          );
           break;
         }
 
@@ -81,11 +89,19 @@ const ObjectService = {
 
           const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri: objectUri });
 
-          await ctx.call(controlledActions?.put || 'ldp.resource.put', {
-            resource: activity.object,
-            contentType: MIME_TYPES.JSON,
-            webId: actorUri
-          });
+          await ctx.call(
+            controlledActions?.put || 'ldp.resource.put',
+            {
+              resource: activity.object,
+              contentType: MIME_TYPES.JSON,
+              webId: actorUri
+            },
+            {
+              meta: {
+                skipObjectsWatcher: true // We don't want to trigger another Create action
+              }
+            }
+          );
 
           break;
         }
@@ -97,7 +113,15 @@ const ObjectService = {
             if (await ctx.call('ldp.resource.exist', { resourceUri, webId: actorUri })) {
               const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri });
 
-              await ctx.call(controlledActions?.delete || 'ldp.resource.delete', { resourceUri, webId: actorUri });
+              await ctx.call(
+                controlledActions?.delete || 'ldp.resource.delete',
+                { resourceUri, webId: actorUri },
+                {
+                  meta: {
+                    skipObjectsWatcher: true // We don't want to trigger another Create action
+                  }
+                }
+              );
             }
           } else {
             this.logger.warn('Cannot delete object as it is undefined');
@@ -146,12 +170,12 @@ const ObjectService = {
   events: {
     async 'ldp.resource.deleted'(ctx) {
       if (this.settings.activateTombstones) {
-        const { resourceUri, oldData } = ctx.params;
+        const { resourceUri, oldData, dataset } = ctx.params;
         const formerType = oldData.type || oldData['@type'];
 
         // Do not create Tombstones for actors or collections
         if (![...Object.values(ACTOR_TYPES), 'Collection', 'OrderedCollection'].includes(formerType)) {
-          await this.actions.createTombstone({ resourceUri, formerType }, { parentCtx: ctx });
+          await this.actions.createTombstone({ resourceUri, formerType }, { meta: { dataset }, parentCtx: ctx });
         }
       }
     }

@@ -82,12 +82,26 @@ const getPathFromUri = uri => {
   }
 };
 
-// Transforms "http://localhost:3000/dataset/data" to "dataset"
+// Transforms "http://localhost:3000/alice/data" to "alice"
 const getDatasetFromUri = uri => {
   const path = getPathFromUri(uri);
   if (path) {
     const parts = path.split('/');
     if (parts.length > 1) return parts[1];
+  } else {
+    throw new Error(`${uri} is not a valid URL`);
+  }
+};
+
+// Transforms "http://localhost:3000/alice/data" to "http://localhost:3000/alice"
+const getWebIdFromUri = uri => {
+  const path = getPathFromUri(uri);
+  if (path) {
+    const parts = path.split('/');
+    if (parts.length > 1) {
+      const urlObject = new URL(uri);
+      return `${urlObject.origin}/${parts[1]}`;
+    }
   } else {
     throw new Error(`${uri} is not a valid URL`);
   }
@@ -161,6 +175,7 @@ module.exports = {
   getParentContainerUri,
   getParentContainerPath,
   getDatasetFromUri,
+  getWebIdFromUri,
   hasType,
   isContainer,
   defaultToArray,

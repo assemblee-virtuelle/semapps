@@ -33,6 +33,9 @@ const CollectionService = {
 
         default:
           return {
+            anon: {
+              read: true
+            },
             user: {
               uri: webId,
               read: true,
@@ -102,6 +105,8 @@ const CollectionService = {
       if (!ctx.params.containerUri) {
         ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
       }
+
+      await this.actions.waitForContainerCreation({ containerUri: ctx.params.containerUri });
 
       const ordered = arrayOf(ctx.params.resource.type).includes('OrderedCollection');
 

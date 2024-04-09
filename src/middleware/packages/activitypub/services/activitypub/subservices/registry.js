@@ -3,6 +3,7 @@ const { quad, namedNode } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { defaultToArray } = require('../../../utils');
 const { ACTOR_TYPES, FULL_ACTOR_TYPES, AS_PREFIX } = require('../../../constants');
+const { getWebIdFromUri } = require('@semapps/ldp');
 
 const RegistryService = {
   name: 'activitypub.registry',
@@ -30,7 +31,7 @@ const RegistryService = {
       return this.registeredCollections;
     },
     async createAndAttachCollection(ctx) {
-      const { objectUri, collection, webId } = ctx.params;
+      const { objectUri, collection } = ctx.params;
       const { path, attachPredicate, ordered, summary, dereferenceItems, itemsPerPage, sortPredicate, sortOrder } =
         collection || {};
       const collectionUri = urlJoin(objectUri, path);
@@ -53,12 +54,12 @@ const RegistryService = {
               'semapps:sortOrder': sortOrder
             },
             contentType: MIME_TYPES.JSON,
-            webId: 'system'
+            webId: this.settings.podProvider ? getWebIdFromUri(objectUri) : 'system'
           },
           {
             meta: {
               // Bypass the automatic URI generation
-              forcedResourceUri: path ? urlJoin(objectUri, path) : undefined
+              forcedResourceUri: path ? collectionUri : undefined
             }
           }
         );
@@ -69,7 +70,7 @@ const RegistryService = {
           {
             resourceUri: objectUri,
             triplesToAdd: [quad(namedNode(objectUri), namedNode(attachPredicate), namedNode(collectionUri))],
-            webId
+            webId: 'system'
           },
           {
             meta: {
@@ -98,7 +99,7 @@ const RegistryService = {
       for (const collection of this.registeredCollections) {
         this.logger.info(`Looking for containers with types: ${JSON.stringify(collection.attachToTypes)}`);
 
-        const datasets = this.settings.podProvider ? await this.broker.call('pod.list') : ['*'];
+        const datasets = this.settings.podProvider ? await this.broker.call('pod.list') : [undefined];
         for (let dataset of datasets) {
           // Find all containers where we want to attach this collection
           const containers = await ctx.call('ldp.registry.getByType', { type: collection.attachToTypes, dataset });
