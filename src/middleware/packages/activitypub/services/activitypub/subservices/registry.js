@@ -189,21 +189,23 @@ const RegistryService = {
     },
     async 'ldp.resource.patched'(ctx) {
       const { resourceUri, triplesAdded, webId } = ctx.params;
-      for (const triple of triplesAdded) {
-        if (triple.predicate.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
-          const collections = this.getCollectionsByType(triple.object.value);
-          for (const collection of collections) {
-            if (this.isActor(triple.object.value)) {
-              // If the resource is an actor, use the resource URI as the webId
-              await this.actions.createAndAttachCollection(
-                { objectUri: resourceUri, collection, webId: resourceUri },
-                { parentCtx: ctx }
-              );
-            } else {
-              await this.actions.createAndAttachCollection(
-                { objectUri: resourceUri, collection, webId },
-                { parentCtx: ctx }
-              );
+      if (triplesAdded) {
+        for (const triple of triplesAdded) {
+          if (triple.predicate.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
+            const collections = this.getCollectionsByType(triple.object.value);
+            for (const collection of collections) {
+              if (this.isActor(triple.object.value)) {
+                // If the resource is an actor, use the resource URI as the webId
+                await this.actions.createAndAttachCollection(
+                  { objectUri: resourceUri, collection, webId: resourceUri },
+                  { parentCtx: ctx }
+                );
+              } else {
+                await this.actions.createAndAttachCollection(
+                  { objectUri: resourceUri, collection, webId },
+                  { parentCtx: ctx }
+                );
+              }
             }
           }
         }
