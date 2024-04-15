@@ -66,10 +66,25 @@ module.exports = {
     },
     // TODO move to ontologies service ??
     async expandPredicate(ctx) {
-      const { predicate, context } = ctx.params;
+      let { predicate, context } = ctx.params;
+
       if (isURL(predicate)) return predicate;
+
+      // If no context is provided, use default context
+      if (!context) context = await ctx.call('jsonld.context.get');
+
       const result = await this.actions.expand({ input: { '@context': context, [predicate]: '' } }, { parentCtx: ctx });
-      return Object.keys(result[0])[0];
+
+      const expandedPredicate = Object.keys(result[0])?.[0];
+
+      if (!isURL(expandedPredicate)) {
+        throw new Error(`
+          Could not expand predicate (${expandedPredicate}).
+          Is an ontology missing or not registered yet on the local context ?
+        `);
+      }
+
+      return expandedPredicate;
     },
     async expandTypes(ctx) {
       let { types, context } = ctx.params;
