@@ -3,8 +3,6 @@ const { JsonLdParser } = require('jsonld-streaming-parser');
 const streamifyString = require('streamify-string');
 const { arrayOf, isURL } = require('../../utils');
 
-const delay = t => new Promise(resolve => setTimeout(resolve, t));
-
 module.exports = {
   name: 'jsonld.parser',
   dependencies: ['jsonld.document-loader'],
@@ -68,6 +66,8 @@ module.exports = {
     async expandPredicate(ctx) {
       let { predicate, context } = ctx.params;
 
+      if (!predicate) throw new Error('No predicate param provided to expandPredicate action');
+
       if (isURL(predicate)) return predicate;
 
       // If no context is provided, use default context
@@ -88,6 +88,8 @@ module.exports = {
     },
     async expandTypes(ctx) {
       let { types, context } = ctx.params;
+
+      if (!types) throw new Error('No types param provided to expandTypes action');
 
       // If types are already full URIs, return them immediately
       if (arrayOf(types).every(type => isURL(type))) return types;
