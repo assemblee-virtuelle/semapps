@@ -24,12 +24,12 @@ This service allows you to create an ActivityPub server with data stored in a tr
 - ActorService
 - ApiService
 - CollectionService
+- CollectionsRegistryService
 - FollowService
 - InboxService
 - LikeService
 - ObjectService
 - OutboxService
-- RegistryService
 - ReplyService
 
 ## Other services
@@ -58,13 +58,7 @@ module.exports = {
   settings: {
     baseUri: 'http://localhost:3000/',
     queueServiceUrl: null,
-    activateTombestones: true,
-    like: {
-      attachToActorTypes: null
-    },
-    follow: {
-      attachToActorTypes: null
-    }
+    activateTombestones: true
   }
 };
 ```
@@ -119,14 +113,12 @@ Additionally, the ActivityPub services will append all the ActivityPub-specific 
 
 ## Settings
 
-| Property                     | Type       | Default       | Description                                                                                                                                        |
-| ---------------------------- | ---------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `baseUri`                    | `String`   | **required**  | Base URI of your web server                                                                                                                        |
-| `selectActorData`            | `Function` |               | Receives the data provided on signup (as JSON-LD), and must return the properties (with full URI) to be appended to the actor profile (see above). |
-| `queueServiceUrl`            | `String`   |               | Redis connection string. If set, the [Bull](https://github.com/OptimalBits/bull) task manager will be used to handle federation POSTs.             |
-| `activateTombestones`        | `Boolean`  | true          | If true, all deleted resources will be replaced with a [Tombstone](https://www.w3.org/TR/activitystreams-vocabulary/#dfn-tombstone)                |
-| `like.attachToActorsTypes`   | `Array`    | All AS actors | The ActivityStreams actors which will be attached a `liked` collection                                                                             |
-| `follow.attachToActorsTypes` | `Array`    | All AS actors | The ActivityStreams actors which will be attached a `followers` and `following` collections                                                        |
+| Property              | Type       | Default      | Description                                                                                                                                        |
+| --------------------- | ---------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `baseUri`             | `String`   | **required** | Base URI of your web server                                                                                                                        |
+| `selectActorData`     | `Function` |              | Receives the data provided on signup (as JSON-LD), and must return the properties (with full URI) to be appended to the actor profile (see above). |
+| `queueServiceUrl`     | `String`   |              | Redis connection string. If set, the [Bull](https://github.com/OptimalBits/bull) task manager will be used to handle federation POSTs.             |
+| `activateTombestones` | `Boolean`  | true         | If true, all deleted resources will be replaced with a [Tombstone](https://www.w3.org/TR/activitystreams-vocabulary/#dfn-tombstone)                |
 
 ## Events
 

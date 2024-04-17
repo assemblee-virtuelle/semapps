@@ -8,20 +8,22 @@ const OutboxService = {
   name: 'activitypub.outbox',
   settings: {
     baseUri: null,
-    podProvider: false
-  },
-  dependencies: ['activitypub.object', 'activitypub.collection', 'activitypub.registry'],
-  async started() {
-    await this.broker.call('activitypub.registry.register', {
+    podProvider: false,
+    collectionOptions: {
       path: '/outbox',
       attachToTypes: Object.values(ACTOR_TYPES),
       attachPredicate: 'https://www.w3.org/ns/activitystreams#outbox',
       ordered: true,
       itemsPerPage: 10,
       dereferenceItems: true,
-      sort: { predicate: 'as:published', order: 'DESC' },
+      sortPredicate: 'as:published',
+      sortOrder: 'semapps:DescOrder',
       permissions: collectionPermissionsWithAnonRead
-    });
+    }
+  },
+  dependencies: ['activitypub.object', 'activitypub.collection', 'activitypub.collections-registry'],
+  async started() {
+    await this.broker.call('activitypub.collections-registry.register', this.settings.collectionOptions);
   },
   actions: {
     async post(ctx) {
@@ -128,6 +130,11 @@ const OutboxService = {
       }
 
       return activity;
+    },
+    async updateCollectionsOptions(ctx) {
+      await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
+        collection: this.settings.collectionOptions
+      });
     }
   },
   methods: {

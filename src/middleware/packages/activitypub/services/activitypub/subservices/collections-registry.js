@@ -1,12 +1,12 @@
 const urlJoin = require('url-join');
 const { quad, namedNode } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { getWebIdFromUri } = require('@semapps/ldp');
 const { defaultToArray } = require('../../../utils');
 const { ACTOR_TYPES, FULL_ACTOR_TYPES, AS_PREFIX } = require('../../../constants');
-const { getWebIdFromUri } = require('@semapps/ldp');
 
-const RegistryService = {
-  name: 'activitypub.registry',
+const CollectionsRegistryService = {
+  name: 'activitypub.collections-registry',
   settings: {
     baseUri: null,
     podProvider: false
@@ -120,6 +120,70 @@ const RegistryService = {
           }
         }
       }
+    },
+    async updateCollectionsOptions(ctx) {
+      const { collection } = ctx.params;
+      let { attachPredicate, ordered, summary, dereferenceItems, itemsPerPage, sortPredicate, sortOrder } =
+        collection || {};
+
+      attachPredicate = await ctx.call('jsonld.parser.expandPredicate', { predicate: attachPredicate });
+      sortPredicate = sortPredicate && (await ctx.call('jsonld.parser.expandPredicate', { predicate: sortPredicate }));
+      sortOrder = sortOrder && (await ctx.call('jsonld.parser.expandPredicate', { predicate: sortOrder }));
+
+      const datasets = this.settings.podProvider ? await this.broker.call('pod.list') : [undefined];
+
+      for (let dataset of datasets) {
+        this.logger.info(`Getting all collections in dataset ${dataset} attached with predicate ${attachPredicate}...`);
+
+        const results = await ctx.call('triplestore.query', {
+          query: `
+            SELECT ?collectionUri
+            WHERE {
+              ?objectUri <${attachPredicate}> ?collectionUri 
+            }
+          `,
+          accept: MIME_TYPES.JSON,
+          webId: 'system',
+          dataset
+        });
+
+        for (const collectionUri of results.map(r => r.collectionUri.value)) {
+          this.logger.info(`Updating options of ${collectionUri}...`);
+          await ctx.call('triplestore.update', {
+            query: `
+              PREFIX as: <https://www.w3.org/ns/activitystreams#>
+              PREFIX semapps: <http://semapps.org/ns/core#>
+              DELETE {
+                <${collectionUri}> 
+                  a ?type ;
+                  as:summary ?summary ;
+                  semapps:dereferenceItems ?dereferenceItems ;
+                  semapps:itemsPerPage ?itemsPerPage ;
+                  semapps:sortPredicate ?sortPredicate ;
+                  semapps:sortOrder ?sortOrder .
+              }
+              INSERT {
+                <${collectionUri}> a ${ordered ? 'as:OrderedCollection, as:Collection' : 'as:Collection'} .
+                ${summary ? `<${collectionUri}> as:summary "${summary}" .` : ''}
+                <${collectionUri}> semapps:dereferenceItems ${dereferenceItems} .
+                ${itemsPerPage ? `<${collectionUri}> semapps:itemsPerPage ${itemsPerPage} .` : ''}
+                ${sortPredicate ? `<${collectionUri}> semapps:sortPredicate <${sortPredicate}> .` : ''}
+                ${sortOrder ? `<${collectionUri}> semapps:sortOrder <${sortOrder}> .` : ''}
+              }
+              WHERE {
+                <${collectionUri}> a ?type
+                OPTIONAL { <${collectionUri}> as:summary ?summary . }
+                OPTIONAL { <${collectionUri}> semapps:dereferenceItems ?dereferenceItems . }
+                OPTIONAL { <${collectionUri}> semapps:itemsPerPage ?itemsPerPage . }
+                OPTIONAL { <${collectionUri}> semapps:sortPredicate ?sortPredicate . }
+                OPTIONAL { <${collectionUri}> semapps:sortOrder ?sortOrder . }
+              }
+            `,
+            webId: 'system',
+            dataset
+          });
+        }
+      }
     }
   },
   methods: {
@@ -224,4 +288,4 @@ const RegistryService = {
   }
 };
 
-module.exports = RegistryService;
+module.exports = CollectionsRegistryService;

@@ -8,20 +8,22 @@ const { ACTOR_TYPES } = require('../../../constants');
 const InboxService = {
   name: 'activitypub.inbox',
   settings: {
-    podProvider: false
-  },
-  dependencies: ['activitypub.collection', 'activitypub.registry'],
-  async started() {
-    await this.broker.call('activitypub.registry.register', {
+    podProvider: false,
+    collectionOptions: {
       path: '/inbox',
       attachToTypes: Object.values(ACTOR_TYPES),
       attachPredicate: 'http://www.w3.org/ns/ldp#inbox',
       ordered: true,
       itemsPerPage: 10,
       dereferenceItems: true,
-      sort: { predicate: 'as:published', order: 'DESC' },
+      sortPredicate: 'as:published',
+      sortOrder: 'semapps:DescOrder',
       permissions: collectionPermissionsWithAnonRead
-    });
+    }
+  },
+  dependencies: ['activitypub.collection', 'activitypub.collections-registry'],
+  async started() {
+    await this.broker.call('activitypub.collections-registry.register', this.settings.collectionsOptions);
   },
   actions: {
     async post(ctx) {
@@ -156,6 +158,11 @@ const InboxService = {
       }
 
       return activities;
+    },
+    async updateCollectionsOptions(ctx) {
+      await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
+        collection: this.settings.collectionOptions
+      });
     }
   }
 };

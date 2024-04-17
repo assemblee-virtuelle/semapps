@@ -1,5 +1,5 @@
 const ActivitiesHandlerMixin = require('../../../mixins/activities-handler');
-const { ACTIVITY_TYPES } = require('../../../constants');
+const { ACTIVITY_TYPES, ACTOR_TYPES } = require('../../../constants');
 const { collectionPermissionsWithAnonRead } = require('../../../utils');
 
 const FollowService = {
@@ -7,29 +7,29 @@ const FollowService = {
   mixins: [ActivitiesHandlerMixin],
   settings: {
     baseUri: null,
-    attachToActorTypes: null
+    followersCollectionOptions: {
+      path: '/followers',
+      attachToTypes: Object.values(ACTOR_TYPES),
+      attachPredicate: 'https://www.w3.org/ns/activitystreams#followers',
+      ordered: false,
+      summary: 'Followers list',
+      dereferenceItems: false,
+      permissions: collectionPermissionsWithAnonRead
+    },
+    followingCollectionOptions: {
+      path: '/following',
+      attachToTypes: Object.values(ACTOR_TYPES),
+      attachPredicate: 'https://www.w3.org/ns/activitystreams#following',
+      ordered: false,
+      summary: 'Following list',
+      dereferenceItems: false,
+      permissions: collectionPermissionsWithAnonRead
+    }
   },
   dependencies: ['activitypub.outbox', 'activitypub.collection'],
   async started() {
-    const { attachToActorTypes } = this.settings;
-
-    await this.broker.call('activitypub.registry.register', {
-      path: '/followers',
-      attachToTypes: attachToActorTypes,
-      attachPredicate: 'https://www.w3.org/ns/activitystreams#followers',
-      ordered: false,
-      dereferenceItems: false,
-      permissions: collectionPermissionsWithAnonRead
-    });
-
-    await this.broker.call('activitypub.registry.register', {
-      path: '/following',
-      attachToTypes: attachToActorTypes,
-      attachPredicate: 'https://www.w3.org/ns/activitystreams#following',
-      ordered: false,
-      dereferenceItems: false,
-      permissions: collectionPermissionsWithAnonRead
-    });
+    await this.broker.call('activitypub.collections-registry.register', this.settings.followersCollectionOptions);
+    await this.broker.call('activitypub.collections-registry.register', this.settings.followingCollectionOptions);
   },
   actions: {
     async addFollower(ctx) {
@@ -108,6 +108,14 @@ const FollowService = {
 
       return await ctx.call('activitypub.collection.get', {
         resourceUri: collectionUri
+      });
+    },
+    async updateCollectionsOptions(ctx) {
+      await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
+        collection: this.settings.followersCollectionOptions
+      });
+      await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
+        collection: this.settings.followingCollectionOptions
       });
     }
   },

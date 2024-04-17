@@ -22,7 +22,7 @@ const ReplyService = {
       const { objectUri, replyUri } = ctx.params;
 
       // Create the /replies collection and attach it to the object, unless it already exists
-      const collectionUri = await ctx.call('activitypub.registry.createAndAttachCollection', {
+      const collectionUri = await ctx.call('activitypub.collections-registry.createAndAttachCollection', {
         objectUri,
         collection: this.settings.collectionOptions,
         webId: 'system'
@@ -55,6 +55,11 @@ const ReplyService = {
             ?object as:replies ?collection .
           }
         `
+      });
+    },
+    async updateCollectionsOptions(ctx) {
+      await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
+        collection: this.settings.collectionOptions
       });
     }
   },

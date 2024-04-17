@@ -1,5 +1,5 @@
 const ActivitiesHandlerMixin = require('../../../mixins/activities-handler');
-const { ACTIVITY_TYPES } = require('../../../constants');
+const { ACTIVITY_TYPES, ACTOR_TYPES } = require('../../../constants');
 const { collectionPermissionsWithAnonRead } = require('../../../utils');
 
 const LikeService = {
@@ -14,20 +14,19 @@ const LikeService = {
       ordered: false,
       dereferenceItems: false,
       permissions: collectionPermissionsWithAnonRead
-    }
-  },
-  dependencies: ['activitypub.outbox', 'activitypub.collection'],
-  async started() {
-    const { attachToActorTypes } = this.settings;
-
-    await this.broker.call('activitypub.registry.register', {
+    },
+    likedCollectionOptions: {
       path: '/liked',
-      attachToTypes: attachToActorTypes,
+      attachToTypes: Object.values(ACTOR_TYPES),
       attachPredicate: 'https://www.w3.org/ns/activitystreams#liked',
       ordered: false,
       dereferenceItems: false,
       permissions: collectionPermissionsWithAnonRead
-    });
+    }
+  },
+  dependencies: ['activitypub.outbox', 'activitypub.collection'],
+  async started() {
+    await this.broker.call('activitypub.collections-registry.register', this.settings.likedCollectionOptions);
   },
   actions: {
     async addLike(ctx) {
@@ -47,7 +46,7 @@ const LikeService = {
 
       if (this.isLocal(objectUri)) {
         // Create the /likes collection and attach it to the object, unless it already exists
-        const likesCollectionUri = await ctx.call('activitypub.registry.createAndAttachCollection', {
+        const likesCollectionUri = await ctx.call('activitypub.collections-registry.createAndAttachCollection', {
           objectUri,
           collection: this.settings.likesCollectionOptions
         });
@@ -87,6 +86,14 @@ const LikeService = {
       }
 
       ctx.emit('activitypub.like.removed', { actorUri, objectUri }, { meta: { webId: null, dataset: null } });
+    },
+    async updateCollectionsOptions(ctx) {
+      await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
+        collection: this.settings.likesCollectionOptions
+      });
+      await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
+        collection: this.settings.likedCollectionOptions
+      });
     }
   },
   activities: {

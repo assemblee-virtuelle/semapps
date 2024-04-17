@@ -10,7 +10,7 @@ const InboxService = require('./subservices/inbox');
 const LikeService = require('./subservices/like');
 const ObjectService = require('./subservices/object');
 const OutboxService = require('./subservices/outbox');
-const RegistryService = require('./subservices/registry');
+const CollectionsRegistryService = require('./subservices/collections-registry');
 const ReplyService = require('./subservices/reply');
 const { ACTOR_TYPES } = require('../../constants');
 
@@ -43,7 +43,7 @@ const ActivityPubService = {
       }
     });
 
-    this.broker.createService(RegistryService, {
+    this.broker.createService(CollectionsRegistryService, {
       settings: {
         baseUri,
         podProvider
@@ -82,8 +82,7 @@ const ActivityPubService = {
 
     this.broker.createService(FollowService, {
       settings: {
-        baseUri,
-        attachToActorTypes: follow.attachToActorTypes || Object.values(ACTOR_TYPES)
+        baseUri
       }
     });
 
@@ -95,8 +94,7 @@ const ActivityPubService = {
 
     this.broker.createService(LikeService, {
       settings: {
-        baseUri,
-        attachToActorTypes: like.attachToActorTypes || Object.values(ACTOR_TYPES)
+        baseUri
       }
     });
 
@@ -123,6 +121,15 @@ const ActivityPubService = {
       ...sec,
       overwrite: true
     });
+  },
+  actions: {
+    async updateCollectionsOptions(ctx) {
+      await ctx.call('activitypub.follow.updateCollectionsOptions');
+      await ctx.call('activitypub.inbox.updateCollectionsOptions');
+      await ctx.call('activitypub.outbox.updateCollectionsOptions');
+      await ctx.call('activitypub.like.updateCollectionsOptions');
+      await ctx.call('activitypub.reply.updateCollectionsOptions');
+    }
   }
 };
 
