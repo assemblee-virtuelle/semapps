@@ -28,9 +28,9 @@ ENV JAVA_MX_RAM="4G"
 ENV FUSEKI_SHA512 2b92f3304743da335f648c1be7b5d7c3a94725ed0a9b5123362c89a50986690114dcef0813e328126b14240f321f740b608cc353417e485c9235476f059bd380
 ENV FUSEKI_VERSION 3.17.0
 # Tip: No need for https as we've coded the sha512 above
-ENV ASF_MIRROR_EU http://www.eu.apache.org/dist/
+ENV ASF_MIRROR_EU https://www.eu.apache.org/dist/
 ENV ASF_MIRROR_US https://downloads.apache.org/
-ENV ASF_ARCHIVE http://archive.apache.org/dist/
+ENV ASF_ARCHIVE https://archive.apache.org/dist/
 #
 
 ENV JENA_SHA512 321c763fa3b3532fa06bb146363722e58e10289194f622f2e29117b610521e62e7ea51b9d06cd366570ed143f2ebbeded22e5302d2375b49da253b7ddef86d34
@@ -47,7 +47,7 @@ WORKDIR /tmp
 # sha512 checksum
 RUN echo "$FUSEKI_SHA512  fuseki.tar.gz" > fuseki.tar.gz.sha512
 # Download/check/unpack/move in one go (to reduce image size)
-RUN     curl -sS --fail $ASF_ARCHIVE/jena/binaries/apache-jena-fuseki-$FUSEKI_VERSION.tar.gz > fuseki.tar.gz && \
+RUN     curl -sSL --fail $ASF_ARCHIVE/jena/binaries/apache-jena-fuseki-$FUSEKI_VERSION.tar.gz > fuseki.tar.gz && \
         sha512sum -c fuseki.tar.gz.sha512 && \
         tar zxf fuseki.tar.gz && \
         mv apache-jena-fuseki* $FUSEKI_HOME && \

@@ -1,18 +1,33 @@
 #!/bin/bash
 set -e
 
-cd /fuseki/databases
+declare -a operations=("compact" "deleteOld")
+declare -a graphs=("" "Acl" "Mirror")
 
-# Go through all directories in the /fuseki/databases
-for dir in */; do
-    echo "Compacting /fuseki/databases/${dir::-1}..."
+for operation in "${operations[@]}"; do
+    for graph in "${graphs[@]}"; do
+        # Go through all files in the /fuseki/configuration
+        for filepath in /fuseki/configuration/*.ttl; do
+            filename=$(basename -- "$filepath")
 
-    /jena-fuseki/bin/tdb2.tdbcompact --loc=/fuseki/databases/${dir::-1}
+            # Remove .ttl extension
+            dataset="${filename%.*}"
 
-    # Wait 5 seconds to ensure the compacting is finished (this is usually done in less than 2 seconds)
-    sleep 5
+            dir="/fuseki/databases/${dataset}${graph}"
 
-    # Remove the old Data directory
-    cd /fuseki/databases/${dir::-1}
-    find . -iname 'Data*' ! -wholename $(find . -iname 'Data*' -type d | sort -n | tail -n 1)  -type d -exec rm -rf {} +
+            if [ -d "$dir" ]; then
+                if [ "$operation" == "compact" ]; then
+                    echo "Compacting ${dir}..."
+                    # TODO use --deleteOld command available in higher Fuseki versions
+                    /jena-fuseki/bin/tdb2.tdbcompact --loc=${dir}
+                else
+                    echo "Deleting old directories from ${dir}..."
+                    cd "${dir}"
+                    find . -iname 'Data*' ! -wholename $(find . -iname 'Data*' -type d | sort -n | tail -n 1)  -type d -exec rm -rf {} +
+                fi
+            else
+                echo "Directory ${dir} does not exist, skipping..."
+            fi
+        done
+    done
 done
