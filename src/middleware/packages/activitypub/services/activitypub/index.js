@@ -121,15 +121,6 @@ const ActivityPubService = {
       ...sec,
       overwrite: true
     });
-  },
-  actions: {
-    async updateCollectionsOptions(ctx) {
-      await ctx.call('activitypub.follow.updateCollectionsOptions');
-      await ctx.call('activitypub.inbox.updateCollectionsOptions');
-      await ctx.call('activitypub.outbox.updateCollectionsOptions');
-      await ctx.call('activitypub.like.updateCollectionsOptions');
-      await ctx.call('activitypub.reply.updateCollectionsOptions');
-    }
   }
 };
 
