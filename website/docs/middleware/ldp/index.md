@@ -77,16 +77,17 @@ module.exports = {
 
 The following options can be set for each container, or they can be set in the `defaultContainerOptions` settings.
 
-| Property                  | Type                   | Default       | Description                                                                                                                                            |
-| ------------------------- | ---------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `accept`                  | `String`               | "text/turtle" | Type to return (`application/ld+json`, `text/turtle` or `application/n-triples`)                                                                       |
-| `acceptedTypes`           | `Array`                |               | RDF classes accepted in this container. This is not enforced but used by some services to identify containers.                                         |
-| `excludeFromMirror`       | `Boolean`              | false         | If true, other servers will not be able to [mirror](../sync/mirror) this container.                                                                    |
-| `permissions`             | `Object` or `Function` |               | If the WebACL service is activated, permissions of the container itself                                                                                |
-| `newResourcesPermissions` | `Object` or `Function` |               | If the WebACL service is activated, permissions for new resources. [See the docs here](../webacl/index.md#default-permissions-for-new-resources)       |
-| `readOnly`                | `Boolean`              | false         | Do not set `POST`, `PATCH`, `PUT` and `DELETE` routes for the container and its resources                                                              |
-| `preferredView`           | `String`               |               | A part of the final URL for redirecting to the preferred view of the resource (see below).                                                             |
-| `controlledActions`       | `Object`               |               | Use custom actions instead of the LDP ones (post, list, get, create, put, patch, delete). Used by the [ControlledContainerMixin](controlled-container) |
+| Property                  | Type                   | Default       | Description                                                                                                                                                          |
+| ------------------------- | ---------------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `accept`                  | `String`               | "text/turtle" | Type to return (`application/ld+json`, `text/turtle` or `application/n-triples`)                                                                                     |
+| `acceptedTypes`           | `Array`                |               | RDF classes accepted in this container. This is not enforced but used by some services to identify containers.                                                       |
+| `excludeFromMirror`       | `Boolean`              | false         | If true, other servers will not be able to [mirror](../sync/mirror) this container.                                                                                  |
+| `activateTombstones`      | `Boolean`              | true          | If true, and if the ActivityPubService setting is also true, [Tombstones](https://www.w3.org/TR/activitypub/#delete-activity-outbox) will replace deleted resources. |
+| `permissions`             | `Object` or `Function` |               | If the WebACL service is activated, permissions of the container itself                                                                                              |
+| `newResourcesPermissions` | `Object` or `Function` |               | If the WebACL service is activated, permissions for new resources. [See the docs here](../webacl/index.md#default-permissions-for-new-resources)                     |
+| `readOnly`                | `Boolean`              | false         | Do not set `POST`, `PATCH`, `PUT` and `DELETE` routes for the container and its resources                                                                            |
+| `preferredView`           | `String`               |               | A part of the final URL for redirecting to the preferred view of the resource (see below).                                                                           |
+| `controlledActions`       | `Object`               |               | Use custom actions instead of the LDP ones (post, list, get, create, put, patch, delete). Used by the [ControlledContainerMixin](controlled-container)               |
 
 ## API routes
 

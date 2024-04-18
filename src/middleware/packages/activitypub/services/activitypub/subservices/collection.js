@@ -19,6 +19,7 @@ const CollectionService = {
       'https://www.w3.org/ns/activitystreams#OrderedCollection'
     ],
     accept: MIME_TYPES.JSON,
+    activateTombstones: false,
     permissions: {},
     newResourcesPermissions: webId => {
       switch (webId) {

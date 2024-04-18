@@ -10,7 +10,8 @@ module.exports = {
     newResourcesPermissions: null,
     controlledActions: {},
     readOnly: false,
-    excludeFromMirror: false
+    excludeFromMirror: false,
+    activateTombstones: true
   },
   dependencies: ['ldp'],
   async started() {
@@ -21,6 +22,7 @@ module.exports = {
       accept: this.settings.accept,
       permissions: this.settings.permissions,
       excludeFromMirror: this.settings.excludeFromMirror,
+      activateTombstones: this.settings.activateTombstones,
       newResourcesPermissions: this.settings.newResourcesPermissions,
       controlledActions: {
         post: `${this.name}.post`,

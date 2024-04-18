@@ -18,6 +18,7 @@ module.exports = {
       podsContainer: true,
       acceptedTypes: [FULL_ACTOR_TYPES.PERSON],
       excludeFromMirror: true,
+      activateTombstones: false,
       controlledActions: {
         get: 'pod.getActor'
       }

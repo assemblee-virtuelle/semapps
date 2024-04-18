@@ -190,6 +190,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
               });
               const resourceExist = await ctx.call('ldp.resource.exist', {
                 resourceUri: ctx.params.resourceUri,
+                acceptTombstones: false, // Ignore Tombstones
                 webId: 'system'
               });
               if (containerExist || resourceExist) {

@@ -169,12 +169,18 @@ const ObjectService = {
   },
   events: {
     async 'ldp.resource.deleted'(ctx) {
+      // Check if tombstones are globally activated
       if (this.settings.activateTombstones) {
-        const { resourceUri, oldData, dataset } = ctx.params;
-        const formerType = oldData.type || oldData['@type'];
+        const { resourceUri, containersUris, oldData, dataset } = ctx.params;
 
-        // Do not create Tombstones for actors or collections
-        if (![...Object.values(ACTOR_TYPES), 'Collection', 'OrderedCollection'].includes(formerType)) {
+        // Check if tombstones are activated for this specific container
+        const containerOptions = await ctx.call('ldp.registry.getByUri', {
+          containerUri: containersUris[0],
+          dataset
+        });
+
+        if (containerOptions.activateTombstones !== false) {
+          const formerType = oldData.type || oldData['@type'];
           await this.actions.createTombstone({ resourceUri, formerType }, { meta: { dataset }, parentCtx: ctx });
         }
       }
