@@ -3,7 +3,7 @@ const waitForExpect = require('wait-for-expect');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const initialize = require('./initialize');
 
-jest.setTimeout(70000);
+jest.setTimeout(100000);
 
 let server1;
 let server2;

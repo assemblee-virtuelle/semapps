@@ -12,7 +12,6 @@ const FollowService = {
       attachToTypes: Object.values(ACTOR_TYPES),
       attachPredicate: 'https://www.w3.org/ns/activitystreams#followers',
       ordered: false,
-      summary: 'Followers list',
       dereferenceItems: false,
       permissions: collectionPermissionsWithAnonRead
     },
@@ -21,7 +20,6 @@ const FollowService = {
       attachToTypes: Object.values(ACTOR_TYPES),
       attachPredicate: 'https://www.w3.org/ns/activitystreams#following',
       ordered: false,
-      summary: 'Following list',
       dereferenceItems: false,
       permissions: collectionPermissionsWithAnonRead
     }

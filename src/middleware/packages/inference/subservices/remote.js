@@ -154,6 +154,9 @@ module.exports = {
               resourceUri: relationship.subject,
               triplesToAdd: activity.object.type === ACTIVITY_TYPES.ADD ? triples : [],
               triplesToRemove: activity.object.type === ACTIVITY_TYPES.REMOVE ? triples : [],
+              // We want this operation to be ignored by the InferenceService
+              // Otherwise it will send back an offer to add the inverse relationship
+              skipInferenceCheck: true,
               webId: 'system'
             });
 

@@ -23,7 +23,7 @@ const InboxService = {
   },
   dependencies: ['activitypub.collection', 'activitypub.collections-registry'],
   async started() {
-    await this.broker.call('activitypub.collections-registry.register', this.settings.collectionsOptions);
+    await this.broker.call('activitypub.collections-registry.register', this.settings.collectionOptions);
   },
   actions: {
     async post(ctx) {
