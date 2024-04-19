@@ -1,46 +1,61 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { MoleculerError } = require('moleculer').Errors;
+const { getDatasetFromUri } = require('@semapps/ldp');
+const { Errors: E } = require('moleculer-web');
 const { objectIdToCurrent, collectionPermissionsWithAnonRead } = require('../../../utils');
-const ControlledCollectionMixin = require('../../../mixins/controlled-collection');
 const { ACTOR_TYPES } = require('../../../constants');
 
 /** @type {import('moleculer').ServiceSchema} */
 const InboxService = {
   name: 'activitypub.inbox',
-  mixins: [ControlledCollectionMixin],
   settings: {
-    path: '/inbox',
-    attachToTypes: Object.values(ACTOR_TYPES),
-    attachPredicate: 'http://www.w3.org/ns/ldp#inbox',
-    ordered: true,
-    itemsPerPage: 10,
-    dereferenceItems: true,
-    sort: { predicate: 'as:published', order: 'DESC' },
-    permissions: collectionPermissionsWithAnonRead,
-    podProvider: false
+    podProvider: false,
+    collectionOptions: {
+      path: '/inbox',
+      attachToTypes: Object.values(ACTOR_TYPES),
+      attachPredicate: 'http://www.w3.org/ns/ldp#inbox',
+      ordered: true,
+      itemsPerPage: 10,
+      dereferenceItems: true,
+      sortPredicate: 'as:published',
+      sortOrder: 'semapps:DescOrder',
+      permissions: collectionPermissionsWithAnonRead
+    }
   },
-  dependencies: ['activitypub.collection', 'triplestore'],
+  dependencies: ['activitypub.collection', 'activitypub.collections-registry'],
+  async started() {
+    await this.broker.call('activitypub.collections-registry.register', this.settings.collectionOptions);
+  },
   actions: {
     async post(ctx) {
       const { collectionUri, ...activity } = ctx.params;
 
+      if (this.settings.podProvider) {
+        ctx.meta.dataset = getDatasetFromUri(collectionUri);
+      }
+
+      if (!collectionUri || !collectionUri.startsWith('http')) {
+        throw new Error(`The collectionUri ${collectionUri} is not a valid URL`);
+      }
+
       // Ensure the actor in the activity is the same as the posting actor
       // (When posting, the webId is the one of the poster)
       if (activity.actor !== ctx.meta.webId) {
-        ctx.meta.$statusMessage = 'Activity actor is not the same as the posting actor';
-        ctx.meta.$statusCode = 401;
+        throw new E.UnAuthorizedError('INVALID_ACTOR', 'Activity actor is not the same as the posting actor');
       }
 
       // We want the next operations to be done by the system
+      // TODO check if we can avoid this, as this is a bad practice
       ctx.meta.webId = 'system';
 
       // Remember inbox owner (used by WebACL middleware)
       const actorUri = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'inbox' });
 
-      const collectionExists = await ctx.call('activitypub.collection.exist', { collectionUri });
+      const collectionExists = await ctx.call('activitypub.collection.exist', {
+        resourceUri: collectionUri,
+        webId: 'system'
+      });
       if (!collectionExists) {
-        ctx.meta.$statusCode = 404;
-        return;
+        throw new E.NotFoundError();
       }
 
       if (!ctx.meta.skipSignatureValidation) {
@@ -59,8 +74,7 @@ const InboxService = {
         });
 
         if (!validDigest || !validSignature) {
-          ctx.meta.$statusCode = 401;
-          return;
+          throw new E.UnAuthorizedError('INVALID_SIGNATURE');
         }
       }
 
@@ -84,7 +98,7 @@ const InboxService = {
         });
 
         // Attach the activity to the inbox
-        await ctx.call('activitypub.collection.attach', {
+        await ctx.call('activitypub.collection.add', {
           collectionUri,
           item: activity
         });
@@ -92,10 +106,14 @@ const InboxService = {
         // If the activity cannot be retrieved, pass the full object
         // This will be used in particular for Solid notifications
         // which will send the full activity to the listeners
-        await ctx.emit('activitypub.collection.added', {
-          collectionUri,
-          item: activity
-        });
+        ctx.emit(
+          'activitypub.collection.added',
+          {
+            collectionUri,
+            item: activity
+          },
+          { meta: { webId: null, dataset: null } }
+        );
       }
 
       ctx.emit(
@@ -107,8 +125,6 @@ const InboxService = {
         },
         { meta: { webId: null, dataset: null } }
       );
-
-      ctx.meta.$statusCode = 202;
     },
     async getByDates(ctx) {
       const { collectionUri, fromDate, toDate } = ctx.params;
@@ -142,6 +158,11 @@ const InboxService = {
       }
 
       return activities;
+    },
+    async updateCollectionsOptions(ctx) {
+      await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
+        collection: this.settings.collectionOptions
+      });
     }
   }
 };

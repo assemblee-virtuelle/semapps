@@ -8,7 +8,7 @@ This service allows you to create an ActivityPub server with data stored in a tr
 
 - Store activities, actors and objects in the triple store
 - Allow to create actors when new [WebIDs](../webid.md) are created
-- Side effects are supported for `Create`, `Update`, `Delete`, `Follow`, `Like`
+- Side effects are supported for `Create`, `Update`, `Delete`, `Follow`, `Like` activities, as well replies
 
 ## Dependencies
 
@@ -20,25 +20,26 @@ This service allows you to create an ActivityPub server with data stored in a tr
 ## Sub-services
 
 - ActivityService
+- ActivitiesWatcherService
 - ActorService
+- ApiService
 - CollectionService
+- CollectionsRegistryService
 - FollowService
 - InboxService
 - LikeService
 - ObjectService
 - OutboxService
-- RelayService
 - ReplyService
-- RegistryService
 
 ## Other services
 
 - [ActivityMappingService](activity-mapping.md)
+- RelayService
 
 ## Mixins
 
 - [ActivitiesHandlerMixin](activities-handler.md)
-- ControlledCollectionMixin
 - BotMixin
 
 ## Install
@@ -57,16 +58,7 @@ module.exports = {
   settings: {
     baseUri: 'http://localhost:3000/',
     queueServiceUrl: null,
-    like: {
-      attachToObjectTypes: null,
-      attachToActorTypes: null
-    },
-    follow: {
-      attachToActorTypes: null
-    },
-    reply: {
-      attachToObjectTypes: null
-    }
+    activateTombestones: true
   }
 };
 ```
@@ -121,15 +113,12 @@ Additionally, the ActivityPub services will append all the ActivityPub-specific 
 
 ## Settings
 
-| Property                     | Type       | Default        | Description                                                                                                                                        |
-| ---------------------------- | ---------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `baseUri`                    | `String`   | **required**   | Base URI of your web server                                                                                                                        |
-| `selectActorData`            | `Function` |                | Receives the data provided on signup (as JSON-LD), and must return the properties (with full URI) to be appended to the actor profile (see above). |
-| `queueServiceUrl`            | `String`   |                | Redis connection string. If set, the [Bull](https://github.com/OptimalBits/bull) task manager will be used to handle federation POSTs.             |
-| `like.attachToObjectTypes`   | `Array`    | All AS objects | The ActivityStreams objects which will be attached a `likes` collection                                                                            |
-| `like.attachToActorsTypes`   | `Array`    | All AS actors  | The ActivityStreams actors which will be attached a `liked` collection                                                                             |
-| `follow.attachToActorsTypes` | `Array`    | All AS actors  | The ActivityStreams actors which will be attached a `followers` and `following` collections                                                        |
-| `reply.attachToObjectTypes`  | `Array`    | All AS objects | The ActivityStreams objects which will be attached a `replies` collection                                                                          |
+| Property              | Type       | Default      | Description                                                                                                                                                                         |
+| --------------------- | ---------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `baseUri`             | `String`   | **required** | Base URI of your web server                                                                                                                                                         |
+| `selectActorData`     | `Function` |              | Receives the data provided on signup (as JSON-LD), and must return the properties (with full URI) to be appended to the actor profile (see above).                                  |
+| `queueServiceUrl`     | `String`   |              | Redis connection string. If set, the [Bull](https://github.com/OptimalBits/bull) task manager will be used to handle federation POSTs.                                              |
+| `activateTombestones` | `Boolean`  | true         | If true, all deleted resources will be replaced with a [Tombstone](https://www.w3.org/TR/activitystreams-vocabulary/#dfn-tombstone), except for containers which have disabled this |
 
 ## Events
 

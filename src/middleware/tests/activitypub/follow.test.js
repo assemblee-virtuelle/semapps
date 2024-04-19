@@ -53,7 +53,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
       actor: bob.id,
       type: ACTIVITY_TYPES.FOLLOW,
       object: alice.id,
-      to: [alice.id, `${bob.id}/followers`]
+      to: alice.id
     });
 
     await waitForExpect(async () => {
@@ -64,7 +64,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
 
     await waitForExpect(async () => {
       const inbox = await bob.call('activitypub.collection.get', {
-        collectionUri: bob.inbox,
+        resourceUri: bob.inbox,
         page: 1,
         webId: bob.id
       });
@@ -99,7 +99,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
 
     await waitForExpect(async () => {
       const inbox = await bob.call('activitypub.collection.get', {
-        collectionUri: bob.inbox,
+        resourceUri: bob.inbox,
         page: 1,
         webId: bob.id
       });

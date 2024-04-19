@@ -43,8 +43,8 @@ module.exports = {
     });
 
     // We must detach the resource from the containers after deletion, otherwise the permissions may fail
-    const containers = await ctx.call('ldp.resource.getContainers', { resourceUri });
-    for (const containerUri of containers) {
+    const containersUris = await ctx.call('ldp.resource.getContainers', { resourceUri });
+    for (const containerUri of containersUris) {
       await ctx.call('ldp.container.detach', { containerUri, resourceUri, webId: 'system' });
     }
 
@@ -58,6 +58,7 @@ module.exports = {
 
     const returnValues = {
       resourceUri,
+      containersUris,
       oldData,
       webId,
       dataset: ctx.meta.dataset

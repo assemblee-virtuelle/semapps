@@ -101,7 +101,7 @@ describe.each([true])('Register ontologies with persistRegistry %s', persistRegi
           ont2: 'https://www.w3.org/ns/ontology2#',
           ont3: 'https://www.w3.org/ns/ontology3#',
           friend: {
-            '@id': 'https://www.w3.org/ns/ontology3#friend',
+            '@id': 'ont3:friend',
             '@type': '@id',
             '@protected': true
           }

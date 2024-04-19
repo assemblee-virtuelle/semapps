@@ -1,4 +1,6 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { Errors: E } = require('moleculer-web');
+const { hasType } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
@@ -24,6 +26,11 @@ module.exports = {
 
     if (!resource) {
       resource = await this.actions.getNetwork({ resourceUri, webId }, { parentCtx: ctx });
+    }
+
+    // Do not store Tombstone (throw 404 error)
+    if (hasType(resource, 'Tombstone')) {
+      throw new E.NotFoundError();
     }
 
     if (!resourceUri) {

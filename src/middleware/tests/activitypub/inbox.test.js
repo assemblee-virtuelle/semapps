@@ -62,7 +62,7 @@ describe('Permissions are correctly set on inbox', () => {
     // Get inbox as recipient
     await waitForExpect(async () => {
       const outbox = await broker.call('activitypub.collection.get', {
-        collectionUri: simon.inbox,
+        resourceUri: simon.inbox,
         page: 1,
         webId: simon.id
       });
@@ -80,7 +80,7 @@ describe('Permissions are correctly set on inbox', () => {
     // Get inbox as emitter
     await waitForExpect(async () => {
       const outbox = await broker.call('activitypub.collection.get', {
-        collectionUri: simon.inbox,
+        resourceUri: simon.inbox,
         page: 1,
         webId: sebastien.id
       });
@@ -98,7 +98,7 @@ describe('Permissions are correctly set on inbox', () => {
     // Get inbox as anonymous
     await waitForExpect(async () => {
       const outbox = await broker.call('activitypub.collection.get', {
-        collectionUri: sebastien.inbox,
+        resourceUri: sebastien.inbox,
         page: 1,
         webId: 'anon'
       });
@@ -118,7 +118,7 @@ describe('Permissions are correctly set on inbox', () => {
     // Get inbox as recipient
     await waitForExpect(async () => {
       const outbox = await broker.call('activitypub.collection.get', {
-        collectionUri: simon.inbox,
+        resourceUri: simon.inbox,
         page: 1,
         webId: simon.id
       });
@@ -136,7 +136,7 @@ describe('Permissions are correctly set on inbox', () => {
     // Get inbox as emitter
     await waitForExpect(async () => {
       const outbox = await broker.call('activitypub.collection.get', {
-        collectionUri: simon.inbox,
+        resourceUri: simon.inbox,
         page: 1,
         webId: sebastien.id
       });
@@ -154,7 +154,7 @@ describe('Permissions are correctly set on inbox', () => {
     // Get inbox as anonymous
     await waitForExpect(async () => {
       const outbox = await broker.call('activitypub.collection.get', {
-        collectionUri: simon.inbox,
+        resourceUri: simon.inbox,
         page: 1,
         webId: 'anon'
       });

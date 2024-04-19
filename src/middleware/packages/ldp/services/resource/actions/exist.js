@@ -4,10 +4,11 @@ module.exports = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
+    acceptTombstones: { type: 'boolean', default: true },
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
-    const { resourceUri } = ctx.params;
+    const { resourceUri, acceptTombstones } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     let exist = await ctx.call('triplestore.tripleExist', {
@@ -22,6 +23,12 @@ module.exports = {
         webId,
         graphName: this.settings.mirrorGraphName
       });
+    }
+
+    // If resource exists but we don't want tombstones, check the resource type
+    if (exist && !acceptTombstones) {
+      const types = await this.actions.getTypes({ resourceUri }, { parentCtx: ctx });
+      if (types.includes('https://www.w3.org/ns/activitystreams#Tombstone')) return false;
     }
 
     return exist;

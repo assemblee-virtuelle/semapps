@@ -13,6 +13,7 @@ const CapabilitiesService = {
   settings: {
     path: CAPABILITIES_ROUTE,
     excludeFromMirror: true,
+    activateTombstones: false,
     permissions: {},
     newResourcesPermissions: {}
   },

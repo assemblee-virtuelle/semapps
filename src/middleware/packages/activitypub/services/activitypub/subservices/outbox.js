@@ -1,45 +1,49 @@
 const fetch = require('node-fetch');
-const { MoleculerError } = require('moleculer').Errors;
+const { Errors: E } = require('moleculer-web');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const ControlledCollectionMixin = require('../../../mixins/controlled-collection');
 const { collectionPermissionsWithAnonRead, getSlugFromUri, objectIdToCurrent } = require('../../../utils');
 const { ACTOR_TYPES } = require('../../../constants');
 
 const OutboxService = {
   name: 'activitypub.outbox',
-  mixins: [ControlledCollectionMixin],
   settings: {
     baseUri: null,
     podProvider: false,
-    // ControlledCollectionMixin settings
-    path: '/outbox',
-    attachToTypes: Object.values(ACTOR_TYPES),
-    attachPredicate: 'https://www.w3.org/ns/activitystreams#outbox',
-    ordered: true,
-    itemsPerPage: 10,
-    dereferenceItems: true,
-    sort: { predicate: 'as:published', order: 'DESC' },
-    permissions: collectionPermissionsWithAnonRead
+    collectionOptions: {
+      path: '/outbox',
+      attachToTypes: Object.values(ACTOR_TYPES),
+      attachPredicate: 'https://www.w3.org/ns/activitystreams#outbox',
+      ordered: true,
+      itemsPerPage: 10,
+      dereferenceItems: true,
+      sortPredicate: 'as:published',
+      sortOrder: 'semapps:DescOrder',
+      permissions: collectionPermissionsWithAnonRead
+    }
   },
-  dependencies: ['activitypub.object', 'activitypub.collection'],
+  dependencies: ['activitypub.object', 'activitypub.collection', 'activitypub.collections-registry'],
+  async started() {
+    await this.broker.call('activitypub.collections-registry.register', this.settings.collectionOptions);
+  },
   actions: {
     async post(ctx) {
       let { collectionUri, ...activity } = ctx.params;
 
-      const collectionExists = await ctx.call('activitypub.collection.exist', { collectionUri });
+      const collectionExists = await ctx.call('activitypub.collection.exist', { resourceUri: collectionUri });
       if (!collectionExists) {
-        throw new MoleculerError(`Collection not found:${collectionUri}`, 404, 'NOT_FOUND');
+        throw E.NotFoundError();
       }
 
       const actorUri = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'outbox' });
-      if (!actorUri) throw new MoleculerError('The collection is not a valid ActivityPub outbox', 400);
+      if (!actorUri) {
+        throw new E.BadRequestError('INVALID_COLLECTION', 'The collection is not a valid ActivityPub outbox');
+      }
 
       // Ensure logged user is posting to his own outbox
       if (ctx.meta.webId && ctx.meta.webId !== 'system' && actorUri !== ctx.meta.webId) {
-        throw new MoleculerError(
-          `Forbidden to post to the outbox ${collectionUri} (webId ${ctx.meta.webId})`,
-          403,
-          'FORBIDDEN'
+        throw new E.UnAuthorizedError(
+          'UNAUTHORIZED',
+          `Forbidden to post to the outbox ${collectionUri} (webId ${ctx.meta.webId})`
         );
       }
 
@@ -79,7 +83,7 @@ const OutboxService = {
       activity = await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' });
 
       // Attach the newly-created activity to the outbox
-      await ctx.call('activitypub.collection.attach', {
+      await ctx.call('activitypub.collection.add', {
         collectionUri,
         item: activity
       });
@@ -125,16 +129,12 @@ const OutboxService = {
         }
       }
 
-      // TODO identify API calls so that we only set these headers if necessary
-      // (They can enter into conflict with an usage of ctx.meta.$location)
-      ctx.meta.$responseHeaders = {
-        Location: activityUri,
-        'Content-Length': 0
-      };
-
-      ctx.meta.$statusCode = 201;
-
       return activity;
+    },
+    async updateCollectionsOptions(ctx) {
+      await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
+        collection: this.settings.collectionOptions
+      });
     }
   },
   methods: {
@@ -166,7 +166,7 @@ const OutboxService = {
 
           // Attach activity to the inbox of the recipient
           await this.broker.call(
-            'activitypub.collection.attach',
+            'activitypub.collection.add',
             {
               collectionUri: recipientInbox,
               item: activity

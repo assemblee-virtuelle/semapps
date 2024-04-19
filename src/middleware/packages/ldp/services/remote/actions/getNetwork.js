@@ -37,9 +37,11 @@ module.exports = {
     if (response.ok) {
       if (accept === MIME_TYPES.JSON) {
         return await response.json();
+      } else {
+        return await response.text();
       }
-      return await response.text();
+    } else {
+      throw new MoleculerError(response.statusText, response.status);
     }
-    throw new MoleculerError(response.statusText, response.status);
   }
 };

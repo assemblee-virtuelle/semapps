@@ -1,14 +1,15 @@
 const { throw403 } = require('@semapps/middlewares');
-const { arrayOf } = require('@semapps/ldp');
+const { arrayOf, hasType } = require('@semapps/ldp');
+const { ACTIVITY_TYPES } = require('@semapps/activitypub');
 const { isRemoteUri, getSlugFromUri } = require('../utils');
-const { defaultContainerRights, defaultCollectionRights } = require('../defaultRights');
+const { defaultContainerRights } = require('../defaultRights');
 
 const modifyActions = [
   'ldp.resource.create',
   'ldp.container.create',
-  'activitypub.collection.create',
   'activitypub.activity.create',
   'activitypub.activity.attach',
+  'activitypub.object.createTombstone',
   'webid.create',
   'ldp.remote.store',
   'ldp.remote.delete',
@@ -175,24 +176,6 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
             break;
           }
 
-          case 'activitypub.collection.create': {
-            // On start, collection options are passed as parameters because the registry is not up yet
-            if (!ctx.params.options) {
-              ctx.params.options = await ctx.call('activitypub.registry.getByUri', {
-                collectionUri: ctx.params.collectionUri
-              });
-            }
-            const rights = ctx.params.options?.permissions || defaultCollectionRights;
-
-            // We must add the permissions before inserting the collection
-            await ctx.call('webacl.resource.addRights', {
-              resourceUri: ctx.params.collectionUri,
-              newRights: typeof rights === 'function' ? rights(webId) : rights,
-              webId: 'system'
-            });
-            break;
-          }
-
           default:
             break;
         }
@@ -206,25 +189,12 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
           // Remove the permissions which were added just before
           switch (action.name) {
             case 'ldp.resource.create':
-              await ctx.call(
-                'webacl.resource.deleteAllRights',
-                { resourceUri: ctx.params.resource['@id'] || ctx.params.resource.id },
-                { meta: { webId: 'system' } }
-              );
+              await ctx.call('webacl.resource.deleteAllRights', {
+                resourceUri: ctx.params.resource['@id'] || ctx.params.resource.id
+              });
               break;
             case 'ldp.container.create':
-              await ctx.call(
-                'webacl.resource.deleteAllRights',
-                { resourceUri: ctx.params.containerUri },
-                { meta: { webId: 'system' } }
-              );
-              break;
-            case 'activitypub.collection.create':
-              await ctx.call(
-                'webacl.resource.deleteAllRights',
-                { resourceUri: ctx.params.collectionUri },
-                { meta: { webId: 'system' } }
-              );
+              await ctx.call('webacl.resource.deleteAllRights', { resourceUri: ctx.params.containerUri });
               break;
             default:
               break;
@@ -237,23 +207,28 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
          */
         switch (action.name) {
           case 'ldp.resource.delete':
-            await ctx.call(
-              'webacl.resource.deleteAllRights',
-              { resourceUri: ctx.params.resourceUri },
-              { meta: { webId: 'system' } }
-            );
+            await ctx.call('webacl.resource.deleteAllRights', { resourceUri: ctx.params.resourceUri });
             break;
 
           case 'ldp.remote.delete':
-            await ctx.call(
-              'webacl.resource.deleteAllRights',
-              { resourceUri: ctx.params.resourceUri },
-              { meta: { webId: 'system' } }
-            );
+            await ctx.call('webacl.resource.deleteAllRights', { resourceUri: ctx.params.resourceUri });
             break;
 
           case 'webid.create':
             await addRightsToNewUser(ctx, actionReturnValue);
+            break;
+
+          case 'activitypub.object.createTombstone':
+            // Tombstones should be public
+            await ctx.call('webacl.resource.addRights', {
+              resourceUri: ctx.params.resourceUri,
+              additionalRights: {
+                anon: {
+                  read: true
+                }
+              },
+              webId: 'system'
+            });
             break;
 
           case 'ldp.remote.store': {
@@ -289,7 +264,8 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
             const recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
 
             // When a new activity is created, ensure the emitter has read rights also
-            if (action.name === 'activitypub.activity.create') {
+            // Don't do that on podProvider config, because the Pod owner already has all rights
+            if (action.name === 'activitypub.activity.create' && !podProvider) {
               if (!recipients.includes(activity.actor)) recipients.push(activity.actor);
             }
 
@@ -307,6 +283,20 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
                 },
                 webId: 'system'
               });
+
+              // If this is a Create activity, also give rights to the created object
+              if (action.name === 'activitypub.activity.create' && hasType(activity, ACTIVITY_TYPES.CREATE)) {
+                await ctx.call('webacl.resource.addRights', {
+                  resourceUri: typeof activity.object === 'string' ? activity.object : activity.object.id,
+                  additionalRights: {
+                    user: {
+                      uri: recipient,
+                      read: true
+                    }
+                  },
+                  webId: 'system'
+                });
+              }
             }
 
             // If activity is public, give anonymous read right
@@ -320,6 +310,19 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
                 },
                 webId: 'system'
               });
+
+              // If this is a Create activity, also give rights to the created object
+              if (action.name === 'activitypub.activity.create' && hasType(activity, ACTIVITY_TYPES.CREATE)) {
+                await ctx.call('webacl.resource.addRights', {
+                  resourceUri: typeof activity.object === 'string' ? activity.object : activity.object.id,
+                  additionalRights: {
+                    anon: {
+                      read: true
+                    }
+                  },
+                  webId: 'system'
+                });
+              }
             }
             break;
           }

@@ -258,7 +258,10 @@ module.exports = {
       }
     },
     async 'ldp.resource.patched'(ctx) {
-      const { triplesAdded, triplesRemoved } = ctx.params;
+      const { triplesAdded, triplesRemoved, skipInferenceCheck } = ctx.params;
+
+      // If the patch is done following a remote inference offer
+      if (skipInferenceCheck) return;
 
       const triplesToAdd = this.generateInverseTriples(triplesAdded);
       const triplesToRemove = this.generateInverseTriples(triplesRemoved);

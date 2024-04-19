@@ -15,7 +15,7 @@ const handledActions = [
 const ObjectsWatcherMiddleware = (config = {}) => {
   const { baseUrl, podProvider = false, postWithoutRecipients = false } = config;
   let relayActor;
-  let watchedContainers = [];
+  let excludedContainersPathRegex = [];
   let initialized = false;
   let cacherActivated = false;
 
@@ -53,9 +53,9 @@ const ObjectsWatcherMiddleware = (config = {}) => {
     return recipients;
   };
 
-  const isWatched = containersUris => {
+  const isExcluded = containersUris => {
     return containersUris.some(uri =>
-      watchedContainers.some(container => container.pathRegex.test(new URL(uri).pathname))
+      excludedContainersPathRegex.some(pathRegex => pathRegex.test(new URL(uri).pathname))
     );
   };
 
@@ -94,7 +94,11 @@ const ObjectsWatcherMiddleware = (config = {}) => {
       }
 
       const containers = await broker.call('ldp.registry.list');
-      watchedContainers = Object.values(containers).filter(c => !c.excludeFromMirror);
+      for (const container of Object.values(containers)) {
+        if (container.excludeFromMirror === true && !excludedContainersPathRegex.includes(container.pathRegex)) {
+          excludedContainersPathRegex.push(container.pathRegex);
+        }
+      }
 
       initialized = true;
       cacherActivated = !!broker.cacher;
@@ -156,7 +160,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
           const containers = containerUri
             ? [containerUri]
             : await ctx.call('ldp.resource.getContainers', { resourceUri });
-          if (!isWatched(containers)) return await next(ctx);
+          if (isExcluded(containers)) return await next(ctx);
 
           /*
            * BEFORE HOOKS
@@ -186,6 +190,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
               });
               const resourceExist = await ctx.call('ldp.resource.exist', {
                 resourceUri: ctx.params.resourceUri,
+                acceptTombstones: false, // Ignore Tombstones
                 webId: 'system'
               });
               if (containerExist || resourceExist) {
@@ -342,7 +347,9 @@ const ObjectsWatcherMiddleware = (config = {}) => {
       if (event.name === 'ldp.registry.registered') {
         return async ctx => {
           const { container } = ctx.params;
-          if (!container.excludeFromMirror) watchedContainers.push(container);
+          if (container.excludeFromMirror === true && !excludedContainersPathRegex.includes(container.pathRegex)) {
+            excludedContainersPathRegex.push(container.pathRegex);
+          }
           return next(ctx);
         };
       }

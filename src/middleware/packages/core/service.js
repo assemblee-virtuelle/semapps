@@ -1,7 +1,7 @@
 const path = require('path');
 const ApiGatewayService = require('moleculer-web');
 const { Errors: E } = require('moleculer-web');
-const { ActivityPubService } = require('@semapps/activitypub');
+const { ActivityPubService, FULL_ACTOR_TYPES } = require('@semapps/activitypub');
 const { JsonLdService } = require('@semapps/jsonld');
 const { LdpService, DocumentTaggerMixin } = require('@semapps/ldp');
 const { OntologiesService } = require('@semapps/ontologies');
@@ -14,7 +14,7 @@ const { WebfingerService } = require('@semapps/webfinger');
 
 const botsContainer = {
   path: '/as/application',
-  acceptedTypes: ['Application'],
+  acceptedTypes: [FULL_ACTOR_TYPES.APPLICATION],
   readOnly: true
 };
 

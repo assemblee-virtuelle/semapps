@@ -38,13 +38,17 @@ module.exports = {
       type: 'array',
       optional: true
     },
+    skipInferenceCheck: {
+      type: 'boolean',
+      optional: true
+    },
     webId: {
       type: 'string',
       optional: true
     }
   },
   async handler(ctx) {
-    let { resourceUri, sparqlUpdate, triplesToAdd, triplesToRemove, webId } = ctx.params;
+    let { resourceUri, sparqlUpdate, triplesToAdd, triplesToRemove, skipInferenceCheck, webId } = ctx.params;
     webId = webId || ctx.meta.webId || 'anon';
 
     if (this.isRemoteUri(resourceUri, ctx.meta.dataset))
@@ -116,6 +120,7 @@ module.exports = {
       resourceUri,
       triplesAdded: triplesToAdd,
       triplesRemoved: triplesToRemove,
+      skipInferenceCheck,
       webId,
       dataset: ctx.meta.dataset
     };

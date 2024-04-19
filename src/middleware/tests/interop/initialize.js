@@ -2,7 +2,7 @@ const fse = require('fs-extra');
 const path = require('path');
 const urlJoin = require('url-join');
 const { ServiceBroker } = require('moleculer');
-const { ACTOR_TYPES, RelayService } = require('@semapps/activitypub');
+const { FULL_ACTOR_TYPES, RelayService } = require('@semapps/activitypub');
 const { AuthLocalService } = require('@semapps/auth');
 const { CoreService } = require('@semapps/core');
 const { InferenceService } = require('@semapps/inference');
@@ -26,12 +26,12 @@ const containers = [
   },
   {
     path: '/as/actor',
-    acceptedTypes: [ACTOR_TYPES.PERSON],
+    acceptedTypes: [FULL_ACTOR_TYPES.PERSON],
     excludeFromMirror: true
   },
   {
     path: '/as/application',
-    acceptedTypes: [ACTOR_TYPES.APPLICATION],
+    acceptedTypes: [FULL_ACTOR_TYPES.APPLICATION],
     excludeFromMirror: true
   }
 ];

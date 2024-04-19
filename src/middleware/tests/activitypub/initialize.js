@@ -21,7 +21,7 @@ const initialize = async (port, mainDataset, accountsDataset) => {
     logger: {
       type: 'Console',
       options: {
-        level: 'error'
+        level: 'warn'
       }
     }
   });
@@ -52,11 +52,12 @@ const initialize = async (port, mainDataset, accountsDataset) => {
     settings: {
       baseUrl,
       jwtPath: path.resolve(__dirname, './jwt'),
-      accountsDataset
+      accountsDataset,
+      mail: false
     }
   });
 
-  broker.createService(WebIdService, {
+  await broker.createService(WebIdService, {
     settings: {
       usersContainer: urlJoin(baseUrl, 'as/actor')
     }
@@ -86,6 +87,15 @@ const initialize = async (port, mainDataset, accountsDataset) => {
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
     resourceUri: urlJoin(baseUrl, 'as/activity'),
+    additionalRights: {
+      anon: {
+        write: true
+      }
+    }
+  });
+  await broker.call('webacl.resource.addRights', {
+    webId: 'system',
+    resourceUri: urlJoin(baseUrl, 'as/collection'),
     additionalRights: {
       anon: {
         write: true

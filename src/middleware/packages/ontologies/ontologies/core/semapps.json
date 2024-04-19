@@ -1,4 +1,12 @@
 {
   "prefix": "semapps",
-  "namespace": "http://semapps.org/ns/core#"
+  "namespace": "http://semapps.org/ns/core#",
+  "jsonldContext": {
+    "semapps:sortPredicate": {
+      "@type": "@id"
+    },
+    "semapps:sortOrder": {
+      "@type": "@id"
+    }
+  }
 }

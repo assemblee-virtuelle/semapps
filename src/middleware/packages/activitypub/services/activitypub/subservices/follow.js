@@ -1,5 +1,5 @@
 const ActivitiesHandlerMixin = require('../../../mixins/activities-handler');
-const { ACTIVITY_TYPES } = require('../../../constants');
+const { ACTIVITY_TYPES, ACTOR_TYPES } = require('../../../constants');
 const { collectionPermissionsWithAnonRead } = require('../../../utils');
 
 const FollowService = {
@@ -7,29 +7,27 @@ const FollowService = {
   mixins: [ActivitiesHandlerMixin],
   settings: {
     baseUri: null,
-    attachToActorTypes: null
-  },
-  dependencies: ['activitypub.outbox', 'activitypub.collection'],
-  async started() {
-    const { attachToActorTypes } = this.settings;
-
-    await this.broker.call('activitypub.registry.register', {
+    followersCollectionOptions: {
       path: '/followers',
-      attachToTypes: attachToActorTypes,
+      attachToTypes: Object.values(ACTOR_TYPES),
       attachPredicate: 'https://www.w3.org/ns/activitystreams#followers',
       ordered: false,
       dereferenceItems: false,
       permissions: collectionPermissionsWithAnonRead
-    });
-
-    await this.broker.call('activitypub.registry.register', {
+    },
+    followingCollectionOptions: {
       path: '/following',
-      attachToTypes: attachToActorTypes,
+      attachToTypes: Object.values(ACTOR_TYPES),
       attachPredicate: 'https://www.w3.org/ns/activitystreams#following',
       ordered: false,
       dereferenceItems: false,
       permissions: collectionPermissionsWithAnonRead
-    });
+    }
+  },
+  dependencies: ['activitypub.outbox', 'activitypub.collection'],
+  async started() {
+    await this.broker.call('activitypub.collections-registry.register', this.settings.followersCollectionOptions);
+    await this.broker.call('activitypub.collections-registry.register', this.settings.followingCollectionOptions);
   },
   actions: {
     async addFollower(ctx) {
@@ -38,7 +36,7 @@ const FollowService = {
       if (this.isLocalActor(following)) {
         const actor = await ctx.call('activitypub.actor.get', { actorUri: following });
         if (actor.followers) {
-          await ctx.call('activitypub.collection.attach', {
+          await ctx.call('activitypub.collection.add', {
             collectionUri: actor.followers,
             item: follower
           });
@@ -49,7 +47,7 @@ const FollowService = {
       if (this.isLocalActor(follower)) {
         const actor = await ctx.call('activitypub.actor.get', { actorUri: follower });
         if (actor.following) {
-          await ctx.call('activitypub.collection.attach', {
+          await ctx.call('activitypub.collection.add', {
             collectionUri: actor.following,
             item: following
           });
@@ -64,7 +62,7 @@ const FollowService = {
       if (this.isLocalActor(following)) {
         const actor = await ctx.call('activitypub.actor.get', { actorUri: following });
         if (actor.followers) {
-          await ctx.call('activitypub.collection.detach', {
+          await ctx.call('activitypub.collection.remove', {
             collectionUri: actor.followers,
             item: follower
           });
@@ -75,7 +73,7 @@ const FollowService = {
       if (this.isLocalActor(follower)) {
         const actor = await ctx.call('activitypub.actor.get', { actorUri: follower });
         if (actor.following) {
-          await ctx.call('activitypub.collection.detach', {
+          await ctx.call('activitypub.collection.remove', {
             collectionUri: actor.following,
             item: following
           });
@@ -100,14 +98,22 @@ const FollowService = {
       const { collectionUri } = ctx.params;
 
       return await ctx.call('activitypub.collection.get', {
-        collectionUri
+        resourceUri: collectionUri
       });
     },
     async listFollowing(ctx) {
       const { collectionUri } = ctx.params;
 
       return await ctx.call('activitypub.collection.get', {
-        collectionUri
+        resourceUri: collectionUri
+      });
+    },
+    async updateCollectionsOptions(ctx) {
+      await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
+        collection: this.settings.followersCollectionOptions
+      });
+      await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
+        collection: this.settings.followingCollectionOptions
       });
     }
   },
