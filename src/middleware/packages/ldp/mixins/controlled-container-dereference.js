@@ -1,16 +1,15 @@
-const { isObject } = require('../utils');
+const { MIME_TYPES } = require('@semapps/mime-types');
+const { isObject, defaultToArray, arrayOf } = require('../utils');
 
 /**
  * @description MoleculerJS mixin to be applied on the ControlledContainerMixin within a Semapps project.
- * Provides resource dereferencing after ldp.resource.get execution
- * @module MoleculerJS Mixin - Dereference
+ * Provides resource dereferencing after ldp.resource.get execution using after.get hook.
  *
- * Features include:
- * - `get`: Retrieve a specific property from the main data.
- * - `dereference`: Recursively dereference properties from the main data.
- * - `handleAfterGetWithoutContext`: Post-retrieval result processing applying a dereferencing plan.
+ * Calls `ldp.resource.get` recursively on all properties defined in schema and adds them to the result.
+ * The default json context is applied when fetching, so use the corresponding default context's property name.
+ * The final result is framed using the jsonContext provided in the get request (if present).
  *
- * The mixin also introduces an `after.get` hook for automated processing following each retrieval action.
+ * This is not very efficient. At some time, this might be refactored to utilize a custom SPARQL query.
  *
  * Example moleculer service:
  * ```javascript
@@ -19,15 +18,16 @@ const { isObject } = require('../utils');
  * mixins: [ControlledContainerMixin, DereferenceMixin],
  * settings: {
  *   path: '/resources',
- *   acceptedTypes: ['prefix:Classe'],
- *   preferredView: '/Resource',
  *   dereferencePlan: [
  *     {
- *       "p": "schema:member",
- *       "n": [
- *         { "p": "schema:affiliation" }
+ *       property: "publicKey"
+ *     },
+ *     {
+ *       property: "schema:member",
+ *       nested: [
+ *         { property: "schema:affiliation" }
  *       ]
- *     }
+ *     },
  *   ]
  *  }
  * }
@@ -45,11 +45,14 @@ module.exports = {
      * @param property - The property to get from mainData. It must be a property of mainData
      * @returns { Promise } The result of the get operation as a JSON object with @context removed from the result
      */
-    async getWithoutContext(ctx, mainData, property) {
+    async getWithoutContext(ctx, reference) {
+      // If ref not defined or if it's a resolved object with no id (created by blank nodes)...
+      if (typeof reference !== 'string' && !reference?.['@id'] && !reference?.id) return reference;
+
       // Call the ldp.resource.get method to get the resource
       let result = await ctx.call('ldp.resource.get', {
-        resourceUri: mainData[property],
-        accept: 'application/ld+json'
+        resourceUri: reference['@id'] || reference.id || reference,
+        accept: MIME_TYPES.JSON
       });
       // Delete the context from the result
       delete result['@context'];
@@ -57,37 +60,47 @@ module.exports = {
     },
 
     /**
-     * Dereferences properties from mainData according to propertiesSchema. This method is recursive so you can pass an array of propertiesSchema and it will dereference each element of the array to the result
-     * @param ctx - moleculer context
-     * @param mainData - The main data to dereference. Can be an array or an object.
-     * @param propertiesSchema - The properties schema to dereference the mainData with.
+     * Dereferences properties from mainData according to propertiesSchema.
+     * @param {object} ctx - moleculer context
+     * @param {object | object[]} mainData - The main data to dereference. Can be an array or an object.
+     * @param {object | object[] } propertiesSchema - The properties schema to dereference the mainData with.
      * @returns { Promise } Resolves to the dereferenced data
      */
     async dereference(ctx, mainData, propertiesSchema) {
       if (Array.isArray(mainData)) {
-        let result = [];
-        for (let mainDataIteration of mainData) {
-          result.push(await this.dereference(ctx, mainDataIteration, propertiesSchema));
-        }
-        return result;
+        // Dereference all elements recursively (in parallel).
+        return Promise.all(mainData.map(dataEl => this.dereference(ctx, dataEl, propertiesSchema)));
       } else if (isObject(mainData)) {
         let resultData = { ...mainData };
-        let propertiesSchemaArray = [];
-        if (!Array.isArray(propertiesSchema)) {
-          propertiesSchemaArray = [propertiesSchema];
-        } else {
-          propertiesSchemaArray = [...propertiesSchema];
-        }
 
-        for (let propertySchema of propertiesSchemaArray) {
-          const property = propertySchema.p;
-          const reference = await this.getWithoutContext(ctx, mainData, property, true);
-          if (propertySchema.n && reference != undefined) {
-            resultData[property] = await this.dereference(ctx, reference, propertySchema.n);
-          } else {
-            resultData[property] = reference;
-          }
-        }
+        // Dereference each property in schema.
+        await Promise.all(
+          defaultToArray(propertiesSchema).map(async ({ property, nested }) => {
+            // Check if property to dereference is present in retrieved object.
+            if (!mainData[property]) return;
+
+            // There may be more than one reference in a property, so iterate over each
+            const dereferenced = await Promise.all(
+              arrayOf(mainData[property]).map(async reference => {
+                const dereferencedObj = await this.getWithoutContext(ctx, reference);
+                // If there is a nested dereference schema
+                if (nested && dereferencedObj !== undefined) {
+                  return await this.dereference(ctx, dereferencedObj, nested);
+                } else {
+                  return dereferencedObj;
+                }
+              })
+            );
+
+            if (dereferenced.length === 1) {
+              // eslint-disable-next-line prefer-destructuring
+              resultData[property] = dereferenced[0];
+            } else {
+              resultData[property] = dereferenced;
+            }
+          })
+        );
+
         return resultData;
       } else {
         return mainData;
@@ -96,20 +109,28 @@ module.exports = {
 
     /**
      * Dereference and return the result after get. This is called after the result has been resolve thanks to ldp service
-     * @param ctx - moleculer context
-     * @param res - the result of the operation. It can be any type
-     * @returns { Promise } - the result of the operation or an error if there was a problem with the result
+     * @param {object} ctx - moleculer context
+     * @param {any} result - the result of the operation. It can be any type
+     * @returns { Promise<any> } - the result of the operation or an error if there was a problem with the result
      */
-    async handleAfterGetWithoutContext(ctx, res) {
-      const dereferencePlan = this.settings.dereferencePlan || [];
-      const result = await this.dereference(ctx, res, dereferencePlan);
-      return result;
+    async handleAfterGet(ctx, result) {
+      const dereferenced = await this.dereference(ctx, result, this.settings.dereferencePlan || []);
+      // Apply framing, if jsonContext if present, since dereferenced properties are not yet.
+      const { jsonContext } = ctx.params;
+      if (jsonContext) {
+        return await ctx.call('jsonld.parser.frame', {
+          input: result,
+          frame: {
+            '@context': jsonContext
+          }
+        });
+      }
+      return dereferenced;
     }
   },
   hooks: {
-    /** This hook is used to call the handleAfterGetWithoutContext method after the getWithoutContext method */
     after: {
-      getWithoutContext: 'handleAfterGetWithoutContext'
+      get: ['handleAfterGet']
     }
   }
 };
