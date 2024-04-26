@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "lib": ["es2020"],
+    "lib": ["ESNext"],
     "allowJs": true,
     "checkJs": false,
     "resolveJsonModule": true,
@@ -13,5 +13,5 @@
     "moduleResolution": "NodeNext"
   },
   "include": ["**/*.js", "**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": []
 }

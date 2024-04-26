@@ -1,6 +1,7 @@
 {
   "env": {
-    "node": true
+    "node": true,
+    "jest": true
   },
   "extends": [
     "plugin:jsdoc/recommended-typescript-flavor",
