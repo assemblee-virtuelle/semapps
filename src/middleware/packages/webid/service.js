@@ -13,9 +13,12 @@ const WebIdService = {
     defaultAccept: 'text/turtle',
     podProvider: false,
     podsContainer: false,
-    dereferencePlan: {
-      p: 'publicKey'
-    }
+    dereferencePlan: [
+      {
+        property: 'publicKey'
+      },
+      { property: 'assertionMethod' }
+    ]
   },
   dependencies: ['ldp.resource', 'ontologies'],
   mixins: [ControlledContainerMixin, ControlledContainerDereferenceMixin],
@@ -84,50 +87,6 @@ const WebIdService = {
       ctx.emit('webid.created', newPerson, { meta: { webId: null, dataset: null } });
 
       return webId;
-    },
-    /* This should be handled by controlled container...
-    async get(ctx) {
-      const webId = await this.getWebId(ctx);
-      if (webId) {
-        return await ctx.call('ldp.resource.get', {
-          resourceUri: webId,
-          accept: MIME_TYPES.JSON,
-          webId
-        });
-      }
-      ctx.meta.$statusCode = 404;
-    },
-    */
-    async edit(ctx) {
-      const { userId, ...profileData } = ctx.params;
-      const webId = await this.getWebId(ctx);
-      return await ctx.call('ldp.resource.put', {
-        resource: {
-          '@context': {
-            '@vocab': foaf.namespace
-          },
-          '@type': 'Person',
-          '@id': webId,
-          ...profileData
-        },
-        webId,
-        contentType: MIME_TYPES.JSON,
-        accept: MIME_TYPES.JSON
-      });
-    }
-  },
-  methods: {
-    async getWebId(ctx) {
-      if (ctx.params.userId) {
-        // If an userId is specified, use it to find the webId
-        return this.settings.usersContainer + ctx.params.userId;
-      }
-      if (ctx.meta.webId || ctx.meta.tokenPayload.webId) {
-        return ctx.meta.webId || ctx.meta.tokenPayload.webId;
-      }
-      throw new Error(
-        'webid.getWebId have to be call with ctx.params.userId or ctx.meta.webId or ctx.meta.tokenPayload.webId'
-      );
     }
   }
 };

@@ -33,8 +33,7 @@ const AuthSSOMixin = {
         webId = accountData.webId;
         newUser = false;
 
-        // TODO update account with recent information
-        // await ctx.call('webid.edit', profileData, { meta: { webId } });
+        // TODO update account with recent profileData information
 
         ctx.emit('auth.connected', { webId, accountData, ssoData }, { meta: { webId: null, dataset: null } });
       } else {
