@@ -2,26 +2,15 @@ const { createSign, createHash } = require('crypto');
 const { parseRequest, verifySignature } = require('http-signature');
 const { createAuthzHeader, createSignatureString } = require('http-signature-header');
 const { Errors: E } = require('moleculer-web');
-const KeypairService = require('./services/keypair');
+const { KEY_TYPES } = require('../keys');
+const asArray = require('../utils');
 
 const SignatureService = {
   name: 'signature',
-  settings: {
-    actorsKeyPairsDir: null
-  },
-  created() {
-    const { actorsKeyPairsDir } = this.settings;
-
-    this.broker.createService(KeypairService, {
-      settings: {
-        actorsKeyPairsDir
-      }
-    });
-  },
   actions: {
     async generateSignatureHeaders(ctx) {
       const { url, method, body, actorUri } = ctx.params;
-      const { privateKey } = await ctx.call('signature.keypair.get', { actorUri });
+      const [{ privateKeyPem }] = await ctx.call('keys.getWebIdKeys', { webId: actorUri, keyType: KEY_TYPES.RSA });
 
       const headers = { Date: new Date().toUTCString() };
       const includeHeaders = ['(request-target)', 'host', 'date'];
@@ -37,7 +26,7 @@ const SignatureService = {
       // Hash signature string
       const signer = createSign('sha256');
       signer.update(signatureString);
-      const signatureHash = signer.sign(privateKey).toString('base64');
+      const signatureHash = signer.sign(privateKeyPem).toString('base64');
 
       headers.Signature = createAuthzHeader({
         includeHeaders,
@@ -52,6 +41,17 @@ const SignatureService = {
       const { body, headers } = ctx.params;
       return headers.digest ? this.buildDigest(body) === headers.digest : true;
     },
+    /**
+     * Given url, path, method, headers, validates a given http signature.
+     * If the signature is valid, it returns the actorUri and the publicKeyPem used to verify the signature.
+     * Else, it returns `{isValid: false}`.
+     * @param {object} ctx Context
+     * @param {string} ctx.url The URL of the request
+     * @param {string} ctx.path The path of the request
+     * @param {string} ctx.method The method of the request
+     * @param {object} ctx.headers The headers of the request
+     * @returns {Promise<{isValid: boolean, actorUri: string, publicKeyPem: string}>}
+     */
     async verifyHttpSignature(ctx) {
       const { url, path, method, headers } = ctx.params;
 
@@ -68,14 +68,25 @@ const SignatureService = {
       });
 
       const { keyId } = parsedSignature.params;
-      if (!keyId) return false;
+      if (!keyId) return { isValid: false };
       const [actorUri] = keyId.split('#');
 
-      const publicKeys = await ctx.call('keys.getRemotePublicKeys', { actorUri });
-      if (!publicKeys) return false;
+      const publicKeys = await ctx.call('keys.getRemotePublicKeys', { webId: actorUri, keyType: KEY_TYPES.RSA });
+      if (!publicKeys) return { isValid: false };
 
-      const isValid = verifySignature(parsedSignature, publicKeys);
-      return { isValid, actorUri };
+      // Check, if one of the keys is able to verify the signature.
+      const { isValid: keyValid, publicKey: publicKeyPem } = asArray(publicKeys)
+        .flatMap(key => key.publicKeyPem || [])
+        .map(pubKeyPem => {
+          try {
+            return { isValid: verifySignature(parsedSignature, pubKeyPem), publicKey: pubKeyPem };
+          } catch (e) {
+            return { isValid: false };
+          }
+        })
+        .find(({ isValid }) => isValid);
+
+      return { isValid: keyValid, actorUri, publicKeyPem };
     },
     // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
     async authenticate(ctx) {

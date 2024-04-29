@@ -10,7 +10,7 @@ module.exports = {
     name: { type: 'string', optional: true },
     accept: { type: 'string', optional: true },
     acceptedTypes: { type: 'multi', rules: [{ type: 'array' }, { type: 'string' }], optional: true },
-    permissions: { type: 'object', optional: true },
+    permissions: { type: 'multi', rules: [{ type: 'object' }, { type: 'function' }], optional: true },
     excludeFromMirror: { type: 'boolean', optional: true },
     activateTombstones: { type: 'boolean', default: true },
     newResourcesPermissions: { type: 'multi', rules: [{ type: 'object' }, { type: 'function' }], optional: true },

@@ -8,4 +8,4 @@ const asArray = value => {
   return [value];
 };
 
-module.exports = asArray;
+module.exports = { asArray };

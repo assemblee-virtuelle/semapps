@@ -1,6 +1,6 @@
-const { ControlledContainerMixin, defaultToArray } = require('@semapps/ldp');
+const { ControlledContainerMixin } = require('@semapps/ldp');
 const { Errors: E } = require('moleculer-web');
-const KEY_TYPES = require('../keyTypes');
+const KEY_TYPES = require('./keyTypes');
 
 /**
  * DANGER ZONE
@@ -8,6 +8,7 @@ const KEY_TYPES = require('../keyTypes');
  * Container to store the private keys of actors.
  *
  * Watch out with permissions. This should be strictly limited to the owner and privileged apps.
+ * @type {import('moleculer').ServiceSchema}
  */
 module.exports = {
   name: 'keys.container',
@@ -15,9 +16,24 @@ module.exports = {
   settings: {
     path: '/key',
     acceptedTypes: Object.values(KEY_TYPES),
-    // Permissions must only be granted to the owner and authenticated and authorized privileged apps.
-    permissions: {},
-    newResourcesPermissions: {},
+    permissions: (webId, ctx) => {
+      // If not a pod provider, the container is shared, so any user can append.
+      return {
+        anyUser: {
+          // `this` is not available here.
+          read: !ctx.service.settings.podProvider,
+          append: !ctx.service.settings.podProvider
+        }
+      };
+    },
+    newResourcesPermissions: webId => ({
+      user: {
+        uri: webId,
+        read: true,
+        write: true,
+        control: true
+      }
+    }),
     excludeFromMirror: true,
     // Disallow PATCH & PUT, to prevent keys from being overwritten
     controlledActions: {
@@ -25,7 +41,7 @@ module.exports = {
       patch: 'keys.container.forbidden',
       delete: 'keys.delete'
     },
-    podProvider: true
+    podProvider: false
   },
   actions: {
     async forbidden(ctx) {

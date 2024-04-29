@@ -9,7 +9,7 @@
     "@semapps/jsonld": "0.7.0",
     "@semapps/ldp": "0.7.0",
     "@semapps/ontologies": "0.7.0",
-    "@semapps/signature": "0.7.0",
+    "@semapps/crypto": "0.7.0",
     "@semapps/sparql-endpoint": "0.7.0",
     "@semapps/triplestore": "0.7.0",
     "@semapps/void": "0.7.0",

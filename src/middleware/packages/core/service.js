@@ -5,12 +5,12 @@ const { ActivityPubService, FULL_ACTOR_TYPES } = require('@semapps/activitypub')
 const { JsonLdService } = require('@semapps/jsonld');
 const { LdpService, DocumentTaggerMixin } = require('@semapps/ldp');
 const { OntologiesService } = require('@semapps/ontologies');
-const { SignatureService } = require('@semapps/signature');
 const { SparqlEndpointService } = require('@semapps/sparql-endpoint');
 const { TripleStoreService } = require('@semapps/triplestore');
 const { VoidService } = require('@semapps/void');
 const { WebAclService } = require('@semapps/webacl');
 const { WebfingerService } = require('@semapps/webfinger');
+const { KeyService, SignatureService } = require('@semapps/crypto');
 
 const botsContainer = {
   path: '/as/application',
@@ -134,11 +134,17 @@ const CoreService = {
     if (this.settings.signature !== false) {
       this.broker.createService(SignatureService, {
         settings: {
-          actorsKeyPairsDir: path.resolve(baseDir, './actors'),
           ...this.settings.signature
         }
       });
     }
+
+    this.broker.createService(KeyService, {
+      settings: {
+        actorsKeyPairsDir: path.resolve(baseDir, './actors'),
+        ...this.settings.keyService
+      }
+    });
 
     if (this.settings.sparqlEndpoint !== false) {
       this.broker.createService(SparqlEndpointService, {
