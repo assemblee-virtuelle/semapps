@@ -7,6 +7,7 @@
   "dependencies": {
     "@semapps/activitypub": "0.7.0",
     "@semapps/ldp": "0.7.0",
+    "@semapps/webid": "0.7.1",
     "@semapps/middlewares": "0.7.0",
     "url-join": "^4.0.1"
   },
