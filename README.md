@@ -19,7 +19,7 @@ This is where all the semantic web standards are implemented.
 - [WAC / WebACL](https://semapps.org/docs/middleware/webacl)
 - [Webfinger](https://semapps.org/docs/middleware/webfinger)
 - [WebId](https://semapps.org/docs/middleware/webid)
-- [HTTP Signature](https://semapps.org/docs/middleware/signature)
+- [HTTP Signature](https://semapps.org/docs/middleware/crypto/signature)
 
 We use the [Moleculer](https://moleculer.services/) micro-service framework to help create modular backends.
 

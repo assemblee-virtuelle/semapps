@@ -14,7 +14,7 @@ This service implements [HTTP Signature](https://tools.ietf.org/html/draft-cavag
 
 ## Sub-services
 
-- [KeypairService](keypair.md)
+- [KeypairService](keypair.md) (deprecated and superseded by [KeyService](../key-service))
 
 ## Other services
 
