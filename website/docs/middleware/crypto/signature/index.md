@@ -24,16 +24,10 @@ This service implements [HTTP Signature](https://tools.ietf.org/html/draft-cavag
 
 - None
 
-## Install
-
-```bash
-$ yarn add @semapps/signature
-```
-
 ## Usage
 
 ```js
-const { SignatureService } = require('@semapps/signature');
+const { SignatureService } = require('@semapps/crypto');
 const path = require('path');
 
 module.exports = {
