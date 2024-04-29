@@ -158,19 +158,6 @@ const ActorService = {
         async () => await this.actions.get({ actorUri, webId: 'system' }, { parentCtx: ctx, meta: { $cache: false } })
       );
     },
-    async generateMissingActorsData(ctx) {
-      for (const containerUri of this.settings.actorsContainers) {
-        const containerData = await ctx.call('ldp.container.get', { containerUri, accept: MIME_TYPES.JSON });
-        for (const actor of containerData['ldp:contains']) {
-          const actorUri = actor.id || actor['@id'];
-          await this.actions.appendActorData({ actorUri, userData: actor }, { parentCtx: ctx });
-          if (!actor.publicKey) {
-            await this.actions.generateKeyPair({ actorUri }, { parentCtx: ctx });
-          }
-          this.broker.info(`Generated missing data for actor ${actorUri}`);
-        }
-      }
-    },
     getCollectionUri: {
       cache: true,
       async handler(ctx) {
