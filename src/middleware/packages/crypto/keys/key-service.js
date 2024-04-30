@@ -467,6 +467,11 @@ const KeyService = {
       }
     },
 
+    /**
+     * Fetches remote keys from a webId (publicKey or assertionMethod field).
+     * Returns all keys of the given `keyType` or all, if `keyType` is `null`.
+     * Returns outdated keys as well.
+     */
     getRemotePublicKeys: {
       params: {
         webId: { type: 'string' },
@@ -474,20 +479,18 @@ const KeyService = {
         forceRefetch: { type: 'boolean', default: false }
       },
       async handler(ctx) {
-        const { actorUri, keyType, forceRefetch } = ctx.params;
-
-        // TODO, disregard keys that are expired (Multibase key expires)
+        const { webId, keyType, forceRefetch } = ctx.params;
 
         /** @type {object[]} */
-        let keyObjects = this.remoteActorPublicKeyCache[actorUri];
+        let keyObjects = this.remoteActorPublicKeyCache[webId];
         if (!keyObjects || forceRefetch) {
-          const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
+          const response = await fetch(webId, { headers: { Accept: 'application/json' } });
           if (!response.ok) return false;
 
           const actor = await response.json();
           if (!actor || !actor.publicKey) return false;
           keyObjects = asArray(actor.publicKey).concat(asArray(actor.assertionMethod));
-          this.remoteActorPublicKeyCache[actorUri] = keyObjects;
+          this.remoteActorPublicKeyCache[webId] = keyObjects;
         }
 
         if (keyType) {
