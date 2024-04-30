@@ -2,8 +2,8 @@ const { createSign, createHash } = require('crypto');
 const { parseRequest, verifySignature } = require('http-signature');
 const { createAuthzHeader, createSignatureString } = require('http-signature-header');
 const { Errors: E } = require('moleculer-web');
-const { KEY_TYPES } = require('../keys');
-const asArray = require('../utils');
+const KEY_TYPES = require('../keys/keyTypes');
+const { asArray } = require('../utils');
 
 const SignatureService = {
   name: 'signature',
@@ -71,6 +71,7 @@ const SignatureService = {
       if (!keyId) return { isValid: false };
       const [actorUri] = keyId.split('#');
 
+      // TODO: Check if keys are outdated
       const publicKeys = await ctx.call('keys.getRemotePublicKeys', { webId: actorUri, keyType: KEY_TYPES.RSA });
       if (!publicKeys) return { isValid: false };
 
