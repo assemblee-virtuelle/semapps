@@ -46,7 +46,7 @@ const AuthSSOMixin = {
           email: profileData.email,
           username: profileData.username
         });
-        webId = await ctx.call('webid.create', this.pickWebIdData({ nick: accountData.username, ...profileData }));
+        webId = await ctx.call('webid.createWebId', this.pickWebIdData({ nick: accountData.username, ...profileData }));
         newUser = true;
 
         // Link the webId with the account

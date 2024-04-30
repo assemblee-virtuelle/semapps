@@ -10,7 +10,7 @@ const modifyActions = [
   'activitypub.activity.create',
   'activitypub.activity.attach',
   'activitypub.object.createTombstone',
-  'webid.create',
+  'webid.createWebId',
   'ldp.remote.store',
   'ldp.remote.delete',
   'ldp.resource.delete'
@@ -214,7 +214,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
             await ctx.call('webacl.resource.deleteAllRights', { resourceUri: ctx.params.resourceUri });
             break;
 
-          case 'webid.create':
+          case 'webid.createWebId':
             await addRightsToNewUser(ctx, actionReturnValue);
             break;
 

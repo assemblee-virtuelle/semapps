@@ -56,7 +56,7 @@ const AuthLocalService = {
       });
 
       const profileData = { nick: username, email, ...rest };
-      const webId = await ctx.call('webid.create', this.pickWebIdData(profileData));
+      const webId = await ctx.call('webid.createWebId', this.pickWebIdData(profileData));
 
       // Link the webId with the account
       accountData = await ctx.call('auth.account.attachWebId', { accountUri: accountData['@id'], webId });

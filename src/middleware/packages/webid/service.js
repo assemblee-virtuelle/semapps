@@ -9,6 +9,7 @@ const WebIdService = {
   settings: {
     path: '/',
     baseUrl: null,
+    // TODO: This should be renamed to path
     usersContainer: null,
     defaultAccept: 'text/turtle',
     podProvider: false,
@@ -36,7 +37,7 @@ const WebIdService = {
     /**
      * This should only be called after the user has been authenticated
      */
-    async create(ctx) {
+    async createWebId(ctx) {
       let { email, nick, name, familyName, homepage, ...rest } = ctx.params;
 
       if (!nick && email) {
