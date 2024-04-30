@@ -41,7 +41,8 @@ beforeAll(async () => {
 
   broker.createService(WebIdService, {
     settings: {
-      path: '/users'
+      path: '/users',
+      baseUrl: CONFIG.HOME_URL
     }
   });
 

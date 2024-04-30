@@ -25,6 +25,8 @@ const WebIdService = {
   dependencies: ['ldp.resource', 'ontologies'],
   mixins: [ControlledContainerMixin, ControlledContainerDereferenceMixin],
   async started() {
+    if (!this.settings.baseUrl) throw new Error('The baseUrl setting is required for webId service.');
+
     await this.broker.call('ontologies.register', {
       ...foaf,
       overwrite: true
@@ -59,7 +61,6 @@ const WebIdService = {
 
       // Create profile with system webId
       if (this.settings.podProvider) {
-        if (!this.settings.baseUrl) throw new Error('The baseUrl setting is required in POD provider config');
         webId = urlJoin(this.settings.baseUrl, nick);
         await ctx.call('ldp.resource.create', {
           resource: {
@@ -74,7 +75,7 @@ const WebIdService = {
         webId = await ctx.call('ldp.container.post', {
           resource,
           slug: nick,
-          containerUri: this.settings.path,
+          containerUri: urlJoin(this.settings.baseUrl, this.settings.path),
           contentType: MIME_TYPES.JSON,
           webId: 'system'
         });
