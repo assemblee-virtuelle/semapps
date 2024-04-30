@@ -135,3 +135,5 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
 
   return broker;
 };
+
+module.exports = initialize;
