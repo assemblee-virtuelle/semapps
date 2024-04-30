@@ -2,6 +2,7 @@ const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { foaf, schema } = require('@semapps/ontologies');
 const { ControlledContainerMixin, ControlledContainerDereferenceMixin } = require('@semapps/ldp');
+const { FULL_ACTOR_TYPES } = require('@semapps/activitypub');
 
 /** @type {import('moleculer').ServiceSchema} */
 const WebIdService = {
@@ -9,8 +10,8 @@ const WebIdService = {
   settings: {
     path: '/',
     baseUrl: null,
-    // TODO: This should be renamed to path
-    usersContainer: null,
+    acceptedTypes: Object.values(FULL_ACTOR_TYPES),
+
     defaultAccept: 'text/turtle',
     podProvider: false,
     podsContainer: false,
@@ -69,11 +70,11 @@ const WebIdService = {
           webId: 'system'
         });
       } else {
-        if (!this.settings.usersContainer) throw new Error('The usersContainer setting is required');
+        if (!this.settings.path) throw new Error('The path setting is required');
         webId = await ctx.call('ldp.container.post', {
           resource,
           slug: nick,
-          containerUri: this.settings.usersContainer,
+          containerUri: this.settings.path,
           contentType: MIME_TYPES.JSON,
           webId: 'system'
         });

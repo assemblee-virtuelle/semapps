@@ -48,7 +48,7 @@ const initialize = async () => {
 
   await broker.createService(WebIdService, {
     settings: {
-      usersContainer: urlJoin(CONFIG.HOME_URL, 'users')
+      path: 'users'
     }
   });
 

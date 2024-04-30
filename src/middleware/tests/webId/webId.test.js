@@ -41,7 +41,7 @@ beforeAll(async () => {
 
   broker.createService(WebIdService, {
     settings: {
-      usersContainer: urlJoin(CONFIG.HOME_URL, 'users')
+      path: 'users'
     }
   });
 
@@ -62,7 +62,7 @@ describe('WebId user creation', () => {
       homepage: 'http://example.org/myPage'
     };
 
-    const webId = await broker.call('webid.create', profileData);
+    const webId = await broker.call('webid.createWebId', profileData);
     expect(webId).toBe(`${CONFIG.HOME_URL}users/${profileData.nick}`);
   }, 20000);
 });

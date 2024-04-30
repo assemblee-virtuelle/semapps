@@ -25,11 +25,6 @@ const containers = [
     newResourcesPermissions: {}
   },
   {
-    path: '/as/actor',
-    acceptedTypes: [FULL_ACTOR_TYPES.PERSON],
-    excludeFromMirror: true
-  },
-  {
     path: '/as/application',
     acceptedTypes: [FULL_ACTOR_TYPES.APPLICATION],
     excludeFromMirror: true
@@ -100,7 +95,8 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
 
   await broker.createService(WebIdService, {
     settings: {
-      usersContainer: urlJoin(baseUrl, 'as/actor')
+      path: 'as/actor',
+      acceptedTypes: [FULL_ACTOR_TYPES.PERSON]
     }
   });
 
@@ -139,5 +135,3 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
 
   return broker;
 };
-
-module.exports = initialize;

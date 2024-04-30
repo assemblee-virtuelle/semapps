@@ -67,7 +67,7 @@ const initialize = async (port, withOldKeyStore = false) => {
   broker.createService({
     mixins: [WebIdService],
     settings: {
-      usersContainer: urlJoin(baseUrl, 'users')
+      path: 'users'
     }
   });
 
