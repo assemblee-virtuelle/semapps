@@ -43,7 +43,10 @@ module.exports = {
       }
 
       [expandedResource] = await ctx.call('jsonld.parser.expand', { input: resource });
-      isContainer = expandedResource['@type']?.includes('http://www.w3.org/ns/ldp#Container');
+      if (!expandedResource['@type']) {
+        throw new MoleculerError('The resource must have a type', 400, 'BAD_REQUEST');
+      }
+      isContainer = expandedResource['@type'].includes('http://www.w3.org/ns/ldp#Container');
 
       if (isContainer) {
         if (
