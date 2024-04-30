@@ -222,10 +222,10 @@ Generate the private/public key pair for a given actor.
 
 `string` - The generated public key.
 
-### `getRemotePublicKey`
+### `getRemotePublicKeys`
 
 Get the public keys of a remote actor by [key type](#supported-key-types).
-Keep it in local cache. Queries the remote actor's webId document and looks for keys in the `publicKey` and the `assertionMethod` fields.
+Keep it in local cache. Queries the remote actor's webId document and looks for keys in the `publicKey` and the `assertionMethod` fields. Does not filter outdated keys.
 
 ##### Parameters
 
