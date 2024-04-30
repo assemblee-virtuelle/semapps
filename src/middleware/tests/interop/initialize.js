@@ -95,7 +95,7 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
 
   await broker.createService(WebIdService, {
     settings: {
-      path: 'as/actor',
+      path: '/as/actor',
       acceptedTypes: [FULL_ACTOR_TYPES.PERSON]
     }
   });
