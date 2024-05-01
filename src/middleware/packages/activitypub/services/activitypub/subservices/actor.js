@@ -5,6 +5,7 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 const { ACTOR_TYPES, AS_PREFIX } = require('../../../constants');
 const { defaultToArray, getSlugFromUri, waitForResource } = require('../../../utils');
 
+/** @type {import('moleculer').ServiceSchema} */
 const ActorService = {
   name: 'activitypub.actor',
   dependencies: ['activitypub.collection', 'ldp', 'signature'],
