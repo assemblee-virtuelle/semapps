@@ -187,6 +187,14 @@ const ActorService = {
       const { resourceUri, newData } = ctx.params;
       if (this.isActor(newData)) {
         await this.actions.appendActorData({ actorUri: resourceUri }, { parentCtx: ctx });
+        await ctx.call('signature.keypair.generate', { actorUri: resourceUri });
+        await ctx.call('signature.keypair.attachPublicKey', { actorUri: resourceUri });
+      }
+    },
+    async 'ldp.resource.deleted'(ctx) {
+      const { resourceUri, oldData } = ctx.params;
+      if (this.isActor(oldData)) {
+        await ctx.call('signature.keypair.delete', { actorUri: resourceUri });
       }
     },
     async 'auth.registered'(ctx) {

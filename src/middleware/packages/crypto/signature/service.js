@@ -10,7 +10,8 @@ const SignatureService = {
   actions: {
     async generateSignatureHeaders(ctx) {
       const { url, method, body, actorUri } = ctx.params;
-      const [{ privateKeyPem }] = await ctx.call('keys.getWebIdKeys', { webId: actorUri, keyType: KEY_TYPES.RSA });
+      // const [{ privateKeyPem }] = await ctx.call('keys.getWebIdKeys', { webId: actorUri, keyType: KEY_TYPES.RSA });
+      const { privateKey: privateKeyPem } = await ctx.call('signature.keypair.get', { actorUri });
 
       const headers = { Date: new Date().toUTCString() };
       const includeHeaders = ['(request-target)', 'host', 'date'];
@@ -72,7 +73,9 @@ const SignatureService = {
       const [actorUri] = keyId.split('#');
 
       // TODO: Check if keys are outdated
-      const publicKeys = await ctx.call('keys.getRemotePublicKeys', { webId: actorUri, keyType: KEY_TYPES.RSA });
+      // const publicKeys = await ctx.call('keys.getRemotePublicKeys', { webId: actorUri, keyType: KEY_TYPES.RSA });
+      const publicKeys = [{ publicKeyPem: await ctx.call('signature.keypair.getRemotePublicKey', { actorUri }) }];
+
       if (!publicKeys) return { isValid: false };
 
       // Check, if one of the keys is able to verify the signature.
@@ -85,7 +88,7 @@ const SignatureService = {
             return { isValid: false };
           }
         })
-        .find(({ isValid }) => isValid);
+        .find(({ isValid }) => isValid) || { isValid: false, publicKey: null };
 
       return { isValid: keyValid, actorUri, publicKeyPem };
     },
