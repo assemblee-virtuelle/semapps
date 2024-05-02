@@ -49,7 +49,7 @@ module.exports = {
       // If ref not defined or if it's a resolved object with no id (created by blank nodes)...
       if (typeof reference !== 'string' && !reference?.['@id'] && !reference?.id) return reference;
 
-      // Call the ldp.resource.get method to get the resource
+      // Get the resource.
       let result = await ctx.call('ldp.resource.get', {
         resourceUri: reference['@id'] || reference.id || reference,
         accept: MIME_TYPES.JSON
@@ -79,10 +79,11 @@ module.exports = {
             // Check if property to dereference is present in retrieved object.
             if (!mainData[property]) return;
 
-            // There may be more than one reference in a property, so iterate over each
+            // Resolve all references of that property.
             const dereferenced = await Promise.all(
               arrayOf(mainData[property]).map(async reference => {
                 const dereferencedObj = await this.getWithoutContext(ctx, reference);
+
                 // If there is a nested dereference schema
                 if (nested && dereferencedObj !== undefined) {
                   return await this.dereference(ctx, dereferencedObj, nested);
@@ -108,14 +109,16 @@ module.exports = {
     },
 
     /**
-     * Dereference and return the result after get. This is called after the result has been resolve thanks to ldp service
+     * Dereference a json-ld object according to the service's dereferencePlan.
      * @param {object} ctx - moleculer context
-     * @param {any} result - the result of the operation. It can be any type
-     * @returns { Promise<any> } - the result of the operation or an error if there was a problem with the result
+     * @param {any} result - the result of the `get` operation.
+     * @returns { Promise<any> } - The dereferenced object.
      */
     async handleAfterGet(ctx, result) {
-      const dereferenced = await this.dereference(ctx, result, this.settings.dereferencePlan || []);
-      // Apply framing, if jsonContext if present, since dereferenced properties are not yet.
+      if (!this.settings.dereferencePlan) return result;
+
+      const dereferenced = await this.dereference(ctx, result, this.settings.dereferencePlan);
+      // Apply framing, if jsonContext if present, since dereferenced properties might not yet be framed correctly.
       const { jsonContext } = ctx.params;
       if (jsonContext) {
         return await ctx.call('jsonld.parser.frame', {

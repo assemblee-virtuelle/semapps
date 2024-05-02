@@ -28,10 +28,10 @@ ED25519 keys have the `@type` `[crypto.Key_Types.ED25519, crypto.KEY_TYPES.VERIF
 
 ##### RSA Key Format
 
-```json
+```js
 {
   "@id": "https://semapps.example/key/123",
-  "@type": ["<Key_Types.RSA>", "<KEY_TYPES.VERIFICATION_METHOD>"],
+  "@type": [Key_Types.RSA, KEY_TYPES.VERIFICATION_METHOD],
   "owner": "https://example.com/users/123",
   "controller": "https://example.com/users/123",
   "publicKeyPem": "-----BEGIN PUBLIC KEY-----\n....",
@@ -42,10 +42,10 @@ ED25519 keys have the `@type` `[crypto.Key_Types.ED25519, crypto.KEY_TYPES.VERIF
 
 ##### ED25519 Key Format
 
-```json
+```js
 {
   "@id": "https://semapps.example/key/123",
-  "@type": ["<Key_Types.ED25519>", "<KEY_TYPES.VERIFICATION_METHOD>"],
+  "@type": [Key_Types.ED25519, KEY_TYPES.VERIFICATION_METHOD],
   "owner": "https://semapps.example/users/123",
   "controller": "https://semapps.example/users/123",
   "publicKeyMultibase": "<public key",
@@ -76,7 +76,7 @@ The following service actions are available.
 
 ### `getByType`
 
-Get list of all public-private key pairs of a given key type for an actor. Looks for keys in the `keys` container. If none of the given type is available, `[]` is returned.
+Get list of all public-private key pairs of a given key type for an actor. Looks for keys in the `keys` container. If none of the requested type is available, `[]` is returned.
 
 ##### Parameters
 
@@ -91,7 +91,7 @@ Get list of all public-private key pairs of a given key type for an actor. Looks
 
 ### `getWebIdKeys`
 
-Get list of all public-private key pairs for an actor that are published in the actor's webId. Looks for keys in the `keys` container. **If none of the given type is available, a new one is crated and returned**.
+Get list of all public-private key pairs for an actor that are published in the actor's webId. Looks for keys in the `keys` container. **If none of the requested type is available, a new one is crated and returned**.
 
 ##### Parameters
 
@@ -147,6 +147,7 @@ The key resource as located in the `/key` container.
 
 Attaches a given key to the webId document.
 If the key is not published yet, it will be published in the `/public-key` container.
+If the key is a RSA key and another RSA key is attached already, the old one will be replaced.
 
 ##### Parameters
 
@@ -208,24 +209,13 @@ Removes webId references and the corresponding public key.
 
 Returns nothing.
 
-### `generate`
-
-Generate the private/public key pair for a given actor.
-
-##### Parameters
-
-| Property   | Type     | Default      | Description                                            |
-| ---------- | -------- | ------------ | ------------------------------------------------------ |
-| `actorUri` | `string` | **required** | URI of the actor for which will generate the key pairs |
-
-##### Return
-
-`string` - The generated public key.
-
 ### `getRemotePublicKeys`
 
 Get the public keys of a remote actor by [key type](#supported-key-types).
 Keep it in local cache. Queries the remote actor's webId document and looks for keys in the `publicKey` and the `assertionMethod` fields. Does not filter outdated keys.
+
+Note that key types are not very standardized yet, so filtering by key types other than RSA might not work as
+expected for other implementations.
 
 ##### Parameters
 

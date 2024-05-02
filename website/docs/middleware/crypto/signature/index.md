@@ -22,19 +22,15 @@ This service implements [HTTP Signature](https://tools.ietf.org/html/draft-cavag
 
 ## Dependencies
 
-- None
+- [KeyService](../key-service)
 
 ## Usage
 
 ```js
 const { SignatureService } = require('@semapps/crypto');
-const path = require('path');
 
 module.exports = {
-  mixins: [SignatureService],
-  settings: {
-    actorsKeyPairsDir: path.resolve(__dirname, '../actors')
-  }
+  mixins: [SignatureService]
 };
 ```
 
@@ -66,12 +62,6 @@ const ApiService = {
   }
 }
 ```
-
-## Settings
-
-| Property            | Type     | Default      | Description                                        |
-| ------------------- | -------- | ------------ | -------------------------------------------------- |
-| `actorsKeyPairsDir` | `String` | **required** | Path to where the actor's key pair will be stored. |
 
 ## Actions
 

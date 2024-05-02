@@ -6,7 +6,7 @@ This package contains key management and signature services.
 
 ## Features
 
-- Store different key types in a container.
+- Store different key types in a the `/key` and `/public-key` container.
 - Sign HTTP requests with HTTP signatures.
 
 ## Dependencies

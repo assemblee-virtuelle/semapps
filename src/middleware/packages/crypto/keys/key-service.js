@@ -51,6 +51,7 @@ const KeyService = {
       }
     });
 
+    // Legacy service.
     this.broker.createService(KeyPairService, {
       settings: {
         actorsKeyPairsDir: this.settings.actorsKeyPairsDir
@@ -112,7 +113,7 @@ const KeyService = {
       }
     },
     /**
-     * Get's the keys by type that are present in the actor's webId.
+     * Gets the keys by type that are present in the actor's webId.
      * If none for the type is present, a new one is created and returned.
      * TODO: If this becomes a performance bottleneck, we can use SPARQL queries.
      * @returns An array of keys present in the webId.
@@ -127,30 +128,30 @@ const KeyService = {
         const webId = ctx.params.webId || ctx.meta.webId;
         const webIdDoc = await ctx.call('webid.get', { resourceUri: webId, accept: MIME_TYPES.JSON, webId });
 
-        let keys;
-        if (keyType === KEY_TYPES.RSA) {
-          keys = asArray(webIdDoc.publicKey);
-        } else {
-          keys = asArray(webIdDoc.assertionMethod).filter(key => (key.type || key['@type']) === keyType);
+        // RSA keys are stored in `publicKey` field, everything else in `assertionMethod`
+        const publicKeys =
+          keyType === KEY_TYPES.RSA
+            ? asArray(webIdDoc.publicKey)
+            : asArray(webIdDoc.assertionMethod).filter(key => (key.type || key['@type']) === keyType);
+
+        if (publicKeys.length === 0) {
+          // No keys found, we create a new one.
+          const newKey = await this.actions.createKeyForActor({ webId, attachToWebId: true, keyType });
+          return [newKey];
         }
 
-        if (keys.length > 0) {
-          // Fetch all private keys.
-          return await Promise.all(
-            keys.map(key => {
-              const publicKeyId = key.id || key['@id'];
-              return ctx.call('keys.container.get', {
-                resourceUri: publicKeyId.replace('/public-key/', '/key/'),
-                accept: MIME_TYPES.JSON,
-                webId
-              });
-            })
-          );
-        }
-
-        // No keys found, we create a new one.
-        const newKey = await this.actions.createKeyForActor({ webId, attachToWebId: true, keyType });
-        return [newKey];
+        // Fetch all private keys for the public keys in the webId.
+        return await Promise.all(
+          publicKeys.map(key => {
+            const publicKeyId = key.id || key['@id'];
+            return ctx.call('keys.container.get', {
+              // public and private key URIs have the same slug, so we just replace the container name here..
+              resourceUri: publicKeyId.replace('/public-key/', '/key/'),
+              accept: MIME_TYPES.JSON,
+              webId
+            });
+          })
+        );
       }
     },
     /**
@@ -160,9 +161,9 @@ const KeyService = {
      */
     getSigningMultikeyInstance: {
       params: {
+        keyObject: { type: 'object', optional: true },
         keyId: { type: 'string', optional: true },
         keyType: { type: 'string', default: KEY_TYPES.ED25519 },
-        keyObject: { type: 'object', optional: true },
         webId: { type: 'string', optional: true }
       },
       async handler(ctx) {
@@ -176,7 +177,7 @@ const KeyService = {
         if (!asArray(keyObject.type || keyObject['@type']).includes(KEY_TYPES.ED25519)) {
           throw new Error('Only ED25519 keys are supported by this action.');
         }
-        // The library required the key to have type Multikey only.
+        // The library requires the key to have the type field set to `Multikey` only.
         return await Ed25519Multikey.from({ keyObject, type: 'Multikey' });
       }
     },
@@ -216,7 +217,7 @@ const KeyService = {
             { keyObject: keyObject, keyId: keyObject.id, webId },
             { parentCtx: ctx }
           );
-          //  The field `rdfs:seeAlso` was added to the resource above. Instead of refetching, we manually update the object.
+          // `rdfs:seeAlso` is added to the private key above. Instead of refetching, we manually update the object.
           keyObject['rdfs:seeAlso'] = publicKeyUri;
 
           if (attachToWebId) {
@@ -246,12 +247,12 @@ const KeyService = {
           return await this.actions.generateRsaKey();
         }
 
-        throw new Error('Key type not implemented.');
+        throw new Error('Key type not supported.');
       }
     },
 
     /**
-     * Generate ed25519 key pair.
+     * Generate ED25519 key pair.
      * @returns {object} Key pair in [MultiKey format](https://www.w3.org/TR/vc-data-integrity/#multikey).
      */
     generateEd25519Key: {
@@ -261,8 +262,9 @@ const KeyService = {
         const keyObject = await keyPair.export({ publicKey: true, secretKey: true });
         // The id field is set to `undefined` which can cause issues with the ld parser.
         delete keyObject.id;
-        // The default context is more flexible in adding more fields to the object.
+        // We need the default context instead, for adding other fields.
         delete keyObject['@context'];
+        // Set additional types which we require to find them easily by type in the db.
         keyObject['@type'] = [KEY_TYPES.ED25519, KEY_TYPES.MULTI_KEY, KEY_TYPES.VERIFICATION_METHOD];
         return keyObject;
       }
@@ -312,6 +314,7 @@ const KeyService = {
     /**
      * Attaches a given key to the webId document.
      * If the key is not published yet, it will be published in the `/public-keys` container.
+     * If the key is a RSA key and another RSA key is attached already, the old one will be replaced.
      * @param {*} ctx Context.
      * @param {string} ctx.webId The WebId.
      * @param {string} ctx.keyId The id of the public-private key pair resource.
@@ -451,7 +454,9 @@ const KeyService = {
       async handler(ctx) {
         const keyId = ctx.params.keyId || ctx.params.keyObject?.id || ctx.params.keyObject?.['@id'];
         const webId = ctx.params.webId || ctx.meta.webId;
-        const keyObject = await ctx.call('keys.container.get', { resourceUri: keyId, accept: MIME_TYPES.JSON, webId });
+        const keyObject =
+          ctx.params.keyObject ||
+          (await ctx.call('keys.container.get', { resourceUri: keyId, accept: MIME_TYPES.JSON, webId }));
 
         await ctx.call('keys.container.delete', { resourceUri: keyId, webId });
         // Delete corresponding public key in the `public-key` container, if present.
@@ -462,6 +467,7 @@ const KeyService = {
         }
         const publicKeyId = keyObject['rdfs:seeAlso'];
         if (publicKeyId) {
+          // Try to detach from webId. Will have no effect, if not attached.
           await this.actions.detachFromWebId({ webId, publicKeyId }, { parentCtx: ctx });
         }
       }
@@ -470,7 +476,7 @@ const KeyService = {
     /**
      * Fetches remote keys from a webId (publicKey or assertionMethod field).
      * Returns all keys of the given `keyType` or all, if `keyType` is `null`.
-     * Returns outdated keys as well.
+     * Does not filter outdated keys.
      */
     getRemotePublicKeys: {
       params: {
@@ -488,8 +494,8 @@ const KeyService = {
           if (!response.ok) return false;
 
           const actor = await response.json();
-          if (!actor || !actor.publicKey) return false;
-          keyObjects = asArray(actor.publicKey).concat(asArray(actor.assertionMethod));
+
+          keyObjects = asArray(actor?.publicKey).concat(asArray(actor?.assertionMethod));
           this.remoteActorPublicKeyCache[webId] = keyObjects;
         }
 
@@ -545,7 +551,7 @@ const KeyService = {
         }
 
         /** @type {never} Not implemented yet. */
-        throw new Error('Key type not implemented yet.');
+        throw new Error(`Key type ${keyType} not supported.`);
       }
     }
   },
@@ -555,20 +561,21 @@ const KeyService = {
       '*': function checkMigration(ctx) {
         if (!this.isMigrated && !ctx.meta.skipMigrationCheck) {
           throw new Error(
-            'The keys were not migrated to db storage yet. Please run `keys.migration.migrateKeysToDb` and use the deprecated `signature.keypair` service.'
+            'The keys were not migrated to db storage yet. Please run `keys.migration.migrateKeysToDb` and use the deprecated `signature.keypair` service for now.'
           );
         }
       }
     }
   },
   events: {
-    async 'keys.migration.migrated'(ctx) {
+    async 'keys.migration.migrated'() {
       this.isMigrated = true;
     },
     async 'auth.registered'(ctx) {
       const { webId } = ctx.params;
 
       if (!this.isMigrated) {
+        // Key creation will be handled by legacy service.
         return;
       }
 

@@ -22,7 +22,7 @@ The following service actions are available.
 
 ### `migrateKeysToDb`
 
-Get list of all public-private key pairs of a given key type for an actor. Looks for keys in the `keys` container. If none of the given type is available, `[]` is returned.
+Migrate all available keys from the filesystem to the db store.
 
 ##### Returns
 
@@ -34,7 +34,7 @@ Emits event `keys.migration.migrated` with no payload.
 
 ### `isMigrated`
 
-Checks if keys have been migrated to db store by checking if the filesystem contains any keys (usually in the `actors` directory).
+Checks if keys have been migrated to db store by checking if the filesystem's `actorsKeyPairsDir` contains any `.key` or `.key.pub` files (usually in the `actors` directory).
 
 ##### Parameters
 

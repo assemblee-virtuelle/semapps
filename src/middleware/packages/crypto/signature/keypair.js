@@ -8,8 +8,9 @@ const KEY_TYPES = require('../keys/keyTypes');
 
 /**
  * Deprecated Service.
- * This service is only left here for migration purposes from the old key management system.
- * The old one used a file-system based key store, the new one stores keys in the graph db.
+ * This service uses a file-system based key store, the new one stores keys in the graph db.
+ * If the migration has taken place (by calling `keys.migration.migrateKeysToDb`), calls
+ * will be redirected to the new service.
  * @type {import('moleculer').ServiceSchema}
  */
 const SignatureService = {
@@ -37,13 +38,6 @@ const SignatureService = {
           keyType: KEY_TYPES.RSA,
           webId: actorUri
         });
-        if (!key) {
-          key = await ctx.call('keys.createKeyForActor', {
-            webId: actorUri,
-            keyType: KEY_TYPES.RSA,
-            attachToWebId: true
-          });
-        }
         return key.publicKeyPem;
       }
 

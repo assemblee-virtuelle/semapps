@@ -40,15 +40,15 @@ module.exports = {
 
         // Get the user's RSA key
         const { publicKey, privateKey } = await ctx.call('signature.keypair.get', { actorUri: webId, webId });
-        if (!publicKey && !privateKey) {
-          this.logger.warn(`No key found for ${webId}, creating a new one...`);
+        if (!publicKey || !privateKey) {
+          this.logger.warn(`Public or private key was not found for ${webId}, creating a new one...`);
           await ctx.call('keys.createKeyForActor', { webId, keyType: KEY_TYPES.RSA, attachToWebId: true });
           continue;
         }
 
         // Delete old public key blank node and data from the webId.
         await ctx.call('triplestore.update', {
-          // For pod context, pod dataset is responsible, else default.
+          // For podProvider context, the pod dataset is responsible, else default.
           dataset: this.settings.podProvider ? username : undefined,
           webId: 'system',
           query: `
@@ -102,7 +102,7 @@ module.exports = {
     },
 
     /** Returns true, if the server has migrated to the new key service yet, i.e. keys are stored in the user dataset, not on fs. */
-    async isMigrated(ctx) {
+    async isMigrated() {
       // Check actorsKeyPairsDir for existing keys.
       if (!fs.existsSync(this.settings.actorsKeyPairsDir)) {
         return true;

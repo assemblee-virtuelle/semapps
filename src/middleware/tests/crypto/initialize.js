@@ -72,12 +72,6 @@ const initialize = async (port, withOldKeyStore = false) => {
     }
   });
 
-  // this.broker.createService(PodService, {
-  //   settings: {
-  //     baseUrl
-  //   }
-  // });
-
   await broker.start();
   broker.waitForServices(
     ['core', 'auth', 'webid', 'triplestore', 'keys', 'keys.container', 'keys.public-container', 'keys.migration'],

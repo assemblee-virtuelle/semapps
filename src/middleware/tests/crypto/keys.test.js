@@ -437,6 +437,7 @@ describe('keys', () => {
         expect(
           arrayOf(webIdDocument.assertionMethod).find(key => (key.id || key['@id']) === keyPair['rdfs:seeAlso'])
         ).toBeTruthy();
+        expect(webIdDocument.assertionMethod.length).toBeGreaterThan(1);
       });
 
       test('keys.getWebIdKeys returns keys', async () => {
@@ -455,24 +456,9 @@ describe('keys', () => {
 
   describe('Migration', () => {
     beforeAll(async () => {
-      // Restart broker
+      // Stop and create new broker without migration.
       if (broker) await broker.stop();
-      ({ broker } = await initialize(3000, true));
-
-      user = await broker.call('auth.signup', {
-        username: 'alice',
-        email: 'alice@test.example',
-        password: 'test',
-        name: 'Alice'
-      });
-      user2 = await broker.call('auth.signup', {
-        username: 'bob',
-        email: 'bob@test.example',
-        password: 'test',
-        name: 'Bob'
-      });
-      // Wait for keys to have been created for user.
-      await wait(2000);
+      await setUp(true);
     });
 
     // To store the key and validate if it remained the same after migration.
@@ -490,7 +476,7 @@ describe('keys', () => {
           })
         ).rejects.toMatchObject({
           message:
-            'The keys were not migrated to db storage yet. Please run `keys.migration.migrateKeysToDb` and use the deprecated `signature.keypair` service.'
+            'The keys were not migrated to db storage yet. Please run `keys.migration.migrateKeysToDb` and use the deprecated `signature.keypair` service for now.'
         });
       });
 
@@ -560,7 +546,6 @@ describe('keys', () => {
           expect(keyPair.privateKeyPem).toBe(privateKeyPemBeforeMigration);
         });
 
-        // TODO: validate
         test('key in webId', async () => {
           const [keyPair] = await broker.call('keys.getByType', { webId: user.webId, keyType: KEY_TYPES.RSA });
 
