@@ -2,14 +2,16 @@ const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { foaf, schema } = require('@semapps/ontologies');
 const { ControlledContainerMixin, ControlledContainerDereferenceMixin } = require('@semapps/ldp');
+const { FULL_ACTOR_TYPES } = require('@semapps/activitypub');
 
 /** @type {import('moleculer').ServiceSchema} */
 const WebIdService = {
   name: 'webid',
   settings: {
-    path: '/foaf/person',
+    path: '/',
     baseUrl: null,
-    acceptedTypes: ['http://xmlns.com/foaf/0.1/Person'],
+    acceptedTypes: Object.values(FULL_ACTOR_TYPES),
+
     defaultAccept: 'text/turtle',
     podProvider: false,
     podsContainer: false,
@@ -70,15 +72,13 @@ const WebIdService = {
         });
       } else {
         if (!this.settings.path) throw new Error('The path setting is required');
-        webId = await this.actions.post(
-          {
-            resource,
-            slug: nick,
-            contentType: MIME_TYPES.JSON,
-            webId: 'system'
-          },
-          { parentCtx: ctx }
-        );
+        webId = await ctx.call('ldp.container.post', {
+          resource,
+          slug: nick,
+          containerUri: urlJoin(this.settings.baseUrl, this.settings.path),
+          contentType: MIME_TYPES.JSON,
+          webId: 'system'
+        });
       }
 
       const newPerson = await ctx.call('ldp.resource.get', {
