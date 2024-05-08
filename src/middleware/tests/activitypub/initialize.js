@@ -6,7 +6,7 @@ const { AuthLocalService } = require('@semapps/auth');
 const { CoreService } = require('@semapps/core');
 const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
 const { WebIdService } = require('@semapps/webid');
-const { FULL_OBJECT_TYPES } = require('@semapps/activitypub');
+const { FULL_OBJECT_TYPES, FULL_ACTOR_TYPES } = require('@semapps/activitypub');
 const CONFIG = require('../config');
 const { clearDataset } = require('../utils');
 
@@ -67,6 +67,7 @@ const initialize = async (port, mainDataset, accountsDataset) => {
   await broker.createService(WebIdService, {
     settings: {
       path: '/as/actor',
+      acceptedTypes: Object.values(FULL_ACTOR_TYPES),
       baseUrl
     }
   });

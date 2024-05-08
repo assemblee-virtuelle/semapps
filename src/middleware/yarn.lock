@@ -2042,15 +2042,6 @@
     localforage "^1.9.0"
     util "^0.12.4"
 
-"@semapps/webid@0.7.1":
-  version "0.7.0"
-  dependencies:
-    "@semapps/activitypub" "0.7.0"
-    "@semapps/ldp" "0.7.0"
-    "@semapps/mime-types" "0.7.0"
-    "@semapps/ontologies" "0.7.0"
-    url-join "^4.0.1"
-
 "@sigstore/bundle@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@sigstore/bundle/-/bundle-1.1.0.tgz#17f8d813b09348b16eeed66a8cf1c3d6bd3d04f1"

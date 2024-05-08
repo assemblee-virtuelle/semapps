@@ -1,7 +1,6 @@
 const fse = require('fs-extra');
 const fs = require('fs');
 const path = require('path');
-const urlJoin = require('url-join');
 const { ServiceBroker } = require('moleculer');
 const { AuthLocalService } = require('@semapps/auth');
 const { CoreService } = require('@semapps/core');

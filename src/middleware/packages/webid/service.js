@@ -8,10 +8,9 @@ const { FULL_ACTOR_TYPES } = require('@semapps/activitypub');
 const WebIdService = {
   name: 'webid',
   settings: {
-    path: '/',
+    path: '/foaf/person',
     baseUrl: null,
-    acceptedTypes: Object.values(FULL_ACTOR_TYPES),
-
+    acceptedTypes: ['http://xmlns.com/foaf/0.1/Person'],
     defaultAccept: 'text/turtle',
     podProvider: false,
     podsContainer: false,
@@ -72,13 +71,15 @@ const WebIdService = {
         });
       } else {
         if (!this.settings.path) throw new Error('The path setting is required');
-        webId = await ctx.call('ldp.container.post', {
-          resource,
-          slug: nick,
-          containerUri: urlJoin(this.settings.baseUrl, this.settings.path),
-          contentType: MIME_TYPES.JSON,
-          webId: 'system'
-        });
+        webId = await this.actions.post(
+          {
+            resource,
+            slug: nick,
+            contentType: MIME_TYPES.JSON,
+            webId: 'system'
+          },
+          { parentCtx: ctx }
+        );
       }
 
       const newPerson = await ctx.call('ldp.resource.get', {
