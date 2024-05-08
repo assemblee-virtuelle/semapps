@@ -1,4 +1,4 @@
-const asArray = value => {
+const arrayOf = value => {
   if (value === undefined || value === null) {
     return [];
   }
@@ -8,4 +8,4 @@ const asArray = value => {
   return [value];
 };
 
-module.exports = { asArray };
+module.exports = { arrayOf };

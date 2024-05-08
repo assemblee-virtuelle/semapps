@@ -6,7 +6,6 @@ const KEY_TYPES = require('./keyTypes');
 /** @type {import('moleculer').ServiceSchema} */
 module.exports = {
   settings: {
-    settingsDataset: 'settings',
     actorsKeyPairsDir: null,
     podProvider: false
   },
@@ -47,6 +46,8 @@ module.exports = {
         }
 
         // Delete old public key blank node and data from the webId.
+        // Note: updating the triple store directly would usually require to delete the Redis cache for
+        // the webId, but since we are attaching the new public key just after this, it is not necessary.
         await ctx.call('triplestore.update', {
           // For podProvider context, the pod dataset is responsible, else default.
           dataset: this.settings.podProvider ? username : undefined,
@@ -97,7 +98,7 @@ module.exports = {
           path.join(this.settings.actorsKeyPairsDir, 'old', keyFile)
         )
       );
-      ctx.broker.logger.info('=== Keys migration completed ===');
+      this.logger.info('=== Keys migration completed ===');
       await ctx.emit('keys.migration.migrated');
     },
 

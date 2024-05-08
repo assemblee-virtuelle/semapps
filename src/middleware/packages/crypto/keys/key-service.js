@@ -2,15 +2,16 @@ const fetch = require('node-fetch');
 const { generateKeyPair } = require('crypto');
 const { namedNode, triple } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const Ed25519Multikey = require('@digitalbazaar/ed25519-multikey');
 const { getSlugFromUri } = require('@semapps/ldp');
 const { sec } = require('@semapps/ontologies');
-const { asArray } = require('../utils');
+const { arrayOf } = require('../utils');
 const KEY_TYPES = require('./keyTypes');
 const KeyContainerService = require('./keys-container');
 const PublicKeyContainerService = require('./public-keys-container');
 const MigrationService = require('./migration-service');
 const { KeyPairService } = require('../signature');
+/** @type {import('@digitalbazaar/ed25519-multikey')} */
+let Ed25519Multikey;
 
 /**
  * Service for managing keys (creating, storing, retrieving).
@@ -28,11 +29,12 @@ const KeyService = {
   name: 'keys',
   settings: {
     podProvider: false,
-    settingsDataset: 'settings',
     actorsKeyPairsDir: null
   },
   dependencies: ['ontologies'],
   async created() {
+    Ed25519Multikey = await import('@digitalbazaar/ed25519-multikey');
+
     // Start keys-container and public-keys-container services.
     this.broker.createService(KeyContainerService, {
       settings: {
@@ -58,16 +60,16 @@ const KeyService = {
       }
     });
 
-    this.remoteActorPublicKeyCache = {};
-
-    await this.waitForServices('keys.migration');
-    this.isMigrated = await this.broker.call('keys.migration.isMigrated');
-  },
-  async started() {
+    await this.waitForServices('ontologies');
     this.broker.call('ontologies.register', {
       ...sec,
       overwrite: true
     });
+
+    await this.waitForServices('keys.migration');
+    this.isMigrated = await this.broker.call('keys.migration.isMigrated');
+
+    this.remoteActorPublicKeyCache = {};
   },
   actions: {
     /**
@@ -85,31 +87,17 @@ const KeyService = {
 
         // Get the key container, to search by type.
         const container = await ctx.call('keys.container.list', {
-          webId: 'system',
+          webId,
           accept: MIME_TYPES.JSON
         });
 
         // Check if key type is present.
         const matchedKeys = container['ldp:contains'].filter(
           keyResource =>
-            asArray(keyResource.type || keyResource['@type']).includes(keyType) && keyResource.controller === webId
+            arrayOf(keyResource.type || keyResource['@type']).includes(keyType) && keyResource.controller === webId
         );
 
-        if (matchedKeys.length === 0) {
-          // No key found.
-          return [];
-        }
-        // We query the resources again, to ensure the user is authorized.
-        const returnedKeys = await Promise.all(
-          matchedKeys.map(key =>
-            ctx.call('keys.container.get', {
-              resourceUri: key.id || key['@id'],
-              webId,
-              accept: MIME_TYPES.JSON
-            })
-          )
-        );
-        return returnedKeys;
+        return matchedKeys;
       }
     },
     /**
@@ -118,7 +106,7 @@ const KeyService = {
      * TODO: If this becomes a performance bottleneck, we can use SPARQL queries.
      * @returns An array of keys present in the webId.
      */
-    getWebIdKeys: {
+    getOrCreateWebIdKeys: {
       params: {
         keyType: { type: 'string' },
         webId: { type: 'string', optional: true }
@@ -131,8 +119,8 @@ const KeyService = {
         // RSA keys are stored in `publicKey` field, everything else in `assertionMethod`
         const publicKeys =
           keyType === KEY_TYPES.RSA
-            ? asArray(webIdDoc.publicKey)
-            : asArray(webIdDoc.assertionMethod).filter(key => (key.type || key['@type']) === keyType);
+            ? arrayOf(webIdDoc.publicKey)
+            : arrayOf(webIdDoc.assertionMethod).filter(key => (key.type || key['@type']) === keyType);
 
         if (publicKeys.length === 0) {
           // No keys found, we create a new one.
@@ -172,9 +160,9 @@ const KeyService = {
         const keyObject =
           ctx.params.keyObject || keyId
             ? await ctx.call('keys.container.get', { resourceUri: keyId, webId, accept: MIME_TYPES.JSON })
-            : (await ctx.call('keys.getWebIdKeys', { webId, keyType }))[0];
+            : (await ctx.call('keys.getOrCreateWebIdKeys', { webId, keyType }))[0];
 
-        if (!asArray(keyObject.type || keyObject['@type']).includes(KEY_TYPES.ED25519)) {
+        if (!arrayOf(keyObject.type || keyObject['@type']).includes(KEY_TYPES.ED25519)) {
           throw new Error('Only ED25519 keys are supported by this action.');
         }
         // The library requires the key to have the type field set to `Multikey` only.
@@ -335,7 +323,7 @@ const KeyService = {
           ctx.params.keyObject ||
           (await ctx.call('keys.container.get', { resourceUri: keyId, accept: MIME_TYPES.JSON, webId }));
 
-        const isRsaKey = asArray(keyObject.type || keyObject['@type']).includes(KEY_TYPES.RSA);
+        const isRsaKey = arrayOf(keyObject.type || keyObject['@type']).includes(KEY_TYPES.RSA);
 
         // The rdfs:seeAlso points to the public key resource. If it doesn't exist, publish it.
         const publicKeyId = keyObject['rdfs:seeAlso']
@@ -349,8 +337,8 @@ const KeyService = {
         });
         // Ensure the same public key is not attached already.
         if (
-          asArray(webIdDocument.publicKey)
-            .concat(asArray(webIdDocument.assertionMethod))
+          arrayOf(webIdDocument.publicKey)
+            .concat(arrayOf(webIdDocument.assertionMethod))
             .find(key => (key.id || key['@id']) === publicKeyId)
         ) {
           // Key is already attached, nothing to do.
@@ -447,22 +435,22 @@ const KeyService = {
      */
     delete: {
       params: {
-        keyId: { type: 'string', optional: true },
+        resourceUri: { type: 'string', optional: true },
         keyObject: { type: 'object', optional: true },
         webId: { type: 'string', optional: true }
       },
       async handler(ctx) {
-        const keyId = ctx.params.keyId || ctx.params.keyObject?.id || ctx.params.keyObject?.['@id'];
+        const resourceUri = ctx.params.resourceUri || ctx.params.keyObject?.id || ctx.params.keyObject?.['@id'];
         const webId = ctx.params.webId || ctx.meta.webId;
         const keyObject =
           ctx.params.keyObject ||
-          (await ctx.call('keys.container.get', { resourceUri: keyId, accept: MIME_TYPES.JSON, webId }));
+          (await ctx.call('keys.container.get', { resourceUri, accept: MIME_TYPES.JSON, webId }));
 
-        await ctx.call('keys.container.delete', { resourceUri: keyId, webId });
+        await ctx.call('keys.container.delete', { resourceUri, webId });
         // Delete corresponding public key in the `public-key` container, if present.
         if (keyObject['rdfs:seeAlso']) {
           // Don't call `keys.public-container.delete`
-          // because that will try to delete the private key reference (which we deleted all together).
+          // because that will try to delete the private key reference (which we deleted already).
           await ctx.call('ldp.resource.delete', { resourceUri: keyObject['rdfs:seeAlso'], webId });
         }
         const publicKeyId = keyObject['rdfs:seeAlso'];
@@ -495,7 +483,7 @@ const KeyService = {
 
           const actor = await response.json();
 
-          keyObjects = asArray(actor?.publicKey).concat(asArray(actor?.assertionMethod));
+          keyObjects = arrayOf(actor?.publicKey).concat(arrayOf(actor?.assertionMethod));
           this.remoteActorPublicKeyCache[webId] = keyObjects;
         }
 
@@ -503,11 +491,11 @@ const KeyService = {
           if (keyType === KEY_TYPES.RSA) {
             // RSA keys might not have a type field, so we filter them manually.
             return keyObjects.filter(key => {
-              const types = asArray(key.type || key['@type']);
+              const types = arrayOf(key.type || key['@type']);
               return types.length === 0 || types.includes(KEY_TYPES.RSA);
             });
           } else {
-            return keyObjects.filter(key => asArray(key.type || key['@type']).includes(keyType));
+            return keyObjects.filter(key => arrayOf(key.type || key['@type']).includes(keyType));
           }
         }
         return keyObjects;
@@ -530,10 +518,10 @@ const KeyService = {
 
         const keyType = keyObject['@type'] || keyObject.type;
 
-        if (asArray(keyType).includes(KEY_TYPES.ED25519)) {
+        if (arrayOf(keyType).includes(KEY_TYPES.ED25519)) {
           return {
             '@type': [KEY_TYPES.ED25519, KEY_TYPES.MULTI_KEY, KEY_TYPES.VERIFICATION_METHOD],
-            controller: keyObject.owner,
+            controller: keyObject.controller,
             expires: keyObject.expires,
             owner: keyObject.owner,
             publicKeyMultibase: keyObject.publicKeyMultibase,
@@ -541,7 +529,7 @@ const KeyService = {
           };
         }
 
-        if (asArray(keyType).includes(KEY_TYPES.RSA)) {
+        if (arrayOf(keyType).includes(KEY_TYPES.RSA)) {
           return {
             '@type': keyType,
             owner: keyObject.owner,
