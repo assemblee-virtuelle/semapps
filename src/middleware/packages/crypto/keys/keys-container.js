@@ -26,14 +26,18 @@ module.exports = {
         }
       };
     },
-    newResourcesPermissions: webId => ({
-      user: {
-        uri: webId,
-        read: true,
-        write: true,
-        control: true
-      }
-    }),
+    newResourcesPermissions: webId => {
+      if (webId === 'anon' || webId === 'system') throw new Error('Key resource must be created for registered webId.');
+
+      return {
+        user: {
+          uri: webId,
+          read: true,
+          write: true,
+          control: true
+        }
+      };
+    },
     excludeFromMirror: true,
     // Disallow PATCH & PUT, to prevent keys from being overwritten
     controlledActions: {

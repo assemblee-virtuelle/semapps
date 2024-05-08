@@ -23,47 +23,55 @@ module.exports = {
         }
       };
     },
-    newResourcesPermissions: webId => ({
-      anon: {
-        read: true
-      },
-      user: {
-        uri: webId,
-        read: true,
-        write: true,
-        control: true
-      }
-    }),
+    newResourcesPermissions: webId => {
+      if (webId === 'anon' || webId === 'system') throw new Error('Key resource must be created for registered webId.');
+
+      return {
+        anon: {
+          read: true
+        },
+        user: {
+          uri: webId,
+          read: true,
+          write: true,
+          control: true
+        }
+      };
+    },
     excludeFromMirror: false,
     // Disallow PATCH & PUT, to prevent keys from being overwritten
     controlledActions: {
-      put: 'keys.container.forbidden',
-      patch: 'keys.container.forbidden',
-      delete: 'keys.public-container.delete'
+      put: 'keys.public-container.forbidden',
+      patch: 'keys.public-container.forbidden'
     },
     podProvider: false
   },
+
   actions: {
-    /** Deletes the public key and removes the reference from the public-private key-pair container `/key`. */
-    async delete(ctx) {
-      const { keyId: publicKeyId } = ctx.params;
-      await ctx.call('ldp.resource.delete', { resourceUri: publicKeyId });
-
-      const privateKeyId = publicKeyId.replace('/public-key/', '/key/');
-
-      await ctx.call('ldp.resource.patch', {
-        resourceUri: privateKeyId,
-        triplesToRemove: [
-          triple(
-            namedNode(privateKeyId),
-            namedNode('http://www.w3.org/2000/01/rdf-schema#seeAlso'),
-            namedNode(publicKeyId)
-          )
-        ]
-      });
-    },
     async forbidden(ctx) {
       throw new E.ForbiddenError();
+    }
+  },
+
+  hooks: {
+    after: {
+      /** Delete the public key reference from the public-private key-pair container `/key`. */
+      async delete(ctx) {
+        const { resourceUri } = ctx.params;
+
+        const privateKeyId = resourceUri.replace('/public-key/', '/key/');
+
+        await ctx.call('ldp.resource.patch', {
+          resourceUri: privateKeyId,
+          triplesToRemove: [
+            triple(
+              namedNode(privateKeyId),
+              namedNode('http://www.w3.org/2000/01/rdf-schema#seeAlso'),
+              namedNode(resourceUri)
+            )
+          ]
+        });
+      }
     }
   }
 };

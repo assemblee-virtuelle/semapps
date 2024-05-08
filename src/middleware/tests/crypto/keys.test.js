@@ -114,7 +114,7 @@ describe('keys', () => {
         expect(oldKeyPair).toBeTruthy();
 
         // Delete
-        await broker.call('keys.delete', { webId: user.webId, keyId: oldKeyPair.id || oldKeyPair['@id'] });
+        await broker.call('keys.delete', { webId: user.webId, resourceUri: oldKeyPair.id || oldKeyPair['@id'] });
 
         // Expect webId not to have key.
         const webIdDocument = await broker.call('webid.get', {
@@ -250,8 +250,8 @@ describe('keys', () => {
         ).toBeUndefined();
       });
 
-      test('keys.getWebIdKeys returns key', async () => {
-        const webIdKeys = await broker.call('keys.getWebIdKeys', {
+      test('keys.getOrCreateWebIdKeys returns key', async () => {
+        const webIdKeys = await broker.call('keys.getOrCreateWebIdKeys', {
           webId: user.webId,
           keyType: KEY_TYPES.RSA
         });
@@ -341,7 +341,7 @@ describe('keys', () => {
         expect(oldKeyPair).toBeTruthy();
 
         // Delete
-        await broker.call('keys.delete', { webId: user.webId, keyId: oldKeyPair.id || oldKeyPair['@id'] });
+        await broker.call('keys.delete', { webId: user.webId, resourceUri: oldKeyPair.id || oldKeyPair['@id'] });
 
         // Expect webId not to have key.
         const webIdDocument = await broker.call('webid.get', {
@@ -440,8 +440,8 @@ describe('keys', () => {
         expect(webIdDocument.assertionMethod.length).toBeGreaterThan(1);
       });
 
-      test('keys.getWebIdKeys returns keys', async () => {
-        const webIdKeys = await broker.call('keys.getWebIdKeys', {
+      test('keys.getOrCreateWebIdKeys returns keys', async () => {
+        const webIdKeys = await broker.call('keys.getOrCreateWebIdKeys', {
           webId: user.webId,
           keyType: KEY_TYPES.ED25519
         });

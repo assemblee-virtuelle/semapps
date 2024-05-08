@@ -34,7 +34,7 @@ const SignatureService = {
       const { actorUri } = ctx.params;
 
       if (this.isMigrated) {
-        let [key] = await ctx.call('keys.getWebIdKeys', {
+        let [key] = await ctx.call('keys.getOrCreateWebIdKeys', {
           keyType: KEY_TYPES.RSA,
           webId: actorUri
         });
@@ -80,8 +80,8 @@ const SignatureService = {
       const { actorUri } = ctx.params;
 
       if (this.isMigrated) {
-        const [key] = await ctx.call('keys.getWebIdKeys', { webId: actorUri, keyType: KEY_TYPES.RSA });
-        await ctx.call('keys.delete', { keyId: key.id || key['@id'], webId: actorUri });
+        const [key] = await ctx.call('keys.getOrCreateWebIdKeys', { webId: actorUri, keyType: KEY_TYPES.RSA });
+        await ctx.call('keys.delete', { resourceUri: key.id || key['@id'], webId: actorUri });
         return;
       }
 
@@ -145,7 +145,7 @@ const SignatureService = {
 
       // Call new method, if migrated.
       if (this.isMigrated) {
-        const [key] = await ctx.call('keys.getWebIdKeys', { keyType: KEY_TYPES.RSA, webId: actorUri });
+        const [key] = await ctx.call('keys.getOrCreateWebIdKeys', { keyType: KEY_TYPES.RSA, webId: actorUri });
         return {
           publicKey: key.publicKeyPem,
           privateKey: key.privateKeyPem
