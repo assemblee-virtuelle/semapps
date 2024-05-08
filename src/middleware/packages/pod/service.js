@@ -34,7 +34,7 @@ module.exports = {
       },
       hooks: {
         before: {
-          async create(ctx) {
+          async createWebId(ctx) {
             const { nick } = ctx.params;
             await ctx.call('pod.create', { username: nick });
           }
