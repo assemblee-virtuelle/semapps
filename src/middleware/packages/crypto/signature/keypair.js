@@ -167,7 +167,8 @@ const SignatureService = {
 
       // Call new method, if migrated.
       if (this.isMigrated) {
-        return (await ctx.call('keys.getRemotePublicKeys', { webId: actorUri, keyType: KEY_TYPES.RSA }))[0];
+        return (await ctx.call('keys.getRemotePublicKeys', { webId: actorUri, keyType: KEY_TYPES.RSA }))?.[0]
+          ?.publicKeyPem;
       }
 
       if (this.remoteActorPublicKeyCache[actorUri]) {
