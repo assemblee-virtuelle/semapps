@@ -89,7 +89,7 @@ Get list of all public-private key pairs of a given key type for an actor. Looks
 
 `Array` - List of all public-private key pairs for the given actor and key type.
 
-### `getWebIdKeys`
+### `getOrCreateWebIdKeys`
 
 Get list of all public-private key pairs for an actor that are published in the actor's webId. Looks for keys in the `keys` container. **If none of the requested type is available, a new one is crated and returned**.
 
@@ -112,13 +112,13 @@ The returned object is a `@digitalbazaar/ed25519-multikey` instance.
 
 ##### Parameters
 
-| Property    | Type     | Default             | Description                                                                                                                                    |
-| ----------- | -------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `keyType`   | `string` | `KEY_TYPES.ED25519` | URI of the key type. Only `KEY_TYPES.ED25519` is supported.                                                                                    |
-| `webId`     | `string` | `ctx.meta.webId`    | The webId of the actor for whom the keys are to be queried.                                                                                    |
-| `keyId`     | `string` | `undefined`         | The keyId of the key to be returned (will be resolved).                                                                                        |
-| `keyObject` | `object` | `undefined`         | The key object to use. If neither keyId nor keyObject is provided, will choose the first key available through [getWebIdKeys](#getwebidkeys) . |
-| `webId`     | `string` | `ctx.meta.webId`    | The webId of the actor for whom the key is to be queried.                                                                                      |
+| Property    | Type     | Default             | Description                                                                                                                                                    |
+| ----------- | -------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `keyType`   | `string` | `KEY_TYPES.ED25519` | URI of the key type. Only `KEY_TYPES.ED25519` is supported.                                                                                                    |
+| `webId`     | `string` | `ctx.meta.webId`    | The webId of the actor for whom the keys are to be queried.                                                                                                    |
+| `keyId`     | `string` | `undefined`         | The keyId of the key to be returned (will be resolved).                                                                                                        |
+| `keyObject` | `object` | `undefined`         | The key object to use. If neither keyId nor keyObject is provided, will choose the first key available through [getOrCreateWebIdKeys](#getOrCreateWebIdKeys) . |
+| `webId`     | `string` | `ctx.meta.webId`    | The webId of the actor for whom the key is to be queried.                                                                                                      |
 
 ##### Return
 
