@@ -2,10 +2,10 @@
 title: Migration Service
 ---
 
-Service to migrate keys from the deprecated `KeypairService` to the new `KeyService`. The old one uses a file system key store, the new one stores keys in the db.
-Note, you can only use the new key service if you have migrated your keys.
+Service to migrate keys from the deprecated `KeypairService` to the new `KeysService`. The old one uses a file system key store, the new one stores keys in the db.
+Note, you can only use the new keys service if you have migrated your keys.
 
-# Migration to the new key service store
+# Migration to the new keys service store
 
 ## Features
 
@@ -14,7 +14,7 @@ Note, you can only use the new key service if you have migrated your keys.
 
 ## Settings
 
-See [KeyService](./key-service) for settings.
+See [KeysService](./key-service) for settings.
 
 ## Actions
 

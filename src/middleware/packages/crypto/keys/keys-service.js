@@ -6,12 +6,16 @@ const { getSlugFromUri } = require('@semapps/ldp');
 const { sec } = require('@semapps/ontologies');
 const { arrayOf } = require('../utils');
 const KEY_TYPES = require('./keyTypes');
-const KeyContainerService = require('./keys-container');
-const PublicKeyContainerService = require('./public-keys-container');
+const KeyContainerService = require('./key-container');
+const PublicKeyContainerService = require('./public-key-container');
 const MigrationService = require('./migration-service');
 const { KeyPairService } = require('../signature');
+
 /** @type {import('@digitalbazaar/ed25519-multikey')} */
 let Ed25519Multikey;
+(async () => {
+  Ed25519Multikey = await import('@digitalbazaar/ed25519-multikey');
+})();
 
 /**
  * Service for managing keys (creating, storing, retrieving).
@@ -25,7 +29,7 @@ let Ed25519Multikey;
  * If key access times become an issue some time, we can create custom queries.
  * @type {import('moleculer').ServiceSchema}
  */
-const KeyService = {
+const KeysService = {
   name: 'keys',
   settings: {
     podProvider: false,
@@ -33,8 +37,6 @@ const KeyService = {
   },
   dependencies: ['ontologies'],
   async created() {
-    Ed25519Multikey = await import('@digitalbazaar/ed25519-multikey');
-
     // Start keys-container and public-keys-container services.
     this.broker.createService(KeyContainerService, {
       settings: {
@@ -576,4 +578,4 @@ const KeyService = {
   }
 };
 
-module.exports = KeyService;
+module.exports = KeysService;

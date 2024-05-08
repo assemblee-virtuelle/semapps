@@ -10,7 +10,7 @@ const { TripleStoreService } = require('@semapps/triplestore');
 const { VoidService } = require('@semapps/void');
 const { WebAclService } = require('@semapps/webacl');
 const { WebfingerService } = require('@semapps/webfinger');
-const { KeyService, SignatureService } = require('@semapps/crypto');
+const { KeysService, SignatureService } = require('@semapps/crypto');
 
 const botsContainer = {
   path: '/as/application',
@@ -139,10 +139,10 @@ const CoreService = {
       });
     }
 
-    this.broker.createService(KeyService, {
+    this.broker.createService(KeysService, {
       settings: {
         actorsKeyPairsDir: path.resolve(baseDir, './actors'),
-        ...this.settings.keyService
+        ...this.settings.keysService
       }
     });
 

@@ -18,7 +18,7 @@ This package contains key management and signature services.
 ## Sub-services
 
 - [SignatureService](./signature)
-- [KeyService](./key-service)
+- [KeysService](./key-service)
 - [MigrationService](./migration-service)
 
 ## Install

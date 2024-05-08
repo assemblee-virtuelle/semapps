@@ -38,7 +38,7 @@
     "publicKeyMultibase": { "@type": "sec:multibase", "@id": "sec:publicKeyMultibase" },
     "publicKeyPem": "sec:publicKeyPem",
     "publicKeyWif": "sec:publicKeyWif",
-    "publicKeyService": { "@id": "sec:publicKeyService", "@type": "@id" },
+    "publicKeysService": { "@id": "sec:publicKeysService", "@type": "@id" },
     "revoked": { "@id": "sec:revoked", "@type": "xsd:dateTime" },
     "salt": "sec:salt",
     "secretKeyMultibase": { "@type": "sec:multibase", "@id": "sec:secretKeyMultibase" },

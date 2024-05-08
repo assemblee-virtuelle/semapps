@@ -100,7 +100,7 @@ const SignatureService = {
 
       if (this.isMigrated) {
         this.logger.warn(
-          `The key service has been migrated. Key setup is handled by the keys service. This function will not have an effect`
+          `The keys service has been migrated. Key setup is handled by the keys service. This function will not have an effect`
         );
         return;
       }
@@ -193,15 +193,15 @@ const SignatureService = {
 
         if (this.isMigrated) {
           this.logger.warn(
-            'The key service has been migrated. ' +
+            'The keys service has been migrated. ' +
               'Key requests and setup are redirected to and handled in the new service. ' +
               'This service might be removed in a future version.'
           );
         } else {
           this.logger.warn(
-            'The key service has not been migrated yet. ' +
+            'The keys service has not been migrated yet. ' +
               'This service is still handling key requests and setup. ' +
-              'Please migrate to the new key service.'
+              'Please migrate to the new keys service.'
           );
         }
         this.hasWarnedMigration = true;

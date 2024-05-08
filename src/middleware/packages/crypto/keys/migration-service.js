@@ -102,7 +102,7 @@ module.exports = {
       await ctx.emit('keys.migration.migrated');
     },
 
-    /** Returns true, if the server has migrated to the new key service yet, i.e. keys are stored in the user dataset, not on fs. */
+    /** Returns true, if the server has migrated to the new keys service yet, i.e. keys are stored in the user dataset, not on fs. */
     async isMigrated() {
       // Check actorsKeyPairsDir for existing keys.
       if (!fs.existsSync(this.settings.actorsKeyPairsDir)) {

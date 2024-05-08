@@ -1,5 +1,5 @@
 ---
-title: Key Service
+title: Keys Service
 ---
 
 Supersedes the signature keypair service.

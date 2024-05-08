@@ -467,7 +467,7 @@ describe('keys', () => {
     let privateKeyPemBeforeMigration;
 
     describe('Before migration', () => {
-      test('new key service not usable before migration', async () => {
+      test('new keys service not usable before migration', async () => {
         await expect(
           broker.call('keys.createKeyForActor', {
             webId: user.webId,
