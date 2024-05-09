@@ -29,6 +29,8 @@ module.exports = {
 
     // Do not await to avoid circular dependency with jsonld service
     this.registerAll();
+
+    console.log('ONTOLIGIES SERVICE STARTED');
   },
   actions: {
     findPrefix: findPrefixAction,

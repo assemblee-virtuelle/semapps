@@ -25,7 +25,8 @@ const SignatureService = {
     } else if (!fs.existsSync(this.settings.actorsKeyPairsDir)) {
       throw new Error(`The actorsKeyPairsDir (${this.settings.actorsKeyPairsDir}) does not exist! Please create it.`);
     }
-
+  },
+  async started() {
     await this.waitForServices('keys.migration');
     this.isMigrated = await this.broker.call('keys.migration.isMigrated');
   },

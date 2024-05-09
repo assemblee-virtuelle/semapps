@@ -61,7 +61,8 @@ const KeysService = {
         actorsKeyPairsDir: this.settings.actorsKeyPairsDir
       }
     });
-
+  },
+  async started() {
     await this.waitForServices('ontologies');
     this.broker.call('ontologies.register', {
       ...sec,

@@ -37,6 +37,12 @@ const { isObject, defaultToArray, arrayOf } = require('../utils');
 
 module.exports = {
   dependencies: ['ldp.resource'],
+  async created() {
+    console.log('DEREFERENCE MIXIN CREATED');
+  },
+  async started() {
+    console.log('DEREFERENCE MIXIN STARTED');
+  },
   methods: {
     /**
      * Get a property from main data. This is a wrapper around ldp.resource.get to allow us to pass in the property to the API
@@ -115,6 +121,7 @@ module.exports = {
      * @returns { Promise<any> } - The dereferenced object.
      */
     async handleAfterGet(ctx, result) {
+      console.log('DEREFERENCE MIXIN AFTER GET CALLED');
       if (!this.settings.dereferencePlan) return result;
 
       const dereferenced = await this.dereference(ctx, result, this.settings.dereferencePlan);
