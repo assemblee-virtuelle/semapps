@@ -2,7 +2,6 @@ const fetch = require('node-fetch');
 const { generateKeyPair } = require('crypto');
 const { namedNode, triple } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getSlugFromUri } = require('@semapps/ldp');
 const { sec } = require('@semapps/ontologies');
 const { arrayOf } = require('../utils');
 const KEY_TYPES = require('./keyTypes');
@@ -35,7 +34,14 @@ const KeysService = {
     podProvider: false,
     actorsKeyPairsDir: null
   },
-  dependencies: ['ontologies'],
+  dependencies: [
+    'ontologies',
+    'keys.container',
+    'keys.public-container',
+    'signature.keypair',
+    'keys.migration',
+    'webid'
+  ],
   async created() {
     // Start keys-container and public-keys-container services.
     this.broker.createService(KeyContainerService, {
@@ -127,17 +133,20 @@ const KeysService = {
 
         if (publicKeys.length === 0) {
           // No keys found, we create a new one.
-          const newKey = await this.actions.createKeyForActor({ webId, attachToWebId: true, keyType });
+          const newKey = await this.actions.createKeyForActor(
+            { webId, attachToWebId: true, keyType },
+            { parentCtx: ctx }
+          );
           return [newKey];
         }
 
         // Fetch all private keys for the public keys in the webId.
         return await Promise.all(
-          publicKeys.map(key => {
+          publicKeys.map(async key => {
             const publicKeyId = key.id || key['@id'];
-            return ctx.call('keys.container.get', {
+            return await ctx.call('keys.container.get', {
               // public and private key URIs have the same slug, so we just replace the container name here..
-              resourceUri: publicKeyId.replace('/public-key/', '/key/'),
+              resourceUri: await this.actions.findPrivateKeyUri({ publicKeyUri: publicKeyId }, { parentCtx: ctx }),
               accept: MIME_TYPES.JSON,
               webId
             });
@@ -409,10 +418,9 @@ const KeysService = {
         // First, get the public key part.
         const publicKeyObject = await this.actions.getPublicKeyObject({ keyObject }, { parentCtx: ctx });
 
-        // Then, store it in the `/public-key` container (use same slug).
+        // Then, store it in the `/public-key` container.
         const publicKeyUri = await ctx.call('keys.public-container.post', {
           resource: publicKeyObject,
-          slug: getSlugFromUri(privateKeyUri),
           contentType: MIME_TYPES.JSON,
           webId: webId
         });
@@ -544,6 +552,25 @@ const KeysService = {
         /** @type {never} Not implemented yet. */
         throw new Error(`Key type ${keyType} not supported.`);
       }
+    },
+    findPrivateKeyUri: {
+      params: {
+        publicKeyUri: { type: 'string' }
+      },
+      async handler(ctx) {
+        const { publicKeyUri } = ctx.params;
+
+        const queryResult = await ctx.call('triplestore.query', {
+          query: `
+          SELECT ?privateKey WHERE {
+            ?privateKey <http://www.w3.org/2000/01/rdf-schema#seeAlso> <${publicKeyUri}> .
+          }`,
+          dataset: undefined,
+          webId: 'system'
+        });
+
+        return queryResult[0]?.privateKey?.value;
+      }
     }
   },
   methods: {},
@@ -570,10 +597,24 @@ const KeysService = {
         return;
       }
 
+      // Wait for the key containers to be created.
+      const keyContainerUri = await ctx.call('keys.container.getContainerUri', { webId }, { parentCtx: ctx });
+      const publicKeyContainerUri = await ctx.call(
+        'keys.public-container.getContainerUri',
+        { webId },
+        { parentCtx: ctx }
+      );
+      await ctx.call('keys.container.waitForContainerCreation', { containerUri: keyContainerUri }, { parentCtx: ctx });
+      await ctx.call(
+        'keys.container.waitForContainerCreation',
+        { containerUri: publicKeyContainerUri },
+        { parentCtx: ctx }
+      );
+
       // Create, publish and attach keys to the webId.
       await Promise.all([
-        this.actions.createKeyForActor({ webId, attachToWebId: true, keyType: KEY_TYPES.RSA }),
-        this.actions.createKeyForActor({ webId, attachToWebId: true, keyType: KEY_TYPES.ED25519 })
+        this.actions.createKeyForActor({ webId, attachToWebId: true, keyType: KEY_TYPES.RSA }, { parentCtx: ctx }),
+        this.actions.createKeyForActor({ webId, attachToWebId: true, keyType: KEY_TYPES.ED25519 }, { parentCtx: ctx })
       ]);
     }
   }

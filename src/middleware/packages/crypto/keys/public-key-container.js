@@ -59,7 +59,7 @@ module.exports = {
       async delete(ctx) {
         const { resourceUri } = ctx.params;
 
-        const privateKeyId = resourceUri.replace('/public-key/', '/key/');
+        const privateKeyId = ctx.call('keys.findPrivateKeyUri', { publicKeyUri: resourceUri });
 
         await ctx.call('ldp.resource.patch', {
           resourceUri: privateKeyId,

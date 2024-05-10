@@ -34,9 +34,6 @@ module.exports = {
     put: putAction,
     upload: uploadAction
   },
-  async started() {
-    console.log('LDP RESOURCE SERVICE started');
-  },
   hooks: {
     before: {
       '*'(ctx) {

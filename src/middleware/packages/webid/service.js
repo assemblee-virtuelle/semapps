@@ -23,12 +23,9 @@ const WebIdService = {
   dependencies: ['ldp.resource', 'ontologies'],
   mixins: [ControlledContainerMixin, ControlledContainerDereferenceMixin],
   async created() {
-    console.log('WEBID SERVICE CREATED CALLED', this.settings);
+    if (!this.settings.baseUrl) throw new Error('The baseUrl setting is required for webId service.');
   },
   async started() {
-    console.log('WEBID SERVICE START HAS BEEN CALLED.');
-    if (!this.settings.baseUrl) throw new Error('The baseUrl setting is required for webId service.');
-
     await this.broker.call('ontologies.register', {
       ...foaf,
       overwrite: true
@@ -43,7 +40,6 @@ const WebIdService = {
      * This should only be called after the user has been authenticated
      */
     async createWebId(ctx) {
-      console.log('CREATE WEBID ACTION CALLED');
       let { email, nick, name, familyName, homepage, ...rest } = ctx.params;
 
       if (!nick && email) {

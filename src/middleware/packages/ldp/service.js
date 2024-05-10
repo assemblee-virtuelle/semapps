@@ -80,8 +80,6 @@ module.exports = {
     if (this.broker.cacher) {
       await this.broker.createService(LdpCacheService);
     }
-
-    console.log('LDP SERVICE CREATED');
   },
   async started() {
     await this.broker.call('ontologies.register', {
@@ -93,8 +91,6 @@ module.exports = {
       ...semapps,
       overwrite: true
     });
-
-    console.log('LDP SERVICE STARTED');
   },
   actions: {
     getBaseUrl() {

@@ -11,22 +11,7 @@ module.exports = {
     baseUrl: null
   },
   dependencies: ['triplestore', 'ldp', 'auth.account', 'api'],
-  async started() {
-    // Container with actors
-    // The `podsContainer: true` config will register the container but not create LDP containers on a dataset
-    /*
-    await this.broker.call('ldp.registry.register', {
-      name: 'pods',
-      path: '/',
-      podsContainer: true,
-      acceptedTypes: [FULL_ACTOR_TYPES.PERSON],
-      excludeFromMirror: true,
-      activateTombstones: false,
-      controlledActions: {
-        get: 'pod.getActor'
-      }
-    });
-    */
+  async created() {
     this.broker.createService(WebIdService, {
       settings: {
         path: '/',
@@ -44,6 +29,23 @@ module.exports = {
         }
       }
     });
+  },
+  async started() {
+    // Container with actors
+    // The `podsContainer: true` config will register the container but not create LDP containers on a dataset
+    /*
+    await this.broker.call('ldp.registry.register', {
+      name: 'pods',
+      path: '/',
+      podsContainer: true,
+      acceptedTypes: [FULL_ACTOR_TYPES.PERSON],
+      excludeFromMirror: true,
+      activateTombstones: false,
+      controlledActions: {
+        get: 'pod.getActor'
+      }
+    });
+    */
 
     // API routes to actors (and their collections) are added manually
     await this.broker.call('api.addRoute', { route: getPodsRoute() });

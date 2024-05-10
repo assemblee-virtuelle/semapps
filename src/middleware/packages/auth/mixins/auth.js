@@ -54,10 +54,6 @@ const AuthMixin = {
     for (const route of this.getApiRoutes()) {
       await this.broker.call('api.addRoute', { route });
     }
-
-    console.log('AUTH MIXIN: WAITING FOR WEBID SERVICE');
-    await this.waitForServices('webid');
-    console.log('AUTH MIXIN: WAITING FOR WEBID SERVICE --- successful');
   },
   actions: {
     // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication

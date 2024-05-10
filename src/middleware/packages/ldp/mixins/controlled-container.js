@@ -16,15 +16,7 @@ module.exports = {
     podProvider: false
   },
   dependencies: ['ldp'],
-  async created() {
-    if (this.name.includes('webid')) {
-      console.log('WEBID CONTAINER MIXIN CREATED');
-    }
-  },
   async started() {
-    if (this.name.includes('webid')) {
-      console.log(`CONTROLLED CONTAINER MIXIN: ${this.name} registering at ${this.settings.path}`);
-    }
     const registration = await this.broker.call('ldp.registry.register', {
       path: this.settings.path,
       name: this.name,
