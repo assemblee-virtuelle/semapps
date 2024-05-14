@@ -9,7 +9,6 @@ const { InferenceService } = require('@semapps/inference');
 const { pair } = require('@semapps/ontologies');
 const { MirrorService, ObjectsWatcherMiddleware } = require('@semapps/sync');
 const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
-const { WebIdService } = require('@semapps/webid');
 const CONFIG = require('../config');
 const { clearDataset } = require('../utils');
 
@@ -71,7 +70,11 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
       api: {
         port
       },
-      mirror: serverToMirror ? { servers: [serverToMirror] } : true
+      mirror: serverToMirror ? { servers: [serverToMirror] } : true,
+      webid: {
+        path: '/as/actor',
+        acceptedTypes: [FULL_ACTOR_TYPES.PERSON]
+      }
     }
   });
 
@@ -90,14 +93,6 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
       baseUrl,
       jwtPath: path.resolve(__dirname, './jwt'),
       accountsDataset
-    }
-  });
-
-  await broker.createService(WebIdService, {
-    settings: {
-      path: '/as/actor',
-      baseUrl,
-      acceptedTypes: [FULL_ACTOR_TYPES.PERSON]
     }
   });
 

@@ -1,7 +1,5 @@
 const urlJoin = require('url-join');
 const { getSlugFromUri } = require('@semapps/ldp');
-const { WebIdService } = require('@semapps/webid');
-const { FULL_ACTOR_TYPES } = require('@semapps/activitypub');
 const getPodsRoute = require('./routes/getPodsRoute');
 
 /** @type {import('moleculer').ServiceSchema} */
@@ -11,25 +9,6 @@ module.exports = {
     baseUrl: null
   },
   dependencies: ['triplestore', 'ldp', 'auth.account', 'api'],
-  async created() {
-    this.broker.createService(WebIdService, {
-      settings: {
-        path: '/',
-        baseUrl: this.settings.baseUrl,
-        acceptedTypes: Object.values(FULL_ACTOR_TYPES),
-        podProvider: true,
-        podsContainer: true
-      },
-      hooks: {
-        before: {
-          async createWebId(ctx) {
-            const { nick } = ctx.params;
-            await ctx.call('pod.create', { username: nick });
-          }
-        }
-      }
-    });
-  },
   async started() {
     // Container with actors
     // The `podsContainer: true` config will register the container but not create LDP containers on a dataset

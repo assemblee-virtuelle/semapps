@@ -6,7 +6,6 @@ const { CoreService } = require('@semapps/core');
 const { pair, petr } = require('@semapps/ontologies');
 const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
 const { AuthLocalService } = require('@semapps/auth');
-const { WebIdService } = require('@semapps/webid');
 const path = require('path');
 const CONFIG = require('../config');
 const { clearDataset } = require('../utils');
@@ -79,7 +78,10 @@ const initialize = async () => {
       activitypub: false,
       mirror: false,
       void: false,
-      webfinger: false
+      webfinger: false,
+      webid: {
+        path: '/users'
+      }
     }
   });
 
@@ -88,13 +90,6 @@ const initialize = async () => {
       baseUrl: CONFIG.HOME_URL,
       jwtPath: path.resolve(__dirname, '../jwt'),
       accountsDataset: CONFIG.SETTINGS_DATASET
-    }
-  });
-
-  await broker.createService(WebIdService, {
-    settings: {
-      path: '/users',
-      baseUrl: CONFIG.HOME_URL
     }
   });
 

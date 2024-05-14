@@ -5,7 +5,6 @@ const { ServiceBroker } = require('moleculer');
 const { AuthLocalService } = require('@semapps/auth');
 const { CoreService } = require('@semapps/core');
 const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
-const { WebIdService } = require('@semapps/webid');
 const CONFIG = require('../config');
 const { clearDataset } = require('../utils');
 
@@ -50,6 +49,9 @@ const initialize = async (port, withOldKeyStore = false) => {
       mirror: false,
       api: {
         port
+      },
+      webid: {
+        path: '/users'
       }
     }
   });
@@ -60,14 +62,6 @@ const initialize = async (port, withOldKeyStore = false) => {
       baseUrl,
       jwtPath: path.resolve(__dirname, './jwt'),
       accountsDataset: CONFIG.SETTINGS_DATASET
-    }
-  });
-
-  broker.createService({
-    mixins: [WebIdService],
-    settings: {
-      path: '/users',
-      baseUrl
     }
   });
 

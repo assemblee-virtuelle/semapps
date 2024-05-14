@@ -11,6 +11,7 @@ const { VoidService } = require('@semapps/void');
 const { WebAclService } = require('@semapps/webacl');
 const { WebfingerService } = require('@semapps/webfinger');
 const { KeysService, SignatureService } = require('@semapps/crypto');
+const { WebIdService } = require('@semapps/webid');
 
 const botsContainer = {
   path: '/as/application',
@@ -48,7 +49,8 @@ const CoreService = {
     sparqlEndpoint: {},
     void: {},
     webacl: {},
-    webfinger: {}
+    webfinger: {},
+    webid: {}
   },
   created() {
     const { baseUrl, baseDir, triplestore, containers, ontologies } = this.settings;
@@ -139,10 +141,19 @@ const CoreService = {
       });
     }
 
+    if (this.settings.webId?.disabled !== true) {
+      this.broker.createService(WebIdService, {
+        settings: {
+          baseUrl,
+          ...this.settings.webid
+        }
+      });
+    }
+
     this.broker.createService(KeysService, {
       settings: {
         actorsKeyPairsDir: path.resolve(baseDir, './actors'),
-        ...this.settings.keysService
+        ...this.settings.keys
       }
     });
 

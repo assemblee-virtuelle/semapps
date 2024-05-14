@@ -34,14 +34,7 @@ const KeysService = {
     podProvider: false,
     actorsKeyPairsDir: null
   },
-  dependencies: [
-    'ontologies',
-    'keys.container',
-    'keys.public-container',
-    'signature.keypair',
-    'keys.migration',
-    'webid'
-  ],
+  dependencies: ['ontologies', 'keys.container', 'keys.public-container', 'signature.keypair', 'keys.migration'],
   async created() {
     // Start keys-container and public-keys-container services.
     this.broker.createService(KeyContainerService, {
