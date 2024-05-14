@@ -33,26 +33,27 @@ module.exports = {
 
       // For each actor...
       for (const username of users) {
-        const [user] = await ctx.call('auth.account.find', { query: { username } });
+        try {
+          const [user] = await ctx.call('auth.account.find', { query: { username } });
 
-        const { webId } = user;
+          const { webId } = user;
 
-        // Get the user's RSA key
-        const { publicKey, privateKey } = await ctx.call('signature.keypair.get', { actorUri: webId, webId });
-        if (!publicKey || !privateKey) {
-          this.logger.warn(`Public or private key was not found for ${webId}, creating a new one...`);
-          await ctx.call('keys.createKeyForActor', { webId, keyType: KEY_TYPES.RSA, attachToWebId: true });
-          continue;
-        }
+          // Get the user's RSA key
+          const { publicKey, privateKey } = await ctx.call('signature.keypair.get', { actorUri: webId, webId });
+          if (!publicKey || !privateKey) {
+            this.logger.warn(`Public or private key was not found for ${webId}, creating a new one...`);
+            await ctx.call('keys.createKeyForActor', { webId, keyType: KEY_TYPES.RSA, attachToWebId: true });
+            continue;
+          }
 
-        // Delete old public key blank node and data from the webId.
-        // Note: updating the triple store directly would usually require to delete the Redis cache for
-        // the webId, but since we are attaching the new public key just after this, it is not necessary.
-        await ctx.call('triplestore.update', {
-          // For podProvider context, the pod dataset is responsible, else default.
-          dataset: this.settings.podProvider ? username : undefined,
-          webId: 'system',
-          query: `
+          // Delete old public key blank node and data from the webId.
+          // Note: updating the triple store directly would usually require to delete the Redis cache for
+          // the webId, but since we are attaching the new public key just after this, it is not necessary.
+          await ctx.call('triplestore.update', {
+            // For podProvider context, the pod dataset is responsible, else default.
+            dataset: this.settings.podProvider ? username : undefined,
+            webId: 'system',
+            query: `
             PREFIX sec: <https://w3id.org/security#>   
             DELETE {
               ?o  ?p1  ?o1 .
@@ -62,29 +63,33 @@ module.exports = {
               <${webId}>  sec:publicKey  ?o .
               ?o ?p1 ?o1 .
             }`
-        });
+          });
 
-        // Add the key using the new keys service.
-        const keyResource = {
-          '@type': [KEY_TYPES.RSA, KEY_TYPES.VERIFICATION_METHOD],
-          publicKeyPem: publicKey,
-          privateKeyPem: privateKey,
-          owner: webId,
-          controller: webId
-        };
-        const resourceUri = await ctx.call('keys.container.post', {
-          resource: keyResource,
-          contentType: MIME_TYPES.JSON,
-          webId: webId
-        });
-        keyResource.id = resourceUri;
+          // Add the key using the new keys service.
+          const keyResource = {
+            '@type': [KEY_TYPES.RSA, KEY_TYPES.VERIFICATION_METHOD],
+            publicKeyPem: publicKey,
+            privateKeyPem: privateKey,
+            owner: webId,
+            controller: webId
+          };
+          const resourceUri = await ctx.call('keys.container.post', {
+            resource: keyResource,
+            contentType: MIME_TYPES.JSON,
+            webId: webId
+          });
+          keyResource.id = resourceUri;
 
-        // Publish key.
-        await ctx.call(
-          'keys.attachPublicKeyToWebId',
-          { webId, keyObject: keyResource },
-          { meta: { skipMigrationCheck: true } }
-        );
+          // Publish key.
+          await ctx.call(
+            'keys.attachPublicKeyToWebId',
+            { webId, keyObject: keyResource },
+            { meta: { skipMigrationCheck: true } }
+          );
+          this.logger.info('Migrated keys of user ', username);
+        } catch (error) {
+          this.logger.error(`Could not migrate user ${username}`, error);
+        }
       }
 
       // Move fs keys to ./old folder
