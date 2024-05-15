@@ -22,11 +22,6 @@ const containers = [
     acceptedTypes: ['pair:Resource'],
     permissions: {},
     newResourcesPermissions: {}
-  },
-  {
-    path: '/as/application',
-    acceptedTypes: [FULL_ACTOR_TYPES.APPLICATION],
-    excludeFromMirror: true
   }
 ];
 
@@ -73,7 +68,7 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
       mirror: serverToMirror ? { servers: [serverToMirror] } : true,
       webid: {
         path: '/as/actor',
-        acceptedTypes: [FULL_ACTOR_TYPES.PERSON]
+        acceptedTypes: [FULL_ACTOR_TYPES.PERSON, FULL_ACTOR_TYPES.APPLICATION]
       }
     }
   });
@@ -109,17 +104,6 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
   // setting some write permission on the containers for anonymous user, which is the one that will be used in the tests.
   await broker.call('webacl.resource.addRights', {
     resourceUri: urlJoin(baseUrl, 'resources'),
-    additionalRights: {
-      anon: {
-        read: true,
-        write: true
-      }
-    },
-    webId: 'system'
-  });
-
-  await broker.call('webacl.resource.addRights', {
-    resourceUri: urlJoin(baseUrl, 'as/application'),
     additionalRights: {
       anon: {
         read: true,
