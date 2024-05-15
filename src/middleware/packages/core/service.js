@@ -141,7 +141,7 @@ const CoreService = {
       });
     }
 
-    if (this.settings.webId?.disabled !== true) {
+    if (this.settings.webId !== false) {
       this.broker.createService(WebIdService, {
         settings: {
           baseUrl,
