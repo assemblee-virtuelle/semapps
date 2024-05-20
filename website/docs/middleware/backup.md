@@ -4,18 +4,15 @@ title: Backup
 
 This service allows you to backup the triples in a given dataset, as well as the uploaded files.
 
-
 ## Features
 
 - Backup Fuseki datasets and uploaded files
 - Choose copy method: Rsync, FTP or filesystem (copy to another directory)
 - Setup a cron to automatically launch the rsync operation
 
-
 ## Dependencies
 
 - [TripleStoreService](triplestore)
-
 
 ## Install
 
@@ -35,7 +32,6 @@ You will also need to add the remote server domain as a known host, otherwise ss
 ssh-keyscan REMOTE_SERVER_DOMAIN_NAME >> ~/.ssh/known_hosts
 ```
 
-
 ## Usage
 
 ```js
@@ -46,7 +42,7 @@ module.exports = {
   mixins: [BackupService],
   settings: {
     localServer: {
-      fusekiBackupsPath: '/absolute/path/to/fuseki/backups',
+      fusekiBase: '/absolute/path/to/fuseki-base/',
       otherDirsPaths: {
         uploads: path.resolve(__dirname, '../uploads')
       }
@@ -57,8 +53,7 @@ module.exports = {
       user: 'user', // Required for rsync and ftp
       password: 'password', // Required for rsync and ftp
       host: 'remote.server.com', // Required for rsync and ftp
-      port: null, // Required for ftp
-      
+      port: null // Required for ftp
     },
     // Required only if you want to do automatic backups
     cronJob: {
@@ -69,16 +64,15 @@ module.exports = {
 };
 ```
 
-
 ## Service settings
 
-| Property       | Type       | Default | Description                                                                  |
-|----------------|------------|---------|------------------------------------------------------------------------------|
-| `localServer`  | `[Object]` |         | Absolute path to the Fuseki backups and other directories you want to backup |
-| `copyMethod`   | `[String]` | "rsync" | Copy method ("rsync", "ftp" or "fs")                                         |
-| `remoteServer` | `[Object]` |         | Information to connect to the remote server (see above)                      |
-| `cronJob`      | `[Object]` |         | Information for the automatic backups (see above)                            |
-
+| Property                     | Type                     | Default | Description                                                                  |
+| ---------------------------- | ------------------------ | ------- | ---------------------------------------------------------------------------- |
+| `localServer.fusekiBase`     | `[String]`               |         | Absolute path to the Fuseki backups and other directories you want to backup |
+| `localServer.otherDirsPaths` | `Record<string, string>` |         | Other directories to back up with the keys as the backup dir names.          |
+| `copyMethod`                 | `[String]`               | "rsync" | Copy method ("rsync", "ftp" or "fs")                                         |
+| `remoteServer`               | `[Object]`               |         | Information to connect to the remote server (see above)                      |
+| `cronJob`                    | `[Object]`               |         | Information for the automatic backups (see above)                            |
 
 ## Actions
 
@@ -101,7 +95,8 @@ Copy the other directories defined in the settings with the remote server.
 Copy the data in the local server to the remote server.
 
 ##### Parameters
-| Property | Type | Default            | Description                                             |
-|----------| ---- |--------------------|---------------------------------------------------------|
-| `path`   | `String`  | **required**  | Absolute path to be synchronized with the remote server |
-| `subDir` | `String`  |               | Sub-directory in the remote server                      |
+
+| Property | Type     | Default      | Description                                             |
+| -------- | -------- | ------------ | ------------------------------------------------------- |
+| `path`   | `String` | **required** | Absolute path to be synchronized with the remote server |
+| `subDir` | `String` |              | Sub-directory in the remote server                      |

@@ -9,5 +9,6 @@ module.exports = {
   SETTINGS_DATASET: process.env.SEMAPPS_SETTINGS_DATASET,
   JENA_USER: process.env.SEMAPPS_JENA_USER,
   JENA_PASSWORD: process.env.SEMAPPS_JENA_PASSWORD,
-  ACTIVATE_CACHE: process.env.SEMAPPS_ACTIVATE_CACHE === 'true'
+  ACTIVATE_CACHE: process.env.SEMAPPS_ACTIVATE_CACHE === 'true',
+  FUSEKI_BASE: process.env.FUSEKI_BASE
 };

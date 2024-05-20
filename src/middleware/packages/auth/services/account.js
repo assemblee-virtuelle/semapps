@@ -184,6 +184,29 @@ module.exports = {
         '@id': account['@id'],
         ...params
       });
+    },
+    async deleteByWebId(ctx) {
+      const { webId } = ctx.params;
+      const account = await ctx.call('auth.account.findByWebId', { webId });
+
+      if (account) {
+        await this._remove(ctx, { id: account['@id'] });
+        return true;
+      }
+
+      return false;
+    },
+    // Remove email and password from an account, set deletedAt timestamp.
+    async setTombstone(ctx) {
+      const { webId } = ctx.params;
+      const account = await ctx.call('auth.account.findByWebId', { webId });
+
+      return await this._update(ctx, {
+        '@id': account['@id'],
+        email: undefined,
+        hashedPassword: undefined,
+        deletedAt: new Date().toISOString()
+      });
     }
   },
   methods: {

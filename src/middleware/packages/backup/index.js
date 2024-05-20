@@ -1,7 +1,10 @@
 const { CronJob } = require('cron');
+const fs = require('fs');
 const fsCopy = require('./utils/fsCopy');
 const ftpCopy = require('./utils/ftpCopy');
 const rsyncCopy = require('./utils/rsyncCopy');
+const ftpRemove = require('./utils/ftpRemove');
+const fsRemove = require('./utils/fsRemove');
 /**
  * @typedef {import('moleculer').Context} Context
  */
@@ -10,7 +13,7 @@ const BackupService = {
   name: 'backup',
   settings: {
     localServer: {
-      fusekiBackupsPath: null,
+      fusekiBase: null,
       otherDirsPaths: {}
     },
     copyMethod: 'rsync', // rsync, ftp, or fs
@@ -34,6 +37,10 @@ const BackupService = {
     if (cronJob.time) {
       this.cronJob = new CronJob(cronJob.time, this.actions.backupAll, null, true, cronJob.timeZone);
     }
+
+    if (!this.settings.localServer.fusekiBase) {
+      throw new Error('Backup service requires `localServer.fusekiBase` setting to be set to the FUSEKI_BASE path.');
+    }
   },
   actions: {
     async backupAll(ctx) {
@@ -41,13 +48,6 @@ const BackupService = {
       await this.actions.backupOtherDirs({}, { parentCtx: ctx });
     },
     async backupDatasets(ctx) {
-      const { fusekiBackupsPath } = this.settings.localServer;
-
-      if (!fusekiBackupsPath) {
-        this.logger.info('No fusekiBackupsPath defined, skipping backup...');
-        return;
-      }
-
       // Generate a new backup of all datasets
       const datasets = await ctx.call('triplestore.dataset.list');
       for (const dataset of datasets) {
@@ -55,7 +55,10 @@ const BackupService = {
         await ctx.call('triplestore.dataset.backup', { dataset });
       }
 
-      await this.actions.copyToRemoteServer({ path: fusekiBackupsPath, subDir: 'datasets' }, { parentCtx: ctx });
+      await this.actions.copyToRemoteServer(
+        { path: path.join(this.settings.localServer.fusekiBase, 'backups'), subDir: 'datasets' },
+        { parentCtx: ctx }
+      );
     },
     async backupOtherDirs(ctx) {
       const { otherDirsPaths } = this.settings.localServer;
@@ -95,6 +98,53 @@ const BackupService = {
 
         default:
           throw new Error(`Unknown copy method: ${copyMethod}`);
+      }
+    },
+    deleteDataset: {
+      params: {
+        dataset: { type: 'string' },
+        iKnowWhatImDoing: { type: 'boolean' }
+      },
+      async handle(ctx) {
+        const { dataset, iKnowWhatImDoing } = ctx.params;
+        const {
+          copyMethod,
+          remoteServer,
+          localServer: { fusekiBase }
+        } = this.settings;
+        if (!iKnowWhatImDoing) {
+          throw new Error(
+            'Please confirm that you know what you are doing and set the `iKnowWhatImDoing` parameter to `true`.'
+          );
+        }
+
+        // File format: <dataset-name>_<iso timestamp, but with _ instead of T and : replaced by `-`>
+        const backupsPattern = RegExp(`^${dataset}_.{10}_.{8}\\.nq\\.gz$`);
+        const deleteFilenames = await fs.promises
+          .readdir(path.join(fusekiBase, 'backups'))
+          .then(files => files.filter(file => backupsPattern.test(file)));
+
+        // Delete all backups locally.
+        await Promise.all(deleteFilenames.map(file => path.join('./backups', file)).map(file => fs.promises.rm(file)));
+
+        // Delete backups from remote.
+        switch (copyMethod) {
+          case 'rsync':
+            // This will sync deletions too.
+            await rsyncCopy(path.join(fusekiBase, 'backups'), 'datasets', remoteServer);
+            break;
+
+          case 'ftp':
+            await ftpRemove(deleteFilenames, remoteServer);
+            break;
+
+          case 'fs':
+            await fsRemove(deleteFilenames, remoteServer);
+            break;
+
+          default:
+            throw new Error(`Unknown copy method: ${copyMethod}`);
+        }
       }
     }
   }
