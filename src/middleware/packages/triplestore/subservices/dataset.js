@@ -114,43 +114,45 @@ const DatasetService = {
           task = await response.json();
         }
       } while (!task || !task.finished);
-    }
-  },
-  delete: {
-    params: {
-      dataset: { type: 'string' },
-      iKnowWhatImDoing: { type: 'boolean' }
     },
-    async handler(ctx) {
-      const { dataset, iKnowWhatImDoing } = ctx.params;
-      if (!iKnowWhatImDoing) {
-        throw new Error('Please confirm that you know what you are doing by setting `iKnowWhatImDoing` to `true`.');
-      }
+    delete: {
+      params: {
+        dataset: { type: 'string' },
+        iKnowWhatImDoing: { type: 'boolean' }
+      },
+      async handler(ctx) {
+        const { dataset, iKnowWhatImDoing } = ctx.params;
+        if (!iKnowWhatImDoing) {
+          throw new Error('Please confirm that you know what you are doing by setting `iKnowWhatImDoing` to `true`.');
+        }
+        const isSecure = await this.actions.isSecure({ dataset });
 
-      const response = await fetch(urlJoin(this.settings.url, '$/datasets', dataset), {
-        method: 'DELETE',
-        headers: this.headers
-      });
-      const { taskId } = await response.json();
-      await this.actions.waitForTaskCompletion({ taskId }, { parentCtx: ctx });
-
-      // If this is a secure dataset, we might need to delete stuff manually.
-      if (await this.actions.isSecure({ dataset })) {
-        if (!this.settings.fusekiBase)
+        if (isSecure && !this.settings.fusekiBase)
           throw new Error(
             'Please provide the fusekiBase dir setting to the triplestore service, to delete a secure dataset.'
           );
 
-        const dbDir = path.join(this.settings.fusekiBase, 'databases', dataset);
-        const dbAclDir = path.join(this.settings.fusekiBase, 'databases', `${dataset}Acl`);
-        const confFile = path.join(this.settings.fusekiBase, 'configuration', `${dataset}.ttl`);
+        const response = await fetch(urlJoin(this.settings.url, '$/datasets', dataset), {
+          method: 'DELETE',
+          headers: this.headers
+        });
+        if (!response.ok) {
+          throw new Error(`Failed to delete dataset ${dataset}: ${response.statusText}`);
+        }
 
-        // Delete all, if present.
-        await Promise.all([
-          fs.promises.rm(dbDir, { recursive: true, force: true }),
-          fs.promises.rm(dbAclDir, { recursive: true, force: true }),
-          fs.promises.rm(confFile, { force: true })
-        ]);
+        // If this is a secure dataset, we might need to delete stuff manually.
+        if (isSecure) {
+          const dbDir = path.join(this.settings.fusekiBase, 'databases', dataset);
+          const dbAclDir = path.join(this.settings.fusekiBase, 'databases', `${dataset}Acl`);
+          const confFile = path.join(this.settings.fusekiBase, 'configuration', `${dataset}.ttl`);
+
+          // Delete all, if present.
+          await Promise.all([
+            fs.promises.rm(dbDir, { recursive: true, force: true }),
+            fs.promises.rm(dbAclDir, { recursive: true, force: true }),
+            fs.promises.rm(confFile, { force: true })
+          ]);
+        }
       }
     }
   }
