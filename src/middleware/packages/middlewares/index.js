@@ -47,6 +47,11 @@ const throw403 = msg => {
   throw new MoleculerError('Forbidden', 403, 'ACCESS_DENIED', { status: 'Forbidden', text: msg });
 };
 
+/** @type {(msg: string) => never} */
+const throw404 = msg => {
+  throw new MoleculerError('Forbidden', 404, 'NOT_FOUND', { status: 'Not found', text: msg });
+};
+
 const throw500 = msg => {
   throw new MoleculerError(msg, 500, 'INTERNAL_SERVER_ERROR', { status: 'Server Error', text: msg });
 };
@@ -202,5 +207,6 @@ module.exports = {
   saveDatasetMeta,
   throw400,
   throw403,
+  throw404,
   throw500
 };
