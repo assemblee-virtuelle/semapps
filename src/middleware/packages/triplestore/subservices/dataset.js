@@ -81,6 +81,15 @@ const DatasetService = {
       }
       return [];
     },
+    async isSecure(ctx) {
+      const { dataset } = ctx.params;
+      // Check if http://semapps.org/webacl graph exists
+      return await ctx.call('triplestore.query', {
+        query: `ASK WHERE { GRAPH <http://semapps.org/webacl> { ?s ?p ?o } }`,
+        dataset,
+        webId: 'system'
+      });
+    },
     async waitForCreation(ctx) {
       const { dataset } = ctx.params;
       let datasetExist;
@@ -126,7 +135,12 @@ const DatasetService = {
       await this.actions.waitForTaskCompletion({ taskId }, { parentCtx: ctx });
 
       // If this is a secure dataset, we might need to delete stuff manually.
-      if (this.settings.fusekiBase) {
+      if (await this.actions.isSecure({ dataset })) {
+        if (!this.settings.fusekiBase)
+          throw new Error(
+            'Please provide the fusekiBase dir setting to the triplestore service, to delete a secure dataset.'
+          );
+
         const dbDir = path.join(this.settings.fusekiBase, 'databases', dataset);
         const dbAclDir = path.join(this.settings.fusekiBase, 'databases', `${dataset}Acl`);
         const confFile = path.join(this.settings.fusekiBase, 'configuration', `${dataset}.ttl`);
