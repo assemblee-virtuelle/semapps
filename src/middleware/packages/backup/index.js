@@ -1,5 +1,6 @@
 const { CronJob } = require('cron');
 const fs = require('fs');
+const pathJoin = require('path').join;
 const fsCopy = require('./utils/fsCopy');
 const ftpCopy = require('./utils/ftpCopy');
 const rsyncCopy = require('./utils/rsyncCopy');
@@ -32,13 +33,16 @@ const BackupService = {
   },
   dependencies: ['triplestore'],
   started() {
-    const { cronJob } = this.settings;
+    const {
+      cronJob,
+      localServer: { fusekiBase }
+    } = this.settings;
 
     if (cronJob.time) {
       this.cronJob = new CronJob(cronJob.time, this.actions.backupAll, null, true, cronJob.timeZone);
     }
 
-    if (!this.settings.localServer.fusekiBase) {
+    if (!fusekiBase) {
       throw new Error('Backup service requires `localServer.fusekiBase` setting to be set to the FUSEKI_BASE path.');
     }
   },
@@ -56,7 +60,7 @@ const BackupService = {
       }
 
       await this.actions.copyToRemoteServer(
-        { path: path.join(this.settings.localServer.fusekiBase, 'backups'), subDir: 'datasets' },
+        { path: pathJoin(this.settings.localServer.fusekiBase, 'backups'), subDir: 'datasets' },
         { parentCtx: ctx }
       );
     },
@@ -105,7 +109,7 @@ const BackupService = {
         dataset: { type: 'string' },
         iKnowWhatImDoing: { type: 'boolean' }
       },
-      async handle(ctx) {
+      async handler(ctx) {
         const { dataset, iKnowWhatImDoing } = ctx.params;
         const {
           copyMethod,
@@ -121,17 +125,19 @@ const BackupService = {
         // File format: <dataset-name>_<iso timestamp, but with _ instead of T and : replaced by `-`>
         const backupsPattern = RegExp(`^${dataset}_.{10}_.{8}\\.nq\\.gz$`);
         const deleteFilenames = await fs.promises
-          .readdir(path.join(fusekiBase, 'backups'))
+          .readdir(pathJoin(fusekiBase, 'backups'))
           .then(files => files.filter(file => backupsPattern.test(file)));
 
         // Delete all backups locally.
-        await Promise.all(deleteFilenames.map(file => path.join('./backups', file)).map(file => fs.promises.rm(file)));
+        await Promise.all(
+          deleteFilenames.map(file => pathJoin(fusekiBase, 'backups', file)).map(file => fs.promises.rm(file))
+        );
 
-        // Delete backups from remote.
+        // Delete backups from remote.fusekiBase
         switch (copyMethod) {
           case 'rsync':
-            // This will sync deletions too.
-            await rsyncCopy(path.join(fusekiBase, 'backups'), 'datasets', remoteServer);
+            // The last param sets the --deletion argument, to sync deletions too.
+            await rsyncCopy(pathJoin(fusekiBase, 'backups'), 'datasets', remoteServer, true);
             break;
 
           case 'ftp':
@@ -139,7 +145,7 @@ const BackupService = {
             break;
 
           case 'fs':
-            await fsRemove(deleteFilenames, remoteServer);
+            await fsRemove(deleteFilenames, 'datasets', remoteServer);
             break;
 
           default:

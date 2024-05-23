@@ -140,16 +140,18 @@ const DatasetService = {
           throw new Error(`Failed to delete dataset ${dataset}: ${response.statusText}`);
         }
 
-        // If this is a secure dataset, we might need to delete stuff manually.
+        // If this is a secure dataset, we need to delete stuff manually.
         if (isSecure) {
           const dbDir = path.join(this.settings.fusekiBase, 'databases', dataset);
           const dbAclDir = path.join(this.settings.fusekiBase, 'databases', `${dataset}Acl`);
+          const dbMirrorDir = path.join(this.settings.fusekiBase, 'databases', `${dataset}Mirror`);
           const confFile = path.join(this.settings.fusekiBase, 'configuration', `${dataset}.ttl`);
 
           // Delete all, if present.
           await Promise.all([
             fs.promises.rm(dbDir, { recursive: true, force: true }),
             fs.promises.rm(dbAclDir, { recursive: true, force: true }),
+            fs.promises.rm(dbMirrorDir, { recursive: true, force: true }),
             fs.promises.rm(confFile, { force: true })
           ]);
         }

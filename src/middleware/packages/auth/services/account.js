@@ -202,9 +202,14 @@ module.exports = {
       const account = await ctx.call('auth.account.findByWebId', { webId });
 
       return await this._update(ctx, {
+        // Set all values to undefined...
+        ...Object.fromEntries(Object.keys(account).map(key => [key, null])),
         '@id': account['@id'],
-        email: undefined,
-        hashedPassword: undefined,
+        // ...except for
+        webId: account.webId,
+        username: account.username,
+        podUri: account.podUri,
+        // And add a deletedAt date.
         deletedAt: new Date().toISOString()
       });
     }

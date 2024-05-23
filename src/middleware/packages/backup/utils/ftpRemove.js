@@ -1,4 +1,3 @@
-const fs = require('fs');
 const Client = require('ssh2-sftp-client');
 const { join: pathJoin } = require('path');
 
