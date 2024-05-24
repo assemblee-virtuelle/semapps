@@ -19,7 +19,7 @@ module.exports = {
         return;
       }
 
-      const accounts = await this.broker.call('auth.account.find');
+      const accounts = await ctx.call('auth.account.find');
       const usernamesByKey = fs
         .readdirSync(this.settings.actorsKeyPairsDir)
         .filter(fn => fn.endsWith('.key'))
@@ -32,20 +32,23 @@ module.exports = {
 
       this.logger.info(`=== Migrating keys from filesystem to LDP ===`);
 
+      // This can cause deadlocks otherwise.
+      ctx.meta.skipObjectsWatcher = true;
+
       // Do the migration process.
       try {
         // Get keys with account info.
-        const accountsAndKeys = await this.getAccountsAndKeys();
+        const accountsAndKeys = await this.getAccountsAndKeys(ctx);
 
         // Delete public key material from webId (later replaced with references to the public key resources).
-        await this.deleteKeysFromWebId(accountsAndKeys);
+        await this.deleteKeysFromWebId(ctx, accountsAndKeys);
 
         // Create key resources in db and link to webIds.
-        await this.attachOrCreateToDb(accountsAndKeys);
+        await this.attachOrCreateToDb(ctx, accountsAndKeys);
       } catch (err) {
         // Error occurred during migration process. Try to revert to initial state.
         try {
-          await this.deleteKeysFromWebId(accounts);
+          await this.deleteKeysFromWebId(ctx.accounts);
         } catch (_) {
           // pass
         }
@@ -75,7 +78,7 @@ module.exports = {
       // Stats about missing accounts and key-pairs.
       const accountNames = accounts.map(acc => acc.username);
       const keysWithoutRegisteredUser = usernamesByKey.filter(keyName => !accountNames.includes(keyName));
-      const usersWithoutKeys = accountNames.filter(accName => usernamesByKey.includes(accName));
+      const usersWithoutKeys = accountNames.filter(accName => !usernamesByKey.includes(accName));
 
       if (keysWithoutRegisteredUser.length > 0) {
         this.logger.warn(
@@ -109,13 +112,13 @@ module.exports = {
     }
   },
   methods: {
-    async getAccountsAndKeys() {
+    async getAccountsAndKeys(ctx) {
       /** @type {object[]} */
-      const accounts = await this.broker.call('auth.account.find');
+      const accounts = await ctx.call('auth.account.find');
       return await Promise.all(
         accounts.map(async account => {
           // Get the user's RSA key
-          const { publicKey, privateKey } = await this.broker.call('signature.keypair.get', {
+          const { publicKey, privateKey } = await ctx.call('signature.keypair.get', {
             actorUri: account.webId,
             webId: 'system'
           });
@@ -127,13 +130,13 @@ module.exports = {
         })
       );
     },
-    async deleteKeysFromWebId(accounts) {
+    async deleteKeysFromWebId(ctx, accounts) {
       // Delete old public key blank node and data from the webId.
       // Note: updating the triple store directly would usually require to delete the Redis cache for
       // the webId, but since we are attaching the new public key in the next step, it is not necessary.
       await Promise.all(
         accounts.map(async ({ username, webId }) => {
-          await this.broker.call('triplestore.update', {
+          await ctx.call('triplestore.update', {
             // For podProvider context, the pod dataset is responsible, else default.
             dataset: this.settings.podProvider ? username : undefined,
             webId: 'system',
@@ -151,7 +154,7 @@ module.exports = {
         })
       );
     },
-    async attachOrCreateToDb(accountsAndKeys) {
+    async attachOrCreateToDb(ctx, accountsAndKeys) {
       // Add keys to container / create new keys where missing.
       await Promise.all(
         accountsAndKeys.map(async ({ webId, publicKey, privateKey }) => {
@@ -164,20 +167,20 @@ module.exports = {
               owner: webId,
               controller: webId
             };
-            const keyId = await this.broker.call('keys.container.post', {
+            const keyId = await ctx.call('keys.container.post', {
               resource: keyResource,
               contentType: MIME_TYPES.JSON,
               webId
             });
             keyResource.id = keyId;
             // Publish key.
-            await this.broker.call(
+            await ctx.call(
               'keys.attachPublicKeyToWebId',
               { webId, keyObject: keyResource },
               { meta: { skipMigrationCheck: true } }
             );
           } else {
-            await this.broker.call('keys.createKeyForActor', { webId, keyType: KEY_TYPES.RSA, attachToWebId: true });
+            await ctx.call('keys.createKeyForActor', { webId, keyType: KEY_TYPES.RSA, attachToWebId: true });
           }
         })
       );
