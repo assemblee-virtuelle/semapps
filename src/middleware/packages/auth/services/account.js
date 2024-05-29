@@ -88,6 +88,12 @@ module.exports = {
       const accounts = await this._find(ctx, { query: { email } });
       return accounts.length > 0;
     },
+    /** Overwrite find method, to filter accounts with tombstone. */
+    async find(ctx) {
+      /** @type {object[]} */
+      const accounts = await this._find(ctx, ctx.params);
+      return accounts.filter(account => !account.deletedAt);
+    },
     async findByUsername(ctx) {
       const { username } = ctx.params;
       const accounts = await this._find(ctx, { query: { username } });
