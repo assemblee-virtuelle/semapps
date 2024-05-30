@@ -122,11 +122,7 @@ const BackupService = {
           );
         }
 
-        // File format: <dataset-name>_<iso timestamp, but with _ instead of T and : replaced by `-`>
-        const backupsPattern = RegExp(`^${dataset}_.{10}_.{8}\\.nq\\.gz$`);
-        const deleteFilenames = await fs.promises
-          .readdir(pathJoin(fusekiBase, 'backups'))
-          .then(files => files.filter(file => backupsPattern.test(file)));
+        const deleteFilenames = await ctx.call('backup.listBackupsForDataset', { dataset });
 
         // Delete all backups locally.
         await Promise.all(
@@ -152,6 +148,17 @@ const BackupService = {
             throw new Error(`Unknown copy method: ${copyMethod}`);
         }
       }
+    },
+    async listBackupsForDataset(ctx) {
+      const { dataset } = ctx.params;
+
+      // File format: <dataset-name>_<iso timestamp, but with _ instead of T and : replaced by `-`>
+      const backupsPattern = RegExp(`^${dataset}_.{10}_.{8}\\.nq\\.gz$`);
+      const filenames = await fs.promises
+        .readdir(pathJoin(this.settings.localServer.fusekiBase, 'backups'))
+        .then(files => files.filter(file => backupsPattern.test(file)));
+
+      return filenames;
     }
   }
 };
