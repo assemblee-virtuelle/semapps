@@ -1956,8 +1956,7 @@ const $b403c35bd8d76c50$var$useStyles = (0, $1obPJ$muistylesmakeStyles)((theme)=
                         (0, $1obPJ$required)(),
                         (0, $7a0bbe6824860dfe$export$2e2bcd8739ae039)(passwordScorer)
                     ],
-                    onChange: (e)=>setNewPassword(e.target.value),
-                    format: (value)=>value ? value.toLowerCase() : ""
+                    onChange: (e)=>setNewPassword(e.target.value)
                 }),
                 /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
                     autoFocus: true,
@@ -1967,8 +1966,7 @@ const $b403c35bd8d76c50$var$useStyles = (0, $1obPJ$muistylesmakeStyles)((theme)=
                     autoComplete: "current-password",
                     fullWidth: true,
                     disabled: loading,
-                    validate: (0, $1obPJ$required)(),
-                    format: (value)=>value ? value.toLowerCase() : ""
+                    validate: (0, $1obPJ$required)()
                 }),
                 /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Button1), {
                     variant: "contained",

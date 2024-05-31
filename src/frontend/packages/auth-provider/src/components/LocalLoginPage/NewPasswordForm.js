@@ -97,7 +97,6 @@ const NewPasswordForm = ({ redirectTo, passwordScorer = defaultScorer }) => {
           disabled={loading}
           validate={[required(), validatePasswordStrength(passwordScorer)]}
           onChange={e => setNewPassword(e.target.value)}
-          format={value => (value ? value.toLowerCase() : '')}
         />
         <TextInput
           autoFocus
@@ -108,7 +107,6 @@ const NewPasswordForm = ({ redirectTo, passwordScorer = defaultScorer }) => {
           fullWidth
           disabled={loading}
           validate={required()}
-          format={value => (value ? value.toLowerCase() : '')}
         />
         <Button
           variant="contained"

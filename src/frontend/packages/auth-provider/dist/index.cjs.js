@@ -1995,8 +1995,7 @@ const $176df6bd8edc5f4d$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
                         (0, $4Uj5b$reactadmin.required)(),
                         (0, $eab41bc89667b2c6$export$2e2bcd8739ae039)(passwordScorer)
                     ],
-                    onChange: (e)=>setNewPassword(e.target.value),
-                    format: (value)=>value ? value.toLowerCase() : ""
+                    onChange: (e)=>setNewPassword(e.target.value)
                 }),
                 /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
                     autoFocus: true,
@@ -2006,8 +2005,7 @@ const $176df6bd8edc5f4d$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
                     autoComplete: "current-password",
                     fullWidth: true,
                     disabled: loading,
-                    validate: (0, $4Uj5b$reactadmin.required)(),
-                    format: (value)=>value ? value.toLowerCase() : ""
+                    validate: (0, $4Uj5b$reactadmin.required)()
                 }),
                 /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
                     variant: "contained",
