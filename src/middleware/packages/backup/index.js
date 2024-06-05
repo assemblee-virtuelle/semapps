@@ -125,9 +125,7 @@ const BackupService = {
         const deleteFilenames = await ctx.call('backup.listBackupsForDataset', { dataset });
 
         // Delete all backups locally.
-        await Promise.all(
-          deleteFilenames.map(file => pathJoin(fusekiBase, 'backups', file)).map(file => fs.promises.rm(file))
-        );
+        await Promise.all(deleteFilenames.map(file => fs.promises.rm(file)));
 
         // Delete backups from remote.fusekiBase
         switch (copyMethod) {
@@ -149,6 +147,7 @@ const BackupService = {
         }
       }
     },
+    /** Returns an array of file paths to the backups relative to `this.settings.localServer.fusekiBase`. */
     async listBackupsForDataset(ctx) {
       const { dataset } = ctx.params;
 
@@ -156,7 +155,8 @@ const BackupService = {
       const backupsPattern = RegExp(`^${dataset}_.{10}_.{8}\\.nq\\.gz$`);
       const filenames = await fs.promises
         .readdir(pathJoin(this.settings.localServer.fusekiBase, 'backups'))
-        .then(files => files.filter(file => backupsPattern.test(file)));
+        .then(files => files.filter(file => backupsPattern.test(file)))
+        .then(files => files.map(file => pathJoin(this.settings.localServer.fusekiBase, 'backups', file)));
 
       return filenames;
     }
