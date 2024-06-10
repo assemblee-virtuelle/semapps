@@ -1,5 +1,6 @@
 import jsonld from 'jsonld';
 import isobject from 'isobject';
+import arrayOf from './arrayOf';
 
 export const isType = (type, resource) => {
   const resourceType = resource.type || resource['@type'];
@@ -30,7 +31,7 @@ const fetchContainers = async (containers, resourceId, params, config) => {
       })
       .then(json => {
         if (isType('ldp:Container', json)) {
-          return json['ldp:contains'].map(resource => ({ '@context': json['@context'], ...resource }));
+          return arrayOf(json['ldp:contains']).map(resource => ({ '@context': json['@context'], ...resource }));
         }
         throw new Error(`${containerUri} is not a LDP container`);
       })

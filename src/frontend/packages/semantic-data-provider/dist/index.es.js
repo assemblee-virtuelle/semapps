@@ -307,6 +307,19 @@ var $54a3fa40eed06111$export$2e2bcd8739ae039 = $54a3fa40eed06111$var$getDataMode
 
 
 
+const $db0064b52a991847$var$arrayOf = (value)=>{
+    // If the field is null-ish, we suppose there are no values.
+    if (!value) return [];
+    // Return as is.
+    if (Array.isArray(value)) return value;
+    // Single value is made an array.
+    return [
+        value
+    ];
+};
+var $db0064b52a991847$export$2e2bcd8739ae039 = $db0064b52a991847$var$arrayOf;
+
+
 const $3aeefa4731ce9a96$export$26b9f946b448f23e = (type, resource)=>{
     const resourceType = resource.type || resource["@type"];
     return Array.isArray(resourceType) ? resourceType.includes(type) : resourceType === type;
@@ -327,7 +340,7 @@ const $3aeefa4731ce9a96$var$fetchContainers = async (containers, resourceId, par
             if (json["@context"] !== jsonContext) return (0, $fj9kP$jsonld).compact(json, jsonContext);
             return json;
         }).then((json)=>{
-            if ($3aeefa4731ce9a96$export$26b9f946b448f23e("ldp:Container", json)) return json["ldp:contains"].map((resource)=>({
+            if ($3aeefa4731ce9a96$export$26b9f946b448f23e("ldp:Container", json)) return (0, $db0064b52a991847$export$2e2bcd8739ae039)(json["ldp:contains"]).map((resource)=>({
                     "@context": json["@context"],
                     ...resource
                 }));
