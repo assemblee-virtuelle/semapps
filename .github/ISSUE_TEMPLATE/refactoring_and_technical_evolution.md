@@ -1,17 +1,17 @@
 ---
-name: Refactoring et évolution technique
-about: Proposer une amélioration du code existant (refactoring, restructuration, changement de responsabilité de composant...)
-title: ''
-labels: ''
-assignees: ''
+name: Refactoring and technical evolution
+about: Suggest improvements to existing code (refactoring, restructuring, change of component responsibility, etc.)
+title: ‘’
+labels: ‘’
+assignees: ‘’
 
 ---
 
-**Problématique**
-Décrire ce qui ne convient pas dans le code actuel.
+**Issue**
+Describe what is wrong with the current code.
 
-**Composants concernés**
-Lister les composants impactés (services Moleculer, packages NPM...) 
+**Components affected**
+List the components affected (Moleculer services, NPM packages, etc.). 
 
-**Proposition**
-Décrire l'évolution technique proposée et pourquoi elle améliorerait le projet.
+**Proposal**
+Describe the proposed technical change and why it would improve the project.
