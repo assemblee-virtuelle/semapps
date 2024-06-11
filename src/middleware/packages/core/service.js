@@ -5,12 +5,13 @@ const { ActivityPubService, FULL_ACTOR_TYPES } = require('@semapps/activitypub')
 const { JsonLdService } = require('@semapps/jsonld');
 const { LdpService, DocumentTaggerMixin } = require('@semapps/ldp');
 const { OntologiesService } = require('@semapps/ontologies');
-const { SignatureService } = require('@semapps/signature');
 const { SparqlEndpointService } = require('@semapps/sparql-endpoint');
 const { TripleStoreService } = require('@semapps/triplestore');
 const { VoidService } = require('@semapps/void');
 const { WebAclService } = require('@semapps/webacl');
 const { WebfingerService } = require('@semapps/webfinger');
+const { KeysService, SignatureService } = require('@semapps/crypto');
+const { WebIdService } = require('@semapps/webid');
 
 const botsContainer = {
   path: '/as/application',
@@ -48,7 +49,8 @@ const CoreService = {
     sparqlEndpoint: {},
     void: {},
     webacl: {},
-    webfinger: {}
+    webfinger: {},
+    webid: {}
   },
   created() {
     const { baseUrl, baseDir, triplestore, containers, ontologies } = this.settings;
@@ -134,11 +136,26 @@ const CoreService = {
     if (this.settings.signature !== false) {
       this.broker.createService(SignatureService, {
         settings: {
-          actorsKeyPairsDir: path.resolve(baseDir, './actors'),
           ...this.settings.signature
         }
       });
     }
+
+    if (this.settings.webId !== false) {
+      this.broker.createService(WebIdService, {
+        settings: {
+          baseUrl,
+          ...this.settings.webid
+        }
+      });
+    }
+
+    this.broker.createService(KeysService, {
+      settings: {
+        actorsKeyPairsDir: path.resolve(baseDir, './actors'),
+        ...this.settings.keys
+      }
+    });
 
     if (this.settings.sparqlEndpoint !== false) {
       this.broker.createService(SparqlEndpointService, {

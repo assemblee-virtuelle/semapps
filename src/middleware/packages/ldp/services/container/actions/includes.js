@@ -9,16 +9,21 @@ module.exports = {
     }
   },
   async handler(ctx) {
-    const { containerUri, resourceUri } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
+    const containerUri = ctx.params.containerUri.replace(/\/+$/, '');
+    const childUri = ctx.params.resourceUri.replace(/\/+$/, '');
 
     const isRemoteContainer = this.isRemoteUri(containerUri, ctx.meta.dataset);
 
     return await ctx.call('triplestore.query', {
       query: `
-        ASK {
+        PREFIX ldp: <http://www.w3.org/ns/ldp#>
+        ASK
+        WHERE { 
           ${isRemoteContainer ? `GRAPH <${this.settings.mirrorGraphName}> {` : ''}
-          <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>
+          ?container ldp:contains ?child .
+          FILTER(?container IN (<${containerUri}>, <${`${containerUri}/`}>)) .
+          FILTER(?child IN (<${childUri}>, <${`${childUri}/`}>)) .
           ${isRemoteContainer ? '}' : ''}
         }
       `,

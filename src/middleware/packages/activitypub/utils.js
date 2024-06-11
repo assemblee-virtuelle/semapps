@@ -85,15 +85,23 @@ const arrayOf = value => {
  * @type {import("./utilTypes").waitForResource}
  */
 const waitForResource = async (delayMs, fieldNames, maxTries, callback) => {
+  let result;
   for (let i = 0; i < maxTries; i += 1) {
-    const result = await callback();
+    result = await callback();
     // If a result (and the expected field, if required) is present, return.
     if (result !== undefined && arrayOf(fieldNames).every(fieldName => Object.keys(result).includes(fieldName))) {
       return result;
     }
     await delay(delayMs);
   }
-  throw new Error(`Waiting for resource failed. No results after ${maxTries} tries`);
+
+  const missingProperties = result && fieldNames.filter(fieldName => !Object.keys(result).includes(fieldName));
+
+  throw new Error(
+    `Waiting for resource failed. No results after ${maxTries} tries. The resource is ${
+      result === undefined ? 'undefined' : `missing the following properties: ${JSON.stringify(missingProperties)}`
+    }.`
+  );
 };
 
 const objectDepth = o => (Object(o) === o ? 1 + Math.max(-1, ...Object.values(o).map(objectDepth)) : 0);

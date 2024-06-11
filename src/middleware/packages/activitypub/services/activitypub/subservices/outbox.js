@@ -31,7 +31,7 @@ const OutboxService = {
 
       const collectionExists = await ctx.call('activitypub.collection.exist', { resourceUri: collectionUri });
       if (!collectionExists) {
-        throw E.NotFoundError();
+        throw new E.NotFoundError();
       }
 
       const actorUri = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'outbox' });

@@ -67,41 +67,44 @@ module.exports = {
         );
       }
 
-      // Request each resources
-      const resources = [];
-      if (result && result.contains) {
-        for (const resourceUri of defaultToArray(result.contains)) {
-          try {
-            // We pass the accept/jsonContext parameters only if they are explicit
-            const resource = await ctx.call(
-              'ldp.resource.get',
-              cleanUndefined({
-                resourceUri,
-                webId,
-                jsonContext,
-                accept
+      // Request each resources (in parallel)
+      const resources =
+        !result || !result.contains
+          ? []
+          : await Promise.all(
+              defaultToArray(result.contains).flatMap(async resourceUri => {
+                try {
+                  // We pass the accept/jsonContext parameters only if they are explicit
+                  const resource = await ctx.call(
+                    'ldp.resource.get',
+                    cleanUndefined({
+                      resourceUri,
+                      webId,
+                      jsonContext,
+                      accept
+                    })
+                  );
+
+                  // Ensure a valid resource is returned (in some case, we may have only the context)
+                  if (resource['@id'] || resource.id) {
+                    // If we have a child container, remove the ldp:contains property and add a ldp:Resource type
+                    // We are copying SOLID: https://github.com/assemblee-virtuelle/semapps/issues/429#issuecomment-768210074
+                    if (isContainer(resource)) {
+                      delete resource['ldp:contains'];
+                      const typePredicate = resource.type ? 'type' : '@type';
+                      resource[typePredicate] = defaultToArray(resource[typePredicate]);
+                      resource[typePredicate].push('ldp:Resource');
+                    }
+
+                    return resource;
+                  }
+                } catch (e) {
+                  // Ignore a resource if it is not found
+                  if (e.name !== 'MoleculerError') throw e;
+                }
+                return [];
               })
             );
-
-            // Ensure a valid resource is returned (in some case, we may have only the context)
-            if (resource['@id'] || resource.id) {
-              // If we have a child container, remove the ldp:contains property and add a ldp:Resource type
-              // We are copying SOLID: https://github.com/assemblee-virtuelle/semapps/issues/429#issuecomment-768210074
-              if (isContainer(resource)) {
-                delete resource['ldp:contains'];
-                const typePredicate = resource.type ? 'type' : '@type';
-                resource[typePredicate] = defaultToArray(resource[typePredicate]);
-                resource[typePredicate].push('ldp:Resource');
-              }
-
-              resources.push(resource);
-            }
-          } catch (e) {
-            // Ignore a resource if it is not found
-            if (e.name !== 'MoleculerError') throw e;
-          }
-        }
-      }
 
       result = await ctx.call('jsonld.parser.compact', {
         input: {

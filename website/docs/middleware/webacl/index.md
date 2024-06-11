@@ -5,20 +5,24 @@ title: WebACL
 This package allows you to handle rights through the [WebACL standard](https://github.com/solid/web-access-control-spec).
 
 ## Features
+
 - View and modify rights of any resources
 - Automatically add rights when LDP resources, LDP containers or ActivityPub collections are created
 - Create ACL groups, manage members of these groups
 
 ## Dependencies
+
 - [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
 - [TripleStoreService](../triplestore)
 
 ## Sub-services
+
 - [WebAclResourceService](resource.md)
 - [WebAclGroupService](group.md)
 - WebAclCacheCleanerService
 
 ## Bots
+
 - [AuthorizerBot](authorizer.md)
 - [GroupsManagerBot](groups-manager.md)
 
@@ -63,12 +67,13 @@ module.exports = {
 ```
 
 The WebAclMiddleware:
+
 - Protects the actions of the LDP service
 - Automatically updates ACL when LDP resources, LDP containers or ActivityPub collections are added or removed.
 
 ### Secured and unsecured dataset
 
-It is important to know if your Fuseki dataset is secured with WebACL or not. 
+It is important to know if your Fuseki dataset is secured with WebACL or not.
 
 - If you use a secured dataset without the WebACL service and middleware, you will get permission errors every time you try to access a container or resource, because Fuseki will not find the appropriate WebACL triples and will thus assume you do not have the permission to do the action.
 - If you use a unsecured data with the WebACL service and middleware, you will get the error `Error when starting the webAcl service: the main dataset is not secure. see dataset.create`.
@@ -102,7 +107,6 @@ module.exports = {
 
 See the [Moleculer caching documentation](https://moleculer.services/docs/0.14/caching.html) to know what options can be passed.
 
-
 ### Default permissions for new resources
 
 By default, new resources are created with these rights:
@@ -119,19 +123,18 @@ By default, new resources are created with these rights:
 If you wish to change these options, you can set the `newResourcesPermissions` parameter in [LdpService's `defaultContainerOptions`](../ldp#settings), or to a particular container.
 
 This `newResourcesPermissions` parameter can be:
-- An object in the form expected by the `additionalRights` parameters of the [`webacl.resource.addRights`](resource.md#webaclresourceaddrights) action (with keys "anon", "anyUser", "user", "group")
-- A function which receives the WebID of the creator (or "anon" if the user is not authenticated, or "system") and returns an object in the same shape
 
+- An object in the form expected by the `additionalRights` parameters of the [`webacl.resource.addRights`](resource.md#addrights) action (with keys "anon", "anyUser", "user", "group").
+- A function which receives the WebID of the creator (or "anon" if the user is not authenticated, or "system"), and the `ctx` object and returns an object in the same shape.
 
 ## Settings
 
 | Property      | Type      | Default                     | Description                                                                                                                                     |
-|---------------|-----------|-----------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| ------------- | --------- | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | `baseUrl`     | `String`  | **required**                | Base URL of the LDP server                                                                                                                      |
 | `graphName`   | `Array`   | "http://semapps.org/webacl" | Graph where the ACL triples are stored. If you change this, you should also change the config of the WebAclMiddleware.                          |
 | `podProvider` | `Boolean` | false                       | Set to true if you are setting up a POD provider.                                                                                               |
 | `superAdmins` | `Array`   |                             | Array of users' URIs you want to give super-admins rights (all permissions on all resources). This only works if you have a root LDP container. |
-
 
 ## General notes
 

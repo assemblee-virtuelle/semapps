@@ -19,7 +19,7 @@ const AuthMixin = {
     accountsDataset: 'settings',
     podProvider: false
   },
-  dependencies: ['api', 'webid'],
+  dependencies: ['api'],
   async created() {
     const { jwtPath, reservedUsernames, accountsDataset, podProvider } = this.settings;
 

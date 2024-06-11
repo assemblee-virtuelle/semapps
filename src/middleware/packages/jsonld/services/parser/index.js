@@ -1,7 +1,7 @@
 const jsonld = require('jsonld');
 const { JsonLdParser } = require('jsonld-streaming-parser');
 const streamifyString = require('streamify-string');
-const { arrayOf, isURL } = require('../../utils');
+const { arrayOf, isURI } = require('../../utils/utils');
 
 module.exports = {
   name: 'jsonld.parser',
@@ -68,7 +68,7 @@ module.exports = {
 
       if (!predicate) throw new Error('No predicate param provided to expandPredicate action');
 
-      if (isURL(predicate)) return predicate;
+      if (isURI(predicate)) return predicate;
 
       // If no context is provided, use default context
       if (!context) context = await ctx.call('jsonld.context.get');
@@ -77,7 +77,7 @@ module.exports = {
 
       const expandedPredicate = Object.keys(result[0])?.[0];
 
-      if (!isURL(expandedPredicate)) {
+      if (!isURI(expandedPredicate)) {
         throw new Error(`
           Could not expand predicate (${expandedPredicate}).
           Is an ontology missing or not registered yet on the local context ?
@@ -92,7 +92,7 @@ module.exports = {
       if (!types) throw new Error('No types param provided to expandTypes action');
 
       // If types are already full URIs, return them immediately
-      if (arrayOf(types).every(type => isURL(type))) return types;
+      if (arrayOf(types).every(type => isURI(type))) return types;
 
       // If no context is provided, use default context
       if (!context) context = await ctx.call('jsonld.context.get');
@@ -101,7 +101,7 @@ module.exports = {
 
       const expandedTypes = result?.[0]?.['@type'];
 
-      if (!arrayOf(expandedTypes).every(type => isURL(type))) {
+      if (!arrayOf(expandedTypes).every(type => isURI(type))) {
         throw new Error(`
           Could not expand all types (${expandedTypes.join(', ')}).
           Is an ontology missing or not registered yet on the local context ?

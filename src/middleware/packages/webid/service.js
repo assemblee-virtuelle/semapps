@@ -1,16 +1,30 @@
 const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { foaf, schema } = require('@semapps/ontologies');
+const { ControlledContainerMixin, ControlledContainerDereferenceMixin } = require('@semapps/ldp');
 
+/** @type {import('moleculer').ServiceSchema} */
 const WebIdService = {
   name: 'webid',
   settings: {
+    path: '/foaf/person',
     baseUrl: null,
-    usersContainer: null,
+    acceptedTypes: ['http://xmlns.com/foaf/0.1/Person'],
     defaultAccept: 'text/turtle',
-    podProvider: false
+    podProvider: false,
+    podsContainer: false,
+    dereferencePlan: [
+      {
+        property: 'publicKey'
+      },
+      { property: 'assertionMethod' }
+    ]
   },
   dependencies: ['ldp.resource', 'ontologies'],
+  mixins: [ControlledContainerMixin, ControlledContainerDereferenceMixin],
+  async created() {
+    if (!this.settings.baseUrl) throw new Error('The baseUrl setting is required for webId service.');
+  },
   async started() {
     await this.broker.call('ontologies.register', {
       ...foaf,
@@ -25,7 +39,7 @@ const WebIdService = {
     /**
      * This should only be called after the user has been authenticated
      */
-    async create(ctx) {
+    async createWebId(ctx) {
       let { email, nick, name, familyName, homepage, ...rest } = ctx.params;
 
       if (!nick && email) {
@@ -46,7 +60,6 @@ const WebIdService = {
 
       // Create profile with system webId
       if (this.settings.podProvider) {
-        if (!this.settings.baseUrl) throw new Error('The baseUrl setting is required in POD provider config');
         webId = urlJoin(this.settings.baseUrl, nick);
         await ctx.call('ldp.resource.create', {
           resource: {
@@ -57,14 +70,16 @@ const WebIdService = {
           webId: 'system'
         });
       } else {
-        if (!this.settings.usersContainer) throw new Error('The usersContainer setting is required');
-        webId = await ctx.call('ldp.container.post', {
-          resource,
-          slug: nick,
-          containerUri: this.settings.usersContainer,
-          contentType: MIME_TYPES.JSON,
-          webId: 'system'
-        });
+        if (!this.settings.path) throw new Error('The path setting is required');
+        webId = await this.actions.post(
+          {
+            resource,
+            slug: nick,
+            contentType: MIME_TYPES.JSON,
+            webId: 'system'
+          },
+          { parentCtx: ctx }
+        );
       }
 
       const newPerson = await ctx.call('ldp.resource.get', {
@@ -76,48 +91,6 @@ const WebIdService = {
       ctx.emit('webid.created', newPerson, { meta: { webId: null, dataset: null } });
 
       return webId;
-    },
-    async view(ctx) {
-      const webId = await this.getWebId(ctx);
-      if (webId) {
-        return await ctx.call('ldp.resource.get', {
-          resourceUri: webId,
-          accept: MIME_TYPES.JSON,
-          webId
-        });
-      }
-      ctx.meta.$statusCode = 404;
-    },
-    async edit(ctx) {
-      const { userId, ...profileData } = ctx.params;
-      const webId = await this.getWebId(ctx);
-      return await ctx.call('ldp.resource.put', {
-        resource: {
-          '@context': {
-            '@vocab': foaf.namespace
-          },
-          '@type': 'Person',
-          '@id': webId,
-          ...profileData
-        },
-        webId,
-        contentType: MIME_TYPES.JSON,
-        accept: MIME_TYPES.JSON
-      });
-    }
-  },
-  methods: {
-    async getWebId(ctx) {
-      if (ctx.params.userId) {
-        // If an userId is specified, use it to find the webId
-        return this.settings.usersContainer + ctx.params.userId;
-      }
-      if (ctx.meta.webId || ctx.meta.tokenPayload.webId) {
-        return ctx.meta.webId || ctx.meta.tokenPayload.webId;
-      }
-      throw new Error(
-        'webid.getWebId have to be call with ctx.params.userId or ctx.meta.webId or ctx.meta.tokenPayload.webId'
-      );
     }
   }
 };

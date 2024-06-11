@@ -1,11 +1,12 @@
 {
   "env": {
-    "node": true
+    "node": true,
+    "jest": true
   },
   "extends": [
     "plugin:jsdoc/recommended-typescript-flavor",
     "airbnb/base",
-    //  "plugin:@typescript-eslint/recommended-type-checked",
+    // "plugin:@typescript-eslint/recommended-type-checked",
     "plugin:node/recommended",
     "plugin:jest/recommended",
     "prettier"

@@ -74,8 +74,14 @@ const fetchServer = (url, options = {}) => {
     });
 };
 
+const wait = ms =>
+  new Promise(resolve => {
+    setTimeout(resolve, ms);
+  });
+
 module.exports = {
   clearDataset,
   listDatasets,
-  fetchServer
+  fetchServer,
+  wait
 };

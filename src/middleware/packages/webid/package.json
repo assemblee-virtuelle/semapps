@@ -5,6 +5,7 @@
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
+    "@semapps/activitypub": "0.7.0",
     "@semapps/ldp": "0.7.0",
     "@semapps/mime-types": "0.7.0",
     "@semapps/ontologies": "0.7.0",

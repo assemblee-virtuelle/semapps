@@ -1,3 +1,7 @@
 module.exports = {
-  testEnvironment: 'node'
+  testEnvironment: 'node',
+  transform: {
+    '\\.[jt]sx?$': ['babel-jest', { rootMode: 'upward' }]
+  },
+  transformIgnorePatterns: []
 };

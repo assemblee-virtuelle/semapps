@@ -9,7 +9,6 @@ const { InferenceService } = require('@semapps/inference');
 const { pair } = require('@semapps/ontologies');
 const { MirrorService, ObjectsWatcherMiddleware } = require('@semapps/sync');
 const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
-const { WebIdService } = require('@semapps/webid');
 const CONFIG = require('../config');
 const { clearDataset } = require('../utils');
 
@@ -23,16 +22,6 @@ const containers = [
     acceptedTypes: ['pair:Resource'],
     permissions: {},
     newResourcesPermissions: {}
-  },
-  {
-    path: '/as/actor',
-    acceptedTypes: [FULL_ACTOR_TYPES.PERSON],
-    excludeFromMirror: true
-  },
-  {
-    path: '/as/application',
-    acceptedTypes: [FULL_ACTOR_TYPES.APPLICATION],
-    excludeFromMirror: true
   }
 ];
 
@@ -76,7 +65,11 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
       api: {
         port
       },
-      mirror: serverToMirror ? { servers: [serverToMirror] } : true
+      mirror: serverToMirror ? { servers: [serverToMirror] } : true,
+      webid: {
+        path: '/as/actor',
+        acceptedTypes: [FULL_ACTOR_TYPES.PERSON, FULL_ACTOR_TYPES.APPLICATION]
+      }
     }
   });
 
@@ -98,12 +91,6 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
     }
   });
 
-  await broker.createService(WebIdService, {
-    settings: {
-      usersContainer: urlJoin(baseUrl, 'as/actor')
-    }
-  });
-
   await broker.createService(InferenceService, {
     settings: {
       baseUrl,
@@ -117,17 +104,6 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
   // setting some write permission on the containers for anonymous user, which is the one that will be used in the tests.
   await broker.call('webacl.resource.addRights', {
     resourceUri: urlJoin(baseUrl, 'resources'),
-    additionalRights: {
-      anon: {
-        read: true,
-        write: true
-      }
-    },
-    webId: 'system'
-  });
-
-  await broker.call('webacl.resource.addRights', {
-    resourceUri: urlJoin(baseUrl, 'as/application'),
     additionalRights: {
       anon: {
         read: true,

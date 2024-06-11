@@ -121,9 +121,6 @@ module.exports = {
         // it should only be used for containers
         if (newRights.default) difference = difference.concat(processRights(newRights.default, `${aclUri}Default`));
         currentAuths = {};
-
-        if (difference.length === 0)
-          new MoleculerError("No permission set for the new resource. This won't work!", 400, 'BAD_REQUEST');
       }
 
       let addRequest = '';
