@@ -59,7 +59,7 @@ module.exports = {
           ${graphName ? '}' : ''}
         }
       `,
-      webId,
+      webId: 'system',
       dataset
     });
 
