@@ -28,7 +28,7 @@ const UserMenuItem = forwardRef(({ label, icon, to, ...rest }, ref) => {
 });
 
 const UserMenu = ({ logout, profileResource, ...otherProps }) => {
-  const { identity } = useGetIdentity();
+  const { data: identity } = useGetIdentity();
   return (
     <RaUserMenu {...otherProps}>
       {identity && identity.id !== ''

@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { usePermissions, useRedirect, useNotify, useGetIdentity } from 'react-admin';
 import { rights, forbiddenErrors } from '../constants';
 
 const useCheckPermissions = (uri, mode, redirectUrl = '/') => {
-  const { identity, isLoading } = useGetIdentity();
+  const { data: identity, isLoading } = useGetIdentity();
   const { permissions } = usePermissions(uri);
   const notify = useNotify();
   const redirect = useRedirect();

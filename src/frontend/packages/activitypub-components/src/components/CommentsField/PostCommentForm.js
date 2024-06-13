@@ -62,7 +62,7 @@ const EmptyToolbar = () => null;
 
 const PostCommentForm = ({ context, placeholder, helperText, mentions, userResource, addItem, removeItem }) => {
   const record = useRecordContext();
-  const { identity, isLoading } = useGetIdentity();
+  const { data: identity, isLoading } = useGetIdentity();
   const userDataModel = useDataModel(userResource);
   const classes = useStyles();
   const notify = useNotify();

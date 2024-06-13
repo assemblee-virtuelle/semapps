@@ -50,7 +50,7 @@ const LocalLoginPage = ({
   const isNewPassword = searchParams.has('new_password');
   const isLogin = !isSignup && !isResetPassword && !isNewPassword;
   const redirectTo = searchParams.get('redirect');
-  const { identity, isLoading } = useGetIdentity();
+  const { data: identity, isLoading } = useGetIdentity();
 
   useEffect(() => {
     if (!isLoading && identity?.id) {

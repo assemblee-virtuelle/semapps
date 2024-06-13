@@ -14,7 +14,7 @@ const SsoLoginPage = ({ children, backgroundImage, buttons, userResource, proper
   let backgroundImageLoaded = false;
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { identity, isLoading } = useGetIdentity();
+  const { data: identity, isLoading } = useGetIdentity();
 
   const notify = useNotify();
   const login = useLogin();

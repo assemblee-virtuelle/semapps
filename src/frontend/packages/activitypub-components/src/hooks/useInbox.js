@@ -3,7 +3,7 @@ import { useGetIdentity, fetchUtils } from 'react-admin';
 import { buildBlankNodesQuery } from '@semapps/semantic-data-provider';
 
 const useInbox = () => {
-  const { identity } = useGetIdentity();
+  const { data: identity } = useGetIdentity();
 
   const inboxUrl = useMemo(() => {
     if (identity?.webIdData) {
