@@ -524,7 +524,7 @@ const $09162138eadab4b9$export$edca379024d80309 = {
 
 
 const $673a0cc190160362$var$useCheckPermissions = (uri, mode, redirectUrl = "/")=>{
-    const { identity: identity, isLoading: isLoading } = (0, $4Uj5b$reactadmin.useGetIdentity)();
+    const { data: identity, isLoading: isLoading } = (0, $4Uj5b$reactadmin.useGetIdentity)();
     const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)(uri);
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
     const redirect = (0, $4Uj5b$reactadmin.useRedirect)();
@@ -1265,7 +1265,7 @@ const $0af8eee27f6a6e9f$var$SsoLoginPage = ({ children: children, backgroundImag
     let backgroundImageLoaded = false;
     const navigate = (0, $4Uj5b$reactrouterdom.useNavigate)();
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
-    const { identity: identity, isLoading: isLoading } = (0, $4Uj5b$reactadmin.useGetIdentity)();
+    const { data: identity, isLoading: isLoading } = (0, $4Uj5b$reactadmin.useGetIdentity)();
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
     const login = (0, $4Uj5b$reactadmin.useLogin)();
     const dataProvider = (0, $4Uj5b$reactadmin.useDataProvider)();
@@ -2206,7 +2206,7 @@ const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
     const isNewPassword = searchParams.has("new_password");
     const isLogin = !isSignup && !isResetPassword && !isNewPassword;
     const redirectTo = searchParams.get("redirect");
-    const { identity: identity, isLoading: isLoading } = (0, $4Uj5b$reactadmin.useGetIdentity)();
+    const { data: identity, isLoading: isLoading } = (0, $4Uj5b$reactadmin.useGetIdentity)();
     (0, $4Uj5b$react.useEffect)(()=>{
         if (!isLoading && identity?.id) {
             if (postLoginRedirect) navigate(`${postLoginRedirect}?${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}`);
@@ -2367,7 +2367,7 @@ const $9734e84907c0d5dd$var$UserMenuItem = /*#__PURE__*/ (0, $4Uj5b$react.forwar
     });
 });
 const $9734e84907c0d5dd$var$UserMenu = ({ logout: logout, profileResource: profileResource, ...otherProps })=>{
-    const { identity: identity } = (0, $4Uj5b$reactadmin.useGetIdentity)();
+    const { data: identity } = (0, $4Uj5b$reactadmin.useGetIdentity)();
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.UserMenu), {
         ...otherProps,
         children: identity && identity.id !== "" ? [
@@ -2408,7 +2408,7 @@ var $9734e84907c0d5dd$export$2e2bcd8739ae039 = $9734e84907c0d5dd$var$UserMenu;
 
 
 const $84db3891236a263f$var$useCheckAuthenticated = (message)=>{
-    const { identity: identity, isLoading: isLoading } = (0, $4Uj5b$reactadmin.useGetIdentity)();
+    const { data: identity, isLoading: isLoading } = (0, $4Uj5b$reactadmin.useGetIdentity)();
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
     const redirect = (0, $4Uj5b$reactadmin.useRedirect)();
     const location = (0, $4Uj5b$reactrouterdom.useLocation)();

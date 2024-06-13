@@ -109,7 +109,7 @@ const $ebea823cebb2f44b$export$4d8d554031975581 = "https://www.w3.org/ns/activit
 
 
 const $decfdd34cc00b80e$var$useOutbox = ()=>{
-    const { identity: identity } = (0, $583VT$reactadmin.useGetIdentity)();
+    const { data: identity } = (0, $583VT$reactadmin.useGetIdentity)();
     const outboxUrl = (0, $583VT$react.useMemo)(()=>{
         if (identity?.webIdData) return identity?.webIdData?.outbox;
     }, [
@@ -280,7 +280,7 @@ const $703eba3e46be7ee5$var$useStyles = (0, ($parcel$interopDefault($583VT$muist
 const $703eba3e46be7ee5$var$EmptyToolbar = ()=>null;
 const $703eba3e46be7ee5$var$PostCommentForm = ({ context: context, placeholder: placeholder, helperText: helperText, mentions: mentions, userResource: userResource, addItem: addItem, removeItem: removeItem })=>{
     const record = (0, $583VT$reactadmin.useRecordContext)();
-    const { identity: identity, isLoading: isLoading } = (0, $583VT$reactadmin.useGetIdentity)();
+    const { data: identity, isLoading: isLoading } = (0, $583VT$reactadmin.useGetIdentity)();
     const userDataModel = (0, $583VT$semappssemanticdataprovider.useDataModel)(userResource);
     const classes = $703eba3e46be7ee5$var$useStyles();
     const notify = (0, $583VT$reactadmin.useNotify)();
@@ -740,7 +740,9 @@ var $505d598a33288aad$export$2e2bcd8739ae039 = $505d598a33288aad$var$CollectionL
 
 
 
-const $b0c94a9bdea99da5$var$ReferenceCollectionField = ({ source: source, record: record, reference: reference, children: children, ...rest })=>{
+
+const $b0c94a9bdea99da5$var$ReferenceCollectionField = ({ source: source, reference: reference, children: children, ...rest })=>{
+    const record = (0, $583VT$reactadmin.useRecordContext)();
     if ((0, ($parcel$interopDefault($583VT$react))).Children.count(children) !== 1) throw new Error("<ReferenceCollectionField> only accepts a single child");
     if (!record || !record[source]) return null;
     return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $505d598a33288aad$export$2e2bcd8739ae039), {
@@ -758,7 +760,7 @@ var $b0c94a9bdea99da5$export$2e2bcd8739ae039 = $b0c94a9bdea99da5$var$ReferenceCo
 
 
 const $97664763db3c0a46$var$useInbox = ()=>{
-    const { identity: identity } = (0, $583VT$reactadmin.useGetIdentity)();
+    const { data: identity } = (0, $583VT$reactadmin.useGetIdentity)();
     const inboxUrl = (0, $583VT$react.useMemo)(()=>{
         if (identity?.webIdData) return identity?.webIdData?.inbox;
     }, [

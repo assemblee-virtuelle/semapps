@@ -116,14 +116,12 @@ export function CollectionList({
 }): import('react/jsx-runtime').JSX.Element;
 export function ReferenceCollectionField({
   source,
-  record,
   reference,
   children,
   ...rest
 }: {
   [x: string]: any;
   source: any;
-  record: any;
   reference: any;
   children: any;
 }): import('react/jsx-runtime').JSX.Element | null;

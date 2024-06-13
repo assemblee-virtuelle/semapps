@@ -87,7 +87,7 @@ const $338f387df48a40d7$export$4d8d554031975581 = "https://www.w3.org/ns/activit
 
 
 const $712f7f004b5f345e$var$useOutbox = ()=>{
-    const { identity: identity } = (0, $85cNH$useGetIdentity)();
+    const { data: identity } = (0, $85cNH$useGetIdentity)();
     const outboxUrl = (0, $85cNH$useMemo)(()=>{
         if (identity?.webIdData) return identity?.webIdData?.outbox;
     }, [
@@ -258,7 +258,7 @@ const $3c17312a40ebf1ed$var$useStyles = (0, $85cNH$muistylesmakeStyles)((theme)=
 const $3c17312a40ebf1ed$var$EmptyToolbar = ()=>null;
 const $3c17312a40ebf1ed$var$PostCommentForm = ({ context: context, placeholder: placeholder, helperText: helperText, mentions: mentions, userResource: userResource, addItem: addItem, removeItem: removeItem })=>{
     const record = (0, $85cNH$useRecordContext)();
-    const { identity: identity, isLoading: isLoading } = (0, $85cNH$useGetIdentity)();
+    const { data: identity, isLoading: isLoading } = (0, $85cNH$useGetIdentity)();
     const userDataModel = (0, $85cNH$useDataModel)(userResource);
     const classes = $3c17312a40ebf1ed$var$useStyles();
     const notify = (0, $85cNH$useNotify)();
@@ -718,7 +718,9 @@ var $d3be168cd1e7aaae$export$2e2bcd8739ae039 = $d3be168cd1e7aaae$var$CollectionL
 
 
 
-const $ea214512ab1a2e8f$var$ReferenceCollectionField = ({ source: source, record: record, reference: reference, children: children, ...rest })=>{
+
+const $ea214512ab1a2e8f$var$ReferenceCollectionField = ({ source: source, reference: reference, children: children, ...rest })=>{
+    const record = (0, $85cNH$useRecordContext)();
     if ((0, $85cNH$react).Children.count(children) !== 1) throw new Error("<ReferenceCollectionField> only accepts a single child");
     if (!record || !record[source]) return null;
     return /*#__PURE__*/ (0, $85cNH$jsx)((0, $d3be168cd1e7aaae$export$2e2bcd8739ae039), {
@@ -736,7 +738,7 @@ var $ea214512ab1a2e8f$export$2e2bcd8739ae039 = $ea214512ab1a2e8f$var$ReferenceCo
 
 
 const $542b37cc25b8ccca$var$useInbox = ()=>{
-    const { identity: identity } = (0, $85cNH$useGetIdentity)();
+    const { data: identity } = (0, $85cNH$useGetIdentity)();
     const inboxUrl = (0, $85cNH$useMemo)(()=>{
         if (identity?.webIdData) return identity?.webIdData?.inbox;
     }, [

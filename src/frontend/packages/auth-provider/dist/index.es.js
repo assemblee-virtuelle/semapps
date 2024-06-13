@@ -485,7 +485,7 @@ const $3ecc2efd72c45a68$export$edca379024d80309 = {
 
 
 const $abd69a52484f41d9$var$useCheckPermissions = (uri, mode, redirectUrl = "/")=>{
-    const { identity: identity, isLoading: isLoading } = (0, $1obPJ$useGetIdentity)();
+    const { data: identity, isLoading: isLoading } = (0, $1obPJ$useGetIdentity)();
     const { permissions: permissions } = (0, $1obPJ$usePermissions)(uri);
     const notify = (0, $1obPJ$useNotify)();
     const redirect = (0, $1obPJ$useRedirect)();
@@ -1226,7 +1226,7 @@ const $479961b7e298304b$var$SsoLoginPage = ({ children: children, backgroundImag
     let backgroundImageLoaded = false;
     const navigate = (0, $1obPJ$useNavigate)();
     const [searchParams] = (0, $1obPJ$useSearchParams)();
-    const { identity: identity, isLoading: isLoading } = (0, $1obPJ$useGetIdentity)();
+    const { data: identity, isLoading: isLoading } = (0, $1obPJ$useGetIdentity)();
     const notify = (0, $1obPJ$useNotify)();
     const login = (0, $1obPJ$useLogin)();
     const dataProvider = (0, $1obPJ$useDataProvider)();
@@ -2167,7 +2167,7 @@ const $23fea069f5d2d834$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
     const isNewPassword = searchParams.has("new_password");
     const isLogin = !isSignup && !isResetPassword && !isNewPassword;
     const redirectTo = searchParams.get("redirect");
-    const { identity: identity, isLoading: isLoading } = (0, $1obPJ$useGetIdentity)();
+    const { data: identity, isLoading: isLoading } = (0, $1obPJ$useGetIdentity)();
     (0, $1obPJ$useEffect)(()=>{
         if (!isLoading && identity?.id) {
             if (postLoginRedirect) navigate(`${postLoginRedirect}?${(0, $2dfd781b793256e6$export$2e2bcd8739ae039)(searchParams)}`);
@@ -2328,7 +2328,7 @@ const $5ef2eaf62f09ff2c$var$UserMenuItem = /*#__PURE__*/ (0, $1obPJ$forwardRef)(
     });
 });
 const $5ef2eaf62f09ff2c$var$UserMenu = ({ logout: logout, profileResource: profileResource, ...otherProps })=>{
-    const { identity: identity } = (0, $1obPJ$useGetIdentity)();
+    const { data: identity } = (0, $1obPJ$useGetIdentity)();
     return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$UserMenu), {
         ...otherProps,
         children: identity && identity.id !== "" ? [
@@ -2369,7 +2369,7 @@ var $5ef2eaf62f09ff2c$export$2e2bcd8739ae039 = $5ef2eaf62f09ff2c$var$UserMenu;
 
 
 const $a18ea4963428dd85$var$useCheckAuthenticated = (message)=>{
-    const { identity: identity, isLoading: isLoading } = (0, $1obPJ$useGetIdentity)();
+    const { data: identity, isLoading: isLoading } = (0, $1obPJ$useGetIdentity)();
     const notify = (0, $1obPJ$useNotify)();
     const redirect = (0, $1obPJ$useRedirect)();
     const location = (0, $1obPJ$useLocation)();
