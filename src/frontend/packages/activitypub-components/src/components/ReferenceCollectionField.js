@@ -1,7 +1,10 @@
 import React from 'react';
+import { useRecordContext } from 'react-admin';
 import CollectionList from './CollectionList';
 
-const ReferenceCollectionField = ({ source, record, reference, children, ...rest }) => {
+const ReferenceCollectionField = ({ source, reference, children, ...rest }) => {
+  const record = useRecordContext();
+
   if (React.Children.count(children) !== 1) {
     throw new Error('<ReferenceCollectionField> only accepts a single child');
   }
