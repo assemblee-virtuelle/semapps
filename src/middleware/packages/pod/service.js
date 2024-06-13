@@ -1,8 +1,8 @@
 const urlJoin = require('url-join');
-const { FULL_ACTOR_TYPES } = require('@semapps/activitypub');
 const { getSlugFromUri } = require('@semapps/ldp');
 const getPodsRoute = require('./routes/getPodsRoute');
 
+/** @type {import('moleculer').ServiceSchema} */
 module.exports = {
   name: 'pod',
   settings: {
@@ -12,6 +12,7 @@ module.exports = {
   async started() {
     // Container with actors
     // The `podsContainer: true` config will register the container but not create LDP containers on a dataset
+    /*
     await this.broker.call('ldp.registry.register', {
       name: 'pods',
       path: '/',
@@ -23,6 +24,7 @@ module.exports = {
         get: 'pod.getActor'
       }
     });
+    */
 
     // API routes to actors (and their collections) are added manually
     await this.broker.call('api.addRoute', { route: getPodsRoute() });

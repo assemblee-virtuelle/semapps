@@ -5,10 +5,16 @@ const { ServiceBroker } = require('moleculer');
 const { AuthLocalService } = require('@semapps/auth');
 const { CoreService } = require('@semapps/core');
 const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
-const { containers } = require('@semapps/activitypub');
-const { WebIdService } = require('@semapps/webid');
+const { FULL_OBJECT_TYPES, FULL_ACTOR_TYPES } = require('@semapps/activitypub');
 const CONFIG = require('../config');
 const { clearDataset } = require('../utils');
+
+const containers = [
+  {
+    path: '/as/object',
+    acceptedTypes: Object.values(FULL_OBJECT_TYPES)
+  }
+];
 
 const initialize = async (port, mainDataset, accountsDataset) => {
   await clearDataset(mainDataset);
@@ -44,6 +50,10 @@ const initialize = async (port, mainDataset, accountsDataset) => {
       mirror: false,
       api: {
         port
+      },
+      webid: {
+        path: '/as/actor',
+        acceptedTypes: Object.values(FULL_ACTOR_TYPES)
       }
     }
   });
@@ -54,12 +64,6 @@ const initialize = async (port, mainDataset, accountsDataset) => {
       jwtPath: path.resolve(__dirname, './jwt'),
       accountsDataset,
       mail: false
-    }
-  });
-
-  await broker.createService(WebIdService, {
-    settings: {
-      usersContainer: urlJoin(baseUrl, 'as/actor')
     }
   });
 

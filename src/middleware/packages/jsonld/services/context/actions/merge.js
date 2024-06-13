@@ -1,4 +1,4 @@
-const { isURL, isObject, mergeObjectInArray } = require('../../../utils');
+const { isURL, isObject, mergeObjectInArray } = require('../../../utils/utils');
 
 module.exports = {
   visibility: 'public',

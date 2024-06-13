@@ -4,6 +4,7 @@ const sendToken = require('../middlewares/sendToken');
 const { MoleculerError } = require('moleculer').Errors;
 const AuthMailService = require('./mail');
 
+/** @type {import('moleculer').ServiceSchema} */
 const AuthLocalService = {
   name: 'auth',
   mixins: [AuthMixin],
@@ -27,6 +28,7 @@ const AuthLocalService = {
       }
     }
   },
+  dependencies: ['webid'],
   async created() {
     const { mail } = this.settings;
 
@@ -43,6 +45,8 @@ const AuthLocalService = {
   actions: {
     async signup(ctx) {
       const { username, email, password, interactionId, ...rest } = ctx.params;
+      // This is going to get in our way otherwise when waiting for completions.
+      ctx.meta.skipObjectsWatcher = true;
 
       if (username && username.length < 2) {
         throw new Error('The username must be at least 2 characters long');
@@ -56,7 +60,7 @@ const AuthLocalService = {
       });
 
       const profileData = { nick: username, email, ...rest };
-      const webId = await ctx.call('webid.create', this.pickWebIdData(profileData));
+      const webId = await ctx.call('webid.createWebId', this.pickWebIdData(profileData));
 
       // Link the webId with the account
       accountData = await ctx.call('auth.account.attachWebId', { accountUri: accountData['@id'], webId });

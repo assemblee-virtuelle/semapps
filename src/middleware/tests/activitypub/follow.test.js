@@ -2,7 +2,7 @@ const { ACTIVITY_TYPES, OBJECT_TYPES } = require('@semapps/activitypub');
 const waitForExpect = require('wait-for-expect');
 const initialize = require('./initialize');
 
-jest.setTimeout(50000);
+jest.setTimeout(50_000);
 
 const NUM_USERS = 2;
 

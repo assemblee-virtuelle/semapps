@@ -38,6 +38,11 @@ const negotiateContentType = (req, res, next) => {
 };
 
 /** @type {(msg: string) => never} */
+const throw400 = msg => {
+  throw new MoleculerError(msg, 400, 'BAD_REQUEST', { status: 'Bad Request', text: msg });
+};
+
+/** @type {(msg: string) => never} */
 const throw403 = msg => {
   throw new MoleculerError('Forbidden', 403, 'ACCESS_DENIED', { status: 'Forbidden', text: msg });
 };
@@ -195,6 +200,7 @@ module.exports = {
   parseTurtle,
   parseFile,
   saveDatasetMeta,
+  throw400,
   throw403,
   throw500
 };

@@ -1,8 +1,6 @@
-const urlJoin = require('url-join');
 const path = require('path');
 const { ServiceBroker } = require('moleculer');
 const { CoreService } = require('@semapps/core');
-const { WebIdService } = require('@semapps/webid');
 const CONFIG = require('../config');
 const { clearDataset } = require('../utils');
 
@@ -35,13 +33,10 @@ beforeAll(async () => {
       mirror: false,
       void: false,
       webacl: false,
-      webfinger: false
-    }
-  });
-
-  broker.createService(WebIdService, {
-    settings: {
-      usersContainer: urlJoin(CONFIG.HOME_URL, 'users')
+      webfinger: false,
+      webid: {
+        path: '/users'
+      }
     }
   });
 
@@ -62,7 +57,7 @@ describe('WebId user creation', () => {
       homepage: 'http://example.org/myPage'
     };
 
-    const webId = await broker.call('webid.create', profileData);
+    const webId = await broker.call('webid.createWebId', profileData);
     expect(webId).toBe(`${CONFIG.HOME_URL}users/${profileData.nick}`);
   }, 20000);
 });

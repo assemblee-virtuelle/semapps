@@ -28,14 +28,13 @@ module.exports = {
 
 ## Settings
 
-All [container options](index#container-options) are accepted.
-
+All [container options](index.md#container-options) are accepted.
 
 ## Actions
 
-This mixin automatically configure CRUD actions (see below). You can call them directly, or overwrite them.
+This mixin automatically configures CRUD actions (see below). You can call them directly, or overwrite them.
 
-- The `post` and `list` actions redirect to the [LdpContainerService](container) unless they are set. When called directly, it will automatically guess the `containerUri` param if it is not set.
+- The `post` and `list` actions redirect to the [LdpContainerService](container) unless they are set. The `list` action is redirected to the [LdpContainerService `get`](container#get) action. When called directly, it will automatically guess the `containerUri` param if it is not set.
 
 - The `get`, `create`, `patch`, `put` and `delete` actions redirect to the [LdpResourceService](resource) unless they are set.
 

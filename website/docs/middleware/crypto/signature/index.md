@@ -14,7 +14,7 @@ This service implements [HTTP Signature](https://tools.ietf.org/html/draft-cavag
 
 ## Sub-services
 
-- [KeypairService](keypair.md)
+- [KeypairService](keypair.md) (deprecated and superseded by [KeysService](../key-service))
 
 ## Other services
 
@@ -22,25 +22,15 @@ This service implements [HTTP Signature](https://tools.ietf.org/html/draft-cavag
 
 ## Dependencies
 
-- None
-
-## Install
-
-```bash
-$ yarn add @semapps/signature
-```
+- [KeysService](../key-service)
 
 ## Usage
 
 ```js
-const { SignatureService } = require('@semapps/signature');
-const path = require('path');
+const { SignatureService } = require('@semapps/crypto');
 
 module.exports = {
-  mixins: [SignatureService],
-  settings: {
-    actorsKeyPairsDir: path.resolve(__dirname, '../actors')
-  }
+  mixins: [SignatureService]
 };
 ```
 
@@ -72,12 +62,6 @@ const ApiService = {
   }
 }
 ```
-
-## Settings
-
-| Property            | Type     | Default      | Description                                        |
-| ------------------- | -------- | ------------ | -------------------------------------------------- |
-| `actorsKeyPairsDir` | `String` | **required** | Path to where the actor's key pair will be stored. |
 
 ## Actions
 
