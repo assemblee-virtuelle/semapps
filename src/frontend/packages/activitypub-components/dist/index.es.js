@@ -526,7 +526,7 @@ var $be88b298220210d1$export$2e2bcd8739ae039 = $be88b298220210d1$var$CommentsLis
 
 const $e4e1b14e0441184d$export$e57ff0f701c44363 = (value)=>{
     // If the field is null-ish, we suppose there are no values.
-    if (!value) return [];
+    if (value === null || value === undefined) return [];
     // Return as is.
     if (Array.isArray(value)) return value;
     // Single value is made an array.
