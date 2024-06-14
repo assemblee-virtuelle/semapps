@@ -1,5 +1,5 @@
 ---
-title: ControlledContainerDereferenceMixin
+title: DereferenceMixin
 ---
 
 ## Usage
