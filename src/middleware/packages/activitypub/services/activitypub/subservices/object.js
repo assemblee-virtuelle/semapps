@@ -98,7 +98,7 @@ const ObjectService = {
             },
             {
               meta: {
-                skipObjectsWatcher: true // We don't want to trigger another Create action
+                skipObjectsWatcher: true // We don't want to trigger another Update action
               }
             }
           );
@@ -118,7 +118,7 @@ const ObjectService = {
                 { resourceUri, webId: actorUri },
                 {
                   meta: {
-                    skipObjectsWatcher: true // We don't want to trigger another Create action
+                    skipObjectsWatcher: true // We don't want to trigger another Delete action
                   }
                 }
               );

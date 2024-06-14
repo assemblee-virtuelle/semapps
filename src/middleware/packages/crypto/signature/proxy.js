@@ -73,7 +73,7 @@ const ProxyService = {
         ctx.meta.$responseHeaders = response.headers;
         return response.body;
       } catch (e) {
-        console.error(e);
+        if (e.code !== 404 && e.code !== 403) console.error(e);
         ctx.meta.$statusCode = !e.code ? 500 : e.code === 'ECONNREFUSED' ? 502 : e.code;
         ctx.meta.$statusMessage = e.message;
       }
@@ -126,12 +126,15 @@ const ProxyService = {
           statusText: response.statusText
         };
       } else {
-        this.logger.warn(
-          `Could not ${method || 'GET'} ${url} through proxy of ${actorUri} (Error ${response.status}: ${
-            response.statusText
-          })`
-        );
-        throw new MoleculerError(response.statusText, response.status);
+        // this.logger.warn(
+        //   `Could not ${method || 'GET'} ${url} through proxy of ${actorUri} (Error ${response.status}: ${
+        //     response.statusText
+        //   }) with body ${body}`
+        // );
+        return {
+          status: response.status,
+          statusText: response.statusText
+        };
       }
     }
   },
