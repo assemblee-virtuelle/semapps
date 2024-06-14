@@ -119,18 +119,18 @@ module.exports = {
 
       const dereferenced = await this.dereference(ctx, result, this.settings.dereferencePlan);
       // Apply framing, if jsonContext if present, since dereferenced properties might not yet be framed correctly.
-      const { jsonContext } = ctx.params;
+      const { resourceUri, jsonContext } = ctx.params;
       if (jsonContext) {
         return await ctx.call('jsonld.parser.frame', {
           input: result,
           frame: {
-            '@context': jsonContext
+            '@context': jsonContext,
+            '@id': resourceUri
           }
         });
+      } else {
+        return dereferenced;
       }
-
-      // console.log('dereference called and dereferenced to', dereferenced);
-      return dereferenced;
     }
   },
   hooks: {

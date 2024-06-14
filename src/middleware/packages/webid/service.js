@@ -1,7 +1,7 @@
 const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { foaf, schema } = require('@semapps/ontologies');
-const { ControlledContainerMixin, ControlledContainerDereferenceMixin } = require('@semapps/ldp');
+const { ControlledContainerMixin, DereferenceMixin } = require('@semapps/ldp');
 
 /** @type {import('moleculer').ServiceSchema} */
 const WebIdService = {
@@ -21,7 +21,7 @@ const WebIdService = {
     ]
   },
   dependencies: ['ldp.resource', 'ontologies'],
-  mixins: [ControlledContainerMixin, ControlledContainerDereferenceMixin],
+  mixins: [ControlledContainerMixin, DereferenceMixin],
   async created() {
     if (!this.settings.baseUrl) throw new Error('The baseUrl setting is required for webId service.');
   },
