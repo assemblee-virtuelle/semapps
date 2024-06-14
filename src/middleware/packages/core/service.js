@@ -35,7 +35,8 @@ const CoreService = {
       url: undefined,
       user: undefined,
       password: undefined,
-      mainDataset: undefined
+      mainDataset: undefined,
+      fusekiBase: undefined
     },
     // Optional
     containers: undefined,
@@ -173,11 +174,7 @@ const CoreService = {
 
       this.broker.createService(TripleStoreService, {
         settings: {
-          url: triplestore.url,
-          user: triplestore.user,
-          password: triplestore.password,
-          mainDataset: triplestore.mainDataset,
-          ...this.settings.triplestore
+          ...triplestore
         },
         async started() {
           if (triplestore.mainDataset) {

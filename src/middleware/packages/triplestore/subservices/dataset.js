@@ -1,17 +1,19 @@
 const fetch = require('node-fetch');
-const fsPromises = require('fs').promises;
+const fs = require('fs');
 const path = require('path');
 const urlJoin = require('url-join');
 const format = require('string-template');
 
 const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
+/** @type {import('moleculer').ServiceSchema} */
 const DatasetService = {
   name: 'triplestore.dataset',
   settings: {
     url: null,
     user: null,
-    password: null
+    password: null,
+    fusekiBase: null
   },
   started() {
     this.headers = {
@@ -44,7 +46,7 @@ const DatasetService = {
           throw new Error(`Error when creating dataset ${dataset}. Its name cannot end with Acl or Mirror`);
 
         const templateFilePath = path.join(__dirname, '../templates', secure ? 'secure-dataset.ttl' : 'dataset.ttl');
-        const template = await fsPromises.readFile(templateFilePath, 'utf8');
+        const template = await fs.promises.readFile(templateFilePath, 'utf8');
         const assembler = format(template, { dataset: dataset });
         response = await fetch(urlJoin(this.settings.url, '$/datasets'), {
           method: 'POST',
@@ -79,6 +81,15 @@ const DatasetService = {
       }
       return [];
     },
+    async isSecure(ctx) {
+      const { dataset } = ctx.params;
+      // Check if http://semapps.org/webacl graph exists
+      return await ctx.call('triplestore.query', {
+        query: `ASK WHERE { GRAPH <http://semapps.org/webacl> { ?s ?p ?o } }`,
+        dataset,
+        webId: 'system'
+      });
+    },
     async waitForCreation(ctx) {
       const { dataset } = ctx.params;
       let datasetExist;
@@ -103,6 +114,48 @@ const DatasetService = {
           task = await response.json();
         }
       } while (!task || !task.finished);
+    },
+    delete: {
+      params: {
+        dataset: { type: 'string' },
+        iKnowWhatImDoing: { type: 'boolean' }
+      },
+      async handler(ctx) {
+        const { dataset, iKnowWhatImDoing } = ctx.params;
+        if (!iKnowWhatImDoing) {
+          throw new Error('Please confirm that you know what you are doing by setting `iKnowWhatImDoing` to `true`.');
+        }
+        const isSecure = await this.actions.isSecure({ dataset });
+
+        if (isSecure && !this.settings.fusekiBase)
+          throw new Error(
+            'Please provide the fusekiBase dir setting to the triplestore service, to delete a secure dataset.'
+          );
+
+        const response = await fetch(urlJoin(this.settings.url, '$/datasets', dataset), {
+          method: 'DELETE',
+          headers: this.headers
+        });
+        if (!response.ok) {
+          throw new Error(`Failed to delete dataset ${dataset}: ${response.statusText}`);
+        }
+
+        // If this is a secure dataset, we need to delete stuff manually.
+        if (isSecure) {
+          const dbDir = path.join(this.settings.fusekiBase, 'databases', dataset);
+          const dbAclDir = path.join(this.settings.fusekiBase, 'databases', `${dataset}Acl`);
+          const dbMirrorDir = path.join(this.settings.fusekiBase, 'databases', `${dataset}Mirror`);
+          const confFile = path.join(this.settings.fusekiBase, 'configuration', `${dataset}.ttl`);
+
+          // Delete all, if present.
+          await Promise.all([
+            fs.promises.rm(dbDir, { recursive: true, force: true }),
+            fs.promises.rm(dbAclDir, { recursive: true, force: true }),
+            fs.promises.rm(dbMirrorDir, { recursive: true, force: true }),
+            fs.promises.rm(confFile, { force: true })
+          ]);
+        }
+      }
     }
   }
 };

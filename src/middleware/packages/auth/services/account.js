@@ -88,6 +88,12 @@ module.exports = {
       const accounts = await this._find(ctx, { query: { email } });
       return accounts.length > 0;
     },
+    /** Overwrite find method, to filter accounts with tombstone. */
+    async find(ctx) {
+      /** @type {object[]} */
+      const accounts = await this._find(ctx, ctx.params);
+      return accounts.filter(account => !account.deletedAt);
+    },
     async findByUsername(ctx) {
       const { username } = ctx.params;
       const accounts = await this._find(ctx, { query: { username } });
@@ -183,6 +189,34 @@ module.exports = {
       return await this._update(ctx, {
         '@id': account['@id'],
         ...params
+      });
+    },
+    async deleteByWebId(ctx) {
+      const { webId } = ctx.params;
+      const account = await ctx.call('auth.account.findByWebId', { webId });
+
+      if (account) {
+        await this._remove(ctx, { id: account['@id'] });
+        return true;
+      }
+
+      return false;
+    },
+    // Remove email and password from an account, set deletedAt timestamp.
+    async setTombstone(ctx) {
+      const { webId } = ctx.params;
+      const account = await ctx.call('auth.account.findByWebId', { webId });
+
+      return await this._update(ctx, {
+        // Set all values to undefined...
+        ...Object.fromEntries(Object.keys(account).map(key => [key, null])),
+        '@id': account['@id'],
+        // ...except for
+        webId: account.webId,
+        username: account.username,
+        podUri: account.podUri,
+        // And add a deletedAt date.
+        deletedAt: new Date().toISOString()
       });
     }
   },

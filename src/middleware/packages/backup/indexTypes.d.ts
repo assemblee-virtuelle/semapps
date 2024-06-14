@@ -2,7 +2,7 @@ import { Context, ServiceSchema, CallingOptions } from 'moleculer';
 import { CronJob } from 'cron';
 
 interface LocalServerSettings {
-  fusekiBackupsPath: string | null;
+  fusekiBase: string | null;
   otherDirsPaths: Record<string, string>;
 }
 
