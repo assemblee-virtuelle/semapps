@@ -66,7 +66,7 @@ const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
 const arrayOf = value => {
   // If the field is null-ish, we suppose there are no values.
-  if (!value) {
+  if (value === null || value === undefined) {
     return [];
   }
   // Return as is.

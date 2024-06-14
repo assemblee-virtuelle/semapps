@@ -27,7 +27,7 @@ const mergeObjectInArray = (obj, arr) => {
 
 const arrayOf = value => {
   // If the field is null-ish, we suppose there are no values.
-  if (!value) {
+  if (value === null || value === undefined) {
     return [];
   }
   // Return as is.
