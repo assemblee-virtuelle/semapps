@@ -21,6 +21,8 @@ const CollectionService = {
     accept: MIME_TYPES.JSON,
     activateTombstones: false,
     permissions: {},
+    // These default permissions can be overridden by providing
+    // a `permissions` param when calling activitypub.collection.post
     newResourcesPermissions: webId => {
       switch (webId) {
         case 'anon':
@@ -237,6 +239,7 @@ const CollectionService = {
           PREFIX semapps: <http://semapps.org/ns/core#>
           SELECT ?ordered ?summary ?dereferenceItems ?itemsPerPage ?sortPredicate ?sortOrder
           WHERE {
+            <${collectionUri}> a <https://www.w3.org/ns/activitystreams#Collection> . # This will return [] if the user has no read permission
             BIND (EXISTS{<${collectionUri}> a <https://www.w3.org/ns/activitystreams#OrderedCollection>} AS ?ordered)
             OPTIONAL { <${collectionUri}> as:summary ?summary . }
             OPTIONAL { <${collectionUri}> semapps:dereferenceItems ?dereferenceItems . }
@@ -249,8 +252,8 @@ const CollectionService = {
         webId
       });
 
-      if (!results.length === 0) {
-        throw new MoleculerError('Collection Not found', 404, 'NOT_FOUND');
+      if (results.length === 0) {
+        throw new MoleculerError('Not found', 404, 'NOT_FOUND');
       }
 
       const options = Object.fromEntries(
