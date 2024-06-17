@@ -336,7 +336,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
 
               const permissions =
                 typeof ctx.params.permissions === 'function'
-                  ? ctx.params.permissions(ctx.params.webId)
+                  ? ctx.params.permissions(ctx.params.webId || ctx.meta.webId || 'anon')
                   : ctx.params.permissions;
 
               await ctx.call('webacl.resource.addRights', {
