@@ -30,7 +30,8 @@ module.exports = {
       resourcesWithContainerPath
     } = this.settings;
 
-    await this.broker.createService(LdpContainerService, {
+    this.broker.createService({
+      mixins: [LdpContainerService],
       settings: {
         baseUrl,
         podProvider,
@@ -39,7 +40,8 @@ module.exports = {
       hooks: this.schema.hooksContainer || {}
     });
 
-    await this.broker.createService(LdpResourceService, {
+    this.broker.createService({
+      mixins: [LdpResourceService],
       settings: {
         baseUrl,
         podProvider,
@@ -50,7 +52,8 @@ module.exports = {
       hooks: this.schema.hooksResource || {}
     });
 
-    await this.broker.createService(LdpRemoteService, {
+    this.broker.createService({
+      mixins: [LdpRemoteService],
       settings: {
         baseUrl,
         podProvider,
@@ -58,7 +61,8 @@ module.exports = {
       }
     });
 
-    await this.broker.createService(LdpRegistryService, {
+    this.broker.createService({
+      mixins: [LdpRegistryService],
       settings: {
         baseUrl,
         containers,
@@ -67,18 +71,19 @@ module.exports = {
       }
     });
 
-    await this.broker.createService(LdpApiService, {
+    this.broker.createService({
+      mixins: [LdpApiService],
       settings: {
         baseUrl,
         podProvider
       }
     });
 
-    await this.broker.createService(LdpLinkHeaderService);
+    this.broker.createService({ mixins: [LdpLinkHeaderService] });
 
     // Only create this service if a cacher is defined
     if (this.broker.cacher) {
-      await this.broker.createService(LdpCacheService);
+      this.broker.createService({ mixins: [LdpCacheService] });
     }
   },
   async started() {

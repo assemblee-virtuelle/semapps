@@ -35,7 +35,8 @@ const initialize = async (port, mainDataset, accountsDataset) => {
   // Remove all actors keys
   await fse.emptyDir(path.resolve(__dirname, './actors'));
 
-  await broker.createService(CoreService, {
+  broker.createService({
+    mixins: [CoreService],
     settings: {
       baseUrl,
       baseDir: path.resolve(__dirname, '..'),
@@ -58,7 +59,8 @@ const initialize = async (port, mainDataset, accountsDataset) => {
     }
   });
 
-  await broker.createService(AuthLocalService, {
+  broker.createService({
+    mixins: [AuthLocalService],
     settings: {
       baseUrl,
       jwtPath: path.resolve(__dirname, './jwt'),

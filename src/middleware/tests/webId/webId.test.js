@@ -18,7 +18,8 @@ const broker = new ServiceBroker({
 beforeAll(async () => {
   await clearDataset(CONFIG.MAIN_DATASET);
 
-  await broker.createService(CoreService, {
+  broker.createService({
+    mixins: [CoreService],
     settings: {
       baseUrl: CONFIG.HOME_URL,
       baseDir: path.resolve(__dirname, '..'),

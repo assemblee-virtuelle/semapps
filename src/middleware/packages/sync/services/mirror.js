@@ -23,7 +23,8 @@ module.exports = {
     'ldp.registry'
   ],
   created() {
-    this.broker.createService(SynchronizerService, {
+    this.broker.createService({
+      mixins: [SynchronizerService],
       settings: {
         podProvider: false,
         mirrorGraph: true,

@@ -10,7 +10,8 @@ module.exports = {
   },
   dependencies: ['activitypub.relay'],
   created() {
-    this.broker.createService(SynchronizerService, {
+    this.broker.createService({
+      mixins: [SynchronizerService],
       settings: {
         podProvider: false,
         mirrorGraph: this.settings.mirrorGraph,

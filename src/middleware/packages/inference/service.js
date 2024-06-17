@@ -16,7 +16,8 @@ module.exports = {
   created() {
     const { baseUrl, acceptFromRemoteServers, offerToRemoteServers } = this.settings;
     if (acceptFromRemoteServers || offerToRemoteServers) {
-      this.broker.createService(RemoteService, {
+      this.broker.createService({
+        mixins: [RemoteService],
         settings: {
           baseUrl,
           acceptFromRemoteServers,

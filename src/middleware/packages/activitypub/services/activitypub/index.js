@@ -35,22 +35,25 @@ const ActivityPubService = {
     const { baseUri, podProvider, activitiesPath, selectActorData, queueServiceUrl, activateTombstones, like, follow } =
       this.settings;
 
-    this.broker.createService(ActivitiesWatcherService);
+    this.broker.createService({ mixins: [ActivitiesWatcherService] });
 
-    this.broker.createService(CollectionService, {
+    this.broker.createService({
+      mixins: [CollectionService],
       settings: {
         podProvider
       }
     });
 
-    this.broker.createService(CollectionsRegistryService, {
+    this.broker.createService({
+      mixins: [CollectionsRegistryService],
       settings: {
         baseUri,
         podProvider
       }
     });
 
-    this.broker.createService(ActorService, {
+    this.broker.createService({
+      mixins: [ActorService],
       settings: {
         baseUri,
         selectActorData,
@@ -58,14 +61,16 @@ const ActivityPubService = {
       }
     });
 
-    this.broker.createService(ApiService, {
+    this.broker.createService({
+      mixins: [ApiService],
       settings: {
         baseUri,
         podProvider
       }
     });
 
-    this.broker.createService(ObjectService, {
+    this.broker.createService({
+      mixins: [ObjectService],
       settings: {
         baseUri,
         podProvider,
@@ -73,39 +78,44 @@ const ActivityPubService = {
       }
     });
 
-    this.broker.createService(ActivityService, {
+    this.broker.createService({
+      mixins: [ActivityService],
       settings: {
         baseUri,
         path: activitiesPath
       }
     });
 
-    this.broker.createService(FollowService, {
+    this.broker.createService({
+      mixins: [FollowService],
       settings: {
         baseUri
       }
     });
 
-    this.broker.createService(InboxService, {
+    this.broker.createService({
+      mixins: [InboxService],
       settings: {
         podProvider
       }
     });
 
-    this.broker.createService(LikeService, {
+    this.broker.createService({
+      mixins: [LikeService],
       settings: {
         baseUri
       }
     });
 
-    this.broker.createService(ReplyService, {
+    this.broker.createService({
+      mixins: [ReplyService],
       settings: {
         baseUri
       }
     });
 
-    this.broker.createService(OutboxService, {
-      mixins: queueServiceUrl ? [QueueService(queueServiceUrl)] : undefined,
+    this.broker.createService({
+      mixins: queueServiceUrl ? [OutboxService, QueueService(queueServiceUrl)] : [OutboxService],
       settings: {
         baseUri,
         podProvider

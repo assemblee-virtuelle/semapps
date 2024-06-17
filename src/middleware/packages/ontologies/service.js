@@ -19,7 +19,8 @@ module.exports = {
   async created() {
     const { persistRegistry, settingsDataset } = this.settings;
     if (persistRegistry) {
-      await this.broker.createService(OntologiesRegistryService, {
+      this.broker.createService({
+        mixins: [OntologiesRegistryService],
         adapter: new TripleStoreAdapter({ type: 'Ontology', dataset: settingsDataset })
       });
     }

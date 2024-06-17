@@ -37,17 +37,20 @@ const KeysService = {
   dependencies: ['ontologies', 'keys.container', 'keys.public-container', 'signature.keypair', 'keys.migration'],
   async created() {
     // Start keys-container and public-keys-container services.
-    this.broker.createService(KeyContainerService, {
+    this.broker.createService({
+      mixins: [KeyContainerService],
       settings: {
         podProvider: this.settings.podProvider
       }
     });
-    this.broker.createService(PublicKeyContainerService, {
+    this.broker.createService({
+      mixins: [PublicKeyContainerService],
       settings: {
         podProvider: this.settings.podProvider
       }
     });
-    this.broker.createService(MigrationService, {
+    this.broker.createService({
+      mixins: [MigrationService],
       settings: {
         podProvider: this.settings.podProvider,
         actorsKeyPairsDir: this.settings.actorsKeyPairsDir
@@ -55,7 +58,8 @@ const KeysService = {
     });
 
     // Legacy service.
-    this.broker.createService(KeyPairService, {
+    this.broker.createService({
+      mixins: [KeyPairService],
       settings: {
         actorsKeyPairsDir: this.settings.actorsKeyPairsDir
       }

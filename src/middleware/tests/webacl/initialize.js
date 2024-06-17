@@ -1,5 +1,4 @@
 const path = require('path');
-const urlJoin = require('url-join');
 const { ServiceBroker } = require('moleculer');
 const { CoreService } = require('@semapps/core');
 const { pair } = require('@semapps/ontologies');
@@ -18,7 +17,8 @@ const initialize = async () => {
     }
   });
 
-  await broker.createService(CoreService, {
+  broker.createService({
+    mixins: [CoreService],
     settings: {
       baseUrl: CONFIG.HOME_URL,
       baseDir: path.resolve(__dirname, '..'),
@@ -40,7 +40,8 @@ const initialize = async () => {
     }
   });
 
-  await broker.createService(AuthLocalService, {
+  broker.createService({
+    mixins: [AuthLocalService],
     settings: {
       baseUrl: CONFIG.HOME_URL,
       jwtPath: path.resolve(__dirname, '../jwt'),

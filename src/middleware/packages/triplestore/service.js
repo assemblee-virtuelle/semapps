@@ -29,7 +29,8 @@ const TripleStoreService = {
     this.subservices = {};
 
     if (dataset !== false) {
-      this.subservices.dataset = this.broker.createService(DatasetService, {
+      this.subservices.dataset = this.broker.createService({
+        mixins: [DatasetService],
         settings: {
           url,
           user,

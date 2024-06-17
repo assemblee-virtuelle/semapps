@@ -23,17 +23,19 @@ const AuthMixin = {
   async created() {
     const { jwtPath, reservedUsernames, accountsDataset, podProvider } = this.settings;
 
-    this.broker.createService(AuthJWTService, {
+    this.broker.createService({
+      mixins: [AuthJWTService],
       settings: { jwtPath }
     });
 
-    this.broker.createService(AuthAccountService, {
+    this.broker.createService({
+      mixins: [AuthAccountService],
       settings: { reservedUsernames },
       adapter: new TripleStoreAdapter({ type: 'AuthAccount', dataset: accountsDataset })
     });
 
     if (podProvider) {
-      this.broker.createService(CapabilitiesService, { settings: { path: this.settings.capabilitiesPath } });
+      this.broker.createService({ mixins: [CapabilitiesService], settings: { path: this.settings.capabilitiesPath } });
     }
   },
   async started() {

@@ -11,13 +11,14 @@ const ExpoPushService = {
   },
   dependencies: ['api'],
   created() {
-    this.broker.createService(ExpoPushDeviceService, {
+    this.broker.createService({
+      mixins: [ExpoPushDeviceService],
       settings: {
         newDeviceNotification: this.settings.newDeviceNotification
       }
     });
 
-    this.broker.createService(ExpoPushNotificationService);
+    this.broker.createService({ mixins: [ExpoPushNotificationService] });
   },
   async started() {
     await this.broker.call('api.addRoute', {

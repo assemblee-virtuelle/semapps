@@ -35,7 +35,8 @@ const AuthLocalService = {
     this.passportId = 'local';
 
     if (mail !== false) {
-      await this.broker.createService(AuthMailService, {
+      this.broker.createService({
+        mixins: [AuthMailService],
         settings: {
           ...mail
         }

@@ -57,7 +57,8 @@ const CoreService = {
     const { baseUrl, baseDir, triplestore, containers, ontologies } = this.settings;
 
     if (this.settings.activitypub !== false) {
-      this.broker.createService(ActivityPubService, {
+      this.broker.createService({
+        mixins: [ActivityPubService],
         // Type support for settings could be given, once moleculer type definitions improve...
         settings: {
           baseUri: baseUrl,
@@ -67,7 +68,8 @@ const CoreService = {
     }
 
     if (this.settings.api !== false) {
-      this.broker.createService(ApiGatewayService, {
+      this.broker.createService({
+        mixins: [ApiGatewayService],
         settings: {
           cors: {
             origin: '*',
@@ -109,7 +111,8 @@ const CoreService = {
     }
 
     if (this.settings.jsonld !== false) {
-      this.broker.createService(JsonLdService, {
+      this.broker.createService({
+        mixins: [JsonLdService],
         settings: {
           baseUri: baseUrl,
           ...this.settings.jsonld
@@ -117,15 +120,16 @@ const CoreService = {
       });
     }
 
-    this.broker.createService(OntologiesService, {
+    this.broker.createService({
+      mixins: [OntologiesService],
       settings: {
         ontologies
       }
     });
 
     if (this.settings.ldp !== false) {
-      this.broker.createService(LdpService, {
-        mixins: [DocumentTaggerMixin],
+      this.broker.createService({
+        mixins: [DocumentTaggerMixin, LdpService],
         settings: {
           baseUrl,
           containers: containers || (this.settings.mirror !== false ? [botsContainer] : []),
@@ -135,7 +139,8 @@ const CoreService = {
     }
 
     if (this.settings.signature !== false) {
-      this.broker.createService(SignatureService, {
+      this.broker.createService({
+        mixins: [SignatureService],
         settings: {
           ...this.settings.signature
         }
@@ -143,7 +148,8 @@ const CoreService = {
     }
 
     if (this.settings.webId !== false) {
-      this.broker.createService(WebIdService, {
+      this.broker.createService({
+        mixins: [WebIdService],
         settings: {
           baseUrl,
           ...this.settings.webid
@@ -151,7 +157,8 @@ const CoreService = {
       });
     }
 
-    this.broker.createService(KeysService, {
+    this.broker.createService({
+      mixins: [KeysService],
       settings: {
         actorsKeyPairsDir: path.resolve(baseDir, './actors'),
         ...this.settings.keys
@@ -159,7 +166,8 @@ const CoreService = {
     });
 
     if (this.settings.sparqlEndpoint !== false) {
-      this.broker.createService(SparqlEndpointService, {
+      this.broker.createService({
+        mixins: [SparqlEndpointService],
         settings: {
           defaultAccept: 'application/ld+json',
           ...this.settings.sparqlEndpoint
@@ -172,7 +180,8 @@ const CoreService = {
       // We define a constant here, because this.settings.webacl is not available inside the started method
       const secure = this.settings.webacl !== false;
 
-      this.broker.createService(TripleStoreService, {
+      this.broker.createService({
+        mixins: [TripleStoreService],
         settings: {
           ...triplestore
         },
@@ -188,7 +197,8 @@ const CoreService = {
     }
 
     if (this.settings.void !== false) {
-      this.broker.createService(VoidService, {
+      this.broker.createService({
+        mixins: [VoidService],
         settings: {
           baseUrl,
           ...this.settings.void
@@ -197,7 +207,8 @@ const CoreService = {
     }
 
     if (this.settings.webacl !== false) {
-      this.broker.createService(WebAclService, {
+      this.broker.createService({
+        mixins: [WebAclService],
         settings: {
           baseUrl,
           ...this.settings.webacl
@@ -206,7 +217,8 @@ const CoreService = {
     }
 
     if (this.settings.webfinger !== false) {
-      this.broker.createService(WebfingerService, {
+      this.broker.createService({
+        mixins: [WebfingerService],
         settings: {
           baseUrl,
           ...this.settings.webfinger

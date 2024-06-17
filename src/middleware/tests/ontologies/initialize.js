@@ -20,7 +20,8 @@ module.exports = async (cacher, persistRegistry) => {
     cacher // If true, will use Moleculer MemoryCacher
   });
 
-  await broker.createService(JsonLdService, {
+  broker.createService({
+    mixins: [JsonLdService],
     settings: {
       baseUri: CONFIG.HOME_URL,
       // Fake contexts to avoid validation errors
@@ -37,7 +38,8 @@ module.exports = async (cacher, persistRegistry) => {
     }
   });
 
-  await broker.createService(TripleStoreService, {
+  broker.createService({
+    mixins: [TripleStoreService],
     settings: {
       url: CONFIG.SPARQL_ENDPOINT,
       user: CONFIG.JENA_USER,
@@ -46,9 +48,10 @@ module.exports = async (cacher, persistRegistry) => {
     }
   });
 
-  await broker.createService(ApiGatewayService);
+  broker.createService({ mixins: [ApiGatewayService] });
 
-  await broker.createService(OntologiesService, {
+  broker.createService({
+    mixins: [OntologiesService],
     settings: {
       persistRegistry,
       settingsDataset: CONFIG.SETTINGS_DATASET

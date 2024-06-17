@@ -50,7 +50,8 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
     }
   });
 
-  await broker.createService(CoreService, {
+  broker.createService({
+    mixins: [CoreService],
     settings: {
       baseUrl,
       baseDir: path.resolve(__dirname, '..'),
@@ -73,17 +74,19 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
     }
   });
 
-  await broker.createService(RelayService);
+  broker.createService({ mixins: [RelayService] });
 
   if (serverToMirror) {
-    await broker.createService(MirrorService, {
+    broker.createService({
+      mixins: [MirrorService],
       settings: {
         servers: [serverToMirror]
       }
     });
   }
 
-  await broker.createService(AuthLocalService, {
+  broker.createService({
+    mixins: [AuthLocalService],
     settings: {
       baseUrl,
       jwtPath: path.resolve(__dirname, './jwt'),
@@ -91,7 +94,8 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
     }
   });
 
-  await broker.createService(InferenceService, {
+  broker.createService({
+    mixins: [InferenceService],
     settings: {
       baseUrl,
       acceptFromRemoteServers: true,

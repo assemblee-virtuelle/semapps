@@ -16,7 +16,8 @@ module.exports = {
   async created() {
     const { baseUrl, graphName, podProvider, superAdmins } = this.settings;
 
-    await this.broker.createService(WebAclResourceService, {
+    this.broker.createService({
+      mixins: [WebAclResourceService],
       settings: {
         baseUrl,
         graphName,
@@ -24,7 +25,8 @@ module.exports = {
       }
     });
 
-    await this.broker.createService(WebAclGroupService, {
+    this.broker.createService({
+      mixins: [WebAclGroupService],
       settings: {
         baseUrl,
         graphName,
@@ -35,7 +37,7 @@ module.exports = {
 
     // Only create this service if a cacher is defined
     if (this.broker.cacher) {
-      await this.broker.createService(WebAclCacheService);
+      this.broker.createService({ mixins: [WebAclCacheService] });
     }
   },
   async started() {

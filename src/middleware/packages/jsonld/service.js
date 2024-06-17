@@ -19,22 +19,27 @@ module.exports = {
       throw new Error('The baseUri and localContextPath settings are required');
     }
 
-    await this.broker.createService(JsonLdDocumentLoaderService, {
+    this.broker.createService({
+      mixins: [JsonLdDocumentLoaderService],
       settings: {
         cachedContextFiles,
         localContextUri: urlJoin(baseUri, localContextPath)
       }
     });
 
-    await this.broker.createService(JsonLdContextService, {
+    this.broker.createService({
+      mixins: [JsonLdContextService],
       settings: {
         localContextUri: urlJoin(baseUri, localContextPath)
       }
     });
 
-    await this.broker.createService(JsonLdParserService);
+    this.broker.createService({
+      mixins: [JsonLdParserService]
+    });
 
-    await this.broker.createService(JsonLdApiService, {
+    this.broker.createService({
+      mixins: [JsonLdApiService],
       settings: {
         localContextPath
       }

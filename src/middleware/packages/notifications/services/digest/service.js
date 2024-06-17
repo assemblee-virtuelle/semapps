@@ -22,7 +22,8 @@ const DigestNotificationsService = {
   },
   dependencies: ['digest.subscription'],
   created() {
-    this.broker.createService(DigestSubscriptionService, {
+    this.broker.createService({
+      mixins: [DigestSubscriptionService],
       adapter: new TripleStoreAdapter({ type: 'DigestSubscription', dataset: this.settings.subscriptionsDataset })
     });
   },
