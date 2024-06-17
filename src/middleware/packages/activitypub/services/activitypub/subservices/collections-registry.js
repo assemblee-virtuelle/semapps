@@ -32,8 +32,17 @@ const CollectionsRegistryService = {
     },
     async createAndAttachCollection(ctx) {
       const { objectUri, collection } = ctx.params;
-      const { path, attachPredicate, ordered, summary, dereferenceItems, itemsPerPage, sortPredicate, sortOrder } =
-        collection || {};
+      const {
+        path,
+        attachPredicate,
+        ordered,
+        summary,
+        dereferenceItems,
+        itemsPerPage,
+        sortPredicate,
+        sortOrder,
+        permissions
+      } = collection || {};
       const collectionUri = urlJoin(objectUri, path);
 
       const exists = await ctx.call('activitypub.collection.exist', { resourceUri: collectionUri });
@@ -54,7 +63,8 @@ const CollectionsRegistryService = {
               'semapps:sortOrder': sortOrder
             },
             contentType: MIME_TYPES.JSON,
-            webId: this.settings.podProvider ? getWebIdFromUri(objectUri) : 'system'
+            webId: this.settings.podProvider ? getWebIdFromUri(objectUri) : 'system',
+            permissions // Handled by the WebAclMiddleware, if present
           },
           {
             meta: {

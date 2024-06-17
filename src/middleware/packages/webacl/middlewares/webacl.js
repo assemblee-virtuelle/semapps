@@ -9,6 +9,7 @@ const modifyActions = [
   'ldp.container.create',
   'activitypub.activity.create',
   'activitypub.activity.attach',
+  'activitypub.collection.post',
   'activitypub.object.createTombstone',
   'webid.createWebId',
   'ldp.remote.store',
@@ -323,6 +324,26 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
                   webId: 'system'
                 });
               }
+            }
+            break;
+          }
+
+          case 'activitypub.collection.post': {
+            // If a `permissions` param is passed when creating the collection, delete the permissions added before creation
+            // (through the `newResourcesPermissions` of the collection container) and add these permissions instead
+            if (ctx.params.permissions) {
+              await ctx.call('webacl.resource.deleteAllRights', { resourceUri: actionReturnValue });
+
+              const permissions =
+                typeof ctx.params.permissions === 'function'
+                  ? ctx.params.permissions(ctx.params.webId)
+                  : ctx.params.permissions;
+
+              await ctx.call('webacl.resource.addRights', {
+                resourceUri: actionReturnValue,
+                additionalRights: permissions,
+                webId: 'system'
+              });
             }
             break;
           }

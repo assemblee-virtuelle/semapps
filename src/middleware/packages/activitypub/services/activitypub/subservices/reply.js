@@ -54,7 +54,8 @@ const ReplyService = {
             ?collection a as:Collection .
             ?object as:replies ?collection .
           }
-        `
+        `,
+        webId: 'system'
       });
     },
     async updateCollectionsOptions(ctx) {
