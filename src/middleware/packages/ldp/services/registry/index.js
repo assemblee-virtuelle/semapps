@@ -31,7 +31,7 @@ module.exports = {
     for (let container of this.settings.containers) {
       // Ensure backward compatibility
       if (typeof container === 'string') container = { path: container };
-      // We await each container registration so they happen in order (root container first)
+      // We await each container registration so they happen in order (root container first)git
       await this.actions.register(container);
     }
   },
