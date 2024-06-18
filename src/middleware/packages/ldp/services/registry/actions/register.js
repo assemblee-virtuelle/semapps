@@ -1,6 +1,7 @@
 const urlJoin = require('url-join');
 const pathJoin = require('path').join;
 const { pathToRegexp } = require('path-to-regexp');
+const defaultOptions = require('../defaultOptions');
 
 module.exports = {
   visibility: 'public',
@@ -10,13 +11,12 @@ module.exports = {
     name: { type: 'string', optional: true },
     accept: { type: 'string', optional: true },
     acceptedTypes: { type: 'multi', rules: [{ type: 'array' }, { type: 'string' }], optional: true },
-    permissions: { type: 'multi', rules: [{ type: 'object' }, { type: 'function' }], optional: true },
     excludeFromMirror: { type: 'boolean', optional: true },
     activateTombstones: { type: 'boolean', default: true },
+    permissions: { type: 'multi', rules: [{ type: 'object' }, { type: 'function' }], optional: true },
     newResourcesPermissions: { type: 'multi', rules: [{ type: 'object' }, { type: 'function' }], optional: true },
     controlledActions: { type: 'object', optional: true },
-    readOnly: { type: 'boolean', optional: true },
-    dataset: { type: 'string', optional: true }
+    readOnly: { type: 'boolean', optional: true }
   },
   async handler(ctx) {
     let { path, acceptedTypes, fullPath, name, podsContainer, dataset, ...options } = ctx.params;
@@ -53,16 +53,22 @@ module.exports = {
         if (!account) throw new Error(`No pod found with username ${dataset}`);
         if (!account.podUri) throw new Error(`The podUri is not defined for account ${account.username}`);
         ctx.meta.dataset = account.username;
-        const containerUri = urlJoin(account.podUri, path);
-        await this.createAndAttachContainer(ctx, containerUri, path, options);
+        await ctx.call('ldp.container.createAndAttach', {
+          containerUri: urlJoin(account.podUri, path),
+          permissions: options.permissions, // Used by the WebAclMiddleware
+          webId: account.webId
+        });
       } else {
         // 1. Ensure the container has been created for each user
         const accounts = await ctx.call('auth.account.find');
         for (const account of accounts) {
           if (!account.podUri) throw new Error(`The podUri is not defined for account ${account.username}`);
           ctx.meta.dataset = account.username;
-          const containerUri = urlJoin(account.podUri, path);
-          await this.createAndAttachContainer(ctx, containerUri, path, options);
+          await ctx.call('ldp.container.createAndAttach', {
+            containerUri: urlJoin(account.podUri, path),
+            permissions: options.permissions, // Used by the WebAclMiddleware
+            webId: account.webId
+          });
         }
       }
 
@@ -70,22 +76,32 @@ module.exports = {
       fullPath = pathJoin('/:username([^/.][^/]+)', 'data', path);
     } else {
       // Ensure the container has been created
-      const containerUri = urlJoin(this.settings.baseUrl, path);
-      await this.createAndAttachContainer(ctx, containerUri, path, options);
+      await ctx.call('ldp.container.createAndAttach', {
+        containerUri: urlJoin(this.settings.baseUrl, path),
+        permissions: options.permissions || defaultOptions.permissions // Used by the WebAclMiddleware
+      });
     }
 
     const pathRegex = pathToRegexp(fullPath);
 
     // Save the options
-    if (!this.registeredContainers[dataset || '*']) this.registeredContainers[dataset || '*'] = {};
-    this.registeredContainers[dataset || '*'][name] = { path, fullPath, pathRegex, name, acceptedTypes, ...options };
+    this.registeredContainers[name] = {
+      path,
+      fullPath,
+      pathRegex,
+      name,
+      ...defaultOptions,
+      podsContainer,
+      acceptedTypes,
+      ...options
+    };
 
     ctx.emit(
       'ldp.registry.registered',
-      { container: this.registeredContainers[dataset || '*'][name], dataset },
+      { container: this.registeredContainers[name] },
       { meta: { webId: null, dataset: null } }
     );
 
-    return this.registeredContainers[dataset || '*'][name];
+    return this.registeredContainers[name];
   }
 };

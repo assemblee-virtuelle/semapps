@@ -42,6 +42,53 @@ describe('LDP container tests', () => {
     });
   });
 
+  test('Create a sub-container and attach it to the root container', async () => {
+    await broker.call('ldp.container.createAndAttach', {
+      containerUri: `${CONFIG.HOME_URL}parent/child`,
+      webId: 'system'
+    });
+
+    // Intermediate containers have no permissions
+    expect(broker.call('ldp.container.exist', { containerUri: `${CONFIG.HOME_URL}parent` })).resolves.toBeFalsy();
+    expect(
+      broker.call('ldp.container.exist', { containerUri: `${CONFIG.HOME_URL}parent`, webId: 'system' })
+    ).resolves.toBeTruthy();
+
+    expect(
+      broker.call('ldp.container.exist', { containerUri: `${CONFIG.HOME_URL}parent/child` })
+    ).resolves.toBeTruthy();
+
+    await expect(
+      broker.call('ldp.container.get', {
+        containerUri: `${CONFIG.HOME_URL}`,
+        accept: MIME_TYPES.JSON,
+        webId: 'system'
+      })
+    ).resolves.toMatchObject({
+      'ldp:contains': expect.arrayContaining([
+        {
+          '@id': `${CONFIG.HOME_URL}parent`,
+          '@type': ['ldp:Container', 'ldp:BasicContainer', 'ldp:Resource']
+        }
+      ])
+    });
+
+    await expect(
+      broker.call('ldp.container.get', {
+        containerUri: `${CONFIG.HOME_URL}parent`,
+        accept: MIME_TYPES.JSON,
+        webId: 'system'
+      })
+    ).resolves.toMatchObject({
+      'ldp:contains': expect.arrayContaining([
+        {
+          '@id': `${CONFIG.HOME_URL}parent/child`,
+          '@type': ['ldp:Container', 'ldp:BasicContainer', 'ldp:Resource']
+        }
+      ])
+    });
+  });
+
   test('Post a resource in a container', async () => {
     resourceUri = await broker.call('ldp.container.post', {
       containerUri: `${CONFIG.HOME_URL}resources`,

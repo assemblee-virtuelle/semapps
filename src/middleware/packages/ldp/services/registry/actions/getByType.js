@@ -1,19 +1,20 @@
+/**
+ * Find the container options for a resource type
+ * This only returns containers registered with the LDP registry, not the ones registered with the TypeIndex.
+ */
 module.exports = {
   visibility: 'public',
   params: {
-    type: { type: 'multi', rules: [{ type: 'string' }, { type: 'array' }] },
-    dataset: { type: 'string', optional: true }
+    type: { type: 'multi', rules: [{ type: 'string' }, { type: 'array' }] }
   },
   async handler(ctx) {
-    const { type, dataset } = ctx.params;
+    const { type } = ctx.params;
     const types = await ctx.call('jsonld.parser.expandTypes', { types: type });
-    const registeredContainers = await this.actions.list({ dataset }, { parentCtx: ctx });
+    const registeredContainers = await this.actions.list({}, { parentCtx: ctx });
 
     return Object.values(registeredContainers).find(container =>
-      types.some(type =>
-        Array.isArray(container.acceptedTypes)
-          ? container.acceptedTypes.includes(type)
-          : container.acceptedTypes === type
+      types.some(t =>
+        Array.isArray(container.acceptedTypes) ? container.acceptedTypes.includes(t) : container.acceptedTypes === t
       )
     );
   }

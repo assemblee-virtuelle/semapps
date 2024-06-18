@@ -15,6 +15,7 @@ module.exports = {
   DocumentTaggerMixin: require('./mixins/document-tagger'),
   DisassemblyMixin: require('./mixins/disassembly'),
   // Other
+  defaultContainerOptions: require('./services/registry/defaultOptions'),
   LdpAdapter: require('./adapter'),
   ...utils
 };

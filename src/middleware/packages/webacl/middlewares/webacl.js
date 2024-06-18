@@ -1,8 +1,7 @@
 const { throw403 } = require('@semapps/middlewares');
-const { arrayOf, hasType } = require('@semapps/ldp');
+const { arrayOf, hasType, defaultContainerOptions } = require('@semapps/ldp');
 const { ACTIVITY_TYPES } = require('@semapps/activitypub');
 const { isRemoteUri, getSlugFromUri } = require('../utils');
-const { defaultContainerRights } = require('../defaultRights');
 
 const modifyActions = [
   'ldp.resource.create',
@@ -161,17 +160,18 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
           }
 
           case 'ldp.container.create': {
-            // On start, container options are passed as parameters because the registry is not up yet
-            if (!ctx.params.options) {
-              ctx.params.options = await ctx.call('ldp.registry.getByUri', {
-                containerUri: ctx.params.containerUri
-              });
+            // On start, container permissions are passed as parameters because the registry is not up yet
+            let permissions;
+            if (ctx.params.permissions) {
+              permissions = ctx.params.permissions || defaultContainerOptions.permissions;
+            } else {
+              const options = await ctx.call('ldp.registry.getByUri', { containerUri: ctx.params.containerUri });
+              permissions = options?.permissions || defaultContainerOptions.permissions;
             }
-            const rights = ctx.params.options?.permissions || defaultContainerRights;
 
             await ctx.call('webacl.resource.addRights', {
               resourceUri: ctx.params.containerUri,
-              newRights: typeof rights === 'function' ? rights(webId, ctx) : rights,
+              newRights: typeof permissions === 'function' ? permissions(webId, ctx) : permissions,
               webId: 'system'
             });
             break;
