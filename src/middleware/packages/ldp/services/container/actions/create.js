@@ -6,6 +6,7 @@ module.exports = {
     containerUri: { type: 'string' },
     title: { type: 'string', optional: true },
     description: { type: 'string', optional: true },
+    permissions: { type: 'multi', rules: [{ type: 'object' }, { type: 'function' }], optional: true }, // Used by the WebAclMiddleware
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {

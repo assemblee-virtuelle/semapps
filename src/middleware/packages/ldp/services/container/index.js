@@ -2,6 +2,7 @@ const urlJoin = require('url-join');
 const attachAction = require('./actions/attach');
 const clearAction = require('./actions/clear');
 const createAction = require('./actions/create');
+const createAndAttachAction = require('./actions/createAndAttach');
 const deleteAction = require('./actions/delete');
 const detachAction = require('./actions/detach');
 const existAction = require('./actions/exist');
@@ -27,6 +28,7 @@ module.exports = {
     attach: attachAction,
     clear: clearAction,
     create: createAction,
+    createAndAttach: createAndAttachAction,
     delete: deleteAction,
     detach: detachAction,
     exist: existAction,
