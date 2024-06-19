@@ -444,6 +444,24 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                 if (e.message === "auth.account.invalid_password") throw new Error("auth.notification.invalid_password");
                 throw new Error("auth.notification.update_settings_error");
             }
+        },
+        /**
+     * Inform the OIDC server that the login interaction has been completed.
+     * This is necessary, otherwise the OIDC server will keep on redirecting to the login form.
+     * We call the endpoint with the token as a proof of login, otherwise it could be abused.
+     */ loginCompleted: async (interactionId, webId)=>{
+            const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
+            // Note: the
+            await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, ".oidc/login-completed"), {
+                method: "POST",
+                body: JSON.stringify({
+                    interactionId: interactionId,
+                    webId: webId
+                }),
+                headers: new Headers({
+                    "Content-Type": "application/json"
+                })
+            });
         }
     };
 };
@@ -2200,26 +2218,35 @@ const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
     const classes = $4c56dbfbda0fa20c$var$useStyles();
     const navigate = (0, $4Uj5b$reactrouterdom.useNavigate)();
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
+    const authProvider = (0, $4Uj5b$reactadmin.useAuthProvider)();
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
     const isSignup = hasSignup && searchParams.has("signup");
     const isResetPassword = searchParams.has("reset_password");
     const isNewPassword = searchParams.has("new_password");
     const isLogin = !isSignup && !isResetPassword && !isNewPassword;
     const redirectTo = searchParams.get("redirect");
+    const interactionId = searchParams.get("interaction_id");
     const { data: identity, isLoading: isLoading } = (0, $4Uj5b$reactadmin.useGetIdentity)();
     (0, $4Uj5b$react.useEffect)(()=>{
-        if (!isLoading && identity?.id) {
-            if (postLoginRedirect) navigate(`${postLoginRedirect}?${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}`);
-            else if (redirectTo && redirectTo.startsWith("http")) window.location.href = redirectTo;
-            else navigate(redirectTo || "/");
-        }
+        (async ()=>{
+            if (!isLoading && identity?.id) {
+                if (interactionId) // If interactionId is set, it means we are connecting from another application.
+                // So first call a custom endpoint to tell the OIDC server the login is completed
+                await authProvider.loginCompleted(interactionId, identity?.id);
+                if (postLoginRedirect) navigate(`${postLoginRedirect}?${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}`);
+                else if (redirectTo && redirectTo.startsWith("http")) window.location.href = redirectTo;
+                else navigate(redirectTo || "/");
+            }
+        })();
     }, [
         identity,
         isLoading,
         navigate,
         searchParams,
         redirectTo,
-        postLoginRedirect
+        postLoginRedirect,
+        authProvider,
+        interactionId
     ]);
     const [title, text] = (0, $4Uj5b$react.useMemo)(()=>{
         if (isSignup) return [

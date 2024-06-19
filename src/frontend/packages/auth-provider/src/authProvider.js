@@ -416,6 +416,23 @@ const authProvider = ({
 
         throw new Error('auth.notification.update_settings_error');
       }
+    },
+    /**
+     * Inform the OIDC server that the login interaction has been completed.
+     * This is necessary, otherwise the OIDC server will keep on redirecting to the login form.
+     * We call the endpoint with the token as a proof of login, otherwise it could be abused.
+     */
+    loginCompleted: async (interactionId, webId) => {
+      const authServerUrl = await getAuthServerUrl(dataProvider);
+      // Note: the
+      await dataProvider.fetch(urlJoin(authServerUrl, '.oidc/login-completed'), {
+        method: 'POST',
+        body: JSON.stringify({
+          interactionId,
+          webId
+        }),
+        headers: new Headers({ 'Content-Type': 'application/json' })
+      });
     }
   };
 };

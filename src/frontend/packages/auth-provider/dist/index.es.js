@@ -405,6 +405,24 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
                 if (e.message === "auth.account.invalid_password") throw new Error("auth.notification.invalid_password");
                 throw new Error("auth.notification.update_settings_error");
             }
+        },
+        /**
+     * Inform the OIDC server that the login interaction has been completed.
+     * This is necessary, otherwise the OIDC server will keep on redirecting to the login form.
+     * We call the endpoint with the token as a proof of login, otherwise it could be abused.
+     */ loginCompleted: async (interactionId, webId)=>{
+            const authServerUrl = await (0, $47a3fad69bcb0083$export$274217e117cdbc7b)(dataProvider);
+            // Note: the
+            await dataProvider.fetch((0, $1obPJ$urljoin)(authServerUrl, ".oidc/login-completed"), {
+                method: "POST",
+                body: JSON.stringify({
+                    interactionId: interactionId,
+                    webId: webId
+                }),
+                headers: new Headers({
+                    "Content-Type": "application/json"
+                })
+            });
         }
     };
 };
@@ -2161,26 +2179,35 @@ const $23fea069f5d2d834$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
     const classes = $23fea069f5d2d834$var$useStyles();
     const navigate = (0, $1obPJ$useNavigate)();
     const translate = (0, $1obPJ$useTranslate)();
+    const authProvider = (0, $1obPJ$useAuthProvider)();
     const [searchParams] = (0, $1obPJ$useSearchParams)();
     const isSignup = hasSignup && searchParams.has("signup");
     const isResetPassword = searchParams.has("reset_password");
     const isNewPassword = searchParams.has("new_password");
     const isLogin = !isSignup && !isResetPassword && !isNewPassword;
     const redirectTo = searchParams.get("redirect");
+    const interactionId = searchParams.get("interaction_id");
     const { data: identity, isLoading: isLoading } = (0, $1obPJ$useGetIdentity)();
     (0, $1obPJ$useEffect)(()=>{
-        if (!isLoading && identity?.id) {
-            if (postLoginRedirect) navigate(`${postLoginRedirect}?${(0, $2dfd781b793256e6$export$2e2bcd8739ae039)(searchParams)}`);
-            else if (redirectTo && redirectTo.startsWith("http")) window.location.href = redirectTo;
-            else navigate(redirectTo || "/");
-        }
+        (async ()=>{
+            if (!isLoading && identity?.id) {
+                if (interactionId) // If interactionId is set, it means we are connecting from another application.
+                // So first call a custom endpoint to tell the OIDC server the login is completed
+                await authProvider.loginCompleted(interactionId, identity?.id);
+                if (postLoginRedirect) navigate(`${postLoginRedirect}?${(0, $2dfd781b793256e6$export$2e2bcd8739ae039)(searchParams)}`);
+                else if (redirectTo && redirectTo.startsWith("http")) window.location.href = redirectTo;
+                else navigate(redirectTo || "/");
+            }
+        })();
     }, [
         identity,
         isLoading,
         navigate,
         searchParams,
         redirectTo,
-        postLoginRedirect
+        postLoginRedirect,
+        authProvider,
+        interactionId
     ]);
     const [title, text] = (0, $1obPJ$useMemo)(()=>{
         if (isSignup) return [
