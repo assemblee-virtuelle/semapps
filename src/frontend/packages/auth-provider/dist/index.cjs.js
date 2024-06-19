@@ -119,7 +119,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
     return {
         login: async (params)=>{
             if (authType === $6a92eb32301846ac$var$AUTH_TYPE_SOLID_OIDC) {
-                const { webId: webId, issuer: issuer, isSignup: isSignup = false } = params;
+                const { webId: webId, issuer: issuer, redirect: redirect = "/", isSignup: isSignup = false } = params;
                 webId && issuer;
                 const as = await $4Uj5b$oauth4webapi.discoveryRequest(new URL(issuer)).then((response)=>$4Uj5b$oauth4webapi.processDiscoveryResponse(new URL(issuer), response));
                 const codeVerifier = $4Uj5b$oauth4webapi.generateRandomCodeVerifier();
@@ -127,6 +127,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                 const codeChallengeMethod = "S256";
                 // Save to use on handleCallback method
                 localStorage.setItem("code_verifier", codeVerifier);
+                localStorage.setItem("redirect", redirect);
                 const authorizationUrl = new URL(as.authorization_endpoint);
                 authorizationUrl.searchParams.set("response_type", "code");
                 authorizationUrl.searchParams.set("client_id", clientId);
@@ -180,18 +181,20 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                 const currentUrl = new URL(window.location.href);
                 const params = $4Uj5b$oauth4webapi.validateAuthResponse(as, client, currentUrl, $4Uj5b$oauth4webapi.expectNoState);
                 if ($4Uj5b$oauth4webapi.isOAuth2Error(params)) throw new Error(`OAuth error: ${params.error} (${params.error_description})`);
-                // Retrieve code verifier set during login
+                // Retrieve data set during login
                 const codeVerifier = localStorage.getItem("code_verifier");
+                const redirect = localStorage.getItem("redirect");
                 const response = await $4Uj5b$oauth4webapi.authorizationCodeGrantRequest(as, client, params, `${window.location.origin}/auth-callback`, codeVerifier);
                 const result = await $4Uj5b$oauth4webapi.processAuthorizationCodeOpenIDResponse(as, client, response);
                 if ($4Uj5b$oauth4webapi.isOAuth2Error(result)) throw new Error(`OAuth error: ${params.error} (${params.error_description})`);
                 // Until DPoP is implemented, use the ID token to log into local Pod
                 // And the proxy endpoint to log into remote Pods
                 localStorage.setItem("token", result.id_token);
-                // Remove code verifier now we don't need it anymore
+                // Remove we don't need it anymore
                 localStorage.removeItem("code_verifier");
+                localStorage.removeItem("redirect");
                 // Reload to ensure the dataServer config is reset
-                window.location.href = "/";
+                window.location.href = redirect || "/";
             } else {
                 const token = searchParams.get("token");
                 if (!token) throw new Error("auth.message.no_token_returned");

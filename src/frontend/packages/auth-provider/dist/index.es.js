@@ -80,7 +80,7 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
     return {
         login: async (params)=>{
             if (authType === $1d8606895ce3b768$var$AUTH_TYPE_SOLID_OIDC) {
-                const { webId: webId, issuer: issuer, isSignup: isSignup = false } = params;
+                const { webId: webId, issuer: issuer, redirect: redirect = "/", isSignup: isSignup = false } = params;
                 webId && issuer;
                 const as = await $1obPJ$discoveryRequest(new URL(issuer)).then((response)=>$1obPJ$processDiscoveryResponse(new URL(issuer), response));
                 const codeVerifier = $1obPJ$generateRandomCodeVerifier();
@@ -88,6 +88,7 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
                 const codeChallengeMethod = "S256";
                 // Save to use on handleCallback method
                 localStorage.setItem("code_verifier", codeVerifier);
+                localStorage.setItem("redirect", redirect);
                 const authorizationUrl = new URL(as.authorization_endpoint);
                 authorizationUrl.searchParams.set("response_type", "code");
                 authorizationUrl.searchParams.set("client_id", clientId);
@@ -141,18 +142,20 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
                 const currentUrl = new URL(window.location.href);
                 const params = $1obPJ$validateAuthResponse(as, client, currentUrl, $1obPJ$expectNoState);
                 if ($1obPJ$isOAuth2Error(params)) throw new Error(`OAuth error: ${params.error} (${params.error_description})`);
-                // Retrieve code verifier set during login
+                // Retrieve data set during login
                 const codeVerifier = localStorage.getItem("code_verifier");
+                const redirect = localStorage.getItem("redirect");
                 const response = await $1obPJ$authorizationCodeGrantRequest(as, client, params, `${window.location.origin}/auth-callback`, codeVerifier);
                 const result = await $1obPJ$processAuthorizationCodeOpenIDResponse(as, client, response);
                 if ($1obPJ$isOAuth2Error(result)) throw new Error(`OAuth error: ${params.error} (${params.error_description})`);
                 // Until DPoP is implemented, use the ID token to log into local Pod
                 // And the proxy endpoint to log into remote Pods
                 localStorage.setItem("token", result.id_token);
-                // Remove code verifier now we don't need it anymore
+                // Remove we don't need it anymore
                 localStorage.removeItem("code_verifier");
+                localStorage.removeItem("redirect");
                 // Reload to ensure the dataServer config is reset
-                window.location.href = "/";
+                window.location.href = redirect || "/";
             } else {
                 const token = searchParams.get("token");
                 if (!token) throw new Error("auth.message.no_token_returned");

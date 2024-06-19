@@ -23,7 +23,7 @@ const authProvider = ({
   return {
     login: async params => {
       if (authType === AUTH_TYPE_SOLID_OIDC) {
-        const { webId, issuer, isSignup = false } = params;
+        const { webId, issuer, redirect = '/', isSignup = false } = params;
 
         if (webId && !issuer) {
           // TODO find issuer from webId
@@ -39,6 +39,7 @@ const authProvider = ({
 
         // Save to use on handleCallback method
         localStorage.setItem('code_verifier', codeVerifier);
+        localStorage.setItem('redirect', redirect);
 
         const authorizationUrl = new URL(as.authorization_endpoint);
         authorizationUrl.searchParams.set('response_type', 'code');
@@ -102,8 +103,9 @@ const authProvider = ({
           throw new Error(`OAuth error: ${params.error} (${params.error_description})`);
         }
 
-        // Retrieve code verifier set during login
+        // Retrieve data set during login
         const codeVerifier = localStorage.getItem('code_verifier');
+        const redirect = localStorage.getItem('redirect');
 
         const response = await oauth.authorizationCodeGrantRequest(
           as,
@@ -122,11 +124,12 @@ const authProvider = ({
         // And the proxy endpoint to log into remote Pods
         localStorage.setItem('token', result.id_token);
 
-        // Remove code verifier now we don't need it anymore
+        // Remove we don't need it anymore
         localStorage.removeItem('code_verifier');
+        localStorage.removeItem('redirect');
 
         // Reload to ensure the dataServer config is reset
-        window.location.href = '/';
+        window.location.href = redirect || '/';
       } else {
         const token = searchParams.get('token');
         if (!token) throw new Error('auth.message.no_token_returned');
