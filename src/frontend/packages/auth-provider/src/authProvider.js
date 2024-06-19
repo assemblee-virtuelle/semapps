@@ -23,7 +23,7 @@ const authProvider = ({
   return {
     login: async params => {
       if (authType === AUTH_TYPE_SOLID_OIDC) {
-        const { webId, issuer } = params;
+        const { webId, issuer, isSignup = false } = params;
 
         if (webId && !issuer) {
           // TODO find issuer from webId
@@ -47,6 +47,7 @@ const authProvider = ({
         authorizationUrl.searchParams.set('code_challenge_method', codeChallengeMethod);
         authorizationUrl.searchParams.set('redirect_uri', `${window.location.origin}/auth-callback`);
         authorizationUrl.searchParams.set('scope', 'openid webid offline_access');
+        authorizationUrl.searchParams.set('is_signup', isSignup);
 
         window.location = authorizationUrl;
       } else if (authType === AUTH_TYPE_LOCAL) {

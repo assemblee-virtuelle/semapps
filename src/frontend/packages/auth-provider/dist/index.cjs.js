@@ -119,7 +119,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
     return {
         login: async (params)=>{
             if (authType === $6a92eb32301846ac$var$AUTH_TYPE_SOLID_OIDC) {
-                const { webId: webId, issuer: issuer } = params;
+                const { webId: webId, issuer: issuer, isSignup: isSignup = false } = params;
                 webId && issuer;
                 const as = await $4Uj5b$oauth4webapi.discoveryRequest(new URL(issuer)).then((response)=>$4Uj5b$oauth4webapi.processDiscoveryResponse(new URL(issuer), response));
                 const codeVerifier = $4Uj5b$oauth4webapi.generateRandomCodeVerifier();
@@ -134,6 +134,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                 authorizationUrl.searchParams.set("code_challenge_method", codeChallengeMethod);
                 authorizationUrl.searchParams.set("redirect_uri", `${window.location.origin}/auth-callback`);
                 authorizationUrl.searchParams.set("scope", "openid webid offline_access");
+                authorizationUrl.searchParams.set("is_signup", isSignup);
                 window.location = authorizationUrl;
             } else if (authType === $6a92eb32301846ac$var$AUTH_TYPE_LOCAL) {
                 const { username: username, password: password, interactionId: interactionId, redirectTo: redirectTo } = params;
