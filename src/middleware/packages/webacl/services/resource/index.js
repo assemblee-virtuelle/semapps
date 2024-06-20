@@ -3,6 +3,7 @@ const { MoleculerError } = require('moleculer').Errors;
 const addRights = require('./actions/addRights');
 const awaitReadRight = require('./actions/awaitReadRight');
 const deleteAllRights = require('./actions/deleteAllRights');
+const deleteAllUserRights = require('./actions/deleteAllUserRights');
 const getLink = require('./actions/getLink');
 const getRights = require('./actions/getRights');
 const getUsersWithReadRights = require('./actions/getUsersWithReadRights');
@@ -42,6 +43,7 @@ module.exports = {
     addRights: addRights.action,
     awaitReadRight: awaitReadRight.action,
     deleteAllRights: deleteAllRights.action,
+    deleteAllUserRights: deleteAllUserRights.action,
     getLink: getLink.action,
     getRights: getRights.action,
     hasRights: hasRights.action,

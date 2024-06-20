@@ -54,6 +54,10 @@ module.exports = {
       const { uri, isContainer } = ctx.params;
       await this.actions.invalidateResourceRights({ uri, specificUriOnly: !isContainer }, { parentCtx: ctx });
     },
+    async 'webacl.resource.user-deleted'(ctx) {
+      const { webId } = ctx.params;
+      await this.actions.invalidateAllUserRights({ uri: webId }, { parentCtx: ctx });
+    },
     async 'webacl.group.member-added'(ctx) {
       const { groupUri, memberUri } = ctx.params;
       await this.actions.invalidateResourceRights({ uri: groupUri, specificUriOnly: true }, { parentCtx: ctx });
