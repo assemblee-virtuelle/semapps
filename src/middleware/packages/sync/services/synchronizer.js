@@ -56,7 +56,7 @@ const SynchronizerService = {
                     webId: recipientUri
                   }
                 : {
-                    resource,
+                    resource: { '@context': activity['@context'], ...resource },
                     mirrorGraph: this.settings.mirrorGraph,
                     webId: recipientUri
                   }
@@ -105,8 +105,8 @@ const SynchronizerService = {
       },
       async onReceive(ctx, activity, recipientUri) {
         if (await this.isValid(activity, recipientUri)) {
-          for (const resource of defaultToArray(activity.object)) {
-            await ctx.call(
+          for (let resource of defaultToArray(activity.object)) {
+            resource = await ctx.call(
               'ldp.remote.store',
               typeof resource === 'string'
                 ? {
@@ -115,7 +115,7 @@ const SynchronizerService = {
                     webId: recipientUri
                   }
                 : {
-                    resource,
+                    resource: { '@context': activity['@context'], ...resource },
                     mirrorGraph: this.settings.mirrorGraph,
                     webId: recipientUri
                   }
