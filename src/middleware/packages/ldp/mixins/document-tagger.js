@@ -68,7 +68,10 @@ module.exports = {
   events: {
     async 'ldp.resource.created'(ctx) {
       const { resourceUri, newData, webId } = ctx.params;
-      this.actions.tagCreatedResource({ resourceUri, newData, webId }, { parentCtx: ctx });
+      this.actions.tagCreatedResource(
+        { resourceUri, newData, webId: ctx.meta.impersonatedUser || webId },
+        { parentCtx: ctx }
+      );
     },
     async 'ldp.resource.updated'(ctx) {
       const { resourceUri } = ctx.params;

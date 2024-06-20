@@ -119,7 +119,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
     return {
         login: async (params)=>{
             if (authType === $6a92eb32301846ac$var$AUTH_TYPE_SOLID_OIDC) {
-                const { webId: webId, issuer: issuer } = params;
+                const { webId: webId, issuer: issuer, redirect: redirect = "/", isSignup: isSignup = false } = params;
                 webId && issuer;
                 const as = await $4Uj5b$oauth4webapi.discoveryRequest(new URL(issuer)).then((response)=>$4Uj5b$oauth4webapi.processDiscoveryResponse(new URL(issuer), response));
                 const codeVerifier = $4Uj5b$oauth4webapi.generateRandomCodeVerifier();
@@ -127,6 +127,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                 const codeChallengeMethod = "S256";
                 // Save to use on handleCallback method
                 localStorage.setItem("code_verifier", codeVerifier);
+                localStorage.setItem("redirect", redirect);
                 const authorizationUrl = new URL(as.authorization_endpoint);
                 authorizationUrl.searchParams.set("response_type", "code");
                 authorizationUrl.searchParams.set("client_id", clientId);
@@ -134,6 +135,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                 authorizationUrl.searchParams.set("code_challenge_method", codeChallengeMethod);
                 authorizationUrl.searchParams.set("redirect_uri", `${window.location.origin}/auth-callback`);
                 authorizationUrl.searchParams.set("scope", "openid webid offline_access");
+                authorizationUrl.searchParams.set("is_signup", isSignup);
                 window.location = authorizationUrl;
             } else if (authType === $6a92eb32301846ac$var$AUTH_TYPE_LOCAL) {
                 const { username: username, password: password, interactionId: interactionId, redirectTo: redirectTo } = params;
@@ -179,18 +181,20 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                 const currentUrl = new URL(window.location.href);
                 const params = $4Uj5b$oauth4webapi.validateAuthResponse(as, client, currentUrl, $4Uj5b$oauth4webapi.expectNoState);
                 if ($4Uj5b$oauth4webapi.isOAuth2Error(params)) throw new Error(`OAuth error: ${params.error} (${params.error_description})`);
-                // Retrieve code verifier set during login
+                // Retrieve data set during login
                 const codeVerifier = localStorage.getItem("code_verifier");
+                const redirect = localStorage.getItem("redirect");
                 const response = await $4Uj5b$oauth4webapi.authorizationCodeGrantRequest(as, client, params, `${window.location.origin}/auth-callback`, codeVerifier);
                 const result = await $4Uj5b$oauth4webapi.processAuthorizationCodeOpenIDResponse(as, client, response);
                 if ($4Uj5b$oauth4webapi.isOAuth2Error(result)) throw new Error(`OAuth error: ${params.error} (${params.error_description})`);
                 // Until DPoP is implemented, use the ID token to log into local Pod
                 // And the proxy endpoint to log into remote Pods
                 localStorage.setItem("token", result.id_token);
-                // Remove code verifier now we don't need it anymore
+                // Remove we don't need it anymore
                 localStorage.removeItem("code_verifier");
+                localStorage.removeItem("redirect");
                 // Reload to ensure the dataServer config is reset
-                window.location.href = "/";
+                window.location.href = redirect || "/";
             } else {
                 const token = searchParams.get("token");
                 if (!token) throw new Error("auth.message.no_token_returned");
@@ -444,6 +448,24 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                 if (e.message === "auth.account.invalid_password") throw new Error("auth.notification.invalid_password");
                 throw new Error("auth.notification.update_settings_error");
             }
+        },
+        /**
+     * Inform the OIDC server that the login interaction has been completed.
+     * This is necessary, otherwise the OIDC server will keep on redirecting to the login form.
+     * We call the endpoint with the token as a proof of login, otherwise it could be abused.
+     */ loginCompleted: async (interactionId, webId)=>{
+            const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
+            // Note: the
+            await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, ".oidc/login-completed"), {
+                method: "POST",
+                body: JSON.stringify({
+                    interactionId: interactionId,
+                    webId: webId
+                }),
+                headers: new Headers({
+                    "Content-Type": "application/json"
+                })
+            });
         }
     };
 };
@@ -2200,26 +2222,35 @@ const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
     const classes = $4c56dbfbda0fa20c$var$useStyles();
     const navigate = (0, $4Uj5b$reactrouterdom.useNavigate)();
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
+    const authProvider = (0, $4Uj5b$reactadmin.useAuthProvider)();
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
     const isSignup = hasSignup && searchParams.has("signup");
     const isResetPassword = searchParams.has("reset_password");
     const isNewPassword = searchParams.has("new_password");
     const isLogin = !isSignup && !isResetPassword && !isNewPassword;
     const redirectTo = searchParams.get("redirect");
+    const interactionId = searchParams.get("interaction_id");
     const { data: identity, isLoading: isLoading } = (0, $4Uj5b$reactadmin.useGetIdentity)();
     (0, $4Uj5b$react.useEffect)(()=>{
-        if (!isLoading && identity?.id) {
-            if (postLoginRedirect) navigate(`${postLoginRedirect}?${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}`);
-            else if (redirectTo && redirectTo.startsWith("http")) window.location.href = redirectTo;
-            else navigate(redirectTo || "/");
-        }
+        (async ()=>{
+            if (!isLoading && identity?.id) {
+                if (interactionId) // If interactionId is set, it means we are connecting from another application.
+                // So first call a custom endpoint to tell the OIDC server the login is completed
+                await authProvider.loginCompleted(interactionId, identity?.id);
+                if (postLoginRedirect) navigate(`${postLoginRedirect}?${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}`);
+                else if (redirectTo && redirectTo.startsWith("http")) window.location.href = redirectTo;
+                else navigate(redirectTo || "/");
+            }
+        })();
     }, [
         identity,
         isLoading,
         navigate,
         searchParams,
         redirectTo,
-        postLoginRedirect
+        postLoginRedirect,
+        authProvider,
+        interactionId
     ]);
     const [title, text] = (0, $4Uj5b$react.useMemo)(()=>{
         if (isSignup) return [

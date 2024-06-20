@@ -38,6 +38,12 @@ export function authProvider({
   setNewPassword: (params: any) => Promise<void>;
   getAccountSettings: (params: any) => Promise<any>;
   updateAccountSettings: (params: any) => Promise<void>;
+  /**
+   * Inform the OIDC server that the login interaction has been completed.
+   * This is necessary, otherwise the OIDC server will keep on redirecting to the login form.
+   * We call the endpoint with the token as a proof of login, otherwise it could be abused.
+   */
+  loginCompleted: (interactionId: any, webId: any) => Promise<void>;
 };
 export declare namespace rights {
   export { rightsToShow as show };

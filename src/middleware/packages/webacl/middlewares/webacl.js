@@ -241,7 +241,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
                 'webacl.resource.addRights',
                 {
                   resourceUri,
-                  additionalRights: {
+                  newRights: {
                     user: {
                       uri: webId,
                       read: true
