@@ -23,7 +23,7 @@ export declare namespace ACTIVITY_TYPES {
   let REMOVE: string;
   let TENTATIVE_REJECT: string;
   let TENTATIVE_ACCEPT: string;
-  let TRAVAL: string;
+  let TRAVEL: string;
   let UNDO: string;
   let UPDATE: string;
   let VIEW: string;
@@ -64,9 +64,9 @@ export function useCollection(
   predicateOrUrl: any,
   options?: {}
 ): {
-  items: undefined;
+  items: any;
   totalItems: undefined;
-  error: unknown;
+  error: false | any[];
   refetch: <TPageData>(
     options?: (import('react-query').RefetchOptions & import('react-query').RefetchQueryFilters<TPageData>) | undefined
   ) => Promise<import('react-query').QueryObserverResult<import('react-query').InfiniteData<any>, unknown>>;
@@ -77,10 +77,11 @@ export function useCollection(
   isLoading: boolean;
   isFetching: boolean;
   isFetchingNextPage: boolean;
-  status: 'success' | 'error' | 'loading' | 'idle';
-  addItem: (item: any) => void;
-  removeItem: (itemId: any) => void;
   url: any;
+  hasLiveUpdates: {
+    status: string;
+    error: undefined;
+  };
 };
 export function CommentsField({
   source,

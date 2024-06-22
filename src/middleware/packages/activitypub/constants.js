@@ -29,7 +29,7 @@ const ACTIVITY_TYPES = {
   REMOVE: 'Remove',
   TENTATIVE_REJECT: 'TentativeReject',
   TENTATIVE_ACCEPT: 'TentativeAccept',
-  TRAVAL: 'Travel',
+  TRAVEL: 'Travel',
   UNDO: 'Undo',
   UPDATE: 'Update',
   VIEW: 'View'
