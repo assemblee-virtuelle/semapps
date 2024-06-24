@@ -44,7 +44,6 @@ module.exports = {
     },
     toRDF(ctx) {
       const { input, options } = ctx.params;
-      if (!input['@context']) throw new Error(`Cannot convert JSON-LD to RDF because no JSON-LD context is provided`);
       return this.jsonld.toRDF(input, options);
     },
     // Return quads in RDF.JS data model

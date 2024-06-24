@@ -41,6 +41,14 @@ module.exports = {
       throw new Error(`The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId})`);
     }
 
+    // Adds the default context, if it is missing
+    if (!resource['@context']) {
+      resource = {
+        '@context': await ctx.call('jsonld.context.get'),
+        ...resource
+      };
+    }
+
     if (!dataset && this.settings.podProvider) {
       if (!webId) {
         throw new Error(`In Pod provider config, a webId or dataset param must be provided to ldp.remote.store`);
