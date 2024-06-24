@@ -1543,6 +1543,97 @@ var $6844bbce0ad66151$export$2e2bcd8739ae039 = $6844bbce0ad66151$var$Reification
 
 
 
+/**
+ * Find the solid notification description resource for a given resource URI.
+ */ const $03d52e691e8dc945$var$findDescriptionResource = async (fetch, resourceUri)=>{
+    const { headers: headers } = await fetch(resourceUri, {
+        method: "HEAD"
+    });
+    const linkHeader = headers.get("Link");
+    const matches = linkHeader?.match(/<([^>]+)>;\s*rel="(?:describedby|http:\/\/www\.w3\.org\/ns\/solid\/terms#storageDescription)"/);
+    if (!matches?.[1]) return undefined;
+    const { json: descriptionResource } = await fetch(matches[1]);
+    return descriptionResource;
+};
+const $03d52e691e8dc945$export$3edfe18db119b920 = async (fetch, resourceUri, options = {
+    type: "WebSocketChannel2023"
+})=>{
+    const { type: type, closeAfter: closeAfter, startIn: startIn, rate: rate } = options;
+    let { startAt: startAt, endAt: endAt } = options;
+    if (startIn && !startAt) startAt = new Date(Date.now() + startIn).toISOString();
+    if (closeAfter && !endAt) endAt = new Date(Date.now() + closeAfter).toISOString();
+    const descriptionResource = await $03d52e691e8dc945$var$findDescriptionResource(fetch, resourceUri);
+    // TODO: use a json-ld parser / ldo in the future for this...
+    // Get solid notification subscription service for the given type.
+    const subscriptionService = (await Promise.all(// Get the subscription service resources (that describe a channel type).
+    (0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(descriptionResource.subscription || descriptionResource["notify:subscription"]).map(async (subscriptionServiceOrUri)=>{
+        // They might not be resolved...
+        if (typeof subscriptionServiceOrUri === "string") {
+            const { json: json } = await fetch(subscriptionServiceOrUri);
+            return json;
+        }
+        return subscriptionServiceOrUri;
+    }))).find((service)=>{
+        // Find for the correct channel type (e.g. web socket).
+        const channelType = service.channelType ?? service["notify:channelType"];
+        return channelType === type || channelType === `notify:${type}`;
+    });
+    if (!subscriptionService) throw new Error(`No solid notification subscription service found for type ${type}`);
+    // Create a new channel.
+    const { json: channel } = await fetch(subscriptionService.id || subscriptionService["@id"], {
+        method: "POST",
+        body: JSON.stringify({
+            "@context": "https://www.w3.org/ns/solid/notification/v1",
+            type: "WebSocketChannel2023",
+            topic: resourceUri,
+            startAt: startAt,
+            endAt: endAt,
+            rate: rate
+        })
+    });
+    return channel;
+};
+const $03d52e691e8dc945$export$28772ab4c256e709 = async (fetch, resourceUri, options)=>{
+    const channel = await $03d52e691e8dc945$export$3edfe18db119b920(fetch, resourceUri, options);
+    const receiveFrom = channel.receiveFrom || channel["notify:receiveFrom"];
+    return new WebSocket(receiveFrom);
+};
+const $03d52e691e8dc945$var$registeredWebSockets = new Map();
+/**
+ * @param fetch A react admin fetch function.
+ * @param resourceUri The resource to subscribe to
+ * @param options Options to pass to @see createSolidNotificationChannel, if the channel does not exist yet.
+ * @returns {WebSocket} A new or existing web socket that subscribed to the given resource.
+ */ const $03d52e691e8dc945$export$8d60734939c59ced = async (fetch, resourceUri, options = {
+    type: "WebSocketChannel2023",
+    closeAfter: 3600000
+})=>{
+    const socket = $03d52e691e8dc945$var$registeredWebSockets.get(resourceUri);
+    if (socket) // Will resolve or is resolved already.
+    return socket;
+    // Create a promise, to return immediately and set the sockets cache.
+    // This prevents racing conditions that create multiple channels.
+    const wsPromise = $03d52e691e8dc945$export$28772ab4c256e709(fetch, resourceUri, {
+        ...options,
+        type: "WebSocketChannel2023"
+    }).then((ws)=>{
+        // Remove the promise from the cache, if it closes.
+        ws.addEventListener("close", (e)=>{
+            $03d52e691e8dc945$var$registeredWebSockets.delete(resourceUri);
+        });
+        // Close the socket, if the endAt / closeAfter time is reached.
+        const closeIn = options.closeAfter ?? (options.endAt && new Date(options.endAt).getTime() - Date.now());
+        if (closeIn) setTimeout(()=>{
+            ws.close();
+        }, closeIn);
+        return ws;
+    });
+    $03d52e691e8dc945$var$registeredWebSockets.set(resourceUri, wsPromise);
+    return wsPromise;
+};
 
-export {$243bf28fbb1b868f$export$2e2bcd8739ae039 as dataProvider, $6cde9a8fbbde3ffb$export$2e2bcd8739ae039 as buildSparqlQuery, $865f630cc944e818$export$2e2bcd8739ae039 as buildBlankNodesQuery, $87656edf926c0f1f$export$2e2bcd8739ae039 as useGetExternalLink, $586fa0ea9d02fa12$export$2e2bcd8739ae039 as useContainers, $7bd037d7ec9d51f8$export$2e2bcd8739ae039 as useCreateContainer, $35f3e75c86e51f35$export$2e2bcd8739ae039 as useCreateContainerUri, $e5a0eacd756fd1d5$export$2e2bcd8739ae039 as useDataModel, $3a9656756670cb78$export$2e2bcd8739ae039 as useDataModels, $4daf4cf698ee4eed$export$2e2bcd8739ae039 as useDataServers, $406574efa35ec6f1$export$2e2bcd8739ae039 as FilterHandler, $1d8c1cbe606a94ae$export$2e2bcd8739ae039 as GroupedReferenceHandler, $6844bbce0ad66151$export$2e2bcd8739ae039 as ReificationArrayInput};
+
+
+
+export {$243bf28fbb1b868f$export$2e2bcd8739ae039 as dataProvider, $6cde9a8fbbde3ffb$export$2e2bcd8739ae039 as buildSparqlQuery, $865f630cc944e818$export$2e2bcd8739ae039 as buildBlankNodesQuery, $87656edf926c0f1f$export$2e2bcd8739ae039 as useGetExternalLink, $586fa0ea9d02fa12$export$2e2bcd8739ae039 as useContainers, $7bd037d7ec9d51f8$export$2e2bcd8739ae039 as useCreateContainer, $35f3e75c86e51f35$export$2e2bcd8739ae039 as useCreateContainerUri, $e5a0eacd756fd1d5$export$2e2bcd8739ae039 as useDataModel, $3a9656756670cb78$export$2e2bcd8739ae039 as useDataModels, $4daf4cf698ee4eed$export$2e2bcd8739ae039 as useDataServers, $406574efa35ec6f1$export$2e2bcd8739ae039 as FilterHandler, $1d8c1cbe606a94ae$export$2e2bcd8739ae039 as GroupedReferenceHandler, $6844bbce0ad66151$export$2e2bcd8739ae039 as ReificationArrayInput, $03d52e691e8dc945$export$28772ab4c256e709 as createWsChannel, $03d52e691e8dc945$export$8d60734939c59ced as getOrCreateWsChannel, $03d52e691e8dc945$export$3edfe18db119b920 as createSolidNotificationChannel};
 //# sourceMappingURL=index.es.js.map

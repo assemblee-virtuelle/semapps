@@ -1,22 +1,31 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
-import { useGetIdentity, useDataProvider, useGetOne, useGetMany } from 'react-admin';
-import { useInfiniteQuery, useQueryClient, useQueries } from 'react-query';
-import { createWsChannel } from '@semapps/semantic-data-provider/src/notificationChannels/subscribeToUpdates';
+import { useGetIdentity, useDataProvider } from 'react-admin';
+import { useInfiniteQuery, useQueries } from 'react-query';
+import { getOrCreateWsChannel } from '@semapps/semantic-data-provider';
 import { arrayOf } from '../utils';
 
 const useItemsFromPagesAndNotifications = (pages, notifications, dereferenceItems) => {
   const dataProvider = useDataProvider();
 
   // Add all items from pages and process notifications (possibly new and deleted items).
-  const addItems = notifications.map(n => n.type === 'Add').map(n => n.object);
-  const removeItems = notifications.map(n => n.type === 'Remove').map(n => n.object.id || n.object);
-  const currentItems = !pages ? [] : pages.flatMap(p => arrayOf(p.orderedItems || p.items));
-  const currentAndNew = currentItems.concat(addItems);
-  const items = currentAndNew
-    // Filter out removed items.
-    .filter(item => !removeItems.some(r => (r.id ?? r) === (item.id ?? item)))
-    // Filter duplicates.
-    .filter(item => currentAndNew.some(i2 => (i2.id ?? i2) === (item.id ?? item)));
+  const items = useMemo(
+    () => {
+      const addItems = notifications.map(n => n.type === 'Add').map(n => n.object);
+      const removeItems = notifications.map(n => n.type === 'Remove').map(n => n.object.id || n.object);
+      const currentItems = !pages ? [] : pages.flatMap(p => arrayOf(p.orderedItems || p.items));
+      const currentAndNew = currentItems.concat(addItems);
+
+      return (
+        currentAndNew
+          // Filter out removed items.
+          .filter(item => !removeItems.some(r => (r.id ?? r) === (item.id ?? item)))
+          // Filter duplicates.
+          .filter(item => currentAndNew.some(i2 => (i2.id ?? i2) === (item.id ?? item)))
+      );
+    },
+    pages,
+    notifications
+  );
 
   if (!dereferenceItems) {
     return { loadedItems: items, isLoading: false, isFetching: false };
@@ -28,7 +37,8 @@ const useItemsFromPagesAndNotifications = (pages, notifications, dereferenceItem
       .filter(item => typeof item === 'string')
       .map(itemUri => ({
         queryKey: ['resource', itemUri],
-        queryFn: async () => (await dataProvider.fetch(itemUri)).json
+        queryFn: async () => (await dataProvider.fetch(itemUri)).json,
+        staleTime: Infinity
       }))
   );
 
@@ -40,6 +50,8 @@ const useItemsFromPagesAndNotifications = (pages, notifications, dereferenceItem
         return (itemQuery.isSuccess && itemQuery.data) || [];
       })
     );
+
+  console.log('loadedItems', loadedItems.length, 'total', items.length);
 
   const errors = itemQueries.filter(q => q.error);
   return {
@@ -68,7 +80,8 @@ const useCollection = (predicateOrUrl, options = {}) => {
         return identity?.webIdData?.[predicateOrUrl];
       }
     }
-    throw new Error(`No URL available for useCollection: ${predicateOrUrl}.`);
+    return undefined;
+    // throw new Error(`No URL available for useCollection: ${predicateOrUrl}.`);
   }, [identity, predicateOrUrl]);
 
   // Fetch page of collection item references (if pageParam provided)
@@ -121,15 +134,17 @@ const useCollection = (predicateOrUrl, options = {}) => {
     isLoading: isLoadingItems,
     isFetching: isFetchingItems,
     errors: itemErrors
-  } = useItemsFromPagesAndNotifications(data.pages, notifications, dereferenceItems);
+  } = useItemsFromPagesAndNotifications(data?.pages, notifications, dereferenceItems);
   // Notifications have been processed after hook call, so reset.
-  setNotifications([]);
+  // useEffect(() => {
+  //   setNotifications([]);
+  // }, [notifications])
 
   // Live Updates
   useEffect(() => {
-    if (liveUpdates) {
+    if (liveUpdates && collectionUrl) {
       // Create ws that listens to collectionUri changes
-      createWsChannel(dataProvider.fetch, collectionUrl)
+      getOrCreateWsChannel(dataProvider.fetch, collectionUrl)
         .then(webSocket => {
           webSocket.addEventListener('message', e => {
             if ((e.data && e.data.type === 'Add') || e.data.type === 'Remove') {

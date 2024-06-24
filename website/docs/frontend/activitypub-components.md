@@ -81,18 +81,29 @@ export const ActorShow = props => (
 
 This hook allows you to load data from an [ActivityStreams Collection](https://www.w3.org/TR/activitystreams-core/#collections).
 
-It takes as a parameter a full URL or a predicate. In the latter case, it will look for the properties of the logged-in actor. Typically, you could use `useCollection("followers")` to get the list of followers of the logged-in actor.
+As first parameter, it takes a full URL or a predicate. In the latter case, it will look for the properties of the logged-in actor. Typically, you could use `useCollection("followers")` to get the list of followers of the logged-in actor. The second parameter is an options object. See below for the supported options.
 
 ```jsx
 const {
-  items, // an array listing the items of the collection
-  loaded, // boolean that is false until the data is available
-  loading, // boolean that is true on mount, and false once the data was fetched
-  error, // error message if there was an error loading the collection
-  refetch, // a callback to refresh the data
-  url // url of the loaded collection (useful if only a predicate was passed)
-} = useCollection('http://localhost:3000/alice/followers');
+  items, // An array listing the items of the collection.
+  totalItems, // The total number of items in the collection.
+  refetch, // A callback to refresh the data
+  url, // url of the loaded collection (useful if only a predicate was passed)
+  error, // List of all errors that occurred while fetching the collection and its items or undefined.
+  fetchNextPage, // Callback to fetch the next items in the collection.
+  hasNextPage, // Boolean indicating, if the items list is complete or if there are more items retrievable.
+  isLoading, // True, if items or a page is loading.
+  isFetching, // True, if items or a page is being fetched.
+  isFetchingNextPage, // True, if the next page is being fetched.
+  url: collectionUrl, // The URL of the collection
+  hasLiveUpdates // True if the hook is triggered on Solid Notification WebSocket Channel updates.
+} = useCollection('http://localhost:3000/alice/followers', { dereferenceItems: false, liveUpdates: true });
 ```
+
+#### useCollection `options` parameter:
+
+- `dereferenceItems: boolean` Set to true, to force dereferencing of collection items. Note that items may be returned as object, if the server dereferences the items itself.
+- `liveUpdates: boolean` Set to true, to ask the server to notify the client of updates to the collection using a Solid Notifications WebSocket Channel. The hook will automatically trigger in those cases. No updates will be provided, if the server does not support the protocol.
 
 ### useInbox
 
