@@ -14,4 +14,8 @@ export { default as FilterHandler } from './reification/FilterHandler';
 export { default as GroupedReferenceHandler } from './reification/GroupedReferenceHandler';
 export { default as ReificationArrayInput } from './reification/ReificationArrayInput';
 
-export { createWsChannel, createSolidNotificationChannel } from './notificationChannels/subscribeToUpdates';
+export {
+  createWsChannel,
+  getOrCreateWsChannel,
+  createSolidNotificationChannel
+} from './notificationChannels/subscribeToUpdates';

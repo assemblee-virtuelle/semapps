@@ -6,12 +6,12 @@ import $85cNH$tiptapextensionplaceholder from "@tiptap/extension-placeholder";
 import {Box as $85cNH$Box, Avatar as $85cNH$Avatar, Button as $85cNH$Button, Typography as $85cNH$Typography, CircularProgress as $85cNH$CircularProgress} from "@mui/material";
 import $85cNH$muistylesmakeStyles from "@mui/styles/makeStyles";
 import $85cNH$muiiconsmaterialSend from "@mui/icons-material/Send";
-import {useDataModel as $85cNH$useDataModel, buildBlankNodesQuery as $85cNH$buildBlankNodesQuery, createWsChannel as $85cNH$createWsChannel} from "@semapps/semantic-data-provider";
+import {useDataModel as $85cNH$useDataModel, buildBlankNodesQuery as $85cNH$buildBlankNodesQuery, getOrCreateWsChannel as $85cNH$getOrCreateWsChannel} from "@semapps/semantic-data-provider";
 import {AuthDialog as $85cNH$AuthDialog} from "@semapps/auth-provider";
 import {mergeAttributes as $85cNH$mergeAttributes} from "@tiptap/core";
 import $85cNH$tiptapextensionmention from "@tiptap/extension-mention";
 import {ReferenceField as $85cNH$ReferenceField, AvatarWithLabelField as $85cNH$AvatarWithLabelField} from "@semapps/field-components";
-import {useQueries as $85cNH$useQueries, useInfiniteQuery as $85cNH$useInfiniteQuery} from "react-query";
+import {useQueries as $85cNH$useQueries, useQueryClient as $85cNH$useQueryClient, useInfiniteQuery as $85cNH$useInfiniteQuery} from "react-query";
 import {ReactRenderer as $85cNH$ReactRenderer} from "@tiptap/react";
 import $85cNH$tippyjs from "tippy.js";
 
@@ -525,7 +525,7 @@ var $be88b298220210d1$export$2e2bcd8739ae039 = $be88b298220210d1$var$CommentsLis
 
 
 
-const $e4e1b14e0441184d$export$e57ff0f701c44363 = (value)=>{
+const $577f4953dfa5de4f$export$e57ff0f701c44363 = (value)=>{
     // If the field is null-ish, we suppose there are no values.
     if (value === null || value === undefined) return [];
     // Return as is.
@@ -535,30 +535,34 @@ const $e4e1b14e0441184d$export$e57ff0f701c44363 = (value)=>{
         value
     ];
 };
-var $e4e1b14e0441184d$export$2e2bcd8739ae039 = {
-    arrayOf: $e4e1b14e0441184d$export$e57ff0f701c44363
+var $577f4953dfa5de4f$export$2e2bcd8739ae039 = {
+    arrayOf: $577f4953dfa5de4f$export$e57ff0f701c44363
+};
+const $577f4953dfa5de4f$export$34aed805e991a647 = (iterable, predicate)=>{
+    const seen = new Set();
+    return iterable.filter((item)=>{
+        const key = predicate(item);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
 };
 
 
-const $c1e897431d8c5742$var$useItemsFromPagesAndNotifications = (pages, notifications, dereferenceItems)=>{
+const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
     const dataProvider = (0, $85cNH$useDataProvider)();
-    // Add all items from pages and process notifications (possibly new and deleted items).
-    const items = (0, $85cNH$useMemo)(()=>{
-        const addItems = notifications.map((n)=>n.type === "Add").map((n)=>n.object);
-        const removeItems = notifications.map((n)=>n.type === "Remove").map((n)=>n.object.id || n.object);
-        const currentItems = !pages ? [] : pages.flatMap((p)=>(0, $e4e1b14e0441184d$export$e57ff0f701c44363)(p.orderedItems || p.items));
-        const currentAndNew = currentItems.concat(addItems);
-        return currentAndNew// Filter out removed items.
-        .filter((item)=>!removeItems.some((r)=>(r.id ?? r) === (item.id ?? item)))// Filter duplicates.
-        .filter((item)=>currentAndNew.some((i2)=>(i2.id ?? i2) === (item.id ?? item)));
-    }, pages, notifications);
-    if (!dereferenceItems) return {
-        loadedItems: items,
-        isLoading: false,
-        isFetching: false
-    };
-    // Dereference all items, if they are not yet.
-    const itemQueries = (0, $85cNH$useQueries)(items.filter((item)=>typeof item === "string").map((itemUri)=>({
+    const items = (0, $85cNH$useMemo)(()=>pages.flatMap((p)=>(0, $577f4953dfa5de4f$export$e57ff0f701c44363)(p.orderedItems || p.items)), [
+        pages
+    ]);
+    // We will force dereference, if some items are not URI string references.
+    const shouldDereference = (0, $85cNH$useMemo)(()=>{
+        return dereferenceItems || items.some((item)=>typeof item !== "string");
+    }, [
+        dereferenceItems,
+        items
+    ]);
+    // Dereference all items, if necessary (even if shouldDereference is false, the hook needs to be called).
+    const itemQueries = (0, $85cNH$useQueries)(!shouldDereference ? [] : items.filter((item)=>typeof item === "string").map((itemUri)=>({
             queryKey: [
                 "resource",
                 itemUri
@@ -566,27 +570,34 @@ const $c1e897431d8c5742$var$useItemsFromPagesAndNotifications = (pages, notifica
             queryFn: async ()=>(await dataProvider.fetch(itemUri)).json,
             staleTime: Infinity
         })));
+    if (!shouldDereference) return {
+        loadedItems: items,
+        isLoading: false,
+        isFetching: false
+    };
     // Put all loaded items together (might be dereferenced already, so concatenate).
     const loadedItems = items.filter((item)=>typeof item !== "string").concat(itemQueries.flatMap((itemQuery)=>{
         return itemQuery.isSuccess && itemQuery.data || [];
     }));
-    console.log("loadedItems", loadedItems.length, "total", items.length);
     const errors = itemQueries.filter((q)=>q.error);
     return {
         loadedItems: loadedItems,
         isLoading: itemQueries.some((q)=>q.isLoading),
         isFetching: itemQueries.some((q)=>q.isFetching),
-        errors: errors.length > 0 && errors
+        errors: errors.length > 0 ? errors : undefined
     };
 };
-const $c1e897431d8c5742$var$useCollection = (predicateOrUrl, options = {})=>{
+/**
+ * Subscribe a collection.
+ * @param predicateOrUrl The collection URI or the predicate to get the collection URI from the identity (webId).
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: true }`
+ */ const $8281f3ce3b9d6123$var$useCollection = (predicateOrUrl, options = {})=>{
     const { dereferenceItems: dereferenceItems = false, liveUpdates: liveUpdates = true } = options;
     const { data: identity } = (0, $85cNH$useGetIdentity)();
     const [totalItems, setTotalItems] = (0, $85cNH$useState)();
-    const [notifications, setNotifications] = (0, $85cNH$useState)([]);
+    const queryClient = (0, $85cNH$useQueryClient)();
     const [hasLiveUpdates, setHasLiveUpdates] = (0, $85cNH$useState)({
-        status: "disconnected",
-        error: undefined
+        status: "connecting"
     });
     const dataProvider = (0, $85cNH$useDataProvider)();
     // Get collectionUrl from webId predicate or URL.
@@ -624,7 +635,7 @@ const $c1e897431d8c5742$var$useCollection = (predicateOrUrl, options = {})=>{
         setTotalItems
     ]);
     // Use infiniteQuery to handle pagination, fetching, etc.
-    const { data: data, error: collectionError, fetchNextPage: fetchNextPage, refetch: refetch, hasNextPage: hasNextPage, isLoading: isLoadingPage, isFetching: isFetchingPage, isFetchingNextPage: isFetchingNextPage } = (0, $85cNH$useInfiniteQuery)([
+    const { data: pageData, error: collectionError, fetchNextPage: fetchNextPage, refetch: refetch, hasNextPage: hasNextPage, isLoading: isLoadingPage, isFetching: isFetchingPage, isFetchingNextPage: isFetchingNextPage } = (0, $85cNH$useInfiniteQuery)([
         "collection",
         {
             collectionUrl: collectionUrl
@@ -634,21 +645,82 @@ const $c1e897431d8c5742$var$useCollection = (predicateOrUrl, options = {})=>{
         getNextPageParam: (lastPage)=>lastPage.next,
         getPreviousPageParam: (firstPage)=>firstPage.prev
     });
-    // Put all items together in a list.
-    const { loadedItems: items, isLoading: isLoadingItems, isFetching: isFetchingItems, errors: itemErrors } = $c1e897431d8c5742$var$useItemsFromPagesAndNotifications(data?.pages, notifications, dereferenceItems);
-    // Notifications have been processed after hook call, so reset.
-    // useEffect(() => {
-    //   setNotifications([]);
-    // }, [notifications])
+    // Put all items together in a list (and dereference, if required).
+    const { loadedItems: items, isLoading: isLoadingItems, isFetching: isFetchingItems, errors: itemErrors } = $8281f3ce3b9d6123$var$useItemsFromPages(pageData?.pages ?? [], dereferenceItems);
+    const allErrors = (0, $577f4953dfa5de4f$export$e57ff0f701c44363)(collectionError).concat((0, $577f4953dfa5de4f$export$e57ff0f701c44363)(itemErrors));
+    const addItem = (0, $85cNH$useCallback)((item, shouldRefetch = true)=>{
+        queryClient.setQueryData([
+            "collection",
+            {
+                collectionUrl: collectionUrl
+            }
+        ], (oldData)=>{
+            if (!oldData) return oldData;
+            setTotalItems(totalItems && totalItems + 1);
+            // Destructure, so react knows, it needs to re-render the pages.
+            const pages = [
+                ...oldData.pages
+            ];
+            const firstPageItems = pages?.[0]?.orderedItems || pages?.[0]?.items || [];
+            firstPageItems.unshift(item);
+            oldData.pages = pages;
+            return oldData;
+        });
+        if (shouldRefetch) setTimeout(()=>queryClient.refetchQueries([
+                "collection",
+                {
+                    collectionUrl: collectionUrl
+                }
+            ], {
+                active: true,
+                exact: true
+            }), typeof shouldRefetch === "number" ? shouldRefetch : 2000);
+    }, [
+        queryClient,
+        collectionUrl
+    ]);
+    const removeItem = (0, $85cNH$useCallback)((item, shouldRefetch = true)=>{
+        queryClient.setQueryData([
+            "collection",
+            {
+                collectionUrl: collectionUrl
+            }
+        ], (oldData)=>{
+            if (!oldData) return oldData;
+            setTotalItems(totalItems && totalItems - 1);
+            // Destructure, so react knows, it needs to re-render the pages array.
+            const pages = [
+                ...oldData.pages
+            ];
+            // Find the item in all pages and remove the item to be removed (either item.id or just item)
+            pages.forEach((page)=>{
+                if (page.orderedItems) page.orderedItems = page.orderedItems.filter((i)=>(i.id || i) !== (item.id || item));
+                else if (page.items) page.items = page.items.filter((i)=>(i.id || i) !== (item?.id || item));
+            });
+            oldData.pages = pages;
+            return oldData;
+        });
+        if (shouldRefetch) setTimeout(()=>queryClient.refetchQueries([
+                "collection",
+                {
+                    collectionUrl: collectionUrl
+                }
+            ], {
+                active: true,
+                exact: true
+            }), typeof shouldRefetch === "number" ? shouldRefetch : 2000);
+    }, [
+        queryClient,
+        collectionUrl
+    ]);
     // Live Updates
     (0, $85cNH$useEffect)(()=>{
         if (liveUpdates && collectionUrl) // Create ws that listens to collectionUri changes
-        (0, $85cNH$createWsChannel)(dataProvider.fetch, collectionUrl).then((webSocket)=>{
+        (0, $85cNH$getOrCreateWsChannel)(dataProvider.fetch, collectionUrl).then((webSocket)=>{
             webSocket.addEventListener("message", (e)=>{
-                if (e.data && e.data.type === "Add" || e.data.type === "Remove") setNotifications([
-                    ...notifications,
-                    e.data
-                ]);
+                const data = JSON.parse(e.data);
+                if (data && data.type === "Add") addItem(data.object, true);
+                else if (data && data.type === "Remove") removeItem(data.object, true);
             });
             webSocket.addEventListener("error", (e)=>{
                 setHasLiveUpdates({
@@ -658,9 +730,9 @@ const $c1e897431d8c5742$var$useCollection = (predicateOrUrl, options = {})=>{
             // TODO: Retry after a while
             });
             webSocket.addEventListener("close", (e)=>{
-                setHasLiveUpdates({
+                if (!hasLiveUpdates.error) setHasLiveUpdates({
                     ...hasLiveUpdates,
-                    status: "disconnected"
+                    status: "closed"
                 });
             });
             setHasLiveUpdates({
@@ -670,15 +742,16 @@ const $c1e897431d8c5742$var$useCollection = (predicateOrUrl, options = {})=>{
     }, [
         collectionUrl,
         liveUpdates,
-        dataProvider.fetch
+        dataProvider
     ]);
-    const allErrors = (0, $e4e1b14e0441184d$export$e57ff0f701c44363)(collectionError).concat((0, $e4e1b14e0441184d$export$e57ff0f701c44363)(itemErrors));
     return {
         items: items,
         totalItems: totalItems,
         error: allErrors.length > 0 && allErrors,
         refetch: refetch,
         fetchNextPage: fetchNextPage,
+        addItem: addItem,
+        removeItem: removeItem,
         hasNextPage: hasNextPage,
         isLoading: isLoadingPage || isLoadingItems,
         isFetching: isFetchingPage || isFetchingItems,
@@ -687,12 +760,12 @@ const $c1e897431d8c5742$var$useCollection = (predicateOrUrl, options = {})=>{
         hasLiveUpdates: hasLiveUpdates
     };
 };
-var $c1e897431d8c5742$export$2e2bcd8739ae039 = $c1e897431d8c5742$var$useCollection;
+var $8281f3ce3b9d6123$export$2e2bcd8739ae039 = $8281f3ce3b9d6123$var$useCollection;
 
 
 const $7ce737d4a1c88e63$var$CommentsField = ({ source: source, context: context, helperText: helperText, placeholder: placeholder, userResource: userResource, mentions: mentions })=>{
     const record = (0, $85cNH$useRecordContext)();
-    const { items: comments, loading: loading, addItem: addItem, removeItem: removeItem } = (0, $c1e897431d8c5742$export$2e2bcd8739ae039)(record.replies);
+    const { items: comments, loading: loading, addItem: addItem, removeItem: removeItem } = (0, $8281f3ce3b9d6123$export$2e2bcd8739ae039)(record.replies);
     if (!userResource) throw new Error("No userResource defined for CommentsField");
     return /*#__PURE__*/ (0, $85cNH$jsxs)((0, $85cNH$Fragment), {
         children: [
@@ -728,7 +801,7 @@ var $7ce737d4a1c88e63$export$2e2bcd8739ae039 = $7ce737d4a1c88e63$var$CommentsFie
 
 const $d3be168cd1e7aaae$var$CollectionList = ({ collectionUrl: collectionUrl, resource: resource, children: children })=>{
     if ((0, $85cNH$react).Children.count(children) !== 1) throw new Error("<CollectionList> only accepts a single child");
-    const { items: actorsUris } = (0, $c1e897431d8c5742$export$2e2bcd8739ae039)(collectionUrl);
+    const { items: actorsUris } = (0, $8281f3ce3b9d6123$export$2e2bcd8739ae039)(collectionUrl);
     const { data: data, isLoading: isLoading, isFetching: isFetching } = (0, $85cNH$useGetMany)(resource, {
         ids: Array.isArray(actorsUris) ? actorsUris : [
             actorsUris
@@ -1052,5 +1125,5 @@ var $51cccd331ea8b13d$export$2e2bcd8739ae039 = $51cccd331ea8b13d$var$useMentions
 
 
 
-export {$7ce737d4a1c88e63$export$2e2bcd8739ae039 as CommentsField, $d3be168cd1e7aaae$export$2e2bcd8739ae039 as CollectionList, $ea214512ab1a2e8f$export$2e2bcd8739ae039 as ReferenceCollectionField, $c1e897431d8c5742$export$2e2bcd8739ae039 as useCollection, $542b37cc25b8ccca$export$2e2bcd8739ae039 as useInbox, $641e93142bcf5435$export$2e2bcd8739ae039 as useNodeinfo, $712f7f004b5f345e$export$2e2bcd8739ae039 as useOutbox, $2514c63dc8f4867c$export$2e2bcd8739ae039 as useWebfinger, $51cccd331ea8b13d$export$2e2bcd8739ae039 as useMentions, $338f387df48a40d7$export$1ec8e53e7d982d22 as ACTIVITY_TYPES, $338f387df48a40d7$export$9649665d7ccb0dc2 as ACTOR_TYPES, $338f387df48a40d7$export$c49cfb2681596b20 as OBJECT_TYPES, $338f387df48a40d7$export$4d8d554031975581 as PUBLIC_URI};
+export {$7ce737d4a1c88e63$export$2e2bcd8739ae039 as CommentsField, $d3be168cd1e7aaae$export$2e2bcd8739ae039 as CollectionList, $ea214512ab1a2e8f$export$2e2bcd8739ae039 as ReferenceCollectionField, $8281f3ce3b9d6123$export$2e2bcd8739ae039 as useCollection, $542b37cc25b8ccca$export$2e2bcd8739ae039 as useInbox, $641e93142bcf5435$export$2e2bcd8739ae039 as useNodeinfo, $712f7f004b5f345e$export$2e2bcd8739ae039 as useOutbox, $2514c63dc8f4867c$export$2e2bcd8739ae039 as useWebfinger, $51cccd331ea8b13d$export$2e2bcd8739ae039 as useMentions, $338f387df48a40d7$export$1ec8e53e7d982d22 as ACTIVITY_TYPES, $338f387df48a40d7$export$9649665d7ccb0dc2 as ACTOR_TYPES, $338f387df48a40d7$export$c49cfb2681596b20 as OBJECT_TYPES, $338f387df48a40d7$export$4d8d554031975581 as PUBLIC_URI};
 //# sourceMappingURL=index.es.js.map

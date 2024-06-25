@@ -27,7 +27,7 @@ function $parcel$interopDefault(a) {
 $parcel$export(module.exports, "CommentsField", () => $2e5504cc4159ca8d$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "CollectionList", () => $505d598a33288aad$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "ReferenceCollectionField", () => $b0c94a9bdea99da5$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "useCollection", () => $2b75a2f49c9ef165$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useCollection", () => $5ca5f7e9fc1c3544$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useInbox", () => $97664763db3c0a46$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useNodeinfo", () => $30fd77858150739b$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useOutbox", () => $decfdd34cc00b80e$export$2e2bcd8739ae039);
@@ -547,7 +547,7 @@ var $d68cd57b2d06b6d5$export$2e2bcd8739ae039 = $d68cd57b2d06b6d5$var$CommentsLis
 
 
 
-const $3ff23aa25753c478$export$e57ff0f701c44363 = (value)=>{
+const $03510abb28fd3d8a$export$e57ff0f701c44363 = (value)=>{
     // If the field is null-ish, we suppose there are no values.
     if (value === null || value === undefined) return [];
     // Return as is.
@@ -557,30 +557,34 @@ const $3ff23aa25753c478$export$e57ff0f701c44363 = (value)=>{
         value
     ];
 };
-var $3ff23aa25753c478$export$2e2bcd8739ae039 = {
-    arrayOf: $3ff23aa25753c478$export$e57ff0f701c44363
+var $03510abb28fd3d8a$export$2e2bcd8739ae039 = {
+    arrayOf: $03510abb28fd3d8a$export$e57ff0f701c44363
+};
+const $03510abb28fd3d8a$export$34aed805e991a647 = (iterable, predicate)=>{
+    const seen = new Set();
+    return iterable.filter((item)=>{
+        const key = predicate(item);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
 };
 
 
-const $2b75a2f49c9ef165$var$useItemsFromPagesAndNotifications = (pages, notifications, dereferenceItems)=>{
+const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
     const dataProvider = (0, $583VT$reactadmin.useDataProvider)();
-    // Add all items from pages and process notifications (possibly new and deleted items).
-    const items = (0, $583VT$react.useMemo)(()=>{
-        const addItems = notifications.map((n)=>n.type === "Add").map((n)=>n.object);
-        const removeItems = notifications.map((n)=>n.type === "Remove").map((n)=>n.object.id || n.object);
-        const currentItems = !pages ? [] : pages.flatMap((p)=>(0, $3ff23aa25753c478$export$e57ff0f701c44363)(p.orderedItems || p.items));
-        const currentAndNew = currentItems.concat(addItems);
-        return currentAndNew// Filter out removed items.
-        .filter((item)=>!removeItems.some((r)=>(r.id ?? r) === (item.id ?? item)))// Filter duplicates.
-        .filter((item)=>currentAndNew.some((i2)=>(i2.id ?? i2) === (item.id ?? item)));
-    }, pages, notifications);
-    if (!dereferenceItems) return {
-        loadedItems: items,
-        isLoading: false,
-        isFetching: false
-    };
-    // Dereference all items, if they are not yet.
-    const itemQueries = (0, $583VT$reactquery.useQueries)(items.filter((item)=>typeof item === "string").map((itemUri)=>({
+    const items = (0, $583VT$react.useMemo)(()=>pages.flatMap((p)=>(0, $03510abb28fd3d8a$export$e57ff0f701c44363)(p.orderedItems || p.items)), [
+        pages
+    ]);
+    // We will force dereference, if some items are not URI string references.
+    const shouldDereference = (0, $583VT$react.useMemo)(()=>{
+        return dereferenceItems || items.some((item)=>typeof item !== "string");
+    }, [
+        dereferenceItems,
+        items
+    ]);
+    // Dereference all items, if necessary (even if shouldDereference is false, the hook needs to be called).
+    const itemQueries = (0, $583VT$reactquery.useQueries)(!shouldDereference ? [] : items.filter((item)=>typeof item === "string").map((itemUri)=>({
             queryKey: [
                 "resource",
                 itemUri
@@ -588,27 +592,34 @@ const $2b75a2f49c9ef165$var$useItemsFromPagesAndNotifications = (pages, notifica
             queryFn: async ()=>(await dataProvider.fetch(itemUri)).json,
             staleTime: Infinity
         })));
+    if (!shouldDereference) return {
+        loadedItems: items,
+        isLoading: false,
+        isFetching: false
+    };
     // Put all loaded items together (might be dereferenced already, so concatenate).
     const loadedItems = items.filter((item)=>typeof item !== "string").concat(itemQueries.flatMap((itemQuery)=>{
         return itemQuery.isSuccess && itemQuery.data || [];
     }));
-    console.log("loadedItems", loadedItems.length, "total", items.length);
     const errors = itemQueries.filter((q)=>q.error);
     return {
         loadedItems: loadedItems,
         isLoading: itemQueries.some((q)=>q.isLoading),
         isFetching: itemQueries.some((q)=>q.isFetching),
-        errors: errors.length > 0 && errors
+        errors: errors.length > 0 ? errors : undefined
     };
 };
-const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl, options = {})=>{
+/**
+ * Subscribe a collection.
+ * @param predicateOrUrl The collection URI or the predicate to get the collection URI from the identity (webId).
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: true }`
+ */ const $5ca5f7e9fc1c3544$var$useCollection = (predicateOrUrl, options = {})=>{
     const { dereferenceItems: dereferenceItems = false, liveUpdates: liveUpdates = true } = options;
     const { data: identity } = (0, $583VT$reactadmin.useGetIdentity)();
     const [totalItems, setTotalItems] = (0, $583VT$react.useState)();
-    const [notifications, setNotifications] = (0, $583VT$react.useState)([]);
+    const queryClient = (0, $583VT$reactquery.useQueryClient)();
     const [hasLiveUpdates, setHasLiveUpdates] = (0, $583VT$react.useState)({
-        status: "disconnected",
-        error: undefined
+        status: "connecting"
     });
     const dataProvider = (0, $583VT$reactadmin.useDataProvider)();
     // Get collectionUrl from webId predicate or URL.
@@ -646,7 +657,7 @@ const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl, options = {})=>{
         setTotalItems
     ]);
     // Use infiniteQuery to handle pagination, fetching, etc.
-    const { data: data, error: collectionError, fetchNextPage: fetchNextPage, refetch: refetch, hasNextPage: hasNextPage, isLoading: isLoadingPage, isFetching: isFetchingPage, isFetchingNextPage: isFetchingNextPage } = (0, $583VT$reactquery.useInfiniteQuery)([
+    const { data: pageData, error: collectionError, fetchNextPage: fetchNextPage, refetch: refetch, hasNextPage: hasNextPage, isLoading: isLoadingPage, isFetching: isFetchingPage, isFetchingNextPage: isFetchingNextPage } = (0, $583VT$reactquery.useInfiniteQuery)([
         "collection",
         {
             collectionUrl: collectionUrl
@@ -656,21 +667,82 @@ const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl, options = {})=>{
         getNextPageParam: (lastPage)=>lastPage.next,
         getPreviousPageParam: (firstPage)=>firstPage.prev
     });
-    // Put all items together in a list.
-    const { loadedItems: items, isLoading: isLoadingItems, isFetching: isFetchingItems, errors: itemErrors } = $2b75a2f49c9ef165$var$useItemsFromPagesAndNotifications(data?.pages, notifications, dereferenceItems);
-    // Notifications have been processed after hook call, so reset.
-    // useEffect(() => {
-    //   setNotifications([]);
-    // }, [notifications])
+    // Put all items together in a list (and dereference, if required).
+    const { loadedItems: items, isLoading: isLoadingItems, isFetching: isFetchingItems, errors: itemErrors } = $5ca5f7e9fc1c3544$var$useItemsFromPages(pageData?.pages ?? [], dereferenceItems);
+    const allErrors = (0, $03510abb28fd3d8a$export$e57ff0f701c44363)(collectionError).concat((0, $03510abb28fd3d8a$export$e57ff0f701c44363)(itemErrors));
+    const addItem = (0, $583VT$react.useCallback)((item, shouldRefetch = true)=>{
+        queryClient.setQueryData([
+            "collection",
+            {
+                collectionUrl: collectionUrl
+            }
+        ], (oldData)=>{
+            if (!oldData) return oldData;
+            setTotalItems(totalItems && totalItems + 1);
+            // Destructure, so react knows, it needs to re-render the pages.
+            const pages = [
+                ...oldData.pages
+            ];
+            const firstPageItems = pages?.[0]?.orderedItems || pages?.[0]?.items || [];
+            firstPageItems.unshift(item);
+            oldData.pages = pages;
+            return oldData;
+        });
+        if (shouldRefetch) setTimeout(()=>queryClient.refetchQueries([
+                "collection",
+                {
+                    collectionUrl: collectionUrl
+                }
+            ], {
+                active: true,
+                exact: true
+            }), typeof shouldRefetch === "number" ? shouldRefetch : 2000);
+    }, [
+        queryClient,
+        collectionUrl
+    ]);
+    const removeItem = (0, $583VT$react.useCallback)((item, shouldRefetch = true)=>{
+        queryClient.setQueryData([
+            "collection",
+            {
+                collectionUrl: collectionUrl
+            }
+        ], (oldData)=>{
+            if (!oldData) return oldData;
+            setTotalItems(totalItems && totalItems - 1);
+            // Destructure, so react knows, it needs to re-render the pages array.
+            const pages = [
+                ...oldData.pages
+            ];
+            // Find the item in all pages and remove the item to be removed (either item.id or just item)
+            pages.forEach((page)=>{
+                if (page.orderedItems) page.orderedItems = page.orderedItems.filter((i)=>(i.id || i) !== (item.id || item));
+                else if (page.items) page.items = page.items.filter((i)=>(i.id || i) !== (item?.id || item));
+            });
+            oldData.pages = pages;
+            return oldData;
+        });
+        if (shouldRefetch) setTimeout(()=>queryClient.refetchQueries([
+                "collection",
+                {
+                    collectionUrl: collectionUrl
+                }
+            ], {
+                active: true,
+                exact: true
+            }), typeof shouldRefetch === "number" ? shouldRefetch : 2000);
+    }, [
+        queryClient,
+        collectionUrl
+    ]);
     // Live Updates
     (0, $583VT$react.useEffect)(()=>{
         if (liveUpdates && collectionUrl) // Create ws that listens to collectionUri changes
-        (0, $583VT$semappssemanticdataprovider.createWsChannel)(dataProvider.fetch, collectionUrl).then((webSocket)=>{
+        (0, $583VT$semappssemanticdataprovider.getOrCreateWsChannel)(dataProvider.fetch, collectionUrl).then((webSocket)=>{
             webSocket.addEventListener("message", (e)=>{
-                if (e.data && e.data.type === "Add" || e.data.type === "Remove") setNotifications([
-                    ...notifications,
-                    e.data
-                ]);
+                const data = JSON.parse(e.data);
+                if (data && data.type === "Add") addItem(data.object, true);
+                else if (data && data.type === "Remove") removeItem(data.object, true);
             });
             webSocket.addEventListener("error", (e)=>{
                 setHasLiveUpdates({
@@ -680,9 +752,9 @@ const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl, options = {})=>{
             // TODO: Retry after a while
             });
             webSocket.addEventListener("close", (e)=>{
-                setHasLiveUpdates({
+                if (!hasLiveUpdates.error) setHasLiveUpdates({
                     ...hasLiveUpdates,
-                    status: "disconnected"
+                    status: "closed"
                 });
             });
             setHasLiveUpdates({
@@ -692,15 +764,16 @@ const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl, options = {})=>{
     }, [
         collectionUrl,
         liveUpdates,
-        dataProvider.fetch
+        dataProvider
     ]);
-    const allErrors = (0, $3ff23aa25753c478$export$e57ff0f701c44363)(collectionError).concat((0, $3ff23aa25753c478$export$e57ff0f701c44363)(itemErrors));
     return {
         items: items,
         totalItems: totalItems,
         error: allErrors.length > 0 && allErrors,
         refetch: refetch,
         fetchNextPage: fetchNextPage,
+        addItem: addItem,
+        removeItem: removeItem,
         hasNextPage: hasNextPage,
         isLoading: isLoadingPage || isLoadingItems,
         isFetching: isFetchingPage || isFetchingItems,
@@ -709,12 +782,12 @@ const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl, options = {})=>{
         hasLiveUpdates: hasLiveUpdates
     };
 };
-var $2b75a2f49c9ef165$export$2e2bcd8739ae039 = $2b75a2f49c9ef165$var$useCollection;
+var $5ca5f7e9fc1c3544$export$2e2bcd8739ae039 = $5ca5f7e9fc1c3544$var$useCollection;
 
 
 const $2e5504cc4159ca8d$var$CommentsField = ({ source: source, context: context, helperText: helperText, placeholder: placeholder, userResource: userResource, mentions: mentions })=>{
     const record = (0, $583VT$reactadmin.useRecordContext)();
-    const { items: comments, loading: loading, addItem: addItem, removeItem: removeItem } = (0, $2b75a2f49c9ef165$export$2e2bcd8739ae039)(record.replies);
+    const { items: comments, loading: loading, addItem: addItem, removeItem: removeItem } = (0, $5ca5f7e9fc1c3544$export$2e2bcd8739ae039)(record.replies);
     if (!userResource) throw new Error("No userResource defined for CommentsField");
     return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsxs)((0, $583VT$reactjsxruntime.Fragment), {
         children: [
@@ -750,7 +823,7 @@ var $2e5504cc4159ca8d$export$2e2bcd8739ae039 = $2e5504cc4159ca8d$var$CommentsFie
 
 const $505d598a33288aad$var$CollectionList = ({ collectionUrl: collectionUrl, resource: resource, children: children })=>{
     if ((0, ($parcel$interopDefault($583VT$react))).Children.count(children) !== 1) throw new Error("<CollectionList> only accepts a single child");
-    const { items: actorsUris } = (0, $2b75a2f49c9ef165$export$2e2bcd8739ae039)(collectionUrl);
+    const { items: actorsUris } = (0, $5ca5f7e9fc1c3544$export$2e2bcd8739ae039)(collectionUrl);
     const { data: data, isLoading: isLoading, isFetching: isFetching } = (0, $583VT$reactadmin.useGetMany)(resource, {
         ids: Array.isArray(actorsUris) ? actorsUris : [
             actorsUris

@@ -100,12 +100,16 @@ const createWsChannel = async (fetch: fetchFn, resourceUri: string, options: Cre
 const registeredWebSockets = new Map<string, WebSocket | Promise<WebSocket>>();
 
 /**
- * @param fetch A react admin fetch function
+ * @param fetch A react admin fetch function.
  * @param resourceUri The resource to subscribe to
  * @param options Options to pass to @see createSolidNotificationChannel, if the channel does not exist yet.
  * @returns {WebSocket} A new or existing web socket that subscribed to the given resource.
  */
-const getOrCreateWsChannel = async (fetch: fetchFn, resourceUri: string, options: CreateSolidChannelOptions) => {
+const getOrCreateWsChannel = async (
+  fetch: fetchFn,
+  resourceUri: string,
+  options: CreateSolidChannelOptions = { type: 'WebSocketChannel2023', closeAfter: 1000 * 60 * 60 }
+) => {
   const socket = registeredWebSockets.get(resourceUri);
   if (socket) {
     // Will resolve or is resolved already.
@@ -114,7 +118,7 @@ const getOrCreateWsChannel = async (fetch: fetchFn, resourceUri: string, options
 
   // Create a promise, to return immediately and set the sockets cache.
   // This prevents racing conditions that create multiple channels.
-  const wsPromise = createWsChannel(fetch, resourceUri, options).then(ws => {
+  const wsPromise = createWsChannel(fetch, resourceUri, { ...options, type: 'WebSocketChannel2023' }).then(ws => {
     // Remove the promise from the cache, if it closes.
     ws.addEventListener('close', e => {
       registeredWebSockets.delete(resourceUri);

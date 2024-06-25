@@ -57,22 +57,30 @@ export function useOutbox(): {
   loaded: boolean;
   owner: import('react-admin').Identifier | undefined;
 };
-declare namespace _default {
-  export { arrayOf };
+interface UseCollectionOptions {
+  dereferenceItems?: boolean;
+  liveUpdates?: boolean;
 }
-export function useCollection(
-  predicateOrUrl: any,
-  options?: {}
-): {
-  items: any;
-  totalItems: undefined;
-  error: false | any[];
+/**
+ * Subscribe a collection.
+ * @param predicateOrUrl The collection URI or the predicate to get the collection URI from the identity (webId).
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: true }`
+ */
+export const useCollection: (
+  predicateOrUrl: string,
+  options?: UseCollectionOptions
+) => {
+  items: any[];
+  totalItems: number | undefined;
+  error: false | unknown[];
   refetch: <TPageData>(
     options?: (import('react-query').RefetchOptions & import('react-query').RefetchQueryFilters<TPageData>) | undefined
   ) => Promise<import('react-query').QueryObserverResult<import('react-query').InfiniteData<any>, unknown>>;
   fetchNextPage: (
-    options?: import('react-query').FetchNextPageOptions | undefined
+    options?: import('react-query').FetchNextPageOptions
   ) => Promise<import('react-query').InfiniteQueryObserverResult<any, unknown>>;
+  addItem: (item: string | any, shouldRefetch?: boolean | number) => void;
+  removeItem: (item: string | any, shouldRefetch?: boolean) => void;
   hasNextPage: boolean | undefined;
   isLoading: boolean;
   isFetching: boolean;
@@ -80,7 +88,7 @@ export function useCollection(
   url: any;
   hasLiveUpdates: {
     status: string;
-    error: undefined;
+    error?: any;
   };
 };
 export function CommentsField({

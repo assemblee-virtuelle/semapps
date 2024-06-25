@@ -1531,17 +1531,23 @@ const $03d52e691e8dc945$export$28772ab4c256e709 = async (fetch, resourceUri, opt
 };
 const $03d52e691e8dc945$var$registeredWebSockets = new Map();
 /**
- * @param fetch A react admin fetch function
+ * @param fetch A react admin fetch function.
  * @param resourceUri The resource to subscribe to
  * @param options Options to pass to @see createSolidNotificationChannel, if the channel does not exist yet.
  * @returns {WebSocket} A new or existing web socket that subscribed to the given resource.
- */ const $03d52e691e8dc945$export$8d60734939c59ced = async (fetch, resourceUri, options)=>{
+ */ const $03d52e691e8dc945$export$8d60734939c59ced = async (fetch, resourceUri, options = {
+    type: "WebSocketChannel2023",
+    closeAfter: 3600000
+})=>{
     const socket = $03d52e691e8dc945$var$registeredWebSockets.get(resourceUri);
     if (socket) // Will resolve or is resolved already.
     return socket;
     // Create a promise, to return immediately and set the sockets cache.
     // This prevents racing conditions that create multiple channels.
-    const wsPromise = $03d52e691e8dc945$export$28772ab4c256e709(fetch, resourceUri, options).then((ws)=>{
+    const wsPromise = $03d52e691e8dc945$export$28772ab4c256e709(fetch, resourceUri, {
+        ...options,
+        type: "WebSocketChannel2023"
+    }).then((ws)=>{
         // Remove the promise from the cache, if it closes.
         ws.addEventListener("close", (e)=>{
             $03d52e691e8dc945$var$registeredWebSockets.delete(resourceUri);
@@ -1560,5 +1566,5 @@ const $03d52e691e8dc945$var$registeredWebSockets = new Map();
 
 
 
-export {$243bf28fbb1b868f$export$2e2bcd8739ae039 as dataProvider, $6cde9a8fbbde3ffb$export$2e2bcd8739ae039 as buildSparqlQuery, $865f630cc944e818$export$2e2bcd8739ae039 as buildBlankNodesQuery, $87656edf926c0f1f$export$2e2bcd8739ae039 as useGetExternalLink, $586fa0ea9d02fa12$export$2e2bcd8739ae039 as useContainers, $7bd037d7ec9d51f8$export$2e2bcd8739ae039 as useCreateContainer, $e5a0eacd756fd1d5$export$2e2bcd8739ae039 as useDataModel, $349fed82907088e5$export$2e2bcd8739ae039 as useDataModels, $11b469d0a927fb46$export$2e2bcd8739ae039 as useDataServers, $406574efa35ec6f1$export$2e2bcd8739ae039 as FilterHandler, $1d8c1cbe606a94ae$export$2e2bcd8739ae039 as GroupedReferenceHandler, $6844bbce0ad66151$export$2e2bcd8739ae039 as ReificationArrayInput, $03d52e691e8dc945$export$28772ab4c256e709 as createWsChannel, $03d52e691e8dc945$export$3edfe18db119b920 as createSolidNotificationChannel};
+export {$243bf28fbb1b868f$export$2e2bcd8739ae039 as dataProvider, $6cde9a8fbbde3ffb$export$2e2bcd8739ae039 as buildSparqlQuery, $865f630cc944e818$export$2e2bcd8739ae039 as buildBlankNodesQuery, $87656edf926c0f1f$export$2e2bcd8739ae039 as useGetExternalLink, $586fa0ea9d02fa12$export$2e2bcd8739ae039 as useContainers, $7bd037d7ec9d51f8$export$2e2bcd8739ae039 as useCreateContainer, $e5a0eacd756fd1d5$export$2e2bcd8739ae039 as useDataModel, $349fed82907088e5$export$2e2bcd8739ae039 as useDataModels, $11b469d0a927fb46$export$2e2bcd8739ae039 as useDataServers, $406574efa35ec6f1$export$2e2bcd8739ae039 as FilterHandler, $1d8c1cbe606a94ae$export$2e2bcd8739ae039 as GroupedReferenceHandler, $6844bbce0ad66151$export$2e2bcd8739ae039 as ReificationArrayInput, $03d52e691e8dc945$export$28772ab4c256e709 as createWsChannel, $03d52e691e8dc945$export$8d60734939c59ced as getOrCreateWsChannel, $03d52e691e8dc945$export$3edfe18db119b920 as createSolidNotificationChannel};
 //# sourceMappingURL=index.es.js.map

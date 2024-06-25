@@ -32,6 +32,7 @@ $parcel$export(module.exports, "FilterHandler", () => $f763906f9b20f2d8$export$2
 $parcel$export(module.exports, "GroupedReferenceHandler", () => $b4703fef6d6af456$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "ReificationArrayInput", () => $030f1232f6810456$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "createWsChannel", () => $84ab912646919f8c$export$28772ab4c256e709);
+$parcel$export(module.exports, "getOrCreateWsChannel", () => $84ab912646919f8c$export$8d60734939c59ced);
 $parcel$export(module.exports, "createSolidNotificationChannel", () => $84ab912646919f8c$export$3edfe18db119b920);
 
 
@@ -1554,17 +1555,23 @@ const $84ab912646919f8c$export$28772ab4c256e709 = async (fetch, resourceUri, opt
 };
 const $84ab912646919f8c$var$registeredWebSockets = new Map();
 /**
- * @param fetch A react admin fetch function
+ * @param fetch A react admin fetch function.
  * @param resourceUri The resource to subscribe to
  * @param options Options to pass to @see createSolidNotificationChannel, if the channel does not exist yet.
  * @returns {WebSocket} A new or existing web socket that subscribed to the given resource.
- */ const $84ab912646919f8c$export$8d60734939c59ced = async (fetch, resourceUri, options)=>{
+ */ const $84ab912646919f8c$export$8d60734939c59ced = async (fetch, resourceUri, options = {
+    type: "WebSocketChannel2023",
+    closeAfter: 3600000
+})=>{
     const socket = $84ab912646919f8c$var$registeredWebSockets.get(resourceUri);
     if (socket) // Will resolve or is resolved already.
     return socket;
     // Create a promise, to return immediately and set the sockets cache.
     // This prevents racing conditions that create multiple channels.
-    const wsPromise = $84ab912646919f8c$export$28772ab4c256e709(fetch, resourceUri, options).then((ws)=>{
+    const wsPromise = $84ab912646919f8c$export$28772ab4c256e709(fetch, resourceUri, {
+        ...options,
+        type: "WebSocketChannel2023"
+    }).then((ws)=>{
         // Remove the promise from the cache, if it closes.
         ws.addEventListener("close", (e)=>{
             $84ab912646919f8c$var$registeredWebSockets.delete(resourceUri);
