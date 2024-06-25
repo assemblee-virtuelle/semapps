@@ -1,11 +1,11 @@
 {
   "name": "@semapps/webfinger",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "Webfinger extension for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "@semapps/mime-types": "0.8.1",
+    "@semapps/mime-types": "0.8.2",
     "node-fetch": "^2.6.6"
   },
   "publishConfig": {
