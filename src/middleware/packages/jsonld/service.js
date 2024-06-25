@@ -19,18 +19,27 @@ module.exports = {
       throw new Error('The baseUri and localContextPath settings are required');
     }
 
+    let localContextUri;
+    if (localContextPath.startsWith('.well-known') || localContextPath.startsWith('/.well-known')) {
+      // For /.well-known URIs, use the root path
+      const { origin } = new URL(baseUri);
+      localContextUri = urlJoin(origin, localContextPath);
+    } else {
+      localContextUri = urlJoin(baseUri, localContextPath);
+    }
+
     this.broker.createService({
       mixins: [JsonLdDocumentLoaderService],
       settings: {
         cachedContextFiles,
-        localContextUri: urlJoin(baseUri, localContextPath)
+        localContextUri
       }
     });
 
     this.broker.createService({
       mixins: [JsonLdContextService],
       settings: {
-        localContextUri: urlJoin(baseUri, localContextPath)
+        localContextUri
       }
     });
 
