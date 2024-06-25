@@ -1,14 +1,14 @@
 {
   "name": "@semapps/webid",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "WebID service for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "@semapps/activitypub": "0.8.0",
-    "@semapps/ldp": "0.8.0",
-    "@semapps/mime-types": "0.8.0",
-    "@semapps/ontologies": "0.8.0",
+    "@semapps/activitypub": "0.8.1",
+    "@semapps/ldp": "0.8.1",
+    "@semapps/mime-types": "0.8.1",
+    "@semapps/ontologies": "0.8.1",
     "url-join": "^4.0.1"
   },
   "publishConfig": {
