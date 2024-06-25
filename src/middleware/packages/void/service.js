@@ -165,7 +165,7 @@ module.exports = {
     });
     await this.broker.call('api.addRoute', {
       route: {
-        path: '/.well-known/void',
+        path: '/.well-known/void', // .well-known routes must use the root path
         name: 'void-endpoint',
         bodyParsers: false,
         authorization: false,

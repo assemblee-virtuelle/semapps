@@ -23,7 +23,10 @@ module.exports = {
     put: putAction
   },
   async started() {
-    await this.broker.call('api.addRoute', { route: getCatchAllRoute(this.settings.podProvider) });
+    const { pathname: basePath } = new URL(this.settings.baseUrl);
+    await this.broker.call('api.addRoute', {
+      route: getCatchAllRoute(basePath, this.settings.podProvider)
+    });
   },
   methods: {
     getUriFromSlugParts(slugParts, username) {

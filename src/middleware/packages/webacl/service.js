@@ -61,7 +61,9 @@ module.exports = {
       }
     }
 
-    for (const route of getRoutes(this.settings.podProvider)) {
+    const { pathname: basePath } = new URL(this.settings.baseUrl);
+
+    for (const route of getRoutes(basePath, this.settings.podProvider)) {
       await this.broker.call('api.addRoute', { route });
     }
 

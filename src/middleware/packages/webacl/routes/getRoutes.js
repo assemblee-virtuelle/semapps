@@ -1,3 +1,4 @@
+const path = require('path');
 const { parseHeader, negotiateContentType, negotiateAccept, parseJson } = require('@semapps/middlewares');
 
 const onError = (req, res, err) => {
@@ -8,12 +9,12 @@ const onError = (req, res, err) => {
   res.end(JSON.stringify({ type, code, message, data, name }));
 };
 
-const getRoutes = podProvider => {
+const getRoutes = (basePath, podProvider) => {
   const middlewares = [parseHeader, parseJson, negotiateContentType, negotiateAccept];
 
   return [
     {
-      path: '/_acl',
+      path: path.join(basePath, '/_acl'),
       name: 'acl',
       authorization: false,
       authentication: true,
@@ -35,7 +36,7 @@ const getRoutes = podProvider => {
       onError
     },
     {
-      path: '/_rights',
+      path: path.join(basePath, '/_rights'),
       name: 'acl-rights',
       authorization: false,
       authentication: true,
@@ -49,7 +50,7 @@ const getRoutes = podProvider => {
       onError
     },
     {
-      path: podProvider ? '/_groups/:username([^/._][^/]+)' : '/_groups',
+      path: path.join(basePath, podProvider ? '/_groups/:username([^/._][^/]+)' : '/_groups'),
       name: 'acl-groups',
       authorization: false,
       authentication: true,

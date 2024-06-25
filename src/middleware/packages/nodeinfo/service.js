@@ -1,3 +1,4 @@
+const path = require('path');
 const urlJoin = require('url-join');
 
 const NodeinfoService = {
@@ -24,11 +25,12 @@ const NodeinfoService = {
   },
   async started() {
     if (!this.settings.baseUrl) throw new Error('The baseUrl setting is missing from nodeinfo service');
+    const { pathname: basePath } = new URL(this.settings.baseUrl);
 
     await this.broker.call('api.addRoute', {
       route: {
         name: 'nodeinfo-links',
-        path: '/.well-known/nodeinfo',
+        path: '/.well-known/nodeinfo', // .well-known links must use the root path
         authorization: false,
         authentication: false,
         aliases: {
@@ -40,7 +42,7 @@ const NodeinfoService = {
     await this.broker.call('api.addRoute', {
       route: {
         name: 'nodeinfo-schema',
-        path: '/nodeinfo/2.1',
+        path: path.join(basePath, '/nodeinfo/2.1'),
         authorization: false,
         authentication: false,
         aliases: {

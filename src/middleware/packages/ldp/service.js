@@ -101,6 +101,10 @@ module.exports = {
     getBaseUrl() {
       return this.settings.baseUrl;
     },
+    getBasePath() {
+      const { pathname } = new URL(this.settings.baseUrl);
+      return pathname;
+    },
     getSetting(ctx) {
       const { key } = ctx.params;
       return this.settings[key];

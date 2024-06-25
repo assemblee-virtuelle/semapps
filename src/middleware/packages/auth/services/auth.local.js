@@ -1,3 +1,4 @@
+const path = require('path');
 const { Strategy } = require('passport-local');
 const AuthMixin = require('../mixins/auth');
 const sendToken = require('../middlewares/sendToken');
@@ -153,9 +154,9 @@ const AuthLocalService = {
         }
       );
     },
-    getApiRoutes() {
+    getApiRoutes(basePath) {
       const loginRoute = {
-        path: '/auth/login',
+        path: path.join(basePath, '/auth/login'),
         name: 'auth-login',
         use: [this.passport.initialize()],
         aliases: {
@@ -164,7 +165,7 @@ const AuthLocalService = {
       };
 
       const logoutRoute = {
-        path: '/auth/logout',
+        path: path.join(basePath, '/auth/logout'),
         name: 'auth-logout',
         aliases: {
           'GET /': 'auth.logout'
@@ -172,7 +173,7 @@ const AuthLocalService = {
       };
 
       const signupRoute = {
-        path: '/auth/signup',
+        path: path.join(basePath, '/auth/signup'),
         name: 'auth-signup',
         aliases: {
           'POST /': 'auth.signup'
@@ -180,7 +181,7 @@ const AuthLocalService = {
       };
 
       const formRoute = {
-        path: '/auth',
+        path: path.join(basePath, '/auth'),
         name: 'auth',
         aliases: {
           'GET /': 'auth.redirectToForm'
@@ -188,14 +189,14 @@ const AuthLocalService = {
       };
 
       const resetPasswordRoute = {
-        path: '/auth/reset_password',
+        path: path.join(basePath, '/auth/reset_password'),
         name: 'auth-reset-password',
         aliases: {
           'POST /': 'auth.resetPassword'
         }
       };
       const setNewPasswordRoute = {
-        path: '/auth/new_password',
+        path: path.join(basePath, '/auth/new_password'),
         name: 'auth-new-password',
         aliases: {
           'POST /': 'auth.setNewPassword'
@@ -203,7 +204,7 @@ const AuthLocalService = {
       };
 
       const accountSettingsRoute = {
-        path: '/auth/account',
+        path: path.join(basePath, '/auth/account'),
         name: 'auth-account',
         aliases: {
           'GET /': 'auth.account.findSettingsByWebId',
