@@ -53,7 +53,9 @@ const AuthMixin = {
 
     this.passport.use(this.passportId, this.strategy);
 
-    for (const route of this.getApiRoutes()) {
+    const { pathname: basePath } = new URL(this.settings.baseUrl);
+
+    for (const route of this.getApiRoutes(basePath)) {
       await this.broker.call('api.addRoute', { route });
     }
   },

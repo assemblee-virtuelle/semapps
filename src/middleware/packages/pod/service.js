@@ -26,8 +26,11 @@ module.exports = {
     });
     */
 
+    if (!this.settings.baseUrl) throw new Error('The baseUrl setting of the pod service is required');
+    const { pathname: basePath } = new URL(this.settings.baseUrl);
+
     // API routes to actors (and their collections) are added manually
-    await this.broker.call('api.addRoute', { route: getPodsRoute() });
+    await this.broker.call('api.addRoute', { route: getPodsRoute(basePath) });
 
     // Root container for the POD (/:username/data/)
     await this.broker.call('ldp.registry.register', {

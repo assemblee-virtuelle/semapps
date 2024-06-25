@@ -1,4 +1,5 @@
 const urlJoin = require('url-join');
+const path = require('path');
 const { arrayOf } = require('@semapps/ldp');
 const {
   parseUrl,
@@ -21,17 +22,23 @@ const ApiService = {
   },
   dependencies: ['api', 'ldp', 'ldp.registry'],
   async started() {
+    if (!this.settings.baseUri) throw new Error('The baseUri setting of the activitypub.api service is required');
+    const { pathname: basePath } = new URL(this.settings.baseUri);
     const resourcesWithContainerPath = await this.broker.call('ldp.getSetting', { key: 'resourcesWithContainerPath' });
     if (this.settings.podProvider) {
-      await this.broker.call('api.addRoute', { route: this.getBoxesRoute('/:username([^/.][^/]+)') });
+      await this.broker.call('api.addRoute', {
+        route: this.getBoxesRoute(path.join(basePath, '/:username([^/.][^/]+)'))
+      });
     } else if (!resourcesWithContainerPath) {
-      await this.broker.call('api.addRoute', { route: this.getBoxesRoute(`/:actorSlug`) });
+      await this.broker.call('api.addRoute', { route: this.getBoxesRoute(path.join(basePath, `/:actorSlug`)) });
     } else {
       // If some actor containers are already registered, add the corresponding API routes
       const registeredContainers = await this.broker.call('ldp.registry.list');
       for (const container of Object.values(registeredContainers)) {
         if (arrayOf(container.acceptedTypes).some(type => Object.values(FULL_ACTOR_TYPES).includes(type))) {
-          await this.broker.call('api.addRoute', { route: this.getBoxesRoute(`${container.fullPath}/:actorSlug`) });
+          await this.broker.call('api.addRoute', {
+            route: this.getBoxesRoute(path.join(basePath, `${container.fullPath}/:actorSlug`))
+          });
         }
       }
     }
@@ -67,6 +74,7 @@ const ApiService = {
   events: {
     async 'ldp.registry.registered'(ctx) {
       const { container } = ctx.params;
+      const { pathname: basePath } = new URL(this.settings.baseUri);
       const resourcesWithContainerPath = await this.broker.call('ldp.getSetting', {
         key: 'resourcesWithContainerPath'
       });
@@ -75,7 +83,9 @@ const ApiService = {
         resourcesWithContainerPath &&
         arrayOf(container.acceptedTypes).some(type => Object.values(FULL_ACTOR_TYPES).includes(type))
       ) {
-        await ctx.call('api.addRoute', { route: this.getBoxesRoute(`${container.fullPath}/:actorSlug`) });
+        await ctx.call('api.addRoute', {
+          route: this.getBoxesRoute(path.join(basePath, `${container.fullPath}/:actorSlug`))
+        });
       }
     }
   },

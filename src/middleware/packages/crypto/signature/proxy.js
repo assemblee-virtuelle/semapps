@@ -1,5 +1,5 @@
+const path = require('path');
 const urlJoin = require('url-join');
-const { MoleculerError } = require('moleculer').Errors;
 const { parseHeader, parseFile, saveDatasetMeta } = require('@semapps/middlewares');
 const fetch = require('node-fetch');
 const { Errors: E } = require('moleculer-web');
@@ -18,8 +18,10 @@ const ProxyService = {
   settings: {
     podProvider: false
   },
-  dependencies: ['api'],
+  dependencies: ['api', 'ldp'],
   async started() {
+    const basePath = await this.broker.call('ldp.getBasePath');
+
     const routeConfig = {
       name: 'proxy-endpoint',
       authorization: true,
@@ -30,9 +32,11 @@ const ProxyService = {
     };
 
     if (this.settings.podProvider) {
-      await this.broker.call('api.addRoute', { route: { path: '/:username([^/.][^/]+)/proxy', ...routeConfig } });
+      await this.broker.call('api.addRoute', {
+        route: { path: path.join(basePath, '/:username([^/.][^/]+)/proxy'), ...routeConfig }
+      });
     } else {
-      await this.broker.call('api.addRoute', { route: { path: '/proxy', ...routeConfig } });
+      await this.broker.call('api.addRoute', { route: { path: path.join(basePath, '/proxy'), ...routeConfig } });
     }
   },
   actions: {

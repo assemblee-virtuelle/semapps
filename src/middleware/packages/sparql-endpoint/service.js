@@ -1,5 +1,5 @@
+const path = require('path');
 const urlJoin = require('url-join');
-const { Errors: E } = require('moleculer-web');
 const getRoute = require('./getRoute');
 
 const SparqlEndpointService = {
@@ -9,12 +9,16 @@ const SparqlEndpointService = {
     ignoreAcl: false,
     podProvider: false
   },
-  dependencies: ['triplestore', 'api'],
+  dependencies: ['triplestore', 'api', 'ldp'],
   async started() {
+    const basePath = await this.broker.call('ldp.getBasePath');
     if (this.settings.podProvider) {
-      await this.broker.call('api.addRoute', { route: getRoute('/:username([^/.][^/]+)/sparql'), toBottom: false });
+      await this.broker.call('api.addRoute', {
+        route: getRoute(path.join(basePath, '/:username([^/.][^/]+)/sparql')),
+        toBottom: false
+      });
     } else {
-      await this.broker.call('api.addRoute', { route: getRoute('/sparql'), toBottom: false });
+      await this.broker.call('api.addRoute', { route: getRoute(path.join(basePath, '/sparql')), toBottom: false });
     }
   },
   actions: {

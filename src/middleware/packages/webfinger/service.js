@@ -15,7 +15,7 @@ const WebfingerService = {
 
     await this.broker.call('api.addRoute', {
       route: {
-        path: '/.well-known',
+        path: '/.well-known', // .well-known routes must use the root path
         name: 'webfinger-endpoint',
         bodyParsers: { json: true },
         aliases: {

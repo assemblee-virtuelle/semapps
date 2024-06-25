@@ -1,3 +1,4 @@
+const path = require('path');
 const session = require('express-session');
 const AuthMixin = require('./auth');
 const saveRedirectUrl = require('../middlewares/saveRedirectUrl');
@@ -65,11 +66,11 @@ const AuthSSOMixin = {
     }
   },
   methods: {
-    getApiRoutes() {
+    getApiRoutes(basePath) {
       const sessionMiddleware = session({ secret: this.settings.sessionSecret, maxAge: null });
       return [
         {
-          path: '/auth',
+          path: path.join(basePath, '/auth'),
           name: 'auth',
           use: [sessionMiddleware, this.passport.initialize(), this.passport.session()],
           aliases: {
@@ -77,7 +78,7 @@ const AuthSSOMixin = {
           }
         },
         {
-          path: '/auth/logout',
+          path: path.join(basePath, '/auth/logout'),
           name: 'auth-logout',
           use: [sessionMiddleware, this.passport.initialize(), this.passport.session()],
           aliases: {

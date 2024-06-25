@@ -1,4 +1,4 @@
-const urlJoin = require('url-join');
+const path = require('path');
 const DbService = require('moleculer-db');
 const { MoleculerError, ServiceSchemaError } = require('moleculer').Errors;
 const { TripleStoreAdapter } = require('@semapps/ldp');
@@ -12,18 +12,16 @@ const WebhooksService = {
     allowedActions: [],
     context: { '@vocab': 'http://semapps.org/ns/core#' }
   },
-  dependencies: ['api'],
+  dependencies: ['api', 'ldp'],
   async started() {
     this.settings.allowedActions.forEach(actionName => {
       if (!this.actions[actionName]) {
         throw new ServiceSchemaError(`Missing action "${actionName}" in service settings!`);
       }
     });
-    const routes = await this.actions.getApiRoutes();
-    for (const route of routes) {
-      await this.broker.call('api.addRoute', {
-        route
-      });
+    const basePath = await this.broker.call('ldp.getBasePath');
+    for (const route of await this.actions.getApiRoutes(basePath)) {
+      await this.broker.call('api.addRoute', { route });
     }
   },
   actions: {
@@ -63,11 +61,11 @@ const WebhooksService = {
 
       return webhook['@id'];
     },
-    getApiRoutes() {
+    getApiRoutes(basePath) {
       return [
         // Unsecured routes
         {
-          path: '/webhooks',
+          path: path.join(basePath, '/webhooks'),
           name: 'webhooks-process',
           bodyParsers: { json: true },
           authorization: false,
@@ -78,7 +76,7 @@ const WebhooksService = {
         },
         // Secured routes
         {
-          path: '/webhooks',
+          path: path.join(basePath, '/webhooks'),
           name: 'webhooks-generate',
           bodyParsers: { json: true },
           authorization: true,

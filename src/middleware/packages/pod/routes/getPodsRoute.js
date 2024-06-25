@@ -1,3 +1,4 @@
+const path = require('path');
 const {
   parseUrl,
   parseHeader,
@@ -23,7 +24,7 @@ const transformRouteParamsToSlugParts = (req, res, next) => {
   next();
 };
 
-function getPodsRoute() {
+function getPodsRoute(basePath) {
   const middlewares = [
     parseUrl,
     parseHeader,
@@ -39,7 +40,7 @@ function getPodsRoute() {
 
   return {
     name: 'pods',
-    path: '/:username([^/.][^/]+)',
+    path: path.join(basePath, '/:username([^/.][^/]+)'),
     // Disable the body parsers so that we can parse the body ourselves
     // (Moleculer-web doesn't handle non-JSON bodies, so we must do it)
     bodyParsers: false,

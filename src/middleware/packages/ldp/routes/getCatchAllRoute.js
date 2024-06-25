@@ -1,3 +1,4 @@
+const path = require('path');
 const {
   parseUrl,
   parseHeader,
@@ -10,7 +11,7 @@ const {
   saveDatasetMeta
 } = require('@semapps/middlewares');
 
-function getCatchAllRoute(podProvider) {
+function getCatchAllRoute(basePath, podProvider) {
   const middlewares = [
     parseUrl,
     parseHeader,
@@ -25,7 +26,7 @@ function getCatchAllRoute(podProvider) {
 
   return {
     name: 'ldp',
-    path: podProvider ? '/:username([^/.][^/]+)/:slugParts*' : '/:slugParts*',
+    path: path.join(basePath, podProvider ? '/:username([^/.][^/]+)/:slugParts*' : '/:slugParts*'),
     // Disable the body parsers so that we can parse the body ourselves
     // (Moleculer-web doesn't handle non-JSON bodies, so we must do it)
     bodyParsers: false,
