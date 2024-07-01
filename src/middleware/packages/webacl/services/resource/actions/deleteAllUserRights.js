@@ -11,7 +11,7 @@ module.exports = {
         query: `
           PREFIX acl: <http://www.w3.org/ns/auth/acl#>
           WITH <${this.settings.graphName}>
-          DELETE
+          DELETE { ?auth acl:agent <${webId}>  }
           WHERE { ?auth acl:agent <${webId}>  }
         `,
         webId: 'system'
