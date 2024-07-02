@@ -27,7 +27,7 @@ const setUp = async withOldKeyStore => {
   });
 
   // Wait for keys to have been created for user.
-  await wait(2000);
+  await wait(5000);
 };
 
 afterAll(async () => {

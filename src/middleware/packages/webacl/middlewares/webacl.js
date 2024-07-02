@@ -6,7 +6,7 @@ const { isRemoteUri, getSlugFromUri } = require('../utils');
 const modifyActions = [
   'ldp.resource.create',
   'ldp.container.create',
-  'activitypub.activity.create',
+  'activitypub.activity.post',
   'activitypub.activity.attach',
   'activitypub.collection.post',
   'activitypub.object.createTombstone',
@@ -255,10 +255,13 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
             break;
           }
 
-          case 'activitypub.activity.create':
+          case 'activitypub.activity.post':
           case 'activitypub.activity.attach': {
+            const activityUri =
+              action.name === 'activitypub.activity.attach' ? actionReturnValue.resourceUri : actionReturnValue;
+
             const activity = await ctx.call('activitypub.activity.get', {
-              resourceUri: actionReturnValue.resourceUri,
+              resourceUri: activityUri,
               webId: ctx.params.webId || 'system'
             });
 
@@ -266,7 +269,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
 
             // When a new activity is created, ensure the emitter has read rights also
             // Don't do that on podProvider config, because the Pod owner already has all rights
-            if (action.name === 'activitypub.activity.create' && !podProvider) {
+            if (action.name === 'activitypub.activity.post' && !podProvider) {
               if (!recipients.includes(activity.actor)) recipients.push(activity.actor);
             }
 
@@ -275,7 +278,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
             // https://github.com/assemblee-virtuelle/semapps/issues/908
             for (const recipient of recipients) {
               await ctx.call('webacl.resource.addRights', {
-                resourceUri: actionReturnValue.resourceUri,
+                resourceUri: activityUri,
                 additionalRights: {
                   user: {
                     uri: recipient,
@@ -286,7 +289,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
               });
 
               // If this is a Create activity, also give rights to the created object
-              if (action.name === 'activitypub.activity.create' && hasType(activity, ACTIVITY_TYPES.CREATE)) {
+              if (action.name === 'activitypub.activity.post' && hasType(activity, ACTIVITY_TYPES.CREATE)) {
                 await ctx.call('webacl.resource.addRights', {
                   resourceUri: typeof activity.object === 'string' ? activity.object : activity.object.id,
                   additionalRights: {
@@ -303,7 +306,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
             // If activity is public, give anonymous read right
             if (await ctx.call('activitypub.activity.isPublic', { activity })) {
               await ctx.call('webacl.resource.addRights', {
-                resourceUri: actionReturnValue.resourceUri,
+                resourceUri: activityUri,
                 additionalRights: {
                   anon: {
                     read: true
@@ -313,7 +316,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
               });
 
               // If this is a Create activity, also give rights to the created object
-              if (action.name === 'activitypub.activity.create' && hasType(activity, ACTIVITY_TYPES.CREATE)) {
+              if (action.name === 'activitypub.activity.post' && hasType(activity, ACTIVITY_TYPES.CREATE)) {
                 await ctx.call('webacl.resource.addRights', {
                   resourceUri: typeof activity.object === 'string' ? activity.object : activity.object.id,
                   additionalRights: {
