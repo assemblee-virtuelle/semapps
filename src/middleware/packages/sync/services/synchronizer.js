@@ -76,19 +76,27 @@ const SynchronizerService = {
             }
 
             if (this.settings.attachToLocalContainers) {
-              const container = await ctx.call('ldp.registry.getByType', { type });
-              if (container) {
-                try {
-                  const containerUri = await ctx.call('ldp.registry.getUri', {
+              let containerUri;
+
+              if (this.settings.podProvider) {
+                // If this is a Pod provider, try to find the container with the type-registrations service
+                [containerUri] = await ctx.call('type-registrations.findContainersUris', {
+                  type,
+                  webId: recipientUri
+                });
+              } else {
+                // Otherwise try to find it with the LdpRegistry
+                const container = await ctx.call('ldp.registry.getByType', { type });
+                if (container) {
+                  containerUri = await ctx.call('ldp.registry.getUri', {
                     path: container.path,
                     webId: recipientUri
                   });
-                  await ctx.call('ldp.container.attach', { containerUri, resourceUri, webId: recipientUri });
-                } catch (e) {
-                  this.logger.warn(
-                    `Error when attaching remote resource ${resourceUri} to local container: ${e.message}`
-                  );
                 }
+              }
+
+              if (containerUri) {
+                await ctx.call('ldp.container.attach', { containerUri, resourceUri, webId: recipientUri });
               } else {
                 this.logger.warn(
                   `Cannot attach resource ${resourceUri} of type "${type}", no matching local containers were found`
@@ -140,7 +148,9 @@ const SynchronizerService = {
                 webId: recipientUri
               });
             } catch (e) {
-              this.logger.warn(`Remote resource ${resourceUri} not deleted as it was not found on local dataset`);
+              this.logger.warn(
+                `Remote resource ${resourceUri} not deleted as it was not found on local dataset. Error ${e.message}`
+              );
             }
 
             if (activity.target && this.settings.synchronizeContainers) {

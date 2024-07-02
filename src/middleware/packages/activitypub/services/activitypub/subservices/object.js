@@ -1,6 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getSlugFromUri } = require('@semapps/ldp');
-const { OBJECT_TYPES, ACTIVITY_TYPES, ACTOR_TYPES } = require('../../../constants');
+const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../../../constants');
 
 const ObjectService = {
   name: 'activitypub.object',
@@ -52,20 +51,37 @@ const ObjectService = {
             context: activity['@context']
           });
 
-          // Get the first matching container
           // TODO: attach to all matching containers
-          const container = await ctx.call('ldp.registry.getByType', {
-            type: types,
-            dataset: this.settings.podProvider ? getSlugFromUri(actorUri) : undefined
-          });
+          let container, containerUri;
 
-          if (!container)
+          if (this.settings.podProvider) {
+            // If this is a Pod provider, find the container with the type-registrations service
+            for (const type of types) {
+              const containersUris = await ctx.call('type-registrations.findContainersUris', {
+                type,
+                webId: actorUri
+              });
+              if (containersUris.length > 0) {
+                containerUri = containersUris[0];
+                continue;
+              }
+            }
+          } else {
+            // Otherwise try to find it with the LdpRegistry
+            container = await ctx.call('ldp.registry.getByType', { type: types });
+            if (container) {
+              containerUri = await ctx.call('ldp.registry.getUri', {
+                path: container.path,
+                webId: actorUri
+              });
+            }
+          }
+
+          if (!containerUri)
             throw new Error(`Cannot create resource of type "${types.join(', ')}", no matching containers were found!`);
 
-          const containerUri = await ctx.call('ldp.registry.getUri', { path: container.path, webId: actorUri });
-
           objectUri = await ctx.call(
-            container.controlledActions?.post || 'ldp.container.post',
+            container?.controlledActions?.post || 'ldp.container.post',
             {
               containerUri,
               resource: activity.object,
