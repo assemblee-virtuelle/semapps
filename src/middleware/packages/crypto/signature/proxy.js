@@ -124,18 +124,15 @@ const ProxyService = {
         response.headers.delete('connection');
 
         return {
+          ok: true,
           body: responseBody,
           headers: Object.fromEntries(response.headers.entries()),
           status: response.status,
           statusText: response.statusText
         };
       } else {
-        // this.logger.warn(
-        //   `Could not ${method || 'GET'} ${url} through proxy of ${actorUri} (Error ${response.status}: ${
-        //     response.statusText
-        //   }) with body ${body}`
-        // );
         return {
+          ok: false,
           status: response.status,
           statusText: response.statusText
         };

@@ -1,11 +1,9 @@
 const urlJoin = require('url-join');
 const { PUBLIC_URI, ACTIVITY_TYPES } = require('@semapps/activitypub');
 
-const handledActions = [
-  'ldp.container.post',
-  'ldp.resource.put',
-  'ldp.resource.patch',
-  'ldp.resource.delete',
+const handledLdpActions = ['ldp.container.post', 'ldp.resource.put', 'ldp.resource.patch', 'ldp.resource.delete'];
+
+const handledWacActions = [
   'webacl.resource.addRights',
   'webacl.resource.setRights',
   'webacl.resource.removeRights',
@@ -20,6 +18,16 @@ const ObjectsWatcherMiddleware = (config = {}) => {
   let cacherActivated = false;
 
   if (!baseUrl) throw new Error('The baseUrl setting is missing from ObjectsWatcherMiddleware');
+
+  const isHandled = actionName => {
+    // In a Pod provider config, we want to handle only LDP-related actions
+    // The AnnouncerService takes care of resources sharing with other users
+    if (podProvider) {
+      return handledLdpActions.includes(actionName);
+    } else {
+      return handledLdpActions.includes(actionName) || handledWacActions.includes(actionName);
+    }
+  };
 
   const getActor = async (ctx, resourceUri) => {
     if (podProvider) {
@@ -104,7 +112,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
       cacherActivated = !!broker.cacher;
     },
     localAction: (next, action) => {
-      if (handledActions.includes(action.name)) {
+      if (isHandled(action.name)) {
         return async ctx => {
           // Don't handle actions until middleware is fully started
           // Otherwise, the creation of the relay actor calls the middleware before it started
