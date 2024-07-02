@@ -1,11 +1,16 @@
 const { defaultToArray } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 
-const defaultFetcher = (ctx, resourceUri) =>
-  ctx.call('ldp.resource.get', {
-    resourceUri,
-    accept: MIME_TYPES.JSON
-  });
+const defaultFetcher = async (ctx, resourceUri) => {
+  try {
+    return await ctx.call('ldp.resource.get', {
+      resourceUri,
+      accept: MIME_TYPES.JSON
+    });
+  } catch (e) {
+    return false;
+  }
+};
 
 /**
  * Match an activity against a pattern
@@ -27,17 +32,8 @@ const matchActivity = async (ctx, matcher, activityOrObject, fetcher = defaultFe
   // Check if we need to dereference the activity or object
   let dereferencedActivityOrObject;
   if (typeof activityOrObject === 'string') {
-    try {
-      dereferencedActivityOrObject = await fetcher(ctx, activityOrObject);
-    } catch (e) {
-      if (e.code === 404) {
-        // Ignore 404 errors as they may happen when objects are deleted in side effects
-        console.warn(`Could not dereference ${activityOrObject} as it is not found`);
-        dereferencedActivityOrObject = { error: e.message };
-      } else {
-        throw new Error(e);
-      }
-    }
+    dereferencedActivityOrObject = await fetcher(ctx, activityOrObject);
+    if (!dereferencedActivityOrObject) return false;
   } else {
     // Copy the object to a new object
     dereferencedActivityOrObject = { ...activityOrObject };
@@ -55,8 +51,9 @@ const matchActivity = async (ctx, matcher, activityOrObject, fetcher = defaultFe
     } else if (
       !dereferencedActivityOrObject[key] ||
       !defaultToArray(dereferencedActivityOrObject[key]).some(v => defaultToArray(matcher[key]).includes(v))
-    )
+    ) {
       return false;
+    }
   }
 
   // We have a match ! Return the dereferenced object
