@@ -68,6 +68,8 @@ const ApiService = {
         Location: activity.id || activity['@id'],
         'Content-Length': 0
       };
+      // We need to set this also here (in addition to above) or we get a Moleculer warning
+      ctx.meta.$location = activity.id || activity['@id'];
       ctx.meta.$statusCode = 201;
     }
   },
