@@ -38,15 +38,13 @@ const fetchContainers = async (containers, resourceId, params, config) => {
   );
 
   // Fetch simultaneously all containers
-  let results = await Promise.all(fetchPromises);
+  const results = await Promise.all(fetchPromises);
 
   if (results.length === 0) {
     return { data: [], total: 0 };
   }
-  // Merge all results in one array
-  results = [].concat.apply(...results);
 
-  let returnData = results.map(item => {
+  let returnData = results.flatMap(item => {
     item.id = item.id || item['@id'];
     return item;
   });
@@ -59,24 +57,40 @@ const fetchContainers = async (containers, resourceId, params, config) => {
       delete params.filter.a;
     }
 
+    if (params.filter._predicates && Array.isArray(params.filter._predicates)) {
+      returnData = returnData.map(resource => {
+        return Object.keys(resource)
+          .filter(key => params.filter._predicates.includes(key) || key === 'id')
+          .reduce((filteredResource, key) => {
+            filteredResource[key] = resource[key];
+            return filteredResource;
+          }, {});
+      });
+    }
+
     if (Object.keys(params.filter).length > 0) {
       returnData = returnData.filter(resource => {
-        return Object.entries(params.filter).every(([k, v]) => {
-          if (k == 'q') {
-            return Object.entries(resource).some(([kr, vr]) => {
-              if (!isobject(vr)) {
-                const arrayValues = Array.isArray(vr) ? vr : [vr];
-                return arrayValues.some(va => {
-                  if (typeof va === 'string' || va instanceof String) {
-                    return va.toLowerCase().normalize('NFD').includes(v.toLowerCase().normalize('NFD'));
-                  }
-                });
-              }
-              return false;
-            });
-          }
+        if (params.filter.q) {
+          return Object.entries(resource).some(([kr, vr]) => {
+            if (!isobject(vr)) {
+              const arrayValues = Array.isArray(vr) ? vr : [vr];
+              return arrayValues.some(va => {
+                if (typeof va === 'string' || va instanceof String) {
+                  return va.toLowerCase().normalize('NFD').includes(params.filter.q.toLowerCase().normalize('NFD'));
+                }
+              });
+            }
+            return false;
+          });
+        }
+
+        const attributesFilters = Object.keys(params.filter).filter(f => !['_predicates', '_servers', 'q'].includes(f));
+
+        return attributesFilters.every(k => {
           if (resource[k]) {
-            return Array.isArray(resource[k]) ? resource[k].some(va => va.includes(v)) : resource[k].includes(v);
+            return Array.isArray(resource[k])
+              ? resource[k].some(va => va.includes(params.filter[k]))
+              : resource[k].includes(params.filter[k]);
           }
           return false;
         });
@@ -95,6 +109,9 @@ const fetchContainers = async (containers, resourceId, params, config) => {
       return true;
     });
   }
+
+  const total = returnData.length;
+
   if (params.pagination) {
     returnData = returnData.slice(
       (params.pagination.page - 1) * params.pagination.perPage,
@@ -102,7 +119,7 @@ const fetchContainers = async (containers, resourceId, params, config) => {
     );
   }
 
-  return { data: returnData, total: results.length };
+  return { data: returnData, total };
 };
 
 export default fetchContainers;
