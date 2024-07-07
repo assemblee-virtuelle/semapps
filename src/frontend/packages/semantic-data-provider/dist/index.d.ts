@@ -1,3 +1,6 @@
+type DataServerKey = string & {
+    readonly _type?: 'DataServerKey';
+};
 export function buildBlankNodesQuery(blankNodes: any, baseQuery: any, ontologies: any): {
     construct: import("@rdfjs/types").Quad[] | null;
     where: {
@@ -33,7 +36,7 @@ export function dataProvider(config: any): {
 export function useGetExternalLink(componentExternalLinks: any): (record: any) => any;
 export const useDataModel: (resourceId: string) => any;
 export function useDataServers(): undefined;
-export const useContainers: (resourceId: string, serverKeys?: string) => Record<string, string[]> | undefined;
+export const useContainers: (resourceId: string, serverKeys?: string) => Record<DataServerKey, string[]> | undefined;
 export function useCreateContainer(resourceId: any): undefined;
 export function useDataModels(): undefined;
 /**

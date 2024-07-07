@@ -29,7 +29,7 @@ const getListMethod =
     }
 
     if (dataModel.list?.fetchContainer) {
-      return fetchContainers(containers, resourceId, params, config);
+      return fetchContainers(containers, params, config);
     }
     return fetchSparqlEndpoints(containers, resourceId, params, config);
   };
