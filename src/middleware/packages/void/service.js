@@ -211,7 +211,8 @@ module.exports = {
         const ontologies = await ctx.call('ontologies.list');
         const partitions = await this.getContainers(ctx);
 
-        const url = urlJoin(this.settings.baseUrl, '.well-known/void');
+        const { origin } = new URL(this.settings.baseUrl);
+        const url = urlJoin(origin, '.well-known/void');
 
         // first we compile the local data void information (local containers)
 

@@ -47,9 +47,10 @@ const ApiService = {
     async inbox(ctx) {
       const { actorSlug, ...activity } = ctx.params;
       const { requestUrl } = ctx.meta;
+      const { origin } = new URL(this.settings.baseUri);
 
       await ctx.call('activitypub.inbox.post', {
-        collectionUri: urlJoin(this.settings.baseUri, requestUrl),
+        collectionUri: urlJoin(origin, requestUrl),
         ...activity
       });
 
@@ -58,9 +59,10 @@ const ApiService = {
     async outbox(ctx) {
       let { actorSlug, ...activity } = ctx.params;
       const { requestUrl } = ctx.meta;
+      const { origin } = new URL(this.settings.baseUri);
 
       activity = await ctx.call('activitypub.outbox.post', {
-        collectionUri: urlJoin(this.settings.baseUri, requestUrl),
+        collectionUri: urlJoin(origin, requestUrl),
         ...activity
       });
 
