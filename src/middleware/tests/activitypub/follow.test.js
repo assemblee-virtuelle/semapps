@@ -22,7 +22,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
 
     for (let i = 1; i <= NUM_USERS; i++) {
       if (mode === 'multi-server') {
-        broker[i] = await initialize(3000 + i, `testData${i}`, `settings${i}`);
+        broker[i] = await initialize(3000 + i, `testData${i}`, `settings${i}`, i);
       } else {
         broker[i] = broker;
       }

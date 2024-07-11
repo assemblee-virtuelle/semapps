@@ -96,19 +96,6 @@ module.exports = {
     //   }
     //   return { id: 0 };
     // },
-    async waitForJob(queueName, jobId) {
-      if (this.getQueue) {
-        const queue = this.getQueue(queueName);
-        return new Promise((resolve, reject) => {
-          queue.on('completed', (job, result) => {
-            if (job.id === jobId) resolve(result);
-          });
-          queue.on('failed', (job, err) => {
-            if (job.id === jobId) reject(err);
-          });
-        });
-      }
-    },
     async fetch(resourceUri, webId, dataset) {
       try {
         return await this.broker.call(
@@ -196,7 +183,7 @@ module.exports = {
         const { activity } = job.data;
         const emitterUri = activity.actor;
         const startTime = performance.now();
-        let numErrors = 0,
+        let errors = [],
           match,
           dereferencedActivity = activity;
 
@@ -208,7 +195,7 @@ module.exports = {
         const fetcher = resourceUri => this.fetch(resourceUri, emitterUri, dataset);
 
         for (const processor of this.processors) {
-          if (processor.boxTypes.includes('inbox')) {
+          if (processor.boxTypes.includes('outbox')) {
             // Even if there is no match, we keep in memory the dereferenced activity so that we don't need to dereference it again
             ({ match, dereferencedActivity } = await this.matchActivity(
               processor.matcher,
@@ -220,7 +207,7 @@ module.exports = {
               try {
                 const result = await this.broker.call(processor.actionName, {
                   key: processor.key,
-                  boxType: 'inbox',
+                  boxType: 'outbox',
                   dereferencedActivity,
                   actorUri: emitterUri
                 });
@@ -231,7 +218,7 @@ module.exports = {
                 );
               } catch (e) {
                 job.log(`ERROR ${processor.key} (${processor.actionName}): ${e.message}`);
-                numErrors++;
+                errors.push(processor.key);
               }
             } else {
               job.log(`SKIP ${processor.key} (${processor.actionName})`);
@@ -239,8 +226,10 @@ module.exports = {
           }
         }
 
-        if (numErrors > 0) {
-          throw new Error(`Could not fully process activity ${activity.id}. ${numErrors} errors detected`);
+        if (errors.length > 0) {
+          throw new Error(
+            `Could not fully process activity ${activity.id}. Error with the processor(s) ${errors.join(', ')}`
+          );
         } else {
           return {
             dereferencedActivity,

@@ -22,6 +22,7 @@ const { MIME_TYPES } = require('@semapps/mime-types');
  */
 const matchActivity = async (matcher, activity, fetcher) => {
   if (!matcher) return { match: false, dereferencedActivity: activity };
+  if (matcher === '*') return { match: true, dereferencedActivity: activity };
 
   // If the matcher is a function, call it
   if (typeof matcher === 'function') {
