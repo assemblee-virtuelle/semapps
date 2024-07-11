@@ -3,7 +3,7 @@ const { OBJECT_TYPES, ACTIVITY_TYPES } = require('@semapps/activitypub');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const initialize = require('./initialize');
 
-jest.setTimeout(50000);
+jest.setTimeout(70000);
 
 const NUM_USERS = 2;
 
@@ -24,7 +24,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
 
     for (let i = 1; i <= NUM_USERS; i++) {
       if (mode === 'multi-server') {
-        broker[i] = await initialize(3000 + i, `testData${i}`, `settings${i}`);
+        broker[i] = await initialize(3000 + i, `testData${i}`, `settings${i}`, i);
       } else {
         broker[i] = broker;
       }

@@ -3,7 +3,7 @@ const urlJoin = require('url-join');
 const { namedNode, literal, triple, variable } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { ACTOR_TYPES, AS_PREFIX } = require('../../../constants');
-const { defaultToArray, getSlugFromUri, waitForResource } = require('../../../utils');
+const { defaultToArray, getSlugFromUri, waitForResource, delay } = require('../../../utils');
 
 /** @type {import('moleculer').ServiceSchema} */
 const ActorService = {

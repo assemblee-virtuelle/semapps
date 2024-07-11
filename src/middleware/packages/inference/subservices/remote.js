@@ -95,10 +95,9 @@ module.exports = {
   },
   activities: {
     offerInference: {
-      async match(ctx, activity) {
+      async match(activity, fetcher) {
         return (
           (await matchActivity(
-            ctx,
             {
               type: ACTIVITY_TYPES.OFFER,
               object: {
@@ -108,10 +107,10 @@ module.exports = {
                 }
               }
             },
-            activity
+            activity,
+            fetcher
           )) ||
           (await matchActivity(
-            ctx,
             {
               type: ACTIVITY_TYPES.OFFER,
               object: {
@@ -121,7 +120,8 @@ module.exports = {
                 }
               }
             },
-            activity
+            activity,
+            fetcher
           ))
         );
       },

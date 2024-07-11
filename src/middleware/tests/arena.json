@@ -1,0 +1,88 @@
+{
+  "queues": [
+    {
+      "name": "sendMail",
+      "hostId": "db0",
+      "host": "redis",
+      "port": 6379,
+      "db": 0
+    },
+    {
+      "name": "remotePost",
+      "hostId": "db0",
+      "host": "redis",
+      "port": 6379,
+      "db": 0
+    },
+    {
+      "name": "processInbox",
+      "hostId": "db0",
+      "host": "redis",
+      "port": 6379,
+      "db": 0
+    },
+    {
+      "name": "processOutbox",
+      "hostId": "db0",
+      "host": "redis",
+      "port": 6379,
+      "db": 0
+    },
+    {
+      "name": "sendMail",
+      "hostId": "db1",
+      "host": "redis",
+      "port": 6379,
+      "db": 1
+    },
+    {
+      "name": "remotePost",
+      "hostId": "db1",
+      "host": "redis",
+      "port": 6379,
+      "db": 1
+    },
+    {
+      "name": "processInbox",
+      "hostId": "db1",
+      "host": "redis",
+      "port": 6379,
+      "db": 1
+    },
+    {
+      "name": "processOutbox",
+      "hostId": "db1",
+      "host": "redis",
+      "port": 6379,
+      "db": 1
+    },
+    {
+      "name": "sendMail",
+      "hostId": "db2",
+      "host": "redis",
+      "port": 6379,
+      "db": 2
+    },
+    {
+      "name": "remotePost",
+      "hostId": "db2",
+      "host": "redis",
+      "port": 6379,
+      "db": 2
+    },
+    {
+      "name": "processInbox",
+      "hostId": "db2",
+      "host": "redis",
+      "port": 6379,
+      "db": 2
+    },
+    {
+      "name": "processOutbox",
+      "hostId": "db2",
+      "host": "redis",
+      "port": 6379,
+      "db": 2
+    }
+  ]
+}

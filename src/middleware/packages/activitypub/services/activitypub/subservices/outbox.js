@@ -82,6 +82,13 @@ const OutboxService = {
 
       activity = await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' });
 
+      try {
+        await ctx.call('activitypub.side-effects.processOutbox', { activity });
+      } catch (e) {
+        // If some processors failed, log error message but don't stop
+        this.logger.error(e.message);
+      }
+
       // Attach the newly-created activity to the outbox
       await ctx.call('activitypub.collection.add', {
         collectionUri,
@@ -107,7 +114,7 @@ const OutboxService = {
         } else {
           // If the QueueService mixin is available, use it
           if (this.createJob) {
-            this.createJob('remotePost', activity.actor, { recipientUri, activity });
+            this.createJob('remotePost', recipientUri, { recipientUri, activity });
           } else {
             // Send directly (but without waiting)
             this.remotePost(recipientUri, activity);
@@ -120,13 +127,8 @@ const OutboxService = {
 
       // Post to local recipients
       if (localRecipients.length > 0) {
-        // If the QueueService mixin is available, use it
-        if (this.createJob) {
-          this.createJob('localPost', activity.actor, { recipients: localRecipients, activity });
-        } else {
-          // Call directly (but without waiting)
-          this.localPost(localRecipients, activity);
-        }
+        // Call directly (but without waiting)
+        this.localPost(localRecipients, activity);
       }
 
       return activity;
@@ -144,6 +146,14 @@ const OutboxService = {
     async localPost(recipients, activity) {
       const success = [];
       const failures = [];
+
+      try {
+        await this.broker.call('activitypub.side-effects.processInbox', { activity, recipients });
+      } catch (e) {
+        console.error(e);
+        // If some processors failed, log error message but don't stop
+        this.logger.error(e.message);
+      }
 
       for (const recipientUri of recipients) {
         try {
@@ -241,7 +251,7 @@ const OutboxService = {
         });
 
         if (response.ok) {
-          return true;
+          return response;
         } else {
           this.logger.warn(`Error when posting activity to remote actor ${recipientUri}: ${response.statusText}`);
           return false;
@@ -260,28 +270,13 @@ const OutboxService = {
         const { activity, recipientUri } = job.data;
         const response = await this.remotePost(recipientUri, activity);
 
-        if (!response.ok) {
-          job.moveToFailed({ message: `Unable to send to remote actor ${recipientUri}` }, true);
+        if (!!response) {
+          throw new Error(`Unable to send to remote actor ${recipientUri}`);
         } else {
           job.progress(100);
         }
 
         return { response };
-      }
-    },
-    localPost: {
-      name: '*',
-      async process(job) {
-        const { activity, recipients } = job.data;
-        const { success, failures } = await this.localPost(recipients, activity);
-
-        if (success.length === 0) {
-          job.moveToFailed({ message: 'No local recipients could be reached' }, true);
-        } else {
-          job.progress(100);
-        }
-
-        return { success, failures };
       }
     }
   }

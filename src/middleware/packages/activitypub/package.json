@@ -11,7 +11,6 @@
     "@semapps/mime-types": "0.8.4",
     "@semapps/ontologies": "0.8.4",
     "@semapps/triplestore": "0.8.4",
-    "bull-board": "^0.7.0",
     "handlebars": "^4.7.7",
     "moleculer": "^0.14.18",
     "moleculer-bull": "^0.2.5",

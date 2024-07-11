@@ -80,6 +80,13 @@ const InboxService = {
 
       // TODO check activity is valid
 
+      try {
+        await this.broker.call('activitypub.side-effects.processInbox', { activity, recipients: [actorUri] });
+      } catch (e) {
+        // If some processors failed, log error message but don't stop
+        this.logger.error(e.message);
+      }
+
       // If this is a transient activity, we have no way to retrieve it
       // so do not store it in the inbox (Mastodon works the same way)
       if (activity.id && !activity.id.includes('#')) {

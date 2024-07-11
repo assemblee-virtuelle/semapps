@@ -1,5 +1,5 @@
 const ActivitiesHandlerMixin = {
-  dependencies: ['activitypub.activities-watcher'],
+  dependencies: ['activitypub.side-effects'],
   async started() {
     if (!this.schema.activities || this.schema.activities.length === 0) {
       throw new Error(`ActivitiesHandlerMixin: no activities defined in the service ${this.name}`);
@@ -10,11 +10,12 @@ const ActivitiesHandlerMixin = {
       if (activityHandler.onReceive) boxTypes.push('inbox');
       if (activityHandler.onEmit) boxTypes.push('outbox');
 
-      await this.broker.call('activitypub.activities-watcher.watch', {
+      await this.broker.call('activitypub.side-effects.addProcessor', {
         matcher: typeof activityHandler.match === 'function' ? activityHandler.match.bind(this) : activityHandler.match,
         actionName: `${this.name}.processActivity`,
         boxTypes,
-        key
+        key,
+        priority: activityHandler.priority
       });
     }
   },
@@ -32,9 +33,9 @@ const ActivitiesHandlerMixin = {
       ctx.meta.webId = actorUri;
 
       if (boxType === 'inbox' && activityHandler.onReceive) {
-        await activityHandler.onReceive.bind(this)(ctx, dereferencedActivity, actorUri);
+        return await activityHandler.onReceive.bind(this)(ctx, dereferencedActivity, actorUri);
       } else if (boxType === 'outbox' && activityHandler.onEmit) {
-        await activityHandler.onEmit.bind(this)(ctx, dereferencedActivity, actorUri);
+        return await activityHandler.onEmit.bind(this)(ctx, dereferencedActivity, actorUri);
       } else {
         this.logger.warn(
           `Cannot process activity because no onReceive or onEmit methods are associated with with key ${key}`

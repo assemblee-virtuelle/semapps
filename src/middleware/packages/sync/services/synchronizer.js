@@ -37,6 +37,25 @@ const SynchronizerService = {
           following: activity.actor
         });
       }
+    },
+    // Return true if the resource is on the same server as the actor
+    isLocal(url, actorUri) {
+      if (this.settings.podProvider) {
+        const { origin, pathname } = new URL(actorUri);
+        const aclBase = `${origin}/_acl${pathname}`; // URL of type http://localhost:3000/_acl/alice
+        const aclGroupBase = `${origin}/_groups${pathname}`; // URL of type http://localhost:3000/_groups/alice
+        return (
+          url === actorUri ||
+          url.startsWith(actorUri + '/') ||
+          url === aclBase ||
+          url.startsWith(aclBase + '/') ||
+          url === aclGroupBase ||
+          url.startsWith(aclGroupBase + '/')
+        );
+      } else {
+        const { origin } = new URL(actorUri);
+        return url.startsWith(origin);
+      }
     }
   },
   activities: {
@@ -47,60 +66,64 @@ const SynchronizerService = {
       async onReceive(ctx, activity, recipientUri) {
         if (await this.isValid(activity, recipientUri)) {
           for (let resource of defaultToArray(activity.object)) {
-            resource = await ctx.call(
-              'ldp.remote.store',
-              typeof resource === 'string'
-                ? {
-                    resourceUri: resource,
-                    mirrorGraph: this.settings.mirrorGraph,
-                    webId: recipientUri
-                  }
-                : {
-                    resource: { '@context': activity['@context'], ...resource },
-                    mirrorGraph: this.settings.mirrorGraph,
-                    webId: recipientUri
-                  }
-            );
+            const resourceUri = typeof resource === 'string' ? resource : resource['@id'] || resource.id;
 
-            const resourceUri = resource['@id'] || resource.id;
-            const type = resource['@type'] || resource.type;
+            // Ignore if the resource is on the same server
+            if (!this.isLocal(resourceUri, recipientUri)) {
+              resource = await ctx.call(
+                'ldp.remote.store',
+                typeof resource === 'string'
+                  ? {
+                      resourceUri: resource,
+                      mirrorGraph: this.settings.mirrorGraph,
+                      webId: recipientUri
+                    }
+                  : {
+                      resource: { '@context': activity['@context'], ...resource },
+                      mirrorGraph: this.settings.mirrorGraph,
+                      webId: recipientUri
+                    }
+              );
 
-            if (activity.target && this.settings.synchronizeContainers) {
-              for (const containerUri of defaultToArray(activity.target)) {
-                await ctx.call('ldp.container.attach', {
-                  containerUri,
-                  resourceUri,
-                  webId: recipientUri
-                });
-              }
-            }
+              const type = resource['@type'] || resource.type;
 
-            if (this.settings.attachToLocalContainers) {
-              let containerUri;
-
-              if (this.settings.podProvider) {
-                // If this is a Pod provider, try to find the container with the type-registrations service
-                [containerUri] = await ctx.call('type-registrations.findContainersUris', {
-                  type,
-                  webId: recipientUri
-                });
-              } else {
-                // Otherwise try to find it with the LdpRegistry
-                const container = await ctx.call('ldp.registry.getByType', { type });
-                if (container) {
-                  containerUri = await ctx.call('ldp.registry.getUri', {
-                    path: container.path,
+              if (activity.target && this.settings.synchronizeContainers) {
+                for (const containerUri of defaultToArray(activity.target)) {
+                  await ctx.call('ldp.container.attach', {
+                    containerUri,
+                    resourceUri,
                     webId: recipientUri
                   });
                 }
               }
 
-              if (containerUri) {
-                await ctx.call('ldp.container.attach', { containerUri, resourceUri, webId: recipientUri });
-              } else {
-                this.logger.warn(
-                  `Cannot attach resource ${resourceUri} of type "${type}", no matching local containers were found`
-                );
+              if (this.settings.attachToLocalContainers) {
+                let containerUri;
+
+                if (this.settings.podProvider) {
+                  // If this is a Pod provider, try to find the container with the type-registrations service
+                  [containerUri] = await ctx.call('type-registrations.findContainersUris', {
+                    type,
+                    webId: recipientUri
+                  });
+                } else {
+                  // Otherwise try to find it with the LdpRegistry
+                  const container = await ctx.call('ldp.registry.getByType', { type });
+                  if (container) {
+                    containerUri = await ctx.call('ldp.registry.getUri', {
+                      path: container.path,
+                      webId: recipientUri
+                    });
+                  }
+                }
+
+                if (containerUri) {
+                  await ctx.call('ldp.container.attach', { containerUri, resourceUri, webId: recipientUri });
+                } else {
+                  this.logger.warn(
+                    `Cannot attach resource ${resourceUri} of type "${type}", no matching local containers were found`
+                  );
+                }
               }
             }
           }

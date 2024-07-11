@@ -142,7 +142,6 @@ const KeysService = {
           publicKeys.map(async key => {
             const publicKeyId = key.id || key['@id'];
             return await ctx.call('keys.container.get', {
-              // public and private key URIs have the same slug, so we just replace the container name here..
               resourceUri: await this.actions.findPrivateKeyUri({ publicKeyUri: publicKeyId }, { parentCtx: ctx }),
               accept: MIME_TYPES.JSON,
               webId
@@ -562,7 +561,7 @@ const KeysService = {
           SELECT ?privateKey WHERE {
             ?privateKey <http://www.w3.org/2000/01/rdf-schema#seeAlso> <${publicKeyUri}> .
           }`,
-          dataset: undefined,
+          // dataset: undefined,
           webId: 'system'
         });
 

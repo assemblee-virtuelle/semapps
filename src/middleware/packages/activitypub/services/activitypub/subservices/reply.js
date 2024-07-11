@@ -66,23 +66,19 @@ const ReplyService = {
   },
   activities: {
     postReply: {
-      async match(ctx, activity) {
-        const dereferencedActivity = await matchActivity(
-          ctx,
+      async match(activity, fetcher) {
+        const { match, dereferencedActivity } = await matchActivity(
           {
             type: ACTIVITY_TYPES.CREATE,
             object: {
               type: OBJECT_TYPES.NOTE
             }
           },
-          activity
+          activity,
+          fetcher
         );
         // We have a match only if there is a inReplyTo predicate to the object
-        if (dereferencedActivity && dereferencedActivity.object.inReplyTo) {
-          return dereferencedActivity;
-        } else {
-          return false;
-        }
+        return { match: match && dereferencedActivity.object.inReplyTo, dereferencedActivity };
       },
       async onEmit(ctx, activity) {
         if (this.isLocalObject(activity.object.inReplyTo)) {

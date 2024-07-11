@@ -12,6 +12,7 @@ module.exports = {
       await this.contextParser.parse(context);
       return true;
     } catch (e) {
+      this.logger.warn(`Could not parse context. Error: ${e.message}`);
       return false;
     }
   }
