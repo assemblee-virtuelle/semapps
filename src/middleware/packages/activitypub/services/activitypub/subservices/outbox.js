@@ -143,6 +143,7 @@ const OutboxService = {
     isLocalActor(uri) {
       return uri.startsWith(this.settings.baseUri);
     },
+    // TODO put this in the activitypub.inbox service
     async localPost(recipients, activity) {
       const success = [];
       const failures = [];
