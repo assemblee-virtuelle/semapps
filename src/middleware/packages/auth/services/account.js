@@ -147,13 +147,13 @@ module.exports = {
       return resetPasswordToken;
     },
     async findDatasetByWebId(ctx) {
-      const { webId } = ctx.meta;
+      const webId = ctx.params.webId || ctx.meta.webId;
       const account = await ctx.call('auth.account.findByWebId', { webId });
       // If no podUri exist, it means we are not in Pod config
       return account?.podUri ? getSlugFromUri(webId) : undefined;
     },
     async findSettingsByWebId(ctx) {
-      const { webId } = ctx.meta;
+      const webId = ctx.params.webId || ctx.meta.webId;
       const account = await ctx.call('auth.account.findByWebId', { webId });
 
       return {

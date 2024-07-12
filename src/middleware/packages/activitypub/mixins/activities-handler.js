@@ -30,8 +30,6 @@ const ActivitiesHandlerMixin = {
         return;
       }
 
-      ctx.meta.webId = actorUri;
-
       if (boxType === 'inbox' && activityHandler.onReceive) {
         return await activityHandler.onReceive.bind(this)(ctx, dereferencedActivity, actorUri);
       } else if (boxType === 'outbox' && activityHandler.onEmit) {

@@ -119,6 +119,10 @@ module.exports = {
   queues: {
     processInbox: {
       name: '*',
+      // We must allow multiple jobs to be run at the same time, otherwise if
+      // the activitypub.outbox.post action is called by a processor, the jobs queue will halt
+      // (the first job will stay in active state, the other one in pending state)
+      concurrency: 5,
       async process(job) {
         const { activity, recipients } = job.data;
         const startTime = performance.now();
@@ -145,12 +149,18 @@ module.exports = {
 
               if (match) {
                 try {
-                  const result = await this.broker.call(processor.actionName, {
-                    key: processor.key,
-                    boxType: 'inbox',
-                    dereferencedActivity,
-                    actorUri: recipientUri
-                  });
+                  const result = await this.broker.call(
+                    processor.actionName,
+                    {
+                      key: processor.key,
+                      boxType: 'inbox',
+                      dereferencedActivity,
+                      actorUri: recipientUri
+                    },
+                    {
+                      meta: { webId: recipientUri, dataset }
+                    }
+                  );
                   job.log(
                     `SUCCESS ${processor.key} (${processor.actionName}): ${
                       typeof result === 'object' ? JSON.stringify(result) : result
@@ -181,6 +191,10 @@ module.exports = {
     },
     processOutbox: {
       name: '*',
+      // We must allow multiple jobs to be run at the same time, otherwise if
+      // the activitypub.outbox.post action is called by a processor, the jobs queue will halt
+      // (the first job will stay in active state, the other one in pending state)
+      concurrency: 5,
       async process(job) {
         const { activity } = job.data;
         const emitterUri = activity.actor;
@@ -207,12 +221,18 @@ module.exports = {
 
             if (match) {
               try {
-                const result = await this.broker.call(processor.actionName, {
-                  key: processor.key,
-                  boxType: 'outbox',
-                  dereferencedActivity,
-                  actorUri: emitterUri
-                });
+                const result = await this.broker.call(
+                  processor.actionName,
+                  {
+                    key: processor.key,
+                    boxType: 'outbox',
+                    dereferencedActivity,
+                    actorUri: emitterUri
+                  },
+                  {
+                    meta: { webId: emitterUri, dataset }
+                  }
+                );
                 job.log(
                   `SUCCESS ${processor.key} (${processor.actionName}): ${
                     typeof result === 'object' ? JSON.stringify(result) : result

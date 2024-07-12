@@ -1,17 +1,6 @@
 const { defaultToArray } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 
-// const defaultFetcher = async (resourceUri) => {
-//   try {
-//     return await ctx.call('ldp.resource.get', {
-//       resourceUri,
-//       accept: MIME_TYPES.JSON
-//     });
-//   } catch (e) {
-//     return false;
-//   }
-// };
-
 /**
  * Match an activity against a pattern
  * If there is a match, return the activity dereferenced according to the pattern
