@@ -1,7 +1,6 @@
 const { acl, vcard, rdfs } = require('@semapps/ontologies');
 const WebAclResourceService = require('./services/resource');
 const WebAclGroupService = require('./services/group');
-const WebAclActivityService = require('./services/activity');
 const WebAclCacheService = require('./services/cache');
 const getRoutes = require('./routes/getRoutes');
 
@@ -33,13 +32,6 @@ module.exports = {
         graphName,
         podProvider,
         superAdmins
-      }
-    });
-
-    this.broker.createService({
-      mixins: [WebAclActivityService],
-      settings: {
-        podProvider
       }
     });
 

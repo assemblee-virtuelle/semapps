@@ -85,6 +85,7 @@ const ActivityPubService = {
       mixins: [ActivityService],
       settings: {
         baseUri,
+        podProvider,
         path: activitiesPath
       }
     });
