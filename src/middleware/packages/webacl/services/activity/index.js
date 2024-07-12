@@ -25,21 +25,10 @@ module.exports = {
         // TODO improve performances by passing all users at once
         // https://github.com/assemblee-virtuelle/semapps/issues/908
         for (const recipientUri of recipients) {
-          await ctx.call('webacl.resource.addRights', {
-            resourceUri: activityUri,
-            additionalRights: {
-              user: {
-                uri: recipientUri,
-                read: true
-              }
-            },
-            webId: 'system'
-          });
-
-          // If this is a Create activity, also give rights to the created object
-          if (hasType(activity, ACTIVITY_TYPES.CREATE)) {
-            await ctx.call('webacl.resource.addRights', {
-              resourceUri: typeof activity.object === 'string' ? activity.object : activity.object.id,
+          await ctx.call(
+            'webacl.resource.addRights',
+            {
+              resourceUri: activityUri,
               additionalRights: {
                 user: {
                   uri: recipientUri,
@@ -47,33 +36,76 @@ module.exports = {
                 }
               },
               webId: 'system'
-            });
+            },
+            {
+              meta: {
+                skipObjectsWatcher: true
+              }
+            }
+          );
+
+          // If this is a Create activity, also give rights to the created object
+          if (hasType(activity, ACTIVITY_TYPES.CREATE)) {
+            await ctx.call(
+              'webacl.resource.addRights',
+              {
+                resourceUri: typeof activity.object === 'string' ? activity.object : activity.object.id,
+                additionalRights: {
+                  user: {
+                    uri: recipientUri,
+                    read: true
+                  }
+                },
+                webId: 'system'
+              },
+              {
+                meta: {
+                  skipObjectsWatcher: true
+                }
+              }
+            );
           }
         }
 
         // If activity is public, give anonymous read right
         if (await ctx.call('activitypub.activity.isPublic', { activity })) {
-          await ctx.call('webacl.resource.addRights', {
-            resourceUri: activityUri,
-            additionalRights: {
-              anon: {
-                read: true
-              }
-            },
-            webId: 'system'
-          });
-
-          // If this is a Create activity, also give anonymous read right to the created object
-          if (hasType(activity, ACTIVITY_TYPES.CREATE)) {
-            await ctx.call('webacl.resource.addRights', {
-              resourceUri: typeof activity.object === 'string' ? activity.object : activity.object.id,
+          await ctx.call(
+            'webacl.resource.addRights',
+            {
+              resourceUri: activityUri,
               additionalRights: {
                 anon: {
                   read: true
                 }
               },
               webId: 'system'
-            });
+            },
+            {
+              meta: {
+                skipObjectsWatcher: true // We don't want to trigger an Update
+              }
+            }
+          );
+
+          // If this is a Create activity, also give anonymous read right to the created object
+          if (hasType(activity, ACTIVITY_TYPES.CREATE)) {
+            await ctx.call(
+              'webacl.resource.addRights',
+              {
+                resourceUri: typeof activity.object === 'string' ? activity.object : activity.object.id,
+                additionalRights: {
+                  anon: {
+                    read: true
+                  }
+                },
+                webId: 'system'
+              },
+              {
+                meta: {
+                  skipObjectsWatcher: true // We don't want to trigger an Update
+                }
+              }
+            );
           }
         }
       }

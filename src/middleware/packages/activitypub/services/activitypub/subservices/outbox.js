@@ -219,48 +219,35 @@ const OutboxService = {
       // During tests, do not do post to remote servers
       if (process.env.NODE_ENV === 'test' && !recipientUri.startsWith('http://localhost')) return;
 
-      try {
-        const recipientInbox = await this.broker.call('activitypub.actor.getCollectionUri', {
-          actorUri: recipientUri,
-          predicate: 'inbox',
-          webId: 'system'
-        });
+      const recipientInbox = await this.broker.call('activitypub.actor.getCollectionUri', {
+        actorUri: recipientUri,
+        predicate: 'inbox',
+        webId: 'system'
+      });
 
-        if (!recipientInbox) {
-          this.logger.warn(`Error when posting activity to remote actor ${recipientUri}: no inbox attached`);
-          return false;
-        }
-
-        const body = JSON.stringify(activity);
-
-        const signatureHeaders = await this.broker.call('signature.generateSignatureHeaders', {
-          url: recipientInbox,
-          method: 'POST',
-          body,
-          actorUri: activity.actor
-        });
-
-        // Post activity to the inbox of the remote actor
-        const response = await fetch(recipientInbox, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...signatureHeaders
-          },
-          body
-        });
-
-        if (response.ok) {
-          return response;
-        } else {
-          this.logger.warn(`Error when posting activity to remote actor ${recipientUri}: ${response.statusText}`);
-          return false;
-        }
-      } catch (e) {
-        console.error(e);
-        this.logger.warn(`Error when posting activity to remote actor ${recipientUri}: ${e.message}`);
+      if (!recipientInbox) {
+        this.logger.warn(`Error when posting activity to remote actor ${recipientUri}: no inbox attached`);
         return false;
       }
+
+      const body = JSON.stringify(activity);
+
+      const signatureHeaders = await this.broker.call('signature.generateSignatureHeaders', {
+        url: recipientInbox,
+        method: 'POST',
+        body,
+        actorUri: activity.actor
+      });
+
+      // Post activity to the inbox of the remote actor
+      return await fetch(recipientInbox, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...signatureHeaders
+        },
+        body
+      });
     }
   },
   queues: {
@@ -270,8 +257,8 @@ const OutboxService = {
         const { activity, recipientUri } = job.data;
         const response = await this.remotePost(recipientUri, activity);
 
-        if (!!response) {
-          throw new Error(`Unable to send to remote actor ${recipientUri}`);
+        if (!response.ok) {
+          throw new Error(`Error when posting activity to remote actor ${recipientUri}: ${response.statusText}`);
         } else {
           job.progress(100);
         }

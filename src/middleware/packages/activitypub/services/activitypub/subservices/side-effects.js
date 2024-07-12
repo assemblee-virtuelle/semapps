@@ -87,6 +87,7 @@ module.exports = {
     matchActivity(pattern, activity, fetcher) {
       return matchActivity(pattern, activity, fetcher);
     },
+    // TODO fake createJob function to call directly the job
     // async createJob(queueName, jobName, data, opts) {
     //   this.logger.warn(`QueueMixin not configured, calling job directly`);
     //   try {
@@ -121,7 +122,7 @@ module.exports = {
       async process(job) {
         const { activity, recipients } = job.data;
         const startTime = performance.now();
-        let numErrors = 0,
+        let errors = [],
           match,
           dereferencedActivity = activity;
 
@@ -157,7 +158,7 @@ module.exports = {
                   );
                 } catch (e) {
                   job.log(`ERROR ${processor.key} (${processor.actionName}): ${e.message}`);
-                  numErrors++;
+                  errors.push(processor.key);
                 }
               } else {
                 job.log(`SKIP ${processor.key} (${processor.actionName})`);
@@ -166,9 +167,10 @@ module.exports = {
           }
         }
 
-        if (numErrors > 0) {
-          await job.discard();
-          throw new Error(`Could not fully process activity ${activity.id}. ${numErrors} errors detected`);
+        if (errors.length > 0) {
+          throw new Error(
+            `Could not fully process activity ${activity.id}. Error with the processor(s) ${errors.join(', ')}`
+          );
         } else {
           return {
             dereferencedActivity,

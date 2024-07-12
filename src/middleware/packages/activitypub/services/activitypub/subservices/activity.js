@@ -67,7 +67,8 @@ const ActivityService = {
         }
       }
 
-      return output;
+      // Remove duplicates
+      return [...new Set(output)];
     },
     async getLocalRecipients(ctx) {
       const { activity } = ctx.params;

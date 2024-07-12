@@ -100,7 +100,7 @@ const SignatureService = {
       const { actorUri } = ctx.params;
 
       if (this.isMigrated) {
-        this.logger.warn(
+        this.logger.info(
           `The keys service has been migrated. Key setup is handled by the keys service. This function will not have an effect`
         );
         return;

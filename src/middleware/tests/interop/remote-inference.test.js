@@ -9,8 +9,8 @@ let server1;
 let server2;
 
 beforeAll(async () => {
-  server1 = await initialize(3001, 'testData', 'settings');
-  server2 = await initialize(3002, 'testData2', 'settings2');
+  server1 = await initialize(3001, 'testData1', 'settings1', 1);
+  server2 = await initialize(3002, 'testData2', 'settings2', 2);
 });
 afterAll(async () => {
   if (server1) await server1.stop();

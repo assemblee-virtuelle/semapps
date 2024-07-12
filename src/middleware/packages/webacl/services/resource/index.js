@@ -72,7 +72,7 @@ module.exports = {
     async checkResourceOrContainerExists(ctx, resourceUri) {
       // Ensure LDP services have been started
       // We cannot add them as dependencies as this creates circular dependencies
-      await ctx.broker.waitForServices(['ldp.container', 'ldp.resource']);
+      await this.broker.waitForServices(['ldp.container', 'ldp.resource']);
 
       if (resourceUri.startsWith(urlJoin(this.settings.baseUrl, '_groups'))) {
         const exists = await aclGroupExists(resourceUri, ctx, this.settings.graphName);

@@ -3,7 +3,7 @@ const waitForExpect = require('wait-for-expect');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const initialize = require('./initialize');
 
-jest.setTimeout(50000);
+jest.setTimeout(100000);
 
 let server1;
 let server2;
@@ -12,14 +12,14 @@ const relay1 = 'http://localhost:3001/as/actor/relay';
 const relay2 = 'http://localhost:3002/as/actor/relay';
 
 beforeAll(async () => {
-  server1 = await initialize(3001, 'testData', 'settings');
+  server1 = await initialize(3001, 'testData1', 'settings1', 1);
 
   // Wait for Relay actor creation, or server2 won't be able to mirror server1
   await server1.call('activitypub.actor.awaitCreateComplete', {
     actorUri: relay1
   });
 
-  server2 = await initialize(3002, 'testData2', 'settings2', 'http://localhost:3001');
+  server2 = await initialize(3002, 'testData2', 'settings2', 2, 'http://localhost:3001');
 });
 afterAll(async () => {
   if (server1) await server1.stop();
