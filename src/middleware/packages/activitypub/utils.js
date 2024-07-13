@@ -104,8 +104,6 @@ const waitForResource = async (delayMs, fieldNames, maxTries, callback) => {
   );
 };
 
-const objectDepth = o => (Object(o) === o ? 1 + Math.max(-1, ...Object.values(o).map(objectDepth)) : 0);
-
 const getValueFromDataType = result => {
   switch (result.datatype?.value) {
     case 'http://www.w3.org/2001/XMLSchema#boolean':
@@ -129,6 +127,5 @@ module.exports = {
   delay,
   arrayOf,
   waitForResource,
-  objectDepth,
   getValueFromDataType
 };

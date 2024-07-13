@@ -1,4 +1,4 @@
-const QueueService = require('moleculer-bull');
+const QueueMixin = require('moleculer-bull');
 const { as, sec } = require('@semapps/ontologies');
 const ActorService = require('./subservices/actor');
 const ActivityService = require('./subservices/activity');
@@ -12,6 +12,7 @@ const OutboxService = require('./subservices/outbox');
 const CollectionsRegistryService = require('./subservices/collections-registry');
 const ReplyService = require('./subservices/reply');
 const SideEffectsService = require('./subservices/side-effects');
+const FakeQueueMixin = require('../../mixins/fake-queue-mixin');
 const { ACTOR_TYPES } = require('../../constants');
 
 const ActivityPubService = {
@@ -36,7 +37,7 @@ const ActivityPubService = {
       this.settings;
 
     this.broker.createService({
-      mixins: [SideEffectsService, QueueService(queueServiceUrl)],
+      mixins: [SideEffectsService, queueServiceUrl ? QueueMixin(queueServiceUrl) : FakeQueueMixin],
       settings: { podProvider }
     });
 
@@ -119,7 +120,7 @@ const ActivityPubService = {
     });
 
     this.broker.createService({
-      mixins: queueServiceUrl ? [OutboxService, QueueService(queueServiceUrl)] : [OutboxService],
+      mixins: [OutboxService, queueServiceUrl ? QueueMixin(queueServiceUrl) : FakeQueueMixin],
       settings: {
         baseUri,
         podProvider

@@ -95,14 +95,14 @@ const OutboxService = {
         item: activity
       });
 
-      const localRecipients = [];
+      let localRecipients = [],
+        remoteRecipients = [];
       const recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
 
-      // Post to remote recipients
       for (const recipientUri of recipients) {
         if (this.isLocalActor(recipientUri)) {
           if (this.settings.podProvider) {
-            const podExist = await this.broker.call('pod.exist', { webId: recipientUri });
+            const podExist = await ctx.call('pod.exist', { webId: recipientUri });
             if (podExist) {
               localRecipients.push(recipientUri);
             } else {
@@ -112,14 +112,14 @@ const OutboxService = {
             localRecipients.push(recipientUri);
           }
         } else {
-          // If the QueueService mixin is available, use it
-          if (this.createJob) {
-            this.createJob('remotePost', recipientUri, { recipientUri, activity });
-          } else {
-            // Send directly (but without waiting)
-            this.remotePost(recipientUri, activity);
-          }
+          remoteRecipients.push(recipientUri);
         }
+      }
+
+      // Post to remote recipients
+      for (const recipientUri of remoteRecipients) {
+        const job = await this.createJob('remotePost', recipientUri, { recipientUri, activity });
+        await job.finished();
       }
 
       // Send this event now, because the localPost method will emit activitypub.inbox.received event
@@ -215,40 +215,6 @@ const OutboxService = {
       this.broker.emit('activitypub.inbox.received', { activity, recipients, local: true });
 
       return { success, failures };
-    },
-    async remotePost(recipientUri, activity) {
-      // During tests, do not do post to remote servers
-      if (process.env.NODE_ENV === 'test' && !recipientUri.startsWith('http://localhost')) return;
-
-      const recipientInbox = await this.broker.call('activitypub.actor.getCollectionUri', {
-        actorUri: recipientUri,
-        predicate: 'inbox',
-        webId: 'system'
-      });
-
-      if (!recipientInbox) {
-        this.logger.warn(`Error when posting activity to remote actor ${recipientUri}: no inbox attached`);
-        return false;
-      }
-
-      const body = JSON.stringify(activity);
-
-      const signatureHeaders = await this.broker.call('signature.generateSignatureHeaders', {
-        url: recipientInbox,
-        method: 'POST',
-        body,
-        actorUri: activity.actor
-      });
-
-      // Post activity to the inbox of the remote actor
-      return await fetch(recipientInbox, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...signatureHeaders
-        },
-        body
-      });
     }
   },
   queues: {
@@ -256,13 +222,45 @@ const OutboxService = {
       name: '*',
       async process(job) {
         const { activity, recipientUri } = job.data;
-        const response = await this.remotePost(recipientUri, activity);
+
+        // During tests, do not do post to remote servers
+        if (process.env.NODE_ENV === 'test' && !recipientUri.startsWith('http://localhost')) return;
+
+        const recipientInbox = await this.broker.call('activitypub.actor.getCollectionUri', {
+          actorUri: recipientUri,
+          predicate: 'inbox',
+          webId: 'system'
+        });
+
+        if (!recipientInbox) {
+          throw new Error(`Error when posting activity to remote actor ${recipientUri}: no inbox attached`);
+        }
+
+        const body = JSON.stringify(activity);
+
+        const signatureHeaders = await this.broker.call('signature.generateSignatureHeaders', {
+          url: recipientInbox,
+          method: 'POST',
+          body,
+          actorUri: activity.actor
+        });
+
+        const response = await fetch(recipientInbox, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...signatureHeaders
+          },
+          body
+        });
 
         if (!response.ok) {
-          throw new Error(`Error when posting activity to remote actor ${recipientUri}: ${response.statusText}`);
-        } else {
-          job.progress(100);
+          throw new Error(
+            `Error ${response.status} when posting activity ${activity.id} to remote actor ${recipientUri}: ${response.statusText}`
+          );
         }
+
+        job.progress(100);
 
         return { response };
       }

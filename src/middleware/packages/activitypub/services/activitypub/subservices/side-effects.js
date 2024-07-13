@@ -1,6 +1,4 @@
-const { isObject } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { objectDepth } = require('../../../utils');
 const matchActivity = require('../../../utils/matchActivity');
 
 /**
@@ -26,7 +24,8 @@ module.exports = {
 
       this.processors.push({ matcher, actionName, boxTypes, key, priority });
 
-      this.sortProcessors();
+      // Sort processors by priority
+      this.processors.sort((a, b) => a.priority - b.priority);
     },
     /**
      * Called by activitypub.outbox.post when an activity is posted
@@ -64,39 +63,9 @@ module.exports = {
     }
   },
   methods: {
-    sortProcessors() {
-      // Sort processors by priority, then depth of matchers (if matcher is a function, it is put at the end)
-      this.processors.sort((a, b) => {
-        if (a.priority !== b.priority) {
-          return a.priority - b.priority;
-        } else if (isObject(a.matcher)) {
-          if (isObject(b.matcher)) {
-            return objectDepth(a.matcher) - objectDepth(b.matcher);
-          } else {
-            return 1;
-          }
-        } else {
-          if (isObject(b)) {
-            return -1;
-          } else {
-            return 0;
-          }
-        }
-      });
-    },
     matchActivity(pattern, activity, fetcher) {
       return matchActivity(pattern, activity, fetcher);
     },
-    // TODO fake createJob function to call directly the job
-    // async createJob(queueName, jobName, data, opts) {
-    //   this.logger.warn(`QueueMixin not configured, calling job directly`);
-    //   try {
-    //     await this.schema.queues[queueName].process({ data, log: () => {} });
-    //   } catch (e) {
-    //     this.logger.error(e.message);
-    //   }
-    //   return { id: 0 };
-    // },
     async fetch(resourceUri, webId, dataset) {
       try {
         return await this.broker.call(

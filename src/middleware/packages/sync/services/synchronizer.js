@@ -164,6 +164,9 @@ const SynchronizerService = {
           for (const resource of defaultToArray(activity.object)) {
             const resourceUri = typeof resource === 'string' ? resource : resource.id || resource['@id'];
 
+            // Skip if the actor is asking to delete himself
+            if (resourceUri === activity.actor) return;
+
             // If the remote resource is attached to a local container, it will be automatically detached
             try {
               await ctx.call('ldp.remote.delete', {
