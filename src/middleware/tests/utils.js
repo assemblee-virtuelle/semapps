@@ -1,5 +1,6 @@
 const urlJoin = require('url-join');
 const fetch = require('node-fetch');
+const Redis = require('ioredis');
 const CONFIG = require('./config');
 
 const listDatasets = async () => {
@@ -74,6 +75,13 @@ const fetchServer = (url, options = {}) => {
     });
 };
 
+const clearQueue = async queueServiceUrl => {
+  // Clear queue
+  const redisClient = new Redis(queueServiceUrl);
+  const result = await redisClient.flushdb();
+  redisClient.disconnect();
+};
+
 const wait = ms =>
   new Promise(resolve => {
     setTimeout(resolve, ms);
@@ -83,5 +91,6 @@ module.exports = {
   clearDataset,
   listDatasets,
   fetchServer,
+  clearQueue,
   wait
 };

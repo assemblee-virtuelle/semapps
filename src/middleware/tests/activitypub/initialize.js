@@ -1,14 +1,13 @@
 const fse = require('fs-extra');
 const path = require('path');
 const urlJoin = require('url-join');
-const Redis = require('ioredis');
 const { ServiceBroker } = require('moleculer');
 const { AuthLocalService } = require('@semapps/auth');
 const { CoreService } = require('@semapps/core');
 const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
 const { FULL_OBJECT_TYPES, FULL_ACTOR_TYPES } = require('@semapps/activitypub');
 const CONFIG = require('../config');
-const { clearDataset } = require('../utils');
+const { clearDataset, clearQueue } = require('../utils');
 
 const containers = [
   {
@@ -18,16 +17,12 @@ const containers = [
 ];
 
 const initialize = async (port, mainDataset, accountsDataset, queueServiceDb = 0) => {
+  const baseUrl = `http://localhost:${port}/`;
+  const queueServiceUrl = `redis://localhost:6379/${queueServiceDb}`;
+
   await clearDataset(mainDataset);
   await clearDataset(accountsDataset);
-
-  // Clear queue
-  const queueServiceUrl = `redis://localhost:6379/${queueServiceDb}`;
-  const redisClient = new Redis(queueServiceUrl);
-  const result = await redisClient.flushdb();
-  redisClient.disconnect();
-
-  const baseUrl = `http://localhost:${port}/`;
+  await clearQueue(queueServiceUrl);
 
   const broker = new ServiceBroker({
     nodeID: `server${port}`,
