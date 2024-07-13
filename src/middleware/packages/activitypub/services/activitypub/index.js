@@ -12,7 +12,7 @@ const OutboxService = require('./subservices/outbox');
 const CollectionsRegistryService = require('./subservices/collections-registry');
 const ReplyService = require('./subservices/reply');
 const SideEffectsService = require('./subservices/side-effects');
-const FakeQueueMixin = require('../../mixins/fake-queue-mixin');
+const FakeQueueMixin = require('../../mixins/fake-queue');
 const { ACTOR_TYPES } = require('../../constants');
 
 const ActivityPubService = {
