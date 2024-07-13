@@ -68,7 +68,8 @@ module.exports = {
     },
     async fetch(resourceUri, webId, dataset) {
       try {
-        return await this.broker.call(
+        // We must not return immediately, or errors will not be caught below
+        const resource = await this.broker.call(
           'ldp.resource.get',
           {
             resourceUri,
@@ -77,6 +78,7 @@ module.exports = {
           },
           { meta: { dataset } }
         );
+        return resource;
       } catch (e) {
         this.logger.warn(
           `Could not fetch ${resourceUri} with webId ${webId} and dataset ${dataset}. Error: ${e.message}`
