@@ -1,6 +1,7 @@
 const fse = require('fs-extra');
 const path = require('path');
 const urlJoin = require('url-join');
+const Redis = require('ioredis');
 const { ServiceBroker } = require('moleculer');
 const { FULL_ACTOR_TYPES, RelayService } = require('@semapps/activitypub');
 const { AuthLocalService } = require('@semapps/auth');
@@ -25,10 +26,16 @@ const containers = [
   }
 ];
 
-const initialize = async (port, mainDataset, accountsDataset, serverToMirror) => {
+const initialize = async (port, mainDataset, accountsDataset, queueServiceDb, serverToMirror) => {
   // Clear datasets
   await clearDataset(mainDataset);
   await clearDataset(accountsDataset);
+
+  // Clear queue
+  const queueServiceUrl = `redis://localhost:6379/${queueServiceDb}`;
+  const redisClient = new Redis(queueServiceUrl);
+  const result = await redisClient.flushdb();
+  redisClient.disconnect();
 
   // Remove all actors keys
   await fse.emptyDir(path.resolve(__dirname, './actors'));
@@ -63,6 +70,9 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
       },
       containers,
       ontologies: [pair],
+      activitypub: {
+        queueServiceUrl
+      },
       api: {
         port
       },

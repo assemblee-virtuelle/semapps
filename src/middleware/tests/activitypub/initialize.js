@@ -7,7 +7,7 @@ const { CoreService } = require('@semapps/core');
 const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
 const { FULL_OBJECT_TYPES, FULL_ACTOR_TYPES } = require('@semapps/activitypub');
 const CONFIG = require('../config');
-const { clearDataset } = require('../utils');
+const { clearDataset, clearQueue } = require('../utils');
 
 const containers = [
   {
@@ -16,13 +16,16 @@ const containers = [
   }
 ];
 
-const initialize = async (port, mainDataset, accountsDataset) => {
+const initialize = async (port, mainDataset, accountsDataset, queueServiceDb = 0) => {
+  const baseUrl = `http://localhost:${port}/`;
+  const queueServiceUrl = `redis://localhost:6379/${queueServiceDb}`;
+
   await clearDataset(mainDataset);
   await clearDataset(accountsDataset);
-
-  const baseUrl = `http://localhost:${port}/`;
+  await clearQueue(queueServiceUrl);
 
   const broker = new ServiceBroker({
+    nodeID: `server${port}`,
     middlewares: [CacherMiddleware(CONFIG.ACTIVATE_CACHE), WebAclMiddleware({ baseUrl })],
     logger: {
       type: 'Console',
@@ -49,6 +52,9 @@ const initialize = async (port, mainDataset, accountsDataset) => {
       containers,
       void: false,
       mirror: false,
+      activitypub: {
+        queueServiceUrl
+      },
       api: {
         port
       },

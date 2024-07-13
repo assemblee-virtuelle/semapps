@@ -28,6 +28,7 @@
     "moleculer": "^0.14.17",
     "moleculer-web": "^0.10.0-beta1",
     "node-fetch": "^2.6.6",
+    "ioredis": "^4.27.0",
     "rdf-data-model": "^1.0.0",
     "supertest": "^4.0.2",
     "url-join": "^4.0.1",

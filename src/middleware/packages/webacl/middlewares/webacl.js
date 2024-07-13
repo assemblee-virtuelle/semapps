@@ -6,8 +6,6 @@ const { isRemoteUri, getSlugFromUri } = require('../utils');
 const modifyActions = [
   'ldp.resource.create',
   'ldp.container.create',
-  'activitypub.activity.post',
-  'activitypub.activity.attach',
   'activitypub.collection.post',
   'activitypub.object.createTombstone',
   'webid.createWebId',
@@ -21,38 +19,58 @@ const addRightsToNewResource = async (ctx, resourceUri, webId) => {
   const newRights =
     typeof newResourcesPermissions === 'function' ? newResourcesPermissions(webId, ctx) : newResourcesPermissions;
 
-  await ctx.call('webacl.resource.addRights', {
-    webId: 'system',
-    resourceUri,
-    newRights
-  });
+  await ctx.call(
+    'webacl.resource.addRights',
+    {
+      webId: 'system',
+      resourceUri,
+      newRights
+    },
+    {
+      meta: {
+        skipObjectsWatcher: true
+      }
+    }
+  );
 };
 
 const addRightsToNewUser = async (ctx, userUri) => {
   // Manually add the permissions for the user resource now that we have its webId
   // First delete the default permissions added by the middleware when we called ldp.resource.create
-  await ctx.call('webacl.resource.deleteAllRights', { resourceUri: userUri }, { meta: { webId: 'system' } });
+  await ctx.call(
+    'webacl.resource.deleteAllRights',
+    { resourceUri: userUri },
+    { meta: { webId: 'system', skipObjectsWatcher: true } }
+  );
 
   // TODO find the permissions to set from the users container
   // const { newResourcesPermissions } = await ctx.call('ldp.registry.getByUri', { resourceUri: userUri });
   // const newRights =
   //   typeof newResourcesPermissions === 'function' ? newResourcesPermissions(userUri) : newResourcesPermissions;
 
-  await ctx.call('webacl.resource.addRights', {
-    webId: 'system',
-    resourceUri: userUri,
-    newRights: {
-      anon: {
-        read: true
-      },
-      user: {
-        uri: userUri,
-        read: true,
-        write: true,
-        control: true
+  await ctx.call(
+    'webacl.resource.addRights',
+    {
+      webId: 'system',
+      resourceUri: userUri,
+      newRights: {
+        anon: {
+          read: true
+        },
+        user: {
+          uri: userUri,
+          read: true,
+          write: true,
+          control: true
+        }
+      }
+    },
+    {
+      meta: {
+        skipObjectsWatcher: true
       }
     }
-  });
+  );
 };
 
 /**
@@ -169,11 +187,19 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
               permissions = options?.permissions || defaultContainerOptions.permissions;
             }
 
-            await ctx.call('webacl.resource.addRights', {
-              resourceUri: ctx.params.containerUri,
-              newRights: typeof permissions === 'function' ? permissions(webId, ctx) : permissions,
-              webId: 'system'
-            });
+            await ctx.call(
+              'webacl.resource.addRights',
+              {
+                resourceUri: ctx.params.containerUri,
+                newRights: typeof permissions === 'function' ? permissions(webId, ctx) : permissions,
+                webId: 'system'
+              },
+              {
+                meta: {
+                  skipObjectsWatcher: true
+                }
+              }
+            );
             break;
           }
 
@@ -190,12 +216,28 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
           // Remove the permissions which were added just before
           switch (action.name) {
             case 'ldp.resource.create':
-              await ctx.call('webacl.resource.deleteAllRights', {
-                resourceUri: ctx.params.resource['@id'] || ctx.params.resource.id
-              });
+              await ctx.call(
+                'webacl.resource.deleteAllRights',
+                {
+                  resourceUri: ctx.params.resource['@id'] || ctx.params.resource.id
+                },
+                {
+                  meta: {
+                    skipObjectsWatcher: true
+                  }
+                }
+              );
               break;
             case 'ldp.container.create':
-              await ctx.call('webacl.resource.deleteAllRights', { resourceUri: ctx.params.containerUri });
+              await ctx.call(
+                'webacl.resource.deleteAllRights',
+                { resourceUri: ctx.params.containerUri },
+                {
+                  meta: {
+                    skipObjectsWatcher: true
+                  }
+                }
+              );
               break;
             default:
               break;
@@ -208,11 +250,27 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
          */
         switch (action.name) {
           case 'ldp.resource.delete':
-            await ctx.call('webacl.resource.deleteAllRights', { resourceUri: ctx.params.resourceUri });
+            await ctx.call(
+              'webacl.resource.deleteAllRights',
+              { resourceUri: ctx.params.resourceUri },
+              {
+                meta: {
+                  skipObjectsWatcher: true
+                }
+              }
+            );
             break;
 
           case 'ldp.remote.delete':
-            await ctx.call('webacl.resource.deleteAllRights', { resourceUri: ctx.params.resourceUri });
+            await ctx.call(
+              'webacl.resource.deleteAllRights',
+              { resourceUri: ctx.params.resourceUri },
+              {
+                meta: {
+                  skipObjectsWatcher: true
+                }
+              }
+            );
             break;
 
           case 'webid.createWebId':
@@ -221,15 +279,23 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
 
           case 'activitypub.object.createTombstone':
             // Tombstones should be public
-            await ctx.call('webacl.resource.addRights', {
-              resourceUri: ctx.params.resourceUri,
-              additionalRights: {
-                anon: {
-                  read: true
-                }
+            await ctx.call(
+              'webacl.resource.addRights',
+              {
+                resourceUri: ctx.params.resourceUri,
+                additionalRights: {
+                  anon: {
+                    read: true
+                  }
+                },
+                webId: 'system'
               },
-              webId: 'system'
-            });
+              {
+                meta: {
+                  skipObjectsWatcher: true
+                }
+              }
+            );
             break;
 
           case 'ldp.remote.store': {
@@ -249,84 +315,8 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
                   },
                   webId: 'system'
                 },
-                { meta: { dataset } }
+                { meta: { dataset, skipObjectsWatcher: true } }
               );
-            }
-            break;
-          }
-
-          case 'activitypub.activity.post':
-          case 'activitypub.activity.attach': {
-            const activityUri =
-              action.name === 'activitypub.activity.attach' ? actionReturnValue.resourceUri : actionReturnValue;
-
-            const activity = await ctx.call('activitypub.activity.get', {
-              resourceUri: activityUri,
-              webId: ctx.params.webId || 'system'
-            });
-
-            const recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
-
-            // When a new activity is created, ensure the emitter has read rights also
-            // Don't do that on podProvider config, because the Pod owner already has all rights
-            if (action.name === 'activitypub.activity.post' && !podProvider) {
-              if (!recipients.includes(activity.actor)) recipients.push(activity.actor);
-            }
-
-            // Give read rights to the activity's recipients
-            // TODO improve performances by passing all users at once
-            // https://github.com/assemblee-virtuelle/semapps/issues/908
-            for (const recipient of recipients) {
-              await ctx.call('webacl.resource.addRights', {
-                resourceUri: activityUri,
-                additionalRights: {
-                  user: {
-                    uri: recipient,
-                    read: true
-                  }
-                },
-                webId: 'system'
-              });
-
-              // If this is a Create activity, also give rights to the created object
-              if (action.name === 'activitypub.activity.post' && hasType(activity, ACTIVITY_TYPES.CREATE)) {
-                await ctx.call('webacl.resource.addRights', {
-                  resourceUri: typeof activity.object === 'string' ? activity.object : activity.object.id,
-                  additionalRights: {
-                    user: {
-                      uri: recipient,
-                      read: true
-                    }
-                  },
-                  webId: 'system'
-                });
-              }
-            }
-
-            // If activity is public, give anonymous read right
-            if (await ctx.call('activitypub.activity.isPublic', { activity })) {
-              await ctx.call('webacl.resource.addRights', {
-                resourceUri: activityUri,
-                additionalRights: {
-                  anon: {
-                    read: true
-                  }
-                },
-                webId: 'system'
-              });
-
-              // If this is a Create activity, also give rights to the created object
-              if (action.name === 'activitypub.activity.post' && hasType(activity, ACTIVITY_TYPES.CREATE)) {
-                await ctx.call('webacl.resource.addRights', {
-                  resourceUri: typeof activity.object === 'string' ? activity.object : activity.object.id,
-                  additionalRights: {
-                    anon: {
-                      read: true
-                    }
-                  },
-                  webId: 'system'
-                });
-              }
             }
             break;
           }
@@ -335,18 +325,34 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
             // If a `permissions` param is passed when creating the collection, delete the permissions added before creation
             // (through the `newResourcesPermissions` of the collection container) and add these permissions instead
             if (ctx.params.permissions) {
-              await ctx.call('webacl.resource.deleteAllRights', { resourceUri: actionReturnValue });
+              await ctx.call(
+                'webacl.resource.deleteAllRights',
+                { resourceUri: actionReturnValue },
+                {
+                  meta: {
+                    skipObjectsWatcher: true
+                  }
+                }
+              );
 
               const permissions =
                 typeof ctx.params.permissions === 'function'
                   ? ctx.params.permissions(ctx.params.webId || ctx.meta.webId || 'anon')
                   : ctx.params.permissions;
 
-              await ctx.call('webacl.resource.addRights', {
-                resourceUri: actionReturnValue,
-                additionalRights: permissions,
-                webId: 'system'
-              });
+              await ctx.call(
+                'webacl.resource.addRights',
+                {
+                  resourceUri: actionReturnValue,
+                  additionalRights: permissions,
+                  webId: 'system'
+                },
+                {
+                  meta: {
+                    skipObjectsWatcher: true
+                  }
+                }
+              );
             }
             break;
           }

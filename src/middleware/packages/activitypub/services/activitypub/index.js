@@ -1,7 +1,6 @@
-const QueueService = require('moleculer-bull');
+const QueueMixin = require('moleculer-bull');
 const { as, sec } = require('@semapps/ontologies');
 const ActorService = require('./subservices/actor');
-const ActivitiesWatcherService = require('./subservices/activities-watcher');
 const ActivityService = require('./subservices/activity');
 const ApiService = require('./subservices/api');
 const CollectionService = require('./subservices/collection');
@@ -12,6 +11,8 @@ const ObjectService = require('./subservices/object');
 const OutboxService = require('./subservices/outbox');
 const CollectionsRegistryService = require('./subservices/collections-registry');
 const ReplyService = require('./subservices/reply');
+const SideEffectsService = require('./subservices/side-effects');
+const FakeQueueMixin = require('../../mixins/fake-queue');
 const { ACTOR_TYPES } = require('../../constants');
 
 const ActivityPubService = {
@@ -35,7 +36,10 @@ const ActivityPubService = {
     const { baseUri, podProvider, activitiesPath, selectActorData, queueServiceUrl, activateTombstones, like, follow } =
       this.settings;
 
-    this.broker.createService({ mixins: [ActivitiesWatcherService] });
+    this.broker.createService({
+      mixins: [SideEffectsService, queueServiceUrl ? QueueMixin(queueServiceUrl) : FakeQueueMixin],
+      settings: { podProvider }
+    });
 
     this.broker.createService({
       mixins: [CollectionService],
@@ -82,6 +86,7 @@ const ActivityPubService = {
       mixins: [ActivityService],
       settings: {
         baseUri,
+        podProvider,
         path: activitiesPath
       }
     });
@@ -115,7 +120,7 @@ const ActivityPubService = {
     });
 
     this.broker.createService({
-      mixins: queueServiceUrl ? [OutboxService, QueueService(queueServiceUrl)] : [OutboxService],
+      mixins: [OutboxService, queueServiceUrl ? QueueMixin(queueServiceUrl) : FakeQueueMixin],
       settings: {
         baseUri,
         podProvider

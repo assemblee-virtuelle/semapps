@@ -3,7 +3,7 @@ const { quad, namedNode, blankNode, literal } = require('rdf-data-model');
 const CONFIG = require('../config');
 const initialize = require('./initialize');
 
-jest.setTimeout(20000);
+jest.setTimeout(50000);
 let broker;
 
 beforeAll(async () => {

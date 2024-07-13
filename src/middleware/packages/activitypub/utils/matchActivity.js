@@ -1,63 +1,51 @@
 const { defaultToArray } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 
-const defaultFetcher = async (ctx, resourceUri) => {
-  try {
-    return await ctx.call('ldp.resource.get', {
-      resourceUri,
-      accept: MIME_TYPES.JSON
-    });
-  } catch (e) {
-    return false;
-  }
-};
-
 /**
  * Match an activity against a pattern
  * If there is a match, return the activity dereferenced according to the pattern
- * @param {object} ctx The moleculer context
- * @param {object | (ctx, dereferencedActivity) => Promise<boolean>} matcher An activity object pattern or an async function that returns true upon match.
- * @param {object} activityOrObject The activity to match for.
- * @param {(ctx, resourceUri) => Promise<object>} fetcher Fetch the resources and return it in JSON-LD format.
+ * @param {object | (dereferencedActivity, fetcher) => Promise<boolean>} matcher An activity object pattern or an async function that returns true upon match.
+ * @param {object} activity The activity to match for.
+ * @param {(resourceUri) => Promise<object>} fetcher Fetch the resources and return it in JSON-LD format, or false if the fetch failed
  * @returns {object} The dereferenced activity / object.
  */
-const matchActivity = async (ctx, matcher, activityOrObject, fetcher = defaultFetcher) => {
-  if (!matcher) return false;
+const matchActivity = async (matcher, activity, fetcher) => {
+  if (!matcher) return { match: false, dereferencedActivity: activity };
+  if (matcher === '*') return { match: true, dereferencedActivity: activity };
 
   // If the matcher is a function, call it
   if (typeof matcher === 'function') {
-    return await matcher(ctx, activityOrObject);
+    return await matcher(activity, fetcher);
   }
 
   // Check if we need to dereference the activity or object
-  let dereferencedActivityOrObject;
-  if (typeof activityOrObject === 'string') {
-    dereferencedActivityOrObject = await fetcher(ctx, activityOrObject);
-    if (!dereferencedActivityOrObject) return false;
+  let dereferencedActivity;
+  if (typeof activity === 'string') {
+    dereferencedActivity = await fetcher(activity);
+    if (!dereferencedActivity) return { match: false, dereferencedActivity: activity };
   } else {
     // Copy the object to a new object
-    dereferencedActivityOrObject = { ...activityOrObject };
+    dereferencedActivity = { ...activity };
   }
 
   for (const key of Object.keys(matcher)) {
     if (typeof matcher[key] === 'object' && !Array.isArray(matcher[key])) {
-      dereferencedActivityOrObject[key] = await matchActivity(
-        ctx,
-        matcher[key],
-        dereferencedActivityOrObject[key],
-        fetcher
-      );
-      if (!dereferencedActivityOrObject[key]) return false;
+      const matchResults = await matchActivity(matcher[key], dereferencedActivity[key], fetcher);
+      if (matchResults.match) {
+        dereferencedActivity[key] = matchResults.dereferencedActivity;
+      } else {
+        return { match: false, dereferencedActivity };
+      }
     } else if (
-      !dereferencedActivityOrObject[key] ||
-      !defaultToArray(dereferencedActivityOrObject[key]).some(v => defaultToArray(matcher[key]).includes(v))
+      !dereferencedActivity[key] ||
+      !defaultToArray(dereferencedActivity[key]).some(v => defaultToArray(matcher[key]).includes(v))
     ) {
-      return false;
+      return { match: false, dereferencedActivity };
     }
   }
 
-  // We have a match ! Return the dereferenced object
-  return dereferencedActivityOrObject;
+  // We have a match !
+  return { match: true, dereferencedActivity };
 };
 
 module.exports = matchActivity;

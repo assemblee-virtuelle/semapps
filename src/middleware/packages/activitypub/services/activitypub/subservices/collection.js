@@ -337,7 +337,7 @@ const CollectionService = {
             } catch (e) {
               if (e.code === 404 || e.code === 403) {
                 // Ignore resource if it is not found
-                this.logger.warn(`Item not found with URI: ${itemUri}`);
+                this.logger.debug(`Item not found with URI: ${itemUri}`);
               } else {
                 throw e;
               }

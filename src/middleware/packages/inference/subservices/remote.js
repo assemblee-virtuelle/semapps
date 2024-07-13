@@ -95,23 +95,23 @@ module.exports = {
   },
   activities: {
     offerInference: {
-      async match(ctx, activity) {
-        return (
-          (await matchActivity(
-            ctx,
-            {
-              type: ACTIVITY_TYPES.OFFER,
+      async match(activity, fetcher) {
+        let { match, dereferencedActivity } = await matchActivity(
+          {
+            type: ACTIVITY_TYPES.OFFER,
+            object: {
+              type: ACTIVITY_TYPES.ADD,
               object: {
-                type: ACTIVITY_TYPES.ADD,
-                object: {
-                  type: OBJECT_TYPES.RELATIONSHIP
-                }
+                type: OBJECT_TYPES.RELATIONSHIP
               }
-            },
-            activity
-          )) ||
-          (await matchActivity(
-            ctx,
+            }
+          },
+          activity,
+          fetcher
+        );
+
+        if (!match) {
+          ({ match, dereferencedActivity } = await matchActivity(
             {
               type: ACTIVITY_TYPES.OFFER,
               object: {
@@ -121,9 +121,12 @@ module.exports = {
                 }
               }
             },
-            activity
-          ))
-        );
+            dereferencedActivity, // Use the newly dereferenced activity to improve perf
+            fetcher
+          ));
+        }
+
+        return { match, dereferencedActivity };
       },
       async onReceive(ctx, activity, recipientUri) {
         if (this.settings.acceptFromRemoteServers && recipientUri === this.relayActor.id) {
