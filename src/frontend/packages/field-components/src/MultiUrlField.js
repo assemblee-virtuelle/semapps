@@ -80,8 +80,14 @@ const MultiUrlField = ({ source, domainMapping }) => {
   const urlArray = record[source] ? (Array.isArray(record[source]) ? record[source] : [record[source]]) : [];
   return urlArray.map((url, index) => {
     if (!url.startsWith('http')) url = `https://${url}`;
-    const parsedUrl = new URL(url);
-    if (!parsedUrl) return null;
+
+    let parsedUrl = null;
+    try {
+      parsedUrl = new URL(url);
+    } catch (e) {
+      return null;
+    }
+
     const chip = newDomainMapping[parsedUrl.hostname] || {
       label: 'Site web',
       icon: <LanguageIcon />,
