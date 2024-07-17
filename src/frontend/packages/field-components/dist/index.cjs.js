@@ -644,8 +644,12 @@ const $732a429355ed7119$var$MultiUrlField = ({ source: source, domainMapping: do
     ] : [];
     return urlArray.map((url, index)=>{
         if (!url.startsWith("http")) url = `https://${url}`;
-        const parsedUrl = new URL(url);
-        if (!parsedUrl) return null;
+        let parsedUrl = null;
+        try {
+            parsedUrl = new URL(url);
+        } catch (e) {
+            return null;
+        }
         const chip = newDomainMapping[parsedUrl.hostname] || {
             label: "Site web",
             icon: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, ($parcel$interopDefault($gJbUX$muiiconsmaterialLanguage))), {}),
