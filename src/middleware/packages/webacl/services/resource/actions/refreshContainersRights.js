@@ -11,7 +11,7 @@ module.exports = {
       for (const { permissions, path } of Object.values(containers)) {
         if (permissions) {
           const containerUri = urlJoin(this.settings.baseUrl, path);
-          const containerRights = typeof permissions === 'function' ? permissions('system') : permissions;
+          const containerRights = typeof permissions === 'function' ? permissions('system', ctx) : permissions;
 
           this.logger.info(`Refreshing rights for container ${containerUri}...`);
 
