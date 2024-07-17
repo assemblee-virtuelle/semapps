@@ -13,7 +13,6 @@ module.exports = {
   },
   async started() {
     this.processors = [];
-    if (!this.createJob) throw new Error(`The ActivityProcessorService must be configured with the QueueMixin`);
   },
   actions: {
     /**
