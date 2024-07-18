@@ -21,6 +21,7 @@ const ActivityPubService = {
     baseUri: null,
     podProvider: false,
     activitiesPath: '/as/activity',
+    collectionsPath: '/as/collection',
     activateTombstones: true,
     selectActorData: null,
     queueServiceUrl: null,
@@ -33,18 +34,28 @@ const ActivityPubService = {
   },
   dependencies: ['api', 'ontologies'],
   created() {
-    const { baseUri, podProvider, activitiesPath, selectActorData, queueServiceUrl, activateTombstones, like, follow } =
-      this.settings;
+    const {
+      baseUri,
+      podProvider,
+      activitiesPath,
+      collectionsPath,
+      selectActorData,
+      queueServiceUrl,
+      activateTombstones,
+      like,
+      follow
+    } = this.settings;
 
     this.broker.createService({
-      mixins: [SideEffectsService, queueServiceUrl ? QueueMixin(queueServiceUrl) : FakeQueueMixin],
+      mixins: [queueServiceUrl ? QueueMixin(queueServiceUrl) : FakeQueueMixin, SideEffectsService],
       settings: { podProvider }
     });
 
     this.broker.createService({
       mixins: [CollectionService],
       settings: {
-        podProvider
+        podProvider,
+        path: collectionsPath
       }
     });
 
