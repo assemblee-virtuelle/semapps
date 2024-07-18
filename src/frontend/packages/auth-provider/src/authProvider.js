@@ -160,7 +160,7 @@ const authProvider = ({
           const { json } = await dataProvider.fetch(urlJoin(authServerUrl, 'auth/signup'), {
             method: 'POST',
             body: JSON.stringify({
-              username: username.trim(),
+              username: username?.trim(),
               email: email.trim(),
               password: password.trim(),
               interactionId,
