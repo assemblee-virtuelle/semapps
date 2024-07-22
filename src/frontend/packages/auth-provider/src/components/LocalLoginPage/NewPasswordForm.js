@@ -13,6 +13,12 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const samePassword = (value, allValues) => {
+  if (value && value !== allValues.password) {
+    return 'Mot de passe différent du premier';
+  }
+};
+
 /**
  *
  * @param {string} redirectTo
@@ -99,14 +105,13 @@ const NewPasswordForm = ({ redirectTo, passwordScorer = defaultScorer }) => {
           onChange={e => setNewPassword(e.target.value)}
         />
         <TextInput
-          autoFocus
           type="password"
           source="confirm-password"
           label={translate('auth.input.confirm_new_password')}
           autoComplete="current-password"
           fullWidth
           disabled={loading}
-          validate={required()}
+          validate={[required(), samePassword]}
         />
         <Button
           variant="contained"
