@@ -31,19 +31,6 @@ module.exports = {
       }
     }
 
-    // Check that jsonldContext doesn't conflict with existing context
-    if (jsonldContext) {
-      await this.broker.waitForServices(['jsonld.context'], 15000);
-      const existingContext = await ctx.call('jsonld.context.get');
-      const newContext = [].concat(existingContext, jsonldContext);
-      const isValid = await ctx.call('jsonld.context.validate', { context: newContext });
-      if (!isValid) {
-        throw new Error(
-          `Cannot register ${prefix} ontology. The ontology's JSON-LD context is in conflict with the existing JSON-LD context`
-        );
-      }
-    }
-
     if (this.settings.persistRegistry) {
       await ctx.call('ontologies.registry.updateOrCreate', {
         prefix,

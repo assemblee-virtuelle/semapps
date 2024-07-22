@@ -28,8 +28,7 @@ module.exports = {
   async started() {
     if (!this.settings.persistRegistry) this.ontologies = {};
 
-    // Do not await to avoid circular dependency with jsonld service
-    this.registerAll();
+    await this.registerAll();
   },
   actions: {
     findPrefix: findPrefixAction,
