@@ -1,6 +1,6 @@
 {
   "name": "@semapps/field-components",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "React-Admin field components for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -15,7 +15,7 @@
     "watch": "nodemon --watch src --exec 'yarn build'"
   },
   "dependencies": {
-    "@semapps/semantic-data-provider": "0.6.3",
+    "@semapps/semantic-data-provider": "0.6.4",
     "lodash.debounce": "^4.0.8",
     "react-icons": "^4.4.0"
   },
