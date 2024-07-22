@@ -1041,6 +1041,7 @@ var $915df908e0942746$export$2e2bcd8739ae039 = $915df908e0942746$var$fetchVoidEn
 
 // Return the first server matching with the baseUrl
 const $59a07b932dae8600$var$getServerKeyFromUri = (uri, dataServers)=>{
+    if (!uri) throw Error(`No URI provided to getServerKeyFromUri`);
     return Object.keys(dataServers).find((key)=>{
         if (dataServers[key].pod) // The baseUrl ends with /data so remove this part to match with the webId and webId-related URLs (/inbox, /outbox...)
         return dataServers[key].baseUrl && uri.startsWith(dataServers[key].baseUrl.replace("/data", ""));
@@ -1111,30 +1112,44 @@ const $7f6a16d0025dc83a$var$dataProvider = (config)=>{
     if (!config.returnFailedResources) config.returnFailedResources = false;
     // Configure httpClient with data servers (this is needed for proxy calls)
     config.httpClient = (0, $341dff85fe619d85$export$2e2bcd8739ae039)(config.dataServers);
-    const fetchUserConfigPromise = (0, $3cfb23eead135e3f$export$2e2bcd8739ae039)(config);
-    const fetchVoidEndpointsPromise = (0, $915df908e0942746$export$2e2bcd8739ae039)(config);
-    const waitForVoidEndpoints = (method)=>async (...arg)=>{
+    // Keep in memory for refresh
+    const originalConfig = {
+        ...config
+    };
+    let fetchUserConfigPromise = (0, $3cfb23eead135e3f$export$2e2bcd8739ae039)(config);
+    let fetchVoidEndpointsPromise = (0, $915df908e0942746$export$2e2bcd8739ae039)(config);
+    const waitForConfig = (method)=>async (...arg)=>{
             await fetchUserConfigPromise;
             await fetchVoidEndpointsPromise; // Return immediately if promise is fulfilled
             return await method(...arg);
         };
     return {
-        getList: waitForVoidEndpoints((0, $b6ed253f3374f5d4$export$2e2bcd8739ae039)(config)),
-        getMany: waitForVoidEndpoints((0, $e296494b4f6a4f89$export$2e2bcd8739ae039)(config)),
-        getManyReference: waitForVoidEndpoints((0, $e5e279a608b8e6b1$export$2e2bcd8739ae039)(config)),
-        getOne: waitForVoidEndpoints((0, $9020b8e3f4a4c1a1$export$2e2bcd8739ae039)(config)),
-        create: waitForVoidEndpoints((0, $907cbc087f6529e2$export$2e2bcd8739ae039)(config)),
-        update: waitForVoidEndpoints((0, $ceaafb56f75454f0$export$2e2bcd8739ae039)(config)),
+        getList: waitForConfig((0, $b6ed253f3374f5d4$export$2e2bcd8739ae039)(config)),
+        getMany: waitForConfig((0, $e296494b4f6a4f89$export$2e2bcd8739ae039)(config)),
+        getManyReference: waitForConfig((0, $e5e279a608b8e6b1$export$2e2bcd8739ae039)(config)),
+        getOne: waitForConfig((0, $9020b8e3f4a4c1a1$export$2e2bcd8739ae039)(config)),
+        create: waitForConfig((0, $907cbc087f6529e2$export$2e2bcd8739ae039)(config)),
+        update: waitForConfig((0, $ceaafb56f75454f0$export$2e2bcd8739ae039)(config)),
         updateMany: ()=>{
             throw new Error("updateMany is not implemented yet");
         },
-        delete: waitForVoidEndpoints((0, $566b5adde94810fa$export$2e2bcd8739ae039)(config)),
-        deleteMany: waitForVoidEndpoints((0, $f170294dd29d8bf8$export$2e2bcd8739ae039)(config)),
+        delete: waitForConfig((0, $566b5adde94810fa$export$2e2bcd8739ae039)(config)),
+        deleteMany: waitForConfig((0, $f170294dd29d8bf8$export$2e2bcd8739ae039)(config)),
         // Custom methods
-        getDataModels: waitForVoidEndpoints((0, $241c41c6f6021c7a$export$2e2bcd8739ae039)(config)),
-        getDataServers: waitForVoidEndpoints((0, $b16131432127b07b$export$2e2bcd8739ae039)(config)),
+        getDataModels: waitForConfig((0, $241c41c6f6021c7a$export$2e2bcd8739ae039)(config)),
+        getDataServers: waitForConfig((0, $b16131432127b07b$export$2e2bcd8739ae039)(config)),
         getLocalDataServers: (0, $b16131432127b07b$export$2e2bcd8739ae039)(config),
-        fetch: waitForVoidEndpoints(config.httpClient)
+        fetch: waitForConfig(config.httpClient),
+        refreshConfig: async ()=>{
+            config = {
+                ...originalConfig
+            };
+            fetchUserConfigPromise = (0, $3cfb23eead135e3f$export$2e2bcd8739ae039)(config);
+            fetchVoidEndpointsPromise = (0, $915df908e0942746$export$2e2bcd8739ae039)(config);
+            await fetchUserConfigPromise;
+            await fetchVoidEndpointsPromise;
+            return config;
+        }
     };
 };
 var $7f6a16d0025dc83a$export$2e2bcd8739ae039 = $7f6a16d0025dc83a$var$dataProvider;
@@ -1244,7 +1259,7 @@ var $3158e0dc13ffffaa$export$2e2bcd8739ae039 = $3158e0dc13ffffaa$var$useContaine
 
 const $b32fd11d6aa83d1c$var$findCreateContainerWithTypes = (types, createServerKey, dataServers)=>{
     const containers = [];
-    if (Object.keys(dataServers[createServerKey].containers[createServerKey]).length > 0) Object.keys(dataServers[createServerKey].containers[createServerKey]).forEach((type)=>{
+    if (dataServers[createServerKey].containers?.[createServerKey] && Object.keys(dataServers[createServerKey].containers[createServerKey]).length > 0) Object.keys(dataServers[createServerKey].containers[createServerKey]).forEach((type)=>{
         if (types.includes(type)) dataServers[createServerKey].containers[createServerKey][type].map((path)=>{
             const containerUri = (0, ($parcel$interopDefault($bkNnK$urljoin)))(dataServers[createServerKey].baseUrl, path);
             if (!containers.includes(containerUri)) containers.push(containerUri);
