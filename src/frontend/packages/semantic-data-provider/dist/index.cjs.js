@@ -1,6 +1,5 @@
 var $bkNnK$urljoin = require("url-join");
 var $bkNnK$jsonld = require("jsonld");
-var $bkNnK$isobject = require("isobject");
 var $bkNnK$rdfjsdatamodel = require("@rdfjs/data-model");
 var $bkNnK$sparqljs = require("sparqljs");
 var $bkNnK$cryptojsmd5 = require("crypto-js/md5");
@@ -327,8 +326,7 @@ var $241c41c6f6021c7a$export$2e2bcd8739ae039 = $241c41c6f6021c7a$var$getDataMode
 
 
 
-
-const $4d160872c02aa8d3$var$arrayOf = (value)=>{
+const $e6fbab1f303bdb93$var$arrayOf = (value)=>{
     // If the field is null-ish, we suppose there are no values.
     if (!value) return [];
     // Return as is.
@@ -338,86 +336,110 @@ const $4d160872c02aa8d3$var$arrayOf = (value)=>{
         value
     ];
 };
-var $4d160872c02aa8d3$export$2e2bcd8739ae039 = $4d160872c02aa8d3$var$arrayOf;
+var $e6fbab1f303bdb93$export$2e2bcd8739ae039 = $e6fbab1f303bdb93$var$arrayOf;
 
 
-const $6e66f3a2f960b9ca$export$26b9f946b448f23e = (type, resource)=>{
-    const resourceType = resource.type || resource["@type"];
-    return Array.isArray(resourceType) ? resourceType.includes(type) : resourceType === type;
+const $8c999cc29c8d6a6c$var$isValidLDPContainer = (container)=>{
+    const resourceType = container.type || container["@type"];
+    return Array.isArray(resourceType) ? resourceType.includes("ldp:Container") : resourceType === "ldp:Container";
 };
-const $6e66f3a2f960b9ca$var$fetchContainers = async (containers, resourceId, params, config)=>{
-    const { httpClient: httpClient, jsonContext: jsonContext } = config;
-    // Transform in an containerUri:serverKey object
-    const containersServers = Object.keys(containers).reduce((acc, serverKey)=>({
-            ...acc,
-            ...Object.fromEntries(containers[serverKey].map((containerUri)=>[
-                    containerUri,
-                    serverKey
-                ]))
-        }), {});
-    const fetchPromises = Object.keys(containersServers).map((containerUri)=>httpClient(containerUri).then(({ json: json })=>{
+const $8c999cc29c8d6a6c$var$isObject = (val)=>{
+    return val != null && typeof val === "object" && !Array.isArray(val);
+};
+const $8c999cc29c8d6a6c$var$fetchContainers = async (containers, params, { httpClient: httpClient, jsonContext: jsonContext })=>{
+    const containersUri = Object.values(containers).flat();
+    const fetchPromises = containersUri.map((containerUri)=>httpClient(containerUri).then(async ({ json: json })=>{
+            const jsonResponse = json;
             // If container's context is different, compact it to have an uniform result
             // TODO deep compare if the context is an object
-            if (json["@context"] !== jsonContext) return (0, ($parcel$interopDefault($bkNnK$jsonld))).compact(json, jsonContext);
-            return json;
+            if (jsonResponse["@context"] !== jsonContext) return (0, ($parcel$interopDefault($bkNnK$jsonld))).compact(jsonResponse, jsonContext);
+            return jsonResponse;
         }).then((json)=>{
-            if ($6e66f3a2f960b9ca$export$26b9f946b448f23e("ldp:Container", json)) return (0, $4d160872c02aa8d3$export$2e2bcd8739ae039)(json["ldp:contains"]).map((resource)=>({
+            if (!$8c999cc29c8d6a6c$var$isValidLDPContainer(json)) throw new Error(`${containerUri} is not a LDP container`);
+            return (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(json["ldp:contains"]).map((resource)=>({
                     "@context": json["@context"],
                     ...resource
                 }));
-            throw new Error(`${containerUri} is not a LDP container`);
         }));
     // Fetch simultaneously all containers
-    let results = await Promise.all(fetchPromises);
-    if (results.length === 0) return {
-        data: [],
-        total: 0
-    };
-    // Merge all results in one array
-    results = [].concat.apply(...results);
-    let returnData = results.map((item)=>{
-        item.id = item.id || item["@id"];
-        return item;
+    const results = await Promise.all(fetchPromises);
+    let resources = results.flat();
+    resources = resources.map((resource)=>{
+        resource.id ||= resource["@id"];
+        return resource;
     });
     // Apply filter to results
-    if (params.filter) {
-        // For SPARQL queries, we use "a" to filter types, but in containers it must be "type"
-        if (params.filter.a) {
-            params.filter.type = params.filter.a;
-            delete params.filter.a;
-        }
-        if (Object.keys(params.filter).length > 0) returnData = returnData.filter((resource)=>{
-            return Object.entries(params.filter).every(([k, v])=>{
-                if (k == "q") return Object.entries(resource).some(([kr, vr])=>{
-                    if (!(0, ($parcel$interopDefault($bkNnK$isobject)))(vr)) {
-                        const arrayValues = Array.isArray(vr) ? vr : [
-                            vr
-                        ];
-                        return arrayValues.some((va)=>{
-                            if (typeof va === "string" || va instanceof String) return va.toLowerCase().normalize("NFD").includes(v.toLowerCase().normalize("NFD"));
-                        });
-                    }
-                    return false;
-                });
-                if (resource[k]) return Array.isArray(resource[k]) ? resource[k].some((va)=>va.includes(v)) : resource[k].includes(v);
-                return false;
+    const filters = params.filter;
+    // For SPARQL queries, we use "a" to filter types, but in containers it must be "type"
+    if (filters.a) {
+        filters.type = filters.a;
+        delete filters.a;
+    }
+    // Filter resources attributes according to _predicates list
+    if (filters._predicates && Array.isArray(filters._predicates)) {
+        const predicates = filters._predicates;
+        const mandatoryAttributes = [
+            "id"
+        ];
+        resources = resources.map((resource)=>{
+            return Object.keys(resource).filter((key)=>predicates.includes(key) || mandatoryAttributes.includes(key)).reduce((filteredResource, key)=>{
+                filteredResource[key] = resource[key];
+                return filteredResource;
+            }, {
+                "@context": []
             });
         });
     }
-    if (params.sort) returnData = returnData.sort((a, b)=>{
+    if (Object.keys(filters).filter((f)=>![
+            "_predicates",
+            "_servers"
+        ].includes(f)).length > 0) resources = resources.filter((resource)=>{
+        // Full text filtering
+        if (filters.q) return Object.values(resource).some((attributeValue)=>{
+            if (!$8c999cc29c8d6a6c$var$isObject(attributeValue)) {
+                const arrayValues = Array.isArray(attributeValue) ? attributeValue : [
+                    attributeValue
+                ];
+                return arrayValues.some((value)=>{
+                    if (typeof value === "string") return value.toLowerCase().normalize("NFD").includes(filters.q.toLowerCase().normalize("NFD"));
+                    return false;
+                });
+            }
+            return false;
+        });
+        // Attribute filtering
+        const attributesFilters = Object.keys(filters).filter((f)=>![
+                "_predicates",
+                "_servers",
+                "q"
+            ].includes(f));
+        return attributesFilters.every((attribute)=>{
+            if (resource[attribute]) {
+                const arrayValues = Array.isArray(resource[attribute]) ? resource[attribute] : [
+                    resource[attribute]
+                ];
+                return arrayValues.some((value)=>typeof value === "string" && value.includes(filters[attribute]));
+            }
+            return false;
+        });
+    });
+    // Sorting
+    if (params.sort) resources = resources.sort((a, b)=>{
         if (a[params.sort.field] && b[params.sort.field]) {
             if (params.sort.order === "ASC") return a[params.sort.field].localeCompare(b[params.sort.field]);
             return b[params.sort.field].localeCompare(a[params.sort.field]);
         }
         return true;
     });
-    if (params.pagination) returnData = returnData.slice((params.pagination.page - 1) * params.pagination.perPage, params.pagination.page * params.pagination.perPage);
+    // Pagination
+    const total = resources.length;
+    if (params.pagination) resources = resources.slice((params.pagination.page - 1) * params.pagination.perPage, params.pagination.page * params.pagination.perPage);
     return {
-        data: returnData,
-        total: results.length
+        data: resources,
+        total: total
     };
 };
-var $6e66f3a2f960b9ca$export$2e2bcd8739ae039 = $6e66f3a2f960b9ca$var$fetchContainers;
+var $8c999cc29c8d6a6c$export$2e2bcd8739ae039 = $8c999cc29c8d6a6c$var$fetchContainers;
 
 
 
@@ -882,7 +904,7 @@ const $b6ed253f3374f5d4$var$getListMethod = (config)=>async (resourceId, params 
             containers = (0, $e3a78b3d48a0a0fb$export$2e2bcd8739ae039)(dataModel.list.containers, dataServers);
         } else // Otherwise find the container URIs on the given servers (either in the filter or the data model)
         containers = (0, $047a107b0d203793$export$2e2bcd8739ae039)(dataModel.types, params.filter?._servers || dataModel.list?.servers, dataServers);
-        if (dataModel.list?.fetchContainer) return (0, $6e66f3a2f960b9ca$export$2e2bcd8739ae039)(containers, resourceId, params, config);
+        if (dataModel.list?.fetchContainer) return (0, $8c999cc29c8d6a6c$export$2e2bcd8739ae039)(containers, params, config);
         return (0, $1e7a94d745f8597b$export$2e2bcd8739ae039)(containers, resourceId, params, config);
     };
 var $b6ed253f3374f5d4$export$2e2bcd8739ae039 = $b6ed253f3374f5d4$var$getListMethod;

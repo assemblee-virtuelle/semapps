@@ -1,6 +1,7 @@
 import { fetchUtils } from 'react-admin';
 
-export type DataServerKey = string;
+export type DataServerKey = string & { readonly _type?: 'DataServerKey' };
+export type ContainerURI = string & { readonly _type?: 'ContainerURI' };
 
 type DataServerConfig = {
   /** Server base url */
@@ -44,8 +45,8 @@ type HttpClientOptions = {
 
 export type Configuration = {
   dataServers: DataServersConfig;
-  httpClient: (url: string, options: HttpClientOptions) => ReturnType<typeof fetchUtils.fetchJson>;
+  httpClient: (url: string, options?: HttpClientOptions) => ReturnType<typeof fetchUtils.fetchJson>;
 
-  /** Context from ontologies { prefix: IRI } or IRI */
-  jsonContext: string | Record<string, string>;
+  /** Context from ontologies { prefix: IRI } or IRI, or array of IRI */
+  jsonContext: string | string[] | Record<string, string>;
 };

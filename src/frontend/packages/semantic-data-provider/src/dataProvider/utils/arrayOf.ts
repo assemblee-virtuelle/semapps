@@ -1,4 +1,4 @@
-const arrayOf = value => {
+const arrayOf = <T>(value: T | T[]) => {
   // If the field is null-ish, we suppose there are no values.
   if (!value) {
     return [];

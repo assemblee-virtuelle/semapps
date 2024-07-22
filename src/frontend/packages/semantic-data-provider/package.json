@@ -11,19 +11,19 @@
     "dist"
   ],
   "scripts": {
-    "build": "parcel build && yalc publish --push --changed",
+    "build": "parcel build --no-cache && yalc publish --push --changed",
     "watch": "nodemon --ext ts,tsx,js --watch src --exec 'yarn build'"
   },
   "dependencies": {
     "@rdfjs/data-model": "^1.3.4",
     "crypto-js": "^4.1.1",
-    "isobject": "^4.0.0",
     "jsonld": "^5.2.0",
     "jwt-decode": "^3.0.0",
     "sparqljs": "^3.5.1",
     "url-join": "^4.0.1"
   },
   "devDependencies": {
+    "@types/jsonld": "^1.5.14",
     "@types/url-join": "^4.0.1"
   },
   "peerDependencies": {
