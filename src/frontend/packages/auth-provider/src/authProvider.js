@@ -20,6 +20,18 @@ const authProvider = ({
     throw new Error('The authType parameter is missing from the auth provider');
   if (authType === AUTH_TYPE_SOLID_OIDC && !clientId)
     throw new Error('The clientId parameter is required for solid-oidc authentication');
+  const callCheckUser = async webId => {
+    if (checkUser) {
+      try {
+        const { json: userData } = await dataProvider.fetch(webId);
+        if (!userData) throw new Error('auth.message.unable_to_fetch_user_data');
+        if (checkUser(userData) === false) throw new Error('auth.message.user_not_allowed_to_login');
+      } catch (e) {
+        localStorage.removeItem('token');
+        throw e;
+      }
+    }
+  };
   return {
     login: async params => {
       if (authType === AUTH_TYPE_SOLID_OIDC) {
@@ -54,8 +66,12 @@ const authProvider = ({
       } else if (authType === AUTH_TYPE_LOCAL) {
         const { username, password, interactionId, redirectTo } = params;
         const authServerUrl = await getAuthServerUrl(dataProvider);
+        let token, webId;
+
         try {
-          const { json } = await dataProvider.fetch(urlJoin(authServerUrl, 'auth/login'), {
+          ({
+            json: { token, webId }
+          } = await dataProvider.fetch(urlJoin(authServerUrl, 'auth/login'), {
             method: 'POST',
             body: JSON.stringify({
               username: username.trim(),
@@ -63,18 +79,23 @@ const authProvider = ({
               interactionId
             }),
             headers: new Headers({ 'Content-Type': 'application/json' })
-          });
-          const { token } = json;
-          localStorage.setItem('token', token);
-          if (redirectTo) {
-            if (interactionId) await delay(3000); // Ensure the interactionId has been received and processed
-            window.location.href = redirectTo;
-          } else {
-            // Reload to ensure the dataServer config is reset
-            window.location.reload();
-          }
+          }));
         } catch (e) {
           throw new Error('ra.auth.sign_in_error');
+        }
+
+        // Set token now as it is required for refreshConfig
+        localStorage.setItem('token', token);
+        await dataProvider.refreshConfig();
+
+        await callCheckUser(webId);
+
+        // TODO now that we have a refreshConfig method, see if we can avoid a hard reload
+        if (redirectTo) {
+          if (interactionId) await delay(3000); // Ensure the interactionId has been received and processed
+          window.location.href = redirectTo;
+        } else {
+          window.location.reload();
         }
       } else if (authType === AUTH_TYPE_SSO) {
         const authServerUrl = await getAuthServerUrl(dataProvider);
@@ -140,15 +161,13 @@ const authProvider = ({
         } catch (e) {
           throw new Error('auth.message.invalid_token_returned');
         }
-        const { json } = await dataProvider.fetch(webId);
-
-        if (!json) throw new Error('auth.message.unable_to_fetch_user_data');
-
-        if (checkUser && !checkUser(json)) throw new Error('auth.message.user_not_allowed_to_login');
 
         localStorage.setItem('token', token);
+        await dataProvider.refreshConfig();
 
-        // Reload to ensure the dataServer config is reset
+        await callCheckUser(webId);
+
+        // TODO now that we have a refreshConfig method, see if we can avoid a hard reload
         window.location.href = '/';
       }
     },
@@ -156,8 +175,12 @@ const authProvider = ({
       const authServerUrl = await getAuthServerUrl(dataProvider);
       if (authType === AUTH_TYPE_LOCAL) {
         const { username, email, password, domain, interactionId, ...profileData } = params;
+        let token, webId;
+
         try {
-          const { json } = await dataProvider.fetch(urlJoin(authServerUrl, 'auth/signup'), {
+          ({
+            json: { token, webId }
+          } = await dataProvider.fetch(urlJoin(authServerUrl, 'auth/signup'), {
             method: 'POST',
             body: JSON.stringify({
               username: username?.trim(),
@@ -167,11 +190,7 @@ const authProvider = ({
               ...profileData
             }),
             headers: new Headers({ 'Content-Type': 'application/json' })
-          });
-          const { token } = json;
-          localStorage.setItem('token', token);
-          const { webId } = jwtDecode(token);
-          return webId;
+          }));
         } catch (e) {
           if (e.message === 'email.already.exists') {
             throw new Error('auth.message.user_email_exist');
@@ -183,6 +202,13 @@ const authProvider = ({
             throw new Error(e.message || 'ra.auth.sign_in_error');
           }
         }
+
+        localStorage.setItem('token', token);
+        await dataProvider.refreshConfig();
+
+        await callCheckUser(webId);
+
+        return webId;
       } else {
         const redirectUrl = `${new URL(window.location.href).origin}/login?login=true`;
         window.location.href = urlJoin(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
