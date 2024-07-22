@@ -24,10 +24,13 @@ const dataProvider = config => {
   // Configure httpClient with data servers (this is needed for proxy calls)
   config.httpClient = httpClient(config.dataServers);
 
-  const fetchUserConfigPromise = fetchUserConfig(config);
-  const fetchVoidEndpointsPromise = fetchVoidEndpoints(config);
+  // Keep in memory for refresh
+  const originalConfig = { ...config };
 
-  const waitForVoidEndpoints =
+  let fetchUserConfigPromise = fetchUserConfig(config);
+  let fetchVoidEndpointsPromise = fetchVoidEndpoints(config);
+
+  const waitForConfig =
     method =>
     async (...arg) => {
       await fetchUserConfigPromise;
@@ -36,22 +39,30 @@ const dataProvider = config => {
     };
 
   return {
-    getList: waitForVoidEndpoints(getListMethod(config)),
-    getMany: waitForVoidEndpoints(getManyMethod(config)),
-    getManyReference: waitForVoidEndpoints(getManyReferenceMethod(config)),
-    getOne: waitForVoidEndpoints(getOneMethod(config)),
-    create: waitForVoidEndpoints(createMethod(config)),
-    update: waitForVoidEndpoints(updateMethod(config)),
+    getList: waitForConfig(getListMethod(config)),
+    getMany: waitForConfig(getManyMethod(config)),
+    getManyReference: waitForConfig(getManyReferenceMethod(config)),
+    getOne: waitForConfig(getOneMethod(config)),
+    create: waitForConfig(createMethod(config)),
+    update: waitForConfig(updateMethod(config)),
     updateMany: () => {
       throw new Error('updateMany is not implemented yet');
     },
-    delete: waitForVoidEndpoints(deleteMethod(config)),
-    deleteMany: waitForVoidEndpoints(deleteManyMethod(config)),
+    delete: waitForConfig(deleteMethod(config)),
+    deleteMany: waitForConfig(deleteManyMethod(config)),
     // Custom methods
-    getDataModels: waitForVoidEndpoints(getDataModelsMethod(config)),
-    getDataServers: waitForVoidEndpoints(getDataServersMethod(config)),
+    getDataModels: waitForConfig(getDataModelsMethod(config)),
+    getDataServers: waitForConfig(getDataServersMethod(config)),
     getLocalDataServers: getDataServersMethod(config),
-    fetch: waitForVoidEndpoints(config.httpClient)
+    fetch: waitForConfig(config.httpClient),
+    refreshConfig: async () => {
+      config = { ...originalConfig };
+      fetchUserConfigPromise = fetchUserConfig(config);
+      fetchVoidEndpointsPromise = fetchVoidEndpoints(config);
+      await fetchUserConfigPromise;
+      await fetchVoidEndpointsPromise;
+      return config;
+    }
   };
 };
 
