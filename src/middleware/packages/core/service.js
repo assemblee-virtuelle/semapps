@@ -45,6 +45,7 @@ const CoreService = {
     activitypub: {},
     api: {},
     jsonld: {},
+    keys: {},
     ldp: {},
     signature: {},
     sparqlEndpoint: {},
@@ -157,13 +158,15 @@ const CoreService = {
       });
     }
 
-    this.broker.createService({
-      mixins: [KeysService],
-      settings: {
-        actorsKeyPairsDir: path.resolve(baseDir, './actors'),
-        ...this.settings.keys
-      }
-    });
+    if (this.settings.keys !== false) {
+      this.broker.createService({
+        mixins: [KeysService],
+        settings: {
+          actorsKeyPairsDir: path.resolve(baseDir, './actors'),
+          ...this.settings.keys
+        }
+      });
+    }
 
     if (this.settings.sparqlEndpoint !== false) {
       this.broker.createService({
