@@ -25,13 +25,17 @@ module.exports = {
     }
 
     if (webId && webId !== 'system' && webId !== 'anon' && (await this.proxyAvailable())) {
-      const { body } = await ctx.call('signature.proxy.query', {
+      const response = await ctx.call('signature.proxy.query', {
         url: resourceUri,
         method: 'GET',
         headers,
         actorUri: webId
       });
-      return body;
+      if (response.ok) {
+        return response.body;
+      } else {
+        throw new MoleculerError(response.statusText, response.status);
+      }
     } else {
       const response = await fetch(resourceUri, { headers });
       if (response.ok) {
