@@ -47,7 +47,7 @@ const ActivityPubService = {
     } = this.settings;
 
     this.broker.createService({
-      mixins: [queueServiceUrl ? QueueMixin(queueServiceUrl) : FakeQueueMixin, SideEffectsService],
+      mixins: [SideEffectsService, queueServiceUrl ? QueueMixin(queueServiceUrl) : FakeQueueMixin],
       settings: { podProvider }
     });
 
