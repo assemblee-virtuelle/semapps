@@ -172,18 +172,26 @@ const SignatureService = {
           ?.publicKeyPem;
       }
 
-      if (this.remoteActorPublicKeyCache[actorUri]) {
-        return this.remoteActorPublicKeyCache[actorUri];
+      if (!this.remoteActorPublicKeyCache[actorUri]) {
+        const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
+        if (!response.ok) return false;
+
+        const actor = await response.json();
+        if (!actor || !actor.publicKey) return false;
+
+        // If the public key is not dereferenced
+        if (typeof actor.publicKey === 'string') {
+          const response = await fetch(actor.publicKey, { headers: { Accept: 'application/json' } });
+          if (!response.ok) return false;
+          const publicKey = await response.json();
+          if (!publicKey) return false;
+          this.remoteActorPublicKeyCache[actorUri] = publicKey.publicKeyPem;
+        } else {
+          this.remoteActorPublicKeyCache[actorUri] = actor.publicKey.publicKeyPem;
+        }
       }
 
-      const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
-      if (!response.ok) return false;
-
-      const actor = await response.json();
-      if (!actor || !actor.publicKey || !actor.publicKey.publicKeyPem) return false;
-
-      this.remoteActorPublicKeyCache[actorUri] = actor.publicKey.publicKeyPem;
-      return actor.publicKey.publicKeyPem;
+      return this.remoteActorPublicKeyCache[actorUri];
     }
   },
   hooks: {

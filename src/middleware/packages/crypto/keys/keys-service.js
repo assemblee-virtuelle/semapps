@@ -491,6 +491,25 @@ const KeysService = {
           const actor = await response.json();
 
           keyObjects = arrayOf(actor?.publicKey).concat(arrayOf(actor?.assertionMethod));
+
+          // Dereference keys if necessary
+          keyObjects = await Promise.all(
+            keyObjects.map(async k => {
+              if (typeof k === 'string') {
+                const response = await fetch(k, { headers: { Accept: 'application/json' } });
+                if (!response.ok) return false;
+                const dereferencedKey = await response.json();
+                if (!dereferencedKey) return false;
+                return dereferencedKey;
+              } else {
+                return k;
+              }
+            })
+          );
+
+          // Remove keys which could not be dereferenced
+          keyObjects = keyObjects.filter(k => k !== false);
+
           this.remoteActorPublicKeyCache[webId] = keyObjects;
         }
 
