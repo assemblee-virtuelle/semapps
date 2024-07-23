@@ -20,7 +20,8 @@ module.exports = {
     }
 
     if (containerUri) {
-      const path = new URL(containerUri).pathname;
+      const basePath = await ctx.call('ldp.getBasePath');
+      const path = new URL(containerUri).pathname.replace(basePath, '/');
       const registeredContainers = await this.actions.list({}, { parentCtx: ctx });
       const containerOptions =
         Object.values(registeredContainers).find(container => container.pathRegex.test(path)) || {};
