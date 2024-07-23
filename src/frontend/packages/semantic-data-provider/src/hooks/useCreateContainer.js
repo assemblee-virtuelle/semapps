@@ -5,6 +5,7 @@ import useDataServers from './useDataServers';
 import findCreateContainerWithTypes from '../dataProvider/utils/findCreateContainerWithTypes';
 import getServerKeyFromType from '../dataProvider/utils/getServerKeyFromType';
 
+/** @deprecated Use "useCreateContainerUri" instead */
 const useCreateContainer = resourceId => {
   const dataModel = useDataModel(resourceId);
   const dataServers = useDataServers();

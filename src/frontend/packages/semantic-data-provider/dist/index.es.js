@@ -4,7 +4,7 @@ import $fj9kP$rdfjsdatamodel, {triple as $fj9kP$triple, variable as $fj9kP$varia
 import {Generator as $fj9kP$Generator} from "sparqljs";
 import $fj9kP$cryptojsmd5 from "crypto-js/md5";
 import $fj9kP$jwtdecode from "jwt-decode";
-import {fetchUtils as $fj9kP$fetchUtils, DataProviderContext as $fj9kP$DataProviderContext, useRecordContext as $fj9kP$useRecordContext, useGetList as $fj9kP$useGetList, ArrayInput as $fj9kP$ArrayInput, SimpleFormIterator as $fj9kP$SimpleFormIterator, TextInput as $fj9kP$TextInput} from "react-admin";
+import {fetchUtils as $fj9kP$fetchUtils, DataProviderContext as $fj9kP$DataProviderContext, useDataProvider as $fj9kP$useDataProvider, useRecordContext as $fj9kP$useRecordContext, useGetList as $fj9kP$useGetList, ArrayInput as $fj9kP$ArrayInput, SimpleFormIterator as $fj9kP$SimpleFormIterator, TextInput as $fj9kP$TextInput} from "react-admin";
 import $fj9kP$react, {useContext as $fj9kP$useContext, useMemo as $fj9kP$useMemo, useCallback as $fj9kP$useCallback, useState as $fj9kP$useState, useEffect as $fj9kP$useEffect} from "react";
 import {jsx as $fj9kP$jsx, Fragment as $fj9kP$Fragment, jsxs as $fj9kP$jsxs} from "react/jsx-runtime";
 import $fj9kP$muistylesmakeStyles from "@mui/styles/makeStyles";
@@ -174,7 +174,7 @@ const $15b841e67a1ba752$var$findContainersWithTypes = (types, serverKeys, dataSe
     const existingContainers = [];
     const parsedServerKeys = (0, $64441f6e76bd15b6$export$2e2bcd8739ae039)(serverKeys, dataServers);
     Object.keys(dataServers).filter((dataServerKey)=>dataServers[dataServerKey].containers).forEach((dataServerKey)=>{
-        Object.keys(dataServers[dataServerKey].containers).forEach((containerKey)=>{
+        Object.keys(dataServers[dataServerKey].containers || {}).forEach((containerKey)=>{
             if (!parsedServerKeys || parsedServerKeys.includes(containerKey)) Object.keys(dataServers[dataServerKey].containers[containerKey]).forEach((type)=>{
                 if (types.includes(type)) dataServers[dataServerKey].containers[containerKey][type].map((path)=>{
                     const containerUri = (0, $fj9kP$urljoin)(dataServers[containerKey].baseUrl, path);
@@ -1221,25 +1221,26 @@ var $e5a0eacd756fd1d5$export$2e2bcd8739ae039 = $e5a0eacd756fd1d5$var$useDataMode
 
 
 
-const $11b469d0a927fb46$var$useDataServers = ()=>{
-    // Get the raw data provider, since useDataProvider returns a wrapper
-    const dataProvider = (0, $fj9kP$useContext)((0, $fj9kP$DataProviderContext));
+const $4daf4cf698ee4eed$var$useDataServers = ()=>{
+    const dataProvider = (0, $fj9kP$useDataProvider)();
     const [dataServers, setDataServers] = (0, $fj9kP$useState)();
     (0, $fj9kP$useEffect)(()=>{
-        dataProvider.getDataServers().then((results)=>setDataServers(results));
+        dataProvider.getDataServers().then((results)=>{
+            setDataServers(results);
+        });
     }, [
         dataProvider,
         setDataServers
     ]);
     return dataServers;
 };
-var $11b469d0a927fb46$export$2e2bcd8739ae039 = $11b469d0a927fb46$var$useDataServers;
+var $4daf4cf698ee4eed$export$2e2bcd8739ae039 = $4daf4cf698ee4eed$var$useDataServers;
 
 
 
 const $586fa0ea9d02fa12$var$useContainers = (resourceId, serverKeys = "@all")=>{
     const dataModel = (0, $e5a0eacd756fd1d5$export$2e2bcd8739ae039)(resourceId);
-    const dataServers = (0, $11b469d0a927fb46$export$2e2bcd8739ae039)();
+    const dataServers = (0, $4daf4cf698ee4eed$export$2e2bcd8739ae039)();
     const [containers, setContainers] = (0, $fj9kP$useState)();
     (0, $fj9kP$useEffect)(()=>{
         if (dataModel && dataServers) setContainers((0, $15b841e67a1ba752$export$2e2bcd8739ae039)(dataModel.types, serverKeys, dataServers));
@@ -1258,10 +1259,10 @@ var $586fa0ea9d02fa12$export$2e2bcd8739ae039 = $586fa0ea9d02fa12$var$useContaine
 
 
 
-const $a6f9067f89a63589$var$findCreateContainerWithTypes = (types, createServerKey, dataServers)=>{
+const $7d9911a250866af6$var$findCreateContainerWithTypes = (types, createServerKey, dataServers)=>{
     const containers = [];
-    if (dataServers[createServerKey].containers?.[createServerKey] && Object.keys(dataServers[createServerKey].containers[createServerKey]).length > 0) Object.keys(dataServers[createServerKey].containers[createServerKey]).forEach((type)=>{
-        if (types.includes(type)) dataServers[createServerKey].containers[createServerKey][type].map((path)=>{
+    Object.keys(dataServers[createServerKey].containers?.[createServerKey] || {}).forEach((type)=>{
+        if (types.includes(type)) dataServers[createServerKey].containers[createServerKey][type].forEach((path)=>{
             const containerUri = (0, $fj9kP$urljoin)(dataServers[createServerKey].baseUrl, path);
             if (!containers.includes(containerUri)) containers.push(containerUri);
         });
@@ -1270,13 +1271,13 @@ const $a6f9067f89a63589$var$findCreateContainerWithTypes = (types, createServerK
     else if (containers.length > 1) throw new Error(`More than one container found matching with types ${JSON.stringify(types)}. You must set the create.server or create.container property for the resource.`);
     return containers[0];
 };
-var $a6f9067f89a63589$export$2e2bcd8739ae039 = $a6f9067f89a63589$var$findCreateContainerWithTypes;
+var $7d9911a250866af6$export$2e2bcd8739ae039 = $7d9911a250866af6$var$findCreateContainerWithTypes;
 
 
 
-const $7bd037d7ec9d51f8$var$useCreateContainer = (resourceId)=>{
+/** @deprecated Use "useCreateContainerUri" instead */ const $7bd037d7ec9d51f8$var$useCreateContainer = (resourceId)=>{
     const dataModel = (0, $e5a0eacd756fd1d5$export$2e2bcd8739ae039)(resourceId);
-    const dataServers = (0, $11b469d0a927fb46$export$2e2bcd8739ae039)();
+    const dataServers = (0, $4daf4cf698ee4eed$export$2e2bcd8739ae039)();
     const [createContainer, setCreateContainer] = (0, $fj9kP$useState)();
     (0, $fj9kP$useEffect)(()=>{
         if (dataModel && dataServers) {
@@ -1284,10 +1285,10 @@ const $7bd037d7ec9d51f8$var$useCreateContainer = (resourceId)=>{
                 const [serverKey, path] = Object.entries(dataModel.create.container)[0];
                 if (!serverKey || !dataServers[serverKey]) throw new Error(`Wrong key for the dataModel.create.container config of resource ${resourceId}`);
                 setCreateContainer((0, $fj9kP$urljoin)(dataServers[serverKey].baseUrl, path));
-            } else if (dataModel.create?.server) setCreateContainer((0, $a6f9067f89a63589$export$2e2bcd8739ae039)(dataModel.types, dataModel.create?.server, dataServers));
+            } else if (dataModel.create?.server) setCreateContainer((0, $7d9911a250866af6$export$2e2bcd8739ae039)(dataModel.types, dataModel.create?.server, dataServers));
             else {
                 const defaultServerKey = (0, $8326b88c1a913ca9$export$2e2bcd8739ae039)("default", dataServers);
-                setCreateContainer((0, $a6f9067f89a63589$export$2e2bcd8739ae039)(dataModel.types, defaultServerKey, dataServers));
+                setCreateContainer((0, $7d9911a250866af6$export$2e2bcd8739ae039)(dataModel.types, defaultServerKey, dataServers));
             }
         }
     }, [
@@ -1303,19 +1304,50 @@ var $7bd037d7ec9d51f8$export$2e2bcd8739ae039 = $7bd037d7ec9d51f8$var$useCreateCo
 
 
 
-const $349fed82907088e5$var$useDataModels = ()=>{
-    // Get the raw data provider, since useDataProvider returns a wrapper
-    const dataProvider = (0, $fj9kP$useContext)((0, $fj9kP$DataProviderContext));
+
+
+
+
+const $3a9656756670cb78$var$useDataModels = ()=>{
+    const dataProvider = (0, $fj9kP$useDataProvider)();
     const [dataModels, setDataModels] = (0, $fj9kP$useState)();
     (0, $fj9kP$useEffect)(()=>{
-        dataProvider.getDataModels().then((results)=>setDataModels(results));
+        dataProvider.getDataModels().then((results)=>{
+            setDataModels(results);
+        });
     }, [
         dataProvider,
         setDataModels
     ]);
     return dataModels;
 };
-var $349fed82907088e5$export$2e2bcd8739ae039 = $349fed82907088e5$var$useDataModels;
+var $3a9656756670cb78$export$2e2bcd8739ae039 = $3a9656756670cb78$var$useDataModels;
+
+
+const $35f3e75c86e51f35$var$useCreateContainerUri = ()=>{
+    const dataModels = (0, $3a9656756670cb78$export$2e2bcd8739ae039)();
+    const dataServers = (0, $4daf4cf698ee4eed$export$2e2bcd8739ae039)();
+    const getContainerUri = (0, $fj9kP$useCallback)((resourceId)=>{
+        if (!dataModels || !dataServers || !dataModels[resourceId]) return undefined;
+        const dataModel = dataModels[resourceId];
+        if (dataModel.create?.container) {
+            const [serverKey, path] = Object.entries(dataModel.create.container)[0];
+            if (!serverKey || !dataServers[serverKey]) throw new Error(`Wrong key for the dataModel.create.container config of resource ${resourceId}`);
+            return (0, $fj9kP$urljoin)(dataServers[serverKey].baseUrl, path);
+        }
+        if (dataModel.create?.server) return (0, $7d9911a250866af6$export$2e2bcd8739ae039)(dataModel.types, dataModel.create?.server, dataServers);
+        const defaultServerKey = (0, $8326b88c1a913ca9$export$2e2bcd8739ae039)("default", dataServers);
+        if (!defaultServerKey) throw new Error(`No default dataServer found. You can set explicitly one setting the "default" attribute to true`);
+        return (0, $7d9911a250866af6$export$2e2bcd8739ae039)(dataModel.types, defaultServerKey, dataServers);
+    }, [
+        dataModels,
+        dataServers
+    ]);
+    return getContainerUri;
+};
+var $35f3e75c86e51f35$export$2e2bcd8739ae039 = $35f3e75c86e51f35$var$useCreateContainerUri;
+
+
 
 
 
@@ -1512,5 +1544,5 @@ var $6844bbce0ad66151$export$2e2bcd8739ae039 = $6844bbce0ad66151$var$Reification
 
 
 
-export {$243bf28fbb1b868f$export$2e2bcd8739ae039 as dataProvider, $6cde9a8fbbde3ffb$export$2e2bcd8739ae039 as buildSparqlQuery, $865f630cc944e818$export$2e2bcd8739ae039 as buildBlankNodesQuery, $87656edf926c0f1f$export$2e2bcd8739ae039 as useGetExternalLink, $586fa0ea9d02fa12$export$2e2bcd8739ae039 as useContainers, $7bd037d7ec9d51f8$export$2e2bcd8739ae039 as useCreateContainer, $e5a0eacd756fd1d5$export$2e2bcd8739ae039 as useDataModel, $349fed82907088e5$export$2e2bcd8739ae039 as useDataModels, $11b469d0a927fb46$export$2e2bcd8739ae039 as useDataServers, $406574efa35ec6f1$export$2e2bcd8739ae039 as FilterHandler, $1d8c1cbe606a94ae$export$2e2bcd8739ae039 as GroupedReferenceHandler, $6844bbce0ad66151$export$2e2bcd8739ae039 as ReificationArrayInput};
+export {$243bf28fbb1b868f$export$2e2bcd8739ae039 as dataProvider, $6cde9a8fbbde3ffb$export$2e2bcd8739ae039 as buildSparqlQuery, $865f630cc944e818$export$2e2bcd8739ae039 as buildBlankNodesQuery, $87656edf926c0f1f$export$2e2bcd8739ae039 as useGetExternalLink, $586fa0ea9d02fa12$export$2e2bcd8739ae039 as useContainers, $7bd037d7ec9d51f8$export$2e2bcd8739ae039 as useCreateContainer, $35f3e75c86e51f35$export$2e2bcd8739ae039 as useCreateContainerUri, $e5a0eacd756fd1d5$export$2e2bcd8739ae039 as useDataModel, $3a9656756670cb78$export$2e2bcd8739ae039 as useDataModels, $4daf4cf698ee4eed$export$2e2bcd8739ae039 as useDataServers, $406574efa35ec6f1$export$2e2bcd8739ae039 as FilterHandler, $1d8c1cbe606a94ae$export$2e2bcd8739ae039 as GroupedReferenceHandler, $6844bbce0ad66151$export$2e2bcd8739ae039 as ReificationArrayInput};
 //# sourceMappingURL=index.es.js.map

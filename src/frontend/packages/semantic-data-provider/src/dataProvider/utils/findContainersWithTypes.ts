@@ -15,11 +15,11 @@ const findContainersWithTypes = (
   Object.keys(dataServers)
     .filter(dataServerKey => dataServers[dataServerKey].containers)
     .forEach(dataServerKey => {
-      Object.keys(dataServers[dataServerKey].containers).forEach(containerKey => {
+      Object.keys(dataServers[dataServerKey].containers || {}).forEach(containerKey => {
         if (!parsedServerKeys || parsedServerKeys.includes(containerKey)) {
-          Object.keys(dataServers[dataServerKey].containers[containerKey]).forEach(type => {
+          Object.keys(dataServers[dataServerKey].containers![containerKey]).forEach(type => {
             if (types.includes(type)) {
-              dataServers[dataServerKey].containers[containerKey][type].map(path => {
+              dataServers[dataServerKey].containers![containerKey][type].map(path => {
                 const containerUri = urlJoin(dataServers[containerKey].baseUrl, path);
 
                 // Avoid returning the same container several times
