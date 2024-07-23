@@ -262,7 +262,7 @@ const OutboxService = {
 
         job.progress(100);
 
-        return { response };
+        return { ok: response.ok, status: response.status, statusText: response.statusText };
       }
     }
   }
