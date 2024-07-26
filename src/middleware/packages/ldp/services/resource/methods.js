@@ -59,7 +59,7 @@ module.exports = {
         if (node.datatype.value === 'http://www.w3.org/2001/XMLSchema#string') {
           // Use triple quotes SPARQL notation to allow new lines and double quotes
           // See https://www.w3.org/TR/sparql11-query/#QSynLiterals
-          return `'''${node.value}'''`;
+          return `'''${node.value?.replace(/'/g, "\\'")}'''`;
         }
         return `"${node.value}"^^<${node.datatype.value}>`;
 
