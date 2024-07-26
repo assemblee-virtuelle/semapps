@@ -1,12 +1,12 @@
 {
   "name": "@semapps/notifications",
-  "version": "0.8.8",
+  "version": "0.8.9",
   "description": "Notifications tools for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "@semapps/ldp": "0.8.8",
-    "@semapps/triplestore": "0.8.8",
+    "@semapps/ldp": "0.8.9",
+    "@semapps/triplestore": "0.8.9",
     "cron-parser": "^4.3.0",
     "expo-server-sdk": "^3.4.0",
     "moleculer": "^0.14.18",

@@ -1,12 +1,12 @@
 {
   "name": "@semapps/migration",
-  "version": "0.8.8",
+  "version": "0.8.9",
   "description": "SemApps migration utilities",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "@semapps/ldp": "0.8.8",
-    "@semapps/webacl": "0.8.8"
+    "@semapps/ldp": "0.8.9",
+    "@semapps/webacl": "0.8.9"
   },
   "publishConfig": {
     "access": "public"
