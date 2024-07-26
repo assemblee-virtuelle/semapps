@@ -80,7 +80,7 @@ const fetchContainers = async (
   let resources = results.flat();
 
   resources = resources.map(resource => {
-    resource.id ||= resource['@id'];
+    resource.id = resource.id || resource['@id'];
     return resource;
   });
 
