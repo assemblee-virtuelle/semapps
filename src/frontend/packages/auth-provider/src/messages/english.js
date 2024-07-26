@@ -6,6 +6,7 @@ const englishMessages = {
       login_required: 'Login required'
     },
     action: {
+      submit: 'Submit',
       permissions: 'Permissions',
       signup: 'Signup',
       reset_password: 'Reset password',
@@ -61,6 +62,7 @@ const englishMessages = {
       unable_to_fetch_user_data: 'Unable to fetch user data',
       no_token_returned: 'No token returned',
       invalid_token_returned: 'Invalid token returned',
+      signup_error: 'Account registration failed',
       user_not_allowed_to_login: 'You are not allowed to login with this account',
       user_email_not_found: 'No account found with this email address',
       user_email_exist: 'An account already exist with this email address',

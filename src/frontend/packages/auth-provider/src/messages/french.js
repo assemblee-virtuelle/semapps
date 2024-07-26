@@ -6,6 +6,7 @@ const frenchMessages = {
       login_required: 'Connexion requise'
     },
     action: {
+      submit: 'Soumettre',
       permissions: 'Permissions',
       signup: "S'inscrire",
       reset_password: 'Mot de passe oublié ?',
@@ -62,6 +63,7 @@ const frenchMessages = {
       unable_to_fetch_user_data: 'Impossible de récupérer les données du profil',
       no_token_returned: 'Aucun token a été retourné',
       invalid_token_returned: 'Token invalide',
+      signup_error: "L'inscription a échoué",
       user_not_allowed_to_login: "Vous n'avez pas le droit de vous connecter avec ce compte",
       user_email_not_found: 'Aucun compte trouvé avec cette adresse mail',
       user_email_exist: 'Un compte existe déjà avec cette adresse mail',

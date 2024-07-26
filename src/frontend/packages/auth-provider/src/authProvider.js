@@ -199,7 +199,7 @@ const authProvider = ({
           } else if (e.message === 'username.invalid') {
             throw new Error('auth.message.username_invalid');
           } else {
-            throw new Error(e.message || 'ra.auth.sign_in_error');
+            throw new Error('auth.message.signup_error');
           }
         }
 
@@ -400,7 +400,11 @@ const authProvider = ({
           headers: new Headers({ 'Content-Type': 'application/json' })
         });
       } catch (e) {
-        throw new Error('auth.notification.reset_password_error');
+        if (e.message === 'email.not.exists') {
+          throw new Error('auth.message.user_email_not_found');
+        } else {
+          throw new Error('auth.notification.reset_password_error');
+        }
       }
     },
     setNewPassword: async params => {
@@ -413,7 +417,11 @@ const authProvider = ({
           headers: new Headers({ 'Content-Type': 'application/json' })
         });
       } catch (e) {
-        throw new Error('auth.notification.new_password_error');
+        if (e.message === 'email.not.exists') {
+          throw new Error('auth.message.user_email_not_found');
+        } else {
+          throw new Error('auth.notification.new_password_error');
+        }
       }
     },
     getAccountSettings: async params => {
