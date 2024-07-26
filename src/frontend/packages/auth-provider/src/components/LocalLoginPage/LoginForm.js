@@ -39,8 +39,8 @@ const LoginForm = ({ postLoginRedirect, allowUsername }) => {
           typeof error === 'string'
             ? error
             : typeof error === 'undefined' || !error.message
-            ? 'ra.auth.sign_in_error'
-            : error.message,
+              ? 'ra.auth.sign_in_error'
+              : error.message,
           {
             type: 'warning',
             messageArgs: {
@@ -52,7 +52,7 @@ const LoginForm = ({ postLoginRedirect, allowUsername }) => {
   };
 
   return (
-    <Form onSubmit={submit} noValidate defaultValues={{ email: searchParams.get('email') }}>
+    <Form onSubmit={submit} noValidate defaultValues={{ username: searchParams.get('email') }}>
       <CardContent className={classes.content}>
         <TextInput
           source="username"

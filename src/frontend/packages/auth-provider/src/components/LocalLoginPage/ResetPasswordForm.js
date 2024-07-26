@@ -66,7 +66,7 @@ const ResetPasswordForm = () => {
           {loading ? (
             <CircularProgress className={classes.icon} size={19} thickness={3} />
           ) : (
-            translate('auth.action.reset_password')
+            translate('auth.action.submit')
           )}
         </Button>
       </CardContent>

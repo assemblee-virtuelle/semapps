@@ -105,7 +105,7 @@ const LocalLoginPage = ({
         {isNewPassword && <NewPasswordForm redirectTo={redirectTo} passwordScorer={passwordScorer} />}
         {isLogin && <LoginForm postLoginRedirect={postLoginRedirect} allowUsername={allowUsername} />}
         <div className={classes.switch}>
-          {isSignup && (
+          {(isSignup || isResetPassword) && (
             <Link to={`/login?${getSearchParamsRest(searchParams)}`}>
               <Typography variant="body2">{translate('auth.action.login')}</Typography>
             </Link>

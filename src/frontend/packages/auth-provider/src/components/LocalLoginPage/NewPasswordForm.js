@@ -45,9 +45,12 @@ const NewPasswordForm = ({ redirectTo, passwordScorer = defaultScorer }) => {
     setLoading(true);
     authProvider
       .setNewPassword({ ...values, token })
-      .then(res => {
+      .then(() => {
         setTimeout(() => {
-          window.location.href = `/login${redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : ''}`;
+          const url = new URL('/login', window.location.origin);
+          if (redirectTo) url.searchParams.append('redirect', redirectTo);
+          url.searchParams.append('email', values.email);
+          window.location.href = url.toString();
           setLoading(false);
         }, 2000);
         notify('auth.notification.password_changed', { type: 'info' });
