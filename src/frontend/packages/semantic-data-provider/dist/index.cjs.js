@@ -366,7 +366,7 @@ const $8c999cc29c8d6a6c$var$fetchContainers = async (containers, params, { httpC
     const results = await Promise.all(fetchPromises);
     let resources = results.flat();
     resources = resources.map((resource)=>{
-        resource.id ||= resource["@id"];
+        resource.id = resource.id || resource["@id"];
         return resource;
     });
     // Apply filter to results

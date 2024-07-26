@@ -247,7 +247,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                     if (e.message === "email.already.exists") throw new Error("auth.message.user_email_exist");
                     else if (e.message === "username.already.exists") throw new Error("auth.message.username_exist");
                     else if (e.message === "username.invalid") throw new Error("auth.message.username_invalid");
-                    else throw new Error(e.message || "ra.auth.sign_in_error");
+                    else throw new Error("auth.message.signup_error");
                 }
                 localStorage.setItem("token", token);
                 await dataProvider.refreshConfig();
@@ -411,7 +411,8 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                     })
                 });
             } catch (e) {
-                throw new Error("auth.notification.reset_password_error");
+                if (e.message === "email.not.exists") throw new Error("auth.message.user_email_not_found");
+                else throw new Error("auth.notification.reset_password_error");
             }
         },
         setNewPassword: async (params)=>{
@@ -430,7 +431,8 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                     })
                 });
             } catch (e) {
-                throw new Error("auth.notification.new_password_error");
+                if (e.message === "email.not.exists") throw new Error("auth.message.user_email_not_found");
+                else throw new Error("auth.notification.new_password_error");
             }
         },
         getAccountSettings: async (params)=>{
@@ -1875,7 +1877,7 @@ const $8a2df01c9f2675bb$var$LoginForm = ({ postLoginRedirect: postLoginRedirect,
         onSubmit: submit,
         noValidate: true,
         defaultValues: {
-            email: searchParams.get("email")
+            username: searchParams.get("email")
         },
         children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
             className: classes.content,
@@ -1966,9 +1968,12 @@ const $176df6bd8edc5f4d$var$samePassword = (value, allValues)=>{
         authProvider.setNewPassword({
             ...values,
             token: token
-        }).then((res)=>{
+        }).then(()=>{
             setTimeout(()=>{
-                window.location.href = `/login${redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : ""}`;
+                const url = new URL("/login", window.location.origin);
+                if (redirectTo) url.searchParams.append("redirect", redirectTo);
+                url.searchParams.append("email", values.email);
+                window.location.href = url.toString();
                 setLoading(false);
             }, 2000);
             notify("auth.notification.password_changed", {
@@ -2133,7 +2138,7 @@ const $a04debd4e4af2a01$var$ResetPasswordForm = ()=>{
                         className: classes.icon,
                         size: 19,
                         thickness: 3
-                    }) : translate("auth.action.reset_password")
+                    }) : translate("auth.action.submit")
                 })
             ]
         })
@@ -2323,7 +2328,7 @@ const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
                 /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("div", {
                     className: classes.switch,
                     children: [
-                        isSignup && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactrouterdom.Link), {
+                        (isSignup || isResetPassword) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactrouterdom.Link), {
                             to: `/login?${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}`,
                             children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
                                 variant: "body2",
@@ -2546,6 +2551,7 @@ const $be2fdde9f3e3137d$var$englishMessages = {
             login_required: "Login required"
         },
         action: {
+            submit: "Submit",
             permissions: "Permissions",
             signup: "Signup",
             reset_password: "Reset password",
@@ -2601,6 +2607,7 @@ const $be2fdde9f3e3137d$var$englishMessages = {
             unable_to_fetch_user_data: "Unable to fetch user data",
             no_token_returned: "No token returned",
             invalid_token_returned: "Invalid token returned",
+            signup_error: "Account registration failed",
             user_not_allowed_to_login: "You are not allowed to login with this account",
             user_email_not_found: "No account found with this email address",
             user_email_exist: "An account already exist with this email address",
@@ -2636,6 +2643,7 @@ const $6dbc362c3d93e01d$var$frenchMessages = {
             login_required: "Connexion requise"
         },
         action: {
+            submit: "Soumettre",
             permissions: "Permissions",
             signup: "S'inscrire",
             reset_password: "Mot de passe oubli\xe9 ?",
@@ -2691,6 +2699,7 @@ const $6dbc362c3d93e01d$var$frenchMessages = {
             unable_to_fetch_user_data: "Impossible de r\xe9cup\xe9rer les donn\xe9es du profil",
             no_token_returned: "Aucun token a \xe9t\xe9 retourn\xe9",
             invalid_token_returned: "Token invalide",
+            signup_error: "L'inscription a \xe9chou\xe9",
             user_not_allowed_to_login: "Vous n'avez pas le droit de vous connecter avec ce compte",
             user_email_not_found: "Aucun compte trouv\xe9 avec cette adresse mail",
             user_email_exist: "Un compte existe d\xe9j\xe0 avec cette adresse mail",
