@@ -23,12 +23,18 @@ module.exports = {
 
     {
       type: 'category',
-      label: 'HTTP Signature',
+      label: 'Crypto',
       link: {
         type: 'doc',
-        id: 'middleware/signature/index'
+        id: 'middleware/crypto/index'
       },
-      items: ['middleware/signature/keypair', 'middleware/signature/proxy']
+      items: [
+        'middleware/crypto/keys',
+        'middleware/crypto/signature',
+        'middleware/crypto/proxy',
+        'middleware/crypto/migration',
+        'middleware/crypto/keypair'
+      ]
     },
     {
       type: 'category',

@@ -1,0 +1,24 @@
+name: Deploy
+
+on:
+  push:
+    branches: ['master']
+    paths: ['website/**']
+  # Allows you to run this workflow manually from the Actions tab on GitHub.
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: build and start docker container
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: semapps.org
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          port: 22
+          script: |
+            cd deployment_semapps_av
+            docker compose build semapps-website
+            docker compose up -d semapps-website

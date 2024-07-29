@@ -1,14 +1,11 @@
 ---
-title: [Deprecated] KeypairService 
+title: KeypairService
 ---
 
-# Deprecation Notice
-
+:::warning
 This Service has been deprecated in favor of the new keys service which stores keys in the pod's `/keys` container instead of the filesystem.
-Please consider migrating by calling `keys.migration.migrateKeysToDb`. Before migration, the new service can not operate and ED25519 keys are not supported by this service.
-After migration requests will be redirected to the new service.
-
-# Private/public key pairs management
+Please consider migrating by calling `keys.migration.migrateKeysToDb`. Before migration, the new service can not operate and ED25519 keys are not supported by this service. After migration requests will be redirected to the new service.
+:::
 
 ## Features
 
