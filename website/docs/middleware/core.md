@@ -11,7 +11,7 @@ This service allows you to easily configure standard SemApps services. It is off
 - [JsonLdService](jsonld)
 - [LdpService](ldp)
 - [SignatureService](crypto/signature)
-- [KeysService](crypto/key-service)
+- [KeysService](crypto/keys)
 - [SparqlEndpointService](sparql-endpoint)
 - [TripleStoreService](triplestore)
 - [VoidService](void.md)

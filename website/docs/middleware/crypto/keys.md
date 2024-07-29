@@ -1,10 +1,8 @@
 ---
-title: Keys Service
+title: KeysService
 ---
 
-Supersedes the signature keypair service.
-
-# Private/public key pairs management
+Private/public key pairs management
 
 ## Features
 

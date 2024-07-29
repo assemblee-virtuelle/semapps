@@ -1,5 +1,5 @@
 ---
-title: HTTP Signature
+title: SignatureService
 ---
 
 This service implements [HTTP Signature](https://tools.ietf.org/html/draft-cavage-http-signatures-12) authentication, which allow to send messages in a secure way between servers. It is used in particular with the [ActivityPub](../activitypub) federation mechanism.
@@ -14,15 +14,11 @@ This service implements [HTTP Signature](https://tools.ietf.org/html/draft-cavag
 
 ## Sub-services
 
-- [KeypairService](keypair.md) (deprecated and superseded by [KeysService](../key-service))
-
-## Other services
-
-- [ProxyService](proxy.md)
+- [KeypairService](keypair) (deprecated and superseded by [KeysService](keys))
 
 ## Dependencies
 
-- [KeysService](../key-service)
+- [KeysService](keys)
 
 ## Usage
 

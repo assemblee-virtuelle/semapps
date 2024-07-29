@@ -1,5 +1,5 @@
 ---
-title: Crypto Package
+title: Crypto
 ---
 
 This package contains key management and signature services.
@@ -15,11 +15,13 @@ This package contains key management and signature services.
 - [LdpService](../ldp/)
 - [Ontologies](../ontologies)
 
-## Sub-services
+## Services
 
+- [KeysService](./keys)
 - [SignatureService](./signature)
-- [KeysService](./key-service)
-- [MigrationService](./migration-service)
+- [ProxyService](./proxy)
+- [MigrationService](./migration)
+- [KeypairService](./keypair) (deprecated)
 
 ## Install
 
