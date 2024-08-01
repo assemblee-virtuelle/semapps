@@ -11,7 +11,7 @@ import {AuthDialog as $85cNH$AuthDialog} from "@semapps/auth-provider";
 import {mergeAttributes as $85cNH$mergeAttributes} from "@tiptap/core";
 import $85cNH$tiptapextensionmention from "@tiptap/extension-mention";
 import {ReferenceField as $85cNH$ReferenceField, AvatarWithLabelField as $85cNH$AvatarWithLabelField} from "@semapps/field-components";
-import {useQueries as $85cNH$useQueries, useQueryClient as $85cNH$useQueryClient, useInfiniteQuery as $85cNH$useInfiniteQuery} from "react-query";
+import {useQueries as $85cNH$useQueries, useInfiniteQuery as $85cNH$useInfiniteQuery, useQueryClient as $85cNH$useQueryClient} from "react-query";
 import {ReactRenderer as $85cNH$ReactRenderer} from "@tiptap/react";
 import $85cNH$tippyjs from "tippy.js";
 
@@ -549,6 +549,238 @@ const $577f4953dfa5de4f$export$34aed805e991a647 = (iterable, predicate)=>{
 };
 
 
+const $c1e897431d8c5742$var$useItemsFromPagesAndNotifications = (pages, notifications, dereferenceItems)=>{
+    const dataProvider = (0, $85cNH$useDataProvider)();
+    // Add all items from pages and process notifications (possibly new and deleted items).
+    const items = (0, $85cNH$useMemo)(()=>{
+        const addItems = notifications.map((n)=>n.type === "Add").map((n)=>n.object);
+        const removeItems = notifications.map((n)=>n.type === "Remove").map((n)=>n.object.id || n.object);
+        const currentItems = !pages ? [] : pages.flatMap((p)=>(0, $577f4953dfa5de4f$export$e57ff0f701c44363)(p.orderedItems || p.items));
+        const currentAndNew = currentItems.concat(addItems);
+        return currentAndNew// Filter out removed items.
+        .filter((item)=>!removeItems.some((r)=>(r.id ?? r) === (item.id ?? item)))// Filter duplicates.
+        .filter((item)=>currentAndNew.some((i2)=>(i2.id ?? i2) === (item.id ?? item)));
+    }, pages, notifications);
+    if (!dereferenceItems) return {
+        loadedItems: items,
+        isLoading: false,
+        isFetching: false
+    };
+    // Dereference all items, if they are not yet.
+    const itemQueries = (0, $85cNH$useQueries)(items.filter((item)=>typeof item === "string").map((itemUri)=>({
+            queryKey: [
+                "resource",
+                itemUri
+            ],
+            queryFn: async ()=>(await dataProvider.fetch(itemUri)).json,
+            staleTime: Infinity
+        })));
+    // Put all loaded items together (might be dereferenced already, so concatenate).
+    const loadedItems = items.filter((item)=>typeof item !== "string").concat(itemQueries.flatMap((itemQuery)=>{
+        return itemQuery.isSuccess && itemQuery.data || [];
+    }));
+    console.log("loadedItems", loadedItems.length, "total", items.length);
+    const errors = itemQueries.filter((q)=>q.error);
+    return {
+        loadedItems: loadedItems,
+        isLoading: itemQueries.some((q)=>q.isLoading),
+        isFetching: itemQueries.some((q)=>q.isFetching),
+        errors: errors.length > 0 && errors
+    };
+};
+const $c1e897431d8c5742$var$useCollection = (predicateOrUrl, options = {})=>{
+    const { dereferenceItems: dereferenceItems = false, liveUpdates: liveUpdates = true } = options;
+    const { data: identity } = (0, $85cNH$useGetIdentity)();
+    const [totalItems, setTotalItems] = (0, $85cNH$useState)();
+    const [notifications, setNotifications] = (0, $85cNH$useState)([]);
+    const [hasLiveUpdates, setHasLiveUpdates] = (0, $85cNH$useState)({
+        status: "disconnected",
+        error: undefined
+    });
+    const dataProvider = (0, $85cNH$useDataProvider)();
+    // Get collectionUrl from webId predicate or URL.
+    const collectionUrl = (0, $85cNH$useMemo)(()=>{
+        if (predicateOrUrl) {
+            if (predicateOrUrl.startsWith("http")) return predicateOrUrl;
+            if (identity?.webIdData) return identity?.webIdData?.[predicateOrUrl];
+        }
+        return undefined;
+    // throw new Error(`No URL available for useCollection: ${predicateOrUrl}.`);
+    }, [
+        identity,
+        predicateOrUrl
+    ]);
+    // Fetch page of collection item references (if pageParam provided)
+    //  or default to `collectionUrl` (which should give you the first page).
+    const fetchCollection = (0, $85cNH$useCallback)(async ({ pageParam: nextPageUrl })=>{
+        // Fetch page or first page (collectionUrl)
+        let { json: json } = await dataProvider.fetch(nextPageUrl || collectionUrl);
+        if (json.totalItems) setTotalItems(json.totalItems);
+        // If first page, handle this here.
+        if ((json.type === "OrderedCollection" || json.type === "Collection") && json.first) {
+            if (json.first?.items) {
+                if (json.first?.items.length === 0 && json.first?.next) // Special case where the first property is an object without items
+                ({ json: json } = await dataProvider.fetch(json.first?.next));
+                else json = json.first;
+            } else // Fetch the first page
+            ({ json: json } = await dataProvider.fetch(json.first));
+        }
+        return json;
+    }, [
+        dataProvider,
+        collectionUrl,
+        identity,
+        setTotalItems
+    ]);
+    // Use infiniteQuery to handle pagination, fetching, etc.
+    const { data: data, error: collectionError, fetchNextPage: fetchNextPage, refetch: refetch, hasNextPage: hasNextPage, isLoading: isLoadingPage, isFetching: isFetchingPage, isFetchingNextPage: isFetchingNextPage } = (0, $85cNH$useInfiniteQuery)([
+        "collection",
+        {
+            collectionUrl: collectionUrl
+        }
+    ], fetchCollection, {
+        enabled: !!(collectionUrl && identity?.id),
+        getNextPageParam: (lastPage)=>lastPage.next,
+        getPreviousPageParam: (firstPage)=>firstPage.prev
+    });
+    // Put all items together in a list.
+    const { loadedItems: items, isLoading: isLoadingItems, isFetching: isFetchingItems, errors: itemErrors } = $c1e897431d8c5742$var$useItemsFromPagesAndNotifications(data?.pages, notifications, dereferenceItems);
+    // Notifications have been processed after hook call, so reset.
+    // useEffect(() => {
+    //   setNotifications([]);
+    // }, [notifications])
+    // Live Updates
+    (0, $85cNH$useEffect)(()=>{
+        if (liveUpdates && collectionUrl) // Create ws that listens to collectionUri changes
+        (0, $85cNH$getOrCreateWsChannel)(dataProvider.fetch, collectionUrl).then((webSocket)=>{
+            webSocket.addEventListener("message", (e)=>{
+                if (e.data && e.data.type === "Add" || e.data.type === "Remove") setNotifications([
+                    ...notifications,
+                    e.data
+                ]);
+            });
+            webSocket.addEventListener("error", (e)=>{
+                setHasLiveUpdates({
+                    status: "error",
+                    error: e
+                });
+            // TODO: Retry after a while
+            });
+            webSocket.addEventListener("close", (e)=>{
+                setHasLiveUpdates({
+                    ...hasLiveUpdates,
+                    status: "disconnected"
+                });
+            });
+            setHasLiveUpdates({
+                status: "connected"
+            });
+        }).catch(()=>{}); // If it fails, we won't receive live updates. But that's okay.
+    }, [
+        collectionUrl,
+        liveUpdates,
+        dataProvider.fetch
+    ]);
+    const allErrors = (0, $577f4953dfa5de4f$export$e57ff0f701c44363)(collectionError).concat((0, $577f4953dfa5de4f$export$e57ff0f701c44363)(itemErrors));
+    return {
+        items: items,
+        totalItems: totalItems,
+        error: allErrors.length > 0 && allErrors,
+        refetch: refetch,
+        fetchNextPage: fetchNextPage,
+        hasNextPage: hasNextPage,
+        isLoading: isLoadingPage || isLoadingItems,
+        isFetching: isFetchingPage || isFetchingItems,
+        isFetchingNextPage: isFetchingNextPage,
+        url: collectionUrl,
+        hasLiveUpdates: hasLiveUpdates
+    };
+};
+var $c1e897431d8c5742$export$2e2bcd8739ae039 = $c1e897431d8c5742$var$useCollection;
+
+
+const $7ce737d4a1c88e63$var$CommentsField = ({ source: source, context: context, helperText: helperText, placeholder: placeholder, userResource: userResource, mentions: mentions })=>{
+    const record = (0, $85cNH$useRecordContext)();
+    const { items: comments, loading: loading, addItem: addItem, removeItem: removeItem } = (0, $c1e897431d8c5742$export$2e2bcd8739ae039)(record.replies);
+    if (!userResource) throw new Error("No userResource defined for CommentsField");
+    return /*#__PURE__*/ (0, $85cNH$jsxs)((0, $85cNH$Fragment), {
+        children: [
+            /*#__PURE__*/ (0, $85cNH$jsx)((0, $3c17312a40ebf1ed$export$2e2bcd8739ae039), {
+                context: context,
+                helperText: helperText,
+                userResource: userResource,
+                placeholder: placeholder,
+                mentions: mentions,
+                addItem: addItem,
+                removeItem: removeItem
+            }),
+            /*#__PURE__*/ (0, $85cNH$jsx)((0, $be88b298220210d1$export$2e2bcd8739ae039), {
+                comments: comments,
+                loading: loading,
+                userResource: userResource
+            })
+        ]
+    });
+};
+$7ce737d4a1c88e63$var$CommentsField.defaultProps = {
+    label: "Commentaires",
+    placeholder: "Commencez \xe0 taper votre commentaire...",
+    source: "id",
+    context: "id"
+};
+var $7ce737d4a1c88e63$export$2e2bcd8739ae039 = $7ce737d4a1c88e63$var$CommentsField;
+
+
+
+
+
+
+const $d3be168cd1e7aaae$var$CollectionList = ({ collectionUrl: collectionUrl, resource: resource, children: children })=>{
+    if ((0, $85cNH$react).Children.count(children) !== 1) throw new Error("<CollectionList> only accepts a single child");
+    const { items: actorsUris } = (0, $c1e897431d8c5742$export$2e2bcd8739ae039)(collectionUrl);
+    const { data: data, isLoading: isLoading, isFetching: isFetching } = (0, $85cNH$useGetMany)(resource, {
+        ids: Array.isArray(actorsUris) ? actorsUris : [
+            actorsUris
+        ]
+    }, {
+        enabled: !!actorsUris
+    });
+    const listContext = (0, $85cNH$useList)({
+        data: data,
+        isLoading: isLoading,
+        isFetching: isFetching
+    });
+    return /*#__PURE__*/ (0, $85cNH$jsx)((0, $85cNH$ListContextProvider), {
+        value: listContext,
+        children: children
+    });
+};
+var $d3be168cd1e7aaae$export$2e2bcd8739ae039 = $d3be168cd1e7aaae$var$CollectionList;
+
+
+
+
+
+
+const $ea214512ab1a2e8f$var$ReferenceCollectionField = ({ source: source, reference: reference, children: children, ...rest })=>{
+    const record = (0, $85cNH$useRecordContext)();
+    if ((0, $85cNH$react).Children.count(children) !== 1) throw new Error("<ReferenceCollectionField> only accepts a single child");
+    if (!record || !record[source]) return null;
+    return /*#__PURE__*/ (0, $85cNH$jsx)((0, $d3be168cd1e7aaae$export$2e2bcd8739ae039), {
+        resource: reference,
+        collectionUrl: record[source],
+        ...rest,
+        children: children
+    });
+};
+var $ea214512ab1a2e8f$export$2e2bcd8739ae039 = $ea214512ab1a2e8f$var$ReferenceCollectionField;
+
+
+
+
+
+
+
 const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
     const dataProvider = (0, $85cNH$useDataProvider)();
     const items = (0, $85cNH$useMemo)(()=>pages.flatMap((p)=>(0, $577f4953dfa5de4f$export$e57ff0f701c44363)(p.orderedItems || p.items)), [
@@ -588,7 +820,7 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
     };
 };
 /**
- * Subscribe a collection.
+ * Subscribe a collection. Supports pagination.
  * @param predicateOrUrl The collection URI or the predicate to get the collection URI from the identity (webId).
  * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: true }`
  */ const $8281f3ce3b9d6123$var$useCollection = (predicateOrUrl, options = {})=>{
@@ -761,84 +993,6 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
     };
 };
 var $8281f3ce3b9d6123$export$2e2bcd8739ae039 = $8281f3ce3b9d6123$var$useCollection;
-
-
-const $7ce737d4a1c88e63$var$CommentsField = ({ source: source, context: context, helperText: helperText, placeholder: placeholder, userResource: userResource, mentions: mentions })=>{
-    const record = (0, $85cNH$useRecordContext)();
-    const { items: comments, loading: loading, addItem: addItem, removeItem: removeItem } = (0, $8281f3ce3b9d6123$export$2e2bcd8739ae039)(record.replies);
-    if (!userResource) throw new Error("No userResource defined for CommentsField");
-    return /*#__PURE__*/ (0, $85cNH$jsxs)((0, $85cNH$Fragment), {
-        children: [
-            /*#__PURE__*/ (0, $85cNH$jsx)((0, $3c17312a40ebf1ed$export$2e2bcd8739ae039), {
-                context: context,
-                helperText: helperText,
-                userResource: userResource,
-                placeholder: placeholder,
-                mentions: mentions,
-                addItem: addItem,
-                removeItem: removeItem
-            }),
-            /*#__PURE__*/ (0, $85cNH$jsx)((0, $be88b298220210d1$export$2e2bcd8739ae039), {
-                comments: comments,
-                loading: loading,
-                userResource: userResource
-            })
-        ]
-    });
-};
-$7ce737d4a1c88e63$var$CommentsField.defaultProps = {
-    label: "Commentaires",
-    placeholder: "Commencez \xe0 taper votre commentaire...",
-    source: "id",
-    context: "id"
-};
-var $7ce737d4a1c88e63$export$2e2bcd8739ae039 = $7ce737d4a1c88e63$var$CommentsField;
-
-
-
-
-
-
-const $d3be168cd1e7aaae$var$CollectionList = ({ collectionUrl: collectionUrl, resource: resource, children: children })=>{
-    if ((0, $85cNH$react).Children.count(children) !== 1) throw new Error("<CollectionList> only accepts a single child");
-    const { items: actorsUris } = (0, $8281f3ce3b9d6123$export$2e2bcd8739ae039)(collectionUrl);
-    const { data: data, isLoading: isLoading, isFetching: isFetching } = (0, $85cNH$useGetMany)(resource, {
-        ids: Array.isArray(actorsUris) ? actorsUris : [
-            actorsUris
-        ]
-    }, {
-        enabled: !!actorsUris
-    });
-    const listContext = (0, $85cNH$useList)({
-        data: data,
-        isLoading: isLoading,
-        isFetching: isFetching
-    });
-    return /*#__PURE__*/ (0, $85cNH$jsx)((0, $85cNH$ListContextProvider), {
-        value: listContext,
-        children: children
-    });
-};
-var $d3be168cd1e7aaae$export$2e2bcd8739ae039 = $d3be168cd1e7aaae$var$CollectionList;
-
-
-
-
-
-
-const $ea214512ab1a2e8f$var$ReferenceCollectionField = ({ source: source, reference: reference, children: children, ...rest })=>{
-    const record = (0, $85cNH$useRecordContext)();
-    if ((0, $85cNH$react).Children.count(children) !== 1) throw new Error("<ReferenceCollectionField> only accepts a single child");
-    if (!record || !record[source]) return null;
-    return /*#__PURE__*/ (0, $85cNH$jsx)((0, $d3be168cd1e7aaae$export$2e2bcd8739ae039), {
-        resource: reference,
-        collectionUrl: record[source],
-        ...rest,
-        children: children
-    });
-};
-var $ea214512ab1a2e8f$export$2e2bcd8739ae039 = $ea214512ab1a2e8f$var$ReferenceCollectionField;
-
 
 
 

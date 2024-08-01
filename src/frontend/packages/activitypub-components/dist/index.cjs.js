@@ -571,6 +571,238 @@ const $03510abb28fd3d8a$export$34aed805e991a647 = (iterable, predicate)=>{
 };
 
 
+const $2b75a2f49c9ef165$var$useItemsFromPagesAndNotifications = (pages, notifications, dereferenceItems)=>{
+    const dataProvider = (0, $583VT$reactadmin.useDataProvider)();
+    // Add all items from pages and process notifications (possibly new and deleted items).
+    const items = (0, $583VT$react.useMemo)(()=>{
+        const addItems = notifications.map((n)=>n.type === "Add").map((n)=>n.object);
+        const removeItems = notifications.map((n)=>n.type === "Remove").map((n)=>n.object.id || n.object);
+        const currentItems = !pages ? [] : pages.flatMap((p)=>(0, $03510abb28fd3d8a$export$e57ff0f701c44363)(p.orderedItems || p.items));
+        const currentAndNew = currentItems.concat(addItems);
+        return currentAndNew// Filter out removed items.
+        .filter((item)=>!removeItems.some((r)=>(r.id ?? r) === (item.id ?? item)))// Filter duplicates.
+        .filter((item)=>currentAndNew.some((i2)=>(i2.id ?? i2) === (item.id ?? item)));
+    }, pages, notifications);
+    if (!dereferenceItems) return {
+        loadedItems: items,
+        isLoading: false,
+        isFetching: false
+    };
+    // Dereference all items, if they are not yet.
+    const itemQueries = (0, $583VT$reactquery.useQueries)(items.filter((item)=>typeof item === "string").map((itemUri)=>({
+            queryKey: [
+                "resource",
+                itemUri
+            ],
+            queryFn: async ()=>(await dataProvider.fetch(itemUri)).json,
+            staleTime: Infinity
+        })));
+    // Put all loaded items together (might be dereferenced already, so concatenate).
+    const loadedItems = items.filter((item)=>typeof item !== "string").concat(itemQueries.flatMap((itemQuery)=>{
+        return itemQuery.isSuccess && itemQuery.data || [];
+    }));
+    console.log("loadedItems", loadedItems.length, "total", items.length);
+    const errors = itemQueries.filter((q)=>q.error);
+    return {
+        loadedItems: loadedItems,
+        isLoading: itemQueries.some((q)=>q.isLoading),
+        isFetching: itemQueries.some((q)=>q.isFetching),
+        errors: errors.length > 0 && errors
+    };
+};
+const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl, options = {})=>{
+    const { dereferenceItems: dereferenceItems = false, liveUpdates: liveUpdates = true } = options;
+    const { data: identity } = (0, $583VT$reactadmin.useGetIdentity)();
+    const [totalItems, setTotalItems] = (0, $583VT$react.useState)();
+    const [notifications, setNotifications] = (0, $583VT$react.useState)([]);
+    const [hasLiveUpdates, setHasLiveUpdates] = (0, $583VT$react.useState)({
+        status: "disconnected",
+        error: undefined
+    });
+    const dataProvider = (0, $583VT$reactadmin.useDataProvider)();
+    // Get collectionUrl from webId predicate or URL.
+    const collectionUrl = (0, $583VT$react.useMemo)(()=>{
+        if (predicateOrUrl) {
+            if (predicateOrUrl.startsWith("http")) return predicateOrUrl;
+            if (identity?.webIdData) return identity?.webIdData?.[predicateOrUrl];
+        }
+        return undefined;
+    // throw new Error(`No URL available for useCollection: ${predicateOrUrl}.`);
+    }, [
+        identity,
+        predicateOrUrl
+    ]);
+    // Fetch page of collection item references (if pageParam provided)
+    //  or default to `collectionUrl` (which should give you the first page).
+    const fetchCollection = (0, $583VT$react.useCallback)(async ({ pageParam: nextPageUrl })=>{
+        // Fetch page or first page (collectionUrl)
+        let { json: json } = await dataProvider.fetch(nextPageUrl || collectionUrl);
+        if (json.totalItems) setTotalItems(json.totalItems);
+        // If first page, handle this here.
+        if ((json.type === "OrderedCollection" || json.type === "Collection") && json.first) {
+            if (json.first?.items) {
+                if (json.first?.items.length === 0 && json.first?.next) // Special case where the first property is an object without items
+                ({ json: json } = await dataProvider.fetch(json.first?.next));
+                else json = json.first;
+            } else // Fetch the first page
+            ({ json: json } = await dataProvider.fetch(json.first));
+        }
+        return json;
+    }, [
+        dataProvider,
+        collectionUrl,
+        identity,
+        setTotalItems
+    ]);
+    // Use infiniteQuery to handle pagination, fetching, etc.
+    const { data: data, error: collectionError, fetchNextPage: fetchNextPage, refetch: refetch, hasNextPage: hasNextPage, isLoading: isLoadingPage, isFetching: isFetchingPage, isFetchingNextPage: isFetchingNextPage } = (0, $583VT$reactquery.useInfiniteQuery)([
+        "collection",
+        {
+            collectionUrl: collectionUrl
+        }
+    ], fetchCollection, {
+        enabled: !!(collectionUrl && identity?.id),
+        getNextPageParam: (lastPage)=>lastPage.next,
+        getPreviousPageParam: (firstPage)=>firstPage.prev
+    });
+    // Put all items together in a list.
+    const { loadedItems: items, isLoading: isLoadingItems, isFetching: isFetchingItems, errors: itemErrors } = $2b75a2f49c9ef165$var$useItemsFromPagesAndNotifications(data?.pages, notifications, dereferenceItems);
+    // Notifications have been processed after hook call, so reset.
+    // useEffect(() => {
+    //   setNotifications([]);
+    // }, [notifications])
+    // Live Updates
+    (0, $583VT$react.useEffect)(()=>{
+        if (liveUpdates && collectionUrl) // Create ws that listens to collectionUri changes
+        (0, $583VT$semappssemanticdataprovider.getOrCreateWsChannel)(dataProvider.fetch, collectionUrl).then((webSocket)=>{
+            webSocket.addEventListener("message", (e)=>{
+                if (e.data && e.data.type === "Add" || e.data.type === "Remove") setNotifications([
+                    ...notifications,
+                    e.data
+                ]);
+            });
+            webSocket.addEventListener("error", (e)=>{
+                setHasLiveUpdates({
+                    status: "error",
+                    error: e
+                });
+            // TODO: Retry after a while
+            });
+            webSocket.addEventListener("close", (e)=>{
+                setHasLiveUpdates({
+                    ...hasLiveUpdates,
+                    status: "disconnected"
+                });
+            });
+            setHasLiveUpdates({
+                status: "connected"
+            });
+        }).catch(()=>{}); // If it fails, we won't receive live updates. But that's okay.
+    }, [
+        collectionUrl,
+        liveUpdates,
+        dataProvider.fetch
+    ]);
+    const allErrors = (0, $03510abb28fd3d8a$export$e57ff0f701c44363)(collectionError).concat((0, $03510abb28fd3d8a$export$e57ff0f701c44363)(itemErrors));
+    return {
+        items: items,
+        totalItems: totalItems,
+        error: allErrors.length > 0 && allErrors,
+        refetch: refetch,
+        fetchNextPage: fetchNextPage,
+        hasNextPage: hasNextPage,
+        isLoading: isLoadingPage || isLoadingItems,
+        isFetching: isFetchingPage || isFetchingItems,
+        isFetchingNextPage: isFetchingNextPage,
+        url: collectionUrl,
+        hasLiveUpdates: hasLiveUpdates
+    };
+};
+var $2b75a2f49c9ef165$export$2e2bcd8739ae039 = $2b75a2f49c9ef165$var$useCollection;
+
+
+const $2e5504cc4159ca8d$var$CommentsField = ({ source: source, context: context, helperText: helperText, placeholder: placeholder, userResource: userResource, mentions: mentions })=>{
+    const record = (0, $583VT$reactadmin.useRecordContext)();
+    const { items: comments, loading: loading, addItem: addItem, removeItem: removeItem } = (0, $2b75a2f49c9ef165$export$2e2bcd8739ae039)(record.replies);
+    if (!userResource) throw new Error("No userResource defined for CommentsField");
+    return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsxs)((0, $583VT$reactjsxruntime.Fragment), {
+        children: [
+            /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $703eba3e46be7ee5$export$2e2bcd8739ae039), {
+                context: context,
+                helperText: helperText,
+                userResource: userResource,
+                placeholder: placeholder,
+                mentions: mentions,
+                addItem: addItem,
+                removeItem: removeItem
+            }),
+            /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $d68cd57b2d06b6d5$export$2e2bcd8739ae039), {
+                comments: comments,
+                loading: loading,
+                userResource: userResource
+            })
+        ]
+    });
+};
+$2e5504cc4159ca8d$var$CommentsField.defaultProps = {
+    label: "Commentaires",
+    placeholder: "Commencez \xe0 taper votre commentaire...",
+    source: "id",
+    context: "id"
+};
+var $2e5504cc4159ca8d$export$2e2bcd8739ae039 = $2e5504cc4159ca8d$var$CommentsField;
+
+
+
+
+
+
+const $505d598a33288aad$var$CollectionList = ({ collectionUrl: collectionUrl, resource: resource, children: children })=>{
+    if ((0, ($parcel$interopDefault($583VT$react))).Children.count(children) !== 1) throw new Error("<CollectionList> only accepts a single child");
+    const { items: actorsUris } = (0, $2b75a2f49c9ef165$export$2e2bcd8739ae039)(collectionUrl);
+    const { data: data, isLoading: isLoading, isFetching: isFetching } = (0, $583VT$reactadmin.useGetMany)(resource, {
+        ids: Array.isArray(actorsUris) ? actorsUris : [
+            actorsUris
+        ]
+    }, {
+        enabled: !!actorsUris
+    });
+    const listContext = (0, $583VT$reactadmin.useList)({
+        data: data,
+        isLoading: isLoading,
+        isFetching: isFetching
+    });
+    return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$reactadmin.ListContextProvider), {
+        value: listContext,
+        children: children
+    });
+};
+var $505d598a33288aad$export$2e2bcd8739ae039 = $505d598a33288aad$var$CollectionList;
+
+
+
+
+
+
+const $b0c94a9bdea99da5$var$ReferenceCollectionField = ({ source: source, reference: reference, children: children, ...rest })=>{
+    const record = (0, $583VT$reactadmin.useRecordContext)();
+    if ((0, ($parcel$interopDefault($583VT$react))).Children.count(children) !== 1) throw new Error("<ReferenceCollectionField> only accepts a single child");
+    if (!record || !record[source]) return null;
+    return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $505d598a33288aad$export$2e2bcd8739ae039), {
+        resource: reference,
+        collectionUrl: record[source],
+        ...rest,
+        children: children
+    });
+};
+var $b0c94a9bdea99da5$export$2e2bcd8739ae039 = $b0c94a9bdea99da5$var$ReferenceCollectionField;
+
+
+
+
+
+
+
 const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
     const dataProvider = (0, $583VT$reactadmin.useDataProvider)();
     const items = (0, $583VT$react.useMemo)(()=>pages.flatMap((p)=>(0, $03510abb28fd3d8a$export$e57ff0f701c44363)(p.orderedItems || p.items)), [
@@ -610,7 +842,7 @@ const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
     };
 };
 /**
- * Subscribe a collection.
+ * Subscribe a collection. Supports pagination.
  * @param predicateOrUrl The collection URI or the predicate to get the collection URI from the identity (webId).
  * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: true }`
  */ const $5ca5f7e9fc1c3544$var$useCollection = (predicateOrUrl, options = {})=>{
@@ -783,84 +1015,6 @@ const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
     };
 };
 var $5ca5f7e9fc1c3544$export$2e2bcd8739ae039 = $5ca5f7e9fc1c3544$var$useCollection;
-
-
-const $2e5504cc4159ca8d$var$CommentsField = ({ source: source, context: context, helperText: helperText, placeholder: placeholder, userResource: userResource, mentions: mentions })=>{
-    const record = (0, $583VT$reactadmin.useRecordContext)();
-    const { items: comments, loading: loading, addItem: addItem, removeItem: removeItem } = (0, $5ca5f7e9fc1c3544$export$2e2bcd8739ae039)(record.replies);
-    if (!userResource) throw new Error("No userResource defined for CommentsField");
-    return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsxs)((0, $583VT$reactjsxruntime.Fragment), {
-        children: [
-            /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $703eba3e46be7ee5$export$2e2bcd8739ae039), {
-                context: context,
-                helperText: helperText,
-                userResource: userResource,
-                placeholder: placeholder,
-                mentions: mentions,
-                addItem: addItem,
-                removeItem: removeItem
-            }),
-            /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $d68cd57b2d06b6d5$export$2e2bcd8739ae039), {
-                comments: comments,
-                loading: loading,
-                userResource: userResource
-            })
-        ]
-    });
-};
-$2e5504cc4159ca8d$var$CommentsField.defaultProps = {
-    label: "Commentaires",
-    placeholder: "Commencez \xe0 taper votre commentaire...",
-    source: "id",
-    context: "id"
-};
-var $2e5504cc4159ca8d$export$2e2bcd8739ae039 = $2e5504cc4159ca8d$var$CommentsField;
-
-
-
-
-
-
-const $505d598a33288aad$var$CollectionList = ({ collectionUrl: collectionUrl, resource: resource, children: children })=>{
-    if ((0, ($parcel$interopDefault($583VT$react))).Children.count(children) !== 1) throw new Error("<CollectionList> only accepts a single child");
-    const { items: actorsUris } = (0, $5ca5f7e9fc1c3544$export$2e2bcd8739ae039)(collectionUrl);
-    const { data: data, isLoading: isLoading, isFetching: isFetching } = (0, $583VT$reactadmin.useGetMany)(resource, {
-        ids: Array.isArray(actorsUris) ? actorsUris : [
-            actorsUris
-        ]
-    }, {
-        enabled: !!actorsUris
-    });
-    const listContext = (0, $583VT$reactadmin.useList)({
-        data: data,
-        isLoading: isLoading,
-        isFetching: isFetching
-    });
-    return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$reactadmin.ListContextProvider), {
-        value: listContext,
-        children: children
-    });
-};
-var $505d598a33288aad$export$2e2bcd8739ae039 = $505d598a33288aad$var$CollectionList;
-
-
-
-
-
-
-const $b0c94a9bdea99da5$var$ReferenceCollectionField = ({ source: source, reference: reference, children: children, ...rest })=>{
-    const record = (0, $583VT$reactadmin.useRecordContext)();
-    if ((0, ($parcel$interopDefault($583VT$react))).Children.count(children) !== 1) throw new Error("<ReferenceCollectionField> only accepts a single child");
-    if (!record || !record[source]) return null;
-    return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $505d598a33288aad$export$2e2bcd8739ae039), {
-        resource: reference,
-        collectionUrl: record[source],
-        ...rest,
-        children: children
-    });
-};
-var $b0c94a9bdea99da5$export$2e2bcd8739ae039 = $b0c94a9bdea99da5$var$ReferenceCollectionField;
-
 
 
 

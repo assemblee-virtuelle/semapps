@@ -62,7 +62,7 @@ interface UseCollectionOptions {
   liveUpdates?: boolean;
 }
 /**
- * Subscribe a collection.
+ * Subscribe a collection. Supports pagination.
  * @param predicateOrUrl The collection URI or the predicate to get the collection URI from the identity (webId).
  * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: true }`
  */
@@ -77,7 +77,7 @@ export const useCollection: (
     options?: (import('react-query').RefetchOptions & import('react-query').RefetchQueryFilters<TPageData>) | undefined
   ) => Promise<import('react-query').QueryObserverResult<import('react-query').InfiniteData<any>, unknown>>;
   fetchNextPage: (
-    options?: import('react-query').FetchNextPageOptions
+    options?: import('react-query').FetchNextPageOptions | undefined
   ) => Promise<import('react-query').InfiniteQueryObserverResult<any, unknown>>;
   addItem: (item: string | any, shouldRefetch?: boolean | number) => void;
   removeItem: (item: string | any, shouldRefetch?: boolean) => void;
