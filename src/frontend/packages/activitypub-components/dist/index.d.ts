@@ -23,7 +23,7 @@ export declare namespace ACTIVITY_TYPES {
   let REMOVE: string;
   let TENTATIVE_REJECT: string;
   let TENTATIVE_ACCEPT: string;
-  let TRAVAL: string;
+  let TRAVEL: string;
   let UNDO: string;
   let UPDATE: string;
   let VIEW: string;
@@ -57,30 +57,39 @@ export function useOutbox(): {
   loaded: boolean;
   owner: import('react-admin').Identifier | undefined;
 };
-declare namespace _default {
-  export { arrayOf };
+interface UseCollectionOptions {
+  dereferenceItems?: boolean;
+  liveUpdates?: boolean;
 }
-export function useCollection(
-  predicateOrUrl: any,
-  options?: {}
-): {
-  items: undefined;
-  totalItems: undefined;
-  error: unknown;
+/**
+ * Subscribe a collection. Supports pagination.
+ * @param predicateOrUrl The collection URI or the predicate to get the collection URI from the identity (webId).
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: true }`
+ */
+export const useCollection: (
+  predicateOrUrl: string,
+  options?: UseCollectionOptions
+) => {
+  items: any[];
+  totalItems: number | undefined;
+  error: false | unknown[];
   refetch: <TPageData>(
     options?: (import('react-query').RefetchOptions & import('react-query').RefetchQueryFilters<TPageData>) | undefined
   ) => Promise<import('react-query').QueryObserverResult<import('react-query').InfiniteData<any>, unknown>>;
   fetchNextPage: (
     options?: import('react-query').FetchNextPageOptions | undefined
   ) => Promise<import('react-query').InfiniteQueryObserverResult<any, unknown>>;
+  addItem: (item: string | any, shouldRefetch?: boolean | number) => void;
+  removeItem: (item: string | any, shouldRefetch?: boolean) => void;
   hasNextPage: boolean | undefined;
   isLoading: boolean;
   isFetching: boolean;
   isFetchingNextPage: boolean;
-  status: 'success' | 'error' | 'loading' | 'idle';
-  addItem: (item: any) => void;
-  removeItem: (itemId: any) => void;
   url: any;
+  hasLiveUpdates: {
+    status: string;
+    error?: any;
+  };
 };
 export function CommentsField({
   source,

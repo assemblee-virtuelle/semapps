@@ -1,3 +1,4 @@
+import { fetchUtils } from "react-admin";
 type DataServerKey = string & {
     readonly _type?: 'DataServerKey';
 };
@@ -126,5 +127,23 @@ export function GroupedReferenceHandler({ children, groupReference, groupLabel, 
     filterProperty: any;
 }): import("react/jsx-runtime").JSX.Element;
 export function ReificationArrayInput(props: any): import("react/jsx-runtime").JSX.Element;
+type fetchFn = typeof fetchUtils.fetchJson;
+interface CreateSolidChannelOptions {
+    type: string;
+    closeAfter?: number;
+    startIn?: number;
+    startAt?: string;
+    endAt?: string;
+    rate?: number;
+}
+export const createSolidNotificationChannel: (fetch: fetchFn, resourceUri: string, options?: CreateSolidChannelOptions) => Promise<any>;
+export const createWsChannel: (fetch: fetchFn, resourceUri: string, options: CreateSolidChannelOptions) => Promise<WebSocket>;
+/**
+ * @param fetch A react admin fetch function.
+ * @param resourceUri The resource to subscribe to
+ * @param options Options to pass to @see createSolidNotificationChannel, if the channel does not exist yet.
+ * @returns {WebSocket} A new or existing web socket that subscribed to the given resource.
+ */
+export const getOrCreateWsChannel: (fetch: fetchFn, resourceUri: string, options?: CreateSolidChannelOptions) => Promise<WebSocket>;
 
 //# sourceMappingURL=index.d.ts.map

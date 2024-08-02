@@ -248,3 +248,36 @@ Get the [data servers](data-servers) config, including data fetched through VoID
 ```js
 const dataServers = useDataServers();
 ```
+
+## Utilities
+
+### `getOrCreateWsChannel`
+
+This function adheres to the [Solid Notification Protocol](https://solidproject.org/TR/notifications-protocol), specifically the [WebSocketChannel2023](https://solid.github.io/notifications/websocket-channel-2023) specification. It creates a WebSocket that conforms to this specification.
+
+#### Parameters
+
+| Param Position | Property      | Type       | Default      | Description                                                                                                                                                                                                                                                                  |
+| -------------- | ------------- | ---------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1              | `fetch`       | `Function` | **required** | A React Admin fetch function. You can obtain it using `const { fetch } = useDataProvider()`.                                                                                                                                                                                 |
+| 2              | `resourceUri` | `string`   | **required** | The URI of the resource to subscribe to.                                                                                                                                                                                                                                     |
+| 3              | `options`     | `object`   |              | Options to pass to `createSolidNotificationChannel` if the channel does not exist yet. Refer to the [documentation of the features in the spec](https://solidproject.org/TR/notifications-protocol#notification-features) for more details. See `CreateSolidChannelOptions`. |
+
+#### `CreateSolidChannelOptions` Interface
+
+| Property     | Type                | Default                | Description                                                                           |
+| ------------ | ------------------- | ---------------------- | ------------------------------------------------------------------------------------- |
+| `type`       | `string`            | `WebSocketChannel2023` | The type of channel. The default and only supported option is `WebSocketChannel2023`. |
+| `closeAfter` | `number`            |                        | Time in milliseconds after which the channel should close.                            |
+| `startIn`    | `number`            |                        | Time in milliseconds to wait before starting the channel.                             |
+| `startAt`    | `string` (ISO 8601) |                        | ISO 8601 timestamp indicating when to start the channel.                              |
+| `endAt`      | `string` (ISO 8601) |                        | ISO 8601 timestamp indicating when to end the channel.                                |
+| `rate`       | `number`            |                        | The rate in milliseconds at which notifications should be sent at most.               |
+
+### `createWsChannel`
+
+This function operates similarly to `getOrCreateWsChannel` but always creates a new channel, even if a channel for the same resource (but potentially with different options) is already open. The newly created channel is not registered in the cache used by `getOrCreateWsChannel`.
+
+### `createSolidNotificationChannel`
+
+This function is used internally by `getOrCreateWsChannel` and `createWsChannel` to create a WebSocket channel object conforming to the Solid Notification Protocol.

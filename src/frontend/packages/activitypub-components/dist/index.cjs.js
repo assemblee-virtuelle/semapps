@@ -27,7 +27,7 @@ function $parcel$interopDefault(a) {
 $parcel$export(module.exports, "CommentsField", () => $2e5504cc4159ca8d$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "CollectionList", () => $505d598a33288aad$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "ReferenceCollectionField", () => $b0c94a9bdea99da5$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "useCollection", () => $2b75a2f49c9ef165$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useCollection", () => $5ca5f7e9fc1c3544$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useInbox", () => $97664763db3c0a46$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useNodeinfo", () => $30fd77858150739b$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useOutbox", () => $decfdd34cc00b80e$export$2e2bcd8739ae039);
@@ -76,7 +76,7 @@ const $ebea823cebb2f44b$export$1ec8e53e7d982d22 = {
     REMOVE: "Remove",
     TENTATIVE_REJECT: "TentativeReject",
     TENTATIVE_ACCEPT: "TentativeAccept",
-    TRAVAL: "Travel",
+    TRAVEL: "Travel",
     UNDO: "Undo",
     UPDATE: "Update",
     VIEW: "View"
@@ -546,7 +546,8 @@ var $d68cd57b2d06b6d5$export$2e2bcd8739ae039 = $d68cd57b2d06b6d5$var$CommentsLis
 
 
 
-const $3ff23aa25753c478$export$e57ff0f701c44363 = (value)=>{
+
+const $03510abb28fd3d8a$export$e57ff0f701c44363 = (value)=>{
     // If the field is null-ish, we suppose there are no values.
     if (value === null || value === undefined) return [];
     // Return as is.
@@ -556,30 +557,88 @@ const $3ff23aa25753c478$export$e57ff0f701c44363 = (value)=>{
         value
     ];
 };
-var $3ff23aa25753c478$export$2e2bcd8739ae039 = {
-    arrayOf: $3ff23aa25753c478$export$e57ff0f701c44363
+var $03510abb28fd3d8a$export$2e2bcd8739ae039 = {
+    arrayOf: $03510abb28fd3d8a$export$e57ff0f701c44363
+};
+const $03510abb28fd3d8a$export$34aed805e991a647 = (iterable, predicate)=>{
+    const seen = new Set();
+    return iterable.filter((item)=>{
+        const key = predicate(item);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
 };
 
 
-const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl, options = {})=>{
-    const { dereferenceItems: dereferenceItems = false } = options;
-    const { data: identity } = (0, $583VT$reactadmin.useGetIdentity)();
-    const [items, setItems] = (0, $583VT$react.useState)();
-    const [totalItems, setTotalItems] = (0, $583VT$react.useState)();
+const $2b75a2f49c9ef165$var$useItemsFromPagesAndNotifications = (pages, notifications, dereferenceItems)=>{
     const dataProvider = (0, $583VT$reactadmin.useDataProvider)();
-    const queryClient = (0, $583VT$reactquery.useQueryClient)();
+    // Add all items from pages and process notifications (possibly new and deleted items).
+    const items = (0, $583VT$react.useMemo)(()=>{
+        const addItems = notifications.map((n)=>n.type === "Add").map((n)=>n.object);
+        const removeItems = notifications.map((n)=>n.type === "Remove").map((n)=>n.object.id || n.object);
+        const currentItems = !pages ? [] : pages.flatMap((p)=>(0, $03510abb28fd3d8a$export$e57ff0f701c44363)(p.orderedItems || p.items));
+        const currentAndNew = currentItems.concat(addItems);
+        return currentAndNew// Filter out removed items.
+        .filter((item)=>!removeItems.some((r)=>(r.id ?? r) === (item.id ?? item)))// Filter duplicates.
+        .filter((item)=>currentAndNew.some((i2)=>(i2.id ?? i2) === (item.id ?? item)));
+    }, pages, notifications);
+    if (!dereferenceItems) return {
+        loadedItems: items,
+        isLoading: false,
+        isFetching: false
+    };
+    // Dereference all items, if they are not yet.
+    const itemQueries = (0, $583VT$reactquery.useQueries)(items.filter((item)=>typeof item === "string").map((itemUri)=>({
+            queryKey: [
+                "resource",
+                itemUri
+            ],
+            queryFn: async ()=>(await dataProvider.fetch(itemUri)).json,
+            staleTime: Infinity
+        })));
+    // Put all loaded items together (might be dereferenced already, so concatenate).
+    const loadedItems = items.filter((item)=>typeof item !== "string").concat(itemQueries.flatMap((itemQuery)=>{
+        return itemQuery.isSuccess && itemQuery.data || [];
+    }));
+    console.log("loadedItems", loadedItems.length, "total", items.length);
+    const errors = itemQueries.filter((q)=>q.error);
+    return {
+        loadedItems: loadedItems,
+        isLoading: itemQueries.some((q)=>q.isLoading),
+        isFetching: itemQueries.some((q)=>q.isFetching),
+        errors: errors.length > 0 && errors
+    };
+};
+const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl, options = {})=>{
+    const { dereferenceItems: dereferenceItems = false, liveUpdates: liveUpdates = true } = options;
+    const { data: identity } = (0, $583VT$reactadmin.useGetIdentity)();
+    const [totalItems, setTotalItems] = (0, $583VT$react.useState)();
+    const [notifications, setNotifications] = (0, $583VT$react.useState)([]);
+    const [hasLiveUpdates, setHasLiveUpdates] = (0, $583VT$react.useState)({
+        status: "disconnected",
+        error: undefined
+    });
+    const dataProvider = (0, $583VT$reactadmin.useDataProvider)();
+    // Get collectionUrl from webId predicate or URL.
     const collectionUrl = (0, $583VT$react.useMemo)(()=>{
         if (predicateOrUrl) {
             if (predicateOrUrl.startsWith("http")) return predicateOrUrl;
             if (identity?.webIdData) return identity?.webIdData?.[predicateOrUrl];
         }
+        return undefined;
+    // throw new Error(`No URL available for useCollection: ${predicateOrUrl}.`);
     }, [
         identity,
         predicateOrUrl
     ]);
+    // Fetch page of collection item references (if pageParam provided)
+    //  or default to `collectionUrl` (which should give you the first page).
     const fetchCollection = (0, $583VT$react.useCallback)(async ({ pageParam: nextPageUrl })=>{
+        // Fetch page or first page (collectionUrl)
         let { json: json } = await dataProvider.fetch(nextPageUrl || collectionUrl);
         if (json.totalItems) setTotalItems(json.totalItems);
+        // If first page, handle this here.
         if ((json.type === "OrderedCollection" || json.type === "Collection") && json.first) {
             if (json.first?.items) {
                 if (json.first?.items.length === 0 && json.first?.next) // Special case where the first property is an object without items
@@ -588,17 +647,6 @@ const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl, options = {})=>{
             } else // Fetch the first page
             ({ json: json } = await dataProvider.fetch(json.first));
         }
-        // Force dereference of items
-        if (dereferenceItems) {
-            const itemPredicate = json.items ? "items" : "orderedItems";
-            json[itemPredicate] = json[itemPredicate] && await Promise.all((0, $3ff23aa25753c478$export$e57ff0f701c44363)(json[itemPredicate]).map(async (item)=>{
-                if (typeof item === "string") {
-                    const { json: json } = await dataProvider.fetch(item);
-                    return json;
-                }
-                return item;
-            }));
-        }
         return json;
     }, [
         dataProvider,
@@ -606,8 +654,9 @@ const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl, options = {})=>{
         identity,
         setTotalItems
     ]);
-    const { data: data, error: error, fetchNextPage: fetchNextPage, refetch: refetch, hasNextPage: hasNextPage, isLoading: isLoading, isFetching: isFetching, isFetchingNextPage: isFetchingNextPage, status: status } = (0, $583VT$reactquery.useInfiniteQuery)([
-        "Collection",
+    // Use infiniteQuery to handle pagination, fetching, etc.
+    const { data: data, error: collectionError, fetchNextPage: fetchNextPage, refetch: refetch, hasNextPage: hasNextPage, isLoading: isLoadingPage, isFetching: isFetchingPage, isFetchingNextPage: isFetchingNextPage } = (0, $583VT$reactquery.useInfiniteQuery)([
+        "collection",
         {
             collectionUrl: collectionUrl
         }
@@ -616,63 +665,57 @@ const $2b75a2f49c9ef165$var$useCollection = (predicateOrUrl, options = {})=>{
         getNextPageParam: (lastPage)=>lastPage.next,
         getPreviousPageParam: (firstPage)=>firstPage.prev
     });
+    // Put all items together in a list.
+    const { loadedItems: items, isLoading: isLoadingItems, isFetching: isFetchingItems, errors: itemErrors } = $2b75a2f49c9ef165$var$useItemsFromPagesAndNotifications(data?.pages, notifications, dereferenceItems);
+    // Notifications have been processed after hook call, so reset.
+    // useEffect(() => {
+    //   setNotifications([]);
+    // }, [notifications])
+    // Live Updates
     (0, $583VT$react.useEffect)(()=>{
-        if (data?.pages) setItems([].concat(...data.pages.map((p)=>(0, $3ff23aa25753c478$export$e57ff0f701c44363)(p.orderedItems || p.items))));
+        if (liveUpdates && collectionUrl) // Create ws that listens to collectionUri changes
+        (0, $583VT$semappssemanticdataprovider.getOrCreateWsChannel)(dataProvider.fetch, collectionUrl).then((webSocket)=>{
+            webSocket.addEventListener("message", (e)=>{
+                if (e.data && e.data.type === "Add" || e.data.type === "Remove") setNotifications([
+                    ...notifications,
+                    e.data
+                ]);
+            });
+            webSocket.addEventListener("error", (e)=>{
+                setHasLiveUpdates({
+                    status: "error",
+                    error: e
+                });
+            // TODO: Retry after a while
+            });
+            webSocket.addEventListener("close", (e)=>{
+                setHasLiveUpdates({
+                    ...hasLiveUpdates,
+                    status: "disconnected"
+                });
+            });
+            setHasLiveUpdates({
+                status: "connected"
+            });
+        }).catch(()=>{}); // If it fails, we won't receive live updates. But that's okay.
     }, [
-        data,
-        setItems
+        collectionUrl,
+        liveUpdates,
+        dataProvider.fetch
     ]);
-    const addItem = (0, $583VT$react.useCallback)((item)=>{
-        setItems((oldItems)=>[
-                ...oldItems,
-                item
-            ]);
-        // TODO use queryClient.setQueryData to update items directly in react-query cache
-        setTimeout(()=>queryClient.refetchQueries([
-                "Collection",
-                {
-                    collectionUrl: collectionUrl
-                }
-            ], {
-                active: true,
-                exact: true
-            }), 2000);
-    }, [
-        setItems,
-        queryClient,
-        collectionUrl
-    ]);
-    const removeItem = (0, $583VT$react.useCallback)((itemId)=>{
-        setItems((oldItems)=>oldItems.filter((item)=>typeof item === "string" ? item !== itemId : item.id !== itemId));
-        // TODO use queryClient.setQueryData to update items directly in react-query cache
-        setTimeout(()=>queryClient.refetchQueries([
-                "Collection",
-                {
-                    collectionUrl: collectionUrl
-                }
-            ], {
-                active: true,
-                exact: true
-            }), 2000);
-    }, [
-        setItems,
-        queryClient,
-        collectionUrl
-    ]);
+    const allErrors = (0, $03510abb28fd3d8a$export$e57ff0f701c44363)(collectionError).concat((0, $03510abb28fd3d8a$export$e57ff0f701c44363)(itemErrors));
     return {
         items: items,
         totalItems: totalItems,
-        error: error,
+        error: allErrors.length > 0 && allErrors,
         refetch: refetch,
         fetchNextPage: fetchNextPage,
         hasNextPage: hasNextPage,
-        isLoading: isLoading,
-        isFetching: isFetching,
+        isLoading: isLoadingPage || isLoadingItems,
+        isFetching: isFetchingPage || isFetchingItems,
         isFetchingNextPage: isFetchingNextPage,
-        status: status,
-        addItem: addItem,
-        removeItem: removeItem,
-        url: collectionUrl
+        url: collectionUrl,
+        hasLiveUpdates: hasLiveUpdates
     };
 };
 var $2b75a2f49c9ef165$export$2e2bcd8739ae039 = $2b75a2f49c9ef165$var$useCollection;
@@ -754,6 +797,224 @@ const $b0c94a9bdea99da5$var$ReferenceCollectionField = ({ source: source, refere
 };
 var $b0c94a9bdea99da5$export$2e2bcd8739ae039 = $b0c94a9bdea99da5$var$ReferenceCollectionField;
 
+
+
+
+
+
+
+const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
+    const dataProvider = (0, $583VT$reactadmin.useDataProvider)();
+    const items = (0, $583VT$react.useMemo)(()=>pages.flatMap((p)=>(0, $03510abb28fd3d8a$export$e57ff0f701c44363)(p.orderedItems || p.items)), [
+        pages
+    ]);
+    // We will force dereference, if some items are not URI string references.
+    const shouldDereference = (0, $583VT$react.useMemo)(()=>{
+        return dereferenceItems || items.some((item)=>typeof item !== "string");
+    }, [
+        dereferenceItems,
+        items
+    ]);
+    // Dereference all items, if necessary (even if shouldDereference is false, the hook needs to be called).
+    const itemQueries = (0, $583VT$reactquery.useQueries)(!shouldDereference ? [] : items.filter((item)=>typeof item === "string").map((itemUri)=>({
+            queryKey: [
+                "resource",
+                itemUri
+            ],
+            queryFn: async ()=>(await dataProvider.fetch(itemUri)).json,
+            staleTime: Infinity
+        })));
+    if (!shouldDereference) return {
+        loadedItems: items,
+        isLoading: false,
+        isFetching: false
+    };
+    // Put all loaded items together (might be dereferenced already, so concatenate).
+    const loadedItems = items.filter((item)=>typeof item !== "string").concat(itemQueries.flatMap((itemQuery)=>{
+        return itemQuery.isSuccess && itemQuery.data || [];
+    }));
+    const errors = itemQueries.filter((q)=>q.error);
+    return {
+        loadedItems: loadedItems,
+        isLoading: itemQueries.some((q)=>q.isLoading),
+        isFetching: itemQueries.some((q)=>q.isFetching),
+        errors: errors.length > 0 ? errors : undefined
+    };
+};
+/**
+ * Subscribe a collection. Supports pagination.
+ * @param predicateOrUrl The collection URI or the predicate to get the collection URI from the identity (webId).
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: true }`
+ */ const $5ca5f7e9fc1c3544$var$useCollection = (predicateOrUrl, options = {})=>{
+    const { dereferenceItems: dereferenceItems = false, liveUpdates: liveUpdates = true } = options;
+    const { data: identity } = (0, $583VT$reactadmin.useGetIdentity)();
+    const [totalItems, setTotalItems] = (0, $583VT$react.useState)();
+    const queryClient = (0, $583VT$reactquery.useQueryClient)();
+    const [hasLiveUpdates, setHasLiveUpdates] = (0, $583VT$react.useState)({
+        status: "connecting"
+    });
+    const dataProvider = (0, $583VT$reactadmin.useDataProvider)();
+    // Get collectionUrl from webId predicate or URL.
+    const collectionUrl = (0, $583VT$react.useMemo)(()=>{
+        if (predicateOrUrl) {
+            if (predicateOrUrl.startsWith("http")) return predicateOrUrl;
+            if (identity?.webIdData) return identity?.webIdData?.[predicateOrUrl];
+        }
+        return undefined;
+    // throw new Error(`No URL available for useCollection: ${predicateOrUrl}.`);
+    }, [
+        identity,
+        predicateOrUrl
+    ]);
+    // Fetch page of collection item references (if pageParam provided)
+    //  or default to `collectionUrl` (which should give you the first page).
+    const fetchCollection = (0, $583VT$react.useCallback)(async ({ pageParam: nextPageUrl })=>{
+        // Fetch page or first page (collectionUrl)
+        let { json: json } = await dataProvider.fetch(nextPageUrl || collectionUrl);
+        if (json.totalItems) setTotalItems(json.totalItems);
+        // If first page, handle this here.
+        if ((json.type === "OrderedCollection" || json.type === "Collection") && json.first) {
+            if (json.first?.items) {
+                if (json.first?.items.length === 0 && json.first?.next) // Special case where the first property is an object without items
+                ({ json: json } = await dataProvider.fetch(json.first?.next));
+                else json = json.first;
+            } else // Fetch the first page
+            ({ json: json } = await dataProvider.fetch(json.first));
+        }
+        return json;
+    }, [
+        dataProvider,
+        collectionUrl,
+        identity,
+        setTotalItems
+    ]);
+    // Use infiniteQuery to handle pagination, fetching, etc.
+    const { data: pageData, error: collectionError, fetchNextPage: fetchNextPage, refetch: refetch, hasNextPage: hasNextPage, isLoading: isLoadingPage, isFetching: isFetchingPage, isFetchingNextPage: isFetchingNextPage } = (0, $583VT$reactquery.useInfiniteQuery)([
+        "collection",
+        {
+            collectionUrl: collectionUrl
+        }
+    ], fetchCollection, {
+        enabled: !!(collectionUrl && identity?.id),
+        getNextPageParam: (lastPage)=>lastPage.next,
+        getPreviousPageParam: (firstPage)=>firstPage.prev
+    });
+    // Put all items together in a list (and dereference, if required).
+    const { loadedItems: items, isLoading: isLoadingItems, isFetching: isFetchingItems, errors: itemErrors } = $5ca5f7e9fc1c3544$var$useItemsFromPages(pageData?.pages ?? [], dereferenceItems);
+    const allErrors = (0, $03510abb28fd3d8a$export$e57ff0f701c44363)(collectionError).concat((0, $03510abb28fd3d8a$export$e57ff0f701c44363)(itemErrors));
+    const addItem = (0, $583VT$react.useCallback)((item, shouldRefetch = true)=>{
+        queryClient.setQueryData([
+            "collection",
+            {
+                collectionUrl: collectionUrl
+            }
+        ], (oldData)=>{
+            if (!oldData) return oldData;
+            setTotalItems(totalItems && totalItems + 1);
+            // Destructure, so react knows, it needs to re-render the pages.
+            const pages = [
+                ...oldData.pages
+            ];
+            const firstPageItems = pages?.[0]?.orderedItems || pages?.[0]?.items || [];
+            firstPageItems.unshift(item);
+            oldData.pages = pages;
+            return oldData;
+        });
+        if (shouldRefetch) setTimeout(()=>queryClient.refetchQueries([
+                "collection",
+                {
+                    collectionUrl: collectionUrl
+                }
+            ], {
+                active: true,
+                exact: true
+            }), typeof shouldRefetch === "number" ? shouldRefetch : 2000);
+    }, [
+        queryClient,
+        collectionUrl
+    ]);
+    const removeItem = (0, $583VT$react.useCallback)((item, shouldRefetch = true)=>{
+        queryClient.setQueryData([
+            "collection",
+            {
+                collectionUrl: collectionUrl
+            }
+        ], (oldData)=>{
+            if (!oldData) return oldData;
+            setTotalItems(totalItems && totalItems - 1);
+            // Destructure, so react knows, it needs to re-render the pages array.
+            const pages = [
+                ...oldData.pages
+            ];
+            // Find the item in all pages and remove the item to be removed (either item.id or just item)
+            pages.forEach((page)=>{
+                if (page.orderedItems) page.orderedItems = page.orderedItems.filter((i)=>(i.id || i) !== (item.id || item));
+                else if (page.items) page.items = page.items.filter((i)=>(i.id || i) !== (item?.id || item));
+            });
+            oldData.pages = pages;
+            return oldData;
+        });
+        if (shouldRefetch) setTimeout(()=>queryClient.refetchQueries([
+                "collection",
+                {
+                    collectionUrl: collectionUrl
+                }
+            ], {
+                active: true,
+                exact: true
+            }), typeof shouldRefetch === "number" ? shouldRefetch : 2000);
+    }, [
+        queryClient,
+        collectionUrl
+    ]);
+    // Live Updates
+    (0, $583VT$react.useEffect)(()=>{
+        if (liveUpdates && collectionUrl) // Create ws that listens to collectionUri changes
+        (0, $583VT$semappssemanticdataprovider.getOrCreateWsChannel)(dataProvider.fetch, collectionUrl).then((webSocket)=>{
+            webSocket.addEventListener("message", (e)=>{
+                const data = JSON.parse(e.data);
+                if (data && data.type === "Add") addItem(data.object, true);
+                else if (data && data.type === "Remove") removeItem(data.object, true);
+            });
+            webSocket.addEventListener("error", (e)=>{
+                setHasLiveUpdates({
+                    status: "error",
+                    error: e
+                });
+            // TODO: Retry after a while
+            });
+            webSocket.addEventListener("close", (e)=>{
+                if (!hasLiveUpdates.error) setHasLiveUpdates({
+                    ...hasLiveUpdates,
+                    status: "closed"
+                });
+            });
+            setHasLiveUpdates({
+                status: "connected"
+            });
+        }).catch(()=>{}); // If it fails, we won't receive live updates. But that's okay.
+    }, [
+        collectionUrl,
+        liveUpdates,
+        dataProvider
+    ]);
+    return {
+        items: items,
+        totalItems: totalItems,
+        error: allErrors.length > 0 && allErrors,
+        refetch: refetch,
+        fetchNextPage: fetchNextPage,
+        addItem: addItem,
+        removeItem: removeItem,
+        hasNextPage: hasNextPage,
+        isLoading: isLoadingPage || isLoadingItems,
+        isFetching: isFetchingPage || isFetchingItems,
+        isFetchingNextPage: isFetchingNextPage,
+        url: collectionUrl,
+        hasLiveUpdates: hasLiveUpdates
+    };
+};
+var $5ca5f7e9fc1c3544$export$2e2bcd8739ae039 = $5ca5f7e9fc1c3544$var$useCollection;
 
 
 
