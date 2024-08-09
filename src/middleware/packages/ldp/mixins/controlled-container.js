@@ -9,6 +9,7 @@ module.exports = {
     permissions: null,
     newResourcesPermissions: null,
     controlledActions: {},
+    description: null,
     readOnly: false,
     excludeFromMirror: false,
     activateTombstones: true,
@@ -17,17 +18,11 @@ module.exports = {
   },
   dependencies: ['ldp'],
   async started() {
+    const { path, controlledActions, ...rest } = this.settings;
+
     const registration = await this.broker.call('ldp.registry.register', {
-      path: this.settings.path,
+      path,
       name: this.name,
-      podsContainer: this.settings.podsContainer,
-      podProvider: this.settings.podProvider,
-      acceptedTypes: this.settings.acceptedTypes,
-      accept: this.settings.accept,
-      permissions: this.settings.permissions,
-      excludeFromMirror: this.settings.excludeFromMirror,
-      activateTombstones: this.settings.activateTombstones,
-      newResourcesPermissions: this.settings.newResourcesPermissions,
       controlledActions: {
         post: `${this.name}.post`,
         list: `${this.name}.list`,
@@ -38,11 +33,11 @@ module.exports = {
         delete: `${this.name}.delete`,
         ...this.settings.controlledActions
       },
-      readOnly: this.settings.readOnly
+      ...rest
     });
 
     // If no path was defined in the settings, set the automatically generated path (so that it can be used below)
-    if (!this.settings.path) this.settings.path = registration.path;
+    if (!path) this.settings.path = registration.path;
   },
   actions: {
     async post(ctx) {
