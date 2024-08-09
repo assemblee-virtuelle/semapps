@@ -214,7 +214,7 @@ const authProvider = ({
         window.location.href = urlJoin(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
       }
     },
-    logout: async () => {
+    logout: async redirectUrl => {
       switch (authType) {
         case AUTH_TYPE_LOCAL: {
           const authServerUrl = await getAuthServerUrl(dataProvider);
@@ -273,12 +273,13 @@ const authProvider = ({
             // Delete token but also any other value in local storage
             localStorage.clear();
 
-            // Redirect to the POD provider
-            return `${urlJoin(webId, 'openApp')}?type=${encodeURIComponent(
-              'http://www.w3.org/ns/solid/interop#ApplicationRegistration'
-            )}`;
+            // Redirect to the Pod provider
+            // TODO Use 'solid:oidcIssuer' when it is available
+            // See https://github.com/activitypods/activitypods/issues/122
+            return redirectUrl || new URL(webId).origin;
+          } else {
+            return redirectUrl;
           }
-          break;
         }
 
         default:

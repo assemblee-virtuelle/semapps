@@ -4,7 +4,7 @@ import {discoveryRequest as $1obPJ$discoveryRequest, processDiscoveryResponse as
 import {jsx as $1obPJ$jsx, jsxs as $1obPJ$jsxs, Fragment as $1obPJ$Fragment} from "react/jsx-runtime";
 import $1obPJ$react, {useEffect as $1obPJ$useEffect, useState as $1obPJ$useState, useCallback as $1obPJ$useCallback, useRef as $1obPJ$useRef, useMemo as $1obPJ$useMemo, forwardRef as $1obPJ$forwardRef} from "react";
 import {useResourceContext as $1obPJ$useResourceContext, Create as $1obPJ$Create, CreateActions as $1obPJ$CreateActions, usePermissions as $1obPJ$usePermissions, useNotify as $1obPJ$useNotify, useRedirect as $1obPJ$useRedirect, useGetRecordId as $1obPJ$useGetRecordId, Edit as $1obPJ$Edit, useResourceDefinition as $1obPJ$useResourceDefinition, useRecordContext as $1obPJ$useRecordContext, TopToolbar as $1obPJ$TopToolbar, ListButton as $1obPJ$ListButton, ShowButton as $1obPJ$ShowButton, Button as $1obPJ$Button, useTranslate as $1obPJ$useTranslate, useGetList as $1obPJ$useGetList, useDataProvider as $1obPJ$useDataProvider, Loading as $1obPJ$Loading, Error as $1obPJ$Error, useAuthProvider as $1obPJ$useAuthProvider, Toolbar as $1obPJ$Toolbar, SaveButton as $1obPJ$SaveButton, DeleteButton as $1obPJ$DeleteButton, EditButton as $1obPJ$EditButton, List as $1obPJ$List1, CreateButton as $1obPJ$CreateButton, ExportButton as $1obPJ$ExportButton, Show as $1obPJ$Show, useLogin as $1obPJ$useLogin, useGetIdentity as $1obPJ$useGetIdentity, useSafeSetState as $1obPJ$useSafeSetState, useLocaleState as $1obPJ$useLocaleState, Form as $1obPJ$Form, TextInput as $1obPJ$TextInput, required as $1obPJ$required, minLength as $1obPJ$minLength, email as $1obPJ$email, Notification as $1obPJ$Notification, Resource as $1obPJ$Resource, useUserMenu as $1obPJ$useUserMenu, UserMenu as $1obPJ$UserMenu, Logout as $1obPJ$Logout, useGetPermissions as $1obPJ$useGetPermissions} from "react-admin";
-import {useCreateContainer as $1obPJ$useCreateContainer, useCreateContainerUri as $1obPJ$useCreateContainerUri} from "@semapps/semantic-data-provider";
+import {useCreateContainerUri as $1obPJ$useCreateContainerUri, useCreateContainer as $1obPJ$useCreateContainer} from "@semapps/semantic-data-provider";
 import $1obPJ$muiiconsmaterialShare from "@mui/icons-material/Share";
 import {Dialog as $1obPJ$Dialog, DialogTitle as $1obPJ$DialogTitle, DialogContent as $1obPJ$DialogContent, DialogActions as $1obPJ$DialogActions, TextField as $1obPJ$TextField, List as $1obPJ$List, ListItem as $1obPJ$ListItem, ListItemAvatar as $1obPJ$ListItemAvatar, Avatar as $1obPJ$Avatar, ListItemText as $1obPJ$ListItemText, ListItemSecondaryAction as $1obPJ$ListItemSecondaryAction, IconButton as $1obPJ$IconButton, Menu as $1obPJ$Menu, MenuItem as $1obPJ$MenuItem, ListItemIcon as $1obPJ$ListItemIcon, useMediaQuery as $1obPJ$useMediaQuery, DialogContentText as $1obPJ$DialogContentText, Button as $1obPJ$Button1, Card as $1obPJ$Card, Typography as $1obPJ$Typography, CardActions as $1obPJ$CardActions, CardContent as $1obPJ$CardContent, CircularProgress as $1obPJ$CircularProgress, LinearProgress as $1obPJ$LinearProgress, Box as $1obPJ$Box} from "@mui/material";
 import $1obPJ$muistylesmakeStyles from "@mui/styles/makeStyles";
@@ -219,7 +219,7 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
                 window.location.href = (0, $1obPJ$urljoin)(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
             }
         },
-        logout: async ()=>{
+        logout: async (redirectUrl)=>{
             switch(authType){
                 case $1d8606895ce3b768$var$AUTH_TYPE_LOCAL:
                     {
@@ -266,10 +266,11 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
                             const { webid: webId } = (0, $1obPJ$jwtdecode)(token); // Not webId !!
                             // Delete token but also any other value in local storage
                             localStorage.clear();
-                            // Redirect to the POD provider
-                            return `${(0, $1obPJ$urljoin)(webId, "openApp")}?type=${encodeURIComponent("http://www.w3.org/ns/solid/interop#ApplicationRegistration")}`;
-                        }
-                        break;
+                            // Redirect to the Pod provider
+                            // TODO Use 'solid:oidcIssuer' when it is available
+                            // See https://github.com/activitypods/activitypods/issues/122
+                            return redirectUrl || new URL(webId).origin;
+                        } else return redirectUrl;
                     }
                 default:
                     break;
@@ -544,7 +545,7 @@ var $3246c5a1f284b82d$export$2e2bcd8739ae039 = $3246c5a1f284b82d$var$useCheckPer
 
 const $f2c5683e04dee28c$var$CreateWithPermissions = (props)=>{
     const resource = (0, $1obPJ$useResourceContext)();
-    const createContainerUri = (0, $1obPJ$useCreateContainer)(resource);
+    const createContainerUri = (0, $1obPJ$useCreateContainerUri)()(resource);
     (0, $3246c5a1f284b82d$export$2e2bcd8739ae039)(createContainerUri, "create");
     return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Create), {
         ...props
