@@ -1,8 +1,4 @@
 const { MoleculerError } = require('moleculer').Errors;
-const SparqlParser = require('sparqljs').Parser;
-
-const parser = new SparqlParser();
-const ACCEPTED_OPERATIONS = ['insert', 'delete'];
 
 function checkTriplesSubjectIsResource(triples, resourceUri) {
   for (const triple of triples) {
@@ -26,10 +22,6 @@ module.exports = {
     resourceUri: {
       type: 'string'
     },
-    sparqlUpdate: {
-      type: 'string',
-      optional: true
-    },
     triplesToAdd: {
       type: 'array',
       optional: true
@@ -48,7 +40,7 @@ module.exports = {
     }
   },
   async handler(ctx) {
-    let { resourceUri, sparqlUpdate, triplesToAdd, triplesToRemove, skipInferenceCheck, webId } = ctx.params;
+    let { resourceUri, triplesToAdd, triplesToRemove, skipInferenceCheck, webId } = ctx.params;
     webId = webId || ctx.meta.webId || 'anon';
 
     if (this.isRemoteUri(resourceUri, ctx.meta.dataset))
@@ -57,57 +49,28 @@ module.exports = {
     // const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId: 'system' });
     // if (!resourceExist) throw new MoleculerError('Resource not found', 404, 'FORBIDDEN');
 
-    if (sparqlUpdate) {
-      let parsedQuery;
-
-      try {
-        parsedQuery = parser.parse(sparqlUpdate);
-      } catch (e) {
-        throw new MoleculerError(`Invalid SPARQL Update: ${sparqlUpdate}`, 400, 'BAD_REQUEST');
-      }
-
-      if (parsedQuery.type !== 'update')
-        throw new MoleculerError('Invalid SPARQL. Must be an Update', 400, 'BAD_REQUEST');
-
-      const triplesByOperation = Object.fromEntries(
-        parsedQuery.updates
-          .filter(p => ACCEPTED_OPERATIONS.includes(p.updateType))
-          .map(p => [p.updateType, p[p.updateType][0].triples])
-      );
-
-      if (Object.values(triplesByOperation).length === 0)
-        throw new MoleculerError(
-          'Invalid SPARQL operation. Must be INSERT DATA and/or DELETE DATA',
-          400,
-          'BAD_REQUEST'
-        );
-
-      triplesToAdd = triplesByOperation.insert;
-      triplesToRemove = triplesByOperation.delete;
-    }
-
     if (!triplesToAdd && !triplesToRemove)
       throw new MoleculerError('No triples to add or to remove', 400, 'BAD_REQUEST');
 
-    // Rebuild the sparql update to reduce security risks
-    sparqlUpdate = {
+    // Build the SPARQL update
+    const sparqlUpdate = {
       type: 'update',
       updates: []
     };
-
-    if (triplesToAdd) {
-      checkTriplesSubjectIsResource(triplesToAdd, resourceUri);
-      sparqlUpdate.updates.push({
-        updateType: 'insert',
-        insert: [{ type: 'bgp', triples: triplesToAdd }]
-      });
-    }
 
     if (triplesToRemove) {
       checkTriplesSubjectIsResource(triplesToRemove, resourceUri);
       sparqlUpdate.updates.push({
         updateType: 'delete',
         delete: [{ type: 'bgp', triples: triplesToRemove }]
+      });
+    }
+
+    if (triplesToAdd) {
+      checkTriplesSubjectIsResource(triplesToAdd, resourceUri);
+      sparqlUpdate.updates.push({
+        updateType: 'insert',
+        insert: [{ type: 'bgp', triples: triplesToAdd }]
       });
     }
 

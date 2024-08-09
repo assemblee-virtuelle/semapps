@@ -2,10 +2,7 @@ const { MoleculerError } = require('moleculer').Errors;
 const { ControlledContainerMixin, arrayOf } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { Errors: E } = require('moleculer-web');
-const SparqlParser = require('sparqljs').Parser;
 const { getValueFromDataType } = require('../../../utils');
-
-const parser = new SparqlParser();
 
 const CollectionService = {
   name: 'activitypub.collection',
@@ -56,7 +53,7 @@ const CollectionService = {
       throw new E.ForbiddenError();
     },
     async patch(ctx) {
-      const { resourceUri: collectionUri, sparqlUpdate } = ctx.params;
+      const { resourceUri: collectionUri, triplesToAdd, triplesToRemove } = ctx.params;
       const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
       const collectionExist = await ctx.call('activitypub.collection.exist', { resourceUri: collectionUri, webId });
@@ -68,40 +65,28 @@ const CollectionService = {
         );
       }
 
-      try {
-        const parsedQuery = parser.parse(sparqlUpdate);
-
-        if (parsedQuery.type !== 'update')
-          throw new MoleculerError('Invalid SPARQL. Must be an Update', 400, 'BAD_REQUEST');
-
-        const updates = { insert: [], delete: [] };
-        parsedQuery.updates.forEach(p => updates[p.updateType].push(p[p.updateType][0]));
-
-        for (const inserts of updates.insert) {
-          for (const triple of inserts.triples) {
-            if (
-              triple.subject.value === collectionUri &&
-              triple.predicate.value === 'https://www.w3.org/ns/activitystreams#items'
-            ) {
-              const itemUri = triple.object.value;
-              await ctx.call('activitypub.collection.add', { collectionUri, itemUri });
-            }
+      if (triplesToAdd) {
+        for (const triple of triplesToAdd) {
+          if (
+            triple.subject.value === collectionUri &&
+            triple.predicate.value === 'https://www.w3.org/ns/activitystreams#items'
+          ) {
+            const itemUri = triple.object.value;
+            await ctx.call('activitypub.collection.add', { collectionUri, itemUri });
           }
         }
+      }
 
-        for (const deletes of updates.delete) {
-          for (const triple of deletes.triples) {
-            if (
-              triple.subject.value === collectionUri &&
-              triple.predicate.value === 'https://www.w3.org/ns/activitystreams#items'
-            ) {
-              const itemUri = triple.object.value;
-              await ctx.call('activitypub.collection.remove', { collectionUri, itemUri });
-            }
+      if (triplesToRemove) {
+        for (const triple of triplesToRemove) {
+          if (
+            triple.subject.value === collectionUri &&
+            triple.predicate.value === 'https://www.w3.org/ns/activitystreams#items'
+          ) {
+            const itemUri = triple.object.value;
+            await ctx.call('activitypub.collection.remove', { collectionUri, itemUri });
           }
         }
-      } catch (e) {
-        throw new MoleculerError(`Invalid sparql-update content`, 400, 'BAD_REQUEST');
       }
     },
     async post(ctx) {
