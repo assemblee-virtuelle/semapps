@@ -1,8 +1,5 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { isMirror } = require('../../../utils');
-const SparqlParser = require('sparqljs').Parser;
-
-const parser = new SparqlParser();
 
 module.exports = {
   visibility: 'public',
@@ -10,8 +7,13 @@ module.exports = {
     containerUri: {
       type: 'string'
     },
-    sparqlUpdate: {
-      type: 'string'
+    triplesToAdd: {
+      type: 'array',
+      optional: true
+    },
+    triplesToRemove: {
+      type: 'array',
+      optional: true
     },
     webId: {
       type: 'string',
@@ -19,78 +21,70 @@ module.exports = {
     }
   },
   async handler(ctx) {
-    let { containerUri, sparqlUpdate, webId } = ctx.params;
-    webId = webId || ctx.meta.webId || 'anon';
+    const { containerUri, triplesToAdd, triplesToRemove } = ctx.params;
+    const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     const containerExist = await ctx.call('ldp.container.exist', { containerUri, webId });
     if (!containerExist) {
       throw new MoleculerError(`Cannot update content of non-existing container ${containerUri}`, 400, 'BAD_REQUEST');
     }
 
-    try {
-      const parsedQuery = parser.parse(sparqlUpdate);
+    if (!triplesToAdd && !triplesToRemove)
+      throw new MoleculerError('No triples to add or to remove', 400, 'BAD_REQUEST');
 
-      if (parsedQuery.type !== 'update')
-        throw new MoleculerError('Invalid SPARQL. Must be an Update', 400, 'BAD_REQUEST');
+    if (triplesToAdd) {
+      for (const triple of triplesToAdd) {
+        // Ensure the containerUri is the same as specified in the params
+        if (triple.subject.value === containerUri && triple.predicate.value === 'http://www.w3.org/ns/ldp#contains') {
+          const resourceUri = triple.object.value;
+          try {
+            await ctx.call('ldp.container.attach', { containerUri, resourceUri });
+          } catch (e) {
+            if (e.code === 404 && isMirror(resourceUri, this.settings.baseUrl)) {
+              // We need to import the remote resource
+              this.logger.info(`Importing ${resourceUri}...`);
+              try {
+                await ctx.call('ldp.remote.store', {
+                  resourceUri,
+                  keepInSync: true,
+                  mirrorGraph: true,
+                  webId
+                });
 
-      const updates = { insert: [], delete: [] };
-      parsedQuery.updates.forEach(p => updates[p.updateType].push(p[p.updateType][0]));
-
-      for (const inss of updates.insert) {
-        // check that the containerUri is the same as specified in the params. ignore if not.
-        for (const ins of inss.triples)
-          if (ins.subject.value === containerUri && ins.predicate.value === 'http://www.w3.org/ns/ldp#contains') {
-            const insUri = ins.object.value;
-            try {
-              await ctx.call('ldp.container.attach', { containerUri, resourceUri: insUri });
-            } catch (e) {
-              if (e.code === 404 && isMirror(insUri, this.settings.baseUrl)) {
-                // we need to import the remote resource
-                this.logger.info(`IMPORTING ${insUri}`);
-                try {
-                  await ctx.call('ldp.remote.store', {
-                    resourceUri: insUri,
-                    keepInSync: true,
-                    mirrorGraph: true,
-                    webId
-                  });
-
-                  // Now if the import went well, we can retry the attach
-                  await ctx.call('ldp.container.attach', { containerUri, resourceUri: insUri });
-                } catch (e) {
-                  this.logger.warn(`ERROR while IMPORTING ${insUri} : ${e.message}`);
-                }
+                // Now if the import went well, we can retry the attach
+                await ctx.call('ldp.container.attach', { containerUri, resourceUri });
+              } catch (e2) {
+                this.logger.warn(`Error while importing ${resourceUri} : ${e2.message}`);
               }
             }
           }
+        }
       }
+    }
 
-      for (const dels of updates.delete) {
-        for (const del of dels.triples)
-          if (del.subject.value === containerUri && del.predicate.value === 'http://www.w3.org/ns/ldp#contains') {
-            const delUri = del.object.value;
-            try {
-              await ctx.call('ldp.container.detach', { containerUri, resourceUri: delUri });
+    if (triplesToRemove) {
+      for (const triple of triplesToRemove) {
+        if (triple.subject.value === containerUri && triple.predicate.value === 'http://www.w3.org/ns/ldp#contains') {
+          const resourceUri = triple.object.value;
+          try {
+            await ctx.call('ldp.container.detach', { containerUri, resourceUri });
 
-              // If the mirrored resource is not attached to any container anymore, it must be deleted.
-              const containers = await ctx.call('ldp.resource.getContainers', { resourceUri: delUri });
-              if (containers.length === 0 && isMirror(delUri, this.settings.baseUrl)) {
-                await ctx.call('ldp.remote.delete', { resourceUri: delUri });
-              }
-            } catch (e) {
-              // Fail silently
-              this.logger.warn(`Error when detaching ${delUri} from ${containerUri}: ${e.message}`);
+            // If the mirrored resource is not attached to any container anymore, it must be deleted.
+            const containers = await ctx.call('ldp.resource.getContainers', { resourceUri });
+            if (containers.length === 0 && isMirror(resourceUri, this.settings.baseUrl)) {
+              await ctx.call('ldp.remote.delete', { resourceUri });
             }
+          } catch (e) {
+            // Fail silently
+            this.logger.warn(`Error when detaching ${resourceUri} from ${containerUri}: ${e.message}`);
           }
+        }
       }
-    } catch (e) {
-      console.log(e);
-      throw new MoleculerError(`Invalid SPARQL UPDATE content`, 400, 'BAD_REQUEST');
     }
 
     ctx.emit(
       'ldp.container.patched',
-      { containerUri, dataset: ctx.meta.dataset },
+      { containerUri, triplesAdded: triplesToAdd, triplesRemoved: triplesToRemove, dataset: ctx.meta.dataset },
       { meta: { webId: null, dataset: null } }
     );
   }
