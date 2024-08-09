@@ -258,7 +258,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                 window.location.href = (0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
             }
         },
-        logout: async ()=>{
+        logout: async (redirectUrl)=>{
             switch(authType){
                 case $6a92eb32301846ac$var$AUTH_TYPE_LOCAL:
                     {
@@ -305,10 +305,11 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                             const { webid: webId } = (0, ($parcel$interopDefault($4Uj5b$jwtdecode)))(token); // Not webId !!
                             // Delete token but also any other value in local storage
                             localStorage.clear();
-                            // Redirect to the POD provider
-                            return `${(0, ($parcel$interopDefault($4Uj5b$urljoin)))(webId, "openApp")}?type=${encodeURIComponent("http://www.w3.org/ns/solid/interop#ApplicationRegistration")}`;
-                        }
-                        break;
+                            // Redirect to the Pod provider
+                            // TODO Use 'solid:oidcIssuer' when it is available
+                            // See https://github.com/activitypods/activitypods/issues/122
+                            return redirectUrl || new URL(webId).origin;
+                        } else return redirectUrl;
                     }
                 default:
                     break;
@@ -583,7 +584,7 @@ var $715d0a876ac5de8e$export$2e2bcd8739ae039 = $715d0a876ac5de8e$var$useCheckPer
 
 const $7c87aa71409e289a$var$CreateWithPermissions = (props)=>{
     const resource = (0, $4Uj5b$reactadmin.useResourceContext)();
-    const createContainerUri = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainer)(resource);
+    const createContainerUri = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainerUri)()(resource);
     (0, $715d0a876ac5de8e$export$2e2bcd8739ae039)(createContainerUri, "create");
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Create), {
         ...props
