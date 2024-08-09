@@ -1,6 +1,6 @@
 {
   "name": "@semapps/mime-types",
-  "version": "0.8.9",
+  "version": "0.9.0",
   "description": "MIME types handling for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
