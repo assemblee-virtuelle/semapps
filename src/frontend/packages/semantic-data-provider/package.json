@@ -1,6 +1,6 @@
 {
   "name": "@semapps/semantic-data-provider",
-  "version": "0.6.6",
+  "version": "0.6.7",
   "description": "React-Admin data provider for LDP servers",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -23,10 +23,10 @@
     "url-join": "^4.0.1"
   },
   "devDependencies": {
+    "@rdfjs/types": "^1.1.0",
     "@types/jsonld": "^1.5.14",
-    "@types/url-join": "^4.0.1",
     "@types/sparqljs": "^3.1.11",
-    "@rdfjs/types": "^1.1.0"
+    "@types/url-join": "^4.0.1"
   },
   "peerDependencies": {
     "@mui/styles": "^5.13.1",
