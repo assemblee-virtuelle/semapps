@@ -952,6 +952,44 @@ var $e5e279a608b8e6b1$export$2e2bcd8739ae039 = $e5e279a608b8e6b1$var$getManyRefe
 
 
 
+const $fda69bf2752eb49a$var$generator = new (0, $bkNnK$sparqljs.Generator)();
+const $fda69bf2752eb49a$var$patchMethod = (config)=>async (resourceId, params)=>{
+        const { httpClient: httpClient } = config;
+        const sparqlUpdate = {
+            type: "update",
+            prefixes: {},
+            updates: []
+        };
+        if (params.triplesToAdd) sparqlUpdate.updates.push({
+            updateType: "insert",
+            insert: [
+                {
+                    type: "bgp",
+                    triples: params.triplesToAdd
+                }
+            ]
+        });
+        if (params.triplesToRemove) sparqlUpdate.updates.push({
+            updateType: "delete",
+            delete: [
+                {
+                    type: "bgp",
+                    triples: params.triplesToRemove
+                }
+            ]
+        });
+        await httpClient(`${params.id}`, {
+            method: "PATCH",
+            headers: new Headers({
+                "Content-Type": "application/sparql-update"
+            }),
+            body: $fda69bf2752eb49a$var$generator.stringify(sparqlUpdate)
+        });
+    };
+var $fda69bf2752eb49a$export$2e2bcd8739ae039 = $fda69bf2752eb49a$var$patchMethod;
+
+
+
 const $ceaafb56f75454f0$var$updateMethod = (config)=>async (resourceId, params)=>{
         const { httpClient: httpClient, jsonContext: jsonContext } = config;
         // Upload files, if there are any
@@ -1162,6 +1200,7 @@ const $7f6a16d0025dc83a$var$dataProvider = (config)=>{
         delete: waitForConfig((0, $566b5adde94810fa$export$2e2bcd8739ae039)(config)),
         deleteMany: waitForConfig((0, $f170294dd29d8bf8$export$2e2bcd8739ae039)(config)),
         // Custom methods
+        patch: waitForConfig((0, $fda69bf2752eb49a$export$2e2bcd8739ae039)(config)),
         getDataModels: waitForConfig((0, $241c41c6f6021c7a$export$2e2bcd8739ae039)(config)),
         getDataServers: waitForConfig((0, $b16131432127b07b$export$2e2bcd8739ae039)(config)),
         getLocalDataServers: (0, $b16131432127b07b$export$2e2bcd8739ae039)(config),

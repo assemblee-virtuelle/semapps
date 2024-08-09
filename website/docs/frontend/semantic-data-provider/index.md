@@ -159,6 +159,27 @@ Here's an example to fetch ActivityStreams events after a given date:
 
 > Note: In the above example, the variable `s1` is the URI of a LDP resource.
 
+## Custom methods
+
+In addition to regular [React-Admin methods](https://marmelab.com/react-admin/DataProviderWriting.html#data-provider-methods), we provide custom methods that are specific to linked data. These can be accessed with the `useDataProvider` hook.
+
+### `patch`
+
+Patch a resource with a SPARQL-Update (`application/sparql-update`) operation.
+
+#### Parameters
+
+| Property                 | Type     | Default      | Description                                                                                        |
+| ------------------------ | -------- | ------------ | -------------------------------------------------------------------------------------------------- |
+| `resourceId`             | `String` | **required** | React-Admin resource ID                                                                            |
+| `params.id`              | `String` | **required** | URI of the resource to patch                                                                       |
+| `params.triplesToAdd`    | `[Quad]` |              | Triples to insert, formatted with the [RDFJS data model](https://github.com/rdfjs-base/data-model) |
+| `params.triplesToRemove` | `[Quad]` |              | Triples to delete, formatted with the [RDFJS data model](https://github.com/rdfjs-base/data-model) |
+
+### `refreshConfig`
+
+Refresh the dymamically loaded config (VOID endpoint and, for Pods, the user config)
+
 ## Hooks
 
 ### useContainers

@@ -7,6 +7,7 @@ import getListMethod from './methods/getList';
 import getManyMethod from './methods/getMany';
 import getManyReferenceMethod from './methods/getManyReference';
 import getOneMethod from './methods/getOne';
+import patchMethod from './methods/patch';
 import updateMethod from './methods/update';
 import fetchUserConfig from './utils/fetchUserConfig';
 import fetchVoidEndpoints from './utils/fetchVoidEndpoints';
@@ -51,6 +52,7 @@ const dataProvider = config => {
     delete: waitForConfig(deleteMethod(config)),
     deleteMany: waitForConfig(deleteManyMethod(config)),
     // Custom methods
+    patch: waitForConfig(patchMethod(config)),
     getDataModels: waitForConfig(getDataModelsMethod(config)),
     getDataServers: waitForConfig(getDataServersMethod(config)),
     getLocalDataServers: getDataServersMethod(config),

@@ -24,7 +24,9 @@
   },
   "devDependencies": {
     "@types/jsonld": "^1.5.14",
-    "@types/url-join": "^4.0.1"
+    "@types/url-join": "^4.0.1",
+    "@types/sparqljs": "^3.1.11",
+    "@rdfjs/types": "^1.1.0"
   },
   "peerDependencies": {
     "@mui/styles": "^5.13.1",
