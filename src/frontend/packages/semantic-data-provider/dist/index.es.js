@@ -927,6 +927,44 @@ var $b5979a9678f57756$export$2e2bcd8739ae039 = $b5979a9678f57756$var$getManyRefe
 
 
 
+const $cdfdce6efa87baab$var$generator = new (0, $fj9kP$Generator)();
+const $cdfdce6efa87baab$var$patchMethod = (config)=>async (resourceId, params)=>{
+        const { httpClient: httpClient } = config;
+        const sparqlUpdate = {
+            type: "update",
+            prefixes: {},
+            updates: []
+        };
+        if (params.triplesToAdd) sparqlUpdate.updates.push({
+            updateType: "insert",
+            insert: [
+                {
+                    type: "bgp",
+                    triples: params.triplesToAdd
+                }
+            ]
+        });
+        if (params.triplesToRemove) sparqlUpdate.updates.push({
+            updateType: "delete",
+            delete: [
+                {
+                    type: "bgp",
+                    triples: params.triplesToRemove
+                }
+            ]
+        });
+        await httpClient(`${params.id}`, {
+            method: "PATCH",
+            headers: new Headers({
+                "Content-Type": "application/sparql-update"
+            }),
+            body: $cdfdce6efa87baab$var$generator.stringify(sparqlUpdate)
+        });
+    };
+var $cdfdce6efa87baab$export$2e2bcd8739ae039 = $cdfdce6efa87baab$var$patchMethod;
+
+
+
 const $c5031381f4dfc62d$var$updateMethod = (config)=>async (resourceId, params)=>{
         const { httpClient: httpClient, jsonContext: jsonContext } = config;
         // Upload files, if there are any
@@ -1137,6 +1175,7 @@ const $243bf28fbb1b868f$var$dataProvider = (config)=>{
         delete: waitForConfig((0, $9510970b8e7eb9e2$export$2e2bcd8739ae039)(config)),
         deleteMany: waitForConfig((0, $298dd1ae21173ea0$export$2e2bcd8739ae039)(config)),
         // Custom methods
+        patch: waitForConfig((0, $cdfdce6efa87baab$export$2e2bcd8739ae039)(config)),
         getDataModels: waitForConfig((0, $54a3fa40eed06111$export$2e2bcd8739ae039)(config)),
         getDataServers: waitForConfig((0, $7dd5bf9323d2d9c1$export$2e2bcd8739ae039)(config)),
         getLocalDataServers: (0, $7dd5bf9323d2d9c1$export$2e2bcd8739ae039)(config),

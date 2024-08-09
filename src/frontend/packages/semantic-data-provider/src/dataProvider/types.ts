@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-redundant-type-constituents */
-import { DataProvider as RaDataProvider, fetchUtils } from 'react-admin';
+import { DataProvider as RaDataProvider, RaRecord, fetchUtils } from 'react-admin';
+import type { Quad } from '@rdfjs/types';
 
 export type DataServerKey = string & { readonly _type?: 'DataServerKey' };
 export type ContainerURI = string & { readonly _type?: 'ContainerURI' };
@@ -99,3 +100,9 @@ export type DataProvider = RaDataProvider & {
   getDataModels: () => Promise<Record<string, DataModel>>;
   getDataServers: () => Promise<DataServersConfig>;
 };
+
+export interface PatchParams<RecordType extends RaRecord = any> {
+  id: RecordType['id'];
+  triplesToAdd?: Quad[];
+  triplesToRemove?: Quad[];
+}
