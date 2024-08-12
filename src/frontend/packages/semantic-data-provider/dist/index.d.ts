@@ -1,4 +1,4 @@
-import { DataProvider as _DataProvider1, RaRecord, fetchUtils } from 'react-admin';
+import { DataProvider, RaRecord, fetchUtils } from 'react-admin';
 import { Quad } from '@rdfjs/types';
 export type DataServerKey = string & {
   readonly _type?: 'DataServerKey';
@@ -73,7 +73,7 @@ export type Configuration = {
   jsonContext: string | string[] | Record<string, string>;
   resources: Record<string, DataModel>;
 };
-export type DataProvider = _DataProvider1 & {
+export type SemanticDataProvider = DataProvider & {
   getDataModels: () => Promise<Record<string, DataModel>>;
   getDataServers: () => Promise<DataServersConfig>;
   fetch: (url: string, options?: HttpClientOptions) => ReturnType<typeof fetchUtils.fetchJson>;

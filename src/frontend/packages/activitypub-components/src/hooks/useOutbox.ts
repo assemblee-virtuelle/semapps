@@ -1,15 +1,15 @@
 import { useCallback } from 'react';
 import { useDataProvider, useGetIdentity } from 'react-admin';
-import { DataProvider } from '@semapps/semantic-data-provider';
+import { SemanticDataProvider } from '@semapps/semantic-data-provider';
 import useCollection from './useCollection';
 import useAwaitActivity from './useAwaitActivity';
 import type { UseCollectionOptions } from '../types';
 
 const useOutbox = (options: UseCollectionOptions = {}) => {
-  const dataProvider: DataProvider = useDataProvider();
+  const dataProvider = useDataProvider<SemanticDataProvider>();
   const { data: identity } = useGetIdentity();
-  const { url, hasLiveUpdates, ...rest } = useCollection('outbox', options);
-  const awaitActivity = useAwaitActivity(hasLiveUpdates.webSocket);
+  const { url, hasLiveUpdates, items, ...rest } = useCollection('outbox', options);
+  const awaitActivity = useAwaitActivity(hasLiveUpdates.webSocket, items);
 
   // Post an activity to the logged user's outbox and return its URI
   const post = useCallback(
@@ -31,7 +31,7 @@ const useOutbox = (options: UseCollectionOptions = {}) => {
     [url, dataProvider]
   );
 
-  return { url, hasLiveUpdates, post, awaitActivity, owner: identity?.id, ...rest };
+  return { url, hasLiveUpdates, items, post, awaitActivity, owner: identity?.id, ...rest };
 };
 
 export default useOutbox;

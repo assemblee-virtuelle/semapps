@@ -1,14 +1,16 @@
 import { useCallback } from 'react';
 import { useDataProvider } from 'react-admin';
-import { DataProvider } from '@semapps/semantic-data-provider';
-import { SolidNotification } from '../types';
+import { SemanticDataProvider } from '@semapps/semantic-data-provider';
+import { SolidNotification, AwaitActivityOptions } from '../types';
 
-const useAwaitActivity = (webSocket?: WebSocket) => {
-  const dataProvider: DataProvider = useDataProvider();
+const useAwaitActivity = (webSocket?: WebSocket, existingActivities?: Array<object | string>) => {
+  const dataProvider = useDataProvider<SemanticDataProvider>();
 
+  // TODO Allow to pass an object, and automatically dereference it if required, like on the @semapps/activitypub matchActivity util
   return useCallback(
-    (matchActivity: (activity: object) => boolean, timeout: number = 30000) =>
-      new Promise((resolve, reject) => {
+    (matchActivity: (activity: object) => boolean, options: AwaitActivityOptions = {}) => {
+      const { timeout = 30000, checkExistingActivities = false } = options;
+      return new Promise((resolve, reject) => {
         if (webSocket) {
           const onMessage = (event: MessageEvent<string>) => {
             const data: SolidNotification = JSON.parse(event.data);
@@ -32,6 +34,18 @@ const useAwaitActivity = (webSocket?: WebSocket) => {
             reject(new Error(`${e.reason} (Code: ${e.code})`));
           });
 
+          // If a list of activities is already loaded, verify if there is a match
+          if (existingActivities && checkExistingActivities) {
+            for (const a of existingActivities) {
+              if (typeof a !== 'string') {
+                if (matchActivity(a)) {
+                  webSocket.removeEventListener('message', onMessage);
+                  resolve(a);
+                }
+              }
+            }
+          }
+
           setTimeout(() => {
             webSocket.removeEventListener('message', onMessage);
             reject(new Error('Timeout'));
@@ -39,8 +53,9 @@ const useAwaitActivity = (webSocket?: WebSocket) => {
         } else {
           throw new Error('WebSocket is not initialized !');
         }
-      }),
-    [webSocket, dataProvider]
+      });
+    },
+    [webSocket, existingActivities, dataProvider]
   );
 };
 

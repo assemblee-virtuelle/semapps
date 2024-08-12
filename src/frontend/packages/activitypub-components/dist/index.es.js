@@ -330,10 +330,11 @@ var $8281f3ce3b9d6123$export$2e2bcd8739ae039 = $8281f3ce3b9d6123$var$useCollecti
 
 
 
-const $600ca419166a1ded$var$useAwaitActivity = (webSocket)=>{
+const $600ca419166a1ded$var$useAwaitActivity = (webSocket, existingActivities)=>{
     const dataProvider = (0, $85cNH$useDataProvider)();
-    console.log("useAwaitActivity", webSocket);
-    return (0, $85cNH$useCallback)((matchActivity, timeout = 30000)=>new Promise((resolve, reject)=>{
+    return (0, $85cNH$useCallback)((matchActivity, options = {})=>{
+        const { timeout: timeout = 30000, checkExistingActivities: checkExistingActivities = false } = options;
+        return new Promise((resolve, reject)=>{
             if (webSocket) {
                 const onMessage = (event)=>{
                     const data = JSON.parse(event.data);
@@ -352,13 +353,26 @@ const $600ca419166a1ded$var$useAwaitActivity = (webSocket)=>{
                 webSocket.addEventListener("close", (e)=>{
                     reject(new Error(`${e.reason} (Code: ${e.code})`));
                 });
+                // If a list of activities is already loaded, verify if there is a match
+                console.log("existingActivities", checkExistingActivities, existingActivities);
+                if (existingActivities && checkExistingActivities) for (const a of existingActivities){
+                    console.log("checking activity", a);
+                    if (typeof a !== "string") {
+                        if (matchActivity(a)) {
+                            webSocket.removeEventListener("message", onMessage);
+                            resolve(a);
+                        }
+                    }
+                }
                 setTimeout(()=>{
                     webSocket.removeEventListener("message", onMessage);
                     reject(new Error("Timeout"));
                 }, timeout);
             } else throw new Error("WebSocket is not initialized !");
-        }), [
+        });
+    }, [
         webSocket,
+        existingActivities,
         dataProvider
     ]);
 };
@@ -367,8 +381,9 @@ var $600ca419166a1ded$export$2e2bcd8739ae039 = $600ca419166a1ded$var$useAwaitAct
 
 const $4d1d40fdbcd30589$var$useOutbox = (options = {})=>{
     const dataProvider = (0, $85cNH$useDataProvider)();
-    const { url: url, hasLiveUpdates: hasLiveUpdates, ...rest } = (0, $8281f3ce3b9d6123$export$2e2bcd8739ae039)("outbox", options);
-    const awaitActivity = (0, $600ca419166a1ded$export$2e2bcd8739ae039)(hasLiveUpdates.webSocket);
+    const { data: identity } = (0, $85cNH$useGetIdentity)();
+    const { url: url, hasLiveUpdates: hasLiveUpdates, items: items, ...rest } = (0, $8281f3ce3b9d6123$export$2e2bcd8739ae039)("outbox", options);
+    const awaitActivity = (0, $600ca419166a1ded$export$2e2bcd8739ae039)(hasLiveUpdates.webSocket, items);
     // Post an activity to the logged user's outbox and return its URI
     const post = (0, $85cNH$useCallback)(async (activity)=>{
         if (!url) throw new Error("Cannot post to outbox before user identity is loaded. Please use the isLoading argument of useOutbox");
@@ -387,8 +402,10 @@ const $4d1d40fdbcd30589$var$useOutbox = (options = {})=>{
     return {
         url: url,
         hasLiveUpdates: hasLiveUpdates,
+        items: items,
         post: post,
         awaitActivity: awaitActivity,
+        owner: identity?.id,
         ...rest
     };
 };
@@ -837,7 +854,9 @@ var $ea214512ab1a2e8f$export$2e2bcd8739ae039 = $ea214512ab1a2e8f$var$ReferenceCo
 
 
 
+
 const $cc1d1cd0e97c63a2$var$useInbox = (options = {})=>{
+    const { data: identity } = (0, $85cNH$useGetIdentity)();
     const { items: items, url: url, hasLiveUpdates: hasLiveUpdates, ...rest } = (0, $8281f3ce3b9d6123$export$2e2bcd8739ae039)("inbox", options);
     const awaitActivity = (0, $600ca419166a1ded$export$2e2bcd8739ae039)(hasLiveUpdates.webSocket);
     return {
@@ -845,6 +864,7 @@ const $cc1d1cd0e97c63a2$var$useInbox = (options = {})=>{
         url: url,
         hasLiveUpdates: hasLiveUpdates,
         awaitActivity: awaitActivity,
+        owner: identity?.id,
         ...rest
     };
 };

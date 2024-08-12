@@ -352,10 +352,11 @@ var $5ca5f7e9fc1c3544$export$2e2bcd8739ae039 = $5ca5f7e9fc1c3544$var$useCollecti
 
 
 
-const $5e70f9d0635e25dd$var$useAwaitActivity = (webSocket)=>{
+const $5e70f9d0635e25dd$var$useAwaitActivity = (webSocket, existingActivities)=>{
     const dataProvider = (0, $583VT$reactadmin.useDataProvider)();
-    console.log("useAwaitActivity", webSocket);
-    return (0, $583VT$react.useCallback)((matchActivity, timeout = 30000)=>new Promise((resolve, reject)=>{
+    return (0, $583VT$react.useCallback)((matchActivity, options = {})=>{
+        const { timeout: timeout = 30000, checkExistingActivities: checkExistingActivities = false } = options;
+        return new Promise((resolve, reject)=>{
             if (webSocket) {
                 const onMessage = (event)=>{
                     const data = JSON.parse(event.data);
@@ -374,13 +375,26 @@ const $5e70f9d0635e25dd$var$useAwaitActivity = (webSocket)=>{
                 webSocket.addEventListener("close", (e)=>{
                     reject(new Error(`${e.reason} (Code: ${e.code})`));
                 });
+                // If a list of activities is already loaded, verify if there is a match
+                console.log("existingActivities", checkExistingActivities, existingActivities);
+                if (existingActivities && checkExistingActivities) for (const a of existingActivities){
+                    console.log("checking activity", a);
+                    if (typeof a !== "string") {
+                        if (matchActivity(a)) {
+                            webSocket.removeEventListener("message", onMessage);
+                            resolve(a);
+                        }
+                    }
+                }
                 setTimeout(()=>{
                     webSocket.removeEventListener("message", onMessage);
                     reject(new Error("Timeout"));
                 }, timeout);
             } else throw new Error("WebSocket is not initialized !");
-        }), [
+        });
+    }, [
         webSocket,
+        existingActivities,
         dataProvider
     ]);
 };
@@ -389,8 +403,9 @@ var $5e70f9d0635e25dd$export$2e2bcd8739ae039 = $5e70f9d0635e25dd$var$useAwaitAct
 
 const $456aea3814dded7d$var$useOutbox = (options = {})=>{
     const dataProvider = (0, $583VT$reactadmin.useDataProvider)();
-    const { url: url, hasLiveUpdates: hasLiveUpdates, ...rest } = (0, $5ca5f7e9fc1c3544$export$2e2bcd8739ae039)("outbox", options);
-    const awaitActivity = (0, $5e70f9d0635e25dd$export$2e2bcd8739ae039)(hasLiveUpdates.webSocket);
+    const { data: identity } = (0, $583VT$reactadmin.useGetIdentity)();
+    const { url: url, hasLiveUpdates: hasLiveUpdates, items: items, ...rest } = (0, $5ca5f7e9fc1c3544$export$2e2bcd8739ae039)("outbox", options);
+    const awaitActivity = (0, $5e70f9d0635e25dd$export$2e2bcd8739ae039)(hasLiveUpdates.webSocket, items);
     // Post an activity to the logged user's outbox and return its URI
     const post = (0, $583VT$react.useCallback)(async (activity)=>{
         if (!url) throw new Error("Cannot post to outbox before user identity is loaded. Please use the isLoading argument of useOutbox");
@@ -409,8 +424,10 @@ const $456aea3814dded7d$var$useOutbox = (options = {})=>{
     return {
         url: url,
         hasLiveUpdates: hasLiveUpdates,
+        items: items,
         post: post,
         awaitActivity: awaitActivity,
+        owner: identity?.id,
         ...rest
     };
 };
@@ -859,7 +876,9 @@ var $b0c94a9bdea99da5$export$2e2bcd8739ae039 = $b0c94a9bdea99da5$var$ReferenceCo
 
 
 
+
 const $486f741c94cd8f74$var$useInbox = (options = {})=>{
+    const { data: identity } = (0, $583VT$reactadmin.useGetIdentity)();
     const { items: items, url: url, hasLiveUpdates: hasLiveUpdates, ...rest } = (0, $5ca5f7e9fc1c3544$export$2e2bcd8739ae039)("inbox", options);
     const awaitActivity = (0, $5e70f9d0635e25dd$export$2e2bcd8739ae039)(hasLiveUpdates.webSocket);
     return {
@@ -867,6 +886,7 @@ const $486f741c94cd8f74$var$useInbox = (options = {})=>{
         url: url,
         hasLiveUpdates: hasLiveUpdates,
         awaitActivity: awaitActivity,
+        owner: identity?.id,
         ...rest
     };
 };

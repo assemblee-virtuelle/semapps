@@ -3,6 +3,11 @@ export interface UseCollectionOptions {
   liveUpdates?: boolean;
 }
 
+export interface AwaitActivityOptions {
+  timeout?: number;
+  checkExistingActivities?: boolean;
+}
+
 export type SolidNotification = {
   '@context': string | string[];
   id: string;

@@ -1,12 +1,12 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { useGetIdentity, useDataProvider } from 'react-admin';
 import { QueryFunction, useInfiniteQuery, useQueries, useQueryClient } from 'react-query';
-import { getOrCreateWsChannel } from '@semapps/semantic-data-provider';
+import { getOrCreateWsChannel, SemanticDataProvider } from '@semapps/semantic-data-provider';
 import { arrayOf } from '../utils';
 import type { UseCollectionOptions, SolidNotification } from '../types';
 
 const useItemsFromPages = (pages: any[], dereferenceItems: boolean) => {
-  const dataProvider = useDataProvider();
+  const dataProvider = useDataProvider<SemanticDataProvider>();
   const items = useMemo(() => pages.flatMap(p => arrayOf(p.orderedItems || p.items)), [pages]);
 
   // We will force dereference, if some items are not URI string references.
@@ -62,7 +62,7 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
   const [hasLiveUpdates, setHasLiveUpdates] = useState<{ status: string; error?: any; webSocket?: WebSocket }>({
     status: 'connecting'
   });
-  const dataProvider = useDataProvider();
+  const dataProvider = useDataProvider<SemanticDataProvider>();
 
   // Get collectionUrl from webId predicate or URL.
   const collectionUrl = useMemo(() => {

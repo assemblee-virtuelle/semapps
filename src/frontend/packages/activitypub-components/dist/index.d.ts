@@ -86,7 +86,6 @@ export const useCollection: (
   };
 };
 export const useOutbox: (options?: UseCollectionOptions) => {
-  items: any[];
   totalItems: number | undefined;
   error: false | unknown[];
   refetch: <TPageData>(
@@ -107,8 +106,13 @@ export const useOutbox: (options?: UseCollectionOptions) => {
     error?: any;
     webSocket?: WebSocket | undefined;
   };
+  items: any[];
   post: (activity: object) => Promise<string | null>;
-  awaitActivity: (matchActivity: (activity: object) => boolean, timeout?: number) => Promise<unknown>;
+  awaitActivity: (
+    matchActivity: (activity: object) => boolean,
+    options?: import('types').AwaitActivityOptions
+  ) => Promise<unknown>;
+  owner: import('react-admin').Identifier | undefined;
 };
 export function CommentsField({
   source,
@@ -175,7 +179,11 @@ export const useInbox: (options?: UseCollectionOptions) => {
     error?: any;
     webSocket?: WebSocket | undefined;
   };
-  awaitActivity: (matchActivity: (activity: object) => boolean, timeout?: number) => Promise<unknown>;
+  awaitActivity: (
+    matchActivity: (activity: object) => boolean,
+    options?: import('types').AwaitActivityOptions
+  ) => Promise<unknown>;
+  owner: import('react-admin').Identifier | undefined;
 };
 export function useNodeinfo(host: any, rel?: string): undefined;
 export function useWebfinger(): {
