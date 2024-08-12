@@ -49,7 +49,7 @@ module.exports = {
     '@typescript-eslint/no-unsafe-enum-comparison': 'warn',
     '@typescript-eslint/no-unsafe-member-access': 'warn',
     '@typescript-eslint/no-unsafe-return': 'warn',
-    '@typescript-eslint/no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': 'warn',
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/non-nullable-type-assertion-style': 'warn',
     '@typescript-eslint/prefer-includes': 'warn',
@@ -112,7 +112,7 @@ module.exports = {
     'no-underscore-dangle': 'off',
     'no-unsafe-optional-chaining': 'warn',
     'no-unused-expressions': 'warn',
-    'no-unused-vars': 'warn',
+    'no-unused-vars': 'off',
     'no-use-before-define': 'warn',
     'no-useless-return': 'warn',
     'no-var': 'warn',
@@ -193,7 +193,8 @@ module.exports = {
         '@typescript-eslint/strict-boolean-expressions': 'off',
         '@typescript-eslint/switch-exhaustiveness-check': 'off',
         '@typescript-eslint/unbound-method': 'off',
-        'react/prop-types': 'off'
+        'react/prop-types': 'off',
+        'no-unused-vars': 'on'
       }
     }
   ]
