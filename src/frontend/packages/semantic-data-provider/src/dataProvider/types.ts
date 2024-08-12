@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-redundant-type-constituents */
-import { DataProvider as RaDataProvider, RaRecord, fetchUtils } from 'react-admin';
+import { DataProvider, RaRecord, fetchUtils } from 'react-admin';
 import type { Quad } from '@rdfjs/types';
 
 export type DataServerKey = string & { readonly _type?: 'DataServerKey' };
@@ -96,7 +96,7 @@ export type Configuration = {
   resources: Record<string, DataModel>;
 };
 
-export type DataProvider = RaDataProvider & {
+export type SemanticDataProvider = DataProvider & {
   getDataModels: () => Promise<Record<string, DataModel>>;
   getDataServers: () => Promise<DataServersConfig>;
   fetch: (url: string, options?: HttpClientOptions) => ReturnType<typeof fetchUtils.fetchJson>;

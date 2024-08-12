@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useDataProvider } from 'react-admin';
-import { DataProvider, DataServersConfig } from '../dataProvider/types';
+import { SemanticDataProvider, DataServersConfig } from '../dataProvider/types';
 
 const useDataServers = () => {
-  const dataProvider = useDataProvider<DataProvider>();
+  const dataProvider = useDataProvider<SemanticDataProvider>();
   const [dataServers, setDataServers] = useState<DataServersConfig>();
 
   useEffect(() => {
