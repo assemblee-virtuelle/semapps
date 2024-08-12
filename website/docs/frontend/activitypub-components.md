@@ -100,41 +100,48 @@ const {
 } = useCollection('http://localhost:3000/alice/followers', { dereferenceItems: false, liveUpdates: true });
 ```
 
-#### useCollection `options` parameter:
+#### `options` parameter
 
 - `dereferenceItems: boolean` Set to true, to force dereferencing of collection items. Note that items may be returned as object, if the server dereferences the items itself.
 - `liveUpdates: boolean` Set to true, to ask the server to notify the client of updates to the collection using a Solid Notifications WebSocket Channel. The hook will automatically trigger in those cases. No updates will be provided, if the server does not support the protocol.
 
 ### useInbox
 
-This hook allows you to fetch activities from the logged-in user's inbox.
+Use the `useCollection` hook and return the same data. Also return a `awaitActivity` method, that can be used to wait for a certain activity to be received in the inbox.
 
 ```jsx
 import { useEffect } from 'react';
 import { useInbox } from '@semapps/activitypub-components';
 
-export const MyPage = props => {
+export const FollowDetectionPage = props => {
   const inbox = useInbox();
-  useEffect(() => {
-    inbox.fetch().then(activities => console.log(activities));
+
+  const onClick = useCallback(async () => {
+    const followActivity = await inbox.awaitActivity(a => a.type === 'Follow');
+    console.log(`Follow activity received from ${followActivity.actor} !`);
   }, [inbox]);
-  return null;
+
+  return <button onClick={onClick}>Wait for follow</button>;
 };
 ```
 
 ### useOutbox
 
-This hook allows you to fetch activities from the logged-in user's outbox, and also to post new activities.
+Works the same way as the `useInbox` hook, but for the logged user's outbox. It adds a `post` method that can be used to post a new activity in the user's outbox.
 
 ```jsx
 import { useEffect, useCallback } from 'react';
 import { useOutbox, ACTIVITY_TYPES } from '@semapps/activitypub-components';
 
-export const MyPage = props => {
+export const FollowDetectionPage = props => {
   const outbox = useOutbox();
 
   useEffect(() => {
-    outbox.fetch().then(activities => console.log(activities));
+    outbox
+      .awaitActivity(a => a.type === 'Follow')
+      .then(followActivity => {
+        console.log(`Follow activity sent to ${followActivity.to} !`);
+      });
   }, [outbox]);
 
   const follow = useCallback(
