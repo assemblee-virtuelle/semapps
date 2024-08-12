@@ -3,6 +3,7 @@ import { useGetIdentity, useDataProvider } from 'react-admin';
 import { QueryFunction, useInfiniteQuery, useQueries, useQueryClient } from 'react-query';
 import { getOrCreateWsChannel } from '@semapps/semantic-data-provider';
 import { arrayOf } from '../utils';
+import type { UseCollectionOptions, SolidNotification } from '../types';
 
 const useItemsFromPages = (pages: any[], dereferenceItems: boolean) => {
   const dataProvider = useDataProvider();
@@ -48,11 +49,6 @@ const useItemsFromPages = (pages: any[], dereferenceItems: boolean) => {
   };
 };
 
-interface UseCollectionOptions {
-  dereferenceItems?: boolean;
-  liveUpdates?: boolean;
-}
-
 /**
  * Subscribe a collection. Supports pagination.
  * @param predicateOrUrl The collection URI or the predicate to get the collection URI from the identity (webId).
@@ -63,7 +59,9 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
   const { data: identity } = useGetIdentity();
   const [totalItems, setTotalItems] = useState<number>();
   const queryClient = useQueryClient();
-  const [hasLiveUpdates, setHasLiveUpdates] = useState<{ status: string; error?: any }>({ status: 'connecting' });
+  const [hasLiveUpdates, setHasLiveUpdates] = useState<{ status: string; error?: any; webSocket?: WebSocket }>({
+    status: 'connecting'
+  });
   const dataProvider = useDataProvider();
 
   // Get collectionUrl from webId predicate or URL.
@@ -203,10 +201,10 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
       getOrCreateWsChannel(dataProvider.fetch, collectionUrl)
         .then(webSocket => {
           webSocket.addEventListener('message', e => {
-            const data = JSON.parse(e.data);
-            if (data && data.type === 'Add') {
+            const data: SolidNotification = JSON.parse(e.data);
+            if (data.type === 'Add') {
               addItem(data.object, true);
-            } else if (data && data.type === 'Remove') {
+            } else if (data.type === 'Remove') {
               removeItem(data.object, true);
             }
           });
@@ -219,7 +217,7 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
               setHasLiveUpdates({ ...hasLiveUpdates, status: 'closed' });
             }
           });
-          setHasLiveUpdates({ status: 'connected' });
+          setHasLiveUpdates({ status: 'connected', webSocket });
         })
         .catch(() => {}); // If it fails, we won't receive live updates. But that's okay.
     }

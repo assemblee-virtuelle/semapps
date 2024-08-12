@@ -20,3 +20,5 @@ export {
   getOrCreateWsChannel,
   createSolidNotificationChannel
 } from './notificationChannels/subscribeToUpdates';
+
+export * from './dataProvider/types';

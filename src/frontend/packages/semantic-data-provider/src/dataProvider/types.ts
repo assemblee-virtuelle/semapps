@@ -99,6 +99,7 @@ export type Configuration = {
 export type DataProvider = RaDataProvider & {
   getDataModels: () => Promise<Record<string, DataModel>>;
   getDataServers: () => Promise<DataServersConfig>;
+  fetch: (url: string, options?: HttpClientOptions) => ReturnType<typeof fetchUtils.fetchJson>;
 };
 
 export interface PatchParams<RecordType extends RaRecord = any> {

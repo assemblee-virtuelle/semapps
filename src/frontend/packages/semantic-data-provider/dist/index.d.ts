@@ -1,6 +1,10 @@
-import { fetchUtils } from 'react-admin';
-type DataServerKey = string & {
+import { DataProvider as _DataProvider1, RaRecord, fetchUtils } from 'react-admin';
+import { Quad } from '@rdfjs/types';
+export type DataServerKey = string & {
   readonly _type?: 'DataServerKey';
+};
+export type ContainerURI = string & {
+  readonly _type?: 'ContainerURI';
 };
 type DataServerConfig = {
   /** Server base url */
@@ -24,8 +28,13 @@ type DataServerConfig = {
   containers?: Record<DataServerKey, Record<string, string[]>>;
   blankNodes: any;
 };
-type DataServersConfig = Record<DataServerKey, DataServerConfig>;
-type DataModel = {
+export type DataServersConfig = Record<DataServerKey, DataServerConfig>;
+type HttpClientOptions = {
+  headers?: Headers;
+  method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+  body?: string | File;
+};
+export type DataModel = {
   /** Type(s) of resources to fetch or create (example: [pair:Organization]) */
   types: string | string[];
   list?: {
@@ -57,6 +66,23 @@ type DataModel = {
     title: string;
   };
 };
+export type Configuration = {
+  dataServers: DataServersConfig;
+  httpClient: (url: string, options?: HttpClientOptions) => ReturnType<typeof fetchUtils.fetchJson>;
+  /** Context from ontologies { prefix: IRI } or IRI, or array of IRI */
+  jsonContext: string | string[] | Record<string, string>;
+  resources: Record<string, DataModel>;
+};
+export type DataProvider = _DataProvider1 & {
+  getDataModels: () => Promise<Record<string, DataModel>>;
+  getDataServers: () => Promise<DataServersConfig>;
+  fetch: (url: string, options?: HttpClientOptions) => ReturnType<typeof fetchUtils.fetchJson>;
+};
+export interface PatchParams<RecordType extends RaRecord = any> {
+  id: RecordType['id'];
+  triplesToAdd?: Quad[];
+  triplesToRemove?: Quad[];
+}
 export function buildBlankNodesQuery(
   blankNodes: any,
   baseQuery: any,
