@@ -1,17 +1,17 @@
 import {jsxs as $85cNH$jsxs, Fragment as $85cNH$Fragment, jsx as $85cNH$jsx} from "react/jsx-runtime";
 import $85cNH$react, {useState as $85cNH$useState, useCallback as $85cNH$useCallback, useMemo as $85cNH$useMemo, useEffect as $85cNH$useEffect, forwardRef as $85cNH$forwardRef, useImperativeHandle as $85cNH$useImperativeHandle} from "react";
-import {useRecordContext as $85cNH$useRecordContext, useGetIdentity as $85cNH$useGetIdentity, useNotify as $85cNH$useNotify, Form as $85cNH$Form, fetchUtils as $85cNH$fetchUtils, TextField as $85cNH$TextField, DateField as $85cNH$DateField, RichTextField as $85cNH$RichTextField, useDataProvider as $85cNH$useDataProvider, useGetMany as $85cNH$useGetMany, useList as $85cNH$useList, ListContextProvider as $85cNH$ListContextProvider, useGetList as $85cNH$useGetList} from "react-admin";
+import {useRecordContext as $85cNH$useRecordContext, useGetIdentity as $85cNH$useGetIdentity, useNotify as $85cNH$useNotify, Form as $85cNH$Form, useDataProvider as $85cNH$useDataProvider, TextField as $85cNH$TextField, DateField as $85cNH$DateField, RichTextField as $85cNH$RichTextField, useGetMany as $85cNH$useGetMany, useList as $85cNH$useList, ListContextProvider as $85cNH$ListContextProvider, fetchUtils as $85cNH$fetchUtils, useGetList as $85cNH$useGetList} from "react-admin";
 import {RichTextInput as $85cNH$RichTextInput, DefaultEditorOptions as $85cNH$DefaultEditorOptions} from "ra-input-rich-text";
 import $85cNH$tiptapextensionplaceholder from "@tiptap/extension-placeholder";
 import {Box as $85cNH$Box, Avatar as $85cNH$Avatar, Button as $85cNH$Button, Typography as $85cNH$Typography, CircularProgress as $85cNH$CircularProgress} from "@mui/material";
 import $85cNH$muistylesmakeStyles from "@mui/styles/makeStyles";
 import $85cNH$muiiconsmaterialSend from "@mui/icons-material/Send";
-import {useDataModel as $85cNH$useDataModel, buildBlankNodesQuery as $85cNH$buildBlankNodesQuery, getOrCreateWsChannel as $85cNH$getOrCreateWsChannel} from "@semapps/semantic-data-provider";
+import {useDataModel as $85cNH$useDataModel, getOrCreateWsChannel as $85cNH$getOrCreateWsChannel} from "@semapps/semantic-data-provider";
 import {AuthDialog as $85cNH$AuthDialog} from "@semapps/auth-provider";
+import {useQueries as $85cNH$useQueries, useQueryClient as $85cNH$useQueryClient, useInfiniteQuery as $85cNH$useInfiniteQuery} from "react-query";
 import {mergeAttributes as $85cNH$mergeAttributes} from "@tiptap/core";
 import $85cNH$tiptapextensionmention from "@tiptap/extension-mention";
 import {ReferenceField as $85cNH$ReferenceField, AvatarWithLabelField as $85cNH$AvatarWithLabelField} from "@semapps/field-components";
-import {useQueries as $85cNH$useQueries, useInfiniteQuery as $85cNH$useInfiniteQuery, useQueryClient as $85cNH$useQueryClient} from "react-query";
 import {ReactRenderer as $85cNH$ReactRenderer} from "@tiptap/react";
 import $85cNH$tippyjs from "tippy.js";
 
@@ -86,78 +86,341 @@ const $338f387df48a40d7$export$4d8d554031975581 = "https://www.w3.org/ns/activit
 
 
 
-const $712f7f004b5f345e$var$useOutbox = ()=>{
+
+
+
+const $577f4953dfa5de4f$export$e57ff0f701c44363 = (value)=>{
+    // If the field is null-ish, we suppose there are no values.
+    if (value === null || value === undefined) return [];
+    // Return as is.
+    if (Array.isArray(value)) return value;
+    // Single value is made an array.
+    return [
+        value
+    ];
+};
+var $577f4953dfa5de4f$export$2e2bcd8739ae039 = {
+    arrayOf: $577f4953dfa5de4f$export$e57ff0f701c44363
+};
+const $577f4953dfa5de4f$export$34aed805e991a647 = (iterable, predicate)=>{
+    const seen = new Set();
+    return iterable.filter((item)=>{
+        const key = predicate(item);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
+};
+
+
+const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
+    const dataProvider = (0, $85cNH$useDataProvider)();
+    const items = (0, $85cNH$useMemo)(()=>pages.flatMap((p)=>(0, $577f4953dfa5de4f$export$e57ff0f701c44363)(p.orderedItems || p.items)), [
+        pages
+    ]);
+    // We will force dereference, if some items are not URI string references.
+    const shouldDereference = (0, $85cNH$useMemo)(()=>{
+        return dereferenceItems || items.some((item)=>typeof item !== "string");
+    }, [
+        dereferenceItems,
+        items
+    ]);
+    // Dereference all items, if necessary (even if shouldDereference is false, the hook needs to be called).
+    const itemQueries = (0, $85cNH$useQueries)(!shouldDereference ? [] : items.filter((item)=>typeof item === "string").map((itemUri)=>({
+            queryKey: [
+                "resource",
+                itemUri
+            ],
+            queryFn: async ()=>(await dataProvider.fetch(itemUri)).json,
+            staleTime: Infinity
+        })));
+    if (!shouldDereference) return {
+        loadedItems: items,
+        isLoading: false,
+        isFetching: false
+    };
+    // Put all loaded items together (might be dereferenced already, so concatenate).
+    const loadedItems = items.filter((item)=>typeof item !== "string").concat(itemQueries.flatMap((itemQuery)=>{
+        return itemQuery.isSuccess && itemQuery.data || [];
+    }));
+    const errors = itemQueries.filter((q)=>q.error);
+    return {
+        loadedItems: loadedItems,
+        isLoading: itemQueries.some((q)=>q.isLoading),
+        isFetching: itemQueries.some((q)=>q.isFetching),
+        errors: errors.length > 0 ? errors : undefined
+    };
+};
+/**
+ * Subscribe a collection. Supports pagination.
+ * @param predicateOrUrl The collection URI or the predicate to get the collection URI from the identity (webId).
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: true }`
+ */ const $8281f3ce3b9d6123$var$useCollection = (predicateOrUrl, options = {})=>{
+    const { dereferenceItems: dereferenceItems = false, liveUpdates: liveUpdates = true } = options;
     const { data: identity } = (0, $85cNH$useGetIdentity)();
-    const outboxUrl = (0, $85cNH$useMemo)(()=>{
-        if (identity?.webIdData) return identity?.webIdData?.outbox;
+    const [totalItems, setTotalItems] = (0, $85cNH$useState)();
+    const queryClient = (0, $85cNH$useQueryClient)();
+    const [hasLiveUpdates, setHasLiveUpdates] = (0, $85cNH$useState)({
+        status: "connecting"
+    });
+    const dataProvider = (0, $85cNH$useDataProvider)();
+    // Get collectionUrl from webId predicate or URL.
+    const collectionUrl = (0, $85cNH$useMemo)(()=>{
+        if (predicateOrUrl) {
+            if (predicateOrUrl.startsWith("http")) return predicateOrUrl;
+            if (identity?.webIdData) return identity?.webIdData?.[predicateOrUrl];
+        }
+        return undefined;
+    // throw new Error(`No URL available for useCollection: ${predicateOrUrl}.`);
     }, [
-        identity
+        identity,
+        predicateOrUrl
     ]);
-    const sparqlEndpoint = (0, $85cNH$useMemo)(()=>{
-        if (identity?.webIdData) return identity?.webIdData?.endpoints?.["void:sparqlEndpoint"] || `${identity?.id}/sparql`;
+    // Fetch page of collection item references (if pageParam provided)
+    //  or default to `collectionUrl` (which should give you the first page).
+    const fetchCollection = (0, $85cNH$useCallback)(async ({ pageParam: nextPageUrl })=>{
+        // Fetch page or first page (collectionUrl)
+        let { json: json } = await dataProvider.fetch(nextPageUrl || collectionUrl);
+        if (json.totalItems) setTotalItems(json.totalItems);
+        // If first page, handle this here.
+        if ((json.type === "OrderedCollection" || json.type === "Collection") && json.first) {
+            if (json.first?.items) {
+                if (json.first?.items.length === 0 && json.first?.next) // Special case where the first property is an object without items
+                ({ json: json } = await dataProvider.fetch(json.first?.next));
+                else json = json.first;
+            } else // Fetch the first page
+            ({ json: json } = await dataProvider.fetch(json.first));
+        }
+        return json;
     }, [
-        identity
+        dataProvider,
+        collectionUrl,
+        identity,
+        setTotalItems
     ]);
+    // Use infiniteQuery to handle pagination, fetching, etc.
+    const { data: pageData, error: collectionError, fetchNextPage: fetchNextPage, refetch: refetch, hasNextPage: hasNextPage, isLoading: isLoadingPage, isFetching: isFetchingPage, isFetchingNextPage: isFetchingNextPage } = (0, $85cNH$useInfiniteQuery)([
+        "collection",
+        {
+            collectionUrl: collectionUrl
+        }
+    ], fetchCollection, {
+        enabled: !!(collectionUrl && identity?.id),
+        getNextPageParam: (lastPage)=>lastPage.next,
+        getPreviousPageParam: (firstPage)=>firstPage.prev
+    });
+    // Put all items together in a list (and dereference, if required).
+    const { loadedItems: items, isLoading: isLoadingItems, isFetching: isFetchingItems, errors: itemErrors } = $8281f3ce3b9d6123$var$useItemsFromPages(pageData?.pages ?? [], dereferenceItems);
+    const allErrors = (0, $577f4953dfa5de4f$export$e57ff0f701c44363)(collectionError).concat((0, $577f4953dfa5de4f$export$e57ff0f701c44363)(itemErrors));
+    const addItem = (0, $85cNH$useCallback)((item, shouldRefetch = true)=>{
+        queryClient.setQueryData([
+            "collection",
+            {
+                collectionUrl: collectionUrl
+            }
+        ], (oldData)=>{
+            if (!oldData) return oldData;
+            setTotalItems(totalItems && totalItems + 1);
+            // Destructure, so react knows, it needs to re-render the pages.
+            const pages = [
+                ...oldData.pages
+            ];
+            const firstPageItems = pages?.[0]?.orderedItems || pages?.[0]?.items || [];
+            firstPageItems.unshift(item);
+            oldData.pages = pages;
+            return oldData;
+        });
+        if (shouldRefetch) setTimeout(()=>queryClient.refetchQueries([
+                "collection",
+                {
+                    collectionUrl: collectionUrl
+                }
+            ], {
+                active: true,
+                exact: true
+            }), typeof shouldRefetch === "number" ? shouldRefetch : 2000);
+    }, [
+        queryClient,
+        collectionUrl
+    ]);
+    const removeItem = (0, $85cNH$useCallback)((item, shouldRefetch = true)=>{
+        queryClient.setQueryData([
+            "collection",
+            {
+                collectionUrl: collectionUrl
+            }
+        ], (oldData)=>{
+            if (!oldData) return oldData;
+            setTotalItems(totalItems && totalItems - 1);
+            // Destructure, so react knows, it needs to re-render the pages array.
+            const pages = [
+                ...oldData.pages
+            ];
+            // Find the item in all pages and remove the item to be removed (either item.id or just item)
+            pages.forEach((page)=>{
+                if (page.orderedItems) page.orderedItems = page.orderedItems.filter((i)=>(i.id || i) !== (item.id || item));
+                else if (page.items) page.items = page.items.filter((i)=>(i.id || i) !== (item?.id || item));
+            });
+            oldData.pages = pages;
+            return oldData;
+        });
+        if (shouldRefetch) setTimeout(()=>queryClient.refetchQueries([
+                "collection",
+                {
+                    collectionUrl: collectionUrl
+                }
+            ], {
+                active: true,
+                exact: true
+            }), typeof shouldRefetch === "number" ? shouldRefetch : 2000);
+    }, [
+        queryClient,
+        collectionUrl
+    ]);
+    // Live Updates
+    (0, $85cNH$useEffect)(()=>{
+        if (liveUpdates && collectionUrl) // Create ws that listens to collectionUri changes
+        (0, $85cNH$getOrCreateWsChannel)(dataProvider.fetch, collectionUrl).then((webSocket)=>{
+            webSocket.addEventListener("message", (e)=>{
+                const data = JSON.parse(e.data);
+                if (data.type === "Add") addItem(data.object, true);
+                else if (data.type === "Remove") removeItem(data.object, true);
+            });
+            webSocket.addEventListener("error", (e)=>{
+                setHasLiveUpdates({
+                    status: "error",
+                    error: e
+                });
+            // TODO: Retry after a while
+            });
+            webSocket.addEventListener("close", (e)=>{
+                if (!hasLiveUpdates.error) setHasLiveUpdates({
+                    ...hasLiveUpdates,
+                    status: "closed"
+                });
+            });
+            setHasLiveUpdates({
+                status: "connected",
+                webSocket: webSocket
+            });
+        }).catch(()=>{}); // If it fails, we won't receive live updates. But that's okay.
+    }, [
+        collectionUrl,
+        liveUpdates,
+        dataProvider
+    ]);
+    return {
+        items: items,
+        totalItems: totalItems,
+        error: allErrors.length > 0 && allErrors,
+        refetch: refetch,
+        fetchNextPage: fetchNextPage,
+        addItem: addItem,
+        removeItem: removeItem,
+        hasNextPage: hasNextPage,
+        isLoading: isLoadingPage || isLoadingItems,
+        isFetching: isFetchingPage || isFetchingItems,
+        isFetchingNextPage: isFetchingNextPage,
+        url: collectionUrl,
+        hasLiveUpdates: hasLiveUpdates
+    };
+};
+var $8281f3ce3b9d6123$export$2e2bcd8739ae039 = $8281f3ce3b9d6123$var$useCollection;
+
+
+
+
+/**
+ * Hook used internally by useInbox and useOutbox. This is not exported.
+ * @param webSocket WebSocket which allow to listen to the inbox or outbox
+ * @param existingActivities Partial list of activities already received in the inbox and outbox
+ */ const $600ca419166a1ded$var$useAwaitActivity = (webSocket, existingActivities)=>{
+    const dataProvider = (0, $85cNH$useDataProvider)();
+    // TODO Allow to pass an object, and automatically dereference it if required, like on the @semapps/activitypub matchActivity util
+    return (0, $85cNH$useCallback)((matchActivity, options = {})=>{
+        const { timeout: timeout = 30000, checkExistingActivities: checkExistingActivities = false } = options;
+        return new Promise((resolve, reject)=>{
+            if (webSocket) {
+                const onMessage = (event)=>{
+                    const data = JSON.parse(event.data);
+                    if (data.type === "Add") dataProvider.fetch(data.object).then(({ json: json })=>{
+                        if (matchActivity(json)) {
+                            webSocket.removeEventListener("message", onMessage);
+                            return resolve(json);
+                        }
+                    });
+                };
+                webSocket.addEventListener("message", onMessage);
+                // TODO reconnect if connection closed
+                webSocket.addEventListener("error", (e)=>{
+                    reject(e);
+                });
+                webSocket.addEventListener("close", (e)=>{
+                    reject(new Error(`${e.reason} (Code: ${e.code})`));
+                });
+                // If a list of activities is already loaded, verify if there is a match
+                if (existingActivities && checkExistingActivities) for (const a of existingActivities){
+                    if (typeof a !== "string") {
+                        if (matchActivity(a)) {
+                            webSocket.removeEventListener("message", onMessage);
+                            return resolve(a);
+                        }
+                    }
+                }
+                setTimeout(()=>{
+                    webSocket.removeEventListener("message", onMessage);
+                    reject(new Error("Timeout"));
+                }, timeout);
+            } else throw new Error("WebSocket is not initialized !");
+        });
+    }, [
+        webSocket,
+        existingActivities,
+        dataProvider
+    ]);
+};
+var $600ca419166a1ded$export$2e2bcd8739ae039 = $600ca419166a1ded$var$useAwaitActivity;
+
+
+/**
+ * Hook to fetch and post to the outbox of the logged user.
+ * Returns the same data as the useCollection hooks, plus:
+ * - `post`: a function to post a new activity in the user's outbox
+ * - `awaitActivity`: a function to wait for a certain activity to be posted
+ * - `owner`: the WebID of the outbox's owner
+ * See https://semapps.org/docs/frontend/activitypub-components#useoutbox for usage
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: true }`
+ */ const $4d1d40fdbcd30589$var$useOutbox = (options = {})=>{
+    const dataProvider = (0, $85cNH$useDataProvider)();
+    const { data: identity } = (0, $85cNH$useGetIdentity)();
+    const { url: url, hasLiveUpdates: hasLiveUpdates, items: items, ...rest } = (0, $8281f3ce3b9d6123$export$2e2bcd8739ae039)("outbox", options);
+    const awaitActivity = (0, $600ca419166a1ded$export$2e2bcd8739ae039)(hasLiveUpdates.webSocket, items);
     // Post an activity to the logged user's outbox and return its URI
     const post = (0, $85cNH$useCallback)(async (activity)=>{
-        if (!outboxUrl) throw new Error("Cannot post to outbox before user identity is loaded. Please use the loaded argument of useOutbox");
-        const token = localStorage.getItem("token");
-        const { headers: headers } = await (0, $85cNH$fetchUtils).fetchJson(outboxUrl, {
+        if (!url) throw new Error("Cannot post to outbox before user identity is loaded. Please use the isLoading argument of useOutbox");
+        const { headers: headers } = await dataProvider.fetch(url, {
             method: "POST",
             body: JSON.stringify({
                 "@context": "https://www.w3.org/ns/activitystreams",
                 ...activity
-            }),
-            headers: new Headers({
-                "Content-Type": "application/ld+json",
-                Authorization: `Bearer ${token}`
             })
         });
         return headers.get("Location");
     }, [
-        outboxUrl
-    ]);
-    const fetch = (0, $85cNH$useCallback)(async ()=>{
-        if (!sparqlEndpoint || !outboxUrl) return;
-        const token = localStorage.getItem("token");
-        const blankNodesQuery = (0, $85cNH$buildBlankNodesQuery)([
-            "as:object"
-        ]);
-        const query = `
-      PREFIX as: <https://www.w3.org/ns/activitystreams#>
-      CONSTRUCT {
-        ?s1 ?p1 ?o1 .
-        ${blankNodesQuery.construct}
-      }
-      WHERE {
-        <${outboxUrl}> as:items ?s1 .
-        ?s1 ?p1 ?o1 .
-        ${blankNodesQuery.where}
-      }
-    `;
-        const { json: json } = await (0, $85cNH$fetchUtils).fetchJson(sparqlEndpoint, {
-            method: "POST",
-            body: query,
-            headers: new Headers({
-                Accept: "application/ld+json",
-                Authorization: token ? `Bearer ${token}` : undefined
-            })
-        });
-        if (json["@graph"]) return json["@graph"];
-        return null;
-    }, [
-        sparqlEndpoint,
-        outboxUrl
+        url,
+        dataProvider
     ]);
     return {
+        url: url,
+        hasLiveUpdates: hasLiveUpdates,
+        items: items,
         post: post,
-        fetch: fetch,
-        url: outboxUrl,
-        loaded: !!outboxUrl,
-        owner: identity?.id
+        awaitActivity: awaitActivity,
+        owner: identity?.id,
+        ...rest
     };
 };
-var $712f7f004b5f345e$export$2e2bcd8739ae039 = $712f7f004b5f345e$var$useOutbox;
+var $4d1d40fdbcd30589$export$2e2bcd8739ae039 = $4d1d40fdbcd30589$var$useOutbox;
 
 
 
@@ -262,7 +525,7 @@ const $3c17312a40ebf1ed$var$PostCommentForm = ({ context: context, placeholder: 
     const userDataModel = (0, $85cNH$useDataModel)(userResource);
     const classes = $3c17312a40ebf1ed$var$useStyles();
     const notify = (0, $85cNH$useNotify)();
-    const outbox = (0, $712f7f004b5f345e$export$2e2bcd8739ae039)();
+    const outbox = (0, $4d1d40fdbcd30589$export$2e2bcd8739ae039)();
     const [expanded, setExpanded] = (0, $85cNH$useState)(false);
     const [openAuth, setOpenAuth] = (0, $85cNH$useState)(false);
     const onSubmit = (0, $85cNH$useCallback)(async (values)=>{
@@ -522,186 +785,9 @@ var $be88b298220210d1$export$2e2bcd8739ae039 = $be88b298220210d1$var$CommentsLis
 
 
 
-
-
-
-const $577f4953dfa5de4f$export$e57ff0f701c44363 = (value)=>{
-    // If the field is null-ish, we suppose there are no values.
-    if (value === null || value === undefined) return [];
-    // Return as is.
-    if (Array.isArray(value)) return value;
-    // Single value is made an array.
-    return [
-        value
-    ];
-};
-var $577f4953dfa5de4f$export$2e2bcd8739ae039 = {
-    arrayOf: $577f4953dfa5de4f$export$e57ff0f701c44363
-};
-const $577f4953dfa5de4f$export$34aed805e991a647 = (iterable, predicate)=>{
-    const seen = new Set();
-    return iterable.filter((item)=>{
-        const key = predicate(item);
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
-    });
-};
-
-
-const $c1e897431d8c5742$var$useItemsFromPagesAndNotifications = (pages, notifications, dereferenceItems)=>{
-    const dataProvider = (0, $85cNH$useDataProvider)();
-    // Add all items from pages and process notifications (possibly new and deleted items).
-    const items = (0, $85cNH$useMemo)(()=>{
-        const addItems = notifications.map((n)=>n.type === "Add").map((n)=>n.object);
-        const removeItems = notifications.map((n)=>n.type === "Remove").map((n)=>n.object.id || n.object);
-        const currentItems = !pages ? [] : pages.flatMap((p)=>(0, $577f4953dfa5de4f$export$e57ff0f701c44363)(p.orderedItems || p.items));
-        const currentAndNew = currentItems.concat(addItems);
-        return currentAndNew// Filter out removed items.
-        .filter((item)=>!removeItems.some((r)=>(r.id ?? r) === (item.id ?? item)))// Filter duplicates.
-        .filter((item)=>currentAndNew.some((i2)=>(i2.id ?? i2) === (item.id ?? item)));
-    }, pages, notifications);
-    if (!dereferenceItems) return {
-        loadedItems: items,
-        isLoading: false,
-        isFetching: false
-    };
-    // Dereference all items, if they are not yet.
-    const itemQueries = (0, $85cNH$useQueries)(items.filter((item)=>typeof item === "string").map((itemUri)=>({
-            queryKey: [
-                "resource",
-                itemUri
-            ],
-            queryFn: async ()=>(await dataProvider.fetch(itemUri)).json,
-            staleTime: Infinity
-        })));
-    // Put all loaded items together (might be dereferenced already, so concatenate).
-    const loadedItems = items.filter((item)=>typeof item !== "string").concat(itemQueries.flatMap((itemQuery)=>{
-        return itemQuery.isSuccess && itemQuery.data || [];
-    }));
-    console.log("loadedItems", loadedItems.length, "total", items.length);
-    const errors = itemQueries.filter((q)=>q.error);
-    return {
-        loadedItems: loadedItems,
-        isLoading: itemQueries.some((q)=>q.isLoading),
-        isFetching: itemQueries.some((q)=>q.isFetching),
-        errors: errors.length > 0 && errors
-    };
-};
-const $c1e897431d8c5742$var$useCollection = (predicateOrUrl, options = {})=>{
-    const { dereferenceItems: dereferenceItems = false, liveUpdates: liveUpdates = true } = options;
-    const { data: identity } = (0, $85cNH$useGetIdentity)();
-    const [totalItems, setTotalItems] = (0, $85cNH$useState)();
-    const [notifications, setNotifications] = (0, $85cNH$useState)([]);
-    const [hasLiveUpdates, setHasLiveUpdates] = (0, $85cNH$useState)({
-        status: "disconnected",
-        error: undefined
-    });
-    const dataProvider = (0, $85cNH$useDataProvider)();
-    // Get collectionUrl from webId predicate or URL.
-    const collectionUrl = (0, $85cNH$useMemo)(()=>{
-        if (predicateOrUrl) {
-            if (predicateOrUrl.startsWith("http")) return predicateOrUrl;
-            if (identity?.webIdData) return identity?.webIdData?.[predicateOrUrl];
-        }
-        return undefined;
-    // throw new Error(`No URL available for useCollection: ${predicateOrUrl}.`);
-    }, [
-        identity,
-        predicateOrUrl
-    ]);
-    // Fetch page of collection item references (if pageParam provided)
-    //  or default to `collectionUrl` (which should give you the first page).
-    const fetchCollection = (0, $85cNH$useCallback)(async ({ pageParam: nextPageUrl })=>{
-        // Fetch page or first page (collectionUrl)
-        let { json: json } = await dataProvider.fetch(nextPageUrl || collectionUrl);
-        if (json.totalItems) setTotalItems(json.totalItems);
-        // If first page, handle this here.
-        if ((json.type === "OrderedCollection" || json.type === "Collection") && json.first) {
-            if (json.first?.items) {
-                if (json.first?.items.length === 0 && json.first?.next) // Special case where the first property is an object without items
-                ({ json: json } = await dataProvider.fetch(json.first?.next));
-                else json = json.first;
-            } else // Fetch the first page
-            ({ json: json } = await dataProvider.fetch(json.first));
-        }
-        return json;
-    }, [
-        dataProvider,
-        collectionUrl,
-        identity,
-        setTotalItems
-    ]);
-    // Use infiniteQuery to handle pagination, fetching, etc.
-    const { data: data, error: collectionError, fetchNextPage: fetchNextPage, refetch: refetch, hasNextPage: hasNextPage, isLoading: isLoadingPage, isFetching: isFetchingPage, isFetchingNextPage: isFetchingNextPage } = (0, $85cNH$useInfiniteQuery)([
-        "collection",
-        {
-            collectionUrl: collectionUrl
-        }
-    ], fetchCollection, {
-        enabled: !!(collectionUrl && identity?.id),
-        getNextPageParam: (lastPage)=>lastPage.next,
-        getPreviousPageParam: (firstPage)=>firstPage.prev
-    });
-    // Put all items together in a list.
-    const { loadedItems: items, isLoading: isLoadingItems, isFetching: isFetchingItems, errors: itemErrors } = $c1e897431d8c5742$var$useItemsFromPagesAndNotifications(data?.pages, notifications, dereferenceItems);
-    // Notifications have been processed after hook call, so reset.
-    // useEffect(() => {
-    //   setNotifications([]);
-    // }, [notifications])
-    // Live Updates
-    (0, $85cNH$useEffect)(()=>{
-        if (liveUpdates && collectionUrl) // Create ws that listens to collectionUri changes
-        (0, $85cNH$getOrCreateWsChannel)(dataProvider.fetch, collectionUrl).then((webSocket)=>{
-            webSocket.addEventListener("message", (e)=>{
-                if (e.data && e.data.type === "Add" || e.data.type === "Remove") setNotifications([
-                    ...notifications,
-                    e.data
-                ]);
-            });
-            webSocket.addEventListener("error", (e)=>{
-                setHasLiveUpdates({
-                    status: "error",
-                    error: e
-                });
-            // TODO: Retry after a while
-            });
-            webSocket.addEventListener("close", (e)=>{
-                setHasLiveUpdates({
-                    ...hasLiveUpdates,
-                    status: "disconnected"
-                });
-            });
-            setHasLiveUpdates({
-                status: "connected"
-            });
-        }).catch(()=>{}); // If it fails, we won't receive live updates. But that's okay.
-    }, [
-        collectionUrl,
-        liveUpdates,
-        dataProvider.fetch
-    ]);
-    const allErrors = (0, $577f4953dfa5de4f$export$e57ff0f701c44363)(collectionError).concat((0, $577f4953dfa5de4f$export$e57ff0f701c44363)(itemErrors));
-    return {
-        items: items,
-        totalItems: totalItems,
-        error: allErrors.length > 0 && allErrors,
-        refetch: refetch,
-        fetchNextPage: fetchNextPage,
-        hasNextPage: hasNextPage,
-        isLoading: isLoadingPage || isLoadingItems,
-        isFetching: isFetchingPage || isFetchingItems,
-        isFetchingNextPage: isFetchingNextPage,
-        url: collectionUrl,
-        hasLiveUpdates: hasLiveUpdates
-    };
-};
-var $c1e897431d8c5742$export$2e2bcd8739ae039 = $c1e897431d8c5742$var$useCollection;
-
-
 const $7ce737d4a1c88e63$var$CommentsField = ({ source: source, context: context, helperText: helperText, placeholder: placeholder, userResource: userResource, mentions: mentions })=>{
     const record = (0, $85cNH$useRecordContext)();
-    const { items: comments, loading: loading, addItem: addItem, removeItem: removeItem } = (0, $c1e897431d8c5742$export$2e2bcd8739ae039)(record.replies);
+    const { items: comments, loading: loading, addItem: addItem, removeItem: removeItem } = (0, $8281f3ce3b9d6123$export$2e2bcd8739ae039)(record.replies);
     if (!userResource) throw new Error("No userResource defined for CommentsField");
     return /*#__PURE__*/ (0, $85cNH$jsxs)((0, $85cNH$Fragment), {
         children: [
@@ -737,7 +823,7 @@ var $7ce737d4a1c88e63$export$2e2bcd8739ae039 = $7ce737d4a1c88e63$var$CommentsFie
 
 const $d3be168cd1e7aaae$var$CollectionList = ({ collectionUrl: collectionUrl, resource: resource, children: children })=>{
     if ((0, $85cNH$react).Children.count(children) !== 1) throw new Error("<CollectionList> only accepts a single child");
-    const { items: actorsUris } = (0, $c1e897431d8c5742$export$2e2bcd8739ae039)(collectionUrl);
+    const { items: actorsUris } = (0, $8281f3ce3b9d6123$export$2e2bcd8739ae039)(collectionUrl);
     const { data: data, isLoading: isLoading, isFetching: isFetching } = (0, $85cNH$useGetMany)(resource, {
         ids: Array.isArray(actorsUris) ? actorsUris : [
             actorsUris
@@ -780,284 +866,27 @@ var $ea214512ab1a2e8f$export$2e2bcd8739ae039 = $ea214512ab1a2e8f$var$ReferenceCo
 
 
 
-
-const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
-    const dataProvider = (0, $85cNH$useDataProvider)();
-    const items = (0, $85cNH$useMemo)(()=>pages.flatMap((p)=>(0, $577f4953dfa5de4f$export$e57ff0f701c44363)(p.orderedItems || p.items)), [
-        pages
-    ]);
-    // We will force dereference, if some items are not URI string references.
-    const shouldDereference = (0, $85cNH$useMemo)(()=>{
-        return dereferenceItems || items.some((item)=>typeof item !== "string");
-    }, [
-        dereferenceItems,
-        items
-    ]);
-    // Dereference all items, if necessary (even if shouldDereference is false, the hook needs to be called).
-    const itemQueries = (0, $85cNH$useQueries)(!shouldDereference ? [] : items.filter((item)=>typeof item === "string").map((itemUri)=>({
-            queryKey: [
-                "resource",
-                itemUri
-            ],
-            queryFn: async ()=>(await dataProvider.fetch(itemUri)).json,
-            staleTime: Infinity
-        })));
-    if (!shouldDereference) return {
-        loadedItems: items,
-        isLoading: false,
-        isFetching: false
-    };
-    // Put all loaded items together (might be dereferenced already, so concatenate).
-    const loadedItems = items.filter((item)=>typeof item !== "string").concat(itemQueries.flatMap((itemQuery)=>{
-        return itemQuery.isSuccess && itemQuery.data || [];
-    }));
-    const errors = itemQueries.filter((q)=>q.error);
-    return {
-        loadedItems: loadedItems,
-        isLoading: itemQueries.some((q)=>q.isLoading),
-        isFetching: itemQueries.some((q)=>q.isFetching),
-        errors: errors.length > 0 ? errors : undefined
-    };
-};
 /**
- * Subscribe a collection. Supports pagination.
- * @param predicateOrUrl The collection URI or the predicate to get the collection URI from the identity (webId).
+ * Hook to fetch the inbox of the logged user.
+ * Returns the same data as the useCollection hooks, plus:
+ * - `awaitActivity`: a function to wait for a certain activity to be received
+ * - `owner`: the WebID of the inbox's owner
+ * See https://semapps.org/docs/frontend/activitypub-components#useinbox for usage
  * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: true }`
- */ const $8281f3ce3b9d6123$var$useCollection = (predicateOrUrl, options = {})=>{
-    const { dereferenceItems: dereferenceItems = false, liveUpdates: liveUpdates = true } = options;
+ */ const $cc1d1cd0e97c63a2$var$useInbox = (options = {})=>{
     const { data: identity } = (0, $85cNH$useGetIdentity)();
-    const [totalItems, setTotalItems] = (0, $85cNH$useState)();
-    const queryClient = (0, $85cNH$useQueryClient)();
-    const [hasLiveUpdates, setHasLiveUpdates] = (0, $85cNH$useState)({
-        status: "connecting"
-    });
-    const dataProvider = (0, $85cNH$useDataProvider)();
-    // Get collectionUrl from webId predicate or URL.
-    const collectionUrl = (0, $85cNH$useMemo)(()=>{
-        if (predicateOrUrl) {
-            if (predicateOrUrl.startsWith("http")) return predicateOrUrl;
-            if (identity?.webIdData) return identity?.webIdData?.[predicateOrUrl];
-        }
-        return undefined;
-    // throw new Error(`No URL available for useCollection: ${predicateOrUrl}.`);
-    }, [
-        identity,
-        predicateOrUrl
-    ]);
-    // Fetch page of collection item references (if pageParam provided)
-    //  or default to `collectionUrl` (which should give you the first page).
-    const fetchCollection = (0, $85cNH$useCallback)(async ({ pageParam: nextPageUrl })=>{
-        // Fetch page or first page (collectionUrl)
-        let { json: json } = await dataProvider.fetch(nextPageUrl || collectionUrl);
-        if (json.totalItems) setTotalItems(json.totalItems);
-        // If first page, handle this here.
-        if ((json.type === "OrderedCollection" || json.type === "Collection") && json.first) {
-            if (json.first?.items) {
-                if (json.first?.items.length === 0 && json.first?.next) // Special case where the first property is an object without items
-                ({ json: json } = await dataProvider.fetch(json.first?.next));
-                else json = json.first;
-            } else // Fetch the first page
-            ({ json: json } = await dataProvider.fetch(json.first));
-        }
-        return json;
-    }, [
-        dataProvider,
-        collectionUrl,
-        identity,
-        setTotalItems
-    ]);
-    // Use infiniteQuery to handle pagination, fetching, etc.
-    const { data: pageData, error: collectionError, fetchNextPage: fetchNextPage, refetch: refetch, hasNextPage: hasNextPage, isLoading: isLoadingPage, isFetching: isFetchingPage, isFetchingNextPage: isFetchingNextPage } = (0, $85cNH$useInfiniteQuery)([
-        "collection",
-        {
-            collectionUrl: collectionUrl
-        }
-    ], fetchCollection, {
-        enabled: !!(collectionUrl && identity?.id),
-        getNextPageParam: (lastPage)=>lastPage.next,
-        getPreviousPageParam: (firstPage)=>firstPage.prev
-    });
-    // Put all items together in a list (and dereference, if required).
-    const { loadedItems: items, isLoading: isLoadingItems, isFetching: isFetchingItems, errors: itemErrors } = $8281f3ce3b9d6123$var$useItemsFromPages(pageData?.pages ?? [], dereferenceItems);
-    const allErrors = (0, $577f4953dfa5de4f$export$e57ff0f701c44363)(collectionError).concat((0, $577f4953dfa5de4f$export$e57ff0f701c44363)(itemErrors));
-    const addItem = (0, $85cNH$useCallback)((item, shouldRefetch = true)=>{
-        queryClient.setQueryData([
-            "collection",
-            {
-                collectionUrl: collectionUrl
-            }
-        ], (oldData)=>{
-            if (!oldData) return oldData;
-            setTotalItems(totalItems && totalItems + 1);
-            // Destructure, so react knows, it needs to re-render the pages.
-            const pages = [
-                ...oldData.pages
-            ];
-            const firstPageItems = pages?.[0]?.orderedItems || pages?.[0]?.items || [];
-            firstPageItems.unshift(item);
-            oldData.pages = pages;
-            return oldData;
-        });
-        if (shouldRefetch) setTimeout(()=>queryClient.refetchQueries([
-                "collection",
-                {
-                    collectionUrl: collectionUrl
-                }
-            ], {
-                active: true,
-                exact: true
-            }), typeof shouldRefetch === "number" ? shouldRefetch : 2000);
-    }, [
-        queryClient,
-        collectionUrl
-    ]);
-    const removeItem = (0, $85cNH$useCallback)((item, shouldRefetch = true)=>{
-        queryClient.setQueryData([
-            "collection",
-            {
-                collectionUrl: collectionUrl
-            }
-        ], (oldData)=>{
-            if (!oldData) return oldData;
-            setTotalItems(totalItems && totalItems - 1);
-            // Destructure, so react knows, it needs to re-render the pages array.
-            const pages = [
-                ...oldData.pages
-            ];
-            // Find the item in all pages and remove the item to be removed (either item.id or just item)
-            pages.forEach((page)=>{
-                if (page.orderedItems) page.orderedItems = page.orderedItems.filter((i)=>(i.id || i) !== (item.id || item));
-                else if (page.items) page.items = page.items.filter((i)=>(i.id || i) !== (item?.id || item));
-            });
-            oldData.pages = pages;
-            return oldData;
-        });
-        if (shouldRefetch) setTimeout(()=>queryClient.refetchQueries([
-                "collection",
-                {
-                    collectionUrl: collectionUrl
-                }
-            ], {
-                active: true,
-                exact: true
-            }), typeof shouldRefetch === "number" ? shouldRefetch : 2000);
-    }, [
-        queryClient,
-        collectionUrl
-    ]);
-    // Live Updates
-    (0, $85cNH$useEffect)(()=>{
-        if (liveUpdates && collectionUrl) // Create ws that listens to collectionUri changes
-        (0, $85cNH$getOrCreateWsChannel)(dataProvider.fetch, collectionUrl).then((webSocket)=>{
-            webSocket.addEventListener("message", (e)=>{
-                const data = JSON.parse(e.data);
-                if (data && data.type === "Add") addItem(data.object, true);
-                else if (data && data.type === "Remove") removeItem(data.object, true);
-            });
-            webSocket.addEventListener("error", (e)=>{
-                setHasLiveUpdates({
-                    status: "error",
-                    error: e
-                });
-            // TODO: Retry after a while
-            });
-            webSocket.addEventListener("close", (e)=>{
-                if (!hasLiveUpdates.error) setHasLiveUpdates({
-                    ...hasLiveUpdates,
-                    status: "closed"
-                });
-            });
-            setHasLiveUpdates({
-                status: "connected"
-            });
-        }).catch(()=>{}); // If it fails, we won't receive live updates. But that's okay.
-    }, [
-        collectionUrl,
-        liveUpdates,
-        dataProvider
-    ]);
+    const { items: items, url: url, hasLiveUpdates: hasLiveUpdates, ...rest } = (0, $8281f3ce3b9d6123$export$2e2bcd8739ae039)("inbox", options);
+    const awaitActivity = (0, $600ca419166a1ded$export$2e2bcd8739ae039)(hasLiveUpdates.webSocket);
     return {
         items: items,
-        totalItems: totalItems,
-        error: allErrors.length > 0 && allErrors,
-        refetch: refetch,
-        fetchNextPage: fetchNextPage,
-        addItem: addItem,
-        removeItem: removeItem,
-        hasNextPage: hasNextPage,
-        isLoading: isLoadingPage || isLoadingItems,
-        isFetching: isFetchingPage || isFetchingItems,
-        isFetchingNextPage: isFetchingNextPage,
-        url: collectionUrl,
-        hasLiveUpdates: hasLiveUpdates
+        url: url,
+        hasLiveUpdates: hasLiveUpdates,
+        awaitActivity: awaitActivity,
+        owner: identity?.id,
+        ...rest
     };
 };
-var $8281f3ce3b9d6123$export$2e2bcd8739ae039 = $8281f3ce3b9d6123$var$useCollection;
-
-
-
-
-
-const $542b37cc25b8ccca$var$useInbox = ()=>{
-    const { data: identity } = (0, $85cNH$useGetIdentity)();
-    const inboxUrl = (0, $85cNH$useMemo)(()=>{
-        if (identity?.webIdData) return identity?.webIdData?.inbox;
-    }, [
-        identity
-    ]);
-    const sparqlEndpoint = (0, $85cNH$useMemo)(()=>{
-        if (identity?.webIdData) return identity?.webIdData?.endpoints?.["void:sparqlEndpoint"] || `${identity?.id}/sparql`;
-    }, [
-        identity
-    ]);
-    const fetch = (0, $85cNH$useCallback)(async ({ filters: filters })=>{
-        if (!sparqlEndpoint || !inboxUrl) return;
-        const token = localStorage.getItem("token");
-        const blankNodesQuery = (0, $85cNH$buildBlankNodesQuery)([
-            "as:object"
-        ]);
-        let filtersWhereQuery = "";
-        if (filters) Object.keys(filters).forEach((predicate)=>{
-            if (filters[predicate]) {
-                const object = filters[predicate].startsWith("http") ? `<${filters[predicate]}>` : filters[predicate];
-                filtersWhereQuery += `?s1 ${predicate} ${object} .`;
-            }
-        });
-        const query = `
-        PREFIX as: <https://www.w3.org/ns/activitystreams#>
-        CONSTRUCT {
-          ?s1 ?p1 ?o1 .
-          ${blankNodesQuery.construct}
-        }
-        WHERE {
-          <${inboxUrl}> as:items ?s1 .
-          ?s1 ?p1 ?o1 .
-          FILTER( (isIRI(?s1)) ) .
-          ${filtersWhereQuery}
-          ${blankNodesQuery.where}
-        }
-      `;
-        const { json: json } = await (0, $85cNH$fetchUtils).fetchJson(sparqlEndpoint, {
-            method: "POST",
-            body: query,
-            headers: new Headers({
-                Accept: "application/ld+json",
-                Authorization: token ? `Bearer ${token}` : undefined
-            })
-        });
-        if (json["@graph"]) return json["@graph"];
-        return null;
-    }, [
-        sparqlEndpoint,
-        inboxUrl
-    ]);
-    return {
-        fetch: fetch,
-        url: inboxUrl,
-        owner: identity?.id
-    };
-};
-var $542b37cc25b8ccca$export$2e2bcd8739ae039 = $542b37cc25b8ccca$var$useInbox;
+var $cc1d1cd0e97c63a2$export$2e2bcd8739ae039 = $cc1d1cd0e97c63a2$var$useInbox;
 
 
 
@@ -1279,5 +1108,5 @@ var $51cccd331ea8b13d$export$2e2bcd8739ae039 = $51cccd331ea8b13d$var$useMentions
 
 
 
-export {$7ce737d4a1c88e63$export$2e2bcd8739ae039 as CommentsField, $d3be168cd1e7aaae$export$2e2bcd8739ae039 as CollectionList, $ea214512ab1a2e8f$export$2e2bcd8739ae039 as ReferenceCollectionField, $8281f3ce3b9d6123$export$2e2bcd8739ae039 as useCollection, $542b37cc25b8ccca$export$2e2bcd8739ae039 as useInbox, $641e93142bcf5435$export$2e2bcd8739ae039 as useNodeinfo, $712f7f004b5f345e$export$2e2bcd8739ae039 as useOutbox, $2514c63dc8f4867c$export$2e2bcd8739ae039 as useWebfinger, $51cccd331ea8b13d$export$2e2bcd8739ae039 as useMentions, $338f387df48a40d7$export$1ec8e53e7d982d22 as ACTIVITY_TYPES, $338f387df48a40d7$export$9649665d7ccb0dc2 as ACTOR_TYPES, $338f387df48a40d7$export$c49cfb2681596b20 as OBJECT_TYPES, $338f387df48a40d7$export$4d8d554031975581 as PUBLIC_URI};
+export {$7ce737d4a1c88e63$export$2e2bcd8739ae039 as CommentsField, $d3be168cd1e7aaae$export$2e2bcd8739ae039 as CollectionList, $ea214512ab1a2e8f$export$2e2bcd8739ae039 as ReferenceCollectionField, $8281f3ce3b9d6123$export$2e2bcd8739ae039 as useCollection, $cc1d1cd0e97c63a2$export$2e2bcd8739ae039 as useInbox, $641e93142bcf5435$export$2e2bcd8739ae039 as useNodeinfo, $4d1d40fdbcd30589$export$2e2bcd8739ae039 as useOutbox, $2514c63dc8f4867c$export$2e2bcd8739ae039 as useWebfinger, $51cccd331ea8b13d$export$2e2bcd8739ae039 as useMentions, $338f387df48a40d7$export$1ec8e53e7d982d22 as ACTIVITY_TYPES, $338f387df48a40d7$export$9649665d7ccb0dc2 as ACTOR_TYPES, $338f387df48a40d7$export$c49cfb2681596b20 as OBJECT_TYPES, $338f387df48a40d7$export$4d8d554031975581 as PUBLIC_URI};
 //# sourceMappingURL=index.es.js.map

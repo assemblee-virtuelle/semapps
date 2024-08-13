@@ -50,13 +50,6 @@ export declare namespace OBJECT_TYPES {
   let VIDEO: string;
 }
 export const PUBLIC_URI: 'https://www.w3.org/ns/activitystreams#Public';
-export function useOutbox(): {
-  post: (activity: any) => Promise<string | null>;
-  fetch: () => Promise<any>;
-  url: any;
-  loaded: boolean;
-  owner: import('react-admin').Identifier | undefined;
-};
 interface UseCollectionOptions {
   dereferenceItems?: boolean;
   liveUpdates?: boolean;
@@ -89,7 +82,46 @@ export const useCollection: (
   hasLiveUpdates: {
     status: string;
     error?: any;
+    webSocket?: WebSocket | undefined;
   };
+};
+/**
+ * Hook to fetch and post to the outbox of the logged user.
+ * Returns the same data as the useCollection hooks, plus:
+ * - `post`: a function to post a new activity in the user's outbox
+ * - `awaitActivity`: a function to wait for a certain activity to be posted
+ * - `owner`: the WebID of the outbox's owner
+ * See https://semapps.org/docs/frontend/activitypub-components#useoutbox for usage
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: true }`
+ */
+export const useOutbox: (options?: UseCollectionOptions) => {
+  totalItems: number | undefined;
+  error: false | unknown[];
+  refetch: <TPageData>(
+    options?: (import('react-query').RefetchOptions & import('react-query').RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<import('react-query').QueryObserverResult<import('react-query').InfiniteData<any>, unknown>>;
+  fetchNextPage: (
+    options?: import('react-query').FetchNextPageOptions | undefined
+  ) => Promise<import('react-query').InfiniteQueryObserverResult<any, unknown>>;
+  addItem: (item: any, shouldRefetch?: number | boolean) => void;
+  removeItem: (item: any, shouldRefetch?: boolean) => void;
+  hasNextPage: boolean | undefined;
+  isLoading: boolean;
+  isFetching: boolean;
+  isFetchingNextPage: boolean;
+  url: any;
+  hasLiveUpdates: {
+    status: string;
+    error?: any;
+    webSocket?: WebSocket | undefined;
+  };
+  items: any[];
+  post: (activity: object) => Promise<string | null>;
+  awaitActivity: (
+    matchActivity: (activity: object) => boolean,
+    options?: import('types').AwaitActivityOptions
+  ) => Promise<unknown>;
+  owner: import('react-admin').Identifier | undefined;
 };
 export function CommentsField({
   source,
@@ -134,9 +166,40 @@ export function ReferenceCollectionField({
   reference: any;
   children: any;
 }): import('react/jsx-runtime').JSX.Element | null;
-export function useInbox(): {
-  fetch: ({ filters }: { filters: any }) => Promise<any>;
+/**
+ * Hook to fetch the inbox of the logged user.
+ * Returns the same data as the useCollection hooks, plus:
+ * - `awaitActivity`: a function to wait for a certain activity to be received
+ * - `owner`: the WebID of the inbox's owner
+ * See https://semapps.org/docs/frontend/activitypub-components#useinbox for usage
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: true }`
+ */
+export const useInbox: (options?: UseCollectionOptions) => {
+  totalItems: number | undefined;
+  error: false | unknown[];
+  refetch: <TPageData>(
+    options?: (import('react-query').RefetchOptions & import('react-query').RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<import('react-query').QueryObserverResult<import('react-query').InfiniteData<any>, unknown>>;
+  fetchNextPage: (
+    options?: import('react-query').FetchNextPageOptions | undefined
+  ) => Promise<import('react-query').InfiniteQueryObserverResult<any, unknown>>;
+  addItem: (item: any, shouldRefetch?: number | boolean) => void;
+  removeItem: (item: any, shouldRefetch?: boolean) => void;
+  hasNextPage: boolean | undefined;
+  isLoading: boolean;
+  isFetching: boolean;
+  isFetchingNextPage: boolean;
+  items: any[];
   url: any;
+  hasLiveUpdates: {
+    status: string;
+    error?: any;
+    webSocket?: WebSocket | undefined;
+  };
+  awaitActivity: (
+    matchActivity: (activity: object) => boolean,
+    options?: import('types').AwaitActivityOptions
+  ) => Promise<unknown>;
   owner: import('react-admin').Identifier | undefined;
 };
 export function useNodeinfo(host: any, rel?: string): undefined;

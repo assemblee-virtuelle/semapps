@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useDataProvider } from 'react-admin';
-import { DataModel, DataProvider } from '../dataProvider/types';
+import { DataModel, SemanticDataProvider } from '../dataProvider/types';
 
 const useDataModels = () => {
-  const dataProvider = useDataProvider<DataProvider>();
+  const dataProvider = useDataProvider<SemanticDataProvider>();
   const [dataModels, setDataModels] = useState<Record<string, DataModel>>();
 
   useEffect(() => {
