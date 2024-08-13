@@ -330,8 +330,13 @@ var $8281f3ce3b9d6123$export$2e2bcd8739ae039 = $8281f3ce3b9d6123$var$useCollecti
 
 
 
-const $600ca419166a1ded$var$useAwaitActivity = (webSocket, existingActivities)=>{
+/**
+ * Hook used internally by useInbox and useOutbox. This is not exported.
+ * @param webSocket WebSocket which allow to listen to the inbox or outbox
+ * @param existingActivities Partial list of activities already received in the inbox and outbox
+ */ const $600ca419166a1ded$var$useAwaitActivity = (webSocket, existingActivities)=>{
     const dataProvider = (0, $85cNH$useDataProvider)();
+    // TODO Allow to pass an object, and automatically dereference it if required, like on the @semapps/activitypub matchActivity util
     return (0, $85cNH$useCallback)((matchActivity, options = {})=>{
         const { timeout: timeout = 30000, checkExistingActivities: checkExistingActivities = false } = options;
         return new Promise((resolve, reject)=>{
@@ -341,7 +346,7 @@ const $600ca419166a1ded$var$useAwaitActivity = (webSocket, existingActivities)=>
                     if (data.type === "Add") dataProvider.fetch(data.object).then(({ json: json })=>{
                         if (matchActivity(json)) {
                             webSocket.removeEventListener("message", onMessage);
-                            resolve(json);
+                            return resolve(json);
                         }
                     });
                 };
@@ -354,13 +359,11 @@ const $600ca419166a1ded$var$useAwaitActivity = (webSocket, existingActivities)=>
                     reject(new Error(`${e.reason} (Code: ${e.code})`));
                 });
                 // If a list of activities is already loaded, verify if there is a match
-                console.log("existingActivities", checkExistingActivities, existingActivities);
                 if (existingActivities && checkExistingActivities) for (const a of existingActivities){
-                    console.log("checking activity", a);
                     if (typeof a !== "string") {
                         if (matchActivity(a)) {
                             webSocket.removeEventListener("message", onMessage);
-                            resolve(a);
+                            return resolve(a);
                         }
                     }
                 }
@@ -379,7 +382,15 @@ const $600ca419166a1ded$var$useAwaitActivity = (webSocket, existingActivities)=>
 var $600ca419166a1ded$export$2e2bcd8739ae039 = $600ca419166a1ded$var$useAwaitActivity;
 
 
-const $4d1d40fdbcd30589$var$useOutbox = (options = {})=>{
+/**
+ * Hook to fetch and post to the outbox of the logged user.
+ * Returns the same data as the useCollection hooks, plus:
+ * - `post`: a function to post a new activity in the user's outbox
+ * - `awaitActivity`: a function to wait for a certain activity to be posted
+ * - `owner`: the WebID of the outbox's owner
+ * See https://semapps.org/docs/frontend/activitypub-components#useoutbox for usage
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: true }`
+ */ const $4d1d40fdbcd30589$var$useOutbox = (options = {})=>{
     const dataProvider = (0, $85cNH$useDataProvider)();
     const { data: identity } = (0, $85cNH$useGetIdentity)();
     const { url: url, hasLiveUpdates: hasLiveUpdates, items: items, ...rest } = (0, $8281f3ce3b9d6123$export$2e2bcd8739ae039)("outbox", options);
@@ -855,7 +866,14 @@ var $ea214512ab1a2e8f$export$2e2bcd8739ae039 = $ea214512ab1a2e8f$var$ReferenceCo
 
 
 
-const $cc1d1cd0e97c63a2$var$useInbox = (options = {})=>{
+/**
+ * Hook to fetch the inbox of the logged user.
+ * Returns the same data as the useCollection hooks, plus:
+ * - `awaitActivity`: a function to wait for a certain activity to be received
+ * - `owner`: the WebID of the inbox's owner
+ * See https://semapps.org/docs/frontend/activitypub-components#useinbox for usage
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: true }`
+ */ const $cc1d1cd0e97c63a2$var$useInbox = (options = {})=>{
     const { data: identity } = (0, $85cNH$useGetIdentity)();
     const { items: items, url: url, hasLiveUpdates: hasLiveUpdates, ...rest } = (0, $8281f3ce3b9d6123$export$2e2bcd8739ae039)("inbox", options);
     const awaitActivity = (0, $600ca419166a1ded$export$2e2bcd8739ae039)(hasLiveUpdates.webSocket);

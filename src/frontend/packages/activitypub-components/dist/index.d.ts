@@ -85,6 +85,15 @@ export const useCollection: (
     webSocket?: WebSocket | undefined;
   };
 };
+/**
+ * Hook to fetch and post to the outbox of the logged user.
+ * Returns the same data as the useCollection hooks, plus:
+ * - `post`: a function to post a new activity in the user's outbox
+ * - `awaitActivity`: a function to wait for a certain activity to be posted
+ * - `owner`: the WebID of the outbox's owner
+ * See https://semapps.org/docs/frontend/activitypub-components#useoutbox for usage
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: true }`
+ */
 export const useOutbox: (options?: UseCollectionOptions) => {
   totalItems: number | undefined;
   error: false | unknown[];
@@ -157,6 +166,14 @@ export function ReferenceCollectionField({
   reference: any;
   children: any;
 }): import('react/jsx-runtime').JSX.Element | null;
+/**
+ * Hook to fetch the inbox of the logged user.
+ * Returns the same data as the useCollection hooks, plus:
+ * - `awaitActivity`: a function to wait for a certain activity to be received
+ * - `owner`: the WebID of the inbox's owner
+ * See https://semapps.org/docs/frontend/activitypub-components#useinbox for usage
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: true }`
+ */
 export const useInbox: (options?: UseCollectionOptions) => {
   totalItems: number | undefined;
   error: false | unknown[];

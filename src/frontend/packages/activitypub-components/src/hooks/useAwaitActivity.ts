@@ -3,6 +3,11 @@ import { useDataProvider } from 'react-admin';
 import { SemanticDataProvider } from '@semapps/semantic-data-provider';
 import { SolidNotification, AwaitActivityOptions } from '../types';
 
+/**
+ * Hook used internally by useInbox and useOutbox. This is not exported.
+ * @param webSocket WebSocket which allow to listen to the inbox or outbox
+ * @param existingActivities Partial list of activities already received in the inbox and outbox
+ */
 const useAwaitActivity = (webSocket?: WebSocket, existingActivities?: Array<object | string>) => {
   const dataProvider = useDataProvider<SemanticDataProvider>();
 
@@ -18,7 +23,7 @@ const useAwaitActivity = (webSocket?: WebSocket, existingActivities?: Array<obje
               dataProvider.fetch(data.object).then(({ json }) => {
                 if (matchActivity(json)) {
                   webSocket.removeEventListener('message', onMessage);
-                  resolve(json);
+                  return resolve(json);
                 }
               });
             }
@@ -40,7 +45,7 @@ const useAwaitActivity = (webSocket?: WebSocket, existingActivities?: Array<obje
               if (typeof a !== 'string') {
                 if (matchActivity(a)) {
                   webSocket.removeEventListener('message', onMessage);
-                  resolve(a);
+                  return resolve(a);
                 }
               }
             }
