@@ -214,7 +214,8 @@ const authProvider = ({
         window.location.href = urlJoin(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
       }
     },
-    logout: async redirectUrl => {
+    logout: async params => {
+      const { redirectUrl } = params || {};
       switch (authType) {
         case AUTH_TYPE_LOCAL: {
           const authServerUrl = await getAuthServerUrl(dataProvider);

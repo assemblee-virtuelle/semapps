@@ -219,7 +219,8 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
                 window.location.href = (0, $1obPJ$urljoin)(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
             }
         },
-        logout: async (redirectUrl)=>{
+        logout: async (params)=>{
+            const { redirectUrl: redirectUrl } = params || {};
             switch(authType){
                 case $1d8606895ce3b768$var$AUTH_TYPE_LOCAL:
                     {

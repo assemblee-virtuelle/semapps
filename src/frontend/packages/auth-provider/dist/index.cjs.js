@@ -258,7 +258,8 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                 window.location.href = (0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
             }
         },
-        logout: async (redirectUrl)=>{
+        logout: async (params)=>{
+            const { redirectUrl: redirectUrl } = params || {};
             switch(authType){
                 case $6a92eb32301846ac$var$AUTH_TYPE_LOCAL:
                     {
