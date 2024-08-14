@@ -27,7 +27,7 @@ const OutboxService = {
   },
   actions: {
     async post(ctx) {
-      let { collectionUri, ...activity } = ctx.params;
+      let { collectionUri, username, ...activity } = ctx.params;
 
       const collectionExists = await ctx.call('activitypub.collection.exist', { resourceUri: collectionUri });
       if (!collectionExists) {
