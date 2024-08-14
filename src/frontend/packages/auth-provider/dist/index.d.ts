@@ -442,6 +442,7 @@ declare namespace englishMessages {
       let account_settings_updated: string;
       let login_to_continue: string;
       let choose_pod_provider: string;
+      let unreachable_auth_server: string;
     }
     namespace notification {
       let reset_password_submitted: string;
@@ -539,6 +540,7 @@ declare namespace frenchMessages {
       let account_settings_updated: string;
       let login_to_continue: string;
       let choose_pod_provider: string;
+      let unreachable_auth_server: string;
     }
     namespace notification {
       let reset_password_submitted: string;

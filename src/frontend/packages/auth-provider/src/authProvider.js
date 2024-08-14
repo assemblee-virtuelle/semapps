@@ -43,7 +43,10 @@ const authProvider = ({
 
         const as = await oauth
           .discoveryRequest(new URL(issuer))
-          .then(response => oauth.processDiscoveryResponse(new URL(issuer), response));
+          .then(response => oauth.processDiscoveryResponse(new URL(issuer), response))
+          .catch(() => {
+            throw new Error('auth.message.unreachable_auth_server');
+          });
 
         const codeVerifier = oauth.generateRandomCodeVerifier();
         const codeChallenge = await oauth.calculatePKCECodeChallenge(codeVerifier);
@@ -284,7 +287,16 @@ const authProvider = ({
       }
       return true;
     },
-    checkError: error => Promise.resolve(),
+    checkError: error => {
+      // We want to disconnect only with INVALID_TOKEN errors
+      if (error.status === 401 && error.body && error.body.type === 'INVALID_TOKEN') {
+        localStorage.removeItem('token');
+        return Promise.reject();
+      } else {
+        // Other error code (404, 500, etc): no need to log out
+        return Promise.resolve();
+      }
+    },
     getPermissions: async uri => {
       if (!checkPermissions) return;
 
