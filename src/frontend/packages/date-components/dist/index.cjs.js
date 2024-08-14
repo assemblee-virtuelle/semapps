@@ -2,6 +2,7 @@ var $3RhHq$reactjsxruntime = require("react/jsx-runtime");
 var $3RhHq$muixdatepickersDatePicker = require("@mui/x-date-pickers/DatePicker");
 var $3RhHq$muixdatepickersTimePicker = require("@mui/x-date-pickers/TimePicker");
 var $3RhHq$muixdatepickersDateTimePicker = require("@mui/x-date-pickers/DateTimePicker");
+require("@fullcalendar/core/vdom");
 var $3RhHq$react = require("react");
 var $3RhHq$reactadmin = require("react-admin");
 var $3RhHq$muixdatepickersLocalizationProvider = require("@mui/x-date-pickers/LocalizationProvider");
@@ -28,7 +29,10 @@ $parcel$export(module.exports, "DateTimeInput", () => $0ec82123656742c1$export$1
 $parcel$export(module.exports, "CalendarList", () => $563c84827e91e322$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "DaysList", () => $5379d12b87e743a4$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useFullCalendarProps", () => $c8dbd8ec3b8f34cc$export$2e2bcd8739ae039);
-/* eslint-disable react/react-in-jsx-scope */ /* eslint-disable react/jsx-props-no-spreading */ 
+/* eslint-disable react/react-in-jsx-scope */ /* eslint-disable react/jsx-props-no-spreading */ // Solves bug with Vite in dev mode. Can be removed when we upgrade to FullCalendar v6
+// See https://github.com/fullcalendar/fullcalendar-vue/issues/152
+
+
 
 
 

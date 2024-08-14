@@ -2,6 +2,7 @@ import {jsx as $5Ihaz$jsx, jsxs as $5Ihaz$jsxs} from "react/jsx-runtime";
 import {DatePicker as $5Ihaz$DatePicker} from "@mui/x-date-pickers/DatePicker";
 import {TimePicker as $5Ihaz$TimePicker} from "@mui/x-date-pickers/TimePicker";
 import {DateTimePicker as $5Ihaz$DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
+import "@fullcalendar/core/vdom";
 import {useCallback as $5Ihaz$useCallback, useMemo as $5Ihaz$useMemo} from "react";
 import {useInput as $5Ihaz$useInput, useTranslateLabel as $5Ihaz$useTranslateLabel, InputHelperText as $5Ihaz$InputHelperText, useListContext as $5Ihaz$useListContext, useCreatePath as $5Ihaz$useCreatePath} from "react-admin";
 import {LocalizationProvider as $5Ihaz$LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
@@ -13,7 +14,10 @@ import $5Ihaz$muistylesmakeStyles from "@mui/styles/makeStyles";
 import {useSearchParams as $5Ihaz$useSearchParams, useNavigate as $5Ihaz$useNavigate} from "react-router-dom";
 import $5Ihaz$fullcalendarlist from "@fullcalendar/list";
 
-/* eslint-disable react/react-in-jsx-scope */ /* eslint-disable react/jsx-props-no-spreading */ 
+/* eslint-disable react/react-in-jsx-scope */ /* eslint-disable react/jsx-props-no-spreading */ // Solves bug with Vite in dev mode. Can be removed when we upgrade to FullCalendar v6
+// See https://github.com/fullcalendar/fullcalendar-vue/issues/152
+
+
 
 
 
