@@ -46,7 +46,7 @@ const AuthLocalService = {
   },
   actions: {
     async signup(ctx) {
-      const { username, email, password, interactionId, ...rest } = ctx.params;
+      const { username, email, password, ...rest } = ctx.params;
       // This is going to get in our way otherwise when waiting for completions.
       ctx.meta.skipObjectsWatcher = true;
 
@@ -72,7 +72,7 @@ const AuthLocalService = {
         // Link the webId with the account
         accountData = await ctx.call('auth.account.attachWebId', { accountUri: accountData['@id'], webId });
 
-        ctx.emit('auth.registered', { webId, profileData, accountData, interactionId });
+        ctx.emit('auth.registered', { webId, profileData, accountData });
 
         const token = await ctx.call('auth.jwt.generateToken', { payload: { webId } });
 
@@ -84,15 +84,11 @@ const AuthLocalService = {
       }
     },
     async login(ctx) {
-      const { username, password, interactionId } = ctx.params;
+      const { username, password } = ctx.params;
 
       const accountData = await ctx.call('auth.account.verify', { username, password });
 
-      ctx.emit(
-        'auth.connected',
-        { webId: accountData.webId, accountData, interactionId },
-        { meta: { webId: null, dataset: null } }
-      );
+      ctx.emit('auth.connected', { webId: accountData.webId, accountData }, { meta: { webId: null, dataset: null } });
 
       const token = await ctx.call('auth.jwt.generateToken', { payload: { webId: accountData.webId } });
 

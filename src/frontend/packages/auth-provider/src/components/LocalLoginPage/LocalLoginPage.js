@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { useTranslate, useGetIdentity, useAuthProvider } from 'react-admin';
+import { useTranslate, useGetIdentity } from 'react-admin';
 import { Card, Typography } from '@mui/material';
 import LockIcon from '@mui/icons-material/Lock';
 import makeStyles from '@mui/styles/makeStyles';
@@ -10,6 +10,7 @@ import NewPasswordForm from './NewPasswordForm';
 import ResetPasswordForm from './ResetPasswordForm';
 import SimpleBox from './SimpleBox';
 import { defaultScorer } from '../../passwordScorer';
+import useLoginCompleted from '../../hooks/useLoginCompleted';
 import getSearchParamsRest from './getSearchParamsRest';
 
 const useStyles = makeStyles(() => ({
@@ -44,34 +45,28 @@ const LocalLoginPage = ({
   const classes = useStyles();
   const navigate = useNavigate();
   const translate = useTranslate();
-  const authProvider = useAuthProvider();
   const [searchParams] = useSearchParams();
   const isSignup = hasSignup && searchParams.has('signup');
   const isResetPassword = searchParams.has('reset_password');
   const isNewPassword = searchParams.has('new_password');
   const isLogin = !isSignup && !isResetPassword && !isNewPassword;
-  const redirectTo = searchParams.get('redirect');
+  const loginCompleted = useLoginCompleted();
+  const redirectTo = postLoginRedirect
+    ? `${postLoginRedirect}?${getSearchParamsRest(searchParams)}`
+    : searchParams.get('redirect') || '/';
   const interactionId = searchParams.get('interaction_id');
   const { data: identity, isLoading } = useGetIdentity();
 
   useEffect(() => {
     (async () => {
       if (!isLoading && identity?.id) {
-        if (interactionId) {
-          // If interactionId is set, it means we are connecting from another application.
-          // So first call a custom endpoint to tell the OIDC server the login is completed
-          await authProvider.loginCompleted(interactionId, identity?.id);
-        }
-        if (postLoginRedirect) {
-          navigate(`${postLoginRedirect}?${getSearchParamsRest(searchParams)}`);
-        } else if (redirectTo && redirectTo.startsWith('http')) {
-          window.location.href = redirectTo;
-        } else {
-          navigate(redirectTo || '/');
-        }
+        // If interactionId is set, it means we are connecting from another application
+        // So call a custom endpoint to tell the OIDC server the login is completed
+        if (interactionId) await loginCompleted(interactionId);
+        window.location.href = redirectTo;
       }
     })();
-  }, [identity, isLoading, navigate, searchParams, redirectTo, postLoginRedirect, authProvider, interactionId]);
+  }, [identity, isLoading, navigate, searchParams, redirectTo, loginCompleted, interactionId]);
 
   const [title, text] = useMemo(() => {
     if (isSignup) {

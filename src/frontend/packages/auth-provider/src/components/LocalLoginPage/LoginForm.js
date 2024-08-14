@@ -1,6 +1,17 @@
-import * as React from 'react';
-import { Form, useTranslate, useNotify, useSafeSetState, TextInput, required, email, useLogin } from 'react-admin';
-import { useLocation } from 'react-router-dom';
+import React, { useCallback } from 'react';
+import {
+  Form,
+  useTranslate,
+  useNotify,
+  useSafeSetState,
+  TextInput,
+  required,
+  email,
+  useLogin,
+  useDataProvider
+} from 'react-admin';
+import useLoginCompleted from '../../hooks/useLoginCompleted';
+import { useSearchParams } from 'react-router-dom';
 import { Button, CardContent, CircularProgress } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import getSearchParamsRest from './getSearchParamsRest';
@@ -20,20 +31,27 @@ const LoginForm = ({ postLoginRedirect, allowUsername }) => {
   const translate = useTranslate();
   const notify = useNotify();
   const classes = useStyles();
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
+  const dataProvider = useDataProvider();
+  const [searchParams] = useSearchParams();
+  const loginCompleted = useLoginCompleted();
+  const interactionId = searchParams.get('interaction_id');
   const redirectTo = postLoginRedirect
     ? `${postLoginRedirect}?${getSearchParamsRest(searchParams)}`
     : searchParams.get('redirect');
-  const interactionId = searchParams.get('interaction_id');
 
-  const submit = values => {
-    setLoading(true);
-    login({ ...values, redirectTo, interactionId })
-      .then(() => {
+  const submit = useCallback(
+    async values => {
+      try {
+        setLoading(true);
+        await login(values);
+        // If interactionId is set, it means we are connecting from another application.
+        // So call a custom endpoint to tell the OIDC server the login is completed
+        if (interactionId) await loginCompleted(interactionId);
         setLoading(false);
-      })
-      .catch(error => {
+        // TODO now that we have the refreshConfig method, see if we can avoid a hard reload
+        // window.location.reload();
+        window.location.href = redirectTo;
+      } catch (e) {
         setLoading(false);
         notify(
           typeof error === 'string'
@@ -48,8 +66,10 @@ const LoginForm = ({ postLoginRedirect, allowUsername }) => {
             }
           }
         );
-      });
-  };
+      }
+    },
+    [setLoading, login, redirectTo, notify, interactionId, dataProvider]
+  );
 
   return (
     <Form onSubmit={submit} noValidate defaultValues={{ username: searchParams.get('email') }}>
