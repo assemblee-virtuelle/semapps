@@ -60,6 +60,7 @@ const $47a3fad69bcb0083$export$274217e117cdbc7b = async (dataProvider)=>{
     const authServer = Object.values(dataServers).find((server)=>server.authServer === true);
     if (!authServer) throw new Error("Could not find a server with authServer: true. Check your dataServers config.");
     // If the server is a POD, return the root URL instead of https://domain.com/user/data
+    // TODO Use 'solid:oidcIssuer' when it is available
     return authServer.pod ? new URL(authServer.baseUrl).origin : authServer.baseUrl;
 };
 const $47a3fad69bcb0083$export$1391212d75b2ee65 = async (t)=>new Promise((resolve)=>setTimeout(resolve, t));
@@ -92,7 +93,9 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
             if (authType === $1d8606895ce3b768$var$AUTH_TYPE_SOLID_OIDC) {
                 const { webId: webId, issuer: issuer, redirect: redirect = "/", isSignup: isSignup = false } = params;
                 webId && issuer;
-                const as = await $1obPJ$discoveryRequest(new URL(issuer)).then((response)=>$1obPJ$processDiscoveryResponse(new URL(issuer), response));
+                const as = await $1obPJ$discoveryRequest(new URL(issuer)).then((response)=>$1obPJ$processDiscoveryResponse(new URL(issuer), response)).catch(()=>{
+                    throw new Error("auth.message.unreachable_auth_server");
+                });
                 const codeVerifier = $1obPJ$generateRandomCodeVerifier();
                 const codeChallenge = await $1obPJ$calculatePKCECodeChallenge(codeVerifier);
                 const codeChallengeMethod = "S256";
@@ -109,7 +112,7 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
                 authorizationUrl.searchParams.set("is_signup", isSignup);
                 window.location = authorizationUrl;
             } else if (authType === $1d8606895ce3b768$var$AUTH_TYPE_LOCAL) {
-                const { username: username, password: password, interactionId: interactionId, redirectTo: redirectTo } = params;
+                const { username: username, password: password } = params;
                 const authServerUrl = await (0, $47a3fad69bcb0083$export$274217e117cdbc7b)(dataProvider);
                 let token, webId;
                 try {
@@ -117,8 +120,7 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
                         method: "POST",
                         body: JSON.stringify({
                             username: username.trim(),
-                            password: password.trim(),
-                            interactionId: interactionId
+                            password: password.trim()
                         }),
                         headers: new Headers({
                             "Content-Type": "application/json"
@@ -131,11 +133,6 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
                 localStorage.setItem("token", token);
                 await dataProvider.refreshConfig();
                 await callCheckUser(webId);
-                // TODO now that we have a refreshConfig method, see if we can avoid a hard reload
-                if (redirectTo) {
-                    if (interactionId) await (0, $47a3fad69bcb0083$export$1391212d75b2ee65)(3000); // Ensure the interactionId has been received and processed
-                    window.location.href = redirectTo;
-                } else window.location.reload();
             } else if (authType === $1d8606895ce3b768$var$AUTH_TYPE_SSO) {
                 const authServerUrl = await (0, $47a3fad69bcb0083$export$274217e117cdbc7b)(dataProvider);
                 let redirectUrl = `${new URL(window.location.href).origin}/login?login=true`;
@@ -181,14 +178,12 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
                 localStorage.setItem("token", token);
                 await dataProvider.refreshConfig();
                 await callCheckUser(webId);
-                // TODO now that we have a refreshConfig method, see if we can avoid a hard reload
-                window.location.href = "/";
             }
         },
         signup: async (params)=>{
             const authServerUrl = await (0, $47a3fad69bcb0083$export$274217e117cdbc7b)(dataProvider);
             if (authType === $1d8606895ce3b768$var$AUTH_TYPE_LOCAL) {
-                const { username: username, email: email, password: password, domain: domain, interactionId: interactionId, ...profileData } = params;
+                const { username: username, email: email, password: password, domain: domain, ...profileData } = params;
                 let token, webId;
                 try {
                     ({ json: { token: token, webId: webId } } = await dataProvider.fetch((0, $1obPJ$urljoin)(authServerUrl, "auth/signup"), {
@@ -197,7 +192,6 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
                             username: username?.trim(),
                             email: email.trim(),
                             password: password.trim(),
-                            interactionId: interactionId,
                             ...profileData
                         }),
                         headers: new Headers({
@@ -285,7 +279,14 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
             if (checkUser) return checkUser(userData);
             return true;
         },
-        checkError: (error)=>Promise.resolve(),
+        checkError: (error)=>{
+            // We want to disconnect only with INVALID_TOKEN errors
+            if (error.status === 401 && error.body && error.body.type === "INVALID_TOKEN") {
+                localStorage.removeItem("token");
+                return Promise.reject();
+            } else // Other error code (404, 500, etc): no need to log out
+            return Promise.resolve();
+        },
         getPermissions: async (uri)=>{
             if (!checkPermissions) return;
             // React-admin calls getPermissions with an empty object on every page refresh
@@ -426,24 +427,6 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
                 if (e.message === "auth.account.invalid_password") throw new Error("auth.notification.invalid_password");
                 throw new Error("auth.notification.update_settings_error");
             }
-        },
-        /**
-     * Inform the OIDC server that the login interaction has been completed.
-     * This is necessary, otherwise the OIDC server will keep on redirecting to the login form.
-     * We call the endpoint with the token as a proof of login, otherwise it could be abused.
-     */ loginCompleted: async (interactionId, webId)=>{
-            const authServerUrl = await (0, $47a3fad69bcb0083$export$274217e117cdbc7b)(dataProvider);
-            // Note: the
-            await dataProvider.fetch((0, $1obPJ$urljoin)(authServerUrl, ".oidc/login-completed"), {
-                method: "POST",
-                body: JSON.stringify({
-                    interactionId: interactionId,
-                    webId: webId
-                }),
-                headers: new Headers({
-                    "Content-Type": "application/json"
-                })
-            });
         }
     };
 };
@@ -1481,6 +1464,30 @@ const $fb967e2c34f56644$var$useSignup = ()=>{
 var $fb967e2c34f56644$export$2e2bcd8739ae039 = $fb967e2c34f56644$var$useSignup;
 
 
+
+
+
+
+// Call a custom endpoint to tell the OIDC server the login is completed
+const $0c4661523fd529fe$var$useLoginCompleted = ()=>{
+    const dataProvider = (0, $1obPJ$useDataProvider)();
+    return (0, $1obPJ$useCallback)(async (interactionId)=>{
+        const authServerUrl = await (0, $47a3fad69bcb0083$export$274217e117cdbc7b)(dataProvider);
+        console.log("login completed", authServerUrl, interactionId);
+        await dataProvider.fetch((0, $1obPJ$urljoin)(authServerUrl, ".oidc/login-completed"), {
+            method: "POST",
+            body: JSON.stringify({
+                interactionId: interactionId
+            }),
+            headers: new Headers({
+                "Content-Type": "application/json"
+            })
+        });
+    });
+};
+var $0c4661523fd529fe$export$2e2bcd8739ae039 = $0c4661523fd529fe$var$useLoginCompleted;
+
+
 // Inspired by https://github.com/bartlomiejzuber/password-strength-score
 /**
  * @typedef PasswordStrengthOptions
@@ -1642,47 +1649,53 @@ const $e011da92680cf1fe$var$useStyles = (0, $1obPJ$muistylesmakeStyles)((theme)=
  *  Set to `null` or `false`, if you don't want password strength checks. Default is
  *  passwordStrength's `defaultScorer`.
  * @returns
- */ const $e011da92680cf1fe$var$SignupForm = ({ passwordScorer: passwordScorer = (0, $646d64648a630b24$export$19dcdb21c6965fb8), postSignupRedirect: postSignupRedirect, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect })=>{
+ */ const $e011da92680cf1fe$var$SignupForm = ({ passwordScorer: passwordScorer = (0, $646d64648a630b24$export$19dcdb21c6965fb8), postSignupRedirect: postSignupRedirect, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect = 0 })=>{
     const [loading, setLoading] = (0, $1obPJ$useSafeSetState)(false);
     const signup = (0, $fb967e2c34f56644$export$2e2bcd8739ae039)();
     const translate = (0, $1obPJ$useTranslate)();
     const notify = (0, $1obPJ$useNotify)();
     const classes = $e011da92680cf1fe$var$useStyles();
     const [searchParams] = (0, $1obPJ$useSearchParams)();
+    const loginCompleted = (0, $0c4661523fd529fe$export$2e2bcd8739ae039)();
     const interactionId = searchParams.get("interaction_id");
-    const redirectTo = searchParams.get("redirect");
+    const redirectTo = postSignupRedirect ? `${postSignupRedirect}?${(0, $2dfd781b793256e6$export$2e2bcd8739ae039)(searchParams)}` : searchParams.get("redirect") || "/";
     const [locale] = (0, $1obPJ$useLocaleState)();
-    const [password, setPassword] = $1obPJ$useState("");
-    const submit = (values)=>{
-        setLoading(true);
-        signup({
-            ...values,
-            interactionId: interactionId,
-            ...additionalSignupValues
-        }).then(()=>{
-            if (delayBeforeRedirect) setTimeout(()=>{
-                // Reload to ensure the dataServer config is reset
-                window.location.reload();
-                window.location.href = postSignupRedirect ? `${postSignupRedirect}?${(0, $2dfd781b793256e6$export$2e2bcd8739ae039)(searchParams)}` : redirectTo || "/";
+    const [password, setPassword] = (0, $1obPJ$useState)("");
+    const submit = (0, $1obPJ$useCallback)(async (values)=>{
+        try {
+            setLoading(true);
+            await signup({
+                ...values,
+                ...additionalSignupValues
+            });
+            // If interactionId is set, it means we are connecting from another application.
+            // So call a custom endpoint to tell the OIDC server the login is completed
+            if (interactionId) await loginCompleted(interactionId);
+            setTimeout(()=>{
+                // TODO now that we have the refreshConfig method, see if we can avoid a hard reload
+                // window.location.reload();
+                window.location.href = redirectTo;
                 setLoading(false);
             }, delayBeforeRedirect);
-            else {
-                // Reload to ensure the dataServer config is reset
-                window.location.reload();
-                window.location.href = postSignupRedirect ? `${postSignupRedirect}?${(0, $2dfd781b793256e6$export$2e2bcd8739ae039)(searchParams)}` : redirectTo || "/";
-                setLoading(false);
-            }
             notify("auth.message.new_user_created", {
                 type: "info"
             });
-        }).catch((error)=>{
+        } catch (e) {
             setLoading(false);
             notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "ra.auth.sign_in_error" : error.message, {
                 type: "warning",
                 _: typeof error === "string" ? error : error && error.message ? error.message : undefined
             });
-        });
-    };
+        }
+    }, [
+        setLoading,
+        signup,
+        additionalSignupValues,
+        redirectTo,
+        notify,
+        interactionId,
+        loginCompleted
+    ]);
     return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Form), {
         onSubmit: submit,
         noValidate: true,
@@ -1800,6 +1813,7 @@ var $e011da92680cf1fe$export$2e2bcd8739ae039 = $e011da92680cf1fe$var$SignupForm;
 
 
 
+
 const $e2a34b2d647a5391$var$useStyles = (0, $1obPJ$muistylesmakeStyles)((theme)=>({
         content: {
             width: 450
@@ -1814,19 +1828,23 @@ const $e2a34b2d647a5391$var$LoginForm = ({ postLoginRedirect: postLoginRedirect,
     const translate = (0, $1obPJ$useTranslate)();
     const notify = (0, $1obPJ$useNotify)();
     const classes = $e2a34b2d647a5391$var$useStyles();
-    const location = (0, $1obPJ$useLocation)();
-    const searchParams = new URLSearchParams(location.search);
-    const redirectTo = postLoginRedirect ? `${postLoginRedirect}?${(0, $2dfd781b793256e6$export$2e2bcd8739ae039)(searchParams)}` : searchParams.get("redirect");
+    const dataProvider = (0, $1obPJ$useDataProvider)();
+    const [searchParams] = (0, $1obPJ$useSearchParams)();
+    const loginCompleted = (0, $0c4661523fd529fe$export$2e2bcd8739ae039)();
     const interactionId = searchParams.get("interaction_id");
-    const submit = (values)=>{
-        setLoading(true);
-        login({
-            ...values,
-            redirectTo: redirectTo,
-            interactionId: interactionId
-        }).then(()=>{
+    const redirectTo = postLoginRedirect ? `${postLoginRedirect}?${(0, $2dfd781b793256e6$export$2e2bcd8739ae039)(searchParams)}` : searchParams.get("redirect");
+    const submit = (0, $1obPJ$useCallback)(async (values)=>{
+        try {
+            setLoading(true);
+            await login(values);
+            // If interactionId is set, it means we are connecting from another application.
+            // So call a custom endpoint to tell the OIDC server the login is completed
+            if (interactionId) await loginCompleted(interactionId);
             setLoading(false);
-        }).catch((error)=>{
+            // TODO now that we have the refreshConfig method, see if we can avoid a hard reload
+            // window.location.reload();
+            window.location.href = redirectTo;
+        } catch (e) {
             setLoading(false);
             notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "ra.auth.sign_in_error" : error.message, {
                 type: "warning",
@@ -1834,8 +1852,15 @@ const $e2a34b2d647a5391$var$LoginForm = ({ postLoginRedirect: postLoginRedirect,
                     _: typeof error === "string" ? error : error && error.message ? error.message : undefined
                 }
             });
-        });
-    };
+        }
+    }, [
+        setLoading,
+        login,
+        redirectTo,
+        notify,
+        interactionId,
+        dataProvider
+    ]);
     return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Form), {
         onSubmit: submit,
         noValidate: true,
@@ -2190,6 +2215,7 @@ var $1b78e27e3e92a798$export$2e2bcd8739ae039 = $1b78e27e3e92a798$var$SimpleBox;
 
 
 
+
 const $23fea069f5d2d834$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
         switch: {
             marginBottom: "1em",
@@ -2213,24 +2239,22 @@ const $23fea069f5d2d834$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
     const classes = $23fea069f5d2d834$var$useStyles();
     const navigate = (0, $1obPJ$useNavigate)();
     const translate = (0, $1obPJ$useTranslate)();
-    const authProvider = (0, $1obPJ$useAuthProvider)();
     const [searchParams] = (0, $1obPJ$useSearchParams)();
     const isSignup = hasSignup && searchParams.has("signup");
     const isResetPassword = searchParams.has("reset_password");
     const isNewPassword = searchParams.has("new_password");
     const isLogin = !isSignup && !isResetPassword && !isNewPassword;
-    const redirectTo = searchParams.get("redirect");
+    const loginCompleted = (0, $0c4661523fd529fe$export$2e2bcd8739ae039)();
+    const redirectTo = postLoginRedirect ? `${postLoginRedirect}?${(0, $2dfd781b793256e6$export$2e2bcd8739ae039)(searchParams)}` : searchParams.get("redirect") || "/";
     const interactionId = searchParams.get("interaction_id");
     const { data: identity, isLoading: isLoading } = (0, $1obPJ$useGetIdentity)();
     (0, $1obPJ$useEffect)(()=>{
         (async ()=>{
             if (!isLoading && identity?.id) {
-                if (interactionId) // If interactionId is set, it means we are connecting from another application.
-                // So first call a custom endpoint to tell the OIDC server the login is completed
-                await authProvider.loginCompleted(interactionId, identity?.id);
-                if (postLoginRedirect) navigate(`${postLoginRedirect}?${(0, $2dfd781b793256e6$export$2e2bcd8739ae039)(searchParams)}`);
-                else if (redirectTo && redirectTo.startsWith("http")) window.location.href = redirectTo;
-                else navigate(redirectTo || "/");
+                // If interactionId is set, it means we are connecting from another application
+                // So call a custom endpoint to tell the OIDC server the login is completed
+                if (interactionId) await loginCompleted(interactionId);
+                window.location.href = redirectTo;
             }
         })();
     }, [
@@ -2239,8 +2263,7 @@ const $23fea069f5d2d834$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
         navigate,
         searchParams,
         redirectTo,
-        postLoginRedirect,
-        authProvider,
+        loginCompleted,
         interactionId
     ]);
     const [title, text] = (0, $1obPJ$useMemo)(()=>{
@@ -2582,7 +2605,8 @@ const $22afd1c81635c9d9$var$englishMessages = {
             bad_request: "Bad request (Error message returned by the server: %{error})",
             account_settings_updated: "Your account settings have been successfully updated",
             login_to_continue: "Please login to continue",
-            choose_pod_provider: "Please choose a POD provider in the list below. All application data will be saved on your POD."
+            choose_pod_provider: "Please choose a Pod provider in the list below. All application data will be saved on your Pod.",
+            unreachable_auth_server: "The authentication server cannot be reached"
         },
         notification: {
             reset_password_submitted: "An email has been sent with reset password instructions",
@@ -2674,7 +2698,8 @@ const $509b6323d7902699$var$frenchMessages = {
             bad_request: "Requ\xeate erron\xe9e (Message d'erreur renvoy\xe9 par le serveur: %{error})",
             account_settings_updated: "Les param\xe8tres de votre compte ont \xe9t\xe9 mis \xe0 jour avec succ\xe8s",
             login_to_continue: "Veuillez vous connecter pour continuer",
-            choose_pod_provider: "Veuillez choisir un fournisseur de PODs dans la liste ci-dessous. Toutes les donn\xe9es de l'application seront enregistr\xe9es sur votre POD."
+            choose_pod_provider: "Veuillez choisir un fournisseur de Pods dans la liste ci-dessous. Toutes les donn\xe9es de l'application seront enregistr\xe9es sur votre Pod.",
+            unreachable_auth_server: "Le serveur de connexion ne peut \xeatre atteint"
         },
         notification: {
             reset_password_submitted: "Un e-mail a \xe9t\xe9 envoy\xe9 avec les instructions de r\xe9initialisation du mot de passe",

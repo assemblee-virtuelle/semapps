@@ -1,7 +1,7 @@
 import jwtDecode from 'jwt-decode';
 import urlJoin from 'url-join';
 import * as oauth from 'oauth4webapi';
-import { defaultToArray, getAclUri, getAclContext, getAuthServerUrl, delay } from './utils';
+import { defaultToArray, getAclUri, getAclContext, getAuthServerUrl } from './utils';
 
 const AUTH_TYPE_SSO = 'sso';
 const AUTH_TYPE_LOCAL = 'local';
@@ -43,7 +43,10 @@ const authProvider = ({
 
         const as = await oauth
           .discoveryRequest(new URL(issuer))
-          .then(response => oauth.processDiscoveryResponse(new URL(issuer), response));
+          .then(response => oauth.processDiscoveryResponse(new URL(issuer), response))
+          .catch(() => {
+            throw new Error('auth.message.unreachable_auth_server');
+          });
 
         const codeVerifier = oauth.generateRandomCodeVerifier();
         const codeChallenge = await oauth.calculatePKCECodeChallenge(codeVerifier);
@@ -64,7 +67,7 @@ const authProvider = ({
 
         window.location = authorizationUrl;
       } else if (authType === AUTH_TYPE_LOCAL) {
-        const { username, password, interactionId, redirectTo } = params;
+        const { username, password } = params;
         const authServerUrl = await getAuthServerUrl(dataProvider);
         let token, webId;
 
@@ -75,8 +78,7 @@ const authProvider = ({
             method: 'POST',
             body: JSON.stringify({
               username: username.trim(),
-              password: password.trim(),
-              interactionId
+              password: password.trim()
             }),
             headers: new Headers({ 'Content-Type': 'application/json' })
           }));
@@ -89,14 +91,6 @@ const authProvider = ({
         await dataProvider.refreshConfig();
 
         await callCheckUser(webId);
-
-        // TODO now that we have a refreshConfig method, see if we can avoid a hard reload
-        if (redirectTo) {
-          if (interactionId) await delay(3000); // Ensure the interactionId has been received and processed
-          window.location.href = redirectTo;
-        } else {
-          window.location.reload();
-        }
       } else if (authType === AUTH_TYPE_SSO) {
         const authServerUrl = await getAuthServerUrl(dataProvider);
         let redirectUrl = `${new URL(window.location.href).origin}/login?login=true`;
@@ -166,15 +160,12 @@ const authProvider = ({
         await dataProvider.refreshConfig();
 
         await callCheckUser(webId);
-
-        // TODO now that we have a refreshConfig method, see if we can avoid a hard reload
-        window.location.href = '/';
       }
     },
     signup: async params => {
       const authServerUrl = await getAuthServerUrl(dataProvider);
       if (authType === AUTH_TYPE_LOCAL) {
-        const { username, email, password, domain, interactionId, ...profileData } = params;
+        const { username, email, password, domain, ...profileData } = params;
         let token, webId;
 
         try {
@@ -186,7 +177,6 @@ const authProvider = ({
               username: username?.trim(),
               email: email.trim(),
               password: password.trim(),
-              interactionId,
               ...profileData
             }),
             headers: new Headers({ 'Content-Type': 'application/json' })
@@ -297,7 +287,16 @@ const authProvider = ({
       }
       return true;
     },
-    checkError: error => Promise.resolve(),
+    checkError: error => {
+      // We want to disconnect only with INVALID_TOKEN errors
+      if (error.status === 401 && error.body && error.body.type === 'INVALID_TOKEN') {
+        localStorage.removeItem('token');
+        return Promise.reject();
+      } else {
+        // Other error code (404, 500, etc): no need to log out
+        return Promise.resolve();
+      }
+    },
     getPermissions: async uri => {
       if (!checkPermissions) return;
 
@@ -456,23 +455,6 @@ const authProvider = ({
 
         throw new Error('auth.notification.update_settings_error');
       }
-    },
-    /**
-     * Inform the OIDC server that the login interaction has been completed.
-     * This is necessary, otherwise the OIDC server will keep on redirecting to the login form.
-     * We call the endpoint with the token as a proof of login, otherwise it could be abused.
-     */
-    loginCompleted: async (interactionId, webId) => {
-      const authServerUrl = await getAuthServerUrl(dataProvider);
-      // Note: the
-      await dataProvider.fetch(urlJoin(authServerUrl, '.oidc/login-completed'), {
-        method: 'POST',
-        body: JSON.stringify({
-          interactionId,
-          webId
-        }),
-        headers: new Headers({ 'Content-Type': 'application/json' })
-      });
     }
   };
 };

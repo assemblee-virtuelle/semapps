@@ -38,12 +38,6 @@ export function authProvider({
   setNewPassword: (params: any) => Promise<void>;
   getAccountSettings: (params: any) => Promise<any>;
   updateAccountSettings: (params: any) => Promise<void>;
-  /**
-   * Inform the OIDC server that the login interaction has been completed.
-   * This is necessary, otherwise the OIDC server will keep on redirecting to the login form.
-   * We call the endpoint with the token as a proof of login, otherwise it could be abused.
-   */
-  loginCompleted: (interactionId: any, webId: any) => Promise<void>;
 };
 type AclMode = 'acl:Read' | 'acl:Append' | 'acl:Write' | 'acl:Control';
 /** foaf:Agent = anonymous, acl:AuthenticatedAgent = logged */
@@ -448,6 +442,7 @@ declare namespace englishMessages {
       let account_settings_updated: string;
       let login_to_continue: string;
       let choose_pod_provider: string;
+      let unreachable_auth_server: string;
     }
     namespace notification {
       let reset_password_submitted: string;
@@ -545,6 +540,7 @@ declare namespace frenchMessages {
       let account_settings_updated: string;
       let login_to_continue: string;
       let choose_pod_provider: string;
+      let unreachable_auth_server: string;
     }
     namespace notification {
       let reset_password_submitted: string;
