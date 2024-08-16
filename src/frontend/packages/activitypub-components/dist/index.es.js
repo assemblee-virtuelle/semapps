@@ -891,20 +891,24 @@ var $cc1d1cd0e97c63a2$export$2e2bcd8739ae039 = $cc1d1cd0e97c63a2$var$useInbox;
 
 
 
-const $641e93142bcf5435$var$useNodeinfo = (host, rel = "http://nodeinfo.diaspora.software/ns/schema/2.1")=>{
+const $6a227ddc2fd92a7a$var$useNodeinfo = (host, rel = "http://nodeinfo.diaspora.software/ns/schema/2.1")=>{
     const [schema, setSchema] = (0, $85cNH$useState)();
     (0, $85cNH$useEffect)(()=>{
         (async ()=>{
-            const protocol = host.includes(":") ? "http" : "https"; // If the host has a port, we are likely on HTTP
-            const nodeinfoUrl = `${protocol}://${host}/.well-known/nodeinfo`;
-            try {
-                const { json: links } = await (0, $85cNH$fetchUtils).fetchJson(nodeinfoUrl);
-                // Accept any version of the nodeinfo protocol
-                const link = links?.links?.find((l)=>l.rel === rel);
-                const { json: json } = await (0, $85cNH$fetchUtils).fetchJson(link.href);
-                setSchema(json);
-            } catch (e) {
-            // Do nothing if nodeinfo can't be fetched
+            if (host && rel) {
+                const protocol = host.includes(":") ? "http" : "https"; // If the host has a port, we are likely on HTTP
+                const nodeinfoUrl = `${protocol}://${host}/.well-known/nodeinfo`;
+                try {
+                    const { json: links } = await (0, $85cNH$fetchUtils).fetchJson(nodeinfoUrl);
+                    // Accept any version of the nodeinfo protocol
+                    const link = links?.links?.find((l)=>l.rel === rel);
+                    if (link) {
+                        const { json: json } = await (0, $85cNH$fetchUtils).fetchJson(link.href);
+                        setSchema(json);
+                    }
+                } catch (e) {
+                // Do nothing if nodeinfo can't be fetched
+                }
             }
         })();
     }, [
@@ -914,7 +918,7 @@ const $641e93142bcf5435$var$useNodeinfo = (host, rel = "http://nodeinfo.diaspora
     ]);
     return schema;
 };
-var $641e93142bcf5435$export$2e2bcd8739ae039 = $641e93142bcf5435$var$useNodeinfo;
+var $6a227ddc2fd92a7a$export$2e2bcd8739ae039 = $6a227ddc2fd92a7a$var$useNodeinfo;
 
 
 
@@ -1108,5 +1112,5 @@ var $51cccd331ea8b13d$export$2e2bcd8739ae039 = $51cccd331ea8b13d$var$useMentions
 
 
 
-export {$7ce737d4a1c88e63$export$2e2bcd8739ae039 as CommentsField, $d3be168cd1e7aaae$export$2e2bcd8739ae039 as CollectionList, $ea214512ab1a2e8f$export$2e2bcd8739ae039 as ReferenceCollectionField, $8281f3ce3b9d6123$export$2e2bcd8739ae039 as useCollection, $cc1d1cd0e97c63a2$export$2e2bcd8739ae039 as useInbox, $641e93142bcf5435$export$2e2bcd8739ae039 as useNodeinfo, $4d1d40fdbcd30589$export$2e2bcd8739ae039 as useOutbox, $2514c63dc8f4867c$export$2e2bcd8739ae039 as useWebfinger, $51cccd331ea8b13d$export$2e2bcd8739ae039 as useMentions, $338f387df48a40d7$export$1ec8e53e7d982d22 as ACTIVITY_TYPES, $338f387df48a40d7$export$9649665d7ccb0dc2 as ACTOR_TYPES, $338f387df48a40d7$export$c49cfb2681596b20 as OBJECT_TYPES, $338f387df48a40d7$export$4d8d554031975581 as PUBLIC_URI};
+export {$7ce737d4a1c88e63$export$2e2bcd8739ae039 as CommentsField, $d3be168cd1e7aaae$export$2e2bcd8739ae039 as CollectionList, $ea214512ab1a2e8f$export$2e2bcd8739ae039 as ReferenceCollectionField, $8281f3ce3b9d6123$export$2e2bcd8739ae039 as useCollection, $cc1d1cd0e97c63a2$export$2e2bcd8739ae039 as useInbox, $6a227ddc2fd92a7a$export$2e2bcd8739ae039 as useNodeinfo, $4d1d40fdbcd30589$export$2e2bcd8739ae039 as useOutbox, $2514c63dc8f4867c$export$2e2bcd8739ae039 as useWebfinger, $51cccd331ea8b13d$export$2e2bcd8739ae039 as useMentions, $338f387df48a40d7$export$1ec8e53e7d982d22 as ACTIVITY_TYPES, $338f387df48a40d7$export$9649665d7ccb0dc2 as ACTOR_TYPES, $338f387df48a40d7$export$c49cfb2681596b20 as OBJECT_TYPES, $338f387df48a40d7$export$4d8d554031975581 as PUBLIC_URI};
 //# sourceMappingURL=index.es.js.map

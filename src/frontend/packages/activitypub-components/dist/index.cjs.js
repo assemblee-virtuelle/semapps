@@ -29,7 +29,7 @@ $parcel$export(module.exports, "CollectionList", () => $505d598a33288aad$export$
 $parcel$export(module.exports, "ReferenceCollectionField", () => $b0c94a9bdea99da5$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useCollection", () => $5ca5f7e9fc1c3544$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useInbox", () => $486f741c94cd8f74$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "useNodeinfo", () => $30fd77858150739b$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useNodeinfo", () => $59fc2d2cba62bd8e$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useOutbox", () => $456aea3814dded7d$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useWebfinger", () => $5b61553556e35016$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useMentions", () => $968ea07fb81eda0b$export$2e2bcd8739ae039);
@@ -913,20 +913,24 @@ var $486f741c94cd8f74$export$2e2bcd8739ae039 = $486f741c94cd8f74$var$useInbox;
 
 
 
-const $30fd77858150739b$var$useNodeinfo = (host, rel = "http://nodeinfo.diaspora.software/ns/schema/2.1")=>{
+const $59fc2d2cba62bd8e$var$useNodeinfo = (host, rel = "http://nodeinfo.diaspora.software/ns/schema/2.1")=>{
     const [schema, setSchema] = (0, $583VT$react.useState)();
     (0, $583VT$react.useEffect)(()=>{
         (async ()=>{
-            const protocol = host.includes(":") ? "http" : "https"; // If the host has a port, we are likely on HTTP
-            const nodeinfoUrl = `${protocol}://${host}/.well-known/nodeinfo`;
-            try {
-                const { json: links } = await (0, $583VT$reactadmin.fetchUtils).fetchJson(nodeinfoUrl);
-                // Accept any version of the nodeinfo protocol
-                const link = links?.links?.find((l)=>l.rel === rel);
-                const { json: json } = await (0, $583VT$reactadmin.fetchUtils).fetchJson(link.href);
-                setSchema(json);
-            } catch (e) {
-            // Do nothing if nodeinfo can't be fetched
+            if (host && rel) {
+                const protocol = host.includes(":") ? "http" : "https"; // If the host has a port, we are likely on HTTP
+                const nodeinfoUrl = `${protocol}://${host}/.well-known/nodeinfo`;
+                try {
+                    const { json: links } = await (0, $583VT$reactadmin.fetchUtils).fetchJson(nodeinfoUrl);
+                    // Accept any version of the nodeinfo protocol
+                    const link = links?.links?.find((l)=>l.rel === rel);
+                    if (link) {
+                        const { json: json } = await (0, $583VT$reactadmin.fetchUtils).fetchJson(link.href);
+                        setSchema(json);
+                    }
+                } catch (e) {
+                // Do nothing if nodeinfo can't be fetched
+                }
             }
         })();
     }, [
@@ -936,7 +940,7 @@ const $30fd77858150739b$var$useNodeinfo = (host, rel = "http://nodeinfo.diaspora
     ]);
     return schema;
 };
-var $30fd77858150739b$export$2e2bcd8739ae039 = $30fd77858150739b$var$useNodeinfo;
+var $59fc2d2cba62bd8e$export$2e2bcd8739ae039 = $59fc2d2cba62bd8e$var$useNodeinfo;
 
 
 
