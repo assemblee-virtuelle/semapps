@@ -1,8 +1,8 @@
 var $3RhHq$reactjsxruntime = require("react/jsx-runtime");
+require("@fullcalendar/core/vdom");
 var $3RhHq$muixdatepickersDatePicker = require("@mui/x-date-pickers/DatePicker");
 var $3RhHq$muixdatepickersTimePicker = require("@mui/x-date-pickers/TimePicker");
 var $3RhHq$muixdatepickersDateTimePicker = require("@mui/x-date-pickers/DateTimePicker");
-require("@fullcalendar/core/vdom");
 var $3RhHq$react = require("react");
 var $3RhHq$reactadmin = require("react-admin");
 var $3RhHq$muixdatepickersLocalizationProvider = require("@mui/x-date-pickers/LocalizationProvider");
