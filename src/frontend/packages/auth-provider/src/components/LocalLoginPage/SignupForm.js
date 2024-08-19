@@ -78,7 +78,7 @@ const SignupForm = ({
           setLoading(false);
         }, delayBeforeRedirect);
         notify('auth.message.new_user_created', { type: 'info' });
-      } catch (e) {
+      } catch (error) {
         setLoading(false);
         notify(
           typeof error === 'string'

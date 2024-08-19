@@ -51,7 +51,7 @@ const LoginForm = ({ postLoginRedirect, allowUsername }) => {
         // TODO now that we have the refreshConfig method, see if we can avoid a hard reload
         // window.location.reload();
         window.location.href = redirectTo;
-      } catch (e) {
+      } catch (error) {
         setLoading(false);
         notify(
           typeof error === 'string'

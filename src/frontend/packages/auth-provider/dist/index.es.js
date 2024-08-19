@@ -1680,7 +1680,7 @@ const $e011da92680cf1fe$var$useStyles = (0, $1obPJ$muistylesmakeStyles)((theme)=
             notify("auth.message.new_user_created", {
                 type: "info"
             });
-        } catch (e) {
+        } catch (error) {
             setLoading(false);
             notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "ra.auth.sign_in_error" : error.message, {
                 type: "warning",
@@ -1844,7 +1844,7 @@ const $e2a34b2d647a5391$var$LoginForm = ({ postLoginRedirect: postLoginRedirect,
             // TODO now that we have the refreshConfig method, see if we can avoid a hard reload
             // window.location.reload();
             window.location.href = redirectTo;
-        } catch (e) {
+        } catch (error) {
             setLoading(false);
             notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "ra.auth.sign_in_error" : error.message, {
                 type: "warning",
