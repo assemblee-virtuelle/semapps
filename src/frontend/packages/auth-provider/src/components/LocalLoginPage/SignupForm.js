@@ -15,11 +15,9 @@ import { useSearchParams } from 'react-router-dom';
 import { Button, CardContent, CircularProgress, Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import useSignup from '../../hooks/useSignup';
-import useLoginCompleted from '../../hooks/useLoginCompleted';
 import validatePasswordStrength from './validatePasswordStrength';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 import { defaultScorer } from '../../passwordScorer';
-import getSearchParamsRest from './getSearchParamsRest';
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -31,32 +29,22 @@ const useStyles = makeStyles(theme => ({
 }));
 
 /**
- * @param postSignupRedirect
- * @param additionalSignupValues
- * @param delayBeforeRedirect
- * @param {string} redirectTo
+ * @param {function} props.onSignup Optional function to call when signup is completed
+ * @param {object} props.additionalSignupValues
+ * @param {number} delayBeforeRedirect
  * @param {object} passwordScorer Scorer to evaluate and indicate password strength.
  *  Set to `null` or `false`, if you don't want password strength checks. Default is
  *  passwordStrength's `defaultScorer`.
  * @returns
  */
-const SignupForm = ({
-  passwordScorer = defaultScorer,
-  postSignupRedirect,
-  additionalSignupValues,
-  delayBeforeRedirect = 0
-}) => {
+const SignupForm = ({ passwordScorer = defaultScorer, onSignup, additionalSignupValues, delayBeforeRedirect = 0 }) => {
   const [loading, setLoading] = useSafeSetState(false);
   const signup = useSignup();
   const translate = useTranslate();
   const notify = useNotify();
   const classes = useStyles();
   const [searchParams] = useSearchParams();
-  const loginCompleted = useLoginCompleted();
-  const interactionId = searchParams.get('interaction_id');
-  const redirectTo = postSignupRedirect
-    ? `${postSignupRedirect}?${getSearchParamsRest(searchParams)}`
-    : searchParams.get('redirect') || '/';
+  const redirectTo = searchParams.get('redirect') || '/';
   const [locale] = useLocaleState();
   const [password, setPassword] = useState('');
 
@@ -68,16 +56,13 @@ const SignupForm = ({
           ...values,
           ...additionalSignupValues
         });
-        // If interactionId is set, it means we are connecting from another application.
-        // So call a custom endpoint to tell the OIDC server the login is completed
-        if (interactionId) await loginCompleted(interactionId);
         setTimeout(() => {
-          // TODO now that we have the refreshConfig method, see if we can avoid a hard reload
-          // window.location.reload();
-          window.location.href = redirectTo;
-          setLoading(false);
+          if (onSignup) {
+            onSignup(redirectTo);
+          } else {
+            window.location.href = redirectTo;
+          }
         }, delayBeforeRedirect);
-        notify('auth.message.new_user_created', { type: 'info' });
       } catch (error) {
         setLoading(false);
         notify(
@@ -93,7 +78,7 @@ const SignupForm = ({
         );
       }
     },
-    [setLoading, signup, additionalSignupValues, redirectTo, notify, interactionId, loginCompleted]
+    [setLoading, signup, additionalSignupValues, redirectTo, notify, onSignup]
   );
 
   return (

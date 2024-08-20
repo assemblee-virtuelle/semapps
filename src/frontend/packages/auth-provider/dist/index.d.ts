@@ -287,7 +287,6 @@ declare namespace SignupForm {
 }
 declare namespace LoginForm {
   namespace defaultValues {
-    let redirectTo: string;
     let allowUsername: boolean;
   }
 }
@@ -295,8 +294,8 @@ declare namespace LoginForm {
  * @param {object} props Props
  * @param {boolean} props.hasSignup If to show signup form.
  * @param {boolean} props.allowUsername Indicates, if login is allowed with username (instead of email).
- * @param {string} props.postSignupRedirect Location to redirect to after signup.
- * @param {string} props.postLoginRedirect Location to redirect to after login.
+ * @param {function} props.onLogin Optional function to call when login is completed
+ * @param {function} props.onSignup Optional function to call when signup is completed
  * @param {object} props.additionalSignupValues
  * @param {object} props.passwordScorer Scorer to evaluate and indicate password strength.
  *  Set to `null` or `false`, if you don't want password strength checks. Default is
@@ -306,15 +305,15 @@ declare namespace LoginForm {
 export function LocalLoginPage({
   hasSignup,
   allowUsername,
-  postSignupRedirect,
-  postLoginRedirect,
+  onLogin,
+  onSignup,
   additionalSignupValues,
   passwordScorer
 }: {
   hasSignup: boolean;
   allowUsername: boolean;
-  postSignupRedirect: string;
-  postLoginRedirect: string;
+  onLogin: Function;
+  onSignup: Function;
   additionalSignupValues: object;
   passwordScorer: object;
 }): import('react/jsx-runtime').JSX.Element | null;

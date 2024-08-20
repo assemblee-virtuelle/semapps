@@ -21,7 +21,7 @@ import dataProvider from './dataProvider.js';
 
 const App = () => (
   <Admin
-    authProvider={authProvider({ 
+    authProvider={authProvider({
       dataProvider,
       authType: 'sso' // or "local" or "pod"
     })}
@@ -73,17 +73,18 @@ This function receives user data and must return true or false, depending on whe
 
 > This `checkUser` function is also available to any of your components using the React-Admin's `useAuthProvider` hook.
 
-
 ## Pages components
 
 ### CreateWithPermissions
 
 Same as React-Admin [Create](https://marmelab.com/react-admin/doc/3.19/CreateEdit.html) component, except:
+
 - It ensures the logged-in user has the right to create a new resource.
 
 ### EditWithPermissions
 
 Same as React-Admin [Edit](https://marmelab.com/react-admin/doc/3.19/CreateEdit.html) component, except:
+
 - It ensures the logged-in user has the right to edit the resource.
 - It displays the Permissions button (through an `EditActionsWithPermissions` component which can be imported independently) if the logged-in user has `acl:Control` right.
 - It does not show the delete button if user doesn't have a `acl:write` right (through an `EditToolbarWithPermissions` component which can be imported independently).
@@ -91,14 +92,15 @@ Same as React-Admin [Edit](https://marmelab.com/react-admin/doc/3.19/CreateEdit.
 ### ListWithPermissions
 
 Same as React-Admin [List](https://marmelab.com/react-admin/doc/3.19/List.html#the-list-component) component, except:
+
 - It displays the Permissions button (through a `ListActionsWithPermissions` component which can be imported independently) if the logged-in user has `acl:Control` right.
 
 ### ShowWithPermissions
 
 Same as React-Admin [Show](https://marmelab.com/react-admin/doc/3.19/Show.html#the-show-component) component, except:
+
 - It ensures the logged-in user has the right to view the resource
 - It displays the Permissions button (through a `ShowActionsWithPermissions` component which can be imported independently) if the logged-in user has `acl:Control` right.
-
 
 ## Other components
 
@@ -107,11 +109,9 @@ Same as React-Admin [Show](https://marmelab.com/react-admin/doc/3.19/Show.html#t
 ```js
 const MyPage = () => {
   const [openAuth, setOpenAuth] = useState(false);
-  return(
+  return (
     <>
-      <Button onClick={() => setOpenAuth(true)}>
-        Protected action
-      </Button>
+      <Button onClick={() => setOpenAuth(true)}>Protected action</Button>
       <AuthDialog open={openAuth} onClose={() => setOpenAuth(false)} />
     </>
   );
@@ -119,7 +119,7 @@ const MyPage = () => {
 ```
 
 | Property   | Type       | Default                    | Description                        |
-|------------|------------|----------------------------|------------------------------------|
+| ---------- | ---------- | -------------------------- | ---------------------------------- |
 | `open`     | `Boolean`  | **required**               | True if the dialog is open         |
 | `onClose`  | `Function` | **required**               | Function to close the dialog       |
 | `redirect` | `String`   | Current path               | Path where to redirect after login |
@@ -128,26 +128,28 @@ const MyPage = () => {
 
 All other props are passed to the underlying Material-UI [Dialog](https://v4.mui.com/api/dialog/) component.
 
-
 ### LocalLoginPage
 
 Login/signup page to use with a [local authentication](../middleware/auth#local-accounts). Include reset password feature.
 
-| Property          | Type      | Default                    | Description                                                  |
-|-------------------|-----------|----------------------------|--------------------------------------------------------------|
-| `hasSignup`       | `String`  | `true`                     | Set to false if you don't the user to be able to signup      |
-
+| Property                 | Type       | Default         | Description                                                                 |
+| ------------------------ | ---------- | --------------- | --------------------------------------------------------------------------- |
+| `hasSignup`              | `String`   | `true`          | Set to false if you don't want the user to be able to signup                |
+| `allowUsername`          | `Boolean`  | `false`         | Indicates if login is allowed with username (instead of email).             |
+| `onLogin`                | `Function` |                 | Function called at the end of the login process. Should redirect.           |
+| `onSignup`               | `Function` |                 | Function called at the end of the signup process. Should redirect.          |
+| `additionalSignupValues` | `Object`   |                 | Additional values to send to the signup endpoint                            |
+| `passwordScorer`         | `Function` | `defaultScorer` | Scorer to evaluate and indicate password strength. Set to false to disable. |
 
 ### SsoLoginPage
 
 Login page to use with a [SSO authentication](../middleware/auth#oidc) (OIDC/Cas).
 
-| Property          | Type      | Default                    | Description                                                                                           |
-|-------------------|-----------|----------------------------|-------------------------------------------------------------------------------------------------------|
-| `userResource`    | `String`  | "Person"                   | True if the dialog is open                                                                            |
-| `text`            | `Element` |                            | Text to show above the SSO button                                                                     |
-| `propertiesExist` | `Array`   |                            | Properties to check after the user has been created. Useful when collections are added asynchronously |
-
+| Property          | Type      | Default  | Description                                         |
+| ----------------- | --------- | -------- | --------------------------------------------------- |
+| `userResource`    | `String`  | "Person" | True if the dialog is open                          |
+| `text`            | `Element` |          | Text to show above the SSO button                   |
+| `propertiesExist` | `Array`   |          | Properties to check after the user has been created |
 
 ## Hooks
 
@@ -161,18 +163,17 @@ const { agents, addPermission, removePermission } = useAgents(uri);
 
 #### Parameters
 
-| Property | Type | Default | Description                           |
-|----------| ---- | ------- |---------------------------------------|
-| `uri`    | `String`  | **required** | URI of the resource or container      |
+| Property | Type     | Default      | Description                      |
+| -------- | -------- | ------------ | -------------------------------- |
+| `uri`    | `String` | **required** | URI of the resource or container |
 
 #### Return values
 
 | Property           | Type       | Description                                               |
-|--------------------|------------|-----------------------------------------------------------|
+| ------------------ | ---------- | --------------------------------------------------------- |
 | `agents`           | `Array`    | Array of objects with `id`, `predicate` and `permissions` |
 | `addPermission`    | `Function` | Function to add a new permission                          |
 | `removePermission` | `Function` | Function to remove an existing permission                 |
-
 
 ### useCheckAuthenticated
 
@@ -185,10 +186,9 @@ const { identity, loading } = useCheckAuthenticated();
 #### Return values
 
 | Property   | Type      | Description                                                 |
-|------------|-----------|-------------------------------------------------------------|
+| ---------- | --------- | ----------------------------------------------------------- |
 | `identity` | `Object`  | Object returned by the auth provider's `getIdentity` method |
 | `loading`  | `Boolean` | True if the user data is loading                            |
-
 
 ### useCheckPermissions
 
@@ -200,18 +200,17 @@ const { permissions } = useCheckPermissions(uri, mode, redirectUrl);
 
 #### Parameters
 
-| Property      | Type     | Default      | Description                                                             |
-|---------------|----------|--------------|-------------------------------------------------------------------------|
-| `uri`         | `String` | **required** | URI of the resource or container                                        |
-| `mode`        | `String` | **required** | "list", "edit", "create" or "show"                                      |
-| `redirectUrl` | `String` | "/"           | Path to redirect to if the user doesn't have the required permissions  |
+| Property      | Type     | Default      | Description                                                           |
+| ------------- | -------- | ------------ | --------------------------------------------------------------------- |
+| `uri`         | `String` | **required** | URI of the resource or container                                      |
+| `mode`        | `String` | **required** | "list", "edit", "create" or "show"                                    |
+| `redirectUrl` | `String` | "/"          | Path to redirect to if the user doesn't have the required permissions |
 
 #### Return value
 
-| Property      | Type      | Description                                        |
-|---------------|-----------|----------------------------------------------------|
-| `permissions` | `Object`  | Permissions of the logged-in user for the resource |
-
+| Property      | Type     | Description                                        |
+| ------------- | -------- | -------------------------------------------------- |
+| `permissions` | `Object` | Permissions of the logged-in user for the resource |
 
 ### useSignup
 
