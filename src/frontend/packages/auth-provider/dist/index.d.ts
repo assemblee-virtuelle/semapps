@@ -79,7 +79,7 @@ declare const rights: {
   control: AclMode[];
 };
 export const useCheckPermissions: (
-  uri: string,
+  uri: string | undefined,
   mode: keyof typeof rights,
   redirectUrl?: string
 ) => Permissions | undefined;
