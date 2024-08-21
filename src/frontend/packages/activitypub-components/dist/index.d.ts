@@ -1,3 +1,4 @@
+import { RefObject } from 'react';
 export declare namespace ACTIVITY_TYPES {
   let ACCEPT: string;
   let ADD: string;
@@ -53,6 +54,10 @@ export const PUBLIC_URI: 'https://www.w3.org/ns/activitystreams#Public';
 interface UseCollectionOptions {
   dereferenceItems?: boolean;
   liveUpdates?: boolean;
+}
+interface AwaitActivityOptions {
+  timeout?: number;
+  checkExistingActivities?: boolean;
 }
 /**
  * NodeInfo schema version 2.1.
@@ -212,8 +217,9 @@ export const useCollection: (
   hasLiveUpdates: {
     status: string;
     error?: any;
-    webSocket?: WebSocket | undefined;
   };
+  awaitWebSocketConnection: (options?: AwaitActivityOptions) => Promise<RefObject<WebSocket>>;
+  webSocketRef: import('react').MutableRefObject<WebSocket | null>;
 };
 /**
  * Hook to fetch and post to the outbox of the logged user.
@@ -239,13 +245,16 @@ export const useOutbox: (options?: UseCollectionOptions) => {
   isLoading: boolean;
   isFetching: boolean;
   isFetchingNextPage: boolean;
-  url: any;
   hasLiveUpdates: {
     status: string;
     error?: any;
-    webSocket?: WebSocket | undefined;
   };
+  webSocketRef: import('react').MutableRefObject<WebSocket | null>;
+  url: any;
   items: any[];
+  awaitWebSocketConnection: (
+    options?: import('types').AwaitActivityOptions
+  ) => Promise<import('react').RefObject<WebSocket>>;
   post: (activity: object) => Promise<string | null>;
   awaitActivity: (
     matchActivity: (activity: object) => boolean,
@@ -319,13 +328,16 @@ export const useInbox: (options?: UseCollectionOptions) => {
   isLoading: boolean;
   isFetching: boolean;
   isFetchingNextPage: boolean;
-  items: any[];
-  url: any;
   hasLiveUpdates: {
     status: string;
     error?: any;
-    webSocket?: WebSocket | undefined;
   };
+  webSocketRef: import('react').MutableRefObject<WebSocket | null>;
+  url: any;
+  items: any[];
+  awaitWebSocketConnection: (
+    options?: import('types').AwaitActivityOptions
+  ) => Promise<import('react').RefObject<WebSocket>>;
   awaitActivity: (
     matchActivity: (activity: object) => boolean,
     options?: import('types').AwaitActivityOptions

@@ -186,6 +186,7 @@ const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
         status: "connecting"
     });
     const dataProvider = (0, $583VT$reactadmin.useDataProvider)();
+    const webSocketRef = (0, $583VT$react.useRef)(null);
     // Get collectionUrl from webId predicate or URL.
     const collectionUrl = (0, $583VT$react.useMemo)(()=>{
         if (predicateOrUrl) {
@@ -302,34 +303,55 @@ const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
     // Live Updates
     (0, $583VT$react.useEffect)(()=>{
         if (liveUpdates && collectionUrl) // Create ws that listens to collectionUri changes
-        (0, $583VT$semappssemanticdataprovider.getOrCreateWsChannel)(dataProvider.fetch, collectionUrl).then((webSocket)=>{
-            webSocket.addEventListener("message", (e)=>{
+        (0, $583VT$semappssemanticdataprovider.getOrCreateWsChannel)(dataProvider.fetch, collectionUrl).then((ws)=>{
+            webSocketRef.current = ws; // Keep a ref to the webSocket so that it can be used elsewhere
+            webSocketRef.current.addEventListener("message", (e)=>{
                 const data = JSON.parse(e.data);
                 if (data.type === "Add") addItem(data.object, true);
                 else if (data.type === "Remove") removeItem(data.object, true);
             });
-            webSocket.addEventListener("error", (e)=>{
+            webSocketRef.current.addEventListener("error", (e)=>{
                 setHasLiveUpdates({
                     status: "error",
                     error: e
                 });
             // TODO: Retry after a while
             });
-            webSocket.addEventListener("close", (e)=>{
+            webSocketRef.current.addEventListener("close", (e)=>{
                 if (!hasLiveUpdates.error) setHasLiveUpdates({
                     ...hasLiveUpdates,
                     status: "closed"
                 });
             });
             setHasLiveUpdates({
-                status: "connected",
-                webSocket: webSocket
+                status: "connected"
             });
         }).catch(()=>{}); // If it fails, we won't receive live updates. But that's okay.
     }, [
         collectionUrl,
         liveUpdates,
-        dataProvider
+        dataProvider,
+        webSocketRef
+    ]);
+    const awaitWebSocketConnection = (0, $583VT$react.useCallback)((options = {})=>{
+        const { timeout: timeout = 30000 } = options;
+        return new Promise((resolve, reject)=>{
+            if (webSocketRef?.current) resolve(webSocketRef);
+            else {
+                const timeoutId = setTimeout(()=>{
+                    reject(`No WebSocket connection found within ${Math.round(timeout / 1000)}s`);
+                }, timeout);
+                const intervalId = setInterval(()=>{
+                    if (webSocketRef?.current) {
+                        clearInterval(intervalId);
+                        clearTimeout(timeoutId);
+                        resolve(webSocketRef);
+                    } else console.log("WebSocket is not initialized yet, waiting...");
+                }, 100);
+            }
+        });
+    }, [
+        webSocketRef
     ]);
     return {
         items: items,
@@ -344,7 +366,9 @@ const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
         isFetching: isFetchingPage || isFetchingItems,
         isFetchingNextPage: isFetchingNextPage,
         url: collectionUrl,
-        hasLiveUpdates: hasLiveUpdates
+        hasLiveUpdates: hasLiveUpdates,
+        awaitWebSocketConnection: awaitWebSocketConnection,
+        webSocketRef: webSocketRef
     };
 };
 var $5ca5f7e9fc1c3544$export$2e2bcd8739ae039 = $5ca5f7e9fc1c3544$var$useCollection;
@@ -354,49 +378,60 @@ var $5ca5f7e9fc1c3544$export$2e2bcd8739ae039 = $5ca5f7e9fc1c3544$var$useCollecti
 
 /**
  * Hook used internally by useInbox and useOutbox. This is not exported.
- * @param webSocket WebSocket which allow to listen to the inbox or outbox
+ * @param awaitWebSocketConnection Promise returning the WebSocket which allow to listen to the inbox or outbox
  * @param existingActivities Partial list of activities already received in the inbox and outbox
- */ const $5e70f9d0635e25dd$var$useAwaitActivity = (webSocket, existingActivities)=>{
+ */ const $5e70f9d0635e25dd$var$useAwaitActivity = (awaitWebSocketConnection, existingActivities)=>{
     const dataProvider = (0, $583VT$reactadmin.useDataProvider)();
-    // TODO Allow to pass an object, and automatically dereference it if required, like on the @semapps/activitypub matchActivity util
+    // TODO Allow to pass an  object, and automatically dereference it if required, like on the @semapps/activitypub matchActivity util
     return (0, $583VT$react.useCallback)((matchActivity, options = {})=>{
         const { timeout: timeout = 30000, checkExistingActivities: checkExistingActivities = false } = options;
         return new Promise((resolve, reject)=>{
-            if (webSocket) {
+            awaitWebSocketConnection().then((webSocketRef)=>{
                 const onMessage = (event)=>{
                     const data = JSON.parse(event.data);
                     if (data.type === "Add") dataProvider.fetch(data.object).then(({ json: json })=>{
                         if (matchActivity(json)) {
-                            webSocket.removeEventListener("message", onMessage);
+                            removeListeners();
                             return resolve(json);
                         }
                     });
                 };
-                webSocket.addEventListener("message", onMessage);
-                // TODO reconnect if connection closed
-                webSocket.addEventListener("error", (e)=>{
+                const onError = (e)=>{
+                    // TODO reconnect if connection closed
+                    removeListeners();
                     reject(e);
-                });
-                webSocket.addEventListener("close", (e)=>{
+                };
+                const onClose = (e)=>{
+                    removeListeners();
                     reject(new Error(`${e.reason} (Code: ${e.code})`));
-                });
+                };
+                const removeListeners = ()=>{
+                    webSocketRef.current?.removeEventListener("message", onMessage);
+                    webSocketRef.current?.removeEventListener("error", onError);
+                    webSocketRef.current?.removeEventListener("close", onClose);
+                };
+                webSocketRef.current?.addEventListener("message", onMessage);
+                webSocketRef.current?.addEventListener("error", onError);
+                webSocketRef.current?.addEventListener("close", onClose);
                 // If a list of activities is already loaded, verify if there is a match
                 if (existingActivities && checkExistingActivities) for (const a of existingActivities){
                     if (typeof a !== "string") {
                         if (matchActivity(a)) {
-                            webSocket.removeEventListener("message", onMessage);
+                            removeListeners();
                             return resolve(a);
                         }
                     }
                 }
                 setTimeout(()=>{
-                    webSocket.removeEventListener("message", onMessage);
+                    removeListeners();
                     reject(new Error("Timeout"));
                 }, timeout);
-            } else throw new Error("WebSocket is not initialized !");
+            }).catch((e)=>{
+                reject(e);
+            });
         });
     }, [
-        webSocket,
+        awaitWebSocketConnection,
         existingActivities,
         dataProvider
     ]);
@@ -415,8 +450,8 @@ var $5e70f9d0635e25dd$export$2e2bcd8739ae039 = $5e70f9d0635e25dd$var$useAwaitAct
  */ const $456aea3814dded7d$var$useOutbox = (options = {})=>{
     const dataProvider = (0, $583VT$reactadmin.useDataProvider)();
     const { data: identity } = (0, $583VT$reactadmin.useGetIdentity)();
-    const { url: url, hasLiveUpdates: hasLiveUpdates, items: items, ...rest } = (0, $5ca5f7e9fc1c3544$export$2e2bcd8739ae039)("outbox", options);
-    const awaitActivity = (0, $5e70f9d0635e25dd$export$2e2bcd8739ae039)(hasLiveUpdates.webSocket, items);
+    const { url: url, items: items, awaitWebSocketConnection: awaitWebSocketConnection, ...rest } = (0, $5ca5f7e9fc1c3544$export$2e2bcd8739ae039)("outbox", options);
+    const awaitActivity = (0, $5e70f9d0635e25dd$export$2e2bcd8739ae039)(awaitWebSocketConnection, items);
     // Post an activity to the logged user's outbox and return its URI
     const post = (0, $583VT$react.useCallback)(async (activity)=>{
         if (!url) throw new Error("Cannot post to outbox before user identity is loaded. Please use the isLoading argument of useOutbox");
@@ -434,8 +469,8 @@ var $5e70f9d0635e25dd$export$2e2bcd8739ae039 = $5e70f9d0635e25dd$var$useAwaitAct
     ]);
     return {
         url: url,
-        hasLiveUpdates: hasLiveUpdates,
         items: items,
+        awaitWebSocketConnection: awaitWebSocketConnection,
         post: post,
         awaitActivity: awaitActivity,
         owner: identity?.id,
@@ -897,12 +932,12 @@ var $b0c94a9bdea99da5$export$2e2bcd8739ae039 = $b0c94a9bdea99da5$var$ReferenceCo
  * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: true }`
  */ const $486f741c94cd8f74$var$useInbox = (options = {})=>{
     const { data: identity } = (0, $583VT$reactadmin.useGetIdentity)();
-    const { items: items, url: url, hasLiveUpdates: hasLiveUpdates, ...rest } = (0, $5ca5f7e9fc1c3544$export$2e2bcd8739ae039)("inbox", options);
-    const awaitActivity = (0, $5e70f9d0635e25dd$export$2e2bcd8739ae039)(hasLiveUpdates.webSocket);
+    const { url: url, items: items, awaitWebSocketConnection: awaitWebSocketConnection, ...rest } = (0, $5ca5f7e9fc1c3544$export$2e2bcd8739ae039)("inbox", options);
+    const awaitActivity = (0, $5e70f9d0635e25dd$export$2e2bcd8739ae039)(awaitWebSocketConnection, items);
     return {
-        items: items,
         url: url,
-        hasLiveUpdates: hasLiveUpdates,
+        items: items,
+        awaitWebSocketConnection: awaitWebSocketConnection,
         awaitActivity: awaitActivity,
         owner: identity?.id,
         ...rest
