@@ -1503,30 +1503,6 @@ const $19e4629c708b7a3e$var$useSignup = ()=>{
 var $19e4629c708b7a3e$export$2e2bcd8739ae039 = $19e4629c708b7a3e$var$useSignup;
 
 
-
-
-
-
-// Call a custom endpoint to tell the OIDC server the login is completed
-const $e5ab9cca64b9eee5$var$useLoginCompleted = ()=>{
-    const dataProvider = (0, $4Uj5b$reactadmin.useDataProvider)();
-    return (0, $4Uj5b$react.useCallback)(async (interactionId)=>{
-        const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
-        console.log("login completed", authServerUrl, interactionId);
-        await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, ".oidc/login-completed"), {
-            method: "POST",
-            body: JSON.stringify({
-                interactionId: interactionId
-            }),
-            headers: new Headers({
-                "Content-Type": "application/json"
-            })
-        });
-    });
-};
-var $e5ab9cca64b9eee5$export$2e2bcd8739ae039 = $e5ab9cca64b9eee5$var$useLoginCompleted;
-
-
 // Inspired by https://github.com/bartlomiejzuber/password-strength-score
 /**
  * @typedef PasswordStrengthOptions
@@ -1656,21 +1632,6 @@ function $edfec7f9e9fd7881$export$2e2bcd8739ae039({ scorer: scorer = (0, $d1ca1e
 
 
 
-const $cd7709c431b14d14$var$USED_SEARCH_PARAMS = [
-    "signup",
-    "reset_password",
-    "new_password",
-    "email",
-    "force-email"
-];
-const $cd7709c431b14d14$var$getSearchParamsRest = (searchParams)=>{
-    const rest = [];
-    for (const [key, value] of searchParams.entries())if (!$cd7709c431b14d14$var$USED_SEARCH_PARAMS.includes(key)) rest.push(`${key}=${encodeURIComponent(value)}`);
-    return rest.length > 0 ? rest.join("&") : "";
-};
-var $cd7709c431b14d14$export$2e2bcd8739ae039 = $cd7709c431b14d14$var$getSearchParamsRest;
-
-
 const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))((theme)=>({
         content: {
             width: 450
@@ -1680,24 +1641,21 @@ const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
         }
     }));
 /**
- * @param postSignupRedirect
- * @param additionalSignupValues
- * @param delayBeforeRedirect
- * @param {string} redirectTo
+ * @param {function} props.onSignup Optional function to call when signup is completed
+ * @param {object} props.additionalSignupValues
+ * @param {number} delayBeforeRedirect
  * @param {object} passwordScorer Scorer to evaluate and indicate password strength.
  *  Set to `null` or `false`, if you don't want password strength checks. Default is
  *  passwordStrength's `defaultScorer`.
  * @returns
- */ const $5f70c240e5b0340c$var$SignupForm = ({ passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8), postSignupRedirect: postSignupRedirect, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect = 0 })=>{
+ */ const $5f70c240e5b0340c$var$SignupForm = ({ passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8), onSignup: onSignup, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect = 0 })=>{
     const [loading, setLoading] = (0, $4Uj5b$reactadmin.useSafeSetState)(false);
     const signup = (0, $19e4629c708b7a3e$export$2e2bcd8739ae039)();
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
     const classes = $5f70c240e5b0340c$var$useStyles();
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
-    const loginCompleted = (0, $e5ab9cca64b9eee5$export$2e2bcd8739ae039)();
-    const interactionId = searchParams.get("interaction_id");
-    const redirectTo = postSignupRedirect ? `${postSignupRedirect}?${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}` : searchParams.get("redirect") || "/";
+    const redirectTo = searchParams.get("redirect") || "/";
     const [locale] = (0, $4Uj5b$reactadmin.useLocaleState)();
     const [password, setPassword] = (0, $4Uj5b$react.useState)("");
     const submit = (0, $4Uj5b$react.useCallback)(async (values)=>{
@@ -1707,18 +1665,10 @@ const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
                 ...values,
                 ...additionalSignupValues
             });
-            // If interactionId is set, it means we are connecting from another application.
-            // So call a custom endpoint to tell the OIDC server the login is completed
-            if (interactionId) await loginCompleted(interactionId);
             setTimeout(()=>{
-                // TODO now that we have the refreshConfig method, see if we can avoid a hard reload
-                // window.location.reload();
-                window.location.href = redirectTo;
-                setLoading(false);
+                if (onSignup) onSignup(redirectTo);
+                else window.location.href = redirectTo;
             }, delayBeforeRedirect);
-            notify("auth.message.new_user_created", {
-                type: "info"
-            });
         } catch (error) {
             setLoading(false);
             notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "ra.auth.sign_in_error" : error.message, {
@@ -1732,8 +1682,7 @@ const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
         additionalSignupValues,
         redirectTo,
         notify,
-        interactionId,
-        loginCompleted
+        onSignup
     ]);
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Form), {
         onSubmit: submit,
@@ -1851,8 +1800,6 @@ var $5f70c240e5b0340c$export$2e2bcd8739ae039 = $5f70c240e5b0340c$var$SignupForm;
 
 
 
-
-
 const $8a2df01c9f2675bb$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))((theme)=>({
         content: {
             width: 450
@@ -1861,28 +1808,20 @@ const $8a2df01c9f2675bb$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
             margin: theme.spacing(0.3)
         }
     }));
-const $8a2df01c9f2675bb$var$LoginForm = ({ postLoginRedirect: postLoginRedirect, allowUsername: allowUsername })=>{
+const $8a2df01c9f2675bb$var$LoginForm = ({ onLogin: onLogin, allowUsername: allowUsername })=>{
     const [loading, setLoading] = (0, $4Uj5b$reactadmin.useSafeSetState)(false);
     const login = (0, $4Uj5b$reactadmin.useLogin)();
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
     const classes = $8a2df01c9f2675bb$var$useStyles();
-    const dataProvider = (0, $4Uj5b$reactadmin.useDataProvider)();
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
-    const loginCompleted = (0, $e5ab9cca64b9eee5$export$2e2bcd8739ae039)();
-    const interactionId = searchParams.get("interaction_id");
-    const redirectTo = postLoginRedirect ? `${postLoginRedirect}?${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}` : searchParams.get("redirect");
+    const redirectTo = searchParams.get("redirect") || "/";
     const submit = (0, $4Uj5b$react.useCallback)(async (values)=>{
         try {
             setLoading(true);
             await login(values);
-            // If interactionId is set, it means we are connecting from another application.
-            // So call a custom endpoint to tell the OIDC server the login is completed
-            if (interactionId) await loginCompleted(interactionId);
-            setLoading(false);
-            // TODO now that we have the refreshConfig method, see if we can avoid a hard reload
-            // window.location.reload();
-            window.location.href = redirectTo;
+            if (onLogin) onLogin(redirectTo);
+            else window.location.href = redirectTo;
         } catch (error) {
             setLoading(false);
             notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "ra.auth.sign_in_error" : error.message, {
@@ -1897,8 +1836,7 @@ const $8a2df01c9f2675bb$var$LoginForm = ({ postLoginRedirect: postLoginRedirect,
         login,
         redirectTo,
         notify,
-        interactionId,
-        dataProvider
+        onLogin
     ]);
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Form), {
         onSubmit: submit,
@@ -1950,7 +1888,6 @@ const $8a2df01c9f2675bb$var$LoginForm = ({ postLoginRedirect: postLoginRedirect,
     });
 };
 $8a2df01c9f2675bb$var$LoginForm.defaultValues = {
-    redirectTo: "/",
     allowUsername: false
 };
 var $8a2df01c9f2675bb$export$2e2bcd8739ae039 = $8a2df01c9f2675bb$var$LoginForm;
@@ -2253,6 +2190,19 @@ var $d6b5c702311394c4$export$2e2bcd8739ae039 = $d6b5c702311394c4$var$SimpleBox;
 
 
 
+const $cd7709c431b14d14$var$USED_SEARCH_PARAMS = [
+    "signup",
+    "reset_password",
+    "new_password",
+    "email",
+    "force-email"
+];
+const $cd7709c431b14d14$var$getSearchParamsRest = (searchParams)=>{
+    const rest = [];
+    for (const [key, value] of searchParams.entries())if (!$cd7709c431b14d14$var$USED_SEARCH_PARAMS.includes(key)) rest.push(`${key}=${encodeURIComponent(value)}`);
+    return rest.length > 0 ? rest.join("&") : "";
+};
+var $cd7709c431b14d14$export$2e2bcd8739ae039 = $cd7709c431b14d14$var$getSearchParamsRest;
 
 
 const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))(()=>({
@@ -2267,43 +2217,35 @@ const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
  * @param {object} props Props
  * @param {boolean} props.hasSignup If to show signup form.
  * @param {boolean} props.allowUsername Indicates, if login is allowed with username (instead of email).
- * @param {string} props.postSignupRedirect Location to redirect to after signup.
- * @param {string} props.postLoginRedirect Location to redirect to after login.
+ * @param {function} props.onLogin Optional function to call when login is completed
+ * @param {function} props.onSignup Optional function to call when signup is completed
  * @param {object} props.additionalSignupValues
  * @param {object} props.passwordScorer Scorer to evaluate and indicate password strength.
  *  Set to `null` or `false`, if you don't want password strength checks. Default is
  *  passwordStrength's `defaultScorer`.
  * @returns
- */ const $4c56dbfbda0fa20c$var$LocalLoginPage = ({ hasSignup: hasSignup, allowUsername: allowUsername, postSignupRedirect: postSignupRedirect, postLoginRedirect: postLoginRedirect, additionalSignupValues: additionalSignupValues, passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8) })=>{
+ */ const $4c56dbfbda0fa20c$var$LocalLoginPage = ({ hasSignup: hasSignup, allowUsername: allowUsername, onLogin: onLogin, onSignup: onSignup, additionalSignupValues: additionalSignupValues, passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8) })=>{
     const classes = $4c56dbfbda0fa20c$var$useStyles();
-    const navigate = (0, $4Uj5b$reactrouterdom.useNavigate)();
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
     const isSignup = hasSignup && searchParams.has("signup");
     const isResetPassword = searchParams.has("reset_password");
     const isNewPassword = searchParams.has("new_password");
     const isLogin = !isSignup && !isResetPassword && !isNewPassword;
-    const loginCompleted = (0, $e5ab9cca64b9eee5$export$2e2bcd8739ae039)();
-    const redirectTo = postLoginRedirect ? `${postLoginRedirect}?${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}` : searchParams.get("redirect") || "/";
-    const interactionId = searchParams.get("interaction_id");
+    const redirectTo = searchParams.get("redirect") || "/";
     const { data: identity, isLoading: isLoading } = (0, $4Uj5b$reactadmin.useGetIdentity)();
     (0, $4Uj5b$react.useEffect)(()=>{
         (async ()=>{
             if (!isLoading && identity?.id) {
-                // If interactionId is set, it means we are connecting from another application
-                // So call a custom endpoint to tell the OIDC server the login is completed
-                if (interactionId) await loginCompleted(interactionId);
-                window.location.href = redirectTo;
+                if (onLogin) onLogin(redirectTo);
+                else window.location.href = redirectTo;
             }
         })();
     }, [
         identity,
         isLoading,
-        navigate,
-        searchParams,
         redirectTo,
-        loginCompleted,
-        interactionId
+        onLogin
     ]);
     const [title, text] = (0, $4Uj5b$react.useMemo)(()=>{
         if (isSignup) return [
@@ -2335,9 +2277,13 @@ const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
         icon: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialLock))), {}),
         children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Card), {
             children: [
+                isLogin && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $8a2df01c9f2675bb$export$2e2bcd8739ae039), {
+                    onLogin: onLogin,
+                    allowUsername: allowUsername
+                }),
                 isSignup && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $5f70c240e5b0340c$export$2e2bcd8739ae039), {
                     delayBeforeRedirect: 4000,
-                    postSignupRedirect: postSignupRedirect,
+                    onSignup: onSignup,
                     additionalSignupValues: additionalSignupValues,
                     passwordScorer: passwordScorer
                 }),
@@ -2345,10 +2291,6 @@ const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
                 isNewPassword && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $176df6bd8edc5f4d$export$2e2bcd8739ae039), {
                     redirectTo: redirectTo,
                     passwordScorer: passwordScorer
-                }),
-                isLogin && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $8a2df01c9f2675bb$export$2e2bcd8739ae039), {
-                    postLoginRedirect: postLoginRedirect,
-                    allowUsername: allowUsername
                 }),
                 /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("div", {
                     className: classes.switch,

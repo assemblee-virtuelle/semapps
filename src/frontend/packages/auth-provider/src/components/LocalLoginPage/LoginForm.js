@@ -1,20 +1,8 @@
 import React, { useCallback } from 'react';
-import {
-  Form,
-  useTranslate,
-  useNotify,
-  useSafeSetState,
-  TextInput,
-  required,
-  email,
-  useLogin,
-  useDataProvider
-} from 'react-admin';
-import useLoginCompleted from '../../hooks/useLoginCompleted';
+import { Form, useTranslate, useNotify, useSafeSetState, TextInput, required, email, useLogin } from 'react-admin';
 import { useSearchParams } from 'react-router-dom';
 import { Button, CardContent, CircularProgress } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import getSearchParamsRest from './getSearchParamsRest';
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -25,32 +13,25 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const LoginForm = ({ postLoginRedirect, allowUsername }) => {
+const LoginForm = ({ onLogin, allowUsername }) => {
   const [loading, setLoading] = useSafeSetState(false);
   const login = useLogin();
   const translate = useTranslate();
   const notify = useNotify();
   const classes = useStyles();
-  const dataProvider = useDataProvider();
   const [searchParams] = useSearchParams();
-  const loginCompleted = useLoginCompleted();
-  const interactionId = searchParams.get('interaction_id');
-  const redirectTo = postLoginRedirect
-    ? `${postLoginRedirect}?${getSearchParamsRest(searchParams)}`
-    : searchParams.get('redirect');
+  const redirectTo = searchParams.get('redirect') || '/';
 
   const submit = useCallback(
     async values => {
       try {
         setLoading(true);
         await login(values);
-        // If interactionId is set, it means we are connecting from another application.
-        // So call a custom endpoint to tell the OIDC server the login is completed
-        if (interactionId) await loginCompleted(interactionId);
-        setLoading(false);
-        // TODO now that we have the refreshConfig method, see if we can avoid a hard reload
-        // window.location.reload();
-        window.location.href = redirectTo;
+        if (onLogin) {
+          onLogin(redirectTo);
+        } else {
+          window.location.href = redirectTo;
+        }
       } catch (error) {
         setLoading(false);
         notify(
@@ -68,7 +49,7 @@ const LoginForm = ({ postLoginRedirect, allowUsername }) => {
         );
       }
     },
-    [setLoading, login, redirectTo, notify, interactionId, dataProvider]
+    [setLoading, login, redirectTo, notify, onLogin]
   );
 
   return (
@@ -112,7 +93,6 @@ const LoginForm = ({ postLoginRedirect, allowUsername }) => {
 };
 
 LoginForm.defaultValues = {
-  redirectTo: '/',
   allowUsername: false
 };
 
