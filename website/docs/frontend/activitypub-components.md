@@ -96,7 +96,9 @@ const {
   isFetching, // True, if items or a page is being fetched.
   isFetchingNextPage, // True, if the next page is being fetched.
   url: collectionUrl, // The URL of the collection
-  hasLiveUpdates // True if the hook is triggered on Solid Notification WebSocket Channel updates.
+  hasLiveUpdates, // Object with the status of the WebSocket connection ('connected', 'closed', 'error') and eventually the error
+  webSocketRef, // A React reference to the WebSocket object. It may not be initialized yet.
+  awaitWebSocketConnection // Async function that waits for the WebSocket connection to be established. Returns the WebSocket ref.
 } = useCollection('http://localhost:3000/alice/followers', { dereferenceItems: false, liveUpdates: true });
 ```
 
