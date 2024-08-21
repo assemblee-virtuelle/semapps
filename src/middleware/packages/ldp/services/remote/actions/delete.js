@@ -5,13 +5,17 @@ module.exports = {
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
-    const { resourceUri, webId } = ctx.params;
+    const { resourceUri } = ctx.params;
+    const webId = ctx.params.webId || ctx.meta.webId;
 
     if (!this.isRemoteUri(resourceUri, webId)) {
       throw new Error(`The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId})`);
     }
 
     if (this.settings.podProvider) {
+      if (!webId || webId === 'system' || webId === 'anon') {
+        throw new Error(`Cannot delete remote resource in cache without a webId (Provided: ${webId})`);
+      }
       const account = await ctx.call('auth.account.findByWebId', { webId });
       ctx.meta.dataset = account.username;
     }
