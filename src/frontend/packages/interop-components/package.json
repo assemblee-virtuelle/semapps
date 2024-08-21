@@ -12,7 +12,7 @@
   ],
   "scripts": {
     "build": "parcel build && yalc publish --push --changed",
-    "watch": "nodemon --watch src --exec 'yarn build'"
+    "watch": "nodemon --ext ts,tsx,js --watch src --exec 'yarn build'"
   },
   "dependencies": {
     "@semapps/input-components": "0.7.0",
