@@ -17,8 +17,8 @@ import type { UseCollectionOptions } from '../types';
 const useOutbox = (options: UseCollectionOptions = {}) => {
   const dataProvider = useDataProvider<SemanticDataProvider>();
   const { data: identity } = useGetIdentity();
-  const { url, hasLiveUpdates, items, ...rest } = useCollection('outbox', options);
-  const awaitActivity = useAwaitActivity(hasLiveUpdates.webSocket, items);
+  const { url, items, awaitWebSocketConnection, ...rest } = useCollection('outbox', options);
+  const awaitActivity = useAwaitActivity(awaitWebSocketConnection, items);
 
   // Post an activity to the logged user's outbox and return its URI
   const post = useCallback(
@@ -40,7 +40,7 @@ const useOutbox = (options: UseCollectionOptions = {}) => {
     [url, dataProvider]
   );
 
-  return { url, hasLiveUpdates, items, post, awaitActivity, owner: identity?.id, ...rest };
+  return { url, items, awaitWebSocketConnection, post, awaitActivity, owner: identity?.id, ...rest };
 };
 
 export default useOutbox;

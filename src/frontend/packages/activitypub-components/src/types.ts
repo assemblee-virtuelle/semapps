@@ -3,6 +3,10 @@ export interface UseCollectionOptions {
   liveUpdates?: boolean;
 }
 
+export interface AwaitWebSocketConnectionOptions {
+  timeout?: number;
+}
+
 export interface AwaitActivityOptions {
   timeout?: number;
   checkExistingActivities?: boolean;

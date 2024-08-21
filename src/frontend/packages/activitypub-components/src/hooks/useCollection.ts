@@ -1,9 +1,9 @@
-import { useCallback, useMemo, useState, useEffect } from 'react';
+import { useCallback, useMemo, useState, useEffect, useRef, RefObject } from 'react';
 import { useGetIdentity, useDataProvider } from 'react-admin';
 import { QueryFunction, useInfiniteQuery, useQueries, useQueryClient } from 'react-query';
 import { getOrCreateWsChannel, SemanticDataProvider } from '@semapps/semantic-data-provider';
 import { arrayOf } from '../utils';
-import type { UseCollectionOptions, SolidNotification } from '../types';
+import type { UseCollectionOptions, SolidNotification, AwaitActivityOptions } from '../types';
 
 const useItemsFromPages = (pages: any[], dereferenceItems: boolean) => {
   const dataProvider = useDataProvider<SemanticDataProvider>();
@@ -59,10 +59,11 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
   const { data: identity } = useGetIdentity();
   const [totalItems, setTotalItems] = useState<number>();
   const queryClient = useQueryClient();
-  const [hasLiveUpdates, setHasLiveUpdates] = useState<{ status: string; error?: any; webSocket?: WebSocket }>({
+  const [hasLiveUpdates, setHasLiveUpdates] = useState<{ status: string; error?: any }>({
     status: 'connecting'
   });
   const dataProvider = useDataProvider<SemanticDataProvider>();
+  const webSocketRef = useRef<WebSocket | null>(null);
 
   // Get collectionUrl from webId predicate or URL.
   const collectionUrl = useMemo(() => {
@@ -199,8 +200,9 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
     if (liveUpdates && collectionUrl) {
       // Create ws that listens to collectionUri changes
       getOrCreateWsChannel(dataProvider.fetch, collectionUrl)
-        .then(webSocket => {
-          webSocket.addEventListener('message', e => {
+        .then(ws => {
+          webSocketRef.current = ws; // Keep a ref to the webSocket so that it can be used elsewhere
+          webSocketRef.current.addEventListener('message', e => {
             const data: SolidNotification = JSON.parse(e.data);
             if (data.type === 'Add') {
               addItem(data.object, true);
@@ -208,20 +210,45 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
               removeItem(data.object, true);
             }
           });
-          webSocket.addEventListener('error', e => {
+          webSocketRef.current.addEventListener('error', e => {
             setHasLiveUpdates({ status: 'error', error: e });
             // TODO: Retry after a while
           });
-          webSocket.addEventListener('close', e => {
+          webSocketRef.current.addEventListener('close', e => {
             if (!hasLiveUpdates.error) {
               setHasLiveUpdates({ ...hasLiveUpdates, status: 'closed' });
             }
           });
-          setHasLiveUpdates({ status: 'connected', webSocket });
+          setHasLiveUpdates({ status: 'connected' });
         })
         .catch(() => {}); // If it fails, we won't receive live updates. But that's okay.
     }
-  }, [collectionUrl, liveUpdates, dataProvider]);
+  }, [collectionUrl, liveUpdates, dataProvider, webSocketRef]);
+
+  const awaitWebSocketConnection = useCallback(
+    (options: AwaitActivityOptions = {}): Promise<RefObject<WebSocket>> => {
+      const { timeout = 30000 } = options;
+      return new Promise((resolve, reject) => {
+        if (webSocketRef?.current) {
+          resolve(webSocketRef);
+        } else {
+          const timeoutId = setTimeout(() => {
+            reject(`No WebSocket connection found within ${Math.round(timeout / 1000)}s`);
+          }, timeout);
+          const intervalId = setInterval(() => {
+            if (webSocketRef?.current) {
+              clearInterval(intervalId);
+              clearTimeout(timeoutId);
+              resolve(webSocketRef);
+            } else {
+              console.log('WebSocket is not initialized yet, waiting...');
+            }
+          }, 100);
+        }
+      });
+    },
+    [webSocketRef]
+  );
 
   return {
     items,
@@ -236,7 +263,9 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
     isFetching: isFetchingPage || isFetchingItems,
     isFetchingNextPage,
     url: collectionUrl,
-    hasLiveUpdates
+    hasLiveUpdates,
+    awaitWebSocketConnection,
+    webSocketRef
   };
 };
 
