@@ -101,7 +101,7 @@ module.exports = {
           dereferencedActivity = activity;
 
         for (const recipientUri of recipients) {
-          job.log(`Processing activity ${activity.id} received in the inbox of ${recipientUri}...`);
+          this.logger.info(`Processing activity ${activity.id} received in the inbox of ${recipientUri}...`);
 
           const dataset = this.settings.podProvider
             ? await this.broker.call('auth.account.findDatasetByWebId', { webId: recipientUri })
@@ -137,6 +137,7 @@ module.exports = {
                     }`
                   );
                 } catch (e) {
+                  console.error(e);
                   job.log(`ERROR ${processor.key} (${processor.actionName}): ${e.message}`);
                   errors.push(processor.key);
                 }
@@ -169,11 +170,8 @@ module.exports = {
         const { activity } = job.data;
         const emitterUri = activity.actor;
         const startTime = performance.now();
-        let errors = [],
-          match,
+        let match,
           dereferencedActivity = activity;
-
-        job.log(`Processing activity ${activity.id} emitted to the outbox of ${emitterUri}...`);
 
         const dataset = this.settings.podProvider
           ? await this.broker.call('auth.account.findDatasetByWebId', { webId: emitterUri })
@@ -210,7 +208,9 @@ module.exports = {
                 );
               } catch (e) {
                 job.log(`ERROR ${processor.key} (${processor.actionName}): ${e.message}`);
-                errors.push(processor.key);
+                // When sending through the outbox, we want to return immediately the error
+                // TODO Call a new "revert" method for every side-effect processor ?
+                throw e;
               }
             } else {
               job.log(`SKIP ${processor.key} (${processor.actionName})`);
@@ -218,16 +218,10 @@ module.exports = {
           }
         }
 
-        if (errors.length > 0) {
-          throw new Error(
-            `Could not fully process activity ${activity.id}. Error with the processor(s) ${errors.join(', ')}`
-          );
-        } else {
-          return {
-            dereferencedActivity,
-            executionTime: `${Math.ceil(performance.now() - startTime) / 1000}s`
-          };
-        }
+        return {
+          dereferencedActivity,
+          executionTime: `${Math.ceil(performance.now() - startTime) / 1000}s`
+        };
       }
     }
   }

@@ -85,8 +85,9 @@ const OutboxService = {
       try {
         await ctx.call('activitypub.side-effects.processOutbox', { activity });
       } catch (e) {
-        // If some processors failed, log error message but don't stop
-        this.logger.error(e.message);
+        await ctx.call('activitypub.activity.delete', { resourceUri: activityUri, webId: 'system' });
+        // TODO unprocess objects
+        throw e;
       }
 
       // Attach the newly-created activity to the outbox
