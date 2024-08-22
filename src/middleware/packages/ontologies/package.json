@@ -1,11 +1,11 @@
 {
   "name": "@semapps/ontologies",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "SemApps ontologies",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "@semapps/triplestore": "0.9.0",
+    "@semapps/triplestore": "0.9.1",
     "moleculer-db": "^0.8.16",
     "node-fetch": "^2.6.6"
   },
