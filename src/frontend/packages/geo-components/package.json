@@ -1,6 +1,6 @@
 {
   "name": "@semapps/geo-components",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "React-Admin component for geographic data display and input",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
