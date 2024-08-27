@@ -1,6 +1,5 @@
 const path = require('path');
 const session = require('express-session');
-const { MIME_TYPES } = require('@semapps/mime-types');
 const AuthMixin = require('./auth');
 const saveRedirectUrl = require('../middlewares/saveRedirectUrl');
 const redirectToFront = require('../middlewares/redirectToFront');
@@ -22,43 +21,33 @@ const AuthSSOMixin = {
     async loginOrSignup(ctx) {
       const { ssoData } = ctx.params;
 
-      const selectedSsoData = this.settings.selectSsoData ? await this.settings.selectSsoData(ssoData) : ssoData;
+      const profileData = this.settings.selectSsoData ? await this.settings.selectSsoData(ssoData) : ssoData;
 
       // TODO use UUID to identify unique accounts with SSO
-      const existingAccounts = await ctx.call('auth.account.find', { query: { email: selectedSsoData.email } });
+      const existingAccounts = await ctx.call('auth.account.find', { query: { email: profileData.email } });
 
+      let accountData;
       let webId;
       let newUser;
-
       if (existingAccounts.length > 0) {
-        const [accountData] = existingAccounts;
-
+        accountData = existingAccounts[0];
         webId = accountData.webId;
         newUser = false;
 
-        const webIdData = await ctx.call('webid.get', { resourceUri: webId, accept: MIME_TYPES.JSON });
+        // TODO update account with recent profileData information
 
-        ctx.emit(
-          'auth.connected',
-          { webId, webIdData, accountData, ssoData },
-          { meta: { webId: null, dataset: null } }
-        );
+        ctx.emit('auth.connected', { webId, accountData, ssoData }, { meta: { webId: null, dataset: null } });
       } else {
-        if (!this.settings.registrationAllowed) throw new Error('registration.not-allowed');
+        if (!this.settings.registrationAllowed) {
+          throw new Error('registration.not-allowed');
+        }
 
-        const accountData = await ctx.call('auth.account.create', {
-          uuid: selectedSsoData.uuid,
-          email: selectedSsoData.email,
-          username: selectedSsoData.username
+        accountData = await ctx.call('auth.account.create', {
+          uuid: profileData.uuid,
+          email: profileData.email,
+          username: profileData.username
         });
-
-        webId = await ctx.call(
-          'webid.createWebId',
-          this.pickWebIdData({ nick: accountData.username, ...selectedSsoData })
-        );
-
-        const webIdData = await ctx.call('webid.get', { resourceUri: webId, accept: MIME_TYPES.JSON });
-
+        webId = await ctx.call('webid.createWebId', this.pickWebIdData({ nick: accountData.username, ...profileData }));
         newUser = true;
 
         // Link the webId with the account
@@ -66,7 +55,7 @@ const AuthSSOMixin = {
 
         ctx.emit(
           'auth.registered',
-          { webId, webIdData, accountData, ssoData },
+          { webId, profileData, accountData, ssoData },
           { meta: { webId: null, dataset: null } }
         );
       }

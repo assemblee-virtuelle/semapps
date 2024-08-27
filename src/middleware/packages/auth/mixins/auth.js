@@ -1,7 +1,6 @@
 const passport = require('passport');
 const { Errors: E } = require('moleculer-web');
 const { TripleStoreAdapter } = require('@semapps/triplestore');
-const { MIME_TYPES } = require('@semapps/mime-types');
 const urlJoin = require('url-join');
 const AuthAccountService = require('../services/account');
 const AuthJWTService = require('../services/jwt');
