@@ -6,6 +6,7 @@ const patchAction = require('./actions/patch');
 const postAction = require('./actions/post');
 const putAction = require('./actions/put');
 const getCatchAllRoute = require('../../routes/getCatchAllRoute');
+const getPodsRoute = require('../../routes/getPodsRoute');
 
 module.exports = {
   name: 'ldp.api',
@@ -23,9 +24,15 @@ module.exports = {
     put: putAction
   },
   async started() {
-    const { pathname: basePath } = new URL(this.settings.baseUrl);
+    const { baseUrl, podProvider } = this.settings;
+    const { pathname: basePath } = new URL(baseUrl);
+
+    if (podProvider) {
+      await this.broker.call('api.addRoute', { route: getPodsRoute(basePath) });
+    }
+
     await this.broker.call('api.addRoute', {
-      route: getCatchAllRoute(basePath, this.settings.podProvider)
+      route: getCatchAllRoute(basePath, podProvider)
     });
   },
   methods: {

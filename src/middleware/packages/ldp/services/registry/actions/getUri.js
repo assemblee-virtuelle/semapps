@@ -14,10 +14,10 @@ module.exports = {
     const { path, webId } = ctx.params;
 
     if (this.settings.podProvider) {
-      const account = await ctx.call('auth.account.findByWebId', { webId });
-      if (!account) throw new Error(`No account found with webId ${webId}`);
-      return urlJoin(account.podUri, path);
+      const podUrl = await ctx.call('pod.getUrl', { webId });
+      return urlJoin(podUrl, path);
+    } else {
+      return urlJoin(this.settings.baseUrl, path);
     }
-    return urlJoin(this.settings.baseUrl, path);
   }
 };

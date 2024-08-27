@@ -102,15 +102,11 @@ const OutboxService = {
 
       for (const recipientUri of recipients) {
         if (this.isLocalActor(recipientUri)) {
-          if (this.settings.podProvider) {
-            const podExist = await ctx.call('pod.exist', { webId: recipientUri });
-            if (podExist) {
-              localRecipients.push(recipientUri);
-            } else {
-              this.logger.warn(`No local Pod found with webId ${recipientUri}`);
-            }
-          } else {
+          const account = await ctx.call('auth.account.findByWebId', { webId: recipientUri });
+          if (account) {
             localRecipients.push(recipientUri);
+          } else {
+            this.logger.warn(`No local account found with webId ${recipientUri}`);
           }
         } else {
           remoteRecipients.push(recipientUri);
@@ -159,12 +155,10 @@ const OutboxService = {
 
       for (const recipientUri of recipients) {
         try {
-          const dataset = this.settings.podProvider ? getSlugFromUri(recipientUri) : undefined;
+          const account = await this.broker.call('auth.account.findByWebId', { webId: recipientUri });
+          if (!account) throw new Error(`No account found with webId ${recipientUri}`);
 
-          if (this.settings.podProvider) {
-            const podExist = await this.broker.call('pod.exist', { username: dataset });
-            if (!podExist) throw new Error(`No Pod found with username ${dataset}`);
-          }
+          const dataset = this.settings.podProvider ? account.username : undefined;
 
           const recipientInbox = await this.broker.call(
             'activitypub.actor.getCollectionUri',

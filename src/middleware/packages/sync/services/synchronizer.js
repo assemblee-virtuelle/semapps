@@ -19,8 +19,8 @@ const SynchronizerService = {
   methods: {
     async isValid(activity, recipientUri) {
       if (this.settings.podProvider) {
-        const podExist = await this.broker.call('pod.exist', { webId: recipientUri });
-        if (!podExist) {
+        const account = await this.broker.call('auth.account.findByWebId', { webId: recipientUri });
+        if (!account) {
           this.logger.warn(`No local Pod found for webId ${recipientUri}`);
           return false;
         } else {

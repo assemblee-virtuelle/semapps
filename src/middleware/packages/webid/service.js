@@ -58,17 +58,20 @@ const WebIdService = {
         ...rest
       };
 
-      // Create profile with system webId
       if (this.settings.podProvider) {
+        // In Pod provider config, there is no LDP container for the webId, so we must create it directly
         webId = urlJoin(this.settings.baseUrl, nick);
-        await ctx.call('ldp.resource.create', {
-          resource: {
-            '@id': webId,
-            ...resource
+        await this.actions.create(
+          {
+            resource: {
+              '@id': webId,
+              ...resource
+            },
+            contentType: MIME_TYPES.JSON,
+            webId: 'system'
           },
-          contentType: MIME_TYPES.JSON,
-          webId: 'system'
-        });
+          { parentCtx: ctx }
+        );
       } else {
         if (!this.settings.path) throw new Error('The path setting is required');
         webId = await this.actions.post(
@@ -82,13 +85,16 @@ const WebIdService = {
         );
       }
 
-      const newPerson = await ctx.call('ldp.resource.get', {
-        resourceUri: webId,
-        accept: MIME_TYPES.JSON,
-        webId: 'system'
-      });
+      const webIdData = await this.actions.get(
+        {
+          resourceUri: webId,
+          accept: MIME_TYPES.JSON,
+          webId: 'system'
+        },
+        { parentCtx: ctx }
+      );
 
-      ctx.emit('webid.created', newPerson, { meta: { webId: null, dataset: null } });
+      ctx.emit('webid.created', webIdData, { meta: { webId: null, dataset: null } });
 
       return webId;
     }

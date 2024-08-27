@@ -109,7 +109,9 @@ const CollectionsRegistryService = {
       for (const collection of this.registeredCollections) {
         this.logger.info(`Looking for containers with types: ${JSON.stringify(collection.attachToTypes)}`);
 
-        const datasets = this.settings.podProvider ? await this.broker.call('pod.list') : [undefined];
+        const accounts = await this.broker.call('auth.account.find');
+        const datasets = this.settings.podProvider ? accounts.map(a => a.username) : [undefined];
+
         for (let dataset of datasets) {
           // Find all containers where we want to attach this collection
           const containers = await ctx.call('ldp.registry.getByType', { type: collection.attachToTypes, dataset });
@@ -140,7 +142,8 @@ const CollectionsRegistryService = {
       sortPredicate = sortPredicate && (await ctx.call('jsonld.parser.expandPredicate', { predicate: sortPredicate }));
       sortOrder = sortOrder && (await ctx.call('jsonld.parser.expandPredicate', { predicate: sortOrder }));
 
-      const datasets = this.settings.podProvider ? await this.broker.call('pod.list') : [undefined];
+      const accounts = await this.broker.call('auth.account.find');
+      const datasets = this.settings.podProvider ? accounts.map(a => a.username) : [undefined];
 
       for (let dataset of datasets) {
         this.logger.info(`Getting all collections in dataset ${dataset} attached with predicate ${attachPredicate}...`);

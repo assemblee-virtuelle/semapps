@@ -1,4 +1,5 @@
 const urlJoin = require('url-join');
+const { MIME_TYPES } = require('@semapps/mime-types');
 const { getParentContainerUri } = require('../../../utils');
 
 /**
@@ -25,7 +26,9 @@ module.exports = {
 
       // TODO find the Pod root by looking at the webID (pim:storage)
       if (this.settings.podProvider && !webId) throw new Error(`The webId param is required in Pod provider config`);
-      const rootContainerUri = this.settings.podProvider ? urlJoin(webId, 'data') : urlJoin(this.settings.baseUrl, '/');
+      const rootContainerUri = this.settings.podProvider
+        ? await ctx.call('pod.getUrl', { webId })
+        : urlJoin(this.settings.baseUrl, '/');
 
       const containerPath = containerUri.replace(rootContainerUri, '/');
 

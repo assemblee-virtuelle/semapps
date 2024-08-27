@@ -51,10 +51,10 @@ module.exports = {
       if (dataset && dataset !== '*') {
         const account = await ctx.call('auth.account.findByUsername', { username: dataset });
         if (!account) throw new Error(`No pod found with username ${dataset}`);
-        if (!account.podUri) throw new Error(`The podUri is not defined for account ${account.username}`);
+        const podUrl = await ctx.call('pod.getUrl', { webId: account.webId });
         ctx.meta.dataset = account.username;
         await ctx.call('ldp.container.createAndAttach', {
-          containerUri: urlJoin(account.podUri, path),
+          containerUri: urlJoin(podUrl, path),
           permissions: options.permissions, // Used by the WebAclMiddleware
           webId: account.webId
         });
@@ -62,10 +62,10 @@ module.exports = {
         // 1. Ensure the container has been created for each user
         const accounts = await ctx.call('auth.account.find');
         for (const account of accounts) {
-          if (!account.podUri) throw new Error(`The podUri is not defined for account ${account.username}`);
+          const podUrl = await ctx.call('pod.getUrl', { webId: account.webId });
           ctx.meta.dataset = account.username;
           await ctx.call('ldp.container.createAndAttach', {
-            containerUri: urlJoin(account.podUri, path),
+            containerUri: urlJoin(podUrl, path),
             permissions: options.permissions, // Used by the WebAclMiddleware
             webId: account.webId
           });
