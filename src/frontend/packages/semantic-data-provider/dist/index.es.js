@@ -1014,7 +1014,7 @@ const $81a8da127161495a$var$fetchUserConfig = async (config)=>{
             // Fill the config provided to the data provider
             // We must modify the config object directly
             config.dataServers[podKey].name = "My Pod";
-            config.dataServers[podKey].baseUrl = (0, $fj9kP$urljoin)(webId, "data"); // TODO find POD URI from user profile
+            config.dataServers[podKey].baseUrl = userData["pim:storage"] || (0, $fj9kP$urljoin)(webId, "data");
             config.dataServers[podKey].sparqlEndpoint = userData.endpoints?.["void:sparqlEndpoint"] || (0, $fj9kP$urljoin)(webId, "sparql");
         }
         if (authServerKey) // Fill the config provided to the data provider

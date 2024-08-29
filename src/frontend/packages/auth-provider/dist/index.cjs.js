@@ -98,8 +98,7 @@ const $2d06940433ec0c6c$export$274217e117cdbc7b = async (dataProvider)=>{
     const dataServers = await dataProvider.getDataServers();
     const authServer = Object.values(dataServers).find((server)=>server.authServer === true);
     if (!authServer) throw new Error("Could not find a server with authServer: true. Check your dataServers config.");
-    // If the server is a POD, return the root URL instead of https://domain.com/user/data
-    // TODO Use 'solid:oidcIssuer' when it is available
+    // If the server is a Pod provider, return the root URL instead of https://domain.com/user/data
     return authServer.pod ? new URL(authServer.baseUrl).origin : authServer.baseUrl;
 };
 const $2d06940433ec0c6c$export$1391212d75b2ee65 = async (t)=>new Promise((resolve)=>setTimeout(resolve, t));
@@ -130,8 +129,14 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
     return {
         login: async (params)=>{
             if (authType === $6a92eb32301846ac$var$AUTH_TYPE_SOLID_OIDC) {
-                const { webId: webId, issuer: issuer, redirect: redirect = "/", isSignup: isSignup = false } = params;
-                webId && issuer;
+                let { webId: webId, issuer: issuer, redirect: redirect = "/", isSignup: isSignup = false } = params;
+                if (webId && !issuer) {
+                    // Find issuer from webId
+                    const { json: userData } = await dataProvider.fetch(webId);
+                    if (!userData) throw new Error("auth.message.unable_to_fetch_user_data");
+                    if (!userData["solid:oidcIssuer"]) throw new Error("auth.message.no_associated_oidc_issuer");
+                    issuer = userData?.["solid:oidcIssuer"];
+                }
                 const as = await $4Uj5b$oauth4webapi.discoveryRequest(new URL(issuer)).then((response)=>$4Uj5b$oauth4webapi.processDiscoveryResponse(new URL(issuer), response)).catch(()=>{
                     throw new Error("auth.message.unreachable_auth_server");
                 });
@@ -300,10 +305,13 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                             const { webid: webId } = (0, ($parcel$interopDefault($4Uj5b$jwtdecode)))(token); // Not webId !!
                             // Delete token but also any other value in local storage
                             localStorage.clear();
-                            // Redirect to the Pod provider
-                            // TODO Use 'solid:oidcIssuer' when it is available
-                            // See https://github.com/activitypods/activitypods/issues/122
-                            return redirectUrl || new URL(webId).origin;
+                            if (redirectUrl) return redirectUrl;
+                            else {
+                                // We don't need the token to fetch the WebID since it is public
+                                const { json: userData } = await dataProvider.fetch(webId);
+                                // Redirect to the Pod provider
+                                return userData?.["solid:oidcIssuer"] || new URL(webId).origin;
+                            }
                         } else return redirectUrl;
                     }
                 default:
@@ -2573,6 +2581,7 @@ const $be2fdde9f3e3137d$var$englishMessages = {
             container_list_forbidden: "You are not allowed to list these resources",
             unable_to_fetch_user_data: "Unable to fetch user data",
             no_token_returned: "No token returned",
+            no_associated_oidc_issuer: "No OIDC issuer associated with the provided WebID",
             invalid_token_returned: "Invalid token returned",
             signup_error: "Account registration failed",
             user_not_allowed_to_login: "You are not allowed to login with this account",
@@ -2666,6 +2675,7 @@ const $6dbc362c3d93e01d$var$frenchMessages = {
             container_list_forbidden: "Vous n'avez pas la permission de voir ces ressources",
             unable_to_fetch_user_data: "Impossible de r\xe9cup\xe9rer les donn\xe9es du profil",
             no_token_returned: "Aucun token a \xe9t\xe9 retourn\xe9",
+            no_associated_oidc_issuer: "Aucun serveur de connexion associ\xe9 avec le WebID fourni",
             invalid_token_returned: "Token invalide",
             signup_error: "L'inscription a \xe9chou\xe9",
             user_not_allowed_to_login: "Vous n'avez pas le droit de vous connecter avec ce compte",

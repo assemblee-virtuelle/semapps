@@ -61,6 +61,7 @@ const englishMessages = {
       container_list_forbidden: 'You are not allowed to list these resources',
       unable_to_fetch_user_data: 'Unable to fetch user data',
       no_token_returned: 'No token returned',
+      no_associated_oidc_issuer: 'No OIDC issuer associated with the provided WebID',
       invalid_token_returned: 'Invalid token returned',
       signup_error: 'Account registration failed',
       user_not_allowed_to_login: 'You are not allowed to login with this account',

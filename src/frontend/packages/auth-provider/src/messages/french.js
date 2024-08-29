@@ -62,6 +62,7 @@ const frenchMessages = {
       container_list_forbidden: "Vous n'avez pas la permission de voir ces ressources",
       unable_to_fetch_user_data: 'Impossible de récupérer les données du profil',
       no_token_returned: 'Aucun token a été retourné',
+      no_associated_oidc_issuer: 'Aucun serveur de connexion associé avec le WebID fourni',
       invalid_token_returned: 'Token invalide',
       signup_error: "L'inscription a échoué",
       user_not_allowed_to_login: "Vous n'avez pas le droit de vous connecter avec ce compte",

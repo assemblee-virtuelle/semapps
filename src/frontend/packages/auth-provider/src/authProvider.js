@@ -35,10 +35,14 @@ const authProvider = ({
   return {
     login: async params => {
       if (authType === AUTH_TYPE_SOLID_OIDC) {
-        const { webId, issuer, redirect = '/', isSignup = false } = params;
+        let { webId, issuer, redirect = '/', isSignup = false } = params;
 
         if (webId && !issuer) {
-          // TODO find issuer from webId
+          // Find issuer from webId
+          const { json: userData } = await dataProvider.fetch(webId);
+          if (!userData) throw new Error('auth.message.unable_to_fetch_user_data');
+          if (!userData['solid:oidcIssuer']) throw new Error('auth.message.no_associated_oidc_issuer');
+          issuer = userData?.['solid:oidcIssuer'];
         }
 
         const as = await oauth
@@ -264,10 +268,15 @@ const authProvider = ({
             // Delete token but also any other value in local storage
             localStorage.clear();
 
-            // Redirect to the Pod provider
-            // TODO Use 'solid:oidcIssuer' when it is available
-            // See https://github.com/activitypods/activitypods/issues/122
-            return redirectUrl || new URL(webId).origin;
+            if (redirectUrl) {
+              return redirectUrl;
+            } else {
+              // We don't need the token to fetch the WebID since it is public
+              const { json: userData } = await dataProvider.fetch(webId);
+
+              // Redirect to the Pod provider
+              return userData?.['solid:oidcIssuer'] || new URL(webId).origin;
+            }
           } else {
             return redirectUrl;
           }
