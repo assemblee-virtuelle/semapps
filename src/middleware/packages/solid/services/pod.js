@@ -13,17 +13,18 @@ module.exports = {
   async started() {
     if (!this.settings.baseUrl) throw new Error('The baseUrl setting of the pod service is required');
 
-    // Root container for the Pod (/:username/data/)
-    await this.broker.call('ldp.registry.register', {
+    await this.broker.call('ontologies.register', {
+      ...pim,
+      overwrite: true
+    });
+
+    // Register root container for the Pod (/:username/data/)
+    // Do not await or we will have a circular dependency with the LdpRegistryService
+    this.broker.call('ldp.registry.register', {
       path: '/',
       excludeFromMirror: true,
       permissions: {},
       newResourcesPermissions: {}
-    });
-
-    await this.broker.call('ontologies.register', {
-      ...pim,
-      overwrite: true
     });
   },
   actions: {
