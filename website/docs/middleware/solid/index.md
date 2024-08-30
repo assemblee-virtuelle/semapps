@@ -4,15 +4,13 @@ title: Solid
 
 This package handles standards related to the [Solid](https://solidproject.org/) project.
 
-## Features
-
-- Create Pods (Personal online datastore)
-
 ## Services
 
 - [PodService](pod.md)
-- TypeIndexService
-- NotificationService
+- [TypeIndexesService](type-indexes.md)
+- [TypeRegistrationsService](type-registrations.md)
+- SolidNotificationsProviderService
+- SolidNotificationsListenerService
 
 ## Install
 
