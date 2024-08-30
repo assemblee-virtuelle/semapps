@@ -1,4 +1,4 @@
-const { defaultToArray } = require('@semapps/ldp');
+const { arrayOf } = require('@semapps/ldp');
 const { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin } = require('@semapps/activitypub');
 
 const SynchronizerService = {
@@ -65,7 +65,7 @@ const SynchronizerService = {
       },
       async onReceive(ctx, activity, recipientUri) {
         if (await this.isValid(activity, recipientUri)) {
-          for (let resource of defaultToArray(activity.object)) {
+          for (let resource of arrayOf(activity.object)) {
             const resourceUri = typeof resource === 'string' ? resource : resource['@id'] || resource.id;
 
             // Ignore if the resource is on the same server
@@ -88,7 +88,7 @@ const SynchronizerService = {
               const type = resource['@type'] || resource.type;
 
               if (activity.target && this.settings.synchronizeContainers) {
-                for (const containerUri of defaultToArray(activity.target)) {
+                for (const containerUri of arrayOf(activity.target)) {
                   await ctx.call('ldp.container.attach', {
                     containerUri,
                     resourceUri,
@@ -136,7 +136,7 @@ const SynchronizerService = {
       },
       async onReceive(ctx, activity, recipientUri) {
         if (await this.isValid(activity, recipientUri)) {
-          for (let resource of defaultToArray(activity.object)) {
+          for (let resource of arrayOf(activity.object)) {
             resource = await ctx.call(
               'ldp.remote.store',
               typeof resource === 'string'
@@ -161,7 +161,7 @@ const SynchronizerService = {
       },
       async onReceive(ctx, activity, recipientUri) {
         if (await this.isValid(activity, recipientUri)) {
-          for (const resource of defaultToArray(activity.object)) {
+          for (const resource of arrayOf(activity.object)) {
             const resourceUri = typeof resource === 'string' ? resource : resource.id || resource['@id'];
 
             // Skip if the actor is asking to delete himself
@@ -180,7 +180,7 @@ const SynchronizerService = {
             }
 
             if (activity.target && this.settings.synchronizeContainers) {
-              for (const containerUri of defaultToArray(activity.target)) {
+              for (const containerUri of arrayOf(activity.target)) {
                 await ctx.call('ldp.container.detach', {
                   containerUri,
                   resourceUri,

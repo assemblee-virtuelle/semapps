@@ -114,6 +114,7 @@ const hasType = (resource, type) => {
 
 const isContainer = resource => hasType(resource, 'ldp:Container');
 
+/** @deprecated Use arrayOf instead */
 const defaultToArray = value => (!value ? undefined : Array.isArray(value) ? value : [value]);
 
 const delay = t => new Promise(resolve => setTimeout(resolve, t));

@@ -1,5 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { defaultToArray } = require('@semapps/ldp');
+const { arrayOf } = require('@semapps/ldp');
 
 module.exports = {
   action: {
@@ -20,8 +20,8 @@ module.exports = {
       let usersWithReadRights = [];
 
       if (readAuthorization) {
-        usersWithReadRights = defaultToArray(readAuthorization['acl:agent']) || [];
-        const groupsWithReadRights = defaultToArray(readAuthorization['acl:agentGroup']) || [];
+        usersWithReadRights = arrayOf(readAuthorization['acl:agent']);
+        const groupsWithReadRights = arrayOf(readAuthorization['acl:agentGroup']);
 
         for (const groupUri of groupsWithReadRights) {
           const members = await ctx.call('webacl.group.getMembers', { groupUri, webId: 'system' });

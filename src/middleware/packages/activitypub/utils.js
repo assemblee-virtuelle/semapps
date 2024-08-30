@@ -52,11 +52,6 @@ const collectionPermissionsWithAnonRead = webId => {
   return permissions;
 };
 
-// Items or recipients may be string or array, so default to array for easier handling
-const defaultToArray = value => {
-  return !value ? undefined : Array.isArray(value) ? value : [value];
-};
-
 const getSlugFromUri = str => str.match(new RegExp(`.*/(.*)`))[1];
 
 /** @deprecated Use the ldp.resource.getContainers action instead */
@@ -121,7 +116,6 @@ module.exports = {
   objectCurrentToId,
   objectIdToCurrent,
   collectionPermissionsWithAnonRead,
-  defaultToArray,
   getSlugFromUri,
   getContainerFromUri,
   delay,

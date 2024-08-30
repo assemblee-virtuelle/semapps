@@ -1,7 +1,7 @@
 const urlJoin = require('url-join');
 const fetch = require('node-fetch');
 const { MoleculerError } = require('moleculer').Errors;
-const { createFragmentURL, defaultToArray } = require('@semapps/ldp');
+const { createFragmentURL, arrayOf } = require('@semapps/ldp');
 const { ACTIVITY_TYPES } = require('@semapps/activitypub');
 const SynchronizerService = require('./synchronizer');
 
@@ -103,7 +103,7 @@ module.exports = {
         const partitions = server['void:classPartition'];
 
         if (partitions) {
-          for (const p of defaultToArray(partitions)) {
+          for (const p of arrayOf(partitions)) {
             // we skip empty containers and doNotMirror containers
             if (p['semapps:doNotMirror']) continue;
 

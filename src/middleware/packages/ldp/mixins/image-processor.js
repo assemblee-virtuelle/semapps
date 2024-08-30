@@ -1,6 +1,6 @@
 const sharp = require('sharp');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { defaultToArray } = require('../utils');
+const { arrayOf } = require('../utils');
 
 const SUPPORTED_IMAGES_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
@@ -68,9 +68,9 @@ module.exports = {
       const { webId } = ctx.params;
       const container = await this.actions.list({ webId }, { parentCtx: ctx });
       if (container['ldp:contains']) {
-        const resources = defaultToArray(container['ldp:contains']);
+        const resources = arrayOf(container['ldp:contains']);
         this.logger.info(`Processing ${resources.length} images...`);
-        for (const resource of defaultToArray(container['ldp:contains'])) {
+        for (const resource of resources) {
           this.logger.info(`Processing image ${resource.id}...`);
           await this.actions.processImage({ resourceUri: resource.id }, { parentCtx: ctx });
         }
