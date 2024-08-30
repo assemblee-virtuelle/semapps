@@ -101,8 +101,6 @@ module.exports = {
       if (newBlankNodes.length > 0) query += this.bindNewBlankNodes(newBlankNodes);
       query += ` }`;
 
-      this.logger.info('PUT query', query);
-
       await ctx.call('triplestore.update', {
         query,
         webId
