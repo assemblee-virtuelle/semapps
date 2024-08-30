@@ -61,7 +61,7 @@ module.exports = {
     if (newBlankNodes.length > 0) query += this.bindNewBlankNodes(newBlankNodes);
     query += ` }`;
 
-    this.logger.info('POST query', query);
+    this.logger.debug('Fuseki Update Query:', query);
 
     await ctx.call('triplestore.update', {
       query,
