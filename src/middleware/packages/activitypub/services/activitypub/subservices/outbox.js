@@ -3,9 +3,11 @@ const { Errors: E } = require('moleculer-web');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { collectionPermissionsWithAnonRead, getSlugFromUri, objectIdToCurrent } = require('../../../utils');
 const { ACTOR_TYPES } = require('../../../constants');
+const AwaitActivityMixin = require('../../../mixins/await-activity');
 
 const OutboxService = {
   name: 'activitypub.outbox',
+  mixins: [AwaitActivityMixin],
   settings: {
     baseUri: null,
     podProvider: false,
