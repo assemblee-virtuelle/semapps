@@ -1,5 +1,6 @@
 const urlJoin = require('url-join');
 const { ControlledContainerMixin, DereferenceMixin, arrayOf } = require('@semapps/ldp');
+const { solid } = require('@semapps/ontologies');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { namedNode, triple } = require('@rdfjs/data-model');
 const TypeRegistrationsService = require('./type-registrations');
@@ -29,9 +30,16 @@ module.exports = {
     // DereferenceMixin settings
     dereferencePlan: [{ property: 'solid:hasTypeRegistration' }]
   },
+  dependencies: ['ontologies'],
   created() {
     this.broker.createService({
       mixins: [TypeRegistrationsService]
+    });
+  },
+  async started() {
+    await this.broker.call('ontologies.register', {
+      ...solid,
+      overwrite: true
     });
   },
   actions: {

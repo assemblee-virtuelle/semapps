@@ -1,5 +1,6 @@
 const urlJoin = require('url-join');
 const QueueMixin = require('moleculer-bull');
+const { notify } = require('@semapps/ontologies');
 const WebhookChannelService = require('./channels/webhook-channel');
 const WebSocketChannelService = require('./channels/websocket-channel');
 
@@ -9,7 +10,7 @@ module.exports = {
     baseUrl: null,
     queueServiceUrl: null
   },
-  dependencies: ['api', 'ldp.link-header'],
+  dependencies: ['api', 'ldp.link-header', 'ontologies'],
   async created() {
     const { baseUrl, queueServiceUrl } = this.settings;
     if (!baseUrl || !queueServiceUrl) throw new Error(`The baseUrl and queueServiceUrl settings are required`);
@@ -26,6 +27,11 @@ module.exports = {
     });
   },
   async started() {
+    await this.broker.call('ontologies.register', {
+      ...notify,
+      overwrite: true
+    });
+
     await this.broker.call('ldp.link-header.register', { actionName: 'solid-notifications.provider.getLink' });
 
     await this.broker.call('api.addRoute', {

@@ -6,6 +6,7 @@ const { v4: uuidv4 } = require('uuid');
 const DbService = require('moleculer-db');
 const { MoleculerError } = require('moleculer').Errors;
 const { parseHeader, negotiateContentType, parseJson } = require('@semapps/middlewares');
+const { notify } = require('@semapps/ontologies');
 const { TripleStoreAdapter } = require('@semapps/triplestore');
 
 module.exports = {
@@ -17,9 +18,14 @@ module.exports = {
     // DbService settings
     idField: '@id'
   },
-  dependencies: ['api', 'app'],
+  dependencies: ['api', 'app', 'ontologies'],
   async started() {
     if (!this.settings.baseUrl) throw new Error(`The baseUrl setting is required`);
+
+    await this.broker.call('ontologies.register', {
+      ...notify,
+      overwrite: true
+    });
 
     // Retrieve all active listeners
     const results = await this.actions.list({});
