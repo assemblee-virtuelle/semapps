@@ -157,6 +157,9 @@ module.exports = {
     },
     getCache() {
       return this.channels;
+    },
+    resetCache() {
+      this.channels = [];
     }
   },
   events: {
