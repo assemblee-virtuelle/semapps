@@ -11,7 +11,7 @@ const matchActivity = require('../utils/matchActivity');
 const AwaitActivityMixin = {
   actions: {
     async awaitActivity(ctx) {
-      const { collectionUri, matcher, maxTries = 60, delayMs = 500 } = ctx.params;
+      const { collectionUri, matcher, maxTries = 60, delayMs = 500, publishedAfter } = ctx.params;
       const webId = ctx.params.webId || ctx.meta.webId || 'anon';
       let match = false;
       let dereferencedActivity;
@@ -40,6 +40,16 @@ const AwaitActivityMixin = {
         });
 
         const firstActivity = outbox?.orderedItems?.[0];
+
+        // If the activity was published before the publishedAfter param, skip it
+        if (publishedAfter && firstActivity.published) {
+          const activityDate = new Date(firstActivity.published);
+          const publishedAfterDate = new Date(publishedAfter);
+          if (activityDate < publishedAfterDate) {
+            await delay(delayMs);
+            continue;
+          }
+        }
 
         ({ match, dereferencedActivity } = await matchActivity(matcher, firstActivity, fetcher));
 
