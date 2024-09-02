@@ -71,7 +71,13 @@ module.exports = {
         type: 'doc',
         id: 'middleware/solid/index'
       },
-      items: ['middleware/solid/pod', 'middleware/solid/type-indexes', 'middleware/solid/type-registrations']
+      items: [
+        'middleware/solid/pod',
+        'middleware/solid/type-indexes',
+        'middleware/solid/type-registrations',
+        'middleware/solid/notifications-provider',
+        'middleware/solid/notifications-listener'
+      ]
     },
     'middleware/sparql-endpoint',
     {

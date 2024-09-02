@@ -9,8 +9,8 @@ This package handles standards related to the [Solid](https://solidproject.org/)
 - [PodService](pod.md)
 - [TypeIndexesService](type-indexes.md)
 - [TypeRegistrationsService](type-registrations.md)
-- SolidNotificationsProviderService
-- SolidNotificationsListenerService
+- [NotificationsProviderService](notifications-provider.md)
+- [NotificationsListenerService](notifications-listener.md)
 
 ## Install
 

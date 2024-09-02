@@ -8,23 +8,34 @@ module.exports = {
   name: 'solid-notifications.provider',
   settings: {
     baseUrl: null,
-    queueServiceUrl: null
+    queueServiceUrl: null,
+    channels: {
+      webhook: true,
+      websocket: true
+    }
   },
   dependencies: ['api', 'ldp.link-header', 'ontologies'],
   async created() {
-    const { baseUrl, queueServiceUrl } = this.settings;
-    if (!baseUrl || !queueServiceUrl) throw new Error(`The baseUrl and queueServiceUrl settings are required`);
+    const { baseUrl, queueServiceUrl, channels } = this.settings;
+    if (!baseUrl) throw new Error(`The baseUrl setting is required`);
+    if (channels.webhook && !queueServiceUrl)
+      throw new Error(`The queueServiceUrl setting is required if webhooks are activated`);
 
-    this.broker.createService({
-      name: 'solid-notifications.provider.websocket',
-      mixins: [WebSocketChannelService],
-      settings: { baseUrl }
-    });
-    this.broker.createService({
-      name: 'solid-notifications.provider.webhook',
-      mixins: [WebhookChannelService, QueueMixin(queueServiceUrl)],
-      settings: { baseUrl }
-    });
+    if (channels.webhook) {
+      this.broker.createService({
+        name: 'solid-notifications.provider.webhook',
+        mixins: [WebhookChannelService, QueueMixin(queueServiceUrl)],
+        settings: { baseUrl }
+      });
+    }
+
+    if (channels.websocket) {
+      this.broker.createService({
+        name: 'solid-notifications.provider.websocket',
+        mixins: [WebSocketChannelService],
+        settings: { baseUrl }
+      });
+    }
   },
   async started() {
     await this.broker.call('ontologies.register', {
@@ -52,14 +63,18 @@ module.exports = {
       ctx.meta.$responseType = 'application/ld+json';
       // Cache for 1 days.
       ctx.meta.$responseHeaders = { 'Cache-Control': 'public, max-age=86400' };
+
+      const subscriptions = [];
+      if (this.settings.channels.webhook)
+        subscriptions.push(urlJoin(this.settings.baseUrl, '.notifications', 'WebSocketChannel2023'));
+      if (this.settings.channels.websocket)
+        subscriptions.push(urlJoin(this.settings.baseUrl, '.notifications', 'WebhookChannel2023'));
+
       return {
         '@context': { notify: 'http://www.w3.org/ns/solid/notifications#' },
         '@id': urlJoin(this.settings.baseUrl, '.well-known', 'solid'),
         '@type': 'http://www.w3.org/ns/pim/space#Storage',
-        'notify:subscription': [
-          urlJoin(this.settings.baseUrl, '.notifications', 'WebSocketChannel2023'),
-          urlJoin(this.settings.baseUrl, '.notifications', 'WebhookChannel2023')
-        ]
+        'notify:subscription': subscriptions
       };
     },
     getLink() {
