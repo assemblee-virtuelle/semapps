@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { fetchUtils } from 'react-admin';
 import type { NodeInfo, NodeInfoLinks } from '../types';
 
-const useNodeinfo = (host: string, rel = 'http://nodeinfo.diaspora.software/ns/schema/2.1') => {
+const useNodeinfo = (host?: string, rel = 'http://nodeinfo.diaspora.software/ns/schema/2.1') => {
   const [schema, setSchema] = useState<NodeInfo>();
 
   useEffect(() => {

@@ -344,7 +344,7 @@ export const useInbox: (options?: UseCollectionOptions) => {
   ) => Promise<unknown>;
   owner: import('react-admin').Identifier | undefined;
 };
-export const useNodeinfo: (host: string, rel?: string) => NodeInfo | undefined;
+export const useNodeinfo: (host?: string, rel?: string) => NodeInfo | undefined;
 export function useWebfinger(): {
   fetch: (id: any) => Promise<any>;
 };
