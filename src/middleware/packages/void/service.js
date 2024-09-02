@@ -6,7 +6,7 @@ const { DataFactory, Writer } = require('n3');
 
 const { quad, namedNode, literal, blankNode } = DataFactory;
 const { MoleculerError } = require('moleculer').Errors;
-const { createFragmentURL, regexProtocolAndHostAndPort, defaultToArray } = require('@semapps/ldp');
+const { createFragmentURL, regexProtocolAndHostAndPort, arrayOf } = require('@semapps/ldp');
 const { parseHeader } = require('@semapps/middlewares');
 
 const prefixes = {
@@ -120,7 +120,7 @@ const addMirrorServer = async (
     const originalPartitions = originalVoid['void:classPartition'];
 
     if (originalPartitions) {
-      for (const p of defaultToArray(originalPartitions)) {
+      for (const p of arrayOf(originalPartitions)) {
         // we skip empty containers and doNotMirror containers
         if (p['void:entities'] === '0' || p['semapps:doNotMirror']) continue;
         partitionsMap[p['void:uriSpace']] = p;
@@ -370,7 +370,7 @@ module.exports = {
           .map(async c => {
             const partition = {
               'http://rdfs.org/ns/void#uriSpace': urlJoin(baseUrl, c.path),
-              'http://rdfs.org/ns/void#class': defaultToArray(c.acceptedTypes)
+              'http://rdfs.org/ns/void#class': arrayOf(c.acceptedTypes)
             };
             if (c.excludeFromMirror) partition['http://semapps.org/ns/core#doNotMirror'] = true;
             const count = await ctx.call('triplestore.query', {

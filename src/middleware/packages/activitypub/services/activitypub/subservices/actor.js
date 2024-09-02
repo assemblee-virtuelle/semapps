@@ -2,8 +2,9 @@ const fetch = require('node-fetch');
 const urlJoin = require('url-join');
 const { namedNode, literal, triple, variable } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { arrayOf } = require('@semapps/ldp');
 const { ACTOR_TYPES, AS_PREFIX } = require('../../../constants');
-const { defaultToArray, getSlugFromUri, waitForResource, delay } = require('../../../utils');
+const { getSlugFromUri, waitForResource } = require('../../../utils');
 
 /** @type {import('moleculer').ServiceSchema} */
 const ActorService = {
@@ -48,10 +49,8 @@ const ActorService = {
 
       if (!propertiesToAdd['http://www.w3.org/1999/02/22-rdf-syntax-ns#type']) {
         // Ensure at least one actor type, otherwise ActivityPub-specific properties (inbox, public key...) will not be added
-        const resourceType = defaultToArray(userData.type || userData['@type']);
-        const includeActorType = resourceType
-          ? resourceType.some(type => Object.values(ACTOR_TYPES).includes(type))
-          : false;
+        const resourceType = arrayOf(userData.type || userData['@type']);
+        const includeActorType = resourceType.some(type => Object.values(ACTOR_TYPES).includes(type));
         if (!includeActorType) {
           propertiesToAdd['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = `${AS_PREFIX}Person`;
         }
@@ -177,9 +176,7 @@ const ActorService = {
       );
     },
     isActor(resource) {
-      return defaultToArray(resource['@type'] || resource.type || []).some(type =>
-        Object.values(ACTOR_TYPES).includes(type)
-      );
+      return arrayOf(resource['@type'] || resource.type).some(type => Object.values(ACTOR_TYPES).includes(type));
     }
   },
   events: {

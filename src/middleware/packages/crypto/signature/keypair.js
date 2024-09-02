@@ -19,7 +19,6 @@ const SignatureService = {
     actorsKeyPairsDir: null
   },
   async created() {
-    this.remoteActorPublicKeyCache = {};
     if (!this.settings.actorsKeyPairsDir) {
       throw new Error('You must set the actorsKeyPairsDir setting in the signature service');
     } else if (!fs.existsSync(this.settings.actorsKeyPairsDir)) {
@@ -172,26 +171,22 @@ const SignatureService = {
           ?.publicKeyPem;
       }
 
-      if (!this.remoteActorPublicKeyCache[actorUri]) {
-        const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
+      let response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
+      if (!response.ok) return false;
+
+      const actor = await response.json();
+      if (!actor || !actor.publicKey) return false;
+
+      // If the public key is not dereferenced
+      if (typeof actor.publicKey === 'string') {
+        response = await fetch(actor.publicKey, { headers: { Accept: 'application/json' } });
         if (!response.ok) return false;
-
-        const actor = await response.json();
-        if (!actor || !actor.publicKey) return false;
-
-        // If the public key is not dereferenced
-        if (typeof actor.publicKey === 'string') {
-          const response = await fetch(actor.publicKey, { headers: { Accept: 'application/json' } });
-          if (!response.ok) return false;
-          const publicKey = await response.json();
-          if (!publicKey) return false;
-          this.remoteActorPublicKeyCache[actorUri] = publicKey.publicKeyPem;
-        } else {
-          this.remoteActorPublicKeyCache[actorUri] = actor.publicKey.publicKeyPem;
-        }
+        const publicKey = await response.json();
+        if (!publicKey) return false;
+        return publicKey.publicKeyPem;
+      } else {
+        return actor.publicKey.publicKeyPem;
       }
-
-      return this.remoteActorPublicKeyCache[actorUri];
     }
   },
   hooks: {

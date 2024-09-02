@@ -1,12 +1,6 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { MoleculerError } = require('moleculer').Errors;
-const {
-  buildBlankNodesQuery,
-  buildFiltersQuery,
-  isContainer,
-  defaultToArray,
-  cleanUndefined
-} = require('../../../utils');
+const { buildBlankNodesQuery, buildFiltersQuery, isContainer, cleanUndefined, arrayOf } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
@@ -72,7 +66,7 @@ module.exports = {
         !result || !result.contains
           ? []
           : await Promise.all(
-              defaultToArray(result.contains).flatMap(async resourceUri => {
+              arrayOf(result.contains).flatMap(async resourceUri => {
                 try {
                   // We pass the accept/jsonContext parameters only if they are explicit
                   const resource = await ctx.call(
@@ -92,7 +86,7 @@ module.exports = {
                     if (isContainer(resource)) {
                       delete resource['ldp:contains'];
                       const typePredicate = resource.type ? 'type' : '@type';
-                      resource[typePredicate] = defaultToArray(resource[typePredicate]);
+                      resource[typePredicate] = arrayOf(resource[typePredicate]);
                       resource[typePredicate].push('ldp:Resource');
                     }
 

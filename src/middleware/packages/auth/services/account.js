@@ -149,8 +149,7 @@ module.exports = {
     async findDatasetByWebId(ctx) {
       const webId = ctx.params.webId || ctx.meta.webId;
       const account = await ctx.call('auth.account.findByWebId', { webId });
-      // If no podUri exist, it means we are not in Pod config
-      return account?.podUri ? getSlugFromUri(webId) : undefined;
+      return account?.username;
     },
     async findSettingsByWebId(ctx) {
       const webId = ctx.params.webId || ctx.meta.webId;
@@ -214,7 +213,6 @@ module.exports = {
         // ...except for
         webId: account.webId,
         username: account.username,
-        podUri: account.podUri,
         // And add a deletedAt date.
         deletedAt: new Date().toISOString()
       });

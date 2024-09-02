@@ -1,5 +1,4 @@
-const { defaultToArray } = require('@semapps/ldp');
-const { MIME_TYPES } = require('@semapps/mime-types');
+const { arrayOf } = require('@semapps/ldp');
 
 /**
  * Match an activity against a pattern
@@ -38,7 +37,7 @@ const matchActivity = async (matcher, activity, fetcher) => {
       }
     } else if (
       !dereferencedActivity[key] ||
-      !defaultToArray(dereferencedActivity[key]).some(v => defaultToArray(matcher[key]).includes(v))
+      !arrayOf(dereferencedActivity[key]).some(v => arrayOf(matcher[key]).includes(v))
     ) {
       return { match: false, dereferencedActivity };
     }

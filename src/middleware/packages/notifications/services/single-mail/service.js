@@ -13,6 +13,7 @@ const SingleMailNotificationsService = {
     defaultFrontUrl: null,
     color: '#E2003B',
     delay: 0,
+    podProvider: false,
     // See moleculer-mail doc https://github.com/moleculerjs/moleculer-addons/tree/master/packages/moleculer-mail
     templateFolder: path.join(__dirname, '../../templates'),
     from: null,
@@ -32,7 +33,7 @@ const SingleMailNotificationsService = {
 
         if (account) {
           ctx.meta.webId = recipientUri;
-          ctx.meta.dataset = account?.podUri && getSlugFromUri(recipientUri); // If no Pod config, will be undefined
+          ctx.meta.dataset = this.settings.podProvider ? getSlugFromUri(recipientUri) : undefined;
 
           const locale = account?.preferredLocale || this.settings.defaultLocale;
           const notification = await ctx.call('activity-mapping.map', { activity, locale });

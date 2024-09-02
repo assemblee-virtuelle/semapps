@@ -50,6 +50,30 @@
     },
     "apods:registeredClass": {
       "@type": "@id"
+    },
+    "apods:registeredContainer": {
+      "@type": "@id"
+    },
+    "apods:hasClassDescription": {
+      "@type": "@id"
+    },
+    "apods:preferredForClass": {
+      "@type": "@id"
+    },
+    "apods:describedClass": {
+      "@type": "@id"
+    },
+    "apods:describedBy": {
+      "@type": "@id"
+    },
+    "apods:labelPredicate": {
+      "@type": "@id"
+    },
+    "apods:defaultApp": {
+      "@type": "@id"
+    },
+    "apods:availableApps": {
+      "@type": "@id"
     }
   }
 }

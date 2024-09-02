@@ -74,8 +74,6 @@ const KeysService = {
 
     await this.waitForServices('keys.migration');
     this.isMigrated = await this.broker.call('keys.migration.isMigrated');
-
-    this.remoteActorPublicKeyCache = {};
   },
   actions: {
     /**
@@ -476,42 +474,34 @@ const KeysService = {
     getRemotePublicKeys: {
       params: {
         webId: { type: 'string' },
-        keyType: { type: 'string', optional: true, default: KEY_TYPES.RSA, nullable: true },
-        forceRefetch: { type: 'boolean', default: false }
+        keyType: { type: 'string', optional: true, default: KEY_TYPES.RSA, nullable: true }
       },
       async handler(ctx) {
-        const { webId, keyType, forceRefetch } = ctx.params;
+        const { webId, keyType } = ctx.params;
 
-        /** @type {object[]} */
-        let keyObjects = this.remoteActorPublicKeyCache[webId];
-        if (!keyObjects || forceRefetch) {
-          const response = await fetch(webId, { headers: { Accept: 'application/json' } });
-          if (!response.ok) return false;
+        let response = await fetch(webId, { headers: { Accept: 'application/json' } });
+        if (!response.ok) return false;
+        const actor = await response.json();
 
-          const actor = await response.json();
+        let keyObjects = arrayOf(actor?.publicKey).concat(arrayOf(actor?.assertionMethod));
 
-          keyObjects = arrayOf(actor?.publicKey).concat(arrayOf(actor?.assertionMethod));
+        // Dereference keys if necessary
+        keyObjects = await Promise.all(
+          keyObjects.map(async k => {
+            if (typeof k === 'string') {
+              response = await fetch(k, { headers: { Accept: 'application/json' } });
+              if (!response.ok) return false;
+              const dereferencedKey = await response.json();
+              if (!dereferencedKey) return false;
+              return dereferencedKey;
+            } else {
+              return k;
+            }
+          })
+        );
 
-          // Dereference keys if necessary
-          keyObjects = await Promise.all(
-            keyObjects.map(async k => {
-              if (typeof k === 'string') {
-                const response = await fetch(k, { headers: { Accept: 'application/json' } });
-                if (!response.ok) return false;
-                const dereferencedKey = await response.json();
-                if (!dereferencedKey) return false;
-                return dereferencedKey;
-              } else {
-                return k;
-              }
-            })
-          );
-
-          // Remove keys which could not be dereferenced
-          keyObjects = keyObjects.filter(k => k !== false);
-
-          this.remoteActorPublicKeyCache[webId] = keyObjects;
-        }
+        // Remove keys which could not be dereferenced
+        keyObjects = keyObjects.filter(k => k !== false);
 
         if (keyType) {
           if (keyType === KEY_TYPES.RSA) {
@@ -524,6 +514,7 @@ const KeysService = {
             return keyObjects.filter(key => arrayOf(key.type || key['@type']).includes(keyType));
           }
         }
+
         return keyObjects;
       }
     },

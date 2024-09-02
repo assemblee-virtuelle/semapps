@@ -64,6 +64,21 @@ module.exports = {
     },
     'middleware/nodeinfo',
     'middleware/ontologies',
+    {
+      type: 'category',
+      label: 'Solid',
+      link: {
+        type: 'doc',
+        id: 'middleware/solid/index'
+      },
+      items: [
+        'middleware/solid/pod',
+        'middleware/solid/type-indexes',
+        'middleware/solid/type-registrations',
+        'middleware/solid/notifications-provider',
+        'middleware/solid/notifications-listener'
+      ]
+    },
     'middleware/sparql-endpoint',
     {
       type: 'category',

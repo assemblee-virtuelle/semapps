@@ -1,5 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { defaultToArray } = require('../utils');
+const { arrayOf } = require('../utils');
 
 module.exports = {
   settings: {
@@ -69,8 +69,8 @@ module.exports = {
         const uriRemoved = [];
         let uriKept = [];
 
-        const oldDisassemblyValue = defaultToArray(oldData[disassemblyConfig.path]) || [];
-        const newDisassemblyValue = defaultToArray(newData[disassemblyConfig.path]) || [];
+        const oldDisassemblyValue = arrayOf(oldData[disassemblyConfig.path]);
+        const newDisassemblyValue = arrayOf(newData[disassemblyConfig.path]);
 
         const resourcesToAdd = newDisassemblyValue.filter(
           t1 => !oldDisassemblyValue.some(t2 => (t1.id || t1['@id']) === t2)
@@ -95,7 +95,7 @@ module.exports = {
               contentType: MIME_TYPES.JSON,
               webId: 'system'
             });
-            uriAdded.push({ '@id': newResourceUri, '@type': '@id' })
+            uriAdded.push({ '@id': newResourceUri, '@type': '@id' });
           }
         }
 
@@ -107,7 +107,7 @@ module.exports = {
                 webId: 'system'
               });
             } catch (error) {
-              this.logger.warn(`${resource} Not found during disassembly`)
+              this.logger.warn(`${resource} Not found during disassembly`);
             }
             uriRemoved.push({ '@id': resource['@id'] || resource.id || resource, '@type': '@id' });
           }
@@ -126,7 +126,7 @@ module.exports = {
                 webId: 'system'
               });
             } catch (error) {
-              this.logger.warn(`${resource} Not found during disassembly`)
+              this.logger.warn(`${resource} Not found during disassembly`);
             }
           }
           uriKept = resourcesToKeep.map(r => ({ '@id': r['@id'] || r.id || r, '@type': '@id' }));

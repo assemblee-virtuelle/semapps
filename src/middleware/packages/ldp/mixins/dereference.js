@@ -1,5 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { isObject, defaultToArray, arrayOf } = require('../utils');
+const { isObject, arrayOf } = require('../utils');
 
 /**
  * @description MoleculerJS mixin to be applied on the ControlledContainerMixin within a Semapps project.
@@ -75,7 +75,7 @@ module.exports = {
 
         // Dereference each property in schema.
         await Promise.all(
-          defaultToArray(propertiesSchema).map(async ({ property, nested }) => {
+          arrayOf(propertiesSchema).map(async ({ property, nested }) => {
             // Check if property to dereference is present in retrieved object.
             if (!mainData[property]) return;
 

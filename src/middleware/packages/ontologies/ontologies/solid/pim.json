@@ -1,0 +1,15 @@
+{
+  "prefix": "pim",
+  "namespace": "http://www.w3.org/ns/pim/space#",
+  "jsonldContext": {
+    "pim:storage": {
+      "@type": "@id"
+    },
+    "pim:preferencesFile": {
+      "@type": "@id"
+    },
+    "pim:workspace": {
+      "@type": "@id"
+    }
+  }
+}

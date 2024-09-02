@@ -3,10 +3,12 @@ const { getDatasetFromUri } = require('@semapps/ldp');
 const { Errors: E } = require('moleculer-web');
 const { objectIdToCurrent, collectionPermissionsWithAnonRead } = require('../../../utils');
 const { ACTOR_TYPES } = require('../../../constants');
+const AwaitActivityMixin = require('../../../mixins/await-activity');
 
 /** @type {import('moleculer').ServiceSchema} */
 const InboxService = {
   name: 'activitypub.inbox',
+  mixins: [AwaitActivityMixin],
   settings: {
     podProvider: false,
     collectionOptions: {

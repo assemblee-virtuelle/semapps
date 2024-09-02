@@ -1,8 +1,7 @@
 const urlJoin = require('url-join');
 const { quad, namedNode } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getWebIdFromUri } = require('@semapps/ldp');
-const { defaultToArray } = require('../../../utils');
+const { getWebIdFromUri, arrayOf } = require('@semapps/ldp');
 const { ACTOR_TYPES, FULL_ACTOR_TYPES, AS_PREFIX } = require('../../../constants');
 
 const CollectionsRegistryService = {
@@ -109,7 +108,9 @@ const CollectionsRegistryService = {
       for (const collection of this.registeredCollections) {
         this.logger.info(`Looking for containers with types: ${JSON.stringify(collection.attachToTypes)}`);
 
-        const datasets = this.settings.podProvider ? await this.broker.call('pod.list') : [undefined];
+        const accounts = await this.broker.call('auth.account.find');
+        const datasets = this.settings.podProvider ? accounts.map(a => a.username) : [undefined];
+
         for (let dataset of datasets) {
           // Find all containers where we want to attach this collection
           const containers = await ctx.call('ldp.registry.getByType', { type: collection.attachToTypes, dataset });
@@ -140,7 +141,8 @@ const CollectionsRegistryService = {
       sortPredicate = sortPredicate && (await ctx.call('jsonld.parser.expandPredicate', { predicate: sortPredicate }));
       sortOrder = sortOrder && (await ctx.call('jsonld.parser.expandPredicate', { predicate: sortOrder }));
 
-      const datasets = this.settings.podProvider ? await this.broker.call('pod.list') : [undefined];
+      const accounts = await this.broker.call('auth.account.find');
+      const datasets = this.settings.podProvider ? accounts.map(a => a.username) : [undefined];
 
       for (let dataset of datasets) {
         this.logger.info(`Getting all collections in dataset ${dataset} attached with predicate ${attachPredicate}...`);
@@ -199,8 +201,8 @@ const CollectionsRegistryService = {
   methods: {
     // Get the collections attached to the given type
     getCollectionsByType(types) {
-      types = defaultToArray(types);
-      return types
+      types = arrayOf(types);
+      return types.length > 0
         ? this.registeredCollections.filter(collection =>
             types
               .map(type => type.replace(AS_PREFIX, '')) // Remove AS prefix if it is set
@@ -213,7 +215,7 @@ const CollectionsRegistryService = {
         : [];
     },
     isActor(types) {
-      return defaultToArray(types).some(type =>
+      return arrayOf(types).some(type =>
         [...Object.values(ACTOR_TYPES), ...Object.values(FULL_ACTOR_TYPES)].includes(type)
       );
     },

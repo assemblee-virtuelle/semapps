@@ -40,13 +40,14 @@ module.exports = {
   events: {
     async 'auth.registered'(ctx) {
       const { webId, accountData } = ctx.params;
-      // We want to add user's containers only in POD provider config
+      // We want to add user's containers only in Pod provider config
       if (this.settings.podProvider) {
+        const podUrl = await ctx.call('pod.getUrl', { webId });
         const registeredContainers = await this.actions.list({ dataset: accountData.username }, { parentCtx: ctx });
         // Go through each registered containers
         for (const container of Object.values(registeredContainers)) {
           await ctx.call('ldp.container.createAndAttach', {
-            containerUri: urlJoin(accountData.podUri, container.path),
+            containerUri: urlJoin(podUrl, container.path),
             webId
           });
         }

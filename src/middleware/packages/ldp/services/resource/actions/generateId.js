@@ -24,7 +24,7 @@ module.exports = {
     if ((!this.settings.resourcesWithContainerPath || !containerUri) && !isContainer) {
       // Use the root container URI
       containerUri = this.settings.podProvider
-        ? urlJoin(this.settings.baseUrl, ctx.meta.dataset, 'data')
+        ? await ctx.call('pod.getUrl', { webId: urlJoin(this.settings.baseUrl, ctx.meta.dataset) })
         : this.settings.baseUrl;
     }
 

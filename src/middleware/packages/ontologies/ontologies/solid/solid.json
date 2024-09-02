@@ -1,0 +1,27 @@
+{
+  "prefix": "solid",
+  "namespace": "http://www.w3.org/ns/solid/terms#",
+  "jsonldContext": {
+    "solid:publicTypeIndex": {
+      "@type": "@id"
+    },
+    "solid:privateTypeIndex": {
+      "@type": "@id"
+    },
+    "solid:hasTypeRegistration": {
+      "@type": "@id"
+    },
+    "solid:forClass": {
+      "@type": "@id"
+    },
+    "solid:instance": {
+      "@type": "@id"
+    },
+    "solid:instanceContainer": {
+      "@type": "@id"
+    },
+    "solid:oidcIssuer": {
+      "@type": "@id"
+    }
+  }
+}

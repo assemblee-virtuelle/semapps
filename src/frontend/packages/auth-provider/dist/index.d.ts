@@ -427,6 +427,7 @@ declare namespace englishMessages {
       let container_list_forbidden: string;
       let unable_to_fetch_user_data: string;
       let no_token_returned: string;
+      let no_associated_oidc_issuer: string;
       let invalid_token_returned: string;
       let signup_error: string;
       let user_not_allowed_to_login: string;
@@ -525,6 +526,7 @@ declare namespace frenchMessages {
       let container_list_forbidden: string;
       let unable_to_fetch_user_data: string;
       let no_token_returned: string;
+      let no_associated_oidc_issuer: string;
       let invalid_token_returned: string;
       let signup_error: string;
       let user_not_allowed_to_login: string;
