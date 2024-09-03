@@ -1,5 +1,4 @@
 import { Context, ServiceSchema, CallingOptions } from 'moleculer';
-import { CronJob } from 'cron';
 
 interface LocalServerSettings {
   fusekiBase: string | null;
