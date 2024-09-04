@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+const { isURL } = require('../utils');
 
 module.exports = {
   visibility: 'public',
@@ -7,6 +8,8 @@ module.exports = {
   },
   async handler(ctx) {
     const { uri } = ctx.params;
+
+    if (!isURL(uri)) throw new Error(`The uri param of the ontologies.findPrefix action must be a full URL`);
 
     const response = await fetch(`http://prefix.cc/?q=${encodeURIComponent(uri)}`, { redirect: 'manual' });
 
