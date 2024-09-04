@@ -5,6 +5,9 @@ import { getOrCreateWsChannel, SemanticDataProvider } from '@semapps/semantic-da
 import { arrayOf } from '../utils';
 import type { UseCollectionOptions, SolidNotification, AwaitActivityOptions } from '../types';
 
+// Used to avoid re-renders
+const emptyArray: never[] = [];
+
 const useItemsFromPages = (pages: any[], dereferenceItems: boolean) => {
   const dataProvider = useDataProvider<SemanticDataProvider>();
   const items = useMemo(() => pages.flatMap(p => arrayOf(p.orderedItems || p.items)), [pages]);
@@ -17,7 +20,7 @@ const useItemsFromPages = (pages: any[], dereferenceItems: boolean) => {
   // Dereference all items, if necessary (even if shouldDereference is false, the hook needs to be called).
   const itemQueries = useQueries(
     !shouldDereference
-      ? []
+      ? emptyArray
       : items
           .filter(item => typeof item === 'string')
           .map(itemUri => ({
@@ -129,7 +132,7 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
     isLoading: isLoadingItems,
     isFetching: isFetchingItems,
     errors: itemErrors
-  } = useItemsFromPages(pageData?.pages ?? [], dereferenceItems);
+  } = useItemsFromPages(pageData?.pages ?? emptyArray, dereferenceItems);
 
   const allErrors = arrayOf(collectionError).concat(arrayOf(itemErrors));
 

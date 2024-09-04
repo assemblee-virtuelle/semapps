@@ -135,6 +135,8 @@ const $03510abb28fd3d8a$export$34aed805e991a647 = (iterable, predicate)=>{
 };
 
 
+// Used to avoid re-renders
+const $5ca5f7e9fc1c3544$var$emptyArray = [];
 const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
     const dataProvider = (0, $583VT$reactadmin.useDataProvider)();
     const items = (0, $583VT$react.useMemo)(()=>pages.flatMap((p)=>(0, $03510abb28fd3d8a$export$e57ff0f701c44363)(p.orderedItems || p.items)), [
@@ -148,7 +150,7 @@ const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
         items
     ]);
     // Dereference all items, if necessary (even if shouldDereference is false, the hook needs to be called).
-    const itemQueries = (0, $583VT$reactquery.useQueries)(!shouldDereference ? [] : items.filter((item)=>typeof item === "string").map((itemUri)=>({
+    const itemQueries = (0, $583VT$reactquery.useQueries)(!shouldDereference ? $5ca5f7e9fc1c3544$var$emptyArray : items.filter((item)=>typeof item === "string").map((itemUri)=>({
             queryKey: [
                 "resource",
                 itemUri
@@ -233,7 +235,7 @@ const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
         getPreviousPageParam: (firstPage)=>firstPage.prev
     });
     // Put all items together in a list (and dereference, if required).
-    const { loadedItems: items, isLoading: isLoadingItems, isFetching: isFetchingItems, errors: itemErrors } = $5ca5f7e9fc1c3544$var$useItemsFromPages(pageData?.pages ?? [], dereferenceItems);
+    const { loadedItems: items, isLoading: isLoadingItems, isFetching: isFetchingItems, errors: itemErrors } = $5ca5f7e9fc1c3544$var$useItemsFromPages(pageData?.pages ?? $5ca5f7e9fc1c3544$var$emptyArray, dereferenceItems);
     const allErrors = (0, $03510abb28fd3d8a$export$e57ff0f701c44363)(collectionError).concat((0, $03510abb28fd3d8a$export$e57ff0f701c44363)(itemErrors));
     const addItem = (0, $583VT$react.useCallback)((item, shouldRefetch = true)=>{
         queryClient.setQueryData([
