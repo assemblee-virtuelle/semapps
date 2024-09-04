@@ -87,15 +87,9 @@ module.exports = {
     }
   },
   async started() {
-    await this.broker.call('ontologies.register', {
-      ...ldp,
-      overwrite: true
-    });
+    await this.broker.call('ontologies.register', ldp);
     // Used by binaries
-    await this.broker.call('ontologies.register', {
-      ...semapps,
-      overwrite: true
-    });
+    await this.broker.call('ontologies.register', semapps);
   },
   actions: {
     getBaseUrl() {

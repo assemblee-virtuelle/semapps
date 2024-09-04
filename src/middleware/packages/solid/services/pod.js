@@ -13,10 +13,7 @@ module.exports = {
   async started() {
     if (!this.settings.baseUrl) throw new Error('The baseUrl setting of the pod service is required');
 
-    await this.broker.call('ontologies.register', {
-      ...pim,
-      overwrite: true
-    });
+    await this.broker.call('ontologies.register', pim);
 
     // Register root container for the Pod (/:username/data/)
     // Do not await or we will have a circular dependency with the LdpRegistryService

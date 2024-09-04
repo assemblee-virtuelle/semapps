@@ -38,10 +38,7 @@ module.exports = {
     }
   },
   async started() {
-    await this.broker.call('ontologies.register', {
-      ...notify,
-      overwrite: true
-    });
+    await this.broker.call('ontologies.register', notify);
 
     await this.broker.call('ldp.link-header.register', { actionName: 'solid-notifications.provider.getLink' });
 

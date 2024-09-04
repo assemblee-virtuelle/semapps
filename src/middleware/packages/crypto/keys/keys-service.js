@@ -67,10 +67,7 @@ const KeysService = {
   },
   async started() {
     await this.waitForServices('ontologies');
-    this.broker.call('ontologies.register', {
-      ...sec,
-      overwrite: true
-    });
+    this.broker.call('ontologies.register', sec);
 
     await this.waitForServices('keys.migration');
     this.isMigrated = await this.broker.call('keys.migration.isMigrated');

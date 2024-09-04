@@ -26,8 +26,7 @@ module.exports = {
     }
   },
   async started() {
-    if (!this.settings.persistRegistry) this.ontologies = {};
-
+    this.ontologies = {};
     await this.registerAll();
   },
   actions: {
@@ -42,12 +41,13 @@ module.exports = {
   },
   methods: {
     async registerAll() {
-      if (this.settings.persistRegistry) await this.broker.waitForServices(['ontologies.registry']);
+      if (this.settings.persistRegistry) {
+        await this.broker.waitForServices(['ontologies.registry']);
+        const persistedOntologies = await this.broker.call('ontologies.registry.list');
+        this.ontologies = { ...this.ontologies, ...persistedOntologies };
+      }
       for (const ontology of this.settings.ontologies) {
-        if (!ontology || !ontology.prefix || !ontology.namespace) {
-          throw new Error(`Cannot register ontologies ! At least one ontology is incorrect.`);
-        }
-        await this.actions.register({ ...ontology, overwrite: true });
+        await this.actions.register(ontology);
       }
     }
   }

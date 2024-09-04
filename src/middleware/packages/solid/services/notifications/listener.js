@@ -22,10 +22,7 @@ module.exports = {
   async started() {
     if (!this.settings.baseUrl) throw new Error(`The baseUrl setting is required`);
 
-    await this.broker.call('ontologies.register', {
-      ...notify,
-      overwrite: true
-    });
+    await this.broker.call('ontologies.register', notify);
 
     // Retrieve all active listeners
     const results = await this.actions.list({});

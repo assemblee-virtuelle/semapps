@@ -34,15 +34,10 @@ describe.each([true])('Register ontologies with persistRegistry %s', persistRegi
       );
     });
 
-    test('Register the same ontology with overwrite = false', async () => {
-      await expect(broker.call('ontologies.register', { ...ont1, overwrite: false })).rejects.toThrow();
-    });
-
-    test('Register the same ontology with overwrite = true', async () => {
+    test('Register the same ontology', async () => {
       await broker.call('ontologies.register', {
         ...ont1,
-        owl: 'https://www.w3.org/ns/ontology1.ttl',
-        overwrite: true
+        owl: 'https://www.w3.org/ns/ontology1.ttl'
       });
 
       await expect(broker.call('ontologies.get', { prefix: 'ont1' })).resolves.toMatchObject({

@@ -159,10 +159,7 @@ module.exports = {
   },
   dependencies: ['ldp.registry', 'api', 'triplestore', 'ontologies', 'jsonld'],
   async started() {
-    await this.broker.call('ontologies.register', {
-      ...voidOntology,
-      overwrite: true
-    });
+    await this.broker.call('ontologies.register', voidOntology);
     await this.broker.call('api.addRoute', {
       route: {
         path: '/.well-known/void', // .well-known routes must use the root path

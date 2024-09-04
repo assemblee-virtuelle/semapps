@@ -37,10 +37,7 @@ module.exports = {
     });
   },
   async started() {
-    await this.broker.call('ontologies.register', {
-      ...solid,
-      overwrite: true
-    });
+    await this.broker.call('ontologies.register', solid);
   },
   actions: {
     async createAndAttachToWebId(ctx) {

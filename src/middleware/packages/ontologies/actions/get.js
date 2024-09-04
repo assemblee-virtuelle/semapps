@@ -10,25 +10,14 @@ module.exports = {
     let { prefix, namespace, uri } = ctx.params;
     let ontology;
 
-    if (!prefix && !namespace && !uri) throw new Error('You must provide a prefix, namespace or uri parameter');
-
-    if (this.settings.persistRegistry) {
-      if (prefix) {
-        ontology = await ctx.call('ontologies.registry.getByPrefix', { prefix });
-      } else if (namespace) {
-        ontology = await ctx.call('ontologies.registry.getByNamespace', { namespace });
-      } else if (uri) {
-        const ontologies = await ctx.call('ontologies.registry.list');
-        ontology = ontologies.find(o => uri.startsWith(o.namespace));
-      }
+    if (prefix) {
+      ontology = this.ontologies[prefix] || false;
+    } else if (namespace) {
+      ontology = Object.values(this.ontologies).find(o => o.namespace === namespace);
+    } else if (uri) {
+      ontology = Object.values(this.ontologies).find(o => uri.startsWith(o.namespace));
     } else {
-      if (prefix) {
-        ontology = this.ontologies[prefix] || false;
-      } else if (namespace) {
-        ontology = Object.values(this.ontologies).find(o => o.namespace === namespace);
-      } else if (uri) {
-        ontology = Object.values(this.ontologies).find(o => uri.startsWith(o.namespace));
-      }
+      throw new Error('You must provide a prefix, namespace or uri parameter');
     }
 
     // Must return null if no results, because the cache JsonSerializer cannot handle undefined values
