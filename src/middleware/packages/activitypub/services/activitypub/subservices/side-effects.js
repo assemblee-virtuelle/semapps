@@ -137,6 +137,7 @@ module.exports = {
                     }`
                   );
                 } catch (e) {
+                  // Show error because the QueueService transforms it in something that makes it lose the stacktrace
                   console.error(e);
                   job.log(`ERROR ${processor.key} (${processor.actionName}): ${e.message}`);
                   errors.push(processor.key);
@@ -210,6 +211,8 @@ module.exports = {
                 job.log(`ERROR ${processor.key} (${processor.actionName}): ${e.message}`);
                 // When sending through the outbox, we want to return immediately the error
                 // TODO Call a new "revert" method for every side-effect processor ?
+                // Show error because the QueueService transforms it in something that makes it lose the stacktrace
+                console.error(e);
                 throw e;
               }
             } else {
