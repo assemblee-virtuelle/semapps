@@ -1626,32 +1626,42 @@ var $030f1232f6810456$export$2e2bcd8739ae039 = $030f1232f6810456$var$Reification
 
 /**
  * Find the solid notification description resource for a given resource URI.
- */ const $84ab912646919f8c$var$findDescriptionResource = async (fetch, resourceUri)=>{
-    const { headers: headers } = await fetch(resourceUri, {
+ */ const $84ab912646919f8c$var$findDescriptionResource = async (authenticatedFetch, resourceUri)=>{
+    const { headers: headers } = await authenticatedFetch(resourceUri, {
         method: "HEAD"
     });
     const linkHeader = headers.get("Link");
     const matches = linkHeader?.match(/<([^>]+)>;\s*rel="(?:describedby|http:\/\/www\.w3\.org\/ns\/solid\/terms#storageDescription)"/);
     if (!matches?.[1]) return undefined;
-    const { json: descriptionResource } = await fetch(matches[1]);
-    return descriptionResource;
+    // Don't use authenticatedFetch to get this endpoint
+    const response = await fetch(matches[1], {
+        headers: new Headers({
+            Accept: "application/ld+json"
+        })
+    });
+    return await response.json();
 };
-const $84ab912646919f8c$export$3edfe18db119b920 = async (fetch, resourceUri, options = {
+const $84ab912646919f8c$export$3edfe18db119b920 = async (authenticatedFetch, resourceUri, options = {
     type: "WebSocketChannel2023"
 })=>{
     const { type: type, closeAfter: closeAfter, startIn: startIn, rate: rate } = options;
     let { startAt: startAt, endAt: endAt } = options;
     if (startIn && !startAt) startAt = new Date(Date.now() + startIn).toISOString();
     if (closeAfter && !endAt) endAt = new Date(Date.now() + closeAfter).toISOString();
-    const descriptionResource = await $84ab912646919f8c$var$findDescriptionResource(fetch, resourceUri);
+    const descriptionResource = await $84ab912646919f8c$var$findDescriptionResource(authenticatedFetch, resourceUri);
     // TODO: use a json-ld parser / ldo in the future for this...
     // Get solid notification subscription service for the given type.
     const subscriptionService = (await Promise.all(// Get the subscription service resources (that describe a channel type).
     (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(descriptionResource.subscription || descriptionResource["notify:subscription"]).map(async (subscriptionServiceOrUri)=>{
         // They might not be resolved...
         if (typeof subscriptionServiceOrUri === "string") {
-            const { json: json } = await fetch(subscriptionServiceOrUri);
-            return json;
+            // Don't use authenticatedFetch to get this endpoint
+            const response = await fetch(subscriptionServiceOrUri, {
+                headers: new Headers({
+                    Accept: "application/ld+json"
+                })
+            });
+            return await response.json();
         }
         return subscriptionServiceOrUri;
     }))).find((service)=>{
@@ -1661,10 +1671,10 @@ const $84ab912646919f8c$export$3edfe18db119b920 = async (fetch, resourceUri, opt
     });
     if (!subscriptionService) throw new Error(`No solid notification subscription service found for type ${type}`);
     // Create a new channel.
-    const { json: channel } = await fetch(subscriptionService.id || subscriptionService["@id"], {
+    const { json: channel } = await authenticatedFetch(subscriptionService.id || subscriptionService["@id"], {
         method: "POST",
         body: JSON.stringify({
-            "@context": "https://www.w3.org/ns/solid/notification/v1",
+            "@context": "https://www.w3.org/ns/solid/notifications-context/v1",
             type: "WebSocketChannel2023",
             topic: resourceUri,
             startAt: startAt,
@@ -1674,18 +1684,18 @@ const $84ab912646919f8c$export$3edfe18db119b920 = async (fetch, resourceUri, opt
     });
     return channel;
 };
-const $84ab912646919f8c$export$28772ab4c256e709 = async (fetch, resourceUri, options)=>{
-    const channel = await $84ab912646919f8c$export$3edfe18db119b920(fetch, resourceUri, options);
+const $84ab912646919f8c$export$28772ab4c256e709 = async (authenticatedFetch, resourceUri, options)=>{
+    const channel = await $84ab912646919f8c$export$3edfe18db119b920(authenticatedFetch, resourceUri, options);
     const receiveFrom = channel.receiveFrom || channel["notify:receiveFrom"];
     return new WebSocket(receiveFrom);
 };
 const $84ab912646919f8c$var$registeredWebSockets = new Map();
 /**
- * @param fetch A react admin fetch function.
+ * @param authenticatedFetch A react admin fetch function.
  * @param resourceUri The resource to subscribe to
  * @param options Options to pass to @see createSolidNotificationChannel, if the channel does not exist yet.
  * @returns {WebSocket} A new or existing web socket that subscribed to the given resource.
- */ const $84ab912646919f8c$export$8d60734939c59ced = async (fetch, resourceUri, options = {
+ */ const $84ab912646919f8c$export$8d60734939c59ced = async (authenticatedFetch, resourceUri, options = {
     type: "WebSocketChannel2023",
     closeAfter: 3600000
 })=>{
@@ -1694,7 +1704,7 @@ const $84ab912646919f8c$var$registeredWebSockets = new Map();
     return socket;
     // Create a promise, to return immediately and set the sockets cache.
     // This prevents racing conditions that create multiple channels.
-    const wsPromise = $84ab912646919f8c$export$28772ab4c256e709(fetch, resourceUri, {
+    const wsPromise = $84ab912646919f8c$export$28772ab4c256e709(authenticatedFetch, resourceUri, {
         ...options,
         type: "WebSocketChannel2023"
     }).then((ws)=>{

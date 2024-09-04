@@ -188,23 +188,23 @@ interface CreateSolidChannelOptions {
   rate?: number;
 }
 export const createSolidNotificationChannel: (
-  fetch: fetchFn,
+  authenticatedFetch: fetchFn,
   resourceUri: string,
   options?: CreateSolidChannelOptions
 ) => Promise<any>;
 export const createWsChannel: (
-  fetch: fetchFn,
+  authenticatedFetch: fetchFn,
   resourceUri: string,
   options: CreateSolidChannelOptions
 ) => Promise<WebSocket>;
 /**
- * @param fetch A react admin fetch function.
+ * @param authenticatedFetch A react admin fetch function.
  * @param resourceUri The resource to subscribe to
  * @param options Options to pass to @see createSolidNotificationChannel, if the channel does not exist yet.
  * @returns {WebSocket} A new or existing web socket that subscribed to the given resource.
  */
 export const getOrCreateWsChannel: (
-  fetch: fetchFn,
+  authenticatedFetch: fetchFn,
   resourceUri: string,
   options?: CreateSolidChannelOptions
 ) => Promise<WebSocket>;
