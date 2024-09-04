@@ -92,16 +92,16 @@ module.exports = {
       if (!types) throw new Error('No types param provided to expandTypes action');
 
       // If types are already full URIs, return them immediately
-      if (arrayOf(types).every(type => isURI(type))) return types;
+      if (arrayOf(types).every(type => isURI(type))) return arrayOf(types);
 
       // If no context is provided, use default context
       if (!context) context = await ctx.call('jsonld.context.get');
 
       const result = await this.actions.expand({ input: { '@context': context, '@type': types } }, { parentCtx: ctx });
 
-      const expandedTypes = result?.[0]?.['@type'];
+      const expandedTypes = arrayOf(result?.[0]?.['@type']);
 
-      if (!arrayOf(expandedTypes).every(type => isURI(type))) {
+      if (!expandedTypes.every(type => isURI(type))) {
         throw new Error(`
           Could not expand all types (${expandedTypes.join(', ')}).
           Is an ontology missing or not registered yet on the local context ?
