@@ -12,16 +12,10 @@ module.exports = {
       optional: true
     },
     preserveContextUri: { type: 'boolean', default: false },
-    overwrite: { type: 'boolean', default: false }
+    persist: { type: 'boolean', default: false }
   },
   async handler(ctx) {
-    let { prefix, namespace, owl, jsonldContext, preserveContextUri, overwrite } = ctx.params;
-
-    const ontology = await this.actions.get({ prefix }, { parentCtx: ctx });
-
-    if (!overwrite && ontology) {
-      throw new Error(`Cannot register ${prefix} ontology. An ontology with the prefix is already registered`);
-    }
+    let { prefix, namespace, owl, jsonldContext, preserveContextUri, persist } = ctx.params;
 
     if (preserveContextUri === true) {
       if (!jsonldContext || !arrayOf(jsonldContext).every(context => isURL(context))) {
@@ -31,14 +25,20 @@ module.exports = {
       }
     }
 
-    if (this.settings.persistRegistry) {
+    if (persist) {
+      if (!this.settings.persistRegistry)
+        throw new Error(`Cannot persist ontology because the persistRegistry setting is false`);
+      if (owl || jsonldContext) throw new Error(`The owl and jsonldContext params cannot be persisted`);
+
       await ctx.call('ontologies.registry.updateOrCreate', {
         prefix,
-        namespace,
-        owl,
-        jsonldContext,
-        preserveContextUri
+        namespace
       });
+
+      this.ontologies[prefix] = {
+        prefix,
+        namespace
+      };
     } else {
       this.ontologies[prefix] = {
         prefix,

@@ -67,17 +67,8 @@ module.exports = {
       await this.broker.call('api.addRoute', { route });
     }
 
-    await this.broker.call('ontologies.register', {
-      ...acl,
-      overwrite: true
-    });
-    await this.broker.call('ontologies.register', {
-      ...vcard,
-      overwrite: true
-    });
-    await this.broker.call('ontologies.register', {
-      ...rdfs,
-      overwrite: true
-    });
+    await this.broker.call('ontologies.register', acl);
+    await this.broker.call('ontologies.register', vcard);
+    await this.broker.call('ontologies.register', rdfs);
   }
 };

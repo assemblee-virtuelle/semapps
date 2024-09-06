@@ -1,6 +1,5 @@
 const DbService = require('moleculer-db');
 const { TripleStoreAdapter } = require('@semapps/triplestore');
-const { isURL } = require('../utils');
 
 module.exports = {
   name: 'ontologies.registry',
@@ -13,59 +12,33 @@ module.exports = {
     async getByPrefix(ctx) {
       const { prefix } = ctx.params;
       const [ontology] = await this._find(ctx, { query: { prefix } });
-      return this.parse(ontology);
+      return ontology && { prefix: ontology.prefix, namespace: ontology.namespace };
     },
     async getByNamespace(ctx) {
       const { namespace } = ctx.params;
       const [ontology] = await this._find(ctx, { query: { namespace } });
-      return this.parse(ontology);
+      return ontology && { prefix: ontology.prefix, namespace: ontology.namespace };
     },
     async list(ctx) {
       const ontologies = await this._list(ctx, {});
-      return ontologies.rows.map(({ prefix, namespace, owl, jsonldContext, preserveContextUri }) => {
-        return this.parse({ prefix, namespace, owl, jsonldContext, preserveContextUri });
-      });
+      return ontologies.rows.map(({ prefix, namespace }) => ({ prefix, namespace }));
     },
     async updateOrCreate(ctx) {
-      let { prefix, namespace, owl, jsonldContext, preserveContextUri } = ctx.params;
+      const { prefix, namespace } = ctx.params;
 
       const ontology = await this.actions.getByPrefix({ prefix }, { parentCtx: ctx });
-
-      if (!isURL(jsonldContext)) jsonldContext = JSON.stringify(jsonldContext);
 
       if (ontology) {
         await this._update(ctx, {
           '@id': ontology['@id'],
-          namespace,
-          owl,
-          jsonldContext,
-          preserveContextUri
+          namespace
         });
       } else {
         await this._create(ctx, {
           prefix,
-          namespace,
-          owl,
-          jsonldContext,
-          preserveContextUri
+          namespace
         });
       }
-    }
-  },
-  methods: {
-    parse(ontology) {
-      // If the jsonldContext is not an URL, it is an object to be parsed
-      if (ontology?.jsonldContext && !isURL(ontology.jsonldContext)) {
-        ontology.jsonldContext = JSON.parse(ontology.jsonldContext);
-      }
-
-      if (ontology?.preserveContextUri === 'true') {
-        ontology.preserveContextUri = true;
-      } else if (ontology?.preserveContextUri === 'false') {
-        ontology.preserveContextUri = false;
-      }
-
-      return ontology;
     }
   }
 };

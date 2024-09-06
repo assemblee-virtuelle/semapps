@@ -13,7 +13,6 @@ const CollectionsRegistryService = require('./subservices/collections-registry')
 const ReplyService = require('./subservices/reply');
 const SideEffectsService = require('./subservices/side-effects');
 const FakeQueueMixin = require('../../mixins/fake-queue');
-const { ACTOR_TYPES } = require('../../constants');
 
 const ActivityPubService = {
   name: 'activitypub',
@@ -24,13 +23,7 @@ const ActivityPubService = {
     collectionsPath: '/as/collection',
     activateTombstones: true,
     selectActorData: null,
-    queueServiceUrl: null,
-    like: {
-      attachToActorTypes: null
-    },
-    follow: {
-      attachToActorTypes: null
-    }
+    queueServiceUrl: null
   },
   dependencies: ['api', 'ontologies'],
   created() {
@@ -41,9 +34,7 @@ const ActivityPubService = {
       collectionsPath,
       selectActorData,
       queueServiceUrl,
-      activateTombstones,
-      like,
-      follow
+      activateTombstones
     } = this.settings;
 
     this.broker.createService({
@@ -139,14 +130,8 @@ const ActivityPubService = {
     });
   },
   async started() {
-    await this.broker.call('ontologies.register', {
-      ...as,
-      overwrite: true
-    });
-    await this.broker.call('ontologies.register', {
-      ...sec,
-      overwrite: true
-    });
+    await this.broker.call('ontologies.register', as);
+    await this.broker.call('ontologies.register', sec);
   }
 };
 

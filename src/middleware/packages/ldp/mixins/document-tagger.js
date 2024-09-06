@@ -10,10 +10,7 @@ module.exports = {
     }
   },
   async started() {
-    await this.broker.call('ontologies.register', {
-      ...dc,
-      overwrite: true
-    });
+    await this.broker.call('ontologies.register', dc);
   },
   actions: {
     async tagCreatedResource(ctx) {

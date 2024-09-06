@@ -1,0 +1,10 @@
+{
+  "prefix": "ont5",
+  "namespace": "https://www.w3.org/ns/ontology5#",
+  "jsonldContext": {
+    "friend": {
+      "@id": "ont5:friend",
+      "@type": "@id"
+    }
+  }
+}

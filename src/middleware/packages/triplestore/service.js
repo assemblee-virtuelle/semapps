@@ -23,7 +23,7 @@ const TripleStoreService = {
     // Sub-services customization
     dataset: {}
   },
-  dependencies: ['jsonld'],
+  dependencies: ['jsonld.parser'],
   async created() {
     const { url, user, password, dataset, fusekiBase } = this.settings;
     this.subservices = {};

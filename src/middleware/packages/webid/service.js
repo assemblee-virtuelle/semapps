@@ -26,14 +26,8 @@ const WebIdService = {
     if (!this.settings.baseUrl) throw new Error('The baseUrl setting is required for webId service.');
   },
   async started() {
-    await this.broker.call('ontologies.register', {
-      ...foaf,
-      overwrite: true
-    });
-    await this.broker.call('ontologies.register', {
-      ...schema,
-      overwrite: true
-    });
+    await this.broker.call('ontologies.register', foaf);
+    await this.broker.call('ontologies.register', schema);
   },
   actions: {
     /**

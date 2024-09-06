@@ -52,19 +52,20 @@ module.exports = {
 
 Any services may call the [`register`](#register) action to add new ontologies. That's how most core services register the ontologies they need.
 
-By default, the ontologies registry is not persisted. It is kept in memory and so the `register` action must be called again on every restart.
+By default, ontologies are not persisted. They are kept in memory and so the `register` action must be called again on every restart.
 
-If you wish ontologies to be persisted, you must set the `persistRegistry` setting to `true`.
+If you wish ontologies to be persisted, you must set the `persistRegistry` setting to `true` and call the `register` action with `persist: true`.
 
-By default, they will be persisted in a dataset named `settings` (the same used by the `auth.account` service).
-If you wish to use another dataset name, you can change the `settingsDataset` setting.
+By default, they will be persisted in a dataset named `settings` (the same used by the `auth.account` service). If you wish to use another dataset name, you can change the `settingsDataset` setting.
+
+Note that only the `prefix` and `namespaces` properties can be persisted.
 
 ## Settings
 
 | Property          | Type      | Default    | Description                                                             |
 | ----------------- | --------- | ---------- | ----------------------------------------------------------------------- |
 | `ontologies`      | `[Array]` |            | List of (custom) ontologies to be registered                            |
-| `persistRegistry` | `Boolean` | false      | If true, registered ontologies will be persisted in a dataset           |
+| `persistRegistry` | `Boolean` | false      | If true, registered ontologies can be persisted in a dataset            |
 | `settingsDataset` | `String`  | "settings" | The dataset where to persist ontologies (if `persistRegistry` is true ) |
 
 ## Core ontologies
@@ -81,10 +82,24 @@ These ontologies can be imported individually using their prefixes, or as a whol
 | `rdf`     | http://www.w3.org/1999/02/22-rdf-syntax-ns# |
 | `rdfs`    | http://www.w3.org/2000/01/rdf-schema#       |
 | `sec`     | https://w3id.org/security#                  |
+| `skos`    | http://www.w3.org/2008/05/skos#             |
 | `semapps` | http://semapps.org/ns/core#                 |
 | `vcard`   | http://www.w3.org/2006/vcard/ns#            |
 | `void`    | http://rdfs.org/ns/void#                    |
 | `xsd`     | http://www.w3.org/2001/XMLSchema#           |
+
+## Solid-related ontologies
+
+These ontologies can be imported individually using their prefixes, or as a whole with `solidOntologies`.
+
+| Prefix    | Namespace                                 |
+| --------- | ----------------------------------------- |
+| `apods`   | http://activitypods.org/ns/core#          |
+| `interop` | http://www.w3.org/ns/solid/interop#       |
+| `notify`  | http://www.w3.org/ns/solid/notifications# |
+| `oidc`    | http://www.w3.org/ns/solid/oidc#          |
+| `pim`     | http://www.w3.org/ns/pim/space#           |
+| `solid`   | http://www.w3.org/ns/solid/terms#         |
 
 ## Actions
 
@@ -171,4 +186,4 @@ Register a new ontology.
 | `owl`                | `String`                      |              | URL of the OWL file (used by the [InferenceService](./inference.md))                                                                  |
 | `jsonldContext`      | `String`, `Array` or `Object` |              | JSON-LD context associated with the ontology. Can be an URL, a array or an object                                                     |
 | `preserveContextUri` | `Boolean`                     | false        | If true, the `jsonldContext` will not be merged in the local context file. Works only if jsonldContext is an URL or an array of URLs. |
-| `overwrite`          | `Boolean`                     | false        | If true, any existing ontology with the same prefix and URL will be overwritten                                                       |
+| `persist`            | `Boolean`                     | false        | If true, the ontology will be persisted (see above)                                                                                   |

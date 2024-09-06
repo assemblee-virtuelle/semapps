@@ -7,7 +7,7 @@ const { TripleStoreService } = require('@semapps/triplestore');
 const CONFIG = require('../config');
 const { clearDataset } = require('../utils');
 
-module.exports = async (cacher, persistRegistry) => {
+module.exports = async cacher => {
   await clearDataset(CONFIG.SETTINGS_DATASET);
 
   const broker = new ServiceBroker({
@@ -53,7 +53,7 @@ module.exports = async (cacher, persistRegistry) => {
   broker.createService({
     mixins: [OntologiesService],
     settings: {
-      persistRegistry,
+      persistRegistry: true,
       settingsDataset: CONFIG.SETTINGS_DATASET
     }
   });
