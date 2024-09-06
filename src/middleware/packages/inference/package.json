@@ -1,11 +1,11 @@
 {
   "name": "@semapps/inference",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "description": "Inference engine for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "@semapps/activitypub": "0.9.2",
+    "@semapps/activitypub": "0.9.3",
     "n3": "^1.6.3",
     "node-fetch": "^2.6.6",
     "url-join": "^4.0.1"
