@@ -156,11 +156,11 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
 /**
  * Subscribe a collection. Supports pagination.
  * @param predicateOrUrl The collection URI or the predicate to get the collection URI from the identity (webId).
- * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: true }`
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false }`
  */ const $8281f3ce3b9d6123$var$useCollection = (predicateOrUrl, options = {})=>{
-    const { dereferenceItems: dereferenceItems = false, liveUpdates: liveUpdates = true } = options;
+    const { dereferenceItems: dereferenceItems = false, liveUpdates: liveUpdates = false } = options;
     const { data: identity } = (0, $85cNH$useGetIdentity)();
-    const [totalItems, setTotalItems] = (0, $85cNH$useState)();
+    const [totalItems, setTotalItems] = (0, $85cNH$useState)(0);
     const queryClient = (0, $85cNH$useQueryClient)();
     const [hasLiveUpdates, setHasLiveUpdates] = (0, $85cNH$useState)({
         status: "connecting"
@@ -223,13 +223,19 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
             }
         ], (oldData)=>{
             if (!oldData) return oldData;
-            setTotalItems(totalItems && totalItems + 1);
+            setTotalItems((totalItems)=>totalItems + 1);
             // Destructure, so react knows, it needs to re-render the pages.
             const pages = [
                 ...oldData.pages
             ];
-            const firstPageItems = pages?.[0]?.orderedItems || pages?.[0]?.items || [];
-            firstPageItems.unshift(item);
+            if (pages?.[0]?.orderedItems) pages[0].orderedItems = [
+                item,
+                ...(0, $577f4953dfa5de4f$export$e57ff0f701c44363)(pages[0].orderedItems)
+            ];
+            else if (pages?.[0]?.items) pages[0].items = [
+                item,
+                ...(0, $577f4953dfa5de4f$export$e57ff0f701c44363)(pages[0].items)
+            ];
             oldData.pages = pages;
             return oldData;
         });
@@ -244,7 +250,8 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
             }), typeof shouldRefetch === "number" ? shouldRefetch : 2000);
     }, [
         queryClient,
-        collectionUrl
+        collectionUrl,
+        setTotalItems
     ]);
     const removeItem = (0, $85cNH$useCallback)((item, shouldRefetch = true)=>{
         queryClient.setQueryData([
@@ -254,7 +261,7 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
             }
         ], (oldData)=>{
             if (!oldData) return oldData;
-            setTotalItems(totalItems && totalItems - 1);
+            setTotalItems((totalItems)=>totalItems - 1);
             // Destructure, so react knows, it needs to re-render the pages array.
             const pages = [
                 ...oldData.pages
@@ -278,7 +285,8 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
             }), typeof shouldRefetch === "number" ? shouldRefetch : 2000);
     }, [
         queryClient,
-        collectionUrl
+        collectionUrl,
+        setTotalItems
     ]);
     // Live Updates
     (0, $85cNH$useEffect)(()=>{
@@ -311,10 +319,14 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
         collectionUrl,
         liveUpdates,
         dataProvider,
-        webSocketRef
+        webSocketRef,
+        addItem,
+        removeItem,
+        setHasLiveUpdates
     ]);
     const awaitWebSocketConnection = (0, $85cNH$useCallback)((options = {})=>{
         const { timeout: timeout = 30000 } = options;
+        if (!liveUpdates) throw new Error(`Cannot call awaitWebSocketConnection because the liveUpdates option is set to false`);
         return new Promise((resolve, reject)=>{
             if (webSocketRef?.current) resolve(webSocketRef);
             else {
@@ -331,7 +343,8 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
             }
         });
     }, [
-        webSocketRef
+        webSocketRef,
+        liveUpdates
     ]);
     return {
         items: items,
@@ -426,7 +439,7 @@ var $600ca419166a1ded$export$2e2bcd8739ae039 = $600ca419166a1ded$var$useAwaitAct
  * - `awaitActivity`: a function to wait for a certain activity to be posted
  * - `owner`: the WebID of the outbox's owner
  * See https://semapps.org/docs/frontend/activitypub-components#useoutbox for usage
- * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: true }`
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false }`
  */ const $4d1d40fdbcd30589$var$useOutbox = (options = {})=>{
     const dataProvider = (0, $85cNH$useDataProvider)();
     const { data: identity } = (0, $85cNH$useGetIdentity)();
@@ -909,7 +922,7 @@ var $ea214512ab1a2e8f$export$2e2bcd8739ae039 = $ea214512ab1a2e8f$var$ReferenceCo
  * - `awaitActivity`: a function to wait for a certain activity to be received
  * - `owner`: the WebID of the inbox's owner
  * See https://semapps.org/docs/frontend/activitypub-components#useinbox for usage
- * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: true }`
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false }`
  */ const $cc1d1cd0e97c63a2$var$useInbox = (options = {})=>{
     const { data: identity } = (0, $85cNH$useGetIdentity)();
     const { url: url, items: items, awaitWebSocketConnection: awaitWebSocketConnection, ...rest } = (0, $8281f3ce3b9d6123$export$2e2bcd8739ae039)("inbox", options);
