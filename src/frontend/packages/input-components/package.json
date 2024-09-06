@@ -1,6 +1,6 @@
 {
   "name": "@semapps/input-components",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "React-Admin input components for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -15,7 +15,7 @@
     "watch": "nodemon --ext ts,tsx,js --watch src --exec 'yarn build'"
   },
   "dependencies": {
-    "@semapps/semantic-data-provider": "0.8.0"
+    "@semapps/semantic-data-provider": "0.8.1"
   },
   "peerDependencies": {
     "react": "^18.2.0",
