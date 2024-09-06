@@ -55,12 +55,12 @@ const useItemsFromPages = (pages: any[], dereferenceItems: boolean) => {
 /**
  * Subscribe a collection. Supports pagination.
  * @param predicateOrUrl The collection URI or the predicate to get the collection URI from the identity (webId).
- * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: true }`
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false }`
  */
 const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {}) => {
-  const { dereferenceItems = false, liveUpdates = true } = options;
+  const { dereferenceItems = false, liveUpdates = false } = options;
   const { data: identity } = useGetIdentity();
-  const [totalItems, setTotalItems] = useState<number>();
+  const [totalItems, setTotalItems] = useState<number>(0);
   const queryClient = useQueryClient();
   const [hasLiveUpdates, setHasLiveUpdates] = useState<{ status: string; error?: any }>({
     status: 'connecting'
@@ -140,12 +140,16 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
     (item: string | any, shouldRefetch: boolean | number = true) => {
       queryClient.setQueryData(['collection', { collectionUrl }], (oldData: any) => {
         if (!oldData) return oldData;
-        setTotalItems(totalItems && totalItems + 1);
+        setTotalItems(totalItems => totalItems + 1);
 
         // Destructure, so react knows, it needs to re-render the pages.
         const pages = [...oldData.pages];
-        const firstPageItems: any[] = pages?.[0]?.orderedItems || pages?.[0]?.items || [];
-        firstPageItems.unshift(item);
+
+        if (pages?.[0]?.orderedItems) {
+          pages[0].orderedItems = [item, ...arrayOf(pages[0].orderedItems)];
+        } else if (pages?.[0]?.items) {
+          pages[0].items = [item, ...arrayOf(pages[0].items)];
+        }
 
         oldData.pages = pages;
         return oldData;
@@ -161,14 +165,14 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
         );
       }
     },
-    [queryClient, collectionUrl]
+    [queryClient, collectionUrl, setTotalItems]
   );
 
   const removeItem = useCallback(
     (item: string | any, shouldRefetch: boolean = true) => {
       queryClient.setQueryData(['collection', { collectionUrl }], (oldData: any) => {
         if (!oldData) return oldData;
-        setTotalItems(totalItems && totalItems - 1);
+        setTotalItems(totalItems => totalItems - 1);
 
         // Destructure, so react knows, it needs to re-render the pages array.
         const pages = [...oldData.pages];
@@ -195,7 +199,7 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
         );
       }
     },
-    [queryClient, collectionUrl]
+    [queryClient, collectionUrl, setTotalItems]
   );
 
   // Live Updates
@@ -226,11 +230,13 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
         })
         .catch(() => {}); // If it fails, we won't receive live updates. But that's okay.
     }
-  }, [collectionUrl, liveUpdates, dataProvider, webSocketRef]);
+  }, [collectionUrl, liveUpdates, dataProvider, webSocketRef, addItem, removeItem, setHasLiveUpdates]);
 
   const awaitWebSocketConnection = useCallback(
     (options: AwaitActivityOptions = {}): Promise<RefObject<WebSocket>> => {
       const { timeout = 30000 } = options;
+      if (!liveUpdates)
+        throw new Error(`Cannot call awaitWebSocketConnection because the liveUpdates option is set to false`);
       return new Promise((resolve, reject) => {
         if (webSocketRef?.current) {
           resolve(webSocketRef);
@@ -250,7 +256,7 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
         }
       });
     },
-    [webSocketRef]
+    [webSocketRef, liveUpdates]
   );
 
   return {

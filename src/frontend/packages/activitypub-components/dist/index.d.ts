@@ -192,14 +192,14 @@ interface NodeInfo {
 /**
  * Subscribe a collection. Supports pagination.
  * @param predicateOrUrl The collection URI or the predicate to get the collection URI from the identity (webId).
- * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: true }`
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false }`
  */
 export const useCollection: (
   predicateOrUrl: string,
   options?: UseCollectionOptions
 ) => {
   items: any[];
-  totalItems: number | undefined;
+  totalItems: number;
   error: false | unknown[];
   refetch: <TPageData>(
     options?: (import('react-query').RefetchOptions & import('react-query').RefetchQueryFilters<TPageData>) | undefined
@@ -228,10 +228,10 @@ export const useCollection: (
  * - `awaitActivity`: a function to wait for a certain activity to be posted
  * - `owner`: the WebID of the outbox's owner
  * See https://semapps.org/docs/frontend/activitypub-components#useoutbox for usage
- * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: true }`
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false }`
  */
 export const useOutbox: (options?: UseCollectionOptions) => {
-  totalItems: number | undefined;
+  totalItems: number;
   error: false | unknown[];
   refetch: <TPageData>(
     options?: (import('react-query').RefetchOptions & import('react-query').RefetchQueryFilters<TPageData>) | undefined
@@ -311,10 +311,10 @@ export function ReferenceCollectionField({
  * - `awaitActivity`: a function to wait for a certain activity to be received
  * - `owner`: the WebID of the inbox's owner
  * See https://semapps.org/docs/frontend/activitypub-components#useinbox for usage
- * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: true }`
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false }`
  */
 export const useInbox: (options?: UseCollectionOptions) => {
-  totalItems: number | undefined;
+  totalItems: number;
   error: false | unknown[];
   refetch: <TPageData>(
     options?: (import('react-query').RefetchOptions & import('react-query').RefetchQueryFilters<TPageData>) | undefined

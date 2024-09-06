@@ -12,7 +12,7 @@ import type { UseCollectionOptions } from '../types';
  * - `awaitActivity`: a function to wait for a certain activity to be posted
  * - `owner`: the WebID of the outbox's owner
  * See https://semapps.org/docs/frontend/activitypub-components#useoutbox for usage
- * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: true }`
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false }`
  */
 const useOutbox = (options: UseCollectionOptions = {}) => {
   const dataProvider = useDataProvider<SemanticDataProvider>();
