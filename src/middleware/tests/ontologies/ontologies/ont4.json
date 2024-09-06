@@ -1,11 +1,4 @@
 {
   "prefix": "ont4",
-  "namespace": "https://www.w3.org/ns/ontology4#",
-  "jsonldContext": {
-    "ont4": "https://www.w3.org/ns/ontology4#",
-    "friend": {
-      "@id": "ont4:friend",
-      "@type": "@id"
-    }
-  }
+  "namespace": "https://www.w3.org/ns/ontology4#"
 }
