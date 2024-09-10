@@ -15,7 +15,13 @@ const CapabilitiesService = {
     excludeFromMirror: true,
     activateTombstones: false,
     permissions: {},
-    newResourcesPermissions: {}
+    newResourcesPermissions: {},
+    description: {
+      labelMap: {
+        en: 'Capabilities'
+      },
+      internal: true
+    }
   },
   hooks: {
     before: {

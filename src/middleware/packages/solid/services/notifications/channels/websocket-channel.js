@@ -9,10 +9,14 @@ const WebSocketChannel2023Service = {
   settings: {
     channelType: 'WebSocketChannel2023',
     sendOrReceive: 'receive',
-
-    baseUrl: null
+    baseUrl: null,
+    description: {
+      labelMap: {
+        en: 'WebSocket Channel'
+      },
+      internal: true
+    }
   },
-
   async started() {
     this.socketConnections = [];
 
@@ -60,7 +64,6 @@ const WebSocketChannel2023Service = {
       };
     }
   },
-
   methods: {
     onChannelDeleted(channel) {
       // Close open connections (is removed from array on close event).

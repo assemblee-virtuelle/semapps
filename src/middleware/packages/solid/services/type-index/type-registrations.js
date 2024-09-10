@@ -108,10 +108,11 @@ module.exports = {
         labelMap: { type: 'object', optional: true },
         labelPredicate: { type: 'string', optional: true },
         openEndpoint: { type: 'string', optional: true },
-        icon: { type: 'string', optional: true }
+        icon: { type: 'string', optional: true },
+        internal: { type: 'boolean', optional: true }
       },
       async handler(ctx) {
-        const { type, webId, labelMap, labelPredicate, openEndpoint, icon } = ctx.params;
+        const { type, webId, labelMap, labelPredicate, openEndpoint, icon, internal } = ctx.params;
 
         const [registration] = await this.actions.getByType({ type, webId }, { parentCtx: ctx });
         if (!registration) throw new Error(`No registration found with type ${type}`);
@@ -138,7 +139,8 @@ module.exports = {
             'skos:prefLabel': label,
             'apods:labelPredicate': labelPredicate,
             'apods:openEndpoint': openEndpoint,
-            'apods:icon': icon
+            'apods:icon': icon,
+            'apods:internal': internal || false
           },
           contentType: MIME_TYPES.JSON,
           webId

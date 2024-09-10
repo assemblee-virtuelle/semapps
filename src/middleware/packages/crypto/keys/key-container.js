@@ -45,7 +45,13 @@ module.exports = {
       patch: 'keys.container.forbidden',
       delete: 'keys.delete'
     },
-    podProvider: false
+    description: {
+      labelMap: {
+        en: 'Private Keys',
+        fr: 'Clés privées'
+      },
+      internal: true
+    }
   },
   actions: {
     async forbidden(ctx) {
