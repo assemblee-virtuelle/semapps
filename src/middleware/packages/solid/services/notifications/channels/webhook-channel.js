@@ -6,8 +6,9 @@ const queueOptions =
   process.env.NODE_ENV === 'test'
     ? {}
     : {
-        // Try again after 3 minutes and until 12 hours later
-        attempts: 8,
+        // Try again after 3 minutes and until 48 hours later
+        // Method to calculate it: Math.round((Math.pow(2, attemptsMade) - 1) * delay)
+        attempts: 10,
         backoff: { type: 'exponential', delay: '180000' }
       };
 
@@ -42,10 +43,14 @@ const WebhookChannel2023Service = {
         'notify:feature': ['notify:endAt', 'notify:rate', 'notify:startAt', 'notify:state']
       };
     },
-    async deleteAppChannels(ctx) {
+    async getAppChannels(ctx) {
       const { appUri, webId } = ctx.params;
       const { origin: appOrigin } = new URL(appUri);
-      const appChannels = this.channels.filter(c => c.webId === webId && c.sendTo.startsWith(appOrigin));
+      return this.channels.filter(c => c.webId === webId && c.sendTo.startsWith(appOrigin));
+    },
+    async deleteAppChannels(ctx) {
+      const { appUri, webId } = ctx.params;
+      const appChannels = await this.actions.getAppChannels({ appUri, webId }, { parentCtx: ctx });
       for (const appChannel of appChannels) {
         await this.actions.delete({ resourceUri: appChannel.id, webId: appChannel.webId });
       }

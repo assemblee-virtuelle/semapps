@@ -55,8 +55,8 @@ module.exports = {
 
       if (existingListener) {
         try {
-          // Check if channel still exist
-          const channel = await ctx.call('ldp.remote.get', {
+          // Check if channel still exist. If not, it will throw an error.
+          await ctx.call('ldp.remote.get', {
             resourceUri: existingListener.channelUri,
             webId: appActor.id,
             strategy: 'networkOnly'

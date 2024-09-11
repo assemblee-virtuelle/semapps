@@ -266,7 +266,6 @@ module.exports = {
             }
 
             this.channels.push({
-              ...channel,
               id: channel.id || channel['@id'],
               topic: channel['notify:topic'],
               sendTo: channel['notify:sendTo'],
