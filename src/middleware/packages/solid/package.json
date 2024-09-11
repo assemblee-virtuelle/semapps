@@ -17,6 +17,7 @@
     "moleculer": "^0.14.19",
     "moleculer-bull": "0.2.8",
     "moleculer-db": "^0.8.16",
+    "moleculer-web": "^0.10.0-beta1",
     "moment": "2.30.1",
     "node-fetch": "^2.6.6",
     "url-join": "^4.0.1",
