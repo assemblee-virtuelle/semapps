@@ -8,6 +8,7 @@ const ReplyService = {
   mixins: [ActivitiesHandlerMixin],
   settings: {
     baseUri: null,
+    podProvider: false,
     collectionOptions: {
       path: '/replies',
       attachPredicate: 'https://www.w3.org/ns/activitystreams#replies',
@@ -80,16 +81,16 @@ const ReplyService = {
         // We have a match only if there is a inReplyTo predicate to the object
         return { match: match && dereferencedActivity.object.inReplyTo, dereferencedActivity };
       },
-      async onEmit(ctx, activity) {
-        if (this.isLocalObject(activity.object.inReplyTo)) {
+      async onEmit(ctx, activity, emitterUri) {
+        if (this.isLocalObject(activity.object.inReplyTo, emitterUri)) {
           await this.actions.addReply(
             { objectUri: activity.object.inReplyTo, replyUri: activity.object.id },
             { parentCtx: ctx }
           );
         }
       },
-      async onReceive(ctx, activity) {
-        if (this.isLocalObject(activity.object.inReplyTo)) {
+      async onReceive(ctx, activity, recipientUri) {
+        if (this.isLocalObject(activity.object.inReplyTo, recipientUri)) {
           await this.actions.addReply(
             { objectUri: activity.object.inReplyTo, replyUri: activity.object.id },
             { parentCtx: ctx }
@@ -114,8 +115,22 @@ const ReplyService = {
     }
   },
   methods: {
-    isLocalObject(uri) {
-      return uri.startsWith(this.settings.baseUri);
+    isLocalObject(uri, actorUri) {
+      if (this.settings.podProvider) {
+        const { origin, pathname } = new URL(actorUri);
+        const aclBase = `${origin}/_acl${pathname}`; // URL of type http://localhost:3000/_acl/alice
+        const aclGroupBase = `${origin}/_groups${pathname}`; // URL of type http://localhost:3000/_groups/alice
+        return (
+          uri === actorUri ||
+          uri.startsWith(actorUri + '/') ||
+          uri === aclBase ||
+          uri.startsWith(aclBase + '/') ||
+          uri === aclGroupBase ||
+          uri.startsWith(aclGroupBase + '/')
+        );
+      } else {
+        return uri.startsWith(this.settings.baseUri);
+      }
     }
   }
 };

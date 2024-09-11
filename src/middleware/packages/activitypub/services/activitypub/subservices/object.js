@@ -201,11 +201,6 @@ const ObjectService = {
         }
       }
     }
-  },
-  methods: {
-    isLocal(uri) {
-      return uri.startsWith(this.settings.baseUri);
-    }
   }
 };
 

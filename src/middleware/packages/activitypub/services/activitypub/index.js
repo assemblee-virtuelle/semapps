@@ -110,14 +110,16 @@ const ActivityPubService = {
     this.broker.createService({
       mixins: [LikeService],
       settings: {
-        baseUri
+        baseUri,
+        podProvider
       }
     });
 
     this.broker.createService({
       mixins: [ReplyService],
       settings: {
-        baseUri
+        baseUri,
+        podProvider
       }
     });
 

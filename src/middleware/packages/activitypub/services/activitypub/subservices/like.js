@@ -7,7 +7,7 @@ const LikeService = {
   mixins: [ActivitiesHandlerMixin],
   settings: {
     baseUri: null,
-    attachToActorTypes: null,
+    podProvider: false,
     likesCollectionOptions: {
       path: '/likes',
       attachPredicate: 'https://www.w3.org/ns/activitystreams#likes',
@@ -29,63 +29,57 @@ const LikeService = {
     await this.broker.call('activitypub.collections-registry.register', this.settings.likedCollectionOptions);
   },
   actions: {
-    async addLike(ctx) {
+    async addObjectToActorLikedCollection(ctx) {
       const { actorUri, objectUri } = ctx.params;
 
-      if (this.isLocal(actorUri)) {
-        const actor = await ctx.call('activitypub.actor.get', { actorUri });
+      const actor = await ctx.call('activitypub.actor.get', { actorUri });
 
-        // If a liked collection is attached to the actor, attach the object
-        if (actor.liked) {
-          await ctx.call('activitypub.collection.add', {
-            collectionUri: actor.liked,
-            item: objectUri
-          });
-        }
-      }
-
-      if (this.isLocal(objectUri)) {
-        // Create the /likes collection and attach it to the object, unless it already exists
-        const likesCollectionUri = await ctx.call('activitypub.collections-registry.createAndAttachCollection', {
-          objectUri,
-          collection: this.settings.likesCollectionOptions
-        });
-
+      // If a liked collection is attached to the actor, attach the object
+      if (actor.liked) {
         await ctx.call('activitypub.collection.add', {
-          collectionUri: likesCollectionUri,
+          collectionUri: actor.liked,
+          item: objectUri
+        });
+      }
+    },
+    async addActorToObjectLikesCollection(ctx) {
+      const { actorUri, objectUri } = ctx.params;
+
+      const likesCollectionUri = await ctx.call('activitypub.collections-registry.createAndAttachCollection', {
+        objectUri,
+        collection: this.settings.likesCollectionOptions
+      });
+
+      await ctx.call('activitypub.collection.add', {
+        collectionUri: likesCollectionUri,
+        item: actorUri
+      });
+    },
+    async removeObjectFromActorLikedCollection(ctx) {
+      const { actorUri, objectUri } = ctx.params;
+
+      const actor = await ctx.call('activitypub.actor.get', { actorUri });
+
+      // If a liked collection is attached to the actor, detach the object
+      if (actor.liked) {
+        await ctx.call('activitypub.collection.remove', {
+          collectionUri: actor.liked,
+          item: objectUri
+        });
+      }
+    },
+    async removeActorFromObjectLikesCollection(ctx) {
+      const { actorUri, objectUri } = ctx.params;
+
+      const object = await ctx.call('activitypub.object.get', { objectUri, actorUri });
+
+      // If a likes collection is attached to the object, detach the actor
+      if (object.likes) {
+        await ctx.call('activitypub.collection.remove', {
+          collectionUri: object.likes,
           item: actorUri
         });
       }
-
-      ctx.emit('activitypub.like.added', { actorUri, objectUri }, { meta: { webId: null, dataset: null } });
-    },
-    async removeLike(ctx) {
-      const { actorUri, objectUri } = ctx.params;
-
-      if (this.isLocal(actorUri)) {
-        const actor = await ctx.call('activitypub.actor.get', { actorUri });
-
-        // If a liked collection is attached to the actor, detach the object
-        if (actor.liked) {
-          await ctx.call('activitypub.collection.remove', {
-            collectionUri: actor.liked,
-            item: objectUri
-          });
-        }
-      }
-
-      if (this.isLocal(objectUri)) {
-        const object = await ctx.call('activitypub.object.get', { objectUri, actorUri });
-        // If a likes collection is attached to the object, detach the actor
-        if (object.likes) {
-          await ctx.call('activitypub.collection.remove', {
-            collectionUri: object.likes,
-            item: actorUri
-          });
-        }
-      }
-
-      ctx.emit('activitypub.like.removed', { actorUri, objectUri }, { meta: { webId: null, dataset: null } });
     },
     async updateCollectionsOptions(ctx) {
       await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
@@ -101,11 +95,26 @@ const LikeService = {
       match: {
         type: ACTIVITY_TYPES.LIKE
       },
-      async onEmit(ctx, activity) {
-        await this.actions.addLike({ actorUri: activity.actor, objectUri: activity.object }, { parentCtx: ctx });
+      async onEmit(ctx, activity, emitterUri) {
+        await this.actions.addObjectToActorLikedCollection(
+          { actorUri: activity.actor, objectUri: activity.object },
+          { parentCtx: ctx }
+        );
+        // In case there is no recipient, add the actor immediately to the collection
+        if (this.isLocalObject(activity.object, emitterUri)) {
+          await this.actions.addActorToObjectLikesCollection(
+            { actorUri: activity.actor, objectUri: activity.object },
+            { parentCtx: ctx }
+          );
+        }
       },
-      async onReceive(ctx, activity) {
-        await this.actions.addLike({ actorUri: activity.actor, objectUri: activity.object }, { parentCtx: ctx });
+      async onReceive(ctx, activity, recipientUri) {
+        if (this.isLocalObject(activity.object, recipientUri)) {
+          await this.actions.addActorToObjectLikesCollection(
+            { actorUri: activity.actor, objectUri: activity.object },
+            { parentCtx: ctx }
+          );
+        }
       }
     },
     unlikeObject: {
@@ -115,23 +124,46 @@ const LikeService = {
           type: ACTIVITY_TYPES.LIKE
         }
       },
-      async onEmit(ctx, activity) {
-        await this.actions.removeLike(
-          { actorUri: activity.actor, objectUri: activity.object.object },
+      async onEmit(ctx, activity, emitterUri) {
+        await this.actions.removeObjectFromActorLikedCollection(
+          { actorUri: activity.actor, objectUri: activity.object },
           { parentCtx: ctx }
         );
+        // In case there is no recipient, remove the actor immediately from the collection
+        if (this.isLocalObject(activity.object, emitterUri)) {
+          await this.actions.removeActorFromObjectLikesCollection(
+            { actorUri: activity.actor, objectUri: activity.object },
+            { parentCtx: ctx }
+          );
+        }
       },
-      async onReceive(ctx, activity) {
-        await this.actions.removeLike(
-          { actorUri: activity.actor, objectUri: activity.object.object },
-          { parentCtx: ctx }
-        );
+      async onReceive(ctx, activity, recipientUri) {
+        if (this.isLocalObject(activity.object, recipientUri)) {
+          await this.actions.removeActorFromObjectLikesCollection(
+            { actorUri: activity.actor, objectUri: activity.object },
+            { parentCtx: ctx }
+          );
+        }
       }
     }
   },
   methods: {
-    isLocal(uri) {
-      return uri.startsWith(this.settings.baseUri);
+    isLocalObject(uri, actorUri) {
+      if (this.settings.podProvider) {
+        const { origin, pathname } = new URL(actorUri);
+        const aclBase = `${origin}/_acl${pathname}`; // URL of type http://localhost:3000/_acl/alice
+        const aclGroupBase = `${origin}/_groups${pathname}`; // URL of type http://localhost:3000/_groups/alice
+        return (
+          uri === actorUri ||
+          uri.startsWith(actorUri + '/') ||
+          uri === aclBase ||
+          uri.startsWith(aclBase + '/') ||
+          uri === aclGroupBase ||
+          uri.startsWith(aclGroupBase + '/')
+        );
+      } else {
+        return uri.startsWith(this.settings.baseUri);
+      }
     }
   }
 };
