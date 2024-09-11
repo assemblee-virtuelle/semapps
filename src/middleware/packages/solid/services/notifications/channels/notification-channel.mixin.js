@@ -188,8 +188,11 @@ module.exports = {
       this.onContainerOrCollectionEvent(containerUri, resourceUri, ACTIVITY_TYPES.REMOVE);
     },
     async 'activitypub.collection.added'(ctx) {
-      const { collectionUri, itemUri } = ctx.params;
-      this.onContainerOrCollectionEvent(collectionUri, itemUri, ACTIVITY_TYPES.ADD);
+      const { collectionUri, itemUri, item } = ctx.params;
+      // Mastodon sometimes send unfetchable activities (like `Accept` activities)
+      // In this case, we receive the activity as `item` and `itemUri` is undefined
+      // We will send a notification to the listener with the whole activity
+      this.onContainerOrCollectionEvent(collectionUri, itemUri || item, ACTIVITY_TYPES.ADD);
     },
     async 'activitypub.collection.removed'(ctx) {
       const { collectionUri, itemUri } = ctx.params;
@@ -214,12 +217,12 @@ module.exports = {
 
       return matchedChannels;
     },
-    onContainerOrCollectionEvent(containerOrCollectionUri, resourceOrItemUri, type) {
+    onContainerOrCollectionEvent(containerOrCollectionUri, resourceUriOrResource, type) {
       const activity = {
         '@context': ['https://www.w3.org/ns/activitystreams', 'https://www.w3.org/ns/solid/notifications-context/v1'],
         id: `urn:uuid:${uuidV4()}`,
         type,
-        object: resourceOrItemUri,
+        object: resourceUriOrResource,
         target: containerOrCollectionUri
       };
       this.triggerChannelsForTopic(containerOrCollectionUri, activity);
