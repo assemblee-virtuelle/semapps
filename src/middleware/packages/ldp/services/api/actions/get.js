@@ -1,5 +1,6 @@
 const fs = require('fs');
 const { MoleculerError } = require('moleculer').Errors;
+const { MIME_TYPES } = require('@semapps/mime-types');
 const { cleanUndefined, parseJson } = require('../../../utils');
 
 module.exports = async function get(ctx) {
@@ -67,7 +68,11 @@ module.exports = async function get(ctx) {
         })
       );
 
-      if (types.includes('http://semapps.org/ns/core#File')) {
+      // If the resource is a file and no semantic encoding was requested, return it
+      if (
+        types.includes('http://semapps.org/ns/core#File') &&
+        ![MIME_TYPES.JSON, MIME_TYPES.TURTLE, MIME_TYPES.TRIPLE].includes(accept)
+      ) {
         try {
           const file = fs.readFileSync(res['semapps:localPath']);
           ctx.meta.$responseType = res['semapps:mimeType'];
