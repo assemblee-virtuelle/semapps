@@ -140,7 +140,7 @@ module.exports = {
         topic,
         sendTo,
         receiveFrom,
-        webId
+        webId: topicWebId
       };
       this.channels.push(channel);
       this.onChannelCreated(channel);
