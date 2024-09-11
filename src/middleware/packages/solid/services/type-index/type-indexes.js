@@ -1,6 +1,6 @@
 const urlJoin = require('url-join');
 const { ControlledContainerMixin, DereferenceMixin, arrayOf } = require('@semapps/ldp');
-const { solid } = require('@semapps/ontologies');
+const { solid, skos, apods } = require('@semapps/ontologies');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { namedNode, triple } = require('@rdfjs/data-model');
 const TypeRegistrationsService = require('./type-registrations');
@@ -38,6 +38,9 @@ module.exports = {
   },
   async started() {
     await this.broker.call('ontologies.register', solid);
+    // The following ontologies are used for the type description
+    await this.broker.call('ontologies.register', skos);
+    await this.broker.call('ontologies.register', apods);
   },
   actions: {
     async createAndAttachToWebId(ctx) {

@@ -351,6 +351,7 @@ module.exports = {
   },
   hooks: {
     before: {
+      // Handle side effects when the default app is changed from the Pod provider frontend
       async patch(ctx) {
         const { resourceUri, triplesToAdd, triplesToRemove } = ctx.params;
         const webId = ctx.params.webId || ctx.meta.webId || 'anon';
