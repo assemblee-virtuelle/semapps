@@ -18,6 +18,15 @@ module.exports = {
         await this.broker.cacher.clean(`webacl.resource.hasRights:**${uri}**`);
       }
     },
+    async invalidateAllUserRightsOnPod(ctx) {
+      if (this.broker.cacher) {
+        const { webId, podOwner } = ctx.params;
+        await this.broker.cacher.clean(`webacl.resource.getRights:${podOwner}|**|${webId}`);
+        await this.broker.cacher.clean(`webacl.resource.hasRights:${podOwner}|**|${webId}`);
+        await this.broker.cacher.clean(`webacl.resource.getRights:${podOwner}/**|**|${webId}`);
+        await this.broker.cacher.clean(`webacl.resource.hasRights:${podOwner}/**|**|${webId}`);
+      }
+    },
     async generateForUser(ctx) {
       const { webId } = ctx.params;
       this.logger.info(`Generating cache for user ${webId}`);
