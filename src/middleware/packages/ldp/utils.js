@@ -40,27 +40,32 @@ const buildBlankNodesQuery = depth => {
   return { construct, where };
 };
 
+const isURL = value => (typeof value === 'string' || value instanceof String) && value.startsWith('http');
+
+/** If the value starts with `http` or `urn:` */
+const isURI = value =>
+  (typeof value === 'string' || value instanceof String) && (value.startsWith('http') || value.startsWith('urn:'));
+
 const buildFiltersQuery = filters => {
   let where = '';
   if (filters) {
     Object.keys(filters).forEach((predicate, i) => {
       if (filters[predicate]) {
         where += `
-          FILTER EXISTS { ?s1 ${predicate.startsWith('http') ? `<${predicate}>` : predicate} ${
-            filters[predicate].startsWith('http') ? `<${filters[predicate]}>` : `"${filters[predicate]}"`
-          } } .
+          FILTER EXISTS { 
+            ?s1 ${isURI(predicate) ? `<${predicate}>` : predicate} ${
+              isURI(filters[predicate]) ? `<${filters[predicate]}>` : `"${filters[predicate]}"`
+            } } .
         `;
       } else {
         where += `
-          FILTER NOT EXISTS { ?s1 ${predicate.startsWith('http') ? `<${predicate}>` : predicate} ?unwanted${i} } .
+          FILTER NOT EXISTS { ?s1 ${isURI(predicate) ? `<${predicate}>` : predicate} ?unwanted${i} } .
         `;
       }
     });
   }
   return { where };
 };
-
-const isURL = value => (typeof value === 'string' || value instanceof String) && value.startsWith('http');
 
 const isObject = value => typeof value === 'object' && !Array.isArray(value) && value !== null;
 
@@ -170,6 +175,7 @@ module.exports = {
   buildBlankNodesQuery,
   buildFiltersQuery,
   isURL,
+  isURI,
   isObject,
   getSlugFromUri,
   getContainerFromUri,

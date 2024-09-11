@@ -18,8 +18,13 @@ const WebhookChannel2023Service = {
   settings: {
     channelType: 'WebhookChannel2023',
     sendOrReceive: 'send',
-
-    baseUrl: null
+    baseUrl: null,
+    description: {
+      labelMap: {
+        en: 'Webhook Channel'
+      },
+      internal: true
+    }
   },
   created() {
     if (!this.createJob) throw new Error('The QueueMixin must be configured with this service');
@@ -46,7 +51,6 @@ const WebhookChannel2023Service = {
       }
     }
   },
-
   methods: {
     onEvent(channel, activity) {
       this.createJob('webhookPost', channel.sendTo, { channel, activity }, queueOptions);

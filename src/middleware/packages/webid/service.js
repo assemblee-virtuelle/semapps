@@ -6,13 +6,24 @@ const { ControlledContainerMixin, DereferenceMixin } = require('@semapps/ldp');
 /** @type {import('moleculer').ServiceSchema} */
 const WebIdService = {
   name: 'webid',
+  mixins: [ControlledContainerMixin, DereferenceMixin],
   settings: {
-    path: '/foaf/person',
     baseUrl: null,
+    podProvider: false,
+    // ControlledContainerMixin
+    path: '/foaf/person',
     acceptedTypes: ['http://xmlns.com/foaf/0.1/Person'],
     defaultAccept: 'text/turtle',
-    podProvider: false,
     podsContainer: false,
+    description: {
+      labelMap: {
+        en: 'Actor',
+        fr: 'Acteur'
+      },
+      labelPredicate: 'foaf:nick',
+      internal: true
+    },
+    // DereferenceMixin
     dereferencePlan: [
       {
         property: 'publicKey'
@@ -21,7 +32,6 @@ const WebIdService = {
     ]
   },
   dependencies: ['ldp.resource', 'ontologies'],
-  mixins: [ControlledContainerMixin, DereferenceMixin],
   async created() {
     if (!this.settings.baseUrl) throw new Error('The baseUrl setting is required for webId service.');
   },

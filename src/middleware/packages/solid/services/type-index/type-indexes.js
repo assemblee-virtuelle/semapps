@@ -120,6 +120,7 @@ module.exports = {
           const podUrl = await ctx.call('pod.getUrl', { webId });
           const containerUri = urlJoin(podUrl, container.path);
           for (const type of arrayOf(container.acceptedTypes)) {
+            this.logger.info(`Registering ${containerUri} with type ${type}...`);
             await ctx.call('type-registrations.register', { type, containerUri, webId });
             if (container.description) {
               await ctx.call('type-registrations.attachDescription', {
