@@ -1,13 +1,13 @@
 {
   "name": "@semapps/sync",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "description": "Synchronization tools for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "@semapps/activitypub": "0.9.4",
-    "@semapps/ldp": "0.9.4",
-    "@semapps/mime-types": "0.9.4",
+    "@semapps/activitypub": "0.9.5",
+    "@semapps/ldp": "0.9.5",
+    "@semapps/mime-types": "0.9.5",
     "moleculer": "^0.14.17",
     "node-fetch": "^2.6.6",
     "url-join": "^4.0.1"
