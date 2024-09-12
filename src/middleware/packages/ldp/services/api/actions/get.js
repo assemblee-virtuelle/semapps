@@ -71,7 +71,7 @@ module.exports = async function get(ctx) {
       // If the resource is a file and no semantic encoding was requested, return it
       if (
         types.includes('http://semapps.org/ns/core#File') &&
-        ![MIME_TYPES.JSON, MIME_TYPES.TURTLE, MIME_TYPES.TRIPLE].includes(accept)
+        ![MIME_TYPES.JSON, MIME_TYPES.TURTLE].includes(ctx.meta.originalHeaders?.accept)
       ) {
         try {
           const file = fs.readFileSync(res['semapps:localPath']);
@@ -79,7 +79,8 @@ module.exports = async function get(ctx) {
           // Since files are currently immutable, we set a maximum browser cache age
           // We do that after the file is read, otherwise the error 404 will be cached by the browser
           ctx.meta.$responseHeaders = {
-            'Cache-Control': 'public, max-age=31536000'
+            'Cache-Control': 'public, max-age=31536000',
+            Vary: 'Accept'
           };
           return file;
         } catch (e) {
