@@ -31,7 +31,7 @@ const WebSocketChannel2023Service = {
           const channel = this.channels.find(c => c.receiveFrom === connection.requestUrl);
           // Check if the requested channel is registered.
           if (!channel) {
-            connection.webSocket.close(4040, 'Channel not found.');
+            connection.webSocket.close(404, 'Channel not found.');
             return;
           }
           this.socketConnections.push(connection);
