@@ -12,21 +12,11 @@ import {
   useLocaleState
 } from 'react-admin';
 import { useSearchParams } from 'react-router-dom';
-import { Button, CardContent, CircularProgress, Typography } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { Button, CardContent, Typography } from '@mui/material';
 import useSignup from '../../hooks/useSignup';
 import validatePasswordStrength from './validatePasswordStrength';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 import { defaultScorer } from '../../passwordScorer';
-
-const useStyles = makeStyles(theme => ({
-  content: {
-    width: 450
-  },
-  icon: {
-    margin: theme.spacing(0.3)
-  }
-}));
 
 /**
  * @param {function} props.onSignup Optional function to call when signup is completed
@@ -42,7 +32,6 @@ const SignupForm = ({ passwordScorer = defaultScorer, onSignup, additionalSignup
   const signup = useSignup();
   const translate = useTranslate();
   const notify = useNotify();
-  const classes = useStyles();
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/';
   const [locale] = useLocaleState();
@@ -83,7 +72,7 @@ const SignupForm = ({ passwordScorer = defaultScorer, onSignup, additionalSignup
 
   return (
     <Form onSubmit={submit} noValidate defaultValues={{ email: searchParams.get('email') }}>
-      <CardContent className={classes.content}>
+      <CardContent>
         <TextInput
           autoFocus
           source="username"
@@ -129,19 +118,8 @@ const SignupForm = ({ passwordScorer = defaultScorer, onSignup, additionalSignup
           disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
           validate={[required(), validatePasswordStrength(passwordScorer)]}
         />
-        <Button
-          variant="contained"
-          type="submit"
-          color="primary"
-          disabled={loading}
-          fullWidth
-          className={classes.button}
-        >
-          {loading ? (
-            <CircularProgress className={classes.icon} size={19} thickness={3} />
-          ) : (
-            translate('auth.action.signup')
-          )}
+        <Button variant="contained" type="submit" color="primary" disabled={loading} fullWidth>
+          {translate('auth.action.signup')}
         </Button>
       </CardContent>
     </Form>

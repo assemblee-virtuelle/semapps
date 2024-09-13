@@ -6,7 +6,7 @@ import $1obPJ$react, {useEffect as $1obPJ$useEffect, useState as $1obPJ$useState
 import {useResourceContext as $1obPJ$useResourceContext, Create as $1obPJ$Create, CreateActions as $1obPJ$CreateActions, usePermissions as $1obPJ$usePermissions, useNotify as $1obPJ$useNotify, useRedirect as $1obPJ$useRedirect, useGetRecordId as $1obPJ$useGetRecordId, Edit as $1obPJ$Edit, useResourceDefinition as $1obPJ$useResourceDefinition, useRecordContext as $1obPJ$useRecordContext, TopToolbar as $1obPJ$TopToolbar, ListButton as $1obPJ$ListButton, ShowButton as $1obPJ$ShowButton, Button as $1obPJ$Button, useTranslate as $1obPJ$useTranslate, useGetList as $1obPJ$useGetList, useDataProvider as $1obPJ$useDataProvider, Loading as $1obPJ$Loading, Error as $1obPJ$Error, useAuthProvider as $1obPJ$useAuthProvider, Toolbar as $1obPJ$Toolbar, SaveButton as $1obPJ$SaveButton, DeleteButton as $1obPJ$DeleteButton, EditButton as $1obPJ$EditButton, List as $1obPJ$List1, CreateButton as $1obPJ$CreateButton, ExportButton as $1obPJ$ExportButton, Show as $1obPJ$Show, useLogin as $1obPJ$useLogin, useGetIdentity as $1obPJ$useGetIdentity, useSafeSetState as $1obPJ$useSafeSetState, useLocaleState as $1obPJ$useLocaleState, Form as $1obPJ$Form, TextInput as $1obPJ$TextInput, required as $1obPJ$required, minLength as $1obPJ$minLength, email as $1obPJ$email, Notification as $1obPJ$Notification, Resource as $1obPJ$Resource, useUserMenu as $1obPJ$useUserMenu, UserMenu as $1obPJ$UserMenu, Logout as $1obPJ$Logout, useGetPermissions as $1obPJ$useGetPermissions} from "react-admin";
 import {useCreateContainerUri as $1obPJ$useCreateContainerUri, useCreateContainer as $1obPJ$useCreateContainer} from "@semapps/semantic-data-provider";
 import $1obPJ$muiiconsmaterialShare from "@mui/icons-material/Share";
-import {Dialog as $1obPJ$Dialog, DialogTitle as $1obPJ$DialogTitle, DialogContent as $1obPJ$DialogContent, DialogActions as $1obPJ$DialogActions, TextField as $1obPJ$TextField, List as $1obPJ$List, ListItem as $1obPJ$ListItem, ListItemAvatar as $1obPJ$ListItemAvatar, Avatar as $1obPJ$Avatar, ListItemText as $1obPJ$ListItemText, ListItemSecondaryAction as $1obPJ$ListItemSecondaryAction, IconButton as $1obPJ$IconButton, Menu as $1obPJ$Menu, MenuItem as $1obPJ$MenuItem, ListItemIcon as $1obPJ$ListItemIcon, useMediaQuery as $1obPJ$useMediaQuery, DialogContentText as $1obPJ$DialogContentText, Button as $1obPJ$Button1, Card as $1obPJ$Card, Typography as $1obPJ$Typography, CardActions as $1obPJ$CardActions, CardContent as $1obPJ$CardContent, CircularProgress as $1obPJ$CircularProgress, LinearProgress as $1obPJ$LinearProgress, Box as $1obPJ$Box} from "@mui/material";
+import {Dialog as $1obPJ$Dialog, DialogTitle as $1obPJ$DialogTitle, DialogContent as $1obPJ$DialogContent, DialogActions as $1obPJ$DialogActions, TextField as $1obPJ$TextField, List as $1obPJ$List, ListItem as $1obPJ$ListItem, ListItemAvatar as $1obPJ$ListItemAvatar, Avatar as $1obPJ$Avatar, ListItemText as $1obPJ$ListItemText, ListItemSecondaryAction as $1obPJ$ListItemSecondaryAction, IconButton as $1obPJ$IconButton, Menu as $1obPJ$Menu, MenuItem as $1obPJ$MenuItem, ListItemIcon as $1obPJ$ListItemIcon, useMediaQuery as $1obPJ$useMediaQuery, DialogContentText as $1obPJ$DialogContentText, Button as $1obPJ$Button1, Card as $1obPJ$Card, Typography as $1obPJ$Typography, CardActions as $1obPJ$CardActions, Box as $1obPJ$Box, CardContent as $1obPJ$CardContent, LinearProgress as $1obPJ$LinearProgress} from "@mui/material";
 import $1obPJ$muistylesmakeStyles from "@mui/styles/makeStyles";
 import $1obPJ$muimaterialAutocomplete from "@mui/material/Autocomplete";
 import $1obPJ$muiiconsmaterialPerson from "@mui/icons-material/Person";
@@ -1461,8 +1461,6 @@ var $479961b7e298304b$export$2e2bcd8739ae039 = $479961b7e298304b$var$SsoLoginPag
 
 
 
-
-
 const $fb967e2c34f56644$var$useSignup = ()=>{
     const authProvider = (0, $1obPJ$useAuthProvider)();
     return (0, $1obPJ$useCallback)((params = {})=>authProvider.signup(params), [
@@ -1601,14 +1599,6 @@ function $a8046307c9dfa483$export$2e2bcd8739ae039({ scorer: scorer = (0, $646d64
 
 
 
-const $e011da92680cf1fe$var$useStyles = (0, $1obPJ$muistylesmakeStyles)((theme)=>({
-        content: {
-            width: 450
-        },
-        icon: {
-            margin: theme.spacing(0.3)
-        }
-    }));
 /**
  * @param {function} props.onSignup Optional function to call when signup is completed
  * @param {object} props.additionalSignupValues
@@ -1622,7 +1612,6 @@ const $e011da92680cf1fe$var$useStyles = (0, $1obPJ$muistylesmakeStyles)((theme)=
     const signup = (0, $fb967e2c34f56644$export$2e2bcd8739ae039)();
     const translate = (0, $1obPJ$useTranslate)();
     const notify = (0, $1obPJ$useNotify)();
-    const classes = $e011da92680cf1fe$var$useStyles();
     const [searchParams] = (0, $1obPJ$useSearchParams)();
     const redirectTo = searchParams.get("redirect") || "/";
     const [locale] = (0, $1obPJ$useLocaleState)();
@@ -1660,7 +1649,6 @@ const $e011da92680cf1fe$var$useStyles = (0, $1obPJ$muistylesmakeStyles)((theme)=
             email: searchParams.get("email")
         },
         children: /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$CardContent), {
-            className: classes.content,
             children: [
                 /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
                     autoFocus: true,
@@ -1745,12 +1733,7 @@ const $e011da92680cf1fe$var$useStyles = (0, $1obPJ$muistylesmakeStyles)((theme)=
                     color: "primary",
                     disabled: loading,
                     fullWidth: true,
-                    className: classes.button,
-                    children: loading ? /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$CircularProgress), {
-                        className: classes.icon,
-                        size: 19,
-                        thickness: 3
-                    }) : translate("auth.action.signup")
+                    children: translate("auth.action.signup")
                 })
             ]
         })
@@ -1768,21 +1751,11 @@ var $e011da92680cf1fe$export$2e2bcd8739ae039 = $e011da92680cf1fe$var$SignupForm;
 
 
 
-
-const $e2a34b2d647a5391$var$useStyles = (0, $1obPJ$muistylesmakeStyles)((theme)=>({
-        content: {
-            width: 450
-        },
-        icon: {
-            margin: theme.spacing(0.3)
-        }
-    }));
 const $e2a34b2d647a5391$var$LoginForm = ({ onLogin: onLogin, allowUsername: allowUsername })=>{
     const [loading, setLoading] = (0, $1obPJ$useSafeSetState)(false);
     const login = (0, $1obPJ$useLogin)();
     const translate = (0, $1obPJ$useTranslate)();
     const notify = (0, $1obPJ$useNotify)();
-    const classes = $e2a34b2d647a5391$var$useStyles();
     const [searchParams] = (0, $1obPJ$useSearchParams)();
     const redirectTo = searchParams.get("redirect") || "/";
     const submit = (0, $1obPJ$useCallback)(async (values)=>{
@@ -1814,7 +1787,6 @@ const $e2a34b2d647a5391$var$LoginForm = ({ onLogin: onLogin, allowUsername: allo
             username: searchParams.get("email")
         },
         children: /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$CardContent), {
-            className: classes.content,
             children: [
                 /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
                     source: "username",
@@ -1845,12 +1817,7 @@ const $e2a34b2d647a5391$var$LoginForm = ({ onLogin: onLogin, allowUsername: allo
                     color: "primary",
                     disabled: loading,
                     fullWidth: true,
-                    className: classes.button,
-                    children: loading ? /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$CircularProgress), {
-                        className: classes.icon,
-                        size: 19,
-                        thickness: 3
-                    }) : translate("auth.action.login")
+                    children: translate("auth.action.login")
                 })
             ]
         })
@@ -1870,12 +1837,6 @@ var $e2a34b2d647a5391$export$2e2bcd8739ae039 = $e2a34b2d647a5391$var$LoginForm;
 
 
 
-
-const $b403c35bd8d76c50$var$useStyles = (0, $1obPJ$muistylesmakeStyles)((theme)=>({
-        icon: {
-            margin: theme.spacing(0.3)
-        }
-    }));
 const $b403c35bd8d76c50$var$samePassword = (value, allValues)=>{
     if (value && value !== allValues.password) return "Mot de passe diff\xe9rent du premier";
 };
@@ -1894,7 +1855,6 @@ const $b403c35bd8d76c50$var$samePassword = (value, allValues)=>{
     const authProvider = (0, $1obPJ$useAuthProvider)();
     const translate = (0, $1obPJ$useTranslate)();
     const notify = (0, $1obPJ$useNotify)();
-    const classes = $b403c35bd8d76c50$var$useStyles();
     const [newPassword, setNewPassword] = (0, $1obPJ$useState)("");
     const submit = (values)=>{
         setLoading(true);
@@ -1929,7 +1889,6 @@ const $b403c35bd8d76c50$var$samePassword = (value, allValues)=>{
             email: searchParams.get("email")
         },
         children: /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$CardContent), {
-            className: classes.content,
             children: [
                 /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
                     autoFocus: true,
@@ -1996,12 +1955,7 @@ const $b403c35bd8d76c50$var$samePassword = (value, allValues)=>{
                     color: "primary",
                     disabled: loading,
                     fullWidth: true,
-                    className: classes.button,
-                    children: loading ? /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$CircularProgress), {
-                        className: classes.icon,
-                        size: 19,
-                        thickness: 3
-                    }) : translate("auth.action.set_new_password")
+                    children: translate("auth.action.set_new_password")
                 })
             ]
         })
@@ -2014,18 +1968,11 @@ var $b403c35bd8d76c50$export$2e2bcd8739ae039 = $b403c35bd8d76c50$var$NewPassword
 
 
 
-
-const $8d415f03f06df877$var$useStyles = (0, $1obPJ$muistylesmakeStyles)((theme)=>({
-        icon: {
-            margin: theme.spacing(0.3)
-        }
-    }));
 const $8d415f03f06df877$var$ResetPasswordForm = ()=>{
     const [loading, setLoading] = (0, $1obPJ$useSafeSetState)(false);
     const authProvider = (0, $1obPJ$useAuthProvider)();
     const translate = (0, $1obPJ$useTranslate)();
     const notify = (0, $1obPJ$useNotify)();
-    const classes = $8d415f03f06df877$var$useStyles();
     const submit = (values)=>{
         setLoading(true);
         authProvider.resetPassword({
@@ -2048,7 +1995,6 @@ const $8d415f03f06df877$var$ResetPasswordForm = ()=>{
     return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Form), {
         onSubmit: submit,
         children: /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$CardContent), {
-            className: classes.content,
             children: [
                 /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
                     autoFocus: true,
@@ -2066,12 +2012,7 @@ const $8d415f03f06df877$var$ResetPasswordForm = ()=>{
                     color: "primary",
                     disabled: loading,
                     fullWidth: true,
-                    className: classes.button,
-                    children: loading ? /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$CircularProgress), {
-                        className: classes.icon,
-                        size: 19,
-                        thickness: 3
-                    }) : translate("auth.action.submit")
+                    children: translate("auth.action.submit")
                 })
             ]
         })
@@ -2092,15 +2033,15 @@ const $1b78e27e3e92a798$var$useStyles = (0, $1obPJ$muistylesmakeStyles)((theme)=
             }
         },
         root: {
-            backgroundColor: theme.palette.secondary.main
+            backgroundColor: theme.palette.secondary.main,
+            [theme.breakpoints.down("sm")]: {
+                padding: "1em"
+            }
         },
         card: {
-            minWidth: 300,
-            maxWidth: 500,
-            marginTop: "6em",
-            [theme.breakpoints.down("sm")]: {
-                margin: "1em"
-            }
+            width: "100%",
+            maxWidth: 450,
+            marginTop: "6em"
         },
         icon: {
             marginTop: 5,
@@ -2174,14 +2115,6 @@ const $2dfd781b793256e6$var$getSearchParamsRest = (searchParams)=>{
 var $2dfd781b793256e6$export$2e2bcd8739ae039 = $2dfd781b793256e6$var$getSearchParamsRest;
 
 
-const $23fea069f5d2d834$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
-        switch: {
-            marginBottom: "1em",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center"
-        }
-    }));
 /**
  * @param {object} props Props
  * @param {boolean} props.hasSignup If to show signup form.
@@ -2194,7 +2127,6 @@ const $23fea069f5d2d834$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
  *  passwordStrength's `defaultScorer`.
  * @returns
  */ const $23fea069f5d2d834$var$LocalLoginPage = ({ hasSignup: hasSignup, allowUsername: allowUsername, onLogin: onLogin, onSignup: onSignup, additionalSignupValues: additionalSignupValues, passwordScorer: passwordScorer = (0, $646d64648a630b24$export$19dcdb21c6965fb8) })=>{
-    const classes = $23fea069f5d2d834$var$useStyles();
     const translate = (0, $1obPJ$useTranslate)();
     const [searchParams] = (0, $1obPJ$useSearchParams)();
     const isSignup = hasSignup && searchParams.has("signup");
@@ -2261,8 +2193,14 @@ const $23fea069f5d2d834$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
                     redirectTo: redirectTo,
                     passwordScorer: passwordScorer
                 }),
-                /*#__PURE__*/ (0, $1obPJ$jsxs)("div", {
-                    className: classes.switch,
+                /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Box), {
+                    sx: {
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        mt: -1,
+                        mb: 2
+                    },
                     children: [
                         (isSignup || isResetPassword) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Link), {
                             to: `/login?${(0, $2dfd781b793256e6$export$2e2bcd8739ae039)(searchParams)}`,

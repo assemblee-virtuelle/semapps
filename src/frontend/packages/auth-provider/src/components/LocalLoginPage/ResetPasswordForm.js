@@ -1,20 +1,12 @@
 import React from 'react';
 import { Form, TextInput, required, useTranslate, useNotify, useSafeSetState, useAuthProvider } from 'react-admin';
-import { Button, CardContent, CircularProgress } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
-
-const useStyles = makeStyles(theme => ({
-  icon: {
-    margin: theme.spacing(0.3)
-  }
-}));
+import { Button, CardContent } from '@mui/material';
 
 const ResetPasswordForm = () => {
   const [loading, setLoading] = useSafeSetState(false);
   const authProvider = useAuthProvider();
   const translate = useTranslate();
   const notify = useNotify();
-  const classes = useStyles();
 
   const submit = values => {
     setLoading(true);
@@ -44,7 +36,7 @@ const ResetPasswordForm = () => {
 
   return (
     <Form onSubmit={submit}>
-      <CardContent className={classes.content}>
+      <CardContent>
         <TextInput
           autoFocus
           source="email"
@@ -55,19 +47,8 @@ const ResetPasswordForm = () => {
           validate={required()}
           format={value => (value ? value.toLowerCase() : '')}
         />
-        <Button
-          variant="contained"
-          type="submit"
-          color="primary"
-          disabled={loading}
-          fullWidth
-          className={classes.button}
-        >
-          {loading ? (
-            <CircularProgress className={classes.icon} size={19} thickness={3} />
-          ) : (
-            translate('auth.action.submit')
-          )}
+        <Button variant="contained" type="submit" color="primary" disabled={loading} fullWidth>
+          {translate('auth.action.submit')}
         </Button>
       </CardContent>
     </Form>

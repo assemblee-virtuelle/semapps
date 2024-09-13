@@ -1,9 +1,8 @@
 import { useEffect, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslate, useGetIdentity } from 'react-admin';
-import { Card, Typography } from '@mui/material';
+import { Box, Card, Typography } from '@mui/material';
 import LockIcon from '@mui/icons-material/Lock';
-import makeStyles from '@mui/styles/makeStyles';
 import SignupForm from './SignupForm';
 import LoginForm from './LoginForm';
 import NewPasswordForm from './NewPasswordForm';
@@ -11,15 +10,6 @@ import ResetPasswordForm from './ResetPasswordForm';
 import SimpleBox from './SimpleBox';
 import { defaultScorer } from '../../passwordScorer';
 import getSearchParamsRest from './getSearchParamsRest';
-
-const useStyles = makeStyles(() => ({
-  switch: {
-    marginBottom: '1em',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center'
-  }
-}));
 
 /**
  * @param {object} props Props
@@ -41,7 +31,6 @@ const LocalLoginPage = ({
   additionalSignupValues,
   passwordScorer = defaultScorer
 }) => {
-  const classes = useStyles();
   const translate = useTranslate();
   const [searchParams] = useSearchParams();
   const isSignup = hasSignup && searchParams.has('signup');
@@ -94,7 +83,7 @@ const LocalLoginPage = ({
         )}
         {isResetPassword && <ResetPasswordForm />}
         {isNewPassword && <NewPasswordForm redirectTo={redirectTo} passwordScorer={passwordScorer} />}
-        <div className={classes.switch}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: -1, mb: 2 }}>
           {(isSignup || isResetPassword) && (
             <Link to={`/login?${getSearchParamsRest(searchParams)}`}>
               <Typography variant="body2">{translate('auth.action.login')}</Typography>
@@ -116,7 +105,7 @@ const LocalLoginPage = ({
               </div>
             </>
           )}
-        </div>
+        </Box>
       </Card>
     </SimpleBox>
   );

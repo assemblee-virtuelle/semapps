@@ -1500,8 +1500,6 @@ var $0af8eee27f6a6e9f$export$2e2bcd8739ae039 = $0af8eee27f6a6e9f$var$SsoLoginPag
 
 
 
-
-
 const $19e4629c708b7a3e$var$useSignup = ()=>{
     const authProvider = (0, $4Uj5b$reactadmin.useAuthProvider)();
     return (0, $4Uj5b$react.useCallback)((params = {})=>authProvider.signup(params), [
@@ -1640,14 +1638,6 @@ function $edfec7f9e9fd7881$export$2e2bcd8739ae039({ scorer: scorer = (0, $d1ca1e
 
 
 
-const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))((theme)=>({
-        content: {
-            width: 450
-        },
-        icon: {
-            margin: theme.spacing(0.3)
-        }
-    }));
 /**
  * @param {function} props.onSignup Optional function to call when signup is completed
  * @param {object} props.additionalSignupValues
@@ -1661,7 +1651,6 @@ const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
     const signup = (0, $19e4629c708b7a3e$export$2e2bcd8739ae039)();
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
-    const classes = $5f70c240e5b0340c$var$useStyles();
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
     const redirectTo = searchParams.get("redirect") || "/";
     const [locale] = (0, $4Uj5b$reactadmin.useLocaleState)();
@@ -1699,7 +1688,6 @@ const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
             email: searchParams.get("email")
         },
         children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
-            className: classes.content,
             children: [
                 /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
                     autoFocus: true,
@@ -1784,12 +1772,7 @@ const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
                     color: "primary",
                     disabled: loading,
                     fullWidth: true,
-                    className: classes.button,
-                    children: loading ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.CircularProgress), {
-                        className: classes.icon,
-                        size: 19,
-                        thickness: 3
-                    }) : translate("auth.action.signup")
+                    children: translate("auth.action.signup")
                 })
             ]
         })
@@ -1807,21 +1790,11 @@ var $5f70c240e5b0340c$export$2e2bcd8739ae039 = $5f70c240e5b0340c$var$SignupForm;
 
 
 
-
-const $8a2df01c9f2675bb$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))((theme)=>({
-        content: {
-            width: 450
-        },
-        icon: {
-            margin: theme.spacing(0.3)
-        }
-    }));
 const $8a2df01c9f2675bb$var$LoginForm = ({ onLogin: onLogin, allowUsername: allowUsername })=>{
     const [loading, setLoading] = (0, $4Uj5b$reactadmin.useSafeSetState)(false);
     const login = (0, $4Uj5b$reactadmin.useLogin)();
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
-    const classes = $8a2df01c9f2675bb$var$useStyles();
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
     const redirectTo = searchParams.get("redirect") || "/";
     const submit = (0, $4Uj5b$react.useCallback)(async (values)=>{
@@ -1853,7 +1826,6 @@ const $8a2df01c9f2675bb$var$LoginForm = ({ onLogin: onLogin, allowUsername: allo
             username: searchParams.get("email")
         },
         children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
-            className: classes.content,
             children: [
                 /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
                     source: "username",
@@ -1884,12 +1856,7 @@ const $8a2df01c9f2675bb$var$LoginForm = ({ onLogin: onLogin, allowUsername: allo
                     color: "primary",
                     disabled: loading,
                     fullWidth: true,
-                    className: classes.button,
-                    children: loading ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.CircularProgress), {
-                        className: classes.icon,
-                        size: 19,
-                        thickness: 3
-                    }) : translate("auth.action.login")
+                    children: translate("auth.action.login")
                 })
             ]
         })
@@ -1909,12 +1876,6 @@ var $8a2df01c9f2675bb$export$2e2bcd8739ae039 = $8a2df01c9f2675bb$var$LoginForm;
 
 
 
-
-const $176df6bd8edc5f4d$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))((theme)=>({
-        icon: {
-            margin: theme.spacing(0.3)
-        }
-    }));
 const $176df6bd8edc5f4d$var$samePassword = (value, allValues)=>{
     if (value && value !== allValues.password) return "Mot de passe diff\xe9rent du premier";
 };
@@ -1933,7 +1894,6 @@ const $176df6bd8edc5f4d$var$samePassword = (value, allValues)=>{
     const authProvider = (0, $4Uj5b$reactadmin.useAuthProvider)();
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
-    const classes = $176df6bd8edc5f4d$var$useStyles();
     const [newPassword, setNewPassword] = (0, $4Uj5b$react.useState)("");
     const submit = (values)=>{
         setLoading(true);
@@ -1968,7 +1928,6 @@ const $176df6bd8edc5f4d$var$samePassword = (value, allValues)=>{
             email: searchParams.get("email")
         },
         children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
-            className: classes.content,
             children: [
                 /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
                     autoFocus: true,
@@ -2035,12 +1994,7 @@ const $176df6bd8edc5f4d$var$samePassword = (value, allValues)=>{
                     color: "primary",
                     disabled: loading,
                     fullWidth: true,
-                    className: classes.button,
-                    children: loading ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.CircularProgress), {
-                        className: classes.icon,
-                        size: 19,
-                        thickness: 3
-                    }) : translate("auth.action.set_new_password")
+                    children: translate("auth.action.set_new_password")
                 })
             ]
         })
@@ -2053,18 +2007,11 @@ var $176df6bd8edc5f4d$export$2e2bcd8739ae039 = $176df6bd8edc5f4d$var$NewPassword
 
 
 
-
-const $a04debd4e4af2a01$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))((theme)=>({
-        icon: {
-            margin: theme.spacing(0.3)
-        }
-    }));
 const $a04debd4e4af2a01$var$ResetPasswordForm = ()=>{
     const [loading, setLoading] = (0, $4Uj5b$reactadmin.useSafeSetState)(false);
     const authProvider = (0, $4Uj5b$reactadmin.useAuthProvider)();
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
-    const classes = $a04debd4e4af2a01$var$useStyles();
     const submit = (values)=>{
         setLoading(true);
         authProvider.resetPassword({
@@ -2087,7 +2034,6 @@ const $a04debd4e4af2a01$var$ResetPasswordForm = ()=>{
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Form), {
         onSubmit: submit,
         children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
-            className: classes.content,
             children: [
                 /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
                     autoFocus: true,
@@ -2105,12 +2051,7 @@ const $a04debd4e4af2a01$var$ResetPasswordForm = ()=>{
                     color: "primary",
                     disabled: loading,
                     fullWidth: true,
-                    className: classes.button,
-                    children: loading ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.CircularProgress), {
-                        className: classes.icon,
-                        size: 19,
-                        thickness: 3
-                    }) : translate("auth.action.submit")
+                    children: translate("auth.action.submit")
                 })
             ]
         })
@@ -2131,15 +2072,15 @@ const $d6b5c702311394c4$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
             }
         },
         root: {
-            backgroundColor: theme.palette.secondary.main
+            backgroundColor: theme.palette.secondary.main,
+            [theme.breakpoints.down("sm")]: {
+                padding: "1em"
+            }
         },
         card: {
-            minWidth: 300,
-            maxWidth: 500,
-            marginTop: "6em",
-            [theme.breakpoints.down("sm")]: {
-                margin: "1em"
-            }
+            width: "100%",
+            maxWidth: 450,
+            marginTop: "6em"
         },
         icon: {
             marginTop: 5,
@@ -2213,14 +2154,6 @@ const $cd7709c431b14d14$var$getSearchParamsRest = (searchParams)=>{
 var $cd7709c431b14d14$export$2e2bcd8739ae039 = $cd7709c431b14d14$var$getSearchParamsRest;
 
 
-const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))(()=>({
-        switch: {
-            marginBottom: "1em",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center"
-        }
-    }));
 /**
  * @param {object} props Props
  * @param {boolean} props.hasSignup If to show signup form.
@@ -2233,7 +2166,6 @@ const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
  *  passwordStrength's `defaultScorer`.
  * @returns
  */ const $4c56dbfbda0fa20c$var$LocalLoginPage = ({ hasSignup: hasSignup, allowUsername: allowUsername, onLogin: onLogin, onSignup: onSignup, additionalSignupValues: additionalSignupValues, passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8) })=>{
-    const classes = $4c56dbfbda0fa20c$var$useStyles();
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
     const isSignup = hasSignup && searchParams.has("signup");
@@ -2300,8 +2232,14 @@ const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
                     redirectTo: redirectTo,
                     passwordScorer: passwordScorer
                 }),
-                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("div", {
-                    className: classes.switch,
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Box), {
+                    sx: {
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        mt: -1,
+                        mb: 2
+                    },
                     children: [
                         (isSignup || isResetPassword) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactrouterdom.Link), {
                             to: `/login?${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}`,

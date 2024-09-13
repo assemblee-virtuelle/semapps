@@ -10,15 +10,15 @@ const useStyles = makeStyles(theme => ({
     }
   },
   root: {
-    backgroundColor: theme.palette.secondary.main
+    backgroundColor: theme.palette.secondary.main,
+    [theme.breakpoints.down('sm')]: {
+      padding: '1em'
+    }
   },
   card: {
-    minWidth: 300,
-    maxWidth: 500,
-    marginTop: '6em',
-    [theme.breakpoints.down('sm')]: {
-      margin: '1em'
-    }
+    width: '100%',
+    maxWidth: 450,
+    marginTop: '6em'
   },
   icon: {
     marginTop: 5,

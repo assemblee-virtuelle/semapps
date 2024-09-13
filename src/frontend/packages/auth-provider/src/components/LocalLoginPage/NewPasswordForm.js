@@ -1,17 +1,10 @@
 import React, { useState } from 'react';
 import { Form, useTranslate, useNotify, useSafeSetState, useAuthProvider, TextInput, required } from 'react-admin';
 import { useLocation } from 'react-router-dom';
-import { Button, CardContent, CircularProgress, Typography } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { Button, CardContent, Typography } from '@mui/material';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 import validatePasswordStrength from './validatePasswordStrength';
 import { defaultScorer } from '../../passwordScorer';
-
-const useStyles = makeStyles(theme => ({
-  icon: {
-    margin: theme.spacing(0.3)
-  }
-}));
 
 const samePassword = (value, allValues) => {
   if (value && value !== allValues.password) {
@@ -37,7 +30,6 @@ const NewPasswordForm = ({ redirectTo, passwordScorer = defaultScorer }) => {
 
   const translate = useTranslate();
   const notify = useNotify();
-  const classes = useStyles();
 
   const [newPassword, setNewPassword] = useState('');
 
@@ -75,7 +67,7 @@ const NewPasswordForm = ({ redirectTo, passwordScorer = defaultScorer }) => {
 
   return (
     <Form onSubmit={submit} noValidate defaultValues={{ email: searchParams.get('email') }}>
-      <CardContent className={classes.content}>
+      <CardContent>
         <TextInput
           autoFocus
           source="email"
@@ -116,19 +108,8 @@ const NewPasswordForm = ({ redirectTo, passwordScorer = defaultScorer }) => {
           disabled={loading}
           validate={[required(), samePassword]}
         />
-        <Button
-          variant="contained"
-          type="submit"
-          color="primary"
-          disabled={loading}
-          fullWidth
-          className={classes.button}
-        >
-          {loading ? (
-            <CircularProgress className={classes.icon} size={19} thickness={3} />
-          ) : (
-            translate('auth.action.set_new_password')
-          )}
+        <Button variant="contained" type="submit" color="primary" disabled={loading} fullWidth>
+          {translate('auth.action.set_new_password')}
         </Button>
       </CardContent>
     </Form>
