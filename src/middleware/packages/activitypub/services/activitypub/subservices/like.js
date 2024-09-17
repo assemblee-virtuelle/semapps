@@ -96,6 +96,7 @@ const LikeService = {
         type: ACTIVITY_TYPES.LIKE
       },
       async onEmit(ctx, activity, emitterUri) {
+        if (!activity?.object) throw new Error(`No object in the Like activity`);
         await this.actions.addObjectToActorLikedCollection(
           { actorUri: activity.actor, objectUri: activity.object },
           { parentCtx: ctx }
@@ -110,6 +111,7 @@ const LikeService = {
       },
       async onReceive(ctx, activity, recipientUri) {
         if (this.isLocalObject(activity.object, recipientUri)) {
+          if (!activity?.object) throw new Error(`No object in the Like activity`);
           await this.actions.addActorToObjectLikesCollection(
             { actorUri: activity.actor, objectUri: activity.object },
             { parentCtx: ctx }
@@ -125,22 +127,24 @@ const LikeService = {
         }
       },
       async onEmit(ctx, activity, emitterUri) {
+        if (!activity.object?.object) throw new Error(`No object in the Like activity`);
         await this.actions.removeObjectFromActorLikedCollection(
-          { actorUri: activity.actor, objectUri: activity.object },
+          { actorUri: activity.actor, objectUri: activity.object.object },
           { parentCtx: ctx }
         );
         // In case there is no recipient, remove the actor immediately from the collection
-        if (this.isLocalObject(activity.object, emitterUri)) {
+        if (this.isLocalObject(activity.object.object, emitterUri)) {
           await this.actions.removeActorFromObjectLikesCollection(
-            { actorUri: activity.actor, objectUri: activity.object },
+            { actorUri: activity.actor, objectUri: activity.object.object },
             { parentCtx: ctx }
           );
         }
       },
       async onReceive(ctx, activity, recipientUri) {
-        if (this.isLocalObject(activity.object, recipientUri)) {
+        if (this.isLocalObject(activity.object.object, recipientUri)) {
+          if (!activity.object?.object) throw new Error(`No object in the Like activity`);
           await this.actions.removeActorFromObjectLikesCollection(
-            { actorUri: activity.actor, objectUri: activity.object },
+            { actorUri: activity.actor, objectUri: activity.object.object },
             { parentCtx: ctx }
           );
         }
