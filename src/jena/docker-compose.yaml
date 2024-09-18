@@ -4,6 +4,9 @@ services:
     build:
       context: fuseki-docker
       dockerfile: Dockerfile
+      platforms:
+        - linux/arm64
+        - linux/amd64
     image: semapps/jena-fuseki-webacl
     container_name: fuseki
     volumes:
