@@ -179,9 +179,9 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
         // Find the item in all pages and remove the item to be removed (either item.id or just item)
         pages.forEach(page => {
           if (page.orderedItems) {
-            page.orderedItems = page.orderedItems.filter((i: any) => (i.id || i) !== (item.id || item));
+            page.orderedItems = arrayOf(page.orderedItems).filter((i: any) => (i.id || i) !== (item.id || item));
           } else if (page.items) {
-            page.items = page.items.filter((i: any) => (i.id || i) !== (item?.id || item));
+            page.items = arrayOf(page.items).filter((i: any) => (i.id || i) !== (item?.id || item));
           }
         });
 

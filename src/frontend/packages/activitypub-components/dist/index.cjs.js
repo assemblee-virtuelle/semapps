@@ -290,8 +290,8 @@ const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
             ];
             // Find the item in all pages and remove the item to be removed (either item.id or just item)
             pages.forEach((page)=>{
-                if (page.orderedItems) page.orderedItems = page.orderedItems.filter((i)=>(i.id || i) !== (item.id || item));
-                else if (page.items) page.items = page.items.filter((i)=>(i.id || i) !== (item?.id || item));
+                if (page.orderedItems) page.orderedItems = (0, $03510abb28fd3d8a$export$e57ff0f701c44363)(page.orderedItems).filter((i)=>(i.id || i) !== (item.id || item));
+                else if (page.items) page.items = (0, $03510abb28fd3d8a$export$e57ff0f701c44363)(page.items).filter((i)=>(i.id || i) !== (item?.id || item));
             });
             oldData.pages = pages;
             return oldData;
