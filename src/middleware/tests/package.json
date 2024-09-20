@@ -8,6 +8,7 @@
   "author": "SemApps Team",
   "license": "Apache-2.0",
   "dependencies": {
+    "@rdfjs/data-model": "^1.3.4",
     "@semapps/activitypub": "0.9.5",
     "@semapps/auth": "0.9.5",
     "@semapps/core": "0.9.5",

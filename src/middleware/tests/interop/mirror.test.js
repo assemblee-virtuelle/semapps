@@ -1,5 +1,6 @@
 const urlJoin = require('url-join');
 const waitForExpect = require('wait-for-expect');
+const { triple, namedNode } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const initialize = require('./initialize');
 
@@ -101,10 +102,13 @@ describe('Server2 mirror server1', () => {
   test('Resource on server1 is patched on server2 container', async () => {
     await server2.call('ldp.container.patch', {
       containerUri: 'http://localhost:3002/resources',
-      sparqlUpdate: `
-        PREFIX ldp: <http://www.w3.org/ns/ldp#>
-        INSERT DATA { <http://localhost:3002/resources> ldp:contains <${resourceUri}>. };
-      `
+      triplesToAdd: [
+        triple(
+          namedNode('http://localhost:3002/resources'),
+          namedNode('http://www.w3.org/ns/ldp#contains'),
+          namedNode(resourceUri)
+        )
+      ]
     });
 
     await waitForExpect(async () => {

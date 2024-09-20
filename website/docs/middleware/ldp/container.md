@@ -159,22 +159,31 @@ Array of URIs
 
 ##### Parameters
 
-| Property       | Type     | Default             | Description                                                                     |
-| -------------- | -------- | ------------------- | ------------------------------------------------------------------------------- |
-| `containerUri` | `String` | **required**        | URI of container to which the resource will be attached or detached             |
-| `sparqlUpdate` | `String` | **required**        | SPARQL UPDATE string with INSERT DATA and/or DELETE DATA statements (see below) |
-| `webId`        | `string` | Logged user's webId | User doing the action                                                           |
+| Property          | Type     | Default             | Description                                                         |
+| ----------------- | -------- | ------------------- | ------------------------------------------------------------------- |
+| `containerUri`    | `String` | **required**        | URI of container to which the resource will be attached or detached |
+| `triplesToAdd`    | `Array`  |                     | Triples to add, in RDF/JS format. See below for details.            |
+| `triplesToRemove` | `Array`  |                     | Triples to remove, in RDF/JS format. See below for details.         |
+| `webId`           | `string` | Logged user's webId | User doing the action                                               |
 
-The format of the `update` string is as follow:
+Example usage:
 
+```js
+const { triple, namedNode } = require('@rdfjs/data-model');
+
+await this.broker.call('ldp.container.patch', {
+  containerUri: 'http://localhost:3002/resources',
+  triplesToAdd: [
+    triple(
+      namedNode('http://localhost:3002/resources'),
+      namedNode('http://www.w3.org/ns/ldp#contains'),
+      namedNode('http://localhost:3001/resources/my-resource')
+    )
+  ]
+});
 ```
-PREFIX ldp: <http://www.w3.org/ns/ldp#>
-INSERT DATA { <http://url/of/container> ldp:contains <http://url/of/resource/to/attach>. };
-DELETE DATA { <http://url/of/container> ldp:contains <http://url/of/resource/to/detach>. };
-```
 
-Any remote RDF resource can be attached to a container, given that its server can answer a GET request on it that returns its content in Turtle format.
-This means that even other LDP servers than semapps can have their resources linked to a container.
+If the resource being patched is a remote resource, it will be stored locally (with `ldp.remote.store`) before being attached to the container.
 
 ### `post`
 
