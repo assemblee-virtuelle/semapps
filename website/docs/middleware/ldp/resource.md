@@ -15,11 +15,11 @@ The following service actions are available:
 
 ##### Parameters
 
-| Property      | Type     | Default             | Description                                                                                 |
-| ------------- | -------- | ------------------- | ------------------------------------------------------------------------------------------- |
-| `resource`    | `Object` | **required**        | Resource to create (with an ID)                                                             |
-| `contentType` | `String` | **required**        | Type of provided resource (`application/ld+json`, `text/turtle` or `application/n-triples`) |
-| `webId`       | `String` | Logged user's webId | User doing the action                                                                       |
+| Property      | Type     | Default             | Description                     |
+| ------------- | -------- | ------------------- | ------------------------------- |
+| `resource`    | `Object` | **required**        | Resource to create (with an ID) |
+| `contentType` | `String` | **required**        | Type of provided resource       |
+| `webId`       | `String` | Logged user's webId | User doing the action           |
 
 ##### Return values
 
@@ -31,7 +31,7 @@ The following service actions are available:
 
 ### `delete`
 
-- Delete the whole resource and detach it from its container
+Delete the whole resource and detach it from its container
 
 ##### Parameters
 
@@ -66,31 +66,32 @@ The following service actions are available:
 
 ### `generateId`
 
-- Finds an unique ID for a resource
+Finds an unique ID for a resource
 
 ##### Parameters
 
-| Property       | Type     | Default      | Description                                       |
-| -------------- | -------- | ------------ | ------------------------------------------------- |
-| `containerUri` | `String` | **required** | URI of the container where to create the resource |
-| `slug`         | `String` |              | Preferred slug (will be "slugified")              |
+| Property       | Type      | Default      | Description                                          |
+| -------------- | --------- | ------------ | ---------------------------------------------------- |
+| `containerUri` | `String`  | **required** | URI of the container where to create the resource    |
+| `slug`         | `String`  |              | Preferred slug (will be "slugified")                 |
+| `isContainer`  | `Boolean` | `false`      | Set to true if you want to generate a container's ID |
 
 ##### Return values
 
-Full URI available
+Full available URI
 
 ### `get`
 
 - Get a resource by its URI
-  -Accept triples, turtle or JSON-LD (see `@semapps/mime-types` package)
+  -A ccept triples, turtle or JSON-LD (see `@semapps/mime-types` package)
 
 ##### Parameters
 
-| Property      | Type     | Default             | Description                                                                      |
-| ------------- | -------- | ------------------- | -------------------------------------------------------------------------------- |
-| `resourceUri` | `String` | **required**        | URI of the resource                                                              |
-| `accept`      | `string` | **required**        | Type to return (`application/ld+json`, `text/turtle` or `application/n-triples`) |
-| `webId`       | `string` | Logged user's webId | User doing the action                                                            |
+| Property      | Type     | Default             | Description           |
+| ------------- | -------- | ------------------- | --------------------- |
+| `resourceUri` | `String` | **required**        | URI of the resource   |
+| `accept`      | `string` | **required**        | Type to return        |
+| `webId`       | `string` | Logged user's webId | User doing the action |
 
 You can also pass any parameter defined in the [container options](./index.md#container-options).
 
@@ -98,47 +99,76 @@ You can also pass any parameter defined in the [container options](./index.md#co
 
 Triples, Turtle or JSON-LD depending on `accept` type.
 
-### `patch`
+### `getContainers`
 
-- Partial update of an existing resource. Allow to add and/or remove tripled.
-- Accept either a SPARQL Update (with INSERT DATA and/or DELETE DATA) or an array of triples conforming with the [RDF.js data model](https://github.com/rdfjs-base/data-model)
-- You can add blank nodes but not remove them (this is a limitation of the SPARQL specifications for DELETE DATA)
-- If you try to modify triples not linked to the PATCH resource, it will throw an error.
-
-##### Example query
-
-```sparql
-PREFIX as: <https://www.w3.org/ns/activitystreams#>
-INSERT DATA {
-  <http://localhost:3000/actor/virtual-assembly> as:name "Virtual Assembly" .
-  <http://localhost:3000/actor/virtual-assembly> as:location [
-     a as:Place ;
-     pair:label "Paris"
-  ] .
-};
-DELETE DATA {
-  <http://localhost:3000/actor/virtual-assembly> as:name "VirtualAssembly" .
-};
-```
+Get the list of containers which includes the resource
 
 ##### Parameters
 
-| Property          | Type     | Default             | Description                                                                                        |
-| ----------------- | -------- | ------------------- | -------------------------------------------------------------------------------------------------- |
-| `resourceUri`     | `String` | **required**        | URI of resource to update                                                                          |
-| `sparqlUpdate`    | `String` |                     | SPARQL query with INSERT DATA and/or DELETE DATA operations                                        |
-| `triplesToAdd`    | `Array`  |                     | Array of triples conforming with the [RDF.js data model](https://github.com/rdfjs-base/data-model) |
-| `triplesToRemove` | `Array`  |                     | Array of triples conforming with the [RDF.js data model](https://github.com/rdfjs-base/data-model) |
-| `webId`           | `String` | Logged user's webId | User doing the action                                                                              |
+| Property      | Type     | Default                             | Description                                     |
+| ------------- | -------- | ----------------------------------- | ----------------------------------------------- |
+| `resourceUri` | `String` | **required**                        | URI of the resource                             |
+| `dataset`     | `String` | **required** in Pod provider config | The dataset in which to look for the containers |
+
+##### Return
+
+An array of containers URIS
+
+### `getTypes`
+
+Get the type(s) of the given resource
+
+##### Parameters
+
+| Property      | Type     | Default      | Description         |
+| ------------- | -------- | ------------ | ------------------- |
+| `resourceUri` | `String` | **required** | URI of the resource |
+
+##### Return
+
+An array of types
+
+### `patch`
+
+- Partial update of an existing resource. Allow to add and/or remove tripled.
+- Takes an array of triples conforming with the [RDF.js data model](https://github.com/rdfjs-base/data-model)
+- You can add blank nodes but not remove them (this is a limitation of the SPARQL specifications for DELETE DATA)
+- If you try to modify triples not linked to the PATCH resource, it will throw an error.
+
+##### Parameters
+
+| Property          | Type     | Default             | Description                                                 |
+| ----------------- | -------- | ------------------- | ----------------------------------------------------------- |
+| `resourceUri`     | `String` | **required**        | URI of resource to update                                   |
+| `triplesToAdd`    | `Array`  |                     | Triples to add, in RDF/JS format. See below for details.    |
+| `triplesToRemove` | `Array`  |                     | Triples to remove, in RDF/JS format. See below for details. |
+| `webId`           | `String` | Logged user's webId | User doing the action                                       |
+
+Example usage:
+
+```js
+const { triple, namedNode } = require('@rdfjs/data-model');
+
+await this.broker.call('ldp.resource.patch', {
+  containerUri: 'http://localhost:3002/my-resource',
+  triplesToAdd: [
+    triple(
+      namedNode('http://localhost:3002/my-resource'),
+      namedNode('http://purl.org/dc/terms/creator'),
+      namedNode('http://localhost:3002/alice')
+    )
+  ]
+});
+```
 
 ##### Return values
 
-| Property          | Type     | Description                                                                                        |
-| ----------------- | -------- | -------------------------------------------------------------------------------------------------- |
-| `resourceUri`     | `String` | URI of the updated resource                                                                        |
-| `triplesToAdd`    | `Array`  | Array of triples conforming with the [RDF.js data model](https://github.com/rdfjs-base/data-model) |
-| `triplesToRemove` | `Array`  | Array of triples conforming with the [RDF.js data model](https://github.com/rdfjs-base/data-model) |
-| `webId`           | `String` | User who did the action                                                                            |
+| Property         | Type     | Description                         |
+| ---------------- | -------- | ----------------------------------- |
+| `resourceUri`    | `String` | URI of the updated resource         |
+| `triplesAdded`   | `Array`  | Array of triples which were addeed  |
+| `triplesRemoved` | `Array`  | Array of triples which were removed |
+| `webId`          | `String` | User who did the action             |
 
 ### `put`
 
@@ -162,6 +192,21 @@ DELETE DATA {
 | `newData`     | `Object` | New value of the resource   |
 | `oldData`     | `Object` | Old value of the resource   |
 | `webId`       | `String` | User who did the action     |
+
+### `upload`
+
+Upload a given file and return its JSON-LD representation
+
+##### Parameters
+
+| Property      | Type     | Default      | Description                                                                |
+| ------------- | -------- | ------------ | -------------------------------------------------------------------------- |
+| `resourceUri` | `String` | **required** | URI of the file resource. Will be used when choosing the path of the file. |
+| `file`        | `File`   | **required** | File to upload                                                             |
+
+##### Return values
+
+The JSON-LD representation of the uploaded file (using the `semapps:File` predicate).
 
 ## Events
 

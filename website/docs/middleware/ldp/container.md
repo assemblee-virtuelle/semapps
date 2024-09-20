@@ -10,14 +10,26 @@ The following service actions are available:
 
 ### `attach`
 
-- Attach a resource to a container
+Attach a resource to a container
 
 ##### Parameters
 
-| Property       | Type     | Default      | Description                                             |
-| -------------- | -------- | ------------ | ------------------------------------------------------- |
-| `containerUri` | `String` | **required** | URI of container to which the resource will be attached |
-| `resourceUri`  | `String` | **required** | URI of resource to attach                               |
+| Property       | Type     | Default             | Description                                             |
+| -------------- | -------- | ------------------- | ------------------------------------------------------- |
+| `containerUri` | `String` | **required**        | URI of container to which the resource will be attached |
+| `resourceUri`  | `String` | **required**        | URI of resource to attach                               |
+| `webId`        | `String` | Logged user's webId | User doing the action                                   |
+
+### `clear`
+
+Delete all the resources attached to a container
+
+##### Parameters
+
+| Property       | Type     | Default             | Description                   |
+| -------------- | -------- | ------------------- | ----------------------------- |
+| `containerUri` | `String` | **required**        | URI of the container to clear |
+| `webId`        | `String` | Logged user's webId | User doing the action         |
 
 ### `create`
 
@@ -26,42 +38,52 @@ The following service actions are available:
 
 ##### Parameters
 
-| Property       | Type     | Default      | Description                    |
-| -------------- | -------- | ------------ | ------------------------------ |
-| `containerUri` | `String` | **required** | URI of the container to create |
-| `title`        | `String` |              | Title of the container         |
-| `description`  | `String` |              | Description of the container   |
+| Property       | Type     | Default             | Description                                   |
+| -------------- | -------- | ------------------- | --------------------------------------------- |
+| `containerUri` | `String` | **required**        | URI of the container to create                |
+| `title`        | `String` |                     | Title of the container                        |
+| `description`  | `String` |                     | Description of the container                  |
+| `permissions`  | `String` |                     | WAC permissions to apply to the new container |
+| `webId`        | `String` | Logged user's webId | User doing the action                         |
 
-### `clear`
+### `createAndAttach`
 
-- Delete all the resources attached to a container
+- Create a container and attach it to its parent container(s)
+- Recursively create the parent container(s) if they don't exist
+- In Pod provider config, the webId is required to find the Pod root
 
 ##### Parameters
 
-| Property       | Type     | Default      | Description                   |
-| -------------- | -------- | ------------ | ----------------------------- |
-| `containerUri` | `String` | **required** | URI of the container to clear |
+| Property       | Type     | Default             | Description                                   |
+| -------------- | -------- | ------------------- | --------------------------------------------- |
+| `containerUri` | `String` | **required**        | URI of the container to create                |
+| `title`        | `String` |                     | Title of the container                        |
+| `description`  | `String` |                     | Description of the container                  |
+| `permissions`  | `String` |                     | WAC permissions to apply to the new container |
+| `webId`        | `String` | Logged user's webId | User doing the action                         |
 
 ### `detach`
 
-- Detach a resource from a container
+Detach a resource from a container
 
 ##### Parameters
 
-| Property       | Type     | Default      | Description                                             |
-| -------------- | -------- | ------------ | ------------------------------------------------------- |
-| `containerUri` | `String` | **required** | URI of container to which the resource will be detached |
-| `resourceUri`  | `String` | **required** | URI of resource to attach                               |
+| Property       | Type     | Default             | Description                                             |
+| -------------- | -------- | ------------------- | ------------------------------------------------------- |
+| `containerUri` | `String` | **required**        | URI of container to which the resource will be detached |
+| `resourceUri`  | `String` | **required**        | URI of resource to attach                               |
+| `webId`        | `String` | Logged user's webId | User doing the action                                   |
 
 ### `exist`
 
-- Check if a container exists
+Check if a container exists
 
 ##### Parameters
 
-| Property       | Type     | Default      | Description               |
-| -------------- | -------- | ------------ | ------------------------- |
-| `containerUri` | `String` | **required** | URI of container to check |
+| Property       | Type     | Default             | Description               |
+| -------------- | -------- | ------------------- | ------------------------- |
+| `containerUri` | `String` | **required**        | URI of container to check |
+| `webId`        | `String` | Logged user's webId | User doing the action     |
 
 ##### Return
 
@@ -69,16 +91,17 @@ The following service actions are available:
 
 ### `get`
 
-- Get all resources attached to a container
-- Use the LDP ontology of BasicContainers
+Get the LDP container with all its resources (which are dereferenced)
 
 ##### Parameters
 
-| Property       | Type     | Default             | Description                                                                      |
-| -------------- | -------- | ------------------- | -------------------------------------------------------------------------------- |
-| `containerUri` | `String` | **required**        | URI of container                                                                 |
-| `accept`       | `string` | **required**        | Type to return (`application/ld+json`, `text/turtle` or `application/n-triples`) |
-| `webId`        | `string` | Logged user's webId | User doing the action                                                            |
+| Property       | Type                | Default             | Description                                        |
+| -------------- | ------------------- | ------------------- | -------------------------------------------------- |
+| `containerUri` | `String`            | **required**        | URI of container                                   |
+| `accept`       | `String`            | **required**        | Type to return                                     |
+| `filters`      | `Object`            |                     | Key/value with predicates and value                |
+| `jsonContext`  | `Object`or `String` |                     | JSON-LD context to use when compacting the results |
+| `webId`        | `String`            | Logged user's webId | User doing the action                              |
 
 You can also pass parameters defined in the [container options](index.md#container-options).
 
@@ -88,7 +111,13 @@ Triples, Turtle or JSON-LD depending on `accept` type.
 
 ### `getAll`
 
-- Get the list of all existing containers
+Get the list of all existing containers
+
+##### Parameters
+
+| Property  | Type     | Default | Description                               |
+| --------- | -------- | ------- | ----------------------------------------- |
+| `dataset` | `String` |         | Dataset (required in Pod provider config) |
 
 ##### Return
 
@@ -112,7 +141,7 @@ The path of the container
 
 ### `getUris`
 
-- Get the list of all resources within a container
+Get the list of all resources within a container
 
 ##### Parameters
 
@@ -126,14 +155,15 @@ Array of URIs
 
 ### `includes`
 
-- Checks if a resource is contained in the container
+Checks if a resource is in the container
 
 ##### Parameters
 
-| Property       | Type     | Default      | Description      |
-| -------------- | -------- | ------------ | ---------------- |
-| `containerUri` | `String` | **required** | URI of container |
-| `resourceUri`  | `String` | **required** | URI of resource  |
+| Property       | Type     | Default             | Description           |
+| -------------- | -------- | ------------------- | --------------------- |
+| `containerUri` | `String` | **required**        | URI of container      |
+| `resourceUri`  | `String` | **required**        | URI of resource       |
+| `webId`        | `String` | Logged user's webId | User doing the action |
 
 ##### Return
 
@@ -141,13 +171,14 @@ Array of URIs
 
 ### `isEmpty`
 
-- Checks if a container is empty
+Checks if a container is empty
 
 ##### Parameters
 
-| Property       | Type     | Default      | Description      |
-| -------------- | -------- | ------------ | ---------------- |
-| `containerUri` | `String` | **required** | URI of container |
+| Property       | Type     | Default             | Description           |
+| -------------- | -------- | ------------------- | --------------------- |
+| `containerUri` | `String` | **required**        | URI of container      |
+| `webId`        | `String` | Logged user's webId | User doing the action |
 
 ##### Return
 
@@ -155,7 +186,7 @@ Array of URIs
 
 ### `patch`
 
-- Attach and/or detach resource(s) from a container
+Attach and/or detach resource(s) from a container
 
 ##### Parameters
 
@@ -192,17 +223,19 @@ If the resource being patched is a remote resource, it will be stored locally (w
 
 ##### Parameters
 
-| Property       | Type     | Default             | Description                                                                                 |
-| -------------- | -------- | ------------------- | ------------------------------------------------------------------------------------------- |
-| `resource`     | `Object` | **required**        | Resource to create                                                                          |
-| `containerUri` | `String` | **required**        | Container where the resource will be created                                                |
-| `contentType`  | `String` | **required**        | Type of provided resource (`application/ld+json`, `text/turtle` or `application/n-triples`) |
-| `webId`        | `String` | Logged user's webId | User doing the action                                                                       |
-| `slug`         | `String` |                     | Specific ID tu use for URI instead generated UUID                                           |
+| Property       | Type     | Default             | Description                                       |
+| -------------- | -------- | ------------------- | ------------------------------------------------- |
+| `resource`     | `Object` | **required**        | Resource to create                                |
+| `containerUri` | `String` | **required**        | Container where the resource will be created      |
+| `contentType`  | `String` | **required**        | Type of data                                      |
+| `slug`         | `String` |                     | Specific ID tu use for URI instead generated UUID |
+| `webId`        | `String` | Logged user's webId | User doing the action                             |
+
+The `slug` parameter is ignored if the `resourcesWithContainerPath` setting is `false`.
 
 ##### Return
 
-`String`: URI of the created resource
+URI of the created resource
 
 ## Events
 
