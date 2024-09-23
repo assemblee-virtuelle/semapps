@@ -90,9 +90,11 @@ COPY extra/semapps-jena-permissions-1.0.0.jar /jena-fuseki/extra/semapps-jena-pe
 #COPY configuration/testData.ttl /jena-fuseki/configuration/testData.ttl
 COPY docker-entrypoint.sh /
 COPY docker-compact-entrypoint.sh /
+COPY docker-delete-old-data-entrypoint.sh /
 COPY docker-migration-entrypoint.sh /
 RUN chmod 755 /docker-entrypoint.sh
 RUN chmod 755 /docker-compact-entrypoint.sh
+RUN chmod 755 /docker-delete-old-data-entrypoint.sh
 RUN chmod 755 /docker-migration-entrypoint.sh
 
 COPY load.sh /jena-fuseki/
