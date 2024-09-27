@@ -19,7 +19,7 @@ const BackupService = {
       otherDirsPaths: {}
     },
     copyMethod: 'rsync', // rsync, ftp, or fs
-    deleteBackupsAfterCopy: false,
+    deleteFusekiBackupsAfterCopy: false,
     remoteServer: {
       path: null, // Required
       user: null, // Required by rsync and ftp
@@ -74,7 +74,7 @@ const BackupService = {
       );
 
       // If there was an error on copy, don't delete the backups
-      if (copied && this.settings.deleteBackupsAfterCopy) {
+      if (copied && this.settings.deleteFusekiBackupsAfterCopy) {
         emptyDirSync(backupsDirPath);
       }
     },
