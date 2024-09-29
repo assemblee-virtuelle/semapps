@@ -133,7 +133,7 @@ const CollectionsRegistryService = {
       }
     },
     async updateCollectionsOptions(ctx) {
-      const { collection } = ctx.params;
+      let { collection, dataset } = ctx.params;
       let { attachPredicate, ordered, summary, dereferenceItems, itemsPerPage, sortPredicate, sortOrder } =
         collection || {};
 
@@ -142,9 +142,9 @@ const CollectionsRegistryService = {
       sortOrder = sortOrder && (await ctx.call('jsonld.parser.expandPredicate', { predicate: sortOrder }));
 
       const accounts = await this.broker.call('auth.account.find');
-      const datasets = this.settings.podProvider ? accounts.map(a => a.username) : [undefined];
+      const datasets = dataset ? [dataset] : this.settings.podProvider ? accounts.map(a => a.username) : [undefined];
 
-      for (let dataset of datasets) {
+      for (dataset of datasets) {
         this.logger.info(`Getting all collections in dataset ${dataset} attached with predicate ${attachPredicate}...`);
 
         const results = await ctx.call('triplestore.query', {

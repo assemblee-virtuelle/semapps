@@ -109,11 +109,14 @@ const FollowService = {
       });
     },
     async updateCollectionsOptions(ctx) {
+      const { dataset } = ctx.params;
       await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
-        collection: this.settings.followersCollectionOptions
+        collection: this.settings.followersCollectionOptions,
+        dataset
       });
       await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
-        collection: this.settings.followingCollectionOptions
+        collection: this.settings.followingCollectionOptions,
+        dataset
       });
     }
   },
