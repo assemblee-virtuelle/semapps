@@ -169,8 +169,10 @@ const InboxService = {
       return activities;
     },
     async updateCollectionsOptions(ctx) {
+      const { dataset } = ctx.params;
       await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
-        collection: this.settings.collectionOptions
+        collection: this.settings.collectionOptions,
+        dataset
       });
     }
   }

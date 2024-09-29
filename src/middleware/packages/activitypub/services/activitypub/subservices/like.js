@@ -82,11 +82,14 @@ const LikeService = {
       }
     },
     async updateCollectionsOptions(ctx) {
+      const { dataset } = ctx.params;
       await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
-        collection: this.settings.likesCollectionOptions
+        collection: this.settings.likesCollectionOptions,
+        dataset
       });
       await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
-        collection: this.settings.likedCollectionOptions
+        collection: this.settings.likedCollectionOptions,
+        dataset
       });
     }
   },
