@@ -160,40 +160,42 @@ const CollectionsRegistryService = {
         });
 
         for (const collectionUri of results.map(r => r.collectionUri.value)) {
-          this.logger.info(`Updating options of ${collectionUri}...`);
-          await ctx.call('triplestore.update', {
-            query: `
-              PREFIX as: <https://www.w3.org/ns/activitystreams#>
-              PREFIX semapps: <http://semapps.org/ns/core#>
-              DELETE {
-                <${collectionUri}> 
-                  a ?type ;
-                  as:summary ?summary ;
-                  semapps:dereferenceItems ?dereferenceItems ;
-                  semapps:itemsPerPage ?itemsPerPage ;
-                  semapps:sortPredicate ?sortPredicate ;
-                  semapps:sortOrder ?sortOrder .
-              }
-              INSERT {
-                <${collectionUri}> a ${ordered ? 'as:OrderedCollection, as:Collection' : 'as:Collection'} .
-                ${summary ? `<${collectionUri}> as:summary "${summary}" .` : ''}
-                <${collectionUri}> semapps:dereferenceItems ${dereferenceItems} .
-                ${itemsPerPage ? `<${collectionUri}> semapps:itemsPerPage ${itemsPerPage} .` : ''}
-                ${sortPredicate ? `<${collectionUri}> semapps:sortPredicate <${sortPredicate}> .` : ''}
-                ${sortOrder ? `<${collectionUri}> semapps:sortOrder <${sortOrder}> .` : ''}
-              }
-              WHERE {
-                <${collectionUri}> a ?type
-                OPTIONAL { <${collectionUri}> as:summary ?summary . }
-                OPTIONAL { <${collectionUri}> semapps:dereferenceItems ?dereferenceItems . }
-                OPTIONAL { <${collectionUri}> semapps:itemsPerPage ?itemsPerPage . }
-                OPTIONAL { <${collectionUri}> semapps:sortPredicate ?sortPredicate . }
-                OPTIONAL { <${collectionUri}> semapps:sortOrder ?sortOrder . }
-              }
-            `,
-            webId: 'system',
-            dataset
-          });
+          if (this.isLocalObject(collectionUri, urlJoin(this.settings.baseUri, dataset))) {
+            this.logger.info(`Updating options of ${collectionUri}...`);
+            await ctx.call('triplestore.update', {
+              query: `
+                PREFIX as: <https://www.w3.org/ns/activitystreams#>
+                PREFIX semapps: <http://semapps.org/ns/core#>
+                DELETE {
+                  <${collectionUri}> 
+                    a ?type ;
+                    as:summary ?summary ;
+                    semapps:dereferenceItems ?dereferenceItems ;
+                    semapps:itemsPerPage ?itemsPerPage ;
+                    semapps:sortPredicate ?sortPredicate ;
+                    semapps:sortOrder ?sortOrder .
+                }
+                INSERT {
+                  <${collectionUri}> a ${ordered ? 'as:OrderedCollection, as:Collection' : 'as:Collection'} .
+                  ${summary ? `<${collectionUri}> as:summary "${summary}" .` : ''}
+                  <${collectionUri}> semapps:dereferenceItems ${dereferenceItems} .
+                  ${itemsPerPage ? `<${collectionUri}> semapps:itemsPerPage ${itemsPerPage} .` : ''}
+                  ${sortPredicate ? `<${collectionUri}> semapps:sortPredicate <${sortPredicate}> .` : ''}
+                  ${sortOrder ? `<${collectionUri}> semapps:sortOrder <${sortOrder}> .` : ''}
+                }
+                WHERE {
+                  <${collectionUri}> a ?type
+                  OPTIONAL { <${collectionUri}> as:summary ?summary . }
+                  OPTIONAL { <${collectionUri}> semapps:dereferenceItems ?dereferenceItems . }
+                  OPTIONAL { <${collectionUri}> semapps:itemsPerPage ?itemsPerPage . }
+                  OPTIONAL { <${collectionUri}> semapps:sortPredicate ?sortPredicate . }
+                  OPTIONAL { <${collectionUri}> semapps:sortOrder ?sortOrder . }
+                }
+              `,
+              webId: 'system',
+              dataset
+            });
+          }
         }
       }
     }
@@ -221,6 +223,23 @@ const CollectionsRegistryService = {
     },
     hasTypeChanged(oldData, newData) {
       return JSON.stringify(newData.type || newData['@type']) !== JSON.stringify(oldData.type || oldData['@type']);
+    },
+    isLocalObject(uri, actorUri) {
+      if (this.settings.podProvider) {
+        const { origin, pathname } = new URL(actorUri);
+        const aclBase = `${origin}/_acl${pathname}`; // URL of type http://localhost:3000/_acl/alice
+        const aclGroupBase = `${origin}/_groups${pathname}`; // URL of type http://localhost:3000/_groups/alice
+        return (
+          uri === actorUri ||
+          uri.startsWith(actorUri + '/') ||
+          uri === aclBase ||
+          uri.startsWith(aclBase + '/') ||
+          uri === aclGroupBase ||
+          uri.startsWith(aclGroupBase + '/')
+        );
+      } else {
+        return uri.startsWith(this.settings.baseUri);
+      }
     }
   },
   events: {
