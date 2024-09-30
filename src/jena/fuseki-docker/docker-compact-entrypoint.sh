@@ -18,8 +18,15 @@ for operation in "${operations[@]}"; do
             if [ -d "$dir" ]; then
                 if [ "$operation" == "compact" ]; then
                     echo "Compacting ${dir}..."
-                    # TODO use --deleteOld command available in higher Fuseki versions
-                    /jena-fuseki/bin/tdb2.tdbcompact --loc=${dir}
+                    {
+                         # TODO use --deleteOld command available in higher Fuseki versions
+                        /jena-fuseki/bin/tdb2.tdbcompact --loc=${dir}
+                    } || {
+                        # We immediately delete any newly-created directory, to avoid potentially correct data to be removed during the deleteOld operation
+                        echo "Compact job failed. Deleting new directories from ${dir}..."
+                        cd "${dir}"
+                        find . -iname 'Data*' ! -wholename $(find . -iname 'Data*' -type d | sort -n -r | tail -n 1)  -type d -exec rm -rf {} +
+                    }
                 else
                     echo "Deleting old directories from ${dir}..."
                     cd "${dir}"
