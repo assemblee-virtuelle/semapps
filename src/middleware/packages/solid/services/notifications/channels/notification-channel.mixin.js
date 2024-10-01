@@ -72,13 +72,14 @@ module.exports = {
 
     this.channels = [];
 
-    await this.loadChannelsFromDb({ removeOldChannels: true });
+    // Do not await all channels to be loaded
+    this.loadChannelsFromDb({ removeOldChannels: true });
   },
   actions: {
     async discover() {
       throw new Error('Not implemented. Please provide this action in your service.');
       // Cache for 1 day.
-      ctx.meta.$responseHeaders = { 'Cache-Control': 'public, max-age=86400' };
+      // ctx.meta.$responseHeaders = { 'Cache-Control': 'public, max-age=86400' };
     },
 
     async createChannel(ctx) {
@@ -254,34 +255,32 @@ module.exports = {
       );
     },
     async loadChannelsFromDb({ removeOldChannels }) {
-      // Load all channels from all Pods
-      await Promise.all(
-        (await this.broker.call('auth.account.find')).map(async ({ webId }) => {
-          const container = await this.actions.list({ webId });
-          for (const channel of arrayOf(container['ldp:contains'])) {
-            // Remove channels where endAt is in the past.
-            if (removeOldChannels && channel['notify:endAt'] < new Date()) {
-              this.broker.call('ldp.resource.delete', {
-                resourceUri: channel.id || channel['@id'],
-                webId: 'system'
-              });
-              continue;
-            }
-
-            this.channels.push({
-              id: channel.id || channel['@id'],
-              topic: channel['notify:topic'],
-              sendTo: channel['notify:sendTo'],
-              receiveFrom: channel['notify:receiveFrom'],
-              startAt: channel['notify:startAt'],
-              endAt: channel['notify:endAt'],
-              accept: channel['notify:accept'],
-              rate: channel['notify:rate'],
-              webId
+      const accounts = await this.broker.call('auth.account.find');
+      for (const { webId } of accounts) {
+        const container = await this.actions.list({ webId });
+        for (const channel of arrayOf(container['ldp:contains'])) {
+          // Remove channels where endAt is in the past.
+          if (removeOldChannels && channel['notify:endAt'] < new Date()) {
+            this.broker.call('ldp.resource.delete', {
+              resourceUri: channel.id || channel['@id'],
+              webId: 'system'
             });
+            continue;
           }
-        })
-      );
+
+          this.channels.push({
+            id: channel.id || channel['@id'],
+            topic: channel['notify:topic'],
+            sendTo: channel['notify:sendTo'],
+            receiveFrom: channel['notify:receiveFrom'],
+            startAt: channel['notify:startAt'],
+            endAt: channel['notify:endAt'],
+            accept: channel['notify:accept'],
+            rate: channel['notify:rate'],
+            webId
+          });
+        }
+      }
     },
 
     // METHODS TO IMPLEMENT by implementing service.
