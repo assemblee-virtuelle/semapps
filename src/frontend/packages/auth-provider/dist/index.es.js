@@ -357,8 +357,14 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
             const token = localStorage.getItem("token");
             if (token) {
                 const payload = (0, $1obPJ$jwtdecode)(token);
-                const webId = payload.webId || payload.webid; // Currently we must deal with both formats
-                if (!webId) throw new Error("No webId found on provided token !");
+                // Backend-generated tokens use webId but Solid-OIDC tokens use webid
+                const webId = authType === $1d8606895ce3b768$var$AUTH_TYPE_SOLID_OIDC ? payload.webid : payload.webId;
+                if (!webId) {
+                    // If webId is not set, it is probably because we have ActivityPods v1 tokens and we need to disconnect
+                    localStorage.removeItem("token");
+                    window.location.href = "/login";
+                    throw new Error("No webId found on provided token !");
+                }
                 const { json: webIdData } = await dataProvider.fetch(webId);
                 const { json: profileData } = webIdData.url ? await dataProvider.fetch(webIdData.url) : {};
                 return {
