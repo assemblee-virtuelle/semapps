@@ -10,6 +10,7 @@ module.exports = {
   mixins: [ControlledContainerMixin, DereferenceMixin],
   settings: {
     acceptedTypes: ['solid:TypeIndex'],
+    permissions: {},
     newResourcesPermissions: webId => {
       if (webId === 'anon' || webId === 'system')
         throw new Error('Type indexes must be created by a registered webId.');
@@ -27,6 +28,7 @@ module.exports = {
       };
     },
     excludeFromMirror: true,
+    activateTombstones: false,
     // DereferenceMixin settings
     dereferencePlan: [{ property: 'solid:hasTypeRegistration' }]
   },

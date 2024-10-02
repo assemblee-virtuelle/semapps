@@ -16,7 +16,9 @@ module.exports = {
         }
       }
     },
-    excludeFromMirror: true
+    newResourcesPermissions: {},
+    excludeFromMirror: true,
+    activateTombstones: false
   },
   actions: {
     register: {
