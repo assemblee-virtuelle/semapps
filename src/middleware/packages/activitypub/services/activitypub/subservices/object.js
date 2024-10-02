@@ -195,7 +195,7 @@ const ObjectService = {
           dataset
         });
 
-        if (containerOptions.activateTombstones !== false) {
+        if (containerOptions.activateTombstones !== false && ctx.meta.activateTombstones !== false) {
           const formerType = oldData.type || oldData['@type'];
           await this.actions.createTombstone({ resourceUri, formerType }, { meta: { dataset }, parentCtx: ctx });
         }
