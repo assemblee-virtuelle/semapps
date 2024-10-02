@@ -7,7 +7,7 @@ const { arrayOf } = require('../utils');
 const KEY_TYPES = require('./keyTypes');
 const KeyContainerService = require('./key-container');
 const PublicKeyContainerService = require('./public-key-container');
-const MigrationService = require('./migration-service');
+const MigrationService = require('./migration');
 const { KeyPairService } = require('../signature');
 
 /** @type {import('@digitalbazaar/ed25519-multikey')} */

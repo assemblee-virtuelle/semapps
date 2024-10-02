@@ -30,7 +30,9 @@ module.exports = {
         : ctx.params.strategy;
 
     if (!this.isRemoteUri(resourceUri, webId)) {
-      throw new Error(`The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId})`);
+      throw new Error(
+        `The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId} / dataset ${ctx.meta.dataset})`
+      );
     }
 
     switch (strategy) {
