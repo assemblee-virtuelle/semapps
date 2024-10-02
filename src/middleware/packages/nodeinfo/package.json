@@ -1,6 +1,6 @@
 {
   "name": "@semapps/nodeinfo",
-  "version": "0.9.7",
+  "version": "0.9.8",
   "description": "Nodeinfo extension for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
