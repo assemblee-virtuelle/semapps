@@ -48,30 +48,6 @@ module.exports = {
     if (podsContainer === true) {
       // Skip container creation for the root PODs container (it is not a real LDP container since no dataset have these data)
     } else if (this.settings.podProvider) {
-      if (dataset && dataset !== '*') {
-        const account = await ctx.call('auth.account.findByUsername', { username: dataset });
-        if (!account) throw new Error(`No pod found with username ${dataset}`);
-        const podUrl = await ctx.call('pod.getUrl', { webId: account.webId });
-        ctx.meta.dataset = account.username;
-        await ctx.call('ldp.container.createAndAttach', {
-          containerUri: urlJoin(podUrl, path),
-          permissions: options.permissions, // Used by the WebAclMiddleware
-          webId: account.webId
-        });
-      } else {
-        // 1. Ensure the container has been created for each user
-        const accounts = await ctx.call('auth.account.find');
-        for (const account of accounts) {
-          const podUrl = await ctx.call('pod.getUrl', { webId: account.webId });
-          ctx.meta.dataset = account.username;
-          await ctx.call('ldp.container.createAndAttach', {
-            containerUri: urlJoin(podUrl, path),
-            permissions: options.permissions, // Used by the WebAclMiddleware
-            webId: account.webId
-          });
-        }
-      }
-
       // TODO see if we can base ourselves on a general config for the POD data path
       fullPath = pathJoin('/:username([^/.][^/]+)', 'data', path);
     } else {

@@ -46,6 +46,46 @@ module.exports = {
       const { webId } = ctx.params;
       // This is faster, but later we should use the 'pim:storage' property of the webId
       return urlJoin(webId, this.settings.pathName);
+    },
+    async createAndAttachContainers(ctx) {
+      const registeredContainers = await ctx.call('ldp.registry.list');
+      const accounts = await ctx.call('auth.account.find');
+      for (const { webId, username } of accounts) {
+        this.logger.info(`Creating and attaching containers for ${webId}...`);
+
+        const podUrl = await this.actions.getUrl({ webId }, { parentCtx: ctx });
+        ctx.meta.dataset = username;
+
+        for (const { path, permissions } of Object.values(registeredContainers)) {
+          await ctx.call('ldp.container.createAndAttach', {
+            containerUri: urlJoin(podUrl, path),
+            permissions, // Used by the WebAclMiddleware
+            webId
+          });
+        }
+
+        // Give full rights to user on his pod
+        await ctx.call('webacl.resource.addRights', {
+          resourceUri: podUrl,
+          additionalRights: {
+            user: {
+              uri: webId,
+              read: true,
+              write: true,
+              control: true
+            },
+            default: {
+              user: {
+                uri: webId,
+                read: true,
+                write: true,
+                control: true
+              }
+            }
+          },
+          webId: 'system'
+        });
+      }
     }
   },
   events: {
