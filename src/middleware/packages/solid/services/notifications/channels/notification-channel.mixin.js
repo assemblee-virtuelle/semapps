@@ -255,34 +255,37 @@ module.exports = {
       );
     },
     async loadChannelsFromDb({ removeOldChannels }) {
-      const accounts = await this.broker.call('auth.account.find');
-      for (const { webId } of accounts) {
-        const container = await this.actions.list({ webId });
-        for (const channel of arrayOf(container['ldp:contains'])) {
-          // Remove channels where endAt is in the past.
-          if (removeOldChannels && channel['notify:endAt'] < new Date()) {
-            this.broker.call('ldp.resource.delete', {
-              resourceUri: channel.id || channel['@id'],
-              webId: 'system'
-            });
-            continue;
-          }
+      try {
+        const accounts = await this.broker.call('auth.account.find');
+        for (const { webId } of accounts) {
+          const container = await this.actions.list({ webId });
+          for (const channel of arrayOf(container['ldp:contains'])) {
+            // Remove channels where endAt is in the past.
+            if (removeOldChannels && channel['notify:endAt'] < new Date()) {
+              this.broker.call('ldp.resource.delete', {
+                resourceUri: channel.id || channel['@id'],
+                webId: 'system'
+              });
+              continue;
+            }
 
-          this.channels.push({
-            id: channel.id || channel['@id'],
-            topic: channel['notify:topic'],
-            sendTo: channel['notify:sendTo'],
-            receiveFrom: channel['notify:receiveFrom'],
-            startAt: channel['notify:startAt'],
-            endAt: channel['notify:endAt'],
-            accept: channel['notify:accept'],
-            rate: channel['notify:rate'],
-            webId
-          });
+            this.channels.push({
+              id: channel.id || channel['@id'],
+              topic: channel['notify:topic'],
+              sendTo: channel['notify:sendTo'],
+              receiveFrom: channel['notify:receiveFrom'],
+              startAt: channel['notify:startAt'],
+              endAt: channel['notify:endAt'],
+              accept: channel['notify:accept'],
+              rate: channel['notify:rate'],
+              webId
+            });
+          }
         }
+      } catch (e) {
+        this.logger.error(`Could not load channels from triple store. Error: ${e.message}`);
       }
     },
-
     // METHODS TO IMPLEMENT by implementing service.
     //
     async onEvent(channel, activity) {
