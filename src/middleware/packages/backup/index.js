@@ -1,5 +1,6 @@
 const { CronJob } = require('cron');
 const fs = require('fs');
+const { emptyDirSync } = require('fs-extra');
 const pathJoin = require('path').join;
 const fsCopy = require('./utils/fsCopy');
 const ftpCopy = require('./utils/ftpCopy');
@@ -18,6 +19,7 @@ const BackupService = {
       otherDirsPaths: {}
     },
     copyMethod: 'rsync', // rsync, ftp, or fs
+    deleteFusekiBackupsAfterCopy: false,
     remoteServer: {
       path: null, // Required
       user: null, // Required by rsync and ftp
@@ -35,15 +37,20 @@ const BackupService = {
   started() {
     const {
       cronJob,
+      copyMethod,
       localServer: { fusekiBase }
     } = this.settings;
 
-    if (cronJob.time) {
-      this.cronJob = new CronJob(cronJob.time, this.actions.backupAll, null, true, cronJob.timeZone);
-    }
-
     if (!fusekiBase) {
       throw new Error('Backup service requires `localServer.fusekiBase` setting to be set to the FUSEKI_BASE path.');
+    }
+
+    if (!['rsync', 'ftp', 'fs'].includes(copyMethod)) {
+      throw new Error(`The copyMethod setting must be either rysnc, ftp or fs. Provided: ${copyMethod}`);
+    }
+
+    if (cronJob.time) {
+      this.cronJob = new CronJob(cronJob.time, this.actions.backupAll, null, true, cronJob.timeZone);
     }
   },
   actions: {
@@ -59,10 +66,17 @@ const BackupService = {
         await ctx.call('triplestore.dataset.backup', { dataset });
       }
 
-      await this.actions.copyToRemoteServer(
-        { path: pathJoin(this.settings.localServer.fusekiBase, 'backups'), subDir: 'datasets' },
+      const backupsDirPath = pathJoin(this.settings.localServer.fusekiBase, 'backups');
+
+      const copied = await this.actions.copyToRemoteServer(
+        { path: backupsDirPath, subDir: 'datasets' },
         { parentCtx: ctx }
       );
+
+      // If there was an error on copy, don't delete the backups
+      if (copied && this.settings.deleteFusekiBackupsAfterCopy) {
+        emptyDirSync(backupsDirPath);
+      }
     },
     async backupOtherDirs(ctx) {
       const { otherDirsPaths } = this.settings.localServer;
@@ -84,24 +98,27 @@ const BackupService = {
       // Path is mandatory for all copy methods
       if (!remoteServer.path) {
         this.logger.info('No remote server config defined, skipping remote backup...');
-        return;
+        return false;
       }
 
-      switch (copyMethod) {
-        case 'rsync':
-          await rsyncCopy(path, subDir, remoteServer);
-          break;
+      try {
+        switch (copyMethod) {
+          case 'rsync':
+            await rsyncCopy(path, subDir, remoteServer, false);
+            break;
 
-        case 'ftp':
-          await ftpCopy(path, subDir, remoteServer);
-          break;
+          case 'ftp':
+            await ftpCopy(path, subDir, remoteServer);
+            break;
 
-        case 'fs':
-          await fsCopy(path, subDir, remoteServer);
-          break;
-
-        default:
-          throw new Error(`Unknown copy method: ${copyMethod}`);
+          case 'fs':
+            await fsCopy(path, subDir, remoteServer);
+            break;
+        }
+        return true;
+      } catch (e) {
+        this.logger.error(`Failed to copy ${path} to remote server with ${copyMethod}. Error: ${e.message}`);
+        return false;
       }
     },
     deleteDataset: {
@@ -147,7 +164,7 @@ const BackupService = {
         }
       }
     },
-    /** Returns an array of file paths to the backups relative to `this.settings.localServer.fusekiBase`. */
+    // Returns an array of file paths to the backups relative to `this.settings.localServer.fusekiBase`.
     async listBackupsForDataset(ctx) {
       const { dataset } = ctx.params;
 

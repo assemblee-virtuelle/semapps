@@ -12,12 +12,12 @@ const rsyncCopy = (path, subDir, remoteServer, syncDelete = false) => {
   if (syncDelete) rsync.set('delete');
 
   return new Promise((resolve, reject) => {
-    console.log(`Rsync started with command: ${rsync.command()}`);
+    this.logger.info(`Rsync started with command: ${rsync.command()}`);
     rsync.execute(error => {
       if (error) {
         reject(error);
       } else {
-        console.log('Rsync finished !');
+        this.logger.info('Rsync finished !');
         resolve();
       }
     });
