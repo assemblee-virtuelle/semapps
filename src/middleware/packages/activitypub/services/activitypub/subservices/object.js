@@ -189,15 +189,18 @@ const ObjectService = {
       if (this.settings.activateTombstones) {
         const { resourceUri, containersUris, oldData, dataset } = ctx.params;
 
-        // Check if tombstones are activated for this specific container
-        const containerOptions = await ctx.call('ldp.registry.getByUri', {
-          containerUri: containersUris[0],
-          dataset
-        });
+        // If the resource was in no container, skip...
+        if (containersUris.length > 0) {
+          // Check if tombstones are activated for this specific container
+          const containerOptions = await ctx.call('ldp.registry.getByUri', {
+            containerUri: containersUris[0],
+            dataset
+          });
 
-        if (containerOptions.activateTombstones !== false && ctx.meta.activateTombstones !== false) {
-          const formerType = oldData.type || oldData['@type'];
-          await this.actions.createTombstone({ resourceUri, formerType }, { meta: { dataset }, parentCtx: ctx });
+          if (containerOptions.activateTombstones !== false && ctx.meta.activateTombstones !== false) {
+            const formerType = oldData.type || oldData['@type'];
+            await this.actions.createTombstone({ resourceUri, formerType }, { meta: { dataset }, parentCtx: ctx });
+          }
         }
       }
     }
