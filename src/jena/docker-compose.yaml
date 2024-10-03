@@ -7,7 +7,7 @@ services:
       platforms:
         - linux/arm64
         - linux/amd64
-    image: semapps/jena-fuseki-webacl
+    image: semapps/jena-fuseki-webacl:${TAG}
     container_name: fuseki
     volumes:
       - ./data/rdf_data:/fuseki

@@ -6,14 +6,20 @@ For more information, see https://semapps.org/docs/triplestore
 
 ## Publishing
 
-To publish the `semapps/jena-fuseki-webacl` image on AMD/ARM platforms, first create the [BuildX container](https://docs.docker.com/build/building/multi-platform/#create-a-custom-builder):
+To publish the `semapps/jena-fuseki-webacl` image on AMD/ARM platforms, first create the [BuildX container](https://docs.docker.com/build/building/multi-platform/#create-a-custom-builder) with this command:
 
 ```
-docker buildx create --name container-builder --driver docker-container --use --bootstrap
+make init-container-builder
 ```
 
-Then run this command:
+Then run this command to publish the image with the current version of SemApps:
 
 ```
-COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose build --push fuseki
+make publish
+```
+
+Run this command to publish the image with the "latest" tag:
+
+```
+make publish
 ```
