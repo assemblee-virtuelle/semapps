@@ -104,6 +104,16 @@ module.exports = {
       // Generate a webhook path
       const webhookUrl = urlJoin(this.settings.baseUrl, '.webhooks', uuidv4());
 
+      // Persist listener on the settings dataset
+      // We must do it before creating the webhook channel, in case the webhook is called immediately
+      let listener = await this._create(ctx, {
+        webhookUrl,
+        resourceUri,
+        actionName
+      });
+
+      this.listeners.push(listener);
+
       // Create a webhook channel (authenticate with HTTP signature)
       const { body } = await ctx.call('signature.proxy.query', {
         url: webhookSubscription.id || webhookSubscription['@id'],
@@ -120,15 +130,11 @@ module.exports = {
         actorUri: appActor.id
       });
 
-      // Persist listener on the settings dataset
-      const listener = await this._create(ctx, {
-        webhookUrl,
-        resourceUri,
-        channelUri: body.id,
-        actionName
-      });
-
-      this.listeners.push(listener);
+      // Keep track of the channel URI, to be able to check if it still exists
+      listener.channelUri = body.id;
+      await this._update(ctx, listener);
+      const listenerIndex = this.listeners.findIndex(l => l['@id'] === listener['@id']);
+      this.listeners[listenerIndex] = listener;
 
       return listener;
     },
