@@ -1,11 +1,11 @@
 {
   "name": "@semapps/middlewares",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Express Middlewares for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "@semapps/mime-types": "1.0.1",
+    "@semapps/mime-types": "1.0.2",
     "busboy": "^0.3.1",
     "memory-streams": "^0.1.3",
     "moleculer": "^0.14.18"

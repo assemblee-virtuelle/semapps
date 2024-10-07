@@ -1,6 +1,6 @@
 {
   "name": "@semapps/backup",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Backup of datasets and uploaded files for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
