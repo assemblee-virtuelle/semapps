@@ -1,7 +1,6 @@
 const urlJoin = require('url-join');
 const pathJoin = require('path').join;
 const { pathToRegexp } = require('path-to-regexp');
-const defaultOptions = require('../defaultOptions');
 
 module.exports = {
   visibility: 'public',
@@ -54,7 +53,7 @@ module.exports = {
       // Ensure the container has been created
       await ctx.call('ldp.container.createAndAttach', {
         containerUri: urlJoin(this.settings.baseUrl, path),
-        permissions: options.permissions || defaultOptions.permissions // Used by the WebAclMiddleware
+        permissions: options.permissions || this.settings.defaultOptions.permissions // Used by the WebAclMiddleware
       });
     }
 
@@ -66,7 +65,7 @@ module.exports = {
       fullPath,
       pathRegex,
       name,
-      ...defaultOptions,
+      ...this.settings.defaultOptions,
       podsContainer,
       acceptedTypes,
       ...options
