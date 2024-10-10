@@ -279,12 +279,6 @@ export function PasswordStrengthIndicator({
     | undefined;
   password: any;
 }): import('react/jsx-runtime').JSX.Element;
-declare namespace SignupForm {
-  namespace defaultValues {
-    let redirectTo: string;
-    let additionalSignupValues: {};
-  }
-}
 declare namespace LoginForm {
   namespace defaultValues {
     let allowUsername: boolean;
