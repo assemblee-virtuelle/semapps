@@ -1,7 +1,7 @@
-import React, { useCallback } from 'react';
-import { Form, useTranslate, useNotify, useSafeSetState, TextInput, required, email, useLogin } from 'react-admin';
+import { useForm, FormProvider } from 'react-hook-form';
+import { useTranslate, useNotify, useSafeSetState, useLogin, email } from 'react-admin';
 import { useSearchParams } from 'react-router-dom';
-import { Button, CardContent } from '@mui/material';
+import { Button, CardContent, TextField } from '@mui/material';
 
 const LoginForm = ({ onLogin, allowUsername }) => {
   const [loading, setLoading] = useSafeSetState(false);
@@ -11,62 +11,100 @@ const LoginForm = ({ onLogin, allowUsername }) => {
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/';
 
-  const submit = useCallback(
-    async values => {
-      try {
-        setLoading(true);
-        await login(values);
-        if (onLogin) {
-          onLogin(redirectTo);
-        } else {
-          window.location.href = redirectTo;
-        }
-      } catch (error) {
-        setLoading(false);
-        notify(
-          typeof error === 'string'
-            ? error
-            : typeof error === 'undefined' || !error.message
-              ? 'ra.auth.sign_in_error'
-              : error.message,
-          {
-            type: 'warning',
-            messageArgs: {
-              _: typeof error === 'string' ? error : error && error.message ? error.message : undefined
-            }
-          }
-        );
+  const methods = useForm({
+    defaultValues: {
+      username: searchParams.get('email') || '',
+      password: ''
+    }
+  });
+
+  const {
+    handleSubmit,
+    register,
+    formState: { errors, isSubmitting },
+    reset
+  } = methods;
+
+  const onSubmit = async values => {
+    try {
+      setLoading(true);
+      await login(values);
+      if (onLogin) {
+        onLogin(redirectTo);
+      } else {
+        window.location.href = redirectTo;
       }
-    },
-    [setLoading, login, redirectTo, notify, onLogin]
-  );
+    } catch (error) {
+      setLoading(false);
+      // Reset form to current values to ensure consistency
+      reset(values, { keepValues: true });
+      notify(
+        typeof error === 'string'
+          ? error
+          : typeof error === 'undefined' || !error.message
+            ? 'ra.auth.sign_in_error'
+            : error.message,
+        {
+          type: 'warning',
+          messageArgs: {
+            _: typeof error === 'string' ? error : error && error.message ? error.message : undefined
+          }
+        }
+      );
+    }
+  };
 
   return (
-    <Form onSubmit={submit} noValidate defaultValues={{ username: searchParams.get('email') }}>
-      <CardContent>
-        <TextInput
-          source="username"
-          label={translate(allowUsername ? 'auth.input.username_or_email' : 'auth.input.email')}
-          autoComplete="email"
-          fullWidth
-          disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
-          format={value => (value ? value.toLowerCase() : '')}
-          validate={allowUsername ? [required()] : [required(), email()]}
-        />
-        <TextInput
-          source="password"
-          type="password"
-          label={translate('ra.auth.password')}
-          autoComplete="current-password"
-          fullWidth
-          disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
-          validate={required()}
-        />
-        <Button variant="contained" type="submit" color="primary" disabled={loading} fullWidth>
-          {translate('auth.action.login')}
-        </Button>
-      </CardContent>
-    </Form>
+    <FormProvider {...methods}>
+      <form onSubmit={handleSubmit(onSubmit)} noValidate>
+        <CardContent>
+          <TextField
+            {...register('username', {
+              required: translate('ra.validation.required'),
+              validate: value => {
+                if (!allowUsername) {
+                  const validationRes = email()(value);
+                  return validationRes.message ?? validationRes ?? true;
+                }
+                return true;
+              },
+              setValueAs: value => value.toLowerCase()
+            })}
+            label={translate(allowUsername ? 'auth.input.username_or_email' : 'auth.input.email')}
+            error={!!errors.username}
+            helperText={translate(errors.username?.message)}
+            autoComplete="email"
+            fullWidth
+            disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
+            margin="normal"
+          />
+
+          <TextField
+            {...register('password', {
+              required: translate('ra.validation.required')
+            })}
+            type="password"
+            label={translate('ra.auth.password')}
+            error={!!errors.password}
+            helperText={translate(errors.password?.message)}
+            autoComplete="current-password"
+            fullWidth
+            disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
+          />
+
+          <Button
+            variant="contained"
+            type="submit"
+            color="primary"
+            disabled={loading || isSubmitting}
+            fullWidth
+            sx={{ mt: 2 }}
+          >
+            {translate('auth.action.login')}
+          </Button>
+        </CardContent>
+      </form>
+    </FormProvider>
   );
 };
 
