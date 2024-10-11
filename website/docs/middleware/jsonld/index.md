@@ -51,8 +51,9 @@ module.exports = {
 
 ## Service settings
 
-| Property             | Type       | Default                       | Description                                                    |
-| -------------------- | ---------- | ----------------------------- | -------------------------------------------------------------- |
-| `baseUri`            | `String`   | **required**                  | Base URL of the server.                                        |
-| `localContextPath`   | `String`   | "/.well-known/context.jsonld" | Path of the automatically generated local JSON-LD context file |
-| `cachedContextFiles` | `[Object]` |                               | Context files to put in cache on start (see example above)     |
+| Property             | Type       | Default                       | Description                                                                                                    |
+| -------------------- | ---------- | ----------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `baseUri`            | `String`   | **required**                  | Base URL of the server.                                                                                        |
+| `localContextPath`   | `String`   | "/.well-known/context.jsonld" | Path of the automatically generated local JSON-LD context file                                                 |
+| `cacheFor`           | `number`   | 21600 (6 hours)               | `Cache-Control: public, max-age=<cacheFor>` header for api responses in seconds. Set to `null`, to deactivate. |
+| `cachedContextFiles` | `[Object]` |                               | Context files to put in cache on start (see example above)                                                     |
