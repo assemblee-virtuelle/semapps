@@ -9,11 +9,13 @@ module.exports = {
   settings: {
     baseUri: null,
     localContextPath: '.well-known/context.jsonld',
-    cachedContextFiles: []
+    cachedContextFiles: [],
+    /** Indicate that the context.jsonld may be cached by the browser for the given amount of seconds. @default 21600 */
+    cacheFor: 21600
   },
   dependencies: ['ontologies'],
   async created() {
-    const { baseUri, localContextPath, cachedContextFiles } = this.settings;
+    const { baseUri, localContextPath, cachedContextFiles, cacheFor } = this.settings;
 
     if (!baseUri || !localContextPath) {
       throw new Error('The baseUri and localContextPath settings are required');
@@ -50,7 +52,8 @@ module.exports = {
     this.broker.createService({
       mixins: [JsonLdApiService],
       settings: {
-        localContextPath
+        localContextPath,
+        cacheFor
       }
     });
   }
