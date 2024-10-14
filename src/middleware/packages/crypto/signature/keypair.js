@@ -19,10 +19,10 @@ const SignatureService = {
     actorsKeyPairsDir: null
   },
   async created() {
-    if (!this.settings.actorsKeyPairsDir) {
-      throw new Error('You must set the actorsKeyPairsDir setting in the signature service');
-    } else if (!fs.existsSync(this.settings.actorsKeyPairsDir)) {
-      throw new Error(`The actorsKeyPairsDir (${this.settings.actorsKeyPairsDir}) does not exist! Please create it.`);
+    if (this.settings.actorsKeyPairsDir && !fs.existsSync(this.settings.actorsKeyPairsDir)) {
+      throw new Error(
+        `The \`actorsKeyPairsDir\` is configured for the keys legacy service but the directory (${this.settings.actorsKeyPairsDir}) does not exist! Please remove the setting (preferred) or create the directory.`
+      );
     }
   },
   async started() {

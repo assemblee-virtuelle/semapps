@@ -111,6 +111,11 @@ module.exports = {
 
     /** Returns true, if the server has migrated to the new keys service yet, i.e. keys are stored in the user dataset, not on fs. */
     async isMigrated() {
+      // If the `actorsKeyPairsDir` setting is not set, we assume migration has happened or was never needed.
+      if (!this.settings.actorsKeyPairsDir) {
+        return true;
+      }
+
       // Check actorsKeyPairsDir for existing keys.
       if (!fs.existsSync(this.settings.actorsKeyPairsDir)) {
         return true;
