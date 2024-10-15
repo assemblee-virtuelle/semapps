@@ -75,10 +75,10 @@ const LoginForm = ({ onLogin, allowUsername }) => {
             helperText={translate(errors.username?.message)}
             autoComplete="email"
             fullWidth
-            disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
-            margin="normal"
+            disabled={loading}
+            margin="dense"
+            sx={{ mb: 2 }}
           />
-
           <TextField
             {...register('password', {
               required: translate('ra.validation.required')
@@ -89,9 +89,10 @@ const LoginForm = ({ onLogin, allowUsername }) => {
             helperText={translate(errors.password?.message)}
             autoComplete="current-password"
             fullWidth
-            disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
+            disabled={loading}
+            margin="dense"
+            sx={{ mb: 2 }}
           />
-
           <Button
             variant="contained"
             type="submit"

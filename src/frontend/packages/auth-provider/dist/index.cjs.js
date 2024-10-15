@@ -1737,7 +1737,10 @@ function $edfec7f9e9fd7881$export$2e2bcd8739ae039({ scorer: scorer = (0, $d1ca1e
                         helperText: translate(errors.username?.message),
                         fullWidth: true,
                         disabled: loading,
-                        margin: "normal"
+                        margin: "dense",
+                        sx: {
+                            mb: 2
+                        }
                     }),
                     /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.TextField), {
                         ...register("email", {
@@ -1752,7 +1755,11 @@ function $edfec7f9e9fd7881$export$2e2bcd8739ae039({ scorer: scorer = (0, $d1ca1e
                         autoComplete: "email",
                         helperText: translate(errors.email?.message),
                         fullWidth: true,
-                        disabled: loading || searchParams.has("email") && searchParams.has("force-email")
+                        disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
+                        margin: "dense",
+                        sx: {
+                            mb: 2
+                        }
                     }),
                     passwordScorer && password && !(searchParams.has("email") && searchParams.has("force-email")) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
                         children: [
@@ -1788,7 +1795,11 @@ function $edfec7f9e9fd7881$export$2e2bcd8739ae039({ scorer: scorer = (0, $d1ca1e
                         helperText: translate(errors.password?.message),
                         autoComplete: "new-password",
                         fullWidth: true,
-                        disabled: loading || searchParams.has("email") && searchParams.has("force-email")
+                        disabled: loading,
+                        margin: "dense",
+                        sx: {
+                            mb: 2
+                        }
                     }),
                     /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
                         variant: "contained",
@@ -1872,8 +1883,11 @@ const $8a2df01c9f2675bb$var$LoginForm = ({ onLogin: onLogin, allowUsername: allo
                         helperText: translate(errors.username?.message),
                         autoComplete: "email",
                         fullWidth: true,
-                        disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
-                        margin: "normal"
+                        disabled: loading,
+                        margin: "dense",
+                        sx: {
+                            mb: 2
+                        }
                     }),
                     /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.TextField), {
                         ...register("password", {
@@ -1885,7 +1899,11 @@ const $8a2df01c9f2675bb$var$LoginForm = ({ onLogin: onLogin, allowUsername: allo
                         helperText: translate(errors.password?.message),
                         autoComplete: "current-password",
                         fullWidth: true,
-                        disabled: loading || searchParams.has("email") && searchParams.has("force-email")
+                        disabled: loading,
+                        margin: "dense",
+                        sx: {
+                            mb: 2
+                        }
                     }),
                     /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
                         variant: "contained",

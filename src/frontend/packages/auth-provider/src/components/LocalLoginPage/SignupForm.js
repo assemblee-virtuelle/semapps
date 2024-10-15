@@ -105,9 +105,9 @@ const SignupForm = ({ passwordScorer = defaultScorer, onSignup, additionalSignup
             helperText={translate(errors.username?.message)}
             fullWidth
             disabled={loading}
-            margin="normal"
+            margin="dense"
+            sx={{ mb: 2 }}
           />
-
           <TextField
             {...register('email', {
               required: translate('ra.validation.required'),
@@ -122,8 +122,9 @@ const SignupForm = ({ passwordScorer = defaultScorer, onSignup, additionalSignup
             helperText={translate(errors.email?.message)}
             fullWidth
             disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
+            margin="dense"
+            sx={{ mb: 2 }}
           />
-
           {passwordScorer && password && !(searchParams.has('email') && searchParams.has('force-email')) && (
             <>
               <Typography variant="caption" style={{ marginBottom: 3 }}>
@@ -132,7 +133,6 @@ const SignupForm = ({ passwordScorer = defaultScorer, onSignup, additionalSignup
               <PasswordStrengthIndicator password={password} scorer={passwordScorer} sx={{ width: '100%' }} />
             </>
           )}
-
           <TextField
             {...register('password', {
               required: translate('ra.validation.required'),
@@ -145,9 +145,10 @@ const SignupForm = ({ passwordScorer = defaultScorer, onSignup, additionalSignup
             helperText={translate(errors.password?.message)}
             autoComplete="new-password"
             fullWidth
-            disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
+            disabled={loading}
+            margin="dense"
+            sx={{ mb: 2 }}
           />
-
           <Button
             variant="contained"
             type="submit"

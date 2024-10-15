@@ -1698,7 +1698,10 @@ function $a8046307c9dfa483$export$2e2bcd8739ae039({ scorer: scorer = (0, $646d64
                         helperText: translate(errors.username?.message),
                         fullWidth: true,
                         disabled: loading,
-                        margin: "normal"
+                        margin: "dense",
+                        sx: {
+                            mb: 2
+                        }
                     }),
                     /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextField), {
                         ...register("email", {
@@ -1713,7 +1716,11 @@ function $a8046307c9dfa483$export$2e2bcd8739ae039({ scorer: scorer = (0, $646d64
                         autoComplete: "email",
                         helperText: translate(errors.email?.message),
                         fullWidth: true,
-                        disabled: loading || searchParams.has("email") && searchParams.has("force-email")
+                        disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
+                        margin: "dense",
+                        sx: {
+                            mb: 2
+                        }
                     }),
                     passwordScorer && password && !(searchParams.has("email") && searchParams.has("force-email")) && /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Fragment), {
                         children: [
@@ -1749,7 +1756,11 @@ function $a8046307c9dfa483$export$2e2bcd8739ae039({ scorer: scorer = (0, $646d64
                         helperText: translate(errors.password?.message),
                         autoComplete: "new-password",
                         fullWidth: true,
-                        disabled: loading || searchParams.has("email") && searchParams.has("force-email")
+                        disabled: loading,
+                        margin: "dense",
+                        sx: {
+                            mb: 2
+                        }
                     }),
                     /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Button1), {
                         variant: "contained",
@@ -1833,8 +1844,11 @@ const $e2a34b2d647a5391$var$LoginForm = ({ onLogin: onLogin, allowUsername: allo
                         helperText: translate(errors.username?.message),
                         autoComplete: "email",
                         fullWidth: true,
-                        disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
-                        margin: "normal"
+                        disabled: loading,
+                        margin: "dense",
+                        sx: {
+                            mb: 2
+                        }
                     }),
                     /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextField), {
                         ...register("password", {
@@ -1846,7 +1860,11 @@ const $e2a34b2d647a5391$var$LoginForm = ({ onLogin: onLogin, allowUsername: allo
                         helperText: translate(errors.password?.message),
                         autoComplete: "current-password",
                         fullWidth: true,
-                        disabled: loading || searchParams.has("email") && searchParams.has("force-email")
+                        disabled: loading,
+                        margin: "dense",
+                        sx: {
+                            mb: 2
+                        }
                     }),
                     /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Button1), {
                         variant: "contained",

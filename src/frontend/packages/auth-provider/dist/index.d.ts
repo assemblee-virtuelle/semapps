@@ -89,8 +89,8 @@ declare namespace CreateWithPermissions {
     let actions: import('react/jsx-runtime').JSX.Element;
   }
 }
-export const useAgents: (uri: any) => {
-  agents: Record<string, Permission>;
+export function useAgents(uri: any): {
+  agents: {};
   addPermission: (agentId: any, predicate: any, mode: any) => void;
   removePermission: (agentId: any, predicate: any, mode: any) => void;
 };
