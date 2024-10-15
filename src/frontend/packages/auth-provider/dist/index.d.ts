@@ -89,8 +89,8 @@ declare namespace CreateWithPermissions {
     let actions: import('react/jsx-runtime').JSX.Element;
   }
 }
-export function useAgents(uri: any): {
-  agents: {};
+export const useAgents: (uri: any) => {
+  agents: Record<string, Permission>;
   addPermission: (agentId: any, predicate: any, mode: any) => void;
   removePermission: (agentId: any, predicate: any, mode: any) => void;
 };
@@ -279,12 +279,6 @@ export function PasswordStrengthIndicator({
     | undefined;
   password: any;
 }): import('react/jsx-runtime').JSX.Element;
-declare namespace SignupForm {
-  namespace defaultValues {
-    let redirectTo: string;
-    let additionalSignupValues: {};
-  }
-}
 declare namespace LoginForm {
   namespace defaultValues {
     let allowUsername: boolean;
