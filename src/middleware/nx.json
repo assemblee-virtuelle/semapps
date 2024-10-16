@@ -1,9 +1,9 @@
 {
   "tasksRunnerOptions": {
-    "useDaemonProcess": false,
     "default": {
       "runner": "nx/tasks-runners/default",
       "options": {
+        "useDaemonProcess": false,
         "cacheableOperations": []
       }
     }
