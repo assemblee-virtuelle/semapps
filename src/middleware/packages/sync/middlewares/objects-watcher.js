@@ -218,7 +218,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
           switch (action.name) {
             case 'ldp.container.post': {
               const recipients = await getRecipients(ctx, actionReturnValue);
-              await outboxPost(ctx, actionReturnValue, recipients, {
+              outboxPost(ctx, actionReturnValue, recipients, {
                 type: ACTIVITY_TYPES.CREATE,
                 object: actionReturnValue,
                 target: ctx.params.containerUri
@@ -228,7 +228,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
 
             case 'ldp.resource.patch': {
               const recipients = await getRecipients(ctx, ctx.params.resourceUri);
-              await outboxPost(ctx, ctx.params.resourceUri, recipients, {
+              outboxPost(ctx, ctx.params.resourceUri, recipients, {
                 type: ACTIVITY_TYPES.UPDATE,
                 object: ctx.params.resourceUri
               });
@@ -238,7 +238,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
             case 'ldp.resource.put': {
               const resourceUri = ctx.params.resource.id || ctx.params.resource['@id'];
               const recipients = await getRecipients(ctx, resourceUri);
-              await outboxPost(ctx, resourceUri, recipients, {
+              outboxPost(ctx, resourceUri, recipients, {
                 type: ACTIVITY_TYPES.UPDATE,
                 object: resourceUri
               });
@@ -246,7 +246,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
             }
 
             case 'ldp.resource.delete': {
-              await outboxPost(ctx, ctx.params.resourceUri, oldRecipients, {
+              outboxPost(ctx, ctx.params.resourceUri, oldRecipients, {
                 type: ACTIVITY_TYPES.DELETE,
                 object: ctx.params.resourceUri,
                 target: oldContainers
@@ -264,7 +264,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
                   const containers = await ctx.call('ldp.resource.getContainers', {
                     resourceUri: ctx.params.resourceUri
                   });
-                  await outboxPost(ctx, ctx.params.resourceUri, recipientsAdded, {
+                  outboxPost(ctx, ctx.params.resourceUri, recipientsAdded, {
                     type: ACTIVITY_TYPES.CREATE,
                     object: ctx.params.resourceUri,
                     target: containers
@@ -282,7 +282,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
 
               const recipientsAdded = newRecipients.filter(u => !oldRecipients.includes(u));
               if (recipientsAdded.length > 0) {
-                await outboxPost(ctx, ctx.params.resourceUri, recipientsAdded, {
+                outboxPost(ctx, ctx.params.resourceUri, recipientsAdded, {
                   type: ACTIVITY_TYPES.CREATE,
                   object: ctx.params.resourceUri,
                   target: containers
@@ -291,7 +291,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
 
               const recipientsRemoved = oldRecipients.filter(u => !newRecipients.includes(u));
               if (recipientsRemoved.length > 0) {
-                await outboxPost(ctx, ctx.params.resourceUri, recipientsRemoved, {
+                outboxPost(ctx, ctx.params.resourceUri, recipientsRemoved, {
                   type: ACTIVITY_TYPES.DELETE,
                   object: ctx.params.resourceUri,
                   target: containers
@@ -301,7 +301,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
               if (actionReturnValue.isContainer && actionReturnValue.addDefaultPublicRead) {
                 const subUris = await ctx.call('ldp.container.getUris', { containerUri: ctx.params.resourceUri });
                 // TODO check that sub-resources did not already have public read rights individually (must be done before)
-                await outboxPost(ctx, ctx.params.resourceUri, {
+                outboxPost(ctx, ctx.params.resourceUri, {
                   type: ACTIVITY_TYPES.CREATE,
                   object: subUris,
                   target: ctx.params.resourceUri
@@ -311,7 +311,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
               if (actionReturnValue.isContainer && actionReturnValue.removeDefaultPublicRead) {
                 const subUris = await ctx.call('ldp.container.getUris', { containerUri: ctx.params.resourceUri });
                 // TODO check that sub-resources did not already have public read rights individually (must be done before)
-                await outboxPost(ctx, ctx.params.resourceUri, {
+                outboxPost(ctx, ctx.params.resourceUri, {
                   type: ACTIVITY_TYPES.DELETE,
                   object: subUris,
                   target: ctx.params.resourceUri
@@ -333,7 +333,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
                   const containers = await ctx.call('ldp.resource.getContainers', {
                     resourceUri: ctx.params.resourceUri
                   });
-                  await outboxPost(ctx, ctx.params.resourceUri, recipientsRemoved, {
+                  outboxPost(ctx, ctx.params.resourceUri, recipientsRemoved, {
                     type: ACTIVITY_TYPES.DELETE,
                     object: ctx.params.resourceUri,
                     target: containers
