@@ -5,6 +5,16 @@ const { collectionPermissionsWithAnonRead, getSlugFromUri, objectIdToCurrent } =
 const { ACTOR_TYPES } = require('../../../constants');
 const AwaitActivityMixin = require('../../../mixins/await-activity');
 
+const queueOptions =
+  process.env.NODE_ENV === 'test'
+    ? {}
+    : {
+        // Try again after 3 minutes and until 48 hours later
+        // Method to calculate it: Math.round((Math.pow(2, attemptsMade) - 1) * delay)
+        attempts: 10,
+        backoff: { type: 'exponential', delay: '180000' }
+      };
+
 const OutboxService = {
   name: 'activitypub.outbox',
   mixins: [AwaitActivityMixin],
@@ -117,8 +127,7 @@ const OutboxService = {
 
       // Post to remote recipients
       for (const recipientUri of remoteRecipients) {
-        const job = await this.createJob('remotePost', recipientUri, { recipientUri, activity });
-        await job.finished();
+        this.createJob('remotePost', recipientUri, { recipientUri, activity }, queueOptions);
       }
 
       // Send this event now, because the localPost method will emit activitypub.inbox.received event
