@@ -1,9 +1,18 @@
-import React from 'react';
-import { useForm, FormProvider } from 'react-hook-form';
+import React, { useCallback, useState } from 'react';
 import createSlug from 'speakingurl';
-import { useTranslate, useNotify, useSafeSetState, useLocaleState } from 'react-admin';
+import {
+  Form,
+  useTranslate,
+  useNotify,
+  useSafeSetState,
+  TextInput,
+  minLength,
+  required,
+  email,
+  useLocaleState
+} from 'react-admin';
 import { useSearchParams } from 'react-router-dom';
-import { Button, CardContent, TextField, Typography } from '@mui/material';
+import { Button, CardContent, Typography } from '@mui/material';
 import useSignup from '../../hooks/useSignup';
 import validatePasswordStrength from './validatePasswordStrength';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
@@ -26,142 +35,100 @@ const SignupForm = ({ passwordScorer = defaultScorer, onSignup, additionalSignup
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/';
   const [locale] = useLocaleState();
+  const [password, setPassword] = useState('');
 
-  const methods = useForm({
-    defaultValues: {
-      username: '',
-      email: searchParams.get('email') || '',
-      password: ''
-    }
-  });
-
-  const {
-    handleSubmit,
-    register,
-    formState: { errors, isSubmitting },
-    watch,
-    reset
-  } = methods;
-
-  const password = watch('password');
-
-  const onSubmit = async values => {
-    try {
-      setLoading(true);
-      await signup({
-        ...values,
-        ...additionalSignupValues
-      });
-      setTimeout(() => {
-        if (onSignup) {
-          onSignup(redirectTo);
-        } else {
-          window.location.href = redirectTo;
-        }
-      }, delayBeforeRedirect);
-    } catch (error) {
-      setLoading(false);
-      // Reset form to current values to ensure consistency...
-      reset(values, { keepValues: true });
-      notify(
-        typeof error === 'string'
-          ? error
-          : typeof error === 'undefined' || !error.message
-            ? 'ra.auth.sign_in_error'
-            : error.message,
-        {
-          type: 'warning',
-          _: typeof error === 'string' ? error : error && error.message ? error.message : undefined
-        }
-      );
-    }
-  };
-
-  const formatUsername = value => {
-    return value
-      ? createSlug(value, {
-          lang: locale || 'fr',
-          separator: '_',
-          custom: ['.', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-        })
-      : '';
-  };
+  const submit = useCallback(
+    async values => {
+      try {
+        setLoading(true);
+        await signup({
+          ...values,
+          ...additionalSignupValues
+        });
+        setTimeout(() => {
+          if (onSignup) {
+            onSignup(redirectTo);
+          } else {
+            window.location.href = redirectTo;
+          }
+        }, delayBeforeRedirect);
+      } catch (error) {
+        setLoading(false);
+        notify(
+          typeof error === 'string'
+            ? error
+            : typeof error === 'undefined' || !error.message
+              ? 'ra.auth.sign_in_error'
+              : error.message,
+          {
+            type: 'warning',
+            _: typeof error === 'string' ? error : error && error.message ? error.message : undefined
+          }
+        );
+      }
+    },
+    [setLoading, signup, additionalSignupValues, redirectTo, notify, onSignup]
+  );
 
   return (
-    <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)} noValidate>
-        <CardContent>
-          <TextField
-            {...register('username', {
-              required: translate('ra.validation.required'),
-              minLength: {
-                value: 2,
-                message: translate('ra.validation.minLength', { min: 2 })
-              },
-              setValueAs: formatUsername
-            })}
-            label={translate('auth.input.username')}
-            error={!!errors.username}
-            helperText={translate(errors.username?.message)}
-            fullWidth
-            disabled={loading}
-            margin="normal"
-          />
-
-          <TextField
-            {...register('email', {
-              required: translate('ra.validation.required'),
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: translate('ra.validation.email')
-              }
-            })}
-            label={translate('auth.input.email')}
-            error={!!errors.email}
-            autoComplete="email"
-            helperText={translate(errors.email?.message)}
-            fullWidth
-            disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
-          />
-
-          {passwordScorer && password && !(searchParams.has('email') && searchParams.has('force-email')) && (
-            <>
-              <Typography variant="caption" style={{ marginBottom: 3 }}>
-                {translate('auth.input.password_strength')}:{' '}
-              </Typography>
-              <PasswordStrengthIndicator password={password} scorer={passwordScorer} sx={{ width: '100%' }} />
-            </>
-          )}
-
-          <TextField
-            {...register('password', {
-              required: translate('ra.validation.required'),
-              validate: value => validatePasswordStrength(passwordScorer)(value)
-            })}
-            type="password"
-            value={password}
-            label={translate('ra.auth.password')}
-            error={!!errors.password}
-            helperText={translate(errors.password?.message)}
-            autoComplete="new-password"
-            fullWidth
-            disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
-          />
-
-          <Button
-            variant="contained"
-            type="submit"
-            color="primary"
-            disabled={loading || isSubmitting}
-            fullWidth
-            sx={{ mt: 2 }}
-          >
-            {translate('auth.action.signup')}
-          </Button>
-        </CardContent>
-      </form>
-    </FormProvider>
+    <Form onSubmit={submit} noValidate defaultValues={{ email: searchParams.get('email') }}>
+      <CardContent>
+        <TextInput
+          autoFocus
+          source="username"
+          label={translate('auth.input.username')}
+          autoComplete="username"
+          fullWidth
+          disabled={loading}
+          validate={[required(), minLength(2)]}
+          format={value =>
+            value
+              ? createSlug(value, {
+                  lang: locale || 'fr',
+                  separator: '_',
+                  custom: ['.', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+                })
+              : ''
+          }
+        />
+        <TextInput
+          source="email"
+          label={translate('auth.input.email')}
+          autoComplete="email"
+          fullWidth
+          disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
+          validate={[required(), email()]}
+        />
+        {passwordScorer && password && !(searchParams.has('email') && searchParams.has('force-email')) && (
+          <>
+            <Typography variant="caption" style={{ marginBottom: 3 }}>
+              {translate('auth.input.password_strength')}:{' '}
+            </Typography>
+            <PasswordStrengthIndicator password={password} scorer={passwordScorer} sx={{ width: '100%' }} />
+          </>
+        )}
+        <TextInput
+          source="password"
+          type="password"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          label={translate('ra.auth.password')}
+          autoComplete="new-password"
+          fullWidth
+          disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
+          validate={[required(), validatePasswordStrength(passwordScorer)]}
+        />
+        <Button variant="contained" type="submit" color="primary" disabled={loading} fullWidth>
+          {translate('auth.action.signup')}
+        </Button>
+      </CardContent>
+    </Form>
   );
+};
+
+SignupForm.defaultValues = {
+  redirectTo: '/',
+  additionalSignupValues: {}
 };
 
 export default SignupForm;
