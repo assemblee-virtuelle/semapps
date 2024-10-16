@@ -1647,14 +1647,14 @@ function $edfec7f9e9fd7881$export$2e2bcd8739ae039({ scorer: scorer = (0, $d1ca1e
 
 
 /**
- * @param {function} props.onSignup Optional function to call when signup is completed
- * @param {object} props.additionalSignupValues
- * @param {number} delayBeforeRedirect
- * @param {object} passwordScorer Scorer to evaluate and indicate password strength.
+ * @param onSignup Optional function to call when signup is completed. Called after the `delayBeforeRedirect`.
+ * @param additionalSignupValues Passed to react-admin's signup function.
+ * @param delayBeforeRedirect In milliseconds
+ * @param passwordScorer Scorer to evaluate and indicate password strength.
  *  Set to `null` or `false`, if you don't want password strength checks. Default is
  *  passwordStrength's `defaultScorer`.
  * @returns
- */ const $5f70c240e5b0340c$var$SignupForm = ({ passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8), onSignup: onSignup, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect = 0 })=>{
+ */ const $87a1f23cb4681f00$var$SignupForm = ({ passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8), onSignup: onSignup, additionalSignupValues: additionalSignupValues = {}, delayBeforeRedirect: delayBeforeRedirect = 0 })=>{
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
     const [handleSubmit, setHandleSubmit] = (0, $4Uj5b$react.useState)(()=>{});
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Form), {
@@ -1663,7 +1663,7 @@ function $edfec7f9e9fd7881$export$2e2bcd8739ae039({ scorer: scorer = (0, $d1ca1e
         defaultValues: {
             email: searchParams.get("email")
         },
-        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($5f70c240e5b0340c$var$FormContent, {
+        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($87a1f23cb4681f00$var$FormContent, {
             passwordScorer: passwordScorer,
             additionalSignupValues: additionalSignupValues,
             onSignup: onSignup,
@@ -1672,7 +1672,7 @@ function $edfec7f9e9fd7881$export$2e2bcd8739ae039({ scorer: scorer = (0, $d1ca1e
         })
     });
 };
-const $5f70c240e5b0340c$var$FormContent = ({ passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8), onSignup: onSignup, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect = 0, setHandleSubmit: setHandleSubmit })=>{
+const $87a1f23cb4681f00$var$FormContent = ({ passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8), onSignup: onSignup, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect = 0, setHandleSubmit: setHandleSubmit })=>{
     const [loading, setLoading] = (0, $4Uj5b$reactadmin.useSafeSetState)(false);
     const signup = (0, $19e4629c708b7a3e$export$2e2bcd8739ae039)();
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
@@ -1807,11 +1807,7 @@ const $5f70c240e5b0340c$var$FormContent = ({ passwordScorer: passwordScorer = (0
         ]
     });
 };
-$5f70c240e5b0340c$var$SignupForm.defaultValues = {
-    redirectTo: "/",
-    additionalSignupValues: {}
-};
-var $5f70c240e5b0340c$export$2e2bcd8739ae039 = $5f70c240e5b0340c$var$SignupForm;
+var $87a1f23cb4681f00$export$2e2bcd8739ae039 = $87a1f23cb4681f00$var$SignupForm;
 
 
 
@@ -1820,23 +1816,23 @@ var $5f70c240e5b0340c$export$2e2bcd8739ae039 = $5f70c240e5b0340c$var$SignupForm;
 
 
 
-const $8a2df01c9f2675bb$var$LoginForm = ({ onLogin: onLogin, allowUsername: allowUsername })=>{
+const $403a8b015c5eea65$var$LoginForm = ({ onLogin: onLogin, allowUsername: allowUsername })=>{
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
-    const [handleSubmit, setHandleSubmit] = useState(()=>{});
-    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)(Form, {
+    const [handleSubmit, setHandleSubmit] = (0, $4Uj5b$react.useState)(()=>{});
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Form), {
         onSubmit: handleSubmit,
         noValidate: true,
         defaultValues: {
             email: searchParams.get("email")
         },
-        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($8a2df01c9f2675bb$var$FormContent, {
+        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($403a8b015c5eea65$var$FormContent, {
             onLogin: onLogin,
             allowUsername: allowUsername,
             setHandleSubmit: setHandleSubmit
         })
     });
 };
-const $8a2df01c9f2675bb$var$FormContent = ({ onLogin: onLogin, allowUsername: allowUsername, setHandleSubmit: setHandleSubmit })=>{
+const $403a8b015c5eea65$var$FormContent = ({ onLogin: onLogin, allowUsername: allowUsername, setHandleSubmit: setHandleSubmit })=>{
     const [loading, setLoading] = (0, $4Uj5b$reactadmin.useSafeSetState)(false);
     const login = (0, $4Uj5b$reactadmin.useLogin)();
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
@@ -1910,10 +1906,10 @@ const $8a2df01c9f2675bb$var$FormContent = ({ onLogin: onLogin, allowUsername: al
         ]
     });
 };
-$8a2df01c9f2675bb$var$LoginForm.defaultValues = {
+$403a8b015c5eea65$var$LoginForm.defaultValues = {
     allowUsername: false
 };
-var $8a2df01c9f2675bb$export$2e2bcd8739ae039 = $8a2df01c9f2675bb$var$LoginForm;
+var $403a8b015c5eea65$export$2e2bcd8739ae039 = $403a8b015c5eea65$var$LoginForm;
 
 
 
@@ -2265,11 +2261,11 @@ var $cd7709c431b14d14$export$2e2bcd8739ae039 = $cd7709c431b14d14$var$getSearchPa
         icon: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialLock))), {}),
         children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Card), {
             children: [
-                isLogin && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $8a2df01c9f2675bb$export$2e2bcd8739ae039), {
+                isLogin && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $403a8b015c5eea65$export$2e2bcd8739ae039), {
                     onLogin: onLogin,
                     allowUsername: allowUsername
                 }),
-                isSignup && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $5f70c240e5b0340c$export$2e2bcd8739ae039), {
+                isSignup && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $87a1f23cb4681f00$export$2e2bcd8739ae039), {
                     delayBeforeRedirect: 4000,
                     onSignup: onSignup,
                     additionalSignupValues: additionalSignupValues,

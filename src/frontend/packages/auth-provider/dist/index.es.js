@@ -1608,14 +1608,14 @@ function $a8046307c9dfa483$export$2e2bcd8739ae039({ scorer: scorer = (0, $646d64
 
 
 /**
- * @param {function} props.onSignup Optional function to call when signup is completed
- * @param {object} props.additionalSignupValues
- * @param {number} delayBeforeRedirect
- * @param {object} passwordScorer Scorer to evaluate and indicate password strength.
+ * @param onSignup Optional function to call when signup is completed. Called after the `delayBeforeRedirect`.
+ * @param additionalSignupValues Passed to react-admin's signup function.
+ * @param delayBeforeRedirect In milliseconds
+ * @param passwordScorer Scorer to evaluate and indicate password strength.
  *  Set to `null` or `false`, if you don't want password strength checks. Default is
  *  passwordStrength's `defaultScorer`.
  * @returns
- */ const $e011da92680cf1fe$var$SignupForm = ({ passwordScorer: passwordScorer = (0, $646d64648a630b24$export$19dcdb21c6965fb8), onSignup: onSignup, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect = 0 })=>{
+ */ const $abd712f6afb101e7$var$SignupForm = ({ passwordScorer: passwordScorer = (0, $646d64648a630b24$export$19dcdb21c6965fb8), onSignup: onSignup, additionalSignupValues: additionalSignupValues = {}, delayBeforeRedirect: delayBeforeRedirect = 0 })=>{
     const [searchParams] = (0, $1obPJ$useSearchParams)();
     const [handleSubmit, setHandleSubmit] = (0, $1obPJ$useState)(()=>{});
     return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Form), {
@@ -1624,7 +1624,7 @@ function $a8046307c9dfa483$export$2e2bcd8739ae039({ scorer: scorer = (0, $646d64
         defaultValues: {
             email: searchParams.get("email")
         },
-        children: /*#__PURE__*/ (0, $1obPJ$jsx)($e011da92680cf1fe$var$FormContent, {
+        children: /*#__PURE__*/ (0, $1obPJ$jsx)($abd712f6afb101e7$var$FormContent, {
             passwordScorer: passwordScorer,
             additionalSignupValues: additionalSignupValues,
             onSignup: onSignup,
@@ -1633,7 +1633,7 @@ function $a8046307c9dfa483$export$2e2bcd8739ae039({ scorer: scorer = (0, $646d64
         })
     });
 };
-const $e011da92680cf1fe$var$FormContent = ({ passwordScorer: passwordScorer = (0, $646d64648a630b24$export$19dcdb21c6965fb8), onSignup: onSignup, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect = 0, setHandleSubmit: setHandleSubmit })=>{
+const $abd712f6afb101e7$var$FormContent = ({ passwordScorer: passwordScorer = (0, $646d64648a630b24$export$19dcdb21c6965fb8), onSignup: onSignup, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect = 0, setHandleSubmit: setHandleSubmit })=>{
     const [loading, setLoading] = (0, $1obPJ$useSafeSetState)(false);
     const signup = (0, $fb967e2c34f56644$export$2e2bcd8739ae039)();
     const translate = (0, $1obPJ$useTranslate)();
@@ -1768,11 +1768,7 @@ const $e011da92680cf1fe$var$FormContent = ({ passwordScorer: passwordScorer = (0
         ]
     });
 };
-$e011da92680cf1fe$var$SignupForm.defaultValues = {
-    redirectTo: "/",
-    additionalSignupValues: {}
-};
-var $e011da92680cf1fe$export$2e2bcd8739ae039 = $e011da92680cf1fe$var$SignupForm;
+var $abd712f6afb101e7$export$2e2bcd8739ae039 = $abd712f6afb101e7$var$SignupForm;
 
 
 
@@ -1781,23 +1777,23 @@ var $e011da92680cf1fe$export$2e2bcd8739ae039 = $e011da92680cf1fe$var$SignupForm;
 
 
 
-const $e2a34b2d647a5391$var$LoginForm = ({ onLogin: onLogin, allowUsername: allowUsername })=>{
+const $326df91dd4ec3405$var$LoginForm = ({ onLogin: onLogin, allowUsername: allowUsername })=>{
     const [searchParams] = (0, $1obPJ$useSearchParams)();
-    const [handleSubmit, setHandleSubmit] = useState(()=>{});
-    return /*#__PURE__*/ (0, $1obPJ$jsx)(Form, {
+    const [handleSubmit, setHandleSubmit] = (0, $1obPJ$useState)(()=>{});
+    return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Form), {
         onSubmit: handleSubmit,
         noValidate: true,
         defaultValues: {
             email: searchParams.get("email")
         },
-        children: /*#__PURE__*/ (0, $1obPJ$jsx)($e2a34b2d647a5391$var$FormContent, {
+        children: /*#__PURE__*/ (0, $1obPJ$jsx)($326df91dd4ec3405$var$FormContent, {
             onLogin: onLogin,
             allowUsername: allowUsername,
             setHandleSubmit: setHandleSubmit
         })
     });
 };
-const $e2a34b2d647a5391$var$FormContent = ({ onLogin: onLogin, allowUsername: allowUsername, setHandleSubmit: setHandleSubmit })=>{
+const $326df91dd4ec3405$var$FormContent = ({ onLogin: onLogin, allowUsername: allowUsername, setHandleSubmit: setHandleSubmit })=>{
     const [loading, setLoading] = (0, $1obPJ$useSafeSetState)(false);
     const login = (0, $1obPJ$useLogin)();
     const translate = (0, $1obPJ$useTranslate)();
@@ -1871,10 +1867,10 @@ const $e2a34b2d647a5391$var$FormContent = ({ onLogin: onLogin, allowUsername: al
         ]
     });
 };
-$e2a34b2d647a5391$var$LoginForm.defaultValues = {
+$326df91dd4ec3405$var$LoginForm.defaultValues = {
     allowUsername: false
 };
-var $e2a34b2d647a5391$export$2e2bcd8739ae039 = $e2a34b2d647a5391$var$LoginForm;
+var $326df91dd4ec3405$export$2e2bcd8739ae039 = $326df91dd4ec3405$var$LoginForm;
 
 
 
@@ -2226,11 +2222,11 @@ var $2dfd781b793256e6$export$2e2bcd8739ae039 = $2dfd781b793256e6$var$getSearchPa
         icon: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$muiiconsmaterialLock), {}),
         children: /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Card), {
             children: [
-                isLogin && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $e2a34b2d647a5391$export$2e2bcd8739ae039), {
+                isLogin && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $326df91dd4ec3405$export$2e2bcd8739ae039), {
                     onLogin: onLogin,
                     allowUsername: allowUsername
                 }),
-                isSignup && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $e011da92680cf1fe$export$2e2bcd8739ae039), {
+                isSignup && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $abd712f6afb101e7$export$2e2bcd8739ae039), {
                     delayBeforeRedirect: 4000,
                     onSignup: onSignup,
                     additionalSignupValues: additionalSignupValues,

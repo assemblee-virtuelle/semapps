@@ -1,12 +1,26 @@
-import { useEffect } from 'react';
-import { useTranslate, useNotify, useSafeSetState, TextInput, required, email, useLogin } from 'react-admin';
+import { useEffect, useState } from 'react';
+import { useTranslate, useNotify, useSafeSetState, TextInput, required, email, useLogin, Form } from 'react-admin';
 import { useSearchParams } from 'react-router-dom';
 import { Button, CardContent } from '@mui/material';
-import { useFormContext } from 'react-hook-form';
+import { SubmitHandler, useFormContext } from 'react-hook-form';
 
-const LoginForm = ({ onLogin, allowUsername }) => {
+interface FormValues {
+  username: string;
+  password: string;
+}
+
+interface LoginFormProps {
+  /**
+   * Called on login.
+   * @param {string} redirectTo The location the form asks to redirect to, if set in search param `redirect`.
+   */
+  onLogin: (redirectTo: string) => void;
+  /** If the form should allow login with username (in addition to email). */
+  allowUsername: boolean;
+}
+const LoginForm = ({ onLogin, allowUsername }: LoginFormProps) => {
   const [searchParams] = useSearchParams();
-  const [handleSubmit, setHandleSubmit] = useState(() => {});
+  const [handleSubmit, setHandleSubmit] = useState<SubmitHandler<FormValues>>(() => {});
 
   return (
     <Form onSubmit={handleSubmit} noValidate defaultValues={{ email: searchParams.get('email') }}>
@@ -15,7 +29,11 @@ const LoginForm = ({ onLogin, allowUsername }) => {
   );
 };
 
-const FormContent = ({ onLogin, allowUsername, setHandleSubmit }) => {
+const FormContent = ({
+  onLogin,
+  allowUsername,
+  setHandleSubmit
+}: LoginFormProps & { setHandleSubmit: React.Dispatch<React.SetStateAction<SubmitHandler<FormValues>>> }) => {
   const [loading, setLoading] = useSafeSetState(false);
   const login = useLogin();
   const translate = useTranslate();
@@ -25,7 +43,7 @@ const FormContent = ({ onLogin, allowUsername, setHandleSubmit }) => {
   const formContext = useFormContext();
 
   useEffect(() => {
-    setHandleSubmit(() => async values => {
+    setHandleSubmit(() => async (values: FormValues) => {
       try {
         setLoading(true);
         await login(values);

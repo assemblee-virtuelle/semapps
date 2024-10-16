@@ -12,25 +12,43 @@ import {
   useLocaleState
 } from 'react-admin';
 import { useSearchParams } from 'react-router-dom';
-import { useFormContext } from 'react-hook-form';
+import { SubmitHandler, useFormContext } from 'react-hook-form';
 import { Button, CardContent, Typography } from '@mui/material';
 import useSignup from '../../hooks/useSignup';
 import validatePasswordStrength from './validatePasswordStrength';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 import { defaultScorer } from '../../passwordScorer';
 
+interface FormValues {
+  username: string;
+  password: string;
+  email: string;
+}
+
+interface SignupFormProps {
+  onSignup: (redirectTo: string) => void;
+  additionalSignupValues: object;
+  delayBeforeRedirect: number;
+  passwordScorer: typeof defaultScorer;
+}
+
 /**
- * @param {function} props.onSignup Optional function to call when signup is completed
- * @param {object} props.additionalSignupValues
- * @param {number} delayBeforeRedirect
- * @param {object} passwordScorer Scorer to evaluate and indicate password strength.
+ * @param onSignup Optional function to call when signup is completed. Called after the `delayBeforeRedirect`.
+ * @param additionalSignupValues Passed to react-admin's signup function.
+ * @param delayBeforeRedirect In milliseconds
+ * @param passwordScorer Scorer to evaluate and indicate password strength.
  *  Set to `null` or `false`, if you don't want password strength checks. Default is
  *  passwordStrength's `defaultScorer`.
  * @returns
  */
-const SignupForm = ({ passwordScorer = defaultScorer, onSignup, additionalSignupValues, delayBeforeRedirect = 0 }) => {
+const SignupForm = ({
+  passwordScorer = defaultScorer,
+  onSignup,
+  additionalSignupValues = {},
+  delayBeforeRedirect = 0
+}: SignupFormProps) => {
   const [searchParams] = useSearchParams();
-  const [handleSubmit, setHandleSubmit] = useState(() => {});
+  const [handleSubmit, setHandleSubmit] = useState<SubmitHandler<FormValues>>(() => {});
 
   return (
     <Form onSubmit={handleSubmit} noValidate defaultValues={{ email: searchParams.get('email') }}>
@@ -51,7 +69,7 @@ const FormContent = ({
   additionalSignupValues,
   delayBeforeRedirect = 0,
   setHandleSubmit
-}) => {
+}: SignupFormProps & { setHandleSubmit: React.Dispatch<React.SetStateAction<SubmitHandler<FormValues>>> }) => {
   const [loading, setLoading] = useSafeSetState(false);
   const signup = useSignup();
   const translate = useTranslate();
@@ -63,7 +81,7 @@ const FormContent = ({
   const formContext = useFormContext();
 
   useEffect(() => {
-    setHandleSubmit(() => async values => {
+    setHandleSubmit(() => async (values: FormValues) => {
       try {
         setLoading(true);
         await signup({
@@ -147,11 +165,6 @@ const FormContent = ({
       </Button>
     </CardContent>
   );
-};
-
-SignupForm.defaultValues = {
-  redirectTo: '/',
-  additionalSignupValues: {}
 };
 
 export default SignupForm;
