@@ -34,30 +34,32 @@ const AwaitActivityMixin = {
       };
 
       for (let i = 0; i < maxTries; i += 1) {
-        const outbox = await ctx.call('activitypub.collection.get', {
+        const collection = await ctx.call('activitypub.collection.get', {
           resourceUri: collectionUri,
           page: 1
         });
 
-        const firstActivity = outbox?.orderedItems?.[0];
+        const firstActivity = collection?.orderedItems?.[0];
 
-        // If the activity was published before the publishedAfter param, skip it
-        if (publishedAfter && firstActivity.published) {
-          const activityDate = new Date(firstActivity.published);
-          const publishedAfterDate = new Date(publishedAfter);
-          if (activityDate < publishedAfterDate) {
-            await delay(delayMs);
-            continue;
+        if (firstActivity) {
+          // If the activity was published before the publishedAfter param, skip it
+          if (publishedAfter && firstActivity.published) {
+            const activityDate = new Date(firstActivity.published);
+            const publishedAfterDate = new Date(publishedAfter);
+            if (activityDate < publishedAfterDate) {
+              await delay(delayMs);
+              continue;
+            }
+          }
+
+          ({ match, dereferencedActivity } = await matchActivity(matcher, firstActivity, fetcher));
+
+          if (match) {
+            return dereferencedActivity;
           }
         }
 
-        ({ match, dereferencedActivity } = await matchActivity(matcher, firstActivity, fetcher));
-
-        if (match) {
-          return dereferencedActivity;
-        } else {
-          await delay(delayMs);
-        }
+        await delay(delayMs);
       }
 
       throw new Error(`No matching activity found on ${collectionUri} after ${(delayMs * maxTries) / 1000}s`);
