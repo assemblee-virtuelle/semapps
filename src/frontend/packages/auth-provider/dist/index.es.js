@@ -3,7 +3,7 @@ import $1obPJ$urljoin from "url-join";
 import {discoveryRequest as $1obPJ$discoveryRequest, processDiscoveryResponse as $1obPJ$processDiscoveryResponse, generateRandomCodeVerifier as $1obPJ$generateRandomCodeVerifier, calculatePKCECodeChallenge as $1obPJ$calculatePKCECodeChallenge, validateAuthResponse as $1obPJ$validateAuthResponse, expectNoState as $1obPJ$expectNoState, isOAuth2Error as $1obPJ$isOAuth2Error, authorizationCodeGrantRequest as $1obPJ$authorizationCodeGrantRequest, processAuthorizationCodeOpenIDResponse as $1obPJ$processAuthorizationCodeOpenIDResponse} from "oauth4webapi";
 import {jsx as $1obPJ$jsx, jsxs as $1obPJ$jsxs, Fragment as $1obPJ$Fragment} from "react/jsx-runtime";
 import $1obPJ$react, {useEffect as $1obPJ$useEffect, useState as $1obPJ$useState, useCallback as $1obPJ$useCallback, useRef as $1obPJ$useRef, useMemo as $1obPJ$useMemo, forwardRef as $1obPJ$forwardRef} from "react";
-import {useResourceContext as $1obPJ$useResourceContext, Create as $1obPJ$Create, CreateActions as $1obPJ$CreateActions, usePermissions as $1obPJ$usePermissions, useNotify as $1obPJ$useNotify, useRedirect as $1obPJ$useRedirect, useGetRecordId as $1obPJ$useGetRecordId, Edit as $1obPJ$Edit, useResourceDefinition as $1obPJ$useResourceDefinition, useRecordContext as $1obPJ$useRecordContext, TopToolbar as $1obPJ$TopToolbar, ListButton as $1obPJ$ListButton, ShowButton as $1obPJ$ShowButton, Button as $1obPJ$Button, useTranslate as $1obPJ$useTranslate, useGetList as $1obPJ$useGetList, useDataProvider as $1obPJ$useDataProvider, Loading as $1obPJ$Loading, Error as $1obPJ$Error, useAuthProvider as $1obPJ$useAuthProvider, Toolbar as $1obPJ$Toolbar, SaveButton as $1obPJ$SaveButton, DeleteButton as $1obPJ$DeleteButton, EditButton as $1obPJ$EditButton, List as $1obPJ$List1, CreateButton as $1obPJ$CreateButton, ExportButton as $1obPJ$ExportButton, Show as $1obPJ$Show, useLogin as $1obPJ$useLogin, useGetIdentity as $1obPJ$useGetIdentity, useSafeSetState as $1obPJ$useSafeSetState, useLocaleState as $1obPJ$useLocaleState, Form as $1obPJ$Form, TextInput as $1obPJ$TextInput, required as $1obPJ$required, minLength as $1obPJ$minLength, email as $1obPJ$email, Notification as $1obPJ$Notification, Resource as $1obPJ$Resource, useUserMenu as $1obPJ$useUserMenu, UserMenu as $1obPJ$UserMenu, Logout as $1obPJ$Logout, useGetPermissions as $1obPJ$useGetPermissions} from "react-admin";
+import {useResourceContext as $1obPJ$useResourceContext, Create as $1obPJ$Create, CreateActions as $1obPJ$CreateActions, usePermissions as $1obPJ$usePermissions, useNotify as $1obPJ$useNotify, useRedirect as $1obPJ$useRedirect, useGetRecordId as $1obPJ$useGetRecordId, Edit as $1obPJ$Edit, useResourceDefinition as $1obPJ$useResourceDefinition, useRecordContext as $1obPJ$useRecordContext, TopToolbar as $1obPJ$TopToolbar, ListButton as $1obPJ$ListButton, ShowButton as $1obPJ$ShowButton, Button as $1obPJ$Button, useTranslate as $1obPJ$useTranslate, useGetList as $1obPJ$useGetList, useDataProvider as $1obPJ$useDataProvider, Loading as $1obPJ$Loading, Error as $1obPJ$Error, useAuthProvider as $1obPJ$useAuthProvider, Toolbar as $1obPJ$Toolbar, SaveButton as $1obPJ$SaveButton, DeleteButton as $1obPJ$DeleteButton, EditButton as $1obPJ$EditButton, List as $1obPJ$List1, CreateButton as $1obPJ$CreateButton, ExportButton as $1obPJ$ExportButton, Show as $1obPJ$Show, useLogin as $1obPJ$useLogin, useGetIdentity as $1obPJ$useGetIdentity, Form as $1obPJ$Form, useSafeSetState as $1obPJ$useSafeSetState, useLocaleState as $1obPJ$useLocaleState, TextInput as $1obPJ$TextInput, required as $1obPJ$required, minLength as $1obPJ$minLength, email as $1obPJ$email, Notification as $1obPJ$Notification, Resource as $1obPJ$Resource, useUserMenu as $1obPJ$useUserMenu, UserMenu as $1obPJ$UserMenu, Logout as $1obPJ$Logout, useGetPermissions as $1obPJ$useGetPermissions} from "react-admin";
 import {useCreateContainerUri as $1obPJ$useCreateContainerUri, useCreateContainer as $1obPJ$useCreateContainer} from "@semapps/semantic-data-provider";
 import $1obPJ$muiiconsmaterialShare from "@mui/icons-material/Share";
 import {Dialog as $1obPJ$Dialog, DialogTitle as $1obPJ$DialogTitle, DialogContent as $1obPJ$DialogContent, DialogActions as $1obPJ$DialogActions, TextField as $1obPJ$TextField, List as $1obPJ$List, ListItem as $1obPJ$ListItem, ListItemAvatar as $1obPJ$ListItemAvatar, Avatar as $1obPJ$Avatar, ListItemText as $1obPJ$ListItemText, ListItemSecondaryAction as $1obPJ$ListItemSecondaryAction, IconButton as $1obPJ$IconButton, Menu as $1obPJ$Menu, MenuItem as $1obPJ$MenuItem, ListItemIcon as $1obPJ$ListItemIcon, useMediaQuery as $1obPJ$useMediaQuery, DialogContentText as $1obPJ$DialogContentText, Button as $1obPJ$Button1, Card as $1obPJ$Card, Typography as $1obPJ$Typography, CardActions as $1obPJ$CardActions, Box as $1obPJ$Box, CardContent as $1obPJ$CardContent, LinearProgress as $1obPJ$LinearProgress} from "@mui/material";
@@ -20,6 +20,7 @@ import {styled as $1obPJ$styled1} from "@mui/material/styles";
 import {useNavigate as $1obPJ$useNavigate, useSearchParams as $1obPJ$useSearchParams, Link as $1obPJ$Link, useLocation as $1obPJ$useLocation} from "react-router-dom";
 import $1obPJ$muiiconsmaterialLock from "@mui/icons-material/Lock";
 import $1obPJ$speakingurl from "speakingurl";
+import {useFormContext as $1obPJ$useFormContext} from "react-hook-form";
 import {withStyles as $1obPJ$withStyles} from "@mui/styles";
 import $1obPJ$muiiconsmaterialAccountCircle from "@mui/icons-material/AccountCircle";
 import $1obPJ$lodashisEqual from "lodash/isEqual";
@@ -1467,6 +1468,7 @@ var $479961b7e298304b$export$2e2bcd8739ae039 = $479961b7e298304b$var$SsoLoginPag
 
 
 
+
 const $fb967e2c34f56644$var$useSignup = ()=>{
     const authProvider = (0, $1obPJ$useAuthProvider)();
     return (0, $1obPJ$useCallback)((params = {})=>authProvider.signup(params), [
@@ -1614,6 +1616,24 @@ function $a8046307c9dfa483$export$2e2bcd8739ae039({ scorer: scorer = (0, $646d64
  *  passwordStrength's `defaultScorer`.
  * @returns
  */ const $e011da92680cf1fe$var$SignupForm = ({ passwordScorer: passwordScorer = (0, $646d64648a630b24$export$19dcdb21c6965fb8), onSignup: onSignup, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect = 0 })=>{
+    const [searchParams] = (0, $1obPJ$useSearchParams)();
+    const [handleSubmit, setHandleSubmit] = (0, $1obPJ$useState)(()=>{});
+    return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Form), {
+        onSubmit: handleSubmit,
+        noValidate: true,
+        defaultValues: {
+            email: searchParams.get("email")
+        },
+        children: /*#__PURE__*/ (0, $1obPJ$jsx)($e011da92680cf1fe$var$FormContent, {
+            passwordScorer: passwordScorer,
+            additionalSignupValues: additionalSignupValues,
+            onSignup: onSignup,
+            delayBeforeRedirect: delayBeforeRedirect,
+            setHandleSubmit: setHandleSubmit
+        })
+    });
+};
+const $e011da92680cf1fe$var$FormContent = ({ passwordScorer: passwordScorer = (0, $646d64648a630b24$export$19dcdb21c6965fb8), onSignup: onSignup, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect = 0, setHandleSubmit: setHandleSubmit })=>{
     const [loading, setLoading] = (0, $1obPJ$useSafeSetState)(false);
     const signup = (0, $fb967e2c34f56644$export$2e2bcd8739ae039)();
     const translate = (0, $1obPJ$useTranslate)();
@@ -1622,127 +1642,130 @@ function $a8046307c9dfa483$export$2e2bcd8739ae039({ scorer: scorer = (0, $646d64
     const redirectTo = searchParams.get("redirect") || "/";
     const [locale] = (0, $1obPJ$useLocaleState)();
     const [password, setPassword] = (0, $1obPJ$useState)("");
-    const submit = (0, $1obPJ$useCallback)(async (values)=>{
-        try {
-            setLoading(true);
-            await signup({
-                ...values,
-                ...additionalSignupValues
+    const formContext = (0, $1obPJ$useFormContext)();
+    (0, $1obPJ$useEffect)(()=>{
+        setHandleSubmit(()=>async (values)=>{
+                try {
+                    setLoading(true);
+                    await signup({
+                        ...values,
+                        ...additionalSignupValues
+                    });
+                    setTimeout(()=>{
+                        if (onSignup) onSignup(redirectTo);
+                        else window.location.href = redirectTo;
+                    }, delayBeforeRedirect);
+                } catch (error) {
+                    setLoading(false);
+                    notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "ra.auth.sign_in_error" : error.message, {
+                        type: "error",
+                        _: typeof error === "string" ? error : error && error.message ? error.message : undefined
+                    });
+                    formContext.reset({
+                        ...values
+                    }, {
+                        keepDirty: true,
+                        keepErrors: true
+                    });
+                }
             });
-            setTimeout(()=>{
-                if (onSignup) onSignup(redirectTo);
-                else window.location.href = redirectTo;
-            }, delayBeforeRedirect);
-        } catch (error) {
-            setLoading(false);
-            notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "ra.auth.sign_in_error" : error.message, {
-                type: "warning",
-                _: typeof error === "string" ? error : error && error.message ? error.message : undefined
-            });
-        }
     }, [
         setLoading,
         signup,
         additionalSignupValues,
         redirectTo,
         notify,
-        onSignup
+        onSignup,
+        formContext
     ]);
-    return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Form), {
-        onSubmit: submit,
-        noValidate: true,
-        defaultValues: {
-            email: searchParams.get("email")
-        },
-        children: /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$CardContent), {
-            children: [
-                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
-                    autoFocus: true,
-                    source: "username",
-                    label: translate("auth.input.username"),
-                    autoComplete: "username",
-                    fullWidth: true,
-                    disabled: loading,
-                    validate: [
-                        (0, $1obPJ$required)(),
-                        (0, $1obPJ$minLength)(2)
-                    ],
-                    format: (value)=>value ? (0, $1obPJ$speakingurl)(value, {
-                            lang: locale || "fr",
-                            separator: "_",
-                            custom: [
-                                ".",
-                                "-",
-                                "0",
-                                "1",
-                                "2",
-                                "3",
-                                "4",
-                                "5",
-                                "6",
-                                "7",
-                                "8",
-                                "9"
-                            ]
-                        }) : ""
-                }),
-                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
-                    source: "email",
-                    label: translate("auth.input.email"),
-                    autoComplete: "email",
-                    fullWidth: true,
-                    disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
-                    validate: [
-                        (0, $1obPJ$required)(),
-                        (0, $1obPJ$email)()
-                    ]
-                }),
-                passwordScorer && password && !(searchParams.has("email") && searchParams.has("force-email")) && /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Fragment), {
-                    children: [
-                        /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Typography), {
-                            variant: "caption",
-                            style: {
-                                marginBottom: 3
-                            },
-                            children: [
-                                translate("auth.input.password_strength"),
-                                ":",
-                                " "
-                            ]
-                        }),
-                        /*#__PURE__*/ (0, $1obPJ$jsx)((0, $a8046307c9dfa483$export$2e2bcd8739ae039), {
-                            password: password,
-                            scorer: passwordScorer,
-                            sx: {
-                                width: "100%"
-                            }
-                        })
-                    ]
-                }),
-                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
-                    source: "password",
-                    type: "password",
-                    value: password,
-                    onChange: (e)=>setPassword(e.target.value),
-                    label: translate("ra.auth.password"),
-                    autoComplete: "new-password",
-                    fullWidth: true,
-                    disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
-                    validate: [
-                        (0, $1obPJ$required)(),
-                        (0, $7a0bbe6824860dfe$export$2e2bcd8739ae039)(passwordScorer)
-                    ]
-                }),
-                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Button1), {
-                    variant: "contained",
-                    type: "submit",
-                    color: "primary",
-                    disabled: loading,
-                    fullWidth: true,
-                    children: translate("auth.action.signup")
-                })
-            ]
-        })
+    return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$CardContent), {
+        children: [
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
+                autoFocus: true,
+                source: "username",
+                label: translate("auth.input.username"),
+                autoComplete: "username",
+                fullWidth: true,
+                disabled: loading,
+                validate: [
+                    (0, $1obPJ$required)(),
+                    (0, $1obPJ$minLength)(2)
+                ],
+                format: (value)=>value ? (0, $1obPJ$speakingurl)(value, {
+                        lang: locale || "fr",
+                        separator: "_",
+                        custom: [
+                            ".",
+                            "-",
+                            "0",
+                            "1",
+                            "2",
+                            "3",
+                            "4",
+                            "5",
+                            "6",
+                            "7",
+                            "8",
+                            "9"
+                        ]
+                    }) : ""
+            }),
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
+                source: "email",
+                label: translate("auth.input.email"),
+                autoComplete: "email",
+                fullWidth: true,
+                disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
+                validate: [
+                    (0, $1obPJ$required)(),
+                    (0, $1obPJ$email)()
+                ]
+            }),
+            passwordScorer && password && !(searchParams.has("email") && searchParams.has("force-email")) && /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Fragment), {
+                children: [
+                    /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Typography), {
+                        variant: "caption",
+                        style: {
+                            marginBottom: 3
+                        },
+                        children: [
+                            translate("auth.input.password_strength"),
+                            ":",
+                            " "
+                        ]
+                    }),
+                    /*#__PURE__*/ (0, $1obPJ$jsx)((0, $a8046307c9dfa483$export$2e2bcd8739ae039), {
+                        password: password,
+                        scorer: passwordScorer,
+                        sx: {
+                            width: "100%"
+                        }
+                    })
+                ]
+            }),
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
+                source: "password",
+                type: "password",
+                value: password,
+                onChange: (e)=>setPassword(e.target.value),
+                label: translate("ra.auth.password"),
+                autoComplete: "new-password",
+                fullWidth: true,
+                disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
+                validate: [
+                    (0, $1obPJ$required)(),
+                    (0, $7a0bbe6824860dfe$export$2e2bcd8739ae039)(passwordScorer)
+                ]
+            }),
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Button1), {
+                variant: "contained",
+                type: "submit",
+                color: "primary",
+                disabled: loading,
+                fullWidth: true,
+                children: translate("auth.action.signup")
+            })
+        ]
     });
 };
 $e011da92680cf1fe$var$SignupForm.defaultValues = {
@@ -1757,28 +1780,54 @@ var $e011da92680cf1fe$export$2e2bcd8739ae039 = $e011da92680cf1fe$var$SignupForm;
 
 
 
+
 const $e2a34b2d647a5391$var$LoginForm = ({ onLogin: onLogin, allowUsername: allowUsername })=>{
+    const [searchParams] = (0, $1obPJ$useSearchParams)();
+    const [handleSubmit, setHandleSubmit] = useState(()=>{});
+    return /*#__PURE__*/ (0, $1obPJ$jsx)(Form, {
+        onSubmit: handleSubmit,
+        noValidate: true,
+        defaultValues: {
+            email: searchParams.get("email")
+        },
+        children: /*#__PURE__*/ (0, $1obPJ$jsx)($e2a34b2d647a5391$var$FormContent, {
+            onLogin: onLogin,
+            allowUsername: allowUsername,
+            setHandleSubmit: setHandleSubmit
+        })
+    });
+};
+const $e2a34b2d647a5391$var$FormContent = ({ onLogin: onLogin, allowUsername: allowUsername, setHandleSubmit: setHandleSubmit })=>{
     const [loading, setLoading] = (0, $1obPJ$useSafeSetState)(false);
     const login = (0, $1obPJ$useLogin)();
     const translate = (0, $1obPJ$useTranslate)();
     const notify = (0, $1obPJ$useNotify)();
     const [searchParams] = (0, $1obPJ$useSearchParams)();
     const redirectTo = searchParams.get("redirect") || "/";
-    const submit = (0, $1obPJ$useCallback)(async (values)=>{
-        try {
-            setLoading(true);
-            await login(values);
-            if (onLogin) onLogin(redirectTo);
-            else window.location.href = redirectTo;
-        } catch (error) {
-            setLoading(false);
-            notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "ra.auth.sign_in_error" : error.message, {
-                type: "warning",
-                messageArgs: {
-                    _: typeof error === "string" ? error : error && error.message ? error.message : undefined
+    const formContext = (0, $1obPJ$useFormContext)();
+    (0, $1obPJ$useEffect)(()=>{
+        setHandleSubmit(()=>async (values)=>{
+                try {
+                    setLoading(true);
+                    await login(values);
+                    if (onLogin) onLogin(redirectTo);
+                    else window.location.href = redirectTo;
+                } catch (error) {
+                    setLoading(false);
+                    notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "ra.auth.sign_in_error" : error.message, {
+                        type: "error",
+                        messageArgs: {
+                            _: typeof error === "string" ? error : error && error.message ? error.message : undefined
+                        }
+                    });
+                    formContext.reset({
+                        ...values
+                    }, {
+                        keepDirty: true,
+                        keepErrors: true
+                    });
                 }
             });
-        }
     }, [
         setLoading,
         login,
@@ -1786,47 +1835,40 @@ const $e2a34b2d647a5391$var$LoginForm = ({ onLogin: onLogin, allowUsername: allo
         notify,
         onLogin
     ]);
-    return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Form), {
-        onSubmit: submit,
-        noValidate: true,
-        defaultValues: {
-            username: searchParams.get("email")
-        },
-        children: /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$CardContent), {
-            children: [
-                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
-                    source: "username",
-                    label: translate(allowUsername ? "auth.input.username_or_email" : "auth.input.email"),
-                    autoComplete: "email",
-                    fullWidth: true,
-                    disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
-                    format: (value)=>value ? value.toLowerCase() : "",
-                    validate: allowUsername ? [
-                        (0, $1obPJ$required)()
-                    ] : [
-                        (0, $1obPJ$required)(),
-                        (0, $1obPJ$email)()
-                    ]
-                }),
-                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
-                    source: "password",
-                    type: "password",
-                    label: translate("ra.auth.password"),
-                    autoComplete: "current-password",
-                    fullWidth: true,
-                    disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
-                    validate: (0, $1obPJ$required)()
-                }),
-                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Button1), {
-                    variant: "contained",
-                    type: "submit",
-                    color: "primary",
-                    disabled: loading,
-                    fullWidth: true,
-                    children: translate("auth.action.login")
-                })
-            ]
-        })
+    return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$CardContent), {
+        children: [
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
+                source: "username",
+                label: translate(allowUsername ? "auth.input.username_or_email" : "auth.input.email"),
+                autoComplete: "email",
+                fullWidth: true,
+                disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
+                format: (value)=>value ? value.toLowerCase() : "",
+                validate: allowUsername ? [
+                    (0, $1obPJ$required)()
+                ] : [
+                    (0, $1obPJ$required)(),
+                    (0, $1obPJ$email)()
+                ]
+            }),
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
+                source: "password",
+                type: "password",
+                label: translate("ra.auth.password"),
+                autoComplete: "current-password",
+                fullWidth: true,
+                disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
+                validate: (0, $1obPJ$required)()
+            }),
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Button1), {
+                variant: "contained",
+                type: "submit",
+                color: "primary",
+                disabled: loading,
+                fullWidth: true,
+                children: translate("auth.action.login")
+            })
+        ]
     });
 };
 $e2a34b2d647a5391$var$LoginForm.defaultValues = {

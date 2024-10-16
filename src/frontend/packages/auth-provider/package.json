@@ -21,7 +21,8 @@
     "lodash": "^4.17.21",
     "oauth4webapi": "^2.3.0",
     "speakingurl": "^14.0.1",
-    "url-join": "^4.0.1"
+    "url-join": "^4.0.1",
+    "react-hook-form": "^7.43.9"
   },
   "peerDependencies": {
     "@mui/icons-material": "^5.13.1",
