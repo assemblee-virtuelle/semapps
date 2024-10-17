@@ -1790,7 +1790,7 @@ const $87a1f23cb4681f00$var$FormContent = ({ passwordScorer: passwordScorer = (0
                 label: translate("ra.auth.password"),
                 autoComplete: "new-password",
                 fullWidth: true,
-                disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
+                disabled: loading,
                 validate: [
                     (0, $4Uj5b$reactadmin.required)(),
                     (0, $eab41bc89667b2c6$export$2e2bcd8739ae039)(passwordScorer)
@@ -1892,7 +1892,7 @@ const $403a8b015c5eea65$var$FormContent = ({ onLogin: onLogin, allowUsername: al
                 label: translate("ra.auth.password"),
                 autoComplete: "current-password",
                 fullWidth: true,
-                disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
+                disabled: loading,
                 validate: (0, $4Uj5b$reactadmin.required)()
             }),
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {

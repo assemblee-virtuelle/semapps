@@ -58,7 +58,7 @@ const SignupForm = ({
         onSignup={onSignup}
         delayBeforeRedirect={delayBeforeRedirect}
         setHandleSubmit={setHandleSubmit}
-      ></FormContent>
+      />
     </Form>
   );
 };
@@ -157,7 +157,7 @@ const FormContent = ({
         label={translate('ra.auth.password')}
         autoComplete="new-password"
         fullWidth
-        disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
+        disabled={loading}
         validate={[required(), validatePasswordStrength(passwordScorer)]}
       />
       <Button variant="contained" type="submit" color="primary" disabled={loading} fullWidth>

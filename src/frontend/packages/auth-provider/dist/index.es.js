@@ -1751,7 +1751,7 @@ const $abd712f6afb101e7$var$FormContent = ({ passwordScorer: passwordScorer = (0
                 label: translate("ra.auth.password"),
                 autoComplete: "new-password",
                 fullWidth: true,
-                disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
+                disabled: loading,
                 validate: [
                     (0, $1obPJ$required)(),
                     (0, $7a0bbe6824860dfe$export$2e2bcd8739ae039)(passwordScorer)
@@ -1853,7 +1853,7 @@ const $326df91dd4ec3405$var$FormContent = ({ onLogin: onLogin, allowUsername: al
                 label: translate("ra.auth.password"),
                 autoComplete: "current-password",
                 fullWidth: true,
-                disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
+                disabled: loading,
                 validate: (0, $1obPJ$required)()
             }),
             /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Button1), {

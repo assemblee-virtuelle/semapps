@@ -24,7 +24,7 @@ const LoginForm = ({ onLogin, allowUsername }: LoginFormProps) => {
 
   return (
     <Form onSubmit={handleSubmit} noValidate defaultValues={{ email: searchParams.get('email') }}>
-      <FormContent onLogin={onLogin} allowUsername={allowUsername} setHandleSubmit={setHandleSubmit}></FormContent>
+      <FormContent onLogin={onLogin} allowUsername={allowUsername} setHandleSubmit={setHandleSubmit} />
     </Form>
   );
 };
@@ -89,7 +89,7 @@ const FormContent = ({
         label={translate('ra.auth.password')}
         autoComplete="current-password"
         fullWidth
-        disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
+        disabled={loading}
         validate={required()}
       />
       <Button variant="contained" type="submit" color="primary" disabled={loading} fullWidth>
