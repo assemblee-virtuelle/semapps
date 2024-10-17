@@ -1647,14 +1647,32 @@ function $edfec7f9e9fd7881$export$2e2bcd8739ae039({ scorer: scorer = (0, $d1ca1e
 
 
 /**
- * @param {function} props.onSignup Optional function to call when signup is completed
- * @param {object} props.additionalSignupValues
- * @param {number} delayBeforeRedirect
- * @param {object} passwordScorer Scorer to evaluate and indicate password strength.
+ * @param onSignup Optional function to call when signup is completed. Called after the `delayBeforeRedirect`.
+ * @param additionalSignupValues Passed to react-admin's signup function.
+ * @param delayBeforeRedirect In milliseconds
+ * @param passwordScorer Scorer to evaluate and indicate password strength.
  *  Set to `null` or `false`, if you don't want password strength checks. Default is
  *  passwordStrength's `defaultScorer`.
  * @returns
- */ const $5f70c240e5b0340c$var$SignupForm = ({ passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8), onSignup: onSignup, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect = 0 })=>{
+ */ const $87a1f23cb4681f00$var$SignupForm = ({ passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8), onSignup: onSignup, additionalSignupValues: additionalSignupValues = {}, delayBeforeRedirect: delayBeforeRedirect = 0 })=>{
+    const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
+    const [handleSubmit, setHandleSubmit] = (0, $4Uj5b$react.useState)(()=>{});
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Form), {
+        onSubmit: handleSubmit,
+        noValidate: true,
+        defaultValues: {
+            email: searchParams.get("email")
+        },
+        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($87a1f23cb4681f00$var$FormContent, {
+            passwordScorer: passwordScorer,
+            additionalSignupValues: additionalSignupValues,
+            onSignup: onSignup,
+            delayBeforeRedirect: delayBeforeRedirect,
+            setHandleSubmit: setHandleSubmit
+        })
+    });
+};
+const $87a1f23cb4681f00$var$FormContent = ({ passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8), onSignup: onSignup, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect = 0, setHandleSubmit: setHandleSubmit })=>{
     const [loading, setLoading] = (0, $4Uj5b$reactadmin.useSafeSetState)(false);
     const signup = (0, $19e4629c708b7a3e$export$2e2bcd8739ae039)();
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
@@ -1662,251 +1680,236 @@ function $edfec7f9e9fd7881$export$2e2bcd8739ae039({ scorer: scorer = (0, $d1ca1e
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
     const redirectTo = searchParams.get("redirect") || "/";
     const [locale] = (0, $4Uj5b$reactadmin.useLocaleState)();
-    const methods = (0, $4Uj5b$reacthookform.useForm)({
-        defaultValues: {
-            username: "",
-            email: searchParams.get("email") || "",
-            password: ""
-        }
-    });
-    const { handleSubmit: handleSubmit, register: register, formState: { errors: errors, isSubmitting: isSubmitting }, watch: watch, reset: reset } = methods;
-    const password = watch("password");
-    const onSubmit = async (values)=>{
-        try {
-            setLoading(true);
-            await signup({
-                ...values,
-                ...additionalSignupValues
+    const [password, setPassword] = (0, $4Uj5b$react.useState)("");
+    const formContext = (0, $4Uj5b$reacthookform.useFormContext)();
+    (0, $4Uj5b$react.useEffect)(()=>{
+        setHandleSubmit(()=>async (values)=>{
+                try {
+                    setLoading(true);
+                    await signup({
+                        ...values,
+                        ...additionalSignupValues
+                    });
+                    setTimeout(()=>{
+                        if (onSignup) onSignup(redirectTo);
+                        else window.location.href = redirectTo;
+                    }, delayBeforeRedirect);
+                } catch (error) {
+                    setLoading(false);
+                    notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "ra.auth.sign_in_error" : error.message, {
+                        type: "error",
+                        _: typeof error === "string" ? error : error && error.message ? error.message : undefined
+                    });
+                    formContext.reset({
+                        ...values
+                    }, {
+                        keepDirty: true,
+                        keepErrors: true
+                    });
+                }
             });
-            setTimeout(()=>{
-                if (onSignup) onSignup(redirectTo);
-                else window.location.href = redirectTo;
-            }, delayBeforeRedirect);
-        } catch (error) {
-            setLoading(false);
-            // Reset form to current values to ensure consistency...
-            reset(values, {
-                keepValues: true
-            });
-            notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "ra.auth.sign_in_error" : error.message, {
-                type: "warning",
-                _: typeof error === "string" ? error : error && error.message ? error.message : undefined
-            });
-        }
-    };
-    const formatUsername = (value)=>{
-        return value ? (0, ($parcel$interopDefault($4Uj5b$speakingurl)))(value, {
-            lang: locale || "fr",
-            separator: "_",
-            custom: [
-                ".",
-                "-",
-                "0",
-                "1",
-                "2",
-                "3",
-                "4",
-                "5",
-                "6",
-                "7",
-                "8",
-                "9"
-            ]
-        }) : "";
-    };
-    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reacthookform.FormProvider), {
-        ...methods,
-        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)("form", {
-            onSubmit: handleSubmit(onSubmit),
-            noValidate: true,
-            children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
+    }, [
+        setLoading,
+        signup,
+        additionalSignupValues,
+        redirectTo,
+        notify,
+        onSignup,
+        formContext
+    ]);
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
+        children: [
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
+                autoFocus: true,
+                source: "username",
+                label: translate("auth.input.username"),
+                autoComplete: "username",
+                fullWidth: true,
+                disabled: loading,
+                validate: [
+                    (0, $4Uj5b$reactadmin.required)(),
+                    (0, $4Uj5b$reactadmin.minLength)(2)
+                ],
+                format: (value)=>value ? (0, ($parcel$interopDefault($4Uj5b$speakingurl)))(value, {
+                        lang: locale || "fr",
+                        separator: "_",
+                        custom: [
+                            ".",
+                            "-",
+                            "0",
+                            "1",
+                            "2",
+                            "3",
+                            "4",
+                            "5",
+                            "6",
+                            "7",
+                            "8",
+                            "9"
+                        ]
+                    }) : ""
+            }),
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
+                source: "email",
+                label: translate("auth.input.email"),
+                autoComplete: "email",
+                fullWidth: true,
+                disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
+                validate: [
+                    (0, $4Uj5b$reactadmin.required)(),
+                    (0, $4Uj5b$reactadmin.email)()
+                ]
+            }),
+            passwordScorer && password && !(searchParams.has("email") && searchParams.has("force-email")) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
                 children: [
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.TextField), {
-                        ...register("username", {
-                            required: translate("ra.validation.required"),
-                            minLength: {
-                                value: 2,
-                                message: translate("ra.validation.minLength", {
-                                    min: 2
-                                })
-                            },
-                            setValueAs: formatUsername
-                        }),
-                        label: translate("auth.input.username"),
-                        error: !!errors.username,
-                        helperText: translate(errors.username?.message),
-                        fullWidth: true,
-                        disabled: loading,
-                        margin: "normal"
-                    }),
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.TextField), {
-                        ...register("email", {
-                            required: translate("ra.validation.required"),
-                            pattern: {
-                                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                                message: translate("ra.validation.email")
-                            }
-                        }),
-                        label: translate("auth.input.email"),
-                        error: !!errors.email,
-                        autoComplete: "email",
-                        helperText: translate(errors.email?.message),
-                        fullWidth: true,
-                        disabled: loading || searchParams.has("email") && searchParams.has("force-email")
-                    }),
-                    passwordScorer && password && !(searchParams.has("email") && searchParams.has("force-email")) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
+                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Typography), {
+                        variant: "caption",
+                        style: {
+                            marginBottom: 3
+                        },
                         children: [
-                            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Typography), {
-                                variant: "caption",
-                                style: {
-                                    marginBottom: 3
-                                },
-                                children: [
-                                    translate("auth.input.password_strength"),
-                                    ":",
-                                    " "
-                                ]
-                            }),
-                            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $edfec7f9e9fd7881$export$2e2bcd8739ae039), {
-                                password: password,
-                                scorer: passwordScorer,
-                                sx: {
-                                    width: "100%"
-                                }
-                            })
+                            translate("auth.input.password_strength"),
+                            ":",
+                            " "
                         ]
                     }),
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.TextField), {
-                        ...register("password", {
-                            required: translate("ra.validation.required"),
-                            validate: (value)=>(0, $eab41bc89667b2c6$export$2e2bcd8739ae039)(passwordScorer)(value)
-                        }),
-                        type: "password",
-                        value: password,
-                        label: translate("ra.auth.password"),
-                        error: !!errors.password,
-                        helperText: translate(errors.password?.message),
-                        autoComplete: "new-password",
-                        fullWidth: true,
-                        disabled: loading || searchParams.has("email") && searchParams.has("force-email")
-                    }),
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
-                        variant: "contained",
-                        type: "submit",
-                        color: "primary",
-                        disabled: loading || isSubmitting,
-                        fullWidth: true,
+                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $edfec7f9e9fd7881$export$2e2bcd8739ae039), {
+                        password: password,
+                        scorer: passwordScorer,
                         sx: {
-                            mt: 2
-                        },
-                        children: translate("auth.action.signup")
+                            width: "100%"
+                        }
                     })
                 ]
+            }),
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
+                source: "password",
+                type: "password",
+                value: password,
+                onChange: (e)=>setPassword(e.target.value),
+                label: translate("ra.auth.password"),
+                autoComplete: "new-password",
+                fullWidth: true,
+                disabled: loading,
+                validate: [
+                    (0, $4Uj5b$reactadmin.required)(),
+                    (0, $eab41bc89667b2c6$export$2e2bcd8739ae039)(passwordScorer)
+                ]
+            }),
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
+                variant: "contained",
+                type: "submit",
+                color: "primary",
+                disabled: loading,
+                fullWidth: true,
+                children: translate("auth.action.signup")
             })
+        ]
+    });
+};
+var $87a1f23cb4681f00$export$2e2bcd8739ae039 = $87a1f23cb4681f00$var$SignupForm;
+
+
+
+
+
+
+
+
+const $403a8b015c5eea65$var$LoginForm = ({ onLogin: onLogin, allowUsername: allowUsername })=>{
+    const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
+    const [handleSubmit, setHandleSubmit] = (0, $4Uj5b$react.useState)(()=>{});
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Form), {
+        onSubmit: handleSubmit,
+        noValidate: true,
+        defaultValues: {
+            email: searchParams.get("email")
+        },
+        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($403a8b015c5eea65$var$FormContent, {
+            onLogin: onLogin,
+            allowUsername: allowUsername,
+            setHandleSubmit: setHandleSubmit
         })
     });
 };
-var $5f70c240e5b0340c$export$2e2bcd8739ae039 = $5f70c240e5b0340c$var$SignupForm;
-
-
-
-
-
-
-
-const $8a2df01c9f2675bb$var$LoginForm = ({ onLogin: onLogin, allowUsername: allowUsername })=>{
+const $403a8b015c5eea65$var$FormContent = ({ onLogin: onLogin, allowUsername: allowUsername, setHandleSubmit: setHandleSubmit })=>{
     const [loading, setLoading] = (0, $4Uj5b$reactadmin.useSafeSetState)(false);
     const login = (0, $4Uj5b$reactadmin.useLogin)();
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
     const redirectTo = searchParams.get("redirect") || "/";
-    const methods = (0, $4Uj5b$reacthookform.useForm)({
-        defaultValues: {
-            username: searchParams.get("email") || "",
-            password: ""
-        }
-    });
-    const { handleSubmit: handleSubmit, register: register, formState: { errors: errors, isSubmitting: isSubmitting }, reset: reset } = methods;
-    const onSubmit = async (values)=>{
-        try {
-            setLoading(true);
-            await login(values);
-            if (onLogin) onLogin(redirectTo);
-            else window.location.href = redirectTo;
-        } catch (error) {
-            setLoading(false);
-            // Reset form to current values to ensure consistency
-            reset(values, {
-                keepValues: true
-            });
-            notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "ra.auth.sign_in_error" : error.message, {
-                type: "warning",
-                messageArgs: {
-                    _: typeof error === "string" ? error : error && error.message ? error.message : undefined
+    const formContext = (0, $4Uj5b$reacthookform.useFormContext)();
+    (0, $4Uj5b$react.useEffect)(()=>{
+        setHandleSubmit(()=>async (values)=>{
+                try {
+                    setLoading(true);
+                    await login(values);
+                    if (onLogin) onLogin(redirectTo);
+                    else window.location.href = redirectTo;
+                } catch (error) {
+                    setLoading(false);
+                    notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "ra.auth.sign_in_error" : error.message, {
+                        type: "error",
+                        messageArgs: {
+                            _: typeof error === "string" ? error : error && error.message ? error.message : undefined
+                        }
+                    });
+                    formContext.reset({
+                        ...values
+                    }, {
+                        keepDirty: true,
+                        keepErrors: true
+                    });
                 }
             });
-        }
-    };
-    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reacthookform.FormProvider), {
-        ...methods,
-        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)("form", {
-            onSubmit: handleSubmit(onSubmit),
-            noValidate: true,
-            children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
-                children: [
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.TextField), {
-                        ...register("username", {
-                            required: translate("ra.validation.required"),
-                            validate: (value)=>{
-                                if (!allowUsername) {
-                                    const validationRes = (0, $4Uj5b$reactadmin.email)()(value);
-                                    return validationRes.message ?? validationRes ?? true;
-                                }
-                                return true;
-                            },
-                            setValueAs: (value)=>value.toLowerCase()
-                        }),
-                        label: translate(allowUsername ? "auth.input.username_or_email" : "auth.input.email"),
-                        error: !!errors.username,
-                        helperText: translate(errors.username?.message),
-                        autoComplete: "email",
-                        fullWidth: true,
-                        disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
-                        margin: "normal"
-                    }),
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.TextField), {
-                        ...register("password", {
-                            required: translate("ra.validation.required")
-                        }),
-                        type: "password",
-                        label: translate("ra.auth.password"),
-                        error: !!errors.password,
-                        helperText: translate(errors.password?.message),
-                        autoComplete: "current-password",
-                        fullWidth: true,
-                        disabled: loading || searchParams.has("email") && searchParams.has("force-email")
-                    }),
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
-                        variant: "contained",
-                        type: "submit",
-                        color: "primary",
-                        disabled: loading || isSubmitting,
-                        fullWidth: true,
-                        sx: {
-                            mt: 2
-                        },
-                        children: translate("auth.action.login")
-                    })
+    }, [
+        setLoading,
+        login,
+        redirectTo,
+        notify,
+        onLogin
+    ]);
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
+        children: [
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
+                source: "username",
+                label: translate(allowUsername ? "auth.input.username_or_email" : "auth.input.email"),
+                autoComplete: "email",
+                fullWidth: true,
+                disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
+                format: (value)=>value ? value.toLowerCase() : "",
+                validate: allowUsername ? [
+                    (0, $4Uj5b$reactadmin.required)()
+                ] : [
+                    (0, $4Uj5b$reactadmin.required)(),
+                    (0, $4Uj5b$reactadmin.email)()
                 ]
+            }),
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
+                source: "password",
+                type: "password",
+                label: translate("ra.auth.password"),
+                autoComplete: "current-password",
+                fullWidth: true,
+                disabled: loading,
+                validate: (0, $4Uj5b$reactadmin.required)()
+            }),
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
+                variant: "contained",
+                type: "submit",
+                color: "primary",
+                disabled: loading,
+                fullWidth: true,
+                children: translate("auth.action.login")
             })
-        })
+        ]
     });
 };
-$8a2df01c9f2675bb$var$LoginForm.defaultValues = {
+$403a8b015c5eea65$var$LoginForm.defaultValues = {
     allowUsername: false
 };
-var $8a2df01c9f2675bb$export$2e2bcd8739ae039 = $8a2df01c9f2675bb$var$LoginForm;
+var $403a8b015c5eea65$export$2e2bcd8739ae039 = $403a8b015c5eea65$var$LoginForm;
 
 
 
@@ -2258,11 +2261,11 @@ var $cd7709c431b14d14$export$2e2bcd8739ae039 = $cd7709c431b14d14$var$getSearchPa
         icon: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialLock))), {}),
         children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Card), {
             children: [
-                isLogin && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $8a2df01c9f2675bb$export$2e2bcd8739ae039), {
+                isLogin && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $403a8b015c5eea65$export$2e2bcd8739ae039), {
                     onLogin: onLogin,
                     allowUsername: allowUsername
                 }),
-                isSignup && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $5f70c240e5b0340c$export$2e2bcd8739ae039), {
+                isSignup && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $87a1f23cb4681f00$export$2e2bcd8739ae039), {
                     delayBeforeRedirect: 4000,
                     onSignup: onSignup,
                     additionalSignupValues: additionalSignupValues,
