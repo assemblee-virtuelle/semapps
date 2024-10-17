@@ -1,6 +1,6 @@
 {
   "name": "@semapps/jsonld",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "JsonLD utils for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",

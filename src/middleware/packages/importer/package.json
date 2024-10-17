@@ -1,13 +1,13 @@
 {
   "name": "@semapps/importer",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "JSON importer and synchronizer for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "@semapps/activitypub": "1.0.2",
-    "@semapps/ldp": "1.0.2",
-    "@semapps/mime-types": "1.0.2",
+    "@semapps/activitypub": "1.0.3",
+    "@semapps/ldp": "1.0.3",
+    "@semapps/mime-types": "1.0.3",
     "cron-parser": "^4.2.1",
     "google-libphonenumber": "^3.2.26",
     "node-fetch": "^2.6.6",
