@@ -96,7 +96,7 @@ const WebhookChannel2023Service = {
             // await this.actions.delete({ resourceUri: channel.id, webId: channel.webId });
           }
 
-          throw new Error(`Posting to webhook ${channel.sendTo} failed. Error: (${e.message})`);
+          throw new Error(`Posting to webhook ${channel.sendTo} failed. Error: ${e.message}`);
         }
       }
     }

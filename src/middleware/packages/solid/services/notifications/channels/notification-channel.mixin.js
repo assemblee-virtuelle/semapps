@@ -255,9 +255,9 @@ module.exports = {
       );
     },
     async loadChannelsFromDb({ removeOldChannels }) {
-      try {
-        const accounts = await this.broker.call('auth.account.find');
-        for (const { webId } of accounts) {
+      const accounts = await this.broker.call('auth.account.find');
+      for (const { webId } of accounts) {
+        try {
           const container = await this.actions.list({ webId });
           for (const channel of arrayOf(container['ldp:contains'])) {
             // Remove channels where endAt is in the past.
@@ -281,9 +281,9 @@ module.exports = {
               webId
             });
           }
+        } catch (e) {
+          this.logger.error(`Could not load notifications channels of ${webId}. Error: ${e.message}`);
         }
-      } catch (e) {
-        this.logger.error(`Could not load channels from triple store. Error: ${e.message}`);
       }
     },
     // METHODS TO IMPLEMENT by implementing service.
