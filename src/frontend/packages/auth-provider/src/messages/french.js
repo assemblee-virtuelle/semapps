@@ -44,7 +44,8 @@ const frenchMessages = {
       new_password: 'Nouveau mot de passe',
       confirm_new_password: 'Confirmer le nouveau mot de passe',
       password_strength: 'Force du mot de passe',
-      password_too_weak: 'Mot de passe trop faible. Augmenter la longueur ou ajouter des caractères spéciaux.'
+      password_too_weak: 'Mot de passe trop faible. Augmenter la longueur ou ajouter des caractères spéciaux.',
+      password_mismatch: 'Mot de passe différent du premier'
     },
     helper: {
       login: 'Connectez-vous à votre compte.',
