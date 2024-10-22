@@ -1881,17 +1881,33 @@ var $326df91dd4ec3405$export$2e2bcd8739ae039 = $326df91dd4ec3405$var$LoginForm;
 
 
 
-const $b403c35bd8d76c50$var$samePassword = (value, allValues)=>{
-    if (value && value !== allValues.password) return "Mot de passe diff\xe9rent du premier";
+const $ddc5b4ef9210a90f$var$samePassword = (value, allValues)=>{
+    if (value && value !== allValues.password) return "auth.input.password_mismatch";
 };
 /**
  *
  * @param {string} redirectTo
- * @param {Object} passwordScorer Scorer to evaluate and indicate password strength.
+ * @param {typeof defaultScorer} passwordScorer Scorer to evaluate and indicate password strength.
  *  Set to `null` or `false`, if you don't want password strength checks. Default is
  *  passwordStrength's `defaultScorer`.
  * @returns
- */ const $b403c35bd8d76c50$var$NewPasswordForm = ({ redirectTo: redirectTo, passwordScorer: passwordScorer = (0, $646d64648a630b24$export$19dcdb21c6965fb8) })=>{
+ */ const $ddc5b4ef9210a90f$var$NewPasswordForm = ({ redirectTo: redirectTo, passwordScorer: passwordScorer = (0, $646d64648a630b24$export$19dcdb21c6965fb8) })=>{
+    const [searchParams] = (0, $1obPJ$useSearchParams)();
+    const [handleSubmit, setHandleSubmit] = (0, $1obPJ$useState)(()=>{});
+    return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Form), {
+        onSubmit: handleSubmit,
+        noValidate: true,
+        defaultValues: {
+            email: searchParams.get("email")
+        },
+        children: /*#__PURE__*/ (0, $1obPJ$jsx)($ddc5b4ef9210a90f$var$FormContent, {
+            setHandleSubmit: setHandleSubmit,
+            redirectTo: redirectTo,
+            passwordScorer: passwordScorer
+        })
+    });
+};
+const $ddc5b4ef9210a90f$var$FormContent = ({ setHandleSubmit: setHandleSubmit, redirectTo: redirectTo, passwordScorer: passwordScorer })=>{
     const location = (0, $1obPJ$useLocation)();
     const searchParams = new URLSearchParams(location.search);
     const token = searchParams.get("token");
@@ -1900,169 +1916,173 @@ const $b403c35bd8d76c50$var$samePassword = (value, allValues)=>{
     const translate = (0, $1obPJ$useTranslate)();
     const notify = (0, $1obPJ$useNotify)();
     const [newPassword, setNewPassword] = (0, $1obPJ$useState)("");
-    const submit = (values)=>{
-        setLoading(true);
-        authProvider.setNewPassword({
-            ...values,
-            token: token
-        }).then(()=>{
-            setTimeout(()=>{
-                const url = new URL("/login", window.location.origin);
-                if (redirectTo) url.searchParams.append("redirect", redirectTo);
-                url.searchParams.append("email", values.email);
-                window.location.href = url.toString();
-                setLoading(false);
-            }, 2000);
-            notify("auth.notification.password_changed", {
-                type: "info"
+    (0, $1obPJ$useEffect)(()=>{
+        setHandleSubmit(()=>async (values)=>{
+                setLoading(true);
+                authProvider.setNewPassword({
+                    ...values,
+                    token: token
+                }).then(()=>{
+                    setTimeout(()=>{
+                        const url = new URL("/login", window.location.origin);
+                        if (redirectTo) url.searchParams.append("redirect", redirectTo);
+                        url.searchParams.append("email", values.email);
+                        window.location.href = url.toString();
+                        setLoading(false);
+                    }, 2000);
+                    notify("auth.notification.password_changed", {
+                        type: "info"
+                    });
+                }).catch((error)=>{
+                    setLoading(false);
+                    notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "auth.notification.reset_password_error" : error.message, {
+                        type: "warning",
+                        messageArgs: {
+                            _: typeof error === "string" ? error : error && error.message ? error.message : undefined
+                        }
+                    });
+                });
             });
-        }).catch((error)=>{
-            setLoading(false);
-            notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "auth.notification.reset_password_error" : error.message, {
-                type: "warning",
-                messageArgs: {
-                    _: typeof error === "string" ? error : error && error.message ? error.message : undefined
-                }
-            });
-        });
-    };
+    });
+    return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$CardContent), {
+        children: [
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
+                autoFocus: true,
+                source: "email",
+                label: translate("auth.input.email"),
+                autoComplete: "email",
+                fullWidth: true,
+                disabled: loading,
+                validate: (0, $1obPJ$required)(),
+                format: (value)=>value ? value.toLowerCase() : ""
+            }),
+            passwordScorer && /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Fragment), {
+                children: [
+                    /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Typography), {
+                        variant: "caption",
+                        style: {
+                            marginBottom: 3
+                        },
+                        children: [
+                            translate("auth.input.password_strength"),
+                            ":",
+                            " "
+                        ]
+                    }),
+                    /*#__PURE__*/ (0, $1obPJ$jsx)((0, $a8046307c9dfa483$export$2e2bcd8739ae039), {
+                        password: newPassword,
+                        scorer: passwordScorer,
+                        sx: {
+                            width: "100%"
+                        }
+                    })
+                ]
+            }),
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
+                autoFocus: true,
+                type: "password",
+                source: "password",
+                value: newPassword,
+                label: translate("auth.input.new_password"),
+                autoComplete: "current-password",
+                fullWidth: true,
+                disabled: loading,
+                validate: [
+                    (0, $1obPJ$required)(),
+                    (0, $7a0bbe6824860dfe$export$2e2bcd8739ae039)(passwordScorer)
+                ],
+                onChange: (e)=>setNewPassword(e.target.value)
+            }),
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
+                type: "password",
+                source: "confirm-password",
+                label: translate("auth.input.confirm_new_password"),
+                autoComplete: "current-password",
+                fullWidth: true,
+                disabled: loading,
+                validate: [
+                    (0, $1obPJ$required)(),
+                    $ddc5b4ef9210a90f$var$samePassword
+                ]
+            }),
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Button1), {
+                variant: "contained",
+                type: "submit",
+                color: "primary",
+                disabled: loading,
+                fullWidth: true,
+                children: translate("auth.action.set_new_password")
+            })
+        ]
+    });
+};
+var $ddc5b4ef9210a90f$export$2e2bcd8739ae039 = $ddc5b4ef9210a90f$var$NewPasswordForm;
+
+
+
+
+
+
+const $4c941e9b40342087$var$ResetPasswordForm = ()=>{
+    const [handleSubmit, setHandleSubmit] = (0, $1obPJ$useState)(()=>{});
     return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Form), {
-        onSubmit: submit,
+        onSubmit: handleSubmit,
         noValidate: true,
-        defaultValues: {
-            email: searchParams.get("email")
-        },
-        children: /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$CardContent), {
-            children: [
-                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
-                    autoFocus: true,
-                    source: "email",
-                    label: translate("auth.input.email"),
-                    autoComplete: "email",
-                    fullWidth: true,
-                    disabled: loading,
-                    validate: (0, $1obPJ$required)(),
-                    format: (value)=>value ? value.toLowerCase() : ""
-                }),
-                passwordScorer && /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Fragment), {
-                    children: [
-                        /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Typography), {
-                            variant: "caption",
-                            style: {
-                                marginBottom: 3
-                            },
-                            children: [
-                                translate("auth.input.password_strength"),
-                                ":",
-                                " "
-                            ]
-                        }),
-                        /*#__PURE__*/ (0, $1obPJ$jsx)((0, $a8046307c9dfa483$export$2e2bcd8739ae039), {
-                            password: newPassword,
-                            scorer: passwordScorer,
-                            sx: {
-                                width: "100%"
-                            }
-                        })
-                    ]
-                }),
-                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
-                    autoFocus: true,
-                    type: "password",
-                    source: "password",
-                    value: newPassword,
-                    label: translate("auth.input.new_password"),
-                    autoComplete: "current-password",
-                    fullWidth: true,
-                    disabled: loading,
-                    validate: [
-                        (0, $1obPJ$required)(),
-                        (0, $7a0bbe6824860dfe$export$2e2bcd8739ae039)(passwordScorer)
-                    ],
-                    onChange: (e)=>setNewPassword(e.target.value)
-                }),
-                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
-                    type: "password",
-                    source: "confirm-password",
-                    label: translate("auth.input.confirm_new_password"),
-                    autoComplete: "current-password",
-                    fullWidth: true,
-                    disabled: loading,
-                    validate: [
-                        (0, $1obPJ$required)(),
-                        $b403c35bd8d76c50$var$samePassword
-                    ]
-                }),
-                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Button1), {
-                    variant: "contained",
-                    type: "submit",
-                    color: "primary",
-                    disabled: loading,
-                    fullWidth: true,
-                    children: translate("auth.action.set_new_password")
-                })
-            ]
+        children: /*#__PURE__*/ (0, $1obPJ$jsx)($4c941e9b40342087$var$FormContent, {
+            setHandleSubmit: setHandleSubmit
         })
     });
 };
-var $b403c35bd8d76c50$export$2e2bcd8739ae039 = $b403c35bd8d76c50$var$NewPasswordForm;
-
-
-
-
-
-
-const $8d415f03f06df877$var$ResetPasswordForm = ()=>{
+const $4c941e9b40342087$var$FormContent = ({ setHandleSubmit: setHandleSubmit })=>{
     const [loading, setLoading] = (0, $1obPJ$useSafeSetState)(false);
     const authProvider = (0, $1obPJ$useAuthProvider)();
     const translate = (0, $1obPJ$useTranslate)();
     const notify = (0, $1obPJ$useNotify)();
-    const submit = (values)=>{
-        setLoading(true);
-        authProvider.resetPassword({
-            ...values
-        }).then((res)=>{
-            setLoading(false);
-            notify("auth.notification.reset_password_submitted", {
-                type: "info"
+    (0, $1obPJ$useEffect)(()=>{
+        setHandleSubmit(()=>async (values)=>{
+                setLoading(true);
+                authProvider.resetPassword({
+                    ...values
+                }).then(()=>{
+                    setLoading(false);
+                    notify("auth.notification.reset_password_submitted", {
+                        type: "info"
+                    });
+                }).catch((error)=>{
+                    setLoading(false);
+                    notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "auth.notification.reset_password_error" : error.message, {
+                        type: "warning",
+                        messageArgs: {
+                            _: typeof error === "string" ? error : error && error.message ? error.message : undefined
+                        }
+                    });
+                });
             });
-        }).catch((error)=>{
-            setLoading(false);
-            notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "auth.notification.reset_password_error" : error.message, {
-                type: "warning",
-                messageArgs: {
-                    _: typeof error === "string" ? error : error && error.message ? error.message : undefined
-                }
-            });
-        });
-    };
-    return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Form), {
-        onSubmit: submit,
-        children: /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$CardContent), {
-            children: [
-                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
-                    autoFocus: true,
-                    source: "email",
-                    label: translate("auth.input.email"),
-                    autoComplete: "email",
-                    fullWidth: true,
-                    disabled: loading,
-                    validate: (0, $1obPJ$required)(),
-                    format: (value)=>value ? value.toLowerCase() : ""
-                }),
-                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Button1), {
-                    variant: "contained",
-                    type: "submit",
-                    color: "primary",
-                    disabled: loading,
-                    fullWidth: true,
-                    children: translate("auth.action.submit")
-                })
-            ]
-        })
+    });
+    return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$CardContent), {
+        children: [
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
+                autoFocus: true,
+                source: "email",
+                label: translate("auth.input.email"),
+                autoComplete: "email",
+                fullWidth: true,
+                disabled: loading,
+                validate: (0, $1obPJ$required)(),
+                format: (value)=>value ? value.toLowerCase() : ""
+            }),
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Button1), {
+                variant: "contained",
+                type: "submit",
+                color: "primary",
+                disabled: loading,
+                fullWidth: true,
+                children: translate("auth.action.submit")
+            })
+        ]
     });
 };
-var $8d415f03f06df877$export$2e2bcd8739ae039 = $8d415f03f06df877$var$ResetPasswordForm;
+var $4c941e9b40342087$export$2e2bcd8739ae039 = $4c941e9b40342087$var$ResetPasswordForm;
 
 
 
@@ -2232,8 +2252,8 @@ var $2dfd781b793256e6$export$2e2bcd8739ae039 = $2dfd781b793256e6$var$getSearchPa
                     additionalSignupValues: additionalSignupValues,
                     passwordScorer: passwordScorer
                 }),
-                isResetPassword && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $8d415f03f06df877$export$2e2bcd8739ae039), {}),
-                isNewPassword && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $b403c35bd8d76c50$export$2e2bcd8739ae039), {
+                isResetPassword && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $4c941e9b40342087$export$2e2bcd8739ae039), {}),
+                isNewPassword && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $ddc5b4ef9210a90f$export$2e2bcd8739ae039), {
                     redirectTo: redirectTo,
                     passwordScorer: passwordScorer
                 }),
@@ -2507,7 +2527,8 @@ const $22afd1c81635c9d9$var$englishMessages = {
             new_password: "New password",
             confirm_new_password: "Confirm new password",
             password_strength: "Password strength",
-            password_too_weak: "Password too weak. Increase length or add special characters."
+            password_too_weak: "Password too weak. Increase length or add special characters.",
+            password_mismatch: "The passwords you provided do not match."
         },
         helper: {
             login: "Sign in to your account",
@@ -2601,7 +2622,8 @@ const $509b6323d7902699$var$frenchMessages = {
             new_password: "Nouveau mot de passe",
             confirm_new_password: "Confirmer le nouveau mot de passe",
             password_strength: "Force du mot de passe",
-            password_too_weak: "Mot de passe trop faible. Augmenter la longueur ou ajouter des caract\xe8res sp\xe9ciaux."
+            password_too_weak: "Mot de passe trop faible. Augmenter la longueur ou ajouter des caract\xe8res sp\xe9ciaux.",
+            password_mismatch: "Mot de passe diff\xe9rent du premier"
         },
         helper: {
             login: "Connectez-vous \xe0 votre compte.",
