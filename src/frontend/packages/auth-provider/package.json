@@ -1,6 +1,6 @@
 {
   "name": "@semapps/auth-provider",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "React-Admin auth provider for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -15,7 +15,7 @@
     "watch": "nodemon --ext ts,tsx,js --watch src --exec 'yarn build'"
   },
   "dependencies": {
-    "@semapps/semantic-data-provider": "1.0.1",
+    "@semapps/semantic-data-provider": "1.0.2",
     "classnames": "^2.3.2",
     "jwt-decode": "^3.0.0",
     "lodash": "^4.17.21",
