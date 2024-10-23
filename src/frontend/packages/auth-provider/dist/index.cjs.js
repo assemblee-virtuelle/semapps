@@ -1920,17 +1920,33 @@ var $403a8b015c5eea65$export$2e2bcd8739ae039 = $403a8b015c5eea65$var$LoginForm;
 
 
 
-const $176df6bd8edc5f4d$var$samePassword = (value, allValues)=>{
-    if (value && value !== allValues.password) return "Mot de passe diff\xe9rent du premier";
+const $2f0ce992717e175e$var$samePassword = (value, allValues)=>{
+    if (value && value !== allValues.password) return "auth.input.password_mismatch";
 };
 /**
  *
  * @param {string} redirectTo
- * @param {Object} passwordScorer Scorer to evaluate and indicate password strength.
+ * @param {typeof defaultScorer} passwordScorer Scorer to evaluate and indicate password strength.
  *  Set to `null` or `false`, if you don't want password strength checks. Default is
  *  passwordStrength's `defaultScorer`.
  * @returns
- */ const $176df6bd8edc5f4d$var$NewPasswordForm = ({ redirectTo: redirectTo, passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8) })=>{
+ */ const $2f0ce992717e175e$var$NewPasswordForm = ({ redirectTo: redirectTo, passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8) })=>{
+    const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
+    const [handleSubmit, setHandleSubmit] = (0, $4Uj5b$react.useState)(()=>{});
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Form), {
+        onSubmit: handleSubmit,
+        noValidate: true,
+        defaultValues: {
+            email: searchParams.get("email")
+        },
+        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($2f0ce992717e175e$var$FormContent, {
+            setHandleSubmit: setHandleSubmit,
+            redirectTo: redirectTo,
+            passwordScorer: passwordScorer
+        })
+    });
+};
+const $2f0ce992717e175e$var$FormContent = ({ setHandleSubmit: setHandleSubmit, redirectTo: redirectTo, passwordScorer: passwordScorer })=>{
     const location = (0, $4Uj5b$reactrouterdom.useLocation)();
     const searchParams = new URLSearchParams(location.search);
     const token = searchParams.get("token");
@@ -1939,169 +1955,173 @@ const $176df6bd8edc5f4d$var$samePassword = (value, allValues)=>{
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
     const [newPassword, setNewPassword] = (0, $4Uj5b$react.useState)("");
-    const submit = (values)=>{
-        setLoading(true);
-        authProvider.setNewPassword({
-            ...values,
-            token: token
-        }).then(()=>{
-            setTimeout(()=>{
-                const url = new URL("/login", window.location.origin);
-                if (redirectTo) url.searchParams.append("redirect", redirectTo);
-                url.searchParams.append("email", values.email);
-                window.location.href = url.toString();
-                setLoading(false);
-            }, 2000);
-            notify("auth.notification.password_changed", {
-                type: "info"
+    (0, $4Uj5b$react.useEffect)(()=>{
+        setHandleSubmit(()=>async (values)=>{
+                setLoading(true);
+                authProvider.setNewPassword({
+                    ...values,
+                    token: token
+                }).then(()=>{
+                    setTimeout(()=>{
+                        const url = new URL("/login", window.location.origin);
+                        if (redirectTo) url.searchParams.append("redirect", redirectTo);
+                        url.searchParams.append("email", values.email);
+                        window.location.href = url.toString();
+                        setLoading(false);
+                    }, 2000);
+                    notify("auth.notification.password_changed", {
+                        type: "info"
+                    });
+                }).catch((error)=>{
+                    setLoading(false);
+                    notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "auth.notification.reset_password_error" : error.message, {
+                        type: "warning",
+                        messageArgs: {
+                            _: typeof error === "string" ? error : error && error.message ? error.message : undefined
+                        }
+                    });
+                });
             });
-        }).catch((error)=>{
-            setLoading(false);
-            notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "auth.notification.reset_password_error" : error.message, {
-                type: "warning",
-                messageArgs: {
-                    _: typeof error === "string" ? error : error && error.message ? error.message : undefined
-                }
-            });
-        });
-    };
+    });
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
+        children: [
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
+                autoFocus: true,
+                source: "email",
+                label: translate("auth.input.email"),
+                autoComplete: "email",
+                fullWidth: true,
+                disabled: loading,
+                validate: (0, $4Uj5b$reactadmin.required)(),
+                format: (value)=>value ? value.toLowerCase() : ""
+            }),
+            passwordScorer && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
+                children: [
+                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Typography), {
+                        variant: "caption",
+                        style: {
+                            marginBottom: 3
+                        },
+                        children: [
+                            translate("auth.input.password_strength"),
+                            ":",
+                            " "
+                        ]
+                    }),
+                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $edfec7f9e9fd7881$export$2e2bcd8739ae039), {
+                        password: newPassword,
+                        scorer: passwordScorer,
+                        sx: {
+                            width: "100%"
+                        }
+                    })
+                ]
+            }),
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
+                autoFocus: true,
+                type: "password",
+                source: "password",
+                value: newPassword,
+                label: translate("auth.input.new_password"),
+                autoComplete: "current-password",
+                fullWidth: true,
+                disabled: loading,
+                validate: [
+                    (0, $4Uj5b$reactadmin.required)(),
+                    (0, $eab41bc89667b2c6$export$2e2bcd8739ae039)(passwordScorer)
+                ],
+                onChange: (e)=>setNewPassword(e.target.value)
+            }),
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
+                type: "password",
+                source: "confirm-password",
+                label: translate("auth.input.confirm_new_password"),
+                autoComplete: "current-password",
+                fullWidth: true,
+                disabled: loading,
+                validate: [
+                    (0, $4Uj5b$reactadmin.required)(),
+                    $2f0ce992717e175e$var$samePassword
+                ]
+            }),
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
+                variant: "contained",
+                type: "submit",
+                color: "primary",
+                disabled: loading,
+                fullWidth: true,
+                children: translate("auth.action.set_new_password")
+            })
+        ]
+    });
+};
+var $2f0ce992717e175e$export$2e2bcd8739ae039 = $2f0ce992717e175e$var$NewPasswordForm;
+
+
+
+
+
+
+const $be1129164d40878e$var$ResetPasswordForm = ()=>{
+    const [handleSubmit, setHandleSubmit] = (0, $4Uj5b$react.useState)(()=>{});
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Form), {
-        onSubmit: submit,
+        onSubmit: handleSubmit,
         noValidate: true,
-        defaultValues: {
-            email: searchParams.get("email")
-        },
-        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
-            children: [
-                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
-                    autoFocus: true,
-                    source: "email",
-                    label: translate("auth.input.email"),
-                    autoComplete: "email",
-                    fullWidth: true,
-                    disabled: loading,
-                    validate: (0, $4Uj5b$reactadmin.required)(),
-                    format: (value)=>value ? value.toLowerCase() : ""
-                }),
-                passwordScorer && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
-                    children: [
-                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Typography), {
-                            variant: "caption",
-                            style: {
-                                marginBottom: 3
-                            },
-                            children: [
-                                translate("auth.input.password_strength"),
-                                ":",
-                                " "
-                            ]
-                        }),
-                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $edfec7f9e9fd7881$export$2e2bcd8739ae039), {
-                            password: newPassword,
-                            scorer: passwordScorer,
-                            sx: {
-                                width: "100%"
-                            }
-                        })
-                    ]
-                }),
-                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
-                    autoFocus: true,
-                    type: "password",
-                    source: "password",
-                    value: newPassword,
-                    label: translate("auth.input.new_password"),
-                    autoComplete: "current-password",
-                    fullWidth: true,
-                    disabled: loading,
-                    validate: [
-                        (0, $4Uj5b$reactadmin.required)(),
-                        (0, $eab41bc89667b2c6$export$2e2bcd8739ae039)(passwordScorer)
-                    ],
-                    onChange: (e)=>setNewPassword(e.target.value)
-                }),
-                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
-                    type: "password",
-                    source: "confirm-password",
-                    label: translate("auth.input.confirm_new_password"),
-                    autoComplete: "current-password",
-                    fullWidth: true,
-                    disabled: loading,
-                    validate: [
-                        (0, $4Uj5b$reactadmin.required)(),
-                        $176df6bd8edc5f4d$var$samePassword
-                    ]
-                }),
-                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
-                    variant: "contained",
-                    type: "submit",
-                    color: "primary",
-                    disabled: loading,
-                    fullWidth: true,
-                    children: translate("auth.action.set_new_password")
-                })
-            ]
+        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($be1129164d40878e$var$FormContent, {
+            setHandleSubmit: setHandleSubmit
         })
     });
 };
-var $176df6bd8edc5f4d$export$2e2bcd8739ae039 = $176df6bd8edc5f4d$var$NewPasswordForm;
-
-
-
-
-
-
-const $a04debd4e4af2a01$var$ResetPasswordForm = ()=>{
+const $be1129164d40878e$var$FormContent = ({ setHandleSubmit: setHandleSubmit })=>{
     const [loading, setLoading] = (0, $4Uj5b$reactadmin.useSafeSetState)(false);
     const authProvider = (0, $4Uj5b$reactadmin.useAuthProvider)();
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
-    const submit = (values)=>{
-        setLoading(true);
-        authProvider.resetPassword({
-            ...values
-        }).then((res)=>{
-            setLoading(false);
-            notify("auth.notification.reset_password_submitted", {
-                type: "info"
+    (0, $4Uj5b$react.useEffect)(()=>{
+        setHandleSubmit(()=>async (values)=>{
+                setLoading(true);
+                authProvider.resetPassword({
+                    ...values
+                }).then(()=>{
+                    setLoading(false);
+                    notify("auth.notification.reset_password_submitted", {
+                        type: "info"
+                    });
+                }).catch((error)=>{
+                    setLoading(false);
+                    notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "auth.notification.reset_password_error" : error.message, {
+                        type: "warning",
+                        messageArgs: {
+                            _: typeof error === "string" ? error : error && error.message ? error.message : undefined
+                        }
+                    });
+                });
             });
-        }).catch((error)=>{
-            setLoading(false);
-            notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "auth.notification.reset_password_error" : error.message, {
-                type: "warning",
-                messageArgs: {
-                    _: typeof error === "string" ? error : error && error.message ? error.message : undefined
-                }
-            });
-        });
-    };
-    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Form), {
-        onSubmit: submit,
-        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
-            children: [
-                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
-                    autoFocus: true,
-                    source: "email",
-                    label: translate("auth.input.email"),
-                    autoComplete: "email",
-                    fullWidth: true,
-                    disabled: loading,
-                    validate: (0, $4Uj5b$reactadmin.required)(),
-                    format: (value)=>value ? value.toLowerCase() : ""
-                }),
-                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
-                    variant: "contained",
-                    type: "submit",
-                    color: "primary",
-                    disabled: loading,
-                    fullWidth: true,
-                    children: translate("auth.action.submit")
-                })
-            ]
-        })
+    });
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
+        children: [
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
+                autoFocus: true,
+                source: "email",
+                label: translate("auth.input.email"),
+                autoComplete: "email",
+                fullWidth: true,
+                disabled: loading,
+                validate: (0, $4Uj5b$reactadmin.required)(),
+                format: (value)=>value ? value.toLowerCase() : ""
+            }),
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
+                variant: "contained",
+                type: "submit",
+                color: "primary",
+                disabled: loading,
+                fullWidth: true,
+                children: translate("auth.action.submit")
+            })
+        ]
     });
 };
-var $a04debd4e4af2a01$export$2e2bcd8739ae039 = $a04debd4e4af2a01$var$ResetPasswordForm;
+var $be1129164d40878e$export$2e2bcd8739ae039 = $be1129164d40878e$var$ResetPasswordForm;
 
 
 
@@ -2271,8 +2291,8 @@ var $cd7709c431b14d14$export$2e2bcd8739ae039 = $cd7709c431b14d14$var$getSearchPa
                     additionalSignupValues: additionalSignupValues,
                     passwordScorer: passwordScorer
                 }),
-                isResetPassword && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $a04debd4e4af2a01$export$2e2bcd8739ae039), {}),
-                isNewPassword && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $176df6bd8edc5f4d$export$2e2bcd8739ae039), {
+                isResetPassword && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $be1129164d40878e$export$2e2bcd8739ae039), {}),
+                isNewPassword && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $2f0ce992717e175e$export$2e2bcd8739ae039), {
                     redirectTo: redirectTo,
                     passwordScorer: passwordScorer
                 }),
@@ -2546,7 +2566,8 @@ const $be2fdde9f3e3137d$var$englishMessages = {
             new_password: "New password",
             confirm_new_password: "Confirm new password",
             password_strength: "Password strength",
-            password_too_weak: "Password too weak. Increase length or add special characters."
+            password_too_weak: "Password too weak. Increase length or add special characters.",
+            password_mismatch: "The passwords you provided do not match."
         },
         helper: {
             login: "Sign in to your account",
@@ -2640,7 +2661,8 @@ const $6dbc362c3d93e01d$var$frenchMessages = {
             new_password: "Nouveau mot de passe",
             confirm_new_password: "Confirmer le nouveau mot de passe",
             password_strength: "Force du mot de passe",
-            password_too_weak: "Mot de passe trop faible. Augmenter la longueur ou ajouter des caract\xe8res sp\xe9ciaux."
+            password_too_weak: "Mot de passe trop faible. Augmenter la longueur ou ajouter des caract\xe8res sp\xe9ciaux.",
+            password_mismatch: "Mot de passe diff\xe9rent du premier"
         },
         helper: {
             login: "Connectez-vous \xe0 votre compte.",
