@@ -182,7 +182,7 @@ class TripleStoreAdapter {
 
     return this.findById(_id)
       .then(oldData => {
-        newData = { ...oldData, ...newData, '@id': null, '@type': null, '@context': null };
+        newData = { ...oldData, ...newData };
         return this.broker.call('triplestore.update', {
           query: `
             DELETE {
@@ -193,7 +193,7 @@ class TripleStoreAdapter {
               ${
                 newData
                   ? Object.keys(newData)
-                      .filter(predicate => newData[predicate])
+                      .filter(predicate => newData[predicate] && !['@id', '@type', '@context'].includes(predicate))
                       .map(predicate => `<${_id}> <${this.ontology + predicate}> "${newData[predicate]}"`)
                       .join(' . ')
                   : ''
