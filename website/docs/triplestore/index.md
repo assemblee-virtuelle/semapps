@@ -51,3 +51,4 @@ services:
 
 - [Migrating datasets](migrating-datasets)
 - [Compacting datasets](compacting-datasets)
+- [Moving datasets](moving-datasets)

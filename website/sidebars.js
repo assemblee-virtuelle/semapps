@@ -175,7 +175,12 @@ module.exports = {
     'frontend/list-components',
     'frontend/markdown-components'
   ],
-  triplestore: ['triplestore/index', 'triplestore/migrating-datasets', 'triplestore/compacting-datasets'],
+  triplestore: [
+    'triplestore/index',
+    'triplestore/migrating-datasets',
+    'triplestore/compacting-datasets',
+    'triplestore/moving-datasets'
+  ],
   contribute: {
     'SemApps core': ['contribute/code', 'contribute/coding-conventions'],
     Documentation: ['contribute/documentation', 'contribute/style-guide']
