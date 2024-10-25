@@ -1,6 +1,6 @@
+const urlJoin = require('url-join');
 const { throw403 } = require('@semapps/middlewares');
-const { arrayOf, hasType, defaultContainerOptions } = require('@semapps/ldp');
-const { ACTIVITY_TYPES } = require('@semapps/activitypub');
+const { arrayOf, defaultContainerOptions } = require('@semapps/ldp');
 const { isRemoteUri, getSlugFromUri } = require('../utils');
 
 const modifyActions = [
@@ -13,6 +13,8 @@ const modifyActions = [
   'ldp.remote.delete',
   'ldp.resource.delete'
 ];
+
+const tripleStoreActions = ['triplestore.insert', 'triplestore.query', 'triplestore.update', 'triplestore.dropAll'];
 
 const addRightsToNewResource = async (ctx, resourceUri, webId) => {
   const { newResourcesPermissions } = await ctx.call('ldp.registry.getByUri', { resourceUri });
@@ -154,8 +156,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
 
         throw403();
       };
-    }
-    if (modifyActions.includes(action.name)) {
+    } else if (modifyActions.includes(action.name)) {
       return async ctx => {
         const webId = ctx.params.webId || ctx.meta.webId || 'anon';
         let actionReturnValue;
@@ -362,6 +363,19 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
         }
 
         return actionReturnValue;
+      };
+    } else if (tripleStoreActions.includes(action.name)) {
+      return async ctx => {
+        if (podProvider) {
+          const webId = ctx.params.webId || ctx.meta.webId || 'anon';
+          const dataset = ctx.params.dataset || ctx.meta.dataset;
+
+          // If the webId is the owner of the Pod, bypass WAC checks
+          if (urlJoin(baseUrl, dataset) === webId) {
+            ctx.params.webId = 'system';
+          }
+        }
+        return next(ctx);
       };
     }
 

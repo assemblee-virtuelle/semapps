@@ -25,19 +25,13 @@ const SparqlEndpointService = {
     async query(ctx) {
       const query = ctx.params.query || ctx.params.body;
       const accept = ctx.params.accept || ctx.meta.headers?.accept || this.settings.defaultAccept;
-      let isPodOwner = false;
-
-      if (this.settings.podProvider) {
-        const account = await ctx.call('auth.account.findByWebId', { webId: ctx.meta.webId });
-        isPodOwner = !!account && account.username === ctx.params.username;
-      }
 
       const response = await ctx.call('triplestore.query', {
         query,
         accept,
         dataset: ctx.params.username,
         // In Pod provider config, query as system when the Pod owner is querying his own data
-        webId: isPodOwner || this.settings.ignoreAcl ? 'system' : ctx.meta.webId
+        webId: this.settings.ignoreAcl ? 'system' : ctx.meta.webId
       });
 
       if (ctx.meta.$responseType === undefined) {
