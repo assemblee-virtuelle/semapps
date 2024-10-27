@@ -12,12 +12,17 @@ import type { UseCollectionOptions } from '../types';
  * - `awaitActivity`: a function to wait for a certain activity to be posted
  * - `owner`: the WebID of the outbox's owner
  * See https://semapps.org/docs/frontend/activitypub-components#useoutbox for usage
- * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false }`
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false, fetchOnMount: false }`
  */
 const useOutbox = (options: UseCollectionOptions = {}) => {
+  const { dereferenceItems = false, liveUpdates = false, fetchOnMount = false } = options;
   const dataProvider = useDataProvider<SemanticDataProvider>();
   const { data: identity } = useGetIdentity();
-  const { url, items, awaitWebSocketConnection, ...rest } = useCollection('outbox', options);
+  const { url, items, awaitWebSocketConnection, ...rest } = useCollection('outbox', {
+    dereferenceItems,
+    liveUpdates,
+    fetchOnMount
+  });
   const awaitActivity = useAwaitActivity(awaitWebSocketConnection, items);
 
   // Post an activity to the logged user's outbox and return its URI

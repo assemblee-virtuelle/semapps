@@ -54,6 +54,7 @@ export const PUBLIC_URI: 'https://www.w3.org/ns/activitystreams#Public';
 interface UseCollectionOptions {
   dereferenceItems?: boolean;
   liveUpdates?: boolean;
+  fetchOnMount?: boolean;
 }
 interface AwaitActivityOptions {
   timeout?: number;
@@ -192,7 +193,7 @@ interface NodeInfo {
 /**
  * Subscribe a collection. Supports pagination.
  * @param predicateOrUrl The collection URI or the predicate to get the collection URI from the identity (webId).
- * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false }`
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false, fetchOnMount: true }`
  */
 export const useCollection: (
   predicateOrUrl: string,
@@ -228,7 +229,7 @@ export const useCollection: (
  * - `awaitActivity`: a function to wait for a certain activity to be posted
  * - `owner`: the WebID of the outbox's owner
  * See https://semapps.org/docs/frontend/activitypub-components#useoutbox for usage
- * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false }`
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false, fetchOnMount: false }`
  */
 export const useOutbox: (options?: UseCollectionOptions) => {
   totalItems: number;
@@ -311,7 +312,7 @@ export function ReferenceCollectionField({
  * - `awaitActivity`: a function to wait for a certain activity to be received
  * - `owner`: the WebID of the inbox's owner
  * See https://semapps.org/docs/frontend/activitypub-components#useinbox for usage
- * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false }`
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false, fetchOnMount = false }`
  */
 export const useInbox: (options?: UseCollectionOptions) => {
   totalItems: number;
