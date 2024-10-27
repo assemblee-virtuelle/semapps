@@ -102,6 +102,7 @@ module.exports = {
 
         for (const recipientUri of recipients) {
           this.logger.info(`Processing activity ${activity.id} received in the inbox of ${recipientUri}...`);
+          job.log(`Processing activity for recipient ${recipientUri}...`);
 
           const dataset = this.settings.podProvider
             ? await this.broker.call('auth.account.findDatasetByWebId', { webId: recipientUri })
