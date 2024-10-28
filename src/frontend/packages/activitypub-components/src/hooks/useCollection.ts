@@ -26,7 +26,7 @@ const useItemsFromPages = (pages: any[], dereferenceItems: boolean) => {
           .map(itemUri => ({
             queryKey: ['resource', itemUri],
             queryFn: async () => (await dataProvider.fetch(itemUri)).json,
-            staleTime: Infinity
+            staleTime: Infinity // Activities are immutable, so no need to refetch..
           }))
   );
 

@@ -51,6 +51,9 @@ $parcel$export(module.exports, "ReificationArrayInput", () => $030f1232f6810456$
 $parcel$export(module.exports, "createWsChannel", () => $84ab912646919f8c$export$28772ab4c256e709);
 $parcel$export(module.exports, "getOrCreateWsChannel", () => $84ab912646919f8c$export$8d60734939c59ced);
 $parcel$export(module.exports, "createSolidNotificationChannel", () => $84ab912646919f8c$export$3edfe18db119b920);
+var $1bc09db736a9cb94$exports = {};
+/* eslint-disable @typescript-eslint/no-redundant-type-constituents */ 
+
 
 
 const $3db7a4510a668a04$var$fetchResource = async (resourceUri, config)=>{
@@ -1183,7 +1186,7 @@ var $59a07b932dae8600$export$2e2bcd8739ae039 = $59a07b932dae8600$var$getServerKe
 var $341dff85fe619d85$export$2e2bcd8739ae039 = $341dff85fe619d85$var$httpClient;
 
 
-const $7f6a16d0025dc83a$var$dataProvider = (config)=>{
+/** @type {(config: Configuration) => SemanticDataProvider} */ const $7f6a16d0025dc83a$var$dataProvider = (config)=>{
     // TODO verify all data provider config + data models
     if (!(0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("default", config.dataServers)) throw new Error("You must define a default server in your dataServers config");
     if (!config.jsonContext) config.jsonContext = Object.fromEntries(config.ontologies.map((o)=>[
@@ -1724,8 +1727,6 @@ const $84ab912646919f8c$var$registeredWebSockets = new Map();
 };
 
 
-var $1bc09db736a9cb94$exports = {};
-/* eslint-disable @typescript-eslint/no-redundant-type-constituents */ 
 
 $parcel$exportWildcard(module.exports, $1bc09db736a9cb94$exports);
 

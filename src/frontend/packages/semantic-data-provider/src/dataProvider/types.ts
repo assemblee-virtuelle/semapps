@@ -39,12 +39,6 @@ type DataServerConfig = {
 
 export type DataServersConfig = Record<DataServerKey, DataServerConfig>;
 
-type HttpClientOptions = {
-  headers?: Headers;
-  method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-  body?: string | File;
-};
-
 export type DataModel = {
   /** Type(s) of resources to fetch or create (example: [pair:Organization]) */
   types: string | string[];
@@ -86,9 +80,11 @@ export type DataModel = {
   };
 };
 
+export type FetchFn = typeof fetchUtils.fetchJson;
+
 export type Configuration = {
   dataServers: DataServersConfig;
-  httpClient: (url: string, options?: HttpClientOptions) => ReturnType<typeof fetchUtils.fetchJson>;
+  httpClient: FetchFn;
 
   /** Context from ontologies { prefix: IRI } or IRI, or array of IRI */
   jsonContext: string | string[] | Record<string, string>;
@@ -99,7 +95,7 @@ export type Configuration = {
 export type SemanticDataProvider = DataProvider & {
   getDataModels: () => Promise<Record<string, DataModel>>;
   getDataServers: () => Promise<DataServersConfig>;
-  fetch: (url: string, options?: HttpClientOptions) => ReturnType<typeof fetchUtils.fetchJson>;
+  fetch: FetchFn;
 };
 
 export interface PatchParams<RecordType extends RaRecord = any> {
