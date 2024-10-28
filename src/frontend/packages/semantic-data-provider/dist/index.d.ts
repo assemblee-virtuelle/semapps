@@ -29,11 +29,6 @@ type DataServerConfig = {
   blankNodes: any;
 };
 export type DataServersConfig = Record<DataServerKey, DataServerConfig>;
-type HttpClientOptions = {
-  headers?: Headers;
-  method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-  body?: string | File;
-};
 export type DataModel = {
   /** Type(s) of resources to fetch or create (example: [pair:Organization]) */
   types: string | string[];
@@ -66,9 +61,10 @@ export type DataModel = {
     title: string;
   };
 };
+export type FetchFn = typeof fetchUtils.fetchJson;
 export type Configuration = {
   dataServers: DataServersConfig;
-  httpClient: (url: string, options?: HttpClientOptions) => ReturnType<typeof fetchUtils.fetchJson>;
+  httpClient: FetchFn;
   /** Context from ontologies { prefix: IRI } or IRI, or array of IRI */
   jsonContext: string | string[] | Record<string, string>;
   resources: Record<string, DataModel>;
@@ -76,7 +72,7 @@ export type Configuration = {
 export type SemanticDataProvider = DataProvider & {
   getDataModels: () => Promise<Record<string, DataModel>>;
   getDataServers: () => Promise<DataServersConfig>;
-  fetch: (url: string, options?: HttpClientOptions) => ReturnType<typeof fetchUtils.fetchJson>;
+  fetch: FetchFn;
 };
 export interface PatchParams<RecordType extends RaRecord = any> {
   id: RecordType['id'];
@@ -110,23 +106,8 @@ export function buildSparqlQuery({
   dataModel: any;
   ontologies: any;
 }): string;
-export function dataProvider(config: any): {
-  getList: (...arg: any[]) => Promise<any>;
-  getMany: (...arg: any[]) => Promise<any>;
-  getManyReference: (...arg: any[]) => Promise<any>;
-  getOne: (...arg: any[]) => Promise<any>;
-  create: (...arg: any[]) => Promise<any>;
-  update: (...arg: any[]) => Promise<any>;
-  updateMany: () => never;
-  delete: (...arg: any[]) => Promise<any>;
-  deleteMany: (...arg: any[]) => Promise<any>;
-  patch: (...arg: any[]) => Promise<any>;
-  getDataModels: (...arg: any[]) => Promise<any>;
-  getDataServers: (...arg: any[]) => Promise<any>;
-  getLocalDataServers: () => any;
-  fetch: (...arg: any[]) => Promise<any>;
-  refreshConfig: () => Promise<any>;
-};
+/** @type {(config: Configuration) => SemanticDataProvider} */
+export const dataProvider: (config: Configuration) => SemanticDataProvider;
 export function useGetExternalLink(componentExternalLinks: any): (record: any) => any;
 export const useDataModel: (resourceId: string) => any;
 export const useDataServers: () => DataServersConfig | undefined;
@@ -178,7 +159,6 @@ export function GroupedReferenceHandler({
   filterProperty: any;
 }): import('react/jsx-runtime').JSX.Element;
 export function ReificationArrayInput(props: any): import('react/jsx-runtime').JSX.Element;
-type fetchFn = typeof fetchUtils.fetchJson;
 interface CreateSolidChannelOptions {
   type: string;
   closeAfter?: number;
@@ -188,12 +168,12 @@ interface CreateSolidChannelOptions {
   rate?: number;
 }
 export const createSolidNotificationChannel: (
-  authenticatedFetch: fetchFn,
+  authenticatedFetch: FetchFn,
   resourceUri: string,
   options?: CreateSolidChannelOptions
 ) => Promise<any>;
 export const createWsChannel: (
-  authenticatedFetch: fetchFn,
+  authenticatedFetch: FetchFn,
   resourceUri: string,
   options: CreateSolidChannelOptions
 ) => Promise<WebSocket>;
@@ -204,7 +184,7 @@ export const createWsChannel: (
  * @returns {WebSocket} A new or existing web socket that subscribed to the given resource.
  */
 export const getOrCreateWsChannel: (
-  authenticatedFetch: fetchFn,
+  authenticatedFetch: FetchFn,
   resourceUri: string,
   options?: CreateSolidChannelOptions
 ) => Promise<WebSocket>;

@@ -1,3 +1,4 @@
+import { Configuration, SemanticDataProvider } from './types';
 import createMethod from './methods/create';
 import deleteMethod from './methods/delete';
 import deleteManyMethod from './methods/deleteMany';
@@ -14,6 +15,7 @@ import fetchVoidEndpoints from './utils/fetchVoidEndpoints';
 import getServerKeyFromType from './utils/getServerKeyFromType';
 import httpClient from './httpClient';
 
+/** @type {(config: Configuration) => SemanticDataProvider} */
 const dataProvider = config => {
   // TODO verify all data provider config + data models
   if (!getServerKeyFromType('default', config.dataServers))

@@ -1,12 +1,6 @@
 import { fetchUtils } from 'react-admin';
 import arrayOf from '../dataProvider/utils/arrayOf';
-
-/*
- * Utility functions for subscribing to resource update using Solid Notifications.
- * See https://solidproject.org/TR/notifications-protocol for an overview.
- */
-
-type fetchFn = typeof fetchUtils.fetchJson;
+import { FetchFn } from '../dataProvider/types';
 
 interface CreateSolidChannelOptions {
   type: string;
@@ -20,7 +14,7 @@ interface CreateSolidChannelOptions {
 /**
  * Find the solid notification description resource for a given resource URI.
  */
-const findDescriptionResource = async (authenticatedFetch: fetchFn, resourceUri: string) => {
+const findDescriptionResource = async (authenticatedFetch: FetchFn, resourceUri: string) => {
   const { headers } = await authenticatedFetch(resourceUri, { method: 'HEAD' });
   const linkHeader = headers.get('Link');
 
@@ -38,7 +32,7 @@ const findDescriptionResource = async (authenticatedFetch: fetchFn, resourceUri:
 };
 
 const createSolidNotificationChannel = async (
-  authenticatedFetch: fetchFn,
+  authenticatedFetch: FetchFn,
   resourceUri: string,
   options: CreateSolidChannelOptions = { type: 'WebSocketChannel2023' }
 ) => {
@@ -95,7 +89,7 @@ const createSolidNotificationChannel = async (
 };
 
 const createWsChannel = async (
-  authenticatedFetch: fetchFn,
+  authenticatedFetch: FetchFn,
   resourceUri: string,
   options: CreateSolidChannelOptions
 ) => {
@@ -114,7 +108,7 @@ const registeredWebSockets = new Map<string, WebSocket | Promise<WebSocket>>();
  * @returns {WebSocket} A new or existing web socket that subscribed to the given resource.
  */
 const getOrCreateWsChannel = async (
-  authenticatedFetch: fetchFn,
+  authenticatedFetch: FetchFn,
   resourceUri: string,
   options: CreateSolidChannelOptions = { type: 'WebSocketChannel2023', closeAfter: 1000 * 60 * 60 }
 ) => {

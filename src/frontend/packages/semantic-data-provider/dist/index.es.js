@@ -9,6 +9,9 @@ import $fj9kP$react, {useContext as $fj9kP$useContext, useMemo as $fj9kP$useMemo
 import {jsx as $fj9kP$jsx, Fragment as $fj9kP$Fragment, jsxs as $fj9kP$jsxs} from "react/jsx-runtime";
 import $fj9kP$muistylesmakeStyles from "@mui/styles/makeStyles";
 
+var $11242e90250f263e$exports = {};
+/* eslint-disable @typescript-eslint/no-redundant-type-constituents */ 
+
 
 
 const $336b7edf722fe53e$var$fetchResource = async (resourceUri, config)=>{
@@ -1141,7 +1144,7 @@ var $47e21ee81eed09a6$export$2e2bcd8739ae039 = $47e21ee81eed09a6$var$getServerKe
 var $22b4895a4ca7d626$export$2e2bcd8739ae039 = $22b4895a4ca7d626$var$httpClient;
 
 
-const $243bf28fbb1b868f$var$dataProvider = (config)=>{
+/** @type {(config: Configuration) => SemanticDataProvider} */ const $243bf28fbb1b868f$var$dataProvider = (config)=>{
     // TODO verify all data provider config + data models
     if (!(0, $8326b88c1a913ca9$export$2e2bcd8739ae039)("default", config.dataServers)) throw new Error("You must define a default server in your dataServers config");
     if (!config.jsonContext) config.jsonContext = Object.fromEntries(config.ontologies.map((o)=>[
@@ -1682,8 +1685,6 @@ const $03d52e691e8dc945$var$registeredWebSockets = new Map();
 };
 
 
-var $11242e90250f263e$exports = {};
-/* eslint-disable @typescript-eslint/no-redundant-type-constituents */ 
 
 
 
