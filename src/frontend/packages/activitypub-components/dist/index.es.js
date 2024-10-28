@@ -156,9 +156,9 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
 /**
  * Subscribe a collection. Supports pagination.
  * @param predicateOrUrl The collection URI or the predicate to get the collection URI from the identity (webId).
- * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false }`
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false, fetchOnMount: true }`
  */ const $8281f3ce3b9d6123$var$useCollection = (predicateOrUrl, options = {})=>{
-    const { dereferenceItems: dereferenceItems = false, liveUpdates: liveUpdates = false } = options;
+    const { dereferenceItems: dereferenceItems = false, liveUpdates: liveUpdates = false, fetchOnMount: fetchOnMount = true } = options;
     const { data: identity } = (0, $85cNH$useGetIdentity)();
     const [totalItems, setTotalItems] = (0, $85cNH$useState)(0);
     const queryClient = (0, $85cNH$useQueryClient)();
@@ -208,7 +208,7 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
             collectionUrl: collectionUrl
         }
     ], fetchCollection, {
-        enabled: !!(collectionUrl && identity?.id),
+        enabled: fetchOnMount && !!(collectionUrl && identity?.id),
         getNextPageParam: (lastPage)=>lastPage.next,
         getPreviousPageParam: (firstPage)=>firstPage.prev
     });
@@ -439,11 +439,16 @@ var $600ca419166a1ded$export$2e2bcd8739ae039 = $600ca419166a1ded$var$useAwaitAct
  * - `awaitActivity`: a function to wait for a certain activity to be posted
  * - `owner`: the WebID of the outbox's owner
  * See https://semapps.org/docs/frontend/activitypub-components#useoutbox for usage
- * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false }`
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false, fetchOnMount: false }`
  */ const $4d1d40fdbcd30589$var$useOutbox = (options = {})=>{
+    const { dereferenceItems: dereferenceItems = false, liveUpdates: liveUpdates = false, fetchOnMount: fetchOnMount = false } = options;
     const dataProvider = (0, $85cNH$useDataProvider)();
     const { data: identity } = (0, $85cNH$useGetIdentity)();
-    const { url: url, items: items, awaitWebSocketConnection: awaitWebSocketConnection, ...rest } = (0, $8281f3ce3b9d6123$export$2e2bcd8739ae039)("outbox", options);
+    const { url: url, items: items, awaitWebSocketConnection: awaitWebSocketConnection, ...rest } = (0, $8281f3ce3b9d6123$export$2e2bcd8739ae039)("outbox", {
+        dereferenceItems: dereferenceItems,
+        liveUpdates: liveUpdates,
+        fetchOnMount: fetchOnMount
+    });
     const awaitActivity = (0, $600ca419166a1ded$export$2e2bcd8739ae039)(awaitWebSocketConnection, items);
     // Post an activity to the logged user's outbox and return its URI
     const post = (0, $85cNH$useCallback)(async (activity)=>{
@@ -922,10 +927,15 @@ var $ea214512ab1a2e8f$export$2e2bcd8739ae039 = $ea214512ab1a2e8f$var$ReferenceCo
  * - `awaitActivity`: a function to wait for a certain activity to be received
  * - `owner`: the WebID of the inbox's owner
  * See https://semapps.org/docs/frontend/activitypub-components#useinbox for usage
- * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false }`
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false, fetchOnMount = false }`
  */ const $cc1d1cd0e97c63a2$var$useInbox = (options = {})=>{
+    const { dereferenceItems: dereferenceItems = false, liveUpdates: liveUpdates = false, fetchOnMount: fetchOnMount = false } = options;
     const { data: identity } = (0, $85cNH$useGetIdentity)();
-    const { url: url, items: items, awaitWebSocketConnection: awaitWebSocketConnection, ...rest } = (0, $8281f3ce3b9d6123$export$2e2bcd8739ae039)("inbox", options);
+    const { url: url, items: items, awaitWebSocketConnection: awaitWebSocketConnection, ...rest } = (0, $8281f3ce3b9d6123$export$2e2bcd8739ae039)("inbox", {
+        dereferenceItems: dereferenceItems,
+        liveUpdates: liveUpdates,
+        fetchOnMount: fetchOnMount
+    });
     const awaitActivity = (0, $600ca419166a1ded$export$2e2bcd8739ae039)(awaitWebSocketConnection, items);
     return {
         url: url,

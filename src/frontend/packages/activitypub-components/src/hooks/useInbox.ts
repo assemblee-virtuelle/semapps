@@ -9,11 +9,16 @@ import type { UseCollectionOptions } from '../types';
  * - `awaitActivity`: a function to wait for a certain activity to be received
  * - `owner`: the WebID of the inbox's owner
  * See https://semapps.org/docs/frontend/activitypub-components#useinbox for usage
- * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false }`
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false, fetchOnMount = false }`
  */
 const useInbox = (options: UseCollectionOptions = {}) => {
+  const { dereferenceItems = false, liveUpdates = false, fetchOnMount = false } = options;
   const { data: identity } = useGetIdentity();
-  const { url, items, awaitWebSocketConnection, ...rest } = useCollection('inbox', options);
+  const { url, items, awaitWebSocketConnection, ...rest } = useCollection('inbox', {
+    dereferenceItems,
+    liveUpdates,
+    fetchOnMount
+  });
   const awaitActivity = useAwaitActivity(awaitWebSocketConnection, items);
   return { url, items, awaitWebSocketConnection, awaitActivity, owner: identity?.id, ...rest };
 };

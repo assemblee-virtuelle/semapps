@@ -55,10 +55,10 @@ const useItemsFromPages = (pages: any[], dereferenceItems: boolean) => {
 /**
  * Subscribe a collection. Supports pagination.
  * @param predicateOrUrl The collection URI or the predicate to get the collection URI from the identity (webId).
- * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false }`
+ * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false, fetchOnMount: true }`
  */
 const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {}) => {
-  const { dereferenceItems = false, liveUpdates = false } = options;
+  const { dereferenceItems = false, liveUpdates = false, fetchOnMount = true } = options;
   const { data: identity } = useGetIdentity();
   const [totalItems, setTotalItems] = useState<number>(0);
   const queryClient = useQueryClient();
@@ -121,7 +121,7 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
     isFetching: isFetchingPage,
     isFetchingNextPage
   } = useInfiniteQuery(['collection', { collectionUrl }], fetchCollection, {
-    enabled: !!(collectionUrl && identity?.id),
+    enabled: fetchOnMount && !!(collectionUrl && identity?.id),
     getNextPageParam: (lastPage: any) => lastPage.next,
     getPreviousPageParam: (firstPage: any) => firstPage.prev
   });
