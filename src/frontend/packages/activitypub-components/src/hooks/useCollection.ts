@@ -30,26 +30,34 @@ const useItemsFromPages = (pages: any[], dereferenceItems: boolean) => {
           }))
   );
 
-  if (!shouldDereference) {
-    return { loadedItems: items, isLoading: false, isFetching: false };
-  }
-
   // Put all loaded items together (might be dereferenced already, so concatenate).
-  const loadedItems = items
-    .filter(item => typeof item !== 'string')
-    .concat(
-      itemQueries.flatMap(itemQuery => {
-        return (itemQuery.isSuccess && itemQuery.data) || [];
-      })
-    );
+  const loadedItems = useMemo(
+    () =>
+      items
+        .filter(item => typeof item !== 'string')
+        .concat(
+          itemQueries.flatMap(itemQuery => {
+            return (itemQuery.isSuccess && itemQuery.data) || [];
+          })
+        ),
+    [items, itemQueries]
+  );
 
-  const errors = itemQueries.filter(q => q.error);
-  return {
-    loadedItems,
-    isLoading: itemQueries.some(q => q.isLoading),
-    isFetching: itemQueries.some(q => q.isFetching),
-    errors: errors.length > 0 ? errors : undefined
-  };
+  const errors = useMemo(() => itemQueries.filter(q => q.error), [itemQueries]);
+
+  const isLoading = itemQueries.some(q => q.isLoading);
+  const isFetching = itemQueries.some(q => q.isFetching);
+  const errorsFormatted = useMemo(() => (errors.length > 0 ? errors : undefined), [errors]);
+
+  return useMemo(
+    () => ({
+      loadedItems,
+      isLoading,
+      isFetching,
+      errors: errorsFormatted
+    }),
+    [loadedItems, itemQueries, errorsFormatted]
+  );
 };
 
 /**
@@ -134,7 +142,7 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
     errors: itemErrors
   } = useItemsFromPages(pageData?.pages ?? emptyArray, dereferenceItems);
 
-  const allErrors = arrayOf(collectionError).concat(arrayOf(itemErrors));
+  const allErrors = useMemo(() => arrayOf(collectionError).concat(arrayOf(itemErrors)), [collectionError, itemErrors]);
 
   const addItem = useCallback(
     (item: string | any, shouldRefetch: boolean | number = true) => {
@@ -259,23 +267,42 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
     [webSocketRef, liveUpdates]
   );
 
-  return {
-    items,
-    totalItems,
-    error: allErrors.length > 0 && allErrors,
-    refetch,
-    fetchNextPage,
-    addItem,
-    removeItem,
-    hasNextPage,
-    isLoading: isLoadingPage || isLoadingItems,
-    isFetching: isFetchingPage || isFetchingItems,
-    isFetchingNextPage,
-    url: collectionUrl,
-    hasLiveUpdates,
-    awaitWebSocketConnection,
-    webSocketRef
-  };
+  return useMemo(
+    () => ({
+      items,
+      totalItems,
+      error: allErrors.length > 0 && allErrors,
+      refetch,
+      fetchNextPage,
+      addItem,
+      removeItem,
+      hasNextPage,
+      isLoading: isLoadingPage || isLoadingItems,
+      isFetching: isFetchingPage || isFetchingItems,
+      isFetchingNextPage,
+      url: collectionUrl,
+      hasLiveUpdates,
+      awaitWebSocketConnection,
+      webSocketRef
+    }),
+    [
+      items,
+      totalItems,
+      allErrors.length > 0 && allErrors,
+      refetch,
+      fetchNextPage,
+      addItem,
+      removeItem,
+      hasNextPage,
+      isLoadingPage || isLoadingItems,
+      isFetchingPage || isFetchingItems,
+      isFetchingNextPage,
+      collectionUrl,
+      hasLiveUpdates,
+      awaitWebSocketConnection,
+      webSocketRef
+    ]
+  );
 };
 
 export default useCollection;
