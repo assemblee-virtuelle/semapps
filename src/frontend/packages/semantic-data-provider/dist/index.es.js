@@ -71,7 +71,7 @@ const $b17c43e3301545ca$var$getUploadsContainerUri = (config)=>{
     if (serverKey && config.dataServers[serverKey].uploadsContainer) return (0, $fj9kP$urljoin)(config.dataServers[serverKey].baseUrl, config.dataServers[serverKey].uploadsContainer);
     return null;
 };
-const $b17c43e3301545ca$var$uploadFile = async (rawFile, config)=>{
+const $b17c43e3301545ca$export$a5575dbeeffdad98 = async (rawFile, config)=>{
     const uploadsContainerUri = $b17c43e3301545ca$var$getUploadsContainerUri(config);
     if (!uploadsContainerUri) throw new Error("You must define an uploadsContainer in one of the server's configuration");
     const response = await config.httpClient(uploadsContainerUri, {
@@ -103,7 +103,7 @@ const $b17c43e3301545ca$var$deleteFiles = async (filesToDelete, config)=>{
             const itemValue = value[i];
             if ($b17c43e3301545ca$var$isFile(itemValue)) {
                 if ($b17c43e3301545ca$var$isFileToDelete(itemValue)) filesToDelete.push(itemValue.fileToDelete);
-                updatedRecord[property][i] = await $b17c43e3301545ca$var$uploadFile(itemValue.rawFile, config);
+                updatedRecord[property][i] = await $b17c43e3301545ca$export$a5575dbeeffdad98(itemValue.rawFile, config);
             } else if ($b17c43e3301545ca$var$isFileToDelete(itemValue)) {
                 filesToDelete.push(itemValue.fileToDelete);
                 updatedRecord[property][i] = null;
@@ -111,7 +111,7 @@ const $b17c43e3301545ca$var$deleteFiles = async (filesToDelete, config)=>{
         }
         else if ($b17c43e3301545ca$var$isFile(value)) {
             if ($b17c43e3301545ca$var$isFileToDelete(value)) filesToDelete.push(value.fileToDelete);
-            updatedRecord[property] = await $b17c43e3301545ca$var$uploadFile(value.rawFile, config);
+            updatedRecord[property] = await $b17c43e3301545ca$export$a5575dbeeffdad98(value.rawFile, config);
         } else if ($b17c43e3301545ca$var$isFileToDelete(value)) {
             filesToDelete.push(value.fileToDelete);
             updatedRecord[property] = null;
@@ -1144,6 +1144,7 @@ var $47e21ee81eed09a6$export$2e2bcd8739ae039 = $47e21ee81eed09a6$var$getServerKe
 var $22b4895a4ca7d626$export$2e2bcd8739ae039 = $22b4895a4ca7d626$var$httpClient;
 
 
+
 /** @type {(config: Configuration) => SemanticDataProvider} */ const $243bf28fbb1b868f$var$dataProvider = (config)=>{
     // TODO verify all data provider config + data models
     if (!(0, $8326b88c1a913ca9$export$2e2bcd8739ae039)("default", config.dataServers)) throw new Error("You must define a default server in your dataServers config");
@@ -1183,6 +1184,7 @@ var $22b4895a4ca7d626$export$2e2bcd8739ae039 = $22b4895a4ca7d626$var$httpClient;
         getDataServers: waitForConfig((0, $7dd5bf9323d2d9c1$export$2e2bcd8739ae039)(config)),
         getLocalDataServers: (0, $7dd5bf9323d2d9c1$export$2e2bcd8739ae039)(config),
         fetch: waitForConfig(config.httpClient),
+        uploadFile: waitForConfig((rawFile)=>(0, $b17c43e3301545ca$export$a5575dbeeffdad98)(rawFile, config)),
         refreshConfig: async ()=>{
             config = {
                 ...originalConfig

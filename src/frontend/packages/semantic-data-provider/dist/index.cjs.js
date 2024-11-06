@@ -113,7 +113,7 @@ const $6fcb30f76390d142$var$getUploadsContainerUri = (config)=>{
     if (serverKey && config.dataServers[serverKey].uploadsContainer) return (0, ($parcel$interopDefault($bkNnK$urljoin)))(config.dataServers[serverKey].baseUrl, config.dataServers[serverKey].uploadsContainer);
     return null;
 };
-const $6fcb30f76390d142$var$uploadFile = async (rawFile, config)=>{
+const $6fcb30f76390d142$export$a5575dbeeffdad98 = async (rawFile, config)=>{
     const uploadsContainerUri = $6fcb30f76390d142$var$getUploadsContainerUri(config);
     if (!uploadsContainerUri) throw new Error("You must define an uploadsContainer in one of the server's configuration");
     const response = await config.httpClient(uploadsContainerUri, {
@@ -145,7 +145,7 @@ const $6fcb30f76390d142$var$deleteFiles = async (filesToDelete, config)=>{
             const itemValue = value[i];
             if ($6fcb30f76390d142$var$isFile(itemValue)) {
                 if ($6fcb30f76390d142$var$isFileToDelete(itemValue)) filesToDelete.push(itemValue.fileToDelete);
-                updatedRecord[property][i] = await $6fcb30f76390d142$var$uploadFile(itemValue.rawFile, config);
+                updatedRecord[property][i] = await $6fcb30f76390d142$export$a5575dbeeffdad98(itemValue.rawFile, config);
             } else if ($6fcb30f76390d142$var$isFileToDelete(itemValue)) {
                 filesToDelete.push(itemValue.fileToDelete);
                 updatedRecord[property][i] = null;
@@ -153,7 +153,7 @@ const $6fcb30f76390d142$var$deleteFiles = async (filesToDelete, config)=>{
         }
         else if ($6fcb30f76390d142$var$isFile(value)) {
             if ($6fcb30f76390d142$var$isFileToDelete(value)) filesToDelete.push(value.fileToDelete);
-            updatedRecord[property] = await $6fcb30f76390d142$var$uploadFile(value.rawFile, config);
+            updatedRecord[property] = await $6fcb30f76390d142$export$a5575dbeeffdad98(value.rawFile, config);
         } else if ($6fcb30f76390d142$var$isFileToDelete(value)) {
             filesToDelete.push(value.fileToDelete);
             updatedRecord[property] = null;
@@ -1186,6 +1186,7 @@ var $59a07b932dae8600$export$2e2bcd8739ae039 = $59a07b932dae8600$var$getServerKe
 var $341dff85fe619d85$export$2e2bcd8739ae039 = $341dff85fe619d85$var$httpClient;
 
 
+
 /** @type {(config: Configuration) => SemanticDataProvider} */ const $7f6a16d0025dc83a$var$dataProvider = (config)=>{
     // TODO verify all data provider config + data models
     if (!(0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("default", config.dataServers)) throw new Error("You must define a default server in your dataServers config");
@@ -1225,6 +1226,7 @@ var $341dff85fe619d85$export$2e2bcd8739ae039 = $341dff85fe619d85$var$httpClient;
         getDataServers: waitForConfig((0, $b16131432127b07b$export$2e2bcd8739ae039)(config)),
         getLocalDataServers: (0, $b16131432127b07b$export$2e2bcd8739ae039)(config),
         fetch: waitForConfig(config.httpClient),
+        uploadFile: waitForConfig((rawFile)=>(0, $6fcb30f76390d142$export$a5575dbeeffdad98)(rawFile, config)),
         refreshConfig: async ()=>{
             config = {
                 ...originalConfig
