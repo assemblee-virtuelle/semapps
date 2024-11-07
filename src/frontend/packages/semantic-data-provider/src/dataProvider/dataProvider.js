@@ -14,6 +14,7 @@ import fetchUserConfig from './utils/fetchUserConfig';
 import fetchVoidEndpoints from './utils/fetchVoidEndpoints';
 import getServerKeyFromType from './utils/getServerKeyFromType';
 import httpClient from './httpClient';
+import { uploadFile } from './utils/handleFiles';
 
 /** @type {(config: Configuration) => SemanticDataProvider} */
 const dataProvider = config => {
@@ -59,6 +60,7 @@ const dataProvider = config => {
     getDataServers: waitForConfig(getDataServersMethod(config)),
     getLocalDataServers: getDataServersMethod(config),
     fetch: waitForConfig(config.httpClient),
+    uploadFile: waitForConfig(rawFile => uploadFile(rawFile, config)),
     refreshConfig: async () => {
       config = { ...originalConfig };
       fetchUserConfigPromise = fetchUserConfig(config);

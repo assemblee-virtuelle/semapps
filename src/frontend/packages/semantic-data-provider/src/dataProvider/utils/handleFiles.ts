@@ -14,7 +14,7 @@ const getUploadsContainerUri = (config: Configuration) => {
   return null;
 };
 
-const uploadFile = async (rawFile: File, config: Configuration) => {
+export const uploadFile = async (rawFile: File, config: Configuration) => {
   const uploadsContainerUri = getUploadsContainerUri(config);
   if (!uploadsContainerUri) throw new Error("You must define an uploadsContainer in one of the server's configuration");
 
