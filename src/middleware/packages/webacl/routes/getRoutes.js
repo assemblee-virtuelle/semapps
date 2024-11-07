@@ -56,11 +56,11 @@ const getRoutes = (basePath, podProvider) => {
       authentication: true,
       aliases: {
         'POST /': [parseHeader, 'webacl.group.api_create'],
-        'GET /:id': ['webacl.group.api_getMembers'],
+        'GET /:id*': ['webacl.group.api_getMembers'],
         'GET /': ['webacl.group.api_getGroups'],
-        'DELETE /:id': ['webacl.group.api_delete'],
-        'PATCH /:id': ['webacl.group.api_addMember'],
-        'PUT /:id': ['webacl.group.api_removeMember']
+        'DELETE /:id*': ['webacl.group.api_delete'],
+        'PATCH /:id*': ['webacl.group.api_addMember'],
+        'PUT /:id*': ['webacl.group.api_removeMember']
       },
       bodyParsers: {
         json: true
