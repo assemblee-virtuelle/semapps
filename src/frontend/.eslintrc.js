@@ -194,7 +194,7 @@ module.exports = {
         '@typescript-eslint/switch-exhaustiveness-check': 'off',
         '@typescript-eslint/unbound-method': 'off',
         'react/prop-types': 'off',
-        'no-unused-vars': 'on'
+        'no-unused-vars': 'warn'
       }
     }
   ]
