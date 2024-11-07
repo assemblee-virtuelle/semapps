@@ -3,9 +3,8 @@ title: ObjectsWatcherMiddleware
 ---
 
 Watch for changes (create / update / delete) in the LDP server and send corresponding ActivityPub activities.
-If a private data becomes public, it is considered a new resource. 
-If a public data becomes private, it is considered as being deleted. 
-
+If private data becomes public, it sends a `Create` activity.
+If public data becomes private, it sends a `Delete` activity.
 
 ## Features
 
@@ -13,9 +12,8 @@ If a public data becomes private, it is considered as being deleted.
 - Generate corresponding ActivityPub activities (Create, Update, Delete)
 - Send them through the instance (Relay) actor or, in POD provider config, through the Pod actor.
 - Send them to:
-    - All actors who have read permissions on the resource
-    - Emitter followers and [as:Public](https://www.w3.org/TR/activitypub/#public-addressing)
-
+  - All actors that have read permissions on the resource
+  - Followers and [as:Public](https://www.w3.org/TR/activitypub/#public-addressing), if the resource has public read rights
 
 ## Usage
 
@@ -37,12 +35,9 @@ If you don't want a container with public data to be mirrored, you can add the `
 
 This choice will appear on the [VoID endpoint](../void.md), so that mirrors ignore them.
 
-
 ## Settings
 
 | Property      | Type      | Default      | Description                                      |
-|---------------|-----------|--------------|--------------------------------------------------|
-| `baseUrl`     | `String`  | **Required** | The base URL of your instance                    |            
-| `podProvider` | `Boolean` | false        | If your instance is a Pods provider, set to true |            
-
-
+| ------------- | --------- | ------------ | ------------------------------------------------ |
+| `baseUrl`     | `String`  | **Required** | The base URL of your instance                    |
+| `podProvider` | `Boolean` | false        | If your instance is a Pods provider, set to true |
