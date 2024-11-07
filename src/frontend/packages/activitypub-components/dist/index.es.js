@@ -134,24 +134,33 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
                 itemUri
             ],
             queryFn: async ()=>(await dataProvider.fetch(itemUri)).json,
-            staleTime: Infinity
+            staleTime: Infinity // Activities are immutable, so no need to refetch..
         })));
-    if (!shouldDereference) return {
-        loadedItems: items,
-        isLoading: false,
-        isFetching: false
-    };
     // Put all loaded items together (might be dereferenced already, so concatenate).
-    const loadedItems = items.filter((item)=>typeof item !== "string").concat(itemQueries.flatMap((itemQuery)=>{
-        return itemQuery.isSuccess && itemQuery.data || [];
-    }));
-    const errors = itemQueries.filter((q)=>q.error);
-    return {
-        loadedItems: loadedItems,
-        isLoading: itemQueries.some((q)=>q.isLoading),
-        isFetching: itemQueries.some((q)=>q.isFetching),
-        errors: errors.length > 0 ? errors : undefined
-    };
+    const loadedItems = (0, $85cNH$useMemo)(()=>items.filter((item)=>typeof item !== "string").concat(itemQueries.flatMap((itemQuery)=>{
+            return itemQuery.isSuccess && itemQuery.data || [];
+        })), [
+        items,
+        itemQueries
+    ]);
+    const errors = (0, $85cNH$useMemo)(()=>itemQueries.filter((q)=>q.error), [
+        itemQueries
+    ]);
+    const isLoading = itemQueries.some((q)=>q.isLoading);
+    const isFetching = itemQueries.some((q)=>q.isFetching);
+    const errorsFormatted = (0, $85cNH$useMemo)(()=>errors.length > 0 ? errors : undefined, [
+        errors
+    ]);
+    return (0, $85cNH$useMemo)(()=>({
+            loadedItems: loadedItems,
+            isLoading: isLoading,
+            isFetching: isFetching,
+            errors: errorsFormatted
+        }), [
+        loadedItems,
+        itemQueries,
+        errorsFormatted
+    ]);
 };
 /**
  * Subscribe a collection. Supports pagination.
@@ -214,7 +223,10 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
     });
     // Put all items together in a list (and dereference, if required).
     const { loadedItems: items, isLoading: isLoadingItems, isFetching: isFetchingItems, errors: itemErrors } = $8281f3ce3b9d6123$var$useItemsFromPages(pageData?.pages ?? $8281f3ce3b9d6123$var$emptyArray, dereferenceItems);
-    const allErrors = (0, $577f4953dfa5de4f$export$e57ff0f701c44363)(collectionError).concat((0, $577f4953dfa5de4f$export$e57ff0f701c44363)(itemErrors));
+    const allErrors = (0, $85cNH$useMemo)(()=>(0, $577f4953dfa5de4f$export$e57ff0f701c44363)(collectionError).concat((0, $577f4953dfa5de4f$export$e57ff0f701c44363)(itemErrors)), [
+        collectionError,
+        itemErrors
+    ]);
     const addItem = (0, $85cNH$useCallback)((item, shouldRefetch = true)=>{
         queryClient.setQueryData([
             "collection",
@@ -346,23 +358,39 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
         webSocketRef,
         liveUpdates
     ]);
-    return {
-        items: items,
-        totalItems: totalItems,
-        error: allErrors.length > 0 && allErrors,
-        refetch: refetch,
-        fetchNextPage: fetchNextPage,
-        addItem: addItem,
-        removeItem: removeItem,
-        hasNextPage: hasNextPage,
-        isLoading: isLoadingPage || isLoadingItems,
-        isFetching: isFetchingPage || isFetchingItems,
-        isFetchingNextPage: isFetchingNextPage,
-        url: collectionUrl,
-        hasLiveUpdates: hasLiveUpdates,
-        awaitWebSocketConnection: awaitWebSocketConnection,
-        webSocketRef: webSocketRef
-    };
+    return (0, $85cNH$useMemo)(()=>({
+            items: items,
+            totalItems: totalItems,
+            error: allErrors.length > 0 && allErrors,
+            refetch: refetch,
+            fetchNextPage: fetchNextPage,
+            addItem: addItem,
+            removeItem: removeItem,
+            hasNextPage: hasNextPage,
+            isLoading: isLoadingPage || isLoadingItems,
+            isFetching: isFetchingPage || isFetchingItems,
+            isFetchingNextPage: isFetchingNextPage,
+            url: collectionUrl,
+            hasLiveUpdates: hasLiveUpdates,
+            awaitWebSocketConnection: awaitWebSocketConnection,
+            webSocketRef: webSocketRef
+        }), [
+        items,
+        totalItems,
+        allErrors.length > 0 && allErrors,
+        refetch,
+        fetchNextPage,
+        addItem,
+        removeItem,
+        hasNextPage,
+        isLoadingPage || isLoadingItems,
+        isFetchingPage || isFetchingItems,
+        isFetchingNextPage,
+        collectionUrl,
+        hasLiveUpdates,
+        awaitWebSocketConnection,
+        webSocketRef
+    ]);
 };
 var $8281f3ce3b9d6123$export$2e2bcd8739ae039 = $8281f3ce3b9d6123$var$useCollection;
 
