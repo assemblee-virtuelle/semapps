@@ -6,7 +6,7 @@ services:
     container_name: fuseki_tests
     restart: always
     volumes:
-      - ./data/fuseki_tests:/fuseki
+      - ./data/fuseki_tests:/fuseki:z
     ports:
       - '3040:3030'
     expose:
@@ -16,7 +16,7 @@ services:
 
   redis:
     image: redis
-    container_name: redis
+    container_name: redis_middleware_tests
     expose:
       - '6379'
     ports:
@@ -30,7 +30,7 @@ services:
     container_name: arena
     restart: always
     volumes:
-      - ./arena.json:/opt/arena/src/server/config/index.json
+      - ./arena.json:/opt/arena/src/server/config/index.json:z
     depends_on:
       - redis
     ports:
