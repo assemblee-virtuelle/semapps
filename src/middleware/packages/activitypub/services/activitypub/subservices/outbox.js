@@ -95,6 +95,7 @@ const OutboxService = {
       activity = await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' });
 
       try {
+        // Notify listeners of activities.
         await ctx.call('activitypub.side-effects.processOutbox', { activity });
       } catch (e) {
         await ctx.call('activitypub.activity.delete', { resourceUri: activityUri, webId: 'system' });
@@ -108,8 +109,8 @@ const OutboxService = {
         item: activity
       });
 
-      let localRecipients = [],
-        remoteRecipients = [];
+      const localRecipients = [];
+      const remoteRecipients = [];
       const recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
 
       for (const recipientUri of recipients) {
