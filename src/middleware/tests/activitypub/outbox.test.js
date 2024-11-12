@@ -53,6 +53,7 @@ describe('Permissions are correctly set on outbox', () => {
 
   let objectPrivateFirst;
   test('Post private message to self', async () => {
+    // TODO: THIS CURRENTLY FAILS BECAUSE DEFAULT RIGHTS ARE INCORRECT FOR INBOX.
     await broker.call('activitypub.outbox.post', {
       collectionUri: sebastien.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
