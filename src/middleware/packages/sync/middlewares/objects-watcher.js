@@ -29,6 +29,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
     }
   };
 
+  /** Get owner WebID of resource (by looking at the slash URI). */
   const getActor = async (ctx, resourceUri) => {
     if (podProvider) {
       const url = new URL(resourceUri);
@@ -86,7 +87,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
           collectionUri: actor.outbox,
           '@context': 'https://www.w3.org/ns/activitystreams',
           ...activity,
-          to: recipients
+          bto: recipients
         },
         { meta: { webId: actor.id, doNotProcessObject: true } }
       );
