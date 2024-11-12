@@ -36,7 +36,7 @@ module.exports = {
         'processOutbox',
         activity.id,
         { activity },
-        { removeOnComplete: { age: 2629800 } } // Keep completed jobs during one month
+        { removeOnComplete: { age: 2629800 } } // Keep completed jobs for one month
       );
 
       await job.finished();
@@ -52,7 +52,7 @@ module.exports = {
         'processInbox',
         activity.id,
         { activity, recipients },
-        { removeOnComplete: { age: 2629800 } } // Keep completed jobs during one month
+        { removeOnComplete: { age: 2629800 } } // Keep completed jobs for one month
       );
 
       await job.finished();

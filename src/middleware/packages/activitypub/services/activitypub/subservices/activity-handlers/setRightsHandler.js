@@ -1,8 +1,9 @@
-import { hasType } from '@semapps/ldp';
-import { ACTIVITY_TYPES } from '../../../../constants';
+const { hasType } = require('@semapps/ldp');
+const { ACTIVITY_TYPES } = require('../../../../constants');
 
 const removeReadRights = async ({ ctx, recipientUris, resourceUri, skipObjectsWatcher, anon }) => {
-  return await ctx.call(
+  if (recipientUris === 0 && !anon) return;
+  await ctx.call(
     'webacl.resource.removeRights',
     {
       resourceUri,
@@ -24,7 +25,8 @@ const removeReadRights = async ({ ctx, recipientUris, resourceUri, skipObjectsWa
 };
 
 const addReadRights = async ({ ctx, recipientUris, resourceUri, skipObjectsWatcher, anon }) => {
-  return await ctx.call(
+  if (recipientUris?.length === 0 && !anon) return;
+  await ctx.call(
     'webacl.resource.addRights',
     {
       resourceUri,
@@ -85,7 +87,7 @@ const setRightsHandler = {
     else if (hasType(activity, ACTIVITY_TYPES.UPDATE)) {
       // const rights = await ctx.call('webacl.resource.getRights', { resourceUri: objectUri });
       // const wasPublic = rights?.anon?.read;
-      const previousRecipients = await ctx.call('webacl.getUsersWithReadRights', {
+      const previousRecipients = await ctx.call('webacl.resource.getUsersWithReadRights', {
         resourceUri: objectUri
       });
 
@@ -93,7 +95,7 @@ const setRightsHandler = {
       const addedRecipients = newRecipients.filter(r => !previousRecipients.includes(r));
 
       // We add rights to all new recipients.
-      //  ~~ *And* if the object was private before, we send out a `Create` activity instead,
+      //  ~~*And* if the object was private before, we send out a `Create` activity instead,
       //  by not skipping the objectWatcher that handles this.~~
       await addReadRights({
         ctx,
@@ -118,4 +120,4 @@ const setRightsHandler = {
   }
 };
 
-export default setRightsHandler;
+module.exports = setRightsHandler;
