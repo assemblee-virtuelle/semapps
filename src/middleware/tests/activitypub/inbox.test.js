@@ -2,7 +2,7 @@ const { ACTIVITY_TYPES, OBJECT_TYPES, PUBLIC_URI } = require('@semapps/activityp
 const waitForExpect = require('wait-for-expect');
 const initialize = require('./initialize');
 
-jest.setTimeout(50000);
+jest.setTimeout(50_000);
 
 let broker;
 let broker2;

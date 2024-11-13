@@ -97,7 +97,7 @@ module.exports = {
           isContainer
         );
 
-        // find the difference between addedRights and currentPerms. add only what is not existant yet.
+        // find the difference between addedRights and currentPerms. add only what is not existent yet.
         difference = addedRights.filter(x => !currentPerms.some(y => x.auth === y.auth && x.o === y.o && x.p === y.p));
         if (difference.length === 0) return;
 
@@ -107,7 +107,7 @@ module.exports = {
         // TODO: check that the resource doesn't exist. otherwise, raise an error
         if (webId !== 'system')
           throw new MoleculerError(
-            'Access denied ! only system can add permissions for a newly created resource',
+            'Access denied! Only system can add permissions for a newly created resource',
             403,
             'ACCESS_DENIED'
           );

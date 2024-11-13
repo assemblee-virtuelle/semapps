@@ -27,6 +27,16 @@ const {
 
 const filterAclsOnlyAgent = acl => agentPredicates.includes(acl.p.value);
 
+/**
+ * Server for handling webacl resource and container rights.
+ *
+ * **There are two different formats in which rights are expressed:**
+ * - The triple authorization nodes format (https://semapps.org/docs/middleware/webacl/resource#getrights)
+ *  - triples in the form <https://my.resource#Read> <acl:agent> <https://mypod.store/laurin>
+ *    - e.g. `{ auth: 'http://localhost:3000/_acl/container29#Control',  p: 'http://www.w3.org/ns/auth/acl#agent',  o: 'https://data.virtual-assembly.org/users/sebastien.rosset' }`
+ * - The nested json format as used in "additionalRights" (https://semapps.org/docs/middleware/webacl/resource#addrights)
+ *  - organized by user, group, anon, anyUser. See the documentation for the details.
+ */
 module.exports = {
   name: 'webacl.resource',
   settings: {

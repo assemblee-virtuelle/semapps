@@ -29,7 +29,8 @@ module.exports = {
         }
       }
 
-      return usersWithReadRights;
+      // Deduplicate (users might be in multiple groups).
+      return [...new Set(usersWithReadRights)];
     }
   }
 };

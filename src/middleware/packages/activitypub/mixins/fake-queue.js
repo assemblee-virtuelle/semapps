@@ -26,3 +26,5 @@ const FakeQueueMixin = {
     }
   }
 };
+
+module.exports = FakeQueueMixin;
