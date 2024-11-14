@@ -156,7 +156,7 @@ const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
                 itemUri
             ],
             queryFn: async ()=>(await dataProvider.fetch(itemUri)).json,
-            staleTime: Infinity
+            staleTime: Infinity // Activities are immutable, so no need to refetch..
         })));
     if (!shouldDereference) return {
         loadedItems: items,
