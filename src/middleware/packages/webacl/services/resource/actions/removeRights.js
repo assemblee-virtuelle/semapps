@@ -7,6 +7,7 @@ module.exports = {
     params: {
       resourceUri: { type: 'string', optional: false },
       webId: { type: 'string', optional: true },
+      /** In nested json format (e.g. `{anon: {read: true}}`) */
       rights: { type: 'object', optional: false }
     },
     async handler(ctx) {

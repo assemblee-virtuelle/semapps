@@ -1,3 +1,4 @@
+const { arrayOf } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { MoleculerError } = require('moleculer').Errors;
 const urlJoin = require('url-join');
@@ -73,10 +74,10 @@ WHERE { GRAPH <${graphName}> {
     ?p ?o.
 } }`;
 
-const getAuthorizationNode = async (ctx, resourceUri, resourceAclUri, mode, graphName, seachForDefault) => {
+const getAuthorizationNode = async (ctx, resourceUri, resourceAclUri, mode, graphName, searchForDefault) => {
   const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX acl: <http://www.w3.org/ns/auth/acl#>\n${AUTHORIZATION_NODE_QUERY(
     mode,
-    seachForDefault ? 'default' : 'accessTo',
+    searchForDefault ? 'default' : 'accessTo',
     resourceUri,
     graphName
   )}`;
@@ -88,7 +89,7 @@ const getAuthorizationNode = async (ctx, resourceUri, resourceAclUri, mode, grap
   });
 
   return auths.map(a => {
-    a.auth.value = `${resourceAclUri}#${seachForDefault ? 'Default' : ''}${mode}`;
+    a.auth.value = `${resourceAclUri}#${searchForDefault ? 'Default' : ''}${mode}`;
     return a;
   });
 };
@@ -275,10 +276,12 @@ const processRights = (rights, aclUri) => {
     if (rights.anon.control) list.push({ auth: `${aclUri}Control`, p: FULL_AGENTCLASS_URI, o: FULL_FOAF_AGENT });
   }
   if (rights.user && rights.user.uri) {
-    if (rights.user.read) list.push({ auth: `${aclUri}Read`, p: FULL_AGENT_URI, o: rights.user.uri });
-    if (rights.user.write) list.push({ auth: `${aclUri}Write`, p: FULL_AGENT_URI, o: rights.user.uri });
-    if (rights.user.append) list.push({ auth: `${aclUri}Append`, p: FULL_AGENT_URI, o: rights.user.uri });
-    if (rights.user.control) list.push({ auth: `${aclUri}Control`, p: FULL_AGENT_URI, o: rights.user.uri });
+    arrayOf(rights.user.uri).forEach(uri => {
+      if (rights.user.read) list.push({ auth: `${aclUri}Read`, p: FULL_AGENT_URI, o: uri });
+      if (rights.user.write) list.push({ auth: `${aclUri}Write`, p: FULL_AGENT_URI, o: uri });
+      if (rights.user.append) list.push({ auth: `${aclUri}Append`, p: FULL_AGENT_URI, o: uri });
+      if (rights.user.control) list.push({ auth: `${aclUri}Control`, p: FULL_AGENT_URI, o: uri });
+    });
   }
   if (rights.anyUser) {
     if (rights.anyUser.read) list.push({ auth: `${aclUri}Read`, p: FULL_AGENTCLASS_URI, o: FULL_ACL_ANYAGENT });
@@ -287,10 +290,12 @@ const processRights = (rights, aclUri) => {
     if (rights.anyUser.control) list.push({ auth: `${aclUri}Control`, p: FULL_AGENTCLASS_URI, o: FULL_ACL_ANYAGENT });
   }
   if (rights.group && rights.group.uri) {
-    if (rights.group.read) list.push({ auth: `${aclUri}Read`, p: FULL_AGENT_GROUP, o: rights.group.uri });
-    if (rights.group.write) list.push({ auth: `${aclUri}Write`, p: FULL_AGENT_GROUP, o: rights.group.uri });
-    if (rights.group.append) list.push({ auth: `${aclUri}Append`, p: FULL_AGENT_GROUP, o: rights.group.uri });
-    if (rights.group.control) list.push({ auth: `${aclUri}Control`, p: FULL_AGENT_GROUP, o: rights.group.uri });
+    arrayOf(rights.group.uri).forEach(uri => {
+      if (rights.group.read) list.push({ auth: `${aclUri}Read`, p: FULL_AGENT_GROUP, o: uri });
+      if (rights.group.write) list.push({ auth: `${aclUri}Write`, p: FULL_AGENT_GROUP, o: uri });
+      if (rights.group.append) list.push({ auth: `${aclUri}Append`, p: FULL_AGENT_GROUP, o: uri });
+      if (rights.group.control) list.push({ auth: `${aclUri}Control`, p: FULL_AGENT_GROUP, o: uri });
+    });
   }
   return list;
 };

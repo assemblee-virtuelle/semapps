@@ -30,12 +30,13 @@ const ObjectService = {
 
       // If an object is passed directly, first wrap it in a Create activity
       if (Object.values(OBJECT_TYPES).includes(activityType)) {
-        const { to, '@id': id, ...object } = activity;
+        const { to, cc, '@id': id, ...object } = activity;
         activityType = ACTIVITY_TYPES.CREATE;
         activity = {
           '@context': object['@context'],
           type: activityType,
           to,
+          cc,
           actor: object.attributedTo,
           object
         };

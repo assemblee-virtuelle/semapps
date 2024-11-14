@@ -10,14 +10,14 @@ services:
     image: semapps/jena-fuseki-webacl:${TAG}
     container_name: fuseki
     volumes:
-      - ./data/rdf_data:/fuseki
+      - ./data/rdf_data:/fuseki:z
     ports:
-      - "3030:3030"
+      - '3030:3030'
     expose:
-      - "3030"
+      - '3030'
     environment:
-      ADMIN_PASSWORD: "admin"
-      JAVA_MX_RAM: "4G"
+      ADMIN_PASSWORD: 'admin'
+      JAVA_MX_RAM: '4G'
 
   fuseki_compact:
     build:
@@ -27,7 +27,7 @@ services:
     image: semapps/jena-fuseki-webacl
     container_name: fuseki_compact
     volumes:
-      - ./data/rdf_data:/fuseki
+      - ./data/rdf_data:/fuseki:z
 
   fuseki_migrate:
     build:
@@ -37,4 +37,4 @@ services:
     image: semapps/jena-fuseki-webacl
     container_name: fuseki_migration
     volumes:
-      - ./data/rdf_data:/fuseki
+      - ./data/rdf_data:/fuseki:z
