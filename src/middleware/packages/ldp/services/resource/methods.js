@@ -60,8 +60,11 @@ module.exports = {
           // Use triple quotes SPARQL notation to allow new lines and double quotes
           // See https://www.w3.org/TR/sparql11-query/#QSynLiterals
           return `'''${node.value?.replace(/'/g, "\\'")}'''`;
+        } else if (node.datatype.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#langString') {
+          return `'''${node.value}'''@${node.language}`;
+        } else {
+          return `"${node.value}"^^<${node.datatype.value}>`;
         }
-        return `"${node.value}"^^<${node.datatype.value}>`;
 
       default:
         throw new Error(`Unknown node type: ${node.termType}`);
