@@ -1,7 +1,7 @@
 const urlJoin = require('url-join');
 const { throw403 } = require('@semapps/middlewares');
 const { arrayOf, defaultContainerOptions } = require('@semapps/ldp');
-const { isRemoteUri, getSlugFromUri } = require('../utils');
+const { getSlugFromUri } = require('../utils');
 
 const modifyActions = [
   'ldp.resource.create',
@@ -123,7 +123,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
 
         const resourceUri = ctx.params.resourceUri || ctx.params.resource.id || ctx.params.resource['@id'];
 
-        if (isRemoteUri(resourceUri, ctx.meta.dataset, { baseUrl, podProvider })) {
+        if (await ctx.call('ldp.remote.isRemote', { resourceUri })) {
           // Bypass if mirrored resource as WebACL are not activated in mirror graph
           if ((await ctx.call('ldp.remote.getGraph', { resourceUri })) === 'http://semapps.org/mirror') {
             return bypass();
@@ -169,7 +169,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
             const resourceUri = ctx.params.resource['@id'] || ctx.params.resource.id;
             // Do not add ACLs if this is a mirrored resource as WebACL are not activated on the mirror graph
             if (
-              isRemoteUri(resourceUri, ctx.meta.dataset, { baseUrl, podProvider }) &&
+              (await ctx.call('ldp.remote.isRemote', { resourceUri })) &&
               (await ctx.call('ldp.remote.getGraph', { resourceUri })) === 'http://semapps.org/mirror'
             )
               return next(ctx);

@@ -1,5 +1,4 @@
 const fs = require('fs');
-const urlJoin = require('url-join');
 const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
 const { variable } = require('@rdfjs/data-model');
@@ -128,13 +127,5 @@ module.exports = {
   },
   bindNewBlankNodes(triples) {
     return triples.map(triple => `BIND (BNODE() AS ?${triple.object.value}) .`).join('\n');
-  },
-  isRemoteUri(uri, dataset) {
-    if (this.settings.podProvider && !dataset)
-      throw new Error(`Unable to know if ${uri} is remote. In Pod provider config, the dataset must be provided`);
-    return (
-      !urlJoin(uri, '/').startsWith(this.settings.baseUrl) ||
-      (this.settings.podProvider && !urlJoin(uri, '/').startsWith(`${urlJoin(this.settings.baseUrl, dataset)}/`))
-    );
   }
 };

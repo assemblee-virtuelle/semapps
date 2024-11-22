@@ -29,7 +29,7 @@ module.exports = {
         ? 'networkOnly'
         : ctx.params.strategy;
 
-    if (!this.isRemoteUri(resourceUri, webId)) {
+    if (!(await this.actions.isRemote(resourceUri, { parentCtx: ctx }))) {
       throw new Error(
         `The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId} / dataset ${ctx.meta.dataset})`
       );

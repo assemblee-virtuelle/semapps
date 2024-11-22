@@ -13,7 +13,7 @@ module.exports = {
     const containerUri = ctx.params.containerUri.replace(/\/+$/, '');
     const childUri = ctx.params.resourceUri.replace(/\/+$/, '');
 
-    const isRemoteContainer = this.isRemoteUri(containerUri, ctx.meta.dataset);
+    const isRemoteContainer = await ctx.call('ldp.remote.isRemote', { resourceUri: containerUri });
 
     return await ctx.call('triplestore.query', {
       query: `

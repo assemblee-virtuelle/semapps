@@ -9,10 +9,9 @@ module.exports = {
   },
   async handler(ctx) {
     const { resourceUri } = ctx.params;
-    let { webId } = ctx.params;
-    webId = webId || ctx.meta.webId || 'anon';
+    const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-    if (this.isRemoteUri(resourceUri, ctx.meta.dataset)) {
+    if (await ctx.call('ldp.remote.isRemote', { resourceUri })) {
       return await ctx.call('ldp.remote.delete', { resourceUri, webId });
     }
 

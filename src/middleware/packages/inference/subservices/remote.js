@@ -1,7 +1,6 @@
 const fetch = require('node-fetch');
 const N3 = require('n3');
 const { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin, matchActivity } = require('@semapps/activitypub');
-const urlJoin = require('url-join');
 
 const { DataFactory } = N3;
 const { triple, namedNode } = DataFactory;
@@ -88,11 +87,6 @@ module.exports = {
       }
     }
   },
-  methods: {
-    isRemoteUri(uri) {
-      return !urlJoin(uri, '/').startsWith(this.settings.baseUrl);
-    }
-  },
   activities: {
     offerInference: {
       async match(activity, fetcher) {
@@ -132,7 +126,7 @@ module.exports = {
         if (this.settings.acceptFromRemoteServers && recipientUri === this.relayActor.id) {
           const relationship = activity.object.object;
           if (relationship.subject && relationship.relationship && relationship.object) {
-            if (this.isRemoteUri(relationship.subject)) {
+            if (await ctx.call('ldp.remote.isRemote', { resourceUri: relationship.subject })) {
               this.logger.warn('Attempt at offering an inverse relationship on a remote resource. Aborting...');
               return;
             }

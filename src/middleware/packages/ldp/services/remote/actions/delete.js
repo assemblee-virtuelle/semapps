@@ -8,8 +8,10 @@ module.exports = {
     const { resourceUri } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId;
 
-    if (!this.isRemoteUri(resourceUri, webId)) {
-      throw new Error(`The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId})`);
+    if (!(await this.actions.isRemote(resourceUri, { parentCtx: ctx }))) {
+      throw new Error(
+        `The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId} / dataset ${ctx.meta.dataset})`
+      );
     }
 
     if (this.settings.podProvider) {

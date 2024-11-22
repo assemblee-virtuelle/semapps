@@ -14,7 +14,7 @@ module.exports = {
     const { containerUri, resourceUri } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-    const isRemoteContainer = this.isRemoteUri(containerUri, ctx.meta.dataset);
+    const isRemoteContainer = await ctx.call('ldp.remote.isRemote', { resourceUri: containerUri });
 
     const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri, webId });
     if (!resourceExists) {
