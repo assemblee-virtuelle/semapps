@@ -16,9 +16,10 @@ module.exports = {
     aclVerified: { type: 'boolean', optional: true }
   },
   cache: {
-    enabled(ctx) {
+    async enabled(ctx) {
       // Do not cache remote resources as we have no mechanism to clear this cache
-      return !await ctx.call('ldp.remote.isRemote', { resourceUri: ctx.params.resourceUri });
+      const isRemote = await ctx.call('ldp.remote.isRemote', { resourceUri: ctx.params.resourceUri });
+      return !isRemote;
     },
     keys: ['resourceUri', 'accept', 'jsonContext']
   },
