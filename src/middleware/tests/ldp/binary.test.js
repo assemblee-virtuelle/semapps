@@ -61,7 +61,11 @@ describe('Binary handling of LDP server', () => {
   });
 
   test('Get image as binary (via API)', async () => {
-    const { headers, body } = await fetchServer(fileUri);
+    const { headers, body } = await fetchServer(fileUri, {
+      headers: new fetch.Headers({
+        Accept: '*/*'
+      })
+    });
 
     expect(headers.get('Content-Length')).toBe('3181');
     expect(headers.get('Cache-Control')).toBe('public, max-age=31536000');

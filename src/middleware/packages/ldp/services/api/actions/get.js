@@ -59,21 +59,18 @@ module.exports = async function get(ctx) {
         }
       }
 
-      res = await ctx.call(
-        controlledActions.get || 'ldp.resource.get',
-        cleanUndefined({
-          resourceUri: uri,
-          accept,
-          jsonContext: parseJson(ctx.meta.headers?.jsonldcontext)
-        })
-      );
-
       // If the resource is a file and no semantic encoding was requested, return it
       if (
         types.includes('http://semapps.org/ns/core#File') &&
         ![MIME_TYPES.JSON, MIME_TYPES.TURTLE].includes(ctx.meta.originalHeaders?.accept)
       ) {
         try {
+          // Get the file as JSON to get its metadata
+          res = await ctx.call(controlledActions.get || 'ldp.resource.get', {
+            resourceUri: uri,
+            accept: MIME_TYPES.JSON
+          });
+
           const file = fs.readFileSync(res['semapps:localPath']);
           ctx.meta.$responseType = res['semapps:mimeType'];
           // Since files are currently immutable, we set a maximum browser cache age
@@ -87,6 +84,15 @@ module.exports = async function get(ctx) {
           throw new MoleculerError('File Not found', 404, 'NOT_FOUND');
         }
       } else {
+        res = await ctx.call(
+          controlledActions.get || 'ldp.resource.get',
+          cleanUndefined({
+            resourceUri: uri,
+            accept,
+            jsonContext: parseJson(ctx.meta.headers?.jsonldcontext)
+          })
+        );
+
         ctx.meta.$responseType = ctx.meta.$responseType || accept;
         if (ctx.meta.$responseType === 'application/ld+json')
           ctx.meta.$responseType = `application/ld+json; profile="https://www.w3.org/ns/activitystreams"`;
