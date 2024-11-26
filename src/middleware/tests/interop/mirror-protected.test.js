@@ -88,7 +88,7 @@ describe('Resource on server1 is shared with user on server2', () => {
         type: ACTIVITY_TYPES.CREATE,
         actor: relay1,
         object: resourceUri,
-        to: user2.id
+        bto: user2.id
       });
     });
   });
@@ -117,7 +117,7 @@ describe('Resource on server1 is shared with user on server2', () => {
         type: ACTIVITY_TYPES.DELETE,
         actor: relay1,
         object: resourceUri,
-        to: user2.id
+        bto: user2.id
       });
     });
   });
