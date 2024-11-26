@@ -1,4 +1,3 @@
-const urlJoin = require('url-join');
 const Schedule = require('moleculer-schedule');
 const deleteAction = require('./actions/delete');
 const getAction = require('./actions/get');
@@ -30,16 +29,6 @@ module.exports = {
     } // Used by tests
   },
   methods: {
-    isRemoteUri(uri, webId) {
-      return (
-        !urlJoin(uri, '/').startsWith(this.settings.baseUrl) ||
-        (this.settings.podProvider &&
-          webId &&
-          webId !== 'anon' &&
-          webId !== 'system' &&
-          !urlJoin(uri, '/').startsWith(`${webId}/`))
-      );
-    },
     async proxyAvailable() {
       const services = await this.broker.call('$node.services');
       return services.some(s => s.name === 'signature.proxy');

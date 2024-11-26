@@ -1,4 +1,3 @@
-const urlJoin = require('url-join');
 const { PUBLIC_URI, ACTIVITY_TYPES } = require('@semapps/activitypub');
 
 const handledLdpActions = ['ldp.container.post', 'ldp.resource.put', 'ldp.resource.patch', 'ldp.resource.delete'];
@@ -65,15 +64,6 @@ const ObjectsWatcherMiddleware = (config = {}) => {
   const isExcluded = containersUris => {
     return containersUris.some(uri =>
       excludedContainersPathRegex.some(pathRegex => pathRegex.test(new URL(uri).pathname))
-    );
-  };
-
-  const isRemoteUri = (uri, dataset) => {
-    if (podProvider && !dataset)
-      throw new Error(`Unable to know if ${uri} is remote. In Pod provider config, the dataset must be provided`);
-    return (
-      !urlJoin(uri, '/').startsWith(baseUrl) ||
-      (podProvider && !urlJoin(uri, '/').startsWith(`${urlJoin(baseUrl, dataset)}/`))
     );
   };
 
@@ -164,7 +154,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
           }
 
           // We never want to watch remote resources
-          if (resourceUri && isRemoteUri(resourceUri, ctx.meta.dataset)) return await next(ctx);
+          if (resourceUri && (await ctx.call('ldp.remote.isRemote', { resourceUri }))) return await next(ctx);
 
           const containers = containerUri
             ? [containerUri]

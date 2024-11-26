@@ -300,15 +300,6 @@ const processRights = (rights, aclUri) => {
   return list;
 };
 
-const isRemoteUri = (uri, dataset, { baseUrl, podProvider }) => {
-  if (podProvider && !dataset)
-    throw new Error(`Unable to know if ${uri} is remote. In Pod provider config, the dataset must be provided`);
-  return (
-    !urlJoin(uri, '/').startsWith(baseUrl) ||
-    (podProvider && !urlJoin(uri, '/').startsWith(`${urlJoin(baseUrl, dataset)}/`))
-  );
-};
-
 module.exports = {
   getSlugFromUri,
   hasType,
@@ -336,6 +327,5 @@ module.exports = {
   FULL_AGENT_URI,
   FULL_AGENT_GROUP,
   FULL_FOAF_AGENT,
-  FULL_ACL_ANYAGENT,
-  isRemoteUri
+  FULL_ACL_ANYAGENT
 };

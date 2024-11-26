@@ -43,7 +43,7 @@ module.exports = {
     let { resourceUri, triplesToAdd, triplesToRemove, skipInferenceCheck, webId } = ctx.params;
     webId = webId || ctx.meta.webId || 'anon';
 
-    if (this.isRemoteUri(resourceUri, ctx.meta.dataset))
+    if (await ctx.call('ldp.remote.isRemote', { resourceUri }))
       throw new MoleculerError('Remote resources cannot be patched', 403, 'FORBIDDEN');
 
     // const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId: 'system' });

@@ -18,7 +18,7 @@ module.exports = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const resourceUri = resource.id || resource['@id'];
 
-    if (this.isRemoteUri(resourceUri, ctx.meta.dataset))
+    if (await ctx.call('ldp.remote.isRemote', { resourceUri }))
       throw new MoleculerError('Remote resources cannot be created', 403, 'FORBIDDEN');
 
     const { controlledActions } = {

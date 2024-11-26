@@ -1,5 +1,4 @@
 const fetch = require('node-fetch');
-const urlJoin = require('url-join');
 const { namedNode, literal, triple, variable } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { arrayOf } = require('@semapps/ldp');
@@ -18,7 +17,8 @@ const ActorService = {
   actions: {
     async get(ctx) {
       const { actorUri, webId } = ctx.params;
-      if (!this.isRemoteUri(actorUri, ctx.meta.dataset)) {
+      // If dataset is not in the meta, assume that actor is remote
+      if (ctx.meta.dataset && !(await ctx.call('ldp.remote.isRemote', { resourceUri: actorUri }))) {
         try {
           // Don't return immediately the promise, or we won't be able to catch errors
           const actor = await ctx.call('ldp.resource.get', { resourceUri: actorUri, accept: MIME_TYPES.JSON, webId });
@@ -168,13 +168,6 @@ const ActorService = {
     }
   },
   methods: {
-    isRemoteUri(uri, dataset) {
-      if (this.settings.podProvider && !dataset) return true; // If no dataset is set, assume actor is remote
-      return (
-        !urlJoin(uri, '/').startsWith(this.settings.baseUri) ||
-        (this.settings.podProvider && !urlJoin(uri, '/').startsWith(`${urlJoin(this.settings.baseUri, dataset)}/`))
-      );
-    },
     isActor(resource) {
       return arrayOf(resource['@type'] || resource.type).some(type => Object.values(ACTOR_TYPES).includes(type));
     }

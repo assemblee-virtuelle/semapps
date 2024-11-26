@@ -27,7 +27,7 @@ module.exports = {
 
     const resourceUri = resource.id || resource['@id'];
 
-    if (this.isRemoteUri(resourceUri, ctx.meta.dataset))
+    if (await ctx.call('ldp.remote.isRemote', { resourceUri }))
       throw new MoleculerError(
         `Remote resource ${resourceUri} cannot be modified (dataset: ${ctx.meta.dataset})`,
         403,

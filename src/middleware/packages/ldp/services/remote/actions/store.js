@@ -37,8 +37,10 @@ module.exports = {
       resourceUri = resource.id || resource['@id'];
     }
 
-    if (!this.isRemoteUri(resourceUri, webId)) {
-      throw new Error(`The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId})`);
+    if (!(await this.actions.isRemote({ resourceUri }, { parentCtx: ctx }))) {
+      throw new Error(
+        `The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId} / dataset ${ctx.meta.dataset}))`
+      );
     }
 
     // Adds the default context, if it is missing

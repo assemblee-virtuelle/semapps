@@ -16,9 +16,10 @@ module.exports = {
     aclVerified: { type: 'boolean', optional: true }
   },
   cache: {
-    enabled(ctx) {
-      // Do not cache remote resources as we have no mecanism to clear this cache
-      return !this.isRemoteUri(ctx.params.resourceUri, ctx.meta.dataset);
+    async enabled(ctx) {
+      // Do not cache remote resources as we have no mechanism to clear this cache
+      const isRemote = await ctx.call('ldp.remote.isRemote', { resourceUri: ctx.params.resourceUri });
+      return !isRemote;
     },
     keys: ['resourceUri', 'accept', 'jsonContext']
   },
@@ -26,7 +27,7 @@ module.exports = {
     const { resourceUri, aclVerified, jsonContext } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-    if (this.isRemoteUri(resourceUri, ctx.meta.dataset)) {
+    if (await ctx.call('ldp.remote.isRemote', { resourceUri })) {
       return await ctx.call('ldp.remote.get', ctx.params);
     }
 

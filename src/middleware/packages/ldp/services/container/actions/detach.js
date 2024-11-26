@@ -11,7 +11,7 @@ module.exports = {
     let { containerUri, resourceUri } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-    const isRemoteContainer = this.isRemoteUri(containerUri, ctx.meta.dataset);
+    const isRemoteContainer = await ctx.call('ldp.remote.isRemote', { resourceUri: containerUri });
 
     if (new URL(containerUri).pathname === '/') {
       if (isRemoteContainer) return; // indeed, we never have the root container on a mirror.

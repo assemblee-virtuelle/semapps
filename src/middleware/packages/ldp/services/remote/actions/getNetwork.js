@@ -20,8 +20,10 @@ module.exports = {
     const headers = new fetch.Headers({ accept });
     if (jsonContext) headers.set('JsonLdContext', JSON.stringify(jsonContext));
 
-    if (!this.isRemoteUri(resourceUri, webId)) {
-      throw new Error(`The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId})`);
+    if (!(await this.actions.isRemote({ resourceUri }, { parentCtx: ctx }))) {
+      throw new Error(
+        `The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId} / dataset ${ctx.meta.dataset})`
+      );
     }
 
     if (webId && webId !== 'system' && webId !== 'anon' && (await this.proxyAvailable())) {

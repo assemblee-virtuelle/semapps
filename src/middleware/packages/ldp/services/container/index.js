@@ -1,4 +1,3 @@
-const urlJoin = require('url-join');
 const attachAction = require('./actions/attach');
 const clearAction = require('./actions/clear');
 const createAction = require('./actions/create');
@@ -40,16 +39,6 @@ module.exports = {
     isEmpty: isEmptyAction,
     post: postAction,
     patch: patchAction
-  },
-  methods: {
-    isRemoteUri(uri, dataset) {
-      if (this.settings.podProvider && !dataset)
-        throw new Error(`Unable to know if ${uri} is remote. In Pod provider config, the dataset must be provided`);
-      return (
-        !urlJoin(uri, '/').startsWith(this.settings.baseUrl) ||
-        (this.settings.podProvider && !urlJoin(uri, '/').startsWith(`${urlJoin(this.settings.baseUrl, dataset)}/`))
-      );
-    }
   },
   hooks: {
     before: {
