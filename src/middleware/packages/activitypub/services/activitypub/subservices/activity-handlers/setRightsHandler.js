@@ -1,28 +1,28 @@
 const { hasType } = require('@semapps/ldp');
 const { ACTIVITY_TYPES } = require('../../../../constants');
 
-const removeReadRights = async ({ ctx, recipientUris, resourceUri, skipObjectsWatcher, anon }) => {
-  if (recipientUris === 0 && !anon) return;
-  await ctx.call(
-    'webacl.resource.removeRights',
-    {
-      resourceUri,
-      rights: {
-        ...(anon && { anon: { read: true } }),
-        ...(recipientUris && {
-          uri: recipientUris,
-          read: true
-        })
-      },
-      webId: 'system'
-    },
-    {
-      meta: {
-        skipObjectsWatcher
-      }
-    }
-  );
-};
+// const removeReadRights = async ({ ctx, recipientUris, resourceUri, skipObjectsWatcher, anon }) => {
+//   if (recipientUris === 0 && !anon) return;
+//   await ctx.call(
+//     'webacl.resource.removeRights',
+//     {
+//       resourceUri,
+//       rights: {
+//         ...(anon && { anon: { read: true } }),
+//         ...(recipientUris && {
+//           uri: recipientUris,
+//           read: true
+//         })
+//       },
+//       webId: 'system'
+//     },
+//     {
+//       meta: {
+//         skipObjectsWatcher
+//       }
+//     }
+//   );
+// };
 
 const addReadRights = async ({ ctx, recipientUris, resourceUri, skipObjectsWatcher, anon }) => {
   if (recipientUris?.length === 0 && !anon) return;
@@ -91,12 +91,10 @@ const setRightsHandler = {
         resourceUri: objectUri
       });
 
-      const removedRecipients = previousRecipients.filter(r => !newRecipients.includes(r));
-      const addedRecipients = newRecipients.filter(r => !previousRecipients.includes(r));
-
       // We add rights to all new recipients.
       //  ~~*And* if the object was private before, we send out a `Create` activity instead,
       //  by not skipping the objectWatcher that handles this.~~
+      const addedRecipients = newRecipients.filter(r => !previousRecipients.includes(r));
       await addReadRights({
         ctx,
         resourceUri: objectUri,
@@ -108,14 +106,15 @@ const setRightsHandler = {
       // We remove rights from all actors that aren't recipients anymore.
       //  *And* we do not skip the object-watcher middleware, to send `Delete` activities
       //  to actors that cannot see the object anymore.
-      if (removedRecipients.length > 0 || !activityIsPublic)
-        await removeReadRights({
-          ctx,
-          resourceUri: objectUri,
-          recipientUris: removedRecipients,
-          skipObjectsWatcher: false,
-          anon: !activityIsPublic
-        });
+      // const removedRecipients = previousRecipients.filter(r => !newRecipients.includes(r));
+      // if (removedRecipients.length > 0 || !activityIsPublic)
+      //   await removeReadRights({
+      //     ctx,
+      //     resourceUri: objectUri,
+      //     recipientUris: removedRecipients,
+      //     skipObjectsWatcher: false,
+      //     anon: !activityIsPublic
+      //   });
     }
   }
 };
