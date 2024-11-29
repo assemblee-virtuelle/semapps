@@ -323,7 +323,9 @@ const CollectionService = {
                   resourceUri: itemUri,
                   accept: MIME_TYPES.JSON,
                   jsonContext,
-                  webId
+                  // If a registered app fetch the inbox or outbox, the webId will be "system"
+                  // But we need to have the real user in case we need to fetch through the proxy
+                  webId: webId === 'system' && ctx.meta.impersonatedUser ? ctx.meta.impersonatedUser : webId
                 })
               );
             } catch (e) {
@@ -366,12 +368,10 @@ const CollectionService = {
         }
       }
 
-      const test = await ctx.call('jsonld.parser.compact', {
+      return await ctx.call('jsonld.parser.compact', {
         input: returnData,
         context: jsonContext || localContext
       });
-
-      return test;
     },
     /*
      * Empty the collection, deleting all items it contains.
