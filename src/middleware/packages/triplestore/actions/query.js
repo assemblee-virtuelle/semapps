@@ -27,11 +27,8 @@ module.exports = {
     const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
     if (!dataset) throw new Error(`No dataset defined for triplestore query: ${query}`);
-    if (!(await ctx.call('triplestore.dataset.exist', { dataset }))) {
-      const error = new Error(`The dataset ${dataset} doesn't exist`);
-      error.code = 404;
-      throw error;
-    }
+    if (!(await ctx.call('triplestore.dataset.exist', { dataset })))
+      throw new Error(`The dataset ${dataset} doesn't exist`);
 
     if (typeof query === 'object') query = this.generateSparqlQuery(query);
 
