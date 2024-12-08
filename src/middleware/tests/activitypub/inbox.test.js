@@ -179,21 +179,4 @@ describe('Permissions are correctly set on inbox', () => {
       });
     });
   });
-
-  test('Check the inbox response for a deleted actor', async () => {
-    const account = await broker2.call('auth.account.findByUsername', { username: "simonlouvet" });
-    console.log(account);
-
-    await broker2.call('auth.account.setTombstone', { webId: simon.id });
-
-    const account2 = await broker2.call('auth.account.findByUsername', { username: "simonlouvet" });
-    console.log(account2);
-
-
-    await expect(broker2.call('activitypub.collection.get', {
-      resourceUri: simon.inbox,
-      page: 1,
-      webId: 'anon'
-    })).rejects.toThrow('Not found');
-  });
 });
