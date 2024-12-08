@@ -45,6 +45,14 @@ const InboxService = {
         throw new E.UnAuthorizedError('INVALID_ACTOR', 'Activity actor is not the same as the posting actor');
       }
 
+      // Verify that the account exists and has not been deleted
+      const account = await ctx.call('auth.account.findByUsername', { username: activity.username });
+      if (!account) {
+        throw new E.NotFoundError();
+      }
+      if (account.deletedAt) {
+        throw new E.GoneError();
+      }
       // We want the next operations to be done by the system
       // TODO check if we can avoid this, as this is a bad practice
       ctx.meta.webId = 'system';

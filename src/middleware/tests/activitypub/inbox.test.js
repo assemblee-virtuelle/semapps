@@ -50,6 +50,16 @@ describe('Permissions are correctly set on inbox', () => {
     });
   });
 
+  test("Inbox response for an actor that does not exist", async () => {
+    const resourceUri = simon.inbox.replace('simonlouvet', 'unknown'); // 'http://localhost:3000/as/actor/simonlouvet/inbox', 
+    await expect(broker.call('activitypub.collection.get', {
+      resourceUri,
+      page: 1,
+      webId: 'anon'
+    })
+    ).rejects.toThrow('Not found');
+  });
+
   test('Post private message to friend', async () => {
     await broker.call('activitypub.outbox.post', {
       collectionUri: sebastien.outbox,
