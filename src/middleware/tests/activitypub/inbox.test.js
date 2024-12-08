@@ -50,6 +50,16 @@ describe('Permissions are correctly set on inbox', () => {
     });
   });
 
+  test("Inbox response for an actor that does not exist", async () => {
+    const resourceUri = simon.inbox.replace('simonlouvet', 'unknown'); // 'http://localhost:3000/as/actor/simonlouvet/inbox', 
+    await expect(broker.call('activitypub.collection.get', {
+      resourceUri,
+      page: 1,
+      webId: 'anon'
+    })
+    ).rejects.toThrow('Not found');
+  });
+
   test('Post private message to friend', async () => {
     await broker.call('activitypub.outbox.post', {
       collectionUri: sebastien.outbox,
@@ -168,5 +178,22 @@ describe('Permissions are correctly set on inbox', () => {
         }
       });
     });
+  });
+
+  test('Check the inbox response for a deleted actor', async () => {
+    const account = await broker2.call('auth.account.findByUsername', { username: "simonlouvet" });
+    console.log(account);
+
+    await broker2.call('auth.account.setTombstone', { webId: simon.id });
+
+    const account2 = await broker2.call('auth.account.findByUsername', { username: "simonlouvet" });
+    console.log(account2);
+
+
+    await expect(broker2.call('activitypub.collection.get', {
+      resourceUri: simon.inbox,
+      page: 1,
+      webId: 'anon'
+    })).rejects.toThrow('Not found');
   });
 });
