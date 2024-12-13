@@ -1,11 +1,11 @@
 const { ServiceBroker } = require('moleculer');
 const fs = require('fs');
-const urlJoin = require('url-join');
 const { join: pathJoin } = require('path');
 const { CoreService } = require('@semapps/core');
 const { pair, petr } = require('@semapps/ontologies');
 const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
 const { AuthLocalService } = require('@semapps/auth');
+const { ControlledContainerMixin } = require('@semapps/ldp');
 const path = require('path');
 const CONFIG = require('../config');
 const { clearDataset } = require('../utils');
@@ -92,6 +92,25 @@ const initialize = async () => {
       baseUrl: CONFIG.HOME_URL,
       jwtPath: path.resolve(__dirname, '../jwt'),
       accountsDataset: CONFIG.SETTINGS_DATASET
+    }
+  });
+
+  broker.createService({
+    name: 'event',
+    mixins: [ControlledContainerMixin],
+    settings: {
+      acceptedTypes: ['pair:Event'],
+      permissions
+    },
+    actions: {
+      getHeaderLinks() {
+        return [
+          {
+            uri: 'http://foo.bar',
+            rel: 'http://foo.baz'
+          }
+        ];
+      }
     }
   });
 

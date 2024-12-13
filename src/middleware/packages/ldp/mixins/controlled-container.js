@@ -27,6 +27,7 @@ module.exports = {
         post: `${this.name}.post`,
         list: `${this.name}.list`,
         get: `${this.name}.get`,
+        getHeaderLinks: `${this.name}.getHeaderLinks`,
         create: `${this.name}.create`,
         patch: `${this.name}.patch`,
         put: `${this.name}.put`,
@@ -71,6 +72,9 @@ module.exports = {
         ...containerParams,
         ...ctx.params
       });
+    },
+    getHeaderLinks(ctx) {
+      return [];
     },
     create(ctx) {
       return ctx.call('ldp.resource.create', ctx.params);
