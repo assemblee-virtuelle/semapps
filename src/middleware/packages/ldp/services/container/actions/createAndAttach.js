@@ -25,7 +25,7 @@ module.exports = {
 
       if (this.settings.podProvider && !webId) throw new Error(`The webId param is required in Pod provider config`);
       const rootContainerUri = this.settings.podProvider
-        ? await ctx.call('pod.getUrl', { webId })
+        ? await ctx.call('solid-storage.getUrl', { webId })
         : urlJoin(this.settings.baseUrl, '/');
 
       const containerPath = containerUri.replace(rootContainerUri, '/');

@@ -162,7 +162,7 @@ const AuthMixin = {
         const baseUrlTrailing = urlJoin(this.settings.baseUrl, '/');
         webId = webId || baseUrlTrailing + username;
 
-        const podUrl = await ctx.call('pod.getUrl', { webId });
+        const podUrl = await ctx.call('solid-storage.getUrl', { webId });
 
         // Check if capabilityUri is within the resource owner's pod
         if (!webId?.startsWith(baseUrlTrailing) || !capabilityUri?.startsWith(podUrl)) {

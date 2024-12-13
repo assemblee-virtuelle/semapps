@@ -14,7 +14,7 @@ module.exports = {
     const { path, webId } = ctx.params;
 
     if (this.settings.podProvider) {
-      const podUrl = await ctx.call('pod.getUrl', { webId });
+      const podUrl = await ctx.call('solid-storage.getUrl', { webId });
       return urlJoin(podUrl, path);
     } else {
       return urlJoin(this.settings.baseUrl, path);

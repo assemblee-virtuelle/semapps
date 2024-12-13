@@ -337,7 +337,7 @@ module.exports = {
         const registeredContainers = await ctx.call('ldp.registry.list');
         // Go through each Pod
         for (const { webId } of accounts) {
-          const podUrl = await ctx.call('pod.getUrl', { webId });
+          const podUrl = await ctx.call('solid-storage.getUrl', { webId });
           // Go through each registered container
           for (const container of Object.values(registeredContainers)) {
             if (container.podsContainer !== true) {

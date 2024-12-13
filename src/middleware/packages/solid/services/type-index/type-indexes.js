@@ -82,7 +82,7 @@ module.exports = {
       const accounts = await ctx.call('auth.account.find');
       for (const { webId } of accounts) {
         this.logger.info(`Migrating ${webId}...`);
-        const podUrl = await ctx.call('pod.getUrl', { webId });
+        const podUrl = await ctx.call('solid-storage.getUrl', { webId });
         await this.actions.createAndAttachToWebId({ webId }, { parentCtx: ctx });
 
         // Go through each registered container and persist them
@@ -122,7 +122,7 @@ module.exports = {
       // Go through each registered container
       for (const container of Object.values(registeredContainers)) {
         if (container.podsContainer !== true) {
-          const podUrl = await ctx.call('pod.getUrl', { webId });
+          const podUrl = await ctx.call('solid-storage.getUrl', { webId });
           const containerUri = urlJoin(podUrl, container.path);
           for (const type of arrayOf(container.acceptedTypes)) {
             this.logger.info(`Registering ${containerUri} with type ${type}...`);
