@@ -59,7 +59,8 @@ module.exports = {
         'middleware/ldp/registry',
         'middleware/ldp/controlled-container',
         'middleware/ldp/document-tagger',
-        'middleware/ldp/image-processor'
+        'middleware/ldp/image-processor',
+        'middleware/ldp/dereference'
       ]
     },
     'middleware/nodeinfo',

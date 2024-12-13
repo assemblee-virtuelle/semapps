@@ -31,6 +31,7 @@ This package allows you to setup [LDP](https://www.w3.org/TR/ldp-primer/) contai
 - [ControlledContainerMixin](controlled-container)
 - [DocumentTaggerMixin](document-tagger.md)
 - [ImageProcessorMixin](image-processor.md)
+- [DereferenceMixin](dereference.md)
 - DisassemblyMixin
 
 ## Install
