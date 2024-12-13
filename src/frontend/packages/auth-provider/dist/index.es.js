@@ -371,6 +371,7 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
                 return {
                     id: webId,
                     fullName: profileData?.["vcard:given-name"] || profileData?.["pair:label"] || webIdData["foaf:name"] || webIdData["pair:label"],
+                    avatar: profileData?.["vcard:photo"] || webIdData.image || webIdData.icon,
                     profileData: profileData,
                     webIdData: webIdData
                 };

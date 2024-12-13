@@ -29,6 +29,7 @@ export function authProvider({
     | {
         id: any;
         fullName: any;
+        avatar: any;
         profileData: any;
         webIdData: any;
       }

@@ -402,6 +402,7 @@ const authProvider = ({
             profileData?.['pair:label'] ||
             webIdData['foaf:name'] ||
             webIdData['pair:label'],
+          avatar: profileData?.['vcard:photo'] || webIdData.image || webIdData.icon,
           profileData,
           webIdData
         };
