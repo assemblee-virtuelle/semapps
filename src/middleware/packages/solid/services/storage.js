@@ -4,14 +4,14 @@ const { pim } = require('@semapps/ontologies');
 
 /** @type {import('moleculer').ServiceSchema} */
 module.exports = {
-  name: 'pod',
+  name: 'solid-storage',
   settings: {
     baseUrl: null,
     pathName: 'data'
   },
   dependencies: ['ontologies', 'ldp.registry'],
   async started() {
-    if (!this.settings.baseUrl) throw new Error('The baseUrl setting of the pod service is required');
+    if (!this.settings.baseUrl) throw new Error('The baseUrl setting of the solid-storage service is required');
 
     await this.broker.call('ontologies.register', pim);
 
@@ -27,7 +27,7 @@ module.exports = {
   actions: {
     async create(ctx) {
       const { username } = ctx.params;
-      if (!username) throw new Error('Cannot create pod without a username');
+      if (!username) throw new Error('Cannot create Solid storage without a username');
 
       await ctx.call('triplestore.dataset.create', {
         dataset: username,

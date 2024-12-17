@@ -43,7 +43,7 @@ module.exports = {
       }
     }
   },
-  dependencies: ['api', 'pod'],
+  dependencies: ['api'],
   async created() {
     if (!this.settings.baseUrl) throw new Error('The baseUrl setting is required');
     if (this.settings.sendOrReceive !== 'receive' && this.settings.sendOrReceive !== 'send')
