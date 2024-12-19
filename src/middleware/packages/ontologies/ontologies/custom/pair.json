@@ -10,6 +10,9 @@
     "pair:isDepictedBy": {
       "@type": "@id"
     },
+    "pair:depictedBy": {
+      "@type": "@id"
+    },
 
     "pair:about": {
       "@type": "@id"
