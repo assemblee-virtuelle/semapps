@@ -122,6 +122,7 @@ const ProxyService = {
         // Remove headers that we don't want to be transfered
         response.headers.delete('content-length');
         response.headers.delete('connection');
+        response.headers.delete('content-encoding');
 
         return {
           ok: true,
