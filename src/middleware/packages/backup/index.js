@@ -123,21 +123,15 @@ const BackupService = {
     },
     deleteDataset: {
       params: {
-        dataset: { type: 'string' },
-        iKnowWhatImDoing: { type: 'boolean' }
+        dataset: { type: 'string' }
       },
       async handler(ctx) {
-        const { dataset, iKnowWhatImDoing } = ctx.params;
+        const { dataset } = ctx.params;
         const {
           copyMethod,
           remoteServer,
           localServer: { fusekiBase }
         } = this.settings;
-        if (!iKnowWhatImDoing) {
-          throw new Error(
-            'Please confirm that you know what you are doing and set the `iKnowWhatImDoing` parameter to `true`.'
-          );
-        }
 
         const deleteFilenames = await ctx.call('backup.listBackupsForDataset', { dataset });
 
@@ -145,22 +139,24 @@ const BackupService = {
         await Promise.all(deleteFilenames.map(file => fs.promises.rm(file)));
 
         // Delete backups from remote.fusekiBase
-        switch (copyMethod) {
-          case 'rsync':
-            // The last param sets the --deletion argument, to sync deletions too.
-            await rsyncCopy(pathJoin(fusekiBase, 'backups'), 'datasets', remoteServer, true);
-            break;
+        if (remoteServer.path) {
+          switch (copyMethod) {
+            case 'rsync':
+              // The last param sets the --deletion argument, to sync deletions too.
+              await rsyncCopy(pathJoin(fusekiBase, 'backups'), 'datasets', remoteServer, true);
+              break;
 
-          case 'ftp':
-            await ftpRemove(deleteFilenames, remoteServer);
-            break;
+            case 'ftp':
+              await ftpRemove(deleteFilenames, remoteServer);
+              break;
 
-          case 'fs':
-            await fsRemove(deleteFilenames, 'datasets', remoteServer);
-            break;
+            case 'fs':
+              await fsRemove(deleteFilenames, 'datasets', remoteServer);
+              break;
 
-          default:
-            throw new Error(`Unknown copy method: ${copyMethod}`);
+            default:
+              throw new Error(`Unknown copy method: ${copyMethod}`);
+          }
         }
       }
     },
