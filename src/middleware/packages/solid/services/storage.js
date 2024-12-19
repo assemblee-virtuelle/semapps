@@ -15,7 +15,7 @@ module.exports = {
 
     await this.broker.call('ontologies.register', pim);
 
-    // Register root container for the Pod (/:username/data/)
+    // Register root container for the storage (/:username/data/)
     // Do not await or we will have a circular dependency with the LdpRegistryService
     this.broker.call('ldp.registry.register', {
       path: '/',
@@ -36,76 +36,36 @@ module.exports = {
 
       ctx.meta.dataset = username;
 
-      // Create the Pod root container so that the LdpRegistryService can create the default containers
-      const podRootUri = urlJoin(this.settings.baseUrl, username, this.settings.pathName);
-      await ctx.call('ldp.container.create', { containerUri: podRootUri, webId: 'system' });
+      // Create the storage root container so that the LdpRegistryService can create the default containers
+      const storageRootUri = urlJoin(this.settings.baseUrl, username, this.settings.pathName);
+      await ctx.call('ldp.container.create', { containerUri: storageRootUri, webId: 'system' });
 
-      return podRootUri;
+      return storageRootUri;
     },
     async getUrl(ctx) {
       const { webId } = ctx.params;
       // This is faster, but later we should use the 'pim:storage' property of the webId
       return urlJoin(webId, this.settings.pathName);
-    },
-    async createAndAttachContainers(ctx) {
-      const registeredContainers = await ctx.call('ldp.registry.list');
-      const accounts = await ctx.call('auth.account.find');
-      for (const { webId, username } of accounts) {
-        this.logger.info(`Creating and attaching containers for ${webId}...`);
-
-        const podUrl = await this.actions.getUrl({ webId }, { parentCtx: ctx });
-        ctx.meta.dataset = username;
-
-        for (const { path, permissions } of Object.values(registeredContainers)) {
-          await ctx.call('ldp.container.createAndAttach', {
-            containerUri: urlJoin(podUrl, path),
-            permissions, // Used by the WebAclMiddleware
-            webId
-          });
-        }
-
-        // Give full rights to user on his pod
-        await ctx.call('webacl.resource.addRights', {
-          resourceUri: podUrl,
-          additionalRights: {
-            user: {
-              uri: webId,
-              read: true,
-              write: true,
-              control: true
-            },
-            default: {
-              user: {
-                uri: webId,
-                read: true,
-                write: true,
-                control: true
-              }
-            }
-          },
-          webId: 'system'
-        });
-      }
     }
   },
   events: {
     async 'auth.registered'(ctx) {
       const { webId } = ctx.params;
 
-      const podUrl = await this.actions.getUrl({ webId }, { parentCtx: ctx });
+      const storageUrl = await this.actions.getUrl({ webId }, { parentCtx: ctx });
 
-      // Attach the podUrl to the webId
+      // Attach the storage URL to the webId
       await ctx.call('ldp.resource.patch', {
         resourceUri: webId,
         triplesToAdd: [
-          triple(namedNode(webId), namedNode('http://www.w3.org/ns/pim/space#storage'), namedNode(podUrl))
+          triple(namedNode(webId), namedNode('http://www.w3.org/ns/pim/space#storage'), namedNode(storageUrl))
         ],
         webId: 'system'
       });
 
-      // Give full rights to user on his pod
+      // Give full rights to user on his storage
       await ctx.call('webacl.resource.addRights', {
-        resourceUri: podUrl,
+        resourceUri: storageUrl,
         additionalRights: {
           user: {
             uri: webId,

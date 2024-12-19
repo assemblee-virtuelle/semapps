@@ -42,12 +42,12 @@ module.exports = {
       const { webId, accountData } = ctx.params;
       // We want to add user's containers only in Pod provider config
       if (this.settings.podProvider) {
-        const podUrl = await ctx.call('solid-storage.getUrl', { webId });
+        const storageUrl = await ctx.call('solid-storage.getUrl', { webId });
         const registeredContainers = await this.actions.list({ dataset: accountData.username }, { parentCtx: ctx });
         // Go through each registered containers
         for (const container of Object.values(registeredContainers)) {
           await ctx.call('ldp.container.createAndAttach', {
-            containerUri: urlJoin(podUrl, container.path),
+            containerUri: urlJoin(storageUrl, container.path),
             webId
           });
         }
