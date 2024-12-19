@@ -193,8 +193,20 @@ class TripleStoreAdapter {
               ${
                 newData
                   ? Object.keys(newData)
-                      .filter(predicate => newData[predicate] && !['@id', '@type', '@context'].includes(predicate))
-                      .map(predicate => `<${_id}> <${this.ontology + predicate}> "${newData[predicate]}"`)
+                      .filter(predicate => {
+                        if (!newData[predicate]) return false;
+                        if (Array.isArray(newData[predicate]) && newData[predicate].length === 0) return false;
+                        if (['@id', '@type', '@context'].includes(predicate)) return false;
+                        return true;
+                      })
+                      .map(
+                        predicate =>
+                          `<${_id}> <${this.ontology + predicate}> ${
+                            Array.isArray(newData[predicate])
+                              ? newData[predicate].map(o => `"${o}"`).join(', ')
+                              : `"${newData[predicate]}"`
+                          }`
+                      )
                       .join(' . ')
                   : ''
               }
