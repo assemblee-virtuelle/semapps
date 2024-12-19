@@ -29,7 +29,7 @@ module.exports = {
     myAnnounceActivity: {
       async match(activity, fetcher) {
         if (activity.actor !== 'http://localhost:3000/myself') {
-          return { match: false, dereferenceActivity: activity };
+          return { match: false, dereferencedActivity: activity };
         } else {
           return await matchActivity({ type: ACTIVITY_TYPES.ANNOUNCE }, activity, fetcher);
         }
