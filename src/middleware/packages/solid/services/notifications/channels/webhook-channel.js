@@ -1,4 +1,3 @@
-const urlJoin = require('url-join');
 const fetch = require('node-fetch');
 const NotificationChannelMixin = require('./notification-channel.mixin');
 
@@ -27,24 +26,19 @@ const WebhookChannel2023Service = {
         en: 'Webhook Channel'
       },
       internal: true
+    },
+    endpoint: {
+      path: '/.notifications/WebhookChannel2023',
+      initialData: {
+        'notify:channelType': 'notify:WebhookChannel2023',
+        'notify:feature': ['notify:endAt', 'notify:rate', 'notify:startAt', 'notify:state']
+      }
     }
   },
   created() {
     if (!this.createJob) throw new Error('The QueueMixin must be configured with this service');
   },
   actions: {
-    async discover(ctx) {
-      // TODO Handle content negotiation
-      ctx.meta.$responseType = 'application/ld+json';
-      // Cache for 1 day.
-      ctx.meta.$responseHeaders = { 'Cache-Control': 'public, max-age=86400' };
-      return {
-        '@context': { notify: 'http://www.w3.org/ns/solid/notifications#' },
-        '@id': urlJoin(this.settings.baseUrl, '.notifications', 'WebhookChannel2023'),
-        'notify:channelType': 'notify:WebhookChannel2023',
-        'notify:feature': ['notify:endAt', 'notify:rate', 'notify:startAt', 'notify:state']
-      };
-    },
     async getAppChannels(ctx) {
       const { appUri, webId } = ctx.params;
       const { origin: appOrigin } = new URL(appUri);

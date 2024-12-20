@@ -7,6 +7,7 @@ module.exports = {
   name: 'solid-notifications.provider',
   settings: {
     baseUrl: null,
+    settingsDataset: null,
     queueServiceUrl: null,
     channels: {
       webhook: true,
@@ -15,8 +16,9 @@ module.exports = {
   },
   dependencies: ['api', 'ontologies'],
   async created() {
-    const { baseUrl, queueServiceUrl, channels } = this.settings;
+    const { baseUrl, settingsDataset, queueServiceUrl, channels } = this.settings;
     if (!baseUrl) throw new Error(`The baseUrl setting is required`);
+    if (!settingsDataset) throw new Error(`The settingsDataset setting is required`);
     if (channels.webhook && !queueServiceUrl)
       throw new Error(`The queueServiceUrl setting is required if webhooks are activated`);
 
@@ -24,7 +26,7 @@ module.exports = {
       this.broker.createService({
         name: 'solid-notifications.provider.webhook',
         mixins: [WebhookChannelService, QueueMixin(queueServiceUrl)],
-        settings: { baseUrl }
+        settings: { baseUrl, settingsDataset }
       });
     }
 
@@ -32,7 +34,7 @@ module.exports = {
       this.broker.createService({
         name: 'solid-notifications.provider.websocket',
         mixins: [WebSocketChannelService],
-        settings: { baseUrl }
+        settings: { baseUrl, settingsDataset }
       });
     }
   },

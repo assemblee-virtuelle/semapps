@@ -15,6 +15,13 @@ const WebSocketChannel2023Service = {
         en: 'WebSocket Channel'
       },
       internal: true
+    },
+    endpoint: {
+      path: '/.notifications/WebSocketChannel2023',
+      initialData: {
+        'notify:channelType': 'notify:WebSocketChannel2023',
+        'notify:feature': ['notify:endAt', 'notify:rate', 'notify:startAt', 'notify:state']
+      }
     }
   },
   async started() {
@@ -50,19 +57,6 @@ const WebSocketChannel2023Service = {
         }
       }
     });
-  },
-  actions: {
-    async discover(ctx) {
-      ctx.meta.$responseType = 'application/ld+json';
-      // Cache for 1 day.
-      ctx.meta.$responseHeaders = { 'Cache-Control': 'public, max-age=86400' };
-      return {
-        '@context': { notify: 'http://www.w3.org/ns/solid/notifications#' },
-        '@id': urlJoin(this.settings.baseUrl, '.notifications', 'WebSocketChannel2023'),
-        'notify:channelType': 'notify:WebSocketChannel2023',
-        'notify:feature': ['notify:endAt', 'notify:rate', 'notify:startAt', 'notify:state']
-      };
-    }
   },
   methods: {
     onChannelDeleted(channel) {

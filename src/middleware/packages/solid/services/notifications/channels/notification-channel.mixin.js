@@ -1,8 +1,6 @@
-const path = require('path');
 const urlJoin = require('url-join');
 const { Errors: E } = require('moleculer-web');
-const { parseHeader, negotiateContentType, parseJson } = require('@semapps/middlewares');
-const { ControlledContainerMixin, getDatasetFromUri, arrayOf } = require('@semapps/ldp');
+const { SpecialEndpointMixin, ControlledContainerMixin, getDatasetFromUri, arrayOf } = require('@semapps/ldp');
 const { ACTIVITY_TYPES } = require('@semapps/activitypub');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { namedNode } = require('@rdfjs/data-model');
@@ -23,7 +21,7 @@ const moment = require('moment');
  */
 module.exports = {
   // name: 'solid-notifications.provider.<ChannelType>',
-  mixins: [ControlledContainerMixin],
+  mixins: [ControlledContainerMixin, SpecialEndpointMixin],
   settings: {
     // Channel properties (to be overridden)
     channelType: null, // E.g. 'WebhookChannel2023',
@@ -42,6 +40,13 @@ module.exports = {
         read: true,
         write: true
       }
+    },
+
+    // SpecialEndpointMixin (to be filled by channels services)
+    settingsDataset: null,
+    endpoint: {
+      path: null,
+      initialData: {}
     }
   },
   dependencies: ['api', 'solid-endpoint'],
@@ -54,24 +59,9 @@ module.exports = {
     if (this.settings.acceptedTypes?.length <= 0) this.settings.acceptedTypes = [this.settings.typePredicate];
   },
   async started() {
-    const { channelType, baseUrl } = this.settings;
-    const { pathname: basePath } = new URL(baseUrl);
+    const { channelType } = this.settings;
 
-    await this.broker.call('api.addRoute', {
-      route: {
-        name: `notification-${channelType}`,
-        path: path.join(basePath, `/.notifications/${channelType}`),
-        bodyParsers: false,
-        authorization: false,
-        authentication: true,
-        aliases: {
-          'GET /': `${this.name}.discover`,
-          'POST /': [parseHeader, negotiateContentType, parseJson, `${this.name}.createChannel`]
-        }
-      }
-    });
-
-    await this.broker.call('solid-endpoint.add', {
+    await this.broker.call('solid-endpoint.endpointAdd', {
       predicate: namedNode('http://www.w3.org/ns/solid/notifications#subscription'),
       object: namedNode(urlJoin(this.settings.baseUrl, '.notifications', channelType))
     });
@@ -82,13 +72,8 @@ module.exports = {
     this.loadChannelsFromDb({ removeOldChannels: true });
   },
   actions: {
-    async discover() {
-      throw new Error('Not implemented. Please provide this action in your service.');
-      // Cache for 1 day.
-      // ctx.meta.$responseHeaders = { 'Cache-Control': 'public, max-age=86400' };
-    },
-
-    async createChannel(ctx) {
+    // Action called by the SpecialEndpointMixin when POSTing to the endpoint
+    async endpointPost(ctx) {
       // Expect format https://communitysolidserver.github.io/CommunitySolidServer/latest/usage/notifications/#webhooks
       // Correct context: https://github.com/solid/vocab/blob/main/solid-notifications-context.jsonld
       const type = ctx.params.type || ctx.params['@type'];
