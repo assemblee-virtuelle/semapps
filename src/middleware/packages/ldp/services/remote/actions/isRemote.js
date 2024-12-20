@@ -16,6 +16,9 @@ module.exports = {
     } else {
       // If the resource is on the same Pod provider, it may be on a different Pod
       if (this.settings.podProvider) {
+        // For special URLs starting with a dot (such as /.well-known), don't check datasets
+        if (resourceUri.startsWith(urlJoin(this.settings.baseUrl, '/.'))) return false;
+
         if (!dataset)
           throw new Error(
             `Unable to know if ${resourceUri} is remote. In Pod provider config, the dataset must be provided`
