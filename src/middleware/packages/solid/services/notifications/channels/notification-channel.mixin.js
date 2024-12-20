@@ -5,6 +5,7 @@ const { parseHeader, negotiateContentType, parseJson } = require('@semapps/middl
 const { ControlledContainerMixin, getDatasetFromUri, arrayOf } = require('@semapps/ldp');
 const { ACTIVITY_TYPES } = require('@semapps/activitypub');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { namedNode } = require('@rdfjs/data-model');
 const { v4: uuidV4 } = require('uuid');
 const moment = require('moment');
 
@@ -43,7 +44,7 @@ module.exports = {
       }
     }
   },
-  dependencies: ['api'],
+  dependencies: ['api', 'solid-endpoint'],
   async created() {
     if (!this.settings.baseUrl) throw new Error('The baseUrl setting is required');
     if (this.settings.sendOrReceive !== 'receive' && this.settings.sendOrReceive !== 'send')
@@ -68,6 +69,11 @@ module.exports = {
           'POST /': [parseHeader, negotiateContentType, parseJson, `${this.name}.createChannel`]
         }
       }
+    });
+
+    await this.broker.call('solid-endpoint.add', {
+      predicate: namedNode('http://www.w3.org/ns/solid/notifications#subscription'),
+      object: namedNode(urlJoin(this.settings.baseUrl, '.notifications', channelType))
     });
 
     this.channels = [];
