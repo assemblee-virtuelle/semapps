@@ -65,6 +65,21 @@
     },
     "interop:usesLanguage": {
       "@type": "xsd:language"
+    },
+    "interop:hasAuthorizationAgent": {
+      "@type": "@id"
+    },
+    "interop:hasRegistrySet": {
+      "@type": "@id"
+    },
+    "interop:hasAgentRegistry": {
+      "@type": "@id"
+    },
+    "interop:hasAuthorizationRegistry": {
+      "@type": "@id"
+    },
+    "interop:hasDataRegistry": {
+      "@type": "@id"
     }
   }
 }
