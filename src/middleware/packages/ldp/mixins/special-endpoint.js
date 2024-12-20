@@ -18,18 +18,20 @@ module.exports = {
     if (!this.settings.settingsDataset)
       throw new Error(`The settingsDataset must be specified for service ${this.name}`);
 
+    const middlewares = [parseUrl, parseHeader, negotiateAccept, parseJson, parseTurtle];
+
+    let aliases = {};
+    aliases['GET /'] = [...middlewares, `${this.name}.endpointGet`];
+    if (this.actions.endpointPost) aliases['POST /'] = [...middlewares, `${this.name}.endpointPost`];
+
     await this.broker.call('api.addRoute', {
       route: {
+        name: `endpoint-${this.name}`,
         path: this.settings.endpoint.path,
         bodyParsers: false,
         authorization: false,
         authentication: false,
-        aliases: {
-          'GET /': [parseUrl, parseHeader, negotiateAccept, parseJson, parseTurtle, `${this.name}.endpointGet`],
-          'POST /': this.actions.endpointPost
-            ? [parseUrl, parseHeader, negotiateAccept, parseJson, parseTurtle, `${this.name}.endpointPost`]
-            : undefined
-        }
+        aliases
       }
     });
 
