@@ -15,7 +15,7 @@ module.exports = {
   },
   dependencies: ['api', 'ldp'],
   async started() {
-    await this.broker.call('ldp.link-header.register', { actionName: 'solid-notifications.provider.getLink' });
+    await this.broker.call('ldp.link-header.register', { actionName: 'solid-endpoint.getLink' });
   },
   actions: {
     getLink() {
