@@ -34,7 +34,7 @@ module.exports = {
       webId
     });
 
-    if (!isRemoteContainer)
+    if (!isRemoteContainer && !ctx.meta.skipEmitEvent) {
       ctx.emit(
         'ldp.container.detached',
         {
@@ -44,5 +44,6 @@ module.exports = {
         },
         { meta: { webId: null, dataset: null } }
       );
+    }
   }
 };

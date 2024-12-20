@@ -34,7 +34,9 @@ module.exports = {
       webId
     };
 
-    ctx.emit('ldp.container.deleted', returnValues, { meta: { webId: null, dataset: null } });
+    if (!ctx.meta.skipEmitEvent) {
+      ctx.emit('ldp.container.deleted', returnValues, { meta: { webId: null, dataset: null } });
+    }
 
     return returnValues;
   }

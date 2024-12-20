@@ -40,7 +40,9 @@ module.exports = {
       dataset: ctx.meta.dataset
     };
 
-    if (!isRemoteContainer) ctx.emit('ldp.container.attached', returnValues, { meta: { webId: null, dataset: null } });
+    if (!isRemoteContainer && !ctx.meta.skipEmitEvent) {
+      ctx.emit('ldp.container.attached', returnValues, { meta: { webId: null, dataset: null } });
+    }
 
     return returnValues;
   }

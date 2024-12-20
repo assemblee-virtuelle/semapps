@@ -80,10 +80,13 @@ module.exports = {
     const returnValues = {
       resourceUri,
       newData,
-      webId
+      webId,
+      dataset: ctx.meta.dataset
     };
 
-    ctx.emit('ldp.resource.created', returnValues, { meta: { webId: null } });
+    if (!ctx.meta.skipEmitEvent) {
+      ctx.emit('ldp.resource.created', returnValues, { meta: { webId: null, dataset: null } });
+    }
 
     return returnValues;
   }

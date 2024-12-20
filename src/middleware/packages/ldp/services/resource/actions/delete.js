@@ -65,7 +65,9 @@ module.exports = {
 
     ctx.call('triplestore.deleteOrphanBlankNodes');
 
-    ctx.emit('ldp.resource.deleted', returnValues, { meta: { webId: null, dataset: null } });
+    if (!ctx.meta.skipEmitEvent) {
+      ctx.emit('ldp.resource.deleted', returnValues, { meta: { webId: null, dataset: null } });
+    }
 
     return returnValues;
   }

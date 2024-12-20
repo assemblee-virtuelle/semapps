@@ -102,11 +102,12 @@ module.exports = {
         }
       }
     }
-
-    ctx.emit(
-      'ldp.container.patched',
-      { containerUri, resourcesAdded, resourcesRemoved, dataset: ctx.meta.dataset },
-      { meta: { webId: null, dataset: null } }
-    );
+    if (!ctx.meta.skipEmitEvent) {
+      ctx.emit(
+        'ldp.container.patched',
+        { containerUri, resourcesAdded, resourcesRemoved, dataset: ctx.meta.dataset },
+        { meta: { webId: null, dataset: null } }
+      );
+    }
   }
 };

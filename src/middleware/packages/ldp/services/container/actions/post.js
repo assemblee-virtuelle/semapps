@@ -110,15 +110,17 @@ module.exports = {
       throw e;
     }
 
-    ctx.emit(
-      'ldp.container.attached',
-      {
-        containerUri,
-        resourceUri,
-        fromContainerPost: true
-      },
-      { meta: { webId: null } }
-    );
+    if (!ctx.meta.skipEmitEvent) {
+      ctx.emit(
+        'ldp.container.attached',
+        {
+          containerUri,
+          resourceUri,
+          fromContainerPost: true
+        },
+        { meta: { webId: null } }
+      );
+    }
 
     return resourceUri;
   }

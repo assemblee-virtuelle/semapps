@@ -88,7 +88,9 @@ module.exports = {
       dataset: ctx.meta.dataset
     };
 
-    ctx.emit('ldp.resource.patched', returnValues, { meta: { webId: null, dataset: null } });
+    if (!ctx.meta.skipEmitEvent) {
+      ctx.emit('ldp.resource.patched', returnValues, { meta: { webId: null, dataset: null } });
+    }
 
     return returnValues;
   }

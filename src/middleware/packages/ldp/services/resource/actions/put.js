@@ -122,22 +122,24 @@ module.exports = {
         }
       );
 
-      ctx.emit(
-        'ldp.resource.updated',
-        {
-          resourceUri,
-          oldData,
-          newData,
-          webId,
-          dataset: ctx.meta.dataset
-        },
-        {
-          meta: {
-            webId: null,
-            dataset: null
+      if (!ctx.meta.skipEmitEvent) {
+        ctx.emit(
+          'ldp.resource.updated',
+          {
+            resourceUri,
+            oldData,
+            newData,
+            webId,
+            dataset: ctx.meta.dataset
+          },
+          {
+            meta: {
+              webId: null,
+              dataset: null
+            }
           }
-        }
-      );
+        );
+      }
     }
 
     return {
