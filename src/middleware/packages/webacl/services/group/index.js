@@ -37,6 +37,21 @@ module.exports = {
     api_removeMember: removeMemberAction.api
   },
   async started() {
+    // Remove existing superAdmins users in database if they are not listed in superAdmins setting
+    const superAdmins = Array.isArray(this.settings.superAdmins) ? this.settings.superAdmins : [];
+    const groupUri = urlJoin(this.settings.baseUrl, '_groups', 'superadmins');
+    const members = await this.actions.getMembers({
+      groupUri,
+      webId: 'system'
+    });
+
+    await Promise.all(
+      members
+        .filter(memberUri => !superAdmins.includes(memberUri))
+        .map(memberUri => this.actions.removeMember({ groupUri, memberUri, webId: 'system' }))
+    );
+
+    // Add as superAdmins users listed in superAdmins setting
     if (this.settings.superAdmins && this.settings.superAdmins.length > 0) {
       if (this.settings.podProvider) {
         throw new Error('You cannot create a superadmin group in a POD provider config');
@@ -59,7 +74,6 @@ module.exports = {
       }
 
       // Give full rights to root container
-      const groupUri = urlJoin(this.settings.baseUrl, '_groups', 'superadmins');
       await this.broker.call('webacl.resource.addRights', {
         resourceUri: this.settings.baseUrl,
         additionalRights: {
