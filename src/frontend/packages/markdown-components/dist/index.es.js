@@ -12,7 +12,7 @@ import {styled as $kkR1A$styled} from "@mui/material/styles";
 
 
 
-const $cf6ed0ef7f5d4af7$var$MarkdownField = ({ source: source, LabelComponent: LabelComponent, overrides: overrides = {}, ...rest })=>{
+const $cf6ed0ef7f5d4af7$var$MarkdownField = ({ source: source, LabelComponent: LabelComponent = "h2", overrides: overrides = {}, ...rest })=>{
     const record = (0, $kkR1A$useRecordContext)();
     if (!record || !(0, $kkR1A$lodashget)(record, source)) return null;
     return /*#__PURE__*/ (0, $kkR1A$jsx)((0, $kkR1A$markdowntojsx), {
@@ -36,9 +36,6 @@ const $cf6ed0ef7f5d4af7$var$MarkdownField = ({ source: source, LabelComponent: L
         },
         children: (0, $kkR1A$lodashget)(record, source)
     });
-};
-$cf6ed0ef7f5d4af7$var$MarkdownField.defaultProps = {
-    LabelComponent: "h2"
 };
 var $cf6ed0ef7f5d4af7$export$2e2bcd8739ae039 = $cf6ed0ef7f5d4af7$var$MarkdownField;
 

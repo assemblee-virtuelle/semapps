@@ -2,11 +2,17 @@ import { FunctionComponent } from 'react';
 import { ReactMdeProps } from 'react-mde';
 import { MarkdownToJSX } from 'markdown-to-jsx';
 import { TextInputProps } from 'react-admin';
-declare namespace MarkdownField {
-  namespace defaultProps {
-    let LabelComponent: string;
-  }
-}
+export function MarkdownField({
+  source,
+  LabelComponent,
+  overrides,
+  ...rest
+}: {
+  [x: string]: any;
+  source: any;
+  LabelComponent?: string | undefined;
+  overrides?: {} | undefined;
+}): import('react/jsx-runtime').JSX.Element | null;
 type Props = TextInputProps & {
   overrides?: MarkdownToJSX.Overrides;
   reactMdeProps?: ReactMdeProps;

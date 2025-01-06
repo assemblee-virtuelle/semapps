@@ -3,7 +3,7 @@ import { useRecordContext } from 'react-admin';
 import Markdown from 'markdown-to-jsx';
 import get from 'lodash/get';
 
-const MarkdownField = ({ source, LabelComponent, overrides = {}, ...rest }) => {
+const MarkdownField = ({ source, LabelComponent = 'h2', overrides = {}, ...rest }) => {
   const record = useRecordContext();
   if (!record || !get(record, source)) return null;
 
@@ -31,10 +31,6 @@ const MarkdownField = ({ source, LabelComponent, overrides = {}, ...rest }) => {
       {get(record, source)}
     </Markdown>
   );
-};
-
-MarkdownField.defaultProps = {
-  LabelComponent: 'h2'
 };
 
 export default MarkdownField;

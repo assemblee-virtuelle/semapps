@@ -24,7 +24,7 @@ $parcel$export(module.exports, "useLoadLinks", () => $111c9a4f9553dc9d$export$2e
 
 
 
-const $e77dbe0cc63a4759$var$MarkdownField = ({ source: source, LabelComponent: LabelComponent, overrides: overrides = {}, ...rest })=>{
+const $e77dbe0cc63a4759$var$MarkdownField = ({ source: source, LabelComponent: LabelComponent = "h2", overrides: overrides = {}, ...rest })=>{
     const record = (0, $7rG7r$reactadmin.useRecordContext)();
     if (!record || !(0, ($parcel$interopDefault($7rG7r$lodashget)))(record, source)) return null;
     return /*#__PURE__*/ (0, $7rG7r$reactjsxruntime.jsx)((0, ($parcel$interopDefault($7rG7r$markdowntojsx))), {
@@ -48,9 +48,6 @@ const $e77dbe0cc63a4759$var$MarkdownField = ({ source: source, LabelComponent: L
         },
         children: (0, ($parcel$interopDefault($7rG7r$lodashget)))(record, source)
     });
-};
-$e77dbe0cc63a4759$var$MarkdownField.defaultProps = {
-    LabelComponent: "h2"
 };
 var $e77dbe0cc63a4759$export$2e2bcd8739ae039 = $e77dbe0cc63a4759$var$MarkdownField;
 
