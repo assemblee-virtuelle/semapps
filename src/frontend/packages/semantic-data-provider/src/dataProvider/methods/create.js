@@ -43,7 +43,7 @@ const createMethod = config => async (resourceId, params) => {
     }
 
     // Upload files, if there are any
-    const { updatedRecord } = await handleFiles.upload(params.data, config);
+    const { updatedRecord } = await handleFiles.upload(params.data, config, serverKey);
     params.data = updatedRecord;
 
     const { headers: responseHeaders } = await httpClient(containerUri, {

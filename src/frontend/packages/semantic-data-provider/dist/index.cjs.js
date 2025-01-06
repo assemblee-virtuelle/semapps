@@ -108,13 +108,15 @@ var $9020b8e3f4a4c1a1$export$2e2bcd8739ae039 = $9020b8e3f4a4c1a1$var$getOneMetho
 
 const $6fcb30f76390d142$var$isFile = (o)=>o?.rawFile && o.rawFile instanceof File;
 const $6fcb30f76390d142$var$isFileToDelete = (o)=>o?.fileToDelete !== undefined && o?.fileToDelete !== null;
-const $6fcb30f76390d142$var$getUploadsContainerUri = (config)=>{
-    const serverKey = Object.keys(config.dataServers).find((key)=>config.dataServers[key].uploadsContainer);
-    if (serverKey && config.dataServers[serverKey].uploadsContainer) return (0, ($parcel$interopDefault($bkNnK$urljoin)))(config.dataServers[serverKey].baseUrl, config.dataServers[serverKey].uploadsContainer);
+const $6fcb30f76390d142$var$getUploadsContainerUri = (config, serverKey)=>{
+    // If no server key is defined, or if the server has no uploads container, find any server with a uploads container
+    if (!serverKey || !config.dataServers[serverKey].uploadsContainer) serverKey = Object.keys(config.dataServers).find((key)=>config.dataServers[key].uploadsContainer);
+    if (serverKey) return (0, ($parcel$interopDefault($bkNnK$urljoin)))(config.dataServers[serverKey].baseUrl, config.dataServers[serverKey].uploadsContainer);
+    else // No server has an uploads container
     return null;
 };
-const $6fcb30f76390d142$export$a5575dbeeffdad98 = async (rawFile, config)=>{
-    const uploadsContainerUri = $6fcb30f76390d142$var$getUploadsContainerUri(config);
+const $6fcb30f76390d142$export$a5575dbeeffdad98 = async (rawFile, config, serverKey)=>{
+    const uploadsContainerUri = $6fcb30f76390d142$var$getUploadsContainerUri(config, serverKey);
     if (!uploadsContainerUri) throw new Error("You must define an uploadsContainer in one of the server's configuration");
     const response = await config.httpClient(uploadsContainerUri, {
         method: "POST",
@@ -134,7 +136,7 @@ const $6fcb30f76390d142$var$deleteFiles = async (filesToDelete, config)=>{
 /*
  * Look for raw files in the record data.
  * If there are any, upload them and replace the file by its URL.
- */ const $6fcb30f76390d142$var$uploadAllFiles = async (record, config)=>{
+ */ const $6fcb30f76390d142$var$uploadAllFiles = async (record, config, serverKey)=>{
     const filesToDelete = [];
     const updatedRecord = {
         ...record
@@ -145,7 +147,7 @@ const $6fcb30f76390d142$var$deleteFiles = async (filesToDelete, config)=>{
             const itemValue = value[i];
             if ($6fcb30f76390d142$var$isFile(itemValue)) {
                 if ($6fcb30f76390d142$var$isFileToDelete(itemValue)) filesToDelete.push(itemValue.fileToDelete);
-                updatedRecord[property][i] = await $6fcb30f76390d142$export$a5575dbeeffdad98(itemValue.rawFile, config);
+                updatedRecord[property][i] = await $6fcb30f76390d142$export$a5575dbeeffdad98(itemValue.rawFile, config, serverKey);
             } else if ($6fcb30f76390d142$var$isFileToDelete(itemValue)) {
                 filesToDelete.push(itemValue.fileToDelete);
                 updatedRecord[property][i] = null;
@@ -153,7 +155,7 @@ const $6fcb30f76390d142$var$deleteFiles = async (filesToDelete, config)=>{
         }
         else if ($6fcb30f76390d142$var$isFile(value)) {
             if ($6fcb30f76390d142$var$isFileToDelete(value)) filesToDelete.push(value.fileToDelete);
-            updatedRecord[property] = await $6fcb30f76390d142$export$a5575dbeeffdad98(value.rawFile, config);
+            updatedRecord[property] = await $6fcb30f76390d142$export$a5575dbeeffdad98(value.rawFile, config, serverKey);
         } else if ($6fcb30f76390d142$var$isFileToDelete(value)) {
             filesToDelete.push(value.fileToDelete);
             updatedRecord[property] = null;
@@ -266,7 +268,7 @@ const $907cbc087f6529e2$var$createMethod = (config)=>async (resourceId, params)=
                 else headers.set("Slug", params.data[dataModel.fieldsMapping.title]);
             }
             // Upload files, if there are any
-            const { updatedRecord: updatedRecord } = await (0, $6fcb30f76390d142$export$2e2bcd8739ae039).upload(params.data, config);
+            const { updatedRecord: updatedRecord } = await (0, $6fcb30f76390d142$export$2e2bcd8739ae039).upload(params.data, config, serverKey);
             params.data = updatedRecord;
             const { headers: responseHeaders } = await httpClient(containerUri, {
                 method: "POST",
@@ -1010,10 +1012,23 @@ var $fda69bf2752eb49a$export$2e2bcd8739ae039 = $fda69bf2752eb49a$var$patchMethod
 
 
 
+// Return the first server matching with the baseUrl
+const $59a07b932dae8600$var$getServerKeyFromUri = (uri, dataServers)=>{
+    if (!uri) throw Error(`No URI provided to getServerKeyFromUri`);
+    return Object.keys(dataServers).find((key)=>{
+        if (dataServers[key].pod) // The baseUrl ends with /data so remove this part to match with the webId and webId-related URLs (/inbox, /outbox...)
+        return dataServers[key].baseUrl && uri.startsWith(dataServers[key].baseUrl.replace("/data", ""));
+        return uri.startsWith(dataServers[key].baseUrl);
+    });
+};
+var $59a07b932dae8600$export$2e2bcd8739ae039 = $59a07b932dae8600$var$getServerKeyFromUri;
+
+
 const $ceaafb56f75454f0$var$updateMethod = (config)=>async (resourceId, params)=>{
-        const { httpClient: httpClient, jsonContext: jsonContext } = config;
+        const { httpClient: httpClient, jsonContext: jsonContext, dataServers: dataServers } = config;
+        const serverKey = (0, $59a07b932dae8600$export$2e2bcd8739ae039)(params.id, dataServers);
         // Upload files, if there are any
-        const { updatedRecord: updatedRecord, filesToDelete: filesToDelete } = await (0, $6fcb30f76390d142$export$2e2bcd8739ae039).upload(params.data, config);
+        const { updatedRecord: updatedRecord, filesToDelete: filesToDelete } = await (0, $6fcb30f76390d142$export$2e2bcd8739ae039).upload(params.data, config, serverKey);
         params.data = updatedRecord;
         await httpClient(`${params.id}`, {
             method: "PUT",
@@ -1122,17 +1137,6 @@ var $915df908e0942746$export$2e2bcd8739ae039 = $915df908e0942746$var$fetchVoidEn
 
 
 
-
-// Return the first server matching with the baseUrl
-const $59a07b932dae8600$var$getServerKeyFromUri = (uri, dataServers)=>{
-    if (!uri) throw Error(`No URI provided to getServerKeyFromUri`);
-    return Object.keys(dataServers).find((key)=>{
-        if (dataServers[key].pod) // The baseUrl ends with /data so remove this part to match with the webId and webId-related URLs (/inbox, /outbox...)
-        return dataServers[key].baseUrl && uri.startsWith(dataServers[key].baseUrl.replace("/data", ""));
-        return uri.startsWith(dataServers[key].baseUrl);
-    });
-};
-var $59a07b932dae8600$export$2e2bcd8739ae039 = $59a07b932dae8600$var$getServerKeyFromUri;
 
 
 
