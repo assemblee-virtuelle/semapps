@@ -132,7 +132,7 @@ const KeysService = {
           return [newKey];
         }
 
-        // Fetch all private keys for the public keys in the webId.
+        // Get all private keys for the public keys in the webId.
         return await Promise.all(
           publicKeys.map(async key => {
             const publicKeyId = key.id || key['@id'];
@@ -169,7 +169,7 @@ const KeysService = {
           throw new Error('Only ED25519 keys are supported by this action.');
         }
         // The library requires the key to have the type field set to `Multikey` only.
-        return await Ed25519Multikey.from({ keyObject, type: 'Multikey' });
+        return await Ed25519Multikey.from({ ...keyObject, type: 'Multikey' });
       }
     },
 
@@ -244,7 +244,7 @@ const KeysService = {
 
     /**
      * Generate ED25519 key pair.
-     * @returns {object} Key pair in [MultiKey format](https://www.w3.org/TR/vc-data-integrity/#multikey).
+     * @returns {object} Key pair in [MultiKey format](https://www.w3.org/TR/controller-document/#Multikey).
      */
     generateEd25519Key: {
       params: {},
@@ -256,6 +256,7 @@ const KeysService = {
         // We need the default context instead, for adding other fields.
         delete keyObject['@context'];
         // Set additional types which we require to find them easily by type in the db.
+        delete keyObject.type;
         keyObject['@type'] = [KEY_TYPES.ED25519, KEY_TYPES.MULTI_KEY, KEY_TYPES.VERIFICATION_METHOD];
         return keyObject;
       }
