@@ -395,9 +395,9 @@ const CollectionService = {
       });
     },
     /*
-     * Delete the container and remove all links to the items.
-     * The items are not deleted, for this call the clear action.
+     * Get the owner of collections attached to actors
      * @param collectionUri The full URI of the collection
+     * @param collectionKey The key of the collection (eg. inbox)
      */
     async getOwner(ctx) {
       const { collectionUri, collectionKey } = ctx.params;

@@ -31,10 +31,6 @@ const InboxService = {
     async post(ctx) {
       const { collectionUri, ...activity } = ctx.params;
 
-      if (this.settings.podProvider) {
-        ctx.meta.dataset = getDatasetFromUri(collectionUri);
-      }
-
       if (!collectionUri || !collectionUri.startsWith('http')) {
         throw new Error(`The collectionUri ${collectionUri} is not a valid URL`);
       }
@@ -45,20 +41,20 @@ const InboxService = {
         throw new E.UnAuthorizedError('INVALID_ACTOR', 'Activity actor is not the same as the posting actor');
       }
 
+      const inboxOwner = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'inbox' });
+
       // Verify that the account exists and has not been deleted
-      const account = await ctx.call('auth.account.findByUsername', { username: activity.username });
-      if (!account) {
-        throw new E.NotFoundError();
+      const account = await ctx.call('auth.account.findByWebId', { webId: inboxOwner });
+      if (!account) throw new E.NotFoundError();
+      if (account.deletedAt) throw new E.GoneError();
+
+      if (this.settings.podProvider) {
+        ctx.meta.dataset = account.username;
       }
-      if (account.deletedAt) {
-        throw new E.GoneError();
-      }
+
       // We want the next operations to be done by the system
       // TODO check if we can avoid this, as this is a bad practice
       ctx.meta.webId = 'system';
-
-      // Remember inbox owner (used by WebACL middleware)
-      const actorUri = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'inbox' });
 
       const collectionExists = await ctx.call('activitypub.collection.exist', {
         resourceUri: collectionUri,
@@ -91,7 +87,7 @@ const InboxService = {
       // TODO check activity is valid
 
       try {
-        await this.broker.call('activitypub.side-effects.processInbox', { activity, recipients: [actorUri] });
+        await this.broker.call('activitypub.side-effects.processInbox', { activity, recipients: [inboxOwner] });
       } catch (e) {
         // If some processors failed, log error message but don't stop
         this.logger.error(e.message);
@@ -105,13 +101,13 @@ const InboxService = {
           resource: objectIdToCurrent(activity),
           mirrorGraph: false, // Store in default graph as activity may not be public
           keepInSync: false, // Activities are immutable
-          webId: actorUri
+          webId: inboxOwner
         });
 
         // Attach the activity to the activities container, in order to use the container options
         await ctx.call('activitypub.activity.attach', {
           resourceUri: activity.id,
-          webId: this.settings.podProvider ? actorUri : 'system'
+          webId: this.settings.podProvider ? inboxOwner : 'system'
         });
 
         // Attach the activity to the inbox
@@ -137,7 +133,7 @@ const InboxService = {
         'activitypub.inbox.received',
         {
           activity,
-          recipients: [actorUri],
+          recipients: [inboxOwner],
           local: false
         },
         { meta: { webId: null, dataset: null } }
