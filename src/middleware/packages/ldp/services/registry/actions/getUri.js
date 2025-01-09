@@ -14,6 +14,8 @@ module.exports = {
     const { path, webId } = ctx.params;
 
     if (this.settings.podProvider) {
+      if (webId === 'system' || webId === 'anon')
+        throw new Error(`You must provide a real webId param in Pod provider config. Received: ${webId}`);
       const podUrl = await ctx.call('solid-storage.getUrl', { webId });
       return urlJoin(podUrl, path);
     } else {
