@@ -30,6 +30,9 @@
     "interop:grantee": {
       "@type": "@id"
     },
+    "interop:hasAccessAuthorization": {
+      "@type": "@id"
+    },
     "interop:hasAccessGrant": {
       "@type": "@id"
     },
@@ -46,6 +49,9 @@
       "@type": "@id"
     },
     "interop:satisfiesAccessNeed": {
+      "@type": "@id"
+    },
+    "interop:scopeOfAuthorization": {
       "@type": "@id"
     },
     "interop:scopeOfGrant": {
