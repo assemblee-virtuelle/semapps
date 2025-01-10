@@ -14,6 +14,7 @@ module.exports = {
   ImageProcessorMixin: require('./mixins/image-processor'),
   DocumentTaggerMixin: require('./mixins/document-tagger'),
   DisassemblyMixin: require('./mixins/disassembly'),
+  SingleResourceContainerMixin: require('./mixins/single-resource-container'),
   SpecialEndpointMixin: require('./mixins/special-endpoint'),
   // Other
   defaultContainerOptions: require('./services/registry/defaultOptions'),
