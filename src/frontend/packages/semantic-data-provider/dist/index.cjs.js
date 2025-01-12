@@ -451,11 +451,8 @@ const $8c999cc29c8d6a6c$var$fetchContainers = async (containers, params, { httpC
     });
     // Sorting
     if (params.sort) resources = resources.sort((a, b)=>{
-        if (a[params.sort.field] && b[params.sort.field]) {
-            if (params.sort.order === "ASC") return a[params.sort.field].localeCompare(b[params.sort.field]);
-            return b[params.sort.field].localeCompare(a[params.sort.field]);
-        }
-        return true;
+        if (params.sort.order === "ASC") return (a[params.sort.field] ?? "").localeCompare(b[params.sort.field] ?? "");
+        return (b[params.sort.field] ?? "").localeCompare(a[params.sort.field] ?? "");
     });
     // Pagination
     const total = resources.length;
