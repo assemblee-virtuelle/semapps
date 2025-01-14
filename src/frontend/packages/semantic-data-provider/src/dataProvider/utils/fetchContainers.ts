@@ -148,13 +148,10 @@ const fetchContainers = async (
   // Sorting
   if (params.sort) {
     resources = resources.sort((a, b) => {
-      if (a[params.sort.field] && b[params.sort.field]) {
-        if (params.sort.order === 'ASC') {
-          return a[params.sort.field].localeCompare(b[params.sort.field]);
-        }
-        return b[params.sort.field].localeCompare(a[params.sort.field]);
+      if (params.sort.order === 'ASC') {
+        return (a[params.sort.field] ?? '').localeCompare(b[params.sort.field] ?? '');
       }
-      return true;
+      return (b[params.sort.field] ?? '').localeCompare(a[params.sort.field] ?? '');
     });
   }
 
