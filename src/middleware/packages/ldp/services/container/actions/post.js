@@ -1,5 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { cleanUndefined } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
@@ -32,6 +33,9 @@ module.exports = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     let isContainer = false;
     let expandedResource;
+
+    // Remove undefined values as this may cause problems
+    resource = cleanUndefined(resource);
 
     if (!file) {
       // Adds the default context, if it is missing

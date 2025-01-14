@@ -1,5 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { cleanUndefined } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
@@ -24,6 +25,9 @@ module.exports = {
     let { webId } = ctx.params;
     webId = webId || ctx.meta.webId || 'anon';
     let newData;
+
+    // Remove undefined values as this may cause problems
+    resource = cleanUndefined(resource);
 
     const resourceUri = resource.id || resource['@id'];
 
