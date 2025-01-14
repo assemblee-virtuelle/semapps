@@ -1,3 +1,4 @@
+const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 const ControlledContainerMixin = require('./controlled-container');
 
@@ -37,21 +38,31 @@ module.exports = {
       const containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
       const resourcesUris = await ctx.call('ldp.container.getUris', { containerUri });
       return resourcesUris[0];
+    },
+    async exist(ctx) {
+      const resourceUri = await this.actions.getResourceUri({ webId: ctx.params.webId }, { parentCtx: ctx });
+      return !!resourceUri;
     }
   },
   hooks: {
     before: {
       async get(ctx) {
-        if (!ctx.params.resourceUri)
+        if (!ctx.params.resourceUri) {
           ctx.params.resourceUri = await this.actions.getResourceUri({ webId: ctx.params.webId }, { parentCtx: ctx });
+          if (!ctx.params.resourceUri) throw new MoleculerError('Resource not found', 404, 'NOT_FOUND');
+        }
       },
       async patch(ctx) {
-        if (!ctx.params.resourceUri)
+        if (!ctx.params.resourceUri) {
           ctx.params.resourceUri = await this.actions.getResourceUri({ webId: ctx.params.webId }, { parentCtx: ctx });
+          if (!ctx.params.resourceUri) throw new MoleculerError('Resource not found', 404, 'NOT_FOUND');
+        }
       },
       async put(ctx) {
-        if (!ctx.params.resourceUri)
+        if (!ctx.params.resourceUri) {
           ctx.params.resourceUri = await this.actions.getResourceUri({ webId: ctx.params.webId }, { parentCtx: ctx });
+          if (!ctx.params.resourceUri) throw new MoleculerError('Resource not found', 404, 'NOT_FOUND');
+        }
       }
     }
   },
