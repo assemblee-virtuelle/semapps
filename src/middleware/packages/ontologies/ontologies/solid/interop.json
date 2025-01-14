@@ -27,6 +27,9 @@
     "interop:grantedBy": {
       "@type": "@id"
     },
+    "interop:grantedWith": {
+      "@type": "@id"
+    },
     "interop:grantee": {
       "@type": "@id"
     },
@@ -43,6 +46,9 @@
       "@type": "@id"
     },
     "interop:hasAccessDescriptionSet": {
+      "@type": "@id"
+    },
+    "interop:hasDataAuthorization": {
       "@type": "@id"
     },
     "interop:hasDataGrant": {
@@ -64,6 +70,9 @@
       "@type": "xsd:dateTime"
     },
     "interop:registeredBy": {
+      "@type": "@id"
+    },
+    "interop:registeredWith": {
       "@type": "@id"
     },
     "interop:updatedAt": {
