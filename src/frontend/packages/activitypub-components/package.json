@@ -1,6 +1,6 @@
 {
   "name": "@semapps/activitypub-components",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "React-Admin components for ActivityPub display",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -16,9 +16,9 @@
     "watch": "nodemon --ext ts,tsx,js --watch src --exec 'yarn build'"
   },
   "dependencies": {
-    "@semapps/auth-provider": "1.0.3",
-    "@semapps/field-components": "1.0.3",
-    "@semapps/semantic-data-provider": "1.0.3",
+    "@semapps/auth-provider": "1.0.4",
+    "@semapps/field-components": "1.0.4",
+    "@semapps/semantic-data-provider": "1.0.4",
     "@tiptap/core": "^2.0.0-beta.95",
     "@tiptap/extension-mention": "^2.0.0-beta.95",
     "@tiptap/extension-placeholder": "^2.0.0-beta.95",
