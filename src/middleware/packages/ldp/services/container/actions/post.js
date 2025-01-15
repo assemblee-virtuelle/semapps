@@ -35,7 +35,7 @@ module.exports = {
     let expandedResource;
 
     // Remove undefined values as this may cause problems
-    resource = cleanUndefined(resource);
+    resource = resource && cleanUndefined(resource);
 
     if (!file) {
       // Adds the default context, if it is missing

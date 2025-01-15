@@ -27,7 +27,7 @@ module.exports = {
     let newData;
 
     // Remove undefined values as this may cause problems
-    resource = cleanUndefined(resource);
+    resource = resource && cleanUndefined(resource);
 
     const resourceUri = resource.id || resource['@id'];
 
