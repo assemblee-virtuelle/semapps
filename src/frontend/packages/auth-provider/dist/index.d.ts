@@ -30,7 +30,7 @@ export function authProvider({
         id: any;
         fullName: any;
         avatar: any;
-        profileData: any;
+        profileData: {};
         webIdData: any;
       }
     | undefined

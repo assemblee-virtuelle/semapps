@@ -393,17 +393,27 @@ const authProvider = ({
         }
 
         const { json: webIdData } = await dataProvider.fetch(webId);
-        const { json: profileData } = webIdData.url ? await dataProvider.fetch(webIdData.url) : {};
+        let profileData = {};
+
+        if (webIdData.url) {
+          try {
+            const { status, json } = await dataProvider.fetch(webIdData.url);
+            if (status === 200) profileData = json;
+          } catch (e) {
+            // Could not fetch profile. Continue...
+            console.error(e);
+          }
+        }
 
         return {
           id: webId,
           fullName:
-            profileData?.['vcard:given-name'] ||
-            profileData?.['pair:label'] ||
+            profileData['vcard:given-name'] ||
+            profileData['pair:label'] ||
             webIdData['foaf:name'] ||
             webIdData['pair:label'],
           avatar:
-            profileData?.['vcard:photo'] ||
+            profileData['vcard:photo'] ||
             webIdData.image?.url ||
             webIdData.image ||
             webIdData.icon?.url ||
