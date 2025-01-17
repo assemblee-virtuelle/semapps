@@ -4,6 +4,7 @@ module.exports = {
   dc: require('./dc.json'),
   foaf: require('./foaf.json'),
   ldp: require('./ldp.json'),
+  multiKey: require('./multikey.json'),
   rdf: require('./rdf.json'),
   rdfs: require('./rdfs.json'),
   sec: require('./sec.json'),
