@@ -1,5 +1,8 @@
+const { multiKey } = require('@semapps/ontologies');
+
 const { ControlledContainerMixin } = require('@semapps/ldp');
 const { Errors: E } = require('moleculer-web');
+const { arrayOf } = require('../utils');
 const KEY_TYPES = require('./keyTypes');
 
 /**
@@ -41,9 +44,10 @@ module.exports = {
     excludeFromMirror: true,
     // Disallow PATCH & PUT, to prevent keys from being overwritten
     controlledActions: {
+      get: 'keys.container.get', // Returns key object with context and type required by Multikey spec.
       put: 'keys.container.forbidden',
       patch: 'keys.container.forbidden',
-      delete: 'keys.delete'
+      delete: 'keys.delete' // Handles deletion of public key as well.
     },
     description: {
       labelMap: {
@@ -56,6 +60,31 @@ module.exports = {
   actions: {
     async forbidden(ctx) {
       throw new E.ForbiddenError();
+    },
+    /**
+     * Get action that sets the multikey context and multikey type for those keys. This is required by the spec.
+     * This Action is used by the public key container as well.
+     */
+    async get(ctx) {
+      const resource = await ctx.call('ldp.resource.get', ctx.params);
+
+      if (arrayOf(resource.type).includes(KEY_TYPES.MULTI_KEY)) {
+        const multiKeyFramedKey = await ctx.call('jsonld.parser.frame', {
+          input: resource,
+          frame: {
+            // Context MUST include multikey context.
+            '@context': multiKey.jsonldContext,
+            '@id': resource.id
+          }
+        });
+        // MultiKeys MUST have Multikey type (https://www.w3.org/TR/controller-document/#Multikey)
+        delete multiKeyFramedKey.type;
+        multiKeyFramedKey.type = 'MultiKey';
+
+        return multiKeyFramedKey;
+      }
+
+      return resource;
     }
   }
 };

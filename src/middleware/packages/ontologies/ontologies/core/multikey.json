@@ -1,0 +1,6 @@
+{
+  "prefix": "multikey",
+  "namespace": "https://w3id.org/security#",
+  "preserveContextUri": true,
+  "jsonldContext": "https://w3id.org/security/multikey/v1"
+}

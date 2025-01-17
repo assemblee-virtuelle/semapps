@@ -155,19 +155,38 @@ const KeysService = {
         keyObject: { type: 'object', optional: true },
         keyId: { type: 'string', optional: true },
         keyType: { type: 'string', default: KEY_TYPES.ED25519 },
-        webId: { type: 'string', optional: true }
+        webId: { type: 'string', optional: true },
+        /** Add the secret key to the key object, if not set (or the public key id is provided), it will be removed. */
+        withPrivateKey: { type: 'boolean', default: false }
       },
       async handler(ctx) {
-        const { keyId, keyType } = ctx.params;
+        const { keyId, keyType, withPrivateKey } = ctx.params;
         const webId = ctx.params.webId || ctx.meta.webId;
+
+        // Get key from parameters, id (URI) or the one associated with the webId (in that priority).
+        // Note: Key purposes are not regarded, as they are currently not used.
         const keyObject =
           ctx.params.keyObject || keyId
             ? await ctx.call('keys.container.get', { resourceUri: keyId, webId, accept: MIME_TYPES.JSON })
             : (await ctx.call('keys.getOrCreateWebIdKeys', { webId, keyType }))[0];
 
+        // We support ed25519 only.
         if (!arrayOf(keyObject.type || keyObject['@type']).includes(KEY_TYPES.ED25519)) {
           throw new Error('Only ED25519 keys are supported by this action.');
         }
+
+        // We need the key object to have the public key's id, so it is resolvable.
+        // So if the key object is the secret key object, replace the id.
+        if (keyObject.secretKeyMultibase) {
+          keyObject.id = keyObject['rdfs:seeAlso'];
+          delete keyObject['rdfs:seeAlso'];
+        }
+
+        // Remove secret key, unless explicitly wanted.
+        if (!withPrivateKey) {
+          delete keyObject.secretKeyMultibase;
+        }
+
         // The library requires the key to have the type field set to `Multikey` only.
         return await Ed25519Multikey.from({ ...keyObject, type: 'Multikey' });
       }
@@ -536,6 +555,8 @@ const KeysService = {
         if (arrayOf(keyType).includes(KEY_TYPES.ED25519)) {
           return {
             '@type': [KEY_TYPES.ED25519, KEY_TYPES.MULTI_KEY, KEY_TYPES.VERIFICATION_METHOD],
+            // Attach ID of public key
+            id: keyObject.secretKeyMultibase ? keyObject['rdfs:seeAlso'] : keyId,
             controller: keyObject.controller,
             expires: keyObject.expires,
             owner: keyObject.owner,
@@ -547,6 +568,8 @@ const KeysService = {
         if (arrayOf(keyType).includes(KEY_TYPES.RSA)) {
           return {
             '@type': keyType,
+            // Attach ID of public key
+            id: keyObject.privateKeyPem ? keyObject['rdfs:seeAlso'] : keyId,
             owner: keyObject.owner,
             controller: keyObject.owner,
             publicKeyPem: keyObject.publicKeyPem
@@ -557,6 +580,7 @@ const KeysService = {
         throw new Error(`Key type ${keyType} not supported.`);
       }
     },
+
     findPrivateKeyUri: {
       params: {
         publicKeyUri: { type: 'string' }

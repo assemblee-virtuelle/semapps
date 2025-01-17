@@ -4,7 +4,7 @@
  * so this is by far no authoritative collection.
  */
 const KEY_TYPES = {
-  /** Officially being deprecated but there's no alternative yet. */
+  /** Officially being deprecated but there's no alternative predicate yet. */
   RSA: 'https://www.w3.org/ns/auth/rsa#RSAKey',
   /** There is no standardized type except for MultiKey which allows for this key type, so this is custom. */
   ED25519: 'urn:ed25519-key',
