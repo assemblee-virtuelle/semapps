@@ -72,22 +72,21 @@ Note that only the `prefix` and `namespaces` properties can be persisted.
 
 These ontologies can be imported individually using their prefixes, or as a whole with `coreOntologies`.
 
-| Prefix     | Namespace                                   |
-| ---------- | ------------------------------------------- |
-| `acl`      | http://www.w3.org/ns/auth/acl#              |
-| `as`       | https://www.w3.org/ns/activitystreams#      |
-| `dc`       | http://purl.org/dc/terms/                   |
-| `foaf`     | http://xmlns.com/foaf/0.1/                  |
-| `ldp`      | http://www.w3.org/ns/ldp#                   |
-| `multikey` | https://w3id.org/security/multikey/v1       |
-| `rdf`      | http://www.w3.org/1999/02/22-rdf-syntax-ns# |
-| `rdfs`     | http://www.w3.org/2000/01/rdf-schema#       |
-| `sec`      | https://w3id.org/security#                  |
-| `skos`     | http://www.w3.org/2008/05/skos#             |
-| `semapps`  | http://semapps.org/ns/core#                 |
-| `vcard`    | http://www.w3.org/2006/vcard/ns#            |
-| `void`     | http://rdfs.org/ns/void#                    |
-| `xsd`      | http://www.w3.org/2001/XMLSchema#           |
+| Prefix    | Namespace                                   |
+| --------- | ------------------------------------------- |
+| `acl`     | http://www.w3.org/ns/auth/acl#              |
+| `as`      | https://www.w3.org/ns/activitystreams#      |
+| `dc`      | http://purl.org/dc/terms/                   |
+| `foaf`    | http://xmlns.com/foaf/0.1/                  |
+| `ldp`     | http://www.w3.org/ns/ldp#                   |
+| `rdf`     | http://www.w3.org/1999/02/22-rdf-syntax-ns# |
+| `rdfs`    | http://www.w3.org/2000/01/rdf-schema#       |
+| `sec`     | https://w3id.org/security#                  |
+| `skos`    | http://www.w3.org/2008/05/skos#             |
+| `semapps` | http://semapps.org/ns/core#                 |
+| `vcard`   | http://www.w3.org/2006/vcard/ns#            |
+| `void`    | http://rdfs.org/ns/void#                    |
+| `xsd`     | http://www.w3.org/2001/XMLSchema#           |
 
 ## Solid-related ontologies
 
