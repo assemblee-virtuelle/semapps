@@ -68,12 +68,15 @@ module.exports = {
     async get(ctx) {
       const resource = await ctx.call('ldp.resource.get', ctx.params);
 
-      if (arrayOf(resource.type).includes(KEY_TYPES.MULTI_KEY)) {
+      // If Multikey
+      if (
+        arrayOf(resource['@type'] || resource.type).some(type => ['sec:Multikey', KEY_TYPES.MULTI_KEY].includes(type))
+      ) {
         const multiKeyFramedKey = await ctx.call('jsonld.parser.frame', {
           input: resource,
           frame: {
-            // Context MUST include multikey context.
-            '@context': multiKey.jsonldContext,
+            // Context MUST equal multikey context.
+            '@context': 'https://w3id.org/security/multikey/v1',
             '@id': resource.id
           }
         });
