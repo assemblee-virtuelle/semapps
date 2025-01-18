@@ -136,7 +136,7 @@ const KeysService = {
         return await Promise.all(
           publicKeys.map(async key => {
             const publicKeyId = key.id || key['@id'];
-            return await ctx.call('keys.container.get', {
+            return await ctx.call('ldp.resource.get', {
               resourceUri: await this.actions.findPrivateKeyUri({ publicKeyUri: publicKeyId }, { parentCtx: ctx }),
               accept: MIME_TYPES.JSON,
               webId
@@ -167,7 +167,7 @@ const KeysService = {
         // Note: Key purposes are not regarded, as they are currently not used.
         const keyObject =
           ctx.params.keyObject || keyId
-            ? await ctx.call('keys.container.get', { resourceUri: keyId, webId, accept: MIME_TYPES.JSON })
+            ? await ctx.call('ldp.resource.get', { resourceUri: keyId, webId, accept: MIME_TYPES.JSON })
             : (await ctx.call('keys.getOrCreateWebIdKeys', { webId, keyType }))[0];
 
         // We support ed25519 only.
@@ -344,7 +344,7 @@ const KeysService = {
 
         const keyObject =
           ctx.params.keyObject ||
-          (await ctx.call('keys.container.get', { resourceUri: keyId, accept: MIME_TYPES.JSON, webId }));
+          (await ctx.call('ldp.resource.get', { resourceUri: keyId, accept: MIME_TYPES.JSON, webId }));
 
         const isRsaKey = arrayOf(keyObject.type || keyObject['@type']).includes(KEY_TYPES.RSA);
 
@@ -424,7 +424,7 @@ const KeysService = {
         const privateKeyUri = ctx.params.keyId || ctx.params.keyObject?.id || ctx.params.keyObject?.['@id'];
         const keyObject =
           ctx.params.keyObject ||
-          (await ctx.call('keys.container.get', { resourceUri: privateKeyUri, accept: MIME_TYPES.JSON }));
+          (await ctx.call('ldp.resource.get', { resourceUri: privateKeyUri, accept: MIME_TYPES.JSON }));
 
         // First, get the public key part.
         const publicKeyObject = await this.actions.getPublicKeyObject({ keyObject }, { parentCtx: ctx });
@@ -465,8 +465,7 @@ const KeysService = {
         const resourceUri = ctx.params.resourceUri || ctx.params.keyObject?.id || ctx.params.keyObject?.['@id'];
         const webId = ctx.params.webId || ctx.meta.webId;
         const keyObject =
-          ctx.params.keyObject ||
-          (await ctx.call('keys.container.get', { resourceUri, accept: MIME_TYPES.JSON, webId }));
+          ctx.params.keyObject || (await ctx.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON, webId }));
 
         await ctx.call('keys.container.delete', { resourceUri, webId });
         // Delete corresponding public key in the `public-key` container, if present.
@@ -547,8 +546,7 @@ const KeysService = {
       async handler(ctx) {
         const keyId = ctx.params.keyId || ctx.params.keyObject?.id || ctx.params.keyObject?.['@id'];
         const keyObject =
-          ctx.params.keyObject ||
-          (await ctx.call('keys.container.get', { resourceUri: keyId, accept: MIME_TYPES.JSON }));
+          ctx.params.keyObject || (await ctx.call('ldp.resource.get', { resourceUri: keyId, accept: MIME_TYPES.JSON }));
 
         const keyType = keyObject['@type'] || keyObject.type;
 

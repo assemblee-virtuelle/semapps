@@ -11,7 +11,10 @@
     "sourceMap": true,
     "strictNullChecks": true,
     "module": "NodeNext",
-    "moduleResolution": "NodeNext"
+    "moduleResolution": "NodeNext",
+    "resolvePackageJsonExports": true,
+    "esModuleInterop": true,
+    "resolvePackageJsonImports": true
   },
   "include": ["**/*.js", "**/*.ts"],
   "exclude": []
