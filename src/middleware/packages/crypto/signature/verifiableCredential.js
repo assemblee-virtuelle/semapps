@@ -123,7 +123,7 @@ const SignatureService = {
       const credential = {
         '@type': 'VerifiableCredential', // Another one like ActivityCapability?
         '@context': context,
-        issuer: key.id,
+        issuer: webId,
         validFrom,
         validUntil,
         name,

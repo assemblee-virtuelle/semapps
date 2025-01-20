@@ -2,7 +2,7 @@
 title: JsonLdContextService
 ---
 
-This service allows you to do manage [JSON-LD contexts](https://www.w3.org/TR/json-ld11/#the-context).
+This service allows you to manage [JSON-LD contexts](https://www.w3.org/TR/json-ld11/#the-context).
 
 ## Actions
 

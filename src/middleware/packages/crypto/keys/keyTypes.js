@@ -6,7 +6,7 @@
 const KEY_TYPES = {
   /** Officially being deprecated but there's no alternative predicate yet. */
   RSA: 'https://www.w3.org/ns/auth/rsa#RSAKey',
-  /** There is no standardized type except for MultiKey which allows for this key type, so this is custom. */
+  /** There is no standardized type except for Multikey which allows for this key type, so this is custom. */
   ED25519: 'urn:ed25519-key',
   JWK: 'https://w3id.org/security/jwk/v1',
   /**
