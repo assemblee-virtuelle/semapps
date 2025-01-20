@@ -1,6 +1,6 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { getDatasetFromUri } = require('@semapps/ldp');
 const { Errors: E } = require('moleculer-web');
+const { MoleculerError } = require('moleculer').Errors;
+const { MIME_TYPES } = require('@semapps/mime-types');
 const { objectIdToCurrent, collectionPermissionsWithAnonRead } = require('../../../utils');
 const { ACTOR_TYPES } = require('../../../constants');
 const AwaitActivityMixin = require('../../../mixins/await-activity');
@@ -46,7 +46,7 @@ const InboxService = {
       // Verify that the account exists and has not been deleted
       const account = await ctx.call('auth.account.findByWebId', { webId: inboxOwner });
       if (!account) throw new E.NotFoundError();
-      if (account.deletedAt) throw new E.GoneError();
+      if (account.deletedAt) throw new MoleculerError(`User does not exist anymore`, 410, 'GONE');
 
       if (this.settings.podProvider) {
         ctx.meta.dataset = account.username;
