@@ -46,7 +46,6 @@ describe('signatures', () => {
         },
         { meta: { webId: user.webId } }
       );
-      console.debug('vc', credential);
 
       const validationResult = await broker.call(
         'signature.vc.verifyVC',
@@ -54,8 +53,7 @@ describe('signatures', () => {
         { meta: { webId: user.webId } }
       );
 
-      console.debug(validationResult);
-      expect(validationResult.verified).toBeTruthy(); // or valid?
+      expect(validationResult.verified).toBeTruthy();
     });
   });
 });

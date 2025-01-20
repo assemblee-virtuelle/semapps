@@ -68,23 +68,28 @@ module.exports = {
     async get(ctx) {
       const resource = await ctx.call('ldp.resource.get', ctx.params);
 
-      // If Multikey
-      if (
-        arrayOf(resource['@type'] || resource.type).some(type => ['sec:Multikey', KEY_TYPES.MULTI_KEY].includes(type))
-      ) {
-        const multiKeyFramedKey = await ctx.call('jsonld.parser.frame', {
+      if (arrayOf(resource.type || resource['@type']).includes('sec:Multikey')) {
+        // By the specs (see below), the type of a multikey should have type multikey
+        //  and a protected context defining multikey. Unfortunately, @digitalbazaar/ed25519-multikey": "^1.3.0" is stricter.
+        //  Thus the separate handling for multikeys...
+        // https://www.w3.org/TR/controller-document/#json-ld-context
+        // https://www.w3.org/TR/controller-document/#Multikey
+
+        const targetContext = 'https://w3id.org/security/multikey/v1'; // await ctx.call('jsonld.context.get');
+
+        const framedResult = await ctx.call('jsonld.parser.frame', {
           input: resource,
           frame: {
-            // Context MUST equal multikey context.
-            '@context': 'https://w3id.org/security/multikey/v1',
-            '@id': resource.id
+            '@context': targetContext
           }
         });
-        // MultiKeys MUST have Multikey type (https://www.w3.org/TR/controller-document/#Multikey)
-        delete multiKeyFramedKey.type;
-        multiKeyFramedKey.type = 'MultiKey';
 
-        return multiKeyFramedKey;
+        const multikey = framedResult['@graph'][0] || framedResult;
+        // Must be Multikey only
+        multikey.type = 'Multikey';
+        multikey['@context'] = targetContext;
+
+        return multikey;
       }
 
       return resource;
