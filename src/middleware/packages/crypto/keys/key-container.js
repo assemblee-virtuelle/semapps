@@ -1,5 +1,3 @@
-const { multiKey } = require('@semapps/ontologies');
-
 const { ControlledContainerMixin } = require('@semapps/ldp');
 const { Errors: E } = require('moleculer-web');
 const { arrayOf } = require('../utils');
@@ -70,12 +68,12 @@ module.exports = {
 
       if (arrayOf(resource.type || resource['@type']).includes('sec:Multikey')) {
         // By the specs (see below), the type of a multikey should have type multikey
-        //  and a protected context defining multikey. Unfortunately, @digitalbazaar/ed25519-multikey": "^1.3.0" is stricter.
+        //  and a protected context defining multikey. Unfortunately, @digitalbazaar/ed25519-multikey": "1.3.0" is stricter.
         //  Thus the separate handling for multikeys...
         // https://www.w3.org/TR/controller-document/#json-ld-context
         // https://www.w3.org/TR/controller-document/#Multikey
 
-        const targetContext = 'https://w3id.org/security/multikey/v1'; // await ctx.call('jsonld.context.get');
+        const targetContext = ['https://w3id.org/security/multikey/v1', ...(await ctx.call('jsonld.context.get'))];
 
         const framedResult = await ctx.call('jsonld.parser.frame', {
           input: resource,
@@ -85,7 +83,8 @@ module.exports = {
         });
 
         const multikey = framedResult['@graph'][0] || framedResult;
-        // Must be Multikey only
+        // Type must be Multikey only
+        delete multikey['@type'];
         multikey.type = 'Multikey';
         multikey['@context'] = targetContext;
 

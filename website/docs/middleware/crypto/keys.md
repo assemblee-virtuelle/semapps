@@ -102,7 +102,7 @@ Get list of all public-private key pairs for an actor that are published in the 
 
 `Array` - List of all public-private key pairs for the given actor. Keys in format as described in [Key Format](#key-format).
 
-### `getSigningMultikeyInstance`
+### `getMultikeyInstance`
 
 Returns a signing key instance for a given keyId or key type. If no key is available, a new one is created.
 Currently supports Ed25519Multikey only.
