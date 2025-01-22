@@ -52,7 +52,7 @@ describe('signatures', () => {
         { credential: credential },
         { meta: { webId: user.webId } }
       );
-
+      console.debug(validationResult);
       expect(validationResult.verified).toBeTruthy();
     });
   });

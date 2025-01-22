@@ -74,7 +74,7 @@ const SignatureService = {
 
       // TODO: Get the key from the service as json, parse to signing key object here.
       // This way, we don't have the dependency on the digitalbazaar service.
-      const key = await ctx.call('keys.getSigningMultikeyInstance', { webId, keyType: KEY_TYPES.ED25519 });
+      const key = await ctx.call('keys.getMultikeyInstance', { webId, keyType: KEY_TYPES.ED25519 });
       const suite = new DataIntegrityProof({
         signer: key.signer(),
         cryptosuite
@@ -112,7 +112,7 @@ const SignatureService = {
         additionalCredentialProps = {}
       } = ctx.params;
 
-      const key = await ctx.call('keys.getSigningMultikeyInstance', {
+      const key = await ctx.call('keys.getMultikeyInstance', {
         webId,
         keyType: KEY_TYPES.ED25519,
         withPrivateKey: true

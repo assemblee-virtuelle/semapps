@@ -150,7 +150,7 @@ const KeysService = {
      * Currently supports Ed25519Multikey only.
      * @returns {Ed25519Multikey} The signing key instance.
      */
-    getSigningMultikeyInstance: {
+    getMultikeyInstance: {
       params: {
         keyObject: { type: 'object', optional: true },
         keyId: { type: 'string', optional: true },
