@@ -62,8 +62,7 @@ describe('Collections API', () => {
         id: collectionUri,
         type: 'Collection',
         summary: 'My non-ordered collection',
-        'semapps:dereferenceItems': false,
-        totalItems: 0
+        'semapps:dereferenceItems': false
       }
     });
   });
@@ -86,8 +85,7 @@ describe('Collections API', () => {
         type: 'Collection',
         summary: 'My non-ordered collection',
         'semapps:dereferenceItems': false,
-        items: items[0],
-        totalItems: 1
+        items: items[0]
       }
     });
   });
@@ -109,8 +107,7 @@ describe('Collections API', () => {
         id: collectionUri,
         type: 'Collection',
         summary: 'My non-ordered collection',
-        'semapps:dereferenceItems': false,
-        totalItems: 0
+        'semapps:dereferenceItems': false
       }
     });
   });
@@ -147,31 +144,34 @@ describe('Collections API', () => {
         summary: 'My paginated collection',
         'semapps:dereferenceItems': false,
         'semapps:itemsPerPage': 4,
-        first: `${paginatedCollectionUri}?page=1`,
-        last: `${paginatedCollectionUri}?page=3`,
-        totalItems: 10
+        first: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[0])}`,
+        last: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[items.length - 1])}`
+        // first: `${paginatedCollectionUri}?page=1`,
+        // last: `${paginatedCollectionUri}?page=3`
       }
     });
 
-    await expect(fetchServer(`${paginatedCollectionUri}?page=1`)).resolves.toMatchObject({
+    await expect(
+      fetchServer(`${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[0])}`)
+    ).resolves.toMatchObject({
       json: {
-        id: `${paginatedCollectionUri}?page=1`,
+        id: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[0])}`,
         type: 'CollectionPage',
         partOf: paginatedCollectionUri,
-        next: `${paginatedCollectionUri}?page=2`,
-        items: expect.arrayContaining([items[0], items[1], items[2], items[3]]),
-        totalItems: 10
+        next: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[4])}`,
+        items: expect.arrayContaining([items[0], items[1], items[2], items[3]])
       }
     });
 
-    await expect(fetchServer(`${paginatedCollectionUri}?page=3`)).resolves.toMatchObject({
+    await expect(
+      fetchServer(`${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[8])}`)
+    ).resolves.toMatchObject({
       json: {
-        id: `${paginatedCollectionUri}?page=3`,
+        id: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[8])}`,
         type: 'CollectionPage',
         partOf: paginatedCollectionUri,
-        prev: `${paginatedCollectionUri}?page=2`,
-        items: expect.arrayContaining([items[8], items[9]]),
-        totalItems: 10
+        prev: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[7])}`,
+        items: expect.arrayContaining([items[8], items[9]])
       }
     });
   });

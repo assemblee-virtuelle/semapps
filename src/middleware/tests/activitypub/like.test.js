@@ -89,8 +89,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', m
         })
       ).resolves.toMatchObject({
         type: 'Collection',
-        items: bob.id,
-        totalItems: 1
+        items: bob.id
       });
     });
 
@@ -103,8 +102,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', m
         })
       ).resolves.toMatchObject({
         type: 'Collection',
-        items: aliceMessageUri,
-        totalItems: 1
+        items: aliceMessageUri
       });
     });
   });
@@ -123,28 +121,20 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', m
 
     // Ensure Bob has been removed from the /likes collection
     await waitForExpect(async () => {
-      await expect(
-        alice.call('activitypub.collection.get', {
-          resourceUri: `${aliceMessageUri}/likes`,
-          accept: MIME_TYPES.JSON
-        })
-      ).resolves.toMatchObject({
-        type: 'Collection',
-        totalItems: 0
+      const likes = await alice.call('activitypub.collection.get', {
+        resourceUri: `${aliceMessageUri}/likes`,
+        accept: MIME_TYPES.JSON
       });
+      expect(likes.items).toHaveLength(0);
     });
 
-    // Ensure the note has been added to Bob's /liked collection
+    // Ensure the note has been removed from Bob's /liked collection
     await waitForExpect(async () => {
-      await expect(
-        bob.call('activitypub.collection.get', {
-          resourceUri: `${bob.id}/liked`,
-          accept: MIME_TYPES.JSON
-        })
-      ).resolves.toMatchObject({
-        type: 'Collection',
-        totalItems: 0
+      const liked = await bob.call('activitypub.collection.get', {
+        resourceUri: `${bob.id}/liked`,
+        accept: MIME_TYPES.JSON
       });
+      expect(liked.items).toHaveLength(0);
     });
   });
 });

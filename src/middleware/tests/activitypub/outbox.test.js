@@ -62,9 +62,13 @@ describe('Permissions are correctly set on outbox', () => {
 
     // Get outbox as self
     await waitForExpect(async () => {
+      const outboxMenu = await broker.call('activitypub.collection.get', {
+        resourceUri: sebastien.outbox,
+        webId: sebastien.id
+      });
       const outbox = await broker.call('activitypub.collection.get', {
         resourceUri: sebastien.outbox,
-        page: 1,
+        afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: sebastien.id
       });
       expect(outbox.orderedItems).toHaveLength(1);
@@ -84,9 +88,13 @@ describe('Permissions are correctly set on outbox', () => {
 
     // Get outbox as anonymous
     await waitForExpect(async () => {
+      const outboxMenu = await broker.call('activitypub.collection.get', {
+        resourceUri: sebastien.outbox,
+        webId: sebastien.id
+      });
       const outbox = await broker.call('activitypub.collection.get', {
         resourceUri: sebastien.outbox,
-        page: 1,
+        afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: 'anon'
       });
       expect(outbox.orderedItems).toHaveLength(0);
@@ -114,9 +122,13 @@ describe('Permissions are correctly set on outbox', () => {
 
     // Get outbox as friend
     await waitForExpect(async () => {
+      const outboxMenu = await broker.call('activitypub.collection.get', {
+        resourceUri: sebastien.outbox,
+        webId: sebastien.id
+      });
       const outbox = await broker.call('activitypub.collection.get', {
         resourceUri: sebastien.outbox,
-        page: 1,
+        afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: simon.id
       });
       expect(outbox.orderedItems).toHaveLength(1);
@@ -132,9 +144,13 @@ describe('Permissions are correctly set on outbox', () => {
 
     // Get outbox as anonymous
     await waitForExpect(async () => {
+      const outboxMenu = await broker.call('activitypub.collection.get', {
+        resourceUri: sebastien.outbox,
+        webId: sebastien.id
+      });
       const outbox = await broker.call('activitypub.collection.get', {
         resourceUri: sebastien.outbox,
-        page: 1,
+        afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: 'anon'
       });
       expect(outbox.orderedItems).toHaveLength(0);
@@ -152,9 +168,13 @@ describe('Permissions are correctly set on outbox', () => {
 
     // Get outbox as friend
     await waitForExpect(async () => {
+      const outboxMenu = await broker.call('activitypub.collection.get', {
+        resourceUri: sebastien.outbox,
+        webId: sebastien.id
+      });
       const outbox = await broker.call('activitypub.collection.get', {
         resourceUri: sebastien.outbox,
-        page: 1,
+        afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: simon.id
       });
       expect(outbox.orderedItems).toHaveLength(2);
@@ -170,9 +190,13 @@ describe('Permissions are correctly set on outbox', () => {
 
     // Get outbox as anonymous
     await waitForExpect(async () => {
+      const outboxMenu = await broker.call('activitypub.collection.get', {
+        resourceUri: sebastien.outbox,
+        webId: sebastien.id
+      });
       const outbox = await broker.call('activitypub.collection.get', {
         resourceUri: sebastien.outbox,
-        page: 1,
+        afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: 'anon'
       });
       expect(outbox.orderedItems).toHaveLength(1);
@@ -204,9 +228,13 @@ describe('Permissions are correctly set on outbox', () => {
 
     // Get outbox as friend.
     await waitForExpect(async () => {
+      const outboxMenu = await broker.call('activitypub.collection.get', {
+        resourceUri: sebastien.outbox,
+        webId: sebastien.id
+      });
       const outboxFetchedByFriend = await broker.call('activitypub.collection.get', {
         resourceUri: sebastien.outbox,
-        page: 1,
+        afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: simon.id
       });
       expect(outboxFetchedByFriend.orderedItems[0]).toMatchObject({
@@ -220,9 +248,13 @@ describe('Permissions are correctly set on outbox', () => {
     });
 
     // Expect that public has no read rights.
+    const outboxMenu = await broker.call('activitypub.collection.get', {
+      resourceUri: sebastien.outbox,
+      webId: sebastien.id
+    });
     const outboxFetchedByAnon = await broker.call('activitypub.collection.get', {
       resourceUri: sebastien.outbox,
-      page: 1,
+      afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
       webId: simon.id
     });
     expect(outboxFetchedByAnon.orderedItems[0].object?.name).toBe('Message is now visible to friend');
@@ -245,9 +277,13 @@ describe('Permissions are correctly set on outbox', () => {
 
     // Get outbox as anon.
     await waitForExpect(async () => {
+      const outboxMenu = await broker.call('activitypub.collection.get', {
+        resourceUri: sebastien.outbox,
+        webId: sebastien.id
+      });
       const outboxFetchedByAnon = await broker.call('activitypub.collection.get', {
         resourceUri: sebastien.outbox,
-        page: 1,
+        afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: 'anon'
       });
       expect(outboxFetchedByAnon.orderedItems[0]).toMatchObject({
@@ -276,9 +312,13 @@ describe('Permissions are correctly set on outbox', () => {
     });
 
     waitForExpect(async () => {
+      const outboxMenu = await broker.call('activitypub.collection.get', {
+        resourceUri: sebastien.outbox,
+        webId: sebastien.id
+      });
       const outboxFetchedByFriend = await broker.call('activitypub.collection.get', {
         resourceUri: sebastien.outbox,
-        page: 1,
+        afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: simon.id
       });
       expect(outboxFetchedByFriend.orderedItems[0]).not.toMatchObject({
@@ -292,7 +332,7 @@ describe('Permissions are correctly set on outbox', () => {
 
       const outboxFetchedBySelf = await broker.call('activitypub.collection.get', {
         resourceUri: sebastien.outbox,
-        page: 1,
+        afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: sebastien.id
       });
       expect(outboxFetchedBySelf.orderedItems[0]).toMatchObject({
@@ -308,7 +348,7 @@ describe('Permissions are correctly set on outbox', () => {
       // Expect friend receives a `Delete`, if the Update is made private.
       const friendOutbox = await broker.call('activitypub.collection.get', {
         resourceUri: simon.outbox,
-        page: 1,
+        afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: simon.id
       });
       expect(friendOutbox.orderedItems[0]).toMatchObject({

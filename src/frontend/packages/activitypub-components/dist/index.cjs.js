@@ -183,6 +183,8 @@ const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
     const { dereferenceItems: dereferenceItems = false, liveUpdates: liveUpdates = false } = options;
     const { data: identity } = (0, $583VT$reactadmin.useGetIdentity)();
     const [totalItems, setTotalItems] = (0, $583VT$react.useState)(0);
+    const [isPaginated, setIsPaginated] = (0, $583VT$react.useState)(false); // true if the collection is paginated
+    const [yieldsTotalItems, setYieldsTotalItems] = (0, $583VT$react.useState)(false); // true if the collection server yields totalItems
     const queryClient = (0, $583VT$reactquery.useQueryClient)();
     const [hasLiveUpdates, setHasLiveUpdates] = (0, $583VT$react.useState)({
         status: "connecting"
@@ -204,9 +206,24 @@ const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
     // Fetch page of collection item references (if pageParam provided)
     //  or default to `collectionUrl` (which should give you the first page).
     const fetchCollection = (0, $583VT$react.useCallback)(async ({ pageParam: nextPageUrl })=>{
+        // If there is a nextPageUrl, we are fetching a page, otherwise we are fetching the first page or the collection
+        const fetchingPage = !!nextPageUrl;
         // Fetch page or first page (collectionUrl)
         let { json: json } = await dataProvider.fetch(nextPageUrl || collectionUrl);
-        if (json.totalItems) setTotalItems(json.totalItems);
+        // If we are fetching the first page or the collection, we can workout some information
+        if (!fetchingPage) {
+            const localIsPaginated = !!json.first || !!json.next;
+            setIsPaginated(localIsPaginated);
+            // If the server yields totalItems, we can use it
+            if (json.totalItems) {
+                setTotalItems(json.totalItems);
+                setYieldsTotalItems(true);
+            } else if (!localIsPaginated) {
+                // If the collection is not paginated, we can count items
+                const items = (0, $03510abb28fd3d8a$export$e57ff0f701c44363)(json.orderedItems || json.items);
+                if (items) setTotalItems(items.length);
+            }
+        }
         // If first page, handle this here.
         if ((json.type === "OrderedCollection" || json.type === "Collection") && json.first) {
             if (json.first?.items) {
@@ -221,7 +238,9 @@ const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
         dataProvider,
         collectionUrl,
         identity,
-        setTotalItems
+        setTotalItems,
+        setIsPaginated,
+        setYieldsTotalItems
     ]);
     // Use infiniteQuery to handle pagination, fetching, etc.
     const { data: pageData, error: collectionError, fetchNextPage: fetchNextPage, refetch: refetch, hasNextPage: hasNextPage, isLoading: isLoadingPage, isFetching: isFetchingPage, isFetchingNextPage: isFetchingNextPage } = (0, $583VT$reactquery.useInfiniteQuery)([
@@ -245,7 +264,8 @@ const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
             }
         ], (oldData)=>{
             if (!oldData) return oldData;
-            setTotalItems((totalItems)=>totalItems + 1);
+            // Only update totalItems if collection is not paginated or if the server yields totalItems
+            if (yieldsTotalItems || !isPaginated) setTotalItems((totalItems)=>totalItems + 1);
             // Destructure, so react knows, it needs to re-render the pages.
             const pages = [
                 ...oldData.pages
@@ -273,7 +293,9 @@ const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
     }, [
         queryClient,
         collectionUrl,
-        setTotalItems
+        setTotalItems,
+        isPaginated,
+        yieldsTotalItems
     ]);
     const removeItem = (0, $583VT$react.useCallback)((item, shouldRefetch = true)=>{
         queryClient.setQueryData([
@@ -283,7 +305,8 @@ const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
             }
         ], (oldData)=>{
             if (!oldData) return oldData;
-            setTotalItems((totalItems)=>totalItems - 1);
+            // Only update totalItems if collection is not paginated or if the server yields totalItems
+            if (yieldsTotalItems || !isPaginated) setTotalItems((totalItems)=>totalItems - 1);
             // Destructure, so react knows, it needs to re-render the pages array.
             const pages = [
                 ...oldData.pages
@@ -308,7 +331,9 @@ const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
     }, [
         queryClient,
         collectionUrl,
-        setTotalItems
+        setTotalItems,
+        isPaginated,
+        yieldsTotalItems
     ]);
     // Live Updates
     (0, $583VT$react.useEffect)(()=>{
@@ -368,9 +393,9 @@ const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
         webSocketRef,
         liveUpdates
     ]);
-    return {
+    // Construct return object conditionally
+    const returnObject = {
         items: items,
-        totalItems: totalItems,
         error: allErrors.length > 0 && allErrors,
         refetch: refetch,
         fetchNextPage: fetchNextPage,
@@ -385,6 +410,12 @@ const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
         awaitWebSocketConnection: awaitWebSocketConnection,
         webSocketRef: webSocketRef
     };
+    // Only include totalItems if the server yields totalItems or for non-paginated collections
+    if (yieldsTotalItems || !isPaginated) return {
+        ...returnObject,
+        totalItems: totalItems
+    };
+    return returnObject;
 };
 var $5ca5f7e9fc1c3544$export$2e2bcd8739ae039 = $5ca5f7e9fc1c3544$var$useCollection;
 
