@@ -78,6 +78,9 @@
     "interop:updatedAt": {
       "@type": "@id"
     },
+    "interop:registeredShapeTree": {
+      "@type": "@id"
+    },
     "interop:usesLanguage": {
       "@type": "xsd:language"
     },
@@ -94,6 +97,9 @@
       "@type": "@id"
     },
     "interop:hasDataRegistry": {
+      "@type": "@id"
+    },
+    "interop:hasDataRegistration": {
       "@type": "@id"
     }
   }
