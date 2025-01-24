@@ -1,4 +1,5 @@
 import $fj9kP$urljoin from "url-join";
+import * as $fj9kP$speakingurl from "speakingurl";
 import $fj9kP$jsonld from "jsonld";
 import $fj9kP$rdfjsdatamodel, {triple as $fj9kP$triple, variable as $fj9kP$variable, namedNode as $fj9kP$namedNode} from "@rdfjs/data-model";
 import {Generator as $fj9kP$Generator} from "sparqljs";
@@ -198,6 +199,7 @@ const $15b841e67a1ba752$var$findContainersWithTypes = (types, serverKeys, dataSe
 var $15b841e67a1ba752$export$2e2bcd8739ae039 = $15b841e67a1ba752$var$findContainersWithTypes;
 
 
+
 const $5a7a2f7583392866$var$createMethod = (config)=>async (resourceId, params)=>{
         const { dataServers: dataServers, resources: resources, httpClient: httpClient, jsonContext: jsonContext } = config;
         const dataModel = resources[resourceId];
@@ -222,8 +224,9 @@ const $5a7a2f7583392866$var$createMethod = (config)=>async (resourceId, params)=
         }
         if (params.data) {
             if (dataModel.fieldsMapping?.title) {
-                if (Array.isArray(dataModel.fieldsMapping.title)) headers.set("Slug", dataModel.fieldsMapping.title.map((f)=>params.data[f]).join(" "));
-                else headers.set("Slug", params.data[dataModel.fieldsMapping.title]);
+                const slug = Array.isArray(dataModel.fieldsMapping.title) ? dataModel.fieldsMapping.title.map((f)=>params.data[f]).join(" ") : params.data[dataModel.fieldsMapping.title];
+                // Generate slug here, otherwise we may get errors with special characters
+                headers.set("Slug", $fj9kP$speakingurl(slug));
             }
             // Upload files, if there are any
             const { updatedRecord: updatedRecord } = await (0, $b17c43e3301545ca$export$2e2bcd8739ae039).upload(params.data, config, serverKey);

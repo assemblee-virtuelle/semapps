@@ -1,4 +1,5 @@
 import urlJoin from 'url-join';
+import createSlug from 'speakingurl';
 import getOne from './getOne';
 import handleFiles from '../utils/handleFiles';
 import findContainersWithTypes from '../utils/findContainersWithTypes';
@@ -35,11 +36,12 @@ const createMethod = config => async (resourceId, params) => {
 
   if (params.data) {
     if (dataModel.fieldsMapping?.title) {
-      if (Array.isArray(dataModel.fieldsMapping.title)) {
-        headers.set('Slug', dataModel.fieldsMapping.title.map(f => params.data[f]).join(' '));
-      } else {
-        headers.set('Slug', params.data[dataModel.fieldsMapping.title]);
-      }
+      const slug = Array.isArray(dataModel.fieldsMapping.title)
+        ? dataModel.fieldsMapping.title.map(f => params.data[f]).join(' ')
+        : params.data[dataModel.fieldsMapping.title];
+
+      // Generate slug here, otherwise we may get errors with special characters
+      headers.set('Slug', createSlug(slug));
     }
 
     // Upload files, if there are any

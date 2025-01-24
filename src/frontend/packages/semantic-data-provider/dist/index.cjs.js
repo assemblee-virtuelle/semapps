@@ -1,4 +1,5 @@
 var $bkNnK$urljoin = require("url-join");
+var $bkNnK$speakingurl = require("speakingurl");
 var $bkNnK$jsonld = require("jsonld");
 var $bkNnK$rdfjsdatamodel = require("@rdfjs/data-model");
 var $bkNnK$sparqljs = require("sparqljs");
@@ -240,6 +241,7 @@ const $047a107b0d203793$var$findContainersWithTypes = (types, serverKeys, dataSe
 var $047a107b0d203793$export$2e2bcd8739ae039 = $047a107b0d203793$var$findContainersWithTypes;
 
 
+
 const $907cbc087f6529e2$var$createMethod = (config)=>async (resourceId, params)=>{
         const { dataServers: dataServers, resources: resources, httpClient: httpClient, jsonContext: jsonContext } = config;
         const dataModel = resources[resourceId];
@@ -264,8 +266,9 @@ const $907cbc087f6529e2$var$createMethod = (config)=>async (resourceId, params)=
         }
         if (params.data) {
             if (dataModel.fieldsMapping?.title) {
-                if (Array.isArray(dataModel.fieldsMapping.title)) headers.set("Slug", dataModel.fieldsMapping.title.map((f)=>params.data[f]).join(" "));
-                else headers.set("Slug", params.data[dataModel.fieldsMapping.title]);
+                const slug = Array.isArray(dataModel.fieldsMapping.title) ? dataModel.fieldsMapping.title.map((f)=>params.data[f]).join(" ") : params.data[dataModel.fieldsMapping.title];
+                // Generate slug here, otherwise we may get errors with special characters
+                headers.set("Slug", $bkNnK$speakingurl(slug));
             }
             // Upload files, if there are any
             const { updatedRecord: updatedRecord } = await (0, $6fcb30f76390d142$export$2e2bcd8739ae039).upload(params.data, config, serverKey);
