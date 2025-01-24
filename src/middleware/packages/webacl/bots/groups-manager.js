@@ -1,3 +1,5 @@
+const { arrayOf } = require('@semapps/ldp');
+const { MIME_TYPES } = require('@semapps/mime-types');
 const { hasType } = require('../utils');
 
 module.exports = {
@@ -12,6 +14,37 @@ module.exports = {
       if (!(await this.broker.call('webacl.group.exist', { groupSlug: rule.groupSlug, webId: 'system' }))) {
         this.logger.info(`Group ${rule.groupSlug} doesn't exist, creating it...`);
         await this.broker.call('webacl.group.create', { groupSlug: rule.groupSlug, webId: 'system' });
+      }
+    }
+  },
+  actions: {
+    async refreshAll(ctx) {
+      const usersContainer = await ctx.call('ldp.container.get', {
+        containerUri: this.settings.usersContainer,
+        accept: MIME_TYPES.JSON,
+        webId: 'system'
+      });
+
+      for (const user of arrayOf(usersContainer['ldp:contains'])) {
+        const userUri = user['@id'] || user.id;
+        this.logger.info(`Refreshing user ${userUri}...`);
+        for (const rule of this.settings.rules) {
+          if (this.matchRule(rule, user)) {
+            this.logger.info(`Adding user ${userUri} to group ${rule.groupSlug}`);
+            await ctx.call('webacl.group.addMember', {
+              groupSlug: rule.groupSlug,
+              memberUri: user.id,
+              webId: 'system'
+            });
+          } else {
+            this.logger.info(`Removing user ${userUri} from group ${rule.groupSlug} (if it exists)`);
+            await ctx.call('webacl.group.removeMember', {
+              groupSlug: rule.groupSlug,
+              memberUri: user.id,
+              webId: 'system'
+            });
+          }
+        }
       }
     }
   },
@@ -37,6 +70,7 @@ module.exports = {
       if (this.isUser(newData)) {
         for (const rule of this.settings.rules) {
           if (this.matchRule(rule, newData)) {
+            this.logger.info(`Adding user ${resourceUri} to group ${rule.groupSlug}`);
             await ctx.call('webacl.group.addMember', {
               groupSlug: rule.groupSlug,
               memberUri: resourceUri,
@@ -51,12 +85,14 @@ module.exports = {
       if (this.isUser(newData)) {
         for (const rule of this.settings.rules) {
           if (this.matchRule(rule, newData)) {
+            this.logger.info(`Adding user ${resourceUri} to group ${rule.groupSlug}`);
             await ctx.call('webacl.group.addMember', {
               groupSlug: rule.groupSlug,
               memberUri: resourceUri,
               webId: 'system'
             });
           } else {
+            this.logger.info(`Removing user ${resourceUri} from group ${rule.groupSlug} (if it exists)`);
             await ctx.call('webacl.group.removeMember', {
               groupSlug: rule.groupSlug,
               memberUri: resourceUri,
@@ -70,6 +106,7 @@ module.exports = {
       const { resourceUri, oldData } = ctx.params;
       if (this.isUser(oldData)) {
         for (const rule of this.settings.rules) {
+          this.logger.info(`Removing user ${resourceUri} from group ${rule.groupSlug} (if it exists)`);
           await ctx.call('webacl.group.removeMember', {
             groupSlug: rule.groupSlug,
             memberUri: resourceUri,
