@@ -152,7 +152,7 @@ const $a4d27c2ab268c05b$var$stopPropagation = (e)=>e.stopPropagation();
 // required by ChipField, which uses a Chip from material-ui.
 // The material-ui Chip requires an onClick handler to behave like a clickable element.
 const $a4d27c2ab268c05b$var$handleClick = ()=>{};
-const $a4d27c2ab268c05b$var$GridList = ({ children: children, linkType: linkType, externalLinks: externalLinks, spacing: spacing, xs: xs, sm: sm, md: md, lg: lg, xl: xl })=>{
+const $a4d27c2ab268c05b$var$GridList = ({ children: children, linkType: linkType = "edit", externalLinks: externalLinks = false, spacing: spacing = 3, xs: xs = 6, sm: sm, md: md, lg: lg, xl: xl })=>{
     const { data: data, resource: resource, isLoading: isLoading } = (0, $5MILa$reactadmin.useListContext)();
     const getExternalLink = (0, $5MILa$semappssemanticdataprovider.useGetExternalLink)(externalLinks);
     const createPath = (0, $5MILa$reactadmin.useCreatePath)();
@@ -203,12 +203,6 @@ const $a4d27c2ab268c05b$var$GridList = ({ children: children, linkType: linkType
         })
     });
 };
-$a4d27c2ab268c05b$var$GridList.defaultProps = {
-    xs: 6,
-    spacing: 3,
-    linkType: "edit",
-    externalLinks: false
-};
 var $a4d27c2ab268c05b$export$2e2bcd8739ae039 = $a4d27c2ab268c05b$var$GridList;
 
 
@@ -251,7 +245,11 @@ const $bc22719d52a02d2c$var$useStyles = (0, ($parcel$interopDefault($5MILa$muist
  *     linkType="show"
  *   />
  * </List>
- */ const $bc22719d52a02d2c$var$MasonryList = ({ image: image, content: content, actions: actions, breakpointCols: breakpointCols, linkType: linkType })=>{
+ */ const $bc22719d52a02d2c$var$MasonryList = ({ image: image, content: content, actions: actions, breakpointCols: breakpointCols = {
+    default: 3,
+    1050: 2,
+    700: 1
+}, linkType: linkType = "edit" })=>{
     const classes = $bc22719d52a02d2c$var$useStyles();
     const { data: data, resource: resource } = (0, $5MILa$reactadmin.useListContext)();
     const createPath = (0, $5MILa$reactadmin.useCreatePath)();
@@ -293,14 +291,6 @@ const $bc22719d52a02d2c$var$useStyles = (0, ($parcel$interopDefault($5MILa$muist
             });
         })
     });
-};
-$bc22719d52a02d2c$var$MasonryList.defaultProps = {
-    breakpointCols: {
-        default: 3,
-        1050: 2,
-        700: 1
-    },
-    linkType: "edit"
 };
 var $bc22719d52a02d2c$export$2e2bcd8739ae039 = $bc22719d52a02d2c$var$MasonryList;
 
@@ -472,7 +462,7 @@ var $6ca83fab5dd482a0$export$2e2bcd8739ae039 = $6ca83fab5dd482a0$var$ListActions
 
 
 
-const $8e315201c1049d3f$var$MultiViewsList = ({ children: children, actions: actions, views: views, ListComponent: ListComponent, ...otherProps })=>{
+const $8e315201c1049d3f$var$MultiViewsList = ({ children: children, actions: actions = /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $6ca83fab5dd482a0$export$2e2bcd8739ae039), {}), views: views, ListComponent: ListComponent = (0, $5MILa$reactadmin.List), ...otherProps })=>{
     const query = new URLSearchParams((0, $5MILa$reactrouter.useLocation)().search);
     const initialView = query.has("view") ? query.get("view") : Object.keys(views)[0];
     const [currentView, setView] = (0, $5MILa$react.useState)(initialView);
@@ -492,10 +482,6 @@ const $8e315201c1049d3f$var$MultiViewsList = ({ children: children, actions: act
             children: views[currentView].list
         })
     });
-};
-$8e315201c1049d3f$var$MultiViewsList.defaultProps = {
-    actions: /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $6ca83fab5dd482a0$export$2e2bcd8739ae039), {}),
-    ListComponent: (0, $5MILa$reactadmin.List)
 };
 var $8e315201c1049d3f$export$2e2bcd8739ae039 = $8e315201c1049d3f$var$MultiViewsList;
 

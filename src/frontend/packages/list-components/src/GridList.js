@@ -11,7 +11,7 @@ const stopPropagation = e => e.stopPropagation();
 // The material-ui Chip requires an onClick handler to behave like a clickable element.
 const handleClick = () => {};
 
-const GridList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, xl }) => {
+const GridList = ({ children, linkType = 'edit', externalLinks = false, spacing = 3, xs = 6, sm, md, lg, xl }) => {
   const { data, resource, isLoading } = useListContext();
   const getExternalLink = useGetExternalLink(externalLinks);
   const createPath = useCreatePath();
@@ -54,13 +54,6 @@ const GridList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, 
       })}
     </Grid>
   );
-};
-
-GridList.defaultProps = {
-  xs: 6,
-  spacing: 3,
-  linkType: 'edit',
-  externalLinks: false
 };
 
 export default GridList;

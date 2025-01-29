@@ -39,7 +39,13 @@ const useStyles = makeStyles(() => ({
  *   />
  * </List>
  */
-const MasonryList = ({ image, content, actions, breakpointCols, linkType }) => {
+const MasonryList = ({
+  image,
+  content,
+  actions,
+  breakpointCols = { default: 3, 1050: 2, 700: 1 },
+  linkType = 'edit'
+}) => {
   const classes = useStyles();
   const { data, resource } = useListContext();
   const createPath = useCreatePath();
@@ -64,11 +70,6 @@ const MasonryList = ({ image, content, actions, breakpointCols, linkType }) => {
       })}
     </Masonry>
   );
-};
-
-MasonryList.defaultProps = {
-  breakpointCols: { default: 3, 1050: 2, 700: 1 },
-  linkType: 'edit'
 };
 
 export default MasonryList;

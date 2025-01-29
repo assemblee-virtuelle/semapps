@@ -4,10 +4,17 @@ import { useLocation } from 'react-router';
 import ListActionsWithViews from './ListActionsWithViews';
 import ListViewContext from './ListViewContext';
 
-const MultiViewsList = ({ children, actions, views, ListComponent, ...otherProps }) => {
+const MultiViewsList = ({
+  children,
+  actions = <ListActionsWithViews />,
+  views,
+  ListComponent = List,
+  ...otherProps
+}) => {
   const query = new URLSearchParams(useLocation().search);
   const initialView = query.has('view') ? query.get('view') : Object.keys(views)[0];
   const [currentView, setView] = useState(initialView);
+
   return (
     <ListViewContext.Provider value={{ views, currentView, setView }}>
       <ListComponent
@@ -22,11 +29,6 @@ const MultiViewsList = ({ children, actions, views, ListComponent, ...otherProps
       </ListComponent>
     </ListViewContext.Provider>
   );
-};
-
-MultiViewsList.defaultProps = {
-  actions: <ListActionsWithViews />,
-  ListComponent: List
 };
 
 export default MultiViewsList;
