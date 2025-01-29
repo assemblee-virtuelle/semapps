@@ -1,5 +1,5 @@
 var $3RhHq$reactjsxruntime = require("react/jsx-runtime");
-require("@fullcalendar/core/vdom");
+require("@fullcalendar/react/dist/vdom");
 var $3RhHq$muixdatepickersDatePicker = require("@mui/x-date-pickers/DatePicker");
 var $3RhHq$muixdatepickersTimePicker = require("@mui/x-date-pickers/TimePicker");
 var $3RhHq$muixdatepickersDateTimePicker = require("@mui/x-date-pickers/DateTimePicker");
@@ -107,7 +107,7 @@ var $c332daa71b957685$export$2e2bcd8739ae039 = $c332daa71b957685$var$Picker;
 
 
 
-const $c8dbd8ec3b8f34cc$var$useFullCalendarProps = ({ label: label, startDate: startDate, endDate: endDate, linkType: linkType })=>{
+const $c8dbd8ec3b8f34cc$var$useFullCalendarProps = ({ label: label, startDate: startDate, endDate: endDate, linkType: linkType = "edit" })=>{
     const { data: data, isLoading: isLoading, resource: resource } = (0, $3RhHq$reactadmin.useListContext)();
     const [searchParams, setSearchParams] = (0, $3RhHq$reactrouterdom.useSearchParams)();
     const navigate = (0, $3RhHq$reactrouterdom.useNavigate)();
@@ -184,9 +184,6 @@ const $563c84827e91e322$var$CalendarList = (props)=>{
         ...fullCalendarProps
     });
 };
-$563c84827e91e322$var$CalendarList.defaultProps = {
-    linkType: "edit"
-};
 var $563c84827e91e322$export$2e2bcd8739ae039 = $563c84827e91e322$var$CalendarList;
 
 
@@ -216,9 +213,6 @@ const $5379d12b87e743a4$var$DaysList = (props)=>{
         initialView: "listMonth",
         ...fullCalendarProps
     });
-};
-$5379d12b87e743a4$var$DaysList.defaultProps = {
-    linkType: "edit"
 };
 var $5379d12b87e743a4$export$2e2bcd8739ae039 = $5379d12b87e743a4$var$DaysList;
 

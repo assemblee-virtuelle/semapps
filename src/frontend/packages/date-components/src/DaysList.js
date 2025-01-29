@@ -21,8 +21,4 @@ const DaysList = props => {
   return <FullCalendar plugins={[listPlugin]} locale={props.locale} initialView="listMonth" {...fullCalendarProps} />;
 };
 
-DaysList.defaultProps = {
-  linkType: 'edit'
-};
-
 export default DaysList;
