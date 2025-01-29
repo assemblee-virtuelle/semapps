@@ -9,7 +9,15 @@ import LockIcon from '@mui/icons-material/Lock';
 const delay = async t => new Promise(resolve => setTimeout(resolve, t));
 
 // Inspired from https://github.com/marmelab/react-admin/blob/master/packages/ra-ui-materialui/src/auth/Login.tsx
-const SsoLoginPage = ({ children, backgroundImage, buttons, userResource, propertiesExist, text, ...rest }) => {
+const SsoLoginPage = ({
+  children,
+  backgroundImage,
+  buttons,
+  userResource = 'Person',
+  propertiesExist = [],
+  text,
+  ...rest
+}) => {
   const containerRef = useRef();
   let backgroundImageLoaded = false;
   const navigate = useNavigate();
@@ -170,12 +178,5 @@ const Root = styled('div', {
     justifyContent: 'center'
   }
 }));
-
-SsoLoginPage.defaultProps = {
-  propertiesExist: [],
-  // TODO deprecate this
-  buttons: [<Button startIcon={<Avatar src="/lescommuns.jpg" />}>Les Communs</Button>],
-  userResource: 'Person'
-};
 
 export default SsoLoginPage;

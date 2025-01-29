@@ -4,7 +4,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import { useCreateContainer } from '@semapps/semantic-data-provider';
 import PermissionsDialog from './PermissionsDialog';
 
-const PermissionsButton = ({ isContainer }) => {
+const PermissionsButton = ({ isContainer = false }) => {
   const record = useRecordContext();
   const resource = useResourceContext();
   const [showDialog, setShowDialog] = useState(false);
@@ -18,10 +18,6 @@ const PermissionsButton = ({ isContainer }) => {
       <PermissionsDialog uri={uri} isContainer={isContainer} open={showDialog} onClose={() => setShowDialog(false)} />
     </>
   );
-};
-
-PermissionsButton.defaultProps = {
-  isContainer: false
 };
 
 export default PermissionsButton;

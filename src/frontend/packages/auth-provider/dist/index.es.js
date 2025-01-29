@@ -3,7 +3,7 @@ import $1obPJ$urljoin from "url-join";
 import {discoveryRequest as $1obPJ$discoveryRequest, processDiscoveryResponse as $1obPJ$processDiscoveryResponse, generateRandomCodeVerifier as $1obPJ$generateRandomCodeVerifier, calculatePKCECodeChallenge as $1obPJ$calculatePKCECodeChallenge, validateAuthResponse as $1obPJ$validateAuthResponse, expectNoState as $1obPJ$expectNoState, isOAuth2Error as $1obPJ$isOAuth2Error, authorizationCodeGrantRequest as $1obPJ$authorizationCodeGrantRequest, processAuthorizationCodeOpenIDResponse as $1obPJ$processAuthorizationCodeOpenIDResponse} from "oauth4webapi";
 import {jsx as $1obPJ$jsx, jsxs as $1obPJ$jsxs, Fragment as $1obPJ$Fragment} from "react/jsx-runtime";
 import $1obPJ$react, {useEffect as $1obPJ$useEffect, useState as $1obPJ$useState, useCallback as $1obPJ$useCallback, useRef as $1obPJ$useRef, useMemo as $1obPJ$useMemo, forwardRef as $1obPJ$forwardRef} from "react";
-import {useResourceContext as $1obPJ$useResourceContext, Create as $1obPJ$Create, CreateActions as $1obPJ$CreateActions, usePermissions as $1obPJ$usePermissions, useNotify as $1obPJ$useNotify, useRedirect as $1obPJ$useRedirect, useGetRecordId as $1obPJ$useGetRecordId, Edit as $1obPJ$Edit, useResourceDefinition as $1obPJ$useResourceDefinition, useRecordContext as $1obPJ$useRecordContext, TopToolbar as $1obPJ$TopToolbar, ListButton as $1obPJ$ListButton, ShowButton as $1obPJ$ShowButton, Button as $1obPJ$Button, useTranslate as $1obPJ$useTranslate, useGetList as $1obPJ$useGetList, useDataProvider as $1obPJ$useDataProvider, Loading as $1obPJ$Loading, Error as $1obPJ$Error, useAuthProvider as $1obPJ$useAuthProvider, Toolbar as $1obPJ$Toolbar, SaveButton as $1obPJ$SaveButton, DeleteButton as $1obPJ$DeleteButton, EditButton as $1obPJ$EditButton, List as $1obPJ$List1, CreateButton as $1obPJ$CreateButton, ExportButton as $1obPJ$ExportButton, Show as $1obPJ$Show, useLogin as $1obPJ$useLogin, useGetIdentity as $1obPJ$useGetIdentity, Form as $1obPJ$Form, useSafeSetState as $1obPJ$useSafeSetState, useLocaleState as $1obPJ$useLocaleState, TextInput as $1obPJ$TextInput, required as $1obPJ$required, minLength as $1obPJ$minLength, email as $1obPJ$email, Notification as $1obPJ$Notification, Resource as $1obPJ$Resource, useUserMenu as $1obPJ$useUserMenu, UserMenu as $1obPJ$UserMenu, Logout as $1obPJ$Logout, useGetPermissions as $1obPJ$useGetPermissions} from "react-admin";
+import {CreateActions as $1obPJ$CreateActions, useResourceContext as $1obPJ$useResourceContext, Create as $1obPJ$Create, usePermissions as $1obPJ$usePermissions, useNotify as $1obPJ$useNotify, useRedirect as $1obPJ$useRedirect, useGetRecordId as $1obPJ$useGetRecordId, Edit as $1obPJ$Edit, useResourceDefinition as $1obPJ$useResourceDefinition, useRecordContext as $1obPJ$useRecordContext, TopToolbar as $1obPJ$TopToolbar, ListButton as $1obPJ$ListButton, ShowButton as $1obPJ$ShowButton, Button as $1obPJ$Button, useTranslate as $1obPJ$useTranslate, useGetList as $1obPJ$useGetList, useDataProvider as $1obPJ$useDataProvider, Loading as $1obPJ$Loading, Error as $1obPJ$Error, useAuthProvider as $1obPJ$useAuthProvider, Toolbar as $1obPJ$Toolbar, SaveButton as $1obPJ$SaveButton, DeleteButton as $1obPJ$DeleteButton, EditButton as $1obPJ$EditButton, List as $1obPJ$List1, CreateButton as $1obPJ$CreateButton, ExportButton as $1obPJ$ExportButton, Show as $1obPJ$Show, useLogin as $1obPJ$useLogin, useGetIdentity as $1obPJ$useGetIdentity, Form as $1obPJ$Form, useSafeSetState as $1obPJ$useSafeSetState, useLocaleState as $1obPJ$useLocaleState, TextInput as $1obPJ$TextInput, required as $1obPJ$required, minLength as $1obPJ$minLength, email as $1obPJ$email, Notification as $1obPJ$Notification, Resource as $1obPJ$Resource, useUserMenu as $1obPJ$useUserMenu, UserMenu as $1obPJ$UserMenu, Logout as $1obPJ$Logout, useGetPermissions as $1obPJ$useGetPermissions} from "react-admin";
 import {useCreateContainerUri as $1obPJ$useCreateContainerUri, useCreateContainer as $1obPJ$useCreateContainer} from "@semapps/semantic-data-provider";
 import $1obPJ$muiiconsmaterialShare from "@mui/icons-material/Share";
 import {Dialog as $1obPJ$Dialog, DialogTitle as $1obPJ$DialogTitle, DialogContent as $1obPJ$DialogContent, DialogActions as $1obPJ$DialogActions, TextField as $1obPJ$TextField, List as $1obPJ$List, ListItem as $1obPJ$ListItem, ListItemAvatar as $1obPJ$ListItemAvatar, Avatar as $1obPJ$Avatar, ListItemText as $1obPJ$ListItemText, ListItemSecondaryAction as $1obPJ$ListItemSecondaryAction, IconButton as $1obPJ$IconButton, Menu as $1obPJ$Menu, MenuItem as $1obPJ$MenuItem, ListItemIcon as $1obPJ$ListItemIcon, useMediaQuery as $1obPJ$useMediaQuery, DialogContentText as $1obPJ$DialogContentText, Button as $1obPJ$Button1, Card as $1obPJ$Card, Typography as $1obPJ$Typography, CardActions as $1obPJ$CardActions, Box as $1obPJ$Box, CardContent as $1obPJ$CardContent, LinearProgress as $1obPJ$LinearProgress} from "@mui/material";
@@ -16,7 +16,7 @@ import $1obPJ$muiiconsmaterialCheck from "@mui/icons-material/Check";
 import $1obPJ$muiiconsmaterialPublic from "@mui/icons-material/Public";
 import $1obPJ$muiiconsmaterialVpnLock from "@mui/icons-material/VpnLock";
 import $1obPJ$muiiconsmaterialGroup from "@mui/icons-material/Group";
-import {styled as $1obPJ$styled1} from "@mui/material/styles";
+import {styled as $1obPJ$styled1, useTheme as $1obPJ$useTheme} from "@mui/material/styles";
 import {useNavigate as $1obPJ$useNavigate, useSearchParams as $1obPJ$useSearchParams, Link as $1obPJ$Link, useLocation as $1obPJ$useLocation} from "react-router-dom";
 import $1obPJ$muiiconsmaterialLock from "@mui/icons-material/Lock";
 import $1obPJ$speakingurl from "speakingurl";
@@ -297,13 +297,10 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
             } else // Other error code (404, 500, etc): no need to log out
             return Promise.resolve();
         },
-        getPermissions: async (uri)=>{
+        getPermissions: async ({ uri: uri })=>{
             if (!checkPermissions) return;
-            // React-admin calls getPermissions with an empty object on every page refresh
-            // It also passes an object `{ params: { route: 'dashboard' } }` on the Dashboard
-            // Ignore all this until we found a way to bypass these redundant calls
-            if (typeof uri === "object") return;
-            if (!uri || !uri.startsWith("http")) throw new Error("The first parameter passed to getPermissions must be an URL");
+            if (!uri) return;
+            if (!uri.startsWith("http")) throw new Error("The first parameter passed to getPermissions must be an URL:");
             const aclUri = (0, $47a3fad69bcb0083$export$4450a74bced1b745)(uri);
             try {
                 const { json: json } = await dataProvider.fetch(aclUri);
@@ -531,7 +528,9 @@ const $dd9154ee844248d7$export$edca379024d80309 = {
 
 
 const $3246c5a1f284b82d$var$useCheckPermissions = (uri, mode, redirectUrl = "/")=>{
-    const { permissions: permissions } = (0, $1obPJ$usePermissions)(uri);
+    const { permissions: permissions } = (0, $1obPJ$usePermissions)({
+        uri: uri
+    });
     const notify = (0, $1obPJ$useNotify)();
     const redirect = (0, $1obPJ$useRedirect)();
     (0, $1obPJ$useEffect)(()=>{
@@ -551,18 +550,17 @@ const $3246c5a1f284b82d$var$useCheckPermissions = (uri, mode, redirectUrl = "/")
 var $3246c5a1f284b82d$export$2e2bcd8739ae039 = $3246c5a1f284b82d$var$useCheckPermissions;
 
 
-const $f2c5683e04dee28c$var$CreateWithPermissions = (props)=>{
+const $555a60066c55ca73$var$CreateWithPermissions = ({ actions: actions = /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$CreateActions), {}), children: children, ...rest })=>{
     const resource = (0, $1obPJ$useResourceContext)();
     const createContainerUri = (0, $1obPJ$useCreateContainerUri)()(resource);
     (0, $3246c5a1f284b82d$export$2e2bcd8739ae039)(createContainerUri, "create");
     return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Create), {
-        ...props
+        actions: actions,
+        ...rest,
+        children: children
     });
 };
-$f2c5683e04dee28c$var$CreateWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$CreateActions), {})
-};
-var $f2c5683e04dee28c$export$2e2bcd8739ae039 = $f2c5683e04dee28c$var$CreateWithPermissions;
+var $555a60066c55ca73$export$2e2bcd8739ae039 = $555a60066c55ca73$var$CreateWithPermissions;
 
 
 
@@ -843,7 +841,9 @@ var $c8acba773a123777$export$2e2bcd8739ae039 = $c8acba773a123777$var$EditPermiss
 
 
 const $7ad577d9c9c71db0$var$useAgents = (uri)=>{
-    const { permissions: permissions } = (0, $1obPJ$usePermissions)(uri);
+    const { permissions: permissions } = (0, $1obPJ$usePermissions)({
+        uri: uri
+    });
     const authProvider = (0, $1obPJ$useAuthProvider)();
     const [agents, setAgents] = (0, $1obPJ$useState)({});
     // Format list of authorized agents, based on the permissions returned for the resource
@@ -999,7 +999,7 @@ const $827412a5ced0d5cd$var$PermissionsDialog = ({ open: open, onClose: onClose,
 var $827412a5ced0d5cd$export$2e2bcd8739ae039 = $827412a5ced0d5cd$var$PermissionsDialog;
 
 
-const $7dac2771cc5eb38b$var$PermissionsButton = ({ isContainer: isContainer })=>{
+const $7dac2771cc5eb38b$var$PermissionsButton = ({ isContainer: isContainer = false })=>{
     const record = (0, $1obPJ$useRecordContext)();
     const resource = (0, $1obPJ$useResourceContext)();
     const [showDialog, setShowDialog] = (0, $1obPJ$useState)(false);
@@ -1021,9 +1021,6 @@ const $7dac2771cc5eb38b$var$PermissionsButton = ({ isContainer: isContainer })=>
         ]
     });
 };
-$7dac2771cc5eb38b$var$PermissionsButton.defaultProps = {
-    isContainer: false
-};
 var $7dac2771cc5eb38b$export$2e2bcd8739ae039 = $7dac2771cc5eb38b$var$PermissionsButton;
 
 
@@ -1031,10 +1028,14 @@ var $7dac2771cc5eb38b$export$2e2bcd8739ae039 = $7dac2771cc5eb38b$var$Permissions
 const $1d084bfeb799eb8d$var$EditActionsWithPermissions = ()=>{
     const { hasList: hasList, hasShow: hasShow } = (0, $1obPJ$useResourceDefinition)();
     const record = (0, $1obPJ$useRecordContext)();
-    const { permissions: permissions } = (0, $1obPJ$usePermissions)(record?.id);
+    const { permissions: permissions } = (0, $1obPJ$usePermissions)({
+        uri: record?.id
+    });
     const resource = (0, $1obPJ$useResourceContext)();
     const containerUri = (0, $1obPJ$useCreateContainerUri)()(resource);
-    const { permissions: containerPermissions } = (0, $1obPJ$usePermissions)(containerUri);
+    const { permissions: containerPermissions } = (0, $1obPJ$usePermissions)({
+        uri: containerUri
+    });
     return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$TopToolbar), {
         children: [
             hasList && containerPermissions && containerPermissions.some((p)=>(0, $dd9154ee844248d7$export$dc3840a4e2a72b8c).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ListButton), {}),
@@ -1047,6 +1048,20 @@ var $1d084bfeb799eb8d$export$2e2bcd8739ae039 = $1d084bfeb799eb8d$var$EditActions
 
 
 
+const $d4772f22df7d8ad1$var$EditWithPermissions = ({ actions: actions = /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1d084bfeb799eb8d$export$2e2bcd8739ae039), {}), children: children, ...rest })=>{
+    const recordId = (0, $1obPJ$useGetRecordId)();
+    (0, $3246c5a1f284b82d$export$2e2bcd8739ae039)(recordId, "edit");
+    return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Edit), {
+        actions: actions,
+        ...rest,
+        children: children
+    });
+};
+var $d4772f22df7d8ad1$export$2e2bcd8739ae039 = $d4772f22df7d8ad1$var$EditWithPermissions;
+
+
+
+
 
 
 
@@ -1056,7 +1071,9 @@ var $1d084bfeb799eb8d$export$2e2bcd8739ae039 = $1d084bfeb799eb8d$var$EditActions
 
 const $7efdcbe4be05bfd5$var$DeleteButtonWithPermissions = (props)=>{
     const recordId = (0, $1obPJ$useGetRecordId)();
-    const { permissions: permissions, isLoading: isLoading } = (0, $1obPJ$usePermissions)(recordId);
+    const { permissions: permissions, isLoading: isLoading } = (0, $1obPJ$usePermissions)({
+        uri: recordId
+    });
     if (!isLoading && permissions?.some((p)=>(0, $dd9154ee844248d7$export$ac7b0367c0f9031e).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$DeleteButton), {
         ...props
     });
@@ -1081,33 +1098,14 @@ var $6b0c1a175ed94bdf$export$2e2bcd8739ae039 = $6b0c1a175ed94bdf$var$EditToolbar
 
 
 
-const $28fa6ad821327921$var$EditWithPermissions = (props)=>{
-    const recordId = (0, $1obPJ$useGetRecordId)();
-    (0, $3246c5a1f284b82d$export$2e2bcd8739ae039)(recordId, "edit");
-    return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Edit), {
-        ...props,
-        children: /*#__PURE__*/ (0, $1obPJ$react).cloneElement(props.children, {
-            toolbar: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $6b0c1a175ed94bdf$export$2e2bcd8739ae039), {}),
-            // Allow to override toolbar
-            ...props.children.props
-        })
-    });
-};
-$28fa6ad821327921$var$EditWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1d084bfeb799eb8d$export$2e2bcd8739ae039), {})
-};
-var $28fa6ad821327921$export$2e2bcd8739ae039 = $28fa6ad821327921$var$EditWithPermissions;
-
-
-
-
-
 
 
 
 const $c78c2d7e17f60b2f$var$EditButtonWithPermissions = (props)=>{
     const recordId = (0, $1obPJ$useGetRecordId)();
-    const { permissions: permissions, isLoading: isLoading } = (0, $1obPJ$usePermissions)(recordId);
+    const { permissions: permissions, isLoading: isLoading } = (0, $1obPJ$usePermissions)({
+        uri: recordId
+    });
     if (!isLoading && permissions?.some((p)=>(0, $dd9154ee844248d7$export$b9d0f5f3ab5e453b).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$EditButton), {
         ...props
     });
@@ -1127,13 +1125,17 @@ var $c78c2d7e17f60b2f$export$2e2bcd8739ae039 = $c78c2d7e17f60b2f$var$EditButtonW
 
 
 
+
 // Do not show Export and Refresh buttons on mobile
-const $e6071424a1ba88d9$var$ListActionsWithPermissions = ({ bulkActions: bulkActions, sort: sort, displayedFilters: displayedFilters, exporter: exporter, filters: filters, filterValues: filterValues, onUnselectItems: onUnselectItems, selectedIds: selectedIds, showFilter: showFilter, total: total })=>{
+const $79c9804078d70be7$var$ListActionsWithPermissions = ({ sort: sort, displayedFilters: displayedFilters, exporter: exporter, filters: filters, filterValues: filterValues, showFilter: showFilter, total: total })=>{
+    const theme = (0, $1obPJ$useTheme)();
+    const xs = (0, $1obPJ$useMediaQuery)(theme.breakpoints.down("xs"));
     const resource = (0, $1obPJ$useResourceContext)();
-    const xs = (0, $1obPJ$useMediaQuery)((theme)=>theme.breakpoints.down("xs"));
     const resourceDefinition = (0, $1obPJ$useResourceDefinition)();
-    const createContainerUri = (0, $1obPJ$useCreateContainer)(resource);
-    const { permissions: permissions } = (0, $1obPJ$usePermissions)(createContainerUri);
+    const containerUri = (0, $1obPJ$useCreateContainerUri)()(resource);
+    const { permissions: permissions } = (0, $1obPJ$usePermissions)({
+        uri: containerUri
+    });
     return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$TopToolbar), {
         children: [
             filters && /*#__PURE__*/ (0, $1obPJ$react).cloneElement(filters, {
@@ -1142,34 +1144,27 @@ const $e6071424a1ba88d9$var$ListActionsWithPermissions = ({ bulkActions: bulkAct
                 filterValues: filterValues,
                 context: "button"
             }),
-            resourceDefinition.hasCreate && permissions && permissions.some((p)=>(0, $dd9154ee844248d7$export$65615a101bd6f5ca).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$CreateButton), {}),
-            permissions && permissions.some((p)=>(0, $dd9154ee844248d7$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $7dac2771cc5eb38b$export$2e2bcd8739ae039), {
+            resourceDefinition.hasCreate && permissions?.some((p)=>(0, $dd9154ee844248d7$export$65615a101bd6f5ca).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$CreateButton), {}),
+            permissions?.some((p)=>(0, $dd9154ee844248d7$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $7dac2771cc5eb38b$export$2e2bcd8739ae039), {
                 isContainer: true
             }),
             !xs && exporter !== false && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ExportButton), {
                 disabled: total === 0,
                 sort: sort,
-                filter: filterValues,
-                exporter: exporter
-            }),
-            bulkActions && /*#__PURE__*/ (0, $1obPJ$react).cloneElement(bulkActions, {
                 filterValues: filterValues,
-                selectedIds: selectedIds,
-                onUnselectItems: onUnselectItems
+                exporter: exporter
             })
         ]
     });
 };
-var $e6071424a1ba88d9$export$2e2bcd8739ae039 = $e6071424a1ba88d9$var$ListActionsWithPermissions;
+var $79c9804078d70be7$export$2e2bcd8739ae039 = $79c9804078d70be7$var$ListActionsWithPermissions;
 
 
-const $a4ded8260cc90dad$var$ListWithPermissions = (props)=>/*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$List1), {
-        ...props
+const $c356f5bf85f01e2c$var$ListWithPermissions = ({ actions: actions = /*#__PURE__*/ (0, $1obPJ$jsx)((0, $79c9804078d70be7$export$2e2bcd8739ae039), {}), ...rest })=>/*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$List1), {
+        actions: actions,
+        ...rest
     });
-$a4ded8260cc90dad$var$ListWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $e6071424a1ba88d9$export$2e2bcd8739ae039), {})
-};
-var $a4ded8260cc90dad$export$2e2bcd8739ae039 = $a4ded8260cc90dad$var$ListWithPermissions;
+var $c356f5bf85f01e2c$export$2e2bcd8739ae039 = $c356f5bf85f01e2c$var$ListWithPermissions;
 
 
 
@@ -1185,10 +1180,14 @@ var $a4ded8260cc90dad$export$2e2bcd8739ae039 = $a4ded8260cc90dad$var$ListWithPer
 const $acd67d211d146755$var$ShowActionsWithPermissions = ()=>{
     const { hasList: hasList, hasEdit: hasEdit } = (0, $1obPJ$useResourceDefinition)();
     const record = (0, $1obPJ$useRecordContext)();
-    const { permissions: permissions } = (0, $1obPJ$usePermissions)(record?.id);
+    const { permissions: permissions } = (0, $1obPJ$usePermissions)({
+        uri: record?.id
+    });
     const resource = (0, $1obPJ$useResourceContext)();
     const containerUri = (0, $1obPJ$useCreateContainerUri)()(resource);
-    const { permissions: containerPermissions } = (0, $1obPJ$usePermissions)(containerUri);
+    const { permissions: containerPermissions } = (0, $1obPJ$usePermissions)({
+        uri: containerUri
+    });
     return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$TopToolbar), {
         children: [
             hasList && containerPermissions && containerPermissions.some((p)=>(0, $dd9154ee844248d7$export$dc3840a4e2a72b8c).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$ListButton), {}),
@@ -1201,17 +1200,15 @@ var $acd67d211d146755$export$2e2bcd8739ae039 = $acd67d211d146755$var$ShowActions
 
 
 
-const $561bb436d5af917c$var$ShowWithPermissions = (props)=>{
+const $666a46a782bc3d6f$var$ShowWithPermissions = ({ actions: actions, ...rest })=>{
     const recordId = (0, $1obPJ$useGetRecordId)();
     (0, $3246c5a1f284b82d$export$2e2bcd8739ae039)(recordId, "show");
     return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Show), {
-        ...props
+        actions: actions || /*#__PURE__*/ (0, $1obPJ$jsx)((0, $acd67d211d146755$export$2e2bcd8739ae039), {}),
+        ...rest
     });
 };
-$561bb436d5af917c$var$ShowWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $acd67d211d146755$export$2e2bcd8739ae039), {})
-};
-var $561bb436d5af917c$export$2e2bcd8739ae039 = $561bb436d5af917c$var$ShowWithPermissions;
+var $666a46a782bc3d6f$export$2e2bcd8739ae039 = $666a46a782bc3d6f$var$ShowWithPermissions;
 
 
 
@@ -1220,7 +1217,7 @@ var $561bb436d5af917c$export$2e2bcd8739ae039 = $561bb436d5af917c$var$ShowWithPer
 
 
 
-const $c2eef7602bbbff5e$var$AuthDialog = ({ open: open, onClose: onClose, title: title, message: message, redirect: redirect, ...rest })=>{
+const $c2eef7602bbbff5e$var$AuthDialog = ({ open: open, onClose: onClose, title: title = "auth.dialog.login_required", message: message = "auth.message.login_to_continue", redirect: redirect, ...rest })=>{
     const login = (0, $1obPJ$useLogin)();
     const translate = (0, $1obPJ$useTranslate)();
     return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Dialog), {
@@ -1255,10 +1252,6 @@ const $c2eef7602bbbff5e$var$AuthDialog = ({ open: open, onClose: onClose, title:
         ]
     });
 };
-$c2eef7602bbbff5e$var$AuthDialog.defaultProps = {
-    title: "auth.dialog.login_required",
-    message: "auth.message.login_to_continue"
-};
 var $c2eef7602bbbff5e$export$2e2bcd8739ae039 = $c2eef7602bbbff5e$var$AuthDialog;
 
 
@@ -1272,7 +1265,7 @@ var $c2eef7602bbbff5e$export$2e2bcd8739ae039 = $c2eef7602bbbff5e$var$AuthDialog;
 
 const $479961b7e298304b$var$delay = async (t)=>new Promise((resolve)=>setTimeout(resolve, t));
 // Inspired from https://github.com/marmelab/react-admin/blob/master/packages/ra-ui-materialui/src/auth/Login.tsx
-const $479961b7e298304b$var$SsoLoginPage = ({ children: children, backgroundImage: backgroundImage, buttons: buttons, userResource: userResource, propertiesExist: propertiesExist, text: text, ...rest })=>{
+const $479961b7e298304b$var$SsoLoginPage = ({ children: children, backgroundImage: backgroundImage, buttons: buttons, userResource: userResource = "Person", propertiesExist: propertiesExist = [], text: text, ...rest })=>{
     const containerRef = (0, $1obPJ$useRef)();
     let backgroundImageLoaded = false;
     const navigate = (0, $1obPJ$useNavigate)();
@@ -1447,19 +1440,6 @@ const $479961b7e298304b$var$Root = (0, $1obPJ$styled1)("div", {
             justifyContent: "center"
         }
     }));
-$479961b7e298304b$var$SsoLoginPage.defaultProps = {
-    propertiesExist: [],
-    // TODO deprecate this
-    buttons: [
-        /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Button1), {
-            startIcon: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Avatar), {
-                src: "/lescommuns.jpg"
-            }),
-            children: "Les Communs"
-        })
-    ],
-    userResource: "Person"
-};
 var $479961b7e298304b$export$2e2bcd8739ae039 = $479961b7e298304b$var$SsoLoginPage;
 
 
@@ -2551,7 +2531,7 @@ var $2dfd781b793256e6$export$2e2bcd8739ae039 = $2dfd781b793256e6$var$getSearchPa
  *  Set to `null` or `false`, if you don't want password strength checks. Default is
  *  passwordStrength's `defaultScorer`.
  * @returns
- */ const $23fea069f5d2d834$var$LocalLoginPage = ({ hasSignup: hasSignup, allowUsername: allowUsername, onLogin: onLogin, onSignup: onSignup, additionalSignupValues: additionalSignupValues, passwordScorer: passwordScorer = (0, $646d64648a630b24$export$19dcdb21c6965fb8) })=>{
+ */ const $23fea069f5d2d834$var$LocalLoginPage = ({ hasSignup: hasSignup = true, allowUsername: allowUsername = false, onLogin: onLogin, onSignup: onSignup, additionalSignupValues: additionalSignupValues = {}, passwordScorer: passwordScorer = (0, $646d64648a630b24$export$19dcdb21c6965fb8) })=>{
     const translate = (0, $1obPJ$useTranslate)();
     const [searchParams] = (0, $1obPJ$useSearchParams)();
     const isSignup = hasSignup && searchParams.has("signup");
@@ -2662,11 +2642,6 @@ var $2dfd781b793256e6$export$2e2bcd8739ae039 = $2dfd781b793256e6$var$getSearchPa
         })
     });
 };
-$23fea069f5d2d834$var$LocalLoginPage.defaultProps = {
-    hasSignup: true,
-    allowUsername: false,
-    additionalSignupValues: {}
-};
 var $23fea069f5d2d834$export$2e2bcd8739ae039 = $23fea069f5d2d834$var$LocalLoginPage;
 
 
@@ -2677,8 +2652,10 @@ var $23fea069f5d2d834$export$2e2bcd8739ae039 = $23fea069f5d2d834$var$LocalLoginP
 
 // Not used for now. The ListWithPermissions component will handle the conditional display of the Create button.
 const $9594dfbc217337d0$var$ResourceWithPermission = ({ name: name, create: create, ...rest })=>{
-    const createContainer = (0, $1obPJ$useCreateContainer)(name);
-    const { permissions: permissions } = (0, $1obPJ$usePermissions)(createContainer);
+    const createContainer = (0, $1obPJ$useCreateContainerUri)()(name);
+    const { permissions: permissions } = (0, $1obPJ$usePermissions)({
+        uri: createContainer
+    });
     return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Resource), {
         ...rest,
         name: name,
@@ -2732,14 +2709,14 @@ const $5ef2eaf62f09ff2c$var$UserMenu = ({ logout: logout, profileResource: profi
             /*#__PURE__*/ (0, $1obPJ$jsx)($5ef2eaf62f09ff2c$var$UserMenuItem, {
                 label: "auth.action.view_my_profile",
                 icon: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$muiiconsmaterialAccountCircle), {}),
-                to: `/${profileResource}/${encodeURIComponent(identity?.profileData?.id || identity.id)}/show`
+                to: `/${profileResource || "Person"}/${encodeURIComponent(identity?.profileData?.id || identity.id)}/show`
             }, "view"),
             /*#__PURE__*/ (0, $1obPJ$jsx)($5ef2eaf62f09ff2c$var$UserMenuItem, {
                 label: "auth.action.edit_my_profile",
                 icon: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$muiiconsmaterialEdit), {}),
-                to: `/${profileResource}/${encodeURIComponent(identity?.profileData?.id || identity.id)}`
+                to: `/${profileResource || "Person"}/${encodeURIComponent(identity?.profileData?.id || identity.id)}`
             }, "edit"),
-            /*#__PURE__*/ (0, $1obPJ$react).cloneElement(logout, {
+            /*#__PURE__*/ (0, $1obPJ$react).cloneElement(logout || /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Logout), {}), {
                 key: "logout"
             })
         ] : [
@@ -2753,10 +2730,6 @@ const $5ef2eaf62f09ff2c$var$UserMenu = ({ logout: logout, profileResource: profi
             }, "login")
         ]
     });
-};
-$5ef2eaf62f09ff2c$var$UserMenu.defaultProps = {
-    logout: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Logout), {}),
-    profileResource: "Person"
 };
 var $5ef2eaf62f09ff2c$export$2e2bcd8739ae039 = $5ef2eaf62f09ff2c$var$UserMenu;
 
@@ -3076,5 +3049,5 @@ var $509b6323d7902699$export$2e2bcd8739ae039 = $509b6323d7902699$var$frenchMessa
 
 
 
-export {$1d8606895ce3b768$export$2e2bcd8739ae039 as authProvider, $f2c5683e04dee28c$export$2e2bcd8739ae039 as CreateWithPermissions, $28fa6ad821327921$export$2e2bcd8739ae039 as EditWithPermissions, $1d084bfeb799eb8d$export$2e2bcd8739ae039 as EditActionsWithPermissions, $6b0c1a175ed94bdf$export$2e2bcd8739ae039 as EditToolbarWithPermissions, $c78c2d7e17f60b2f$export$2e2bcd8739ae039 as EditButtonWithPermissions, $7efdcbe4be05bfd5$export$2e2bcd8739ae039 as DeleteButtonWithPermissions, $a4ded8260cc90dad$export$2e2bcd8739ae039 as ListWithPermissions, $e6071424a1ba88d9$export$2e2bcd8739ae039 as ListActionsWithPermissions, $561bb436d5af917c$export$2e2bcd8739ae039 as ShowWithPermissions, $acd67d211d146755$export$2e2bcd8739ae039 as ShowActionsWithPermissions, $7dac2771cc5eb38b$export$2e2bcd8739ae039 as PermissionsButton, $c2eef7602bbbff5e$export$2e2bcd8739ae039 as AuthDialog, $479961b7e298304b$export$2e2bcd8739ae039 as SsoLoginPage, $479961b7e298304b$export$2e2bcd8739ae039 as LoginPage, $23fea069f5d2d834$export$2e2bcd8739ae039 as LocalLoginPage, $9594dfbc217337d0$export$2e2bcd8739ae039 as ResourceWithPermissions, $5ef2eaf62f09ff2c$export$2e2bcd8739ae039 as UserMenu, $7ad577d9c9c71db0$export$2e2bcd8739ae039 as useAgents, $a18ea4963428dd85$export$2e2bcd8739ae039 as useCheckAuthenticated, $3246c5a1f284b82d$export$2e2bcd8739ae039 as useCheckPermissions, $26b16c415d19fb4a$export$2e2bcd8739ae039 as usePermissionsWithRefetch, $fb967e2c34f56644$export$2e2bcd8739ae039 as useSignup, $a8046307c9dfa483$export$2e2bcd8739ae039 as PasswordStrengthIndicator, $7a0bbe6824860dfe$export$2e2bcd8739ae039 as validatePasswordStrength, $646d64648a630b24$export$19dcdb21c6965fb8 as defaultPasswordScorer, $646d64648a630b24$export$ba43bf67f3d48107 as defaultPasswordScorerOptions, $646d64648a630b24$export$a1d713a9155d58fc as createPasswordScorer, $22afd1c81635c9d9$export$2e2bcd8739ae039 as englishMessages, $509b6323d7902699$export$2e2bcd8739ae039 as frenchMessages};
+export {$1d8606895ce3b768$export$2e2bcd8739ae039 as authProvider, $555a60066c55ca73$export$2e2bcd8739ae039 as CreateWithPermissions, $d4772f22df7d8ad1$export$2e2bcd8739ae039 as EditWithPermissions, $1d084bfeb799eb8d$export$2e2bcd8739ae039 as EditActionsWithPermissions, $6b0c1a175ed94bdf$export$2e2bcd8739ae039 as EditToolbarWithPermissions, $c78c2d7e17f60b2f$export$2e2bcd8739ae039 as EditButtonWithPermissions, $7efdcbe4be05bfd5$export$2e2bcd8739ae039 as DeleteButtonWithPermissions, $c356f5bf85f01e2c$export$2e2bcd8739ae039 as ListWithPermissions, $79c9804078d70be7$export$2e2bcd8739ae039 as ListActionsWithPermissions, $666a46a782bc3d6f$export$2e2bcd8739ae039 as ShowWithPermissions, $acd67d211d146755$export$2e2bcd8739ae039 as ShowActionsWithPermissions, $7dac2771cc5eb38b$export$2e2bcd8739ae039 as PermissionsButton, $c2eef7602bbbff5e$export$2e2bcd8739ae039 as AuthDialog, $479961b7e298304b$export$2e2bcd8739ae039 as SsoLoginPage, $479961b7e298304b$export$2e2bcd8739ae039 as LoginPage, $23fea069f5d2d834$export$2e2bcd8739ae039 as LocalLoginPage, $9594dfbc217337d0$export$2e2bcd8739ae039 as ResourceWithPermissions, $5ef2eaf62f09ff2c$export$2e2bcd8739ae039 as UserMenu, $7ad577d9c9c71db0$export$2e2bcd8739ae039 as useAgents, $a18ea4963428dd85$export$2e2bcd8739ae039 as useCheckAuthenticated, $3246c5a1f284b82d$export$2e2bcd8739ae039 as useCheckPermissions, $26b16c415d19fb4a$export$2e2bcd8739ae039 as usePermissionsWithRefetch, $fb967e2c34f56644$export$2e2bcd8739ae039 as useSignup, $a8046307c9dfa483$export$2e2bcd8739ae039 as PasswordStrengthIndicator, $7a0bbe6824860dfe$export$2e2bcd8739ae039 as validatePasswordStrength, $646d64648a630b24$export$19dcdb21c6965fb8 as defaultPasswordScorer, $646d64648a630b24$export$ba43bf67f3d48107 as defaultPasswordScorerOptions, $646d64648a630b24$export$a1d713a9155d58fc as createPasswordScorer, $22afd1c81635c9d9$export$2e2bcd8739ae039 as englishMessages, $509b6323d7902699$export$2e2bcd8739ae039 as frenchMessages};
 //# sourceMappingURL=index.es.js.map

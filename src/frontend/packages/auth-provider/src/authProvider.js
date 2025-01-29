@@ -306,16 +306,11 @@ const authProvider = ({
         return Promise.resolve();
       }
     },
-    getPermissions: async uri => {
+    getPermissions: async ({ uri }) => {
       if (!checkPermissions) return;
+      if (!uri) return;
 
-      // React-admin calls getPermissions with an empty object on every page refresh
-      // It also passes an object `{ params: { route: 'dashboard' } }` on the Dashboard
-      // Ignore all this until we found a way to bypass these redundant calls
-      if (typeof uri === 'object') return;
-
-      if (!uri || !uri.startsWith('http'))
-        throw new Error('The first parameter passed to getPermissions must be an URL');
+      if (!uri.startsWith('http')) throw new Error('The first parameter passed to getPermissions must be an URL:');
 
       const aclUri = getAclUri(uri);
 

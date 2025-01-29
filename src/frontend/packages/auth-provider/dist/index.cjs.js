@@ -36,15 +36,15 @@ function $parcel$interopDefault(a) {
 }
 
 $parcel$export(module.exports, "authProvider", () => $6a92eb32301846ac$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "CreateWithPermissions", () => $7c87aa71409e289a$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "EditWithPermissions", () => $6f1389d03e4735d1$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "CreateWithPermissions", () => $436b98c09d4bfc58$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "EditWithPermissions", () => $7059823a3e1f1c04$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "EditActionsWithPermissions", () => $87767302443de17c$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "EditToolbarWithPermissions", () => $41feb0ed0192b62e$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "EditButtonWithPermissions", () => $496e40eed9f00a2c$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "DeleteButtonWithPermissions", () => $79bac4913d414938$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "ListWithPermissions", () => $15811bcd3a3eb59f$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "ListActionsWithPermissions", () => $6452f20f9b47ebd6$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "ShowWithPermissions", () => $773eb052716d0fa7$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "ListWithPermissions", () => $027dac078faf6ea1$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "ListActionsWithPermissions", () => $429746dd303ba55f$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "ShowWithPermissions", () => $7789a2f600191ad3$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "ShowActionsWithPermissions", () => $43f4d313e20b20c2$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "PermissionsButton", () => $49d4f2fbe6f28cfd$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "AuthDialog", () => $4e0bf9be00aaa242$export$2e2bcd8739ae039);
@@ -336,13 +336,10 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
             } else // Other error code (404, 500, etc): no need to log out
             return Promise.resolve();
         },
-        getPermissions: async (uri)=>{
+        getPermissions: async ({ uri: uri })=>{
             if (!checkPermissions) return;
-            // React-admin calls getPermissions with an empty object on every page refresh
-            // It also passes an object `{ params: { route: 'dashboard' } }` on the Dashboard
-            // Ignore all this until we found a way to bypass these redundant calls
-            if (typeof uri === "object") return;
-            if (!uri || !uri.startsWith("http")) throw new Error("The first parameter passed to getPermissions must be an URL");
+            if (!uri) return;
+            if (!uri.startsWith("http")) throw new Error("The first parameter passed to getPermissions must be an URL:");
             const aclUri = (0, $2d06940433ec0c6c$export$4450a74bced1b745)(uri);
             try {
                 const { json: json } = await dataProvider.fetch(aclUri);
@@ -570,7 +567,9 @@ const $09c536abc6cea017$export$edca379024d80309 = {
 
 
 const $715d0a876ac5de8e$var$useCheckPermissions = (uri, mode, redirectUrl = "/")=>{
-    const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)(uri);
+    const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)({
+        uri: uri
+    });
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
     const redirect = (0, $4Uj5b$reactadmin.useRedirect)();
     (0, $4Uj5b$react.useEffect)(()=>{
@@ -590,18 +589,17 @@ const $715d0a876ac5de8e$var$useCheckPermissions = (uri, mode, redirectUrl = "/")
 var $715d0a876ac5de8e$export$2e2bcd8739ae039 = $715d0a876ac5de8e$var$useCheckPermissions;
 
 
-const $7c87aa71409e289a$var$CreateWithPermissions = (props)=>{
+const $436b98c09d4bfc58$var$CreateWithPermissions = ({ actions: actions = /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.CreateActions), {}), children: children, ...rest })=>{
     const resource = (0, $4Uj5b$reactadmin.useResourceContext)();
     const createContainerUri = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainerUri)()(resource);
     (0, $715d0a876ac5de8e$export$2e2bcd8739ae039)(createContainerUri, "create");
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Create), {
-        ...props
+        actions: actions,
+        ...rest,
+        children: children
     });
 };
-$7c87aa71409e289a$var$CreateWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.CreateActions), {})
-};
-var $7c87aa71409e289a$export$2e2bcd8739ae039 = $7c87aa71409e289a$var$CreateWithPermissions;
+var $436b98c09d4bfc58$export$2e2bcd8739ae039 = $436b98c09d4bfc58$var$CreateWithPermissions;
 
 
 
@@ -882,7 +880,9 @@ var $6bcadc28bc94109b$export$2e2bcd8739ae039 = $6bcadc28bc94109b$var$EditPermiss
 
 
 const $780e01b2b2982de2$var$useAgents = (uri)=>{
-    const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)(uri);
+    const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)({
+        uri: uri
+    });
     const authProvider = (0, $4Uj5b$reactadmin.useAuthProvider)();
     const [agents, setAgents] = (0, $4Uj5b$react.useState)({});
     // Format list of authorized agents, based on the permissions returned for the resource
@@ -1038,7 +1038,7 @@ const $eb7f8a6f7bf44740$var$PermissionsDialog = ({ open: open, onClose: onClose,
 var $eb7f8a6f7bf44740$export$2e2bcd8739ae039 = $eb7f8a6f7bf44740$var$PermissionsDialog;
 
 
-const $49d4f2fbe6f28cfd$var$PermissionsButton = ({ isContainer: isContainer })=>{
+const $49d4f2fbe6f28cfd$var$PermissionsButton = ({ isContainer: isContainer = false })=>{
     const record = (0, $4Uj5b$reactadmin.useRecordContext)();
     const resource = (0, $4Uj5b$reactadmin.useResourceContext)();
     const [showDialog, setShowDialog] = (0, $4Uj5b$react.useState)(false);
@@ -1060,9 +1060,6 @@ const $49d4f2fbe6f28cfd$var$PermissionsButton = ({ isContainer: isContainer })=>
         ]
     });
 };
-$49d4f2fbe6f28cfd$var$PermissionsButton.defaultProps = {
-    isContainer: false
-};
 var $49d4f2fbe6f28cfd$export$2e2bcd8739ae039 = $49d4f2fbe6f28cfd$var$PermissionsButton;
 
 
@@ -1070,10 +1067,14 @@ var $49d4f2fbe6f28cfd$export$2e2bcd8739ae039 = $49d4f2fbe6f28cfd$var$Permissions
 const $87767302443de17c$var$EditActionsWithPermissions = ()=>{
     const { hasList: hasList, hasShow: hasShow } = (0, $4Uj5b$reactadmin.useResourceDefinition)();
     const record = (0, $4Uj5b$reactadmin.useRecordContext)();
-    const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)(record?.id);
+    const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)({
+        uri: record?.id
+    });
     const resource = (0, $4Uj5b$reactadmin.useResourceContext)();
     const containerUri = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainerUri)()(resource);
-    const { permissions: containerPermissions } = (0, $4Uj5b$reactadmin.usePermissions)(containerUri);
+    const { permissions: containerPermissions } = (0, $4Uj5b$reactadmin.usePermissions)({
+        uri: containerUri
+    });
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactadmin.TopToolbar), {
         children: [
             hasList && containerPermissions && containerPermissions.some((p)=>(0, $09c536abc6cea017$export$dc3840a4e2a72b8c).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ListButton), {}),
@@ -1086,6 +1087,20 @@ var $87767302443de17c$export$2e2bcd8739ae039 = $87767302443de17c$var$EditActions
 
 
 
+const $7059823a3e1f1c04$var$EditWithPermissions = ({ actions: actions = /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $87767302443de17c$export$2e2bcd8739ae039), {}), children: children, ...rest })=>{
+    const recordId = (0, $4Uj5b$reactadmin.useGetRecordId)();
+    (0, $715d0a876ac5de8e$export$2e2bcd8739ae039)(recordId, "edit");
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Edit), {
+        actions: actions,
+        ...rest,
+        children: children
+    });
+};
+var $7059823a3e1f1c04$export$2e2bcd8739ae039 = $7059823a3e1f1c04$var$EditWithPermissions;
+
+
+
+
 
 
 
@@ -1095,7 +1110,9 @@ var $87767302443de17c$export$2e2bcd8739ae039 = $87767302443de17c$var$EditActions
 
 const $79bac4913d414938$var$DeleteButtonWithPermissions = (props)=>{
     const recordId = (0, $4Uj5b$reactadmin.useGetRecordId)();
-    const { permissions: permissions, isLoading: isLoading } = (0, $4Uj5b$reactadmin.usePermissions)(recordId);
+    const { permissions: permissions, isLoading: isLoading } = (0, $4Uj5b$reactadmin.usePermissions)({
+        uri: recordId
+    });
     if (!isLoading && permissions?.some((p)=>(0, $09c536abc6cea017$export$ac7b0367c0f9031e).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.DeleteButton), {
         ...props
     });
@@ -1120,33 +1137,14 @@ var $41feb0ed0192b62e$export$2e2bcd8739ae039 = $41feb0ed0192b62e$var$EditToolbar
 
 
 
-const $6f1389d03e4735d1$var$EditWithPermissions = (props)=>{
-    const recordId = (0, $4Uj5b$reactadmin.useGetRecordId)();
-    (0, $715d0a876ac5de8e$export$2e2bcd8739ae039)(recordId, "edit");
-    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Edit), {
-        ...props,
-        children: /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(props.children, {
-            toolbar: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $41feb0ed0192b62e$export$2e2bcd8739ae039), {}),
-            // Allow to override toolbar
-            ...props.children.props
-        })
-    });
-};
-$6f1389d03e4735d1$var$EditWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $87767302443de17c$export$2e2bcd8739ae039), {})
-};
-var $6f1389d03e4735d1$export$2e2bcd8739ae039 = $6f1389d03e4735d1$var$EditWithPermissions;
-
-
-
-
-
 
 
 
 const $496e40eed9f00a2c$var$EditButtonWithPermissions = (props)=>{
     const recordId = (0, $4Uj5b$reactadmin.useGetRecordId)();
-    const { permissions: permissions, isLoading: isLoading } = (0, $4Uj5b$reactadmin.usePermissions)(recordId);
+    const { permissions: permissions, isLoading: isLoading } = (0, $4Uj5b$reactadmin.usePermissions)({
+        uri: recordId
+    });
     if (!isLoading && permissions?.some((p)=>(0, $09c536abc6cea017$export$b9d0f5f3ab5e453b).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.EditButton), {
         ...props
     });
@@ -1166,13 +1164,17 @@ var $496e40eed9f00a2c$export$2e2bcd8739ae039 = $496e40eed9f00a2c$var$EditButtonW
 
 
 
+
 // Do not show Export and Refresh buttons on mobile
-const $6452f20f9b47ebd6$var$ListActionsWithPermissions = ({ bulkActions: bulkActions, sort: sort, displayedFilters: displayedFilters, exporter: exporter, filters: filters, filterValues: filterValues, onUnselectItems: onUnselectItems, selectedIds: selectedIds, showFilter: showFilter, total: total })=>{
+const $429746dd303ba55f$var$ListActionsWithPermissions = ({ sort: sort, displayedFilters: displayedFilters, exporter: exporter, filters: filters, filterValues: filterValues, showFilter: showFilter, total: total })=>{
+    const theme = (0, $4Uj5b$muimaterialstyles.useTheme)();
+    const xs = (0, $4Uj5b$muimaterial.useMediaQuery)(theme.breakpoints.down("xs"));
     const resource = (0, $4Uj5b$reactadmin.useResourceContext)();
-    const xs = (0, $4Uj5b$muimaterial.useMediaQuery)((theme)=>theme.breakpoints.down("xs"));
     const resourceDefinition = (0, $4Uj5b$reactadmin.useResourceDefinition)();
-    const createContainerUri = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainer)(resource);
-    const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)(createContainerUri);
+    const containerUri = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainerUri)()(resource);
+    const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)({
+        uri: containerUri
+    });
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactadmin.TopToolbar), {
         children: [
             filters && /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(filters, {
@@ -1181,34 +1183,27 @@ const $6452f20f9b47ebd6$var$ListActionsWithPermissions = ({ bulkActions: bulkAct
                 filterValues: filterValues,
                 context: "button"
             }),
-            resourceDefinition.hasCreate && permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$65615a101bd6f5ca).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.CreateButton), {}),
-            permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {
+            resourceDefinition.hasCreate && permissions?.some((p)=>(0, $09c536abc6cea017$export$65615a101bd6f5ca).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.CreateButton), {}),
+            permissions?.some((p)=>(0, $09c536abc6cea017$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {
                 isContainer: true
             }),
             !xs && exporter !== false && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ExportButton), {
                 disabled: total === 0,
                 sort: sort,
-                filter: filterValues,
-                exporter: exporter
-            }),
-            bulkActions && /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(bulkActions, {
                 filterValues: filterValues,
-                selectedIds: selectedIds,
-                onUnselectItems: onUnselectItems
+                exporter: exporter
             })
         ]
     });
 };
-var $6452f20f9b47ebd6$export$2e2bcd8739ae039 = $6452f20f9b47ebd6$var$ListActionsWithPermissions;
+var $429746dd303ba55f$export$2e2bcd8739ae039 = $429746dd303ba55f$var$ListActionsWithPermissions;
 
 
-const $15811bcd3a3eb59f$var$ListWithPermissions = (props)=>/*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.List), {
-        ...props
+const $027dac078faf6ea1$var$ListWithPermissions = ({ actions: actions = /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $429746dd303ba55f$export$2e2bcd8739ae039), {}), ...rest })=>/*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.List), {
+        actions: actions,
+        ...rest
     });
-$15811bcd3a3eb59f$var$ListWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $6452f20f9b47ebd6$export$2e2bcd8739ae039), {})
-};
-var $15811bcd3a3eb59f$export$2e2bcd8739ae039 = $15811bcd3a3eb59f$var$ListWithPermissions;
+var $027dac078faf6ea1$export$2e2bcd8739ae039 = $027dac078faf6ea1$var$ListWithPermissions;
 
 
 
@@ -1224,10 +1219,14 @@ var $15811bcd3a3eb59f$export$2e2bcd8739ae039 = $15811bcd3a3eb59f$var$ListWithPer
 const $43f4d313e20b20c2$var$ShowActionsWithPermissions = ()=>{
     const { hasList: hasList, hasEdit: hasEdit } = (0, $4Uj5b$reactadmin.useResourceDefinition)();
     const record = (0, $4Uj5b$reactadmin.useRecordContext)();
-    const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)(record?.id);
+    const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)({
+        uri: record?.id
+    });
     const resource = (0, $4Uj5b$reactadmin.useResourceContext)();
     const containerUri = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainerUri)()(resource);
-    const { permissions: containerPermissions } = (0, $4Uj5b$reactadmin.usePermissions)(containerUri);
+    const { permissions: containerPermissions } = (0, $4Uj5b$reactadmin.usePermissions)({
+        uri: containerUri
+    });
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactadmin.TopToolbar), {
         children: [
             hasList && containerPermissions && containerPermissions.some((p)=>(0, $09c536abc6cea017$export$dc3840a4e2a72b8c).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ListButton), {}),
@@ -1240,17 +1239,15 @@ var $43f4d313e20b20c2$export$2e2bcd8739ae039 = $43f4d313e20b20c2$var$ShowActions
 
 
 
-const $773eb052716d0fa7$var$ShowWithPermissions = (props)=>{
+const $7789a2f600191ad3$var$ShowWithPermissions = ({ actions: actions, ...rest })=>{
     const recordId = (0, $4Uj5b$reactadmin.useGetRecordId)();
     (0, $715d0a876ac5de8e$export$2e2bcd8739ae039)(recordId, "show");
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Show), {
-        ...props
+        actions: actions || /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $43f4d313e20b20c2$export$2e2bcd8739ae039), {}),
+        ...rest
     });
 };
-$773eb052716d0fa7$var$ShowWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $43f4d313e20b20c2$export$2e2bcd8739ae039), {})
-};
-var $773eb052716d0fa7$export$2e2bcd8739ae039 = $773eb052716d0fa7$var$ShowWithPermissions;
+var $7789a2f600191ad3$export$2e2bcd8739ae039 = $7789a2f600191ad3$var$ShowWithPermissions;
 
 
 
@@ -1259,7 +1256,7 @@ var $773eb052716d0fa7$export$2e2bcd8739ae039 = $773eb052716d0fa7$var$ShowWithPer
 
 
 
-const $4e0bf9be00aaa242$var$AuthDialog = ({ open: open, onClose: onClose, title: title, message: message, redirect: redirect, ...rest })=>{
+const $4e0bf9be00aaa242$var$AuthDialog = ({ open: open, onClose: onClose, title: title = "auth.dialog.login_required", message: message = "auth.message.login_to_continue", redirect: redirect, ...rest })=>{
     const login = (0, $4Uj5b$reactadmin.useLogin)();
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Dialog), {
@@ -1294,10 +1291,6 @@ const $4e0bf9be00aaa242$var$AuthDialog = ({ open: open, onClose: onClose, title:
         ]
     });
 };
-$4e0bf9be00aaa242$var$AuthDialog.defaultProps = {
-    title: "auth.dialog.login_required",
-    message: "auth.message.login_to_continue"
-};
 var $4e0bf9be00aaa242$export$2e2bcd8739ae039 = $4e0bf9be00aaa242$var$AuthDialog;
 
 
@@ -1311,7 +1304,7 @@ var $4e0bf9be00aaa242$export$2e2bcd8739ae039 = $4e0bf9be00aaa242$var$AuthDialog;
 
 const $0af8eee27f6a6e9f$var$delay = async (t)=>new Promise((resolve)=>setTimeout(resolve, t));
 // Inspired from https://github.com/marmelab/react-admin/blob/master/packages/ra-ui-materialui/src/auth/Login.tsx
-const $0af8eee27f6a6e9f$var$SsoLoginPage = ({ children: children, backgroundImage: backgroundImage, buttons: buttons, userResource: userResource, propertiesExist: propertiesExist, text: text, ...rest })=>{
+const $0af8eee27f6a6e9f$var$SsoLoginPage = ({ children: children, backgroundImage: backgroundImage, buttons: buttons, userResource: userResource = "Person", propertiesExist: propertiesExist = [], text: text, ...rest })=>{
     const containerRef = (0, $4Uj5b$react.useRef)();
     let backgroundImageLoaded = false;
     const navigate = (0, $4Uj5b$reactrouterdom.useNavigate)();
@@ -1486,19 +1479,6 @@ const $0af8eee27f6a6e9f$var$Root = (0, $4Uj5b$muimaterialstyles.styled)("div", {
             justifyContent: "center"
         }
     }));
-$0af8eee27f6a6e9f$var$SsoLoginPage.defaultProps = {
-    propertiesExist: [],
-    // TODO deprecate this
-    buttons: [
-        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
-            startIcon: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Avatar), {
-                src: "/lescommuns.jpg"
-            }),
-            children: "Les Communs"
-        })
-    ],
-    userResource: "Person"
-};
 var $0af8eee27f6a6e9f$export$2e2bcd8739ae039 = $0af8eee27f6a6e9f$var$SsoLoginPage;
 
 
@@ -2590,7 +2570,7 @@ var $cd7709c431b14d14$export$2e2bcd8739ae039 = $cd7709c431b14d14$var$getSearchPa
  *  Set to `null` or `false`, if you don't want password strength checks. Default is
  *  passwordStrength's `defaultScorer`.
  * @returns
- */ const $4c56dbfbda0fa20c$var$LocalLoginPage = ({ hasSignup: hasSignup, allowUsername: allowUsername, onLogin: onLogin, onSignup: onSignup, additionalSignupValues: additionalSignupValues, passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8) })=>{
+ */ const $4c56dbfbda0fa20c$var$LocalLoginPage = ({ hasSignup: hasSignup = true, allowUsername: allowUsername = false, onLogin: onLogin, onSignup: onSignup, additionalSignupValues: additionalSignupValues = {}, passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8) })=>{
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
     const isSignup = hasSignup && searchParams.has("signup");
@@ -2701,11 +2681,6 @@ var $cd7709c431b14d14$export$2e2bcd8739ae039 = $cd7709c431b14d14$var$getSearchPa
         })
     });
 };
-$4c56dbfbda0fa20c$var$LocalLoginPage.defaultProps = {
-    hasSignup: true,
-    allowUsername: false,
-    additionalSignupValues: {}
-};
 var $4c56dbfbda0fa20c$export$2e2bcd8739ae039 = $4c56dbfbda0fa20c$var$LocalLoginPage;
 
 
@@ -2716,8 +2691,10 @@ var $4c56dbfbda0fa20c$export$2e2bcd8739ae039 = $4c56dbfbda0fa20c$var$LocalLoginP
 
 // Not used for now. The ListWithPermissions component will handle the conditional display of the Create button.
 const $0973974d3aa8078b$var$ResourceWithPermission = ({ name: name, create: create, ...rest })=>{
-    const createContainer = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainer)(name);
-    const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)(createContainer);
+    const createContainer = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainerUri)()(name);
+    const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)({
+        uri: createContainer
+    });
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Resource), {
         ...rest,
         name: name,
@@ -2771,14 +2748,14 @@ const $9734e84907c0d5dd$var$UserMenu = ({ logout: logout, profileResource: profi
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($9734e84907c0d5dd$var$UserMenuItem, {
                 label: "auth.action.view_my_profile",
                 icon: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialAccountCircle))), {}),
-                to: `/${profileResource}/${encodeURIComponent(identity?.profileData?.id || identity.id)}/show`
+                to: `/${profileResource || "Person"}/${encodeURIComponent(identity?.profileData?.id || identity.id)}/show`
             }, "view"),
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($9734e84907c0d5dd$var$UserMenuItem, {
                 label: "auth.action.edit_my_profile",
                 icon: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialEdit))), {}),
-                to: `/${profileResource}/${encodeURIComponent(identity?.profileData?.id || identity.id)}`
+                to: `/${profileResource || "Person"}/${encodeURIComponent(identity?.profileData?.id || identity.id)}`
             }, "edit"),
-            /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(logout, {
+            /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(logout || /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Logout), {}), {
                 key: "logout"
             })
         ] : [
@@ -2792,10 +2769,6 @@ const $9734e84907c0d5dd$var$UserMenu = ({ logout: logout, profileResource: profi
             }, "login")
         ]
     });
-};
-$9734e84907c0d5dd$var$UserMenu.defaultProps = {
-    logout: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Logout), {}),
-    profileResource: "Person"
 };
 var $9734e84907c0d5dd$export$2e2bcd8739ae039 = $9734e84907c0d5dd$var$UserMenu;
 
