@@ -34,7 +34,17 @@ const selectOptionText = (option, optionText) => {
   }
 };
 
-const LocationInput = ({ mapboxConfig, source, label, parse, optionText, helperText, ...rest }) => {
+const LocationInput = ({
+  mapboxConfig,
+  source,
+  label,
+  parse,
+  optionText,
+  helperText,
+  variant = 'outlined',
+  size = 'small',
+  ...rest
+}) => {
   if (!mapboxConfig) {
     throw new Error('@semapps/geo-components : No mapbox configuration');
   }
@@ -176,14 +186,11 @@ const LocationInput = ({ mapboxConfig, source, label, parse, optionText, helperT
           </li>
         );
       }}
+      variant={variant}
+      size={size}
       {...rest}
     />
   );
-};
-
-LocationInput.defaultProps = {
-  variant: 'outlined',
-  size: 'small'
 };
 
 export default LocationInput;

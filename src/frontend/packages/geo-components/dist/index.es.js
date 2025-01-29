@@ -44,7 +44,7 @@ const $30efcd78e923a66d$var$selectOptionText = (option, optionText)=>{
     if (typeof optionText === "string") return option[optionText];
     if (typeof optionText === "function") return optionText(option);
 };
-const $30efcd78e923a66d$var$LocationInput = ({ mapboxConfig: mapboxConfig, source: source, label: label, parse: parse, optionText: optionText, helperText: helperText, ...rest })=>{
+const $30efcd78e923a66d$var$LocationInput = ({ mapboxConfig: mapboxConfig, source: source, label: label, parse: parse, optionText: optionText, helperText: helperText, variant: variant = "outlined", size: size = "small", ...rest })=>{
     if (!mapboxConfig) throw new Error("@semapps/geo-components : No mapbox configuration");
     if (!mapboxConfig.access_token) throw new Error("@semapps/geo-components : No access token in mapbox configuration");
     const record = (0, $4dBGn$useRecordContext)();
@@ -175,12 +175,10 @@ const $30efcd78e923a66d$var$LocationInput = ({ mapboxConfig: mapboxConfig, sourc
                 })
             });
         },
+        variant: variant,
+        size: size,
         ...rest
     });
-};
-$30efcd78e923a66d$var$LocationInput.defaultProps = {
-    variant: "outlined",
-    size: "small"
 };
 var $30efcd78e923a66d$export$2e2bcd8739ae039 = $30efcd78e923a66d$var$LocationInput;
 
@@ -335,7 +333,10 @@ const $6ec4ba22c7861081$var$useStyles = (0, $4dBGn$muistylesmakeStyles)(()=>({
             justifyContent: "center"
         }
     }));
-const $6ec4ba22c7861081$var$MapList = ({ latitude: latitude, longitude: longitude, label: label, description: description, popupContent: popupContent, height: height, center: center, zoom: zoom, groupClusters: groupClusters, boundToMarkers: boundToMarkers, connectMarkers: connectMarkers, ...otherProps })=>{
+const $6ec4ba22c7861081$var$MapList = ({ latitude: latitude, longitude: longitude, label: label, description: description, popupContent: popupContent = (0, $0af94055ba27b10f$export$2e2bcd8739ae039), height: height = 700, center: center = [
+    47,
+    2.213749
+], zoom: zoom = 6, groupClusters: groupClusters = true, boundToMarkers: boundToMarkers, connectMarkers: connectMarkers = false, scrollWheelZoom: scrollWheelZoom = false, ...otherProps })=>{
     const { data: data, isLoading: isLoading } = (0, $4dBGn$useListContext)();
     const xs = (0, $4dBGn$useMediaQuery)((theme)=>theme.breakpoints.down("sm"), {
         noSsr: true
@@ -407,6 +408,7 @@ const $6ec4ba22c7861081$var$MapList = ({ latitude: latitude, longitude: longitud
         center: !boundToMarkers ? center : undefined,
         zoom: !boundToMarkers ? zoom : undefined,
         bounds: bounds,
+        scrollWheelZoom: scrollWheelZoom,
         ...otherProps,
         children: [
             /*#__PURE__*/ (0, $4dBGn$jsx)((0, $4dBGn$TileLayer), {
@@ -436,18 +438,6 @@ const $6ec4ba22c7861081$var$MapList = ({ latitude: latitude, longitude: longitud
         ]
     });
 };
-$6ec4ba22c7861081$var$MapList.defaultProps = {
-    height: 700,
-    center: [
-        47,
-        2.213749
-    ],
-    zoom: 6,
-    groupClusters: true,
-    connectMarkers: false,
-    scrollWheelZoom: false,
-    popupContent: (0, $0af94055ba27b10f$export$2e2bcd8739ae039)
-};
 var $6ec4ba22c7861081$export$2e2bcd8739ae039 = $6ec4ba22c7861081$var$MapList;
 
 
@@ -466,7 +456,7 @@ const $48abf5ed53d78299$var$ChangeView = ({ center: center, zoom: zoom })=>{
 var $48abf5ed53d78299$export$2e2bcd8739ae039 = $48abf5ed53d78299$var$ChangeView;
 
 
-const $c0e51b97cc9ee3d2$var$MapField = ({ latitude: latitude, longitude: longitude, address: address, height: height, typographyProps: typographyProps, ...rest })=>{
+const $c0e51b97cc9ee3d2$var$MapField = ({ latitude: latitude, longitude: longitude, address: address, height: height = 400, zoom: zoom = 11, typographyProps: typographyProps, ...rest })=>{
     const record = (0, $4dBGn$useRecordContext)();
     const position = [
         latitude(record),
@@ -489,6 +479,7 @@ const $c0e51b97cc9ee3d2$var$MapField = ({ latitude: latitude, longitude: longitu
                     height: height
                 },
                 center: position,
+                zoom: zoom,
                 ...rest,
                 children: [
                     /*#__PURE__*/ (0, $4dBGn$jsx)((0, $48abf5ed53d78299$export$2e2bcd8739ae039), {
@@ -505,10 +496,6 @@ const $c0e51b97cc9ee3d2$var$MapField = ({ latitude: latitude, longitude: longitu
             })
         ]
     });
-};
-$c0e51b97cc9ee3d2$var$MapField.defaultProps = {
-    height: 400,
-    zoom: 11
 };
 var $c0e51b97cc9ee3d2$export$2e2bcd8739ae039 = $c0e51b97cc9ee3d2$var$MapField;
 

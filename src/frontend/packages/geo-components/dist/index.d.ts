@@ -1,10 +1,25 @@
 export function extractContext(context: any, key: any): any;
-declare namespace LocationInput {
-  namespace defaultProps {
-    let variant: string;
-    let size: string;
-  }
-}
+export function LocationInput({
+  mapboxConfig,
+  source,
+  label,
+  parse,
+  optionText,
+  helperText,
+  variant,
+  size,
+  ...rest
+}: {
+  [x: string]: any;
+  mapboxConfig: any;
+  source: any;
+  label: any;
+  parse: any;
+  optionText: any;
+  helperText: any;
+  variant?: string | undefined;
+  size?: string | undefined;
+}): import('react/jsx-runtime').JSX.Element;
 export function MapList({
   latitude,
   longitude,
@@ -17,6 +32,7 @@ export function MapList({
   groupClusters,
   boundToMarkers,
   connectMarkers,
+  scrollWheelZoom,
   ...otherProps
 }: {
   [x: string]: any;
@@ -24,30 +40,21 @@ export function MapList({
   longitude: any;
   label: any;
   description: any;
-  popupContent: any;
-  height: any;
-  center: any;
-  zoom: any;
-  groupClusters: any;
+  popupContent?: (() => import('react/jsx-runtime').JSX.Element | null) | undefined;
+  height?: number | undefined;
+  center?: number[] | undefined;
+  zoom?: number | undefined;
+  groupClusters?: boolean | undefined;
   boundToMarkers: any;
-  connectMarkers: any;
+  connectMarkers?: boolean | undefined;
+  scrollWheelZoom?: boolean | undefined;
 }): import('react/jsx-runtime').JSX.Element | null;
-declare namespace MapList {
-  namespace defaultProps {
-    export let height: number;
-    export let center: number[];
-    export let zoom: number;
-    export let groupClusters: boolean;
-    export let connectMarkers: boolean;
-    export let scrollWheelZoom: boolean;
-    export { DefaultPopupContent as popupContent };
-  }
-}
 export function MapField({
   latitude,
   longitude,
   address,
   height,
+  zoom,
   typographyProps,
   ...rest
 }: {
@@ -55,14 +62,9 @@ export function MapField({
   latitude: any;
   longitude: any;
   address: any;
-  height: any;
+  height?: number | undefined;
+  zoom?: number | undefined;
   typographyProps: any;
 }): import('react/jsx-runtime').JSX.Element | null;
-declare namespace MapField {
-  namespace defaultProps {
-    let height: number;
-    let zoom: number;
-  }
-}
 
 //# sourceMappingURL=index.d.ts.map

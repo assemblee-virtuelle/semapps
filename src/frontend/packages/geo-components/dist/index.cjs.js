@@ -57,7 +57,7 @@ const $7a57fad6c56283a6$var$selectOptionText = (option, optionText)=>{
     if (typeof optionText === "string") return option[optionText];
     if (typeof optionText === "function") return optionText(option);
 };
-const $7a57fad6c56283a6$var$LocationInput = ({ mapboxConfig: mapboxConfig, source: source, label: label, parse: parse, optionText: optionText, helperText: helperText, ...rest })=>{
+const $7a57fad6c56283a6$var$LocationInput = ({ mapboxConfig: mapboxConfig, source: source, label: label, parse: parse, optionText: optionText, helperText: helperText, variant: variant = "outlined", size: size = "small", ...rest })=>{
     if (!mapboxConfig) throw new Error("@semapps/geo-components : No mapbox configuration");
     if (!mapboxConfig.access_token) throw new Error("@semapps/geo-components : No access token in mapbox configuration");
     const record = (0, $CiwlJ$reactadmin.useRecordContext)();
@@ -188,12 +188,10 @@ const $7a57fad6c56283a6$var$LocationInput = ({ mapboxConfig: mapboxConfig, sourc
                 })
             });
         },
+        variant: variant,
+        size: size,
         ...rest
     });
-};
-$7a57fad6c56283a6$var$LocationInput.defaultProps = {
-    variant: "outlined",
-    size: "small"
 };
 var $7a57fad6c56283a6$export$2e2bcd8739ae039 = $7a57fad6c56283a6$var$LocationInput;
 
@@ -348,7 +346,10 @@ const $3929b9df2dd76406$var$useStyles = (0, ($parcel$interopDefault($CiwlJ$muist
             justifyContent: "center"
         }
     }));
-const $3929b9df2dd76406$var$MapList = ({ latitude: latitude, longitude: longitude, label: label, description: description, popupContent: popupContent, height: height, center: center, zoom: zoom, groupClusters: groupClusters, boundToMarkers: boundToMarkers, connectMarkers: connectMarkers, ...otherProps })=>{
+const $3929b9df2dd76406$var$MapList = ({ latitude: latitude, longitude: longitude, label: label, description: description, popupContent: popupContent = (0, $e9a08b6b577904d6$export$2e2bcd8739ae039), height: height = 700, center: center = [
+    47,
+    2.213749
+], zoom: zoom = 6, groupClusters: groupClusters = true, boundToMarkers: boundToMarkers, connectMarkers: connectMarkers = false, scrollWheelZoom: scrollWheelZoom = false, ...otherProps })=>{
     const { data: data, isLoading: isLoading } = (0, $CiwlJ$reactadmin.useListContext)();
     const xs = (0, $CiwlJ$muimaterial.useMediaQuery)((theme)=>theme.breakpoints.down("sm"), {
         noSsr: true
@@ -420,6 +421,7 @@ const $3929b9df2dd76406$var$MapList = ({ latitude: latitude, longitude: longitud
         center: !boundToMarkers ? center : undefined,
         zoom: !boundToMarkers ? zoom : undefined,
         bounds: bounds,
+        scrollWheelZoom: scrollWheelZoom,
         ...otherProps,
         children: [
             /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactleaflet.TileLayer), {
@@ -449,18 +451,6 @@ const $3929b9df2dd76406$var$MapList = ({ latitude: latitude, longitude: longitud
         ]
     });
 };
-$3929b9df2dd76406$var$MapList.defaultProps = {
-    height: 700,
-    center: [
-        47,
-        2.213749
-    ],
-    zoom: 6,
-    groupClusters: true,
-    connectMarkers: false,
-    scrollWheelZoom: false,
-    popupContent: (0, $e9a08b6b577904d6$export$2e2bcd8739ae039)
-};
 var $3929b9df2dd76406$export$2e2bcd8739ae039 = $3929b9df2dd76406$var$MapList;
 
 
@@ -479,7 +469,7 @@ const $a907502a25565c32$var$ChangeView = ({ center: center, zoom: zoom })=>{
 var $a907502a25565c32$export$2e2bcd8739ae039 = $a907502a25565c32$var$ChangeView;
 
 
-const $7855b7e2551c6d96$var$MapField = ({ latitude: latitude, longitude: longitude, address: address, height: height, typographyProps: typographyProps, ...rest })=>{
+const $7855b7e2551c6d96$var$MapField = ({ latitude: latitude, longitude: longitude, address: address, height: height = 400, zoom: zoom = 11, typographyProps: typographyProps, ...rest })=>{
     const record = (0, $CiwlJ$reactadmin.useRecordContext)();
     const position = [
         latitude(record),
@@ -502,6 +492,7 @@ const $7855b7e2551c6d96$var$MapField = ({ latitude: latitude, longitude: longitu
                     height: height
                 },
                 center: position,
+                zoom: zoom,
                 ...rest,
                 children: [
                     /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $a907502a25565c32$export$2e2bcd8739ae039), {
@@ -518,10 +509,6 @@ const $7855b7e2551c6d96$var$MapField = ({ latitude: latitude, longitude: longitu
             })
         ]
     });
-};
-$7855b7e2551c6d96$var$MapField.defaultProps = {
-    height: 400,
-    zoom: 11
 };
 var $7855b7e2551c6d96$export$2e2bcd8739ae039 = $7855b7e2551c6d96$var$MapField;
 
