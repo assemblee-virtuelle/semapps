@@ -62,7 +62,7 @@ const $3a4b4c603fe6b68b$var$selectOptionText = (option, optionText)=>{
     if (typeof optionText === "function") return optionText(option);
 };
 const $3a4b4c603fe6b68b$var$capitalizeFirstLetter = (string)=>string && string.charAt(0).toUpperCase() + string.slice(1);
-const $3a4b4c603fe6b68b$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $as47w$react.forwardRef)(({ fetchLexicon: fetchLexicon, source: source, defaultValue: defaultValue, label: label, parse: parse, optionText: optionText, helperText: helperText, ...rest }, ref)=>{
+const $3a4b4c603fe6b68b$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $as47w$react.forwardRef)(({ fetchLexicon: fetchLexicon, source: source, defaultValue: defaultValue, label: label, parse: parse, optionText: optionText = "label", helperText: helperText, ...rest }, ref)=>{
     const resource = (0, $as47w$reactadmin.useResourceContext)();
     const classes = $3a4b4c603fe6b68b$var$useStyles();
     const locale = (0, $as47w$reactadmin.useLocale)();
@@ -204,9 +204,6 @@ const $3a4b4c603fe6b68b$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $as47w$
         }
     });
 });
-$3a4b4c603fe6b68b$var$LexiconAutocompleteInput.defaultProps = {
-    optionText: "label"
-};
 var $3a4b4c603fe6b68b$export$2e2bcd8739ae039 = $3a4b4c603fe6b68b$var$LexiconAutocompleteInput;
 
 
