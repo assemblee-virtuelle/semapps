@@ -27,13 +27,7 @@ const ActivityService = {
       put: 'activitypub.activity.forbidden',
       delete: 'activitypub.activity.forbidden'
     },
-    description: {
-      labelMap: {
-        en: 'Activities',
-        fr: 'Activités'
-      },
-      internal: true
-    }
+    typeIndex: 'private'
   },
   dependencies: ['ldp.container'],
   actions: {

@@ -44,13 +44,7 @@ module.exports = {
       put: 'keys.public-container.forbidden',
       patch: 'keys.public-container.forbidden'
     },
-    description: {
-      labelMap: {
-        en: 'Public Keys',
-        fr: 'Clés publiques'
-      },
-      internal: true
-    }
+    typeIndex: 'private'
   },
 
   actions: {

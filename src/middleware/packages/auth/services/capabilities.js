@@ -16,12 +16,7 @@ const CapabilitiesService = {
     activateTombstones: false,
     permissions: {},
     newResourcesPermissions: {},
-    description: {
-      labelMap: {
-        en: 'Capabilities'
-      },
-      internal: true
-    }
+    typeIndex: 'private'
   },
   hooks: {
     before: {
