@@ -1,6 +1,7 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 const ControlledContainerMixin = require('./controlled-container');
+const { delay } = require('../utils');
 
 module.exports = {
   mixins: [ControlledContainerMixin],
@@ -42,6 +43,21 @@ module.exports = {
     async exist(ctx) {
       const resourceUri = await this.actions.getResourceUri({ webId: ctx.params.webId }, { parentCtx: ctx });
       return !!resourceUri;
+    },
+    async waitForResourceCreation(ctx) {
+      const { webId } = ctx.params;
+      let containerUri;
+      let attempts = 0;
+
+      do {
+        attempts += 1;
+        if (attempts > 1) await delay(1000);
+        containerUri = await this.actions.getResourceUri({ webId });
+      } while (!containerUri || attempts > 30);
+
+      if (!containerUri) throw new Error(`Resource still had not been created after 30s`);
+
+      return containerUri;
     }
   },
   hooks: {
