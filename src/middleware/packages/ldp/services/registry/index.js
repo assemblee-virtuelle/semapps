@@ -1,7 +1,6 @@
 const urlJoin = require('url-join');
 const getByTypeAction = require('./actions/getByType');
 const getByUriAction = require('./actions/getByUri');
-const getDescriptionByTypeAction = require('./actions/getDescriptionByType');
 const getUriAction = require('./actions/getUri');
 const listAction = require('./actions/list');
 const registerAction = require('./actions/register');
@@ -19,7 +18,6 @@ module.exports = {
   actions: {
     getByType: getByTypeAction,
     getByUri: getByUriAction,
-    getDescriptionByType: getDescriptionByTypeAction,
     getUri: getUriAction,
     list: listAction,
     register: registerAction
