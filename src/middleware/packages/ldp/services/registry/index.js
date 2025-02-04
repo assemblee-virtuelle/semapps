@@ -45,9 +45,10 @@ module.exports = {
         const storageUrl = await ctx.call('solid-storage.getUrl', { webId });
         const registeredContainers = await this.actions.list({ dataset: accountData.username }, { parentCtx: ctx });
         // Go through each registered containers
-        for (const container of Object.values(registeredContainers)) {
+        for (const options of Object.values(registeredContainers)) {
           await ctx.call('ldp.container.createAndAttach', {
-            containerUri: urlJoin(storageUrl, container.path),
+            containerUri: urlJoin(storageUrl, options.path),
+            options,
             webId
           });
         }

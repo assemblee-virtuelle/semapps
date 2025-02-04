@@ -17,128 +17,75 @@ module.exports = {
     register: {
       visibility: 'public',
       params: {
-        type: { type: 'string' },
+        types: { type: 'array' },
         containerUri: { type: 'string' },
         webId: { type: 'string' },
         private: { type: 'boolean', default: false }
       },
       async handler(ctx) {
-        let { type, containerUri, webId, private } = ctx.params;
+        let { types, containerUri, webId, private } = ctx.params;
 
-        const [expandedType] = await ctx.call('jsonld.parser.expandTypes', { types: [type] });
+        // Wait for the container with type registrations to be created
+        const typeRegistrationsContainerUri = await this.actions.getContainerUri({ webId });
+        await this.actions.waitForContainerCreation({ containerUri: typeRegistrationsContainerUri });
 
-        // Check if the container was already registered
-        let existingRegistration = await this.actions.getByContainerUri({ containerUri, webId });
+        // Check if the provided container was already registered
+        // if (!(await this.actions.getByContainerUri({ containerUri, webId }))) {
+        //   throw new Error(
+        //     `Cannot register ${containerUri} for type ${types.join(', ')} because the container is already registered.`
+        //   );
+        // }
 
-        if (existingRegistration) {
-          const expandedRegisteredTypes = await ctx.call('jsonld.parser.expandTypes', {
-            types: existingRegistration['solid:forClass']
-          });
+        const expandedTypes = await ctx.call('jsonld.parser.expandTypes', { types });
 
-          // If the container is registered with other types, append the new type
-          if (!expandedRegisteredTypes.includes(expandedType)) {
-            await this.actions.patch({
-              resourceUri: existingRegistration.id,
-              triplesToAdd: [
-                triple(
-                  namedNode(existingRegistration.id),
-                  namedNode('http://www.w3.org/ns/solid/terms#forClass'),
-                  namedNode(expandedType)
-                )
-              ],
-              webId
-            });
-          }
-
-          return existingRegistration;
-        } else {
-          // Ensure there is no registration for this type on another container
-          // existingRegistration = await this.actions.getByType({ type: expandedType, webId });
-
-          // if (existingRegistration && existingRegistration['solid:instanceContainer'] !== containerUri) {
-          //   throw new Error(
-          //     `Cannot register ${containerUri} for type ${type} because the container ${existingRegistration['solid:instanceContainer']} is already registered for this type.`
-          //   );
-          // }
-
-          // Create the type registration
-          const registrationUri = await this.actions.post(
-            {
-              resource: {
-                type: 'solid:TypeRegistration',
-                'solid:forClass': expandedType,
-                'solid:instanceContainer': containerUri
-              },
-              permissions: private ? {} : { anon: { read: true } },
-              contentType: MIME_TYPES.JSON,
-              webId
+        // Create the type registration
+        const registrationUri = await this.actions.post(
+          {
+            resource: {
+              type: 'solid:TypeRegistration',
+              'solid:forClass': expandedTypes,
+              'solid:instanceContainer': containerUri
             },
-            { parentCtx: ctx }
-          );
-
-          // Find the public or private TypeIndex linked with the WebId
-          const indexUri = private
-            ? await ctx.call('type-indexes.getPrivateIndex', { webId })
-            : await ctx.call('type-indexes.getPublicIndex', { webId });
-          if (!indexUri)
-            throw new Error(`No ${private ? 'private' : 'public'} type index associated with webId ${webId}`);
-
-          // Attach it to the TypeIndex
-          await ctx.call('type-indexes.patch', {
-            resourceUri: indexUri,
-            triplesToAdd: [
-              triple(
-                namedNode(indexUri),
-                namedNode('http://www.w3.org/ns/solid/terms#hasTypeRegistration'),
-                namedNode(registrationUri)
-              )
-            ],
+            contentType: MIME_TYPES.JSON,
             webId
-          });
-
-          return registrationUri;
-        }
-      }
-    },
-    attachDescription: {
-      visibility: 'public',
-      params: {
-        type: { type: 'string' },
-        webId: { type: 'string' },
-        labelMap: { type: 'object', optional: true },
-        labelPredicate: { type: 'string', optional: true }
-      },
-      async handler(ctx) {
-        const { type, webId, labelMap, labelPredicate } = ctx.params;
-
-        const [registration] = await this.actions.getByType({ type, webId }, { parentCtx: ctx });
-        if (!registration) throw new Error(`No registration found with type ${type}`);
-
-        let label;
-
-        if (labelMap) {
-          const userData = await ctx.call('ldp.resource.get', {
-            resourceUri: webId,
-            accept: MIME_TYPES.JSON,
-            webId
-          });
-
-          const userLocale = userData['schema:knowsLanguage'];
-
-          if (userLocale) {
-            label = labelMap?.[userLocale] || labelMap?.en;
-          }
-        }
-
-        await ctx.call('type-registrations.put', {
-          resource: {
-            ...registration,
-            'skos:prefLabel': label,
-            'apods:labelPredicate': labelPredicate
           },
-          contentType: MIME_TYPES.JSON,
+          { parentCtx: ctx }
+        );
+
+        // Give anonymous read permission to public type registrations
+        if (!private) {
+          await ctx.call('webacl.resource.addRights', {
+            resourceUri: registrationUri,
+            additionalRights: {
+              anon: {
+                read: true
+              }
+            },
+            webId: 'system'
+          });
+        }
+
+        // Find the public or private TypeIndex linked with the WebId
+        const indexUri = private
+          ? await ctx.call('type-indexes.getPrivateIndex', { webId })
+          : await ctx.call('type-indexes.getPublicIndex', { webId });
+        if (!indexUri)
+          throw new Error(`No ${private ? 'private' : 'public'} type index associated with webId ${webId}`);
+
+        // Attach it to the TypeIndex
+        await ctx.call('type-indexes.patch', {
+          resourceUri: indexUri,
+          triplesToAdd: [
+            triple(
+              namedNode(indexUri),
+              namedNode('http://www.w3.org/ns/solid/terms#hasTypeRegistration'),
+              namedNode(registrationUri)
+            )
+          ],
           webId
         });
+
+        return registrationUri;
       }
     },
     /**
@@ -282,6 +229,26 @@ module.exports = {
             }
           }
         }
+      }
+    }
+  },
+  events: {
+    async 'ldp.container.created'(ctx) {
+      const { containerUri, options, webId } = ctx.params;
+
+      if (options?.typeIndex) {
+        // TODO wait for type indexes creation
+        await ctx.call('type-indexes.waitForIndexCreation', { type: options.typeIndex, webId });
+
+        await this.actions.register(
+          {
+            types: arrayOf(options?.acceptedTypes),
+            containerUri,
+            webId,
+            private: options.typeIndex === 'private'
+          },
+          { parentCtx: ctx }
+        );
       }
     }
   }

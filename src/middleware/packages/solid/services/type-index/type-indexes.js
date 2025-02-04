@@ -1,5 +1,4 @@
-const urlJoin = require('url-join');
-const { ControlledContainerMixin, DereferenceMixin, arrayOf } = require('@semapps/ldp');
+const { ControlledContainerMixin, DereferenceMixin, delay } = require('@semapps/ldp');
 const { solid, skos, apods } = require('@semapps/ontologies');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { namedNode, triple } = require('@rdfjs/data-model');
@@ -11,6 +10,7 @@ module.exports = {
   settings: {
     acceptedTypes: ['solid:TypeIndex'],
     permissions: {},
+    newResourcesPermissions: {},
     excludeFromMirror: true,
     activateTombstones: false,
     // DereferenceMixin settings
@@ -38,15 +38,21 @@ module.exports = {
             type: ['solid:TypeIndex', 'solid:ListedDocument']
           },
           contentType: MIME_TYPES.JSON,
-          permissions: {
-            anon: {
-              read: true
-            }
-          },
           webId
         },
         { parentCtx: ctx }
       );
+
+      // Give anonymous read permission
+      await ctx.call('webacl.resource.addRights', {
+        resourceUri: indexUri,
+        additionalRights: {
+          anon: {
+            read: true
+          }
+        },
+        webId: 'system'
+      });
 
       await ctx.call('ldp.resource.patch', {
         resourceUri: webId,
@@ -73,7 +79,6 @@ module.exports = {
           resource: {
             type: ['solid:TypeIndex', 'solid:UnlistedDocument']
           },
-          permissions: {},
           contentType: MIME_TYPES.JSON,
           webId
         },
@@ -111,7 +116,31 @@ module.exports = {
 
       const preferencesFileUri = await ctx.call('solid-preferences-file.get', { webId });
 
-      return preferencesFileUri['solid:privateTypeIndex'];
+      return preferencesFileUri?.['solid:privateTypeIndex'];
+    },
+    async waitForIndexCreation(ctx) {
+      const { type, webId } = ctx.params;
+      let indexUri;
+      let attempts = 0;
+
+      do {
+        attempts += 1;
+        if (attempts > 1) await delay(1000);
+        try {
+          indexUri =
+            type === 'private'
+              ? await this.actions.getPrivateIndex({ webId })
+              : await this.actions.getPublicIndex({ webId });
+        } catch (e) {
+          // Ignore 404 errors
+          if (e.code !== 404) throw e;
+        }
+      } while (!indexUri || attempts > 30);
+
+      if (!indexUri)
+        throw new Error(`${type === 'private' ? 'Private' : 'Public'} TypeIndex still has not been created after 30s`);
+
+      return indexUri;
     }
   },
   methods: {
@@ -123,7 +152,6 @@ module.exports = {
   events: {
     async 'auth.registered'(ctx) {
       const { webId } = ctx.params;
-      const podUrl = await ctx.call('solid-storage.getUrl', { webId });
 
       // Wait until the /solid/type-index container has been created for the user
       const indexesContainerUri = await this.actions.getContainerUri({ webId }, { parentCtx: ctx });
@@ -135,31 +163,6 @@ module.exports = {
 
       await this.actions.createPublicIndex({ webId }, { parentCtx: ctx });
       await this.actions.createPrivateIndex({ webId }, { parentCtx: ctx });
-
-      const registeredContainers = await ctx.call('ldp.registry.list');
-
-      // Go through each registered container
-      for (const container of Object.values(registeredContainers)) {
-        if (container.podsContainer !== true) {
-          const containerUri = urlJoin(podUrl, container.path);
-          for (const type of arrayOf(container.acceptedTypes)) {
-            this.logger.info(`Registering ${containerUri} with type ${type}...`);
-            await ctx.call('type-registrations.register', {
-              type,
-              containerUri,
-              webId,
-              private: container.description?.internal
-            });
-            if (container.description) {
-              await ctx.call('type-registrations.attachDescription', {
-                type,
-                webId,
-                ...container.description
-              });
-            }
-          }
-        }
-      }
     }
   }
 };
