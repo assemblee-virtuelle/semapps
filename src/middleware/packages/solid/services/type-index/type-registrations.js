@@ -103,7 +103,7 @@ module.exports = {
       async handler(ctx) {
         const { containerUri, appUri, webId } = ctx.params;
 
-        let [registration] = await this.actions.getByContainerUri({ containerUri, webId }, { parentCtx: ctx });
+        let registration = await this.actions.getByContainerUri({ containerUri, webId }, { parentCtx: ctx });
         if (!registration) throw new Error(`No registration found for container ${containerUri}`);
 
         // Add the app to available apps
@@ -132,7 +132,7 @@ module.exports = {
       async handler(ctx) {
         const { containerUri, appUri, webId } = ctx.params;
 
-        let [registration] = await this.actions.getByContainerUri({ containerUri, webId }, { parentCtx: ctx });
+        let registration = await this.actions.getByContainerUri({ containerUri, webId }, { parentCtx: ctx });
         if (!registration) throw new Error(`No registration found for container ${containerUri}`);
 
         // Remove the app from available apps
