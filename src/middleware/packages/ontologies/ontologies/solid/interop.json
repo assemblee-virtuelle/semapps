@@ -76,7 +76,7 @@
       "@type": "@id"
     },
     "interop:updatedAt": {
-      "@type": "@id"
+      "@type": "xsd:dateTime"
     },
     "interop:registeredShapeTree": {
       "@type": "@id"

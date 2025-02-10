@@ -22,18 +22,26 @@ module.exports = async function get(ctx) {
         ...ctx.meta.headers
       };
 
+      // See https://www.w3.org/TR/ldp/#prefer-parameters
+      const doNotIncludeResources =
+        ctx.meta.headers?.prefer === 'return=representation; include="http://www.w3.org/ns/ldp#PreferMinimalContainer"';
+
       res = await ctx.call(
         controlledActions?.list || 'ldp.container.get',
         cleanUndefined({
           containerUri: uri,
           accept,
-          jsonContext: parseJson(ctx.meta.headers?.jsonldcontext)
+          jsonContext: parseJson(ctx.meta.headers?.jsonldcontext),
+          doNotIncludeResources
         })
       );
 
+      if (doNotIncludeResources) {
+        if (!ctx.meta.$responseHeaders) ctx.meta.$responseHeaders = {};
+        ctx.meta.$responseHeaders['Preference-Applied'] = 'return=representation';
+      }
+
       ctx.meta.$responseType = ctx.meta.$responseType || accept;
-      if (ctx.meta.$responseType === 'application/ld+json')
-        ctx.meta.$responseType = `application/ld+json; profile="https://www.w3.org/ns/activitystreams"`;
     } else {
       /*
        * LDP RESOURCE
@@ -94,13 +102,15 @@ module.exports = async function get(ctx) {
         );
 
         ctx.meta.$responseType = ctx.meta.$responseType || accept;
-        if (ctx.meta.$responseType === 'application/ld+json')
-          ctx.meta.$responseType = `application/ld+json; profile="https://www.w3.org/ns/activitystreams"`;
       }
     }
 
     if (!ctx.meta.$responseHeaders) ctx.meta.$responseHeaders = {};
     ctx.meta.$responseHeaders.Link = await ctx.call('ldp.link-header.get', { uri });
+
+    // Hack to make our servers work with Mastodon servers, which except a special profile
+    if (ctx.meta.$responseType === 'application/ld+json')
+      ctx.meta.$responseType = `application/ld+json; profile="https://www.w3.org/ns/activitystreams"`;
 
     return res;
   } catch (e) {

@@ -95,13 +95,14 @@ Get the LDP container with all its resources (which are dereferenced)
 
 ##### Parameters
 
-| Property       | Type                | Default             | Description                                        |
-| -------------- | ------------------- | ------------------- | -------------------------------------------------- |
-| `containerUri` | `String`            | **required**        | URI of container                                   |
-| `accept`       | `String`            | **required**        | Type to return                                     |
-| `filters`      | `Object`            |                     | Key/value with predicates and value                |
-| `jsonContext`  | `Object`or `String` |                     | JSON-LD context to use when compacting the results |
-| `webId`        | `String`            | Logged user's webId | User doing the action                              |
+| Property                | Type                | Default             | Description                                        |
+| ----------------------- | ------------------- | ------------------- | -------------------------------------------------- |
+| `containerUri`          | `String`            | **required**        | URI of container                                   |
+| `accept`                | `String`            | **required**        | Type to return                                     |
+| `filters`               | `Object`            |                     | Key/value with predicates and value                |
+| `doNotIncludeResources` | `Boolean`           | false               | If true, does not return the contained resources   |
+| `jsonContext`           | `Object`or `String` |                     | JSON-LD context to use when compacting the results |
+| `webId`                 | `String`            | Logged user's webId | User doing the action                              |
 
 You can also pass parameters defined in the [container options](index.md#container-options).
 
