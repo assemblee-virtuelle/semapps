@@ -249,7 +249,7 @@ module.exports = {
         // Delete all existing type registration of the given user
         // We don't use ldp.container.clear to ensure the delete hook below is called
 
-        const typeRegistrationsContainerUri = this.actions.getContainerUri({ webId });
+        const typeRegistrationsContainerUri = await this.actions.getContainerUri({ webId });
         const typeRegistrationsUris = await ctx.call('ldp.container.getUris', {
           containerUri: typeRegistrationsContainerUri
         });
