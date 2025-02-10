@@ -128,6 +128,18 @@ describe('LDP handling through API', () => {
     });
   });
 
+  // See https://www.w3.org/TR/ldp/#prefer-parameters
+  test('Get container with minimal representation', async () => {
+    const { json, headers } = await fetchServer(containerUri, {
+      headers: new fetch.Headers({
+        Prefer: 'return=representation; include="http://www.w3.org/ns/ldp#PreferMinimalContainer"'
+      })
+    });
+
+    expect(json['ldp:contains']).toBeUndefined();
+    expect(headers.get('Preference-Applied')).toBe('return=representation');
+  });
+
   test('Replace resource', async () => {
     await fetchServer(resourceUri, {
       method: 'PUT',
