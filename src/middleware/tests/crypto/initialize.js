@@ -76,7 +76,7 @@ const initialize = async (port, withOldKeyStore = false) => {
       'keys.container',
       'keys.public-container',
       'keys.migration',
-      'signature.vc'
+      'signature.data-integrity'
     ],
     5_000
   );
