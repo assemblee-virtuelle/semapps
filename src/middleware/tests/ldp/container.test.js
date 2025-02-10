@@ -194,10 +194,10 @@ describe('LDP container tests', () => {
       '@type': ['ldp:Container', 'ldp:BasicContainer'],
       'ldp:contains': [
         {
-          'pair:label': 'My project 2'
+          'pair:label': 'My project'
         },
         {
-          'pair:label': 'My project'
+          'pair:label': 'My project 2'
         }
       ]
     });
@@ -220,6 +220,16 @@ describe('LDP container tests', () => {
         }
       ]
     });
+  });
+
+  test('Get container without resources', async () => {
+    const container = await broker.call('ldp.container.get', {
+      containerUri: `${CONFIG.HOME_URL}resources`,
+      accept: MIME_TYPES.JSON,
+      doNotIncludeResources: true
+    });
+
+    expect(container['ldp:contained']).toBeUndefined();
   });
 
   test('Detach a resource from a container', async () => {
