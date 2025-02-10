@@ -234,22 +234,42 @@ module.exports = {
         return registrations.map(r => r['solid:instanceContainer']);
       }
     },
-    addMissing: {
+    /**
+     * Reset the public and private registries of the given user
+     * Based on the information found on the LDP registry
+     */
+    resetFromRegistry: {
       visibility: 'public',
+      params: {
+        webId: { type: 'string' }
+      },
       async handler(ctx) {
-        const accounts = await ctx.call('auth.account.find');
+        const { webId } = ctx.params;
+
+        // Delete all existing type registration of the given user
+        // We don't use ldp.container.clear to ensure the delete hook below is called
+
+        const typeRegistrationsContainerUri = this.actions.getContainerUri({ webId });
+        const typeRegistrationsUris = await ctx.call('ldp.container.getUris', {
+          containerUri: typeRegistrationsContainerUri
+        });
+
+        for (const typeRegistrationUri of typeRegistrationsUris) {
+          await this.actions.delete({ resourceUri: typeRegistrationUri, webId: 'system' });
+        }
+
+        // Go through each registered container and register back the type registration
+
         const registeredContainers = await ctx.call('ldp.registry.list');
-        // Go through each Pod
-        for (const { webId } of accounts) {
-          const podUrl = await ctx.call('solid-storage.getUrl', { webId });
-          // Go through each registered container
-          for (const container of Object.values(registeredContainers)) {
-            if (container.podsContainer !== true) {
-              const containerUri = urlJoin(podUrl, container.path);
-              for (const type of arrayOf(container.acceptedTypes)) {
-                await this.actions.register({ type, containerUri, webId }, { parentCtx: ctx });
-              }
-            }
+        const podUrl = await ctx.call('solid-storage.getUrl', { webId });
+
+        for (const options of Object.values(registeredContainers)) {
+          if (options.typeIndex) {
+            const containerUri = urlJoin(podUrl, options.path);
+            await this.actions.register(
+              { types: arrayOf(options.acceptedTypes), containerUri, webId, private: options.typeIndex === 'private' },
+              { parentCtx: ctx }
+            );
           }
         }
       }
@@ -272,6 +292,26 @@ module.exports = {
           },
           { parentCtx: ctx }
         );
+      }
+    },
+    hooks: {
+      after: {
+        async delete(ctx, res) {
+          const { resourceUri, dataset } = res;
+
+          // Detach the type registration from the index
+          await ctx.call('triplestore.update', {
+            query: `
+              DELETE WHERE { 
+                ?typeIndex <http://www.w3.org/ns/solid/terms#hasTypeRegistration> <${resourceUri}> . 
+              }
+            `,
+            dataset,
+            webId: 'system'
+          });
+
+          return res;
+        }
       }
     }
   }
