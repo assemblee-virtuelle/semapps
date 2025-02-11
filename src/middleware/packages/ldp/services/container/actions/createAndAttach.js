@@ -12,11 +12,11 @@ module.exports = {
     containerUri: { type: 'string' },
     title: { type: 'string', optional: true },
     description: { type: 'string', optional: true },
-    permissions: { type: 'multi', rules: [{ type: 'object' }, { type: 'function' }], optional: true }, // Used by the WebAclMiddleware
+    options: { type: 'object', optional: true },
     webId: { type: 'string', optional: true } // Required in Pod provider config
   },
   async handler(ctx) {
-    const { containerUri, title, description, permissions, webId } = ctx.params;
+    const { containerUri, title, description, options, webId } = ctx.params;
 
     const exists = await ctx.call('ldp.container.exist', { containerUri, webId: 'system' });
 
@@ -47,7 +47,7 @@ module.exports = {
         if (!parentExists) {
           // Recursively create the parent containers, without title/description/permissions
           await this.actions.createAndAttach(
-            { containerUri: parentContainerUri, permissions: {}, webId },
+            { containerUri: parentContainerUri, options: {}, webId },
             { parentCtx: ctx }
           );
         }
@@ -59,8 +59,8 @@ module.exports = {
           containerUri,
           title,
           description,
-          permissions,
-          webId: 'system'
+          options,
+          webId
         },
         { parentCtx: ctx }
       );

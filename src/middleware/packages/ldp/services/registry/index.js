@@ -1,7 +1,6 @@
 const urlJoin = require('url-join');
 const getByTypeAction = require('./actions/getByType');
 const getByUriAction = require('./actions/getByUri');
-const getDescriptionByTypeAction = require('./actions/getDescriptionByType');
 const getUriAction = require('./actions/getUri');
 const listAction = require('./actions/list');
 const registerAction = require('./actions/register');
@@ -19,7 +18,6 @@ module.exports = {
   actions: {
     getByType: getByTypeAction,
     getByUri: getByUriAction,
-    getDescriptionByType: getDescriptionByTypeAction,
     getUri: getUriAction,
     list: listAction,
     register: registerAction
@@ -45,9 +43,10 @@ module.exports = {
         const storageUrl = await ctx.call('solid-storage.getUrl', { webId });
         const registeredContainers = await this.actions.list({ dataset: accountData.username }, { parentCtx: ctx });
         // Go through each registered containers
-        for (const container of Object.values(registeredContainers)) {
+        for (const options of Object.values(registeredContainers)) {
           await ctx.call('ldp.container.createAndAttach', {
-            containerUri: urlJoin(storageUrl, container.path),
+            containerUri: urlJoin(storageUrl, options.path),
+            options,
             webId
           });
         }
