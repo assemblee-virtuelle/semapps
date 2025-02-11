@@ -293,25 +293,25 @@ module.exports = {
           { parentCtx: ctx }
         );
       }
-    },
-    hooks: {
-      after: {
-        async delete(ctx, res) {
-          const { resourceUri, dataset } = res;
+    }
+  },
+  hooks: {
+    after: {
+      async delete(ctx, res) {
+        const { resourceUri, dataset } = res;
 
-          // Detach the type registration from the index
-          await ctx.call('triplestore.update', {
-            query: `
-              DELETE WHERE { 
-                ?typeIndex <http://www.w3.org/ns/solid/terms#hasTypeRegistration> <${resourceUri}> . 
-              }
-            `,
-            dataset,
-            webId: 'system'
-          });
+        // Detach the type registration from the index
+        await ctx.call('triplestore.update', {
+          query: `
+            DELETE WHERE { 
+              ?typeIndex <http://www.w3.org/ns/solid/terms#hasTypeRegistration> <${resourceUri}> . 
+            }
+          `,
+          dataset,
+          webId: 'system'
+        });
 
-          return res;
-        }
+        return res;
       }
     }
   }
