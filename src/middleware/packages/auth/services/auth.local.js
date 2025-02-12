@@ -74,7 +74,7 @@ const AuthLocalService = {
 
         ctx.emit('auth.registered', { webId, profileData, accountData });
 
-        const token = await ctx.call('auth.jwt.generateToken', { payload: { webId } });
+        const token = await ctx.call('auth.jwt.generateServerSignedToken', { payload: { webId } });
 
         return { token, webId, newUser: true };
       } catch (e) {
@@ -90,7 +90,7 @@ const AuthLocalService = {
 
       ctx.emit('auth.connected', { webId: accountData.webId, accountData }, { meta: { webId: null, dataset: null } });
 
-      const token = await ctx.call('auth.jwt.generateToken', { payload: { webId: accountData.webId } });
+      const token = await ctx.call('auth.jwt.generateServerSignedToken', { payload: { webId: accountData.webId } });
 
       return { token, webId: accountData.webId, newUser: false };
     },

@@ -73,7 +73,7 @@ const AuthMixin = {
       }
 
       if (method === 'Bearer') {
-        const payload = await ctx.call('auth.jwt.verifyToken', { token });
+        const payload = await ctx.call('auth.jwt.verifyServerSignedToken', { token });
         if (payload) {
           ctx.meta.tokenPayload = payload;
           ctx.meta.webId = payload.webId;
@@ -83,17 +83,6 @@ const AuthMixin = {
         // TODO make sure token is deleted client-side
         ctx.meta.webId = 'anon';
         return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
-      } else if ((method === 'Capability' || req.$params.capability) && this.settings.podProvider) {
-        const capabilityUri = token || req.$params.capability;
-        const capability = await this.actions.getValidateCapability({
-          capabilityUri,
-          username: req.parsedUrl.match(/[^/]+/)[0]
-        });
-
-        ctx.meta.webId = 'anon';
-        req.$ctx.meta.webId = 'anon';
-        req.$ctx.meta.authorization = { capability };
-        return Promise.resolve(null);
       }
 
       // No valid auth method given.
@@ -108,26 +97,36 @@ const AuthMixin = {
       const [method, token] = req.headers.authorization && req.headers.authorization.split(' ');
 
       if (!token) {
-        ctx.meta.webId = 'anon';
         return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
       }
 
       if (method === 'Bearer') {
-        const payload = await ctx.call('auth.jwt.verifyToken', { token });
-        if (payload) {
-          ctx.meta.tokenPayload = payload;
-          ctx.meta.webId = payload.webId;
-          return Promise.resolve(payload);
+        // Validate if the token was signed by server (registered user).
+        const serverSignedPayload = await ctx.call('auth.jwt.verifyServerSignedToken', { token });
+        if (serverSignedPayload) {
+          ctx.meta.tokenPayload = serverSignedPayload;
+          ctx.meta.webId = serverSignedPayload.webId;
+          return Promise.resolve(serverSignedPayload);
         }
+
+        // The payload might not be verified yet.
       } else if ((method === 'Capability' || req.$params.capability) && this.settings.podProvider) {
+        // TODO: ^This needs to be changed to support data integrity-style http headers.
+
+        // What to do here:
+        // Validate if the capability is valid
+        // Validate if the request/path accepts auth via capability.
+
         const capabilityUri = token || req.$params.capability;
         const capability = await this.actions.getValidateCapability({
           capabilityUri,
           username: req.parsedUrl.match(/[^/]+/)[0]
         });
 
+        // The webId will not necessarily be anon.
+        // TODO: Look if/how services should allow this stuff at all.
+        //  Make it a white-list approach?
         ctx.meta.webId = 'anon';
-
         req.$ctx.meta.webId = 'anon';
         req.$ctx.meta.authorization = { capability };
         if (capability) {
@@ -198,7 +197,7 @@ const AuthMixin = {
 
     async impersonate(ctx) {
       const { webId } = ctx.params;
-      return await ctx.call('auth.jwt.generateToken', {
+      return await ctx.call('auth.jwt.generateServerSignedToken', {
         payload: {
           webId
         }
