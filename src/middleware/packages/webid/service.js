@@ -15,7 +15,6 @@ const WebIdService = {
     acceptedTypes: ['http://xmlns.com/foaf/0.1/Person'],
     defaultAccept: 'text/turtle',
     podsContainer: false,
-    typeIndex: 'private',
     // DereferenceMixin
     dereferencePlan: [
       {

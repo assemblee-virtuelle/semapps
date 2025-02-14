@@ -45,8 +45,7 @@ const CollectionService = {
           };
       }
     },
-    excludeFromMirror: true,
-    typeIndex: 'private'
+    excludeFromMirror: true
   },
   dependencies: ['triplestore', 'ldp.resource'],
   actions: {

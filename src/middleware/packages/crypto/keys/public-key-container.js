@@ -43,8 +43,7 @@ module.exports = {
     controlledActions: {
       put: 'keys.public-container.forbidden',
       patch: 'keys.public-container.forbidden'
-    },
-    typeIndex: 'private'
+    }
   },
 
   actions: {

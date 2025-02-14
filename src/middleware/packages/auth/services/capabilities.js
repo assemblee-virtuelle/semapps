@@ -15,8 +15,7 @@ const CapabilitiesService = {
     excludeFromMirror: true,
     activateTombstones: false,
     permissions: {},
-    newResourcesPermissions: {},
-    typeIndex: 'private'
+    newResourcesPermissions: {}
   },
   hooks: {
     before: {

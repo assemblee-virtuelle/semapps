@@ -26,8 +26,7 @@ const ActivityService = {
       patch: 'activitypub.activity.forbidden',
       put: 'activitypub.activity.forbidden',
       delete: 'activitypub.activity.forbidden'
-    },
-    typeIndex: 'private'
+    }
   },
   dependencies: ['ldp.container'],
   actions: {

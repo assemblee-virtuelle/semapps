@@ -44,8 +44,7 @@ module.exports = {
       put: 'keys.container.forbidden',
       patch: 'keys.container.forbidden',
       delete: 'keys.delete'
-    },
-    typeIndex: 'private'
+    }
   },
   actions: {
     async forbidden(ctx) {
