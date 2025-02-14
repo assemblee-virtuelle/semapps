@@ -45,10 +45,11 @@ const SignatureService = {
      * If the signature is valid, it returns the actorUri and the publicKeyPem used to verify the signature.
      * Else, it returns `{isValid: false}`.
      * @param {object} ctx Context
-     * @param {string} ctx.url The URL of the request
-     * @param {string} ctx.path The path of the request
-     * @param {string} ctx.method The method of the request
-     * @param {object} ctx.headers The headers of the request
+     * @param {object} ctx.params Params
+     * @param {string} ctx.params.url The URL of the request
+     * @param {string} ctx.params.path The path of the request
+     * @param {string} ctx.params.method The method of the request
+     * @param {object} ctx.params.headers The headers of the request
      * @returns {Promise<{isValid: boolean, actorUri: string, publicKeyPem: string}>}
      */
     async verifyHttpSignature(ctx) {

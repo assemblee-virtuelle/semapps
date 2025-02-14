@@ -101,6 +101,7 @@ const KeysService = {
         return matchedKeys;
       }
     },
+
     /**
      * Gets the keys by type that are present in the actor's webId.
      * If none for the type is present, a new one is created and returned.
@@ -121,7 +122,7 @@ const KeysService = {
         const publicKeys =
           keyType === KEY_TYPES.RSA
             ? arrayOf(webIdDoc.publicKey)
-            : arrayOf(webIdDoc.assertionMethod).filter(key => (key.type || key['@type']) === keyType);
+            : arrayOf(webIdDoc.assertionMethod).filter(key => arrayOf(key.type || key['@type']).includes(keyType));
 
         if (publicKeys.length === 0) {
           // No keys found, we create a new one.
@@ -136,7 +137,7 @@ const KeysService = {
         return await Promise.all(
           publicKeys.map(async key => {
             const publicKeyId = key.id || key['@id'];
-            return await ctx.call('ldp.resource.get', {
+            return await ctx.call('keys.container.get', {
               resourceUri: await this.actions.findPrivateKeyUri({ publicKeyUri: publicKeyId }, { parentCtx: ctx }),
               accept: MIME_TYPES.JSON,
               webId
@@ -145,6 +146,7 @@ const KeysService = {
         );
       }
     },
+
     /**
      * Returns a signing key instance for a given key or key type. If no key is available, a new one is created.
      * Currently supports Ed25519Multikey only.
@@ -167,11 +169,13 @@ const KeysService = {
         // Note: Key purposes are not regarded, as they are currently not used.
         const keyObject =
           ctx.params.keyObject || keyId
-            ? await ctx.call('ldp.resource.get', { resourceUri: keyId, webId, accept: MIME_TYPES.JSON })
+            ? await ctx.call('keys.container.get', { resourceUri: keyId, webId, accept: MIME_TYPES.JSON })
             : (await ctx.call('keys.getOrCreateWebIdKeys', { webId, keyType }))[0];
 
         // We support ed25519 only.
-        if (!arrayOf(keyObject.type || keyObject['@type']).includes(KEY_TYPES.ED25519)) {
+        if (
+          !arrayOf(keyObject.type || keyObject['@type']).some(type => ['Multikey', KEY_TYPES.MULTI_KEY].includes(type))
+        ) {
           throw new Error('Only ED25519 keys are supported by this action.');
         }
 
@@ -322,6 +326,7 @@ const KeysService = {
         });
       }
     },
+
     /**
      * Attaches a given key to the webId document.
      * If the key is not published yet, it will be published in the `/public-keys` container.
