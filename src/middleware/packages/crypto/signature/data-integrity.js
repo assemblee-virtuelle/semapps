@@ -1,20 +1,25 @@
 const { ControlledContainerMixin } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const {
-  createPresentation,
-  issue,
-  signPresentation,
-  verify: verifyPresentation,
-  verifyCredential
-} = require('@digitalbazaar/vc');
-const { cryptosuite } = require('@digitalbazaar/eddsa-rdfc-2022-cryptosuite');
-const { DataIntegrityProof } = require('@digitalbazaar/data-integrity');
 const { randomUUID } = require('node:crypto');
 const jsigs = require('jsonld-signatures');
-
 const {
   purposes: { AssertionProofPurpose }
 } = jsigs;
+
+let createPresentation, issue, signPresentation, verifyPresentation, verifyCredential;
+let cryptosuite;
+let DataIntegrityProof;
+(async () => {
+  ({
+    createPresentation,
+    issue,
+    signPresentation,
+    verify: verifyPresentation,
+    verifyCredential
+  } = await import('@digitalbazaar/vc'));
+  ({ cryptosuite } = await import('@digitalbazaar/eddsa-rdfc-2022-cryptosuite'));
+  ({ DataIntegrityProof } = await import('@digitalbazaar/data-integrity'));
+})();
 
 const KEY_TYPES = require('../keys/keyTypes');
 // import { Errors as E } from 'moleculer-web';
@@ -30,7 +35,7 @@ const context = [
 ];
 
 /** @type {ServiceSchema} */
-const SignatureService = {
+const DataIntegrityService = {
   name: 'signature.data-integrity',
   mixins: [ControlledContainerMixin],
   settings: {
@@ -268,7 +273,6 @@ const SignatureService = {
      * Given a parent VC capability, create a delegated VC with a parent VC.
      * Same params as createVC but VC is created with type CapabilityCredential.
      * And optional param `parentCapability` param is optional to link to the parent.
-     * @param {*} ctx
      */
     async createCapability(ctx) {
       const { parentCapability, subject } = ctx.params;
@@ -315,4 +319,4 @@ const SignatureService = {
   }
 };
 
-module.exports = SignatureService;
+module.exports = DataIntegrityService;

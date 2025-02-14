@@ -1,12 +1,66 @@
 const passport = require('passport');
 const { Errors: E } = require('moleculer-web');
 const { TripleStoreAdapter } = require('@semapps/triplestore');
-const urlJoin = require('url-join');
 const AuthAccountService = require('../services/account');
 const AuthJWTService = require('../services/jwt');
 const CapabilitiesService = require('../services/capabilities');
 
-/** @type {import('moleculer').ServiceSchema} */
+/**
+ * Auth Mixin that handles authentication and authorization for routes
+ * that requested this.
+ *
+ * The authorization and authentication actions check for a valid `authorization` header.
+ * If the bearer token is a server-signed JWT identifying the user, `ctx.meta.tokenPayload` and
+ * `ctx.meta.webId` are set. Setting either `authorization` or `authentication` suffices.
+ *
+ * # Authentication
+ * In the `authenticate` action, the webId is set to `anon`, if no `authorization` header is present.
+ *
+ * # Authorization
+ * In contrast, the `authorize` action throws an unauthorized error,
+ * if no `authorization` header is present.
+ * @see https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
+ *
+ * ## Capability Authorization
+ * Additionally, the `authorize` action supports capability authorization based on
+ * Verifiable Credentials (VCs), if `authorizeWithCapability` is set to `true`.
+ * For details, see @todo.
+ *
+ * **WARNING**: This does not make any assertions about the validity of the capabilities'
+ * content (`credentialSubject`). What *is* checked:
+ * - the delegation chain was correct
+ * - all signatures are valid
+ * - the `controller`s of the keys (`verificationMethod`) used in the proofs to sign
+ *   the VC capabilities and presentation are correct. I.e. the controller resolves to
+ *   the WebId/controller identifier document (CID) which lists the key.\
+ *   This means that *you know who signed the presentation and capabilities* on the way.
+ *
+ * NO BUSINESS LOGIC IS CHECKED.\
+ * It is still necessary to verify if the request itself is valid.
+ * There would be no error when the `credentialSubject` says: "A is allowed to read B"
+ * while the statement is made actually made by "C" and not by "B".\
+ * **For now, we don't use [challenges](https://www.w3.org/TR/vc-data-integrity/#dfn-challenge)**,
+ * so you cannot rule out replay attacks.
+ *
+ * @see https://moleculer.services/docs/0.13/moleculer-web.html#Authorization
+ *
+ * @example Configuration for a new route
+ * ```js
+ * ctx.call('api.addRoute', {
+ *   path: path.join(basePath, '/your/route'),
+ *   name: 'your-route-name',
+ *   aliases: {
+ *     'GET /': 'your.action.here',
+ *   },
+ *   // Set to true, to run authorization action.
+ *   authorization: true,
+ *   // Set to true, to run authenticate action.
+ *   authentication: false,
+ * });
+ * ```
+ *
+ * @type {import('moleculer').ServiceSchema}
+ */
 const AuthMixin = {
   settings: {
     baseUrl: null,
@@ -81,7 +135,6 @@ const AuthMixin = {
         }
         // Invalid token
         // TODO make sure token is deleted client-side
-        ctx.meta.webId = 'anon';
         return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
       }
 
@@ -89,6 +142,7 @@ const AuthMixin = {
       ctx.meta.webId = 'anon';
       return Promise.resolve(null);
     },
+
     // See https://moleculer.services/docs/0.13/moleculer-web.html#Authorization
     async authorize(ctx) {
       const { route, req, res } = ctx.params;
@@ -99,8 +153,41 @@ const AuthMixin = {
       if (!token) {
         return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
       }
+      if (method !== 'Bearer') {
+        return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
+      }
 
-      if (method === 'Bearer') {
+      if (route.opts.authorizeWithCapability) {
+        // We accept VC Presentations to invoke capabilities here. It must be encoded as JWT.
+        // We do not use the VC-JOSE spec to sign and envelop presentations. Instead we go
+        // with embedded signatures. This way, the signature persists within the resource.
+
+        // Decode JTW to JSON.
+        const decodedToken = await ctx.call('jwt.decodeToken');
+        if (!decodedToken) return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
+
+        // Verify that decoded JSON token is a signed VC presentation for a capability.
+        const { verified: isCapSignatureVerified, credentialsOrdered } = await ctx.call(
+          'signature.data-integrity.verifyCapabilityPresentation',
+          {
+            presentation: decodedToken
+          }
+        );
+        if (!isCapSignatureVerified) return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
+
+        // VC Presentation is signed correctly.
+        // The verification methods (keys) used for signing, belong to the claimed
+        // controller (webID). The controller identifier document (in our case the webId)
+        // lists the used verification method, for the given purpose (`assertionMethod`).
+
+        // We don't have the "who is invoking" information. And set webId to anon.
+        // TODO: Is ctx.meta and req.$ctx.meta the same?
+        ctx.meta.webId = 'anon';
+        req.$ctx.meta.webId = 'anon';
+        req.$ctx.meta.authorization = { capability: credentialsOrdered };
+
+        return Promise.resolve(credentialsOrdered);
+      } else {
         // Validate if the token was signed by server (registered user).
         const serverSignedPayload = await ctx.call('auth.jwt.verifyServerSignedToken', { token });
         if (serverSignedPayload) {
@@ -108,91 +195,9 @@ const AuthMixin = {
           ctx.meta.webId = serverSignedPayload.webId;
           return Promise.resolve(serverSignedPayload);
         }
-
-        // The payload might not be verified yet.
-      } else if ((method === 'Capability' || req.$params.capability) && this.settings.podProvider) {
-        // TODO: ^This needs to be changed to support data integrity-style http headers.
-
-        // What to do here:
-        // Validate if the capability is valid
-        // Validate if the request/path accepts auth via capability.
-
-        const capabilityUri = token || req.$params.capability;
-        const capability = await this.actions.getValidateCapability({
-          capabilityUri,
-          username: req.parsedUrl.match(/[^/]+/)[0]
-        });
-
-        // The webId will not necessarily be anon.
-        // TODO: Look if/how services should allow this stuff at all.
-        //  Make it a white-list approach?
-        ctx.meta.webId = 'anon';
-        req.$ctx.meta.webId = 'anon';
-        req.$ctx.meta.authorization = { capability };
-        if (capability) {
-          return Promise.resolve(null);
-        }
       }
 
       return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
-    },
-    getValidateCapability: {
-      params: {
-        capabilityUri: {
-          type: 'string',
-          required: true
-        },
-        webId: {
-          type: 'string',
-          optional: true
-        },
-        username: {
-          type: 'string',
-          optional: true
-        }
-      },
-      /**
-       * Checks, if the provided capabilityUri is a valid URI and within the resource owner's cap container.
-       * @returns {Promise<object>} The stored capability object or undefined, if the capability is not valid.
-       */
-      async handler(ctx) {
-        let { capabilityUri, webId, username } = ctx.params;
-        /** @type {string} */
-        const baseUrlTrailing = urlJoin(this.settings.baseUrl, '/');
-        webId = webId || baseUrlTrailing + username;
-
-        const podUrl = await ctx.call('solid-storage.getUrl', { webId });
-
-        // Check if capabilityUri is within the resource owner's pod
-        if (!webId?.startsWith(baseUrlTrailing) || !capabilityUri?.startsWith(podUrl)) {
-          return undefined;
-        }
-
-        // Check, if capUri is a valid URI.
-        try {
-          // eslint-disable-next-line no-new
-          new URL(capabilityUri);
-        } catch {
-          return undefined;
-        }
-
-        // Check if capabilityUri is within the resource owner's cap container.
-        const resourceCapContainerUri = await ctx.call('capabilities.getContainerUri', {
-          webId
-        });
-
-        if (
-          !(await ctx.call('ldp.container.includes', {
-            containerUri: resourceCapContainerUri,
-            resourceUri: capabilityUri,
-            webId: 'system'
-          }))
-        ) {
-          return undefined;
-        }
-
-        return await ctx.call('capabilities.get', { resourceUri: capabilityUri });
-      }
     },
 
     async impersonate(ctx) {
