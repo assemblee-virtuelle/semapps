@@ -90,6 +90,13 @@ const frenchMessages = {
       invalid_password: 'Mot de passe incorrect',
       get_settings_error: "Une erreur s'est produite",
       update_settings_error: "Une erreur s'est produite"
+    },
+    required: {
+      email: 'Veuillez entrer votre adresse e-mail',
+      password: 'Veuillez entrer votre mot de passe',
+      identifier: 'Veuillez entrer un identifiant unique',
+      newPassword: 'Veuillez entrer un nouveau mot de passe',
+      newPasswordAgain: 'Veuillez entrer le nouveau mot de passe encore une fois'
     }
   }
 };

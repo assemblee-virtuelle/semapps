@@ -105,7 +105,7 @@ const FormContent = ({
               : error.message,
           {
             type: 'error',
-            _: typeof error === 'string' ? error : error && error.message ? error.message : undefined
+            _: typeof error === 'string' ? error : error?.message ? error.message : undefined
           }
         );
         formContext.reset({ ...values }, { keepDirty: true, keepErrors: true });
@@ -122,7 +122,7 @@ const FormContent = ({
         autoComplete="username"
         fullWidth
         disabled={loading}
-        validate={[required(), minLength(2)]}
+        validate={[required(translate('auth.required.identifier')), minLength(2)]}
         format={value =>
           value
             ? createSlug(value, {
@@ -139,7 +139,7 @@ const FormContent = ({
         autoComplete="email"
         fullWidth
         disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
-        validate={[required(), email()]}
+        validate={[required('auth.required.email'), email()]}
       />
       {passwordScorer && password && !(searchParams.has('email') && searchParams.has('force-email')) && (
         <>
@@ -153,12 +153,14 @@ const FormContent = ({
         source="password"
         type="password"
         value={password}
-        onChange={e => setPassword(e.target.value)}
+        onChange={e => {
+          setPassword(e.target.value);
+        }}
         label={translate('ra.auth.password')}
         autoComplete="new-password"
         fullWidth
         disabled={loading}
-        validate={[required(), validatePasswordStrength(passwordScorer)]}
+        validate={[required('auth.required.password'), validatePasswordStrength(passwordScorer)]}
       />
       <Button variant="contained" type="submit" color="primary" disabled={loading} fullWidth>
         {translate('auth.action.signup')}

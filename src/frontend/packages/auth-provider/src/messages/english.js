@@ -88,6 +88,13 @@ const englishMessages = {
       invalid_password: 'Invalid password',
       get_settings_error: 'An error occurred',
       update_settings_error: 'An error occurred'
+    },
+    required: {
+      email: 'Please enter your email address',
+      password: 'Please enter your password',
+      identifier: 'Please enter a unique identifier',
+      newPassword: 'Please enter a new password',
+      newPasswordAgain: 'Please enter the new password again'
     }
   }
 };

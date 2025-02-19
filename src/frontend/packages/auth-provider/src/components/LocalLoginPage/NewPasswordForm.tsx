@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Form, useTranslate, useNotify, useSafeSetState, useAuthProvider, TextInput, required } from 'react-admin';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { Button, CardContent, Typography } from '@mui/material';
+import { SubmitHandler } from 'react-hook-form';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 import validatePasswordStrength from './validatePasswordStrength';
 import { defaultScorer } from '../../passwordScorer';
-import { SubmitHandler } from 'react-hook-form';
 
 interface FormProps {
   redirectTo: string;
@@ -82,7 +82,7 @@ const FormContent = ({
           notify(
             typeof error === 'string'
               ? error
-              : typeof error === 'undefined' || !error.message
+              : !error.message
                 ? 'auth.notification.reset_password_error'
                 : error.message,
             {
@@ -105,7 +105,7 @@ const FormContent = ({
         autoComplete="email"
         fullWidth
         disabled={loading}
-        validate={required()}
+        validate={required(translate('auth.required.newPassword'))}
         format={value => (value ? value.toLowerCase() : '')}
       />
       {passwordScorer && (
@@ -126,8 +126,10 @@ const FormContent = ({
         autoComplete="current-password"
         fullWidth
         disabled={loading}
-        validate={[required(), validatePasswordStrength(passwordScorer)]}
-        onChange={e => setNewPassword(e.target.value)}
+        validate={[required(translate('auth.required.newPasswordAgain')), validatePasswordStrength(passwordScorer)]}
+        onChange={e => {
+          setNewPassword(e.target.value);
+        }}
       />
       <TextInput
         type="password"

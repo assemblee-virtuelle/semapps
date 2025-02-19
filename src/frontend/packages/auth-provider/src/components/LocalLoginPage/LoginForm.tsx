@@ -63,7 +63,7 @@ const FormContent = ({
           {
             type: 'error',
             messageArgs: {
-              _: typeof error === 'string' ? error : error && error.message ? error.message : undefined
+              _: typeof error === 'string' ? error : error?.message ? error.message : undefined
             }
           }
         );
@@ -81,7 +81,11 @@ const FormContent = ({
         fullWidth
         disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
         format={value => (value ? value.toLowerCase() : '')}
-        validate={allowUsername ? [required()] : [required(), email()]}
+        validate={
+          allowUsername
+            ? [required(translate('auth.required.identifier'))]
+            : [required(translate('auth.required.identifier')), email()]
+        }
       />
       <TextInput
         source="password"
@@ -90,7 +94,7 @@ const FormContent = ({
         autoComplete="current-password"
         fullWidth
         disabled={loading}
-        validate={required()}
+        validate={required(translate('auth.required.password'))}
       />
       <Button variant="contained" type="submit" color="primary" disabled={loading} fullWidth>
         {translate('auth.action.login')}

@@ -41,7 +41,7 @@ const FormContent = ({
           notify(
             typeof error === 'string'
               ? error
-              : typeof error === 'undefined' || !error.message
+              : !error.message
                 ? 'auth.notification.reset_password_error'
                 : error.message,
             {
@@ -64,7 +64,7 @@ const FormContent = ({
         autoComplete="email"
         fullWidth
         disabled={loading}
-        validate={required()}
+        validate={required(translate('auth.required.email'))}
         format={value => (value ? value.toLowerCase() : '')}
       />
       <Button variant="contained" type="submit" color="primary" disabled={loading} fullWidth>
