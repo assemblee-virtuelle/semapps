@@ -5,6 +5,13 @@ import type { Quad } from '@rdfjs/types';
 export type DataServerKey = string & { readonly _type?: 'DataServerKey' };
 export type ContainerURI = string & { readonly _type?: 'ContainerURI' };
 
+export type Container = {
+  server?: string;
+  uri?: string;
+  path: string;
+  types: [string];
+};
+
 type DataServerConfig = {
   /** Server base url */
   baseUrl: string;
@@ -15,26 +22,25 @@ type DataServerConfig = {
   /** True if this is the server where users are autenticated */
   authServer?: boolean;
 
-  /** True if we should fetch void endpoint */
-  void?: boolean;
-
   /** True if the server is a pod */
   pod?: boolean;
+
+  containers?: Container[];
 
   /** Container used for uploaded files */
   uploadsContainer?: string;
 
+  sparqlEndpoint?: string;
   proxyUrl?: string;
   noProxy?: boolean;
 
   externalLinks?: boolean;
 
   // Server attributes that can be retrieved via void endpoint
-  name: string;
-  description: string;
-  sparqlEndpoint: string;
-  containers?: Record<DataServerKey, Record<string, string[]>>;
-  blankNodes: any; // TODO: Type this object
+  name?: string;
+  description?: string;
+
+  blankNodes?: any; // TODO: Type this object
 };
 
 export type DataServersConfig = Record<DataServerKey, DataServerConfig>;
@@ -47,7 +53,7 @@ export type DataModel = {
     servers?: DataServerKey[] | DataServerKey | '@all' | '@remote' | '@default' | '@auth' | '@pod';
 
     /** URL(s) of the container(s) to fetch. If specified, will bypass the list.servers config */
-    containers?: Record<DataServerKey, string[]>;
+    containers?: string[];
 
     /** Predicates listed are blank nodes and will be dereferenced in SPARQL queries. Automatically set if Void endpoints are found */
     blankNodes?: string[];
@@ -72,7 +78,7 @@ export type DataModel = {
     server?: '@default' | '@auth' | '@pod' | DataServerKey;
 
     /** URL of the container where to create new resources. If specified, will bypass the create.server config */
-    container?: Record<DataServerKey, string>;
+    container?: string[];
   };
   fieldsMapping?: {
     /** The predicate of the title */
@@ -90,6 +96,10 @@ export type Configuration = {
   jsonContext: string | string[] | Record<string, string>;
 
   resources: Record<string, DataModel>;
+
+  ontologies: Record<string, string>;
+
+  preloadPlugins: Array<(config: Configuration) => Promise<void>>;
 };
 
 export type SemanticDataProvider = DataProvider & {
@@ -105,3 +115,32 @@ export interface PatchParams<RecordType extends RaRecord = any> {
   triplesToAdd?: Quad[];
   triplesToRemove?: Quad[];
 }
+
+export interface ResponseError extends Error {
+  status?: number;
+}
+
+export type VoidPartition = {
+  'void:class': string;
+  'void:entities': string;
+  'void:uriSpace': string;
+};
+
+export type VoidDataset = {
+  '@id': string;
+  '@type': string;
+  'dc:description': string;
+  'dc:title': string;
+  'void:classPartition': VoidPartition[];
+  'void:features': string;
+  'void:rootResource': string;
+  'void:sparqlEndpoint': string;
+  'void:uriSpace': string;
+  'void:vocabulary': string[];
+};
+
+export type VoidResults = {
+  key: string;
+  datasets?: VoidDataset[];
+  error?: string;
+};

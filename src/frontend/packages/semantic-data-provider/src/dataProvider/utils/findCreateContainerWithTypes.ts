@@ -1,4 +1,3 @@
-import urlJoin from 'url-join';
 import { DataModel, DataServerKey, DataServersConfig } from '../types';
 
 const findCreateContainerWithTypes = (
@@ -6,26 +5,20 @@ const findCreateContainerWithTypes = (
   createServerKey: DataServerKey,
   dataServers: DataServersConfig
 ) => {
-  const containers: string[] = [];
+  if (!dataServers[createServerKey].containers)
+    throw new Error(`Data server ${createServerKey} has no declared containers`);
 
-  Object.keys(dataServers[createServerKey].containers?.[createServerKey] || {}).forEach(type => {
-    if (types.includes(type)) {
-      dataServers[createServerKey].containers![createServerKey][type].forEach(path => {
-        const containerUri = urlJoin(dataServers[createServerKey].baseUrl, path);
-        if (!containers.includes(containerUri)) {
-          containers.push(containerUri);
-        }
-      });
-    }
-  });
+  const matchingContainers = dataServers[createServerKey].containers.filter(
+    container => container.types?.some(t => types.includes(t))
+  );
 
-  if (containers.length === 0) {
+  if (matchingContainers.length === 0) {
     throw new Error(
       `No container found matching with types ${JSON.stringify(
         types
-      )}. You can set explicitely the create.container property of the resource.`
+      )}. You can set explicitly the create.container property of the resource.`
     );
-  } else if (containers.length > 1) {
+  } else if (matchingContainers.length > 1) {
     throw new Error(
       `More than one container found matching with types ${JSON.stringify(
         types
@@ -33,7 +26,7 @@ const findCreateContainerWithTypes = (
     );
   }
 
-  return containers[0];
+  return matchingContainers[0].uri;
 };
 
 export default findCreateContainerWithTypes;

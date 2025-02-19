@@ -6,6 +6,12 @@ export type DataServerKey = string & {
 export type ContainerURI = string & {
   readonly _type?: 'ContainerURI';
 };
+export type Container = {
+  server?: string;
+  uri?: string;
+  path: string;
+  types: [string];
+};
 type DataServerConfig = {
   /** Server base url */
   baseUrl: string;
@@ -13,20 +19,18 @@ type DataServerConfig = {
   default?: boolean;
   /** True if this is the server where users are autenticated */
   authServer?: boolean;
-  /** True if we should fetch void endpoint */
-  void?: boolean;
   /** True if the server is a pod */
   pod?: boolean;
+  containers?: Container[];
   /** Container used for uploaded files */
   uploadsContainer?: string;
+  sparqlEndpoint?: string;
   proxyUrl?: string;
   noProxy?: boolean;
   externalLinks?: boolean;
-  name: string;
-  description: string;
-  sparqlEndpoint: string;
-  containers?: Record<DataServerKey, Record<string, string[]>>;
-  blankNodes: any;
+  name?: string;
+  description?: string;
+  blankNodes?: any;
 };
 export type DataServersConfig = Record<DataServerKey, DataServerConfig>;
 export type DataModel = {
@@ -36,7 +40,7 @@ export type DataModel = {
     /** The servers where to fetch the resource. Default to @all */
     servers?: DataServerKey[] | DataServerKey | '@all' | '@remote' | '@default' | '@auth' | '@pod';
     /** URL(s) of the container(s) to fetch. If specified, will bypass the list.servers config */
-    containers?: Record<DataServerKey, string[]>;
+    containers?: string[];
     /** Predicates listed are blank nodes and will be dereferenced in SPARQL queries. Automatically set if Void endpoints are found */
     blankNodes?: string[];
     /** @deprecated Predicates listed will be turned to arrays if they are simple strings. Used by for reified relationship */
@@ -54,7 +58,7 @@ export type DataModel = {
     /** The server where to create new resources. Default to @default */
     server?: '@default' | '@auth' | '@pod' | DataServerKey;
     /** URL of the container where to create new resources. If specified, will bypass the create.server config */
-    container?: Record<DataServerKey, string>;
+    container?: string[];
   };
   fieldsMapping?: {
     /** The predicate of the title */
@@ -68,6 +72,8 @@ export type Configuration = {
   /** Context from ontologies { prefix: IRI } or IRI, or array of IRI */
   jsonContext: string | string[] | Record<string, string>;
   resources: Record<string, DataModel>;
+  ontologies: Record<string, string>;
+  preloadPlugins: Array<(config: Configuration) => Promise<void>>;
 };
 export type SemanticDataProvider = DataProvider & {
   getDataModels: () => Promise<Record<string, DataModel>>;
@@ -81,6 +87,31 @@ export interface PatchParams<RecordType extends RaRecord = any> {
   triplesToAdd?: Quad[];
   triplesToRemove?: Quad[];
 }
+export interface ResponseError extends Error {
+  status?: number;
+}
+export type VoidPartition = {
+  'void:class': string;
+  'void:entities': string;
+  'void:uriSpace': string;
+};
+export type VoidDataset = {
+  '@id': string;
+  '@type': string;
+  'dc:description': string;
+  'dc:title': string;
+  'void:classPartition': VoidPartition[];
+  'void:features': string;
+  'void:rootResource': string;
+  'void:sparqlEndpoint': string;
+  'void:uriSpace': string;
+  'void:vocabulary': string[];
+};
+export type VoidResults = {
+  key: string;
+  datasets?: VoidDataset[];
+  error?: string;
+};
 export function buildBlankNodesQuery(
   blankNodes: any,
   baseQuery: any,
@@ -98,26 +129,42 @@ export function buildBlankNodesQuery(
       where: string;
     };
 export function buildSparqlQuery({
-  containers,
+  containersUris,
   params,
   dataModel,
   ontologies
 }: {
-  containers: any;
+  containersUris: any;
   params: any;
   dataModel: any;
   ontologies: any;
 }): string;
-/** @type {(config: Configuration) => SemanticDataProvider} */
-export const dataProvider: (config: Configuration) => SemanticDataProvider;
-export function useGetExternalLink(componentExternalLinks: any): (record: any) => any;
-export const useDataModel: (resourceId: string) => any;
-export const useDataServers: () => DataServersConfig | undefined;
-export const useContainers: (resourceId: string, serverKeys?: string) => Record<DataServerKey, string[]> | undefined;
-/** @deprecated Use "useCreateContainerUri" instead */
-export function useCreateContainer(resourceId: any): undefined;
+/** @type {(originalConfig: Configuration) => SemanticDataProvider} */
+export const dataProvider: (originalConfig: Configuration) => SemanticDataProvider;
+export const configureUserStorage: (config: Configuration) => Promise<Configuration>;
+/**
+ * Return a function that look if an app (clientId) is registered with an user (webId)
+ * If not, it redirects to the endpoint provided by the user's authorization agent
+ * See https://solid.github.io/data-interoperability-panel/specification/#authorization-agent
+ */
+export const fetchAppRegistration: (config: Configuration) => Promise<Configuration>;
+export const fetchDataRegistry: (config: Configuration) => Promise<Configuration>;
+export const fetchVoidEndpoints: (config: Configuration) => Promise<Configuration>;
 export const useDataModels: () => Record<string, DataModel> | undefined;
-export const useCreateContainerUri: () => (resourceId: string) => string | undefined;
+export const useDataServers: () => DataServersConfig | undefined;
+export const useContainers: ({
+  resourceId,
+  types,
+  serverKeys
+}: {
+  resourceId?: string | undefined;
+  types?: string[] | undefined;
+  serverKeys?: string | undefined;
+}) => Container[];
+export const useGetCreateContainerUri: () => (resourceId: string) => string | undefined;
+export const useCreateContainerUri: (resourceId: string) => string | undefined;
+export const useDataModel: (resourceId: string) => any;
+export function useGetExternalLink(componentExternalLinks: any): (record: any) => any;
 /**
  * @example
  * <Show>

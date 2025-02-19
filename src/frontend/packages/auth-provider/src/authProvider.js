@@ -193,6 +193,7 @@ const authProvider = ({
           } else if (e.message === 'username.invalid') {
             throw new Error('auth.message.username_invalid');
           } else {
+            console.error(e);
             throw new Error('auth.message.signup_error');
           }
         }
@@ -315,7 +316,7 @@ const authProvider = ({
       if (typeof uri === 'object') return;
 
       if (!uri || !uri.startsWith('http'))
-        throw new Error('The first parameter passed to getPermissions must be an URL');
+        throw new Error(`The first parameter passed to getPermissions must be an URL. Received: ${uri}`);
 
       const aclUri = getAclUri(uri);
 

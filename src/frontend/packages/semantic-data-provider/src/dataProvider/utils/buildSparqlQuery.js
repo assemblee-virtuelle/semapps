@@ -14,7 +14,7 @@ const generator = new SparqlGenerator({
 
 const reservedFilterKeys = ['q', 'sparqlWhere', 'blankNodes', 'blankNodesDepth', '_servers', '_predicates'];
 
-const buildSparqlQuery = ({ containers, params, dataModel, ontologies }) => {
+const buildSparqlQuery = ({ containersUris, params, dataModel, ontologies }) => {
   const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes;
   const predicates = params.filter?._predicates || dataModel.list?.predicates;
   const blankNodesDepth = params.filter?.blankNodesDepth ?? dataModel.list?.blankNodesDepth ?? 2;
@@ -26,13 +26,13 @@ const buildSparqlQuery = ({ containers, params, dataModel, ontologies }) => {
     template: baseQuery.construct,
     where: [],
     type: 'query',
-    prefixes: Object.fromEntries(ontologies.map(ontology => [ontology.prefix, ontology.url]))
+    prefixes: ontologies
   };
 
   const containerWhere = [
     {
       type: 'values',
-      values: containers.map(containerUri => ({ '?containerUri': namedNode(containerUri) }))
+      values: containersUris.map(containerUri => ({ '?containerUri': namedNode(containerUri) }))
     },
     triple(variable('containerUri'), namedNode('http://www.w3.org/ns/ldp#contains'), variable('s1')),
     {
@@ -48,30 +48,34 @@ const buildSparqlQuery = ({ containers, params, dataModel, ontologies }) => {
   let resourceWhere = [];
 
   if (filter && Object.keys(filter).length > 0) {
-    const hasSPARQLFilter = filter.sparqlWhere && Object.keys(filter.sparqlWhere).length > 0;
-    const hasFullTextSearch = filter.q && filter.q.length > 0;
-
-    if (hasSPARQLFilter) {
-      /*
-        Example of usage :
-        {
-          "sparqlWhere": {
-            "type": "bgp",
-            "triples": [{
-              "subject": {"termType": "Variable", "value": "s1"},
-              "predicate": {"termType": "NameNode", "value": "http://virtual-assembly.org/ontologies/pair#label"},
-              "object": {"termType": "Literal", "value": "My Organization"}
-            }]
-          }
+    /*
+      Example of usage :
+      {
+        "sparqlWhere": {
+          "type": "bgp",
+          "triples": [{
+            "subject": {"termType": "Variable", "value": "s1"},
+            "predicate": {"termType": "NameNode", "value": "http://virtual-assembly.org/ontologies/pair#label"},
+            "object": {"termType": "Literal", "value": "My Organization"}
+          }]
         }
-      */
-      // initialize array in case of single value :
-      [].concat(filter.sparqlWhere).forEach(sw => {
-        resourceWhere.push(sw);
-      });
+      }
+    */
+    if (filter.sparqlWhere) {
+      // When the SPARQL request comes from the browser's URL, it is a JSON string that must be parsed
+      const sparqlWhere =
+        filter.sparqlWhere && (typeof filter.sparqlWhere === 'string' || filter.sparqlWhere instanceof String)
+          ? JSON.parse(decodeURIComponent(filter.sparqlWhere))
+          : filter.sparqlWhere;
+
+      if (Object.keys(sparqlWhere).length > 0) {
+        [].concat(sparqlWhere).forEach(sw => {
+          resourceWhere.push(sw);
+        });
+      }
     }
 
-    if (hasFullTextSearch) {
+    if (filter.q && filter.q.length > 0) {
       resourceWhere.push({
         type: 'group',
         patterns: [
@@ -144,30 +148,7 @@ const buildSparqlQuery = ({ containers, params, dataModel, ontologies }) => {
     resourceWhere.push(baseQuery.where);
   }
 
-  sparqlJsParams.where.push(
-    {
-      type: 'union',
-      patterns: [
-        containerWhere,
-        {
-          type: 'graph',
-          name: namedNode('http://semapps.org/mirror'),
-          patterns: containerWhere
-        }
-      ]
-    },
-    {
-      type: 'union',
-      patterns: [
-        resourceWhere,
-        {
-          type: 'graph',
-          name: namedNode('http://semapps.org/mirror'),
-          patterns: resourceWhere
-        }
-      ]
-    }
-  );
+  sparqlJsParams.where.push(containerWhere, resourceWhere);
 
   return generator.stringify(sparqlJsParams);
 };

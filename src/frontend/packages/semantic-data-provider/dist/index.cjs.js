@@ -1,11 +1,13 @@
-var $bkNnK$urljoin = require("url-join");
 var $bkNnK$speakingurl = require("speakingurl");
 var $bkNnK$jsonld = require("jsonld");
+var $bkNnK$urljoin = require("url-join");
 var $bkNnK$rdfjsdatamodel = require("@rdfjs/data-model");
 var $bkNnK$sparqljs = require("sparqljs");
 var $bkNnK$cryptojsmd5 = require("crypto-js/md5");
-var $bkNnK$jwtdecode = require("jwt-decode");
 var $bkNnK$reactadmin = require("react-admin");
+var $bkNnK$jwtdecode = require("jwt-decode");
+var $bkNnK$httplinkheader = require("http-link-header");
+var $bkNnK$shexjsparser = require("@shexjs/parser");
 var $bkNnK$react = require("react");
 var $bkNnK$reactjsxruntime = require("react/jsx-runtime");
 var $bkNnK$muistylesmakeStyles = require("@mui/styles/makeStyles");
@@ -39,13 +41,17 @@ function $parcel$interopDefault(a) {
 $parcel$export(module.exports, "dataProvider", () => $7f6a16d0025dc83a$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "buildSparqlQuery", () => $33c37185da3771a9$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "buildBlankNodesQuery", () => $64d4ce40c79d1509$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "useGetExternalLink", () => $85e9a897c6d7c14a$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "configureUserStorage", () => $89358cee13a17a31$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "fetchAppRegistration", () => $c512de108ef5d674$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "fetchDataRegistry", () => $cd772adda3024172$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "fetchVoidEndpoints", () => $1395e306228d41f2$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useContainers", () => $3158e0dc13ffffaa$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "useCreateContainer", () => $99ed32cbdb76cb50$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useCreateContainerUri", () => $298b78bb7d4a3358$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useDataModel", () => $63a32f1a35c6f80e$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useDataModels", () => $20621bc841a5205a$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useDataServers", () => $c9933a88e2acc4da$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useGetCreateContainerUri", () => $32d32215b4e4729f$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useGetExternalLink", () => $85e9a897c6d7c14a$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "FilterHandler", () => $f763906f9b20f2d8$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "GroupedReferenceHandler", () => $b4703fef6d6af456$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "ReificationArrayInput", () => $030f1232f6810456$export$2e2bcd8739ae039);
@@ -173,7 +179,6 @@ var $6fcb30f76390d142$export$2e2bcd8739ae039 = {
 };
 
 
-
 const $8f44b7c15b8b8e1d$var$getServerKeyFromType = (type, dataServers)=>{
     return Object.keys(dataServers).find((key)=>{
         return dataServers[key][type];
@@ -182,7 +187,7 @@ const $8f44b7c15b8b8e1d$var$getServerKeyFromType = (type, dataServers)=>{
 var $8f44b7c15b8b8e1d$export$2e2bcd8739ae039 = $8f44b7c15b8b8e1d$var$getServerKeyFromType;
 
 
-const $982f4f2fb185d606$var$parseServerKey = (serverKey, dataServers)=>{
+const $6531da3b9e8c524a$var$parseServerKey = (serverKey, dataServers)=>{
     switch(serverKey){
         case "@default":
             return (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("default", dataServers);
@@ -196,50 +201,48 @@ const $982f4f2fb185d606$var$parseServerKey = (serverKey, dataServers)=>{
 };
 // Return the list of servers keys in an array
 // parsing keywords like @all, @default, @pod and @authServer
-const $982f4f2fb185d606$var$parseServerKeys = (serverKeys, dataServers)=>{
+const $6531da3b9e8c524a$var$parseServerKeys = (serverKeys, dataServers)=>{
     if (Array.isArray(serverKeys)) {
         if (serverKeys.includes("@all")) return Object.keys(dataServers);
-        return serverKeys.map((serverKey)=>$982f4f2fb185d606$var$parseServerKey(serverKey, dataServers));
-    }
-    if (typeof serverKeys === "string") {
+        else return serverKeys.map((serverKey)=>$6531da3b9e8c524a$var$parseServerKey(serverKey, dataServers));
+    } else if (typeof serverKeys === "string") {
         if (serverKeys === "@all") return Object.keys(dataServers);
-        if (serverKeys === "@remote") {
+        else if (serverKeys === "@remote") {
             const defaultServerKey = (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("default", dataServers);
             return Object.keys(dataServers).filter((serverKey)=>serverKey !== defaultServerKey);
-        }
-        return [
-            $982f4f2fb185d606$var$parseServerKey(serverKeys, dataServers)
+        } else return [
+            $6531da3b9e8c524a$var$parseServerKey(serverKeys, dataServers)
         ];
-    }
-    // If server key is empty
-    return false;
+    } else throw new Error(`The parseServerKeys expect a list of server keys, or keywords`);
 };
-var $982f4f2fb185d606$export$2e2bcd8739ae039 = $982f4f2fb185d606$var$parseServerKeys;
+var $6531da3b9e8c524a$export$2e2bcd8739ae039 = $6531da3b9e8c524a$var$parseServerKeys;
 
 
-const $047a107b0d203793$var$findContainersWithTypes = (types, serverKeys, dataServers)=>{
-    const containers = {};
-    const existingContainers = [];
-    const parsedServerKeys = (0, $982f4f2fb185d606$export$2e2bcd8739ae039)(serverKeys, dataServers);
-    Object.keys(dataServers).filter((dataServerKey)=>dataServers[dataServerKey].containers).forEach((dataServerKey)=>{
-        Object.keys(dataServers[dataServerKey].containers || {}).forEach((containerKey)=>{
-            if (!parsedServerKeys || parsedServerKeys.includes(containerKey)) Object.keys(dataServers[dataServerKey].containers[containerKey]).forEach((type)=>{
-                if (types.includes(type)) dataServers[dataServerKey].containers[containerKey][type].map((path)=>{
-                    const containerUri = (0, ($parcel$interopDefault($bkNnK$urljoin)))(dataServers[containerKey].baseUrl, path);
-                    // Avoid returning the same container several times
-                    if (!existingContainers.includes(containerUri)) {
-                        existingContainers.push(containerUri);
-                        if (!containers[dataServerKey]) containers[dataServerKey] = [];
-                        containers[dataServerKey].push(containerUri);
-                    }
-                });
-            });
+/**
+ * Return all containers matching the given types
+ */ const $047a107b0d203793$var$findContainersWithTypes = (types, serverKeys, dataServers)=>{
+    const matchingContainers = [];
+    const parsedServerKeys = (0, $6531da3b9e8c524a$export$2e2bcd8739ae039)(serverKeys || "@all", dataServers);
+    Object.keys(dataServers).forEach((dataServerKey)=>{
+        if (parsedServerKeys.includes(dataServerKey)) dataServers[dataServerKey].containers?.forEach((container)=>{
+            if (container.types?.some((t)=>types.includes(t))) matchingContainers.push(container);
         });
     });
-    return containers;
+    return matchingContainers;
 };
 var $047a107b0d203793$export$2e2bcd8739ae039 = $047a107b0d203793$var$findContainersWithTypes;
 
+
+const $37c161736d0d7276$var$findContainersWithURIs = (containersUris, dataServers)=>{
+    const matchingContainers = [];
+    Object.keys(dataServers).forEach((serverKey)=>{
+        dataServers[serverKey].containers?.forEach((container)=>{
+            if (container.uri && containersUris.includes(container.uri)) matchingContainers.push(container);
+        });
+    });
+    return matchingContainers;
+};
+var $37c161736d0d7276$export$2e2bcd8739ae039 = $37c161736d0d7276$var$findContainersWithURIs;
 
 
 const $907cbc087f6529e2$var$createMethod = (config)=>async (resourceId, params)=>{
@@ -250,25 +253,26 @@ const $907cbc087f6529e2$var$createMethod = (config)=>async (resourceId, params)=
         let containerUri;
         let serverKey;
         if (dataModel.create?.container) {
-            serverKey = Object.keys(dataModel.create.container)[0];
-            containerUri = (0, ($parcel$interopDefault($bkNnK$urljoin)))(dataServers[serverKey].baseUrl, Object.values(dataModel.create.container)[0]);
+            const [container] = (0, $37c161736d0d7276$export$2e2bcd8739ae039)([
+                dataModel.create?.container
+            ], dataServers);
+            serverKey = container.server;
+            containerUri = container.uri;
         } else {
             serverKey = dataModel.create?.server || Object.keys(dataServers).find((key)=>dataServers[key].default === true);
             if (!serverKey) throw new Error("You must define a server for the creation, or a container, or a default server");
             const containers = (0, $047a107b0d203793$export$2e2bcd8739ae039)(dataModel.types, [
                 serverKey
             ], dataServers);
-            // Extract the containerUri from the results (and ensure there is only one)
-            const serverKeys = Object.keys(containers);
-            if (!serverKeys || serverKeys.length === 0) throw new Error(`No container with types ${JSON.stringify(dataModel.types)} found on server ${serverKey}`);
-            if (serverKeys.length > 1 || containers[serverKeys[0]].length > 1) throw new Error(`More than one container detected with types ${JSON.stringify(dataModel.types)} on server ${serverKey}`);
-            containerUri = containers[serverKeys[0]][0];
+            if (!containers || containers.length === 0) throw new Error(`No container with types ${JSON.stringify(dataModel.types)} found on server ${serverKey}`);
+            if (containers.length > 1) throw new Error(`More than one container detected with types ${JSON.stringify(dataModel.types)} on server ${serverKey}`);
+            containerUri = containers[0].uri;
         }
         if (params.data) {
             if (dataModel.fieldsMapping?.title) {
                 const slug = Array.isArray(dataModel.fieldsMapping.title) ? dataModel.fieldsMapping.title.map((f)=>params.data[f]).join(" ") : params.data[dataModel.fieldsMapping.title];
                 // Generate slug here, otherwise we may get errors with special characters
-                headers.set("Slug", $bkNnK$speakingurl(slug));
+                headers.set("Slug", (0, ($parcel$interopDefault($bkNnK$speakingurl)))(slug));
             }
             // Upload files, if there are any
             const { updatedRecord: updatedRecord } = await (0, $6fcb30f76390d142$export$2e2bcd8739ae039).upload(params.data, config, serverKey);
@@ -376,15 +380,14 @@ const $8c999cc29c8d6a6c$var$isObject = (val)=>{
     return val != null && typeof val === "object" && !Array.isArray(val);
 };
 const $8c999cc29c8d6a6c$var$fetchContainers = async (containers, params, { httpClient: httpClient, jsonContext: jsonContext })=>{
-    const containersUri = Object.values(containers).flat();
-    const fetchPromises = containersUri.map((containerUri)=>httpClient(containerUri).then(async ({ json: json })=>{
+    const fetchPromises = containers.map((container)=>httpClient(container.uri).then(async ({ json: json })=>{
             const jsonResponse = json;
             // If container's context is different, compact it to have an uniform result
             // TODO deep compare if the context is an object
             if (jsonResponse["@context"] !== jsonContext) return (0, ($parcel$interopDefault($bkNnK$jsonld))).compact(jsonResponse, jsonContext);
             return jsonResponse;
         }).then((json)=>{
-            if (!$8c999cc29c8d6a6c$var$isValidLDPContainer(json)) throw new Error(`${containerUri} is not a LDP container`);
+            if (!$8c999cc29c8d6a6c$var$isValidLDPContainer(json)) throw new Error(`${container.uri} is not a LDP container`);
             return (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(json["ldp:contains"]).map((resource)=>({
                     "@context": json["@context"],
                     ...resource
@@ -668,7 +671,7 @@ const $33c37185da3771a9$var$reservedFilterKeys = [
     "_servers",
     "_predicates"
 ];
-const $33c37185da3771a9$var$buildSparqlQuery = ({ containers: containers, params: params, dataModel: dataModel, ontologies: ontologies })=>{
+const $33c37185da3771a9$var$buildSparqlQuery = ({ containersUris: containersUris, params: params, dataModel: dataModel, ontologies: ontologies })=>{
     const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes;
     const predicates = params.filter?._predicates || dataModel.list?.predicates;
     const blankNodesDepth = params.filter?.blankNodesDepth ?? dataModel.list?.blankNodesDepth ?? 2;
@@ -682,15 +685,12 @@ const $33c37185da3771a9$var$buildSparqlQuery = ({ containers: containers, params
         template: baseQuery.construct,
         where: [],
         type: "query",
-        prefixes: Object.fromEntries(ontologies.map((ontology)=>[
-                ontology.prefix,
-                ontology.url
-            ]))
+        prefixes: ontologies
     };
     const containerWhere = [
         {
             type: "values",
-            values: containers.map((containerUri)=>({
+            values: containersUris.map((containerUri)=>({
                     "?containerUri": $33c37185da3771a9$var$namedNode(containerUri)
                 }))
         },
@@ -708,25 +708,26 @@ const $33c37185da3771a9$var$buildSparqlQuery = ({ containers: containers, params
     ];
     let resourceWhere = [];
     if (filter && Object.keys(filter).length > 0) {
-        const hasSPARQLFilter = filter.sparqlWhere && Object.keys(filter.sparqlWhere).length > 0;
-        const hasFullTextSearch = filter.q && filter.q.length > 0;
-        if (hasSPARQLFilter) /*
-        Example of usage :
-        {
-          "sparqlWhere": {
-            "type": "bgp",
-            "triples": [{
-              "subject": {"termType": "Variable", "value": "s1"},
-              "predicate": {"termType": "NameNode", "value": "http://virtual-assembly.org/ontologies/pair#label"},
-              "object": {"termType": "Literal", "value": "My Organization"}
-            }]
-          }
+        /*
+      Example of usage :
+      {
+        "sparqlWhere": {
+          "type": "bgp",
+          "triples": [{
+            "subject": {"termType": "Variable", "value": "s1"},
+            "predicate": {"termType": "NameNode", "value": "http://virtual-assembly.org/ontologies/pair#label"},
+            "object": {"termType": "Literal", "value": "My Organization"}
+          }]
         }
-      */ // initialize array in case of single value :
-        [].concat(filter.sparqlWhere).forEach((sw)=>{
-            resourceWhere.push(sw);
-        });
-        if (hasFullTextSearch) resourceWhere.push({
+      }
+    */ if (filter.sparqlWhere) {
+            // When the SPARQL request comes from the browser's URL, it is a JSON string that must be parsed
+            const sparqlWhere = filter.sparqlWhere && (typeof filter.sparqlWhere === "string" || filter.sparqlWhere instanceof String) ? JSON.parse(decodeURIComponent(filter.sparqlWhere)) : filter.sparqlWhere;
+            if (Object.keys(sparqlWhere).length > 0) [].concat(sparqlWhere).forEach((sw)=>{
+                resourceWhere.push(sw);
+            });
+        }
+        if (filter.q && filter.q.length > 0) resourceWhere.push({
             type: "group",
             patterns: [
                 {
@@ -787,27 +788,7 @@ const $33c37185da3771a9$var$buildSparqlQuery = ({ containers: containers, params
         resourceWhere = resourceWhere.concat(blankNodesQuery.where);
         sparqlJsParams.template = sparqlJsParams.template.concat(blankNodesQuery.construct);
     } else resourceWhere.push(baseQuery.where);
-    sparqlJsParams.where.push({
-        type: "union",
-        patterns: [
-            containerWhere,
-            {
-                type: "graph",
-                name: $33c37185da3771a9$var$namedNode("http://semapps.org/mirror"),
-                patterns: containerWhere
-            }
-        ]
-    }, {
-        type: "union",
-        patterns: [
-            resourceWhere,
-            {
-                type: "graph",
-                name: $33c37185da3771a9$var$namedNode("http://semapps.org/mirror"),
-                patterns: resourceWhere
-            }
-        ]
-    });
+    sparqlJsParams.where.push(containerWhere, resourceWhere);
     return $33c37185da3771a9$var$generator.stringify(sparqlJsParams);
 };
 var $33c37185da3771a9$export$2e2bcd8739ae039 = $33c37185da3771a9$var$buildSparqlQuery;
@@ -818,7 +799,6 @@ const $1e7a94d745f8597b$var$compare = (a, b)=>{
         case "string":
             return a.localeCompare(b);
         case "number":
-        case "bigint":
             return a - b;
         default:
             return 0;
@@ -827,12 +807,14 @@ const $1e7a94d745f8597b$var$compare = (a, b)=>{
 const $1e7a94d745f8597b$var$fetchSparqlEndpoints = async (containers, resourceId, params, config)=>{
     const { dataServers: dataServers, resources: resources, httpClient: httpClient, jsonContext: jsonContext, ontologies: ontologies } = config;
     const dataModel = resources[resourceId];
-    const sparqlQueryPromises = Object.keys(containers).map((serverKey)=>new Promise((resolve, reject)=>{
+    const serversToQuery = containers.reduce((acc, cur)=>{
+        if (!acc.includes(cur.server)) acc.push(cur.server);
+        return acc;
+    }, []);
+    const sparqlQueryPromises = serversToQuery.map((serverKey)=>new Promise((resolve, reject)=>{
             const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes;
-            // When the SPARQL request comes from the browser's URL, it comes as JSON string which must must be parsed
-            if (params.filter?.sparqlWhere && (typeof params.filter.sparqlWhere === "string" || params.filter.sparqlWhere instanceof String)) params.filter.sparqlWhere = JSON.parse(decodeURIComponent(params.filter.sparqlWhere));
             const sparqlQuery = (0, $33c37185da3771a9$export$2e2bcd8739ae039)({
-                containers: containers[serverKey],
+                containersUris: containers.filter((c)=>c.server === serverKey).map((c)=>c.uri),
                 params: params,
                 dataModel: dataModel,
                 ontologies: ontologies
@@ -867,7 +849,7 @@ const $1e7a94d745f8597b$var$fetchSparqlEndpoints = async (containers, resourceId
                         ]
                     };
                 }
-                resolve(compactJson["@graph"].map((resource)=>({
+                resolve(compactJson["@graph"]?.map((resource)=>({
                         "@context": compactJson["@context"],
                         ...resource
                     })) || []);
@@ -904,36 +886,22 @@ var $1e7a94d745f8597b$export$2e2bcd8739ae039 = $1e7a94d745f8597b$var$fetchSparql
 
 
 
-const $e3a78b3d48a0a0fb$var$findContainersWithPaths = (paths, dataServers)=>{
-    const containers = {};
-    Object.keys(paths).forEach((serverKey)=>{
-        if (dataServers[serverKey]) {
-            containers[serverKey] = [];
-            paths[serverKey].forEach((path)=>{
-                containers[serverKey].push((0, ($parcel$interopDefault($bkNnK$urljoin)))(dataServers[serverKey].baseUrl, path));
-            });
-        } else throw new Error(`No server found with key ${serverKey}`);
-    });
-    return containers;
-};
-var $e3a78b3d48a0a0fb$export$2e2bcd8739ae039 = $e3a78b3d48a0a0fb$var$findContainersWithPaths;
 
-
-const $b6ed253f3374f5d4$var$getListMethod = (config)=>async (resourceId, params = {})=>{
+const $95cbc03f25caf72a$var$getListMethod = (config)=>async (resourceId, params)=>{
         const { dataServers: dataServers, resources: resources } = config;
         const dataModel = resources[resourceId];
         if (!dataModel) throw new Error(`Resource ${resourceId} is not mapped in resources file`);
-        let containers;
+        let containers = [];
         if (!params.filter?._servers && dataModel.list?.containers) {
             if (Array.isArray(dataModel.list?.containers)) throw new Error(`The list.containers property of ${resourceId} dataModel must be of type object ({ serverKey: [containerUri] })`);
             // If containers are set explicitly, use them
-            containers = (0, $e3a78b3d48a0a0fb$export$2e2bcd8739ae039)(dataModel.list.containers, dataServers);
+            containers = (0, $37c161736d0d7276$export$2e2bcd8739ae039)(dataModel.list.containers, dataServers);
         } else // Otherwise find the container URIs on the given servers (either in the filter or the data model)
-        containers = (0, $047a107b0d203793$export$2e2bcd8739ae039)(dataModel.types, params.filter?._servers || dataModel.list?.servers, dataServers);
+        containers = (0, $047a107b0d203793$export$2e2bcd8739ae039)((0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(dataModel.types), params?.filter?._servers || dataModel.list?.servers, dataServers);
         if (dataModel.list?.fetchContainer) return (0, $8c999cc29c8d6a6c$export$2e2bcd8739ae039)(containers, params, config);
-        return (0, $1e7a94d745f8597b$export$2e2bcd8739ae039)(containers, resourceId, params, config);
+        else return (0, $1e7a94d745f8597b$export$2e2bcd8739ae039)(containers, resourceId, params, config);
     };
-var $b6ed253f3374f5d4$export$2e2bcd8739ae039 = $b6ed253f3374f5d4$var$getListMethod;
+var $95cbc03f25caf72a$export$2e2bcd8739ae039 = $95cbc03f25caf72a$var$getListMethod;
 
 
 
@@ -967,7 +935,7 @@ const $e5e279a608b8e6b1$var$getManyReferenceMethod = (config)=>async (resourceId
             [params.target]: params.id
         };
         delete params.target;
-        return await (0, $b6ed253f3374f5d4$export$2e2bcd8739ae039)(config)(resourceId, params);
+        return await (0, $95cbc03f25caf72a$export$2e2bcd8739ae039)(config)(resourceId, params);
     };
 var $e5e279a608b8e6b1$export$2e2bcd8739ae039 = $e5e279a608b8e6b1$var$getManyReferenceMethod;
 
@@ -1049,101 +1017,11 @@ var $ceaafb56f75454f0$export$2e2bcd8739ae039 = $ceaafb56f75454f0$var$updateMetho
 
 
 
-const $3cfb23eead135e3f$var$fetchUserConfig = async (config)=>{
-    const { dataServers: dataServers, httpClient: httpClient } = config;
-    const token = localStorage.getItem("token");
-    const podKey = (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("pod", dataServers);
-    const authServerKey = (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("authServer", dataServers);
-    // If the user is logged in
-    if (token) {
-        const payload = (0, ($parcel$interopDefault($bkNnK$jwtdecode)))(token);
-        const webId = payload.webId || payload.webid; // Currently we must deal with both formats
-        let userData;
-        try {
-            const { json: json } = await httpClient(webId);
-            userData = json;
-        } catch (e) {
-            console.error(e);
-            // If the webId cannot be fetched, assume an invalid token and disconnect the user
-            localStorage.clear();
-            window.location.reload();
-            return;
-        }
-        // If we have a POD server
-        if (podKey) {
-            // Fill the config provided to the data provider
-            // We must modify the config object directly
-            config.dataServers[podKey].name = "My Pod";
-            config.dataServers[podKey].baseUrl = userData["pim:storage"] || (0, ($parcel$interopDefault($bkNnK$urljoin)))(webId, "data");
-            config.dataServers[podKey].sparqlEndpoint = userData.endpoints?.["void:sparqlEndpoint"] || (0, ($parcel$interopDefault($bkNnK$urljoin)))(webId, "sparql");
-        }
-        if (authServerKey) // Fill the config provided to the data provider
-        // We must modify the config object directly
-        config.dataServers[authServerKey].proxyUrl = userData.endpoints?.proxyUrl;
-    } else if (podKey) // If the user is not logged in, ignore the POD server
-    delete config.dataServers[podKey];
-};
-var $3cfb23eead135e3f$export$2e2bcd8739ae039 = $3cfb23eead135e3f$var$fetchUserConfig;
-
-
-const $915df908e0942746$var$defaultToArray = (value)=>!value ? undefined : Array.isArray(value) ? value : [
-        value
-    ];
-const $915df908e0942746$var$fetchVoidEndpoints = async (config)=>{
-    const fetchPromises = Object.entries(config.dataServers).filter(([key, server])=>server.pod !== true && server.void !== false).map(([key, server])=>config.httpClient(new URL("/.well-known/void", server.baseUrl).toString()).then((result)=>({
-                key: key,
-                datasets: result.json["@graph"]
-            })).catch((e)=>{
-            if (e.status === 404 || e.status === 401 || e.status === 500) return {
-                key: key,
-                error: e
-            };
-            throw e;
-        }));
-    let results = [];
-    try {
-        results = await Promise.all(fetchPromises);
-    } catch (e) {
-    // Do not throw error if no endpoint found
-    }
-    for (const result of results){
-        config.dataServers[result.key].containers = config.dataServers[result.key].containers || {};
-        config.dataServers[result.key].blankNodes = config.dataServers[result.key].blankNodes || {};
-        // Ignore unfetchable endpoints
-        if (result.datasets) for (const dataset of result.datasets){
-            const datasetServerKey = Object.keys(config.dataServers).find((key)=>dataset["void:uriSpace"] === config.dataServers[key].baseUrl);
-            // If the dataset is not part of a server mapped in the dataServers, ignore it
-            if (datasetServerKey) {
-                // If this is the local dataset, add the base information
-                if (datasetServerKey === result.key) {
-                    config.dataServers[result.key].name = config.dataServers[result.key].name || dataset["dc:title"];
-                    config.dataServers[result.key].description = config.dataServers[result.key].description || dataset["dc:description"];
-                    config.dataServers[result.key].sparqlEndpoint = config.dataServers[result.key].sparqlEndpoint || dataset["void:sparqlEndpoint"];
-                }
-                config.dataServers[result.key].containers[datasetServerKey] = config.dataServers[result.key].containers[datasetServerKey] || {};
-                for (const partition of $915df908e0942746$var$defaultToArray(dataset["void:classPartition"]))for (const type of $915df908e0942746$var$defaultToArray(partition["void:class"])){
-                    // Set containers by type
-                    const path = partition["void:uriSpace"].replace(dataset["void:uriSpace"], "/");
-                    if (config.dataServers[result.key].containers[datasetServerKey][type]) config.dataServers[result.key].containers[datasetServerKey][type].push(path);
-                    else config.dataServers[result.key].containers[datasetServerKey][type] = [
-                        path
-                    ];
-                }
-            }
-        }
-    }
-};
-var $915df908e0942746$export$2e2bcd8739ae039 = $915df908e0942746$var$fetchVoidEndpoints;
-
-
-
-
-
-
 /*
  * HTTP client used by all calls in data provider and auth provider
  * Do proxy calls if a proxy endpoint is available and the server is different from the auth server
  */ const $341dff85fe619d85$var$httpClient = (dataServers)=>(url, options = {})=>{
+        if (!url) throw new Error(`No URL provided on httpClient call`);
         const authServerKey = (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("authServer", dataServers);
         const serverKey = (0, $59a07b932dae8600$export$2e2bcd8739ae039)(url, dataServers);
         const useProxy = serverKey !== authServerKey && dataServers[authServerKey]?.proxyUrl && dataServers[serverKey]?.noProxy !== true;
@@ -1191,59 +1069,432 @@ var $341dff85fe619d85$export$2e2bcd8739ae039 = $341dff85fe619d85$var$httpClient;
 
 
 
-/** @type {(config: Configuration) => SemanticDataProvider} */ const $7f6a16d0025dc83a$var$dataProvider = (config)=>{
-    // TODO verify all data provider config + data models
-    if (!(0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("default", config.dataServers)) throw new Error("You must define a default server in your dataServers config");
-    if (!config.jsonContext) config.jsonContext = Object.fromEntries(config.ontologies.map((o)=>[
-            o.prefix,
-            o.url
-        ]));
-    if (!config.returnFailedResources) config.returnFailedResources = false;
-    // Configure httpClient with data servers (this is needed for proxy calls)
-    config.httpClient = (0, $341dff85fe619d85$export$2e2bcd8739ae039)(config.dataServers);
-    // Keep in memory for refresh
-    const originalConfig = {
+
+const $5e24772571dd1677$var$normalizeConfig = (config)=>{
+    const newConfig = {
         ...config
     };
-    let fetchUserConfigPromise = (0, $3cfb23eead135e3f$export$2e2bcd8739ae039)(config);
-    let fetchVoidEndpointsPromise = (0, $915df908e0942746$export$2e2bcd8739ae039)(config);
-    const waitForConfig = (method)=>async (...arg)=>{
-            await fetchUserConfigPromise;
-            await fetchVoidEndpointsPromise; // Return immediately if promise is fulfilled
-            return await method(...arg);
+    Object.keys(newConfig.dataServers).forEach((serverKey)=>{
+        newConfig.dataServers[serverKey].containers = newConfig.dataServers[serverKey].containers?.map((container)=>({
+                ...container,
+                server: serverKey,
+                uri: (0, ($parcel$interopDefault($bkNnK$urljoin)))(config.dataServers[serverKey].baseUrl, container.path)
+            }));
+    });
+    return newConfig;
+};
+var $5e24772571dd1677$export$2e2bcd8739ae039 = $5e24772571dd1677$var$normalizeConfig;
+
+
+/** @type {(originalConfig: Configuration) => SemanticDataProvider} */ const $7f6a16d0025dc83a$var$dataProvider = (originalConfig)=>{
+    // Keep in memory for refresh
+    let config = {
+        ...originalConfig
+    };
+    const prepareConfig = async ()=>{
+        // Configure httpClient with initial data servers, so that plugins may use it
+        config.httpClient = (0, $341dff85fe619d85$export$2e2bcd8739ae039)(config.dataServers);
+        for (const plugin of config.preloadPlugins)config = await plugin(config);
+        // Configure again httpClient with possibly updated data servers
+        config.httpClient = (0, $341dff85fe619d85$export$2e2bcd8739ae039)(config.dataServers);
+        config = (0, $5e24772571dd1677$export$2e2bcd8739ae039)(config);
+        if (!config.jsonContext) config.jsonContext = config.ontologies;
+        if (!config.returnFailedResources) config.returnFailedResources = false;
+        console.log("config after preload plugins", config);
+    };
+    // Immediately call the preload plugins
+    const prepareConfigPromise = prepareConfig();
+    const waitForPrepareConfig = (method)=>async (...arg)=>{
+            await prepareConfigPromise; // Return immediately if plugins have already been loaded
+            return method(config)(...arg);
         };
     return {
-        getList: waitForConfig((0, $b6ed253f3374f5d4$export$2e2bcd8739ae039)(config)),
-        getMany: waitForConfig((0, $e296494b4f6a4f89$export$2e2bcd8739ae039)(config)),
-        getManyReference: waitForConfig((0, $e5e279a608b8e6b1$export$2e2bcd8739ae039)(config)),
-        getOne: waitForConfig((0, $9020b8e3f4a4c1a1$export$2e2bcd8739ae039)(config)),
-        create: waitForConfig((0, $907cbc087f6529e2$export$2e2bcd8739ae039)(config)),
-        update: waitForConfig((0, $ceaafb56f75454f0$export$2e2bcd8739ae039)(config)),
+        getList: waitForPrepareConfig((0, $95cbc03f25caf72a$export$2e2bcd8739ae039)),
+        getMany: waitForPrepareConfig((0, $e296494b4f6a4f89$export$2e2bcd8739ae039)),
+        getManyReference: waitForPrepareConfig((0, $e5e279a608b8e6b1$export$2e2bcd8739ae039)),
+        getOne: waitForPrepareConfig((0, $9020b8e3f4a4c1a1$export$2e2bcd8739ae039)),
+        create: waitForPrepareConfig((0, $907cbc087f6529e2$export$2e2bcd8739ae039)),
+        update: waitForPrepareConfig((0, $ceaafb56f75454f0$export$2e2bcd8739ae039)),
         updateMany: ()=>{
             throw new Error("updateMany is not implemented yet");
         },
-        delete: waitForConfig((0, $566b5adde94810fa$export$2e2bcd8739ae039)(config)),
-        deleteMany: waitForConfig((0, $f170294dd29d8bf8$export$2e2bcd8739ae039)(config)),
+        delete: waitForPrepareConfig((0, $566b5adde94810fa$export$2e2bcd8739ae039)),
+        deleteMany: waitForPrepareConfig((0, $f170294dd29d8bf8$export$2e2bcd8739ae039)),
         // Custom methods
-        patch: waitForConfig((0, $fda69bf2752eb49a$export$2e2bcd8739ae039)(config)),
-        getDataModels: waitForConfig((0, $241c41c6f6021c7a$export$2e2bcd8739ae039)(config)),
-        getDataServers: waitForConfig((0, $b16131432127b07b$export$2e2bcd8739ae039)(config)),
-        getLocalDataServers: (0, $b16131432127b07b$export$2e2bcd8739ae039)(config),
-        fetch: waitForConfig(config.httpClient),
-        uploadFile: waitForConfig((rawFile)=>(0, $6fcb30f76390d142$export$a5575dbeeffdad98)(rawFile, config)),
+        patch: waitForPrepareConfig((0, $fda69bf2752eb49a$export$2e2bcd8739ae039)),
+        getDataModels: waitForPrepareConfig((0, $241c41c6f6021c7a$export$2e2bcd8739ae039)),
+        getDataServers: waitForPrepareConfig((0, $b16131432127b07b$export$2e2bcd8739ae039)),
+        getLocalDataServers: (0, $b16131432127b07b$export$2e2bcd8739ae039)(originalConfig),
+        fetch: waitForPrepareConfig((c)=>(0, $341dff85fe619d85$export$2e2bcd8739ae039)(c.dataServers)),
+        uploadFile: waitForPrepareConfig((c)=>(rawFile)=>(0, $6fcb30f76390d142$export$a5575dbeeffdad98)(rawFile, c)),
         refreshConfig: async ()=>{
             config = {
                 ...originalConfig
             };
-            fetchUserConfigPromise = (0, $3cfb23eead135e3f$export$2e2bcd8739ae039)(config);
-            fetchVoidEndpointsPromise = (0, $915df908e0942746$export$2e2bcd8739ae039)(config);
-            await fetchUserConfigPromise;
-            await fetchVoidEndpointsPromise;
+            await prepareConfig();
             return config;
         }
     };
 };
 var $7f6a16d0025dc83a$export$2e2bcd8739ae039 = $7f6a16d0025dc83a$var$dataProvider;
+
+
+
+
+
+
+const $89358cee13a17a31$var$configureUserStorage = async (config)=>{
+    const token = localStorage.getItem("token");
+    // If the user is logged in
+    if (token) {
+        const payload = (0, ($parcel$interopDefault($bkNnK$jwtdecode)))(token);
+        const webId = payload.webId || payload.webid; // Currently we must deal with both formats
+        const { json: user } = await config.httpClient(webId);
+        if (user) {
+            const newConfig = {
+                ...config
+            };
+            newConfig.dataServers.user = {
+                pod: true,
+                default: true,
+                baseUrl: user["pim:storage"] || (0, ($parcel$interopDefault($bkNnK$urljoin)))(webId, "data"),
+                sparqlEndpoint: user.endpoints?.["void:sparqlEndpoint"] || (0, ($parcel$interopDefault($bkNnK$urljoin)))(webId, "sparql"),
+                proxyUrl: user.endpoints?.proxyUrl,
+                containers: []
+            };
+            newConfig.jsonContext = [
+                "https://www.w3.org/ns/activitystreams",
+                (0, ($parcel$interopDefault($bkNnK$urljoin)))(new URL(webId).origin, "/.well-known/context.jsonld")
+            ];
+            return newConfig;
+        }
+    }
+    // Nothing to change
+    return config;
+};
+var $89358cee13a17a31$export$2e2bcd8739ae039 = $89358cee13a17a31$var$configureUserStorage;
+
+
+
+
+
+
+
+const $37dc42f6e1c3b4af$var$shexParser = (0, ($parcel$interopDefault($bkNnK$shexjsparser))).construct("");
+const $37dc42f6e1c3b4af$var$getContainerFromDataRegistration = async (dataRegistrationUri, config)=>{
+    const { json: dataRegistration } = await config.httpClient(dataRegistrationUri, {
+        headers: new Headers({
+            Accept: "application/ld+json",
+            Prefer: 'return=representation; include="http://www.w3.org/ns/ldp#PreferMinimalContainer"'
+        })
+    });
+    const shapeTreeUri = dataRegistration["interop:registeredShapeTree"];
+    let { json: shapeTree } = await config.httpClient(shapeTreeUri);
+    shapeTree = await (0, ($parcel$interopDefault($bkNnK$jsonld))).compact(shapeTree, {
+        st: "http://www.w3.org/ns/shapetrees#",
+        skos: "http://www.w3.org/2004/02/skos/core#",
+        expectsType: {
+            "@id": "st:expectsType",
+            "@type": "@id"
+        },
+        shape: {
+            "@id": "st:shape",
+            "@type": "@id"
+        },
+        describesInstance: {
+            "@id": "st:describesInstance",
+            "@type": "@id"
+        },
+        label: {
+            "@id": "skos:prefLabel",
+            "@container": "@language"
+        }
+    });
+    const { baseUrl: baseUrl } = config.dataServers.user;
+    const containerPath = dataRegistration.id.replace(baseUrl, "");
+    const container = {
+        path: containerPath,
+        label: shapeTree.label,
+        labelPredicate: shapeTree.describesInstance
+    };
+    if (shapeTree.shape) {
+        const { body: shexC } = await config.httpClient(shapeTree.shape, {
+            headers: new Headers({
+                Accept: "*/*"
+            })
+        }); // TODO use text/shex
+        const shexJ = $37dc42f6e1c3b4af$var$shexParser.parse(shexC);
+        const type = shexJ?.shapes?.[0]?.shapeExpr?.expression?.expressions.find((expr)=>expr.predicate === "http://www.w3.org/1999/02/22-rdf-syntax-ns#type")?.valueExpr?.values?.[0];
+        container.types = [
+            type
+        ];
+    }
+    return container;
+};
+var $37dc42f6e1c3b4af$export$2e2bcd8739ae039 = $37dc42f6e1c3b4af$var$getContainerFromDataRegistration;
+
+
+/**
+ * Return a function that look if an app (clientId) is registered with an user (webId)
+ * If not, it redirects to the endpoint provided by the user's authorization agent
+ * See https://solid.github.io/data-interoperability-panel/specification/#authorization-agent
+ */ const $c512de108ef5d674$var$fetchAppRegistration = async (config)=>{
+    const token = localStorage.getItem("token");
+    // If the user is logged in
+    if (token) {
+        const payload = (0, ($parcel$interopDefault($bkNnK$jwtdecode)))(token);
+        const webId = payload.webId || payload.webid; // Currently we must deal with both formats
+        const { json: user } = await config.httpClient(webId);
+        const authAgentUri = user["interop:hasAuthorizationAgent"];
+        if (authAgentUri) {
+            // Find if an application registration is linked to this user
+            // See https://solid.github.io/data-interoperability-panel/specification/#agent-registration-discovery
+            const { headers: headers } = await config.httpClient(authAgentUri);
+            if (headers.has("Link")) {
+                const linkHeader = (0, ($parcel$interopDefault($bkNnK$httplinkheader))).parse(headers.get("Link"));
+                const registeredAgentLinkHeader = linkHeader.rel("http://www.w3.org/ns/solid/interop#registeredAgent");
+                if (registeredAgentLinkHeader.length > 0) {
+                    const appRegistrationUri = registeredAgentLinkHeader[0].anchor;
+                    const { json: appRegistration } = await config.httpClient(appRegistrationUri);
+                    const newConfig = {
+                        ...config
+                    };
+                    for (const accessGrantUri of (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(appRegistration["hasAccessGrant:hasDataGrant"])){
+                        const { json: accessGrant } = await config.httpClient(accessGrantUri);
+                        for (const dataGrantUri of (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(accessGrant["interop:hasDataGrant"])){
+                            const { json: dataGrant } = await config.httpClient(dataGrantUri);
+                            const container = await (0, $37dc42f6e1c3b4af$export$2e2bcd8739ae039)(dataGrant["interop:hasDataRegistration"], config);
+                            newConfig.dataServers.user.containers?.push(container);
+                        }
+                    }
+                    return newConfig;
+                }
+            }
+        }
+    }
+    return config;
+};
+var $c512de108ef5d674$export$2e2bcd8739ae039 = $c512de108ef5d674$var$fetchAppRegistration;
+
+
+
+
+const $cd772adda3024172$var$fetchDataRegistry = async (config)=>{
+    const token = localStorage.getItem("token");
+    // If the user is logged in
+    if (token) {
+        if (!config.dataServers.user) throw new Error(`You must configure the user storage first with the configureUserStorage plugin`);
+        const payload = (0, ($parcel$interopDefault($bkNnK$jwtdecode)))(token);
+        const webId = payload.webId || payload.webid; // Currently we must deal with both formats
+        const { json: user } = await config.httpClient(webId);
+        const { json: registrySet } = await config.httpClient(user["interop:hasRegistrySet"]);
+        const { json: dataRegistry } = await config.httpClient(registrySet["interop:hasDataRegistry"]);
+        if (dataRegistry["interop:hasDataRegistration"]) {
+            const results = await Promise.all(dataRegistry["interop:hasDataRegistration"].map((dataRegistrationUri)=>{
+                return (0, $37dc42f6e1c3b4af$export$2e2bcd8739ae039)(dataRegistrationUri, config);
+            }));
+            const newConfig = {
+                ...config
+            };
+            newConfig.dataServers.user.containers?.push(...results.flat());
+            return newConfig;
+        }
+    }
+    // Nothing to change
+    return config;
+};
+var $cd772adda3024172$export$2e2bcd8739ae039 = $cd772adda3024172$var$fetchDataRegistry;
+
+
+
+const $1395e306228d41f2$var$fetchVoidEndpoints = async (config)=>{
+    let results = [];
+    try {
+        results = await Promise.all(Object.entries(config.dataServers).filter(([_, server])=>server.pod !== true && server.void !== false).map(async ([key, server])=>config.httpClient(new URL("/.well-known/void", server.baseUrl).toString()).then((result)=>({
+                    key: key,
+                    datasets: result.json?.["@graph"]
+                })).catch((e)=>{
+                if (e.status === 404 || e.status === 401 || e.status === 500) return {
+                    key: key,
+                    error: e.message
+                };
+                throw e;
+            })));
+    } catch (e) {
+    // Do not throw error if no endpoint found
+    }
+    results = results.filter((result)=>result.datasets);
+    if (results.length > 0) {
+        const newConfig = {
+            ...config
+        };
+        for (const result of results){
+            // Ignore unfetchable endpoints
+            if (result.datasets) for (const dataset of result.datasets){
+                newConfig.dataServers[result.key].name ??= dataset["dc:title"];
+                newConfig.dataServers[result.key].description ??= dataset["dc:description"];
+                newConfig.dataServers[result.key].sparqlEndpoint ??= dataset["void:sparqlEndpoint"];
+                newConfig.dataServers[result.key].containers ??= [];
+                for (const partition of (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(dataset["void:classPartition"]))for (const type of (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(partition["void:class"])){
+                    const path = partition["void:uriSpace"].replace(dataset["void:uriSpace"], "/");
+                    const containerIndex = newConfig.dataServers[result.key].containers?.findIndex((c)=>c.types.includes(type));
+                    // TODO expand type
+                    if (containerIndex !== -1) newConfig.dataServers[result.key].containers?.[containerIndex] = {
+                        path: path,
+                        types: [
+                            type
+                        ]
+                    };
+                    else newConfig.dataServers[result.key].containers?.push({
+                        path: path,
+                        types: [
+                            type
+                        ]
+                    });
+                }
+            }
+        }
+        return newConfig;
+    } else return config;
+};
+var $1395e306228d41f2$export$2e2bcd8739ae039 = $1395e306228d41f2$var$fetchVoidEndpoints;
+
+
+
+
+
+const $20621bc841a5205a$var$useDataModels = ()=>{
+    const dataProvider = (0, $bkNnK$reactadmin.useDataProvider)();
+    const [dataModels, setDataModels] = (0, $bkNnK$react.useState)();
+    (0, $bkNnK$react.useEffect)(()=>{
+        dataProvider.getDataModels().then((results)=>{
+            setDataModels(results);
+        });
+    }, [
+        dataProvider,
+        setDataModels
+    ]);
+    return dataModels;
+};
+var $20621bc841a5205a$export$2e2bcd8739ae039 = $20621bc841a5205a$var$useDataModels;
+
+
+
+
+const $c9933a88e2acc4da$var$useDataServers = ()=>{
+    const dataProvider = (0, $bkNnK$reactadmin.useDataProvider)();
+    const [dataServers, setDataServers] = (0, $bkNnK$react.useState)();
+    (0, $bkNnK$react.useEffect)(()=>{
+        dataProvider.getDataServers().then((results)=>{
+            setDataServers(results);
+        });
+    }, [
+        dataProvider,
+        setDataServers
+    ]);
+    return dataServers;
+};
+var $c9933a88e2acc4da$export$2e2bcd8739ae039 = $c9933a88e2acc4da$var$useDataServers;
+
+
+
+
+
+const $3158e0dc13ffffaa$var$useContainers = ({ resourceId: resourceId, types: types, serverKeys: serverKeys })=>{
+    const dataModels = (0, $20621bc841a5205a$export$2e2bcd8739ae039)();
+    const dataServers = (0, $c9933a88e2acc4da$export$2e2bcd8739ae039)();
+    const containers = (0, $bkNnK$react.useMemo)(()=>{
+        if (dataServers && dataModels) {
+            if (resourceId) {
+                const dataModel = dataModels[resourceId];
+                return (0, $047a107b0d203793$export$2e2bcd8739ae039)((0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(dataModel.types), serverKeys, dataServers);
+            } else if (types) return (0, $047a107b0d203793$export$2e2bcd8739ae039)(types, serverKeys, dataServers);
+            else {
+                const parsedServerKeys = (0, $6531da3b9e8c524a$export$2e2bcd8739ae039)(serverKeys || "@all", dataServers);
+                return parsedServerKeys.map((serverKey)=>dataServers[serverKey].containers).flat();
+            }
+        } else return [];
+    }, [
+        dataModels,
+        dataServers,
+        resourceId,
+        types,
+        serverKeys
+    ]);
+    return containers;
+};
+var $3158e0dc13ffffaa$export$2e2bcd8739ae039 = $3158e0dc13ffffaa$var$useContainers;
+
+
+
+
+
+
+const $ff3623bf1421ebcc$var$findCreateContainerWithTypes = (types, createServerKey, dataServers)=>{
+    if (!dataServers[createServerKey].containers) throw new Error(`Data server ${createServerKey} has no declared containers`);
+    const matchingContainers = dataServers[createServerKey].containers.filter((container)=>container.types?.some((t)=>types.includes(t)));
+    if (matchingContainers.length === 0) throw new Error(`No container found matching with types ${JSON.stringify(types)}. You can set explicitly the create.container property of the resource.`);
+    else if (matchingContainers.length > 1) throw new Error(`More than one container found matching with types ${JSON.stringify(types)}. You must set the create.server or create.container property for the resource.`);
+    return matchingContainers[0].uri;
+};
+var $ff3623bf1421ebcc$export$2e2bcd8739ae039 = $ff3623bf1421ebcc$var$findCreateContainerWithTypes;
+
+
+
+
+const $32d32215b4e4729f$var$useGetCreateContainerUri = ()=>{
+    const dataModels = (0, $20621bc841a5205a$export$2e2bcd8739ae039)();
+    const dataServers = (0, $c9933a88e2acc4da$export$2e2bcd8739ae039)();
+    const getCreateContainerUri = (0, $bkNnK$react.useCallback)((resourceId)=>{
+        if (!dataModels || !dataServers || !dataModels[resourceId]) return undefined;
+        const dataModel = dataModels[resourceId];
+        if (dataModel.create?.container) {
+            const [serverKey, path] = Object.entries(dataModel.create.container)[0];
+            if (!serverKey || !dataServers[serverKey]) throw new Error(`Wrong key for the dataModel.create.container config of resource ${resourceId}`);
+            return (0, ($parcel$interopDefault($bkNnK$urljoin)))(dataServers[serverKey].baseUrl, path);
+        } else if (dataModel.create?.server) return (0, $ff3623bf1421ebcc$export$2e2bcd8739ae039)(dataModel.types, dataModel.create?.server, dataServers);
+        else {
+            const defaultServerKey = (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("default", dataServers);
+            if (!defaultServerKey) throw new Error(`No default dataServer found. You can set explicitly one setting the "default" attribute to true`);
+            return (0, $ff3623bf1421ebcc$export$2e2bcd8739ae039)(dataModel.types, defaultServerKey, dataServers);
+        }
+    }, [
+        dataModels,
+        dataServers
+    ]);
+    return getCreateContainerUri;
+};
+var $32d32215b4e4729f$export$2e2bcd8739ae039 = $32d32215b4e4729f$var$useGetCreateContainerUri;
+
+
+const $298b78bb7d4a3358$var$useCreateContainerUri = (resourceId)=>{
+    const getCreateContainerUri = (0, $32d32215b4e4729f$export$2e2bcd8739ae039)();
+    const createContainerUri = (0, $bkNnK$react.useMemo)(()=>getCreateContainerUri(resourceId), [
+        getCreateContainerUri,
+        resourceId
+    ]);
+    return createContainerUri;
+};
+var $298b78bb7d4a3358$export$2e2bcd8739ae039 = $298b78bb7d4a3358$var$useCreateContainerUri;
+
+
+
+
+const $63a32f1a35c6f80e$var$useDataModel = (resourceId)=>{
+    // Get the raw data provider, since useDataProvider returns a wrapper
+    const dataProvider = (0, $bkNnK$react.useContext)((0, $bkNnK$reactadmin.DataProviderContext));
+    const [dataModel, setDataModel] = (0, $bkNnK$react.useState)(undefined); // TODO: Type this object
+    (0, $bkNnK$react.useEffect)(()=>{
+        dataProvider.getDataModels().then((results)=>setDataModel(results[resourceId]));
+    }, [
+        dataProvider,
+        resourceId,
+        setDataModel
+    ]);
+    return dataModel;
+};
+var $63a32f1a35c6f80e$export$2e2bcd8739ae039 = $63a32f1a35c6f80e$var$useDataModel;
+
 
 
 
@@ -1288,157 +1539,6 @@ const $85e9a897c6d7c14a$var$useGetExternalLink = (componentExternalLinks)=>{
     ]);
 };
 var $85e9a897c6d7c14a$export$2e2bcd8739ae039 = $85e9a897c6d7c14a$var$useGetExternalLink;
-
-
-
-
-
-const $63a32f1a35c6f80e$var$useDataModel = (resourceId)=>{
-    // Get the raw data provider, since useDataProvider returns a wrapper
-    const dataProvider = (0, $bkNnK$react.useContext)((0, $bkNnK$reactadmin.DataProviderContext));
-    const [dataModel, setDataModel] = (0, $bkNnK$react.useState)(undefined); // TODO: Type this object
-    (0, $bkNnK$react.useEffect)(()=>{
-        dataProvider.getDataModels().then((results)=>setDataModel(results[resourceId]));
-    }, [
-        dataProvider,
-        resourceId,
-        setDataModel
-    ]);
-    return dataModel;
-};
-var $63a32f1a35c6f80e$export$2e2bcd8739ae039 = $63a32f1a35c6f80e$var$useDataModel;
-
-
-
-
-const $c9933a88e2acc4da$var$useDataServers = ()=>{
-    const dataProvider = (0, $bkNnK$reactadmin.useDataProvider)();
-    const [dataServers, setDataServers] = (0, $bkNnK$react.useState)();
-    (0, $bkNnK$react.useEffect)(()=>{
-        dataProvider.getDataServers().then((results)=>{
-            setDataServers(results);
-        });
-    }, [
-        dataProvider,
-        setDataServers
-    ]);
-    return dataServers;
-};
-var $c9933a88e2acc4da$export$2e2bcd8739ae039 = $c9933a88e2acc4da$var$useDataServers;
-
-
-
-const $3158e0dc13ffffaa$var$useContainers = (resourceId, serverKeys = "@all")=>{
-    const dataModel = (0, $63a32f1a35c6f80e$export$2e2bcd8739ae039)(resourceId);
-    const dataServers = (0, $c9933a88e2acc4da$export$2e2bcd8739ae039)();
-    const [containers, setContainers] = (0, $bkNnK$react.useState)();
-    (0, $bkNnK$react.useEffect)(()=>{
-        if (dataModel && dataServers) setContainers((0, $047a107b0d203793$export$2e2bcd8739ae039)(dataModel.types, serverKeys, dataServers));
-    }, [
-        dataModel,
-        dataServers,
-        serverKeys
-    ]);
-    return containers;
-};
-var $3158e0dc13ffffaa$export$2e2bcd8739ae039 = $3158e0dc13ffffaa$var$useContainers;
-
-
-
-
-
-
-
-const $ff3623bf1421ebcc$var$findCreateContainerWithTypes = (types, createServerKey, dataServers)=>{
-    const containers = [];
-    Object.keys(dataServers[createServerKey].containers?.[createServerKey] || {}).forEach((type)=>{
-        if (types.includes(type)) dataServers[createServerKey].containers[createServerKey][type].forEach((path)=>{
-            const containerUri = (0, ($parcel$interopDefault($bkNnK$urljoin)))(dataServers[createServerKey].baseUrl, path);
-            if (!containers.includes(containerUri)) containers.push(containerUri);
-        });
-    });
-    if (containers.length === 0) throw new Error(`No container found matching with types ${JSON.stringify(types)}. You can set explicitely the create.container property of the resource.`);
-    else if (containers.length > 1) throw new Error(`More than one container found matching with types ${JSON.stringify(types)}. You must set the create.server or create.container property for the resource.`);
-    return containers[0];
-};
-var $ff3623bf1421ebcc$export$2e2bcd8739ae039 = $ff3623bf1421ebcc$var$findCreateContainerWithTypes;
-
-
-
-/** @deprecated Use "useCreateContainerUri" instead */ const $99ed32cbdb76cb50$var$useCreateContainer = (resourceId)=>{
-    const dataModel = (0, $63a32f1a35c6f80e$export$2e2bcd8739ae039)(resourceId);
-    const dataServers = (0, $c9933a88e2acc4da$export$2e2bcd8739ae039)();
-    const [createContainer, setCreateContainer] = (0, $bkNnK$react.useState)();
-    (0, $bkNnK$react.useEffect)(()=>{
-        if (dataModel && dataServers) {
-            if (dataModel.create?.container) {
-                const [serverKey, path] = Object.entries(dataModel.create.container)[0];
-                if (!serverKey || !dataServers[serverKey]) throw new Error(`Wrong key for the dataModel.create.container config of resource ${resourceId}`);
-                setCreateContainer((0, ($parcel$interopDefault($bkNnK$urljoin)))(dataServers[serverKey].baseUrl, path));
-            } else if (dataModel.create?.server) setCreateContainer((0, $ff3623bf1421ebcc$export$2e2bcd8739ae039)(dataModel.types, dataModel.create?.server, dataServers));
-            else {
-                const defaultServerKey = (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("default", dataServers);
-                setCreateContainer((0, $ff3623bf1421ebcc$export$2e2bcd8739ae039)(dataModel.types, defaultServerKey, dataServers));
-            }
-        }
-    }, [
-        dataModel,
-        dataServers,
-        setCreateContainer
-    ]);
-    return createContainer;
-};
-var $99ed32cbdb76cb50$export$2e2bcd8739ae039 = $99ed32cbdb76cb50$var$useCreateContainer;
-
-
-
-
-
-
-
-
-
-const $20621bc841a5205a$var$useDataModels = ()=>{
-    const dataProvider = (0, $bkNnK$reactadmin.useDataProvider)();
-    const [dataModels, setDataModels] = (0, $bkNnK$react.useState)();
-    (0, $bkNnK$react.useEffect)(()=>{
-        dataProvider.getDataModels().then((results)=>{
-            setDataModels(results);
-        });
-    }, [
-        dataProvider,
-        setDataModels
-    ]);
-    return dataModels;
-};
-var $20621bc841a5205a$export$2e2bcd8739ae039 = $20621bc841a5205a$var$useDataModels;
-
-
-const $298b78bb7d4a3358$var$useCreateContainerUri = ()=>{
-    const dataModels = (0, $20621bc841a5205a$export$2e2bcd8739ae039)();
-    const dataServers = (0, $c9933a88e2acc4da$export$2e2bcd8739ae039)();
-    const getContainerUri = (0, $bkNnK$react.useCallback)((resourceId)=>{
-        if (!dataModels || !dataServers || !dataModels[resourceId]) return undefined;
-        const dataModel = dataModels[resourceId];
-        if (dataModel.create?.container) {
-            const [serverKey, path] = Object.entries(dataModel.create.container)[0];
-            if (!serverKey || !dataServers[serverKey]) throw new Error(`Wrong key for the dataModel.create.container config of resource ${resourceId}`);
-            return (0, ($parcel$interopDefault($bkNnK$urljoin)))(dataServers[serverKey].baseUrl, path);
-        }
-        if (dataModel.create?.server) return (0, $ff3623bf1421ebcc$export$2e2bcd8739ae039)(dataModel.types, dataModel.create?.server, dataServers);
-        const defaultServerKey = (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("default", dataServers);
-        if (!defaultServerKey) throw new Error(`No default dataServer found. You can set explicitly one setting the "default" attribute to true`);
-        return (0, $ff3623bf1421ebcc$export$2e2bcd8739ae039)(dataModel.types, defaultServerKey, dataServers);
-    }, [
-        dataModels,
-        dataServers
-    ]);
-    return getContainerUri;
-};
-var $298b78bb7d4a3358$export$2e2bcd8739ae039 = $298b78bb7d4a3358$var$useCreateContainerUri;
-
-
-
 
 
 

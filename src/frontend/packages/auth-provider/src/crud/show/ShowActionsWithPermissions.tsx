@@ -19,7 +19,7 @@ const ShowActionsWithPermissions = () => {
   const { permissions } = usePermissions<Permissions | undefined>(record?.id);
 
   const resource = useResourceContext();
-  const containerUri = useCreateContainerUri()(resource);
+  const containerUri = useCreateContainerUri(resource);
   const { permissions: containerPermissions } = usePermissions<Permissions | undefined>(containerUri);
 
   return (

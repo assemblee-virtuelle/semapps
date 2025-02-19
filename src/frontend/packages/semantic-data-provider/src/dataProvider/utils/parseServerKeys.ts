@@ -1,6 +1,7 @@
 import getServerKeyFromType from './getServerKeyFromType';
+import { DataServersConfig } from '../types';
 
-const parseServerKey = (serverKey, dataServers) => {
+const parseServerKey = (serverKey: string, dataServers: DataServersConfig) => {
   switch (serverKey) {
     case '@default':
       return getServerKeyFromType('default', dataServers);
@@ -15,25 +16,25 @@ const parseServerKey = (serverKey, dataServers) => {
 
 // Return the list of servers keys in an array
 // parsing keywords like @all, @default, @pod and @authServer
-const parseServerKeys = (serverKeys, dataServers) => {
+const parseServerKeys = (serverKeys: string | string[], dataServers: DataServersConfig) => {
   if (Array.isArray(serverKeys)) {
     if (serverKeys.includes('@all')) {
       return Object.keys(dataServers);
+    } else {
+      return serverKeys.map(serverKey => parseServerKey(serverKey, dataServers));
     }
-    return serverKeys.map(serverKey => parseServerKey(serverKey, dataServers));
-  }
-  if (typeof serverKeys === 'string') {
+  } else if (typeof serverKeys === 'string') {
     if (serverKeys === '@all') {
       return Object.keys(dataServers);
-    }
-    if (serverKeys === '@remote') {
+    } else if (serverKeys === '@remote') {
       const defaultServerKey = getServerKeyFromType('default', dataServers);
       return Object.keys(dataServers).filter(serverKey => serverKey !== defaultServerKey);
+    } else {
+      return [parseServerKey(serverKeys, dataServers)];
     }
-    return [parseServerKey(serverKeys, dataServers)];
+  } else {
+    throw new Error(`The parseServerKeys expect a list of server keys, or keywords`);
   }
-  // If server key is empty
-  return false;
 };
 
 export default parseServerKeys;

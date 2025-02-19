@@ -9,6 +9,8 @@ import getServerKeyFromType from './utils/getServerKeyFromType';
 const httpClient =
   dataServers =>
   (url, options = {}) => {
+    if (!url) throw new Error(`No URL provided on httpClient call`);
+
     const authServerKey = getServerKeyFromType('authServer', dataServers);
     const serverKey = getServerKeyFromUri(url, dataServers);
     const useProxy =
