@@ -280,7 +280,6 @@ module.exports = {
       const { containerUri, options, webId } = ctx.params;
 
       if (options?.typeIndex) {
-        // TODO wait for type indexes creation
         await ctx.call('type-indexes.waitForIndexCreation', { type: options.typeIndex, webId });
 
         await this.actions.register(

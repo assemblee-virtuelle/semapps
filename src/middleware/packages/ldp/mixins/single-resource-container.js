@@ -46,18 +46,31 @@ module.exports = {
     },
     async waitForResourceCreation(ctx) {
       const { webId } = ctx.params;
-      let containerUri;
+      let resource;
       let attempts = 0;
 
       do {
         attempts += 1;
         if (attempts > 1) await delay(1000);
-        containerUri = await this.actions.getResourceUri({ webId });
-      } while (!containerUri || attempts > 30);
+        const resourceUri = await this.actions.getResourceUri({ webId });
 
-      if (!containerUri) throw new Error(`Resource still had not been created after 30s`);
+        // Now wait for resources to have been effectively created, because when we call the ldp.container.post action,
+        // the ldp:contains predicate is added first (to ensure WAC permissions work) and then the resource is created
+        if (resourceUri) {
+          try {
+            resource = await this.actions.get(
+              { resourceUri, webId: 'system' },
+              { parentCtx: ctx, meta: { $cache: false } }
+            );
+          } catch (e) {
+            // Ignore
+          }
+        }
+      } while (!resource || attempts > 30);
 
-      return containerUri;
+      if (!resource) throw new Error(`Resource still had not been created after 30s`);
+
+      return resource.id || resource['@id'];
     }
   },
   hooks: {

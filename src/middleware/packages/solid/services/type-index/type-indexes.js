@@ -1,4 +1,4 @@
-const { ControlledContainerMixin, DereferenceMixin, delay } = require('@semapps/ldp');
+const { ControlledContainerMixin, DereferenceMixin, delay, arrayOf } = require('@semapps/ldp');
 const { solid, skos, apods } = require('@semapps/ontologies');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { namedNode, triple } = require('@rdfjs/data-model');
@@ -141,6 +141,28 @@ module.exports = {
         throw new Error(`${type === 'private' ? 'Private' : 'Public'} TypeIndex still has not been created after 30s`);
 
       return indexUri;
+    },
+    /**
+     * Wait until all type registrations have been created for the newly-created user
+     */
+    async awaitCreateComplete(ctx) {
+      const { webId } = ctx.params;
+
+      const containers = await ctx.call('ldp.registry.list');
+      const numContainersWithTypeIndex = Object.values(containers).filter(container => container.typeIndex).length;
+
+      let numTypeRegistrations;
+      let attempts = 0;
+      do {
+        attempts += 1;
+        if (attempts > 1) await delay(1000);
+        const typeRegistrationsContainer = await ctx.call('type-registrations.list', { webId });
+        numTypeRegistrations = arrayOf(typeRegistrationsContainer['ldp:contains']).length;
+        if (attempts > 30)
+          throw new Error(
+            `After 30s, user ${webId} has only ${numTypeRegistrations} types registrations. Expecting ${numContainersWithTypeIndex}`
+          );
+      } while (numTypeRegistrations < numContainersWithTypeIndex);
     }
   },
   methods: {
