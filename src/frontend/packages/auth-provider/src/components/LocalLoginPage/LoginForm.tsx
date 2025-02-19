@@ -3,6 +3,7 @@ import { useTranslate, useNotify, useSafeSetState, TextInput, required, email, u
 import { useSearchParams } from 'react-router-dom';
 import { Button, CardContent } from '@mui/material';
 import { SubmitHandler, useFormContext } from 'react-hook-form';
+import RequiredFieldIndicator from './RequiredFieldIndicator';
 
 interface FormValues {
   username: string;
@@ -76,7 +77,12 @@ const FormContent = ({
     <CardContent>
       <TextInput
         source="username"
-        label={translate(allowUsername ? 'auth.input.username_or_email' : 'auth.input.email')}
+        label={
+          <>
+            {translate(allowUsername ? 'auth.input.username_or_email' : 'auth.input.email')}
+            <RequiredFieldIndicator />
+          </>
+        }
         autoComplete="email"
         fullWidth
         disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
@@ -90,7 +96,12 @@ const FormContent = ({
       <TextInput
         source="password"
         type="password"
-        label={translate('ra.auth.password')}
+        label={
+          <>
+            {translate('ra.auth.password')}
+            <RequiredFieldIndicator />
+          </>
+        }
         autoComplete="current-password"
         fullWidth
         disabled={loading}

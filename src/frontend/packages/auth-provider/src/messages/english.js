@@ -45,7 +45,9 @@ const englishMessages = {
       confirm_new_password: 'Confirm new password',
       password_strength: 'Password strength',
       password_too_weak: 'Password too weak. Increase length or add special characters.',
-      password_mismatch: 'The passwords you provided do not match.'
+      password_mismatch: 'The passwords you provided do not match.',
+      required_field: 'Required field',
+      required_field_description: 'This field is required'
     },
     helper: {
       login: 'Sign in to your account',

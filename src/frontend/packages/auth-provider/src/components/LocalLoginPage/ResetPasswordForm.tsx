@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Form, TextInput, required, useTranslate, useNotify, useSafeSetState, useAuthProvider } from 'react-admin';
 import { Button, CardContent } from '@mui/material';
 import { SubmitHandler } from 'react-hook-form';
+import RequiredFieldIndicator from './RequiredFieldIndicator';
 
 interface FormValues {
   email: string;
@@ -60,7 +61,12 @@ const FormContent = ({
       <TextInput
         autoFocus
         source="email"
-        label={translate('auth.input.email')}
+        label={
+          <>
+            {translate('auth.input.email')}
+            <RequiredFieldIndicator />
+          </>
+        }
         autoComplete="email"
         fullWidth
         disabled={loading}

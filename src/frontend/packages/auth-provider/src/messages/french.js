@@ -45,7 +45,9 @@ const frenchMessages = {
       confirm_new_password: 'Confirmer le nouveau mot de passe',
       password_strength: 'Force du mot de passe',
       password_too_weak: 'Mot de passe trop faible. Augmenter la longueur ou ajouter des caractères spéciaux.',
-      password_mismatch: 'Mot de passe différent du premier'
+      password_mismatch: 'Mot de passe différent du premier',
+      required_field: 'Champ obligatoire',
+      required_field_description: 'Ce champ est obligatoire'
     },
     helper: {
       login: 'Connectez-vous à votre compte.',

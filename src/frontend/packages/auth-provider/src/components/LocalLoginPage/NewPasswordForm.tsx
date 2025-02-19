@@ -6,6 +6,7 @@ import { SubmitHandler } from 'react-hook-form';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 import validatePasswordStrength from './validatePasswordStrength';
 import { defaultScorer } from '../../passwordScorer';
+import RequiredFieldIndicator from './RequiredFieldIndicator';
 
 interface FormProps {
   redirectTo: string;
@@ -101,7 +102,12 @@ const FormContent = ({
       <TextInput
         autoFocus
         source="email"
-        label={translate('auth.input.email')}
+        label={
+          <>
+            {translate('auth.input.email')}
+            <RequiredFieldIndicator />
+          </>
+        }
         autoComplete="email"
         fullWidth
         disabled={loading}
@@ -122,7 +128,12 @@ const FormContent = ({
         type="password"
         source="password"
         value={newPassword}
-        label={translate('auth.input.new_password')}
+        label={
+          <>
+            {translate('auth.input.new_password')}
+            <RequiredFieldIndicator />
+          </>
+        }
         autoComplete="current-password"
         fullWidth
         disabled={loading}
@@ -134,7 +145,12 @@ const FormContent = ({
       <TextInput
         type="password"
         source="confirm-password"
-        label={translate('auth.input.confirm_new_password')}
+        label={
+          <>
+            {translate('auth.input.confirm_new_password')}
+            <RequiredFieldIndicator />
+          </>
+        }
         autoComplete="current-password"
         fullWidth
         disabled={loading}

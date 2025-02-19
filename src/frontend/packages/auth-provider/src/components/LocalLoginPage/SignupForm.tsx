@@ -18,6 +18,7 @@ import useSignup from '../../hooks/useSignup';
 import validatePasswordStrength from './validatePasswordStrength';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 import { defaultScorer } from '../../passwordScorer';
+import RequiredFieldIndicator from './RequiredFieldIndicator';
 
 interface FormValues {
   username: string;
@@ -118,7 +119,12 @@ const FormContent = ({
       <TextInput
         autoFocus
         source="username"
-        label={translate('auth.input.username')}
+        label={
+          <>
+            {translate('auth.input.username')}
+            <RequiredFieldIndicator />
+          </>
+        }
         autoComplete="username"
         fullWidth
         disabled={loading}
@@ -135,7 +141,12 @@ const FormContent = ({
       />
       <TextInput
         source="email"
-        label={translate('auth.input.email')}
+        label={
+          <>
+            {translate('auth.input.email')}
+            <RequiredFieldIndicator />
+          </>
+        }
         autoComplete="email"
         fullWidth
         disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
@@ -156,7 +167,12 @@ const FormContent = ({
         onChange={e => {
           setPassword(e.target.value);
         }}
-        label={translate('ra.auth.password')}
+        label={
+          <>
+            {translate('ra.auth.password')}
+            <RequiredFieldIndicator />
+          </>
+        }
         autoComplete="new-password"
         fullWidth
         disabled={loading}
