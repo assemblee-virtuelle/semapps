@@ -6,7 +6,7 @@ import QuickAppendDialog from './QuickAppendDialog';
 const QuickAppendReferenceArrayField = ({ reference, source, resource, children, ...otherProps }) => {
   const record = useRecordContext();
   const [showDialog, setShowDialog] = useState(false);
-  const { permissions } = usePermissions(record.id);
+  const { permissions } = usePermissions({ uri: record.id });
 
   const canAppend = useMemo(
     () => !!permissions && permissions.some(p => ['acl:Append', 'acl:Write', 'acl:Control'].includes(p['acl:mode'])),

@@ -21,7 +21,7 @@ export function useFullCalendarProps({
   label: any;
   startDate: any;
   endDate: any;
-  linkType: any;
+  linkType?: string | undefined;
 }): {
   initialDate: Date;
   events:
@@ -36,16 +36,8 @@ export function useFullCalendarProps({
   datesSet: ({ view }: { view: any }) => void;
   eventClick: ({ event, jsEvent }: { event: any; jsEvent: any }) => void;
 };
-declare namespace CalendarList {
-  namespace defaultProps {
-    let linkType: string;
-  }
-}
-declare namespace DaysList {
-  namespace defaultProps {
-    let linkType: string;
-  }
-}
+export function CalendarList(props: any): import('react/jsx-runtime').JSX.Element;
+export function DaysList(props: any): import('react/jsx-runtime').JSX.Element;
 export const DateInput: <TDate>(
   props: Omit<Props<DatePickerProps<TDate>>, 'PickerComponent'>
 ) => import('react/jsx-runtime').JSX.Element;

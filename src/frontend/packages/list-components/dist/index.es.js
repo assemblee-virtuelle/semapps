@@ -135,7 +135,7 @@ const $e54e9a9f27806c4d$var$stopPropagation = (e)=>e.stopPropagation();
 // required by ChipField, which uses a Chip from material-ui.
 // The material-ui Chip requires an onClick handler to behave like a clickable element.
 const $e54e9a9f27806c4d$var$handleClick = ()=>{};
-const $e54e9a9f27806c4d$var$GridList = ({ children: children, linkType: linkType, externalLinks: externalLinks, spacing: spacing, xs: xs, sm: sm, md: md, lg: lg, xl: xl })=>{
+const $e54e9a9f27806c4d$var$GridList = ({ children: children, linkType: linkType = "edit", externalLinks: externalLinks = false, spacing: spacing = 3, xs: xs = 6, sm: sm, md: md, lg: lg, xl: xl })=>{
     const { data: data, resource: resource, isLoading: isLoading } = (0, $2An97$useListContext)();
     const getExternalLink = (0, $2An97$useGetExternalLink)(externalLinks);
     const createPath = (0, $2An97$useCreatePath)();
@@ -186,12 +186,6 @@ const $e54e9a9f27806c4d$var$GridList = ({ children: children, linkType: linkType
         })
     });
 };
-$e54e9a9f27806c4d$var$GridList.defaultProps = {
-    xs: 6,
-    spacing: 3,
-    linkType: "edit",
-    externalLinks: false
-};
 var $e54e9a9f27806c4d$export$2e2bcd8739ae039 = $e54e9a9f27806c4d$var$GridList;
 
 
@@ -234,7 +228,11 @@ const $8cf7b8f98f373d84$var$useStyles = (0, $2An97$muistylesmakeStyles)(()=>({
  *     linkType="show"
  *   />
  * </List>
- */ const $8cf7b8f98f373d84$var$MasonryList = ({ image: image, content: content, actions: actions, breakpointCols: breakpointCols, linkType: linkType })=>{
+ */ const $8cf7b8f98f373d84$var$MasonryList = ({ image: image, content: content, actions: actions, breakpointCols: breakpointCols = {
+    default: 3,
+    1050: 2,
+    700: 1
+}, linkType: linkType = "edit" })=>{
     const classes = $8cf7b8f98f373d84$var$useStyles();
     const { data: data, resource: resource } = (0, $2An97$useListContext)();
     const createPath = (0, $2An97$useCreatePath)();
@@ -276,14 +274,6 @@ const $8cf7b8f98f373d84$var$useStyles = (0, $2An97$muistylesmakeStyles)(()=>({
             });
         })
     });
-};
-$8cf7b8f98f373d84$var$MasonryList.defaultProps = {
-    breakpointCols: {
-        default: 3,
-        1050: 2,
-        700: 1
-    },
-    linkType: "edit"
 };
 var $8cf7b8f98f373d84$export$2e2bcd8739ae039 = $8cf7b8f98f373d84$var$MasonryList;
 
@@ -455,7 +445,7 @@ var $032ebd19dd4d05d7$export$2e2bcd8739ae039 = $032ebd19dd4d05d7$var$ListActions
 
 
 
-const $5bd09179d1367bb7$var$MultiViewsList = ({ children: children, actions: actions, views: views, ListComponent: ListComponent, ...otherProps })=>{
+const $5bd09179d1367bb7$var$MultiViewsList = ({ children: children, actions: actions = /*#__PURE__*/ (0, $2An97$jsx)((0, $032ebd19dd4d05d7$export$2e2bcd8739ae039), {}), views: views, ListComponent: ListComponent = (0, $2An97$List), ...otherProps })=>{
     const query = new URLSearchParams((0, $2An97$useLocation)().search);
     const initialView = query.has("view") ? query.get("view") : Object.keys(views)[0];
     const [currentView, setView] = (0, $2An97$useState)(initialView);
@@ -475,10 +465,6 @@ const $5bd09179d1367bb7$var$MultiViewsList = ({ children: children, actions: act
             children: views[currentView].list
         })
     });
-};
-$5bd09179d1367bb7$var$MultiViewsList.defaultProps = {
-    actions: /*#__PURE__*/ (0, $2An97$jsx)((0, $032ebd19dd4d05d7$export$2e2bcd8739ae039), {}),
-    ListComponent: (0, $2An97$List)
 };
 var $5bd09179d1367bb7$export$2e2bcd8739ae039 = $5bd09179d1367bb7$var$MultiViewsList;
 

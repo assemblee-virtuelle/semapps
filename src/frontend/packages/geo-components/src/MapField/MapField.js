@@ -4,7 +4,7 @@ import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import { Box, Typography } from '@mui/material';
 import ChangeView from './ChangeView';
 
-const MapField = ({ latitude, longitude, address, height, typographyProps, ...rest }) => {
+const MapField = ({ latitude, longitude, address, height = 400, zoom = 11, typographyProps, ...rest }) => {
   const record = useRecordContext();
   const position = [latitude(record), longitude(record)];
 
@@ -19,7 +19,7 @@ const MapField = ({ latitude, longitude, address, height, typographyProps, ...re
           <Typography {...typographyProps}>{address(record)}</Typography>
         </Box>
       )}
-      <MapContainer style={{ height }} center={position} {...rest}>
+      <MapContainer style={{ height }} center={position} zoom={zoom} {...rest}>
         <ChangeView center={position} />
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -29,11 +29,6 @@ const MapField = ({ latitude, longitude, address, height, typographyProps, ...re
       </MapContainer>
     </Box>
   );
-};
-
-MapField.defaultProps = {
-  height: 400,
-  zoom: 11
 };
 
 export default MapField;

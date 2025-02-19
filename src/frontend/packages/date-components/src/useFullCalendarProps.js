@@ -2,7 +2,7 @@ import React, { useMemo, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useListContext, useCreatePath } from 'react-admin';
 
-const useFullCalendarProps = ({ label, startDate, endDate, linkType }) => {
+const useFullCalendarProps = ({ label, startDate, endDate, linkType = 'edit' }) => {
   const { data, isLoading, resource } = useListContext();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();

@@ -1,9 +1,22 @@
-declare namespace AvatarWithLabelField {
-  namespace defaultProps {
-    let labelColor: string;
-    let externalLink: boolean;
-  }
-}
+export function AvatarWithLabelField({
+  label,
+  defaultLabel,
+  image,
+  fallback,
+  externalLink,
+  labelColor,
+  classes,
+  ...rest
+}: {
+  [x: string]: any;
+  label: any;
+  defaultLabel: any;
+  image: any;
+  fallback: any;
+  externalLink?: boolean | undefined;
+  labelColor?: string | undefined;
+  classes: any;
+}): import('react/jsx-runtime').JSX.Element;
 export function ReferenceArrayField({
   source,
   ...otherProps

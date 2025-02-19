@@ -79,7 +79,7 @@ const $4e17293ac0574285$var$useStyles = (0, ($parcel$interopDefault($gJbUX$muist
         }
     }));
 const $4e17293ac0574285$var$handleClick = ()=>{};
-const $4e17293ac0574285$var$AvatarWithLabelField = ({ label: label, defaultLabel: defaultLabel, image: image, fallback: fallback, externalLink: externalLink, labelColor: labelColor, classes: classes, ...rest })=>{
+const $4e17293ac0574285$var$AvatarWithLabelField = ({ label: label, defaultLabel: defaultLabel, image: image, fallback: fallback, externalLink: externalLink = false, labelColor: labelColor = "secondary", classes: classes, ...rest })=>{
     classes = $4e17293ac0574285$var$useStyles(classes);
     const record = (0, $gJbUX$reactadmin.useRecordContext)();
     const computedLabel = (typeof label === "function" ? label(record) : record[label]) || defaultLabel;
@@ -115,10 +115,6 @@ const $4e17293ac0574285$var$AvatarWithLabelField = ({ label: label, defaultLabel
             })
         ]
     });
-};
-$4e17293ac0574285$var$AvatarWithLabelField.defaultProps = {
-    labelColor: "secondary",
-    externalLink: false
 };
 var $4e17293ac0574285$export$2e2bcd8739ae039 = $4e17293ac0574285$var$AvatarWithLabelField;
 
@@ -524,7 +520,9 @@ var $9ac0ba4780250906$export$2e2bcd8739ae039 = $9ac0ba4780250906$var$QuickAppend
 const $6a1cce6d258bf615$var$QuickAppendReferenceArrayField = ({ reference: reference, source: source, resource: resource, children: children, ...otherProps })=>{
     const record = (0, $gJbUX$reactadmin.useRecordContext)();
     const [showDialog, setShowDialog] = (0, $gJbUX$react.useState)(false);
-    const { permissions: permissions } = (0, $gJbUX$reactadmin.usePermissions)(record.id);
+    const { permissions: permissions } = (0, $gJbUX$reactadmin.usePermissions)({
+        uri: record.id
+    });
     const canAppend = (0, $gJbUX$react.useMemo)(()=>!!permissions && permissions.some((p)=>[
                 "acl:Append",
                 "acl:Write",

@@ -24,11 +24,11 @@ import getSearchParamsRest from './getSearchParamsRest';
  * @returns
  */
 const LocalLoginPage = ({
-  hasSignup,
-  allowUsername,
+  hasSignup = true,
+  allowUsername = false,
   onLogin,
   onSignup,
-  additionalSignupValues,
+  additionalSignupValues = {},
   passwordScorer = defaultScorer
 }) => {
   const translate = useTranslate();
@@ -109,12 +109,6 @@ const LocalLoginPage = ({
       </Card>
     </SimpleBox>
   );
-};
-
-LocalLoginPage.defaultProps = {
-  hasSignup: true,
-  allowUsername: false,
-  additionalSignupValues: {}
 };
 
 export default LocalLoginPage;
