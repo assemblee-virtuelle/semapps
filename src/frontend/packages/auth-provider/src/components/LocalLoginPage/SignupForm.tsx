@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import createSlug from 'speakingurl';
 import {
   Form,
@@ -20,6 +20,7 @@ import validatePasswordStrength from './validatePasswordStrength';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 import { defaultScorer } from '../../passwordScorer';
 import RequiredFieldIndicator, { VisuallyHidden } from './RequiredFieldIndicator';
+import { PasswordAnalysis } from '../../types';
 
 interface FormValues {
   username: string;
@@ -74,6 +75,7 @@ const FormContent = ({
 }: SignupFormProps & { setHandleSubmit: React.Dispatch<React.SetStateAction<SubmitHandler<FormValues>>> }) => {
   const [loading, setLoading] = useSafeSetState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [passwordAnalysis, setPasswordAnalysis] = useState<PasswordAnalysis | null>(null);
   const signup = useSignup();
   const translate = useTranslate();
   const notify = useNotify();
@@ -120,6 +122,15 @@ const FormContent = ({
     });
   }, [setLoading, signup, additionalSignupValues, redirectTo, notify, onSignup, formContext]);
 
+  useEffect(() => {
+    if (password && passwordScorer) {
+      const analysis = passwordScorer.analyzeFn(password);
+      setPasswordAnalysis(analysis);
+    } else {
+      setPasswordAnalysis(null);
+    }
+  }, [password, passwordScorer]);
+
   return (
     <CardContent>
       <TextInput
@@ -164,6 +175,31 @@ const FormContent = ({
             {translate('auth.input.password_strength')}:{' '}
           </Typography>
           <PasswordStrengthIndicator password={password} scorer={passwordScorer} sx={{ width: '100%' }} />
+          {passwordAnalysis && passwordAnalysis.suggestions.length > 0 && (
+            <Typography
+              variant="caption"
+              color="textSecondary"
+              component="div"
+              sx={{
+                mt: 1,
+                mb: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 0.5
+              }}
+            >
+              {translate('auth.input.password_suggestions')}:
+              {passwordAnalysis.suggestions.map((suggestion, index) => {
+                const translationKey = `auth.input.password_suggestion.${suggestion}`;
+                const translatedText = translate(translationKey);
+                return (
+                  <span key={index} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    • {translatedText}
+                  </span>
+                );
+              })}
+            </Typography>
+          )}
         </>
       )}
       <div className="password-container" style={{ position: 'relative' }}>

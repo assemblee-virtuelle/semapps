@@ -46,6 +46,16 @@ const frenchMessages = {
       new_password: 'Nouveau mot de passe',
       confirm_new_password: 'Confirmer le nouveau mot de passe',
       password_strength: 'Force du mot de passe',
+      password_suggestions: 'Suggestions pour améliorer votre mot de passe',
+      password_suggestion: {
+        add_lowercase_letters_a_z: 'Ajouter des lettres minuscules (a-z)',
+        add_uppercase_letters_a_z: 'Ajouter des lettres majuscules (A-Z)',
+        add_numbers_0_9: 'Ajouter des chiffres (0-9)',
+        add_special_characters: 'Ajouter des caractères spéciaux (!@#$...)',
+        make_it_at_least_8_characters_long: 'Faire au moins 8 caractères de long',
+        make_it_at_least_14_characters_long_for_maximum_strength:
+          'Faire au moins 14 caractères de long pour une force maximale'
+      },
       password_too_weak: 'Mot de passe trop faible. Augmenter la longueur ou ajouter des caractères spéciaux.',
       password_mismatch: 'Mot de passe différent du premier',
       required_field: 'Champ obligatoire',

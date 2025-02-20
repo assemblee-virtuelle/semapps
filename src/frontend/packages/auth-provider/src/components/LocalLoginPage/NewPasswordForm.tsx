@@ -8,6 +8,7 @@ import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 import validatePasswordStrength from './validatePasswordStrength';
 import { defaultScorer } from '../../passwordScorer';
 import RequiredFieldIndicator, { VisuallyHidden } from './RequiredFieldIndicator';
+import { PasswordAnalysis } from '../../types';
 
 interface FormProps {
   redirectTo: string;
@@ -65,6 +66,7 @@ const FormContent = ({
   const notify = useNotify();
 
   const [newPassword, setNewPassword] = useState('');
+  const [passwordAnalysis, setPasswordAnalysis] = useState<PasswordAnalysis | null>(null);
 
   const toggleNewPassword = () => {
     setShowNewPassword(!showNewPassword);
@@ -108,6 +110,15 @@ const FormContent = ({
     });
   });
 
+  useEffect(() => {
+    if (newPassword && passwordScorer) {
+      const analysis = passwordScorer.analyzeFn(newPassword);
+      setPasswordAnalysis(analysis);
+    } else {
+      setPasswordAnalysis(null);
+    }
+  }, [newPassword, passwordScorer]);
+
   return (
     <CardContent>
       <TextInput
@@ -125,13 +136,36 @@ const FormContent = ({
         validate={required(translate('auth.required.newPassword'))}
         format={value => (value ? value.toLowerCase() : '')}
       />
-      {passwordScorer && (
+      {passwordScorer && newPassword && (
         <>
           <Typography variant="caption" style={{ marginBottom: 3 }}>
             {translate('auth.input.password_strength')}:{' '}
           </Typography>
-
           <PasswordStrengthIndicator password={newPassword} scorer={passwordScorer} sx={{ width: '100%' }} />
+          {passwordAnalysis && passwordAnalysis.suggestions.length > 0 && (
+            <Typography
+              variant="caption"
+              color="textSecondary"
+              component="div"
+              sx={{
+                mt: 1,
+                mb: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 0.5
+              }}
+            >
+              {translate('auth.input.password_suggestions')}:
+              {passwordAnalysis.suggestions.map((suggestion, index) => {
+                const translationKey = `auth.input.password_suggestion.${suggestion}`;
+                return (
+                  <span key={index} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    • {translate(translationKey)}
+                  </span>
+                );
+              })}
+            </Typography>
+          )}
         </>
       )}
       <div className="password-container" style={{ position: 'relative' }}>
