@@ -13,12 +13,13 @@ import {
 } from 'react-admin';
 import { useSearchParams } from 'react-router-dom';
 import { SubmitHandler, useFormContext } from 'react-hook-form';
-import { Button, CardContent, Typography } from '@mui/material';
+import { Button, CardContent, Typography, IconButton } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import useSignup from '../../hooks/useSignup';
 import validatePasswordStrength from './validatePasswordStrength';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 import { defaultScorer } from '../../passwordScorer';
-import RequiredFieldIndicator from './RequiredFieldIndicator';
+import RequiredFieldIndicator, { VisuallyHidden } from './RequiredFieldIndicator';
 
 interface FormValues {
   username: string;
@@ -72,6 +73,7 @@ const FormContent = ({
   setHandleSubmit
 }: SignupFormProps & { setHandleSubmit: React.Dispatch<React.SetStateAction<SubmitHandler<FormValues>>> }) => {
   const [loading, setLoading] = useSafeSetState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const signup = useSignup();
   const translate = useTranslate();
   const notify = useNotify();
@@ -80,6 +82,10 @@ const FormContent = ({
   const [locale] = useLocaleState();
   const [password, setPassword] = useState('');
   const formContext = useFormContext();
+
+  const togglePassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   useEffect(() => {
     setHandleSubmit(() => async (values: FormValues) => {
@@ -160,24 +166,41 @@ const FormContent = ({
           <PasswordStrengthIndicator password={password} scorer={passwordScorer} sx={{ width: '100%' }} />
         </>
       )}
-      <TextInput
-        source="password"
-        type="password"
-        value={password}
-        onChange={e => {
-          setPassword(e.target.value);
-        }}
-        label={
-          <>
-            {translate('ra.auth.password')}
-            <RequiredFieldIndicator />
-          </>
-        }
-        autoComplete="new-password"
-        fullWidth
-        disabled={loading}
-        validate={[required('auth.required.password'), validatePasswordStrength(passwordScorer)]}
-      />
+      <div className="password-container" style={{ position: 'relative' }}>
+        <TextInput
+          source="password"
+          type={showPassword ? 'text' : 'password'}
+          value={password}
+          onChange={e => {
+            setPassword(e.target.value);
+          }}
+          label={
+            <>
+              {translate('ra.auth.password')}
+              <RequiredFieldIndicator />
+            </>
+          }
+          autoComplete="new-password"
+          fullWidth
+          disabled={loading}
+          validate={[required('auth.required.password'), validatePasswordStrength(passwordScorer)]}
+          aria-describedby="signup-password-desc"
+        />
+        <VisuallyHidden id="signup-password-desc">{translate('auth.input.password_description')}</VisuallyHidden>
+        <IconButton
+          aria-label={translate(showPassword ? 'auth.action.hide_password' : 'auth.action.show_password')}
+          onClick={togglePassword}
+          style={{
+            position: 'absolute',
+            right: '8px',
+            top: '17px',
+            padding: '4px'
+          }}
+          size="large"
+        >
+          {showPassword ? <VisibilityOff /> : <Visibility />}
+        </IconButton>
+      </div>
       <Button variant="contained" type="submit" color="primary" disabled={loading} fullWidth>
         {translate('auth.action.signup')}
       </Button>

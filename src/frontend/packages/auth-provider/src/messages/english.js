@@ -14,7 +14,9 @@ const englishMessages = {
       logout: 'Logout',
       login: 'Login',
       view_my_profile: 'View my profile',
-      edit_my_profile: 'Edit my profile'
+      edit_my_profile: 'Edit my profile',
+      show_password: 'Show password',
+      hide_password: 'Hide password'
     },
     right: {
       resource: {
@@ -47,7 +49,8 @@ const englishMessages = {
       password_too_weak: 'Password too weak. Increase length or add special characters.',
       password_mismatch: 'The passwords you provided do not match.',
       required_field: 'Required field',
-      required_field_description: 'This field is required'
+      required_field_description: 'This field is required',
+      password_description: 'Characters you type will be visually hidden for security reasons'
     },
     helper: {
       login: 'Sign in to your account',

@@ -1,3 +1,4 @@
+import React from 'react';
 import { useTranslate } from 'react-admin';
 import { styled } from '@mui/material/styles';
 
@@ -11,7 +12,7 @@ import { styled } from '@mui/material/styles';
  * - Ensures text doesn't interfere with layout
  * - Maintains text focusability for keyboard navigation
  */
-const VisuallyHidden = styled('span')({
+export const VisuallyHidden = styled('span')({
   border: 0,
   clip: 'rect(0 0 0 0)',
   height: '1px',

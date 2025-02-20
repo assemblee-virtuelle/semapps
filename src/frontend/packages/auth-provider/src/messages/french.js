@@ -14,7 +14,9 @@ const frenchMessages = {
       logout: 'Se déconnecter',
       login: 'Se connecter',
       view_my_profile: 'Voir mon profil',
-      edit_my_profile: 'Éditer mon profil'
+      edit_my_profile: 'Éditer mon profil',
+      show_password: 'Afficher le mot de passe',
+      hide_password: 'Masquer le mot de passe'
     },
     right: {
       resource: {
@@ -47,7 +49,8 @@ const frenchMessages = {
       password_too_weak: 'Mot de passe trop faible. Augmenter la longueur ou ajouter des caractères spéciaux.',
       password_mismatch: 'Mot de passe différent du premier',
       required_field: 'Champ obligatoire',
-      required_field_description: 'Ce champ est obligatoire'
+      required_field_description: 'Ce champ est obligatoire',
+      password_description: 'Les caractères que vous tapez seront masqués visuellement pour des raisons de sécurité'
     },
     helper: {
       login: 'Connectez-vous à votre compte.',

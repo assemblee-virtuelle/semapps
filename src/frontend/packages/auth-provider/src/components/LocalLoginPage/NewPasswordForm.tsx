@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Form, useTranslate, useNotify, useSafeSetState, useAuthProvider, TextInput, required } from 'react-admin';
 import { useLocation, useSearchParams } from 'react-router-dom';
-import { Button, CardContent, Typography } from '@mui/material';
+import { Button, CardContent, Typography, IconButton } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { SubmitHandler } from 'react-hook-form';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 import validatePasswordStrength from './validatePasswordStrength';
 import { defaultScorer } from '../../passwordScorer';
-import RequiredFieldIndicator from './RequiredFieldIndicator';
+import RequiredFieldIndicator, { VisuallyHidden } from './RequiredFieldIndicator';
 
 interface FormProps {
   redirectTo: string;
@@ -56,12 +57,22 @@ const FormContent = ({
   const token = searchParams.get('token');
 
   const [loading, setLoading] = useSafeSetState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const authProvider = useAuthProvider();
 
   const translate = useTranslate();
   const notify = useNotify();
 
   const [newPassword, setNewPassword] = useState('');
+
+  const toggleNewPassword = () => {
+    setShowNewPassword(!showNewPassword);
+  };
+
+  const toggleConfirmPassword = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
 
   useEffect(() => {
     setHandleSubmit(() => async (values: FormValues) => {
@@ -123,39 +134,73 @@ const FormContent = ({
           <PasswordStrengthIndicator password={newPassword} scorer={passwordScorer} sx={{ width: '100%' }} />
         </>
       )}
-      <TextInput
-        autoFocus
-        type="password"
-        source="password"
-        value={newPassword}
-        label={
-          <>
-            {translate('auth.input.new_password')}
-            <RequiredFieldIndicator />
-          </>
-        }
-        autoComplete="current-password"
-        fullWidth
-        disabled={loading}
-        validate={[required(translate('auth.required.newPasswordAgain')), validatePasswordStrength(passwordScorer)]}
-        onChange={e => {
-          setNewPassword(e.target.value);
-        }}
-      />
-      <TextInput
-        type="password"
-        source="confirm-password"
-        label={
-          <>
-            {translate('auth.input.confirm_new_password')}
-            <RequiredFieldIndicator />
-          </>
-        }
-        autoComplete="current-password"
-        fullWidth
-        disabled={loading}
-        validate={[required(), samePassword]}
-      />
+      <div className="password-container" style={{ position: 'relative' }}>
+        <TextInput
+          autoFocus
+          type={showNewPassword ? 'text' : 'password'}
+          source="password"
+          value={newPassword}
+          label={
+            <>
+              {translate('auth.input.new_password')}
+              <RequiredFieldIndicator />
+            </>
+          }
+          autoComplete="current-password"
+          fullWidth
+          disabled={loading}
+          validate={[required(translate('auth.required.newPasswordAgain')), validatePasswordStrength(passwordScorer)]}
+          onChange={e => {
+            setNewPassword(e.target.value);
+          }}
+          aria-describedby="new-password-desc"
+        />
+        <VisuallyHidden id="new-password-desc">{translate('auth.input.password_description')}</VisuallyHidden>
+        <IconButton
+          aria-label={translate(showNewPassword ? 'auth.action.hide_password' : 'auth.action.show_password')}
+          onClick={toggleNewPassword}
+          style={{
+            position: 'absolute',
+            right: '8px',
+            top: '17px',
+            padding: '4px'
+          }}
+          size="large"
+        >
+          {showNewPassword ? <VisibilityOff /> : <Visibility />}
+        </IconButton>
+      </div>
+      <div className="password-container" style={{ position: 'relative' }}>
+        <TextInput
+          type={showConfirmPassword ? 'text' : 'password'}
+          source="confirm-password"
+          label={
+            <>
+              {translate('auth.input.confirm_new_password')}
+              <RequiredFieldIndicator />
+            </>
+          }
+          autoComplete="current-password"
+          fullWidth
+          disabled={loading}
+          validate={[required(), samePassword]}
+          aria-describedby="confirm-password-desc"
+        />
+        <VisuallyHidden id="confirm-password-desc">{translate('auth.input.password_description')}</VisuallyHidden>
+        <IconButton
+          aria-label={translate(showConfirmPassword ? 'auth.action.hide_password' : 'auth.action.show_password')}
+          onClick={toggleConfirmPassword}
+          style={{
+            position: 'absolute',
+            right: '8px',
+            top: '17px',
+            padding: '4px'
+          }}
+          size="large"
+        >
+          {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+        </IconButton>
+      </div>
       <Button variant="contained" type="submit" color="primary" disabled={loading} fullWidth>
         {translate('auth.action.set_new_password')}
       </Button>
