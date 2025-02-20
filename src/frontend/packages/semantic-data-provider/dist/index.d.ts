@@ -81,6 +81,7 @@ export type SemanticDataProvider = DataProvider & {
   fetch: FetchFn;
   refreshConfig: () => Promise<Configuration>;
   uploadFile: (rawFile: File) => Promise<string | null>;
+  expandTypes: (types: string[]) => Promise<string[]>;
 };
 export interface PatchParams<RecordType extends RaRecord = any> {
   id: RecordType['id'];
@@ -141,7 +142,9 @@ export function buildSparqlQuery({
 }): string;
 /** @type {(originalConfig: Configuration) => SemanticDataProvider} */
 export const dataProvider: (originalConfig: Configuration) => SemanticDataProvider;
-export const configureUserStorage: (config: Configuration) => Promise<Configuration>;
+export const configureUserStorage: () => {
+  transformConfig: (config: Configuration) => Promise<Configuration>;
+};
 /**
  * Return a function that look if an app (clientId) is registered with an user (webId)
  * If not, it redirects to the endpoint provided by the user's authorization agent
@@ -159,7 +162,7 @@ export const useContainers: ({
 }: {
   resourceId?: string | undefined;
   types?: string[] | undefined;
-  serverKeys?: string | undefined;
+  serverKeys?: string[] | undefined;
 }) => Container[];
 export const useGetCreateContainerUri: () => (resourceId: string) => string | undefined;
 export const useCreateContainerUri: (resourceId: string) => string | undefined;

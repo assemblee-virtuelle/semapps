@@ -108,6 +108,7 @@ export type SemanticDataProvider = DataProvider & {
   fetch: FetchFn;
   refreshConfig: () => Promise<Configuration>;
   uploadFile: (rawFile: File) => Promise<string | null>;
+  expandTypes: (types: string[]) => Promise<string[]>;
 };
 
 export interface PatchParams<RecordType extends RaRecord = any> {

@@ -1070,10 +1070,32 @@ var $341dff85fe619d85$export$2e2bcd8739ae039 = $341dff85fe619d85$var$httpClient;
 
 
 
-const $5e24772571dd1677$var$normalizeConfig = (config)=>{
+
+
+
+const $9ab033d1ec46b5da$var$isURL = (value)=>(typeof value === "string" || value instanceof String) && value.startsWith("http");
+const $9ab033d1ec46b5da$var$expandTypes = async (types, context)=>{
+    // If types are already full URIs, return them immediately
+    if (types.every((type)=>$9ab033d1ec46b5da$var$isURL(type))) return types;
+    const result = await (0, ($parcel$interopDefault($bkNnK$jsonld))).expand({
+        "@context": context,
+        "@type": types
+    });
+    const expandedTypes = (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(result[0]["@type"]);
+    if (!expandedTypes.every((type)=>$9ab033d1ec46b5da$var$isURL(type))) throw new Error(`
+      Could not expand all types (${expandedTypes.join(", ")}).
+      Is an ontology missing or not registered yet on the local context ?
+    `);
+    return expandedTypes;
+};
+var $9ab033d1ec46b5da$export$2e2bcd8739ae039 = $9ab033d1ec46b5da$var$expandTypes;
+
+
+const $5e24772571dd1677$var$normalizeConfig = async (config)=>{
     const newConfig = {
         ...config
     };
+    // Add server and uri key to servers' containers
     Object.keys(newConfig.dataServers).forEach((serverKey)=>{
         newConfig.dataServers[serverKey].containers = newConfig.dataServers[serverKey].containers?.map((container)=>({
                 ...container,
@@ -1081,9 +1103,12 @@ const $5e24772571dd1677$var$normalizeConfig = (config)=>{
                 uri: (0, ($parcel$interopDefault($bkNnK$urljoin)))(config.dataServers[serverKey].baseUrl, container.path)
             }));
     });
+    // Expand types in data models
+    for (const resourceId of Object.keys(newConfig.resources))newConfig.resources[resourceId].types = await (0, $9ab033d1ec46b5da$export$2e2bcd8739ae039)((0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(newConfig.resources[resourceId].types), config.jsonContext);
     return newConfig;
 };
 var $5e24772571dd1677$export$2e2bcd8739ae039 = $5e24772571dd1677$var$normalizeConfig;
+
 
 
 /** @type {(originalConfig: Configuration) => SemanticDataProvider} */ const $7f6a16d0025dc83a$var$dataProvider = (originalConfig)=>{
@@ -1097,7 +1122,7 @@ var $5e24772571dd1677$export$2e2bcd8739ae039 = $5e24772571dd1677$var$normalizeCo
         for (const plugin of config.preloadPlugins)config = await plugin(config);
         // Configure again httpClient with possibly updated data servers
         config.httpClient = (0, $341dff85fe619d85$export$2e2bcd8739ae039)(config.dataServers);
-        config = (0, $5e24772571dd1677$export$2e2bcd8739ae039)(config);
+        config = await (0, $5e24772571dd1677$export$2e2bcd8739ae039)(config);
         if (!config.jsonContext) config.jsonContext = config.ontologies;
         if (!config.returnFailedResources) config.returnFailedResources = false;
         console.log("config after preload plugins", config);
@@ -1127,6 +1152,7 @@ var $5e24772571dd1677$export$2e2bcd8739ae039 = $5e24772571dd1677$var$normalizeCo
         getLocalDataServers: (0, $b16131432127b07b$export$2e2bcd8739ae039)(originalConfig),
         fetch: waitForPrepareConfig((c)=>(0, $341dff85fe619d85$export$2e2bcd8739ae039)(c.dataServers)),
         uploadFile: waitForPrepareConfig((c)=>(rawFile)=>(0, $6fcb30f76390d142$export$a5575dbeeffdad98)(rawFile, c)),
+        expandTypes: waitForPrepareConfig((c)=>(types)=>(0, $9ab033d1ec46b5da$export$2e2bcd8739ae039)(types, c.jsonContext)),
         refreshConfig: async ()=>{
             config = {
                 ...originalConfig
@@ -1143,35 +1169,37 @@ var $7f6a16d0025dc83a$export$2e2bcd8739ae039 = $7f6a16d0025dc83a$var$dataProvide
 
 
 
-const $89358cee13a17a31$var$configureUserStorage = async (config)=>{
-    const token = localStorage.getItem("token");
-    // If the user is logged in
-    if (token) {
-        const payload = (0, ($parcel$interopDefault($bkNnK$jwtdecode)))(token);
-        const webId = payload.webId || payload.webid; // Currently we must deal with both formats
-        const { json: user } = await config.httpClient(webId);
-        if (user) {
-            const newConfig = {
-                ...config
-            };
-            newConfig.dataServers.user = {
-                pod: true,
-                default: true,
-                baseUrl: user["pim:storage"] || (0, ($parcel$interopDefault($bkNnK$urljoin)))(webId, "data"),
-                sparqlEndpoint: user.endpoints?.["void:sparqlEndpoint"] || (0, ($parcel$interopDefault($bkNnK$urljoin)))(webId, "sparql"),
-                proxyUrl: user.endpoints?.proxyUrl,
-                containers: []
-            };
-            newConfig.jsonContext = [
-                "https://www.w3.org/ns/activitystreams",
-                (0, ($parcel$interopDefault($bkNnK$urljoin)))(new URL(webId).origin, "/.well-known/context.jsonld")
-            ];
-            return newConfig;
+const $89358cee13a17a31$var$configureUserStorage = ()=>({
+        transformConfig: async (config)=>{
+            const token = localStorage.getItem("token");
+            // If the user is logged in
+            if (token) {
+                const payload = (0, ($parcel$interopDefault($bkNnK$jwtdecode)))(token);
+                const webId = payload.webId || payload.webid; // Currently we must deal with both formats
+                const { json: user } = await config.httpClient(webId);
+                if (user) {
+                    const newConfig = {
+                        ...config
+                    };
+                    newConfig.dataServers.user = {
+                        pod: true,
+                        default: true,
+                        baseUrl: user["pim:storage"] || (0, ($parcel$interopDefault($bkNnK$urljoin)))(webId, "data"),
+                        sparqlEndpoint: user.endpoints?.["void:sparqlEndpoint"] || (0, ($parcel$interopDefault($bkNnK$urljoin)))(webId, "sparql"),
+                        proxyUrl: user.endpoints?.proxyUrl,
+                        containers: []
+                    };
+                    newConfig.jsonContext = [
+                        "https://www.w3.org/ns/activitystreams",
+                        (0, ($parcel$interopDefault($bkNnK$urljoin)))(new URL(webId).origin, "/.well-known/context.jsonld")
+                    ];
+                    return newConfig;
+                }
+            }
+            // Nothing to change
+            return config;
         }
-    }
-    // Nothing to change
-    return config;
-};
+    });
 var $89358cee13a17a31$export$2e2bcd8739ae039 = $89358cee13a17a31$var$configureUserStorage;
 
 
@@ -1339,7 +1367,7 @@ const $1395e306228d41f2$var$fetchVoidEndpoints = async (config)=>{
                     const path = partition["void:uriSpace"].replace(dataset["void:uriSpace"], "/");
                     const containerIndex = newConfig.dataServers[result.key].containers?.findIndex((c)=>c.types.includes(type));
                     // TODO expand type
-                    if (containerIndex !== -1) newConfig.dataServers[result.key].containers?.[containerIndex] = {
+                    if (containerIndex && containerIndex !== -1) newConfig.dataServers[result.key].containers[containerIndex] = {
                         path: path,
                         types: [
                             type
@@ -1358,6 +1386,7 @@ const $1395e306228d41f2$var$fetchVoidEndpoints = async (config)=>{
     } else return config;
 };
 var $1395e306228d41f2$export$2e2bcd8739ae039 = $1395e306228d41f2$var$fetchVoidEndpoints;
+
 
 
 
@@ -1403,23 +1432,29 @@ var $c9933a88e2acc4da$export$2e2bcd8739ae039 = $c9933a88e2acc4da$var$useDataServ
 const $3158e0dc13ffffaa$var$useContainers = ({ resourceId: resourceId, types: types, serverKeys: serverKeys })=>{
     const dataModels = (0, $20621bc841a5205a$export$2e2bcd8739ae039)();
     const dataServers = (0, $c9933a88e2acc4da$export$2e2bcd8739ae039)();
-    const containers = (0, $bkNnK$react.useMemo)(()=>{
-        if (dataServers && dataModels) {
-            if (resourceId) {
-                const dataModel = dataModels[resourceId];
-                return (0, $047a107b0d203793$export$2e2bcd8739ae039)((0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(dataModel.types), serverKeys, dataServers);
-            } else if (types) return (0, $047a107b0d203793$export$2e2bcd8739ae039)(types, serverKeys, dataServers);
-            else {
-                const parsedServerKeys = (0, $6531da3b9e8c524a$export$2e2bcd8739ae039)(serverKeys || "@all", dataServers);
-                return parsedServerKeys.map((serverKey)=>dataServers[serverKey].containers).flat();
+    const dataProvider = (0, $bkNnK$reactadmin.useDataProvider)();
+    const [containers, setContainers] = (0, $bkNnK$react.useState)([]);
+    (0, $bkNnK$react.useEffect)(()=>{
+        (async ()=>{
+            if (dataServers && dataModels) {
+                if (resourceId) {
+                    const dataModel = dataModels[resourceId];
+                    setContainers((0, $047a107b0d203793$export$2e2bcd8739ae039)((0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(dataModel.types), serverKeys, dataServers));
+                } else if (types) {
+                    const expandedTypes = await dataProvider.expandTypes(types);
+                    setContainers((0, $047a107b0d203793$export$2e2bcd8739ae039)(expandedTypes, serverKeys, dataServers));
+                } else {
+                    const parsedServerKeys = (0, $6531da3b9e8c524a$export$2e2bcd8739ae039)(serverKeys || "@all", dataServers);
+                    setContainers(parsedServerKeys.map((serverKey)=>dataServers[serverKey].containers).flat());
+                }
             }
-        } else return [];
+        })();
     }, [
         dataModels,
         dataServers,
-        resourceId,
-        types,
-        serverKeys
+        dataProvider,
+        setContainers,
+        resourceId
     ]);
     return containers;
 };

@@ -13,6 +13,7 @@ import updateMethod from './methods/update';
 import httpClient from './httpClient';
 import { uploadFile } from './utils/handleFiles';
 import normalizeConfig from './utils/normalizeConfig';
+import expandTypes from './utils/expandTypes';
 
 /** @type {(originalConfig: Configuration) => SemanticDataProvider} */
 const dataProvider = originalConfig => {
@@ -30,7 +31,7 @@ const dataProvider = originalConfig => {
     // Configure again httpClient with possibly updated data servers
     config.httpClient = httpClient(config.dataServers);
 
-    config = normalizeConfig(config);
+    config = await normalizeConfig(config);
 
     if (!config.jsonContext) config.jsonContext = config.ontologies;
     if (!config.returnFailedResources) config.returnFailedResources = false;
@@ -67,6 +68,7 @@ const dataProvider = originalConfig => {
     getLocalDataServers: getDataServersMethod(originalConfig),
     fetch: waitForPrepareConfig(c => httpClient(c.dataServers)),
     uploadFile: waitForPrepareConfig(c => rawFile => uploadFile(rawFile, c)),
+    expandTypes: waitForPrepareConfig(c => types => expandTypes(types, c.jsonContext)),
     refreshConfig: async () => {
       config = { ...originalConfig };
       await prepareConfig();

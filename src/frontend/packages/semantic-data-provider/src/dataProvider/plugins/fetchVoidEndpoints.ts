@@ -48,8 +48,8 @@ const fetchVoidEndpoints = async (config: Configuration) => {
 
               // TODO expand type
 
-              if (containerIndex !== -1) {
-                newConfig.dataServers[result.key].containers?.[containerIndex] = {
+              if (containerIndex && containerIndex !== -1) {
+                newConfig.dataServers[result.key].containers[containerIndex] = {
                   path,
                   types: [type]
                 };
