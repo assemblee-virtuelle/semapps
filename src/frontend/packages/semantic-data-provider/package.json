@@ -26,10 +26,12 @@
     "url-join": "^4.0.1"
   },
   "devDependencies": {
+    "@semapps/auth-provider": "^1.0.4",
     "@rdfjs/types": "^1.1.0",
     "@types/jsonld": "^1.5.14",
     "@types/sparqljs": "^3.1.11",
-    "@types/url-join": "^4.0.1"
+    "@types/url-join": "^4.0.1",
+    "@types/http-link-header": "^1.0.7"
   },
   "peerDependencies": {
     "@mui/styles": "^5.13.1",

@@ -10,7 +10,8 @@ export type Container = {
   server?: string;
   uri?: string;
   path: string;
-  types: [string];
+  types: string[];
+  [k: string]: any;
 };
 type DataServerConfig = {
   /** Server base url */
@@ -21,7 +22,7 @@ type DataServerConfig = {
   authServer?: boolean;
   /** True if the server is a pod */
   pod?: boolean;
-  containers?: Container[];
+  containers: Container[];
   /** Container used for uploaded files */
   uploadsContainer?: string;
   sparqlEndpoint?: string;
@@ -31,6 +32,7 @@ type DataServerConfig = {
   name?: string;
   description?: string;
   blankNodes?: any;
+  [k: string]: any;
 };
 export type DataServersConfig = Record<DataServerKey, DataServerConfig>;
 export type DataModel = {
@@ -73,7 +75,10 @@ export type Configuration = {
   jsonContext: string | string[] | Record<string, string>;
   resources: Record<string, DataModel>;
   ontologies: Record<string, string>;
-  preloadPlugins: Array<(config: Configuration) => Promise<void>>;
+  plugins: Plugin[];
+};
+export type Plugin = {
+  transformConfig: (config: Configuration) => Promise<Configuration>;
 };
 export type SemanticDataProvider = DataProvider & {
   getDataModels: () => Promise<Record<string, DataModel>>;
@@ -110,6 +115,7 @@ export type VoidDataset = {
 };
 export type VoidResults = {
   key: string;
+  context?: any;
   datasets?: VoidDataset[];
   error?: string;
 };
@@ -142,17 +148,15 @@ export function buildSparqlQuery({
 }): string;
 /** @type {(originalConfig: Configuration) => SemanticDataProvider} */
 export const dataProvider: (originalConfig: Configuration) => SemanticDataProvider;
-export const configureUserStorage: () => {
-  transformConfig: (config: Configuration) => Promise<Configuration>;
-};
+export const configureUserStorage: () => Plugin;
 /**
  * Return a function that look if an app (clientId) is registered with an user (webId)
  * If not, it redirects to the endpoint provided by the user's authorization agent
  * See https://solid.github.io/data-interoperability-panel/specification/#authorization-agent
  */
-export const fetchAppRegistration: (config: Configuration) => Promise<Configuration>;
-export const fetchDataRegistry: (config: Configuration) => Promise<Configuration>;
-export const fetchVoidEndpoints: (config: Configuration) => Promise<Configuration>;
+export const fetchAppRegistration: () => Plugin;
+export const fetchDataRegistry: () => Plugin;
+export const fetchVoidEndpoints: () => Plugin;
 export const useDataModels: () => Record<string, DataModel> | undefined;
 export const useDataServers: () => DataServersConfig | undefined;
 export const useContainers: ({

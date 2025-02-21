@@ -24,8 +24,10 @@ const dataProvider = originalConfig => {
     // Configure httpClient with initial data servers, so that plugins may use it
     config.httpClient = httpClient(config.dataServers);
 
-    for (const plugin of config.preloadPlugins) {
-      config = await plugin(config);
+    for (const plugin of config.plugins) {
+      if (plugin.transformConfig) {
+        config = await plugin.transformConfig(config);
+      }
     }
 
     // Configure again httpClient with possibly updated data servers

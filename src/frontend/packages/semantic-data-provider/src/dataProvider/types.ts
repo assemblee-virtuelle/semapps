@@ -9,7 +9,8 @@ export type Container = {
   server?: string;
   uri?: string;
   path: string;
-  types: [string];
+  types: string[];
+  [k: string]: any;
 };
 
 type DataServerConfig = {
@@ -25,7 +26,7 @@ type DataServerConfig = {
   /** True if the server is a pod */
   pod?: boolean;
 
-  containers?: Container[];
+  containers: Container[];
 
   /** Container used for uploaded files */
   uploadsContainer?: string;
@@ -41,6 +42,8 @@ type DataServerConfig = {
   description?: string;
 
   blankNodes?: any; // TODO: Type this object
+
+  [k: string]: any;
 };
 
 export type DataServersConfig = Record<DataServerKey, DataServerConfig>;
@@ -99,7 +102,11 @@ export type Configuration = {
 
   ontologies: Record<string, string>;
 
-  preloadPlugins: Array<(config: Configuration) => Promise<void>>;
+  plugins: Plugin[];
+};
+
+export type Plugin = {
+  transformConfig: (config: Configuration) => Promise<Configuration>;
 };
 
 export type SemanticDataProvider = DataProvider & {
@@ -142,6 +149,7 @@ export type VoidDataset = {
 
 export type VoidResults = {
   key: string;
+  context?: any;
   datasets?: VoidDataset[];
   error?: string;
 };

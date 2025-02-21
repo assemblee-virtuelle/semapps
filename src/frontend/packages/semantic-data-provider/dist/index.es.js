@@ -1073,7 +1073,7 @@ var $33bf2a661b5c0cbd$export$2e2bcd8739ae039 = $33bf2a661b5c0cbd$var$normalizeCo
     const prepareConfig = async ()=>{
         // Configure httpClient with initial data servers, so that plugins may use it
         config.httpClient = (0, $22b4895a4ca7d626$export$2e2bcd8739ae039)(config.dataServers);
-        for (const plugin of config.preloadPlugins)config = await plugin(config);
+        for (const plugin of config.plugins)if (plugin.transformConfig) config = await plugin.transformConfig(config);
         // Configure again httpClient with possibly updated data servers
         config.httpClient = (0, $22b4895a4ca7d626$export$2e2bcd8739ae039)(config.dataServers);
         config = await (0, $33bf2a661b5c0cbd$export$2e2bcd8739ae039)(config);
@@ -1220,125 +1220,133 @@ var $d7a7484a035f15cd$export$2e2bcd8739ae039 = $d7a7484a035f15cd$var$getContaine
  * Return a function that look if an app (clientId) is registered with an user (webId)
  * If not, it redirects to the endpoint provided by the user's authorization agent
  * See https://solid.github.io/data-interoperability-panel/specification/#authorization-agent
- */ const $2c257b4237cb14ca$var$fetchAppRegistration = async (config)=>{
-    const token = localStorage.getItem("token");
-    // If the user is logged in
-    if (token) {
-        const payload = (0, $fj9kP$jwtdecode)(token);
-        const webId = payload.webId || payload.webid; // Currently we must deal with both formats
-        const { json: user } = await config.httpClient(webId);
-        const authAgentUri = user["interop:hasAuthorizationAgent"];
-        if (authAgentUri) {
-            // Find if an application registration is linked to this user
-            // See https://solid.github.io/data-interoperability-panel/specification/#agent-registration-discovery
-            const { headers: headers } = await config.httpClient(authAgentUri);
-            if (headers.has("Link")) {
-                const linkHeader = (0, $fj9kP$httplinkheader).parse(headers.get("Link"));
-                const registeredAgentLinkHeader = linkHeader.rel("http://www.w3.org/ns/solid/interop#registeredAgent");
-                if (registeredAgentLinkHeader.length > 0) {
-                    const appRegistrationUri = registeredAgentLinkHeader[0].anchor;
-                    const { json: appRegistration } = await config.httpClient(appRegistrationUri);
-                    const newConfig = {
-                        ...config
-                    };
-                    for (const accessGrantUri of (0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(appRegistration["hasAccessGrant:hasDataGrant"])){
-                        const { json: accessGrant } = await config.httpClient(accessGrantUri);
-                        for (const dataGrantUri of (0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(accessGrant["interop:hasDataGrant"])){
-                            const { json: dataGrant } = await config.httpClient(dataGrantUri);
-                            const container = await (0, $d7a7484a035f15cd$export$2e2bcd8739ae039)(dataGrant["interop:hasDataRegistration"], config);
-                            newConfig.dataServers.user.containers?.push(container);
+ */ const $2c257b4237cb14ca$var$fetchAppRegistration = ()=>({
+        transformConfig: async (config)=>{
+            const token = localStorage.getItem("token");
+            // If the user is logged in
+            if (token) {
+                const payload = (0, $fj9kP$jwtdecode)(token);
+                const webId = payload.webId || payload.webid; // Currently we must deal with both formats
+                const { json: user } = await config.httpClient(webId);
+                const authAgentUri = user["interop:hasAuthorizationAgent"];
+                if (authAgentUri) {
+                    // Find if an application registration is linked to this user
+                    // See https://solid.github.io/data-interoperability-panel/specification/#agent-registration-discovery
+                    const { headers: headers } = await config.httpClient(authAgentUri);
+                    if (headers.has("Link")) {
+                        const linkHeader = (0, $fj9kP$httplinkheader).parse(headers.get("Link"));
+                        const registeredAgentLinkHeader = linkHeader.rel("http://www.w3.org/ns/solid/interop#registeredAgent");
+                        if (registeredAgentLinkHeader.length > 0) {
+                            const appRegistrationUri = registeredAgentLinkHeader[0].anchor;
+                            const { json: appRegistration } = await config.httpClient(appRegistrationUri);
+                            const newConfig = {
+                                ...config
+                            };
+                            for (const accessGrantUri of (0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(appRegistration["hasAccessGrant:hasDataGrant"])){
+                                const { json: accessGrant } = await config.httpClient(accessGrantUri);
+                                for (const dataGrantUri of (0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(accessGrant["interop:hasDataGrant"])){
+                                    const { json: dataGrant } = await config.httpClient(dataGrantUri);
+                                    const container = await (0, $d7a7484a035f15cd$export$2e2bcd8739ae039)(dataGrant["interop:hasDataRegistration"], config);
+                                    newConfig.dataServers.user.containers?.push(container);
+                                }
+                            }
+                            return newConfig;
                         }
                     }
-                    return newConfig;
                 }
             }
+            return config;
         }
-    }
-    return config;
-};
+    });
 var $2c257b4237cb14ca$export$2e2bcd8739ae039 = $2c257b4237cb14ca$var$fetchAppRegistration;
 
 
 
 
-const $91255e144bb55afc$var$fetchDataRegistry = async (config)=>{
-    const token = localStorage.getItem("token");
-    // If the user is logged in
-    if (token) {
-        if (!config.dataServers.user) throw new Error(`You must configure the user storage first with the configureUserStorage plugin`);
-        const payload = (0, $fj9kP$jwtdecode)(token);
-        const webId = payload.webId || payload.webid; // Currently we must deal with both formats
-        const { json: user } = await config.httpClient(webId);
-        const { json: registrySet } = await config.httpClient(user["interop:hasRegistrySet"]);
-        const { json: dataRegistry } = await config.httpClient(registrySet["interop:hasDataRegistry"]);
-        if (dataRegistry["interop:hasDataRegistration"]) {
-            const results = await Promise.all(dataRegistry["interop:hasDataRegistration"].map((dataRegistrationUri)=>{
-                return (0, $d7a7484a035f15cd$export$2e2bcd8739ae039)(dataRegistrationUri, config);
-            }));
-            const newConfig = {
-                ...config
-            };
-            newConfig.dataServers.user.containers?.push(...results.flat());
-            return newConfig;
+const $91255e144bb55afc$var$fetchDataRegistry = ()=>({
+        transformConfig: async (config)=>{
+            const token = localStorage.getItem("token");
+            // If the user is logged in
+            if (token) {
+                if (!config.dataServers.user) throw new Error(`You must configure the user storage first with the configureUserStorage plugin`);
+                const payload = (0, $fj9kP$jwtdecode)(token);
+                const webId = payload.webId || payload.webid; // Currently we must deal with both formats
+                const { json: user } = await config.httpClient(webId);
+                const { json: registrySet } = await config.httpClient(user["interop:hasRegistrySet"]);
+                const { json: dataRegistry } = await config.httpClient(registrySet["interop:hasDataRegistry"]);
+                if (dataRegistry["interop:hasDataRegistration"]) {
+                    const results = await Promise.all(dataRegistry["interop:hasDataRegistration"].map((dataRegistrationUri)=>{
+                        return (0, $d7a7484a035f15cd$export$2e2bcd8739ae039)(dataRegistrationUri, config);
+                    }));
+                    const newConfig = {
+                        ...config
+                    };
+                    newConfig.dataServers.user.containers?.push(...results.flat());
+                    return newConfig;
+                }
+            }
+            // Nothing to change
+            return config;
         }
-    }
-    // Nothing to change
-    return config;
-};
+    });
 var $91255e144bb55afc$export$2e2bcd8739ae039 = $91255e144bb55afc$var$fetchDataRegistry;
 
 
 
-const $a87fd63d8fca0380$var$fetchVoidEndpoints = async (config)=>{
-    let results = [];
-    try {
-        results = await Promise.all(Object.entries(config.dataServers).filter(([_, server])=>server.pod !== true && server.void !== false).map(async ([key, server])=>config.httpClient(new URL("/.well-known/void", server.baseUrl).toString()).then((result)=>({
-                    key: key,
-                    datasets: result.json?.["@graph"]
-                })).catch((e)=>{
-                if (e.status === 404 || e.status === 401 || e.status === 500) return {
-                    key: key,
-                    error: e.message
-                };
-                throw e;
-            })));
-    } catch (e) {
-    // Do not throw error if no endpoint found
-    }
-    results = results.filter((result)=>result.datasets);
-    if (results.length > 0) {
-        const newConfig = {
-            ...config
-        };
-        for (const result of results){
-            // Ignore unfetchable endpoints
-            if (result.datasets) for (const dataset of result.datasets){
-                newConfig.dataServers[result.key].name ??= dataset["dc:title"];
-                newConfig.dataServers[result.key].description ??= dataset["dc:description"];
-                newConfig.dataServers[result.key].sparqlEndpoint ??= dataset["void:sparqlEndpoint"];
-                newConfig.dataServers[result.key].containers ??= [];
-                for (const partition of (0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(dataset["void:classPartition"]))for (const type of (0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(partition["void:class"])){
-                    const path = partition["void:uriSpace"].replace(dataset["void:uriSpace"], "/");
-                    const containerIndex = newConfig.dataServers[result.key].containers?.findIndex((c)=>c.types.includes(type));
-                    // TODO expand type
-                    if (containerIndex && containerIndex !== -1) newConfig.dataServers[result.key].containers[containerIndex] = {
-                        path: path,
-                        types: [
-                            type
-                        ]
-                    };
-                    else newConfig.dataServers[result.key].containers?.push({
-                        path: path,
-                        types: [
-                            type
-                        ]
-                    });
-                }
+
+const $a87fd63d8fca0380$var$fetchVoidEndpoints = ()=>({
+        transformConfig: async (config)=>{
+            let results = [];
+            try {
+                results = await Promise.all(Object.entries(config.dataServers).filter(([_, server])=>server.pod !== true && server.void !== false).map(async ([key, server])=>config.httpClient(new URL("/.well-known/void", server.baseUrl).toString()).then((result)=>({
+                            key: key,
+                            context: result.json?.["@context"],
+                            datasets: result.json?.["@graph"]
+                        })).catch((e)=>{
+                        if (e.status === 404 || e.status === 401 || e.status === 500) return {
+                            key: key,
+                            error: e.message
+                        };
+                        throw e;
+                    })));
+            } catch (e) {
+            // Do not throw error if no endpoint found
             }
+            results = results.filter((result)=>result.datasets);
+            if (results.length > 0) {
+                const newConfig = {
+                    ...config
+                };
+                for (const result of results){
+                    // Ignore unfetchable endpoints
+                    if (result.datasets) for (const dataset of result.datasets){
+                        newConfig.dataServers[result.key].name ??= dataset["dc:title"];
+                        newConfig.dataServers[result.key].description ??= dataset["dc:description"];
+                        newConfig.dataServers[result.key].sparqlEndpoint ??= dataset["void:sparqlEndpoint"];
+                        newConfig.dataServers[result.key].containers ??= [];
+                        for (const partition of (0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(dataset["void:classPartition"]))for (const type of (0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(partition["void:class"])){
+                            const path = partition["void:uriSpace"].replace(dataset["void:uriSpace"], "/");
+                            const expandedTypes = await (0, $36aa010ec46eaf45$export$2e2bcd8739ae039)([
+                                type
+                            ], result.context);
+                            const containerIndex = newConfig.dataServers[result.key].containers.findIndex((c)=>c.types.some((t)=>expandedTypes.includes(t)));
+                            if (containerIndex && containerIndex !== -1) // If a container with this type already exist, overwrite path and types
+                            newConfig.dataServers[result.key].containers[containerIndex] = {
+                                ...newConfig.dataServers[result.key].containers[containerIndex],
+                                path: path,
+                                types: expandedTypes
+                            };
+                            else newConfig.dataServers[result.key].containers.push({
+                                path: path,
+                                types: expandedTypes
+                            });
+                        }
+                    }
+                }
+                return newConfig;
+            } else return config;
         }
-        return newConfig;
-    } else return config;
-};
+    });
 var $a87fd63d8fca0380$export$2e2bcd8739ae039 = $a87fd63d8fca0380$var$fetchVoidEndpoints;
 
 
@@ -1388,6 +1396,7 @@ const $586fa0ea9d02fa12$var$useContainers = ({ resourceId: resourceId, types: ty
     const dataServers = (0, $4daf4cf698ee4eed$export$2e2bcd8739ae039)();
     const dataProvider = (0, $fj9kP$useDataProvider)();
     const [containers, setContainers] = (0, $fj9kP$useState)([]);
+    // Warning: if types or serverKeys change, the containers list will not be updated (otherwise we have an infinite re-render loop)
     (0, $fj9kP$useEffect)(()=>{
         (async ()=>{
             if (dataServers && dataModels) {

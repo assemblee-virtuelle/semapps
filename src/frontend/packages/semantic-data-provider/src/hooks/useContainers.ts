@@ -21,6 +21,7 @@ const useContainers = ({
   const dataProvider = useDataProvider<SemanticDataProvider>();
   const [containers, setContainers] = useState<Container[]>([]);
 
+  // Warning: if types or serverKeys change, the containers list will not be updated (otherwise we have an infinite re-render loop)
   useEffect(() => {
     (async () => {
       if (dataServers && dataModels) {
