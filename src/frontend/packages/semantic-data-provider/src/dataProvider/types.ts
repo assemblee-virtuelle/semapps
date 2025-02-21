@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-redundant-type-constituents */
 import { DataProvider, RaRecord, fetchUtils } from 'react-admin';
 import type { Quad } from '@rdfjs/types';
+import { ContextDefinition } from 'jsonld';
 
 export type DataServerKey = string & { readonly _type?: 'DataServerKey' };
 export type ContainerURI = string & { readonly _type?: 'ContainerURI' };
@@ -96,7 +97,7 @@ export type Configuration = {
   httpClient: FetchFn;
 
   /** Context from ontologies { prefix: IRI } or IRI, or array of IRI */
-  jsonContext: string | string[] | Record<string, string>;
+  jsonContext: ContextDefinition;
 
   resources: Record<string, DataModel>;
 
@@ -113,6 +114,7 @@ export type SemanticDataProvider = DataProvider & {
   getDataModels: () => Promise<Record<string, DataModel>>;
   getDataServers: () => Promise<DataServersConfig>;
   fetch: FetchFn;
+  getConfig: () => Promise<Configuration>;
   refreshConfig: () => Promise<Configuration>;
   uploadFile: (rawFile: File) => Promise<string | null>;
   expandTypes: (types: string[]) => Promise<string[]>;

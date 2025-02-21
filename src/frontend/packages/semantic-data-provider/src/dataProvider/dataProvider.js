@@ -33,12 +33,12 @@ const dataProvider = originalConfig => {
     // Configure again httpClient with possibly updated data servers
     config.httpClient = httpClient(config.dataServers);
 
-    config = await normalizeConfig(config);
-
     if (!config.jsonContext) config.jsonContext = config.ontologies;
     if (!config.returnFailedResources) config.returnFailedResources = false;
 
-    console.log('config after preload plugins', config);
+    config = await normalizeConfig(config);
+
+    console.log('Config after plugins', config);
   };
 
   // Immediately call the preload plugins
@@ -71,6 +71,7 @@ const dataProvider = originalConfig => {
     fetch: waitForPrepareConfig(c => httpClient(c.dataServers)),
     uploadFile: waitForPrepareConfig(c => rawFile => uploadFile(rawFile, c)),
     expandTypes: waitForPrepareConfig(c => types => expandTypes(types, c.jsonContext)),
+    getConfig: waitForPrepareConfig(c => () => c),
     refreshConfig: async () => {
       config = { ...originalConfig };
       await prepareConfig();

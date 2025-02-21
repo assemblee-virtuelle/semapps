@@ -8,6 +8,7 @@ export { default as fetchAppRegistration } from './dataProvider/plugins/fetchApp
 export { default as fetchDataRegistry } from './dataProvider/plugins/fetchDataRegistry';
 export { default as fetchVoidEndpoints } from './dataProvider/plugins/fetchVoidEndpoints';
 
+export { default as useCompactPredicate } from './hooks/useCompactPredicate';
 export { default as useContainers } from './hooks/useContainers';
 export { default as useCreateContainerUri } from './hooks/useCreateContainerUri';
 export { default as useDataModel } from './hooks/useDataModel';

@@ -9,11 +9,11 @@ const resolvePrefix = (item, ontologies) => {
   }
   const [prefix, value] = item.split(':');
   if (value) {
-    const ontology = ontologies.find(ontology => ontology.prefix === prefix);
-    if (ontology) {
-      return ontology.url + value;
+    if (ontologies[prefix]) {
+      return ontologies[prefix] + value;
+    } else {
+      throw new Error(`No ontology found with prefix ${prefix}`);
     }
-    throw new Error(`No ontology found with prefix ${prefix}`);
   } else {
     throw new Error(`The value "${item}" is not correct. It must include a prefix or be a full URI.`);
   }

@@ -13,7 +13,7 @@ const useContainers = ({
   serverKeys
 }: {
   resourceId?: string;
-  types?: string[];
+  types?: string | string[];
   serverKeys?: string[];
 }) => {
   const dataModels = useDataModels();
@@ -23,20 +23,24 @@ const useContainers = ({
 
   // Warning: if types or serverKeys change, the containers list will not be updated (otherwise we have an infinite re-render loop)
   useEffect(() => {
-    (async () => {
-      if (dataServers && dataModels) {
-        if (resourceId) {
-          const dataModel = dataModels[resourceId];
-          setContainers(findContainersWithTypes(arrayOf(dataModel.types), serverKeys, dataServers));
-        } else if (types) {
-          const expandedTypes = await dataProvider.expandTypes(types);
-          setContainers(findContainersWithTypes(expandedTypes, serverKeys, dataServers));
-        } else {
-          const parsedServerKeys = parseServerKeys(serverKeys || '@all', dataServers) as string[];
-          setContainers(parsedServerKeys.map(serverKey => dataServers[serverKey].containers).flat() as Container[]);
-        }
+    if (dataServers && dataModels) {
+      if (resourceId) {
+        const dataModel = dataModels[resourceId];
+        setContainers(findContainersWithTypes(arrayOf(dataModel.types), serverKeys, dataServers));
+      } else if (types) {
+        dataProvider
+          .expandTypes(arrayOf(types))
+          .then(expandedTypes => {
+            setContainers(findContainersWithTypes(expandedTypes, serverKeys, dataServers));
+          })
+          .catch(() => {
+            // Ignore errors
+          });
+      } else {
+        const parsedServerKeys = parseServerKeys(serverKeys || '@all', dataServers) as string[];
+        setContainers(parsedServerKeys.map(serverKey => dataServers[serverKey].containers).flat());
       }
-    })();
+    }
   }, [dataModels, dataServers, dataProvider, setContainers, resourceId]);
 
   return containers;

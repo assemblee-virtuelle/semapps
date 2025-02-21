@@ -1,5 +1,6 @@
 import { DataProvider, RaRecord, fetchUtils } from 'react-admin';
 import { Quad } from '@rdfjs/types';
+import { ContextDefinition } from 'jsonld';
 export type DataServerKey = string & {
   readonly _type?: 'DataServerKey';
 };
@@ -72,7 +73,7 @@ export type Configuration = {
   dataServers: DataServersConfig;
   httpClient: FetchFn;
   /** Context from ontologies { prefix: IRI } or IRI, or array of IRI */
-  jsonContext: string | string[] | Record<string, string>;
+  jsonContext: ContextDefinition;
   resources: Record<string, DataModel>;
   ontologies: Record<string, string>;
   plugins: Plugin[];
@@ -84,6 +85,7 @@ export type SemanticDataProvider = DataProvider & {
   getDataModels: () => Promise<Record<string, DataModel>>;
   getDataServers: () => Promise<DataServersConfig>;
   fetch: FetchFn;
+  getConfig: () => Promise<Configuration>;
   refreshConfig: () => Promise<Configuration>;
   uploadFile: (rawFile: File) => Promise<string | null>;
   expandTypes: (types: string[]) => Promise<string[]>;
@@ -157,20 +159,21 @@ export const configureUserStorage: () => Plugin;
 export const fetchAppRegistration: () => Plugin;
 export const fetchDataRegistry: () => Plugin;
 export const fetchVoidEndpoints: () => Plugin;
-export const useDataModels: () => Record<string, DataModel> | undefined;
-export const useDataServers: () => DataServersConfig | undefined;
+export const useCompactPredicate: (predicate: string, context?: ContextDefinition) => string | undefined;
+export const useDataModels: () => Record<string, import('index').DataModel> | undefined;
+export const useDataServers: () => import('index').DataServersConfig | undefined;
 export const useContainers: ({
   resourceId,
   types,
   serverKeys
 }: {
   resourceId?: string | undefined;
-  types?: string[] | undefined;
+  types?: string | string[] | undefined;
   serverKeys?: string[] | undefined;
 }) => Container[];
 export const useGetCreateContainerUri: () => (resourceId: string) => string | undefined;
 export const useCreateContainerUri: (resourceId: string) => string | undefined;
-export const useDataModel: (resourceId: string) => any;
+export const useDataModel: (resourceId: string) => import('index').DataModel | undefined;
 export function useGetExternalLink(componentExternalLinks: any): (record: any) => any;
 /**
  * @example

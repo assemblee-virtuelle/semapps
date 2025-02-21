@@ -4,7 +4,7 @@ import { Configuration, Container } from '../types';
 
 const shexParser = ShexParser.construct('');
 
-const getContainerFromDataRegistration = async (dataRegistrationUri: string, config: Configuration) => {
+const getContainerFromDataRegistration = async (dataRegistrationUri: string, config: Configuration): Container => {
   const { json: dataRegistration } = await config.httpClient(dataRegistrationUri, {
     headers: new Headers({
       Accept: 'application/ld+json',
@@ -32,7 +32,7 @@ const getContainerFromDataRegistration = async (dataRegistrationUri: string, con
     path: containerPath,
     label: shapeTree.label,
     labelPredicate: shapeTree.describesInstance
-  } as Container;
+  };
 
   if (shapeTree.shape) {
     const { body: shexC } = await config.httpClient(shapeTree.shape, { headers: new Headers({ Accept: '*/*' }) }); // TODO use text/shex

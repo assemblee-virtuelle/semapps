@@ -460,9 +460,8 @@ const $564e5d81f6496048$var$resolvePrefix = (item, ontologies)=>{
     return "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
     const [prefix, value] = item.split(":");
     if (value) {
-        const ontology = ontologies.find((ontology)=>ontology.prefix === prefix);
-        if (ontology) return ontology.url + value;
-        throw new Error(`No ontology found with prefix ${prefix}`);
+        if (ontologies[prefix]) return ontologies[prefix] + value;
+        else throw new Error(`No ontology found with prefix ${prefix}`);
     } else throw new Error(`The value "${item}" is not correct. It must include a prefix or be a full URI.`);
 };
 var $564e5d81f6496048$export$2e2bcd8739ae039 = $564e5d81f6496048$var$resolvePrefix;
@@ -1076,10 +1075,10 @@ var $33bf2a661b5c0cbd$export$2e2bcd8739ae039 = $33bf2a661b5c0cbd$var$normalizeCo
         for (const plugin of config.plugins)if (plugin.transformConfig) config = await plugin.transformConfig(config);
         // Configure again httpClient with possibly updated data servers
         config.httpClient = (0, $22b4895a4ca7d626$export$2e2bcd8739ae039)(config.dataServers);
-        config = await (0, $33bf2a661b5c0cbd$export$2e2bcd8739ae039)(config);
         if (!config.jsonContext) config.jsonContext = config.ontologies;
         if (!config.returnFailedResources) config.returnFailedResources = false;
-        console.log("config after preload plugins", config);
+        config = await (0, $33bf2a661b5c0cbd$export$2e2bcd8739ae039)(config);
+        console.log("Config after plugins", config);
     };
     // Immediately call the preload plugins
     const prepareConfigPromise = prepareConfig();
@@ -1107,6 +1106,7 @@ var $33bf2a661b5c0cbd$export$2e2bcd8739ae039 = $33bf2a661b5c0cbd$var$normalizeCo
         fetch: waitForPrepareConfig((c)=>(0, $22b4895a4ca7d626$export$2e2bcd8739ae039)(c.dataServers)),
         uploadFile: waitForPrepareConfig((c)=>(rawFile)=>(0, $b17c43e3301545ca$export$a5575dbeeffdad98)(rawFile, c)),
         expandTypes: waitForPrepareConfig((c)=>(types)=>(0, $36aa010ec46eaf45$export$2e2bcd8739ae039)(types, c.jsonContext)),
+        getConfig: waitForPrepareConfig((c)=>()=>c),
         refreshConfig: async ()=>{
             config = {
                 ...originalConfig
@@ -1353,37 +1353,72 @@ var $a87fd63d8fca0380$export$2e2bcd8739ae039 = $a87fd63d8fca0380$var$fetchVoidEn
 
 
 
-
-const $3a9656756670cb78$var$useDataModels = ()=>{
+const $3677b4de74c3d10d$var$useDataProviderConfig = ()=>{
     const dataProvider = (0, $fj9kP$useDataProvider)();
-    const [dataModels, setDataModels] = (0, $fj9kP$useState)();
+    const [config, setConfig] = (0, $fj9kP$useState)();
+    const [isLoading, setIsLoading] = (0, $fj9kP$useState)(false);
     (0, $fj9kP$useEffect)(()=>{
-        dataProvider.getDataModels().then((results)=>{
-            setDataModels(results);
-        });
+        if (!isLoading && !config) {
+            setIsLoading(true);
+            dataProvider.getConfig().then((c)=>{
+                setConfig(c);
+                setIsLoading(false);
+            });
+        }
     }, [
         dataProvider,
-        setDataModels
+        setConfig,
+        config,
+        setIsLoading,
+        isLoading
     ]);
-    return dataModels;
+    return config;
+};
+var $3677b4de74c3d10d$export$2e2bcd8739ae039 = $3677b4de74c3d10d$var$useDataProviderConfig;
+
+
+
+const $52b38c5b114c348c$var$compactPredicate = async (predicate, context)=>{
+    const result = await (0, $fj9kP$jsonld).compact({
+        [predicate]: ""
+    }, context);
+    return Object.keys(result).find((key)=>key !== "@context");
+};
+var $52b38c5b114c348c$export$2e2bcd8739ae039 = $52b38c5b114c348c$var$compactPredicate;
+
+
+const $72db0904d77f0f1e$var$useCompactPredicate = (predicate, context)=>{
+    const config = (0, $3677b4de74c3d10d$export$2e2bcd8739ae039)();
+    const [result, setResult] = (0, $fj9kP$useState)();
+    (0, $fj9kP$useEffect)(()=>{
+        if (config && predicate) (0, $52b38c5b114c348c$export$2e2bcd8739ae039)(predicate, context || config.jsonContext).then((r)=>{
+            setResult(r);
+        });
+    }, [
+        predicate,
+        setResult,
+        config,
+        context
+    ]);
+    return result;
+};
+var $72db0904d77f0f1e$export$2e2bcd8739ae039 = $72db0904d77f0f1e$var$useCompactPredicate;
+
+
+
+
+
+const $3a9656756670cb78$var$useDataModels = ()=>{
+    const config = (0, $3677b4de74c3d10d$export$2e2bcd8739ae039)();
+    return config?.resources;
 };
 var $3a9656756670cb78$export$2e2bcd8739ae039 = $3a9656756670cb78$var$useDataModels;
 
 
 
-
 const $4daf4cf698ee4eed$var$useDataServers = ()=>{
-    const dataProvider = (0, $fj9kP$useDataProvider)();
-    const [dataServers, setDataServers] = (0, $fj9kP$useState)();
-    (0, $fj9kP$useEffect)(()=>{
-        dataProvider.getDataServers().then((results)=>{
-            setDataServers(results);
-        });
-    }, [
-        dataProvider,
-        setDataServers
-    ]);
-    return dataServers;
+    const config = (0, $3677b4de74c3d10d$export$2e2bcd8739ae039)();
+    return config?.dataServers;
 };
 var $4daf4cf698ee4eed$export$2e2bcd8739ae039 = $4daf4cf698ee4eed$var$useDataServers;
 
@@ -1398,20 +1433,20 @@ const $586fa0ea9d02fa12$var$useContainers = ({ resourceId: resourceId, types: ty
     const [containers, setContainers] = (0, $fj9kP$useState)([]);
     // Warning: if types or serverKeys change, the containers list will not be updated (otherwise we have an infinite re-render loop)
     (0, $fj9kP$useEffect)(()=>{
-        (async ()=>{
-            if (dataServers && dataModels) {
-                if (resourceId) {
-                    const dataModel = dataModels[resourceId];
-                    setContainers((0, $15b841e67a1ba752$export$2e2bcd8739ae039)((0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(dataModel.types), serverKeys, dataServers));
-                } else if (types) {
-                    const expandedTypes = await dataProvider.expandTypes(types);
-                    setContainers((0, $15b841e67a1ba752$export$2e2bcd8739ae039)(expandedTypes, serverKeys, dataServers));
-                } else {
-                    const parsedServerKeys = (0, $99cc2e4a2a3c100b$export$2e2bcd8739ae039)(serverKeys || "@all", dataServers);
-                    setContainers(parsedServerKeys.map((serverKey)=>dataServers[serverKey].containers).flat());
-                }
+        if (dataServers && dataModels) {
+            if (resourceId) {
+                const dataModel = dataModels[resourceId];
+                setContainers((0, $15b841e67a1ba752$export$2e2bcd8739ae039)((0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(dataModel.types), serverKeys, dataServers));
+            } else if (types) dataProvider.expandTypes((0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(types)).then((expandedTypes)=>{
+                setContainers((0, $15b841e67a1ba752$export$2e2bcd8739ae039)(expandedTypes, serverKeys, dataServers));
+            }).catch(()=>{
+            // Ignore errors
+            });
+            else {
+                const parsedServerKeys = (0, $99cc2e4a2a3c100b$export$2e2bcd8739ae039)(serverKeys || "@all", dataServers);
+                setContainers(parsedServerKeys.map((serverKey)=>dataServers[serverKey].containers).flat());
             }
-        })();
+        }
     }, [
         dataModels,
         dataServers,
@@ -1477,19 +1512,9 @@ var $35f3e75c86e51f35$export$2e2bcd8739ae039 = $35f3e75c86e51f35$var$useCreateCo
 
 
 
-
 const $e5a0eacd756fd1d5$var$useDataModel = (resourceId)=>{
-    // Get the raw data provider, since useDataProvider returns a wrapper
-    const dataProvider = (0, $fj9kP$useContext)((0, $fj9kP$DataProviderContext));
-    const [dataModel, setDataModel] = (0, $fj9kP$useState)(undefined); // TODO: Type this object
-    (0, $fj9kP$useEffect)(()=>{
-        dataProvider.getDataModels().then((results)=>setDataModel(results[resourceId]));
-    }, [
-        dataProvider,
-        resourceId,
-        setDataModel
-    ]);
-    return dataModel;
+    const config = (0, $3677b4de74c3d10d$export$2e2bcd8739ae039)();
+    return config?.resources[resourceId];
 };
 var $e5a0eacd756fd1d5$export$2e2bcd8739ae039 = $e5a0eacd756fd1d5$var$useDataModel;
 
@@ -1834,5 +1859,5 @@ const $03d52e691e8dc945$var$registeredWebSockets = new Map();
 
 
 
-export {$243bf28fbb1b868f$export$2e2bcd8739ae039 as dataProvider, $6cde9a8fbbde3ffb$export$2e2bcd8739ae039 as buildSparqlQuery, $865f630cc944e818$export$2e2bcd8739ae039 as buildBlankNodesQuery, $cdd3c71a628eeefe$export$2e2bcd8739ae039 as configureUserStorage, $2c257b4237cb14ca$export$2e2bcd8739ae039 as fetchAppRegistration, $91255e144bb55afc$export$2e2bcd8739ae039 as fetchDataRegistry, $a87fd63d8fca0380$export$2e2bcd8739ae039 as fetchVoidEndpoints, $586fa0ea9d02fa12$export$2e2bcd8739ae039 as useContainers, $35f3e75c86e51f35$export$2e2bcd8739ae039 as useCreateContainerUri, $e5a0eacd756fd1d5$export$2e2bcd8739ae039 as useDataModel, $3a9656756670cb78$export$2e2bcd8739ae039 as useDataModels, $4daf4cf698ee4eed$export$2e2bcd8739ae039 as useDataServers, $8dbb0c8c3814e663$export$2e2bcd8739ae039 as useGetCreateContainerUri, $87656edf926c0f1f$export$2e2bcd8739ae039 as useGetExternalLink, $406574efa35ec6f1$export$2e2bcd8739ae039 as FilterHandler, $1d8c1cbe606a94ae$export$2e2bcd8739ae039 as GroupedReferenceHandler, $6844bbce0ad66151$export$2e2bcd8739ae039 as ReificationArrayInput, $03d52e691e8dc945$export$28772ab4c256e709 as createWsChannel, $03d52e691e8dc945$export$8d60734939c59ced as getOrCreateWsChannel, $03d52e691e8dc945$export$3edfe18db119b920 as createSolidNotificationChannel};
+export {$243bf28fbb1b868f$export$2e2bcd8739ae039 as dataProvider, $6cde9a8fbbde3ffb$export$2e2bcd8739ae039 as buildSparqlQuery, $865f630cc944e818$export$2e2bcd8739ae039 as buildBlankNodesQuery, $cdd3c71a628eeefe$export$2e2bcd8739ae039 as configureUserStorage, $2c257b4237cb14ca$export$2e2bcd8739ae039 as fetchAppRegistration, $91255e144bb55afc$export$2e2bcd8739ae039 as fetchDataRegistry, $a87fd63d8fca0380$export$2e2bcd8739ae039 as fetchVoidEndpoints, $72db0904d77f0f1e$export$2e2bcd8739ae039 as useCompactPredicate, $586fa0ea9d02fa12$export$2e2bcd8739ae039 as useContainers, $35f3e75c86e51f35$export$2e2bcd8739ae039 as useCreateContainerUri, $e5a0eacd756fd1d5$export$2e2bcd8739ae039 as useDataModel, $3a9656756670cb78$export$2e2bcd8739ae039 as useDataModels, $4daf4cf698ee4eed$export$2e2bcd8739ae039 as useDataServers, $8dbb0c8c3814e663$export$2e2bcd8739ae039 as useGetCreateContainerUri, $87656edf926c0f1f$export$2e2bcd8739ae039 as useGetExternalLink, $406574efa35ec6f1$export$2e2bcd8739ae039 as FilterHandler, $1d8c1cbe606a94ae$export$2e2bcd8739ae039 as GroupedReferenceHandler, $6844bbce0ad66151$export$2e2bcd8739ae039 as ReificationArrayInput, $03d52e691e8dc945$export$28772ab4c256e709 as createWsChannel, $03d52e691e8dc945$export$8d60734939c59ced as getOrCreateWsChannel, $03d52e691e8dc945$export$3edfe18db119b920 as createSolidNotificationChannel};
 //# sourceMappingURL=index.es.js.map

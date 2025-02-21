@@ -45,6 +45,7 @@ $parcel$export(module.exports, "configureUserStorage", () => $89358cee13a17a31$e
 $parcel$export(module.exports, "fetchAppRegistration", () => $c512de108ef5d674$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "fetchDataRegistry", () => $cd772adda3024172$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "fetchVoidEndpoints", () => $1395e306228d41f2$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useCompactPredicate", () => $9d33c8835e67bede$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useContainers", () => $3158e0dc13ffffaa$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useCreateContainerUri", () => $298b78bb7d4a3358$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useDataModel", () => $63a32f1a35c6f80e$export$2e2bcd8739ae039);
@@ -506,9 +507,8 @@ const $761c677606459117$var$resolvePrefix = (item, ontologies)=>{
     return "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
     const [prefix, value] = item.split(":");
     if (value) {
-        const ontology = ontologies.find((ontology)=>ontology.prefix === prefix);
-        if (ontology) return ontology.url + value;
-        throw new Error(`No ontology found with prefix ${prefix}`);
+        if (ontologies[prefix]) return ontologies[prefix] + value;
+        else throw new Error(`No ontology found with prefix ${prefix}`);
     } else throw new Error(`The value "${item}" is not correct. It must include a prefix or be a full URI.`);
 };
 var $761c677606459117$export$2e2bcd8739ae039 = $761c677606459117$var$resolvePrefix;
@@ -1122,10 +1122,10 @@ var $5e24772571dd1677$export$2e2bcd8739ae039 = $5e24772571dd1677$var$normalizeCo
         for (const plugin of config.plugins)if (plugin.transformConfig) config = await plugin.transformConfig(config);
         // Configure again httpClient with possibly updated data servers
         config.httpClient = (0, $341dff85fe619d85$export$2e2bcd8739ae039)(config.dataServers);
-        config = await (0, $5e24772571dd1677$export$2e2bcd8739ae039)(config);
         if (!config.jsonContext) config.jsonContext = config.ontologies;
         if (!config.returnFailedResources) config.returnFailedResources = false;
-        console.log("config after preload plugins", config);
+        config = await (0, $5e24772571dd1677$export$2e2bcd8739ae039)(config);
+        console.log("Config after plugins", config);
     };
     // Immediately call the preload plugins
     const prepareConfigPromise = prepareConfig();
@@ -1153,6 +1153,7 @@ var $5e24772571dd1677$export$2e2bcd8739ae039 = $5e24772571dd1677$var$normalizeCo
         fetch: waitForPrepareConfig((c)=>(0, $341dff85fe619d85$export$2e2bcd8739ae039)(c.dataServers)),
         uploadFile: waitForPrepareConfig((c)=>(rawFile)=>(0, $6fcb30f76390d142$export$a5575dbeeffdad98)(rawFile, c)),
         expandTypes: waitForPrepareConfig((c)=>(types)=>(0, $9ab033d1ec46b5da$export$2e2bcd8739ae039)(types, c.jsonContext)),
+        getConfig: waitForPrepareConfig((c)=>()=>c),
         refreshConfig: async ()=>{
             config = {
                 ...originalConfig
@@ -1399,37 +1400,72 @@ var $1395e306228d41f2$export$2e2bcd8739ae039 = $1395e306228d41f2$var$fetchVoidEn
 
 
 
-
-const $20621bc841a5205a$var$useDataModels = ()=>{
+const $9def35f4441a9bb2$var$useDataProviderConfig = ()=>{
     const dataProvider = (0, $bkNnK$reactadmin.useDataProvider)();
-    const [dataModels, setDataModels] = (0, $bkNnK$react.useState)();
+    const [config, setConfig] = (0, $bkNnK$react.useState)();
+    const [isLoading, setIsLoading] = (0, $bkNnK$react.useState)(false);
     (0, $bkNnK$react.useEffect)(()=>{
-        dataProvider.getDataModels().then((results)=>{
-            setDataModels(results);
-        });
+        if (!isLoading && !config) {
+            setIsLoading(true);
+            dataProvider.getConfig().then((c)=>{
+                setConfig(c);
+                setIsLoading(false);
+            });
+        }
     }, [
         dataProvider,
-        setDataModels
+        setConfig,
+        config,
+        setIsLoading,
+        isLoading
     ]);
-    return dataModels;
+    return config;
+};
+var $9def35f4441a9bb2$export$2e2bcd8739ae039 = $9def35f4441a9bb2$var$useDataProviderConfig;
+
+
+
+const $013953e307d438b1$var$compactPredicate = async (predicate, context)=>{
+    const result = await (0, ($parcel$interopDefault($bkNnK$jsonld))).compact({
+        [predicate]: ""
+    }, context);
+    return Object.keys(result).find((key)=>key !== "@context");
+};
+var $013953e307d438b1$export$2e2bcd8739ae039 = $013953e307d438b1$var$compactPredicate;
+
+
+const $9d33c8835e67bede$var$useCompactPredicate = (predicate, context)=>{
+    const config = (0, $9def35f4441a9bb2$export$2e2bcd8739ae039)();
+    const [result, setResult] = (0, $bkNnK$react.useState)();
+    (0, $bkNnK$react.useEffect)(()=>{
+        if (config && predicate) (0, $013953e307d438b1$export$2e2bcd8739ae039)(predicate, context || config.jsonContext).then((r)=>{
+            setResult(r);
+        });
+    }, [
+        predicate,
+        setResult,
+        config,
+        context
+    ]);
+    return result;
+};
+var $9d33c8835e67bede$export$2e2bcd8739ae039 = $9d33c8835e67bede$var$useCompactPredicate;
+
+
+
+
+
+const $20621bc841a5205a$var$useDataModels = ()=>{
+    const config = (0, $9def35f4441a9bb2$export$2e2bcd8739ae039)();
+    return config?.resources;
 };
 var $20621bc841a5205a$export$2e2bcd8739ae039 = $20621bc841a5205a$var$useDataModels;
 
 
 
-
 const $c9933a88e2acc4da$var$useDataServers = ()=>{
-    const dataProvider = (0, $bkNnK$reactadmin.useDataProvider)();
-    const [dataServers, setDataServers] = (0, $bkNnK$react.useState)();
-    (0, $bkNnK$react.useEffect)(()=>{
-        dataProvider.getDataServers().then((results)=>{
-            setDataServers(results);
-        });
-    }, [
-        dataProvider,
-        setDataServers
-    ]);
-    return dataServers;
+    const config = (0, $9def35f4441a9bb2$export$2e2bcd8739ae039)();
+    return config?.dataServers;
 };
 var $c9933a88e2acc4da$export$2e2bcd8739ae039 = $c9933a88e2acc4da$var$useDataServers;
 
@@ -1444,20 +1480,20 @@ const $3158e0dc13ffffaa$var$useContainers = ({ resourceId: resourceId, types: ty
     const [containers, setContainers] = (0, $bkNnK$react.useState)([]);
     // Warning: if types or serverKeys change, the containers list will not be updated (otherwise we have an infinite re-render loop)
     (0, $bkNnK$react.useEffect)(()=>{
-        (async ()=>{
-            if (dataServers && dataModels) {
-                if (resourceId) {
-                    const dataModel = dataModels[resourceId];
-                    setContainers((0, $047a107b0d203793$export$2e2bcd8739ae039)((0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(dataModel.types), serverKeys, dataServers));
-                } else if (types) {
-                    const expandedTypes = await dataProvider.expandTypes(types);
-                    setContainers((0, $047a107b0d203793$export$2e2bcd8739ae039)(expandedTypes, serverKeys, dataServers));
-                } else {
-                    const parsedServerKeys = (0, $6531da3b9e8c524a$export$2e2bcd8739ae039)(serverKeys || "@all", dataServers);
-                    setContainers(parsedServerKeys.map((serverKey)=>dataServers[serverKey].containers).flat());
-                }
+        if (dataServers && dataModels) {
+            if (resourceId) {
+                const dataModel = dataModels[resourceId];
+                setContainers((0, $047a107b0d203793$export$2e2bcd8739ae039)((0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(dataModel.types), serverKeys, dataServers));
+            } else if (types) dataProvider.expandTypes((0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(types)).then((expandedTypes)=>{
+                setContainers((0, $047a107b0d203793$export$2e2bcd8739ae039)(expandedTypes, serverKeys, dataServers));
+            }).catch(()=>{
+            // Ignore errors
+            });
+            else {
+                const parsedServerKeys = (0, $6531da3b9e8c524a$export$2e2bcd8739ae039)(serverKeys || "@all", dataServers);
+                setContainers(parsedServerKeys.map((serverKey)=>dataServers[serverKey].containers).flat());
             }
-        })();
+        }
     }, [
         dataModels,
         dataServers,
@@ -1523,19 +1559,9 @@ var $298b78bb7d4a3358$export$2e2bcd8739ae039 = $298b78bb7d4a3358$var$useCreateCo
 
 
 
-
 const $63a32f1a35c6f80e$var$useDataModel = (resourceId)=>{
-    // Get the raw data provider, since useDataProvider returns a wrapper
-    const dataProvider = (0, $bkNnK$react.useContext)((0, $bkNnK$reactadmin.DataProviderContext));
-    const [dataModel, setDataModel] = (0, $bkNnK$react.useState)(undefined); // TODO: Type this object
-    (0, $bkNnK$react.useEffect)(()=>{
-        dataProvider.getDataModels().then((results)=>setDataModel(results[resourceId]));
-    }, [
-        dataProvider,
-        resourceId,
-        setDataModel
-    ]);
-    return dataModel;
+    const config = (0, $9def35f4441a9bb2$export$2e2bcd8739ae039)();
+    return config?.resources[resourceId];
 };
 var $63a32f1a35c6f80e$export$2e2bcd8739ae039 = $63a32f1a35c6f80e$var$useDataModel;
 
