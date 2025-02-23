@@ -2,14 +2,20 @@ const { createSign, createHash } = require('crypto');
 const { parseRequest, verifySignature } = require('http-signature');
 const { createAuthzHeader, createSignatureString } = require('http-signature-header');
 const { Errors: E } = require('moleculer-web');
-const { arrayOf } = require('../utils');
+const { KEY_TYPES } = require('../constants');
+const { arrayOf } = require('../utils/utils');
 
-const SignatureService = {
+const HttpSignatureService = {
+  // TODO: Rename to signature.http-signatures in a major release.
   name: 'signature',
   actions: {
     async generateSignatureHeaders(ctx) {
       const { url, method, body, actorUri } = ctx.params;
-      const { privateKey: privateKeyPem } = await ctx.call('signature.keypair.get', { actorUri });
+      // TODO: Use new service.
+      const [{ privateKeyPem }] = await ctx.call('keys.getOrCreateWebIdKeys', {
+        keyType: KEY_TYPES.RSA,
+        webId: actorUri
+      });
 
       const headers = { Date: new Date().toUTCString() };
       const includeHeaders = ['(request-target)', 'host', 'date'];
@@ -40,6 +46,7 @@ const SignatureService = {
       const { body, headers } = ctx.params;
       return headers.digest ? this.buildDigest(body) === headers.digest : true;
     },
+
     /**
      * Given url, path, method, headers, validates a given http signature.
      * If the signature is valid, it returns the actorUri and the publicKeyPem used to verify the signature.
@@ -73,12 +80,12 @@ const SignatureService = {
 
       // TODO: Check if keys are outdated
 
-      const publicKeys = [{ publicKeyPem: await ctx.call('signature.keypair.getRemotePublicKey', { actorUri }) }];
+      const publicKeys = await ctx.call('keys.getRemotePublicKeys', { actorUri, keyType: KEY_TYPES.RSA });
 
       if (!publicKeys) return { isValid: false };
 
       // Check, if one of the keys is able to verify the signature.
-      const { isValid: keyValid, publicKey: publicKeyPem } = arrayOf(publicKeys)
+      const { isValid: keyValid, publicKey: publicKeyPem } = publicKeys
         .flatMap(key => key.publicKeyPem || [])
         .map(pubKeyPem => {
           try {
@@ -135,4 +142,4 @@ const SignatureService = {
   }
 };
 
-module.exports = SignatureService;
+module.exports = HttpSignatureService;

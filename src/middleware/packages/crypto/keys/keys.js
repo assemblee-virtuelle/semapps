@@ -3,8 +3,8 @@ const { generateKeyPair } = require('crypto');
 const { namedNode, triple } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { sec } = require('@semapps/ontologies');
-const { arrayOf } = require('../utils');
-const KEY_TYPES = require('./keyTypes');
+const { arrayOf } = require('../utils/utils');
+const { KEY_TYPES } = require('../constants');
 const KeyContainerService = require('./key-container');
 const PublicKeyContainerService = require('./public-key-container');
 const MigrationService = require('./migration');
@@ -483,6 +483,20 @@ const KeysService = {
         if (publicKeyId) {
           // Try to detach from webId. Will have no effect, if not attached.
           await this.actions.detachFromWebId({ webId, publicKeyId }, { parentCtx: ctx });
+        }
+      }
+    },
+
+    /** Delete all keys belonging to an actor. */
+    deleteAllKeysForWebId: {
+      params: {
+        webId: { type: 'string' }
+      },
+      async handler(ctx) {
+        const { webId } = ctx.params;
+        const keys = await ctx.call('keys.container.list', { webId, accept: MIME_TYPES.JSON });
+        for (const key of keys['ldp:contains']) {
+          await ctx.call('keys.delete', { resourceUri: key.id, webId });
         }
       }
     },
