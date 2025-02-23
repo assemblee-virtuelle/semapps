@@ -83,6 +83,11 @@ module.exports = {
         return false;
       }
     },
+    async generateUnsignedToken(ctx) {
+      const { payload } = ctx.params;
+      const token = jwt.sign(payload, null, { algorithm: 'none' });
+      return token;
+    },
     // Warning, this does NOT verify if signature is valid
     async decodeToken(ctx) {
       const { token } = ctx.params;
