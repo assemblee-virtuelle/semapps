@@ -151,6 +151,7 @@ const CoreService = {
       this.broker.createService({
         mixins: [DataIntegrityService],
         settings: {
+          baseUri: baseUrl,
           ...this.settings.dataIntegrity
         }
       });
