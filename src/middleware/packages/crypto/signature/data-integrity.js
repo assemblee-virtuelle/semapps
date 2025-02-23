@@ -1,45 +1,47 @@
+const { namedNode, triple, blankNode } = require('@rdfjs/data-model');
 const { ControlledContainerMixin } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { randomUUID } = require('node:crypto');
+const path = require('node:path');
 const jsigs = require('jsonld-signatures');
+const VCCapabilityPresentationProofPurpose = require('./VCCapabilityPresentationProofPurpose');
+
 const {
   purposes: { AssertionProofPurpose }
 } = jsigs;
+const ChallengeService = require('./challenge-service');
 
-let createPresentation, issue, signPresentation, verifyPresentation, verifyCredential;
 let cryptosuite;
 let DataIntegrityProof;
+let vc;
 (async () => {
-  ({
-    createPresentation,
-    issue,
-    signPresentation,
-    verify: verifyPresentation,
-    verifyCredential
-  } = await import('@digitalbazaar/vc'));
+  vc = await import('@digitalbazaar/vc');
+
   ({ cryptosuite } = await import('@digitalbazaar/eddsa-rdfc-2022-cryptosuite'));
   ({ DataIntegrityProof } = await import('@digitalbazaar/data-integrity'));
 })();
 
-const KEY_TYPES = require('../keys/keyTypes');
-// import { Errors as E } from 'moleculer-web';
-const { arrayOf, orderLinearGraph } = require('../utils');
+const { KEY_TYPES, VC_API_SERVICE_TYPE } = require('../constants');
+const { arrayOf } = require('../utils/utils');
 
-// TODO: How do we ensure to attach the right context?
-const context = [
-  'https://www.w3.org/ns/credentials/v2',
-  'https://w3id.org/security/v2',
-  {
-    parentProof: 'http://activitypods.org/ns/core#parentProof'
-  }
-];
+// TODO: Do we need the second one? We need custom contexts to allow for additional properties!
+const context = ['https://www.w3.org/ns/credentials/v2', 'https://w3id.org/security/v2'];
 
-/** @type {ServiceSchema} */
+/**
+ * TODO: Document this service and explain how it functions.
+ *
+ * TODO: Add parameter validation.
+ *
+ * @type {import('moleculer').ServiceSchema}
+ */
 const DataIntegrityService = {
   name: 'signature.data-integrity',
   mixins: [ControlledContainerMixin],
   settings: {
+    baseUri: null,
     path: '/credentials',
+    /** Changing this will break existing references in webId documents to the VC API. */
+    vcApiPath: '/api/v1/vc',
     excludeFromMirror: true,
     activateTombstones: false,
     permissions: {},
@@ -56,7 +58,11 @@ const DataIntegrityService = {
     this.documentLoader = async (url, options) => {
       return await this.broker.call('jsonld.document-loader.loadWithCache', { url, options });
     };
+
+    // Start challenge service.
+    this.broker.createService({ mixins: [ChallengeService] });
   },
+
   actions: {
     async verifyObject(ctx) {
       const { object, purpose = new AssertionProofPurpose() } = ctx.params;
@@ -69,13 +75,13 @@ const DataIntegrityService = {
     },
 
     async verifyVC(ctx) {
-      const { credential, purpose = new AssertionProofPurpose() } = ctx.params;
+      const { credential, purpose = new vc.CredentialIssuancePurpose() } = ctx.params;
 
       const suite = new DataIntegrityProof({
         cryptosuite
       });
 
-      const verificationResult = await verifyCredential({
+      const verificationResult = await vc.verifyCredential({
         credential,
         documentLoader: this.documentLoader,
         purpose,
@@ -86,15 +92,30 @@ const DataIntegrityService = {
     },
 
     async verifyPresentation(ctx) {
-      const { presentation, challenge = '', purpose = new AssertionProofPurpose() } = ctx.params;
+      const { presentation, challenge = presentation?.proof?.challenge, term, domain } = ctx.params;
+
+      const challengeValidationResult = await ctx.call('signature.challenge.validateChallenge', {
+        challenge
+      });
+      if (!challengeValidationResult.valid) {
+        return challengeValidationResult;
+      }
+
+      // Used to validate verifiable credentials in presentation.
+      const credentialPurpose = ctx.params.credentialPurpose || new vc.CredentialIssuancePurpose();
+
+      const presentationPurpose =
+        ctx.params.presentationPurpose ||
+        new vc.AuthenticationProofPurpose({ term: term || 'assertionMethod', challenge, domain });
 
       const suite = new DataIntegrityProof({
         cryptosuite
       });
 
-      const verificationResult = await verifyPresentation({
+      const verificationResult = await vc.verifyPresentation({
         presentation,
-        presentationPurpose: purpose,
+        presentationPurpose,
+        purpose: credentialPurpose,
         challenge,
         suite,
         documentLoader: this.documentLoader
@@ -140,7 +161,7 @@ const DataIntegrityService = {
       const {
         validFrom,
         validUntil,
-        subject,
+        credentialSubject,
         webId = ctx.meta.webId,
         name,
         description,
@@ -167,7 +188,7 @@ const DataIntegrityService = {
         validUntil,
         name,
         description,
-        credentialSubject: subject,
+        credentialSubject,
         ...additionalCredentialProps
         // We don't take the following into account:
         //  status, credentialSchema, refreshService, termsOfUse, evidence
@@ -204,8 +225,10 @@ const DataIntegrityService = {
         cryptosuite
       });
 
+      console.debug('Signing credential', credentialResource);
+
       // Sign credential
-      const signedCredential = await issue({
+      const signedCredential = await vc.issue({
         credential: credentialResource,
         documentLoader: this.documentLoader,
         purpose,
@@ -226,7 +249,7 @@ const DataIntegrityService = {
       const {
         verifiableCredential,
         additionalPresentationProps = {},
-        challenge = '',
+        challenge,
         webId = ctx.meta.webId,
         purpose = new AssertionProofPurpose(),
         keyObject = undefined,
@@ -247,14 +270,14 @@ const DataIntegrityService = {
       });
 
       // Create presentation.
-      const presentation = createPresentation({
+      const presentation = vc.createPresentation({
         verifiableCredential,
         holder: webId,
         id: `urn:uuid:${randomUUID()}`
       });
 
       // Sign presentation.
-      const signedPresentation = await signPresentation({
+      const signedPresentation = await vc.signPresentation({
         presentation: {
           ...presentation,
           // '@context': context,
@@ -272,50 +295,73 @@ const DataIntegrityService = {
     /**
      * Given a parent VC capability, create a delegated VC with a parent VC.
      * Same params as createVC but VC is created with type CapabilityCredential.
-     * And optional param `parentCapability` param is optional to link to the parent.
      */
     async createCapability(ctx) {
-      const { parentCapability, subject } = ctx.params;
+      const { webId = ctx.meta.webId } = ctx.params;
 
       // We could add type CapabilityCredential...
       return await ctx.call('signature.data-integrity.createVC', {
         ...ctx.params,
-        subject: {
-          ...subject,
-          parentCapability: parentCapability?.id // Do we even need this? It's nice to have.
-        }
+        // Indicates that the presentation must be done by the holder (i.e. credentialSubject.id).
+        nonTransferable: true,
+        issuer: webId
       });
     },
 
+    // Note, this does not verify if the original issuer is authorized to use the requested endpoint.
+    // This is the business logic's responsibility.
     async verifyCapabilityPresentation(ctx) {
-      const { presentation } = ctx.params;
-      const presentationResult = await this.actions.verifyPresentation(ctx.params);
+      const { presentation, challenge, domain, maxChainLength = 2 } = ctx.params;
 
-      if (!presentationResult.verified) {
-        return presentationResult;
-      }
+      const presentationPurpose = new VCCapabilityPresentationProofPurpose({ maxChainLength, challenge, domain });
+      const credentialPurpose = new vc.CredentialIssuancePurpose();
 
-      const credentialOrder = orderLinearGraph(
-        arrayOf(presentation.verifiableCredential).map(cred => ({
-          id: cred.id,
-          nextId: cred.credentialSubject.parentCapability,
-          cred
-        }))
+      const verificationResult = await this.actions.verifyPresentation({
+        ...ctx.params,
+        presentationPurpose,
+        credentialPurpose
+      });
+
+      const orderedPresentation = arrayOf(presentation.verifiableCredential).sort(
+        (c1, c2) => new Date(c1.issuanceDate || c1.proof.created) - new Date(c2.issuanceDate || c2.proof.created)
       );
 
-      if (credentialOrder === null) {
-        return {
-          verified: false,
-          error:
-            'The signatures were correct but the credentials were not composed of a delegation chain with `parentCapability` (e.g. parent VC <- delegated VC <- sub-delegated VC.'
-        };
-      }
-
-      return { verified: true, error: undefined, credentialsOrdered: credentialOrder.map(obj => obj.cred) };
+      return { ...verificationResult, presentation: orderedPresentation };
     }
   },
   methods: {
     //
+  },
+  events: {
+    /**
+     * Registers the location of the VC api for the webId.
+     *
+     * Note: The VC API is still in specification and discovery has not been standardized.
+     * See: https://github.com/w3c-ccg/vc-api/issues/459
+     *
+     * TODO: Write job to attach those triples to existing webIds.
+     */
+    async 'auth.registered'(ctx) {
+      const { webId } = ctx.params;
+      // Attach the storage URL to the webId
+      await ctx.call('ldp.resource.patch', {
+        resourceUri: webId,
+        triplesToAdd: [
+          triple(namedNode(webId), namedNode('https://www.w3.org/ns/did#service'), blankNode('b0')),
+          triple(
+            blankNode('b0'),
+            namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+            namedNode(VC_API_SERVICE_TYPE)
+          ),
+          triple(
+            blankNode('b0'),
+            namedNode('https://www.w3.org/ns/did#serviceEndpoint'),
+            namedNode(path.join(this.settings.baseUri, this.settings.vcApiPath))
+          )
+        ],
+        webId: 'system'
+      });
+    }
   }
 };
 
