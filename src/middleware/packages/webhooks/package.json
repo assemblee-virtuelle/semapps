@@ -6,6 +6,7 @@
   "author": "Virtual Assembly",
   "dependencies": {
     "@semapps/ldp": "1.0.10",
+    "@semapps/triplestore": "1.0.10",
     "moleculer": "^0.14.18",
     "moleculer-db": "^0.8.15",
     "url-join": "^4.0.1"
