@@ -1,7 +1,7 @@
 const { ControlledContainerMixin } = require('@semapps/ldp');
 const { Errors: E } = require('moleculer-web');
-const { arrayOf } = require('../utils');
-const KEY_TYPES = require('./keyTypes');
+const { arrayOf } = require('../utils/utils');
+const { KEY_TYPES } = require('../constants');
 
 /**
  * DANGER ZONE

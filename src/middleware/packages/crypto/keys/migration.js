@@ -1,7 +1,7 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
 const fs = require('fs');
 const path = require('path');
-const KEY_TYPES = require('./keyTypes');
+const { KEY_TYPES } = require('../constants');
 
 /** @type {import('moleculer').ServiceSchema} */
 module.exports = {

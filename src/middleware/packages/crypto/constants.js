@@ -1,3 +1,5 @@
+const VC_API_SERVICE_TYPE = 'urn:tmp:vcService';
+
 /**
  * Map from key type to URI.
  * Key Types are a bit of a mess in the rdf ontologies out there,
@@ -20,3 +22,8 @@ const KEY_TYPES = {
 };
 
 module.exports = KEY_TYPES;
+
+module.exports = {
+  VC_API_SERVICE_TYPE,
+  KEY_TYPES
+};
