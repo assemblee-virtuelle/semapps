@@ -1,5 +1,6 @@
+const { did } = require('@semapps/ontologies');
 const { namedNode, triple, blankNode } = require('@rdfjs/data-model');
-const { ControlledContainerMixin } = require('@semapps/ldp');
+const { ControlledContainerMixin, PseudoIdMixin } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { randomUUID } = require('node:crypto');
 const path = require('node:path');
@@ -7,7 +8,7 @@ const jsigs = require('jsonld-signatures');
 const VCCapabilityPresentationProofPurpose = require('./VCCapabilityPresentationProofPurpose');
 
 const {
-  purposes: { AssertionProofPurpose }
+  purposes: { AssertionProofPurpose, AuthenticationProofPurpose }
 } = jsigs;
 const ChallengeService = require('./challenge-service');
 
@@ -36,7 +37,8 @@ const context = ['https://www.w3.org/ns/credentials/v2', 'https://w3id.org/secur
  */
 const DataIntegrityService = {
   name: 'signature.data-integrity',
-  mixins: [ControlledContainerMixin],
+  mixins: [ControlledContainerMixin, PseudoIdMixin],
+  dependencies: ['ontologies'],
   settings: {
     baseUri: null,
     path: '/credentials',
@@ -53,14 +55,16 @@ const DataIntegrityService = {
       internal: true
     }
   },
-
+  created() {
+    // Start challenge service.
+    this.broker.createService({ mixins: [ChallengeService] });
+  },
   started() {
     this.documentLoader = async (url, options) => {
       return await this.broker.call('jsonld.document-loader.loadWithCache', { url, options });
     };
 
-    // Start challenge service.
-    this.broker.createService({ mixins: [ChallengeService] });
+    this.broker.call('ontologies.register', did);
   },
 
   actions: {
@@ -106,13 +110,13 @@ const DataIntegrityService = {
 
       const presentationPurpose =
         ctx.params.presentationPurpose ||
-        new vc.AuthenticationProofPurpose({ term: term || 'assertionMethod', challenge, domain });
+        new AuthenticationProofPurpose({ term: term || 'assertionMethod', challenge, domain });
 
       const suite = new DataIntegrityProof({
         cryptosuite
       });
 
-      const verificationResult = await vc.verifyPresentation({
+      const verificationResult = await vc.verify({
         presentation,
         presentationPurpose,
         purpose: credentialPurpose,
@@ -204,7 +208,7 @@ const DataIntegrityService = {
         { parentCtx: ctx }
       );
 
-      const credentialResource = await ctx.call('ldp.resource.get', {
+      const credentialResource = await this.actions.get({
         resourceUri,
         jsonContext: context,
         webId: 'system',
@@ -224,8 +228,6 @@ const DataIntegrityService = {
         signer: key.signer(),
         cryptosuite
       });
-
-      console.debug('Signing credential', credentialResource);
 
       // Sign credential
       const signedCredential = await vc.issue({
@@ -250,8 +252,9 @@ const DataIntegrityService = {
         verifiableCredential,
         additionalPresentationProps = {},
         challenge,
+        domain,
         webId = ctx.meta.webId,
-        purpose = new AssertionProofPurpose(),
+        purpose = new AuthenticationProofPurpose({ term: 'assertionMethod', challenge, domain }),
         keyObject = undefined,
         keyId = undefined
       } = ctx.params;
@@ -280,7 +283,6 @@ const DataIntegrityService = {
       const signedPresentation = await vc.signPresentation({
         presentation: {
           ...presentation,
-          // '@context': context,
           ...additionalPresentationProps
         },
         suite,
@@ -293,17 +295,19 @@ const DataIntegrityService = {
     },
 
     /**
-     * Given a parent VC capability, create a delegated VC with a parent VC.
-     * Same params as createVC but VC is created with type CapabilityCredential.
+     * Create a capability VC. Will add the issuer to the VC and set the nonTransferable flag,
+     * if anyHolder is false (default). Set anyHolder to true to allow any holder to present the VC.
+     * Useful e.g. for invite links to users who have not signed up yet.
+     *
      */
     async createCapability(ctx) {
-      const { webId = ctx.meta.webId } = ctx.params;
+      const { webId = ctx.meta.webId, anyHolder = false } = ctx.params;
 
       // We could add type CapabilityCredential...
       return await ctx.call('signature.data-integrity.createVC', {
         ...ctx.params,
         // Indicates that the presentation must be done by the holder (i.e. credentialSubject.id).
-        nonTransferable: true,
+        nonTransferable: !anyHolder,
         issuer: webId
       });
     },
@@ -311,7 +315,7 @@ const DataIntegrityService = {
     // Note, this does not verify if the original issuer is authorized to use the requested endpoint.
     // This is the business logic's responsibility.
     async verifyCapabilityPresentation(ctx) {
-      const { presentation, challenge, domain, maxChainLength = 2 } = ctx.params;
+      const { presentation, challenge = presentation?.proof?.challenge, domain, maxChainLength = 2 } = ctx.params;
 
       const presentationPurpose = new VCCapabilityPresentationProofPurpose({ maxChainLength, challenge, domain });
       const credentialPurpose = new vc.CredentialIssuancePurpose();
