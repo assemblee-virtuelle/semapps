@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+##
+
+Breaking: Rename `auth.jwt.generateToken` to `auth.jwt.generateServerSignedToken` and `auth.jwt.verifyToken` to `auth.jwt.verifyServerSignedToken`.
+
 ## [middleware-0.4.2] - 2023-01-30
 
 **@semapps/crypto**

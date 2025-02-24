@@ -10,7 +10,7 @@ const { TripleStoreService } = require('@semapps/triplestore');
 const { VoidService } = require('@semapps/void');
 const { WebAclService } = require('@semapps/webacl');
 const { WebfingerService } = require('@semapps/webfinger');
-const { KeysService, SignatureService } = require('@semapps/crypto');
+const { KeysService, SignatureService, DataIntegrityService } = require('@semapps/crypto');
 const { WebIdService } = require('@semapps/webid');
 
 const botsContainer = {
@@ -20,8 +20,6 @@ const botsContainer = {
 };
 
 /**
- * @typedef {import('http').ServerResponse} ServerResponse
- * @typedef {import('http').IncomingMessage} IncomingMessage
  * @typedef {import('./serviceTypes').CoreServiceSettings} CoreServiceSettings
  */
 
@@ -49,6 +47,7 @@ const CoreService = {
     ldp: {},
     signature: {},
     sparqlEndpoint: {},
+    dataIntegrity: {},
     void: {},
     webacl: {},
     webfinger: {},
@@ -144,6 +143,16 @@ const CoreService = {
         mixins: [SignatureService],
         settings: {
           ...this.settings.signature
+        }
+      });
+    }
+
+    if (this.settings.dataIntegrity !== false) {
+      this.broker.createService({
+        mixins: [DataIntegrityService],
+        settings: {
+          baseUri: baseUrl,
+          ...this.settings.dataIntegrity
         }
       });
     }

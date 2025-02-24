@@ -1,12 +1,14 @@
+const VC_API_SERVICE_TYPE = 'urn:tmp:vcService';
+
 /**
  * Map from key type to URI.
  * Key Types are a bit of a mess in the rdf ontologies out there,
  * so this is by far no authoritative collection.
  */
 const KEY_TYPES = {
-  /** Officially being deprecated but there's no alternative yet. */
+  /** Officially being deprecated but there's no alternative predicate yet. */
   RSA: 'https://www.w3.org/ns/auth/rsa#RSAKey',
-  /** There is no standardized type except for MultiKey which allows for this key type, so this is custom. */
+  /** There is no standardized type except for Multikey which allows for this key type, so this is custom. */
   ED25519: 'urn:ed25519-key',
   JWK: 'https://w3id.org/security/jwk/v1',
   /**
@@ -20,3 +22,8 @@ const KEY_TYPES = {
 };
 
 module.exports = KEY_TYPES;
+
+module.exports = {
+  VC_API_SERVICE_TYPE,
+  KEY_TYPES
+};
