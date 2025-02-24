@@ -7,6 +7,8 @@ const { arrayOf, deepStrictEqual } = require('../utils/utils');
 /**
  * Create an instance of this class when verifying capability VC presentations using
  * the @digitalbazaar/vc library.
+ *
+ * This class validates if the rules for a VC capability chain are followed.
  */
 class VCCapabilityPresentationProofPurpose extends AuthenticationProofPurpose {
   /**

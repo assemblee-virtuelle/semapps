@@ -5,6 +5,7 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 const { randomUUID } = require('node:crypto');
 const path = require('node:path');
 const jsigs = require('jsonld-signatures');
+const VCPurpose = require('./VCPurpose');
 const VCCapabilityPresentationProofPurpose = require('./VCCapabilityPresentationProofPurpose');
 
 const {
@@ -79,7 +80,7 @@ const DataIntegrityService = {
     },
 
     async verifyVC(ctx) {
-      const { credential, purpose = new vc.CredentialIssuancePurpose() } = ctx.params;
+      const { credential, purpose = new VCPurpose() } = ctx.params;
 
       const suite = new DataIntegrityProof({
         cryptosuite
@@ -106,7 +107,7 @@ const DataIntegrityService = {
       }
 
       // Used to validate verifiable credentials in presentation.
-      const credentialPurpose = ctx.params.credentialPurpose || new vc.CredentialIssuancePurpose();
+      const credentialPurpose = ctx.params.credentialPurpose || new VCPurpose();
 
       const presentationPurpose =
         ctx.params.presentationPurpose ||
@@ -295,6 +296,18 @@ const DataIntegrityService = {
     },
 
     /**
+     * Revokes a VC by deleting the resource.
+     *
+     * TODO: When we implement the whole VC spec, we will use status lists.
+     *
+     */
+    async revokeVC(ctx) {
+      const { resourceUri } = ctx.params;
+
+      return await ctx.call('ldp.resource.delete', { resourceUri, webId: 'system' });
+    },
+
+    /**
      * Create a capability VC. Will add the issuer to the VC and set the nonTransferable flag,
      * if anyHolder is false (default). Set anyHolder to true to allow any holder to present the VC.
      * Useful e.g. for invite links to users who have not signed up yet.
@@ -318,7 +331,7 @@ const DataIntegrityService = {
       const { presentation, challenge = presentation?.proof?.challenge, domain, maxChainLength = 2 } = ctx.params;
 
       const presentationPurpose = new VCCapabilityPresentationProofPurpose({ maxChainLength, challenge, domain });
-      const credentialPurpose = new vc.CredentialIssuancePurpose();
+      const credentialPurpose = new VCPurpose();
 
       const verificationResult = await this.actions.verifyPresentation({
         ...ctx.params,
@@ -326,6 +339,7 @@ const DataIntegrityService = {
         credentialPurpose
       });
 
+      // Order the VCs in the presentation by issuance date.
       const orderedPresentation = arrayOf(presentation.verifiableCredential).sort(
         (c1, c2) => new Date(c1.issuanceDate || c1.proof.created) - new Date(c2.issuanceDate || c2.proof.created)
       );
