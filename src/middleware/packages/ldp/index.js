@@ -11,6 +11,7 @@ module.exports = {
   // Mixins
   ControlledContainerMixin: require('./mixins/controlled-container'),
   DereferenceMixin: require('./mixins/dereference'),
+  PseudoIdMixin: require('./mixins/pseudo-id'),
   ImageProcessorMixin: require('./mixins/image-processor'),
   DocumentTaggerMixin: require('./mixins/document-tagger'),
   DisassemblyMixin: require('./mixins/disassembly'),

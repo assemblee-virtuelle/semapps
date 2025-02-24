@@ -40,10 +40,16 @@ class VCCapabilityPresentationProofPurpose extends AuthenticationProofPurpose {
     if (!proof || !options) {
       throw new Error('Proof and options are required.');
     }
-    const { document: presentation, controller: controllerDocument } = options;
-    if (!controllerDocument || !controllerDocument.id) {
-      throw new Error('Controller document must have an id.');
+    const { document: presentation } = options;
+
+    // Validate things in super classes.
+    // This will validate that the challenge is correct, the key controllers are correct (=key owner is signer), etc.
+    const superResult = await super.validate(proof, options);
+    if (!superResult.valid) {
+      return superResult;
     }
+
+    const controllerDocument = superResult.controller;
 
     // Validate that all credentials have an issuance or proof.created field.
     for (const credential of arrayOf(presentation.verifiableCredential)) {
@@ -114,10 +120,6 @@ class VCCapabilityPresentationProofPurpose extends AuthenticationProofPurpose {
       }
       previousSubject = currentSubject;
     }
-
-    // Validate things in super classes.
-    // This will validate that the challenge is correct, the key controllers are correct (=key owner is signer), etc.
-    const superResult = await super.validate(proof, options);
 
     return superResult;
   }
