@@ -57,6 +57,7 @@ var $1bc09db736a9cb94$exports = {};
 
 
 
+
 const $3db7a4510a668a04$var$fetchResource = async (resourceUri, config)=>{
     const { httpClient: httpClient, jsonContext: jsonContext } = config;
     let { json: data } = await httpClient(resourceUri);
@@ -241,7 +242,6 @@ const $047a107b0d203793$var$findContainersWithTypes = (types, serverKeys, dataSe
 var $047a107b0d203793$export$2e2bcd8739ae039 = $047a107b0d203793$var$findContainersWithTypes;
 
 
-
 const $907cbc087f6529e2$var$createMethod = (config)=>async (resourceId, params)=>{
         const { dataServers: dataServers, resources: resources, httpClient: httpClient, jsonContext: jsonContext } = config;
         const dataModel = resources[resourceId];
@@ -268,7 +268,7 @@ const $907cbc087f6529e2$var$createMethod = (config)=>async (resourceId, params)=
             if (dataModel.fieldsMapping?.title) {
                 const slug = Array.isArray(dataModel.fieldsMapping.title) ? dataModel.fieldsMapping.title.map((f)=>params.data[f]).join(" ") : params.data[dataModel.fieldsMapping.title];
                 // Generate slug here, otherwise we may get errors with special characters
-                headers.set("Slug", $bkNnK$speakingurl(slug));
+                headers.set("Slug", (0, ($parcel$interopDefault($bkNnK$speakingurl)))(slug));
             }
             // Upload files, if there are any
             const { updatedRecord: updatedRecord } = await (0, $6fcb30f76390d142$export$2e2bcd8739ae039).upload(params.data, config, serverKey);
@@ -1201,6 +1201,8 @@ var $341dff85fe619d85$export$2e2bcd8739ae039 = $341dff85fe619d85$var$httpClient;
     if (!config.returnFailedResources) config.returnFailedResources = false;
     // Configure httpClient with data servers (this is needed for proxy calls)
     config.httpClient = (0, $341dff85fe619d85$export$2e2bcd8739ae039)(config.dataServers);
+    // Useful for debugging.
+    document.httpClient = config.httpClient;
     // Keep in memory for refresh
     const originalConfig = {
         ...config

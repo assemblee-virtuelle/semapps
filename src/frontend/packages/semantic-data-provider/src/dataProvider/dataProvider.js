@@ -28,6 +28,9 @@ const dataProvider = config => {
   // Configure httpClient with data servers (this is needed for proxy calls)
   config.httpClient = httpClient(config.dataServers);
 
+  // Useful for debugging.
+  document.httpClient = config.httpClient;
+
   // Keep in memory for refresh
   const originalConfig = { ...config };
 
