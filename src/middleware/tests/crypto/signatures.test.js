@@ -186,7 +186,6 @@ describe('signatures', () => {
 
       const presentation = await broker.call('signature.data-integrity.createPresentation', {
         verifiableCredential: credential,
-        additionalPresentationProps: undefined,
         webId: bob.webId,
         challenge: await getChallengeFrom(alice)
       });
