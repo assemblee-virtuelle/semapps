@@ -34,7 +34,7 @@ module.exports = {
           document: await ctx.call('jsonld.context.getLocal')
         };
       }
-      if (cache.has(url)) {
+      if (cache.has(url) && !options?.noCache) {
         return cache.get(url);
       }
       const context = await defaultDocumentLoader(url, options);
