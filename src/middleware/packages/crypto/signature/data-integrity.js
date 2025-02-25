@@ -30,7 +30,8 @@ const { arrayOf } = require('../utils/utils');
 const context = ['https://www.w3.org/ns/credentials/v2', 'https://w3id.org/security/v2'];
 
 /**
- * TODO: Document this service and explain how it functions.
+ *
+ * WARNING: Changing things here can have security implications.
  *
  * TODO: Add parameter validation.
  *
@@ -69,282 +70,386 @@ const DataIntegrityService = {
   },
 
   actions: {
-    async verifyObject(ctx) {
-      const { object, purpose = new AssertionProofPurpose() } = ctx.params;
+    /**
+     * Verify an object.
+     * @param {object} ctx.params.object - The object to verify.
+     * @param {object} [ctx.params.purpose] - The purpose of the verification.
+     */
+    verifyObject: {
+      params: {
+        object: { type: 'object' },
+        purpose: { type: 'object', optional: true }
+      },
+      async handler(ctx) {
+        const { object, purpose = new AssertionProofPurpose() } = ctx.params;
 
-      const suite = new DataIntegrityProof({
-        cryptosuite
-      });
+        const suite = new DataIntegrityProof({
+          cryptosuite
+        });
 
-      return jsigs.verify(object, { purpose, documentLoader: this.documentLoader, suite });
-    },
-
-    async verifyVC(ctx) {
-      const { credential, purpose = new VCPurpose() } = ctx.params;
-
-      const suite = new DataIntegrityProof({
-        cryptosuite
-      });
-
-      const verificationResult = await vc.verifyCredential({
-        credential,
-        documentLoader: this.documentLoader,
-        purpose,
-        suite
-      });
-
-      return verificationResult;
-    },
-
-    async verifyPresentation(ctx) {
-      const { presentation, challenge = presentation?.proof?.challenge, term, domain } = ctx.params;
-
-      const challengeValidationResult = await ctx.call('signature.challenge.validateChallenge', {
-        challenge
-      });
-      if (!challengeValidationResult.valid) {
-        return challengeValidationResult;
+        return jsigs.verify(object, { purpose, documentLoader: this.documentLoader, suite });
       }
-
-      // Used to validate verifiable credentials in presentation.
-      const credentialPurpose = ctx.params.credentialPurpose || new VCPurpose();
-
-      const presentationPurpose =
-        ctx.params.presentationPurpose ||
-        new AuthenticationProofPurpose({ term: term || 'assertionMethod', challenge, domain });
-
-      const suite = new DataIntegrityProof({
-        cryptosuite
-      });
-
-      const verificationResult = await vc.verify({
-        presentation,
-        presentationPurpose,
-        purpose: credentialPurpose,
-        challenge,
-        suite,
-        documentLoader: this.documentLoader
-      });
-
-      return verificationResult;
     },
 
-    async signObject(ctx) {
-      const {
-        object,
-        purpose = new AssertionProofPurpose(),
-        webId = ctx.meta.webId,
-        keyObject = undefined,
-        keyId = undefined
-      } = ctx.params;
+    /**
+     * Verify a verifiable credential.
+     * @param {object} ctx.params.credential - The credential to verify.
+     * @param {object} [ctx.params.purpose] - The purpose of the verification.
+     */
+    verifyVC: {
+      params: {
+        credential: { type: 'object' },
+        purpose: { type: 'object', optional: true }
+      },
+      async handler(ctx) {
+        const { credential, purpose = new VCPurpose() } = ctx.params;
 
-      const key = await ctx.call('keys.getMultikeyInstance', {
-        webId,
-        keyObject,
-        keyId,
-        keyType: KEY_TYPES.ED25519,
-        withPrivateKey: true
-      });
+        const suite = new DataIntegrityProof({
+          cryptosuite
+        });
 
-      const suite = new DataIntegrityProof({
-        signer: key.signer(),
-        cryptosuite
-      });
+        const verificationResult = await vc.verifyCredential({
+          credential,
+          documentLoader: this.documentLoader,
+          purpose,
+          suite
+        });
 
-      return jsigs.sign(object, { purpose, documentLoader: this.documentLoader, suite });
+        return verificationResult;
+      }
+    },
+
+    /**
+     * Verify a presentation.
+     * @param {object} ctx.params.presentation - The presentation to verify.
+     * @param {string} [ctx.params.challenge] - The challenge to verify.
+     * @param {string} [ctx.params.term] - The term to use.
+     * @param {string} [ctx.params.domain] - The domain to use.
+     */
+    verifyPresentation: {
+      params: {
+        presentation: { type: 'object' },
+        challenge: { type: 'string', optional: true },
+        term: { type: 'string', optional: true },
+        domain: { type: 'string', optional: true }
+      },
+      async handler(ctx) {
+        const { presentation, challenge = presentation?.proof?.challenge, term, domain } = ctx.params;
+
+        const challengeValidationResult = await ctx.call('signature.challenge.validateChallenge', {
+          challenge
+        });
+        if (!challengeValidationResult.valid) {
+          return challengeValidationResult;
+        }
+
+        // Used to validate verifiable credentials in presentation.
+        const credentialPurpose = ctx.params.credentialPurpose || new VCPurpose();
+
+        const presentationPurpose =
+          ctx.params.presentationPurpose ||
+          new AuthenticationProofPurpose({ term: term || 'assertionMethod', challenge, domain });
+
+        const suite = new DataIntegrityProof({
+          cryptosuite
+        });
+
+        const verificationResult = await vc.verify({
+          presentation,
+          presentationPurpose,
+          purpose: credentialPurpose,
+          challenge,
+          suite,
+          documentLoader: this.documentLoader
+        });
+
+        return verificationResult;
+      }
+    },
+
+    /**
+     * Sign an object.
+     * @param {object} ctx.params.object - The object to sign.
+     * @param {object} [ctx.params.purpose] - The purpose of the signing.
+     * @param {string} [ctx.params.webId] - The webId of the signer.
+     * @param {object} [ctx.params.keyObject] - The key object to use.
+     * @param {string} [ctx.params.keyId] - The key ID to use.
+     */
+    signObject: {
+      params: {
+        object: { type: 'object' },
+        purpose: { type: 'object', optional: true },
+        webId: { type: 'string', optional: true },
+        keyObject: { type: 'object', optional: true },
+        keyId: { type: 'string', optional: true }
+      },
+      async handler(ctx) {
+        const {
+          object,
+          purpose = new AssertionProofPurpose(),
+          webId = ctx.meta.webId,
+          keyObject = undefined,
+          keyId = undefined
+        } = ctx.params;
+
+        const key = await ctx.call('keys.getMultikeyInstance', {
+          webId,
+          keyObject,
+          keyId,
+          keyType: KEY_TYPES.ED25519,
+          withPrivateKey: true
+        });
+
+        const suite = new DataIntegrityProof({
+          signer: key.signer(),
+          cryptosuite
+        });
+
+        return jsigs.sign(object, { purpose, documentLoader: this.documentLoader, suite });
+      }
     },
 
     /**
      * Create a Verifiable Credential.
      *
-     * VCs have a resolvable (non-guessable) URI and are publicly readable by default.
-     * Set `noAnonRead` to `true`, to prevent this.
-     * @param {} ctx
-     * @returns
+     * Set param `noAnonRead` to `true` to prevent anonymous read access to the credential.
+     * Since the credential URIs are unguessable this is not always necessary.
+     *
+     * @param {object} ctx.params - The parameters for creating the VC.
+     * @returns {object} The signed credential.
      */
-    async createVC(ctx) {
-      const {
-        validFrom,
-        validUntil,
-        credentialSubject,
-        webId = ctx.meta.webId,
-        name,
-        description,
-        noAnonRead = false,
-        purpose = new AssertionProofPurpose(),
-        additionalCredentialProps = {},
-        keyObject = undefined,
-        keyId = undefined
-      } = ctx.params;
+    createVC: {
+      params: {
+        validFrom: { type: 'string', optional: true },
+        validUntil: { type: 'string', optional: true },
+        credentialSubject: { type: 'object' },
+        webId: { type: 'string', optional: true },
+        name: { type: 'string', optional: true },
+        description: { type: 'string', optional: true },
+        noAnonRead: { type: 'boolean', optional: true, default: false },
+        purpose: { type: 'object', optional: true },
+        additionalCredentialProps: { type: 'object', optional: true },
+        keyObject: { type: 'object', optional: true },
+        keyId: { type: 'string', optional: true }
+      },
+      async handler(ctx) {
+        const {
+          validFrom,
+          validUntil,
+          credentialSubject,
+          webId = ctx.meta.webId,
+          name,
+          description,
+          noAnonRead = false,
+          purpose = new AssertionProofPurpose(),
+          additionalCredentialProps = {},
+          keyObject = undefined,
+          keyId = undefined
+        } = ctx.params;
 
-      const key = await ctx.call('keys.getMultikeyInstance', {
-        webId,
-        keyObject,
-        keyId,
-        keyType: KEY_TYPES.ED25519,
-        withPrivateKey: true
-      });
-
-      const credential = {
-        '@type': 'VerifiableCredential', // Another one like ActivityCapability?
-        '@context': context,
-        issuer: webId,
-        validFrom,
-        validUntil,
-        name,
-        description,
-        credentialSubject,
-        ...additionalCredentialProps
-        // We don't take the following into account:
-        //  status, credentialSchema, refreshService, termsOfUse, evidence
-      };
-
-      // Create the VC resource
-      const resourceUri = await this.actions.post(
-        {
-          resource: credential,
-          contentType: MIME_TYPES.JSON,
-          webId: 'system'
-        },
-        { parentCtx: ctx }
-      );
-
-      const credentialResource = await this.actions.get({
-        resourceUri,
-        jsonContext: context,
-        webId: 'system',
-        accept: MIME_TYPES.JSON
-      });
-
-      // Add anonymous read rights to VC resource by default.
-      if (!noAnonRead)
-        await ctx.call('webacl.resource.addRights', {
-          resourceUri,
-          additionalRights: { anon: { read: true } },
-          webId: 'system'
+        const key = await ctx.call('keys.getMultikeyInstance', {
+          webId,
+          keyObject,
+          keyId,
+          keyType: KEY_TYPES.ED25519,
+          withPrivateKey: true
         });
 
-      // Get signature suite
-      const suite = new DataIntegrityProof({
-        signer: key.signer(),
-        cryptosuite
-      });
+        const credential = {
+          '@type': 'VerifiableCredential',
+          '@context': context,
+          issuer: webId,
+          validFrom,
+          validUntil,
+          name,
+          description,
+          credentialSubject,
+          ...additionalCredentialProps
+        };
 
-      // Sign credential
-      const signedCredential = await vc.issue({
-        credential: credentialResource,
-        documentLoader: this.documentLoader,
-        purpose,
-        suite
-      });
+        // Create the VC resource
+        const resourceUri = await this.actions.post(
+          {
+            resource: credential,
+            contentType: MIME_TYPES.JSON,
+            webId: 'system'
+          },
+          { parentCtx: ctx }
+        );
 
-      // Update resource to add the signatures.
-      await ctx.call(
-        'ldp.resource.put',
-        { resource: signedCredential, contentType: MIME_TYPES.JSON, webId: 'system' },
-        { meta: { skipEmitEvent: true } }
-      );
+        const credentialResource = await this.actions.get({
+          resourceUri,
+          jsonContext: context,
+          webId: 'system',
+          accept: MIME_TYPES.JSON
+        });
 
-      return signedCredential;
-    },
+        // Add anonymous read rights to VC resource by default.
+        if (!noAnonRead)
+          await ctx.call('webacl.resource.addRights', {
+            resourceUri,
+            additionalRights: { anon: { read: true } },
+            webId: 'system'
+          });
 
-    async createPresentation(ctx) {
-      const {
-        verifiableCredential,
-        additionalPresentationProps = {},
-        challenge,
-        domain,
-        webId = ctx.meta.webId,
-        purpose = new AuthenticationProofPurpose({ term: 'assertionMethod', challenge, domain }),
-        keyObject = undefined,
-        keyId = undefined
-      } = ctx.params;
+        // Get signature suite
+        const suite = new DataIntegrityProof({
+          signer: key.signer(),
+          cryptosuite
+        });
 
-      // Get keys and suite required for signing.
-      const key = await ctx.call('keys.getMultikeyInstance', {
-        webId,
-        keyObject,
-        keyId,
-        keyType: KEY_TYPES.ED25519,
-        withPrivateKey: true
-      });
-      const suite = new DataIntegrityProof({
-        signer: key.signer(),
-        cryptosuite
-      });
+        // Sign credential
+        const signedCredential = await vc.issue({
+          credential: credentialResource,
+          documentLoader: this.documentLoader,
+          purpose,
+          suite
+        });
 
-      // Create presentation.
-      const presentation = vc.createPresentation({
-        verifiableCredential,
-        holder: webId,
-        id: `urn:uuid:${randomUUID()}`
-      });
+        // Update resource to add the signatures.
+        await ctx.call(
+          'ldp.resource.put',
+          { resource: signedCredential, contentType: MIME_TYPES.JSON, webId: 'system' },
+          { meta: { skipEmitEvent: true } }
+        );
 
-      // Sign presentation.
-      const signedPresentation = await vc.signPresentation({
-        presentation: {
-          ...presentation,
-          ...additionalPresentationProps
-        },
-        suite,
-        challenge,
-        purpose,
-        documentLoader: this.documentLoader
-      });
-
-      return signedPresentation;
+        return signedCredential;
+      }
     },
 
     /**
-     * Revokes a VC by deleting the resource.
-     *
-     * TODO: When we implement the whole VC spec, we will use status lists.
-     *
+     * Create a presentation.
+     * @param {object} ctx.params - The parameters for creating the presentation.
+     * @returns {object} The signed presentation.
      */
-    async revokeVC(ctx) {
-      const { resourceUri } = ctx.params;
+    createPresentation: {
+      params: {
+        // array or object
+        verifiableCredential: { type: 'multi', rules: [{ type: 'object' }, { type: 'array' }] },
+        additionalPresentationProps: { type: 'object', optional: true },
+        challenge: { type: 'string' },
+        domain: { type: 'string', optional: true },
+        webId: { type: 'string', optional: true },
+        purpose: { type: 'object', optional: true },
+        keyObject: { type: 'object', optional: true },
+        keyId: { type: 'string', optional: true }
+      },
+      async handler(ctx) {
+        const {
+          verifiableCredential,
+          additionalPresentationProps = {},
+          challenge,
+          domain,
+          webId = ctx.meta.webId,
+          purpose = new AuthenticationProofPurpose({ term: 'assertionMethod', challenge, domain }),
+          keyObject = undefined,
+          keyId = undefined
+        } = ctx.params;
 
-      return await ctx.call('ldp.resource.delete', { resourceUri, webId: 'system' });
+        const key = await ctx.call('keys.getMultikeyInstance', {
+          webId,
+          keyObject,
+          keyId,
+          keyType: KEY_TYPES.ED25519,
+          withPrivateKey: true
+        });
+        const suite = new DataIntegrityProof({
+          signer: key.signer(),
+          cryptosuite
+        });
+
+        // Create presentation.
+        const presentation = vc.createPresentation({
+          verifiableCredential,
+          holder: webId,
+          id: `urn:uuid:${randomUUID()}`
+        });
+
+        // Sign presentation.
+        const signedPresentation = await vc.signPresentation({
+          presentation: {
+            ...presentation,
+            ...additionalPresentationProps
+          },
+          suite,
+          challenge,
+          purpose,
+          documentLoader: this.documentLoader
+        });
+
+        return signedPresentation;
+      }
     },
 
     /**
-     * Create a capability VC. Will add the issuer to the VC and set the nonTransferable flag,
-     * if anyHolder is false (default). Set anyHolder to true to allow any holder to present the VC.
-     * Useful e.g. for invite links to users who have not signed up yet.
-     *
+     * Revoke a Verifiable Credential by deleting the resource.
+     * @param {object} ctx.params.resourceUri - The URI of the resource to revoke.
      */
-    async createCapability(ctx) {
-      const { webId = ctx.meta.webId, anyHolder = false } = ctx.params;
+    revokeVC: {
+      params: {
+        resourceUri: { type: 'string' }
+      },
+      async handler(ctx) {
+        const { resourceUri } = ctx.params;
 
-      // We could add type CapabilityCredential...
-      return await ctx.call('signature.data-integrity.createVC', {
-        ...ctx.params,
-        // Indicates that the presentation must be done by the holder (i.e. credentialSubject.id).
-        nonTransferable: !anyHolder,
-        issuer: webId
-      });
+        return await ctx.call('ldp.resource.delete', { resourceUri, webId: 'system' });
+      }
     },
 
-    // Note, this does not verify if the original issuer is authorized to use the requested endpoint.
-    // This is the business logic's responsibility.
-    async verifyCapabilityPresentation(ctx) {
-      const { presentation, challenge = presentation?.proof?.challenge, domain, maxChainLength = 2 } = ctx.params;
+    /**
+     * Create a capability Verifiable Credential.
+     * @param {object} ctx.params - The parameters for creating the capability VC.
+     * @returns {object} The created capability VC.
+     */
+    createCapability: {
+      params: {
+        webId: { type: 'string', optional: true },
+        anyHolder: { type: 'boolean', optional: true, default: false }
+      },
+      async handler(ctx) {
+        const { webId = ctx.meta.webId, anyHolder = false } = ctx.params;
 
-      const presentationPurpose = new VCCapabilityPresentationProofPurpose({ maxChainLength, challenge, domain });
-      const credentialPurpose = new VCPurpose();
+        // TODO: We could add type CapabilityCredential...
+        return await ctx.call('signature.data-integrity.createVC', {
+          ...ctx.params,
+          // Indicates that the presentation must be done by the holder (i.e. credentialSubject.id).
+          nonTransferable: !anyHolder,
+          issuer: webId
+        });
+      }
+    },
 
-      const verificationResult = await this.actions.verifyPresentation({
-        ...ctx.params,
-        presentationPurpose,
-        credentialPurpose
-      });
+    /**
+     * Verify a capability presentation.
+     * @param {object} ctx.params - The parameters for verifying the capability presentation.
+     * @returns {object} The verification result.
+     */
+    verifyCapabilityPresentation: {
+      params: {
+        presentation: { type: 'object' },
+        challenge: { type: 'string', optional: true },
+        domain: { type: 'string', optional: true },
+        maxChainLength: { type: 'number', optional: true, default: 2 }
+      },
+      async handler(ctx) {
+        const { presentation, challenge = presentation?.proof?.challenge, domain, maxChainLength = 2 } = ctx.params;
 
-      // Order the VCs in the presentation by issuance date.
-      const orderedPresentation = arrayOf(presentation.verifiableCredential).sort(
-        (c1, c2) => new Date(c1.issuanceDate || c1.proof.created) - new Date(c2.issuanceDate || c2.proof.created)
-      );
+        const presentationPurpose = new VCCapabilityPresentationProofPurpose({ maxChainLength, challenge, domain });
+        const credentialPurpose = new VCPurpose();
 
-      return { ...verificationResult, presentation: orderedPresentation };
+        const verificationResult = await this.actions.verifyPresentation({
+          ...ctx.params,
+          presentationPurpose,
+          credentialPurpose
+        });
+
+        // Order the VCs in the presentation by issuance date.
+        const orderedPresentation = arrayOf(presentation.verifiableCredential).sort(
+          (c1, c2) => new Date(c1.issuanceDate || c1.proof.created) - new Date(c2.issuanceDate || c2.proof.created)
+        );
+
+        return { ...verificationResult, presentation: orderedPresentation };
+      }
     }
   },
   methods: {
