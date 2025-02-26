@@ -73,11 +73,9 @@ module.exports = {
       // TODO see if we can base ourselves on a general config for the POD data path
       options.fullPath = pathJoin('/:username([^/.][^/]+)', 'data', options.path);
     } else {
-      // Ensure the container has been created
       await ctx.call('ldp.container.createAndAttach', {
         containerUri: urlJoin(this.settings.baseUrl, options.path),
-        options,
-        permissions: options.permissions // Used by the WebAclMiddleware
+        options
       });
     }
 

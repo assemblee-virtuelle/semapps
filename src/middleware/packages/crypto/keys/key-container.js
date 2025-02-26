@@ -20,7 +20,7 @@ module.exports = {
       // If not a pod provider, the container is shared, so any user can append.
       return {
         anyUser: {
-          // `this` is not available here.
+          // Warning! ctx.service is the LdpContainerService. The WebAclMiddleware calls this function. This creates confusion.
           read: !ctx.service.settings.podProvider,
           append: !ctx.service.settings.podProvider
         }
