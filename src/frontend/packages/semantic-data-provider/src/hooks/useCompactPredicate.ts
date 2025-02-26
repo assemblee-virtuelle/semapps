@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
-import { ContextDefinition } from 'jsonld';
 import useDataProviderConfig from './useDataProviderConfig';
 import compactPredicate from '../dataProvider/utils/compactPredicate';
 
-const useCompactPredicate = (predicate: string, context?: ContextDefinition): string | undefined => {
+const useCompactPredicate = (
+  predicate: string,
+  context?: string | string[] | Record<string, string>
+): string | undefined => {
   const config = useDataProviderConfig();
   const [result, setResult] = useState<string>();
 

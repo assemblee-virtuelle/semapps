@@ -9,7 +9,10 @@ export type Container = {
   server?: string;
   uri?: string;
   path: string;
-  types: string[];
+  types?: string[];
+  label?: Record<string, string>;
+  labelPredicate?: string;
+  binaryResources?: boolean;
   [k: string]: any;
 };
 
@@ -20,7 +23,7 @@ type DataServerConfig = {
   /** Default server (used for the creation of resources) */
   default?: boolean;
 
-  /** True if this is the server where users are autenticated */
+  /** True if this is the server where users are authenticated */
   authServer?: boolean;
 
   /** True if the server is a pod */
@@ -28,16 +31,12 @@ type DataServerConfig = {
 
   containers: Container[];
 
-  /** Container used for uploaded files */
-  uploadsContainer?: string;
-
   sparqlEndpoint?: string;
   proxyUrl?: string;
   noProxy?: boolean;
 
   externalLinks?: boolean;
 
-  // Server attributes that can be retrieved via void endpoint
   name?: string;
   description?: string;
 

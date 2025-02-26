@@ -25,7 +25,9 @@ const fetchDataRegistry = (): Plugin => ({
         );
 
         const newConfig = { ...config } as Configuration;
+
         newConfig.dataServers.user.containers?.push(...results.flat());
+
         return newConfig;
       }
     }

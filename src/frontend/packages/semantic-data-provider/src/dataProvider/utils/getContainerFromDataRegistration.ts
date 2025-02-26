@@ -1,8 +1,5 @@
 import jsonld from 'jsonld';
-import ShexParser from '@shexjs/parser';
 import { Configuration, Container } from '../types';
-
-const shexParser = ShexParser.construct('');
 
 const getContainerFromDataRegistration = async (dataRegistrationUri: string, config: Configuration) => {
   const { json: dataRegistration } = await config.httpClient(dataRegistrationUri, {
@@ -32,19 +29,14 @@ const getContainerFromDataRegistration = async (dataRegistrationUri: string, con
     path: containerPath,
     shapeTreeUri: shapeTree.shape,
     label: shapeTree.label,
-    labelPredicate: shapeTree.describesInstance
-  };
+    labelPredicate: shapeTree.describesInstance,
+    binaryResources: shapeTree.expectsType === 'st:NonRDFResource'
+  } as Container;
 
   if (shapeTree.shape) {
-    const { body: shexC } = await config.httpClient(shapeTree.shape, { headers: new Headers({ Accept: '*/*' }) }); // TODO use text/shex
+    const { json: shape } = await config.httpClient(shapeTree.shape);
 
-    const shexJ = shexParser.parse(shexC);
-
-    const type = shexJ?.shapes?.[0]?.shapeExpr?.expression?.expressions.find(
-      expr => expr.predicate === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
-    )?.valueExpr?.values?.[0];
-
-    container.types = [type];
+    container.types = shape?.[0]?.['http://www.w3.org/ns/shacl#targetClass']?.map((node: any) => node?.['@id']);
   }
 
   return container;

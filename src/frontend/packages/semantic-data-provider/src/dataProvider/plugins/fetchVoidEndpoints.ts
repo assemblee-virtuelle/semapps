@@ -49,8 +49,8 @@ const fetchVoidEndpoints = (): Plugin => ({
                 const path = partition['void:uriSpace'].replace(dataset['void:uriSpace'], '/');
                 const expandedTypes = await expandTypes([type], result.context);
 
-                const containerIndex = newConfig.dataServers[result.key].containers.findIndex(c =>
-                  c.types.some(t => expandedTypes.includes(t))
+                const containerIndex = newConfig.dataServers[result.key].containers.findIndex(
+                  c => c.types?.some(t => expandedTypes.includes(t))
                 );
                 if (containerIndex && containerIndex !== -1) {
                   // If a container with this type already exist, overwrite path and types
