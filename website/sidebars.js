@@ -165,7 +165,11 @@ module.exports = {
         type: 'doc',
         id: 'frontend/semantic-data-provider/index'
       },
-      items: ['frontend/semantic-data-provider/data-servers', 'frontend/semantic-data-provider/data-model']
+      items: [
+        'frontend/semantic-data-provider/data-servers',
+        'frontend/semantic-data-provider/data-model',
+        'frontend/semantic-data-provider/plugins'
+      ]
     },
     'frontend/auth-provider',
     'frontend/activitypub-components',

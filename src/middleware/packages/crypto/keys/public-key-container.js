@@ -19,6 +19,7 @@ module.exports = {
       return {
         anyUser: {
           read: true,
+          // Warning! ctx.service is the LdpContainerService. The WebAclMiddleware calls this function. This creates confusion.
           append: !ctx.service.settings.podProvider
         }
       };
