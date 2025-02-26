@@ -166,6 +166,7 @@ export const configureUserStorage: () => Plugin;
  */
 export const fetchAppRegistration: () => Plugin;
 export const fetchDataRegistry: () => Plugin;
+export const fetchTypeIndexes: () => Plugin;
 export const fetchVoidEndpoints: () => Plugin;
 export const useCompactPredicate: (predicate: string, context?: ContextDefinition) => string | undefined;
 export const useDataModels: () => Record<string, import('index').DataModel> | undefined;
