@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-redundant-type-constituents */
 import { DataProvider, RaRecord, fetchUtils } from 'react-admin';
 import type { Quad } from '@rdfjs/types';
-import { ContextDefinition } from 'jsonld';
 
 export type DataServerKey = string & { readonly _type?: 'DataServerKey' };
 export type ContainerURI = string & { readonly _type?: 'ContainerURI' };
@@ -52,6 +51,8 @@ export type DataServersConfig = Record<DataServerKey, DataServerConfig>;
 export type DataModel = {
   /** Type(s) of resources to fetch or create (example: [pair:Organization]) */
   types: string | string[];
+  /** Shape tree matching the data model. Can be used instead of types. */
+  shapeTreeUri?: string;
   list?: {
     /** The servers where to fetch the resource. Default to @all */
     servers?: DataServerKey[] | DataServerKey | '@all' | '@remote' | '@default' | '@auth' | '@pod';
@@ -97,7 +98,7 @@ export type Configuration = {
   httpClient: FetchFn;
 
   /** Context from ontologies { prefix: IRI } or IRI, or array of IRI */
-  jsonContext: ContextDefinition;
+  jsonContext: string | string[] | Record<string, string>;
 
   resources: Record<string, DataModel>;
 
@@ -154,4 +155,11 @@ export type VoidResults = {
   context?: any;
   datasets?: VoidDataset[];
   error?: string;
+};
+
+export type TypeRegistration = {
+  id: string;
+  type: string;
+  'solid:forClass': string | string[];
+  'solid:instanceContainer': string;
 };

@@ -4,7 +4,7 @@ import { Configuration, Container } from '../types';
 
 const shexParser = ShexParser.construct('');
 
-const getContainerFromDataRegistration = async (dataRegistrationUri: string, config: Configuration): Container => {
+const getContainerFromDataRegistration = async (dataRegistrationUri: string, config: Configuration) => {
   const { json: dataRegistration } = await config.httpClient(dataRegistrationUri, {
     headers: new Headers({
       Accept: 'application/ld+json',
@@ -30,6 +30,7 @@ const getContainerFromDataRegistration = async (dataRegistrationUri: string, con
 
   const container = {
     path: containerPath,
+    shapeTreeUri: shapeTree.shape,
     label: shapeTree.label,
     labelPredicate: shapeTree.describesInstance
   };

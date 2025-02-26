@@ -2,7 +2,7 @@ import DataFactory from '@rdfjs/data-model';
 import buildBaseQuery from './buildBaseQuery';
 import buildBlankNodesQuery from './buildBlankNodesQuery';
 import buildAutoDetectBlankNodesQuery from './buildAutoDetectBlankNodesQuery';
-import resolvePrefix from './resolvePrefix';
+import getUriFromPrefix from './getUriFromPrefix';
 
 const SparqlGenerator = require('sparqljs').Generator;
 
@@ -128,8 +128,8 @@ const buildSparqlQuery = ({ containersUris, params, dataModel, ontologies }) => 
         resourceWhere.unshift(
           triple(
             variable('s1'),
-            namedNode(resolvePrefix(predicate, ontologies)),
-            namedNode(resolvePrefix(object, ontologies))
+            namedNode(getUriFromPrefix(predicate, ontologies)),
+            namedNode(getUriFromPrefix(object, ontologies))
           )
         );
       }

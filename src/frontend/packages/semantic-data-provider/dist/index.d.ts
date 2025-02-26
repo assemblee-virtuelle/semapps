@@ -39,6 +39,8 @@ export type DataServersConfig = Record<DataServerKey, DataServerConfig>;
 export type DataModel = {
   /** Type(s) of resources to fetch or create (example: [pair:Organization]) */
   types: string | string[];
+  /** Shape tree matching the data model. Can be used instead of types. */
+  shapeTreeUri?: string;
   list?: {
     /** The servers where to fetch the resource. Default to @all */
     servers?: DataServerKey[] | DataServerKey | '@all' | '@remote' | '@default' | '@auth' | '@pod';
@@ -73,7 +75,7 @@ export type Configuration = {
   dataServers: DataServersConfig;
   httpClient: FetchFn;
   /** Context from ontologies { prefix: IRI } or IRI, or array of IRI */
-  jsonContext: ContextDefinition;
+  jsonContext: string | string[] | Record<string, string>;
   resources: Record<string, DataModel>;
   ontologies: Record<string, string>;
   plugins: Plugin[];
@@ -121,6 +123,12 @@ export type VoidResults = {
   datasets?: VoidDataset[];
   error?: string;
 };
+export type TypeRegistration = {
+  id: string;
+  type: string;
+  'solid:forClass': string | string[];
+  'solid:instanceContainer': string;
+};
 export function buildBlankNodesQuery(
   blankNodes: any,
   baseQuery: any,
@@ -162,19 +170,14 @@ export const fetchVoidEndpoints: () => Plugin;
 export const useCompactPredicate: (predicate: string, context?: ContextDefinition) => string | undefined;
 export const useDataModels: () => Record<string, import('index').DataModel> | undefined;
 export const useDataServers: () => import('index').DataServersConfig | undefined;
-export const useContainers: ({
-  resourceId,
-  types,
-  serverKeys
-}: {
-  resourceId?: string | undefined;
-  types?: string | string[] | undefined;
-  serverKeys?: string[] | undefined;
-}) => Container[];
+export const useContainers: (resourceId?: string, serverKeys?: string | string[]) => Container[];
+export const useContainersByTypes: (types?: string | string[]) => Container[];
+export const useContainerByUri: (containerUri: string) => Container | undefined;
 export const useGetCreateContainerUri: () => (resourceId: string) => string | undefined;
 export const useCreateContainerUri: (resourceId: string) => string | undefined;
 export const useDataModel: (resourceId: string) => import('index').DataModel | undefined;
 export function useGetExternalLink(componentExternalLinks: any): (record: any) => any;
+export const useGetPrefixFromUri: () => (uri: string) => string;
 /**
  * @example
  * <Show>

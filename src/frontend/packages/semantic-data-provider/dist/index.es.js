@@ -453,18 +453,20 @@ var $3007d5479dd82d51$export$2e2bcd8739ae039 = $3007d5479dd82d51$var$getEmbedFra
 
 
 
-const $564e5d81f6496048$var$resolvePrefix = (item, ontologies)=>{
+const $4872a1c30c1fc60e$var$getUriFromPrefix = (item, ontologies)=>{
     if (item.startsWith("http://") || item.startsWith("https://")) // Already resolved, return the URI
     return item;
-    if (item === "a") // Special case
+    else if (item === "a") // Special case
     return "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
-    const [prefix, value] = item.split(":");
-    if (value) {
-        if (ontologies[prefix]) return ontologies[prefix] + value;
-        else throw new Error(`No ontology found with prefix ${prefix}`);
-    } else throw new Error(`The value "${item}" is not correct. It must include a prefix or be a full URI.`);
+    else {
+        const [prefix, value] = item.split(":");
+        if (value) {
+            if (ontologies[prefix]) return ontologies[prefix] + value;
+            else throw new Error(`No ontology found with prefix ${prefix}`);
+        } else throw new Error(`The value "${item}" is not correct. It must include a prefix or be a full URI.`);
+    }
 };
-var $564e5d81f6496048$export$2e2bcd8739ae039 = $564e5d81f6496048$var$resolvePrefix;
+var $4872a1c30c1fc60e$export$2e2bcd8739ae039 = $4872a1c30c1fc60e$var$getUriFromPrefix;
 
 
 const $47d734d7812e6861$var$defaultToArray = (value)=>!value ? [] : Array.isArray(value) ? value : [
@@ -475,7 +477,7 @@ const $47d734d7812e6861$var$typeQuery = (0, $fj9kP$triple)((0, $fj9kP$variable)(
 const $47d734d7812e6861$var$buildBaseQuery = (predicates, ontologies)=>{
     let baseTriples;
     if (predicates) {
-        baseTriples = $47d734d7812e6861$var$defaultToArray(predicates).map((predicate, i)=>(0, $fj9kP$triple)((0, $fj9kP$variable)("s1"), (0, $fj9kP$namedNode)((0, $564e5d81f6496048$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $fj9kP$variable)(`o${i + 1}`)));
+        baseTriples = $47d734d7812e6861$var$defaultToArray(predicates).map((predicate, i)=>(0, $fj9kP$triple)((0, $fj9kP$variable)("s1"), (0, $fj9kP$namedNode)((0, $4872a1c30c1fc60e$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $fj9kP$variable)(`o${i + 1}`)));
         return {
             construct: [
                 $47d734d7812e6861$var$typeQuery,
@@ -539,7 +541,7 @@ const $865f630cc944e818$var$buildBlankNodesQuery = (blankNodes, baseQuery, ontol
             const varName = $865f630cc944e818$var$generateSparqlVarName(node);
             const parentVarName = parentNode ? $865f630cc944e818$var$generateSparqlVarName(parentNode) : "1";
             const query = [
-                (0, $fj9kP$triple)((0, $fj9kP$variable)(`s${parentVarName}`), (0, $fj9kP$namedNode)((0, $564e5d81f6496048$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $fj9kP$variable)(`s${varName}`)),
+                (0, $fj9kP$triple)((0, $fj9kP$variable)(`s${parentVarName}`), (0, $fj9kP$namedNode)((0, $4872a1c30c1fc60e$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $fj9kP$variable)(`s${varName}`)),
                 (0, $fj9kP$triple)((0, $fj9kP$variable)(`s${varName}`), (0, $fj9kP$variable)(`p${varName}`), (0, $fj9kP$variable)(`o${varName}`))
             ];
             queries.push({
@@ -732,7 +734,7 @@ const $6cde9a8fbbde3ffb$var$buildSparqlQuery = ({ containersUris: containersUris
         // SPARQL keyword a = filter based on the class of a resource (example => 'a': 'pair:OrganizationType')
         // Other filters are based on a value (example => 'petr:hasAudience': 'http://localhost:3000/audiences/tout-public')
         Object.entries(filter).forEach(([predicate, object])=>{
-            if (!$6cde9a8fbbde3ffb$var$reservedFilterKeys.includes(predicate)) resourceWhere.unshift($6cde9a8fbbde3ffb$var$triple($6cde9a8fbbde3ffb$var$variable("s1"), $6cde9a8fbbde3ffb$var$namedNode((0, $564e5d81f6496048$export$2e2bcd8739ae039)(predicate, ontologies)), $6cde9a8fbbde3ffb$var$namedNode((0, $564e5d81f6496048$export$2e2bcd8739ae039)(object, ontologies))));
+            if (!$6cde9a8fbbde3ffb$var$reservedFilterKeys.includes(predicate)) resourceWhere.unshift($6cde9a8fbbde3ffb$var$triple($6cde9a8fbbde3ffb$var$variable("s1"), $6cde9a8fbbde3ffb$var$namedNode((0, $4872a1c30c1fc60e$export$2e2bcd8739ae039)(predicate, ontologies)), $6cde9a8fbbde3ffb$var$namedNode((0, $4872a1c30c1fc60e$export$2e2bcd8739ae039)(object, ontologies))));
         });
     }
     // Blank nodes
@@ -849,7 +851,8 @@ const $1caf729dc3ce856d$var$getListMethod = (config)=>async (resourceId, params)
             if (Array.isArray(dataModel.list?.containers)) throw new Error(`The list.containers property of ${resourceId} dataModel must be of type object ({ serverKey: [containerUri] })`);
             // If containers are set explicitly, use them
             containers = (0, $7c772a9c0c25a69d$export$2e2bcd8739ae039)(dataModel.list.containers, dataServers);
-        } else // Otherwise find the container URIs on the given servers (either in the filter or the data model)
+        } else if (dataModel.shapeTreeUri) containers = (0, $15b841e67a1ba752$export$2e2bcd8739ae039)((0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(dataModel.shapeTreeUri), params?.filter?._servers || dataModel.list?.servers, dataServers);
+        else // Otherwise find the container URIs on the given servers (either in the filter or the data model)
         containers = (0, $15b841e67a1ba752$export$2e2bcd8739ae039)((0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(dataModel.types), params?.filter?._servers || dataModel.list?.servers, dataServers);
         if (dataModel.list?.fetchContainer) return (0, $aba124ea15ea8bc6$export$2e2bcd8739ae039)(containers, params, config);
         else return (0, $05a1b4063d50f1b7$export$2e2bcd8739ae039)(containers, resourceId, params, config);
@@ -1196,6 +1199,7 @@ const $d7a7484a035f15cd$var$getContainerFromDataRegistration = async (dataRegist
     const containerPath = dataRegistration.id.replace(baseUrl, "");
     const container = {
         path: containerPath,
+        shapeTreeUri: shapeTree.shape,
         label: shapeTree.label,
         labelPredicate: shapeTree.describesInstance
     };
@@ -1407,7 +1411,6 @@ var $72db0904d77f0f1e$export$2e2bcd8739ae039 = $72db0904d77f0f1e$var$useCompactP
 
 
 
-
 const $3a9656756670cb78$var$useDataModels = ()=>{
     const config = (0, $3677b4de74c3d10d$export$2e2bcd8739ae039)();
     return config?.resources;
@@ -1426,23 +1429,17 @@ var $4daf4cf698ee4eed$export$2e2bcd8739ae039 = $4daf4cf698ee4eed$var$useDataServ
 
 
 
-const $586fa0ea9d02fa12$var$useContainers = ({ resourceId: resourceId, types: types, serverKeys: serverKeys })=>{
+const $586fa0ea9d02fa12$var$useContainers = (resourceId, serverKeys)=>{
     const dataModels = (0, $3a9656756670cb78$export$2e2bcd8739ae039)();
     const dataServers = (0, $4daf4cf698ee4eed$export$2e2bcd8739ae039)();
-    const dataProvider = (0, $fj9kP$useDataProvider)();
     const [containers, setContainers] = (0, $fj9kP$useState)([]);
-    // Warning: if types or serverKeys change, the containers list will not be updated (otherwise we have an infinite re-render loop)
+    // Warning: if serverKeys change, the containers list will not be updated (otherwise we have an infinite re-render loop)
     (0, $fj9kP$useEffect)(()=>{
         if (dataServers && dataModels) {
             if (resourceId) {
                 const dataModel = dataModels[resourceId];
                 setContainers((0, $15b841e67a1ba752$export$2e2bcd8739ae039)((0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(dataModel.types), serverKeys, dataServers));
-            } else if (types) dataProvider.expandTypes((0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(types)).then((expandedTypes)=>{
-                setContainers((0, $15b841e67a1ba752$export$2e2bcd8739ae039)(expandedTypes, serverKeys, dataServers));
-            }).catch(()=>{
-            // Ignore errors
-            });
-            else {
+            } else {
                 const parsedServerKeys = (0, $99cc2e4a2a3c100b$export$2e2bcd8739ae039)(serverKeys || "@all", dataServers);
                 setContainers(parsedServerKeys.map((serverKey)=>dataServers[serverKey].containers).flat());
             }
@@ -1450,13 +1447,59 @@ const $586fa0ea9d02fa12$var$useContainers = ({ resourceId: resourceId, types: ty
     }, [
         dataModels,
         dataServers,
-        dataProvider,
         setContainers,
         resourceId
     ]);
     return containers;
 };
 var $586fa0ea9d02fa12$export$2e2bcd8739ae039 = $586fa0ea9d02fa12$var$useContainers;
+
+
+
+
+
+
+
+const $9d2c669bd52faa31$var$useContainersByTypes = (types)=>{
+    const dataServers = (0, $4daf4cf698ee4eed$export$2e2bcd8739ae039)();
+    const dataProvider = (0, $fj9kP$useDataProvider)();
+    const [containers, setContainers] = (0, $fj9kP$useState)([]);
+    (0, $fj9kP$useEffect)(()=>{
+        if (dataServers && types) dataProvider.expandTypes((0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(types)).then((expandedTypes)=>{
+            setContainers((0, $15b841e67a1ba752$export$2e2bcd8739ae039)(expandedTypes, "@all", dataServers));
+        }).catch(()=>{
+        // Ignore errors
+        });
+    }, [
+        dataServers,
+        dataProvider,
+        setContainers,
+        types
+    ]);
+    return containers;
+};
+var $9d2c669bd52faa31$export$2e2bcd8739ae039 = $9d2c669bd52faa31$var$useContainersByTypes;
+
+
+
+
+const $43097d0b613bd4db$var$useContainerByUri = (containerUri)=>{
+    const dataServers = (0, $4daf4cf698ee4eed$export$2e2bcd8739ae039)();
+    const [container, setContainer] = (0, $fj9kP$useState)();
+    (0, $fj9kP$useEffect)(()=>{
+        if (dataServers && containerUri) Object.keys(dataServers).forEach((serverKey)=>{
+            dataServers[serverKey].containers?.forEach((c)=>{
+                if (c.uri === containerUri) setContainer(c);
+            });
+        });
+    }, [
+        dataServers,
+        setContainer,
+        containerUri
+    ]);
+    return container;
+};
+var $43097d0b613bd4db$export$2e2bcd8739ae039 = $43097d0b613bd4db$var$useContainerByUri;
 
 
 
@@ -1562,6 +1605,26 @@ const $87656edf926c0f1f$var$useGetExternalLink = (componentExternalLinks)=>{
     ]);
 };
 var $87656edf926c0f1f$export$2e2bcd8739ae039 = $87656edf926c0f1f$var$useGetExternalLink;
+
+
+
+
+const $861da9be2c0e62eb$var$getPrefixFromUri = (uri, ontologies)=>{
+    for (const [prefix, namespace] of Object.entries(ontologies)){
+        if (uri.startsWith(namespace)) return uri.replace(namespace, `${prefix}:`);
+    }
+    return uri;
+};
+var $861da9be2c0e62eb$export$2e2bcd8739ae039 = $861da9be2c0e62eb$var$getPrefixFromUri;
+
+
+const $487567a146508c4e$var$useGetPrefixFromUri = ()=>{
+    const config = (0, $3677b4de74c3d10d$export$2e2bcd8739ae039)();
+    return (0, $fj9kP$useCallback)((uri)=>(0, $861da9be2c0e62eb$export$2e2bcd8739ae039)(uri, config.ontologies), [
+        config?.ontologies
+    ]);
+};
+var $487567a146508c4e$export$2e2bcd8739ae039 = $487567a146508c4e$var$useGetPrefixFromUri;
 
 
 
@@ -1859,5 +1922,5 @@ const $03d52e691e8dc945$var$registeredWebSockets = new Map();
 
 
 
-export {$243bf28fbb1b868f$export$2e2bcd8739ae039 as dataProvider, $6cde9a8fbbde3ffb$export$2e2bcd8739ae039 as buildSparqlQuery, $865f630cc944e818$export$2e2bcd8739ae039 as buildBlankNodesQuery, $cdd3c71a628eeefe$export$2e2bcd8739ae039 as configureUserStorage, $2c257b4237cb14ca$export$2e2bcd8739ae039 as fetchAppRegistration, $91255e144bb55afc$export$2e2bcd8739ae039 as fetchDataRegistry, $a87fd63d8fca0380$export$2e2bcd8739ae039 as fetchVoidEndpoints, $72db0904d77f0f1e$export$2e2bcd8739ae039 as useCompactPredicate, $586fa0ea9d02fa12$export$2e2bcd8739ae039 as useContainers, $35f3e75c86e51f35$export$2e2bcd8739ae039 as useCreateContainerUri, $e5a0eacd756fd1d5$export$2e2bcd8739ae039 as useDataModel, $3a9656756670cb78$export$2e2bcd8739ae039 as useDataModels, $4daf4cf698ee4eed$export$2e2bcd8739ae039 as useDataServers, $8dbb0c8c3814e663$export$2e2bcd8739ae039 as useGetCreateContainerUri, $87656edf926c0f1f$export$2e2bcd8739ae039 as useGetExternalLink, $406574efa35ec6f1$export$2e2bcd8739ae039 as FilterHandler, $1d8c1cbe606a94ae$export$2e2bcd8739ae039 as GroupedReferenceHandler, $6844bbce0ad66151$export$2e2bcd8739ae039 as ReificationArrayInput, $03d52e691e8dc945$export$28772ab4c256e709 as createWsChannel, $03d52e691e8dc945$export$8d60734939c59ced as getOrCreateWsChannel, $03d52e691e8dc945$export$3edfe18db119b920 as createSolidNotificationChannel};
+export {$243bf28fbb1b868f$export$2e2bcd8739ae039 as dataProvider, $6cde9a8fbbde3ffb$export$2e2bcd8739ae039 as buildSparqlQuery, $865f630cc944e818$export$2e2bcd8739ae039 as buildBlankNodesQuery, $cdd3c71a628eeefe$export$2e2bcd8739ae039 as configureUserStorage, $2c257b4237cb14ca$export$2e2bcd8739ae039 as fetchAppRegistration, $91255e144bb55afc$export$2e2bcd8739ae039 as fetchDataRegistry, $a87fd63d8fca0380$export$2e2bcd8739ae039 as fetchVoidEndpoints, $72db0904d77f0f1e$export$2e2bcd8739ae039 as useCompactPredicate, $586fa0ea9d02fa12$export$2e2bcd8739ae039 as useContainers, $9d2c669bd52faa31$export$2e2bcd8739ae039 as useContainersByTypes, $43097d0b613bd4db$export$2e2bcd8739ae039 as useContainerByUri, $35f3e75c86e51f35$export$2e2bcd8739ae039 as useCreateContainerUri, $e5a0eacd756fd1d5$export$2e2bcd8739ae039 as useDataModel, $3a9656756670cb78$export$2e2bcd8739ae039 as useDataModels, $4daf4cf698ee4eed$export$2e2bcd8739ae039 as useDataServers, $8dbb0c8c3814e663$export$2e2bcd8739ae039 as useGetCreateContainerUri, $87656edf926c0f1f$export$2e2bcd8739ae039 as useGetExternalLink, $487567a146508c4e$export$2e2bcd8739ae039 as useGetPrefixFromUri, $406574efa35ec6f1$export$2e2bcd8739ae039 as FilterHandler, $1d8c1cbe606a94ae$export$2e2bcd8739ae039 as GroupedReferenceHandler, $6844bbce0ad66151$export$2e2bcd8739ae039 as ReificationArrayInput, $03d52e691e8dc945$export$28772ab4c256e709 as createWsChannel, $03d52e691e8dc945$export$8d60734939c59ced as getOrCreateWsChannel, $03d52e691e8dc945$export$3edfe18db119b920 as createSolidNotificationChannel};
 //# sourceMappingURL=index.es.js.map

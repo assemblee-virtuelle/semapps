@@ -1,6 +1,7 @@
 import jwtDecode from 'jwt-decode';
 import urlJoin from 'url-join';
 import { Configuration, Plugin } from '../types';
+import { ContextDefinition } from 'jsonld';
 
 const configureUserStorage = (): Plugin => ({
   transformConfig: async (config: Configuration) => {

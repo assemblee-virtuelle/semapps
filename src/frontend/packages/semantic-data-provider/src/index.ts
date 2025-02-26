@@ -10,12 +10,15 @@ export { default as fetchVoidEndpoints } from './dataProvider/plugins/fetchVoidE
 
 export { default as useCompactPredicate } from './hooks/useCompactPredicate';
 export { default as useContainers } from './hooks/useContainers';
+export { default as useContainersByTypes } from './hooks/useContainersByTypes';
+export { default as useContainerByUri } from './hooks/useContainerByUri';
 export { default as useCreateContainerUri } from './hooks/useCreateContainerUri';
 export { default as useDataModel } from './hooks/useDataModel';
 export { default as useDataModels } from './hooks/useDataModels';
 export { default as useDataServers } from './hooks/useDataServers';
 export { default as useGetCreateContainerUri } from './hooks/useGetCreateContainerUri';
 export { default as useGetExternalLink } from './hooks/useGetExternalLink';
+export { default as useGetPrefixFromUri } from './hooks/useGetPrefixFromUri';
 
 export { default as FilterHandler } from './reification/FilterHandler';
 export { default as GroupedReferenceHandler } from './reification/GroupedReferenceHandler';

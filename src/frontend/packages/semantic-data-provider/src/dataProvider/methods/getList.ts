@@ -3,7 +3,7 @@ import findContainersWithTypes from '../utils/findContainersWithTypes';
 import fetchContainers from '../utils/fetchContainers';
 import fetchSparqlEndpoints from '../utils/fetchSparqlEndpoints';
 import findContainersWithURIs from '../utils/findContainersWithURIs';
-import { Configuration } from '../types';
+import { Configuration, Container } from '../types';
 import arrayOf from '../utils/arrayOf';
 
 const getListMethod = (config: Configuration) => async (resourceId: string, params: GetListParams) => {
@@ -12,7 +12,7 @@ const getListMethod = (config: Configuration) => async (resourceId: string, para
 
   if (!dataModel) throw new Error(`Resource ${resourceId} is not mapped in resources file`);
 
-  let containers = [];
+  let containers: Container[] = [];
   if (!params.filter?._servers && dataModel.list?.containers) {
     if (Array.isArray(dataModel.list?.containers))
       throw new Error(
@@ -20,6 +20,12 @@ const getListMethod = (config: Configuration) => async (resourceId: string, para
       );
     // If containers are set explicitly, use them
     containers = findContainersWithURIs(dataModel.list.containers, dataServers);
+  } else if (dataModel.shapeTreeUri) {
+    containers = findContainersWithTypes(
+      arrayOf(dataModel.shapeTreeUri),
+      params?.filter?._servers || dataModel.list?.servers,
+      dataServers
+    );
   } else {
     // Otherwise find the container URIs on the given servers (either in the filter or the data model)
     containers = findContainersWithTypes(

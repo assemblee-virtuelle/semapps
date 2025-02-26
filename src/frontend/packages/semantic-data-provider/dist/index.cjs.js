@@ -47,12 +47,15 @@ $parcel$export(module.exports, "fetchDataRegistry", () => $cd772adda3024172$expo
 $parcel$export(module.exports, "fetchVoidEndpoints", () => $1395e306228d41f2$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useCompactPredicate", () => $9d33c8835e67bede$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useContainers", () => $3158e0dc13ffffaa$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useContainersByTypes", () => $21fb109d85e9c16c$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useContainerByUri", () => $d3746ce11bc56f3b$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useCreateContainerUri", () => $298b78bb7d4a3358$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useDataModel", () => $63a32f1a35c6f80e$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useDataModels", () => $20621bc841a5205a$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useDataServers", () => $c9933a88e2acc4da$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useGetCreateContainerUri", () => $32d32215b4e4729f$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useGetExternalLink", () => $85e9a897c6d7c14a$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useGetPrefixFromUri", () => $d602250066d4ff3e$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "FilterHandler", () => $f763906f9b20f2d8$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "GroupedReferenceHandler", () => $b4703fef6d6af456$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "ReificationArrayInput", () => $030f1232f6810456$export$2e2bcd8739ae039);
@@ -500,18 +503,20 @@ var $e5241bff9fc0c9d7$export$2e2bcd8739ae039 = $e5241bff9fc0c9d7$var$getEmbedFra
 
 
 
-const $761c677606459117$var$resolvePrefix = (item, ontologies)=>{
+const $108795c3831be99f$var$getUriFromPrefix = (item, ontologies)=>{
     if (item.startsWith("http://") || item.startsWith("https://")) // Already resolved, return the URI
     return item;
-    if (item === "a") // Special case
+    else if (item === "a") // Special case
     return "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
-    const [prefix, value] = item.split(":");
-    if (value) {
-        if (ontologies[prefix]) return ontologies[prefix] + value;
-        else throw new Error(`No ontology found with prefix ${prefix}`);
-    } else throw new Error(`The value "${item}" is not correct. It must include a prefix or be a full URI.`);
+    else {
+        const [prefix, value] = item.split(":");
+        if (value) {
+            if (ontologies[prefix]) return ontologies[prefix] + value;
+            else throw new Error(`No ontology found with prefix ${prefix}`);
+        } else throw new Error(`The value "${item}" is not correct. It must include a prefix or be a full URI.`);
+    }
 };
-var $761c677606459117$export$2e2bcd8739ae039 = $761c677606459117$var$resolvePrefix;
+var $108795c3831be99f$export$2e2bcd8739ae039 = $108795c3831be99f$var$getUriFromPrefix;
 
 
 const $51d7c29cc84f802b$var$defaultToArray = (value)=>!value ? [] : Array.isArray(value) ? value : [
@@ -522,7 +527,7 @@ const $51d7c29cc84f802b$var$typeQuery = (0, $bkNnK$rdfjsdatamodel.triple)((0, $b
 const $51d7c29cc84f802b$var$buildBaseQuery = (predicates, ontologies)=>{
     let baseTriples;
     if (predicates) {
-        baseTriples = $51d7c29cc84f802b$var$defaultToArray(predicates).map((predicate, i)=>(0, $bkNnK$rdfjsdatamodel.triple)((0, $bkNnK$rdfjsdatamodel.variable)("s1"), (0, $bkNnK$rdfjsdatamodel.namedNode)((0, $761c677606459117$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $bkNnK$rdfjsdatamodel.variable)(`o${i + 1}`)));
+        baseTriples = $51d7c29cc84f802b$var$defaultToArray(predicates).map((predicate, i)=>(0, $bkNnK$rdfjsdatamodel.triple)((0, $bkNnK$rdfjsdatamodel.variable)("s1"), (0, $bkNnK$rdfjsdatamodel.namedNode)((0, $108795c3831be99f$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $bkNnK$rdfjsdatamodel.variable)(`o${i + 1}`)));
         return {
             construct: [
                 $51d7c29cc84f802b$var$typeQuery,
@@ -586,7 +591,7 @@ const $64d4ce40c79d1509$var$buildBlankNodesQuery = (blankNodes, baseQuery, ontol
             const varName = $64d4ce40c79d1509$var$generateSparqlVarName(node);
             const parentVarName = parentNode ? $64d4ce40c79d1509$var$generateSparqlVarName(parentNode) : "1";
             const query = [
-                (0, $bkNnK$rdfjsdatamodel.triple)((0, $bkNnK$rdfjsdatamodel.variable)(`s${parentVarName}`), (0, $bkNnK$rdfjsdatamodel.namedNode)((0, $761c677606459117$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $bkNnK$rdfjsdatamodel.variable)(`s${varName}`)),
+                (0, $bkNnK$rdfjsdatamodel.triple)((0, $bkNnK$rdfjsdatamodel.variable)(`s${parentVarName}`), (0, $bkNnK$rdfjsdatamodel.namedNode)((0, $108795c3831be99f$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $bkNnK$rdfjsdatamodel.variable)(`s${varName}`)),
                 (0, $bkNnK$rdfjsdatamodel.triple)((0, $bkNnK$rdfjsdatamodel.variable)(`s${varName}`), (0, $bkNnK$rdfjsdatamodel.variable)(`p${varName}`), (0, $bkNnK$rdfjsdatamodel.variable)(`o${varName}`))
             ];
             queries.push({
@@ -779,7 +784,7 @@ const $33c37185da3771a9$var$buildSparqlQuery = ({ containersUris: containersUris
         // SPARQL keyword a = filter based on the class of a resource (example => 'a': 'pair:OrganizationType')
         // Other filters are based on a value (example => 'petr:hasAudience': 'http://localhost:3000/audiences/tout-public')
         Object.entries(filter).forEach(([predicate, object])=>{
-            if (!$33c37185da3771a9$var$reservedFilterKeys.includes(predicate)) resourceWhere.unshift($33c37185da3771a9$var$triple($33c37185da3771a9$var$variable("s1"), $33c37185da3771a9$var$namedNode((0, $761c677606459117$export$2e2bcd8739ae039)(predicate, ontologies)), $33c37185da3771a9$var$namedNode((0, $761c677606459117$export$2e2bcd8739ae039)(object, ontologies))));
+            if (!$33c37185da3771a9$var$reservedFilterKeys.includes(predicate)) resourceWhere.unshift($33c37185da3771a9$var$triple($33c37185da3771a9$var$variable("s1"), $33c37185da3771a9$var$namedNode((0, $108795c3831be99f$export$2e2bcd8739ae039)(predicate, ontologies)), $33c37185da3771a9$var$namedNode((0, $108795c3831be99f$export$2e2bcd8739ae039)(object, ontologies))));
         });
     }
     // Blank nodes
@@ -896,7 +901,8 @@ const $95cbc03f25caf72a$var$getListMethod = (config)=>async (resourceId, params)
             if (Array.isArray(dataModel.list?.containers)) throw new Error(`The list.containers property of ${resourceId} dataModel must be of type object ({ serverKey: [containerUri] })`);
             // If containers are set explicitly, use them
             containers = (0, $37c161736d0d7276$export$2e2bcd8739ae039)(dataModel.list.containers, dataServers);
-        } else // Otherwise find the container URIs on the given servers (either in the filter or the data model)
+        } else if (dataModel.shapeTreeUri) containers = (0, $047a107b0d203793$export$2e2bcd8739ae039)((0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(dataModel.shapeTreeUri), params?.filter?._servers || dataModel.list?.servers, dataServers);
+        else // Otherwise find the container URIs on the given servers (either in the filter or the data model)
         containers = (0, $047a107b0d203793$export$2e2bcd8739ae039)((0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(dataModel.types), params?.filter?._servers || dataModel.list?.servers, dataServers);
         if (dataModel.list?.fetchContainer) return (0, $8c999cc29c8d6a6c$export$2e2bcd8739ae039)(containers, params, config);
         else return (0, $1e7a94d745f8597b$export$2e2bcd8739ae039)(containers, resourceId, params, config);
@@ -1243,6 +1249,7 @@ const $37dc42f6e1c3b4af$var$getContainerFromDataRegistration = async (dataRegist
     const containerPath = dataRegistration.id.replace(baseUrl, "");
     const container = {
         path: containerPath,
+        shapeTreeUri: shapeTree.shape,
         label: shapeTree.label,
         labelPredicate: shapeTree.describesInstance
     };
@@ -1454,7 +1461,6 @@ var $9d33c8835e67bede$export$2e2bcd8739ae039 = $9d33c8835e67bede$var$useCompactP
 
 
 
-
 const $20621bc841a5205a$var$useDataModels = ()=>{
     const config = (0, $9def35f4441a9bb2$export$2e2bcd8739ae039)();
     return config?.resources;
@@ -1473,23 +1479,17 @@ var $c9933a88e2acc4da$export$2e2bcd8739ae039 = $c9933a88e2acc4da$var$useDataServ
 
 
 
-const $3158e0dc13ffffaa$var$useContainers = ({ resourceId: resourceId, types: types, serverKeys: serverKeys })=>{
+const $3158e0dc13ffffaa$var$useContainers = (resourceId, serverKeys)=>{
     const dataModels = (0, $20621bc841a5205a$export$2e2bcd8739ae039)();
     const dataServers = (0, $c9933a88e2acc4da$export$2e2bcd8739ae039)();
-    const dataProvider = (0, $bkNnK$reactadmin.useDataProvider)();
     const [containers, setContainers] = (0, $bkNnK$react.useState)([]);
-    // Warning: if types or serverKeys change, the containers list will not be updated (otherwise we have an infinite re-render loop)
+    // Warning: if serverKeys change, the containers list will not be updated (otherwise we have an infinite re-render loop)
     (0, $bkNnK$react.useEffect)(()=>{
         if (dataServers && dataModels) {
             if (resourceId) {
                 const dataModel = dataModels[resourceId];
                 setContainers((0, $047a107b0d203793$export$2e2bcd8739ae039)((0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(dataModel.types), serverKeys, dataServers));
-            } else if (types) dataProvider.expandTypes((0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(types)).then((expandedTypes)=>{
-                setContainers((0, $047a107b0d203793$export$2e2bcd8739ae039)(expandedTypes, serverKeys, dataServers));
-            }).catch(()=>{
-            // Ignore errors
-            });
-            else {
+            } else {
                 const parsedServerKeys = (0, $6531da3b9e8c524a$export$2e2bcd8739ae039)(serverKeys || "@all", dataServers);
                 setContainers(parsedServerKeys.map((serverKey)=>dataServers[serverKey].containers).flat());
             }
@@ -1497,13 +1497,59 @@ const $3158e0dc13ffffaa$var$useContainers = ({ resourceId: resourceId, types: ty
     }, [
         dataModels,
         dataServers,
-        dataProvider,
         setContainers,
         resourceId
     ]);
     return containers;
 };
 var $3158e0dc13ffffaa$export$2e2bcd8739ae039 = $3158e0dc13ffffaa$var$useContainers;
+
+
+
+
+
+
+
+const $21fb109d85e9c16c$var$useContainersByTypes = (types)=>{
+    const dataServers = (0, $c9933a88e2acc4da$export$2e2bcd8739ae039)();
+    const dataProvider = (0, $bkNnK$reactadmin.useDataProvider)();
+    const [containers, setContainers] = (0, $bkNnK$react.useState)([]);
+    (0, $bkNnK$react.useEffect)(()=>{
+        if (dataServers && types) dataProvider.expandTypes((0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(types)).then((expandedTypes)=>{
+            setContainers((0, $047a107b0d203793$export$2e2bcd8739ae039)(expandedTypes, "@all", dataServers));
+        }).catch(()=>{
+        // Ignore errors
+        });
+    }, [
+        dataServers,
+        dataProvider,
+        setContainers,
+        types
+    ]);
+    return containers;
+};
+var $21fb109d85e9c16c$export$2e2bcd8739ae039 = $21fb109d85e9c16c$var$useContainersByTypes;
+
+
+
+
+const $d3746ce11bc56f3b$var$useContainerByUri = (containerUri)=>{
+    const dataServers = (0, $c9933a88e2acc4da$export$2e2bcd8739ae039)();
+    const [container, setContainer] = (0, $bkNnK$react.useState)();
+    (0, $bkNnK$react.useEffect)(()=>{
+        if (dataServers && containerUri) Object.keys(dataServers).forEach((serverKey)=>{
+            dataServers[serverKey].containers?.forEach((c)=>{
+                if (c.uri === containerUri) setContainer(c);
+            });
+        });
+    }, [
+        dataServers,
+        setContainer,
+        containerUri
+    ]);
+    return container;
+};
+var $d3746ce11bc56f3b$export$2e2bcd8739ae039 = $d3746ce11bc56f3b$var$useContainerByUri;
 
 
 
@@ -1609,6 +1655,26 @@ const $85e9a897c6d7c14a$var$useGetExternalLink = (componentExternalLinks)=>{
     ]);
 };
 var $85e9a897c6d7c14a$export$2e2bcd8739ae039 = $85e9a897c6d7c14a$var$useGetExternalLink;
+
+
+
+
+const $8c4c0f0b55649ce6$var$getPrefixFromUri = (uri, ontologies)=>{
+    for (const [prefix, namespace] of Object.entries(ontologies)){
+        if (uri.startsWith(namespace)) return uri.replace(namespace, `${prefix}:`);
+    }
+    return uri;
+};
+var $8c4c0f0b55649ce6$export$2e2bcd8739ae039 = $8c4c0f0b55649ce6$var$getPrefixFromUri;
+
+
+const $d602250066d4ff3e$var$useGetPrefixFromUri = ()=>{
+    const config = (0, $9def35f4441a9bb2$export$2e2bcd8739ae039)();
+    return (0, $bkNnK$react.useCallback)((uri)=>(0, $8c4c0f0b55649ce6$export$2e2bcd8739ae039)(uri, config.ontologies), [
+        config?.ontologies
+    ]);
+};
+var $d602250066d4ff3e$export$2e2bcd8739ae039 = $d602250066d4ff3e$var$useGetPrefixFromUri;
 
 
 
