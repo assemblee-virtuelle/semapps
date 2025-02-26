@@ -26,12 +26,16 @@ module.exports = {
     // TODO Remove this when we stop using the type for the container path
     if (!options.acceptedTypes && options.shapeTreeUri) {
       const services = await this.broker.call('$node.services');
-      if (!services.some(s => s.name === 'shex'))
-        throw new Error('If you use shapeTreeUri in container options, you need the shex service');
+      if (!services.some(s => s.name === 'shape-trees') && !services.some(s => s.name === 'shacl'))
+        throw new Error('If you use shapeTreeUri in container options, you need the shape-trees and shacl service');
 
-      const shapeType = await ctx.call('shex.getType', { shapeUri: options.shapeTreeUri });
-      if (!shapeType) throw new Error(`Could not get type from shape ${options.shapeTreeUri}`);
-      options.acceptedTypes = [shapeType];
+      try {
+        const shapeUri = await ctx.call('shape-trees.getShape', { resourceUri: options.shapeTreeUri });
+        const [shapeType] = await ctx.call('shacl.getTypes', { resourceUri: shapeUri });
+        options.acceptedTypes = shapeType;
+      } catch (e) {
+        throw new Error(`Could not get type from shape ${options.shapeTreeUri}. Error: ${e.message}`);
+      }
     }
 
     options.acceptedTypes =
@@ -69,11 +73,9 @@ module.exports = {
       // TODO see if we can base ourselves on a general config for the POD data path
       options.fullPath = pathJoin('/:username([^/.][^/]+)', 'data', options.path);
     } else {
-      // Ensure the container has been created
       await ctx.call('ldp.container.createAndAttach', {
         containerUri: urlJoin(this.settings.baseUrl, options.path),
-        options,
-        permissions: options.permissions // Used by the WebAclMiddleware
+        options
       });
     }
 

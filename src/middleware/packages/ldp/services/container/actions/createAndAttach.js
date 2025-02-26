@@ -23,7 +23,9 @@ module.exports = {
     if (!exists) {
       let parentContainerUri;
 
-      if (this.settings.podProvider && !webId) throw new Error(`The webId param is required in Pod provider config`);
+      if (this.settings.podProvider && (!webId || webId === 'anon' || webId === 'system'))
+        throw new Error(`The webId param is required in Pod provider config. Provided: ${webId}`);
+
       const rootContainerUri = this.settings.podProvider
         ? await ctx.call('solid-storage.getUrl', { webId })
         : urlJoin(this.settings.baseUrl, '/');
@@ -47,7 +49,7 @@ module.exports = {
         if (!parentExists) {
           // Recursively create the parent containers, without title/description/permissions
           await this.actions.createAndAttach(
-            { containerUri: parentContainerUri, options: {}, webId },
+            { containerUri: parentContainerUri, options: { permissions: {} }, webId },
             { parentCtx: ctx }
           );
         }
@@ -60,7 +62,7 @@ module.exports = {
           title,
           description,
           options,
-          webId
+          webId: this.settings.podProvider ? webId : 'system'
         },
         { parentCtx: ctx }
       );
