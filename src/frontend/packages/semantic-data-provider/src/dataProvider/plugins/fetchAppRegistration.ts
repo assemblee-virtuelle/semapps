@@ -1,5 +1,6 @@
 import jwtDecode from 'jwt-decode';
 import LinkHeader from 'http-link-header';
+import urlJoin from 'url-join';
 import { Configuration, Plugin } from '../types';
 import arrayOf from '../utils/arrayOf';
 import getContainerFromDataRegistration from '../utils/getContainerFromDataRegistration';

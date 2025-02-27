@@ -1,10 +1,10 @@
 var $bkNnK$speakingurl = require("speakingurl");
 var $bkNnK$jsonld = require("jsonld");
-var $bkNnK$urljoin = require("url-join");
 var $bkNnK$rdfjsdatamodel = require("@rdfjs/data-model");
 var $bkNnK$sparqljs = require("sparqljs");
 var $bkNnK$cryptojsmd5 = require("crypto-js/md5");
 var $bkNnK$reactadmin = require("react-admin");
+var $bkNnK$urljoin = require("url-join");
 var $bkNnK$jwtdecode = require("jwt-decode");
 var $bkNnK$httplinkheader = require("http-link-header");
 var $bkNnK$shexjsparser = require("@shexjs/parser");
@@ -118,19 +118,21 @@ const $9020b8e3f4a4c1a1$var$getOneMethod = (config)=>async (resourceId, params)=
 var $9020b8e3f4a4c1a1$export$2e2bcd8739ae039 = $9020b8e3f4a4c1a1$var$getOneMethod;
 
 
-
-const $6fcb30f76390d142$var$isFile = (o)=>o?.rawFile && o.rawFile instanceof File;
-const $6fcb30f76390d142$var$isFileToDelete = (o)=>o?.fileToDelete !== undefined && o?.fileToDelete !== null;
-const $6fcb30f76390d142$var$getUploadsContainerUri = (config, serverKey)=>{
-    // If no server key is defined, or if the server has no uploads container, find any server with a uploads container
-    if (!serverKey || !config.dataServers[serverKey].uploadsContainer) serverKey = Object.keys(config.dataServers).find((key)=>config.dataServers[key].uploadsContainer);
-    if (serverKey) return (0, ($parcel$interopDefault($bkNnK$urljoin)))(config.dataServers[serverKey].baseUrl, config.dataServers[serverKey].uploadsContainer);
+const $0edd1f2d07c8231f$var$getUploadsContainerUri = (config, serverKey)=>{
+    // If no server key is defined, find any server with a uploads container
+    if (!serverKey) serverKey = Object.keys(config.dataServers).find((key)=>config.dataServers[key].containers.find((c)=>c.binaryResources));
+    if (serverKey) return config.dataServers[serverKey].containers.find((c)=>c.binaryResources)?.uri;
     else // No server has an uploads container
     return null;
 };
+var $0edd1f2d07c8231f$export$2e2bcd8739ae039 = $0edd1f2d07c8231f$var$getUploadsContainerUri;
+
+
+const $6fcb30f76390d142$var$isFile = (o)=>o?.rawFile && o.rawFile instanceof File;
+const $6fcb30f76390d142$var$isFileToDelete = (o)=>o?.fileToDelete !== undefined && o?.fileToDelete !== null;
 const $6fcb30f76390d142$export$a5575dbeeffdad98 = async (rawFile, config, serverKey)=>{
-    const uploadsContainerUri = $6fcb30f76390d142$var$getUploadsContainerUri(config, serverKey);
-    if (!uploadsContainerUri) throw new Error("You must define an uploadsContainer in one of the server's configuration");
+    const uploadsContainerUri = (0, $0edd1f2d07c8231f$export$2e2bcd8739ae039)(config, serverKey);
+    if (!uploadsContainerUri) throw new Error("You must define an container with binaryResources in one of the server's configuration");
     const response = await config.httpClient(uploadsContainerUri, {
         method: "POST",
         body: rawFile,
@@ -1216,8 +1218,6 @@ var $89358cee13a17a31$export$2e2bcd8739ae039 = $89358cee13a17a31$var$configureUs
 
 
 
-
-const $37dc42f6e1c3b4af$var$shexParser = (0, ($parcel$interopDefault($bkNnK$shexjsparser))).construct("");
 const $37dc42f6e1c3b4af$var$getContainerFromDataRegistration = async (dataRegistrationUri, config)=>{
     const { json: dataRegistration } = await config.httpClient(dataRegistrationUri, {
         headers: new Headers({
@@ -1253,19 +1253,12 @@ const $37dc42f6e1c3b4af$var$getContainerFromDataRegistration = async (dataRegist
         path: containerPath,
         shapeTreeUri: shapeTree.shape,
         label: shapeTree.label,
-        labelPredicate: shapeTree.describesInstance
+        labelPredicate: shapeTree.describesInstance,
+        binaryResources: shapeTree.expectsType === "st:NonRDFResource"
     };
     if (shapeTree.shape) {
-        const { body: shexC } = await config.httpClient(shapeTree.shape, {
-            headers: new Headers({
-                Accept: "*/*"
-            })
-        }); // TODO use text/shex
-        const shexJ = $37dc42f6e1c3b4af$var$shexParser.parse(shexC);
-        const type = shexJ?.shapes?.[0]?.shapeExpr?.expression?.expressions.find((expr)=>expr.predicate === "http://www.w3.org/1999/02/22-rdf-syntax-ns#type")?.valueExpr?.values?.[0];
-        container.types = [
-            type
-        ];
+        const { json: shape } = await config.httpClient(shapeTree.shape);
+        container.types = shape?.[0]?.["http://www.w3.org/ns/shacl#targetClass"]?.map((node)=>node?.["@id"]);
     }
     return container;
 };
@@ -1446,7 +1439,7 @@ const $1395e306228d41f2$var$fetchVoidEndpoints = ()=>({
                             const expandedTypes = await (0, $9ab033d1ec46b5da$export$2e2bcd8739ae039)([
                                 type
                             ], result.context);
-                            const containerIndex = newConfig.dataServers[result.key].containers.findIndex((c)=>c.types.some((t)=>expandedTypes.includes(t)));
+                            const containerIndex = newConfig.dataServers[result.key].containers.findIndex((c)=>c.types?.some((t)=>expandedTypes.includes(t)));
                             if (containerIndex && containerIndex !== -1) // If a container with this type already exist, overwrite path and types
                             newConfig.dataServers[result.key].containers[containerIndex] = {
                                 ...newConfig.dataServers[result.key].containers[containerIndex],

@@ -1,6 +1,5 @@
 import { DataProvider, RaRecord, fetchUtils } from 'react-admin';
 import { Quad } from '@rdfjs/types';
-import { ContextDefinition } from 'jsonld';
 export type DataServerKey = string & {
   readonly _type?: 'DataServerKey';
 };
@@ -11,7 +10,10 @@ export type Container = {
   server?: string;
   uri?: string;
   path: string;
-  types: string[];
+  types?: string[];
+  label?: Record<string, string>;
+  labelPredicate?: string;
+  binaryResources?: boolean;
   [k: string]: any;
 };
 type DataServerConfig = {
@@ -19,13 +21,11 @@ type DataServerConfig = {
   baseUrl: string;
   /** Default server (used for the creation of resources) */
   default?: boolean;
-  /** True if this is the server where users are autenticated */
+  /** True if this is the server where users are authenticated */
   authServer?: boolean;
   /** True if the server is a pod */
   pod?: boolean;
   containers: Container[];
-  /** Container used for uploaded files */
-  uploadsContainer?: string;
   sparqlEndpoint?: string;
   proxyUrl?: string;
   noProxy?: boolean;
@@ -168,7 +168,10 @@ export const fetchAppRegistration: () => Plugin;
 export const fetchDataRegistry: () => Plugin;
 export const fetchTypeIndexes: () => Plugin;
 export const fetchVoidEndpoints: () => Plugin;
-export const useCompactPredicate: (predicate: string, context?: ContextDefinition) => string | undefined;
+export const useCompactPredicate: (
+  predicate: string,
+  context?: string | string[] | Record<string, string>
+) => string | undefined;
 export const useDataModels: () => Record<string, import('index').DataModel> | undefined;
 export const useDataServers: () => import('index').DataServersConfig | undefined;
 export const useContainers: (resourceId?: string, serverKeys?: string | string[]) => Container[];

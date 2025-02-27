@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@rdfjs/data-model": "^1.3.4",
-    "@shexjs/parser": "1.0.0-alpha.28",
     "change-case": "^5.4.4",
     "crypto-js": "^4.1.1",
     "http-link-header": "1.1.3",
