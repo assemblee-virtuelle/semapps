@@ -7,7 +7,6 @@ var $bkNnK$reactadmin = require("react-admin");
 var $bkNnK$urljoin = require("url-join");
 var $bkNnK$jwtdecode = require("jwt-decode");
 var $bkNnK$httplinkheader = require("http-link-header");
-var $bkNnK$shexjsparser = require("@shexjs/parser");
 var $bkNnK$changecase = require("change-case");
 var $bkNnK$react = require("react");
 var $bkNnK$reactjsxruntime = require("react/jsx-runtime");

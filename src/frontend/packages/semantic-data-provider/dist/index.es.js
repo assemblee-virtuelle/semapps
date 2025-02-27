@@ -7,7 +7,6 @@ import {fetchUtils as $fj9kP$fetchUtils, useDataProvider as $fj9kP$useDataProvid
 import $fj9kP$urljoin from "url-join";
 import $fj9kP$jwtdecode from "jwt-decode";
 import $fj9kP$httplinkheader from "http-link-header";
-import $fj9kP$shexjsparser from "@shexjs/parser";
 import {capitalCase as $fj9kP$capitalCase} from "change-case";
 import $fj9kP$react, {useState as $fj9kP$useState, useEffect as $fj9kP$useEffect, useMemo as $fj9kP$useMemo, useCallback as $fj9kP$useCallback, useContext as $fj9kP$useContext} from "react";
 import {jsx as $fj9kP$jsx, Fragment as $fj9kP$Fragment, jsxs as $fj9kP$jsxs} from "react/jsx-runtime";
