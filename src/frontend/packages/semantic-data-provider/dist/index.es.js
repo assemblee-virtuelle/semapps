@@ -7,6 +7,7 @@ import {fetchUtils as $fj9kP$fetchUtils, useDataProvider as $fj9kP$useDataProvid
 import $fj9kP$urljoin from "url-join";
 import $fj9kP$jwtdecode from "jwt-decode";
 import $fj9kP$httplinkheader from "http-link-header";
+import {capitalCase as $fj9kP$capitalCase} from "change-case";
 import $fj9kP$react, {useState as $fj9kP$useState, useEffect as $fj9kP$useEffect, useMemo as $fj9kP$useMemo, useCallback as $fj9kP$useCallback, useContext as $fj9kP$useContext} from "react";
 import {jsx as $fj9kP$jsx, Fragment as $fj9kP$Fragment, jsxs as $fj9kP$jsxs} from "react/jsx-runtime";
 import $fj9kP$muistylesmakeStyles from "@mui/styles/makeStyles";
@@ -1290,6 +1291,67 @@ var $91255e144bb55afc$export$2e2bcd8739ae039 = $91255e144bb55afc$var$fetchDataRe
 
 
 
+
+
+const $2d5f75df63129ebc$var$fetchTypeIndexes = ()=>({
+        transformConfig: async (config)=>{
+            const token = localStorage.getItem("token");
+            // If the user is logged in
+            if (token) {
+                if (!config.dataServers.user) throw new Error(`You must configure the user storage first with the configureUserStorage plugin`);
+                const payload = (0, $fj9kP$jwtdecode)(token);
+                const webId = payload.webId || payload.webid; // Currently we must deal with both formats
+                const { json: user } = await config.httpClient(webId);
+                const typeRegistrations = {
+                    public: [],
+                    private: []
+                };
+                if (user["solid:publicTypeIndex"]) {
+                    const { json: publicTypeIndex } = await config.httpClient(user["solid:publicTypeIndex"]);
+                    if (publicTypeIndex) typeRegistrations.public = (0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(publicTypeIndex["solid:hasTypeRegistration"]);
+                }
+                if (user["pim:preferencesFile"]) {
+                    const { json: preferencesFile } = await config.httpClient(user["pim:preferencesFile"]);
+                    if (preferencesFile?.["solid:privateTypeIndex"]) {
+                        const { json: privateTypeIndex } = await config.httpClient(preferencesFile["solid:privateTypeIndex"]);
+                        typeRegistrations.private = (0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(privateTypeIndex["solid:hasTypeRegistration"]);
+                    }
+                }
+                if (typeRegistrations.public.length > 0 || typeRegistrations.private.length > 0) {
+                    const newConfig = {
+                        ...config
+                    };
+                    for (const mode of Object.keys(typeRegistrations))for (const typeRegistration of typeRegistrations[mode]){
+                        const types = (0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(typeRegistration["solid:forClass"]);
+                        const container = {
+                            label: {
+                                en: (0, $fj9kP$capitalCase)(types[0].split(":")[1], {
+                                    separateNumbers: true
+                                })
+                            },
+                            path: typeRegistration["solid:instanceContainer"].replace(newConfig.dataServers.user.baseUrl, ""),
+                            types: await (0, $36aa010ec46eaf45$export$2e2bcd8739ae039)(types, user["@context"]),
+                            private: mode === "private"
+                        };
+                        const containerIndex = newConfig.dataServers.user.containers.findIndex((c)=>c.path === container.path);
+                        if (containerIndex !== -1) // If a container with this URI already exist, add type registration information if they are not set
+                        newConfig.dataServers.user.containers[containerIndex] = {
+                            ...container,
+                            ...newConfig.dataServers.user.containers[containerIndex]
+                        };
+                        else newConfig.dataServers.user.containers.push(container);
+                    }
+                    return newConfig;
+                }
+            }
+            return config;
+        }
+    });
+var $2d5f75df63129ebc$export$2e2bcd8739ae039 = $2d5f75df63129ebc$var$fetchTypeIndexes;
+
+
+
+
 const $a87fd63d8fca0380$var$fetchVoidEndpoints = ()=>({
         transformConfig: async (config)=>{
             let results = [];
@@ -1914,5 +1976,5 @@ const $03d52e691e8dc945$var$registeredWebSockets = new Map();
 
 
 
-export {$243bf28fbb1b868f$export$2e2bcd8739ae039 as dataProvider, $6cde9a8fbbde3ffb$export$2e2bcd8739ae039 as buildSparqlQuery, $865f630cc944e818$export$2e2bcd8739ae039 as buildBlankNodesQuery, $cdd3c71a628eeefe$export$2e2bcd8739ae039 as configureUserStorage, $2c257b4237cb14ca$export$2e2bcd8739ae039 as fetchAppRegistration, $91255e144bb55afc$export$2e2bcd8739ae039 as fetchDataRegistry, $a87fd63d8fca0380$export$2e2bcd8739ae039 as fetchVoidEndpoints, $72db0904d77f0f1e$export$2e2bcd8739ae039 as useCompactPredicate, $586fa0ea9d02fa12$export$2e2bcd8739ae039 as useContainers, $9d2c669bd52faa31$export$2e2bcd8739ae039 as useContainersByTypes, $43097d0b613bd4db$export$2e2bcd8739ae039 as useContainerByUri, $35f3e75c86e51f35$export$2e2bcd8739ae039 as useCreateContainerUri, $e5a0eacd756fd1d5$export$2e2bcd8739ae039 as useDataModel, $3a9656756670cb78$export$2e2bcd8739ae039 as useDataModels, $4daf4cf698ee4eed$export$2e2bcd8739ae039 as useDataServers, $8dbb0c8c3814e663$export$2e2bcd8739ae039 as useGetCreateContainerUri, $87656edf926c0f1f$export$2e2bcd8739ae039 as useGetExternalLink, $487567a146508c4e$export$2e2bcd8739ae039 as useGetPrefixFromUri, $406574efa35ec6f1$export$2e2bcd8739ae039 as FilterHandler, $1d8c1cbe606a94ae$export$2e2bcd8739ae039 as GroupedReferenceHandler, $6844bbce0ad66151$export$2e2bcd8739ae039 as ReificationArrayInput, $03d52e691e8dc945$export$28772ab4c256e709 as createWsChannel, $03d52e691e8dc945$export$8d60734939c59ced as getOrCreateWsChannel, $03d52e691e8dc945$export$3edfe18db119b920 as createSolidNotificationChannel};
+export {$243bf28fbb1b868f$export$2e2bcd8739ae039 as dataProvider, $6cde9a8fbbde3ffb$export$2e2bcd8739ae039 as buildSparqlQuery, $865f630cc944e818$export$2e2bcd8739ae039 as buildBlankNodesQuery, $cdd3c71a628eeefe$export$2e2bcd8739ae039 as configureUserStorage, $2c257b4237cb14ca$export$2e2bcd8739ae039 as fetchAppRegistration, $91255e144bb55afc$export$2e2bcd8739ae039 as fetchDataRegistry, $2d5f75df63129ebc$export$2e2bcd8739ae039 as fetchTypeIndexes, $a87fd63d8fca0380$export$2e2bcd8739ae039 as fetchVoidEndpoints, $72db0904d77f0f1e$export$2e2bcd8739ae039 as useCompactPredicate, $586fa0ea9d02fa12$export$2e2bcd8739ae039 as useContainers, $9d2c669bd52faa31$export$2e2bcd8739ae039 as useContainersByTypes, $43097d0b613bd4db$export$2e2bcd8739ae039 as useContainerByUri, $35f3e75c86e51f35$export$2e2bcd8739ae039 as useCreateContainerUri, $e5a0eacd756fd1d5$export$2e2bcd8739ae039 as useDataModel, $3a9656756670cb78$export$2e2bcd8739ae039 as useDataModels, $4daf4cf698ee4eed$export$2e2bcd8739ae039 as useDataServers, $8dbb0c8c3814e663$export$2e2bcd8739ae039 as useGetCreateContainerUri, $87656edf926c0f1f$export$2e2bcd8739ae039 as useGetExternalLink, $487567a146508c4e$export$2e2bcd8739ae039 as useGetPrefixFromUri, $406574efa35ec6f1$export$2e2bcd8739ae039 as FilterHandler, $1d8c1cbe606a94ae$export$2e2bcd8739ae039 as GroupedReferenceHandler, $6844bbce0ad66151$export$2e2bcd8739ae039 as ReificationArrayInput, $03d52e691e8dc945$export$28772ab4c256e709 as createWsChannel, $03d52e691e8dc945$export$8d60734939c59ced as getOrCreateWsChannel, $03d52e691e8dc945$export$3edfe18db119b920 as createSolidNotificationChannel};
 //# sourceMappingURL=index.es.js.map

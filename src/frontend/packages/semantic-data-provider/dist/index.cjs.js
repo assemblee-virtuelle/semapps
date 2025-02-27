@@ -7,6 +7,7 @@ var $bkNnK$reactadmin = require("react-admin");
 var $bkNnK$urljoin = require("url-join");
 var $bkNnK$jwtdecode = require("jwt-decode");
 var $bkNnK$httplinkheader = require("http-link-header");
+var $bkNnK$changecase = require("change-case");
 var $bkNnK$react = require("react");
 var $bkNnK$reactjsxruntime = require("react/jsx-runtime");
 var $bkNnK$muistylesmakeStyles = require("@mui/styles/makeStyles");
@@ -43,6 +44,7 @@ $parcel$export(module.exports, "buildBlankNodesQuery", () => $64d4ce40c79d1509$e
 $parcel$export(module.exports, "configureUserStorage", () => $89358cee13a17a31$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "fetchAppRegistration", () => $c512de108ef5d674$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "fetchDataRegistry", () => $cd772adda3024172$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "fetchTypeIndexes", () => $69d4da9beaa62ac6$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "fetchVoidEndpoints", () => $1395e306228d41f2$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useCompactPredicate", () => $9d33c8835e67bede$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useContainers", () => $3158e0dc13ffffaa$export$2e2bcd8739ae039);
@@ -1336,6 +1338,67 @@ const $cd772adda3024172$var$fetchDataRegistry = ()=>({
         }
     });
 var $cd772adda3024172$export$2e2bcd8739ae039 = $cd772adda3024172$var$fetchDataRegistry;
+
+
+
+
+
+
+const $69d4da9beaa62ac6$var$fetchTypeIndexes = ()=>({
+        transformConfig: async (config)=>{
+            const token = localStorage.getItem("token");
+            // If the user is logged in
+            if (token) {
+                if (!config.dataServers.user) throw new Error(`You must configure the user storage first with the configureUserStorage plugin`);
+                const payload = (0, ($parcel$interopDefault($bkNnK$jwtdecode)))(token);
+                const webId = payload.webId || payload.webid; // Currently we must deal with both formats
+                const { json: user } = await config.httpClient(webId);
+                const typeRegistrations = {
+                    public: [],
+                    private: []
+                };
+                if (user["solid:publicTypeIndex"]) {
+                    const { json: publicTypeIndex } = await config.httpClient(user["solid:publicTypeIndex"]);
+                    if (publicTypeIndex) typeRegistrations.public = (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(publicTypeIndex["solid:hasTypeRegistration"]);
+                }
+                if (user["pim:preferencesFile"]) {
+                    const { json: preferencesFile } = await config.httpClient(user["pim:preferencesFile"]);
+                    if (preferencesFile?.["solid:privateTypeIndex"]) {
+                        const { json: privateTypeIndex } = await config.httpClient(preferencesFile["solid:privateTypeIndex"]);
+                        typeRegistrations.private = (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(privateTypeIndex["solid:hasTypeRegistration"]);
+                    }
+                }
+                if (typeRegistrations.public.length > 0 || typeRegistrations.private.length > 0) {
+                    const newConfig = {
+                        ...config
+                    };
+                    for (const mode of Object.keys(typeRegistrations))for (const typeRegistration of typeRegistrations[mode]){
+                        const types = (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(typeRegistration["solid:forClass"]);
+                        const container = {
+                            label: {
+                                en: (0, $bkNnK$changecase.capitalCase)(types[0].split(":")[1], {
+                                    separateNumbers: true
+                                })
+                            },
+                            path: typeRegistration["solid:instanceContainer"].replace(newConfig.dataServers.user.baseUrl, ""),
+                            types: await (0, $9ab033d1ec46b5da$export$2e2bcd8739ae039)(types, user["@context"]),
+                            private: mode === "private"
+                        };
+                        const containerIndex = newConfig.dataServers.user.containers.findIndex((c)=>c.path === container.path);
+                        if (containerIndex !== -1) // If a container with this URI already exist, add type registration information if they are not set
+                        newConfig.dataServers.user.containers[containerIndex] = {
+                            ...container,
+                            ...newConfig.dataServers.user.containers[containerIndex]
+                        };
+                        else newConfig.dataServers.user.containers.push(container);
+                    }
+                    return newConfig;
+                }
+            }
+            return config;
+        }
+    });
+var $69d4da9beaa62ac6$export$2e2bcd8739ae039 = $69d4da9beaa62ac6$var$fetchTypeIndexes;
 
 
 

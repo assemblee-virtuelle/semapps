@@ -6,6 +6,7 @@ export { default as buildBlankNodesQuery } from './dataProvider/utils/buildBlank
 export { default as configureUserStorage } from './dataProvider/plugins/configureUserStorage';
 export { default as fetchAppRegistration } from './dataProvider/plugins/fetchAppRegistration';
 export { default as fetchDataRegistry } from './dataProvider/plugins/fetchDataRegistry';
+export { default as fetchTypeIndexes } from './dataProvider/plugins/fetchTypeIndexes';
 export { default as fetchVoidEndpoints } from './dataProvider/plugins/fetchVoidEndpoints';
 
 export { default as useCompactPredicate } from './hooks/useCompactPredicate';

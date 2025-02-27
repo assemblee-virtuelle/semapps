@@ -70,6 +70,21 @@ export default dataProvider({
 
 If no application registration is found, it does nothing.
 
+### `fetchTypeIndexes`
+
+This plugin automatically load the public and private [Type Indexes](https://github.com/solid/type-indexes) of the logged-in user. It maps all Type Registrations with containers definitions. If no `label` is set yet, it automatically sets an english with the formatted class name.
+
+You need to load the `configureUserStorage` plugin first.
+
+```js
+import { dataProvider, configureUserStorage, fetchTypeIndexes } from '@semapps/semantic-data-provider';
+
+export default dataProvider({
+  plugins[configureUserStorage(), fetchTypeIndexes()],
+  ...
+});
+```
+
 ## Writing your own plugin
 
 Plugins are objects with a single `transformConfig` method, which takes the data provider configuration and return a new configuration.
