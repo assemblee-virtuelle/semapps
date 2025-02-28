@@ -29,6 +29,7 @@ class VCCapabilityPresentationProofPurpose extends AuthenticationProofPurpose {
    * @throws {Error} If the number of VC credentials exceeds the maximum allowed `this.maxChainLength`.
    * @throws {Error} If the capability chain is invalid (`credentialSubject` of VC must match the next VCs issuer).
    * @throws {Error} If the subject of the last VC in the chain is not the invoker / signer of the presentation.
+   *                 If there is only one VC and no `credentialSubject.id` is present, this is allowed.
    * @throws {Error} If any credential is missing an issuance or proof.created field.
    * @throws {Error} If there is no VC present in the presentation.
    * @throws {Error} If any `credentialSubject` is missing or does not have an id.
@@ -83,10 +84,16 @@ class VCCapabilityPresentationProofPurpose extends AuthenticationProofPurpose {
       };
     }
 
-    // Validate that all credentialSubjects have an id.
-    for (const credential of credentialsOrdered) {
-      if (!credential.credentialSubject || !credential.credentialSubject.id) {
-        return { valid: false, error: new Error('credentialSubject is missing or does not have an id.') };
+    /** Indicates that the credential does not have a pre-defined holder (e.g. useful for invite links). */
+    const isOpenCapability = credentialsOrdered.length === 1 && !credentialsOrdered[0].credentialSubject?.id;
+
+    // Validate that all credentialSubjects have an id
+    // OR: there is only one credential with no `id`.
+    if (!isOpenCapability) {
+      for (const credential of credentialsOrdered) {
+        if (!credential.credentialSubject?.id) {
+          return { valid: false, error: new Error('credentialSubject is missing or does not have an id.') };
+        }
       }
     }
 
@@ -103,8 +110,11 @@ class VCCapabilityPresentationProofPurpose extends AuthenticationProofPurpose {
     }
 
     // Validate that the last VC's subject is the invoker/presentation signer.
-    if (controllerDocument.id !== credentialsOrdered[credentialsOrdered.length - 1].credentialSubject.id) {
-      return { valid: false, error: new Error('Invoker of capability is not the subject of the last capability.') };
+    // OR: `isOpenCapability` is true.
+    if (!isOpenCapability) {
+      if (controllerDocument.id !== credentialsOrdered[credentialsOrdered.length - 1].credentialSubject.id) {
+        return { valid: false, error: new Error('Invoker of capability is not the subject of the last capability.') };
+      }
     }
 
     // Validate that the credentialSubject content of each VC matches (id excluded).
@@ -112,7 +122,7 @@ class VCCapabilityPresentationProofPurpose extends AuthenticationProofPurpose {
     let previousSubject = credentialsOrdered[0].credentialSubject;
     for (let i = 1; i < credentialsOrdered.length; i += 1) {
       const currentSubject = credentialsOrdered[i].credentialSubject;
-      for (const key of Object.keys(previousSubject)) {
+      for (const key of Object.keys(currentSubject)) {
         if (key !== 'id' && !deepStrictEqual(previousSubject[key], currentSubject[key])) {
           return {
             valid: false,

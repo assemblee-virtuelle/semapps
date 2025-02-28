@@ -77,6 +77,7 @@ These ontologies can be imported individually using their prefixes, or as a whol
 | `acl`     | http://www.w3.org/ns/auth/acl#              |
 | `as`      | https://www.w3.org/ns/activitystreams#      |
 | `dc`      | http://purl.org/dc/terms/                   |
+| `did`     | https://www.w3.org/ns/did#                  |
 | `foaf`    | http://xmlns.com/foaf/0.1/                  |
 | `ldp`     | http://www.w3.org/ns/ldp#                   |
 | `rdf`     | http://www.w3.org/1999/02/22-rdf-syntax-ns# |
