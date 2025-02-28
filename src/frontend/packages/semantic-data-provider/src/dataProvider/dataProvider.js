@@ -21,6 +21,8 @@ const dataProvider = originalConfig => {
   let config = { ...originalConfig };
 
   const prepareConfig = async () => {
+    config.dataServers ??= {};
+
     // Configure httpClient with initial data servers, so that plugins may use it
     config.httpClient = httpClient(config.dataServers);
 

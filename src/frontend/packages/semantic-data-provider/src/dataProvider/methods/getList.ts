@@ -3,6 +3,7 @@ import findContainersWithTypes from '../utils/findContainersWithTypes';
 import fetchContainers from '../utils/fetchContainers';
 import fetchSparqlEndpoints from '../utils/fetchSparqlEndpoints';
 import findContainersWithURIs from '../utils/findContainersWithURIs';
+import findContainersWithShapeTree from '../utils/findContainersWithShapeTree';
 import { Configuration, Container } from '../types';
 import arrayOf from '../utils/arrayOf';
 
@@ -21,8 +22,8 @@ const getListMethod = (config: Configuration) => async (resourceId: string, para
     // If containers are set explicitly, use them
     containers = findContainersWithURIs(dataModel.list.containers, dataServers);
   } else if (dataModel.shapeTreeUri) {
-    containers = findContainersWithTypes(
-      arrayOf(dataModel.shapeTreeUri),
+    containers = findContainersWithShapeTree(
+      dataModel.shapeTreeUri,
       params?.filter?._servers || dataModel.list?.servers,
       dataServers
     );

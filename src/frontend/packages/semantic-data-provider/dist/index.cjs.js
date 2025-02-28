@@ -187,7 +187,7 @@ var $6fcb30f76390d142$export$2e2bcd8739ae039 = {
 
 
 const $8f44b7c15b8b8e1d$var$getServerKeyFromType = (type, dataServers)=>{
-    return Object.keys(dataServers).find((key)=>{
+    return dataServers && Object.keys(dataServers).find((key)=>{
         return dataServers[key][type];
     });
 };
@@ -895,6 +895,22 @@ var $1e7a94d745f8597b$export$2e2bcd8739ae039 = $1e7a94d745f8597b$var$fetchSparql
 
 
 
+/**
+ * Return all containers matching the given shape tree
+ */ const $1d94774735aa9ea2$var$findContainersWithShapeTree = (shapeTreeUri, serverKeys, dataServers)=>{
+    const matchingContainers = [];
+    const parsedServerKeys = (0, $6531da3b9e8c524a$export$2e2bcd8739ae039)(serverKeys || "@all", dataServers);
+    Object.keys(dataServers).forEach((dataServerKey)=>{
+        if (parsedServerKeys.includes(dataServerKey)) dataServers[dataServerKey].containers?.forEach((container)=>{
+            if (container.shapeTreeUri === shapeTreeUri) matchingContainers.push(container);
+        });
+    });
+    return matchingContainers;
+};
+var $1d94774735aa9ea2$export$2e2bcd8739ae039 = $1d94774735aa9ea2$var$findContainersWithShapeTree;
+
+
+
 const $95cbc03f25caf72a$var$getListMethod = (config)=>async (resourceId, params)=>{
         const { dataServers: dataServers, resources: resources } = config;
         const dataModel = resources[resourceId];
@@ -904,7 +920,7 @@ const $95cbc03f25caf72a$var$getListMethod = (config)=>async (resourceId, params)
             if (Array.isArray(dataModel.list?.containers)) throw new Error(`The list.containers property of ${resourceId} dataModel must be of type object ({ serverKey: [containerUri] })`);
             // If containers are set explicitly, use them
             containers = (0, $37c161736d0d7276$export$2e2bcd8739ae039)(dataModel.list.containers, dataServers);
-        } else if (dataModel.shapeTreeUri) containers = (0, $047a107b0d203793$export$2e2bcd8739ae039)((0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(dataModel.shapeTreeUri), params?.filter?._servers || dataModel.list?.servers, dataServers);
+        } else if (dataModel.shapeTreeUri) containers = (0, $1d94774735aa9ea2$export$2e2bcd8739ae039)(dataModel.shapeTreeUri, params?.filter?._servers || dataModel.list?.servers, dataServers);
         else // Otherwise find the container URIs on the given servers (either in the filter or the data model)
         containers = (0, $047a107b0d203793$export$2e2bcd8739ae039)((0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(dataModel.types), params?.filter?._servers || dataModel.list?.servers, dataServers);
         if (dataModel.list?.fetchContainer) return (0, $8c999cc29c8d6a6c$export$2e2bcd8739ae039)(containers, params, config);
@@ -992,7 +1008,7 @@ var $fda69bf2752eb49a$export$2e2bcd8739ae039 = $fda69bf2752eb49a$var$patchMethod
 // Return the first server matching with the baseUrl
 const $59a07b932dae8600$var$getServerKeyFromUri = (uri, dataServers)=>{
     if (!uri) throw Error(`No URI provided to getServerKeyFromUri`);
-    return Object.keys(dataServers).find((key)=>{
+    return dataServers && Object.keys(dataServers).find((key)=>{
         if (dataServers[key].pod) // The baseUrl ends with /data so remove this part to match with the webId and webId-related URLs (/inbox, /outbox...)
         return dataServers[key].baseUrl && uri.startsWith(dataServers[key].baseUrl.replace("/data", ""));
         return uri.startsWith(dataServers[key].baseUrl);
@@ -1100,6 +1116,46 @@ const $9ab033d1ec46b5da$var$expandTypes = async (types, context)=>{
 var $9ab033d1ec46b5da$export$2e2bcd8739ae039 = $9ab033d1ec46b5da$var$expandTypes;
 
 
+
+
+const $058bb6151d120fba$var$getTypesFromShapeTree = async (shapeTreeUri)=>{
+    let { json: shapeTree } = await (0, $bkNnK$reactadmin.fetchUtils).fetchJson(shapeTreeUri, {
+        headers: new Headers({
+            Accept: "application/ld+json"
+        })
+    });
+    shapeTree = await (0, ($parcel$interopDefault($bkNnK$jsonld))).compact(shapeTree, {
+        st: "http://www.w3.org/ns/shapetrees#",
+        skos: "http://www.w3.org/2004/02/skos/core#",
+        expectsType: {
+            "@id": "st:expectsType",
+            "@type": "@id"
+        },
+        shape: {
+            "@id": "st:shape",
+            "@type": "@id"
+        },
+        describesInstance: {
+            "@id": "st:describesInstance",
+            "@type": "@id"
+        },
+        label: {
+            "@id": "skos:prefLabel",
+            "@container": "@language"
+        }
+    });
+    if (shapeTree.shape) {
+        const { json: shape } = await (0, $bkNnK$reactadmin.fetchUtils).fetchJson(shapeTree.shape, {
+            headers: new Headers({
+                Accept: "application/ld+json"
+            })
+        });
+        return shape?.[0]?.["http://www.w3.org/ns/shacl#targetClass"]?.map((node)=>node?.["@id"]) || [];
+    } else return [];
+};
+var $058bb6151d120fba$export$2e2bcd8739ae039 = $058bb6151d120fba$var$getTypesFromShapeTree;
+
+
 const $5e24772571dd1677$var$normalizeConfig = async (config)=>{
     const newConfig = {
         ...config
@@ -1113,7 +1169,10 @@ const $5e24772571dd1677$var$normalizeConfig = async (config)=>{
             }));
     });
     // Expand types in data models
-    for (const resourceId of Object.keys(newConfig.resources))newConfig.resources[resourceId].types = await (0, $9ab033d1ec46b5da$export$2e2bcd8739ae039)((0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(newConfig.resources[resourceId].types), config.jsonContext);
+    for (const resourceId of Object.keys(newConfig.resources)){
+        if (!newConfig.resources[resourceId].types && newConfig.resources[resourceId].shapeTreeUri) newConfig.resources[resourceId].types = await (0, $058bb6151d120fba$export$2e2bcd8739ae039)(newConfig.resources[resourceId].shapeTreeUri);
+        newConfig.resources[resourceId].types = await (0, $9ab033d1ec46b5da$export$2e2bcd8739ae039)((0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(newConfig.resources[resourceId].types), config.jsonContext);
+    }
     return newConfig;
 };
 var $5e24772571dd1677$export$2e2bcd8739ae039 = $5e24772571dd1677$var$normalizeConfig;
@@ -1126,6 +1185,7 @@ var $5e24772571dd1677$export$2e2bcd8739ae039 = $5e24772571dd1677$var$normalizeCo
         ...originalConfig
     };
     const prepareConfig = async ()=>{
+        config.dataServers ??= {};
         // Configure httpClient with initial data servers, so that plugins may use it
         config.httpClient = (0, $341dff85fe619d85$export$2e2bcd8739ae039)(config.dataServers);
         for (const plugin of config.plugins)if (plugin.transformConfig) config = await plugin.transformConfig(config);
@@ -1194,6 +1254,7 @@ const $89358cee13a17a31$var$configureUserStorage = ()=>({
                     newConfig.dataServers.user = {
                         pod: true,
                         default: true,
+                        authServer: true,
                         baseUrl: user["pim:storage"] || (0, ($parcel$interopDefault($bkNnK$urljoin)))(webId, "data"),
                         sparqlEndpoint: user.endpoints?.["void:sparqlEndpoint"] || (0, ($parcel$interopDefault($bkNnK$urljoin)))(webId, "sparql"),
                         proxyUrl: user.endpoints?.proxyUrl,
@@ -1250,7 +1311,7 @@ const $37dc42f6e1c3b4af$var$getContainerFromDataRegistration = async (dataRegist
     const containerPath = dataRegistration.id.replace(baseUrl, "");
     const container = {
         path: containerPath,
-        shapeTreeUri: shapeTree.shape,
+        shapeTreeUri: shapeTreeUri,
         label: shapeTree.label,
         labelPredicate: shapeTree.describesInstance,
         binaryResources: shapeTree.expectsType === "st:NonRDFResource"
@@ -1290,7 +1351,7 @@ var $37dc42f6e1c3b4af$export$2e2bcd8739ae039 = $37dc42f6e1c3b4af$var$getContaine
                             const newConfig = {
                                 ...config
                             };
-                            for (const accessGrantUri of (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(appRegistration["hasAccessGrant:hasDataGrant"])){
+                            for (const accessGrantUri of (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(appRegistration["interop:hasAccessGrant"])){
                                 const { json: accessGrant } = await config.httpClient(accessGrantUri);
                                 for (const dataGrantUri of (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(accessGrant["interop:hasDataGrant"])){
                                     const { json: dataGrant } = await config.httpClient(dataGrantUri);

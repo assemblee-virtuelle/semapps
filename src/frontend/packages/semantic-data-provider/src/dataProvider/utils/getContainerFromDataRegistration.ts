@@ -27,7 +27,7 @@ const getContainerFromDataRegistration = async (dataRegistrationUri: string, con
 
   const container = {
     path: containerPath,
-    shapeTreeUri: shapeTree.shape,
+    shapeTreeUri,
     label: shapeTree.label,
     labelPredicate: shapeTree.describesInstance,
     binaryResources: shapeTree.expectsType === 'st:NonRDFResource'

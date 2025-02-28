@@ -1,7 +1,6 @@
 import jwtDecode from 'jwt-decode';
 import urlJoin from 'url-join';
 import { Configuration, Plugin } from '../types';
-import { ContextDefinition } from 'jsonld';
 
 const configureUserStorage = (): Plugin => ({
   transformConfig: async (config: Configuration) => {
@@ -19,6 +18,7 @@ const configureUserStorage = (): Plugin => ({
         newConfig.dataServers.user = {
           pod: true,
           default: true,
+          authServer: true,
           baseUrl: user['pim:storage'] || urlJoin(webId, 'data'),
           sparqlEndpoint: user.endpoints?.['void:sparqlEndpoint'] || urlJoin(webId, 'sparql'),
           proxyUrl: user.endpoints?.proxyUrl,

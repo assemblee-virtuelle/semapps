@@ -1,6 +1,5 @@
 import jwtDecode from 'jwt-decode';
 import LinkHeader from 'http-link-header';
-import urlJoin from 'url-join';
 import { Configuration, Plugin } from '../types';
 import arrayOf from '../utils/arrayOf';
 import getContainerFromDataRegistration from '../utils/getContainerFromDataRegistration';
@@ -36,7 +35,7 @@ const fetchAppRegistration = (): Plugin => ({
 
             const newConfig = { ...config } as Configuration;
 
-            for (const accessGrantUri of arrayOf(appRegistration['hasAccessGrant:hasDataGrant'])) {
+            for (const accessGrantUri of arrayOf(appRegistration['interop:hasAccessGrant'])) {
               const { json: accessGrant } = await config.httpClient(accessGrantUri);
 
               for (const dataGrantUri of arrayOf(accessGrant['interop:hasDataGrant'])) {
