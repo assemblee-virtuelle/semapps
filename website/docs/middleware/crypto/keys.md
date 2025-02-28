@@ -102,25 +102,25 @@ Get list of all public-private key pairs for an actor that are published in the 
 
 `Array` - List of all public-private key pairs for the given actor. Keys in format as described in [Key Format](#key-format).
 
-### `getMultikeyInstance`
+### `getMultikey`
 
-Returns a signing key instance for a given keyId or key type. If no key is available, a new one is created.
+Returns a multikey object for a given keyId or key type. If no key is available, a new one is created.
 Currently supports Ed25519Multikey only.
-The returned object is a `@digitalbazaar/ed25519-multikey` instance.
 
 ##### Parameters
 
-| Property    | Type     | Default             | Description                                                                                                                                                    |
-| ----------- | -------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `keyType`   | `string` | `KEY_TYPES.ED25519` | URI of the key type. Only `KEY_TYPES.ED25519` is supported.                                                                                                    |
-| `webId`     | `string` | `ctx.meta.webId`    | The webId of the actor for whom the keys are to be queried.                                                                                                    |
-| `keyId`     | `string` | `undefined`         | The keyId of the key to be returned (will be resolved).                                                                                                        |
-| `keyObject` | `object` | `undefined`         | The key object to use. If neither keyId nor keyObject is provided, will choose the first key available through [getOrCreateWebIdKeys](#getOrCreateWebIdKeys) . |
-| `webId`     | `string` | `ctx.meta.webId`    | The webId of the actor for whom the key is to be queried.                                                                                                      |
+| Property         | Type      | Default             | Description                                                                                                                                                    |
+| ---------------- | --------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `keyType`        | `string`  | `KEY_TYPES.ED25519` | URI of the key type. Only `KEY_TYPES.ED25519` is supported.                                                                                                    |
+| `webId`          | `string`  | `ctx.meta.webId`    | The webId of the actor for whom the keys are to be queried.                                                                                                    |
+| `keyId`          | `string`  | `undefined`         | The keyId of the key to be returned (will be resolved).                                                                                                        |
+| `keyObject`      | `object`  | `undefined`         | The key object to use. If neither keyId nor keyObject is provided, will choose the first key available through [getOrCreateWebIdKeys](#getOrCreateWebIdKeys) . |
+| `webId`          | `string`  | `ctx.meta.webId`    | The webId of the actor for whom the key is to be queried.                                                                                                      |
+| `withPrivateKey` | `boolean` | `false`             | Set to `true` to request the `secretKeyMultibase` as well. queried.                                                                                            |
 
 ##### Return
 
-A `@digitalbazaar/ed25519-multikey` instance.
+A multikey object.
 
 ### `createKeyForActor`
 

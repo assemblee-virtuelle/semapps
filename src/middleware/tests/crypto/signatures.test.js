@@ -1,11 +1,10 @@
-const { KEY_TYPES, VC_API_SERVICE_TYPE } = require('@semapps/crypto');
+const { VC_API_SERVICE_TYPE } = require('@semapps/crypto');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { arrayOf, waitForResource } = require('@semapps/ldp');
+const { arrayOf } = require('@semapps/ldp');
 const path = require('node:path');
-const { wait } = require('../utils');
 const initialize = require('./initialize');
 
-jest.setTimeout(25_000);
+jest.setTimeout(15_000);
 
 const getChallengeFrom = async actor => {
   const vcApiEndpoint = arrayOf(actor.webIdDoc.service).find(
@@ -44,6 +43,23 @@ const setUp = async withOldKeyStore => {
     email: 'craig@test.example',
     password: 'test',
     name: 'Craig'
+  });
+
+  // Get WebId documents (we need them to find the VC API for getting challenges).
+  alice.webIdDoc = await broker.call('ldp.resource.get', {
+    resourceUri: alice.webId,
+    webId: 'system',
+    accept: MIME_TYPES.JSON
+  });
+  bob.webIdDoc = await broker.call('ldp.resource.get', {
+    resourceUri: bob.webId,
+    webId: 'system',
+    accept: MIME_TYPES.JSON
+  });
+  craig.webIdDoc = await broker.call('ldp.resource.get', {
+    resourceUri: craig.webId,
+    webId: 'system',
+    accept: MIME_TYPES.JSON
   });
 };
 
@@ -101,30 +117,11 @@ describe('signatures', () => {
         { meta: { webId: alice.webId } }
       );
 
-      expect(validationResult.valid).toBeFalsy();
+      expect(validationResult.verified).toBe(false);
     });
   });
 
   describe('VC', () => {
-    // Get WebId documents (we need them to find the VC API for getting challenges).
-    beforeAll(async () => {
-      alice.webIdDoc = await broker.call('ldp.resource.get', {
-        resourceUri: alice.webId,
-        webId: 'system',
-        accept: MIME_TYPES.JSON
-      });
-      bob.webIdDoc = await broker.call('ldp.resource.get', {
-        resourceUri: bob.webId,
-        webId: 'system',
-        accept: MIME_TYPES.JSON
-      });
-      craig.webIdDoc = broker.call('ldp.resource.get', {
-        resourceUri: craig.webId,
-        webId: 'system',
-        accept: MIME_TYPES.JSON
-      });
-    });
-
     test('credential is signed and verifiable', async () => {
       const credential = await broker.call(
         'signature.data-integrity.createVC',
@@ -144,7 +141,7 @@ describe('signatures', () => {
         { meta: { webId: alice.webId } }
       );
 
-      expect(validationResult.verified).toBeTruthy();
+      expect(validationResult.verified).toBe(true);
     });
 
     test('verifying modified credential fails', async () => {
@@ -223,7 +220,7 @@ describe('signatures', () => {
       const validationResult = await broker.call('signature.data-integrity.verifyPresentation', {
         presentation
       });
-      expect(validationResult.valid).toBe(false);
+      expect(validationResult.verified).toBe(false);
     });
 
     test('verifying modified presentation fails', async () => {
@@ -258,8 +255,6 @@ describe('signatures', () => {
   });
 
   describe('capabilities', () => {
-    // TODO: Test transferable capability for invite link.
-
     test('first and second capability are created and presentation is verifiable', async () => {
       const firstCapability = await broker.call(
         'signature.data-integrity.createCapability',
@@ -301,6 +296,78 @@ describe('signatures', () => {
       expect(validationResult.verified).toBeTruthy();
     });
 
+    test('capability is open / has no credentialSubject and transferable', async () => {
+      const firstCapability = await broker.call(
+        'signature.data-integrity.createCapability',
+        {
+          name: 'First capability',
+          credentialSubject: {
+            name: 'Invite Link',
+            description: 'An open capability.'
+          }
+        },
+        { meta: { webId: alice.webId } }
+      );
+
+      const presentation = await broker.call('signature.data-integrity.createPresentation', {
+        verifiableCredential: [firstCapability],
+        additionalPresentationProps: { description: 'Hey, you gave me that invite link.' },
+        webId: craig.webId,
+        challenge: await getChallengeFrom(alice)
+      });
+
+      const validationResult = await broker.call(
+        'signature.data-integrity.verifyCapabilityPresentation',
+        { presentation },
+        { meta: { webId: alice.webId } }
+      );
+
+      expect(validationResult.verified).toBeTruthy();
+    });
+
+    test('second capability is revoked and presentation invalid.', async () => {
+      const firstCapability = await broker.call(
+        'signature.data-integrity.createCapability',
+        {
+          name: 'First capability',
+          credentialSubject: {
+            id: bob.webId,
+            description: 'A transferable capability.'
+          }
+        },
+        { meta: { webId: alice.webId } }
+      );
+
+      const secondCapability = await broker.call(
+        'signature.data-integrity.createCapability',
+        {
+          name: 'Second capability',
+          credentialSubject: {
+            id: craig.webId,
+            description: 'A transferable capability.'
+          }
+        },
+        { meta: { webId: bob.webId } }
+      );
+
+      await broker.call('signature.data-integrity.revokeVC', { vc: secondCapability });
+
+      const presentation = await broker.call('signature.data-integrity.createPresentation', {
+        verifiableCredential: [firstCapability, secondCapability],
+        additionalPresentationProps: { description: 'Hey, Alice! Bob gave me this capability.' },
+        webId: craig.webId,
+        challenge: await getChallengeFrom(alice)
+      });
+
+      const validationResult = await broker.call(
+        'signature.data-integrity.verifyCapabilityPresentation',
+        { presentation },
+        { meta: { webId: alice.webId } }
+      );
+
+      expect(validationResult.verified).toBe(false);
+    });
+
     test('second capability with additional credentialSubject invalid', async () => {
       const firstCapability = await broker.call(
         'signature.data-integrity.createCapability',
@@ -338,7 +405,7 @@ describe('signatures', () => {
         { meta: { webId: alice.webId } }
       );
 
-      expect(validationResult.valid).toBeFalsy();
+      expect(validationResult.verified).toBe(false);
     });
 
     test('capability not invoked by holder invalid', async () => {
@@ -366,7 +433,7 @@ describe('signatures', () => {
         { meta: { webId: alice.webId } }
       );
 
-      expect(validationResult.valid).toBeFalsy();
+      expect(validationResult.verified).toBeFalsy();
     });
 
     test('non-linked chain is invalid', async () => {
@@ -406,7 +473,7 @@ describe('signatures', () => {
         { meta: { webId: alice.webId } }
       );
 
-      expect(validationResult.valid).toBeFalsy();
+      expect(validationResult.verified).toBeFalsy();
     });
   });
 });

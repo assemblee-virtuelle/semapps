@@ -16,11 +16,14 @@ const ChallengeService = require('./challenge-service');
 let cryptosuite;
 let DataIntegrityProof;
 let vc;
+/** @type {import('@digitalbazaar/ed25519-multikey')} */
+let Ed25519Multikey;
 (async () => {
   vc = await import('@digitalbazaar/vc');
 
   ({ cryptosuite } = await import('@digitalbazaar/eddsa-rdfc-2022-cryptosuite'));
   ({ DataIntegrityProof } = await import('@digitalbazaar/data-integrity'));
+  Ed25519Multikey = await import('@digitalbazaar/ed25519-multikey');
 })();
 
 const { KEY_TYPES, VC_API_SERVICE_TYPE } = require('../constants');
@@ -32,8 +35,6 @@ const context = ['https://www.w3.org/ns/credentials/v2', 'https://w3id.org/secur
 /**
  *
  * WARNING: Changing things here can have security implications.
- *
- * TODO: Add parameter validation.
  *
  * @type {import('moleculer').ServiceSchema}
  */
@@ -140,7 +141,7 @@ const DataIntegrityService = {
           challenge
         });
         if (!challengeValidationResult.valid) {
-          return challengeValidationResult;
+          return { verified: false, error: challengeValidationResult.error };
         }
 
         // Used to validate verifiable credentials in presentation.
@@ -192,16 +193,18 @@ const DataIntegrityService = {
           keyId = undefined
         } = ctx.params;
 
-        const key = await ctx.call('keys.getMultikeyInstance', {
+        const key = await ctx.call('keys.getMultikey', {
           webId,
           keyObject,
           keyId,
           keyType: KEY_TYPES.ED25519,
           withPrivateKey: true
         });
+        // The library requires the key to have the type field set to `Multikey` only.
+        const signingKeyInstance = await Ed25519Multikey.from({ ...key, type: 'Multikey' });
 
         const suite = new DataIntegrityProof({
-          signer: key.signer(),
+          signer: signingKeyInstance.signer(),
           cryptosuite
         });
 
@@ -247,13 +250,15 @@ const DataIntegrityService = {
           keyId = undefined
         } = ctx.params;
 
-        const key = await ctx.call('keys.getMultikeyInstance', {
+        const key = await ctx.call('keys.getMultikey', {
           webId,
           keyObject,
           keyId,
           keyType: KEY_TYPES.ED25519,
           withPrivateKey: true
         });
+        // The library requires the key to have the type field set to `Multikey` only.
+        const signingKeyInstance = await Ed25519Multikey.from({ ...key, type: 'Multikey' });
 
         const credential = {
           '@type': 'VerifiableCredential',
@@ -294,7 +299,7 @@ const DataIntegrityService = {
 
         // Get signature suite
         const suite = new DataIntegrityProof({
-          signer: key.signer(),
+          signer: signingKeyInstance.signer(),
           cryptosuite
         });
 
@@ -346,15 +351,18 @@ const DataIntegrityService = {
           keyId = undefined
         } = ctx.params;
 
-        const key = await ctx.call('keys.getMultikeyInstance', {
+        const key = await ctx.call('keys.getMultikey', {
           webId,
           keyObject,
           keyId,
           keyType: KEY_TYPES.ED25519,
           withPrivateKey: true
         });
+        // The library requires the key to have the type field set to `Multikey` only.
+        const signingKeyInstance = await Ed25519Multikey.from({ ...key, type: 'Multikey' });
+
         const suite = new DataIntegrityProof({
-          signer: key.signer(),
+          signer: signingKeyInstance.signer(),
           cryptosuite
         });
 
@@ -383,37 +391,51 @@ const DataIntegrityService = {
 
     /**
      * Revoke a Verifiable Credential by deleting the resource.
-     * @param {object} ctx.params.resourceUri - The URI of the resource to revoke.
+     * @param {object} ctx.params.vc - The VC or the VC URI.
      */
     revokeVC: {
       params: {
-        resourceUri: { type: 'string' }
+        vc: { type: 'multi', rules: [{ type: 'object' }, { type: 'string' }] }
       },
       async handler(ctx) {
-        const { resourceUri } = ctx.params;
+        const { vc: credential } = ctx.params;
 
-        return await ctx.call('ldp.resource.delete', { resourceUri, webId: 'system' });
+        return await ctx.call('ldp.resource.delete', { resourceUri: credential?.id || credential, webId: 'system' });
       }
     },
 
     /**
      * Create a capability Verifiable Credential.
-     * @param {object} ctx.params - The parameters for creating the capability VC.
-     * @returns {object} The created capability VC.
+     *
+     * Use the credentialSubject to express statements that authorize the holder of the capability.
+     *
+     * Use `credentialSubject.id` to set the holder of the capability.
+     * Do not set `credentialSubject.id`, to allow any holder to present the capability.
+     * The capability validator (@see VCCapabilityPresentationProofPurpose ) will check the holder of the capability
+     * and does not allow more than one delegation step (presenting more than one capability VC) when the holder is
+     * anonymous.
+     *
      */
     createCapability: {
       params: {
+        anyHolder: { type: 'boolean', optional: true, default: false },
+        validFrom: { type: 'string', optional: true },
+        validUntil: { type: 'string', optional: true },
+        credentialSubject: { type: 'object' },
         webId: { type: 'string', optional: true },
-        anyHolder: { type: 'boolean', optional: true, default: false }
+        name: { type: 'string', optional: true },
+        description: { type: 'string', optional: true },
+        noAnonRead: { type: 'boolean', optional: true, default: false },
+        purpose: { type: 'object', optional: true },
+        additionalCredentialProps: { type: 'object', optional: true },
+        keyObject: { type: 'object', optional: true },
+        keyId: { type: 'string', optional: true }
       },
       async handler(ctx) {
-        const { webId = ctx.meta.webId, anyHolder = false } = ctx.params;
+        const { webId = ctx.meta.webId } = ctx.params;
 
-        // TODO: We could add type CapabilityCredential...
         return await ctx.call('signature.data-integrity.createVC', {
           ...ctx.params,
-          // Indicates that the presentation must be done by the holder (i.e. credentialSubject.id).
-          nonTransferable: !anyHolder,
           issuer: webId
         });
       }

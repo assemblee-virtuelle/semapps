@@ -150,9 +150,9 @@ const KeysService = {
     /**
      * Returns a signing key instance for a given key or key type. If no key is available, a new one is created.
      * Currently supports Ed25519Multikey only.
-     * @returns {Ed25519Multikey} The signing key instance.
+     * @returns {object} The Multikey object.
      */
-    getMultikeyInstance: {
+    getMultikey: {
       params: {
         keyObject: { type: 'object', optional: true },
         keyId: { type: 'string', optional: true },
@@ -191,8 +191,7 @@ const KeysService = {
           delete keyObject.secretKeyMultibase;
         }
 
-        // The library requires the key to have the type field set to `Multikey` only.
-        return await Ed25519Multikey.from({ ...keyObject, type: 'Multikey' });
+        return keyObject;
       }
     },
 
