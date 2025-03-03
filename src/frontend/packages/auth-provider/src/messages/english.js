@@ -93,7 +93,8 @@ const englishMessages = {
       login_to_continue: 'Please login to continue',
       choose_pod_provider:
         'Please choose a Pod provider in the list below. All application data will be saved on your Pod.',
-      unreachable_auth_server: 'The authentication server cannot be reached'
+      unreachable_auth_server: 'The authentication server cannot be reached',
+      user_authorization_agent_not_found: 'No user agent authorization found'
     },
     notification: {
       reset_password_submitted: 'An email has been sent with reset password instructions',
