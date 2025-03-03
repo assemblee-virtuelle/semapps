@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Form, TextInput, required, useTranslate, useNotify, useSafeSetState, useAuthProvider } from 'react-admin';
 import { Button, CardContent } from '@mui/material';
 import { SubmitHandler } from 'react-hook-form';
+import RequiredFieldIndicator from './RequiredFieldIndicator';
 
 interface FormValues {
   email: string;
@@ -41,7 +42,7 @@ const FormContent = ({
           notify(
             typeof error === 'string'
               ? error
-              : typeof error === 'undefined' || !error.message
+              : !error.message
                 ? 'auth.notification.reset_password_error'
                 : error.message,
             {
@@ -60,11 +61,16 @@ const FormContent = ({
       <TextInput
         autoFocus
         source="email"
-        label={translate('auth.input.email')}
+        label={
+          <>
+            {translate('auth.input.email')}
+            <RequiredFieldIndicator />
+          </>
+        }
         autoComplete="email"
         fullWidth
         disabled={loading}
-        validate={required()}
+        validate={required(translate('auth.required.email'))}
         format={value => (value ? value.toLowerCase() : '')}
       />
       <Button variant="contained" type="submit" color="primary" disabled={loading} fullWidth>

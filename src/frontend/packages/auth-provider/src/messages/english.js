@@ -14,7 +14,9 @@ const englishMessages = {
       logout: 'Logout',
       login: 'Login',
       view_my_profile: 'View my profile',
-      edit_my_profile: 'Edit my profile'
+      edit_my_profile: 'Edit my profile',
+      show_password: 'Show password',
+      hide_password: 'Hide password'
     },
     right: {
       resource: {
@@ -44,8 +46,21 @@ const englishMessages = {
       new_password: 'New password',
       confirm_new_password: 'Confirm new password',
       password_strength: 'Password strength',
+      password_suggestions: 'Suggestions to improve your password',
+      password_suggestion: {
+        add_lowercase_letters_a_z: 'Add lowercase letters (a-z)',
+        add_uppercase_letters_a_z: 'Add uppercase letters (A-Z)',
+        add_numbers_0_9: 'Add numbers (0-9)',
+        add_special_characters: 'Add special characters (!@#$...)',
+        make_it_at_least_8_characters_long: 'Make it at least 8 characters long',
+        make_it_at_least_14_characters_long_for_maximum_strength:
+          'Make it at least 14 characters long for maximum strength'
+      },
       password_too_weak: 'Password too weak. Increase length or add special characters.',
-      password_mismatch: 'The passwords you provided do not match.'
+      password_mismatch: 'The passwords you provided do not match.',
+      required_field: 'Required field',
+      required_field_description: 'This field is required',
+      password_description: 'Characters you type will be visually hidden for security reasons'
     },
     helper: {
       login: 'Sign in to your account',
@@ -88,6 +103,13 @@ const englishMessages = {
       invalid_password: 'Invalid password',
       get_settings_error: 'An error occurred',
       update_settings_error: 'An error occurred'
+    },
+    required: {
+      email: 'Please enter your email address',
+      password: 'Please enter your password',
+      identifier: 'Please enter a unique identifier',
+      newPassword: 'Please enter a new password',
+      newPasswordAgain: 'Please enter the new password again'
     }
   }
 };
