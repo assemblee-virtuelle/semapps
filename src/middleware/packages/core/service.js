@@ -10,7 +10,7 @@ const { TripleStoreService } = require('@semapps/triplestore');
 const { VoidService } = require('@semapps/void');
 const { WebAclService } = require('@semapps/webacl');
 const { WebfingerService } = require('@semapps/webfinger');
-const { KeysService, SignatureService, DataIntegrityService } = require('@semapps/crypto');
+const { KeysService, SignatureService, VerifiableCredentialsService } = require('@semapps/crypto');
 const { WebIdService } = require('@semapps/webid');
 
 const botsContainer = {
@@ -147,12 +147,11 @@ const CoreService = {
       });
     }
 
-    if (this.settings.dataIntegrity !== false) {
+    if (this.settings.verifiableCredentials !== false) {
       this.broker.createService({
-        mixins: [DataIntegrityService],
+        mixins: [VerifiableCredentialsService],
         settings: {
-          baseUri: baseUrl,
-          ...this.settings.dataIntegrity
+          ...this.settings.verifiableCredentials
         }
       });
     }

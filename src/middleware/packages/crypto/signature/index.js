@@ -1,8 +1,5 @@
 module.exports = {
   SignatureService: require('./http-signatures'),
   ProxyService: require('./proxy'),
-  KeyPairService: require('./keypair'),
-  DataIntegrityService: require('./data-integrity'),
-  ChallengeService: require('./challenge-service'),
-  VCCapabilityPresentationProofPurpose: require('./VCCapabilityPresentationProofPurpose')
+  KeyPairService: require('./keypair')
 };

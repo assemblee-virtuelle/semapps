@@ -168,7 +168,7 @@ const AuthMixin = {
 
         // Verify that decoded JSON token is a signed VC presentation for a capability.
         const { verified: isCapSignatureVerified, presentation: verifiedPresentation } = await ctx.call(
-          'signature.data-integrity.verifyCapabilityPresentation',
+          'crypto.vc.verifier.verifyCapabilityPresentation',
           {
             presentation: decodedToken
           }
@@ -187,14 +187,14 @@ const AuthMixin = {
         req.$ctx.meta.authorization = { capabilityPresentation: verifiedPresentation };
 
         return Promise.resolve(verifiedPresentation);
-      } else {
-        // Validate if the token was signed by server (registered user).
-        const serverSignedPayload = await ctx.call('auth.jwt.verifyServerSignedToken', { token });
-        if (serverSignedPayload) {
-          ctx.meta.tokenPayload = serverSignedPayload;
-          ctx.meta.webId = serverSignedPayload.webId;
-          return Promise.resolve(serverSignedPayload);
-        }
+      }
+
+      // Validate if the token was signed by server (registered user).
+      const serverSignedPayload = await ctx.call('auth.jwt.verifyServerSignedToken', { token });
+      if (serverSignedPayload) {
+        ctx.meta.tokenPayload = serverSignedPayload;
+        ctx.meta.webId = serverSignedPayload.webId;
+        return Promise.resolve(serverSignedPayload);
       }
 
       return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));

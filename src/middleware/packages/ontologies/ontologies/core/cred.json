@@ -1,0 +1,6 @@
+{
+  "prefix": "cred",
+  "namespace": "https://www.w3.org/2018/credentials#",
+  "jsonldContext": "https://www.w3.org/ns/credentials/v2",
+  "preserveContextUri": true
+}

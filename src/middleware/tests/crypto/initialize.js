@@ -19,7 +19,7 @@ const initialize = async (port, withOldKeyStore = false) => {
     logger: {
       type: 'Console',
       options: {
-        level: 'error'
+        level: 'warn'
       }
     }
   });
@@ -76,7 +76,7 @@ const initialize = async (port, withOldKeyStore = false) => {
       'keys.container',
       'keys.public-container',
       'keys.migration',
-      'signature.data-integrity'
+      'crypto.vc'
     ],
     5_000
   );

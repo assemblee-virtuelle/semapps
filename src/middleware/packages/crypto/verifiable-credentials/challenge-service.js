@@ -8,8 +8,7 @@ const crypto = require('node:crypto');
  * @type {import('moleculer').ServiceSchema}
  */
 const ChallengeService = {
-  name: 'signature.challenge',
-  dependencies: ['api'],
+  name: 'crypto.vc.presentation.challenge',
   settings: {
     /** Milliseconds challenges should be valid for. @default 5 minutes */
     challengeExpirationMs: 5 * 60 * 1000
@@ -17,26 +16,9 @@ const ChallengeService = {
   async started() {
     // Have the format { challenge: {timestamp: new Date()} }
     this.challenges = {};
-
-    // Register route to obtain challenge from.
-    await this.broker.call('api.addRoute', {
-      route: {
-        name: 'create-challenge-endpoint',
-        path: '/api/v1/vc/challenges',
-        authorization: false,
-        authentication: false,
-        aliases: {
-          'POST /': 'signature.challenge.createChallenge'
-        }
-      }
-    });
-
-    // TODO: Add VC API discovery in WebId / CID document.
-    // This requires to add the triples to the webId doc
-    // and it requires the context to be updated.
   },
   actions: {
-    createChallenge() {
+    create() {
       if (!this.cleanupTimerSetUp) {
         this.startCleanupTimer();
       }
@@ -47,15 +29,15 @@ const ChallengeService = {
       return { challenge };
     },
 
-    getAllChallenges() {
+    getAll() {
       return this.challenges;
     },
 
-    clearChallenges() {
+    clearAll() {
       this.challenges = {};
     },
 
-    validateChallenge(ctx) {
+    validate(ctx) {
       const { challenge } = ctx.params;
 
       // Does challenge exist?
@@ -74,7 +56,7 @@ const ChallengeService = {
       return { valid: true };
     },
 
-    cleanOldChallenges() {
+    cleanElapsed() {
       const now = Date.now();
       for (const [challenge, { issued }] of Object.entries(this.challenges)) {
         if (now - issued > this.settings.challengeExpirationMs) {
@@ -92,13 +74,13 @@ const ChallengeService = {
         this.broker.call('timer.set', {
           key: 'challengeCleanup',
           time: Date.now() + this.settings.challengeExpirationMs,
-          actionName: 'signature.challenge.cleanOldChallenges',
+          actionName: 'crypto.vc.presentation.challenge.cleanElapsed',
           repeat: this.settings.challengeExpirationMs
         });
       } else {
         // Set up `setInterval`-based solution.
         setInterval(() => {
-          this.actions.cleanOldChallenges();
+          this.actions.cleanElapsed();
           this.cleanupTimerSetUp = false;
         }, this.settings.challengeExpirationMs);
       }

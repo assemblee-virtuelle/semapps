@@ -1,5 +1,6 @@
 module.exports = {
   ...require('./keys'),
   ...require('./signature'),
-  ...require('./constants')
+  ...require('./constants'),
+  ...require('./verifiable-credentials')
 };

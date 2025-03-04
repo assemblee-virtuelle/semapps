@@ -46,7 +46,7 @@ module.exports = {
       }
       const newObj = { ...obj };
 
-      if (newObj.id || (newObj['@id'] && !isRoot)) {
+      if (!isRoot && (newObj.id || newObj['@id'])) {
         newObj[this.settings.pseudoIdPredicate] = newObj['@id'] || newObj.id;
         delete newObj.id;
         delete newObj['@id'];
