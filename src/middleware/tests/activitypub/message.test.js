@@ -112,8 +112,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
           type: OBJECT_TYPES.NOTE,
           attributedTo: bob.id,
           content: "I'm fine, what about you ?"
-        },
-        totalItems: 1
+        }
       });
     });
   });
@@ -141,14 +140,11 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
     });
 
     await waitForExpect(async () => {
-      await expect(
-        alice.call('activitypub.collection.get', {
-          resourceUri: `${aliceMessageUri}/replies`,
-          accept: MIME_TYPES.JSON
-        })
-      ).resolves.toMatchObject({
-        totalItems: 0
+      const replies = await alice.call('activitypub.collection.get', {
+        resourceUri: `${aliceMessageUri}/replies`,
+        accept: MIME_TYPES.JSON
       });
+      expect(replies.items).toBeUndefinedOrEmptyArray();
     });
   });
 });

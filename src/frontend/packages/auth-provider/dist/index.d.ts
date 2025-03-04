@@ -215,15 +215,28 @@ declare namespace SsoLoginPage {
 }
 export function useSignup(): (params?: {}) => any;
 /**
+ * Configuration options for password strength scoring
+ *
+ * The password strength is calculated based on:
+ * - Password length (up to 4 points):
+ * - 2 points if length >= 8 characters
+ * - Additional 2 points if length >= 14 characters
+ * - Character types (1 point each):
+ * - Lowercase letters
+ * - Uppercase letters
+ * - Numbers
+ * - Special characters
+ *
+ * Maximum possible score is 8 points
  * @typedef PasswordStrengthOptions
- * @property {number} isVeryLongLength - Required characters for a very long password (default: 12)
- * @property {number} isLongLength - Required characters for a long password (default: 6)
- * @property {number} isVeryLongScore - Score for a very long password (default: 2.5)
- * @property {number} isLongScore - Score for a long password (default: 1.5)
- * @property {number} uppercaseScore - Score for a password with uppercase letters (default: 1)
- * @property {number} lowercaseScore - Score for a password with lowercase letters (default: 1)
- * @property {number} numbersScore - Score for a password with numbers (default: 1)
- * @property {number} nonAlphanumericsScore - Score for a password without non-alphanumeric characters (default: 1)
+ * @property {number} isVeryLongLength - Number of characters required for a very long password (default: 14)
+ * @property {number} isLongLength - Number of characters required for a long password (default: 8)
+ * @property {number} isVeryLongScore - Additional score for a very long password (default: 2)
+ * @property {number} isLongScore - Score for a long password (default: 2)
+ * @property {number} uppercaseScore - Score for including uppercase letters (default: 1)
+ * @property {number} lowercaseScore - Score for including lowercase letters (default: 1)
+ * @property {number} numbersScore - Score for including numbers (default: 1)
+ * @property {number} nonAlphanumericsScore - Score for including special characters (default: 1)
  */
 /** @type {PasswordStrengthOptions} */
 export const defaultPasswordScorerOptions: PasswordStrengthOptions;
@@ -231,51 +244,102 @@ export function createPasswordScorer(
   options?: PasswordStrengthOptions,
   minRequiredScore?: number
 ): {
-  scoreFn: (password: any) => number;
+  scoreFn: (password: string) => number;
+  analyzeFn: (password: string) => {
+    score: number;
+    suggestions: string[];
+    missingCriteria: {
+      lowercase: boolean;
+      uppercase: boolean;
+      numbers: boolean;
+      special: boolean;
+      length: boolean;
+      veryLong: boolean;
+    };
+  };
   minRequiredScore: number;
   maxScore: number;
 };
 export declare namespace defaultScorer {
-  export function scoreFn(password: any): number;
-  export { minRequiredScore };
-  export let maxScore: number;
+  let scoreFn: (password: string) => number;
+  let analyzeFn: (password: string) => {
+    score: number;
+    suggestions: string[];
+    missingCriteria: {
+      lowercase: boolean;
+      uppercase: boolean;
+      numbers: boolean;
+      special: boolean;
+      length: boolean;
+      veryLong: boolean;
+    };
+  };
+  let minRequiredScore: number;
+  let maxScore: number;
 }
+/**
+ * Configuration options for password strength scoring
+ *
+ * The password strength is calculated based on:
+ * - Password length (up to 4 points):
+ * - 2 points if length >= 8 characters
+ * - Additional 2 points if length >= 14 characters
+ * - Character types (1 point each):
+ * - Lowercase letters
+ * - Uppercase letters
+ * - Numbers
+ * - Special characters
+ *
+ * Maximum possible score is 8 points
+ */
 type PasswordStrengthOptions = {
   /**
-   * - Required characters for a very long password (default: 12)
+   * - Number of characters required for a very long password (default: 14)
    */
   isVeryLongLength: number;
   /**
-   * - Required characters for a long password (default: 6)
+   * - Number of characters required for a long password (default: 8)
    */
   isLongLength: number;
   /**
-   * - Score for a very long password (default: 2.5)
+   * - Additional score for a very long password (default: 2)
    */
   isVeryLongScore: number;
   /**
-   * - Score for a long password (default: 1.5)
+   * - Score for a long password (default: 2)
    */
   isLongScore: number;
   /**
-   * - Score for a password with uppercase letters (default: 1)
+   * - Score for including uppercase letters (default: 1)
    */
   uppercaseScore: number;
   /**
-   * - Score for a password with lowercase letters (default: 1)
+   * - Score for including lowercase letters (default: 1)
    */
   lowercaseScore: number;
   /**
-   * - Score for a password with numbers (default: 1)
+   * - Score for including numbers (default: 1)
    */
   numbersScore: number;
   /**
-   * - Score for a password without non-alphanumeric characters (default: 1)
+   * - Score for including special characters (default: 1)
    */
   nonAlphanumericsScore: number;
 };
 export function validatePasswordStrength(scorer?: {
-  scoreFn: (password: any) => number;
+  scoreFn: (password: string) => number;
+  analyzeFn: (password: string) => {
+    score: number;
+    suggestions: string[];
+    missingCriteria: {
+      lowercase: boolean;
+      uppercase: boolean;
+      numbers: boolean;
+      special: boolean;
+      length: boolean;
+      veryLong: boolean;
+    };
+  };
   minRequiredScore: number;
   maxScore: number;
 }): (value: any) => 'auth.input.password_too_weak' | undefined;
@@ -287,7 +351,19 @@ export function PasswordStrengthIndicator({
   [x: string]: any;
   scorer?:
     | {
-        scoreFn: (password: any) => number;
+        scoreFn: (password: string) => number;
+        analyzeFn: (password: string) => {
+          score: number;
+          suggestions: string[];
+          missingCriteria: {
+            lowercase: boolean;
+            uppercase: boolean;
+            numbers: boolean;
+            special: boolean;
+            length: boolean;
+            veryLong: boolean;
+          };
+        };
         minRequiredScore: number;
         maxScore: number;
       }
@@ -377,6 +453,8 @@ declare namespace englishMessages {
       let login: string;
       let view_my_profile: string;
       let edit_my_profile: string;
+      let show_password: string;
+      let hide_password: string;
     }
     namespace right {
       namespace resource {
@@ -410,8 +488,20 @@ declare namespace englishMessages {
       let new_password: string;
       let confirm_new_password: string;
       let password_strength: string;
+      let password_suggestions: string;
+      namespace password_suggestion {
+        let add_lowercase_letters_a_z: string;
+        let add_uppercase_letters_a_z: string;
+        let add_numbers_0_9: string;
+        let add_special_characters: string;
+        let make_it_at_least_8_characters_long: string;
+        let make_it_at_least_14_characters_long_for_maximum_strength: string;
+      }
       let password_too_weak: string;
       let password_mismatch: string;
+      let required_field: string;
+      let required_field_description: string;
+      let password_description: string;
     }
     namespace helper {
       let login_1: string;
@@ -457,6 +547,14 @@ declare namespace englishMessages {
       let invalid_password: string;
       let get_settings_error: string;
       let update_settings_error: string;
+    }
+    namespace required {
+      let email_1: string;
+      export { email_1 as email };
+      export let password: string;
+      export let identifier: string;
+      export let newPassword: string;
+      export let newPasswordAgain: string;
     }
   }
 }
@@ -477,6 +575,8 @@ declare namespace frenchMessages {
       let login: string;
       let view_my_profile: string;
       let edit_my_profile: string;
+      let show_password: string;
+      let hide_password: string;
     }
     namespace right {
       namespace resource {
@@ -510,8 +610,20 @@ declare namespace frenchMessages {
       let new_password: string;
       let confirm_new_password: string;
       let password_strength: string;
+      let password_suggestions: string;
+      namespace password_suggestion {
+        let add_lowercase_letters_a_z: string;
+        let add_uppercase_letters_a_z: string;
+        let add_numbers_0_9: string;
+        let add_special_characters: string;
+        let make_it_at_least_8_characters_long: string;
+        let make_it_at_least_14_characters_long_for_maximum_strength: string;
+      }
       let password_too_weak: string;
       let password_mismatch: string;
+      let required_field: string;
+      let required_field_description: string;
+      let password_description: string;
     }
     namespace helper {
       let login_1: string;
@@ -557,6 +669,14 @@ declare namespace frenchMessages {
       let invalid_password: string;
       let get_settings_error: string;
       let update_settings_error: string;
+    }
+    namespace required {
+      let email_1: string;
+      export { email_1 as email };
+      export let password: string;
+      export let identifier: string;
+      export let newPassword: string;
+      export let newPasswordAgain: string;
     }
   }
 }

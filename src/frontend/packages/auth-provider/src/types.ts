@@ -3,6 +3,19 @@ export type AclMode = 'acl:Read' | 'acl:Append' | 'acl:Write' | 'acl:Control';
 /** foaf:Agent = anonymous, acl:AuthenticatedAgent = logged */
 export type AclClass = 'foaf:Agent' | 'acl:AuthenticatedAgent';
 
+export interface PasswordAnalysis {
+  score: number;
+  suggestions: string[];
+  missingCriteria: {
+    lowercase: boolean;
+    uppercase: boolean;
+    numbers: boolean;
+    special: boolean;
+    length: boolean;
+    veryLong: boolean;
+  };
+}
+
 type BasePermission = {
   /** '#Control' | '#Read' | '#Write' | custom string */
   '@id': string;

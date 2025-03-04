@@ -49,14 +49,24 @@ module.exports = {
       // If ref not defined or if it's a resolved object with no id (created by blank nodes)...
       if (typeof reference !== 'string' && !reference?.['@id'] && !reference?.id) return reference;
 
+      const resourceUri = reference['@id'] || reference.id || reference;
+
       // Get the resource.
-      let result = await ctx.call('ldp.resource.get', {
-        resourceUri: reference['@id'] || reference.id || reference,
-        accept: MIME_TYPES.JSON
-      });
-      // Delete the context from the result
-      delete result['@context'];
-      return result;
+      try {
+        let result = await ctx.call('ldp.resource.get', {
+          resourceUri,
+          accept: MIME_TYPES.JSON
+        });
+        // Delete the context from the result
+        delete result['@context'];
+        return result;
+      } catch (e) {
+        if (e.code === 403 || e.code === 404) {
+          return resourceUri;
+        } else {
+          throw e;
+        }
+      }
     },
 
     /**

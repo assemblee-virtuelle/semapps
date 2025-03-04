@@ -86,7 +86,7 @@ As first parameter, it takes a full URL or a predicate. In the latter case, it w
 ```jsx
 const {
   items, // An array listing the items of the collection.
-  totalItems, // The total number of items in the collection.
+  totalItems, // The total number of items in the collection. Only present if the collection is not paginated or if the server yields totalItems
   refetch, // A callback to refresh the data
   url, // url of the loaded collection (useful if only a predicate was passed)
   error, // List of all errors that occurred while fetching the collection and its items or undefined.

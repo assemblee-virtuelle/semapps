@@ -61,6 +61,8 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
   const { dereferenceItems = false, liveUpdates = false } = options;
   const { data: identity } = useGetIdentity();
   const [totalItems, setTotalItems] = useState<number>(0);
+  const [isPaginated, setIsPaginated] = useState<boolean>(false); // true if the collection is paginated
+  const [yieldsTotalItems, setYieldsTotalItems] = useState<boolean>(false); // true if the collection server yields totalItems
   const queryClient = useQueryClient();
   const [hasLiveUpdates, setHasLiveUpdates] = useState<{ status: string; error?: any }>({
     status: 'connecting'
@@ -86,9 +88,26 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
   //  or default to `collectionUrl` (which should give you the first page).
   const fetchCollection: QueryFunction = useCallback(
     async ({ pageParam: nextPageUrl }) => {
+      // If there is a nextPageUrl, we are fetching a page, otherwise we are fetching the first page or the collection
+      const fetchingPage: boolean = !!nextPageUrl;
       // Fetch page or first page (collectionUrl)
       let { json } = await dataProvider.fetch(nextPageUrl || collectionUrl);
-      if (json.totalItems) setTotalItems(json.totalItems);
+
+      // If we are fetching the first page or the collection, we can workout some information
+      if (!fetchingPage) {
+        const localIsPaginated = !!json.first || !!json.next;
+        setIsPaginated(localIsPaginated);
+
+        // If the server yields totalItems, we can use it
+        if (json.totalItems) {
+          setTotalItems(json.totalItems);
+          setYieldsTotalItems(true);
+        } else if (!localIsPaginated) {
+          // If the collection is not paginated, we can count items
+          const items = arrayOf(json.orderedItems || json.items);
+          if (items) setTotalItems(items.length);
+        }
+      }
 
       // If first page, handle this here.
       if ((json.type === 'OrderedCollection' || json.type === 'Collection') && json.first) {
@@ -107,7 +126,7 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
 
       return json;
     },
-    [dataProvider, collectionUrl, identity, setTotalItems]
+    [dataProvider, collectionUrl, identity, setTotalItems, setIsPaginated, setYieldsTotalItems]
   );
 
   // Use infiniteQuery to handle pagination, fetching, etc.
@@ -140,7 +159,11 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
     (item: string | any, shouldRefetch: boolean | number = true) => {
       queryClient.setQueryData(['collection', { collectionUrl }], (oldData: any) => {
         if (!oldData) return oldData;
-        setTotalItems(totalItems => totalItems + 1);
+
+        // Only update totalItems if collection is not paginated or if the server yields totalItems
+        if (yieldsTotalItems || !isPaginated) {
+          setTotalItems(totalItems => totalItems + 1);
+        }
 
         // Destructure, so react knows, it needs to re-render the pages.
         const pages = [...oldData.pages];
@@ -165,14 +188,18 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
         );
       }
     },
-    [queryClient, collectionUrl, setTotalItems]
+    [queryClient, collectionUrl, setTotalItems, isPaginated, yieldsTotalItems]
   );
 
   const removeItem = useCallback(
     (item: string | any, shouldRefetch: boolean = true) => {
       queryClient.setQueryData(['collection', { collectionUrl }], (oldData: any) => {
         if (!oldData) return oldData;
-        setTotalItems(totalItems => totalItems - 1);
+
+        // Only update totalItems if collection is not paginated or if the server yields totalItems
+        if (yieldsTotalItems || !isPaginated) {
+          setTotalItems(totalItems => totalItems - 1);
+        }
 
         // Destructure, so react knows, it needs to re-render the pages array.
         const pages = [...oldData.pages];
@@ -199,7 +226,7 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
         );
       }
     },
-    [queryClient, collectionUrl, setTotalItems]
+    [queryClient, collectionUrl, setTotalItems, isPaginated, yieldsTotalItems]
   );
 
   // Live Updates
@@ -259,9 +286,9 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
     [webSocketRef, liveUpdates]
   );
 
-  return {
+  // Construct return object conditionally
+  const returnObject = {
     items,
-    totalItems,
     error: allErrors.length > 0 && allErrors,
     refetch,
     fetchNextPage,
@@ -276,6 +303,13 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
     awaitWebSocketConnection,
     webSocketRef
   };
+
+  // Only include totalItems if the server yields totalItems or for non-paginated collections
+  if (yieldsTotalItems || !isPaginated) {
+    return { ...returnObject, totalItems };
+  }
+
+  return returnObject;
 };
 
 export default useCollection;
