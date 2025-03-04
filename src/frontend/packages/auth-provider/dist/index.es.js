@@ -4,7 +4,7 @@ import {discoveryRequest as $1obPJ$discoveryRequest, processDiscoveryResponse as
 import {jsx as $1obPJ$jsx, jsxs as $1obPJ$jsxs, Fragment as $1obPJ$Fragment} from "react/jsx-runtime";
 import $1obPJ$react, {useEffect as $1obPJ$useEffect, useState as $1obPJ$useState, useCallback as $1obPJ$useCallback, useRef as $1obPJ$useRef, useMemo as $1obPJ$useMemo, forwardRef as $1obPJ$forwardRef} from "react";
 import {useResourceContext as $1obPJ$useResourceContext, Create as $1obPJ$Create, CreateActions as $1obPJ$CreateActions, usePermissions as $1obPJ$usePermissions, useNotify as $1obPJ$useNotify, useRedirect as $1obPJ$useRedirect, useGetRecordId as $1obPJ$useGetRecordId, Edit as $1obPJ$Edit, useResourceDefinition as $1obPJ$useResourceDefinition, useRecordContext as $1obPJ$useRecordContext, TopToolbar as $1obPJ$TopToolbar, ListButton as $1obPJ$ListButton, ShowButton as $1obPJ$ShowButton, Button as $1obPJ$Button, useTranslate as $1obPJ$useTranslate, useGetList as $1obPJ$useGetList, useDataProvider as $1obPJ$useDataProvider, Loading as $1obPJ$Loading, Error as $1obPJ$Error, useAuthProvider as $1obPJ$useAuthProvider, Toolbar as $1obPJ$Toolbar, SaveButton as $1obPJ$SaveButton, DeleteButton as $1obPJ$DeleteButton, EditButton as $1obPJ$EditButton, List as $1obPJ$List1, CreateButton as $1obPJ$CreateButton, ExportButton as $1obPJ$ExportButton, Show as $1obPJ$Show, useLogin as $1obPJ$useLogin, useGetIdentity as $1obPJ$useGetIdentity, Form as $1obPJ$Form, useSafeSetState as $1obPJ$useSafeSetState, useLocaleState as $1obPJ$useLocaleState, TextInput as $1obPJ$TextInput, required as $1obPJ$required, minLength as $1obPJ$minLength, email as $1obPJ$email, Notification as $1obPJ$Notification, Resource as $1obPJ$Resource, useUserMenu as $1obPJ$useUserMenu, UserMenu as $1obPJ$UserMenu, Logout as $1obPJ$Logout, useGetPermissions as $1obPJ$useGetPermissions} from "react-admin";
-import {useCreateContainerUri as $1obPJ$useCreateContainerUri, useCreateContainer as $1obPJ$useCreateContainer} from "@semapps/semantic-data-provider";
+import {useCreateContainerUri as $1obPJ$useCreateContainerUri} from "@semapps/semantic-data-provider";
 import $1obPJ$muiiconsmaterialShare from "@mui/icons-material/Share";
 import {Dialog as $1obPJ$Dialog, DialogTitle as $1obPJ$DialogTitle, DialogContent as $1obPJ$DialogContent, DialogActions as $1obPJ$DialogActions, TextField as $1obPJ$TextField, List as $1obPJ$List, ListItem as $1obPJ$ListItem, ListItemAvatar as $1obPJ$ListItemAvatar, Avatar as $1obPJ$Avatar, ListItemText as $1obPJ$ListItemText, ListItemSecondaryAction as $1obPJ$ListItemSecondaryAction, IconButton as $1obPJ$IconButton, Menu as $1obPJ$Menu, MenuItem as $1obPJ$MenuItem, ListItemIcon as $1obPJ$ListItemIcon, useMediaQuery as $1obPJ$useMediaQuery, DialogContentText as $1obPJ$DialogContentText, Button as $1obPJ$Button1, Card as $1obPJ$Card, Typography as $1obPJ$Typography, CardActions as $1obPJ$CardActions, Box as $1obPJ$Box, CardContent as $1obPJ$CardContent, LinearProgress as $1obPJ$LinearProgress} from "@mui/material";
 import $1obPJ$muistylesmakeStyles from "@mui/styles/makeStyles";
@@ -209,7 +209,10 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
                     if (e.message === "email.already.exists") throw new Error("auth.message.user_email_exist");
                     else if (e.message === "username.already.exists") throw new Error("auth.message.username_exist");
                     else if (e.message === "username.invalid") throw new Error("auth.message.username_invalid");
-                    else throw new Error("auth.message.signup_error");
+                    else {
+                        console.error(e);
+                        throw new Error("auth.message.signup_error");
+                    }
                 }
                 localStorage.setItem("token", token);
                 await dataProvider.refreshConfig();
@@ -303,7 +306,7 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
             // It also passes an object `{ params: { route: 'dashboard' } }` on the Dashboard
             // Ignore all this until we found a way to bypass these redundant calls
             if (typeof uri === "object") return;
-            if (!uri || !uri.startsWith("http")) throw new Error("The first parameter passed to getPermissions must be an URL");
+            if (!uri || !uri.startsWith("http")) throw new Error(`The first parameter passed to getPermissions must be an URL. Received: ${uri}`);
             const aclUri = (0, $47a3fad69bcb0083$export$4450a74bced1b745)(uri);
             try {
                 const { json: json } = await dataProvider.fetch(aclUri);
@@ -553,7 +556,7 @@ var $3246c5a1f284b82d$export$2e2bcd8739ae039 = $3246c5a1f284b82d$var$useCheckPer
 
 const $f2c5683e04dee28c$var$CreateWithPermissions = (props)=>{
     const resource = (0, $1obPJ$useResourceContext)();
-    const createContainerUri = (0, $1obPJ$useCreateContainerUri)()(resource);
+    const createContainerUri = (0, $1obPJ$useCreateContainerUri)(resource);
     (0, $3246c5a1f284b82d$export$2e2bcd8739ae039)(createContainerUri, "create");
     return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Create), {
         ...props
@@ -1003,7 +1006,7 @@ const $7dac2771cc5eb38b$var$PermissionsButton = ({ isContainer: isContainer })=>
     const record = (0, $1obPJ$useRecordContext)();
     const resource = (0, $1obPJ$useResourceContext)();
     const [showDialog, setShowDialog] = (0, $1obPJ$useState)(false);
-    const createContainer = (0, $1obPJ$useCreateContainer)(resource);
+    const createContainer = (0, $1obPJ$useCreateContainerUri)(resource);
     const uri = isContainer ? createContainer : record.id || record["@id"];
     return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Fragment), {
         children: [
@@ -1033,7 +1036,7 @@ const $1d084bfeb799eb8d$var$EditActionsWithPermissions = ()=>{
     const record = (0, $1obPJ$useRecordContext)();
     const { permissions: permissions } = (0, $1obPJ$usePermissions)(record?.id);
     const resource = (0, $1obPJ$useResourceContext)();
-    const containerUri = (0, $1obPJ$useCreateContainerUri)()(resource);
+    const containerUri = (0, $1obPJ$useCreateContainerUri)(resource);
     const { permissions: containerPermissions } = (0, $1obPJ$usePermissions)(containerUri);
     return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$TopToolbar), {
         children: [
@@ -1132,7 +1135,7 @@ const $e6071424a1ba88d9$var$ListActionsWithPermissions = ({ bulkActions: bulkAct
     const resource = (0, $1obPJ$useResourceContext)();
     const xs = (0, $1obPJ$useMediaQuery)((theme)=>theme.breakpoints.down("xs"));
     const resourceDefinition = (0, $1obPJ$useResourceDefinition)();
-    const createContainerUri = (0, $1obPJ$useCreateContainer)(resource);
+    const createContainerUri = (0, $1obPJ$useCreateContainerUri)(resource);
     const { permissions: permissions } = (0, $1obPJ$usePermissions)(createContainerUri);
     return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$TopToolbar), {
         children: [
@@ -1187,7 +1190,7 @@ const $acd67d211d146755$var$ShowActionsWithPermissions = ()=>{
     const record = (0, $1obPJ$useRecordContext)();
     const { permissions: permissions } = (0, $1obPJ$usePermissions)(record?.id);
     const resource = (0, $1obPJ$useResourceContext)();
-    const containerUri = (0, $1obPJ$useCreateContainerUri)()(resource);
+    const containerUri = (0, $1obPJ$useCreateContainerUri)(resource);
     const { permissions: containerPermissions } = (0, $1obPJ$usePermissions)(containerUri);
     return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$TopToolbar), {
         children: [
@@ -2677,7 +2680,7 @@ var $23fea069f5d2d834$export$2e2bcd8739ae039 = $23fea069f5d2d834$var$LocalLoginP
 
 // Not used for now. The ListWithPermissions component will handle the conditional display of the Create button.
 const $9594dfbc217337d0$var$ResourceWithPermission = ({ name: name, create: create, ...rest })=>{
-    const createContainer = (0, $1obPJ$useCreateContainer)(name);
+    const createContainer = (0, $1obPJ$useCreateContainerUri)(name);
     const { permissions: permissions } = (0, $1obPJ$usePermissions)(createContainer);
     return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Resource), {
         ...rest,
@@ -3072,6 +3075,9 @@ const $509b6323d7902699$var$frenchMessages = {
     }
 };
 var $509b6323d7902699$export$2e2bcd8739ae039 = $509b6323d7902699$var$frenchMessages;
+
+
+var $7bff7e7f4958f7ba$exports = {};
 
 
 

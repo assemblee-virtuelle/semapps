@@ -1,27 +1,15 @@
-import urlJoin from 'url-join';
 import { RaRecord } from 'react-admin';
 import { Configuration } from '../types';
+import getUploadsContainerUri from './getUploadsContainerUri';
 
 const isFile = (o: any): o is { rawFile: File } => o?.rawFile && o.rawFile instanceof File;
 const isFileToDelete = (o: any): o is { fileToDelete: string } =>
   o?.fileToDelete !== undefined && o?.fileToDelete !== null;
 
-const getUploadsContainerUri = (config: Configuration, serverKey?: string) => {
-  // If no server key is defined, or if the server has no uploads container, find any server with a uploads container
-  if (!serverKey || !config.dataServers[serverKey].uploadsContainer)
-    serverKey = Object.keys(config.dataServers).find(key => config.dataServers[key].uploadsContainer);
-
-  if (serverKey) {
-    return urlJoin(config.dataServers[serverKey].baseUrl, config.dataServers[serverKey].uploadsContainer!);
-  } else {
-    // No server has an uploads container
-    return null;
-  }
-};
-
 export const uploadFile = async (rawFile: File, config: Configuration, serverKey?: string) => {
   const uploadsContainerUri = getUploadsContainerUri(config, serverKey);
-  if (!uploadsContainerUri) throw new Error("You must define an uploadsContainer in one of the server's configuration");
+  if (!uploadsContainerUri)
+    throw new Error("You must define an container with binaryResources in one of the server's configuration");
 
   const response = await config.httpClient(uploadsContainerUri, {
     method: 'POST',

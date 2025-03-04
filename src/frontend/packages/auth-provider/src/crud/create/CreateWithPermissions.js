@@ -5,7 +5,7 @@ import useCheckPermissions from '../../hooks/useCheckPermissions';
 
 const CreateWithPermissions = props => {
   const resource = useResourceContext();
-  const createContainerUri = useCreateContainerUri()(resource);
+  const createContainerUri = useCreateContainerUri(resource);
   useCheckPermissions(createContainerUri, 'create');
   return <Create {...props} />;
 };

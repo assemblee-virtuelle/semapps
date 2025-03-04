@@ -1,5 +1,7 @@
 const getRdfPrefixes = ontologies => {
-  return ontologies.map(ontology => `PREFIX ${ontology.prefix}: <${ontology.url}>`).join('\n');
+  return Object.entries(ontologies)
+    .map(([prefix, url]) => `PREFIX ${prefix}: <${url}>`)
+    .join('\n');
 };
 
 export default getRdfPrefixes;

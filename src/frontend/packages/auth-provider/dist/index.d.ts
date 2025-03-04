@@ -40,9 +40,21 @@ export function authProvider({
   getAccountSettings: (params: any) => Promise<any>;
   updateAccountSettings: (params: any) => Promise<void>;
 };
-type AclMode = 'acl:Read' | 'acl:Append' | 'acl:Write' | 'acl:Control';
+export type AclMode = 'acl:Read' | 'acl:Append' | 'acl:Write' | 'acl:Control';
 /** foaf:Agent = anonymous, acl:AuthenticatedAgent = logged */
-type AclClass = 'foaf:Agent' | 'acl:AuthenticatedAgent';
+export type AclClass = 'foaf:Agent' | 'acl:AuthenticatedAgent';
+export interface PasswordAnalysis {
+  score: number;
+  suggestions: string[];
+  missingCriteria: {
+    lowercase: boolean;
+    uppercase: boolean;
+    numbers: boolean;
+    special: boolean;
+    length: boolean;
+    veryLong: boolean;
+  };
+}
 type BasePermission = {
   /** '#Control' | '#Read' | '#Write' | custom string */
   '@id': string;
@@ -70,7 +82,21 @@ type ClassPermission = BasePermission & {
   'acl:agentClass': AclClass | AclClass[];
 };
 type Permission = UserPermission | GroupPermission | ClassPermission;
-type Permissions = Permission[];
+export type Permissions = Permission[];
+export type CustomTokenPayload = {
+  webId: string;
+  iat: number;
+};
+export type IdTokenPayload = {
+  azp: string;
+  sub: string;
+  webid: string;
+  at_hash: string;
+  aud: string;
+  exp: number;
+  iat: number;
+  iss: string;
+};
 declare const rights: {
   show: AclMode[];
   list: AclMode[];

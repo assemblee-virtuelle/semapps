@@ -1,5 +1,5 @@
 import { namedNode, triple, variable } from '@rdfjs/data-model';
-import resolvePrefix from './resolvePrefix';
+import getUriFromPrefix from './getUriFromPrefix';
 
 const defaultToArray = value => (!value ? [] : Array.isArray(value) ? value : [value]);
 
@@ -14,7 +14,7 @@ const buildBaseQuery = (predicates, ontologies) => {
   let baseTriples;
   if (predicates) {
     baseTriples = defaultToArray(predicates).map((predicate, i) =>
-      triple(variable('s1'), namedNode(resolvePrefix(predicate, ontologies)), variable(`o${i + 1}`))
+      triple(variable('s1'), namedNode(getUriFromPrefix(predicate, ontologies)), variable(`o${i + 1}`))
     );
     return {
       construct: [typeQuery, ...baseTriples],
