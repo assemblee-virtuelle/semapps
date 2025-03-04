@@ -77,9 +77,13 @@ describe('Resource on server1 is shared with user on server2', () => {
     });
 
     await waitForExpect(async () => {
+      const outboxMenu = await server1.call('activitypub.collection.get', {
+        resourceUri: `${relay1}/outbox`,
+        webId: relay1
+      });
       const inbox = await server1.call('activitypub.collection.get', {
         resourceUri: `${relay1}/outbox`,
-        page: 1,
+        afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: relay1
       });
 
@@ -106,9 +110,13 @@ describe('Resource on server1 is shared with user on server2', () => {
     });
 
     await waitForExpect(async () => {
+      const outboxMenu = await server1.call('activitypub.collection.get', {
+        resourceUri: `${relay1}/outbox`,
+        webId: relay1
+      });
       const inbox = await server1.call('activitypub.collection.get', {
         resourceUri: `${relay1}/outbox`,
-        page: 1,
+        afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: relay1
       });
 

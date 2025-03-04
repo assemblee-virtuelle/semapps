@@ -63,9 +63,14 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
     });
 
     await waitForExpect(async () => {
+      const inboxMenu = await bob.call('activitypub.collection.get', {
+        resourceUri: bob.inbox,
+        webId: bob.id
+      });
+
       const inbox = await bob.call('activitypub.collection.get', {
         resourceUri: bob.inbox,
-        page: 1,
+        afterEq: new URL(inboxMenu?.first).searchParams.get('afterEq'),
         webId: bob.id
       });
       expect(inbox).not.toBeNull();
@@ -98,9 +103,13 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
     });
 
     await waitForExpect(async () => {
+      const inboxMenu = await bob.call('activitypub.collection.get', {
+        resourceUri: bob.inbox,
+        webId: bob.id
+      });
       const inbox = await bob.call('activitypub.collection.get', {
         resourceUri: bob.inbox,
-        page: 1,
+        afterEq: new URL(inboxMenu?.first).searchParams.get('afterEq'),
         webId: bob.id
       });
 

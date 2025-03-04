@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useTranslate, useNotify, useSafeSetState, TextInput, required, email, useLogin, Form } from 'react-admin';
 import { useSearchParams } from 'react-router-dom';
-import { Button, CardContent } from '@mui/material';
+import { Button, CardContent, IconButton } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { SubmitHandler, useFormContext } from 'react-hook-form';
+import RequiredFieldIndicator, { VisuallyHidden } from './RequiredFieldIndicator';
 
 interface FormValues {
   username: string;
@@ -18,6 +20,7 @@ interface LoginFormProps {
   /** If the form should allow login with username (in addition to email). */
   allowUsername: boolean;
 }
+
 const LoginForm = ({ onLogin, allowUsername }: LoginFormProps) => {
   const [searchParams] = useSearchParams();
   const [handleSubmit, setHandleSubmit] = useState<SubmitHandler<FormValues>>(() => {});
@@ -35,12 +38,17 @@ const FormContent = ({
   setHandleSubmit
 }: LoginFormProps & { setHandleSubmit: React.Dispatch<React.SetStateAction<SubmitHandler<FormValues>>> }) => {
   const [loading, setLoading] = useSafeSetState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const login = useLogin();
   const translate = useTranslate();
   const notify = useNotify();
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/';
   const formContext = useFormContext();
+
+  const togglePassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   useEffect(() => {
     setHandleSubmit(() => async (values: FormValues) => {
@@ -63,7 +71,7 @@ const FormContent = ({
           {
             type: 'error',
             messageArgs: {
-              _: typeof error === 'string' ? error : error && error.message ? error.message : undefined
+              _: typeof error === 'string' ? error : error?.message ? error.message : undefined
             }
           }
         );
@@ -76,22 +84,53 @@ const FormContent = ({
     <CardContent>
       <TextInput
         source="username"
-        label={translate(allowUsername ? 'auth.input.username_or_email' : 'auth.input.email')}
+        label={
+          <>
+            {translate(allowUsername ? 'auth.input.username_or_email' : 'auth.input.email')}
+            <RequiredFieldIndicator />
+          </>
+        }
         autoComplete="email"
         fullWidth
         disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
         format={value => (value ? value.toLowerCase() : '')}
-        validate={allowUsername ? [required()] : [required(), email()]}
+        validate={
+          allowUsername
+            ? [required(translate('auth.required.identifier'))]
+            : [required(translate('auth.required.identifier')), email()]
+        }
       />
-      <TextInput
-        source="password"
-        type="password"
-        label={translate('ra.auth.password')}
-        autoComplete="current-password"
-        fullWidth
-        disabled={loading}
-        validate={required()}
-      />
+      <div className="password-container" style={{ position: 'relative' }}>
+        <TextInput
+          source="password"
+          type={showPassword ? 'text' : 'password'}
+          label={
+            <>
+              {translate('ra.auth.password')}
+              <RequiredFieldIndicator />
+            </>
+          }
+          autoComplete="current-password"
+          fullWidth
+          disabled={loading}
+          validate={required(translate('auth.required.password'))}
+          aria-describedby="password-desc"
+        />
+        <VisuallyHidden id="password-desc">{translate('auth.input.password_description')}</VisuallyHidden>
+        <IconButton
+          aria-label={translate(showPassword ? 'auth.action.hide_password' : 'auth.action.show_password')}
+          onClick={togglePassword}
+          style={{
+            position: 'absolute',
+            right: '8px',
+            top: '17px',
+            padding: '4px'
+          }}
+          size="large"
+        >
+          {showPassword ? <VisibilityOff /> : <Visibility />}
+        </IconButton>
+      </div>
       <Button variant="contained" type="submit" color="primary" disabled={loading} fullWidth>
         {translate('auth.action.login')}
       </Button>

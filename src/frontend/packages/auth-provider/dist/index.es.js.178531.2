@@ -21,7 +21,6 @@ import {useNavigate as $1obPJ$useNavigate, useSearchParams as $1obPJ$useSearchPa
 import $1obPJ$muiiconsmaterialLock from "@mui/icons-material/Lock";
 import $1obPJ$speakingurl from "speakingurl";
 import {useFormContext as $1obPJ$useFormContext} from "react-hook-form";
-import {VisibilityOff as $1obPJ$VisibilityOff, Visibility as $1obPJ$Visibility} from "@mui/icons-material";
 import {withStyles as $1obPJ$withStyles} from "@mui/styles";
 import $1obPJ$muiiconsmaterialAccountCircle from "@mui/icons-material/AccountCircle";
 import $1obPJ$lodashisEqual from "lodash/isEqual";
@@ -1478,7 +1477,6 @@ var $479961b7e298304b$export$2e2bcd8739ae039 = $479961b7e298304b$var$SsoLoginPag
 
 
 
-
 const $fb967e2c34f56644$var$useSignup = ()=>{
     const authProvider = (0, $1obPJ$useAuthProvider)();
     return (0, $1obPJ$useCallback)((params = {})=>authProvider.signup(params), [
@@ -1490,33 +1488,20 @@ var $fb967e2c34f56644$export$2e2bcd8739ae039 = $fb967e2c34f56644$var$useSignup;
 
 // Inspired by https://github.com/bartlomiejzuber/password-strength-score
 /**
- * Configuration options for password strength scoring
- *
- * The password strength is calculated based on:
- * - Password length (up to 4 points):
- * - 2 points if length >= 8 characters
- * - Additional 2 points if length >= 14 characters
- * - Character types (1 point each):
- * - Lowercase letters
- * - Uppercase letters
- * - Numbers
- * - Special characters
- *
- * Maximum possible score is 8 points
  * @typedef PasswordStrengthOptions
- * @property {number} isVeryLongLength - Number of characters required for a very long password (default: 14)
- * @property {number} isLongLength - Number of characters required for a long password (default: 8)
- * @property {number} isVeryLongScore - Additional score for a very long password (default: 2)
- * @property {number} isLongScore - Score for a long password (default: 2)
- * @property {number} uppercaseScore - Score for including uppercase letters (default: 1)
- * @property {number} lowercaseScore - Score for including lowercase letters (default: 1)
- * @property {number} numbersScore - Score for including numbers (default: 1)
- * @property {number} nonAlphanumericsScore - Score for including special characters (default: 1)
+ * @property {number} isVeryLongLength - Required characters for a very long password (default: 12)
+ * @property {number} isLongLength - Required characters for a long password (default: 6)
+ * @property {number} isVeryLongScore - Score for a very long password (default: 2.5)
+ * @property {number} isLongScore - Score for a long password (default: 1.5)
+ * @property {number} uppercaseScore - Score for a password with uppercase letters (default: 1)
+ * @property {number} lowercaseScore - Score for a password with lowercase letters (default: 1)
+ * @property {number} numbersScore - Score for a password with numbers (default: 1)
+ * @property {number} nonAlphanumericsScore - Score for a password without non-alphanumeric characters (default: 1)
  */ /** @type {PasswordStrengthOptions} */ const $646d64648a630b24$export$ba43bf67f3d48107 = {
     isVeryLongLength: 14,
     isLongLength: 8,
     isLongScore: 2,
-    isVeryLongScore: 2,
+    isVeryLongScore: 4,
     uppercaseScore: 1,
     lowercaseScore: 1,
     numbersScore: 1,
@@ -1528,47 +1513,13 @@ const $646d64648a630b24$export$963a5c59734509bb = (password, options)=>{
         ...$646d64648a630b24$export$ba43bf67f3d48107,
         ...options
     };
+    const longScore = password.length >= mergedOptions.isLongLength && mergedOptions.isLongScore || 0;
+    const veryLongScore = password.length >= mergedOptions.isVeryLongLength && mergedOptions.isVeryLongScore || 0;
     const lowercaseScore = /[a-z]/.test(password) && mergedOptions.lowercaseScore || 0;
     const uppercaseScore = /[A-Z]/.test(password) && mergedOptions.uppercaseScore || 0;
     const numbersScore = /\d/.test(password) && mergedOptions.numbersScore || 0;
     const nonalphasScore = /\W/.test(password) && mergedOptions.nonAlphanumericsScore || 0;
-    // Calculate length score separately
-    let lengthScore = 0;
-    if (password.length >= mergedOptions.isVeryLongLength) lengthScore = mergedOptions.isLongScore + mergedOptions.isVeryLongScore;
-    else if (password.length >= mergedOptions.isLongLength) lengthScore = mergedOptions.isLongScore;
-    return uppercaseScore + lowercaseScore + numbersScore + nonalphasScore + lengthScore;
-};
-const $646d64648a630b24$export$b6086dad7504ebad = (password, options = $646d64648a630b24$export$ba43bf67f3d48107)=>{
-    const mergedOptions = {
-        ...$646d64648a630b24$export$ba43bf67f3d48107,
-        ...options
-    };
-    const score = $646d64648a630b24$export$963a5c59734509bb(password, mergedOptions);
-    const hasLowercase = /[a-z]/.test(password);
-    const hasUppercase = /[A-Z]/.test(password);
-    const hasNumbers = /\d/.test(password);
-    const hasSpecial = /\W/.test(password);
-    const isLong = password.length >= mergedOptions.isLongLength;
-    const isVeryLong = password.length >= mergedOptions.isVeryLongLength;
-    const suggestions = [];
-    if (!hasLowercase) suggestions.push("add_lowercase_letters_a_z");
-    if (!hasUppercase) suggestions.push("add_uppercase_letters_a_z");
-    if (!hasNumbers) suggestions.push("add_numbers_0_9");
-    if (!hasSpecial) suggestions.push("add_special_characters");
-    if (!isLong) suggestions.push("make_it_at_least_8_characters_long");
-    else if (!isVeryLong) suggestions.push("make_it_at_least_14_characters_long_for_maximum_strength");
-    return {
-        score: score,
-        suggestions: suggestions,
-        missingCriteria: {
-            lowercase: !hasLowercase,
-            uppercase: !hasUppercase,
-            numbers: !hasNumbers,
-            special: !hasSpecial,
-            length: !isLong,
-            veryLong: !isVeryLong
-        }
-    };
+    return uppercaseScore + lowercaseScore + numbersScore + nonalphasScore + longScore + veryLongScore;
 };
 const $646d64648a630b24$export$a1d713a9155d58fc = (options = $646d64648a630b24$export$ba43bf67f3d48107, minRequiredScore = 5)=>{
     const mergedOptions = {
@@ -1577,7 +1528,6 @@ const $646d64648a630b24$export$a1d713a9155d58fc = (options = $646d64648a630b24$e
     };
     return {
         scoreFn: (password)=>$646d64648a630b24$export$963a5c59734509bb(password, mergedOptions),
-        analyzeFn: (password)=>$646d64648a630b24$export$b6086dad7504ebad(password, mergedOptions),
         minRequiredScore: minRequiredScore,
         maxScore: mergedOptions.uppercaseScore + mergedOptions.lowercaseScore + mergedOptions.numbersScore + mergedOptions.nonAlphanumericsScore + mergedOptions.isLongScore + mergedOptions.isVeryLongScore
     };
@@ -1668,8 +1618,7 @@ function $a8046307c9dfa483$export$2e2bcd8739ae039({ scorer: scorer = (0, $646d64
 
 
 
-
-const $14a371ab7c177429$export$439d29a4e110a164 = (0, $1obPJ$styled1)("span")({
+const $14a371ab7c177429$var$VisuallyHidden = (0, $1obPJ$styled1)("span")({
     border: 0,
     clip: "rect(0 0 0 0)",
     height: "1px",
@@ -1680,27 +1629,7 @@ const $14a371ab7c177429$export$439d29a4e110a164 = (0, $1obPJ$styled1)("span")({
     width: "1px",
     whiteSpace: "nowrap"
 });
-/**
- * Component that indicates a form field is required in an accessible way.
- *
- * How it works:
- * 1. Displays an asterisk (*) visually for sighted users
- * 2. Hides the asterisk from screen readers using aria-hidden="true"
- * 3. Provides explanatory text for screen readers via VisuallyHidden
- *
- * Usage:
- * ```tsx
- * <label>
- *   Name <RequiredFieldIndicator />
- * </label>
- * ```
- *
- * Result:
- * - Visual: "Name *"
- * - Screen reader: "Name This field is required"
- *
- * The message is internationalized using the 'auth.input.required_field_description' translation key
- */ const $14a371ab7c177429$var$RequiredFieldIndicator = ()=>{
+const $14a371ab7c177429$var$RequiredFieldIndicator = ()=>{
     const translate = (0, $1obPJ$useTranslate)();
     return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Fragment), {
         children: [
@@ -1708,7 +1637,7 @@ const $14a371ab7c177429$export$439d29a4e110a164 = (0, $1obPJ$styled1)("span")({
                 "aria-hidden": "true",
                 children: "*"
             }),
-            /*#__PURE__*/ (0, $1obPJ$jsx)($14a371ab7c177429$export$439d29a4e110a164, {
+            /*#__PURE__*/ (0, $1obPJ$jsx)($14a371ab7c177429$var$VisuallyHidden, {
                 children: translate("auth.input.required_field_description")
             })
         ]
@@ -1745,8 +1674,6 @@ var $14a371ab7c177429$export$2e2bcd8739ae039 = $14a371ab7c177429$var$RequiredFie
 };
 const $abd712f6afb101e7$var$FormContent = ({ passwordScorer: passwordScorer = (0, $646d64648a630b24$export$19dcdb21c6965fb8), onSignup: onSignup, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect = 0, setHandleSubmit: setHandleSubmit })=>{
     const [loading, setLoading] = (0, $1obPJ$useSafeSetState)(false);
-    const [showPassword, setShowPassword] = (0, $1obPJ$useState)(false);
-    const [passwordAnalysis, setPasswordAnalysis] = (0, $1obPJ$useState)(null);
     const signup = (0, $fb967e2c34f56644$export$2e2bcd8739ae039)();
     const translate = (0, $1obPJ$useTranslate)();
     const notify = (0, $1obPJ$useNotify)();
@@ -1755,9 +1682,6 @@ const $abd712f6afb101e7$var$FormContent = ({ passwordScorer: passwordScorer = (0
     const [locale] = (0, $1obPJ$useLocaleState)();
     const [password, setPassword] = (0, $1obPJ$useState)("");
     const formContext = (0, $1obPJ$useFormContext)();
-    const togglePassword = ()=>{
-        setShowPassword(!showPassword);
-    };
     (0, $1obPJ$useEffect)(()=>{
         setHandleSubmit(()=>async (values)=>{
                 try {
@@ -1792,15 +1716,6 @@ const $abd712f6afb101e7$var$FormContent = ({ passwordScorer: passwordScorer = (0
         notify,
         onSignup,
         formContext
-    ]);
-    (0, $1obPJ$useEffect)(()=>{
-        if (password && passwordScorer) {
-            const analysis = passwordScorer.analyzeFn(password);
-            setPasswordAnalysis(analysis);
-        } else setPasswordAnalysis(null);
-    }, [
-        password,
-        passwordScorer
     ]);
     return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$CardContent), {
         children: [
@@ -1874,84 +1789,28 @@ const $abd712f6afb101e7$var$FormContent = ({ passwordScorer: passwordScorer = (0
                         sx: {
                             width: "100%"
                         }
-                    }),
-                    passwordAnalysis && passwordAnalysis.suggestions.length > 0 && /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Typography), {
-                        variant: "caption",
-                        color: "textSecondary",
-                        component: "div",
-                        sx: {
-                            mt: 1,
-                            mb: 2,
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: 0.5
-                        },
-                        children: [
-                            translate("auth.input.password_suggestions"),
-                            ":",
-                            passwordAnalysis.suggestions.map((suggestion, index)=>{
-                                const translationKey = `auth.input.password_suggestion.${suggestion}`;
-                                const translatedText = translate(translationKey);
-                                return /*#__PURE__*/ (0, $1obPJ$jsxs)("span", {
-                                    style: {
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: "4px"
-                                    },
-                                    children: [
-                                        "\u2022 ",
-                                        translatedText
-                                    ]
-                                }, index);
-                            })
-                        ]
                     })
                 ]
             }),
-            /*#__PURE__*/ (0, $1obPJ$jsxs)("div", {
-                className: "password-container",
-                style: {
-                    position: "relative"
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
+                source: "password",
+                type: "password",
+                value: password,
+                onChange: (e)=>{
+                    setPassword(e.target.value);
                 },
-                children: [
-                    /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
-                        source: "password",
-                        type: showPassword ? "text" : "password",
-                        value: password,
-                        onChange: (e)=>{
-                            setPassword(e.target.value);
-                        },
-                        label: /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Fragment), {
-                            children: [
-                                translate("ra.auth.password"),
-                                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $14a371ab7c177429$export$2e2bcd8739ae039), {})
-                            ]
-                        }),
-                        autoComplete: "new-password",
-                        fullWidth: true,
-                        disabled: loading,
-                        validate: [
-                            (0, $1obPJ$required)("auth.required.password"),
-                            (0, $7a0bbe6824860dfe$export$2e2bcd8739ae039)(passwordScorer)
-                        ],
-                        "aria-describedby": "signup-password-desc"
-                    }),
-                    /*#__PURE__*/ (0, $1obPJ$jsx)((0, $14a371ab7c177429$export$439d29a4e110a164), {
-                        id: "signup-password-desc",
-                        children: translate("auth.input.password_description")
-                    }),
-                    /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$IconButton), {
-                        "aria-label": translate(showPassword ? "auth.action.hide_password" : "auth.action.show_password"),
-                        onClick: togglePassword,
-                        style: {
-                            position: "absolute",
-                            right: "8px",
-                            top: "17px",
-                            padding: "4px"
-                        },
-                        size: "large",
-                        children: showPassword ? /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$VisibilityOff), {}) : /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Visibility), {})
-                    })
+                label: /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Fragment), {
+                    children: [
+                        translate("ra.auth.password"),
+                        /*#__PURE__*/ (0, $1obPJ$jsx)((0, $14a371ab7c177429$export$2e2bcd8739ae039), {})
+                    ]
+                }),
+                autoComplete: "new-password",
+                fullWidth: true,
+                disabled: loading,
+                validate: [
+                    (0, $1obPJ$required)("auth.required.password"),
+                    (0, $7a0bbe6824860dfe$export$2e2bcd8739ae039)(passwordScorer)
                 ]
             }),
             /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Button1), {
@@ -1966,7 +1825,6 @@ const $abd712f6afb101e7$var$FormContent = ({ passwordScorer: passwordScorer = (0
     });
 };
 var $abd712f6afb101e7$export$2e2bcd8739ae039 = $abd712f6afb101e7$var$SignupForm;
-
 
 
 
@@ -1994,16 +1852,12 @@ const $326df91dd4ec3405$var$LoginForm = ({ onLogin: onLogin, allowUsername: allo
 };
 const $326df91dd4ec3405$var$FormContent = ({ onLogin: onLogin, allowUsername: allowUsername, setHandleSubmit: setHandleSubmit })=>{
     const [loading, setLoading] = (0, $1obPJ$useSafeSetState)(false);
-    const [showPassword, setShowPassword] = (0, $1obPJ$useState)(false);
     const login = (0, $1obPJ$useLogin)();
     const translate = (0, $1obPJ$useTranslate)();
     const notify = (0, $1obPJ$useNotify)();
     const [searchParams] = (0, $1obPJ$useSearchParams)();
     const redirectTo = searchParams.get("redirect") || "/";
     const formContext = (0, $1obPJ$useFormContext)();
-    const togglePassword = ()=>{
-        setShowPassword(!showPassword);
-    };
     (0, $1obPJ$useEffect)(()=>{
         setHandleSubmit(()=>async (values)=>{
                 try {
@@ -2055,44 +1909,19 @@ const $326df91dd4ec3405$var$FormContent = ({ onLogin: onLogin, allowUsername: al
                     (0, $1obPJ$email)()
                 ]
             }),
-            /*#__PURE__*/ (0, $1obPJ$jsxs)("div", {
-                className: "password-container",
-                style: {
-                    position: "relative"
-                },
-                children: [
-                    /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
-                        source: "password",
-                        type: showPassword ? "text" : "password",
-                        label: /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Fragment), {
-                            children: [
-                                translate("ra.auth.password"),
-                                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $14a371ab7c177429$export$2e2bcd8739ae039), {})
-                            ]
-                        }),
-                        autoComplete: "current-password",
-                        fullWidth: true,
-                        disabled: loading,
-                        validate: (0, $1obPJ$required)(translate("auth.required.password")),
-                        "aria-describedby": "password-desc"
-                    }),
-                    /*#__PURE__*/ (0, $1obPJ$jsx)((0, $14a371ab7c177429$export$439d29a4e110a164), {
-                        id: "password-desc",
-                        children: translate("auth.input.password_description")
-                    }),
-                    /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$IconButton), {
-                        "aria-label": translate(showPassword ? "auth.action.hide_password" : "auth.action.show_password"),
-                        onClick: togglePassword,
-                        style: {
-                            position: "absolute",
-                            right: "8px",
-                            top: "17px",
-                            padding: "4px"
-                        },
-                        size: "large",
-                        children: showPassword ? /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$VisibilityOff), {}) : /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Visibility), {})
-                    })
-                ]
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
+                source: "password",
+                type: "password",
+                label: /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Fragment), {
+                    children: [
+                        translate("ra.auth.password"),
+                        /*#__PURE__*/ (0, $1obPJ$jsx)((0, $14a371ab7c177429$export$2e2bcd8739ae039), {})
+                    ]
+                }),
+                autoComplete: "current-password",
+                fullWidth: true,
+                disabled: loading,
+                validate: (0, $1obPJ$required)(translate("auth.required.password"))
             }),
             /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Button1), {
                 variant: "contained",
@@ -2109,7 +1938,6 @@ $326df91dd4ec3405$var$LoginForm.defaultValues = {
     allowUsername: false
 };
 var $326df91dd4ec3405$export$2e2bcd8739ae039 = $326df91dd4ec3405$var$LoginForm;
-
 
 
 
@@ -2152,19 +1980,10 @@ const $ddc5b4ef9210a90f$var$FormContent = ({ setHandleSubmit: setHandleSubmit, r
     const searchParams = new URLSearchParams(location.search);
     const token = searchParams.get("token");
     const [loading, setLoading] = (0, $1obPJ$useSafeSetState)(false);
-    const [showNewPassword, setShowNewPassword] = (0, $1obPJ$useState)(false);
-    const [showConfirmPassword, setShowConfirmPassword] = (0, $1obPJ$useState)(false);
     const authProvider = (0, $1obPJ$useAuthProvider)();
     const translate = (0, $1obPJ$useTranslate)();
     const notify = (0, $1obPJ$useNotify)();
     const [newPassword, setNewPassword] = (0, $1obPJ$useState)("");
-    const [passwordAnalysis, setPasswordAnalysis] = (0, $1obPJ$useState)(null);
-    const toggleNewPassword = ()=>{
-        setShowNewPassword(!showNewPassword);
-    };
-    const toggleConfirmPassword = ()=>{
-        setShowConfirmPassword(!showConfirmPassword);
-    };
     (0, $1obPJ$useEffect)(()=>{
         setHandleSubmit(()=>async (values)=>{
                 setLoading(true);
@@ -2193,15 +2012,6 @@ const $ddc5b4ef9210a90f$var$FormContent = ({ setHandleSubmit: setHandleSubmit, r
                 });
             });
     });
-    (0, $1obPJ$useEffect)(()=>{
-        if (newPassword && passwordScorer) {
-            const analysis = passwordScorer.analyzeFn(newPassword);
-            setPasswordAnalysis(analysis);
-        } else setPasswordAnalysis(null);
-    }, [
-        newPassword,
-        passwordScorer
-    ]);
     return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$CardContent), {
         children: [
             /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
@@ -2219,7 +2029,7 @@ const $ddc5b4ef9210a90f$var$FormContent = ({ setHandleSubmit: setHandleSubmit, r
                 validate: (0, $1obPJ$required)(translate("auth.required.newPassword")),
                 format: (value)=>value ? value.toLowerCase() : ""
             }),
-            passwordScorer && newPassword && /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Fragment), {
+            passwordScorer && /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Fragment), {
                 children: [
                     /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Typography), {
                         variant: "caption",
@@ -2238,126 +2048,46 @@ const $ddc5b4ef9210a90f$var$FormContent = ({ setHandleSubmit: setHandleSubmit, r
                         sx: {
                             width: "100%"
                         }
-                    }),
-                    passwordAnalysis && passwordAnalysis.suggestions.length > 0 && /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Typography), {
-                        variant: "caption",
-                        color: "textSecondary",
-                        component: "div",
-                        sx: {
-                            mt: 1,
-                            mb: 2,
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: 0.5
-                        },
-                        children: [
-                            translate("auth.input.password_suggestions"),
-                            ":",
-                            passwordAnalysis.suggestions.map((suggestion, index)=>{
-                                const translationKey = `auth.input.password_suggestion.${suggestion}`;
-                                return /*#__PURE__*/ (0, $1obPJ$jsxs)("span", {
-                                    style: {
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: "4px"
-                                    },
-                                    children: [
-                                        "\u2022 ",
-                                        translate(translationKey)
-                                    ]
-                                }, index);
-                            })
-                        ]
                     })
                 ]
             }),
-            /*#__PURE__*/ (0, $1obPJ$jsxs)("div", {
-                className: "password-container",
-                style: {
-                    position: "relative"
-                },
-                children: [
-                    /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
-                        autoFocus: true,
-                        type: showNewPassword ? "text" : "password",
-                        source: "password",
-                        value: newPassword,
-                        label: /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Fragment), {
-                            children: [
-                                translate("auth.input.new_password"),
-                                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $14a371ab7c177429$export$2e2bcd8739ae039), {})
-                            ]
-                        }),
-                        autoComplete: "current-password",
-                        fullWidth: true,
-                        disabled: loading,
-                        validate: [
-                            (0, $1obPJ$required)(translate("auth.required.newPasswordAgain")),
-                            (0, $7a0bbe6824860dfe$export$2e2bcd8739ae039)(passwordScorer)
-                        ],
-                        onChange: (e)=>{
-                            setNewPassword(e.target.value);
-                        },
-                        "aria-describedby": "new-password-desc"
-                    }),
-                    /*#__PURE__*/ (0, $1obPJ$jsx)((0, $14a371ab7c177429$export$439d29a4e110a164), {
-                        id: "new-password-desc",
-                        children: translate("auth.input.password_description")
-                    }),
-                    /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$IconButton), {
-                        "aria-label": translate(showNewPassword ? "auth.action.hide_password" : "auth.action.show_password"),
-                        onClick: toggleNewPassword,
-                        style: {
-                            position: "absolute",
-                            right: "8px",
-                            top: "17px",
-                            padding: "4px"
-                        },
-                        size: "large",
-                        children: showNewPassword ? /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$VisibilityOff), {}) : /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Visibility), {})
-                    })
-                ]
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
+                autoFocus: true,
+                type: "password",
+                source: "password",
+                value: newPassword,
+                label: /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Fragment), {
+                    children: [
+                        translate("auth.input.new_password"),
+                        /*#__PURE__*/ (0, $1obPJ$jsx)((0, $14a371ab7c177429$export$2e2bcd8739ae039), {})
+                    ]
+                }),
+                autoComplete: "current-password",
+                fullWidth: true,
+                disabled: loading,
+                validate: [
+                    (0, $1obPJ$required)(translate("auth.required.newPasswordAgain")),
+                    (0, $7a0bbe6824860dfe$export$2e2bcd8739ae039)(passwordScorer)
+                ],
+                onChange: (e)=>{
+                    setNewPassword(e.target.value);
+                }
             }),
-            /*#__PURE__*/ (0, $1obPJ$jsxs)("div", {
-                className: "password-container",
-                style: {
-                    position: "relative"
-                },
-                children: [
-                    /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
-                        type: showConfirmPassword ? "text" : "password",
-                        source: "confirm-password",
-                        label: /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Fragment), {
-                            children: [
-                                translate("auth.input.confirm_new_password"),
-                                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $14a371ab7c177429$export$2e2bcd8739ae039), {})
-                            ]
-                        }),
-                        autoComplete: "current-password",
-                        fullWidth: true,
-                        disabled: loading,
-                        validate: [
-                            (0, $1obPJ$required)(),
-                            $ddc5b4ef9210a90f$var$samePassword
-                        ],
-                        "aria-describedby": "confirm-password-desc"
-                    }),
-                    /*#__PURE__*/ (0, $1obPJ$jsx)((0, $14a371ab7c177429$export$439d29a4e110a164), {
-                        id: "confirm-password-desc",
-                        children: translate("auth.input.password_description")
-                    }),
-                    /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$IconButton), {
-                        "aria-label": translate(showConfirmPassword ? "auth.action.hide_password" : "auth.action.show_password"),
-                        onClick: toggleConfirmPassword,
-                        style: {
-                            position: "absolute",
-                            right: "8px",
-                            top: "17px",
-                            padding: "4px"
-                        },
-                        size: "large",
-                        children: showConfirmPassword ? /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$VisibilityOff), {}) : /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Visibility), {})
-                    })
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$TextInput), {
+                type: "password",
+                source: "confirm-password",
+                label: /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Fragment), {
+                    children: [
+                        translate("auth.input.confirm_new_password"),
+                        /*#__PURE__*/ (0, $1obPJ$jsx)((0, $14a371ab7c177429$export$2e2bcd8739ae039), {})
+                    ]
+                }),
+                autoComplete: "current-password",
+                fullWidth: true,
+                disabled: loading,
+                validate: [
+                    (0, $1obPJ$required)(),
+                    $ddc5b4ef9210a90f$var$samePassword
                 ]
             }),
             /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Button1), {
@@ -2858,9 +2588,7 @@ const $22afd1c81635c9d9$var$englishMessages = {
             logout: "Logout",
             login: "Login",
             view_my_profile: "View my profile",
-            edit_my_profile: "Edit my profile",
-            show_password: "Show password",
-            hide_password: "Hide password"
+            edit_my_profile: "Edit my profile"
         },
         right: {
             resource: {
@@ -2890,20 +2618,10 @@ const $22afd1c81635c9d9$var$englishMessages = {
             new_password: "New password",
             confirm_new_password: "Confirm new password",
             password_strength: "Password strength",
-            password_suggestions: "Suggestions to improve your password",
-            password_suggestion: {
-                add_lowercase_letters_a_z: "Add lowercase letters (a-z)",
-                add_uppercase_letters_a_z: "Add uppercase letters (A-Z)",
-                add_numbers_0_9: "Add numbers (0-9)",
-                add_special_characters: "Add special characters (!@#$...)",
-                make_it_at_least_8_characters_long: "Make it at least 8 characters long",
-                make_it_at_least_14_characters_long_for_maximum_strength: "Make it at least 14 characters long for maximum strength"
-            },
             password_too_weak: "Password too weak. Increase length or add special characters.",
             password_mismatch: "The passwords you provided do not match.",
             required_field: "Required field",
-            required_field_description: "This field is required",
-            password_description: "Characters you type will be visually hidden for security reasons"
+            required_field_description: "This field is required"
         },
         helper: {
             login: "Sign in to your account",
@@ -2974,9 +2692,7 @@ const $509b6323d7902699$var$frenchMessages = {
             logout: "Se d\xe9connecter",
             login: "Se connecter",
             view_my_profile: "Voir mon profil",
-            edit_my_profile: "\xc9diter mon profil",
-            show_password: "Afficher le mot de passe",
-            hide_password: "Masquer le mot de passe"
+            edit_my_profile: "\xc9diter mon profil"
         },
         right: {
             resource: {
@@ -3006,20 +2722,10 @@ const $509b6323d7902699$var$frenchMessages = {
             new_password: "Nouveau mot de passe",
             confirm_new_password: "Confirmer le nouveau mot de passe",
             password_strength: "Force du mot de passe",
-            password_suggestions: "Suggestions pour am\xe9liorer votre mot de passe",
-            password_suggestion: {
-                add_lowercase_letters_a_z: "Ajouter des lettres minuscules (a-z)",
-                add_uppercase_letters_a_z: "Ajouter des lettres majuscules (A-Z)",
-                add_numbers_0_9: "Ajouter des chiffres (0-9)",
-                add_special_characters: "Ajouter des caract\xe8res sp\xe9ciaux (!@#$...)",
-                make_it_at_least_8_characters_long: "Faire au moins 8 caract\xe8res de long",
-                make_it_at_least_14_characters_long_for_maximum_strength: "Faire au moins 14 caract\xe8res de long pour une force maximale"
-            },
             password_too_weak: "Mot de passe trop faible. Augmenter la longueur ou ajouter des caract\xe8res sp\xe9ciaux.",
             password_mismatch: "Mot de passe diff\xe9rent du premier",
             required_field: "Champ obligatoire",
-            required_field_description: "Ce champ est obligatoire",
-            password_description: "Les caract\xe8res que vous tapez seront masqu\xe9s visuellement pour des raisons de s\xe9curit\xe9"
+            required_field_description: "Ce champ est obligatoire"
         },
         helper: {
             login: "Connectez-vous \xe0 votre compte.",

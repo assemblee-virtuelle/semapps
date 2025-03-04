@@ -21,6 +21,7 @@ var $4Uj5b$reactrouterdom = require("react-router-dom");
 var $4Uj5b$muiiconsmaterialLock = require("@mui/icons-material/Lock");
 var $4Uj5b$speakingurl = require("speakingurl");
 var $4Uj5b$reacthookform = require("react-hook-form");
+var $4Uj5b$muiiconsmaterial = require("@mui/icons-material");
 var $4Uj5b$muistyles = require("@mui/styles");
 var $4Uj5b$muiiconsmaterialAccountCircle = require("@mui/icons-material/AccountCircle");
 var $4Uj5b$lodashisEqual = require("lodash/isEqual");
@@ -1516,6 +1517,7 @@ var $0af8eee27f6a6e9f$export$2e2bcd8739ae039 = $0af8eee27f6a6e9f$var$SsoLoginPag
 
 
 
+
 const $19e4629c708b7a3e$var$useSignup = ()=>{
     const authProvider = (0, $4Uj5b$reactadmin.useAuthProvider)();
     return (0, $4Uj5b$react.useCallback)((params = {})=>authProvider.signup(params), [
@@ -1527,20 +1529,33 @@ var $19e4629c708b7a3e$export$2e2bcd8739ae039 = $19e4629c708b7a3e$var$useSignup;
 
 // Inspired by https://github.com/bartlomiejzuber/password-strength-score
 /**
+ * Configuration options for password strength scoring
+ *
+ * The password strength is calculated based on:
+ * - Password length (up to 4 points):
+ * - 2 points if length >= 8 characters
+ * - Additional 2 points if length >= 14 characters
+ * - Character types (1 point each):
+ * - Lowercase letters
+ * - Uppercase letters
+ * - Numbers
+ * - Special characters
+ *
+ * Maximum possible score is 8 points
  * @typedef PasswordStrengthOptions
- * @property {number} isVeryLongLength - Required characters for a very long password (default: 12)
- * @property {number} isLongLength - Required characters for a long password (default: 6)
- * @property {number} isVeryLongScore - Score for a very long password (default: 2.5)
- * @property {number} isLongScore - Score for a long password (default: 1.5)
- * @property {number} uppercaseScore - Score for a password with uppercase letters (default: 1)
- * @property {number} lowercaseScore - Score for a password with lowercase letters (default: 1)
- * @property {number} numbersScore - Score for a password with numbers (default: 1)
- * @property {number} nonAlphanumericsScore - Score for a password without non-alphanumeric characters (default: 1)
+ * @property {number} isVeryLongLength - Number of characters required for a very long password (default: 14)
+ * @property {number} isLongLength - Number of characters required for a long password (default: 8)
+ * @property {number} isVeryLongScore - Additional score for a very long password (default: 2)
+ * @property {number} isLongScore - Score for a long password (default: 2)
+ * @property {number} uppercaseScore - Score for including uppercase letters (default: 1)
+ * @property {number} lowercaseScore - Score for including lowercase letters (default: 1)
+ * @property {number} numbersScore - Score for including numbers (default: 1)
+ * @property {number} nonAlphanumericsScore - Score for including special characters (default: 1)
  */ /** @type {PasswordStrengthOptions} */ const $d1ca1e1d215e32ca$export$ba43bf67f3d48107 = {
     isVeryLongLength: 14,
     isLongLength: 8,
     isLongScore: 2,
-    isVeryLongScore: 4,
+    isVeryLongScore: 2,
     uppercaseScore: 1,
     lowercaseScore: 1,
     numbersScore: 1,
@@ -1552,13 +1567,47 @@ const $d1ca1e1d215e32ca$export$963a5c59734509bb = (password, options)=>{
         ...$d1ca1e1d215e32ca$export$ba43bf67f3d48107,
         ...options
     };
-    const longScore = password.length >= mergedOptions.isLongLength && mergedOptions.isLongScore || 0;
-    const veryLongScore = password.length >= mergedOptions.isVeryLongLength && mergedOptions.isVeryLongScore || 0;
     const lowercaseScore = /[a-z]/.test(password) && mergedOptions.lowercaseScore || 0;
     const uppercaseScore = /[A-Z]/.test(password) && mergedOptions.uppercaseScore || 0;
     const numbersScore = /\d/.test(password) && mergedOptions.numbersScore || 0;
     const nonalphasScore = /\W/.test(password) && mergedOptions.nonAlphanumericsScore || 0;
-    return uppercaseScore + lowercaseScore + numbersScore + nonalphasScore + longScore + veryLongScore;
+    // Calculate length score separately
+    let lengthScore = 0;
+    if (password.length >= mergedOptions.isVeryLongLength) lengthScore = mergedOptions.isLongScore + mergedOptions.isVeryLongScore;
+    else if (password.length >= mergedOptions.isLongLength) lengthScore = mergedOptions.isLongScore;
+    return uppercaseScore + lowercaseScore + numbersScore + nonalphasScore + lengthScore;
+};
+const $d1ca1e1d215e32ca$export$b6086dad7504ebad = (password, options = $d1ca1e1d215e32ca$export$ba43bf67f3d48107)=>{
+    const mergedOptions = {
+        ...$d1ca1e1d215e32ca$export$ba43bf67f3d48107,
+        ...options
+    };
+    const score = $d1ca1e1d215e32ca$export$963a5c59734509bb(password, mergedOptions);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecial = /\W/.test(password);
+    const isLong = password.length >= mergedOptions.isLongLength;
+    const isVeryLong = password.length >= mergedOptions.isVeryLongLength;
+    const suggestions = [];
+    if (!hasLowercase) suggestions.push("add_lowercase_letters_a_z");
+    if (!hasUppercase) suggestions.push("add_uppercase_letters_a_z");
+    if (!hasNumbers) suggestions.push("add_numbers_0_9");
+    if (!hasSpecial) suggestions.push("add_special_characters");
+    if (!isLong) suggestions.push("make_it_at_least_8_characters_long");
+    else if (!isVeryLong) suggestions.push("make_it_at_least_14_characters_long_for_maximum_strength");
+    return {
+        score: score,
+        suggestions: suggestions,
+        missingCriteria: {
+            lowercase: !hasLowercase,
+            uppercase: !hasUppercase,
+            numbers: !hasNumbers,
+            special: !hasSpecial,
+            length: !isLong,
+            veryLong: !isVeryLong
+        }
+    };
 };
 const $d1ca1e1d215e32ca$export$a1d713a9155d58fc = (options = $d1ca1e1d215e32ca$export$ba43bf67f3d48107, minRequiredScore = 5)=>{
     const mergedOptions = {
@@ -1567,6 +1616,7 @@ const $d1ca1e1d215e32ca$export$a1d713a9155d58fc = (options = $d1ca1e1d215e32ca$e
     };
     return {
         scoreFn: (password)=>$d1ca1e1d215e32ca$export$963a5c59734509bb(password, mergedOptions),
+        analyzeFn: (password)=>$d1ca1e1d215e32ca$export$b6086dad7504ebad(password, mergedOptions),
         minRequiredScore: minRequiredScore,
         maxScore: mergedOptions.uppercaseScore + mergedOptions.lowercaseScore + mergedOptions.numbersScore + mergedOptions.nonAlphanumericsScore + mergedOptions.isLongScore + mergedOptions.isVeryLongScore
     };
@@ -1654,6 +1704,58 @@ function $edfec7f9e9fd7881$export$2e2bcd8739ae039({ scorer: scorer = (0, $d1ca1e
 
 
 
+
+
+
+
+const $189e343500739785$export$439d29a4e110a164 = (0, $4Uj5b$muimaterialstyles.styled)("span")({
+    border: 0,
+    clip: "rect(0 0 0 0)",
+    height: "1px",
+    margin: -1,
+    overflow: "hidden",
+    padding: 0,
+    position: "absolute",
+    width: "1px",
+    whiteSpace: "nowrap"
+});
+/**
+ * Component that indicates a form field is required in an accessible way.
+ *
+ * How it works:
+ * 1. Displays an asterisk (*) visually for sighted users
+ * 2. Hides the asterisk from screen readers using aria-hidden="true"
+ * 3. Provides explanatory text for screen readers via VisuallyHidden
+ *
+ * Usage:
+ * ```tsx
+ * <label>
+ *   Name <RequiredFieldIndicator />
+ * </label>
+ * ```
+ *
+ * Result:
+ * - Visual: "Name *"
+ * - Screen reader: "Name This field is required"
+ *
+ * The message is internationalized using the 'auth.input.required_field_description' translation key
+ */ const $189e343500739785$var$RequiredFieldIndicator = ()=>{
+    const translate = (0, $4Uj5b$reactadmin.useTranslate)();
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
+        children: [
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)("span", {
+                "aria-hidden": "true",
+                children: "*"
+            }),
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($189e343500739785$export$439d29a4e110a164, {
+                children: translate("auth.input.required_field_description")
+            })
+        ]
+    });
+};
+var $189e343500739785$export$2e2bcd8739ae039 = $189e343500739785$var$RequiredFieldIndicator;
+
+
 /**
  * @param onSignup Optional function to call when signup is completed. Called after the `delayBeforeRedirect`.
  * @param additionalSignupValues Passed to react-admin's signup function.
@@ -1682,6 +1784,8 @@ function $edfec7f9e9fd7881$export$2e2bcd8739ae039({ scorer: scorer = (0, $d1ca1e
 };
 const $87a1f23cb4681f00$var$FormContent = ({ passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8), onSignup: onSignup, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect = 0, setHandleSubmit: setHandleSubmit })=>{
     const [loading, setLoading] = (0, $4Uj5b$reactadmin.useSafeSetState)(false);
+    const [showPassword, setShowPassword] = (0, $4Uj5b$react.useState)(false);
+    const [passwordAnalysis, setPasswordAnalysis] = (0, $4Uj5b$react.useState)(null);
     const signup = (0, $19e4629c708b7a3e$export$2e2bcd8739ae039)();
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
@@ -1690,6 +1794,9 @@ const $87a1f23cb4681f00$var$FormContent = ({ passwordScorer: passwordScorer = (0
     const [locale] = (0, $4Uj5b$reactadmin.useLocaleState)();
     const [password, setPassword] = (0, $4Uj5b$react.useState)("");
     const formContext = (0, $4Uj5b$reacthookform.useFormContext)();
+    const togglePassword = ()=>{
+        setShowPassword(!showPassword);
+    };
     (0, $4Uj5b$react.useEffect)(()=>{
         setHandleSubmit(()=>async (values)=>{
                 try {
@@ -1706,7 +1813,7 @@ const $87a1f23cb4681f00$var$FormContent = ({ passwordScorer: passwordScorer = (0
                     setLoading(false);
                     notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "ra.auth.sign_in_error" : error.message, {
                         type: "error",
-                        _: typeof error === "string" ? error : error && error.message ? error.message : undefined
+                        _: typeof error === "string" ? error : error?.message ? error.message : undefined
                     });
                     formContext.reset({
                         ...values
@@ -1725,17 +1832,31 @@ const $87a1f23cb4681f00$var$FormContent = ({ passwordScorer: passwordScorer = (0
         onSignup,
         formContext
     ]);
+    (0, $4Uj5b$react.useEffect)(()=>{
+        if (password && passwordScorer) {
+            const analysis = passwordScorer.analyzeFn(password);
+            setPasswordAnalysis(analysis);
+        } else setPasswordAnalysis(null);
+    }, [
+        password,
+        passwordScorer
+    ]);
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
         children: [
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
                 autoFocus: true,
                 source: "username",
-                label: translate("auth.input.username"),
+                label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
+                    children: [
+                        translate("auth.input.username"),
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
+                    ]
+                }),
                 autoComplete: "username",
                 fullWidth: true,
                 disabled: loading,
                 validate: [
-                    (0, $4Uj5b$reactadmin.required)(),
+                    (0, $4Uj5b$reactadmin.required)(translate("auth.required.identifier")),
                     (0, $4Uj5b$reactadmin.minLength)(2)
                 ],
                 format: (value)=>value ? (0, ($parcel$interopDefault($4Uj5b$speakingurl)))(value, {
@@ -1759,12 +1880,17 @@ const $87a1f23cb4681f00$var$FormContent = ({ passwordScorer: passwordScorer = (0
             }),
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
                 source: "email",
-                label: translate("auth.input.email"),
+                label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
+                    children: [
+                        translate("auth.input.email"),
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
+                    ]
+                }),
                 autoComplete: "email",
                 fullWidth: true,
                 disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
                 validate: [
-                    (0, $4Uj5b$reactadmin.required)(),
+                    (0, $4Uj5b$reactadmin.required)("auth.required.email"),
                     (0, $4Uj5b$reactadmin.email)()
                 ]
             }),
@@ -1787,21 +1913,84 @@ const $87a1f23cb4681f00$var$FormContent = ({ passwordScorer: passwordScorer = (0
                         sx: {
                             width: "100%"
                         }
+                    }),
+                    passwordAnalysis && passwordAnalysis.suggestions.length > 0 && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Typography), {
+                        variant: "caption",
+                        color: "textSecondary",
+                        component: "div",
+                        sx: {
+                            mt: 1,
+                            mb: 2,
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 0.5
+                        },
+                        children: [
+                            translate("auth.input.password_suggestions"),
+                            ":",
+                            passwordAnalysis.suggestions.map((suggestion, index)=>{
+                                const translationKey = `auth.input.password_suggestion.${suggestion}`;
+                                const translatedText = translate(translationKey);
+                                return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("span", {
+                                    style: {
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "4px"
+                                    },
+                                    children: [
+                                        "\u2022 ",
+                                        translatedText
+                                    ]
+                                }, index);
+                            })
+                        ]
                     })
                 ]
             }),
-            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
-                source: "password",
-                type: "password",
-                value: password,
-                onChange: (e)=>setPassword(e.target.value),
-                label: translate("ra.auth.password"),
-                autoComplete: "new-password",
-                fullWidth: true,
-                disabled: loading,
-                validate: [
-                    (0, $4Uj5b$reactadmin.required)(),
-                    (0, $eab41bc89667b2c6$export$2e2bcd8739ae039)(passwordScorer)
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("div", {
+                className: "password-container",
+                style: {
+                    position: "relative"
+                },
+                children: [
+                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
+                        source: "password",
+                        type: showPassword ? "text" : "password",
+                        value: password,
+                        onChange: (e)=>{
+                            setPassword(e.target.value);
+                        },
+                        label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
+                            children: [
+                                translate("ra.auth.password"),
+                                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
+                            ]
+                        }),
+                        autoComplete: "new-password",
+                        fullWidth: true,
+                        disabled: loading,
+                        validate: [
+                            (0, $4Uj5b$reactadmin.required)("auth.required.password"),
+                            (0, $eab41bc89667b2c6$export$2e2bcd8739ae039)(passwordScorer)
+                        ],
+                        "aria-describedby": "signup-password-desc"
+                    }),
+                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$439d29a4e110a164), {
+                        id: "signup-password-desc",
+                        children: translate("auth.input.password_description")
+                    }),
+                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.IconButton), {
+                        "aria-label": translate(showPassword ? "auth.action.hide_password" : "auth.action.show_password"),
+                        onClick: togglePassword,
+                        style: {
+                            position: "absolute",
+                            right: "8px",
+                            top: "17px",
+                            padding: "4px"
+                        },
+                        size: "large",
+                        children: showPassword ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.VisibilityOff), {}) : /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.Visibility), {})
+                    })
                 ]
             }),
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
@@ -1816,6 +2005,8 @@ const $87a1f23cb4681f00$var$FormContent = ({ passwordScorer: passwordScorer = (0
     });
 };
 var $87a1f23cb4681f00$export$2e2bcd8739ae039 = $87a1f23cb4681f00$var$SignupForm;
+
+
 
 
 
@@ -1842,12 +2033,16 @@ const $403a8b015c5eea65$var$LoginForm = ({ onLogin: onLogin, allowUsername: allo
 };
 const $403a8b015c5eea65$var$FormContent = ({ onLogin: onLogin, allowUsername: allowUsername, setHandleSubmit: setHandleSubmit })=>{
     const [loading, setLoading] = (0, $4Uj5b$reactadmin.useSafeSetState)(false);
+    const [showPassword, setShowPassword] = (0, $4Uj5b$react.useState)(false);
     const login = (0, $4Uj5b$reactadmin.useLogin)();
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
     const redirectTo = searchParams.get("redirect") || "/";
     const formContext = (0, $4Uj5b$reacthookform.useFormContext)();
+    const togglePassword = ()=>{
+        setShowPassword(!showPassword);
+    };
     (0, $4Uj5b$react.useEffect)(()=>{
         setHandleSubmit(()=>async (values)=>{
                 try {
@@ -1860,7 +2055,7 @@ const $403a8b015c5eea65$var$FormContent = ({ onLogin: onLogin, allowUsername: al
                     notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "ra.auth.sign_in_error" : error.message, {
                         type: "error",
                         messageArgs: {
-                            _: typeof error === "string" ? error : error && error.message ? error.message : undefined
+                            _: typeof error === "string" ? error : error?.message ? error.message : undefined
                         }
                     });
                     formContext.reset({
@@ -1882,26 +2077,61 @@ const $403a8b015c5eea65$var$FormContent = ({ onLogin: onLogin, allowUsername: al
         children: [
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
                 source: "username",
-                label: translate(allowUsername ? "auth.input.username_or_email" : "auth.input.email"),
+                label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
+                    children: [
+                        translate(allowUsername ? "auth.input.username_or_email" : "auth.input.email"),
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
+                    ]
+                }),
                 autoComplete: "email",
                 fullWidth: true,
                 disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
                 format: (value)=>value ? value.toLowerCase() : "",
                 validate: allowUsername ? [
-                    (0, $4Uj5b$reactadmin.required)()
+                    (0, $4Uj5b$reactadmin.required)(translate("auth.required.identifier"))
                 ] : [
-                    (0, $4Uj5b$reactadmin.required)(),
+                    (0, $4Uj5b$reactadmin.required)(translate("auth.required.identifier")),
                     (0, $4Uj5b$reactadmin.email)()
                 ]
             }),
-            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
-                source: "password",
-                type: "password",
-                label: translate("ra.auth.password"),
-                autoComplete: "current-password",
-                fullWidth: true,
-                disabled: loading,
-                validate: (0, $4Uj5b$reactadmin.required)()
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("div", {
+                className: "password-container",
+                style: {
+                    position: "relative"
+                },
+                children: [
+                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
+                        source: "password",
+                        type: showPassword ? "text" : "password",
+                        label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
+                            children: [
+                                translate("ra.auth.password"),
+                                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
+                            ]
+                        }),
+                        autoComplete: "current-password",
+                        fullWidth: true,
+                        disabled: loading,
+                        validate: (0, $4Uj5b$reactadmin.required)(translate("auth.required.password")),
+                        "aria-describedby": "password-desc"
+                    }),
+                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$439d29a4e110a164), {
+                        id: "password-desc",
+                        children: translate("auth.input.password_description")
+                    }),
+                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.IconButton), {
+                        "aria-label": translate(showPassword ? "auth.action.hide_password" : "auth.action.show_password"),
+                        onClick: togglePassword,
+                        style: {
+                            position: "absolute",
+                            right: "8px",
+                            top: "17px",
+                            padding: "4px"
+                        },
+                        size: "large",
+                        children: showPassword ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.VisibilityOff), {}) : /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.Visibility), {})
+                    })
+                ]
             }),
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
                 variant: "contained",
@@ -1918,6 +2148,8 @@ $403a8b015c5eea65$var$LoginForm.defaultValues = {
     allowUsername: false
 };
 var $403a8b015c5eea65$export$2e2bcd8739ae039 = $403a8b015c5eea65$var$LoginForm;
+
+
 
 
 
@@ -1959,10 +2191,19 @@ const $2f0ce992717e175e$var$FormContent = ({ setHandleSubmit: setHandleSubmit, r
     const searchParams = new URLSearchParams(location.search);
     const token = searchParams.get("token");
     const [loading, setLoading] = (0, $4Uj5b$reactadmin.useSafeSetState)(false);
+    const [showNewPassword, setShowNewPassword] = (0, $4Uj5b$react.useState)(false);
+    const [showConfirmPassword, setShowConfirmPassword] = (0, $4Uj5b$react.useState)(false);
     const authProvider = (0, $4Uj5b$reactadmin.useAuthProvider)();
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
     const [newPassword, setNewPassword] = (0, $4Uj5b$react.useState)("");
+    const [passwordAnalysis, setPasswordAnalysis] = (0, $4Uj5b$react.useState)(null);
+    const toggleNewPassword = ()=>{
+        setShowNewPassword(!showNewPassword);
+    };
+    const toggleConfirmPassword = ()=>{
+        setShowConfirmPassword(!showConfirmPassword);
+    };
     (0, $4Uj5b$react.useEffect)(()=>{
         setHandleSubmit(()=>async (values)=>{
                 setLoading(true);
@@ -1982,7 +2223,7 @@ const $2f0ce992717e175e$var$FormContent = ({ setHandleSubmit: setHandleSubmit, r
                     });
                 }).catch((error)=>{
                     setLoading(false);
-                    notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "auth.notification.reset_password_error" : error.message, {
+                    notify(typeof error === "string" ? error : !error.message ? "auth.notification.reset_password_error" : error.message, {
                         type: "warning",
                         messageArgs: {
                             _: typeof error === "string" ? error : error && error.message ? error.message : undefined
@@ -1991,19 +2232,33 @@ const $2f0ce992717e175e$var$FormContent = ({ setHandleSubmit: setHandleSubmit, r
                 });
             });
     });
+    (0, $4Uj5b$react.useEffect)(()=>{
+        if (newPassword && passwordScorer) {
+            const analysis = passwordScorer.analyzeFn(newPassword);
+            setPasswordAnalysis(analysis);
+        } else setPasswordAnalysis(null);
+    }, [
+        newPassword,
+        passwordScorer
+    ]);
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
         children: [
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
                 autoFocus: true,
                 source: "email",
-                label: translate("auth.input.email"),
+                label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
+                    children: [
+                        translate("auth.input.email"),
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
+                    ]
+                }),
                 autoComplete: "email",
                 fullWidth: true,
                 disabled: loading,
-                validate: (0, $4Uj5b$reactadmin.required)(),
+                validate: (0, $4Uj5b$reactadmin.required)(translate("auth.required.newPassword")),
                 format: (value)=>value ? value.toLowerCase() : ""
             }),
-            passwordScorer && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
+            passwordScorer && newPassword && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
                 children: [
                     /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Typography), {
                         variant: "caption",
@@ -2022,34 +2277,126 @@ const $2f0ce992717e175e$var$FormContent = ({ setHandleSubmit: setHandleSubmit, r
                         sx: {
                             width: "100%"
                         }
+                    }),
+                    passwordAnalysis && passwordAnalysis.suggestions.length > 0 && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Typography), {
+                        variant: "caption",
+                        color: "textSecondary",
+                        component: "div",
+                        sx: {
+                            mt: 1,
+                            mb: 2,
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 0.5
+                        },
+                        children: [
+                            translate("auth.input.password_suggestions"),
+                            ":",
+                            passwordAnalysis.suggestions.map((suggestion, index)=>{
+                                const translationKey = `auth.input.password_suggestion.${suggestion}`;
+                                return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("span", {
+                                    style: {
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "4px"
+                                    },
+                                    children: [
+                                        "\u2022 ",
+                                        translate(translationKey)
+                                    ]
+                                }, index);
+                            })
+                        ]
                     })
                 ]
             }),
-            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
-                autoFocus: true,
-                type: "password",
-                source: "password",
-                value: newPassword,
-                label: translate("auth.input.new_password"),
-                autoComplete: "current-password",
-                fullWidth: true,
-                disabled: loading,
-                validate: [
-                    (0, $4Uj5b$reactadmin.required)(),
-                    (0, $eab41bc89667b2c6$export$2e2bcd8739ae039)(passwordScorer)
-                ],
-                onChange: (e)=>setNewPassword(e.target.value)
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("div", {
+                className: "password-container",
+                style: {
+                    position: "relative"
+                },
+                children: [
+                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
+                        autoFocus: true,
+                        type: showNewPassword ? "text" : "password",
+                        source: "password",
+                        value: newPassword,
+                        label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
+                            children: [
+                                translate("auth.input.new_password"),
+                                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
+                            ]
+                        }),
+                        autoComplete: "current-password",
+                        fullWidth: true,
+                        disabled: loading,
+                        validate: [
+                            (0, $4Uj5b$reactadmin.required)(translate("auth.required.newPasswordAgain")),
+                            (0, $eab41bc89667b2c6$export$2e2bcd8739ae039)(passwordScorer)
+                        ],
+                        onChange: (e)=>{
+                            setNewPassword(e.target.value);
+                        },
+                        "aria-describedby": "new-password-desc"
+                    }),
+                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$439d29a4e110a164), {
+                        id: "new-password-desc",
+                        children: translate("auth.input.password_description")
+                    }),
+                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.IconButton), {
+                        "aria-label": translate(showNewPassword ? "auth.action.hide_password" : "auth.action.show_password"),
+                        onClick: toggleNewPassword,
+                        style: {
+                            position: "absolute",
+                            right: "8px",
+                            top: "17px",
+                            padding: "4px"
+                        },
+                        size: "large",
+                        children: showNewPassword ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.VisibilityOff), {}) : /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.Visibility), {})
+                    })
+                ]
             }),
-            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
-                type: "password",
-                source: "confirm-password",
-                label: translate("auth.input.confirm_new_password"),
-                autoComplete: "current-password",
-                fullWidth: true,
-                disabled: loading,
-                validate: [
-                    (0, $4Uj5b$reactadmin.required)(),
-                    $2f0ce992717e175e$var$samePassword
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("div", {
+                className: "password-container",
+                style: {
+                    position: "relative"
+                },
+                children: [
+                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
+                        type: showConfirmPassword ? "text" : "password",
+                        source: "confirm-password",
+                        label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
+                            children: [
+                                translate("auth.input.confirm_new_password"),
+                                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
+                            ]
+                        }),
+                        autoComplete: "current-password",
+                        fullWidth: true,
+                        disabled: loading,
+                        validate: [
+                            (0, $4Uj5b$reactadmin.required)(),
+                            $2f0ce992717e175e$var$samePassword
+                        ],
+                        "aria-describedby": "confirm-password-desc"
+                    }),
+                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$439d29a4e110a164), {
+                        id: "confirm-password-desc",
+                        children: translate("auth.input.password_description")
+                    }),
+                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.IconButton), {
+                        "aria-label": translate(showConfirmPassword ? "auth.action.hide_password" : "auth.action.show_password"),
+                        onClick: toggleConfirmPassword,
+                        style: {
+                            position: "absolute",
+                            right: "8px",
+                            top: "17px",
+                            padding: "4px"
+                        },
+                        size: "large",
+                        children: showConfirmPassword ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.VisibilityOff), {}) : /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.Visibility), {})
+                    })
                 ]
             }),
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
@@ -2064,6 +2411,7 @@ const $2f0ce992717e175e$var$FormContent = ({ setHandleSubmit: setHandleSubmit, r
     });
 };
 var $2f0ce992717e175e$export$2e2bcd8739ae039 = $2f0ce992717e175e$var$NewPasswordForm;
+
 
 
 
@@ -2097,7 +2445,7 @@ const $be1129164d40878e$var$FormContent = ({ setHandleSubmit: setHandleSubmit })
                     });
                 }).catch((error)=>{
                     setLoading(false);
-                    notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "auth.notification.reset_password_error" : error.message, {
+                    notify(typeof error === "string" ? error : !error.message ? "auth.notification.reset_password_error" : error.message, {
                         type: "warning",
                         messageArgs: {
                             _: typeof error === "string" ? error : error && error.message ? error.message : undefined
@@ -2111,11 +2459,16 @@ const $be1129164d40878e$var$FormContent = ({ setHandleSubmit: setHandleSubmit })
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
                 autoFocus: true,
                 source: "email",
-                label: translate("auth.input.email"),
+                label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
+                    children: [
+                        translate("auth.input.email"),
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
+                    ]
+                }),
                 autoComplete: "email",
                 fullWidth: true,
                 disabled: loading,
-                validate: (0, $4Uj5b$reactadmin.required)(),
+                validate: (0, $4Uj5b$reactadmin.required)(translate("auth.required.email")),
                 format: (value)=>value ? value.toLowerCase() : ""
             }),
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
@@ -2544,7 +2897,9 @@ const $be2fdde9f3e3137d$var$englishMessages = {
             logout: "Logout",
             login: "Login",
             view_my_profile: "View my profile",
-            edit_my_profile: "Edit my profile"
+            edit_my_profile: "Edit my profile",
+            show_password: "Show password",
+            hide_password: "Hide password"
         },
         right: {
             resource: {
@@ -2574,8 +2929,20 @@ const $be2fdde9f3e3137d$var$englishMessages = {
             new_password: "New password",
             confirm_new_password: "Confirm new password",
             password_strength: "Password strength",
+            password_suggestions: "Suggestions to improve your password",
+            password_suggestion: {
+                add_lowercase_letters_a_z: "Add lowercase letters (a-z)",
+                add_uppercase_letters_a_z: "Add uppercase letters (A-Z)",
+                add_numbers_0_9: "Add numbers (0-9)",
+                add_special_characters: "Add special characters (!@#$...)",
+                make_it_at_least_8_characters_long: "Make it at least 8 characters long",
+                make_it_at_least_14_characters_long_for_maximum_strength: "Make it at least 14 characters long for maximum strength"
+            },
             password_too_weak: "Password too weak. Increase length or add special characters.",
-            password_mismatch: "The passwords you provided do not match."
+            password_mismatch: "The passwords you provided do not match.",
+            required_field: "Required field",
+            required_field_description: "This field is required",
+            password_description: "Characters you type will be visually hidden for security reasons"
         },
         helper: {
             login: "Sign in to your account",
@@ -2617,6 +2984,13 @@ const $be2fdde9f3e3137d$var$englishMessages = {
             invalid_password: "Invalid password",
             get_settings_error: "An error occurred",
             update_settings_error: "An error occurred"
+        },
+        required: {
+            email: "Please enter your email address",
+            password: "Please enter your password",
+            identifier: "Please enter a unique identifier",
+            newPassword: "Please enter a new password",
+            newPasswordAgain: "Please enter the new password again"
         }
     }
 };
@@ -2639,7 +3013,9 @@ const $6dbc362c3d93e01d$var$frenchMessages = {
             logout: "Se d\xe9connecter",
             login: "Se connecter",
             view_my_profile: "Voir mon profil",
-            edit_my_profile: "\xc9diter mon profil"
+            edit_my_profile: "\xc9diter mon profil",
+            show_password: "Afficher le mot de passe",
+            hide_password: "Masquer le mot de passe"
         },
         right: {
             resource: {
@@ -2669,8 +3045,20 @@ const $6dbc362c3d93e01d$var$frenchMessages = {
             new_password: "Nouveau mot de passe",
             confirm_new_password: "Confirmer le nouveau mot de passe",
             password_strength: "Force du mot de passe",
+            password_suggestions: "Suggestions pour am\xe9liorer votre mot de passe",
+            password_suggestion: {
+                add_lowercase_letters_a_z: "Ajouter des lettres minuscules (a-z)",
+                add_uppercase_letters_a_z: "Ajouter des lettres majuscules (A-Z)",
+                add_numbers_0_9: "Ajouter des chiffres (0-9)",
+                add_special_characters: "Ajouter des caract\xe8res sp\xe9ciaux (!@#$...)",
+                make_it_at_least_8_characters_long: "Faire au moins 8 caract\xe8res de long",
+                make_it_at_least_14_characters_long_for_maximum_strength: "Faire au moins 14 caract\xe8res de long pour une force maximale"
+            },
             password_too_weak: "Mot de passe trop faible. Augmenter la longueur ou ajouter des caract\xe8res sp\xe9ciaux.",
-            password_mismatch: "Mot de passe diff\xe9rent du premier"
+            password_mismatch: "Mot de passe diff\xe9rent du premier",
+            required_field: "Champ obligatoire",
+            required_field_description: "Ce champ est obligatoire",
+            password_description: "Les caract\xe8res que vous tapez seront masqu\xe9s visuellement pour des raisons de s\xe9curit\xe9"
         },
         helper: {
             login: "Connectez-vous \xe0 votre compte.",
@@ -2712,6 +3100,13 @@ const $6dbc362c3d93e01d$var$frenchMessages = {
             invalid_password: "Mot de passe incorrect",
             get_settings_error: "Une erreur s'est produite",
             update_settings_error: "Une erreur s'est produite"
+        },
+        required: {
+            email: "Veuillez entrer votre adresse e-mail",
+            password: "Veuillez entrer votre mot de passe",
+            identifier: "Veuillez entrer un identifiant unique",
+            newPassword: "Veuillez entrer un nouveau mot de passe",
+            newPasswordAgain: "Veuillez entrer le nouveau mot de passe encore une fois"
         }
     }
 };
