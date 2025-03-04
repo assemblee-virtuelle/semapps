@@ -55,3 +55,21 @@ Return the URI of the single resource
 | Property | Type  | Default | Description                                             |
 | -------- | ----- | ------- | ------------------------------------------------------- |
 | `webId`  | `URI` |         | User doing the action (required in Pod provider config) |
+
+##### Return values
+
+The URI of the single resource
+
+### `waitForResourceCreation`
+
+Wait for the resource to be created, by checking if it exists every second for 30s.
+
+##### Parameters
+
+| Property | Type  | Default | Description                                             |
+| -------- | ----- | ------- | ------------------------------------------------------- |
+| `webId`  | `URI` |         | User doing the action (required in Pod provider config) |
+
+##### Return values
+
+The URI of the single resource
