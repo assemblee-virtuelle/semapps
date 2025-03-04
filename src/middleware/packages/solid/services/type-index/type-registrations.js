@@ -20,10 +20,10 @@ module.exports = {
         types: { type: 'array' },
         containerUri: { type: 'string' },
         webId: { type: 'string' },
-        private: { type: 'boolean', default: false }
+        isPrivate: { type: 'boolean', default: false }
       },
       async handler(ctx) {
-        let { types, containerUri, webId, private } = ctx.params;
+        let { types, containerUri, webId, isPrivate } = ctx.params;
 
         // Wait for the container with type registrations to be created
         const typeRegistrationsContainerUri = await this.actions.getContainerUri({ webId });
@@ -75,7 +75,7 @@ module.exports = {
           );
 
           // Give anonymous read permission to public type registrations
-          if (!private) {
+          if (!isPrivate) {
             await ctx.call('webacl.resource.addRights', {
               resourceUri: registrationUri,
               additionalRights: {
@@ -88,11 +88,11 @@ module.exports = {
           }
 
           // Find the public or private TypeIndex linked with the WebId
-          const indexUri = private
+          const indexUri = isPrivate
             ? await ctx.call('type-indexes.getPrivateIndex', { webId })
             : await ctx.call('type-indexes.getPublicIndex', { webId });
           if (!indexUri)
-            throw new Error(`No ${private ? 'private' : 'public'} type index associated with webId ${webId}`);
+            throw new Error(`No ${isPrivate ? 'private' : 'public'} type index associated with webId ${webId}`);
 
           // Attach it to the TypeIndex
           await ctx.call('type-indexes.patch', {
@@ -267,7 +267,12 @@ module.exports = {
           if (options.typeIndex) {
             const containerUri = urlJoin(podUrl, options.path);
             await this.actions.register(
-              { types: arrayOf(options.acceptedTypes), containerUri, webId, private: options.typeIndex === 'private' },
+              {
+                types: arrayOf(options.acceptedTypes),
+                containerUri,
+                webId,
+                isPrivate: options.typeIndex === 'private'
+              },
               { parentCtx: ctx }
             );
           }
@@ -287,7 +292,7 @@ module.exports = {
             types: arrayOf(options?.acceptedTypes),
             containerUri,
             webId,
-            private: options.typeIndex === 'private'
+            isPrivate: options.typeIndex === 'private'
           },
           { parentCtx: ctx }
         );
