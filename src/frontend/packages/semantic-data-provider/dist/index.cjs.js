@@ -118,9 +118,9 @@ var $9020b8e3f4a4c1a1$export$2e2bcd8739ae039 = $9020b8e3f4a4c1a1$var$getOneMetho
 
 
 const $0edd1f2d07c8231f$var$getUploadsContainerUri = (config, serverKey)=>{
-    // If no server key is defined, find any server with a uploads container
-    if (!serverKey) serverKey = Object.keys(config.dataServers).find((key)=>config.dataServers[key].containers.find((c)=>c.binaryResources));
-    if (serverKey) return config.dataServers[serverKey].containers.find((c)=>c.binaryResources)?.uri;
+    // If no server key is defined or if the server has no uploads container, find any server with a uploads container
+    if (!serverKey || !config.dataServers[serverKey].containers || !config.dataServers[serverKey].containers?.find((c)=>c.binaryResources)) serverKey = Object.keys(config.dataServers).find((key)=>config.dataServers[key].containers?.find((c)=>c.binaryResources));
+    if (serverKey) return config.dataServers[serverKey].containers?.find((c)=>c.binaryResources)?.uri;
     else // No server has an uploads container
     return null;
 };
@@ -1161,13 +1161,14 @@ const $5e24772571dd1677$var$normalizeConfig = async (config)=>{
         ...config
     };
     // Add server and uri key to servers' containers
-    Object.keys(newConfig.dataServers).forEach((serverKey)=>{
-        newConfig.dataServers[serverKey].containers = newConfig.dataServers[serverKey].containers?.map((container)=>({
-                ...container,
-                server: serverKey,
-                uri: (0, ($parcel$interopDefault($bkNnK$urljoin)))(config.dataServers[serverKey].baseUrl, container.path)
-            }));
-    });
+    for (const serverKey of Object.keys(newConfig.dataServers))if (newConfig.dataServers[serverKey].containers) newConfig.dataServers[serverKey].containers = await Promise.all(newConfig.dataServers[serverKey].containers?.map(async (container)=>{
+        return {
+            ...container,
+            types: container.types && await (0, $9ab033d1ec46b5da$export$2e2bcd8739ae039)(container.types, config.jsonContext),
+            server: serverKey,
+            uri: (0, ($parcel$interopDefault($bkNnK$urljoin)))(config.dataServers[serverKey].baseUrl, container.path)
+        };
+    }));
     // Expand types in data models
     for (const resourceId of Object.keys(newConfig.resources)){
         if (!newConfig.resources[resourceId].types && newConfig.resources[resourceId].shapeTreeUri) newConfig.resources[resourceId].types = await (0, $058bb6151d120fba$export$2e2bcd8739ae039)(newConfig.resources[resourceId].shapeTreeUri);
