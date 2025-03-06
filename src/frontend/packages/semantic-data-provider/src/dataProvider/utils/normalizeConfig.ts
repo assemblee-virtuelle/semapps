@@ -26,7 +26,9 @@ const normalizeConfig = async (config: Configuration) => {
   // Expand types in data models
   for (const resourceId of Object.keys(newConfig.resources)) {
     if (!newConfig.resources[resourceId].types && newConfig.resources[resourceId].shapeTreeUri) {
-      newConfig.resources[resourceId].types = await getTypesFromShapeTree(newConfig.resources[resourceId].shapeTreeUri);
+      newConfig.resources[resourceId].types = await getTypesFromShapeTree(
+        newConfig.resources[resourceId].shapeTreeUri!
+      );
     }
 
     newConfig.resources[resourceId].types = await expandTypes(
