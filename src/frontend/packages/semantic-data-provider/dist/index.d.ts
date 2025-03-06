@@ -1,5 +1,6 @@
 import { DataProvider, RaRecord, fetchUtils } from 'react-admin';
 import { Quad } from '@rdfjs/types';
+import { JSX } from 'react/jsx-runtime';
 export type DataServerKey = string & {
   readonly _type?: 'DataServerKey';
 };
@@ -135,7 +136,7 @@ export function buildBlankNodesQuery(
   ontologies: any
 ):
   | {
-      construct: import('@rdfjs/types').Quad[] | null;
+      construct: Quad[] | null;
       where: {
         type: string;
         patterns: any[];
@@ -172,14 +173,14 @@ export const useCompactPredicate: (
   predicate: string,
   context?: string | string[] | Record<string, string>
 ) => string | undefined;
-export const useDataModels: () => Record<string, import('index').DataModel> | undefined;
-export const useDataServers: () => import('index').DataServersConfig | undefined;
+export const useDataModels: () => Record<string, DataModel> | undefined;
+export const useDataServers: () => DataServersConfig | undefined;
 export const useContainers: (resourceId?: string, serverKeys?: string | string[]) => Container[];
 export const useContainersByTypes: (types?: string | string[]) => Container[];
 export const useContainerByUri: (containerUri: string) => Container | undefined;
 export const useGetCreateContainerUri: () => (resourceId: string) => string | undefined;
 export const useCreateContainerUri: (resourceId: string) => string | undefined;
-export const useDataModel: (resourceId: string) => import('index').DataModel | undefined;
+export const useDataModel: (resourceId: string) => DataModel | undefined;
 export function useGetExternalLink(componentExternalLinks: any): (record: any) => any;
 export const useGetPrefixFromUri: () => (uri: string) => string;
 /**
@@ -208,7 +209,7 @@ export function FilterHandler({
   record: any;
   filter: any;
   source: any;
-}): import('react/jsx-runtime').JSX.Element;
+}): JSX.Element;
 export function GroupedReferenceHandler({
   children,
   groupReference,
@@ -223,8 +224,8 @@ export function GroupedReferenceHandler({
   groupLabel: any;
   groupHeader: any;
   filterProperty: any;
-}): import('react/jsx-runtime').JSX.Element;
-export function ReificationArrayInput(props: any): import('react/jsx-runtime').JSX.Element;
+}): JSX.Element;
+export function ReificationArrayInput(props: any): JSX.Element;
 interface CreateSolidChannelOptions {
   type: string;
   closeAfter?: number;

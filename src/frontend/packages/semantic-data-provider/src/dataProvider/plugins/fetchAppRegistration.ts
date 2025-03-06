@@ -35,20 +35,20 @@ const fetchAppRegistration = (): Plugin => ({
 
             const newConfig = { ...config } as Configuration;
 
-            for (const accessGrantUri of arrayOf(appRegistration['interop:hasAccessGrant'])) {
-              const { json: accessGrant } = await config.httpClient(accessGrantUri);
-
-              for (const dataGrantUri of arrayOf(accessGrant['interop:hasDataGrant'])) {
-                const { json: dataGrant } = await config.httpClient(dataGrantUri);
-
-                const container = await getContainerFromDataRegistration(
-                  dataGrant['interop:hasDataRegistration'],
-                  config
+            // Load data grants concurrently to improve performances
+            const results = await Promise.all(
+              arrayOf(appRegistration['interop:hasAccessGrant']).map(async accessGrantUri => {
+                const { json: accessGrant } = await config.httpClient(accessGrantUri);
+                return Promise.all(
+                  arrayOf(accessGrant['interop:hasDataGrant']).map(async dataGrantUri => {
+                    const { json: dataGrant } = await config.httpClient(dataGrantUri);
+                    return getContainerFromDataRegistration(dataGrant['interop:hasDataRegistration'], config);
+                  })
                 );
+              })
+            );
 
-                newConfig.dataServers.user.containers?.push(container);
-              }
-            }
+            newConfig.dataServers.user.containers = results.flat();
 
             return newConfig;
           }

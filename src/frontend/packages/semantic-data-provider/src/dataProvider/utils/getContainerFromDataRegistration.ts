@@ -1,4 +1,5 @@
 import jsonld from 'jsonld';
+import { fetchUtils } from 'react-admin';
 import { Configuration, Container } from '../types';
 
 const getContainerFromDataRegistration = async (dataRegistrationUri: string, config: Configuration) => {
@@ -11,7 +12,9 @@ const getContainerFromDataRegistration = async (dataRegistrationUri: string, con
 
   const shapeTreeUri = dataRegistration['interop:registeredShapeTree'];
 
-  let { json: shapeTree } = await config.httpClient(shapeTreeUri);
+  let { json: shapeTree } = await fetchUtils.fetchJson(shapeTreeUri, {
+    headers: new Headers({ Accept: 'application/ld+json' })
+  });
 
   shapeTree = await jsonld.compact(shapeTree, {
     st: 'http://www.w3.org/ns/shapetrees#',
@@ -34,7 +37,9 @@ const getContainerFromDataRegistration = async (dataRegistrationUri: string, con
   } as Container;
 
   if (shapeTree.shape) {
-    const { json: shape } = await config.httpClient(shapeTree.shape);
+    const { json: shape } = await fetchUtils.fetchJson(shapeTree.shape, {
+      headers: new Headers({ Accept: 'application/ld+json' })
+    });
 
     container.types = shape?.[0]?.['http://www.w3.org/ns/shacl#targetClass']?.map((node: any) => node?.['@id']);
   }

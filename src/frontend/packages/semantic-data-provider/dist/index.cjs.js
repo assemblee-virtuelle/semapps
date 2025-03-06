@@ -72,10 +72,10 @@ const $3db7a4510a668a04$var$fetchResource = async (resourceUri, config)=>{
     const { httpClient: httpClient, jsonContext: jsonContext } = config;
     let { json: data } = await httpClient(resourceUri);
     if (!data) throw new Error(`Not a valid JSON: ${resourceUri}`);
-    data.id = data.id || data["@id"];
+    data.id = data.id || data['@id'];
     // We compact only if the context is different between the frontend and the middleware
     // TODO deep compare if the context is an object
-    if (data["@context"] !== jsonContext) data = await (0, ($parcel$interopDefault($bkNnK$jsonld))).compact(data, jsonContext);
+    if (data['@context'] !== jsonContext) data = await (0, ($parcel$interopDefault($bkNnK$jsonld))).compact(data, jsonContext);
     return data;
 };
 var $3db7a4510a668a04$export$2e2bcd8739ae039 = $3db7a4510a668a04$var$fetchResource;
@@ -133,18 +133,18 @@ const $6fcb30f76390d142$export$a5575dbeeffdad98 = async (rawFile, config, server
     const uploadsContainerUri = (0, $0edd1f2d07c8231f$export$2e2bcd8739ae039)(config, serverKey);
     if (!uploadsContainerUri) throw new Error("You must define an container with binaryResources in one of the server's configuration");
     const response = await config.httpClient(uploadsContainerUri, {
-        method: "POST",
+        method: 'POST',
         body: rawFile,
         headers: new Headers({
-            "Content-Type": rawFile.type
+            'Content-Type': rawFile.type
         })
     });
-    if (response.status === 201) return response.headers.get("Location");
+    if (response.status === 201) return response.headers.get('Location');
     return null;
 };
 const $6fcb30f76390d142$var$deleteFiles = async (filesToDelete, config)=>{
     return Promise.all(filesToDelete.map((file)=>config.httpClient(file, {
-            method: "DELETE"
+            method: 'DELETE'
         })));
 };
 /*
@@ -196,12 +196,12 @@ var $8f44b7c15b8b8e1d$export$2e2bcd8739ae039 = $8f44b7c15b8b8e1d$var$getServerKe
 
 const $6531da3b9e8c524a$var$parseServerKey = (serverKey, dataServers)=>{
     switch(serverKey){
-        case "@default":
-            return (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("default", dataServers);
-        case "@pod":
-            return (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("pod", dataServers);
-        case "@authServer":
-            return (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("authServer", dataServers);
+        case '@default':
+            return (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)('default', dataServers);
+        case '@pod':
+            return (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)('pod', dataServers);
+        case '@authServer':
+            return (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)('authServer', dataServers);
         default:
             return serverKey;
     }
@@ -210,12 +210,12 @@ const $6531da3b9e8c524a$var$parseServerKey = (serverKey, dataServers)=>{
 // parsing keywords like @all, @default, @pod and @authServer
 const $6531da3b9e8c524a$var$parseServerKeys = (serverKeys, dataServers)=>{
     if (Array.isArray(serverKeys)) {
-        if (serverKeys.includes("@all")) return Object.keys(dataServers);
+        if (serverKeys.includes('@all')) return Object.keys(dataServers);
         else return serverKeys.map((serverKey)=>$6531da3b9e8c524a$var$parseServerKey(serverKey, dataServers));
-    } else if (typeof serverKeys === "string") {
-        if (serverKeys === "@all") return Object.keys(dataServers);
-        else if (serverKeys === "@remote") {
-            const defaultServerKey = (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("default", dataServers);
+    } else if (typeof serverKeys === 'string') {
+        if (serverKeys === '@all') return Object.keys(dataServers);
+        else if (serverKeys === '@remote') {
+            const defaultServerKey = (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)('default', dataServers);
             return Object.keys(dataServers).filter((serverKey)=>serverKey !== defaultServerKey);
         } else return [
             $6531da3b9e8c524a$var$parseServerKey(serverKeys, dataServers)
@@ -229,7 +229,7 @@ var $6531da3b9e8c524a$export$2e2bcd8739ae039 = $6531da3b9e8c524a$var$parseServer
  * Return all containers matching the given types
  */ const $047a107b0d203793$var$findContainersWithTypes = (types, serverKeys, dataServers)=>{
     const matchingContainers = [];
-    const parsedServerKeys = (0, $6531da3b9e8c524a$export$2e2bcd8739ae039)(serverKeys || "@all", dataServers);
+    const parsedServerKeys = (0, $6531da3b9e8c524a$export$2e2bcd8739ae039)(serverKeys || '@all', dataServers);
     Object.keys(dataServers).forEach((dataServerKey)=>{
         if (parsedServerKeys.includes(dataServerKey)) dataServers[dataServerKey].containers?.forEach((container)=>{
             if (container.types?.some((t)=>types.includes(t))) matchingContainers.push(container);
@@ -267,7 +267,7 @@ const $907cbc087f6529e2$var$createMethod = (config)=>async (resourceId, params)=
             containerUri = container.uri;
         } else {
             serverKey = dataModel.create?.server || Object.keys(dataServers).find((key)=>dataServers[key].default === true);
-            if (!serverKey) throw new Error("You must define a server for the creation, or a container, or a default server");
+            if (!serverKey) throw new Error('You must define a server for the creation, or a container, or a default server');
             const containers = (0, $047a107b0d203793$export$2e2bcd8739ae039)(dataModel.types, [
                 serverKey
             ], dataServers);
@@ -277,32 +277,32 @@ const $907cbc087f6529e2$var$createMethod = (config)=>async (resourceId, params)=
         }
         if (params.data) {
             if (dataModel.fieldsMapping?.title) {
-                const slug = Array.isArray(dataModel.fieldsMapping.title) ? dataModel.fieldsMapping.title.map((f)=>params.data[f]).join(" ") : params.data[dataModel.fieldsMapping.title];
+                const slug = Array.isArray(dataModel.fieldsMapping.title) ? dataModel.fieldsMapping.title.map((f)=>params.data[f]).join(' ') : params.data[dataModel.fieldsMapping.title];
                 // Generate slug here, otherwise we may get errors with special characters
-                headers.set("Slug", (0, ($parcel$interopDefault($bkNnK$speakingurl)))(slug));
+                headers.set('Slug', (0, ($parcel$interopDefault($bkNnK$speakingurl)))(slug));
             }
             // Upload files, if there are any
             const { updatedRecord: updatedRecord } = await (0, $6fcb30f76390d142$export$2e2bcd8739ae039).upload(params.data, config, serverKey);
             params.data = updatedRecord;
             const { headers: responseHeaders } = await httpClient(containerUri, {
-                method: "POST",
+                method: 'POST',
                 headers: headers,
                 body: JSON.stringify({
-                    "@context": jsonContext,
-                    "@type": dataModel.types,
+                    '@context': jsonContext,
+                    '@type': dataModel.types,
                     ...params.data
                 })
             });
             // Retrieve newly-created resource
-            const resourceUri = responseHeaders.get("Location");
+            const resourceUri = responseHeaders.get('Location');
             return await (0, $9020b8e3f4a4c1a1$export$2e2bcd8739ae039)(config)(resourceId, {
                 id: resourceUri
             });
         }
         if (params.id) {
-            headers.set("Content-Type", "application/sparql-update");
+            headers.set('Content-Type', 'application/sparql-update');
             await httpClient(containerUri, {
-                method: "PATCH",
+                method: 'PATCH',
                 headers: headers,
                 body: `
         PREFIX ldp: <http://www.w3.org/ns/ldp#>
@@ -322,7 +322,7 @@ var $907cbc087f6529e2$export$2e2bcd8739ae039 = $907cbc087f6529e2$var$createMetho
 const $566b5adde94810fa$var$deleteMethod = (config)=>async (resourceId, params)=>{
         const { httpClient: httpClient } = config;
         await httpClient(`${params.id}`, {
-            method: "DELETE"
+            method: 'DELETE'
         });
         if (params.meta?.filesToDelete) await (0, $6fcb30f76390d142$export$2e2bcd8739ae039).delete(params.meta.filesToDelete, config);
         return {
@@ -339,7 +339,7 @@ const $f170294dd29d8bf8$var$deleteManyMethod = (config)=>async (resourceId, para
         const ids = [];
         for (const id of params.ids)try {
             await httpClient(id, {
-                method: "DELETE"
+                method: 'DELETE'
             });
             ids.push(id);
         } catch (e) {
@@ -380,23 +380,23 @@ var $e6fbab1f303bdb93$export$2e2bcd8739ae039 = $e6fbab1f303bdb93$var$arrayOf;
 
 
 const $8c999cc29c8d6a6c$var$isValidLDPContainer = (container)=>{
-    const resourceType = container.type || container["@type"];
-    return Array.isArray(resourceType) ? resourceType.includes("ldp:Container") : resourceType === "ldp:Container";
+    const resourceType = container.type || container['@type'];
+    return Array.isArray(resourceType) ? resourceType.includes('ldp:Container') : resourceType === 'ldp:Container';
 };
 const $8c999cc29c8d6a6c$var$isObject = (val)=>{
-    return val != null && typeof val === "object" && !Array.isArray(val);
+    return val != null && typeof val === 'object' && !Array.isArray(val);
 };
 const $8c999cc29c8d6a6c$var$fetchContainers = async (containers, params, { httpClient: httpClient, jsonContext: jsonContext })=>{
     const fetchPromises = containers.map((container)=>httpClient(container.uri).then(async ({ json: json })=>{
             const jsonResponse = json;
             // If container's context is different, compact it to have an uniform result
             // TODO deep compare if the context is an object
-            if (jsonResponse["@context"] !== jsonContext) return (0, ($parcel$interopDefault($bkNnK$jsonld))).compact(jsonResponse, jsonContext);
+            if (jsonResponse['@context'] !== jsonContext) return (0, ($parcel$interopDefault($bkNnK$jsonld))).compact(jsonResponse, jsonContext);
             return jsonResponse;
         }).then((json)=>{
             if (!$8c999cc29c8d6a6c$var$isValidLDPContainer(json)) throw new Error(`${container.uri} is not a LDP container`);
-            return (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(json["ldp:contains"]).map((resource)=>({
-                    "@context": json["@context"],
+            return (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(json['ldp:contains']).map((resource)=>({
+                    '@context': json['@context'],
                     ...resource
                 }));
         }));
@@ -404,7 +404,7 @@ const $8c999cc29c8d6a6c$var$fetchContainers = async (containers, params, { httpC
     const results = await Promise.all(fetchPromises);
     let resources = results.flat();
     resources = resources.map((resource)=>{
-        resource.id = resource.id || resource["@id"];
+        resource.id = resource.id || resource['@id'];
         return resource;
     });
     // Apply filter to results
@@ -418,20 +418,20 @@ const $8c999cc29c8d6a6c$var$fetchContainers = async (containers, params, { httpC
     if (filters._predicates && Array.isArray(filters._predicates)) {
         const predicates = filters._predicates;
         const mandatoryAttributes = [
-            "id"
+            'id'
         ];
         resources = resources.map((resource)=>{
             return Object.keys(resource).filter((key)=>predicates.includes(key) || mandatoryAttributes.includes(key)).reduce((filteredResource, key)=>{
                 filteredResource[key] = resource[key];
                 return filteredResource;
             }, {
-                "@context": []
+                '@context': []
             });
         });
     }
     if (Object.keys(filters).filter((f)=>![
-            "_predicates",
-            "_servers"
+            '_predicates',
+            '_servers'
         ].includes(f)).length > 0) resources = resources.filter((resource)=>{
         // Full text filtering
         if (filters.q) return Object.values(resource).some((attributeValue)=>{
@@ -440,7 +440,7 @@ const $8c999cc29c8d6a6c$var$fetchContainers = async (containers, params, { httpC
                     attributeValue
                 ];
                 return arrayValues.some((value)=>{
-                    if (typeof value === "string") return value.toLowerCase().normalize("NFD").includes(filters.q.toLowerCase().normalize("NFD"));
+                    if (typeof value === 'string') return value.toLowerCase().normalize('NFD').includes(filters.q.toLowerCase().normalize('NFD'));
                     return false;
                 });
             }
@@ -448,24 +448,24 @@ const $8c999cc29c8d6a6c$var$fetchContainers = async (containers, params, { httpC
         });
         // Attribute filtering
         const attributesFilters = Object.keys(filters).filter((f)=>![
-                "_predicates",
-                "_servers",
-                "q"
+                '_predicates',
+                '_servers',
+                'q'
             ].includes(f));
         return attributesFilters.every((attribute)=>{
             if (resource[attribute]) {
                 const arrayValues = Array.isArray(resource[attribute]) ? resource[attribute] : [
                     resource[attribute]
                 ];
-                return arrayValues.some((value)=>typeof value === "string" && value.includes(filters[attribute]));
+                return arrayValues.some((value)=>typeof value === 'string' && value.includes(filters[attribute]));
             }
             return false;
         });
     });
     // Sorting
     if (params.sort) resources = resources.sort((a, b)=>{
-        if (params.sort.order === "ASC") return (a[params.sort.field] ?? "").localeCompare(b[params.sort.field] ?? "");
-        return (b[params.sort.field] ?? "").localeCompare(a[params.sort.field] ?? "");
+        if (params.sort.order === 'ASC') return (a[params.sort.field] ?? '').localeCompare(b[params.sort.field] ?? '');
+        return (b[params.sort.field] ?? '').localeCompare(a[params.sort.field] ?? '');
     });
     // Pagination
     const total = resources.length;
@@ -484,7 +484,7 @@ const $e5241bff9fc0c9d7$var$getEmbedFrame = (blankNodes)=>{
     let predicates;
     if (blankNodes) {
         for (const blankNode of blankNodes){
-            if (blankNode.includes("/")) predicates = blankNode.split("/").reverse();
+            if (blankNode.includes('/')) predicates = blankNode.split('/').reverse();
             else predicates = [
                 blankNode
             ];
@@ -492,7 +492,7 @@ const $e5241bff9fc0c9d7$var$getEmbedFrame = (blankNodes)=>{
                 ...embedFrame,
                 ...predicates.reduce((accumulator, predicate)=>({
                         [predicate]: {
-                            "@embed": "@last",
+                            '@embed': '@last',
                             ...accumulator
                         }
                     }), {})
@@ -507,12 +507,12 @@ var $e5241bff9fc0c9d7$export$2e2bcd8739ae039 = $e5241bff9fc0c9d7$var$getEmbedFra
 
 
 const $108795c3831be99f$var$getUriFromPrefix = (item, ontologies)=>{
-    if (item.startsWith("http://") || item.startsWith("https://")) // Already resolved, return the URI
+    if (item.startsWith('http://') || item.startsWith('https://')) // Already resolved, return the URI
     return item;
-    else if (item === "a") // Special case
-    return "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
+    else if (item === 'a') // Special case
+    return 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
     else {
-        const [prefix, value] = item.split(":");
+        const [prefix, value] = item.split(':');
         if (value) {
             if (ontologies[prefix]) return ontologies[prefix] + value;
             else throw new Error(`No ontology found with prefix ${prefix}`);
@@ -526,11 +526,11 @@ const $51d7c29cc84f802b$var$defaultToArray = (value)=>!value ? [] : Array.isArra
         value
     ];
 // We need to always include the type or React-Admin will not work properly
-const $51d7c29cc84f802b$var$typeQuery = (0, $bkNnK$rdfjsdatamodel.triple)((0, $bkNnK$rdfjsdatamodel.variable)("s1"), (0, $bkNnK$rdfjsdatamodel.namedNode)("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), (0, $bkNnK$rdfjsdatamodel.variable)("type"));
+const $51d7c29cc84f802b$var$typeQuery = (0, $bkNnK$rdfjsdatamodel.triple)((0, $bkNnK$rdfjsdatamodel.variable)('s1'), (0, $bkNnK$rdfjsdatamodel.namedNode)('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), (0, $bkNnK$rdfjsdatamodel.variable)('type'));
 const $51d7c29cc84f802b$var$buildBaseQuery = (predicates, ontologies)=>{
     let baseTriples;
     if (predicates) {
-        baseTriples = $51d7c29cc84f802b$var$defaultToArray(predicates).map((predicate, i)=>(0, $bkNnK$rdfjsdatamodel.triple)((0, $bkNnK$rdfjsdatamodel.variable)("s1"), (0, $bkNnK$rdfjsdatamodel.namedNode)((0, $108795c3831be99f$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $bkNnK$rdfjsdatamodel.variable)(`o${i + 1}`)));
+        baseTriples = $51d7c29cc84f802b$var$defaultToArray(predicates).map((predicate, i)=>(0, $bkNnK$rdfjsdatamodel.triple)((0, $bkNnK$rdfjsdatamodel.variable)('s1'), (0, $bkNnK$rdfjsdatamodel.namedNode)((0, $108795c3831be99f$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $bkNnK$rdfjsdatamodel.variable)(`o${i + 1}`)));
         return {
             construct: [
                 $51d7c29cc84f802b$var$typeQuery,
@@ -539,7 +539,7 @@ const $51d7c29cc84f802b$var$buildBaseQuery = (predicates, ontologies)=>{
             where: [
                 $51d7c29cc84f802b$var$typeQuery,
                 ...baseTriples.map((triple)=>({
-                        type: "optional",
+                        type: 'optional',
                         patterns: [
                             triple
                         ]
@@ -548,7 +548,7 @@ const $51d7c29cc84f802b$var$buildBaseQuery = (predicates, ontologies)=>{
         };
     }
     baseTriples = [
-        (0, $bkNnK$rdfjsdatamodel.triple)((0, $bkNnK$rdfjsdatamodel.variable)("s1"), (0, $bkNnK$rdfjsdatamodel.variable)("p1"), (0, $bkNnK$rdfjsdatamodel.variable)("o1"))
+        (0, $bkNnK$rdfjsdatamodel.triple)((0, $bkNnK$rdfjsdatamodel.variable)('s1'), (0, $bkNnK$rdfjsdatamodel.variable)('p1'), (0, $bkNnK$rdfjsdatamodel.variable)('o1'))
     ];
     return {
         construct: baseTriples,
@@ -565,22 +565,22 @@ var $51d7c29cc84f802b$export$2e2bcd8739ae039 = $51d7c29cc84f802b$var$buildBaseQu
 const $64d4ce40c79d1509$var$extractNodes = (blankNodes)=>{
     const nodes = [];
     if (blankNodes) {
-        for (const predicate of blankNodes)if (predicate.includes("/")) {
-            const nodeNames = predicate.split("/");
-            for(let i = 1; i <= nodeNames.length; i++)nodes.push(nodeNames.slice(0, i).join("/"));
+        for (const predicate of blankNodes)if (predicate.includes('/')) {
+            const nodeNames = predicate.split('/');
+            for(let i = 1; i <= nodeNames.length; i++)nodes.push(nodeNames.slice(0, i).join('/'));
         } else nodes.push(predicate);
     }
     return nodes;
 };
 const $64d4ce40c79d1509$var$generateSparqlVarName = (node)=>(0, ($parcel$interopDefault($bkNnK$cryptojsmd5)))(node);
-const $64d4ce40c79d1509$var$getParentNode = (node)=>node.includes("/") && node.split("/")[0];
-const $64d4ce40c79d1509$var$getPredicate = (node)=>node.includes("/") ? node.split("/")[1] : node;
+const $64d4ce40c79d1509$var$getParentNode = (node)=>node.includes('/') && node.split('/')[0];
+const $64d4ce40c79d1509$var$getPredicate = (node)=>node.includes('/') ? node.split('/')[1] : node;
 const $64d4ce40c79d1509$var$buildUnionQuery = (queries)=>queries.map((q)=>{
         let triples = q.query;
         const firstTriple = queries.find((q2)=>q.parentNode === q2.node);
         if (firstTriple !== undefined) triples = triples.concat(firstTriple.query[0]);
         return {
-            type: "bgp",
+            type: 'bgp',
             triples: triples
         };
     });
@@ -592,7 +592,7 @@ const $64d4ce40c79d1509$var$buildBlankNodesQuery = (blankNodes, baseQuery, ontol
             const parentNode = $64d4ce40c79d1509$var$getParentNode(node);
             const predicate = $64d4ce40c79d1509$var$getPredicate(node);
             const varName = $64d4ce40c79d1509$var$generateSparqlVarName(node);
-            const parentVarName = parentNode ? $64d4ce40c79d1509$var$generateSparqlVarName(parentNode) : "1";
+            const parentVarName = parentNode ? $64d4ce40c79d1509$var$generateSparqlVarName(parentNode) : '1';
             const query = [
                 (0, $bkNnK$rdfjsdatamodel.triple)((0, $bkNnK$rdfjsdatamodel.variable)(`s${parentVarName}`), (0, $bkNnK$rdfjsdatamodel.namedNode)((0, $108795c3831be99f$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $bkNnK$rdfjsdatamodel.variable)(`s${varName}`)),
                 (0, $bkNnK$rdfjsdatamodel.triple)((0, $bkNnK$rdfjsdatamodel.variable)(`s${varName}`), (0, $bkNnK$rdfjsdatamodel.variable)(`p${varName}`), (0, $bkNnK$rdfjsdatamodel.variable)(`o${varName}`))
@@ -601,13 +601,13 @@ const $64d4ce40c79d1509$var$buildBlankNodesQuery = (blankNodes, baseQuery, ontol
                 node: node,
                 parentNode: parentNode,
                 query: query,
-                filter: "" // `FILTER(isBLANK(?s${varName})) .`
+                filter: '' // `FILTER(isBLANK(?s${varName})) .`
             });
         }
         return {
             construct: queries.length > 0 ? queries.map((q)=>q.query).reduce((pre, cur)=>pre.concat(cur)) : null,
             where: {
-                type: "union",
+                type: 'union',
                 patterns: [
                     baseQuery.where,
                     ...$64d4ce40c79d1509$var$buildUnionQuery(queries)
@@ -616,8 +616,8 @@ const $64d4ce40c79d1509$var$buildBlankNodesQuery = (blankNodes, baseQuery, ontol
         };
     }
     return {
-        construct: "",
-        where: ""
+        construct: '',
+        where: ''
     };
 };
 var $64d4ce40c79d1509$export$2e2bcd8739ae039 = $64d4ce40c79d1509$var$buildBlankNodesQuery;
@@ -639,10 +639,10 @@ const $3b137d792e8838ac$var$buildAutoDetectBlankNodesQuery = (depth, baseQuery)=
             whereQueries.push([
                 ...whereQueries[whereQueries.length - 1],
                 {
-                    type: "filter",
+                    type: 'filter',
                     expression: {
-                        type: "operation",
-                        operator: "isblank",
+                        type: 'operation',
+                        operator: 'isblank',
                         args: [
                             (0, $bkNnK$rdfjsdatamodel.variable)(`o${i}`)
                         ]
@@ -652,11 +652,11 @@ const $3b137d792e8838ac$var$buildAutoDetectBlankNodesQuery = (depth, baseQuery)=
             ]);
         }
         where = {
-            type: "union",
+            type: 'union',
             patterns: whereQueries
         };
     } else if (depth === 0) where = baseQuery.where;
-    else throw new Error("The depth of buildAutoDetectBlankNodesQuery should be 0 or more");
+    else throw new Error('The depth of buildAutoDetectBlankNodesQuery should be 0 or more');
     return {
         construct: construct,
         where: where
@@ -672,12 +672,12 @@ const { literal: $33c37185da3771a9$var$literal, namedNode: $33c37185da3771a9$var
 const $33c37185da3771a9$var$generator = new $33c37185da3771a9$require$SparqlGenerator({
 });
 const $33c37185da3771a9$var$reservedFilterKeys = [
-    "q",
-    "sparqlWhere",
-    "blankNodes",
-    "blankNodesDepth",
-    "_servers",
-    "_predicates"
+    'q',
+    'sparqlWhere',
+    'blankNodes',
+    'blankNodesDepth',
+    '_servers',
+    '_predicates'
 ];
 const $33c37185da3771a9$var$buildSparqlQuery = ({ containersUris: containersUris, params: params, dataModel: dataModel, ontologies: ontologies })=>{
     const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes;
@@ -689,27 +689,27 @@ const $33c37185da3771a9$var$buildSparqlQuery = ({ containersUris: containersUris
     };
     const baseQuery = (0, $51d7c29cc84f802b$export$2e2bcd8739ae039)(predicates, ontologies);
     const sparqlJsParams = {
-        queryType: "CONSTRUCT",
+        queryType: 'CONSTRUCT',
         template: baseQuery.construct,
         where: [],
-        type: "query",
+        type: 'query',
         prefixes: ontologies
     };
     const containerWhere = [
         {
-            type: "values",
+            type: 'values',
             values: containersUris.map((containerUri)=>({
-                    "?containerUri": $33c37185da3771a9$var$namedNode(containerUri)
+                    '?containerUri': $33c37185da3771a9$var$namedNode(containerUri)
                 }))
         },
-        $33c37185da3771a9$var$triple($33c37185da3771a9$var$variable("containerUri"), $33c37185da3771a9$var$namedNode("http://www.w3.org/ns/ldp#contains"), $33c37185da3771a9$var$variable("s1")),
+        $33c37185da3771a9$var$triple($33c37185da3771a9$var$variable('containerUri'), $33c37185da3771a9$var$namedNode('http://www.w3.org/ns/ldp#contains'), $33c37185da3771a9$var$variable('s1')),
         {
-            type: "filter",
+            type: 'filter',
             expression: {
-                type: "operation",
-                operator: "isiri",
+                type: 'operation',
+                operator: 'isiri',
                 args: [
-                    $33c37185da3771a9$var$variable("s1")
+                    $33c37185da3771a9$var$variable('s1')
                 ]
             }
         }
@@ -730,56 +730,56 @@ const $33c37185da3771a9$var$buildSparqlQuery = ({ containersUris: containersUris
       }
     */ if (filter.sparqlWhere) {
             // When the SPARQL request comes from the browser's URL, it is a JSON string that must be parsed
-            const sparqlWhere = filter.sparqlWhere && (typeof filter.sparqlWhere === "string" || filter.sparqlWhere instanceof String) ? JSON.parse(decodeURIComponent(filter.sparqlWhere)) : filter.sparqlWhere;
+            const sparqlWhere = filter.sparqlWhere && (typeof filter.sparqlWhere === 'string' || filter.sparqlWhere instanceof String) ? JSON.parse(decodeURIComponent(filter.sparqlWhere)) : filter.sparqlWhere;
             if (Object.keys(sparqlWhere).length > 0) [].concat(sparqlWhere).forEach((sw)=>{
                 resourceWhere.push(sw);
             });
         }
         if (filter.q && filter.q.length > 0) resourceWhere.push({
-            type: "group",
+            type: 'group',
             patterns: [
                 {
-                    queryType: "SELECT",
+                    queryType: 'SELECT',
                     variables: [
-                        $33c37185da3771a9$var$variable("s1")
+                        $33c37185da3771a9$var$variable('s1')
                     ],
                     where: [
-                        $33c37185da3771a9$var$triple($33c37185da3771a9$var$variable("s1"), $33c37185da3771a9$var$variable("p1"), $33c37185da3771a9$var$variable("o1")),
+                        $33c37185da3771a9$var$triple($33c37185da3771a9$var$variable('s1'), $33c37185da3771a9$var$variable('p1'), $33c37185da3771a9$var$variable('o1')),
                         {
-                            type: "filter",
+                            type: 'filter',
                             expression: {
-                                type: "operation",
-                                operator: "isliteral",
+                                type: 'operation',
+                                operator: 'isliteral',
                                 args: [
-                                    $33c37185da3771a9$var$variable("o1")
+                                    $33c37185da3771a9$var$variable('o1')
                                 ]
                             }
                         },
                         {
-                            type: "filter",
+                            type: 'filter',
                             expression: {
-                                type: "operation",
-                                operator: "regex",
+                                type: 'operation',
+                                operator: 'regex',
                                 args: [
                                     {
-                                        type: "operation",
-                                        operator: "lcase",
+                                        type: 'operation',
+                                        operator: 'lcase',
                                         args: [
                                             {
-                                                type: "operation",
-                                                operator: "str",
+                                                type: 'operation',
+                                                operator: 'str',
                                                 args: [
-                                                    $33c37185da3771a9$var$variable("o1")
+                                                    $33c37185da3771a9$var$variable('o1')
                                                 ]
                                             }
                                         ]
                                     },
-                                    $33c37185da3771a9$var$literal(filter.q.toLowerCase(), "", $33c37185da3771a9$var$namedNode("http://www.w3.org/2001/XMLSchema#string"))
+                                    $33c37185da3771a9$var$literal(filter.q.toLowerCase(), '', $33c37185da3771a9$var$namedNode('http://www.w3.org/2001/XMLSchema#string'))
                                 ]
                             }
                         }
                     ],
-                    type: "query"
+                    type: 'query'
                 }
             ]
         });
@@ -787,7 +787,7 @@ const $33c37185da3771a9$var$buildSparqlQuery = ({ containersUris: containersUris
         // SPARQL keyword a = filter based on the class of a resource (example => 'a': 'pair:OrganizationType')
         // Other filters are based on a value (example => 'petr:hasAudience': 'http://localhost:3000/audiences/tout-public')
         Object.entries(filter).forEach(([predicate, object])=>{
-            if (!$33c37185da3771a9$var$reservedFilterKeys.includes(predicate)) resourceWhere.unshift($33c37185da3771a9$var$triple($33c37185da3771a9$var$variable("s1"), $33c37185da3771a9$var$namedNode((0, $108795c3831be99f$export$2e2bcd8739ae039)(predicate, ontologies)), $33c37185da3771a9$var$namedNode((0, $108795c3831be99f$export$2e2bcd8739ae039)(object, ontologies))));
+            if (!$33c37185da3771a9$var$reservedFilterKeys.includes(predicate)) resourceWhere.unshift($33c37185da3771a9$var$triple($33c37185da3771a9$var$variable('s1'), $33c37185da3771a9$var$namedNode((0, $108795c3831be99f$export$2e2bcd8739ae039)(predicate, ontologies)), $33c37185da3771a9$var$namedNode((0, $108795c3831be99f$export$2e2bcd8739ae039)(object, ontologies))));
         });
     }
     // Blank nodes
@@ -804,9 +804,9 @@ var $33c37185da3771a9$export$2e2bcd8739ae039 = $33c37185da3771a9$var$buildSparql
 
 const $1e7a94d745f8597b$var$compare = (a, b)=>{
     switch(typeof a){
-        case "string":
+        case 'string':
             return a.localeCompare(b);
-        case "number":
+        case 'number':
             return a - b;
         default:
             return 0;
@@ -828,37 +828,37 @@ const $1e7a94d745f8597b$var$fetchSparqlEndpoints = async (containers, resourceId
                 ontologies: ontologies
             });
             httpClient(dataServers[serverKey].sparqlEndpoint, {
-                method: "POST",
+                method: 'POST',
                 body: sparqlQuery
             }).then(({ json: json })=>{
                 // If we declared the blank nodes to dereference, embed only those blank nodes
                 // This solve problems which can occur when same-type resources are embedded in other resources
                 // To increase performances, you can set explicitEmbedOnFraming to false (make sure the result is still OK)
                 const frame = blankNodes && dataModel.list?.explicitEmbedOnFraming !== false ? {
-                    "@context": jsonContext,
-                    "@type": dataModel.types,
-                    "@embed": "@never",
+                    '@context': jsonContext,
+                    '@type': dataModel.types,
+                    '@embed': '@never',
                     ...(0, $e5241bff9fc0c9d7$export$2e2bcd8739ae039)(blankNodes)
                 } : {
-                    "@context": jsonContext,
-                    "@type": dataModel.types
+                    '@context': jsonContext,
+                    '@type': dataModel.types
                 };
                 // omitGraph option force results to be in a @graph, even if we have a single result
                 return (0, ($parcel$interopDefault($bkNnK$jsonld))).frame(json, frame, {
                     omitGraph: false
                 });
             }).then((compactJson)=>{
-                if (compactJson["@id"]) {
-                    const { "@context": context, ...rest } = compactJson;
+                if (compactJson['@id']) {
+                    const { '@context': context, ...rest } = compactJson;
                     compactJson = {
-                        "@context": context,
-                        "@graph": [
+                        '@context': context,
+                        '@graph': [
                             rest
                         ]
                     };
                 }
-                resolve(compactJson["@graph"]?.map((resource)=>({
-                        "@context": compactJson["@context"],
+                resolve(compactJson['@graph']?.map((resource)=>({
+                        '@context': compactJson['@context'],
                         ...resource
                     })) || []);
             }).catch((e)=>reject(e));
@@ -873,13 +873,13 @@ const $1e7a94d745f8597b$var$fetchSparqlEndpoints = async (containers, resourceId
     results = [].concat(...results);
     // Add id in addition to @id, as this is what React-Admin expects
     let returnData = results.map((item)=>{
-        item.id = item.id || item["@id"];
+        item.id = item.id || item['@id'];
         return item;
     });
     // TODO sort and paginate the results in the SPARQL query to improve performances
     if (params.sort) returnData = returnData.sort((a, b)=>{
         if (a[params.sort.field] !== undefined && b[params.sort.field] !== undefined) {
-            if (params.sort.order === "ASC") return $1e7a94d745f8597b$var$compare(a[params.sort.field], b[params.sort.field]);
+            if (params.sort.order === 'ASC') return $1e7a94d745f8597b$var$compare(a[params.sort.field], b[params.sort.field]);
             return $1e7a94d745f8597b$var$compare(b[params.sort.field], a[params.sort.field]);
         }
         return 0;
@@ -899,7 +899,7 @@ var $1e7a94d745f8597b$export$2e2bcd8739ae039 = $1e7a94d745f8597b$var$fetchSparql
  * Return all containers matching the given shape tree
  */ const $1d94774735aa9ea2$var$findContainersWithShapeTree = (shapeTreeUri, serverKeys, dataServers)=>{
     const matchingContainers = [];
-    const parsedServerKeys = (0, $6531da3b9e8c524a$export$2e2bcd8739ae039)(serverKeys || "@all", dataServers);
+    const parsedServerKeys = (0, $6531da3b9e8c524a$export$2e2bcd8739ae039)(serverKeys || '@all', dataServers);
     Object.keys(dataServers).forEach((dataServerKey)=>{
         if (parsedServerKeys.includes(dataServerKey)) dataServers[dataServerKey].containers?.forEach((container)=>{
             if (container.shapeTreeUri === shapeTreeUri) matchingContainers.push(container);
@@ -933,7 +933,7 @@ var $95cbc03f25caf72a$export$2e2bcd8739ae039 = $95cbc03f25caf72a$var$getListMeth
 const $e296494b4f6a4f89$var$getManyMethod = (config)=>async (resourceId, params)=>{
         const { returnFailedResources: returnFailedResources } = config;
         let returnData = await Promise.all(params.ids.map((id)=>(0, $9020b8e3f4a4c1a1$export$2e2bcd8739ae039)(config)(resourceId, {
-                id: typeof id === "object" ? id["@id"] : id
+                id: typeof id === 'object' ? id['@id'] : id
             }).then(({ data: data })=>data).catch(()=>{
                 // Catch if one resource fails to load
                 // Otherwise no references will be show if only one is missing
@@ -971,32 +971,32 @@ const $fda69bf2752eb49a$var$generator = new (0, $bkNnK$sparqljs.Generator)();
 const $fda69bf2752eb49a$var$patchMethod = (config)=>async (resourceId, params)=>{
         const { httpClient: httpClient } = config;
         const sparqlUpdate = {
-            type: "update",
+            type: 'update',
             prefixes: {},
             updates: []
         };
         if (params.triplesToAdd) sparqlUpdate.updates.push({
-            updateType: "insert",
+            updateType: 'insert',
             insert: [
                 {
-                    type: "bgp",
+                    type: 'bgp',
                     triples: params.triplesToAdd
                 }
             ]
         });
         if (params.triplesToRemove) sparqlUpdate.updates.push({
-            updateType: "delete",
+            updateType: 'delete',
             delete: [
                 {
-                    type: "bgp",
+                    type: 'bgp',
                     triples: params.triplesToRemove
                 }
             ]
         });
         await httpClient(`${params.id}`, {
-            method: "PATCH",
+            method: 'PATCH',
             headers: new Headers({
-                "Content-Type": "application/sparql-update"
+                'Content-Type': 'application/sparql-update'
             }),
             body: $fda69bf2752eb49a$var$generator.stringify(sparqlUpdate)
         });
@@ -1010,7 +1010,7 @@ const $59a07b932dae8600$var$getServerKeyFromUri = (uri, dataServers)=>{
     if (!uri) throw Error(`No URI provided to getServerKeyFromUri`);
     return dataServers && Object.keys(dataServers).find((key)=>{
         if (dataServers[key].pod) // The baseUrl ends with /data so remove this part to match with the webId and webId-related URLs (/inbox, /outbox...)
-        return dataServers[key].baseUrl && uri.startsWith(dataServers[key].baseUrl.replace("/data", ""));
+        return dataServers[key].baseUrl && uri.startsWith(dataServers[key].baseUrl.replace('/data', ''));
         return uri.startsWith(dataServers[key].baseUrl);
     });
 };
@@ -1024,9 +1024,9 @@ const $ceaafb56f75454f0$var$updateMethod = (config)=>async (resourceId, params)=
         const { updatedRecord: updatedRecord, filesToDelete: filesToDelete } = await (0, $6fcb30f76390d142$export$2e2bcd8739ae039).upload(params.data, config, serverKey);
         params.data = updatedRecord;
         await httpClient(`${params.id}`, {
-            method: "PUT",
+            method: 'PUT',
             body: JSON.stringify({
-                "@context": jsonContext,
+                '@context': jsonContext,
                 ...params.data
             })
         });
@@ -1047,46 +1047,46 @@ var $ceaafb56f75454f0$export$2e2bcd8739ae039 = $ceaafb56f75454f0$var$updateMetho
  * Do proxy calls if a proxy endpoint is available and the server is different from the auth server
  */ const $341dff85fe619d85$var$httpClient = (dataServers)=>(url, options = {})=>{
         if (!url) throw new Error(`No URL provided on httpClient call`);
-        const authServerKey = (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("authServer", dataServers);
+        const authServerKey = (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)('authServer', dataServers);
         const serverKey = (0, $59a07b932dae8600$export$2e2bcd8739ae039)(url, dataServers);
         const useProxy = serverKey !== authServerKey && dataServers[authServerKey]?.proxyUrl && dataServers[serverKey]?.noProxy !== true;
         if (!options.headers) options.headers = new Headers();
         switch(options.method){
-            case "POST":
-            case "PATCH":
-            case "PUT":
-                if (!options.headers.has("Accept")) options.headers.set("Accept", "application/ld+json");
-                if (!options.headers.has("Content-Type")) options.headers.set("Content-Type", "application/ld+json");
+            case 'POST':
+            case 'PATCH':
+            case 'PUT':
+                if (!options.headers.has('Accept')) options.headers.set('Accept', 'application/ld+json');
+                if (!options.headers.has('Content-Type')) options.headers.set('Content-Type', 'application/ld+json');
                 break;
-            case "DELETE":
+            case 'DELETE':
                 break;
-            case "GET":
+            case 'GET':
             default:
-                if (!options.headers.has("Accept")) options.headers.set("Accept", "application/ld+json");
+                if (!options.headers.has('Accept')) options.headers.set('Accept', 'application/ld+json');
                 break;
         }
         if (useProxy) {
             const formData = new FormData();
-            formData.append("id", url);
-            formData.append("method", options.method || "GET");
-            formData.append("headers", JSON.stringify(Object.fromEntries(options.headers.entries())));
+            formData.append('id', url);
+            formData.append('method', options.method || 'GET');
+            formData.append('headers', JSON.stringify(Object.fromEntries(options.headers.entries())));
             if (options.body) {
-                if (options.body instanceof File) formData.append("body", options.body, options.body.name);
-                else formData.append("body", options.body);
+                if (options.body instanceof File) formData.append('body', options.body, options.body.name);
+                else formData.append('body', options.body);
             }
             // Post to proxy endpoint with multipart/form-data format
             return (0, $bkNnK$reactadmin.fetchUtils).fetchJson(dataServers[authServerKey].proxyUrl, {
-                method: "POST",
+                method: 'POST',
                 headers: new Headers({
-                    Authorization: `Bearer ${localStorage.getItem("token")}`
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
                 }),
                 body: formData
             });
         }
         // Add token if the server is the same as the auth server
         if (serverKey === authServerKey) {
-            const token = localStorage.getItem("token");
-            if (token) options.headers.set("Authorization", `Bearer ${token}`);
+            const token = localStorage.getItem('token');
+            if (token) options.headers.set('Authorization', `Bearer ${token}`);
         }
         return (0, $bkNnK$reactadmin.fetchUtils).fetchJson(url, options);
     };
@@ -1098,17 +1098,17 @@ var $341dff85fe619d85$export$2e2bcd8739ae039 = $341dff85fe619d85$var$httpClient;
 
 
 
-const $9ab033d1ec46b5da$var$isURL = (value)=>(typeof value === "string" || value instanceof String) && value.startsWith("http");
+const $9ab033d1ec46b5da$var$isURL = (value)=>(typeof value === 'string' || value instanceof String) && value.startsWith('http');
 const $9ab033d1ec46b5da$var$expandTypes = async (types, context)=>{
     // If types are already full URIs, return them immediately
     if (types.every((type)=>$9ab033d1ec46b5da$var$isURL(type))) return types;
     const result = await (0, ($parcel$interopDefault($bkNnK$jsonld))).expand({
-        "@context": context,
-        "@type": types
+        '@context': context,
+        '@type': types
     });
-    const expandedTypes = (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(result[0]["@type"]);
+    const expandedTypes = (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(result[0]['@type']);
     if (!expandedTypes.every((type)=>$9ab033d1ec46b5da$var$isURL(type))) throw new Error(`
-      Could not expand all types (${expandedTypes.join(", ")}).
+      Could not expand all types (${expandedTypes.join(', ')}).
       Is an ontology missing or not registered yet on the local context ?
     `);
     return expandedTypes;
@@ -1121,36 +1121,36 @@ var $9ab033d1ec46b5da$export$2e2bcd8739ae039 = $9ab033d1ec46b5da$var$expandTypes
 const $058bb6151d120fba$var$getTypesFromShapeTree = async (shapeTreeUri)=>{
     let { json: shapeTree } = await (0, $bkNnK$reactadmin.fetchUtils).fetchJson(shapeTreeUri, {
         headers: new Headers({
-            Accept: "application/ld+json"
+            Accept: 'application/ld+json'
         })
     });
     shapeTree = await (0, ($parcel$interopDefault($bkNnK$jsonld))).compact(shapeTree, {
-        st: "http://www.w3.org/ns/shapetrees#",
-        skos: "http://www.w3.org/2004/02/skos/core#",
+        st: 'http://www.w3.org/ns/shapetrees#',
+        skos: 'http://www.w3.org/2004/02/skos/core#',
         expectsType: {
-            "@id": "st:expectsType",
-            "@type": "@id"
+            '@id': 'st:expectsType',
+            '@type': '@id'
         },
         shape: {
-            "@id": "st:shape",
-            "@type": "@id"
+            '@id': 'st:shape',
+            '@type': '@id'
         },
         describesInstance: {
-            "@id": "st:describesInstance",
-            "@type": "@id"
+            '@id': 'st:describesInstance',
+            '@type': '@id'
         },
         label: {
-            "@id": "skos:prefLabel",
-            "@container": "@language"
+            '@id': 'skos:prefLabel',
+            '@container': '@language'
         }
     });
     if (shapeTree.shape) {
         const { json: shape } = await (0, $bkNnK$reactadmin.fetchUtils).fetchJson(shapeTree.shape, {
             headers: new Headers({
-                Accept: "application/ld+json"
+                Accept: 'application/ld+json'
             })
         });
-        return shape?.[0]?.["http://www.w3.org/ns/shacl#targetClass"]?.map((node)=>node?.["@id"]) || [];
+        return shape?.[0]?.['http://www.w3.org/ns/shacl#targetClass']?.map((node)=>node?.['@id']) || [];
     } else return [];
 };
 var $058bb6151d120fba$export$2e2bcd8739ae039 = $058bb6151d120fba$var$getTypesFromShapeTree;
@@ -1195,7 +1195,7 @@ var $5e24772571dd1677$export$2e2bcd8739ae039 = $5e24772571dd1677$var$normalizeCo
         if (!config.jsonContext) config.jsonContext = config.ontologies;
         if (!config.returnFailedResources) config.returnFailedResources = false;
         config = await (0, $5e24772571dd1677$export$2e2bcd8739ae039)(config);
-        console.log("Config after plugins", config);
+        console.log('Config after plugins', config);
     };
     // Immediately call the preload plugins
     const prepareConfigPromise = prepareConfig();
@@ -1211,7 +1211,7 @@ var $5e24772571dd1677$export$2e2bcd8739ae039 = $5e24772571dd1677$var$normalizeCo
         create: waitForPrepareConfig((0, $907cbc087f6529e2$export$2e2bcd8739ae039)),
         update: waitForPrepareConfig((0, $ceaafb56f75454f0$export$2e2bcd8739ae039)),
         updateMany: ()=>{
-            throw new Error("updateMany is not implemented yet");
+            throw new Error('updateMany is not implemented yet');
         },
         delete: waitForPrepareConfig((0, $566b5adde94810fa$export$2e2bcd8739ae039)),
         deleteMany: waitForPrepareConfig((0, $f170294dd29d8bf8$export$2e2bcd8739ae039)),
@@ -1242,7 +1242,7 @@ var $7f6a16d0025dc83a$export$2e2bcd8739ae039 = $7f6a16d0025dc83a$var$dataProvide
 
 const $89358cee13a17a31$var$configureUserStorage = ()=>({
         transformConfig: async (config)=>{
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem('token');
             // If the user is logged in
             if (token) {
                 const payload = (0, ($parcel$interopDefault($bkNnK$jwtdecode)))(token);
@@ -1256,14 +1256,14 @@ const $89358cee13a17a31$var$configureUserStorage = ()=>({
                         pod: true,
                         default: true,
                         authServer: true,
-                        baseUrl: user["pim:storage"] || (0, ($parcel$interopDefault($bkNnK$urljoin)))(webId, "data"),
-                        sparqlEndpoint: user.endpoints?.["void:sparqlEndpoint"] || (0, ($parcel$interopDefault($bkNnK$urljoin)))(webId, "sparql"),
+                        baseUrl: user['pim:storage'] || (0, ($parcel$interopDefault($bkNnK$urljoin)))(webId, 'data'),
+                        sparqlEndpoint: user.endpoints?.['void:sparqlEndpoint'] || (0, ($parcel$interopDefault($bkNnK$urljoin)))(webId, 'sparql'),
                         proxyUrl: user.endpoints?.proxyUrl,
                         containers: []
                     };
                     newConfig.jsonContext = [
-                        "https://www.w3.org/ns/activitystreams",
-                        (0, ($parcel$interopDefault($bkNnK$urljoin)))(new URL(webId).origin, "/.well-known/context.jsonld")
+                        'https://www.w3.org/ns/activitystreams',
+                        (0, ($parcel$interopDefault($bkNnK$urljoin)))(new URL(webId).origin, '/.well-known/context.jsonld')
                     ];
                     return newConfig;
                 }
@@ -1279,47 +1279,56 @@ var $89358cee13a17a31$export$2e2bcd8739ae039 = $89358cee13a17a31$var$configureUs
 
 
 
+
 const $37dc42f6e1c3b4af$var$getContainerFromDataRegistration = async (dataRegistrationUri, config)=>{
     const { json: dataRegistration } = await config.httpClient(dataRegistrationUri, {
         headers: new Headers({
-            Accept: "application/ld+json",
+            Accept: 'application/ld+json',
             Prefer: 'return=representation; include="http://www.w3.org/ns/ldp#PreferMinimalContainer"'
         })
     });
-    const shapeTreeUri = dataRegistration["interop:registeredShapeTree"];
-    let { json: shapeTree } = await config.httpClient(shapeTreeUri);
+    const shapeTreeUri = dataRegistration['interop:registeredShapeTree'];
+    let { json: shapeTree } = await (0, $bkNnK$reactadmin.fetchUtils).fetchJson(shapeTreeUri, {
+        headers: new Headers({
+            Accept: 'application/ld+json'
+        })
+    });
     shapeTree = await (0, ($parcel$interopDefault($bkNnK$jsonld))).compact(shapeTree, {
-        st: "http://www.w3.org/ns/shapetrees#",
-        skos: "http://www.w3.org/2004/02/skos/core#",
+        st: 'http://www.w3.org/ns/shapetrees#',
+        skos: 'http://www.w3.org/2004/02/skos/core#',
         expectsType: {
-            "@id": "st:expectsType",
-            "@type": "@id"
+            '@id': 'st:expectsType',
+            '@type': '@id'
         },
         shape: {
-            "@id": "st:shape",
-            "@type": "@id"
+            '@id': 'st:shape',
+            '@type': '@id'
         },
         describesInstance: {
-            "@id": "st:describesInstance",
-            "@type": "@id"
+            '@id': 'st:describesInstance',
+            '@type': '@id'
         },
         label: {
-            "@id": "skos:prefLabel",
-            "@container": "@language"
+            '@id': 'skos:prefLabel',
+            '@container': '@language'
         }
     });
     const { baseUrl: baseUrl } = config.dataServers.user;
-    const containerPath = dataRegistration.id.replace(baseUrl, "");
+    const containerPath = dataRegistration.id.replace(baseUrl, '');
     const container = {
         path: containerPath,
         shapeTreeUri: shapeTreeUri,
         label: shapeTree.label,
         labelPredicate: shapeTree.describesInstance,
-        binaryResources: shapeTree.expectsType === "st:NonRDFResource"
+        binaryResources: shapeTree.expectsType === 'st:NonRDFResource'
     };
     if (shapeTree.shape) {
-        const { json: shape } = await config.httpClient(shapeTree.shape);
-        container.types = shape?.[0]?.["http://www.w3.org/ns/shacl#targetClass"]?.map((node)=>node?.["@id"]);
+        const { json: shape } = await (0, $bkNnK$reactadmin.fetchUtils).fetchJson(shapeTree.shape, {
+            headers: new Headers({
+                Accept: 'application/ld+json'
+            })
+        });
+        container.types = shape?.[0]?.['http://www.w3.org/ns/shacl#targetClass']?.map((node)=>node?.['@id']);
     }
     return container;
 };
@@ -1332,34 +1341,35 @@ var $37dc42f6e1c3b4af$export$2e2bcd8739ae039 = $37dc42f6e1c3b4af$var$getContaine
  * See https://solid.github.io/data-interoperability-panel/specification/#authorization-agent
  */ const $c512de108ef5d674$var$fetchAppRegistration = ()=>({
         transformConfig: async (config)=>{
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem('token');
             // If the user is logged in
             if (token) {
                 const payload = (0, ($parcel$interopDefault($bkNnK$jwtdecode)))(token);
                 const webId = payload.webId || payload.webid; // Currently we must deal with both formats
                 const { json: user } = await config.httpClient(webId);
-                const authAgentUri = user["interop:hasAuthorizationAgent"];
+                const authAgentUri = user['interop:hasAuthorizationAgent'];
                 if (authAgentUri) {
                     // Find if an application registration is linked to this user
                     // See https://solid.github.io/data-interoperability-panel/specification/#agent-registration-discovery
                     const { headers: headers } = await config.httpClient(authAgentUri);
-                    if (headers.has("Link")) {
-                        const linkHeader = (0, ($parcel$interopDefault($bkNnK$httplinkheader))).parse(headers.get("Link"));
-                        const registeredAgentLinkHeader = linkHeader.rel("http://www.w3.org/ns/solid/interop#registeredAgent");
+                    if (headers.has('Link')) {
+                        const linkHeader = (0, ($parcel$interopDefault($bkNnK$httplinkheader))).parse(headers.get('Link'));
+                        const registeredAgentLinkHeader = linkHeader.rel('http://www.w3.org/ns/solid/interop#registeredAgent');
                         if (registeredAgentLinkHeader.length > 0) {
                             const appRegistrationUri = registeredAgentLinkHeader[0].anchor;
                             const { json: appRegistration } = await config.httpClient(appRegistrationUri);
                             const newConfig = {
                                 ...config
                             };
-                            for (const accessGrantUri of (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(appRegistration["interop:hasAccessGrant"])){
+                            // Load data grants concurrently to improve performances
+                            const results = await Promise.all((0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(appRegistration['interop:hasAccessGrant']).map(async (accessGrantUri)=>{
                                 const { json: accessGrant } = await config.httpClient(accessGrantUri);
-                                for (const dataGrantUri of (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(accessGrant["interop:hasDataGrant"])){
+                                return Promise.all((0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(accessGrant['interop:hasDataGrant']).map(async (dataGrantUri)=>{
                                     const { json: dataGrant } = await config.httpClient(dataGrantUri);
-                                    const container = await (0, $37dc42f6e1c3b4af$export$2e2bcd8739ae039)(dataGrant["interop:hasDataRegistration"], config);
-                                    newConfig.dataServers.user.containers?.push(container);
-                                }
-                            }
+                                    return (0, $37dc42f6e1c3b4af$export$2e2bcd8739ae039)(dataGrant['interop:hasDataRegistration'], config);
+                                }));
+                            }));
+                            newConfig.dataServers.user.containers = results.flat();
                             return newConfig;
                         }
                     }
@@ -1375,17 +1385,17 @@ var $c512de108ef5d674$export$2e2bcd8739ae039 = $c512de108ef5d674$var$fetchAppReg
 
 const $cd772adda3024172$var$fetchDataRegistry = ()=>({
         transformConfig: async (config)=>{
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem('token');
             // If the user is logged in
             if (token) {
                 if (!config.dataServers.user) throw new Error(`You must configure the user storage first with the configureUserStorage plugin`);
                 const payload = (0, ($parcel$interopDefault($bkNnK$jwtdecode)))(token);
                 const webId = payload.webId || payload.webid; // Currently we must deal with both formats
                 const { json: user } = await config.httpClient(webId);
-                const { json: registrySet } = await config.httpClient(user["interop:hasRegistrySet"]);
-                const { json: dataRegistry } = await config.httpClient(registrySet["interop:hasDataRegistry"]);
-                if (dataRegistry["interop:hasDataRegistration"]) {
-                    const results = await Promise.all(dataRegistry["interop:hasDataRegistration"].map((dataRegistrationUri)=>{
+                const { json: registrySet } = await config.httpClient(user['interop:hasRegistrySet']);
+                const { json: dataRegistry } = await config.httpClient(registrySet['interop:hasDataRegistry']);
+                if (dataRegistry['interop:hasDataRegistration']) {
+                    const results = await Promise.all(dataRegistry['interop:hasDataRegistration'].map((dataRegistrationUri)=>{
                         return (0, $37dc42f6e1c3b4af$export$2e2bcd8739ae039)(dataRegistrationUri, config);
                     }));
                     const newConfig = {
@@ -1408,7 +1418,7 @@ var $cd772adda3024172$export$2e2bcd8739ae039 = $cd772adda3024172$var$fetchDataRe
 
 const $69d4da9beaa62ac6$var$fetchTypeIndexes = ()=>({
         transformConfig: async (config)=>{
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem('token');
             // If the user is logged in
             if (token) {
                 if (!config.dataServers.user) throw new Error(`You must configure the user storage first with the configureUserStorage plugin`);
@@ -1419,15 +1429,15 @@ const $69d4da9beaa62ac6$var$fetchTypeIndexes = ()=>({
                     public: [],
                     private: []
                 };
-                if (user["solid:publicTypeIndex"]) {
-                    const { json: publicTypeIndex } = await config.httpClient(user["solid:publicTypeIndex"]);
-                    if (publicTypeIndex) typeRegistrations.public = (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(publicTypeIndex["solid:hasTypeRegistration"]);
+                if (user['solid:publicTypeIndex']) {
+                    const { json: publicTypeIndex } = await config.httpClient(user['solid:publicTypeIndex']);
+                    if (publicTypeIndex) typeRegistrations.public = (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(publicTypeIndex['solid:hasTypeRegistration']);
                 }
-                if (user["pim:preferencesFile"]) {
-                    const { json: preferencesFile } = await config.httpClient(user["pim:preferencesFile"]);
-                    if (preferencesFile?.["solid:privateTypeIndex"]) {
-                        const { json: privateTypeIndex } = await config.httpClient(preferencesFile["solid:privateTypeIndex"]);
-                        typeRegistrations.private = (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(privateTypeIndex["solid:hasTypeRegistration"]);
+                if (user['pim:preferencesFile']) {
+                    const { json: preferencesFile } = await config.httpClient(user['pim:preferencesFile']);
+                    if (preferencesFile?.['solid:privateTypeIndex']) {
+                        const { json: privateTypeIndex } = await config.httpClient(preferencesFile['solid:privateTypeIndex']);
+                        typeRegistrations.private = (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(privateTypeIndex['solid:hasTypeRegistration']);
                     }
                 }
                 if (typeRegistrations.public.length > 0 || typeRegistrations.private.length > 0) {
@@ -1435,16 +1445,16 @@ const $69d4da9beaa62ac6$var$fetchTypeIndexes = ()=>({
                         ...config
                     };
                     for (const mode of Object.keys(typeRegistrations))for (const typeRegistration of typeRegistrations[mode]){
-                        const types = (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(typeRegistration["solid:forClass"]);
+                        const types = (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(typeRegistration['solid:forClass']);
                         const container = {
                             label: {
-                                en: (0, $bkNnK$changecase.capitalCase)(types[0].split(":")[1], {
+                                en: (0, $bkNnK$changecase.capitalCase)(types[0].split(':')[1], {
                                     separateNumbers: true
                                 })
                             },
-                            path: typeRegistration["solid:instanceContainer"].replace(newConfig.dataServers.user.baseUrl, ""),
-                            types: await (0, $9ab033d1ec46b5da$export$2e2bcd8739ae039)(types, user["@context"]),
-                            private: mode === "private"
+                            path: typeRegistration['solid:instanceContainer'].replace(newConfig.dataServers.user.baseUrl, ''),
+                            types: await (0, $9ab033d1ec46b5da$export$2e2bcd8739ae039)(types, user['@context']),
+                            private: mode === 'private'
                         };
                         const containerIndex = newConfig.dataServers.user.containers.findIndex((c)=>c.path === container.path);
                         if (containerIndex !== -1) // If a container with this URI already exist, add type registration information if they are not set
@@ -1469,10 +1479,10 @@ const $1395e306228d41f2$var$fetchVoidEndpoints = ()=>({
         transformConfig: async (config)=>{
             let results = [];
             try {
-                results = await Promise.all(Object.entries(config.dataServers).filter(([_, server])=>server.pod !== true && server.void !== false).map(async ([key, server])=>config.httpClient(new URL("/.well-known/void", server.baseUrl).toString()).then((result)=>({
+                results = await Promise.all(Object.entries(config.dataServers).filter(([_, server])=>server.pod !== true && server.void !== false).map(async ([key, server])=>config.httpClient(new URL('/.well-known/void', server.baseUrl).toString()).then((result)=>({
                             key: key,
-                            context: result.json?.["@context"],
-                            datasets: result.json?.["@graph"]
+                            context: result.json?.['@context'],
+                            datasets: result.json?.['@graph']
                         })).catch((e)=>{
                         if (e.status === 404 || e.status === 401 || e.status === 500) return {
                             key: key,
@@ -1491,12 +1501,12 @@ const $1395e306228d41f2$var$fetchVoidEndpoints = ()=>({
                 for (const result of results){
                     // Ignore unfetchable endpoints
                     if (result.datasets) for (const dataset of result.datasets){
-                        newConfig.dataServers[result.key].name ??= dataset["dc:title"];
-                        newConfig.dataServers[result.key].description ??= dataset["dc:description"];
-                        newConfig.dataServers[result.key].sparqlEndpoint ??= dataset["void:sparqlEndpoint"];
+                        newConfig.dataServers[result.key].name ??= dataset['dc:title'];
+                        newConfig.dataServers[result.key].description ??= dataset['dc:description'];
+                        newConfig.dataServers[result.key].sparqlEndpoint ??= dataset['void:sparqlEndpoint'];
                         newConfig.dataServers[result.key].containers ??= [];
-                        for (const partition of (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(dataset["void:classPartition"]))for (const type of (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(partition["void:class"])){
-                            const path = partition["void:uriSpace"].replace(dataset["void:uriSpace"], "/");
+                        for (const partition of (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(dataset['void:classPartition']))for (const type of (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(partition['void:class'])){
+                            const path = partition['void:uriSpace'].replace(dataset['void:uriSpace'], '/');
                             const expandedTypes = await (0, $9ab033d1ec46b5da$export$2e2bcd8739ae039)([
                                 type
                             ], result.context);
@@ -1551,9 +1561,9 @@ var $9def35f4441a9bb2$export$2e2bcd8739ae039 = $9def35f4441a9bb2$var$useDataProv
 
 const $013953e307d438b1$var$compactPredicate = async (predicate, context)=>{
     const result = await (0, ($parcel$interopDefault($bkNnK$jsonld))).compact({
-        [predicate]: ""
+        [predicate]: ''
     }, context);
-    return Object.keys(result).find((key)=>key !== "@context");
+    return Object.keys(result).find((key)=>key !== '@context');
 };
 var $013953e307d438b1$export$2e2bcd8739ae039 = $013953e307d438b1$var$compactPredicate;
 
@@ -1607,7 +1617,7 @@ const $3158e0dc13ffffaa$var$useContainers = (resourceId, serverKeys)=>{
                 const dataModel = dataModels[resourceId];
                 setContainers((0, $047a107b0d203793$export$2e2bcd8739ae039)((0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(dataModel.types), serverKeys, dataServers));
             } else {
-                const parsedServerKeys = (0, $6531da3b9e8c524a$export$2e2bcd8739ae039)(serverKeys || "@all", dataServers);
+                const parsedServerKeys = (0, $6531da3b9e8c524a$export$2e2bcd8739ae039)(serverKeys || '@all', dataServers);
                 setContainers(parsedServerKeys.map((serverKey)=>dataServers[serverKey].containers).flat());
             }
         }
@@ -1633,7 +1643,7 @@ const $21fb109d85e9c16c$var$useContainersByTypes = (types)=>{
     const [containers, setContainers] = (0, $bkNnK$react.useState)([]);
     (0, $bkNnK$react.useEffect)(()=>{
         if (dataServers && types) dataProvider.expandTypes((0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(types)).then((expandedTypes)=>{
-            setContainers((0, $047a107b0d203793$export$2e2bcd8739ae039)(expandedTypes, "@all", dataServers));
+            setContainers((0, $047a107b0d203793$export$2e2bcd8739ae039)(expandedTypes, '@all', dataServers));
         }).catch(()=>{
         // Ignore errors
         });
@@ -1697,7 +1707,7 @@ const $32d32215b4e4729f$var$useGetCreateContainerUri = ()=>{
             return (0, ($parcel$interopDefault($bkNnK$urljoin)))(dataServers[serverKey].baseUrl, path);
         } else if (dataModel.create?.server) return (0, $ff3623bf1421ebcc$export$2e2bcd8739ae039)(dataModel.types, dataModel.create?.server, dataServers);
         else {
-            const defaultServerKey = (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("default", dataServers);
+            const defaultServerKey = (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)('default', dataServers);
             if (!defaultServerKey) throw new Error(`No default dataServer found. You can set explicitly one setting the "default" attribute to true`);
             return (0, $ff3623bf1421ebcc$export$2e2bcd8739ae039)(dataModel.types, defaultServerKey, dataServers);
         }
@@ -1734,8 +1744,8 @@ var $63a32f1a35c6f80e$export$2e2bcd8739ae039 = $63a32f1a35c6f80e$var$useDataMode
 
 
 
-const $85e9a897c6d7c14a$var$compute = (externalLinks, record)=>typeof externalLinks === "function" ? externalLinks(record) : externalLinks;
-const $85e9a897c6d7c14a$var$isURL = (url)=>typeof url === "string" && url.startsWith("http");
+const $85e9a897c6d7c14a$var$compute = (externalLinks, record)=>typeof externalLinks === 'function' ? externalLinks(record) : externalLinks;
+const $85e9a897c6d7c14a$var$isURL = (url)=>typeof url === 'string' && url.startsWith('http');
 const $85e9a897c6d7c14a$var$useGetExternalLink = (componentExternalLinks)=>{
     // Since the externalLinks config is defined only locally, we don't need to wait for VOID endpoints fetching
     const dataProvider = (0, $bkNnK$react.useContext)((0, $bkNnK$reactadmin.DataProviderContext));
@@ -1946,15 +1956,15 @@ var $b4703fef6d6af456$export$2e2bcd8739ae039 = $b4703fef6d6af456$var$GroupedRefe
 
 const $030f1232f6810456$var$useReferenceInputStyles = (0, ($parcel$interopDefault($bkNnK$muistylesmakeStyles)))({
     form: {
-        display: "flex"
+        display: 'flex'
     },
     input: {
-        paddingRight: "20px"
+        paddingRight: '20px'
     }
 });
 const $030f1232f6810456$var$useHideInputStyles = (0, ($parcel$interopDefault($bkNnK$muistylesmakeStyles)))({
     root: {
-        display: "none"
+        display: 'none'
     }
 });
 const $030f1232f6810456$var$ReificationArrayInput = (props)=>{
@@ -1990,21 +2000,21 @@ var $030f1232f6810456$export$2e2bcd8739ae039 = $030f1232f6810456$var$Reification
  * Find the solid notification description resource for a given resource URI.
  */ const $84ab912646919f8c$var$findDescriptionResource = async (authenticatedFetch, resourceUri)=>{
     const { headers: headers } = await authenticatedFetch(resourceUri, {
-        method: "HEAD"
+        method: 'HEAD'
     });
-    const linkHeader = headers.get("Link");
+    const linkHeader = headers.get('Link');
     const matches = linkHeader?.match(/<([^>]+)>;\s*rel="(?:describedby|http:\/\/www\.w3\.org\/ns\/solid\/terms#storageDescription)"/);
     if (!matches?.[1]) return undefined;
     // Don't use authenticatedFetch to get this endpoint
     const response = await fetch(matches[1], {
         headers: new Headers({
-            Accept: "application/ld+json"
+            Accept: 'application/ld+json'
         })
     });
     return await response.json();
 };
 const $84ab912646919f8c$export$3edfe18db119b920 = async (authenticatedFetch, resourceUri, options = {
-    type: "WebSocketChannel2023"
+    type: 'WebSocketChannel2023'
 })=>{
     const { type: type, closeAfter: closeAfter, startIn: startIn, rate: rate } = options;
     let { startAt: startAt, endAt: endAt } = options;
@@ -2014,13 +2024,13 @@ const $84ab912646919f8c$export$3edfe18db119b920 = async (authenticatedFetch, res
     // TODO: use a json-ld parser / ldo in the future for this...
     // Get solid notification subscription service for the given type.
     const subscriptionService = (await Promise.all(// Get the subscription service resources (that describe a channel type).
-    (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(descriptionResource.subscription || descriptionResource["notify:subscription"]).map(async (subscriptionServiceOrUri)=>{
+    (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(descriptionResource.subscription || descriptionResource['notify:subscription']).map(async (subscriptionServiceOrUri)=>{
         // They might not be resolved...
-        if (typeof subscriptionServiceOrUri === "string") {
+        if (typeof subscriptionServiceOrUri === 'string') {
             // Don't use authenticatedFetch to get this endpoint
             const response = await fetch(subscriptionServiceOrUri, {
                 headers: new Headers({
-                    Accept: "application/ld+json"
+                    Accept: 'application/ld+json'
                 })
             });
             return await response.json();
@@ -2028,16 +2038,16 @@ const $84ab912646919f8c$export$3edfe18db119b920 = async (authenticatedFetch, res
         return subscriptionServiceOrUri;
     }))).find((service)=>{
         // Find for the correct channel type (e.g. web socket).
-        const channelType = service.channelType ?? service["notify:channelType"];
+        const channelType = service.channelType ?? service['notify:channelType'];
         return channelType === type || channelType === `notify:${type}`;
     });
     if (!subscriptionService) throw new Error(`No solid notification subscription service found for type ${type}`);
     // Create a new channel.
-    const { json: channel } = await authenticatedFetch(subscriptionService.id || subscriptionService["@id"], {
-        method: "POST",
+    const { json: channel } = await authenticatedFetch(subscriptionService.id || subscriptionService['@id'], {
+        method: 'POST',
         body: JSON.stringify({
-            "@context": "https://www.w3.org/ns/solid/notifications-context/v1",
-            type: "WebSocketChannel2023",
+            '@context': 'https://www.w3.org/ns/solid/notifications-context/v1',
+            type: 'WebSocketChannel2023',
             topic: resourceUri,
             startAt: startAt,
             endAt: endAt,
@@ -2048,7 +2058,7 @@ const $84ab912646919f8c$export$3edfe18db119b920 = async (authenticatedFetch, res
 };
 const $84ab912646919f8c$export$28772ab4c256e709 = async (authenticatedFetch, resourceUri, options)=>{
     const channel = await $84ab912646919f8c$export$3edfe18db119b920(authenticatedFetch, resourceUri, options);
-    const receiveFrom = channel.receiveFrom || channel["notify:receiveFrom"];
+    const receiveFrom = channel.receiveFrom || channel['notify:receiveFrom'];
     return new WebSocket(receiveFrom);
 };
 const $84ab912646919f8c$var$registeredWebSockets = new Map();
@@ -2058,7 +2068,7 @@ const $84ab912646919f8c$var$registeredWebSockets = new Map();
  * @param options Options to pass to @see createSolidNotificationChannel, if the channel does not exist yet.
  * @returns {WebSocket} A new or existing web socket that subscribed to the given resource.
  */ const $84ab912646919f8c$export$8d60734939c59ced = async (authenticatedFetch, resourceUri, options = {
-    type: "WebSocketChannel2023",
+    type: 'WebSocketChannel2023',
     closeAfter: 3600000
 })=>{
     const socket = $84ab912646919f8c$var$registeredWebSockets.get(resourceUri);
@@ -2068,10 +2078,10 @@ const $84ab912646919f8c$var$registeredWebSockets = new Map();
     // This prevents racing conditions that create multiple channels.
     const wsPromise = $84ab912646919f8c$export$28772ab4c256e709(authenticatedFetch, resourceUri, {
         ...options,
-        type: "WebSocketChannel2023"
+        type: 'WebSocketChannel2023'
     }).then((ws)=>{
         // Remove the promise from the cache, if it closes.
-        ws.addEventListener("close", (e)=>{
+        ws.addEventListener('close', (e)=>{
             $84ab912646919f8c$var$registeredWebSockets.delete(resourceUri);
         });
         // Close the socket, if the endAt / closeAfter time is reached.
