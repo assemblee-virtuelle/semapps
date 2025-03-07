@@ -8,7 +8,7 @@ import {
   useResourceContext
 } from 'react-admin';
 import { useMediaQuery } from '@mui/material';
-import { useCreateContainer } from '@semapps/semantic-data-provider';
+import { useCreateContainerUri } from '@semapps/semantic-data-provider';
 import PermissionsButton from '../../components/PermissionsButton/PermissionsButton';
 import { rightsToCreate, rightsToControl } from '../../constants';
 
@@ -28,7 +28,7 @@ const ListActionsWithPermissions = ({
   const resource = useResourceContext();
   const xs = useMediaQuery(theme => theme.breakpoints.down('xs'));
   const resourceDefinition = useResourceDefinition();
-  const createContainerUri = useCreateContainer(resource);
+  const createContainerUri = useCreateContainerUri(resource);
   const { permissions } = usePermissions(createContainerUri);
   return (
     <TopToolbar>

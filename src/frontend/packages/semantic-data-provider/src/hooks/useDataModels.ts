@@ -1,18 +1,8 @@
-import { useState, useEffect } from 'react';
-import { useDataProvider } from 'react-admin';
-import { DataModel, SemanticDataProvider } from '../dataProvider/types';
+import useDataProviderConfig from './useDataProviderConfig';
 
 const useDataModels = () => {
-  const dataProvider = useDataProvider<SemanticDataProvider>();
-  const [dataModels, setDataModels] = useState<Record<string, DataModel>>();
-
-  useEffect(() => {
-    dataProvider.getDataModels().then(results => {
-      setDataModels(results);
-    });
-  }, [dataProvider, setDataModels]);
-
-  return dataModels;
+  const config = useDataProviderConfig();
+  return config?.resources;
 };
 
 export default useDataModels;

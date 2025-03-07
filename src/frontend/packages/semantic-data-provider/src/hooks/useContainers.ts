@@ -1,19 +1,28 @@
-import { useState, useEffect } from 'react';
-import useDataModel from './useDataModel';
+import { useEffect, useState } from 'react';
+import useDataModels from './useDataModels';
 import useDataServers from './useDataServers';
 import findContainersWithTypes from '../dataProvider/utils/findContainersWithTypes';
-import { DataServerKey } from '../dataProvider/types';
+import parseServerKeys from '../dataProvider/utils/parseServerKeys';
+import { Container } from '../dataProvider/types';
+import arrayOf from '../dataProvider/utils/arrayOf';
 
-const useContainers = (resourceId: string, serverKeys = '@all') => {
-  const dataModel = useDataModel(resourceId);
+const useContainers = (resourceId?: string, serverKeys?: string | string[]) => {
+  const dataModels = useDataModels();
   const dataServers = useDataServers();
-  const [containers, setContainers] = useState<Record<DataServerKey, string[]>>();
+  const [containers, setContainers] = useState<Container[]>([]);
 
+  // Warning: if serverKeys change, the containers list will not be updated (otherwise we have an infinite re-render loop)
   useEffect(() => {
-    if (dataModel && dataServers) {
-      setContainers(findContainersWithTypes(dataModel.types, serverKeys, dataServers));
+    if (dataServers && dataModels) {
+      if (resourceId) {
+        const dataModel = dataModels[resourceId];
+        setContainers(findContainersWithTypes(arrayOf(dataModel.types), serverKeys, dataServers));
+      } else {
+        const parsedServerKeys = parseServerKeys(serverKeys || '@all', dataServers) as string[];
+        setContainers(parsedServerKeys.map(serverKey => dataServers[serverKey].containers).flat());
+      }
     }
-  }, [dataModel, dataServers, serverKeys]);
+  }, [dataModels, dataServers, setContainers, resourceId]);
 
   return containers;
 };

@@ -1,6 +1,6 @@
 import md5 from 'crypto-js/md5';
 import { namedNode, triple, variable } from '@rdfjs/data-model';
-import resolvePrefix from './resolvePrefix';
+import getUriFromPrefix from './getUriFromPrefix';
 
 // Transform ['ont:predicate1/ont:predicate2'] to ['ont:predicate1', 'ont:predicate1/ont:predicate2']
 const extractNodes = blankNodes => {
@@ -51,7 +51,11 @@ const buildBlankNodesQuery = (blankNodes, baseQuery, ontologies) => {
       const parentVarName = parentNode ? generateSparqlVarName(parentNode) : '1';
 
       const query = [
-        triple(variable(`s${parentVarName}`), namedNode(resolvePrefix(predicate, ontologies)), variable(`s${varName}`)),
+        triple(
+          variable(`s${parentVarName}`),
+          namedNode(getUriFromPrefix(predicate, ontologies)),
+          variable(`s${varName}`)
+        ),
         triple(variable(`s${varName}`), variable(`p${varName}`), variable(`o${varName}`))
       ];
 

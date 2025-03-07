@@ -1,41 +1,29 @@
-import urlJoin from 'url-join';
-import { Configuration, DataServerKey } from '../types';
+import { DataServersConfig, Container } from '../types';
 import parseServerKeys from './parseServerKeys';
 
+/**
+ * Return all containers matching the given types
+ */
 const findContainersWithTypes = (
   types: string[],
   serverKeys: string | string[] | undefined,
-  dataServers: Configuration['dataServers']
+  dataServers: DataServersConfig
 ) => {
-  const containers = {} as Record<DataServerKey, string[]>;
-  const existingContainers: string[] = [];
+  const matchingContainers: Container[] = [];
 
-  const parsedServerKeys = parseServerKeys(serverKeys, dataServers);
+  const parsedServerKeys = parseServerKeys(serverKeys || '@all', dataServers);
 
-  Object.keys(dataServers)
-    .filter(dataServerKey => dataServers[dataServerKey].containers)
-    .forEach(dataServerKey => {
-      Object.keys(dataServers[dataServerKey].containers || {}).forEach(containerKey => {
-        if (!parsedServerKeys || parsedServerKeys.includes(containerKey)) {
-          Object.keys(dataServers[dataServerKey].containers![containerKey]).forEach(type => {
-            if (types.includes(type)) {
-              dataServers[dataServerKey].containers![containerKey][type].map(path => {
-                const containerUri = urlJoin(dataServers[containerKey].baseUrl, path);
-
-                // Avoid returning the same container several times
-                if (!existingContainers.includes(containerUri)) {
-                  existingContainers.push(containerUri);
-
-                  if (!containers[dataServerKey]) containers[dataServerKey] = [];
-                  containers[dataServerKey].push(containerUri);
-                }
-              });
-            }
-          });
+  Object.keys(dataServers).forEach(dataServerKey => {
+    if (parsedServerKeys.includes(dataServerKey)) {
+      dataServers[dataServerKey].containers?.forEach(container => {
+        if (container.types?.some(t => types.includes(t))) {
+          matchingContainers.push(container);
         }
       });
-    });
-  return containers;
+    }
+  });
+
+  return matchingContainers;
 };
 
 export default findContainersWithTypes;
