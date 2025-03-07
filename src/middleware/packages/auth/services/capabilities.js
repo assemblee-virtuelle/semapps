@@ -12,16 +12,12 @@ const CapabilitiesService = {
   mixins: [ControlledContainerMixin],
   settings: {
     path: CAPABILITIES_ROUTE,
+    acceptedTypes: ['acl:Authorization'],
     excludeFromMirror: true,
     activateTombstones: false,
     permissions: {},
     newResourcesPermissions: {},
-    description: {
-      labelMap: {
-        en: 'Capabilities'
-      },
-      internal: true
-    }
+    typeIndex: 'private'
   },
   hooks: {
     before: {

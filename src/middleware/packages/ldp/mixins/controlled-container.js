@@ -9,12 +9,12 @@ module.exports = {
     permissions: null,
     newResourcesPermissions: null,
     controlledActions: {},
-    description: null,
     readOnly: false,
     excludeFromMirror: false,
     activateTombstones: true,
     podsContainer: false,
-    podProvider: false
+    podProvider: false,
+    typeIndex: undefined
   },
   dependencies: ['ldp'],
   async started() {

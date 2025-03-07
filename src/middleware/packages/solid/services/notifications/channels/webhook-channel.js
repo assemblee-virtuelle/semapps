@@ -21,12 +21,7 @@ const WebhookChannel2023Service = {
     channelType: 'WebhookChannel2023',
     sendOrReceive: 'send',
     baseUrl: null,
-    description: {
-      labelMap: {
-        en: 'Webhook Channel'
-      },
-      internal: true
-    },
+    typeIndex: 'private',
     endpoint: {
       path: '/.notifications/WebhookChannel2023',
       initialData: {
