@@ -190,7 +190,6 @@ async function selectAndDereferenceItems(ctx, allItemURIs, options, webId, curso
     nextItemUri = allItemURIs.shift();
   }
 
-  // Return the items without their individual context
   return {
     items: selectedItems,
     previousItemUri,
