@@ -33,18 +33,7 @@ async function getCollectionMetadata(ctx, collectionUri, webId) {
     throw new MoleculerError('Not found', 404, 'NOT_FOUND');
   }
 
-  const options = Object.fromEntries(
-    Object.entries(results[0]).map(([key, result]) => [key, getValueFromDataType(result)])
-  );
-
-  return {
-    ...options,
-    summary: options.summary,
-    'semapps:dereferenceItems': options.dereferenceItems,
-    'semapps:itemsPerPage': options.itemsPerPage,
-    'semapps:sortPredicate': options.sortPredicate,
-    'semapps:sortOrder': options.sortOrder
-  };
+  return Object.fromEntries(Object.entries(results[0]).map(([key, result]) => [key, getValueFromDataType(result)]));
 }
 
 async function verifyCursorExists(ctx, collectionUri, cursor) {
@@ -157,12 +146,10 @@ function applyPagination(allItemURIs, beforeEq, afterEq) {
  * @param {Array} items - The collection items
  * @param {object} options - The collection options
  * @param {string} webId - The webId of the user requesting the collection
- * @param {Array} jsonContext - The JSON-LD context for the response
  * @param {object} cursorDirection - The direction of the requested cursor
- * @param {object} logger - The logger
  * @returns {object} The selected and (possibly) dereferenced items, previous item uri, next item uri
  */
-async function selectAndDereferenceItems(ctx, allItemURIs, options, webId, jsonContext, cursorDirection, logger) {
+async function selectAndDereferenceItems(ctx, allItemURIs, options, webId, cursorDirection) {
   let selectedItems = [];
   let itemUri = null;
   let nextItemUri = null;
@@ -171,20 +158,25 @@ async function selectAndDereferenceItems(ctx, allItemURIs, options, webId, jsonC
   do {
     itemUri = cursorDirection.hasBeforeEq ? allItemURIs.pop() : allItemURIs.shift();
     if (itemUri) {
-      try {
-        const item = await ctx.call('ldp.resource.get', {
-          resourceUri: itemUri,
-          accept: MIME_TYPES.JSON,
-          jsonContext,
-          webId: ctx.meta.impersonatedUser || webId
-        });
-        selectedItems.push(item);
-      } catch (e) {
-        if (e.code === 404 || e.code === 403) {
-          logger.debug(`Item not found with URI: ${itemUri}`);
-        } else {
-          throw e;
+      if (options.dereferenceItems) {
+        try {
+          let item = await ctx.call('ldp.resource.get', {
+            resourceUri: itemUri,
+            accept: MIME_TYPES.JSON,
+            webId: ctx.meta.impersonatedUser || webId
+          });
+          delete item['@context']; // Don't keep the items individual context
+          selectedItems.push(item);
+        } catch (e) {
+          if (e.code === 404 || e.code === 403) {
+            ctx.broker.logger.debug(`Item not found with URI: ${itemUri}`);
+          } else {
+            throw e;
+          }
         }
+      } else {
+        // If dereferencing is disabled, keep only the item URI
+        selectedItems.push(itemUri);
       }
     }
   } while ((selectedItems.length < options.itemsPerPage || !options.itemsPerPage) && itemUri);
@@ -198,20 +190,21 @@ async function selectAndDereferenceItems(ctx, allItemURIs, options, webId, jsonC
     nextItemUri = allItemURIs.shift();
   }
 
-  // If dereferencing is disabled, return the item URIs directly
-  if (!options.dereferenceItems) {
-    selectedItems = selectedItems.map(item => item.id);
-  } else {
-    // If dereferencing is enabled, return the items without their individual context
-    selectedItems = selectedItems.map(({ '@context': context, ...item }) => item);
-  }
-
+  // Return the items without their individual context
   return {
     items: selectedItems,
     previousItemUri,
     nextItemUri
   };
 }
+
+const formatOptions = options => ({
+  summary: options.summary,
+  'semapps:dereferenceItems': options.dereferenceItems,
+  'semapps:itemsPerPage': options.itemsPerPage,
+  'semapps:sortPredicate': options.sortPredicate,
+  'semapps:sortOrder': options.sortOrder
+});
 
 function formatResponse(
   ctx,
@@ -236,7 +229,7 @@ function formatResponse(
       '@context': localContext,
       id: collectionUri,
       type: options.ordered ? 'OrderedCollection' : 'Collection',
-      ...options,
+      ...formatOptions(options),
       first: firstItemUri ? `${collectionUri}?afterEq=${encodeURIComponent(firstItemUri)}` : undefined,
       last: lastItemUri ? `${collectionUri}?beforeEq=${encodeURIComponent(lastItemUri)}` : undefined
     };
@@ -260,7 +253,7 @@ function formatResponse(
     '@context': localContext,
     id: collectionUri,
     type: options.ordered ? 'OrderedCollection' : 'Collection',
-    ...options,
+    ...formatOptions(options),
     [itemsProp]: items
   };
 }
@@ -302,18 +295,10 @@ module.exports = {
       items: processedItems,
       previousItemUri,
       nextItemUri
-    } = await selectAndDereferenceItems(
-      ctx,
-      paginatedItemURIs,
-      options,
-      webId,
-      jsonContext,
-      {
-        hasBeforeEq: !!beforeEq,
-        hasAfterEq: !!afterEq
-      },
-      this.logger
-    );
+    } = await selectAndDereferenceItems(ctx, paginatedItemURIs, options, webId, {
+      hasBeforeEq: !!beforeEq,
+      hasAfterEq: !!afterEq
+    });
 
     // Use the items directly as cursors if they exist
     const prevCursorUri = previousItemUri || initialPrevCursor;
