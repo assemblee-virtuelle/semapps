@@ -110,12 +110,11 @@ const KeysService = {
     getOrCreateWebIdKeys: {
       params: {
         keyType: { type: 'string' },
-        webId: { type: 'string', optional: true }
+        webId: { type: 'string' }
       },
       async handler(ctx) {
-        const { keyType } = ctx.params;
-        const webId = ctx.params.webId || ctx.meta.webId;
-        const webIdDoc = await ctx.call('webid.get', { resourceUri: webId, accept: MIME_TYPES.JSON, webId });
+        const { keyType, webId } = ctx.params;
+        const webIdDoc = await ctx.call('webid.get', { resourceUri: webId, accept: MIME_TYPES.JSON, webId: 'system' });
 
         // RSA keys are stored in `publicKey` field, everything else in `assertionMethod`
         const publicKeys =
@@ -152,14 +151,13 @@ const KeysService = {
      */
     getSigningMultikeyInstance: {
       params: {
+        webId: { type: 'string' },
         keyObject: { type: 'object', optional: true },
         keyId: { type: 'string', optional: true },
-        keyType: { type: 'string', default: KEY_TYPES.ED25519 },
-        webId: { type: 'string', optional: true }
+        keyType: { type: 'string', default: KEY_TYPES.ED25519 }
       },
       async handler(ctx) {
-        const { keyId, keyType } = ctx.params;
-        const webId = ctx.params.webId || ctx.meta.webId;
+        const { webId, keyId, keyType } = ctx.params;
         const keyObject =
           ctx.params.keyObject || keyId
             ? await ctx.call('keys.container.get', { resourceUri: keyId, webId, accept: MIME_TYPES.JSON })
