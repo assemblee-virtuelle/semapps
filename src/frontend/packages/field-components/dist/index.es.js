@@ -64,7 +64,7 @@ const $548fb3c4c04d834a$var$useStyles = (0, $9pxSs$muistylesmakeStyles)((theme)=
         }
     }));
 const $548fb3c4c04d834a$var$handleClick = ()=>{};
-const $548fb3c4c04d834a$var$AvatarWithLabelField = ({ label: label, defaultLabel: defaultLabel, image: image, fallback: fallback, externalLink: externalLink, labelColor: labelColor, classes: classes, ...rest })=>{
+const $548fb3c4c04d834a$var$AvatarWithLabelField = ({ label: label, defaultLabel: defaultLabel, image: image, fallback: fallback, externalLink: externalLink = false, labelColor: labelColor = "secondary", classes: classes, ...rest })=>{
     classes = $548fb3c4c04d834a$var$useStyles(classes);
     const record = (0, $9pxSs$useRecordContext)();
     const computedLabel = (typeof label === "function" ? label(record) : record[label]) || defaultLabel;
@@ -100,10 +100,6 @@ const $548fb3c4c04d834a$var$AvatarWithLabelField = ({ label: label, defaultLabel
             })
         ]
     });
-};
-$548fb3c4c04d834a$var$AvatarWithLabelField.defaultProps = {
-    labelColor: "secondary",
-    externalLink: false
 };
 var $548fb3c4c04d834a$export$2e2bcd8739ae039 = $548fb3c4c04d834a$var$AvatarWithLabelField;
 
@@ -509,7 +505,9 @@ var $3d5bffcd1289119f$export$2e2bcd8739ae039 = $3d5bffcd1289119f$var$QuickAppend
 const $c6e9301cf3cc37bc$var$QuickAppendReferenceArrayField = ({ reference: reference, source: source, resource: resource, children: children, ...otherProps })=>{
     const record = (0, $9pxSs$useRecordContext)();
     const [showDialog, setShowDialog] = (0, $9pxSs$useState)(false);
-    const { permissions: permissions } = (0, $9pxSs$usePermissions)(record.id);
+    const { permissions: permissions } = (0, $9pxSs$usePermissions)({
+        uri: record.id
+    });
     const canAppend = (0, $9pxSs$useMemo)(()=>!!permissions && permissions.some((p)=>[
                 "acl:Append",
                 "acl:Write",

@@ -1,5 +1,5 @@
 import {jsx as $5Ihaz$jsx, jsxs as $5Ihaz$jsxs} from "react/jsx-runtime";
-import "@fullcalendar/core/vdom";
+import "@fullcalendar/react/dist/vdom";
 import {DatePicker as $5Ihaz$DatePicker} from "@mui/x-date-pickers/DatePicker";
 import {TimePicker as $5Ihaz$TimePicker} from "@mui/x-date-pickers/TimePicker";
 import {DateTimePicker as $5Ihaz$DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
@@ -92,7 +92,7 @@ var $610808f89222f9cc$export$2e2bcd8739ae039 = $610808f89222f9cc$var$Picker;
 
 
 
-const $37245c02f9b1b006$var$useFullCalendarProps = ({ label: label, startDate: startDate, endDate: endDate, linkType: linkType })=>{
+const $37245c02f9b1b006$var$useFullCalendarProps = ({ label: label, startDate: startDate, endDate: endDate, linkType: linkType = "edit" })=>{
     const { data: data, isLoading: isLoading, resource: resource } = (0, $5Ihaz$useListContext)();
     const [searchParams, setSearchParams] = (0, $5Ihaz$useSearchParams)();
     const navigate = (0, $5Ihaz$useNavigate)();
@@ -169,9 +169,6 @@ const $abbcc02f55461290$var$CalendarList = (props)=>{
         ...fullCalendarProps
     });
 };
-$abbcc02f55461290$var$CalendarList.defaultProps = {
-    linkType: "edit"
-};
 var $abbcc02f55461290$export$2e2bcd8739ae039 = $abbcc02f55461290$var$CalendarList;
 
 
@@ -201,9 +198,6 @@ const $69d9f850452774a2$var$DaysList = (props)=>{
         initialView: "listMonth",
         ...fullCalendarProps
     });
-};
-$69d9f850452774a2$var$DaysList.defaultProps = {
-    linkType: "edit"
 };
 var $69d9f850452774a2$export$2e2bcd8739ae039 = $69d9f850452774a2$var$DaysList;
 

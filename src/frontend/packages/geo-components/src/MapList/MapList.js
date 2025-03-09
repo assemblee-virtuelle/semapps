@@ -30,13 +30,14 @@ const MapList = ({
   longitude,
   label,
   description,
-  popupContent,
-  height,
-  center,
-  zoom,
-  groupClusters,
+  popupContent = DefaultPopupContent,
+  height = 700,
+  center = [47, 2.213749],
+  zoom = 6,
+  groupClusters = true,
   boundToMarkers,
-  connectMarkers,
+  connectMarkers = false,
+  scrollWheelZoom = false,
   ...otherProps
 }) => {
   const { data, isLoading } = useListContext();
@@ -112,6 +113,7 @@ const MapList = ({
       center={!boundToMarkers ? center : undefined}
       zoom={!boundToMarkers ? zoom : undefined}
       bounds={bounds}
+      scrollWheelZoom={scrollWheelZoom}
       {...otherProps}
     >
       <TileLayer
@@ -130,16 +132,6 @@ const MapList = ({
       </RecordContextProvider>
     </MapContainer>
   );
-};
-
-MapList.defaultProps = {
-  height: 700,
-  center: [47, 2.213749],
-  zoom: 6,
-  groupClusters: true,
-  connectMarkers: false,
-  scrollWheelZoom: false,
-  popupContent: DefaultPopupContent
 };
 
 export default MapList;

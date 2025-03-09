@@ -4,7 +4,7 @@ import { rightsToDelete } from '../../constants';
 
 const DeleteButtonWithPermissions = props => {
   const recordId = useGetRecordId();
-  const { permissions, isLoading } = usePermissions(recordId);
+  const { permissions, isLoading } = usePermissions({ uri: recordId });
   if (!isLoading && permissions?.some(p => rightsToDelete.includes(p['acl:mode']))) {
     return <DeleteButton {...props} />;
   }

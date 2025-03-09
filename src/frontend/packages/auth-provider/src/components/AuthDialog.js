@@ -2,7 +2,14 @@ import React from 'react';
 import { useLogin, useTranslate } from 'react-admin';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
-const AuthDialog = ({ open, onClose, title, message, redirect, ...rest }) => {
+const AuthDialog = ({
+  open,
+  onClose,
+  title = 'auth.dialog.login_required',
+  message = 'auth.message.login_to_continue',
+  redirect,
+  ...rest
+}) => {
   const login = useLogin();
   const translate = useTranslate();
   return (
@@ -23,11 +30,6 @@ const AuthDialog = ({ open, onClose, title, message, redirect, ...rest }) => {
       </DialogActions>
     </Dialog>
   );
-};
-
-AuthDialog.defaultProps = {
-  title: 'auth.dialog.login_required',
-  message: 'auth.message.login_to_continue'
 };
 
 export default AuthDialog;

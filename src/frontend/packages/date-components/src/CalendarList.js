@@ -38,8 +38,4 @@ const CalendarList = props => {
   );
 };
 
-CalendarList.defaultProps = {
-  linkType: 'edit'
-};
-
 export default CalendarList;

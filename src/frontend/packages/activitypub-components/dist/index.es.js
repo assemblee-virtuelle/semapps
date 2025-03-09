@@ -866,7 +866,7 @@ var $be88b298220210d1$export$2e2bcd8739ae039 = $be88b298220210d1$var$CommentsLis
 
 
 
-const $7ce737d4a1c88e63$var$CommentsField = ({ source: source, context: context, helperText: helperText, placeholder: placeholder, userResource: userResource, mentions: mentions })=>{
+const $7ce737d4a1c88e63$var$CommentsField = ({ source: source = "id", context: context = "id", helperText: helperText, placeholder: placeholder = "Commencez \xe0 taper votre commentaire...", userResource: userResource, mentions: mentions })=>{
     const record = (0, $85cNH$useRecordContext)();
     const { items: comments, loading: loading, addItem: addItem, removeItem: removeItem } = (0, $8281f3ce3b9d6123$export$2e2bcd8739ae039)(record.replies);
     if (!userResource) throw new Error("No userResource defined for CommentsField");
@@ -888,12 +888,6 @@ const $7ce737d4a1c88e63$var$CommentsField = ({ source: source, context: context,
             })
         ]
     });
-};
-$7ce737d4a1c88e63$var$CommentsField.defaultProps = {
-    label: "Commentaires",
-    placeholder: "Commencez \xe0 taper votre commentaire...",
-    source: "id",
-    context: "id"
 };
 var $7ce737d4a1c88e63$export$2e2bcd8739ae039 = $7ce737d4a1c88e63$var$CommentsField;
 
