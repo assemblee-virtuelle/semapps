@@ -25,10 +25,12 @@ const configureUserStorage = (): Plugin => ({
           containers: []
         };
 
-        newConfig.jsonContext = [
-          'https://www.w3.org/ns/activitystreams',
-          urlJoin(new URL(webId).origin, '/.well-known/context.jsonld')
-        ];
+        if (!newConfig.jsonContext) {
+          newConfig.jsonContext = [
+            'https://www.w3.org/ns/activitystreams',
+            urlJoin(new URL(webId).origin, '/.well-known/context.jsonld')
+          ];
+        }
 
         return newConfig;
       }
