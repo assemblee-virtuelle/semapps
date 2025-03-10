@@ -7,7 +7,6 @@ const compare = (a, b) => {
     case 'string':
       return a.localeCompare(b);
     case 'number':
-    case 'bigint':
       return a - b;
     default:
       return 0;
@@ -18,20 +17,18 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
   const { dataServers, resources, httpClient, jsonContext, ontologies } = config;
   const dataModel = resources[resourceId];
 
-  const sparqlQueryPromises = Object.keys(containers).map(
+  const serversToQuery = containers.reduce((acc, cur) => {
+    if (!acc.includes(cur.server)) acc.push(cur.server);
+    return acc;
+  }, []);
+
+  const sparqlQueryPromises = serversToQuery.map(
     serverKey =>
       new Promise((resolve, reject) => {
         const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes;
 
-        // When the SPARQL request comes from the browser's URL, it comes as JSON string which must must be parsed
-        if (
-          params.filter?.sparqlWhere &&
-          (typeof params.filter.sparqlWhere === 'string' || params.filter.sparqlWhere instanceof String)
-        ) {
-          params.filter.sparqlWhere = JSON.parse(decodeURIComponent(params.filter.sparqlWhere));
-        }
         const sparqlQuery = buildSparqlQuery({
-          containers: containers[serverKey],
+          containersUris: containers.filter(c => c.server === serverKey).map(c => c.uri),
           params,
           dataModel,
           ontologies
@@ -70,7 +67,7 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
               };
             }
             resolve(
-              compactJson['@graph'].map(resource => ({ '@context': compactJson['@context'], ...resource })) || []
+              compactJson['@graph']?.map(resource => ({ '@context': compactJson['@context'], ...resource })) || []
             );
           })
           .catch(e => reject(e));

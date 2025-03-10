@@ -1,8 +1,8 @@
-import urlJoin from 'url-join';
 import createSlug from 'speakingurl';
 import getOne from './getOne';
 import handleFiles from '../utils/handleFiles';
 import findContainersWithTypes from '../utils/findContainersWithTypes';
+import findContainersWithURIs from '../utils/findContainersWithURIs';
 
 const createMethod = config => async (resourceId, params) => {
   const { dataServers, resources, httpClient, jsonContext } = config;
@@ -15,23 +15,23 @@ const createMethod = config => async (resourceId, params) => {
   let containerUri;
   let serverKey;
   if (dataModel.create?.container) {
-    serverKey = Object.keys(dataModel.create.container)[0];
-    containerUri = urlJoin(dataServers[serverKey].baseUrl, Object.values(dataModel.create.container)[0]);
+    const [container] = findContainersWithURIs([dataModel.create?.container], dataServers);
+    serverKey = container.server;
+    containerUri = container.uri;
   } else {
     serverKey = dataModel.create?.server || Object.keys(dataServers).find(key => dataServers[key].default === true);
     if (!serverKey) throw new Error('You must define a server for the creation, or a container, or a default server');
 
     const containers = findContainersWithTypes(dataModel.types, [serverKey], dataServers);
-    // Extract the containerUri from the results (and ensure there is only one)
-    const serverKeys = Object.keys(containers);
 
-    if (!serverKeys || serverKeys.length === 0)
+    if (!containers || containers.length === 0)
       throw new Error(`No container with types ${JSON.stringify(dataModel.types)} found on server ${serverKey}`);
-    if (serverKeys.length > 1 || containers[serverKeys[0]].length > 1)
+    if (containers.length > 1)
       throw new Error(
         `More than one container detected with types ${JSON.stringify(dataModel.types)} on server ${serverKey}`
       );
-    containerUri = containers[serverKeys[0]][0];
+
+    containerUri = containers[0].uri;
   }
 
   if (params.data) {

@@ -10,63 +10,81 @@ import getManyReferenceMethod from './methods/getManyReference';
 import getOneMethod from './methods/getOne';
 import patchMethod from './methods/patch';
 import updateMethod from './methods/update';
-import fetchUserConfig from './utils/fetchUserConfig';
-import fetchVoidEndpoints from './utils/fetchVoidEndpoints';
-import getServerKeyFromType from './utils/getServerKeyFromType';
 import httpClient from './httpClient';
 import { uploadFile } from './utils/handleFiles';
+import normalizeConfig from './utils/normalizeConfig';
+import expandTypes from './utils/expandTypes';
+import getOntologiesFromContext from './utils/getOntologiesFromContext';
 
-/** @type {(config: Configuration) => SemanticDataProvider} */
-const dataProvider = config => {
-  // TODO verify all data provider config + data models
-  if (!getServerKeyFromType('default', config.dataServers))
-    throw new Error('You must define a default server in your dataServers config');
-
-  if (!config.jsonContext) config.jsonContext = Object.fromEntries(config.ontologies.map(o => [o.prefix, o.url]));
-  if (!config.returnFailedResources) config.returnFailedResources = false;
-
-  // Configure httpClient with data servers (this is needed for proxy calls)
-  config.httpClient = httpClient(config.dataServers);
-
+/** @type {(originalConfig: Configuration) => SemanticDataProvider} */
+const dataProvider = originalConfig => {
   // Keep in memory for refresh
-  const originalConfig = { ...config };
+  let config = { ...originalConfig };
 
-  let fetchUserConfigPromise = fetchUserConfig(config);
-  let fetchVoidEndpointsPromise = fetchVoidEndpoints(config);
+  const prepareConfig = async () => {
+    config.dataServers ??= {};
 
-  const waitForConfig =
+    // Configure httpClient with initial data servers, so that plugins may use it
+    config.httpClient = httpClient(config.dataServers);
+
+    for (const plugin of config.plugins) {
+      if (plugin.transformConfig) {
+        config = await plugin.transformConfig(config);
+      }
+    }
+
+    // Configure again httpClient with possibly updated data servers
+    config.httpClient = httpClient(config.dataServers);
+
+    if (!config.ontologies && config.jsonContext) {
+      config.ontologies = await getOntologiesFromContext(config.jsonContext);
+    } else if (!config.jsonContext && config.ontologies) {
+      config.jsonContext = config.ontologies;
+    } else if (!config.jsonContext && !config.ontologies) {
+      throw new Error(`Either the JSON context or the ontologies must be set`);
+    }
+
+    if (!config.returnFailedResources) config.returnFailedResources = false;
+
+    config = await normalizeConfig(config);
+
+    console.log('Config after plugins', config);
+  };
+
+  // Immediately call the preload plugins
+  const prepareConfigPromise = prepareConfig();
+
+  const waitForPrepareConfig =
     method =>
     async (...arg) => {
-      await fetchUserConfigPromise;
-      await fetchVoidEndpointsPromise; // Return immediately if promise is fulfilled
-      return await method(...arg);
+      await prepareConfigPromise; // Return immediately if plugins have already been loaded
+      return method(config)(...arg);
     };
 
   return {
-    getList: waitForConfig(getListMethod(config)),
-    getMany: waitForConfig(getManyMethod(config)),
-    getManyReference: waitForConfig(getManyReferenceMethod(config)),
-    getOne: waitForConfig(getOneMethod(config)),
-    create: waitForConfig(createMethod(config)),
-    update: waitForConfig(updateMethod(config)),
+    getList: waitForPrepareConfig(getListMethod),
+    getMany: waitForPrepareConfig(getManyMethod),
+    getManyReference: waitForPrepareConfig(getManyReferenceMethod),
+    getOne: waitForPrepareConfig(getOneMethod),
+    create: waitForPrepareConfig(createMethod),
+    update: waitForPrepareConfig(updateMethod),
     updateMany: () => {
       throw new Error('updateMany is not implemented yet');
     },
-    delete: waitForConfig(deleteMethod(config)),
-    deleteMany: waitForConfig(deleteManyMethod(config)),
+    delete: waitForPrepareConfig(deleteMethod),
+    deleteMany: waitForPrepareConfig(deleteManyMethod),
     // Custom methods
-    patch: waitForConfig(patchMethod(config)),
-    getDataModels: waitForConfig(getDataModelsMethod(config)),
-    getDataServers: waitForConfig(getDataServersMethod(config)),
-    getLocalDataServers: getDataServersMethod(config),
-    fetch: waitForConfig(config.httpClient),
-    uploadFile: waitForConfig(rawFile => uploadFile(rawFile, config)),
+    patch: waitForPrepareConfig(patchMethod),
+    getDataModels: waitForPrepareConfig(getDataModelsMethod),
+    getDataServers: waitForPrepareConfig(getDataServersMethod),
+    getLocalDataServers: getDataServersMethod(originalConfig),
+    fetch: waitForPrepareConfig(c => httpClient(c.dataServers)),
+    uploadFile: waitForPrepareConfig(c => rawFile => uploadFile(rawFile, c)),
+    expandTypes: waitForPrepareConfig(c => types => expandTypes(types, c.jsonContext)),
+    getConfig: waitForPrepareConfig(c => () => c),
     refreshConfig: async () => {
       config = { ...originalConfig };
-      fetchUserConfigPromise = fetchUserConfig(config);
-      fetchVoidEndpointsPromise = fetchVoidEndpoints(config);
-      await fetchUserConfigPromise;
-      await fetchVoidEndpointsPromise;
+      await prepareConfig();
       return config;
     }
   };
