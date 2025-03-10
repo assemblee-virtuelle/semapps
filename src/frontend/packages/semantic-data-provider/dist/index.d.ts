@@ -130,6 +130,7 @@ export type TypeRegistration = {
   'solid:forClass': string | string[];
   'solid:instanceContainer': string;
 };
+export const getUriFromPrefix: (item: string, ontologies: Record<string, string>) => string;
 export function buildBlankNodesQuery(
   blankNodes: any,
   baseQuery: any,
@@ -159,6 +160,7 @@ export function buildSparqlQuery({
 }): string;
 /** @type {(originalConfig: Configuration) => SemanticDataProvider} */
 export const dataProvider: (originalConfig: Configuration) => SemanticDataProvider;
+export const getPrefixFromUri: (uri: string, ontologies: Record<string, string>) => string;
 export const configureUserStorage: () => Plugin;
 /**
  * Return a function that look if an app (clientId) is registered with an user (webId)
@@ -169,6 +171,7 @@ export const fetchAppRegistration: () => Plugin;
 export const fetchDataRegistry: () => Plugin;
 export const fetchTypeIndexes: () => Plugin;
 export const fetchVoidEndpoints: () => Plugin;
+export const useDataProviderConfig: () => Configuration | undefined;
 export const useCompactPredicate: (
   predicate: string,
   context?: string | string[] | Record<string, string>

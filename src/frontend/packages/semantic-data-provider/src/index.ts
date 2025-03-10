@@ -2,6 +2,8 @@ export { default as dataProvider } from './dataProvider/dataProvider';
 
 export { default as buildSparqlQuery } from './dataProvider/utils/buildSparqlQuery';
 export { default as buildBlankNodesQuery } from './dataProvider/utils/buildBlankNodesQuery';
+export { default as getUriFromPrefix } from './dataProvider/utils/getUriFromPrefix';
+export { default as getPrefixFromUri } from './dataProvider/utils/getPrefixFromUri';
 
 export { default as configureUserStorage } from './dataProvider/plugins/configureUserStorage';
 export { default as fetchAppRegistration } from './dataProvider/plugins/fetchAppRegistration';
@@ -16,6 +18,7 @@ export { default as useContainerByUri } from './hooks/useContainerByUri';
 export { default as useCreateContainerUri } from './hooks/useCreateContainerUri';
 export { default as useDataModel } from './hooks/useDataModel';
 export { default as useDataModels } from './hooks/useDataModels';
+export { default as useDataProviderConfig } from './hooks/useDataProviderConfig';
 export { default as useDataServers } from './hooks/useDataServers';
 export { default as useGetCreateContainerUri } from './hooks/useGetCreateContainerUri';
 export { default as useGetExternalLink } from './hooks/useGetExternalLink';

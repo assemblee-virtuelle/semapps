@@ -41,6 +41,8 @@ function $parcel$interopDefault(a) {
 $parcel$export(module.exports, "dataProvider", () => $7f6a16d0025dc83a$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "buildSparqlQuery", () => $33c37185da3771a9$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "buildBlankNodesQuery", () => $64d4ce40c79d1509$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "getUriFromPrefix", () => $108795c3831be99f$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "getPrefixFromUri", () => $8c4c0f0b55649ce6$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "configureUserStorage", () => $89358cee13a17a31$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "fetchAppRegistration", () => $c512de108ef5d674$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "fetchDataRegistry", () => $cd772adda3024172$export$2e2bcd8739ae039);
@@ -53,6 +55,7 @@ $parcel$export(module.exports, "useContainerByUri", () => $d3746ce11bc56f3b$expo
 $parcel$export(module.exports, "useCreateContainerUri", () => $298b78bb7d4a3358$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useDataModel", () => $63a32f1a35c6f80e$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useDataModels", () => $20621bc841a5205a$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useDataProviderConfig", () => $9def35f4441a9bb2$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useDataServers", () => $c9933a88e2acc4da$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useGetCreateContainerUri", () => $32d32215b4e4729f$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useGetExternalLink", () => $85e9a897c6d7c14a$export$2e2bcd8739ae039);
@@ -1180,6 +1183,34 @@ var $5e24772571dd1677$export$2e2bcd8739ae039 = $5e24772571dd1677$var$normalizeCo
 
 
 
+
+const $fcf4eee3b18e8350$var$isURL = (value)=>(typeof value === 'string' || value instanceof String) && value.startsWith('http');
+const $fcf4eee3b18e8350$var$getOntologiesFromContextJson = (contextJson)=>{
+    const ontologies = {};
+    for (const [key, value] of Object.entries(contextJson))if ($fcf4eee3b18e8350$var$isURL(value)) ontologies[key] = value;
+    return ontologies;
+};
+const $fcf4eee3b18e8350$var$getOntologiesFromContextUrl = async (contextUrl)=>{
+    const { json: json } = await (0, $bkNnK$reactadmin.fetchUtils).fetchJson(contextUrl, {
+        headers: new Headers({
+            Accept: 'application/ld+json'
+        })
+    });
+    return $fcf4eee3b18e8350$var$getOntologiesFromContextJson(json['@context']);
+};
+const $fcf4eee3b18e8350$var$getOntologiesFromContext = async (context)=>{
+    let ontologies = {};
+    if (Array.isArray(context)) for (const contextUrl of context)ontologies = {
+        ...ontologies,
+        ...await $fcf4eee3b18e8350$var$getOntologiesFromContextUrl(contextUrl)
+    };
+    else if (typeof context === 'string') ontologies = await $fcf4eee3b18e8350$var$getOntologiesFromContextUrl(context);
+    else ontologies = $fcf4eee3b18e8350$var$getOntologiesFromContextJson(context);
+    return ontologies;
+};
+var $fcf4eee3b18e8350$export$2e2bcd8739ae039 = $fcf4eee3b18e8350$var$getOntologiesFromContext;
+
+
 /** @type {(originalConfig: Configuration) => SemanticDataProvider} */ const $7f6a16d0025dc83a$var$dataProvider = (originalConfig)=>{
     // Keep in memory for refresh
     let config = {
@@ -1192,7 +1223,9 @@ var $5e24772571dd1677$export$2e2bcd8739ae039 = $5e24772571dd1677$var$normalizeCo
         for (const plugin of config.plugins)if (plugin.transformConfig) config = await plugin.transformConfig(config);
         // Configure again httpClient with possibly updated data servers
         config.httpClient = (0, $341dff85fe619d85$export$2e2bcd8739ae039)(config.dataServers);
-        if (!config.jsonContext) config.jsonContext = config.ontologies;
+        if (!config.ontologies && config.jsonContext) config.ontologies = await (0, $fcf4eee3b18e8350$export$2e2bcd8739ae039)(config.jsonContext);
+        else if (!config.jsonContext && config.ontologies) config.jsonContext = config.ontologies;
+        else if (!config.jsonContext && !config.ontologies) throw new Error(`Either the JSON context or the ontologies must be set`);
         if (!config.returnFailedResources) config.returnFailedResources = false;
         config = await (0, $5e24772571dd1677$export$2e2bcd8739ae039)(config);
         console.log('Config after plugins', config);
@@ -1239,6 +1272,16 @@ var $7f6a16d0025dc83a$export$2e2bcd8739ae039 = $7f6a16d0025dc83a$var$dataProvide
 
 
 
+const $8c4c0f0b55649ce6$var$getPrefixFromUri = (uri, ontologies)=>{
+    for (const [prefix, namespace] of Object.entries(ontologies)){
+        if (uri.startsWith(namespace)) return uri.replace(namespace, `${prefix}:`);
+    }
+    return uri;
+};
+var $8c4c0f0b55649ce6$export$2e2bcd8739ae039 = $8c4c0f0b55649ce6$var$getPrefixFromUri;
+
+
+
 
 const $89358cee13a17a31$var$configureUserStorage = ()=>({
         transformConfig: async (config)=>{
@@ -1261,7 +1304,7 @@ const $89358cee13a17a31$var$configureUserStorage = ()=>({
                         proxyUrl: user.endpoints?.proxyUrl,
                         containers: []
                     };
-                    newConfig.jsonContext = [
+                    if (!newConfig.jsonContext) newConfig.jsonContext = [
                         'https://www.w3.org/ns/activitystreams',
                         (0, ($parcel$interopDefault($bkNnK$urljoin)))(new URL(webId).origin, '/.well-known/context.jsonld')
                     ];
@@ -1744,6 +1787,7 @@ var $63a32f1a35c6f80e$export$2e2bcd8739ae039 = $63a32f1a35c6f80e$var$useDataMode
 
 
 
+
 const $85e9a897c6d7c14a$var$compute = (externalLinks, record)=>typeof externalLinks === 'function' ? externalLinks(record) : externalLinks;
 const $85e9a897c6d7c14a$var$isURL = (url)=>typeof url === 'string' && url.startsWith('http');
 const $85e9a897c6d7c14a$var$useGetExternalLink = (componentExternalLinks)=>{
@@ -1785,14 +1829,6 @@ var $85e9a897c6d7c14a$export$2e2bcd8739ae039 = $85e9a897c6d7c14a$var$useGetExter
 
 
 
-
-const $8c4c0f0b55649ce6$var$getPrefixFromUri = (uri, ontologies)=>{
-    for (const [prefix, namespace] of Object.entries(ontologies)){
-        if (uri.startsWith(namespace)) return uri.replace(namespace, `${prefix}:`);
-    }
-    return uri;
-};
-var $8c4c0f0b55649ce6$export$2e2bcd8739ae039 = $8c4c0f0b55649ce6$var$getPrefixFromUri;
 
 
 const $d602250066d4ff3e$var$useGetPrefixFromUri = ()=>{

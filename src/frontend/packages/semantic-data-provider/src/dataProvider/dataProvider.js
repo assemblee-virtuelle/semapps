@@ -14,6 +14,7 @@ import httpClient from './httpClient';
 import { uploadFile } from './utils/handleFiles';
 import normalizeConfig from './utils/normalizeConfig';
 import expandTypes from './utils/expandTypes';
+import getOntologiesFromContext from './utils/getOntologiesFromContext';
 
 /** @type {(originalConfig: Configuration) => SemanticDataProvider} */
 const dataProvider = originalConfig => {
@@ -35,7 +36,14 @@ const dataProvider = originalConfig => {
     // Configure again httpClient with possibly updated data servers
     config.httpClient = httpClient(config.dataServers);
 
-    if (!config.jsonContext) config.jsonContext = config.ontologies;
+    if (!config.ontologies && config.jsonContext) {
+      config.ontologies = await getOntologiesFromContext(config.jsonContext);
+    } else if (!config.jsonContext && config.ontologies) {
+      config.jsonContext = config.ontologies;
+    } else if (!config.jsonContext && !config.ontologies) {
+      throw new Error(`Either the JSON context or the ontologies must be set`);
+    }
+
     if (!config.returnFailedResources) config.returnFailedResources = false;
 
     config = await normalizeConfig(config);

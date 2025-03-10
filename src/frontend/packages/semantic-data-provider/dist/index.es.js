@@ -1129,6 +1129,34 @@ var $33bf2a661b5c0cbd$export$2e2bcd8739ae039 = $33bf2a661b5c0cbd$var$normalizeCo
 
 
 
+
+const $143de1c1f21344e7$var$isURL = (value)=>(typeof value === 'string' || value instanceof String) && value.startsWith('http');
+const $143de1c1f21344e7$var$getOntologiesFromContextJson = (contextJson)=>{
+    const ontologies = {};
+    for (const [key, value] of Object.entries(contextJson))if ($143de1c1f21344e7$var$isURL(value)) ontologies[key] = value;
+    return ontologies;
+};
+const $143de1c1f21344e7$var$getOntologiesFromContextUrl = async (contextUrl)=>{
+    const { json: json } = await (0, $fj9kP$fetchUtils).fetchJson(contextUrl, {
+        headers: new Headers({
+            Accept: 'application/ld+json'
+        })
+    });
+    return $143de1c1f21344e7$var$getOntologiesFromContextJson(json['@context']);
+};
+const $143de1c1f21344e7$var$getOntologiesFromContext = async (context)=>{
+    let ontologies = {};
+    if (Array.isArray(context)) for (const contextUrl of context)ontologies = {
+        ...ontologies,
+        ...await $143de1c1f21344e7$var$getOntologiesFromContextUrl(contextUrl)
+    };
+    else if (typeof context === 'string') ontologies = await $143de1c1f21344e7$var$getOntologiesFromContextUrl(context);
+    else ontologies = $143de1c1f21344e7$var$getOntologiesFromContextJson(context);
+    return ontologies;
+};
+var $143de1c1f21344e7$export$2e2bcd8739ae039 = $143de1c1f21344e7$var$getOntologiesFromContext;
+
+
 /** @type {(originalConfig: Configuration) => SemanticDataProvider} */ const $243bf28fbb1b868f$var$dataProvider = (originalConfig)=>{
     // Keep in memory for refresh
     let config = {
@@ -1141,7 +1169,9 @@ var $33bf2a661b5c0cbd$export$2e2bcd8739ae039 = $33bf2a661b5c0cbd$var$normalizeCo
         for (const plugin of config.plugins)if (plugin.transformConfig) config = await plugin.transformConfig(config);
         // Configure again httpClient with possibly updated data servers
         config.httpClient = (0, $22b4895a4ca7d626$export$2e2bcd8739ae039)(config.dataServers);
-        if (!config.jsonContext) config.jsonContext = config.ontologies;
+        if (!config.ontologies && config.jsonContext) config.ontologies = await (0, $143de1c1f21344e7$export$2e2bcd8739ae039)(config.jsonContext);
+        else if (!config.jsonContext && config.ontologies) config.jsonContext = config.ontologies;
+        else if (!config.jsonContext && !config.ontologies) throw new Error(`Either the JSON context or the ontologies must be set`);
         if (!config.returnFailedResources) config.returnFailedResources = false;
         config = await (0, $33bf2a661b5c0cbd$export$2e2bcd8739ae039)(config);
         console.log('Config after plugins', config);
@@ -1188,6 +1218,16 @@ var $243bf28fbb1b868f$export$2e2bcd8739ae039 = $243bf28fbb1b868f$var$dataProvide
 
 
 
+const $861da9be2c0e62eb$var$getPrefixFromUri = (uri, ontologies)=>{
+    for (const [prefix, namespace] of Object.entries(ontologies)){
+        if (uri.startsWith(namespace)) return uri.replace(namespace, `${prefix}:`);
+    }
+    return uri;
+};
+var $861da9be2c0e62eb$export$2e2bcd8739ae039 = $861da9be2c0e62eb$var$getPrefixFromUri;
+
+
+
 
 const $cdd3c71a628eeefe$var$configureUserStorage = ()=>({
         transformConfig: async (config)=>{
@@ -1210,7 +1250,7 @@ const $cdd3c71a628eeefe$var$configureUserStorage = ()=>({
                         proxyUrl: user.endpoints?.proxyUrl,
                         containers: []
                     };
-                    newConfig.jsonContext = [
+                    if (!newConfig.jsonContext) newConfig.jsonContext = [
                         'https://www.w3.org/ns/activitystreams',
                         (0, $fj9kP$urljoin)(new URL(webId).origin, '/.well-known/context.jsonld')
                     ];
@@ -1693,6 +1733,7 @@ var $e5a0eacd756fd1d5$export$2e2bcd8739ae039 = $e5a0eacd756fd1d5$var$useDataMode
 
 
 
+
 const $87656edf926c0f1f$var$compute = (externalLinks, record)=>typeof externalLinks === 'function' ? externalLinks(record) : externalLinks;
 const $87656edf926c0f1f$var$isURL = (url)=>typeof url === 'string' && url.startsWith('http');
 const $87656edf926c0f1f$var$useGetExternalLink = (componentExternalLinks)=>{
@@ -1734,14 +1775,6 @@ var $87656edf926c0f1f$export$2e2bcd8739ae039 = $87656edf926c0f1f$var$useGetExter
 
 
 
-
-const $861da9be2c0e62eb$var$getPrefixFromUri = (uri, ontologies)=>{
-    for (const [prefix, namespace] of Object.entries(ontologies)){
-        if (uri.startsWith(namespace)) return uri.replace(namespace, `${prefix}:`);
-    }
-    return uri;
-};
-var $861da9be2c0e62eb$export$2e2bcd8739ae039 = $861da9be2c0e62eb$var$getPrefixFromUri;
 
 
 const $487567a146508c4e$var$useGetPrefixFromUri = ()=>{
@@ -2048,5 +2081,5 @@ const $03d52e691e8dc945$var$registeredWebSockets = new Map();
 
 
 
-export {$243bf28fbb1b868f$export$2e2bcd8739ae039 as dataProvider, $6cde9a8fbbde3ffb$export$2e2bcd8739ae039 as buildSparqlQuery, $865f630cc944e818$export$2e2bcd8739ae039 as buildBlankNodesQuery, $cdd3c71a628eeefe$export$2e2bcd8739ae039 as configureUserStorage, $2c257b4237cb14ca$export$2e2bcd8739ae039 as fetchAppRegistration, $91255e144bb55afc$export$2e2bcd8739ae039 as fetchDataRegistry, $2d5f75df63129ebc$export$2e2bcd8739ae039 as fetchTypeIndexes, $a87fd63d8fca0380$export$2e2bcd8739ae039 as fetchVoidEndpoints, $72db0904d77f0f1e$export$2e2bcd8739ae039 as useCompactPredicate, $586fa0ea9d02fa12$export$2e2bcd8739ae039 as useContainers, $9d2c669bd52faa31$export$2e2bcd8739ae039 as useContainersByTypes, $43097d0b613bd4db$export$2e2bcd8739ae039 as useContainerByUri, $35f3e75c86e51f35$export$2e2bcd8739ae039 as useCreateContainerUri, $e5a0eacd756fd1d5$export$2e2bcd8739ae039 as useDataModel, $3a9656756670cb78$export$2e2bcd8739ae039 as useDataModels, $4daf4cf698ee4eed$export$2e2bcd8739ae039 as useDataServers, $8dbb0c8c3814e663$export$2e2bcd8739ae039 as useGetCreateContainerUri, $87656edf926c0f1f$export$2e2bcd8739ae039 as useGetExternalLink, $487567a146508c4e$export$2e2bcd8739ae039 as useGetPrefixFromUri, $406574efa35ec6f1$export$2e2bcd8739ae039 as FilterHandler, $1d8c1cbe606a94ae$export$2e2bcd8739ae039 as GroupedReferenceHandler, $6844bbce0ad66151$export$2e2bcd8739ae039 as ReificationArrayInput, $03d52e691e8dc945$export$28772ab4c256e709 as createWsChannel, $03d52e691e8dc945$export$8d60734939c59ced as getOrCreateWsChannel, $03d52e691e8dc945$export$3edfe18db119b920 as createSolidNotificationChannel};
+export {$243bf28fbb1b868f$export$2e2bcd8739ae039 as dataProvider, $6cde9a8fbbde3ffb$export$2e2bcd8739ae039 as buildSparqlQuery, $865f630cc944e818$export$2e2bcd8739ae039 as buildBlankNodesQuery, $4872a1c30c1fc60e$export$2e2bcd8739ae039 as getUriFromPrefix, $861da9be2c0e62eb$export$2e2bcd8739ae039 as getPrefixFromUri, $cdd3c71a628eeefe$export$2e2bcd8739ae039 as configureUserStorage, $2c257b4237cb14ca$export$2e2bcd8739ae039 as fetchAppRegistration, $91255e144bb55afc$export$2e2bcd8739ae039 as fetchDataRegistry, $2d5f75df63129ebc$export$2e2bcd8739ae039 as fetchTypeIndexes, $a87fd63d8fca0380$export$2e2bcd8739ae039 as fetchVoidEndpoints, $72db0904d77f0f1e$export$2e2bcd8739ae039 as useCompactPredicate, $586fa0ea9d02fa12$export$2e2bcd8739ae039 as useContainers, $9d2c669bd52faa31$export$2e2bcd8739ae039 as useContainersByTypes, $43097d0b613bd4db$export$2e2bcd8739ae039 as useContainerByUri, $35f3e75c86e51f35$export$2e2bcd8739ae039 as useCreateContainerUri, $e5a0eacd756fd1d5$export$2e2bcd8739ae039 as useDataModel, $3a9656756670cb78$export$2e2bcd8739ae039 as useDataModels, $3677b4de74c3d10d$export$2e2bcd8739ae039 as useDataProviderConfig, $4daf4cf698ee4eed$export$2e2bcd8739ae039 as useDataServers, $8dbb0c8c3814e663$export$2e2bcd8739ae039 as useGetCreateContainerUri, $87656edf926c0f1f$export$2e2bcd8739ae039 as useGetExternalLink, $487567a146508c4e$export$2e2bcd8739ae039 as useGetPrefixFromUri, $406574efa35ec6f1$export$2e2bcd8739ae039 as FilterHandler, $1d8c1cbe606a94ae$export$2e2bcd8739ae039 as GroupedReferenceHandler, $6844bbce0ad66151$export$2e2bcd8739ae039 as ReificationArrayInput, $03d52e691e8dc945$export$28772ab4c256e709 as createWsChannel, $03d52e691e8dc945$export$8d60734939c59ced as getOrCreateWsChannel, $03d52e691e8dc945$export$3edfe18db119b920 as createSolidNotificationChannel};
 //# sourceMappingURL=index.es.js.map
