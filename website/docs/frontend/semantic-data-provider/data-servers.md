@@ -3,7 +3,7 @@ title: Data Servers
 ---
 
 The `dataServers` config passed to the semantic data provider describes the servers to which we want to connect and what
-they contain. These information can be guessed from the various [plugins](../plugins.md) we provide.
+they contain. These information can be guessed from the various [plugins](plugins.md) we provide.
 
 ## Example
 
