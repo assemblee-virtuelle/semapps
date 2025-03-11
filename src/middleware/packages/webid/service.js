@@ -14,14 +14,6 @@ const WebIdService = {
     path: '/foaf/person',
     acceptedTypes: ['http://xmlns.com/foaf/0.1/Person'],
     podsContainer: false,
-    description: {
-      labelMap: {
-        en: 'Actor',
-        fr: 'Acteur'
-      },
-      labelPredicate: 'foaf:nick',
-      internal: true
-    },
     // DereferenceMixin
     dereferencePlan: [
       {

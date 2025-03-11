@@ -45,14 +45,7 @@ const CollectionService = {
           };
       }
     },
-    excludeFromMirror: true,
-    description: {
-      labelMap: {
-        en: 'Collections',
-        fr: 'Collections'
-      },
-      internal: true
-    }
+    excludeFromMirror: true
   },
   dependencies: ['triplestore', 'ldp.resource'],
   actions: {

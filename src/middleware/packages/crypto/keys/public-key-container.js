@@ -19,6 +19,7 @@ module.exports = {
       return {
         anyUser: {
           read: true,
+          // Warning! ctx.service is the LdpContainerService. The WebAclMiddleware calls this function. This creates confusion.
           append: !ctx.service.settings.podProvider
         }
       };
@@ -43,13 +44,6 @@ module.exports = {
     controlledActions: {
       put: 'keys.public-container.forbidden',
       patch: 'keys.public-container.forbidden'
-    },
-    description: {
-      labelMap: {
-        en: 'Public Keys',
-        fr: 'Clés publiques'
-      },
-      internal: true
     }
   },
 
