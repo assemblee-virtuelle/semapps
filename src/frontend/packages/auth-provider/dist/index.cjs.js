@@ -27,6 +27,23 @@ var $4Uj5b$muiiconsmaterialAccountCircle = require("@mui/icons-material/AccountC
 var $4Uj5b$lodashisEqual = require("lodash/isEqual");
 
 
+function $parcel$exportWildcard(dest, source) {
+  Object.keys(source).forEach(function(key) {
+    if (key === 'default' || key === '__esModule' || Object.prototype.hasOwnProperty.call(dest, key)) {
+      return;
+    }
+
+    Object.defineProperty(dest, key, {
+      enumerable: true,
+      get: function get() {
+        return source[key];
+      }
+    });
+  });
+
+  return dest;
+}
+
 function $parcel$export(e, n, v, s) {
   Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
 }
@@ -248,7 +265,10 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                     if (e.message === "email.already.exists") throw new Error("auth.message.user_email_exist");
                     else if (e.message === "username.already.exists") throw new Error("auth.message.username_exist");
                     else if (e.message === "username.invalid") throw new Error("auth.message.username_invalid");
-                    else throw new Error("auth.message.signup_error");
+                    else {
+                        console.error(e);
+                        throw new Error("auth.message.signup_error");
+                    }
                 }
                 localStorage.setItem("token", token);
                 await dataProvider.refreshConfig();
@@ -342,7 +362,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
             // It also passes an object `{ params: { route: 'dashboard' } }` on the Dashboard
             // Ignore all this until we found a way to bypass these redundant calls
             if (typeof uri === "object") return;
-            if (!uri || !uri.startsWith("http")) throw new Error("The first parameter passed to getPermissions must be an URL");
+            if (!uri || !uri.startsWith("http")) throw new Error(`The first parameter passed to getPermissions must be an URL. Received: ${uri}`);
             const aclUri = (0, $2d06940433ec0c6c$export$4450a74bced1b745)(uri);
             try {
                 const { json: json } = await dataProvider.fetch(aclUri);
@@ -592,7 +612,7 @@ var $715d0a876ac5de8e$export$2e2bcd8739ae039 = $715d0a876ac5de8e$var$useCheckPer
 
 const $7c87aa71409e289a$var$CreateWithPermissions = (props)=>{
     const resource = (0, $4Uj5b$reactadmin.useResourceContext)();
-    const createContainerUri = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainerUri)()(resource);
+    const createContainerUri = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainerUri)(resource);
     (0, $715d0a876ac5de8e$export$2e2bcd8739ae039)(createContainerUri, "create");
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Create), {
         ...props
@@ -1042,7 +1062,7 @@ const $49d4f2fbe6f28cfd$var$PermissionsButton = ({ isContainer: isContainer })=>
     const record = (0, $4Uj5b$reactadmin.useRecordContext)();
     const resource = (0, $4Uj5b$reactadmin.useResourceContext)();
     const [showDialog, setShowDialog] = (0, $4Uj5b$react.useState)(false);
-    const createContainer = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainer)(resource);
+    const createContainer = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainerUri)(resource);
     const uri = isContainer ? createContainer : record.id || record["@id"];
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
         children: [
@@ -1072,7 +1092,7 @@ const $87767302443de17c$var$EditActionsWithPermissions = ()=>{
     const record = (0, $4Uj5b$reactadmin.useRecordContext)();
     const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)(record?.id);
     const resource = (0, $4Uj5b$reactadmin.useResourceContext)();
-    const containerUri = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainerUri)()(resource);
+    const containerUri = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainerUri)(resource);
     const { permissions: containerPermissions } = (0, $4Uj5b$reactadmin.usePermissions)(containerUri);
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactadmin.TopToolbar), {
         children: [
@@ -1171,7 +1191,7 @@ const $6452f20f9b47ebd6$var$ListActionsWithPermissions = ({ bulkActions: bulkAct
     const resource = (0, $4Uj5b$reactadmin.useResourceContext)();
     const xs = (0, $4Uj5b$muimaterial.useMediaQuery)((theme)=>theme.breakpoints.down("xs"));
     const resourceDefinition = (0, $4Uj5b$reactadmin.useResourceDefinition)();
-    const createContainerUri = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainer)(resource);
+    const createContainerUri = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainerUri)(resource);
     const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)(createContainerUri);
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactadmin.TopToolbar), {
         children: [
@@ -1226,7 +1246,7 @@ const $43f4d313e20b20c2$var$ShowActionsWithPermissions = ()=>{
     const record = (0, $4Uj5b$reactadmin.useRecordContext)();
     const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)(record?.id);
     const resource = (0, $4Uj5b$reactadmin.useResourceContext)();
-    const containerUri = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainerUri)()(resource);
+    const containerUri = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainerUri)(resource);
     const { permissions: containerPermissions } = (0, $4Uj5b$reactadmin.usePermissions)(containerUri);
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactadmin.TopToolbar), {
         children: [
@@ -2716,7 +2736,7 @@ var $4c56dbfbda0fa20c$export$2e2bcd8739ae039 = $4c56dbfbda0fa20c$var$LocalLoginP
 
 // Not used for now. The ListWithPermissions component will handle the conditional display of the Create button.
 const $0973974d3aa8078b$var$ResourceWithPermission = ({ name: name, create: create, ...rest })=>{
-    const createContainer = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainer)(name);
+    const createContainer = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainerUri)(name);
     const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)(createContainer);
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Resource), {
         ...rest,
@@ -3113,6 +3133,10 @@ const $6dbc362c3d93e01d$var$frenchMessages = {
 var $6dbc362c3d93e01d$export$2e2bcd8739ae039 = $6dbc362c3d93e01d$var$frenchMessages;
 
 
+var $2b305707583c053c$exports = {};
+
+
+$parcel$exportWildcard(module.exports, $2b305707583c053c$exports);
 
 
 //# sourceMappingURL=index.cjs.js.map

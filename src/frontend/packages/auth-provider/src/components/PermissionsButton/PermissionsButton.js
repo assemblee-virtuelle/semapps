@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { Button, useRecordContext, useResourceContext } from 'react-admin';
 import ShareIcon from '@mui/icons-material/Share';
-import { useCreateContainer } from '@semapps/semantic-data-provider';
+import { useCreateContainerUri } from '@semapps/semantic-data-provider';
 import PermissionsDialog from './PermissionsDialog';
 
 const PermissionsButton = ({ isContainer }) => {
   const record = useRecordContext();
   const resource = useResourceContext();
   const [showDialog, setShowDialog] = useState(false);
-  const createContainer = useCreateContainer(resource);
+  const createContainer = useCreateContainerUri(resource);
   const uri = isContainer ? createContainer : record.id || record['@id'];
   return (
     <>

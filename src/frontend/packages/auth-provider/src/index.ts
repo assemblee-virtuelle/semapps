@@ -42,3 +42,5 @@ export {
 
 export { default as englishMessages } from './messages/english';
 export { default as frenchMessages } from './messages/french';
+
+export * from './types';

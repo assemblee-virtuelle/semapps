@@ -1,11 +1,11 @@
 import React from 'react';
 import { Resource, usePermissions } from 'react-admin';
-import { useCreateContainer } from '@semapps/semantic-data-provider';
+import { useCreateContainerUri } from '@semapps/semantic-data-provider';
 import { rightsToCreate } from '../constants';
 
 // Not used for now. The ListWithPermissions component will handle the conditional display of the Create button.
 const ResourceWithPermission = ({ name, create, ...rest }) => {
-  const createContainer = useCreateContainer(name);
+  const createContainer = useCreateContainerUri(name);
   const { permissions } = usePermissions(createContainer);
   return (
     <Resource
