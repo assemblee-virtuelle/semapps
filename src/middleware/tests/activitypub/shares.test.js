@@ -13,7 +13,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
   let alice;
   let bob;
   let aliceMessageUri;
-  let shareActivity;
+  let publicShareActivity;
   beforeAll(async () => {
     if (mode === 'single-server') {
       broker = await initialize(3000, 'testData', 'settings');
@@ -59,12 +59,20 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
 
     aliceMessageUri = createActivity.object.id;
 
-    shareActivity = await bob.call('activitypub.outbox.post', {
+    const privateShareActivity = await bob.call('activitypub.outbox.post', {
       collectionUri: bob.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: ACTIVITY_TYPES.ANNOUNCE,
       object: aliceMessageUri,
       to: alice.id
+    });
+
+    publicShareActivity = await bob.call('activitypub.outbox.post', {
+      collectionUri: bob.outbox,
+      '@context': 'https://www.w3.org/ns/activitystreams',
+      type: ACTIVITY_TYPES.ANNOUNCE,
+      object: aliceMessageUri,
+      to: [alice.id, PUBLIC_URI]
     });
 
     // Ensure the /shares collection has been created
@@ -79,7 +87,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
       });
     });
 
-    // Ensure the annouce activity has been added to the /shares collection
+    // Ensure only the public announce activity has been added to the /shares collection
     await waitForExpect(async () => {
       await expect(
         alice.call('activitypub.collection.get', {
@@ -88,7 +96,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
         })
       ).resolves.toMatchObject({
         type: 'Collection',
-        items: shareActivity.id
+        items: publicShareActivity.id
       });
     });
   });
@@ -98,11 +106,11 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
       collectionUri: bob.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: ACTIVITY_TYPES.UNDO,
-      object: shareActivity.id,
+      object: publicShareActivity.id,
       to: alice.id
     });
 
-    // Ensure the annouce activity has been added to the /shares collection
+    // Ensure the public announce activity has been removed from the /shares collection
     await waitForExpect(async () => {
       await expect(
         alice.call('activitypub.collection.get', {
@@ -110,16 +118,8 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
           accept: MIME_TYPES.JSON
         })
       ).resolves.not.toMatchObject({
-        // type: 'Collection',
-        items: shareActivity.id
+        items: publicShareActivity.id
       });
     });
-
-    // // Ensure Bob'activity has been removed from the /shares collection
-    //   const response = await alice.call('activitypub.collection.get', {
-    //     resourceUri: `${aliceMessageUri}/shares`,
-    //     accept: MIME_TYPES.JSON
-    //   })
-    //   expect(response.items).toBeUndefinedOrEmptyArray();
   });
 });

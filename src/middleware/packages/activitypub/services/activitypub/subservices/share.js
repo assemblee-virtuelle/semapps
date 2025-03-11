@@ -58,30 +58,29 @@ const ShareService = {
       async match(activity, fetcher) {
         const { match, dereferencedActivity } = await matchActivity(
           {
-            // looking for an announce activity targeting any object
-            type: ACTIVITY_TYPES.ANNOUNCE,
-            object: {}
+            // looking for an announce activity
+            type: ACTIVITY_TYPES.ANNOUNCE
           },
           activity,
           fetcher
         );
-        return { match, dereferencedActivity };
+        return {
+          match: match && (await this.broker.call('activitypub.activity.isPublic', { activity })),
+          dereferencedActivity
+        };
       },
       async onReceive(ctx, activity) {
-        await this.actions.addShare({ objectUri: activity.object.id, announce: activity }, { parentCtx: ctx });
+        await this.actions.addShare({ objectUri: activity.object, announce: activity }, { parentCtx: ctx });
       }
     },
     unshareObject: {
       async match(activity, fetcher) {
         const { match, dereferencedActivity } = await matchActivity(
           {
-            // looking for an undo activity targeting an announce activity targeting any object
+            // looking for an undo activity targeting an announce activity
             type: ACTIVITY_TYPES.UNDO,
             object: {
-              type: ACTIVITY_TYPES.ANNOUNCE,
-              object: {
-                object: {}
-              }
+              type: ACTIVITY_TYPES.ANNOUNCE
             }
           },
           activity,
@@ -91,7 +90,7 @@ const ShareService = {
       },
       async onReceive(ctx, activity) {
         await this.actions.removeShare(
-          { objectUri: activity.object.object.id, announce: activity.object },
+          { objectUri: activity.object?.object, announce: activity.object },
           { parentCtx: ctx }
         );
       }
