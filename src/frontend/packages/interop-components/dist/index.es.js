@@ -38,10 +38,10 @@ const $b16cb081b32ae4c7$var$useStyles = (0, $4od2P$muistylesmakeStyles)((theme)=
         }
     }));
 const $b16cb081b32ae4c7$var$selectOptionText = (option, optionText)=>{
-    if (typeof option === "string") return option;
+    if (typeof option === 'string') return option;
     if (option.label) return option.label;
-    if (typeof optionText === "string") return option[optionText];
-    if (typeof optionText === "function") return optionText(option);
+    if (typeof optionText === 'string') return option[optionText];
+    if (typeof optionText === 'function') return optionText(option);
 };
 const $b16cb081b32ae4c7$var$capitalizeFirstLetter = (string)=>string && string.charAt(0).toUpperCase() + string.slice(1);
 const $b16cb081b32ae4c7$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $4od2P$forwardRef)(({ fetchLexicon: fetchLexicon, source: source, defaultValue: defaultValue, label: label, parse: parse, optionText: optionText, helperText: helperText, ...rest }, ref)=>{
@@ -63,7 +63,7 @@ const $b16cb081b32ae4c7$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $4od2P$
                 keyword: keyword,
                 locale: locale
             }).then((data)=>callback(data)).catch((e)=>notify(e.message, {
-                    type: "error"
+                    type: 'error'
                 }));
         }, 200), [
         locale,
@@ -117,11 +117,11 @@ const $b16cb081b32ae4c7$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $4od2P$
             setOptions([]);
         },
         onInputChange: (event, newKeyword)=>setKeyword(newKeyword),
-        noOptionsText: translate("ra.navigation.no_results"),
+        noOptionsText: translate('ra.navigation.no_results'),
         renderInput: (params)=>{
             // Autocomplete=off doesn't work anymore in modern browsers
             // https://stackoverflow.com/a/40791726/7900695
-            params.inputProps.autoComplete = "new-password";
+            params.inputProps.autoComplete = 'new-password';
             return /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$TextField), {
                 ...params,
                 autoFocus: true,
@@ -135,7 +135,7 @@ const $b16cb081b32ae4c7$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $4od2P$
                         if (params.inputProps.onFocus) params.inputProps.onFocus(e);
                     }
                 },
-                label: label !== "" && label !== false && /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$FieldTitle), {
+                label: label !== '' && label !== false && /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$FieldTitle), {
                     label: label,
                     source: source,
                     resource: resource,
@@ -156,7 +156,7 @@ const $b16cb081b32ae4c7$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $4od2P$
                 container: true,
                 alignItems: "center",
                 ...props,
-                key: option.uri || "create",
+                key: option.uri || 'create',
                 children: [
                     /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$Grid), {
                         item: true,
@@ -168,7 +168,7 @@ const $b16cb081b32ae4c7$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $4od2P$
                         item: true,
                         xs: true,
                         children: [
-                            typeof parts === "string" ? parts : parts.map((part, index)=>/*#__PURE__*/ (0, $4od2P$jsx)("span", {
+                            typeof parts === 'string' ? parts : parts.map((part, index)=>/*#__PURE__*/ (0, $4od2P$jsx)("span", {
                                     style: {
                                         fontWeight: part.highlight ? 700 : 400
                                     },
@@ -187,7 +187,7 @@ const $b16cb081b32ae4c7$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $4od2P$
     });
 });
 $b16cb081b32ae4c7$var$LexiconAutocompleteInput.defaultProps = {
-    optionText: "label"
+    optionText: 'label'
 };
 var $b16cb081b32ae4c7$export$2e2bcd8739ae039 = $b16cb081b32ae4c7$var$LexiconAutocompleteInput;
 
@@ -195,10 +195,10 @@ var $b16cb081b32ae4c7$export$2e2bcd8739ae039 = $b16cb081b32ae4c7$var$LexiconAuto
 const $a792efd53d1a9e0e$var$LexiconCreateDialog = ({ fetchLexicon: fetchLexicon, selectData: selectData })=>{
     const { filter: filter, onCancel: onCancel, onCreate: onCreate } = (0, $4od2P$useCreateSuggestionContext)();
     const resource = (0, $4od2P$useResourceContext)();
-    const [value, setValue] = (0, $4od2P$useState)(filter || "");
+    const [value, setValue] = (0, $4od2P$useState)(filter || '');
     const [create] = (0, $4od2P$useCreate)();
     const onClose = (0, $4od2P$useCallback)(()=>{
-        setValue("");
+        setValue('');
         onCancel();
     }, [
         setValue,
@@ -212,8 +212,8 @@ const $a792efd53d1a9e0e$var$LexiconCreateDialog = ({ fetchLexicon: fetchLexicon,
             data: selectData(value)
         }, {
             onSuccess: (data)=>{
-                console.log("onSuccess", data);
-                setValue("");
+                console.log('onSuccess', data);
+                setValue('');
                 onCreate(data);
             }
         });
@@ -285,9 +285,9 @@ const $bcde5854a56da897$var$useFork = (resourceId)=>{
         const strippedData = {
             ...remoteData
         };
-        strippedData["http://www.w3.org/ns/prov#wasDerivedFrom"] = strippedData.id;
+        strippedData['http://www.w3.org/ns/prov#wasDerivedFrom'] = strippedData.id;
         delete strippedData.id;
-        delete strippedData["@context"];
+        delete strippedData['@context'];
         stripProperties.forEach((prop)=>{
             delete strippedData[prop];
         });
@@ -296,7 +296,7 @@ const $bcde5854a56da897$var$useFork = (resourceId)=>{
         });
         redirect(`/${resourceId}/${encodeURIComponent(localData.id)}/show`);
         notify("La ressource a bien \xe9t\xe9 copi\xe9e", {
-            type: "success"
+            type: 'success'
         });
     }, [
         resourceId,
@@ -320,7 +320,7 @@ const $319fb528511df085$var$useSync = (resourceId)=>{
         });
         redirect(`/${resourceId}/${encodeURIComponent(remoteRecordUri)}/show`);
         notify("La ressource a bien \xe9t\xe9 import\xe9e", {
-            type: "success"
+            type: 'success'
         });
     }, [
         dataProvider,
@@ -333,18 +333,18 @@ var $319fb528511df085$export$2e2bcd8739ae039 = $319fb528511df085$var$useSync;
 
 const $7c1a5d2f905b4d36$var$ImportFormInputs = ()=>{
     const resource = (0, $4od2P$useResourceContext)();
-    const containers = (0, $4od2P$useContainers)(resource, "@remote");
+    const containers = (0, $4od2P$useContainers)(resource, '@remote');
     const dataModel = (0, $4od2P$useDataModel)(resource);
     const { watch: watch, setValue: setValue } = (0, $4od2P$useFormContext)();
-    const watchRemoteUri = watch("remoteUri");
-    const watchPlainUri = watch("plainUri");
+    const watchRemoteUri = watch('remoteUri');
+    const watchPlainUri = watch('plainUri');
     (0, $4od2P$useEffect)(()=>{
-        if (watchRemoteUri) setValue("plainUri", watchRemoteUri);
+        if (watchRemoteUri) setValue('plainUri', watchRemoteUri);
     }, [
         watchRemoteUri
     ]);
     (0, $4od2P$useEffect)(()=>{
-        if (watchPlainUri && watchPlainUri !== watchRemoteUri) setValue("remoteUri", null);
+        if (watchPlainUri && watchPlainUri !== watchRemoteUri) setValue('remoteUri', null);
     }, [
         watchRemoteUri,
         watchPlainUri
@@ -356,7 +356,7 @@ const $7c1a5d2f905b4d36$var$ImportFormInputs = ()=>{
                 source: "remoteUri",
                 reference: resource,
                 filter: {
-                    _servers: "@remote",
+                    _servers: '@remote',
                     _predicates: [
                         dataModel?.fieldsMapping?.title
                     ]
@@ -381,11 +381,11 @@ const $7c1a5d2f905b4d36$var$ImportFormInputs = ()=>{
                 label: "M\xe9thode d'importation",
                 choices: [
                     {
-                        id: "sync",
+                        id: 'sync',
                         name: "Garder la ressource locale synchronis\xe9e avec la ressource distante"
                     },
                     {
-                        id: "fork",
+                        id: 'fork',
                         name: "Cr\xe9er une nouvelle version de la ressource (fork)"
                     }
                 ]
@@ -398,7 +398,7 @@ const $7c1a5d2f905b4d36$var$ImportForm = ({ stripProperties: stripProperties })=
     const fork = (0, $bcde5854a56da897$export$2e2bcd8739ae039)(resource);
     const sync = (0, $319fb528511df085$export$2e2bcd8739ae039)(resource);
     const onSubmit = (0, $4od2P$useCallback)(async ({ plainUri: plainUri, method: method })=>{
-        if (method === "fork") await fork(plainUri, stripProperties);
+        if (method === 'fork') await fork(plainUri, stripProperties);
         else await sync(plainUri);
     }, [
         fork,
@@ -408,7 +408,7 @@ const $7c1a5d2f905b4d36$var$ImportForm = ({ stripProperties: stripProperties })=
     return /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$SimpleForm), {
         onSubmit: onSubmit,
         defaultValues: {
-            method: "sync"
+            method: 'sync'
         },
         children: /*#__PURE__*/ (0, $4od2P$jsx)($7c1a5d2f905b4d36$var$ImportFormInputs, {})
     });
@@ -418,14 +418,14 @@ var $7c1a5d2f905b4d36$export$2e2bcd8739ae039 = $7c1a5d2f905b4d36$var$ImportForm;
 
 const $aa427a7c321e4045$var$useStyles = (0, $4od2P$muistylesmakeStyles)(()=>({
         tab: {
-            maxWidth: "unset",
-            padding: "6px 24px"
+            maxWidth: 'unset',
+            padding: '6px 24px'
         }
     }));
 const $aa427a7c321e4045$var$CreateOrImportForm = ({ stripProperties: stripProperties, ...rest })=>{
     const [tab, setTab] = (0, $4od2P$useState)(0);
     const classes = $aa427a7c321e4045$var$useStyles();
-    const xs = (0, $4od2P$useMediaQuery)((theme)=>theme.breakpoints.down("sm"), {
+    const xs = (0, $4od2P$useMediaQuery)((theme)=>theme.breakpoints.down('sm'), {
         noSsr: true
     });
     return /*#__PURE__*/ (0, $4od2P$jsxs)((0, $4od2P$Fragment), {
@@ -444,7 +444,7 @@ const $aa427a7c321e4045$var$CreateOrImportForm = ({ stripProperties: stripProper
                             }),
                             /*#__PURE__*/ (0, $4od2P$jsx)((0, $4od2P$Tab), {
                                 className: classes.tab,
-                                label: xs ? "Importer" : "Importer une ressource distante"
+                                label: xs ? 'Importer' : 'Importer une ressource distante'
                             })
                         ]
                     }),
@@ -476,7 +476,7 @@ const $fd906af5bca60fe2$var$LexiconImportForm = ({ fetchLexicon: fetchLexicon, s
         // Delete the summary as it is "Ajouter XXX au dictionaire"
         if (!lexicon.uri) delete lexicon.summary;
         // If the user doesn't select any option, use the text as the label
-        if (typeof lexicon === "string") lexicon = {
+        if (typeof lexicon === 'string') lexicon = {
             label: lexicon
         };
         await save(selectData(lexicon));
@@ -499,8 +499,8 @@ var $fd906af5bca60fe2$export$2e2bcd8739ae039 = $fd906af5bca60fe2$var$LexiconImpo
 
 
 
-const $905596cc8646669c$var$capitalize = (s)=>s && s[0].toUpperCase() + s.slice(1) || "";
-const $905596cc8646669c$var$fetchWikidata = (apiUrl = "https://www.wikidata.org/w/api.php")=>async ({ keyword: keyword, locale: locale })=>{
+const $905596cc8646669c$var$capitalize = (s)=>s && s[0].toUpperCase() + s.slice(1) || '';
+const $905596cc8646669c$var$fetchWikidata = (apiUrl = 'https://www.wikidata.org/w/api.php')=>async ({ keyword: keyword, locale: locale })=>{
         const response = await fetch(`${apiUrl}?action=wbsearchentities&format=json&language=${locale}&uselang=${locale}&type=item&limit=10&origin=*&search=${encodeURIComponent(keyword)}`);
         if (response.ok) {
             const json = await response.json();
@@ -511,15 +511,15 @@ const $905596cc8646669c$var$fetchWikidata = (apiUrl = "https://www.wikidata.org/
                     icon: (0, $4od2P$muiiconsmaterialLanguage)
                 }));
         }
-        throw new Error("Failed to fetch Wikidata server");
+        throw new Error('Failed to fetch Wikidata server');
     };
 var $905596cc8646669c$export$2e2bcd8739ae039 = $905596cc8646669c$var$fetchWikidata;
 
 
 
 
-const $1cadde849f110c85$var$capitalize = (s)=>s && s[0].toUpperCase() + s.slice(1) || "";
-const $1cadde849f110c85$var$fetchESCO = (apiUrl = "https://ec.europa.eu/esco/api", type = "skill")=>async ({ keyword: keyword, locale: locale })=>{
+const $1cadde849f110c85$var$capitalize = (s)=>s && s[0].toUpperCase() + s.slice(1) || '';
+const $1cadde849f110c85$var$fetchESCO = (apiUrl = 'https://ec.europa.eu/esco/api', type = 'skill')=>async ({ keyword: keyword, locale: locale })=>{
         const response = await fetch((0, $4od2P$urljoin)(apiUrl, `suggest2?text=${encodeURIComponent(keyword)}&language=${locale}&type=${type}&isInScheme=&facet=&offset=&limit=&full=&selectedVersion=&viewObsolete=`));
         if (response.ok) {
             const json = await response.json();
@@ -529,7 +529,7 @@ const $1cadde849f110c85$var$fetchESCO = (apiUrl = "https://ec.europa.eu/esco/api
                     icon: (0, $4od2P$muiiconsmaterialStarBorder)
                 }));
         }
-        throw new Error("Failed to fetch ESCO server");
+        throw new Error('Failed to fetch ESCO server');
     };
 var $1cadde849f110c85$export$2e2bcd8739ae039 = $1cadde849f110c85$var$fetchESCO;
 

@@ -26,29 +26,29 @@ import {FiGitlab as $9pxSs$FiGitlab} from "react-icons/fi";
 
 const $548fb3c4c04d834a$var$useStyles = (0, $9pxSs$muistylesmakeStyles)((theme)=>({
         parent: (props)=>({
-                position: "relative",
+                position: 'relative',
                 ...props.parent
             }),
         square: {
-            width: "100%",
-            paddingBottom: "100%",
-            position: "relative"
+            width: '100%',
+            paddingBottom: '100%',
+            position: 'relative'
         },
         avatar: {
-            position: "absolute",
+            position: 'absolute',
             top: 0,
             bottom: 0,
-            width: "100%",
-            height: "100%",
-            borderRadius: "50%",
+            width: '100%',
+            height: '100%',
+            borderRadius: '50%',
             // backgroundColor: theme.palette.primary.main,
-            "& svg": {
-                width: "55%",
-                height: "55%"
+            '& svg': {
+                width: '55%',
+                height: '55%'
             }
         },
         chip: {
-            position: "absolute",
+            position: 'absolute',
             bottom: -10,
             left: 0,
             right: 0,
@@ -57,7 +57,7 @@ const $548fb3c4c04d834a$var$useStyles = (0, $9pxSs$muistylesmakeStyles)((theme)=
             paddingLeft: 6,
             paddingRight: 6,
             marginBottom: 10,
-            cursor: "pointer"
+            cursor: 'pointer'
         },
         launchIcon: {
             width: 14
@@ -67,9 +67,9 @@ const $548fb3c4c04d834a$var$handleClick = ()=>{};
 const $548fb3c4c04d834a$var$AvatarWithLabelField = ({ label: label, defaultLabel: defaultLabel, image: image, fallback: fallback, externalLink: externalLink, labelColor: labelColor, classes: classes, ...rest })=>{
     classes = $548fb3c4c04d834a$var$useStyles(classes);
     const record = (0, $9pxSs$useRecordContext)();
-    const computedLabel = (typeof label === "function" ? label(record) : record[label]) || defaultLabel;
-    const computedImage = typeof image === "function" ? image(record) : record[image];
-    const computedFallback = typeof fallback === "function" ? fallback(record) : fallback;
+    const computedLabel = (typeof label === 'function' ? label(record) : record[label]) || defaultLabel;
+    const computedImage = typeof image === 'function' ? image(record) : record[image];
+    const computedFallback = typeof fallback === 'function' ? fallback(record) : fallback;
     return /*#__PURE__*/ (0, $9pxSs$jsxs)((0, $9pxSs$Box), {
         className: classes.parent,
         children: [
@@ -102,7 +102,7 @@ const $548fb3c4c04d834a$var$AvatarWithLabelField = ({ label: label, defaultLabel
     });
 };
 $548fb3c4c04d834a$var$AvatarWithLabelField.defaultProps = {
-    labelColor: "secondary",
+    labelColor: 'secondary',
     externalLink: false
 };
 var $548fb3c4c04d834a$export$2e2bcd8739ae039 = $548fb3c4c04d834a$var$AvatarWithLabelField;
@@ -117,7 +117,7 @@ const $867e5374e5f64b17$var$ReferenceArrayField = ({ source: source, ...otherPro
         if (!Array.isArray(record[source])) record[source] = [
             record[source]
         ];
-        record[source] = record[source].map((i)=>i["@id"] || i.id || i);
+        record[source] = record[source].map((i)=>i['@id'] || i.id || i);
     }
     return /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$RecordContextProvider), {
         value: record,
@@ -136,7 +136,7 @@ var $867e5374e5f64b17$export$2e2bcd8739ae039 = $867e5374e5f64b17$var$ReferenceAr
 const $e253ae5050c248a7$var$ReferenceField = ({ source: source, ...otherProps })=>{
     const record = (0, $9pxSs$useRecordContext)();
     if (record[source]) {
-        if (typeof record[source] === "object") record[source] = record[source]["@id"] || record[source].id;
+        if (typeof record[source] === 'object') record[source] = record[source]['@id'] || record[source].id;
     }
     return /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$RecordContextProvider), {
         value: record,
@@ -174,23 +174,23 @@ var $e253ae5050c248a7$export$2e2bcd8739ae039 = $e253ae5050c248a7$var$ReferenceFi
 
 const $6bf8168f746430d4$var$useStyles = (0, $9pxSs$muistylesmakeStyles)((theme)=>({
         root: {
-            width: "100%",
-            maxWidth: "100%",
+            width: '100%',
+            maxWidth: '100%',
             backgroundColor: theme.palette.background.paper,
             paddingTop: 0,
             paddingBottom: 0
         },
         primaryText: {
-            width: "30%"
+            width: '30%'
         },
         secondaryText: {
-            fontStyle: "italic",
-            color: "grey"
+            fontStyle: 'italic',
+            color: 'grey'
         }
     }));
 const $6bf8168f746430d4$var$getServerName = (resourceUri, dataServers)=>{
     const server = dataServers && Object.values(dataServers).find((server)=>resourceUri.startsWith(server.baseUrl));
-    return server ? server.name : "Inconnu";
+    return server ? server.name : 'Inconnu';
 };
 const $6bf8168f746430d4$var$ResultsList = ({ keyword: keyword, source: source, reference: reference, appendLink: appendLink, switchToCreate: switchToCreate })=>{
     const classes = $6bf8168f746430d4$var$useStyles();
@@ -216,14 +216,14 @@ const $6bf8168f746430d4$var$ResultsList = ({ keyword: keyword, source: source, r
                 },
                 sort: {
                     field: dataModel?.fieldsMapping?.title,
-                    order: "ASC"
+                    order: 'ASC'
                 },
                 filter: {
                     q: keyword,
                     _predicates: [
                         dataModel.fieldsMapping.title
                     ],
-                    _servers: "@all"
+                    _servers: '@all'
                 }
             }).then(({ data: data })=>{
                 const existingLinks = record[source] ? Array.isArray(record[source]) ? record[source] : [
@@ -284,7 +284,7 @@ const $6bf8168f746430d4$var$ResultsList = ({ keyword: keyword, source: source, r
                                 href: createPath({
                                     resource: reference,
                                     id: resource.id,
-                                    type: "show"
+                                    type: 'show'
                                 }),
                                 target: "_blank",
                                 rel: "noopener noreferrer",
@@ -306,7 +306,7 @@ const $6bf8168f746430d4$var$ResultsList = ({ keyword: keyword, source: source, r
                     }),
                     /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$ListItemText), {
                         className: classes.primaryText,
-                        primary: translate("ra.navigation.no_results")
+                        primary: translate('ra.navigation.no_results')
                     })
                 ]
             }),
@@ -321,7 +321,7 @@ const $6bf8168f746430d4$var$ResultsList = ({ keyword: keyword, source: source, r
                     }),
                     /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$ListItemText), {
                         className: classes.primaryText,
-                        primary: translate("ra.page.create", {
+                        primary: translate('ra.page.create', {
                             name: getResourceLabel(reference, 1)
                         })
                     })
@@ -364,8 +364,8 @@ const $3d5bffcd1289119f$var$useStyles = (0, $9pxSs$muistylesmakeStyles)(()=>({
 const $3d5bffcd1289119f$var$QuickAppendDialog = ({ open: open, onClose: onClose, subjectUri: subjectUri, source: source, reference: reference })=>{
     const classes = $3d5bffcd1289119f$var$useStyles();
     const { resource: resource } = (0, $9pxSs$useShowContext)();
-    const [keyword, setKeyword] = (0, $9pxSs$useState)("");
-    const [panel, setPanel] = (0, $9pxSs$useState)("find");
+    const [keyword, setKeyword] = (0, $9pxSs$useState)('');
+    const [panel, setPanel] = (0, $9pxSs$useState)('find');
     const dataProvider = (0, $9pxSs$useDataProvider)();
     const translate = (0, $9pxSs$useTranslate)();
     const refresh = (0, $9pxSs$useRefresh)();
@@ -410,7 +410,7 @@ const $3d5bffcd1289119f$var$QuickAppendDialog = ({ open: open, onClose: onClose,
         });
         await appendLink(data.id);
         notify(`La resource "${values.title}" a \xe9t\xe9 cr\xe9\xe9e`, {
-            type: "success"
+            type: 'success'
         });
     }, [
         dataProvider,
@@ -423,7 +423,7 @@ const $3d5bffcd1289119f$var$QuickAppendDialog = ({ open: open, onClose: onClose,
         fullWidth: true,
         open: open,
         onClose: onClose,
-        children: panel === "find" ? /*#__PURE__*/ (0, $9pxSs$jsxs)((0, $9pxSs$Fragment), {
+        children: panel === 'find' ? /*#__PURE__*/ (0, $9pxSs$jsxs)((0, $9pxSs$Fragment), {
             children: [
                 /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$DialogTitle), {
                     className: classes.title,
@@ -449,8 +449,8 @@ const $3d5bffcd1289119f$var$QuickAppendDialog = ({ open: open, onClose: onClose,
                         reference: reference,
                         appendLink: appendLink,
                         switchToCreate: ()=>{
-                            setValue("title", keyword);
-                            setPanel("create");
+                            setValue('title', keyword);
+                            setPanel('create');
                         }
                     })
                 }),
@@ -468,14 +468,14 @@ const $3d5bffcd1289119f$var$QuickAppendDialog = ({ open: open, onClose: onClose,
             children: [
                 /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$DialogTitle), {
                     className: classes.title,
-                    children: translate("ra.page.create", {
+                    children: translate('ra.page.create', {
                         name: getResourceLabel(reference, 1)
                     })
                 }),
                 /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$DialogContent), {
                     className: classes.addForm,
                     children: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$TextField), {
-                        ...register("title"),
+                        ...register('title'),
                         autoFocus: true,
                         label: "Titre",
                         variant: "filled",
@@ -511,10 +511,10 @@ const $c6e9301cf3cc37bc$var$QuickAppendReferenceArrayField = ({ reference: refer
     const [showDialog, setShowDialog] = (0, $9pxSs$useState)(false);
     const { permissions: permissions } = (0, $9pxSs$usePermissions)(record.id);
     const canAppend = (0, $9pxSs$useMemo)(()=>!!permissions && permissions.some((p)=>[
-                "acl:Append",
-                "acl:Write",
-                "acl:Control"
-            ].includes(p["acl:mode"])), [
+                'acl:Append',
+                'acl:Write',
+                'acl:Control'
+            ].includes(p['acl:mode'])), [
         permissions
     ]);
     return /*#__PURE__*/ (0, $9pxSs$jsxs)((0, $9pxSs$Fragment), {
@@ -554,57 +554,57 @@ var $c6e9301cf3cc37bc$export$2e2bcd8739ae039 = $c6e9301cf3cc37bc$var$QuickAppend
 
 
 const $3964a2ca9e598444$var$defaultdomainMapping = {
-    "github.com": {
-        label: "GitHub",
+    'github.com': {
+        label: 'GitHub',
         icon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialGitHub), {}),
-        color: "black",
-        contrastText: "white"
+        color: 'black',
+        contrastText: 'white'
     },
-    "gitlab.com": {
-        label: "GitLab",
+    'gitlab.com': {
+        label: 'GitLab',
         icon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$FiGitlab), {}),
-        color: "orange",
-        contrastText: "black"
+        color: 'orange',
+        contrastText: 'black'
     },
-    "opencollective.com": {
-        label: "Open Collective",
+    'opencollective.com': {
+        label: 'Open Collective',
         icon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Avatar), {
             component: "span",
             src: "https://opencollective.com/static/images/opencollective-icon.svg"
         }),
-        color: "white",
-        contrastText: "#297EFF"
+        color: 'white',
+        contrastText: '#297EFF'
     },
-    "facebook.com": {
-        label: "Facebook",
+    'facebook.com': {
+        label: 'Facebook',
         icon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialFacebook), {}),
-        color: "#4267B2",
-        contrastText: "white"
+        color: '#4267B2',
+        contrastText: 'white'
     },
-    "twitter.com": {
-        label: "Twitter",
+    'twitter.com': {
+        label: 'Twitter',
         icon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialTwitter), {}),
-        color: "#00ACEE",
-        contrastText: "white"
+        color: '#00ACEE',
+        contrastText: 'white'
     },
-    "instagram.com": {
-        label: "Instagram",
+    'instagram.com': {
+        label: 'Instagram',
         icon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialInstagram), {}),
-        color: "#8a3ab9",
-        contrastText: "white"
+        color: '#8a3ab9',
+        contrastText: 'white'
     },
-    "youtube.com": {
-        label: "YouTube",
+    'youtube.com': {
+        label: 'YouTube',
         icon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialYouTube), {}),
-        color: "#FF0000",
-        contrastText: "white"
+        color: '#FF0000',
+        contrastText: 'white'
     }
 };
 const $3964a2ca9e598444$var$useStyles = (0, $9pxSs$muistylesmakeStyles)(()=>({
         link: {
-            textDecoration: "unset",
-            "& :hover": {
-                cursor: "pointer"
+            textDecoration: 'unset',
+            '& :hover': {
+                cursor: 'pointer'
             }
         },
         chip: {
@@ -628,7 +628,7 @@ const $3964a2ca9e598444$var$MultiUrlField = ({ source: source, domainMapping: do
         record[source]
     ] : [];
     return urlArray.map((url, index)=>{
-        if (!url.startsWith("http")) url = `https://${url}`;
+        if (!url.startsWith('http')) url = `https://${url}`;
         let parsedUrl = null;
         try {
             parsedUrl = new URL(url);
@@ -636,10 +636,10 @@ const $3964a2ca9e598444$var$MultiUrlField = ({ source: source, domainMapping: do
             return null;
         }
         const chip = newDomainMapping[parsedUrl.hostname] || {
-            label: "Site web",
+            label: 'Site web',
             icon: /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$muiiconsmaterialLanguage), {}),
-            color: "#ea",
-            contrastText: "black"
+            color: '#ea',
+            contrastText: 'black'
         };
         return /*#__PURE__*/ (0, $9pxSs$jsx)("a", {
             href: url,
@@ -683,7 +683,7 @@ const $ae119a539bc2f2b9$var$stopPropagation = (e)=>e.stopPropagation();
 // The material-ui Chip requires an onClick handler to behave like a clickable element.
 const $ae119a539bc2f2b9$var$handleClick = ()=>{};
 const $ae119a539bc2f2b9$var$SeparatedListField = (props)=>{
-    let { children: children, link: link = "edit", linkType: linkType, separator: separator = ",\xa0" } = props;
+    let { children: children, link: link = 'edit', linkType: linkType, separator: separator = ',\u00A0' } = props;
     const { data: data, isLoading: isLoading, resource: resource } = (0, $9pxSs$useListContext)(props);
     const createPath = (0, $9pxSs$useCreatePath)();
     if (linkType !== undefined) {
@@ -694,7 +694,7 @@ const $ae119a539bc2f2b9$var$SeparatedListField = (props)=>{
     return /*#__PURE__*/ (0, $9pxSs$jsx)((0, $9pxSs$Fragment), {
         children: data.map((record, i)=>{
             if (!record.id) return null;
-            const resourceLinkPath = link !== false && (typeof link === "function" ? link(record.id) : createPath({
+            const resourceLinkPath = link !== false && (typeof link === 'function' ? link(record.id) : createPath({
                 resource: resource,
                 id: record.id,
                 type: link

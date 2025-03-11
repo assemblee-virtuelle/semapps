@@ -41,17 +41,17 @@ const $30efcd78e923a66d$var$StyledLocationOnIcon = (0, $4dBGn$styled)((0, $4dBGn
     }));
 const $30efcd78e923a66d$var$selectOptionText = (option, optionText)=>{
     if (option.place_name) return option.place_name;
-    if (typeof optionText === "string") return option[optionText];
-    if (typeof optionText === "function") return optionText(option);
+    if (typeof optionText === 'string') return option[optionText];
+    if (typeof optionText === 'function') return optionText(option);
 };
 const $30efcd78e923a66d$var$LocationInput = ({ mapboxConfig: mapboxConfig, source: source, label: label, parse: parse, optionText: optionText, helperText: helperText, ...rest })=>{
-    if (!mapboxConfig) throw new Error("@semapps/geo-components : No mapbox configuration");
-    if (!mapboxConfig.access_token) throw new Error("@semapps/geo-components : No access token in mapbox configuration");
+    if (!mapboxConfig) throw new Error('@semapps/geo-components : No mapbox configuration');
+    if (!mapboxConfig.access_token) throw new Error('@semapps/geo-components : No access token in mapbox configuration');
     const record = (0, $4dBGn$useRecordContext)();
     const resource = (0, $4dBGn$useResourceContext)();
     const locale = (0, $4dBGn$useLocale)();
     const translate = (0, $4dBGn$useTranslate)();
-    const [keyword, setKeyword] = (0, $4dBGn$useState)(""); // Typed keywords
+    const [keyword, setKeyword] = (0, $4dBGn$useState)(''); // Typed keywords
     const [options, setOptions] = (0, $4dBGn$useState)([]); // Options returned by MapBox
     // Do not pass the `parse` prop to useInput, as we manually call it on the onChange prop below
     const { field: { value: value, onChange: onChange, onBlur: onBlur /* , onFocus */  }, isRequired: isRequired, fieldState: { error: error, isTouched: /* submitError, */ isTouched } } = (0, $4dBGn$useInput)({
@@ -65,8 +65,8 @@ const $30efcd78e923a66d$var$LocationInput = ({ mapboxConfig: mapboxConfig, sourc
             if (!mapboxConfig.language) mapboxConfig.language = locale;
             // All options available at https://docs.mapbox.com/api/search/geocoding/#forward-geocoding
             Object.entries(mapboxConfig).forEach(([key, value])=>{
-                if (Array.isArray(value)) value = value.join(",");
-                else if (typeof value === "boolean") value = value ? "true" : "false";
+                if (Array.isArray(value)) value = value.join(',');
+                else if (typeof value === 'boolean') value = value ? 'true' : 'false';
                 fetchUrl.searchParams.set(key, value);
             });
             fetch(fetchUrl.toString()).then((res)=>res.json()).then((json)=>callback(json));
@@ -106,11 +106,11 @@ const $30efcd78e923a66d$var$LocationInput = ({ mapboxConfig: mapboxConfig, sourc
             setOptions([]);
         },
         onInputChange: (event, newKeyword)=>setKeyword(newKeyword),
-        noOptionsText: translate("ra.navigation.no_results"),
+        noOptionsText: translate('ra.navigation.no_results'),
         renderInput: (params)=>{
             // Autocomplete=off doesn't work anymore in modern browsers
             // https://stackoverflow.com/a/40791726/7900695
-            params.inputProps.autoComplete = "new-password";
+            params.inputProps.autoComplete = 'new-password';
             return /*#__PURE__*/ (0, $4dBGn$jsx)((0, $4dBGn$TextField), {
                 ...params,
                 inputProps: {
@@ -126,7 +126,7 @@ const $30efcd78e923a66d$var$LocationInput = ({ mapboxConfig: mapboxConfig, sourc
                 }
               } */ 
                 },
-                label: label !== "" && label !== false && /*#__PURE__*/ (0, $4dBGn$jsx)((0, $4dBGn$FieldTitle), {
+                label: label !== '' && label !== false && /*#__PURE__*/ (0, $4dBGn$jsx)((0, $4dBGn$FieldTitle), {
                     label: label,
                     source: source,
                     resource: resource,
@@ -158,7 +158,7 @@ const $30efcd78e923a66d$var$LocationInput = ({ mapboxConfig: mapboxConfig, sourc
                             item: true,
                             xs: true,
                             children: [
-                                typeof parts === "string" ? parts : parts.map((part, index)=>/*#__PURE__*/ (0, $4dBGn$jsx)("span", {
+                                typeof parts === 'string' ? parts : parts.map((part, index)=>/*#__PURE__*/ (0, $4dBGn$jsx)("span", {
                                         style: {
                                             fontWeight: part.highlight ? 700 : 400
                                         },
@@ -179,8 +179,8 @@ const $30efcd78e923a66d$var$LocationInput = ({ mapboxConfig: mapboxConfig, sourc
     });
 };
 $30efcd78e923a66d$var$LocationInput.defaultProps = {
-    variant: "outlined",
-    size: "small"
+    variant: 'outlined',
+    size: 'small'
 };
 var $30efcd78e923a66d$export$2e2bcd8739ae039 = $30efcd78e923a66d$var$LocationInput;
 
@@ -202,7 +202,7 @@ function $30b7ce6cee91ee5d$var$createMarkerCluster({ children: _c, ...props }, c
     const clusterProps = {};
     const clusterEvents = {};
     // Splitting props and events to different objects
-    Object.entries(props).forEach(([propName, prop])=>propName.startsWith("on") ? clusterEvents[propName] = prop : clusterProps[propName] = prop);
+    Object.entries(props).forEach(([propName, prop])=>propName.startsWith('on') ? clusterEvents[propName] = prop : clusterProps[propName] = prop);
     const instance = new (0, $4dBGn$leaflet).MarkerClusterGroup(clusterProps);
     // Initializing event listeners
     Object.entries(clusterEvents).forEach(([eventAsProp, callback])=>{
@@ -281,7 +281,7 @@ var $41a820134d906e83$export$2e2bcd8739ae039 = $41a820134d906e83$var$QueryString
 
 const $845cccf8fd290d00$var$useStyles = (0, $4dBGn$muistylesmakeStyles)(()=>({
         closeButton: {
-            position: "absolute",
+            position: 'absolute',
             zIndex: 1400,
             top: 0,
             right: 0
@@ -325,19 +325,19 @@ var $845cccf8fd290d00$export$2e2bcd8739ae039 = $845cccf8fd290d00$var$MobileDrawe
 const $6ec4ba22c7861081$var$useStyles = (0, $4dBGn$muistylesmakeStyles)(()=>({
         isLoading: {
             zIndex: 1000,
-            position: "absolute",
+            position: 'absolute',
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center"
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
         }
     }));
 const $6ec4ba22c7861081$var$MapList = ({ latitude: latitude, longitude: longitude, label: label, description: description, popupContent: popupContent, height: height, center: center, zoom: zoom, groupClusters: groupClusters, boundToMarkers: boundToMarkers, connectMarkers: connectMarkers, ...otherProps })=>{
     const { data: data, isLoading: isLoading } = (0, $4dBGn$useListContext)();
-    const xs = (0, $4dBGn$useMediaQuery)((theme)=>theme.breakpoints.down("sm"), {
+    const xs = (0, $4dBGn$useMediaQuery)((theme)=>theme.breakpoints.down('sm'), {
         noSsr: true
     });
     const [drawerRecord, setDrawerRecord] = (0, $4dBGn$useState)(null);
@@ -345,11 +345,11 @@ const $6ec4ba22c7861081$var$MapList = ({ latitude: latitude, longitude: longitud
     // Get the zoom and center from query string, if available
     const location = (0, $4dBGn$useLocation)();
     const query = new URLSearchParams(location.search);
-    center = query.has("lat") && query.has("lng") ? [
-        query.get("lat"),
-        query.get("lng")
+    center = query.has('lat') && query.has('lng') ? [
+        query.get('lat'),
+        query.get('lng')
     ] : center;
-    zoom = query.has("zoom") ? query.get("zoom") : zoom;
+    zoom = query.has('zoom') ? query.get('zoom') : zoom;
     let previousRecord;
     const records = isLoading ? [] : data.map((record)=>({
             ...record,

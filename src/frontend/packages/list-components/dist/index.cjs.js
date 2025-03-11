@@ -36,20 +36,20 @@ $parcel$export(module.exports, "ViewsButtons", () => $2b75f3c2996d19f7$export$2e
 
 const $2eed9b3621f13b18$var$useStyles = (0, ($parcel$interopDefault($5MILa$muistylesmakeStyles)))(()=>({
         root: {
-            display: "flex",
-            flexWrap: "wrap"
+            display: 'flex',
+            flexWrap: 'wrap'
         },
         link: {
-            textDecoration: "none",
-            maxWidth: "100%"
+            textDecoration: 'none',
+            maxWidth: '100%'
         },
         chipField: {
-            maxWidth: "100%"
+            maxWidth: '100%'
         },
         addIcon: {
-            cursor: "pointer",
+            cursor: 'pointer',
             fontSize: 35,
-            position: "relative",
+            position: 'relative',
             top: 2
         },
         launchIcon: {
@@ -64,7 +64,7 @@ const $2eed9b3621f13b18$var$stopPropagation = (e)=>e.stopPropagation();
 // The material-ui Chip requires an onClick handler to behave like a clickable element.
 const $2eed9b3621f13b18$var$handleClick = ()=>{};
 const $2eed9b3621f13b18$var$ChipList = (props)=>{
-    const { classes: classesOverride, className: className, children: children, linkType: linkType = "edit", component: component = "div", primaryText: primaryText, appendLink: appendLink, externalLinks: externalLinks = false, ...rest } = props;
+    const { classes: classesOverride, className: className, children: children, linkType: linkType = 'edit', component: component = 'div', primaryText: primaryText, appendLink: appendLink, externalLinks: externalLinks = false, ...rest } = props;
     const { data: data, isLoading: isLoading, resource: resource } = (0, $5MILa$reactadmin.useListContext)(props);
     const getExternalLink = (0, $5MILa$semappssemanticdataprovider.useGetExternalLink)(externalLinks);
     const createPath = (0, $5MILa$reactadmin.useCreatePath)();
@@ -206,7 +206,7 @@ const $a4d27c2ab268c05b$var$GridList = ({ children: children, linkType: linkType
 $a4d27c2ab268c05b$var$GridList.defaultProps = {
     xs: 6,
     spacing: 3,
-    linkType: "edit",
+    linkType: 'edit',
     externalLinks: false
 };
 var $a4d27c2ab268c05b$export$2e2bcd8739ae039 = $a4d27c2ab268c05b$var$GridList;
@@ -220,21 +220,21 @@ var $a4d27c2ab268c05b$export$2e2bcd8739ae039 = $a4d27c2ab268c05b$var$GridList;
 
 const $bc22719d52a02d2c$var$useStyles = (0, ($parcel$interopDefault($5MILa$muistylesmakeStyles)))(()=>({
         grid: {
-            display: "flex",
+            display: 'flex',
             marginLeft: -20,
             marginBottom: -20,
-            width: "auto"
+            width: 'auto'
         },
         column: {
             paddingLeft: 20,
-            backgroundClip: "padding-box"
+            backgroundClip: 'padding-box'
         },
         card: {
             marginBottom: 20
         },
         media: {
             height: 0,
-            paddingTop: "56.25%" // 16:9
+            paddingTop: '56.25%' // 16:9
         }
     }));
 /**
@@ -261,7 +261,7 @@ const $bc22719d52a02d2c$var$useStyles = (0, ($parcel$interopDefault($5MILa$muist
         columnClassName: classes.column,
         children: data.map((record)=>{
             if (!record || record._error) return null;
-            const imageUrl = typeof image === "function" ? image(record) : image;
+            const imageUrl = typeof image === 'function' ? image(record) : image;
             return /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$reactadmin.RecordContextProvider), {
                 value: record,
                 children: /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsxs)((0, $5MILa$muimaterial.Card), {
@@ -300,7 +300,7 @@ $bc22719d52a02d2c$var$MasonryList.defaultProps = {
         1050: 2,
         700: 1
     },
-    linkType: "edit"
+    linkType: 'edit'
 };
 var $bc22719d52a02d2c$export$2e2bcd8739ae039 = $bc22719d52a02d2c$var$MasonryList;
 
@@ -358,7 +358,7 @@ const $696f298352ead676$var$ReferenceFilter = ({ reference: reference, source: s
     (0, $5MILa$react.useEffect)(()=>{
         // Needed when filter item is active and its last relation is removed
         const urlSearchParams = new URLSearchParams(window.location.search);
-        if (!urlSearchParams.get("filter") && !isLoading) setFilters({}, []);
+        if (!urlSearchParams.get('filter') && !isLoading) setFilters({}, []);
     }, [
         isLoading,
         setFilters
@@ -374,13 +374,13 @@ const $696f298352ead676$var$ReferenceFilter = ({ reference: reference, source: s
         });
     };
     return /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$reactadmin.FilterList), {
-        label: label || currentResource?.options?.label || "",
+        label: label || currentResource?.options?.label || '',
         icon: icon || currentResource?.icon ? /*#__PURE__*/ (0, $5MILa$react.createElement)(currentResource.icon) : undefined,
         children: data && data.filter((itemData)=>itemIsUsed(itemData)).map((itemData)=>/*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$reactadmin.FilterListItem), {
                 label: /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsxs)("span", {
                     className: "filter-label",
                     children: [
-                        itemData["pair:label"],
+                        itemData['pair:label'],
                         showCounters && /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)($696f298352ead676$var$ReferenceFilterCounter, {
                             source: source,
                             id: itemData.id
@@ -421,12 +421,12 @@ const $2b75f3c2996d19f7$var$ViewsButtons = ()=>{
     const query = new URLSearchParams((0, $5MILa$reactrouter.useLocation)().search);
     const { views: views, currentView: currentView, setView: setView } = (0, ($parcel$interopDefault($5MILa$react))).useContext((0, $1f2a4ca7a7e2b912$export$2e2bcd8739ae039));
     return views ? Object.entries(views).filter(([key])=>key !== currentView).map(([key, view])=>{
-        query.set("view", key);
-        query.set("page", 1);
-        query.set("perPage", view.perPage);
+        query.set('view', key);
+        query.set('page', 1);
+        query.set('perPage', view.perPage);
         if (view.sort) {
-            query.set("sort", view.sort.field);
-            query.set("order", view.sort.order);
+            query.set('sort', view.sort.field);
+            query.set('order', view.sort.order);
         }
         return /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$reactadmin.Link), {
             to: `?${query.toString()}`,
@@ -442,7 +442,7 @@ var $2b75f3c2996d19f7$export$2e2bcd8739ae039 = $2b75f3c2996d19f7$var$ViewsButton
 
 
 const $6ca83fab5dd482a0$var$ListActionsWithViews = ({ bulkActions: bulkActions, basePath: basePath, sort: sort, displayedFilters: displayedFilters, exporter: exporter, filters: filters, filterValues: filterValues, onUnselectItems: onUnselectItems, selectedIds: selectedIds, showFilter: showFilter, total: total, ...rest })=>{
-    const xs = (0, $5MILa$muimaterial.useMediaQuery)((theme)=>theme.breakpoints.down("sm"));
+    const xs = (0, $5MILa$muimaterial.useMediaQuery)((theme)=>theme.breakpoints.down('sm'));
     const resourceDefinition = (0, $5MILa$reactadmin.useResourceDefinition)(rest);
     return /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsxs)((0, $5MILa$reactadmin.TopToolbar), {
         children: [
@@ -451,7 +451,7 @@ const $6ca83fab5dd482a0$var$ListActionsWithViews = ({ bulkActions: bulkActions, 
                 showFilter: showFilter,
                 displayedFilters: displayedFilters,
                 filterValues: filterValues,
-                context: "button"
+                context: 'button'
             }),
             resourceDefinition.hasCreate && /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$reactadmin.CreateButton), {}),
             !xs && exporter !== false && /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$reactadmin.ExportButton), {
@@ -474,7 +474,7 @@ var $6ca83fab5dd482a0$export$2e2bcd8739ae039 = $6ca83fab5dd482a0$var$ListActions
 
 const $8e315201c1049d3f$var$MultiViewsList = ({ children: children, actions: actions, views: views, ListComponent: ListComponent, ...otherProps })=>{
     const query = new URLSearchParams((0, $5MILa$reactrouter.useLocation)().search);
-    const initialView = query.has("view") ? query.get("view") : Object.keys(views)[0];
+    const initialView = query.has('view') ? query.get('view') : Object.keys(views)[0];
     const [currentView, setView] = (0, $5MILa$react.useState)(initialView);
     return /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $1f2a4ca7a7e2b912$export$2e2bcd8739ae039).Provider, {
         value: {

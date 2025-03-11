@@ -19,20 +19,20 @@ import {useLocation as $2An97$useLocation} from "react-router";
 
 const $a854ae8777f8f757$var$useStyles = (0, $2An97$muistylesmakeStyles)(()=>({
         root: {
-            display: "flex",
-            flexWrap: "wrap"
+            display: 'flex',
+            flexWrap: 'wrap'
         },
         link: {
-            textDecoration: "none",
-            maxWidth: "100%"
+            textDecoration: 'none',
+            maxWidth: '100%'
         },
         chipField: {
-            maxWidth: "100%"
+            maxWidth: '100%'
         },
         addIcon: {
-            cursor: "pointer",
+            cursor: 'pointer',
             fontSize: 35,
-            position: "relative",
+            position: 'relative',
             top: 2
         },
         launchIcon: {
@@ -47,7 +47,7 @@ const $a854ae8777f8f757$var$stopPropagation = (e)=>e.stopPropagation();
 // The material-ui Chip requires an onClick handler to behave like a clickable element.
 const $a854ae8777f8f757$var$handleClick = ()=>{};
 const $a854ae8777f8f757$var$ChipList = (props)=>{
-    const { classes: classesOverride, className: className, children: children, linkType: linkType = "edit", component: component = "div", primaryText: primaryText, appendLink: appendLink, externalLinks: externalLinks = false, ...rest } = props;
+    const { classes: classesOverride, className: className, children: children, linkType: linkType = 'edit', component: component = 'div', primaryText: primaryText, appendLink: appendLink, externalLinks: externalLinks = false, ...rest } = props;
     const { data: data, isLoading: isLoading, resource: resource } = (0, $2An97$useListContext)(props);
     const getExternalLink = (0, $2An97$useGetExternalLink)(externalLinks);
     const createPath = (0, $2An97$useCreatePath)();
@@ -189,7 +189,7 @@ const $e54e9a9f27806c4d$var$GridList = ({ children: children, linkType: linkType
 $e54e9a9f27806c4d$var$GridList.defaultProps = {
     xs: 6,
     spacing: 3,
-    linkType: "edit",
+    linkType: 'edit',
     externalLinks: false
 };
 var $e54e9a9f27806c4d$export$2e2bcd8739ae039 = $e54e9a9f27806c4d$var$GridList;
@@ -203,21 +203,21 @@ var $e54e9a9f27806c4d$export$2e2bcd8739ae039 = $e54e9a9f27806c4d$var$GridList;
 
 const $8cf7b8f98f373d84$var$useStyles = (0, $2An97$muistylesmakeStyles)(()=>({
         grid: {
-            display: "flex",
+            display: 'flex',
             marginLeft: -20,
             marginBottom: -20,
-            width: "auto"
+            width: 'auto'
         },
         column: {
             paddingLeft: 20,
-            backgroundClip: "padding-box"
+            backgroundClip: 'padding-box'
         },
         card: {
             marginBottom: 20
         },
         media: {
             height: 0,
-            paddingTop: "56.25%" // 16:9
+            paddingTop: '56.25%' // 16:9
         }
     }));
 /**
@@ -244,7 +244,7 @@ const $8cf7b8f98f373d84$var$useStyles = (0, $2An97$muistylesmakeStyles)(()=>({
         columnClassName: classes.column,
         children: data.map((record)=>{
             if (!record || record._error) return null;
-            const imageUrl = typeof image === "function" ? image(record) : image;
+            const imageUrl = typeof image === 'function' ? image(record) : image;
             return /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$RecordContextProvider), {
                 value: record,
                 children: /*#__PURE__*/ (0, $2An97$jsxs)((0, $2An97$Card), {
@@ -283,7 +283,7 @@ $8cf7b8f98f373d84$var$MasonryList.defaultProps = {
         1050: 2,
         700: 1
     },
-    linkType: "edit"
+    linkType: 'edit'
 };
 var $8cf7b8f98f373d84$export$2e2bcd8739ae039 = $8cf7b8f98f373d84$var$MasonryList;
 
@@ -341,7 +341,7 @@ const $5ced1203870db4f6$var$ReferenceFilter = ({ reference: reference, source: s
     (0, $2An97$useEffect)(()=>{
         // Needed when filter item is active and its last relation is removed
         const urlSearchParams = new URLSearchParams(window.location.search);
-        if (!urlSearchParams.get("filter") && !isLoading) setFilters({}, []);
+        if (!urlSearchParams.get('filter') && !isLoading) setFilters({}, []);
     }, [
         isLoading,
         setFilters
@@ -357,13 +357,13 @@ const $5ced1203870db4f6$var$ReferenceFilter = ({ reference: reference, source: s
         });
     };
     return /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$FilterList), {
-        label: label || currentResource?.options?.label || "",
+        label: label || currentResource?.options?.label || '',
         icon: icon || currentResource?.icon ? /*#__PURE__*/ (0, $2An97$createElement)(currentResource.icon) : undefined,
         children: data && data.filter((itemData)=>itemIsUsed(itemData)).map((itemData)=>/*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$FilterListItem), {
                 label: /*#__PURE__*/ (0, $2An97$jsxs)("span", {
                     className: "filter-label",
                     children: [
-                        itemData["pair:label"],
+                        itemData['pair:label'],
                         showCounters && /*#__PURE__*/ (0, $2An97$jsx)($5ced1203870db4f6$var$ReferenceFilterCounter, {
                             source: source,
                             id: itemData.id
@@ -404,12 +404,12 @@ const $5a39d2966c9779bd$var$ViewsButtons = ()=>{
     const query = new URLSearchParams((0, $2An97$useLocation)().search);
     const { views: views, currentView: currentView, setView: setView } = (0, $2An97$react).useContext((0, $4d3421bb798b6c78$export$2e2bcd8739ae039));
     return views ? Object.entries(views).filter(([key])=>key !== currentView).map(([key, view])=>{
-        query.set("view", key);
-        query.set("page", 1);
-        query.set("perPage", view.perPage);
+        query.set('view', key);
+        query.set('page', 1);
+        query.set('perPage', view.perPage);
         if (view.sort) {
-            query.set("sort", view.sort.field);
-            query.set("order", view.sort.order);
+            query.set('sort', view.sort.field);
+            query.set('order', view.sort.order);
         }
         return /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$Link), {
             to: `?${query.toString()}`,
@@ -425,7 +425,7 @@ var $5a39d2966c9779bd$export$2e2bcd8739ae039 = $5a39d2966c9779bd$var$ViewsButton
 
 
 const $032ebd19dd4d05d7$var$ListActionsWithViews = ({ bulkActions: bulkActions, basePath: basePath, sort: sort, displayedFilters: displayedFilters, exporter: exporter, filters: filters, filterValues: filterValues, onUnselectItems: onUnselectItems, selectedIds: selectedIds, showFilter: showFilter, total: total, ...rest })=>{
-    const xs = (0, $2An97$useMediaQuery)((theme)=>theme.breakpoints.down("sm"));
+    const xs = (0, $2An97$useMediaQuery)((theme)=>theme.breakpoints.down('sm'));
     const resourceDefinition = (0, $2An97$useResourceDefinition)(rest);
     return /*#__PURE__*/ (0, $2An97$jsxs)((0, $2An97$TopToolbar), {
         children: [
@@ -434,7 +434,7 @@ const $032ebd19dd4d05d7$var$ListActionsWithViews = ({ bulkActions: bulkActions, 
                 showFilter: showFilter,
                 displayedFilters: displayedFilters,
                 filterValues: filterValues,
-                context: "button"
+                context: 'button'
             }),
             resourceDefinition.hasCreate && /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$CreateButton), {}),
             !xs && exporter !== false && /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$ExportButton), {
@@ -457,7 +457,7 @@ var $032ebd19dd4d05d7$export$2e2bcd8739ae039 = $032ebd19dd4d05d7$var$ListActions
 
 const $5bd09179d1367bb7$var$MultiViewsList = ({ children: children, actions: actions, views: views, ListComponent: ListComponent, ...otherProps })=>{
     const query = new URLSearchParams((0, $2An97$useLocation)().search);
-    const initialView = query.has("view") ? query.get("view") : Object.keys(views)[0];
+    const initialView = query.has('view') ? query.get('view') : Object.keys(views)[0];
     const [currentView, setView] = (0, $2An97$useState)(initialView);
     return /*#__PURE__*/ (0, $2An97$jsx)((0, $4d3421bb798b6c78$export$2e2bcd8739ae039).Provider, {
         value: {

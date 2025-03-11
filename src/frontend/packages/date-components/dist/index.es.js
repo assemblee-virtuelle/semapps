@@ -26,7 +26,7 @@ import $5Ihaz$fullcalendarlist from "@fullcalendar/list";
 
 
 
-const $610808f89222f9cc$var$Picker = ({ PickerComponent: PickerComponent, label: label, source: source, helperText: helperText, fullWidth: fullWidth, onBlur: onBlur, onChange: onChange, format: format, parse: parse, validate: validate, defaultValue: defaultValue, locale: locale, translations: translations, stringFormat: stringFormat = "ISO", ...rest })=>{
+const $610808f89222f9cc$var$Picker = ({ PickerComponent: PickerComponent, label: label, source: source, helperText: helperText, fullWidth: fullWidth, onBlur: onBlur, onChange: onChange, format: format, parse: parse, validate: validate, defaultValue: defaultValue, locale: locale, translations: translations, stringFormat: stringFormat = 'ISO', ...rest })=>{
     const { field: field, isRequired: isRequired, fieldState: { error: error, isTouched: isTouched, invalid: invalid }, formState: { isSubmitted: isSubmitted } } = (0, $5Ihaz$useInput)({
         format: format,
         onBlur: onBlur,
@@ -37,7 +37,7 @@ const $610808f89222f9cc$var$Picker = ({ PickerComponent: PickerComponent, label:
         defaultValue: defaultValue
     });
     const handleChange = (0, $5Ihaz$useCallback)((value)=>{
-        if (value instanceof Date) field.onChange(stringFormat === "ISO" ? value.toISOString() : value.toString());
+        if (value instanceof Date) field.onChange(stringFormat === 'ISO' ? value.toISOString() : value.toString());
         else field.onChange(null);
     }, [
         field,
@@ -65,7 +65,7 @@ const $610808f89222f9cc$var$Picker = ({ PickerComponent: PickerComponent, label:
             slotProps: {
                 textField: {
                     error: (isTouched || isSubmitted) && invalid,
-                    size: "small",
+                    size: 'small',
                     fullWidth: fullWidth,
                     helperText: /*#__PURE__*/ (0, $5Ihaz$jsx)((0, $5Ihaz$InputHelperText), {
                         touched: isTouched || isSubmitted,
@@ -115,9 +115,9 @@ const $37245c02f9b1b006$var$useFullCalendarProps = ({ label: label, startDate: s
     ]);
     const events = (0, $5Ihaz$useMemo)(()=>!isLoading && data.filter((record)=>record).map((record)=>({
                 id: record.id,
-                title: typeof label === "string" ? record[label] : label(record),
-                start: typeof startDate === "string" ? record[startDate] : startDate(record),
-                end: typeof endDate === "string" ? record[endDate] : endDate(record),
+                title: typeof label === 'string' ? record[label] : label(record),
+                start: typeof startDate === 'string' ? record[startDate] : startDate(record),
+                end: typeof endDate === 'string' ? record[endDate] : endDate(record),
                 url: createPath({
                     resource: resource,
                     id: record.id,
@@ -130,7 +130,7 @@ const $37245c02f9b1b006$var$useFullCalendarProps = ({ label: label, startDate: s
         createPath
     ]);
     return {
-        initialDate: query.has("month") ? new Date(query.get("year"), query.get("month") - 1) : new Date(),
+        initialDate: query.has('month') ? new Date(query.get('year'), query.get('month') - 1) : new Date(),
         events: events,
         datesSet: datesSet,
         eventClick: eventClick
@@ -140,18 +140,18 @@ var $37245c02f9b1b006$export$2e2bcd8739ae039 = $37245c02f9b1b006$var$useFullCale
 
 
 const $abbcc02f55461290$var$useGlobalStyles = (0, $5Ihaz$muistylesmakeStyles)((theme)=>({
-        "@global": {
-            ".fc-button": {
+        '@global': {
+            '.fc-button': {
                 backgroundColor: `${theme.palette.primary.main} !important`,
-                border: "none !important",
-                opacity: "1 !important"
+                border: 'none !important',
+                opacity: '1 !important'
             },
-            ".fc-day-today": {
+            '.fc-day-today': {
                 backgroundColor: `${theme.palette.secondary.light} !important`
             },
             // Overwrite violet color of links
-            "a.fc-daygrid-dot-event": {
-                color: "black !important"
+            'a.fc-daygrid-dot-event': {
+                color: 'black !important'
             }
         }
     }));
@@ -170,7 +170,7 @@ const $abbcc02f55461290$var$CalendarList = (props)=>{
     });
 };
 $abbcc02f55461290$var$CalendarList.defaultProps = {
-    linkType: "edit"
+    linkType: 'edit'
 };
 var $abbcc02f55461290$export$2e2bcd8739ae039 = $abbcc02f55461290$var$CalendarList;
 
@@ -182,11 +182,11 @@ var $abbcc02f55461290$export$2e2bcd8739ae039 = $abbcc02f55461290$var$CalendarLis
 
 
 const $69d9f850452774a2$var$useGlobalStyles = (0, $5Ihaz$muistylesmakeStyles)((theme)=>({
-        "@global": {
-            ".fc-button": {
+        '@global': {
+            '.fc-button': {
                 backgroundColor: `${theme.palette.primary.main} !important`,
-                border: "none !important",
-                opacity: "1 !important"
+                border: 'none !important',
+                opacity: '1 !important'
             }
         }
     }));
@@ -203,7 +203,7 @@ const $69d9f850452774a2$var$DaysList = (props)=>{
     });
 };
 $69d9f850452774a2$var$DaysList.defaultProps = {
-    linkType: "edit"
+    linkType: 'edit'
 };
 var $69d9f850452774a2$export$2e2bcd8739ae039 = $69d9f850452774a2$var$DaysList;
 

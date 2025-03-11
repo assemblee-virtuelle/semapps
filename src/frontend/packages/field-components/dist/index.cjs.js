@@ -41,29 +41,29 @@ $parcel$export(module.exports, "SeparatedListField", () => $43c570e3fbe4d9a0$exp
 
 const $4e17293ac0574285$var$useStyles = (0, ($parcel$interopDefault($gJbUX$muistylesmakeStyles)))((theme)=>({
         parent: (props)=>({
-                position: "relative",
+                position: 'relative',
                 ...props.parent
             }),
         square: {
-            width: "100%",
-            paddingBottom: "100%",
-            position: "relative"
+            width: '100%',
+            paddingBottom: '100%',
+            position: 'relative'
         },
         avatar: {
-            position: "absolute",
+            position: 'absolute',
             top: 0,
             bottom: 0,
-            width: "100%",
-            height: "100%",
-            borderRadius: "50%",
+            width: '100%',
+            height: '100%',
+            borderRadius: '50%',
             // backgroundColor: theme.palette.primary.main,
-            "& svg": {
-                width: "55%",
-                height: "55%"
+            '& svg': {
+                width: '55%',
+                height: '55%'
             }
         },
         chip: {
-            position: "absolute",
+            position: 'absolute',
             bottom: -10,
             left: 0,
             right: 0,
@@ -72,7 +72,7 @@ const $4e17293ac0574285$var$useStyles = (0, ($parcel$interopDefault($gJbUX$muist
             paddingLeft: 6,
             paddingRight: 6,
             marginBottom: 10,
-            cursor: "pointer"
+            cursor: 'pointer'
         },
         launchIcon: {
             width: 14
@@ -82,9 +82,9 @@ const $4e17293ac0574285$var$handleClick = ()=>{};
 const $4e17293ac0574285$var$AvatarWithLabelField = ({ label: label, defaultLabel: defaultLabel, image: image, fallback: fallback, externalLink: externalLink, labelColor: labelColor, classes: classes, ...rest })=>{
     classes = $4e17293ac0574285$var$useStyles(classes);
     const record = (0, $gJbUX$reactadmin.useRecordContext)();
-    const computedLabel = (typeof label === "function" ? label(record) : record[label]) || defaultLabel;
-    const computedImage = typeof image === "function" ? image(record) : record[image];
-    const computedFallback = typeof fallback === "function" ? fallback(record) : fallback;
+    const computedLabel = (typeof label === 'function' ? label(record) : record[label]) || defaultLabel;
+    const computedImage = typeof image === 'function' ? image(record) : record[image];
+    const computedFallback = typeof fallback === 'function' ? fallback(record) : fallback;
     return /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsxs)((0, $gJbUX$muimaterial.Box), {
         className: classes.parent,
         children: [
@@ -117,7 +117,7 @@ const $4e17293ac0574285$var$AvatarWithLabelField = ({ label: label, defaultLabel
     });
 };
 $4e17293ac0574285$var$AvatarWithLabelField.defaultProps = {
-    labelColor: "secondary",
+    labelColor: 'secondary',
     externalLink: false
 };
 var $4e17293ac0574285$export$2e2bcd8739ae039 = $4e17293ac0574285$var$AvatarWithLabelField;
@@ -132,7 +132,7 @@ const $b6ed9e2776cb4ba3$var$ReferenceArrayField = ({ source: source, ...otherPro
         if (!Array.isArray(record[source])) record[source] = [
             record[source]
         ];
-        record[source] = record[source].map((i)=>i["@id"] || i.id || i);
+        record[source] = record[source].map((i)=>i['@id'] || i.id || i);
     }
     return /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$reactadmin.RecordContextProvider), {
         value: record,
@@ -151,7 +151,7 @@ var $b6ed9e2776cb4ba3$export$2e2bcd8739ae039 = $b6ed9e2776cb4ba3$var$ReferenceAr
 const $387e8196d8654c58$var$ReferenceField = ({ source: source, ...otherProps })=>{
     const record = (0, $gJbUX$reactadmin.useRecordContext)();
     if (record[source]) {
-        if (typeof record[source] === "object") record[source] = record[source]["@id"] || record[source].id;
+        if (typeof record[source] === 'object') record[source] = record[source]['@id'] || record[source].id;
     }
     return /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$reactadmin.RecordContextProvider), {
         value: record,
@@ -189,23 +189,23 @@ var $387e8196d8654c58$export$2e2bcd8739ae039 = $387e8196d8654c58$var$ReferenceFi
 
 const $c7e6f337903f861b$var$useStyles = (0, ($parcel$interopDefault($gJbUX$muistylesmakeStyles)))((theme)=>({
         root: {
-            width: "100%",
-            maxWidth: "100%",
+            width: '100%',
+            maxWidth: '100%',
             backgroundColor: theme.palette.background.paper,
             paddingTop: 0,
             paddingBottom: 0
         },
         primaryText: {
-            width: "30%"
+            width: '30%'
         },
         secondaryText: {
-            fontStyle: "italic",
-            color: "grey"
+            fontStyle: 'italic',
+            color: 'grey'
         }
     }));
 const $c7e6f337903f861b$var$getServerName = (resourceUri, dataServers)=>{
     const server = dataServers && Object.values(dataServers).find((server)=>resourceUri.startsWith(server.baseUrl));
-    return server ? server.name : "Inconnu";
+    return server ? server.name : 'Inconnu';
 };
 const $c7e6f337903f861b$var$ResultsList = ({ keyword: keyword, source: source, reference: reference, appendLink: appendLink, switchToCreate: switchToCreate })=>{
     const classes = $c7e6f337903f861b$var$useStyles();
@@ -231,14 +231,14 @@ const $c7e6f337903f861b$var$ResultsList = ({ keyword: keyword, source: source, r
                 },
                 sort: {
                     field: dataModel?.fieldsMapping?.title,
-                    order: "ASC"
+                    order: 'ASC'
                 },
                 filter: {
                     q: keyword,
                     _predicates: [
                         dataModel.fieldsMapping.title
                     ],
-                    _servers: "@all"
+                    _servers: '@all'
                 }
             }).then(({ data: data })=>{
                 const existingLinks = record[source] ? Array.isArray(record[source]) ? record[source] : [
@@ -299,7 +299,7 @@ const $c7e6f337903f861b$var$ResultsList = ({ keyword: keyword, source: source, r
                                 href: createPath({
                                     resource: reference,
                                     id: resource.id,
-                                    type: "show"
+                                    type: 'show'
                                 }),
                                 target: "_blank",
                                 rel: "noopener noreferrer",
@@ -321,7 +321,7 @@ const $c7e6f337903f861b$var$ResultsList = ({ keyword: keyword, source: source, r
                     }),
                     /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.ListItemText), {
                         className: classes.primaryText,
-                        primary: translate("ra.navigation.no_results")
+                        primary: translate('ra.navigation.no_results')
                     })
                 ]
             }),
@@ -336,7 +336,7 @@ const $c7e6f337903f861b$var$ResultsList = ({ keyword: keyword, source: source, r
                     }),
                     /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.ListItemText), {
                         className: classes.primaryText,
-                        primary: translate("ra.page.create", {
+                        primary: translate('ra.page.create', {
                             name: getResourceLabel(reference, 1)
                         })
                     })
@@ -379,8 +379,8 @@ const $9ac0ba4780250906$var$useStyles = (0, ($parcel$interopDefault($gJbUX$muist
 const $9ac0ba4780250906$var$QuickAppendDialog = ({ open: open, onClose: onClose, subjectUri: subjectUri, source: source, reference: reference })=>{
     const classes = $9ac0ba4780250906$var$useStyles();
     const { resource: resource } = (0, $gJbUX$reactadmin.useShowContext)();
-    const [keyword, setKeyword] = (0, $gJbUX$react.useState)("");
-    const [panel, setPanel] = (0, $gJbUX$react.useState)("find");
+    const [keyword, setKeyword] = (0, $gJbUX$react.useState)('');
+    const [panel, setPanel] = (0, $gJbUX$react.useState)('find');
     const dataProvider = (0, $gJbUX$reactadmin.useDataProvider)();
     const translate = (0, $gJbUX$reactadmin.useTranslate)();
     const refresh = (0, $gJbUX$reactadmin.useRefresh)();
@@ -425,7 +425,7 @@ const $9ac0ba4780250906$var$QuickAppendDialog = ({ open: open, onClose: onClose,
         });
         await appendLink(data.id);
         notify(`La resource "${values.title}" a \xe9t\xe9 cr\xe9\xe9e`, {
-            type: "success"
+            type: 'success'
         });
     }, [
         dataProvider,
@@ -438,7 +438,7 @@ const $9ac0ba4780250906$var$QuickAppendDialog = ({ open: open, onClose: onClose,
         fullWidth: true,
         open: open,
         onClose: onClose,
-        children: panel === "find" ? /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsxs)((0, $gJbUX$reactjsxruntime.Fragment), {
+        children: panel === 'find' ? /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsxs)((0, $gJbUX$reactjsxruntime.Fragment), {
             children: [
                 /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.DialogTitle), {
                     className: classes.title,
@@ -464,8 +464,8 @@ const $9ac0ba4780250906$var$QuickAppendDialog = ({ open: open, onClose: onClose,
                         reference: reference,
                         appendLink: appendLink,
                         switchToCreate: ()=>{
-                            setValue("title", keyword);
-                            setPanel("create");
+                            setValue('title', keyword);
+                            setPanel('create');
                         }
                     })
                 }),
@@ -483,14 +483,14 @@ const $9ac0ba4780250906$var$QuickAppendDialog = ({ open: open, onClose: onClose,
             children: [
                 /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.DialogTitle), {
                     className: classes.title,
-                    children: translate("ra.page.create", {
+                    children: translate('ra.page.create', {
                         name: getResourceLabel(reference, 1)
                     })
                 }),
                 /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.DialogContent), {
                     className: classes.addForm,
                     children: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.TextField), {
-                        ...register("title"),
+                        ...register('title'),
                         autoFocus: true,
                         label: "Titre",
                         variant: "filled",
@@ -526,10 +526,10 @@ const $6a1cce6d258bf615$var$QuickAppendReferenceArrayField = ({ reference: refer
     const [showDialog, setShowDialog] = (0, $gJbUX$react.useState)(false);
     const { permissions: permissions } = (0, $gJbUX$reactadmin.usePermissions)(record.id);
     const canAppend = (0, $gJbUX$react.useMemo)(()=>!!permissions && permissions.some((p)=>[
-                "acl:Append",
-                "acl:Write",
-                "acl:Control"
-            ].includes(p["acl:mode"])), [
+                'acl:Append',
+                'acl:Write',
+                'acl:Control'
+            ].includes(p['acl:mode'])), [
         permissions
     ]);
     return /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsxs)((0, $gJbUX$reactjsxruntime.Fragment), {
@@ -569,57 +569,57 @@ var $6a1cce6d258bf615$export$2e2bcd8739ae039 = $6a1cce6d258bf615$var$QuickAppend
 
 
 const $732a429355ed7119$var$defaultdomainMapping = {
-    "github.com": {
-        label: "GitHub",
+    'github.com': {
+        label: 'GitHub',
         icon: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, ($parcel$interopDefault($gJbUX$muiiconsmaterialGitHub))), {}),
-        color: "black",
-        contrastText: "white"
+        color: 'black',
+        contrastText: 'white'
     },
-    "gitlab.com": {
-        label: "GitLab",
+    'gitlab.com': {
+        label: 'GitLab',
         icon: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$reacticonsfi.FiGitlab), {}),
-        color: "orange",
-        contrastText: "black"
+        color: 'orange',
+        contrastText: 'black'
     },
-    "opencollective.com": {
-        label: "Open Collective",
+    'opencollective.com': {
+        label: 'Open Collective',
         icon: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$muimaterial.Avatar), {
             component: "span",
             src: "https://opencollective.com/static/images/opencollective-icon.svg"
         }),
-        color: "white",
-        contrastText: "#297EFF"
+        color: 'white',
+        contrastText: '#297EFF'
     },
-    "facebook.com": {
-        label: "Facebook",
+    'facebook.com': {
+        label: 'Facebook',
         icon: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, ($parcel$interopDefault($gJbUX$muiiconsmaterialFacebook))), {}),
-        color: "#4267B2",
-        contrastText: "white"
+        color: '#4267B2',
+        contrastText: 'white'
     },
-    "twitter.com": {
-        label: "Twitter",
+    'twitter.com': {
+        label: 'Twitter',
         icon: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, ($parcel$interopDefault($gJbUX$muiiconsmaterialTwitter))), {}),
-        color: "#00ACEE",
-        contrastText: "white"
+        color: '#00ACEE',
+        contrastText: 'white'
     },
-    "instagram.com": {
-        label: "Instagram",
+    'instagram.com': {
+        label: 'Instagram',
         icon: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, ($parcel$interopDefault($gJbUX$muiiconsmaterialInstagram))), {}),
-        color: "#8a3ab9",
-        contrastText: "white"
+        color: '#8a3ab9',
+        contrastText: 'white'
     },
-    "youtube.com": {
-        label: "YouTube",
+    'youtube.com': {
+        label: 'YouTube',
         icon: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, ($parcel$interopDefault($gJbUX$muiiconsmaterialYouTube))), {}),
-        color: "#FF0000",
-        contrastText: "white"
+        color: '#FF0000',
+        contrastText: 'white'
     }
 };
 const $732a429355ed7119$var$useStyles = (0, ($parcel$interopDefault($gJbUX$muistylesmakeStyles)))(()=>({
         link: {
-            textDecoration: "unset",
-            "& :hover": {
-                cursor: "pointer"
+            textDecoration: 'unset',
+            '& :hover': {
+                cursor: 'pointer'
             }
         },
         chip: {
@@ -643,7 +643,7 @@ const $732a429355ed7119$var$MultiUrlField = ({ source: source, domainMapping: do
         record[source]
     ] : [];
     return urlArray.map((url, index)=>{
-        if (!url.startsWith("http")) url = `https://${url}`;
+        if (!url.startsWith('http')) url = `https://${url}`;
         let parsedUrl = null;
         try {
             parsedUrl = new URL(url);
@@ -651,10 +651,10 @@ const $732a429355ed7119$var$MultiUrlField = ({ source: source, domainMapping: do
             return null;
         }
         const chip = newDomainMapping[parsedUrl.hostname] || {
-            label: "Site web",
+            label: 'Site web',
             icon: /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, ($parcel$interopDefault($gJbUX$muiiconsmaterialLanguage))), {}),
-            color: "#ea",
-            contrastText: "black"
+            color: '#ea',
+            contrastText: 'black'
         };
         return /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)("a", {
             href: url,
@@ -698,7 +698,7 @@ const $43c570e3fbe4d9a0$var$stopPropagation = (e)=>e.stopPropagation();
 // The material-ui Chip requires an onClick handler to behave like a clickable element.
 const $43c570e3fbe4d9a0$var$handleClick = ()=>{};
 const $43c570e3fbe4d9a0$var$SeparatedListField = (props)=>{
-    let { children: children, link: link = "edit", linkType: linkType, separator: separator = ",\xa0" } = props;
+    let { children: children, link: link = 'edit', linkType: linkType, separator: separator = ',\u00A0' } = props;
     const { data: data, isLoading: isLoading, resource: resource } = (0, $gJbUX$reactadmin.useListContext)(props);
     const createPath = (0, $gJbUX$reactadmin.useCreatePath)();
     if (linkType !== undefined) {
@@ -709,7 +709,7 @@ const $43c570e3fbe4d9a0$var$SeparatedListField = (props)=>{
     return /*#__PURE__*/ (0, $gJbUX$reactjsxruntime.jsx)((0, $gJbUX$reactjsxruntime.Fragment), {
         children: data.map((record, i)=>{
             if (!record.id) return null;
-            const resourceLinkPath = link !== false && (typeof link === "function" ? link(record.id) : createPath({
+            const resourceLinkPath = link !== false && (typeof link === 'function' ? link(record.id) : createPath({
                 resource: resource,
                 id: record.id,
                 type: link

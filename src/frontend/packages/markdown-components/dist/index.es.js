@@ -12,7 +12,7 @@ import {styled as $kkR1A$styled} from "@mui/material/styles";
 
 
 
-const $cf6ed0ef7f5d4af7$var$MarkdownField = ({ source: source, LabelComponent: LabelComponent = "h2", overrides: overrides = {}, ...rest })=>{
+const $cf6ed0ef7f5d4af7$var$MarkdownField = ({ source: source, LabelComponent: LabelComponent = 'h2', overrides: overrides = {}, ...rest })=>{
     const record = (0, $kkR1A$useRecordContext)();
     if (!record || !(0, $kkR1A$lodashget)(record, source)) return null;
     return /*#__PURE__*/ (0, $kkR1A$jsx)((0, $kkR1A$markdowntojsx), {
@@ -48,78 +48,78 @@ var $cf6ed0ef7f5d4af7$export$2e2bcd8739ae039 = $cf6ed0ef7f5d4af7$var$MarkdownFie
 
 
 const $ece2092e88263cda$var$StyledFormControl = (0, $kkR1A$styled)((0, $kkR1A$FormControl))(({ theme: theme })=>({
-        "& > fieldset": {
+        '& > fieldset': {
             borderWidth: 1,
-            borderStyle: "solid",
+            borderStyle: 'solid',
             padding: 0,
             borderRadius: theme.shape.borderRadius,
             margin: 1
         },
-        "& > fieldset:hover": {
+        '& > fieldset:hover': {
             borderColor: theme.palette.text.primary
         },
-        "& > fieldset:focus-within": {
+        '& > fieldset:focus-within': {
             borderColor: theme.palette.primary.main,
             borderWidth: 2,
             marginLeft: 0
         },
-        "& > fieldset > legend": {
+        '& > fieldset > legend': {
             color: theme.palette.text.secondary,
             marginLeft: 10,
             fontSize: theme.typography.caption.fontSize
         },
-        "& > fieldset:focus-within > legend": {
+        '& > fieldset:focus-within > legend': {
             color: theme.palette.primary.main
         },
-        "& .react-mde": {
+        '& .react-mde': {
             borderWidth: 0,
             borderRadius: theme.shape.borderRadius,
             marginTop: -5
         },
-        "& .mde-header": {
-            background: "transparent"
+        '& .mde-header': {
+            background: 'transparent'
         },
-        "& .mde-text:focus": {
-            outline: "none"
+        '& .mde-text:focus': {
+            outline: 'none'
         },
-        "& .mde-text:focus::placeholder": {
-            color: "transparent"
+        '& .mde-text:focus::placeholder': {
+            color: 'transparent'
         },
-        "&.empty": {
-            "& > fieldset": {
+        '&.empty': {
+            '& > fieldset': {
                 paddingTop: 10,
                 marginTop: 9
             },
-            "& > fieldset:focus-within": {
+            '& > fieldset:focus-within': {
                 paddingTop: 0,
                 margin: 0,
                 marginTop: 1
             },
-            "& > fieldset > legend": {
-                display: "none"
+            '& > fieldset > legend': {
+                display: 'none'
             },
-            "& > fieldset:focus-within > legend": {
-                display: "block"
+            '& > fieldset:focus-within > legend': {
+                display: 'block'
             }
         },
-        "&.validationError": {
-            "& > fieldset": {
+        '&.validationError': {
+            '& > fieldset': {
                 borderColor: theme.palette.error.main
             },
-            "& > fieldset > legend, & .mde-text::placeholder": {
+            '& > fieldset > legend, & .mde-text::placeholder': {
                 color: theme.palette.error.main
             },
-            "& .mde-text:focus::placeholder": {
-                color: "transparent"
+            '& .mde-text:focus::placeholder': {
+                color: 'transparent'
             },
-            "& p.MuiFormHelperText-root": {
+            '& p.MuiFormHelperText-root': {
                 color: theme.palette.error.main
             }
         }
     }));
 const $ece2092e88263cda$var$MarkdownInput = (props)=>{
     const { label: label, source: source, helperText: helperText, fullWidth: fullWidth, validate: validate, overrides: overrides, reactMdeProps: reactMdeProps } = props;
-    const [tab, setTab] = (0, $kkR1A$useState)("write");
+    const [tab, setTab] = (0, $kkR1A$useState)('write');
     const { field: { value: value, onChange: onChange }, fieldState: { isDirty: isDirty, invalid: invalid, error: error, isTouched: isTouched }, formState: { isSubmitted: isSubmitted }, isRequired: isRequired } = (0, $kkR1A$useInput)({
         source: source,
         validate: validate
@@ -128,10 +128,10 @@ const $ece2092e88263cda$var$MarkdownInput = (props)=>{
     const translatedLabel = `${translateLabel({
         label: label,
         source: source
-    })}${isRequired ? "*" : ""}`;
+    })}${isRequired ? '*' : ''}`;
     return /*#__PURE__*/ (0, $kkR1A$jsxs)($ece2092e88263cda$var$StyledFormControl, {
         fullWidth: fullWidth,
-        className: `${invalid ? "validationError" : ""} ${value === "" ? "empty" : ""}`,
+        className: `${invalid ? 'validationError' : ''} ${value === '' ? 'empty' : ''}`,
         children: [
             /*#__PURE__*/ (0, $kkR1A$jsxs)("fieldset", {
                 children: [
@@ -195,14 +195,14 @@ const $c57f5824f8ba8f82$var$useLoadLinks = (resourceType, labelProp)=>{
                 }));
             return [
                 {
-                    preview: translate("ra.navigation.no_results"),
+                    preview: translate('ra.navigation.no_results'),
                     value: `[${keyword}`
                 }
             ];
         }
         return [
             {
-                preview: translate("ra.action.search"),
+                preview: translate('ra.action.search'),
                 value: `[${keyword}`
             }
         ];

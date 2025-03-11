@@ -91,109 +91,109 @@ const $2d06940433ec0c6c$export$dca4f48302963835 = (value)=>!value ? undefined : 
     ];
 const $2d06940433ec0c6c$export$4450a74bced1b745 = (resourceUri)=>{
     const parsedUrl = new URL(resourceUri);
-    return (0, ($parcel$interopDefault($4Uj5b$urljoin)))(parsedUrl.origin, "_acl", parsedUrl.pathname);
+    return (0, ($parcel$interopDefault($4Uj5b$urljoin)))(parsedUrl.origin, '_acl', parsedUrl.pathname);
 };
 const $2d06940433ec0c6c$export$4d54b642c3d13c34 = (baseUri)=>({
-        "@base": baseUri,
-        acl: "http://www.w3.org/ns/auth/acl#",
-        foaf: "http://xmlns.com/foaf/0.1/",
-        "acl:agent": {
-            "@type": "@id"
+        '@base': baseUri,
+        acl: 'http://www.w3.org/ns/auth/acl#',
+        foaf: 'http://xmlns.com/foaf/0.1/',
+        'acl:agent': {
+            '@type': '@id'
         },
-        "acl:agentGroup": {
-            "@type": "@id"
+        'acl:agentGroup': {
+            '@type': '@id'
         },
-        "acl:agentClass": {
-            "@type": "@id"
+        'acl:agentClass': {
+            '@type': '@id'
         },
-        "acl:mode": {
-            "@type": "@id"
+        'acl:mode': {
+            '@type': '@id'
         },
-        "acl:accessTo": {
-            "@type": "@id"
+        'acl:accessTo': {
+            '@type': '@id'
         }
     });
 const $2d06940433ec0c6c$export$274217e117cdbc7b = async (dataProvider)=>{
     const dataServers = await dataProvider.getDataServers();
     const authServer = Object.values(dataServers).find((server)=>server.authServer === true);
-    if (!authServer) throw new Error("Could not find a server with authServer: true. Check your dataServers config.");
+    if (!authServer) throw new Error('Could not find a server with authServer: true. Check your dataServers config.');
     // If the server is a Pod provider, return the root URL instead of https://domain.com/user/data
     return authServer.pod ? new URL(authServer.baseUrl).origin : authServer.baseUrl;
 };
 const $2d06940433ec0c6c$export$1391212d75b2ee65 = async (t)=>new Promise((resolve)=>setTimeout(resolve, t));
 
 
-const $6a92eb32301846ac$var$AUTH_TYPE_SSO = "sso";
-const $6a92eb32301846ac$var$AUTH_TYPE_LOCAL = "local";
-const $6a92eb32301846ac$var$AUTH_TYPE_POD = "pod";
-const $6a92eb32301846ac$var$AUTH_TYPE_SOLID_OIDC = "solid-oidc";
+const $6a92eb32301846ac$var$AUTH_TYPE_SSO = 'sso';
+const $6a92eb32301846ac$var$AUTH_TYPE_LOCAL = 'local';
+const $6a92eb32301846ac$var$AUTH_TYPE_POD = 'pod';
+const $6a92eb32301846ac$var$AUTH_TYPE_SOLID_OIDC = 'solid-oidc';
 const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authType: authType, allowAnonymous: allowAnonymous = true, checkUser: checkUser, checkPermissions: checkPermissions = false, clientId: clientId })=>{
     if (![
         $6a92eb32301846ac$var$AUTH_TYPE_SSO,
         $6a92eb32301846ac$var$AUTH_TYPE_LOCAL,
         $6a92eb32301846ac$var$AUTH_TYPE_POD,
         $6a92eb32301846ac$var$AUTH_TYPE_SOLID_OIDC
-    ].includes(authType)) throw new Error("The authType parameter is missing from the auth provider");
-    if (authType === $6a92eb32301846ac$var$AUTH_TYPE_SOLID_OIDC && !clientId) throw new Error("The clientId parameter is required for solid-oidc authentication");
+    ].includes(authType)) throw new Error('The authType parameter is missing from the auth provider');
+    if (authType === $6a92eb32301846ac$var$AUTH_TYPE_SOLID_OIDC && !clientId) throw new Error('The clientId parameter is required for solid-oidc authentication');
     const callCheckUser = async (webId)=>{
         if (checkUser) try {
             const { json: userData } = await dataProvider.fetch(webId);
-            if (!userData) throw new Error("auth.message.unable_to_fetch_user_data");
-            if (checkUser(userData) === false) throw new Error("auth.message.user_not_allowed_to_login");
+            if (!userData) throw new Error('auth.message.unable_to_fetch_user_data');
+            if (checkUser(userData) === false) throw new Error('auth.message.user_not_allowed_to_login');
         } catch (e) {
-            localStorage.removeItem("token");
+            localStorage.removeItem('token');
             throw e;
         }
     };
     return {
         login: async (params)=>{
             if (authType === $6a92eb32301846ac$var$AUTH_TYPE_SOLID_OIDC) {
-                let { webId: webId, issuer: issuer, redirect: redirect = "/", isSignup: isSignup = false } = params;
+                let { webId: webId, issuer: issuer, redirect: redirect = '/', isSignup: isSignup = false } = params;
                 if (webId && !issuer) {
                     // Find issuer from webId
                     const { json: userData } = await dataProvider.fetch(webId);
-                    if (!userData) throw new Error("auth.message.unable_to_fetch_user_data");
-                    if (!userData["solid:oidcIssuer"]) throw new Error("auth.message.no_associated_oidc_issuer");
-                    issuer = userData?.["solid:oidcIssuer"];
+                    if (!userData) throw new Error('auth.message.unable_to_fetch_user_data');
+                    if (!userData['solid:oidcIssuer']) throw new Error('auth.message.no_associated_oidc_issuer');
+                    issuer = userData?.['solid:oidcIssuer'];
                 }
                 const as = await $4Uj5b$oauth4webapi.discoveryRequest(new URL(issuer)).then((response)=>$4Uj5b$oauth4webapi.processDiscoveryResponse(new URL(issuer), response)).catch(()=>{
-                    throw new Error("auth.message.unreachable_auth_server");
+                    throw new Error('auth.message.unreachable_auth_server');
                 });
                 const codeVerifier = $4Uj5b$oauth4webapi.generateRandomCodeVerifier();
                 const codeChallenge = await $4Uj5b$oauth4webapi.calculatePKCECodeChallenge(codeVerifier);
-                const codeChallengeMethod = "S256";
+                const codeChallengeMethod = 'S256';
                 // Save to use on handleCallback method
-                localStorage.setItem("code_verifier", codeVerifier);
-                localStorage.setItem("redirect", redirect);
+                localStorage.setItem('code_verifier', codeVerifier);
+                localStorage.setItem('redirect', redirect);
                 const authorizationUrl = new URL(as.authorization_endpoint);
-                authorizationUrl.searchParams.set("response_type", "code");
-                authorizationUrl.searchParams.set("client_id", clientId);
-                authorizationUrl.searchParams.set("code_challenge", codeChallenge);
-                authorizationUrl.searchParams.set("code_challenge_method", codeChallengeMethod);
-                authorizationUrl.searchParams.set("redirect_uri", `${window.location.origin}/auth-callback`);
-                authorizationUrl.searchParams.set("scope", "openid webid offline_access");
-                authorizationUrl.searchParams.set("is_signup", isSignup);
+                authorizationUrl.searchParams.set('response_type', 'code');
+                authorizationUrl.searchParams.set('client_id', clientId);
+                authorizationUrl.searchParams.set('code_challenge', codeChallenge);
+                authorizationUrl.searchParams.set('code_challenge_method', codeChallengeMethod);
+                authorizationUrl.searchParams.set('redirect_uri', `${window.location.origin}/auth-callback`);
+                authorizationUrl.searchParams.set('scope', 'openid webid offline_access');
+                authorizationUrl.searchParams.set('is_signup', isSignup);
                 window.location = authorizationUrl;
             } else if (authType === $6a92eb32301846ac$var$AUTH_TYPE_LOCAL) {
                 const { username: username, password: password } = params;
                 const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
                 let token, webId;
                 try {
-                    ({ json: { token: token, webId: webId } } = await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, "auth/login"), {
-                        method: "POST",
+                    ({ json: { token: token, webId: webId } } = await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, 'auth/login'), {
+                        method: 'POST',
                         body: JSON.stringify({
                             username: username.trim(),
                             password: password.trim()
                         }),
                         headers: new Headers({
-                            "Content-Type": "application/json"
+                            'Content-Type': 'application/json'
                         })
                     }));
                 } catch (e) {
-                    throw new Error("ra.auth.sign_in_error");
+                    throw new Error('ra.auth.sign_in_error');
                 }
                 // Set token now as it is required for refreshConfig
-                localStorage.setItem("token", token);
+                localStorage.setItem('token', token);
                 await dataProvider.refreshConfig();
                 await callCheckUser(webId);
             } else if (authType === $6a92eb32301846ac$var$AUTH_TYPE_SSO) {
@@ -206,39 +206,39 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
         handleCallback: async ()=>{
             const { searchParams: searchParams } = new URL(window.location);
             if (authType === $6a92eb32301846ac$var$AUTH_TYPE_SOLID_OIDC) {
-                const issuer = new URL(searchParams.get("iss"));
+                const issuer = new URL(searchParams.get('iss'));
                 const as = await $4Uj5b$oauth4webapi.discoveryRequest(issuer).then((response)=>$4Uj5b$oauth4webapi.processDiscoveryResponse(issuer, response));
                 const client = {
                     client_id: clientId,
-                    token_endpoint_auth_method: "none" // We don't have a client secret
+                    token_endpoint_auth_method: 'none' // We don't have a client secret
                 };
                 const currentUrl = new URL(window.location.href);
                 const params = $4Uj5b$oauth4webapi.validateAuthResponse(as, client, currentUrl, $4Uj5b$oauth4webapi.expectNoState);
                 if ($4Uj5b$oauth4webapi.isOAuth2Error(params)) throw new Error(`OAuth error: ${params.error} (${params.error_description})`);
                 // Retrieve data set during login
-                const codeVerifier = localStorage.getItem("code_verifier");
-                const redirect = localStorage.getItem("redirect");
+                const codeVerifier = localStorage.getItem('code_verifier');
+                const redirect = localStorage.getItem('redirect');
                 const response = await $4Uj5b$oauth4webapi.authorizationCodeGrantRequest(as, client, params, `${window.location.origin}/auth-callback`, codeVerifier);
                 const result = await $4Uj5b$oauth4webapi.processAuthorizationCodeOpenIDResponse(as, client, response);
                 if ($4Uj5b$oauth4webapi.isOAuth2Error(result)) throw new Error(`OAuth error: ${params.error} (${params.error_description})`);
                 // Until DPoP is implemented, use the ID token to log into local Pod
                 // And the proxy endpoint to log into remote Pods
-                localStorage.setItem("token", result.id_token);
+                localStorage.setItem('token', result.id_token);
                 // Remove we don't need it anymore
-                localStorage.removeItem("code_verifier");
-                localStorage.removeItem("redirect");
+                localStorage.removeItem('code_verifier');
+                localStorage.removeItem('redirect');
                 // Reload to ensure the dataServer config is reset
-                window.location.href = redirect || "/";
+                window.location.href = redirect || '/';
             } else {
-                const token = searchParams.get("token");
-                if (!token) throw new Error("auth.message.no_token_returned");
+                const token = searchParams.get('token');
+                if (!token) throw new Error('auth.message.no_token_returned');
                 let webId;
                 try {
                     ({ webId: webId } = (0, ($parcel$interopDefault($4Uj5b$jwtdecode)))(token));
                 } catch (e) {
-                    throw new Error("auth.message.invalid_token_returned");
+                    throw new Error('auth.message.invalid_token_returned');
                 }
-                localStorage.setItem("token", token);
+                localStorage.setItem('token', token);
                 await dataProvider.refreshConfig();
                 await callCheckUser(webId);
             }
@@ -249,8 +249,8 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                 const { username: username, email: email, password: password, domain: domain, ...profileData } = params;
                 let token, webId;
                 try {
-                    ({ json: { token: token, webId: webId } } = await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, "auth/signup"), {
-                        method: "POST",
+                    ({ json: { token: token, webId: webId } } = await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, 'auth/signup'), {
+                        method: 'POST',
                         body: JSON.stringify({
                             username: username?.trim(),
                             email: email.trim(),
@@ -258,19 +258,19 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                             ...profileData
                         }),
                         headers: new Headers({
-                            "Content-Type": "application/json"
+                            'Content-Type': 'application/json'
                         })
                     }));
                 } catch (e) {
-                    if (e.message === "email.already.exists") throw new Error("auth.message.user_email_exist");
-                    else if (e.message === "username.already.exists") throw new Error("auth.message.username_exist");
-                    else if (e.message === "username.invalid") throw new Error("auth.message.username_invalid");
+                    if (e.message === 'email.already.exists') throw new Error('auth.message.user_email_exist');
+                    else if (e.message === 'username.already.exists') throw new Error('auth.message.username_exist');
+                    else if (e.message === 'username.invalid') throw new Error('auth.message.username_invalid');
                     else {
                         console.error(e);
-                        throw new Error("auth.message.signup_error");
+                        throw new Error('auth.message.signup_error');
                     }
                 }
-                localStorage.setItem("token", token);
+                localStorage.setItem('token', token);
                 await dataProvider.refreshConfig();
                 await callCheckUser(webId);
                 return webId;
@@ -289,7 +289,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                         localStorage.clear();
                         let result = {};
                         try {
-                            result = await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, ".well-known/openid-configuration"));
+                            result = await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, '.well-known/openid-configuration'));
                         } catch (e) {
                         // Do nothing if it fails
                         }
@@ -298,7 +298,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                         else {
                             // Reload to ensure the dataServer config is reset
                             window.location.reload();
-                            window.location.href = "/";
+                            window.location.href = '/';
                         }
                         break;
                     }
@@ -306,23 +306,23 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                     {
                         const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
                         const baseUrl = new URL(window.location.href).origin;
-                        return (0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, `auth/logout?redirectUrl=${encodeURIComponent(`${(0, ($parcel$interopDefault($4Uj5b$urljoin)))(baseUrl, "login")}?logout=true`)}`);
+                        return (0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, `auth/logout?redirectUrl=${encodeURIComponent(`${(0, ($parcel$interopDefault($4Uj5b$urljoin)))(baseUrl, 'login')}?logout=true`)}`);
                     }
                 case $6a92eb32301846ac$var$AUTH_TYPE_POD:
                     {
-                        const token = localStorage.getItem("token");
+                        const token = localStorage.getItem('token');
                         if (token) {
                             const { webId: webId } = (0, ($parcel$interopDefault($4Uj5b$jwtdecode)))(token);
                             // Delete token but also any other value in local storage
                             localStorage.clear();
                             // Redirect to the POD provider
-                            return `${(0, ($parcel$interopDefault($4Uj5b$urljoin)))(webId, "openApp")}?type=${encodeURIComponent("http://activitypods.org/ns/core#FrontAppRegistration")}`;
+                            return `${(0, ($parcel$interopDefault($4Uj5b$urljoin)))(webId, 'openApp')}?type=${encodeURIComponent('http://activitypods.org/ns/core#FrontAppRegistration')}`;
                         }
                         break;
                     }
                 case $6a92eb32301846ac$var$AUTH_TYPE_SOLID_OIDC:
                     {
-                        const token = localStorage.getItem("token");
+                        const token = localStorage.getItem('token');
                         if (token) {
                             const { webid: webId } = (0, ($parcel$interopDefault($4Uj5b$jwtdecode)))(token); // Not webId !!
                             // Delete token but also any other value in local storage
@@ -332,7 +332,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                                 // We don't need the token to fetch the WebID since it is public
                                 const { json: userData } = await dataProvider.fetch(webId);
                                 // Redirect to the Pod provider
-                                return userData?.["solid:oidcIssuer"] || new URL(webId).origin;
+                                return userData?.['solid:oidcIssuer'] || new URL(webId).origin;
                             }
                         } else return redirectUrl;
                     }
@@ -341,7 +341,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
             }
         },
         checkAuth: async ()=>{
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem('token');
             if (!token && !allowAnonymous) throw new Error();
         },
         checkUser: (userData)=>{
@@ -350,8 +350,8 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
         },
         checkError: (error)=>{
             // We want to disconnect only with INVALID_TOKEN errors
-            if (error.status === 401 && error.body && error.body.type === "INVALID_TOKEN") {
-                localStorage.removeItem("token");
+            if (error.status === 401 && error.body && error.body.type === 'INVALID_TOKEN') {
+                localStorage.removeItem('token');
                 return Promise.reject();
             } else // Other error code (404, 500, etc): no need to log out
             return Promise.resolve();
@@ -361,44 +361,44 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
             // React-admin calls getPermissions with an empty object on every page refresh
             // It also passes an object `{ params: { route: 'dashboard' } }` on the Dashboard
             // Ignore all this until we found a way to bypass these redundant calls
-            if (typeof uri === "object") return;
-            if (!uri || !uri.startsWith("http")) throw new Error(`The first parameter passed to getPermissions must be an URL. Received: ${uri}`);
+            if (typeof uri === 'object') return;
+            if (!uri || !uri.startsWith('http')) throw new Error(`The first parameter passed to getPermissions must be an URL. Received: ${uri}`);
             const aclUri = (0, $2d06940433ec0c6c$export$4450a74bced1b745)(uri);
             try {
                 const { json: json } = await dataProvider.fetch(aclUri);
-                return json["@graph"];
+                return json['@graph'];
             } catch (e) {
                 console.warn(`Could not fetch ACL URI ${uri}`);
                 return [];
             }
         },
         addPermission: async (uri, agentId, predicate, mode)=>{
-            if (!uri || !uri.startsWith("http")) throw new Error("The first parameter passed to addPermission must be an URL");
+            if (!uri || !uri.startsWith('http')) throw new Error('The first parameter passed to addPermission must be an URL');
             const aclUri = (0, $2d06940433ec0c6c$export$4450a74bced1b745)(uri);
             const authorization = {
-                "@id": `#${mode.replace("acl:", "")}`,
-                "@type": "acl:Authorization",
+                '@id': `#${mode.replace('acl:', '')}`,
+                '@type': 'acl:Authorization',
                 [predicate]: agentId,
-                "acl:accessTo": uri,
-                "acl:mode": mode
+                'acl:accessTo': uri,
+                'acl:mode': mode
             };
             await dataProvider.fetch(aclUri, {
-                method: "PATCH",
+                method: 'PATCH',
                 body: JSON.stringify({
-                    "@context": (0, $2d06940433ec0c6c$export$4d54b642c3d13c34)(aclUri),
-                    "@graph": [
+                    '@context': (0, $2d06940433ec0c6c$export$4d54b642c3d13c34)(aclUri),
+                    '@graph': [
                         authorization
                     ]
                 })
             });
         },
         removePermission: async (uri, agentId, predicate, mode)=>{
-            if (!uri || !uri.startsWith("http")) throw new Error("The first parameter passed to removePermission must be an URL");
+            if (!uri || !uri.startsWith('http')) throw new Error('The first parameter passed to removePermission must be an URL');
             const aclUri = (0, $2d06940433ec0c6c$export$4450a74bced1b745)(uri);
             // Fetch current permissions
             const { json: json } = await dataProvider.fetch(aclUri);
-            const updatedPermissions = json["@graph"].filter((authorization)=>!authorization["@id"].includes("#Default")).map((authorization)=>{
-                const modes = (0, $2d06940433ec0c6c$export$dca4f48302963835)(authorization["acl:mode"]);
+            const updatedPermissions = json['@graph'].filter((authorization)=>!authorization['@id'].includes('#Default')).map((authorization)=>{
+                const modes = (0, $2d06940433ec0c6c$export$dca4f48302963835)(authorization['acl:mode']);
                 let agents = (0, $2d06940433ec0c6c$export$dca4f48302963835)(authorization[predicate]);
                 if (mode && modes.includes(mode) && agents && agents.includes(agentId)) agents = agents.filter((agent)=>agent !== agentId);
                 return {
@@ -407,24 +407,24 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                 };
             });
             await dataProvider.fetch(aclUri, {
-                method: "PUT",
+                method: 'PUT',
                 body: JSON.stringify({
-                    "@context": (0, $2d06940433ec0c6c$export$4d54b642c3d13c34)(aclUri),
-                    "@graph": updatedPermissions
+                    '@context': (0, $2d06940433ec0c6c$export$4d54b642c3d13c34)(aclUri),
+                    '@graph': updatedPermissions
                 })
             });
         },
         getIdentity: async ()=>{
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem('token');
             if (token) {
                 const payload = (0, ($parcel$interopDefault($4Uj5b$jwtdecode)))(token);
                 // Backend-generated tokens use webId but Solid-OIDC tokens use webid
                 const webId = authType === $6a92eb32301846ac$var$AUTH_TYPE_SOLID_OIDC ? payload.webid : payload.webId;
                 if (!webId) {
                     // If webId is not set, it is probably because we have ActivityPods v1 tokens and we need to disconnect
-                    localStorage.removeItem("token");
-                    window.location.href = "/login";
-                    throw new Error("No webId found on provided token !");
+                    localStorage.removeItem('token');
+                    window.location.href = '/login';
+                    throw new Error('No webId found on provided token !');
                 }
                 const { json: webIdData } = await dataProvider.fetch(webId);
                 let profileData = {};
@@ -437,8 +437,8 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                 }
                 return {
                     id: webId,
-                    fullName: profileData["vcard:given-name"] || profileData["pair:label"] || webIdData["foaf:name"] || webIdData["pair:label"],
-                    avatar: profileData["vcard:photo"] || webIdData.image?.url || webIdData.image || webIdData.icon?.url || webIdData.icon,
+                    fullName: profileData['vcard:given-name'] || profileData['pair:label'] || webIdData['foaf:name'] || webIdData['pair:label'],
+                    avatar: profileData['vcard:photo'] || webIdData.image?.url || webIdData.image || webIdData.icon?.url || webIdData.icon,
                     profileData: profileData,
                     webIdData: webIdData
                 };
@@ -448,67 +448,67 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
             const { email: email } = params;
             const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
             try {
-                await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, "auth/reset_password"), {
-                    method: "POST",
+                await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, 'auth/reset_password'), {
+                    method: 'POST',
                     body: JSON.stringify({
                         email: email.trim()
                     }),
                     headers: new Headers({
-                        "Content-Type": "application/json"
+                        'Content-Type': 'application/json'
                     })
                 });
             } catch (e) {
-                if (e.message === "email.not.exists") throw new Error("auth.message.user_email_not_found");
-                else throw new Error("auth.notification.reset_password_error");
+                if (e.message === 'email.not.exists') throw new Error('auth.message.user_email_not_found');
+                else throw new Error('auth.notification.reset_password_error');
             }
         },
         setNewPassword: async (params)=>{
             const { email: email, token: token, password: password } = params;
             const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
             try {
-                await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, "auth/new_password"), {
-                    method: "POST",
+                await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, 'auth/new_password'), {
+                    method: 'POST',
                     body: JSON.stringify({
                         email: email.trim(),
                         token: token,
                         password: password
                     }),
                     headers: new Headers({
-                        "Content-Type": "application/json"
+                        'Content-Type': 'application/json'
                     })
                 });
             } catch (e) {
-                if (e.message === "email.not.exists") throw new Error("auth.message.user_email_not_found");
-                else throw new Error("auth.notification.new_password_error");
+                if (e.message === 'email.not.exists') throw new Error('auth.message.user_email_not_found');
+                else throw new Error('auth.notification.new_password_error');
             }
         },
         getAccountSettings: async (params)=>{
             const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
             try {
-                const { json: json } = await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, "auth/account"));
+                const { json: json } = await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, 'auth/account'));
                 return json;
             } catch (e) {
-                throw new Error("auth.notification.get_settings_error");
+                throw new Error('auth.notification.get_settings_error');
             }
         },
         updateAccountSettings: async (params)=>{
             const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
             try {
                 const { email: email, currentPassword: currentPassword, newPassword: newPassword } = params;
-                await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, "auth/account"), {
-                    method: "POST",
+                await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, 'auth/account'), {
+                    method: 'POST',
                     body: JSON.stringify({
                         currentPassword: currentPassword,
                         email: email?.trim(),
                         newPassword: newPassword
                     }),
                     headers: new Headers({
-                        "Content-Type": "application/json"
+                        'Content-Type': 'application/json'
                     })
                 });
             } catch (e) {
-                if (e.message === "auth.account.invalid_password") throw new Error("auth.notification.invalid_password");
-                throw new Error("auth.notification.update_settings_error");
+                if (e.message === 'auth.account.invalid_password') throw new Error('auth.notification.invalid_password');
+                throw new Error('auth.notification.update_settings_error');
             }
         }
     };
@@ -522,15 +522,15 @@ var $6a92eb32301846ac$export$2e2bcd8739ae039 = $6a92eb32301846ac$var$authProvide
 
 
 
-const $09c536abc6cea017$export$66a34090010a35b3 = "acl:Read";
-const $09c536abc6cea017$export$7c883503ccedfe0e = "acl:Append";
-const $09c536abc6cea017$export$2e56ecf100ca4ba6 = "acl:Write";
-const $09c536abc6cea017$export$5581cb2c55de143a = "acl:Control";
-const $09c536abc6cea017$export$97a08a1bb7ee0545 = "acl:agent";
-const $09c536abc6cea017$export$f07ccbe0773f2c7 = "acl:agentGroup";
-const $09c536abc6cea017$export$2703254089a859eb = "acl:agentClass";
-const $09c536abc6cea017$export$83ae1bc0992a6335 = "foaf:Agent";
-const $09c536abc6cea017$export$546c01a3ffdabe3a = "acl:AuthenticatedAgent";
+const $09c536abc6cea017$export$66a34090010a35b3 = 'acl:Read';
+const $09c536abc6cea017$export$7c883503ccedfe0e = 'acl:Append';
+const $09c536abc6cea017$export$2e56ecf100ca4ba6 = 'acl:Write';
+const $09c536abc6cea017$export$5581cb2c55de143a = 'acl:Control';
+const $09c536abc6cea017$export$97a08a1bb7ee0545 = 'acl:agent';
+const $09c536abc6cea017$export$f07ccbe0773f2c7 = 'acl:agentGroup';
+const $09c536abc6cea017$export$2703254089a859eb = 'acl:agentClass';
+const $09c536abc6cea017$export$83ae1bc0992a6335 = 'foaf:Agent';
+const $09c536abc6cea017$export$546c01a3ffdabe3a = 'acl:AuthenticatedAgent';
 const $09c536abc6cea017$export$d37f0098bcf84c55 = [
     $09c536abc6cea017$export$66a34090010a35b3,
     $09c536abc6cea017$export$7c883503ccedfe0e,
@@ -569,34 +569,34 @@ const $09c536abc6cea017$export$cae945d60b6cbe50 = {
     control: $09c536abc6cea017$export$22242524f7d0624
 };
 const $09c536abc6cea017$export$12e6e8e71d10a4bb = {
-    show: "auth.message.resource_show_forbidden",
-    edit: "auth.message.resource_edit_forbidden",
-    delete: "auth.message.resource_delete_forbidden",
-    control: "auth.message.resource_control_forbidden",
-    list: "auth.message.container_list_forbidden",
-    create: "auth.message.container_create_forbidden"
+    show: 'auth.message.resource_show_forbidden',
+    edit: 'auth.message.resource_edit_forbidden',
+    delete: 'auth.message.resource_delete_forbidden',
+    control: 'auth.message.resource_control_forbidden',
+    list: 'auth.message.container_list_forbidden',
+    create: 'auth.message.container_create_forbidden'
 };
 const $09c536abc6cea017$export$2e9571c4ccdeb6a9 = {
-    [$09c536abc6cea017$export$66a34090010a35b3]: "auth.right.resource.read",
-    [$09c536abc6cea017$export$7c883503ccedfe0e]: "auth.right.resource.append",
-    [$09c536abc6cea017$export$2e56ecf100ca4ba6]: "auth.right.resource.write",
-    [$09c536abc6cea017$export$5581cb2c55de143a]: "auth.right.resource.control"
+    [$09c536abc6cea017$export$66a34090010a35b3]: 'auth.right.resource.read',
+    [$09c536abc6cea017$export$7c883503ccedfe0e]: 'auth.right.resource.append',
+    [$09c536abc6cea017$export$2e56ecf100ca4ba6]: 'auth.right.resource.write',
+    [$09c536abc6cea017$export$5581cb2c55de143a]: 'auth.right.resource.control'
 };
 const $09c536abc6cea017$export$edca379024d80309 = {
-    [$09c536abc6cea017$export$66a34090010a35b3]: "auth.right.container.read",
-    [$09c536abc6cea017$export$2e56ecf100ca4ba6]: "auth.right.container.write",
-    [$09c536abc6cea017$export$5581cb2c55de143a]: "auth.right.container.control"
+    [$09c536abc6cea017$export$66a34090010a35b3]: 'auth.right.container.read',
+    [$09c536abc6cea017$export$2e56ecf100ca4ba6]: 'auth.right.container.write',
+    [$09c536abc6cea017$export$5581cb2c55de143a]: 'auth.right.container.control'
 };
 
 
-const $715d0a876ac5de8e$var$useCheckPermissions = (uri, mode, redirectUrl = "/")=>{
+const $715d0a876ac5de8e$var$useCheckPermissions = (uri, mode, redirectUrl = '/')=>{
     const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)(uri);
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
     const redirect = (0, $4Uj5b$reactadmin.useRedirect)();
     (0, $4Uj5b$react.useEffect)(()=>{
-        if (permissions && !permissions.some((p)=>(0, $09c536abc6cea017$export$cae945d60b6cbe50)[mode].includes(p["acl:mode"]))) {
+        if (permissions && !permissions.some((p)=>(0, $09c536abc6cea017$export$cae945d60b6cbe50)[mode].includes(p['acl:mode']))) {
             notify((0, $09c536abc6cea017$export$12e6e8e71d10a4bb)[mode], {
-                type: "error"
+                type: 'error'
             });
             redirect(redirectUrl);
         }
@@ -613,7 +613,7 @@ var $715d0a876ac5de8e$export$2e2bcd8739ae039 = $715d0a876ac5de8e$var$useCheckPer
 const $7c87aa71409e289a$var$CreateWithPermissions = (props)=>{
     const resource = (0, $4Uj5b$reactadmin.useResourceContext)();
     const createContainerUri = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainerUri)(resource);
-    (0, $715d0a876ac5de8e$export$2e2bcd8739ae039)(createContainerUri, "create");
+    (0, $715d0a876ac5de8e$export$2e2bcd8739ae039)(createContainerUri, 'create');
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Create), {
         ...props
     });
@@ -652,7 +652,7 @@ var $7c87aa71409e289a$export$2e2bcd8739ae039 = $7c87aa71409e289a$var$CreateWithP
 const $a613ad42a03b1bc4$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))(()=>({
         list: {
             padding: 0,
-            width: "100%"
+            width: '100%'
         },
         option: {
             padding: 0
@@ -662,16 +662,16 @@ const $a613ad42a03b1bc4$var$AddPermissionsForm = ({ agents: agents, addPermissio
     const classes = $a613ad42a03b1bc4$var$useStyles();
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     const [value, setValue] = (0, $4Uj5b$react.useState)(null);
-    const [inputValue, setInputValue] = (0, $4Uj5b$react.useState)("");
+    const [inputValue, setInputValue] = (0, $4Uj5b$react.useState)('');
     const [options, setOptions] = (0, $4Uj5b$react.useState)([]);
-    const { data: data } = (0, $4Uj5b$reactadmin.useGetList)("Person", {
+    const { data: data } = (0, $4Uj5b$reactadmin.useGetList)('Person', {
         pagination: {
             page: 1,
             perPage: 100
         },
         sort: {
-            field: "pair:label",
-            order: "ASC"
+            field: 'pair:label',
+            order: 'ASC'
         },
         filter: {
             q: inputValue
@@ -688,20 +688,20 @@ const $a613ad42a03b1bc4$var$AddPermissionsForm = ({ agents: agents, addPermissio
         classes: {
             option: classes.option
         },
-        getOptionLabel: (option)=>option["pair:label"],
+        getOptionLabel: (option)=>option['pair:label'],
         // Do not return agents which have already been added
         filterOptions: (x)=>x.filter((agent)=>!Object.keys(agents).includes(agent.id)),
         options: options,
-        noOptionsText: translate("ra.navigation.no_results"),
+        noOptionsText: translate('ra.navigation.no_results'),
         autoComplete: true,
         blurOnSelect: true,
         clearOnBlur: true,
         disableClearable: true,
         value: value,
         onChange: (event, record)=>{
-            addPermission(record.id || record["@id"], (0, $09c536abc6cea017$export$97a08a1bb7ee0545), (0, $09c536abc6cea017$export$66a34090010a35b3));
+            addPermission(record.id || record['@id'], (0, $09c536abc6cea017$export$97a08a1bb7ee0545), (0, $09c536abc6cea017$export$66a34090010a35b3));
             setValue(null);
-            setInputValue("");
+            setInputValue('');
             setOptions([]);
         },
         onInputChange: (event, newInputValue)=>{
@@ -709,7 +709,7 @@ const $a613ad42a03b1bc4$var$AddPermissionsForm = ({ agents: agents, addPermissio
         },
         renderInput: (params)=>/*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.TextField), {
                 ...params,
-                label: translate("auth.input.agent_select"),
+                label: translate('auth.input.agent_select'),
                 variant: "filled",
                 margin: "dense",
                 fullWidth: true
@@ -728,7 +728,7 @@ const $a613ad42a03b1bc4$var$AddPermissionsForm = ({ agents: agents, addPermissio
                             })
                         }),
                         /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemText), {
-                            primary: option["pair:label"]
+                            primary: option['pair:label']
                         })
                     ]
                 })
@@ -778,16 +778,16 @@ const $7a8c6187e6c69fdd$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
             paddingRight: 36
         },
         primaryText: {
-            width: "30%",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis"
+            width: '30%',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
         },
         secondaryText: {
-            textAlign: "center",
-            width: "60%",
-            fontStyle: "italic",
-            color: "grey"
+            textAlign: 'center',
+            width: '60%',
+            fontStyle: 'italic',
+            color: 'grey'
         }
     }));
 const $7a8c6187e6c69fdd$var$AgentItem = ({ isContainer: isContainer, agent: agent, addPermission: addPermission, removePermission: removePermission })=>{
@@ -799,7 +799,7 @@ const $7a8c6187e6c69fdd$var$AgentItem = ({ isContainer: isContainer, agent: agen
     const [loading, setLoading] = (0, $4Uj5b$react.useState)(true);
     const [error, setError] = (0, $4Uj5b$react.useState)();
     (0, $4Uj5b$react.useEffect)(()=>{
-        if (agent.predicate === (0, $09c536abc6cea017$export$97a08a1bb7ee0545)) dataProvider.getOne("Person", {
+        if (agent.predicate === (0, $09c536abc6cea017$export$97a08a1bb7ee0545)) dataProvider.getOne('Person', {
             id: agent.id
         }).then(({ data: data })=>{
             setUser(data);
@@ -833,11 +833,11 @@ const $7a8c6187e6c69fdd$var$AgentItem = ({ isContainer: isContainer, agent: agen
             }),
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemText), {
                 className: classes.primaryText,
-                primary: user ? user["pair:label"] : translate(agent.id === (0, $09c536abc6cea017$export$83ae1bc0992a6335) ? "auth.agent.anonymous" : "auth.agent.authenticated")
+                primary: user ? user['pair:label'] : translate(agent.id === (0, $09c536abc6cea017$export$83ae1bc0992a6335) ? 'auth.agent.anonymous' : 'auth.agent.authenticated')
             }),
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemText), {
                 className: classes.secondaryText,
-                primary: agent.permissions && agent.permissions.map((p)=>translate(labels[p])).join(", ")
+                primary: agent.permissions && agent.permissions.map((p)=>translate(labels[p])).join(', ')
             }),
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.ListItemSecondaryAction), {
                 children: [
@@ -879,8 +879,8 @@ var $7a8c6187e6c69fdd$export$2e2bcd8739ae039 = $7a8c6187e6c69fdd$var$AgentItem;
 
 
 const $6bcadc28bc94109b$var$StyledList = (0, $4Uj5b$muisystem.styled)((0, $4Uj5b$muimaterial.List))(({ theme: theme })=>({
-        width: "100%",
-        maxWidth: "100%",
+        width: '100%',
+        maxWidth: '100%',
         backgroundColor: theme.palette.background.paper
     }));
 const $6bcadc28bc94109b$var$EditPermissionsForm = ({ isContainer: isContainer, agents: agents, addPermission: addPermission, removePermission: removePermission })=>{
@@ -931,9 +931,9 @@ const $780e01b2b2982de2$var$useAgents = (uri)=>{
         };
         if (permissions) {
             for (const p of permissions){
-                if (p[0, $09c536abc6cea017$export$2703254089a859eb]) (0, $2d06940433ec0c6c$export$dca4f48302963835)(p[0, $09c536abc6cea017$export$2703254089a859eb]).forEach((agentId)=>appendPermission(agentId, (0, $09c536abc6cea017$export$2703254089a859eb), p["acl:mode"]));
-                if (p[0, $09c536abc6cea017$export$97a08a1bb7ee0545]) (0, $2d06940433ec0c6c$export$dca4f48302963835)(p[0, $09c536abc6cea017$export$97a08a1bb7ee0545]).forEach((userUri)=>appendPermission(userUri, (0, $09c536abc6cea017$export$97a08a1bb7ee0545), p["acl:mode"]));
-                if (p[0, $09c536abc6cea017$export$f07ccbe0773f2c7]) (0, $2d06940433ec0c6c$export$dca4f48302963835)(p[0, $09c536abc6cea017$export$f07ccbe0773f2c7]).forEach((groupUri)=>appendPermission(groupUri, (0, $09c536abc6cea017$export$f07ccbe0773f2c7), p["acl:mode"]));
+                if (p[0, $09c536abc6cea017$export$2703254089a859eb]) (0, $2d06940433ec0c6c$export$dca4f48302963835)(p[0, $09c536abc6cea017$export$2703254089a859eb]).forEach((agentId)=>appendPermission(agentId, (0, $09c536abc6cea017$export$2703254089a859eb), p['acl:mode']));
+                if (p[0, $09c536abc6cea017$export$97a08a1bb7ee0545]) (0, $2d06940433ec0c6c$export$dca4f48302963835)(p[0, $09c536abc6cea017$export$97a08a1bb7ee0545]).forEach((userUri)=>appendPermission(userUri, (0, $09c536abc6cea017$export$97a08a1bb7ee0545), p['acl:mode']));
+                if (p[0, $09c536abc6cea017$export$f07ccbe0773f2c7]) (0, $2d06940433ec0c6c$export$dca4f48302963835)(p[0, $09c536abc6cea017$export$f07ccbe0773f2c7]).forEach((groupUri)=>appendPermission(groupUri, (0, $09c536abc6cea017$export$f07ccbe0773f2c7), p['acl:mode']));
             }
             setAgents(result);
         }
@@ -1026,7 +1026,7 @@ const $eb7f8a6f7bf44740$var$PermissionsDialog = ({ open: open, onClose: onClose,
         children: [
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.DialogTitle), {
                 className: classes.title,
-                children: translate(isContainer ? "auth.dialog.container_permissions" : "auth.dialog.resource_permissions")
+                children: translate(isContainer ? 'auth.dialog.container_permissions' : 'auth.dialog.resource_permissions')
             }),
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.DialogContent), {
                 className: classes.addForm,
@@ -1063,7 +1063,7 @@ const $49d4f2fbe6f28cfd$var$PermissionsButton = ({ isContainer: isContainer })=>
     const resource = (0, $4Uj5b$reactadmin.useResourceContext)();
     const [showDialog, setShowDialog] = (0, $4Uj5b$react.useState)(false);
     const createContainer = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainerUri)(resource);
-    const uri = isContainer ? createContainer : record.id || record["@id"];
+    const uri = isContainer ? createContainer : record.id || record['@id'];
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
         children: [
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Button), {
@@ -1096,9 +1096,9 @@ const $87767302443de17c$var$EditActionsWithPermissions = ()=>{
     const { permissions: containerPermissions } = (0, $4Uj5b$reactadmin.usePermissions)(containerUri);
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactadmin.TopToolbar), {
         children: [
-            hasList && containerPermissions && containerPermissions.some((p)=>(0, $09c536abc6cea017$export$dc3840a4e2a72b8c).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ListButton), {}),
-            hasShow && permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$d37f0098bcf84c55).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ShowButton), {}),
-            permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {})
+            hasList && containerPermissions && containerPermissions.some((p)=>(0, $09c536abc6cea017$export$dc3840a4e2a72b8c).includes(p['acl:mode'])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ListButton), {}),
+            hasShow && permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$d37f0098bcf84c55).includes(p['acl:mode'])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ShowButton), {}),
+            permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$22242524f7d0624).includes(p['acl:mode'])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {})
         ]
     });
 };
@@ -1116,7 +1116,7 @@ var $87767302443de17c$export$2e2bcd8739ae039 = $87767302443de17c$var$EditActions
 const $79bac4913d414938$var$DeleteButtonWithPermissions = (props)=>{
     const recordId = (0, $4Uj5b$reactadmin.useGetRecordId)();
     const { permissions: permissions, isLoading: isLoading } = (0, $4Uj5b$reactadmin.usePermissions)(recordId);
-    if (!isLoading && permissions?.some((p)=>(0, $09c536abc6cea017$export$ac7b0367c0f9031e).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.DeleteButton), {
+    if (!isLoading && permissions?.some((p)=>(0, $09c536abc6cea017$export$ac7b0367c0f9031e).includes(p['acl:mode']))) return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.DeleteButton), {
         ...props
     });
     return null;
@@ -1126,8 +1126,8 @@ var $79bac4913d414938$export$2e2bcd8739ae039 = $79bac4913d414938$var$DeleteButto
 
 const $41feb0ed0192b62e$var$StyledToolbar = (0, $4Uj5b$muimaterialstyles.styled)((0, $4Uj5b$reactadmin.Toolbar))(()=>({
         flex: 1,
-        display: "flex",
-        justifyContent: "space-between"
+        display: 'flex',
+        justifyContent: 'space-between'
     }));
 const $41feb0ed0192b62e$var$EditToolbarWithPermissions = (props)=>/*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)($41feb0ed0192b62e$var$StyledToolbar, {
         ...props,
@@ -1142,7 +1142,7 @@ var $41feb0ed0192b62e$export$2e2bcd8739ae039 = $41feb0ed0192b62e$var$EditToolbar
 
 const $6f1389d03e4735d1$var$EditWithPermissions = (props)=>{
     const recordId = (0, $4Uj5b$reactadmin.useGetRecordId)();
-    (0, $715d0a876ac5de8e$export$2e2bcd8739ae039)(recordId, "edit");
+    (0, $715d0a876ac5de8e$export$2e2bcd8739ae039)(recordId, 'edit');
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Edit), {
         ...props,
         children: /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(props.children, {
@@ -1167,7 +1167,7 @@ var $6f1389d03e4735d1$export$2e2bcd8739ae039 = $6f1389d03e4735d1$var$EditWithPer
 const $496e40eed9f00a2c$var$EditButtonWithPermissions = (props)=>{
     const recordId = (0, $4Uj5b$reactadmin.useGetRecordId)();
     const { permissions: permissions, isLoading: isLoading } = (0, $4Uj5b$reactadmin.usePermissions)(recordId);
-    if (!isLoading && permissions?.some((p)=>(0, $09c536abc6cea017$export$b9d0f5f3ab5e453b).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.EditButton), {
+    if (!isLoading && permissions?.some((p)=>(0, $09c536abc6cea017$export$b9d0f5f3ab5e453b).includes(p['acl:mode']))) return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.EditButton), {
         ...props
     });
     return null;
@@ -1189,7 +1189,7 @@ var $496e40eed9f00a2c$export$2e2bcd8739ae039 = $496e40eed9f00a2c$var$EditButtonW
 // Do not show Export and Refresh buttons on mobile
 const $6452f20f9b47ebd6$var$ListActionsWithPermissions = ({ bulkActions: bulkActions, sort: sort, displayedFilters: displayedFilters, exporter: exporter, filters: filters, filterValues: filterValues, onUnselectItems: onUnselectItems, selectedIds: selectedIds, showFilter: showFilter, total: total })=>{
     const resource = (0, $4Uj5b$reactadmin.useResourceContext)();
-    const xs = (0, $4Uj5b$muimaterial.useMediaQuery)((theme)=>theme.breakpoints.down("xs"));
+    const xs = (0, $4Uj5b$muimaterial.useMediaQuery)((theme)=>theme.breakpoints.down('xs'));
     const resourceDefinition = (0, $4Uj5b$reactadmin.useResourceDefinition)();
     const createContainerUri = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainerUri)(resource);
     const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)(createContainerUri);
@@ -1199,10 +1199,10 @@ const $6452f20f9b47ebd6$var$ListActionsWithPermissions = ({ bulkActions: bulkAct
                 showFilter: showFilter,
                 displayedFilters: displayedFilters,
                 filterValues: filterValues,
-                context: "button"
+                context: 'button'
             }),
-            resourceDefinition.hasCreate && permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$65615a101bd6f5ca).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.CreateButton), {}),
-            permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {
+            resourceDefinition.hasCreate && permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$65615a101bd6f5ca).includes(p['acl:mode'])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.CreateButton), {}),
+            permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$22242524f7d0624).includes(p['acl:mode'])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {
                 isContainer: true
             }),
             !xs && exporter !== false && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ExportButton), {
@@ -1250,9 +1250,9 @@ const $43f4d313e20b20c2$var$ShowActionsWithPermissions = ()=>{
     const { permissions: containerPermissions } = (0, $4Uj5b$reactadmin.usePermissions)(containerUri);
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactadmin.TopToolbar), {
         children: [
-            hasList && containerPermissions && containerPermissions.some((p)=>(0, $09c536abc6cea017$export$dc3840a4e2a72b8c).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ListButton), {}),
-            hasEdit && permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$b9d0f5f3ab5e453b).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.EditButton), {}),
-            permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {})
+            hasList && containerPermissions && containerPermissions.some((p)=>(0, $09c536abc6cea017$export$dc3840a4e2a72b8c).includes(p['acl:mode'])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ListButton), {}),
+            hasEdit && permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$b9d0f5f3ab5e453b).includes(p['acl:mode'])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.EditButton), {}),
+            permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$22242524f7d0624).includes(p['acl:mode'])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {})
         ]
     });
 };
@@ -1262,7 +1262,7 @@ var $43f4d313e20b20c2$export$2e2bcd8739ae039 = $43f4d313e20b20c2$var$ShowActions
 
 const $773eb052716d0fa7$var$ShowWithPermissions = (props)=>{
     const recordId = (0, $4Uj5b$reactadmin.useGetRecordId)();
-    (0, $715d0a876ac5de8e$export$2e2bcd8739ae039)(recordId, "show");
+    (0, $715d0a876ac5de8e$export$2e2bcd8739ae039)(recordId, 'show');
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Show), {
         ...props
     });
@@ -1299,7 +1299,7 @@ const $4e0bf9be00aaa242$var$AuthDialog = ({ open: open, onClose: onClose, title:
                 children: [
                     /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
                         onClick: onClose,
-                        children: translate("ra.action.cancel")
+                        children: translate('ra.action.cancel')
                     }),
                     /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
                         onClick: ()=>login({
@@ -1307,7 +1307,7 @@ const $4e0bf9be00aaa242$var$AuthDialog = ({ open: open, onClose: onClose, title:
                             }),
                         color: "primary",
                         variant: "contained",
-                        children: translate("auth.action.login")
+                        children: translate('auth.action.login')
                     })
                 ]
             })
@@ -1315,8 +1315,8 @@ const $4e0bf9be00aaa242$var$AuthDialog = ({ open: open, onClose: onClose, title:
     });
 };
 $4e0bf9be00aaa242$var$AuthDialog.defaultProps = {
-    title: "auth.dialog.login_required",
-    message: "auth.message.login_to_continue"
+    title: 'auth.dialog.login_required',
+    message: 'auth.message.login_to_continue'
 };
 var $4e0bf9be00aaa242$export$2e2bcd8739ae039 = $4e0bf9be00aaa242$var$AuthDialog;
 
@@ -1343,7 +1343,7 @@ const $0af8eee27f6a6e9f$var$SsoLoginPage = ({ children: children, backgroundImag
     const authProvider = (0, $4Uj5b$reactadmin.useAuthProvider)();
     (0, $4Uj5b$react.useEffect)(()=>{
         if (!isLoading && identity?.id) // Already authenticated, redirect to the home page
-        navigate(searchParams.get("redirect") || "/");
+        navigate(searchParams.get('redirect') || '/');
     }, [
         identity,
         isLoading,
@@ -1352,21 +1352,21 @@ const $0af8eee27f6a6e9f$var$SsoLoginPage = ({ children: children, backgroundImag
     ]);
     (0, $4Uj5b$react.useEffect)(()=>{
         (async ()=>{
-            if (searchParams.has("login")) {
-                if (searchParams.has("error")) {
-                    if (searchParams.get("error") === "registration.not-allowed") notify("auth.message.user_email_not_found", {
-                        type: "error"
+            if (searchParams.has('login')) {
+                if (searchParams.has('error')) {
+                    if (searchParams.get('error') === 'registration.not-allowed') notify('auth.message.user_email_not_found', {
+                        type: 'error'
                     });
-                    else notify("auth.message.bad_request", {
-                        type: "error",
+                    else notify('auth.message.bad_request', {
+                        type: 'error',
                         messageArgs: {
-                            error: searchParams.get("error")
+                            error: searchParams.get('error')
                         }
                     });
-                } else if (searchParams.has("token")) {
-                    const token = searchParams.get("token");
+                } else if (searchParams.has('token')) {
+                    const token = searchParams.get('token');
                     const { webId: webId } = (0, ($parcel$interopDefault($4Uj5b$jwtdecode)))(token);
-                    localStorage.setItem("token", token);
+                    localStorage.setItem('token', token);
                     let userData;
                     ({ data: userData } = await dataProvider.getOne(userResource, {
                         id: webId
@@ -1374,7 +1374,7 @@ const $0af8eee27f6a6e9f$var$SsoLoginPage = ({ children: children, backgroundImag
                     if (propertiesExist.length > 0) {
                         let allPropertiesExist = propertiesExist.every((p)=>userData[p]);
                         while(!allPropertiesExist){
-                            console.log("Waiting for all properties to have been created", propertiesExist);
+                            console.log('Waiting for all properties to have been created', propertiesExist);
                             await $0af8eee27f6a6e9f$var$delay(500);
                             ({ data: userData } = await dataProvider.getOne(userResource, {
                                 id: webId
@@ -1383,36 +1383,36 @@ const $0af8eee27f6a6e9f$var$SsoLoginPage = ({ children: children, backgroundImag
                         }
                     }
                     if (!authProvider.checkUser(userData)) {
-                        localStorage.removeItem("token");
-                        notify("auth.message.user_not_allowed_to_login", {
-                            type: "error"
+                        localStorage.removeItem('token');
+                        notify('auth.message.user_not_allowed_to_login', {
+                            type: 'error'
                         });
-                        navigate.replace("/login");
-                    } else if (searchParams.has("redirect")) {
-                        notify("auth.message.user_connected", {
-                            type: "info"
+                        navigate.replace('/login');
+                    } else if (searchParams.has('redirect')) {
+                        notify('auth.message.user_connected', {
+                            type: 'info'
                         });
-                        window.location.href = searchParams.get("redirect");
-                    } else if (searchParams.has("new") && searchParams.get("new") === "true") {
-                        notify("auth.message.new_user_created", {
-                            type: "info"
+                        window.location.href = searchParams.get('redirect');
+                    } else if (searchParams.has('new') && searchParams.get('new') === 'true') {
+                        notify('auth.message.new_user_created', {
+                            type: 'info'
                         });
                         window.location.href = `/${userResource}/${encodeURIComponent(webId)}`;
                     } else {
-                        notify("auth.message.user_connected", {
-                            type: "info"
+                        notify('auth.message.user_connected', {
+                            type: 'info'
                         });
-                        window.location.href = "/";
+                        window.location.href = '/';
                     }
                 }
             }
-            if (searchParams.has("logout")) {
+            if (searchParams.has('logout')) {
                 // Delete token and any other value in local storage
                 localStorage.clear();
-                notify("auth.message.user_disconnected", {
-                    type: "info"
+                notify('auth.message.user_disconnected', {
+                    type: 'info'
                 });
-                navigate("/");
+                navigate('/');
             }
         })();
     }, [
@@ -1459,51 +1459,51 @@ const $0af8eee27f6a6e9f$var$SsoLoginPage = ({ children: children, backgroundImag
                 buttons?.map((button, i)=>/*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.CardActions), {
                         children: /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(button, {
                             fullWidth: true,
-                            variant: "outlined",
-                            type: "submit",
-                            onClick: ()=>login({}, "/login")
+                            variant: 'outlined',
+                            type: 'submit',
+                            onClick: ()=>login({}, '/login')
                         })
                     }, i))
             ]
         })
     });
 };
-const $0af8eee27f6a6e9f$var$PREFIX = "SsoLoginPage";
+const $0af8eee27f6a6e9f$var$PREFIX = 'SsoLoginPage';
 const $0af8eee27f6a6e9f$export$388de65c72fa74b4 = {
     card: `${$0af8eee27f6a6e9f$var$PREFIX}-card`,
     avatar: `${$0af8eee27f6a6e9f$var$PREFIX}-avatar`,
     icon: `${$0af8eee27f6a6e9f$var$PREFIX}-icon`,
     switch: `${$0af8eee27f6a6e9f$var$PREFIX}-switch`
 };
-const $0af8eee27f6a6e9f$var$Root = (0, $4Uj5b$muimaterialstyles.styled)("div", {
+const $0af8eee27f6a6e9f$var$Root = (0, $4Uj5b$muimaterialstyles.styled)('div', {
     name: $0af8eee27f6a6e9f$var$PREFIX,
     overridesResolver: (props, styles)=>styles.root
 })(({ theme: theme })=>({
-        display: "flex",
-        flexDirection: "column",
-        minHeight: "100vh",
-        height: "1px",
-        alignItems: "center",
-        justifyContent: "flex-start",
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "cover",
-        backgroundImage: "radial-gradient(circle at 50% 14em, #313264 0%, #00023b 60%, #00023b 100%)",
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
+        height: '1px',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+        backgroundImage: 'radial-gradient(circle at 50% 14em, #313264 0%, #00023b 60%, #00023b 100%)',
         [`& .${$0af8eee27f6a6e9f$export$388de65c72fa74b4.card}`]: {
             minWidth: 300,
-            marginTop: "6em"
+            marginTop: '6em'
         },
         [`& .${$0af8eee27f6a6e9f$export$388de65c72fa74b4.avatar}`]: {
-            margin: "1em",
-            display: "flex",
-            justifyContent: "center"
+            margin: '1em',
+            display: 'flex',
+            justifyContent: 'center'
         },
         [`& .${$0af8eee27f6a6e9f$export$388de65c72fa74b4.icon}`]: {
             backgroundColor: theme.palette.secondary[500]
         },
         [`& .${$0af8eee27f6a6e9f$export$388de65c72fa74b4.switch}`]: {
-            marginBottom: "1em",
-            display: "flex",
-            justifyContent: "center"
+            marginBottom: '1em',
+            display: 'flex',
+            justifyContent: 'center'
         }
     }));
 $0af8eee27f6a6e9f$var$SsoLoginPage.defaultProps = {
@@ -1517,7 +1517,7 @@ $0af8eee27f6a6e9f$var$SsoLoginPage.defaultProps = {
             children: "Les Communs"
         })
     ],
-    userResource: "Person"
+    userResource: 'Person'
 };
 var $0af8eee27f6a6e9f$export$2e2bcd8739ae039 = $0af8eee27f6a6e9f$var$SsoLoginPage;
 
@@ -1610,12 +1610,12 @@ const $d1ca1e1d215e32ca$export$b6086dad7504ebad = (password, options = $d1ca1e1d
     const isLong = password.length >= mergedOptions.isLongLength;
     const isVeryLong = password.length >= mergedOptions.isVeryLongLength;
     const suggestions = [];
-    if (!hasLowercase) suggestions.push("add_lowercase_letters_a_z");
-    if (!hasUppercase) suggestions.push("add_uppercase_letters_a_z");
-    if (!hasNumbers) suggestions.push("add_numbers_0_9");
-    if (!hasSpecial) suggestions.push("add_special_characters");
-    if (!isLong) suggestions.push("make_it_at_least_8_characters_long");
-    else if (!isVeryLong) suggestions.push("make_it_at_least_14_characters_long_for_maximum_strength");
+    if (!hasLowercase) suggestions.push('add_lowercase_letters_a_z');
+    if (!hasUppercase) suggestions.push('add_uppercase_letters_a_z');
+    if (!hasNumbers) suggestions.push('add_numbers_0_9');
+    if (!hasSpecial) suggestions.push('add_special_characters');
+    if (!isLong) suggestions.push('make_it_at_least_8_characters_long');
+    else if (!isVeryLong) suggestions.push('make_it_at_least_14_characters_long_for_maximum_strength');
     return {
         score: score,
         suggestions: suggestions,
@@ -1647,7 +1647,7 @@ const $d1ca1e1d215e32ca$export$19dcdb21c6965fb8 = $d1ca1e1d215e32ca$export$a1d71
 const $eab41bc89667b2c6$var$validatePasswordStrength = (scorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8))=>(value)=>{
         if (!scorer) return undefined;
         const strength = scorer.scoreFn(value);
-        if (strength < scorer.minRequiredScore) return "auth.input.password_too_weak";
+        if (strength < scorer.minRequiredScore) return 'auth.input.password_too_weak';
         return undefined;
     };
 var $eab41bc89667b2c6$export$2e2bcd8739ae039 = $eab41bc89667b2c6$var$validatePasswordStrength;
@@ -1697,7 +1697,7 @@ function $bd29744006fdc23c$export$2e2bcd8739ae039(props) {
     const currentColor = $bd29744006fdc23c$var$colorGradient(fade, color1, color2);
     const StyledLinearProgress = (0, $4Uj5b$muistyles.withStyles)({
         colorPrimary: {
-            backgroundColor: "black" // '#e0e0e0'
+            backgroundColor: 'black' // '#e0e0e0'
         },
         barColorPrimary: {
             backgroundColor: currentColor
@@ -1728,16 +1728,16 @@ function $edfec7f9e9fd7881$export$2e2bcd8739ae039({ scorer: scorer = (0, $d1ca1e
 
 
 
-const $189e343500739785$export$439d29a4e110a164 = (0, $4Uj5b$muimaterialstyles.styled)("span")({
+const $189e343500739785$export$439d29a4e110a164 = (0, $4Uj5b$muimaterialstyles.styled)('span')({
     border: 0,
-    clip: "rect(0 0 0 0)",
-    height: "1px",
+    clip: 'rect(0 0 0 0)',
+    height: '1px',
     margin: -1,
-    overflow: "hidden",
+    overflow: 'hidden',
     padding: 0,
-    position: "absolute",
-    width: "1px",
-    whiteSpace: "nowrap"
+    position: 'absolute',
+    width: '1px',
+    whiteSpace: 'nowrap'
 });
 /**
  * Component that indicates a form field is required in an accessible way.
@@ -1768,7 +1768,7 @@ const $189e343500739785$export$439d29a4e110a164 = (0, $4Uj5b$muimaterialstyles.s
                 children: "*"
             }),
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($189e343500739785$export$439d29a4e110a164, {
-                children: translate("auth.input.required_field_description")
+                children: translate('auth.input.required_field_description')
             })
         ]
     });
@@ -1791,7 +1791,7 @@ var $189e343500739785$export$2e2bcd8739ae039 = $189e343500739785$var$RequiredFie
         onSubmit: handleSubmit,
         noValidate: true,
         defaultValues: {
-            email: searchParams.get("email")
+            email: searchParams.get('email')
         },
         children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($87a1f23cb4681f00$var$FormContent, {
             passwordScorer: passwordScorer,
@@ -1810,9 +1810,9 @@ const $87a1f23cb4681f00$var$FormContent = ({ passwordScorer: passwordScorer = (0
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
-    const redirectTo = searchParams.get("redirect") || "/";
+    const redirectTo = searchParams.get('redirect') || '/';
     const [locale] = (0, $4Uj5b$reactadmin.useLocaleState)();
-    const [password, setPassword] = (0, $4Uj5b$react.useState)("");
+    const [password, setPassword] = (0, $4Uj5b$react.useState)('');
     const formContext = (0, $4Uj5b$reacthookform.useFormContext)();
     const togglePassword = ()=>{
         setShowPassword(!showPassword);
@@ -1831,9 +1831,9 @@ const $87a1f23cb4681f00$var$FormContent = ({ passwordScorer: passwordScorer = (0
                     }, delayBeforeRedirect);
                 } catch (error) {
                     setLoading(false);
-                    notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "ra.auth.sign_in_error" : error.message, {
-                        type: "error",
-                        _: typeof error === "string" ? error : error?.message ? error.message : undefined
+                    notify(typeof error === 'string' ? error : typeof error === 'undefined' || !error.message ? 'ra.auth.sign_in_error' : error.message, {
+                        type: 'error',
+                        _: typeof error === 'string' ? error : error?.message ? error.message : undefined
                     });
                     formContext.reset({
                         ...values
@@ -1868,7 +1868,7 @@ const $87a1f23cb4681f00$var$FormContent = ({ passwordScorer: passwordScorer = (0
                 source: "username",
                 label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
                     children: [
-                        translate("auth.input.username"),
+                        translate('auth.input.username'),
                         /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
                     ]
                 }),
@@ -1876,45 +1876,45 @@ const $87a1f23cb4681f00$var$FormContent = ({ passwordScorer: passwordScorer = (0
                 fullWidth: true,
                 disabled: loading,
                 validate: [
-                    (0, $4Uj5b$reactadmin.required)(translate("auth.required.identifier")),
+                    (0, $4Uj5b$reactadmin.required)(translate('auth.required.identifier')),
                     (0, $4Uj5b$reactadmin.minLength)(2)
                 ],
                 format: (value)=>value ? (0, ($parcel$interopDefault($4Uj5b$speakingurl)))(value, {
-                        lang: locale || "fr",
-                        separator: "_",
+                        lang: locale || 'fr',
+                        separator: '_',
                         custom: [
-                            ".",
-                            "-",
-                            "0",
-                            "1",
-                            "2",
-                            "3",
-                            "4",
-                            "5",
-                            "6",
-                            "7",
-                            "8",
-                            "9"
+                            '.',
+                            '-',
+                            '0',
+                            '1',
+                            '2',
+                            '3',
+                            '4',
+                            '5',
+                            '6',
+                            '7',
+                            '8',
+                            '9'
                         ]
-                    }) : ""
+                    }) : ''
             }),
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
                 source: "email",
                 label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
                     children: [
-                        translate("auth.input.email"),
+                        translate('auth.input.email'),
                         /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
                     ]
                 }),
                 autoComplete: "email",
                 fullWidth: true,
-                disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
+                disabled: loading || searchParams.has('email') && searchParams.has('force-email'),
                 validate: [
-                    (0, $4Uj5b$reactadmin.required)("auth.required.email"),
+                    (0, $4Uj5b$reactadmin.required)('auth.required.email'),
                     (0, $4Uj5b$reactadmin.email)()
                 ]
             }),
-            passwordScorer && password && !(searchParams.has("email") && searchParams.has("force-email")) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
+            passwordScorer && password && !(searchParams.has('email') && searchParams.has('force-email')) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
                 children: [
                     /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Typography), {
                         variant: "caption",
@@ -1922,16 +1922,16 @@ const $87a1f23cb4681f00$var$FormContent = ({ passwordScorer: passwordScorer = (0
                             marginBottom: 3
                         },
                         children: [
-                            translate("auth.input.password_strength"),
+                            translate('auth.input.password_strength'),
                             ":",
-                            " "
+                            ' '
                         ]
                     }),
                     /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $edfec7f9e9fd7881$export$2e2bcd8739ae039), {
                         password: password,
                         scorer: passwordScorer,
                         sx: {
-                            width: "100%"
+                            width: '100%'
                         }
                     }),
                     passwordAnalysis && passwordAnalysis.suggestions.length > 0 && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Typography), {
@@ -1941,21 +1941,21 @@ const $87a1f23cb4681f00$var$FormContent = ({ passwordScorer: passwordScorer = (0
                         sx: {
                             mt: 1,
                             mb: 2,
-                            display: "flex",
-                            flexDirection: "column",
+                            display: 'flex',
+                            flexDirection: 'column',
                             gap: 0.5
                         },
                         children: [
-                            translate("auth.input.password_suggestions"),
+                            translate('auth.input.password_suggestions'),
                             ":",
                             passwordAnalysis.suggestions.map((suggestion, index)=>{
                                 const translationKey = `auth.input.password_suggestion.${suggestion}`;
                                 const translatedText = translate(translationKey);
                                 return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("span", {
                                     style: {
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: "4px"
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '4px'
                                     },
                                     children: [
                                         "\u2022 ",
@@ -1970,19 +1970,19 @@ const $87a1f23cb4681f00$var$FormContent = ({ passwordScorer: passwordScorer = (0
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("div", {
                 className: "password-container",
                 style: {
-                    position: "relative"
+                    position: 'relative'
                 },
                 children: [
                     /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
                         source: "password",
-                        type: showPassword ? "text" : "password",
+                        type: showPassword ? 'text' : 'password',
                         value: password,
                         onChange: (e)=>{
                             setPassword(e.target.value);
                         },
                         label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
                             children: [
-                                translate("ra.auth.password"),
+                                translate('ra.auth.password'),
                                 /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
                             ]
                         }),
@@ -1990,23 +1990,23 @@ const $87a1f23cb4681f00$var$FormContent = ({ passwordScorer: passwordScorer = (0
                         fullWidth: true,
                         disabled: loading,
                         validate: [
-                            (0, $4Uj5b$reactadmin.required)("auth.required.password"),
+                            (0, $4Uj5b$reactadmin.required)('auth.required.password'),
                             (0, $eab41bc89667b2c6$export$2e2bcd8739ae039)(passwordScorer)
                         ],
                         "aria-describedby": "signup-password-desc"
                     }),
                     /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$439d29a4e110a164), {
                         id: "signup-password-desc",
-                        children: translate("auth.input.password_description")
+                        children: translate('auth.input.password_description')
                     }),
                     /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.IconButton), {
-                        "aria-label": translate(showPassword ? "auth.action.hide_password" : "auth.action.show_password"),
+                        "aria-label": translate(showPassword ? 'auth.action.hide_password' : 'auth.action.show_password'),
                         onClick: togglePassword,
                         style: {
-                            position: "absolute",
-                            right: "8px",
-                            top: "17px",
-                            padding: "4px"
+                            position: 'absolute',
+                            right: '8px',
+                            top: '17px',
+                            padding: '4px'
                         },
                         size: "large",
                         children: showPassword ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.VisibilityOff), {}) : /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.Visibility), {})
@@ -2019,7 +2019,7 @@ const $87a1f23cb4681f00$var$FormContent = ({ passwordScorer: passwordScorer = (0
                 color: "primary",
                 disabled: loading,
                 fullWidth: true,
-                children: translate("auth.action.signup")
+                children: translate('auth.action.signup')
             })
         ]
     });
@@ -2042,7 +2042,7 @@ const $403a8b015c5eea65$var$LoginForm = ({ onLogin: onLogin, allowUsername: allo
         onSubmit: handleSubmit,
         noValidate: true,
         defaultValues: {
-            email: searchParams.get("email")
+            email: searchParams.get('email')
         },
         children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($403a8b015c5eea65$var$FormContent, {
             onLogin: onLogin,
@@ -2058,7 +2058,7 @@ const $403a8b015c5eea65$var$FormContent = ({ onLogin: onLogin, allowUsername: al
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
-    const redirectTo = searchParams.get("redirect") || "/";
+    const redirectTo = searchParams.get('redirect') || '/';
     const formContext = (0, $4Uj5b$reacthookform.useFormContext)();
     const togglePassword = ()=>{
         setShowPassword(!showPassword);
@@ -2072,10 +2072,10 @@ const $403a8b015c5eea65$var$FormContent = ({ onLogin: onLogin, allowUsername: al
                     else window.location.href = redirectTo;
                 } catch (error) {
                     setLoading(false);
-                    notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "ra.auth.sign_in_error" : error.message, {
-                        type: "error",
+                    notify(typeof error === 'string' ? error : typeof error === 'undefined' || !error.message ? 'ra.auth.sign_in_error' : error.message, {
+                        type: 'error',
                         messageArgs: {
-                            _: typeof error === "string" ? error : error?.message ? error.message : undefined
+                            _: typeof error === 'string' ? error : error?.message ? error.message : undefined
                         }
                     });
                     formContext.reset({
@@ -2099,54 +2099,54 @@ const $403a8b015c5eea65$var$FormContent = ({ onLogin: onLogin, allowUsername: al
                 source: "username",
                 label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
                     children: [
-                        translate(allowUsername ? "auth.input.username_or_email" : "auth.input.email"),
+                        translate(allowUsername ? 'auth.input.username_or_email' : 'auth.input.email'),
                         /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
                     ]
                 }),
                 autoComplete: "email",
                 fullWidth: true,
-                disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
-                format: (value)=>value ? value.toLowerCase() : "",
+                disabled: loading || searchParams.has('email') && searchParams.has('force-email'),
+                format: (value)=>value ? value.toLowerCase() : '',
                 validate: allowUsername ? [
-                    (0, $4Uj5b$reactadmin.required)(translate("auth.required.identifier"))
+                    (0, $4Uj5b$reactadmin.required)(translate('auth.required.identifier'))
                 ] : [
-                    (0, $4Uj5b$reactadmin.required)(translate("auth.required.identifier")),
+                    (0, $4Uj5b$reactadmin.required)(translate('auth.required.identifier')),
                     (0, $4Uj5b$reactadmin.email)()
                 ]
             }),
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("div", {
                 className: "password-container",
                 style: {
-                    position: "relative"
+                    position: 'relative'
                 },
                 children: [
                     /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
                         source: "password",
-                        type: showPassword ? "text" : "password",
+                        type: showPassword ? 'text' : 'password',
                         label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
                             children: [
-                                translate("ra.auth.password"),
+                                translate('ra.auth.password'),
                                 /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
                             ]
                         }),
                         autoComplete: "current-password",
                         fullWidth: true,
                         disabled: loading,
-                        validate: (0, $4Uj5b$reactadmin.required)(translate("auth.required.password")),
+                        validate: (0, $4Uj5b$reactadmin.required)(translate('auth.required.password')),
                         "aria-describedby": "password-desc"
                     }),
                     /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$439d29a4e110a164), {
                         id: "password-desc",
-                        children: translate("auth.input.password_description")
+                        children: translate('auth.input.password_description')
                     }),
                     /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.IconButton), {
-                        "aria-label": translate(showPassword ? "auth.action.hide_password" : "auth.action.show_password"),
+                        "aria-label": translate(showPassword ? 'auth.action.hide_password' : 'auth.action.show_password'),
                         onClick: togglePassword,
                         style: {
-                            position: "absolute",
-                            right: "8px",
-                            top: "17px",
-                            padding: "4px"
+                            position: 'absolute',
+                            right: '8px',
+                            top: '17px',
+                            padding: '4px'
                         },
                         size: "large",
                         children: showPassword ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.VisibilityOff), {}) : /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.Visibility), {})
@@ -2159,7 +2159,7 @@ const $403a8b015c5eea65$var$FormContent = ({ onLogin: onLogin, allowUsername: al
                 color: "primary",
                 disabled: loading,
                 fullWidth: true,
-                children: translate("auth.action.login")
+                children: translate('auth.action.login')
             })
         ]
     });
@@ -2181,7 +2181,7 @@ var $403a8b015c5eea65$export$2e2bcd8739ae039 = $403a8b015c5eea65$var$LoginForm;
 
 
 const $2f0ce992717e175e$var$samePassword = (value, allValues)=>{
-    if (value && value !== allValues.password) return "auth.input.password_mismatch";
+    if (value && value !== allValues.password) return 'auth.input.password_mismatch';
 };
 /**
  *
@@ -2197,7 +2197,7 @@ const $2f0ce992717e175e$var$samePassword = (value, allValues)=>{
         onSubmit: handleSubmit,
         noValidate: true,
         defaultValues: {
-            email: searchParams.get("email")
+            email: searchParams.get('email')
         },
         children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($2f0ce992717e175e$var$FormContent, {
             setHandleSubmit: setHandleSubmit,
@@ -2209,14 +2209,14 @@ const $2f0ce992717e175e$var$samePassword = (value, allValues)=>{
 const $2f0ce992717e175e$var$FormContent = ({ setHandleSubmit: setHandleSubmit, redirectTo: redirectTo, passwordScorer: passwordScorer })=>{
     const location = (0, $4Uj5b$reactrouterdom.useLocation)();
     const searchParams = new URLSearchParams(location.search);
-    const token = searchParams.get("token");
+    const token = searchParams.get('token');
     const [loading, setLoading] = (0, $4Uj5b$reactadmin.useSafeSetState)(false);
     const [showNewPassword, setShowNewPassword] = (0, $4Uj5b$react.useState)(false);
     const [showConfirmPassword, setShowConfirmPassword] = (0, $4Uj5b$react.useState)(false);
     const authProvider = (0, $4Uj5b$reactadmin.useAuthProvider)();
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
-    const [newPassword, setNewPassword] = (0, $4Uj5b$react.useState)("");
+    const [newPassword, setNewPassword] = (0, $4Uj5b$react.useState)('');
     const [passwordAnalysis, setPasswordAnalysis] = (0, $4Uj5b$react.useState)(null);
     const toggleNewPassword = ()=>{
         setShowNewPassword(!showNewPassword);
@@ -2232,21 +2232,21 @@ const $2f0ce992717e175e$var$FormContent = ({ setHandleSubmit: setHandleSubmit, r
                     token: token
                 }).then(()=>{
                     setTimeout(()=>{
-                        const url = new URL("/login", window.location.origin);
-                        if (redirectTo) url.searchParams.append("redirect", redirectTo);
-                        url.searchParams.append("email", values.email);
+                        const url = new URL('/login', window.location.origin);
+                        if (redirectTo) url.searchParams.append('redirect', redirectTo);
+                        url.searchParams.append('email', values.email);
                         window.location.href = url.toString();
                         setLoading(false);
                     }, 2000);
-                    notify("auth.notification.password_changed", {
-                        type: "info"
+                    notify('auth.notification.password_changed', {
+                        type: 'info'
                     });
                 }).catch((error)=>{
                     setLoading(false);
-                    notify(typeof error === "string" ? error : !error.message ? "auth.notification.reset_password_error" : error.message, {
-                        type: "warning",
+                    notify(typeof error === 'string' ? error : !error.message ? 'auth.notification.reset_password_error' : error.message, {
+                        type: 'warning',
                         messageArgs: {
-                            _: typeof error === "string" ? error : error && error.message ? error.message : undefined
+                            _: typeof error === 'string' ? error : error && error.message ? error.message : undefined
                         }
                     });
                 });
@@ -2268,15 +2268,15 @@ const $2f0ce992717e175e$var$FormContent = ({ setHandleSubmit: setHandleSubmit, r
                 source: "email",
                 label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
                     children: [
-                        translate("auth.input.email"),
+                        translate('auth.input.email'),
                         /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
                     ]
                 }),
                 autoComplete: "email",
                 fullWidth: true,
                 disabled: loading,
-                validate: (0, $4Uj5b$reactadmin.required)(translate("auth.required.newPassword")),
-                format: (value)=>value ? value.toLowerCase() : ""
+                validate: (0, $4Uj5b$reactadmin.required)(translate('auth.required.newPassword')),
+                format: (value)=>value ? value.toLowerCase() : ''
             }),
             passwordScorer && newPassword && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
                 children: [
@@ -2286,16 +2286,16 @@ const $2f0ce992717e175e$var$FormContent = ({ setHandleSubmit: setHandleSubmit, r
                             marginBottom: 3
                         },
                         children: [
-                            translate("auth.input.password_strength"),
+                            translate('auth.input.password_strength'),
                             ":",
-                            " "
+                            ' '
                         ]
                     }),
                     /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $edfec7f9e9fd7881$export$2e2bcd8739ae039), {
                         password: newPassword,
                         scorer: passwordScorer,
                         sx: {
-                            width: "100%"
+                            width: '100%'
                         }
                     }),
                     passwordAnalysis && passwordAnalysis.suggestions.length > 0 && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Typography), {
@@ -2305,20 +2305,20 @@ const $2f0ce992717e175e$var$FormContent = ({ setHandleSubmit: setHandleSubmit, r
                         sx: {
                             mt: 1,
                             mb: 2,
-                            display: "flex",
-                            flexDirection: "column",
+                            display: 'flex',
+                            flexDirection: 'column',
                             gap: 0.5
                         },
                         children: [
-                            translate("auth.input.password_suggestions"),
+                            translate('auth.input.password_suggestions'),
                             ":",
                             passwordAnalysis.suggestions.map((suggestion, index)=>{
                                 const translationKey = `auth.input.password_suggestion.${suggestion}`;
                                 return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("span", {
                                     style: {
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: "4px"
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '4px'
                                     },
                                     children: [
                                         "\u2022 ",
@@ -2333,17 +2333,17 @@ const $2f0ce992717e175e$var$FormContent = ({ setHandleSubmit: setHandleSubmit, r
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("div", {
                 className: "password-container",
                 style: {
-                    position: "relative"
+                    position: 'relative'
                 },
                 children: [
                     /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
                         autoFocus: true,
-                        type: showNewPassword ? "text" : "password",
+                        type: showNewPassword ? 'text' : 'password',
                         source: "password",
                         value: newPassword,
                         label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
                             children: [
-                                translate("auth.input.new_password"),
+                                translate('auth.input.new_password'),
                                 /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
                             ]
                         }),
@@ -2351,7 +2351,7 @@ const $2f0ce992717e175e$var$FormContent = ({ setHandleSubmit: setHandleSubmit, r
                         fullWidth: true,
                         disabled: loading,
                         validate: [
-                            (0, $4Uj5b$reactadmin.required)(translate("auth.required.newPasswordAgain")),
+                            (0, $4Uj5b$reactadmin.required)(translate('auth.required.newPasswordAgain')),
                             (0, $eab41bc89667b2c6$export$2e2bcd8739ae039)(passwordScorer)
                         ],
                         onChange: (e)=>{
@@ -2361,16 +2361,16 @@ const $2f0ce992717e175e$var$FormContent = ({ setHandleSubmit: setHandleSubmit, r
                     }),
                     /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$439d29a4e110a164), {
                         id: "new-password-desc",
-                        children: translate("auth.input.password_description")
+                        children: translate('auth.input.password_description')
                     }),
                     /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.IconButton), {
-                        "aria-label": translate(showNewPassword ? "auth.action.hide_password" : "auth.action.show_password"),
+                        "aria-label": translate(showNewPassword ? 'auth.action.hide_password' : 'auth.action.show_password'),
                         onClick: toggleNewPassword,
                         style: {
-                            position: "absolute",
-                            right: "8px",
-                            top: "17px",
-                            padding: "4px"
+                            position: 'absolute',
+                            right: '8px',
+                            top: '17px',
+                            padding: '4px'
                         },
                         size: "large",
                         children: showNewPassword ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.VisibilityOff), {}) : /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.Visibility), {})
@@ -2380,15 +2380,15 @@ const $2f0ce992717e175e$var$FormContent = ({ setHandleSubmit: setHandleSubmit, r
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("div", {
                 className: "password-container",
                 style: {
-                    position: "relative"
+                    position: 'relative'
                 },
                 children: [
                     /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
-                        type: showConfirmPassword ? "text" : "password",
+                        type: showConfirmPassword ? 'text' : 'password',
                         source: "confirm-password",
                         label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
                             children: [
-                                translate("auth.input.confirm_new_password"),
+                                translate('auth.input.confirm_new_password'),
                                 /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
                             ]
                         }),
@@ -2403,16 +2403,16 @@ const $2f0ce992717e175e$var$FormContent = ({ setHandleSubmit: setHandleSubmit, r
                     }),
                     /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$439d29a4e110a164), {
                         id: "confirm-password-desc",
-                        children: translate("auth.input.password_description")
+                        children: translate('auth.input.password_description')
                     }),
                     /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.IconButton), {
-                        "aria-label": translate(showConfirmPassword ? "auth.action.hide_password" : "auth.action.show_password"),
+                        "aria-label": translate(showConfirmPassword ? 'auth.action.hide_password' : 'auth.action.show_password'),
                         onClick: toggleConfirmPassword,
                         style: {
-                            position: "absolute",
-                            right: "8px",
-                            top: "17px",
-                            padding: "4px"
+                            position: 'absolute',
+                            right: '8px',
+                            top: '17px',
+                            padding: '4px'
                         },
                         size: "large",
                         children: showConfirmPassword ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.VisibilityOff), {}) : /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.Visibility), {})
@@ -2425,7 +2425,7 @@ const $2f0ce992717e175e$var$FormContent = ({ setHandleSubmit: setHandleSubmit, r
                 color: "primary",
                 disabled: loading,
                 fullWidth: true,
-                children: translate("auth.action.set_new_password")
+                children: translate('auth.action.set_new_password')
             })
         ]
     });
@@ -2460,15 +2460,15 @@ const $be1129164d40878e$var$FormContent = ({ setHandleSubmit: setHandleSubmit })
                     ...values
                 }).then(()=>{
                     setLoading(false);
-                    notify("auth.notification.reset_password_submitted", {
-                        type: "info"
+                    notify('auth.notification.reset_password_submitted', {
+                        type: 'info'
                     });
                 }).catch((error)=>{
                     setLoading(false);
-                    notify(typeof error === "string" ? error : !error.message ? "auth.notification.reset_password_error" : error.message, {
-                        type: "warning",
+                    notify(typeof error === 'string' ? error : !error.message ? 'auth.notification.reset_password_error' : error.message, {
+                        type: 'warning',
                         messageArgs: {
-                            _: typeof error === "string" ? error : error && error.message ? error.message : undefined
+                            _: typeof error === 'string' ? error : error && error.message ? error.message : undefined
                         }
                     });
                 });
@@ -2481,15 +2481,15 @@ const $be1129164d40878e$var$FormContent = ({ setHandleSubmit: setHandleSubmit })
                 source: "email",
                 label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
                     children: [
-                        translate("auth.input.email"),
+                        translate('auth.input.email'),
                         /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
                     ]
                 }),
                 autoComplete: "email",
                 fullWidth: true,
                 disabled: loading,
-                validate: (0, $4Uj5b$reactadmin.required)(translate("auth.required.email")),
-                format: (value)=>value ? value.toLowerCase() : ""
+                validate: (0, $4Uj5b$reactadmin.required)(translate('auth.required.email')),
+                format: (value)=>value ? value.toLowerCase() : ''
             }),
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
                 variant: "contained",
@@ -2497,7 +2497,7 @@ const $be1129164d40878e$var$FormContent = ({ setHandleSubmit: setHandleSubmit })
                 color: "primary",
                 disabled: loading,
                 fullWidth: true,
-                children: translate("auth.action.submit")
+                children: translate('auth.action.submit')
             })
         ]
     });
@@ -2511,29 +2511,29 @@ var $be1129164d40878e$export$2e2bcd8739ae039 = $be1129164d40878e$var$ResetPasswo
 
 
 const $d6b5c702311394c4$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))((theme)=>({
-        "@global": {
+        '@global': {
             body: {
                 backgroundColor: theme.palette.secondary.main
             }
         },
         root: {
             backgroundColor: theme.palette.secondary.main,
-            [theme.breakpoints.down("sm")]: {
-                padding: "1em"
+            [theme.breakpoints.down('sm')]: {
+                padding: '1em'
             }
         },
         card: {
-            width: "100%",
+            width: '100%',
             maxWidth: 450,
-            marginTop: "6em"
+            marginTop: '6em'
         },
         icon: {
             marginTop: 5,
             marginRight: 5
         },
         title: {
-            [theme.breakpoints.down("sm")]: {
-                fontWeight: "bold",
+            [theme.breakpoints.down('sm')]: {
+                fontWeight: 'bold',
                 marginTop: 12
             }
         }
@@ -2555,7 +2555,7 @@ const $d6b5c702311394c4$var$SimpleBox = ({ title: title, icon: icon, text: text,
                         justifyContent: "start",
                         children: [
                             icon && /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(icon, {
-                                fontSize: "large",
+                                fontSize: 'large',
                                 className: classes.icon
                             }),
                             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
@@ -2585,16 +2585,16 @@ var $d6b5c702311394c4$export$2e2bcd8739ae039 = $d6b5c702311394c4$var$SimpleBox;
 
 
 const $cd7709c431b14d14$var$USED_SEARCH_PARAMS = [
-    "signup",
-    "reset_password",
-    "new_password",
-    "email",
-    "force-email"
+    'signup',
+    'reset_password',
+    'new_password',
+    'email',
+    'force-email'
 ];
 const $cd7709c431b14d14$var$getSearchParamsRest = (searchParams)=>{
     const rest = [];
     for (const [key, value] of searchParams.entries())if (!$cd7709c431b14d14$var$USED_SEARCH_PARAMS.includes(key)) rest.push(`${key}=${encodeURIComponent(value)}`);
-    return rest.length > 0 ? rest.join("&") : "";
+    return rest.length > 0 ? rest.join('&') : '';
 };
 var $cd7709c431b14d14$export$2e2bcd8739ae039 = $cd7709c431b14d14$var$getSearchParamsRest;
 
@@ -2613,11 +2613,11 @@ var $cd7709c431b14d14$export$2e2bcd8739ae039 = $cd7709c431b14d14$var$getSearchPa
  */ const $4c56dbfbda0fa20c$var$LocalLoginPage = ({ hasSignup: hasSignup, allowUsername: allowUsername, onLogin: onLogin, onSignup: onSignup, additionalSignupValues: additionalSignupValues, passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8) })=>{
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
-    const isSignup = hasSignup && searchParams.has("signup");
-    const isResetPassword = searchParams.has("reset_password");
-    const isNewPassword = searchParams.has("new_password");
+    const isSignup = hasSignup && searchParams.has('signup');
+    const isResetPassword = searchParams.has('reset_password');
+    const isNewPassword = searchParams.has('new_password');
     const isLogin = !isSignup && !isResetPassword && !isNewPassword;
-    const redirectTo = searchParams.get("redirect") || "/";
+    const redirectTo = searchParams.get('redirect') || '/';
     const { data: identity, isLoading: isLoading } = (0, $4Uj5b$reactadmin.useGetIdentity)();
     (0, $4Uj5b$react.useEffect)(()=>{
         (async ()=>{
@@ -2634,20 +2634,20 @@ var $cd7709c431b14d14$export$2e2bcd8739ae039 = $cd7709c431b14d14$var$getSearchPa
     ]);
     const [title, text] = (0, $4Uj5b$react.useMemo)(()=>{
         if (isSignup) return [
-            "auth.action.signup",
-            "auth.helper.signup"
+            'auth.action.signup',
+            'auth.helper.signup'
         ];
         if (isLogin) return [
-            "auth.action.login",
-            "auth.helper.login"
+            'auth.action.login',
+            'auth.helper.login'
         ];
         if (isResetPassword) return [
-            "auth.action.reset_password",
-            "auth.helper.reset_password"
+            'auth.action.reset_password',
+            'auth.helper.reset_password'
         ];
         if (isNewPassword) return [
-            "auth.action.set_new_password",
-            "auth.helper.set_new_password"
+            'auth.action.set_new_password',
+            'auth.helper.set_new_password'
         ];
     }, [
         isSignup,
@@ -2679,9 +2679,9 @@ var $cd7709c431b14d14$export$2e2bcd8739ae039 = $cd7709c431b14d14$var$getSearchPa
                 }),
                 /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Box), {
                     sx: {
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
                         mt: -1,
                         mb: 2
                     },
@@ -2690,7 +2690,7 @@ var $cd7709c431b14d14$export$2e2bcd8739ae039 = $cd7709c431b14d14$var$getSearchPa
                             to: `/login?${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}`,
                             children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
                                 variant: "body2",
-                                children: translate("auth.action.login")
+                                children: translate('auth.action.login')
                             })
                         }),
                         isLogin && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
@@ -2700,7 +2700,7 @@ var $cd7709c431b14d14$export$2e2bcd8739ae039 = $cd7709c431b14d14$var$getSearchPa
                                         to: `/login?signup=true&${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}`,
                                         children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
                                             variant: "body2",
-                                            children: translate("auth.action.signup")
+                                            children: translate('auth.action.signup')
                                         })
                                     })
                                 }),
@@ -2709,7 +2709,7 @@ var $cd7709c431b14d14$export$2e2bcd8739ae039 = $cd7709c431b14d14$var$getSearchPa
                                         to: `/login?reset_password=true&${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}`,
                                         children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
                                             variant: "body2",
-                                            children: translate("auth.action.reset_password")
+                                            children: translate('auth.action.reset_password')
                                         })
                                     })
                                 })
@@ -2741,7 +2741,7 @@ const $0973974d3aa8078b$var$ResourceWithPermission = ({ name: name, create: crea
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Resource), {
         ...rest,
         name: name,
-        create: permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$65615a101bd6f5ca).includes(p["acl:mode"])) ? create : undefined
+        create: permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$65615a101bd6f5ca).includes(p['acl:mode'])) ? create : undefined
     });
 };
 var $0973974d3aa8078b$export$2e2bcd8739ae039 = $0973974d3aa8078b$var$ResourceWithPermission;
@@ -2774,7 +2774,7 @@ const $9734e84907c0d5dd$var$UserMenuItem = /*#__PURE__*/ (0, $4Uj5b$react.forwar
         children: [
             icon && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemIcon), {
                 children: /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(icon, {
-                    fontSize: "small"
+                    fontSize: 'small'
                 })
             }),
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemText), {
@@ -2787,7 +2787,7 @@ const $9734e84907c0d5dd$var$UserMenu = ({ logout: logout, profileResource: profi
     const { data: identity } = (0, $4Uj5b$reactadmin.useGetIdentity)();
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.UserMenu), {
         ...otherProps,
-        children: identity && identity.id !== "" ? [
+        children: identity && identity.id !== '' ? [
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($9734e84907c0d5dd$var$UserMenuItem, {
                 label: "auth.action.view_my_profile",
                 icon: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialAccountCircle))), {}),
@@ -2799,7 +2799,7 @@ const $9734e84907c0d5dd$var$UserMenu = ({ logout: logout, profileResource: profi
                 to: `/${profileResource}/${encodeURIComponent(identity?.profileData?.id || identity.id)}`
             }, "edit"),
             /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(logout, {
-                key: "logout"
+                key: 'logout'
             })
         ] : [
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($9734e84907c0d5dd$var$UserMenuItem, {
@@ -2815,7 +2815,7 @@ const $9734e84907c0d5dd$var$UserMenu = ({ logout: logout, profileResource: profi
 };
 $9734e84907c0d5dd$var$UserMenu.defaultProps = {
     logout: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Logout), {}),
-    profileResource: "Person"
+    profileResource: 'Person'
 };
 var $9734e84907c0d5dd$export$2e2bcd8739ae039 = $9734e84907c0d5dd$var$UserMenu;
 
@@ -2831,8 +2831,8 @@ const $84db3891236a263f$var$useCheckAuthenticated = (message)=>{
     const location = (0, $4Uj5b$reactrouterdom.useLocation)();
     (0, $4Uj5b$react.useEffect)(()=>{
         if (!isLoading && !identity?.id) {
-            notify(message || "ra.auth.auth_check_error", {
-                type: "error"
+            notify(message || 'ra.auth.auth_check_error', {
+                type: 'error'
             });
             redirect(`/login?redirect=${encodeURIComponent(location.pathname + location.search)}`);
         }
@@ -2859,7 +2859,7 @@ const $80da6dcda9baa28b$var$emptyParams = {};
 // keep a cache of already fetched permissions to initialize state for new
 // components and avoid a useless rerender if the permissions haven't changed
 const $80da6dcda9baa28b$var$alreadyFetchedPermissions = {
-    "{}": undefined
+    '{}': undefined
 };
 // Fork of usePermissionsOptimized, with a refetch option
 const $80da6dcda9baa28b$var$usePermissionsWithRefetch = (params = $80da6dcda9baa28b$var$emptyParams)=>{
@@ -2904,113 +2904,113 @@ var $80da6dcda9baa28b$export$2e2bcd8739ae039 = $80da6dcda9baa28b$var$usePermissi
 const $be2fdde9f3e3137d$var$englishMessages = {
     auth: {
         dialog: {
-            container_permissions: "Container permissions",
-            resource_permissions: "Resource permissions",
-            login_required: "Login required"
+            container_permissions: 'Container permissions',
+            resource_permissions: 'Resource permissions',
+            login_required: 'Login required'
         },
         action: {
-            submit: "Submit",
-            permissions: "Permissions",
-            signup: "Signup",
-            reset_password: "Reset password",
-            set_new_password: "Set new password",
-            logout: "Logout",
-            login: "Login",
-            view_my_profile: "View my profile",
-            edit_my_profile: "Edit my profile",
-            show_password: "Show password",
-            hide_password: "Hide password"
+            submit: 'Submit',
+            permissions: 'Permissions',
+            signup: 'Signup',
+            reset_password: 'Reset password',
+            set_new_password: 'Set new password',
+            logout: 'Logout',
+            login: 'Login',
+            view_my_profile: 'View my profile',
+            edit_my_profile: 'Edit my profile',
+            show_password: 'Show password',
+            hide_password: 'Hide password'
         },
         right: {
             resource: {
-                read: "Read",
-                append: "Append",
-                write: "Write",
-                control: "Control"
+                read: 'Read',
+                append: 'Append',
+                write: 'Write',
+                control: 'Control'
             },
             container: {
-                read: "List",
-                append: "Add",
-                write: "Add",
-                control: "Control"
+                read: 'List',
+                append: 'Add',
+                write: 'Add',
+                control: 'Control'
             }
         },
         agent: {
-            anonymous: "All users",
-            authenticated: "Connected users"
+            anonymous: 'All users',
+            authenticated: 'Connected users'
         },
         input: {
-            agent_select: "Add an user...",
-            name: "Surname",
-            username: "User ID",
-            email: "Email address",
-            username_or_email: "User ID or email address",
-            current_password: "Current password",
-            new_password: "New password",
-            confirm_new_password: "Confirm new password",
-            password_strength: "Password strength",
-            password_suggestions: "Suggestions to improve your password",
+            agent_select: 'Add an user...',
+            name: 'Surname',
+            username: 'User ID',
+            email: 'Email address',
+            username_or_email: 'User ID or email address',
+            current_password: 'Current password',
+            new_password: 'New password',
+            confirm_new_password: 'Confirm new password',
+            password_strength: 'Password strength',
+            password_suggestions: 'Suggestions to improve your password',
             password_suggestion: {
-                add_lowercase_letters_a_z: "Add lowercase letters (a-z)",
-                add_uppercase_letters_a_z: "Add uppercase letters (A-Z)",
-                add_numbers_0_9: "Add numbers (0-9)",
-                add_special_characters: "Add special characters (!@#$...)",
-                make_it_at_least_8_characters_long: "Make it at least 8 characters long",
-                make_it_at_least_14_characters_long_for_maximum_strength: "Make it at least 14 characters long for maximum strength"
+                add_lowercase_letters_a_z: 'Add lowercase letters (a-z)',
+                add_uppercase_letters_a_z: 'Add uppercase letters (A-Z)',
+                add_numbers_0_9: 'Add numbers (0-9)',
+                add_special_characters: 'Add special characters (!@#$...)',
+                make_it_at_least_8_characters_long: 'Make it at least 8 characters long',
+                make_it_at_least_14_characters_long_for_maximum_strength: 'Make it at least 14 characters long for maximum strength'
             },
-            password_too_weak: "Password too weak. Increase length or add special characters.",
-            password_mismatch: "The passwords you provided do not match.",
-            required_field: "Required field",
-            required_field_description: "This field is required",
-            password_description: "Characters you type will be visually hidden for security reasons"
+            password_too_weak: 'Password too weak. Increase length or add special characters.',
+            password_mismatch: 'The passwords you provided do not match.',
+            required_field: 'Required field',
+            required_field_description: 'This field is required',
+            password_description: 'Characters you type will be visually hidden for security reasons'
         },
         helper: {
-            login: "Sign in to your account",
-            signup: "Create your account",
-            reset_password: "Enter your email address below and we will send you a link to reset your password",
-            set_new_password: "Please enter your email address and a new password below"
+            login: 'Sign in to your account',
+            signup: 'Create your account',
+            reset_password: 'Enter your email address below and we will send you a link to reset your password',
+            set_new_password: 'Please enter your email address and a new password below'
         },
         message: {
-            resource_show_forbidden: "You are not allowed to view this resource",
-            resource_edit_forbidden: "You are not allowed to edit this resource",
-            resource_delete_forbidden: "You are not allowed to delete this resource",
-            resource_control_forbidden: "You are not allowed to control this resource",
-            container_create_forbidden: "You are not allowed to create new resource",
-            container_list_forbidden: "You are not allowed to list these resources",
-            unable_to_fetch_user_data: "Unable to fetch user data",
-            no_token_returned: "No token returned",
-            no_associated_oidc_issuer: "No OIDC issuer associated with the provided WebID",
-            invalid_token_returned: "Invalid token returned",
-            signup_error: "Account registration failed",
-            user_not_allowed_to_login: "You are not allowed to login with this account",
-            user_email_not_found: "No account found with this email address",
-            user_email_exist: "An account already exist with this email address",
-            username_exist: "An account already exist with this user ID",
-            username_invalid: "This username is invalid. Only lowercase characters, numbers, dots and hyphens are authorized",
-            new_user_created: "Your account has been successfully created",
-            user_connected: "You are now connected",
-            user_disconnected: "You are now disconnected",
-            bad_request: "Bad request (Error message returned by the server: %{error})",
-            account_settings_updated: "Your account settings have been successfully updated",
-            login_to_continue: "Please login to continue",
-            choose_pod_provider: "Please choose a Pod provider in the list below. All application data will be saved on your Pod.",
-            unreachable_auth_server: "The authentication server cannot be reached"
+            resource_show_forbidden: 'You are not allowed to view this resource',
+            resource_edit_forbidden: 'You are not allowed to edit this resource',
+            resource_delete_forbidden: 'You are not allowed to delete this resource',
+            resource_control_forbidden: 'You are not allowed to control this resource',
+            container_create_forbidden: 'You are not allowed to create new resource',
+            container_list_forbidden: 'You are not allowed to list these resources',
+            unable_to_fetch_user_data: 'Unable to fetch user data',
+            no_token_returned: 'No token returned',
+            no_associated_oidc_issuer: 'No OIDC issuer associated with the provided WebID',
+            invalid_token_returned: 'Invalid token returned',
+            signup_error: 'Account registration failed',
+            user_not_allowed_to_login: 'You are not allowed to login with this account',
+            user_email_not_found: 'No account found with this email address',
+            user_email_exist: 'An account already exist with this email address',
+            username_exist: 'An account already exist with this user ID',
+            username_invalid: 'This username is invalid. Only lowercase characters, numbers, dots and hyphens are authorized',
+            new_user_created: 'Your account has been successfully created',
+            user_connected: 'You are now connected',
+            user_disconnected: 'You are now disconnected',
+            bad_request: 'Bad request (Error message returned by the server: %{error})',
+            account_settings_updated: 'Your account settings have been successfully updated',
+            login_to_continue: 'Please login to continue',
+            choose_pod_provider: 'Please choose a Pod provider in the list below. All application data will be saved on your Pod.',
+            unreachable_auth_server: 'The authentication server cannot be reached'
         },
         notification: {
-            reset_password_submitted: "An email has been sent with reset password instructions",
-            reset_password_error: "An error occurred",
-            password_changed: "Password changed successfully",
-            new_password_error: "An error occurred",
-            invalid_password: "Invalid password",
-            get_settings_error: "An error occurred",
-            update_settings_error: "An error occurred"
+            reset_password_submitted: 'An email has been sent with reset password instructions',
+            reset_password_error: 'An error occurred',
+            password_changed: 'Password changed successfully',
+            new_password_error: 'An error occurred',
+            invalid_password: 'Invalid password',
+            get_settings_error: 'An error occurred',
+            update_settings_error: 'An error occurred'
         },
         required: {
-            email: "Please enter your email address",
-            password: "Please enter your password",
-            identifier: "Please enter a unique identifier",
-            newPassword: "Please enter a new password",
-            newPasswordAgain: "Please enter the new password again"
+            email: 'Please enter your email address',
+            password: 'Please enter your password',
+            identifier: 'Please enter a unique identifier',
+            newPassword: 'Please enter a new password',
+            newPasswordAgain: 'Please enter the new password again'
         }
     }
 };
@@ -3020,71 +3020,71 @@ var $be2fdde9f3e3137d$export$2e2bcd8739ae039 = $be2fdde9f3e3137d$var$englishMess
 const $6dbc362c3d93e01d$var$frenchMessages = {
     auth: {
         dialog: {
-            container_permissions: "Permissions sur le container",
-            resource_permissions: "Permissions sur la ressource",
-            login_required: "Connexion requise"
+            container_permissions: 'Permissions sur le container',
+            resource_permissions: 'Permissions sur la ressource',
+            login_required: 'Connexion requise'
         },
         action: {
-            submit: "Soumettre",
-            permissions: "Permissions",
+            submit: 'Soumettre',
+            permissions: 'Permissions',
             signup: "S'inscrire",
             reset_password: "Mot de passe oubli\xe9 ?",
             set_new_password: "D\xe9finir le mot de passe",
             logout: "Se d\xe9connecter",
-            login: "Se connecter",
-            view_my_profile: "Voir mon profil",
+            login: 'Se connecter',
+            view_my_profile: 'Voir mon profil',
             edit_my_profile: "\xc9diter mon profil",
-            show_password: "Afficher le mot de passe",
-            hide_password: "Masquer le mot de passe"
+            show_password: 'Afficher le mot de passe',
+            hide_password: 'Masquer le mot de passe'
         },
         right: {
             resource: {
-                read: "Lire",
-                append: "Enrichir",
-                write: "Modifier",
-                control: "Administrer"
+                read: 'Lire',
+                append: 'Enrichir',
+                write: 'Modifier',
+                control: 'Administrer'
             },
             container: {
-                read: "Lister",
-                append: "Ajouter",
-                write: "Ajouter",
-                control: "Administrer"
+                read: 'Lister',
+                append: 'Ajouter',
+                write: 'Ajouter',
+                control: 'Administrer'
             }
         },
         agent: {
-            anonymous: "Tous les utilisateurs",
+            anonymous: 'Tous les utilisateurs',
             authenticated: "Utilisateurs connect\xe9s"
         },
         input: {
-            agent_select: "Ajouter un utilisateur...",
+            agent_select: 'Ajouter un utilisateur...',
             name: "Pr\xe9nom",
-            username: "Identifiant unique",
-            email: "Adresse e-mail",
-            username_or_email: "Identifiant ou adresse e-mail",
-            current_password: "Mot de passe actuel",
-            new_password: "Nouveau mot de passe",
-            confirm_new_password: "Confirmer le nouveau mot de passe",
-            password_strength: "Force du mot de passe",
+            username: 'Identifiant unique',
+            email: 'Adresse e-mail',
+            username_or_email: 'Identifiant ou adresse e-mail',
+            current_password: 'Mot de passe actuel',
+            new_password: 'Nouveau mot de passe',
+            confirm_new_password: 'Confirmer le nouveau mot de passe',
+            password_strength: 'Force du mot de passe',
             password_suggestions: "Suggestions pour am\xe9liorer votre mot de passe",
             password_suggestion: {
-                add_lowercase_letters_a_z: "Ajouter des lettres minuscules (a-z)",
-                add_uppercase_letters_a_z: "Ajouter des lettres majuscules (A-Z)",
-                add_numbers_0_9: "Ajouter des chiffres (0-9)",
+                add_lowercase_letters_a_z: 'Ajouter des lettres minuscules (a-z)',
+                add_uppercase_letters_a_z: 'Ajouter des lettres majuscules (A-Z)',
+                add_numbers_0_9: 'Ajouter des chiffres (0-9)',
                 add_special_characters: "Ajouter des caract\xe8res sp\xe9ciaux (!@#$...)",
                 make_it_at_least_8_characters_long: "Faire au moins 8 caract\xe8res de long",
                 make_it_at_least_14_characters_long_for_maximum_strength: "Faire au moins 14 caract\xe8res de long pour une force maximale"
             },
             password_too_weak: "Mot de passe trop faible. Augmenter la longueur ou ajouter des caract\xe8res sp\xe9ciaux.",
             password_mismatch: "Mot de passe diff\xe9rent du premier",
-            required_field: "Champ obligatoire",
-            required_field_description: "Ce champ est obligatoire",
+            required_field: 'Champ obligatoire',
+            required_field_description: 'Ce champ est obligatoire',
             password_description: "Les caract\xe8res que vous tapez seront masqu\xe9s visuellement pour des raisons de s\xe9curit\xe9"
         },
         helper: {
             login: "Connectez-vous \xe0 votre compte.",
             signup: "Cr\xe9ez votre compte",
             reset_password: "Entrez votre adresse mail ci-dessous et nous vous enverrons un lien pour r\xe9initialiser votre mot de passe",
-            set_new_password: "Veuillez entrer votre adresse mail et un nouveau mot de passe ci-dessous"
+            set_new_password: 'Veuillez entrer votre adresse mail et un nouveau mot de passe ci-dessous'
         },
         message: {
             resource_show_forbidden: "Vous n'avez pas la permission de voir cette ressource",
@@ -3096,7 +3096,7 @@ const $6dbc362c3d93e01d$var$frenchMessages = {
             unable_to_fetch_user_data: "Impossible de r\xe9cup\xe9rer les donn\xe9es du profil",
             no_token_returned: "Aucun token a \xe9t\xe9 retourn\xe9",
             no_associated_oidc_issuer: "Aucun serveur de connexion associ\xe9 avec le WebID fourni",
-            invalid_token_returned: "Token invalide",
+            invalid_token_returned: 'Token invalide',
             signup_error: "L'inscription a \xe9chou\xe9",
             user_not_allowed_to_login: "Vous n'avez pas le droit de vous connecter avec ce compte",
             user_email_not_found: "Aucun compte trouv\xe9 avec cette adresse mail",
@@ -3108,7 +3108,7 @@ const $6dbc362c3d93e01d$var$frenchMessages = {
             user_disconnected: "Vous \xeates maintenant d\xe9connect\xe9",
             bad_request: "Requ\xeate erron\xe9e (Message d'erreur renvoy\xe9 par le serveur: %{error})",
             account_settings_updated: "Les param\xe8tres de votre compte ont \xe9t\xe9 mis \xe0 jour avec succ\xe8s",
-            login_to_continue: "Veuillez vous connecter pour continuer",
+            login_to_continue: 'Veuillez vous connecter pour continuer',
             choose_pod_provider: "Veuillez choisir un fournisseur de Pods dans la liste ci-dessous. Toutes les donn\xe9es de l'application seront enregistr\xe9es sur votre Pod.",
             unreachable_auth_server: "Le serveur de connexion ne peut \xeatre atteint"
         },
@@ -3117,16 +3117,16 @@ const $6dbc362c3d93e01d$var$frenchMessages = {
             reset_password_error: "Une erreur s'est produite",
             password_changed: "Le mot de passe a \xe9t\xe9 chang\xe9 avec succ\xe8s",
             new_password_error: "Une erreur s'est produite",
-            invalid_password: "Mot de passe incorrect",
+            invalid_password: 'Mot de passe incorrect',
             get_settings_error: "Une erreur s'est produite",
             update_settings_error: "Une erreur s'est produite"
         },
         required: {
-            email: "Veuillez entrer votre adresse e-mail",
-            password: "Veuillez entrer votre mot de passe",
-            identifier: "Veuillez entrer un identifiant unique",
-            newPassword: "Veuillez entrer un nouveau mot de passe",
-            newPasswordAgain: "Veuillez entrer le nouveau mot de passe encore une fois"
+            email: 'Veuillez entrer votre adresse e-mail',
+            password: 'Veuillez entrer votre mot de passe',
+            identifier: 'Veuillez entrer un identifiant unique',
+            newPassword: 'Veuillez entrer un nouveau mot de passe',
+            newPasswordAgain: 'Veuillez entrer le nouveau mot de passe encore une fois'
         }
     }
 };

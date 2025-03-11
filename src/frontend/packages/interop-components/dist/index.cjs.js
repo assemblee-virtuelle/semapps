@@ -56,10 +56,10 @@ const $3a4b4c603fe6b68b$var$useStyles = (0, ($parcel$interopDefault($as47w$muist
         }
     }));
 const $3a4b4c603fe6b68b$var$selectOptionText = (option, optionText)=>{
-    if (typeof option === "string") return option;
+    if (typeof option === 'string') return option;
     if (option.label) return option.label;
-    if (typeof optionText === "string") return option[optionText];
-    if (typeof optionText === "function") return optionText(option);
+    if (typeof optionText === 'string') return option[optionText];
+    if (typeof optionText === 'function') return optionText(option);
 };
 const $3a4b4c603fe6b68b$var$capitalizeFirstLetter = (string)=>string && string.charAt(0).toUpperCase() + string.slice(1);
 const $3a4b4c603fe6b68b$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $as47w$react.forwardRef)(({ fetchLexicon: fetchLexicon, source: source, defaultValue: defaultValue, label: label, parse: parse, optionText: optionText, helperText: helperText, ...rest }, ref)=>{
@@ -81,7 +81,7 @@ const $3a4b4c603fe6b68b$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $as47w$
                 keyword: keyword,
                 locale: locale
             }).then((data)=>callback(data)).catch((e)=>notify(e.message, {
-                    type: "error"
+                    type: 'error'
                 }));
         }, 200), [
         locale,
@@ -135,11 +135,11 @@ const $3a4b4c603fe6b68b$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $as47w$
             setOptions([]);
         },
         onInputChange: (event, newKeyword)=>setKeyword(newKeyword),
-        noOptionsText: translate("ra.navigation.no_results"),
+        noOptionsText: translate('ra.navigation.no_results'),
         renderInput: (params)=>{
             // Autocomplete=off doesn't work anymore in modern browsers
             // https://stackoverflow.com/a/40791726/7900695
-            params.inputProps.autoComplete = "new-password";
+            params.inputProps.autoComplete = 'new-password';
             return /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $as47w$muimaterial.TextField), {
                 ...params,
                 autoFocus: true,
@@ -153,7 +153,7 @@ const $3a4b4c603fe6b68b$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $as47w$
                         if (params.inputProps.onFocus) params.inputProps.onFocus(e);
                     }
                 },
-                label: label !== "" && label !== false && /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $as47w$reactadmin.FieldTitle), {
+                label: label !== '' && label !== false && /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $as47w$reactadmin.FieldTitle), {
                     label: label,
                     source: source,
                     resource: resource,
@@ -174,7 +174,7 @@ const $3a4b4c603fe6b68b$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $as47w$
                 container: true,
                 alignItems: "center",
                 ...props,
-                key: option.uri || "create",
+                key: option.uri || 'create',
                 children: [
                     /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $as47w$muimaterial.Grid), {
                         item: true,
@@ -186,7 +186,7 @@ const $3a4b4c603fe6b68b$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $as47w$
                         item: true,
                         xs: true,
                         children: [
-                            typeof parts === "string" ? parts : parts.map((part, index)=>/*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)("span", {
+                            typeof parts === 'string' ? parts : parts.map((part, index)=>/*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)("span", {
                                     style: {
                                         fontWeight: part.highlight ? 700 : 400
                                     },
@@ -205,7 +205,7 @@ const $3a4b4c603fe6b68b$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $as47w$
     });
 });
 $3a4b4c603fe6b68b$var$LexiconAutocompleteInput.defaultProps = {
-    optionText: "label"
+    optionText: 'label'
 };
 var $3a4b4c603fe6b68b$export$2e2bcd8739ae039 = $3a4b4c603fe6b68b$var$LexiconAutocompleteInput;
 
@@ -213,10 +213,10 @@ var $3a4b4c603fe6b68b$export$2e2bcd8739ae039 = $3a4b4c603fe6b68b$var$LexiconAuto
 const $af88cd35a927a884$var$LexiconCreateDialog = ({ fetchLexicon: fetchLexicon, selectData: selectData })=>{
     const { filter: filter, onCancel: onCancel, onCreate: onCreate } = (0, $as47w$reactadmin.useCreateSuggestionContext)();
     const resource = (0, $as47w$reactadmin.useResourceContext)();
-    const [value, setValue] = (0, $as47w$react.useState)(filter || "");
+    const [value, setValue] = (0, $as47w$react.useState)(filter || '');
     const [create] = (0, $as47w$reactadmin.useCreate)();
     const onClose = (0, $as47w$react.useCallback)(()=>{
-        setValue("");
+        setValue('');
         onCancel();
     }, [
         setValue,
@@ -230,8 +230,8 @@ const $af88cd35a927a884$var$LexiconCreateDialog = ({ fetchLexicon: fetchLexicon,
             data: selectData(value)
         }, {
             onSuccess: (data)=>{
-                console.log("onSuccess", data);
-                setValue("");
+                console.log('onSuccess', data);
+                setValue('');
                 onCreate(data);
             }
         });
@@ -303,9 +303,9 @@ const $3722be33fafb3622$var$useFork = (resourceId)=>{
         const strippedData = {
             ...remoteData
         };
-        strippedData["http://www.w3.org/ns/prov#wasDerivedFrom"] = strippedData.id;
+        strippedData['http://www.w3.org/ns/prov#wasDerivedFrom'] = strippedData.id;
         delete strippedData.id;
-        delete strippedData["@context"];
+        delete strippedData['@context'];
         stripProperties.forEach((prop)=>{
             delete strippedData[prop];
         });
@@ -314,7 +314,7 @@ const $3722be33fafb3622$var$useFork = (resourceId)=>{
         });
         redirect(`/${resourceId}/${encodeURIComponent(localData.id)}/show`);
         notify("La ressource a bien \xe9t\xe9 copi\xe9e", {
-            type: "success"
+            type: 'success'
         });
     }, [
         resourceId,
@@ -338,7 +338,7 @@ const $c0bd6c85f68e28e0$var$useSync = (resourceId)=>{
         });
         redirect(`/${resourceId}/${encodeURIComponent(remoteRecordUri)}/show`);
         notify("La ressource a bien \xe9t\xe9 import\xe9e", {
-            type: "success"
+            type: 'success'
         });
     }, [
         dataProvider,
@@ -351,18 +351,18 @@ var $c0bd6c85f68e28e0$export$2e2bcd8739ae039 = $c0bd6c85f68e28e0$var$useSync;
 
 const $eaef283c22eb901e$var$ImportFormInputs = ()=>{
     const resource = (0, $as47w$reactadmin.useResourceContext)();
-    const containers = (0, $as47w$semappssemanticdataprovider.useContainers)(resource, "@remote");
+    const containers = (0, $as47w$semappssemanticdataprovider.useContainers)(resource, '@remote');
     const dataModel = (0, $as47w$semappssemanticdataprovider.useDataModel)(resource);
     const { watch: watch, setValue: setValue } = (0, $as47w$reacthookform.useFormContext)();
-    const watchRemoteUri = watch("remoteUri");
-    const watchPlainUri = watch("plainUri");
+    const watchRemoteUri = watch('remoteUri');
+    const watchPlainUri = watch('plainUri');
     (0, $as47w$react.useEffect)(()=>{
-        if (watchRemoteUri) setValue("plainUri", watchRemoteUri);
+        if (watchRemoteUri) setValue('plainUri', watchRemoteUri);
     }, [
         watchRemoteUri
     ]);
     (0, $as47w$react.useEffect)(()=>{
-        if (watchPlainUri && watchPlainUri !== watchRemoteUri) setValue("remoteUri", null);
+        if (watchPlainUri && watchPlainUri !== watchRemoteUri) setValue('remoteUri', null);
     }, [
         watchRemoteUri,
         watchPlainUri
@@ -374,7 +374,7 @@ const $eaef283c22eb901e$var$ImportFormInputs = ()=>{
                 source: "remoteUri",
                 reference: resource,
                 filter: {
-                    _servers: "@remote",
+                    _servers: '@remote',
                     _predicates: [
                         dataModel?.fieldsMapping?.title
                     ]
@@ -399,11 +399,11 @@ const $eaef283c22eb901e$var$ImportFormInputs = ()=>{
                 label: "M\xe9thode d'importation",
                 choices: [
                     {
-                        id: "sync",
+                        id: 'sync',
                         name: "Garder la ressource locale synchronis\xe9e avec la ressource distante"
                     },
                     {
-                        id: "fork",
+                        id: 'fork',
                         name: "Cr\xe9er une nouvelle version de la ressource (fork)"
                     }
                 ]
@@ -416,7 +416,7 @@ const $eaef283c22eb901e$var$ImportForm = ({ stripProperties: stripProperties })=
     const fork = (0, $3722be33fafb3622$export$2e2bcd8739ae039)(resource);
     const sync = (0, $c0bd6c85f68e28e0$export$2e2bcd8739ae039)(resource);
     const onSubmit = (0, $as47w$react.useCallback)(async ({ plainUri: plainUri, method: method })=>{
-        if (method === "fork") await fork(plainUri, stripProperties);
+        if (method === 'fork') await fork(plainUri, stripProperties);
         else await sync(plainUri);
     }, [
         fork,
@@ -426,7 +426,7 @@ const $eaef283c22eb901e$var$ImportForm = ({ stripProperties: stripProperties })=
     return /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $as47w$reactadmin.SimpleForm), {
         onSubmit: onSubmit,
         defaultValues: {
-            method: "sync"
+            method: 'sync'
         },
         children: /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)($eaef283c22eb901e$var$ImportFormInputs, {})
     });
@@ -436,14 +436,14 @@ var $eaef283c22eb901e$export$2e2bcd8739ae039 = $eaef283c22eb901e$var$ImportForm;
 
 const $fb5291a8e3f7cfea$var$useStyles = (0, ($parcel$interopDefault($as47w$muistylesmakeStyles)))(()=>({
         tab: {
-            maxWidth: "unset",
-            padding: "6px 24px"
+            maxWidth: 'unset',
+            padding: '6px 24px'
         }
     }));
 const $fb5291a8e3f7cfea$var$CreateOrImportForm = ({ stripProperties: stripProperties, ...rest })=>{
     const [tab, setTab] = (0, $as47w$react.useState)(0);
     const classes = $fb5291a8e3f7cfea$var$useStyles();
-    const xs = (0, $as47w$muimaterial.useMediaQuery)((theme)=>theme.breakpoints.down("sm"), {
+    const xs = (0, $as47w$muimaterial.useMediaQuery)((theme)=>theme.breakpoints.down('sm'), {
         noSsr: true
     });
     return /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsxs)((0, $as47w$reactjsxruntime.Fragment), {
@@ -462,7 +462,7 @@ const $fb5291a8e3f7cfea$var$CreateOrImportForm = ({ stripProperties: stripProper
                             }),
                             /*#__PURE__*/ (0, $as47w$reactjsxruntime.jsx)((0, $as47w$muimaterial.Tab), {
                                 className: classes.tab,
-                                label: xs ? "Importer" : "Importer une ressource distante"
+                                label: xs ? 'Importer' : 'Importer une ressource distante'
                             })
                         ]
                     }),
@@ -494,7 +494,7 @@ const $80075ef971c3d1de$var$LexiconImportForm = ({ fetchLexicon: fetchLexicon, s
         // Delete the summary as it is "Ajouter XXX au dictionaire"
         if (!lexicon.uri) delete lexicon.summary;
         // If the user doesn't select any option, use the text as the label
-        if (typeof lexicon === "string") lexicon = {
+        if (typeof lexicon === 'string') lexicon = {
             label: lexicon
         };
         await save(selectData(lexicon));
@@ -517,8 +517,8 @@ var $80075ef971c3d1de$export$2e2bcd8739ae039 = $80075ef971c3d1de$var$LexiconImpo
 
 
 
-const $32077f9119e727a8$var$capitalize = (s)=>s && s[0].toUpperCase() + s.slice(1) || "";
-const $32077f9119e727a8$var$fetchWikidata = (apiUrl = "https://www.wikidata.org/w/api.php")=>async ({ keyword: keyword, locale: locale })=>{
+const $32077f9119e727a8$var$capitalize = (s)=>s && s[0].toUpperCase() + s.slice(1) || '';
+const $32077f9119e727a8$var$fetchWikidata = (apiUrl = 'https://www.wikidata.org/w/api.php')=>async ({ keyword: keyword, locale: locale })=>{
         const response = await fetch(`${apiUrl}?action=wbsearchentities&format=json&language=${locale}&uselang=${locale}&type=item&limit=10&origin=*&search=${encodeURIComponent(keyword)}`);
         if (response.ok) {
             const json = await response.json();
@@ -529,15 +529,15 @@ const $32077f9119e727a8$var$fetchWikidata = (apiUrl = "https://www.wikidata.org/
                     icon: (0, ($parcel$interopDefault($as47w$muiiconsmaterialLanguage)))
                 }));
         }
-        throw new Error("Failed to fetch Wikidata server");
+        throw new Error('Failed to fetch Wikidata server');
     };
 var $32077f9119e727a8$export$2e2bcd8739ae039 = $32077f9119e727a8$var$fetchWikidata;
 
 
 
 
-const $17a31747492cb646$var$capitalize = (s)=>s && s[0].toUpperCase() + s.slice(1) || "";
-const $17a31747492cb646$var$fetchESCO = (apiUrl = "https://ec.europa.eu/esco/api", type = "skill")=>async ({ keyword: keyword, locale: locale })=>{
+const $17a31747492cb646$var$capitalize = (s)=>s && s[0].toUpperCase() + s.slice(1) || '';
+const $17a31747492cb646$var$fetchESCO = (apiUrl = 'https://ec.europa.eu/esco/api', type = 'skill')=>async ({ keyword: keyword, locale: locale })=>{
         const response = await fetch((0, ($parcel$interopDefault($as47w$urljoin)))(apiUrl, `suggest2?text=${encodeURIComponent(keyword)}&language=${locale}&type=${type}&isInScheme=&facet=&offset=&limit=&full=&selectedVersion=&viewObsolete=`));
         if (response.ok) {
             const json = await response.json();
@@ -547,7 +547,7 @@ const $17a31747492cb646$var$fetchESCO = (apiUrl = "https://ec.europa.eu/esco/api
                     icon: (0, ($parcel$interopDefault($as47w$muiiconsmaterialStarBorder)))
                 }));
         }
-        throw new Error("Failed to fetch ESCO server");
+        throw new Error('Failed to fetch ESCO server');
     };
 var $17a31747492cb646$export$2e2bcd8739ae039 = $17a31747492cb646$var$fetchESCO;
 

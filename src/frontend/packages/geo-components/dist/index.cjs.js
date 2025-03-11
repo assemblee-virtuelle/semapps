@@ -54,17 +54,17 @@ const $7a57fad6c56283a6$var$StyledLocationOnIcon = (0, $CiwlJ$muisystem.styled)(
     }));
 const $7a57fad6c56283a6$var$selectOptionText = (option, optionText)=>{
     if (option.place_name) return option.place_name;
-    if (typeof optionText === "string") return option[optionText];
-    if (typeof optionText === "function") return optionText(option);
+    if (typeof optionText === 'string') return option[optionText];
+    if (typeof optionText === 'function') return optionText(option);
 };
 const $7a57fad6c56283a6$var$LocationInput = ({ mapboxConfig: mapboxConfig, source: source, label: label, parse: parse, optionText: optionText, helperText: helperText, ...rest })=>{
-    if (!mapboxConfig) throw new Error("@semapps/geo-components : No mapbox configuration");
-    if (!mapboxConfig.access_token) throw new Error("@semapps/geo-components : No access token in mapbox configuration");
+    if (!mapboxConfig) throw new Error('@semapps/geo-components : No mapbox configuration');
+    if (!mapboxConfig.access_token) throw new Error('@semapps/geo-components : No access token in mapbox configuration');
     const record = (0, $CiwlJ$reactadmin.useRecordContext)();
     const resource = (0, $CiwlJ$reactadmin.useResourceContext)();
     const locale = (0, $CiwlJ$reactadmin.useLocale)();
     const translate = (0, $CiwlJ$reactadmin.useTranslate)();
-    const [keyword, setKeyword] = (0, $CiwlJ$react.useState)(""); // Typed keywords
+    const [keyword, setKeyword] = (0, $CiwlJ$react.useState)(''); // Typed keywords
     const [options, setOptions] = (0, $CiwlJ$react.useState)([]); // Options returned by MapBox
     // Do not pass the `parse` prop to useInput, as we manually call it on the onChange prop below
     const { field: { value: value, onChange: onChange, onBlur: onBlur /* , onFocus */  }, isRequired: isRequired, fieldState: { error: error, isTouched: /* submitError, */ isTouched } } = (0, $CiwlJ$reactadmin.useInput)({
@@ -78,8 +78,8 @@ const $7a57fad6c56283a6$var$LocationInput = ({ mapboxConfig: mapboxConfig, sourc
             if (!mapboxConfig.language) mapboxConfig.language = locale;
             // All options available at https://docs.mapbox.com/api/search/geocoding/#forward-geocoding
             Object.entries(mapboxConfig).forEach(([key, value])=>{
-                if (Array.isArray(value)) value = value.join(",");
-                else if (typeof value === "boolean") value = value ? "true" : "false";
+                if (Array.isArray(value)) value = value.join(',');
+                else if (typeof value === 'boolean') value = value ? 'true' : 'false';
                 fetchUrl.searchParams.set(key, value);
             });
             fetch(fetchUrl.toString()).then((res)=>res.json()).then((json)=>callback(json));
@@ -119,11 +119,11 @@ const $7a57fad6c56283a6$var$LocationInput = ({ mapboxConfig: mapboxConfig, sourc
             setOptions([]);
         },
         onInputChange: (event, newKeyword)=>setKeyword(newKeyword),
-        noOptionsText: translate("ra.navigation.no_results"),
+        noOptionsText: translate('ra.navigation.no_results'),
         renderInput: (params)=>{
             // Autocomplete=off doesn't work anymore in modern browsers
             // https://stackoverflow.com/a/40791726/7900695
-            params.inputProps.autoComplete = "new-password";
+            params.inputProps.autoComplete = 'new-password';
             return /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$muimaterial.TextField), {
                 ...params,
                 inputProps: {
@@ -139,7 +139,7 @@ const $7a57fad6c56283a6$var$LocationInput = ({ mapboxConfig: mapboxConfig, sourc
                 }
               } */ 
                 },
-                label: label !== "" && label !== false && /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactadmin.FieldTitle), {
+                label: label !== '' && label !== false && /*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)((0, $CiwlJ$reactadmin.FieldTitle), {
                     label: label,
                     source: source,
                     resource: resource,
@@ -171,7 +171,7 @@ const $7a57fad6c56283a6$var$LocationInput = ({ mapboxConfig: mapboxConfig, sourc
                             item: true,
                             xs: true,
                             children: [
-                                typeof parts === "string" ? parts : parts.map((part, index)=>/*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)("span", {
+                                typeof parts === 'string' ? parts : parts.map((part, index)=>/*#__PURE__*/ (0, $CiwlJ$reactjsxruntime.jsx)("span", {
                                         style: {
                                             fontWeight: part.highlight ? 700 : 400
                                         },
@@ -192,8 +192,8 @@ const $7a57fad6c56283a6$var$LocationInput = ({ mapboxConfig: mapboxConfig, sourc
     });
 };
 $7a57fad6c56283a6$var$LocationInput.defaultProps = {
-    variant: "outlined",
-    size: "small"
+    variant: 'outlined',
+    size: 'small'
 };
 var $7a57fad6c56283a6$export$2e2bcd8739ae039 = $7a57fad6c56283a6$var$LocationInput;
 
@@ -215,7 +215,7 @@ function $7390fd757b2ce4b0$var$createMarkerCluster({ children: _c, ...props }, c
     const clusterProps = {};
     const clusterEvents = {};
     // Splitting props and events to different objects
-    Object.entries(props).forEach(([propName, prop])=>propName.startsWith("on") ? clusterEvents[propName] = prop : clusterProps[propName] = prop);
+    Object.entries(props).forEach(([propName, prop])=>propName.startsWith('on') ? clusterEvents[propName] = prop : clusterProps[propName] = prop);
     const instance = new (0, ($parcel$interopDefault($CiwlJ$leaflet))).MarkerClusterGroup(clusterProps);
     // Initializing event listeners
     Object.entries(clusterEvents).forEach(([eventAsProp, callback])=>{
@@ -294,7 +294,7 @@ var $4340bf725cfbb626$export$2e2bcd8739ae039 = $4340bf725cfbb626$var$QueryString
 
 const $31c59492060af504$var$useStyles = (0, ($parcel$interopDefault($CiwlJ$muistylesmakeStyles)))(()=>({
         closeButton: {
-            position: "absolute",
+            position: 'absolute',
             zIndex: 1400,
             top: 0,
             right: 0
@@ -338,19 +338,19 @@ var $31c59492060af504$export$2e2bcd8739ae039 = $31c59492060af504$var$MobileDrawe
 const $3929b9df2dd76406$var$useStyles = (0, ($parcel$interopDefault($CiwlJ$muistylesmakeStyles)))(()=>({
         isLoading: {
             zIndex: 1000,
-            position: "absolute",
+            position: 'absolute',
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center"
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
         }
     }));
 const $3929b9df2dd76406$var$MapList = ({ latitude: latitude, longitude: longitude, label: label, description: description, popupContent: popupContent, height: height, center: center, zoom: zoom, groupClusters: groupClusters, boundToMarkers: boundToMarkers, connectMarkers: connectMarkers, ...otherProps })=>{
     const { data: data, isLoading: isLoading } = (0, $CiwlJ$reactadmin.useListContext)();
-    const xs = (0, $CiwlJ$muimaterial.useMediaQuery)((theme)=>theme.breakpoints.down("sm"), {
+    const xs = (0, $CiwlJ$muimaterial.useMediaQuery)((theme)=>theme.breakpoints.down('sm'), {
         noSsr: true
     });
     const [drawerRecord, setDrawerRecord] = (0, $CiwlJ$react.useState)(null);
@@ -358,11 +358,11 @@ const $3929b9df2dd76406$var$MapList = ({ latitude: latitude, longitude: longitud
     // Get the zoom and center from query string, if available
     const location = (0, $CiwlJ$reactrouterdom.useLocation)();
     const query = new URLSearchParams(location.search);
-    center = query.has("lat") && query.has("lng") ? [
-        query.get("lat"),
-        query.get("lng")
+    center = query.has('lat') && query.has('lng') ? [
+        query.get('lat'),
+        query.get('lng')
     ] : center;
-    zoom = query.has("zoom") ? query.get("zoom") : zoom;
+    zoom = query.has('zoom') ? query.get('zoom') : zoom;
     let previousRecord;
     const records = isLoading ? [] : data.map((record)=>({
             ...record,
