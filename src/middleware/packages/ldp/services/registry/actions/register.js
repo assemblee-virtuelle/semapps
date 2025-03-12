@@ -30,7 +30,7 @@ module.exports = {
         throw new Error('If you use shapeTreeUri in container options, you need the shape-trees and shacl service');
 
       try {
-        const shapeUri = await ctx.call('shape-trees.getShape', { resourceUri: options.shapeTreeUri });
+        const shapeUri = await ctx.call('shape-trees.getShapeUri', { resourceUri: options.shapeTreeUri });
         const [shapeType] = await ctx.call('shacl.getTypes', { resourceUri: shapeUri });
         options.acceptedTypes = shapeType;
       } catch (e) {
