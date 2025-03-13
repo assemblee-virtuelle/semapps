@@ -37,19 +37,21 @@ module.exports = {
     api_removeMember: removeMemberAction.api
   },
   async started() {
+    const superAdminsGroupUri = urlJoin(this.settings.baseUrl, '_groups', 'superadmins');
+
     if (!this.settings.podProvider) {
       // Remove existing superAdmins users in database if they are not listed in superAdmins setting
       const superAdmins = Array.isArray(this.settings.superAdmins) ? this.settings.superAdmins : [];
-      const groupUri = urlJoin(this.settings.baseUrl, '_groups', 'superadmins');
+
       const members = await this.actions.getMembers({
-        groupUri,
+        groupUri: superAdminsGroupUri,
         webId: 'system'
       });
 
       await Promise.all(
         members
           .filter(memberUri => !superAdmins.includes(memberUri))
-          .map(memberUri => this.actions.removeMember({ groupUri, memberUri, webId: 'system' }))
+          .map(memberUri => this.actions.removeMember({ groupUri: superAdminsGroupUri, memberUri, webId: 'system' }))
       );
     }
 
@@ -80,14 +82,14 @@ module.exports = {
         resourceUri: this.settings.baseUrl,
         additionalRights: {
           group: {
-            uri: groupUri,
+            uri: superAdminsGroupUri,
             read: true,
             write: true,
             control: true
           },
           default: {
             group: {
-              uri: groupUri,
+              uri: superAdminsGroupUri,
               read: true,
               write: true,
               control: true
@@ -99,14 +101,14 @@ module.exports = {
 
       for (const memberUri of this.settings.superAdmins) {
         const isMember = await this.actions.isMember({
-          groupUri,
+          groupUri: superAdminsGroupUri,
           memberId: memberUri,
           webId: 'system'
         });
 
         if (!isMember) {
           this.logger.info(`User ${memberUri} is not member of superadmins group, adding it...`);
-          await this.actions.addMember({ groupUri, memberUri, webId: 'system' });
+          await this.actions.addMember({ groupUri: superAdminsGroupUri, memberUri, webId: 'system' });
         }
       }
     }

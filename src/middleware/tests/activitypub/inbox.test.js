@@ -55,7 +55,6 @@ describe('Permissions are correctly set on inbox', () => {
     await expect(
       broker.call('activitypub.collection.get', {
         resourceUri,
-        page: 1,
         webId: 'anon'
       })
     ).rejects.toThrow('Not found');
