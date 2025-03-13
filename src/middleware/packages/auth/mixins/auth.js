@@ -3,7 +3,6 @@ const { Errors: E } = require('moleculer-web');
 const { TripleStoreAdapter } = require('@semapps/triplestore');
 const AuthAccountService = require('../services/account');
 const AuthJWTService = require('../services/jwt');
-const CapabilitiesService = require('../services/capabilities');
 
 /**
  * Auth Mixin that handles authentication and authorization for routes
@@ -87,10 +86,6 @@ const AuthMixin = {
       settings: { reservedUsernames },
       adapter: new TripleStoreAdapter({ type: 'AuthAccount', dataset: accountsDataset })
     });
-
-    if (podProvider) {
-      this.broker.createService({ mixins: [CapabilitiesService], settings: { path: this.settings.capabilitiesPath } });
-    }
   },
   async started() {
     if (!this.passportId) throw new Error('this.passportId must be set in the service creation.');
@@ -163,28 +158,23 @@ const AuthMixin = {
         // with embedded signatures. This way, the signature persists within the resource.
 
         // Decode JTW to JSON.
-        const decodedToken = await ctx.call('jwt.decodeToken');
+        const decodedToken = await ctx.call('auth.jwt.decodeToken');
         if (!decodedToken) return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
 
         // Verify that decoded JSON token is a signed VC presentation for a capability.
-        const { verified: isCapSignatureVerified, presentation: verifiedPresentation } = await ctx.call(
-          'crypto.vc.verifier.verifyCapabilityPresentation',
-          {
-            presentation: decodedToken
-          }
-        );
+        const {
+          verified: isCapSignatureVerified,
+          presentation: verifiedPresentation,
+          presentationResult
+        } = await ctx.call('crypto.vc.verifier.verifyCapabilityPresentation', {
+          presentation: decodedToken
+        });
         if (!isCapSignatureVerified) return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
 
-        // VC Presentation is signed correctly.
-        // The verification methods (keys) used for signing, belong to the claimed
-        // controller (webID). The controller identifier document (in our case the webId)
-        // lists the used verification method, for the given purpose (`assertionMethod`).
+        // VC Capability is verified.
 
-        // We don't have the "who is invoking" information. And set webId to anon.
-        // TODO: Is ctx.meta and req.$ctx.meta the same?
-        ctx.meta.webId = 'anon';
-        req.$ctx.meta.webId = 'anon';
-        req.$ctx.meta.authorization = { capabilityPresentation: verifiedPresentation };
+        ctx.meta.webId = presentationResult?.results?.[0]?.purposeResult?.holder || 'anon';
+        ctx.meta.authorization = { capabilityPresentation: verifiedPresentation };
 
         return Promise.resolve(verifiedPresentation);
       }

@@ -97,6 +97,7 @@ const VCApiService = {
      * See: https://github.com/w3c-ccg/vc-api/issues/459
      *
      * TODO: Write job to attach those triples to existing webIds.
+     * TODO: Register semapps vc api endpoint type.
      */
     async 'auth.registered'(ctx) {
       const { webId } = ctx.params;

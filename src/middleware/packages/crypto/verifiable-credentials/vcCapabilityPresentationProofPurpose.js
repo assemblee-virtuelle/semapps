@@ -31,6 +31,7 @@ class VCCapabilityPresentationProofPurpose extends AuthenticationProofPurpose {
    * @throws {Error} If the subject of the last VC in the chain is not the invoker / signer of the presentation.
    *                 If there is only one VC and no `credentialSubject.id` is present, this is allowed.
    * @throws {Error} If any credential is missing an issuance or proof.created field.
+   * @throws {Error} The holder in the presentation is set and does not match the controller.
    * @throws {Error} If there is no VC present in the presentation.
    * @throws {Error} If any `credentialSubject` is missing or does not have an id.
    * @throws {Error} If the content of the `credentialSubject`s of the VCs in the capability chain do not match.
@@ -62,6 +63,10 @@ class VCCapabilityPresentationProofPurpose extends AuthenticationProofPurpose {
           error: new Error('VC is missing an issuanceDate or proof.created field.')
         };
       }
+    }
+
+    if (presentation.holder && presentation.holder !== controllerDocument.id) {
+      return { valid: false, error: new Error("VP holder does not match the proof's controller.") };
     }
 
     // Sort credentials so that we can infer the order of the capability chain.
@@ -133,7 +138,7 @@ class VCCapabilityPresentationProofPurpose extends AuthenticationProofPurpose {
       previousSubject = currentSubject;
     }
 
-    return superResult;
+    return { ...superResult, holder: controllerDocument.id };
   }
 }
 

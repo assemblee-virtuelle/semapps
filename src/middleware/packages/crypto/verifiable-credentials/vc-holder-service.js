@@ -111,7 +111,7 @@ const VCHolderService = {
           ...vc.createPresentation({
             type: ['VerifiablePresentation'],
             ...presentationParam,
-            holder: presentationParam?.holder === webId ? presentationParam.holder : undefined
+            holder: presentationParam?.holder || webId
           })
         };
 
@@ -149,7 +149,7 @@ const VCHolderService = {
   methods: {
     /** Creates an ldp resource from the presentation and sets rights. */
     async createPresentationResource(presentation, noAnonRead, webId) {
-      // Post presentation to container.
+      // Post presentation to container (will add metadata).
       const resourceUri = await this.broker.call('crypto.vc.issuer.credential-container.post', {
         resource: presentation,
         contentType: MIME_TYPES.JSON,
