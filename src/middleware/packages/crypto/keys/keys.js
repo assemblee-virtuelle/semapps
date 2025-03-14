@@ -111,12 +111,11 @@ const KeysService = {
     getOrCreateWebIdKeys: {
       params: {
         keyType: { type: 'string' },
-        webId: { type: 'string', optional: true }
+        webId: { type: 'string' }
       },
       async handler(ctx) {
-        const { keyType } = ctx.params;
-        const webId = ctx.params.webId || ctx.meta.webId;
-        const webIdDoc = await ctx.call('webid.get', { resourceUri: webId, accept: MIME_TYPES.JSON, webId });
+        const { keyType, webId } = ctx.params;
+        const webIdDoc = await ctx.call('webid.get', { resourceUri: webId, accept: MIME_TYPES.JSON, webId: 'system' });
 
         // RSA keys are stored in `publicKey` field, everything else in `assertionMethod`
         const publicKeys =
@@ -154,6 +153,7 @@ const KeysService = {
      */
     getMultikey: {
       params: {
+        webId: { type: 'string' },
         keyObject: { type: 'object', optional: true },
         keyId: { type: 'string', optional: true },
         keyType: { type: 'string', default: KEY_TYPES.ED25519 },
@@ -162,8 +162,7 @@ const KeysService = {
         withPrivateKey: { type: 'boolean', default: false }
       },
       async handler(ctx) {
-        const { keyId, keyType, withPrivateKey } = ctx.params;
-        const webId = ctx.params.webId || ctx.meta.webId;
+        const { keyId, keyType, withPrivateKey, webId = ctx.meta.webId } = ctx.params;
 
         // Get key from parameters, id (URI) or the one associated with the webId (in that priority).
         // Note: Key purposes are not regarded, as they are currently not used.

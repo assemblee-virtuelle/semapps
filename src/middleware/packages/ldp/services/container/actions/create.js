@@ -6,11 +6,11 @@ module.exports = {
     containerUri: { type: 'string' },
     title: { type: 'string', optional: true },
     description: { type: 'string', optional: true },
-    permissions: { type: 'multi', rules: [{ type: 'object' }, { type: 'function' }], optional: true }, // Used by the WebAclMiddleware
+    options: { type: 'object', optional: true },
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
-    const { containerUri, title, description } = ctx.params;
+    const { containerUri, title, description, options } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     await ctx.call('triplestore.insert', {
@@ -23,5 +23,7 @@ module.exports = {
       contentType: MIME_TYPES.JSON,
       webId
     });
+
+    ctx.emit('ldp.container.created', { containerUri, options, webId });
   }
 };

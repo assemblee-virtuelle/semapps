@@ -26,7 +26,13 @@ module.exports = {
       );
     }
 
-    if (webId && webId !== 'system' && webId !== 'anon' && (await this.proxyAvailable())) {
+    if (
+      webId &&
+      webId !== 'system' &&
+      webId !== 'anon' &&
+      webId.startsWith(this.settings.baseUrl) &&
+      (await this.proxyAvailable())
+    ) {
       const response = await ctx.call('signature.proxy.query', {
         url: resourceUri,
         method: 'GET',

@@ -12,17 +12,17 @@ npm install @semapps/semantic-data-provider
 
 ```jsx
 import { Admin } from 'react-admin';
-import { dataProvider, httpClient } from '@semapps/semantic-data-provider';
+import { dataProvider } from '@semapps/semantic-data-provider';
 
 const App = () => (
   <Admin
     dataProvider={dataProvider({
-      httpClient,
       dataServers: { ... },
       resources: { ... },
-      ontologies: { ... },
+      ontologies: [ ... ],
       jsonContext: 'http://localhost:3000/context.json',
-      returnFailedResources: false
+      returnFailedResources: false,
+      plugins: [ ... ]
     })}
   >
     <Resource name="Project" ... />
@@ -31,18 +31,13 @@ const App = () => (
 );
 ```
 
-The semantic data provider rely on two important configuration:
+The semantic data provider rely on several important configuration:
 
 - The [Data Servers](data-servers.md), which describes the servers to which we want to connect and what they contain.
 - The [Data Model](data-model.md), which describes how we want the data to be displayed in React-Admin.
+- The [Plugins](plugins.md), which can automatically transform the data provider configuration.
 
 ## Settings
-
-### `httpClient`
-
-HTTP client used to fetch data. Same type as the [fetchJson utility](https://marmelab.com/react-admin/doc/3.19/DataProviders.html#adding-custom-headers) of React-Admin.
-
-We recommend to use the `httpClient` exported from the `@semapps/semantic-data-provider` package.
 
 ### `dataServers`
 
@@ -57,16 +52,10 @@ See the [Data model](data-model) page.
 List of ontologies used to format or select SPARQL data. Format:
 
 ```js
-const ontologies = [
-  {
-    prefix: 'rdf',
-    url: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
-  },
-  {
-    prefix: 'ldp',
-    url: 'http://www.w3.org/ns/ldp#'
-  }
-];
+const ontologies = {
+  rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+  ldp: 'http://www.w3.org/ns/ldp#'
+};
 ```
 
 ### `jsonContext`
@@ -80,6 +69,10 @@ If it is not set, the ontologies set above will be used.
 If true, the `getMany` method will not fail completely if one resource is missing.
 
 Missing resources will be returned with their `id` and `_error: true`.
+
+### `plugins`
+
+See the [Plugins](plugins) page.
 
 ## Filters
 

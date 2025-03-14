@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import createSlug from 'speakingurl';
 import {
   Form,
@@ -13,11 +13,14 @@ import {
 } from 'react-admin';
 import { useSearchParams } from 'react-router-dom';
 import { SubmitHandler, useFormContext } from 'react-hook-form';
-import { Button, CardContent, Typography } from '@mui/material';
+import { Button, CardContent, Typography, IconButton } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import useSignup from '../../hooks/useSignup';
 import validatePasswordStrength from './validatePasswordStrength';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 import { defaultScorer } from '../../passwordScorer';
+import RequiredFieldIndicator, { VisuallyHidden } from './RequiredFieldIndicator';
+import { PasswordAnalysis } from '../../types';
 
 interface FormValues {
   username: string;
@@ -71,6 +74,8 @@ const FormContent = ({
   setHandleSubmit
 }: SignupFormProps & { setHandleSubmit: React.Dispatch<React.SetStateAction<SubmitHandler<FormValues>>> }) => {
   const [loading, setLoading] = useSafeSetState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [passwordAnalysis, setPasswordAnalysis] = useState<PasswordAnalysis | null>(null);
   const signup = useSignup();
   const translate = useTranslate();
   const notify = useNotify();
@@ -79,6 +84,10 @@ const FormContent = ({
   const [locale] = useLocaleState();
   const [password, setPassword] = useState('');
   const formContext = useFormContext();
+
+  const togglePassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   useEffect(() => {
     setHandleSubmit(() => async (values: FormValues) => {
@@ -105,7 +114,7 @@ const FormContent = ({
               : error.message,
           {
             type: 'error',
-            _: typeof error === 'string' ? error : error && error.message ? error.message : undefined
+            _: typeof error === 'string' ? error : error?.message ? error.message : undefined
           }
         );
         formContext.reset({ ...values }, { keepDirty: true, keepErrors: true });
@@ -113,16 +122,30 @@ const FormContent = ({
     });
   }, [setLoading, signup, additionalSignupValues, redirectTo, notify, onSignup, formContext]);
 
+  useEffect(() => {
+    if (password && passwordScorer) {
+      const analysis = passwordScorer.analyzeFn(password);
+      setPasswordAnalysis(analysis);
+    } else {
+      setPasswordAnalysis(null);
+    }
+  }, [password, passwordScorer]);
+
   return (
     <CardContent>
       <TextInput
         autoFocus
         source="username"
-        label={translate('auth.input.username')}
+        label={
+          <>
+            {translate('auth.input.username')}
+            <RequiredFieldIndicator />
+          </>
+        }
         autoComplete="username"
         fullWidth
         disabled={loading}
-        validate={[required(), minLength(2)]}
+        validate={[required(translate('auth.required.identifier')), minLength(2)]}
         format={value =>
           value
             ? createSlug(value, {
@@ -135,11 +158,16 @@ const FormContent = ({
       />
       <TextInput
         source="email"
-        label={translate('auth.input.email')}
+        label={
+          <>
+            {translate('auth.input.email')}
+            <RequiredFieldIndicator />
+          </>
+        }
         autoComplete="email"
         fullWidth
         disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
-        validate={[required(), email()]}
+        validate={[required('auth.required.email'), email()]}
       />
       {passwordScorer && password && !(searchParams.has('email') && searchParams.has('force-email')) && (
         <>
@@ -147,19 +175,68 @@ const FormContent = ({
             {translate('auth.input.password_strength')}:{' '}
           </Typography>
           <PasswordStrengthIndicator password={password} scorer={passwordScorer} sx={{ width: '100%' }} />
+          {passwordAnalysis && passwordAnalysis.suggestions.length > 0 && (
+            <Typography
+              variant="caption"
+              color="textSecondary"
+              component="div"
+              sx={{
+                mt: 1,
+                mb: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 0.5
+              }}
+            >
+              {translate('auth.input.password_suggestions')}:
+              {passwordAnalysis.suggestions.map((suggestion, index) => {
+                const translationKey = `auth.input.password_suggestion.${suggestion}`;
+                const translatedText = translate(translationKey);
+                return (
+                  <span key={index} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    • {translatedText}
+                  </span>
+                );
+              })}
+            </Typography>
+          )}
         </>
       )}
-      <TextInput
-        source="password"
-        type="password"
-        value={password}
-        onChange={e => setPassword(e.target.value)}
-        label={translate('ra.auth.password')}
-        autoComplete="new-password"
-        fullWidth
-        disabled={loading}
-        validate={[required(), validatePasswordStrength(passwordScorer)]}
-      />
+      <div className="password-container" style={{ position: 'relative' }}>
+        <TextInput
+          source="password"
+          type={showPassword ? 'text' : 'password'}
+          value={password}
+          onChange={e => {
+            setPassword(e.target.value);
+          }}
+          label={
+            <>
+              {translate('ra.auth.password')}
+              <RequiredFieldIndicator />
+            </>
+          }
+          autoComplete="new-password"
+          fullWidth
+          disabled={loading}
+          validate={[required('auth.required.password'), validatePasswordStrength(passwordScorer)]}
+          aria-describedby="signup-password-desc"
+        />
+        <VisuallyHidden id="signup-password-desc">{translate('auth.input.password_description')}</VisuallyHidden>
+        <IconButton
+          aria-label={translate(showPassword ? 'auth.action.hide_password' : 'auth.action.show_password')}
+          onClick={togglePassword}
+          style={{
+            position: 'absolute',
+            right: '8px',
+            top: '17px',
+            padding: '4px'
+          }}
+          size="large"
+        >
+          {showPassword ? <VisibilityOff /> : <Visibility />}
+        </IconButton>
+      </div>
       <Button variant="contained" type="submit" color="primary" disabled={loading} fullWidth>
         {translate('auth.action.signup')}
       </Button>

@@ -1,7 +1,7 @@
 import jsonld, { ContextDefinition } from 'jsonld';
 import { GetListParams } from 'react-admin';
 import arrayOf from './arrayOf';
-import { Configuration, ContainerURI, DataServerKey } from '../types';
+import { Configuration, Container, DataServerKey } from '../types';
 
 type LDPContainerType = 'ldp:Container' | 'ldp:BasicContainer';
 
@@ -44,14 +44,12 @@ const isObject = (val: any) => {
 };
 
 const fetchContainers = async (
-  containers: Record<DataServerKey, ContainerURI[]>,
+  containers: Container[],
   params: GetListParams,
   { httpClient, jsonContext }: Configuration
 ) => {
-  const containersUri = Object.values(containers).flat();
-
-  const fetchPromises = containersUri.map(containerUri =>
-    httpClient(containerUri)
+  const fetchPromises = containers.map(container =>
+    httpClient(container.uri)
       .then(async ({ json }) => {
         const jsonResponse: LDPContainer = json;
 
@@ -65,7 +63,7 @@ const fetchContainers = async (
       })
       .then((json: LDPContainer) => {
         if (!isValidLDPContainer(json)) {
-          throw new Error(`${containerUri} is not a LDP container`);
+          throw new Error(`${container.uri} is not a LDP container`);
         }
 
         return arrayOf(json['ldp:contains']).map<LDPResource>(resource => ({

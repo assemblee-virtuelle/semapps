@@ -3,120 +3,50 @@ title: Data Servers
 ---
 
 The `dataServers` config passed to the semantic data provider describes the servers to which we want to connect and what
-they contain. Most of these information can be guessed from the VoID endpoint(s).
+they contain. These information can be guessed from the various [plugins](plugins.md) we provide.
 
-## Configuration with VoID endpoints
-
-```js
-const dataServers = {
-  server1: {
-    baseUrl: 'http://localhost:3000',
-    default: true, // Default server (used for the creation of resources)
-    authServer: true // Server where users are autenticated
-  },
-  server2: {
-    baseUrl: 'http://localhost:3001'
-  }
-};
-```
-
-## Configuration without VoID endpoints
-
-If the server you want to connect to doesn't have a VoID endpoint, you will need to specify manually the name of the
-server, its SPARQL endpoint as well as the containers
+## Example
 
 ```js
 const dataServers = {
   server1: {
+    name: 'Server 1',
     baseUrl: 'http://localhost:3000',
     default: true,
     authServer: true,
-    // Informations required if no VoID endpoint are available
-    name: 'Server 1',
     sparqlEndpoint: 'http://localhost:3000/sparql',
-    containers: {
-      server1: {
-        'foaf:Person': ['/users']
+    containers: [
+      {
+        path: '/users'
+        types: ['foaf:Person']
       }
-    }
-  },
-  server2: {
-    baseUrl: 'http://localhost:3001',
-    name: 'Server 2',
-    sparqlEndpoint: 'http://localhost:3001/sparql',
-    containers: {
-      server2: {
-        'foaf:Person': ['/users']
-      }
-    }
+    ]
   }
 };
 ```
 
-> You can set `void: false` to prevent the semantic data provider from unnecessarily fetching a VoID endpoint.
+## Properties
 
-## Mirrors
+| Property         | Type      | Default      | Description                                                                     |
+| ---------------- | --------- | ------------ | ------------------------------------------------------------------------------- |
+| `baseUrl`        | `String`  | **required** | Base URL of the storage                                                         |
+| `name`           | `String`  |              | Name of the storage. Can be used by components and hooks.                       |
+| `default`        | `Boolean` | false        | If true, is marked as the default server                                        |
+| `authServer`     | `Boolean` | false        | If true, the server is the one against which the user is authenticated          |
+| `pod`            | `Boolean` | false        | If true, the server is a Solid storage                                          |
+| `sparqlEndpoint` | `String`  |              | If defined, the data provider will use it by default when fetching list of data |
+| `containers`     | `Array`   |              | Array of containers in the storage. See below for more information.             |
 
-If a server is [mirroring](../../middleware/sync/mirror.md) another server, the VoID endpoint will show this information and
-the semantic data provider will automatically adapt its requests. If no VoID endpoint is available, you can indicate
-manually the mirrored data like this:
+## Container properties
 
-```js
-const dataServers = {
-  server1: {
-    baseUrl: 'http://localhost:3000',
-    default: true,
-    authServer: true,
-    name: 'Server 1',
-    sparqlEndpoint: 'http://localhost:3000/sparql',
-    containers: {
-      server1: {
-        'foaf:Person': ['/users']
-      },
-      // Data on server2 mirrored on server1
-      server2: {
-        'foaf:Person': ['/users']
-      }
-    }
-  },
-  server2: {
-    baseUrl: 'http://localhost:3001',
-    name: 'Server 2',
-    sparqlEndpoint: 'http://localhost:3001/sparql',
-    containers: {
-      server2: {
-        'foaf:Person': ['/users']
-      }
-    }
-  }
-};
-```
+The `containers` property of the data server is an array of objects with the following properties:
 
-> If many servers are mirroring each others, you can use the `priority` config to help the semantic data provider
-> choose which servers to request first. Enter a number for each server and the server with the highest number will
-> be chosen.
-
-## POD providers
-
-If a server you wish to connect to is a POD provider, you should set `pod: true`. The `baseUrl` and the `sparqlEndpoint`
-config will be obtained after the user connects to his POD. A `proxyUrl` config will also be obtained automatically: it
-is the URL through which requests can be made using HTTP signatures.
-
-```js
-const dataServers = {
-  server1: { ... },
-  server2: { ... },
-  pod: {
-    pod: true,
-    containers: {
-      'pair:Person': [
-        '/contacts'
-      ]
-    },
-    // Calculated automatically after user login
-    baseUrl: null,
-    sparqlEndpoint: null,
-    proxyUrl: null
-  }
-}
-```
+| Property         | Type     | Default      | Description                                                                          |
+| ---------------- | -------- | ------------ | ------------------------------------------------------------------------------------ |
+| `path`           | `String` | **required** | Path of the container, relative to the baseUrl of the storage                        |
+| `types`          | `String` |              | Classes accepted in the container. If a prefix is used, it will be turned to an URI. |
+| `label`          | `Object` |              | An object with the language as the key, and the name of the container as the value   |
+| `labelPredicate` | `String` |              | The predicate to use for the label of the contained resources.                       |
+| `shapeTreeUri`   | `String` |              | URL of the shape tree associated with the container.                                 |
+| `uri`            | `String` |              | If not provided, will be automatically calculated based on the path and the baseUrl  |
+| `server`         | `String` |              | If not defined, will automatically be set on the key of the storage                  |

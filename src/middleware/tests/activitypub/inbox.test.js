@@ -50,18 +50,18 @@ describe('Permissions are correctly set on inbox', () => {
     });
   });
 
-  test("Inbox response for an actor that does not exist", async () => {
-    const resourceUri = simon.inbox.replace('simonlouvet', 'unknown'); // 'http://localhost:3000/as/actor/simonlouvet/inbox', 
-    await expect(broker.call('activitypub.collection.get', {
-      resourceUri,
-      page: 1,
-      webId: 'anon'
-    })
+  test('Inbox response for an actor that does not exist', async () => {
+    const resourceUri = simon.inbox.replace('simonlouvet', 'unknown'); // 'http://localhost:3000/as/actor/simonlouvet/inbox',
+    await expect(
+      broker.call('activitypub.collection.get', {
+        resourceUri,
+        webId: 'anon'
+      })
     ).rejects.toThrow('Not found');
   });
 
   test('Post private message to friend', async () => {
-    await broker.call('activitypub.outbox.post', {
+    const item = await broker.call('activitypub.outbox.post', {
       collectionUri: sebastien.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: OBJECT_TYPES.NOTE,
@@ -71,13 +71,13 @@ describe('Permissions are correctly set on inbox', () => {
 
     // Get inbox as recipient
     await waitForExpect(async () => {
-      const outbox = await broker.call('activitypub.collection.get', {
+      const inbox = await broker.call('activitypub.collection.get', {
         resourceUri: simon.inbox,
-        page: 1,
+        afterEq: item.id,
         webId: simon.id
       });
-      expect(outbox.orderedItems).toHaveLength(1);
-      expect(outbox.orderedItems[0]).toMatchObject({
+      expect(inbox.orderedItems).toHaveLength(1);
+      expect(inbox.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.CREATE,
         object: {
@@ -89,13 +89,13 @@ describe('Permissions are correctly set on inbox', () => {
 
     // Get inbox as emitter
     await waitForExpect(async () => {
-      const outbox = await broker.call('activitypub.collection.get', {
+      const inbox = await broker.call('activitypub.collection.get', {
         resourceUri: simon.inbox,
-        page: 1,
+        afterEq: item.id,
         webId: sebastien.id
       });
-      expect(outbox.orderedItems).toHaveLength(1);
-      expect(outbox.orderedItems[0]).toMatchObject({
+      expect(inbox.orderedItems).toHaveLength(1);
+      expect(inbox.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.CREATE,
         object: {
@@ -107,12 +107,12 @@ describe('Permissions are correctly set on inbox', () => {
 
     // Get inbox as anonymous
     await waitForExpect(async () => {
-      const outbox = await broker.call('activitypub.collection.get', {
-        resourceUri: sebastien.inbox,
-        page: 1,
+      const inbox = await broker.call('activitypub.collection.get', {
+        resourceUri: simon.inbox,
+        afterEq: item.id,
         webId: 'anon'
       });
-      expect(outbox.totalItems).toBe(0);
+      expect(inbox.orderedItems.length).toBe(0);
     });
   });
 
@@ -127,13 +127,18 @@ describe('Permissions are correctly set on inbox', () => {
 
     // Get inbox as recipient
     await waitForExpect(async () => {
-      const outbox = await broker.call('activitypub.collection.get', {
+      const inboxMenu = await broker.call('activitypub.collection.get', {
         resourceUri: simon.inbox,
-        page: 1,
         webId: simon.id
       });
-      expect(outbox.orderedItems).toHaveLength(2);
-      expect(outbox.orderedItems[0]).toMatchObject({
+      const inbox = await broker.call('activitypub.collection.get', {
+        resourceUri: simon.inbox,
+        afterEq: new URL(inboxMenu?.first).searchParams.get('afterEq'),
+        webId: simon.id
+      });
+
+      expect(inbox.orderedItems).toHaveLength(2);
+      expect(inbox.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.CREATE,
         object: {
@@ -145,13 +150,17 @@ describe('Permissions are correctly set on inbox', () => {
 
     // Get inbox as emitter
     await waitForExpect(async () => {
-      const outbox = await broker.call('activitypub.collection.get', {
+      const inboxMenu = await broker.call('activitypub.collection.get', {
         resourceUri: simon.inbox,
-        page: 1,
+        webId: simon.id
+      });
+      const inbox = await broker.call('activitypub.collection.get', {
+        resourceUri: simon.inbox,
+        afterEq: new URL(inboxMenu?.first).searchParams.get('afterEq'),
         webId: sebastien.id
       });
-      expect(outbox.orderedItems).toHaveLength(2);
-      expect(outbox.orderedItems[0]).toMatchObject({
+      expect(inbox.orderedItems).toHaveLength(2);
+      expect(inbox.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.CREATE,
         object: {
@@ -163,13 +172,17 @@ describe('Permissions are correctly set on inbox', () => {
 
     // Get inbox as anonymous
     await waitForExpect(async () => {
-      const outbox = await broker.call('activitypub.collection.get', {
+      const inboxMenu = await broker.call('activitypub.collection.get', {
         resourceUri: simon.inbox,
-        page: 1,
+        webId: simon.id
+      });
+      const inbox = await broker.call('activitypub.collection.get', {
+        resourceUri: simon.inbox,
+        afterEq: new URL(inboxMenu?.first).searchParams.get('afterEq'),
         webId: 'anon'
       });
-      expect(outbox.orderedItems).toHaveLength(1);
-      expect(outbox.orderedItems[0]).toMatchObject({
+      expect(inbox.orderedItems).toHaveLength(1);
+      expect(inbox.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.CREATE,
         object: {

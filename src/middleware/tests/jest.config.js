@@ -4,7 +4,8 @@ const config = {
   transform: {
     '\\.[jt]sx?$': ['babel-jest', { rootMode: 'upward' }]
   },
-  transformIgnorePatterns: []
+  transformIgnorePatterns: [],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js']
 };
 
 module.exports = config;

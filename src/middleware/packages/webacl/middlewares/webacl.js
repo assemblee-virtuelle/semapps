@@ -187,8 +187,8 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
           case 'ldp.container.create': {
             // On start, container permissions are passed as parameters because the registry is not up yet
             let permissions;
-            if (ctx.params.permissions) {
-              permissions = ctx.params.permissions || defaultContainerOptions.permissions;
+            if (ctx.params.options?.permissions) {
+              permissions = ctx.params.options?.permissions;
             } else {
               const options = await ctx.call('ldp.registry.getByUri', { containerUri: ctx.params.containerUri });
               permissions = options?.permissions || defaultContainerOptions.permissions;

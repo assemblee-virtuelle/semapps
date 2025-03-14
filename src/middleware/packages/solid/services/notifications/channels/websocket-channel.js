@@ -10,12 +10,7 @@ const WebSocketChannel2023Service = {
     channelType: 'WebSocketChannel2023',
     sendOrReceive: 'receive',
     baseUrl: null,
-    description: {
-      labelMap: {
-        en: 'WebSocket Channel'
-      },
-      internal: true
-    },
+    typeIndex: 'private',
     endpoint: {
       path: '/.notifications/WebSocketChannel2023',
       initialData: {
