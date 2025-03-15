@@ -15,13 +15,7 @@ const VCPresentationContainer = {
     excludeFromMirror: true,
     activateTombstones: false,
     permissions: {},
-    newResourcesPermissions: {},
-    description: {
-      labelMap: {
-        en: 'Verifiable Credentials'
-      },
-      internal: true
-    }
+    newResourcesPermissions: {}
   }
 };
 

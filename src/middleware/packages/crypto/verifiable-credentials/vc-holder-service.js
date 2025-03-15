@@ -153,7 +153,7 @@ const VCHolderService = {
       const resourceUri = await this.broker.call('crypto.vc.issuer.credential-container.post', {
         resource: presentation,
         contentType: MIME_TYPES.JSON,
-        webId: 'system'
+        webId
       });
 
       // Get the presentation resource.
@@ -163,11 +163,12 @@ const VCHolderService = {
         accept: MIME_TYPES.JSON
       });
 
-      // Set right resource rights.
+      // Set resource rights.
       if (!noAnonRead) {
         // Add anonymous read rights to VC resource and control rights to holder.
         await this.broker.call('webacl.resource.addRights', {
           resourceUri,
+          jsonContext: ['https://www.w3.org/ns/credentials/v2', ...(await this.broker.call('jsonld.context.get'))],
           additionalRights: { anon: { read: true }, user: { uri: webId, control: true, read: true, write: true } },
           webId: 'system'
         });

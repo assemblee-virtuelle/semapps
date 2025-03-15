@@ -157,7 +157,6 @@ const KeysService = {
         keyObject: { type: 'object', optional: true },
         keyId: { type: 'string', optional: true },
         keyType: { type: 'string', default: KEY_TYPES.ED25519 },
-        webId: { type: 'string', optional: true },
         /** Add the secret key to the key object, if not set (or the public key id is provided), it will be removed. */
         withPrivateKey: { type: 'boolean', default: false }
       },
@@ -170,13 +169,6 @@ const KeysService = {
           ctx.params.keyObject || keyId
             ? await ctx.call('keys.container.get', { resourceUri: keyId, webId, accept: MIME_TYPES.JSON })
             : (await ctx.call('keys.getOrCreateWebIdKeys', { webId, keyType }))[0];
-
-        // We support ed25519 only.
-        if (
-          !arrayOf(keyObject.type || keyObject['@type']).some(type => ['Multikey', KEY_TYPES.MULTI_KEY].includes(type))
-        ) {
-          throw new Error('Only ED25519 keys are supported by this action.');
-        }
 
         // We need the key object to have the public key's id, so it is resolvable.
         // So if the key object is the secret key object, replace the id.

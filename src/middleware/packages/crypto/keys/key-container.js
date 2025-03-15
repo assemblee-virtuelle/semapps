@@ -53,35 +53,24 @@ module.exports = {
       throw new E.ForbiddenError();
     },
     /**
-     * Get action that sets the multikey context and multikey type for those keys. This is required by the spec.
+     * Get action that sets the multikey context and multikey type for those keys correctly. This is required by the spec.
+     * See:
+     * - https://www.w3.org/TR/controller-document/#json-ld-context
+     * - https://www.w3.org/TR/controller-document/#Multikey
+     *
      * This Action is used by the public key container as well.
+     *
      */
     async get(ctx) {
-      const resource = await ctx.call('ldp.resource.get', ctx.params);
+      const resource = await ctx.call('ldp.resource.get', {
+        ...ctx.params,
+        jsonContext: ['https://w3id.org/security/multikey/v1', ...(await ctx.call('jsonld.context.get'))]
+      });
 
-      if (arrayOf(resource.type || resource['@type']).includes('sec:Multikey')) {
-        // By the specs (see below), the type of a multikey should have type multikey
-        //  and a protected context defining multikey. Unfortunately, @digitalbazaar/ed25519-multikey": "1.3.0" is stricter.
-        //  Thus the separate handling for multikeys...
-        // https://www.w3.org/TR/controller-document/#json-ld-context
-        // https://www.w3.org/TR/controller-document/#Multikey
-
-        const targetContext = ['https://w3id.org/security/multikey/v1', ...(await ctx.call('jsonld.context.get'))];
-
-        const framedResult = await ctx.call('jsonld.parser.frame', {
-          input: resource,
-          frame: {
-            '@context': targetContext
-          }
-        });
-
-        const multikey = framedResult['@graph'][0] || framedResult;
+      // Make type `Multikey` only, to comply with spec.
+      if (arrayOf(resource.type).includes('sec:Multikey') || arrayOf(resource.type).includes('Multikey')) {
         // Type must be Multikey only
-        delete multikey['@type'];
-        multikey.type = 'Multikey';
-        multikey['@context'] = targetContext;
-
-        return multikey;
+        resource.type = 'Multikey';
       }
 
       return resource;

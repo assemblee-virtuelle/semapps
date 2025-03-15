@@ -112,7 +112,7 @@ const VCCredentialService = {
           withPrivateKey: true
         });
         // The library requires the key to have the type field set to `Multikey` only.
-        const signingKeyInstance = await Ed25519Multikey.from({ ...key, type: 'Multikey' });
+        const signingKeyInstance = await Ed25519Multikey.from(key);
 
         const credential = {
           type: ['VerifiableCredential'],
@@ -153,21 +153,22 @@ const VCCredentialService = {
   },
   methods: {
     /** Creates an ldp resource from the presentation and sets rights. */
-    async createCredentialResource(presentation, noAnonRead, webId) {
+    async createCredentialResource(credential, noAnonRead, webId) {
       const resourceUri = await this.broker.call('crypto.vc.issuer.credential-container.post', {
-        resource: presentation,
+        resource: credential,
         contentType: MIME_TYPES.JSON,
-        webId: 'system'
+        webId
       });
 
       // Get the presentation resource.
       const resource = await this.broker.call('crypto.vc.issuer.credential-container.get', {
         resourceUri,
+        jsonContext: ['https://www.w3.org/ns/credentials/v2', 'https://www.w3.org/2018/credentials/index.jsonld'],
         webId: 'system',
         accept: MIME_TYPES.JSON
       });
 
-      // Set right resource rights.
+      // Set resource rights.
       if (!noAnonRead) {
         // Add anonymous read rights to VC resource and control rights to holder.
         await this.broker.call('webacl.resource.addRights', {
