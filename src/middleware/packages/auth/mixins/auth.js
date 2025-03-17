@@ -128,6 +128,12 @@ const AuthMixin = {
           ctx.meta.webId = payload.webId;
           return Promise.resolve(payload);
         }
+
+        // Check if token is a capability.
+        if (route.opts.authorizeWithCapability) {
+          return this.validateCapability(ctx, token);
+        }
+
         // Invalid token
         // TODO make sure token is deleted client-side
         return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
@@ -152,39 +158,17 @@ const AuthMixin = {
         return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
       }
 
-      if (route.opts.authorizeWithCapability) {
-        // We accept VC Presentations to invoke capabilities here. It must be encoded as JWT.
-        // We do not use the VC-JOSE spec to sign and envelop presentations. Instead we go
-        // with embedded signatures. This way, the signature persists within the resource.
-
-        // Decode JTW to JSON.
-        const decodedToken = await ctx.call('auth.jwt.decodeToken');
-        if (!decodedToken) return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
-
-        // Verify that decoded JSON token is a signed VC presentation for a capability.
-        const {
-          verified: isCapSignatureVerified,
-          presentation: verifiedPresentation,
-          presentationResult
-        } = await ctx.call('crypto.vc.verifier.verifyCapabilityPresentation', {
-          presentation: decodedToken
-        });
-        if (!isCapSignatureVerified) return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
-
-        // VC Capability is verified.
-
-        ctx.meta.webId = presentationResult?.results?.[0]?.purposeResult?.holder || 'anon';
-        ctx.meta.authorization = { capabilityPresentation: verifiedPresentation };
-
-        return Promise.resolve(verifiedPresentation);
-      }
-
       // Validate if the token was signed by server (registered user).
       const serverSignedPayload = await ctx.call('auth.jwt.verifyServerSignedToken', { token });
       if (serverSignedPayload) {
         ctx.meta.tokenPayload = serverSignedPayload;
         ctx.meta.webId = serverSignedPayload.webId;
         return Promise.resolve(serverSignedPayload);
+      }
+
+      // Check if token is a capability.
+      if (route.opts.authorizeWithCapability) {
+        return this.validateCapability(ctx, token);
       }
 
       return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
@@ -200,6 +184,31 @@ const AuthMixin = {
     }
   },
   methods: {
+    async validateCapability(ctx, token) {
+      // We accept VC Presentations to invoke capabilities here. It must be encoded as JWT.
+      // We do not use the VC-JOSE spec to sign and envelop presentations. Instead we go
+      // with embedded signatures. This way, the signature persists within the resource.
+
+      // Decode JTW to JSON.
+      const decodedToken = await ctx.call('auth.jwt.decodeToken', { token });
+      if (!decodedToken) return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
+
+      // Verify that decoded JSON token is a valid VC presentation.
+      const {
+        verified: isCapSignatureVerified,
+        presentation: verifiedPresentation,
+        presentationResult
+      } = await ctx.call('crypto.vc.verifier.verifyCapabilityPresentation', {
+        verifiablePresentation: decodedToken
+      });
+      if (!isCapSignatureVerified) return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
+
+      // VC Capability is verified.
+      ctx.meta.webId = presentationResult?.results?.[0]?.purposeResult?.holder || 'anon';
+      ctx.meta.authorization = { capabilityPresentation: verifiedPresentation };
+
+      return Promise.resolve(verifiedPresentation);
+    },
     getStrategy() {
       throw new Error('getStrategy must be implemented by the service');
     },

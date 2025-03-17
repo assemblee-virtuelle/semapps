@@ -1,4 +1,5 @@
 const { ControlledContainerMixin, PseudoIdMixin } = require('@semapps/ldp');
+const { credentialsContext } = require('../constants');
 
 /**
  * Container for Verifiable Presentations. Posting to this container will create a new VP.
@@ -15,7 +16,18 @@ const VCPresentationContainer = {
     excludeFromMirror: true,
     activateTombstones: false,
     permissions: {},
-    newResourcesPermissions: {}
+    newResourcesPermissions: {},
+    controlledActions: {
+      get: 'crypto.vc.holder.presentation-container.get'
+    }
+  },
+  actions: {
+    async get(ctx) {
+      return ctx.call('ldp.resource.get', {
+        ...ctx.params,
+        jsonContext: credentialsContext
+      });
+    }
   }
 };
 

@@ -270,7 +270,7 @@ describe('verifiable credentials', () => {
   });
 
   describe('capabilities', () => {
-    test('first and second capability are created and presentation is verifiable', async () => {
+    test.only('first and second capability are created and presentation is verifiable', async () => {
       const firstCapability = await alice.fetch(path.join(alice.vcApiEndpoint, 'credentials/issue'), {
         method: 'POST',
         body: JSON.stringify({

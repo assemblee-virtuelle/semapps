@@ -21,7 +21,7 @@ let Ed25519Multikey;
   Ed25519Multikey = await import('@digitalbazaar/ed25519-multikey');
 })();
 
-const { KEY_TYPES } = require('../constants');
+const { KEY_TYPES, credentialsContext } = require('../constants');
 
 /**
  * Service for verifying and creating Verifiable Presentations
@@ -150,7 +150,7 @@ const VCHolderService = {
     /** Creates an ldp resource from the presentation and sets rights. */
     async createPresentationResource(presentation, noAnonRead, webId) {
       // Post presentation to container (will add metadata).
-      const resourceUri = await this.broker.call('crypto.vc.issuer.credential-container.post', {
+      const resourceUri = await this.broker.call('crypto.vc.holder.presentation-container.post', {
         resource: presentation,
         contentType: MIME_TYPES.JSON,
         webId
@@ -168,7 +168,7 @@ const VCHolderService = {
         // Add anonymous read rights to VC resource and control rights to holder.
         await this.broker.call('webacl.resource.addRights', {
           resourceUri,
-          jsonContext: ['https://www.w3.org/ns/credentials/v2', ...(await this.broker.call('jsonld.context.get'))],
+          jsonContext: credentialsContext,
           additionalRights: { anon: { read: true }, user: { uri: webId, control: true, read: true, write: true } },
           webId: 'system'
         });

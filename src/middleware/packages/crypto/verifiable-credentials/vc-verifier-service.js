@@ -1,7 +1,6 @@
-const path = require('node:path');
 const jsigs = require('jsonld-signatures');
-const VCPurpose = require('./vcPurpose');
-const VCCapabilityPresentationProofPurpose = require('./vcCapabilityPresentationProofPurpose');
+const VCPurpose = require('./VcPurpose');
+const VCCapabilityPresentationProofPurpose = require('./VcCapabilityPresentationProofPurpose');
 
 const {
   purposes: { AuthenticationProofPurpose }
@@ -103,7 +102,8 @@ const VCPresentationService = {
           params: {
             challenge: { type: 'string', optional: true },
             domain: { type: 'string', optional: true },
-            proofPurpose: { type: 'string', optional: true }
+            proofPurpose: { type: 'string', optional: true },
+            unsignedPresentation: { type: 'boolean', default: false }
           }
         },
         credentialPurpose: { type: 'object', optional: true },
@@ -112,14 +112,16 @@ const VCPresentationService = {
       async handler(ctx) {
         const {
           verifiablePresentation: presentation,
-          options: { challenge = presentation?.proof?.challenge, proofPurpose: term, domain }
+          options: { challenge = presentation?.proof?.challenge, proofPurpose: term, domain, unsignedPresentation }
         } = ctx.params;
 
-        const challengeValidationResult = await ctx.call('crypto.vc.presentation.challenge.validate', {
-          challenge
-        });
-        if (!challengeValidationResult.valid) {
-          return { verified: false, error: challengeValidationResult.error };
+        if (!unsignedPresentation || challenge) {
+          const challengeValidationResult = await ctx.call('crypto.vc.presentation.challenge.validate', {
+            challenge
+          });
+          if (!challengeValidationResult.valid) {
+            return { verified: false, error: challengeValidationResult.error };
+          }
         }
 
         // Used to validate verifiable credentials in presentation.
@@ -133,16 +135,21 @@ const VCPresentationService = {
           cryptosuite
         });
 
-        const verificationResult = await vc.verify({
-          presentation,
-          presentationPurpose,
-          purpose: credentialPurpose,
-          challenge,
-          suite,
-          documentLoader: this.documentLoader
-        });
-
-        return verificationResult;
+        try {
+          const verificationResult = await vc.verify({
+            presentation,
+            presentationPurpose,
+            purpose: credentialPurpose,
+            challenge,
+            suite,
+            documentLoader: this.documentLoader,
+            unsignedPresentation
+          });
+          return verificationResult;
+        } catch (e) {
+          console.error(e);
+          throw e;
+        }
       }
     },
 
@@ -167,14 +174,28 @@ const VCPresentationService = {
       async handler(ctx) {
         const {
           verifiablePresentation: presentation,
-          options: { challenge = presentation?.proof?.challenge, domain, maxChainLength = 2 }
+          options: {
+            // Challenge may be empty when invoker is anonymous and VC was issued to no particular holder.
+            // The VCCapabilityPresentationProofPurpose will take care of this case.
+            challenge = presentation?.proof?.challenge,
+            domain,
+            maxChainLength = 2
+          }
         } = ctx.params;
 
-        const presentationPurpose = new VCCapabilityPresentationProofPurpose({ maxChainLength, challenge, domain });
+        const presentationPurpose = new VCCapabilityPresentationProofPurpose({
+          maxChainLength,
+          challenge: challenge || '',
+          domain
+        });
         const credentialPurpose = new VCPurpose();
 
         const verificationResult = await this.actions.verifyPresentation({
           ...ctx.params,
+          options: {
+            ...ctx.params.options,
+            unsignedPresentation: !challenge
+          },
           presentationPurpose,
           credentialPurpose
         });

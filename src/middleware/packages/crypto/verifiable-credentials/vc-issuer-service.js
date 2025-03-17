@@ -20,7 +20,7 @@ let Ed25519Multikey;
   Ed25519Multikey = await import('@digitalbazaar/ed25519-multikey');
 })();
 
-const { KEY_TYPES } = require('../constants');
+const { KEY_TYPES, credentialsContext } = require('../constants');
 
 /**
  * Service for verifying, reading, and revoking Verifiable Credentials.
@@ -115,6 +115,7 @@ const VCCredentialService = {
         const signingKeyInstance = await Ed25519Multikey.from(key);
 
         const credential = {
+          '@context': credentialsContext,
           type: ['VerifiableCredential'],
           issuer: webId,
           ...credentialParam
@@ -163,7 +164,7 @@ const VCCredentialService = {
       // Get the presentation resource.
       const resource = await this.broker.call('crypto.vc.issuer.credential-container.get', {
         resourceUri,
-        jsonContext: ['https://www.w3.org/ns/credentials/v2', 'https://www.w3.org/2018/credentials/index.jsonld'],
+        jsonContext: credentialsContext,
         webId: 'system',
         accept: MIME_TYPES.JSON
       });

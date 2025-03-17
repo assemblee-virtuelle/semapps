@@ -1,5 +1,16 @@
 const VC_API_SERVICE_TYPE = 'urn:tmp:vcService';
 
+const credentialsContext = [
+  'https://www.w3.org/ns/credentials/v2',
+  {
+    as: 'https://www.w3.org/ns/activitystreams#',
+    apods: 'http://activitypods.org/ns/core#',
+    acl: 'http://www.w3.org/ns/auth/acl#',
+    dc: 'http://purl.org/dc/terms/',
+    sec: 'https://w3id.org/security#'
+  }
+];
+
 /**
  * Map from key type to URI.
  * Key Types are a bit of a mess in the rdf ontologies out there,
@@ -25,5 +36,6 @@ module.exports = KEY_TYPES;
 
 module.exports = {
   VC_API_SERVICE_TYPE,
-  KEY_TYPES
+  KEY_TYPES,
+  credentialsContext
 };

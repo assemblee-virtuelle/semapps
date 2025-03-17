@@ -10,7 +10,7 @@ const { arrayOf, deepStrictEqual } = require('../utils/utils');
  *
  * This class validates if the rules for a VC capability chain are followed.
  */
-class VCCapabilityPresentationProofPurpose extends AuthenticationProofPurpose {
+class VcCapabilityPresentationProofPurpose extends AuthenticationProofPurpose {
   /**
    * @param {object} options Options.
    * @param {number} [options.maxChainLength] The maximum amount of VCs allowed in the capability chain. Default is 2.
@@ -45,11 +45,21 @@ class VCCapabilityPresentationProofPurpose extends AuthenticationProofPurpose {
       throw new Error('Proof and options are required.');
     }
     const { document: presentation } = options;
+    // Sort credentials so that we can infer the order of the capability chain.
+    const credentialsOrdered = arrayOf(presentation.verifiableCredential).sort(
+      (c1, c2) => new Date(c1.issuanceDate || c1.proof.created) - new Date(c2.issuanceDate || c2.proof.created)
+    );
+
+    /** Indicates that the credential does not have a pre-defined holder (e.g. useful for invite links). */
+    const isOpenCapability = credentialsOrdered.length === 1 && !credentialsOrdered[0].credentialSubject?.id;
 
     // Validate things in super classes.
     // This will validate that the challenge is correct, the key controllers are correct (=key owner is signer), etc.
     const superResult = await super.validate(proof, options);
     if (!superResult.valid) {
+      // TODO: For the case that the credential is an open credential
+      // and the only issue was that the presentation is not signed,
+      // we ignore this.
       return superResult;
     }
 
@@ -65,14 +75,9 @@ class VCCapabilityPresentationProofPurpose extends AuthenticationProofPurpose {
       }
     }
 
-    if (presentation.holder && presentation.holder !== controllerDocument.id) {
+    if (presentation.holder && presentation.holder !== controllerDocument?.id) {
       return { valid: false, error: new Error("VP holder does not match the proof's controller.") };
     }
-
-    // Sort credentials so that we can infer the order of the capability chain.
-    const credentialsOrdered = arrayOf(presentation.verifiableCredential).sort(
-      (c1, c2) => new Date(c1.issuanceDate || c1.proof.created) - new Date(c2.issuanceDate || c2.proof.created)
-    );
 
     // Verify that there is at least one VC present.
     if (credentialsOrdered.length === 0) {
@@ -88,9 +93,6 @@ class VCCapabilityPresentationProofPurpose extends AuthenticationProofPurpose {
         )
       };
     }
-
-    /** Indicates that the credential does not have a pre-defined holder (e.g. useful for invite links). */
-    const isOpenCapability = credentialsOrdered.length === 1 && !credentialsOrdered[0].credentialSubject?.id;
 
     // Validate that all credentialSubjects have an id
     // OR: there is only one credential with no `id`.
@@ -142,4 +144,4 @@ class VCCapabilityPresentationProofPurpose extends AuthenticationProofPurpose {
   }
 }
 
-module.exports = VCCapabilityPresentationProofPurpose;
+module.exports = VcCapabilityPresentationProofPurpose;

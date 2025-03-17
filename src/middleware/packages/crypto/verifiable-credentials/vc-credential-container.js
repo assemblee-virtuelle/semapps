@@ -1,4 +1,5 @@
 const { ControlledContainerMixin, PseudoIdMixin } = require('@semapps/ldp');
+const { credentialsContext } = require('../constants');
 
 /**
  * Container for Verifiable Credentials. Posting to this container will create a new VC.
@@ -16,7 +17,18 @@ const VCCredentialsContainer = {
     excludeFromMirror: true,
     activateTombstones: false,
     permissions: {},
-    newResourcesPermissions: {}
+    newResourcesPermissions: {},
+    controlledActions: {
+      get: 'crypto.vc.issuer.credential-container.get'
+    }
+  },
+  actions: {
+    async get(ctx) {
+      return ctx.call('ldp.resource.get', {
+        ...ctx.params,
+        jsonContext: credentialsContext
+      });
+    }
   }
 };
 
