@@ -35,6 +35,10 @@ const InboxService = {
         throw new Error(`The collectionUri ${collectionUri} is not a valid URL`);
       }
 
+      if (!(await ctx.call('ldp.resource.exist', { resourceUri: collectionUri, webId: 'system' }))) {
+        throw E.NotFoundError();
+      }
+
       // Ensure the actor in the activity is the same as the posting actor
       // (When posting, the webId is the one of the poster)
       if (activity.actor !== ctx.meta.webId) {
