@@ -6,6 +6,8 @@ const { MoleculerError } = require('moleculer').Errors;
 const sanitizeSparqlUri = value => {
   if (value && (value.includes('>') || value.includes('<') || /\s/g.test(value))) {
     throw new MoleculerError('SPARQL injection detected', 400, 'SPARQL_INJECTION');
+  } else {
+    return value;
   }
 };
 
@@ -15,6 +17,8 @@ const sanitizeSparqlUri = value => {
 const sanitizeSparqlString = value => {
   if (value && value.includes('"')) {
     throw new MoleculerError('SPARQL injection detected', 400, 'SPARQL_INJECTION');
+  } else {
+    return value;
   }
 };
 
