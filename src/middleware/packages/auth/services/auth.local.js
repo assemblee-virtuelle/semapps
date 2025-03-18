@@ -5,6 +5,9 @@ const sendToken = require('../middlewares/sendToken');
 const { MoleculerError } = require('moleculer').Errors;
 const AuthMailService = require('./mail');
 
+// Taken from https://stackoverflow.com/a/9204568/7900695
+const emailRegexp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 /** @type {import('moleculer').ServiceSchema} */
 const AuthLocalService = {
   name: 'auth',
@@ -47,11 +50,16 @@ const AuthLocalService = {
   actions: {
     async signup(ctx) {
       const { username, email, password, ...rest } = ctx.params;
+
       // This is going to get in our way otherwise when waiting for completions.
       ctx.meta.skipObjectsWatcher = true;
 
       if (username && username.length < 2) {
         throw new MoleculerError('The username must be at least 2 characters long', 400, 'BAD_REQUEST');
+      }
+
+      if (email && !emailRegexp.test(email)) {
+        throw new MoleculerError('Invalid email address', 400, 'BAD_REQUEST');
       }
 
       let accountData = await ctx.call('auth.account.create', {

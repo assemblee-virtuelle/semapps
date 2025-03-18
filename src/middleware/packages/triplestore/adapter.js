@@ -2,6 +2,7 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { v4: uuidv4 } = require('uuid');
 const { frame } = require('jsonld');
+const { sanitizeSparqlUri, sanitizeSparqlString } = require('./utils');
 
 class TripleStoreAdapter {
   constructor({ type, dataset, baseUri, ontology = 'http://semapps.org/ns/core#' }) {
@@ -42,6 +43,10 @@ class TripleStoreAdapter {
    */
   find(params) {
     const { query } = params;
+
+    // Ensure that the value does not contain SPARQL injection
+    Object.values(query).forEach(value => sanitizeSparqlString(value));
+
     return this.broker
       .call('triplestore.query', {
         query: `
@@ -98,7 +103,7 @@ class TripleStoreAdapter {
         query: `
           CONSTRUCT
           WHERE {
-            <${_id}> ?p ?o .
+            <${sanitizeSparqlUri(_id)}> ?p ?o .
           }
         `,
         accept: MIME_TYPES.JSON,
@@ -186,10 +191,10 @@ class TripleStoreAdapter {
         return this.broker.call('triplestore.update', {
           query: `
             DELETE {
-              <${_id}> ?p ?o .
+              <${sanitizeSparqlUri(_id)}> ?p ?o .
             }
             INSERT {
-              <${_id}> a <${this.ontology + this.type}> .
+              <${sanitizeSparqlUri(_id)}> a <${this.ontology + this.type}> .
               ${
                 newData
                   ? Object.keys(newData)
