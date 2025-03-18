@@ -26,15 +26,13 @@ const VCService = {
     podProvider: false
   },
   created() {
-    this.broker.createService({ mixins: [VCIssuerService], settings: { vcApiPath: this.settings.vcApiPath } });
-    this.broker.createService({ mixins: [VCHolderService], settings: { vcApiPath: this.settings.vcApiPath } });
+    const { vcApiPath, podProvider } = this.settings;
+    this.broker.createService({ mixins: [VCIssuerService], settings: { vcApiPath, podProvider } });
+    this.broker.createService({ mixins: [VCHolderService], settings: { vcApiPath, podProvider } });
     this.broker.createService({ mixins: [VCVerifierService] });
     this.broker.createService({ mixins: [DataIntegrityService] });
     if (this.settings.vcApiPath)
-      this.broker.createService({
-        mixins: [VCApiService],
-        settings: { vcApiPath: this.settings.vcApiPath, podProvider: this.settings.podProvider }
-      });
+      this.broker.createService({ mixins: [VCApiService], settings: { vcApiPath, podProvider } });
   },
   async started() {
     this.broker.call('ontologies.register', did);

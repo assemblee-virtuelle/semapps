@@ -183,6 +183,8 @@ describe('verifiable credentials', () => {
         })
       });
 
+      expect(verifiablePresentation.code).toBeUndefined();
+
       const validationResult = await alice.fetch(path.join(alice.vcApiEndpoint, 'presentations/verify'), {
         method: 'POST',
         body: JSON.stringify({ verifiablePresentation })
@@ -270,7 +272,7 @@ describe('verifiable credentials', () => {
   });
 
   describe('capabilities', () => {
-    test.only('first and second capability are created and presentation is verifiable', async () => {
+    test('first and second capability are created and presentation is verifiable', async () => {
       const firstCapability = await alice.fetch(path.join(alice.vcApiEndpoint, 'credentials/issue'), {
         method: 'POST',
         body: JSON.stringify({
@@ -500,6 +502,10 @@ describe('verifiable credentials', () => {
     });
 
     test('non-linked chain is invalid', async () => {
+      const allCreds = await alice.fetch(path.join(alice.vcApiEndpoint, 'credentials'), {
+        method: 'GET'
+      });
+
       const firstCapability = await alice.fetch(path.join(alice.vcApiEndpoint, 'credentials/issue'), {
         method: 'POST',
         body: JSON.stringify({

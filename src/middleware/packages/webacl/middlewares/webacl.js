@@ -83,8 +83,8 @@ const addRightsToNewUser = async (ctx, userUri) => {
  * @returns {Promise<boolean>} true, if capability enables access to the resource, false otherwise.
  */
 const hasValidCapability = async (capabilityPresentation, resourceUri, mode) => {
-  const vcs = capabilityPresentation.verifiableCredential;
-  const authorizations = vcs[vcs.length - 1].hasAuthorization;
+  const vcs = arrayOf(capabilityPresentation.verifiableCredential);
+  const authorizations = vcs[vcs.length - 1].credentialSubject?.['apods:hasAuthorization'] || [];
 
   // Check, if the capability's ACLs allow access to the resource.
   if (
@@ -154,7 +154,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
         }
 
         // Check, if there is a valid capability.
-        if (ctx.meta.authorization?.capability) {
+        if (ctx.meta.authorization?.capabilityPresentation) {
           if (await hasValidCapability(ctx.meta.authorization.capabilityPresentation, resourceUri, 'acl:Read')) {
             return bypass();
           }

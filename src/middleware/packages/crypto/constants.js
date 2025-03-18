@@ -1,4 +1,22 @@
+const noGraphCredentialContext = require('./utils/noGraphCredentialContext');
+
 const VC_API_SERVICE_TYPE = 'urn:tmp:vcService';
+
+/**
+ * Context the same as @see {credentialContext} but
+ * with the https://www.w3.org/ns/credentials/v2 replaced with
+ * @see {noGraphCredentialContext}
+ */
+const credentialsContextNoGraphProof = [
+  noGraphCredentialContext,
+  {
+    as: 'https://www.w3.org/ns/activitystreams#',
+    apods: 'http://activitypods.org/ns/core#',
+    acl: 'http://www.w3.org/ns/auth/acl#',
+    dc: 'http://purl.org/dc/terms/'
+    // sec: 'https://w3id.org/security#'
+  }
+];
 
 const credentialsContext = [
   'https://www.w3.org/ns/credentials/v2',
@@ -6,8 +24,8 @@ const credentialsContext = [
     as: 'https://www.w3.org/ns/activitystreams#',
     apods: 'http://activitypods.org/ns/core#',
     acl: 'http://www.w3.org/ns/auth/acl#',
-    dc: 'http://purl.org/dc/terms/',
-    sec: 'https://w3id.org/security#'
+    dc: 'http://purl.org/dc/terms/'
+    // : 'https://w3id.org/security#'
   }
 ];
 
@@ -37,5 +55,6 @@ module.exports = KEY_TYPES;
 module.exports = {
   VC_API_SERVICE_TYPE,
   KEY_TYPES,
-  credentialsContext
+  credentialsContext,
+  credentialsContextNoGraphProof
 };

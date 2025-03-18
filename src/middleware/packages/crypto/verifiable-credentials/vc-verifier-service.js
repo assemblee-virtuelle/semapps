@@ -115,27 +115,27 @@ const VCPresentationService = {
           options: { challenge = presentation?.proof?.challenge, proofPurpose: term, domain, unsignedPresentation }
         } = ctx.params;
 
-        if (!unsignedPresentation || challenge) {
-          const challengeValidationResult = await ctx.call('crypto.vc.presentation.challenge.validate', {
-            challenge
-          });
-          if (!challengeValidationResult.valid) {
-            return { verified: false, error: challengeValidationResult.error };
-          }
-        }
-
-        // Used to validate verifiable credentials in presentation.
-        const credentialPurpose = ctx.params.credentialPurpose || new VCPurpose();
-
-        const presentationPurpose =
-          ctx.params.presentationPurpose ||
-          new AuthenticationProofPurpose({ term: term || 'assertionMethod', challenge, domain });
-
-        const suite = new DataIntegrityProof({
-          cryptosuite
-        });
-
         try {
+          if (!unsignedPresentation || challenge) {
+            const challengeValidationResult = await ctx.call('crypto.vc.presentation.challenge.validate', {
+              challenge
+            });
+            if (!challengeValidationResult.valid) {
+              return { verified: false, error: challengeValidationResult.error };
+            }
+          }
+
+          // Used to validate verifiable credentials in presentation.
+          const credentialPurpose = ctx.params.credentialPurpose || new VCPurpose();
+
+          const presentationPurpose =
+            ctx.params.presentationPurpose ||
+            new AuthenticationProofPurpose({ term: term || 'assertionMethod', challenge, domain });
+
+          const suite = new DataIntegrityProof({
+            cryptosuite
+          });
+
           const verificationResult = await vc.verify({
             presentation,
             presentationPurpose,
@@ -147,8 +147,8 @@ const VCPresentationService = {
           });
           return verificationResult;
         } catch (e) {
-          console.error(e);
-          throw e;
+          this.logger.error('Error verifying presentation:', e);
+          return { verified: false, error: e.message };
         }
       }
     },
@@ -201,11 +201,12 @@ const VCPresentationService = {
         });
 
         // Order the VCs in the presentation by issuance date.
-        const orderedPresentation = arrayOf(presentation.verifiableCredential).sort(
+        const orderedCredentials = arrayOf(presentation.verifiableCredential).sort(
           (c1, c2) => new Date(c1.issuanceDate || c1.proof.created) - new Date(c2.issuanceDate || c2.proof.created)
         );
+        presentation.verifiableCredential = orderedCredentials;
 
-        return { ...verificationResult, presentation: orderedPresentation };
+        return { ...verificationResult, presentation };
       }
     }
   }

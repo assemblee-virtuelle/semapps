@@ -32,12 +32,14 @@ const { KEY_TYPES, credentialsContext } = require('../constants');
 const VCCredentialService = {
   name: 'crypto.vc.issuer',
   settings: {
-    vcApiPath: null
+    vcApiPath: null,
+    podProvider: null
   },
   created() {
+    const { vcApiPath, podProvider } = this.settings;
     this.broker.createService({
       mixins: [VCCredentialContainer],
-      settings: { path: path.join(this.settings.vcApiPath, 'credentials') }
+      settings: { path: path.join(vcApiPath, 'credentials'), podProvider }
     });
   },
   async started() {
