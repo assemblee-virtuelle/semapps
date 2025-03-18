@@ -1,6 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
 const urlJoin = require('url-join');
-const { sanitizeSPARQL } = require('../../../utils');
+const { sanitizeSparqlQuery } = require('@semapps/triplestore');
 
 module.exports = {
   action: {
@@ -18,9 +18,6 @@ module.exports = {
       if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');
 
       if (!groupUri) groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
-
-      await sanitizeSPARQL(groupUri);
-      if (memberId) await sanitizeSPARQL(memberId);
 
       // TODO: check that the group exists ?
 
@@ -40,7 +37,8 @@ module.exports = {
       if (memberId === 'anon' || memberId === 'system') return false; // anonymous is never member.
 
       return await ctx.call('triplestore.query', {
-        query: `PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+        query: sanitizeSparqlQuery`
+          PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
           ASK
           WHERE { GRAPH <${this.settings.graphName}> {
             <${groupUri}> vcard:hasMember <${memberId}> .

@@ -1,6 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
 const urlJoin = require('url-join');
-const { sanitizeSPARQL } = require('../../../utils');
+const { sanitizeSparqlQuery } = require('@semapps/triplestore');
 
 module.exports = {
   api: async function api(ctx) {
@@ -32,9 +32,6 @@ module.exports = {
 
       if (!groupUri) groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
 
-      await sanitizeSPARQL(groupUri);
-      await sanitizeSPARQL(memberUri);
-
       // TODO: check that the member exists and is in the group ?
 
       if (webId !== 'system') {
@@ -51,9 +48,14 @@ module.exports = {
       }
 
       await ctx.call('triplestore.update', {
-        query: `PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
-        DELETE DATA { GRAPH <${this.settings.graphName}>
-          { <${groupUri}> vcard:hasMember <${memberUri}> } }`,
+        query: sanitizeSparqlQuery`
+          PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+          DELETE DATA { 
+            GRAPH <${this.settings.graphName}> { 
+              <${groupUri}> vcard:hasMember <${memberUri}>
+            }  
+          }
+        `,
         webId: 'system'
       });
 

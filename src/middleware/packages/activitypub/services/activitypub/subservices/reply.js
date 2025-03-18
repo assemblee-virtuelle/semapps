@@ -1,3 +1,4 @@
+const { sanitizeSparqlQuery } = require('@semapps/triplestore');
 const ActivitiesHandlerMixin = require('../../../mixins/activities-handler');
 const { ACTIVITY_TYPES, OBJECT_TYPES } = require('../../../constants');
 const { collectionPermissionsWithAnonRead } = require('../../../utils');
@@ -45,7 +46,7 @@ const ReplyService = {
       const { objectUri } = ctx.params;
 
       await ctx.call('triplestore.update', {
-        query: `
+        query: sanitizeSparqlQuery`
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           DELETE {
             ?collection as:items <${objectUri}> .

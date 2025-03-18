@@ -1,6 +1,7 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { ControlledContainerMixin, arrayOf } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { sanitizeSparqlQuery } = require('@semapps/triplestore');
 const { Errors: E } = require('moleculer-web');
 const getAction = require('./actions/get');
 
@@ -122,7 +123,7 @@ const CollectionService = {
     async isEmpty(ctx) {
       const { collectionUri } = ctx.params;
       const res = await ctx.call('triplestore.query', {
-        query: `
+        query: sanitizeSparqlQuery`
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           SELECT ( Count(?items) as ?count )
           WHERE {
@@ -144,7 +145,7 @@ const CollectionService = {
       const { collectionUri, itemUri } = ctx.params;
       if (!itemUri) throw new Error('No valid item URI provided for activitypub.collection.includes');
       return await ctx.call('triplestore.query', {
-        query: `
+        query: sanitizeSparqlQuery`
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           ASK
           WHERE {
@@ -176,7 +177,7 @@ const CollectionService = {
         throw new Error(`Cannot attach to a non-existing collection: ${collectionUri} (dataset: ${ctx.meta.dataset})`);
 
       await ctx.call('triplestore.insert', {
-        resource: `<${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>`,
+        resource: sanitizeSparqlQuery`<${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>`,
         webId: 'system'
       });
 
@@ -199,7 +200,7 @@ const CollectionService = {
       if (!collectionExist) throw new Error(`Cannot detach from a non-existing collection: ${collectionUri}`);
 
       await ctx.call('triplestore.update', {
-        query: `
+        query: sanitizeSparqlQuery`
           DELETE
           WHERE
           { <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}> }
@@ -220,7 +221,7 @@ const CollectionService = {
     async clear(ctx) {
       const collectionUri = ctx.params.collectionUri.replace(/\/+$/, '');
       await ctx.call('triplestore.update', {
-        query: `
+        query: sanitizeSparqlQuery`
           PREFIX as: <https://www.w3.org/ns/activitystreams#> 
           DELETE {
             ?s1 ?p1 ?o1 .

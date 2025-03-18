@@ -1,6 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
 const urlJoin = require('url-join');
-const { sanitizeSPARQL } = require('../../../utils');
+const { sanitizeSparqlQuery } = require('@semapps/triplestore');
 
 module.exports = {
   api: async function api(ctx) {
@@ -24,12 +24,9 @@ module.exports = {
 
       if (!groupUri) groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
 
-      await sanitizeSPARQL(groupUri);
-
       // TODO: check that the group exists ?
 
       if (webId !== 'system') {
-        // verifier que nous avons bien le droit Read sur le group.
         const groupRights = await ctx.call('webacl.resource.hasRights', {
           resourceUri: groupUri,
           rights: {
@@ -41,12 +38,13 @@ module.exports = {
       }
 
       const members = await ctx.call('triplestore.query', {
-        query: `
+        query: sanitizeSparqlQuery`
           PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
           SELECT ?m 
           WHERE { 
-            GRAPH <${this.settings.graphName}>
-            { <${groupUri}> vcard:hasMember ?m } 
+            GRAPH <${this.settings.graphName}> { 
+              <${groupUri}> vcard:hasMember ?m 
+            } 
           }
         `,
         webId: 'system'

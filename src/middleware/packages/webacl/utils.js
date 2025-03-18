@@ -262,11 +262,6 @@ async function removeAgentGroupOrAgentFromAuthorizations(uri, isGroup, graphName
   });
 }
 
-async function sanitizeSPARQL(text) {
-  if (text.includes('>') || text.includes('<') || /\s/g.test(text))
-    throw new MoleculerError('sparql injection detected. go away', 400, 'SPARQL_INJECTION');
-}
-
 const processRights = (rights, aclUri) => {
   const list = [];
   if (rights.anon) {
@@ -316,7 +311,6 @@ module.exports = {
   filterTriplesForResource,
   aclGroupExists,
   removeAgentGroupOrAgentFromAuthorizations,
-  sanitizeSPARQL,
   processRights,
   FULL_TYPE_URI,
   FULL_ACCESSTO_URI,

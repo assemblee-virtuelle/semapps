@@ -1,6 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
+const { sanitizeSparqlQuery } = require('@semapps/triplestore');
 const urlJoin = require('url-join');
-const { sanitizeSPARQL } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
@@ -30,13 +30,9 @@ module.exports = {
 
       if (!groupUri) groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
 
-      // sanitizing
-      await sanitizeSPARQL(groupUri);
-      await sanitizeSPARQL(memberUri);
-
       // TODO: check that the member exists ?
 
-      // verifier que nous avons bien le droit Append ou Write sur le group.
+      // Check we have Append ou Write permissions on the group
       if (webId !== 'system') {
         const groupRights = await ctx.call('webacl.resource.hasRights', {
           resourceUri: groupUri,
@@ -51,9 +47,14 @@ module.exports = {
       }
 
       await ctx.call('triplestore.update', {
-        query: `PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
-        INSERT DATA { GRAPH <${this.settings.graphName}>
-          { <${groupUri}> vcard:hasMember <${memberUri}> } }`,
+        query: sanitizeSparqlQuery`
+          PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+          INSERT DATA { 
+            GRAPH <${this.settings.graphName}> { 
+              <${groupUri}> vcard:hasMember <${memberUri}> 
+            }
+          }
+        `,
         webId: 'system'
       });
 
