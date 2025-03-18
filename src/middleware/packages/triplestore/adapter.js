@@ -45,7 +45,7 @@ class TripleStoreAdapter {
     const { query } = params;
 
     // Ensure that the value does not contain SPARQL injection
-    Object.values(query).forEach(value => sanitizeSparqlString(value));
+    if (query) Object.values(query).forEach(value => sanitizeSparqlString(value));
 
     return this.broker
       .call('triplestore.query', {
