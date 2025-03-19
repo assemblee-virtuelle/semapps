@@ -8,6 +8,9 @@ const middlewares = [parseHeader, parseJson, negotiateAccept];
  *
  * Verifiable Credentials API Service.
  *
+ * This service implements (parts of) the
+ * [VC API spec](https://w3c-ccg.github.io/vc-api/) v0.3.
+ *
  * WARNING: Changing things here can have security implications.
  *
  * @type {import('moleculer').ServiceSchema}

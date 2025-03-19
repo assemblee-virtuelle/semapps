@@ -25,7 +25,8 @@ const { KEY_TYPES, credentialsContext, VC_API_PATH } = require('../constants');
 
 /**
  * Service for verifying and creating Verifiable Presentations
- * as well as verifying Capabilities created with Verifiable Credentials.
+ * as well as verifying capabilities created with Verifiable Credentials.
+ * For more information see the VC API spec
  *
  * WARNING: Changing things here can have security implications.
  *

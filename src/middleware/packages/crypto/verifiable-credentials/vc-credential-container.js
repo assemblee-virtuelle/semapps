@@ -3,6 +3,7 @@ const { credentialsContext, credentialsContextNoGraphProof } = require('../const
 
 /**
  * Container for Verifiable Credentials. Posting to this container will create a new VC.
+ * The issuance is not handled in this service but in the {@link VCIssuerService}.
  *
  * WARNING: Changing things here can have security implications.
  *
@@ -18,7 +19,7 @@ const VCCredentialsContainer = {
     activateTombstones: false,
     podProvider: null,
     permissions: (webId, ctx) => {
-      // If not a pod provider, the container is shared, so any user can append.
+      // If not a pod provider, the container is shared, so any user can append (not read arbitrary VCs though).
       return {
         anyUser: {
           // Caution. Here, `ctx.service` is the LdpContainerService. Because this function is called by the WebAclMiddleware.
@@ -41,6 +42,11 @@ const VCCredentialsContainer = {
       };
     }
   },
+  /**
+   * The actions below have their `@context` replaced.
+   * This is because the proof is considered a separate graph in the original context.
+   * We can't handle that internally so we use a copy of the context with the `@graph`s removed.
+   */
   actions: {
     async get(ctx) {
       const resource = await ctx.call('ldp.resource.get', {

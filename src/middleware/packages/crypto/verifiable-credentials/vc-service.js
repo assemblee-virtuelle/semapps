@@ -11,8 +11,12 @@ const VCApiService = require('./vc-api-service');
  * - It also registers the VC API location to the webId.
  * - It registers the did ontology.
  *
+ * [VC Spec Overview](https://www.w3.org/TR/vc-overview/)
  * VC status and VC workflow services are not implemented.
- * The VC API spec is in v0.3 and undergoing changes.
+ *
+ * As of 2025-03, the [VC API spec](https://w3c-ccg.github.io/vc-api/)
+ * is in v0.3 and undergoing changes. Issuance, challenges and verification
+ * are implemented.
  *
  * WARNING: Changing things here can have security implications.
  *

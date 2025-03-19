@@ -1,8 +1,12 @@
 const { ControlledContainerMixin, PseudoIdMixin } = require('@semapps/ldp');
-const { credentialsContext, noGraphCredentialContext } = require('../constants');
+const { credentialsContext, credentialsContextNoGraphProof } = require('../constants');
 
 /**
  * Container for Verifiable Presentations. Posting to this container will create a new VP.
+ * Service works in analogy to @see {VCCredentialsContainer}.
+ *
+ * Note that presentations do not have to be persisted. Upon issuance, the holder can
+ * provide an unsigned presentation with an id that can be signed as well.
  *
  * WARNING: Changing things here can have security implications.
  *
@@ -28,11 +32,16 @@ const VCPresentationContainer = {
     },
     newResourcesPermissions: {}
   },
+  /**
+   * The actions below have their `@context` replaced.
+   * This is because the proof is considered a separate graph in the original context.
+   * We can't handle that internally so we use a copy of the context with the `@graph`s removed.
+   */
   actions: {
     async get(ctx) {
       const resource = ctx.call('ldp.resource.get', {
         ...ctx.params,
-        jsonContext: noGraphCredentialContext
+        jsonContext: credentialsContextNoGraphProof
       });
       return { ...resource, '@context': credentialsContext };
     },
@@ -42,7 +51,7 @@ const VCPresentationContainer = {
         ...ctx.params,
         resource: {
           ...resource,
-          '@context': noGraphCredentialContext
+          '@context': credentialsContextNoGraphProof
         }
       });
     },
@@ -52,14 +61,14 @@ const VCPresentationContainer = {
         ...ctx.params,
         resource: {
           ...resource,
-          '@context': noGraphCredentialContext
+          '@context': credentialsContextNoGraphProof
         }
       });
     },
     async list(ctx) {
       const container = await ctx.call('ldp.container.list', {
         ...ctx.params,
-        jsonContext: noGraphCredentialContext
+        jsonContext: credentialsContextNoGraphProof
       });
       return { ...container, '@context': credentialsContext };
     }
