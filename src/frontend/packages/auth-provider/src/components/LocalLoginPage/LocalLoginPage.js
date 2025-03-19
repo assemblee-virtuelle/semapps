@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslate, useGetIdentity } from 'react-admin';
 import { Box, Card, Typography } from '@mui/material';
@@ -10,6 +10,7 @@ import ResetPasswordForm from './ResetPasswordForm';
 import SimpleBox from './SimpleBox';
 import { defaultScorer } from '../../passwordScorer';
 import getSearchParamsRest from './getSearchParamsRest';
+import { isURL } from '../../utils';
 
 /**
  * @param {object} props Props
@@ -37,7 +38,7 @@ const LocalLoginPage = ({
   const isResetPassword = searchParams.has('reset_password');
   const isNewPassword = searchParams.has('new_password');
   const isLogin = !isSignup && !isResetPassword && !isNewPassword;
-  const redirectTo = searchParams.get('redirect') || '/';
+  const redirectTo = isURL(searchParams.get('redirect')) ? searchParams.get('redirect') : '/';
   const { data: identity, isLoading } = useGetIdentity();
 
   useEffect(() => {
@@ -72,10 +73,11 @@ const LocalLoginPage = ({
   return (
     <SimpleBox title={translate(title)} text={translate(text)} icon={<LockIcon />}>
       <Card>
-        {isLogin && <LoginForm onLogin={onLogin} allowUsername={allowUsername} />}
+        {isLogin && <LoginForm onLogin={onLogin} redirectTo={redirectTo} allowUsername={allowUsername} />}
         {isSignup && (
           <SignupForm
             delayBeforeRedirect={4000}
+            redirectTo={redirectTo}
             onSignup={onSignup}
             additionalSignupValues={additionalSignupValues}
             passwordScorer={passwordScorer}

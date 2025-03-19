@@ -33,6 +33,7 @@ interface SignupFormProps {
   additionalSignupValues: object;
   delayBeforeRedirect: number;
   passwordScorer: typeof defaultScorer;
+  redirectTo: string;
 }
 
 /**
@@ -48,7 +49,8 @@ const SignupForm = ({
   passwordScorer = defaultScorer,
   onSignup,
   additionalSignupValues = {},
-  delayBeforeRedirect = 0
+  delayBeforeRedirect = 0,
+  redirectTo
 }: SignupFormProps) => {
   const [searchParams] = useSearchParams();
   const [handleSubmit, setHandleSubmit] = useState<SubmitHandler<FormValues>>(() => {});
@@ -61,6 +63,7 @@ const SignupForm = ({
         onSignup={onSignup}
         delayBeforeRedirect={delayBeforeRedirect}
         setHandleSubmit={setHandleSubmit}
+        redirectTo={redirectTo}
       />
     </Form>
   );
@@ -71,7 +74,8 @@ const FormContent = ({
   onSignup,
   additionalSignupValues,
   delayBeforeRedirect = 0,
-  setHandleSubmit
+  setHandleSubmit,
+  redirectTo
 }: SignupFormProps & { setHandleSubmit: React.Dispatch<React.SetStateAction<SubmitHandler<FormValues>>> }) => {
   const [loading, setLoading] = useSafeSetState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -80,7 +84,6 @@ const FormContent = ({
   const translate = useTranslate();
   const notify = useNotify();
   const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get('redirect') || '/';
   const [locale] = useLocaleState();
   const [password, setPassword] = useState('');
   const formContext = useFormContext();
