@@ -12,6 +12,7 @@ const VCApiService = require('./vc-api-service');
  * - It registers the did ontology.
  *
  * VC status and VC workflow services are not implemented.
+ * The VC API spec is in v0.3 and undergoing changes.
  *
  * WARNING: Changing things here can have security implications.
  *

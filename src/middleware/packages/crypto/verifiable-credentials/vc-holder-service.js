@@ -110,6 +110,7 @@ const VCHolderService = {
         // Create presentation.
         const vcPresentation = {
           ...vc.createPresentation({
+            '@context': credentialsContext,
             type: ['VerifiablePresentation'],
             ...presentationParam,
             holder: presentationParam?.holder || webId
