@@ -21,7 +21,7 @@ let Ed25519Multikey;
   Ed25519Multikey = await import('@digitalbazaar/ed25519-multikey');
 })();
 
-const { KEY_TYPES, credentialsContext } = require('../constants');
+const { KEY_TYPES, credentialsContext, VC_API_PATH } = require('../constants');
 
 /**
  * Service for verifying and creating Verifiable Presentations
@@ -35,14 +35,13 @@ const VCHolderService = {
   name: 'crypto.vc.holder',
   dependencies: ['jsonld', 'jsonld.context'],
   settings: {
-    vcApiPath: null,
     podProvider: null
   },
   created() {
-    const { vcApiPath, podProvider } = this.settings;
+    const { podProvider } = this.settings;
     this.broker.createService({
       mixins: [VCPresentationContainer],
-      settings: { path: path.join(vcApiPath, 'credentials'), podProvider }
+      settings: { path: path.join(VC_API_PATH, 'credentials'), podProvider }
     });
   },
   async started() {

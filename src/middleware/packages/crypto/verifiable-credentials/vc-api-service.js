@@ -1,7 +1,6 @@
 const { parseHeader, negotiateAccept, parseJson } = require('@semapps/middlewares');
-const { namedNode, triple, blankNode } = require('@rdfjs/data-model');
 const path = require('node:path');
-const { VC_API_SERVICE_TYPE } = require('../constants');
+const { VC_API_PATH } = require('../constants');
 
 const middlewares = [parseHeader, parseJson, negotiateAccept];
 
@@ -17,8 +16,6 @@ const VCApiService = {
   name: 'crypto.vc.api',
   dependencies: ['api', 'ldp'],
   settings: {
-    /** Changing this will break existing references in webId documents to the VC API. */
-    vcApiPath: null,
     podProvider: null
   },
   created() {
@@ -28,11 +25,7 @@ const VCApiService = {
   },
   async started() {
     const basePath = await this.broker.call('ldp.getBasePath');
-    const apiPath = path.join(
-      basePath,
-      this.settings.podProvider ? '/:username([^/.][^/]+)' : '',
-      this.settings.vcApiPath
-    );
+    const apiPath = path.join(basePath, this.settings.podProvider ? '/:username([^/.][^/]+)' : '', VC_API_PATH);
 
     // Credential routes.
     await this.broker.call('api.addRoute', {
@@ -87,40 +80,6 @@ const VCApiService = {
         }
       }
     });
-  },
-
-  events: {
-    /**
-     * Registers the location of the VC api for the webId.
-     *
-     * Note: The VC API is still in specification and discovery has not been standardized.
-     * See: https://github.com/w3c-ccg/vc-api/issues/459
-     *
-     * TODO: Write job to attach those triples to existing webIds.
-     * TODO: Register semapps vc api endpoint type.
-     */
-    async 'auth.registered'(ctx) {
-      const { webId } = ctx.params;
-
-      const vcApiUri = this.settings.podProvider
-        ? path.join(webId, this.settings.vcApiPath)
-        : path.join(await this.broker.call('ldp.getBaseUrl'), this.settings.vcApiPath);
-
-      // Attach the storage URL to the webId
-      await ctx.call('ldp.resource.patch', {
-        resourceUri: webId,
-        triplesToAdd: [
-          triple(namedNode(webId), namedNode('https://www.w3.org/ns/did#service'), blankNode('b0')),
-          triple(
-            blankNode('b0'),
-            namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-            namedNode(VC_API_SERVICE_TYPE)
-          ),
-          triple(blankNode('b0'), namedNode('https://www.w3.org/ns/did#serviceEndpoint'), namedNode(vcApiUri))
-        ],
-        webId: 'system'
-      });
-    }
   }
 };
 

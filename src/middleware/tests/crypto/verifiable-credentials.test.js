@@ -1,6 +1,4 @@
-const { VC_API_SERVICE_TYPE } = require('@semapps/crypto');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { arrayOf } = require('@semapps/ldp');
 const path = require('node:path');
 const initialize = require('./initialize');
 
@@ -44,9 +42,7 @@ const setUpUser = async (broker, username) => {
       })
       .catch(() => null);
   };
-  user.vcApiEndpoint = arrayOf(user.webIdDoc.service).find(
-    service => service.type === VC_API_SERVICE_TYPE
-  ).serviceEndpoint;
+  user.vcApiEndpoint = path.join(user.webIdDoc.service, 'api/vc/v0.3/');
 
   return user;
 };

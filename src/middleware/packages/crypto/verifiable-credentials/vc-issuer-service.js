@@ -20,7 +20,7 @@ let Ed25519Multikey;
   Ed25519Multikey = await import('@digitalbazaar/ed25519-multikey');
 })();
 
-const { KEY_TYPES, credentialsContext } = require('../constants');
+const { KEY_TYPES, credentialsContext, VC_API_PATH } = require('../constants');
 
 /**
  * Service for verifying, reading, and revoking Verifiable Credentials.
@@ -32,14 +32,13 @@ const { KEY_TYPES, credentialsContext } = require('../constants');
 const VCCredentialService = {
   name: 'crypto.vc.issuer',
   settings: {
-    vcApiPath: null,
     podProvider: null
   },
   created() {
-    const { vcApiPath, podProvider } = this.settings;
+    const { podProvider } = this.settings;
     this.broker.createService({
       mixins: [VCCredentialContainer],
-      settings: { path: path.join(vcApiPath, 'credentials'), podProvider }
+      settings: { path: path.join(VC_API_PATH, 'credentials'), podProvider }
     });
   },
   async started() {

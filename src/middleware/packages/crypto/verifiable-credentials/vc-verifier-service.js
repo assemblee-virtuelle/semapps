@@ -32,7 +32,7 @@ const VCPresentationService = {
   dependencies: ['ldp', 'jsonld'],
   created() {
     // Start challenge service.
-    this.broker.createService({ mixins: [ChallengeService], settings: { vcApiPath: this.settings.vcApiPath } });
+    this.broker.createService({ mixins: [ChallengeService] });
   },
   async started() {
     this.documentLoader = async (url, options) => {

@@ -21,18 +21,16 @@ const VCService = {
   name: 'crypto.vc',
   dependencies: ['ontologies'],
   settings: {
-    /** Changing this will break existing references in webId documents to the VC API. */
-    vcApiPath: '/api/vc/v0.3',
-    podProvider: false
+    podProvider: false,
+    enableApi: true
   },
   created() {
-    const { vcApiPath, podProvider } = this.settings;
-    this.broker.createService({ mixins: [VCIssuerService], settings: { vcApiPath, podProvider } });
-    this.broker.createService({ mixins: [VCHolderService], settings: { vcApiPath, podProvider } });
+    const { enableApi, podProvider } = this.settings;
+    this.broker.createService({ mixins: [VCIssuerService], settings: { podProvider } });
+    this.broker.createService({ mixins: [VCHolderService], settings: { podProvider } });
     this.broker.createService({ mixins: [VCVerifierService] });
     this.broker.createService({ mixins: [DataIntegrityService] });
-    if (this.settings.vcApiPath)
-      this.broker.createService({ mixins: [VCApiService], settings: { vcApiPath, podProvider } });
+    if (enableApi) this.broker.createService({ mixins: [VCApiService], settings: { podProvider } });
   },
   async started() {
     this.broker.call('ontologies.register', did);

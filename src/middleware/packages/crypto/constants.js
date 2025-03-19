@@ -1,6 +1,6 @@
 const noGraphCredentialContext = require('./utils/noGraphCredentialContext');
 
-const VC_API_SERVICE_TYPE = 'urn:tmp:vcService';
+const VC_API_PATH = '/api/vc/v0.3';
 
 /**
  * Context the same as @see {credentialContext} but
@@ -53,7 +53,7 @@ const KEY_TYPES = {
 module.exports = KEY_TYPES;
 
 module.exports = {
-  VC_API_SERVICE_TYPE,
+  VC_API_PATH,
   KEY_TYPES,
   credentialsContext,
   credentialsContextNoGraphProof
