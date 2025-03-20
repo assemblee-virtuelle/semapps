@@ -49,7 +49,7 @@ const setUpUser = async (broker, username) => {
 };
 const setUp = async withOldKeyStore => {
   ({ broker, baseUrl } = await initialize(3000, withOldKeyStore));
-  vcApiEndpoint = path.join(baseUrl, 'vc/v0.3/');
+  vcApiEndpoint = path.join(baseUrl, 'api/vc/v0.3/');
   alice = await setUpUser(broker, 'alice');
   bob = await setUpUser(broker, 'bob');
   craig = await setUpUser(broker, 'craig');
