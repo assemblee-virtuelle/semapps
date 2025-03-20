@@ -21,6 +21,7 @@
     "passport-cas2": "0.0.12",
     "passport-local": "^1.0.0",
     "pug": "^3.0.2",
+    "speakingurl": "^14.0.1",
     "url-join": "^4.0.1"
   },
   "publishConfig": {

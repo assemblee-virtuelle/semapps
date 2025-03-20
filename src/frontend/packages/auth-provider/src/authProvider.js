@@ -188,8 +188,12 @@ const authProvider = ({
         } catch (e) {
           if (e.message === 'email.already.exists') {
             throw new Error('auth.message.user_email_exist');
-          } else if (e.message === 'username.already.exists') {
+          } else if (e.message === 'email.invalid') {
+            throw new Error('auth.message.user_email_invalid');
+          } else if (e.message === 'username.already.exists' || e.message === 'username.reserved') {
             throw new Error('auth.message.username_exist');
+          } else if (e.message === 'username.too-short') {
+            throw new Error('auth.message.username_too_short');
           } else if (e.message === 'username.invalid') {
             throw new Error('auth.message.username_invalid');
           } else {

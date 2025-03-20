@@ -84,9 +84,11 @@ const frenchMessages = {
       user_not_allowed_to_login: "Vous n'avez pas le droit de vous connecter avec ce compte",
       user_email_not_found: 'Aucun compte trouvé avec cette adresse mail',
       user_email_exist: 'Un compte existe déjà avec cette adresse mail',
+      user_email_invalid: "L'adresse mail fournie n'est pas valide",
       username_exist: 'Un compte existe déjà avec cet identifiant',
       username_invalid:
         "Cet identifiant n'est pas valide. Seuls les lettres minuscules, les chiffres, les points et les tirets sont autorisés",
+      username_too_short: 'Cet identifiant est trop court. Il doit compter au moins 2 caractères',
       new_user_created: 'Votre compte a été créé avec succès',
       user_connected: 'Vous êtes maintenant connecté',
       user_disconnected: 'Vous êtes maintenant déconnecté',

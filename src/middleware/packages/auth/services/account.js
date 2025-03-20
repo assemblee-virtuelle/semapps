@@ -1,7 +1,11 @@
 const bcrypt = require('bcrypt');
+const createSlug = require('speakingurl');
 const DbService = require('moleculer-db');
 const { TripleStoreAdapter } = require('@semapps/triplestore');
 const crypto = require('crypto');
+
+// Taken from https://stackoverflow.com/a/9204568/7900695
+const emailRegexp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 module.exports = {
   name: 'auth.account',
@@ -17,30 +21,50 @@ module.exports = {
       let { uuid, username, password, email, webId, ...rest } = ctx.params;
       const hashedPassword = password ? await this.hashPassword(password) : undefined;
 
-      email = email && email.toLowerCase();
+      // FORMAT AND VERIFY EMAIL
 
-      const emailExists = !email ? false : await ctx.call('auth.account.emailExists', { email });
-      if (emailExists) {
-        throw new Error('email.already.exists');
+      if (email) {
+        email = email.toLowerCase();
+
+        const emailExists = await ctx.call('auth.account.emailExists', { email });
+        if (emailExists) {
+          throw new Error('email.already.exists');
+        }
+
+        if (!emailRegexp.test(email)) {
+          throw new Error('email.invalid');
+        }
       }
 
+      // FORMAT AND VERIFY USERNAME
+
       if (username) {
-        if (!ctx.meta.isSystemCall) await this.isValidUsername(ctx, username);
+        if (!ctx.meta.isSystemCall) {
+          const { isValid, error } = await this.isValidUsername(ctx, username);
+          if (!isValid) throw new Error(error);
+        }
       } else if (email) {
-        // If username is not provided, find an username based on the email
-        const usernameFromEmail = email.split('@')[0].toLowerCase();
-        let usernameValid = false;
-        let i = 0;
-        do {
-          username = i === 0 ? usernameFromEmail : usernameFromEmail + i;
-          try {
-            usernameValid = await this.isValidUsername(ctx, username);
-          } catch (e) {
-            // Do nothing, the loop will continue
+        // If username is not provided, find one automatically from the email (without errors)
+        username = createSlug(email.split('@')[0].toLowerCase());
+
+        let { isValid, error } = await this.isValidUsername(ctx, username);
+
+        if (!isValid) {
+          if (error === 'username.invalid' || error === 'username.too-short') {
+            // If username generated from email is invalid, use a generic name
+            username = 'user';
           }
-          i++;
-        } while (!usernameValid);
-      } else throw new Error('you must provide at least a username or an email address');
+
+          // If necessary, add a number after the username
+          let i = 0;
+          do {
+            username = i === 0 ? username : username + i;
+            ({ isValid } = await this.isValidUsername(ctx, username));
+          } while (!isValid);
+        }
+      } else {
+        throw new Error('You must provide at least a username or an email address');
+      }
 
       return await this._create(ctx, {
         ...rest,
@@ -219,23 +243,29 @@ module.exports = {
   },
   methods: {
     async isValidUsername(ctx, username) {
+      let error;
+
       // Ensure the username has no space or special characters
       if (!/^[a-z0-9\-+_.]+$/.exec(username)) {
-        throw new Error('username.invalid');
+        error = 'username.invalid';
+      }
+
+      if (username.length < 2) {
+        error = 'username.too-short';
       }
 
       // Ensure we don't use reservedUsernames
       if (this.settings.reservedUsernames.includes(username)) {
-        throw new Error('username.already.exists');
+        error = 'username.reserved';
       }
 
       // Ensure username doesn't already exist
       const usernameExists = await ctx.call('auth.account.usernameExists', { username });
       if (usernameExists) {
-        throw new Error('username.already.exists');
+        error = 'username.already.exists';
       }
 
-      return true;
+      return { isValid: !error, error };
     },
     async hashPassword(password) {
       return new Promise((resolve, reject) => {
