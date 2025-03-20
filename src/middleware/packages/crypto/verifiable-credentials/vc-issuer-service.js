@@ -1,7 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const path = require('node:path');
 const jsigs = require('jsonld-signatures');
-const VCCredentialContainer = require('./vc-credential-container');
 
 const {
   purposes: { AssertionProofPurpose }
@@ -34,13 +32,7 @@ const VCCredentialService = {
   settings: {
     podProvider: null
   },
-  created() {
-    const { podProvider } = this.settings;
-    this.broker.createService({
-      mixins: [VCCredentialContainer],
-      settings: { path: path.join(VC_API_PATH, 'credentials'), podProvider }
-    });
-  },
+
   async started() {
     this.documentLoader = async (url, options) => {
       return await this.broker.call('jsonld.document-loader.loadWithCache', { url, options });

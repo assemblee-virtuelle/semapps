@@ -1,8 +1,6 @@
 const { randomUUID } = require('node:crypto');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const path = require('node:path');
 const jsigs = require('jsonld-signatures');
-const VCPresentationContainer = require('./vc-presentation-container');
 
 const {
   purposes: { AuthenticationProofPurpose }
@@ -35,16 +33,6 @@ const { KEY_TYPES, credentialsContext, VC_API_PATH } = require('../constants');
 const VCHolderService = {
   name: 'crypto.vc.holder',
   dependencies: ['jsonld', 'jsonld.context'],
-  settings: {
-    podProvider: null
-  },
-  created() {
-    const { podProvider } = this.settings;
-    this.broker.createService({
-      mixins: [VCPresentationContainer],
-      settings: { path: path.join(VC_API_PATH, 'credentials'), podProvider }
-    });
-  },
   async started() {
     this.documentLoader = async (url, options) => {
       return await this.broker.call('jsonld.document-loader.loadWithCache', { url, options });
