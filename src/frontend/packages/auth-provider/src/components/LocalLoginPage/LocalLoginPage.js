@@ -10,7 +10,7 @@ import ResetPasswordForm from './ResetPasswordForm';
 import SimpleBox from './SimpleBox';
 import { defaultScorer } from '../../passwordScorer';
 import getSearchParamsRest from './getSearchParamsRest';
-import { isURL } from '../../utils';
+import { isURL, isPath } from '../../utils';
 
 /**
  * @param {object} props Props
@@ -38,7 +38,8 @@ const LocalLoginPage = ({
   const isResetPassword = searchParams.has('reset_password');
   const isNewPassword = searchParams.has('new_password');
   const isLogin = !isSignup && !isResetPassword && !isNewPassword;
-  const redirectTo = isURL(searchParams.get('redirect')) ? searchParams.get('redirect') : '/';
+  const redirectTo =
+    isURL(searchParams.get('redirect')) || isPath(searchParams.get('redirect')) ? searchParams.get('redirect') : '/';
   const { data: identity, isLoading } = useGetIdentity();
 
   useEffect(() => {

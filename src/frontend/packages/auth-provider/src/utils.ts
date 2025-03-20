@@ -36,3 +36,6 @@ export const delay = async (t: number) =>
 
 // Check the value is a string starting with http and without any white space
 export const isURL = (value: any) => typeof value === 'string' && value.startsWith('http') && !/\s/g.test(value);
+
+// Check the value is a string starting with / and without any white space
+export const isPath = (value: any) => typeof value === 'string' && value.startsWith('/') && !/\s/g.test(value);
