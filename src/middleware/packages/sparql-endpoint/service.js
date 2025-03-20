@@ -26,10 +26,19 @@ const SparqlEndpointService = {
       const query = ctx.params.query || ctx.params.body;
       const accept = ctx.params.accept || ctx.meta.headers?.accept || this.settings.defaultAccept;
 
+      if (this.settings.podProvider) {
+        const [account] = await ctx.call('auth.account.find', { query: { username: ctx.params.username } });
+        if (!account) throw new Error(`No account found with username ${ctx.params.username}`);
+
+        if (account.webId !== ctx.meta.webId && account.webId !== ctx.meta.impersonatedUser) {
+          throw new Error(`You can only query your own SPARQL endpoint`);
+        }
+      }
+
       const response = await ctx.call('triplestore.query', {
         query,
         accept,
-        dataset: ctx.params.username,
+        dataset: this.settings.podProvider ? ctx.params.username : undefined,
         // In Pod provider config, query as system when the Pod owner is querying his own data
         webId: this.settings.ignoreAcl ? 'system' : ctx.meta.webId
       });
