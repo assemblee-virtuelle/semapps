@@ -50,8 +50,6 @@ const KEY_TYPES = {
   KEY: 'https://w3id.org/security#Key'
 };
 
-module.exports = KEY_TYPES;
-
 module.exports = {
   VC_API_PATH,
   KEY_TYPES,
