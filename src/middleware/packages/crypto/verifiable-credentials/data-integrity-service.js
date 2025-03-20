@@ -28,9 +28,7 @@ const { KEY_TYPES } = require('../constants');
 const DataIntegrityService = {
   name: 'crypto.vc.data-integrity',
   dependencies: ['ldp', 'api'],
-  settings: {
-    vcApiPath: '/api/v1/vc'
-  },
+
   async started() {
     this.documentLoader = async (url, options) => {
       return await this.broker.call('jsonld.document-loader.loadWithCache', { url, options });
