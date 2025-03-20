@@ -9,6 +9,11 @@ import $85cNH$muiiconsmaterialSend from "@mui/icons-material/Send";
 import {useDataModel as $85cNH$useDataModel, getOrCreateWsChannel as $85cNH$getOrCreateWsChannel} from "@semapps/semantic-data-provider";
 import {AuthDialog as $85cNH$AuthDialog} from "@semapps/auth-provider";
 import {useQueries as $85cNH$useQueries, useQueryClient as $85cNH$useQueryClient, useInfiniteQuery as $85cNH$useInfiniteQuery} from "react-query";
+import $85cNH$rdfvalidateshacl from "rdf-validate-shacl";
+import $85cNH$rdfext from "rdf-ext";
+import $85cNH$rdfjsparserjsonld from "@rdfjs/parser-jsonld";
+import {ReadableWebToNodeStream as $85cNH$ReadableWebToNodeStream} from "readable-web-to-node-stream";
+import $85cNH$rdfjsparsern3 from "@rdfjs/parser-n3";
 import {mergeAttributes as $85cNH$mergeAttributes} from "@tiptap/core";
 import $85cNH$tiptapextensionmention from "@tiptap/extension-mention";
 import {ReferenceField as $85cNH$ReferenceField, AvatarWithLabelField as $85cNH$AvatarWithLabelField} from "@semapps/field-components";
@@ -113,6 +118,106 @@ const $577f4953dfa5de4f$export$34aed805e991a647 = (iterable, predicate)=>{
 };
 
 
+
+
+
+
+
+// Cache of SHACL validators
+const $25cb6caf33e2f460$var$validatorCache = {};
+// Helper function to convert a string to a Node.js Readable stream
+const $25cb6caf33e2f460$var$stringToStream = (str)=>{
+    // Create a TextEncoder to convert string to Uint8Array
+    const encoder = new TextEncoder();
+    const uint8Array = encoder.encode(str);
+    // Create a ReadableStream from the Uint8Array
+    const readableStream = new ReadableStream({
+        start (controller) {
+            controller.enqueue(uint8Array);
+            controller.close();
+        }
+    });
+    // Convert the web ReadableStream to a Node.js Readable stream
+    return new (0, $85cNH$ReadableWebToNodeStream)(readableStream);
+};
+// Helper function to parse JSON-LD and convert to RDF-ext quads
+const $25cb6caf33e2f460$export$2684df65fa35e98e = async (jsonLdObj, context)=>{
+    try {
+        // Add context to the JSON-LD object if needed
+        const jsonLdWithContext = {
+            ...jsonLdObj,
+            '@context': context
+        };
+        // Convert JSON-LD object to string
+        const jsonString = JSON.stringify(jsonLdWithContext);
+        // Convert string to stream using the helper function
+        const textStream = $25cb6caf33e2f460$var$stringToStream(jsonString);
+        // Use the JsonLdParser that outputs rdf-ext compatible quads directly
+        const parser = new (0, $85cNH$rdfjsparserjsonld)({
+            factory: (0, $85cNH$rdfext)
+        });
+        const quadStream = parser.import(textStream);
+        // Collect quads into a dataset
+        const dataset = (0, $85cNH$rdfext).dataset();
+        for await (const quad of quadStream)dataset.add(quad);
+        return dataset;
+    } catch (error) {
+        console.error('Error parsing JSON-LD:', error);
+        throw error;
+    }
+};
+// Helper function to load a SHACL shape and return a validator
+const $25cb6caf33e2f460$export$6de257db5bb9fd74 = async (shapeUri)=>{
+    // Check if the validator is already cached
+    if ($25cb6caf33e2f460$var$validatorCache[shapeUri]) return $25cb6caf33e2f460$var$validatorCache[shapeUri];
+    const response = await fetch(shapeUri, {
+        headers: {
+            Accept: 'text/turtle'
+        }
+    });
+    if (!response.ok) throw new Error(`Failed to load shape: ${response.status} ${response.statusText}`);
+    // Get the Turtle data as text
+    const turtleData = await response.text();
+    // Convert text to stream using the helper function
+    const textStream = $25cb6caf33e2f460$var$stringToStream(turtleData);
+    // Use ParserN3 which outputs rdf-ext compatible quads directly
+    const parser = new (0, $85cNH$rdfjsparsern3)({
+        factory: (0, $85cNH$rdfext)
+    });
+    const quadStream = parser.import(textStream);
+    // Collect quads into a dataset
+    const shapeDataset = (0, $85cNH$rdfext).dataset();
+    for await (const quad of quadStream)shapeDataset.add(quad);
+    // Create and cache the SHACL validator using the dataset
+    $25cb6caf33e2f460$var$validatorCache[shapeUri] = new (0, $85cNH$rdfvalidateshacl)(shapeDataset, {
+        factory: (0, $85cNH$rdfext)
+    });
+    return $25cb6caf33e2f460$var$validatorCache[shapeUri];
+};
+const $25cb6caf33e2f460$export$1558e55ae3912bbb = async (items, shaclValidator, context)=>{
+    if (!shaclValidator) throw new Error('validateItems: shaclValidator is required');
+    if (!context) throw new Error('validateItems: context is required');
+    return Promise.all(items.map(async (item)=>{
+        try {
+            // Create a dataset from the item's JSON-LD
+            const itemDataset = await $25cb6caf33e2f460$export$2684df65fa35e98e(item, context);
+            // Validate against the SHACL shape
+            const report = shaclValidator?.validate(itemDataset);
+            return {
+                item: item,
+                isValid: report?.conforms
+            };
+        } catch (error) {
+            console.error(`Error validating item ${item.id}:`, error);
+            return {
+                item: item,
+                isValid: false
+            };
+        }
+    }));
+};
+
+
 // Used to avoid re-renders
 const $8281f3ce3b9d6123$var$emptyArray = [];
 const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
@@ -158,7 +263,7 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
  * @param predicateOrUrl The collection URI or the predicate to get the collection URI from the identity (webId).
  * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false }`
  */ const $8281f3ce3b9d6123$var$useCollection = (predicateOrUrl, options = {})=>{
-    const { dereferenceItems: dereferenceItems = false, liveUpdates: liveUpdates = false } = options;
+    const { dereferenceItems: dereferenceItems = false, liveUpdates: liveUpdates = false, shaclShapeUri: shaclShapeUri = '', shaclValidationContext: shaclValidationContext = null } = options;
     const { data: identity } = (0, $85cNH$useGetIdentity)();
     const [totalItems, setTotalItems] = (0, $85cNH$useState)(0);
     const [isPaginated, setIsPaginated] = (0, $85cNH$useState)(false); // true if the collection is paginated
@@ -188,6 +293,16 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
         const fetchingPage = !!nextPageUrl;
         // Fetch page or first page (collectionUrl)
         let { json: json } = await dataProvider.fetch(nextPageUrl || collectionUrl);
+        // If first page, handle this here.
+        if ((json.type === 'OrderedCollection' || json.type === 'Collection') && json.first) {
+            if (json.first?.items) {
+                if (json.first?.items.length === 0 && json.first?.next) // Special case where the first property is an object without items
+                ({ json: json } = await dataProvider.fetch(json.first?.next));
+                else json = json.first;
+            } else // Fetch the first page
+            ({ json: json } = await dataProvider.fetch(json.first));
+        }
+        const itemsKey = json.orderedItems ? 'orderedItems' : 'items';
         // If we are fetching the first page or the collection, we can workout some information
         if (!fetchingPage) {
             const localIsPaginated = !!json.first || !!json.next;
@@ -198,18 +313,22 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
                 setYieldsTotalItems(true);
             } else if (!localIsPaginated) {
                 // If the collection is not paginated, we can count items
-                const items = (0, $577f4953dfa5de4f$export$e57ff0f701c44363)(json.orderedItems || json.items);
+                const items = (0, $577f4953dfa5de4f$export$e57ff0f701c44363)(json[itemsKey]);
                 if (items) setTotalItems(items.length);
             }
         }
-        // If first page, handle this here.
-        if ((json.type === 'OrderedCollection' || json.type === 'Collection') && json.first) {
-            if (json.first?.items) {
-                if (json.first?.items.length === 0 && json.first?.next) // Special case where the first property is an object without items
-                ({ json: json } = await dataProvider.fetch(json.first?.next));
-                else json = json.first;
-            } else // Fetch the first page
-            ({ json: json } = await dataProvider.fetch(json.first));
+        // Validate the json with the SHACL shape
+        if (shaclShapeUri !== '' && json[itemsKey] && json[itemsKey].length > 0) try {
+            // get the context from the options or the server's response or fail to validate
+            const context = shaclValidationContext || json['@context'];
+            if (!context) throw new Error(`No context provided in options.shaclValidationContext and none returned by the server.\nA context is required to expand the collection's items and validate them.`);
+            const shaclValidator = await (0, $25cb6caf33e2f460$export$6de257db5bb9fd74)(shaclShapeUri);
+            const validatedResults = await (0, $25cb6caf33e2f460$export$1558e55ae3912bbb)((0, $577f4953dfa5de4f$export$e57ff0f701c44363)(json[itemsKey]), shaclValidator, context);
+            // Keep only the valid item in the collection
+            json[itemsKey] = validatedResults.filter((result)=>result.isValid).map((result)=>result.item);
+        // TODO: store the invalid items in a separate property to return them
+        } catch (error) {
+            console.warn(`Filtering of the collection's items using SHACL validation wasn't possible.\n${collectionUrl}`, error);
         }
         return json;
     }, [
@@ -218,13 +337,16 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
         identity,
         setTotalItems,
         setIsPaginated,
-        setYieldsTotalItems
+        setYieldsTotalItems,
+        shaclShapeUri,
+        shaclValidationContext
     ]);
     // Use infiniteQuery to handle pagination, fetching, etc.
     const { data: pageData, error: collectionError, fetchNextPage: fetchNextPage, refetch: refetch, hasNextPage: hasNextPage, isLoading: isLoadingPage, isFetching: isFetchingPage, isFetchingNextPage: isFetchingNextPage } = (0, $85cNH$useInfiniteQuery)([
         'collection',
         {
-            collectionUrl: collectionUrl
+            collectionUrl: collectionUrl,
+            shaclShapeUri: shaclShapeUri
         }
     ], fetchCollection, {
         enabled: !!(collectionUrl && identity?.id),
