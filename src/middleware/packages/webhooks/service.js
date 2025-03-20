@@ -92,9 +92,6 @@ const WebhooksService = {
     webhooks: {
       name: '*',
       async process(job) {
-        // TODO: This might be a security issue since it can run arbitrary actions of this service.
-        //  @srosset81 -- I didn't find a place where this service is used.
-        //   Should we deprecate this (at least temporarily)?
         const result = await this.actions[job.name](job.data);
 
         job.progress(100);
