@@ -19,7 +19,7 @@ const initialize = async (port, withOldKeyStore = false) => {
     logger: {
       type: 'Console',
       options: {
-        level: 'error'
+        level: 'warn'
       }
     }
   });
@@ -67,8 +67,18 @@ const initialize = async (port, withOldKeyStore = false) => {
 
   await broker.start();
   broker.waitForServices(
-    ['core', 'auth', 'webid', 'triplestore', 'keys', 'keys.container', 'keys.public-container', 'keys.migration'],
-    10_000
+    [
+      'core',
+      'auth',
+      'webid',
+      'triplestore',
+      'keys',
+      'keys.container',
+      'keys.public-container',
+      'keys.migration',
+      'crypto.vc'
+    ],
+    5_000
   );
 
   if (withOldKeyStore) {

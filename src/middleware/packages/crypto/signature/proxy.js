@@ -44,13 +44,6 @@ const ProxyService = {
       const url = ctx.params.id;
       const method = ctx.params.method || 'GET';
       const headers = JSON.parse(ctx.params.headers) || { accept: 'application/json' };
-
-      // If a file is uploaded, convert it to a Buffer
-      const body =
-        ctx.params.files && ctx.params.files.length > 0
-          ? await stream2buffer(ctx.params.files[0].readableStream)
-          : ctx.params.body;
-
       const actorUri = ctx.meta.webId;
 
       // Only user can query his own proxy URL
@@ -58,6 +51,12 @@ const ProxyService = {
         const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
         if (account.username !== ctx.params.username) throw new E.ForbiddenError();
       }
+
+      // If a file is uploaded, convert it to a Buffer
+      const body =
+        ctx.params.files && ctx.params.files.length > 0
+          ? await stream2buffer(ctx.params.files[0].readableStream)
+          : ctx.params.body;
 
       try {
         const response = await this.actions.query(

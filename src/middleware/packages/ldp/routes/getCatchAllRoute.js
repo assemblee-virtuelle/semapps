@@ -32,6 +32,7 @@ function getCatchAllRoute(basePath, podProvider) {
     bodyParsers: false,
     authorization: false,
     authentication: true,
+    authorizeWithCapability: true,
     aliases: {
       'GET /': [...middlewares, 'ldp.api.get'],
       'HEAD /': ['ldp.api.head'],

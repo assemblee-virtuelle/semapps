@@ -26,6 +26,8 @@ const dataProvider = originalConfig => {
 
     // Configure httpClient with initial data servers, so that plugins may use it
     config.httpClient = httpClient(config.dataServers);
+    // Useful for debugging.
+    document.httpClient = config.httpClient;
 
     for (const plugin of config.plugins) {
       if (plugin.transformConfig) {

@@ -46,6 +46,7 @@ function getPodsRoute(basePath) {
     bodyParsers: false,
     authorization: false,
     authentication: true,
+    authorizeWithCapability: true,
     aliases: {
       'GET /': [...middlewares, 'ldp.api.get'],
       'HEAD /': [transformRouteParamsToSlugParts, 'ldp.api.head'],

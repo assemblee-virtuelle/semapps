@@ -1,7 +1,7 @@
 const { triple, namedNode } = require('@rdfjs/data-model');
 const { ControlledContainerMixin } = require('@semapps/ldp');
 const { Errors: E } = require('moleculer-web');
-const KEY_TYPES = require('./keyTypes');
+const { KEY_TYPES } = require('../constants');
 
 /**
  * Container to store the public keys of actors only.
@@ -42,6 +42,7 @@ module.exports = {
     excludeFromMirror: false,
     // Disallow PATCH & PUT, to prevent keys from being overwritten
     controlledActions: {
+      get: 'keys.container.get', // Returns key object with context and type required by Multikey spec.
       put: 'keys.public-container.forbidden',
       patch: 'keys.public-container.forbidden'
     }

@@ -6,7 +6,7 @@
   "author": "Virtual Assembly",
   "dependencies": {
     "jsonld": "^3.3.2",
-    "jsonld-context-parser": "2.4.0",
+    "jsonld-context-parser": "^2.4.0",
     "jsonld-streaming-parser": "^2.4.2",
     "lru-cache": "^6.0.0",
     "streamify-string": "^1.0.1",

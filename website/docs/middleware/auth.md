@@ -14,10 +14,12 @@ This service allows you to authenticate users with an OIDC or CAS server, or wit
 - [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
 - [WebIdService](webid.md)
 
+- [Crypto/VC-Service]
+- TODO: How to handle capabilities
+
 ## Sub-services
 
 - AuthAccountService
-- AuthCapabilitiesService
 - AuthJWTService
 - AuthMailService
 
