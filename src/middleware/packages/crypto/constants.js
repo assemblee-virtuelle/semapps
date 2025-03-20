@@ -1,6 +1,6 @@
 const noGraphCredentialContext = require('./utils/noGraphCredentialContext');
 
-const VC_API_PATH = '/api/vc/v0.3';
+const VC_API_PATH = '/vc/v0.3';
 
 /**
  * Context the same as @see {credentialContext} but
