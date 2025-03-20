@@ -88,7 +88,8 @@ const frenchMessages = {
       username_exist: 'Un compte existe déjà avec cet identifiant',
       username_invalid:
         "Cet identifiant n'est pas valide. Seuls les lettres minuscules, les chiffres, les points et les tirets sont autorisés",
-      username_too_short: 'Cet identifiant est trop court. Il doit compter au moins 2 caractères',
+      username_too_short: "L'identifiant est trop court",
+      password_too_short: 'Le mot de passe est trop court',
       new_user_created: 'Votre compte a été créé avec succès',
       user_connected: 'Vous êtes maintenant connecté',
       user_disconnected: 'Vous êtes maintenant déconnecté',

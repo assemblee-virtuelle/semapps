@@ -13,13 +13,24 @@ module.exports = {
   adapter: new TripleStoreAdapter({ type: 'AuthAccount', dataset: 'settings' }),
   settings: {
     idField: '@id',
-    reservedUsernames: ['relay']
+    reservedUsernames: ['relay'],
+    minPasswordLength: 1,
+    minUsernameLength: 1
   },
   dependencies: ['triplestore'],
   actions: {
     async create(ctx) {
       let { uuid, username, password, email, webId, ...rest } = ctx.params;
-      const hashedPassword = password ? await this.hashPassword(password) : undefined;
+
+      // FORMAT AND VERIFY PASSWORD
+
+      if (password) {
+        if (password.length < this.settings.minPasswordLength) {
+          throw new Error('password.too-short');
+        }
+
+        password = await this.hashPassword(password);
+      }
 
       // FORMAT AND VERIFY EMAIL
 
@@ -71,7 +82,7 @@ module.exports = {
         uuid,
         username,
         email,
-        hashedPassword,
+        hashedPassword: password,
         webId
       });
     },
@@ -250,7 +261,7 @@ module.exports = {
         error = 'username.invalid';
       }
 
-      if (username.length < 2) {
+      if (username.length < this.settings.minUsernameLength) {
         error = 'username.too-short';
       }
 

@@ -196,6 +196,8 @@ const authProvider = ({
             throw new Error('auth.message.username_too_short');
           } else if (e.message === 'username.invalid') {
             throw new Error('auth.message.username_invalid');
+          } else if (e.message === 'password.too-short') {
+            throw new Error('auth.message.password_too_short');
           } else {
             console.error(e);
             throw new Error('auth.message.signup_error');

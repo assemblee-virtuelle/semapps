@@ -14,6 +14,8 @@ const AuthLocalService = {
     jwtPath: null,
     registrationAllowed: true,
     reservedUsernames: [],
+    minPasswordLength: 1,
+    minUsernameLength: 1,
     webIdSelection: [],
     accountSelection: [],
     formUrl: null,
