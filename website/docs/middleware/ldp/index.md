@@ -33,6 +33,7 @@ This package allows you to setup [LDP](https://www.w3.org/TR/ldp-primer/) contai
 - [ImageProcessorMixin](image-processor.md)
 - [DereferenceMixin](dereference.md)
 - DisassemblyMixin
+- MimeTypesMixin
 
 ## Install
 
