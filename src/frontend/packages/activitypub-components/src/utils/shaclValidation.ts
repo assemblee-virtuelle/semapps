@@ -26,7 +26,7 @@ const stringToStream = (str: string): ReadableWebToNodeStream => {
 };
 
 // Helper function to parse JSON-LD and convert to RDF-ext quads
-const parseJsonLd = async (jsonLdObj: object, context: string[]) => {
+const parseJsonLd = async (jsonLdObj: object, context: string | string[] | Record<string, string>) => {
   try {
     // Add context to the JSON-LD object if needed
     const jsonLdWithContext = {
@@ -97,7 +97,7 @@ const getShaclValidator = async (shapeUri: string): Promise<SHACLValidator> => {
 const validateItems = async (
   items: Array<object>,
   shaclValidator: SHACLValidator,
-  context: string[]
+  context: string | string[] | Record<string, string>
 ): Promise<Array<{ item: object; isValid: boolean }>> => {
   if (!shaclValidator) {
     throw new Error('validateItems: shaclValidator is required');

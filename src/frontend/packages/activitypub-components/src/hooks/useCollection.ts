@@ -60,7 +60,7 @@ const useItemsFromPages = (pages: any[], dereferenceItems: boolean) => {
  * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false }`
  */
 const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {}) => {
-  const { dereferenceItems = false, liveUpdates = false, shaclShapeUri = '', shaclValidationContext = null } = options;
+  const { dereferenceItems = false, liveUpdates = false, shaclShapeUri = '' } = options;
   const { data: identity } = useGetIdentity();
   const [totalItems, setTotalItems] = useState<number>(0);
   const [isPaginated, setIsPaginated] = useState<boolean>(false); // true if the collection is paginated
@@ -130,23 +130,16 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
       // Validate the json with the SHACL shape
       if (shaclShapeUri !== '' && json[itemsKey] && json[itemsKey].length > 0) {
         try {
-          // get the context from the options or the server's response or fail to validate
-          const context = shaclValidationContext || json['@context'];
-          if (!context) {
+          if (!json['@context']) {
             throw new Error(
-              `No context provided in options.shaclValidationContext and none returned by the server.\nA context is required to expand the collection's items and validate them.`
+              `No context returned by the server.\nA context is required to expand the collection's items and validate them.`
             );
           }
-          const shaclValidator: SHACLValidator = await getShaclValidator(shaclShapeUri);
-          const validatedResults: Array<{ item: object; isValid: boolean }> = await validateItems(
-            arrayOf(json[itemsKey]),
-            shaclValidator,
-            context
-          );
+          const shaclValidator = await getShaclValidator(shaclShapeUri);
+          const validatedResults = await validateItems(arrayOf(json[itemsKey]), shaclValidator, json['@context']);
 
           // Keep only the valid item in the collection
           json[itemsKey] = validatedResults.filter(result => result.isValid).map(result => result.item);
-          // TODO: store the invalid items in a separate property to return them
         } catch (error) {
           console.warn(
             `Filtering of the collection's items using SHACL validation wasn't possible.\n${collectionUrl}`,
@@ -157,16 +150,7 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
 
       return json;
     },
-    [
-      dataProvider,
-      collectionUrl,
-      identity,
-      setTotalItems,
-      setIsPaginated,
-      setYieldsTotalItems,
-      shaclShapeUri,
-      shaclValidationContext
-    ]
+    [dataProvider, collectionUrl, identity, setTotalItems, setIsPaginated, setYieldsTotalItems, shaclShapeUri]
   );
 
   // Use infiniteQuery to handle pagination, fetching, etc.

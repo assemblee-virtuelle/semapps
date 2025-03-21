@@ -65,7 +65,6 @@ interface UseCollectionOptions {
   dereferenceItems?: boolean;
   liveUpdates?: boolean;
   shaclShapeUri?: string;
-  shaclValidationContext?: string;
 }
 interface AwaitActivityOptions {
   timeout?: number;
