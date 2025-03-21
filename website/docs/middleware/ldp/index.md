@@ -73,6 +73,7 @@ module.exports = {
 | `podProvider`                | `Boolean`  | false                       | Set to true if your server is a POD provider                             |
 | `preferredViewForResource`   | `Function` |                             | Function called to generate a redirect to the preferred view (see below) |
 | `resourcesWithContainerPath` | `Boolean`  | true                        | If true, the URI of all new resources will include the container path    |
+| `binary.maxSize`             | `String`   | "50Mb"                      | The maximum size allowed for uploaded binaries                           |
 
 ## Container options
 
