@@ -10,7 +10,7 @@ const { TripleStoreService } = require('@semapps/triplestore');
 const { VoidService } = require('@semapps/void');
 const { WebAclService } = require('@semapps/webacl');
 const { WebfingerService } = require('@semapps/webfinger');
-const { KeysService, SignatureService, VerifiableCredentialsService } = require('@semapps/crypto');
+const { KeysService, SignatureService } = require('@semapps/crypto');
 const { WebIdService } = require('@semapps/webid');
 
 const botsContainer = {
@@ -47,7 +47,6 @@ const CoreService = {
     ldp: {},
     signature: {},
     sparqlEndpoint: {},
-    dataIntegrity: {},
     void: {},
     webacl: {},
     webfinger: {},
@@ -143,15 +142,6 @@ const CoreService = {
         mixins: [SignatureService],
         settings: {
           ...this.settings.signature
-        }
-      });
-    }
-
-    if (this.settings.verifiableCredentials !== false) {
-      this.broker.createService({
-        mixins: [VerifiableCredentialsService],
-        settings: {
-          ...this.settings.verifiableCredentials
         }
       });
     }

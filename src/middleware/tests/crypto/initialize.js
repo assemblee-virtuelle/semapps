@@ -4,6 +4,7 @@ const path = require('path');
 const { ServiceBroker } = require('moleculer');
 const { AuthLocalService } = require('@semapps/auth');
 const { CoreService } = require('@semapps/core');
+const { VerifiableCredentialsService } = require('@semapps/crypto');
 const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
 const CONFIG = require('../config');
 const { clearDataset } = require('../utils');
@@ -62,6 +63,13 @@ const initialize = async (port, withOldKeyStore = false) => {
       baseUrl,
       jwtPath: path.resolve(__dirname, './jwt'),
       accountsDataset: CONFIG.SETTINGS_DATASET
+    }
+  });
+
+  broker.createService({
+    mixins: [VerifiableCredentialsService],
+    settings: {
+      podProvider: false
     }
   });
 
