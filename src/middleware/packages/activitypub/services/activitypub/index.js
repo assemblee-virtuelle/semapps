@@ -11,6 +11,7 @@ const ObjectService = require('./subservices/object');
 const OutboxService = require('./subservices/outbox');
 const CollectionsRegistryService = require('./subservices/collections-registry');
 const ReplyService = require('./subservices/reply');
+const ShareService = require('./subservices/share');
 const SideEffectsService = require('./subservices/side-effects');
 const FakeQueueMixin = require('../../mixins/fake-queue');
 
@@ -109,6 +110,14 @@ const ActivityPubService = {
 
     this.broker.createService({
       mixins: [LikeService],
+      settings: {
+        baseUri,
+        podProvider
+      }
+    });
+
+    this.broker.createService({
+      mixins: [ShareService],
       settings: {
         baseUri,
         podProvider
