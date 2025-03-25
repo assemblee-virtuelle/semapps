@@ -34,9 +34,6 @@ class VcCapabilityPresentationProofPurpose extends AuthenticationProofPurpose {
    * @throws {Error} The holder in the presentation is set and does not match the controller.
    * @throws {Error} If there is no VC present in the presentation.
    * @throws {Error} If any `credentialSubject` is missing or does not have an id.
-   * @throws {Error} If the content of the `credentialSubject`s of the VCs in the capability chain do not match.
-   *                 Decreasing number of root fields in later VC's credentialSubject is allowed.
-   *                 Leaving fields out in latter VCs is only allowed on the root level of the `credentialSubject`.
    *
    * @returns {Promise<{valid: boolean, error: Error}>} Validation result.
    */
@@ -122,22 +119,6 @@ class VcCapabilityPresentationProofPurpose extends AuthenticationProofPurpose {
       if (controllerDocument.id !== credentialsOrdered[credentialsOrdered.length - 1].credentialSubject.id) {
         return { valid: false, error: new Error('Invoker of capability is not the subject of the last capability.') };
       }
-    }
-
-    // Validate that the credentialSubject content of each VC matches (id excluded).
-    // Earlier VC's credentialSubject may have more root fields than later VC's credentialSubject.
-    let previousSubject = credentialsOrdered[0].credentialSubject;
-    for (let i = 1; i < credentialsOrdered.length; i += 1) {
-      const currentSubject = credentialsOrdered[i].credentialSubject;
-      for (const key of Object.keys(currentSubject)) {
-        if (key !== 'id' && !deepStrictEqual(previousSubject[key], currentSubject[key])) {
-          return {
-            valid: false,
-            error: new Error('CredentialSubject content mismatch between VCs in capability chain.')
-          };
-        }
-      }
-      previousSubject = currentSubject;
     }
 
     return { ...superResult, holder: controllerDocument.id };

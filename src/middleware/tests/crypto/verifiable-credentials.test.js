@@ -407,59 +407,6 @@ describe('verifiable credentials', () => {
       expect(validationResult.verified).toBe(false);
     });
 
-    test('second capability with additional credentialSubject invalid', async () => {
-      const firstCapability = await alice.fetch(path.join(vcApiEndpoint, 'credentials/issue'), {
-        method: 'POST',
-        body: JSON.stringify({
-          credential: {
-            name: 'First capability',
-            credentialSubject: {
-              id: bob.webId,
-              description: 'A transferable capability.'
-            }
-          }
-        })
-      });
-
-      const secondCapability = await bob.fetch(path.join(vcApiEndpoint, 'credentials/issue'), {
-        method: 'POST',
-        body: JSON.stringify({
-          credential: {
-            name: 'Second capability',
-            credentialSubject: {
-              id: craig.webId,
-              name: 'This is an additional field',
-              description: 'A transferable capability.'
-            }
-          }
-        })
-      });
-
-      const verifiablePresentation = await craig.fetch(path.join(vcApiEndpoint, 'presentations'), {
-        method: 'POST',
-        body: JSON.stringify({
-          presentation: {
-            verifiableCredential: [firstCapability, secondCapability],
-            description: 'Hey, Alice! Bob gave me this capability.'
-          },
-          options: {
-            challenge: await getChallengeFrom(alice)
-          }
-        })
-      });
-
-      const validationResult = await broker.call(
-        'crypto.vc.verifier.verifyCapabilityPresentation',
-        { verifiablePresentation },
-        { meta: { webId: alice.webId } }
-      );
-
-      expect(validationResult.verified).toBe(false);
-      expect(validationResult?.error?.errors?.[0].message).toMatch(
-        'CredentialSubject content mismatch between VCs in capability chain'
-      );
-    });
-
     test('capability not invoked by holder invalid', async () => {
       const firstCapability = await alice.fetch(path.join(vcApiEndpoint, 'credentials/issue'), {
         method: 'POST',
