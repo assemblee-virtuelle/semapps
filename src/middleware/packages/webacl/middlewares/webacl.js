@@ -76,28 +76,32 @@ const addRightsToNewUser = async (ctx, userUri) => {
 };
 
 /**
- * Check, if an URI is attached to `ctx.authorization.capability`.
- * If the capability is valid and enables access to the resource, return true.
- *
- * @param {string} mode The `acl:mode` to check for (e.g. `acl:Read`).
- * @returns {Promise<boolean>} true, if capability enables access to the resource, false otherwise.
+ * Check, if a capability grants access to the resource.
  */
-const hasValidCapability = async (capabilityPresentation, resourceUri, mode) => {
+const hasValidCapability = async (ctx, resourceUri, mode) => {
+  const { capabilityPresentation } = ctx.meta.authorization;
   const vcs = arrayOf(capabilityPresentation.verifiableCredential);
-  const authorizations = vcs[vcs.length - 1].credentialSubject?.['apods:hasAuthorization'] || [];
 
-  // Check, if the capability's ACLs allow access to the resource.
-  if (
-    arrayOf(authorizations).some(
-      auth =>
-        arrayOf(auth.type).includes('acl:Authorization') &&
-        arrayOf(auth['acl:mode']).includes(mode) &&
-        arrayOf(auth['acl:accessTo']).includes(resourceUri)
-    )
-  ) {
-    return true;
-  }
-  return false;
+  // Check if every VC contains a valid `hasAuthorization` property.
+  const allHaveAuth = vcs.every(vc => {
+    const auth = vc.credentialSubject?.['apods:hasAuthorization'];
+    return (
+      arrayOf(auth.type).includes('acl:Authorization') &&
+      arrayOf(auth['acl:mode']).includes(mode) &&
+      arrayOf(auth['acl:accessTo']).includes(resourceUri)
+    );
+  });
+  if (!allHaveAuth) return false;
+
+  // Check if issuer of first VC actually has control over it.
+  const hasRights = await ctx.call('webacl.resource.hasRights', {
+    resourceUri,
+    webId: vcs[0].issuer,
+    rights: { control: true }
+  });
+  if (!hasRights?.control) return false;
+
+  return true;
 };
 
 /**
@@ -155,7 +159,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
 
         // Check, if there is a valid capability.
         if (ctx.meta.authorization?.capabilityPresentation) {
-          if (await hasValidCapability(ctx.meta.authorization.capabilityPresentation, resourceUri, 'acl:Read')) {
+          if (await hasValidCapability(ctx, resourceUri, 'acl:Read')) {
             return bypass();
           }
         }
