@@ -2,17 +2,22 @@
 title: Verifiable Credentials
 ---
 
-Verifiable Credentials Services.
-
-All signatures use the EdDSA RDFC 2022 Data Integrity Cryptosuite.
+[Verifiable Credentials](https://www.w3.org/TR/vc-overview/) Services.
 
 ## Features
 
 - Issue and verify Verifiable Credentials (VCs).
 - Create and verify Verifiable Presentations (VPs).
-- Support for capability-based authorization using VCs.
+- Support for [capability-based authorization](#issuing-and-verifying-capabilities) using VCs.
 - Data integrity proofs for signing and verifying objects.
 - Challenge service for creating and validating challenges.
+- An [API](#vc-api) to issue and verify VCs and VPs.
+
+All signatures use the EdDSA RDFC 2022 Data Integrity Cryptosuite.
+
+Note that the [ActivityPub Fediverse Enhancement Proposal (FEP) 8b32](https://codeberg.org/fediverse/fep/src/branch/main/fep/8b32/fep-8b32.md) uses the VC data integrity specification as well. However they use a different crypto suite. See the open issue for SemApps https://github.com/assemblee-virtuelle/semapps/issues/1364.
+
+For SemApps, the WebId document serves as the Controlled Identifier Document (CID) and contains the public key material for `assertionMethod`s by default.
 
 ## Dependencies
 
@@ -144,29 +149,24 @@ Verify a Verifiable Presentation.
 
 ## Issuing and Verifying Capabilities
 
-Capabilities authorizations issued from someone else that authorize the holder to perform certain actions.
+Capabilities are authorizations issued from someone and which authorize the issued holder to perform certain actions.
+In this context, capabilities are based on Verifiable Credentials. Each capability is a signed VC (created with `crypto.vc.issuer.createVC`). You invoke (use) a capability with a Verifiable Presentation (VP).
 
-In SemApps, you can enable routes to authorize with a capability Verifiable Presentation of someone. See the example below.
+See an [example below](#example-issuing-and-verifying-a-capability-chain).
 
-How do capability chains work?
+### Creating a Capability and Chains
 
-How do you issue a capability to a subject? By setting the credentialSubject.id to that actor.
+To create a capability (delegate a right to someone else), the VC issuer sets the `credentialSubject.id` to the ID of the actor being authorized.
+For chains where the authorization is passed further on, the `credentialSubject.id` of the previous capability VC must match the `issuer` of the next VC in the chain. All information stored in the `credentialSubject`, except for the `id`, is dependent on the application of the capability.
 
-### Creating a capability presentation
+### Creating a Capability Presentation
 
-For creating a capability presentation, use `crypto.vc.holder.createPresentation`. In the presentation's `verifiableCredential` property, set all verifiable credentials of the capability chain, if more than one is used.
+For invoking (using) a capability, you need to create a capability presentation with `crypto.vc.holder.createPresentation`. In the presentation's `verifiableCredential` property, set all verifiable credentials of the capability chain, if more than one is used.
 
-### Capability Issuance and Chains
+To use the capability representation in a request, you need to serialize it as an unsigned JWT token (`"alg": "none"`). Use the token in the `Authorization` header: `Authorization: Bearer <signed VP serialized as JWT>`.
+For ActivityPub activities, you don't need Authorization headers. Instead, add a `sec:capability` property to the activity that contains the VP.
 
-To issue a capability to someone, the VC issuer sets the `credentialSubject.id` to the id of the actor that is being authorized. For chains, the `credentialSubject.id` of the previous capability VC is the issuer of the following.
-
-TODO: By default the max chain length is 2 -- should we increase this or let it be defined by the issuer of the first VC?
-
-#### Example
-
-...
-
-### `crypto.vc.verifier.verifyCapabilityPresentation`
+### Capability Verification with `crypto.vc.verifier.verifyCapabilityPresentation`
 
 #### Verification Steps and What is Not Checked
 
@@ -181,15 +181,16 @@ The verification of capabilities is performed using proof purpose classes, as im
   - Ensures that the `credentialSubject.id` of each VC matches the `issuer` of the next VC in the chain.
   - Validates that the subject of the last VC in the chain matches the invoker (signer) of the presentation.
   - Allows for open capabilities (i.e., VCs without a `credentialSubject.id`) if there is only one VC in the chain.
-- **Field Consistency**: Checks that the `credentialSubject` content of each VC in the chain matches, allowing for decreasing root fields in later VCs.
-- **Issuance and Proof Dates**: Ensures that all credentials have either an `issuanceDate` or `proof.created` field.
+- **Issuance and Proof Dates**: Ensures that all credentials have either an `issuanceDate` or `proof.created` property.
 - **Holder Validation**: Confirms that the `holder` in the presentation matches the controller, if specified.
 - **Chain Length**: Ensures that the number of VCs in the chain does not exceed the maximum allowed (`maxChainLength`).
 
 **What is Not Checked:**
 
 - **Business Logic**: The verification process does not validate the correctness of the `credentialSubject` content. For example, it does not ensure that a statement like "A is allowed to read B" is actually made by "B" and not by "C".
-  Any additional rules or logic specific to the application must be implemented separately.
+  Any additional rules or logic specific to the application must be implemented by the service that accepts capability-authorized API requests.
+
+If you have questions, don't hesitate to contact us.
 
 #### Parameters
 
@@ -204,16 +205,12 @@ The verification of capabilities is performed using proof purpose classes, as im
 
 `object` - The verification result. If verification succeeds, it will return `{ verified: true }`. If it fails, it will return `{ verified: false, error: <error> }`.
 
-### Capability Issuance and Chains
+### Example: Issuing and Verifying a Capability Chain
 
-To issue a capability to someone, the VC issuer sets the `credentialSubject.id` to the ID of the actor being authorized. For chains, the `credentialSubject.id` of the previous capability VC must match the `issuer` of the next VC in the chain.
-
-#### Example: Issuing and Verifying a Capability Chain
-
-_Some fields are omitted._
+_Some properties are omitted._
 
 1. **Issuing the First Capability**:
-   This capability will allow holders to see the issuer's profile and send `Note` activities (assuming the user puts restrictions on that for strangers).
+   This capability will allow holders to see the issuer's profile (`apods:hasAuthorization`, which is checked in the [WebACL middleware](../webacl/index.md)) and send `Note` activities (assuming the user puts restrictions on that for strangers and the [activity handler](../activitypub/activities-handler.md) supports it. Disclaimer: For `Create > Note` activities, there is no handler capable of this. The example is for illustrative purposes).
 
    ```json
    {
@@ -230,7 +227,7 @@ _Some fields are omitted._
      "issuer": "https://example.com/actor/issuer",
      "credentialSubject": {
        "id": "https://example.com/actor/holder",
-       "hasAuthorization": {
+       "apods:hasAuthorization": {
          "type": "acl:Authorization",
          "acl:mode": "acl:Read",
          "acl:accessTo": [
@@ -272,8 +269,8 @@ _Some fields are omitted._
    {
      "type": ["VerifiablePresentation"],
      "verifiableCredential": [
-       { ...firstCapabilityVC },
-       { ...secondCapabilityVC }
+       firstCapabilityVC ,
+       secondCapabilityVC,
      ],
      "proof": {
        "type": "DataIntegrityProof",
@@ -308,13 +305,20 @@ _Some fields are omitted._
 
 This process ensures that the delegation chain is valid and that the actor presenting the capability is authorized to perform the specified action.
 
+### Capabilities without subject id / specified holder.
+
+It is possible to create capabilities which are not issued to a specific holder. They do not have a `credentialSubject.id` property.
+This is useful with invite links, for example, where you don't know the recipient's webId in advance.
+
+Capabilities that do not have holders specified in their `credentialSubject.id` property, cannot be chained.
+
 ### Setting up Capability-Enabled Routes
 
 To enable capability-based authorization for a route, set the `opts.authorizeWithCapability` option to `true` in the route configuration. This will ensure that the `authorize` action checks for valid capability presentations. You can specify the maximum allowed chain length with `opts.maxChainLength`. The default is `2`.
 
 When a capability is successfully verified, as described above, the capability presentation is attached to `ctx.meta.authorization.capabilityPresentation` and can be used by the registered actions to check the validity of the business logic.
 
-#### Example
+#### Example: `api.addRoute` configuration
 
 ```javascript
 ctx.call('api.addRoute', {
@@ -334,7 +338,7 @@ ctx.call('api.addRoute', {
 
 ## Challenge Service
 
-The Challenge Service is used to create and validate challenges. Challenges are used to prevent replay attacks by ensuring that each request is unique.
+The Challenge Service is used to create and validate challenges. Challenges are used to prevent replay attacks when presenting a VP, by ensuring that each request is unique.
 
 ### `crypto.vc.presentation.challenge.create`
 
