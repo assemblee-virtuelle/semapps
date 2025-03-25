@@ -75,7 +75,6 @@ const VCApiService = {
       route: {
         name: 'vc.data-integrity',
         path: path.join(apiPath, 'data-integrity'),
-        authorization: false,
         authentication: true,
         aliases: {
           'POST /verify': [...middlewares, 'crypto.vc.data-integrity.verifyObject'],

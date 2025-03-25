@@ -1,22 +1,11 @@
-const jsigs = require('jsonld-signatures');
-const VCPurpose = require('./VcPurpose');
-const VCCapabilityPresentationProofPurpose = require('./VcCapabilityPresentationProofPurpose');
-
 const {
   purposes: { AuthenticationProofPurpose }
-} = jsigs;
-const ChallengeService = require('./challenge-service');
-
-let cryptosuite;
-let DataIntegrityProof;
-let vc;
-(async () => {
-  vc = await import('@digitalbazaar/vc');
-
-  ({ cryptosuite } = await import('@digitalbazaar/eddsa-rdfc-2022-cryptosuite'));
-  ({ DataIntegrityProof } = await import('@digitalbazaar/data-integrity'));
-})();
-
+} = require('jsonld-signatures');
+const { cryptosuite } = require('@digitalbazaar/eddsa-rdfc-2022-cryptosuite');
+const { DataIntegrityProof } = require('@digitalbazaar/data-integrity');
+const vc = require('@digitalbazaar/vc');
+const VCCapabilityPresentationProofPurpose = require('./VcCapabilityPresentationProofPurpose');
+const VCPurpose = require('./VcPurpose');
 const { arrayOf } = require('../utils/utils');
 
 /**
@@ -165,7 +154,7 @@ const VCPresentationService = {
           type: 'object',
           default: {},
           params: {
-            maxChainLength: { type: 'number', optional: true, default: 2 },
+            maxChainLength: { type: 'number', default: 2 },
             challenge: { type: 'string', optional: true },
             domain: { type: 'string', optional: true }
           }

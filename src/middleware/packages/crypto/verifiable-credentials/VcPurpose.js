@@ -1,16 +1,13 @@
 const { CredentialIssuancePurpose } = require('@digitalbazaar/vc');
 
-// let CredentialIssuancePurpose;
-// (async () => {
-//   ({ CredentialIssuancePurpose } = await import('@digitalbazaar/vc'));
-// })();
-
 /**
  * VC purpose that is the same as the vc.CredentialIssuancePurpose but checks validFrom and validUntil.
  */
 class VCPurpose extends CredentialIssuancePurpose {
   /**
    * Called during proof verification.
+   * Super class will check if issuer is the controller of the verification method,
+   * among all AuthenticationProofPurpose checks.
    *
    * @throws {Error} If proof's created timestamp is out of range.
    *

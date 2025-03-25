@@ -1,19 +1,11 @@
 const jsigs = require('jsonld-signatures');
-
 const {
   purposes: { AssertionProofPurpose }
-} = jsigs;
-
-let cryptosuite;
-let DataIntegrityProof;
+} = require('jsonld-signatures');
+const { cryptosuite } = require('@digitalbazaar/eddsa-rdfc-2022-cryptosuite');
+const { DataIntegrityProof } = require('@digitalbazaar/data-integrity');
 /** @type {import('@digitalbazaar/ed25519-multikey')} */
-let Ed25519Multikey;
-(async () => {
-  ({ cryptosuite } = await import('@digitalbazaar/eddsa-rdfc-2022-cryptosuite'));
-  ({ DataIntegrityProof } = await import('@digitalbazaar/data-integrity'));
-  Ed25519Multikey = await import('@digitalbazaar/ed25519-multikey');
-})();
-
+const Ed25519Multikey = require('@digitalbazaar/ed25519-multikey');
 const { KEY_TYPES } = require('../constants');
 
 /**
@@ -47,7 +39,7 @@ const DataIntegrityService = {
           type: 'object',
           optional: true,
           params: {
-            proofPurpose: { type: 'string', optional: true }
+            proofPurpose: { type: 'string', default: 'assertionMethod' }
           }
         },
         purpose: { type: 'object', optional: true }

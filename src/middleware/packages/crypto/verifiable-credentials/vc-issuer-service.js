@@ -1,24 +1,14 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const jsigs = require('jsonld-signatures');
-
 const {
   purposes: { AssertionProofPurpose }
-} = jsigs;
-
-let cryptosuite;
-let DataIntegrityProof;
-let vc;
+} = require('jsonld-signatures');
+const { cryptosuite } = require('@digitalbazaar/eddsa-rdfc-2022-cryptosuite');
+const { DataIntegrityProof } = require('@digitalbazaar/data-integrity');
+const vc = require('@digitalbazaar/vc');
 /** @type {import('@digitalbazaar/ed25519-multikey')} */
-let Ed25519Multikey;
-(async () => {
-  vc = await import('@digitalbazaar/vc');
+const Ed25519Multikey = require('@digitalbazaar/ed25519-multikey');
 
-  ({ cryptosuite } = await import('@digitalbazaar/eddsa-rdfc-2022-cryptosuite'));
-  ({ DataIntegrityProof } = await import('@digitalbazaar/data-integrity'));
-  Ed25519Multikey = await import('@digitalbazaar/ed25519-multikey');
-})();
-
-const { KEY_TYPES, credentialsContext, VC_API_PATH } = require('../constants');
+const { KEY_TYPES, credentialsContext } = require('../constants');
 
 /**
  * Service for verifying, reading, and revoking Verifiable Credentials.
