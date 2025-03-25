@@ -22,8 +22,7 @@ const AuthJWTService = require('../services/jwt');
  *
  * ## Capability Authorization
  * Additionally, the `authorize` action supports capability authorization based on
- * Verifiable Credentials (VCs), if `authorizeWithCapability` is set to `true`.
- * For details, see @todo.
+ * Verifiable Credentials (VCs), if `opts.authorizeWithCapability` is set to `true`.
  *
  * **WARNING**: This does not make any assertions about the validity of the capabilities'
  * content (`credentialSubject`). What *is* checked:
@@ -37,9 +36,7 @@ const AuthJWTService = require('../services/jwt');
  * NO BUSINESS LOGIC IS CHECKED.\
  * It is still necessary to verify if the request itself is valid.
  * There would be no error when the `credentialSubject` says: "A is allowed to read B"
- * while the statement is made actually made by "C" and not by "B".\
- * **For now, we don't use [challenges](https://www.w3.org/TR/vc-data-integrity/#dfn-challenge)**,
- * so you cannot rule out replay attacks.
+ * while the statement is actually made by "C" and not by "B".\
  *
  * @see https://moleculer.services/docs/0.13/moleculer-web.html#Authorization
  *
@@ -199,7 +196,10 @@ const AuthMixin = {
         presentation: verifiedPresentation,
         presentationResult
       } = await ctx.call('crypto.vc.verifier.verifyCapabilityPresentation', {
-        verifiablePresentation: decodedToken
+        verifiablePresentation: decodedToken,
+        options: {
+          maxChainLength: ctx.params.route.opts.maxChainLength
+        }
       });
       if (!isCapSignatureVerified) return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
 

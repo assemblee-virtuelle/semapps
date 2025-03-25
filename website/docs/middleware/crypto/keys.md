@@ -29,7 +29,7 @@ ED25519 keys have the `@type` `[crypto.Key_Types.ED25519, crypto.KEY_TYPES.VERIF
 ```js
 {
   "@id": "https://semapps.example/key/123",
-  "@type": [Key_Types.RSA, KEY_TYPES.VERIFICATION_METHOD],
+  "@type": [KEY_TYPES.RSA, KEY_TYPES.VERIFICATION_METHOD],
   "owner": "https://example.com/users/123",
   "controller": "https://example.com/users/123",
   "publicKeyPem": "-----BEGIN PUBLIC KEY-----\n....",
