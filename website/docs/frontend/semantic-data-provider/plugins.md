@@ -14,7 +14,7 @@ This plugin will fetch the [VoID endpoint](https://www.w3.org/TR/void/) of all s
 import { dataProvider, fetchVoidEndpoints } from '@semapps/semantic-data-provider';
 
 export default dataProvider({
-  plugins[fetchVoidEndpoints()],
+  plugins:[fetchVoidEndpoints()],
   ...
 });
 ```
@@ -35,7 +35,7 @@ Additionally, it will set the JSON-LD context to be the same as the Pod provider
 import { dataProvider, configureUserStorage } from '@semapps/semantic-data-provider';
 
 export default dataProvider({
-  plugins[configureUserStorage()],
+  plugins:[configureUserStorage()],
   ...
 });
 ```
