@@ -1101,16 +1101,16 @@ var $341dff85fe619d85$export$2e2bcd8739ae039 = $341dff85fe619d85$var$httpClient;
 
 
 
-const $9ab033d1ec46b5da$var$isURL = (value)=>(typeof value === 'string' || value instanceof String) && value.startsWith('http');
+const $9ab033d1ec46b5da$var$isURI = (value)=>(typeof value === 'string' || value instanceof String) && (value.startsWith('http') || value.startsWith('urn:'));
 const $9ab033d1ec46b5da$var$expandTypes = async (types, context)=>{
     // If types are already full URIs, return them immediately
-    if (types.every((type)=>$9ab033d1ec46b5da$var$isURL(type))) return types;
+    if (types.every((type)=>$9ab033d1ec46b5da$var$isURI(type))) return types;
     const result = await (0, ($parcel$interopDefault($bkNnK$jsonld))).expand({
         '@context': context,
         '@type': types
     });
     const expandedTypes = (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(result[0]['@type']);
-    if (!expandedTypes.every((type)=>$9ab033d1ec46b5da$var$isURL(type))) throw new Error(`
+    if (!expandedTypes.every((type)=>$9ab033d1ec46b5da$var$isURI(type))) throw new Error(`
       Could not expand all types (${expandedTypes.join(', ')}).
       Is an ontology missing or not registered yet on the local context ?
     `);

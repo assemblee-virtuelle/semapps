@@ -1047,16 +1047,16 @@ var $22b4895a4ca7d626$export$2e2bcd8739ae039 = $22b4895a4ca7d626$var$httpClient;
 
 
 
-const $36aa010ec46eaf45$var$isURL = (value)=>(typeof value === 'string' || value instanceof String) && value.startsWith('http');
+const $36aa010ec46eaf45$var$isURI = (value)=>(typeof value === 'string' || value instanceof String) && (value.startsWith('http') || value.startsWith('urn:'));
 const $36aa010ec46eaf45$var$expandTypes = async (types, context)=>{
     // If types are already full URIs, return them immediately
-    if (types.every((type)=>$36aa010ec46eaf45$var$isURL(type))) return types;
+    if (types.every((type)=>$36aa010ec46eaf45$var$isURI(type))) return types;
     const result = await (0, $fj9kP$jsonld).expand({
         '@context': context,
         '@type': types
     });
     const expandedTypes = (0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(result[0]['@type']);
-    if (!expandedTypes.every((type)=>$36aa010ec46eaf45$var$isURL(type))) throw new Error(`
+    if (!expandedTypes.every((type)=>$36aa010ec46eaf45$var$isURI(type))) throw new Error(`
       Could not expand all types (${expandedTypes.join(', ')}).
       Is an ontology missing or not registered yet on the local context ?
     `);
