@@ -12,6 +12,7 @@ module.exports = {
   ControlledContainerMixin: require('./mixins/controlled-container'),
   DereferenceMixin: require('./mixins/dereference'),
   ImageProcessorMixin: require('./mixins/image-processor'),
+  MimeTypesMixin: require('./mixins/mime-types'),
   DocumentTaggerMixin: require('./mixins/document-tagger'),
   DisassemblyMixin: require('./mixins/disassembly'),
   SingleResourceContainerMixin: require('./mixins/single-resource-container'),

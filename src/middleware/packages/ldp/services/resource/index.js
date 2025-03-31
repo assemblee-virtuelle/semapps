@@ -18,7 +18,10 @@ module.exports = {
     baseUrl: null,
     podProvider: false,
     mirrorGraphName: null,
-    preferredViewForResource: null
+    preferredViewForResource: null,
+    binary: {
+      maxSize: '50Mb'
+    }
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {

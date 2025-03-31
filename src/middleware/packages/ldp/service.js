@@ -16,7 +16,10 @@ module.exports = {
     mirrorGraphName: 'http://semapps.org/mirror',
     defaultContainerOptions: {},
     preferredViewForResource: null,
-    resourcesWithContainerPath: true
+    resourcesWithContainerPath: true,
+    binary: {
+      maxSize: '50Mb'
+    }
   },
   dependencies: ['ldp.container', 'ldp.resource', 'ldp.registry', 'ontologies', 'jsonld'],
   async created() {
@@ -27,7 +30,8 @@ module.exports = {
       defaultContainerOptions,
       mirrorGraphName,
       preferredViewForResource,
-      resourcesWithContainerPath
+      resourcesWithContainerPath,
+      binary
     } = this.settings;
 
     this.broker.createService({
@@ -47,7 +51,8 @@ module.exports = {
         podProvider,
         mirrorGraphName,
         preferredViewForResource,
-        resourcesWithContainerPath
+        resourcesWithContainerPath,
+        binary
       },
       hooks: this.schema.hooksResource || {}
     });

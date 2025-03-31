@@ -1,4 +1,5 @@
 const fs = require('fs');
+const bytes = require('bytes');
 const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
 const { variable } = require('@rdfjs/data-model');
@@ -7,10 +8,24 @@ const { MoleculerError } = require('moleculer').Errors;
 
 // TODO put each method in a different file (problems with "this" not working)
 module.exports = {
-  async streamToFile(inputStream, filePath) {
+  streamToFile(inputStream, filePath, maxSize) {
     return new Promise((resolve, reject) => {
       const fileWriteStream = fs.createWriteStream(filePath);
-      inputStream.pipe(fileWriteStream).on('finish', resolve).on('error', reject);
+      const maxSizeInBytes = maxSize && bytes.parse(maxSize);
+      let fileSize = 0;
+      inputStream
+        .on('data', chunk => {
+          if (maxSizeInBytes) {
+            fileSize += chunk.length;
+            if (fileSize > maxSizeInBytes) {
+              fileWriteStream.destroy(); // Stop persisting the file
+              reject(new MoleculerError(`The file size is limited to ${maxSize}`, 413, 'CONTENT TOO LARGE'));
+            }
+          }
+        })
+        .pipe(fileWriteStream)
+        .on('finish', resolve)
+        .on('error', reject);
     });
   },
   async bodyToTriples(body, contentType) {

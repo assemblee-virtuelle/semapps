@@ -14,7 +14,7 @@ This plugin will fetch the [VoID endpoint](https://www.w3.org/TR/void/) of all s
 import { dataProvider, fetchVoidEndpoints } from '@semapps/semantic-data-provider';
 
 export default dataProvider({
-  plugins[fetchVoidEndpoints()],
+  plugins: [fetchVoidEndpoints()],
   ...
 });
 ```
@@ -35,7 +35,7 @@ Additionally, it will set the JSON-LD context to be the same as the Pod provider
 import { dataProvider, configureUserStorage } from '@semapps/semantic-data-provider';
 
 export default dataProvider({
-  plugins[configureUserStorage()],
+  plugins: [configureUserStorage()],
   ...
 });
 ```
@@ -50,7 +50,7 @@ This plugin automatically load the [Data Registry](https://solid.github.io/data-
 import { dataProvider, configureUserStorage, fetchDataRegistry } from '@semapps/semantic-data-provider';
 
 export default dataProvider({
-  plugins[configureUserStorage(), fetchDataRegistry()],
+  plugins: [configureUserStorage(), fetchDataRegistry()],
   ...
 });
 ```
@@ -63,7 +63,7 @@ This plugin automatically load the [Application Registration](https://solid.gith
 import { dataProvider, configureUserStorage, fetchAppRegistration } from '@semapps/semantic-data-provider';
 
 export default dataProvider({
-  plugins[configureUserStorage(), fetchAppRegistration()],
+  plugins: [configureUserStorage(), fetchAppRegistration()],
   ...
 });
 ```
@@ -80,7 +80,7 @@ You need to load the `configureUserStorage` plugin first.
 import { dataProvider, configureUserStorage, fetchTypeIndexes } from '@semapps/semantic-data-provider';
 
 export default dataProvider({
-  plugins[configureUserStorage(), fetchTypeIndexes()],
+  plugins: [configureUserStorage(), fetchTypeIndexes()],
   ...
 });
 ```

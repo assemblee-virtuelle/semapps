@@ -32,10 +32,25 @@ const negotiateTypeFuseki = function (incomingType) {
   return negotiateType(incomingType).fusekiMapping;
 };
 
+// Return true if the provided `type` is accepted by the allowedTypes.
+// Note that allowedTypes may include wild cards such as "image/*"
+const isMimeTypeMatching = (type, types) => {
+  const negotiator = new Negotiator({
+    headers: {
+      accept: Array.isArray(types) ? types.join(', ') : types
+    }
+  });
+
+  const result = negotiator.mediaType([type]);
+
+  return !!result;
+};
+
 module.exports = {
   MIME_TYPES,
   negotiateType,
   negotiateTypeMime,
   negotiateTypeN3,
-  negotiateTypeFuseki
+  negotiateTypeFuseki,
+  isMimeTypeMatching
 };
