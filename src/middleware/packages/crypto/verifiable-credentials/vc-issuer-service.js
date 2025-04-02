@@ -78,7 +78,7 @@ const VCCredentialService = {
       },
       async handler(ctx) {
         const {
-          credential: credentialParam,
+          credential: receivedCredential,
           options: { proofPurpose = 'assertionMethod' },
           webId = ctx.meta.webId,
           noAnonRead = false,
@@ -101,7 +101,7 @@ const VCCredentialService = {
           '@context': credentialsContext,
           type: ['VerifiableCredential'],
           issuer: webId,
-          ...credentialParam
+          ...receivedCredential
         };
 
         // Create the VC resource, if the id is not set.
@@ -124,7 +124,7 @@ const VCCredentialService = {
         });
 
         // Update resource to add the signatures, if the id had not been set.
-        if (!credentialParam.id)
+        if (!receivedCredential.id)
           await ctx.call(
             'crypto.vc.issuer.credential-container.put',
             { resource: signedCredential, contentType: MIME_TYPES.JSON, webId: 'system' },

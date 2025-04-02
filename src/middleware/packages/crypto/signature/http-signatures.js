@@ -80,7 +80,7 @@ const HttpSignatureService = {
 
       // TODO: Check if keys are outdated
 
-      const publicKeys = await ctx.call('keys.getRemotePublicKeys', { actorUri, keyType: KEY_TYPES.RSA });
+      const publicKeys = await ctx.call('keys.getRemotePublicKeys', { webId: actorUri, keyType: KEY_TYPES.RSA });
 
       if (!publicKeys) return { isValid: false };
 

@@ -19,10 +19,6 @@ const { arrayOf } = require('../utils/utils');
 const VCPresentationService = {
   name: 'crypto.vc.verifier',
   dependencies: ['ldp', 'jsonld'],
-  created() {
-    // Start challenge service.
-    this.broker.createService({ mixins: [ChallengeService] });
-  },
   async started() {
     this.documentLoader = async (url, options) => {
       return await this.broker.call('jsonld.document-loader.loadWithCache', { url, options });

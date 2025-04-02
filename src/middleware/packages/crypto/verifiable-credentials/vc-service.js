@@ -1,4 +1,3 @@
-const path = require('node:path');
 const { did, cred } = require('@semapps/ontologies');
 const VCHolderService = require('./vc-holder-service');
 const VCIssuerService = require('./vc-issuer-service');
@@ -7,7 +6,7 @@ const DataIntegrityService = require('./data-integrity-service');
 const VCApiService = require('./vc-api-service');
 const VCCredentialContainer = require('./vc-credential-container');
 const VCPresentationContainer = require('./vc-presentation-container');
-const { VC_API_PATH } = require('../constants');
+const ChallengeService = require('./challenge-service');
 
 /**
  * Root service for Verifiable Credential and the VC API.
@@ -39,13 +38,14 @@ const VCService = {
     this.broker.createService({ mixins: [VCHolderService] });
     this.broker.createService({ mixins: [VCVerifierService] });
     this.broker.createService({ mixins: [DataIntegrityService] });
+    this.broker.createService({ mixins: [ChallengeService] });
     this.broker.createService({
       mixins: [VCPresentationContainer],
-      settings: { path: path.join(VC_API_PATH, 'presentations'), podProvider }
+      settings: { path: 'presentations', podProvider }
     });
     this.broker.createService({
       mixins: [VCCredentialContainer],
-      settings: { path: path.join(VC_API_PATH, 'credentials'), podProvider }
+      settings: { path: 'credentials', podProvider }
     });
 
     if (enableApi) this.broker.createService({ mixins: [VCApiService], settings: { podProvider } });

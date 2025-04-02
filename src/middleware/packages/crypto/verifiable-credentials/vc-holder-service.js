@@ -86,26 +86,24 @@ const VCHolderService = {
         });
 
         // Create presentation.
-        const vcPresentation = {
+        const presentation = {
           ...vc.createPresentation({
             '@context': credentialsContext,
             type: ['VerifiablePresentation'],
+            id: !presentationParam.id && !ctx.params.options.persist && `urn:uuid:${randomUUID()}`,
             ...presentationParam,
             holder: presentationParam?.holder || webId
           })
         };
 
-        // Create an ephemeral id, if none given and persist is false.
-        if (!presentationParam.id && !ctx.params.persist) presentationParam.id = randomUUID();
-
-        // Create the VP resource, if the id is not set and persist is true.
-        const unsignedPresentation = presentationParam.id
-          ? vcPresentation
-          : await this.createPresentationResource(vcPresentation, noAnonRead);
+        // Create the VP resource, if the id is not set.
+        const presentationWithId = presentation.id
+          ? presentation
+          : await this.createPresentationResource(presentation, noAnonRead, webId);
 
         // Sign presentation.
         const signedPresentation = await vc.signPresentation({
-          presentation: unsignedPresentation,
+          presentation: presentationWithId,
           suite,
           challenge,
           purpose,
@@ -114,7 +112,7 @@ const VCHolderService = {
 
         // Update resource to add the signatures, if the id had not been set.
 
-        if (!presentationParam.id)
+        if (!presentationParam.id && ctx.params.options.persist)
           await ctx.call(
             'crypto.vc.holder.presentation-container.put',
             { resource: signedPresentation, contentType: MIME_TYPES.JSON, webId: 'system' },

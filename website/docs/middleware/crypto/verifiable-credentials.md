@@ -210,7 +210,7 @@ If you have questions, don't hesitate to contact us.
 _Some properties are omitted._
 
 1. **Issuing the First Capability**:
-   This capability will allow holders to see the issuer's profile (`apods:hasAuthorization`, which is checked in the [WebACL middleware](../webacl/index.md)) and send `Note` activities (assuming the user puts restrictions on that for strangers and the [activity handler](../activitypub/activities-handler.md) supports it. Disclaimer: For `Create > Note` activities, there is no handler capable of this. The example is for illustrative purposes).
+   This capability will allow holders to see the issuer's profile (`apods:hasAuthorization`, which is checked in the [WebACL middleware](../webacl/index.md)) and send `Note` activities (assuming the user puts restrictions on that for strangers and the [activity handler](../activitypub/activities-handler.md) supports it. Disclaimer: For `Create > Note` activities, there is no handler capable as of now. The example is for illustrative purposes).
 
    ```json
    {
