@@ -1,3 +1,5 @@
+const { credentialsContext, credentialsContextNoGraphProof } = require('@semapps/crypto');
+const { arrayOf } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const matchActivity = require('../../../utils/matchActivity');
 
@@ -19,9 +21,9 @@ module.exports = {
      * Add a new processor to handle activities
      */
     async addProcessor(ctx) {
-      const { matcher, actionName, boxTypes, key, priority = 10 } = ctx.params;
+      const { matcher, actionName, boxTypes, key, capabilityGrantMatchFnGenerator, priority = 10 } = ctx.params;
 
-      this.processors.push({ matcher, actionName, boxTypes, key, priority });
+      this.processors.push({ matcher, actionName, boxTypes, key, priority, capabilityGrantMatchFnGenerator });
 
       // Sort processors by priority
       this.processors.sort((a, b) => a.priority - b.priority);
@@ -84,6 +86,171 @@ module.exports = {
         );
         return false;
       }
+    },
+    async verifyCapability(activity, recipients) {
+      const retActivity = activity;
+
+      // Dereference capability, if necessary
+      if (typeof retActivity.capability === 'string') {
+        retActivity.capability = await this.broker.call('crypto.vc.holder.presentation-container.get', {
+          resourceUri: retActivity.capability
+        });
+      }
+      // Verify cryptographic and capability-related properties.
+      const capabilityVerified = await this.broker.call('crypto.vc.verifier.verifyCapabilityPresentation', {
+        verifiablePresentation: retActivity.capability
+      });
+
+      if (!capabilityVerified.verified) {
+        throw new Error(
+          `Capability presentation of activity ${retActivity.id} is not valid: ${capabilityVerified.error}`
+        );
+      }
+
+      // Verify that activity grant matches activity.
+
+      // The fetcher is required by matchActivity().
+      // We do not support fetching of non-dereferenced activities for properties required by the grant.
+      const disabledFetcher = () => {
+        throw new Error(
+          'Error verifying ActivityGrant. The activity must be dereferenced according to the pattern of the grant.'
+        );
+      };
+
+      // Verify that each VC capability in the chain has an ActivityGrant that matches the activity's pattern.
+      const verifiableCredentials = arrayOf(retActivity.capability.verifiableCredential);
+      if (verifiableCredentials.length === 0) throw new Error('Capability has no verifiable credentials');
+      for (const vc of verifiableCredentials) {
+        // At least one grant has to match in this VC
+        const activityGrantsInVc = arrayOf(vc.credentialSubject).flatMap(subject =>
+          arrayOf(subject['apods:hasActivityGrant'])
+        );
+
+        let grantMatchedInVc = false;
+        for (const grant of activityGrantsInVc) {
+          // Frame grant to get same shape as activity.
+          const compactedGrant = await this.compactActivityGrant(grant);
+
+          // Check that all properties of the grant are present in activity.
+          const matchResult = await matchActivity(compactedGrant, retActivity, disabledFetcher);
+          if (matchResult.match) {
+            grantMatchedInVc = true;
+            break;
+          }
+        }
+        // At least one grant must have matched.
+        if (!grantMatchedInVc)
+          throw new Error(
+            'Capability does not authorize this activity to be performed. Some VC ActivityGrant did not match activity',
+            { cause: activityGrantsInVc }
+          );
+      }
+
+      // Check that issuer is the recipient.
+      if (recipients.length !== 1 || activity.capability.verifiableCredential[0].issuer !== recipients[0]) {
+        throw new Error('The issuer of the capability must be the recipient of the capability-based activity.', {
+          cause: { activity, recipients }
+        });
+      }
+      // Check that holder is the invoker.
+      if (activity.capability.holder !== activity.actor) {
+        throw new Error("The activity's actor must be the holder of the capability presentation.", {
+          cause: { activity }
+        });
+      }
+
+      // All matched.
+
+      return retActivity;
+    },
+    async compactActivityGrant(activityGrant) {
+      const compactedGrant = await this.broker.call('jsonld.parser.compact', {
+        input: {
+          '@context': credentialsContext,
+          ...activityGrant
+        },
+        context: await this.broker.call('jsonld.context.get')
+      });
+      delete compactedGrant['@context'];
+
+      return compactedGrant;
+    },
+    async runInboxProcessor({ processor, recipientUri, dataset, fetcher, activity }) {
+      let match = false;
+      let dereferencedActivity = activity;
+
+      // Even if there is no match, we keep the dereferenced activity in memory so that we don't need to dereference it again
+      ({ match, dereferencedActivity } = await this.matchActivity(
+        processor.matcher,
+        dereferencedActivity,
+        // TODO: Check if this might be a SECURITY issue because properties
+        // are kept dereferenced for actors that might not have rights to do that.
+        fetcher
+      ));
+
+      // If a capability is present, verify that each VC has a valid ActivityGrant.
+      // The capabilityGrantMatchFnGenerator create a matcher function which needs to match
+      // for an ActivityGrant in each VC in the chain.
+      if (dereferencedActivity.capability && processor.capabilityGrantMatchFnGenerator) {
+        const matchGrantFn = await processor.capabilityGrantMatchFnGenerator({
+          activity: dereferencedActivity,
+          recipientUri
+        });
+
+        // For each VC in chain...
+        let matchedAllVcs = true;
+        for (const vc of arrayOf(dereferencedActivity.capability?.verifiableCredential)) {
+          // ...one ActivityGrant has to match.
+
+          const grantsOfVc = arrayOf(vc.credentialSubject).flatMap(subject =>
+            arrayOf(subject['apods:hasActivityGrant'])
+          );
+
+          let matchedVc = false;
+          for (const grant of grantsOfVc) {
+            const compactedGrant = await this.compactActivityGrant(grant);
+            if (await matchGrantFn(compactedGrant)) {
+              matchedVc = true;
+              break;
+            }
+          }
+          if (!matchedVc) {
+            matchedAllVcs = false;
+            break;
+          }
+        }
+        match = matchedAllVcs;
+      } else if (processor.capabilityGrantMatchFnGenerator) {
+        // Handler requires capability but none is given.
+        return { match: false, dereferencedActivity };
+      } else if (dereferencedActivity.capability) {
+        // Activity has capability but handler does not accept them explicitly.
+        return { match: false, dereferencedActivity };
+      }
+
+      // Run handler on match.
+      if (match) {
+        try {
+          const result = await this.broker.call(
+            processor.actionName,
+            {
+              key: processor.key,
+              boxType: 'inbox',
+              dereferencedActivity,
+              actorUri: recipientUri
+            },
+            {
+              meta: { webId: recipientUri, dataset }
+            }
+          );
+          return { match, result, dereferencedActivity };
+        } catch (error) {
+          // Show error because the QueueService transforms it in something that makes it lose the stacktrace
+          console.error(error);
+          return { match, error, dereferencedActivity };
+        }
+      }
+      return { match: false, dereferencedActivity };
     }
   },
   queues: {
@@ -96,58 +263,58 @@ module.exports = {
       async process(job) {
         const { activity, recipients } = job.data;
         const startTime = performance.now();
-        let errors = [],
-          match,
-          dereferencedActivity = activity;
+        let errors = [];
+        let dereferencedActivity = activity;
 
-        for (const recipientUri of recipients) {
-          this.logger.info(`Processing activity ${activity.id} received in the inbox of ${recipientUri}...`);
-          job.log(`Processing activity for recipient ${recipientUri}...`);
+        // If capability present, verify it.
+        if (activity.capability) {
+          // Will throw, if invalid
+          dereferencedActivity = await this.verifyCapability(dereferencedActivity, recipients);
+        }
 
-          const dataset = this.settings.podProvider
-            ? await this.broker.call('auth.account.findDatasetByWebId', { webId: recipientUri })
-            : undefined;
-          const fetcher = resourceUri => this.fetch(resourceUri, recipientUri, dataset);
+        try {
+          // Process activity for each recipient and activity handler.
+          for (const recipientUri of recipients) {
+            this.logger.info(`Processing activity ${activity.id} received in the inbox of ${recipientUri}...`);
+            job.log(`Processing activity for recipient ${recipientUri}...`);
 
-          for (const processor of this.processors) {
-            if (processor.boxTypes.includes('inbox')) {
-              // Even if there is no match, we keep in memory the dereferenced activity so that we don't need to dereference it again
-              ({ match, dereferencedActivity } = await this.matchActivity(
-                processor.matcher,
-                dereferencedActivity,
-                fetcher
-              ));
+            const dataset = this.settings.podProvider
+              ? await this.broker.call('auth.account.findDatasetByWebId', { webId: recipientUri })
+              : undefined;
+            const fetcher = resourceUri => this.fetch(resourceUri, recipientUri, dataset);
 
-              if (match) {
-                try {
-                  const result = await this.broker.call(
-                    processor.actionName,
-                    {
-                      key: processor.key,
-                      boxType: 'inbox',
-                      dereferencedActivity,
-                      actorUri: recipientUri
-                    },
-                    {
-                      meta: { webId: recipientUri, dataset }
-                    }
-                  );
+            for (const processor of this.processors) {
+              if (processor.boxTypes.includes('inbox')) {
+                let error;
+                let match;
+                let result;
+                ({ error, match, result, dereferencedActivity } = await this.runInboxProcessor({
+                  processor,
+                  recipientUri,
+                  dataset,
+                  fetcher,
+                  activity
+                }));
+
+                if (match && error) {
+                  job.log(`ERROR ${processor.key} (${processor.actionName}): ${error.message}`);
+                  errors.push(processor.key);
+                } else if (match && result) {
                   job.log(
                     `SUCCESS ${processor.key} (${processor.actionName}): ${
                       typeof result === 'object' ? JSON.stringify(result) : result
                     }`
                   );
-                } catch (e) {
-                  // Show error because the QueueService transforms it in something that makes it lose the stacktrace
-                  console.error(e);
-                  job.log(`ERROR ${processor.key} (${processor.actionName}): ${e.message}`);
-                  errors.push(processor.key);
+                } else {
+                  job.log(`SKIP ${processor.key} (${processor.actionName})`);
                 }
-              } else {
-                job.log(`SKIP ${processor.key} (${processor.actionName})`);
               }
             }
           }
+        } catch (error) {
+          // Log error and throw again.
+          console.error(error);
+          throw error;
         }
 
         if (errors.length > 0) {
@@ -172,8 +339,8 @@ module.exports = {
         const { activity } = job.data;
         const emitterUri = activity.actor;
         const startTime = performance.now();
-        let match,
-          dereferencedActivity = activity;
+        let match;
+        let dereferencedActivity = activity;
 
         const dataset = this.settings.podProvider
           ? await this.broker.call('auth.account.findDatasetByWebId', { webId: emitterUri })
@@ -182,12 +349,18 @@ module.exports = {
 
         for (const processor of this.processors) {
           if (processor.boxTypes.includes('outbox')) {
-            // Even if there is no match, we keep in memory the dereferenced activity so that we don't need to dereference it again
-            ({ match, dereferencedActivity } = await this.matchActivity(
-              processor.matcher,
-              dereferencedActivity,
-              fetcher
-            ));
+            // If and only if a capability is present, the processor needs to have a capabilityGrantMatchFnGenerator
+            if (!!dereferencedActivity.capability === !!processor.capabilityGrantMatchFnGenerator)
+              // Even if there is no match, we keep in memory the dereferenced activity so that we don't need to dereference it again
+              ({ match, dereferencedActivity } = await this.matchActivity(
+                processor.matcher,
+                dereferencedActivity,
+                fetcher
+              ));
+            else {
+              // Capability present but no matcher or vice versa.
+              match = false;
+            }
 
             if (match) {
               try {
