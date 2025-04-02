@@ -13,8 +13,8 @@ const credentialsContextNoGraphProof = [
     as: 'https://www.w3.org/ns/activitystreams#',
     apods: 'http://activitypods.org/ns/core#',
     acl: 'http://www.w3.org/ns/auth/acl#',
-    dc: 'http://purl.org/dc/terms/'
-    // sec: 'https://w3id.org/security#'
+    dc: 'http://purl.org/dc/terms/',
+    sec: 'https://w3id.org/security#'
   }
 ];
 
@@ -24,8 +24,8 @@ const credentialsContext = [
     as: 'https://www.w3.org/ns/activitystreams#',
     apods: 'http://activitypods.org/ns/core#',
     acl: 'http://www.w3.org/ns/auth/acl#',
-    dc: 'http://purl.org/dc/terms/'
-    // : 'https://w3id.org/security#'
+    dc: 'http://purl.org/dc/terms/',
+    sec: 'https://w3id.org/security#'
   }
 ];
 
