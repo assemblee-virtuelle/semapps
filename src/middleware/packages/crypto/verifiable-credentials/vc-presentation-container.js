@@ -19,6 +19,8 @@ const VCPresentationContainer = {
     path: null,
     excludeFromMirror: true,
     activateTombstones: false,
+    acceptedTypes: ['https://www.w3.org/2018/credentials#VerifiablePresentation'],
+    typeIndex: 'private',
     podProvider: null,
     permissions: (webId, ctx) => {
       // If not a pod provider, the container is shared, so any user can append.
@@ -39,15 +41,19 @@ const VCPresentationContainer = {
    */
   actions: {
     async get(ctx) {
-      const resource = ctx.call('ldp.resource.get', {
+      const resource = await ctx.call('ldp.resource.get', {
         ...ctx.params,
         jsonContext: credentialsContextNoGraphProof
       });
+      ctx.meta.$responseHeaders = {
+        ...ctx.meta.$responseHeaders,
+        'Cache-Control': 'private, max-age=300, immutable'
+      };
       return { ...resource, '@context': credentialsContext };
     },
     async put(ctx) {
       const { resource } = ctx.params;
-      return ctx.call('ldp.resource.put', {
+      return await ctx.call('ldp.resource.put', {
         ...ctx.params,
         resource: {
           ...resource,
@@ -56,9 +62,13 @@ const VCPresentationContainer = {
       });
     },
     async post(ctx) {
+      // FIXME: The action fails to store the VC with the VP.
+      // This is okay because persisting VPs is not required
+      // and with Apods v3 this issue will probably go away.
       const { resource } = ctx.params;
-      return ctx.call('ldp.container.post', {
+      return await ctx.call('ldp.container.post', {
         ...ctx.params,
+        containerUri: await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx }),
         resource: {
           ...resource,
           '@context': credentialsContextNoGraphProof
