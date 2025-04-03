@@ -88,7 +88,7 @@ const hasValidCapability = async (ctx, resourceUri, mode) => {
     return (
       arrayOf(auth.type).includes('acl:Authorization') &&
       arrayOf(auth['acl:mode']).includes(mode) &&
-      arrayOf(auth['acl:accessTo']).includes(resourceUri)
+      arrayOf(auth['acl:accessTo'].id ?? auth['acl:accessTo']).includes(resourceUri)
     );
   });
   if (!allHaveAuth) return false;

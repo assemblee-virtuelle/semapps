@@ -1,4 +1,4 @@
-const { credentialsContext, credentialsContextNoGraphProof } = require('@semapps/crypto');
+const { credentialsContext } = require('@semapps/crypto');
 const { arrayOf } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const matchActivity = require('../../../utils/matchActivity');
@@ -179,6 +179,7 @@ module.exports = {
       let match = false;
       let dereferencedActivity = activity;
 
+      // 1. Run matcher.
       // Even if there is no match, we keep the dereferenced activity in memory so that we don't need to dereference it again
       ({ match, dereferencedActivity } = await this.matchActivity(
         processor.matcher,
@@ -188,9 +189,9 @@ module.exports = {
         fetcher
       ));
 
-      // If a capability is present, verify that each VC has a valid ActivityGrant.
-      // The capabilityGrantMatchFnGenerator create a matcher function which needs to match
-      // for an ActivityGrant in each VC in the chain.
+      // 2. If a capability is present, verify ActivityGrants by checking that each VC has a valid ActivityGrant.
+      // The capabilityGrantMatchFnGenerator creates a matcher function which needs to match
+      // at least one ActivityGrant per VC in the chain.
       if (dereferencedActivity.capability && processor.capabilityGrantMatchFnGenerator) {
         const matchGrantFn = await processor.capabilityGrantMatchFnGenerator({
           activity: dereferencedActivity,
@@ -220,15 +221,12 @@ module.exports = {
           }
         }
         match = matchedAllVcs;
-      } else if (processor.capabilityGrantMatchFnGenerator) {
+      } else if (processor.capabilityGrantMatchFnGenerator && !dereferencedActivity.capability) {
         // Handler requires capability but none is given.
-        return { match: false, dereferencedActivity };
-      } else if (dereferencedActivity.capability) {
-        // Activity has capability but handler does not accept them explicitly.
         return { match: false, dereferencedActivity };
       }
 
-      // Run handler on match.
+      // 3, Run handler on match.
       if (match) {
         try {
           const result = await this.broker.call(
@@ -349,17 +347,17 @@ module.exports = {
 
         for (const processor of this.processors) {
           if (processor.boxTypes.includes('outbox')) {
-            // If and only if a capability is present, the processor needs to have a capabilityGrantMatchFnGenerator
-            if (!!dereferencedActivity.capability === !!processor.capabilityGrantMatchFnGenerator)
+            // If the processor has a capabilityGrantMatchFnGenerator, the activity must have a capability.
+            if (processor.capabilityGrantMatchFnGenerator && !activity.capability) {
+              // Capability present but no matcher or vice versa.
+              match = false;
+            } else {
               // Even if there is no match, we keep in memory the dereferenced activity so that we don't need to dereference it again
               ({ match, dereferencedActivity } = await this.matchActivity(
                 processor.matcher,
                 dereferencedActivity,
                 fetcher
               ));
-            else {
-              // Capability present but no matcher or vice versa.
-              match = false;
             }
 
             if (match) {
