@@ -87,39 +87,57 @@ module.exports = {
         return false;
       }
     },
-    async verifyCapability(activity, recipients) {
+    /** Verify that capability is signed, proof purpose is correct, and capability holder is the actor. */
+    async verifyCapabilityIntegrity(activity) {
       const retActivity = activity;
 
-      // Dereference capability, if necessary
+      // Dereference capability, if necessary.
       if (typeof retActivity.capability === 'string') {
         retActivity.capability = await this.broker.call('crypto.vc.holder.presentation-container.get', {
           resourceUri: retActivity.capability
         });
       }
+
+      // Check that holder is the invoker/actor.
+      if (activity.capability.holder !== activity.actor) {
+        throw new Error("The activity's actor must be the holder of the capability presentation.", {
+          cause: { activity }
+        });
+      }
+
+      if (arrayOf(activity.capability.verifiableCredential).length === 0) {
+        throw new Error('Capability has no verifiable credentials');
+      }
+
       // Verify cryptographic and capability-related properties.
-      const capabilityVerified = await this.broker.call('crypto.vc.verifier.verifyCapabilityPresentation', {
+      const { verified, error } = await this.broker.call('crypto.vc.verifier.verifyCapabilityPresentation', {
         verifiablePresentation: retActivity.capability
       });
 
-      if (!capabilityVerified.verified) {
-        throw new Error(
-          `Capability presentation of activity ${retActivity.id} is not valid: ${capabilityVerified.error}`
-        );
+      if (!verified) {
+        throw new Error(`Capability presentation of activity ${retActivity.id} is not valid: ${error}`);
       }
 
-      // Verify that activity grant matches activity.
+      return retActivity;
+    },
+    /** Verify that activity grants match activity. */
+    async verifyCapabilityGrants(activity, recipient, fetcher) {
+      const dereferencedActivity = activity;
 
-      // The fetcher is required by matchActivity().
-      // We do not support fetching of non-dereferenced activities for properties required by the grant.
-      const disabledFetcher = () => {
-        throw new Error(
-          'Error verifying ActivityGrant. The activity must be dereferenced according to the pattern of the grant.'
-        );
-      };
+      const verifiableCredentials = arrayOf(dereferencedActivity.capability.verifiableCredential);
+
+      // Check that issuer is the recipient.
+      if (verifiableCredentials[0].issuer !== recipient) {
+        return {
+          match: false,
+          dereferencedActivity,
+          error: new Error('The issuer of the capability must be the recipient of the capability-based activity.', {
+            cause: { activity, recipient }
+          })
+        };
+      }
 
       // Verify that each VC capability in the chain has an ActivityGrant that matches the activity's pattern.
-      const verifiableCredentials = arrayOf(retActivity.capability.verifiableCredential);
-      if (verifiableCredentials.length === 0) throw new Error('Capability has no verifiable credentials');
       for (const vc of verifiableCredentials) {
         // At least one grant has to match in this VC
         const activityGrantsInVc = arrayOf(vc.credentialSubject).flatMap(subject =>
@@ -132,7 +150,7 @@ module.exports = {
           const compactedGrant = await this.compactActivityGrant(grant);
 
           // Check that all properties of the grant are present in activity.
-          const matchResult = await matchActivity(compactedGrant, retActivity, disabledFetcher);
+          const matchResult = await matchActivity(compactedGrant, dereferencedActivity, fetcher);
           if (matchResult.match) {
             grantMatchedInVc = true;
             break;
@@ -140,28 +158,19 @@ module.exports = {
         }
         // At least one grant must have matched.
         if (!grantMatchedInVc)
-          throw new Error(
-            'Capability does not authorize this activity to be performed. Some VC ActivityGrant did not match activity',
-            { cause: activityGrantsInVc }
-          );
+          return {
+            match: false,
+            dereferencedActivity,
+            error: new Error(
+              'Capability does not authorize this activity to be performed. Some VC ActivityGrant did not match activity',
+              { cause: activityGrantsInVc }
+            )
+          };
       }
 
-      // Check that issuer is the recipient.
-      if (recipients.length !== 1 || activity.capability.verifiableCredential[0].issuer !== recipients[0]) {
-        throw new Error('The issuer of the capability must be the recipient of the capability-based activity.', {
-          cause: { activity, recipients }
-        });
-      }
-      // Check that holder is the invoker.
-      if (activity.capability.holder !== activity.actor) {
-        throw new Error("The activity's actor must be the holder of the capability presentation.", {
-          cause: { activity }
-        });
-      }
+      // All grants matched.
 
-      // All matched.
-
-      return retActivity;
+      return { match: true, dereferencedActivity };
     },
     async compactActivityGrant(activityGrant) {
       const compactedGrant = await this.broker.call('jsonld.parser.compact', {
@@ -188,16 +197,24 @@ module.exports = {
         // are kept dereferenced for actors that might not have rights to do that.
         fetcher
       ));
+      if (!match) return { match: false, dereferencedActivity };
 
-      // 2. If a capability is present, verify ActivityGrants by checking that each VC has a valid ActivityGrant.
-      // The capabilityGrantMatchFnGenerator creates a matcher function which needs to match
-      // at least one ActivityGrant per VC in the chain.
       if (dereferencedActivity.capability && processor.capabilityGrantMatchFnGenerator) {
+        // 2.1 Verify that activity grants match activity pattern.
+        // TODO: It might be nice to run this only once (after everything is dereferenced).
+        // This would require the whole matching to be processed before any handler is called.
+        ({ match, dereferencedActivity } = await this.verifyCapabilityGrants(activity, recipientUri, fetcher));
+        if (!match) return { match: false, dereferencedActivity };
+
+        // 2.2 Verify that ActivityGrant matches processor requirements.
+        // The capabilityGrantMatchFnGenerator creates a matcher function which needs to match
+        // at least one ActivityGrant per VC in the chain.
         const matchGrantFn = await processor.capabilityGrantMatchFnGenerator({
           activity: dereferencedActivity,
           recipientUri
         });
 
+        // 2.2.1
         // For each VC in chain...
         let matchedAllVcs = true;
         for (const vc of arrayOf(dereferencedActivity.capability?.verifiableCredential)) {
@@ -267,7 +284,7 @@ module.exports = {
         // If capability present, verify it.
         if (activity.capability) {
           // Will throw, if invalid
-          dereferencedActivity = await this.verifyCapability(dereferencedActivity, recipients);
+          dereferencedActivity = await this.verifyCapabilityIntegrity(dereferencedActivity, recipients);
         }
 
         try {
