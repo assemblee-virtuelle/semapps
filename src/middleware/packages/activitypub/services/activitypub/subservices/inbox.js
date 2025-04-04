@@ -93,9 +93,6 @@ const InboxService = {
         this.logger.error(e.message);
       }
 
-      // Do not persist capabilities as this might be a security issue, when others can read the inbox.
-      delete activity.capability;
-
       // If this is a transient activity, we have no way to retrieve it
       // so do not store it in the inbox (Mastodon works the same way)
       if (activity.id && !activity.id.includes('#')) {
