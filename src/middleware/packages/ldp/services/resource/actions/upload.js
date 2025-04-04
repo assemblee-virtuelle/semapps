@@ -22,9 +22,14 @@ module.exports = {
     }
 
     try {
-      await this.streamToFile(file.readableStream, localPath);
+      await this.streamToFile(file.readableStream, localPath, this.settings.binary.maxSize);
     } catch (e) {
-      throw new MoleculerError(e, 500, 'Server Error');
+      if (e.code === 413) {
+        throw e; // File too large
+      } else {
+        console.error(e);
+        throw new MoleculerError(e, 500, 'Server Error');
+      }
     }
 
     return {

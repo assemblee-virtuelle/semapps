@@ -597,10 +597,11 @@ const KeysService = {
 
         const queryResult = await ctx.call('triplestore.query', {
           query: `
-          SELECT ?privateKey WHERE {
-            ?privateKey <http://www.w3.org/2000/01/rdf-schema#seeAlso> <${publicKeyUri}> .
-          }`,
-          // dataset: undefined,
+            SELECT ?privateKey 
+            WHERE {
+              ?privateKey <http://www.w3.org/2000/01/rdf-schema#seeAlso> <${publicKeyUri}> .
+            }
+          `,
           webId: 'system'
         });
 

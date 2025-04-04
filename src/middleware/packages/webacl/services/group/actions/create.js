@@ -1,7 +1,7 @@
 const { MoleculerError } = require('moleculer').Errors;
 const createSlug = require('speakingurl');
 const urlJoin = require('url-join');
-const { sanitizeSPARQL } = require('../../../utils');
+const { sanitizeSparqlQuery } = require('@semapps/triplestore');
 
 module.exports = {
   api: async function api(ctx) {
@@ -36,8 +36,6 @@ module.exports = {
         groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
       }
 
-      await sanitizeSPARQL(groupUri);
-
       if (await this.actions.exist({ groupUri, webId: 'system' }, { parentCtx: ctx })) {
         throw new MoleculerError('Group already exists', 400, 'BAD_REQUEST');
       }
@@ -67,10 +65,14 @@ module.exports = {
       });
 
       await ctx.call('triplestore.update', {
-        query: `
+        query: sanitizeSparqlQuery`
           PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
-          INSERT DATA { GRAPH <${this.settings.graphName}>
-          { <${groupUri}> a vcard:Group } }`,
+          INSERT DATA { 
+            GRAPH <${this.settings.graphName}> { 
+              <${groupUri}> a vcard:Group 
+            } 
+          }
+        `,
         webId: 'system'
       });
 

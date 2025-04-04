@@ -1,4 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { sanitizeSparqlUri } = require('@semapps/triplestore');
 const { MoleculerError } = require('moleculer').Errors;
 const { getValueFromDataType } = require('../../../../../utils');
 
@@ -155,6 +156,15 @@ async function selectAndDereferenceItems(ctx, allItemURIs, options, webId, curso
   let nextItemUri = null;
   let previousItemUri = null;
 
+  // Pagination is enabled but no page is selected, we will display the "menu" so we don't need to dereference anything
+  if (options.itemsPerPage && !cursorDirection.hasBeforeEq && !cursorDirection.hasAfterEq) {
+    return {
+      items: allItemURIs,
+      previousItemUri,
+      nextItemUri
+    };
+  }
+
   do {
     itemUri = cursorDirection.hasBeforeEq ? allItemURIs.pop() : allItemURIs.shift();
     if (itemUri) {
@@ -276,6 +286,10 @@ module.exports = {
     const afterEq = ctx.params.afterEq || ctx.meta.queryString?.afterEq; // cursor param when moving forwards
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const localContext = await ctx.call('jsonld.context.get');
+
+    sanitizeSparqlUri(collectionUri);
+    sanitizeSparqlUri(beforeEq);
+    sanitizeSparqlUri(afterEq);
 
     await validateCursorParams(ctx, collectionUri, beforeEq, afterEq);
 

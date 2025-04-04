@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslate, useNotify, useSafeSetState, TextInput, required, email, useLogin, Form } from 'react-admin';
 import { useSearchParams } from 'react-router-dom';
 import { Button, CardContent, IconButton } from '@mui/material';
@@ -19,15 +19,22 @@ interface LoginFormProps {
   onLogin: (redirectTo: string) => void;
   /** If the form should allow login with username (in addition to email). */
   allowUsername: boolean;
+  /** URL to redirect to after login */
+  redirectTo: string;
 }
 
-const LoginForm = ({ onLogin, allowUsername }: LoginFormProps) => {
+const LoginForm = ({ onLogin, allowUsername, redirectTo }: LoginFormProps) => {
   const [searchParams] = useSearchParams();
   const [handleSubmit, setHandleSubmit] = useState<SubmitHandler<FormValues>>(() => {});
 
   return (
     <Form onSubmit={handleSubmit} noValidate defaultValues={{ email: searchParams.get('email') }}>
-      <FormContent onLogin={onLogin} allowUsername={allowUsername} setHandleSubmit={setHandleSubmit} />
+      <FormContent
+        onLogin={onLogin}
+        allowUsername={allowUsername}
+        setHandleSubmit={setHandleSubmit}
+        redirectTo={redirectTo}
+      />
     </Form>
   );
 };
@@ -35,7 +42,8 @@ const LoginForm = ({ onLogin, allowUsername }: LoginFormProps) => {
 const FormContent = ({
   onLogin,
   allowUsername,
-  setHandleSubmit
+  setHandleSubmit,
+  redirectTo
 }: LoginFormProps & { setHandleSubmit: React.Dispatch<React.SetStateAction<SubmitHandler<FormValues>>> }) => {
   const [loading, setLoading] = useSafeSetState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -43,7 +51,6 @@ const FormContent = ({
   const translate = useTranslate();
   const notify = useNotify();
   const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get('redirect') || '/';
   const formContext = useFormContext();
 
   const togglePassword = () => {

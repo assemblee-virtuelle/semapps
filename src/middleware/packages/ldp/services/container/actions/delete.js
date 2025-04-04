@@ -1,3 +1,5 @@
+const { sanitizeSparqlQuery } = require('@semapps/triplestore');
+
 module.exports = {
   visibility: 'public',
   params: {
@@ -9,7 +11,7 @@ module.exports = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     await ctx.call('triplestore.update', {
-      query: `
+      query: sanitizeSparqlQuery`
         DELETE
         WHERE {
           <${containerUri}> ?p1 ?o1 .

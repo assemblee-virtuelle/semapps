@@ -1,4 +1,14 @@
-import { RefObject } from 'react';
+import { RefObject, MutableRefObject } from 'react';
+import {
+  RefetchOptions,
+  RefetchQueryFilters,
+  InfiniteData,
+  QueryObserverResult,
+  FetchNextPageOptions,
+  InfiniteQueryObserverResult
+} from 'react-query';
+import { Identifier } from 'react-admin';
+import { JSX } from 'react/jsx-runtime';
 export declare namespace ACTIVITY_TYPES {
   let ACCEPT: string;
   let ADD: string;
@@ -54,6 +64,7 @@ export const PUBLIC_URI: 'https://www.w3.org/ns/activitystreams#Public';
 interface UseCollectionOptions {
   dereferenceItems?: boolean;
   liveUpdates?: boolean;
+  shaclShapeUri?: string;
 }
 interface AwaitActivityOptions {
   timeout?: number;
@@ -202,13 +213,9 @@ export const useCollection: (
       items: any[];
       error: false | unknown[];
       refetch: <TPageData>(
-        options?:
-          | (import('react-query').RefetchOptions & import('react-query').RefetchQueryFilters<TPageData>)
-          | undefined
-      ) => Promise<import('react-query').QueryObserverResult<import('react-query').InfiniteData<any>, unknown>>;
-      fetchNextPage: (
-        options?: import('react-query').FetchNextPageOptions | undefined
-      ) => Promise<import('react-query').InfiniteQueryObserverResult<any, unknown>>;
+        options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+      ) => Promise<QueryObserverResult<InfiniteData<any>, unknown>>;
+      fetchNextPage: (options?: FetchNextPageOptions | undefined) => Promise<InfiniteQueryObserverResult<any, unknown>>;
       addItem: (item: string | any, shouldRefetch?: boolean | number) => void;
       removeItem: (item: string | any, shouldRefetch?: boolean) => void;
       hasNextPage: boolean | undefined;
@@ -221,20 +228,16 @@ export const useCollection: (
         error?: any;
       };
       awaitWebSocketConnection: (options?: AwaitActivityOptions) => Promise<RefObject<WebSocket>>;
-      webSocketRef: import('react').MutableRefObject<WebSocket | null>;
+      webSocketRef: MutableRefObject<WebSocket | null>;
     }
   | {
       totalItems: number;
       items: any[];
       error: false | unknown[];
       refetch: <TPageData>(
-        options?:
-          | (import('react-query').RefetchOptions & import('react-query').RefetchQueryFilters<TPageData>)
-          | undefined
-      ) => Promise<import('react-query').QueryObserverResult<import('react-query').InfiniteData<any>, unknown>>;
-      fetchNextPage: (
-        options?: import('react-query').FetchNextPageOptions | undefined
-      ) => Promise<import('react-query').InfiniteQueryObserverResult<any, unknown>>;
+        options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+      ) => Promise<QueryObserverResult<InfiniteData<any>, unknown>>;
+      fetchNextPage: (options?: FetchNextPageOptions | undefined) => Promise<InfiniteQueryObserverResult<any, unknown>>;
       addItem: (item: string | any, shouldRefetch?: boolean | number) => void;
       removeItem: (item: string | any, shouldRefetch?: boolean) => void;
       hasNextPage: boolean | undefined;
@@ -247,7 +250,7 @@ export const useCollection: (
         error?: any;
       };
       awaitWebSocketConnection: (options?: AwaitActivityOptions) => Promise<RefObject<WebSocket>>;
-      webSocketRef: import('react').MutableRefObject<WebSocket | null>;
+      webSocketRef: MutableRefObject<WebSocket | null>;
     };
 /**
  * Hook to fetch and post to the outbox of the logged user.
@@ -262,13 +265,9 @@ export const useOutbox: (options?: UseCollectionOptions) =>
   | {
       error: false | unknown[];
       refetch: <TPageData>(
-        options?:
-          | (import('react-query').RefetchOptions & import('react-query').RefetchQueryFilters<TPageData>)
-          | undefined
-      ) => Promise<import('react-query').QueryObserverResult<import('react-query').InfiniteData<any>, unknown>>;
-      fetchNextPage: (
-        options?: import('react-query').FetchNextPageOptions | undefined
-      ) => Promise<import('react-query').InfiniteQueryObserverResult<any, unknown>>;
+        options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+      ) => Promise<QueryObserverResult<InfiniteData<any>, unknown>>;
+      fetchNextPage: (options?: FetchNextPageOptions | undefined) => Promise<InfiniteQueryObserverResult<any, unknown>>;
       addItem: (item: any, shouldRefetch?: number | boolean) => void;
       removeItem: (item: any, shouldRefetch?: boolean) => void;
       hasNextPage: boolean | undefined;
@@ -279,30 +278,21 @@ export const useOutbox: (options?: UseCollectionOptions) =>
         status: string;
         error?: any;
       };
-      webSocketRef: import('react').MutableRefObject<WebSocket | null>;
+      webSocketRef: MutableRefObject<WebSocket | null>;
       url: any;
       items: any[];
-      awaitWebSocketConnection: (
-        options?: import('types').AwaitActivityOptions
-      ) => Promise<import('react').RefObject<WebSocket>>;
+      awaitWebSocketConnection: (options?: AwaitActivityOptions) => Promise<RefObject<WebSocket>>;
       post: (activity: object) => Promise<string | null>;
-      awaitActivity: (
-        matchActivity: (activity: object) => boolean,
-        options?: import('types').AwaitActivityOptions
-      ) => Promise<unknown>;
-      owner: import('react-admin').Identifier | undefined;
+      awaitActivity: (matchActivity: (activity: object) => boolean, options?: AwaitActivityOptions) => Promise<unknown>;
+      owner: Identifier | undefined;
     }
   | {
       totalItems: number;
       error: false | unknown[];
       refetch: <TPageData>(
-        options?:
-          | (import('react-query').RefetchOptions & import('react-query').RefetchQueryFilters<TPageData>)
-          | undefined
-      ) => Promise<import('react-query').QueryObserverResult<import('react-query').InfiniteData<any>, unknown>>;
-      fetchNextPage: (
-        options?: import('react-query').FetchNextPageOptions | undefined
-      ) => Promise<import('react-query').InfiniteQueryObserverResult<any, unknown>>;
+        options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+      ) => Promise<QueryObserverResult<InfiniteData<any>, unknown>>;
+      fetchNextPage: (options?: FetchNextPageOptions | undefined) => Promise<InfiniteQueryObserverResult<any, unknown>>;
       addItem: (item: any, shouldRefetch?: number | boolean) => void;
       removeItem: (item: any, shouldRefetch?: boolean) => void;
       hasNextPage: boolean | undefined;
@@ -313,18 +303,13 @@ export const useOutbox: (options?: UseCollectionOptions) =>
         status: string;
         error?: any;
       };
-      webSocketRef: import('react').MutableRefObject<WebSocket | null>;
+      webSocketRef: MutableRefObject<WebSocket | null>;
       url: any;
       items: any[];
-      awaitWebSocketConnection: (
-        options?: import('types').AwaitActivityOptions
-      ) => Promise<import('react').RefObject<WebSocket>>;
+      awaitWebSocketConnection: (options?: AwaitActivityOptions) => Promise<RefObject<WebSocket>>;
       post: (activity: object) => Promise<string | null>;
-      awaitActivity: (
-        matchActivity: (activity: object) => boolean,
-        options?: import('types').AwaitActivityOptions
-      ) => Promise<unknown>;
-      owner: import('react-admin').Identifier | undefined;
+      awaitActivity: (matchActivity: (activity: object) => boolean, options?: AwaitActivityOptions) => Promise<unknown>;
+      owner: Identifier | undefined;
     };
 export function CommentsField({
   source,
@@ -340,7 +325,7 @@ export function CommentsField({
   placeholder: any;
   userResource: any;
   mentions: any;
-}): import('react/jsx-runtime').JSX.Element;
+}): JSX.Element;
 declare namespace CommentsField {
   namespace defaultProps {
     let label: string;
@@ -357,7 +342,7 @@ export function CollectionList({
   collectionUrl: any;
   resource: any;
   children: any;
-}): import('react/jsx-runtime').JSX.Element;
+}): JSX.Element;
 export function ReferenceCollectionField({
   source,
   reference,
@@ -368,7 +353,7 @@ export function ReferenceCollectionField({
   source: any;
   reference: any;
   children: any;
-}): import('react/jsx-runtime').JSX.Element | null;
+}): JSX.Element | null;
 /**
  * Hook to fetch the inbox of the logged user.
  * Returns the same data as the useCollection hooks, plus:
@@ -381,13 +366,9 @@ export const useInbox: (options?: UseCollectionOptions) =>
   | {
       error: false | unknown[];
       refetch: <TPageData>(
-        options?:
-          | (import('react-query').RefetchOptions & import('react-query').RefetchQueryFilters<TPageData>)
-          | undefined
-      ) => Promise<import('react-query').QueryObserverResult<import('react-query').InfiniteData<any>, unknown>>;
-      fetchNextPage: (
-        options?: import('react-query').FetchNextPageOptions | undefined
-      ) => Promise<import('react-query').InfiniteQueryObserverResult<any, unknown>>;
+        options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+      ) => Promise<QueryObserverResult<InfiniteData<any>, unknown>>;
+      fetchNextPage: (options?: FetchNextPageOptions | undefined) => Promise<InfiniteQueryObserverResult<any, unknown>>;
       addItem: (item: any, shouldRefetch?: number | boolean) => void;
       removeItem: (item: any, shouldRefetch?: boolean) => void;
       hasNextPage: boolean | undefined;
@@ -398,29 +379,20 @@ export const useInbox: (options?: UseCollectionOptions) =>
         status: string;
         error?: any;
       };
-      webSocketRef: import('react').MutableRefObject<WebSocket | null>;
+      webSocketRef: MutableRefObject<WebSocket | null>;
       url: any;
       items: any[];
-      awaitWebSocketConnection: (
-        options?: import('types').AwaitActivityOptions
-      ) => Promise<import('react').RefObject<WebSocket>>;
-      awaitActivity: (
-        matchActivity: (activity: object) => boolean,
-        options?: import('types').AwaitActivityOptions
-      ) => Promise<unknown>;
-      owner: import('react-admin').Identifier | undefined;
+      awaitWebSocketConnection: (options?: AwaitActivityOptions) => Promise<RefObject<WebSocket>>;
+      awaitActivity: (matchActivity: (activity: object) => boolean, options?: AwaitActivityOptions) => Promise<unknown>;
+      owner: Identifier | undefined;
     }
   | {
       totalItems: number;
       error: false | unknown[];
       refetch: <TPageData>(
-        options?:
-          | (import('react-query').RefetchOptions & import('react-query').RefetchQueryFilters<TPageData>)
-          | undefined
-      ) => Promise<import('react-query').QueryObserverResult<import('react-query').InfiniteData<any>, unknown>>;
-      fetchNextPage: (
-        options?: import('react-query').FetchNextPageOptions | undefined
-      ) => Promise<import('react-query').InfiniteQueryObserverResult<any, unknown>>;
+        options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+      ) => Promise<QueryObserverResult<InfiniteData<any>, unknown>>;
+      fetchNextPage: (options?: FetchNextPageOptions | undefined) => Promise<InfiniteQueryObserverResult<any, unknown>>;
       addItem: (item: any, shouldRefetch?: number | boolean) => void;
       removeItem: (item: any, shouldRefetch?: boolean) => void;
       hasNextPage: boolean | undefined;
@@ -431,17 +403,12 @@ export const useInbox: (options?: UseCollectionOptions) =>
         status: string;
         error?: any;
       };
-      webSocketRef: import('react').MutableRefObject<WebSocket | null>;
+      webSocketRef: MutableRefObject<WebSocket | null>;
       url: any;
       items: any[];
-      awaitWebSocketConnection: (
-        options?: import('types').AwaitActivityOptions
-      ) => Promise<import('react').RefObject<WebSocket>>;
-      awaitActivity: (
-        matchActivity: (activity: object) => boolean,
-        options?: import('types').AwaitActivityOptions
-      ) => Promise<unknown>;
-      owner: import('react-admin').Identifier | undefined;
+      awaitWebSocketConnection: (options?: AwaitActivityOptions) => Promise<RefObject<WebSocket>>;
+      awaitActivity: (matchActivity: (activity: object) => boolean, options?: AwaitActivityOptions) => Promise<unknown>;
+      owner: Identifier | undefined;
     };
 export const useNodeinfo: (host?: string, rel?: string) => NodeInfo | undefined;
 export function useWebfinger(): {

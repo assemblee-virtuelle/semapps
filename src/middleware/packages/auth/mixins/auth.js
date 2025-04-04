@@ -64,6 +64,8 @@ const AuthMixin = {
     capabilitiesPath: undefined,
     registrationAllowed: true,
     reservedUsernames: [],
+    minPasswordLength: 1,
+    minUsernameLength: 1,
     webIdSelection: [],
     accountSelection: [],
     accountsDataset: 'settings',
@@ -71,7 +73,8 @@ const AuthMixin = {
   },
   dependencies: ['api'],
   async created() {
-    const { jwtPath, reservedUsernames, accountsDataset, podProvider } = this.settings;
+    const { jwtPath, reservedUsernames, minPasswordLength, minUsernameLength, accountsDataset, podProvider } =
+      this.settings;
 
     this.broker.createService({
       mixins: [AuthJWTService],
@@ -80,7 +83,7 @@ const AuthMixin = {
 
     this.broker.createService({
       mixins: [AuthAccountService],
-      settings: { reservedUsernames },
+      settings: { reservedUsernames, minPasswordLength, minUsernameLength },
       adapter: new TripleStoreAdapter({ type: 'AuthAccount', dataset: accountsDataset })
     });
   },
