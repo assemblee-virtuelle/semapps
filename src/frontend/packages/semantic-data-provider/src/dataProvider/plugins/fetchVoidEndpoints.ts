@@ -49,20 +49,24 @@ const fetchVoidEndpoints = (): Plugin => ({
                 const path = partition['void:uriSpace'].replace(dataset['void:uriSpace'], '/');
                 const expandedTypes = await expandTypes([type], result.context);
 
-                const containerIndex = newConfig.dataServers[result.key].containers.findIndex(
-                  c => c.types?.some(t => expandedTypes.includes(t))
-                );
-                if (containerIndex && containerIndex !== -1) {
-                  // If a container with this type already exist, overwrite path and types
+                const containerIndex = newConfig.dataServers[result.key].containers.findIndex(c => c.path === path);
+
+                if (containerIndex !== -1) {
+                  // If a container with this path already exist, merge types
+                  const mergedTypes = [
+                    ...newConfig.dataServers[result.key].containers[containerIndex].types!,
+                    ...expandedTypes
+                  ].filter((v, i, a) => a.indexOf(v) === i);
                   newConfig.dataServers[result.key].containers[containerIndex] = {
                     ...newConfig.dataServers[result.key].containers[containerIndex],
-                    path,
-                    types: expandedTypes
+                    types: mergedTypes,
+                    binaryResources: mergedTypes.includes('http://semapps.org/ns/core#File')
                   };
                 } else {
                   newConfig.dataServers[result.key].containers.push({
                     path,
-                    types: expandedTypes
+                    types: expandedTypes,
+                    binaryResources: expandedTypes.includes('http://semapps.org/ns/core#File')
                   });
                 }
               }

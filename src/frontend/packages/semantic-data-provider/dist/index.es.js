@@ -866,7 +866,7 @@ const $1caf729dc3ce856d$var$getListMethod = (config)=>async (resourceId, params)
         if (!dataModel) throw new Error(`Resource ${resourceId} is not mapped in resources file`);
         let containers = [];
         if (!params.filter?._servers && dataModel.list?.containers) {
-            if (Array.isArray(dataModel.list?.containers)) throw new Error(`The list.containers property of ${resourceId} dataModel must be of type object ({ serverKey: [containerUri] })`);
+            if (!Array.isArray(dataModel.list?.containers)) throw new Error(`The list.containers property of ${resourceId} dataModel must be of type array`);
             // If containers are set explicitly, use them
             containers = (0, $7c772a9c0c25a69d$export$2e2bcd8739ae039)(dataModel.list.containers, dataServers);
         } else if (dataModel.shapeTreeUri) containers = (0, $3bcb3ff5a72a9185$export$2e2bcd8739ae039)(dataModel.shapeTreeUri, params?.filter?._servers || dataModel.list?.servers, dataServers);
@@ -1499,16 +1499,22 @@ const $a87fd63d8fca0380$var$fetchVoidEndpoints = ()=>({
                             const expandedTypes = await (0, $36aa010ec46eaf45$export$2e2bcd8739ae039)([
                                 type
                             ], result.context);
-                            const containerIndex = newConfig.dataServers[result.key].containers.findIndex((c)=>c.types?.some((t)=>expandedTypes.includes(t)));
-                            if (containerIndex && containerIndex !== -1) // If a container with this type already exist, overwrite path and types
-                            newConfig.dataServers[result.key].containers[containerIndex] = {
-                                ...newConfig.dataServers[result.key].containers[containerIndex],
+                            const containerIndex = newConfig.dataServers[result.key].containers.findIndex((c)=>c.path === path);
+                            if (containerIndex !== -1) {
+                                // If a container with this path already exist, merge types
+                                const mergedTypes = [
+                                    ...newConfig.dataServers[result.key].containers[containerIndex].types,
+                                    ...expandedTypes
+                                ].filter((v, i, a)=>a.indexOf(v) === i);
+                                newConfig.dataServers[result.key].containers[containerIndex] = {
+                                    ...newConfig.dataServers[result.key].containers[containerIndex],
+                                    types: mergedTypes,
+                                    binaryResources: mergedTypes.includes('http://semapps.org/ns/core#File')
+                                };
+                            } else newConfig.dataServers[result.key].containers.push({
                                 path: path,
-                                types: expandedTypes
-                            };
-                            else newConfig.dataServers[result.key].containers.push({
-                                path: path,
-                                types: expandedTypes
+                                types: expandedTypes,
+                                binaryResources: expandedTypes.includes('http://semapps.org/ns/core#File')
                             });
                         }
                     }
@@ -1671,7 +1677,6 @@ var $43097d0b613bd4db$export$2e2bcd8739ae039 = $43097d0b613bd4db$var$useContaine
 
 
 
-
 const $7d9911a250866af6$var$findCreateContainerWithTypes = (types, createServerKey, dataServers)=>{
     if (!dataServers[createServerKey].containers) throw new Error(`Data server ${createServerKey} has no declared containers`);
     const matchingContainers = dataServers[createServerKey].containers.filter((container)=>container.types?.some((t)=>types.includes(t)));
@@ -1690,11 +1695,8 @@ const $8dbb0c8c3814e663$var$useGetCreateContainerUri = ()=>{
     const getCreateContainerUri = (0, $fj9kP$useCallback)((resourceId)=>{
         if (!dataModels || !dataServers || !dataModels[resourceId]) return undefined;
         const dataModel = dataModels[resourceId];
-        if (dataModel.create?.container) {
-            const [serverKey, path] = Object.entries(dataModel.create.container)[0];
-            if (!serverKey || !dataServers[serverKey]) throw new Error(`Wrong key for the dataModel.create.container config of resource ${resourceId}`);
-            return (0, $fj9kP$urljoin)(dataServers[serverKey].baseUrl, path);
-        } else if (dataModel.create?.server) return (0, $7d9911a250866af6$export$2e2bcd8739ae039)(dataModel.types, dataModel.create?.server, dataServers);
+        if (dataModel.create?.container) return dataModel.create.container;
+        else if (dataModel.create?.server) return (0, $7d9911a250866af6$export$2e2bcd8739ae039)(dataModel.types, dataModel.create.server, dataServers);
         else {
             const defaultServerKey = (0, $8326b88c1a913ca9$export$2e2bcd8739ae039)('default', dataServers);
             if (!defaultServerKey) throw new Error(`No default dataServer found. You can set explicitly one setting the "default" attribute to true`);

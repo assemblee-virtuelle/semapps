@@ -18,13 +18,9 @@ const useGetCreateContainerUri = () => {
       const dataModel = dataModels[resourceId];
 
       if (dataModel.create?.container) {
-        const [serverKey, path] = Object.entries(dataModel.create.container)[0];
-        if (!serverKey || !dataServers[serverKey]) {
-          throw new Error(`Wrong key for the dataModel.create.container config of resource ${resourceId}`);
-        }
-        return urlJoin(dataServers[serverKey].baseUrl, path);
+        return dataModel.create.container;
       } else if (dataModel.create?.server) {
-        return findCreateContainerWithTypes(dataModel.types, dataModel.create?.server, dataServers);
+        return findCreateContainerWithTypes(dataModel.types, dataModel.create.server, dataServers);
       } else {
         const defaultServerKey = getServerKeyFromType('default', dataServers);
 

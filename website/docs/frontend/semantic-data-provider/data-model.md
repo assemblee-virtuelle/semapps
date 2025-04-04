@@ -15,7 +15,7 @@ const dataModel = {
     types: 'foaf:Person',
     list: {
       servers: '@all',
-      containers: {}, // Si spécifié, bypass la valeur servers. On passe quand même par SPARQL pour faire la requête.
+      containers: [],
       blankNodes: [],
       blankNodesDepth: 2.
       forceArray: [],
@@ -42,7 +42,7 @@ const dataModel = {
 | ----------------------------- | ------------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `types`                       | `Array` or `String  | **required** | Type(s) of resources to fetch or create                                                                                                                                                                           |
 | `list.servers`                | `Array` or `String` | "@all"       | The servers where to fetch the resource.                                                                                                                                                                          |
-| `list.containers`             | `Object`            |              | URL(s) of the container(s) to fetch. If specified, will bypass the `list.servers` config.                                                                                                                         |
+| `list.containers`             | `Array`             |              | Full URL(s) of the container(s) to fetch. If specified, will bypass the `list.servers` config.                                                                                                                    |
 | `list.blankNodes`             | `Array`             |              | Predicates listed are blank nodes and will be dereferenced in SPARQL queries. Automatically set if VoID endpoints are found.                                                                                      |
 | `list.blankNodesDepth`        | `Integer`           |              | If no blank nodes are indicated above, the SPARQL query will automatically search for blank nodes 2-level deep. Setting this parameter to `0` is equivalent to `blankNodes: []` (no blank nodes will be returned) |
 | `list.forceArray`             | `Array`             |              | Predicates listed will be turned to arrays if they are simple strings. Used by for reified relationship. To be deprecated.                                                                                        |
@@ -51,7 +51,7 @@ const dataModel = {
 | `list.fetchContainer`         | `Boolean`           | false        | If true, the data provider will fetch the LDP containers instead of doing a SPARQL request.                                                                                                                       |
 | `list.explicitEmbedOnFraming` | `Boolean`           | true         | If false, improve performances by not including the `@embed` rule in post-request JSON-LD framing                                                                                                                 |
 | `create.server`               | `String`            | "@default"   | The server where to create new resources.                                                                                                                                                                         |
-| `create.container`            | `String`            |              | URL of the container where to create new resources. If specified, will bypass the `create.server` config.                                                                                                         |
+| `create.container`            | `String`            |              | Full URL of the container where to create new resources. If specified, will bypass the `create.server` config.                                                                                                    |
 | `fieldsMapping.title`         | `String`            |              | The predicate of the title. Required by several components.                                                                                                                                                       |
 
 ## Servers special keys
