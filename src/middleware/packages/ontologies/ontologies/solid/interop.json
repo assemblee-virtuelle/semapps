@@ -101,6 +101,9 @@
     },
     "interop:hasDataRegistration": {
       "@type": "@id"
+    },
+    "interop:hasDataInstance": {
+      "@type": "@id"
     }
   }
 }
