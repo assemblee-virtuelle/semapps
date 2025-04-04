@@ -1,0 +1,22 @@
+{
+  "prefix": "cred",
+  "namespace": "https://www.w3.org/2018/credentials#",
+  "preserveContextUri": false,
+  "jsonldContext": {
+    "credentialSubject": {
+      "@id": "https://www.w3.org/2018/credentials#credentialSubject",
+      "@type": "@id"
+    },
+    "holder": {
+      "@id": "https://www.w3.org/2018/credentials#holder",
+      "@type": "@id"
+    },
+    "issuer": {
+      "@id": "https://www.w3.org/2018/credentials#issuer",
+      "@type": "@id"
+    },
+    "verifiableCredential": "https://www.w3.org/2018/credentials#verifiableCredential",
+    "VerifiableCredential": "https://www.w3.org/2018/credentials#VerifiableCredential",
+    "VerifiablePresentation": "https://www.w3.org/2018/credentials#VerifiablePresentation"
+  }
+}

@@ -1,12 +1,62 @@
 const passport = require('passport');
 const { Errors: E } = require('moleculer-web');
 const { TripleStoreAdapter } = require('@semapps/triplestore');
-const urlJoin = require('url-join');
 const AuthAccountService = require('../services/account');
 const AuthJWTService = require('../services/jwt');
-const CapabilitiesService = require('../services/capabilities');
 
-/** @type {import('moleculer').ServiceSchema} */
+/**
+ * Auth Mixin that handles authentication and authorization for routes
+ * that requested this.
+ *
+ * The authorization and authentication actions check for a valid `authorization` header.
+ * If the bearer token is a server-signed JWT identifying the user, `ctx.meta.tokenPayload` and
+ * `ctx.meta.webId` are set. Setting either `authorization` or `authentication` suffices.
+ *
+ * # Authentication
+ * In the `authenticate` action, the webId is set to `anon`, if no `authorization` header is present.
+ *
+ * # Authorization
+ * In contrast, the `authorize` action throws an unauthorized error,
+ * if no `authorization` header is present.
+ * @see https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
+ *
+ * ## Capability Authorization
+ * Additionally, the `authorize` action supports capability authorization based on
+ * Verifiable Credentials (VCs), if `opts.authorizeWithCapability` is set to `true`.
+ *
+ * **WARNING**: This does not make any assertions about the validity of the capabilities'
+ * content (`credentialSubject`). What *is* checked:
+ * - the delegation chain was correct
+ * - all signatures are valid
+ * - the `controller`s of the keys (`verificationMethod`) used in the proofs to sign
+ *   the VC capabilities and presentation are correct. I.e. the controller resolves to
+ *   the WebId/controller identifier document (CID) which lists the key.\
+ *   This means that *you know who signed the presentation and capabilities* on the way.
+ *
+ * NO BUSINESS LOGIC IS CHECKED.\
+ * It is still necessary to verify if the request itself is valid.
+ * There would be no error when the `credentialSubject` says: "A is allowed to read B"
+ * while the statement is actually made by "C" and not by "B".\
+ *
+ * @see https://moleculer.services/docs/0.13/moleculer-web.html#Authorization
+ *
+ * @example Configuration for a new route
+ * ```js
+ * ctx.call('api.addRoute', {
+ *   path: path.join(basePath, '/your/route'),
+ *   name: 'your-route-name',
+ *   aliases: {
+ *     'GET /': 'your.action.here',
+ *   },
+ *   // Set to true, to run authorization action.
+ *   authorization: true,
+ *   // Set to true, to run authenticate action.
+ *   authentication: false,
+ * });
+ * ```
+ *
+ * @type {import('moleculer').ServiceSchema}
+ */
 const AuthMixin = {
   settings: {
     baseUrl: null,
@@ -36,10 +86,6 @@ const AuthMixin = {
       settings: { reservedUsernames, minPasswordLength, minUsernameLength },
       adapter: new TripleStoreAdapter({ type: 'AuthAccount', dataset: accountsDataset })
     });
-
-    if (podProvider) {
-      this.broker.createService({ mixins: [CapabilitiesService], settings: { path: this.settings.capabilitiesPath } });
-    }
   },
   async started() {
     if (!this.passportId) throw new Error('this.passportId must be set in the service creation.');
@@ -76,33 +122,28 @@ const AuthMixin = {
       }
 
       if (method === 'Bearer') {
-        const payload = await ctx.call('auth.jwt.verifyToken', { token });
+        const payload = await ctx.call('auth.jwt.verifyServerSignedToken', { token });
         if (payload) {
           ctx.meta.tokenPayload = payload;
           ctx.meta.webId = payload.webId;
           return Promise.resolve(payload);
         }
+
+        // Check if token is a capability.
+        if (route.opts.authorizeWithCapability) {
+          return this.validateCapability(ctx, token);
+        }
+
         // Invalid token
         // TODO make sure token is deleted client-side
-        ctx.meta.webId = 'anon';
         return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
-      } else if ((method === 'Capability' || req.$params.capability) && this.settings.podProvider) {
-        const capabilityUri = token || req.$params.capability;
-        const capability = await this.actions.getValidateCapability({
-          capabilityUri,
-          username: req.parsedUrl.match(/[^/]+/)[0]
-        });
-
-        ctx.meta.webId = 'anon';
-        req.$ctx.meta.webId = 'anon';
-        req.$ctx.meta.authorization = { capability };
-        return Promise.resolve(null);
       }
 
       // No valid auth method given.
       ctx.meta.webId = 'anon';
       return Promise.resolve(null);
     },
+
     // See https://moleculer.services/docs/0.13/moleculer-web.html#Authorization
     async authorize(ctx) {
       const { route, req, res } = ctx.params;
@@ -111,97 +152,31 @@ const AuthMixin = {
       const [method, token] = req.headers.authorization && req.headers.authorization.split(' ');
 
       if (!token) {
-        ctx.meta.webId = 'anon';
         return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
       }
+      if (method !== 'Bearer') {
+        return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
+      }
 
-      if (method === 'Bearer') {
-        const payload = await ctx.call('auth.jwt.verifyToken', { token });
-        if (payload) {
-          ctx.meta.tokenPayload = payload;
-          ctx.meta.webId = payload.webId;
-          return Promise.resolve(payload);
-        }
-      } else if ((method === 'Capability' || req.$params.capability) && this.settings.podProvider) {
-        const capabilityUri = token || req.$params.capability;
-        const capability = await this.actions.getValidateCapability({
-          capabilityUri,
-          username: req.parsedUrl.match(/[^/]+/)[0]
-        });
+      // Validate if the token was signed by server (registered user).
+      const serverSignedPayload = await ctx.call('auth.jwt.verifyServerSignedToken', { token });
+      if (serverSignedPayload) {
+        ctx.meta.tokenPayload = serverSignedPayload;
+        ctx.meta.webId = serverSignedPayload.webId;
+        return Promise.resolve(serverSignedPayload);
+      }
 
-        ctx.meta.webId = 'anon';
-
-        req.$ctx.meta.webId = 'anon';
-        req.$ctx.meta.authorization = { capability };
-        if (capability) {
-          return Promise.resolve(null);
-        }
+      // Check if token is a capability.
+      if (route.opts.authorizeWithCapability) {
+        return this.validateCapability(ctx, token);
       }
 
       return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
     },
-    getValidateCapability: {
-      params: {
-        capabilityUri: {
-          type: 'string',
-          required: true
-        },
-        webId: {
-          type: 'string',
-          optional: true
-        },
-        username: {
-          type: 'string',
-          optional: true
-        }
-      },
-      /**
-       * Checks, if the provided capabilityUri is a valid URI and within the resource owner's cap container.
-       * @returns {Promise<object>} The stored capability object or undefined, if the capability is not valid.
-       */
-      async handler(ctx) {
-        let { capabilityUri, webId, username } = ctx.params;
-        /** @type {string} */
-        const baseUrlTrailing = urlJoin(this.settings.baseUrl, '/');
-        webId = webId || baseUrlTrailing + username;
-
-        const podUrl = await ctx.call('solid-storage.getUrl', { webId });
-
-        // Check if capabilityUri is within the resource owner's pod
-        if (!webId?.startsWith(baseUrlTrailing) || !capabilityUri?.startsWith(podUrl)) {
-          return undefined;
-        }
-
-        // Check, if capUri is a valid URI.
-        try {
-          // eslint-disable-next-line no-new
-          new URL(capabilityUri);
-        } catch {
-          return undefined;
-        }
-
-        // Check if capabilityUri is within the resource owner's cap container.
-        const resourceCapContainerUri = await ctx.call('capabilities.getContainerUri', {
-          webId
-        });
-
-        if (
-          !(await ctx.call('ldp.container.includes', {
-            containerUri: resourceCapContainerUri,
-            resourceUri: capabilityUri,
-            webId: 'system'
-          }))
-        ) {
-          return undefined;
-        }
-
-        return await ctx.call('capabilities.get', { resourceUri: capabilityUri });
-      }
-    },
 
     async impersonate(ctx) {
       const { webId } = ctx.params;
-      return await ctx.call('auth.jwt.generateToken', {
+      return await ctx.call('auth.jwt.generateServerSignedToken', {
         payload: {
           webId
         }
@@ -209,6 +184,34 @@ const AuthMixin = {
     }
   },
   methods: {
+    async validateCapability(ctx, token) {
+      // We accept VC Presentations to invoke capabilities here. It must be encoded as JWT.
+      // We do not use the VC-JOSE spec to sign and envelop presentations. Instead we go
+      // with embedded signatures. This way, the signature persists within the resource.
+
+      // Decode JTW to JSON.
+      const decodedToken = await ctx.call('auth.jwt.decodeToken', { token });
+      if (!decodedToken) return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
+
+      // Verify that decoded JSON token is a valid VC presentation.
+      const {
+        verified: isCapSignatureVerified,
+        presentation: verifiedPresentation,
+        presentationResult
+      } = await ctx.call('crypto.vc.verifier.verifyCapabilityPresentation', {
+        verifiablePresentation: decodedToken,
+        options: {
+          maxChainLength: ctx.params.route.opts.maxChainLength
+        }
+      });
+      if (!isCapSignatureVerified) return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
+
+      // VC Capability is verified.
+      ctx.meta.webId = presentationResult?.results?.[0]?.purposeResult?.holder || 'anon';
+      ctx.meta.authorization = { capabilityPresentation: verifiedPresentation };
+
+      return Promise.resolve(verifiedPresentation);
+    },
     getStrategy() {
       throw new Error('getStrategy must be implemented by the service');
     },

@@ -12,6 +12,10 @@ const ActivitiesHandlerMixin = {
 
       await this.broker.call('activitypub.side-effects.addProcessor', {
         matcher: typeof activityHandler.match === 'function' ? activityHandler.match.bind(this) : activityHandler.match,
+        capabilityGrantMatchFnGenerator:
+          typeof activityHandler.capabilityGrantMatchFnGenerator === 'function'
+            ? activityHandler.capabilityGrantMatchFnGenerator.bind(this)
+            : undefined,
         actionName: `${this.name}.processActivity`,
         boxTypes,
         key,
@@ -27,7 +31,7 @@ const ActivitiesHandlerMixin = {
 
       if (!activityHandler) {
         this.logger.warn(`Cannot process activity because no handler with key ${key} found`);
-        return;
+        return dereferencedActivity;
       }
 
       if (boxType === 'inbox' && activityHandler.onReceive) {
@@ -38,6 +42,7 @@ const ActivitiesHandlerMixin = {
         this.logger.warn(
           `Cannot process activity because no onReceive or onEmit methods are associated with with key ${key}`
         );
+        return dereferencedActivity;
       }
     }
   }

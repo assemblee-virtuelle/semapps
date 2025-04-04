@@ -3,8 +3,8 @@ const { generateKeyPair } = require('crypto');
 const { namedNode, triple } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { sec } = require('@semapps/ontologies');
-const { arrayOf } = require('../utils');
-const KEY_TYPES = require('./keyTypes');
+const { arrayOf } = require('../utils/utils');
+const { KEY_TYPES } = require('../constants');
 const KeyContainerService = require('./key-container');
 const PublicKeyContainerService = require('./public-key-container');
 const MigrationService = require('./migration');
@@ -101,6 +101,7 @@ const KeysService = {
         return matchedKeys;
       }
     },
+
     /**
      * Gets the keys by type that are present in the actor's webId.
      * If none for the type is present, a new one is created and returned.
@@ -120,7 +121,7 @@ const KeysService = {
         const publicKeys =
           keyType === KEY_TYPES.RSA
             ? arrayOf(webIdDoc.publicKey)
-            : arrayOf(webIdDoc.assertionMethod).filter(key => (key.type || key['@type']) === keyType);
+            : arrayOf(webIdDoc.assertionMethod).filter(key => arrayOf(key.type || key['@type']).includes(keyType));
 
         if (publicKeys.length === 0) {
           // No keys found, we create a new one.
@@ -131,7 +132,7 @@ const KeysService = {
           return [newKey];
         }
 
-        // Fetch all private keys for the public keys in the webId.
+        // Get all private keys for the public keys in the webId.
         return await Promise.all(
           publicKeys.map(async key => {
             const publicKeyId = key.id || key['@id'];
@@ -144,30 +145,44 @@ const KeysService = {
         );
       }
     },
+
     /**
      * Returns a signing key instance for a given key or key type. If no key is available, a new one is created.
      * Currently supports Ed25519Multikey only.
-     * @returns {Ed25519Multikey} The signing key instance.
+     * @returns {object} The Multikey object.
      */
-    getSigningMultikeyInstance: {
+    getMultikey: {
       params: {
         webId: { type: 'string' },
         keyObject: { type: 'object', optional: true },
         keyId: { type: 'string', optional: true },
-        keyType: { type: 'string', default: KEY_TYPES.ED25519 }
+        keyType: { type: 'string', default: KEY_TYPES.ED25519 },
+        /** Add the secret key to the key object, if not set (or the public key id is provided), it will be removed. */
+        withPrivateKey: { type: 'boolean', default: false }
       },
       async handler(ctx) {
-        const { webId, keyId, keyType } = ctx.params;
+        const { keyId, keyType, withPrivateKey, webId = ctx.meta.webId } = ctx.params;
+
+        // Get key from parameters, id (URI) or the one associated with the webId (in that priority).
+        // Note: Key purposes are not regarded, as they are currently not used.
         const keyObject =
           ctx.params.keyObject || keyId
             ? await ctx.call('keys.container.get', { resourceUri: keyId, webId, accept: MIME_TYPES.JSON })
             : (await ctx.call('keys.getOrCreateWebIdKeys', { webId, keyType }))[0];
 
-        if (!arrayOf(keyObject.type || keyObject['@type']).includes(KEY_TYPES.ED25519)) {
-          throw new Error('Only ED25519 keys are supported by this action.');
+        // We need the key object to have the public key's id, so it is resolvable.
+        // So if the key object is the secret key object, replace the id.
+        if (keyObject.secretKeyMultibase) {
+          keyObject.id = keyObject['rdfs:seeAlso'];
+          delete keyObject['rdfs:seeAlso'];
         }
-        // The library requires the key to have the type field set to `Multikey` only.
-        return await Ed25519Multikey.from({ keyObject, type: 'Multikey' });
+
+        // Remove secret key, unless explicitly wanted.
+        if (!withPrivateKey) {
+          delete keyObject.secretKeyMultibase;
+        }
+
+        return keyObject;
       }
     },
 
@@ -242,7 +257,7 @@ const KeysService = {
 
     /**
      * Generate ED25519 key pair.
-     * @returns {object} Key pair in [MultiKey format](https://www.w3.org/TR/vc-data-integrity/#multikey).
+     * @returns {object} Key pair in [MultiKey format](https://www.w3.org/TR/controller-document/#Multikey).
      */
     generateEd25519Key: {
       params: {},
@@ -254,6 +269,7 @@ const KeysService = {
         // We need the default context instead, for adding other fields.
         delete keyObject['@context'];
         // Set additional types which we require to find them easily by type in the db.
+        delete keyObject.type;
         keyObject['@type'] = [KEY_TYPES.ED25519, KEY_TYPES.MULTI_KEY, KEY_TYPES.VERIFICATION_METHOD];
         return keyObject;
       }
@@ -300,6 +316,7 @@ const KeysService = {
         });
       }
     },
+
     /**
      * Attaches a given key to the webId document.
      * If the key is not published yet, it will be published in the `/public-keys` container.
@@ -322,7 +339,7 @@ const KeysService = {
 
         const keyObject =
           ctx.params.keyObject ||
-          (await ctx.call('keys.container.get', { resourceUri: keyId, accept: MIME_TYPES.JSON, webId }));
+          (await ctx.call('ldp.resource.get', { resourceUri: keyId, accept: MIME_TYPES.JSON, webId }));
 
         const isRsaKey = arrayOf(keyObject.type || keyObject['@type']).includes(KEY_TYPES.RSA);
 
@@ -402,7 +419,7 @@ const KeysService = {
         const privateKeyUri = ctx.params.keyId || ctx.params.keyObject?.id || ctx.params.keyObject?.['@id'];
         const keyObject =
           ctx.params.keyObject ||
-          (await ctx.call('keys.container.get', { resourceUri: privateKeyUri, accept: MIME_TYPES.JSON }));
+          (await ctx.call('ldp.resource.get', { resourceUri: privateKeyUri, accept: MIME_TYPES.JSON }));
 
         // First, get the public key part.
         const publicKeyObject = await this.actions.getPublicKeyObject({ keyObject }, { parentCtx: ctx });
@@ -443,8 +460,7 @@ const KeysService = {
         const resourceUri = ctx.params.resourceUri || ctx.params.keyObject?.id || ctx.params.keyObject?.['@id'];
         const webId = ctx.params.webId || ctx.meta.webId;
         const keyObject =
-          ctx.params.keyObject ||
-          (await ctx.call('keys.container.get', { resourceUri, accept: MIME_TYPES.JSON, webId }));
+          ctx.params.keyObject || (await ctx.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON, webId }));
 
         await ctx.call('keys.container.delete', { resourceUri, webId });
         // Delete corresponding public key in the `public-key` container, if present.
@@ -457,6 +473,20 @@ const KeysService = {
         if (publicKeyId) {
           // Try to detach from webId. Will have no effect, if not attached.
           await this.actions.detachFromWebId({ webId, publicKeyId }, { parentCtx: ctx });
+        }
+      }
+    },
+
+    /** Delete all keys belonging to an actor. */
+    deleteAllKeysForWebId: {
+      params: {
+        webId: { type: 'string' }
+      },
+      async handler(ctx) {
+        const { webId } = ctx.params;
+        const keys = await ctx.call('keys.container.list', { webId, accept: MIME_TYPES.JSON });
+        for (const key of keys['ldp:contains']) {
+          await ctx.call('keys.delete', { resourceUri: key.id, webId });
         }
       }
     },
@@ -525,14 +555,15 @@ const KeysService = {
       async handler(ctx) {
         const keyId = ctx.params.keyId || ctx.params.keyObject?.id || ctx.params.keyObject?.['@id'];
         const keyObject =
-          ctx.params.keyObject ||
-          (await ctx.call('keys.container.get', { resourceUri: keyId, accept: MIME_TYPES.JSON }));
+          ctx.params.keyObject || (await ctx.call('ldp.resource.get', { resourceUri: keyId, accept: MIME_TYPES.JSON }));
 
         const keyType = keyObject['@type'] || keyObject.type;
 
         if (arrayOf(keyType).includes(KEY_TYPES.ED25519)) {
           return {
             '@type': [KEY_TYPES.ED25519, KEY_TYPES.MULTI_KEY, KEY_TYPES.VERIFICATION_METHOD],
+            // Attach ID of public key
+            id: keyObject.secretKeyMultibase ? keyObject['rdfs:seeAlso'] : keyId,
             controller: keyObject.controller,
             expires: keyObject.expires,
             owner: keyObject.owner,
@@ -544,6 +575,8 @@ const KeysService = {
         if (arrayOf(keyType).includes(KEY_TYPES.RSA)) {
           return {
             '@type': keyType,
+            // Attach ID of public key
+            id: keyObject.privateKeyPem ? keyObject['rdfs:seeAlso'] : keyId,
             owner: keyObject.owner,
             controller: keyObject.owner,
             publicKeyPem: keyObject.publicKeyPem
@@ -554,6 +587,7 @@ const KeysService = {
         throw new Error(`Key type ${keyType} not supported.`);
       }
     },
+
     findPrivateKeyUri: {
       params: {
         publicKeyUri: { type: 'string' }

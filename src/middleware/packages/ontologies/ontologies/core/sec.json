@@ -1,49 +1,90 @@
 {
   "prefix": "sec",
   "namespace": "https://w3id.org/security#",
+
   "jsonldContext": {
+    "sec": "https://w3id.org/security#",
     "xsd": "http://www.w3.org/2001/XMLSchema#",
 
-    "EcdsaKoblitzSignature2016": "sec:EcdsaKoblitzSignature2016",
-    "Ed25519Signature2018": "sec:Ed25519Signature2018",
-    "EncryptedMessage": "sec:EncryptedMessage",
-    "GraphSignature2012": "sec:GraphSignature2012",
-    "LinkedDataSignature2015": "sec:LinkedDataSignature2015",
-    "LinkedDataSignature2016": "sec:LinkedDataSignature2016",
-    "CryptographicKey": "sec:Key",
-
+    "assertionMethod": {
+      "@id": "sec:assertionMethod",
+      "@type": "@id"
+    },
     "authenticationTag": "sec:authenticationTag",
-    "assertionMethod": { "@id": "sec:assertionMethod", "@type": "@id" },
     "canonicalizationAlgorithm": "sec:canonicalizationAlgorithm",
+    "capability": "sec:capability",
+    "challenge": "sec:challenge",
     "cipherAlgorithm": "sec:cipherAlgorithm",
     "cipherData": "sec:cipherData",
     "cipherKey": "sec:cipherKey",
+    "controller": {
+      "@id": "sec:controller",
+      "@type": "@id"
+    },
+    "CryptographicKey": "sec:Key",
+    "cryptosuite": "sec:cryptosuite",
     "digestAlgorithm": "sec:digestAlgorithm",
     "digestValue": "sec:digestValue",
-    "controller": { "@id": "sec:controller", "@type": "@id" },
     "domain": "sec:domain",
+    "EcdsaKoblitzSignature2016": "sec:EcdsaKoblitzSignature2016",
+    "Ed25519Signature2018": "sec:Ed25519Signature2018",
+    "EncryptedMessage": "sec:EncryptedMessage",
     "encryptionKey": "sec:encryptionKey",
-    "expiration": { "@id": "sec:expiration", "@type": "xsd:dateTime" },
-    "expires": { "@id": "sec:expiration", "@type": "xsd:dateTime" },
+    "expiration": {
+      "@id": "sec:expiration",
+      "@type": "xsd:dateTime"
+    },
+    "expires": {
+      "@id": "sec:expiration",
+      "@type": "xsd:dateTime"
+    },
+    "GraphSignature2012": "sec:GraphSignature2012",
     "initializationVector": "sec:initializationVector",
     "iterationCount": "sec:iterationCount",
+    "LinkedDataSignature2015": "sec:LinkedDataSignature2015",
+    "LinkedDataSignature2016": "sec:LinkedDataSignature2016",
     "nonce": "sec:nonce",
     "normalizationAlgorithm": "sec:normalizationAlgorithm",
-    "owner": { "@id": "sec:owner", "@type": "@id" },
+    "owner": {
+      "@id": "sec:owner",
+      "@type": "@id"
+    },
     "password": "sec:password",
-    "privateKey": { "@id": "sec:privateKey", "@type": "@id" },
+    "privateKey": {
+      "@id": "sec:privateKey",
+      "@type": "@id"
+    },
     "privateKeyPem": "sec:privateKeyPem",
-    "publicKey": { "@id": "sec:publicKey", "@type": "@id" },
+    "proof": "sec:proof",
+    "proofPurpose": "sec:proofPurpose",
+    "proofValue": "sec:proofValue",
+    "publicKey": {
+      "@id": "sec:publicKey",
+      "@type": "@id"
+    },
     "publicKeyBase58": "sec:publicKeyBase58",
-    "publicKeyMultibase": { "@type": "sec:multibase", "@id": "sec:publicKeyMultibase" },
+    "publicKeyMultibase": {
+      "@id": "sec:publicKeyMultibase",
+      "@type": "sec:multibase"
+    },
     "publicKeyPem": "sec:publicKeyPem",
+    "publicKeysService": {
+      "@id": "sec:publicKeysService",
+      "@type": "@id"
+    },
     "publicKeyWif": "sec:publicKeyWif",
-    "publicKeysService": { "@id": "sec:publicKeysService", "@type": "@id" },
-    "revoked": { "@id": "sec:revoked", "@type": "xsd:dateTime" },
+    "revoked": {
+      "@id": "sec:revoked",
+      "@type": "xsd:dateTime"
+    },
     "salt": "sec:salt",
-    "secretKeyMultibase": { "@type": "sec:multibase", "@id": "sec:secretKeyMultibase" },
+    "secretKeyMultibase": {
+      "@id": "sec:secretKeyMultibase",
+      "@type": "sec:multibase"
+    },
     "signature": "sec:signature",
     "signatureAlgorithm": "sec:signingAlgorithm",
-    "signatureValue": "sec:signatureValue"
+    "signatureValue": "sec:signatureValue",
+    "verificationMethod": "sec:verificationMethod"
   }
 }

@@ -106,6 +106,7 @@ const {
 
 - `dereferenceItems: boolean` Set to true, to force dereferencing of collection items. Note that items may be returned as object, if the server dereferences the items itself.
 - `liveUpdates: boolean` Set to true, to ask the server to notify the client of updates to the collection using a Solid Notifications WebSocket Channel. The hook will automatically trigger in those cases. No updates will be provided, if the server does not support the protocol.
+- `shaclShapeUri` Provide a URI to a SHACL shape(s) turtle file. That file will be used to filter the collection items, keeping only those that pass the SHACL validation or that aren'"t targeted by any shape in the file.
 
 ### useInbox
 

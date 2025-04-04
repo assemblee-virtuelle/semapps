@@ -248,7 +248,7 @@ module.exports = {
     async loadChannelsFromDb({ removeOldChannels }) {
       const accounts = await this.broker.call('auth.account.find');
       for (const { webId } of accounts) {
-        this.logger.info(`Loading notification channels of ${webId}...`);
+        this.logger.debug(`Loading notification channels of ${webId}...`);
         try {
           const container = await this.actions.list({ webId });
           for (const channel of arrayOf(container['ldp:contains'])) {

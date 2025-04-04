@@ -4,6 +4,7 @@ const path = require('path');
 const { ServiceBroker } = require('moleculer');
 const { AuthLocalService } = require('@semapps/auth');
 const { CoreService } = require('@semapps/core');
+const { VerifiableCredentialsService } = require('@semapps/crypto');
 const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
 const CONFIG = require('../config');
 const { clearDataset } = require('../utils');
@@ -19,7 +20,7 @@ const initialize = async (port, withOldKeyStore = false) => {
     logger: {
       type: 'Console',
       options: {
-        level: 'error'
+        level: 'warn'
       }
     }
   });
@@ -65,10 +66,27 @@ const initialize = async (port, withOldKeyStore = false) => {
     }
   });
 
+  broker.createService({
+    mixins: [VerifiableCredentialsService],
+    settings: {
+      podProvider: false
+    }
+  });
+
   await broker.start();
   broker.waitForServices(
-    ['core', 'auth', 'webid', 'triplestore', 'keys', 'keys.container', 'keys.public-container', 'keys.migration'],
-    10_000
+    [
+      'core',
+      'auth',
+      'webid',
+      'triplestore',
+      'keys',
+      'keys.container',
+      'keys.public-container',
+      'keys.migration',
+      'crypto.vc'
+    ],
+    5_000
   );
 
   if (withOldKeyStore) {

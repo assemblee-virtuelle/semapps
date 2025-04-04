@@ -87,14 +87,20 @@ const OutboxService = {
         webId: actorUri
       });
 
+      // There might be a capability attached which should not be persisted
+      // because other's could otherwise read it from the (public) outbox.
+      let { capability, ...activityToPersist } = activity;
+
       const activityUri = await ctx.call('activitypub.activity.post', {
         containerUri: activitiesContainerUri,
-        resource: activity,
+        resource: activityToPersist,
         contentType: MIME_TYPES.JSON,
         webId: 'system' // Post as system since there is no write permission to the activities container
       });
 
-      activity = await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' });
+      activityToPersist = await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' });
+      // Reattach capability for further processing (if available).
+      activity = { ...activityToPersist, capability };
 
       try {
         // Notify listeners of activities.
@@ -108,7 +114,7 @@ const OutboxService = {
       // Attach the newly-created activity to the outbox
       await ctx.call('activitypub.collection.add', {
         collectionUri,
-        item: activity
+        item: activityToPersist
       });
 
       const localRecipients = [];
@@ -157,17 +163,21 @@ const OutboxService = {
       return uri.startsWith(this.settings.baseUri);
     },
     // TODO put this in the activitypub.inbox service
-    async localPost(recipients, activity) {
+    async localPost(recipients, activityToPost) {
+      // Leave the capability separate because we don't want to store it.
+      const { capability, ...activity } = activityToPost;
       const success = [];
       const failures = [];
 
       try {
-        await this.broker.call('activitypub.side-effects.processInbox', { activity, recipients });
+        await this.broker.call('activitypub.side-effects.processInbox', { activity: activityToPost, recipients });
       } catch (e) {
         console.error(e);
         // If some processors failed, log error message but don't stop
         this.logger.error(e.message);
       }
+
+      // We do not want the capability persisted...
 
       for (const recipientUri of recipients) {
         try {
@@ -223,7 +233,7 @@ const OutboxService = {
         }
       }
 
-      this.broker.emit('activitypub.inbox.received', { activity, recipients, local: true });
+      this.broker.emit('activitypub.inbox.received', { activity: activityToPost, recipients, local: true });
 
       return { success, failures };
     }

@@ -1,5 +1,5 @@
 const { Errors: E } = require('moleculer-web');
-const { ControlledContainerMixin } = require('@semapps/ldp');
+const { ControlledContainerMixin, PseudoIdMixin } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const setRightsHandler = require('./activity-handlers/setRightsHandler');
 const { objectCurrentToId, objectIdToCurrent, arrayOf } = require('../../../utils');
@@ -8,7 +8,7 @@ const ActivitiesHandlerMixin = require('../../../mixins/activities-handler');
 
 const ActivityService = {
   name: 'activitypub.activity',
-  mixins: [ControlledContainerMixin, ActivitiesHandlerMixin],
+  mixins: [ControlledContainerMixin, ActivitiesHandlerMixin, PseudoIdMixin],
   settings: {
     baseUri: null,
     podProvider: false,

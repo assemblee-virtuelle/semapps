@@ -70,6 +70,7 @@ The WebAclMiddleware:
 
 - Protects the actions of the LDP service
 - Automatically updates ACL when LDP resources, LDP containers or ActivityPub collections are added or removed.
+- Supports capability-based access to a resource, when a controller issued a capability. See the [Verifiable Credentials](../crypto/verifiable-credentials.md#issuing-and-verifying-capabilities) documentation and the [example](../crypto/verifiable-credentials.md#example-issuing-and-verifying-a-capability-chain) with a `apods:hasAuthorization` acl authorization. For capability chains, every capability in the chain must contain an authorization to the requested resource.
 
 ### Secured and unsecured dataset
 

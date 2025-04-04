@@ -20,8 +20,6 @@ const botsContainer = {
 };
 
 /**
- * @typedef {import('http').ServerResponse} ServerResponse
- * @typedef {import('http').IncomingMessage} IncomingMessage
  * @typedef {import('./serviceTypes').CoreServiceSettings} CoreServiceSettings
  */
 
