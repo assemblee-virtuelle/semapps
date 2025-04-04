@@ -95,9 +95,16 @@ module.exports = {
       return ctx.call('ldp.registry.getUri', { path: this.settings.path, webId: ctx.params?.webId || ctx.meta?.webId });
     },
     async waitForContainerCreation(ctx) {
-      const { containerUri } = ctx.params;
+      let { containerUri } = ctx.params;
       let containerExist;
       let containerAttached;
+
+      if (!containerUri) {
+        containerUri = await this.actions.getContainerUri(
+          { webId: ctx.params.webId || ctx.meta.webId },
+          { parentCtx: ctx }
+        );
+      }
 
       do {
         if (containerExist === false) await delay(1000);

@@ -60,7 +60,7 @@ const AuthSSOMixin = {
         );
       }
 
-      const token = await ctx.call('auth.jwt.generateToken', { payload: { webId } });
+      const token = await ctx.call('auth.jwt.generateServerSignedToken', { payload: { webId } });
 
       return { token, newUser };
     }

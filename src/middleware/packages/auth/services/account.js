@@ -186,7 +186,8 @@ module.exports = {
       return account?.username;
     },
     async findSettingsByWebId(ctx) {
-      const webId = ctx.params.webId || ctx.meta.webId;
+      const webId = ctx.meta.webId;
+
       const account = await ctx.call('auth.account.findByWebId', { webId });
 
       return {

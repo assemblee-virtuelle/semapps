@@ -17,7 +17,6 @@ This service allows you to authenticate users with an OIDC or CAS server, or wit
 ## Sub-services
 
 - AuthAccountService
-- AuthCapabilitiesService
 - AuthJWTService
 - AuthMailService
 
@@ -142,6 +141,8 @@ module.exports = {
 ```
 
 For more information, please see the official Moleculer documentation about [authorization](https://moleculer.services/docs/0.14/moleculer-web.html#Authorization) and [authentication](https://moleculer.services/docs/0.14/moleculer-web.html#Authentication).
+
+You can enable **authorization of routes based on capabilities**. For more details, see the documentation on [Verifiable Credentials](./crypto/verifiable-credentials.md#setting-up-capability-enabled-routes)
 
 > It is important that you do not put the AuthService as a dependency of the ApiGatewayService, because the ApiGatewayService is a dependency of AuthService, and you will get a circular dependencies loop.
 
