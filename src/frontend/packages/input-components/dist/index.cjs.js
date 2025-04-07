@@ -33,10 +33,10 @@ const $cdabe6ba421df206$var$transformFile = (file, oldValue)=>{
     };
 };
 const $cdabe6ba421df206$var$format = (v)=>{
-    if (typeof v === "string") return {
+    if (typeof v === 'string') return {
         src: v
     };
-    if (Array.isArray(v)) return v.map((e)=>typeof e === "string" ? {
+    if (Array.isArray(v)) return v.map((e)=>typeof e === 'string' ? {
             src: e
         } : e);
     return v;
@@ -79,7 +79,7 @@ const $a3ccd82fa8860009$var$OptionRenderer = ({ optionText: optionText, dataServ
             server && /*#__PURE__*/ (0, $3asgq$reactjsxruntime.jsxs)("em", {
                 className: "serverName",
                 style: {
-                    color: "grey"
+                    color: 'grey'
                 },
                 children: [
                     "\xa0(",
@@ -121,7 +121,7 @@ const $6c505c4dc3e51ff8$var$MultiServerAutocompleteInput = ({ optionText: option
     const optionTextWithServerName = (0, $3asgq$react.useCallback)((record)=>{
         if (record && dataServers) {
             const server = Object.values(dataServers).find((server)=>record.id.startsWith(server.baseUrl));
-            return record[optionText] + (server ? ` (${server.name})` : "");
+            return record[optionText] + (server ? ` (${server.name})` : '');
         }
     }, [
         optionText,
@@ -141,7 +141,7 @@ var $6c505c4dc3e51ff8$export$2e2bcd8739ae039 = $6c505c4dc3e51ff8$var$MultiServer
 const $9aa37fe333ef760c$var$MultiLinesInput = (props)=>/*#__PURE__*/ (0, $3asgq$reactjsxruntime.jsx)((0, $3asgq$reactadmin.TextInput), {
         multiline: true,
         minRows: 2,
-        format: (value)=>value ? Array.isArray(value) ? value.join("\n") : value : "",
+        format: (value)=>value ? Array.isArray(value) ? value.join('\n') : value : '',
         parse: (value)=>value.split(/\r?\n/),
         ...props
     });
@@ -181,7 +181,7 @@ const $6fb40d62998d2ee1$var$format = (value)=>{
     // If there is no value, return immediately
     if (!value) return value;
     // If the value is an object with an @id field, return the uri
-    return typeof value === "object" ? value.id || value["@id"] : value;
+    return typeof value === 'object' ? value.id || value['@id'] : value;
 };
 const $6fb40d62998d2ee1$var$ReferenceInput = ({ children: children, ...rest })=>{
     const child = (0, ($parcel$interopDefault($3asgq$react))).Children.only(children);

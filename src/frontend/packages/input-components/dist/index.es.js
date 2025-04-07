@@ -18,10 +18,10 @@ const $be5569a64aeca92c$var$transformFile = (file, oldValue)=>{
     };
 };
 const $be5569a64aeca92c$var$format = (v)=>{
-    if (typeof v === "string") return {
+    if (typeof v === 'string') return {
         src: v
     };
-    if (Array.isArray(v)) return v.map((e)=>typeof e === "string" ? {
+    if (Array.isArray(v)) return v.map((e)=>typeof e === 'string' ? {
             src: e
         } : e);
     return v;
@@ -64,7 +64,7 @@ const $c87f07c114e8d06d$var$OptionRenderer = ({ optionText: optionText, dataServ
             server && /*#__PURE__*/ (0, $fAvTC$jsxs)("em", {
                 className: "serverName",
                 style: {
-                    color: "grey"
+                    color: 'grey'
                 },
                 children: [
                     "\xa0(",
@@ -106,7 +106,7 @@ const $b0f28d60b9360e4c$var$MultiServerAutocompleteInput = ({ optionText: option
     const optionTextWithServerName = (0, $fAvTC$useCallback)((record)=>{
         if (record && dataServers) {
             const server = Object.values(dataServers).find((server)=>record.id.startsWith(server.baseUrl));
-            return record[optionText] + (server ? ` (${server.name})` : "");
+            return record[optionText] + (server ? ` (${server.name})` : '');
         }
     }, [
         optionText,
@@ -126,7 +126,7 @@ var $b0f28d60b9360e4c$export$2e2bcd8739ae039 = $b0f28d60b9360e4c$var$MultiServer
 const $5caa484b443e2e14$var$MultiLinesInput = (props)=>/*#__PURE__*/ (0, $fAvTC$jsx)((0, $fAvTC$TextInput), {
         multiline: true,
         minRows: 2,
-        format: (value)=>value ? Array.isArray(value) ? value.join("\n") : value : "",
+        format: (value)=>value ? Array.isArray(value) ? value.join('\n') : value : '',
         parse: (value)=>value.split(/\r?\n/),
         ...props
     });
@@ -166,7 +166,7 @@ const $4dc5aebf6fd9ab50$var$format = (value)=>{
     // If there is no value, return immediately
     if (!value) return value;
     // If the value is an object with an @id field, return the uri
-    return typeof value === "object" ? value.id || value["@id"] : value;
+    return typeof value === 'object' ? value.id || value['@id'] : value;
 };
 const $4dc5aebf6fd9ab50$var$ReferenceInput = ({ children: children, ...rest })=>{
     const child = (0, $fAvTC$react).Children.only(children);

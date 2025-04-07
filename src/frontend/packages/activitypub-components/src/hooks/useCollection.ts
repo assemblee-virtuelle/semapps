@@ -2,7 +2,6 @@ import { useCallback, useMemo, useState, useEffect, useRef, RefObject } from 're
 import { useGetIdentity, useDataProvider } from 'react-admin';
 import { QueryFunction, useInfiniteQuery, useQueries, useQueryClient } from 'react-query';
 import { getOrCreateWsChannel, SemanticDataProvider } from '@semapps/semantic-data-provider';
-import SHACLValidator from 'rdf-validate-shacl';
 import { arrayOf } from '../utils';
 import type { UseCollectionOptions, SolidNotification, AwaitActivityOptions } from '../types';
 import { getShaclValidator, validateItems } from '../utils/shaclValidation';
