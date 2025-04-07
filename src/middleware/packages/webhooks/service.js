@@ -1,7 +1,7 @@
 const path = require('path');
 const DbService = require('moleculer-db');
 const { MoleculerError, ServiceSchemaError } = require('moleculer').Errors;
-const { TripleStoreAdapter } = require('@semapps/ldp');
+const { TripleStoreAdapter } = require('@semapps/triplestore');
 
 const WebhooksService = {
   name: 'webhooks',
@@ -46,7 +46,7 @@ const WebhooksService = {
       const userUri = ctx.meta.webId || ctx.params.userUri;
       const { action } = ctx.params;
 
-      if (!userUri || !action || !this.settings.allowedActions.includes(action)) {
+      if (!userUri || userUri === 'anon' || !action || !this.settings.allowedActions.includes(action)) {
         throw new MoleculerError('Bad request', 400, 'BAD_REQUEST');
       }
 

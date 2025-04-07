@@ -1,6 +1,7 @@
 const { ControlledContainerMixin } = require('@semapps/ldp');
 const { Errors: E } = require('moleculer-web');
-const KEY_TYPES = require('./keyTypes');
+const { arrayOf } = require('../utils/utils');
+const { KEY_TYPES } = require('../constants');
 
 /**
  * DANGER ZONE
@@ -41,6 +42,7 @@ module.exports = {
     excludeFromMirror: true,
     // Disallow PATCH & PUT, to prevent keys from being overwritten
     controlledActions: {
+      get: 'keys.container.get', // Returns key object with context and type required by Multikey spec.
       put: 'keys.container.forbidden',
       patch: 'keys.container.forbidden',
       delete: 'keys.delete'
@@ -49,6 +51,29 @@ module.exports = {
   actions: {
     async forbidden(ctx) {
       throw new E.ForbiddenError();
+    },
+    /**
+     * Get action that sets the multikey context and multikey type for those keys correctly. This is required by the spec.
+     * See:
+     * - https://www.w3.org/TR/controller-document/#json-ld-context
+     * - https://www.w3.org/TR/controller-document/#Multikey
+     *
+     * This Action is used by the public key container as well.
+     *
+     */
+    async get(ctx) {
+      const resource = await ctx.call('ldp.resource.get', {
+        ...ctx.params,
+        jsonContext: ['https://w3id.org/security/multikey/v1', ...(await ctx.call('jsonld.context.get'))]
+      });
+
+      // Make type `Multikey` only, to comply with spec.
+      if (arrayOf(resource.type).includes('sec:Multikey') || arrayOf(resource.type).includes('Multikey')) {
+        // Type must be Multikey only
+        resource.type = 'Multikey';
+      }
+
+      return resource;
     }
   }
 };

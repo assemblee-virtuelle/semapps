@@ -3,6 +3,13 @@ const path = require('path');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 
+/**
+ * Service that creates and validates JSON web tokens(JWT).
+ * Tokens are signed against this server's keys.
+ * This is useful for generating/validating authentication tokens.
+ *
+ * TODO: Tokens do not expire.
+ */
 module.exports = {
   name: 'auth.jwt',
   settings: {
@@ -63,17 +70,23 @@ module.exports = {
         );
       });
     },
-    async generateToken(ctx) {
+    async generateServerSignedToken(ctx) {
       const { payload } = ctx.params;
       return jwt.sign(payload, this.privateKey, { algorithm: 'RS256' });
     },
-    async verifyToken(ctx) {
+    /** Verifies that the token was signed by this server. */
+    async verifyServerSignedToken(ctx) {
       const { token } = ctx.params;
       try {
         return jwt.verify(token, this.publicKey, { algorithms: ['RS256'] });
       } catch (err) {
         return false;
       }
+    },
+    async generateUnsignedToken(ctx) {
+      const { payload } = ctx.params;
+      const token = jwt.sign(payload, null, { algorithm: 'none' });
+      return token;
     },
     // Warning, this does NOT verify if signature is valid
     async decodeToken(ctx) {

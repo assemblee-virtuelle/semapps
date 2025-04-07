@@ -27,7 +27,7 @@ services:
 
   arena:
     image: activitypods/arena
-    container_name: arena
+    container_name: arena_tests
     restart: always
     volumes:
       - ./arena.json:/opt/arena/src/server/config/index.json:z
