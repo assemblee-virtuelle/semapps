@@ -920,7 +920,7 @@ const $95cbc03f25caf72a$var$getListMethod = (config)=>async (resourceId, params)
         if (!dataModel) throw new Error(`Resource ${resourceId} is not mapped in resources file`);
         let containers = [];
         if (!params.filter?._servers && dataModel.list?.containers) {
-            if (Array.isArray(dataModel.list?.containers)) throw new Error(`The list.containers property of ${resourceId} dataModel must be of type object ({ serverKey: [containerUri] })`);
+            if (!Array.isArray(dataModel.list?.containers)) throw new Error(`The list.containers property of ${resourceId} dataModel must be of type array`);
             // If containers are set explicitly, use them
             containers = (0, $37c161736d0d7276$export$2e2bcd8739ae039)(dataModel.list.containers, dataServers);
         } else if (dataModel.shapeTreeUri) containers = (0, $1d94774735aa9ea2$export$2e2bcd8739ae039)(dataModel.shapeTreeUri, params?.filter?._servers || dataModel.list?.servers, dataServers);
@@ -1101,16 +1101,16 @@ var $341dff85fe619d85$export$2e2bcd8739ae039 = $341dff85fe619d85$var$httpClient;
 
 
 
-const $9ab033d1ec46b5da$var$isURL = (value)=>(typeof value === 'string' || value instanceof String) && value.startsWith('http');
+const $9ab033d1ec46b5da$var$isURI = (value)=>(typeof value === 'string' || value instanceof String) && (value.startsWith('http') || value.startsWith('urn:'));
 const $9ab033d1ec46b5da$var$expandTypes = async (types, context)=>{
     // If types are already full URIs, return them immediately
-    if (types.every((type)=>$9ab033d1ec46b5da$var$isURL(type))) return types;
+    if (types.every((type)=>$9ab033d1ec46b5da$var$isURI(type))) return types;
     const result = await (0, ($parcel$interopDefault($bkNnK$jsonld))).expand({
         '@context': context,
         '@type': types
     });
     const expandedTypes = (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(result[0]['@type']);
-    if (!expandedTypes.every((type)=>$9ab033d1ec46b5da$var$isURL(type))) throw new Error(`
+    if (!expandedTypes.every((type)=>$9ab033d1ec46b5da$var$isURI(type))) throw new Error(`
       Could not expand all types (${expandedTypes.join(', ')}).
       Is an ontology missing or not registered yet on the local context ?
     `);
@@ -1220,6 +1220,8 @@ var $fcf4eee3b18e8350$export$2e2bcd8739ae039 = $fcf4eee3b18e8350$var$getOntologi
         config.dataServers ??= {};
         // Configure httpClient with initial data servers, so that plugins may use it
         config.httpClient = (0, $341dff85fe619d85$export$2e2bcd8739ae039)(config.dataServers);
+        // Useful for debugging.
+        document.httpClient = config.httpClient;
         for (const plugin of config.plugins)if (plugin.transformConfig) config = await plugin.transformConfig(config);
         // Configure again httpClient with possibly updated data servers
         config.httpClient = (0, $341dff85fe619d85$export$2e2bcd8739ae039)(config.dataServers);
@@ -1553,16 +1555,22 @@ const $1395e306228d41f2$var$fetchVoidEndpoints = ()=>({
                             const expandedTypes = await (0, $9ab033d1ec46b5da$export$2e2bcd8739ae039)([
                                 type
                             ], result.context);
-                            const containerIndex = newConfig.dataServers[result.key].containers.findIndex((c)=>c.types?.some((t)=>expandedTypes.includes(t)));
-                            if (containerIndex && containerIndex !== -1) // If a container with this type already exist, overwrite path and types
-                            newConfig.dataServers[result.key].containers[containerIndex] = {
-                                ...newConfig.dataServers[result.key].containers[containerIndex],
+                            const containerIndex = newConfig.dataServers[result.key].containers.findIndex((c)=>c.path === path);
+                            if (containerIndex !== -1) {
+                                // If a container with this path already exist, merge types
+                                const mergedTypes = [
+                                    ...newConfig.dataServers[result.key].containers[containerIndex].types,
+                                    ...expandedTypes
+                                ].filter((v, i, a)=>a.indexOf(v) === i);
+                                newConfig.dataServers[result.key].containers[containerIndex] = {
+                                    ...newConfig.dataServers[result.key].containers[containerIndex],
+                                    types: mergedTypes,
+                                    binaryResources: mergedTypes.includes('http://semapps.org/ns/core#File')
+                                };
+                            } else newConfig.dataServers[result.key].containers.push({
                                 path: path,
-                                types: expandedTypes
-                            };
-                            else newConfig.dataServers[result.key].containers.push({
-                                path: path,
-                                types: expandedTypes
+                                types: expandedTypes,
+                                binaryResources: expandedTypes.includes('http://semapps.org/ns/core#File')
                             });
                         }
                     }
@@ -1725,7 +1733,6 @@ var $d3746ce11bc56f3b$export$2e2bcd8739ae039 = $d3746ce11bc56f3b$var$useContaine
 
 
 
-
 const $ff3623bf1421ebcc$var$findCreateContainerWithTypes = (types, createServerKey, dataServers)=>{
     if (!dataServers[createServerKey].containers) throw new Error(`Data server ${createServerKey} has no declared containers`);
     const matchingContainers = dataServers[createServerKey].containers.filter((container)=>container.types?.some((t)=>types.includes(t)));
@@ -1744,11 +1751,8 @@ const $32d32215b4e4729f$var$useGetCreateContainerUri = ()=>{
     const getCreateContainerUri = (0, $bkNnK$react.useCallback)((resourceId)=>{
         if (!dataModels || !dataServers || !dataModels[resourceId]) return undefined;
         const dataModel = dataModels[resourceId];
-        if (dataModel.create?.container) {
-            const [serverKey, path] = Object.entries(dataModel.create.container)[0];
-            if (!serverKey || !dataServers[serverKey]) throw new Error(`Wrong key for the dataModel.create.container config of resource ${resourceId}`);
-            return (0, ($parcel$interopDefault($bkNnK$urljoin)))(dataServers[serverKey].baseUrl, path);
-        } else if (dataModel.create?.server) return (0, $ff3623bf1421ebcc$export$2e2bcd8739ae039)(dataModel.types, dataModel.create?.server, dataServers);
+        if (dataModel.create?.container) return dataModel.create.container;
+        else if (dataModel.create?.server) return (0, $ff3623bf1421ebcc$export$2e2bcd8739ae039)(dataModel.types, dataModel.create.server, dataServers);
         else {
             const defaultServerKey = (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)('default', dataServers);
             if (!defaultServerKey) throw new Error(`No default dataServer found. You can set explicitly one setting the "default" attribute to true`);

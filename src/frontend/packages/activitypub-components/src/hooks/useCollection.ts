@@ -2,8 +2,10 @@ import { useCallback, useMemo, useState, useEffect, useRef, RefObject } from 're
 import { useGetIdentity, useDataProvider } from 'react-admin';
 import { QueryFunction, useInfiniteQuery, useQueries, useQueryClient } from 'react-query';
 import { getOrCreateWsChannel, SemanticDataProvider } from '@semapps/semantic-data-provider';
+import SHACLValidator from 'rdf-validate-shacl';
 import { arrayOf } from '../utils';
 import type { UseCollectionOptions, SolidNotification, AwaitActivityOptions } from '../types';
+import { getShaclValidator, validateItems } from '../utils/shaclValidation';
 
 // Used to avoid re-renders
 const emptyArray: never[] = [];
@@ -58,7 +60,7 @@ const useItemsFromPages = (pages: any[], dereferenceItems: boolean) => {
  * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false }`
  */
 const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {}) => {
-  const { dereferenceItems = false, liveUpdates = false } = options;
+  const { dereferenceItems = false, liveUpdates = false, shaclShapeUri = '' } = options;
   const { data: identity } = useGetIdentity();
   const [totalItems, setTotalItems] = useState<number>(0);
   const [isPaginated, setIsPaginated] = useState<boolean>(false); // true if the collection is paginated
@@ -93,22 +95,6 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
       // Fetch page or first page (collectionUrl)
       let { json } = await dataProvider.fetch(nextPageUrl || collectionUrl);
 
-      // If we are fetching the first page or the collection, we can workout some information
-      if (!fetchingPage) {
-        const localIsPaginated = !!json.first || !!json.next;
-        setIsPaginated(localIsPaginated);
-
-        // If the server yields totalItems, we can use it
-        if (json.totalItems) {
-          setTotalItems(json.totalItems);
-          setYieldsTotalItems(true);
-        } else if (!localIsPaginated) {
-          // If the collection is not paginated, we can count items
-          const items = arrayOf(json.orderedItems || json.items);
-          if (items) setTotalItems(items.length);
-        }
-      }
-
       // If first page, handle this here.
       if ((json.type === 'OrderedCollection' || json.type === 'Collection') && json.first) {
         if (json.first?.items) {
@@ -123,10 +109,48 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
           ({ json } = await dataProvider.fetch(json.first));
         }
       }
+      const itemsKey = json.orderedItems ? 'orderedItems' : 'items';
+
+      // If we are fetching the first page or the collection, we can workout some information
+      if (!fetchingPage) {
+        const localIsPaginated = !!json.first || !!json.next;
+        setIsPaginated(localIsPaginated);
+
+        // If the server yields totalItems, we can use it
+        if (json.totalItems) {
+          setTotalItems(json.totalItems);
+          setYieldsTotalItems(true);
+        } else if (!localIsPaginated) {
+          // If the collection is not paginated, we can count items
+          const items = arrayOf(json[itemsKey]);
+          if (items) setTotalItems(items.length);
+        }
+      }
+
+      // Validate the json with the SHACL shape
+      if (shaclShapeUri !== '' && json[itemsKey] && json[itemsKey].length > 0) {
+        try {
+          if (!json['@context']) {
+            throw new Error(
+              `No context returned by the server.\nA context is required to expand the collection's items and validate them.`
+            );
+          }
+          const shaclValidator = await getShaclValidator(shaclShapeUri);
+          const validatedResults = await validateItems(arrayOf(json[itemsKey]), shaclValidator, json['@context']);
+
+          // Keep only the valid item in the collection
+          json[itemsKey] = validatedResults.filter(result => result.isValid).map(result => result.item);
+        } catch (error) {
+          console.warn(
+            `Filtering of the collection's items using SHACL validation wasn't possible.\n${collectionUrl}`,
+            error
+          );
+        }
+      }
 
       return json;
     },
-    [dataProvider, collectionUrl, identity, setTotalItems, setIsPaginated, setYieldsTotalItems]
+    [dataProvider, collectionUrl, identity, setTotalItems, setIsPaginated, setYieldsTotalItems, shaclShapeUri]
   );
 
   // Use infiniteQuery to handle pagination, fetching, etc.
@@ -139,7 +163,7 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
     isLoading: isLoadingPage,
     isFetching: isFetchingPage,
     isFetchingNextPage
-  } = useInfiniteQuery(['collection', { collectionUrl }], fetchCollection, {
+  } = useInfiniteQuery(['collection', { collectionUrl, shaclShapeUri }], fetchCollection, {
     enabled: !!(collectionUrl && identity?.id),
     getNextPageParam: (lastPage: any) => lastPage.next,
     getPreviousPageParam: (firstPage: any) => firstPage.prev

@@ -1,12 +1,12 @@
 {
   "name": "@semapps/jsonld",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "JsonLD utils for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
     "jsonld": "^3.3.2",
-    "jsonld-context-parser": "2.4.0",
+    "jsonld-context-parser": "^2.4.0",
     "jsonld-streaming-parser": "^2.4.2",
     "lru-cache": "^6.0.0",
     "streamify-string": "^1.0.1",

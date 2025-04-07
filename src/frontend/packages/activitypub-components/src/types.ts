@@ -1,6 +1,7 @@
 export interface UseCollectionOptions {
   dereferenceItems?: boolean;
   liveUpdates?: boolean;
+  shaclShapeUri?: string;
 }
 
 export interface AwaitWebSocketConnectionOptions {

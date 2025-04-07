@@ -4,7 +4,7 @@ const fetch = require('node-fetch');
 const { generateKeyPair } = require('crypto');
 const { namedNode, blankNode, literal, triple } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const KEY_TYPES = require('../keys/keyTypes');
+const { KEY_TYPES } = require('../constants');
 
 /**
  * Deprecated Service.

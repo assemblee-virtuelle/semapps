@@ -184,7 +184,7 @@ const ActorService = {
     async 'ldp.resource.deleted'(ctx) {
       const { resourceUri, oldData } = ctx.params;
       if (this.isActor(oldData)) {
-        await ctx.call('signature.keypair.delete', { actorUri: resourceUri });
+        await ctx.call('keys.deleteAllKeysForWebId', { webId: resourceUri });
       }
     },
     async 'auth.registered'(ctx) {

@@ -20,6 +20,9 @@
     },
     "acl:mode": {
       "@type": "@id"
+    },
+    "acl:Authorization": {
+      "@type": "@id"
     }
   }
 }
