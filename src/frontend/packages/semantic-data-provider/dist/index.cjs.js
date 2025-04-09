@@ -131,7 +131,6 @@ var $0edd1f2d07c8231f$export$2e2bcd8739ae039 = $0edd1f2d07c8231f$var$getUploadsC
 
 
 const $6fcb30f76390d142$var$isFile = (o)=>o?.rawFile && o.rawFile instanceof File;
-const $6fcb30f76390d142$var$isFileToDelete = (o)=>o?.fileToDelete !== undefined && o?.fileToDelete !== null;
 const $6fcb30f76390d142$export$a5575dbeeffdad98 = async (rawFile, config, serverKey)=>{
     const uploadsContainerUri = (0, $0edd1f2d07c8231f$export$2e2bcd8739ae039)(config, serverKey);
     if (!uploadsContainerUri) throw new Error("You must define an container with binaryResources in one of the server's configuration");
@@ -145,16 +144,10 @@ const $6fcb30f76390d142$export$a5575dbeeffdad98 = async (rawFile, config, server
     if (response.status === 201) return response.headers.get('Location');
     return null;
 };
-const $6fcb30f76390d142$var$deleteFiles = async (filesToDelete, config)=>{
-    return Promise.all(filesToDelete.map((file)=>config.httpClient(file, {
-            method: 'DELETE'
-        })));
-};
 /*
  * Look for raw files in the record data.
  * If there are any, upload them and replace the file by its URL.
  */ const $6fcb30f76390d142$var$uploadAllFiles = async (record, config, serverKey)=>{
-    const filesToDelete = [];
     const updatedRecord = {
         ...record
     };
@@ -162,30 +155,16 @@ const $6fcb30f76390d142$var$deleteFiles = async (filesToDelete, config)=>{
         const value = record[property];
         if (Array.isArray(value)) for(let i = 0; i < value.length; i++){
             const itemValue = value[i];
-            if ($6fcb30f76390d142$var$isFile(itemValue)) {
-                if ($6fcb30f76390d142$var$isFileToDelete(itemValue)) filesToDelete.push(itemValue.fileToDelete);
-                updatedRecord[property][i] = await $6fcb30f76390d142$export$a5575dbeeffdad98(itemValue.rawFile, config, serverKey);
-            } else if ($6fcb30f76390d142$var$isFileToDelete(itemValue)) {
-                filesToDelete.push(itemValue.fileToDelete);
-                updatedRecord[property][i] = null;
-            }
+            if ($6fcb30f76390d142$var$isFile(itemValue)) updatedRecord[property][i] = await $6fcb30f76390d142$export$a5575dbeeffdad98(itemValue.rawFile, config, serverKey);
         }
-        else if ($6fcb30f76390d142$var$isFile(value)) {
-            if ($6fcb30f76390d142$var$isFileToDelete(value)) filesToDelete.push(value.fileToDelete);
-            updatedRecord[property] = await $6fcb30f76390d142$export$a5575dbeeffdad98(value.rawFile, config, serverKey);
-        } else if ($6fcb30f76390d142$var$isFileToDelete(value)) {
-            filesToDelete.push(value.fileToDelete);
-            updatedRecord[property] = null;
-        }
+        else if ($6fcb30f76390d142$var$isFile(value)) updatedRecord[property] = await $6fcb30f76390d142$export$a5575dbeeffdad98(value.rawFile, config, serverKey);
     }
     return {
-        updatedRecord: updatedRecord,
-        filesToDelete: filesToDelete
+        updatedRecord: updatedRecord
     };
 };
 var $6fcb30f76390d142$export$2e2bcd8739ae039 = {
-    upload: $6fcb30f76390d142$var$uploadAllFiles,
-    delete: $6fcb30f76390d142$var$deleteFiles
+    upload: $6fcb30f76390d142$var$uploadAllFiles
 };
 
 
@@ -321,13 +300,11 @@ const $907cbc087f6529e2$var$createMethod = (config)=>async (resourceId, params)=
 var $907cbc087f6529e2$export$2e2bcd8739ae039 = $907cbc087f6529e2$var$createMethod;
 
 
-
 const $566b5adde94810fa$var$deleteMethod = (config)=>async (resourceId, params)=>{
         const { httpClient: httpClient } = config;
         await httpClient(`${params.id}`, {
             method: 'DELETE'
         });
-        if (params.meta?.filesToDelete) await (0, $6fcb30f76390d142$export$2e2bcd8739ae039).delete(params.meta.filesToDelete, config);
         return {
             data: {
                 id: params.id
@@ -1024,7 +1001,7 @@ const $ceaafb56f75454f0$var$updateMethod = (config)=>async (resourceId, params)=
         const { httpClient: httpClient, jsonContext: jsonContext, dataServers: dataServers } = config;
         const serverKey = (0, $59a07b932dae8600$export$2e2bcd8739ae039)(params.id, dataServers);
         // Upload files, if there are any
-        const { updatedRecord: updatedRecord, filesToDelete: filesToDelete } = await (0, $6fcb30f76390d142$export$2e2bcd8739ae039).upload(params.data, config, serverKey);
+        const { updatedRecord: updatedRecord } = await (0, $6fcb30f76390d142$export$2e2bcd8739ae039).upload(params.data, config, serverKey);
         params.data = updatedRecord;
         await httpClient(`${params.id}`, {
             method: 'PUT',
@@ -1033,8 +1010,6 @@ const $ceaafb56f75454f0$var$updateMethod = (config)=>async (resourceId, params)=
                 ...params.data
             })
         });
-        // Delete files only if update is successful
-        await (0, $6fcb30f76390d142$export$2e2bcd8739ae039).delete(filesToDelete, config);
         return {
             data: params.data
         };
