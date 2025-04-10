@@ -295,10 +295,14 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
         let { json: json } = await dataProvider.fetch(nextPageUrl || collectionUrl);
         // If first page, handle this here.
         if ((json.type === 'OrderedCollection' || json.type === 'Collection') && json.first) {
-            if (json.first?.items) {
-                if (json.first?.items.length === 0 && json.first?.next) // Special case where the first property is an object without items
+            const firstItems = json.first?.items || json.first?.orderedItems;
+            if (firstItems) {
+                if (firstItems.length === 0 && json.first?.next) // Special case where the first property is an object without items
                 ({ json: json } = await dataProvider.fetch(json.first?.next));
-                else json = json.first;
+                else json = {
+                    '@context': json['@context'],
+                    ...json.first
+                };
             } else // Fetch the first page
             ({ json: json } = await dataProvider.fetch(json.first));
         }
@@ -319,6 +323,7 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
         }
         // Validate the json with the SHACL shape
         if (shaclShapeUri !== '' && json[itemsKey] && json[itemsKey].length > 0) try {
+            console.log('useCollection json', json);
             if (!json['@context']) throw new Error(`No context returned by the server.\nA context is required to expand the collection's items and validate them.`);
             const shaclValidator = await (0, $25cb6caf33e2f460$export$6de257db5bb9fd74)(shaclShapeUri);
             const validatedResults = await (0, $25cb6caf33e2f460$export$1558e55ae3912bbb)((0, $577f4953dfa5de4f$export$e57ff0f701c44363)(json[itemsKey]), shaclValidator, json['@context']);
