@@ -18,6 +18,7 @@ module.exports = {
   DisassemblyMixin: require('./mixins/disassembly'),
   SingleResourceContainerMixin: require('./mixins/single-resource-container'),
   SpecialEndpointMixin: require('./mixins/special-endpoint'),
+  OrphanFilesDeletionMixin: require('./mixins/orphan-files-deletion'),
   // Other
   defaultContainerOptions: require('./services/registry/defaultOptions'),
   LdpAdapter: require('./adapter'),
