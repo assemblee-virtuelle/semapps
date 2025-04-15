@@ -1,10 +1,8 @@
 const { CronJob } = require('cron');
-const urlJoin = require('url-join');
 
 module.exports = {
   settings: {
     orphanFilesDeletion: {
-      baseUrl: undefined,
       cronJob: {
         time: '0 0 4 * * *', // Every night at 4am
         timeZone: 'Europe/Paris'
@@ -17,8 +15,8 @@ module.exports = {
       try {
         this.logger.info('OrphanFilesDeletion - Check...');
 
-        const containerUri = urlJoin(this.settings.orphanFilesDeletion.baseUrl, this.settings.path);
-        const orphanFiles = await ctx.call('triplestore.query', {
+        const containerUri = await this.actions.getContainerUri();
+        const results = await ctx.call('triplestore.query', {
           query: `
             SELECT ?file
             WHERE {
@@ -32,15 +30,15 @@ module.exports = {
           webId: 'system'
         });
 
-        this.logger.info(`OrphanFilesDeletion - Found ${orphanFiles.length} orphan files`);
+        this.logger.info(`OrphanFilesDeletion - Found ${results.length} orphan files`);
 
-        for (let orphanFile of orphanFiles) {
+        for (const { file } of results) {
           await ctx.call('ldp.resource.delete', {
-            resourceUri: orphanFile.file.value,
+            resourceUri: file.value,
             webId: 'system'
           });
 
-          this.logger.info(`OrphanFilesDeletion - ${orphanFile.file.value} deleted`);
+          this.logger.info(`OrphanFilesDeletion - ${file.value} deleted`);
         }
       } catch (error) {
         this.logger.error(`OrphanFilesDeletion - Error: ${error.message}`);
