@@ -104,6 +104,9 @@
     },
     "interop:hasDataInstance": {
       "@type": "@id"
+    },
+    "interop:delegationOfGrant": {
+      "@type": "@id"
     }
   }
 }
