@@ -11,6 +11,7 @@
     "@semapps/ontologies": "1.1.2",
     "@semapps/triplestore": "1.1.2",
     "bytes": "^3.1.2",
+    "cron": "^4.1.4",
     "dashify": "^2.0.0",
     "http-link-header": "^1.1.1",
     "mime-types": "^2.1.35",
