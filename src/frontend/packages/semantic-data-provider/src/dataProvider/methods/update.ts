@@ -9,7 +9,7 @@ const updateMethod = (config: Configuration) => async (resourceId: string, param
   const serverKey = getServerKeyFromUri(params.id, dataServers);
 
   // Upload files, if there are any
-  const { updatedRecord, filesToDelete } = await handleFiles.upload(params.data, config, serverKey);
+  const { updatedRecord } = await handleFiles.upload(params.data, config, serverKey);
   params.data = updatedRecord;
 
   await httpClient(`${params.id}`, {
@@ -19,9 +19,6 @@ const updateMethod = (config: Configuration) => async (resourceId: string, param
       ...params.data
     })
   });
-
-  // Delete files only if update is successful
-  await handleFiles.delete(filesToDelete, config);
 
   return { data: params.data };
 };

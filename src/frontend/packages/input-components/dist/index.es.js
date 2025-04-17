@@ -1,5 +1,5 @@
 import {jsx as $fAvTC$jsx, jsxs as $fAvTC$jsxs} from "react/jsx-runtime";
-import {useRecordContext as $fAvTC$useRecordContext, ImageInput as $fAvTC$ImageInput, AutocompleteArrayInput as $fAvTC$AutocompleteArrayInput, AutocompleteInput as $fAvTC$AutocompleteInput, TextInput as $fAvTC$TextInput, ReferenceArrayInput as $fAvTC$ReferenceArrayInput, ReferenceInput as $fAvTC$ReferenceInput} from "react-admin";
+import {ImageInput as $fAvTC$ImageInput, AutocompleteArrayInput as $fAvTC$AutocompleteArrayInput, useRecordContext as $fAvTC$useRecordContext, AutocompleteInput as $fAvTC$AutocompleteInput, TextInput as $fAvTC$TextInput, ReferenceArrayInput as $fAvTC$ReferenceArrayInput, ReferenceInput as $fAvTC$ReferenceInput} from "react-admin";
 import $fAvTC$react, {useCallback as $fAvTC$useCallback, useEffect as $fAvTC$useEffect} from "react";
 import {useDataServers as $fAvTC$useDataServers} from "@semapps/semantic-data-provider";
 import {useController as $fAvTC$useController} from "react-hook-form";
@@ -8,13 +8,12 @@ import {useController as $fAvTC$useController} from "react-hook-form";
 
 // Since we overwrite FileInput default parse, we must transform the file
 // See https://github.com/marmelab/react-admin/blob/2d6a1982981b0f1882e52dd1a974a60eef333e59/packages/ra-ui-materialui/src/input/FileInput.tsx#L57
-const $be5569a64aeca92c$var$transformFile = (file, oldValue)=>{
+const $be5569a64aeca92c$var$transformFile = (file)=>{
     const preview = URL.createObjectURL(file);
     return {
         rawFile: file,
         src: preview,
-        title: file.name,
-        fileToDelete: oldValue
+        title: file.name
     };
 };
 const $be5569a64aeca92c$var$format = (v)=>{
@@ -26,22 +25,17 @@ const $be5569a64aeca92c$var$format = (v)=>{
         } : e);
     return v;
 };
-const $be5569a64aeca92c$var$parse = (oldValue)=>(v)=>{
-        if (Array.isArray(v)) return v.map((e)=>$be5569a64aeca92c$var$parse(oldValue)(e));
-        if (v instanceof File) return $be5569a64aeca92c$var$transformFile(v, oldValue);
-        if (v && v.src) return v.src;
-        if (!v && oldValue) return {
-            fileToDelete: oldValue
-        };
-        return null;
-    };
+const $be5569a64aeca92c$var$parse = (v)=>{
+    if (Array.isArray(v)) return v.map((e)=>$be5569a64aeca92c$var$parse(e));
+    if (v instanceof File) return $be5569a64aeca92c$var$transformFile(v);
+    if (v?.src && !('rawFile' in v)) return v.src;
+    return v;
+};
 const $be5569a64aeca92c$var$ImageInput = ({ source: source, ...otherProps })=>{
-    const record = (0, $fAvTC$useRecordContext)();
-    const previousValue = record ? record[source] : null;
     return /*#__PURE__*/ (0, $fAvTC$jsx)((0, $fAvTC$ImageInput), {
         source: source,
         format: $be5569a64aeca92c$var$format,
-        parse: $be5569a64aeca92c$var$parse(previousValue),
+        parse: $be5569a64aeca92c$var$parse,
         ...otherProps
     });
 };

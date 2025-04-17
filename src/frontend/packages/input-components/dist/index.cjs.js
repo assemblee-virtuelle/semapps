@@ -23,13 +23,12 @@ $parcel$export(module.exports, "ReferenceInput", () => $6fb40d62998d2ee1$export$
 
 // Since we overwrite FileInput default parse, we must transform the file
 // See https://github.com/marmelab/react-admin/blob/2d6a1982981b0f1882e52dd1a974a60eef333e59/packages/ra-ui-materialui/src/input/FileInput.tsx#L57
-const $cdabe6ba421df206$var$transformFile = (file, oldValue)=>{
+const $cdabe6ba421df206$var$transformFile = (file)=>{
     const preview = URL.createObjectURL(file);
     return {
         rawFile: file,
         src: preview,
-        title: file.name,
-        fileToDelete: oldValue
+        title: file.name
     };
 };
 const $cdabe6ba421df206$var$format = (v)=>{
@@ -41,22 +40,17 @@ const $cdabe6ba421df206$var$format = (v)=>{
         } : e);
     return v;
 };
-const $cdabe6ba421df206$var$parse = (oldValue)=>(v)=>{
-        if (Array.isArray(v)) return v.map((e)=>$cdabe6ba421df206$var$parse(oldValue)(e));
-        if (v instanceof File) return $cdabe6ba421df206$var$transformFile(v, oldValue);
-        if (v && v.src) return v.src;
-        if (!v && oldValue) return {
-            fileToDelete: oldValue
-        };
-        return null;
-    };
+const $cdabe6ba421df206$var$parse = (v)=>{
+    if (Array.isArray(v)) return v.map((e)=>$cdabe6ba421df206$var$parse(e));
+    if (v instanceof File) return $cdabe6ba421df206$var$transformFile(v);
+    if (v?.src && !('rawFile' in v)) return v.src;
+    return v;
+};
 const $cdabe6ba421df206$var$ImageInput = ({ source: source, ...otherProps })=>{
-    const record = (0, $3asgq$reactadmin.useRecordContext)();
-    const previousValue = record ? record[source] : null;
     return /*#__PURE__*/ (0, $3asgq$reactjsxruntime.jsx)((0, $3asgq$reactadmin.ImageInput), {
         source: source,
         format: $cdabe6ba421df206$var$format,
-        parse: $cdabe6ba421df206$var$parse(previousValue),
+        parse: $cdabe6ba421df206$var$parse,
         ...otherProps
     });
 };

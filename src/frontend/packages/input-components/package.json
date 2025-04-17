@@ -11,7 +11,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "parcel build && yalc publish --push --changed",
+    "build": "parcel build --no-cache && yalc publish --push --changed",
     "watch": "nodemon --ext ts,tsx,js --watch src --exec 'yarn build'"
   },
   "dependencies": {
