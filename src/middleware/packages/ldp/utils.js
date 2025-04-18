@@ -112,8 +112,12 @@ const getWebIdFromUri = uri => {
   }
 };
 
+const getId = resource => resource.id || resource['@id'];
+
+const getType = resource => resource.type || resource['@type'];
+
 const hasType = (resource, type) => {
-  const resourceType = resource.type || resource['@type'];
+  const resourceType = getType(resource);
   return Array.isArray(resourceType) ? resourceType.includes(type) : resourceType === type;
 };
 
@@ -183,6 +187,8 @@ module.exports = {
   getParentContainerPath,
   getDatasetFromUri,
   getWebIdFromUri,
+  getId,
+  getType,
   hasType,
   isContainer,
   defaultToArray,
