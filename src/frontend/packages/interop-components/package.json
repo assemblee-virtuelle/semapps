@@ -1,6 +1,6 @@
 {
   "name": "@semapps/interop-components",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "React-Admin components to handle interoperability between SemApps instances",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -15,8 +15,8 @@
     "watch": "nodemon --ext ts,tsx,js --watch src --exec 'yarn build'"
   },
   "dependencies": {
-    "@semapps/input-components": "1.1.2",
-    "@semapps/semantic-data-provider": "1.1.2",
+    "@semapps/input-components": "1.1.3",
+    "@semapps/semantic-data-provider": "1.1.3",
     "autosuggest-highlight": "^3.1.1",
     "lodash.throttle": "^4.1.1",
     "url-join": "^4.0.1"
