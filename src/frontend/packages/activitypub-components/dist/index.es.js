@@ -295,10 +295,16 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
         let { json: json } = await dataProvider.fetch(nextPageUrl || collectionUrl);
         // If first page, handle this here.
         if ((json.type === 'OrderedCollection' || json.type === 'Collection') && json.first) {
-            if (json.first?.items) {
-                if (json.first?.items.length === 0 && json.first?.next) // Special case where the first property is an object without items
+            const firstItems = json.first?.items || json.first?.orderedItems;
+            if (firstItems) {
+                if (firstItems.length === 0 && json.first?.next) // Special case where the first property is an object without items
                 ({ json: json } = await dataProvider.fetch(json.first?.next));
-                else json = json.first;
+                else // Add the @context to the json, so that it can be used to expand the items
+                // That is necessary for the validation of the items
+                json = {
+                    '@context': json['@context'],
+                    ...json.first
+                };
             } else // Fetch the first page
             ({ json: json } = await dataProvider.fetch(json.first));
         }
