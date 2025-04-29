@@ -299,7 +299,9 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
             if (firstItems) {
                 if (firstItems.length === 0 && json.first?.next) // Special case where the first property is an object without items
                 ({ json: json } = await dataProvider.fetch(json.first?.next));
-                else json = {
+                else // Add the @context to the json, so that it can be used to expand the items
+                // That is necessary for the validation of the items
+                json = {
                     '@context': json['@context'],
                     ...json.first
                 };

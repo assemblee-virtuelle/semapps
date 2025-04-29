@@ -102,6 +102,8 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
             // Special case where the first property is an object without items
             ({ json } = await dataProvider.fetch(json.first?.next));
           } else {
+            // Add the @context to the json, so that it can be used to expand the items
+            // That is necessary for the validation of the items
             json = { '@context': json['@context'], ...json.first };
           }
         } else {
