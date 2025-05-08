@@ -3,6 +3,7 @@ const { generateKeyPair } = require('crypto');
 const { namedNode, triple } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { sec } = require('@semapps/ontologies');
+const Ed25519Multikey = require('@digitalbazaar/ed25519-multikey');
 const { arrayOf } = require('../utils/utils');
 const { KEY_TYPES } = require('../constants');
 const KeyContainerService = require('./key-container');
@@ -11,10 +12,6 @@ const MigrationService = require('./migration');
 const { KeyPairService } = require('../signature');
 
 /** @type {import('@digitalbazaar/ed25519-multikey')} */
-let Ed25519Multikey;
-(async () => {
-  Ed25519Multikey = await import('@digitalbazaar/ed25519-multikey');
-})();
 
 /**
  * Service for managing keys (creating, storing, retrieving).
