@@ -107,6 +107,12 @@
     },
     "interop:delegationOfGrant": {
       "@type": "@id"
+    },
+    "interop:reciprocalRegistration": {
+      "@type": "@id"
+    },
+    "interop:replaces": {
+      "@type": "@id"
     }
   }
 }
