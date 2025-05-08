@@ -26,10 +26,14 @@ module.exports = {
     webId: {
       type: 'string',
       optional: true
+    },
+    forcedResourceUri: {
+      type: 'string',
+      optional: true
     }
   },
   async handler(ctx) {
-    let { resource, containerUri, slug, contentType, file } = ctx.params;
+    let { resource, containerUri, slug, contentType, file, forcedResourceUri } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     let isContainer = false;
     let expandedResource;
@@ -62,10 +66,10 @@ module.exports = {
       }
     }
 
-    // The forcedResourceUri meta allows Moleculer service to bypass URI generation
+    // The forcedResourceUri param allows Moleculer service to bypass URI generation
     // It is used by ActivityStreams collections to provide URIs like {actorUri}/inbox
     const resourceUri =
-      ctx.meta.forcedResourceUri || (await ctx.call('ldp.resource.generateId', { containerUri, slug, isContainer }));
+      forcedResourceUri || (await ctx.call('ldp.resource.generateId', { containerUri, slug, isContainer }));
 
     const containerExist = await ctx.call('ldp.container.exist', { containerUri, webId });
     if (!containerExist) {
