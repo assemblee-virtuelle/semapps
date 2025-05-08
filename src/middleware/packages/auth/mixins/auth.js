@@ -189,6 +189,11 @@ const AuthMixin = {
       // We do not use the VC-JOSE spec to sign and envelop presentations. Instead we go
       // with embedded signatures. This way, the signature persists within the resource.
 
+      const hasCapabilityService = ctx.broker.registry.actions.isAvailable(
+        'crypto.vc.verifier.verifyCapabilityPresentation'
+      );
+      if (!hasCapabilityService) return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
+
       // Decode JTW to JSON.
       const decodedToken = await ctx.call('auth.jwt.decodeToken', { token });
       if (!decodedToken) return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
