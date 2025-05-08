@@ -12,6 +12,9 @@
     "streamify-string": "^1.0.1",
     "url-join": "^4.0.1"
   },
+  "devDependencies": {
+    "@types/jsonld": "1.5.15"
+  },
   "publishConfig": {
     "access": "public"
   },
