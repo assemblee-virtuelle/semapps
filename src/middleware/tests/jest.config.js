@@ -2,7 +2,7 @@
 const config = {
   testEnvironment: 'node',
   transform: {
-    '\\.[jt]sx?$': ['babel-jest', { rootMode: 'upward' }]
+    '\\.[jt]sx?$': ['esbuild-jest', { rootMode: 'upward' }]
   },
   transformIgnorePatterns: [],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js']
