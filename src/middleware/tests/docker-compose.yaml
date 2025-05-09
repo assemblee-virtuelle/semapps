@@ -1,5 +1,3 @@
-version: '3.5'
-
 services:
   fuseki_tests:
     image: semapps/jena-fuseki-webacl
@@ -39,3 +37,6 @@ services:
       - '4567'
     environment:
       REDIS_HOST: 'redis'
+networks:
+  default:
+    name: middleware_tests_network
