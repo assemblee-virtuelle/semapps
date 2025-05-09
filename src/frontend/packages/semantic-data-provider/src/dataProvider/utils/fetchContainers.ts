@@ -48,20 +48,25 @@ const fetchContainers = async (
   params: GetListParams,
   { httpClient, jsonContext }: Configuration
 ) => {
-  const fetchPromises = containers.map(container =>
-    httpClient(container.uri)
-      .then(async ({ json }) => {
-        const jsonResponse: LDPContainer = json;
+  // Fetch simultaneously all containers
+  const results = await Promise.all(
+    containers.map(async container => {
+      if (container.selectedResources) {
+        return Promise.all(
+          arrayOf(container.selectedResources).map(async (resourceUri: string) => {
+            const { json }: { json: LDPResource } = await httpClient(resourceUri);
+            return json;
+          })
+        );
+      } else {
+        let { json }: { json: LDPContainer } = await httpClient(container.uri);
 
         // If container's context is different, compact it to have an uniform result
         // TODO deep compare if the context is an object
-        if (jsonResponse['@context'] !== jsonContext) {
-          return jsonld.compact(jsonResponse, jsonContext as ContextDefinition) as unknown as Promise<LDPContainer>;
+        if (json['@context'] !== jsonContext) {
+          json = (await jsonld.compact(json, jsonContext as ContextDefinition)) as unknown as LDPContainer;
         }
 
-        return jsonResponse;
-      })
-      .then((json: LDPContainer) => {
         if (!isValidLDPContainer(json)) {
           throw new Error(`${container.uri} is not a LDP container`);
         }
@@ -70,11 +75,10 @@ const fetchContainers = async (
           '@context': json['@context'],
           ...resource
         }));
-      })
+      }
+    })
   );
 
-  // Fetch simultaneously all containers
-  const results = await Promise.all(fetchPromises);
   let resources = results.flat();
 
   resources = resources.map(resource => {
