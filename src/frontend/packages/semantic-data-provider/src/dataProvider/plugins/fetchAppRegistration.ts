@@ -42,13 +42,26 @@ const fetchAppRegistration = (): Plugin => ({
                 return Promise.all(
                   arrayOf(accessGrant['interop:hasDataGrant']).map(async dataGrantUri => {
                     const { json: dataGrant } = await config.httpClient(dataGrantUri);
-                    return getContainerFromDataRegistration(dataGrant['interop:hasDataRegistration'], config);
+                    const container = await getContainerFromDataRegistration(
+                      dataGrant['interop:hasDataRegistration'],
+                      config
+                    );
+                    if (dataGrant['interop:scopeOfGrant'] === 'interop:SelectedFromRegistry') {
+                      container.selectedResources = arrayOf(dataGrant['interop:hasDataInstance']);
+                    }
+                    return container;
+
+                    // if (dataGrant['interop:scopeOfGrant'] === 'interop:AllFromRegistry') {
+                    //   return getContainerFromDataRegistration(dataGrant['interop:hasDataRegistration'], config);
+                    // } else {
+                    //   return undefined;
+                    // }
                   })
                 );
               })
             );
 
-            newConfig.dataServers.user.containers = results.flat();
+            newConfig.dataServers.user.containers = results.flat().filter(i => i !== undefined);
 
             return newConfig;
           }
