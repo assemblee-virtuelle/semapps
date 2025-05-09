@@ -10,7 +10,7 @@ const handledWacActions = [
 ];
 
 const ObjectsWatcherMiddleware = (config = {}) => {
-  const { baseUrl, podProvider = false, postWithoutRecipients = false } = config;
+  const { baseUrl, podProvider = false, postWithoutRecipients = false, transientActivities = false } = config;
   let relayActor;
   let excludedContainersPathRegex = [];
   let initialized = false;
@@ -75,6 +75,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
         'activitypub.outbox.post',
         {
           collectionUri: actor.outbox,
+          transient: transientActivities,
           '@context': 'https://www.w3.org/ns/activitystreams',
           ...activity,
           bto: recipients

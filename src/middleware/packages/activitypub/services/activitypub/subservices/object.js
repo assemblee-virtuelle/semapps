@@ -1,3 +1,4 @@
+const { getType } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../../../constants');
 
@@ -23,26 +24,29 @@ const ObjectService = {
         accept: MIME_TYPES.JSON
       });
     },
-    async process(ctx) {
-      let { activity, actorUri } = ctx.params;
-      let activityType = activity.type || activity['@type'];
-      let objectUri;
+    // If an object is passed directly, wrap it in a Create activity
+    async wrap(ctx) {
+      const { activity } = ctx.params;
 
-      // If an object is passed directly, first wrap it in a Create activity
-      if (Object.values(OBJECT_TYPES).includes(activityType)) {
+      if (Object.values(OBJECT_TYPES).includes(getType(activity))) {
         const { to, cc, '@id': id, ...object } = activity;
-        activityType = ACTIVITY_TYPES.CREATE;
-        activity = {
+        return {
           '@context': object['@context'],
-          type: activityType,
+          type: ACTIVITY_TYPES.CREATE,
           to,
           cc,
           actor: object.attributedTo,
           object
         };
+      } else {
+        return activity;
       }
+    },
+    async process(ctx) {
+      let { activity, actorUri } = ctx.params;
+      let objectUri;
 
-      switch (activityType) {
+      switch (getType(activity)) {
         case ACTIVITY_TYPES.CREATE: {
           // If the object passed is an URI, this is an announcement and there is nothing to process
           if (typeof activity.object === 'string') break;
