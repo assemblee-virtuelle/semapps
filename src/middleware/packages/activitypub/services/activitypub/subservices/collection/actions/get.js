@@ -10,7 +10,7 @@ const { getValueFromDataType } = require('../../../../../utils');
  * @param {string} webId - The webId of the user requesting the collection
  * @returns {Promise<object>} The collection metadata
  */
-async function getCollectionMetadata(ctx, collectionUri, webId) {
+async function getCollectionMetadata(ctx, collectionUri, webId, dataset) {
   const results = await ctx.call('triplestore.query', {
     query: `
       PREFIX as: <https://www.w3.org/ns/activitystreams#>
@@ -27,6 +27,7 @@ async function getCollectionMetadata(ctx, collectionUri, webId) {
       }
     `,
     accept: MIME_TYPES.JSON,
+    dataset,
     webId
   });
 
@@ -37,7 +38,7 @@ async function getCollectionMetadata(ctx, collectionUri, webId) {
   return Object.fromEntries(Object.entries(results[0]).map(([key, result]) => [key, getValueFromDataType(result)]));
 }
 
-async function verifyCursorExists(ctx, collectionUri, cursor) {
+async function verifyCursorExists(ctx, collectionUri, cursor, dataset) {
   const cursorResult = await ctx.call('triplestore.query', {
     query: `
       PREFIX as: <https://www.w3.org/ns/activitystreams#>
@@ -47,6 +48,7 @@ async function verifyCursorExists(ctx, collectionUri, cursor) {
       }
     `,
     accept: MIME_TYPES.JSON,
+    dataset,
     webId: 'system'
   });
   const itemExists = cursorResult[0]?.itemExists?.value === 'true';
@@ -55,12 +57,12 @@ async function verifyCursorExists(ctx, collectionUri, cursor) {
   }
 }
 
-async function validateCursorParams(ctx, collectionUri, beforeEq, afterEq) {
+async function validateCursorParams(ctx, collectionUri, beforeEq, afterEq, dataset) {
   if (beforeEq && afterEq) {
     throw new MoleculerError('Cannot get a collection with both beforeEq and afterEq', 400, 'BAD_REQUEST');
   }
   if (beforeEq || afterEq) {
-    await verifyCursorExists(ctx, collectionUri, beforeEq || afterEq);
+    await verifyCursorExists(ctx, collectionUri, beforeEq || afterEq, dataset);
   }
 }
 
@@ -71,7 +73,7 @@ async function validateCursorParams(ctx, collectionUri, beforeEq, afterEq) {
  * @param {object} options - The collection options
  * @returns {Promise<Array>} The collection item URIs
  */
-async function fetchCollectionItemURIs(ctx, collectionUri, options) {
+async function fetchCollectionItemURIs(ctx, collectionUri, options, dataset) {
   const result = await ctx.call('triplestore.query', {
     query: `
       PREFIX as: <https://www.w3.org/ns/activitystreams#>
@@ -90,6 +92,7 @@ async function fetchCollectionItemURIs(ctx, collectionUri, options) {
       }
     `,
     accept: MIME_TYPES.JSON,
+    dataset,
     webId: 'system'
   });
 
@@ -287,15 +290,18 @@ module.exports = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const localContext = await ctx.call('jsonld.context.get');
 
+    // Get dataset here since we can't call the method from internal functions
+    const dataset = this.getCollectionDataset(collectionUri);
+
     sanitizeSparqlUri(collectionUri);
     sanitizeSparqlUri(beforeEq);
     sanitizeSparqlUri(afterEq);
 
-    await validateCursorParams(ctx, collectionUri, beforeEq, afterEq);
+    await validateCursorParams(ctx, collectionUri, beforeEq, afterEq, dataset);
 
-    const options = await getCollectionMetadata(ctx, collectionUri, webId);
+    const options = await getCollectionMetadata(ctx, collectionUri, webId, dataset);
 
-    const allItemURIs = await fetchCollectionItemURIs(ctx, collectionUri, options);
+    const allItemURIs = await fetchCollectionItemURIs(ctx, collectionUri, options, dataset);
     const {
       itemURIs: paginatedItemURIs,
       prevCursorUri: initialPrevCursor,
