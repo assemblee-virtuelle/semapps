@@ -2,7 +2,29 @@ const jsonld = require('jsonld');
 const fsPromises = require('fs').promises;
 const LRU = require('lru-cache');
 
-const defaultDocumentLoader = jsonld.documentLoaders.node();
+/** Use document loader depending on node / bun runtime. */
+const defaultDocumentLoader = !process.versions.bun
+  ? jsonld.documentLoaders.node()
+  : /** Document loader using the modern fetch API.  */
+    async (url, options) => {
+      const fetchResult = await fetch(url, {
+        headers: {
+          accept: 'application/json, application/ld+json, application/activity+json',
+          ...options?.headers
+        },
+        redirect: options?.maxRedirects <= 0 ? 'error' : 'follow',
+        follow: options?.maxRedirects
+      });
+
+      const linkHeaderVal = fetchResult.headers.get('link');
+      const parsedLinks = !(linkHeaderVal || linkHeaderVal === '') ? {} : jsonld.util.parseLinkHeader(linkHeaderVal);
+      const contextUrl = parsedLinks['http://www.w3.org/ns/json-ld#context'] || null;
+
+      const document = await fetchResult.json();
+
+      return { contextUrl, documentUrl: url, document };
+    };
+
 const cache = new LRU({ max: 500 });
 
 module.exports = {
