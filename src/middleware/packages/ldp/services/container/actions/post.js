@@ -73,7 +73,11 @@ module.exports = {
 
     const containerExist = await ctx.call('ldp.container.exist', { containerUri, webId });
     if (!containerExist) {
-      throw new MoleculerError(`Cannot create resource in non-existing container ${containerUri}`, 400, 'BAD_REQUEST');
+      throw new MoleculerError(
+        `Cannot create resource in non-existing container ${containerUri} (webId ${webId} / dataset ${ctx.meta.dataset})`,
+        400,
+        'BAD_REQUEST'
+      );
     }
 
     // We must add this first, so that the container's ACLs are taken into account
