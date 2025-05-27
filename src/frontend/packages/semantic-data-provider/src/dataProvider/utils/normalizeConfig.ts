@@ -4,6 +4,10 @@ import arrayOf from './arrayOf';
 import expandTypes from './expandTypes';
 import getTypesFromShapeTree from './getTypesFromShapeTree';
 
+/**
+ * For data server containers, expands types and adds `uri` and `server` properties.
+ * For resources, expands types (if applicable from shape tree information).
+ */
 const normalizeConfig = async (config: Configuration) => {
   const newConfig: Configuration = { ...config };
 

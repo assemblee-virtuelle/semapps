@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-redundant-type-constituents */
 import { DataProvider, RaRecord, fetchUtils } from 'react-admin';
 import type { Quad } from '@rdfjs/types';
+import { LdoDataset } from '@ldo/ldo';
 
 export type DataServerKey = string & { readonly _type?: 'DataServerKey' };
 export type ContainerURI = string & { readonly _type?: 'ContainerURI' };
@@ -114,6 +115,7 @@ export type SemanticDataProvider = DataProvider & {
   getDataModels: () => Promise<Record<string, DataModel>>;
   getDataServers: () => Promise<DataServersConfig>;
   fetch: FetchFn;
+  ldoDataset: LdoDataset;
   getConfig: () => Promise<Configuration>;
   refreshConfig: () => Promise<Configuration>;
   uploadFile: (rawFile: File) => Promise<string | null>;

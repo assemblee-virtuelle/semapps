@@ -55,6 +55,7 @@ const fetchContainers = async (
 
         // If container's context is different, compact it to have an uniform result
         // TODO deep compare if the context is an object
+        // This is most likely an array of two strings
         if (jsonResponse['@context'] !== jsonContext) {
           return jsonld.compact(jsonResponse, jsonContext as ContextDefinition) as unknown as Promise<LDPContainer>;
         }
@@ -67,7 +68,7 @@ const fetchContainers = async (
         }
 
         return arrayOf(json['ldp:contains']).map<LDPResource>(resource => ({
-          '@context': json['@context'],
+          '@context': json['@context'], // TODO: Can it be that resources have a @context set already or is this prohibited by the ldp spec?
           ...resource
         }));
       })

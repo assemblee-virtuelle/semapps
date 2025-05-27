@@ -27,6 +27,7 @@ const useItemsFromPages = (pages: any[], dereferenceItems: boolean) => {
           .map(itemUri => ({
             queryKey: ['resource', itemUri],
             queryFn: async () => (await dataProvider.fetch(itemUri)).json,
+            // TODO: Collections don't have to contain activities only, do they?
             staleTime: Infinity // Activities are immutable, so no need to refetch..
           }))
   );
@@ -54,7 +55,7 @@ const useItemsFromPages = (pages: any[], dereferenceItems: boolean) => {
 };
 
 /**
- * Subscribe a collection. Supports pagination.
+ * Subscribe toa collection. Supports pagination.
  * @param predicateOrUrl The collection URI or the predicate to get the collection URI from the identity (webId).
  * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false }`
  */
@@ -74,7 +75,7 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
   // Get collectionUrl from webId predicate or URL.
   const collectionUrl = useMemo(() => {
     if (predicateOrUrl) {
-      if (predicateOrUrl.startsWith('http')) {
+      if (predicateOrUrl.startsWith('http') || predicateOrUrl.startsWith('did:ng:')) {
         return predicateOrUrl;
       }
       if (identity?.webIdData) {
@@ -137,6 +138,8 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
               `No context returned by the server.\nA context is required to expand the collection's items and validate them.`
             );
           }
+          // TODO: Research: Is this used with the multi-purpose viewer already?
+          // How can multiple shapes be validated? Can we get this typed here?
           const shaclValidator = await getShaclValidator(shaclShapeUri);
           const validatedResults = await validateItems(arrayOf(json[itemsKey]), shaclValidator, json['@context']);
 

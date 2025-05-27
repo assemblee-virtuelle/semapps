@@ -49,7 +49,18 @@ module.exports = {
     '@typescript-eslint/no-unsafe-enum-comparison': 'warn',
     '@typescript-eslint/no-unsafe-member-access': 'warn',
     '@typescript-eslint/no-unsafe-return': 'warn',
-    '@typescript-eslint/no-unused-vars': 'warn',
+    '@typescript-eslint/no-unused-vars': [
+      'warn',
+      {
+        args: 'all',
+        argsIgnorePattern: '^_',
+        caughtErrors: 'all',
+        caughtErrorsIgnorePattern: '^_',
+        destructuredArrayIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        ignoreRestSiblings: true
+      }
+    ],
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/non-nullable-type-assertion-style': 'warn',
     '@typescript-eslint/prefer-includes': 'warn',
