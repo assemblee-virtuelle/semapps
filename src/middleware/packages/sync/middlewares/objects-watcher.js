@@ -78,7 +78,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
           transient: transientActivities,
           '@context': 'https://www.w3.org/ns/activitystreams',
           ...activity,
-          bto: recipients
+          bto: recipients.length > 0 ? recipients : undefined
         },
         { meta: { webId: actor.id, doNotProcessObject: true } }
       );
