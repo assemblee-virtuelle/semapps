@@ -1,4 +1,4 @@
-const { hasType } = require('@semapps/ldp');
+const { hasType, getId } = require('@semapps/ldp');
 const { ACTIVITY_TYPES } = require('../../../../constants');
 
 // const removeReadRights = async ({ ctx, recipientUris, resourceUri, skipObjectsWatcher, anon }) => {
@@ -53,7 +53,7 @@ const setRightsHandler = {
   match: '*',
   priority: 1,
   async onEmit(ctx, activity) {
-    const activityUri = activity['@id'] || activity.id;
+    const activityUri = getId(activity);
     const newRecipients = await ctx.call('activitypub.activity.getRecipients', { activity });
     const activityIsPublic = await ctx.call('activitypub.activity.isPublic', { activity });
     /** @type {string} */
@@ -65,14 +65,16 @@ const setRightsHandler = {
       if (!newRecipients.includes(activity.actor)) newRecipients.push(activity.actor);
     }
 
-    // Give read rights to the activity's recipients.
-    await addReadRights({
-      ctx,
-      resourceUri: activityUri,
-      recipientUris: newRecipients,
-      skipObjectsWatcher: true,
-      anon: activityIsPublic
-    });
+    // Give read rights to the recipients, unless the activity is transient
+    if (!activityUri.includes('#')) {
+      await addReadRights({
+        ctx,
+        resourceUri: activityUri,
+        recipientUris: newRecipients,
+        skipObjectsWatcher: true,
+        anon: activityIsPublic
+      });
+    }
 
     // If Create or Update activity, also give rights to the created object.
     if (hasType(activity, ACTIVITY_TYPES.CREATE) || hasType(activity, ACTIVITY_TYPES.UPDATE)) {
