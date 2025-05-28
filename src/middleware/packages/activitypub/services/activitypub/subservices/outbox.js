@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 const { Errors: E } = require('moleculer-web');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { getType, arrayOf } = require('@semapps/ldp');
 const { collectionPermissionsWithAnonRead, getSlugFromUri, objectIdToCurrent } = require('../../../utils');
 const { ACTOR_TYPES } = require('../../../constants');
 const AwaitActivityMixin = require('../../../mixins/await-activity');
@@ -86,7 +87,11 @@ const OutboxService = {
       // Use the current time for the activity's publish date
       activity.published = new Date().toISOString();
 
-      if (transient !== true) {
+      if (transient === true) {
+        // Object or actor URI + hash with lower case activity
+        activityUri = `${activity.object || activity.actor}#${arrayOf(getType(activity))[0].toLowerCase()}`;
+        activity = { id: activityUri, ...activity };
+      } else {
         const activitiesContainerUri = await ctx.call('activitypub.activity.getContainerUri', {
           webId: actorUri
         });
