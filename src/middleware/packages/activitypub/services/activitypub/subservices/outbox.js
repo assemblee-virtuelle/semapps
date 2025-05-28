@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 const { Errors: E } = require('moleculer-web');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { getType, arrayOf } = require('@semapps/ldp');
 const { collectionPermissionsWithAnonRead, getSlugFromUri, objectIdToCurrent } = require('../../../utils');
 const { ACTOR_TYPES } = require('../../../constants');
 const AwaitActivityMixin = require('../../../mixins/await-activity');
@@ -41,7 +42,8 @@ const OutboxService = {
   },
   actions: {
     async post(ctx) {
-      let { collectionUri, username, ...activity } = ctx.params;
+      let { collectionUri, username, transient, ...activity } = ctx.params;
+      let activityUri;
 
       const collectionExists = await ctx.call('activitypub.collection.exist', { resourceUri: collectionUri });
       if (!collectionExists) {
@@ -69,7 +71,10 @@ const OutboxService = {
         activity['@context'] = await ctx.call('jsonld.context.get');
       }
 
-      if (!ctx.meta.doNotProcessObject) {
+      // Wrap object in Create activity, if necessary
+      activity = await ctx.call('activitypub.object.wrap', { activity });
+
+      if (!ctx.meta.doNotProcessObject && transient !== true) {
         // Process object create, update or delete
         // and return an activity with the object ID
         activity = await ctx.call('activitypub.object.process', { activity, actorUri });
@@ -80,42 +85,44 @@ const OutboxService = {
       }
 
       // Use the current time for the activity's publish date
-      // TODO use it to order the ordered collections
       activity.published = new Date().toISOString();
 
-      const activitiesContainerUri = await ctx.call('activitypub.activity.getContainerUri', {
-        webId: actorUri
-      });
+      if (transient === true) {
+        // Object or actor URI + hash with lower case activity
+        activityUri = `${activity.object || activity.actor}#${arrayOf(getType(activity))[0].toLowerCase()}`;
+        activity = { id: activityUri, ...activity };
+      } else {
+        const activitiesContainerUri = await ctx.call('activitypub.activity.getContainerUri', {
+          webId: actorUri
+        });
 
-      // There might be a capability attached which should not be persisted
-      // because other's could otherwise read it from the (public) outbox.
-      let { capability, ...activityToPersist } = activity;
+        activityUri = await ctx.call('activitypub.activity.post', {
+          containerUri: activitiesContainerUri,
+          resource: activity,
+          contentType: MIME_TYPES.JSON,
+          webId: 'system' // Post as system since there is no write permission to the activities container
+        });
 
-      const activityUri = await ctx.call('activitypub.activity.post', {
-        containerUri: activitiesContainerUri,
-        resource: activityToPersist,
-        contentType: MIME_TYPES.JSON,
-        webId: 'system' // Post as system since there is no write permission to the activities container
-      });
-
-      activityToPersist = await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' });
-      // Reattach capability for further processing (if available).
-      activity = { ...activityToPersist, capability };
+        activity = await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' });
+      }
 
       try {
-        // Notify listeners of activities.
         await ctx.call('activitypub.side-effects.processOutbox', { activity });
       } catch (e) {
-        await ctx.call('activitypub.activity.delete', { resourceUri: activityUri, webId: 'system' });
+        if (transient !== true) {
+          await ctx.call('activitypub.activity.delete', { resourceUri: activityUri, webId: 'system' });
+        }
         // TODO unprocess objects
         throw e;
       }
 
-      // Attach the newly-created activity to the outbox
-      await ctx.call('activitypub.collection.add', {
-        collectionUri,
-        item: activityToPersist
-      });
+      if (transient !== true) {
+        // Attach the newly-created activity to the outbox
+        await ctx.call('activitypub.collection.add', {
+          collectionUri,
+          item: activity
+        });
+      }
 
       const localRecipients = [];
       const remoteRecipients = [];

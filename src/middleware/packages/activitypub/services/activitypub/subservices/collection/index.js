@@ -1,5 +1,5 @@
 const { MoleculerError } = require('moleculer').Errors;
-const { ControlledContainerMixin, arrayOf } = require('@semapps/ldp');
+const { ControlledContainerMixin, arrayOf, getDatasetFromUri } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { sanitizeSparqlQuery } = require('@semapps/triplestore');
 const { Errors: E } = require('moleculer-web');
@@ -131,6 +131,7 @@ const CollectionService = {
           }
         `,
         accept: MIME_TYPES.JSON,
+        dataset: this.getCollectionDataset(collectionUri),
         webId: 'system'
       });
       return Number(res[0].count.value) === 0;
@@ -154,6 +155,7 @@ const CollectionService = {
           }
         `,
         accept: MIME_TYPES.JSON,
+        dataset: this.getCollectionDataset(collectionUri),
         webId: 'system'
       });
     },
@@ -178,6 +180,7 @@ const CollectionService = {
 
       await ctx.call('triplestore.insert', {
         resource: sanitizeSparqlQuery`<${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>`,
+        dataset: this.getCollectionDataset(collectionUri),
         webId: 'system'
       });
 
@@ -205,6 +208,7 @@ const CollectionService = {
           WHERE
           { <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}> }
         `,
+        dataset: this.getCollectionDataset(collectionUri),
         webId: 'system'
       });
 
@@ -232,6 +236,7 @@ const CollectionService = {
             ?s1 ?p1 ?o1 .
           } 
         `,
+        dataset: this.getCollectionDataset(collectionUri),
         webId: 'system'
       });
     },
@@ -256,24 +261,17 @@ const CollectionService = {
           }
         `,
         accept: MIME_TYPES.JSON,
+        dataset: this.getCollectionDataset(collectionUri),
         webId: 'system'
       });
 
       return results.length > 0 ? results[0].actorUri.value : null;
     }
   },
-  hooks: {
-    before: {
-      '*'(ctx) {
-        // If we have a pod provider, guess the dataset from the collection URI
-        if (this.settings.podProvider && ctx.params.collectionUri) {
-          const collectionPath = new URL(ctx.params.collectionUri).pathname;
-          const parts = collectionPath.split('/');
-          if (parts.length > 1) {
-            ctx.meta.dataset = parts[1];
-          }
-        }
-      }
+  methods: {
+    getCollectionDataset(collectionUri) {
+      if (!this.settings.podProvider) return undefined;
+      return getDatasetFromUri(collectionUri);
     }
   }
 };
