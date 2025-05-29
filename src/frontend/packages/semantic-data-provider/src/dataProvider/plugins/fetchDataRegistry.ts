@@ -2,6 +2,13 @@ import jwtDecode from 'jwt-decode';
 import { Configuration, Plugin } from '../types';
 import getContainerFromDataRegistration from '../utils/getContainerFromDataRegistration';
 
+/**
+ * Plugin to add data registrations to the user containers, by fetching the registry set.
+ *
+ * Requires the `configureUserStorage` plugin.
+ *
+ * @returns {Configuration} The configuration with the data registrations added to `dataServers.user.containers`
+ */
 const fetchDataRegistry = (): Plugin => ({
   transformConfig: async (config: Configuration) => {
     const token = localStorage.getItem('token');

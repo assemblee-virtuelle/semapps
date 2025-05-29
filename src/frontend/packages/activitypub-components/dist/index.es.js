@@ -9,14 +9,20 @@ import $85cNH$muiiconsmaterialSend from "@mui/icons-material/Send";
 import {useDataModel as $85cNH$useDataModel, getOrCreateWsChannel as $85cNH$getOrCreateWsChannel} from "@semapps/semantic-data-provider";
 import {AuthDialog as $85cNH$AuthDialog} from "@semapps/auth-provider";
 import {useQueries as $85cNH$useQueries, useQueryClient as $85cNH$useQueryClient, useInfiniteQuery as $85cNH$useInfiniteQuery} from "react-query";
-import $85cNH$rdfvalidateshacl from "rdf-validate-shacl";
+import $85cNH$jsonld from "jsonld";
 import $85cNH$rdfext from "rdf-ext";
-import $85cNH$rdfjsparserjsonld from "@rdfjs/parser-jsonld";
-import {ReadableWebToNodeStream as $85cNH$ReadableWebToNodeStream} from "readable-web-to-node-stream";
 import $85cNH$rdfjsparsern3 from "@rdfjs/parser-n3";
+import {Readable as $85cNH$Readable} from "stream";
+import {Validator as $85cNH$Validator} from "shacl-engine";
+import {ActivityStreamsShape as $85cNH$ActivityStreamsShape} from "@activitypods/shape-definitions";
+import {ReadableWebToNodeStream as $85cNH$ReadableWebToNodeStream} from "readable-web-to-node-stream";
 import {mergeAttributes as $85cNH$mergeAttributes} from "@tiptap/core";
 import $85cNH$tiptapextensionmention from "@tiptap/extension-mention";
 import {ReferenceField as $85cNH$ReferenceField, AvatarWithLabelField as $85cNH$AvatarWithLabelField} from "@semapps/field-components";
+import {createConnectedLdoDataset as $85cNH$createConnectedLdoDataset} from "@ldo/connected";
+import {solidConnectedPlugin as $85cNH$solidConnectedPlugin} from "@ldo/connected-solid";
+import {useInfiniteQuery as $85cNH$useInfiniteQuery1} from "@tanstack/react-query";
+import {OrderedCollectionPageShapeType as $85cNH$OrderedCollectionPageShapeType} from "@activitypods/ldo-shapes";
 import {ReactRenderer as $85cNH$ReactRenderer} from "@tiptap/react";
 import $85cNH$tippyjs from "tippy.js";
 
@@ -94,6 +100,10 @@ const $338f387df48a40d7$export$4d8d554031975581 = 'https://www.w3.org/ns/activit
 
 
 
+
+
+
+
 const $577f4953dfa5de4f$export$e57ff0f701c44363 = (value)=>{
     // If the field is null-ish, we suppose there are no values.
     if (value === null || value === undefined) return [];
@@ -116,6 +126,43 @@ const $577f4953dfa5de4f$export$34aed805e991a647 = (iterable, predicate)=>{
         return true;
     });
 };
+const $577f4953dfa5de4f$export$2684df65fa35e98e = async (jsonLdObject)=>{
+    // Convert JSON-LD object to N-Quads string
+    const nquads = await (0, $85cNH$jsonld).toRDF(jsonLdObject, {
+        format: 'application/n-quads'
+    });
+    // Parse N-Quads string to RDF/JS quads
+    const parser = new (0, $85cNH$rdfjsparsern3)();
+    const quadStream = parser.import((0, $85cNH$Readable).from([
+        nquads
+    ]));
+    const dataset = await (0, $85cNH$rdfext).dataset().import(quadStream);
+    return dataset;
+};
+const $577f4953dfa5de4f$export$7089f01fea2fc5c2 = async (jsonLdObject)=>{
+    // Convert JSON-LD object to N-Quads string
+    const nquads = await (0, $85cNH$jsonld).toRDF(jsonLdObject, {
+        format: 'application/n-quads'
+    });
+    // Parse N-Quads string to RDF/JS quads
+    const parser = new (0, $85cNH$rdfjsparsern3)();
+    const quadStream = parser.import((0, $85cNH$Readable).from([
+        nquads
+    ]));
+    // Convert the quad stream to an array of quads
+    const quads = [];
+    quadStream.on('data', (quad)=>{
+        quads.push(quad);
+    });
+    return new Promise((resolve, reject)=>{
+        quadStream.on('end', ()=>{
+            resolve(quads);
+        });
+        quadStream.on('error', (error)=>{
+            reject(error);
+        });
+    });
+};
 
 
 
@@ -123,10 +170,10 @@ const $577f4953dfa5de4f$export$34aed805e991a647 = (iterable, predicate)=>{
 
 
 
-// Cache of SHACL validators
-const $25cb6caf33e2f460$var$validatorCache = {};
+
+
 // Helper function to convert a string to a Node.js Readable stream
-const $25cb6caf33e2f460$var$stringToStream = (str)=>{
+const $58194f7610fd9353$export$7b2e5d6b7377fcaf = (str)=>{
     // Create a TextEncoder to convert string to Uint8Array
     const encoder = new TextEncoder();
     const uint8Array = encoder.encode(str);
@@ -140,81 +187,126 @@ const $25cb6caf33e2f460$var$stringToStream = (str)=>{
     // Convert the web ReadableStream to a Node.js Readable stream
     return new (0, $85cNH$ReadableWebToNodeStream)(readableStream);
 };
-// Helper function to parse JSON-LD and convert to RDF-ext quads
-const $25cb6caf33e2f460$export$2684df65fa35e98e = async (jsonLdObj, context)=>{
+const $58194f7610fd9353$export$7304a15200aa09e5 = async (turtleData)=>{
+    // Convert Turtle data to a stream
+    const textStream = $58194f7610fd9353$export$7b2e5d6b7377fcaf(turtleData);
+    // Use ParserN3 which outputs rdf-ext compatible quads directly
+    const parser = new (0, $85cNH$rdfjsparsern3)({
+        factory: (0, $85cNH$rdfext)
+    });
+    const quadStream = parser.import(textStream);
+    const dataset = await (0, $85cNH$rdfext).dataset().import(quadStream);
+    return dataset;
+};
+
+
+// Cache of SHACL validators
+const $25cb6caf33e2f460$var$validatorCache = {};
+/**
+ * Returns a SHACL validator for ActivityStreams shapes.
+ *
+ * This function creates a SHACL validator for ActivityStreams shapes using the
+ * `@activitypods/shape-definitions` package. It caches the validator to avoid
+ * creating it multiple times.
+ *
+ * @returns A Promise that resolves to a SHACL Validator instance.
+ */ const $25cb6caf33e2f460$export$8b707c2a07270e94 = async ()=>{
+    // Check if the validator is already cached
+    if ($25cb6caf33e2f460$var$validatorCache.activityStreams) return $25cb6caf33e2f460$var$validatorCache.activityStreams;
     try {
-        // Add context to the JSON-LD object if needed
-        const jsonLdWithContext = {
-            ...jsonLdObj,
-            '@context': context
-        };
-        // Convert JSON-LD object to string
-        const jsonString = JSON.stringify(jsonLdWithContext);
-        // Convert string to stream using the helper function
-        const textStream = $25cb6caf33e2f460$var$stringToStream(jsonString);
-        // Use the JsonLdParser that outputs rdf-ext compatible quads directly
-        const parser = new (0, $85cNH$rdfjsparserjsonld)({
-            factory: (0, $85cNH$rdfext)
+        const shapeDataset = await (0, $58194f7610fd9353$export$7304a15200aa09e5)((0, $85cNH$ActivityStreamsShape));
+        // Create and cache the SHACL validator using the dataset
+        $25cb6caf33e2f460$var$validatorCache.activityStreams = new (0, $85cNH$Validator)(shapeDataset, {
+            factory: (0, $85cNH$rdfext),
+            debug: true
         });
-        const quadStream = parser.import(textStream);
-        // Collect quads into a dataset
-        const dataset = (0, $85cNH$rdfext).dataset();
-        for await (const quad of quadStream)dataset.add(quad);
-        return dataset;
+        return $25cb6caf33e2f460$var$validatorCache.activityStreams;
     } catch (error) {
-        console.error('Error parsing JSON-LD:', error);
-        throw error;
+        throw new Error(`Failed to create ActivityStreams validator: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
 };
 // Helper function to load a SHACL shape and return a validator
 const $25cb6caf33e2f460$export$6de257db5bb9fd74 = async (shapeUri)=>{
     // Check if the validator is already cached
     if ($25cb6caf33e2f460$var$validatorCache[shapeUri]) return $25cb6caf33e2f460$var$validatorCache[shapeUri];
-    const response = await fetch(shapeUri, {
-        headers: {
-            Accept: 'text/turtle'
-        }
-    });
-    if (!response.ok) throw new Error(`Failed to load shape: ${response.status} ${response.statusText}`);
-    // Get the Turtle data as text
-    const turtleData = await response.text();
-    // Convert text to stream using the helper function
-    const textStream = $25cb6caf33e2f460$var$stringToStream(turtleData);
-    // Use ParserN3 which outputs rdf-ext compatible quads directly
-    const parser = new (0, $85cNH$rdfjsparsern3)({
-        factory: (0, $85cNH$rdfext)
-    });
-    const quadStream = parser.import(textStream);
-    // Collect quads into a dataset
-    const shapeDataset = (0, $85cNH$rdfext).dataset();
-    for await (const quad of quadStream)shapeDataset.add(quad);
-    // Create and cache the SHACL validator using the dataset
-    $25cb6caf33e2f460$var$validatorCache[shapeUri] = new (0, $85cNH$rdfvalidateshacl)(shapeDataset, {
-        factory: (0, $85cNH$rdfext)
-    });
-    return $25cb6caf33e2f460$var$validatorCache[shapeUri];
+    try {
+        const response = await fetch(shapeUri, {
+            headers: {
+                Accept: 'text/turtle'
+            }
+        });
+        if (!response.ok) throw new Error(`Failed to load shape: ${response.status} ${response.statusText}`);
+        // Get the Turtle data as text
+        const turtleData = await response.text();
+        const shapeDataset = await (0, $58194f7610fd9353$export$7304a15200aa09e5)(turtleData);
+        // Create and cache the SHACL validator using the dataset
+        $25cb6caf33e2f460$var$validatorCache[shapeUri] = new (0, $85cNH$Validator)(shapeDataset, {
+            factory: (0, $85cNH$rdfext)
+        });
+        return $25cb6caf33e2f460$var$validatorCache[shapeUri];
+    } catch (error) {
+        throw new Error(`Failed to create SHACL validator for ${shapeUri}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
 };
-const $25cb6caf33e2f460$export$1558e55ae3912bbb = async (items, shaclValidator, context)=>{
+/**
+ * Validates an array of items against a SHACL shape and returns the validation results.
+ *
+ * @param items The items to validate
+ * @param shaclValidator The SHACL validator to use
+ * @param context The context to use for the items
+ *
+ * @returns An array of objects containing the item and its validation result
+ */ const $25cb6caf33e2f460$export$1558e55ae3912bbb = async (items, shaclValidator, context)=>{
     if (!shaclValidator) throw new Error('validateItems: shaclValidator is required');
-    if (!context) throw new Error('validateItems: context is required');
     return Promise.all(items.map(async (item)=>{
         try {
+            if (!item['@context']) item['@context'] = context;
             // Create a dataset from the item's JSON-LD
-            const itemDataset = await $25cb6caf33e2f460$export$2684df65fa35e98e(item, context);
+            const itemDataset = await (0, $577f4953dfa5de4f$export$2684df65fa35e98e)(item);
             // Validate against the SHACL shape
-            const report = shaclValidator?.validate(itemDataset);
+            const report = shaclValidator.validate({
+                dataset: itemDataset
+            });
             return {
                 item: item,
-                isValid: report?.conforms
+                isValid: report.conforms
             };
         } catch (error) {
-            console.error(`Error validating item ${item.id}:`, error);
             return {
                 item: item,
-                isValid: false
+                isValid: false,
+                error: error
             };
         }
     }));
+};
+/**
+ * Validates a subject against a set of SHACL shapes and returns the typed item if valid.
+ *
+ * @param subjectUri The subject to validate
+ * @param dataset The dataset containing the subject
+ * @param shapeTypes The shape types to validate against
+ * @param validator The SHACL validator to use
+ *
+ * @returns A typed item if valid, or null if not valid
+ */ const $25cb6caf33e2f460$export$c4cb1062f0ffb837 = async (subjectUri, dataset, shapeTypes, validator)=>{
+    const validationReport = await validator.validate(// Terms means the entry point from which should be validated, in our case the current item.
+    {
+        dataset: dataset,
+        terms: [
+            (0, $85cNH$rdfext).namedNode(subjectUri)
+        ]
+    }, // Here, terms means the shapes to validate against.
+    {
+        terms: shapeTypes.map((shapeType)=>(0, $85cNH$rdfext).namedNode(shapeType.shape))
+    });
+    if (!validationReport.conforms) return null;
+    const { results: results } = validationReport;
+    // Find the shape that matched the item in the report results.
+    const shapeType = shapeTypes.find((st)=>results.find((res)=>res.focusNode === subjectUri && res.shape === st.shape));
+    if (!shapeType) return null;
+    const typedItem = dataset.usingType(shapeType).fromSubject(subjectUri);
+    return typedItem;
 };
 
 
@@ -239,6 +331,7 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
                 itemUri
             ],
             queryFn: async ()=>(await dataProvider.fetch(itemUri)).json,
+            // TODO: Collections don't have to contain activities only, do they?
             staleTime: Infinity // Activities are immutable, so no need to refetch..
         })));
     if (!shouldDereference) return {
@@ -259,7 +352,7 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
     };
 };
 /**
- * Subscribe a collection. Supports pagination.
+ * Subscribe toa collection. Supports pagination.
  * @param predicateOrUrl The collection URI or the predicate to get the collection URI from the identity (webId).
  * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false }`
  */ const $8281f3ce3b9d6123$var$useCollection = (predicateOrUrl, options = {})=>{
@@ -277,7 +370,7 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
     // Get collectionUrl from webId predicate or URL.
     const collectionUrl = (0, $85cNH$useMemo)(()=>{
         if (predicateOrUrl) {
-            if (predicateOrUrl.startsWith('http')) return predicateOrUrl;
+            if (predicateOrUrl.startsWith('http') || predicateOrUrl.startsWith('did:ng:')) return predicateOrUrl;
             if (identity?.webIdData) return identity?.webIdData?.[predicateOrUrl];
         }
         return undefined;
@@ -326,6 +419,8 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
         // Validate the json with the SHACL shape
         if (shaclShapeUri !== '' && json[itemsKey] && json[itemsKey].length > 0) try {
             if (!json['@context']) throw new Error(`No context returned by the server.\nA context is required to expand the collection's items and validate them.`);
+            // TODO: Research: Is this used with the multi-purpose viewer already?
+            // How can multiple shapes be validated? Can we get this typed here?
             const shaclValidator = await (0, $25cb6caf33e2f460$export$6de257db5bb9fd74)(shaclShapeUri);
             const validatedResults = await (0, $25cb6caf33e2f460$export$1558e55ae3912bbb)((0, $577f4953dfa5de4f$export$e57ff0f701c44363)(json[itemsKey]), shaclValidator, json['@context']);
             // Keep only the valid item in the collection
@@ -992,7 +1087,9 @@ var $be88b298220210d1$export$2e2bcd8739ae039 = $be88b298220210d1$var$CommentsLis
 
 const $7ce737d4a1c88e63$var$CommentsField = ({ source: source, context: context, helperText: helperText, placeholder: placeholder, userResource: userResource, mentions: mentions })=>{
     const record = (0, $85cNH$useRecordContext)();
-    const { items: comments, loading: loading, addItem: addItem, removeItem: removeItem } = (0, $8281f3ce3b9d6123$export$2e2bcd8739ae039)(record.replies);
+    const { items: comments, loading: loading, addItem: addItem, removeItem: removeItem } = (0, $8281f3ce3b9d6123$export$2e2bcd8739ae039)(record.replies, {
+        liveUpdates: true
+    });
     if (!userResource) throw new Error('No userResource defined for CommentsField');
     return /*#__PURE__*/ (0, $85cNH$jsxs)((0, $85cNH$Fragment), {
         children: [
@@ -1066,6 +1163,276 @@ const $ea214512ab1a2e8f$var$ReferenceCollectionField = ({ source: source, refere
 };
 var $ea214512ab1a2e8f$export$2e2bcd8739ae039 = $ea214512ab1a2e8f$var$ReferenceCollectionField;
 
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Subscribe to a collection. Supports pagination.
+ * @param collectionUri The collection URI or the predicate to get the collection URI from the identity (webId).
+ * @param {UseCollectionOptions & UseTypedCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false, pageSize: 10 }` and requires at least one ldo @see {ShapeType}.
+ */ const $75609b4dfb738328$var$useTypedCollection = (collectionUri, options)=>{
+    const { pageSize: pageSize = 10, liveUpdates: subscribeToUpdates = false, shapeTypes: shapeTypes } = options;
+    if (!shapeTypes.length) throw new Error('At least one ShapeType is required to filter the collection by.');
+    // 1. Fetch the collection
+    const collectionQuery = $75609b4dfb738328$var$useInfiniteCollectionQuery(collectionUri);
+    const { totalItems: totalItems, isPaginated: isPaginated } = $75609b4dfb738328$var$useTotalItemsFromPages(collectionQuery.data);
+    // 2. Filter items from the collection pages that match the given shape types.
+    const filteredItems = $75609b4dfb738328$var$useFilteredItemsFromPages(collectionQuery.data, shapeTypes);
+    // 3. Set up notifications for live updates, if enabled.
+    const liveUpdatesStatus = $75609b4dfb738328$var$useSubscribeToUpdates({
+        uri: collectionUri,
+        enabled: subscribeToUpdates,
+        onAddItem: (_item)=>{
+            // Since we don't know where the item was added, we refetch the whole collection ¯\_(ツ)_/¯.
+            collectionQuery.refetch();
+        },
+        onRemoveItem: (uri)=>{
+            $75609b4dfb738328$var$removeItemFromQueryData(uri, collectionQuery);
+        }
+    });
+    // 4. Pagination logic.
+    const [requestedNextItems, setRequestedNextItems] = (0, $85cNH$useState)(pageSize);
+    const [requestedPrevItems, setRequestedPrevItems] = (0, $85cNH$useState)(0);
+    // Automatically fetch next page, if more items are requested.
+    (0, $85cNH$useEffect)(()=>{
+        if (requestedNextItems > filteredItems.length && collectionQuery.hasNextPage && !collectionQuery.isLoading) collectionQuery.fetchNextPage();
+    }, [
+        requestedNextItems,
+        filteredItems.length,
+        collectionQuery.hasNextPage,
+        collectionQuery.isLoading
+    ]);
+    // Automatically fetch previous page, if more items are requested.
+    (0, $85cNH$useEffect)(()=>{
+        if (requestedPrevItems > filteredItems.length && collectionQuery.hasPreviousPage && !collectionQuery.isLoading) collectionQuery.fetchPreviousPage();
+    }, [
+        requestedPrevItems,
+        filteredItems.length,
+        collectionQuery.hasPreviousPage,
+        collectionQuery.isLoading
+    ]);
+    /** Fetch next n (filtered) items. */ const fetchNext = (0, $85cNH$useCallback)((noItems = pageSize)=>{
+        setRequestedNextItems(filteredItems.length + noItems);
+    }, [
+        filteredItems.length,
+        pageSize
+    ]);
+    /** Fetch previous n (filtered) items. */ const fetchPrevious = (0, $85cNH$useCallback)((noItems = pageSize)=>{
+        setRequestedPrevItems(filteredItems.length + noItems);
+    }, [
+        filteredItems.length,
+        pageSize
+    ]);
+    return {
+        // TODO: Do we want to expose all properties from the collection query?
+        ...collectionQuery,
+        items: filteredItems,
+        liveUpdatesStatus: liveUpdatesStatus,
+        fetchNext: fetchNext,
+        fetchPrevious: fetchPrevious,
+        totalItems: totalItems,
+        isPaginated: isPaginated
+    };
+};
+var $75609b4dfb738328$export$2e2bcd8739ae039 = $75609b4dfb738328$var$useTypedCollection;
+const $75609b4dfb738328$var$useSubscribeToUpdates = ({ uri: uri, enabled: enabled = true, onAddItem: onAddItem, onRemoveItem: onRemoveItem })=>{
+    const { fetch: fetchFn } = (0, $85cNH$useDataProvider)();
+    const [status, setStatus] = (0, $85cNH$useState)({
+        status: enabled ? 'connecting' : 'disabled'
+    });
+    (0, $85cNH$useEffect)(()=>{
+        const webSocketRef = (0, $85cNH$useRef)(null);
+        // Nothing to do, return empty clean up function.
+        if (!enabled || !uri) return ()=>{};
+        // Create ws that listens to collectionUri changes
+        (0, $85cNH$getOrCreateWsChannel)(fetchFn, uri).then((ws)=>{
+            webSocketRef.current = ws; // Keep a ref to the webSocket so that it can be used elsewhere
+            webSocketRef.current.addEventListener('message', (event)=>{
+                // TODO: correct ldo type
+                const data = JSON.parse(event.data);
+                if (data.type === 'Add') onAddItem(data.object);
+                else if (data.type === 'Remove') onRemoveItem(data.object);
+            });
+            webSocketRef.current.addEventListener('error', (event)=>{
+                setStatus({
+                    error: event,
+                    status: 'error'
+                });
+            // TODO: Retry after a while (use react query?).
+            });
+            webSocketRef.current.addEventListener('close', (_event)=>{
+                if (!status.error) setStatus({
+                    status: 'closed'
+                });
+            });
+        }).catch((error)=>{
+            setStatus({
+                status: 'error',
+                error: error
+            });
+        });
+        // Clean up, i.e. close channel.
+        return ()=>{
+            webSocketRef.current?.close();
+        };
+    }, [
+        uri,
+        enabled,
+        onAddItem,
+        onRemoveItem
+    ]);
+    return status;
+};
+const $75609b4dfb738328$var$useInfiniteCollectionQuery = (collectionUri)=>{
+    const { data: identity } = (0, $85cNH$useGetIdentity)();
+    const dataProvider = (0, $85cNH$useDataProvider)();
+    const { fetch: fetchFn } = dataProvider;
+    const infiniteQueryData = (0, $85cNH$useInfiniteQuery1)({
+        queryKey: [
+            'collection',
+            {
+                uri: collectionUri
+            }
+        ],
+        queryFn: $75609b4dfb738328$var$getFetchCollectionPage(fetchFn),
+        initialPageParam: collectionUri,
+        enabled: !!(collectionUri && identity?.id),
+        getNextPageParam: (current)=>current.raw?.next,
+        getPreviousPageParam: (current)=>current.raw?.prev
+    });
+    return infiniteQueryData;
+};
+const $75609b4dfb738328$var$getFetchCollectionPage = (fetchFn)=>async ({ pageParam: pageUri })=>{
+        // Note, page is not necessarily of type OrderedCollectionPage but it is a partial in any case.
+        const jsonPage = await (await fetchFn(pageUri)).json();
+        if (!jsonPage || typeof jsonPage !== 'object') throw new Error(`Could not fetch page ${pageUri}. Response is invalid.`);
+        const itemsKey = 'orderedItems' in jsonPage ? 'orderedItems' : 'items';
+        if ((0, $577f4953dfa5de4f$export$e57ff0f701c44363)(jsonPage[itemsKey]).length === 0) // No items in page.
+        return {
+            itemIds: [],
+            dataset: null,
+            data: null
+        };
+        // Keep track of item ids in this order (in the rdf dataset the order is lost).
+        const itemIds = (0, $577f4953dfa5de4f$export$e57ff0f701c44363)(jsonPage[itemsKey]).map((itemOrId)=>itemOrId?.['@id'] || itemOrId?.id || itemOrId).filter((item)=>item); // Ensure item is not undefined.
+        // Parse the page into a dataset.
+        // TODO: Move to data provider.
+        const dataset = (0, $85cNH$createConnectedLdoDataset)([
+            (0, $85cNH$solidConnectedPlugin)
+        ]);
+        dataset.setContext('solid', {
+            fetch: fetchFn
+        });
+        dataset.addAll(await (0, $577f4953dfa5de4f$export$7089f01fea2fc5c2)(jsonPage));
+        const resource = dataset.getResource(pageUri);
+        if (resource.type === 'InvalidIdentifierResource') return {
+            itemIds: itemIds,
+            dataset: null,
+            pageUri: pageUri,
+            data: null
+        };
+        const ldoBuilder = dataset.usingType((0, $85cNH$OrderedCollectionPageShapeType));
+        // Run a link query to ensure that all items are dereferenced (the results are kept in the dataset).
+        await ldoBuilder.startLinkQuery(resource, pageUri, {
+            items: true,
+            orderedItems: true
+        }).run({
+            reload: false
+        });
+        return {
+            dataset: dataset,
+            itemIds: itemIds,
+            pageUri: pageUri,
+            data: ldoBuilder.fromSubject(pageUri)
+        };
+    };
+const $75609b4dfb738328$var$useTotalItemsFromPages = (queryData)=>{
+    if (!queryData?.pages.length) return {
+        isPaginated: undefined,
+        totalItems: undefined
+    };
+    const { pages: pages } = queryData;
+    // Check if collection is paginated. We assume that the collection is paginated if there are pages with first, last, prev or next.
+    const isPaginated = pages.length === 0 ? undefined : !!pages.find((page)=>page.data && ('first' in page.data || 'next' in page.data || 'last' in page.data || 'prev' in page.data));
+    // Approach 1: Get total items info by checking if the page has a totalItems property.
+    const totalItemsByCollectionInfo = pages.find((page)=>'totalItems' in page)?.data?.totalItems;
+    if (totalItemsByCollectionInfo) return {
+        totalItems: totalItemsByCollectionInfo,
+        isPaginated: isPaginated
+    };
+    // Approach 2: If collection is not paginated, we count the number of items in the collection.
+    if (!isPaginated) return {
+        totalItems: pages[0].itemIds.length,
+        isPaginated: isPaginated
+    };
+    // Approach 3: If we have the whole collection loaded, we can count the items.
+    const firstPage = pages.find((page)=>page.data?.first)?.data?.first;
+    const lastPage = pages.find((page)=>page.data?.last)?.data?.last;
+    // We assume that all pages are loaded if the first and last page is available.
+    // In that case, count all pages' items.
+    if (firstPage && lastPage) return {
+        isPaginated: isPaginated,
+        totalItems: pages// Get length of page
+        .map((page)=>page.data?.orderedItems?.size || page.data?.items?.size || 0)// Sum all page length counts.
+        .reduce((prev, current)=>prev + current)
+    };
+    // If no approach succeeded, we return undefined.
+    return {
+        totalItems: undefined,
+        isPaginated: isPaginated
+    };
+};
+const $75609b4dfb738328$var$useFilteredItemsFromPages = (queryData, shapeTypes)=>{
+    const [filteredItems, setFilteredItems] = (0, $85cNH$useState)([]);
+    const filterItems = (0, $85cNH$useCallback)(async ()=>{
+        // We need to load the shacl resources and match them to the shape types.
+        const validator = await (0, $25cb6caf33e2f460$export$8b707c2a07270e94)();
+        const pages = queryData?.pages;
+        if (!pages || pages.length === 0) {
+            setFilteredItems([]);
+            return;
+        }
+        const validatedItems = await Promise.all(// For every page, ...
+        queryData.pages.map(async (page)=>{
+            const items = await Promise.all(// For every item in the page, ...
+            page.itemIds.map(async (itemId)=>// Validate item against the shape types and return the ldo object of the correct type, if it is valid.
+                page.dataset && (0, $25cb6caf33e2f460$export$c4cb1062f0ffb837)(itemId, page.dataset, shapeTypes, validator))).then((results)=>results.filter((item)=>!!item)); // Filter out null items.
+            return items;
+        })).then((results)=>results.flat());
+        setFilteredItems(validatedItems);
+    // TODO: Cache filtered items by page, so that we don't have to re-filter them every time?
+    }, [
+        queryData?.pages,
+        shapeTypes
+    ]);
+    (0, $85cNH$useEffect)(()=>{
+        filterItems();
+    }, [
+        filterItems
+    ]);
+    return filteredItems;
+};
+/** A somewhat hacky way to remove an item from the useInfiniteCollectionQuery. */ const $75609b4dfb738328$var$removeItemFromQueryData = (itemUri, collectionQuery)=>{
+    // Manipulate data about total items. Sorry, a bit hacky...
+    collectionQuery.data?.pages.forEach((page)=>{
+        if (!page.dataset) return;
+        page.dataset.deleteMatches((0, $85cNH$rdfext).namedNode(itemUri));
+        // There might be a totalItems property in the page, so we need to update it.
+        if (page.data.totalItems && Number.isInteger(page.data.totalItems)) // eslint-disable-next-line no-param-reassign
+        page.data.totalItems -= 1;
+    });
+}; // Open Question:
+ // - Use one dataset? It has the benefit of only having to define a single solid connected dataset and makes ng switching easier -> no need to create a connected dataset.
+ // - On the other hand (the only downside I can think of rn): Either you have to remove expired items from the dataset or you don't care about old data that is not used by react admin anymore. At a refetch all old data would have to be removed though.
 
 
 
@@ -1317,5 +1684,5 @@ var $51cccd331ea8b13d$export$2e2bcd8739ae039 = $51cccd331ea8b13d$var$useMentions
 
 
 
-export {$7ce737d4a1c88e63$export$2e2bcd8739ae039 as CommentsField, $d3be168cd1e7aaae$export$2e2bcd8739ae039 as CollectionList, $ea214512ab1a2e8f$export$2e2bcd8739ae039 as ReferenceCollectionField, $8281f3ce3b9d6123$export$2e2bcd8739ae039 as useCollection, $cc1d1cd0e97c63a2$export$2e2bcd8739ae039 as useInbox, $6a227ddc2fd92a7a$export$2e2bcd8739ae039 as useNodeinfo, $4d1d40fdbcd30589$export$2e2bcd8739ae039 as useOutbox, $2514c63dc8f4867c$export$2e2bcd8739ae039 as useWebfinger, $51cccd331ea8b13d$export$2e2bcd8739ae039 as useMentions, $338f387df48a40d7$export$1ec8e53e7d982d22 as ACTIVITY_TYPES, $338f387df48a40d7$export$9649665d7ccb0dc2 as ACTOR_TYPES, $338f387df48a40d7$export$c49cfb2681596b20 as OBJECT_TYPES, $338f387df48a40d7$export$4d8d554031975581 as PUBLIC_URI};
+export {$7ce737d4a1c88e63$export$2e2bcd8739ae039 as CommentsField, $d3be168cd1e7aaae$export$2e2bcd8739ae039 as CollectionList, $ea214512ab1a2e8f$export$2e2bcd8739ae039 as ReferenceCollectionField, $8281f3ce3b9d6123$export$2e2bcd8739ae039 as useCollection, $75609b4dfb738328$export$2e2bcd8739ae039 as useTypedCollection, $cc1d1cd0e97c63a2$export$2e2bcd8739ae039 as useInbox, $6a227ddc2fd92a7a$export$2e2bcd8739ae039 as useNodeinfo, $4d1d40fdbcd30589$export$2e2bcd8739ae039 as useOutbox, $2514c63dc8f4867c$export$2e2bcd8739ae039 as useWebfinger, $51cccd331ea8b13d$export$2e2bcd8739ae039 as useMentions, $338f387df48a40d7$export$1ec8e53e7d982d22 as ACTIVITY_TYPES, $338f387df48a40d7$export$9649665d7ccb0dc2 as ACTOR_TYPES, $338f387df48a40d7$export$c49cfb2681596b20 as OBJECT_TYPES, $338f387df48a40d7$export$4d8d554031975581 as PUBLIC_URI};
 //# sourceMappingURL=index.es.js.map
