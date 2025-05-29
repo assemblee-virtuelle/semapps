@@ -1,19 +1,39 @@
-import type { Quad } from '@rdfjs/types';
-// import SHACLValidator from '@rdf-ext/shacl';
 import rdf from 'rdf-ext';
 import { Validator } from 'shacl-engine';
 import { ActivityStreamsShape } from '@activitypods/shape-definitions';
+import { LdoBase, LdoDataset, ShapeType } from '@ldo/ldo';
 import { parseJsonLd } from '../utils';
 import { parseTurtle } from './streamUtils';
-import { LdoBase, LdoDataset, ShapeType } from '@ldo/ldo';
 
 // Cache of SHACL validators
 const validatorCache: Record<string, Validator> = {};
 
+/**
+ * Returns a SHACL validator for ActivityStreams shapes.
+ *
+ * This function creates a SHACL validator for ActivityStreams shapes using the
+ * `@activitypods/shape-definitions` package. It caches the validator to avoid
+ * creating it multiple times.
+ *
+ * @returns A Promise that resolves to a SHACL Validator instance.
+ */
 const getActivityStreamsValidator = async (): Promise<Validator> => {
   // Check if the validator is already cached
   if (validatorCache.activityStreams) {
     return validatorCache.activityStreams;
+  }
+
+  try {
+    const shapeDataset = await parseTurtle(ActivityStreamsShape);
+
+    // Create and cache the SHACL validator using the dataset
+    validatorCache.activityStreams = new Validator(shapeDataset, { factory: rdf, debug: true });
+
+    return validatorCache.activityStreams;
+  } catch (error) {
+    throw new Error(
+      `Failed to create ActivityStreams validator: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
   }
 
   const shapeDataset = await parseTurtle(ActivityStreamsShape);
@@ -31,24 +51,39 @@ const getShaclValidator = async (shapeUri: string): Promise<Validator> => {
     return validatorCache[shapeUri];
   }
 
-  const response = await fetch(shapeUri, {
-    headers: {
-      Accept: 'text/turtle'
+  try {
+    const response = await fetch(shapeUri, {
+      headers: {
+        Accept: 'text/turtle'
+      }
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to load shape: ${response.status} ${response.statusText}`);
     }
-  });
-  if (!response.ok) {
-    throw new Error(`Failed to load shape: ${response.status} ${response.statusText}`);
+
+    // Get the Turtle data as text
+    const turtleData: string = await response.text();
+    const shapeDataset = await parseTurtle(turtleData);
+
+    // Create and cache the SHACL validator using the dataset
+    validatorCache[shapeUri] = new Validator(shapeDataset, { factory: rdf });
+    return validatorCache[shapeUri];
+  } catch (error) {
+    throw new Error(
+      `Failed to create SHACL validator for ${shapeUri}: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
   }
-
-  // Get the Turtle data as text
-  const turtleData: string = await response.text();
-  const shapeDataset = await parseTurtle(turtleData);
-
-  // Create and cache the SHACL validator using the dataset
-  validatorCache[shapeUri] = new Validator(shapeDataset, { factory: rdf });
-  return validatorCache[shapeUri];
 };
 
+/**
+ * Validates an array of items against a SHACL shape and returns the validation results.
+ *
+ * @param items The items to validate
+ * @param shaclValidator The SHACL validator to use
+ * @param context The context to use for the items
+ *
+ * @returns An array of objects containing the item and its validation result
+ */
 const validateItems = async (
   items: Array<object>,
   shaclValidator: Validator,
@@ -57,12 +92,10 @@ const validateItems = async (
   if (!shaclValidator) {
     throw new Error('validateItems: shaclValidator is required');
   }
-  if (!context) {
-    throw new Error('validateItems: context is required');
-  }
   return Promise.all(
     items.map(async (item: any) => {
       try {
+        if (!item['@context']) item['@context'] = context;
         // Create a dataset from the item's JSON-LD
         const itemDataset = await parseJsonLd(item);
 
@@ -84,6 +117,16 @@ const validateItems = async (
   );
 };
 
+/**
+ * Validates a subject against a set of SHACL shapes and returns the typed item if valid.
+ *
+ * @param subjectUri The subject to validate
+ * @param dataset The dataset containing the subject
+ * @param shapeTypes The shape types to validate against
+ * @param validator The SHACL validator to use
+ *
+ * @returns A typed item if valid, or null if not valid
+ */
 const getAndValidateLdoSubject = async <T extends LdoBase>(
   subjectUri: string,
   dataset: LdoDataset,
@@ -97,8 +140,8 @@ const getAndValidateLdoSubject = async <T extends LdoBase>(
     { terms: shapeTypes.map(shapeType => rdf.namedNode(shapeType.shape)) }
   );
 
-  if (!validationReport.conforms) return [];
-  const results = validationReport.results;
+  if (!validationReport.conforms) return null;
+  const { results } = validationReport;
 
   // Find the shape that matched the item in the report results.
   const shapeType = shapeTypes.find(st => results.find(res => res.focusNode === subjectUri && res.shape === st.shape));

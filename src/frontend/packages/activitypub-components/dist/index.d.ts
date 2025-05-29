@@ -9,6 +9,12 @@ import {
 } from 'react-query';
 import { Identifier } from 'react-admin';
 import { JSX } from 'react/jsx-runtime';
+import { LdoBase, ShapeType } from '@ldo/ldo';
+import { LdoBase as _LdoBase1 } from '@ldo/ldo/dist/types/util';
+import { SolidConnectedPlugin } from '@ldo/connected-solid';
+import { ConnectedLdoDataset } from '@ldo/connected';
+import { OrderedCollectionPage } from '@activitypods/ldo-shapes';
+import { a7, au, aP, av, ap, aG, ax } from '@tanstack/query-core/build/legacy/hydration-BCnR_RAv';
 export declare namespace ACTIVITY_TYPES {
   let ACCEPT: string;
   let ADD: string;
@@ -201,7 +207,7 @@ interface NodeInfo {
   };
 }
 /**
- * Subscribe a collection. Supports pagination.
+ * Subscribe toa collection. Supports pagination.
  * @param predicateOrUrl The collection URI or the predicate to get the collection URI from the identity (webId).
  * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false }`
  */
@@ -354,6 +360,925 @@ export function ReferenceCollectionField({
   reference: any;
   children: any;
 }): JSX.Element | null;
+interface UseTypedCollectionOptions<ItemType extends LdoBase> {
+  shapeTypes: ShapeType<ItemType>[];
+  pageSize: number;
+}
+/**
+ * Subscribe to a collection. Supports pagination.
+ * @param collectionUri The collection URI or the predicate to get the collection URI from the identity (webId).
+ * @param {UseCollectionOptions & UseTypedCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false, pageSize: 10 }` and requires at least one ldo @see {ShapeType}.
+ */
+export const useTypedCollection: <ItemType extends _LdoBase1>(
+  collectionUri: string,
+  options: UseCollectionOptions & UseTypedCollectionOptions<ItemType>
+) =>
+  | {
+      items: ItemType[];
+      liveUpdatesStatus: {
+        error?: any;
+        status: 'error' | 'closed' | 'connected' | 'connecting' | 'disabled';
+      };
+      fetchNext: (noItems?: number) => void;
+      fetchPrevious: (noItems?: number) => void;
+      totalItems: number | undefined;
+      isPaginated: boolean | undefined;
+      data: a7<
+        | {
+            itemIds: never[];
+            dataset: null;
+            data: null;
+            pageUri?: undefined;
+          }
+        | {
+            itemIds: string[];
+            dataset: null;
+            pageUri: string;
+            data: null;
+          }
+        | {
+            dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+            itemIds: string[];
+            pageUri: string;
+            data: OrderedCollectionPage;
+          },
+        unknown
+      >;
+      error: Error;
+      isError: true;
+      isPending: false;
+      isLoading: false;
+      isLoadingError: false;
+      isRefetchError: true;
+      isSuccess: false;
+      isPlaceholderData: false;
+      status: 'error';
+      fetchNextPage: (options?: au | undefined) => Promise<
+        aP<
+          a7<
+            | {
+                itemIds: never[];
+                dataset: null;
+                data: null;
+                pageUri?: undefined;
+              }
+            | {
+                itemIds: string[];
+                dataset: null;
+                pageUri: string;
+                data: null;
+              }
+            | {
+                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+                itemIds: string[];
+                pageUri: string;
+                data: OrderedCollectionPage;
+              },
+            unknown
+          >,
+          Error
+        >
+      >;
+      fetchPreviousPage: (options?: av | undefined) => Promise<
+        aP<
+          a7<
+            | {
+                itemIds: never[];
+                dataset: null;
+                data: null;
+                pageUri?: undefined;
+              }
+            | {
+                itemIds: string[];
+                dataset: null;
+                pageUri: string;
+                data: null;
+              }
+            | {
+                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+                itemIds: string[];
+                pageUri: string;
+                data: OrderedCollectionPage;
+              },
+            unknown
+          >,
+          Error
+        >
+      >;
+      hasNextPage: boolean;
+      hasPreviousPage: boolean;
+      isFetchNextPageError: boolean;
+      isFetchingNextPage: boolean;
+      isFetchPreviousPageError: boolean;
+      isFetchingPreviousPage: boolean;
+      dataUpdatedAt: number;
+      errorUpdatedAt: number;
+      failureCount: number;
+      failureReason: Error | null;
+      errorUpdateCount: number;
+      isFetched: boolean;
+      isFetchedAfterMount: boolean;
+      isFetching: boolean;
+      isInitialLoading: boolean;
+      isPaused: boolean;
+      isRefetching: boolean;
+      isStale: boolean;
+      refetch: (options?: ap | undefined) => Promise<
+        aG<
+          a7<
+            | {
+                itemIds: never[];
+                dataset: null;
+                data: null;
+                pageUri?: undefined;
+              }
+            | {
+                itemIds: string[];
+                dataset: null;
+                pageUri: string;
+                data: null;
+              }
+            | {
+                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+                itemIds: string[];
+                pageUri: string;
+                data: OrderedCollectionPage;
+              },
+            unknown
+          >,
+          Error
+        >
+      >;
+      fetchStatus: ax;
+      promise: Promise<
+        a7<
+          | {
+              itemIds: never[];
+              dataset: null;
+              data: null;
+              pageUri?: undefined;
+            }
+          | {
+              itemIds: string[];
+              dataset: null;
+              pageUri: string;
+              data: null;
+            }
+          | {
+              dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+              itemIds: string[];
+              pageUri: string;
+              data: OrderedCollectionPage;
+            },
+          unknown
+        >
+      >;
+    }
+  | {
+      items: ItemType[];
+      liveUpdatesStatus: {
+        error?: any;
+        status: 'error' | 'closed' | 'connected' | 'connecting' | 'disabled';
+      };
+      fetchNext: (noItems?: number) => void;
+      fetchPrevious: (noItems?: number) => void;
+      totalItems: number | undefined;
+      isPaginated: boolean | undefined;
+      data: a7<
+        | {
+            itemIds: never[];
+            dataset: null;
+            data: null;
+            pageUri?: undefined;
+          }
+        | {
+            itemIds: string[];
+            dataset: null;
+            pageUri: string;
+            data: null;
+          }
+        | {
+            dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+            itemIds: string[];
+            pageUri: string;
+            data: OrderedCollectionPage;
+          },
+        unknown
+      >;
+      error: null;
+      isError: false;
+      isPending: false;
+      isLoading: false;
+      isLoadingError: false;
+      isRefetchError: false;
+      isFetchNextPageError: false;
+      isFetchPreviousPageError: false;
+      isSuccess: true;
+      isPlaceholderData: false;
+      status: 'success';
+      fetchNextPage: (options?: au | undefined) => Promise<
+        aP<
+          a7<
+            | {
+                itemIds: never[];
+                dataset: null;
+                data: null;
+                pageUri?: undefined;
+              }
+            | {
+                itemIds: string[];
+                dataset: null;
+                pageUri: string;
+                data: null;
+              }
+            | {
+                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+                itemIds: string[];
+                pageUri: string;
+                data: OrderedCollectionPage;
+              },
+            unknown
+          >,
+          Error
+        >
+      >;
+      fetchPreviousPage: (options?: av | undefined) => Promise<
+        aP<
+          a7<
+            | {
+                itemIds: never[];
+                dataset: null;
+                data: null;
+                pageUri?: undefined;
+              }
+            | {
+                itemIds: string[];
+                dataset: null;
+                pageUri: string;
+                data: null;
+              }
+            | {
+                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+                itemIds: string[];
+                pageUri: string;
+                data: OrderedCollectionPage;
+              },
+            unknown
+          >,
+          Error
+        >
+      >;
+      hasNextPage: boolean;
+      hasPreviousPage: boolean;
+      isFetchingNextPage: boolean;
+      isFetchingPreviousPage: boolean;
+      dataUpdatedAt: number;
+      errorUpdatedAt: number;
+      failureCount: number;
+      failureReason: Error | null;
+      errorUpdateCount: number;
+      isFetched: boolean;
+      isFetchedAfterMount: boolean;
+      isFetching: boolean;
+      isInitialLoading: boolean;
+      isPaused: boolean;
+      isRefetching: boolean;
+      isStale: boolean;
+      refetch: (options?: ap | undefined) => Promise<
+        aG<
+          a7<
+            | {
+                itemIds: never[];
+                dataset: null;
+                data: null;
+                pageUri?: undefined;
+              }
+            | {
+                itemIds: string[];
+                dataset: null;
+                pageUri: string;
+                data: null;
+              }
+            | {
+                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+                itemIds: string[];
+                pageUri: string;
+                data: OrderedCollectionPage;
+              },
+            unknown
+          >,
+          Error
+        >
+      >;
+      fetchStatus: ax;
+      promise: Promise<
+        a7<
+          | {
+              itemIds: never[];
+              dataset: null;
+              data: null;
+              pageUri?: undefined;
+            }
+          | {
+              itemIds: string[];
+              dataset: null;
+              pageUri: string;
+              data: null;
+            }
+          | {
+              dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+              itemIds: string[];
+              pageUri: string;
+              data: OrderedCollectionPage;
+            },
+          unknown
+        >
+      >;
+    }
+  | {
+      items: ItemType[];
+      liveUpdatesStatus: {
+        error?: any;
+        status: 'error' | 'closed' | 'connected' | 'connecting' | 'disabled';
+      };
+      fetchNext: (noItems?: number) => void;
+      fetchPrevious: (noItems?: number) => void;
+      totalItems: number | undefined;
+      isPaginated: boolean | undefined;
+      data: undefined;
+      error: Error;
+      isError: true;
+      isPending: false;
+      isLoading: false;
+      isLoadingError: true;
+      isRefetchError: false;
+      isFetchNextPageError: false;
+      isFetchPreviousPageError: false;
+      isSuccess: false;
+      isPlaceholderData: false;
+      status: 'error';
+      fetchNextPage: (options?: au | undefined) => Promise<
+        aP<
+          a7<
+            | {
+                itemIds: never[];
+                dataset: null;
+                data: null;
+                pageUri?: undefined;
+              }
+            | {
+                itemIds: string[];
+                dataset: null;
+                pageUri: string;
+                data: null;
+              }
+            | {
+                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+                itemIds: string[];
+                pageUri: string;
+                data: OrderedCollectionPage;
+              },
+            unknown
+          >,
+          Error
+        >
+      >;
+      fetchPreviousPage: (options?: av | undefined) => Promise<
+        aP<
+          a7<
+            | {
+                itemIds: never[];
+                dataset: null;
+                data: null;
+                pageUri?: undefined;
+              }
+            | {
+                itemIds: string[];
+                dataset: null;
+                pageUri: string;
+                data: null;
+              }
+            | {
+                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+                itemIds: string[];
+                pageUri: string;
+                data: OrderedCollectionPage;
+              },
+            unknown
+          >,
+          Error
+        >
+      >;
+      hasNextPage: boolean;
+      hasPreviousPage: boolean;
+      isFetchingNextPage: boolean;
+      isFetchingPreviousPage: boolean;
+      dataUpdatedAt: number;
+      errorUpdatedAt: number;
+      failureCount: number;
+      failureReason: Error | null;
+      errorUpdateCount: number;
+      isFetched: boolean;
+      isFetchedAfterMount: boolean;
+      isFetching: boolean;
+      isInitialLoading: boolean;
+      isPaused: boolean;
+      isRefetching: boolean;
+      isStale: boolean;
+      refetch: (options?: ap | undefined) => Promise<
+        aG<
+          a7<
+            | {
+                itemIds: never[];
+                dataset: null;
+                data: null;
+                pageUri?: undefined;
+              }
+            | {
+                itemIds: string[];
+                dataset: null;
+                pageUri: string;
+                data: null;
+              }
+            | {
+                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+                itemIds: string[];
+                pageUri: string;
+                data: OrderedCollectionPage;
+              },
+            unknown
+          >,
+          Error
+        >
+      >;
+      fetchStatus: ax;
+      promise: Promise<
+        a7<
+          | {
+              itemIds: never[];
+              dataset: null;
+              data: null;
+              pageUri?: undefined;
+            }
+          | {
+              itemIds: string[];
+              dataset: null;
+              pageUri: string;
+              data: null;
+            }
+          | {
+              dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+              itemIds: string[];
+              pageUri: string;
+              data: OrderedCollectionPage;
+            },
+          unknown
+        >
+      >;
+    }
+  | {
+      items: ItemType[];
+      liveUpdatesStatus: {
+        error?: any;
+        status: 'error' | 'closed' | 'connected' | 'connecting' | 'disabled';
+      };
+      fetchNext: (noItems?: number) => void;
+      fetchPrevious: (noItems?: number) => void;
+      totalItems: number | undefined;
+      isPaginated: boolean | undefined;
+      data: undefined;
+      error: null;
+      isError: false;
+      isPending: true;
+      isLoading: true;
+      isLoadingError: false;
+      isRefetchError: false;
+      isFetchNextPageError: false;
+      isFetchPreviousPageError: false;
+      isSuccess: false;
+      isPlaceholderData: false;
+      status: 'pending';
+      fetchNextPage: (options?: au | undefined) => Promise<
+        aP<
+          a7<
+            | {
+                itemIds: never[];
+                dataset: null;
+                data: null;
+                pageUri?: undefined;
+              }
+            | {
+                itemIds: string[];
+                dataset: null;
+                pageUri: string;
+                data: null;
+              }
+            | {
+                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+                itemIds: string[];
+                pageUri: string;
+                data: OrderedCollectionPage;
+              },
+            unknown
+          >,
+          Error
+        >
+      >;
+      fetchPreviousPage: (options?: av | undefined) => Promise<
+        aP<
+          a7<
+            | {
+                itemIds: never[];
+                dataset: null;
+                data: null;
+                pageUri?: undefined;
+              }
+            | {
+                itemIds: string[];
+                dataset: null;
+                pageUri: string;
+                data: null;
+              }
+            | {
+                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+                itemIds: string[];
+                pageUri: string;
+                data: OrderedCollectionPage;
+              },
+            unknown
+          >,
+          Error
+        >
+      >;
+      hasNextPage: boolean;
+      hasPreviousPage: boolean;
+      isFetchingNextPage: boolean;
+      isFetchingPreviousPage: boolean;
+      dataUpdatedAt: number;
+      errorUpdatedAt: number;
+      failureCount: number;
+      failureReason: Error | null;
+      errorUpdateCount: number;
+      isFetched: boolean;
+      isFetchedAfterMount: boolean;
+      isFetching: boolean;
+      isInitialLoading: boolean;
+      isPaused: boolean;
+      isRefetching: boolean;
+      isStale: boolean;
+      refetch: (options?: ap | undefined) => Promise<
+        aG<
+          a7<
+            | {
+                itemIds: never[];
+                dataset: null;
+                data: null;
+                pageUri?: undefined;
+              }
+            | {
+                itemIds: string[];
+                dataset: null;
+                pageUri: string;
+                data: null;
+              }
+            | {
+                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+                itemIds: string[];
+                pageUri: string;
+                data: OrderedCollectionPage;
+              },
+            unknown
+          >,
+          Error
+        >
+      >;
+      fetchStatus: ax;
+      promise: Promise<
+        a7<
+          | {
+              itemIds: never[];
+              dataset: null;
+              data: null;
+              pageUri?: undefined;
+            }
+          | {
+              itemIds: string[];
+              dataset: null;
+              pageUri: string;
+              data: null;
+            }
+          | {
+              dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+              itemIds: string[];
+              pageUri: string;
+              data: OrderedCollectionPage;
+            },
+          unknown
+        >
+      >;
+    }
+  | {
+      items: ItemType[];
+      liveUpdatesStatus: {
+        error?: any;
+        status: 'error' | 'closed' | 'connected' | 'connecting' | 'disabled';
+      };
+      fetchNext: (noItems?: number) => void;
+      fetchPrevious: (noItems?: number) => void;
+      totalItems: number | undefined;
+      isPaginated: boolean | undefined;
+      data: undefined;
+      error: null;
+      isError: false;
+      isPending: true;
+      isLoadingError: false;
+      isRefetchError: false;
+      isFetchNextPageError: false;
+      isFetchPreviousPageError: false;
+      isSuccess: false;
+      isPlaceholderData: false;
+      status: 'pending';
+      fetchNextPage: (options?: au | undefined) => Promise<
+        aP<
+          a7<
+            | {
+                itemIds: never[];
+                dataset: null;
+                data: null;
+                pageUri?: undefined;
+              }
+            | {
+                itemIds: string[];
+                dataset: null;
+                pageUri: string;
+                data: null;
+              }
+            | {
+                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+                itemIds: string[];
+                pageUri: string;
+                data: OrderedCollectionPage;
+              },
+            unknown
+          >,
+          Error
+        >
+      >;
+      fetchPreviousPage: (options?: av | undefined) => Promise<
+        aP<
+          a7<
+            | {
+                itemIds: never[];
+                dataset: null;
+                data: null;
+                pageUri?: undefined;
+              }
+            | {
+                itemIds: string[];
+                dataset: null;
+                pageUri: string;
+                data: null;
+              }
+            | {
+                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+                itemIds: string[];
+                pageUri: string;
+                data: OrderedCollectionPage;
+              },
+            unknown
+          >,
+          Error
+        >
+      >;
+      hasNextPage: boolean;
+      hasPreviousPage: boolean;
+      isFetchingNextPage: boolean;
+      isFetchingPreviousPage: boolean;
+      dataUpdatedAt: number;
+      errorUpdatedAt: number;
+      failureCount: number;
+      failureReason: Error | null;
+      errorUpdateCount: number;
+      isFetched: boolean;
+      isFetchedAfterMount: boolean;
+      isFetching: boolean;
+      isLoading: boolean;
+      isInitialLoading: boolean;
+      isPaused: boolean;
+      isRefetching: boolean;
+      isStale: boolean;
+      refetch: (options?: ap | undefined) => Promise<
+        aG<
+          a7<
+            | {
+                itemIds: never[];
+                dataset: null;
+                data: null;
+                pageUri?: undefined;
+              }
+            | {
+                itemIds: string[];
+                dataset: null;
+                pageUri: string;
+                data: null;
+              }
+            | {
+                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+                itemIds: string[];
+                pageUri: string;
+                data: OrderedCollectionPage;
+              },
+            unknown
+          >,
+          Error
+        >
+      >;
+      fetchStatus: ax;
+      promise: Promise<
+        a7<
+          | {
+              itemIds: never[];
+              dataset: null;
+              data: null;
+              pageUri?: undefined;
+            }
+          | {
+              itemIds: string[];
+              dataset: null;
+              pageUri: string;
+              data: null;
+            }
+          | {
+              dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+              itemIds: string[];
+              pageUri: string;
+              data: OrderedCollectionPage;
+            },
+          unknown
+        >
+      >;
+    }
+  | {
+      items: ItemType[];
+      liveUpdatesStatus: {
+        error?: any;
+        status: 'error' | 'closed' | 'connected' | 'connecting' | 'disabled';
+      };
+      fetchNext: (noItems?: number) => void;
+      fetchPrevious: (noItems?: number) => void;
+      totalItems: number | undefined;
+      isPaginated: boolean | undefined;
+      data: a7<
+        | {
+            itemIds: never[];
+            dataset: null;
+            data: null;
+            pageUri?: undefined;
+          }
+        | {
+            itemIds: string[];
+            dataset: null;
+            pageUri: string;
+            data: null;
+          }
+        | {
+            dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+            itemIds: string[];
+            pageUri: string;
+            data: OrderedCollectionPage;
+          },
+        unknown
+      >;
+      isError: false;
+      error: null;
+      isPending: false;
+      isLoading: false;
+      isLoadingError: false;
+      isRefetchError: false;
+      isSuccess: true;
+      isPlaceholderData: true;
+      isFetchNextPageError: false;
+      isFetchPreviousPageError: false;
+      status: 'success';
+      fetchNextPage: (options?: au | undefined) => Promise<
+        aP<
+          a7<
+            | {
+                itemIds: never[];
+                dataset: null;
+                data: null;
+                pageUri?: undefined;
+              }
+            | {
+                itemIds: string[];
+                dataset: null;
+                pageUri: string;
+                data: null;
+              }
+            | {
+                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+                itemIds: string[];
+                pageUri: string;
+                data: OrderedCollectionPage;
+              },
+            unknown
+          >,
+          Error
+        >
+      >;
+      fetchPreviousPage: (options?: av | undefined) => Promise<
+        aP<
+          a7<
+            | {
+                itemIds: never[];
+                dataset: null;
+                data: null;
+                pageUri?: undefined;
+              }
+            | {
+                itemIds: string[];
+                dataset: null;
+                pageUri: string;
+                data: null;
+              }
+            | {
+                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+                itemIds: string[];
+                pageUri: string;
+                data: OrderedCollectionPage;
+              },
+            unknown
+          >,
+          Error
+        >
+      >;
+      hasNextPage: boolean;
+      hasPreviousPage: boolean;
+      isFetchingNextPage: boolean;
+      isFetchingPreviousPage: boolean;
+      dataUpdatedAt: number;
+      errorUpdatedAt: number;
+      failureCount: number;
+      failureReason: Error | null;
+      errorUpdateCount: number;
+      isFetched: boolean;
+      isFetchedAfterMount: boolean;
+      isFetching: boolean;
+      isInitialLoading: boolean;
+      isPaused: boolean;
+      isRefetching: boolean;
+      isStale: boolean;
+      refetch: (options?: ap | undefined) => Promise<
+        aG<
+          a7<
+            | {
+                itemIds: never[];
+                dataset: null;
+                data: null;
+                pageUri?: undefined;
+              }
+            | {
+                itemIds: string[];
+                dataset: null;
+                pageUri: string;
+                data: null;
+              }
+            | {
+                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+                itemIds: string[];
+                pageUri: string;
+                data: OrderedCollectionPage;
+              },
+            unknown
+          >,
+          Error
+        >
+      >;
+      fetchStatus: ax;
+      promise: Promise<
+        a7<
+          | {
+              itemIds: never[];
+              dataset: null;
+              data: null;
+              pageUri?: undefined;
+            }
+          | {
+              itemIds: string[];
+              dataset: null;
+              pageUri: string;
+              data: null;
+            }
+          | {
+              dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+              itemIds: string[];
+              pageUri: string;
+              data: OrderedCollectionPage;
+            },
+          unknown
+        >
+      >;
+    };
 /**
  * Hook to fetch the inbox of the logged user.
  * Returns the same data as the useCollection hooks, plus:

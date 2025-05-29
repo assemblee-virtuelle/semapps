@@ -1,15 +1,18 @@
-import { useCallback, useState, useEffect, useRef, RefObject } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 import { useGetIdentity, useDataProvider } from 'react-admin';
 import { getOrCreateWsChannel, SemanticDataProvider } from '@semapps/semantic-data-provider';
 import { LdoBase, ShapeType } from '@ldo/ldo';
-import { ConnectedLdoDataset, createConnectedLdoDataset } from '@ldo/connected';
-import { SolidConnectedPlugin, solidConnectedPlugin } from '@ldo/connected-solid';
+import { createConnectedLdoDataset } from '@ldo/connected';
+import { solidConnectedPlugin } from '@ldo/connected-solid';
 import { useInfiniteQuery, QueryFunction } from '@tanstack/react-query';
-import { CollectionShapeType, OrderedCollectionPage } from '@activitypods/ldo-shapes';
+import { OrderedCollectionPageShapeType } from '@activitypods/ldo-shapes';
 import rdf from 'rdf-ext';
 import type { UseCollectionOptions, SolidNotification } from '../types';
 import { arrayOf, parseJsonLdToQuads } from '../utils';
-import { getActivityStreamsValidator, getAndValidateLdoSubject } from '../utils/shaclValidation';
+import {
+  getActivityStreamsValidator,
+  getAndValidateLdoSubject as validateAndGetLdoSubject
+} from '../utils/shaclValidation';
 
 interface UseTypedCollectionOptions<ItemType extends LdoBase> {
   shapeTypes: ShapeType<ItemType>[]; // TODO: Needs extended shape type?
@@ -31,10 +34,10 @@ const useTypedCollection = <ItemType extends LdoBase>(
   // 1. Fetch the collection
   const collectionQuery = useInfiniteCollectionQuery(collectionUri);
 
-  const { totalItems, isPaginated } = getTotalItemsFromPages(collectionQuery.data?.pages || []);
+  const { totalItems, isPaginated } = useTotalItemsFromPages(collectionQuery.data);
 
   // 2. Filter items from the collection pages that match the given shape types.
-  const filteredItems = getFilteredItemsFromCollectionPages(collectionQuery.data?.pages || [], shapeTypes);
+  const filteredItems = useFilteredItemsFromPages(collectionQuery.data, shapeTypes);
 
   // 3. Set up notifications for live updates, if enabled.
   const liveUpdatesStatus = useSubscribeToUpdates({
@@ -44,7 +47,9 @@ const useTypedCollection = <ItemType extends LdoBase>(
       // Since we don't know where the item was added, we refetch the whole collection ¯\_(ツ)_/¯.
       collectionQuery.refetch();
     },
-    onRemoveItem: uri => removeItemFromQueryData(uri, collectionQuery)
+    onRemoveItem: uri => {
+      removeItemFromQueryData(uri, collectionQuery);
+    }
   });
 
   // 4. Pagination logic.
@@ -53,31 +58,31 @@ const useTypedCollection = <ItemType extends LdoBase>(
   const [requestedPrevItems, setRequestedPrevItems] = useState(0);
 
   // Automatically fetch next page, if more items are requested.
-  if (requestedNextItems > filteredItems.length && collectionQuery.hasNextPage && !collectionQuery.isLoading) {
-    collectionQuery.fetchNextPage();
-
-    // Should fetch previous page?
-  } else if (
-    requestedPrevItems > filteredItems.length &&
-    collectionQuery.hasPreviousPage &&
-    !collectionQuery.isLoading
-  ) {
-    collectionQuery.fetchPreviousPage();
-  }
+  useEffect(() => {
+    if (requestedNextItems > filteredItems.length && collectionQuery.hasNextPage && !collectionQuery.isLoading) {
+      collectionQuery.fetchNextPage();
+    }
+  }, [requestedNextItems, filteredItems.length, collectionQuery.hasNextPage, collectionQuery.isLoading]);
+  // Automatically fetch previous page, if more items are requested.
+  useEffect(() => {
+    if (requestedPrevItems > filteredItems.length && collectionQuery.hasPreviousPage && !collectionQuery.isLoading) {
+      collectionQuery.fetchPreviousPage();
+    }
+  }, [requestedPrevItems, filteredItems.length, collectionQuery.hasPreviousPage, collectionQuery.isLoading]);
 
   /** Fetch next n (filtered) items. */
   const fetchNext = useCallback(
     (noItems: number = pageSize) => {
       setRequestedNextItems(filteredItems.length + noItems);
     },
-    [setRequestedNextItems, requestedNextItems]
+    [filteredItems.length, pageSize]
   );
   /** Fetch previous n (filtered) items. */
   const fetchPrevious = useCallback(
     (noItems: number = pageSize) => {
       setRequestedPrevItems(filteredItems.length + noItems);
     },
-    [setRequestedPrevItems, requestedNextItems]
+    [filteredItems.length, pageSize]
   );
 
   return {
@@ -175,100 +180,64 @@ const useInfiniteCollectionQuery = (collectionUri: string) => {
 const getFetchCollectionPage = (fetchFn: typeof fetch) =>
   (async ({ pageParam: pageUri }) => {
     // Note, page is not necessarily of type OrderedCollectionPage but it is a partial in any case.
-    const page = await (await fetchFn(pageUri)).json();
-    if (!page) {
-      throw new Error(`Could not fetch page ${pageUri}`);
+    const jsonPage = await (await fetchFn(pageUri)).json();
+    if (!jsonPage || typeof jsonPage !== 'object') {
+      throw new Error(`Could not fetch page ${pageUri}. Response is invalid.`);
     }
 
-    const itemsKey = 'orderedItems' in page ? 'orderedItems' : 'items';
+    const itemsKey = 'orderedItems' in jsonPage ? 'orderedItems' : 'items';
 
-    if (arrayOf(page[itemsKey]).length === 0) {
+    if (arrayOf(jsonPage[itemsKey]).length === 0) {
       // No items in page.
-      return { itemIds: [], dataset: null, page };
+      return { itemIds: [], dataset: null, data: null };
     }
 
     // Keep track of item ids in this order (in the rdf dataset the order is lost).
-    const itemIds: string[] = arrayOf(page[itemsKey])
+    const itemIds: string[] = arrayOf(jsonPage[itemsKey])
       .map((itemOrId: any) => itemOrId?.['@id'] || itemOrId?.id || itemOrId)
       .filter(item => item); // Ensure item is not undefined.
 
-    const solidConnectedDataset = createConnectedLdoDataset([solidConnectedPlugin]);
-    solidConnectedDataset.setContext('solid', { fetch: fetchFn });
-    // Load the page into the dataset.
-    solidConnectedDataset.addAll(await parseJsonLdToQuads(page));
+    // Parse the page into a dataset.
+    // TODO: Move to data provider.
+    const dataset = createConnectedLdoDataset([solidConnectedPlugin]);
+    dataset.setContext('solid', { fetch: fetchFn });
+    dataset.addAll(await parseJsonLdToQuads(jsonPage));
 
-    const resource = solidConnectedDataset.getResource(pageUri);
-    if (resource.type === 'InvalidIdentifierResouce') {
-      return { itemIds, dataset: null, raw: page };
+    const resource = dataset.getResource(pageUri);
+    if (resource.type === 'InvalidIdentifierResource') {
+      return { itemIds, dataset: null, pageUri, data: null };
     }
 
-    const ldoBuilder = solidConnectedDataset.usingType(CollectionShapeType);
+    const ldoBuilder = dataset.usingType(OrderedCollectionPageShapeType);
 
     // Run a link query to ensure that all items are dereferenced (the results are kept in the dataset).
     await ldoBuilder
-      .startLinkQuery(resource, (page.id || page['@id']) as string, {
-        // **TODO**: We might have to ensure that items is not just a string but considered an object in the datamodel.
+      .startLinkQuery(resource, pageUri, {
         items: true,
         orderedItems: true
       })
       .run({ reload: false });
 
-    return { dataset: solidConnectedDataset, itemIds, raw: page };
+    return { dataset, itemIds, pageUri, data: ldoBuilder.fromSubject(pageUri) };
   }) satisfies QueryFunction<object, unknown[], string>;
 
-const getFilteredItemsFromCollectionPages = <T extends LdoBase>(
-  pages: {
-    dataset: ConnectedLdoDataset<SolidConnectedPlugin[]> | null;
-    itemIds: string[];
-  }[],
-  shapeTypes: ShapeType<T>[]
-) => {
-  const [filteredItems, setFilteredItems] = useState<T[]>([]);
-
-  useEffect(async () => {
-    // We need to load the shacl resources and match them to the shape types.
-    const validator = await getActivityStreamsValidator();
-
-    const validatedItems = await Promise.all(
-      // For every page, ...
-      pages.map(async page => {
-        const items: T[] = await Promise.all(
-          // For every item in the page, ...
-          page.itemIds.map(
-            async itemId =>
-              // Validate item against the shape types and return the ldo object of the correct type, if it is valid.
-              page.dataset && getAndValidateLdoSubject(itemId, page.dataset, shapeTypes, validator)
-          )
-        ).then(results => results.filter(item => !!item)); // Filter out null items.
-
-        return items;
-      })
-    ).then(results => results.flat());
-
-    setFilteredItems(validatedItems);
-    // TODO: Cache filtered items by page, so that we don't have to re-filter them every time?
-  }, [pages, shapeTypes]);
-
-  return filteredItems;
-};
-
-const getTotalItemsFromPages = (
-  pages: {
-    itemIds: string[];
-    raw?: OrderedCollectionPage;
-  }[]
+const useTotalItemsFromPages = (
+  queryData: ReturnType<typeof useInfiniteCollectionQuery>['data']
 ): { totalItems: number | undefined; isPaginated: boolean | undefined } => {
-  if (pages.length === 0) return { isPaginated: undefined, totalItems: undefined };
+  if (!queryData?.pages.length) return { isPaginated: undefined, totalItems: undefined };
+  const { pages } = queryData;
 
   // Check if collection is paginated. We assume that the collection is paginated if there are pages with first, last, prev or next.
   const isPaginated =
     pages.length === 0
       ? undefined
-      : !!pages.find(page => 'first' in page.raw || 'next' in page || 'last' in page || 'prev' in page);
+      : !!pages.find(
+          page =>
+            page.data && ('first' in page.data || 'next' in page.data || 'last' in page.data || 'prev' in page.data)
+        );
 
   // Approach 1: Get total items info by checking if the page has a totalItems property.
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  const totalItemsByCollectionInfo = pages.find(page => 'totalItems' in page)?.raw?.totalItems;
+  const totalItemsByCollectionInfo = pages.find(page => 'totalItems' in page)?.data?.totalItems;
   if (totalItemsByCollectionInfo) return { totalItems: totalItemsByCollectionInfo, isPaginated };
 
   // Approach 2: If collection is not paginated, we count the number of items in the collection.
@@ -278,10 +247,8 @@ const getTotalItemsFromPages = (
 
   // Approach 3: If we have the whole collection loaded, we can count the items.
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  const firstPage = pages.find(page => page.raw.first)?.raw?.first;
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  const lastPage = pages.find(page => page.raw.last)?.raw?.last;
+  const firstPage = pages.find(page => page.data?.first)?.data?.first;
+  const lastPage = pages.find(page => page.data?.last)?.data?.last;
 
   // We assume that all pages are loaded if the first and last page is available.
   // In that case, count all pages' items.
@@ -290,8 +257,7 @@ const getTotalItemsFromPages = (
       isPaginated,
       totalItems: pages
         // Get length of page
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
-        .map(page => ('orderedItems' in page.raw ? page.raw?.orderedItems?.length : page.raw?.items?.length || 0))
+        .map(page => page.data?.orderedItems?.size || page.data?.items?.size || 0)
         // Sum all page length counts.
         .reduce((prev: number, current: number) => prev + current)
     };
@@ -300,27 +266,64 @@ const getTotalItemsFromPages = (
   return { totalItems: undefined, isPaginated };
 };
 
+const useFilteredItemsFromPages = <T extends LdoBase>(
+  queryData: ReturnType<typeof useInfiniteCollectionQuery>['data'],
+  shapeTypes: ShapeType<T>[]
+) => {
+  const [filteredItems, setFilteredItems] = useState<T[]>([]);
+
+  const filterItems = useCallback(async () => {
+    // We need to load the shacl resources and match them to the shape types.
+    const validator = await getActivityStreamsValidator();
+
+    const pages = queryData?.pages;
+
+    if (!pages || pages.length === 0) {
+      setFilteredItems([]);
+      return;
+    }
+    const validatedItems = await Promise.all(
+      // For every page, ...
+      queryData.pages.map(async page => {
+        const items: T[] = await Promise.all(
+          // For every item in the page, ...
+          page.itemIds.map(
+            async itemId =>
+              // Validate item against the shape types and return the ldo object of the correct type, if it is valid.
+              page.dataset && validateAndGetLdoSubject(itemId, page.dataset, shapeTypes, validator)
+          )
+        ).then(results => results.filter(item => !!item)); // Filter out null items.
+
+        return items;
+      })
+    ).then(results => results.flat());
+
+    setFilteredItems(validatedItems);
+    // TODO: Cache filtered items by page, so that we don't have to re-filter them every time?
+  }, [queryData?.pages, shapeTypes]);
+
+  useEffect(() => {
+    filterItems();
+  }, [filterItems]);
+
+  return filteredItems;
+};
+
 /** A somewhat hacky way to remove an item from the useInfiniteCollectionQuery. */
 const removeItemFromQueryData = (itemUri: string, collectionQuery: ReturnType<typeof useInfiniteCollectionQuery>) => {
   // Manipulate data about total items. Sorry, a bit hacky...
   collectionQuery.data?.pages.forEach(page => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (page.raw.orderedItems) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, no-param-reassign
-      page.raw.orderedItems = arrayOf(page.raw.orderedItems).filter(item => (item.id || item['@id']) !== itemUri);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    } else if (page.raw?.items) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, no-param-reassign
-      page.raw.items = arrayOf(page.raw.items).filter(item => (item.id || item['@id']) !== itemUri);
-    }
-    // Remove item from the dataset, if it exists.
-    page.dataset?.deleteMatches(rdf.namedNode(itemUri));
+    if (!page.dataset) return;
+    page.dataset.deleteMatches(rdf.namedNode(itemUri));
 
     // There might be a totalItems property in the page, so we need to update it.
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (Number.isInteger(page.raw.totalItems)) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, no-param-reassign
-      page.raw.totalItems -= 1;
+    if (page.data.totalItems && Number.isInteger(page.data.totalItems)) {
+      // eslint-disable-next-line no-param-reassign
+      page.data.totalItems -= 1;
     }
   });
 };
+
+// Open Question:
+// - Use one dataset? It has the benefit of only having to define a single solid connected dataset and makes ng switching easier -> no need to create a connected dataset.
+// - On the other hand (the only downside I can think of rn): Either you have to remove expired items from the dataset or you don't care about old data that is not used by react admin anymore. At a refetch all old data would have to be removed though.
