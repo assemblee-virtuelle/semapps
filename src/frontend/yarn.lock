@@ -7,6 +7,16 @@
   resolved "https://registry.yarnpkg.com/@aashutoshrathi/word-wrap/-/word-wrap-1.2.6.tgz#bd9154aec9983f77b3a034ecaa015c2e4201f6cf"
   integrity sha512-1Yjs2SvM8TflER/OD3cOjhWWOZb58A2t7wpE2S9XfBYTiIl+XFhQG2bjy4Pu1I+EAlCNUzRDYDdFwFYUKvXcIA==
 
+"@activitypods/ldo-shapes@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@activitypods/ldo-shapes/-/ldo-shapes-0.1.1.tgz#95759ea2677396fbafbda812d55a35f6f24b16b7"
+  integrity sha512-W7YA7UGLNuxiqYMA8nkaldUC4ujNs0FQDFfx6628YWCPmEdE+a5PaZ+eTjKIOma2H0pFlp4GORezFauyxlEf0A==
+
+"@activitypods/shape-definitions@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@activitypods/shape-definitions/-/shape-definitions-0.1.1.tgz#b1194d9bfb54d5757ed89aabac46fb0f8845120d"
+  integrity sha512-r+NTnVTehSDcMY5R+qHljef1FFU1z469eRG4r/e7+ivtuMONQgLgAmHEEkfuW8RrpZws9bRyPMTB/Z/oiuz52Q==
+
 "@babel/code-frame@^7.0.0":
   version "7.23.5"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.23.5.tgz#9009b69a8c602293476ad598ff53e4562e15c244"
@@ -5117,17 +5127,17 @@
   dependencies:
     "@swc/counter" "^0.1.3"
 
-"@tanstack/query-core@5.75.7":
-  version "5.75.7"
-  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.75.7.tgz#8de9de6de4ae33e532f1fc99a8633e3461f30db9"
-  integrity sha512-4BHu0qnxUHOSnTn3ow9fIoBKTelh0GY08yn1IO9cxjBTsGvnxz1ut42CHZqUE3Vl/8FAjcHsj8RNJMoXvjgHEA==
+"@tanstack/query-core@5.79.0":
+  version "5.79.0"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.79.0.tgz#947e13c409555a8ca0a17abdf3dff9eb77af45e6"
+  integrity sha512-s+epTqqLM0/TbJzMAK7OEhZIzh63P9sWz5HEFc5XHL4FvKQXQkcjI8F3nee+H/xVVn7mrP610nVXwOytTSYd0w==
 
-"@tanstack/react-query@^5.75.7":
-  version "5.75.7"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.75.7.tgz#5984900369365614edb4a0ed16c1cb521d9fb5ee"
-  integrity sha512-JYcH1g5pNjKXNQcvvnCU/PueaYg05uKBDHlWIyApspv7r5C0BM12n6ysa2QF2T+1tlPnNXOob8vr8o96Nx0GxQ==
+"@tanstack/react-query@^5.79.0":
+  version "5.79.0"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.79.0.tgz#91a41d92dcd92b2cd544bafdcc2c2bd7d06396c6"
+  integrity sha512-DjC4JIYZnYzxaTzbg3osOU63VNLP67dOrWet2cZvXgmgwAXNxfS52AMq86M5++ILuzW+BqTUEVMTjhrZ7/XBuA==
   dependencies:
-    "@tanstack/query-core" "5.75.7"
+    "@tanstack/query-core" "5.79.0"
 
 "@tiptap/core@^2.0.0-beta.95", "@tiptap/core@^2.0.3", "@tiptap/core@^2.1.13":
   version "2.1.13"

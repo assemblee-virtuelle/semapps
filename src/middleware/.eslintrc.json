@@ -115,7 +115,7 @@
     "no-unsafe-optional-chaining": "warn",
     "no-unused-expressions": "warn",
     "no-unused-vars": "warn",
-    "no-use-before-define": "warn",
+    "no-use-before-define": "off",
     "no-var": "warn",
     "node/no-unsupported-features/es-syntax": "off",
     "object-shorthand": "off",
