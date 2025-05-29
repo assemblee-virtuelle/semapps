@@ -2,15 +2,15 @@ import type { Quad } from '@rdfjs/types';
 // import SHACLValidator from '@rdf-ext/shacl';
 import rdf from 'rdf-ext';
 import { Validator } from 'shacl-engine';
-import ParserN3 from '@rdfjs/parser-n3';
 import { ActivityStreamsShape } from '@activitypods/shape-definitions';
-import DatasetExt from 'rdf-ext/lib/Dataset';
 import { parseJsonLd } from '../utils';
+import { parseTurtle } from './streamUtils';
+import { LdoBase, LdoDataset, ShapeType } from '@ldo/ldo';
 
 // Cache of SHACL validators
-const validatorCache: Record<string, typeof Validator> = {};
+const validatorCache: Record<string, Validator> = {};
 
-const getActivityStreamsValidator = async (): Promise<typeof Validator> => {
+const getActivityStreamsValidator = async (): Promise<Validator> => {
   // Check if the validator is already cached
   if (validatorCache.activityStreams) {
     return validatorCache.activityStreams;
@@ -24,20 +24,8 @@ const getActivityStreamsValidator = async (): Promise<typeof Validator> => {
   return validatorCache.activitystreams;
 };
 
-// Helper function to convert a string to a Node.js Readable stream
-const stringToStream = (str: string) => {
-  // Create a ReadableStream from the Uint8Array
-  const readableStream: ReadableStream = new ReadableStream({
-    start(controller: ReadableStreamDefaultController) {
-      controller.enqueue(str);
-      controller.close();
-    }
-  });
-  return readableStream;
-};
-
 // Helper function to load a SHACL shape and return a validator
-const getShaclValidator = async (shapeUri: string): Promise<typeof Validator> => {
+const getShaclValidator = async (shapeUri: string): Promise<Validator> => {
   // Check if the validator is already cached
   if (validatorCache[shapeUri]) {
     return validatorCache[shapeUri];
@@ -63,7 +51,7 @@ const getShaclValidator = async (shapeUri: string): Promise<typeof Validator> =>
 
 const validateItems = async (
   items: Array<object>,
-  shaclValidator: typeof Validator,
+  shaclValidator: Validator,
   context: string | string[] | Record<string, string>
 ): Promise<Array<{ item: object; isValid: boolean }>> => {
   if (!shaclValidator) {
@@ -96,15 +84,29 @@ const validateItems = async (
   );
 };
 
-const parseTurtle = async (turtleData: string): Promise<DatasetExt> => {
-  // Convert Turtle data to a stream
-  const textStream: ReadableWebToNodeStream = stringToStream(turtleData);
+const getAndValidateLdoSubject = async <T extends LdoBase>(
+  subjectUri: string,
+  dataset: LdoDataset,
+  shapeTypes: ShapeType<T>[],
+  validator: Validator
+): Promise<T | null> => {
+  const validationReport = await validator.validate(
+    // Terms means the entry point from which should be validated, in our case the current item.
+    { dataset: dataset, terms: [rdf.namedNode(subjectUri)] },
+    // Here, terms means the shapes to validate against.
+    { terms: shapeTypes.map(shapeType => rdf.namedNode(shapeType.shape)) }
+  );
 
-  // Use ParserN3 which outputs rdf-ext compatible quads directly
-  const parser: ParserN3 = new ParserN3({ factory: rdf });
-  const quadStream: any = parser.import(textStream);
-  const dataset = await rdf.dataset().import(quadStream);
-  return dataset;
+  if (!validationReport.conforms) return [];
+  const results = validationReport.results;
+
+  // Find the shape that matched the item in the report results.
+  const shapeType = shapeTypes.find(st => results.find(res => res.focusNode === subjectUri && res.shape === st.shape));
+
+  if (!shapeType) return null;
+
+  const typedItem = dataset.usingType(shapeType).fromSubject(subjectUri);
+  return typedItem;
 };
 
-export { getShaclValidator, validateItems, getActivityStreamsValidator };
+export { getShaclValidator, validateItems, getActivityStreamsValidator, getAndValidateLdoSubject };
