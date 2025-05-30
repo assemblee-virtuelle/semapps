@@ -2,6 +2,7 @@ import { ComponentType } from 'react';
 import { TextInputProps } from 'react-admin';
 import { getPickersLocalization } from '@mui/x-date-pickers/locales/utils/getPickersLocalization';
 import { Locale } from 'date-fns';
+import { JSX } from 'react/jsx-runtime';
 import { DatePickerProps } from '@mui/x-date-pickers/DatePicker';
 import { TimePickerProps } from '@mui/x-date-pickers/TimePicker';
 import { DateTimePickerProps } from '@mui/x-date-pickers/DateTimePicker';
@@ -21,7 +22,7 @@ export function useFullCalendarProps({
   label: any;
   startDate: any;
   endDate: any;
-  linkType: any;
+  linkType?: string | undefined;
 }): {
   initialDate: Date;
   events:
@@ -36,24 +37,10 @@ export function useFullCalendarProps({
   datesSet: ({ view }: { view: any }) => void;
   eventClick: ({ event, jsEvent }: { event: any; jsEvent: any }) => void;
 };
-declare namespace CalendarList {
-  namespace defaultProps {
-    let linkType: string;
-  }
-}
-declare namespace DaysList {
-  namespace defaultProps {
-    let linkType: string;
-  }
-}
-export const DateInput: <TDate>(
-  props: Omit<Props<DatePickerProps<TDate>>, 'PickerComponent'>
-) => import('react/jsx-runtime').JSX.Element;
-export const TimeInput: <TDate>(
-  props: Omit<Props<TimePickerProps<TDate>>, 'PickerComponent'>
-) => import('react/jsx-runtime').JSX.Element;
-export const DateTimeInput: <TDate>(
-  props: Omit<Props<DateTimePickerProps<TDate>>, 'PickerComponent'>
-) => import('react/jsx-runtime').JSX.Element;
+export function CalendarList(props: any): JSX.Element;
+export function DaysList(props: any): JSX.Element;
+export const DateInput: <TDate>(props: Omit<Props<DatePickerProps<TDate>>, 'PickerComponent'>) => JSX.Element;
+export const TimeInput: <TDate>(props: Omit<Props<TimePickerProps<TDate>>, 'PickerComponent'>) => JSX.Element;
+export const DateTimeInput: <TDate>(props: Omit<Props<DateTimePickerProps<TDate>>, 'PickerComponent'>) => JSX.Element;
 
 //# sourceMappingURL=index.d.ts.map

@@ -37,15 +37,17 @@ const UserMenu = ({ logout, profileResource, ...otherProps }) => {
               key="view"
               label="auth.action.view_my_profile"
               icon={<AccountCircleIcon />}
-              to={`/${profileResource}/${encodeURIComponent(identity?.profileData?.id || identity.id)}/show`}
+              to={`/${profileResource || 'Person'}/${encodeURIComponent(
+                identity?.profileData?.id || identity.id
+              )}/show`}
             />,
             <UserMenuItem
               key="edit"
               label="auth.action.edit_my_profile"
               icon={<EditIcon />}
-              to={`/${profileResource}/${encodeURIComponent(identity?.profileData?.id || identity.id)}`}
+              to={`/${profileResource || 'Person'}/${encodeURIComponent(identity?.profileData?.id || identity.id)}`}
             />,
-            React.cloneElement(logout, { key: 'logout' })
+            React.cloneElement(logout || <Logout />, { key: 'logout' })
           ]
         : [
             <UserMenuItem key="signup" label="auth.action.signup" to="/login?signup=true" />,
@@ -53,11 +55,6 @@ const UserMenu = ({ logout, profileResource, ...otherProps }) => {
           ]}
     </RaUserMenu>
   );
-};
-
-UserMenu.defaultProps = {
-  logout: <Logout />,
-  profileResource: 'Person'
 };
 
 export default UserMenu;

@@ -42,7 +42,7 @@ const selectOptionText = (option, optionText) => {
 const capitalizeFirstLetter = string => string && string.charAt(0).toUpperCase() + string.slice(1);
 
 const LexiconAutocompleteInput = forwardRef(
-  ({ fetchLexicon, source, defaultValue, label, parse, optionText, helperText, ...rest }, ref) => {
+  ({ fetchLexicon, source, defaultValue, label, parse, optionText = 'label', helperText, ...rest }, ref) => {
     const resource = useResourceContext();
     const classes = useStyles();
     const locale = useLocale();
@@ -177,9 +177,5 @@ const LexiconAutocompleteInput = forwardRef(
     );
   }
 );
-
-LexiconAutocompleteInput.defaultProps = {
-  optionText: 'label'
-};
 
 export default LexiconAutocompleteInput;

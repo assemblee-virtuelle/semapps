@@ -6,7 +6,7 @@ import { rightsToCreate } from '../constants';
 // Not used for now. The ListWithPermissions component will handle the conditional display of the Create button.
 const ResourceWithPermission = ({ name, create, ...rest }) => {
   const createContainer = useCreateContainerUri(name);
-  const { permissions } = usePermissions(createContainer);
+  const { permissions } = usePermissions({ uri: createContainer });
   return (
     <Resource
       {...rest}

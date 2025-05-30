@@ -1,5 +1,14 @@
-import React from 'react';
-import { ToolbarProps } from 'react-admin';
+import React, { PropsWithChildren } from 'react';
+import {
+  CreateProps,
+  EditProps,
+  ToolbarProps,
+  ListActionsProps,
+  ListProps,
+  ShowProps,
+  UserIdentity
+} from 'react-admin';
+import { JSX } from 'react/jsx-runtime';
 export function authProvider({
   dataProvider,
   authType,
@@ -22,7 +31,7 @@ export function authProvider({
   checkAuth: () => Promise<void>;
   checkUser: (userData: any) => any;
   checkError: (error: any) => Promise<void>;
-  getPermissions: (uri: any) => Promise<any>;
+  getPermissions: ({ uri }: { uri: any }) => Promise<any>;
   addPermission: (uri: any, agentId: any, predicate: any, mode: any) => Promise<void>;
   removePermission: (uri: any, agentId: any, predicate: any, mode: any) => Promise<void>;
   getIdentity: () => Promise<
@@ -106,73 +115,34 @@ declare const rights: {
   control: AclMode[];
 };
 export const useCheckPermissions: (
-  uri: string,
+  uri: string | undefined,
   mode: keyof typeof rights,
   redirectUrl?: string
 ) => Permissions | undefined;
-export function CreateWithPermissions(props: any): import('react/jsx-runtime').JSX.Element;
-declare namespace CreateWithPermissions {
-  namespace defaultProps {
-    let actions: import('react/jsx-runtime').JSX.Element;
-  }
-}
+export const CreateWithPermissions: ({ actions, children, ...rest }: PropsWithChildren<CreateProps>) => JSX.Element;
 export function useAgents(uri: any): {
   agents: {};
   addPermission: (agentId: any, predicate: any, mode: any) => void;
   removePermission: (agentId: any, predicate: any, mode: any) => void;
 };
-export function PermissionsButton({ isContainer }: { isContainer: any }): import('react/jsx-runtime').JSX.Element;
-declare namespace PermissionsButton {
-  namespace defaultProps {
-    let isContainer: boolean;
-  }
-}
-export const EditActionsWithPermissions: () => import('react/jsx-runtime').JSX.Element;
-export function DeleteButtonWithPermissions(props: any): import('react/jsx-runtime').JSX.Element | null;
+export function PermissionsButton({ isContainer }: { isContainer?: boolean | undefined }): JSX.Element;
+export const EditActionsWithPermissions: () => JSX.Element;
+export const EditWithPermissions: ({ actions, children, ...rest }: PropsWithChildren<EditProps>) => JSX.Element;
+export function DeleteButtonWithPermissions(props: any): JSX.Element | null;
 export const EditToolbarWithPermissions: React.FunctionComponent<ToolbarProps>;
-export function EditWithPermissions(props: any): import('react/jsx-runtime').JSX.Element;
-declare namespace EditWithPermissions {
-  namespace defaultProps {
-    let actions: import('react/jsx-runtime').JSX.Element;
-  }
-}
-export function EditButtonWithPermissions(props: any): import('react/jsx-runtime').JSX.Element | null;
-export function ListActionsWithPermissions({
-  bulkActions,
+export function EditButtonWithPermissions(props: any): JSX.Element | null;
+export const ListActionsWithPermissions: ({
   sort,
   displayedFilters,
   exporter,
   filters,
   filterValues,
-  onUnselectItems,
-  selectedIds,
   showFilter,
   total
-}: {
-  bulkActions: any;
-  sort: any;
-  displayedFilters: any;
-  exporter: any;
-  filters: any;
-  filterValues: any;
-  onUnselectItems: any;
-  selectedIds: any;
-  showFilter: any;
-  total: any;
-}): import('react/jsx-runtime').JSX.Element;
-export function ListWithPermissions(props: any): import('react/jsx-runtime').JSX.Element;
-declare namespace ListWithPermissions {
-  namespace defaultProps {
-    let actions: import('react/jsx-runtime').JSX.Element;
-  }
-}
-export const ShowActionsWithPermissions: () => import('react/jsx-runtime').JSX.Element;
-export function ShowWithPermissions(props: any): import('react/jsx-runtime').JSX.Element;
-declare namespace ShowWithPermissions {
-  namespace defaultProps {
-    let actions: import('react/jsx-runtime').JSX.Element;
-  }
-}
+}: ListActionsProps) => JSX.Element;
+export const ListWithPermissions: ({ actions, ...rest }: ListProps) => JSX.Element;
+export const ShowActionsWithPermissions: () => JSX.Element;
+export const ShowWithPermissions: ({ actions, ...rest }: ShowProps) => JSX.Element;
 export function AuthDialog({
   open,
   onClose,
@@ -184,16 +154,10 @@ export function AuthDialog({
   [x: string]: any;
   open: any;
   onClose: any;
-  title: any;
-  message: any;
+  title?: string | undefined;
+  message?: string | undefined;
   redirect: any;
-}): import('react/jsx-runtime').JSX.Element;
-declare namespace AuthDialog {
-  namespace defaultProps {
-    let title: string;
-    let message: string;
-  }
-}
+}): JSX.Element;
 export declare namespace SsoLoginPageClasses {
   export let card: string;
   export let avatar: string;
@@ -214,17 +178,10 @@ export function LoginPage({
   children: any;
   backgroundImage: any;
   buttons: any;
-  userResource: any;
-  propertiesExist: any;
+  userResource?: string | undefined;
+  propertiesExist?: any[] | undefined;
   text: any;
-}): import('react/jsx-runtime').JSX.Element | null;
-declare namespace SsoLoginPage {
-  namespace defaultProps {
-    let propertiesExist: never[];
-    let buttons: import('react/jsx-runtime').JSX.Element[];
-    let userResource: string;
-  }
-}
+}): JSX.Element | null;
 export function useSignup(): (params?: {}) => any;
 /**
  * Configuration options for password strength scoring
@@ -381,7 +338,7 @@ export function PasswordStrengthIndicator({
       }
     | undefined;
   password: any;
-}): import('react/jsx-runtime').JSX.Element;
+}): JSX.Element;
 /**
  * @param {object} props Props
  * @param {boolean} props.hasSignup If to show signup form.
@@ -408,14 +365,7 @@ export function LocalLoginPage({
   onSignup: Function;
   additionalSignupValues: object;
   passwordScorer: object;
-}): import('react/jsx-runtime').JSX.Element | null;
-declare namespace LocalLoginPage {
-  namespace defaultProps {
-    let hasSignup: boolean;
-    let allowUsername: boolean;
-    let additionalSignupValues: {};
-  }
-}
+}): JSX.Element | null;
 export function ResourceWithPermissions({
   name,
   create,
@@ -424,7 +374,7 @@ export function ResourceWithPermissions({
   [x: string]: any;
   name: any;
   create: any;
-}): import('react/jsx-runtime').JSX.Element;
+}): JSX.Element;
 export function UserMenu({
   logout,
   profileResource,
@@ -433,15 +383,9 @@ export function UserMenu({
   [x: string]: any;
   logout: any;
   profileResource: any;
-}): import('react/jsx-runtime').JSX.Element;
-declare namespace UserMenu {
-  namespace defaultProps {
-    let logout: import('react/jsx-runtime').JSX.Element;
-    let profileResource: string;
-  }
-}
+}): JSX.Element;
 export function useCheckAuthenticated(message: any): {
-  identity: import('react-admin').UserIdentity | undefined;
+  identity: UserIdentity | undefined;
   isLoading: boolean;
 };
 export function usePermissionsWithRefetch(params?: {}): {
@@ -540,8 +484,11 @@ declare namespace englishMessages {
       let user_not_allowed_to_login: string;
       let user_email_not_found: string;
       let user_email_exist: string;
+      let user_email_invalid: string;
       let username_exist: string;
       let username_invalid: string;
+      let username_too_short: string;
+      let password_too_short: string;
       let new_user_created: string;
       let user_connected: string;
       let user_disconnected: string;
@@ -662,8 +609,11 @@ declare namespace frenchMessages {
       let user_not_allowed_to_login: string;
       let user_email_not_found: string;
       let user_email_exist: string;
+      let user_email_invalid: string;
       let username_exist: string;
       let username_invalid: string;
+      let username_too_short: string;
+      let password_too_short: string;
       let new_user_created: string;
       let user_connected: string;
       let user_disconnected: string;

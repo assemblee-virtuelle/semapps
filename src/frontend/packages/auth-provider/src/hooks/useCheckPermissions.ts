@@ -3,8 +3,8 @@ import { usePermissions, useRedirect, useNotify } from 'react-admin';
 import { rights, forbiddenErrors } from '../constants';
 import { Permissions } from '../types';
 
-const useCheckPermissions = (uri: string, mode: keyof typeof rights, redirectUrl: string = '/') => {
-  const { permissions } = usePermissions<Permissions | undefined>(uri);
+const useCheckPermissions = (uri: string | undefined, mode: keyof typeof rights, redirectUrl: string = '/') => {
+  const { permissions } = usePermissions<Permissions | undefined>({ uri });
   const notify = useNotify();
   const redirect = useRedirect();
 

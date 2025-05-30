@@ -313,8 +313,9 @@ const authProvider = ({
         return Promise.resolve();
       }
     },
-    getPermissions: async uri => {
+    getPermissions: async ({ uri }) => {
       if (!checkPermissions) return;
+      if (!uri) return;
 
       // React-admin calls getPermissions with an empty object on every page refresh
       // It also passes an object `{ params: { route: 'dashboard' } }` on the Dashboard

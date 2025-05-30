@@ -325,21 +325,13 @@ export function CommentsField({
   userResource,
   mentions
 }: {
-  source: any;
-  context: any;
+  source?: string | undefined;
+  context?: string | undefined;
   helperText: any;
-  placeholder: any;
+  placeholder?: string | undefined;
   userResource: any;
   mentions: any;
 }): JSX.Element;
-declare namespace CommentsField {
-  namespace defaultProps {
-    let label: string;
-    let placeholder: string;
-    let source: string;
-    let context: string;
-  }
-}
 export function CollectionList({
   collectionUrl,
   resource,

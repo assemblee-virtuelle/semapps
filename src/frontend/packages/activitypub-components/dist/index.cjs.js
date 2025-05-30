@@ -247,6 +247,13 @@ const $24b34de916fb30a8$var$validatorCache = {};
     } catch (error) {
         throw new Error(`Failed to create ActivityStreams validator: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
+    const shapeDataset = await (0, $a370eba7b7eca32b$export$7304a15200aa09e5)((0, $583VT$activitypodsshapedefinitions.ActivityStreamsShape));
+    // Create and cache the SHACL validator using the dataset
+    $24b34de916fb30a8$var$validatorCache.activityStreams = new (0, $583VT$shaclengine.Validator)(shapeDataset, {
+        factory: (0, ($parcel$interopDefault($583VT$rdfext))),
+        debug: true
+    });
+    return $24b34de916fb30a8$var$validatorCache.activitystreams;
 };
 // Helper function to load a SHACL shape and return a validator
 const $24b34de916fb30a8$export$6de257db5bb9fd74 = async (shapeUri)=>{
@@ -1108,7 +1115,7 @@ var $d68cd57b2d06b6d5$export$2e2bcd8739ae039 = $d68cd57b2d06b6d5$var$CommentsLis
 
 
 
-const $2e5504cc4159ca8d$var$CommentsField = ({ source: source, context: context, helperText: helperText, placeholder: placeholder, userResource: userResource, mentions: mentions })=>{
+const $2e5504cc4159ca8d$var$CommentsField = ({ source: source = 'id', context: context = 'id', helperText: helperText, placeholder: placeholder = "Commencez \xe0 taper votre commentaire...", userResource: userResource, mentions: mentions })=>{
     const record = (0, $583VT$reactadmin.useRecordContext)();
     const { items: comments, loading: loading, addItem: addItem, removeItem: removeItem } = (0, $5ca5f7e9fc1c3544$export$2e2bcd8739ae039)(record.replies, {
         liveUpdates: true
@@ -1132,12 +1139,6 @@ const $2e5504cc4159ca8d$var$CommentsField = ({ source: source, context: context,
             })
         ]
     });
-};
-$2e5504cc4159ca8d$var$CommentsField.defaultProps = {
-    label: 'Commentaires',
-    placeholder: "Commencez \xe0 taper votre commentaire...",
-    source: 'id',
-    context: 'id'
 };
 var $2e5504cc4159ca8d$export$2e2bcd8739ae039 = $2e5504cc4159ca8d$var$CommentsField;
 
@@ -1431,6 +1432,7 @@ const $c778e69ff9ab90c6$var$useFilteredItemsFromPages = (queryData, shapeTypes)=
                 page.dataset && (0, $24b34de916fb30a8$export$c4cb1062f0ffb837)(itemId, page.dataset, shapeTypes, validator))).then((results)=>results.filter((item)=>!!item)); // Filter out null items.
             return items;
         })).then((results)=>results.flat());
+        // TODO: Order items by ids.
         setFilteredItems(validatedItems);
     // TODO: Cache filtered items by page, so that we don't have to re-filter them every time?
     }, [

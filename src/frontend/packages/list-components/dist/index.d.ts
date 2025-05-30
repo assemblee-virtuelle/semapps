@@ -1,23 +1,63 @@
-import { RaRecord, Identifier } from 'react-admin';
-export function ChipList(props: any): import('react/jsx-runtime').JSX.Element;
-declare namespace GridList {
-  namespace defaultProps {
-    let xs: number;
-    let spacing: number;
-    let linkType: string;
-    let externalLinks: boolean;
-  }
-}
-declare namespace MasonryList {
-  namespace defaultProps {
-    let breakpointCols: {
-      default: number;
-      1050: number;
-      700: number;
-    };
-    let linkType: string;
-  }
-}
+import { JSX } from 'react/jsx-runtime';
+import { RaRecord, Identifier, ListProps } from 'react-admin';
+import { ReactElementLike, Requireable, ReactNodeLike, Validator, InferProps } from 'prop-types';
+import React from 'react';
+export function ChipList(props: any): JSX.Element;
+export function GridList({
+  children,
+  linkType,
+  externalLinks,
+  spacing,
+  xs,
+  sm,
+  md,
+  lg,
+  xl
+}: {
+  children: any;
+  linkType?: string | undefined;
+  externalLinks?: boolean | undefined;
+  spacing?: number | undefined;
+  xs?: number | undefined;
+  sm: any;
+  md: any;
+  lg: any;
+  xl: any;
+}): JSX.Element | null;
+/**
+ * @example
+ * <List component="div" perPage={50} {...props}>
+ *   <MasonryList
+ *     image={record => record.image}
+ *     content={record => (
+ *       <>
+ *         <Typography variant="subtitle1">{record.title}</Typography>
+ *         <Typography variant="body2" color="textSecondary" component="p">{record.description}</Typography>
+ *       </>
+ *     )}
+ *     linkType="show"
+ *   />
+ * </List>
+ */
+export function MasonryList({
+  image,
+  content,
+  actions,
+  breakpointCols,
+  linkType
+}: {
+  image: any;
+  content: any;
+  actions: any;
+  breakpointCols?:
+    | {
+        default: number;
+        1050: number;
+        700: number;
+      }
+    | undefined;
+  linkType?: string | undefined;
+}): JSX.Element;
 type Props = {
   reference: string;
   source: string;
@@ -42,13 +82,13 @@ export const ReferenceFilter: <ReferenceType extends RaRecord<Identifier>>({
   label,
   icon,
   showCounters
-}: Props) => import('react/jsx-runtime').JSX.Element;
+}: Props) => JSX.Element;
 export const ListViewContext: React.Context<{
   views: null;
   currentView: null;
   setView: () => null;
 }>;
-export function ViewsButtons(): import('react/jsx-runtime').JSX.Element[] | null;
+export function ViewsButtons(): JSX.Element[] | null;
 export function ListActionsWithViews({
   bulkActions,
   basePath,
@@ -75,7 +115,7 @@ export function ListActionsWithViews({
   selectedIds: any;
   showFilter: any;
   total: any;
-}): import('react/jsx-runtime').JSX.Element;
+}): JSX.Element;
 export function MultiViewsList({
   children,
   actions,
@@ -85,15 +125,49 @@ export function MultiViewsList({
 }: {
   [x: string]: any;
   children: any;
-  actions: any;
+  actions?: JSX.Element | undefined;
   views: any;
-  ListComponent: any;
-}): import('react/jsx-runtime').JSX.Element;
-declare namespace MultiViewsList {
-  namespace defaultProps {
-    export let actions: import('react/jsx-runtime').JSX.Element;
-    export { List as ListComponent };
-  }
-}
+  ListComponent?:
+    | {
+        <RecordType extends RaRecord<Identifier> = any>({
+          debounce,
+          disableAuthentication,
+          disableSyncWithLocation,
+          exporter,
+          filter,
+          filterDefaultValues,
+          perPage,
+          queryOptions,
+          resource,
+          sort,
+          storeKey,
+          ...rest
+        }: ListProps<RecordType>): React.ReactElement<any, string | React.JSXElementConstructor<any>>;
+        propTypes: {
+          actions: Requireable<NonNullable<boolean | ReactElementLike>>;
+          aside: Requireable<ReactElementLike>;
+          children: Validator<NonNullable<ReactNodeLike>>;
+          className: Requireable<string>;
+          emptyWhileLoading: Requireable<boolean>;
+          filter: Requireable<object>;
+          filterDefaultValues: Requireable<object>;
+          filters: Requireable<NonNullable<ReactElementLike | ReactElementLike[]>>;
+          pagination: Requireable<NonNullable<boolean | ReactElementLike>>;
+          perPage: Requireable<number>;
+          sort: Requireable<
+            InferProps<{
+              field: Requireable<string>;
+              order: Requireable<'ASC' | 'DESC'>;
+            }>
+          >;
+          sx: Requireable<any>;
+          title: Requireable<NonNullable<string | ReactElementLike>>;
+          disableSyncWithLocation: Requireable<boolean>;
+          hasCreate: Requireable<boolean>;
+          resource: Requireable<string>;
+        };
+      }
+    | undefined;
+}): JSX.Element;
 
 //# sourceMappingURL=index.d.ts.map

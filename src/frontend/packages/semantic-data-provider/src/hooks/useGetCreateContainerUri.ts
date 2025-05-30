@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import urlJoin from 'url-join';
 import useDataServers from './useDataServers';
 import findCreateContainerWithTypes from '../dataProvider/utils/findCreateContainerWithTypes';
 import getServerKeyFromType from '../dataProvider/utils/getServerKeyFromType';

@@ -11,7 +11,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "parcel build && yalc publish --push --changed",
+    "build": "parcel build --no-cache && yalc publish --push --changed",
     "watch": "nodemon --ext ts,tsx,js --watch src --exec 'yarn build'"
   },
   "dependencies": {
@@ -30,7 +30,7 @@
     "@mui/styles": "^5.13.1",
     "@mui/system": "^5.13.1",
     "react": "^18.2.0",
-    "react-admin": "^4.11.0",
+    "react-admin": "^4.11.0 || 5.*",
     "react-router-dom": "^6.1.0"
   },
   "publishConfig": {

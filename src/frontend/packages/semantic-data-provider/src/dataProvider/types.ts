@@ -83,7 +83,7 @@ export type DataModel = {
     server?: '@default' | '@auth' | '@pod' | DataServerKey;
 
     /** URL of the container where to create new resources. If specified, will bypass the create.server config */
-    container?: string[];
+    container?: string;
   };
   fieldsMapping?: {
     /** The predicate of the title */
