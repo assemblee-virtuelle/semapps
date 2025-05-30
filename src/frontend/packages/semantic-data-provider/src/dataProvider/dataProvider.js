@@ -1,4 +1,6 @@
-import { Configuration, SemanticDataProvider } from './types';
+import { createConnectedLdoDataset } from '@ldo/connected';
+import { solidConnectedPlugin } from '@ldo/connected-solid';
+import { createLdoDataset } from '@ldo/ldo';
 import createMethod from './methods/create';
 import deleteMethod from './methods/delete';
 import deleteManyMethod from './methods/deleteMany';
@@ -15,7 +17,6 @@ import { uploadFile } from './utils/handleFiles';
 import normalizeConfig from './utils/normalizeConfig';
 import expandTypes from './utils/expandTypes';
 import getOntologiesFromContext from './utils/getOntologiesFromContext';
-import { createLdoDataset, LdoDataset } from '@ldo/ldo';
 
 /** @type {(originalConfig: Configuration) => SemanticDataProvider} */
 const dataProvider = originalConfig => {
@@ -36,6 +37,9 @@ const dataProvider = originalConfig => {
 
     // Configure again httpClient with possibly updated data servers
     config.httpClient = httpClient(config.dataServers);
+
+    const dataset = createConnectedLdoDataset([solidConnectedPlugin]);
+    dataset.setContext('solid', { fetch: fetchFn });
 
     // Attach httpClient to global document -- useful for debugging.
     document.httpClient = config.httpClient;

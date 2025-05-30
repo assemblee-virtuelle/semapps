@@ -26,7 +26,7 @@
     "eslint": "^8.2.0",
     "eslint-config-airbnb": "19.0.4",
     "eslint-config-prettier": "^8.8.0",
-    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-import": "^2.31",
     "eslint-plugin-import-typescript": "^0.0.4",
     "eslint-plugin-jsdoc": "^46.4.4",
     "eslint-plugin-jsx-a11y": "^6.5.1",

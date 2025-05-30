@@ -15,6 +15,8 @@
     "watch": "nodemon --ext ts,tsx,js --watch src --exec 'yarn build'"
   },
   "dependencies": {
+    "@ldo/connected": "^1.0.0-alpha.24",
+    "@ldo/connected-solid": "^1.0.0-alpha.24",
     "@ldo/ldo": "^1.0.0-alpha.9",
     "@rdfjs/data-model": "^1.3.4",
     "change-case": "^5.4.4",

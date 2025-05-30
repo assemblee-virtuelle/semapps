@@ -298,6 +298,8 @@ const useFilteredItemsFromPages = <T extends LdoBase>(
       })
     ).then(results => results.flat());
 
+    // TODO: Order items by ids.
+
     setFilteredItems(validatedItems);
     // TODO: Cache filtered items by page, so that we don't have to re-filter them every time?
   }, [queryData?.pages, shapeTypes]);
