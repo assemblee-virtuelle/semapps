@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState, useEffect, useRef, RefObject } from 'react';
 import { useGetIdentity, useDataProvider } from 'react-admin';
-import { QueryFunction, useInfiniteQuery, useQueries, useQueryClient } from 'react-query';
+import { QueryFunction, useInfiniteQuery, useQueries, useQueryClient } from '@tanstack/react-query';
 import { getOrCreateWsChannel, SemanticDataProvider } from '@semapps/semantic-data-provider';
 import { arrayOf } from '../utils';
 import type { UseCollectionOptions, SolidNotification, AwaitActivityOptions } from '../types';
@@ -19,8 +19,8 @@ const useItemsFromPages = (pages: any[], dereferenceItems: boolean) => {
   }, [dereferenceItems, items]);
 
   // Dereference all items, if necessary (even if shouldDereference is false, the hook needs to be called).
-  const itemQueries = useQueries(
-    !shouldDereference
+  const itemQueries = useQueries({
+    queries: !shouldDereference
       ? emptyArray
       : items
           .filter(item => typeof item === 'string')
@@ -30,7 +30,7 @@ const useItemsFromPages = (pages: any[], dereferenceItems: boolean) => {
             // TODO: Collections don't have to contain activities only, do they?
             staleTime: Infinity // Activities are immutable, so no need to refetch..
           }))
-  );
+  });
 
   if (!shouldDereference) {
     return { loadedItems: items, isLoading: false, isFetching: false };
@@ -209,7 +209,8 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
       if (shouldRefetch) {
         setTimeout(
           () =>
-            queryClient.refetchQueries(['collection', { collectionUrl }], {
+            queryClient.refetchQueries({
+              queryKey: ['collection', { collectionUrl }],
               active: true,
               exact: true
             }),
@@ -247,7 +248,8 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
       if (shouldRefetch) {
         setTimeout(
           () =>
-            queryClient.refetchQueries(['collection', { collectionUrl }], {
+            queryClient.refetchQueries({
+              queryKey: ['collection', { collectionUrl }],
               active: true,
               exact: true
             }),
