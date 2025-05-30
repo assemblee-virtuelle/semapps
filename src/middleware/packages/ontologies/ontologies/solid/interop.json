@@ -33,6 +33,9 @@
     "interop:grantee": {
       "@type": "@id"
     },
+    "interop:granteeType": {
+      "@type": "@id"
+    },
     "interop:hasAccessAuthorization": {
       "@type": "@id"
     },
@@ -106,6 +109,12 @@
       "@type": "@id"
     },
     "interop:delegationOfGrant": {
+      "@type": "@id"
+    },
+    "interop:reciprocalRegistration": {
+      "@type": "@id"
+    },
+    "interop:replaces": {
       "@type": "@id"
     }
   }

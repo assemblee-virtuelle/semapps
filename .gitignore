@@ -14,6 +14,5 @@ lerna-debug.log
 # conflict
 *.orig
 .nx
-yalc.lock
 .yalc
-
+yalc.lock

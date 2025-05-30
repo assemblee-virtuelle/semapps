@@ -50,28 +50,20 @@ const CollectionsRegistryService = {
         this.collectionsInCreation.push(collectionUri);
 
         // Create the collection
-        await ctx.call(
-          'activitypub.collection.post',
-          {
-            resource: {
-              type: ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
-              summary,
-              'semapps:dereferenceItems': dereferenceItems,
-              'semapps:itemsPerPage': itemsPerPage,
-              'semapps:sortPredicate': sortPredicate,
-              'semapps:sortOrder': sortOrder
-            },
-            contentType: MIME_TYPES.JSON,
-            webId: this.settings.podProvider ? getWebIdFromUri(objectUri) : 'system',
-            permissions // Handled by the WebAclMiddleware, if present
+        await ctx.call('activitypub.collection.post', {
+          resource: {
+            type: ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
+            summary,
+            'semapps:dereferenceItems': dereferenceItems,
+            'semapps:itemsPerPage': itemsPerPage,
+            'semapps:sortPredicate': sortPredicate,
+            'semapps:sortOrder': sortOrder
           },
-          {
-            meta: {
-              // Bypass the automatic URI generation
-              forcedResourceUri: path ? collectionUri : undefined
-            }
-          }
-        );
+          contentType: MIME_TYPES.JSON,
+          webId: this.settings.podProvider ? getWebIdFromUri(objectUri) : 'system',
+          permissions, // Handled by the WebAclMiddleware, if present
+          forcedResourceUri: path ? collectionUri : undefined // Bypass the automatic URI generation
+        });
 
         // Attach it to the object
         await ctx.call(
