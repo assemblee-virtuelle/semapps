@@ -1,5 +1,6 @@
 import { DataProvider, RaRecord, fetchUtils } from 'react-admin';
 import { Quad } from '@rdfjs/types';
+import { LdoDataset } from '@ldo/ldo';
 import { JSX } from 'react/jsx-runtime';
 export type DataServerKey = string & {
   readonly _type?: 'DataServerKey';
@@ -64,7 +65,7 @@ export type DataModel = {
     /** The server where to create new resources. Default to @default */
     server?: '@default' | '@auth' | '@pod' | DataServerKey;
     /** URL of the container where to create new resources. If specified, will bypass the create.server config */
-    container?: string[];
+    container?: string;
   };
   fieldsMapping?: {
     /** The predicate of the title */
@@ -88,6 +89,7 @@ export type SemanticDataProvider = DataProvider & {
   getDataModels: () => Promise<Record<string, DataModel>>;
   getDataServers: () => Promise<DataServersConfig>;
   fetch: FetchFn;
+  ldoDataset: LdoDataset;
   getConfig: () => Promise<Configuration>;
   refreshConfig: () => Promise<Configuration>;
   uploadFile: (rawFile: File) => Promise<string | null>;
@@ -161,6 +163,9 @@ export function buildSparqlQuery({
 /** @type {(originalConfig: Configuration) => SemanticDataProvider} */
 export const dataProvider: (originalConfig: Configuration) => SemanticDataProvider;
 export const getPrefixFromUri: (uri: string, ontologies: Record<string, string>) => string;
+/**
+ * Adds `dataServers.user` properties to configuration (baseUrl, sparqlEndpoint, proxyUrl, ...).
+ */
 export const configureUserStorage: () => Plugin;
 /**
  * Return a function that look if an app (clientId) is registered with an user (webId)
@@ -168,7 +173,21 @@ export const configureUserStorage: () => Plugin;
  * See https://solid.github.io/data-interoperability-panel/specification/#authorization-agent
  */
 export const fetchAppRegistration: () => Plugin;
+/**
+ * Plugin to add data registrations to the user containers, by fetching the registry set.
+ *
+ * Requires the `configureUserStorage` plugin.
+ *
+ * @returns {Configuration} The configuration with the data registrations added to `dataServers.user.containers`
+ */
 export const fetchDataRegistry: () => Plugin;
+/**
+ * Plugin to add type indexes to the user containers, by fetching the them.
+ *
+ * Requires the `configureUserStorage` plugin.
+ *
+ * @returns {Configuration} The configuration with the data registrations added to `dataServers.user.containers`
+ */
 export const fetchTypeIndexes: () => Plugin;
 export const fetchVoidEndpoints: () => Plugin;
 export const useDataProviderConfig: () => Configuration | undefined;
@@ -181,8 +200,8 @@ export const useDataServers: () => DataServersConfig | undefined;
 export const useContainers: (resourceId?: string, serverKeys?: string | string[]) => Container[];
 export const useContainersByTypes: (types?: string | string[]) => Container[];
 export const useContainerByUri: (containerUri: string) => Container | undefined;
-export const useGetCreateContainerUri: () => (resourceId: string) => string | string[] | undefined;
-export const useCreateContainerUri: (resourceId: string) => string | string[] | undefined;
+export const useGetCreateContainerUri: () => (resourceId: string) => string | undefined;
+export const useCreateContainerUri: (resourceId: string) => string | undefined;
 export const useDataModel: (resourceId: string) => DataModel | undefined;
 export function useGetExternalLink(componentExternalLinks: any): (record: any) => any;
 export const useGetPrefixFromUri: () => (uri: string) => string;

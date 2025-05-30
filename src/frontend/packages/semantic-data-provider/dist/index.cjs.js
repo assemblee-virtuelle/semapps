@@ -1,3 +1,6 @@
+var $bkNnK$ldoconnected = require("@ldo/connected");
+var $bkNnK$ldoconnectedsolid = require("@ldo/connected-solid");
+var $bkNnK$ldoldo = require("@ldo/ldo");
 var $bkNnK$speakingurl = require("speakingurl");
 var $bkNnK$jsonld = require("jsonld");
 var $bkNnK$rdfjsdatamodel = require("@rdfjs/data-model");
@@ -66,8 +69,8 @@ $parcel$export(module.exports, "ReificationArrayInput", () => $030f1232f6810456$
 $parcel$export(module.exports, "createWsChannel", () => $84ab912646919f8c$export$28772ab4c256e709);
 $parcel$export(module.exports, "getOrCreateWsChannel", () => $84ab912646919f8c$export$8d60734939c59ced);
 $parcel$export(module.exports, "createSolidNotificationChannel", () => $84ab912646919f8c$export$3edfe18db119b920);
-var $1bc09db736a9cb94$exports = {};
-/* eslint-disable @typescript-eslint/no-redundant-type-constituents */ 
+
+
 
 
 
@@ -371,6 +374,7 @@ const $8c999cc29c8d6a6c$var$fetchContainers = async (containers, params, { httpC
             const jsonResponse = json;
             // If container's context is different, compact it to have an uniform result
             // TODO deep compare if the context is an object
+            // This is most likely an array of two strings
             if (jsonResponse['@context'] !== jsonContext) return (0, ($parcel$interopDefault($bkNnK$jsonld))).compact(jsonResponse, jsonContext);
             return jsonResponse;
         }).then((json)=>{
@@ -1134,7 +1138,10 @@ const $058bb6151d120fba$var$getTypesFromShapeTree = async (shapeTreeUri)=>{
 var $058bb6151d120fba$export$2e2bcd8739ae039 = $058bb6151d120fba$var$getTypesFromShapeTree;
 
 
-const $5e24772571dd1677$var$normalizeConfig = async (config)=>{
+/**
+ * For data server containers, expands types and adds `uri` and `server` properties.
+ * For resources, expands types (if applicable from shape tree information).
+ */ const $5e24772571dd1677$var$normalizeConfig = async (config)=>{
     const newConfig = {
         ...config
     };
@@ -1195,11 +1202,17 @@ var $fcf4eee3b18e8350$export$2e2bcd8739ae039 = $fcf4eee3b18e8350$var$getOntologi
         config.dataServers ??= {};
         // Configure httpClient with initial data servers, so that plugins may use it
         config.httpClient = (0, $341dff85fe619d85$export$2e2bcd8739ae039)(config.dataServers);
-        // Useful for debugging.
-        document.httpClient = config.httpClient;
         for (const plugin of config.plugins)if (plugin.transformConfig) config = await plugin.transformConfig(config);
         // Configure again httpClient with possibly updated data servers
         config.httpClient = (0, $341dff85fe619d85$export$2e2bcd8739ae039)(config.dataServers);
+        const dataset = (0, $bkNnK$ldoconnected.createConnectedLdoDataset)([
+            (0, $bkNnK$ldoconnectedsolid.solidConnectedPlugin)
+        ]);
+        dataset.setContext('solid', {
+            fetch: fetchFn
+        });
+        // Attach httpClient to global document -- useful for debugging.
+        document.httpClient = config.httpClient;
         if (!config.ontologies && config.jsonContext) config.ontologies = await (0, $fcf4eee3b18e8350$export$2e2bcd8739ae039)(config.jsonContext);
         else if (!config.jsonContext && config.ontologies) config.jsonContext = config.ontologies;
         else if (!config.jsonContext && !config.ontologies) throw new Error(`Either the JSON context or the ontologies must be set`);
@@ -1231,6 +1244,7 @@ var $fcf4eee3b18e8350$export$2e2bcd8739ae039 = $fcf4eee3b18e8350$var$getOntologi
         getDataServers: waitForPrepareConfig((0, $b16131432127b07b$export$2e2bcd8739ae039)),
         getLocalDataServers: (0, $b16131432127b07b$export$2e2bcd8739ae039)(originalConfig),
         fetch: waitForPrepareConfig((c)=>(0, $341dff85fe619d85$export$2e2bcd8739ae039)(c.dataServers)),
+        ldoDataset: (0, $bkNnK$ldoldo.createLdoDataset)(),
         uploadFile: waitForPrepareConfig((c)=>(rawFile)=>(0, $6fcb30f76390d142$export$a5575dbeeffdad98)(rawFile, c)),
         expandTypes: waitForPrepareConfig((c)=>(types)=>(0, $9ab033d1ec46b5da$export$2e2bcd8739ae039)(types, c.jsonContext)),
         getConfig: waitForPrepareConfig((c)=>()=>c),
@@ -1260,7 +1274,9 @@ var $8c4c0f0b55649ce6$export$2e2bcd8739ae039 = $8c4c0f0b55649ce6$var$getPrefixFr
 
 
 
-const $89358cee13a17a31$var$configureUserStorage = ()=>({
+/**
+ * Adds `dataServers.user` properties to configuration (baseUrl, sparqlEndpoint, proxyUrl, ...).
+ */ const $89358cee13a17a31$var$configureUserStorage = ()=>({
         transformConfig: async (config)=>{
             const token = localStorage.getItem('token');
             // If the user is logged in
@@ -1403,7 +1419,13 @@ var $c512de108ef5d674$export$2e2bcd8739ae039 = $c512de108ef5d674$var$fetchAppReg
 
 
 
-const $cd772adda3024172$var$fetchDataRegistry = ()=>({
+/**
+ * Plugin to add data registrations to the user containers, by fetching the registry set.
+ *
+ * Requires the `configureUserStorage` plugin.
+ *
+ * @returns {Configuration} The configuration with the data registrations added to `dataServers.user.containers`
+ */ const $cd772adda3024172$var$fetchDataRegistry = ()=>({
         transformConfig: async (config)=>{
             const token = localStorage.getItem('token');
             // If the user is logged in
@@ -1436,7 +1458,13 @@ var $cd772adda3024172$export$2e2bcd8739ae039 = $cd772adda3024172$var$fetchDataRe
 
 
 
-const $69d4da9beaa62ac6$var$fetchTypeIndexes = ()=>({
+/**
+ * Plugin to add type indexes to the user containers, by fetching the them.
+ *
+ * Requires the `configureUserStorage` plugin.
+ *
+ * @returns {Configuration} The configuration with the data registrations added to `dataServers.user.containers`
+ */ const $69d4da9beaa62ac6$var$fetchTypeIndexes = ()=>({
         transformConfig: async (config)=>{
             const token = localStorage.getItem('token');
             // If the user is logged in
@@ -2111,6 +2139,8 @@ const $84ab912646919f8c$var$registeredWebSockets = new Map();
 };
 
 
+var $1bc09db736a9cb94$exports = {};
+/* eslint-disable @typescript-eslint/no-redundant-type-constituents */ 
 
 $parcel$exportWildcard(module.exports, $1bc09db736a9cb94$exports);
 

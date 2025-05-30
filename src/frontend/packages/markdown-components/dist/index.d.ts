@@ -1,3 +1,4 @@
+import { JSX } from 'react/jsx-runtime';
 import { FunctionComponent } from 'react';
 import { ReactMdeProps } from 'react-mde';
 import { MarkdownToJSX } from 'markdown-to-jsx';
@@ -12,7 +13,7 @@ export function MarkdownField({
   source: any;
   LabelComponent?: string | undefined;
   overrides?: {} | undefined;
-}): import('react/jsx-runtime').JSX.Element | null;
+}): JSX.Element | null;
 type Props = TextInputProps & {
   overrides?: MarkdownToJSX.Overrides;
   reactMdeProps?: ReactMdeProps;

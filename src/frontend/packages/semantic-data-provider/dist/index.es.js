@@ -1,3 +1,6 @@
+import {createConnectedLdoDataset as $fj9kP$createConnectedLdoDataset} from "@ldo/connected";
+import {solidConnectedPlugin as $fj9kP$solidConnectedPlugin} from "@ldo/connected-solid";
+import {createLdoDataset as $fj9kP$createLdoDataset} from "@ldo/ldo";
 import $fj9kP$speakingurl from "speakingurl";
 import $fj9kP$jsonld from "jsonld";
 import $fj9kP$rdfjsdatamodel, {triple as $fj9kP$triple, variable as $fj9kP$variable, namedNode as $fj9kP$namedNode} from "@rdfjs/data-model";
@@ -12,8 +15,8 @@ import $fj9kP$react, {useState as $fj9kP$useState, useEffect as $fj9kP$useEffect
 import {jsx as $fj9kP$jsx, Fragment as $fj9kP$Fragment, jsxs as $fj9kP$jsxs} from "react/jsx-runtime";
 import $fj9kP$muistylesmakeStyles from "@mui/styles/makeStyles";
 
-var $11242e90250f263e$exports = {};
-/* eslint-disable @typescript-eslint/no-redundant-type-constituents */ 
+
+
 
 
 
@@ -317,6 +320,7 @@ const $aba124ea15ea8bc6$var$fetchContainers = async (containers, params, { httpC
             const jsonResponse = json;
             // If container's context is different, compact it to have an uniform result
             // TODO deep compare if the context is an object
+            // This is most likely an array of two strings
             if (jsonResponse['@context'] !== jsonContext) return (0, $fj9kP$jsonld).compact(jsonResponse, jsonContext);
             return jsonResponse;
         }).then((json)=>{
@@ -1080,7 +1084,10 @@ const $ab7d38fd091ff1b6$var$getTypesFromShapeTree = async (shapeTreeUri)=>{
 var $ab7d38fd091ff1b6$export$2e2bcd8739ae039 = $ab7d38fd091ff1b6$var$getTypesFromShapeTree;
 
 
-const $33bf2a661b5c0cbd$var$normalizeConfig = async (config)=>{
+/**
+ * For data server containers, expands types and adds `uri` and `server` properties.
+ * For resources, expands types (if applicable from shape tree information).
+ */ const $33bf2a661b5c0cbd$var$normalizeConfig = async (config)=>{
     const newConfig = {
         ...config
     };
@@ -1141,11 +1148,17 @@ var $143de1c1f21344e7$export$2e2bcd8739ae039 = $143de1c1f21344e7$var$getOntologi
         config.dataServers ??= {};
         // Configure httpClient with initial data servers, so that plugins may use it
         config.httpClient = (0, $22b4895a4ca7d626$export$2e2bcd8739ae039)(config.dataServers);
-        // Useful for debugging.
-        document.httpClient = config.httpClient;
         for (const plugin of config.plugins)if (plugin.transformConfig) config = await plugin.transformConfig(config);
         // Configure again httpClient with possibly updated data servers
         config.httpClient = (0, $22b4895a4ca7d626$export$2e2bcd8739ae039)(config.dataServers);
+        const dataset = (0, $fj9kP$createConnectedLdoDataset)([
+            (0, $fj9kP$solidConnectedPlugin)
+        ]);
+        dataset.setContext('solid', {
+            fetch: fetchFn
+        });
+        // Attach httpClient to global document -- useful for debugging.
+        document.httpClient = config.httpClient;
         if (!config.ontologies && config.jsonContext) config.ontologies = await (0, $143de1c1f21344e7$export$2e2bcd8739ae039)(config.jsonContext);
         else if (!config.jsonContext && config.ontologies) config.jsonContext = config.ontologies;
         else if (!config.jsonContext && !config.ontologies) throw new Error(`Either the JSON context or the ontologies must be set`);
@@ -1177,6 +1190,7 @@ var $143de1c1f21344e7$export$2e2bcd8739ae039 = $143de1c1f21344e7$var$getOntologi
         getDataServers: waitForPrepareConfig((0, $7dd5bf9323d2d9c1$export$2e2bcd8739ae039)),
         getLocalDataServers: (0, $7dd5bf9323d2d9c1$export$2e2bcd8739ae039)(originalConfig),
         fetch: waitForPrepareConfig((c)=>(0, $22b4895a4ca7d626$export$2e2bcd8739ae039)(c.dataServers)),
+        ldoDataset: (0, $fj9kP$createLdoDataset)(),
         uploadFile: waitForPrepareConfig((c)=>(rawFile)=>(0, $b17c43e3301545ca$export$a5575dbeeffdad98)(rawFile, c)),
         expandTypes: waitForPrepareConfig((c)=>(types)=>(0, $36aa010ec46eaf45$export$2e2bcd8739ae039)(types, c.jsonContext)),
         getConfig: waitForPrepareConfig((c)=>()=>c),
@@ -1206,7 +1220,9 @@ var $861da9be2c0e62eb$export$2e2bcd8739ae039 = $861da9be2c0e62eb$var$getPrefixFr
 
 
 
-const $cdd3c71a628eeefe$var$configureUserStorage = ()=>({
+/**
+ * Adds `dataServers.user` properties to configuration (baseUrl, sparqlEndpoint, proxyUrl, ...).
+ */ const $cdd3c71a628eeefe$var$configureUserStorage = ()=>({
         transformConfig: async (config)=>{
             const token = localStorage.getItem('token');
             // If the user is logged in
@@ -1349,7 +1365,13 @@ var $2c257b4237cb14ca$export$2e2bcd8739ae039 = $2c257b4237cb14ca$var$fetchAppReg
 
 
 
-const $91255e144bb55afc$var$fetchDataRegistry = ()=>({
+/**
+ * Plugin to add data registrations to the user containers, by fetching the registry set.
+ *
+ * Requires the `configureUserStorage` plugin.
+ *
+ * @returns {Configuration} The configuration with the data registrations added to `dataServers.user.containers`
+ */ const $91255e144bb55afc$var$fetchDataRegistry = ()=>({
         transformConfig: async (config)=>{
             const token = localStorage.getItem('token');
             // If the user is logged in
@@ -1382,7 +1404,13 @@ var $91255e144bb55afc$export$2e2bcd8739ae039 = $91255e144bb55afc$var$fetchDataRe
 
 
 
-const $2d5f75df63129ebc$var$fetchTypeIndexes = ()=>({
+/**
+ * Plugin to add type indexes to the user containers, by fetching the them.
+ *
+ * Requires the `configureUserStorage` plugin.
+ *
+ * @returns {Configuration} The configuration with the data registrations added to `dataServers.user.containers`
+ */ const $2d5f75df63129ebc$var$fetchTypeIndexes = ()=>({
         transformConfig: async (config)=>{
             const token = localStorage.getItem('token');
             // If the user is logged in
@@ -2057,6 +2085,8 @@ const $03d52e691e8dc945$var$registeredWebSockets = new Map();
 };
 
 
+var $11242e90250f263e$exports = {};
+/* eslint-disable @typescript-eslint/no-redundant-type-constituents */ 
 
 
 
