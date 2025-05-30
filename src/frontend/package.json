@@ -17,6 +17,9 @@
     "test-watch": "nx watch --all -- nx run $NX_PROJECT_NAME:build"
   },
   "devDependencies": {
+    "@eslint/compat": "^1.2.9",
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.27.0",
     "@parcel/packager-ts": "^2.13.3",
     "@parcel/transformer-typescript-types": "^2.13.3",
     "@types/react": "^18.2.14",
@@ -33,6 +36,7 @@
     "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^5.2.0",
+    "globals": "^16.2.0",
     "lerna": "^8.0.1",
     "nodemon": "^3.0.1",
     "nx": "^17.2.5",
