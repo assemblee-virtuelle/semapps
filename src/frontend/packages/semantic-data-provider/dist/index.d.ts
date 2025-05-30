@@ -164,7 +164,7 @@ export const dataProvider: (originalConfig: Configuration) => SemanticDataProvid
 export const getPrefixFromUri: (uri: string, ontologies: Record<string, string>) => string;
 export const configureUserStorage: () => Plugin;
 type PluginConfiguration = {
-  fetchSelectedResources: boolean;
+  includeSelectedResources: boolean;
 };
 /**
  * Return a function that look if an app (clientId) is registered with an user (webId)

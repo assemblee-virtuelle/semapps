@@ -1327,7 +1327,7 @@ var $d7a7484a035f15cd$export$2e2bcd8739ae039 = $d7a7484a035f15cd$var$getContaine
  * If not, it redirects to the endpoint provided by the user's authorization agent
  * See https://solid.github.io/data-interoperability-panel/specification/#authorization-agent
  */ const $2c257b4237cb14ca$var$fetchAppRegistration = (pluginConfig = {})=>{
-    const { fetchSelectedResources: fetchSelectedResources = false } = pluginConfig;
+    const { includeSelectedResources: includeSelectedResources = true } = pluginConfig;
     return {
         transformConfig: async (config)=>{
             const token = localStorage.getItem('token');
@@ -1357,7 +1357,7 @@ var $d7a7484a035f15cd$export$2e2bcd8739ae039 = $d7a7484a035f15cd$var$getContaine
                                 container.server = accessGrant['interop:dataOwner'];
                                 if (accessGrant['interop:scopeOfGrant'] === 'interop:AllFromRegistry') return container;
                                 else if (accessGrant['interop:scopeOfGrant'] === 'interop:SelectedFromRegistry') {
-                                    if (!fetchSelectedResources) return undefined;
+                                    if (!includeSelectedResources) return undefined;
                                     container.selectedResources = (0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(accessGrant['interop:hasDataInstance']);
                                     return container;
                                 }

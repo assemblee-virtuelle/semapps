@@ -5,7 +5,7 @@ import arrayOf from '../utils/arrayOf';
 import getContainerFromDataRegistration from '../utils/getContainerFromDataRegistration';
 
 type PluginConfiguration = {
-  fetchSelectedResources: boolean;
+  includeSelectedResources: boolean;
 };
 
 /**
@@ -14,7 +14,7 @@ type PluginConfiguration = {
  * See https://solid.github.io/data-interoperability-panel/specification/#authorization-agent
  */
 const fetchAppRegistration = (pluginConfig = {} as PluginConfiguration): Plugin => {
-  const { fetchSelectedResources = false } = pluginConfig;
+  const { includeSelectedResources = true } = pluginConfig;
   return {
     transformConfig: async (config: Configuration) => {
       const token = localStorage.getItem('token');
@@ -54,7 +54,7 @@ const fetchAppRegistration = (pluginConfig = {} as PluginConfiguration): Plugin 
                   if (accessGrant['interop:scopeOfGrant'] === 'interop:AllFromRegistry') {
                     return container;
                   } else if (accessGrant['interop:scopeOfGrant'] === 'interop:SelectedFromRegistry') {
-                    if (!fetchSelectedResources) return undefined;
+                    if (!includeSelectedResources) return undefined;
                     container.selectedResources = arrayOf(accessGrant['interop:hasDataInstance']);
                     return container;
                   }
