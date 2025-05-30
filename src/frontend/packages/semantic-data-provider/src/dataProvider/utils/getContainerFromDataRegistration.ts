@@ -1,6 +1,7 @@
 import jsonld from 'jsonld';
 import { fetchUtils } from 'react-admin';
 import { Configuration, Container } from '../types';
+import getServerKeyFromType from './getServerKeyFromType';
 
 const getContainerFromDataRegistration = async (dataRegistrationUri: string, config: Configuration) => {
   const { json: dataRegistration } = await config.httpClient(dataRegistrationUri, {
@@ -25,7 +26,8 @@ const getContainerFromDataRegistration = async (dataRegistrationUri: string, con
     label: { '@id': 'skos:prefLabel', '@container': '@language' }
   });
 
-  const { baseUrl } = config.dataServers.user;
+  const userStorage = getServerKeyFromType('authServer', config.dataServers);
+  const { baseUrl } = config.dataServers[userStorage];
   const containerPath = dataRegistration.id.replace(baseUrl, '');
 
   const container = {

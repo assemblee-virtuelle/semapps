@@ -15,7 +15,7 @@ const configureUserStorage = (): Plugin => ({
       if (user) {
         const newConfig = { ...config } as Configuration;
 
-        newConfig.dataServers.user = {
+        newConfig.dataServers[webId] = {
           pod: true,
           default: true,
           authServer: true,
