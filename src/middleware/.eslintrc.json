@@ -11,6 +11,7 @@
     "plugin:jest/recommended",
     "prettier"
   ],
+  "ignorePatterns": ["**/data/**"],
   // "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": "latest",

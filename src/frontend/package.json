@@ -37,6 +37,7 @@
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "globals": "^16.2.0",
+    "jiti": "^2.4.2",
     "lerna": "^8.0.1",
     "nodemon": "^3.0.1",
     "nx": "^17.2.5",

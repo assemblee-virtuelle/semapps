@@ -187,5 +187,5 @@ module.exports = defineConfig([
       'vars-on-top': 'warn'
     }
   },
-  globalIgnores(['**/dist/*', '**/.eslintrc.js'])
+  globalIgnores(['**/dist/*', '**/.eslintrc.js', '**/data/**'])
 ]);
