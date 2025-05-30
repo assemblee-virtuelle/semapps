@@ -2,6 +2,7 @@ import jsonld, { ContextDefinition } from 'jsonld';
 import { GetListParams } from 'react-admin';
 import arrayOf from './arrayOf';
 import { Configuration, Container, DataServerKey } from '../types';
+import fetchSelectedResources from './fetchSelectedResources';
 
 type LDPContainerType = 'ldp:Container' | 'ldp:BasicContainer';
 
@@ -43,22 +44,14 @@ const isObject = (val: any) => {
   return val != null && typeof val === 'object' && !Array.isArray(val);
 };
 
-const fetchContainers = async (
-  containers: Container[],
-  params: GetListParams,
-  { httpClient, jsonContext }: Configuration
-) => {
+const fetchContainers = async (containers: Container[], params: GetListParams, config: Configuration) => {
+  const { httpClient, jsonContext } = config;
+
   // Fetch simultaneously all containers
   const results = await Promise.all(
-    containers.map(async container => {
-      if (container.selectedResources) {
-        return Promise.all(
-          arrayOf(container.selectedResources).map(async (resourceUri: string) => {
-            const { json }: { json: LDPResource } = await httpClient(resourceUri);
-            return json;
-          })
-        );
-      } else {
+    containers
+      .filter(c => !c.selectedResources)
+      .map(async container => {
         let { json }: { json: LDPContainer } = await httpClient(container.uri);
 
         // If container's context is different, compact it to have an uniform result
@@ -75,11 +68,18 @@ const fetchContainers = async (
           '@context': json['@context'],
           ...resource
         }));
-      }
-    })
+      })
   );
 
   let resources = results.flat();
+
+  // Append selected resources (if any)
+  const selectedResources = await fetchSelectedResources(
+    containers,
+    resources.map(r => r.id),
+    config
+  );
+  resources = resources.concat(selectedResources);
 
   resources = resources.map(resource => {
     resource.id = resource.id || resource['@id'];

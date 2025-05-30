@@ -1,5 +1,6 @@
 import { DataProvider, RaRecord, fetchUtils } from 'react-admin';
 import { Quad } from '@rdfjs/types';
+import { Quad as _Quad1 } from '@rdfjs/data-model/node_modules/@rdfjs/types';
 import { JSX } from 'react/jsx-runtime';
 export type DataServerKey = string & {
   readonly _type?: 'DataServerKey';
@@ -137,7 +138,7 @@ export function buildBlankNodesQuery(
   ontologies: any
 ):
   | {
-      construct: Quad[] | null;
+      construct: _Quad1[] | null;
       where: {
         type: string;
         patterns: any[];
@@ -162,12 +163,15 @@ export function buildSparqlQuery({
 export const dataProvider: (originalConfig: Configuration) => SemanticDataProvider;
 export const getPrefixFromUri: (uri: string, ontologies: Record<string, string>) => string;
 export const configureUserStorage: () => Plugin;
+type PluginConfiguration = {
+  fetchSelectedResources: boolean;
+};
 /**
  * Return a function that look if an app (clientId) is registered with an user (webId)
  * If not, it redirects to the endpoint provided by the user's authorization agent
  * See https://solid.github.io/data-interoperability-panel/specification/#authorization-agent
  */
-export const fetchAppRegistration: () => Plugin;
+export const fetchAppRegistration: (pluginConfig?: PluginConfiguration) => Plugin;
 export const fetchDataRegistry: () => Plugin;
 export const fetchTypeIndexes: () => Plugin;
 export const fetchVoidEndpoints: () => Plugin;

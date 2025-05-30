@@ -4,73 +4,85 @@ import { Configuration, Plugin } from '../types';
 import arrayOf from '../utils/arrayOf';
 import getContainerFromDataRegistration from '../utils/getContainerFromDataRegistration';
 
+type PluginConfiguration = {
+  fetchSelectedResources: boolean;
+};
+
 /**
  * Return a function that look if an app (clientId) is registered with an user (webId)
  * If not, it redirects to the endpoint provided by the user's authorization agent
  * See https://solid.github.io/data-interoperability-panel/specification/#authorization-agent
  */
-const fetchAppRegistration = (): Plugin => ({
-  transformConfig: async (config: Configuration) => {
-    const token = localStorage.getItem('token');
+const fetchAppRegistration = (pluginConfig = {} as PluginConfiguration): Plugin => {
+  const { fetchSelectedResources = false } = pluginConfig;
+  return {
+    transformConfig: async (config: Configuration) => {
+      const token = localStorage.getItem('token');
 
-    // If the user is logged in
-    if (token) {
-      const payload: { [k: string]: string | number } = jwtDecode(token);
-      const webId = (payload.webId as string) || (payload.webid as string); // Currently we must deal with both formats
+      // If the user is logged in
+      if (token) {
+        const payload: { [k: string]: string | number } = jwtDecode(token);
+        const webId = (payload.webId as string) || (payload.webid as string); // Currently we must deal with both formats
 
-      const { json: user } = await config.httpClient(webId);
-      const authAgentUri = user['interop:hasAuthorizationAgent'];
+        const { json: user } = await config.httpClient(webId);
+        const authAgentUri = user['interop:hasAuthorizationAgent'];
 
-      if (authAgentUri) {
-        // Find if an application registration is linked to this user
-        // See https://solid.github.io/data-interoperability-panel/specification/#agent-registration-discovery
-        const { headers } = await config.httpClient(authAgentUri);
-        if (headers.has('Link')) {
-          const linkHeader = LinkHeader.parse(headers.get('Link')!);
-          const registeredAgentLinkHeader = linkHeader.rel('http://www.w3.org/ns/solid/interop#registeredAgent');
+        if (authAgentUri) {
+          // Find if an application registration is linked to this user
+          // See https://solid.github.io/data-interoperability-panel/specification/#agent-registration-discovery
+          const { headers } = await config.httpClient(authAgentUri);
+          if (headers.has('Link')) {
+            const linkHeader = LinkHeader.parse(headers.get('Link')!);
+            const registeredAgentLinkHeader = linkHeader.rel('http://www.w3.org/ns/solid/interop#registeredAgent');
 
-          if (registeredAgentLinkHeader.length > 0) {
-            const appRegistrationUri = registeredAgentLinkHeader[0].anchor;
-            const { json: appRegistration } = await config.httpClient(appRegistrationUri);
+            if (registeredAgentLinkHeader.length > 0) {
+              const appRegistrationUri = registeredAgentLinkHeader[0].anchor;
+              const { json: appRegistration } = await config.httpClient(appRegistrationUri);
 
-            const newConfig = { ...config } as Configuration;
+              const newConfig = { ...config } as Configuration;
 
-            // Load data grants concurrently to improve performances
-            const results = await Promise.all(
-              arrayOf(appRegistration['interop:hasAccessGrant']).map(async accessGrantUri => {
-                const { json: accessGrant } = await config.httpClient(accessGrantUri);
-                return Promise.all(
-                  arrayOf(accessGrant['interop:hasDataGrant']).map(async dataGrantUri => {
-                    const { json: dataGrant } = await config.httpClient(dataGrantUri);
-                    const container = await getContainerFromDataRegistration(
-                      dataGrant['interop:hasDataRegistration'],
-                      config
-                    );
-                    if (dataGrant['interop:scopeOfGrant'] === 'interop:SelectedFromRegistry') {
-                      container.selectedResources = arrayOf(dataGrant['interop:hasDataInstance']);
-                    }
+              // Load access grants concurrently to improve performances
+              const results = await Promise.all(
+                arrayOf(appRegistration['interop:hasAccessGrant']).map(async accessGrantUri => {
+                  const { json: accessGrant } = await config.httpClient(accessGrantUri);
+                  const container = await getContainerFromDataRegistration(
+                    accessGrant['interop:hasDataRegistration'],
+                    config
+                  );
+                  container.server = accessGrant['interop:dataOwner'];
+
+                  if (accessGrant['interop:scopeOfGrant'] === 'interop:AllFromRegistry') {
                     return container;
+                  } else if (accessGrant['interop:scopeOfGrant'] === 'interop:SelectedFromRegistry') {
+                    if (!fetchSelectedResources) return undefined;
+                    container.selectedResources = arrayOf(accessGrant['interop:hasDataInstance']);
+                    return container;
+                  }
+                })
+              );
 
-                    // if (dataGrant['interop:scopeOfGrant'] === 'interop:AllFromRegistry') {
-                    //   return getContainerFromDataRegistration(dataGrant['interop:hasDataRegistration'], config);
-                    // } else {
-                    //   return undefined;
-                    // }
-                  })
-                );
-              })
-            );
+              // Put data shared by other users in other servers (storages)
+              for (const container of results.flat().filter(i => i !== undefined)) {
+                if (!newConfig.dataServers[container.server!]) {
+                  newConfig.dataServers[container.server!] = {
+                    pod: true,
+                    baseUrl: `${container.server!}/data`,
+                    containers: [container]
+                  };
+                } else {
+                  newConfig.dataServers[container.server!].containers.push(container);
+                }
+              }
 
-            newConfig.dataServers.user.containers = results.flat().filter(i => i !== undefined);
-
-            return newConfig;
+              return newConfig;
+            }
           }
         }
       }
-    }
 
-    return config;
-  }
-});
+      return config;
+    }
+  };
+};
 
 export default fetchAppRegistration;
