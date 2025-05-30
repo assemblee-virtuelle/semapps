@@ -29,5 +29,12 @@
   "publishConfig": {
     "access": "public"
   },
-  "types": "dist/index.d.ts"
+  "types": "dist/index.d.ts",
+  "devDependencies": {
+    "@mui/icons-material": "^7.1.0",
+    "@mui/material": "^7.1.0",
+    "react": "^18.2.0",
+    "react-admin": "^5.8.3",
+    "react-hook-form": "^7.43.9"
+  }
 }

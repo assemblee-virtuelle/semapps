@@ -712,11 +712,11 @@ var $38698ff0e415f88b$export$2e2bcd8739ae039 = $38698ff0e415f88b$var$AddPermissi
 
 const $2a38cfa58fd59a9e$var$AgentIcon = ({ agent: agent })=>{
     switch(agent.predicate){
-        case 0, $dd9154ee844248d7$export$2703254089a859eb:
+        case (0, $dd9154ee844248d7$export$2703254089a859eb):
             return agent.id === (0, $dd9154ee844248d7$export$83ae1bc0992a6335) ? /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$muiiconsmaterialPublic), {}) : /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$muiiconsmaterialVpnLock), {});
-        case 0, $dd9154ee844248d7$export$97a08a1bb7ee0545:
+        case (0, $dd9154ee844248d7$export$97a08a1bb7ee0545):
             return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$muiiconsmaterialPerson), {});
-        case 0, $dd9154ee844248d7$export$f07ccbe0773f2c7:
+        case (0, $dd9154ee844248d7$export$f07ccbe0773f2c7):
             return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$muiiconsmaterialGroup), {});
         default:
             throw new Error(`Unknown agent predicate: ${agent.predicate}`);
@@ -886,9 +886,9 @@ const $7ad577d9c9c71db0$var$useAgents = (uri)=>{
         };
         if (permissions) {
             for (const p of permissions){
-                if (p[0, $dd9154ee844248d7$export$2703254089a859eb]) (0, $ee80a6b397c7131d$export$dca4f48302963835)(p[0, $dd9154ee844248d7$export$2703254089a859eb]).forEach((agentId)=>appendPermission(agentId, (0, $dd9154ee844248d7$export$2703254089a859eb), p['acl:mode']));
-                if (p[0, $dd9154ee844248d7$export$97a08a1bb7ee0545]) (0, $ee80a6b397c7131d$export$dca4f48302963835)(p[0, $dd9154ee844248d7$export$97a08a1bb7ee0545]).forEach((userUri)=>appendPermission(userUri, (0, $dd9154ee844248d7$export$97a08a1bb7ee0545), p['acl:mode']));
-                if (p[0, $dd9154ee844248d7$export$f07ccbe0773f2c7]) (0, $ee80a6b397c7131d$export$dca4f48302963835)(p[0, $dd9154ee844248d7$export$f07ccbe0773f2c7]).forEach((groupUri)=>appendPermission(groupUri, (0, $dd9154ee844248d7$export$f07ccbe0773f2c7), p['acl:mode']));
+                if (p[(0, $dd9154ee844248d7$export$2703254089a859eb)]) (0, $ee80a6b397c7131d$export$dca4f48302963835)(p[(0, $dd9154ee844248d7$export$2703254089a859eb)]).forEach((agentId)=>appendPermission(agentId, (0, $dd9154ee844248d7$export$2703254089a859eb), p['acl:mode']));
+                if (p[(0, $dd9154ee844248d7$export$97a08a1bb7ee0545)]) (0, $ee80a6b397c7131d$export$dca4f48302963835)(p[(0, $dd9154ee844248d7$export$97a08a1bb7ee0545)]).forEach((userUri)=>appendPermission(userUri, (0, $dd9154ee844248d7$export$97a08a1bb7ee0545), p['acl:mode']));
+                if (p[(0, $dd9154ee844248d7$export$f07ccbe0773f2c7)]) (0, $ee80a6b397c7131d$export$dca4f48302963835)(p[(0, $dd9154ee844248d7$export$f07ccbe0773f2c7)]).forEach((groupUri)=>appendPermission(groupUri, (0, $dd9154ee844248d7$export$f07ccbe0773f2c7), p['acl:mode']));
             }
             setAgents(result);
         }

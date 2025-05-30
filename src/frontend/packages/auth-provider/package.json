@@ -37,6 +37,12 @@
   },
   "types": "dist/index.d.ts",
   "devDependencies": {
-    "@types/speakingurl": "^13.0.6"
+    "@mui/icons-material": "^7.1.0",
+    "@mui/material": "^7.1.0",
+    "@mui/system": "^7.1.0",
+    "@types/speakingurl": "^13.0.6",
+    "react": "^18.2.0",
+    "react-admin": "^5.8.3",
+    "react-router-dom": "^7.6.1"
   }
 }

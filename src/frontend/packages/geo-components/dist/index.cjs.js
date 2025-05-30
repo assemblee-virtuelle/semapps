@@ -214,7 +214,7 @@ function $7390fd757b2ce4b0$var$createMarkerCluster({ children: _c, ...props }, c
     const clusterEvents = {};
     // Splitting props and events to different objects
     Object.entries(props).forEach(([propName, prop])=>propName.startsWith('on') ? clusterEvents[propName] = prop : clusterProps[propName] = prop);
-    const instance = new (0, ($parcel$interopDefault($CiwlJ$leaflet))).MarkerClusterGroup(clusterProps);
+    const instance = new ((0, ($parcel$interopDefault($CiwlJ$leaflet))).MarkerClusterGroup)(clusterProps);
     // Initializing event listeners
     Object.entries(clusterEvents).forEach(([eventAsProp, callback])=>{
         const clusterEvent = `cluster${eventAsProp.substring(2).toLowerCase()}`;

@@ -1095,7 +1095,7 @@ var $ab7d38fd091ff1b6$export$2e2bcd8739ae039 = $ab7d38fd091ff1b6$var$getTypesFro
     for (const serverKey of Object.keys(newConfig.dataServers))if (newConfig.dataServers[serverKey].containers) newConfig.dataServers[serverKey].containers = await Promise.all(newConfig.dataServers[serverKey].containers?.map(async (container)=>{
         return {
             ...container,
-            types: container.types && await (0, $36aa010ec46eaf45$export$2e2bcd8739ae039)(container.types, config.jsonContext),
+            types: container.types && (await (0, $36aa010ec46eaf45$export$2e2bcd8739ae039)(container.types, config.jsonContext)),
             server: serverKey,
             uri: (0, $fj9kP$urljoin)(config.dataServers[serverKey].baseUrl, container.path)
         };
@@ -1130,7 +1130,7 @@ const $143de1c1f21344e7$var$getOntologiesFromContext = async (context)=>{
     let ontologies = {};
     if (Array.isArray(context)) for (const contextUrl of context)ontologies = {
         ...ontologies,
-        ...await $143de1c1f21344e7$var$getOntologiesFromContextUrl(contextUrl)
+        ...(await $143de1c1f21344e7$var$getOntologiesFromContextUrl(contextUrl))
     };
     else if (typeof context === 'string') ontologies = await $143de1c1f21344e7$var$getOntologiesFromContextUrl(context);
     else ontologies = $143de1c1f21344e7$var$getOntologiesFromContextJson(context);

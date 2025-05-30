@@ -768,11 +768,11 @@ var $a613ad42a03b1bc4$export$2e2bcd8739ae039 = $a613ad42a03b1bc4$var$AddPermissi
 
 const $9f58b72d42a695d9$var$AgentIcon = ({ agent: agent })=>{
     switch(agent.predicate){
-        case 0, $09c536abc6cea017$export$2703254089a859eb:
+        case (0, $09c536abc6cea017$export$2703254089a859eb):
             return agent.id === (0, $09c536abc6cea017$export$83ae1bc0992a6335) ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialPublic))), {}) : /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialVpnLock))), {});
-        case 0, $09c536abc6cea017$export$97a08a1bb7ee0545:
+        case (0, $09c536abc6cea017$export$97a08a1bb7ee0545):
             return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialPerson))), {});
-        case 0, $09c536abc6cea017$export$f07ccbe0773f2c7:
+        case (0, $09c536abc6cea017$export$f07ccbe0773f2c7):
             return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialGroup))), {});
         default:
             throw new Error(`Unknown agent predicate: ${agent.predicate}`);
@@ -942,9 +942,9 @@ const $780e01b2b2982de2$var$useAgents = (uri)=>{
         };
         if (permissions) {
             for (const p of permissions){
-                if (p[0, $09c536abc6cea017$export$2703254089a859eb]) (0, $7448e031bca4bf1e$export$dca4f48302963835)(p[0, $09c536abc6cea017$export$2703254089a859eb]).forEach((agentId)=>appendPermission(agentId, (0, $09c536abc6cea017$export$2703254089a859eb), p['acl:mode']));
-                if (p[0, $09c536abc6cea017$export$97a08a1bb7ee0545]) (0, $7448e031bca4bf1e$export$dca4f48302963835)(p[0, $09c536abc6cea017$export$97a08a1bb7ee0545]).forEach((userUri)=>appendPermission(userUri, (0, $09c536abc6cea017$export$97a08a1bb7ee0545), p['acl:mode']));
-                if (p[0, $09c536abc6cea017$export$f07ccbe0773f2c7]) (0, $7448e031bca4bf1e$export$dca4f48302963835)(p[0, $09c536abc6cea017$export$f07ccbe0773f2c7]).forEach((groupUri)=>appendPermission(groupUri, (0, $09c536abc6cea017$export$f07ccbe0773f2c7), p['acl:mode']));
+                if (p[(0, $09c536abc6cea017$export$2703254089a859eb)]) (0, $7448e031bca4bf1e$export$dca4f48302963835)(p[(0, $09c536abc6cea017$export$2703254089a859eb)]).forEach((agentId)=>appendPermission(agentId, (0, $09c536abc6cea017$export$2703254089a859eb), p['acl:mode']));
+                if (p[(0, $09c536abc6cea017$export$97a08a1bb7ee0545)]) (0, $7448e031bca4bf1e$export$dca4f48302963835)(p[(0, $09c536abc6cea017$export$97a08a1bb7ee0545)]).forEach((userUri)=>appendPermission(userUri, (0, $09c536abc6cea017$export$97a08a1bb7ee0545), p['acl:mode']));
+                if (p[(0, $09c536abc6cea017$export$f07ccbe0773f2c7)]) (0, $7448e031bca4bf1e$export$dca4f48302963835)(p[(0, $09c536abc6cea017$export$f07ccbe0773f2c7)]).forEach((groupUri)=>appendPermission(groupUri, (0, $09c536abc6cea017$export$f07ccbe0773f2c7), p['acl:mode']));
             }
             setAgents(result);
         }

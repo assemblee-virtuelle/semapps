@@ -35,6 +35,8 @@
   },
   "devDependencies": {
     "@mui/material": "^7.1.0",
-    "react": "^18.2.0"
+    "react": "^18.2.0",
+    "react-admin": "^5.8.3",
+    "react-router-dom": "^7.6.1"
   }
 }

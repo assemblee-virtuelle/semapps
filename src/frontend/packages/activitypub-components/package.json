@@ -56,10 +56,15 @@
     "access": "public"
   },
   "devDependencies": {
+    "@mui/icons-material": "^7.1.0",
+    "@mui/material": "^7.1.0",
+    "@tanstack/react-query": "^5.79.0",
     "@types/rdf-ext": "^2.5.2",
     "@types/rdf-validate-shacl": "^0.4.9",
     "@types/rdfjs__data-model": "^2.0.9",
     "@types/rdfjs__parser-jsonld": "^2.1.7",
-    "@types/rdfjs__parser-n3": "^2.0.6"
+    "@types/rdfjs__parser-n3": "^2.0.6",
+    "react": "^18.2.0",
+    "react-admin": "5.8.3"
   }
 }
