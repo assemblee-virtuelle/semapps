@@ -9,9 +9,9 @@ import {
   ListItemSecondaryAction,
   IconButton,
   Menu,
-  MenuItem
+  MenuItem,
+  makeStyles
 } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
 import { GROUP_AGENT, USER_AGENT, ANONYMOUS_AGENT, resourceRightsLabels, containerRightsLabels } from '../../constants';

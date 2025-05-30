@@ -1,7 +1,6 @@
 import React from 'react';
 import { Button, useTranslate } from 'react-admin';
-import { Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { Dialog, DialogTitle, DialogContent, DialogActions, makeStyles } from '@mui/material';
 import AddPermissionsForm from './AddPermissionsForm';
 import EditPermissionsForm from './EditPermissionsForm';
 import useAgents from '../../hooks/useAgents';

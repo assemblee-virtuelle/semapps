@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { SimpleForm } from 'react-admin';
-import { Box, Tabs, Tab, Divider, useMediaQuery } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { Box, Tabs, Tab, Divider, useMediaQuery, makeStyles } from '@mui/material';
 import ImportForm from './ImportForm';
 
 const useStyles = makeStyles(() => ({

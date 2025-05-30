@@ -1,5 +1,5 @@
+import { makeStyles } from '@mui/material';
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
-import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles(theme => ({
   items: {

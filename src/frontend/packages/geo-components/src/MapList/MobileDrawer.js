@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import { useMap } from 'react-leaflet';
 import { useRecordContext } from 'react-admin';
-import { Drawer, Box, IconButton } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { Drawer, Box, IconButton, makeStyles } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 
 const useStyles = makeStyles(() => ({

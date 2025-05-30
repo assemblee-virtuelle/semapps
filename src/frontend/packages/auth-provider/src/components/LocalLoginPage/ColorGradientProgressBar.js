@@ -1,6 +1,5 @@
 import React from 'react';
-import { LinearProgress } from '@mui/material';
-import { withStyles } from '@mui/styles';
+import { LinearProgress, withStyles } from '@mui/material';
 
 /**
  * @typedef {object} Color

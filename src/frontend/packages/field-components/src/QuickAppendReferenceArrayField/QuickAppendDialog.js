@@ -8,8 +8,7 @@ import {
   useGetResourceLabel,
   useShowContext
 } from 'react-admin';
-import { Dialog, DialogTitle, TextField, DialogContent, DialogActions } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { Dialog, DialogTitle, TextField, DialogContent, DialogActions, makeStyles } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import AddIcon from '@mui/icons-material/Add';
 import { useDataModel } from '@semapps/semantic-data-provider';

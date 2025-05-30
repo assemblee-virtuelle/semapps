@@ -17,9 +17,9 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   Avatar,
-  CircularProgress
+  CircularProgress,
+  makeStyles
 } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
 import AddIcon from '@mui/icons-material/Add';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import ErrorIcon from '@mui/icons-material/Error';

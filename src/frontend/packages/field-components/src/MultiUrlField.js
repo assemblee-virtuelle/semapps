@@ -1,7 +1,6 @@
 import React from 'react';
 import { useRecordContext } from 'react-admin';
-import { Chip, Avatar } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { Chip, Avatar, makeStyles } from '@mui/material';
 import LanguageIcon from '@mui/icons-material/Language';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import GitHubIcon from '@mui/icons-material/GitHub';
