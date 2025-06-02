@@ -2,6 +2,9 @@ import jwtDecode from 'jwt-decode';
 import urlJoin from 'url-join';
 import { Configuration, Plugin } from '../types';
 
+/**
+ * Adds `dataServers.user` properties to configuration (baseUrl, sparqlEndpoint, proxyUrl, ...).
+ */
 const configureUserStorage = (): Plugin => ({
   transformConfig: async (config: Configuration) => {
     const token = localStorage.getItem('token');

@@ -15,6 +15,7 @@ import { uploadFile } from './utils/handleFiles';
 import normalizeConfig from './utils/normalizeConfig';
 import expandTypes from './utils/expandTypes';
 import getOntologiesFromContext from './utils/getOntologiesFromContext';
+import { createLdoDataset, LdoDataset } from '@ldo/ldo';
 
 /** @type {(originalConfig: Configuration) => SemanticDataProvider} */
 const dataProvider = originalConfig => {
@@ -26,8 +27,6 @@ const dataProvider = originalConfig => {
 
     // Configure httpClient with initial data servers, so that plugins may use it
     config.httpClient = httpClient(config.dataServers);
-    // Useful for debugging.
-    document.httpClient = config.httpClient;
 
     for (const plugin of config.plugins) {
       if (plugin.transformConfig) {
@@ -37,6 +36,9 @@ const dataProvider = originalConfig => {
 
     // Configure again httpClient with possibly updated data servers
     config.httpClient = httpClient(config.dataServers);
+
+    // Attach httpClient to global document -- useful for debugging.
+    document.httpClient = config.httpClient;
 
     if (!config.ontologies && config.jsonContext) {
       config.ontologies = await getOntologiesFromContext(config.jsonContext);
@@ -81,6 +83,7 @@ const dataProvider = originalConfig => {
     getDataServers: waitForPrepareConfig(getDataServersMethod),
     getLocalDataServers: getDataServersMethod(originalConfig),
     fetch: waitForPrepareConfig(c => httpClient(c.dataServers)),
+    ldoDataset: createLdoDataset(),
     uploadFile: waitForPrepareConfig(c => rawFile => uploadFile(rawFile, c)),
     expandTypes: waitForPrepareConfig(c => types => expandTypes(types, c.jsonContext)),
     getConfig: waitForPrepareConfig(c => () => c),

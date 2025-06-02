@@ -4,6 +4,13 @@ import { Configuration, Plugin, TypeRegistration } from '../types';
 import arrayOf from '../utils/arrayOf';
 import expandTypes from '../utils/expandTypes';
 
+/**
+ * Plugin to add type indexes to the user containers, by fetching the them.
+ *
+ * Requires the `configureUserStorage` plugin.
+ *
+ * @returns {Configuration} The configuration with the data registrations added to `dataServers.user.containers`
+ */
 const fetchTypeIndexes = (): Plugin => ({
   transformConfig: async (config: Configuration) => {
     const token = localStorage.getItem('token');

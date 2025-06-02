@@ -6,7 +6,7 @@ import useCollection from '../../hooks/useCollection';
 
 const CommentsField = ({ source, context, helperText, placeholder, userResource, mentions }) => {
   const record = useRecordContext();
-  const { items: comments, loading, addItem, removeItem } = useCollection(record.replies);
+  const { items: comments, loading, addItem, removeItem } = useCollection(record.replies, { liveUpdates: true });
   if (!userResource) throw new Error('No userResource defined for CommentsField');
   return (
     <>
