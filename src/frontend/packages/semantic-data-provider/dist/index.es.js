@@ -1299,7 +1299,7 @@ const $d7a7484a035f15cd$var$getContainerFromDataRegistration = async (dataRegist
             '@container': '@language'
         }
     });
-    const userStorage = (0, $8326b88c1a913ca9$export$2e2bcd8739ae039)('authServer', config.dataServers);
+    const userStorage = (0, $8326b88c1a913ca9$export$2e2bcd8739ae039)('default', config.dataServers);
     const { baseUrl: baseUrl } = config.dataServers[userStorage];
     const containerPath = dataRegistration.id.replace(baseUrl, '');
     const container = {

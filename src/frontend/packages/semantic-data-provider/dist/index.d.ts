@@ -1,6 +1,5 @@
 import { DataProvider, RaRecord, fetchUtils } from 'react-admin';
 import { Quad } from '@rdfjs/types';
-import { Quad as _Quad1 } from '@rdfjs/data-model/node_modules/@rdfjs/types';
 import { JSX } from 'react/jsx-runtime';
 export type DataServerKey = string & {
   readonly _type?: 'DataServerKey';
@@ -138,7 +137,7 @@ export function buildBlankNodesQuery(
   ontologies: any
 ):
   | {
-      construct: _Quad1[] | null;
+      construct: Quad[] | null;
       where: {
         type: string;
         patterns: any[];

@@ -26,7 +26,7 @@ const getContainerFromDataRegistration = async (dataRegistrationUri: string, con
     label: { '@id': 'skos:prefLabel', '@container': '@language' }
   });
 
-  const userStorage = getServerKeyFromType('authServer', config.dataServers);
+  const userStorage = getServerKeyFromType('default', config.dataServers);
   const { baseUrl } = config.dataServers[userStorage];
   const containerPath = dataRegistration.id.replace(baseUrl, '');
 
