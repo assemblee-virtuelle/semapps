@@ -96,14 +96,24 @@ const OutboxService = {
           webId: actorUri
         });
 
+        // -- Persist Capability --
+        // There might be a capability attached which should not be persisted
+        // because other's could otherwise read it from the (public) outbox.
+        let { capability, ...activityToPersist } = activity;
+
         activityUri = await ctx.call('activitypub.activity.post', {
           containerUri: activitiesContainerUri,
-          resource: activity,
+          resource: activityToPersist,
           contentType: MIME_TYPES.JSON,
           webId: 'system' // Post as system since there is no write permission to the activities container
         });
 
-        activity = await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' });
+        // Refetch because persisting has side-effects.
+        // And reattach capability for further processing (if present).
+        activity = {
+          ...(await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' })),
+          capability
+        };
       }
 
       try {
