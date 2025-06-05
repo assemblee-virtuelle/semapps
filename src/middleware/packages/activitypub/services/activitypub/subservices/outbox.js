@@ -96,9 +96,9 @@ const OutboxService = {
           webId: actorUri
         });
 
-        // -- Persist Capability --
-        // There might be a capability attached which should not be persisted
-        // because other's could otherwise read it from the (public) outbox.
+        // -- Persist Activity --
+        // There might be a capability attached which cannot be persisted, if it has a non-resolvable id.
+        // So we won't persist it and re-attach it afterwards.
         let { capability, ...activityToPersist } = activity;
 
         activityUri = await ctx.call('activitypub.activity.post', {
