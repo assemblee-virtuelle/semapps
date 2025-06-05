@@ -1,13 +1,14 @@
 import { useCallback, useMemo, useContext } from 'react';
 import { DataProviderContext } from 'react-admin';
 
-const compute = (externalLinks, record) =>
+const compute = (externalLinks: any, record: any) =>
   typeof externalLinks === 'function' ? externalLinks(record) : externalLinks;
-const isURL = url => typeof url === 'string' && url.startsWith('http');
+const isURL = (url: any) => typeof url === 'string' && url.startsWith('http');
 
-const useGetExternalLink = componentExternalLinks => {
+const useGetExternalLink = (componentExternalLinks: any) => {
   // Since the externalLinks config is defined only locally, we don't need to wait for VOID endpoints fetching
   const dataProvider = useContext(DataProviderContext);
+  // @ts-expect-error TS(2531): Object is possibly 'null'.
   const dataServers = dataProvider.getLocalDataServers();
 
   const serversExternalLinks = useMemo(() => {
@@ -15,7 +16,9 @@ const useGetExternalLink = componentExternalLinks => {
       return Object.fromEntries(
         Object.values(dataServers).map(server => {
           // If externalLinks is not defined in the data server, use external links for non-default servers
+          // @ts-expect-error TS(2571): Object is of type 'unknown'.
           const externalLinks = server.externalLinks !== undefined ? server.externalLinks : !server.default;
+          // @ts-expect-error TS(2571): Object is of type 'unknown'.
           return [server.baseUrl, externalLinks];
         })
       );
@@ -23,7 +26,7 @@ const useGetExternalLink = componentExternalLinks => {
   }, [dataServers]);
 
   return useCallback(
-    record => {
+    (record: any) => {
       const computedComponentExternalLinks = compute(componentExternalLinks, record);
       // If the component explicitly asks not to display as external links, use an internal link
       if (computedComponentExternalLinks === false) return false;

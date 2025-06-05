@@ -37,6 +37,7 @@
   },
   "types": "dist/index.d.ts",
   "devDependencies": {
+    "@types/lodash": "^4.17.17",
     "@mui/icons-material": "^7.1.0",
     "@mui/material": "^7.1.0",
     "@mui/system": "^7.1.0",

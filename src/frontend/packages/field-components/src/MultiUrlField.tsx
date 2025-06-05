@@ -72,12 +72,13 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const MultiUrlField = ({ source, domainMapping }) => {
+const MultiUrlField = ({ source, domainMapping }: any) => {
   const newDomainMapping = { ...defaultdomainMapping, ...domainMapping };
   const record = useRecordContext();
   const classes = useStyles();
+  // @ts-expect-error TS(2532): Object is possibly 'undefined'.
   const urlArray = record[source] ? (Array.isArray(record[source]) ? record[source] : [record[source]]) : [];
-  return urlArray.map((url, index) => {
+  return urlArray.map((url: any, index: any) => {
     if (!url.startsWith('http')) url = `https://${url}`;
 
     let parsedUrl = null;

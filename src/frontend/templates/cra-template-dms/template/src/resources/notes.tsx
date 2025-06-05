@@ -4,13 +4,13 @@ import Icon from '@material-ui/icons/Description';
 
 export const NoteIcon = Icon;
 
-const SearchFilter = props => (
+const SearchFilter = (props: any) => (
   <Filter {...props}>
     <TextInput label="Search" source="q" alwaysOn />
   </Filter>
 );
 
-export const NoteList = props => {
+export const NoteList = (props: any) => {
   return (
     <List title="Notes" perPage={25} filters={<SearchFilter />} {...props}>
       <Datagrid rowClick="edit">
@@ -21,11 +21,11 @@ export const NoteList = props => {
   );
 };
 
-const NoteTitle = ({ record }) => {
+const NoteTitle = ({ record }: any) => {
   return <span>Note {record ? `"${record.name}"` : ''}</span>;
 };
 
-export const NoteEdit = props => (
+export const NoteEdit = (props: any) => (
   <Edit title={<NoteTitle />} {...props}>
     <SimpleForm>
       <TextInput source="name" fullWidth />
@@ -34,7 +34,7 @@ export const NoteEdit = props => (
   </Edit>
 );
 
-export const NoteCreate = props => (
+export const NoteCreate = (props: any) => (
   <Create title="Create Note" {...props}>
     <SimpleForm>
       <TextInput source="name" fullWidth />

@@ -51,7 +51,7 @@ export const defaultOptions = {
  * @param {PasswordStrengthOptions} options - Scoring configuration options
  * @returns {number} Password strength score (0-8)
  */
-export const passwordStrength = (password, options) => {
+export const passwordStrength = (password: any, options: any) => {
   if (!password) {
     return 0;
   }
@@ -94,7 +94,7 @@ export const passwordStrength = (password, options) => {
  *   - suggestions: Array of improvement suggestions
  *   - missingCriteria: Object indicating which criteria are not met
  */
-export const analyzePassword = (password, options = defaultOptions) => {
+export const analyzePassword = (password: any, options = defaultOptions) => {
   const mergedOptions = { ...defaultOptions, ...options };
   const score = passwordStrength(password, mergedOptions);
 
@@ -169,8 +169,8 @@ export const createPasswordScorer = (options = defaultOptions, minRequiredScore 
   const mergedOptions = { ...defaultOptions, ...options };
 
   return {
-    scoreFn: password => passwordStrength(password, mergedOptions),
-    analyzeFn: password => analyzePassword(password, mergedOptions),
+    scoreFn: (password: any) => passwordStrength(password, mergedOptions),
+    analyzeFn: (password: any) => analyzePassword(password, mergedOptions),
     minRequiredScore,
     maxScore:
       mergedOptions.uppercaseScore +

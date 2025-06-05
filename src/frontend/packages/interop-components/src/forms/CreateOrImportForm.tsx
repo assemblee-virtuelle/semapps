@@ -10,8 +10,12 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const CreateOrImportForm = ({ stripProperties, ...rest }) => {
+const CreateOrImportForm = ({
+  stripProperties,
+  ...rest
+}: any) => {
   const [tab, setTab] = useState(0);
+  // @ts-expect-error TS(2349): This expression is not callable.
   const classes = useStyles();
   const xs = useMediaQuery(theme => theme.breakpoints.down('sm'), { noSsr: true });
   return (

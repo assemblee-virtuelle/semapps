@@ -49,15 +49,16 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const CommentsList = ({ comments, userResource, loading }) => {
+const CommentsList = ({ comments, userResource, loading }: any) => {
   const classes = useStyles();
   const userDataModel = useDataModel(userResource);
+
   return (
     <Box position="relative">
       {comments &&
         comments
-          .sort((a, b) => new Date(b.published) - new Date(a.published))
-          .map(comment => (
+          .sort((a: any, b: any) => new Date(b.published).getTime() - new Date(a.published).getTime())
+          .map((comment: any) => (
             <Box className={classes.container} key={comment.id}>
               <Box className={classes.avatar}>
                 <ReferenceField record={comment} reference={userResource} source="attributedTo" linkType="show">
@@ -67,7 +68,11 @@ const CommentsList = ({ comments, userResource, loading }) => {
               <Box className={classes.text}>
                 <Typography variant="body2">
                   <ReferenceField record={comment} reference={userResource} source="attributedTo" linkType="show">
-                    <TextField variant="body2" source={userDataModel?.fieldsMapping?.title} className={classes.label} />
+                    <TextField
+                      variant="body2"
+                      source={userDataModel?.fieldsMapping?.title || ''}
+                      className={classes.label}
+                    />
                   </ReferenceField>
                   &nbsp;•&nbsp;
                   <DateField record={comment} variant="body2" source="published" showTime />

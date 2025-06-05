@@ -1,5 +1,5 @@
 // Return the first server matching with the baseUrl
-const getServerKeyFromUri = (uri, dataServers) => {
+const getServerKeyFromUri = (uri: any, dataServers: any) => {
   if (!uri) throw Error(`No URI provided to getServerKeyFromUri`);
   return (
     dataServers &&

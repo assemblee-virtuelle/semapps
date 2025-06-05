@@ -70,7 +70,7 @@ const GroupedReferenceHandler = ({
   groupHeader,
   filterProperty,
   ...otherProps
-}) => {
+}: any) => {
   const record = useRecordContext();
   const { data } = useGetList(groupReference);
 
@@ -78,6 +78,7 @@ const GroupedReferenceHandler = ({
     <>
       {data?.map((data, index) => {
         const filter = {};
+        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         filter[filterProperty] = data.id;
         return (
           <>

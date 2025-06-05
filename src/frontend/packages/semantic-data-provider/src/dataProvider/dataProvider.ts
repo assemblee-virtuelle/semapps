@@ -19,7 +19,7 @@ import expandTypes from './utils/expandTypes';
 import getOntologiesFromContext from './utils/getOntologiesFromContext';
 
 /** @type {(originalConfig: Configuration) => SemanticDataProvider} */
-const dataProvider = originalConfig => {
+const dataProvider = (originalConfig: any) => {
   // Keep in memory for refresh
   let config = { ...originalConfig };
 
@@ -42,6 +42,7 @@ const dataProvider = originalConfig => {
     dataset.setContext('solid', { fetch: fetchFn });
 
     // Attach httpClient to global document -- useful for debugging.
+    // @ts-expect-error TS(2339): Property 'httpClient' does not exist on type 'Document'.
     document.httpClient = config.httpClient;
 
     if (!config.ontologies && config.jsonContext) {
@@ -63,8 +64,8 @@ const dataProvider = originalConfig => {
   const prepareConfigPromise = prepareConfig();
 
   const waitForPrepareConfig =
-    method =>
-    async (...arg) => {
+    (method: any) =>
+    async (...arg: any[]) => {
       await prepareConfigPromise; // Return immediately if plugins have already been loaded
       return method(config)(...arg);
     };
@@ -86,11 +87,11 @@ const dataProvider = originalConfig => {
     getDataModels: waitForPrepareConfig(getDataModelsMethod),
     getDataServers: waitForPrepareConfig(getDataServersMethod),
     getLocalDataServers: getDataServersMethod(originalConfig),
-    fetch: waitForPrepareConfig(c => httpClient(c.dataServers)),
+    fetch: waitForPrepareConfig((c: any) => httpClient(c.dataServers)),
     ldoDataset: createLdoDataset(),
-    uploadFile: waitForPrepareConfig(c => rawFile => uploadFile(rawFile, c)),
-    expandTypes: waitForPrepareConfig(c => types => expandTypes(types, c.jsonContext)),
-    getConfig: waitForPrepareConfig(c => () => c),
+    uploadFile: waitForPrepareConfig((c: any) => (rawFile: any) => uploadFile(rawFile, c)),
+    expandTypes: waitForPrepareConfig((c: any) => (types: any) => expandTypes(types, c.jsonContext)),
+    getConfig: waitForPrepareConfig((c: any) => () => c),
     refreshConfig: async () => {
       config = { ...originalConfig };
       await prepareConfig();

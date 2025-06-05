@@ -25,7 +25,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import ErrorIcon from '@mui/icons-material/Error';
 import { useDataServers, useDataModel } from '@semapps/semantic-data-provider';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme: any) => ({
   root: {
     width: '100%',
     maxWidth: '100%',
@@ -42,12 +42,13 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const getServerName = (resourceUri, dataServers) => {
+const getServerName = (resourceUri: any, dataServers: any) => {
+  // @ts-expect-error TS(2571): Object is of type 'unknown'.
   const server = dataServers && Object.values(dataServers).find(server => resourceUri.startsWith(server.baseUrl));
   return server ? server.name : 'Inconnu';
 };
 
-const ResultsList = ({ keyword, source, reference, appendLink, switchToCreate }) => {
+const ResultsList = ({ keyword, source, reference, appendLink, switchToCreate }: any) => {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -68,20 +69,27 @@ const ResultsList = ({ keyword, source, reference, appendLink, switchToCreate })
 
   const search = useMemo(
     () =>
-      debounce(keyword => {
+      debounce((keyword: any) => {
         dataProvider
           .getList(reference, {
             pagination: { page: 1, perPage: 100 },
+            // @ts-expect-error TS(2322): Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
             sort: { field: dataModel?.fieldsMapping?.title, order: 'ASC' },
+            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
             filter: { q: keyword, _predicates: [dataModel.fieldsMapping.title], _servers: '@all' }
           })
           .then(({ data }) => {
+            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
             const existingLinks = record[source]
-              ? Array.isArray(record[source])
-                ? record[source]
-                : [record[source]]
+              ? // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                Array.isArray(record[source])
+                ? // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                  record[source]
+                : // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+                  [record[source]]
               : [];
             const newLinks = data.filter(record => !existingLinks.includes(record.id));
+            // @ts-expect-error TS(2345): Argument of type 'any[]' is not assignable to para... Remove this comment to see the full error message
             setResults(newLinks);
             setLoaded(true);
             setLoading(false);
@@ -110,14 +118,25 @@ const ResultsList = ({ keyword, source, reference, appendLink, switchToCreate })
     <List dense className={classes.root}>
       {loaded &&
         results.map(resource => (
+          // @ts-expect-error TS(2769): No overload matches this call.
           <ListItem key={resource.id} button onClick={() => appendLink(resource.id)}>
             <ListItemAvatar>
               <Avatar>{React.createElement(referenceDefinition.icon)}</Avatar>
             </ListItemAvatar>
-            <ListItemText className={classes.primaryText} primary={resource[dataModel.fieldsMapping.title]} />
-            <ListItemText className={classes.secondaryText} primary={getServerName(resource.id, dataServers)} />
+            <ListItemText
+              className={classes.primaryText}
+              // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+              primary={resource[dataModel.fieldsMapping.title]}
+            />
+
+            <ListItemText
+              className={classes.secondaryText}
+              // @ts-expect-error TS(2339): Property 'id' does not exist on type 'never'.
+              primary={getServerName(resource.id, dataServers)}
+            />
             <ListItemSecondaryAction>
               <a
+                // @ts-expect-error TS(2339): Property 'id' does not exist on type 'never'.
                 href={createPath({ resource: reference, id: resource.id, type: 'show' })}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -140,6 +159,7 @@ const ResultsList = ({ keyword, source, reference, appendLink, switchToCreate })
         </ListItem>
       )}
       {loaded && referenceDefinition.hasCreate && (
+        // @ts-expect-error TS(2769): No overload matches this call.
         <ListItem button onClick={switchToCreate}>
           <ListItemAvatar>
             <Avatar>

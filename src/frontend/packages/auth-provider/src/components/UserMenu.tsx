@@ -6,15 +6,17 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useNavigate } from 'react-router-dom';
 
 // It's important to pass the ref to allow Material UI to manage the keyboard navigation
+// @ts-expect-error TS(2339): Property 'label' does not exist on type '{}'.
 const UserMenuItem = forwardRef(({ label, icon, to, ...rest }, ref) => {
-  const { onClose } = useUserMenu();
+  const { onClose } = useUserMenu() || {};
   const translate = useTranslate();
   const navigate = useNavigate();
   const onClick = useCallback(() => {
     navigate(to);
-    onClose();
+    onClose?.();
   }, [to, onClose, navigate]);
   return (
+    // @ts-expect-error TS(2769): No overload matches this call.
     <MenuItem
       onClick={onClick}
       ref={ref}
@@ -27,7 +29,7 @@ const UserMenuItem = forwardRef(({ label, icon, to, ...rest }, ref) => {
   );
 });
 
-const UserMenu = ({ logout, profileResource, ...otherProps }) => {
+const UserMenu = ({ logout, profileResource, ...otherProps }: any) => {
   const { data: identity } = useGetIdentity();
   return (
     <RaUserMenu {...otherProps}>
@@ -35,6 +37,7 @@ const UserMenu = ({ logout, profileResource, ...otherProps }) => {
         ? [
             <UserMenuItem
               key="view"
+              // @ts-expect-error TS(2322): Type '{ key: string; label: string; icon: Element;... Remove this comment to see the full error message
               label="auth.action.view_my_profile"
               icon={<AccountCircleIcon />}
               to={`/${profileResource || 'Person'}/${encodeURIComponent(
@@ -43,6 +46,7 @@ const UserMenu = ({ logout, profileResource, ...otherProps }) => {
             />,
             <UserMenuItem
               key="edit"
+              // @ts-expect-error TS(2322): Type '{ key: string; label: string; icon: Element;... Remove this comment to see the full error message
               label="auth.action.edit_my_profile"
               icon={<EditIcon />}
               to={`/${profileResource || 'Person'}/${encodeURIComponent(identity?.profileData?.id || identity.id)}`}
@@ -50,7 +54,9 @@ const UserMenu = ({ logout, profileResource, ...otherProps }) => {
             React.cloneElement(logout || <Logout />, { key: 'logout' })
           ]
         : [
+            // @ts-expect-error TS(2322): Type '{ key: string; label: string; to: string; }'... Remove this comment to see the full error message
             <UserMenuItem key="signup" label="auth.action.signup" to="/login?signup=true" />,
+            // @ts-expect-error TS(2322): Type '{ key: string; label: string; to: string; }'... Remove this comment to see the full error message
             <UserMenuItem key="login" label="auth.action.login" to="/login" />
           ]}
     </RaUserMenu>

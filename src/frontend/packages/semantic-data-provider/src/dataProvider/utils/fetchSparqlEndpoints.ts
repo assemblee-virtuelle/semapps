@@ -2,7 +2,7 @@ import jsonld from 'jsonld';
 import getEmbedFrame from './getEmbedFrame';
 import buildSparqlQuery from './buildSparqlQuery';
 
-const compare = (a, b) => {
+const compare = (a: any, b: any) => {
   switch (typeof a) {
     case 'string':
       return a.localeCompare(b);
@@ -13,65 +13,69 @@ const compare = (a, b) => {
   }
 };
 
-const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
+const fetchSparqlEndpoints = async (containers: any, resourceId: any, params: any, config: any) => {
   const { dataServers, resources, httpClient, jsonContext, ontologies } = config;
   const dataModel = resources[resourceId];
 
-  const serversToQuery = containers.reduce((acc, cur) => {
+  const serversToQuery = containers.reduce((acc: any, cur: any) => {
     if (!acc.includes(cur.server)) acc.push(cur.server);
     return acc;
   }, []);
 
   const sparqlQueryPromises = serversToQuery.map(
-    serverKey =>
-      new Promise((resolve, reject) => {
-        const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes;
+    (serverKey: any) => new Promise((resolve, reject) => {
+      const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes;
 
-        const sparqlQuery = buildSparqlQuery({
-          containersUris: containers.filter(c => c.server === serverKey).map(c => c.uri),
-          params,
-          dataModel,
-          ontologies
-        });
+      const sparqlQuery = buildSparqlQuery({
+        containersUris: containers.filter((c: any) => c.server === serverKey).map((c: any) => c.uri),
+        params,
+        dataModel,
+        ontologies
+      });
 
-        httpClient(dataServers[serverKey].sparqlEndpoint, {
-          method: 'POST',
-          body: sparqlQuery
-        })
-          .then(({ json }) => {
-            // If we declared the blank nodes to dereference, embed only those blank nodes
-            // This solve problems which can occur when same-type resources are embedded in other resources
-            // To increase performances, you can set explicitEmbedOnFraming to false (make sure the result is still OK)
-            const frame =
-              blankNodes && dataModel.list?.explicitEmbedOnFraming !== false
-                ? {
-                    '@context': jsonContext,
-                    '@type': dataModel.types,
-                    '@embed': '@never',
-                    ...getEmbedFrame(blankNodes)
-                  }
-                : {
-                    '@context': jsonContext,
-                    '@type': dataModel.types
-                  };
-
-            // omitGraph option force results to be in a @graph, even if we have a single result
-            return jsonld.frame(json, frame, { omitGraph: false });
-          })
-          .then(compactJson => {
-            if (compactJson['@id']) {
-              const { '@context': context, ...rest } = compactJson;
-              compactJson = {
-                '@context': context,
-                '@graph': [rest]
-              };
-            }
-            resolve(
-              compactJson['@graph']?.map(resource => ({ '@context': compactJson['@context'], ...resource })) || []
-            );
-          })
-          .catch(e => reject(e));
+      httpClient(dataServers[serverKey].sparqlEndpoint, {
+        method: 'POST',
+        body: sparqlQuery
       })
+        .then(({
+        json
+      }: any) => {
+          // If we declared the blank nodes to dereference, embed only those blank nodes
+          // This solve problems which can occur when same-type resources are embedded in other resources
+          // To increase performances, you can set explicitEmbedOnFraming to false (make sure the result is still OK)
+          const frame =
+            blankNodes && dataModel.list?.explicitEmbedOnFraming !== false
+              ? {
+                  '@context': jsonContext,
+                  '@type': dataModel.types,
+                  '@embed': '@never',
+                  ...getEmbedFrame(blankNodes)
+                }
+              : {
+                  '@context': jsonContext,
+                  '@type': dataModel.types
+                };
+
+          // omitGraph option force results to be in a @graph, even if we have a single result
+          return jsonld.frame(json, frame, { omitGraph: false });
+        })
+        .then((compactJson: any) => {
+          if (compactJson['@id']) {
+            const { '@context': context, ...rest } = compactJson;
+            compactJson = {
+              '@context': context,
+              '@graph': [rest]
+            };
+          }
+          resolve(
+            compactJson['@graph']?.map((resource: any) => ({
+              '@context': compactJson['@context'],
+              ...resource
+            })) || []
+          );
+        })
+        .catch((e: any) => reject(e));
+    })
   );
 
   // Run simultaneous SPARQL queries

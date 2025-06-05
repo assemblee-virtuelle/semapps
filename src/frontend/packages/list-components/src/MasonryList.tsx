@@ -44,29 +44,33 @@ const MasonryList = ({
   actions,
   breakpointCols = { default: 3, 1050: 2, 700: 1 },
   linkType = 'edit'
-}) => {
+}: any) => {
+  // @ts-expect-error TS(2349): This expression is not callable.
   const classes = useStyles();
   const { data, resource } = useListContext();
   const createPath = useCreatePath();
   return (
     <Masonry breakpointCols={breakpointCols} className={classes.grid} columnClassName={classes.column}>
-      {data.map(record => {
-        if (!record || record._error) return null;
-        const imageUrl = typeof image === 'function' ? image(record) : image;
-        return (
-          <RecordContextProvider value={record}>
-            <Card key={record.id} className={classes.card}>
-              <Link to={createPath({ resource, id: record.id, type: linkType })}>
-                <CardActionArea>
-                  {imageUrl && <CardMedia className={classes.media} image={imageUrl} />}
-                  {content && <CardContent>{content(record)}</CardContent>}
-                </CardActionArea>
-              </Link>
-              {actions && <CardActions>{actions.map(action => React.createElement(action))}</CardActions>}
-            </Card>
-          </RecordContextProvider>
-        );
-      })}
+      {
+        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+        data.map(record => {
+          if (!record || record._error) return null;
+          const imageUrl = typeof image === 'function' ? image(record) : image;
+          return (
+            <RecordContextProvider value={record}>
+              <Card key={record.id} className={classes.card}>
+                <Link to={createPath({ resource, id: record.id, type: linkType })}>
+                  <CardActionArea>
+                    {imageUrl && <CardMedia className={classes.media} image={imageUrl} />}
+                    {content && <CardContent>{content(record)}</CardContent>}
+                  </CardActionArea>
+                </Link>
+                {actions && <CardActions>{actions.map((action: any) => React.createElement(action))}</CardActions>}
+              </Card>
+            </RecordContextProvider>
+          );
+        })
+      }
     </Masonry>
   );
 };

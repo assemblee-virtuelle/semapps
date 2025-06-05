@@ -10,7 +10,7 @@ import { OBJECT_TYPES, PUBLIC_URI } from '../../constants';
 import useOutbox from '../../hooks/useOutbox';
 import CustomMention from './CustomMention';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme: any) => ({
   form: {
     marginTop: -12 // Negative margin to keep the form close to the label
   },
@@ -59,7 +59,7 @@ const useStyles = makeStyles(theme => ({
 
 const EmptyToolbar = () => null;
 
-const PostCommentForm = ({ context, placeholder, helperText, mentions, userResource, addItem, removeItem }) => {
+const PostCommentForm = ({ context, placeholder, helperText, mentions, userResource, addItem, removeItem }: any) => {
   const record = useRecordContext();
   const { data: identity, isLoading } = useGetIdentity();
   const userDataModel = useDataModel(userResource);
@@ -70,13 +70,15 @@ const PostCommentForm = ({ context, placeholder, helperText, mentions, userResou
   const [openAuth, setOpenAuth] = useState(false);
 
   const onSubmit = useCallback(
-    async values => {
+    async (values: any) => {
       const document = new DOMParser().parseFromString(values.comment, 'text/html');
       const mentions = Array.from(document.body.getElementsByClassName('mention'));
-      const mentionedUsersUris = [];
+      const mentionedUsersUris: any = [];
 
       mentions.forEach(node => {
+        // @ts-expect-error TS(7015): Element implicitly has an 'any' type because index... Remove this comment to see the full error message
         const userUri = node.attributes['data-mention-id'].value;
+        // @ts-expect-error TS(7015): Element implicitly has an 'any' type because index... Remove this comment to see the full error message
         const userLabel = node.attributes['data-mention-label'].value;
         const link = document.createElement('a');
         link.setAttribute(
@@ -84,6 +86,7 @@ const PostCommentForm = ({ context, placeholder, helperText, mentions, userResou
           `${new URL(window.location.href).origin}/${userResource}/${encodeURIComponent(userUri)}/show`
         );
         link.textContent = `@${userLabel}`;
+        // @ts-expect-error TS(2531): Object is possibly 'null'.
         node.parentNode.replaceChild(link, node);
         mentionedUsersUris.push(userUri);
       });
@@ -97,7 +100,7 @@ const PostCommentForm = ({ context, placeholder, helperText, mentions, userResou
           type: OBJECT_TYPES.NOTE,
           attributedTo: outbox.owner,
           content: document.body.innerHTML,
-          inReplyTo: record[context],
+          inReplyTo: record?.[context],
           published: new Date().toISOString()
         };
 
@@ -132,7 +135,9 @@ const PostCommentForm = ({ context, placeholder, helperText, mentions, userResou
         <Box className={classes.container} onClick={openAuthIfDisconnected}>
           <Avatar
             src={
+              // @ts-expect-error TS(2339): Property 'image' does not exist on type '{ title: ... Remove this comment to see the full error message
               identity?.webIdData?.[userDataModel?.fieldsMapping?.image] ||
+              // @ts-expect-error TS(2339): Property 'image' does not exist on type '{ title: ... Remove this comment to see the full error message
               identity?.profileData?.[userDataModel?.fieldsMapping?.image]
             }
             className={classes.avatar}
@@ -149,6 +154,7 @@ const PostCommentForm = ({ context, placeholder, helperText, mentions, userResou
                 setExpanded(true);
               },
               extensions: [
+                // @ts-expect-error TS(2461): Type 'Extensions | undefined' is not an array type... Remove this comment to see the full error message
                 ...DefaultEditorOptions.extensions,
                 placeholder ? Placeholder.configure({ placeholder }) : null,
                 mentions

@@ -1,7 +1,7 @@
 import { makeStyles } from '@mui/material';
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme: any) => ({
   items: {
     background: '#fff',
     borderRadius: '0.5rem',
@@ -31,19 +31,23 @@ export default forwardRef((props, ref) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const classes = useStyles();
 
-  const selectItem = index => {
+  const selectItem = (index: any) => {
+    // @ts-expect-error TS(2339): Property 'items' does not exist on type '{}'.
     const item = props.items[index];
 
     if (item) {
+      // @ts-expect-error TS(2339): Property 'command' does not exist on type '{}'.
       props.command({ id: item });
     }
   };
 
   const upHandler = () => {
+    // @ts-expect-error TS(2339): Property 'items' does not exist on type '{}'.
     setSelectedIndex((selectedIndex + props.items.length - 1) % props.items.length);
   };
 
   const downHandler = () => {
+    // @ts-expect-error TS(2339): Property 'items' does not exist on type '{}'.
     setSelectedIndex((selectedIndex + 1) % props.items.length);
   };
 
@@ -51,10 +55,11 @@ export default forwardRef((props, ref) => {
     selectItem(selectedIndex);
   };
 
+  // @ts-expect-error TS(2339): Property 'items' does not exist on type '{}'.
   useEffect(() => setSelectedIndex(0), [props.items]);
 
   useImperativeHandle(ref, () => ({
-    onKeyDown: ({ event }) => {
+    onKeyDown: ({ event }: any) => {
       if (event.key === 'ArrowUp') {
         upHandler();
         return true;
@@ -77,7 +82,8 @@ export default forwardRef((props, ref) => {
   return (
     <div className={classes.items}>
       {props.items.length ? (
-        props.items.map((item, index) => (
+        // @ts-expect-error TS(2339): Property 'items' does not exist on type '{}'.
+        props.items.map((item: any, index: any) => (
           <button
             className={classes.item + (index === selectedIndex ? ' selected' : '')}
             key={index}

@@ -22,7 +22,7 @@ const StyledLocationOnIcon = styled(LocationOnIcon)(({ theme }) => ({
   marginRight: theme.spacing(2)
 }));
 
-const selectOptionText = (option, optionText) => {
+const selectOptionText = (option: any, optionText: any) => {
   if (option.place_name) {
     return option.place_name;
   }
@@ -44,7 +44,7 @@ const LocationInput = ({
   variant = 'outlined',
   size = 'small',
   ...rest
-}) => {
+}: any) => {
   if (!mapboxConfig) {
     throw new Error('@semapps/geo-components : No mapbox configuration');
   }
@@ -69,7 +69,7 @@ const LocationInput = ({
 
   const fetchMapbox = useMemo(
     () =>
-      throttle((keyword, callback) => {
+      throttle((keyword: any, callback: any) => {
         const fetchUrl = new URL(`https://api.mapbox.com/geocoding/v5/mapbox.places/${keyword}.json`);
 
         // Use locale as default language
@@ -82,6 +82,7 @@ const LocationInput = ({
           } else if (typeof value === 'boolean') {
             value = value ? 'true' : 'false';
           }
+          // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
           fetchUrl.searchParams.set(key, value);
         });
 
@@ -97,7 +98,7 @@ const LocationInput = ({
     if (!keyword || keyword === selectOptionText(value, optionText)) {
       return undefined;
     }
-    fetchMapbox(keyword, results => setOptions(results.features));
+    fetchMapbox(keyword, (results: any) => setOptions(results.features));
   }, [value, keyword, fetchMapbox]);
 
   return (
@@ -136,6 +137,7 @@ const LocationInput = ({
               onBlur: e => {
                 onBlur(e);
                 if (params.inputProps.onBlur) {
+                  // @ts-expect-error TS(2345): Argument of type 'FocusEvent<HTMLInputElement | HT... Remove this comment to see the full error message
                   params.inputProps.onBlur(e);
                 }
               } /* ,
@@ -154,6 +156,7 @@ const LocationInput = ({
             }
             error={!!((isTouched && error) /* || submitError */)}
             helperText={
+              // @ts-expect-error TS(2322): Type 'FieldError | undefined' is not assignable to... Remove this comment to see the full error message
               <InputHelperText touched={isTouched} error={error /* || submitError */} helperText={helperText} />
             }
             {...rest}
@@ -161,24 +164,29 @@ const LocationInput = ({
         );
       }}
       renderOption={(props, option, state) => {
+        // @ts-expect-error TS(2571): Object is of type 'unknown'.
         const matches = highlightMatch(option.text, keyword);
+        // @ts-expect-error TS(2571): Object is of type 'unknown'.
         const parts = highlightParse(option.text, matches);
 
         return (
           <li {...props}>
             <Grid container alignItems="center">
+              {/* @ts-expect-error TS(2769): No overload matches this call. */}
               <Grid item>
                 <StyledLocationOnIcon />
               </Grid>
+              {/* @ts-expect-error TS(2769): No overload matches this call. */}
               <Grid item xs>
                 {typeof parts === 'string'
                   ? parts
-                  : parts.map((part, index) => (
+                  : parts.map((part: any, index: any) => (
                       <span key={index} style={{ fontWeight: part.highlight ? 700 : 400 }}>
                         {part.text}
                       </span>
                     ))}
                 <Typography variant="body2" color="textSecondary">
+                  {/* @ts-expect-error TS(2571): Object is of type 'unknown'. */}
                   {option.place_name}
                 </Typography>
               </Grid>

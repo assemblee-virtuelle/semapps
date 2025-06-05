@@ -11,9 +11,9 @@ const CommentsField = ({
   placeholder = 'Commencez à taper votre commentaire...',
   userResource,
   mentions
-}) => {
+}: any) => {
   const record = useRecordContext();
-  const { items: comments, loading, addItem, removeItem } = useCollection(record.replies, { liveUpdates: true });
+  const { items: comments, isLoading, addItem, removeItem } = useCollection(record?.replies, { liveUpdates: true });
   if (!userResource) throw new Error('No userResource defined for CommentsField');
   return (
     <>
@@ -26,7 +26,7 @@ const CommentsField = ({
         addItem={addItem}
         removeItem={removeItem}
       />
-      <CommentsList comments={comments} loading={loading} userResource={userResource} />
+      <CommentsList comments={comments} loading={isLoading} userResource={userResource} />
     </>
   );
 };

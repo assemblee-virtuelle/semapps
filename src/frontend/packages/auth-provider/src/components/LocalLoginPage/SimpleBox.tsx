@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Card, makeStyles, Typography } from '@mui/material';
 import { Notification } from 'react-admin';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme: any) => ({
   '@global': {
     body: {
       backgroundColor: theme.palette.secondary.main
@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const SimpleBox = ({ title, icon, text, children }) => {
+const SimpleBox = ({ title, icon, text, children }: any) => {
   const classes = useStyles();
   return (
     <Box display="flex" flexDirection="column" alignItems="center" className={classes.root}>

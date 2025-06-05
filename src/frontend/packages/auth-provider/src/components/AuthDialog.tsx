@@ -9,7 +9,7 @@ const AuthDialog = ({
   message = 'auth.message.login_to_continue',
   redirect,
   ...rest
-}) => {
+}: any) => {
   const login = useLogin();
   const translate = useTranslate();
   return (

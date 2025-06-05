@@ -1,4 +1,4 @@
-const getServerKeyFromType = (type, dataServers) => {
+const getServerKeyFromType = (type: any, dataServers: any) => {
   return (
     dataServers &&
     Object.keys(dataServers).find(key => {

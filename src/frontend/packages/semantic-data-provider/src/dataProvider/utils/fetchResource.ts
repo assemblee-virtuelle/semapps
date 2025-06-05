@@ -1,6 +1,6 @@
 import jsonld from 'jsonld';
 
-const fetchResource = async (resourceUri, config) => {
+const fetchResource = async (resourceUri: any, config: any) => {
   const { httpClient, jsonContext } = config;
 
   let { json: data } = await httpClient(resourceUri);

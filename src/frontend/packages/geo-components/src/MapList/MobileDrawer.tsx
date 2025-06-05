@@ -13,7 +13,11 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const MobileDrawer = ({ popupContent, onClose }) => {
+const MobileDrawer = ({
+  popupContent,
+  onClose
+}: any) => {
+  // @ts-expect-error TS(2349): This expression is not callable.
   const classes = useStyles();
   const record = useRecordContext();
   const map = useMap();

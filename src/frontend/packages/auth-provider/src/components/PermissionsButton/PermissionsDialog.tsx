@@ -23,7 +23,7 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const PermissionsDialog = ({ open, onClose, uri, isContainer }) => {
+const PermissionsDialog = ({ open, onClose, uri, isContainer }: any) => {
   const classes = useStyles();
   const translate = useTranslate();
   const { agents, addPermission, removePermission } = useAgents(uri);

@@ -3,11 +3,13 @@ import { createPathComponent } from '@react-leaflet/core';
 import 'leaflet.markercluster';
 
 // Taken from https://github.com/changey/react-leaflet-markercluster/blob/60992857087c181ada1e8e6659a6666a13c1f868/src/react-leaflet-markercluster.js
-function createMarkerCluster({ children: _c, ...props }, context) {
+// @ts-expect-error TS(7031): Binding element '_c' implicitly has an 'any' type.
+function createMarkerCluster({ children: _c, ...props }, context: any) {
   const clusterProps = {};
   const clusterEvents = {};
   // Splitting props and events to different objects
   Object.entries(props).forEach(([propName, prop]) =>
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     propName.startsWith('on') ? (clusterEvents[propName] = prop) : (clusterProps[propName] = prop)
   );
 

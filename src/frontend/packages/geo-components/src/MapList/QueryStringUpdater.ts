@@ -6,7 +6,7 @@ const QueryStringUpdater = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   useMapEvents({
-    moveend: test => {
+    moveend: (test: any) => {
       setSearchParams(params => ({
         ...Object.fromEntries(params),
         lat: test.target.getCenter().lat,
@@ -14,7 +14,7 @@ const QueryStringUpdater = () => {
         zoom: test.target.getZoom()
       }));
     },
-    zoomend: test => {
+    zoomend: (test: any) => {
       setSearchParams(params => ({
         ...Object.fromEntries(params),
         zoom: test.target.getZoom()

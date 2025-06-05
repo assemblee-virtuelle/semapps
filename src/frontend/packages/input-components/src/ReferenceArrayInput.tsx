@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { ReferenceArrayInput as RaReferenceArrayInput } from 'react-admin';
 import { useController } from 'react-hook-form';
 
-const ReferenceArrayInput = props => {
+const ReferenceArrayInput = (props: any) => {
   const {
     field: { value, onChange }
   } = useController({ name: props.source });

@@ -37,14 +37,14 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const stopPropagation = e => e.stopPropagation();
+const stopPropagation = (e: any) => e.stopPropagation();
 
 // Our handleClick does nothing as we wrap the children inside a Link but it is
 // required by ChipField, which uses a Chip from material-ui.
 // The material-ui Chip requires an onClick handler to behave like a clickable element.
 const handleClick = () => {};
 
-const ChipList = props => {
+const ChipList = (props: any) => {
   const {
     classes: classesOverride,
     className,
@@ -56,10 +56,12 @@ const ChipList = props => {
     externalLinks = false,
     ...rest
   } = props;
+  // @ts-expect-error TS(2554): Expected 0 arguments, but got 1.
   const { data, isLoading, resource } = useListContext(props);
   const getExternalLink = useGetExternalLink(externalLinks);
   const createPath = useCreatePath();
 
+  // @ts-expect-error TS(2349): This expression is not callable.
   const classes = useStyles(props);
   const Component = component;
 
@@ -67,64 +69,67 @@ const ChipList = props => {
 
   return (
     <Component className={classes.root} {...sanitizeListRestProps(rest)}>
-      {data.map(record => {
-        if (!record || record._error) return null;
-        const externalLink = getExternalLink(record);
-        if (externalLink) {
+      {
+        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+        data.map(record => {
+          if (!record || record._error) return null;
+          const externalLink = getExternalLink(record);
+          if (externalLink) {
+            return (
+              <RecordContextProvider value={record} key={record.id}>
+                <a
+                  href={externalLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={classes.link}
+                  onClick={stopPropagation}
+                >
+                  <ChipField
+                    source={primaryText}
+                    className={classes.chipField}
+                    color="secondary"
+                    deleteIcon={<LaunchIcon className={classes.launchIcon} />}
+                    // Workaround to force ChipField to be clickable
+                    onClick={handleClick}
+                    // Required to display the delete icon
+                    onDelete={handleClick}
+                  />
+                </a>
+              </RecordContextProvider>
+            );
+          }
+          if (linkType) {
+            return (
+              <RecordContextProvider value={record} key={record.id}>
+                <Link
+                  className={classes.link}
+                  to={createPath({ resource, id: record.id, type: linkType })}
+                  onClick={stopPropagation}
+                >
+                  <ChipField
+                    source={primaryText}
+                    className={classes.chipField}
+                    color="secondary"
+                    // Workaround to force ChipField to be clickable
+                    onClick={handleClick}
+                  />
+                </Link>
+              </RecordContextProvider>
+            );
+          }
           return (
             <RecordContextProvider value={record} key={record.id}>
-              <a
-                href={externalLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={classes.link}
-                onClick={stopPropagation}
-              >
-                <ChipField
-                  source={primaryText}
-                  className={classes.chipField}
-                  color="secondary"
-                  deleteIcon={<LaunchIcon className={classes.launchIcon} />}
-                  // Workaround to force ChipField to be clickable
-                  onClick={handleClick}
-                  // Required to display the delete icon
-                  onDelete={handleClick}
-                />
-              </a>
+              <ChipField
+                source={primaryText}
+                className={classes.chipField}
+                color="secondary"
+                // Workaround to force ChipField to be clickable
+                onClick={handleClick}
+              />
             </RecordContextProvider>
           );
-        }
-        if (linkType) {
-          return (
-            <RecordContextProvider value={record} key={record.id}>
-              <Link
-                className={classes.link}
-                to={createPath({ resource, id: record.id, type: linkType })}
-                onClick={stopPropagation}
-              >
-                <ChipField
-                  source={primaryText}
-                  className={classes.chipField}
-                  color="secondary"
-                  // Workaround to force ChipField to be clickable
-                  onClick={handleClick}
-                />
-              </Link>
-            </RecordContextProvider>
-          );
-        }
-        return (
-          <RecordContextProvider value={record} key={record.id}>
-            <ChipField
-              source={primaryText}
-              className={classes.chipField}
-              color="secondary"
-              // Workaround to force ChipField to be clickable
-              onClick={handleClick}
-            />
-          </RecordContextProvider>
-        );
-      })}
+        })
+      }
       {appendLink && <AddCircleIcon color="primary" className={classes.addIcon} onClick={appendLink} />}
     </Component>
   );

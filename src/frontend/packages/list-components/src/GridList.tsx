@@ -4,14 +4,24 @@ import { Grid } from '@mui/material';
 import { useGetExternalLink } from '@semapps/semantic-data-provider';
 
 // useful to prevent click bubbling in a datagrid with rowClick
-const stopPropagation = e => e.stopPropagation();
+const stopPropagation = (e: any) => e.stopPropagation();
 
 // Our handleClick does nothing as we wrap the children inside a Link but it is
 // required by ChipField, which uses a Chip from material-ui.
 // The material-ui Chip requires an onClick handler to behave like a clickable element.
 const handleClick = () => {};
 
-const GridList = ({ children, linkType = 'edit', externalLinks = false, spacing = 3, xs = 6, sm, md, lg, xl }) => {
+const GridList = ({
+  children,
+  linkType = 'edit',
+  externalLinks = false,
+  spacing = 3,
+  xs = 6,
+  sm,
+  md,
+  lg,
+  xl
+}: any) => {
   const { data, resource, isLoading } = useListContext();
   const getExternalLink = useGetExternalLink(externalLinks);
   const createPath = useCreatePath();
@@ -47,6 +57,7 @@ const GridList = ({ children, linkType = 'edit', externalLinks = false, spacing 
         }
 
         return (
+          // @ts-expect-error TS(2769): No overload matches this call.
           <Grid item key={record.id} xs={xs} sm={sm} md={md} lg={lg} xl={xl}>
             <RecordContextProvider value={record}>{child}</RecordContextProvider>
           </Grid>

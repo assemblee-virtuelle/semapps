@@ -2,7 +2,11 @@ import React from 'react';
 import { useList, ListContextProvider, useGetMany } from 'react-admin';
 import useCollection from '../hooks/useCollection';
 
-const CollectionList = ({ collectionUrl, resource, children }) => {
+const CollectionList = ({
+  collectionUrl,
+  resource,
+  children
+}: any) => {
   if (React.Children.count(children) !== 1) {
     throw new Error('<CollectionList> only accepts a single child');
   }

@@ -16,7 +16,7 @@ const ListActionsWithViews = ({
   showFilter,
   total,
   ...rest
-}) => {
+}: any) => {
   const xs = useMediaQuery(theme => theme.breakpoints.down('sm'));
   const resourceDefinition = useResourceDefinition(rest);
   return (
@@ -31,6 +31,7 @@ const ListActionsWithViews = ({
         })}
       {resourceDefinition.hasCreate && <CreateButton />}
       {!xs && exporter !== false && (
+        // @ts-expect-error TS(2322): Type '{ disabled: boolean; sort: any; filter: any;... Remove this comment to see the full error message
         <ExportButton disabled={total === 0} sort={sort} filter={filterValues} exporter={exporter} />
       )}
       {bulkActions &&

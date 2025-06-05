@@ -6,7 +6,7 @@ import { Card, Avatar, Typography, Button, CardActions } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import LockIcon from '@mui/icons-material/Lock';
 
-const delay = async t => new Promise(resolve => setTimeout(resolve, t));
+const delay = async (t: number) => new Promise(resolve => setTimeout(resolve, t));
 
 // Inspired from https://github.com/marmelab/react-admin/blob/master/packages/ra-ui-materialui/src/auth/Login.tsx
 const SsoLoginPage = ({
@@ -17,7 +17,7 @@ const SsoLoginPage = ({
   propertiesExist = [],
   text,
   ...rest
-}) => {
+}: any) => {
   const containerRef = useRef();
   let backgroundImageLoaded = false;
   const navigate = useNavigate();
@@ -47,29 +47,32 @@ const SsoLoginPage = ({
           }
         } else if (searchParams.has('token')) {
           const token = searchParams.get('token');
+          // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'unknown'.
           const { webId } = jwtDecode(token);
 
-          localStorage.setItem('token', token);
+          localStorage.setItem('token', token || '');
 
-          let userData;
+          let userData: any;
           ({ data: userData } = await dataProvider.getOne(userResource, { id: webId }));
 
           if (propertiesExist.length > 0) {
+            // @ts-expect-error TS(7006): Parameter 'p' implicitly has an 'any' type.
             let allPropertiesExist = propertiesExist.every(p => userData[p]);
             while (!allPropertiesExist) {
               console.log('Waiting for all properties to have been created', propertiesExist);
               await delay(500);
               ({ data: userData } = await dataProvider.getOne(userResource, { id: webId }));
-              allPropertiesExist = propertiesExist.every(p => userData[p]);
+              allPropertiesExist = propertiesExist.every((p: any) => userData[p]);
             }
           }
 
-          if (!authProvider.checkUser(userData)) {
+          if (!authProvider?.checkUser(userData)) {
             localStorage.removeItem('token');
             notify('auth.message.user_not_allowed_to_login', { type: 'error' });
-            navigate.replace('/login');
+            navigate('/login');
           } else if (searchParams.has('redirect')) {
             notify('auth.message.user_connected', { type: 'info' });
+            // @ts-expect-error TS(2322)
             window.location.href = searchParams.get('redirect');
           } else if (searchParams.has('new') && searchParams.get('new') === 'true') {
             notify('auth.message.new_user_created', { type: 'info' });
@@ -92,6 +95,7 @@ const SsoLoginPage = ({
 
   const updateBackgroundImage = () => {
     if (!backgroundImageLoaded && containerRef.current) {
+      // @ts-expect-error TS(2339): Property 'style' does not exist on type 'never'.
       containerRef.current.style.backgroundImage = `url(${backgroundImage})`;
       backgroundImageLoaded = true;
     }
@@ -123,7 +127,7 @@ const SsoLoginPage = ({
           </Avatar>
         </div>
         {text && <Typography variant="body2" /* className={classes.text} */>{text}</Typography>}
-        {buttons?.map((button, i) => (
+        {buttons?.map((button: any, i: any) => (
           <CardActions key={i}>
             {React.cloneElement(button, {
               fullWidth: true,
@@ -170,6 +174,7 @@ const Root = styled('div', {
     justifyContent: 'center'
   },
   [`& .${SsoLoginPageClasses.icon}`]: {
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     backgroundColor: theme.palette.secondary[500]
   },
   [`& .${SsoLoginPageClasses.switch}`]: {

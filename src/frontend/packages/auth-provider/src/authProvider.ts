@@ -15,12 +15,12 @@ const authProvider = ({
   checkUser,
   checkPermissions = false,
   clientId
-}) => {
+}: any) => {
   if (![AUTH_TYPE_SSO, AUTH_TYPE_LOCAL, AUTH_TYPE_POD, AUTH_TYPE_SOLID_OIDC].includes(authType))
     throw new Error('The authType parameter is missing from the auth provider');
   if (authType === AUTH_TYPE_SOLID_OIDC && !clientId)
     throw new Error('The clientId parameter is required for solid-oidc authentication');
-  const callCheckUser = async webId => {
+  const callCheckUser = async (webId: any) => {
     if (checkUser) {
       try {
         const { json: userData } = await dataProvider.fetch(webId);
@@ -33,7 +33,7 @@ const authProvider = ({
     }
   };
   return {
-    login: async params => {
+    login: async (params: any) => {
       if (authType === AUTH_TYPE_SOLID_OIDC) {
         let { webId, issuer, redirect = '/', isSignup = false } = params;
 
@@ -60,7 +60,7 @@ const authProvider = ({
         localStorage.setItem('code_verifier', codeVerifier);
         localStorage.setItem('redirect', redirect);
 
-        const authorizationUrl = new URL(as.authorization_endpoint);
+        const authorizationUrl = new URL(as.authorization_endpoint!);
         authorizationUrl.searchParams.set('response_type', 'code');
         authorizationUrl.searchParams.set('client_id', clientId);
         authorizationUrl.searchParams.set('code_challenge', codeChallenge);
@@ -69,6 +69,7 @@ const authProvider = ({
         authorizationUrl.searchParams.set('scope', 'openid webid offline_access');
         authorizationUrl.searchParams.set('is_signup', isSignup);
 
+        // @ts-expect-error TS(2322): Type 'URL' is not assignable to type '(string | Lo... Remove this comment to see the full error message
         window.location = authorizationUrl;
       } else if (authType === AUTH_TYPE_LOCAL) {
         const { username, password } = params;
@@ -106,6 +107,7 @@ const authProvider = ({
       const { searchParams } = new URL(window.location);
 
       if (authType === AUTH_TYPE_SOLID_OIDC) {
+        // @ts-expect-error TS(2345): Argument of type 'string | null' is not assignable... Remove this comment to see the full error message
         const issuer = new URL(searchParams.get('iss'));
         const as = await oauth
           .discoveryRequest(issuer)
@@ -117,6 +119,7 @@ const authProvider = ({
         };
 
         const currentUrl = new URL(window.location.href);
+        // @ts-expect-error TS(2345): Argument of type '{ client_id: any; token_endpoint... Remove this comment to see the full error message
         const params = oauth.validateAuthResponse(as, client, currentUrl, oauth.expectNoState);
         if (oauth.isOAuth2Error(params)) {
           throw new Error(`OAuth error: ${params.error} (${params.error_description})`);
@@ -128,14 +131,17 @@ const authProvider = ({
 
         const response = await oauth.authorizationCodeGrantRequest(
           as,
+          // @ts-expect-error TS(2345): Argument of type '{ client_id: any; token_endpoint... Remove this comment to see the full error message
           client,
           params,
           `${window.location.origin}/auth-callback`,
           codeVerifier
         );
 
+        // @ts-expect-error TS(2345): Argument of type '{ client_id: any; token_endpoint... Remove this comment to see the full error message
         const result = await oauth.processAuthorizationCodeOpenIDResponse(as, client, response);
         if (oauth.isOAuth2Error(result)) {
+          // @ts-expect-error TS(2339): Property 'error' does not exist on type 'URLSearch... Remove this comment to see the full error message
           throw new Error(`OAuth error: ${params.error} (${params.error_description})`);
         }
 
@@ -153,7 +159,7 @@ const authProvider = ({
         const token = searchParams.get('token');
         if (!token) throw new Error('auth.message.no_token_returned');
 
-        let webId;
+        let webId: any;
         try {
           ({ webId } = jwtDecode(token));
         } catch (e) {
@@ -166,7 +172,7 @@ const authProvider = ({
         await callCheckUser(webId);
       }
     },
-    signup: async params => {
+    signup: async (params: any) => {
       const authServerUrl = await getAuthServerUrl(dataProvider);
       if (authType === AUTH_TYPE_LOCAL) {
         const { username, email, password, domain, ...profileData } = params;
@@ -215,7 +221,7 @@ const authProvider = ({
         window.location.href = urlJoin(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
       }
     },
-    logout: async params => {
+    logout: async (params: any) => {
       const { redirectUrl } = params || {};
       switch (authType) {
         case AUTH_TYPE_LOCAL: {
@@ -232,8 +238,10 @@ const authProvider = ({
             // Do nothing if it fails
           }
 
+          // @ts-expect-error TS(2339): Property 'status' does not exist on type '{}'.
           if (result.status === 200 && result.json) {
             // Redirect to OIDC endpoint if it exists
+            // @ts-expect-error TS(2339): Property 'json' does not exist on type '{}'.
             window.location.href = result.json.end_session_endpoint;
           } else {
             // Reload to ensure the dataServer config is reset
@@ -256,6 +264,7 @@ const authProvider = ({
         case AUTH_TYPE_POD: {
           const token = localStorage.getItem('token');
           if (token) {
+            // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'unknown'.
             const { webId } = jwtDecode(token);
             // Delete token but also any other value in local storage
             localStorage.clear();
@@ -270,6 +279,7 @@ const authProvider = ({
         case AUTH_TYPE_SOLID_OIDC: {
           const token = localStorage.getItem('token');
           if (token) {
+            // @ts-expect-error TS(2339): Property 'webid' does not exist on type 'unknown'.
             const { webid: webId } = jwtDecode(token); // Not webId !!
 
             // Delete token but also any other value in local storage
@@ -297,13 +307,13 @@ const authProvider = ({
       const token = localStorage.getItem('token');
       if (!token && !allowAnonymous) throw new Error();
     },
-    checkUser: userData => {
+    checkUser: (userData: any) => {
       if (checkUser) {
         return checkUser(userData);
       }
       return true;
     },
-    checkError: error => {
+    checkError: (error: any) => {
       // We want to disconnect only with INVALID_TOKEN errors
       if (error.status === 401 && error.body && error.body.type === 'INVALID_TOKEN') {
         localStorage.removeItem('token');
@@ -313,7 +323,7 @@ const authProvider = ({
         return Promise.resolve();
       }
     },
-    getPermissions: async ({ uri }) => {
+    getPermissions: async ({ uri }: any) => {
       if (!checkPermissions) return;
       if (!uri) return;
 
@@ -335,7 +345,7 @@ const authProvider = ({
         return [];
       }
     },
-    addPermission: async (uri, agentId, predicate, mode) => {
+    addPermission: async (uri: any, agentId: any, predicate: any, mode: any) => {
       if (!uri || !uri.startsWith('http'))
         throw new Error('The first parameter passed to addPermission must be an URL');
 
@@ -357,7 +367,7 @@ const authProvider = ({
         })
       });
     },
-    removePermission: async (uri, agentId, predicate, mode) => {
+    removePermission: async (uri: any, agentId: any, predicate: any, mode: any) => {
       if (!uri || !uri.startsWith('http'))
         throw new Error('The first parameter passed to removePermission must be an URL');
 
@@ -367,11 +377,11 @@ const authProvider = ({
       const { json } = await dataProvider.fetch(aclUri);
 
       const updatedPermissions = json['@graph']
-        .filter(authorization => !authorization['@id'].includes('#Default'))
-        .map(authorization => {
+        .filter((authorization: any) => !authorization['@id'].includes('#Default'))
+        .map((authorization: any) => {
           const modes = defaultToArray(authorization['acl:mode']);
           let agents = defaultToArray(authorization[predicate]);
-          if (mode && modes.includes(mode) && agents && agents.includes(agentId)) {
+          if (mode && modes?.includes(mode) && agents && agents.includes(agentId)) {
             agents = agents.filter(agent => agent !== agentId);
           }
           return { ...authorization, [predicate]: agents };
@@ -391,6 +401,7 @@ const authProvider = ({
         const payload = jwtDecode(token);
 
         // Backend-generated tokens use webId but Solid-OIDC tokens use webid
+        // @ts-expect-error TS(2571): Object is of type 'unknown'.
         const webId = authType === AUTH_TYPE_SOLID_OIDC ? payload.webid : payload.webId;
 
         if (!webId) {
@@ -416,11 +427,14 @@ const authProvider = ({
         return {
           id: webId,
           fullName:
+            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
             profileData['vcard:given-name'] ||
+            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
             profileData['pair:label'] ||
             webIdData['foaf:name'] ||
             webIdData['pair:label'],
           avatar:
+            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
             profileData['vcard:photo'] ||
             webIdData.image?.url ||
             webIdData.image ||
@@ -431,7 +445,7 @@ const authProvider = ({
         };
       }
     },
-    resetPassword: async params => {
+    resetPassword: async (params: any) => {
       const { email } = params;
       const authServerUrl = await getAuthServerUrl(dataProvider);
       try {
@@ -448,7 +462,7 @@ const authProvider = ({
         }
       }
     },
-    setNewPassword: async params => {
+    setNewPassword: async (params: any) => {
       const { email, token, password } = params;
       const authServerUrl = await getAuthServerUrl(dataProvider);
       try {
@@ -465,7 +479,7 @@ const authProvider = ({
         }
       }
     },
-    getAccountSettings: async params => {
+    getAccountSettings: async (params: any) => {
       const authServerUrl = await getAuthServerUrl(dataProvider);
       try {
         const { json } = await dataProvider.fetch(urlJoin(authServerUrl, 'auth/account'));
@@ -474,7 +488,7 @@ const authProvider = ({
         throw new Error('auth.notification.get_settings_error');
       }
     },
-    updateAccountSettings: async params => {
+    updateAccountSettings: async (params: any) => {
       const authServerUrl = await getAuthServerUrl(dataProvider);
       try {
         const { email, currentPassword, newPassword } = params;

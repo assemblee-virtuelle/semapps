@@ -12,6 +12,7 @@ const alreadyFetchedPermissions = { '{}': undefined };
 const usePermissionsWithRefetch = (params = emptyParams) => {
   const key = JSON.stringify(params);
   const [state, setState] = useSafeSetState({
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     permissions: alreadyFetchedPermissions[key]
   });
   const getPermissions = useGetPermissions();
@@ -20,13 +21,16 @@ const usePermissionsWithRefetch = (params = emptyParams) => {
     () =>
       getPermissions(params)
         .then(permissions => {
+          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
           if (!isEqual(permissions, state.permissions)) {
+            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
             alreadyFetchedPermissions[key] = permissions;
             setState({ permissions });
           }
         })
         .catch(error => {
           setState({
+            // @ts-expect-error TS(2345): Argument of type '{ error: any; }' is not assignab... Remove this comment to see the full error message
             error
           });
         }),

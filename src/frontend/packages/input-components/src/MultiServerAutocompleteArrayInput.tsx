@@ -3,10 +3,13 @@ import { AutocompleteArrayInput } from 'react-admin';
 import { useDataServers } from '@semapps/semantic-data-provider';
 import OptionRenderer from './OptionRenderer';
 
-const MultiServerAutocompleteArrayInput = ({ optionText, ...rest }) => {
+const MultiServerAutocompleteArrayInput = ({
+  optionText,
+  ...rest
+}: any) => {
   const dataServers = useDataServers();
   const matchSuggestion = useCallback(
-    (filterValue, choice) => choice[optionText].toLowerCase().match(filterValue.toLowerCase()),
+    (filterValue: any, choice: any) => choice[optionText].toLowerCase().match(filterValue.toLowerCase()),
     [optionText]
   );
   return (

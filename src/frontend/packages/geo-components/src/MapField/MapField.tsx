@@ -4,7 +4,15 @@ import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import { Box, Typography } from '@mui/material';
 import ChangeView from './ChangeView';
 
-const MapField = ({ latitude, longitude, address, height = 400, zoom = 11, typographyProps, ...rest }) => {
+const MapField = ({
+  latitude,
+  longitude,
+  address,
+  height = 400,
+  zoom = 11,
+  typographyProps,
+  ...rest
+}: any) => {
   const record = useRecordContext();
   const position = [latitude(record), longitude(record)];
 
@@ -22,6 +30,7 @@ const MapField = ({ latitude, longitude, address, height = 400, zoom = 11, typog
       <MapContainer style={{ height }} center={position} zoom={zoom} {...rest}>
         <ChangeView center={position} />
         <TileLayer
+          // @ts-expect-error TS(2322): Type '{ attribution: string; url: string; }' is no... Remove this comment to see the full error message
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />

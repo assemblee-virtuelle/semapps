@@ -33,7 +33,7 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const QuickAppendDialog = ({ open, onClose, subjectUri, source, reference }) => {
+const QuickAppendDialog = ({ open, onClose, subjectUri, source, reference }: any) => {
   const classes = useStyles();
   const { resource } = useShowContext();
   const [keyword, setKeyword] = useState('');
@@ -47,7 +47,7 @@ const QuickAppendDialog = ({ open, onClose, subjectUri, source, reference }) => 
   const { register, setValue, handleSubmit } = useForm();
 
   const appendLink = useCallback(
-    async objectUri => {
+    async (objectUri: any) => {
       // Get the freshest data so that the put operation doesn't overwrite anything
       const { data } = await dataProvider.getOne(resource, { id: subjectUri });
 
@@ -72,9 +72,10 @@ const QuickAppendDialog = ({ open, onClose, subjectUri, source, reference }) => 
   );
 
   const create = useCallback(
-    async values => {
+    async (values: any) => {
       const { data } = await dataProvider.create(reference, {
         data: {
+          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
           [dataModel.fieldsMapping.title]: values.title
         }
       });

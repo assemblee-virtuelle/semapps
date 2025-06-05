@@ -3,7 +3,7 @@ import { fetchUtils } from 'react-admin';
 
 const useWebfinger = () => {
   // Post an activity to the logged user's outbox and return its URI
-  const fetch = useCallback(async id => {
+  const fetch = useCallback(async (id: any) => {
     // eslint-disable-next-line
     const [_, username, host] = id.split('@');
     if (host) {
@@ -13,7 +13,7 @@ const useWebfinger = () => {
       try {
         const { json } = await fetchUtils.fetchJson(webfingerUrl);
 
-        const link = json.links.find(l => l.type === 'application/activity+json');
+        const link = json.links.find((l: any) => l.type === 'application/activity+json');
 
         return link ? link.href : null;
       } catch (e) {

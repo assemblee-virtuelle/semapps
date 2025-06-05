@@ -31,7 +31,7 @@ const LocalLoginPage = ({
   onSignup,
   additionalSignupValues = {},
   passwordScorer = defaultScorer
-}) => {
+}: any) => {
   const translate = useTranslate();
   const [searchParams] = useSearchParams();
   const isSignup = hasSignup && searchParams.has('signup');
@@ -48,6 +48,7 @@ const LocalLoginPage = ({
         if (onLogin) {
           onLogin(redirectTo);
         } else {
+          // @ts-expect-error TS(2322): Type 'string | null' is not assignable to type 'st... Remove this comment to see the full error message
           window.location.href = redirectTo;
         }
       }
@@ -67,6 +68,7 @@ const LocalLoginPage = ({
     if (isNewPassword) {
       return ['auth.action.set_new_password', 'auth.helper.set_new_password'];
     }
+    return ['', ''];
   }, [isSignup, isLogin, isResetPassword, isNewPassword]);
 
   if (isLoading || identity?.id) return null;
@@ -74,18 +76,18 @@ const LocalLoginPage = ({
   return (
     <SimpleBox title={translate(title)} text={translate(text)} icon={<LockIcon />}>
       <Card>
-        {isLogin && <LoginForm onLogin={onLogin} redirectTo={redirectTo} allowUsername={allowUsername} />}
+        {isLogin && <LoginForm onLogin={onLogin} redirectTo={redirectTo || ''} allowUsername={allowUsername} />}
         {isSignup && (
           <SignupForm
             delayBeforeRedirect={4000}
-            redirectTo={redirectTo}
+            redirectTo={redirectTo || ''}
             onSignup={onSignup}
             additionalSignupValues={additionalSignupValues}
             passwordScorer={passwordScorer}
           />
         )}
         {isResetPassword && <ResetPasswordForm />}
-        {isNewPassword && <NewPasswordForm redirectTo={redirectTo} passwordScorer={passwordScorer} />}
+        {isNewPassword && <NewPasswordForm redirectTo={redirectTo || ''} passwordScorer={passwordScorer} />}
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: -1, mb: 2 }}>
           {(isSignup || isResetPassword) && (
             <Link to={`/login?${getSearchParamsRest(searchParams)}`}>

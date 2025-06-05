@@ -18,6 +18,7 @@ import { Permissions } from '../../types';
 
 // Do not show Export and Refresh buttons on mobile
 const ListActionsWithPermissions = ({
+  // @ts-expect-error TS(2339): Property 'sort' does not exist on type 'ListAction... Remove this comment to see the full error message
   sort,
   displayedFilters,
   exporter,
@@ -49,6 +50,7 @@ const ListActionsWithPermissions = ({
       )}
       {permissions?.some(p => rightsToControl.includes(p['acl:mode'])) && <PermissionsButton isContainer />}
       {!xs && exporter !== false && (
+        // @ts-expect-error TS(2322): Type '{ disabled: boolean; sort: any; filterValues... Remove this comment to see the full error message
         <ExportButton disabled={total === 0} sort={sort} filterValues={filterValues} exporter={exporter as Exporter} />
       )}
     </TopToolbar>

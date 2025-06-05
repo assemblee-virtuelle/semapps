@@ -9,8 +9,8 @@ const useGetCreateContainerUri = () => {
   const dataServers = useDataServers();
 
   const getCreateContainerUri = useCallback(
-    (resourceId: string) => {
-      if (!dataModels || !dataServers || !dataModels[resourceId]) {
+    (resourceId: string | undefined) => {
+      if (!resourceId || !dataModels || !dataServers || !dataModels[resourceId]) {
         return undefined;
       }
 

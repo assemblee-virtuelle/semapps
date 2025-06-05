@@ -1,6 +1,6 @@
 import { triple, variable } from '@rdfjs/data-model';
 
-const buildAutoDetectBlankNodesQuery = (depth, baseQuery) => {
+const buildAutoDetectBlankNodesQuery = (depth: any, baseQuery: any) => {
   const construct = [...baseQuery.construct];
   let where = {};
   if (depth > 0) {

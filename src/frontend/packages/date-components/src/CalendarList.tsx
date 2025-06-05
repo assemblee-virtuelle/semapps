@@ -4,7 +4,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import { makeStyles, useTheme } from '@mui/material';
 import useFullCalendarProps from './useFullCalendarProps';
 
-const useGlobalStyles = makeStyles(theme => ({
+const useGlobalStyles = makeStyles((theme: any) => ({
   '@global': {
     '.fc-button': {
       backgroundColor: `${theme.palette.primary.main} !important`,
@@ -21,12 +21,14 @@ const useGlobalStyles = makeStyles(theme => ({
   }
 }));
 
-const CalendarList = props => {
+const CalendarList = (props: any) => {
   const theme = useTheme();
   const fullCalendarProps = useFullCalendarProps(props);
+  // @ts-expect-error TS(2349): This expression is not callable.
   useGlobalStyles();
 
   return (
+    // @ts-expect-error TS(2769): No overload matches this call.
     <FullCalendar
       plugins={[dayGridPlugin]}
       locale={props.locale}

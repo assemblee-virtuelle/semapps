@@ -147,9 +147,12 @@ const fetchContainers = async (
   // Sorting
   if (params.sort) {
     resources = resources.sort((a, b) => {
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       if (params.sort.order === 'ASC') {
+        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         return (a[params.sort.field] ?? '').localeCompare(b[params.sort.field] ?? '');
       }
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       return (b[params.sort.field] ?? '').localeCompare(a[params.sort.field] ?? '');
     });
   }

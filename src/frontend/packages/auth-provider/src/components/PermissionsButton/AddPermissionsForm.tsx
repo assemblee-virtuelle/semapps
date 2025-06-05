@@ -15,12 +15,12 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const AddPermissionsForm = ({ agents, addPermission }) => {
+const AddPermissionsForm = ({ agents, addPermission }: any) => {
   const classes = useStyles();
   const translate = useTranslate();
   const [value, setValue] = useState(null);
   const [inputValue, setInputValue] = useState('');
-  const [options, setOptions] = useState([]);
+  const [options, setOptions] = useState([] as any[]);
 
   const { data } = useGetList(
     'Person',
@@ -35,7 +35,7 @@ const AddPermissionsForm = ({ agents, addPermission }) => {
   );
 
   useEffect(() => {
-    setOptions(data?.length > 0 ? Object.values(data) : []);
+    setOptions((data?.length || 0) > 0 ? Object.values(data || []) : []);
   }, [data]);
 
   return (
@@ -50,7 +50,7 @@ const AddPermissionsForm = ({ agents, addPermission }) => {
       blurOnSelect
       clearOnBlur
       disableClearable
-      value={value}
+      value={value || undefined}
       onChange={(event, record) => {
         addPermission(record.id || record['@id'], USER_AGENT, ACL_READ);
         setValue(null);
@@ -64,7 +64,9 @@ const AddPermissionsForm = ({ agents, addPermission }) => {
         <TextField {...params} label={translate('auth.input.agent_select')} variant="filled" margin="dense" fullWidth />
       )}
       renderOption={(props, option) => (
+        // @ts-expect-error TS(2769)
         <List dense className={classes.list} {...props}>
+          {/* @ts-expect-error TS(2769) */}
           <ListItem button>
             <ListItemAvatar>
               <Avatar src={option.image}>

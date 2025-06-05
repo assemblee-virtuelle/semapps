@@ -1,5 +1,5 @@
-const extractContext = (context, key) => {
-  const property = context.find(property => property.id.startsWith(`${key}.`));
+const extractContext = (context: any, key: any) => {
+  const property = context.find((property: any) => property.id.startsWith(`${key}.`));
   if (property) return property.text;
 };
 

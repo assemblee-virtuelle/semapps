@@ -15,11 +15,17 @@ import React, { useState, useEffect } from 'react';
  * </Show>
  */
 
-const FilterHandler = ({ children, record, filter, source, ...otherProps }) => {
+const FilterHandler = ({
+  children,
+  record,
+  filter,
+  source,
+  ...otherProps
+}: any) => {
   const [filtered, setFiltered] = useState();
   useEffect(() => {
     if (record && source && Array.isArray(record?.[source])) {
-      const filteredData = record?.[source].filter(r => {
+      const filteredData = record?.[source].filter((r: any) => {
         let eq = true;
         for (const key in filter) {
           const value = r[key];

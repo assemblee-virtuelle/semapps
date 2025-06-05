@@ -1,11 +1,14 @@
 import urlJoin from 'url-join';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 
-const capitalize = s => (s && s[0].toUpperCase() + s.slice(1)) || '';
+const capitalize = (s: any) => (s && s[0].toUpperCase() + s.slice(1)) || '';
 
 const fetchESCO =
   (apiUrl = 'https://ec.europa.eu/esco/api', type = 'skill') =>
-  async ({ keyword, locale }) => {
+  async ({
+    keyword,
+    locale
+  }: any) => {
     const response = await fetch(
       urlJoin(
         apiUrl,
@@ -16,7 +19,7 @@ const fetchESCO =
     );
     if (response.ok) {
       const json = await response.json();
-      return json._embedded.results.map(r => ({
+      return json._embedded.results.map((r: any) => ({
         uri: r.uri,
         label: capitalize(r.title.replace('’', "'")),
         icon: StarBorderIcon

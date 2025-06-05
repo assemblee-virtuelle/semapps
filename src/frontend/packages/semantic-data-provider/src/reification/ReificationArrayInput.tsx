@@ -17,20 +17,30 @@ const useHideInputStyles = makeStyles({
   }
 });
 
-const ReificationArrayInput = props => {
+const ReificationArrayInput = (props: any) => {
   const { reificationClass, children, ...otherProps } = props;
+  // @ts-expect-error TS(2349): This expression is not callable.
   const flexFormClasses = useReferenceInputStyles();
+  // @ts-expect-error TS(2349): This expression is not callable.
   const hideInputStyles = useHideInputStyles();
 
   return (
     <ArrayInput {...otherProps}>
-      <SimpleFormIterator classes={{ form: flexFormClasses.form }}>
+      <SimpleFormIterator
+        // @ts-expect-error TS(2322): Type '{ children: any[]; classes: { form: any; }; ... Remove this comment to see the full error message
+        classes={{ form: flexFormClasses.form }}
+      >
         {React.Children.map(props.children, (child, i) => {
           return React.cloneElement(child, {
             className: flexFormClasses.input
           });
         })}
-        <TextInput className={hideInputStyles.root} source="type" initialValue={reificationClass} />
+        <TextInput
+          className={hideInputStyles.root}
+          source="type"
+          // @ts-expect-error TS(2322): Type '{ className: any; source: string; initialVal... Remove this comment to see the full error message
+          initialValue={reificationClass}
+        />
       </SimpleFormIterator>
     </ArrayInput>
   );

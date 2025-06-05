@@ -1,13 +1,13 @@
 import { useCallback } from 'react';
 import { useDataProvider, useRedirect, useNotify } from 'react-admin';
 
-const useFork = resourceId => {
+const useFork = (resourceId: any) => {
   const dataProvider = useDataProvider();
   const redirect = useRedirect();
   const notify = useNotify();
 
   return useCallback(
-    async (remoteRecordUri, stripProperties = []) => {
+    async (remoteRecordUri: any, stripProperties = []) => {
       const { data: remoteData } = await dataProvider.getOne(resourceId, { id: remoteRecordUri });
 
       const strippedData = { ...remoteData };

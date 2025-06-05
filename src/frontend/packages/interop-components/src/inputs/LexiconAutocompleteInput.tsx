@@ -16,14 +16,14 @@ import { default as highlightMatch } from 'autosuggest-highlight/match';
 import { default as highlightParse } from 'autosuggest-highlight/parse';
 import throttle from 'lodash.throttle';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme: any) => ({
   icon: {
     color: theme.palette.text.secondary,
     marginRight: theme.spacing(2)
   }
 }));
 
-const selectOptionText = (option, optionText) => {
+const selectOptionText = (option: any, optionText: any) => {
   if (typeof option === 'string') {
     return option;
   }
@@ -38,11 +38,13 @@ const selectOptionText = (option, optionText) => {
   }
 };
 
-const capitalizeFirstLetter = string => string && string.charAt(0).toUpperCase() + string.slice(1);
+const capitalizeFirstLetter = (string: any) => string && string.charAt(0).toUpperCase() + string.slice(1);
 
 const LexiconAutocompleteInput = forwardRef(
+  // @ts-expect-error TS(2339): Property 'fetchLexicon' does not exist on type '{}... Remove this comment to see the full error message
   ({ fetchLexicon, source, defaultValue, label, parse, optionText = 'label', helperText, ...rest }, ref) => {
     const resource = useResourceContext();
+    // @ts-expect-error TS(2349): This expression is not callable.
     const classes = useStyles();
     const locale = useLocale();
     const translate = useTranslate();
@@ -52,6 +54,7 @@ const LexiconAutocompleteInput = forwardRef(
     const {
       field: { value, onChange, onBlur },
       fieldState: { isTouched, error },
+      // @ts-expect-error TS(2339): Property 'submitError' does not exist on type 'Use... Remove this comment to see the full error message
       formState: { submitError },
       isRequired
     } = useInput({ source, defaultValue, ...rest });
@@ -61,10 +64,10 @@ const LexiconAutocompleteInput = forwardRef(
 
     const throttledFetchLexicon = useMemo(
       () =>
-        throttle((keyword, callback) => {
+        throttle((keyword: any, callback: any) => {
           fetchLexicon({ keyword, locale })
-            .then(data => callback(data))
-            .catch(e => notify(e.message, { type: 'error' }));
+            .then((data: any) => callback(data))
+            .catch((e: any) => notify(e.message, { type: 'error' }));
         }, 200),
       [locale, fetchLexicon, notify]
     );
@@ -74,7 +77,7 @@ const LexiconAutocompleteInput = forwardRef(
       if (!keyword) {
         return undefined;
       }
-      throttledFetchLexicon(keyword, results => setOptions(results));
+      throttledFetchLexicon(keyword, (results: any) => setOptions(results));
     }, [value, keyword, throttledFetchLexicon]);
 
     return (
@@ -131,11 +134,13 @@ const LexiconAutocompleteInput = forwardRef(
                 onBlur: e => {
                   onBlur(e);
                   if (params.inputProps.onBlur) {
+                    // @ts-expect-error TS(2345): Argument of type 'FocusEvent<HTMLInputElement | HT... Remove this comment to see the full error message
                     params.inputProps.onBlur(e);
                   }
                 },
                 onFocus: e => {
                   if (params.inputProps.onFocus) {
+                    // @ts-expect-error TS(2345): Argument of type 'FocusEvent<HTMLInputElement | HT... Remove this comment to see the full error message
                     params.inputProps.onFocus(e);
                   }
                 }
@@ -147,6 +152,7 @@ const LexiconAutocompleteInput = forwardRef(
                 )
               }
               error={!!(isTouched && (error || submitError))}
+              // @ts-expect-error TS(2322): Type '{ touched: boolean; error: any; helperText: ... Remove this comment to see the full error message
               helperText={<InputHelperText touched={isTouched} error={error || submitError} helperText={helperText} />}
             />
           );
@@ -155,12 +161,15 @@ const LexiconAutocompleteInput = forwardRef(
           const matches = highlightMatch(option.label, keyword);
           const parts = highlightParse(option.label, matches);
           return (
+            // @ts-expect-error TS(2769): No overload matches this call.
             <Grid container alignItems="center" {...props} key={option.uri || 'create'}>
+              {/* @ts-expect-error TS(2769): No overload matches this call. */}
               <Grid item>{React.createElement(option.icon || LanguageIcon, { className: classes.icon })}</Grid>
+              {/* @ts-expect-error TS(2769): No overload matches this call. */}
               <Grid item xs>
                 {typeof parts === 'string'
                   ? parts
-                  : parts.map((part, index) => (
+                  : parts.map((part: any, index: any) => (
                       <span key={index} style={{ fontWeight: part.highlight ? 700 : 400 }}>
                         {part.text}
                       </span>

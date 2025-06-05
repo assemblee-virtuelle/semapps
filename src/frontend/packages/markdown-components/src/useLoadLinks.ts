@@ -1,9 +1,9 @@
 import { useDataProvider, useTranslate } from 'react-admin';
 
-const useLoadLinks = (resourceType, labelProp) => {
+const useLoadLinks = (resourceType: any, labelProp: any) => {
   const dataProvider = useDataProvider();
   const translate = useTranslate();
-  return async keyword => {
+  return async (keyword: any) => {
     if (keyword) {
       const results = await dataProvider.getList(resourceType, {
         pagination: {
@@ -12,6 +12,7 @@ const useLoadLinks = (resourceType, labelProp) => {
         },
         filter: { q: keyword }
       });
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       if (results.total > 0) {
         return results.data.map(record => ({
           preview: record[labelProp],

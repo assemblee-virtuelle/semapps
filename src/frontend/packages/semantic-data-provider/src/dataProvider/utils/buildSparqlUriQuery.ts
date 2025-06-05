@@ -1,6 +1,10 @@
 import getRdfPrefixes from './getRdfPrefixes';
 
-const buildSparqlUriQuery = ({ types, params: { sort, filter }, ontologies }) => {
+const buildSparqlUriQuery = ({
+  types,
+  params: { sort, filter },
+  ontologies
+}: any) => {
   let whereQuery = '';
 
   if (filter) {

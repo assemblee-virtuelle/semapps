@@ -9,7 +9,12 @@ const StyledList = styled(List)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper
 }));
 
-const EditPermissionsForm = ({ isContainer, agents, addPermission, removePermission }) => {
+const EditPermissionsForm = ({
+  isContainer,
+  agents,
+  addPermission,
+  removePermission
+}: any) => {
   return (
     <StyledList dense>
       {Object.entries(agents).map(([agentId, agent]) => (

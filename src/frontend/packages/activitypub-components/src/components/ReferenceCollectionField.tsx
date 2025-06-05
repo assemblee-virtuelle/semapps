@@ -2,7 +2,12 @@ import React from 'react';
 import { useRecordContext } from 'react-admin';
 import CollectionList from './CollectionList';
 
-const ReferenceCollectionField = ({ source, reference, children, ...rest }) => {
+const ReferenceCollectionField = ({
+  source,
+  reference,
+  children,
+  ...rest
+}: any) => {
   const record = useRecordContext();
 
   if (React.Children.count(children) !== 1) {

@@ -168,10 +168,13 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
     isLoading: isLoadingPage,
     isFetching: isFetchingPage,
     isFetchingNextPage
-  } = useInfiniteQuery(['collection', { collectionUrl, shaclShapeUri }], fetchCollection, {
+  } = useInfiniteQuery({
+    queryKey: ['collection', { collectionUrl, shaclShapeUri }],
     enabled: !!(collectionUrl && identity?.id),
+    initialPageParam: collectionUrl,
     getNextPageParam: (lastPage: any) => lastPage.next,
-    getPreviousPageParam: (firstPage: any) => firstPage.prev
+    getPreviousPageParam: (firstPage: any) => firstPage.prev,
+    queryFn: fetchCollection
   });
 
   // Put all items together in a list (and dereference, if required).
@@ -208,10 +211,10 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
       });
       if (shouldRefetch) {
         setTimeout(
-          () =>
+          async () =>
             queryClient.refetchQueries({
               queryKey: ['collection', { collectionUrl }],
-              active: true,
+              type: 'active',
               exact: true
             }),
           typeof shouldRefetch === 'number' ? shouldRefetch : 2000
@@ -250,7 +253,7 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
           () =>
             queryClient.refetchQueries({
               queryKey: ['collection', { collectionUrl }],
-              active: true,
+              type: 'active',
               exact: true
             }),
           typeof shouldRefetch === 'number' ? shouldRefetch : 2000

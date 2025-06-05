@@ -36,7 +36,7 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const AgentItem = ({ isContainer, agent, addPermission, removePermission }) => {
+const AgentItem = ({ isContainer, agent, addPermission, removePermission }: any) => {
   const classes = useStyles();
   const translate = useTranslate();
   const dataProvider = useDataProvider();
@@ -65,18 +65,24 @@ const AgentItem = ({ isContainer, agent, addPermission, removePermission }) => {
   // For now, do not display groups
   if (agent.predicate === GROUP_AGENT) return null;
 
-  const openMenu = event => setAnchorEl(event.currentTarget);
+  const openMenu = (event: any) => setAnchorEl(event.currentTarget);
   const closeMenu = () => setAnchorEl(null);
 
   const labels = isContainer ? containerRightsLabels : resourceRightsLabels;
 
   if (loading) return <Loading />;
+  // @ts-expect-error TS(2739): Type '{}' is missing the following properties from... Remove this comment to see the full error message
   if (error) return <Error />;
 
   return (
     <ListItem className={classes.listItem}>
       <ListItemAvatar>
-        <Avatar src={user?.image}>
+        <Avatar
+          src={
+            // @ts-expect-error TS(2339): Property 'image' does not exist on type 'never'.
+            user?.image
+          }
+        >
           <AgentIcon agent={agent} />
         </Avatar>
       </ListItemAvatar>
@@ -90,7 +96,8 @@ const AgentItem = ({ isContainer, agent, addPermission, removePermission }) => {
       />
       <ListItemText
         className={classes.secondaryText}
-        primary={agent.permissions && agent.permissions.map(p => translate(labels[p])).join(', ')}
+        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+        primary={agent.permissions && agent.permissions.map((p: any) => translate(labels[p])).join(', ')}
       />
       <ListItemSecondaryAction>
         <IconButton onClick={openMenu} size="large">

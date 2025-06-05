@@ -3,8 +3,8 @@ import { useRecordContext } from 'react-admin';
 import { Box, Avatar, Chip, makeStyles } from '@mui/material';
 import LaunchIcon from '@mui/icons-material/Launch';
 
-const useStyles = makeStyles(theme => ({
-  parent: props => ({
+const useStyles = makeStyles((theme: any) => ({
+  parent: (props: any) => ({
     position: 'relative',
     ...props.parent
   }),
@@ -54,11 +54,13 @@ const AvatarWithLabelField = ({
   labelColor = 'secondary',
   classes,
   ...rest
-}) => {
+}: any) => {
   classes = useStyles(classes);
   const record = useRecordContext();
 
+  // @ts-expect-error TS(2532): Object is possibly 'undefined'.
   const computedLabel = (typeof label === 'function' ? label(record) : record[label]) || defaultLabel;
+  // @ts-expect-error TS(2532): Object is possibly 'undefined'.
   const computedImage = typeof image === 'function' ? image(record) : record[image];
   const computedFallback = typeof fallback === 'function' ? fallback(record) : fallback;
 

@@ -144,7 +144,9 @@ const getAndValidateLdoSubject = async <T extends LdoBase>(
   const { results } = validationReport;
 
   // Find the shape that matched the item in the report results.
-  const shapeType = shapeTypes.find(st => results.find(res => res.focusNode === subjectUri && res.shape === st.shape));
+  const shapeType = shapeTypes.find(st =>
+    results.find((res: any) => res.focusNode === subjectUri && res.shape === st.shape)
+  );
 
   if (!shapeType) return null;
 

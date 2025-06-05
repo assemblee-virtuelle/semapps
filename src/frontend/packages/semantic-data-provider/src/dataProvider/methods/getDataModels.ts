@@ -1,4 +1,4 @@
-const getDataModels = config => () => {
+const getDataModels = (config: any) => () => {
   return config.resources;
 };
 

@@ -15,7 +15,7 @@ import { LinearProgress, withStyles } from '@mui/material';
  * @param {Color} color2
  * @returns {string} `` `rgb(${red}, ${green}, ${blue})` ``
  */
-const colorGradient = (fade, color1, color2) => {
+const colorGradient = (fade: any, color1: any, color2: any) => {
   const diffRed = color2.red - color1.red;
   const diffGreen = color2.green - color1.green;
   const diffBlue = color2.blue - color1.blue;
@@ -38,7 +38,7 @@ const colorGradient = (fade, color1, color2) => {
  * @param {number} props.minVal
  * @param {number} props.currentVal
  */
-export default function ColorGradientProgressBar(props) {
+export default function ColorGradientProgressBar(props: any) {
   const { minVal, maxVal, currentVal, badColor, goodColor, ...restProps } = props;
 
   const color1 = badColor || { red: 0xff, green: 0x40, blue: 0x47 };

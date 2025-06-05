@@ -38,10 +38,11 @@ const MapList = ({
   connectMarkers = false,
   scrollWheelZoom = false,
   ...otherProps
-}) => {
+}: any) => {
   const { data, isLoading } = useListContext();
   const xs = useMediaQuery(theme => theme.breakpoints.down('sm'), { noSsr: true });
   const [drawerRecord, setDrawerRecord] = useState(null);
+  // @ts-expect-error TS(2349): This expression is not callable.
   const classes = useStyles();
 
   // Get the zoom and center from query string, if available
@@ -50,11 +51,12 @@ const MapList = ({
   center = query.has('lat') && query.has('lng') ? [query.get('lat'), query.get('lng')] : center;
   zoom = query.has('zoom') ? query.get('zoom') : zoom;
 
-  let previousRecord;
+  let previousRecord: any;
 
   const records = isLoading
     ? []
-    : data
+    : // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+      data
         .map(record => ({
           ...record,
           latitude: latitude && latitude(record),
@@ -116,6 +118,7 @@ const MapList = ({
       {...otherProps}
     >
       <TileLayer
+        // @ts-expect-error TS(2322): Type '{ attribution: string; url: string; }' is no... Remove this comment to see the full error message
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
@@ -126,7 +129,11 @@ const MapList = ({
       )}
       {groupClusters ? <MarkerClusterGroup showCoverageOnHover={false}>{markers}</MarkerClusterGroup> : markers}
       <QueryStringUpdater />
-      <RecordContextProvider value={drawerRecord}>
+
+      <RecordContextProvider
+        // @ts-expect-error TS(2322): Type 'null' is not assignable to type 'RaRecord<Id... Remove this comment to see the full error message
+        value={drawerRecord}
+      >
         <MobileDrawer popupContent={popupContent} onClose={() => setDrawerRecord(null)} />
       </RecordContextProvider>
     </MapContainer>

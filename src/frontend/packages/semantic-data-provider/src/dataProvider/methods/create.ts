@@ -4,7 +4,7 @@ import handleFiles from '../utils/handleFiles';
 import findContainersWithTypes from '../utils/findContainersWithTypes';
 import findContainersWithURIs from '../utils/findContainersWithURIs';
 
-const createMethod = config => async (resourceId, params) => {
+const createMethod = (config: any) => async (resourceId: any, params: any) => {
   const { dataServers, resources, httpClient, jsonContext } = config;
   const dataModel = resources[resourceId];
 
@@ -37,7 +37,7 @@ const createMethod = config => async (resourceId, params) => {
   if (params.data) {
     if (dataModel.fieldsMapping?.title) {
       const slug = Array.isArray(dataModel.fieldsMapping.title)
-        ? dataModel.fieldsMapping.title.map(f => params.data[f]).join(' ')
+        ? dataModel.fieldsMapping.title.map((f: any) => params.data[f]).join(' ')
         : params.data[dataModel.fieldsMapping.title];
 
       // Generate slug here, otherwise we may get errors with special characters

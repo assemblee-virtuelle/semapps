@@ -1,4 +1,4 @@
-const getDataServers = config => () => {
+const getDataServers = (config: any) => () => {
   return config.dataServers;
 };
 

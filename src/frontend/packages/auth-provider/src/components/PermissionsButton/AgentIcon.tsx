@@ -5,7 +5,9 @@ import PersonIcon from '@mui/icons-material/Person';
 import GroupIcon from '@mui/icons-material/Group';
 import { CLASS_AGENT, GROUP_AGENT, USER_AGENT, ANONYMOUS_AGENT } from '../../constants';
 
-const AgentIcon = ({ agent }) => {
+const AgentIcon = ({
+  agent
+}: any) => {
   switch (agent.predicate) {
     case CLASS_AGENT:
       return agent.id === ANONYMOUS_AGENT ? <PublicIcon /> : <VpnLockIcon />;

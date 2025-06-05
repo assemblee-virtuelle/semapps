@@ -9,7 +9,7 @@ const PermissionsButton = ({ isContainer = false }) => {
   const resource = useResourceContext();
   const [showDialog, setShowDialog] = useState(false);
   const createContainer = useCreateContainerUri(resource);
-  const uri = isContainer ? createContainer : record.id || record['@id'];
+  const uri = isContainer ? createContainer : record?.id || record?.['@id'];
   return (
     <>
       <Button label="auth.action.permissions" onClick={() => setShowDialog(true)}>

@@ -1,4 +1,4 @@
-const deleteManyMethod = config => async (resourceId, params) => {
+const deleteManyMethod = (config: any) => async (resourceId: any, params: any) => {
   const { httpClient } = config;
   const ids = [];
 

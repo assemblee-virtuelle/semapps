@@ -3,7 +3,7 @@ import { useGetList } from 'react-admin';
 import { useDataModel } from '@semapps/semantic-data-provider';
 import renderMentions from './renderMentions';
 
-const useMentions = userResource => {
+const useMentions = (userResource: any) => {
   const userDataModel = useDataModel(userResource);
 
   const { data } = useGetList(
@@ -21,13 +21,13 @@ const useMentions = userResource => {
 
   const availableMentions = useMemo(() => {
     if (data) {
-      return data.map(item => ({ id: item.id, label: item[userDataModel?.fieldsMapping?.title] }));
+      return data.map(item => ({ id: item.id, label: item[userDataModel?.fieldsMapping?.title || ''] }));
     }
   }, [data]);
 
   const items = useMemo(() => {
     if (availableMentions) {
-      return ({ query }) => {
+      return ({ query }: any) => {
         return availableMentions.filter(({ label }) => label.toLowerCase().startsWith(query.toLowerCase())).slice(0, 5);
       };
     }

@@ -1,9 +1,10 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'cryp... Remove this comment to see the full error message
 import md5 from 'crypto-js/md5';
 import { namedNode, triple, variable } from '@rdfjs/data-model';
 import getUriFromPrefix from './getUriFromPrefix';
 
 // Transform ['ont:predicate1/ont:predicate2'] to ['ont:predicate1', 'ont:predicate1/ont:predicate2']
-const extractNodes = blankNodes => {
+const extractNodes = (blankNodes: any) => {
   const nodes = [];
   if (blankNodes) {
     for (const predicate of blankNodes) {
@@ -20,16 +21,16 @@ const extractNodes = blankNodes => {
   return nodes;
 };
 
-const generateSparqlVarName = node => md5(node);
+const generateSparqlVarName = (node: any) => md5(node);
 
-const getParentNode = node => node.includes('/') && node.split('/')[0];
+const getParentNode = (node: any) => node.includes('/') && node.split('/')[0];
 
-const getPredicate = node => (node.includes('/') ? node.split('/')[1] : node);
+const getPredicate = (node: any) => (node.includes('/') ? node.split('/')[1] : node);
 
-const buildUnionQuery = queries =>
-  queries.map(q => {
+const buildUnionQuery = (queries: any) =>
+  queries.map((q: any) => {
     let triples = q.query;
-    const firstTriple = queries.find(q2 => q.parentNode === q2.node);
+    const firstTriple = queries.find((q2: any) => q.parentNode === q2.node);
     if (firstTriple !== undefined) {
       triples = triples.concat(firstTriple.query[0]);
     }
@@ -39,7 +40,7 @@ const buildUnionQuery = queries =>
     };
   });
 
-const buildBlankNodesQuery = (blankNodes, baseQuery, ontologies) => {
+const buildBlankNodesQuery = (blankNodes: any, baseQuery: any, ontologies: any) => {
   const queries = [];
   const nodes = extractNodes(blankNodes);
 

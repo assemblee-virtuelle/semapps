@@ -3,11 +3,11 @@ import tippy from 'tippy.js';
 import MentionsList from './MentionsList';
 
 const renderMentions = () => {
-  let component;
-  let popup;
+  let component: any;
+  let popup: any;
 
   return {
-    onStart: props => {
+    onStart: (props: any) => {
       component = new ReactRenderer(MentionsList, {
         props,
         editor: props.editor
@@ -23,16 +23,14 @@ const renderMentions = () => {
         placement: 'bottom-start'
       });
     },
-
-    onUpdate(props) {
+    onUpdate(props: any) {
       component.updateProps(props);
 
       popup[0].setProps({
         getReferenceClientRect: props.clientRect
       });
     },
-
-    onKeyDown(props) {
+    onKeyDown(props: any) {
       if (props.event.key === 'Escape') {
         popup[0].hide();
 

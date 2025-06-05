@@ -2,7 +2,12 @@ import React, { useMemo, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useListContext, useCreatePath } from 'react-admin';
 
-const useFullCalendarProps = ({ label, startDate, endDate, linkType = 'edit' }) => {
+const useFullCalendarProps = ({
+  label,
+  startDate,
+  endDate,
+  linkType = 'edit'
+}: any) => {
   const { data, isLoading, resource } = useListContext();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -11,14 +16,20 @@ const useFullCalendarProps = ({ label, startDate, endDate, linkType = 'edit' }) 
   const query = new URLSearchParams(location.search);
 
   // Bypass the link in order to use React-Router
-  const eventClick = useCallback(({ event, jsEvent }) => {
+  const eventClick = useCallback(({
+    event,
+    jsEvent
+  }: any) => {
     jsEvent.preventDefault();
     navigate(event.url);
   }, []);
 
   // Change the query string when month change
   const datesSet = useCallback(
-    ({ view }) => {
+    ({
+      view
+    }: any) => {
+      // @ts-expect-error TS(2345): Argument of type '(params: URLSearchParams) => { m... Remove this comment to see the full error message
       setSearchParams(params => ({
         ...params,
         month: view.currentStart.getMonth() + 1,
@@ -31,6 +42,7 @@ const useFullCalendarProps = ({ label, startDate, endDate, linkType = 'edit' }) 
   const events = useMemo(
     () =>
       !isLoading &&
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       data
         .filter(record => record)
         .map(record => ({
@@ -44,6 +56,7 @@ const useFullCalendarProps = ({ label, startDate, endDate, linkType = 'edit' }) 
   );
 
   return {
+    // @ts-expect-error TS(2345): Argument of type 'string | null' is not assignable... Remove this comment to see the full error message
     initialDate: query.has('month') ? new Date(query.get('year'), query.get('month') - 1) : new Date(),
     events,
     datesSet,

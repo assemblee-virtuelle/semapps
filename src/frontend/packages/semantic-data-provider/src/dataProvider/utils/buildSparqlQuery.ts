@@ -14,7 +14,12 @@ const generator = new SparqlGenerator({
 
 const reservedFilterKeys = ['q', 'sparqlWhere', 'blankNodes', 'blankNodesDepth', '_servers', '_predicates'];
 
-const buildSparqlQuery = ({ containersUris, params, dataModel, ontologies }) => {
+const buildSparqlQuery = ({
+  containersUris,
+  params,
+  dataModel,
+  ontologies
+}: any) => {
   const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes;
   const predicates = params.filter?._predicates || dataModel.list?.predicates;
   const blankNodesDepth = params.filter?.blankNodesDepth ?? dataModel.list?.blankNodesDepth ?? 2;
@@ -32,7 +37,9 @@ const buildSparqlQuery = ({ containersUris, params, dataModel, ontologies }) => 
   const containerWhere = [
     {
       type: 'values',
-      values: containersUris.map(containerUri => ({ '?containerUri': namedNode(containerUri) }))
+      values: containersUris.map((containerUri: any) => ({
+        '?containerUri': namedNode(containerUri)
+      }))
     },
     triple(variable('containerUri'), namedNode('http://www.w3.org/ns/ldp#contains'), variable('s1')),
     {
@@ -109,6 +116,7 @@ const buildSparqlQuery = ({ containersUris, params, dataModel, ontologies }) => 
                         }
                       ]
                     },
+                    // @ts-expect-error TS(2554): Expected 1-2 arguments, but got 3.
                     literal(filter.q.toLowerCase(), '', namedNode('http://www.w3.org/2001/XMLSchema#string'))
                   ]
                 }
@@ -129,6 +137,7 @@ const buildSparqlQuery = ({ containersUris, params, dataModel, ontologies }) => 
           triple(
             variable('s1'),
             namedNode(getUriFromPrefix(predicate, ontologies)),
+            // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
             namedNode(getUriFromPrefix(object, ontologies))
           )
         );
@@ -142,12 +151,15 @@ const buildSparqlQuery = ({ containersUris, params, dataModel, ontologies }) => 
     : buildAutoDetectBlankNodesQuery(blankNodesDepth, baseQuery);
 
   if (blankNodesQuery && blankNodesQuery.construct) {
+    // @ts-expect-error TS(2769): No overload matches this call.
     resourceWhere = resourceWhere.concat(blankNodesQuery.where);
+    // @ts-expect-error TS(2769): No overload matches this call.
     sparqlJsParams.template = sparqlJsParams.template.concat(blankNodesQuery.construct);
   } else {
     resourceWhere.push(baseQuery.where);
   }
 
+  // @ts-expect-error TS(2345): Argument of type '(Quad | { type: string; values: ... Remove this comment to see the full error message
   sparqlJsParams.where.push(containerWhere, resourceWhere);
 
   return generator.stringify(sparqlJsParams);
