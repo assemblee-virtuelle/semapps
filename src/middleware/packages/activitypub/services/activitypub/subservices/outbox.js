@@ -96,14 +96,24 @@ const OutboxService = {
           webId: actorUri
         });
 
+        // -- Persist Activity --
+        // There might be a capability attached which cannot be persisted, if it has a non-resolvable id.
+        // So we won't persist it and re-attach it afterwards.
+        let { capability, ...activityToPersist } = activity;
+
         activityUri = await ctx.call('activitypub.activity.post', {
           containerUri: activitiesContainerUri,
-          resource: activity,
+          resource: activityToPersist,
           contentType: MIME_TYPES.JSON,
           webId: 'system' // Post as system since there is no write permission to the activities container
         });
 
-        activity = await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' });
+        // Refetch because persisting has side-effects.
+        // And reattach capability for further processing (if present).
+        activity = {
+          ...(await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' })),
+          capability
+        };
       }
 
       try {
