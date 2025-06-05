@@ -27,7 +27,8 @@ var $4Uj5b$muiiconsmaterialAccountCircle = require("@mui/icons-material/AccountC
 var $4Uj5b$lodashisEqual = require("lodash/isEqual");
 
 
-function $parcel$exportWildcard(dest, source) {
+// @ts-expect-error TS(2393): Duplicate function implementation.
+function $parcel$exportWildcard(dest: any, source: any) {
   Object.keys(source).forEach(function(key) {
     if (key === 'default' || key === '__esModule' || Object.prototype.hasOwnProperty.call(dest, key)) {
       return;
@@ -44,93 +45,132 @@ function $parcel$exportWildcard(dest, source) {
   return dest;
 }
 
-function $parcel$export(e, n, v, s) {
+function $parcel$export(e: any, n: any, v: any, s: any) {
   Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
 }
 
-function $parcel$interopDefault(a) {
+function $parcel$interopDefault(a: any) {
   return a && a.__esModule ? a.default : a;
 }
 
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "authProvider", () => $6a92eb32301846ac$export$2e2bcd8739ae039);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "CreateWithPermissions", () => $436b98c09d4bfc58$export$2e2bcd8739ae039);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "EditWithPermissions", () => $7059823a3e1f1c04$export$2e2bcd8739ae039);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "EditActionsWithPermissions", () => $87767302443de17c$export$2e2bcd8739ae039);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "EditToolbarWithPermissions", () => $41feb0ed0192b62e$export$2e2bcd8739ae039);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "EditButtonWithPermissions", () => $496e40eed9f00a2c$export$2e2bcd8739ae039);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "DeleteButtonWithPermissions", () => $79bac4913d414938$export$2e2bcd8739ae039);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "ListWithPermissions", () => $027dac078faf6ea1$export$2e2bcd8739ae039);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "ListActionsWithPermissions", () => $429746dd303ba55f$export$2e2bcd8739ae039);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "ShowWithPermissions", () => $7789a2f600191ad3$export$2e2bcd8739ae039);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "ShowActionsWithPermissions", () => $43f4d313e20b20c2$export$2e2bcd8739ae039);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "PermissionsButton", () => $49d4f2fbe6f28cfd$export$2e2bcd8739ae039);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "AuthDialog", () => $4e0bf9be00aaa242$export$2e2bcd8739ae039);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "SsoLoginPage", () => $0af8eee27f6a6e9f$export$2e2bcd8739ae039);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "LoginPage", () => $0af8eee27f6a6e9f$export$2e2bcd8739ae039);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "LocalLoginPage", () => $4c56dbfbda0fa20c$export$2e2bcd8739ae039);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "ResourceWithPermissions", () => $0973974d3aa8078b$export$2e2bcd8739ae039);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "UserMenu", () => $9734e84907c0d5dd$export$2e2bcd8739ae039);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "useAgents", () => $780e01b2b2982de2$export$2e2bcd8739ae039);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "useCheckAuthenticated", () => $84db3891236a263f$export$2e2bcd8739ae039);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "useCheckPermissions", () => $715d0a876ac5de8e$export$2e2bcd8739ae039);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "usePermissionsWithRefetch", () => $80da6dcda9baa28b$export$2e2bcd8739ae039);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "useSignup", () => $19e4629c708b7a3e$export$2e2bcd8739ae039);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "PasswordStrengthIndicator", () => $edfec7f9e9fd7881$export$2e2bcd8739ae039);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "validatePasswordStrength", () => $eab41bc89667b2c6$export$2e2bcd8739ae039);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "defaultPasswordScorer", () => $d1ca1e1d215e32ca$export$19dcdb21c6965fb8);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "defaultPasswordScorerOptions", () => $d1ca1e1d215e32ca$export$ba43bf67f3d48107);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "createPasswordScorer", () => $d1ca1e1d215e32ca$export$a1d713a9155d58fc);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "englishMessages", () => $be2fdde9f3e3137d$export$2e2bcd8739ae039);
+// @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
 $parcel$export(module.exports, "frenchMessages", () => $6dbc362c3d93e01d$export$2e2bcd8739ae039);
 
 
 
 
-const $7448e031bca4bf1e$export$dca4f48302963835 = (value)=>!value ? undefined : Array.isArray(value) ? value : [
+const $7448e031bca4bf1e$export$dca4f48302963835 = (value: any) => !value ? undefined : Array.isArray(value) ? value : [
         value
     ];
-const $7448e031bca4bf1e$export$4450a74bced1b745 = (resourceUri)=>{
+const $7448e031bca4bf1e$export$4450a74bced1b745 = (resourceUri: any) => {
     const parsedUrl = new URL(resourceUri);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     return (0, ($parcel$interopDefault($4Uj5b$urljoin)))(parsedUrl.origin, '_acl', parsedUrl.pathname);
 };
-const $7448e031bca4bf1e$export$4d54b642c3d13c34 = (baseUri)=>({
-        '@base': baseUri,
-        acl: 'http://www.w3.org/ns/auth/acl#',
-        foaf: 'http://xmlns.com/foaf/0.1/',
-        'acl:agent': {
-            '@type': '@id'
-        },
-        'acl:agentGroup': {
-            '@type': '@id'
-        },
-        'acl:agentClass': {
-            '@type': '@id'
-        },
-        'acl:mode': {
-            '@type': '@id'
-        },
-        'acl:accessTo': {
-            '@type': '@id'
-        }
-    });
-const $7448e031bca4bf1e$export$274217e117cdbc7b = async (dataProvider)=>{
+const $7448e031bca4bf1e$export$4d54b642c3d13c34 = (baseUri: any) => ({
+    '@base': baseUri,
+    acl: 'http://www.w3.org/ns/auth/acl#',
+    foaf: 'http://xmlns.com/foaf/0.1/',
+
+    'acl:agent': {
+        '@type': '@id'
+    },
+
+    'acl:agentGroup': {
+        '@type': '@id'
+    },
+
+    'acl:agentClass': {
+        '@type': '@id'
+    },
+
+    'acl:mode': {
+        '@type': '@id'
+    },
+
+    'acl:accessTo': {
+        '@type': '@id'
+    }
+});
+const $7448e031bca4bf1e$export$274217e117cdbc7b = async (dataProvider: any) => {
     const dataServers = await dataProvider.getDataServers();
+    // @ts-expect-error TS(2571): Object is of type 'unknown'.
     const authServer = Object.values(dataServers).find((server)=>server.authServer === true);
     if (!authServer) throw new Error('Could not find a server with authServer: true. Check your dataServers config.');
     // If the server is a Pod provider, return the root URL instead of https://domain.com/user/data
+    // @ts-expect-error TS(2571): Object is of type 'unknown'.
     return authServer.pod ? new URL(authServer.baseUrl).origin : authServer.baseUrl;
 };
-const $7448e031bca4bf1e$export$1391212d75b2ee65 = async (t)=>new Promise((resolve)=>{
+const $7448e031bca4bf1e$export$1391212d75b2ee65 = async (t: any) => new Promise((resolve)=>{
         setTimeout(resolve, t);
     });
-const $7448e031bca4bf1e$export$bab98af026af71ac = (value)=>typeof value === 'string' && value.startsWith('http') && !/\s/g.test(value);
-const $7448e031bca4bf1e$export$50ae7fb6f87de989 = (value)=>typeof value === 'string' && value.startsWith('/') && !/\s/g.test(value);
+const $7448e031bca4bf1e$export$bab98af026af71ac = (value: any) => typeof value === 'string' && value.startsWith('http') && !/\s/g.test(value);
+const $7448e031bca4bf1e$export$50ae7fb6f87de989 = (value: any) => typeof value === 'string' && value.startsWith('/') && !/\s/g.test(value);
 
 
 const $6a92eb32301846ac$var$AUTH_TYPE_SSO = 'sso';
 const $6a92eb32301846ac$var$AUTH_TYPE_LOCAL = 'local';
 const $6a92eb32301846ac$var$AUTH_TYPE_POD = 'pod';
 const $6a92eb32301846ac$var$AUTH_TYPE_SOLID_OIDC = 'solid-oidc';
+// @ts-expect-error TS(7031): Binding element 'dataProvider' implicitly has an '... Remove this comment to see the full error message
 const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authType: authType, allowAnonymous: allowAnonymous = true, checkUser: checkUser, checkPermissions: checkPermissions = false, clientId: clientId })=>{
     if (![
         $6a92eb32301846ac$var$AUTH_TYPE_SSO,
@@ -139,7 +179,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
         $6a92eb32301846ac$var$AUTH_TYPE_SOLID_OIDC
     ].includes(authType)) throw new Error('The authType parameter is missing from the auth provider');
     if (authType === $6a92eb32301846ac$var$AUTH_TYPE_SOLID_OIDC && !clientId) throw new Error('The clientId parameter is required for solid-oidc authentication');
-    const callCheckUser = async (webId)=>{
+    const callCheckUser = async (webId: any) => {
         if (checkUser) try {
             const { json: userData } = await dataProvider.fetch(webId);
             if (!userData) throw new Error('auth.message.unable_to_fetch_user_data');
@@ -150,7 +190,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
         }
     };
     return {
-        login: async (params)=>{
+        login: async (params: any) => {
             if (authType === $6a92eb32301846ac$var$AUTH_TYPE_SOLID_OIDC) {
                 let { webId: webId, issuer: issuer, redirect: redirect = '/', isSignup: isSignup = false } = params;
                 if (webId && !issuer) {
@@ -160,7 +200,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                     if (!userData['solid:oidcIssuer']) throw new Error('auth.message.no_associated_oidc_issuer');
                     issuer = userData?.['solid:oidcIssuer'];
                 }
-                const as = await $4Uj5b$oauth4webapi.discoveryRequest(new URL(issuer)).then((response)=>$4Uj5b$oauth4webapi.processDiscoveryResponse(new URL(issuer), response)).catch(()=>{
+                const as = await $4Uj5b$oauth4webapi.discoveryRequest(new URL(issuer)).then((response: any) => $4Uj5b$oauth4webapi.processDiscoveryResponse(new URL(issuer), response)).catch(()=>{
                     throw new Error('auth.message.unreachable_auth_server');
                 });
                 const codeVerifier = $4Uj5b$oauth4webapi.generateRandomCodeVerifier();
@@ -177,12 +217,15 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                 authorizationUrl.searchParams.set('redirect_uri', `${window.location.origin}/auth-callback`);
                 authorizationUrl.searchParams.set('scope', 'openid webid offline_access');
                 authorizationUrl.searchParams.set('is_signup', isSignup);
+                // @ts-expect-error TS(2322): Type 'URL' is not assignable to type '(string | Lo... Remove this comment to see the full error message
                 window.location = authorizationUrl;
             } else if (authType === $6a92eb32301846ac$var$AUTH_TYPE_LOCAL) {
                 const { username: username, password: password } = params;
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 const authServerUrl = await (0, $7448e031bca4bf1e$export$274217e117cdbc7b)(dataProvider);
                 let token, webId;
                 try {
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                     ({ json: { token: token, webId: webId } } = await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, 'auth/login'), {
                         method: 'POST',
                         body: JSON.stringify({
@@ -201,17 +244,21 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                 await dataProvider.refreshConfig();
                 await callCheckUser(webId);
             } else if (authType === $6a92eb32301846ac$var$AUTH_TYPE_SSO) {
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 const authServerUrl = await (0, $7448e031bca4bf1e$export$274217e117cdbc7b)(dataProvider);
                 let redirectUrl = `${new URL(window.location.href).origin}/login?login=true`;
                 if (params.redirect) redirectUrl += `&redirect=${encodeURIComponent(params.redirect)}`;
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 window.location.href = (0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
             }
         },
         handleCallback: async ()=>{
+            // @ts-expect-error TS(2345): Argument of type 'Location' is not assignable to p... Remove this comment to see the full error message
             const { searchParams: searchParams } = new URL(window.location);
             if (authType === $6a92eb32301846ac$var$AUTH_TYPE_SOLID_OIDC) {
+                // @ts-expect-error TS(2345): Argument of type 'string | null' is not assignable... Remove this comment to see the full error message
                 const issuer = new URL(searchParams.get('iss'));
-                const as = await $4Uj5b$oauth4webapi.discoveryRequest(issuer).then((response)=>$4Uj5b$oauth4webapi.processDiscoveryResponse(issuer, response));
+                const as = await $4Uj5b$oauth4webapi.discoveryRequest(issuer).then((response: any) => $4Uj5b$oauth4webapi.processDiscoveryResponse(issuer, response));
                 const client = {
                     client_id: clientId,
                     token_endpoint_auth_method: 'none' // We don't have a client secret
@@ -238,6 +285,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                 if (!token) throw new Error('auth.message.no_token_returned');
                 let webId;
                 try {
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                     ({ webId: webId } = (0, ($parcel$interopDefault($4Uj5b$jwtdecode)))(token));
                 } catch (e) {
                     throw new Error('auth.message.invalid_token_returned');
@@ -247,12 +295,14 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                 await callCheckUser(webId);
             }
         },
-        signup: async (params)=>{
+        signup: async (params: any) => {
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             const authServerUrl = await (0, $7448e031bca4bf1e$export$274217e117cdbc7b)(dataProvider);
             if (authType === $6a92eb32301846ac$var$AUTH_TYPE_LOCAL) {
                 const { username: username, email: email, password: password, domain: domain, ...profileData } = params;
                 let token, webId;
                 try {
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                     ({ json: { token: token, webId: webId } } = await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, 'auth/signup'), {
                         method: 'POST',
                         body: JSON.stringify({
@@ -283,24 +333,29 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                 return webId;
             } else {
                 const redirectUrl = `${new URL(window.location.href).origin}/login?login=true`;
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 window.location.href = (0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
             }
         },
-        logout: async (params)=>{
+        logout: async (params: any) => {
             const { redirectUrl: redirectUrl } = params || {};
             switch(authType){
                 case $6a92eb32301846ac$var$AUTH_TYPE_LOCAL:
                     {
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                         const authServerUrl = await (0, $7448e031bca4bf1e$export$274217e117cdbc7b)(dataProvider);
                         // Delete token but also any other value in local storage
                         localStorage.clear();
                         let result = {};
                         try {
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                             result = await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, '.well-known/openid-configuration'));
                         } catch (e) {
                         // Do nothing if it fails
                         }
+                        // @ts-expect-error TS(2339): Property 'status' does not exist on type '{}'.
                         if (result.status === 200 && result.json) // Redirect to OIDC endpoint if it exists
+                        // @ts-expect-error TS(2339): Property 'json' does not exist on type '{}'.
                         window.location.href = result.json.end_session_endpoint;
                         else {
                             // Reload to ensure the dataServer config is reset
@@ -311,18 +366,22 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                     }
                 case $6a92eb32301846ac$var$AUTH_TYPE_SSO:
                     {
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                         const authServerUrl = await (0, $7448e031bca4bf1e$export$274217e117cdbc7b)(dataProvider);
                         const baseUrl = new URL(window.location.href).origin;
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                         return (0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, `auth/logout?redirectUrl=${encodeURIComponent(`${(0, ($parcel$interopDefault($4Uj5b$urljoin)))(baseUrl, 'login')}?logout=true`)}`);
                     }
                 case $6a92eb32301846ac$var$AUTH_TYPE_POD:
                     {
                         const token = localStorage.getItem('token');
                         if (token) {
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                             const { webId: webId } = (0, ($parcel$interopDefault($4Uj5b$jwtdecode)))(token);
                             // Delete token but also any other value in local storage
                             localStorage.clear();
                             // Redirect to the POD provider
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                             return `${(0, ($parcel$interopDefault($4Uj5b$urljoin)))(webId, 'openApp')}?type=${encodeURIComponent('http://activitypods.org/ns/core#FrontAppRegistration')}`;
                         }
                         break;
@@ -331,6 +390,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                     {
                         const token = localStorage.getItem('token');
                         if (token) {
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                             const { webid: webId } = (0, ($parcel$interopDefault($4Uj5b$jwtdecode)))(token); // Not webId !!
                             // Delete token but also any other value in local storage
                             localStorage.clear();
@@ -351,11 +411,11 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
             const token = localStorage.getItem('token');
             if (!token && !allowAnonymous) throw new Error();
         },
-        checkUser: (userData)=>{
+        checkUser: (userData: any) => {
             if (checkUser) return checkUser(userData);
             return true;
         },
-        checkError: (error)=>{
+        checkError: (error: any) => {
             // We want to disconnect only with INVALID_TOKEN errors
             if (error.status === 401 && error.body && error.body.type === 'INVALID_TOKEN') {
                 localStorage.removeItem('token');
@@ -363,6 +423,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
             } else // Other error code (404, 500, etc): no need to log out
             return Promise.resolve();
         },
+        // @ts-expect-error TS(7031): Binding element 'uri' implicitly has an 'any' type... Remove this comment to see the full error message
         getPermissions: async ({ uri: uri })=>{
             if (!checkPermissions) return;
             if (!uri) return;
@@ -371,6 +432,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
             // Ignore all this until we found a way to bypass these redundant calls
             if (typeof uri === 'object') return;
             if (!uri || !uri.startsWith('http')) throw new Error(`The first parameter passed to getPermissions must be an URL. Received: ${uri}`);
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             const aclUri = (0, $7448e031bca4bf1e$export$4450a74bced1b745)(uri);
             try {
                 const { json: json } = await dataProvider.fetch(aclUri);
@@ -380,8 +442,9 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                 return [];
             }
         },
-        addPermission: async (uri, agentId, predicate, mode)=>{
+        addPermission: async (uri: any, agentId: any, predicate: any, mode: any)=>{
             if (!uri || !uri.startsWith('http')) throw new Error('The first parameter passed to addPermission must be an URL');
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             const aclUri = (0, $7448e031bca4bf1e$export$4450a74bced1b745)(uri);
             const authorization = {
                 '@id': `#${mode.replace('acl:', '')}`,
@@ -393,6 +456,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
             await dataProvider.fetch(aclUri, {
                 method: 'PATCH',
                 body: JSON.stringify({
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                     '@context': (0, $7448e031bca4bf1e$export$4d54b642c3d13c34)(aclUri),
                     '@graph': [
                         authorization
@@ -400,14 +464,18 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                 })
             });
         },
-        removePermission: async (uri, agentId, predicate, mode)=>{
+        removePermission: async (uri: any, agentId: any, predicate: any, mode: any)=>{
             if (!uri || !uri.startsWith('http')) throw new Error('The first parameter passed to removePermission must be an URL');
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             const aclUri = (0, $7448e031bca4bf1e$export$4450a74bced1b745)(uri);
             // Fetch current permissions
             const { json: json } = await dataProvider.fetch(aclUri);
-            const updatedPermissions = json['@graph'].filter((authorization)=>!authorization['@id'].includes('#Default')).map((authorization)=>{
+            const updatedPermissions = json['@graph'].filter((authorization: any) => !authorization['@id'].includes('#Default')).map((authorization: any) => {
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 const modes = (0, $7448e031bca4bf1e$export$dca4f48302963835)(authorization['acl:mode']);
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 let agents = (0, $7448e031bca4bf1e$export$dca4f48302963835)(authorization[predicate]);
+                // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                 if (mode && modes.includes(mode) && agents && agents.includes(agentId)) agents = agents.filter((agent)=>agent !== agentId);
                 return {
                     ...authorization,
@@ -417,6 +485,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
             await dataProvider.fetch(aclUri, {
                 method: 'PUT',
                 body: JSON.stringify({
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                     '@context': (0, $7448e031bca4bf1e$export$4d54b642c3d13c34)(aclUri),
                     '@graph': updatedPermissions
                 })
@@ -425,6 +494,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
         getIdentity: async ()=>{
             const token = localStorage.getItem('token');
             if (token) {
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 const payload = (0, ($parcel$interopDefault($4Uj5b$jwtdecode)))(token);
                 // Backend-generated tokens use webId but Solid-OIDC tokens use webid
                 const webId = authType === $6a92eb32301846ac$var$AUTH_TYPE_SOLID_OIDC ? payload.webid : payload.webId;
@@ -445,17 +515,21 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                 }
                 return {
                     id: webId,
+                    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                     fullName: profileData['vcard:given-name'] || profileData['pair:label'] || webIdData['foaf:name'] || webIdData['pair:label'],
+                    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                     avatar: profileData['vcard:photo'] || webIdData.image?.url || webIdData.image || webIdData.icon?.url || webIdData.icon,
                     profileData: profileData,
                     webIdData: webIdData
                 };
             }
         },
-        resetPassword: async (params)=>{
+        resetPassword: async (params: any) => {
             const { email: email } = params;
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             const authServerUrl = await (0, $7448e031bca4bf1e$export$274217e117cdbc7b)(dataProvider);
             try {
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, 'auth/reset_password'), {
                     method: 'POST',
                     body: JSON.stringify({
@@ -470,10 +544,12 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                 else throw new Error('auth.notification.reset_password_error');
             }
         },
-        setNewPassword: async (params)=>{
+        setNewPassword: async (params: any) => {
             const { email: email, token: token, password: password } = params;
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             const authServerUrl = await (0, $7448e031bca4bf1e$export$274217e117cdbc7b)(dataProvider);
             try {
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, 'auth/new_password'), {
                     method: 'POST',
                     body: JSON.stringify({
@@ -490,19 +566,23 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                 else throw new Error('auth.notification.new_password_error');
             }
         },
-        getAccountSettings: async (params)=>{
+        getAccountSettings: async (params: any) => {
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             const authServerUrl = await (0, $7448e031bca4bf1e$export$274217e117cdbc7b)(dataProvider);
             try {
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 const { json: json } = await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, 'auth/account'));
                 return json;
             } catch (e) {
                 throw new Error('auth.notification.get_settings_error');
             }
         },
-        updateAccountSettings: async (params)=>{
+        updateAccountSettings: async (params: any) => {
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             const authServerUrl = await (0, $7448e031bca4bf1e$export$274217e117cdbc7b)(dataProvider);
             try {
                 const { email: email, currentPassword: currentPassword, newPassword: newPassword } = params;
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 await dataProvider.fetch((0, ($parcel$interopDefault($4Uj5b$urljoin)))(authServerUrl, 'auth/account'), {
                     method: 'POST',
                     body: JSON.stringify({
@@ -597,14 +677,20 @@ const $09c536abc6cea017$export$edca379024d80309 = {
 };
 
 
-const $715d0a876ac5de8e$var$useCheckPermissions = (uri, mode, redirectUrl = '/')=>{
+const $715d0a876ac5de8e$var$useCheckPermissions = (uri: any, mode: any, redirectUrl = '/')=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)({
         uri: uri
     });
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const redirect = (0, $4Uj5b$reactadmin.useRedirect)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     (0, $4Uj5b$react.useEffect)(()=>{
-        if (permissions && !permissions.some((p)=>(0, $09c536abc6cea017$export$cae945d60b6cbe50)[mode].includes(p['acl:mode']))) {
+        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+        if (permissions && !permissions.some((p: any) => (0, $09c536abc6cea017$export$cae945d60b6cbe50)[mode].includes(p['acl:mode']))) {
+            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
             notify((0, $09c536abc6cea017$export$12e6e8e71d10a4bb)[mode], {
                 type: 'error'
             });
@@ -620,10 +706,15 @@ const $715d0a876ac5de8e$var$useCheckPermissions = (uri, mode, redirectUrl = '/')
 var $715d0a876ac5de8e$export$2e2bcd8739ae039 = $715d0a876ac5de8e$var$useCheckPermissions;
 
 
+// @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
 const $436b98c09d4bfc58$var$CreateWithPermissions = ({ actions: actions = /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.CreateActions), {}), children: children, ...rest })=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const resource = (0, $4Uj5b$reactadmin.useResourceContext)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const createContainerUri = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainerUri)(resource);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     (0, $715d0a876ac5de8e$export$2e2bcd8739ae039)(createContainerUri, 'create');
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Create), {
         actions: actions,
         ...rest,
@@ -658,6 +749,7 @@ var $436b98c09d4bfc58$export$2e2bcd8739ae039 = $436b98c09d4bfc58$var$CreateWithP
 
 
 
+// @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
 const $a613ad42a03b1bc4$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))(()=>({
         list: {
             padding: 0,
@@ -667,12 +759,18 @@ const $a613ad42a03b1bc4$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
             padding: 0
         }
     }));
+// @ts-expect-error TS(7031): Binding element 'agents' implicitly has an 'any' t... Remove this comment to see the full error message
 const $a613ad42a03b1bc4$var$AddPermissionsForm = ({ agents: agents, addPermission: addPermission })=>{
     const classes = $a613ad42a03b1bc4$var$useStyles();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [value, setValue] = (0, $4Uj5b$react.useState)(null);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [inputValue, setInputValue] = (0, $4Uj5b$react.useState)('');
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [options, setOptions] = (0, $4Uj5b$react.useState)([]);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const { data: data } = (0, $4Uj5b$reactadmin.useGetList)('Person', {
         pagination: {
             page: 1,
@@ -688,61 +786,73 @@ const $a613ad42a03b1bc4$var$AddPermissionsForm = ({ agents: agents, addPermissio
     }, {
         enabled: inputValue.length > 0
     });
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     (0, $4Uj5b$react.useEffect)(()=>{
         setOptions(data?.length > 0 ? Object.values(data) : []);
     }, [
         data
     ]);
-    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muimaterialAutocomplete))), {
-        classes: {
-            option: classes.option
-        },
-        getOptionLabel: (option)=>option['pair:label'],
-        // Do not return agents which have already been added
-        filterOptions: (x)=>x.filter((agent)=>!Object.keys(agents).includes(agent.id)),
-        options: options,
-        noOptionsText: translate('ra.navigation.no_results'),
-        autoComplete: true,
-        blurOnSelect: true,
-        clearOnBlur: true,
-        disableClearable: true,
-        value: value,
-        onChange: (event, record)=>{
-            addPermission(record.id || record['@id'], (0, $09c536abc6cea017$export$97a08a1bb7ee0545), (0, $09c536abc6cea017$export$66a34090010a35b3));
-            setValue(null);
-            setInputValue('');
-            setOptions([]);
-        },
-        onInputChange: (event, newInputValue)=>{
-            setInputValue(newInputValue);
-        },
-        renderInput: (params)=>/*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.TextField), {
-                ...params,
-                label: translate('auth.input.agent_select'),
-                variant: "filled",
-                margin: "dense",
-                fullWidth: true
-            }),
-        renderOption: (props, option)=>/*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.List), {
-                dense: true,
-                className: classes.list,
-                ...props,
-                children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.ListItem), {
-                    button: true,
-                    children: [
-                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemAvatar), {
-                            children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Avatar), {
-                                src: option.image,
-                                children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialPerson))), {})
+    return (
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muimaterialAutocomplete))), {
+            classes: {
+                option: classes.option
+            },
+            getOptionLabel: (option: any) => option['pair:label'],
+            // Do not return agents which have already been added
+            filterOptions: (x: any) => x.filter((agent: any) => !Object.keys(agents).includes(agent.id)),
+            options: options,
+            noOptionsText: translate('ra.navigation.no_results'),
+            autoComplete: true,
+            blurOnSelect: true,
+            clearOnBlur: true,
+            disableClearable: true,
+            value: value,
+            onChange: (event: any, record: any)=>{
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                addPermission(record.id || record['@id'], (0, $09c536abc6cea017$export$97a08a1bb7ee0545), (0, $09c536abc6cea017$export$66a34090010a35b3));
+                setValue(null);
+                setInputValue('');
+                setOptions([]);
+            },
+            onInputChange: (event: any, newInputValue: any)=>{
+                setInputValue(newInputValue);
+            },
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+            renderInput: (params: any) => /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.TextField), {
+                    ...params,
+                    label: translate('auth.input.agent_select'),
+                    variant: "filled",
+                    margin: "dense",
+                    fullWidth: true
+                }),
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+            renderOption: (props: any, option: any)=>/*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.List), {
+                    dense: true,
+                    className: classes.list,
+                    ...props,
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                    children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.ListItem), {
+                        button: true,
+                        children: [
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemAvatar), {
+                                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                                children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Avatar), {
+                                    src: option.image,
+                                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                                    children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialPerson))), {})
+                                })
+                            }),
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemText), {
+                                primary: option['pair:label']
                             })
-                        }),
-                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemText), {
-                            primary: option['pair:label']
-                        })
-                    ]
+                        ]
+                    })
                 })
-            })
-    });
+        })
+    );
 };
 var $a613ad42a03b1bc4$export$2e2bcd8739ae039 = $a613ad42a03b1bc4$var$AddPermissionsForm;
 
@@ -766,13 +876,20 @@ var $a613ad42a03b1bc4$export$2e2bcd8739ae039 = $a613ad42a03b1bc4$var$AddPermissi
 
 
 
+// @ts-expect-error TS(7031): Binding element 'agent' implicitly has an 'any' ty... Remove this comment to see the full error message
 const $9f58b72d42a695d9$var$AgentIcon = ({ agent: agent })=>{
     switch(agent.predicate){
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         case (0, $09c536abc6cea017$export$2703254089a859eb):
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             return agent.id === (0, $09c536abc6cea017$export$83ae1bc0992a6335) ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialPublic))), {}) : /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialVpnLock))), {});
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         case (0, $09c536abc6cea017$export$97a08a1bb7ee0545):
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialPerson))), {});
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         case (0, $09c536abc6cea017$export$f07ccbe0773f2c7):
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialGroup))), {});
         default:
             throw new Error(`Unknown agent predicate: ${agent.predicate}`);
@@ -781,6 +898,7 @@ const $9f58b72d42a695d9$var$AgentIcon = ({ agent: agent })=>{
 var $9f58b72d42a695d9$export$2e2bcd8739ae039 = $9f58b72d42a695d9$var$AgentIcon;
 
 
+// @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
 const $7a8c6187e6c69fdd$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))(()=>({
         listItem: {
             paddingLeft: 4,
@@ -799,21 +917,31 @@ const $7a8c6187e6c69fdd$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
             color: 'grey'
         }
     }));
+// @ts-expect-error TS(7031): Binding element 'isContainer' implicitly has an 'a... Remove this comment to see the full error message
 const $7a8c6187e6c69fdd$var$AgentItem = ({ isContainer: isContainer, agent: agent, addPermission: addPermission, removePermission: removePermission })=>{
     const classes = $7a8c6187e6c69fdd$var$useStyles();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const dataProvider = (0, $4Uj5b$reactadmin.useDataProvider)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [anchorEl, setAnchorEl] = (0, ($parcel$interopDefault($4Uj5b$react))).useState(null);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [user, setUser] = (0, $4Uj5b$react.useState)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [loading, setLoading] = (0, $4Uj5b$react.useState)(true);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [error, setError] = (0, $4Uj5b$react.useState)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     (0, $4Uj5b$react.useEffect)(()=>{
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         if (agent.predicate === (0, $09c536abc6cea017$export$97a08a1bb7ee0545)) dataProvider.getOne('Person', {
             id: agent.id
+        // @ts-expect-error TS(7031): Binding element 'data' implicitly has an 'any' typ... Remove this comment to see the full error message
         }).then(({ data: data })=>{
             setUser(data);
             setLoading(false);
-        }).catch((error)=>{
+        }).catch((error: any) => {
             setError(error);
             setLoading(false);
         });
@@ -823,78 +951,104 @@ const $7a8c6187e6c69fdd$var$AgentItem = ({ isContainer: isContainer, agent: agen
         agent.predicate
     ]);
     // For now, do not display groups
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     if (agent.predicate === (0, $09c536abc6cea017$export$f07ccbe0773f2c7)) return null;
-    const openMenu = (event)=>setAnchorEl(event.currentTarget);
+    const openMenu = (event: any) => setAnchorEl(event.currentTarget);
     const closeMenu = ()=>setAnchorEl(null);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const labels = isContainer ? (0, $09c536abc6cea017$export$edca379024d80309) : (0, $09c536abc6cea017$export$2e9571c4ccdeb6a9);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     if (loading) return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Loading), {});
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     if (error) return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Error), {});
-    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.ListItem), {
-        className: classes.listItem,
-        children: [
-            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemAvatar), {
-                children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Avatar), {
-                    src: user?.image,
-                    children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $9f58b72d42a695d9$export$2e2bcd8739ae039), {
-                        agent: agent
-                    })
-                })
-            }),
-            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemText), {
-                className: classes.primaryText,
-                primary: user ? user['pair:label'] : translate(agent.id === (0, $09c536abc6cea017$export$83ae1bc0992a6335) ? 'auth.agent.anonymous' : 'auth.agent.authenticated')
-            }),
-            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemText), {
-                className: classes.secondaryText,
-                primary: agent.permissions && agent.permissions.map((p)=>translate(labels[p])).join(', ')
-            }),
-            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.ListItemSecondaryAction), {
-                children: [
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.IconButton), {
-                        onClick: openMenu,
-                        size: "large",
-                        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialEdit))), {})
-                    }),
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Menu), {
-                        anchorEl: anchorEl,
-                        keepMounted: true,
-                        open: Boolean(anchorEl),
-                        onClose: closeMenu,
-                        children: Object.entries(labels).map(([rightKey, rightLabel])=>{
-                            const hasPermission = agent.permissions && agent.permissions.includes(rightKey);
-                            return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.MenuItem), {
-                                onClick: ()=>{
-                                    if (hasPermission) removePermission(agent.id, agent.predicate, rightKey);
-                                    else addPermission(agent.id, agent.predicate, rightKey);
-                                    closeMenu();
-                                },
-                                children: [
-                                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemIcon), {
-                                        children: hasPermission ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialCheck))), {}) : null
-                                    }),
-                                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemText), {
-                                        primary: translate(rightLabel)
-                                    })
-                                ]
-                            }, rightKey);
+    return (
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.ListItem), {
+            className: classes.listItem,
+            children: [
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemAvatar), {
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                    children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Avatar), {
+                        src: user?.image,
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $9f58b72d42a695d9$export$2e2bcd8739ae039), {
+                            agent: agent
                         })
                     })
-                ]
-            })
-        ]
-    });
+                }),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemText), {
+                    className: classes.primaryText,
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                    primary: user ? user['pair:label'] : translate(agent.id === (0, $09c536abc6cea017$export$83ae1bc0992a6335) ? 'auth.agent.anonymous' : 'auth.agent.authenticated')
+                }),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemText), {
+                    className: classes.secondaryText,
+                    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+                    primary: agent.permissions && agent.permissions.map((p: any) => translate(labels[p])).join(', ')
+                }),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.ListItemSecondaryAction), {
+                    children: [
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.IconButton), {
+                            onClick: openMenu,
+                            size: "large",
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                            children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialEdit))), {})
+                        }),
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Menu), {
+                            anchorEl: anchorEl,
+                            keepMounted: true,
+                            open: Boolean(anchorEl),
+                            onClose: closeMenu,
+                            children: Object.entries(labels).map(([rightKey, rightLabel])=>{
+                                const hasPermission = agent.permissions && agent.permissions.includes(rightKey);
+                                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                                return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.MenuItem), {
+                                    onClick: ()=>{
+                                        if (hasPermission) removePermission(agent.id, agent.predicate, rightKey);
+                                        else addPermission(agent.id, agent.predicate, rightKey);
+                                        closeMenu();
+                                    },
+                                    children: [
+                                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemIcon), {
+                                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                                            children: hasPermission ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialCheck))), {}) : null
+                                        }),
+                                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemText), {
+                                            primary: translate(rightLabel)
+                                        })
+                                    ]
+                                }, rightKey);
+                            })
+                        })
+                    ]
+                })
+            ]
+        })
+    );
 };
 var $7a8c6187e6c69fdd$export$2e2bcd8739ae039 = $7a8c6187e6c69fdd$var$AgentItem;
 
 
+// @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
 const $6bcadc28bc94109b$var$StyledList = (0, $4Uj5b$muisystem.styled)((0, $4Uj5b$muimaterial.List))(({ theme: theme })=>({
         width: '100%',
         maxWidth: '100%',
         backgroundColor: theme.palette.background.paper
     }));
+// @ts-expect-error TS(7031): Binding element 'isContainer' implicitly has an 'a... Remove this comment to see the full error message
 const $6bcadc28bc94109b$var$EditPermissionsForm = ({ isContainer: isContainer, agents: agents, addPermission: addPermission, removePermission: removePermission })=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($6bcadc28bc94109b$var$StyledList, {
         dense: true,
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         children: Object.entries(agents).map(([agentId, agent])=>/*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $7a8c6187e6c69fdd$export$2e2bcd8739ae039), {
                 isContainer: isContainer,
                 agent: agent,
@@ -910,28 +1064,40 @@ var $6bcadc28bc94109b$export$2e2bcd8739ae039 = $6bcadc28bc94109b$var$EditPermiss
 
 
 
-const $780e01b2b2982de2$var$useAgents = (uri)=>{
+const $780e01b2b2982de2$var$useAgents = (uri: any) => {
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)({
         uri: uri
     });
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const authProvider = (0, $4Uj5b$reactadmin.useAuthProvider)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [agents, setAgents] = (0, $4Uj5b$react.useState)({});
     // Format list of authorized agents, based on the permissions returned for the resource
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     (0, $4Uj5b$react.useEffect)(()=>{
         const result = {
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             [(0, $09c536abc6cea017$export$83ae1bc0992a6335)]: {
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 id: (0, $09c536abc6cea017$export$83ae1bc0992a6335),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 predicate: (0, $09c536abc6cea017$export$2703254089a859eb),
                 permissions: []
             },
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             [(0, $09c536abc6cea017$export$546c01a3ffdabe3a)]: {
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 id: (0, $09c536abc6cea017$export$546c01a3ffdabe3a),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 predicate: (0, $09c536abc6cea017$export$2703254089a859eb),
                 permissions: []
             }
         };
-        const appendPermission = (agentId, predicate, mode)=>{
+        const appendPermission = (agentId: any, predicate: any, mode: any)=>{
+            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
             if (result[agentId]) result[agentId].permissions.push(mode);
+            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
             else result[agentId] = {
                 id: agentId,
                 predicate: predicate,
@@ -942,8 +1108,11 @@ const $780e01b2b2982de2$var$useAgents = (uri)=>{
         };
         if (permissions) {
             for (const p of permissions){
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 if (p[(0, $09c536abc6cea017$export$2703254089a859eb)]) (0, $7448e031bca4bf1e$export$dca4f48302963835)(p[(0, $09c536abc6cea017$export$2703254089a859eb)]).forEach((agentId)=>appendPermission(agentId, (0, $09c536abc6cea017$export$2703254089a859eb), p['acl:mode']));
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 if (p[(0, $09c536abc6cea017$export$97a08a1bb7ee0545)]) (0, $7448e031bca4bf1e$export$dca4f48302963835)(p[(0, $09c536abc6cea017$export$97a08a1bb7ee0545)]).forEach((userUri)=>appendPermission(userUri, (0, $09c536abc6cea017$export$97a08a1bb7ee0545), p['acl:mode']));
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 if (p[(0, $09c536abc6cea017$export$f07ccbe0773f2c7)]) (0, $7448e031bca4bf1e$export$dca4f48302963835)(p[(0, $09c536abc6cea017$export$f07ccbe0773f2c7)]).forEach((groupUri)=>appendPermission(groupUri, (0, $09c536abc6cea017$export$f07ccbe0773f2c7), p['acl:mode']));
             }
             setAgents(result);
@@ -951,7 +1120,8 @@ const $780e01b2b2982de2$var$useAgents = (uri)=>{
     }, [
         permissions
     ]);
-    const addPermission = (0, $4Uj5b$react.useCallback)((agentId, predicate, mode)=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+    const addPermission = (0, $4Uj5b$react.useCallback)((agentId: any, predicate: any, mode: any)=>{
         const prevAgents = {
             ...agents
         };
@@ -968,7 +1138,7 @@ const $780e01b2b2982de2$var$useAgents = (uri)=>{
                 ]
             }
         });
-        authProvider.addPermission(uri, agentId, predicate, mode).catch((e)=>{
+        authProvider.addPermission(uri, agentId, predicate, mode).catch((e: any) => {
             // If there was an error, revert the optimistic update
             setAgents(prevAgents);
         });
@@ -978,19 +1148,22 @@ const $780e01b2b2982de2$var$useAgents = (uri)=>{
         uri,
         authProvider
     ]);
-    const removePermission = (0, $4Uj5b$react.useCallback)((agentId, predicate, mode)=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+    const removePermission = (0, $4Uj5b$react.useCallback)((agentId: any, predicate: any, mode: any)=>{
         const prevAgents = {
             ...agents
         };
         setAgents(Object.fromEntries(Object.entries(agents).map(([key, agent])=>{
-            if (agent.id === agentId) agent.permissions = agent.permissions.filter((m)=>m !== mode);
+            // @ts-expect-error TS(2571): Object is of type 'unknown'.
+            if (agent.id === agentId) agent.permissions = agent.permissions.filter((m: any) => m !== mode);
             return [
                 key,
                 agent
             ];
         })// Remove agents if they have no permissions (except if they are class agents)
+        // @ts-expect-error TS(2571): Object is of type 'unknown'.
         .filter(([_, agent])=>agent.predicate === (0, $09c536abc6cea017$export$2703254089a859eb) || agent.permissions.length > 0)));
-        authProvider.removePermission(uri, agentId, predicate, mode).catch((e)=>{
+        authProvider.removePermission(uri, agentId, predicate, mode).catch((e: any) => {
             // If there was an error, revert the optimistic update
             setAgents(prevAgents);
         });
@@ -1009,6 +1182,7 @@ const $780e01b2b2982de2$var$useAgents = (uri)=>{
 var $780e01b2b2982de2$export$2e2bcd8739ae039 = $780e01b2b2982de2$var$useAgents;
 
 
+// @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
 const $eb7f8a6f7bf44740$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))(()=>({
         title: {
             paddingBottom: 8
@@ -1026,28 +1200,37 @@ const $eb7f8a6f7bf44740$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
             maxHeight: 210
         }
     }));
+// @ts-expect-error TS(7031): Binding element 'open' implicitly has an 'any' typ... Remove this comment to see the full error message
 const $eb7f8a6f7bf44740$var$PermissionsDialog = ({ open: open, onClose: onClose, uri: uri, isContainer: isContainer })=>{
     const classes = $eb7f8a6f7bf44740$var$useStyles();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const { agents: agents, addPermission: addPermission, removePermission: removePermission } = (0, $780e01b2b2982de2$export$2e2bcd8739ae039)(uri);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Dialog), {
         fullWidth: true,
         open: open,
         onClose: onClose,
         children: [
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.DialogTitle), {
                 className: classes.title,
                 children: translate(isContainer ? 'auth.dialog.container_permissions' : 'auth.dialog.resource_permissions')
             }),
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.DialogContent), {
                 className: classes.addForm,
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $a613ad42a03b1bc4$export$2e2bcd8739ae039), {
                     agents: agents,
                     addPermission: addPermission
                 })
             }),
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.DialogContent), {
                 className: classes.listForm,
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $6bcadc28bc94109b$export$2e2bcd8739ae039), {
                     isContainer: isContainer,
                     agents: agents,
@@ -1055,8 +1238,10 @@ const $eb7f8a6f7bf44740$var$PermissionsDialog = ({ open: open, onClose: onClose,
                     removePermission: removePermission
                 })
             }),
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.DialogActions), {
                 className: classes.actions,
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Button), {
                     label: "ra.action.close",
                     variant: "text",
@@ -1070,18 +1255,26 @@ var $eb7f8a6f7bf44740$export$2e2bcd8739ae039 = $eb7f8a6f7bf44740$var$Permissions
 
 
 const $49d4f2fbe6f28cfd$var$PermissionsButton = ({ isContainer: isContainer = false })=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const record = (0, $4Uj5b$reactadmin.useRecordContext)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const resource = (0, $4Uj5b$reactadmin.useResourceContext)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [showDialog, setShowDialog] = (0, $4Uj5b$react.useState)(false);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const createContainer = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainerUri)(resource);
     const uri = isContainer ? createContainer : record.id || record['@id'];
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
         children: [
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Button), {
                 label: "auth.action.permissions",
                 onClick: ()=>setShowDialog(true),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialShare))), {})
             }),
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $eb7f8a6f7bf44740$export$2e2bcd8739ae039), {
                 uri: uri,
                 isContainer: isContainer,
@@ -1096,31 +1289,47 @@ var $49d4f2fbe6f28cfd$export$2e2bcd8739ae039 = $49d4f2fbe6f28cfd$var$Permissions
 
 
 const $87767302443de17c$var$EditActionsWithPermissions = ()=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const { hasList: hasList, hasShow: hasShow } = (0, $4Uj5b$reactadmin.useResourceDefinition)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const record = (0, $4Uj5b$reactadmin.useRecordContext)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)({
         uri: record?.id
     });
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const resource = (0, $4Uj5b$reactadmin.useResourceContext)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const containerUri = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainerUri)(resource);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const { permissions: containerPermissions } = (0, $4Uj5b$reactadmin.usePermissions)({
         uri: containerUri
     });
-    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactadmin.TopToolbar), {
-        children: [
-            hasList && containerPermissions && containerPermissions.some((p)=>(0, $09c536abc6cea017$export$dc3840a4e2a72b8c).includes(p['acl:mode'])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ListButton), {}),
-            hasShow && permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$d37f0098bcf84c55).includes(p['acl:mode'])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ShowButton), {}),
-            permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$22242524f7d0624).includes(p['acl:mode'])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {})
-        ]
-    });
+    return (
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactadmin.TopToolbar), {
+            children: [
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                hasList && containerPermissions && containerPermissions.some((p: any) => (0, $09c536abc6cea017$export$dc3840a4e2a72b8c).includes(p['acl:mode'])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ListButton), {}),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                hasShow && permissions && permissions.some((p: any) => (0, $09c536abc6cea017$export$d37f0098bcf84c55).includes(p['acl:mode'])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ShowButton), {}),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                permissions && permissions.some((p: any) => (0, $09c536abc6cea017$export$22242524f7d0624).includes(p['acl:mode'])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {})
+            ]
+        })
+    );
 };
 var $87767302443de17c$export$2e2bcd8739ae039 = $87767302443de17c$var$EditActionsWithPermissions;
 
 
 
+// @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
 const $7059823a3e1f1c04$var$EditWithPermissions = ({ actions: actions = /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $87767302443de17c$export$2e2bcd8739ae039), {}), children: children, ...rest })=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const recordId = (0, $4Uj5b$reactadmin.useGetRecordId)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     (0, $715d0a876ac5de8e$export$2e2bcd8739ae039)(recordId, 'edit');
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Edit), {
         actions: actions,
         ...rest,
@@ -1139,12 +1348,15 @@ var $7059823a3e1f1c04$export$2e2bcd8739ae039 = $7059823a3e1f1c04$var$EditWithPer
 
 
 
-const $79bac4913d414938$var$DeleteButtonWithPermissions = (props)=>{
+const $79bac4913d414938$var$DeleteButtonWithPermissions = (props: any) => {
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const recordId = (0, $4Uj5b$reactadmin.useGetRecordId)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const { permissions: permissions, isLoading: isLoading } = (0, $4Uj5b$reactadmin.usePermissions)({
         uri: recordId
     });
-    if (!isLoading && permissions?.some((p)=>(0, $09c536abc6cea017$export$ac7b0367c0f9031e).includes(p['acl:mode']))) return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.DeleteButton), {
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+    if (!isLoading && permissions?.some((p: any) => (0, $09c536abc6cea017$export$ac7b0367c0f9031e).includes(p['acl:mode']))) return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.DeleteButton), {
         ...props
     });
     return null;
@@ -1152,15 +1364,19 @@ const $79bac4913d414938$var$DeleteButtonWithPermissions = (props)=>{
 var $79bac4913d414938$export$2e2bcd8739ae039 = $79bac4913d414938$var$DeleteButtonWithPermissions;
 
 
+// @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
 const $41feb0ed0192b62e$var$StyledToolbar = (0, $4Uj5b$muimaterialstyles.styled)((0, $4Uj5b$reactadmin.Toolbar))(()=>({
         flex: 1,
         display: 'flex',
         justifyContent: 'space-between'
     }));
-const $41feb0ed0192b62e$var$EditToolbarWithPermissions = (props)=>/*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)($41feb0ed0192b62e$var$StyledToolbar, {
+// @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+const $41feb0ed0192b62e$var$EditToolbarWithPermissions = (props: any) => /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)($41feb0ed0192b62e$var$StyledToolbar, {
         ...props,
         children: [
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.SaveButton), {}),
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $79bac4913d414938$export$2e2bcd8739ae039), {})
         ]
     });
@@ -1171,12 +1387,15 @@ var $41feb0ed0192b62e$export$2e2bcd8739ae039 = $41feb0ed0192b62e$var$EditToolbar
 
 
 
-const $496e40eed9f00a2c$var$EditButtonWithPermissions = (props)=>{
+const $496e40eed9f00a2c$var$EditButtonWithPermissions = (props: any) => {
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const recordId = (0, $4Uj5b$reactadmin.useGetRecordId)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const { permissions: permissions, isLoading: isLoading } = (0, $4Uj5b$reactadmin.usePermissions)({
         uri: recordId
     });
-    if (!isLoading && permissions?.some((p)=>(0, $09c536abc6cea017$export$b9d0f5f3ab5e453b).includes(p['acl:mode']))) return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.EditButton), {
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+    if (!isLoading && permissions?.some((p: any) => (0, $09c536abc6cea017$export$b9d0f5f3ab5e453b).includes(p['acl:mode']))) return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.EditButton), {
         ...props
     });
     return null;
@@ -1197,39 +1416,54 @@ var $496e40eed9f00a2c$export$2e2bcd8739ae039 = $496e40eed9f00a2c$var$EditButtonW
 
 
 // Do not show Export and Refresh buttons on mobile
+// @ts-expect-error TS(7031): Binding element 'sort' implicitly has an 'any' typ... Remove this comment to see the full error message
 const $429746dd303ba55f$var$ListActionsWithPermissions = ({ sort: sort, displayedFilters: displayedFilters, exporter: exporter, filters: filters, filterValues: filterValues, showFilter: showFilter, total: total })=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const theme = (0, $4Uj5b$muimaterialstyles.useTheme)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const xs = (0, $4Uj5b$muimaterial.useMediaQuery)(theme.breakpoints.down('xs'));
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const resource = (0, $4Uj5b$reactadmin.useResourceContext)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const resourceDefinition = (0, $4Uj5b$reactadmin.useResourceDefinition)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const containerUri = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainerUri)(resource);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)({
         uri: containerUri
     });
-    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactadmin.TopToolbar), {
-        children: [
-            filters && /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(filters, {
-                showFilter: showFilter,
-                displayedFilters: displayedFilters,
-                filterValues: filterValues,
-                context: 'button'
-            }),
-            resourceDefinition.hasCreate && permissions?.some((p)=>(0, $09c536abc6cea017$export$65615a101bd6f5ca).includes(p['acl:mode'])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.CreateButton), {}),
-            permissions?.some((p)=>(0, $09c536abc6cea017$export$22242524f7d0624).includes(p['acl:mode'])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {
-                isContainer: true
-            }),
-            !xs && exporter !== false && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ExportButton), {
-                disabled: total === 0,
-                sort: sort,
-                filterValues: filterValues,
-                exporter: exporter
-            })
-        ]
-    });
+    return (
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactadmin.TopToolbar), {
+            children: [
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                filters && /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(filters, {
+                    showFilter: showFilter,
+                    displayedFilters: displayedFilters,
+                    filterValues: filterValues,
+                    context: 'button'
+                }),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                resourceDefinition.hasCreate && permissions?.some((p: any) => (0, $09c536abc6cea017$export$65615a101bd6f5ca).includes(p['acl:mode'])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.CreateButton), {}),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                permissions?.some((p: any) => (0, $09c536abc6cea017$export$22242524f7d0624).includes(p['acl:mode'])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {
+                    isContainer: true
+                }),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                !xs && exporter !== false && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ExportButton), {
+                    disabled: total === 0,
+                    sort: sort,
+                    filterValues: filterValues,
+                    exporter: exporter
+                })
+            ]
+        })
+    );
 };
 var $429746dd303ba55f$export$2e2bcd8739ae039 = $429746dd303ba55f$var$ListActionsWithPermissions;
 
 
+// @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
 const $027dac078faf6ea1$var$ListWithPermissions = ({ actions: actions = /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $429746dd303ba55f$export$2e2bcd8739ae039), {}), ...rest })=>/*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.List), {
         actions: actions,
         ...rest
@@ -1248,32 +1482,49 @@ var $027dac078faf6ea1$export$2e2bcd8739ae039 = $027dac078faf6ea1$var$ListWithPer
 
 
 const $43f4d313e20b20c2$var$ShowActionsWithPermissions = ()=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const { hasList: hasList, hasEdit: hasEdit } = (0, $4Uj5b$reactadmin.useResourceDefinition)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const record = (0, $4Uj5b$reactadmin.useRecordContext)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)({
         uri: record?.id
     });
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const resource = (0, $4Uj5b$reactadmin.useResourceContext)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const containerUri = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainerUri)(resource);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const { permissions: containerPermissions } = (0, $4Uj5b$reactadmin.usePermissions)({
         uri: containerUri
     });
-    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactadmin.TopToolbar), {
-        children: [
-            hasList && containerPermissions && containerPermissions.some((p)=>(0, $09c536abc6cea017$export$dc3840a4e2a72b8c).includes(p['acl:mode'])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ListButton), {}),
-            hasEdit && permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$b9d0f5f3ab5e453b).includes(p['acl:mode'])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.EditButton), {}),
-            permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$22242524f7d0624).includes(p['acl:mode'])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {})
-        ]
-    });
+    return (
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactadmin.TopToolbar), {
+            children: [
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                hasList && containerPermissions && containerPermissions.some((p: any) => (0, $09c536abc6cea017$export$dc3840a4e2a72b8c).includes(p['acl:mode'])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.ListButton), {}),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                hasEdit && permissions && permissions.some((p: any) => (0, $09c536abc6cea017$export$b9d0f5f3ab5e453b).includes(p['acl:mode'])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.EditButton), {}),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                permissions && permissions.some((p: any) => (0, $09c536abc6cea017$export$22242524f7d0624).includes(p['acl:mode'])) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {})
+            ]
+        })
+    );
 };
 var $43f4d313e20b20c2$export$2e2bcd8739ae039 = $43f4d313e20b20c2$var$ShowActionsWithPermissions;
 
 
 
+// @ts-expect-error TS(7031): Binding element 'actions' implicitly has an 'any' ... Remove this comment to see the full error message
 const $7789a2f600191ad3$var$ShowWithPermissions = ({ actions: actions, ...rest })=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const recordId = (0, $4Uj5b$reactadmin.useGetRecordId)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     (0, $715d0a876ac5de8e$export$2e2bcd8739ae039)(recordId, 'show');
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Show), {
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         actions: actions || /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $43f4d313e20b20c2$export$2e2bcd8739ae039), {}),
         ...rest
     });
@@ -1287,28 +1538,38 @@ var $7789a2f600191ad3$export$2e2bcd8739ae039 = $7789a2f600191ad3$var$ShowWithPer
 
 
 
+// @ts-expect-error TS(7031): Binding element 'open' implicitly has an 'any' typ... Remove this comment to see the full error message
 const $4e0bf9be00aaa242$var$AuthDialog = ({ open: open, onClose: onClose, title: title = 'auth.dialog.login_required', message: message = 'auth.message.login_to_continue', redirect: redirect, ...rest })=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const login = (0, $4Uj5b$reactadmin.useLogin)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Dialog), {
         open: open,
         onClose: onClose,
         ...rest,
         children: [
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.DialogTitle), {
                 children: translate(title)
             }),
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.DialogContent), {
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.DialogContentText), {
                     children: translate(message)
                 })
             }),
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.DialogActions), {
                 children: [
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                     /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
                         onClick: onClose,
                         children: translate('ra.action.cancel')
                     }),
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                     /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
                         onClick: ()=>login({
                                 redirect: redirect || window.location.pathname + window.location.search
@@ -1333,18 +1594,28 @@ var $4e0bf9be00aaa242$export$2e2bcd8739ae039 = $4e0bf9be00aaa242$var$AuthDialog;
 
 
 
-const $0af8eee27f6a6e9f$var$delay = async (t)=>new Promise((resolve)=>setTimeout(resolve, t));
+const $0af8eee27f6a6e9f$var$delay = async (t: any) => new Promise((resolve)=>setTimeout(resolve, t));
 // Inspired from https://github.com/marmelab/react-admin/blob/master/packages/ra-ui-materialui/src/auth/Login.tsx
+// @ts-expect-error TS(7031): Binding element 'children' implicitly has an 'any'... Remove this comment to see the full error message
 const $0af8eee27f6a6e9f$var$SsoLoginPage = ({ children: children, backgroundImage: backgroundImage, buttons: buttons, userResource: userResource = 'Person', propertiesExist: propertiesExist = [], text: text, ...rest })=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const containerRef = (0, $4Uj5b$react.useRef)();
     let backgroundImageLoaded = false;
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const navigate = (0, $4Uj5b$reactrouterdom.useNavigate)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const { data: identity, isLoading: isLoading } = (0, $4Uj5b$reactadmin.useGetIdentity)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const login = (0, $4Uj5b$reactadmin.useLogin)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const dataProvider = (0, $4Uj5b$reactadmin.useDataProvider)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const authProvider = (0, $4Uj5b$reactadmin.useAuthProvider)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     (0, $4Uj5b$react.useEffect)(()=>{
         if (!isLoading && identity?.id) // Already authenticated, redirect to the home page
         navigate(searchParams.get('redirect') || '/');
@@ -1354,6 +1625,7 @@ const $0af8eee27f6a6e9f$var$SsoLoginPage = ({ children: children, backgroundImag
         navigate,
         searchParams
     ]);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     (0, $4Uj5b$react.useEffect)(()=>{
         (async ()=>{
             if (searchParams.has('login')) {
@@ -1369,9 +1641,10 @@ const $0af8eee27f6a6e9f$var$SsoLoginPage = ({ children: children, backgroundImag
                     });
                 } else if (searchParams.has('token')) {
                     const token = searchParams.get('token');
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                     const { webId: webId } = (0, ($parcel$interopDefault($4Uj5b$jwtdecode)))(token);
                     localStorage.setItem('token', token);
-                    let userData;
+                    let userData: any;
                     ({ data: userData } = await dataProvider.getOne(userResource, {
                         id: webId
                     }));
@@ -1439,38 +1712,49 @@ const $0af8eee27f6a6e9f$var$SsoLoginPage = ({ children: children, backgroundImag
             img.src = backgroundImage;
         }
     };
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     (0, $4Uj5b$react.useEffect)(()=>{
         if (!backgroundImageLoaded) lazyLoadBackgroundImage();
     });
     if (isLoading) return null;
-    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($0af8eee27f6a6e9f$var$Root, {
-        ...rest,
-        ref: containerRef,
-        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Card), {
-            className: $0af8eee27f6a6e9f$export$388de65c72fa74b4.card,
-            children: [
-                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)("div", {
-                    className: $0af8eee27f6a6e9f$export$388de65c72fa74b4.avatar,
-                    children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Avatar), {
-                        className: $0af8eee27f6a6e9f$export$388de65c72fa74b4.icon,
-                        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialLock))), {})
-                    })
-                }),
-                text && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
-                    variant: "body2" /* className={classes.text} */ ,
-                    children: text
-                }),
-                buttons?.map((button, i)=>/*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.CardActions), {
-                        children: /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(button, {
-                            fullWidth: true,
-                            variant: 'outlined',
-                            type: 'submit',
-                            onClick: ()=>login({}, '/login')
+    return (
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($0af8eee27f6a6e9f$var$Root, {
+            ...rest,
+            ref: containerRef,
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+            children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Card), {
+                className: $0af8eee27f6a6e9f$export$388de65c72fa74b4.card,
+                children: [
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)("div", {
+                        className: $0af8eee27f6a6e9f$export$388de65c72fa74b4.avatar,
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Avatar), {
+                            className: $0af8eee27f6a6e9f$export$388de65c72fa74b4.icon,
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                            children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialLock))), {})
                         })
-                    }, i))
-            ]
+                    }),
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                    text && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
+                        variant: "body2" /* className={classes.text} */ ,
+                        children: text
+                    }),
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                    buttons?.map((button: any, i: any)=>/*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.CardActions), {
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                            children: /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(button, {
+                                fullWidth: true,
+                                variant: 'outlined',
+                                type: 'submit',
+                                onClick: ()=>login({}, '/login')
+                            })
+                        }, i))
+                ]
+            })
         })
-    });
+    );
 };
 const $0af8eee27f6a6e9f$var$PREFIX = 'SsoLoginPage';
 const $0af8eee27f6a6e9f$export$388de65c72fa74b4 = {
@@ -1479,9 +1763,11 @@ const $0af8eee27f6a6e9f$export$388de65c72fa74b4 = {
     icon: `${$0af8eee27f6a6e9f$var$PREFIX}-icon`,
     switch: `${$0af8eee27f6a6e9f$var$PREFIX}-switch`
 };
+// @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
 const $0af8eee27f6a6e9f$var$Root = (0, $4Uj5b$muimaterialstyles.styled)('div', {
     name: $0af8eee27f6a6e9f$var$PREFIX,
-    overridesResolver: (props, styles)=>styles.root
+    overridesResolver: (props: any, styles: any)=>styles.root
+// @ts-expect-error TS(7031): Binding element 'theme' implicitly has an 'any' ty... Remove this comment to see the full error message
 })(({ theme: theme })=>({
         display: 'flex',
         flexDirection: 'column',
@@ -1530,7 +1816,9 @@ var $0af8eee27f6a6e9f$export$2e2bcd8739ae039 = $0af8eee27f6a6e9f$var$SsoLoginPag
 
 
 const $19e4629c708b7a3e$var$useSignup = ()=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const authProvider = (0, $4Uj5b$reactadmin.useAuthProvider)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     return (0, $4Uj5b$react.useCallback)((params = {})=>authProvider.signup(params), [
         authProvider
     ]);
@@ -1572,7 +1860,7 @@ var $19e4629c708b7a3e$export$2e2bcd8739ae039 = $19e4629c708b7a3e$var$useSignup;
     numbersScore: 1,
     nonAlphanumericsScore: 1
 };
-const $d1ca1e1d215e32ca$export$963a5c59734509bb = (password, options)=>{
+const $d1ca1e1d215e32ca$export$963a5c59734509bb = (password: any, options: any)=>{
     if (!password) return 0;
     const mergedOptions = {
         ...$d1ca1e1d215e32ca$export$ba43bf67f3d48107,
@@ -1588,7 +1876,7 @@ const $d1ca1e1d215e32ca$export$963a5c59734509bb = (password, options)=>{
     else if (password.length >= mergedOptions.isLongLength) lengthScore = mergedOptions.isLongScore;
     return uppercaseScore + lowercaseScore + numbersScore + nonalphasScore + lengthScore;
 };
-const $d1ca1e1d215e32ca$export$b6086dad7504ebad = (password, options = $d1ca1e1d215e32ca$export$ba43bf67f3d48107)=>{
+const $d1ca1e1d215e32ca$export$b6086dad7504ebad = (password: any, options = $d1ca1e1d215e32ca$export$ba43bf67f3d48107)=>{
     const mergedOptions = {
         ...$d1ca1e1d215e32ca$export$ba43bf67f3d48107,
         ...options
@@ -1626,8 +1914,8 @@ const $d1ca1e1d215e32ca$export$a1d713a9155d58fc = (options = $d1ca1e1d215e32ca$e
         ...options
     };
     return {
-        scoreFn: (password)=>$d1ca1e1d215e32ca$export$963a5c59734509bb(password, mergedOptions),
-        analyzeFn: (password)=>$d1ca1e1d215e32ca$export$b6086dad7504ebad(password, mergedOptions),
+        scoreFn: (password: any) => $d1ca1e1d215e32ca$export$963a5c59734509bb(password, mergedOptions),
+        analyzeFn: (password: any) => $d1ca1e1d215e32ca$export$b6086dad7504ebad(password, mergedOptions),
         minRequiredScore: minRequiredScore,
         maxScore: mergedOptions.uppercaseScore + mergedOptions.lowercaseScore + mergedOptions.numbersScore + mergedOptions.nonAlphanumericsScore + mergedOptions.isLongScore + mergedOptions.isVeryLongScore
     };
@@ -1635,7 +1923,8 @@ const $d1ca1e1d215e32ca$export$a1d713a9155d58fc = (options = $d1ca1e1d215e32ca$e
 const $d1ca1e1d215e32ca$export$19dcdb21c6965fb8 = $d1ca1e1d215e32ca$export$a1d713a9155d58fc($d1ca1e1d215e32ca$export$ba43bf67f3d48107, 5);
 
 
-const $eab41bc89667b2c6$var$validatePasswordStrength = (scorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8))=>(value)=>{
+// @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+const $eab41bc89667b2c6$var$validatePasswordStrength = (scorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8))=>(value: any) => {
         if (!scorer) return undefined;
         const strength = scorer.scoreFn(value);
         if (strength < scorer.minRequiredScore) return 'auth.input.password_too_weak';
@@ -1661,7 +1950,7 @@ var $eab41bc89667b2c6$export$2e2bcd8739ae039 = $eab41bc89667b2c6$var$validatePas
  * @param {Color} color1
  * @param {Color} color2
  * @returns {string} `` `rgb(${red}, ${green}, ${blue})` ``
- */ const $bd29744006fdc23c$var$colorGradient = (fade, color1, color2)=>{
+ */ const $bd29744006fdc23c$var$colorGradient = (fade: any, color1: any, color2: any)=>{
     const diffRed = color2.red - color1.red;
     const diffGreen = color2.green - color1.green;
     const diffBlue = color2.blue - color1.blue;
@@ -1672,7 +1961,7 @@ var $eab41bc89667b2c6$export$2e2bcd8739ae039 = $eab41bc89667b2c6$var$validatePas
     };
     return `rgb(${gradient.red},${gradient.green},${gradient.blue})`;
 };
-function $bd29744006fdc23c$export$2e2bcd8739ae039(props) {
+function $bd29744006fdc23c$export$2e2bcd8739ae039(props: any) {
     const { minVal: minVal, maxVal: maxVal, currentVal: currentVal, badColor: badColor, goodColor: goodColor, ...restProps } = props;
     const color1 = badColor || {
         red: 0xff,
@@ -1686,6 +1975,7 @@ function $bd29744006fdc23c$export$2e2bcd8739ae039(props) {
     };
     const fade = Math.max(0, Math.min(1, (currentVal - minVal) / (maxVal - minVal)));
     const currentColor = $bd29744006fdc23c$var$colorGradient(fade, color1, color2);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const StyledLinearProgress = (0, $4Uj5b$muistyles.withStyles)({
         colorPrimary: {
             backgroundColor: 'black' // '#e0e0e0'
@@ -1693,7 +1983,9 @@ function $bd29744006fdc23c$export$2e2bcd8739ae039(props) {
         barColorPrimary: {
             backgroundColor: currentColor
         }
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     })((0, $4Uj5b$muimaterial.LinearProgress));
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)(StyledLinearProgress, {
         ...restProps,
         value: 100 * fade,
@@ -1703,8 +1995,10 @@ function $bd29744006fdc23c$export$2e2bcd8739ae039(props) {
 
 
 
+// @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
 function $edfec7f9e9fd7881$export$2e2bcd8739ae039({ scorer: scorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8), password: password, ...restProps }) {
     const strength = scorer.scoreFn(password);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $bd29744006fdc23c$export$2e2bcd8739ae039), {
         currentVal: strength,
         minVal: 0,
@@ -1719,6 +2013,7 @@ function $edfec7f9e9fd7881$export$2e2bcd8739ae039({ scorer: scorer = (0, $d1ca1e
 
 
 
+// @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
 const $189e343500739785$export$439d29a4e110a164 = (0, $4Uj5b$muimaterialstyles.styled)('span')({
     border: 0,
     clip: 'rect(0 0 0 0)',
@@ -1751,13 +2046,17 @@ const $189e343500739785$export$439d29a4e110a164 = (0, $4Uj5b$muimaterialstyles.s
  *
  * The message is internationalized using the 'auth.input.required_field_description' translation key
  */ const $189e343500739785$var$RequiredFieldIndicator = ()=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
         children: [
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)("span", {
                 "aria-hidden": "true",
                 children: "*"
             }),
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($189e343500739785$export$439d29a4e110a164, {
                 children: translate('auth.input.required_field_description')
             })
@@ -1775,15 +2074,20 @@ var $189e343500739785$export$2e2bcd8739ae039 = $189e343500739785$var$RequiredFie
  *  Set to `null` or `false`, if you don't want password strength checks. Default is
  *  passwordStrength's `defaultScorer`.
  * @returns
+ // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
  */ const $87a1f23cb4681f00$var$SignupForm = ({ passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8), onSignup: onSignup, additionalSignupValues: additionalSignupValues = {}, delayBeforeRedirect: delayBeforeRedirect = 0, redirectTo: redirectTo })=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [handleSubmit, setHandleSubmit] = (0, $4Uj5b$react.useState)(()=>{});
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Form), {
         onSubmit: handleSubmit,
         noValidate: true,
         defaultValues: {
             email: searchParams.get('email')
         },
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($87a1f23cb4681f00$var$FormContent, {
             passwordScorer: passwordScorer,
             additionalSignupValues: additionalSignupValues,
@@ -1794,22 +2098,34 @@ var $189e343500739785$export$2e2bcd8739ae039 = $189e343500739785$var$RequiredFie
         })
     });
 };
+// @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
 const $87a1f23cb4681f00$var$FormContent = ({ passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8), onSignup: onSignup, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect = 0, setHandleSubmit: setHandleSubmit, redirectTo: redirectTo })=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [loading, setLoading] = (0, $4Uj5b$reactadmin.useSafeSetState)(false);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [showPassword, setShowPassword] = (0, $4Uj5b$react.useState)(false);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [passwordAnalysis, setPasswordAnalysis] = (0, $4Uj5b$react.useState)(null);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const signup = (0, $19e4629c708b7a3e$export$2e2bcd8739ae039)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [locale] = (0, $4Uj5b$reactadmin.useLocaleState)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [password, setPassword] = (0, $4Uj5b$react.useState)('');
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const formContext = (0, $4Uj5b$reacthookform.useFormContext)();
     const togglePassword = ()=>{
         setShowPassword(!showPassword);
     };
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     (0, $4Uj5b$react.useEffect)(()=>{
-        setHandleSubmit(()=>async (values)=>{
+        setHandleSubmit(()=>async (values: any) => {
                 try {
                     setLoading(true);
                     await signup({
@@ -1843,6 +2159,7 @@ const $87a1f23cb4681f00$var$FormContent = ({ passwordScorer: passwordScorer = (0
         onSignup,
         formContext
     ]);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     (0, $4Uj5b$react.useEffect)(()=>{
         if (password && passwordScorer) {
             const analysis = passwordScorer.analyzeFn(password);
@@ -1852,168 +2169,197 @@ const $87a1f23cb4681f00$var$FormContent = ({ passwordScorer: passwordScorer = (0
         password,
         passwordScorer
     ]);
-    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
-        children: [
-            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
-                autoFocus: true,
-                source: "username",
-                label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
-                    children: [
-                        translate('auth.input.username'),
-                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
-                    ]
-                }),
-                autoComplete: "username",
-                fullWidth: true,
-                disabled: loading,
-                validate: [
-                    (0, $4Uj5b$reactadmin.required)(translate('auth.required.identifier')),
-                    (0, $4Uj5b$reactadmin.minLength)(2)
-                ],
-                format: (value)=>value ? (0, ($parcel$interopDefault($4Uj5b$speakingurl)))(value, {
-                        lang: locale || 'fr',
-                        separator: '_',
-                        custom: [
-                            '.',
-                            '-',
-                            '0',
-                            '1',
-                            '2',
-                            '3',
-                            '4',
-                            '5',
-                            '6',
-                            '7',
-                            '8',
-                            '9'
-                        ]
-                    }) : ''
-            }),
-            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
-                source: "email",
-                label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
-                    children: [
-                        translate('auth.input.email'),
-                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
-                    ]
-                }),
-                autoComplete: "email",
-                fullWidth: true,
-                disabled: loading || searchParams.has('email') && searchParams.has('force-email'),
-                validate: [
-                    (0, $4Uj5b$reactadmin.required)('auth.required.email'),
-                    (0, $4Uj5b$reactadmin.email)()
-                ]
-            }),
-            passwordScorer && password && !(searchParams.has('email') && searchParams.has('force-email')) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
-                children: [
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Typography), {
-                        variant: "caption",
-                        style: {
-                            marginBottom: 3
-                        },
+    return (
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
+            children: [
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
+                    autoFocus: true,
+                    source: "username",
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                    label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
                         children: [
-                            translate('auth.input.password_strength'),
-                            ":",
-                            ' '
+                            translate('auth.input.username'),
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
                         ]
                     }),
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $edfec7f9e9fd7881$export$2e2bcd8739ae039), {
-                        password: password,
-                        scorer: passwordScorer,
-                        sx: {
-                            width: '100%'
-                        }
-                    }),
-                    passwordAnalysis && passwordAnalysis.suggestions.length > 0 && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Typography), {
-                        variant: "caption",
-                        color: "textSecondary",
-                        component: "div",
-                        sx: {
-                            mt: 1,
-                            mb: 2,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 0.5
-                        },
+                    autoComplete: "username",
+                    fullWidth: true,
+                    disabled: loading,
+                    validate: [
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        (0, $4Uj5b$reactadmin.required)(translate('auth.required.identifier')),
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        (0, $4Uj5b$reactadmin.minLength)(2)
+                    ],
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                    format: (value: any) => value ? (0, ($parcel$interopDefault($4Uj5b$speakingurl)))(value, {
+                            lang: locale || 'fr',
+                            separator: '_',
+                            custom: [
+                                '.',
+                                '-',
+                                '0',
+                                '1',
+                                '2',
+                                '3',
+                                '4',
+                                '5',
+                                '6',
+                                '7',
+                                '8',
+                                '9'
+                            ]
+                        }) : ''
+                }),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
+                    source: "email",
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                    label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
                         children: [
-                            translate('auth.input.password_suggestions'),
-                            ":",
-                            passwordAnalysis.suggestions.map((suggestion, index)=>{
-                                const translationKey = `auth.input.password_suggestion.${suggestion}`;
-                                const translatedText = translate(translationKey);
-                                return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("span", {
-                                    style: {
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '4px'
-                                    },
-                                    children: [
-                                        "\u2022 ",
-                                        translatedText
-                                    ]
-                                }, index);
-                            })
+                            translate('auth.input.email'),
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
                         ]
-                    })
-                ]
-            }),
-            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("div", {
-                className: "password-container",
-                style: {
-                    position: 'relative'
-                },
-                children: [
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
-                        source: "password",
-                        type: showPassword ? 'text' : 'password',
-                        value: password,
-                        onChange: (e)=>{
-                            setPassword(e.target.value);
-                        },
-                        label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
+                    }),
+                    autoComplete: "email",
+                    fullWidth: true,
+                    disabled: loading || searchParams.has('email') && searchParams.has('force-email'),
+                    validate: [
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        (0, $4Uj5b$reactadmin.required)('auth.required.email'),
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        (0, $4Uj5b$reactadmin.email)()
+                    ]
+                }),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                passwordScorer && password && !(searchParams.has('email') && searchParams.has('force-email')) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
+                    children: [
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Typography), {
+                            variant: "caption",
+                            style: {
+                                marginBottom: 3
+                            },
                             children: [
-                                translate('ra.auth.password'),
-                                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
+                                translate('auth.input.password_strength'),
+                                ":",
+                                ' '
                             ]
                         }),
-                        autoComplete: "new-password",
-                        fullWidth: true,
-                        disabled: loading,
-                        validate: [
-                            (0, $4Uj5b$reactadmin.required)('auth.required.password'),
-                            (0, $eab41bc89667b2c6$export$2e2bcd8739ae039)(passwordScorer)
-                        ],
-                        "aria-describedby": "signup-password-desc"
-                    }),
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$439d29a4e110a164), {
-                        id: "signup-password-desc",
-                        children: translate('auth.input.password_description')
-                    }),
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.IconButton), {
-                        "aria-label": translate(showPassword ? 'auth.action.hide_password' : 'auth.action.show_password'),
-                        onClick: togglePassword,
-                        style: {
-                            position: 'absolute',
-                            right: '8px',
-                            top: '17px',
-                            padding: '4px'
-                        },
-                        size: "large",
-                        children: showPassword ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.VisibilityOff), {}) : /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.Visibility), {})
-                    })
-                ]
-            }),
-            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
-                variant: "contained",
-                type: "submit",
-                color: "primary",
-                disabled: loading,
-                fullWidth: true,
-                children: translate('auth.action.signup')
-            })
-        ]
-    });
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $edfec7f9e9fd7881$export$2e2bcd8739ae039), {
+                            password: password,
+                            scorer: passwordScorer,
+                            sx: {
+                                width: '100%'
+                            }
+                        }),
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        passwordAnalysis && passwordAnalysis.suggestions.length > 0 && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Typography), {
+                            variant: "caption",
+                            color: "textSecondary",
+                            component: "div",
+                            sx: {
+                                mt: 1,
+                                mb: 2,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: 0.5
+                            },
+                            children: [
+                                translate('auth.input.password_suggestions'),
+                                ":",
+                                passwordAnalysis.suggestions.map((suggestion: any, index: any)=>{
+                                    const translationKey = `auth.input.password_suggestion.${suggestion}`;
+                                    const translatedText = translate(translationKey);
+                                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                                    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("span", {
+                                        style: {
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '4px'
+                                        },
+                                        children: [
+                                            "\u2022 ",
+                                            translatedText
+                                        ]
+                                    }, index);
+                                })
+                            ]
+                        })
+                    ]
+                }),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("div", {
+                    className: "password-container",
+                    style: {
+                        position: 'relative'
+                    },
+                    children: [
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
+                            source: "password",
+                            type: showPassword ? 'text' : 'password',
+                            value: password,
+                            onChange: (e: any) => {
+                                setPassword(e.target.value);
+                            },
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                            label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
+                                children: [
+                                    translate('ra.auth.password'),
+                                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
+                                ]
+                            }),
+                            autoComplete: "new-password",
+                            fullWidth: true,
+                            disabled: loading,
+                            validate: [
+                                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                                (0, $4Uj5b$reactadmin.required)('auth.required.password'),
+                                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                                (0, $eab41bc89667b2c6$export$2e2bcd8739ae039)(passwordScorer)
+                            ],
+                            "aria-describedby": "signup-password-desc"
+                        }),
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$439d29a4e110a164), {
+                            id: "signup-password-desc",
+                            children: translate('auth.input.password_description')
+                        }),
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.IconButton), {
+                            "aria-label": translate(showPassword ? 'auth.action.hide_password' : 'auth.action.show_password'),
+                            onClick: togglePassword,
+                            style: {
+                                position: 'absolute',
+                                right: '8px',
+                                top: '17px',
+                                padding: '4px'
+                            },
+                            size: "large",
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                            children: showPassword ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.VisibilityOff), {}) : /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.Visibility), {})
+                        })
+                    ]
+                }),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
+                    variant: "contained",
+                    type: "submit",
+                    color: "primary",
+                    disabled: loading,
+                    fullWidth: true,
+                    children: translate('auth.action.signup')
+                })
+            ]
+        })
+    );
 };
 var $87a1f23cb4681f00$export$2e2bcd8739ae039 = $87a1f23cb4681f00$var$SignupForm;
 
@@ -2026,15 +2372,20 @@ var $87a1f23cb4681f00$export$2e2bcd8739ae039 = $87a1f23cb4681f00$var$SignupForm;
 
 
 
+// @ts-expect-error TS(7031): Binding element 'onLogin' implicitly has an 'any' ... Remove this comment to see the full error message
 const $403a8b015c5eea65$var$LoginForm = ({ onLogin: onLogin, allowUsername: allowUsername, redirectTo: redirectTo })=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [handleSubmit, setHandleSubmit] = (0, $4Uj5b$react.useState)(()=>{});
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Form), {
         onSubmit: handleSubmit,
         noValidate: true,
         defaultValues: {
             email: searchParams.get('email')
         },
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($403a8b015c5eea65$var$FormContent, {
             onLogin: onLogin,
             allowUsername: allowUsername,
@@ -2043,19 +2394,28 @@ const $403a8b015c5eea65$var$LoginForm = ({ onLogin: onLogin, allowUsername: allo
         })
     });
 };
+// @ts-expect-error TS(7031): Binding element 'onLogin' implicitly has an 'any' ... Remove this comment to see the full error message
 const $403a8b015c5eea65$var$FormContent = ({ onLogin: onLogin, allowUsername: allowUsername, setHandleSubmit: setHandleSubmit, redirectTo: redirectTo })=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [loading, setLoading] = (0, $4Uj5b$reactadmin.useSafeSetState)(false);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [showPassword, setShowPassword] = (0, $4Uj5b$react.useState)(false);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const login = (0, $4Uj5b$reactadmin.useLogin)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const formContext = (0, $4Uj5b$reacthookform.useFormContext)();
     const togglePassword = ()=>{
         setShowPassword(!showPassword);
     };
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     (0, $4Uj5b$react.useEffect)(()=>{
-        setHandleSubmit(()=>async (values)=>{
+        setHandleSubmit(()=>async (values: any) => {
                 try {
                     setLoading(true);
                     await login(values);
@@ -2084,76 +2444,94 @@ const $403a8b015c5eea65$var$FormContent = ({ onLogin: onLogin, allowUsername: al
         notify,
         onLogin
     ]);
-    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
-        children: [
-            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
-                source: "username",
-                label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
-                    children: [
-                        translate(allowUsername ? 'auth.input.username_or_email' : 'auth.input.email'),
-                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
+    return (
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
+            children: [
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
+                    source: "username",
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                    label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
+                        children: [
+                            translate(allowUsername ? 'auth.input.username_or_email' : 'auth.input.email'),
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
+                        ]
+                    }),
+                    autoComplete: "email",
+                    fullWidth: true,
+                    disabled: loading || searchParams.has('email') && searchParams.has('force-email'),
+                    format: (value: any) => value ? value.toLowerCase() : '',
+                    validate: allowUsername ? [
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        (0, $4Uj5b$reactadmin.required)(translate('auth.required.identifier'))
+                    ] : [
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        (0, $4Uj5b$reactadmin.required)(translate('auth.required.identifier')),
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        (0, $4Uj5b$reactadmin.email)()
                     ]
                 }),
-                autoComplete: "email",
-                fullWidth: true,
-                disabled: loading || searchParams.has('email') && searchParams.has('force-email'),
-                format: (value)=>value ? value.toLowerCase() : '',
-                validate: allowUsername ? [
-                    (0, $4Uj5b$reactadmin.required)(translate('auth.required.identifier'))
-                ] : [
-                    (0, $4Uj5b$reactadmin.required)(translate('auth.required.identifier')),
-                    (0, $4Uj5b$reactadmin.email)()
-                ]
-            }),
-            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("div", {
-                className: "password-container",
-                style: {
-                    position: 'relative'
-                },
-                children: [
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
-                        source: "password",
-                        type: showPassword ? 'text' : 'password',
-                        label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
-                            children: [
-                                translate('ra.auth.password'),
-                                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
-                            ]
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("div", {
+                    className: "password-container",
+                    style: {
+                        position: 'relative'
+                    },
+                    children: [
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
+                            source: "password",
+                            type: showPassword ? 'text' : 'password',
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                            label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
+                                children: [
+                                    translate('ra.auth.password'),
+                                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
+                                ]
+                            }),
+                            autoComplete: "current-password",
+                            fullWidth: true,
+                            disabled: loading,
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                            validate: (0, $4Uj5b$reactadmin.required)(translate('auth.required.password')),
+                            "aria-describedby": "password-desc"
                         }),
-                        autoComplete: "current-password",
-                        fullWidth: true,
-                        disabled: loading,
-                        validate: (0, $4Uj5b$reactadmin.required)(translate('auth.required.password')),
-                        "aria-describedby": "password-desc"
-                    }),
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$439d29a4e110a164), {
-                        id: "password-desc",
-                        children: translate('auth.input.password_description')
-                    }),
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.IconButton), {
-                        "aria-label": translate(showPassword ? 'auth.action.hide_password' : 'auth.action.show_password'),
-                        onClick: togglePassword,
-                        style: {
-                            position: 'absolute',
-                            right: '8px',
-                            top: '17px',
-                            padding: '4px'
-                        },
-                        size: "large",
-                        children: showPassword ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.VisibilityOff), {}) : /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.Visibility), {})
-                    })
-                ]
-            }),
-            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
-                variant: "contained",
-                type: "submit",
-                color: "primary",
-                disabled: loading,
-                fullWidth: true,
-                children: translate('auth.action.login')
-            })
-        ]
-    });
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$439d29a4e110a164), {
+                            id: "password-desc",
+                            children: translate('auth.input.password_description')
+                        }),
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.IconButton), {
+                            "aria-label": translate(showPassword ? 'auth.action.hide_password' : 'auth.action.show_password'),
+                            onClick: togglePassword,
+                            style: {
+                                position: 'absolute',
+                                right: '8px',
+                                top: '17px',
+                                padding: '4px'
+                            },
+                            size: "large",
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                            children: showPassword ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.VisibilityOff), {}) : /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.Visibility), {})
+                        })
+                    ]
+                }),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
+                    variant: "contained",
+                    type: "submit",
+                    color: "primary",
+                    disabled: loading,
+                    fullWidth: true,
+                    children: translate('auth.action.login')
+                })
+            ]
+        })
+    );
 };
 $403a8b015c5eea65$var$LoginForm.defaultValues = {
     allowUsername: false
@@ -2171,7 +2549,7 @@ var $403a8b015c5eea65$export$2e2bcd8739ae039 = $403a8b015c5eea65$var$LoginForm;
 
 
 
-const $2f0ce992717e175e$var$samePassword = (value, allValues)=>{
+const $2f0ce992717e175e$var$samePassword = (value: any, allValues: any)=>{
     if (value && value !== allValues.password) return 'auth.input.password_mismatch';
 };
 /**
@@ -2181,15 +2559,20 @@ const $2f0ce992717e175e$var$samePassword = (value, allValues)=>{
  *  Set to `null` or `false`, if you don't want password strength checks. Default is
  *  passwordStrength's `defaultScorer`.
  * @returns
+ // @ts-expect-error TS(7031): Binding element 'redirectTo' implicitly has an 'an... Remove this comment to see the full error message
  */ const $2f0ce992717e175e$var$NewPasswordForm = ({ redirectTo: redirectTo, passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8) })=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [handleSubmit, setHandleSubmit] = (0, $4Uj5b$react.useState)(()=>{});
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Form), {
         onSubmit: handleSubmit,
         noValidate: true,
         defaultValues: {
             email: searchParams.get('email')
         },
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($2f0ce992717e175e$var$FormContent, {
             setHandleSubmit: setHandleSubmit,
             redirectTo: redirectTo,
@@ -2197,17 +2580,27 @@ const $2f0ce992717e175e$var$samePassword = (value, allValues)=>{
         })
     });
 };
+// @ts-expect-error TS(7031): Binding element 'setHandleSubmit' implicitly has a... Remove this comment to see the full error message
 const $2f0ce992717e175e$var$FormContent = ({ setHandleSubmit: setHandleSubmit, redirectTo: redirectTo, passwordScorer: passwordScorer })=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const location = (0, $4Uj5b$reactrouterdom.useLocation)();
     const searchParams = new URLSearchParams(location.search);
     const token = searchParams.get('token');
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [loading, setLoading] = (0, $4Uj5b$reactadmin.useSafeSetState)(false);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [showNewPassword, setShowNewPassword] = (0, $4Uj5b$react.useState)(false);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [showConfirmPassword, setShowConfirmPassword] = (0, $4Uj5b$react.useState)(false);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const authProvider = (0, $4Uj5b$reactadmin.useAuthProvider)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [newPassword, setNewPassword] = (0, $4Uj5b$react.useState)('');
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [passwordAnalysis, setPasswordAnalysis] = (0, $4Uj5b$react.useState)(null);
     const toggleNewPassword = ()=>{
         setShowNewPassword(!showNewPassword);
@@ -2215,8 +2608,9 @@ const $2f0ce992717e175e$var$FormContent = ({ setHandleSubmit: setHandleSubmit, r
     const toggleConfirmPassword = ()=>{
         setShowConfirmPassword(!showConfirmPassword);
     };
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     (0, $4Uj5b$react.useEffect)(()=>{
-        setHandleSubmit(()=>async (values)=>{
+        setHandleSubmit(()=>async (values: any) => {
                 setLoading(true);
                 authProvider.setNewPassword({
                     ...values,
@@ -2232,7 +2626,7 @@ const $2f0ce992717e175e$var$FormContent = ({ setHandleSubmit: setHandleSubmit, r
                     notify('auth.notification.password_changed', {
                         type: 'info'
                     });
-                }).catch((error)=>{
+                }).catch((error: any) => {
                     setLoading(false);
                     notify(typeof error === 'string' ? error : !error.message ? 'auth.notification.reset_password_error' : error.message, {
                         type: 'warning',
@@ -2243,6 +2637,7 @@ const $2f0ce992717e175e$var$FormContent = ({ setHandleSubmit: setHandleSubmit, r
                 });
             });
     });
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     (0, $4Uj5b$react.useEffect)(()=>{
         if (newPassword && passwordScorer) {
             const analysis = passwordScorer.analyzeFn(newPassword);
@@ -2252,174 +2647,204 @@ const $2f0ce992717e175e$var$FormContent = ({ setHandleSubmit: setHandleSubmit, r
         newPassword,
         passwordScorer
     ]);
-    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
-        children: [
-            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
-                autoFocus: true,
-                source: "email",
-                label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
+    return (
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
+            children: [
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
+                    autoFocus: true,
+                    source: "email",
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                    label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
+                        children: [
+                            translate('auth.input.email'),
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
+                        ]
+                    }),
+                    autoComplete: "email",
+                    fullWidth: true,
+                    disabled: loading,
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                    validate: (0, $4Uj5b$reactadmin.required)(translate('auth.required.newPassword')),
+                    format: (value: any) => value ? value.toLowerCase() : ''
+                }),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                passwordScorer && newPassword && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
                     children: [
-                        translate('auth.input.email'),
-                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Typography), {
+                            variant: "caption",
+                            style: {
+                                marginBottom: 3
+                            },
+                            children: [
+                                translate('auth.input.password_strength'),
+                                ":",
+                                ' '
+                            ]
+                        }),
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $edfec7f9e9fd7881$export$2e2bcd8739ae039), {
+                            password: newPassword,
+                            scorer: passwordScorer,
+                            sx: {
+                                width: '100%'
+                            }
+                        }),
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        passwordAnalysis && passwordAnalysis.suggestions.length > 0 && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Typography), {
+                            variant: "caption",
+                            color: "textSecondary",
+                            component: "div",
+                            sx: {
+                                mt: 1,
+                                mb: 2,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: 0.5
+                            },
+                            children: [
+                                translate('auth.input.password_suggestions'),
+                                ":",
+                                passwordAnalysis.suggestions.map((suggestion: any, index: any)=>{
+                                    const translationKey = `auth.input.password_suggestion.${suggestion}`;
+                                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                                    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("span", {
+                                        style: {
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '4px'
+                                        },
+                                        children: [
+                                            "\u2022 ",
+                                            translate(translationKey)
+                                        ]
+                                    }, index);
+                                })
+                            ]
+                        })
                     ]
                 }),
-                autoComplete: "email",
-                fullWidth: true,
-                disabled: loading,
-                validate: (0, $4Uj5b$reactadmin.required)(translate('auth.required.newPassword')),
-                format: (value)=>value ? value.toLowerCase() : ''
-            }),
-            passwordScorer && newPassword && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
-                children: [
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Typography), {
-                        variant: "caption",
-                        style: {
-                            marginBottom: 3
-                        },
-                        children: [
-                            translate('auth.input.password_strength'),
-                            ":",
-                            ' '
-                        ]
-                    }),
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $edfec7f9e9fd7881$export$2e2bcd8739ae039), {
-                        password: newPassword,
-                        scorer: passwordScorer,
-                        sx: {
-                            width: '100%'
-                        }
-                    }),
-                    passwordAnalysis && passwordAnalysis.suggestions.length > 0 && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Typography), {
-                        variant: "caption",
-                        color: "textSecondary",
-                        component: "div",
-                        sx: {
-                            mt: 1,
-                            mb: 2,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 0.5
-                        },
-                        children: [
-                            translate('auth.input.password_suggestions'),
-                            ":",
-                            passwordAnalysis.suggestions.map((suggestion, index)=>{
-                                const translationKey = `auth.input.password_suggestion.${suggestion}`;
-                                return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("span", {
-                                    style: {
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '4px'
-                                    },
-                                    children: [
-                                        "\u2022 ",
-                                        translate(translationKey)
-                                    ]
-                                }, index);
-                            })
-                        ]
-                    })
-                ]
-            }),
-            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("div", {
-                className: "password-container",
-                style: {
-                    position: 'relative'
-                },
-                children: [
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
-                        autoFocus: true,
-                        type: showNewPassword ? 'text' : 'password',
-                        source: "password",
-                        value: newPassword,
-                        label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
-                            children: [
-                                translate('auth.input.new_password'),
-                                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
-                            ]
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("div", {
+                    className: "password-container",
+                    style: {
+                        position: 'relative'
+                    },
+                    children: [
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
+                            autoFocus: true,
+                            type: showNewPassword ? 'text' : 'password',
+                            source: "password",
+                            value: newPassword,
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                            label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
+                                children: [
+                                    translate('auth.input.new_password'),
+                                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
+                                ]
+                            }),
+                            autoComplete: "current-password",
+                            fullWidth: true,
+                            disabled: loading,
+                            validate: [
+                                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                                (0, $4Uj5b$reactadmin.required)(translate('auth.required.newPasswordAgain')),
+                                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                                (0, $eab41bc89667b2c6$export$2e2bcd8739ae039)(passwordScorer)
+                            ],
+                            onChange: (e: any) => {
+                                setNewPassword(e.target.value);
+                            },
+                            "aria-describedby": "new-password-desc"
                         }),
-                        autoComplete: "current-password",
-                        fullWidth: true,
-                        disabled: loading,
-                        validate: [
-                            (0, $4Uj5b$reactadmin.required)(translate('auth.required.newPasswordAgain')),
-                            (0, $eab41bc89667b2c6$export$2e2bcd8739ae039)(passwordScorer)
-                        ],
-                        onChange: (e)=>{
-                            setNewPassword(e.target.value);
-                        },
-                        "aria-describedby": "new-password-desc"
-                    }),
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$439d29a4e110a164), {
-                        id: "new-password-desc",
-                        children: translate('auth.input.password_description')
-                    }),
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.IconButton), {
-                        "aria-label": translate(showNewPassword ? 'auth.action.hide_password' : 'auth.action.show_password'),
-                        onClick: toggleNewPassword,
-                        style: {
-                            position: 'absolute',
-                            right: '8px',
-                            top: '17px',
-                            padding: '4px'
-                        },
-                        size: "large",
-                        children: showNewPassword ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.VisibilityOff), {}) : /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.Visibility), {})
-                    })
-                ]
-            }),
-            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("div", {
-                className: "password-container",
-                style: {
-                    position: 'relative'
-                },
-                children: [
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
-                        type: showConfirmPassword ? 'text' : 'password',
-                        source: "confirm-password",
-                        label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
-                            children: [
-                                translate('auth.input.confirm_new_password'),
-                                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
-                            ]
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$439d29a4e110a164), {
+                            id: "new-password-desc",
+                            children: translate('auth.input.password_description')
                         }),
-                        autoComplete: "current-password",
-                        fullWidth: true,
-                        disabled: loading,
-                        validate: [
-                            (0, $4Uj5b$reactadmin.required)(),
-                            $2f0ce992717e175e$var$samePassword
-                        ],
-                        "aria-describedby": "confirm-password-desc"
-                    }),
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$439d29a4e110a164), {
-                        id: "confirm-password-desc",
-                        children: translate('auth.input.password_description')
-                    }),
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.IconButton), {
-                        "aria-label": translate(showConfirmPassword ? 'auth.action.hide_password' : 'auth.action.show_password'),
-                        onClick: toggleConfirmPassword,
-                        style: {
-                            position: 'absolute',
-                            right: '8px',
-                            top: '17px',
-                            padding: '4px'
-                        },
-                        size: "large",
-                        children: showConfirmPassword ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.VisibilityOff), {}) : /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.Visibility), {})
-                    })
-                ]
-            }),
-            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
-                variant: "contained",
-                type: "submit",
-                color: "primary",
-                disabled: loading,
-                fullWidth: true,
-                children: translate('auth.action.set_new_password')
-            })
-        ]
-    });
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.IconButton), {
+                            "aria-label": translate(showNewPassword ? 'auth.action.hide_password' : 'auth.action.show_password'),
+                            onClick: toggleNewPassword,
+                            style: {
+                                position: 'absolute',
+                                right: '8px',
+                                top: '17px',
+                                padding: '4px'
+                            },
+                            size: "large",
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                            children: showNewPassword ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.VisibilityOff), {}) : /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.Visibility), {})
+                        })
+                    ]
+                }),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)("div", {
+                    className: "password-container",
+                    style: {
+                        position: 'relative'
+                    },
+                    children: [
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
+                            type: showConfirmPassword ? 'text' : 'password',
+                            source: "confirm-password",
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                            label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
+                                children: [
+                                    translate('auth.input.confirm_new_password'),
+                                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
+                                ]
+                            }),
+                            autoComplete: "current-password",
+                            fullWidth: true,
+                            disabled: loading,
+                            validate: [
+                                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                                (0, $4Uj5b$reactadmin.required)(),
+                                $2f0ce992717e175e$var$samePassword
+                            ],
+                            "aria-describedby": "confirm-password-desc"
+                        }),
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$439d29a4e110a164), {
+                            id: "confirm-password-desc",
+                            children: translate('auth.input.password_description')
+                        }),
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.IconButton), {
+                            "aria-label": translate(showConfirmPassword ? 'auth.action.hide_password' : 'auth.action.show_password'),
+                            onClick: toggleConfirmPassword,
+                            style: {
+                                position: 'absolute',
+                                right: '8px',
+                                top: '17px',
+                                padding: '4px'
+                            },
+                            size: "large",
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                            children: showConfirmPassword ? /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.VisibilityOff), {}) : /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muiiconsmaterial.Visibility), {})
+                        })
+                    ]
+                }),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
+                    variant: "contained",
+                    type: "submit",
+                    color: "primary",
+                    disabled: loading,
+                    fullWidth: true,
+                    children: translate('auth.action.set_new_password')
+                })
+            ]
+        })
+    );
 };
 var $2f0ce992717e175e$export$2e2bcd8739ae039 = $2f0ce992717e175e$var$NewPasswordForm;
 
@@ -2430,22 +2855,31 @@ var $2f0ce992717e175e$export$2e2bcd8739ae039 = $2f0ce992717e175e$var$NewPassword
 
 
 const $be1129164d40878e$var$ResetPasswordForm = ()=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [handleSubmit, setHandleSubmit] = (0, $4Uj5b$react.useState)(()=>{});
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Form), {
         onSubmit: handleSubmit,
         noValidate: true,
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($be1129164d40878e$var$FormContent, {
             setHandleSubmit: setHandleSubmit
         })
     });
 };
+// @ts-expect-error TS(7031): Binding element 'setHandleSubmit' implicitly has a... Remove this comment to see the full error message
 const $be1129164d40878e$var$FormContent = ({ setHandleSubmit: setHandleSubmit })=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [loading, setLoading] = (0, $4Uj5b$reactadmin.useSafeSetState)(false);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const authProvider = (0, $4Uj5b$reactadmin.useAuthProvider)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     (0, $4Uj5b$react.useEffect)(()=>{
-        setHandleSubmit(()=>async (values)=>{
+        setHandleSubmit(()=>async (values: any) => {
                 setLoading(true);
                 authProvider.resetPassword({
                     ...values
@@ -2454,7 +2888,7 @@ const $be1129164d40878e$var$FormContent = ({ setHandleSubmit: setHandleSubmit })
                     notify('auth.notification.reset_password_submitted', {
                         type: 'info'
                     });
-                }).catch((error)=>{
+                }).catch((error: any) => {
                     setLoading(false);
                     notify(typeof error === 'string' ? error : !error.message ? 'auth.notification.reset_password_error' : error.message, {
                         type: 'warning',
@@ -2465,33 +2899,41 @@ const $be1129164d40878e$var$FormContent = ({ setHandleSubmit: setHandleSubmit })
                 });
             });
     });
-    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
-        children: [
-            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
-                autoFocus: true,
-                source: "email",
-                label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
-                    children: [
-                        translate('auth.input.email'),
-                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
-                    ]
+    return (
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.CardContent), {
+            children: [
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.TextInput), {
+                    autoFocus: true,
+                    source: "email",
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                    label: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
+                        children: [
+                            translate('auth.input.email'),
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $189e343500739785$export$2e2bcd8739ae039), {})
+                        ]
+                    }),
+                    autoComplete: "email",
+                    fullWidth: true,
+                    disabled: loading,
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                    validate: (0, $4Uj5b$reactadmin.required)(translate('auth.required.email')),
+                    format: (value: any) => value ? value.toLowerCase() : ''
                 }),
-                autoComplete: "email",
-                fullWidth: true,
-                disabled: loading,
-                validate: (0, $4Uj5b$reactadmin.required)(translate('auth.required.email')),
-                format: (value)=>value ? value.toLowerCase() : ''
-            }),
-            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
-                variant: "contained",
-                type: "submit",
-                color: "primary",
-                disabled: loading,
-                fullWidth: true,
-                children: translate('auth.action.submit')
-            })
-        ]
-    });
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Button), {
+                    variant: "contained",
+                    type: "submit",
+                    color: "primary",
+                    disabled: loading,
+                    fullWidth: true,
+                    children: translate('auth.action.submit')
+                })
+            ]
+        })
+    );
 };
 var $be1129164d40878e$export$2e2bcd8739ae039 = $be1129164d40878e$var$ResetPasswordForm;
 
@@ -2501,54 +2943,65 @@ var $be1129164d40878e$export$2e2bcd8739ae039 = $be1129164d40878e$var$ResetPasswo
 
 
 
-const $d6b5c702311394c4$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))((theme)=>({
-        '@global': {
-            body: {
-                backgroundColor: theme.palette.secondary.main
-            }
-        },
-        root: {
-            backgroundColor: theme.palette.secondary.main,
-            [theme.breakpoints.down('sm')]: {
-                padding: '1em'
-            }
-        },
-        card: {
-            width: '100%',
-            maxWidth: 450,
-            marginTop: '6em'
-        },
-        icon: {
-            marginTop: 5,
-            marginRight: 5
-        },
-        title: {
-            [theme.breakpoints.down('sm')]: {
-                fontWeight: 'bold',
-                marginTop: 12
-            }
+// @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+const $d6b5c702311394c4$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))((theme: any) => ({
+    '@global': {
+        body: {
+            backgroundColor: theme.palette.secondary.main
         }
-    }));
+    },
+
+    root: {
+        backgroundColor: theme.palette.secondary.main,
+        [theme.breakpoints.down('sm')]: {
+            padding: '1em'
+        }
+    },
+
+    card: {
+        width: '100%',
+        maxWidth: 450,
+        marginTop: '6em'
+    },
+
+    icon: {
+        marginTop: 5,
+        marginRight: 5
+    },
+
+    title: {
+        [theme.breakpoints.down('sm')]: {
+            fontWeight: 'bold',
+            marginTop: 12
+        }
+    }
+}));
+// @ts-expect-error TS(7031): Binding element 'title' implicitly has an 'any' ty... Remove this comment to see the full error message
 const $d6b5c702311394c4$var$SimpleBox = ({ title: title, icon: icon, text: text, children: children })=>{
     const classes = $d6b5c702311394c4$var$useStyles();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Box), {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         className: classes.root,
         children: [
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Card), {
                 className: classes.card,
                 children: [
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                     /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Box), {
                         p: 2,
                         display: "flex",
                         justifyContent: "start",
                         children: [
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                             icon && /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(icon, {
                                 fontSize: 'large',
                                 className: classes.icon
                             }),
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
                                 variant: "h4",
                                 className: classes.title,
@@ -2556,9 +3009,11 @@ const $d6b5c702311394c4$var$SimpleBox = ({ title: title, icon: icon, text: text,
                             })
                         ]
                     }),
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                     /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Box), {
                         pl: 2,
                         pr: 2,
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                         children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
                             variant: "body1",
                             children: text
@@ -2567,6 +3022,7 @@ const $d6b5c702311394c4$var$SimpleBox = ({ title: title, icon: icon, text: text,
                     children
                 ]
             }),
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Notification), {})
         ]
     });
@@ -2582,7 +3038,7 @@ const $cd7709c431b14d14$var$USED_SEARCH_PARAMS = [
     'email',
     'force-email'
 ];
-const $cd7709c431b14d14$var$getSearchParamsRest = (searchParams)=>{
+const $cd7709c431b14d14$var$getSearchParamsRest = (searchParams: any) => {
     const rest = [];
     for (const [key, value] of searchParams.entries())if (!$cd7709c431b14d14$var$USED_SEARCH_PARAMS.includes(key)) rest.push(`${key}=${encodeURIComponent(value)}`);
     return rest.length > 0 ? rest.join('&') : '';
@@ -2602,15 +3058,21 @@ var $cd7709c431b14d14$export$2e2bcd8739ae039 = $cd7709c431b14d14$var$getSearchPa
  *  Set to `null` or `false`, if you don't want password strength checks. Default is
  *  passwordStrength's `defaultScorer`.
  * @returns
+ // @ts-expect-error TS(7031): Binding element 'onLogin' implicitly has an 'any' ... Remove this comment to see the full error message
  */ const $4c56dbfbda0fa20c$var$LocalLoginPage = ({ hasSignup: hasSignup = true, allowUsername: allowUsername = false, onLogin: onLogin, onSignup: onSignup, additionalSignupValues: additionalSignupValues = {}, passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8) })=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [searchParams] = (0, $4Uj5b$reactrouterdom.useSearchParams)();
     const isSignup = hasSignup && searchParams.has('signup');
     const isResetPassword = searchParams.has('reset_password');
     const isNewPassword = searchParams.has('new_password');
     const isLogin = !isSignup && !isResetPassword && !isNewPassword;
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const redirectTo = (0, $7448e031bca4bf1e$export$bab98af026af71ac)(searchParams.get('redirect')) || (0, $7448e031bca4bf1e$export$50ae7fb6f87de989)(searchParams.get('redirect')) ? searchParams.get('redirect') : '/';
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const { data: identity, isLoading: isLoading } = (0, $4Uj5b$reactadmin.useGetIdentity)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     (0, $4Uj5b$react.useEffect)(()=>{
         (async ()=>{
             if (!isLoading && identity?.id) {
@@ -2624,6 +3086,7 @@ var $cd7709c431b14d14$export$2e2bcd8739ae039 = $cd7709c431b14d14$var$getSearchPa
         redirectTo,
         onLogin
     ]);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [title, text] = (0, $4Uj5b$react.useMemo)(()=>{
         if (isSignup) return [
             'auth.action.signup',
@@ -2648,17 +3111,22 @@ var $cd7709c431b14d14$export$2e2bcd8739ae039 = $cd7709c431b14d14$var$getSearchPa
         isNewPassword
     ]);
     if (isLoading || identity?.id) return null;
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $d6b5c702311394c4$export$2e2bcd8739ae039), {
         title: translate(title),
         text: translate(text),
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         icon: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialLock))), {}),
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Card), {
             children: [
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 isLogin && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $403a8b015c5eea65$export$2e2bcd8739ae039), {
                     onLogin: onLogin,
                     redirectTo: redirectTo,
                     allowUsername: allowUsername
                 }),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 isSignup && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $87a1f23cb4681f00$export$2e2bcd8739ae039), {
                     delayBeforeRedirect: 4000,
                     redirectTo: redirectTo,
@@ -2666,11 +3134,14 @@ var $cd7709c431b14d14$export$2e2bcd8739ae039 = $cd7709c431b14d14$var$getSearchPa
                     additionalSignupValues: additionalSignupValues,
                     passwordScorer: passwordScorer
                 }),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 isResetPassword && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $be1129164d40878e$export$2e2bcd8739ae039), {}),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 isNewPassword && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $2f0ce992717e175e$export$2e2bcd8739ae039), {
                     redirectTo: redirectTo,
                     passwordScorer: passwordScorer
                 }),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Box), {
                     sx: {
                         display: 'flex',
@@ -2680,27 +3151,39 @@ var $cd7709c431b14d14$export$2e2bcd8739ae039 = $cd7709c431b14d14$var$getSearchPa
                         mb: 2
                     },
                     children: [
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                         (isSignup || isResetPassword) && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactrouterdom.Link), {
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                             to: `/login?${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}`,
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                             children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
                                 variant: "body2",
                                 children: translate('auth.action.login')
                             })
                         }),
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                         isLogin && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$reactjsxruntime.Fragment), {
                             children: [
+                                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                                 hasSignup && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)("div", {
+                                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                                     children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactrouterdom.Link), {
+                                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                                         to: `/login?signup=true&${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}`,
+                                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                                         children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
                                             variant: "body2",
                                             children: translate('auth.action.signup')
                                         })
                                     })
                                 }),
+                                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                                 /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)("div", {
+                                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                                     children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactrouterdom.Link), {
+                                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                                         to: `/login?reset_password=true&${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}`,
+                                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                                         children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
                                             variant: "body2",
                                             children: translate('auth.action.reset_password')
@@ -2724,16 +3207,23 @@ var $4c56dbfbda0fa20c$export$2e2bcd8739ae039 = $4c56dbfbda0fa20c$var$LocalLoginP
 
 
 // Not used for now. The ListWithPermissions component will handle the conditional display of the Create button.
+// @ts-expect-error TS(7031): Binding element 'name' implicitly has an 'any' typ... Remove this comment to see the full error message
 const $0973974d3aa8078b$var$ResourceWithPermission = ({ name: name, create: create, ...rest })=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const createContainer = (0, $4Uj5b$semappssemanticdataprovider.useCreateContainerUri)(name);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const { permissions: permissions } = (0, $4Uj5b$reactadmin.usePermissions)({
         uri: createContainer
     });
-    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Resource), {
-        ...rest,
-        name: name,
-        create: permissions && permissions.some((p)=>(0, $09c536abc6cea017$export$65615a101bd6f5ca).includes(p['acl:mode'])) ? create : undefined
-    });
+    return (
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Resource), {
+            ...rest,
+            name: name,
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+            create: permissions && permissions.some((p: any) => (0, $09c536abc6cea017$export$65615a101bd6f5ca).includes(p['acl:mode'])) ? create : undefined
+        })
+    );
 };
 var $0973974d3aa8078b$export$2e2bcd8739ae039 = $0973974d3aa8078b$var$ResourceWithPermission;
 
@@ -2746,10 +3236,15 @@ var $0973974d3aa8078b$export$2e2bcd8739ae039 = $0973974d3aa8078b$var$ResourceWit
 
 
 // It's important to pass the ref to allow Material UI to manage the keyboard navigation
-const $9734e84907c0d5dd$var$UserMenuItem = /*#__PURE__*/ (0, $4Uj5b$react.forwardRef)(({ label: label, icon: icon, to: to, ...rest }, ref)=>{
+// @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+const $9734e84907c0d5dd$var$UserMenuItem = /*#__PURE__*/ (0, $4Uj5b$react.forwardRef)(({ label: label, icon: icon, to: to, ...rest }, ref: any)=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const { onClose: onClose } = (0, $4Uj5b$reactadmin.useUserMenu)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const navigate = (0, $4Uj5b$reactrouterdom.useNavigate)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const onClick = (0, $4Uj5b$react.useCallback)(()=>{
         navigate(to);
         onClose();
@@ -2758,45 +3253,59 @@ const $9734e84907c0d5dd$var$UserMenuItem = /*#__PURE__*/ (0, $4Uj5b$react.forwar
         onClose,
         navigate
     ]);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.MenuItem), {
         onClick: onClick,
         ref: ref,
         ...rest,
         children: [
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             icon && /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemIcon), {
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 children: /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(icon, {
                     fontSize: 'small'
                 })
             }),
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.ListItemText), {
                 children: translate(label)
             })
         ]
     });
 });
+// @ts-expect-error TS(7031): Binding element 'logout' implicitly has an 'any' t... Remove this comment to see the full error message
 const $9734e84907c0d5dd$var$UserMenu = ({ logout: logout, profileResource: profileResource, ...otherProps })=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const { data: identity } = (0, $4Uj5b$reactadmin.useGetIdentity)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.UserMenu), {
         ...otherProps,
         children: identity && identity.id !== '' ? [
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($9734e84907c0d5dd$var$UserMenuItem, {
                 label: "auth.action.view_my_profile",
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 icon: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialAccountCircle))), {}),
                 to: `/${profileResource || 'Person'}/${encodeURIComponent(identity?.profileData?.id || identity.id)}/show`
             }, "view"),
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($9734e84907c0d5dd$var$UserMenuItem, {
                 label: "auth.action.edit_my_profile",
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 icon: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, ($parcel$interopDefault($4Uj5b$muiiconsmaterialEdit))), {}),
                 to: `/${profileResource || 'Person'}/${encodeURIComponent(identity?.profileData?.id || identity.id)}`
             }, "edit"),
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(logout || /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Logout), {}), {
                 key: 'logout'
             })
         ] : [
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($9734e84907c0d5dd$var$UserMenuItem, {
                 label: "auth.action.signup",
                 to: "/login?signup=true"
             }, "signup"),
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)($9734e84907c0d5dd$var$UserMenuItem, {
                 label: "auth.action.login",
                 to: "/login"
@@ -2811,11 +3320,16 @@ var $9734e84907c0d5dd$export$2e2bcd8739ae039 = $9734e84907c0d5dd$var$UserMenu;
 
 
 
-const $84db3891236a263f$var$useCheckAuthenticated = (message)=>{
+const $84db3891236a263f$var$useCheckAuthenticated = (message: any) => {
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const { data: identity, isLoading: isLoading } = (0, $4Uj5b$reactadmin.useGetIdentity)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const notify = (0, $4Uj5b$reactadmin.useNotify)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const redirect = (0, $4Uj5b$reactadmin.useRedirect)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const location = (0, $4Uj5b$reactrouterdom.useLocation)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     (0, $4Uj5b$react.useEffect)(()=>{
         if (!isLoading && !identity?.id) {
             notify(message || 'ra.auth.auth_check_error', {
@@ -2851,18 +3365,24 @@ const $80da6dcda9baa28b$var$alreadyFetchedPermissions = {
 // Fork of usePermissionsOptimized, with a refetch option
 const $80da6dcda9baa28b$var$usePermissionsWithRefetch = (params = $80da6dcda9baa28b$var$emptyParams)=>{
     const key = JSON.stringify(params);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [state, setState] = (0, $4Uj5b$reactadmin.useSafeSetState)({
+        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         permissions: $80da6dcda9baa28b$var$alreadyFetchedPermissions[key]
     });
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const getPermissions = (0, $4Uj5b$reactadmin.useGetPermissions)();
-    const fetchPermissions = (0, $4Uj5b$react.useCallback)(()=>getPermissions(params).then((permissions)=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+    const fetchPermissions = (0, $4Uj5b$react.useCallback)(()=>getPermissions(params).then((permissions: any) => {
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             if (!(0, ($parcel$interopDefault($4Uj5b$lodashisEqual)))(permissions, state.permissions)) {
+                // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                 $80da6dcda9baa28b$var$alreadyFetchedPermissions[key] = permissions;
                 setState({
                     permissions: permissions
                 });
             }
-        }).catch((error)=>{
+        }).catch((error: any) => {
             setState({
                 error: error
             });
@@ -2871,6 +3391,7 @@ const $80da6dcda9baa28b$var$usePermissionsWithRefetch = (params = $80da6dcda9baa
         params,
         getPermissions
     ]);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     (0, $4Uj5b$react.useEffect)(()=>{
         fetchPermissions();
     }, [

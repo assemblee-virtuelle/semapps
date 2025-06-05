@@ -5,6 +5,7 @@ import $fj9kP$speakingurl from "speakingurl";
 import $fj9kP$jsonld from "jsonld";
 import $fj9kP$rdfjsdatamodel, {triple as $fj9kP$triple, variable as $fj9kP$variable, namedNode as $fj9kP$namedNode} from "@rdfjs/data-model";
 import {Generator as $fj9kP$Generator} from "sparqljs";
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'cryp... Remove this comment to see the full error message
 import $fj9kP$cryptojsmd5 from "crypto-js/md5";
 import {fetchUtils as $fj9kP$fetchUtils, useDataProvider as $fj9kP$useDataProvider, DataProviderContext as $fj9kP$DataProviderContext, useRecordContext as $fj9kP$useRecordContext, useGetList as $fj9kP$useGetList, ArrayInput as $fj9kP$ArrayInput, SimpleFormIterator as $fj9kP$SimpleFormIterator, TextInput as $fj9kP$TextInput} from "react-admin";
 import $fj9kP$urljoin from "url-join";
@@ -13,6 +14,7 @@ import $fj9kP$httplinkheader from "http-link-header";
 import {capitalCase as $fj9kP$capitalCase} from "change-case";
 import $fj9kP$react, {useState as $fj9kP$useState, useEffect as $fj9kP$useEffect, useMemo as $fj9kP$useMemo, useCallback as $fj9kP$useCallback, useContext as $fj9kP$useContext} from "react";
 import {jsx as $fj9kP$jsx, Fragment as $fj9kP$Fragment, jsxs as $fj9kP$jsxs} from "react/jsx-runtime";
+// @ts-expect-error TS(2307): Cannot find module '@mui/styles/makeStyles' or its... Remove this comment to see the full error message
 import $fj9kP$muistylesmakeStyles from "@mui/styles/makeStyles";
 
 
@@ -20,23 +22,25 @@ import $fj9kP$muistylesmakeStyles from "@mui/styles/makeStyles";
 
 
 
-const $336b7edf722fe53e$var$fetchResource = async (resourceUri, config)=>{
+const $336b7edf722fe53e$var$fetchResource = async (resourceUri: any, config: any)=>{
     const { httpClient: httpClient, jsonContext: jsonContext } = config;
     let { json: data } = await httpClient(resourceUri);
     if (!data) throw new Error(`Not a valid JSON: ${resourceUri}`);
     data.id = data.id || data['@id'];
     // We compact only if the context is different between the frontend and the middleware
     // TODO deep compare if the context is an object
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     if (data['@context'] !== jsonContext) data = await (0, $fj9kP$jsonld).compact(data, jsonContext);
     return data;
 };
 var $336b7edf722fe53e$export$2e2bcd8739ae039 = $336b7edf722fe53e$var$fetchResource;
 
 
-const $ed447224dd38ce82$var$getOneMethod = (config)=>async (resourceId, params)=>{
+const $ed447224dd38ce82$var$getOneMethod = (config: any) => async (resourceId: any, params: any)=>{
         const { resources: resources } = config;
         const dataModel = resources[resourceId];
         if (!dataModel) throw new Error(`Resource ${resourceId} is not mapped in resources file`);
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         const data = await (0, $336b7edf722fe53e$export$2e2bcd8739ae039)(params.id, config);
         // Transform single value into array if forceArray is set
         if (dataModel.list?.forceArray) {
@@ -69,18 +73,19 @@ const $ed447224dd38ce82$var$getOneMethod = (config)=>async (resourceId, params)=
 var $ed447224dd38ce82$export$2e2bcd8739ae039 = $ed447224dd38ce82$var$getOneMethod;
 
 
-const $c35ffbda15247c32$var$getUploadsContainerUri = (config, serverKey)=>{
+const $c35ffbda15247c32$var$getUploadsContainerUri = (config: any, serverKey: any)=>{
     // If no server key is defined or if the server has no uploads container, find any server with a uploads container
-    if (!serverKey || !config.dataServers[serverKey].containers || !config.dataServers[serverKey].containers?.find((c)=>c.binaryResources)) serverKey = Object.keys(config.dataServers).find((key)=>config.dataServers[key].containers?.find((c)=>c.binaryResources));
-    if (serverKey) return config.dataServers[serverKey].containers?.find((c)=>c.binaryResources)?.uri;
+    if (!serverKey || !config.dataServers[serverKey].containers || !config.dataServers[serverKey].containers?.find((c: any) => c.binaryResources)) serverKey = Object.keys(config.dataServers).find((key)=>config.dataServers[key].containers?.find((c: any) => c.binaryResources));
+    if (serverKey) return config.dataServers[serverKey].containers?.find((c: any) => c.binaryResources)?.uri;
     else // No server has an uploads container
     return null;
 };
 var $c35ffbda15247c32$export$2e2bcd8739ae039 = $c35ffbda15247c32$var$getUploadsContainerUri;
 
 
-const $b17c43e3301545ca$var$isFile = (o)=>o?.rawFile && o.rawFile instanceof File;
-const $b17c43e3301545ca$export$a5575dbeeffdad98 = async (rawFile, config, serverKey)=>{
+const $b17c43e3301545ca$var$isFile = (o: any) => o?.rawFile && o.rawFile instanceof File;
+const $b17c43e3301545ca$export$a5575dbeeffdad98 = async (rawFile: any, config: any, serverKey: any)=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const uploadsContainerUri = (0, $c35ffbda15247c32$export$2e2bcd8739ae039)(config, serverKey);
     if (!uploadsContainerUri) throw new Error("You must define an container with binaryResources in one of the server's configuration");
     const response = await config.httpClient(uploadsContainerUri, {
@@ -96,7 +101,7 @@ const $b17c43e3301545ca$export$a5575dbeeffdad98 = async (rawFile, config, server
 /*
  * Look for raw files in the record data.
  * If there are any, upload them and replace the file by its URL.
- */ const $b17c43e3301545ca$var$uploadAllFiles = async (record, config, serverKey)=>{
+ */ const $b17c43e3301545ca$var$uploadAllFiles = async (record: any, config: any, serverKey: any)=>{
     const updatedRecord = {
         ...record
     };
@@ -117,7 +122,7 @@ var $b17c43e3301545ca$export$2e2bcd8739ae039 = {
 };
 
 
-const $8326b88c1a913ca9$var$getServerKeyFromType = (type, dataServers)=>{
+const $8326b88c1a913ca9$var$getServerKeyFromType = (type: any, dataServers: any)=>{
     return dataServers && Object.keys(dataServers).find((key)=>{
         return dataServers[key][type];
     });
@@ -125,13 +130,16 @@ const $8326b88c1a913ca9$var$getServerKeyFromType = (type, dataServers)=>{
 var $8326b88c1a913ca9$export$2e2bcd8739ae039 = $8326b88c1a913ca9$var$getServerKeyFromType;
 
 
-const $99cc2e4a2a3c100b$var$parseServerKey = (serverKey, dataServers)=>{
+const $99cc2e4a2a3c100b$var$parseServerKey = (serverKey: any, dataServers: any)=>{
     switch(serverKey){
         case '@default':
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             return (0, $8326b88c1a913ca9$export$2e2bcd8739ae039)('default', dataServers);
         case '@pod':
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             return (0, $8326b88c1a913ca9$export$2e2bcd8739ae039)('pod', dataServers);
         case '@authServer':
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             return (0, $8326b88c1a913ca9$export$2e2bcd8739ae039)('authServer', dataServers);
         default:
             return serverKey;
@@ -139,13 +147,14 @@ const $99cc2e4a2a3c100b$var$parseServerKey = (serverKey, dataServers)=>{
 };
 // Return the list of servers keys in an array
 // parsing keywords like @all, @default, @pod and @authServer
-const $99cc2e4a2a3c100b$var$parseServerKeys = (serverKeys, dataServers)=>{
+const $99cc2e4a2a3c100b$var$parseServerKeys = (serverKeys: any, dataServers: any)=>{
     if (Array.isArray(serverKeys)) {
         if (serverKeys.includes('@all')) return Object.keys(dataServers);
         else return serverKeys.map((serverKey)=>$99cc2e4a2a3c100b$var$parseServerKey(serverKey, dataServers));
     } else if (typeof serverKeys === 'string') {
         if (serverKeys === '@all') return Object.keys(dataServers);
         else if (serverKeys === '@remote') {
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             const defaultServerKey = (0, $8326b88c1a913ca9$export$2e2bcd8739ae039)('default', dataServers);
             return Object.keys(dataServers).filter((serverKey)=>serverKey !== defaultServerKey);
         } else return [
@@ -158,12 +167,13 @@ var $99cc2e4a2a3c100b$export$2e2bcd8739ae039 = $99cc2e4a2a3c100b$var$parseServer
 
 /**
  * Return all containers matching the given types
- */ const $15b841e67a1ba752$var$findContainersWithTypes = (types, serverKeys, dataServers)=>{
-    const matchingContainers = [];
+ */ const $15b841e67a1ba752$var$findContainersWithTypes = (types: any, serverKeys: any, dataServers: any)=>{
+    const matchingContainers: any = [];
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const parsedServerKeys = (0, $99cc2e4a2a3c100b$export$2e2bcd8739ae039)(serverKeys || '@all', dataServers);
     Object.keys(dataServers).forEach((dataServerKey)=>{
-        if (parsedServerKeys.includes(dataServerKey)) dataServers[dataServerKey].containers?.forEach((container)=>{
-            if (container.types?.some((t)=>types.includes(t))) matchingContainers.push(container);
+        if (parsedServerKeys.includes(dataServerKey)) dataServers[dataServerKey].containers?.forEach((container: any) => {
+            if (container.types?.some((t: any) => types.includes(t))) matchingContainers.push(container);
         });
     });
     return matchingContainers;
@@ -171,10 +181,10 @@ var $99cc2e4a2a3c100b$export$2e2bcd8739ae039 = $99cc2e4a2a3c100b$var$parseServer
 var $15b841e67a1ba752$export$2e2bcd8739ae039 = $15b841e67a1ba752$var$findContainersWithTypes;
 
 
-const $7c772a9c0c25a69d$var$findContainersWithURIs = (containersUris, dataServers)=>{
-    const matchingContainers = [];
+const $7c772a9c0c25a69d$var$findContainersWithURIs = (containersUris: any, dataServers: any)=>{
+    const matchingContainers: any = [];
     Object.keys(dataServers).forEach((serverKey)=>{
-        dataServers[serverKey].containers?.forEach((container)=>{
+        dataServers[serverKey].containers?.forEach((container: any) => {
             if (container.uri && containersUris.includes(container.uri)) matchingContainers.push(container);
         });
     });
@@ -183,7 +193,7 @@ const $7c772a9c0c25a69d$var$findContainersWithURIs = (containersUris, dataServer
 var $7c772a9c0c25a69d$export$2e2bcd8739ae039 = $7c772a9c0c25a69d$var$findContainersWithURIs;
 
 
-const $5a7a2f7583392866$var$createMethod = (config)=>async (resourceId, params)=>{
+const $5a7a2f7583392866$var$createMethod = (config: any) => async (resourceId: any, params: any)=>{
         const { dataServers: dataServers, resources: resources, httpClient: httpClient, jsonContext: jsonContext } = config;
         const dataModel = resources[resourceId];
         if (!dataModel) Error(`Resource ${resourceId} is not mapped in resources file`);
@@ -191,6 +201,7 @@ const $5a7a2f7583392866$var$createMethod = (config)=>async (resourceId, params)=
         let containerUri;
         let serverKey;
         if (dataModel.create?.container) {
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             const [container] = (0, $7c772a9c0c25a69d$export$2e2bcd8739ae039)([
                 dataModel.create?.container
             ], dataServers);
@@ -199,6 +210,7 @@ const $5a7a2f7583392866$var$createMethod = (config)=>async (resourceId, params)=
         } else {
             serverKey = dataModel.create?.server || Object.keys(dataServers).find((key)=>dataServers[key].default === true);
             if (!serverKey) throw new Error('You must define a server for the creation, or a container, or a default server');
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             const containers = (0, $15b841e67a1ba752$export$2e2bcd8739ae039)(dataModel.types, [
                 serverKey
             ], dataServers);
@@ -208,11 +220,13 @@ const $5a7a2f7583392866$var$createMethod = (config)=>async (resourceId, params)=
         }
         if (params.data) {
             if (dataModel.fieldsMapping?.title) {
-                const slug = Array.isArray(dataModel.fieldsMapping.title) ? dataModel.fieldsMapping.title.map((f)=>params.data[f]).join(' ') : params.data[dataModel.fieldsMapping.title];
+                const slug = Array.isArray(dataModel.fieldsMapping.title) ? dataModel.fieldsMapping.title.map((f: any) => params.data[f]).join(' ') : params.data[dataModel.fieldsMapping.title];
                 // Generate slug here, otherwise we may get errors with special characters
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 headers.set('Slug', (0, $fj9kP$speakingurl)(slug));
             }
             // Upload files, if there are any
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             const { updatedRecord: updatedRecord } = await (0, $b17c43e3301545ca$export$2e2bcd8739ae039).upload(params.data, config, serverKey);
             params.data = updatedRecord;
             const { headers: responseHeaders } = await httpClient(containerUri, {
@@ -226,6 +240,7 @@ const $5a7a2f7583392866$var$createMethod = (config)=>async (resourceId, params)=
             });
             // Retrieve newly-created resource
             const resourceUri = responseHeaders.get('Location');
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             return await (0, $ed447224dd38ce82$export$2e2bcd8739ae039)(config)(resourceId, {
                 id: resourceUri
             });
@@ -241,6 +256,7 @@ const $5a7a2f7583392866$var$createMethod = (config)=>async (resourceId, params)=
       `
             });
             // Create must return the new data, so get them from the remote URI
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             return await (0, $ed447224dd38ce82$export$2e2bcd8739ae039)(config)(resourceId, {
                 id: params.id
             });
@@ -249,7 +265,7 @@ const $5a7a2f7583392866$var$createMethod = (config)=>async (resourceId, params)=
 var $5a7a2f7583392866$export$2e2bcd8739ae039 = $5a7a2f7583392866$var$createMethod;
 
 
-const $9510970b8e7eb9e2$var$deleteMethod = (config)=>async (resourceId, params)=>{
+const $9510970b8e7eb9e2$var$deleteMethod = (config: any) => async (resourceId: any, params: any)=>{
         const { httpClient: httpClient } = config;
         await httpClient(`${params.id}`, {
             method: 'DELETE'
@@ -263,7 +279,7 @@ const $9510970b8e7eb9e2$var$deleteMethod = (config)=>async (resourceId, params)=
 var $9510970b8e7eb9e2$export$2e2bcd8739ae039 = $9510970b8e7eb9e2$var$deleteMethod;
 
 
-const $298dd1ae21173ea0$var$deleteManyMethod = (config)=>async (resourceId, params)=>{
+const $298dd1ae21173ea0$var$deleteManyMethod = (config: any) => async (resourceId: any, params: any)=>{
         const { httpClient: httpClient } = config;
         const ids = [];
         for (const id of params.ids)try {
@@ -281,13 +297,13 @@ const $298dd1ae21173ea0$var$deleteManyMethod = (config)=>async (resourceId, para
 var $298dd1ae21173ea0$export$2e2bcd8739ae039 = $298dd1ae21173ea0$var$deleteManyMethod;
 
 
-const $7dd5bf9323d2d9c1$var$getDataServers = (config)=>()=>{
+const $7dd5bf9323d2d9c1$var$getDataServers = (config: any) => ()=>{
         return config.dataServers;
     };
 var $7dd5bf9323d2d9c1$export$2e2bcd8739ae039 = $7dd5bf9323d2d9c1$var$getDataServers;
 
 
-const $54a3fa40eed06111$var$getDataModels = (config)=>()=>{
+const $54a3fa40eed06111$var$getDataModels = (config: any) => ()=>{
         return config.resources;
     };
 var $54a3fa40eed06111$export$2e2bcd8739ae039 = $54a3fa40eed06111$var$getDataModels;
@@ -295,7 +311,7 @@ var $54a3fa40eed06111$export$2e2bcd8739ae039 = $54a3fa40eed06111$var$getDataMode
 
 
 
-const $cc8adac4b83414eb$var$arrayOf = (value)=>{
+const $cc8adac4b83414eb$var$arrayOf = (value: any) => {
     // If the field is null-ish, we suppose there are no values.
     if (!value) return [];
     // Return as is.
@@ -308,23 +324,27 @@ const $cc8adac4b83414eb$var$arrayOf = (value)=>{
 var $cc8adac4b83414eb$export$2e2bcd8739ae039 = $cc8adac4b83414eb$var$arrayOf;
 
 
-const $aba124ea15ea8bc6$var$isValidLDPContainer = (container)=>{
+const $aba124ea15ea8bc6$var$isValidLDPContainer = (container: any) => {
     const resourceType = container.type || container['@type'];
     return Array.isArray(resourceType) ? resourceType.includes('ldp:Container') : resourceType === 'ldp:Container';
 };
-const $aba124ea15ea8bc6$var$isObject = (val)=>{
+const $aba124ea15ea8bc6$var$isObject = (val: any) => {
     return val != null && typeof val === 'object' && !Array.isArray(val);
 };
-const $aba124ea15ea8bc6$var$fetchContainers = async (containers, params, { httpClient: httpClient, jsonContext: jsonContext })=>{
-    const fetchPromises = containers.map((container)=>httpClient(container.uri).then(async ({ json: json })=>{
+// @ts-expect-error TS(7031): Binding element 'httpClient' implicitly has an 'an... Remove this comment to see the full error message
+const $aba124ea15ea8bc6$var$fetchContainers = async (containers: any, params: any, { httpClient: httpClient, jsonContext: jsonContext })=>{
+    // @ts-expect-error TS(7031): Binding element 'json' implicitly has an 'any' typ... Remove this comment to see the full error message
+    const fetchPromises = containers.map((container: any) => httpClient(container.uri).then(async ({ json: json })=>{
             const jsonResponse = json;
             // If container's context is different, compact it to have an uniform result
             // TODO deep compare if the context is an object
             // This is most likely an array of two strings
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             if (jsonResponse['@context'] !== jsonContext) return (0, $fj9kP$jsonld).compact(jsonResponse, jsonContext);
             return jsonResponse;
-        }).then((json)=>{
+        }).then((json: any) => {
             if (!$aba124ea15ea8bc6$var$isValidLDPContainer(json)) throw new Error(`${container.uri} is not a LDP container`);
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             return (0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(json['ldp:contains']).map((resource)=>({
                     '@context': json['@context'],
                     ...resource
@@ -352,6 +372,7 @@ const $aba124ea15ea8bc6$var$fetchContainers = async (containers, params, { httpC
         ];
         resources = resources.map((resource)=>{
             return Object.keys(resource).filter((key)=>predicates.includes(key) || mandatoryAttributes.includes(key)).reduce((filteredResource, key)=>{
+                // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                 filteredResource[key] = resource[key];
                 return filteredResource;
             }, {
@@ -387,7 +408,7 @@ const $aba124ea15ea8bc6$var$fetchContainers = async (containers, params, { httpC
                 const arrayValues = Array.isArray(resource[attribute]) ? resource[attribute] : [
                     resource[attribute]
                 ];
-                return arrayValues.some((value)=>typeof value === 'string' && value.includes(filters[attribute]));
+                return arrayValues.some((value: any) => typeof value === 'string' && value.includes(filters[attribute]));
             }
             return false;
         });
@@ -409,7 +430,7 @@ var $aba124ea15ea8bc6$export$2e2bcd8739ae039 = $aba124ea15ea8bc6$var$fetchContai
 
 
 
-const $3007d5479dd82d51$var$getEmbedFrame = (blankNodes)=>{
+const $3007d5479dd82d51$var$getEmbedFrame = (blankNodes: any) => {
     let embedFrame = {};
     let predicates;
     if (blankNodes) {
@@ -420,12 +441,13 @@ const $3007d5479dd82d51$var$getEmbedFrame = (blankNodes)=>{
             ];
             embedFrame = {
                 ...embedFrame,
-                ...predicates.reduce((accumulator, predicate)=>({
-                        [predicate]: {
-                            '@embed': '@last',
-                            ...accumulator
-                        }
-                    }), {})
+                // @ts-expect-error TS(7006): Parameter 'accumulator' implicitly has an 'any' ty... Remove this comment to see the full error message
+                ...predicates.reduce((accumulator, predicate) => ({
+                    [predicate]: {
+                        '@embed': '@last',
+                        ...accumulator
+                    }
+                }), {})
             };
         }
         return embedFrame;
@@ -436,7 +458,7 @@ var $3007d5479dd82d51$export$2e2bcd8739ae039 = $3007d5479dd82d51$var$getEmbedFra
 
 
 
-const $4872a1c30c1fc60e$var$getUriFromPrefix = (item, ontologies)=>{
+const $4872a1c30c1fc60e$var$getUriFromPrefix = (item: any, ontologies: any)=>{
     if (item.startsWith('http://') || item.startsWith('https://')) // Already resolved, return the URI
     return item;
     else if (item === 'a') // Special case
@@ -452,14 +474,16 @@ const $4872a1c30c1fc60e$var$getUriFromPrefix = (item, ontologies)=>{
 var $4872a1c30c1fc60e$export$2e2bcd8739ae039 = $4872a1c30c1fc60e$var$getUriFromPrefix;
 
 
-const $47d734d7812e6861$var$defaultToArray = (value)=>!value ? [] : Array.isArray(value) ? value : [
+const $47d734d7812e6861$var$defaultToArray = (value: any) => !value ? [] : Array.isArray(value) ? value : [
         value
     ];
 // We need to always include the type or React-Admin will not work properly
+// @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
 const $47d734d7812e6861$var$typeQuery = (0, $fj9kP$triple)((0, $fj9kP$variable)('s1'), (0, $fj9kP$namedNode)('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), (0, $fj9kP$variable)('type'));
-const $47d734d7812e6861$var$buildBaseQuery = (predicates, ontologies)=>{
+const $47d734d7812e6861$var$buildBaseQuery = (predicates: any, ontologies: any)=>{
     let baseTriples;
     if (predicates) {
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         baseTriples = $47d734d7812e6861$var$defaultToArray(predicates).map((predicate, i)=>(0, $fj9kP$triple)((0, $fj9kP$variable)('s1'), (0, $fj9kP$namedNode)((0, $4872a1c30c1fc60e$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $fj9kP$variable)(`o${i + 1}`)));
         return {
             construct: [
@@ -478,6 +502,7 @@ const $47d734d7812e6861$var$buildBaseQuery = (predicates, ontologies)=>{
         };
     }
     baseTriples = [
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         (0, $fj9kP$triple)((0, $fj9kP$variable)('s1'), (0, $fj9kP$variable)('p1'), (0, $fj9kP$variable)('o1'))
     ];
     return {
@@ -492,7 +517,7 @@ var $47d734d7812e6861$export$2e2bcd8739ae039 = $47d734d7812e6861$var$buildBaseQu
 
 
 // Transform ['ont:predicate1/ont:predicate2'] to ['ont:predicate1', 'ont:predicate1/ont:predicate2']
-const $865f630cc944e818$var$extractNodes = (blankNodes)=>{
+const $865f630cc944e818$var$extractNodes = (blankNodes: any) => {
     const nodes = [];
     if (blankNodes) {
         for (const predicate of blankNodes)if (predicate.includes('/')) {
@@ -502,19 +527,20 @@ const $865f630cc944e818$var$extractNodes = (blankNodes)=>{
     }
     return nodes;
 };
-const $865f630cc944e818$var$generateSparqlVarName = (node)=>(0, $fj9kP$cryptojsmd5)(node);
-const $865f630cc944e818$var$getParentNode = (node)=>node.includes('/') && node.split('/')[0];
-const $865f630cc944e818$var$getPredicate = (node)=>node.includes('/') ? node.split('/')[1] : node;
-const $865f630cc944e818$var$buildUnionQuery = (queries)=>queries.map((q)=>{
+// @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+const $865f630cc944e818$var$generateSparqlVarName = (node: any) => (0, $fj9kP$cryptojsmd5)(node);
+const $865f630cc944e818$var$getParentNode = (node: any) => node.includes('/') && node.split('/')[0];
+const $865f630cc944e818$var$getPredicate = (node: any) => node.includes('/') ? node.split('/')[1] : node;
+const $865f630cc944e818$var$buildUnionQuery = (queries: any) => queries.map((q: any) => {
         let triples = q.query;
-        const firstTriple = queries.find((q2)=>q.parentNode === q2.node);
+        const firstTriple = queries.find((q2: any) => q.parentNode === q2.node);
         if (firstTriple !== undefined) triples = triples.concat(firstTriple.query[0]);
         return {
             type: 'bgp',
             triples: triples
         };
     });
-const $865f630cc944e818$var$buildBlankNodesQuery = (blankNodes, baseQuery, ontologies)=>{
+const $865f630cc944e818$var$buildBlankNodesQuery = (blankNodes: any, baseQuery: any, ontologies: any)=>{
     const queries = [];
     const nodes = $865f630cc944e818$var$extractNodes(blankNodes);
     if (nodes && ontologies && ontologies.length > 0) {
@@ -524,7 +550,9 @@ const $865f630cc944e818$var$buildBlankNodesQuery = (blankNodes, baseQuery, ontol
             const varName = $865f630cc944e818$var$generateSparqlVarName(node);
             const parentVarName = parentNode ? $865f630cc944e818$var$generateSparqlVarName(parentNode) : '1';
             const query = [
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 (0, $fj9kP$triple)((0, $fj9kP$variable)(`s${parentVarName}`), (0, $fj9kP$namedNode)((0, $4872a1c30c1fc60e$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $fj9kP$variable)(`s${varName}`)),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 (0, $fj9kP$triple)((0, $fj9kP$variable)(`s${varName}`), (0, $fj9kP$variable)(`p${varName}`), (0, $fj9kP$variable)(`o${varName}`))
             ];
             queries.push({
@@ -550,11 +578,12 @@ const $865f630cc944e818$var$buildBlankNodesQuery = (blankNodes, baseQuery, ontol
         where: ''
     };
 };
+// @ts-expect-error TS(2742): The inferred type of '$865f630cc944e818$export$2e2... Remove this comment to see the full error message
 var $865f630cc944e818$export$2e2bcd8739ae039 = $865f630cc944e818$var$buildBlankNodesQuery;
 
 
 
-const $efbe3fa6f1479c06$var$buildAutoDetectBlankNodesQuery = (depth, baseQuery)=>{
+const $efbe3fa6f1479c06$var$buildAutoDetectBlankNodesQuery = (depth: any, baseQuery: any)=>{
     const construct = [
         ...baseQuery.construct
     ];
@@ -565,6 +594,7 @@ const $efbe3fa6f1479c06$var$buildAutoDetectBlankNodesQuery = (depth, baseQuery)=
             baseQuery.where
         ]);
         for(let i = 1; i <= depth; i++){
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             construct.push((0, $fj9kP$triple)((0, $fj9kP$variable)(`o${i}`), (0, $fj9kP$variable)(`p${i + 1}`), (0, $fj9kP$variable)(`o${i + 1}`)));
             whereQueries.push([
                 ...whereQueries[whereQueries.length - 1],
@@ -574,10 +604,12 @@ const $efbe3fa6f1479c06$var$buildAutoDetectBlankNodesQuery = (depth, baseQuery)=
                         type: 'operation',
                         operator: 'isblank',
                         args: [
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                             (0, $fj9kP$variable)(`o${i}`)
                         ]
                     }
                 },
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 (0, $fj9kP$triple)((0, $fj9kP$variable)(`o${i}`), (0, $fj9kP$variable)(`p${i + 1}`), (0, $fj9kP$variable)(`o${i + 1}`))
             ]);
         }
@@ -598,6 +630,7 @@ var $efbe3fa6f1479c06$export$2e2bcd8739ae039 = $efbe3fa6f1479c06$var$buildAutoDe
 
 
 var $6cde9a8fbbde3ffb$require$SparqlGenerator = $fj9kP$Generator;
+// @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
 const { literal: $6cde9a8fbbde3ffb$var$literal, namedNode: $6cde9a8fbbde3ffb$var$namedNode, triple: $6cde9a8fbbde3ffb$var$triple, variable: $6cde9a8fbbde3ffb$var$variable } = (0, $fj9kP$rdfjsdatamodel);
 const $6cde9a8fbbde3ffb$var$generator = new $6cde9a8fbbde3ffb$require$SparqlGenerator({
 });
@@ -609,6 +642,7 @@ const $6cde9a8fbbde3ffb$var$reservedFilterKeys = [
     '_servers',
     '_predicates'
 ];
+// @ts-expect-error TS(7031): Binding element 'containersUris' implicitly has an... Remove this comment to see the full error message
 const $6cde9a8fbbde3ffb$var$buildSparqlQuery = ({ containersUris: containersUris, params: params, dataModel: dataModel, ontologies: ontologies })=>{
     const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes;
     const predicates = params.filter?._predicates || dataModel.list?.predicates;
@@ -617,6 +651,7 @@ const $6cde9a8fbbde3ffb$var$buildSparqlQuery = ({ containersUris: containersUris
         ...dataModel.list?.filter,
         ...params.filter
     };
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const baseQuery = (0, $47d734d7812e6861$export$2e2bcd8739ae039)(predicates, ontologies);
     const sparqlJsParams = {
         queryType: 'CONSTRUCT',
@@ -628,9 +663,9 @@ const $6cde9a8fbbde3ffb$var$buildSparqlQuery = ({ containersUris: containersUris
     const containerWhere = [
         {
             type: 'values',
-            values: containersUris.map((containerUri)=>({
-                    '?containerUri': $6cde9a8fbbde3ffb$var$namedNode(containerUri)
-                }))
+            values: containersUris.map((containerUri: any) => ({
+                '?containerUri': $6cde9a8fbbde3ffb$var$namedNode(containerUri)
+            }))
         },
         $6cde9a8fbbde3ffb$var$triple($6cde9a8fbbde3ffb$var$variable('containerUri'), $6cde9a8fbbde3ffb$var$namedNode('http://www.w3.org/ns/ldp#contains'), $6cde9a8fbbde3ffb$var$variable('s1')),
         {
@@ -704,6 +739,7 @@ const $6cde9a8fbbde3ffb$var$buildSparqlQuery = ({ containersUris: containersUris
                                             }
                                         ]
                                     },
+                                    // @ts-expect-error TS(2554): Expected 1-2 arguments, but got 3.
                                     $6cde9a8fbbde3ffb$var$literal(filter.q.toLowerCase(), '', $6cde9a8fbbde3ffb$var$namedNode('http://www.w3.org/2001/XMLSchema#string'))
                                 ]
                             }
@@ -717,22 +753,28 @@ const $6cde9a8fbbde3ffb$var$buildSparqlQuery = ({ containersUris: containersUris
         // SPARQL keyword a = filter based on the class of a resource (example => 'a': 'pair:OrganizationType')
         // Other filters are based on a value (example => 'petr:hasAudience': 'http://localhost:3000/audiences/tout-public')
         Object.entries(filter).forEach(([predicate, object])=>{
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             if (!$6cde9a8fbbde3ffb$var$reservedFilterKeys.includes(predicate)) resourceWhere.unshift($6cde9a8fbbde3ffb$var$triple($6cde9a8fbbde3ffb$var$variable('s1'), $6cde9a8fbbde3ffb$var$namedNode((0, $4872a1c30c1fc60e$export$2e2bcd8739ae039)(predicate, ontologies)), $6cde9a8fbbde3ffb$var$namedNode((0, $4872a1c30c1fc60e$export$2e2bcd8739ae039)(object, ontologies))));
         });
     }
     // Blank nodes
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const blankNodesQuery = blankNodes ? (0, $865f630cc944e818$export$2e2bcd8739ae039)(blankNodes, baseQuery, ontologies) : (0, $efbe3fa6f1479c06$export$2e2bcd8739ae039)(blankNodesDepth, baseQuery);
     if (blankNodesQuery && blankNodesQuery.construct) {
+        // @ts-expect-error TS(2769): No overload matches this call.
         resourceWhere = resourceWhere.concat(blankNodesQuery.where);
+        // @ts-expect-error TS(2769): No overload matches this call.
         sparqlJsParams.template = sparqlJsParams.template.concat(blankNodesQuery.construct);
     } else resourceWhere.push(baseQuery.where);
+    // @ts-expect-error TS(2345): Argument of type '(Quad | { type: string; values: ... Remove this comment to see the full error message
     sparqlJsParams.where.push(containerWhere, resourceWhere);
+    // @ts-expect-error TS(2345): Argument of type '{ queryType: string; template: Q... Remove this comment to see the full error message
     return $6cde9a8fbbde3ffb$var$generator.stringify(sparqlJsParams);
 };
 var $6cde9a8fbbde3ffb$export$2e2bcd8739ae039 = $6cde9a8fbbde3ffb$var$buildSparqlQuery;
 
 
-const $05a1b4063d50f1b7$var$compare = (a, b)=>{
+const $05a1b4063d50f1b7$var$compare = (a: any, b: any)=>{
     switch(typeof a){
         case 'string':
             return a.localeCompare(b);
@@ -742,17 +784,18 @@ const $05a1b4063d50f1b7$var$compare = (a, b)=>{
             return 0;
     }
 };
-const $05a1b4063d50f1b7$var$fetchSparqlEndpoints = async (containers, resourceId, params, config)=>{
+const $05a1b4063d50f1b7$var$fetchSparqlEndpoints = async (containers: any, resourceId: any, params: any, config: any)=>{
     const { dataServers: dataServers, resources: resources, httpClient: httpClient, jsonContext: jsonContext, ontologies: ontologies } = config;
     const dataModel = resources[resourceId];
-    const serversToQuery = containers.reduce((acc, cur)=>{
+    const serversToQuery = containers.reduce((acc: any, cur: any)=>{
         if (!acc.includes(cur.server)) acc.push(cur.server);
         return acc;
     }, []);
-    const sparqlQueryPromises = serversToQuery.map((serverKey)=>new Promise((resolve, reject)=>{
+    const sparqlQueryPromises = serversToQuery.map((serverKey: any) => new Promise((resolve, reject)=>{
             const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes;
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             const sparqlQuery = (0, $6cde9a8fbbde3ffb$export$2e2bcd8739ae039)({
-                containersUris: containers.filter((c)=>c.server === serverKey).map((c)=>c.uri),
+                containersUris: containers.filter((c: any) => c.server === serverKey).map((c: any) => c.uri),
                 params: params,
                 dataModel: dataModel,
                 ontologies: ontologies
@@ -760,6 +803,7 @@ const $05a1b4063d50f1b7$var$fetchSparqlEndpoints = async (containers, resourceId
             httpClient(dataServers[serverKey].sparqlEndpoint, {
                 method: 'POST',
                 body: sparqlQuery
+            // @ts-expect-error TS(7031): Binding element 'json' implicitly has an 'any' typ... Remove this comment to see the full error message
             }).then(({ json: json })=>{
                 // If we declared the blank nodes to dereference, embed only those blank nodes
                 // This solve problems which can occur when same-type resources are embedded in other resources
@@ -768,16 +812,18 @@ const $05a1b4063d50f1b7$var$fetchSparqlEndpoints = async (containers, resourceId
                     '@context': jsonContext,
                     '@type': dataModel.types,
                     '@embed': '@never',
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                     ...(0, $3007d5479dd82d51$export$2e2bcd8739ae039)(blankNodes)
                 } : {
                     '@context': jsonContext,
                     '@type': dataModel.types
                 };
                 // omitGraph option force results to be in a @graph, even if we have a single result
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 return (0, $fj9kP$jsonld).frame(json, frame, {
                     omitGraph: false
                 });
-            }).then((compactJson)=>{
+            }).then((compactJson: any) => {
                 if (compactJson['@id']) {
                     const { '@context': context, ...rest } = compactJson;
                     compactJson = {
@@ -787,11 +833,11 @@ const $05a1b4063d50f1b7$var$fetchSparqlEndpoints = async (containers, resourceId
                         ]
                     };
                 }
-                resolve(compactJson['@graph']?.map((resource)=>({
-                        '@context': compactJson['@context'],
-                        ...resource
-                    })) || []);
-            }).catch((e)=>reject(e));
+                resolve(compactJson['@graph']?.map((resource: any) => ({
+                    '@context': compactJson['@context'],
+                    ...resource
+                })) || []);
+            }).catch((e: any) => reject(e));
         }));
     // Run simultaneous SPARQL queries
     let results = await Promise.all(sparqlQueryPromises);
@@ -827,11 +873,12 @@ var $05a1b4063d50f1b7$export$2e2bcd8739ae039 = $05a1b4063d50f1b7$var$fetchSparql
 
 /**
  * Return all containers matching the given shape tree
- */ const $3bcb3ff5a72a9185$var$findContainersWithShapeTree = (shapeTreeUri, serverKeys, dataServers)=>{
-    const matchingContainers = [];
+ */ const $3bcb3ff5a72a9185$var$findContainersWithShapeTree = (shapeTreeUri: any, serverKeys: any, dataServers: any)=>{
+    const matchingContainers: any = [];
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const parsedServerKeys = (0, $99cc2e4a2a3c100b$export$2e2bcd8739ae039)(serverKeys || '@all', dataServers);
     Object.keys(dataServers).forEach((dataServerKey)=>{
-        if (parsedServerKeys.includes(dataServerKey)) dataServers[dataServerKey].containers?.forEach((container)=>{
+        if (parsedServerKeys.includes(dataServerKey)) dataServers[dataServerKey].containers?.forEach((container: any) => {
             if (container.shapeTreeUri === shapeTreeUri) matchingContainers.push(container);
         });
     });
@@ -841,7 +888,7 @@ var $3bcb3ff5a72a9185$export$2e2bcd8739ae039 = $3bcb3ff5a72a9185$var$findContain
 
 
 
-const $1caf729dc3ce856d$var$getListMethod = (config)=>async (resourceId, params)=>{
+const $1caf729dc3ce856d$var$getListMethod = (config: any) => async (resourceId: any, params: any)=>{
         const { dataServers: dataServers, resources: resources } = config;
         const dataModel = resources[resourceId];
         if (!dataModel) throw new Error(`Resource ${resourceId} is not mapped in resources file`);
@@ -849,20 +896,26 @@ const $1caf729dc3ce856d$var$getListMethod = (config)=>async (resourceId, params)
         if (!params.filter?._servers && dataModel.list?.containers) {
             if (!Array.isArray(dataModel.list?.containers)) throw new Error(`The list.containers property of ${resourceId} dataModel must be of type array`);
             // If containers are set explicitly, use them
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             containers = (0, $7c772a9c0c25a69d$export$2e2bcd8739ae039)(dataModel.list.containers, dataServers);
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         } else if (dataModel.shapeTreeUri) containers = (0, $3bcb3ff5a72a9185$export$2e2bcd8739ae039)(dataModel.shapeTreeUri, params?.filter?._servers || dataModel.list?.servers, dataServers);
         else // Otherwise find the container URIs on the given servers (either in the filter or the data model)
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         containers = (0, $15b841e67a1ba752$export$2e2bcd8739ae039)((0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(dataModel.types), params?.filter?._servers || dataModel.list?.servers, dataServers);
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         if (dataModel.list?.fetchContainer) return (0, $aba124ea15ea8bc6$export$2e2bcd8739ae039)(containers, params, config);
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         else return (0, $05a1b4063d50f1b7$export$2e2bcd8739ae039)(containers, resourceId, params, config);
     };
 var $1caf729dc3ce856d$export$2e2bcd8739ae039 = $1caf729dc3ce856d$var$getListMethod;
 
 
 
-const $f1e05270f9a21255$var$getManyMethod = (config)=>async (resourceId, params)=>{
+const $f1e05270f9a21255$var$getManyMethod = (config: any) => async (resourceId: any, params: any)=>{
         const { returnFailedResources: returnFailedResources } = config;
-        let returnData = await Promise.all(params.ids.map((id)=>(0, $ed447224dd38ce82$export$2e2bcd8739ae039)(config)(resourceId, {
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+        let returnData = await Promise.all(params.ids.map((id: any) => (0, $ed447224dd38ce82$export$2e2bcd8739ae039)(config)(resourceId, {
                 id: typeof id === 'object' ? id['@id'] : id
             }).then(({ data: data })=>data).catch(()=>{
                 // Catch if one resource fails to load
@@ -884,12 +937,13 @@ var $f1e05270f9a21255$export$2e2bcd8739ae039 = $f1e05270f9a21255$var$getManyMeth
 
 
 
-const $b5979a9678f57756$var$getManyReferenceMethod = (config)=>async (resourceId, params)=>{
+const $b5979a9678f57756$var$getManyReferenceMethod = (config: any) => async (resourceId: any, params: any)=>{
         params.filter = {
             ...params.filter,
             [params.target]: params.id
         };
         delete params.target;
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         return await (0, $1caf729dc3ce856d$export$2e2bcd8739ae039)(config)(resourceId, params);
     };
 var $b5979a9678f57756$export$2e2bcd8739ae039 = $b5979a9678f57756$var$getManyReferenceMethod;
@@ -897,8 +951,9 @@ var $b5979a9678f57756$export$2e2bcd8739ae039 = $b5979a9678f57756$var$getManyRefe
 
 
 
+// @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
 const $cdfdce6efa87baab$var$generator = new (0, $fj9kP$Generator)();
-const $cdfdce6efa87baab$var$patchMethod = (config)=>async (resourceId, params)=>{
+const $cdfdce6efa87baab$var$patchMethod = (config: any) => async (resourceId: any, params: any)=>{
         const { httpClient: httpClient } = config;
         const sparqlUpdate = {
             type: 'update',
@@ -906,19 +961,25 @@ const $cdfdce6efa87baab$var$patchMethod = (config)=>async (resourceId, params)=>
             updates: []
         };
         if (params.triplesToAdd) sparqlUpdate.updates.push({
+            // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'never'.
             updateType: 'insert',
             insert: [
                 {
+                    // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'never'.
                     type: 'bgp',
+                    // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
                     triples: params.triplesToAdd
                 }
             ]
         });
         if (params.triplesToRemove) sparqlUpdate.updates.push({
+            // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'never'.
             updateType: 'delete',
             delete: [
                 {
+                    // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'never'.
                     type: 'bgp',
+                    // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
                     triples: params.triplesToRemove
                 }
             ]
@@ -928,6 +989,7 @@ const $cdfdce6efa87baab$var$patchMethod = (config)=>async (resourceId, params)=>
             headers: new Headers({
                 'Content-Type': 'application/sparql-update'
             }),
+            // @ts-expect-error TS(2345): Argument of type '{ type: string; prefixes: {}; up... Remove this comment to see the full error message
             body: $cdfdce6efa87baab$var$generator.stringify(sparqlUpdate)
         });
     };
@@ -936,7 +998,7 @@ var $cdfdce6efa87baab$export$2e2bcd8739ae039 = $cdfdce6efa87baab$var$patchMethod
 
 
 // Return the first server matching with the baseUrl
-const $47e21ee81eed09a6$var$getServerKeyFromUri = (uri, dataServers)=>{
+const $47e21ee81eed09a6$var$getServerKeyFromUri = (uri: any, dataServers: any)=>{
     if (!uri) throw Error(`No URI provided to getServerKeyFromUri`);
     return dataServers && Object.keys(dataServers).find((key)=>{
         if (dataServers[key].pod) // The baseUrl ends with /data so remove this part to match with the webId and webId-related URLs (/inbox, /outbox...)
@@ -947,10 +1009,12 @@ const $47e21ee81eed09a6$var$getServerKeyFromUri = (uri, dataServers)=>{
 var $47e21ee81eed09a6$export$2e2bcd8739ae039 = $47e21ee81eed09a6$var$getServerKeyFromUri;
 
 
-const $c5031381f4dfc62d$var$updateMethod = (config)=>async (resourceId, params)=>{
+const $c5031381f4dfc62d$var$updateMethod = (config: any) => async (resourceId: any, params: any)=>{
         const { httpClient: httpClient, jsonContext: jsonContext, dataServers: dataServers } = config;
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         const serverKey = (0, $47e21ee81eed09a6$export$2e2bcd8739ae039)(params.id, dataServers);
         // Upload files, if there are any
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         const { updatedRecord: updatedRecord } = await (0, $b17c43e3301545ca$export$2e2bcd8739ae039).upload(params.data, config, serverKey);
         params.data = updatedRecord;
         await httpClient(`${params.id}`, {
@@ -973,36 +1037,49 @@ var $c5031381f4dfc62d$export$2e2bcd8739ae039 = $c5031381f4dfc62d$var$updateMetho
 /*
  * HTTP client used by all calls in data provider and auth provider
  * Do proxy calls if a proxy endpoint is available and the server is different from the auth server
- */ const $22b4895a4ca7d626$var$httpClient = (dataServers)=>(url, options = {})=>{
+ */ const $22b4895a4ca7d626$var$httpClient = (dataServers: any) => (url: any, options = {})=>{
         if (!url) throw new Error(`No URL provided on httpClient call`);
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         const authServerKey = (0, $8326b88c1a913ca9$export$2e2bcd8739ae039)('authServer', dataServers);
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         const serverKey = (0, $47e21ee81eed09a6$export$2e2bcd8739ae039)(url, dataServers);
         const useProxy = serverKey !== authServerKey && dataServers[authServerKey]?.proxyUrl && dataServers[serverKey]?.noProxy !== true;
+        // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
         if (!options.headers) options.headers = new Headers();
+        // @ts-expect-error TS(2339): Property 'method' does not exist on type '{}'.
         switch(options.method){
             case 'POST':
             case 'PATCH':
             case 'PUT':
+                // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
                 if (!options.headers.has('Accept')) options.headers.set('Accept', 'application/ld+json');
+                // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
                 if (!options.headers.has('Content-Type')) options.headers.set('Content-Type', 'application/ld+json');
                 break;
             case 'DELETE':
                 break;
             case 'GET':
             default:
+                // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
                 if (!options.headers.has('Accept')) options.headers.set('Accept', 'application/ld+json');
                 break;
         }
         if (useProxy) {
             const formData = new FormData();
             formData.append('id', url);
+            // @ts-expect-error TS(2339): Property 'method' does not exist on type '{}'.
             formData.append('method', options.method || 'GET');
+            // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
             formData.append('headers', JSON.stringify(Object.fromEntries(options.headers.entries())));
+            // @ts-expect-error TS(2339): Property 'body' does not exist on type '{}'.
             if (options.body) {
+                // @ts-expect-error TS(2339): Property 'body' does not exist on type '{}'.
                 if (options.body instanceof File) formData.append('body', options.body, options.body.name);
+                // @ts-expect-error TS(2339): Property 'body' does not exist on type '{}'.
                 else formData.append('body', options.body);
             }
             // Post to proxy endpoint with multipart/form-data format
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             return (0, $fj9kP$fetchUtils).fetchJson(dataServers[authServerKey].proxyUrl, {
                 method: 'POST',
                 headers: new Headers({
@@ -1014,8 +1091,10 @@ var $c5031381f4dfc62d$export$2e2bcd8739ae039 = $c5031381f4dfc62d$var$updateMetho
         // Add token if the server is the same as the auth server
         if (serverKey === authServerKey) {
             const token = localStorage.getItem('token');
+            // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
             if (token) options.headers.set('Authorization', `Bearer ${token}`);
         }
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         return (0, $fj9kP$fetchUtils).fetchJson(url, options);
     };
 var $22b4895a4ca7d626$export$2e2bcd8739ae039 = $22b4895a4ca7d626$var$httpClient;
@@ -1026,14 +1105,16 @@ var $22b4895a4ca7d626$export$2e2bcd8739ae039 = $22b4895a4ca7d626$var$httpClient;
 
 
 
-const $36aa010ec46eaf45$var$isURI = (value)=>(typeof value === 'string' || value instanceof String) && (value.startsWith('http') || value.startsWith('urn:'));
-const $36aa010ec46eaf45$var$expandTypes = async (types, context)=>{
+const $36aa010ec46eaf45$var$isURI = (value: any) => (typeof value === 'string' || value instanceof String) && (value.startsWith('http') || value.startsWith('urn:'));
+const $36aa010ec46eaf45$var$expandTypes = async (types: any, context: any)=>{
     // If types are already full URIs, return them immediately
-    if (types.every((type)=>$36aa010ec46eaf45$var$isURI(type))) return types;
+    if (types.every((type: any) => $36aa010ec46eaf45$var$isURI(type))) return types;
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const result = await (0, $fj9kP$jsonld).expand({
         '@context': context,
         '@type': types
     });
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const expandedTypes = (0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(result[0]['@type']);
     if (!expandedTypes.every((type)=>$36aa010ec46eaf45$var$isURI(type))) throw new Error(`
       Could not expand all types (${expandedTypes.join(', ')}).
@@ -1046,12 +1127,14 @@ var $36aa010ec46eaf45$export$2e2bcd8739ae039 = $36aa010ec46eaf45$var$expandTypes
 
 
 
-const $ab7d38fd091ff1b6$var$getTypesFromShapeTree = async (shapeTreeUri)=>{
+const $ab7d38fd091ff1b6$var$getTypesFromShapeTree = async (shapeTreeUri: any) => {
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     let { json: shapeTree } = await (0, $fj9kP$fetchUtils).fetchJson(shapeTreeUri, {
         headers: new Headers({
             Accept: 'application/ld+json'
         })
     });
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     shapeTree = await (0, $fj9kP$jsonld).compact(shapeTree, {
         st: 'http://www.w3.org/ns/shapetrees#',
         skos: 'http://www.w3.org/2004/02/skos/core#',
@@ -1073,12 +1156,13 @@ const $ab7d38fd091ff1b6$var$getTypesFromShapeTree = async (shapeTreeUri)=>{
         }
     });
     if (shapeTree.shape) {
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         const { json: shape } = await (0, $fj9kP$fetchUtils).fetchJson(shapeTree.shape, {
             headers: new Headers({
                 Accept: 'application/ld+json'
             })
         });
-        return shape?.[0]?.['http://www.w3.org/ns/shacl#targetClass']?.map((node)=>node?.['@id']) || [];
+        return shape?.[0]?.['http://www.w3.org/ns/shacl#targetClass']?.map((node: any) => node?.['@id']) || [];
     } else return [];
 };
 var $ab7d38fd091ff1b6$export$2e2bcd8739ae039 = $ab7d38fd091ff1b6$var$getTypesFromShapeTree;
@@ -1087,22 +1171,26 @@ var $ab7d38fd091ff1b6$export$2e2bcd8739ae039 = $ab7d38fd091ff1b6$var$getTypesFro
 /**
  * For data server containers, expands types and adds `uri` and `server` properties.
  * For resources, expands types (if applicable from shape tree information).
- */ const $33bf2a661b5c0cbd$var$normalizeConfig = async (config)=>{
+ */ const $33bf2a661b5c0cbd$var$normalizeConfig = async (config: any) => {
     const newConfig = {
         ...config
     };
     // Add server and uri key to servers' containers
-    for (const serverKey of Object.keys(newConfig.dataServers))if (newConfig.dataServers[serverKey].containers) newConfig.dataServers[serverKey].containers = await Promise.all(newConfig.dataServers[serverKey].containers?.map(async (container)=>{
+    for (const serverKey of Object.keys(newConfig.dataServers))if (newConfig.dataServers[serverKey].containers) newConfig.dataServers[serverKey].containers = await Promise.all(newConfig.dataServers[serverKey].containers?.map(async (container: any) => {
         return {
             ...container,
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             types: container.types && (await (0, $36aa010ec46eaf45$export$2e2bcd8739ae039)(container.types, config.jsonContext)),
             server: serverKey,
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             uri: (0, $fj9kP$urljoin)(config.dataServers[serverKey].baseUrl, container.path)
         };
     }));
     // Expand types in data models
     for (const resourceId of Object.keys(newConfig.resources)){
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         if (!newConfig.resources[resourceId].types && newConfig.resources[resourceId].shapeTreeUri) newConfig.resources[resourceId].types = await (0, $ab7d38fd091ff1b6$export$2e2bcd8739ae039)(newConfig.resources[resourceId].shapeTreeUri);
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         newConfig.resources[resourceId].types = await (0, $36aa010ec46eaf45$export$2e2bcd8739ae039)((0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(newConfig.resources[resourceId].types), config.jsonContext);
     }
     return newConfig;
@@ -1112,13 +1200,15 @@ var $33bf2a661b5c0cbd$export$2e2bcd8739ae039 = $33bf2a661b5c0cbd$var$normalizeCo
 
 
 
-const $143de1c1f21344e7$var$isURL = (value)=>(typeof value === 'string' || value instanceof String) && value.startsWith('http');
-const $143de1c1f21344e7$var$getOntologiesFromContextJson = (contextJson)=>{
+const $143de1c1f21344e7$var$isURL = (value: any) => (typeof value === 'string' || value instanceof String) && value.startsWith('http');
+const $143de1c1f21344e7$var$getOntologiesFromContextJson = (contextJson: any) => {
     const ontologies = {};
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     for (const [key, value] of Object.entries(contextJson))if ($143de1c1f21344e7$var$isURL(value)) ontologies[key] = value;
     return ontologies;
 };
-const $143de1c1f21344e7$var$getOntologiesFromContextUrl = async (contextUrl)=>{
+const $143de1c1f21344e7$var$getOntologiesFromContextUrl = async (contextUrl: any) => {
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const { json: json } = await (0, $fj9kP$fetchUtils).fetchJson(contextUrl, {
         headers: new Headers({
             Accept: 'application/ld+json'
@@ -1126,7 +1216,7 @@ const $143de1c1f21344e7$var$getOntologiesFromContextUrl = async (contextUrl)=>{
     });
     return $143de1c1f21344e7$var$getOntologiesFromContextJson(json['@context']);
 };
-const $143de1c1f21344e7$var$getOntologiesFromContext = async (context)=>{
+const $143de1c1f21344e7$var$getOntologiesFromContext = async (context: any) => {
     let ontologies = {};
     if (Array.isArray(context)) for (const contextUrl of context)ontologies = {
         ...ontologies,
@@ -1139,7 +1229,7 @@ const $143de1c1f21344e7$var$getOntologiesFromContext = async (context)=>{
 var $143de1c1f21344e7$export$2e2bcd8739ae039 = $143de1c1f21344e7$var$getOntologiesFromContext;
 
 
-/** @type {(originalConfig: Configuration) => SemanticDataProvider} */ const $243bf28fbb1b868f$var$dataProvider = (originalConfig)=>{
+/** @type {(originalConfig: Configuration) => SemanticDataProvider} */ const $243bf28fbb1b868f$var$dataProvider = (originalConfig: any) => {
     // Keep in memory for refresh
     let config = {
         ...originalConfig
@@ -1147,53 +1237,77 @@ var $143de1c1f21344e7$export$2e2bcd8739ae039 = $143de1c1f21344e7$var$getOntologi
     const prepareConfig = async ()=>{
         config.dataServers ??= {};
         // Configure httpClient with initial data servers, so that plugins may use it
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         config.httpClient = (0, $22b4895a4ca7d626$export$2e2bcd8739ae039)(config.dataServers);
         for (const plugin of config.plugins)if (plugin.transformConfig) config = await plugin.transformConfig(config);
         // Configure again httpClient with possibly updated data servers
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         config.httpClient = (0, $22b4895a4ca7d626$export$2e2bcd8739ae039)(config.dataServers);
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         const dataset = (0, $fj9kP$createConnectedLdoDataset)([
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             (0, $fj9kP$solidConnectedPlugin)
         ]);
         dataset.setContext('solid', {
+            // @ts-expect-error TS(2552): Cannot find name 'fetchFn'. Did you mean 'fetch'?
             fetch: fetchFn
         });
         // Attach httpClient to global document -- useful for debugging.
+        // @ts-expect-error TS(2339): Property 'httpClient' does not exist on type 'Docu... Remove this comment to see the full error message
         document.httpClient = config.httpClient;
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         if (!config.ontologies && config.jsonContext) config.ontologies = await (0, $143de1c1f21344e7$export$2e2bcd8739ae039)(config.jsonContext);
         else if (!config.jsonContext && config.ontologies) config.jsonContext = config.ontologies;
         else if (!config.jsonContext && !config.ontologies) throw new Error(`Either the JSON context or the ontologies must be set`);
         if (!config.returnFailedResources) config.returnFailedResources = false;
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         config = await (0, $33bf2a661b5c0cbd$export$2e2bcd8739ae039)(config);
         console.log('Config after plugins', config);
     };
     // Immediately call the preload plugins
     const prepareConfigPromise = prepareConfig();
-    const waitForPrepareConfig = (method)=>async (...arg)=>{
+    const waitForPrepareConfig = (method: any) => async (...arg: any[])=>{
             await prepareConfigPromise; // Return immediately if plugins have already been loaded
             return method(config)(...arg);
         };
     return {
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         getList: waitForPrepareConfig((0, $1caf729dc3ce856d$export$2e2bcd8739ae039)),
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         getMany: waitForPrepareConfig((0, $f1e05270f9a21255$export$2e2bcd8739ae039)),
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         getManyReference: waitForPrepareConfig((0, $b5979a9678f57756$export$2e2bcd8739ae039)),
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         getOne: waitForPrepareConfig((0, $ed447224dd38ce82$export$2e2bcd8739ae039)),
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         create: waitForPrepareConfig((0, $5a7a2f7583392866$export$2e2bcd8739ae039)),
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         update: waitForPrepareConfig((0, $c5031381f4dfc62d$export$2e2bcd8739ae039)),
         updateMany: ()=>{
             throw new Error('updateMany is not implemented yet');
         },
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         delete: waitForPrepareConfig((0, $9510970b8e7eb9e2$export$2e2bcd8739ae039)),
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         deleteMany: waitForPrepareConfig((0, $298dd1ae21173ea0$export$2e2bcd8739ae039)),
         // Custom methods
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         patch: waitForPrepareConfig((0, $cdfdce6efa87baab$export$2e2bcd8739ae039)),
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         getDataModels: waitForPrepareConfig((0, $54a3fa40eed06111$export$2e2bcd8739ae039)),
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         getDataServers: waitForPrepareConfig((0, $7dd5bf9323d2d9c1$export$2e2bcd8739ae039)),
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         getLocalDataServers: (0, $7dd5bf9323d2d9c1$export$2e2bcd8739ae039)(originalConfig),
-        fetch: waitForPrepareConfig((c)=>(0, $22b4895a4ca7d626$export$2e2bcd8739ae039)(c.dataServers)),
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+        fetch: waitForPrepareConfig((c: any) => (0, $22b4895a4ca7d626$export$2e2bcd8739ae039)(c.dataServers)),
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         ldoDataset: (0, $fj9kP$createLdoDataset)(),
-        uploadFile: waitForPrepareConfig((c)=>(rawFile)=>(0, $b17c43e3301545ca$export$a5575dbeeffdad98)(rawFile, c)),
-        expandTypes: waitForPrepareConfig((c)=>(types)=>(0, $36aa010ec46eaf45$export$2e2bcd8739ae039)(types, c.jsonContext)),
-        getConfig: waitForPrepareConfig((c)=>()=>c),
+        // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
+        uploadFile: waitForPrepareConfig((c: any) => (rawFile: any) => (0, $b17c43e3301545ca$export$a5575dbeeffdad98)(rawFile, c)),
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+        expandTypes: waitForPrepareConfig((c: any) => (types: any) => (0, $36aa010ec46eaf45$export$2e2bcd8739ae039)(types, c.jsonContext)),
+        getConfig: waitForPrepareConfig((c: any) => ()=>c),
         refreshConfig: async ()=>{
             config = {
                 ...originalConfig
@@ -1209,7 +1323,7 @@ var $243bf28fbb1b868f$export$2e2bcd8739ae039 = $243bf28fbb1b868f$var$dataProvide
 
 
 
-const $861da9be2c0e62eb$var$getPrefixFromUri = (uri, ontologies)=>{
+const $861da9be2c0e62eb$var$getPrefixFromUri = (uri: any, ontologies: any)=>{
     for (const [prefix, namespace] of Object.entries(ontologies)){
         if (uri.startsWith(namespace)) return uri.replace(namespace, `${prefix}:`);
     }
@@ -1223,11 +1337,13 @@ var $861da9be2c0e62eb$export$2e2bcd8739ae039 = $861da9be2c0e62eb$var$getPrefixFr
 /**
  * Adds `dataServers.user` properties to configuration (baseUrl, sparqlEndpoint, proxyUrl, ...).
  */ const $cdd3c71a628eeefe$var$configureUserStorage = ()=>({
-        transformConfig: async (config)=>{
+        transformConfig: async (config: any) => {
             const token = localStorage.getItem('token');
             // If the user is logged in
             if (token) {
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 const payload = (0, $fj9kP$jwtdecode)(token);
+                // @ts-expect-error TS(2571): Object is of type 'unknown'.
                 const webId = payload.webId || payload.webid; // Currently we must deal with both formats
                 const { json: user } = await config.httpClient(webId);
                 if (user) {
@@ -1238,13 +1354,16 @@ var $861da9be2c0e62eb$export$2e2bcd8739ae039 = $861da9be2c0e62eb$var$getPrefixFr
                         pod: true,
                         default: true,
                         authServer: true,
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                         baseUrl: user['pim:storage'] || (0, $fj9kP$urljoin)(webId, 'data'),
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                         sparqlEndpoint: user.endpoints?.['void:sparqlEndpoint'] || (0, $fj9kP$urljoin)(webId, 'sparql'),
                         proxyUrl: user.endpoints?.proxyUrl,
                         containers: []
                     };
                     if (!newConfig.jsonContext) newConfig.jsonContext = [
                         'https://www.w3.org/ns/activitystreams',
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                         (0, $fj9kP$urljoin)(new URL(webId).origin, '/.well-known/context.jsonld')
                     ];
                     return newConfig;
@@ -1262,7 +1381,7 @@ var $cdd3c71a628eeefe$export$2e2bcd8739ae039 = $cdd3c71a628eeefe$var$configureUs
 
 
 
-const $d7a7484a035f15cd$var$getContainerFromDataRegistration = async (dataRegistrationUri, config)=>{
+const $d7a7484a035f15cd$var$getContainerFromDataRegistration = async (dataRegistrationUri: any, config: any)=>{
     const { json: dataRegistration } = await config.httpClient(dataRegistrationUri, {
         headers: new Headers({
             Accept: 'application/ld+json',
@@ -1270,11 +1389,13 @@ const $d7a7484a035f15cd$var$getContainerFromDataRegistration = async (dataRegist
         })
     });
     const shapeTreeUri = dataRegistration['interop:registeredShapeTree'];
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     let { json: shapeTree } = await (0, $fj9kP$fetchUtils).fetchJson(shapeTreeUri, {
         headers: new Headers({
             Accept: 'application/ld+json'
         })
     });
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     shapeTree = await (0, $fj9kP$jsonld).compact(shapeTree, {
         st: 'http://www.w3.org/ns/shapetrees#',
         skos: 'http://www.w3.org/2004/02/skos/core#',
@@ -1305,12 +1426,14 @@ const $d7a7484a035f15cd$var$getContainerFromDataRegistration = async (dataRegist
         binaryResources: shapeTree.expectsType === 'st:NonRDFResource'
     };
     if (shapeTree.shape) {
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         const { json: shape } = await (0, $fj9kP$fetchUtils).fetchJson(shapeTree.shape, {
             headers: new Headers({
                 Accept: 'application/ld+json'
             })
         });
-        container.types = shape?.[0]?.['http://www.w3.org/ns/shacl#targetClass']?.map((node)=>node?.['@id']);
+        // @ts-expect-error TS(2339): Property 'types' does not exist on type '{ path: a... Remove this comment to see the full error message
+        container.types = shape?.[0]?.['http://www.w3.org/ns/shacl#targetClass']?.map((node: any) => node?.['@id']);
     }
     return container;
 };
@@ -1322,11 +1445,13 @@ var $d7a7484a035f15cd$export$2e2bcd8739ae039 = $d7a7484a035f15cd$var$getContaine
  * If not, it redirects to the endpoint provided by the user's authorization agent
  * See https://solid.github.io/data-interoperability-panel/specification/#authorization-agent
  */ const $2c257b4237cb14ca$var$fetchAppRegistration = ()=>({
-        transformConfig: async (config)=>{
+        transformConfig: async (config: any) => {
             const token = localStorage.getItem('token');
             // If the user is logged in
             if (token) {
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 const payload = (0, $fj9kP$jwtdecode)(token);
+                // @ts-expect-error TS(2571): Object is of type 'unknown'.
                 const webId = payload.webId || payload.webid; // Currently we must deal with both formats
                 const { json: user } = await config.httpClient(webId);
                 const authAgentUri = user['interop:hasAuthorizationAgent'];
@@ -1335,6 +1460,7 @@ var $d7a7484a035f15cd$export$2e2bcd8739ae039 = $d7a7484a035f15cd$var$getContaine
                     // See https://solid.github.io/data-interoperability-panel/specification/#agent-registration-discovery
                     const { headers: headers } = await config.httpClient(authAgentUri);
                     if (headers.has('Link')) {
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                         const linkHeader = (0, $fj9kP$httplinkheader).parse(headers.get('Link'));
                         const registeredAgentLinkHeader = linkHeader.rel('http://www.w3.org/ns/solid/interop#registeredAgent');
                         if (registeredAgentLinkHeader.length > 0) {
@@ -1344,10 +1470,13 @@ var $d7a7484a035f15cd$export$2e2bcd8739ae039 = $d7a7484a035f15cd$var$getContaine
                                 ...config
                             };
                             // Load data grants concurrently to improve performances
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                             const results = await Promise.all((0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(appRegistration['interop:hasAccessGrant']).map(async (accessGrantUri)=>{
                                 const { json: accessGrant } = await config.httpClient(accessGrantUri);
+                                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                                 return Promise.all((0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(accessGrant['interop:hasDataGrant']).map(async (dataGrantUri)=>{
                                     const { json: dataGrant } = await config.httpClient(dataGrantUri);
+                                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                                     return (0, $d7a7484a035f15cd$export$2e2bcd8739ae039)(dataGrant['interop:hasDataRegistration'], config);
                                 }));
                             }));
@@ -1372,18 +1501,21 @@ var $2c257b4237cb14ca$export$2e2bcd8739ae039 = $2c257b4237cb14ca$var$fetchAppReg
  *
  * @returns {Configuration} The configuration with the data registrations added to `dataServers.user.containers`
  */ const $91255e144bb55afc$var$fetchDataRegistry = ()=>({
-        transformConfig: async (config)=>{
+        transformConfig: async (config: any) => {
             const token = localStorage.getItem('token');
             // If the user is logged in
             if (token) {
                 if (!config.dataServers.user) throw new Error(`You must configure the user storage first with the configureUserStorage plugin`);
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 const payload = (0, $fj9kP$jwtdecode)(token);
+                // @ts-expect-error TS(2571): Object is of type 'unknown'.
                 const webId = payload.webId || payload.webid; // Currently we must deal with both formats
                 const { json: user } = await config.httpClient(webId);
                 const { json: registrySet } = await config.httpClient(user['interop:hasRegistrySet']);
                 const { json: dataRegistry } = await config.httpClient(registrySet['interop:hasDataRegistry']);
                 if (dataRegistry['interop:hasDataRegistration']) {
-                    const results = await Promise.all(dataRegistry['interop:hasDataRegistration'].map((dataRegistrationUri)=>{
+                    const results = await Promise.all(dataRegistry['interop:hasDataRegistration'].map((dataRegistrationUri: any) => {
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                         return (0, $d7a7484a035f15cd$export$2e2bcd8739ae039)(dataRegistrationUri, config);
                     }));
                     const newConfig = {
@@ -1411,12 +1543,14 @@ var $91255e144bb55afc$export$2e2bcd8739ae039 = $91255e144bb55afc$var$fetchDataRe
  *
  * @returns {Configuration} The configuration with the data registrations added to `dataServers.user.containers`
  */ const $2d5f75df63129ebc$var$fetchTypeIndexes = ()=>({
-        transformConfig: async (config)=>{
+        transformConfig: async (config: any) => {
             const token = localStorage.getItem('token');
             // If the user is logged in
             if (token) {
                 if (!config.dataServers.user) throw new Error(`You must configure the user storage first with the configureUserStorage plugin`);
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 const payload = (0, $fj9kP$jwtdecode)(token);
+                // @ts-expect-error TS(2571): Object is of type 'unknown'.
                 const webId = payload.webId || payload.webid; // Currently we must deal with both formats
                 const { json: user } = await config.httpClient(webId);
                 const typeRegistrations = {
@@ -1425,12 +1559,14 @@ var $91255e144bb55afc$export$2e2bcd8739ae039 = $91255e144bb55afc$var$fetchDataRe
                 };
                 if (user['solid:publicTypeIndex']) {
                     const { json: publicTypeIndex } = await config.httpClient(user['solid:publicTypeIndex']);
+                    // @ts-expect-error TS(2322): Type 'any[]' is not assignable to type 'never[]'.
                     if (publicTypeIndex) typeRegistrations.public = (0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(publicTypeIndex['solid:hasTypeRegistration']);
                 }
                 if (user['pim:preferencesFile']) {
                     const { json: preferencesFile } = await config.httpClient(user['pim:preferencesFile']);
                     if (preferencesFile?.['solid:privateTypeIndex']) {
                         const { json: privateTypeIndex } = await config.httpClient(preferencesFile['solid:privateTypeIndex']);
+                        // @ts-expect-error TS(2322): Type 'any[]' is not assignable to type 'never[]'.
                         typeRegistrations.private = (0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(privateTypeIndex['solid:hasTypeRegistration']);
                     }
                 }
@@ -1438,19 +1574,23 @@ var $91255e144bb55afc$export$2e2bcd8739ae039 = $91255e144bb55afc$var$fetchDataRe
                     const newConfig = {
                         ...config
                     };
+                    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                     for (const mode of Object.keys(typeRegistrations))for (const typeRegistration of typeRegistrations[mode]){
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                         const types = (0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(typeRegistration['solid:forClass']);
                         const container = {
                             label: {
+                                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                                 en: (0, $fj9kP$capitalCase)(types[0].split(':')[1], {
                                     separateNumbers: true
                                 })
                             },
                             path: typeRegistration['solid:instanceContainer'].replace(newConfig.dataServers.user.baseUrl, ''),
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                             types: await (0, $36aa010ec46eaf45$export$2e2bcd8739ae039)(types, user['@context']),
                             private: mode === 'private'
                         };
-                        const containerIndex = newConfig.dataServers.user.containers.findIndex((c)=>c.path === container.path);
+                        const containerIndex = newConfig.dataServers.user.containers.findIndex((c: any) => c.path === container.path);
                         if (containerIndex !== -1) // If a container with this URI already exist, add type registration information if they are not set
                         newConfig.dataServers.user.containers[containerIndex] = {
                             ...container,
@@ -1470,14 +1610,15 @@ var $2d5f75df63129ebc$export$2e2bcd8739ae039 = $2d5f75df63129ebc$var$fetchTypeIn
 
 
 const $a87fd63d8fca0380$var$fetchVoidEndpoints = ()=>({
-        transformConfig: async (config)=>{
+        transformConfig: async (config: any) => {
             let results = [];
             try {
-                results = await Promise.all(Object.entries(config.dataServers).filter(([_, server])=>server.pod !== true && server.void !== false).map(async ([key, server])=>config.httpClient(new URL('/.well-known/void', server.baseUrl).toString()).then((result)=>({
-                            key: key,
-                            context: result.json?.['@context'],
-                            datasets: result.json?.['@graph']
-                        })).catch((e)=>{
+                // @ts-expect-error TS(2571): Object is of type 'unknown'.
+                results = await Promise.all(Object.entries(config.dataServers).filter(([_, server])=>server.pod !== true && server.void !== false).map(async ([key, server])=>config.httpClient(new URL('/.well-known/void', server.baseUrl).toString()).then((result: any) => ({
+                    key: key,
+                    context: result.json?.['@context'],
+                    datasets: result.json?.['@graph']
+                })).catch((e: any) => {
                         if (e.status === 404 || e.status === 401 || e.status === 500) return {
                             key: key,
                             error: e.message
@@ -1499,12 +1640,14 @@ const $a87fd63d8fca0380$var$fetchVoidEndpoints = ()=>({
                         newConfig.dataServers[result.key].description ??= dataset['dc:description'];
                         newConfig.dataServers[result.key].sparqlEndpoint ??= dataset['void:sparqlEndpoint'];
                         newConfig.dataServers[result.key].containers ??= [];
+                        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                         for (const partition of (0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(dataset['void:classPartition']))for (const type of (0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(partition['void:class'])){
                             const path = partition['void:uriSpace'].replace(dataset['void:uriSpace'], '/');
+                            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                             const expandedTypes = await (0, $36aa010ec46eaf45$export$2e2bcd8739ae039)([
                                 type
                             ], result.context);
-                            const containerIndex = newConfig.dataServers[result.key].containers.findIndex((c)=>c.path === path);
+                            const containerIndex = newConfig.dataServers[result.key].containers.findIndex((c: any) => c.path === path);
                             if (containerIndex !== -1) {
                                 // If a container with this path already exist, merge types
                                 const mergedTypes = [
@@ -1535,13 +1678,17 @@ var $a87fd63d8fca0380$export$2e2bcd8739ae039 = $a87fd63d8fca0380$var$fetchVoidEn
 
 
 const $3677b4de74c3d10d$var$useDataProviderConfig = ()=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const dataProvider = (0, $fj9kP$useDataProvider)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [config, setConfig] = (0, $fj9kP$useState)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [isLoading, setIsLoading] = (0, $fj9kP$useState)(false);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     (0, $fj9kP$useEffect)(()=>{
         if (!isLoading && !config) {
             setIsLoading(true);
-            dataProvider.getConfig().then((c)=>{
+            dataProvider.getConfig().then((c: any) => {
                 setConfig(c);
                 setIsLoading(false);
             });
@@ -1559,7 +1706,8 @@ var $3677b4de74c3d10d$export$2e2bcd8739ae039 = $3677b4de74c3d10d$var$useDataProv
 
 
 
-const $52b38c5b114c348c$var$compactPredicate = async (predicate, context)=>{
+const $52b38c5b114c348c$var$compactPredicate = async (predicate: any, context: any)=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const result = await (0, $fj9kP$jsonld).compact({
         [predicate]: ''
     }, context);
@@ -1568,11 +1716,16 @@ const $52b38c5b114c348c$var$compactPredicate = async (predicate, context)=>{
 var $52b38c5b114c348c$export$2e2bcd8739ae039 = $52b38c5b114c348c$var$compactPredicate;
 
 
-const $72db0904d77f0f1e$var$useCompactPredicate = (predicate, context)=>{
+const $72db0904d77f0f1e$var$useCompactPredicate = (predicate: any, context: any)=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const config = (0, $3677b4de74c3d10d$export$2e2bcd8739ae039)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [result, setResult] = (0, $fj9kP$useState)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     (0, $fj9kP$useEffect)(()=>{
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         if (config && predicate) (0, $52b38c5b114c348c$export$2e2bcd8739ae039)(predicate, context || config.jsonContext).then((r)=>{
+            // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
             setResult(r);
         });
     }, [
@@ -1589,7 +1742,9 @@ var $72db0904d77f0f1e$export$2e2bcd8739ae039 = $72db0904d77f0f1e$var$useCompactP
 
 
 const $3a9656756670cb78$var$useDataModels = ()=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const config = (0, $3677b4de74c3d10d$export$2e2bcd8739ae039)();
+    // @ts-expect-error TS(2339): Property 'resources' does not exist on type 'never... Remove this comment to see the full error message
     return config?.resources;
 };
 var $3a9656756670cb78$export$2e2bcd8739ae039 = $3a9656756670cb78$var$useDataModels;
@@ -1597,7 +1752,9 @@ var $3a9656756670cb78$export$2e2bcd8739ae039 = $3a9656756670cb78$var$useDataMode
 
 
 const $4daf4cf698ee4eed$var$useDataServers = ()=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const config = (0, $3677b4de74c3d10d$export$2e2bcd8739ae039)();
+    // @ts-expect-error TS(2339): Property 'dataServers' does not exist on type 'nev... Remove this comment to see the full error message
     return config?.dataServers;
 };
 var $4daf4cf698ee4eed$export$2e2bcd8739ae039 = $4daf4cf698ee4eed$var$useDataServers;
@@ -1606,18 +1763,25 @@ var $4daf4cf698ee4eed$export$2e2bcd8739ae039 = $4daf4cf698ee4eed$var$useDataServ
 
 
 
-const $586fa0ea9d02fa12$var$useContainers = (resourceId, serverKeys)=>{
+const $586fa0ea9d02fa12$var$useContainers = (resourceId: any, serverKeys: any)=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const dataModels = (0, $3a9656756670cb78$export$2e2bcd8739ae039)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const dataServers = (0, $4daf4cf698ee4eed$export$2e2bcd8739ae039)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [containers, setContainers] = (0, $fj9kP$useState)([]);
     // Warning: if serverKeys change, the containers list will not be updated (otherwise we have an infinite re-render loop)
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     (0, $fj9kP$useEffect)(()=>{
         if (dataServers && dataModels) {
             if (resourceId) {
                 const dataModel = dataModels[resourceId];
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 setContainers((0, $15b841e67a1ba752$export$2e2bcd8739ae039)((0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(dataModel.types), serverKeys, dataServers));
             } else {
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 const parsedServerKeys = (0, $99cc2e4a2a3c100b$export$2e2bcd8739ae039)(serverKeys || '@all', dataServers);
+                // @ts-expect-error TS(2345): Argument of type 'any[]' is not assignable to para... Remove this comment to see the full error message
                 setContainers(parsedServerKeys.map((serverKey)=>dataServers[serverKey].containers).flat());
             }
         }
@@ -1637,12 +1801,18 @@ var $586fa0ea9d02fa12$export$2e2bcd8739ae039 = $586fa0ea9d02fa12$var$useContaine
 
 
 
-const $9d2c669bd52faa31$var$useContainersByTypes = (types)=>{
+const $9d2c669bd52faa31$var$useContainersByTypes = (types: any) => {
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const dataServers = (0, $4daf4cf698ee4eed$export$2e2bcd8739ae039)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const dataProvider = (0, $fj9kP$useDataProvider)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [containers, setContainers] = (0, $fj9kP$useState)([]);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     (0, $fj9kP$useEffect)(()=>{
-        if (dataServers && types) dataProvider.expandTypes((0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(types)).then((expandedTypes)=>{
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+        if (dataServers && types) dataProvider.expandTypes((0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(types)).then((expandedTypes: any) => {
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             setContainers((0, $15b841e67a1ba752$export$2e2bcd8739ae039)(expandedTypes, '@all', dataServers));
         }).catch(()=>{
         // Ignore errors
@@ -1660,12 +1830,15 @@ var $9d2c669bd52faa31$export$2e2bcd8739ae039 = $9d2c669bd52faa31$var$useContaine
 
 
 
-const $43097d0b613bd4db$var$useContainerByUri = (containerUri)=>{
+const $43097d0b613bd4db$var$useContainerByUri = (containerUri: any) => {
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const dataServers = (0, $4daf4cf698ee4eed$export$2e2bcd8739ae039)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [container, setContainer] = (0, $fj9kP$useState)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     (0, $fj9kP$useEffect)(()=>{
         if (dataServers && containerUri) Object.keys(dataServers).forEach((serverKey)=>{
-            dataServers[serverKey].containers?.forEach((c)=>{
+            dataServers[serverKey].containers?.forEach((c: any) => {
                 if (c.uri === containerUri) setContainer(c);
             });
         });
@@ -1682,9 +1855,9 @@ var $43097d0b613bd4db$export$2e2bcd8739ae039 = $43097d0b613bd4db$var$useContaine
 
 
 
-const $7d9911a250866af6$var$findCreateContainerWithTypes = (types, createServerKey, dataServers)=>{
+const $7d9911a250866af6$var$findCreateContainerWithTypes = (types: any, createServerKey: any, dataServers: any)=>{
     if (!dataServers[createServerKey].containers) throw new Error(`Data server ${createServerKey} has no declared containers`);
-    const matchingContainers = dataServers[createServerKey].containers.filter((container)=>container.types?.some((t)=>types.includes(t)));
+    const matchingContainers = dataServers[createServerKey].containers.filter((container: any) => container.types?.some((t: any) => types.includes(t)));
     if (matchingContainers.length === 0) throw new Error(`No container found matching with types ${JSON.stringify(types)}. You can set explicitly the create.container property of the resource.`);
     else if (matchingContainers.length > 1) throw new Error(`More than one container found matching with types ${JSON.stringify(types)}. You must set the create.server or create.container property for the resource.`);
     return matchingContainers[0].uri;
@@ -1695,16 +1868,22 @@ var $7d9911a250866af6$export$2e2bcd8739ae039 = $7d9911a250866af6$var$findCreateC
 
 
 const $8dbb0c8c3814e663$var$useGetCreateContainerUri = ()=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const dataModels = (0, $3a9656756670cb78$export$2e2bcd8739ae039)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const dataServers = (0, $4daf4cf698ee4eed$export$2e2bcd8739ae039)();
-    const getCreateContainerUri = (0, $fj9kP$useCallback)((resourceId)=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+    const getCreateContainerUri = (0, $fj9kP$useCallback)((resourceId: any) => {
         if (!dataModels || !dataServers || !dataModels[resourceId]) return undefined;
         const dataModel = dataModels[resourceId];
         if (dataModel.create?.container) return dataModel.create.container;
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         else if (dataModel.create?.server) return (0, $7d9911a250866af6$export$2e2bcd8739ae039)(dataModel.types, dataModel.create.server, dataServers);
         else {
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             const defaultServerKey = (0, $8326b88c1a913ca9$export$2e2bcd8739ae039)('default', dataServers);
             if (!defaultServerKey) throw new Error(`No default dataServer found. You can set explicitly one setting the "default" attribute to true`);
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             return (0, $7d9911a250866af6$export$2e2bcd8739ae039)(dataModel.types, defaultServerKey, dataServers);
         }
     }, [
@@ -1716,8 +1895,10 @@ const $8dbb0c8c3814e663$var$useGetCreateContainerUri = ()=>{
 var $8dbb0c8c3814e663$export$2e2bcd8739ae039 = $8dbb0c8c3814e663$var$useGetCreateContainerUri;
 
 
-const $35f3e75c86e51f35$var$useCreateContainerUri = (resourceId)=>{
+const $35f3e75c86e51f35$var$useCreateContainerUri = (resourceId: any) => {
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const getCreateContainerUri = (0, $8dbb0c8c3814e663$export$2e2bcd8739ae039)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const createContainerUri = (0, $fj9kP$useMemo)(()=>getCreateContainerUri(resourceId), [
         getCreateContainerUri,
         resourceId
@@ -1728,8 +1909,10 @@ var $35f3e75c86e51f35$export$2e2bcd8739ae039 = $35f3e75c86e51f35$var$useCreateCo
 
 
 
-const $e5a0eacd756fd1d5$var$useDataModel = (resourceId)=>{
+const $e5a0eacd756fd1d5$var$useDataModel = (resourceId: any) => {
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const config = (0, $3677b4de74c3d10d$export$2e2bcd8739ae039)();
+    // @ts-expect-error TS(2339): Property 'resources' does not exist on type 'never... Remove this comment to see the full error message
     return config?.resources[resourceId];
 };
 var $e5a0eacd756fd1d5$export$2e2bcd8739ae039 = $e5a0eacd756fd1d5$var$useDataModel;
@@ -1741,17 +1924,22 @@ var $e5a0eacd756fd1d5$export$2e2bcd8739ae039 = $e5a0eacd756fd1d5$var$useDataMode
 
 
 
-const $87656edf926c0f1f$var$compute = (externalLinks, record)=>typeof externalLinks === 'function' ? externalLinks(record) : externalLinks;
-const $87656edf926c0f1f$var$isURL = (url)=>typeof url === 'string' && url.startsWith('http');
-const $87656edf926c0f1f$var$useGetExternalLink = (componentExternalLinks)=>{
+const $87656edf926c0f1f$var$compute = (externalLinks: any, record: any)=>typeof externalLinks === 'function' ? externalLinks(record) : externalLinks;
+const $87656edf926c0f1f$var$isURL = (url: any) => typeof url === 'string' && url.startsWith('http');
+const $87656edf926c0f1f$var$useGetExternalLink = (componentExternalLinks: any) => {
     // Since the externalLinks config is defined only locally, we don't need to wait for VOID endpoints fetching
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const dataProvider = (0, $fj9kP$useContext)((0, $fj9kP$DataProviderContext));
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     const dataServers = dataProvider.getLocalDataServers();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const serversExternalLinks = (0, $fj9kP$useMemo)(()=>{
         if (dataServers) return Object.fromEntries(Object.values(dataServers).map((server)=>{
             // If externalLinks is not defined in the data server, use external links for non-default servers
+            // @ts-expect-error TS(2571): Object is of type 'unknown'.
             const externalLinks = server.externalLinks !== undefined ? server.externalLinks : !server.default;
             return [
+                // @ts-expect-error TS(2571): Object is of type 'unknown'.
                 server.baseUrl,
                 externalLinks
             ];
@@ -1759,7 +1947,8 @@ const $87656edf926c0f1f$var$useGetExternalLink = (componentExternalLinks)=>{
     }, [
         dataServers
     ]);
-    return (0, $fj9kP$useCallback)((record)=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+    return (0, $fj9kP$useCallback)((record: any) => {
         const computedComponentExternalLinks = $87656edf926c0f1f$var$compute(componentExternalLinks, record);
         // If the component explicitly asks not to display as external links, use an internal link
         if (computedComponentExternalLinks === false) return false;
@@ -1785,8 +1974,11 @@ var $87656edf926c0f1f$export$2e2bcd8739ae039 = $87656edf926c0f1f$var$useGetExter
 
 
 const $487567a146508c4e$var$useGetPrefixFromUri = ()=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const config = (0, $3677b4de74c3d10d$export$2e2bcd8739ae039)();
-    return (0, $fj9kP$useCallback)((uri)=>(0, $861da9be2c0e62eb$export$2e2bcd8739ae039)(uri, config.ontologies), [
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
+    return (0, $fj9kP$useCallback)((uri: any) => (0, $861da9be2c0e62eb$export$2e2bcd8739ae039)(uri, config.ontologies), [
+        // @ts-expect-error TS(2339): Property 'ontologies' does not exist on type 'neve... Remove this comment to see the full error message
         config?.ontologies
     ]);
 };
@@ -1808,11 +2000,14 @@ var $487567a146508c4e$export$2e2bcd8739ae039 = $487567a146508c4e$var$useGetPrefi
  *    </SingleFieldList>
  *   </FilterHandler>
  * </Show>
+ // @ts-expect-error TS(7031): Binding element 'children' implicitly has an 'any'... Remove this comment to see the full error message
  */ const $406574efa35ec6f1$var$FilterHandler = ({ children: children, record: record, filter: filter, source: source, ...otherProps })=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const [filtered, setFiltered] = (0, $fj9kP$useState)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     (0, $fj9kP$useEffect)(()=>{
         if (record && source && Array.isArray(record?.[source])) {
-            const filteredData = record?.[source].filter((r)=>{
+            const filteredData = record?.[source].filter((r: any) => {
                 let eq = true;
                 for(const key in filter){
                     const value = r[key];
@@ -1834,8 +2029,11 @@ var $487567a146508c4e$export$2e2bcd8739ae039 = $487567a146508c4e$var$useGetPrefi
         source,
         filter
     ]);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     return /*#__PURE__*/ (0, $fj9kP$jsx)((0, $fj9kP$Fragment), {
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         children: (0, $fj9kP$react).Children.map(children, (child, i)=>{
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             return /*#__PURE__*/ (0, $fj9kP$react).cloneElement(child, {
                 ...otherProps,
                 record: filtered,
@@ -1911,19 +2109,26 @@ var $406574efa35ec6f1$export$2e2bcd8739ae039 = $406574efa35ec6f1$var$FilterHandl
  * </GroupedReferenceHandler>
  *
  *
+ // @ts-expect-error TS(7031): Binding element 'children' implicitly has an 'any'... Remove this comment to see the full error message
  */ const $1d8c1cbe606a94ae$var$GroupedReferenceHandler = ({ children: children, groupReference: groupReference, groupLabel: groupLabel, groupHeader: groupHeader, filterProperty: filterProperty, ...otherProps })=>{
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const record = (0, $fj9kP$useRecordContext)();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     const { data: data } = (0, $fj9kP$useGetList)(groupReference);
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     return /*#__PURE__*/ (0, $fj9kP$jsx)((0, $fj9kP$Fragment), {
         children: data?.map((data, index)=>{
             const filter = {};
+            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
             filter[filterProperty] = data.id;
+            // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
             return /*#__PURE__*/ (0, $fj9kP$jsxs)((0, $fj9kP$Fragment), {
                 children: [
                     groupHeader && groupHeader({
                         ...otherProps,
                         group: data
                     }),
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                     /*#__PURE__*/ (0, $fj9kP$jsx)((0, $406574efa35ec6f1$export$2e2bcd8739ae039), {
                         ...otherProps,
                         record: record,
@@ -1943,6 +2148,7 @@ var $1d8c1cbe606a94ae$export$2e2bcd8739ae039 = $1d8c1cbe606a94ae$var$GroupedRefe
 
 
 
+// @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
 const $6844bbce0ad66151$var$useReferenceInputStyles = (0, $fj9kP$muistylesmakeStyles)({
     form: {
         display: 'flex'
@@ -1951,27 +2157,33 @@ const $6844bbce0ad66151$var$useReferenceInputStyles = (0, $fj9kP$muistylesmakeSt
         paddingRight: '20px'
     }
 });
+// @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
 const $6844bbce0ad66151$var$useHideInputStyles = (0, $fj9kP$muistylesmakeStyles)({
     root: {
         display: 'none'
     }
 });
-const $6844bbce0ad66151$var$ReificationArrayInput = (props)=>{
+const $6844bbce0ad66151$var$ReificationArrayInput = (props: any) => {
     const { reificationClass: reificationClass, children: children, ...otherProps } = props;
     const flexFormClasses = $6844bbce0ad66151$var$useReferenceInputStyles();
     const hideInputStyles = $6844bbce0ad66151$var$useHideInputStyles();
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     return /*#__PURE__*/ (0, $fj9kP$jsx)((0, $fj9kP$ArrayInput), {
         ...otherProps,
+        // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
         children: /*#__PURE__*/ (0, $fj9kP$jsxs)((0, $fj9kP$SimpleFormIterator), {
             classes: {
                 form: flexFormClasses.form
             },
             children: [
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 (0, $fj9kP$react).Children.map(props.children, (child, i)=>{
+                    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                     return /*#__PURE__*/ (0, $fj9kP$react).cloneElement(child, {
                         className: flexFormClasses.input
                     });
                 }),
+                // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
                 /*#__PURE__*/ (0, $fj9kP$jsx)((0, $fj9kP$TextInput), {
                     className: hideInputStyles.root,
                     source: "type",
@@ -1987,7 +2199,7 @@ var $6844bbce0ad66151$export$2e2bcd8739ae039 = $6844bbce0ad66151$var$Reification
 
 /**
  * Find the solid notification description resource for a given resource URI.
- */ const $03d52e691e8dc945$var$findDescriptionResource = async (authenticatedFetch, resourceUri)=>{
+ */ const $03d52e691e8dc945$var$findDescriptionResource = async (authenticatedFetch: any, resourceUri: any)=>{
     const { headers: headers } = await authenticatedFetch(resourceUri, {
         method: 'HEAD'
     });
@@ -2002,10 +2214,12 @@ var $6844bbce0ad66151$export$2e2bcd8739ae039 = $6844bbce0ad66151$var$Reification
     });
     return await response.json();
 };
-const $03d52e691e8dc945$export$3edfe18db119b920 = async (authenticatedFetch, resourceUri, options = {
+const $03d52e691e8dc945$export$3edfe18db119b920 = async (authenticatedFetch: any, resourceUri: any, options = {
     type: 'WebSocketChannel2023'
 })=>{
+    // @ts-expect-error TS(2339): Property 'closeAfter' does not exist on type '{ ty... Remove this comment to see the full error message
     const { type: type, closeAfter: closeAfter, startIn: startIn, rate: rate } = options;
+    // @ts-expect-error TS(2339): Property 'startAt' does not exist on type '{ type:... Remove this comment to see the full error message
     let { startAt: startAt, endAt: endAt } = options;
     if (startIn && !startAt) startAt = new Date(Date.now() + startIn).toISOString();
     if (closeAfter && !endAt) endAt = new Date(Date.now() + closeAfter).toISOString();
@@ -2013,6 +2227,7 @@ const $03d52e691e8dc945$export$3edfe18db119b920 = async (authenticatedFetch, res
     // TODO: use a json-ld parser / ldo in the future for this...
     // Get solid notification subscription service for the given type.
     const subscriptionService = (await Promise.all(// Get the subscription service resources (that describe a channel type).
+    // @ts-expect-error TS(2695): Left side of comma operator is unused and has no s... Remove this comment to see the full error message
     (0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(descriptionResource.subscription || descriptionResource['notify:subscription']).map(async (subscriptionServiceOrUri)=>{
         // They might not be resolved...
         if (typeof subscriptionServiceOrUri === 'string') {
@@ -2045,7 +2260,7 @@ const $03d52e691e8dc945$export$3edfe18db119b920 = async (authenticatedFetch, res
     });
     return channel;
 };
-const $03d52e691e8dc945$export$28772ab4c256e709 = async (authenticatedFetch, resourceUri, options)=>{
+const $03d52e691e8dc945$export$28772ab4c256e709 = async (authenticatedFetch: any, resourceUri: any, options: any)=>{
     const channel = await $03d52e691e8dc945$export$3edfe18db119b920(authenticatedFetch, resourceUri, options);
     const receiveFrom = channel.receiveFrom || channel['notify:receiveFrom'];
     return new WebSocket(receiveFrom);
@@ -2056,7 +2271,7 @@ const $03d52e691e8dc945$var$registeredWebSockets = new Map();
  * @param resourceUri The resource to subscribe to
  * @param options Options to pass to @see createSolidNotificationChannel, if the channel does not exist yet.
  * @returns {WebSocket} A new or existing web socket that subscribed to the given resource.
- */ const $03d52e691e8dc945$export$8d60734939c59ced = async (authenticatedFetch, resourceUri, options = {
+ */ const $03d52e691e8dc945$export$8d60734939c59ced = async (authenticatedFetch: any, resourceUri: any, options = {
     type: 'WebSocketChannel2023',
     closeAfter: 3600000
 })=>{
@@ -2074,6 +2289,7 @@ const $03d52e691e8dc945$var$registeredWebSockets = new Map();
             $03d52e691e8dc945$var$registeredWebSockets.delete(resourceUri);
         });
         // Close the socket, if the endAt / closeAfter time is reached.
+        // @ts-expect-error TS(2339): Property 'endAt' does not exist on type '{ type: s... Remove this comment to see the full error message
         const closeIn = options.closeAfter ?? (options.endAt && new Date(options.endAt).getTime() - Date.now());
         if (closeIn) setTimeout(()=>{
             ws.close();
