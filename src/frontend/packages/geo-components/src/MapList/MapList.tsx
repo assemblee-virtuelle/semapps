@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useListContext, RecordContextProvider } from 'react-admin';
 import { useLocation } from 'react-router-dom';
-import { useMediaQuery, Box, makeStyles } from '@mui/material';
+import { useMediaQuery, Box } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import CircularProgress from '@mui/material/CircularProgress';
 import 'leaflet-defaulticon-compatibility';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';

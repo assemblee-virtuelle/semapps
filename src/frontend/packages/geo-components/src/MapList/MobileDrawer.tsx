@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { useMap } from 'react-leaflet';
 import { useRecordContext } from 'react-admin';
-import { Drawer, Box, IconButton, makeStyles } from '@mui/material';
+import { Drawer, Box, IconButton } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import ClearIcon from '@mui/icons-material/Clear';
 
 const useStyles = makeStyles(() => ({
@@ -13,10 +14,7 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const MobileDrawer = ({
-  popupContent,
-  onClose
-}: any) => {
+const MobileDrawer = ({ popupContent, onClose }: any) => {
   // @ts-expect-error TS(2349): This expression is not callable.
   const classes = useStyles();
   const record = useRecordContext();

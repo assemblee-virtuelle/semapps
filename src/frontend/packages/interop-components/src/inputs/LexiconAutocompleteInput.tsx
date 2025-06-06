@@ -8,7 +8,8 @@ import {
   useResourceContext,
   InputHelperText
 } from 'react-admin';
-import { TextField, Typography, Grid, makeStyles } from '@mui/material';
+import { TextField, Typography, Grid } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import Autocomplete from '@mui/material/Autocomplete';
 import LanguageIcon from '@mui/icons-material/Language';
 import AddIcon from '@mui/icons-material/Add';

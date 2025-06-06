@@ -1,6 +1,6 @@
-import { makeStyles } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { ArrayInput, SimpleFormIterator, TextInput } from 'react-admin';
+import makeStyles from '@mui/styles/makeStyles';
 
 const useReferenceInputStyles = makeStyles({
   form: {

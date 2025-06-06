@@ -20,8 +20,9 @@
     "react-masonry-css": "^1.0.14"
   },
   "peerDependencies": {
-    "@mui/icons-material": "^7.1.0",
-    "@mui/material": "^7.1.0",
+    "@mui/icons-material": "^5.13.1",
+    "@mui/material": "^5.13.1",
+    "@mui/styles": "^5.13.1",
     "react": "^18.2.0",
     "react-admin": "^5.8.3",
     "react-router": "^6.1.0"

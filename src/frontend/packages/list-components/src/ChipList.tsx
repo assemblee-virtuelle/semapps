@@ -7,7 +7,8 @@ import {
   RecordContextProvider,
   Link
 } from 'react-admin';
-import { LinearProgress, makeStyles } from '@mui/material';
+import { LinearProgress } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import LaunchIcon from '@mui/icons-material/Launch';
 import { useGetExternalLink } from '@semapps/semantic-data-provider';

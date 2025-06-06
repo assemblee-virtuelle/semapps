@@ -25,12 +25,13 @@
     "url-join": "^4.0.1"
   },
   "peerDependencies": {
-    "@mui/icons-material": "^7.1.0",
-    "@mui/material": "^7.1.0",
-    "@mui/system": "^7.1.0",
+    "@mui/icons-material": "^5.13.1",
+    "@mui/material": "^5.13.1",
+    "@mui/styles": "^5.13.1",
+    "@mui/system": "^5.13.1",
     "react": "^18.2.0",
     "react-admin": "^5.8.3",
-    "react-router-dom": "^7.6.1"
+    "react-router-dom": "^6.1.0"
   },
   "publishConfig": {
     "access": "public"

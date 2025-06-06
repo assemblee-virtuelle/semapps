@@ -1,6 +1,7 @@
 import React from 'react';
 import { useListContext, Link, useCreatePath, RecordContextProvider } from 'react-admin';
-import { Card, CardActionArea, CardMedia, CardContent, CardActions, makeStyles } from '@mui/material';
+import { Card, CardActionArea, CardMedia, CardContent, CardActions } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import Masonry from 'react-masonry-css';
 
 const useStyles = makeStyles(() => ({

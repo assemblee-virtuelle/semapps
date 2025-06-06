@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { SimpleForm } from 'react-admin';
-import { Box, Tabs, Tab, Divider, useMediaQuery, makeStyles } from '@mui/material';
+import { Box, Tabs, Tab, Divider, useMediaQuery } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import ImportForm from './ImportForm';
 
 const useStyles = makeStyles(() => ({
@@ -10,12 +11,8 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const CreateOrImportForm = ({
-  stripProperties,
-  ...rest
-}: any) => {
+const CreateOrImportForm = ({ stripProperties, ...rest }: any) => {
   const [tab, setTab] = useState(0);
-  // @ts-expect-error TS(2349): This expression is not callable.
   const classes = useStyles();
   const xs = useMediaQuery(theme => theme.breakpoints.down('sm'), { noSsr: true });
   return (

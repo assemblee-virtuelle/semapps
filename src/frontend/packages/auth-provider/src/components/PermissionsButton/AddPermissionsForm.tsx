@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useGetList, useTranslate } from 'react-admin';
-import { TextField, List, ListItem, ListItemAvatar, ListItemText, Avatar, makeStyles } from '@mui/material';
+import { TextField, List, ListItem, ListItemAvatar, ListItemText, Avatar } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import Autocomplete from '@mui/material/Autocomplete';
 import PersonIcon from '@mui/icons-material/Person';
 import { USER_AGENT, ACL_READ } from '../../constants';
