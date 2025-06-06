@@ -10,11 +10,12 @@ const fetchTypeIndexes = (): Plugin => ({
 
     // If the user is logged in
     if (token) {
-      if (!config.dataServers.user)
-        throw new Error(`You must configure the user storage first with the configureUserStorage plugin`);
-
       const payload: { [k: string]: string | number } = jwtDecode(token);
       const webId = (payload.webId as string) || (payload.webid as string); // Currently we must deal with both formats
+
+      if (!config.dataServers[webId])
+        throw new Error(`You must configure the user storage first with the configureUserStorage plugin`);
+
       const { json: user } = await config.httpClient(webId);
 
       const typeRegistrations: { public: TypeRegistration[]; private: TypeRegistration[] } = {
@@ -45,21 +46,21 @@ const fetchTypeIndexes = (): Plugin => ({
             const types = arrayOf(typeRegistration['solid:forClass']);
             const container = {
               label: { en: capitalCase(types[0].split(':')[1], { separateNumbers: true }) },
-              path: typeRegistration['solid:instanceContainer'].replace(newConfig.dataServers.user.baseUrl, ''),
+              path: typeRegistration['solid:instanceContainer'].replace(newConfig.dataServers[webId].baseUrl, ''),
               types: await expandTypes(types, user['@context']),
               private: mode === 'private'
             };
 
-            const containerIndex = newConfig.dataServers.user.containers.findIndex(c => c.path === container.path);
+            const containerIndex = newConfig.dataServers[webId].containers.findIndex(c => c.path === container.path);
 
             if (containerIndex !== -1) {
               // If a container with this URI already exist, add type registration information if they are not set
-              newConfig.dataServers.user.containers[containerIndex] = {
+              newConfig.dataServers[webId].containers[containerIndex] = {
                 ...container,
-                ...newConfig.dataServers.user.containers[containerIndex]
+                ...newConfig.dataServers[webId].containers[containerIndex]
               };
             } else {
-              newConfig.dataServers.user.containers.push(container);
+              newConfig.dataServers[webId].containers.push(container);
             }
           }
         }
