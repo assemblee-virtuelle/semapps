@@ -170,8 +170,8 @@ const useInfiniteCollectionQuery = (collectionUri: string) => {
     queryFn: getFetchCollectionPage(fetchFn),
     initialPageParam: collectionUri, // This could be the place to use as page param, whe collection is different. Probably not such an important thing at all.
     enabled: !!(collectionUri && identity?.id),
-    getNextPageParam: current => current.raw?.next,
-    getPreviousPageParam: current => current.raw?.prev
+    getNextPageParam: current => current.data?.next,
+    getPreviousPageParam: current => current.data?.prev
   });
 
   return infiniteQueryData;
