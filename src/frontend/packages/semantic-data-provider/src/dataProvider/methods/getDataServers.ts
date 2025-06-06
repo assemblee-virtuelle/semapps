@@ -1,4 +1,6 @@
-const getDataServers = (config: any) => () => {
+import { Configuration } from '../types';
+
+const getDataServers = (config: Configuration) => () => {
   return config.dataServers;
 };
 

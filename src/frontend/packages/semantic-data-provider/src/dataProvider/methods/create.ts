@@ -3,8 +3,10 @@ import getOne from './getOne';
 import handleFiles from '../utils/handleFiles';
 import findContainersWithTypes from '../utils/findContainersWithTypes';
 import findContainersWithURIs from '../utils/findContainersWithURIs';
+import { RuntimeConfiguration } from '../types';
+import { CreateParams, RaRecord } from 'react-admin';
 
-const createMethod = (config: any) => async (resourceId: any, params: any) => {
+const createMethod = (config: RuntimeConfiguration) => async (resourceId: string, params: CreateParams<RaRecord>) => {
   const { dataServers, resources, httpClient, jsonContext } = config;
   const dataModel = resources[resourceId];
 

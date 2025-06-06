@@ -1,6 +1,8 @@
+import { GetOneParams, RaRecord } from 'react-admin';
+import { RuntimeConfiguration } from '../types';
 import fetchResource from '../utils/fetchResource';
 
-const getOneMethod = (config: any) => async (resourceId: any, params: any) => {
+const getOneMethod = (config: RuntimeConfiguration) => async (resourceId: string, params: GetOneParams<RaRecord>) => {
   const { resources } = config;
   const dataModel = resources[resourceId];
 

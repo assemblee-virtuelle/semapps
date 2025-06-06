@@ -1,4 +1,6 @@
-const getServerKeyFromType = (type: any, dataServers: any) => {
+import { DataServersConfig } from '../types';
+
+const getServerKeyFromType = (type: string, dataServers: DataServersConfig) => {
   return (
     dataServers &&
     Object.keys(dataServers).find(key => {

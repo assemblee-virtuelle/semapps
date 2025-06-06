@@ -1,6 +1,5 @@
 import { createConnectedLdoDataset } from '@ldo/connected';
 import { solidConnectedPlugin } from '@ldo/connected-solid';
-import { createLdoDataset } from '@ldo/ldo';
 import createMethod from './methods/create';
 import deleteMethod from './methods/delete';
 import deleteManyMethod from './methods/deleteMany';
@@ -12,38 +11,53 @@ import getManyReferenceMethod from './methods/getManyReference';
 import getOneMethod from './methods/getOne';
 import patchMethod from './methods/patch';
 import updateMethod from './methods/update';
-import httpClient from './httpClient';
+import { httpClient, authFetch } from './fetchUtil';
 import { uploadFile } from './utils/handleFiles';
 import normalizeConfig from './utils/normalizeConfig';
 import expandTypes from './utils/expandTypes';
 import getOntologiesFromContext from './utils/getOntologiesFromContext';
+import { Configuration, RuntimeConfiguration, SemanticDataProvider } from './types';
 
-/** @type {(originalConfig: Configuration) => SemanticDataProvider} */
-const dataProvider = (originalConfig: any) => {
+const dataProvider = (originalConfig: Configuration): SemanticDataProvider => {
   // Keep in memory for refresh
-  let config = { ...originalConfig };
+  let config: RuntimeConfiguration;
 
   const prepareConfig = async () => {
+    const fetchJson = httpClient(originalConfig.dataServers);
+    const authFetchFn = authFetch(originalConfig.dataServers);
+
+    const dataset = createConnectedLdoDataset([solidConnectedPlugin]);
+    dataset.setContext('solid', { fetch: authFetchFn });
+
+    config = {
+      ...originalConfig,
+      httpClient: fetchJson,
+      authFetch: authFetchFn,
+      dataset
+    };
+
     config.dataServers ??= {};
 
-    // Configure httpClient with initial data servers, so that plugins may use it
-    config.httpClient = httpClient(config.dataServers);
-
+    // Load plugins.
     for (const plugin of config.plugins) {
       if (plugin.transformConfig) {
         config = await plugin.transformConfig(config);
       }
     }
 
-    // Configure again httpClient with possibly updated data servers
+    // Configure httpClient & authFetch again with possibly updated data servers
     config.httpClient = httpClient(config.dataServers);
+    config.authFetch = authFetch(config.dataServers);
+    dataset.setContext('solid', { fetch: config.authFetch });
 
-    const dataset = createConnectedLdoDataset([solidConnectedPlugin]);
-    dataset.setContext('solid', { fetch: fetchFn });
+    // Create the LDO dataset with the solidConnectedPlugin. It will be used to manage the RDF data.
+    config.dataset = dataset;
 
-    // Attach httpClient to global document -- useful for debugging.
-    // @ts-expect-error TS(2339): Property 'httpClient' does not exist on type 'Document'.
+    // Useful for debugging: Attach httpClient & authFetch to global document.
+    // @ts-expect-error TS(2339)
     document.httpClient = config.httpClient;
+    // @ts-expect-error TS(2339)
+    document.authFetch = authFetchFn;
 
     if (!config.ontologies && config.jsonContext) {
       config.ontologies = await getOntologiesFromContext(config.jsonContext);
@@ -57,17 +71,17 @@ const dataProvider = (originalConfig: any) => {
 
     config = await normalizeConfig(config);
 
-    console.log('Config after plugins', config);
+    console.debug('Config after plugins', config);
   };
 
   // Immediately call the preload plugins
   const prepareConfigPromise = prepareConfig();
 
   const waitForPrepareConfig =
-    (method: any) =>
-    async (...arg: any[]) => {
+    <T extends (...args: any[]) => any>(method: (c: RuntimeConfiguration) => T) =>
+    async (...args: Parameters<T>): Promise<Awaited<ReturnType<T>>> => {
       await prepareConfigPromise; // Return immediately if plugins have already been loaded
-      return method(config)(...arg);
+      return method(config)(...args);
     };
 
   return {
@@ -87,13 +101,13 @@ const dataProvider = (originalConfig: any) => {
     getDataModels: waitForPrepareConfig(getDataModelsMethod),
     getDataServers: waitForPrepareConfig(getDataServersMethod),
     getLocalDataServers: getDataServersMethod(originalConfig),
-    fetch: waitForPrepareConfig((c: any) => httpClient(c.dataServers)),
-    ldoDataset: createLdoDataset(),
-    uploadFile: waitForPrepareConfig((c: any) => (rawFile: any) => uploadFile(rawFile, c)),
-    expandTypes: waitForPrepareConfig((c: any) => (types: any) => expandTypes(types, c.jsonContext)),
-    getConfig: waitForPrepareConfig((c: any) => () => c),
+    httpClient: waitForPrepareConfig(c => httpClient(c.dataServers)),
+    authFetch: waitForPrepareConfig(c => authFetch(c.dataServers)),
+    getDataset: waitForPrepareConfig(c => () => c.dataset),
+    uploadFile: waitForPrepareConfig(c => (rawFile: any) => uploadFile(rawFile, c)),
+    expandTypes: waitForPrepareConfig(c => (types: any) => expandTypes(types, c.jsonContext)),
+    getConfig: waitForPrepareConfig(c => () => c),
     refreshConfig: async () => {
-      config = { ...originalConfig };
       await prepareConfig();
       return config;
     }
