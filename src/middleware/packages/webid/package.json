@@ -17,5 +17,6 @@
   "gitHead": "f65a5a67d02782b0539d12ed482e8cc4149e5d36",
   "engines": {
     "node": ">=14"
-  }
+  },
+  "type": "module"
 }

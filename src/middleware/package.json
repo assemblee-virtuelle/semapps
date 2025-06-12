@@ -2,6 +2,7 @@
   "name": "semapps-middleware",
   "private": true,
   "license": "Apache-2.0",
+  "type": "module",
   "scripts": {
     "version": "lerna version --force-publish='*' --exact --tag-version-prefix='middleware-v'",
     "publish": "lerna publish from-package --dist-tag latest",
