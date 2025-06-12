@@ -10,11 +10,16 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strictNullChecks": true,
+    "strict": true,
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "resolvePackageJsonExports": true,
     "esModuleInterop": true,
-    "resolvePackageJsonImports": true
+    "resolvePackageJsonImports": true,
+    "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": true,
+    "rootDir": "./",
+    "typeRoots": ["./types", "./pod-provider/backend/types"]
   },
   "exclude": []
 }

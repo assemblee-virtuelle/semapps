@@ -11,10 +11,11 @@
     "plugin:jest/recommended",
     "prettier"
   ],
-  // "parser": "@typescript-eslint/parser",
+  "ignorePatterns": ["**/data/**"],
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": "latest",
-    "sourceType": "script" // Allows for the use of imports
+    "sourceType": "module" // Allows for the use of imports
   },
   "plugins": [
     "jsdoc",
@@ -86,7 +87,7 @@
     "import/no-duplicates": "warn",
     "import/no-dynamic-require": "off",
     "import/no-named-default": "warn",
-    "import/no-unresolved": "warn",
+    "import/no-unresolved": "off",
     "import/no-useless-path-segments": "warn",
     "import/order": "warn",
     "jest/no-conditional-expect": "warn",
@@ -118,6 +119,7 @@
     "no-use-before-define": "warn",
     "no-var": "warn",
     "node/no-unsupported-features/es-syntax": "off",
+    "node/no-missing-import": "off",
     "object-shorthand": "off",
     "one-var": "warn",
     "operator-assignment": "warn",
