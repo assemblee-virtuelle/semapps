@@ -11,7 +11,7 @@ import sec from './sec.json' with { type: 'json' };
 import semapps from './semapps.json' with { type: 'json' };
 import skos from './skos.json' with { type: 'json' };
 import vcard from './vcard.json' with { type: 'json' };
-import voidOntology from './void.json' with { type: 'json' };
+import voidOntology from './voidOntology.json' with { type: 'json' };
 import xsd from './xsd.json' with { type: 'json' };
 
 export { acl, as, cred, dc, did, foaf, ldp, rdf, rdfs, sec, semapps, skos, vcard, voidOntology, xsd };

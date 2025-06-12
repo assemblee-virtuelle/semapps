@@ -1,6 +1,5 @@
 import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
-// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { voidOntology } from '@semapps/ontologies';
 import { JsonLdSerializer } from 'jsonld-streaming-serializer';
 import { DataFactory, Writer } from 'n3';
@@ -280,8 +279,7 @@ const VoidSchema = {
         const services = await ctx.call('$node.services');
         const hasSparql =
           services.filter((s: any) => s.name === 'sparqlEndpoint').length > 0
-            ? // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-              urlJoin(this.settings.baseUrl, 'sparql')
+            ? urlJoin(this.settings.baseUrl, 'sparql')
             : undefined;
         if (hasSparql)
           graph.push({
@@ -293,7 +291,6 @@ const VoidSchema = {
         graph.push({
           s: namedNode(thisServer),
           p: namedNode('http://rdfs.org/ns/void#rootResource'),
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           o: namedNode(this.settings.baseUrl)
         });
         for (const ontology of ontologies) {
