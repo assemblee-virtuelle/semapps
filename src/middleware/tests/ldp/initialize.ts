@@ -6,8 +6,11 @@ import { pair, petr } from '@semapps/ontologies';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { AuthLocalService } from '@semapps/auth';
 import { ControlledContainerMixin } from '@semapps/ldp';
+import { fileURLToPath } from 'url';
 import CONFIG from '../config.ts';
 import { clearDataset } from '../utils.ts';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Give write permission on all containers to anonymous users
 const permissions = {

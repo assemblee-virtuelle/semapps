@@ -3,6 +3,9 @@ import urlJoin from 'url-join';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'mole... Remove this comment to see the full error message
 import MailService from 'moleculer-mail';
 import { ServiceSchema, defineAction } from 'moleculer';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const AuthMailSchema = {
   name: 'auth.mail' as const,

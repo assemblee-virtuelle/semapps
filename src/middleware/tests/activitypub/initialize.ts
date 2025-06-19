@@ -6,9 +6,11 @@ import { AuthLocalService } from '@semapps/auth';
 import { CoreService } from '@semapps/core';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { FULL_OBJECT_TYPES, FULL_ACTOR_TYPES } from '@semapps/activitypub';
+import { fileURLToPath } from 'url';
 import CONFIG from '../config.ts';
 import { clearDataset, clearQueue } from '../utils.ts';
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const containers = [
   {
     path: '/as/object',

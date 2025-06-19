@@ -1,8 +1,11 @@
 import path from 'path';
 import { ServiceBroker } from 'moleculer';
 import { CoreService } from '@semapps/core';
+import { fileURLToPath } from 'url';
 import * as CONFIG from '../config.ts';
 import { clearDataset } from '../utils.ts';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 jest.setTimeout(20000);
 

@@ -6,7 +6,9 @@ import urlJoin from 'url-join';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'stri... Remove this comment to see the full error message
 import format from 'string-template';
 import { ServiceSchema, defineAction } from 'moleculer';
+import { fileURLToPath } from 'url';
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const delay = (t: any) => new Promise(resolve => setTimeout(resolve, t));
 
 const DatasetService = {

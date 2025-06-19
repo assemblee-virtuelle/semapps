@@ -6,8 +6,11 @@ import { AuthLocalService } from '@semapps/auth';
 import { CoreService } from '@semapps/core';
 import { VerifiableCredentialsService } from '@semapps/crypto';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
+import { fileURLToPath } from 'url';
 import CONFIG from '../config.ts';
 import { clearDataset } from '../utils.ts';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const initialize = async (port: any, withOldKeyStore = false) => {
   await clearDataset(CONFIG.MAIN_DATASET);
