@@ -9,10 +9,6 @@ import VCCapabilityPresentationProofPurpose from './VcCapabilityPresentationProo
 import VCPurpose from './VcPurpose.ts';
 import { arrayOf } from '../utils/utils.ts';
 
-const {
-  purposes: { AuthenticationProofPurpose }
-} = require('jsonld-signatures');
-
 /**
  * Service for verifying and creating Verifiable Presentations
  * as well as verifying Capabilities created with Verifiable Credentials.

@@ -9,7 +9,8 @@ import { parseHeader } from '@semapps/middlewares';
 import { ServiceSchema, defineAction } from 'moleculer';
 
 const { quad, namedNode, literal, blankNode } = DataFactory;
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors as MoleculerErrors } from 'moleculer';
+const { MoleculerError } = MoleculerErrors;
 
 const prefixes = {
   dc: 'http://purl.org/dc/terms/',

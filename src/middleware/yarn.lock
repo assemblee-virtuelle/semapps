@@ -2013,6 +2013,11 @@
     "@types/node" "*"
     "@types/responselike" "^1.0.0"
 
+"@types/dotenv-flow@^3.3.3":
+  version "3.3.3"
+  resolved "https://registry.yarnpkg.com/@types/dotenv-flow/-/dotenv-flow-3.3.3.tgz#d8bdbb08f35c0a62869b8ce72796055569a44258"
+  integrity sha512-aJjBsKw4bfGjvaRwrxBtEOfYZxCAq+LiFTpZ4DGTEK2b9eLVt/IAClapSxMfgV4Mi/2bIBKKjoTCO0lOh4ACLg==
+
 "@types/graceful-fs@^4.1.2", "@types/graceful-fs@^4.1.3":
   version "4.1.9"
   resolved "https://registry.yarnpkg.com/@types/graceful-fs/-/graceful-fs-4.1.9.tgz#2a06bc0f68a20ab37b3e36aa238be6abdf49e8b4"
@@ -8375,7 +8380,7 @@ moleculer-web@^0.10.0-beta1, moleculer-web@^0.10.7:
     qs "^6.11.0"
     serve-static "^1.14.1"
 
-moleculer@^0.14.17, moleculer@^0.14.18, moleculer@^0.14.19, moleculer@^0.14.29, moleculer@^0.14.31:
+moleculer@^0.14.0, moleculer@^0.14.17, moleculer@^0.14.18, moleculer@^0.14.19, moleculer@^0.14.29, moleculer@^0.14.31:
   version "0.14.35"
   resolved "https://registry.yarnpkg.com/moleculer/-/moleculer-0.14.35.tgz#529fe5fad8b85645d54a99a010a924b136ce6a3f"
   integrity sha512-KB4qs0zNTjE9z7Bl27FFLPaWkAsUFJajF2njozJeor1phFCAYP5S1JsWOSrnUBTtsH7SX4gTw8tGRdcgh1eyVQ==

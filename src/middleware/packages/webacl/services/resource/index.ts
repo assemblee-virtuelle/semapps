@@ -38,7 +38,8 @@ import {
   getDatasetFromUri
 } from '../../utils.ts';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors as MoleculerErrors } from 'moleculer';
+const { MoleculerError } = MoleculerErrors;
 
 const filterAclsOnlyAgent = (acl: any) => agentPredicates.includes(acl.p.value);
 

@@ -11,7 +11,8 @@ import {
   FULL_AGENTCLASS_URI
 } from '../../../utils.ts';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors as MoleculerErrors } from 'moleculer';
+const { MoleculerError } = MoleculerErrors;
 
 export const api = async function api(this: any, ctx: any) {
   const contentType = ctx.meta.headers['content-type'];

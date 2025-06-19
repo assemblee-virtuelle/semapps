@@ -1,6 +1,7 @@
 import { defineAction } from 'moleculer';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors as MoleculerErrors } from 'moleculer';
+const { MoleculerError } = MoleculerErrors;
 
 function checkTriplesSubjectIsResource(triples: any, resourceUri: any) {
   for (const triple of triples) {

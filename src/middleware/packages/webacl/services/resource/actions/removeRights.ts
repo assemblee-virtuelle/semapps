@@ -1,7 +1,8 @@
 import { defineAction } from 'moleculer';
 import { getAclUriFromResourceUri, processRights, FULL_AGENTCLASS_URI, FULL_FOAF_AGENT } from '../../../utils.ts';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors as MoleculerErrors } from 'moleculer';
+const { MoleculerError } = MoleculerErrors;
 
 export const action = defineAction({
   visibility: 'public',

@@ -6,7 +6,8 @@ import { ACTIVITY_TYPES } from '@semapps/activitypub';
 import { ServiceSchema, defineAction } from 'moleculer';
 import SynchronizerService from './synchronizer.ts';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors as MoleculerErrors } from 'moleculer';
+const { MoleculerError } = MoleculerErrors;
 
 const regexPrefix = new RegExp('^@prefix ([\\w-]*: +<.*>) .', 'gm');
 

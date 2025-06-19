@@ -9,7 +9,8 @@ import { MIME_TYPES } from '@semapps/mime-types';
 
 // @ts-expect-error TS(2339): Property 'default' does not exist on type 'RdfPars... Remove this comment to see the full error message
 const rdfParser = rdfparseModule.default;
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors as MoleculerErrors } from 'moleculer';
+const { MoleculerError } = MoleculerErrors;
 
 // TODO put each method in a different file (problems with "this" not working)
 module.exports = {

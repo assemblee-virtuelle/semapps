@@ -1,12 +1,10 @@
-// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
-import { E as Errors } from 'moleculer-web';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema, defineAction, Errors as MoleculerErrors } from 'moleculer';
 import { objectIdToCurrent, collectionPermissionsWithAnonRead } from '../../../utils.ts';
 import { ACTOR_TYPES } from '../../../constants.ts';
 import AwaitActivityMixin from '../../../mixins/await-activity.ts';
 
-const { MoleculerError } = require('moleculer').Errors;
+const { MoleculerError } = MoleculerErrors;
 
 /** @type {import('moleculer').ServiceSchema} */
 const InboxService = {

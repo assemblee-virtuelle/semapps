@@ -1,4 +1,5 @@
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors as MoleculerErrors } from 'moleculer';
+const { MoleculerError } = MoleculerErrors;
 
 /**
  * Throw an error if the value includes a bracket or a space

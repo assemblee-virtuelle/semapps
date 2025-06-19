@@ -3,7 +3,8 @@ import fetch from 'node-fetch';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { defineAction } from 'moleculer';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors as MoleculerErrors } from 'moleculer';
+const { MoleculerError } = MoleculerErrors;
 
 const Schema = defineAction({
   visibility: 'public',

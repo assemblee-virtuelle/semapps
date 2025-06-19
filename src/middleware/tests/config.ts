@@ -1,6 +1,8 @@
 // Read all .env* files in the root folder and add them to process.env
 // See https://github.com/kerimdzhanov/dotenv-flow for more details
-require('dotenv-flow').config();
+import dotenvFlow from 'dotenv-flow';
+
+dotenvFlow.config();
 
 export const HOME_URL = process.env.SEMAPPS_HOME_URL;
 export const SPARQL_ENDPOINT = process.env.SEMAPPS_SPARQL_ENDPOINT;

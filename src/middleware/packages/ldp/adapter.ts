@@ -1,7 +1,8 @@
 import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
+import { Errors as MoleculerErrors } from 'moleculer';
 
-const { ServiceSchemaError } = require('moleculer').Errors;
+const { MoleculerError } = MoleculerErrors;
 
 class LdpAdapter {
   constructor({ resourceService = 'ldp.resource', containerService = 'ldp.container' } = {}) {

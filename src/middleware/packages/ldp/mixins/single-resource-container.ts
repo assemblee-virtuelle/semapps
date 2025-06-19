@@ -1,9 +1,9 @@
 import { MIME_TYPES } from '@semapps/mime-types';
-import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { ServiceSchema, defineAction, defineServiceEvent, Errors as MoleculerErrors } from 'moleculer';
 import ControlledContainerMixin from './controlled-container.ts';
 import { delay } from '../utils.ts';
 
-const { MoleculerError } = require('moleculer').Errors;
+const { MoleculerError } = MoleculerErrors;
 
 const Schema = {
   mixins: [ControlledContainerMixin],

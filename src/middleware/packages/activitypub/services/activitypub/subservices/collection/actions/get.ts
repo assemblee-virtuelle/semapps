@@ -1,9 +1,9 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import { sanitizeSparqlUri } from '@semapps/triplestore';
-import { defineAction } from 'moleculer';
+import { defineAction, Errors as MoleculerErrors } from 'moleculer';
 import { getValueFromDataType } from '../../../../../utils.ts';
 
-const { MoleculerError } = require('moleculer').Errors;
+const { MoleculerError } = MoleculerErrors;
 
 /**
  * Retrieves the collection metadata from the triplestore

@@ -1,6 +1,7 @@
 import sparqljsModule from 'sparqljs';
+import { Errors as MoleculerErrors } from 'moleculer';
 
-const { MoleculerError } = require('moleculer').Errors;
+const { MoleculerError } = MoleculerErrors;
 
 const SparqlParser = sparqljsModule.Parser;
 const parser = new SparqlParser();

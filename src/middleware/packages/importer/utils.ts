@@ -1,12 +1,11 @@
-// @ts-expect-error TS(2724): '"fs"' has no exported member named 'fsPromises'. ... Remove this comment to see the full error message
-import { fsPromises as promises } from 'fs';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'sani... Remove this comment to see the full error message
 import sanitizeHtml from 'sanitize-html';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'goog... Remove this comment to see the full error message
-import googlelibphonenumberModule from 'google-libphonenumber';
+import libPhoneNumberModule from 'google-libphonenumber';
 
-const PNF = googlelibphonenumberModule.PhoneNumberFormat;
-const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
+const PNF = libPhoneNumberModule.PhoneNumberFormat;
+
+const phoneUtil = libPhoneNumberModule.PhoneNumberUtil.getInstance();
 
 const convertToIsoString = (str: any) => str && new Date(str).toISOString();
 

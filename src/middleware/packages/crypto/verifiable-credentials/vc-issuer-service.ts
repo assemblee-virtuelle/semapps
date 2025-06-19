@@ -12,11 +12,10 @@ import vc from '@digitalbazaar/vc';
 import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
 
 import { ServiceSchema, defineAction } from 'moleculer';
+import jsigs from 'jsonld-signatures';
 import { KEY_TYPES, credentialsContext } from '../constants.ts';
 
-const {
-  purposes: { AssertionProofPurpose }
-} = require('jsonld-signatures');
+const { AssertionProofPurpose } = jsigs.purposes;
 
 /**
  * Service for verifying, reading, and revoking Verifiable Credentials.

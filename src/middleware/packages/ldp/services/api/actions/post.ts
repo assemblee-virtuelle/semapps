@@ -3,8 +3,9 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import { uuidv4 as v4 } from 'uuid';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'mime... Remove this comment to see the full error message
 import mime from 'mime-types';
+import { Errors as MoleculerErrors } from 'moleculer';
 
-const { MoleculerError } = require('moleculer').Errors;
+const { MoleculerError } = MoleculerErrors;
 
 export default async function post(this: any, ctx: any) {
   try {

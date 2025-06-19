@@ -13,9 +13,7 @@ import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
 import { ServiceSchema, defineAction } from 'moleculer';
 import { KEY_TYPES } from '../constants.ts';
 
-const {
-  purposes: { AssertionProofPurpose }
-} = require('jsonld-signatures');
+const { AssertionProofPurpose } = jsigs.purposes;
 
 /**
  * Data integrity service for signing objects using the [VC data integrity spec](https://www.w3.org/TR/vc-data-integrity/).

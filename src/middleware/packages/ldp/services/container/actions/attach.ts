@@ -1,6 +1,7 @@
 import { defineAction } from 'moleculer';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors as MoleculerErrors } from 'moleculer';
+const { MoleculerError } = MoleculerErrors;
 
 const Schema = defineAction({
   visibility: 'public',

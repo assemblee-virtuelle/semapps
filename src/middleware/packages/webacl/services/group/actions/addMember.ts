@@ -2,7 +2,8 @@ import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import urlJoin from 'url-join';
 import { defineAction } from 'moleculer';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors as MoleculerErrors } from 'moleculer';
+const { MoleculerError } = MoleculerErrors;
 
 export const api = async function api(this: any, ctx: any) {
   if (!ctx.params.memberUri) throw new MoleculerError('needs a memberUri in your PATCH (json)', 400, 'BAD_REQUEST');

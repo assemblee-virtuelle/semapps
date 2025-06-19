@@ -3,7 +3,8 @@ import fs from 'fs';
 import { defineAction } from 'moleculer';
 import { getSlugFromUri, getContainerFromUri } from '../../../utils.ts';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors as MoleculerErrors } from 'moleculer';
+const { MoleculerError } = MoleculerErrors;
 
 // @ts-expect-error TS(2769): No overload matches this call.
 const Schema = defineAction({
