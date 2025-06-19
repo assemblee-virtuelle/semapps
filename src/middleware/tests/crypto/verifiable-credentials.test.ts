@@ -3,7 +3,6 @@ import path from 'node:path';
 import { ServiceSchema } from 'moleculer';
 import initialize from './initialize.ts';
 
-// @ts-expect-error TS(2304): Cannot find name 'jest'.
 jest.setTimeout(45_000);
 
 const getChallengeFrom = async (actor: any) => {
@@ -59,23 +58,17 @@ const setUp = async (withOldKeyStore: any) => {
   craig = await setUpUser(broker, 'craig');
 };
 
-// @ts-expect-error TS(2304): Cannot find name 'afterAll'.
 afterAll(async () => {
   if (broker) await broker.stop();
 });
 
-// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe('verifiable credentials', () => {
-  // @ts-expect-error TS(2304): Cannot find name 'beforeAll'.
   beforeAll(async () => {
-    // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
     await setUp();
     await broker.call('crypto.vc.issuer.credential-container.waitForContainerCreation');
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
   describe('object integrity', () => {
-    // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
     test('object is signed and verifiable', async () => {
       const object = {
         '@context': { name: 'urn:some:name' as const },
@@ -91,11 +84,9 @@ describe('verifiable credentials', () => {
         body: JSON.stringify({ object: signedObject })
       });
 
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(validationResult.verified).toBeTruthy();
     });
 
-    // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
     test('modified object verification fails', async () => {
       const object = {
         '@context': { name: 'urn:some:name' as const },
@@ -113,14 +104,11 @@ describe('verifiable credentials', () => {
         body: JSON.stringify({ object: signedObject })
       });
 
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(validationResult.verified).toBe(false);
     });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
   describe('credentials', () => {
-    // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
     test('credential is signed and verifiable', async () => {
       const verifiableCredential = await alice.fetch(path.join(vcApiEndpoint, 'credentials/issue'), {
         method: 'POST',
@@ -140,11 +128,9 @@ describe('verifiable credentials', () => {
         body: JSON.stringify({ verifiableCredential })
       });
 
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(validationResult.verified).toBe(true);
     });
 
-    // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
     test('verifying modified credential fails', async () => {
       const verifiableCredential = await alice.fetch(path.join(vcApiEndpoint, 'credentials/issue'), {
         method: 'POST',
@@ -158,7 +144,6 @@ describe('verifiable credentials', () => {
           }
         })
       });
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(verifiableCredential.type).not.toBe('VALIDATION_ERROR');
 
       delete verifiableCredential.credentialSubject.description;
@@ -167,14 +152,11 @@ describe('verifiable credentials', () => {
         method: 'POST',
         body: JSON.stringify({ verifiableCredential })
       });
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(validationResult.type).not.toBe('VALIDATION_ERROR');
 
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(validationResult.verified).toBe(false);
     });
 
-    // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
     test('presentation is signed and verifiable', async () => {
       const credential = await alice.fetch(path.join(vcApiEndpoint, 'credentials/issue'), {
         method: 'POST',
@@ -202,7 +184,6 @@ describe('verifiable credentials', () => {
         })
       });
 
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(verifiablePresentation.code).toBeUndefined();
 
       const validationResult = await alice.fetch(path.join(vcApiEndpoint, 'presentations/verify'), {
@@ -210,11 +191,9 @@ describe('verifiable credentials', () => {
         body: JSON.stringify({ verifiablePresentation })
       });
 
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(validationResult.verified).toBe(true);
     });
 
-    // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
     test('verifying unsigned presentation fails', async () => {
       const credential = await alice.fetch(path.join(vcApiEndpoint, 'credentials/issue'), {
         method: 'POST',
@@ -229,7 +208,6 @@ describe('verifiable credentials', () => {
           }
         })
       });
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(credential.type).not.toBe('VALIDATION_ERROR');
 
       const verifiablePresentation = await bob.fetch(path.join(vcApiEndpoint, 'presentations'), {
@@ -243,7 +221,6 @@ describe('verifiable credentials', () => {
           }
         })
       });
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(verifiablePresentation.type).not.toBe('VALIDATION_ERROR');
       delete verifiablePresentation.proof;
 
@@ -252,11 +229,9 @@ describe('verifiable credentials', () => {
         body: JSON.stringify({ verifiablePresentation })
       });
 
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(validationResult.verified).toBe(false);
     });
 
-    // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
     test('verifying modified presentation fails', async () => {
       const credential = await alice.fetch(path.join(vcApiEndpoint, 'credentials/issue'), {
         method: 'POST',
@@ -271,7 +246,6 @@ describe('verifiable credentials', () => {
           }
         })
       });
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(credential.type).not.toBe('VALIDATION_ERROR');
 
       const verifiablePresentation = await bob.fetch(path.join(vcApiEndpoint, 'presentations'), {
@@ -285,7 +259,6 @@ describe('verifiable credentials', () => {
           }
         })
       });
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(verifiablePresentation.type).not.toBe('VALIDATION_ERROR');
 
       verifiablePresentation.verifiableCredential[0].credentialSubject.description = 'Modified!';
@@ -295,14 +268,11 @@ describe('verifiable credentials', () => {
         body: JSON.stringify({ verifiablePresentation })
       });
 
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(validationResult.verified).toBe(false);
     });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
   describe('capabilities', () => {
-    // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
     test('first and second capability are created and presentation is verifiable', async () => {
       const firstCapability = await alice.fetch(path.join(vcApiEndpoint, 'credentials/issue'), {
         method: 'POST',
@@ -349,11 +319,9 @@ describe('verifiable credentials', () => {
         { meta: { webId: alice.webId } }
       );
 
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(validationResult.verified).toBeTruthy();
     });
 
-    // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
     test('capability is open / has no credentialSubject and transferable', async () => {
       const firstCapability = await alice.fetch(path.join(vcApiEndpoint, 'credentials/issue'), {
         method: 'POST',
@@ -386,11 +354,9 @@ describe('verifiable credentials', () => {
         body: JSON.stringify({ verifiablePresentation })
       });
 
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(validationResult.verified).toBeTruthy();
     });
 
-    // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
     test('second capability is deleted and presentation invalid.', async () => {
       const firstCapability = await alice.fetch(path.join(vcApiEndpoint, 'credentials/issue'), {
         method: 'POST',
@@ -441,11 +407,9 @@ describe('verifiable credentials', () => {
         { meta: { webId: alice.webId } }
       );
 
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(validationResult.verified).toBe(false);
     });
 
-    // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
     test('capability not invoked by holder invalid', async () => {
       const firstCapability = await alice.fetch(path.join(vcApiEndpoint, 'credentials/issue'), {
         method: 'POST',
@@ -479,15 +443,12 @@ describe('verifiable credentials', () => {
         { meta: { webId: alice.webId } }
       );
 
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(validationResult.verified).toBe(false);
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(validationResult.error?.errors?.[0].message).toMatch(
         'Invoker of capability is not the subject of the last capability'
       );
     });
 
-    // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
     test('non-linked chain is invalid', async () => {
       const allCreds = await alice.fetch(path.join(vcApiEndpoint, 'credentials'), {
         method: 'GET'
@@ -539,7 +500,6 @@ describe('verifiable credentials', () => {
         { meta: { webId: alice.webId } }
       );
 
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(validationResult.verified).toBeFalsy();
     });
   });
@@ -548,9 +508,7 @@ describe('verifiable credentials', () => {
 declare global {
   export namespace Moleculer {
     export interface AllServices {
-      // @ts-expect-error TS(2552): Cannot find name 'object'. Did you mean 'Object'?
       [object.name]: typeof object;
-      // @ts-expect-error TS(2552): Cannot find name 'object'. Did you mean 'Object'?
       [object.name]: typeof object;
     }
   }

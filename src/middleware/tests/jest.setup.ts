@@ -1,4 +1,3 @@
-// @ts-expect-error TS(2304): Cannot find name 'expect'.
 expect.extend({
   // An assertion to check if a value is undefined or an empty array
   toBeUndefinedOrEmptyArray(received: any) {

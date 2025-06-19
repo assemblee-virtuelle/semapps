@@ -4,7 +4,6 @@ import ApiGatewayService from 'moleculer-web';
 import { JsonLdService } from '@semapps/jsonld';
 import { OntologiesService } from '@semapps/ontologies';
 import { TripleStoreService } from '@semapps/triplestore';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import CONFIG from '../config.ts';
 import { clearDataset } from '../utils.ts';
 
@@ -21,7 +20,6 @@ export default async (cacher: any) => {
     cacher // If true, will use Moleculer MemoryCacher
   });
 
-  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "jsonld"; sett... Remove this comment to see the full error message
   broker.createService({
     mixins: [JsonLdService],
     settings: {
@@ -40,7 +38,6 @@ export default async (cacher: any) => {
     }
   });
 
-  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "triplestore";... Remove this comment to see the full error message
   broker.createService({
     mixins: [TripleStoreService],
     settings: {
@@ -51,10 +48,8 @@ export default async (cacher: any) => {
     }
   });
 
-  // @ts-expect-error TS(2345): Argument of type '{ mixins: (Moleculer.ServiceSche... Remove this comment to see the full error message
   broker.createService({ mixins: [ApiGatewayService] });
 
-  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "ontologies"; ... Remove this comment to see the full error message
   broker.createService({
     mixins: [OntologiesService],
     settings: {

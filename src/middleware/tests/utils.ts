@@ -1,9 +1,6 @@
 import urlJoin from 'url-join';
-// @ts-expect-error TS(7016): Could not find a declaration file for module 'node... Remove this comment to see the full error message
 import fetch from 'node-fetch';
-// @ts-expect-error TS(7016): Could not find a declaration file for module 'iore... Remove this comment to see the full error message
 import Redis from 'ioredis';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import CONFIG from './config.ts';
 
 const listDatasets = async () => {
@@ -33,40 +30,30 @@ const clearDataset = (dataset: any) =>
 
 const fetchServer = (url: any, options = {}) => {
   if (!url) throw new Error('No url provided to fetchServer');
-  // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
   if (!options.headers) options.headers = new fetch.Headers();
 
-  // @ts-expect-error TS(2339): Property 'method' does not exist on type '{}'.
   switch (options.method) {
     case 'POST':
     case 'PATCH':
     case 'PUT':
-      // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
       if (!options.headers.has('Accept')) options.headers.set('Accept', 'application/ld+json');
-      // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
       if (!options.headers.has('Content-Type')) options.headers.set('Content-Type', 'application/ld+json');
       break;
     case 'DELETE':
       break;
     case 'GET':
     default:
-      // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
       if (!options.headers.has('Accept')) options.headers.set('Accept', 'application/ld+json');
       break;
   }
 
-  // @ts-expect-error TS(2339): Property 'body' does not exist on type '{}'.
   if (options.body && options.headers.get('Content-Type').includes('json')) {
-    // @ts-expect-error TS(2339): Property 'body' does not exist on type '{}'.
     options.body = JSON.stringify(options.body);
   }
 
   return fetch(url, {
-    // @ts-expect-error TS(2339): Property 'method' does not exist on type '{}'.
     method: options.method || 'GET',
-    // @ts-expect-error TS(2339): Property 'body' does not exist on type '{}'.
     body: options.body,
-    // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
     headers: options.headers
   })
     .then((response: any) =>

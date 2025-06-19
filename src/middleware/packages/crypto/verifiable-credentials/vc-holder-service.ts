@@ -16,7 +16,7 @@ import { ServiceSchema, defineAction } from 'moleculer';
 import jsigs from 'jsonld-signatures';
 import { KEY_TYPES, credentialsContext } from '../constants.ts';
 
-const { AssertionProofPurpose } = jsigs.purposes;
+const { AuthenticationProofPurpose } = jsigs.purposes;
 
 /**
  * Service for verifying and creating Verifiable Presentations

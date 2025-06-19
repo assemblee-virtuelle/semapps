@@ -5,9 +5,12 @@ import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
 // @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import vc from '@digitalbazaar/vc';
 import { ServiceSchema, defineAction } from 'moleculer';
+import jsigs from 'jsonld-signatures';
 import VCCapabilityPresentationProofPurpose from './VcCapabilityPresentationProofPurpose.ts';
 import VCPurpose from './VcPurpose.ts';
 import { arrayOf } from '../utils/utils.ts';
+
+const { AuthenticationProofPurpose } = jsigs.purposes;
 
 /**
  * Service for verifying and creating Verifiable Presentations

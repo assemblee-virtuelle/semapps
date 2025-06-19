@@ -3,11 +3,9 @@ import { OBJECT_TYPES, ACTIVITY_TYPES, PUBLIC_URI } from '@semapps/activitypub';
 import { MIME_TYPES } from '@semapps/mime-types';
 import initialize from './initialize.ts';
 
-// @ts-expect-error TS(2304): Cannot find name 'jest'.
 jest.setTimeout(50000);
 const NUM_USERS = 2;
 
-// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', (mode: any) => {
   let broker: any;
   const actors: any = [];
@@ -15,7 +13,6 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
   let bob: any;
   let aliceMessageUri: any;
   let publicShareActivity: any;
-  // @ts-expect-error TS(2304): Cannot find name 'beforeAll'.
   beforeAll(async () => {
     if (mode === 'single-server') {
       broker = await initialize(3000, 'testData', 'settings');
@@ -32,7 +29,6 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
       const { webId } = await broker[i].call('auth.signup', require(`./data/actor${i}.json`));
       actors[i] = await broker[i].call('activitypub.actor.awaitCreateComplete', { actorUri: webId });
       actors[i].call = (actionName: any, params: any, options = {}) =>
-        // @ts-expect-error TS(2339): Property 'meta' does not exist on type '{}'.
         broker[i].call(actionName, params, { ...options, meta: { ...options.meta, webId } });
     }
 
@@ -40,7 +36,6 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
     bob = actors[2];
   });
 
-  // @ts-expect-error TS(2304): Cannot find name 'afterAll'.
   afterAll(async () => {
     if (mode === 'multi-server') {
       for (let i = 1; i <= NUM_USERS; i++) {
@@ -51,7 +46,6 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
     }
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Bob shares Alice message', async () => {
     const createActivity = await alice.call('activitypub.outbox.post', {
       collectionUri: alice.outbox,
@@ -82,7 +76,6 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
 
     // Ensure the /shares collection has been created
     await waitForExpect(async () => {
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(
         alice.call('ldp.resource.get', {
           resourceUri: aliceMessageUri,
@@ -95,7 +88,6 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
 
     // Ensure only the public announce activity has been added to the /shares collection
     await waitForExpect(async () => {
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(
         alice.call('activitypub.collection.get', {
           resourceUri: `${aliceMessageUri}/shares`,
@@ -108,7 +100,6 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
     });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Bob undo his share', async () => {
     await bob.call('activitypub.outbox.post', {
       collectionUri: bob.outbox,
@@ -120,7 +111,6 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
 
     // Ensure the public announce activity has been removed from the /shares collection
     await waitForExpect(async () => {
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(
         alice.call('activitypub.collection.get', {
           resourceUri: `${aliceMessageUri}/shares`,

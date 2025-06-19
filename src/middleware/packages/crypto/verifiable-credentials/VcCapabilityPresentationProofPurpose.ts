@@ -1,7 +1,7 @@
 import jsigs from 'jsonld-signatures';
 import { arrayOf } from '../utils/utils.ts';
 
-const { AssertionProofPurpose } = jsigs.purposes;
+const { AuthenticationProofPurpose } = jsigs.purposes;
 
 /**
  * Create an instance of this class when verifying capability VC presentations using
