@@ -9,8 +9,6 @@ import { ServiceSchema, defineAction } from 'moleculer';
 
 const delay = (t: any) => new Promise(resolve => setTimeout(resolve, t));
 
-/** @type {import('moleculer').ServiceSchema} */
-// @ts-expect-error TS(7022): 'DatasetService' implicitly has type 'any' because... Remove this comment to see the full error message
 const DatasetService = {
   name: 'triplestore.dataset' as const,
   settings: {
@@ -110,8 +108,7 @@ const DatasetService = {
     }),
 
     isSecure: defineAction({
-      // @ts-expect-error TS(7023): 'handler' implicitly has return type 'any' because... Remove this comment to see the full error message
-      async handler(ctx) {
+      async handler(ctx): Promise<any> {
         const { dataset } = ctx.params;
         // Check if http://semapps.org/webacl graph exists
         return await ctx.call('triplestore.query', {

@@ -1,29 +1,17 @@
 import urlJoin from 'url-join';
-import { ServiceSchema, defineAction } from 'moleculer';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import addRights from './actions/addRights.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import awaitReadRight from './actions/awaitReadRight.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import deleteAllRights from './actions/deleteAllRights.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import deleteAllUserRights from './actions/deleteAllUserRights.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import getLink from './actions/getLink.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import getRights from './actions/getRights.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import getUsersWithReadRights from './actions/getUsersWithReadRights.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import hasRights from './actions/hasRights.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import isPublic from './actions/isPublic.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import refreshContainersRights from './actions/refreshContainersRights.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import removeRights from './actions/removeRights.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import setRights from './actions/setRights.ts';
+import { ServiceSchema, Errors as MoleculerErrors } from 'moleculer';
+import * as addRights from './actions/addRights.ts';
+import * as awaitReadRight from './actions/awaitReadRight.ts';
+import * as deleteAllRights from './actions/deleteAllRights.ts';
+import * as deleteAllUserRights from './actions/deleteAllUserRights.ts';
+import * as getLink from './actions/getLink.ts';
+import * as getRights from './actions/getRights.ts';
+import * as getUsersWithReadRights from './actions/getUsersWithReadRights.ts';
+import * as hasRights from './actions/hasRights.ts';
+import * as isPublic from './actions/isPublic.ts';
+import * as refreshContainersRights from './actions/refreshContainersRights.ts';
+import * as removeRights from './actions/removeRights.ts';
+import * as setRights from './actions/setRights.ts';
 
 import {
   getAuthorizationNode,
@@ -38,7 +26,6 @@ import {
   getDatasetFromUri
 } from '../../utils.ts';
 
-import { Errors as MoleculerErrors } from 'moleculer';
 const { MoleculerError } = MoleculerErrors;
 
 const filterAclsOnlyAgent = (acl: any) => agentPredicates.includes(acl.p.value);

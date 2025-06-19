@@ -1,5 +1,6 @@
 import { defineAction } from 'moleculer';
 
+// eslint-disable-next-line import/prefer-default-export
 export const action = defineAction({
   visibility: 'public',
   params: {
@@ -11,8 +12,10 @@ export const action = defineAction({
     await ctx.call('triplestore.update', {
       query: `
         PREFIX acl: <http://www.w3.org/ns/auth/acl#>
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-        WITH <${this.settings.graphName}>
+        WITH <${
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+          this.settings.graphName
+        }>
         DELETE { ?auth acl:agent <${webId}>  }
         WHERE { ?auth acl:agent <${webId}>  }
       `,

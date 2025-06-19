@@ -1,23 +1,14 @@
 import urlJoin from 'url-join';
-import { ServiceSchema, defineAction } from 'moleculer';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import createAction from './actions/create.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import deleteAction from './actions/delete.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import existAction from './actions/exist.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import addMemberAction from './actions/addMember.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import getMembersAction from './actions/getMembers.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import getUriAction from './actions/getUri.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import isMemberAction from './actions/isMember.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import removeMemberAction from './actions/removeMember.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import getGroupsAction from './actions/getGroups.ts';
+import { ServiceSchema } from 'moleculer';
+import * as createAction from './actions/create.ts';
+import * as deleteAction from './actions/delete.ts';
+import * as existAction from './actions/exist.ts';
+import * as addMemberAction from './actions/addMember.ts';
+import * as getMembersAction from './actions/getMembers.ts';
+import * as getUriAction from './actions/getUri.ts';
+import * as isMemberAction from './actions/isMember.ts';
+import * as removeMemberAction from './actions/removeMember.ts';
+import * as getGroupsAction from './actions/getGroups.ts';
 
 const WebaclGroupSchema = {
   name: 'webacl.group' as const,

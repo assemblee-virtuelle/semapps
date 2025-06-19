@@ -48,8 +48,10 @@ export const action = defineAction({
     await ctx.call('triplestore.update', {
       query: sanitizeSparqlQuery`
         DELETE WHERE { 
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-          GRAPH <${this.settings.graphName}> { 
+          GRAPH <${
+            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+            this.settings.graphName
+          }> { 
             <${groupUri}> ?p ?o. 
           } 
         }

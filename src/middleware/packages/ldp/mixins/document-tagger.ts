@@ -61,15 +61,19 @@ const Schema = {
         const { resourceUri, dataset } = ctx.params;
         const now = new Date();
         await ctx.call('triplestore.update', {
-          query: `
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-            DELETE { <${resourceUri}> <${this.settings.documentPredicates.updated}> ?updated }
+          query: `  
+            DELETE { <${resourceUri}> <${
+              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+              this.settings.documentPredicates.updated
+            }> ?updated }
             INSERT { <${resourceUri}> <${
               // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               this.settings.documentPredicates.updated
             }> "${now.toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> }
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-            WHERE { <${resourceUri}> <${this.settings.documentPredicates.updated}> ?updated }
+            WHERE { <${resourceUri}> <${
+              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+              this.settings.documentPredicates.updated
+            }> ?updated }
           `,
           // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           dataset: this.settings.podProvider ? dataset || getDatasetFromUri(resourceUri) : undefined,

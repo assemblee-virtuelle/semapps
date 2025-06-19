@@ -2,9 +2,8 @@
 import createSlug from 'speakingurl';
 import urlJoin from 'url-join';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
-import { defineAction } from 'moleculer';
+import { defineAction, Errors as MoleculerErrors } from 'moleculer';
 
-import { Errors as MoleculerErrors } from 'moleculer';
 const { MoleculerError } = MoleculerErrors;
 
 export const api = async function api(this: any, ctx: any) {
@@ -78,8 +77,10 @@ export const action = defineAction({
       query: sanitizeSparqlQuery`
         PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
         INSERT DATA { 
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-          GRAPH <${this.settings.graphName}> { 
+          GRAPH <${
+            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+            this.settings.graphName
+          }> { 
             <${groupUri}> a vcard:Group 
           } 
         }

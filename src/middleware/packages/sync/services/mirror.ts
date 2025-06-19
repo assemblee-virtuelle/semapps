@@ -3,10 +3,9 @@ import urlJoin from 'url-join';
 import fetch from 'node-fetch';
 import { createFragmentURL, arrayOf } from '@semapps/ldp';
 import { ACTIVITY_TYPES } from '@semapps/activitypub';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema, defineAction, Errors as MoleculerErrors } from 'moleculer';
 import SynchronizerService from './synchronizer.ts';
 
-import { Errors as MoleculerErrors } from 'moleculer';
 const { MoleculerError } = MoleculerErrors;
 
 const regexPrefix = new RegExp('^@prefix ([\\w-]*: +<.*>) .', 'gm');
@@ -148,8 +147,10 @@ const MirrorSchema = {
         // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const singles = await this.broker.call('triplestore.query', {
           query: `SELECT DISTINCT ?s WHERE { 
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-          GRAPH <${this.settings.graphName}> { 
+          GRAPH <${
+            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+            this.settings.graphName
+          }> { 
           ?s <http://semapps.org/ns/core#singleMirroredResource> <${serverUrl}> } }`
         });
 

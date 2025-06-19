@@ -1,7 +1,7 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import urlJoin from 'url-join';
 
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema, defineAction, Errors as MoleculerErrors } from 'moleculer';
 import {
   getAclUriFromResourceUri,
   convertBodyToTriples,
@@ -10,7 +10,6 @@ import {
   FULL_FOAF_AGENT
 } from '../../../utils.ts';
 
-import { Errors as MoleculerErrors } from 'moleculer';
 const { MoleculerError } = MoleculerErrors;
 
 export const api = async function api(this: any, ctx: any) {

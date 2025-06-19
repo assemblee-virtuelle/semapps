@@ -1,5 +1,3 @@
-import { ServiceSchema } from 'moleculer';
-
 /**
  * This is a copy of the https://www.w3.org/ns/credentials/v2 context.
  * With the difference being that the `@graph` property for proofs is removed.
@@ -328,14 +326,6 @@ const noGraphCredentialContext = {
     '@id': 'https://www.iana.org/assignments/jose#x5u',
     '@type': '@id'
   }
-} satisfies ServiceSchema;
+};
 
 export default noGraphCredentialContext;
-
-declare global {
-  export namespace Moleculer {
-    export interface AllServices {
-      [noGraphCredentialContext.name]: typeof noGraphCredentialContext;
-    }
-  }
-}

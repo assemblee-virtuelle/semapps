@@ -1,9 +1,9 @@
-import { defineAction } from 'moleculer';
+import { defineAction, Errors as MoleculerErrors } from 'moleculer';
 import { getAclUriFromResourceUri, processRights, FULL_AGENTCLASS_URI, FULL_FOAF_AGENT } from '../../../utils.ts';
 
-import { Errors as MoleculerErrors } from 'moleculer';
 const { MoleculerError } = MoleculerErrors;
 
+// eslint-disable-next-line import/prefer-default-export
 export const action = defineAction({
   visibility: 'public',
   params: {
@@ -43,8 +43,10 @@ export const action = defineAction({
       query: `
         PREFIX acl: <http://www.w3.org/ns/auth/acl#>
         DELETE DATA {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-          GRAPH <${this.settings.graphName}> {
+          GRAPH <${
+            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+            this.settings.graphName
+          }> {
             ${processedRights.map(right => `<${right.auth}> <${right.p}> <${right.o}> .`).join('\n')}
           }
         }

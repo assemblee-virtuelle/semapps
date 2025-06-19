@@ -1,7 +1,7 @@
 import path from 'path';
-import { ServiceBroker, ServiceSchema } from 'moleculer';
+import { ServiceBroker } from 'moleculer';
 import { CoreService } from '@semapps/core';
-import CONFIG from '../config.ts';
+import * as CONFIG from '../config.ts';
 import { clearDataset } from '../utils.ts';
 
 jest.setTimeout(20000);
@@ -57,17 +57,9 @@ describe('WebId user creation', () => {
       name: 'jon' as const,
       familyName: 'do',
       homepage: 'http://example.org/myPage'
-    } satisfies ServiceSchema;
+    };
 
     const webId = await broker.call('webid.createWebId', profileData);
     expect(webId).toBe(`${CONFIG.HOME_URL}users/${profileData.nick}`);
   }, 20000);
 });
-
-declare global {
-  export namespace Moleculer {
-    export interface AllServices {
-      [profileData.name]: typeof profileData;
-    }
-  }
-}

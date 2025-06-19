@@ -1,6 +1,7 @@
 import urlJoin from 'url-join';
 import { defineAction } from 'moleculer';
 
+// eslint-disable-next-line import/prefer-default-export
 export const action = defineAction({
   visibility: 'public',
   async handler(ctx) {

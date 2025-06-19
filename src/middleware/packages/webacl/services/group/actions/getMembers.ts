@@ -47,8 +47,10 @@ export const action = defineAction({
         PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
         SELECT ?m 
         WHERE { 
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-          GRAPH <${this.settings.graphName}> { 
+          GRAPH <${
+            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+            this.settings.graphName
+          }> { 
             <${groupUri}> vcard:hasMember ?m 
           } 
         }

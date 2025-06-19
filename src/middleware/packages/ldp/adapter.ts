@@ -2,7 +2,7 @@ import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { Errors as MoleculerErrors } from 'moleculer';
 
-const { MoleculerError } = MoleculerErrors;
+const { ServiceSchemaError } = MoleculerErrors;
 
 class LdpAdapter {
   constructor({ resourceService = 'ldp.resource', containerService = 'ldp.container' } = {}) {
@@ -23,7 +23,6 @@ class LdpAdapter {
     // @ts-expect-error TS(2339): Property 'service' does not exist on type 'LdpAdap... Remove this comment to see the full error message
     if (!this.service.schema.settings.containerUri) {
       throw new ServiceSchemaError(
-        // @ts-expect-error TS(2339): Property 'service' does not exist on type 'LdpAdap... Remove this comment to see the full error message
         `Missing \`containerUri\` definition in settings of service ${this.service.schema.name}`
       );
     }
@@ -119,7 +118,6 @@ class LdpAdapter {
   insert(entity: any) {
     const { slug, ...resource } = entity;
 
-    // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'LdpAdapt... Remove this comment to see the full error message
     return (
       this.broker
         // @ts-expect-error TS(2339): Property 'resourceService' does not exist on type ... Remove this comment to see the full error message

@@ -29,8 +29,14 @@ const Schema = defineAction({
         DELETE
         WHERE
         { 
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-          ${isRemoteContainer ? `GRAPH <${this.settings.mirrorGraphName}> {` : ''}
+          ${
+            isRemoteContainer
+              ? `GRAPH <${
+                  // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+                  this.settings.mirrorGraphName
+                }> {`
+              : ''
+          }
           <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> 
           ${isRemoteContainer ? '}' : ''}
         }

@@ -6,10 +6,9 @@ import { JsonLdSerializer } from 'jsonld-streaming-serializer';
 import { DataFactory, Writer } from 'n3';
 import { createFragmentURL, regexProtocolAndHostAndPort, arrayOf } from '@semapps/ldp';
 import { parseHeader } from '@semapps/middlewares';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema, defineAction, Errors as MoleculerErrors } from 'moleculer';
 
 const { quad, namedNode, literal, blankNode } = DataFactory;
-import { Errors as MoleculerErrors } from 'moleculer';
 const { MoleculerError } = MoleculerErrors;
 
 const prefixes = {

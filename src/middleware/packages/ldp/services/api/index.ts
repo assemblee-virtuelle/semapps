@@ -1,5 +1,5 @@
 import urlJoin from 'url-join';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import deleteAction from './actions/delete.ts';
 import getAction from './actions/get.ts';
 import headAction from './actions/head.ts';

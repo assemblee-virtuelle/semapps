@@ -8,7 +8,6 @@ import AuthMailService from './mail.ts';
 
 const { MoleculerError } = MoleculerErrors;
 
-/** @type {import('moleculer').ServiceSchema} */
 const AuthLocalService = {
   name: 'auth' as const,
   mixins: [AuthMixin],
@@ -271,22 +270,7 @@ export default AuthLocalService;
 declare global {
   export namespace Moleculer {
     export interface AllServices {
-      // @ts-expect-error TS(2717): Subsequent property declarations must have the sam... Remove this comment to see the full error message
       [AuthLocalService.name]: typeof AuthLocalService;
-      // @ts-expect-error TS(2304): Cannot find name 'loginRoute'.
-      [loginRoute.name]: typeof loginRoute;
-      // @ts-expect-error TS(2304): Cannot find name 'logoutRoute'.
-      [logoutRoute.name]: typeof logoutRoute;
-      // @ts-expect-error TS(2304): Cannot find name 'signupRoute'.
-      [signupRoute.name]: typeof signupRoute;
-      // @ts-expect-error TS(2304): Cannot find name 'formRoute'.
-      [formRoute.name]: typeof formRoute;
-      // @ts-expect-error TS(2304): Cannot find name 'resetPasswordRoute'.
-      [resetPasswordRoute.name]: typeof resetPasswordRoute;
-      // @ts-expect-error TS(2304): Cannot find name 'setNewPasswordRoute'.
-      [setNewPasswordRoute.name]: typeof setNewPasswordRoute;
-      // @ts-expect-error TS(2304): Cannot find name 'accountSettingsRoute'.
-      [accountSettingsRoute.name]: typeof accountSettingsRoute;
     }
   }
 }

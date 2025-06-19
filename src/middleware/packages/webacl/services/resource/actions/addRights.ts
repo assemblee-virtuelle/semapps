@@ -1,7 +1,7 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import urlJoin from 'url-join';
 
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema, defineAction, Errors as MoleculerErrors } from 'moleculer';
 import {
   getAclUriFromResourceUri,
   convertBodyToTriples,
@@ -11,7 +11,6 @@ import {
   FULL_AGENTCLASS_URI
 } from '../../../utils.ts';
 
-import { Errors as MoleculerErrors } from 'moleculer';
 const { MoleculerError } = MoleculerErrors;
 
 export const api = async function api(this: any, ctx: any) {
@@ -111,7 +110,7 @@ export const action = defineAction({
       // find the difference between addedRights and currentPerms. add only what is not existent yet.
       // @ts-expect-error TS(18048): 'addedRights' is possibly 'undefined'.
       difference = addedRights.filter(
-        x => !currentPerms.some((y: any) => x.auth === y.auth && x.o === y.o && x.p === y.p)
+        (x: any) => !currentPerms.some((y: any) => x.auth === y.auth && x.o === y.o && x.p === y.p)
       );
       if (difference.length === 0) return;
 

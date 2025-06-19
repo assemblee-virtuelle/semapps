@@ -6,6 +6,7 @@
   "author": "Virtual Assembly",
   "dependencies": {
     "@semapps/mime-types": "1.1.3",
+    "moleculer": "^0.14.0",
     "node-fetch": "^2.6.6"
   },
   "publishConfig": {

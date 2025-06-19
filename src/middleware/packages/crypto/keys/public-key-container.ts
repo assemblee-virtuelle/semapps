@@ -1,7 +1,6 @@
 import { triple, namedNode } from '@rdfjs/data-model';
 import { ControlledContainerMixin } from '@semapps/ldp';
-// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
-import { E as Errors } from 'moleculer-web';
+import { E } from 'moleculer-web';
 import { ServiceSchema, defineAction } from 'moleculer';
 import { KEY_TYPES } from '../constants.ts';
 
@@ -53,7 +52,6 @@ const KeysPublicContainerSchema = {
   actions: {
     forbidden: defineAction({
       async handler(ctx) {
-        // @ts-expect-error TS(2304): Cannot find name 'E'.
         throw new E.ForbiddenError();
       }
     })

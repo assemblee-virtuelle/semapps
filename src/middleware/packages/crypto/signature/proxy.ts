@@ -32,7 +32,7 @@ const ProxyService = {
       aliases: {
         'POST /': [parseHeader, parseFile, saveDatasetMeta, 'signature.proxy.api_query'] // parseFile handles multipart/form-data
       }
-    } satisfies ServiceSchema;
+    };
 
     if (this.settings.podProvider) {
       await this.broker.call('api.addRoute', {
@@ -189,8 +189,6 @@ declare global {
   export namespace Moleculer {
     export interface AllServices {
       [ProxyService.name]: typeof ProxyService;
-      // @ts-expect-error TS(2304): Cannot find name 'routeConfig'.
-      [routeConfig.name]: typeof routeConfig;
     }
   }
 }

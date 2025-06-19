@@ -5,6 +5,7 @@ import { defineAction } from 'moleculer';
 import { Errors as MoleculerErrors } from 'moleculer';
 const { MoleculerError } = MoleculerErrors;
 
+// eslint-disable-next-line import/prefer-default-export
 export const action = defineAction({
   visibility: 'public',
   params: {
@@ -25,8 +26,10 @@ export const action = defineAction({
       query: sanitizeSparqlQuery`
         PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
         ASK WHERE { 
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-          GRAPH <${this.settings.graphName}> {
+          GRAPH <${
+            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+            this.settings.graphName
+          }> {
             <${groupUri}> a vcard:Group .
           } 
         }

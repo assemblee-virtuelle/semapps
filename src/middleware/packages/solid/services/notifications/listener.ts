@@ -4,7 +4,7 @@ import urlJoin from 'url-join';
 import fetch from 'node-fetch';
 import LinkHeader from 'http-link-header';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
-import { uuidv4 as v4 } from 'uuid';
+import { uuidv4 } from 'uuid';
 import DbService from 'moleculer-db';
 import { parseHeader, negotiateContentType, parseJson } from '@semapps/middlewares';
 // @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message

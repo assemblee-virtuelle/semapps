@@ -1,6 +1,5 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import path from 'node:path';
-import { ServiceSchema } from 'moleculer';
 import initialize from './initialize.ts';
 
 jest.setTimeout(45_000);
@@ -73,7 +72,7 @@ describe('verifiable credentials', () => {
       const object = {
         '@context': { name: 'urn:some:name' as const },
         name: 'Signed object' as const
-      } satisfies ServiceSchema;
+      };
       const signedObject = await alice.fetch(path.join(vcApiEndpoint, 'data-integrity/sign'), {
         method: 'POST',
         body: JSON.stringify({ object })
@@ -91,7 +90,7 @@ describe('verifiable credentials', () => {
       const object = {
         '@context': { name: 'urn:some:name' as const },
         name: 'Signed object' as const
-      } satisfies ServiceSchema;
+      };
       const signedObject = await alice.fetch(path.join(vcApiEndpoint, 'data-integrity/sign'), {
         method: 'POST',
         body: JSON.stringify({ object })
@@ -504,12 +503,3 @@ describe('verifiable credentials', () => {
     });
   });
 });
-
-declare global {
-  export namespace Moleculer {
-    export interface AllServices {
-      [object.name]: typeof object;
-      [object.name]: typeof object;
-    }
-  }
-}

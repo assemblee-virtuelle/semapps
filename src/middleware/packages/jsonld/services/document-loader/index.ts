@@ -31,7 +31,6 @@ const defaultDocumentLoader = !process.versions.bun
       return { contextUrl, documentUrl: url, document };
     };
 
-// @ts-expect-error TS(2351): This expression is not constructable.
 const cache = new LRU({ max: 500 });
 
 const JsonldDocumentLoaderSchema = {

@@ -4,10 +4,9 @@ import { parseRequest, verifySignature } from 'http-signature';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'http... Remove this comment to see the full error message
 import { createAuthzHeader, createSignatureString } from 'http-signature-header';
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
-import { E as Errors } from 'moleculer-web';
+import { E } from 'moleculer-web';
 import { ServiceSchema, defineAction } from 'moleculer';
 import { KEY_TYPES } from '../constants.ts';
-import { arrayOf } from '../utils/utils.ts';
 
 const HttpSignatureService = {
   // TODO: Rename to signature.http-signatures in a major release.
