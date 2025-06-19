@@ -711,7 +711,8 @@ declare global {
       [key: string]: string | boolean | any[] | number | Record<any, any> | null | undefined;
     };
 
-    function defineAction<P extends ValidatorSchema>(actionSchema: ActionSchema<P>): ActionSchema<P>;
+    function defineAction<P extends ValidatorSchema>(schema: ActionSchema<P>): ActionSchema<P>;
+    function defineServiceEvent<P extends ValidatorSchema>(schema: ServiceEvent<P>): ServiceEvent<P>;
 
     interface EventSchema<Schema extends FastestValidationSchema = {}> {
       name?: string;

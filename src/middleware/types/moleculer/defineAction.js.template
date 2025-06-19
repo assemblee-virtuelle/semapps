@@ -1,4 +1,0 @@
-// This is the patched identity function.
-function defineAction(actionSchema) {
-  return actionSchema;
-}
