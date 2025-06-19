@@ -1,9 +1,8 @@
 import fetch from 'node-fetch';
-// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
-import { E as Errors } from 'moleculer-web';
+import { Errors as E } from 'moleculer-web';
+import { ServiceSchema, defineAction } from 'moleculer';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { getType, arrayOf } from '@semapps/ldp';
-import { ServiceSchema, defineAction } from 'moleculer';
 import { collectionPermissionsWithAnonRead, getSlugFromUri, objectIdToCurrent } from '../../../utils.ts';
 import { ACTOR_TYPES } from '../../../constants.ts';
 import AwaitActivityMixin from '../../../mixins/await-activity.ts';
@@ -50,20 +49,17 @@ const OutboxService = {
 
         const collectionExists = await ctx.call('activitypub.collection.exist', { resourceUri: collectionUri });
         if (!collectionExists) {
-          // @ts-expect-error TS(2304): Cannot find name 'E'.
           throw new E.NotFoundError();
         }
 
         const actorUri = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'outbox' });
         if (!actorUri) {
-          // @ts-expect-error TS(2304): Cannot find name 'E'.
           throw new E.BadRequestError('INVALID_COLLECTION', 'The collection is not a valid ActivityPub outbox');
         }
 
         // Ensure logged user is posting to his own outbox
         // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         if (ctx.meta.webId && ctx.meta.webId !== 'system' && actorUri !== ctx.meta.webId) {
-          // @ts-expect-error TS(2304): Cannot find name 'E'.
           throw new E.UnAuthorizedError(
             'UNAUTHORIZED',
             // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.

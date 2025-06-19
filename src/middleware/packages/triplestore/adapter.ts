@@ -2,7 +2,7 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
-import { uuidv4 as v4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { frame } from 'jsonld';
 import { sanitizeSparqlUri, sanitizeSparqlString } from './utils.ts';
 

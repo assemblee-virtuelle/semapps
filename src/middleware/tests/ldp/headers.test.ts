@@ -1,5 +1,5 @@
 import urlJoin from 'url-join';
-import { parseLinkHeader as parse } from 'http-link-header';
+import { parse as parseLinkHeader } from 'http-link-header';
 import { fetchServer } from '../utils.ts';
 import initialize from './initialize.ts';
 import CONFIG from '../config.ts';

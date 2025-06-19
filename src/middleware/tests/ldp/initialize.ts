@@ -1,6 +1,6 @@
 import { ServiceBroker, defineAction } from 'moleculer';
 import fs from 'fs';
-import path, { pathJoin as join } from 'path';
+import path, { join as pathJoin } from 'path';
 import { CoreService } from '@semapps/core';
 import { pair, petr } from '@semapps/ontologies';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';

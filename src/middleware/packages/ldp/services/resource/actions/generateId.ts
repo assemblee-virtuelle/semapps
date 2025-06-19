@@ -1,7 +1,7 @@
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'spea... Remove this comment to see the full error message
 import createSlug from 'speakingurl';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
-import { uuidv4 as v4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import urlJoin from 'url-join';
 import { defineAction } from 'moleculer';
 

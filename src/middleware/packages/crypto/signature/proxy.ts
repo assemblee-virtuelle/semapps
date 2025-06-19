@@ -4,7 +4,7 @@ import { parseHeader, parseFile, saveDatasetMeta } from '@semapps/middlewares';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'node... Remove this comment to see the full error message
 import fetch from 'node-fetch';
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
-import { E as Errors } from 'moleculer-web';
+import { Errors as E } from 'moleculer-web';
 import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 
 const stream2buffer = (stream: any) => {

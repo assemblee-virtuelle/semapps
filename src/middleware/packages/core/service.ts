@@ -1,6 +1,6 @@
 import path from 'path';
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
-import ApiGatewayService, { E as Errors } from 'moleculer-web';
+import ApiGatewayService, { Errors as E } from 'moleculer-web';
 import { ActivityPubService, FULL_ACTOR_TYPES } from '@semapps/activitypub';
 import { JsonLdService } from '@semapps/jsonld';
 import { LdpService, DocumentTaggerMixin } from '@semapps/ldp';
@@ -101,7 +101,6 @@ const CoreService = {
               return ctx.call('auth.authorize', { route, req, res });
             }
             ctx.meta.webId = 'anon';
-            // @ts-expect-error TS(2304): Cannot find name 'E'.
             return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
           },
           // Overwrite optimization method to put catchAll routes at the end

@@ -1,4 +1,3 @@
-// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { dc } from '@semapps/ontologies';
 import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 import { getDatasetFromUri } from '../utils.ts';

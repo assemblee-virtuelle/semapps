@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import fs from 'fs';
-import { pathJoin as join } from 'path';
+import { join as pathJoin } from 'path';
 import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { getSlugFromUri } from '@semapps/ldp';

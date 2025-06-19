@@ -1,8 +1,7 @@
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'node... Remove this comment to see the full error message
 import fetch from 'node-fetch';
 import cronParser from 'cron-parser';
-// @ts-expect-error TS(2724): '"fs"' has no exported member named 'fsPromises'. ... Remove this comment to see the full error message
-import { fsPromises as promises } from 'fs';
+import { promises as fsPromises } from 'fs';
 import { ACTIVITY_TYPES, PUBLIC_URI } from '@semapps/activitypub';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { ServiceSchema, defineAction } from 'moleculer';
@@ -415,12 +414,10 @@ const Schema = {
         return false;
       } else if (await isDir(param)) {
         // Parameter is a directory
-        // @ts-expect-error TS(2552): Cannot find name 'fsPromises'. Did you mean 'promi... Remove this comment to see the full error message
         const filenames = await fsPromises.readdir(param);
         let files = [];
         for (const filename of filenames) {
           try {
-            // @ts-expect-error TS(2552): Cannot find name 'fsPromises'. Did you mean 'promi... Remove this comment to see the full error message
             let content = await fsPromises.readFile(`${param}/${filename}`, { encoding: 'utf-8' });
             // Parse file if it is JSON
             try {
@@ -437,7 +434,6 @@ const Schema = {
       } else {
         // Parameter is a file
         try {
-          // @ts-expect-error TS(2552): Cannot find name 'fsPromises'. Did you mean 'promi... Remove this comment to see the full error message
           const file = await fsPromises.readFile(param);
           return JSON.parse(file.toString());
         } catch (e) {

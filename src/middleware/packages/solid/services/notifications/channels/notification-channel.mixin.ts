@@ -1,12 +1,12 @@
 import urlJoin from 'url-join';
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
-import { E as Errors } from 'moleculer-web';
+import { Errors as E } from 'moleculer-web';
 import { SpecialEndpointMixin, ControlledContainerMixin, getDatasetFromUri, arrayOf } from '@semapps/ldp';
 import { ACTIVITY_TYPES } from '@semapps/activitypub';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { namedNode } from '@rdfjs/data-model';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
-import { uuidV4 as v4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
 import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 

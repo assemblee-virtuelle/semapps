@@ -1,8 +1,7 @@
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import urlJoin from 'url-join';
-import { defineAction } from 'moleculer';
+import { defineAction, Errors as MoleculerErrors } from 'moleculer';
 
-import { Errors as MoleculerErrors } from 'moleculer';
 const { MoleculerError } = MoleculerErrors;
 
 export const api = async function api(this: any, ctx: any) {

@@ -1,6 +1,5 @@
 import { MIME_TYPES } from '@semapps/mime-types';
-// @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
-import { uuidv4 as v4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'mime... Remove this comment to see the full error message
 import mime from 'mime-types';
 import { Errors as MoleculerErrors } from 'moleculer';
@@ -28,7 +27,6 @@ export default async function post(this: any, ctx: any) {
       }
 
       const extension = mime.extension(ctx.params.files[0].mimetype);
-      // @ts-expect-error TS(2304): Cannot find name 'uuidv4'.
       const slug = extension ? `${uuidv4()}.${extension}}` : uuidv4();
 
       resourceUri = await ctx.call(controlledActions.post || 'ldp.container.post', {

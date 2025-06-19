@@ -1,6 +1,5 @@
 import { ControlledContainerMixin } from '@semapps/ldp';
-// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
-import { E as Errors } from 'moleculer-web';
+import { Errors as E } from 'moleculer-web';
 import { ServiceSchema, defineAction } from 'moleculer';
 import { arrayOf } from '../utils/utils.ts';
 import { KEY_TYPES } from '../constants.ts';
