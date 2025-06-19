@@ -1,9 +1,10 @@
-const { arrayOf } = require('@semapps/ldp');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { hasType } = require('../utils');
+import { arrayOf } from '@semapps/ldp';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { hasType } from '../utils.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
-module.exports = {
-  name: 'groups-manager',
+const GroupsManagerSchema = {
+  name: 'groups-manager' as const,
   settings: {
     usersContainer: null,
     rules: []
@@ -18,35 +19,37 @@ module.exports = {
     }
   },
   actions: {
-    async refreshAll(ctx) {
-      const usersContainer = await ctx.call('ldp.container.get', {
-        containerUri: this.settings.usersContainer,
-        accept: MIME_TYPES.JSON,
-        webId: 'system'
-      });
+    refreshAll: defineAction({
+      async handler(ctx) {
+        const usersContainer = await ctx.call('ldp.container.get', {
+          containerUri: this.settings.usersContainer,
+          accept: MIME_TYPES.JSON,
+          webId: 'system'
+        });
 
-      for (const user of arrayOf(usersContainer['ldp:contains'])) {
-        const userUri = user['@id'] || user.id;
-        this.logger.info(`Refreshing user ${userUri}...`);
-        for (const rule of this.settings.rules) {
-          if (this.matchRule(rule, user)) {
-            this.logger.info(`Adding user ${userUri} to group ${rule.groupSlug}`);
-            await ctx.call('webacl.group.addMember', {
-              groupSlug: rule.groupSlug,
-              memberUri: user.id,
-              webId: 'system'
-            });
-          } else {
-            this.logger.info(`Removing user ${userUri} from group ${rule.groupSlug} (if it exists)`);
-            await ctx.call('webacl.group.removeMember', {
-              groupSlug: rule.groupSlug,
-              memberUri: user.id,
-              webId: 'system'
-            });
+        for (const user of arrayOf(usersContainer['ldp:contains'])) {
+          const userUri = user['@id'] || user.id;
+          this.logger.info(`Refreshing user ${userUri}...`);
+          for (const rule of this.settings.rules) {
+            if (this.matchRule(rule, user)) {
+              this.logger.info(`Adding user ${userUri} to group ${rule.groupSlug}`);
+              await ctx.call('webacl.group.addMember', {
+                groupSlug: rule.groupSlug,
+                memberUri: user.id,
+                webId: 'system'
+              });
+            } else {
+              this.logger.info(`Removing user ${userUri} from group ${rule.groupSlug} (if it exists)`);
+              await ctx.call('webacl.group.removeMember', {
+                groupSlug: rule.groupSlug,
+                memberUri: user.id,
+                webId: 'system'
+              });
+            }
           }
         }
       }
-    }
+    })
   },
   methods: {
     matchRule(rule, record) {
@@ -116,4 +119,14 @@ module.exports = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
+
+export default GroupsManagerSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [GroupsManagerSchema.name]: typeof GroupsManagerSchema;
+    }
+  }
+}

@@ -1,3 +1,2 @@
-module.exports = {
-  InferenceService: require('./service')
-};
+import InferenceService from './service.ts';
+export { InferenceService };

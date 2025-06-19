@@ -1,4 +1,6 @@
-module.exports = {
+import { defineAction } from 'moleculer';
+
+const Schema = defineAction({
   visibility: 'public',
   params: {
     context: {
@@ -16,4 +18,6 @@ module.exports = {
       return false;
     }
   }
-};
+});
+
+export default Schema;

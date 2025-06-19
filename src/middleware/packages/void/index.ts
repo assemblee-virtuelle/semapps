@@ -1,3 +1,2 @@
-module.exports = {
-  VoidService: require('./service')
-};
+import VoidService from './service.ts';
+export { VoidService };

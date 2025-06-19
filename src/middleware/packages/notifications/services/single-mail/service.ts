@@ -1,12 +1,12 @@
-const urlJoin = require('url-join');
-const path = require('path');
-const MailService = require('moleculer-mail');
-const { getSlugFromUri } = require('@semapps/ldp');
-
+import urlJoin from 'url-join';
+import path from 'path';
+import MailService from 'moleculer-mail';
+import { getSlugFromUri } from '@semapps/ldp';
+import { ServiceSchema } from 'moleculer';
 const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
 const SingleMailNotificationsService = {
-  name: 'notifications.single-mail',
+  name: 'notifications.single-mail' as const,
   mixins: [MailService],
   settings: {
     defaultLocale: 'en',
@@ -84,7 +84,7 @@ const SingleMailNotificationsService = {
   },
   queues: {
     sendMail: {
-      name: '*',
+      name: '*' as const,
       async process(job) {
         job.progress(0);
         const result = await this.actions.send(job.data);
@@ -93,6 +93,14 @@ const SingleMailNotificationsService = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
 
-module.exports = SingleMailNotificationsService;
+export default SingleMailNotificationsService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [SingleMailNotificationsService.name]: typeof SingleMailNotificationsService;
+    }
+  }
+}

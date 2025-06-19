@@ -1,3 +1,5 @@
+import { ServiceSchema } from 'moleculer';
+
 /**
  * MoleculerJS mixin to be applied on the ControlledContainerMixin.
  * Adds support for adding different subjects to the same resource/named graph than the resource URI itself.
@@ -9,7 +11,7 @@
  *
  * @type {import('moleculer').ServiceSchema}
  */
-module.exports = {
+const Schema = {
   dependencies: ['ldp.resource'],
   settings: {
     pseudoIdPredicate: 'urn:tmp:pseudoId'
@@ -88,4 +90,6 @@ module.exports = {
       list: ['handleAfterGet']
     }
   }
-};
+} satisfies ServiceSchema;
+
+export default Schema;

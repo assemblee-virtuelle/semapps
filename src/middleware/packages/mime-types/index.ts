@@ -1,6 +1,6 @@
-const Negotiator = require('negotiator');
+import Negotiator from 'negotiator';
 const { MoleculerError } = require('moleculer').Errors;
-const { MIME_TYPES, TYPES_REPO } = require('./constants');
+import { MIME_TYPES, TYPES_REPO } from './constants.ts';
 
 const negotiateType = function (incomingType) {
   const availableMediaTypes = [];
@@ -46,11 +46,4 @@ const isMimeTypeMatching = (type, types) => {
   return !!result;
 };
 
-module.exports = {
-  MIME_TYPES,
-  negotiateType,
-  negotiateTypeMime,
-  negotiateTypeN3,
-  negotiateTypeFuseki,
-  isMimeTypeMatching
-};
+export { MIME_TYPES, negotiateType, negotiateTypeMime, negotiateTypeN3, negotiateTypeFuseki, isMimeTypeMatching };

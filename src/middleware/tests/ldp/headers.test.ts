@@ -1,15 +1,15 @@
-const urlJoin = require('url-join');
-const { parse: parseLinkHeader } = require('http-link-header');
-const { fetchServer } = require('../utils');
-const initialize = require('./initialize');
-const CONFIG = require('../config');
-
+import urlJoin from 'url-join';
+import { parseLinkHeader as parse } from 'http-link-header';
+import { fetchServer } from '../utils.ts';
+import initialize from './initialize.ts';
+import CONFIG from '../config.ts';
 jest.setTimeout(20000);
 let broker;
 
 beforeAll(async () => {
   broker = await initialize();
 });
+
 afterAll(async () => {
   if (broker) await broker.stop();
 });

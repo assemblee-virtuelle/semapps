@@ -1,7 +1,8 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { sanitizeSparqlUri } = require('@semapps/triplestore');
+import { MIME_TYPES } from '@semapps/mime-types';
+import { sanitizeSparqlUri } from '@semapps/triplestore';
 const { MoleculerError } = require('moleculer').Errors;
-const { getValueFromDataType } = require('../../../../../utils');
+import { getValueFromDataType } from '../../../../../utils.ts';
+import { defineAction } from 'moleculer';
 
 /**
  * Retrieves the collection metadata from the triplestore
@@ -270,7 +271,7 @@ function formatResponse(
   };
 }
 
-module.exports = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -341,4 +342,6 @@ module.exports = {
       context: jsonContext || localContext
     });
   }
-};
+});
+
+export default Schema;

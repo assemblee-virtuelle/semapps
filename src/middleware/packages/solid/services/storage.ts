@@ -1,10 +1,11 @@
-const urlJoin = require('url-join');
-const { triple, namedNode } = require('@rdfjs/data-model');
-const { pim } = require('@semapps/ontologies');
+import urlJoin from 'url-join';
+import { triple, namedNode } from '@rdfjs/data-model';
+import { pim } from '@semapps/ontologies';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 /** @type {import('moleculer').ServiceSchema} */
-module.exports = {
-  name: 'solid-storage',
+const SolidStorageSchema = {
+  name: 'solid-storage' as const,
   settings: {
     baseUrl: null,
     pathName: 'data'
@@ -25,28 +26,33 @@ module.exports = {
     });
   },
   actions: {
-    async create(ctx) {
-      const { username } = ctx.params;
-      if (!username) throw new Error('Cannot create Solid storage without a username');
+    create: defineAction({
+      async handler(ctx) {
+        const { username } = ctx.params;
+        if (!username) throw new Error('Cannot create Solid storage without a username');
 
-      await ctx.call('triplestore.dataset.create', {
-        dataset: username,
-        secure: true
-      });
+        await ctx.call('triplestore.dataset.create', {
+          dataset: username,
+          secure: true
+        });
 
-      ctx.meta.dataset = username;
+        ctx.meta.dataset = username;
 
-      // Create the storage root container so that the LdpRegistryService can create the default containers
-      const storageRootUri = urlJoin(this.settings.baseUrl, username, this.settings.pathName);
-      await ctx.call('ldp.container.create', { containerUri: storageRootUri, webId: 'system' });
+        // Create the storage root container so that the LdpRegistryService can create the default containers
+        const storageRootUri = urlJoin(this.settings.baseUrl, username, this.settings.pathName);
+        await ctx.call('ldp.container.create', { containerUri: storageRootUri, webId: 'system' });
 
-      return storageRootUri;
-    },
-    async getUrl(ctx) {
-      const { webId } = ctx.params;
-      // This is faster, but later we should use the 'pim:storage' property of the webId
-      return urlJoin(webId, this.settings.pathName);
-    }
+        return storageRootUri;
+      }
+    }),
+
+    getUrl: defineAction({
+      async handler(ctx) {
+        const { webId } = ctx.params;
+        // This is faster, but later we should use the 'pim:storage' property of the webId
+        return urlJoin(webId, this.settings.pathName);
+      }
+    })
   },
   events: {
     async 'auth.registered'(ctx) {
@@ -86,4 +92,14 @@ module.exports = {
       });
     }
   }
-};
+} satisfies ServiceSchema;
+
+export default SolidStorageSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [SolidStorageSchema.name]: typeof SolidStorageSchema;
+    }
+  }
+}

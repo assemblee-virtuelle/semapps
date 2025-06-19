@@ -1,8 +1,9 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { Errors: E } = require('moleculer-web');
-const { hasType } = require('../../../utils');
+import { MIME_TYPES } from '@semapps/mime-types';
+import { E as Errors } from 'moleculer-web';
+import { hasType } from '../../../utils.ts';
+import { defineAction } from 'moleculer';
 
-module.exports = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     resourceUri: { type: 'string', optional: true },
@@ -100,4 +101,6 @@ module.exports = {
 
     return resource;
   }
-};
+});
+
+export default Schema;

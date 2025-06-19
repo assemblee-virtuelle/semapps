@@ -1,7 +1,7 @@
-const { parseHeader, negotiateAccept, parseJson } = require('@semapps/middlewares');
-const path = require('node:path');
-const { VC_API_PATH } = require('../constants');
-
+import { parseHeader, negotiateAccept, parseJson } from '@semapps/middlewares';
+import path from 'node:path';
+import { VC_API_PATH } from '../constants.ts';
+import { ServiceSchema } from 'moleculer';
 const middlewares = [parseHeader, parseJson, negotiateAccept];
 
 /**
@@ -16,7 +16,7 @@ const middlewares = [parseHeader, parseJson, negotiateAccept];
  * @type {import('moleculer').ServiceSchema}
  */
 const VCApiService = {
-  name: 'crypto.vc.api',
+  name: 'crypto.vc.api' as const,
   dependencies: ['api', 'ldp'],
   settings: {
     podProvider: null
@@ -33,7 +33,7 @@ const VCApiService = {
     // Credential routes.
     await this.broker.call('api.addRoute', {
       route: {
-        name: 'vc.credentials',
+        name: 'vc.credentials' as const,
         path: path.join(apiPath, 'credentials'),
         authentication: true,
         aliases: {
@@ -46,7 +46,7 @@ const VCApiService = {
     // Presentation routes.
     await this.broker.call('api.addRoute', {
       route: {
-        name: 'vc.presentations',
+        name: 'vc.presentations' as const,
         path: path.join(apiPath, 'presentations'),
         authentication: true,
         aliases: {
@@ -60,7 +60,7 @@ const VCApiService = {
     // Challenges route.
     await this.broker.call('api.addRoute', {
       route: {
-        name: 'vc.challenges',
+        name: 'vc.challenges' as const,
         path: path.join(apiPath, 'challenges'),
         authorization: false,
         authentication: false,
@@ -73,7 +73,7 @@ const VCApiService = {
     // Data integrity routes.
     await this.broker.call('api.addRoute', {
       route: {
-        name: 'vc.data-integrity',
+        name: 'vc.data-integrity' as const,
         path: path.join(apiPath, 'data-integrity'),
         authentication: true,
         aliases: {
@@ -83,6 +83,14 @@ const VCApiService = {
       }
     });
   }
-};
+} satisfies ServiceSchema;
 
-module.exports = VCApiService;
+export default VCApiService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [VCApiService.name]: typeof VCApiService;
+    }
+  }
+}

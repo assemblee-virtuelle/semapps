@@ -1,6 +1,7 @@
+import { defineAction } from 'moleculer';
 const { MoleculerError } = require('moleculer').Errors;
 
-module.exports = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     containerUri: { type: 'string' },
@@ -46,4 +47,6 @@ module.exports = {
 
     return returnValues;
   }
-};
+});
+
+export default Schema;

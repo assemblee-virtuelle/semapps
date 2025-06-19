@@ -1,14 +1,14 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { quad, namedNode, blankNode, literal } = require('rdf-data-model');
-const CONFIG = require('../config');
-const initialize = require('./initialize');
-
+import { MIME_TYPES } from '@semapps/mime-types';
+import { quad, namedNode, blankNode, literal } from 'rdf-data-model';
+import CONFIG from '../config.ts';
+import initialize from './initialize.ts';
 jest.setTimeout(50000);
 let broker;
 
 beforeAll(async () => {
   broker = await initialize();
 });
+
 afterAll(async () => {
   if (broker) await broker.stop();
 });

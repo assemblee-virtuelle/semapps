@@ -1,13 +1,14 @@
-const urlJoin = require('url-join');
-const getByTypeAction = require('./actions/getByType');
-const getByUriAction = require('./actions/getByUri');
-const getUriAction = require('./actions/getUri');
-const listAction = require('./actions/list');
-const registerAction = require('./actions/register');
-const defaultOptions = require('./defaultOptions');
+import urlJoin from 'url-join';
+import getByTypeAction from './actions/getByType.ts';
+import getByUriAction from './actions/getByUri.ts';
+import getUriAction from './actions/getUri.ts';
+import listAction from './actions/list.ts';
+import registerAction from './actions/register.ts';
+import defaultOptions from './defaultOptions.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
-module.exports = {
-  name: 'ldp.registry',
+const LdpRegistrySchema = {
+  name: 'ldp.registry' as const,
   settings: {
     baseUrl: null,
     containers: [],
@@ -53,4 +54,14 @@ module.exports = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
+
+export default LdpRegistrySchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [LdpRegistrySchema.name]: typeof LdpRegistrySchema;
+    }
+  }
+}

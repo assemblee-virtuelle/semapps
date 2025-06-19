@@ -1,22 +1,23 @@
-const attachAction = require('./actions/attach');
-const clearAction = require('./actions/clear');
-const createAction = require('./actions/create');
-const createAndAttachAction = require('./actions/createAndAttach');
-const deleteAction = require('./actions/delete');
-const detachAction = require('./actions/detach');
-const existAction = require('./actions/exist');
-const isEmptyAction = require('./actions/isEmpty');
-const getAction = require('./actions/get');
-const getAllAction = require('./actions/getAll');
-const getPathAction = require('./actions/getPath');
-const getUrisAction = require('./actions/getUris');
-const includesAction = require('./actions/includes');
-const postAction = require('./actions/post');
-const patchAction = require('./actions/patch');
-const { getDatasetFromUri } = require('../../utils');
+import attachAction from './actions/attach.ts';
+import clearAction from './actions/clear.ts';
+import createAction from './actions/create.ts';
+import createAndAttachAction from './actions/createAndAttach.ts';
+import deleteAction from './actions/delete.ts';
+import detachAction from './actions/detach.ts';
+import existAction from './actions/exist.ts';
+import isEmptyAction from './actions/isEmpty.ts';
+import getAction from './actions/get.ts';
+import getAllAction from './actions/getAll.ts';
+import getPathAction from './actions/getPath.ts';
+import getUrisAction from './actions/getUris.ts';
+import includesAction from './actions/includes.ts';
+import postAction from './actions/post.ts';
+import patchAction from './actions/patch.ts';
+import { getDatasetFromUri } from '../../utils.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
-module.exports = {
-  name: 'ldp.container',
+const LdpContainerSchema = {
+  name: 'ldp.container' as const,
   settings: {
     baseUrl: null,
     podProvider: false,
@@ -55,4 +56,14 @@ module.exports = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
+
+export default LdpContainerSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [LdpContainerSchema.name]: typeof LdpContainerSchema;
+    }
+  }
+}

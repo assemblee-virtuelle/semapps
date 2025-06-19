@@ -1,7 +1,7 @@
-const urlJoin = require('url-join');
-const { throw403 } = require('@semapps/middlewares');
-const { arrayOf, defaultContainerOptions } = require('@semapps/ldp');
-const { getSlugFromUri } = require('../utils');
+import urlJoin from 'url-join';
+import { throw403 } from '@semapps/middlewares';
+import { arrayOf, defaultContainerOptions } from '@semapps/ldp';
+import { getSlugFromUri } from '../utils.ts';
 
 const modifyActions = [
   'ldp.resource.create',
@@ -109,7 +109,7 @@ const hasValidCapability = async (ctx, resourceUri, mode) => {
  * @type {import('moleculer').Middleware}
  */
 const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://semapps.org/webacl' }) => ({
-  name: 'WebAclMiddleware',
+  name: 'WebAclMiddleware' as const,
   async started() {
     if (!baseUrl) throw new Error('The baseUrl config is missing for the WebACL middleware');
   },
@@ -394,4 +394,4 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
   }
 });
 
-module.exports = WebAclMiddleware;
+export default WebAclMiddleware;

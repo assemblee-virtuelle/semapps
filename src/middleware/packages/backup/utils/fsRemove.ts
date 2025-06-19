@@ -1,5 +1,5 @@
-const fs = require('fs');
-const { join: pathJoin } = require('path');
+import fs from 'fs';
+import { pathJoin as join } from 'path';
 
 const fsRemove = async (removeFiles, subDir, remoteServer) => {
   await Promise.all(
@@ -9,4 +9,4 @@ const fsRemove = async (removeFiles, subDir, remoteServer) => {
   );
 };
 
-module.exports = fsRemove;
+export default fsRemove;

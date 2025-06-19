@@ -1,5 +1,4 @@
-const { PUBLIC_URI, ACTIVITY_TYPES } = require('@semapps/activitypub');
-
+import { PUBLIC_URI, ACTIVITY_TYPES } from '@semapps/activitypub';
 const handledLdpActions = ['ldp.container.post', 'ldp.resource.put', 'ldp.resource.patch', 'ldp.resource.delete'];
 
 const handledWacActions = [
@@ -86,7 +85,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
   };
 
   return {
-    name: 'ObjectsWatcherMiddleware',
+    name: 'ObjectsWatcherMiddleware' as const,
     async started(broker) {
       if (!podProvider) {
         await broker.waitForServices('activitypub.relay');
@@ -358,4 +357,4 @@ const ObjectsWatcherMiddleware = (config = {}) => {
   };
 };
 
-module.exports = ObjectsWatcherMiddleware;
+export default ObjectsWatcherMiddleware;

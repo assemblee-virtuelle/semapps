@@ -1,6 +1,7 @@
-const { isURL, arrayOf } = require('../utils');
+import { isURL, arrayOf } from '../utils.ts';
+import { defineAction } from 'moleculer';
 
-module.exports = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     prefix: 'string',
@@ -56,4 +57,6 @@ module.exports = {
 
     ctx.emit('ontologies.registered', { prefix, namespace, owl, jsonldContext, preserveContextUri });
   }
-};
+});
+
+export default Schema;

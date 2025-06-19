@@ -1,4 +1,4 @@
-module.exports = async function head(ctx) {
+export default async function head(ctx) {
   try {
     const { username, slugParts } = ctx.params;
     const uri = this.getUriFromSlugParts(slugParts, username);
@@ -16,4 +16,4 @@ module.exports = async function head(ctx) {
     ctx.meta.$statusCode = e.code || 500;
     ctx.meta.$statusMessage = e.message;
   }
-};
+}

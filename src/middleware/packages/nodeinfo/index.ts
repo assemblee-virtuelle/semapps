@@ -1,3 +1,2 @@
-module.exports = {
-  NodeinfoService: require('./service')
-};
+import NodeinfoService from './service.ts';
+export { NodeinfoService };

@@ -2,7 +2,7 @@ const {
   purposes: { AuthenticationProofPurpose }
 } = require('jsonld-signatures');
 
-const { arrayOf, deepStrictEqual } = require('../utils/utils');
+import { arrayOf, deepStrictEqual } from '../utils/utils.ts';
 
 /**
  * Create an instance of this class when verifying capability VC presentations using
@@ -125,4 +125,4 @@ class VcCapabilityPresentationProofPurpose extends AuthenticationProofPurpose {
   }
 }
 
-module.exports = VcCapabilityPresentationProofPurpose;
+export default VcCapabilityPresentationProofPurpose;

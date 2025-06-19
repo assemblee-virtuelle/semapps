@@ -1,5 +1,7 @@
-module.exports = {
-  name: 'authorizer',
+import { ServiceSchema } from 'moleculer';
+
+const AuthorizerSchema = {
+  name: 'authorizer' as const,
   settings: {
     rules: []
   },
@@ -109,4 +111,14 @@ module.exports = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
+
+export default AuthorizerSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [AuthorizerSchema.name]: typeof AuthorizerSchema;
+    }
+  }
+}

@@ -1,11 +1,12 @@
-const urlJoin = require('url-join');
-const JsonLdApiService = require('./services/api');
-const JsonLdContextService = require('./services/context');
-const JsonLdDocumentLoaderService = require('./services/document-loader');
-const JsonLdParserService = require('./services/parser');
+import urlJoin from 'url-join';
+import JsonLdApiService from './services/api/index.ts';
+import JsonLdContextService from './services/context/index.ts';
+import JsonLdDocumentLoaderService from './services/document-loader/index.ts';
+import JsonLdParserService from './services/parser/index.ts';
+import { ServiceSchema } from 'moleculer';
 
-module.exports = {
-  name: 'jsonld',
+const JsonldSchema = {
+  name: 'jsonld' as const,
   settings: {
     baseUri: null,
     localContextPath: '.well-known/context.jsonld',
@@ -54,4 +55,14 @@ module.exports = {
       }
     });
   }
-};
+} satisfies ServiceSchema;
+
+export default JsonldSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [JsonldSchema.name]: typeof JsonldSchema;
+    }
+  }
+}

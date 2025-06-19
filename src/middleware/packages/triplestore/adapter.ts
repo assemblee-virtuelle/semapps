@@ -1,8 +1,9 @@
 /* eslint-disable class-methods-use-this */
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { v4: uuidv4 } = require('uuid');
-const { frame } = require('jsonld');
-const { sanitizeSparqlUri, sanitizeSparqlString } = require('./utils');
+import { MIME_TYPES } from '@semapps/mime-types';
+
+import { uuidv4 as v4 } from 'uuid';
+import { frame } from 'jsonld';
+import { sanitizeSparqlUri, sanitizeSparqlString } from './utils.ts';
 
 class TripleStoreAdapter {
   constructor({ type, dataset, baseUri, ontology = 'http://semapps.org/ns/core#' }) {
@@ -281,4 +282,4 @@ class TripleStoreAdapter {
   }
 }
 
-module.exports = TripleStoreAdapter;
+export default TripleStoreAdapter;

@@ -1,17 +1,16 @@
-const urlJoin = require('url-join');
-const fetch = require('node-fetch');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { fetchServer } = require('../utils');
-const initialize = require('./initialize');
-const CONFIG = require('../config');
-
+import urlJoin from 'url-join';
+import fetch from 'node-fetch';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { fetchServer } from '../utils.ts';
+import initialize from './initialize.ts';
+import CONFIG from '../config.ts';
 jest.setTimeout(50000);
-
 let broker;
 
 beforeAll(async () => {
   broker = await initialize(3000, 'testData', 'settings');
 });
+
 afterAll(async () => {
   if (broker) await broker.stop();
 });

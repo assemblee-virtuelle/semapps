@@ -1,9 +1,10 @@
-const ActivitiesHandlerMixin = require('../../../mixins/activities-handler');
-const { ACTIVITY_TYPES, ACTOR_TYPES } = require('../../../constants');
-const { collectionPermissionsWithAnonRead } = require('../../../utils');
+import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
+import { ACTIVITY_TYPES, ACTOR_TYPES } from '../../../constants.ts';
+import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 const LikeService = {
-  name: 'activitypub.like',
+  name: 'activitypub.like' as const,
   mixins: [ActivitiesHandlerMixin],
   settings: {
     baseUri: null,
@@ -29,69 +30,83 @@ const LikeService = {
     await this.broker.call('activitypub.collections-registry.register', this.settings.likedCollectionOptions);
   },
   actions: {
-    async addObjectToActorLikedCollection(ctx) {
-      const { actorUri, objectUri } = ctx.params;
+    addObjectToActorLikedCollection: defineAction({
+      async handler(ctx) {
+        const { actorUri, objectUri } = ctx.params;
 
-      const actor = await ctx.call('activitypub.actor.get', { actorUri });
+        const actor = await ctx.call('activitypub.actor.get', { actorUri });
 
-      // If a liked collection is attached to the actor, attach the object
-      if (actor.liked) {
+        // If a liked collection is attached to the actor, attach the object
+        if (actor.liked) {
+          await ctx.call('activitypub.collection.add', {
+            collectionUri: actor.liked,
+            item: objectUri
+          });
+        }
+      }
+    }),
+
+    addActorToObjectLikesCollection: defineAction({
+      async handler(ctx) {
+        const { actorUri, objectUri } = ctx.params;
+
+        const likesCollectionUri = await ctx.call('activitypub.collections-registry.createAndAttachCollection', {
+          objectUri,
+          collection: this.settings.likesCollectionOptions
+        });
+
         await ctx.call('activitypub.collection.add', {
-          collectionUri: actor.liked,
-          item: objectUri
-        });
-      }
-    },
-    async addActorToObjectLikesCollection(ctx) {
-      const { actorUri, objectUri } = ctx.params;
-
-      const likesCollectionUri = await ctx.call('activitypub.collections-registry.createAndAttachCollection', {
-        objectUri,
-        collection: this.settings.likesCollectionOptions
-      });
-
-      await ctx.call('activitypub.collection.add', {
-        collectionUri: likesCollectionUri,
-        item: actorUri
-      });
-    },
-    async removeObjectFromActorLikedCollection(ctx) {
-      const { actorUri, objectUri } = ctx.params;
-
-      const actor = await ctx.call('activitypub.actor.get', { actorUri });
-
-      // If a liked collection is attached to the actor, detach the object
-      if (actor.liked) {
-        await ctx.call('activitypub.collection.remove', {
-          collectionUri: actor.liked,
-          item: objectUri
-        });
-      }
-    },
-    async removeActorFromObjectLikesCollection(ctx) {
-      const { actorUri, objectUri } = ctx.params;
-
-      const object = await ctx.call('activitypub.object.get', { objectUri, actorUri });
-
-      // If a likes collection is attached to the object, detach the actor
-      if (object.likes) {
-        await ctx.call('activitypub.collection.remove', {
-          collectionUri: object.likes,
+          collectionUri: likesCollectionUri,
           item: actorUri
         });
       }
-    },
-    async updateCollectionsOptions(ctx) {
-      const { dataset } = ctx.params;
-      await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
-        collection: this.settings.likesCollectionOptions,
-        dataset
-      });
-      await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
-        collection: this.settings.likedCollectionOptions,
-        dataset
-      });
-    }
+    }),
+
+    removeObjectFromActorLikedCollection: defineAction({
+      async handler(ctx) {
+        const { actorUri, objectUri } = ctx.params;
+
+        const actor = await ctx.call('activitypub.actor.get', { actorUri });
+
+        // If a liked collection is attached to the actor, detach the object
+        if (actor.liked) {
+          await ctx.call('activitypub.collection.remove', {
+            collectionUri: actor.liked,
+            item: objectUri
+          });
+        }
+      }
+    }),
+
+    removeActorFromObjectLikesCollection: defineAction({
+      async handler(ctx) {
+        const { actorUri, objectUri } = ctx.params;
+
+        const object = await ctx.call('activitypub.object.get', { objectUri, actorUri });
+
+        // If a likes collection is attached to the object, detach the actor
+        if (object.likes) {
+          await ctx.call('activitypub.collection.remove', {
+            collectionUri: object.likes,
+            item: actorUri
+          });
+        }
+      }
+    }),
+
+    updateCollectionsOptions: defineAction({
+      async handler(ctx) {
+        const { dataset } = ctx.params;
+        await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
+          collection: this.settings.likesCollectionOptions,
+          dataset
+        });
+        await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
+          collection: this.settings.likedCollectionOptions,
+          dataset
+        });
+      }
+    })
   },
   activities: {
     likeObject: {
@@ -173,6 +188,14 @@ const LikeService = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
 
-module.exports = LikeService;
+export default LikeService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [LikeService.name]: typeof LikeService;
+    }
+  }
+}

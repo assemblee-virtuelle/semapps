@@ -1,4 +1,6 @@
-module.exports = {
+import { defineAction } from 'moleculer';
+
+const Schema = defineAction({
   visibility: 'public',
   params: {
     containerUri: { type: 'string' },
@@ -21,4 +23,6 @@ module.exports = {
     const num = Number(res[0].count.value);
     return num === 0;
   }
-};
+});
+
+export default Schema;

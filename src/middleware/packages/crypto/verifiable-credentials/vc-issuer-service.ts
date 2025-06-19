@@ -1,14 +1,18 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
+import { MIME_TYPES } from '@semapps/mime-types';
+
 const {
   purposes: { AssertionProofPurpose }
 } = require('jsonld-signatures');
-const { cryptosuite } = require('@digitalbazaar/eddsa-rdfc-2022-cryptosuite');
-const { DataIntegrityProof } = require('@digitalbazaar/data-integrity');
-const vc = require('@digitalbazaar/vc');
-/** @type {import('@digitalbazaar/ed25519-multikey')} */
-const Ed25519Multikey = require('@digitalbazaar/ed25519-multikey');
 
-const { KEY_TYPES, credentialsContext } = require('../constants');
+import { cryptosuite } from '@digitalbazaar/eddsa-rdfc-2022-cryptosuite';
+import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
+import vc from '@digitalbazaar/vc';
+
+/** @type {import('@digitalbazaar/ed25519-multikey')} */
+import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
+
+import { KEY_TYPES, credentialsContext } from '../constants.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 /**
  * Service for verifying, reading, and revoking Verifiable Credentials.
@@ -18,7 +22,7 @@ const { KEY_TYPES, credentialsContext } = require('../constants');
  * @type {import('moleculer').ServiceSchema}
  */
 const VCCredentialService = {
-  name: 'crypto.vc.issuer',
+  name: 'crypto.vc.issuer' as const,
   settings: {
     podProvider: null
   },
@@ -50,7 +54,7 @@ const VCCredentialService = {
      * @param {object} ctx.params - The parameters for creating the VC.
      * @returns {object} The signed credential.
      */
-    createVC: {
+    createVC: defineAction({
       params: {
         credential: {
           type: 'object',
@@ -133,7 +137,7 @@ const VCCredentialService = {
 
         return signedCredential;
       }
-    }
+    })
   },
   methods: {
     /** Creates an ldp resource from the presentation and sets rights. */
@@ -172,6 +176,14 @@ const VCCredentialService = {
       return resource;
     }
   }
-};
+} satisfies ServiceSchema;
 
-module.exports = VCCredentialService;
+export default VCCredentialService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [VCCredentialService.name]: typeof VCCredentialService;
+    }
+  }
+}

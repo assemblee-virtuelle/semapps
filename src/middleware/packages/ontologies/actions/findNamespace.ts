@@ -1,6 +1,7 @@
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
+import { defineAction } from 'moleculer';
 
-module.exports = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     prefix: 'string'
@@ -18,4 +19,6 @@ module.exports = {
 
     return null;
   }
-};
+});
+
+export default Schema;

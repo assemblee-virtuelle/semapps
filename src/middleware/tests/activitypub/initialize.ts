@@ -1,13 +1,13 @@
-const fse = require('fs-extra');
-const path = require('path');
-const urlJoin = require('url-join');
-const { ServiceBroker } = require('moleculer');
-const { AuthLocalService } = require('@semapps/auth');
-const { CoreService } = require('@semapps/core');
-const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
-const { FULL_OBJECT_TYPES, FULL_ACTOR_TYPES } = require('@semapps/activitypub');
-const CONFIG = require('../config');
-const { clearDataset, clearQueue } = require('../utils');
+import fse from 'fs-extra';
+import path from 'path';
+import urlJoin from 'url-join';
+import { ServiceBroker } from 'moleculer';
+import { AuthLocalService } from '@semapps/auth';
+import { CoreService } from '@semapps/core';
+import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
+import { FULL_OBJECT_TYPES, FULL_ACTOR_TYPES } from '@semapps/activitypub';
+import CONFIG from '../config.ts';
+import { clearDataset, clearQueue } from '../utils.ts';
 
 const containers = [
   {
@@ -118,4 +118,4 @@ const initialize = async (port, mainDataset, accountsDataset, queueServiceDb = 0
   return broker;
 };
 
-module.exports = initialize;
+export default initialize;

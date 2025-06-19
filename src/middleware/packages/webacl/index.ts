@@ -1,10 +1,7 @@
-const utils = require('./utils');
-
-module.exports = {
-  GroupsManagerBot: require('./bots/groups-manager'),
-  AuthorizerBot: require('./bots/authorizer'),
-  WebAclService: require('./service'),
-  WebAclMiddleware: require('./middlewares/webacl'),
-  CacherMiddleware: require('./middlewares/cacher'),
-  ...utils
-};
+import GroupsManagerBot from './bots/groups-manager.ts';
+import AuthorizerBot from './bots/authorizer.ts';
+import WebAclService from './service.ts';
+import WebAclMiddleware from './middlewares/webacl.ts';
+import CacherMiddleware from './middlewares/cacher.ts';
+export * from './utils.ts';
+export { GroupsManagerBot, AuthorizerBot, WebAclService, WebAclMiddleware, CacherMiddleware };

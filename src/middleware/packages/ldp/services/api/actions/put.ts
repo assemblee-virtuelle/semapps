@@ -1,6 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
 
-module.exports = async function post(ctx) {
+export default async function post(ctx) {
   const { username, slugParts, body, ...resource } = ctx.params;
 
   const resourceUri = this.getUriFromSlugParts(slugParts, username);
@@ -34,4 +34,4 @@ module.exports = async function post(ctx) {
     ctx.meta.$statusCode = e.code || 500;
     ctx.meta.$statusMessage = e.message;
   }
-};
+}

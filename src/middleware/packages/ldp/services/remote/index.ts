@@ -1,14 +1,15 @@
-const Schedule = require('moleculer-schedule');
-const deleteAction = require('./actions/delete');
-const getAction = require('./actions/get');
-const getGraphAction = require('./actions/getGraph');
-const getNetworkAction = require('./actions/getNetwork');
-const getStoredAction = require('./actions/getStored');
-const isRemoteAction = require('./actions/isRemote');
-const storeAction = require('./actions/store');
+import Schedule from 'moleculer-schedule';
+import deleteAction from './actions/delete.ts';
+import getAction from './actions/get.ts';
+import getGraphAction from './actions/getGraph.ts';
+import getNetworkAction from './actions/getNetwork.ts';
+import getStoredAction from './actions/getStored.ts';
+import isRemoteAction from './actions/isRemote.ts';
+import storeAction from './actions/store.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
-module.exports = {
-  name: 'ldp.remote',
+const LdpRemoteSchema = {
+  name: 'ldp.remote' as const,
   mixins: [Schedule],
   settings: {
     baseUrl: null,
@@ -24,9 +25,13 @@ module.exports = {
     getStored: getStoredAction,
     isRemote: isRemoteAction,
     store: storeAction,
-    runCron() {
-      this.updateSingleMirroredResources();
-    } // Used by tests
+
+    runCron: defineAction({
+      // Used by tests
+      handler() {
+        this.updateSingleMirroredResources();
+      }
+    })
   },
   methods: {
     async proxyAvailable() {
@@ -72,4 +77,14 @@ module.exports = {
       handler: 'updateSingleMirroredResources'
     }
   ]
-};
+} satisfies ServiceSchema;
+
+export default LdpRemoteSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [LdpRemoteSchema.name]: typeof LdpRemoteSchema;
+    }
+  }
+}

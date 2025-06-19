@@ -1,17 +1,16 @@
-module.exports = {
-  acl: require('./acl.json'),
-  as: require('./as.json'),
-  cred: require('./cred.json'),
-  dc: require('./dc.json'),
-  did: require('./did.json'),
-  foaf: require('./foaf.json'),
-  ldp: require('./ldp.json'),
-  rdf: require('./rdf.json'),
-  rdfs: require('./rdfs.json'),
-  sec: require('./sec.json'),
-  semapps: require('./semapps.json'),
-  skos: require('./skos.json'),
-  vcard: require('./vcard.json'),
-  void: require('./void.json'),
-  xsd: require('./xsd.json')
-};
+import acl from './acl.json';
+import as from './as.json';
+import cred from './cred.json';
+import dc from './dc.json';
+import did from './did.json';
+import foaf from './foaf.json';
+import ldp from './ldp.json';
+import rdf from './rdf.json';
+import rdfs from './rdfs.json';
+import sec from './sec.json';
+import semapps from './semapps.json';
+import skos from './skos.json';
+import vcard from './vcard.json';
+import void from './void.json';
+import xsd from './xsd.json';
+export { acl, as, cred, dc, did, foaf, ldp, rdf, rdfs, sec, semapps, skos, vcard, void, xsd };

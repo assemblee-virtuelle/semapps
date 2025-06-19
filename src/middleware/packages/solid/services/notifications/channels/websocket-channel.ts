@@ -1,10 +1,11 @@
-const urlJoin = require('url-join');
-const { v4: uuidV4 } = require('uuid');
-const NotificationChannelMixin = require('./notification-channel.mixin');
+import urlJoin from 'url-join';
+import { uuidV4 as v4 } from 'uuid';
+import NotificationChannelMixin from './notification-channel.mixin.ts';
+import { ServiceSchema } from 'moleculer';
 
 /** @type {import('moleculer').ServiceSchema} */
 const WebSocketChannel2023Service = {
-  name: 'solid-notifications.provider.websocket',
+  name: 'solid-notifications.provider.websocket' as const,
   mixins: [NotificationChannelMixin],
   settings: {
     channelType: 'WebSocketChannel2023',
@@ -23,7 +24,7 @@ const WebSocketChannel2023Service = {
     this.socketConnections = [];
 
     this.broker.call('api.addWebSocketRoute', {
-      name: 'notification-websocket',
+      name: 'notification-websocket' as const,
       route: `/.notifications/WebSocketChannel2023/socket/:id`,
       handlers: {
         /** @param {import('@activitypods/core/services/websocket/websocket.mixin').Connection} connection */
@@ -82,6 +83,14 @@ const WebSocketChannel2023Service = {
       );
     }
   }
-};
+} satisfies ServiceSchema;
 
-module.exports = WebSocketChannel2023Service;
+export default WebSocketChannel2023Service;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [WebSocketChannel2023Service.name]: typeof WebSocketChannel2023Service;
+    }
+  }
+}

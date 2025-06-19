@@ -1,11 +1,12 @@
-const { sanitizeSparqlQuery } = require('@semapps/triplestore');
-const ActivitiesHandlerMixin = require('../../../mixins/activities-handler');
-const { ACTIVITY_TYPES, OBJECT_TYPES } = require('../../../constants');
-const { collectionPermissionsWithAnonRead } = require('../../../utils');
-const matchActivity = require('../../../utils/matchActivity');
+import { sanitizeSparqlQuery } from '@semapps/triplestore';
+import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
+import { ACTIVITY_TYPES, OBJECT_TYPES } from '../../../constants.ts';
+import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
+import matchActivity from '../../../utils/matchActivity.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 const ReplyService = {
-  name: 'activitypub.reply',
+  name: 'activitypub.reply' as const,
   mixins: [ActivitiesHandlerMixin],
   settings: {
     baseUri: null,
@@ -20,53 +21,64 @@ const ReplyService = {
   },
   dependencies: ['activitypub.outbox', 'activitypub.collection'],
   actions: {
-    async addReply(ctx) {
-      const { objectUri, replyUri } = ctx.params;
+    addReply: defineAction({
+      async handler(ctx) {
+        const { objectUri, replyUri } = ctx.params;
 
-      // Create the /replies collection and attach it to the object, unless it already exists
-      const collectionUri = await ctx.call('activitypub.collections-registry.createAndAttachCollection', {
-        objectUri,
-        collection: this.settings.collectionOptions,
-        webId: 'system'
-      });
+        // Create the /replies collection and attach it to the object, unless it already exists
+        const collectionUri = await ctx.call('activitypub.collections-registry.createAndAttachCollection', {
+          objectUri,
+          collection: this.settings.collectionOptions,
+          webId: 'system'
+        });
 
-      await ctx.call('activitypub.collection.add', { collectionUri, item: replyUri });
-    },
-    async removeReply(ctx) {
-      const { objectUri, replyUri } = ctx.params;
-
-      const object = await ctx.call('activitypub.object.get', { objectUri });
-
-      // Remove the reply only if a /replies collection was attached to the object
-      if (object.replies) {
-        await ctx.call('activitypub.collection.remove', { collectionUri: object.replies, item: replyUri });
+        await ctx.call('activitypub.collection.add', { collectionUri, item: replyUri });
       }
-    },
-    async removeFromAllRepliesCollections(ctx) {
-      const { objectUri } = ctx.params;
+    }),
 
-      await ctx.call('triplestore.update', {
-        query: sanitizeSparqlQuery`
-          PREFIX as: <https://www.w3.org/ns/activitystreams#>
-          DELETE {
-            ?collection as:items <${objectUri}> .
-          } 
-          WHERE {
-            ?collection as:items <${objectUri}> .
-            ?collection a as:Collection .
-            ?object as:replies ?collection .
-          }
-        `,
-        webId: 'system'
-      });
-    },
-    async updateCollectionsOptions(ctx) {
-      const { dataset } = ctx.params;
-      await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
-        collection: this.settings.collectionOptions,
-        dataset
-      });
-    }
+    removeReply: defineAction({
+      async handler(ctx) {
+        const { objectUri, replyUri } = ctx.params;
+
+        const object = await ctx.call('activitypub.object.get', { objectUri });
+
+        // Remove the reply only if a /replies collection was attached to the object
+        if (object.replies) {
+          await ctx.call('activitypub.collection.remove', { collectionUri: object.replies, item: replyUri });
+        }
+      }
+    }),
+
+    removeFromAllRepliesCollections: defineAction({
+      async handler(ctx) {
+        const { objectUri } = ctx.params;
+
+        await ctx.call('triplestore.update', {
+          query: sanitizeSparqlQuery`
+            PREFIX as: <https://www.w3.org/ns/activitystreams#>
+            DELETE {
+              ?collection as:items <${objectUri}> .
+            } 
+            WHERE {
+              ?collection as:items <${objectUri}> .
+              ?collection a as:Collection .
+              ?object as:replies ?collection .
+            }
+          `,
+          webId: 'system'
+        });
+      }
+    }),
+
+    updateCollectionsOptions: defineAction({
+      async handler(ctx) {
+        const { dataset } = ctx.params;
+        await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
+          collection: this.settings.collectionOptions,
+          dataset
+        });
+      }
+    })
   },
   activities: {
     postReply: {
@@ -136,6 +148,14 @@ const ReplyService = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
 
-module.exports = ReplyService;
+export default ReplyService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [ReplyService.name]: typeof ReplyService;
+    }
+  }
+}

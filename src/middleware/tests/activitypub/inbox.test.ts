@@ -1,9 +1,7 @@
-const { ACTIVITY_TYPES, OBJECT_TYPES, PUBLIC_URI } = require('@semapps/activitypub');
-const waitForExpect = require('wait-for-expect');
-const initialize = require('./initialize');
-
+import { ACTIVITY_TYPES, OBJECT_TYPES, PUBLIC_URI } from '@semapps/activitypub';
+import waitForExpect from 'wait-for-expect';
+import initialize from './initialize.ts';
 jest.setTimeout(50_000);
-
 let broker;
 let broker2;
 
@@ -11,6 +9,7 @@ beforeAll(async () => {
   broker = await initialize(3000, 'testData', 'settings');
   broker2 = broker;
 });
+
 afterAll(async () => {
   if (broker) await broker.stop();
 });
@@ -24,7 +23,7 @@ describe('Permissions are correctly set on inbox', () => {
       username: 'srosset81',
       email: 'sebastien@test.com',
       password: 'test',
-      name: 'Sébastien'
+      name: 'Sébastien' as const
     });
 
     sebastien = await broker.call('activitypub.actor.awaitCreateComplete', { actorUri: sebastienUri });
@@ -33,7 +32,7 @@ describe('Permissions are correctly set on inbox', () => {
       username: 'simonlouvet',
       email: 'simon@test.com',
       password: 'test',
-      name: 'Simon'
+      name: 'Simon' as const
     });
 
     simon = await broker2.call('activitypub.actor.awaitCreateComplete', { actorUri: simonUri });
@@ -65,7 +64,7 @@ describe('Permissions are correctly set on inbox', () => {
       collectionUri: sebastien.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: OBJECT_TYPES.NOTE,
-      name: 'Private message to friend',
+      name: 'Private message to friend' as const,
       to: simon.id
     });
 
@@ -82,7 +81,7 @@ describe('Permissions are correctly set on inbox', () => {
         type: ACTIVITY_TYPES.CREATE,
         object: {
           type: OBJECT_TYPES.NOTE,
-          name: 'Private message to friend'
+          name: 'Private message to friend' as const
         }
       });
     });
@@ -100,7 +99,7 @@ describe('Permissions are correctly set on inbox', () => {
         type: ACTIVITY_TYPES.CREATE,
         object: {
           type: OBJECT_TYPES.NOTE,
-          name: 'Private message to friend'
+          name: 'Private message to friend' as const
         }
       });
     });
@@ -121,7 +120,7 @@ describe('Permissions are correctly set on inbox', () => {
       collectionUri: sebastien.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: OBJECT_TYPES.NOTE,
-      name: 'Public message',
+      name: 'Public message' as const,
       to: [PUBLIC_URI, simon.id]
     });
 
@@ -143,7 +142,7 @@ describe('Permissions are correctly set on inbox', () => {
         type: ACTIVITY_TYPES.CREATE,
         object: {
           type: OBJECT_TYPES.NOTE,
-          name: 'Public message'
+          name: 'Public message' as const
         }
       });
     });
@@ -165,7 +164,7 @@ describe('Permissions are correctly set on inbox', () => {
         type: ACTIVITY_TYPES.CREATE,
         object: {
           type: OBJECT_TYPES.NOTE,
-          name: 'Public message'
+          name: 'Public message' as const
         }
       });
     });
@@ -187,7 +186,7 @@ describe('Permissions are correctly set on inbox', () => {
         type: ACTIVITY_TYPES.CREATE,
         object: {
           type: OBJECT_TYPES.NOTE,
-          name: 'Public message'
+          name: 'Public message' as const
         }
       });
     });

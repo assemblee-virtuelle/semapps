@@ -1,16 +1,9 @@
-const OntologiesService = require('./service');
-const OntologiesRegistryService = require('./sub-services/registry');
-const coreOntologies = require('./ontologies/core');
-const customOntologies = require('./ontologies/custom');
-const solidOntologies = require('./ontologies/solid');
-
-module.exports = {
-  OntologiesService,
-  OntologiesRegistryService,
-  coreOntologies: Object.values(coreOntologies),
-  solidOntologies: Object.values(solidOntologies),
-  customOntologies: Object.values(customOntologies),
-  ...coreOntologies,
-  ...solidOntologies,
-  ...customOntologies
-};
+import OntologiesService from './service.ts';
+import OntologiesRegistryService from './sub-services/registry.ts';
+export * from './ontologies/core.ts';
+export * from './ontologies/solid.ts';
+export * from './ontologies/custom.ts';
+export { OntologiesService, OntologiesRegistryService };
+export const coreOntologies = Object.values(coreOntologies);
+export const solidOntologies = Object.values(solidOntologies);
+export const customOntologies = Object.values(customOntologies);

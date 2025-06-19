@@ -1,3 +1,2 @@
-module.exports = {
-  CoreService: require('./service')
-};
+import CoreService from './service.ts';
+export { CoreService };

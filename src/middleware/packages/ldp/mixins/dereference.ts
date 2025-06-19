@@ -1,5 +1,6 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { isObject, arrayOf } = require('../utils');
+import { MIME_TYPES } from '@semapps/mime-types';
+import { isObject, arrayOf } from '../utils.ts';
+import { ServiceSchema } from 'moleculer';
 
 /**
  * @description MoleculerJS mixin to be applied on the ControlledContainerMixin within a Semapps project.
@@ -35,7 +36,7 @@ const { isObject, arrayOf } = require('../utils');
  * @type {import('moleculer').ServiceSchema}
  */
 
-module.exports = {
+const Schema = {
   dependencies: ['ldp.resource'],
   methods: {
     /**
@@ -148,4 +149,6 @@ module.exports = {
       get: ['handleAfterGet']
     }
   }
-};
+} satisfies ServiceSchema;
+
+export default Schema;

@@ -1,10 +1,11 @@
-const urlJoin = require('url-join');
-const fetch = require('node-fetch');
-const { getSlugFromUri, delay } = require('@semapps/ldp');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const ImporterMixin = require('./importer');
+import urlJoin from 'url-join';
+import fetch from 'node-fetch';
+import { getSlugFromUri, delay } from '@semapps/ldp';
+import { MIME_TYPES } from '@semapps/mime-types';
+import ImporterMixin from './importer.ts';
+import { ServiceSchema } from 'moleculer';
 
-module.exports = {
+const Schema = {
   mixins: [ImporterMixin],
   settings: {
     source: {
@@ -99,4 +100,6 @@ module.exports = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
+
+export default Schema;

@@ -39,8 +39,4 @@ const sanitizeSparqlQuery = (fragments, ...values) => {
   return values.reduce((acc, value, i) => `${acc}${fragments[i]}${value}`, '') + fragments.slice(-1);
 };
 
-module.exports = {
-  sanitizeSparqlUri,
-  sanitizeSparqlString,
-  sanitizeSparqlQuery
-};
+export { sanitizeSparqlUri, sanitizeSparqlString, sanitizeSparqlQuery };

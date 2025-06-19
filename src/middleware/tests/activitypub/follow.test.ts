@@ -1,9 +1,7 @@
-const { ACTIVITY_TYPES, OBJECT_TYPES } = require('@semapps/activitypub');
-const waitForExpect = require('wait-for-expect');
-const initialize = require('./initialize');
-
+import { ACTIVITY_TYPES, OBJECT_TYPES } from '@semapps/activitypub';
+import waitForExpect from 'wait-for-expect';
+import initialize from './initialize.ts';
 jest.setTimeout(50_000);
-
 const NUM_USERS = 2;
 
 describe.each(['single-server', 'multi-server'])('In mode %s, posting to followers', mode => {
@@ -88,7 +86,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
       collectionUri: alice.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: OBJECT_TYPES.NOTE,
-      name: 'Hello World',
+      name: 'Hello World' as const,
       attributedTo: alice.id,
       to: [alice.followers],
       content: 'My first message, happy to be part of the fediverse !'
@@ -98,7 +96,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
       type: ACTIVITY_TYPES.CREATE,
       object: {
         type: OBJECT_TYPES.NOTE,
-        name: 'Hello World'
+        name: 'Hello World' as const
       }
     });
 

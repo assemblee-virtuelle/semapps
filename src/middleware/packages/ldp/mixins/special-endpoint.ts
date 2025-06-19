@@ -1,9 +1,10 @@
-const urlJoin = require('url-join');
-const { namedNode, triple } = require('@rdfjs/data-model');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { parseUrl, parseHeader, negotiateAccept, parseJson, parseTurtle } = require('@semapps/middlewares');
+import urlJoin from 'url-join';
+import { namedNode, triple } from '@rdfjs/data-model';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { parseUrl, parseHeader, negotiateAccept, parseJson, parseTurtle } from '@semapps/middlewares';
+import { ServiceSchema, defineAction } from 'moleculer';
 
-module.exports = {
+const Schema = {
   settings: {
     baseUrl: null,
     settingsDataset: null,
@@ -59,31 +60,38 @@ module.exports = {
     }
   },
   actions: {
-    async endpointAdd(ctx) {
-      const { predicate, object } = ctx.params;
+    endpointAdd: defineAction({
+      async handler(ctx) {
+        const { predicate, object } = ctx.params;
 
-      await ctx.call(
-        'ldp.resource.patch',
-        {
-          resourceUri: this.endpointUrl,
-          triplesToAdd: [triple(namedNode(this.endpointUrl), predicate, object)],
-          webId: 'system'
-        },
-        { meta: { dataset: this.settings.settingsDataset, skipEmitEvent: true, skipObjectsWatcher: true } }
-      );
-    },
-    async endpointGet(ctx) {
-      ctx.meta.$responseType = ctx.meta.headers?.accept;
+        await ctx.call(
+          'ldp.resource.patch',
+          {
+            resourceUri: this.endpointUrl,
+            triplesToAdd: [triple(namedNode(this.endpointUrl), predicate, object)],
+            webId: 'system'
+          },
+          { meta: { dataset: this.settings.settingsDataset, skipEmitEvent: true, skipObjectsWatcher: true } }
+        );
+      }
+    }),
 
-      return await ctx.call(
-        'ldp.resource.get',
-        {
-          resourceUri: this.endpointUrl,
-          accept: ctx.meta.headers?.accept,
-          webId: 'system'
-        },
-        { meta: { dataset: this.settings.settingsDataset } }
-      );
-    }
+    endpointGet: defineAction({
+      async handler(ctx) {
+        ctx.meta.$responseType = ctx.meta.headers?.accept;
+
+        return await ctx.call(
+          'ldp.resource.get',
+          {
+            resourceUri: this.endpointUrl,
+            accept: ctx.meta.headers?.accept,
+            webId: 'system'
+          },
+          { meta: { dataset: this.settings.settingsDataset } }
+        );
+      }
+    })
   }
-};
+} satisfies ServiceSchema;
+
+export default Schema;

@@ -1,5 +1,5 @@
-const Client = require('ssh2-sftp-client');
-const { join: pathJoin } = require('path');
+import Client from 'ssh2-sftp-client';
+import { pathJoin as join } from 'path';
 
 const ftpRemove = (removeFiles, remoteServer) => {
   return new Promise((resolve, reject) => {
@@ -21,4 +21,4 @@ const ftpRemove = (removeFiles, remoteServer) => {
   });
 };
 
-module.exports = ftpRemove;
+export default ftpRemove;

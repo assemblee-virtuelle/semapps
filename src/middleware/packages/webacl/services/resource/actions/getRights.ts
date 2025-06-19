@@ -1,12 +1,11 @@
-const { JsonLdSerializer } = require('jsonld-streaming-serializer');
-const { DataFactory, Writer } = require('n3');
-
+import { JsonLdSerializer } from 'jsonld-streaming-serializer';
+import { DataFactory, Writer } from 'n3';
 const { quad } = DataFactory;
-const urlJoin = require('url-join');
-const { MIME_TYPES } = require('@semapps/mime-types');
+import urlJoin from 'url-join';
+import { MIME_TYPES } from '@semapps/mime-types';
 const { MoleculerError } = require('moleculer').Errors;
 
-const {
+import {
   getAuthorizationNode,
   checkAgentPresent,
   getUserGroups,
@@ -14,7 +13,9 @@ const {
   filterAgentAcl,
   getAclUriFromResourceUri,
   getUserAgentSearchParam
-} = require('../../../utils');
+} from '../../../utils.ts';
+
+import { defineAction } from 'moleculer';
 
 const prefixes = {
   acl: 'http://www.w3.org/ns/auth/acl#',
@@ -179,43 +180,42 @@ async function getPermissions(ctx, resourceUri, baseUrl, user, graphName, isCont
   return await formatOutput(ctx, document, resourceAclUri, ctx.meta.$responseType === MIME_TYPES.JSON);
 }
 
-module.exports = {
-  api: async function api(ctx) {
-    const { accept } = ctx.meta.headers;
-    let { slugParts } = ctx.params;
+export const api = async function api(ctx) {
+  const { accept } = ctx.meta.headers;
+  let { slugParts } = ctx.params;
 
-    if (accept && accept !== MIME_TYPES.JSON && accept !== MIME_TYPES.TURTLE)
-      throw new MoleculerError(`Accept not supported : ${accept}`, 400, 'ACCEPT_NOT_SUPPORTED');
+  if (accept && accept !== MIME_TYPES.JSON && accept !== MIME_TYPES.TURTLE)
+    throw new MoleculerError(`Accept not supported : ${accept}`, 400, 'ACCEPT_NOT_SUPPORTED');
 
-    // This is the root container
-    if (!slugParts || slugParts.length === 0) slugParts = ['/'];
+  // This is the root container
+  if (!slugParts || slugParts.length === 0) slugParts = ['/'];
 
-    return await ctx.call('webacl.resource.getRights', {
-      resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
-      accept: accept
-    });
-  },
-  action: {
-    visibility: 'public',
-    params: {
-      resourceUri: { type: 'string' },
-      accept: { type: 'string', optional: true },
-      webId: { type: 'string', optional: true },
-      skipResourceCheck: { type: 'boolean', default: false }
-    },
-    cache: {
-      keys: ['resourceUri', 'accept', 'webId', '#webId']
-    },
-    async handler(ctx) {
-      let { resourceUri, webId, accept, skipResourceCheck } = ctx.params;
-      webId = webId || ctx.meta.webId || 'anon';
-
-      accept = accept || MIME_TYPES.TURTLE;
-      ctx.meta.$responseType = accept;
-
-      const isContainer = !skipResourceCheck && (await this.checkResourceOrContainerExists(ctx, resourceUri));
-
-      return await getPermissions(ctx, resourceUri, this.settings.baseUrl, webId, this.settings.graphName, isContainer);
-    }
-  }
+  return await ctx.call('webacl.resource.getRights', {
+    resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
+    accept: accept
+  });
 };
+
+export const action = defineAction({
+  visibility: 'public',
+  params: {
+    resourceUri: { type: 'string' },
+    accept: { type: 'string', optional: true },
+    webId: { type: 'string', optional: true },
+    skipResourceCheck: { type: 'boolean', default: false }
+  },
+  cache: {
+    keys: ['resourceUri', 'accept', 'webId', '#webId']
+  },
+  async handler(ctx) {
+    let { resourceUri, webId, accept, skipResourceCheck } = ctx.params;
+    webId = webId || ctx.meta.webId || 'anon';
+
+    accept = accept || MIME_TYPES.TURTLE;
+    ctx.meta.$responseType = accept;
+
+    const isContainer = !skipResourceCheck && (await this.checkResourceOrContainerExists(ctx, resourceUri));
+
+    return await getPermissions(ctx, resourceUri, this.settings.baseUrl, webId, this.settings.graphName, isContainer);
+  }
+});

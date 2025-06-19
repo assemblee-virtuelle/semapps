@@ -1,10 +1,8 @@
-const { triple, namedNode } = require('rdf-data-model');
-const waitForExpect = require('wait-for-expect');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const initialize = require('./initialize');
-
+import { triple, namedNode } from 'rdf-data-model';
+import waitForExpect from 'wait-for-expect';
+import { MIME_TYPES } from '@semapps/mime-types';
+import initialize from './initialize.ts';
 jest.setTimeout(100000);
-
 let server1;
 let server2;
 
@@ -12,6 +10,7 @@ beforeAll(async () => {
   server1 = await initialize(3001, 'testData1', 'settings1', 1);
   server2 = await initialize(3002, 'testData2', 'settings2', 2);
 });
+
 afterAll(async () => {
   if (server1) await server1.stop();
   if (server2) await server2.stop();

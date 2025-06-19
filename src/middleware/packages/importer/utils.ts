@@ -1,8 +1,8 @@
-const { promises: fsPromises } = require('fs');
-const sanitizeHtml = require('sanitize-html');
-const PNF = require('google-libphonenumber').PhoneNumberFormat;
+import { fsPromises as promises } from 'fs';
+import sanitizeHtml from 'sanitize-html';
+import googlelibphonenumberModule from 'google-libphonenumber';
+const PNF = googlelibphonenumberModule.PhoneNumberFormat;
 const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
-
 const convertToIsoString = str => str && new Date(str).toISOString();
 
 const formatPhoneNumber = (number, countryCode) => {
@@ -55,7 +55,7 @@ const isDir = async path => {
   }
 };
 
-module.exports = {
+export {
   convertToIsoString,
   formatPhoneNumber,
   frenchAddressSearch,

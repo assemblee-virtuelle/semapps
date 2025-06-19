@@ -1,7 +1,7 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
-const path = require('node:path');
-const initialize = require('./initialize');
-
+import { MIME_TYPES } from '@semapps/mime-types';
+import path from 'node:path';
+import initialize from './initialize.ts';
+import { ServiceSchema } from 'moleculer';
 jest.setTimeout(45_000);
 
 const getChallengeFrom = async actor => {
@@ -11,6 +11,7 @@ const getChallengeFrom = async actor => {
 
 /** @type {import('moleculer').ServiceBroker} */
 let broker;
+
 let baseUrl;
 let vcApiEndpoint;
 let alice;
@@ -47,6 +48,7 @@ const setUpUser = async (broker, username) => {
 
   return user;
 };
+
 const setUp = async withOldKeyStore => {
   ({ broker, baseUrl } = await initialize(3000, withOldKeyStore));
   vcApiEndpoint = path.join(baseUrl, 'vc/v0.3/');
@@ -68,9 +70,9 @@ describe('verifiable credentials', () => {
   describe('object integrity', () => {
     test('object is signed and verifiable', async () => {
       const object = {
-        '@context': { name: 'urn:some:name' },
-        name: 'Signed object'
-      };
+        '@context': { name: 'urn:some:name' as const },
+        name: 'Signed object' as const
+      } satisfies ServiceSchema;
       const signedObject = await alice.fetch(path.join(vcApiEndpoint, 'data-integrity/sign'), {
         method: 'POST',
         body: JSON.stringify({ object })
@@ -86,9 +88,9 @@ describe('verifiable credentials', () => {
 
     test('modified object verification fails', async () => {
       const object = {
-        '@context': { name: 'urn:some:name' },
-        name: 'Signed object'
-      };
+        '@context': { name: 'urn:some:name' as const },
+        name: 'Signed object' as const
+      } satisfies ServiceSchema;
       const signedObject = await alice.fetch(path.join(vcApiEndpoint, 'data-integrity/sign'), {
         method: 'POST',
         body: JSON.stringify({ object })
@@ -111,7 +113,7 @@ describe('verifiable credentials', () => {
         method: 'POST',
         body: JSON.stringify({
           credential: {
-            name: 'Test Suite Credential',
+            name: 'Test Suite Credential' as const,
             description: 'This is a test suite credential.',
             credentialSubject: {
               description: 'This is a credentialSubject'
@@ -133,7 +135,7 @@ describe('verifiable credentials', () => {
         method: 'POST',
         body: JSON.stringify({
           credential: {
-            name: 'Test Suite Credential',
+            name: 'Test Suite Credential' as const,
             description: 'This is a test suite credential.',
             credentialSubject: {
               description: 'This is a credentialSubject'
@@ -159,7 +161,7 @@ describe('verifiable credentials', () => {
         method: 'POST',
         body: JSON.stringify({
           credential: {
-            name: 'Test Suite Credential',
+            name: 'Test Suite Credential' as const,
             description: 'This is a test suite credential.',
             credentialSubject: {
               id: bob.webId,
@@ -196,7 +198,7 @@ describe('verifiable credentials', () => {
         method: 'POST',
         body: JSON.stringify({
           credential: {
-            name: 'Test Suite Credential',
+            name: 'Test Suite Credential' as const,
             description: 'This is a test suite credential.',
             credentialSubject: {
               id: bob.webId,
@@ -234,7 +236,7 @@ describe('verifiable credentials', () => {
         method: 'POST',
         body: JSON.stringify({
           credential: {
-            name: 'Test Suite Credential',
+            name: 'Test Suite Credential' as const,
             description: 'This is a test suite credential.',
             credentialSubject: {
               id: bob.webId,
@@ -275,7 +277,7 @@ describe('verifiable credentials', () => {
         method: 'POST',
         body: JSON.stringify({
           credential: {
-            name: 'First capability',
+            name: 'First capability' as const,
             credentialSubject: {
               id: bob.webId,
               description: 'A transferable capability.'
@@ -288,7 +290,7 @@ describe('verifiable credentials', () => {
         method: 'POST',
         body: JSON.stringify({
           credential: {
-            name: 'Second capability',
+            name: 'Second capability' as const,
             credentialSubject: {
               id: craig.webId,
               description: 'A transferable capability.'
@@ -324,9 +326,9 @@ describe('verifiable credentials', () => {
         method: 'POST',
         body: JSON.stringify({
           credential: {
-            name: 'First capability',
+            name: 'First capability' as const,
             credentialSubject: {
-              name: 'Invite Link',
+              name: 'Invite Link' as const,
               description: 'An open capability.'
             }
           }
@@ -359,7 +361,7 @@ describe('verifiable credentials', () => {
         method: 'POST',
         body: JSON.stringify({
           credential: {
-            name: 'First capability',
+            name: 'First capability' as const,
             credentialSubject: {
               id: bob.webId,
               description: 'A transferable capability.'
@@ -372,7 +374,7 @@ describe('verifiable credentials', () => {
         method: 'POST',
         body: JSON.stringify({
           credential: {
-            name: 'Second capability',
+            name: 'Second capability' as const,
             credentialSubject: {
               id: craig.webId,
               description: 'A transferable capability.'
@@ -412,7 +414,7 @@ describe('verifiable credentials', () => {
         method: 'POST',
         body: JSON.stringify({
           credential: {
-            name: 'First capability',
+            name: 'First capability' as const,
             credentialSubject: {
               id: bob.webId,
               description: 'A transferable capability.'
@@ -455,7 +457,7 @@ describe('verifiable credentials', () => {
         method: 'POST',
         body: JSON.stringify({
           credential: {
-            name: 'First capability',
+            name: 'First capability' as const,
             credentialSubject: {
               id: bob.webId,
               description: 'A transferable capability.'
@@ -468,10 +470,10 @@ describe('verifiable credentials', () => {
         method: 'POST',
         body: JSON.stringify({
           credential: {
-            name: 'Second capability',
+            name: 'Second capability' as const,
             credentialSubject: {
               id: craig.webId,
-              name: 'This is an additional field',
+              name: 'This is an additional field' as const,
               description: 'A transferable capability.'
             }
           }
@@ -501,3 +503,12 @@ describe('verifiable credentials', () => {
     });
   });
 });
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [object.name]: typeof object;
+      [object.name]: typeof object;
+    }
+  }
+}

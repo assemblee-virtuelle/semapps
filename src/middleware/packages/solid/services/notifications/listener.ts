@@ -1,16 +1,17 @@
-const path = require('path');
-const urlJoin = require('url-join');
-const fetch = require('node-fetch');
-const LinkHeader = require('http-link-header');
-const { v4: uuidv4 } = require('uuid');
-const DbService = require('moleculer-db');
+import path from 'path';
+import urlJoin from 'url-join';
+import fetch from 'node-fetch';
+import LinkHeader from 'http-link-header';
+import { uuidv4 as v4 } from 'uuid';
+import DbService from 'moleculer-db';
 const { MoleculerError } = require('moleculer').Errors;
-const { parseHeader, negotiateContentType, parseJson } = require('@semapps/middlewares');
-const { notify } = require('@semapps/ontologies');
-const { TripleStoreAdapter } = require('@semapps/triplestore');
+import { parseHeader, negotiateContentType, parseJson } from '@semapps/middlewares';
+import { notify } from '@semapps/ontologies';
+import { TripleStoreAdapter } from '@semapps/triplestore';
+import { ServiceSchema, defineAction } from 'moleculer';
 
-module.exports = {
-  name: 'solid-notifications.listener',
+const SolidNotificationsListenerSchema = {
+  name: 'solid-notifications.listener' as const,
   mixins: [DbService],
   adapter: new TripleStoreAdapter({ type: 'WebhookChannelListener', dataset: 'settings' }),
   settings: {
@@ -43,122 +44,130 @@ module.exports = {
     });
   },
   actions: {
-    async register(ctx) {
-      const { resourceUri, actionName } = ctx.params;
+    register: defineAction({
+      async handler(ctx) {
+        const { resourceUri, actionName } = ctx.params;
 
-      const appActor = await ctx.call('app.get');
+        const appActor = await ctx.call('app.get');
 
-      // Check if a listener already exist
-      const existingListener = this.listeners.find(
-        listener => listener.resourceUri === resourceUri && listener.actionName === actionName
-      );
+        // Check if a listener already exist
+        const existingListener = this.listeners.find(
+          listener => listener.resourceUri === resourceUri && listener.actionName === actionName
+        );
 
-      if (existingListener) {
-        try {
-          // Check if channel still exist. If not, it will throw an error.
-          await ctx.call('ldp.remote.get', {
-            resourceUri: existingListener.channelUri,
-            webId: appActor.id,
-            strategy: 'networkOnly'
-          });
+        if (existingListener) {
+          try {
+            // Check if channel still exist. If not, it will throw an error.
+            await ctx.call('ldp.remote.get', {
+              resourceUri: existingListener.channelUri,
+              webId: appActor.id,
+              strategy: 'networkOnly'
+            });
 
-          // If the channel still exist, registration is not needed
-          return existingListener;
-        } catch (e) {
-          if (e.code === 404) {
-            this.logger.warn(
-              `Channel ${existingListener.channelUri} doesn't exist anymore. Registering a new channel...`
-            );
-            this.actions.remove({ id: existingListener['@id'] }, { parentCtx: ctx });
-            this.listeners = this.listeners.filter(l => l['@id'] !== existingListener['@id']);
-          } else {
-            throw e;
+            // If the channel still exist, registration is not needed
+            return existingListener;
+          } catch (e) {
+            if (e.code === 404) {
+              this.logger.warn(
+                `Channel ${existingListener.channelUri} doesn't exist anymore. Registering a new channel...`
+              );
+              this.actions.remove({ id: existingListener['@id'] }, { parentCtx: ctx });
+              this.listeners = this.listeners.filter(l => l['@id'] !== existingListener['@id']);
+            } else {
+              throw e;
+            }
           }
         }
+
+        // Discover webhook endpoint
+        const storageDescription = await this.getSolidEndpoint(resourceUri);
+        if (!storageDescription) throw new Error(`No storageDescription found for resourceUri ${resourceUri}`);
+
+        // Fetch all subscriptions URLs
+        const results = await Promise.all(
+          storageDescription['notify:subscription'].map(channelSubscriptionUrl =>
+            fetch(channelSubscriptionUrl, {
+              headers: {
+                Accept: 'application/ld+json'
+              }
+            }).then(res => res.ok && res.json())
+          )
+        );
+
+        // Find webhook channel
+        const webhookSubscription = results.find(
+          subscription => subscription && subscription['notify:channelType'] === 'notify:WebhookChannel2023'
+        );
+
+        if (!webhookSubscription) throw new Error(`No webhook subscription URL found for resourceUri ${resourceUri}`);
+
+        // Ensure webhookSubscription['notify:feature'] are correct
+
+        // Generate a webhook path
+        const webhookUrl = urlJoin(this.settings.baseUrl, '.webhooks', uuidv4());
+
+        // Persist listener on the settings dataset
+        // We must do it before creating the webhook channel, in case the webhook is called immediately
+        let listener = await this._create(ctx, {
+          webhookUrl,
+          resourceUri,
+          actionName
+        });
+
+        this.listeners.push(listener);
+
+        // Create a webhook channel (authenticate with HTTP signature)
+        const { body } = await ctx.call('signature.proxy.query', {
+          url: webhookSubscription.id || webhookSubscription['@id'],
+          method: 'POST',
+          headers: new fetch.Headers({ 'Content-Type': 'application/ld+json' }),
+          body: JSON.stringify({
+            '@context': {
+              notify: 'http://www.w3.org/ns/solid/notifications#'
+            },
+            '@type': 'notify:WebhookChannel2023',
+            'notify:topic': resourceUri,
+            'notify:sendTo': webhookUrl
+          }),
+          actorUri: appActor.id
+        });
+
+        // Keep track of the channel URI, to be able to check if it still exists
+        listener.channelUri = body.id;
+        await this._update(ctx, listener);
+        const listenerIndex = this.listeners.findIndex(l => l['@id'] === listener['@id']);
+        this.listeners[listenerIndex] = listener;
+
+        return listener;
       }
+    }),
 
-      // Discover webhook endpoint
-      const storageDescription = await this.getSolidEndpoint(resourceUri);
-      if (!storageDescription) throw new Error(`No storageDescription found for resourceUri ${resourceUri}`);
+    transfer: defineAction({
+      async handler(ctx) {
+        const { uuid, ...data } = ctx.params;
+        const webhookUrl = urlJoin(this.settings.baseUrl, '.webhooks', uuid);
 
-      // Fetch all subscriptions URLs
-      const results = await Promise.all(
-        storageDescription['notify:subscription'].map(channelSubscriptionUrl =>
-          fetch(channelSubscriptionUrl, {
-            headers: {
-              Accept: 'application/ld+json'
-            }
-          }).then(res => res.ok && res.json())
-        )
-      );
+        const listener = this.listeners.find(l => l.webhookUrl === webhookUrl);
 
-      // Find webhook channel
-      const webhookSubscription = results.find(
-        subscription => subscription && subscription['notify:channelType'] === 'notify:WebhookChannel2023'
-      );
-
-      if (!webhookSubscription) throw new Error(`No webhook subscription URL found for resourceUri ${resourceUri}`);
-
-      // Ensure webhookSubscription['notify:feature'] are correct
-
-      // Generate a webhook path
-      const webhookUrl = urlJoin(this.settings.baseUrl, '.webhooks', uuidv4());
-
-      // Persist listener on the settings dataset
-      // We must do it before creating the webhook channel, in case the webhook is called immediately
-      let listener = await this._create(ctx, {
-        webhookUrl,
-        resourceUri,
-        actionName
-      });
-
-      this.listeners.push(listener);
-
-      // Create a webhook channel (authenticate with HTTP signature)
-      const { body } = await ctx.call('signature.proxy.query', {
-        url: webhookSubscription.id || webhookSubscription['@id'],
-        method: 'POST',
-        headers: new fetch.Headers({ 'Content-Type': 'application/ld+json' }),
-        body: JSON.stringify({
-          '@context': {
-            notify: 'http://www.w3.org/ns/solid/notifications#'
-          },
-          '@type': 'notify:WebhookChannel2023',
-          'notify:topic': resourceUri,
-          'notify:sendTo': webhookUrl
-        }),
-        actorUri: appActor.id
-      });
-
-      // Keep track of the channel URI, to be able to check if it still exists
-      listener.channelUri = body.id;
-      await this._update(ctx, listener);
-      const listenerIndex = this.listeners.findIndex(l => l['@id'] === listener['@id']);
-      this.listeners[listenerIndex] = listener;
-
-      return listener;
-    },
-    async transfer(ctx) {
-      const { uuid, ...data } = ctx.params;
-      const webhookUrl = urlJoin(this.settings.baseUrl, '.webhooks', uuid);
-
-      const listener = this.listeners.find(l => l.webhookUrl === webhookUrl);
-
-      if (listener) {
-        try {
-          // Do no wait for the action to finish, so that the result can be immediately returned
-          ctx.call(listener.actionName, data);
-        } catch (e) {
-          // Ignore errors that the actions may generate (otherwise 404 errors will be considered as non-existing webhooks)
+        if (listener) {
+          try {
+            // Do no wait for the action to finish, so that the result can be immediately returned
+            ctx.call(listener.actionName, data);
+          } catch (e) {
+            // Ignore errors that the actions may generate (otherwise 404 errors will be considered as non-existing webhooks)
+          }
+          ctx.meta.$statusCode = 200;
+        } else {
+          throw new MoleculerError(`No webhook found with URL ${webhookUrl}`, 404, 'NOT_FOUND');
         }
-        ctx.meta.$statusCode = 200;
-      } else {
-        throw new MoleculerError(`No webhook found with URL ${webhookUrl}`, 404, 'NOT_FOUND');
       }
-    },
-    getCache() {
-      return this.listeners;
-    }
+    }),
+
+    getCache: defineAction({
+      handler() {
+        return this.listeners;
+      }
+    })
   },
   methods: {
     async getSolidEndpoint(resourceUri) {
@@ -191,4 +200,14 @@ module.exports = {
       return false;
     }
   }
-};
+} satisfies ServiceSchema;
+
+export default SolidNotificationsListenerSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [SolidNotificationsListenerSchema.name]: typeof SolidNotificationsListenerSchema;
+    }
+  }
+}

@@ -1,55 +1,71 @@
-module.exports = {
-  name: 'webacl.cache',
+import { ServiceSchema, defineAction } from 'moleculer';
+
+const WebaclCacheSchema = {
+  name: 'webacl.cache' as const,
   actions: {
-    // Invalidate the WebACL cache of the given resource
-    // If specificUriOnly is false, it will invalidate all resources starting with the given URI
-    async invalidateResourceRights(ctx) {
-      if (this.broker.cacher) {
-        const { uri, specificUriOnly } = ctx.params;
-        await this.broker.cacher.clean(`webacl.resource.getRights:${uri}${specificUriOnly ? '|**' : '**'}`);
-        await this.broker.cacher.clean(`webacl.resource.hasRights:${uri}${specificUriOnly ? '|**' : '**'}`);
-      }
-    },
-    // Invalidate all WebACL cache for the given user
-    async invalidateAllUserRights(ctx) {
-      if (this.broker.cacher) {
-        const { uri } = ctx.params;
-        await this.broker.cacher.clean(`webacl.resource.getRights:**${uri}**`);
-        await this.broker.cacher.clean(`webacl.resource.hasRights:**${uri}**`);
-      }
-    },
-    async invalidateAllUserRightsOnPod(ctx) {
-      if (this.broker.cacher) {
-        const { webId, podOwner } = ctx.params;
-        await this.broker.cacher.clean(`webacl.resource.getRights:${podOwner}|**|${webId}`);
-        await this.broker.cacher.clean(`webacl.resource.hasRights:${podOwner}|**|${webId}`);
-        await this.broker.cacher.clean(`webacl.resource.getRights:${podOwner}/**|**|${webId}`);
-        await this.broker.cacher.clean(`webacl.resource.hasRights:${podOwner}/**|**|${webId}`);
-      }
-    },
-    async generateForUser(ctx) {
-      const { webId } = ctx.params;
-      this.logger.info(`Generating cache for user ${webId}`);
-      const containers = await ctx.call('ldp.container.getAll');
-      for (const containerUri of containers) {
-        this.logger.info(`Generating cache for container ${containerUri}`);
-        const resources = await ctx.call('ldp.container.getUris', { containerUri });
-        for (const resourceUri of resources) {
-          await ctx.call('webacl.resource.hasRights', {
-            resourceUri,
-            rights: { read: true },
-            webId
-          });
+    invalidateResourceRights: defineAction({
+      // Invalidate the WebACL cache of the given resource
+      // If specificUriOnly is false, it will invalidate all resources starting with the given URI
+      async handler(ctx) {
+        if (this.broker.cacher) {
+          const { uri, specificUriOnly } = ctx.params;
+          await this.broker.cacher.clean(`webacl.resource.getRights:${uri}${specificUriOnly ? '|**' : '**'}`);
+          await this.broker.cacher.clean(`webacl.resource.hasRights:${uri}${specificUriOnly ? '|**' : '**'}`);
         }
       }
-    },
-    async generateForAll(ctx) {
-      const { usersContainer } = ctx.params;
-      const users = await ctx.call('ldp.container.getUris', { containerUri: usersContainer });
-      for (const webId of users) {
-        await this.actions.generateForUser({ webId }, { parentCtx: ctx });
+    }),
+
+    invalidateAllUserRights: defineAction({
+      // Invalidate all WebACL cache for the given user
+      async handler(ctx) {
+        if (this.broker.cacher) {
+          const { uri } = ctx.params;
+          await this.broker.cacher.clean(`webacl.resource.getRights:**${uri}**`);
+          await this.broker.cacher.clean(`webacl.resource.hasRights:**${uri}**`);
+        }
       }
-    }
+    }),
+
+    invalidateAllUserRightsOnPod: defineAction({
+      async handler(ctx) {
+        if (this.broker.cacher) {
+          const { webId, podOwner } = ctx.params;
+          await this.broker.cacher.clean(`webacl.resource.getRights:${podOwner}|**|${webId}`);
+          await this.broker.cacher.clean(`webacl.resource.hasRights:${podOwner}|**|${webId}`);
+          await this.broker.cacher.clean(`webacl.resource.getRights:${podOwner}/**|**|${webId}`);
+          await this.broker.cacher.clean(`webacl.resource.hasRights:${podOwner}/**|**|${webId}`);
+        }
+      }
+    }),
+
+    generateForUser: defineAction({
+      async handler(ctx) {
+        const { webId } = ctx.params;
+        this.logger.info(`Generating cache for user ${webId}`);
+        const containers = await ctx.call('ldp.container.getAll');
+        for (const containerUri of containers) {
+          this.logger.info(`Generating cache for container ${containerUri}`);
+          const resources = await ctx.call('ldp.container.getUris', { containerUri });
+          for (const resourceUri of resources) {
+            await ctx.call('webacl.resource.hasRights', {
+              resourceUri,
+              rights: { read: true },
+              webId
+            });
+          }
+        }
+      }
+    }),
+
+    generateForAll: defineAction({
+      async handler(ctx) {
+        const { usersContainer } = ctx.params;
+        const users = await ctx.call('ldp.container.getUris', { containerUri: usersContainer });
+        for (const webId of users) {
+          await this.actions.generateForUser({ webId }, { parentCtx: ctx });
+        }
+      }
+    })
   },
   events: {
     async 'webacl.resource.updated'(ctx) {
@@ -78,4 +94,14 @@ module.exports = {
       await this.actions.invalidateAllUserRights({ uri: memberUri }, { parentCtx: ctx });
     }
   }
-};
+} satisfies ServiceSchema;
+
+export default WebaclCacheSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [WebaclCacheSchema.name]: typeof WebaclCacheSchema;
+    }
+  }
+}

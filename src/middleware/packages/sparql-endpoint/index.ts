@@ -1,3 +1,2 @@
-module.exports = {
-  SparqlEndpointService: require('./service')
-};
+import SparqlEndpointService from './service.ts';
+export { SparqlEndpointService };

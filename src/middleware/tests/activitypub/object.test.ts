@@ -1,16 +1,15 @@
-const { ACTIVITY_TYPES, OBJECT_TYPES } = require('@semapps/activitypub');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const waitForExpect = require('wait-for-expect');
-const initialize = require('./initialize');
-const CONFIG = require('../config');
-
+import { ACTIVITY_TYPES, OBJECT_TYPES } from '@semapps/activitypub';
+import { MIME_TYPES } from '@semapps/mime-types';
+import waitForExpect from 'wait-for-expect';
+import initialize from './initialize.ts';
+import CONFIG from '../config.ts';
 jest.setTimeout(50000);
-
 let broker;
 
 beforeAll(async () => {
   broker = await initialize(3000, 'testData', 'settings');
 });
+
 afterAll(async () => {
   if (broker) await broker.stop();
 });
@@ -24,7 +23,7 @@ describe('Create/Update/Delete objects', () => {
       username: 'srosset81',
       email: 'sebastien@test.com',
       password: 'test',
-      name: 'Sébastien'
+      name: 'Sébastien' as const
     });
 
     sebastien = await broker.call('activitypub.actor.awaitCreateComplete', { actorUri: sebastienUri });
@@ -37,7 +36,7 @@ describe('Create/Update/Delete objects', () => {
       collectionUri: sebastien.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: OBJECT_TYPES.ARTICLE,
-      name: 'My first article',
+      name: 'My first article' as const,
       attributedTo: sebastien.id,
       to: sebastien.followers,
       content: 'My first article, I hope there is no tipo'
@@ -48,7 +47,7 @@ describe('Create/Update/Delete objects', () => {
       actor: sebastien.id,
       object: {
         type: OBJECT_TYPES.ARTICLE,
-        name: 'My first article',
+        name: 'My first article' as const,
         content: 'My first article, I hope there is no tipo'
       },
       to: sebastien.followers

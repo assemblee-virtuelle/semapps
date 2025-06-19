@@ -1,12 +1,13 @@
-const { ContextParser } = require('jsonld-context-parser');
-const getAction = require('./actions/get');
-const getLocalAction = require('./actions/getLocal');
-const mergeAction = require('./actions/merge');
-const parseAction = require('./actions/parse');
-const validateAction = require('./actions/validate');
+import { ContextParser } from 'jsonld-context-parser';
+import getAction from './actions/get.ts';
+import getLocalAction from './actions/getLocal.ts';
+import mergeAction from './actions/merge.ts';
+import parseAction from './actions/parse.ts';
+import validateAction from './actions/validate.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
-module.exports = {
-  name: 'jsonld.context',
+const JsonldContextSchema = {
+  name: 'jsonld.context' as const,
   settings: {
     localContextUri: null
   },
@@ -35,4 +36,14 @@ module.exports = {
     parse: parseAction,
     validate: validateAction
   }
-};
+} satisfies ServiceSchema;
+
+export default JsonldContextSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [JsonldContextSchema.name]: typeof JsonldContextSchema;
+    }
+  }
+}

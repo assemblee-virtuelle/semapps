@@ -1,9 +1,10 @@
-const path = require('path');
-const ExpoPushDeviceService = require('./device');
-const ExpoPushNotificationService = require('./notification');
+import path from 'path';
+import ExpoPushDeviceService from './device.ts';
+import ExpoPushNotificationService from './notification.ts';
+import { ServiceSchema } from 'moleculer';
 
 const ExpoPushService = {
-  name: 'expo-push',
+  name: 'expo-push' as const,
   settings: {
     baseUrl: null,
     newDeviceNotification: {
@@ -29,7 +30,7 @@ const ExpoPushService = {
     await this.broker.call('api.addRoute', {
       route: {
         path: path.join(basePath, '/push'),
-        name: 'push',
+        name: 'push' as const,
         bodyParsers: { json: true },
         authorization: false,
         authentication: true,
@@ -43,6 +44,14 @@ const ExpoPushService = {
       }
     });
   }
-};
+} satisfies ServiceSchema;
 
-module.exports = ExpoPushService;
+export default ExpoPushService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [ExpoPushService.name]: typeof ExpoPushService;
+    }
+  }
+}

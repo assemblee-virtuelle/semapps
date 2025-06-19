@@ -1,12 +1,12 @@
-const fetch = require('node-fetch');
-const N3 = require('n3');
-const { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin, matchActivity } = require('@semapps/activitypub');
-
+import fetch from 'node-fetch';
+import N3 from 'n3';
+import { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin, matchActivity } from '@semapps/activitypub';
+import { ServiceSchema, defineAction } from 'moleculer';
 const { DataFactory } = N3;
 const { triple, namedNode } = DataFactory;
 
-module.exports = {
-  name: 'inference.remote',
+const InferenceRemoteSchema = {
+  name: 'inference.remote' as const,
   mixins: [ActivitiesHandlerMixin],
   settings: {
     baseUrl: null,
@@ -18,7 +18,7 @@ module.exports = {
     this.relayActor = await this.broker.call('activitypub.relay.getActor');
   },
   actions: {
-    offerInference: {
+    offerInference: defineAction({
       visibility: 'public',
       params: {
         subject: { type: 'string', optional: false },
@@ -85,7 +85,7 @@ module.exports = {
           }
         }
       }
-    }
+    })
   },
   activities: {
     offerInference: {
@@ -165,4 +165,14 @@ module.exports = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
+
+export default InferenceRemoteSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [InferenceRemoteSchema.name]: typeof InferenceRemoteSchema;
+    }
+  }
+}

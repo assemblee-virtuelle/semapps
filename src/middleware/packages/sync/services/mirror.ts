@@ -1,14 +1,14 @@
-const urlJoin = require('url-join');
-const fetch = require('node-fetch');
+import urlJoin from 'url-join';
+import fetch from 'node-fetch';
 const { MoleculerError } = require('moleculer').Errors;
-const { createFragmentURL, arrayOf } = require('@semapps/ldp');
-const { ACTIVITY_TYPES } = require('@semapps/activitypub');
-const SynchronizerService = require('./synchronizer');
-
+import { createFragmentURL, arrayOf } from '@semapps/ldp';
+import { ACTIVITY_TYPES } from '@semapps/activitypub';
+import SynchronizerService from './synchronizer.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 const regexPrefix = new RegExp('^@prefix ([\\w-]*: +<.*>) .', 'gm');
 
-module.exports = {
-  name: 'mirror',
+const MirrorSchema = {
+  name: 'mirror' as const,
   settings: {
     graphName: 'http://semapps.org/mirror',
     servers: []
@@ -45,7 +45,7 @@ module.exports = {
     }
   },
   actions: {
-    mirror: {
+    mirror: defineAction({
       visibility: 'public',
       params: {
         serverUrl: { type: 'string', optional: false }
@@ -170,6 +170,16 @@ module.exports = {
 
         return remoteRelayActorUri;
       }
+    })
+  }
+} satisfies ServiceSchema;
+
+export default MirrorSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [MirrorSchema.name]: typeof MirrorSchema;
     }
   }
-};
+}

@@ -1,41 +1,50 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
+import { MIME_TYPES } from '@semapps/mime-types';
+import { ServiceSchema, defineAction } from 'moleculer';
 
-module.exports = {
-  name: 'ldp.cache',
+const LdpCacheSchema = {
+  name: 'ldp.cache' as const,
   dependencies: ['ldp.container'],
   actions: {
-    async generate(ctx) {
-      const containersUris = await ctx.call('ldp.container.getAll');
-      for (const containerUri of containersUris) {
-        try {
-          await ctx.call('ldp.container.get', { containerUri, accept: MIME_TYPES.JSON });
-          this.logger.info(`Generated cache for container ${containerUri}`);
-        } catch (e) {
-          this.logger.warn(`Error when generating cache for container ${containerUri}`);
-          console.error(e);
+    generate: defineAction({
+      async handler(ctx) {
+        const containersUris = await ctx.call('ldp.container.getAll');
+        for (const containerUri of containersUris) {
+          try {
+            await ctx.call('ldp.container.get', { containerUri, accept: MIME_TYPES.JSON });
+            this.logger.info(`Generated cache for container ${containerUri}`);
+          } catch (e) {
+            this.logger.warn(`Error when generating cache for container ${containerUri}`);
+            console.error(e);
+          }
         }
       }
-    },
-    async invalidateResource(ctx) {
-      if (this.broker.cacher) {
-        const { resourceUri, dataset } = ctx.params;
-        await this.broker.cacher.clean(`ldp.resource.get:${resourceUri}**`);
-        await this.broker.cacher.clean(`ldp.resource.getTypes:${resourceUri}**`);
+    }),
 
-        // Also invalidate the cache of the containers containing the resource
-        // For deleted resources, no container will be found (containers will be invalidated through the ldp.resource.detached event)
-        for (const containerUri of await ctx.call('ldp.resource.getContainers', { resourceUri, dataset })) {
-          await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
+    invalidateResource: defineAction({
+      async handler(ctx) {
+        if (this.broker.cacher) {
+          const { resourceUri, dataset } = ctx.params;
+          await this.broker.cacher.clean(`ldp.resource.get:${resourceUri}**`);
+          await this.broker.cacher.clean(`ldp.resource.getTypes:${resourceUri}**`);
+
+          // Also invalidate the cache of the containers containing the resource
+          // For deleted resources, no container will be found (containers will be invalidated through the ldp.resource.detached event)
+          for (const containerUri of await ctx.call('ldp.resource.getContainers', { resourceUri, dataset })) {
+            await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
+          }
         }
       }
-    },
-    async invalidateContainer(ctx) {
-      if (this.broker.cacher) {
-        const { containerUri } = ctx.params;
-        await this.broker.cacher.clean(`ldp.container.get:${containerUri}**`);
-        await this.broker.cacher.clean(`ldp.resource.getTypes:${containerUri}**`);
+    }),
+
+    invalidateContainer: defineAction({
+      async handler(ctx) {
+        if (this.broker.cacher) {
+          const { containerUri } = ctx.params;
+          await this.broker.cacher.clean(`ldp.container.get:${containerUri}**`);
+          await this.broker.cacher.clean(`ldp.resource.getTypes:${containerUri}**`);
+        }
       }
-    }
+    })
   },
   events: {
     async 'ldp.resource.deleted'(ctx) {
@@ -92,4 +101,14 @@ module.exports = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
+
+export default LdpCacheSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [LdpCacheSchema.name]: typeof LdpCacheSchema;
+    }
+  }
+}

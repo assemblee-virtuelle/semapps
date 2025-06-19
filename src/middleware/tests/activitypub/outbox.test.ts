@@ -1,10 +1,8 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { ACTIVITY_TYPES, OBJECT_TYPES, PUBLIC_URI } = require('@semapps/activitypub');
-const waitForExpect = require('wait-for-expect');
-const initialize = require('./initialize');
-
+import { MIME_TYPES } from '@semapps/mime-types';
+import { ACTIVITY_TYPES, OBJECT_TYPES, PUBLIC_URI } from '@semapps/activitypub';
+import waitForExpect from 'wait-for-expect';
+import initialize from './initialize.ts';
 jest.setTimeout(50_000);
-
 let broker;
 let broker2;
 
@@ -12,6 +10,7 @@ beforeAll(async () => {
   broker = await initialize(3000, 'testData', 'settings');
   broker2 = broker;
 });
+
 afterAll(async () => {
   if (broker) await broker.stop();
 });
@@ -25,7 +24,7 @@ describe('Permissions are correctly set on outbox', () => {
       username: 'srosset81',
       email: 'sebastien@test.com',
       password: 'test',
-      name: 'Sébastien'
+      name: 'Sébastien' as const
     });
 
     sebastien = await broker.call('activitypub.actor.awaitCreateComplete', { actorUri: sebastienUri });
@@ -34,7 +33,7 @@ describe('Permissions are correctly set on outbox', () => {
       username: 'simonlouvet',
       email: 'simon@test.com',
       password: 'test',
-      name: 'Simon'
+      name: 'Simon' as const
     });
 
     simon = await broker2.call('activitypub.actor.awaitCreateComplete', { actorUri: simonUri });
@@ -57,7 +56,7 @@ describe('Permissions are correctly set on outbox', () => {
       collectionUri: sebastien.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: OBJECT_TYPES.NOTE,
-      name: 'Private message to self'
+      name: 'Private message to self' as const
     });
 
     // Get outbox as self
@@ -77,7 +76,7 @@ describe('Permissions are correctly set on outbox', () => {
         type: ACTIVITY_TYPES.CREATE,
         object: {
           type: OBJECT_TYPES.NOTE,
-          name: 'Private message to self'
+          name: 'Private message to self' as const
         }
       });
       objectPrivateFirst = outbox.orderedItems[0].object;
@@ -116,7 +115,7 @@ describe('Permissions are correctly set on outbox', () => {
       collectionUri: sebastien.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: OBJECT_TYPES.NOTE,
-      name: 'Private message to friend',
+      name: 'Private message to friend' as const,
       to: simon.id
     });
 
@@ -137,7 +136,7 @@ describe('Permissions are correctly set on outbox', () => {
         type: ACTIVITY_TYPES.CREATE,
         object: {
           type: OBJECT_TYPES.NOTE,
-          name: 'Private message to friend'
+          name: 'Private message to friend' as const
         }
       });
     });
@@ -162,7 +161,7 @@ describe('Permissions are correctly set on outbox', () => {
       collectionUri: sebastien.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: OBJECT_TYPES.NOTE,
-      name: 'Public message',
+      name: 'Public message' as const,
       to: PUBLIC_URI
     });
 
@@ -183,7 +182,7 @@ describe('Permissions are correctly set on outbox', () => {
         type: ACTIVITY_TYPES.CREATE,
         object: {
           type: OBJECT_TYPES.NOTE,
-          name: 'Public message'
+          name: 'Public message' as const
         }
       });
     });
@@ -205,7 +204,7 @@ describe('Permissions are correctly set on outbox', () => {
         type: ACTIVITY_TYPES.CREATE,
         object: {
           type: OBJECT_TYPES.NOTE,
-          name: 'Public message'
+          name: 'Public message' as const
         }
       });
     });
@@ -221,7 +220,7 @@ describe('Permissions are correctly set on outbox', () => {
         id: objectPrivateFirst.id,
         '@context': 'https://www.w3.org/ns/activitystreams',
         type: OBJECT_TYPES.NOTE,
-        name: 'Message is now visible to friend'
+        name: 'Message is now visible to friend' as const
       }
     });
     expect(objectPrivateFirst?.id).toBe(activityUpdatedForFriend.object.id);
@@ -242,7 +241,7 @@ describe('Permissions are correctly set on outbox', () => {
         type: ACTIVITY_TYPES.UPDATE,
         object: {
           type: OBJECT_TYPES.NOTE,
-          name: 'Message is now visible to friend'
+          name: 'Message is now visible to friend' as const
         }
       });
     });
@@ -270,7 +269,7 @@ describe('Permissions are correctly set on outbox', () => {
         id: objectPrivateFirst.id,
         '@context': 'https://www.w3.org/ns/activitystreams',
         type: OBJECT_TYPES.NOTE,
-        name: 'Message is now public'
+        name: 'Message is now public' as const
       }
     });
     expect(objectPrivateFirst.id).toBe(activityUpdatedForPublic.object.id);
@@ -291,7 +290,7 @@ describe('Permissions are correctly set on outbox', () => {
         type: ACTIVITY_TYPES.UPDATE,
         object: {
           type: OBJECT_TYPES.NOTE,
-          name: 'Message is now public'
+          name: 'Message is now public' as const
         }
       });
     });
@@ -307,7 +306,7 @@ describe('Permissions are correctly set on outbox', () => {
         id: objectPrivateFirst.id,
         '@context': 'https://www.w3.org/ns/activitystreams',
         type: OBJECT_TYPES.NOTE,
-        name: 'Message is private again'
+        name: 'Message is private again' as const
       }
     });
 
@@ -326,7 +325,7 @@ describe('Permissions are correctly set on outbox', () => {
         type: ACTIVITY_TYPES.UPDATE,
         object: {
           type: OBJECT_TYPES.NOTE,
-          name: 'Message is private again'
+          name: 'Message is private again' as const
         }
       });
 
@@ -340,7 +339,7 @@ describe('Permissions are correctly set on outbox', () => {
         type: ACTIVITY_TYPES.UPDATE,
         object: {
           type: OBJECT_TYPES.NOTE,
-          name: 'Message is private again'
+          name: 'Message is private again' as const
         }
       });
       const objectUri = outboxFetchedBySelf.orderedItems[0].object.id;

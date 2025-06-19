@@ -1,8 +1,9 @@
-const { arrayOf } = require('@semapps/ldp');
-const { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin } = require('@semapps/activitypub');
+import { arrayOf } from '@semapps/ldp';
+import { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin } from '@semapps/activitypub';
+import { ServiceSchema } from 'moleculer';
 
 const SynchronizerService = {
-  name: 'synchronizer',
+  name: 'synchronizer' as const,
   mixins: [ActivitiesHandlerMixin],
   settings: {
     podProvider: false,
@@ -243,6 +244,14 @@ const SynchronizerService = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
 
-module.exports = SynchronizerService;
+export default SynchronizerService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [SynchronizerService.name]: typeof SynchronizerService;
+    }
+  }
+}

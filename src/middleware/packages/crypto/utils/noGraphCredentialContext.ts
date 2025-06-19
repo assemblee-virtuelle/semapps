@@ -1,3 +1,5 @@
+import { ServiceSchema } from 'moleculer';
+
 /**
  * This is a copy of the https://www.w3.org/ns/credentials/v2 context.
  * With the difference being that the `@graph` property for proofs is removed.
@@ -22,7 +24,7 @@ const noGraphCredentialContext = {
   mediaType: {
     '@id': 'https://schema.org/encodingFormat'
   },
-  name: 'https://schema.org/name',
+  name: 'https://schema.org/name' as const,
 
   VerifiableCredential: {
     '@id': 'https://www.w3.org/2018/credentials#VerifiableCredential',
@@ -57,7 +59,7 @@ const noGraphCredentialContext = {
         '@id': 'https://www.w3.org/2018/credentials#issuer',
         '@type': '@id'
       },
-      name: 'https://schema.org/name',
+      name: 'https://schema.org/name' as const,
       proof: 'https://w3id.org/security#proof',
       refreshService: {
         '@id': 'https://www.w3.org/2018/credentials#refreshService',
@@ -326,6 +328,14 @@ const noGraphCredentialContext = {
     '@id': 'https://www.iana.org/assignments/jose#x5u',
     '@type': '@id'
   }
-};
+} satisfies ServiceSchema;
 
-module.exports = noGraphCredentialContext;
+export default noGraphCredentialContext;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [noGraphCredentialContext.name]: typeof noGraphCredentialContext;
+    }
+  }
+}

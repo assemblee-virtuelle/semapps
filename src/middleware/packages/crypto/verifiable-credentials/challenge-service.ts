@@ -1,4 +1,5 @@
-const crypto = require('node:crypto');
+import crypto from 'node:crypto';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 /**
  * Service to generate challenges upon request.
@@ -8,7 +9,7 @@ const crypto = require('node:crypto');
  * @type {import('moleculer').ServiceSchema}
  */
 const ChallengeService = {
-  name: 'crypto.vc.presentation.challenge',
+  name: 'crypto.vc.presentation.challenge' as const,
   settings: {
     /** Milliseconds challenges should be valid for. @default 5 minutes */
     challengeExpirationMs: 5 * 60 * 1000
@@ -18,52 +19,62 @@ const ChallengeService = {
     this.challenges = {};
   },
   actions: {
-    create() {
-      if (!this.cleanupTimerSetUp) {
-        this.startCleanupTimer();
+    create: defineAction({
+      handler() {
+        if (!this.cleanupTimerSetUp) {
+          this.startCleanupTimer();
+        }
+
+        const challenge = crypto.randomUUID();
+        this.challenges[challenge] = { issued: Date.now() };
+
+        return { challenge };
       }
+    }),
 
-      const challenge = crypto.randomUUID();
-      this.challenges[challenge] = { issued: Date.now() };
-
-      return { challenge };
-    },
-
-    getAll() {
-      return this.challenges;
-    },
-
-    clearAll() {
-      this.challenges = {};
-    },
-
-    validate(ctx) {
-      const { challenge } = ctx.params;
-
-      // Does challenge exist?
-      if (!this.challenges[challenge]) {
-        return { valid: false, error: new Error('Challenge not found or has expired.') };
+    getAll: defineAction({
+      handler() {
+        return this.challenges;
       }
+    }),
 
-      // Is challenge expired?
-      if (Date.now() - this.challenges[challenge].issued > this.settings.challengeExpirationMs) {
-        delete this.challenges[challenge];
-        return { valid: false, error: new Error('Challenge not found or has expired.') };
+    clearAll: defineAction({
+      handler() {
+        this.challenges = {};
       }
+    }),
 
-      delete this.challenges[challenge];
+    validate: defineAction({
+      handler(ctx) {
+        const { challenge } = ctx.params;
 
-      return { valid: true };
-    },
+        // Does challenge exist?
+        if (!this.challenges[challenge]) {
+          return { valid: false, error: new Error('Challenge not found or has expired.') };
+        }
 
-    cleanElapsed() {
-      const now = Date.now();
-      for (const [challenge, { issued }] of Object.entries(this.challenges)) {
-        if (now - issued > this.settings.challengeExpirationMs) {
+        // Is challenge expired?
+        if (Date.now() - this.challenges[challenge].issued > this.settings.challengeExpirationMs) {
           delete this.challenges[challenge];
+          return { valid: false, error: new Error('Challenge not found or has expired.') };
+        }
+
+        delete this.challenges[challenge];
+
+        return { valid: true };
+      }
+    }),
+
+    cleanElapsed: defineAction({
+      handler() {
+        const now = Date.now();
+        for (const [challenge, { issued }] of Object.entries(this.challenges)) {
+          if (now - issued > this.settings.challengeExpirationMs) {
+            delete this.challenges[challenge];
+          }
         }
       }
-    }
+    })
   },
   methods: {
     startCleanupTimer() {
@@ -86,6 +97,14 @@ const ChallengeService = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
 
-module.exports = ChallengeService;
+export default ChallengeService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [ChallengeService.name]: typeof ChallengeService;
+    }
+  }
+}

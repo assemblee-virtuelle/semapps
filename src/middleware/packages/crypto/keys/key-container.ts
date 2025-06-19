@@ -1,7 +1,8 @@
-const { ControlledContainerMixin } = require('@semapps/ldp');
-const { Errors: E } = require('moleculer-web');
-const { arrayOf } = require('../utils/utils');
-const { KEY_TYPES } = require('../constants');
+import { ControlledContainerMixin } from '@semapps/ldp';
+import { E as Errors } from 'moleculer-web';
+import { arrayOf } from '../utils/utils.ts';
+import { KEY_TYPES } from '../constants.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 /**
  * DANGER ZONE
@@ -11,8 +12,8 @@ const { KEY_TYPES } = require('../constants');
  * Watch out with permissions. This should be strictly limited to the owner and privileged apps.
  * @type {import('moleculer').ServiceSchema}
  */
-module.exports = {
-  name: 'keys.container',
+const KeysContainerSchema = {
+  name: 'keys.container' as const,
   mixins: [ControlledContainerMixin],
   settings: {
     path: '/key',
@@ -49,31 +50,46 @@ module.exports = {
     }
   },
   actions: {
-    async forbidden(ctx) {
-      throw new E.ForbiddenError();
-    },
-    /**
-     * Get action that sets the multikey context and multikey type for those keys correctly. This is required by the spec.
-     * See:
-     * - https://www.w3.org/TR/controller-document/#json-ld-context
-     * - https://www.w3.org/TR/controller-document/#Multikey
-     *
-     * This Action is used by the public key container as well.
-     *
-     */
-    async get(ctx) {
-      const resource = await ctx.call('ldp.resource.get', {
-        ...ctx.params,
-        jsonContext: ['https://w3id.org/security/multikey/v1', ...(await ctx.call('jsonld.context.get'))]
-      });
-
-      // Make type `Multikey` only, to comply with spec.
-      if (arrayOf(resource.type).includes('sec:Multikey') || arrayOf(resource.type).includes('Multikey')) {
-        // Type must be Multikey only
-        resource.type = 'Multikey';
+    forbidden: defineAction({
+      async handler(ctx) {
+        throw new E.ForbiddenError();
       }
+    }),
 
-      return resource;
+    get: defineAction({
+      /**
+       * Get action that sets the multikey context and multikey type for those keys correctly. This is required by the spec.
+       * See:
+       * - https://www.w3.org/TR/controller-document/#json-ld-context
+       * - https://www.w3.org/TR/controller-document/#Multikey
+       *
+       * This Action is used by the public key container as well.
+       *
+       */
+      async handler(ctx) {
+        const resource = await ctx.call('ldp.resource.get', {
+          ...ctx.params,
+          jsonContext: ['https://w3id.org/security/multikey/v1', ...(await ctx.call('jsonld.context.get'))]
+        });
+
+        // Make type `Multikey` only, to comply with spec.
+        if (arrayOf(resource.type).includes('sec:Multikey') || arrayOf(resource.type).includes('Multikey')) {
+          // Type must be Multikey only
+          resource.type = 'Multikey';
+        }
+
+        return resource;
+      }
+    })
+  }
+} satisfies ServiceSchema;
+
+export default KeysContainerSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [KeysContainerSchema.name]: typeof KeysContainerSchema;
     }
   }
-};
+}

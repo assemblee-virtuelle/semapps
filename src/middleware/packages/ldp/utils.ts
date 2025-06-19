@@ -1,7 +1,5 @@
-const urlJoin = require('url-join');
-
+import urlJoin from 'url-join';
 const regexPrefix = new RegExp('^@prefix ([\\w-]*: +<.*>) .', 'gm');
-
 const regexProtocolAndHostAndPort = new RegExp('^http(s)?:\\/\\/([\\w-\\.:]*)');
 
 function createFragmentURL(baseUrl, serverUrl) {
@@ -68,14 +66,12 @@ const buildFiltersQuery = filters => {
 };
 
 const isObject = value => typeof value === 'object' && !Array.isArray(value) && value !== null;
-
 const getSlugFromUri = uri => uri.match(new RegExp(`.*/(.*)`))[1];
 
 /** @deprecated Use the ldp.resource.getContainers action instead */
 const getContainerFromUri = uri => uri.match(new RegExp(`(.*)/.*`))[1];
 
 const getParentContainerUri = uri => uri.match(new RegExp(`(.*)/.*`))[1];
-
 const getParentContainerPath = path => path.match(new RegExp(`(.*)/.*`))[1];
 
 const getPathFromUri = uri => {
@@ -113,7 +109,6 @@ const getWebIdFromUri = uri => {
 };
 
 const getId = resource => resource.id || resource['@id'];
-
 const getType = resource => resource.type || resource['@type'];
 
 const hasType = (resource, type) => {
@@ -175,7 +170,7 @@ const waitForResource = async (delayMs, fieldNames, maxTries, callback) => {
   throw new Error(`Waiting for resource failed. No results after ${maxTries} tries`);
 };
 
-module.exports = {
+export {
   buildBlankNodesQuery,
   buildFiltersQuery,
   isURL,

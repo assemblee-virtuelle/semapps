@@ -1,12 +1,12 @@
-const fetch = require('node-fetch');
-const N3 = require('n3');
-
+import fetch from 'node-fetch';
+import N3 from 'n3';
 const { DataFactory } = N3;
 const { triple, namedNode } = DataFactory;
-const RemoteService = require('./subservices/remote');
+import RemoteService from './subservices/remote.ts';
+import { ServiceSchema } from 'moleculer';
 
-module.exports = {
-  name: 'inference',
+const InferenceSchema = {
+  name: 'inference' as const,
   settings: {
     baseUrl: null,
     acceptFromRemoteServers: false,
@@ -322,4 +322,14 @@ module.exports = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
+
+export default InferenceSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [InferenceSchema.name]: typeof InferenceSchema;
+    }
+  }
+}

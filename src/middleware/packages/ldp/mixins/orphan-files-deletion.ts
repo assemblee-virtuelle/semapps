@@ -1,6 +1,7 @@
-const { CronJob } = require('cron');
+import { CronJob } from 'cron';
+import { ServiceSchema, defineAction } from 'moleculer';
 
-module.exports = {
+const Schema = {
   settings: {
     orphanFilesDeletion: {
       cronJob: {
@@ -11,39 +12,41 @@ module.exports = {
   },
   dependencies: ['triplestore', 'ldp.resource'],
   actions: {
-    async checkOrphanFiles(ctx) {
-      try {
-        this.logger.info('OrphanFilesDeletion - Check...');
+    checkOrphanFiles: defineAction({
+      async handler(ctx) {
+        try {
+          this.logger.info('OrphanFilesDeletion - Check...');
 
-        const containerUri = await this.actions.getContainerUri();
-        const results = await ctx.call('triplestore.query', {
-          query: `
-            SELECT ?file
-            WHERE {
-              <${containerUri}> <http://www.w3.org/ns/ldp#contains> ?file .
-              FILTER NOT EXISTS {
-                ?s ?p ?file .
-                FILTER(?s != <${containerUri}>)
+          const containerUri = await this.actions.getContainerUri();
+          const results = await ctx.call('triplestore.query', {
+            query: `
+              SELECT ?file
+              WHERE {
+                <${containerUri}> <http://www.w3.org/ns/ldp#contains> ?file .
+                FILTER NOT EXISTS {
+                  ?s ?p ?file .
+                  FILTER(?s != <${containerUri}>)
+                }
               }
-            }
-          `,
-          webId: 'system'
-        });
-
-        this.logger.info(`OrphanFilesDeletion - Found ${results.length} orphan files`);
-
-        for (const { file } of results) {
-          await ctx.call('ldp.resource.delete', {
-            resourceUri: file.value,
+            `,
             webId: 'system'
           });
 
-          this.logger.info(`OrphanFilesDeletion - ${file.value} deleted`);
+          this.logger.info(`OrphanFilesDeletion - Found ${results.length} orphan files`);
+
+          for (const { file } of results) {
+            await ctx.call('ldp.resource.delete', {
+              resourceUri: file.value,
+              webId: 'system'
+            });
+
+            this.logger.info(`OrphanFilesDeletion - ${file.value} deleted`);
+          }
+        } catch (error) {
+          this.logger.error(`OrphanFilesDeletion - Error: ${error.message}`);
         }
-      } catch (error) {
-        this.logger.error(`OrphanFilesDeletion - Error: ${error.message}`);
       }
-    }
+    })
   },
   created() {
     this.actions.checkOrphanFiles();
@@ -57,4 +60,6 @@ module.exports = {
   stopped() {
     this.cronJob?.stop();
   }
-};
+} satisfies ServiceSchema;
+
+export default Schema;

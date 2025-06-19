@@ -1,7 +1,8 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { arrayOf } = require('../utils');
+import { MIME_TYPES } from '@semapps/mime-types';
+import { arrayOf } from '../utils.ts';
+import { ServiceSchema } from 'moleculer';
 
-module.exports = {
+const Schema = {
   settings: {
     disassembly: [] // Example: [{ path: 'pair:hasLocation', container: 'http://localhost:3000/places' }]
   },
@@ -153,4 +154,6 @@ module.exports = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
+
+export default Schema;

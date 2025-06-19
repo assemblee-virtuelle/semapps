@@ -1,19 +1,20 @@
-const awaitCreateCompleteAction = require('./actions/awaitCreateComplete');
-const getAction = require('./actions/get');
-const createAction = require('./actions/create');
-const patchAction = require('./actions/patch');
-const putAction = require('./actions/put');
-const deleteAction = require('./actions/delete');
-const existAction = require('./actions/exist');
-const generateIdAction = require('./actions/generateId');
-const getContainersAction = require('./actions/getContainers');
-const getTypesAction = require('./actions/getTypes');
-const uploadAction = require('./actions/upload');
-const methods = require('./methods');
-const { getDatasetFromUri } = require('../../utils');
+import awaitCreateCompleteAction from './actions/awaitCreateComplete.ts';
+import getAction from './actions/get.ts';
+import createAction from './actions/create.ts';
+import patchAction from './actions/patch.ts';
+import putAction from './actions/put.ts';
+import deleteAction from './actions/delete.ts';
+import existAction from './actions/exist.ts';
+import generateIdAction from './actions/generateId.ts';
+import getContainersAction from './actions/getContainers.ts';
+import getTypesAction from './actions/getTypes.ts';
+import uploadAction from './actions/upload.ts';
+import methods from './methods.ts';
+import { getDatasetFromUri } from '../../utils.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
-module.exports = {
-  name: 'ldp.resource',
+const LdpResourceSchema = {
+  name: 'ldp.resource' as const,
   settings: {
     baseUrl: null,
     podProvider: false,
@@ -52,4 +53,14 @@ module.exports = {
     }
   },
   methods
-};
+} satisfies ServiceSchema;
+
+export default LdpResourceSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [LdpResourceSchema.name]: typeof LdpResourceSchema;
+    }
+  }
+}

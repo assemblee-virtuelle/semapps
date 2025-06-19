@@ -1,3 +1,5 @@
+import { ServiceSchema } from 'moleculer';
+
 /**
  * Replace moleculer-bull QueueMixin if Redis is not available
  * Call immediately jobs instead of putting them in a queue.
@@ -25,6 +27,6 @@ const FakeQueueMixin = {
       return { id: 0, data, finished: async () => {} };
     }
   }
-};
+} satisfies ServiceSchema;
 
-module.exports = FakeQueueMixin;
+export default FakeQueueMixin;

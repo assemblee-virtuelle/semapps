@@ -1,8 +1,9 @@
 const { MoleculerError } = require('moleculer').Errors;
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { cleanUndefined } = require('../../../utils');
+import { MIME_TYPES } from '@semapps/mime-types';
+import { cleanUndefined } from '../../../utils.ts';
+import { defineAction } from 'moleculer';
 
-module.exports = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     containerUri: {
@@ -136,4 +137,6 @@ module.exports = {
 
     return resourceUri;
   }
-};
+});
+
+export default Schema;

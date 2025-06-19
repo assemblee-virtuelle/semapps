@@ -1,4 +1,6 @@
-module.exports = {
+import { defineAction } from 'moleculer';
+
+const Schema = defineAction({
   visibility: 'public',
   params: {
     prefix: { type: 'string', optional: true },
@@ -26,4 +28,6 @@ module.exports = {
 
     return ontology;
   }
-};
+});
+
+export default Schema;

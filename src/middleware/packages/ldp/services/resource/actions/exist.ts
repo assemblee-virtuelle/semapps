@@ -1,6 +1,7 @@
-const { triple, namedNode, variable } = require('@rdfjs/data-model');
+import { triple, namedNode, variable } from '@rdfjs/data-model';
+import { defineAction } from 'moleculer';
 
-module.exports = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -33,4 +34,6 @@ module.exports = {
 
     return exist;
   }
-};
+});
+
+export default Schema;

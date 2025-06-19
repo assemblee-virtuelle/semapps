@@ -1,9 +1,11 @@
-const urlJoin = require('url-join');
-const pathJoin = require('path').join;
-const { pathToRegexp } = require('path-to-regexp');
-const { arrayOf } = require('../../../utils');
+import urlJoin from 'url-join';
+import pathModule from 'path';
+const pathJoin = pathModule.join;
+import { pathToRegexp } from 'path-to-regexp';
+import { arrayOf } from '../../../utils.ts';
+import { defineAction } from 'moleculer';
 
-module.exports = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     path: { type: 'string', optional: true },
@@ -88,4 +90,6 @@ module.exports = {
 
     return options;
   }
-};
+});
+
+export default Schema;

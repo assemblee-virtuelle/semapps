@@ -1,11 +1,12 @@
-const urlJoin = require('url-join');
-const { Errors: E } = require('moleculer-web');
-const { SpecialEndpointMixin, ControlledContainerMixin, getDatasetFromUri, arrayOf } = require('@semapps/ldp');
-const { ACTIVITY_TYPES } = require('@semapps/activitypub');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { namedNode } = require('@rdfjs/data-model');
-const { v4: uuidV4 } = require('uuid');
-const moment = require('moment');
+import urlJoin from 'url-join';
+import { E as Errors } from 'moleculer-web';
+import { SpecialEndpointMixin, ControlledContainerMixin, getDatasetFromUri, arrayOf } from '@semapps/ldp';
+import { ACTIVITY_TYPES } from '@semapps/activitypub';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { namedNode } from '@rdfjs/data-model';
+import { uuidV4 as v4 } from 'uuid';
+import moment from 'moment';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 /**
  * Solid Notification Channel mixin.
@@ -19,7 +20,7 @@ const moment = require('moment');
  *
  * Note: modifying a channel resource using the ldp API will not take effect until a server restart.
  */
-module.exports = {
+const Schema = {
   // name: 'solid-notifications.provider.<ChannelType>',
   mixins: [ControlledContainerMixin, SpecialEndpointMixin],
   settings: {
@@ -72,87 +73,95 @@ module.exports = {
     this.loadChannelsFromDb({ removeOldChannels: true });
   },
   actions: {
-    // Action called by the SpecialEndpointMixin when POSTing to the endpoint
-    async endpointPost(ctx) {
-      // Expect format https://communitysolidserver.github.io/CommunitySolidServer/latest/usage/notifications/#webhooks
-      // Correct context: https://github.com/solid/vocab/blob/main/solid-notifications-context.jsonld
-      const type = ctx.params.type || ctx.params['@type'];
-      const topic = ctx.params.topic || ctx.params['notify:topic'];
-      const sendToParam = ctx.params.sendTo || ctx.params['notify:sendTo'];
-      const { webId } = ctx.meta;
+    endpointPost: defineAction({
+      // Action called by the SpecialEndpointMixin when POSTing to the endpoint
+      async handler(ctx) {
+        // Expect format https://communitysolidserver.github.io/CommunitySolidServer/latest/usage/notifications/#webhooks
+        // Correct context: https://github.com/solid/vocab/blob/main/solid-notifications-context.jsonld
+        const type = ctx.params.type || ctx.params['@type'];
+        const topic = ctx.params.topic || ctx.params['notify:topic'];
+        const sendToParam = ctx.params.sendTo || ctx.params['notify:sendTo'];
+        const { webId } = ctx.meta;
 
-      // TODO: Use ldo objects; This will only check for the json type and not parse json-ld variants...
-      if (!this.settings.acceptedTypes.includes(type) && this.settings.channelType !== type)
-        throw new Error(`Only one of ${this.settings.acceptedTypes} is accepted on this endpoint`);
+        // TODO: Use ldo objects; This will only check for the json type and not parse json-ld variants...
+        if (!this.settings.acceptedTypes.includes(type) && this.settings.channelType !== type)
+          throw new Error(`Only one of ${this.settings.acceptedTypes} is accepted on this endpoint`);
 
-      // Ensure topic exist (LDP resource, container or collection)
-      const exists = await ctx.call('ldp.resource.exist', {
-        resourceUri: topic,
-        webId: 'system'
-      });
-      if (!exists) throw new E.BadRequestError('Cannot watch non-existing resource');
+        // Ensure topic exist (LDP resource, container or collection)
+        const exists = await ctx.call('ldp.resource.exist', {
+          resourceUri: topic,
+          webId: 'system'
+        });
+        if (!exists) throw new E.BadRequestError('Cannot watch non-existing resource');
 
-      // Ensure topic can be watched by the authenticated agent
-      const rights = await ctx.call('webacl.resource.hasRights', {
-        resourceUri: topic,
-        rights: { read: true },
-        webId
-      });
-      // TODO: Should a client without read rights know about the existence of that resource?
-      if (!rights.read) throw new E.ForbiddenError('You need acl:Read rights on the resource');
+        // Ensure topic can be watched by the authenticated agent
+        const rights = await ctx.call('webacl.resource.hasRights', {
+          resourceUri: topic,
+          rights: { read: true },
+          webId
+        });
+        // TODO: Should a client without read rights know about the existence of that resource?
+        if (!rights.read) throw new E.ForbiddenError('You need acl:Read rights on the resource');
 
-      // Find container URI from topic (must be stored on same Pod)
-      const topicWebId = urlJoin(this.settings.baseUrl, getDatasetFromUri(topic));
-      const channelContainerUri = await this.actions.getContainerUri({ webId: topicWebId }, { parentCtx: ctx });
+        // Find container URI from topic (must be stored on same Pod)
+        const topicWebId = urlJoin(this.settings.baseUrl, getDatasetFromUri(topic));
+        const channelContainerUri = await this.actions.getContainerUri({ webId: topicWebId }, { parentCtx: ctx });
 
-      // Create receiveFrom URI if needed (e.g. for web sockets).
-      const receiveFrom =
-        (this.settings.sendOrReceive === 'receive' && (await this.createReceiveFromUri(topic, webId))) || undefined;
-      const sendTo = (this.settings.sendOrReceive === 'send' && sendToParam) || undefined;
+        // Create receiveFrom URI if needed (e.g. for web sockets).
+        const receiveFrom =
+          (this.settings.sendOrReceive === 'receive' && (await this.createReceiveFromUri(topic, webId))) || undefined;
+        const sendTo = (this.settings.sendOrReceive === 'send' && sendToParam) || undefined;
 
-      // Post channel on Pod
-      const channelUri = await this.actions.post(
-        {
-          containerUri: channelContainerUri,
-          resource: {
-            type: this.settings.typePredicate,
-            'notify:topic': topic,
-            'notify:sendTo': sendTo,
-            'notify:receiveFrom': receiveFrom
+        // Post channel on Pod
+        const channelUri = await this.actions.post(
+          {
+            containerUri: channelContainerUri,
+            resource: {
+              type: this.settings.typePredicate,
+              'notify:topic': topic,
+              'notify:sendTo': sendTo,
+              'notify:receiveFrom': receiveFrom
+            },
+            contentType: MIME_TYPES.JSON,
+            webId: 'system'
           },
-          contentType: MIME_TYPES.JSON,
-          webId: 'system'
-        },
-        { parentCtx: ctx }
-      );
+          { parentCtx: ctx }
+        );
 
-      // Keep track of channel internally.
-      const channel = {
-        id: channelUri,
-        topic,
-        sendTo,
-        receiveFrom,
-        webId: topicWebId
-      };
-      this.channels.push(channel);
-      this.onChannelCreated(channel);
+        // Keep track of channel internally.
+        const channel = {
+          id: channelUri,
+          topic,
+          sendTo,
+          receiveFrom,
+          webId: topicWebId
+        };
+        this.channels.push(channel);
+        this.onChannelCreated(channel);
 
-      ctx.meta.$responseType = 'application/ld+json';
-      return this.actions.get(
-        {
-          resourceUri: channelUri,
-          accept: MIME_TYPES.JSON,
-          webId: 'system'
-        },
-        { parentCtx: ctx }
-      );
-    },
-    getCache() {
-      return this.channels;
-    },
-    resetCache() {
-      this.channels = [];
-    }
+        ctx.meta.$responseType = 'application/ld+json';
+        return this.actions.get(
+          {
+            resourceUri: channelUri,
+            accept: MIME_TYPES.JSON,
+            webId: 'system'
+          },
+          { parentCtx: ctx }
+        );
+      }
+    }),
+
+    getCache: defineAction({
+      handler() {
+        return this.channels;
+      }
+    }),
+
+    resetCache: defineAction({
+      handler() {
+        this.channels = [];
+      }
+    })
   },
   events: {
     async 'ldp.resource.created'(ctx) {
@@ -309,4 +318,6 @@ module.exports = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
+
+export default Schema;

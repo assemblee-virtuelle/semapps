@@ -1,10 +1,8 @@
-const urlJoin = require('url-join');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const initialize = require('./initialize');
-const CONFIG = require('../config');
-
+import urlJoin from 'url-join';
+import { MIME_TYPES } from '@semapps/mime-types';
+import initialize from './initialize.ts';
+import CONFIG from '../config.ts';
 jest.setTimeout(50000);
-
 let broker;
 
 beforeAll(async () => {
@@ -193,7 +191,7 @@ describe('Collections', () => {
         id: items[0],
         type: 'Note',
         content: 'Contenu de ma note #0',
-        name: 'Note #0'
+        name: 'Note #0' as const
       }
     });
   });

@@ -1,16 +1,17 @@
-const { TripleStoreAdapter } = require('@semapps/triplestore');
-const OntologiesRegistryService = require('./sub-services/registry');
-const findPrefixAction = require('./actions/findPrefix');
-const findNamespaceAction = require('./actions/findNamespace');
-const getAction = require('./actions/get');
-const getPrefixesAction = require('./actions/getPrefixes');
-const getRdfPrefixesAction = require('./actions/getRdfPrefixes');
-const listAction = require('./actions/list');
-const prefixToUriAction = require('./actions/prefixToUri');
-const registerAction = require('./actions/register');
+import { TripleStoreAdapter } from '@semapps/triplestore';
+import OntologiesRegistryService from './sub-services/registry.ts';
+import findPrefixAction from './actions/findPrefix.ts';
+import findNamespaceAction from './actions/findNamespace.ts';
+import getAction from './actions/get.ts';
+import getPrefixesAction from './actions/getPrefixes.ts';
+import getRdfPrefixesAction from './actions/getRdfPrefixes.ts';
+import listAction from './actions/list.ts';
+import prefixToUriAction from './actions/prefixToUri.ts';
+import registerAction from './actions/register.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
-module.exports = {
-  name: 'ontologies',
+const OntologiesSchema = {
+  name: 'ontologies' as const,
   settings: {
     ontologies: [],
     persistRegistry: false,
@@ -51,4 +52,14 @@ module.exports = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
+
+export default OntologiesSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [OntologiesSchema.name]: typeof OntologiesSchema;
+    }
+  }
+}

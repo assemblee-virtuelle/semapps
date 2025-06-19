@@ -1,8 +1,9 @@
-const urlJoin = require('url-join');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { arrayOf } = require('@semapps/ldp');
-const { ACTOR_TYPES } = require('../constants');
-const { getSlugFromUri, getContainerFromUri } = require('../utils');
+import urlJoin from 'url-join';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { arrayOf } from '@semapps/ldp';
+import { ACTOR_TYPES } from '../constants.ts';
+import { getSlugFromUri, getContainerFromUri } from '../utils.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 const BotMixin = {
   settings: {
@@ -70,9 +71,11 @@ const BotMixin = {
     }
   },
   actions: {
-    getUri() {
-      return this.settings.actor.uri;
-    }
+    getUri: defineAction({
+      handler() {
+        return this.settings.actor.uri;
+      }
+    })
   },
   events: {
     'activitypub.inbox.received'(ctx) {
@@ -91,6 +94,6 @@ const BotMixin = {
       return arrayOf(result?.items);
     }
   }
-};
+} satisfies ServiceSchema;
 
-module.exports = BotMixin;
+export default BotMixin;

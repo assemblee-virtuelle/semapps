@@ -1,11 +1,10 @@
-const { parseHeader, negotiateAccept, parseSparql, saveDatasetMeta } = require('@semapps/middlewares');
-
+import { parseHeader, negotiateAccept, parseSparql, saveDatasetMeta } from '@semapps/middlewares';
 const middlewares = [parseHeader, parseSparql, negotiateAccept, saveDatasetMeta];
 
 function getRoute(path) {
   return {
     path,
-    name: 'sparql-endpoint',
+    name: 'sparql-endpoint' as const,
     authorization: false,
     authentication: true,
     mergeParams: true,
@@ -29,4 +28,4 @@ function getRoute(path) {
   };
 }
 
-module.exports = getRoute;
+export default getRoute;

@@ -1,10 +1,10 @@
-const path = require('path');
-const { ServiceBroker } = require('moleculer');
-const { CoreService } = require('@semapps/core');
-const CONFIG = require('../config');
-const { clearDataset } = require('../utils');
-
+import path from 'path';
+import { ServiceBroker, ServiceSchema } from 'moleculer';
+import { CoreService } from '@semapps/core';
+import CONFIG from '../config.ts';
+import { clearDataset } from '../utils.ts';
 jest.setTimeout(20000);
+
 const broker = new ServiceBroker({
   logger: {
     type: 'Console',
@@ -53,12 +53,20 @@ describe('WebId user creation', () => {
     const profileData = {
       email: 'my.mail@example.org',
       nick: 'my-nick',
-      name: 'jon',
+      name: 'jon' as const,
       familyName: 'do',
       homepage: 'http://example.org/myPage'
-    };
+    } satisfies ServiceSchema;
 
     const webId = await broker.call('webid.createWebId', profileData);
     expect(webId).toBe(`${CONFIG.HOME_URL}users/${profileData.nick}`);
   }, 20000);
 });
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [profileData.name]: typeof profileData;
+    }
+  }
+}

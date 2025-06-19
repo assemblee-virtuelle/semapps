@@ -1,5 +1,5 @@
-const path = require('path');
-const { parseHeader, negotiateContentType, negotiateAccept, parseJson } = require('@semapps/middlewares');
+import path from 'path';
+import { parseHeader, negotiateContentType, negotiateAccept, parseJson } from '@semapps/middlewares';
 
 const onError = (req, res, err) => {
   const { type, code, message, data, name } = err;
@@ -15,7 +15,7 @@ const getRoutes = (basePath, podProvider) => {
   return [
     {
       path: path.join(basePath, '/_acl'),
-      name: 'acl',
+      name: 'acl' as const,
       authorization: false,
       authentication: true,
       bodyParsers: {
@@ -37,7 +37,7 @@ const getRoutes = (basePath, podProvider) => {
     },
     {
       path: path.join(basePath, '/_rights'),
-      name: 'acl-rights',
+      name: 'acl-rights' as const,
       authorization: false,
       authentication: true,
       aliases: {
@@ -51,7 +51,7 @@ const getRoutes = (basePath, podProvider) => {
     },
     {
       path: path.join(basePath, podProvider ? '/_groups/:username([^/._][^/]+)' : '/_groups'),
-      name: 'acl-groups',
+      name: 'acl-groups' as const,
       authorization: false,
       authentication: true,
       aliases: {
@@ -70,4 +70,4 @@ const getRoutes = (basePath, podProvider) => {
   ];
 };
 
-module.exports = getRoutes;
+export default getRoutes;

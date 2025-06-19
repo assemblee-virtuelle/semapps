@@ -1,15 +1,16 @@
-const { credentialsContext } = require('@semapps/crypto');
-const { arrayOf } = require('@semapps/ldp');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const matchActivity = require('../../../utils/matchActivity');
+import { credentialsContext } from '@semapps/crypto';
+import { arrayOf } from '@semapps/ldp';
+import { MIME_TYPES } from '@semapps/mime-types';
+import matchActivity from '../../../utils/matchActivity.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 /**
  * Allow any service to process activities just after they are posted to the inbox or outbox.
  * It uses a jobs queue so that it is easy to watch and debug results
  * We recommend to use the ActivitiesHandlerMixin to make it easier to use this service.
  */
-module.exports = {
-  name: 'activitypub.side-effects',
+const ActivitypubSideEffectsSchema = {
+  name: 'activitypub.side-effects' as const,
   settings: {
     podProvider: false
   },
@@ -17,51 +18,62 @@ module.exports = {
     this.processors = [];
   },
   actions: {
-    /**
-     * Add a new processor to handle activities
-     */
-    async addProcessor(ctx) {
-      const { matcher, actionName, boxTypes, key, capabilityGrantMatchFnGenerator, priority = 10 } = ctx.params;
+    addProcessor: defineAction({
+      /**
+       * Add a new processor to handle activities
+       */
+      async handler(ctx) {
+        const { matcher, actionName, boxTypes, key, capabilityGrantMatchFnGenerator, priority = 10 } = ctx.params;
 
-      this.processors.push({ matcher, actionName, boxTypes, key, priority, capabilityGrantMatchFnGenerator });
+        this.processors.push({ matcher, actionName, boxTypes, key, priority, capabilityGrantMatchFnGenerator });
 
-      // Sort processors by priority
-      this.processors.sort((a, b) => a.priority - b.priority);
-    },
-    /**
-     * Called by activitypub.outbox.post when an activity is posted
-     */
-    async processOutbox(ctx) {
-      const { activity } = ctx.params;
+        // Sort processors by priority
+        this.processors.sort((a, b) => a.priority - b.priority);
+      }
+    }),
 
-      const job = await this.createJob(
-        'processOutbox',
-        activity.id,
-        { activity },
-        { removeOnComplete: { age: 259200 } } // Keep completed jobs for 3 days
-      );
+    processOutbox: defineAction({
+      /**
+       * Called by activitypub.outbox.post when an activity is posted
+       */
+      async handler(ctx) {
+        const { activity } = ctx.params;
 
-      await job.finished();
-    },
-    /**
-     * Called by activitypub.inbox.post when an activity is received
-     * and by activitypub.outbox.post when an activity is sent to a local actor
-     */
-    async processInbox(ctx) {
-      const { activity, recipients } = ctx.params;
+        const job = await this.createJob(
+          'processOutbox',
+          activity.id,
+          { activity },
+          { removeOnComplete: { age: 259200 } } // Keep completed jobs for 3 days
+        );
 
-      const job = await this.createJob(
-        'processInbox',
-        activity.id,
-        { activity, recipients },
-        { removeOnComplete: { age: 259200 } } // Keep completed jobs for 3 days
-      );
+        await job.finished();
+      }
+    }),
 
-      await job.finished();
-    },
-    getProcessors() {
-      return this.processors;
-    }
+    processInbox: defineAction({
+      /**
+       * Called by activitypub.inbox.post when an activity is received
+       * and by activitypub.outbox.post when an activity is sent to a local actor
+       */
+      async handler(ctx) {
+        const { activity, recipients } = ctx.params;
+
+        const job = await this.createJob(
+          'processInbox',
+          activity.id,
+          { activity, recipients },
+          { removeOnComplete: { age: 259200 } } // Keep completed jobs for 3 days
+        );
+
+        await job.finished();
+      }
+    }),
+
+    getProcessors: defineAction({
+      handler() {
+        return this.processors;
+      }
+    })
   },
   methods: {
     matchActivity(pattern, activity, fetcher) {
@@ -270,7 +282,7 @@ module.exports = {
   },
   queues: {
     processInbox: {
-      name: '*',
+      name: '*' as const,
       // We must allow multiple jobs to be run at the same time, otherwise if
       // the activitypub.outbox.post action is called by a processor, the jobs queue will halt
       // (the first job will stay in active state, the other one in pending state)
@@ -345,7 +357,7 @@ module.exports = {
       }
     },
     processOutbox: {
-      name: '*',
+      name: '*' as const,
       // We must allow multiple jobs to be run at the same time, otherwise if
       // the activitypub.outbox.post action is called by a processor, the jobs queue will halt
       // (the first job will stay in active state, the other one in pending state)
@@ -417,4 +429,14 @@ module.exports = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
+
+export default ActivitypubSideEffectsSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [ActivitypubSideEffectsSchema.name]: typeof ActivitypubSideEffectsSchema;
+    }
+  }
+}

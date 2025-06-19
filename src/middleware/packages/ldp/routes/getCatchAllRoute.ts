@@ -1,5 +1,6 @@
-const path = require('path');
-const {
+import path from 'path';
+
+import {
   parseUrl,
   parseHeader,
   parseSparql,
@@ -9,7 +10,7 @@ const {
   parseTurtle,
   parseFile,
   saveDatasetMeta
-} = require('@semapps/middlewares');
+} from '@semapps/middlewares';
 
 function getCatchAllRoute(basePath, podProvider) {
   const middlewares = [
@@ -25,7 +26,7 @@ function getCatchAllRoute(basePath, podProvider) {
   ];
 
   return {
-    name: 'ldp',
+    name: 'ldp' as const,
     path: path.join(basePath, podProvider ? '/:username([^/.][^/]+)/:slugParts*' : '/:slugParts([^/_][^/]+)*'),
     // Disable the body parsers so that we can parse the body ourselves
     // (Moleculer-web doesn't handle non-JSON bodies, so we must do it)
@@ -47,4 +48,4 @@ function getCatchAllRoute(basePath, podProvider) {
   };
 }
 
-module.exports = getCatchAllRoute;
+export default getCatchAllRoute;
