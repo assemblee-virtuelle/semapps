@@ -2,6 +2,9 @@ import path from 'path';
 import urlJoin from 'url-join';
 import MailService from 'moleculer-mail';
 import { ServiceSchema, defineAction } from 'moleculer';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const AuthMailSchema = {
   name: 'auth.mail' as const,

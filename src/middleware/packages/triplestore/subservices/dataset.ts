@@ -4,9 +4,11 @@ import path from 'path';
 import urlJoin from 'url-join';
 import format from 'string-template';
 import { ServiceSchema, defineAction } from 'moleculer';
-const delay = t => new Promise(resolve => setTimeout(resolve, t));
+import { fileURLToPath } from 'url';
 
-/** @type {import('moleculer').ServiceSchema} */
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const delay = (t: any) => new Promise(resolve => setTimeout(resolve, t));
+
 const DatasetService = {
   name: 'triplestore.dataset' as const,
   settings: {

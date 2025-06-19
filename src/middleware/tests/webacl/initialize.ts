@@ -4,7 +4,11 @@ import { CoreService } from '@semapps/core';
 import { pair } from '@semapps/ontologies';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { AuthLocalService } from '@semapps/auth';
-import CONFIG from '../config.ts';
+import { clearDataset } from '../utils.ts';
+import { fileURLToPath } from 'url';
+import * as CONFIG from '../config.ts';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const initialize = async () => {
   const broker = new ServiceBroker({
