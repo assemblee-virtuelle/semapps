@@ -3,7 +3,10 @@ import path from 'path';
 import MailService from 'moleculer-mail';
 import { getSlugFromUri } from '@semapps/ldp';
 import { ServiceSchema, defineServiceEvent } from 'moleculer';
-const delay = t => new Promise(resolve => setTimeout(resolve, t));
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const delay = (t: any) => new Promise(resolve => setTimeout(resolve, t));
 
 const SingleMailNotificationsService = {
   name: 'notifications.single-mail' as const,

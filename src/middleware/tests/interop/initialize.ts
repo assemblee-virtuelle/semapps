@@ -10,8 +10,11 @@ import { InferenceService } from '@semapps/inference';
 import { pair } from '@semapps/ontologies';
 import { MirrorService, ObjectsWatcherMiddleware } from '@semapps/sync';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
+import { fileURLToPath } from 'url';
 import CONFIG from '../config.ts';
 import { clearDataset } from '../utils.ts';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const containers = [
   {

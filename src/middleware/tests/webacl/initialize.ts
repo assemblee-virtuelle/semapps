@@ -5,7 +5,10 @@ import { as } from '@semapps/ontologies';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { AuthLocalService } from '@semapps/auth';
 import { clearDataset } from '../utils.ts';
-import CONFIG from '../config.ts';
+import { fileURLToPath } from 'url';
+import * as CONFIG from '../config.ts';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const initialize = async () => {
   await clearDataset(CONFIG.MAIN_DATASET);

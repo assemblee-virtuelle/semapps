@@ -4,10 +4,13 @@ import ApiGatewayService from 'moleculer-web';
 import { JsonLdService } from '@semapps/jsonld';
 import { OntologiesService } from '@semapps/ontologies';
 import { TripleStoreService } from '@semapps/triplestore';
+import { fileURLToPath } from 'url';
 import CONFIG from '../config.ts';
 import { clearDataset } from '../utils.ts';
 
-export default async cacher => {
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+export default async (cacher: any) => {
   await clearDataset(CONFIG.SETTINGS_DATASET);
 
   const broker = new ServiceBroker({
