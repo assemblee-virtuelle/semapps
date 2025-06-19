@@ -1,5 +1,8 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import { cryptosuite } from '@digitalbazaar/eddsa-rdfc-2022-cryptosuite';
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import vc from '@digitalbazaar/vc';
 import { ServiceSchema, defineAction } from 'moleculer';
 import VCCapabilityPresentationProofPurpose from './VcCapabilityPresentationProofPurpose.ts';
@@ -22,7 +25,7 @@ const VCPresentationService = {
   name: 'crypto.vc.verifier' as const,
   dependencies: ['ldp', 'jsonld'],
   async started() {
-    this.documentLoader = async (url, options) => {
+    this.documentLoader = async (url: any, options: any) => {
       return await this.broker.call('jsonld.document-loader.loadWithCache', { url, options });
     };
   },
@@ -57,9 +60,11 @@ const VCPresentationService = {
       async handler(ctx) {
         const {
           verifiableCredential,
+          // @ts-expect-error TS(2339): Property 'proofPurpose' does not exist on type 'Ty... Remove this comment to see the full error message
           options: { proofPurpose = 'assertionMethod' }
         } = ctx.params;
 
+        // @ts-expect-error TS(2554): Expected 0 arguments, but got 1.
         const purpose = new VCPurpose({ term: proofPurpose });
 
         const suite = new DataIntegrityProof({
@@ -99,6 +104,7 @@ const VCPresentationService = {
       async handler(ctx) {
         const {
           verifiablePresentation: presentation,
+          // @ts-expect-error TS(2339): Property 'challenge' does not exist on type 'TypeF... Remove this comment to see the full error message
           options: { challenge = presentation?.proof?.challenge, proofPurpose: term, domain, unsignedPresentation }
         } = ctx.params;
 
@@ -134,7 +140,9 @@ const VCPresentationService = {
           });
           return verificationResult;
         } catch (e) {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.error('Error verifying presentation:', e);
+          // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
           return { verified: false, error: e.message };
         }
       }
@@ -164,8 +172,11 @@ const VCPresentationService = {
           options: {
             // Challenge may be empty when invoker is anonymous and VC was issued to no particular holder.
             // The VCCapabilityPresentationProofPurpose will take care of this case.
+            // @ts-expect-error TS(2339): Property 'challenge' does not exist on type 'TypeF... Remove this comment to see the full error message
             challenge = presentation?.proof?.challenge,
+            // @ts-expect-error TS(2339): Property 'domain' does not exist on type 'TypeFrom... Remove this comment to see the full error message
             domain,
+            // @ts-expect-error TS(2339): Property 'maxChainLength' does not exist on type '... Remove this comment to see the full error message
             maxChainLength = 2
           }
         } = ctx.params;
@@ -177,6 +188,7 @@ const VCPresentationService = {
         });
         const credentialPurpose = new VCPurpose();
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const verificationResult = await this.actions.verifyPresentation({
           ...ctx.params,
           options: {
@@ -188,9 +200,12 @@ const VCPresentationService = {
         });
 
         // Order the VCs in the presentation by issuance date.
+        // @ts-expect-error TS(2339): Property 'verifiableCredential' does not exist on ... Remove this comment to see the full error message
         const orderedCredentials = arrayOf(presentation.verifiableCredential).sort(
+          // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
           (c1, c2) => new Date(c1.issuanceDate || c1.proof.created) - new Date(c2.issuanceDate || c2.proof.created)
         );
+        // @ts-expect-error TS(2339): Property 'verifiableCredential' does not exist on ... Remove this comment to see the full error message
         presentation.verifiableCredential = orderedCredentials;
 
         return { ...verificationResult, presentation };

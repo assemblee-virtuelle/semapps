@@ -1,4 +1,5 @@
 import urlJoin from 'url-join';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'node... Remove this comment to see the full error message
 import fetch from 'node-fetch';
 import { createFragmentURL, arrayOf } from '@semapps/ldp';
 import { ACTIVITY_TYPES } from '@semapps/activitypub';
@@ -25,6 +26,7 @@ const MirrorSchema = {
     'ldp.registry'
   ],
   created() {
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "synchronizer"... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [SynchronizerService],
       settings: {
@@ -61,17 +63,20 @@ const MirrorSchema = {
         const remoteRelayActorUri = await ctx.call('webfinger.getRemoteUri', { account: `relay@${serverDomainName}` });
 
         const alreadyFollowing = await ctx.call('activitypub.follow.isFollowing', {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           follower: this.relayActor.id,
           following: remoteRelayActorUri
         });
 
         if (alreadyFollowing) {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.info(`Already mirrored and following: ${serverUrl}`);
           return remoteRelayActorUri;
         }
 
         // If not, we will now mirror and then follow the remote relay actor
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.logger.info(`Mirroring ${serverUrl}`);
 
         const voidUrl = urlJoin(serverUrl, '/.well-known/void');
@@ -88,8 +93,10 @@ const MirrorSchema = {
         const json = await response.json();
         const mapServers = {};
         for (const s of json['@graph']) {
+          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           mapServers[s['@id']] = s;
         }
+        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         const server = mapServers[createFragmentURL('', serverUrl)];
         if (!server)
           throw new MoleculerError(
@@ -125,6 +132,7 @@ const MirrorSchema = {
               for (const pref of prefixes) {
                 sparqlQuery += `PREFIX ${pref[1]}\n`;
               }
+              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               sparqlQuery += `INSERT DATA { GRAPH <${this.settings.graphName}> { \n`;
               sparqlQuery += container.replace(regexPrefix, '');
               sparqlQuery += '} }';
@@ -136,8 +144,10 @@ const MirrorSchema = {
 
         // Unmark any single mirrored resources that belong to this server we just mirrored
         // because we don't need to periodically watch them anymore
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const singles = await this.broker.call('triplestore.query', {
           query: `SELECT DISTINCT ?s WHERE { 
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           GRAPH <${this.settings.graphName}> { 
           ?s <http://semapps.org/ns/core#singleMirroredResource> <${serverUrl}> } }`
         });
@@ -145,8 +155,10 @@ const MirrorSchema = {
         for (const single of singles) {
           try {
             const resourceUri = single.s.value;
+            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             await this.broker.call('triplestore.update', {
               webId: 'system',
+              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               query: `DELETE WHERE { GRAPH <${this.settings.graphName}> { 
               <${resourceUri}> <http://semapps.org/ns/core#singleMirroredResource> ?q. } }`
             });
@@ -155,15 +167,19 @@ const MirrorSchema = {
           }
         }
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.logger.info('Mirroring done.');
 
         // Now subscribing to the Relay actor in order to receive updates
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.logger.info(`Following remote relay actor ${remoteRelayActorUri}`);
 
         await ctx.call('activitypub.outbox.post', {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           collectionUri: this.relayActor.outbox,
           '@context': 'https://www.w3.org/ns/activitystreams',
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           actor: this.relayActor.id,
           type: ACTIVITY_TYPES.FOLLOW,
           object: remoteRelayActorUri,

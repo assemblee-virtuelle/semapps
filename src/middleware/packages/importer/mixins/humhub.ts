@@ -5,7 +5,7 @@ import { convertToIsoString } from '../utils.ts';
 
 const allowedTypes = ['user', 'space', 'calendar', 'post'];
 
-const getSlugByUrl = url => {
+const getSlugByUrl = (url: any) => {
   if (url) {
     const splitUrl = url.split('/');
     let slug = splitUrl.pop();
@@ -26,7 +26,8 @@ const Schema = {
       },
       fieldsMapping: {
         // We don't use arrow function as we need to have access to this.settings
-        slug: function (data) {
+        slug: function (data: any) {
+          // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ slug... Remove this comment to see the full error message
           switch (this.settings.source.humhub.type) {
             case 'user':
             case 'space':
@@ -36,14 +37,18 @@ const Schema = {
               return data.content.metadata.guid;
           }
         },
-        created: function (data) {
+        // @ts-expect-error TS(7023): 'created' implicitly has return type 'any' because... Remove this comment to see the full error message
+        created: function (data: any) {
+          // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ slug... Remove this comment to see the full error message
           switch (this.settings.source.humhub.type) {
             case 'calendar':
             case 'post':
               return convertToIsoString(data.content.metadata.created_at);
           }
         },
-        updated: function (data) {
+        // @ts-expect-error TS(7023): 'updated' implicitly has return type 'any' because... Remove this comment to see the full error message
+        updated: function (data: any) {
+          // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ slug... Remove this comment to see the full error message
           switch (this.settings.source.humhub.type) {
             case 'calendar':
             case 'post':
@@ -67,9 +72,9 @@ const Schema = {
     this.settings.source.getAllFull = this.settings.source.apiUrl;
 
     if (type === 'calendar') {
-      this.settings.source.getOneFull = data => `${this.settings.source.apiUrl}/entry/${data.id}`;
+      this.settings.source.getOneFull = (data: any) => `${this.settings.source.apiUrl}/entry/${data.id}`;
     } else {
-      this.settings.source.getOneFull = data => `${this.settings.source.apiUrl}/${data.id}`;
+      this.settings.source.getOneFull = (data: any) => `${this.settings.source.apiUrl}/${data.id}`;
     }
   },
   methods: {
@@ -110,6 +115,7 @@ const Schema = {
       return results;
     }
   }
+  // @ts-expect-error TS(1360): Type '{ mixins: { settings: { source: { apiUrl: nu... Remove this comment to see the full error message
 } satisfies ServiceSchema;
 
 export default Schema;

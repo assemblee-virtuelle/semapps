@@ -24,12 +24,14 @@ const Schema = defineAction({
     typeIndex: { type: 'string', optional: true }
   },
   async handler(ctx) {
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     let options = { ...this.settings.defaultOptions, ...ctx.params };
 
     // TODO Remove this when we stop using the type for the container path
     if (!options.acceptedTypes && options.shapeTreeUri) {
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       const services = await this.broker.call('$node.services');
-      if (!services.some(s => s.name === 'shape-trees') && !services.some(s => s.name === 'shacl'))
+      if (!services.some((s: any) => s.name === 'shape-trees') && !services.some((s: any) => s.name === 'shacl'))
         throw new Error('If you use shapeTreeUri in container options, you need the shape-trees and shacl service');
 
       try {
@@ -37,6 +39,7 @@ const Schema = defineAction({
         const [shapeType] = await ctx.call('shacl.getTypes', { resourceUri: shapeUri });
         options.acceptedTypes = shapeType;
       } catch (e) {
+        // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
         throw new Error(`Could not get type from shape ${options.shapeTreeUri}. Error: ${e.message}`);
       }
     }
@@ -55,6 +58,7 @@ const Schema = defineAction({
       }
       // If the resource type is invalid, an error will be thrown here
       options.path = await ctx.call('ldp.container.getPath', { resourceType: options.acceptedTypes[0] });
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       this.logger.debug(
         `Automatically generated the path ${options.path} for resource type ${options.acceptedTypes[0]}`
       );
@@ -72,11 +76,13 @@ const Schema = defineAction({
 
     if (options.podsContainer === true) {
       // Skip container creation for the root PODs container (it is not a real LDP container since no dataset have these data)
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     } else if (this.settings.podProvider) {
       // TODO see if we can base ourselves on a general config for the POD data path
       options.fullPath = pathJoin('/:username([^/.][^/]+)', 'data', options.path);
     } else {
       await ctx.call('ldp.container.createAndAttach', {
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         containerUri: urlJoin(this.settings.baseUrl, options.path),
         options
       });
@@ -85,6 +91,7 @@ const Schema = defineAction({
     options.pathRegex = pathToRegexp(options.fullPath);
 
     // Save the options
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     this.registeredContainers[options.name] = options;
 
     ctx.emit('ldp.registry.registered', { container: options }, { meta: { webId: null, dataset: null } });

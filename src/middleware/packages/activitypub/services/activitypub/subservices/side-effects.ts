@@ -25,10 +25,12 @@ const ActivitypubSideEffectsSchema = {
       async handler(ctx) {
         const { matcher, actionName, boxTypes, key, capabilityGrantMatchFnGenerator, priority = 10 } = ctx.params;
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.processors.push({ matcher, actionName, boxTypes, key, priority, capabilityGrantMatchFnGenerator });
 
         // Sort processors by priority
-        this.processors.sort((a, b) => a.priority - b.priority);
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+        this.processors.sort((a: any, b: any) => a.priority - b.priority);
       }
     }),
 
@@ -39,8 +41,10 @@ const ActivitypubSideEffectsSchema = {
       async handler(ctx) {
         const { activity } = ctx.params;
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const job = await this.createJob(
           'processOutbox',
+          // @ts-expect-error TS(2339): Property 'id' does not exist on type 'never'.
           activity.id,
           { activity },
           { removeOnComplete: { age: 259200 } } // Keep completed jobs for 3 days
@@ -58,8 +62,10 @@ const ActivitypubSideEffectsSchema = {
       async handler(ctx) {
         const { activity, recipients } = ctx.params;
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const job = await this.createJob(
           'processInbox',
+          // @ts-expect-error TS(2339): Property 'id' does not exist on type 'never'.
           activity.id,
           { activity, recipients },
           { removeOnComplete: { age: 259200 } } // Keep completed jobs for 3 days
@@ -94,6 +100,7 @@ const ActivitypubSideEffectsSchema = {
         return resource;
       } catch (e) {
         this.logger.warn(
+          // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
           `Could not fetch ${resourceUri} with webId ${webId} and dataset ${dataset}. Error: ${e.message}`
         );
         return false;
@@ -287,7 +294,7 @@ const ActivitypubSideEffectsSchema = {
       // the activitypub.outbox.post action is called by a processor, the jobs queue will halt
       // (the first job will stay in active state, the other one in pending state)
       concurrency: 5,
-      async process(job) {
+      async process(job: any) {
         const { activity, recipients } = job.data;
         const startTime = performance.now();
         let errors = [];
@@ -296,25 +303,32 @@ const ActivitypubSideEffectsSchema = {
         // If capability present, verify it.
         if (activity.capability) {
           // Will throw, if invalid
+          // @ts-expect-error TS(2339): Property 'verifyCapabilityIntegrity' does not exis... Remove this comment to see the full error message
           dereferencedActivity = await this.verifyCapabilityIntegrity(dereferencedActivity, recipients);
         }
 
         try {
           // Process activity for each recipient and activity handler.
           for (const recipientUri of recipients) {
+            // @ts-expect-error TS(2339): Property 'logger' does not exist on type '{ name: ... Remove this comment to see the full error message
             this.logger.info(`Processing activity ${activity.id} received in the inbox of ${recipientUri}...`);
             job.log(`Processing activity for recipient ${recipientUri}...`);
 
+            // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ name... Remove this comment to see the full error message
             const dataset = this.settings.podProvider
-              ? await this.broker.call('auth.account.findDatasetByWebId', { webId: recipientUri })
+              ? // @ts-expect-error TS(2339): Property 'broker' does not exist on type '{ name: ... Remove this comment to see the full error message
+                await this.broker.call('auth.account.findDatasetByWebId', { webId: recipientUri })
               : undefined;
-            const fetcher = resourceUri => this.fetch(resourceUri, recipientUri, dataset);
+            // @ts-expect-error TS(2339): Property 'fetch' does not exist on type '{ name: "... Remove this comment to see the full error message
+            const fetcher = (resourceUri: any) => this.fetch(resourceUri, recipientUri, dataset);
 
+            // @ts-expect-error TS(2551): Property 'processors' does not exist on type '{ na... Remove this comment to see the full error message
             for (const processor of this.processors) {
               if (processor.boxTypes.includes('inbox')) {
                 let error;
                 let match;
                 let result;
+                // @ts-expect-error TS(2339): Property 'runInboxProcessor' does not exist on typ... Remove this comment to see the full error message
                 ({ error, match, result, dereferencedActivity } = await this.runInboxProcessor({
                   processor,
                   recipientUri,
@@ -362,18 +376,22 @@ const ActivitypubSideEffectsSchema = {
       // the activitypub.outbox.post action is called by a processor, the jobs queue will halt
       // (the first job will stay in active state, the other one in pending state)
       concurrency: 5,
-      async process(job) {
+      async process(job: any) {
         const { activity } = job.data;
         const emitterUri = activity.actor;
         const startTime = performance.now();
         let match;
         let dereferencedActivity = activity;
 
+        // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ name... Remove this comment to see the full error message
         const dataset = this.settings.podProvider
-          ? await this.broker.call('auth.account.findDatasetByWebId', { webId: emitterUri })
+          ? // @ts-expect-error TS(2339): Property 'broker' does not exist on type '{ name: ... Remove this comment to see the full error message
+            await this.broker.call('auth.account.findDatasetByWebId', { webId: emitterUri })
           : undefined;
-        const fetcher = resourceUri => this.fetch(resourceUri, emitterUri, dataset);
+        // @ts-expect-error TS(2339): Property 'fetch' does not exist on type '{ name: "... Remove this comment to see the full error message
+        const fetcher = (resourceUri: any) => this.fetch(resourceUri, emitterUri, dataset);
 
+        // @ts-expect-error TS(2551): Property 'processors' does not exist on type '{ na... Remove this comment to see the full error message
         for (const processor of this.processors) {
           if (processor.boxTypes.includes('outbox')) {
             // If the processor has a capabilityGrantMatchFnGenerator, the activity must have a capability.
@@ -382,6 +400,7 @@ const ActivitypubSideEffectsSchema = {
               match = false;
             } else {
               // Even if there is no match, we keep in memory the dereferenced activity so that we don't need to dereference it again
+              // @ts-expect-error TS(2339): Property 'matchActivity' does not exist on type '{... Remove this comment to see the full error message
               ({ match, dereferencedActivity } = await this.matchActivity(
                 processor.matcher,
                 dereferencedActivity,
@@ -391,6 +410,7 @@ const ActivitypubSideEffectsSchema = {
 
             if (match) {
               try {
+                // @ts-expect-error TS(2339): Property 'broker' does not exist on type '{ name: ... Remove this comment to see the full error message
                 const result = await this.broker.call(
                   processor.actionName,
                   {
@@ -409,6 +429,7 @@ const ActivitypubSideEffectsSchema = {
                   }`
                 );
               } catch (e) {
+                // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
                 job.log(`ERROR ${processor.key} (${processor.actionName}): ${e.message}`);
                 // When sending through the outbox, we want to return immediately the error
                 // TODO Call a new "revert" method for every side-effect processor ?

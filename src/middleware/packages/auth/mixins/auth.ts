@@ -1,4 +1,6 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'pass... Remove this comment to see the full error message
 import passport from 'passport';
+// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { E as Errors } from 'moleculer-web';
 import { TripleStoreAdapter } from '@semapps/triplestore';
 import { ServiceSchema, defineAction } from 'moleculer';
@@ -77,11 +79,13 @@ const AuthMixin = {
     const { jwtPath, reservedUsernames, minPasswordLength, minUsernameLength, accountsDataset, podProvider } =
       this.settings;
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "auth.jwt"; se... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [AuthJWTService],
       settings: { jwtPath }
     });
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "auth.account"... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [AuthAccountService],
       settings: { reservedUsernames, minPasswordLength, minUsernameLength },
@@ -92,10 +96,10 @@ const AuthMixin = {
     if (!this.passportId) throw new Error('this.passportId must be set in the service creation.');
 
     this.passport = passport;
-    this.passport.serializeUser((user, done) => {
+    this.passport.serializeUser((user: any, done: any) => {
       done(null, user);
     });
-    this.passport.deserializeUser((user, done) => {
+    this.passport.deserializeUser((user: any, done: any) => {
       done(null, user);
     });
 
@@ -115,10 +119,12 @@ const AuthMixin = {
       async handler(ctx) {
         const { route, req, res } = ctx.params;
         // Extract method and token from authorization header.
+        // @ts-expect-error TS(2339): Property 'headers' does not exist on type 'never'.
         const [method, token] = req.headers.authorization?.split(' ') || [];
 
         if (!token) {
           // No token
+          // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
           ctx.meta.webId = 'anon';
           return Promise.resolve(null);
         }
@@ -126,22 +132,28 @@ const AuthMixin = {
         if (method === 'Bearer') {
           const payload = await ctx.call('auth.jwt.verifyServerSignedToken', { token });
           if (payload) {
+            // @ts-expect-error TS(2339): Property 'tokenPayload' does not exist on type '{}... Remove this comment to see the full error message
             ctx.meta.tokenPayload = payload;
+            // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
             ctx.meta.webId = payload.webId;
             return Promise.resolve(payload);
           }
 
           // Check if token is a capability.
+          // @ts-expect-error TS(2339): Property 'opts' does not exist on type 'never'.
           if (route.opts.authorizeWithCapability) {
+            // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
             return this.validateCapability(ctx, token);
           }
 
           // Invalid token
           // TODO make sure token is deleted client-side
+          // @ts-expect-error TS(2304): Cannot find name 'E'.
           return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
         }
 
         // No valid auth method given.
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         ctx.meta.webId = 'anon';
         return Promise.resolve(null);
       }
@@ -153,28 +165,36 @@ const AuthMixin = {
         const { route, req, res } = ctx.params;
         // Extract token from authorization header (do not take the Bearer part)
         /** @type {[string, string]} */
+        // @ts-expect-error TS(2339): Property 'headers' does not exist on type 'never'.
         const [method, token] = req.headers.authorization && req.headers.authorization.split(' ');
 
         if (!token) {
+          // @ts-expect-error TS(2304): Cannot find name 'E'.
           return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
         }
         if (method !== 'Bearer') {
+          // @ts-expect-error TS(2304): Cannot find name 'E'.
           return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
         }
 
         // Validate if the token was signed by server (registered user).
         const serverSignedPayload = await ctx.call('auth.jwt.verifyServerSignedToken', { token });
         if (serverSignedPayload) {
+          // @ts-expect-error TS(2339): Property 'tokenPayload' does not exist on type '{}... Remove this comment to see the full error message
           ctx.meta.tokenPayload = serverSignedPayload;
+          // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
           ctx.meta.webId = serverSignedPayload.webId;
           return Promise.resolve(serverSignedPayload);
         }
 
         // Check if token is a capability.
+        // @ts-expect-error TS(2339): Property 'opts' does not exist on type 'never'.
         if (route.opts.authorizeWithCapability) {
+          // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
           return this.validateCapability(ctx, token);
         }
 
+        // @ts-expect-error TS(2304): Cannot find name 'E'.
         return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
       }
     }),
@@ -199,10 +219,12 @@ const AuthMixin = {
       const hasCapabilityService = ctx.broker.registry.actions.isAvailable(
         'crypto.vc.verifier.verifyCapabilityPresentation'
       );
+      // @ts-expect-error TS(2304): Cannot find name 'E'.
       if (!hasCapabilityService) return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
 
       // Decode JTW to JSON.
       const decodedToken = await ctx.call('auth.jwt.decodeToken', { token });
+      // @ts-expect-error TS(2304): Cannot find name 'E'.
       if (!decodedToken) return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
 
       // Verify that decoded JSON token is a valid VC presentation.
@@ -216,6 +238,7 @@ const AuthMixin = {
           maxChainLength: ctx.params.route.opts.maxChainLength
         }
       });
+      // @ts-expect-error TS(2304): Cannot find name 'E'.
       if (!isCapSignatureVerified) return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
 
       // VC Capability is verified.
@@ -232,7 +255,9 @@ const AuthMixin = {
     },
     pickWebIdData(data) {
       if (this.settings.webIdSelection.length > 0) {
-        return Object.fromEntries(this.settings.webIdSelection.filter(key => key in data).map(key => [key, data[key]]));
+        return Object.fromEntries(
+          this.settings.webIdSelection.filter((key: any) => key in data).map((key: any) => [key, data[key]])
+        );
       } else {
         // TODO do not return anything if webIdSelection is empty, to conform with pickAccountData
         return data || {};
@@ -241,13 +266,14 @@ const AuthMixin = {
     pickAccountData(data) {
       if (this.settings.accountSelection.length > 0) {
         return Object.fromEntries(
-          this.settings.accountSelection.filter(key => key in data).map(key => [key, data[key]])
+          this.settings.accountSelection.filter((key: any) => key in data).map((key: any) => [key, data[key]])
         );
       } else {
         return {};
       }
     }
   }
+  // @ts-expect-error TS(1360): Type '{ settings: { baseUrl: null; jwtPath: null; ... Remove this comment to see the full error message
 } satisfies ServiceSchema;
 
 export default AuthMixin;

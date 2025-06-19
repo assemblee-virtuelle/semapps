@@ -1,5 +1,6 @@
 import urlJoin from 'url-join';
 import { triple, namedNode } from '@rdfjs/data-model';
+// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { pim } from '@semapps/ontologies';
 import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 
@@ -36,9 +37,11 @@ const SolidStorageSchema = {
           secure: true
         });
 
+        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
         ctx.meta.dataset = username;
 
         // Create the storage root container so that the LdpRegistryService can create the default containers
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const storageRootUri = urlJoin(this.settings.baseUrl, username, this.settings.pathName);
         await ctx.call('ldp.container.create', { containerUri: storageRootUri, webId: 'system' });
 
@@ -50,6 +53,7 @@ const SolidStorageSchema = {
       async handler(ctx) {
         const { webId } = ctx.params;
         // This is faster, but later we should use the 'pim:storage' property of the webId
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         return urlJoin(webId, this.settings.pathName);
       }
     })
@@ -57,14 +61,17 @@ const SolidStorageSchema = {
   events: {
     'auth.registered': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'ServiceEv... Remove this comment to see the full error message
         const { webId } = ctx.params;
 
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         const storageUrl = await this.actions.getUrl({ webId }, { parentCtx: ctx });
 
         // Attach the storage URL to the webId
         await ctx.call('ldp.resource.patch', {
           resourceUri: webId,
           triplesToAdd: [
+            // @ts-expect-error TS(2345): Argument of type 'NamedNode<any>' is not assignabl... Remove this comment to see the full error message
             triple(namedNode(webId), namedNode('http://www.w3.org/ns/pim/space#storage'), namedNode(storageUrl))
           ],
           webId: 'system'

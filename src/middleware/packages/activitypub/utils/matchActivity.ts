@@ -8,7 +8,7 @@ import { arrayOf } from '@semapps/ldp';
  * @param {(resourceUri) => Promise<object>} fetcher Fetch the resources and return it in JSON-LD format, or false if the fetch failed
  * @returns {object} The dereferenced activity / object.
  */
-const matchActivity = async (matcher, activity, fetcher) => {
+const matchActivity = async (matcher: any, activity: any, fetcher: any) => {
   if (!matcher) return { match: false, dereferencedActivity: activity };
   if (matcher === '*') return { match: true, dereferencedActivity: activity };
 

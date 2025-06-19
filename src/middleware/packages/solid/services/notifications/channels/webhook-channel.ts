@@ -1,3 +1,4 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'node... Remove this comment to see the full error message
 import fetch from 'node-fetch';
 import { ServiceSchema, defineAction } from 'moleculer';
 import NotificationChannelMixin from './notification-channel.mixin.ts';
@@ -39,15 +40,18 @@ const WebhookChannel2023Service = {
       async handler(ctx) {
         const { appUri, webId } = ctx.params;
         const { origin: appOrigin } = new URL(appUri);
-        return this.channels.filter(c => c.webId === webId && c.sendTo.startsWith(appOrigin));
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+        return this.channels.filter((c: any) => c.webId === webId && c.sendTo.startsWith(appOrigin));
       }
     }),
 
     deleteAppChannels: defineAction({
       async handler(ctx) {
         const { appUri, webId } = ctx.params;
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const appChannels = await this.actions.getAppChannels({ appUri, webId }, { parentCtx: ctx });
         for (const appChannel of appChannels) {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           await this.actions.delete({ resourceUri: appChannel.id, webId: appChannel.webId });
         }
       }
@@ -61,7 +65,7 @@ const WebhookChannel2023Service = {
   queues: {
     webhookPost: {
       name: '*' as const,
-      async process(job) {
+      async process(job: any) {
         const { channel, activity } = job.data;
 
         try {
@@ -77,6 +81,7 @@ const WebhookChannel2023Service = {
           });
 
           if (response.status >= 400) {
+            // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ name:... Remove this comment to see the full error message
             await this.actions.delete({ resourceUri: channel.id, webId: channel.webId });
             throw new Error(
               `Webhook ${channel.sendTo} returned a ${response.status} error (${response.statusText}). It has been deleted.`
@@ -88,11 +93,13 @@ const WebhookChannel2023Service = {
           return { ok: response.ok, status: response.status, statusText: response.statusText };
         } catch (e) {
           if (job.attemptsMade + 1 >= job.opts.attempts) {
+            // @ts-expect-error TS(2339): Property 'logger' does not exist on type '{ name: ... Remove this comment to see the full error message
             this.logger.warn(`Webhook ${channel.sendTo} failed ${job.opts.attempts} times, deleting it...`);
             // DO NOT DELETE YET TO IMPROVE MONITORING
             // await this.actions.delete({ resourceUri: channel.id, webId: channel.webId });
           }
 
+          // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
           throw new Error(`Posting to webhook ${channel.sendTo} failed. Error: ${e.message}`);
         }
       }

@@ -34,6 +34,7 @@ const ObjectService = {
         const { activity } = ctx.params;
 
         if (Object.values(OBJECT_TYPES).includes(getType(activity))) {
+          // @ts-expect-error TS(2700): Rest types may only be created from object types.
           const { to, cc, '@id': id, ...object } = activity;
           return {
             '@context': object['@context'],
@@ -57,9 +58,11 @@ const ObjectService = {
         switch (getType(activity)) {
           case ACTIVITY_TYPES.CREATE: {
             // If the object passed is an URI, this is an announcement and there is nothing to process
+            // @ts-expect-error TS(2339): Property 'object' does not exist on type 'never'.
             if (typeof activity.object === 'string') break;
 
             const types = await ctx.call('jsonld.parser.expandTypes', {
+              // @ts-expect-error TS(2339): Property 'object' does not exist on type 'never'.
               types: activity.object.type || activity.object['@type'],
               context: activity['@context']
             });
@@ -68,6 +71,7 @@ const ObjectService = {
             let container;
             let containerUri;
 
+            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             if (this.settings.podProvider) {
               // If this is a Pod provider, find the container with the type-registrations service
               for (const type of types) {
@@ -100,6 +104,7 @@ const ObjectService = {
               container?.controlledActions?.post || 'ldp.container.post',
               {
                 containerUri,
+                // @ts-expect-error TS(2339): Property 'object' does not exist on type 'never'.
                 resource: activity.object,
                 contentType: MIME_TYPES.JSON,
                 webId: actorUri
@@ -115,8 +120,10 @@ const ObjectService = {
 
           case ACTIVITY_TYPES.UPDATE: {
             // If the object passed is an URI, this is an announcement and there is nothing to process
+            // @ts-expect-error TS(2339): Property 'object' does not exist on type 'never'.
             if (typeof activity.object === 'string') break;
 
+            // @ts-expect-error TS(2339): Property 'object' does not exist on type 'never'.
             objectUri = activity.object['@id'] || activity.object.id;
 
             const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri: objectUri });
@@ -124,6 +131,7 @@ const ObjectService = {
             await ctx.call(
               controlledActions?.put || 'ldp.resource.put',
               {
+                // @ts-expect-error TS(2339): Property 'object' does not exist on type 'never'.
                 resource: activity.object,
                 contentType: MIME_TYPES.JSON,
                 webId: actorUri
@@ -139,7 +147,9 @@ const ObjectService = {
           }
 
           case ACTIVITY_TYPES.DELETE: {
+            // @ts-expect-error TS(2339): Property 'object' does not exist on type 'never'.
             if (activity.object) {
+              // @ts-expect-error TS(2339): Property 'object' does not exist on type 'never'.
               const resourceUri = typeof activity.object === 'string' ? activity.object : activity.object.id;
               // If the resource is already deleted, it means it was an announcement
               if (await ctx.call('ldp.resource.exist', { resourceUri, webId: actorUri })) {
@@ -156,6 +166,7 @@ const ObjectService = {
                 );
               }
             } else {
+              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               this.logger.warn('Cannot delete object as it is undefined');
             }
             break;
@@ -166,6 +177,7 @@ const ObjectService = {
         }
 
         if (objectUri) {
+          // @ts-expect-error TS(2339): Property 'object' does not exist on type 'never'.
           activity.object = await ctx.call(
             'ldp.resource.get',
             {
@@ -191,7 +203,9 @@ const ObjectService = {
           resource: {
             '@id': resourceUri,
             '@type': 'https://www.w3.org/ns/activitystreams#Tombstone',
-            'https://www.w3.org/ns/activitystreams#formerType': expandedFormerTypes.map(type => ({ '@id': type })),
+            'https://www.w3.org/ns/activitystreams#formerType': expandedFormerTypes.map((type: any) => ({
+              '@id': type
+            })),
             'https://www.w3.org/ns/activitystreams#deleted': {
               '@value': new Date().toISOString(),
               '@type': 'http://www.w3.org/2001/XMLSchema#dateTime'
@@ -207,7 +221,9 @@ const ObjectService = {
     'ldp.resource.deleted': defineServiceEvent({
       async handler(ctx) {
         // Check if tombstones are globally activated
+        // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
         if (this.settings.activateTombstones) {
+          // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Ser... Remove this comment to see the full error message
           const { resourceUri, containersUris, oldData, dataset } = ctx.params;
 
           // If the resource was in no container, skip...
@@ -218,8 +234,10 @@ const ObjectService = {
               dataset
             });
 
+            // @ts-expect-error TS(2339): Property 'activateTombstones' does not exist on ty... Remove this comment to see the full error message
             if (containerOptions.activateTombstones !== false && ctx.meta.activateTombstones !== false) {
               const formerType = oldData.type || oldData['@type'];
+              // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
               await this.actions.createTombstone({ resourceUri, formerType }, { meta: { dataset }, parentCtx: ctx });
             }
           }

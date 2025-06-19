@@ -13,10 +13,13 @@ const Schema = defineAction({
     let ontology;
 
     if (prefix) {
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       ontology = this.ontologies[prefix] || false;
     } else if (namespace) {
+      // @ts-expect-error TS(2769): No overload matches this call.
       ontology = Object.values(this.ontologies).find(o => o.namespace === namespace);
     } else if (uri) {
+      // @ts-expect-error TS(2769): No overload matches this call.
       ontology = Object.values(this.ontologies).find(o => uri.startsWith(o.namespace));
     } else {
       throw new Error('You must provide a prefix, namespace or uri parameter');

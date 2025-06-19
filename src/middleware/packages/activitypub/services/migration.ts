@@ -18,6 +18,7 @@ const ActivitypubMigrationSchema = {
       async handler(ctx) {
         const collectionsContainerUri = await ctx.call('activitypub.collection.getContainerUri');
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.logger.info(`Attaching all collections to ${collectionsContainerUri}`);
 
         await ctx.call('triplestore.update', {

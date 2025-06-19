@@ -1,6 +1,7 @@
 import { defineAction } from 'moleculer';
 import { isURL, arrayOf } from '../utils.ts';
 
+// @ts-expect-error TS(2769): No overload matches this call.
 const Schema = defineAction({
   visibility: 'public',
   params: {
@@ -27,6 +28,7 @@ const Schema = defineAction({
     }
 
     if (persist) {
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       if (!this.settings.persistRegistry)
         throw new Error(`Cannot persist ontology because the persistRegistry setting is false`);
       if (owl || jsonldContext) throw new Error(`The owl and jsonldContext params cannot be persisted`);
@@ -36,11 +38,13 @@ const Schema = defineAction({
         namespace
       });
 
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       this.ontologies[prefix] = {
         prefix,
         namespace
       };
     } else {
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       this.ontologies[prefix] = {
         prefix,
         namespace,
@@ -50,8 +54,11 @@ const Schema = defineAction({
       };
     }
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     if (this.broker.cacher) {
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       this.broker.cacher.clean('ontologies.**');
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       this.broker.cacher.clean('jsonld.context.**');
     }
 

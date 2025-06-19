@@ -16,6 +16,7 @@ const Schema = {
       async create(ctx) {
         const { resource, contentType } = ctx.params;
         if (contentType === MIME_TYPES.JSON) {
+          // @ts-expect-error TS(2349): This expression is not callable.
           await this.createDisassembly(ctx, resource);
         }
       },
@@ -27,12 +28,14 @@ const Schema = {
             accept: MIME_TYPES.JSON,
             webId: 'system'
           });
+          // @ts-expect-error TS(2349): This expression is not callable.
           await this.updateDisassembly(ctx, resource, oldData);
         }
       }
     },
     after: {
       async delete(ctx, res) {
+        // @ts-expect-error TS(2349): This expression is not callable.
         await this.deleteDisassembly(ctx, res.oldData);
         return res;
       }
@@ -68,7 +71,7 @@ const Schema = {
       for (const disassemblyConfig of this.settings.disassembly) {
         const uriAdded = [];
         const uriRemoved = [];
-        let uriKept = [];
+        let uriKept: any = [];
 
         const oldDisassemblyValue = arrayOf(oldData[disassemblyConfig.path]);
         const newDisassemblyValue = arrayOf(newData[disassemblyConfig.path]);
@@ -154,6 +157,7 @@ const Schema = {
       }
     }
   }
+  // @ts-expect-error TS(1360): Type '{ settings: { disassembly: never[]; }; start... Remove this comment to see the full error message
 } satisfies ServiceSchema;
 
 export default Schema;

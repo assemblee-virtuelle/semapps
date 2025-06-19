@@ -1,9 +1,11 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'node... Remove this comment to see the full error message
 import fetch from 'node-fetch';
 import { defineAction } from 'moleculer';
 
 const Schema = defineAction({
   visibility: 'public',
   params: {
+    // @ts-expect-error TS(2769): No overload matches this call.
     prefix: 'string'
   },
   async handler(ctx) {

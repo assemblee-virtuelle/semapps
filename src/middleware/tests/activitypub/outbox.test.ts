@@ -3,23 +3,28 @@ import { ACTIVITY_TYPES, OBJECT_TYPES, PUBLIC_URI } from '@semapps/activitypub';
 import waitForExpect from 'wait-for-expect';
 import initialize from './initialize.ts';
 
+// @ts-expect-error TS(2304): Cannot find name 'jest'.
 jest.setTimeout(50_000);
-let broker;
-let broker2;
+let broker: any;
+let broker2: any;
 
+// @ts-expect-error TS(2304): Cannot find name 'beforeAll'.
 beforeAll(async () => {
   broker = await initialize(3000, 'testData', 'settings');
   broker2 = broker;
 });
 
+// @ts-expect-error TS(2304): Cannot find name 'afterAll'.
 afterAll(async () => {
   if (broker) await broker.stop();
 });
 
+// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe('Permissions are correctly set on outbox', () => {
-  let simon;
-  let sebastien;
+  let simon: any;
+  let sebastien: any;
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Create actor', async () => {
     const { webId: sebastienUri } = await broker.call('auth.signup', {
       username: 'srosset81',
@@ -39,8 +44,10 @@ describe('Permissions are correctly set on outbox', () => {
 
     simon = await broker2.call('activitypub.actor.awaitCreateComplete', { actorUri: simonUri });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(sebastien).toMatchObject({
       id: sebastienUri,
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       type: expect.arrayContaining(['Person', 'foaf:Person']),
       preferredUsername: 'srosset81',
       'foaf:nick': 'srosset81',
@@ -51,7 +58,8 @@ describe('Permissions are correctly set on outbox', () => {
     });
   });
 
-  let objectPrivateFirst;
+  let objectPrivateFirst: any;
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Post private message to self', async () => {
     await broker.call('activitypub.outbox.post', {
       collectionUri: sebastien.outbox,
@@ -71,7 +79,9 @@ describe('Permissions are correctly set on outbox', () => {
         afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: sebastien.id
       });
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(outbox.orderedItems).toHaveLength(1);
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(outbox.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.CREATE,
@@ -97,6 +107,7 @@ describe('Permissions are correctly set on outbox', () => {
         afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: 'anon'
       });
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(outbox.orderedItems).toHaveLength(0);
     });
 
@@ -111,6 +122,7 @@ describe('Permissions are correctly set on outbox', () => {
     // ).rejects.toThrow();
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Post private message to friend', async () => {
     await broker.call('activitypub.outbox.post', {
       collectionUri: sebastien.outbox,
@@ -131,7 +143,9 @@ describe('Permissions are correctly set on outbox', () => {
         afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: simon.id
       });
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(outbox.orderedItems).toHaveLength(1);
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(outbox.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.CREATE,
@@ -153,10 +167,12 @@ describe('Permissions are correctly set on outbox', () => {
         afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: 'anon'
       });
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(outbox.orderedItems).toHaveLength(0);
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Post public message', async () => {
     await broker.call('activitypub.outbox.post', {
       collectionUri: sebastien.outbox,
@@ -177,7 +193,9 @@ describe('Permissions are correctly set on outbox', () => {
         afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: simon.id
       });
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(outbox.orderedItems).toHaveLength(2);
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(outbox.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.CREATE,
@@ -199,7 +217,9 @@ describe('Permissions are correctly set on outbox', () => {
         afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: 'anon'
       });
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(outbox.orderedItems).toHaveLength(1);
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(outbox.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.CREATE,
@@ -211,6 +231,7 @@ describe('Permissions are correctly set on outbox', () => {
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Object permissions change when friend is added to addressees', async () => {
     // Activity is visible to friend after Update.
     const activityUpdatedForFriend = await broker.call('activitypub.outbox.post', {
@@ -224,6 +245,7 @@ describe('Permissions are correctly set on outbox', () => {
         name: 'Message is now visible to friend' as const
       }
     });
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(objectPrivateFirst?.id).toBe(activityUpdatedForFriend.object.id);
 
     // Get outbox as friend.
@@ -237,6 +259,7 @@ describe('Permissions are correctly set on outbox', () => {
         afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: simon.id
       });
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(outboxFetchedByFriend.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.UPDATE,
@@ -257,9 +280,11 @@ describe('Permissions are correctly set on outbox', () => {
       afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
       webId: simon.id
     });
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(outboxFetchedByAnon.orderedItems[0].object?.name).toBe('Message is now visible to friend');
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Object permissions change when public is added to addressees', async () => {
     // Activity is visible after update to public
     const activityUpdatedForPublic = await broker.call('activitypub.outbox.post', {
@@ -273,6 +298,7 @@ describe('Permissions are correctly set on outbox', () => {
         name: 'Message is now public' as const
       }
     });
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(objectPrivateFirst.id).toBe(activityUpdatedForPublic.object.id);
 
     // Get outbox as anon.
@@ -286,6 +312,7 @@ describe('Permissions are correctly set on outbox', () => {
         afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: 'anon'
       });
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(outboxFetchedByAnon.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.UPDATE,
@@ -297,6 +324,7 @@ describe('Permissions are correctly set on outbox', () => {
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Delete activity is sent and object made private after removing addressees', async () => {
     // Activity is not visible after Update to no recipients.
     const activityNowPrivate = await broker.call('activitypub.outbox.post', {
@@ -321,6 +349,7 @@ describe('Permissions are correctly set on outbox', () => {
         afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: simon.id
       });
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(outboxFetchedByFriend.orderedItems[0]).not.toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.UPDATE,
@@ -335,6 +364,7 @@ describe('Permissions are correctly set on outbox', () => {
         afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: sebastien.id
       });
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(outboxFetchedBySelf.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.UPDATE,
@@ -351,12 +381,14 @@ describe('Permissions are correctly set on outbox', () => {
         afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: simon.id
       });
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(friendOutbox.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.DELETE,
         object: objectUri
       });
 
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(() =>
         broker.call('ldp.resource.get', {
           resourceUri: objectUri,

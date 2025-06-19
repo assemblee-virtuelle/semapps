@@ -20,6 +20,7 @@ const Schema = defineAction({
   async handler(ctx) {
     const { containerUri, filters, doNotIncludeResources, jsonContext } = ctx.params;
     let { webId } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     webId = webId || ctx.meta.webId || 'anon';
 
     const { accept } = {
@@ -47,6 +48,7 @@ const Schema = defineAction({
 
     if (Object.keys(containerResults).length === 1 && containerResults['@context']) {
       throw new MoleculerError(
+        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
         `Container not found ${containerUri} (webId ${webId} / dataset ${ctx.meta.dataset})`,
         404,
         'NOT_FOUND'
@@ -69,7 +71,7 @@ const Schema = defineAction({
         webId
       });
 
-      const resourcesUris = resourcesResults?.map(node => node.s1.value);
+      const resourcesUris = resourcesResults?.map((node: any) => node.s1.value);
 
       // Request each resources (in parallel)
       containerResults['http://www.w3.org/ns/ldp#contains'] = await Promise.all(
@@ -101,6 +103,7 @@ const Schema = defineAction({
             }
           } catch (e) {
             // Ignore a resource if it is not found
+            // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
             if (e.name !== 'MoleculerError') throw e;
           }
           return [];

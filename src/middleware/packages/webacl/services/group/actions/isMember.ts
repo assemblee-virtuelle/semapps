@@ -14,10 +14,12 @@ export const action = defineAction({
   },
   async handler(ctx) {
     let { groupSlug, groupUri, memberId } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     if (!groupUri) groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
 
     // TODO: check that the group exists ?
@@ -41,6 +43,7 @@ export const action = defineAction({
       query: sanitizeSparqlQuery`
         PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
         ASK
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         WHERE { GRAPH <${this.settings.graphName}> {
           <${groupUri}> vcard:hasMember <${memberId}> .
         } }

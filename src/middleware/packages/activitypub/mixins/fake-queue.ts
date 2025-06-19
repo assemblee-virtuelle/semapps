@@ -15,18 +15,20 @@ const FakeQueueMixin = {
         // TODO add all job properties https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#job
         await this.schema.queues[queueName].process.bind(this)({
           data,
-          log: (...args) => {
+          log: (...args: any[]) => {
             this.logger.info(...args);
           },
           progress: () => {}
         });
       } catch (e) {
+        // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
         this.logger.error(e.message);
       }
       // TODO add all job properties https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#job
       return { id: 0, data, finished: async () => {} };
     }
   }
+  // @ts-expect-error TS(1360): Type '{ methods: { createJob(queueName: any, jobNa... Remove this comment to see the full error message
 } satisfies ServiceSchema;
 
 export default FakeQueueMixin;

@@ -4,7 +4,7 @@ import { defineAction } from 'moleculer';
 
 const { MoleculerError } = require('moleculer').Errors;
 
-export const api = async function api(ctx) {
+export const api = async function api(this: any, ctx: any) {
   if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;
   return await ctx.call('webacl.group.getMembers', {
     groupSlug: this.settings.podProvider ? `${ctx.params.username}/${ctx.params.id}` : ctx.params.id
@@ -20,10 +20,12 @@ export const action = defineAction({
   },
   async handler(ctx) {
     let { groupSlug, groupUri } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     if (!groupUri) groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
 
     // TODO: check that the group exists ?
@@ -44,6 +46,7 @@ export const action = defineAction({
         PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
         SELECT ?m 
         WHERE { 
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           GRAPH <${this.settings.graphName}> { 
             <${groupUri}> vcard:hasMember ?m 
           } 
@@ -52,6 +55,6 @@ export const action = defineAction({
       webId: 'system'
     });
 
-    return members.map(m => m.m.value);
+    return members.map((m: any) => m.m.value);
   }
 });

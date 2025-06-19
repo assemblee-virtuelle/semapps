@@ -7,7 +7,7 @@ import assert from 'node:assert';
  * @param {any} value The value to convert to an array.
  * @returns {Array} The resulting array.
  */
-const arrayOf = value => {
+const arrayOf = (value: any) => {
   if (value === undefined || value === null) {
     return [];
   }
@@ -26,7 +26,7 @@ const arrayOf = value => {
  * @param {any} object2 Second object to compare
  * @returns  {boolean} True if the objects are deeply equal, false otherwise.
  */
-const deepStrictEqual = (object1, object2) => {
+const deepStrictEqual = (object1: any, object2: any) => {
   try {
     assert.deepStrictEqual(object1, object2);
   } catch (error) {

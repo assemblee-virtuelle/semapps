@@ -2,7 +2,7 @@ import { parseHeader, negotiateAccept, parseSparql, saveDatasetMeta } from '@sem
 
 const middlewares = [parseHeader, parseSparql, negotiateAccept, saveDatasetMeta];
 
-function getRoute(path) {
+function getRoute(path: any) {
   return {
     path,
     name: 'sparql-endpoint' as const,
@@ -19,7 +19,7 @@ function getRoute(path) {
       json: false,
       urlencoded: false
     },
-    onError(req, res, err) {
+    onError(req: any, res: any, err: any) {
       const { type, code, message, data, name } = err;
       res.writeHead(Number(code) || 500, data && data.status ? data.status : 'Server error', {
         'Content-Type': 'application/json'

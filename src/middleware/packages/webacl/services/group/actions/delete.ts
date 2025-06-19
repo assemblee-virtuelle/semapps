@@ -5,7 +5,7 @@ import { removeAgentGroupOrAgentFromAuthorizations } from '../../../utils.ts';
 
 const { MoleculerError } = require('moleculer').Errors;
 
-export const api = async function api(ctx) {
+export const api = async function api(this: any, ctx: any) {
   if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;
   await ctx.call('webacl.group.delete', {
     groupSlug: this.settings.podProvider ? `${ctx.params.username}/${ctx.params.id}` : ctx.params.id
@@ -23,10 +23,12 @@ export const action = defineAction({
   },
   async handler(ctx) {
     let { groupSlug, groupUri } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     if (!groupUri) groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
 
     // TODO: check that the group exists ?
@@ -45,6 +47,7 @@ export const action = defineAction({
     await ctx.call('triplestore.update', {
       query: sanitizeSparqlQuery`
         DELETE WHERE { 
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           GRAPH <${this.settings.graphName}> { 
             <${groupUri}> ?p ?o. 
           } 
@@ -55,6 +58,7 @@ export const action = defineAction({
 
     await ctx.call('webacl.resource.deleteAllRights', { resourceUri: groupUri });
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     await removeAgentGroupOrAgentFromAuthorizations(groupUri, true, this.settings.graphName, ctx);
   }
 });

@@ -38,8 +38,10 @@ const ApiService = {
       // If some actor containers are already registered, add the corresponding API routes
       const registeredContainers = await this.broker.call('ldp.registry.list');
       for (const container of Object.values(registeredContainers)) {
+        // @ts-expect-error TS(18046): 'container' is of type 'unknown'.
         if (arrayOf(container.acceptedTypes).some(type => Object.values(FULL_ACTOR_TYPES).includes(type))) {
           await this.broker.call('api.addRoute', {
+            // @ts-expect-error TS(18046): 'container' is of type 'unknown'.
             route: this.getBoxesRoute(path.join(basePath, `${container.fullPath}/:actorSlug`))
           });
         }
@@ -50,7 +52,9 @@ const ApiService = {
     inbox: defineAction({
       async handler(ctx) {
         const { actorSlug, ...activity } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'requestUrl' does not exist on type '{}'.
         const { requestUrl } = ctx.meta;
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const { origin } = new URL(this.settings.baseUri);
 
         await ctx.call('activitypub.inbox.post', {
@@ -58,6 +62,7 @@ const ApiService = {
           ...activity
         });
 
+        // @ts-expect-error TS(2339): Property '$statusCode' does not exist on type '{}'... Remove this comment to see the full error message
         ctx.meta.$statusCode = 202;
       }
     }),
@@ -65,7 +70,9 @@ const ApiService = {
     outbox: defineAction({
       async handler(ctx) {
         let { actorSlug, ...activity } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'requestUrl' does not exist on type '{}'.
         const { requestUrl } = ctx.meta;
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const { origin } = new URL(this.settings.baseUri);
 
         activity = await ctx.call('activitypub.outbox.post', {
@@ -73,12 +80,15 @@ const ApiService = {
           ...activity
         });
 
+        // @ts-expect-error TS(2339): Property '$responseHeaders' does not exist on type... Remove this comment to see the full error message
         ctx.meta.$responseHeaders = {
           Location: activity.id || activity['@id'],
           'Content-Length': 0
         };
         // We need to set this also here (in addition to above) or we get a Moleculer warning
+        // @ts-expect-error TS(2339): Property '$location' does not exist on type '{}'.
         ctx.meta.$location = activity.id || activity['@id'];
+        // @ts-expect-error TS(2339): Property '$statusCode' does not exist on type '{}'... Remove this comment to see the full error message
         ctx.meta.$statusCode = 201;
       }
     })
@@ -86,17 +96,22 @@ const ApiService = {
   events: {
     'ldp.registry.registered': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'container' does not exist on type 'Servi... Remove this comment to see the full error message
         const { container } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
         const { pathname: basePath } = new URL(this.settings.baseUri);
+        // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'ServiceE... Remove this comment to see the full error message
         const resourcesWithContainerPath = await this.broker.call('ldp.getSetting', {
           key: 'resourcesWithContainerPath'
         });
         if (
+          // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
           !this.settings.podProvider &&
           resourcesWithContainerPath &&
           arrayOf(container.acceptedTypes).some(type => Object.values(FULL_ACTOR_TYPES).includes(type))
         ) {
           await ctx.call('api.addRoute', {
+            // @ts-expect-error TS(2339): Property 'getBoxesRoute' does not exist on type 'S... Remove this comment to see the full error message
             route: this.getBoxesRoute(path.join(basePath, `${container.fullPath}/:actorSlug`))
           });
         }

@@ -1,13 +1,16 @@
 import path from 'path';
 import { ServiceBroker } from 'moleculer';
 import { CoreService } from '@semapps/core';
+// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { pair } from '@semapps/ontologies';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { AuthLocalService } from '@semapps/auth';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import CONFIG from '../config.ts';
 
 const initialize = async () => {
   const broker = new ServiceBroker({
+    // @ts-expect-error TS(2322): Type '{ name: "CacherMiddleware"; created(broker: ... Remove this comment to see the full error message
     middlewares: [CacherMiddleware(CONFIG.ACTIVATE_CACHE), WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
     logger: {
       type: 'Console',
@@ -17,6 +20,7 @@ const initialize = async () => {
     }
   });
 
+  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "core"; settin... Remove this comment to see the full error message
   broker.createService({
     mixins: [CoreService],
     settings: {
@@ -40,6 +44,7 @@ const initialize = async () => {
     }
   });
 
+  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "auth"; mixins... Remove this comment to see the full error message
   broker.createService({
     mixins: [AuthLocalService],
     settings: {

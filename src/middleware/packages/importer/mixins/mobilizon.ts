@@ -44,7 +44,8 @@ const Schema = {
         `
         })
       };
-      this.settings.source.getOneFull = data => urlJoin(this.settings.source.mobilizon.baseUrl, 'events', data.uuid);
+      this.settings.source.getOneFull = (data: any) =>
+        urlJoin(this.settings.source.mobilizon.baseUrl, 'events', data.uuid);
     } else {
       throw new Error('The MobilizonImporterMixin can only import events for now');
     }
@@ -55,6 +56,7 @@ const Schema = {
       return results && results.data && results.data.events && results.data.events.elements;
     }
   }
+  // @ts-expect-error TS(1360): Type '{ mixins: { settings: { source: { apiUrl: nu... Remove this comment to see the full error message
 } satisfies ServiceSchema;
 
 export default Schema;

@@ -14,6 +14,7 @@ const AwaitActivityMixin = {
     awaitActivity: defineAction({
       async handler(ctx) {
         const { collectionUri, matcher, maxTries = 60, delayMs = 500, publishedAfter } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const webId = ctx.params.webId || ctx.meta.webId || 'anon';
         let match = false;
         let dereferencedActivity;
@@ -27,9 +28,11 @@ const AwaitActivityMixin = {
             });
             return resource; // First get the resource, then return it, otherwise the try/catch will not work
           } catch (e) {
+            // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
             if (e.status === 401 || e.status === 403 || e.status === 404) {
               return false;
             } else {
+              // @ts-expect-error TS(2769): No overload matches this call.
               throw new Error(e);
             }
           }
@@ -68,6 +71,7 @@ const AwaitActivityMixin = {
       }
     })
   }
+  // @ts-expect-error TS(1360): Type '{ actions: { awaitActivity: Moleculer.Action... Remove this comment to see the full error message
 } satisfies ServiceSchema;
 
 export default AwaitActivityMixin;

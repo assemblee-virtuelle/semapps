@@ -1,3 +1,4 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'node... Remove this comment to see the full error message
 import fetch from 'node-fetch';
 import { namedNode, literal, triple, variable } from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
@@ -20,6 +21,7 @@ const ActorService = {
       async handler(ctx) {
         const { actorUri, webId } = ctx.params;
         // If dataset is not in the meta, assume that actor is remote
+        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
         if (ctx.meta.dataset && !(await ctx.call('ldp.remote.isRemote', { resourceUri: actorUri }))) {
           try {
             // Don't return immediately the promise, or we won't be able to catch errors
@@ -41,6 +43,7 @@ const ActorService = {
     getProfile: defineAction({
       async handler(ctx) {
         const { actorUri, webId } = ctx.params;
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const actor = await this.actions.get({ actorUri, webId }, { parentCtx: ctx });
         // If the URL is not in the same domain as the actor, it is most likely not a profile
         if (actor.url && new URL(actor.url).host === new URL(actorUri).host) {
@@ -52,7 +55,9 @@ const ActorService = {
     appendActorData: defineAction({
       async handler(ctx) {
         const { actorUri } = ctx.params;
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const userData = await this.actions.get({ actorUri, webId: 'system' }, { parentCtx: ctx });
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const propertiesToAdd = this.settings.selectActorData ? this.settings.selectActorData(userData) : {};
 
         if (!propertiesToAdd['http://www.w3.org/1999/02/22-rdf-syntax-ns#type']) {
@@ -77,6 +82,7 @@ const ActorService = {
               triple(
                 namedNode(actorUri),
                 namedNode(predicate),
+                // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
                 typeof subject === 'string' && subject.startsWith('http') ? namedNode(subject) : literal(subject)
               )
             ),
@@ -104,10 +110,12 @@ const ActorService = {
                     type: 'bgp',
                     triples: [
                       triple(
+                        // @ts-expect-error TS(2345): Argument of type 'NamedNode<never>' is not assigna... Remove this comment to see the full error message
                         namedNode(actorUri),
                         namedNode('https://www.w3.org/ns/activitystreams#endpoints'),
                         variable('endpoints')
                       ),
+                      // @ts-expect-error TS(2345): Argument of type 'Variable' is not assignable to p... Remove this comment to see the full error message
                       triple(variable('endpoints'), namedNode(predicate), namedNode(endpoint))
                     ]
                   }
@@ -121,6 +129,7 @@ const ActorService = {
                         type: 'bgp',
                         triples: [
                           triple(
+                            // @ts-expect-error TS(2345): Argument of type 'NamedNode<never>' is not assigna... Remove this comment to see the full error message
                             namedNode(actorUri),
                             namedNode('https://www.w3.org/ns/activitystreams#endpoints'),
                             variable('b0')
@@ -169,6 +178,7 @@ const ActorService = {
           delayMs,
           keysToCheck,
           maxTries,
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           async () => await this.actions.get({ actorUri, webId: 'system' }, { parentCtx: ctx, meta: { $cache: false } })
         );
       }
@@ -178,6 +188,7 @@ const ActorService = {
       cache: true,
       async handler(ctx) {
         const { actorUri, predicate, webId } = ctx.params;
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const actor = await this.actions.get({ actorUri, webId }, { parentCtx: ctx });
         return actor && actor[predicate];
       }
@@ -191,8 +202,11 @@ const ActorService = {
   events: {
     'ldp.resource.created': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Ser... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'isActor' does not exist on type 'Service... Remove this comment to see the full error message
         if (this.isActor(newData)) {
+          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
           await this.actions.appendActorData({ actorUri: resourceUri }, { parentCtx: ctx });
           await ctx.call('signature.keypair.generate', { actorUri: resourceUri });
           await ctx.call('signature.keypair.attachPublicKey', { actorUri: resourceUri });
@@ -202,7 +216,9 @@ const ActorService = {
 
     'ldp.resource.deleted': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Ser... Remove this comment to see the full error message
         const { resourceUri, oldData } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'isActor' does not exist on type 'Service... Remove this comment to see the full error message
         if (this.isActor(oldData)) {
           await ctx.call('keys.deleteAllKeysForWebId', { webId: resourceUri });
         }
@@ -211,7 +227,9 @@ const ActorService = {
 
     'auth.registered': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'ServiceEv... Remove this comment to see the full error message
         const { webId } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.appendActorData({ actorUri: webId }, { parentCtx: ctx });
       }
     })

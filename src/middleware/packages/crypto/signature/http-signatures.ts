@@ -1,6 +1,9 @@
 import { createSign, createHash } from 'crypto';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'http... Remove this comment to see the full error message
 import { parseRequest, verifySignature } from 'http-signature';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'http... Remove this comment to see the full error message
 import { createAuthzHeader, createSignatureString } from 'http-signature-header';
+// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { E as Errors } from 'moleculer-web';
 import { ServiceSchema, defineAction } from 'moleculer';
 import { KEY_TYPES } from '../constants.ts';
@@ -22,6 +25,7 @@ const HttpSignatureService = {
         const headers = { Date: new Date().toUTCString() };
         const includeHeaders = ['(request-target)', 'host', 'date'];
         if (body) {
+          // @ts-expect-error TS(2339): Property 'Digest' does not exist on type '{ Date: ... Remove this comment to see the full error message
           headers.Digest = this.buildDigest(body);
           includeHeaders.push('digest');
         }
@@ -35,6 +39,7 @@ const HttpSignatureService = {
         signer.update(signatureString);
         const signatureHash = signer.sign(privateKeyPem).toString('base64');
 
+        // @ts-expect-error TS(2339): Property 'Signature' does not exist on type '{ Dat... Remove this comment to see the full error message
         headers.Signature = createAuthzHeader({
           includeHeaders,
           keyId: actorUri,
@@ -49,6 +54,7 @@ const HttpSignatureService = {
     verifyDigest: defineAction({
       async handler(ctx) {
         const { body, headers } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'digest' does not exist on type 'never'.
         return headers.digest ? this.buildDigest(body) === headers.digest : true;
       }
     }),
@@ -72,10 +78,12 @@ const HttpSignatureService = {
         // If there is a x-forwarded-host header, set is as host
         // This is the default behavior for Express server but the ApiGateway doesn't use Express
         if (headers['x-forwarded-host']) {
+          // @ts-expect-error TS(2339): Property 'host' does not exist on type 'never'.
           headers.host = headers['x-forwarded-host'];
         }
 
         const parsedSignature = parseRequest({
+          // @ts-expect-error TS(2339): Property 'replace' does not exist on type 'never'.
           url: path || url.replace(new URL(url).origin, ''), // URL without domain name
           method,
           headers
@@ -93,15 +101,15 @@ const HttpSignatureService = {
 
         // Check, if one of the keys is able to verify the signature.
         const { isValid: keyValid, publicKey: publicKeyPem } = publicKeys
-          .flatMap(key => key.publicKeyPem || [])
-          .map(pubKeyPem => {
+          .flatMap((key: any) => key.publicKeyPem || [])
+          .map((pubKeyPem: any) => {
             try {
               return { isValid: verifySignature(parsedSignature, pubKeyPem), publicKey: pubKeyPem };
             } catch (e) {
               return { isValid: false };
             }
           })
-          .find(({ isValid }) => isValid) || { isValid: false, publicKey: null };
+          .find(({ isValid }: any) => isValid) || { isValid: false, publicKey: null };
 
         return { isValid: keyValid, actorUri, publicKeyPem };
       }
@@ -111,18 +119,25 @@ const HttpSignatureService = {
       // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
       async handler(ctx) {
         const { route, req, res } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'headers' does not exist on type 'never'.
         if (req.headers.signature) {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           const { isValid, actorUri } = await this.actions.verifyHttpSignature(
+            // @ts-expect-error TS(2339): Property 'originalUrl' does not exist on type 'nev... Remove this comment to see the full error message
             { path: req.originalUrl, method: req.method, headers: req.headers },
             { parentCtx: ctx }
           );
           if (isValid) {
+            // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
             ctx.meta.webId = actorUri;
             return Promise.resolve();
           }
+          // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
           ctx.meta.webId = 'anon';
+          // @ts-expect-error TS(2304): Cannot find name 'E'.
           return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
         }
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         ctx.meta.webId = 'anon';
         return Promise.resolve(null);
       }
@@ -132,19 +147,27 @@ const HttpSignatureService = {
       // See https://moleculer.services/docs/0.13/moleculer-web.html#Authorization
       async handler(ctx) {
         const { route, req, res } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'headers' does not exist on type 'never'.
         if (req.headers.signature) {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           const { isValid, actorUri } = await this.actions.verifyHttpSignature(
+            // @ts-expect-error TS(2339): Property 'originalUrl' does not exist on type 'nev... Remove this comment to see the full error message
             { path: req.originalUrl, method: req.method, headers: req.headers },
             { parentCtx: ctx }
           );
           if (isValid) {
+            // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
             ctx.meta.webId = actorUri;
             return Promise.resolve();
           }
+          // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
           ctx.meta.webId = 'anon';
+          // @ts-expect-error TS(2304): Cannot find name 'E'.
           return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
         }
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         ctx.meta.webId = 'anon';
+        // @ts-expect-error TS(2304): Cannot find name 'E'.
         return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
       }
     })

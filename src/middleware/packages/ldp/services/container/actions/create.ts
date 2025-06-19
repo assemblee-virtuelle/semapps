@@ -12,6 +12,7 @@ const Schema = defineAction({
   },
   async handler(ctx) {
     const { containerUri, title, description, options } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     await ctx.call('triplestore.insert', {

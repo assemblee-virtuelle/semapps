@@ -4,11 +4,12 @@ const Schema = defineAction({
   visibility: 'public',
   cache: true,
   async handler(ctx) {
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const ontologies = await this.actions.list({}, { parentCtx: ctx });
     return Object.fromEntries(
       ontologies
-        .sort((a, b) => (a.prefix < b.prefix ? -1 : a.prefix > b.prefix ? 1 : 0))
-        .map(ontology => [ontology.prefix, ontology.namespace])
+        .sort((a: any, b: any) => (a.prefix < b.prefix ? -1 : a.prefix > b.prefix ? 1 : 0))
+        .map((ontology: any) => [ontology.prefix, ontology.namespace])
     );
   }
 });

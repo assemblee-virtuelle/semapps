@@ -26,7 +26,7 @@ const Schema = {
         'api',
         'elements'
       )}?ontology=gogosync`;
-      this.settings.source.getOneFull = data =>
+      this.settings.source.getOneFull = (data: any) =>
         urlJoin(this.settings.source.gogocarto.baseUrl, 'api', 'elements', `${data.id}`);
     } else {
       throw new Error('The GoGoCartoMixin can only import elements for now');
@@ -42,6 +42,7 @@ const Schema = {
       return result.data;
     }
   }
+  // @ts-expect-error TS(1360): Type '{ mixins: { settings: { source: { apiUrl: nu... Remove this comment to see the full error message
 } satisfies ServiceSchema;
 
 export default Schema;

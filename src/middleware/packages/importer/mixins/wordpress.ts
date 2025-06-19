@@ -1,4 +1,5 @@
 import urlJoin from 'url-join';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'node... Remove this comment to see the full error message
 import fetch from 'node-fetch';
 import { getSlugFromUri, delay } from '@semapps/ldp';
 import { MIME_TYPES } from '@semapps/mime-types';
@@ -28,7 +29,7 @@ const Schema = {
     if (this.settings.source.wordpress.type === 'posts') {
       this.settings.source.apiUrl = this.settings.source.wordpress.baseUrl;
       this.settings.source.getAllCompact = urlJoin(this.settings.source.wordpress.baseUrl, 'wp-json/wp/v2/posts');
-      this.settings.source.getOneFull = data =>
+      this.settings.source.getOneFull = (data: any) =>
         urlJoin(this.settings.source.wordpress.baseUrl, 'wp-json/wp/v2/posts', `${data.id}`);
       if (this.settings.source.wordpress.appPassword) {
         this.settings.source.basicAuth = {
@@ -71,6 +72,7 @@ const Schema = {
             this.logger.warn(`Could not get ${mediaUrl}. Trying again in 30 seconds...`);
             await delay(30000);
           } else {
+            // @ts-expect-error TS(2769): No overload matches this call.
             throw new Error(e);
           }
         }
@@ -100,6 +102,7 @@ const Schema = {
       }
     }
   }
+  // @ts-expect-error TS(1360): Type '{ mixins: { settings: { source: { apiUrl: nu... Remove this comment to see the full error message
 } satisfies ServiceSchema;
 
 export default Schema;

@@ -1,4 +1,5 @@
 import path from 'path';
+// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import ApiGatewayService, { E as Errors } from 'moleculer-web';
 import { ActivityPubService, FULL_ACTOR_TYPES } from '@semapps/activitypub';
 import { JsonLdService } from '@semapps/jsonld';
@@ -9,6 +10,7 @@ import { TripleStoreService } from '@semapps/triplestore';
 import { VoidService } from '@semapps/void';
 import { WebAclService } from '@semapps/webacl';
 import { WebfingerService } from '@semapps/webfinger';
+// @ts-expect-error TS(2305): Module '"@semapps/crypto"' has no exported member ... Remove this comment to see the full error message
 import { KeysService, SignatureService } from '@semapps/crypto';
 import { WebIdService } from '@semapps/webid';
 import { ServiceSchema } from 'moleculer';
@@ -56,6 +58,7 @@ const CoreService = {
     const { baseUrl, baseDir, triplestore, containers, ontologies } = this.settings;
 
     if (this.settings.activitypub !== false) {
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub";... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [ActivityPubService],
         // Type support for settings could be given, once moleculer type definitions improve...
@@ -67,6 +70,7 @@ const CoreService = {
     }
 
     if (this.settings.api !== false) {
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: (ServiceSchema<Service... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [ApiGatewayService],
         settings: {
@@ -97,19 +101,21 @@ const CoreService = {
               return ctx.call('auth.authorize', { route, req, res });
             }
             ctx.meta.webId = 'anon';
+            // @ts-expect-error TS(2304): Cannot find name 'E'.
             return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
           },
           // Overwrite optimization method to put catchAll routes at the end
           // See https://github.com/moleculerjs/moleculer-web/issues/335
           optimizeRouteOrder() {
-            this.routes.sort(a => (a.opts.catchAll ? 1 : -1));
-            this.aliases.sort(a => (a.route.opts.catchAll ? 1 : -1));
+            this.routes.sort((a: any) => (a.opts.catchAll ? 1 : -1));
+            this.aliases.sort((a: any) => (a.route.opts.catchAll ? 1 : -1));
           }
         }
       });
     }
 
     if (this.settings.jsonld !== false) {
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "jsonld"; sett... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [JsonLdService],
         settings: {
@@ -119,6 +125,7 @@ const CoreService = {
       });
     }
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "ontologies"; ... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [OntologiesService],
       settings: {
@@ -127,6 +134,7 @@ const CoreService = {
     });
 
     if (this.settings.ldp !== false) {
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: ({ name: "ldp"; settin... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [DocumentTaggerMixin, LdpService],
         settings: {
@@ -138,6 +146,7 @@ const CoreService = {
     }
 
     if (this.settings.signature !== false) {
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: any[]; settings: any; ... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [SignatureService],
         settings: {
@@ -147,6 +156,7 @@ const CoreService = {
     }
 
     if (this.settings.webId !== false) {
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "webid"; mixin... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [WebIdService],
         settings: {
@@ -157,6 +167,7 @@ const CoreService = {
     }
 
     if (this.settings.keys !== false) {
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: any[]; settings: any; ... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [KeysService],
         settings: {
@@ -167,6 +178,7 @@ const CoreService = {
     }
 
     if (this.settings.sparqlEndpoint !== false) {
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "sparqlEndpoin... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [SparqlEndpointService],
         settings: {
@@ -181,6 +193,7 @@ const CoreService = {
       // We define a constant here, because this.settings.webacl is not available inside the started method
       const secure = this.settings.webacl !== false;
 
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "triplestore";... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [TripleStoreService],
         settings: {
@@ -198,6 +211,7 @@ const CoreService = {
     }
 
     if (this.settings.void !== false) {
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "void"; settin... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [VoidService],
         settings: {
@@ -208,6 +222,7 @@ const CoreService = {
     }
 
     if (this.settings.webacl !== false) {
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "webacl"; sett... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [WebAclService],
         settings: {
@@ -218,6 +233,7 @@ const CoreService = {
     }
 
     if (this.settings.webfinger !== false) {
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "webfinger"; s... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [WebfingerService],
         settings: {

@@ -10,6 +10,7 @@ import generateIdAction from './actions/generateId.ts';
 import getContainersAction from './actions/getContainers.ts';
 import getTypesAction from './actions/getTypes.ts';
 import uploadAction from './actions/upload.ts';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import methods from './methods.ts';
 import { getDatasetFromUri } from '../../utils.ts';
 
@@ -41,10 +42,12 @@ const LdpResourceSchema = {
   hooks: {
     before: {
       '*'(ctx) {
+        // @ts-expect-error TS(2339): Property 'podProvider' does not exist on type 'str... Remove this comment to see the full error message
         if (this.settings.podProvider && !ctx.meta.dataset) {
           // If we have a pod provider, guess the dataset from the URI
           const uri =
             ctx.params.resourceUri || (ctx.params.resource && (ctx.params.resource.id || ctx.params.resource['@id']));
+          // @ts-expect-error TS(2339): Property 'baseUrl' does not exist on type 'string ... Remove this comment to see the full error message
           if (uri && uri.startsWith(this.settings.baseUrl)) {
             ctx.meta.dataset = getDatasetFromUri(uri);
           }

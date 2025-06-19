@@ -4,7 +4,7 @@ import { defineAction } from 'moleculer';
 
 const { MoleculerError } = require('moleculer').Errors;
 
-export const api = async function api(ctx) {
+export const api = async function api(this: any, ctx: any) {
   if (!ctx.params.memberUri) throw new MoleculerError('needs a memberUri in your PATCH (json)', 400, 'BAD_REQUEST');
   if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;
 
@@ -26,10 +26,12 @@ export const action = defineAction({
   },
   async handler(ctx) {
     let { groupSlug, groupUri, memberUri } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     if (!groupUri) groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
 
     // TODO: check that the member exists ?
@@ -52,6 +54,7 @@ export const action = defineAction({
       query: sanitizeSparqlQuery`
         PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
         INSERT DATA { 
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           GRAPH <${this.settings.graphName}> { 
             <${groupUri}> vcard:hasMember <${memberUri}> 
           }

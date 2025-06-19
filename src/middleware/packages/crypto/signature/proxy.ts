@@ -1,16 +1,18 @@
 import path from 'path';
 import urlJoin from 'url-join';
 import { parseHeader, parseFile, saveDatasetMeta } from '@semapps/middlewares';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'node... Remove this comment to see the full error message
 import fetch from 'node-fetch';
+// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { E as Errors } from 'moleculer-web';
 import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 
-const stream2buffer = stream => {
+const stream2buffer = (stream: any) => {
   return new Promise((resolve, reject) => {
-    const _buf = [];
-    stream.on('data', chunk => _buf.push(chunk));
+    const _buf: any = [];
+    stream.on('data', (chunk: any) => _buf.push(chunk));
     stream.on('end', () => resolve(Buffer.concat(_buf)));
-    stream.on('error', err => reject(err));
+    stream.on('error', (err: any) => reject(err));
   });
 };
 
@@ -46,21 +48,27 @@ const ProxyService = {
         const url = ctx.params.id;
         const method = ctx.params.method || 'GET';
         const headers = JSON.parse(ctx.params.headers) || { accept: 'application/json' };
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const actorUri = ctx.meta.webId;
 
         // Only user can query his own proxy URL
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (this.settings.podProvider) {
           const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
+          // @ts-expect-error TS(2304): Cannot find name 'E'.
           if (account.username !== ctx.params.username) throw new E.ForbiddenError();
         }
 
         // If a file is uploaded, convert it to a Buffer
         const body =
+          // @ts-expect-error TS(2339): Property 'length' does not exist on type 'never'.
           ctx.params.files && ctx.params.files.length > 0
-            ? await stream2buffer(ctx.params.files[0].readableStream)
+            ? // @ts-expect-error TS(2339): Property 'readableStream' does not exist on type '... Remove this comment to see the full error message
+              await stream2buffer(ctx.params.files[0].readableStream)
             : ctx.params.body;
 
         try {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           const response = await this.actions.query(
             {
               url,
@@ -73,13 +81,19 @@ const ProxyService = {
               parentCtx: ctx
             }
           );
+          // @ts-expect-error TS(2339): Property '$statusCode' does not exist on type '{}'... Remove this comment to see the full error message
           ctx.meta.$statusCode = response.status;
+          // @ts-expect-error TS(2339): Property '$statusMessage' does not exist on type '... Remove this comment to see the full error message
           ctx.meta.$statusMessage = response.statusText;
+          // @ts-expect-error TS(2339): Property '$responseHeaders' does not exist on type... Remove this comment to see the full error message
           ctx.meta.$responseHeaders = response.headers;
           return response.body;
         } catch (e) {
+          // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
           if (e.code !== 404 && e.code !== 403) console.error(e);
+          // @ts-expect-error TS(2339): Property '$statusCode' does not exist on type '{}'... Remove this comment to see the full error message
           ctx.meta.$statusCode = !e.code ? 500 : e.code === 'ECONNREFUSED' ? 502 : e.code;
+          // @ts-expect-error TS(2339): Property '$statusMessage' does not exist on type '... Remove this comment to see the full error message
           ctx.meta.$statusMessage = e.message;
         }
       }
@@ -101,14 +115,17 @@ const ProxyService = {
         if (
           headers &&
           typeof headers === 'object' &&
+          // @ts-expect-error TS(2339): Property 'constructor' does not exist on type 'nev... Remove this comment to see the full error message
           (headers.constructor.name === 'Headers' || headers.constructor.name === '_Headers')
         ) {
+          // @ts-expect-error TS(2322): Type '{ [k: string]: any; }' is not assignable to ... Remove this comment to see the full error message
           headers = Object.fromEntries(headers);
         }
 
         const response = await fetch(url, {
           method,
           headers: {
+            // @ts-expect-error TS(2698): Spread types may only be created from object types... Remove this comment to see the full error message
             ...headers,
             ...signatureHeaders
           },
@@ -148,10 +165,12 @@ const ProxyService = {
   events: {
     'auth.registered': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'ServiceEv... Remove this comment to see the full error message
         const { webId } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
         if (this.settings.podProvider) {
           const services = await ctx.call('$node.services');
-          if (services.filter(s => s.name === 'activitypub.actor')) {
+          if (services.filter((s: any) => s.name === 'activitypub.actor')) {
             await ctx.call('activitypub.actor.addEndpoint', {
               actorUri: webId,
               predicate: 'https://www.w3.org/ns/activitystreams#proxyUrl',
@@ -170,6 +189,7 @@ declare global {
   export namespace Moleculer {
     export interface AllServices {
       [ProxyService.name]: typeof ProxyService;
+      // @ts-expect-error TS(2304): Cannot find name 'routeConfig'.
       [routeConfig.name]: typeof routeConfig;
     }
   }

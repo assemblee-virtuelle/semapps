@@ -1,3 +1,4 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'node... Remove this comment to see the full error message
 import fetch from 'node-fetch';
 import { ServiceSchema, defineAction } from 'moleculer';
 
@@ -30,7 +31,9 @@ const WebfingerService = {
       async handler(ctx) {
         const { resource } = ctx.params;
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const usernameMatchRegex = new RegExp(`^acct:([\\w-_.]*)@${this.settings.domainName}$`);
+        // @ts-expect-error TS(2339): Property 'match' does not exist on type 'never'.
         const matches = resource?.match(usernameMatchRegex);
 
         if (matches) {
@@ -51,6 +54,7 @@ const WebfingerService = {
           }
         }
 
+        // @ts-expect-error TS(2339): Property '$statusCode' does not exist on type '{}'... Remove this comment to see the full error message
         ctx.meta.$statusCode = 404;
       }
     }),
@@ -59,6 +63,7 @@ const WebfingerService = {
       // TODO add cache if response.ok
       async handler(ctx) {
         const { account } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'split' does not exist on type 'never'.
         const splitAccount = account.split('@');
         const domainName = splitAccount.pop();
         const userName = splitAccount.pop();
@@ -68,7 +73,7 @@ const WebfingerService = {
 
         if (response.ok) {
           const json = await response.json();
-          const link = json.links.find(l => l.type === 'application/activity+json');
+          const link = json.links.find((l: any) => l.type === 'application/activity+json');
           if (link) {
             return link.href;
           }

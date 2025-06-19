@@ -1,4 +1,5 @@
 import { negotiateTypeMime, MIME_TYPES } from '@semapps/mime-types';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'busb... Remove this comment to see the full error message
 import Busboy from 'busboy';
 import streams from 'memory-streams';
 
@@ -6,20 +7,20 @@ const { MoleculerError } = require('moleculer').Errors;
 
 // Put requested URL and query string in meta so that services may use them independently
 // Set here https://github.com/moleculerjs/moleculer-web/blob/c6ec80056a64ea15c57d6e2b946ce978d673ae92/src/index.js#L151-L161
-const parseUrl = async (req, res, next) => {
+const parseUrl = async (req: any, res: any, next: any) => {
   req.$ctx.meta.requestUrl = req.parsedUrl;
   req.$ctx.meta.queryString = req.query;
   next();
 };
 
-const parseHeader = async (req, res, next) => {
+const parseHeader = async (req: any, res: any, next: any) => {
   req.$ctx.meta.headers = req.headers ? { ...req.headers } : {};
   // Also remember original headers (needed for HTTP signatures verification and files type negociation)
   req.$ctx.meta.originalHeaders = req.headers ? { ...req.headers } : {};
   next();
 };
 
-const negotiateContentType = (req, res, next) => {
+const negotiateContentType = (req: any, res: any, next: any) => {
   if (!req.$ctx.meta.headers)
     throw new Error(`The parseHeader middleware must be added before the negotiateContentType middleware`);
   if (req.$ctx.meta.headers['content-type'] !== undefined && req.method !== 'DELETE') {
@@ -39,25 +40,25 @@ const negotiateContentType = (req, res, next) => {
 };
 
 /** @type {(msg: string) => never} */
-const throw400 = msg => {
+const throw400 = (msg: any) => {
   throw new MoleculerError(msg, 400, 'BAD_REQUEST', { status: 'Bad Request', text: msg });
 };
 
 /** @type {(msg: string) => never} */
-const throw403 = msg => {
+const throw403 = (msg: any) => {
   throw new MoleculerError('Forbidden', 403, 'ACCESS_DENIED', { status: 'Forbidden', text: msg });
 };
 
 /** @type {(msg: string) => never} */
-const throw404 = msg => {
+const throw404 = (msg: any) => {
   throw new MoleculerError('Forbidden', 404, 'NOT_FOUND', { status: 'Not found', text: msg });
 };
 
-const throw500 = msg => {
+const throw500 = (msg: any) => {
   throw new MoleculerError(msg, 500, 'INTERNAL_SERVER_ERROR', { status: 'Server Error', text: msg });
 };
 
-const negotiateAccept = (req, res, next) => {
+const negotiateAccept = (req: any, res: any, next: any) => {
   if (!req.$ctx.meta.headers)
     throw new Error(`The parseHeader middleware must be added before the negotiateAccept middleware`);
   if (req.$ctx.meta.headers.accept === '*/*') {
@@ -75,10 +76,10 @@ const negotiateAccept = (req, res, next) => {
   }
 };
 
-const getRawBody = req => {
+const getRawBody = (req: any) => {
   return new Promise((resolve, reject) => {
     let data = '';
-    req.on('data', chunk => {
+    req.on('data', (chunk: any) => {
       data += chunk;
     });
     req.on('end', () => {
@@ -87,7 +88,7 @@ const getRawBody = req => {
   });
 };
 
-const parseSparql = async (req, res, next) => {
+const parseSparql = async (req: any, res: any, next: any) => {
   if (!req.$ctx.meta.headers)
     throw new Error(`The parseHeader middleware must be added before the parseSparql middleware`);
   if (
@@ -102,7 +103,7 @@ const parseSparql = async (req, res, next) => {
   next();
 };
 
-const parseTurtle = async (req, res, next) => {
+const parseTurtle = async (req: any, res: any, next: any) => {
   if (!req.$ctx.meta.headers)
     throw new Error(`The parseHeader middleware must be added before the parseTurtle middleware`);
   if (
@@ -117,7 +118,7 @@ const parseTurtle = async (req, res, next) => {
   next();
 };
 
-const parseJson = async (req, res, next) => {
+const parseJson = async (req: any, res: any, next: any) => {
   if (!req.$ctx.meta.headers)
     throw new Error(`The parseHeader middleware must be added before the parseJson middleware`);
   let mimeType = null;
@@ -133,6 +134,7 @@ const parseJson = async (req, res, next) => {
     if (!req.$ctx.meta.parser && mimeType === MIME_TYPES.JSON) {
       const body = await getRawBody(req);
       if (body) {
+        // @ts-expect-error TS(2345): Argument of type '{}' is not assignable to paramet... Remove this comment to see the full error message
         const json = JSON.parse(body);
         req.$params = { ...json, ...req.$params };
         // Keep raw body in meta as we need it for digest header verification
@@ -146,7 +148,7 @@ const parseJson = async (req, res, next) => {
   }
 };
 
-const parseFile = (req, res, next) => {
+const parseFile = (req: any, res: any, next: any) => {
   if (!req.$ctx.meta.headers)
     throw new Error(`The parseHeader middleware must be added before the parseFile middleware`);
   if (!req.$ctx.meta.parser && (req.method === 'POST' || req.method === 'PUT')) {
@@ -155,10 +157,11 @@ const parseFile = (req, res, next) => {
       req.$ctx.meta.headers['content-type'].includes('multipart/form-data')
     ) {
       const busboy = new Busboy({ headers: req.$ctx.meta.headers });
-      const files = [];
-      busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+      const files: any = [];
+      busboy.on('file', (fieldname: any, file: any, filename: any, encoding: any, mimetype: any) => {
+        // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
         const readableStream = new streams.ReadableStream();
-        file.on('data', data => readableStream.push(data));
+        file.on('data', (data: any) => readableStream.push(data));
         files.push({
           fieldname,
           readableStream,
@@ -167,7 +170,7 @@ const parseFile = (req, res, next) => {
           mimetype
         });
       });
-      busboy.on('field', (fieldname, val) => {
+      busboy.on('field', (fieldname: any, val: any) => {
         req.$params[fieldname] = val;
       });
       busboy.on('finish', () => {
@@ -191,7 +194,7 @@ const parseFile = (req, res, next) => {
   }
 };
 
-const saveDatasetMeta = (req, res, next) => {
+const saveDatasetMeta = (req: any, res: any, next: any) => {
   req.$ctx.meta.dataset = req.$params.username;
   next();
 };

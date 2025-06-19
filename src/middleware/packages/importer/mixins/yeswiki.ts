@@ -13,8 +13,8 @@ const Schema = {
       },
       fieldsMapping: {
         slug: 'id_fiche',
-        created: data => convertToIsoString(data.date_creation_fiche),
-        updated: data => convertToIsoString(data.date_maj_fiche)
+        created: (data: any) => convertToIsoString(data.date_creation_fiche),
+        updated: (data: any) => convertToIsoString(data.date_maj_fiche)
       }
     }
   },
@@ -24,14 +24,14 @@ const Schema = {
       // Note: the form_id parameter is not used by YesWiki, but it allows to have a different base URL for each Bazar list
       this.settings.source.apiUrl = `${baseUrl}?BazaR/json&demand=entry&form_id=${formId}`;
       this.settings.source.getAllFull = `${baseUrl}?BazaR/json&demand=entries&id=${formId}`;
-      this.settings.source.getOneFull = data =>
+      this.settings.source.getOneFull = (data: any) =>
         `${baseUrl}?BazaR/json&demand=entry&form_id=${formId}&id_fiche=${data.id_fiche}`;
     } else {
       const apiPath = `api/forms/${formId}/entries/json`;
       this.settings.source.apiUrl = `${baseUrl}?${apiPath}`;
       this.settings.source.getAllFull = `${baseUrl}?${apiPath}`;
       this.settings.source.getAllCompact = `${baseUrl}?${apiPath}&fields=id_fiche,date_maj_fiche`;
-      this.settings.source.getOneFull = data => `${baseUrl}?${apiPath}/${data.id_fiche}`;
+      this.settings.source.getOneFull = (data: any) => `${baseUrl}?${apiPath}/${data.id_fiche}`;
     }
   },
   methods: {
@@ -47,6 +47,7 @@ const Schema = {
       return false;
     }
   }
+  // @ts-expect-error TS(1360): Type '{ mixins: { settings: { source: { apiUrl: nu... Remove this comment to see the full error message
 } satisfies ServiceSchema;
 
 export default Schema;

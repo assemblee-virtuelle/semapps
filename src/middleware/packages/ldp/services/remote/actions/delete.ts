@@ -8,25 +8,32 @@ const Schema = defineAction({
   },
   async handler(ctx) {
     const { resourceUri } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId;
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     if (!(await this.actions.isRemote({ resourceUri }, { parentCtx: ctx }))) {
       throw new Error(
+        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
         `The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId} / dataset ${ctx.meta.dataset})`
       );
     }
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     if (this.settings.podProvider) {
       if (!webId || webId === 'system' || webId === 'anon') {
         throw new Error(`Cannot delete remote resource in cache without a webId (Provided: ${webId})`);
       }
       const account = await ctx.call('auth.account.findByWebId', { webId });
+      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       ctx.meta.dataset = account.username;
     }
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const graphName = await this.actions.getGraph({ resourceUri }, { parentCtx: ctx });
     if (graphName === false) throw new Error(`No graph found with resource ${resourceUri} (webId: ${webId})`);
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const oldData = await this.actions.getStored({ resourceUri, webId }, { parentCtx: ctx });
 
     await ctx.call('triplestore.update', {
@@ -55,9 +62,11 @@ const Schema = defineAction({
       resourceUri,
       oldData,
       webId,
+      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       dataset: ctx.meta.dataset
     };
 
+    // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
     if (!ctx.meta.skipEmitEvent) {
       ctx.emit('ldp.remote.deleted', returnValues, { meta: { webId: null, dataset: null } });
     }

@@ -13,6 +13,7 @@ const OntologiesRegistrySchema = {
     getByPrefix: defineAction({
       async handler(ctx) {
         const { prefix } = ctx.params;
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const [ontology] = await this._find(ctx, { query: { prefix } });
         return ontology && { prefix: ontology.prefix, namespace: ontology.namespace };
       }
@@ -21,6 +22,7 @@ const OntologiesRegistrySchema = {
     getByNamespace: defineAction({
       async handler(ctx) {
         const { namespace } = ctx.params;
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const [ontology] = await this._find(ctx, { query: { namespace } });
         return ontology && { prefix: ontology.prefix, namespace: ontology.namespace };
       }
@@ -28,8 +30,9 @@ const OntologiesRegistrySchema = {
 
     list: defineAction({
       async handler(ctx) {
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const ontologies = await this._list(ctx, {});
-        return ontologies.rows.map(({ prefix, namespace }) => ({ prefix, namespace }));
+        return ontologies.rows.map(({ prefix, namespace }: any) => ({ prefix, namespace }));
       }
     }),
 
@@ -37,14 +40,17 @@ const OntologiesRegistrySchema = {
       async handler(ctx) {
         const { prefix, namespace } = ctx.params;
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const ontology = await this.actions.getByPrefix({ prefix }, { parentCtx: ctx });
 
         if (ontology) {
+          // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
           await this._update(ctx, {
             '@id': ontology['@id'],
             namespace
           });
         } else {
+          // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
           await this._create(ctx, {
             prefix,
             namespace

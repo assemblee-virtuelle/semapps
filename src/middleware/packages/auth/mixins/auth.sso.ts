@@ -1,4 +1,5 @@
 import path from 'path';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'expr... Remove this comment to see the full error message
 import session from 'express-session';
 import { ServiceSchema, defineAction } from 'moleculer';
 import AuthMixin from './auth.ts';
@@ -23,6 +24,7 @@ const AuthSSOMixin = {
       async handler(ctx) {
         const { ssoData } = ctx.params;
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const profileData = this.settings.selectSsoData ? await this.settings.selectSsoData(ssoData) : ssoData;
 
         // TODO use UUID to identify unique accounts with SSO
@@ -40,6 +42,7 @@ const AuthSSOMixin = {
 
           ctx.emit('auth.connected', { webId, accountData, ssoData }, { meta: { webId: null, dataset: null } });
         } else {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           if (!this.settings.registrationAllowed) {
             throw new Error('registration.not-allowed');
           }
@@ -51,6 +54,7 @@ const AuthSSOMixin = {
           });
           webId = await ctx.call(
             'webid.createWebId',
+            // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
             this.pickWebIdData({ nick: accountData.username, ...profileData })
           );
           newUser = true;
@@ -94,6 +98,7 @@ const AuthSSOMixin = {
       ];
     }
   }
+  // @ts-expect-error TS(1360): Type '{ mixins: { settings: { baseUrl: null; jwtPa... Remove this comment to see the full error message
 } satisfies ServiceSchema;
 
 export default AuthSSOMixin;

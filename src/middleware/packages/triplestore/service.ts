@@ -1,5 +1,6 @@
 import { SparqlJsonParser } from 'sparqljson-parse';
 import sparqljsModule from 'sparqljs';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'node... Remove this comment to see the full error message
 import fetch from 'node-fetch';
 import { throw403, throw500 } from '@semapps/middlewares';
 import { ServiceSchema, defineAction } from 'moleculer';
@@ -32,6 +33,7 @@ const TripleStoreService = {
     this.subservices = {};
 
     if (dataset !== false) {
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "triplestore.d... Remove this comment to see the full error message
       this.subservices.dataset = this.broker.createService({
         mixins: [DatasetService],
         settings: {

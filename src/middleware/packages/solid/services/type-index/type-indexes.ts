@@ -1,4 +1,5 @@
 import { ControlledContainerMixin, DereferenceMixin, delay, arrayOf } from '@semapps/ldp';
+// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { solid, skos, apods } from '@semapps/ontologies';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { namedNode, triple } from '@rdfjs/data-model';
@@ -19,6 +20,7 @@ const TypeIndexesSchema = {
   },
   dependencies: ['ontologies'],
   created() {
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "type-registra... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [TypeRegistrationsService]
     });
@@ -34,6 +36,7 @@ const TypeIndexesSchema = {
       async handler(ctx) {
         const { webId } = ctx.params;
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const indexUri = await this.actions.post(
           {
             resource: {
@@ -59,6 +62,7 @@ const TypeIndexesSchema = {
         await ctx.call('ldp.resource.patch', {
           resourceUri: webId,
           triplesToAdd: [
+            // @ts-expect-error TS(2345): Argument of type 'NamedNode<never>' is not assigna... Remove this comment to see the full error message
             triple(namedNode(webId), namedNode('http://www.w3.org/ns/solid/terms#publicTypeIndex'), namedNode(indexUri))
           ],
           webId
@@ -70,15 +74,18 @@ const TypeIndexesSchema = {
       async handler(ctx) {
         const { webId } = ctx.params;
 
+        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         if (!(await this.preferencesFileAvailable()))
           throw new Error(`The private type index requires the SolidPreferencesFile service`);
 
         const preferencesUri = await ctx.call('solid-preferences-file.getResourceUri', { webId });
         if (!preferencesUri) throw new Error(`No preferences file found for user ${webId}`);
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const privateIndex = await this.actions.getPrivateIndex({ webId });
         if (privateIndex) throw new Error(`A private index already exist for user ${webId}`);
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const indexUri = await this.actions.post(
           {
             resource: {
@@ -94,6 +101,7 @@ const TypeIndexesSchema = {
           resourceUri: preferencesUri,
           triplesToAdd: [
             triple(
+              // @ts-expect-error TS(2345): Argument of type 'NamedNode<any>' is not assignabl... Remove this comment to see the full error message
               namedNode(preferencesUri),
               namedNode('http://www.w3.org/ns/solid/terms#privateTypeIndex'),
               namedNode(indexUri)
@@ -122,6 +130,7 @@ const TypeIndexesSchema = {
       async handler(ctx) {
         const { webId } = ctx.params;
 
+        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         if (!(await this.preferencesFileAvailable()))
           throw new Error(`The private type index requires the SolidPreferencesFile service`);
 
@@ -143,10 +152,13 @@ const TypeIndexesSchema = {
           try {
             indexUri =
               type === 'private'
-                ? await this.actions.getPrivateIndex({ webId })
-                : await this.actions.getPublicIndex({ webId });
+                ? // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+                  await this.actions.getPrivateIndex({ webId })
+                : // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+                  await this.actions.getPublicIndex({ webId });
           } catch (e) {
             // Ignore 404 errors
+            // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
             if (e.code !== 404) throw e;
           }
         } while (!indexUri || attempts > 30);
@@ -168,6 +180,7 @@ const TypeIndexesSchema = {
         const { webId } = ctx.params;
 
         const containers = await ctx.call('ldp.registry.list');
+        // @ts-expect-error TS(18046): 'container' is of type 'unknown'.
         const numContainersWithTypeIndex = Object.values(containers).filter(container => container.typeIndex).length;
 
         let numTypeRegistrations;
@@ -188,23 +201,28 @@ const TypeIndexesSchema = {
   methods: {
     async preferencesFileAvailable() {
       const services = await this.broker.call('$node.services');
-      return services.some(s => s.name === 'solid-preferences-file');
+      return services.some((s: any) => s.name === 'solid-preferences-file');
     }
   },
   events: {
     'auth.registered': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'ServiceEv... Remove this comment to see the full error message
         const { webId } = ctx.params;
 
         // Wait until the /solid/type-index container has been created for the user
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         const indexesContainerUri = await this.actions.getContainerUri({ webId }, { parentCtx: ctx });
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.waitForContainerCreation({ containerUri: indexesContainerUri }, { parentCtx: ctx });
 
         // Wait until the /solid/type-registration container has been created for the user
         const registrationsContainerUri = await ctx.call('type-registrations.getContainerUri', { webId });
         await ctx.call('type-registrations.waitForContainerCreation', { containerUri: registrationsContainerUri });
 
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.createPublicIndex({ webId }, { parentCtx: ctx });
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.createPrivateIndex({ webId }, { parentCtx: ctx });
       }
     })

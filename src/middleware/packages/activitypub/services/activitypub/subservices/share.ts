@@ -27,11 +27,13 @@ const ShareService = {
         // Create the /shares collection and attach it to the object, unless it already exists
         const collectionUri = await ctx.call('activitypub.collections-registry.createAndAttachCollection', {
           objectUri,
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           collection: this.settings.collectionOptions,
           webId: 'system'
         });
 
         // Add the announce to the shares collection
+        // @ts-expect-error TS(2339): Property 'id' does not exist on type 'never'.
         await ctx.call('activitypub.collection.add', { collectionUri, item: announce.id });
       }
     }),
@@ -46,6 +48,7 @@ const ShareService = {
         if (object?.shares) {
           await ctx.call('activitypub.collection.remove', {
             collectionUri: object.shares,
+            // @ts-expect-error TS(2339): Property 'id' does not exist on type 'never'.
             item: announce.id
           });
         }
@@ -56,6 +59,7 @@ const ShareService = {
       async handler(ctx) {
         const { dataset } = ctx.params;
         await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           collection: this.settings.collectionOptions,
           dataset
         });
@@ -64,7 +68,7 @@ const ShareService = {
   },
   activities: {
     shareObject: {
-      async match(activity, fetcher) {
+      async match(activity: any, fetcher: any) {
         const { match, dereferencedActivity } = await matchActivity(
           {
             // looking for an announce activity
@@ -74,16 +78,18 @@ const ShareService = {
           fetcher
         );
         return {
+          // @ts-expect-error TS(2339): Property 'broker' does not exist on type '{ match(... Remove this comment to see the full error message
           match: match && (await this.broker.call('activitypub.activity.isPublic', { activity })),
           dereferencedActivity
         };
       },
-      async onReceive(ctx, activity) {
+      async onReceive(ctx: any, activity: any) {
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
         await this.actions.addShare({ objectUri: activity.object, announce: activity }, { parentCtx: ctx });
       }
     },
     unshareObject: {
-      async match(activity, fetcher) {
+      async match(activity: any, fetcher: any) {
         const { match, dereferencedActivity } = await matchActivity(
           {
             // looking for an undo activity targeting an announce activity
@@ -97,7 +103,8 @@ const ShareService = {
         );
         return { match, dereferencedActivity };
       },
-      async onReceive(ctx, activity) {
+      async onReceive(ctx: any, activity: any) {
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
         await this.actions.removeShare(
           { objectUri: activity.object?.object, announce: activity.object },
           { parentCtx: ctx }

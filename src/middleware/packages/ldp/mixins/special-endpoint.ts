@@ -22,7 +22,9 @@ const Schema = {
     const middlewares = [parseUrl, parseHeader, negotiateAccept, parseJson, parseTurtle];
 
     let aliases = {};
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     aliases['GET /'] = [...middlewares, `${this.name}.endpointGet`];
+    // @ts-expect-error TS(2774): This condition will always return true since this ... Remove this comment to see the full error message
     if (this.actions.endpointPost) aliases['POST /'] = [...middlewares, `${this.name}.endpointPost`];
 
     await this.broker.call('api.addRoute', {
@@ -68,9 +70,11 @@ const Schema = {
           'ldp.resource.patch',
           {
             resourceUri: this.endpointUrl,
+            // @ts-expect-error TS(2345): Argument of type 'NamedNode<string>' is not assign... Remove this comment to see the full error message
             triplesToAdd: [triple(namedNode(this.endpointUrl), predicate, object)],
             webId: 'system'
           },
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           { meta: { dataset: this.settings.settingsDataset, skipEmitEvent: true, skipObjectsWatcher: true } }
         );
       }
@@ -78,20 +82,24 @@ const Schema = {
 
     endpointGet: defineAction({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property '$responseType' does not exist on type '{... Remove this comment to see the full error message
         ctx.meta.$responseType = ctx.meta.headers?.accept;
 
         return await ctx.call(
           'ldp.resource.get',
           {
             resourceUri: this.endpointUrl,
+            // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
             accept: ctx.meta.headers?.accept,
             webId: 'system'
           },
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           { meta: { dataset: this.settings.settingsDataset } }
         );
       }
     })
   }
+  // @ts-expect-error TS(1360): Type '{ settings: { baseUrl: null; settingsDataset... Remove this comment to see the full error message
 } satisfies ServiceSchema;
 
 export default Schema;

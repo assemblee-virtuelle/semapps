@@ -1,10 +1,12 @@
 import { MIME_TYPES } from '@semapps/mime-types';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
 import { uuidv4 as v4 } from 'uuid';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'mime... Remove this comment to see the full error message
 import mime from 'mime-types';
 
 const { MoleculerError } = require('moleculer').Errors;
 
-export default async function post(ctx) {
+export default async function post(this: any, ctx: any) {
   try {
     const { username, slugParts, ...resource } = ctx.params;
 
@@ -25,6 +27,7 @@ export default async function post(ctx) {
       }
 
       const extension = mime.extension(ctx.params.files[0].mimetype);
+      // @ts-expect-error TS(2304): Cannot find name 'uuidv4'.
       const slug = extension ? `${uuidv4()}.${extension}}` : uuidv4();
 
       resourceUri = await ctx.call(controlledActions.post || 'ldp.container.post', {
@@ -43,8 +46,11 @@ export default async function post(ctx) {
     ctx.meta.$location = resourceUri;
     ctx.meta.$statusCode = 201;
   } catch (e) {
+    // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
     if (e.code < 400 && e.code >= 500) console.error(e);
+    // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
     ctx.meta.$statusCode = e.code || 500;
+    // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
     ctx.meta.$statusMessage = e.message;
   }
 }

@@ -1,3 +1,4 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'node... Remove this comment to see the full error message
 import fetch from 'node-fetch';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { defineAction } from 'moleculer';
@@ -18,12 +19,15 @@ const Schema = defineAction({
   },
   async handler(ctx) {
     const { resourceUri, accept, jsonContext } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const headers = new fetch.Headers({ accept });
     if (jsonContext) headers.set('JsonLdContext', JSON.stringify(jsonContext));
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     if (!(await this.actions.isRemote({ resourceUri }, { parentCtx: ctx }))) {
       throw new Error(
+        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
         `The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId} / dataset ${ctx.meta.dataset})`
       );
     }
@@ -32,7 +36,9 @@ const Schema = defineAction({
       webId &&
       webId !== 'system' &&
       webId !== 'anon' &&
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       webId.startsWith(this.settings.baseUrl) &&
+      // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
       (await this.proxyAvailable())
     ) {
       const response = await ctx.call('signature.proxy.query', {

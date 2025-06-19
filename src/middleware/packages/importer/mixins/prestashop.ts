@@ -17,8 +17,8 @@ const Schema = {
       },
       fieldsMapping: {
         slug: 'link_rewrite',
-        created: data => convertToIsoString(data.date_add),
-        updated: data => convertToIsoString(data.date_upd)
+        created: (data: any) => convertToIsoString(data.date_add),
+        updated: (data: any) => convertToIsoString(data.date_upd)
       }
     }
   },
@@ -38,7 +38,7 @@ const Schema = {
       'api',
       this.settings.source.prestashop.type
     )}?display=[id,date_upd]`;
-    this.settings.source.getOneFull = data =>
+    this.settings.source.getOneFull = (data: any) =>
       urlJoin(this.settings.source.prestashop.baseUrl, 'api', this.settings.source.prestashop.type, `${data.id}`);
     this.settings.source.headers.Authorization = `Basic ${Buffer.from(
       `${this.settings.source.prestashop.wsKey}:`
@@ -53,6 +53,7 @@ const Schema = {
       const result = await this.fetch(url);
       if (result) {
         return {
+          // @ts-expect-error TS(2698): Spread types may only be created from object types... Remove this comment to see the full error message
           ...Object.values(result)[0],
           type: Object.keys(result)[0]
         };
@@ -60,6 +61,7 @@ const Schema = {
       return false;
     }
   }
+  // @ts-expect-error TS(1360): Type '{ mixins: { settings: { source: { apiUrl: nu... Remove this comment to see the full error message
 } satisfies ServiceSchema;
 
 export default Schema;

@@ -1,4 +1,5 @@
 import urlJoin from 'url-join';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'open... Remove this comment to see the full error message
 import { Issuer, Strategy, custom } from 'openid-client';
 
 import { ServiceSchema } from 'moleculer';
@@ -53,13 +54,13 @@ const AuthOIDCService = {
           params,
           passReqToCallback: true
         },
-        (req, tokenset, userinfo, done) => {
+        (req: any, tokenset: any, userinfo: any, done: any) => {
           req.$ctx
             .call('auth.loginOrSignup', { ssoData: userinfo })
-            .then(loginData => {
+            .then((loginData: any) => {
               done(null, loginData);
             })
-            .catch(e => {
+            .catch((e: any) => {
               console.error(e);
               done(null, false);
             });
@@ -74,6 +75,7 @@ export default AuthOIDCService;
 declare global {
   export namespace Moleculer {
     export interface AllServices {
+      // @ts-expect-error TS(2717): Subsequent property declarations must have the sam... Remove this comment to see the full error message
       [AuthOIDCService.name]: typeof AuthOIDCService;
     }
   }

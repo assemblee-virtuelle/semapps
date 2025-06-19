@@ -1,7 +1,7 @@
 import path from 'path';
 import { parseHeader, negotiateContentType, negotiateAccept, parseJson } from '@semapps/middlewares';
 
-const onError = (req, res, err) => {
+const onError = (req: any, res: any, err: any) => {
   const { type, code, message, data, name } = err;
   res.writeHead(Number(code) || 500, data && data.status ? data.status : 'Server error', {
     'Content-Type': 'application/json'
@@ -9,7 +9,7 @@ const onError = (req, res, err) => {
   res.end(JSON.stringify({ type, code, message, data, name }));
 };
 
-const getRoutes = (basePath, podProvider) => {
+const getRoutes = (basePath: any, podProvider: any) => {
   const middlewares = [parseHeader, parseJson, negotiateContentType, negotiateAccept];
 
   return [
@@ -25,7 +25,7 @@ const getRoutes = (basePath, podProvider) => {
           type: ['text/turtle', 'application/ld+json']
         }
       },
-      onBeforeCall(ctx, route, req) {
+      onBeforeCall(ctx: any, route: any, req: any) {
         ctx.meta.body = req.body;
       },
       aliases: {

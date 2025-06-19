@@ -1,11 +1,14 @@
 import { ServiceBroker, defineAction } from 'moleculer';
 import fs from 'fs';
+// @ts-expect-error TS(2305): Module '"path"' has no exported member 'pathJoin'.
 import path, { pathJoin as join } from 'path';
 import { CoreService } from '@semapps/core';
+// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { pair, petr } from '@semapps/ontologies';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { AuthLocalService } from '@semapps/auth';
 import { ControlledContainerMixin } from '@semapps/ldp';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import CONFIG from '../config.ts';
 import { clearDataset } from '../utils.ts';
 
@@ -47,12 +50,14 @@ const containers = [
 const initialize = async () => {
   await clearDataset(CONFIG.MAIN_DATASET);
 
+  // @ts-expect-error TS(2304): Cannot find name 'pathJoin'.
   const uploadsPath = pathJoin(__dirname, '../uploads');
   if (fs.existsSync(uploadsPath)) {
     fs.readdirSync(uploadsPath).forEach(f => fs.rmSync(`${uploadsPath}/${f}`, { recursive: true, force: true }));
   }
 
   const broker = new ServiceBroker({
+    // @ts-expect-error TS(2322): Type '{ name: "CacherMiddleware"; created(broker: ... Remove this comment to see the full error message
     middlewares: [CacherMiddleware(CONFIG.ACTIVATE_CACHE), WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
     logger: {
       type: 'Console',
@@ -62,6 +67,7 @@ const initialize = async () => {
     }
   });
 
+  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "core"; settin... Remove this comment to see the full error message
   broker.createService({
     mixins: [CoreService],
     settings: {
@@ -85,6 +91,7 @@ const initialize = async () => {
     }
   });
 
+  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "auth"; mixins... Remove this comment to see the full error message
   broker.createService({
     mixins: [AuthLocalService],
     settings: {

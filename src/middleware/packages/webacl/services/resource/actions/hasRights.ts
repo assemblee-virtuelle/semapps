@@ -18,14 +18,14 @@ const perms = {
 };
 
 async function checkRights(
-  askedRights,
-  resultRights,
-  ctx,
-  resourceUri,
-  resourceAclUri,
-  uaSearchParam,
-  graphName,
-  isContainerDefault
+  askedRights: any,
+  resultRights: any,
+  ctx: any,
+  resourceUri: any,
+  resourceAclUri: any,
+  uaSearchParam: any,
+  graphName: any,
+  isContainerDefault: any
 ) {
   for (const [p1, p2] of Object.entries(perms)) {
     if (askedRights[p1] && !resultRights[p1]) {
@@ -43,7 +43,7 @@ async function checkRights(
   }
 }
 
-async function hasPermissions(ctx, resourceUri, askedRights, baseUrl, user, graphName) {
+async function hasPermissions(ctx: any, resourceUri: any, askedRights: any, baseUrl: any, user: any, graphName: any) {
   const resourceAclUri = getAclUriFromResourceUri(baseUrl, resourceUri);
   const resultRights = {};
   let groups;
@@ -53,6 +53,7 @@ async function hasPermissions(ctx, resourceUri, askedRights, baseUrl, user, grap
   }
   const uaSearchParam = getUserAgentSearchParam(user, groups);
 
+  // @ts-expect-error TS(2554): Expected 8 arguments, but got 7.
   await checkRights(askedRights, resultRights, ctx, resourceUri, resourceAclUri, uaSearchParam, graphName);
 
   if (Object.keys(askedRights).length !== Object.keys(resultRights).length) {
@@ -75,13 +76,14 @@ async function hasPermissions(ctx, resourceUri, askedRights, baseUrl, user, grap
 
   // we put some false values if needed
   for (const p1 of Object.keys(perms)) {
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     if (askedRights[p1] && !resultRights[p1]) resultRights[p1] = false;
   }
 
   return resultRights;
 }
 
-export const api = async function api(ctx) {
+export const api = async function api(this: any, ctx: any) {
   let { slugParts } = ctx.params;
 
   // This is the root container
@@ -114,17 +116,23 @@ export const action = defineAction({
   cache: {
     enabled(ctx) {
       // Do not cache remote resources as we have no mecanism to clear this cache
+      // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Boolea... Remove this comment to see the full error message
       return ctx.params.resourceUri.startsWith(this.settings.baseUrl);
     },
     keys: ['resourceUri', 'rights', 'webId']
   },
   async handler(ctx) {
     let { resourceUri, webId, rights } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     webId = webId || ctx.meta.webId || 'anon';
+    // @ts-expect-error TS(2322): Type '{}' is not assignable to type 'undefined'.
     rights = rights || {};
+    // @ts-expect-error TS(2769): No overload matches this call.
     if (Object.keys(rights).length === 0) rights = { read: true, write: true, append: true, control: true };
 
+    // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
     await this.checkResourceOrContainerExists(ctx, resourceUri);
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     return await hasPermissions(ctx, resourceUri, rights, this.settings.baseUrl, webId, this.settings.graphName);
   }
 });

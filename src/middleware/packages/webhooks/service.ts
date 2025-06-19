@@ -8,6 +8,7 @@ const { MoleculerError, ServiceSchemaError } = require('moleculer').Errors;
 const WebhooksService = {
   name: 'webhooks' as const,
   mixins: [DbService],
+  // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
   adapter: new TripleStoreAdapter(),
   settings: {
     containerUri: null,
@@ -16,7 +17,7 @@ const WebhooksService = {
   },
   dependencies: ['api', 'ldp'],
   async started() {
-    this.settings.allowedActions.forEach(actionName => {
+    this.settings.allowedActions.forEach((actionName: any) => {
       if (!this.actions[actionName]) {
         throw new ServiceSchemaError(`Missing action "${actionName}" in service settings!`);
       }
@@ -33,15 +34,18 @@ const WebhooksService = {
         let webhook;
 
         try {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           webhook = await this.actions.get({ id: hash }, { parentCtx: ctx });
         } catch (e) {
           throw new MoleculerError('Webhook not found', 404, 'NOT_FOUND');
         }
 
         if (this.createJob) {
+          // @ts-expect-error TS(2349): This expression is not callable.
           this.createJob('webhooks', webhook.action, { data, user: webhook.user });
         } else {
           // If no queue service is defined, run webhook immediately
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           return await this.actions[webhook.action]({ data, user: webhook.user }, { parentCtx: ctx });
         }
       }
@@ -49,13 +53,16 @@ const WebhooksService = {
 
     generate: defineAction({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const userUri = ctx.meta.webId || ctx.params.userUri;
         const { action } = ctx.params;
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (!userUri || userUri === 'anon' || !action || !this.settings.allowedActions.includes(action)) {
           throw new MoleculerError('Bad request', 400, 'BAD_REQUEST');
         }
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const webhook = await this.actions.create(
           {
             '@type': 'Webhook',
@@ -74,6 +81,7 @@ const WebhooksService = {
         return [
           // Unsecured routes
           {
+            // @ts-expect-error TS(2345): Argument of type 'Context<{ [x: string]: never; $$... Remove this comment to see the full error message
             path: path.join(basePath, '/webhooks'),
             name: 'webhooks-process' as const,
             bodyParsers: { json: true },
@@ -85,6 +93,7 @@ const WebhooksService = {
           },
           // Secured routes
           {
+            // @ts-expect-error TS(2345): Argument of type 'Context<{ [x: string]: never; $$... Remove this comment to see the full error message
             path: path.join(basePath, '/webhooks'),
             name: 'webhooks-generate' as const,
             bodyParsers: { json: true },
@@ -101,7 +110,9 @@ const WebhooksService = {
   queues: {
     webhooks: {
       name: '*' as const,
-      async process(job) {
+      // @ts-expect-error TS(7023): 'process' implicitly has return type 'any' because... Remove this comment to see the full error message
+      async process(job: any) {
+        // @ts-expect-error TS(7022): 'result' implicitly has type 'any' because it does... Remove this comment to see the full error message
         const result = await this.actions[job.name](job.data);
 
         job.progress(100);

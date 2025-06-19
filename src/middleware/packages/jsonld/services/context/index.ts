@@ -18,7 +18,7 @@ const JsonldContextSchema = {
         load: async url => {
           const result = await this.broker
             .call('jsonld.document-loader.loadWithCache', { url })
-            .then(context => context.document);
+            .then((context: any) => context.document);
 
           // Manually clear the contextParser inner cache as we don't want to use it
           // See https://github.com/rubensworks/jsonld-context-parser.js/issues/75

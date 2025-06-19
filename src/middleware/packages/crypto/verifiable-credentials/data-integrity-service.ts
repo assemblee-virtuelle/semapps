@@ -1,9 +1,13 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'json... Remove this comment to see the full error message
 import jsigs from 'jsonld-signatures';
 
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import { cryptosuite } from '@digitalbazaar/eddsa-rdfc-2022-cryptosuite';
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
 
 /** @type {import('@digitalbazaar/ed25519-multikey')} */
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
 
 import { ServiceSchema, defineAction } from 'moleculer';
@@ -27,7 +31,7 @@ const DataIntegrityService = {
   dependencies: ['ldp', 'api'],
 
   async started() {
-    this.documentLoader = async (url, options) => {
+    this.documentLoader = async (url: any, options: any) => {
       return await this.broker.call('jsonld.document-loader.loadWithCache', { url, options });
     };
   },
@@ -86,6 +90,7 @@ const DataIntegrityService = {
           object,
           options: { proofPurpose: method = 'assertionMethod' } = {},
           purpose = new AssertionProofPurpose({ term: method }),
+          // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
           webId = ctx.meta.webId,
           keyObject = undefined,
           keyId = undefined

@@ -61,6 +61,7 @@ const NodeinfoService = {
     addLink: defineAction({
       handler(ctx) {
         const { rel, href } = ctx.params;
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.links.push({ rel, href });
       }
     }),
@@ -75,14 +76,20 @@ const NodeinfoService = {
 
     getSchema: defineAction({
       async handler(ctx) {
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const users = await this.actions.getUsersCount({}, { parentCtx: ctx });
         return {
           version: '2.1' as const,
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           software: this.settings.software,
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           protocols: this.settings.protocols,
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           services: this.settings.services,
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           openRegistrations: this.settings.openRegistrations,
           usage: { users },
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           metadata: this.settings.metadata
         };
       }

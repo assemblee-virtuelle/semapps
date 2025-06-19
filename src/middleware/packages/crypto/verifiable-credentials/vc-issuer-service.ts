@@ -1,10 +1,14 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import { cryptosuite } from '@digitalbazaar/eddsa-rdfc-2022-cryptosuite';
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import vc from '@digitalbazaar/vc';
 
 /** @type {import('@digitalbazaar/ed25519-multikey')} */
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
 
 import { ServiceSchema, defineAction } from 'moleculer';
@@ -28,7 +32,7 @@ const VCCredentialService = {
   },
 
   async started() {
-    this.documentLoader = async (url, options) => {
+    this.documentLoader = async (url: any, options: any) => {
       return await this.broker.call('jsonld.document-loader.loadWithCache', { url, options });
     };
   },
@@ -83,9 +87,12 @@ const VCCredentialService = {
       async handler(ctx) {
         const {
           credential: receivedCredential,
+          // @ts-expect-error TS(2339): Property 'proofPurpose' does not exist on type 'Ty... Remove this comment to see the full error message
           options: { proofPurpose = 'assertionMethod' },
+          // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
           webId = ctx.meta.webId,
           noAnonRead = false,
+          // @ts-expect-error TS(2339): Property 'purpose' does not exist on type '{ crede... Remove this comment to see the full error message
           purpose = new AssertionProofPurpose({ term: proofPurpose }),
           keyObject = undefined,
           keyId = undefined
@@ -102,7 +109,9 @@ const VCCredentialService = {
         const signingKeyInstance = await Ed25519Multikey.from(key);
 
         const credential = {
+          // @ts-expect-error TS(2783): '@context' is specified more than once, so this us... Remove this comment to see the full error message
           '@context': credentialsContext,
+          // @ts-expect-error TS(2783): 'type' is specified more than once, so this usage ... Remove this comment to see the full error message
           type: ['VerifiableCredential'],
           issuer: webId,
           ...receivedCredential
@@ -111,7 +120,8 @@ const VCCredentialService = {
         // Create the VC resource, if the id is not set.
         const credentialResource = credential.id
           ? credential
-          : await this.createCredentialResource(credential, noAnonRead, webId);
+          : // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
+            await this.createCredentialResource(credential, noAnonRead, webId);
 
         // Get signature suite
         const suite = new DataIntegrityProof({

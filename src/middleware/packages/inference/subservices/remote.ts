@@ -1,3 +1,4 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'node... Remove this comment to see the full error message
 import fetch from 'node-fetch';
 import N3 from 'n3';
 import { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin, matchActivity } from '@semapps/activitypub';
@@ -28,6 +29,7 @@ const InferenceRemoteSchema = {
         add: { type: 'boolean', optional: false }
       },
       async handler(ctx) {
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (this.settings.offerToRemoteServers) {
           const serverDomainName = new URL(ctx.params.subject).host;
           const remoteRelayActorUri = await ctx.call('webfinger.getRemoteUri', {
@@ -36,8 +38,10 @@ const InferenceRemoteSchema = {
 
           if (remoteRelayActorUri) {
             await ctx.call('activitypub.outbox.post', {
+              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               collectionUri: this.relayActor.outbox,
               '@context': 'https://www.w3.org/ns/activitystreams',
+              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               actor: this.relayActor.id,
               type: ACTIVITY_TYPES.OFFER,
               object: {
@@ -79,7 +83,9 @@ const InferenceRemoteSchema = {
                 });
               }
             } catch (e) {
+              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               this.logger.warn(
+                // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
                 `Error while connecting to remove server for offering inverse relationship: ${e.message}`
               );
             }
@@ -90,7 +96,7 @@ const InferenceRemoteSchema = {
   },
   activities: {
     offerInference: {
-      async match(activity, fetcher) {
+      async match(activity: any, fetcher: any) {
         let { match, dereferencedActivity } = await matchActivity(
           {
             type: ACTIVITY_TYPES.OFFER,
@@ -123,11 +129,13 @@ const InferenceRemoteSchema = {
 
         return { match, dereferencedActivity };
       },
-      async onReceive(ctx, activity, recipientUri) {
+      async onReceive(ctx: any, activity: any, recipientUri: any) {
+        // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ matc... Remove this comment to see the full error message
         if (this.settings.acceptFromRemoteServers && recipientUri === this.relayActor.id) {
           const relationship = activity.object.object;
           if (relationship.subject && relationship.relationship && relationship.object) {
             if (await ctx.call('ldp.remote.isRemote', { resourceUri: relationship.subject })) {
+              // @ts-expect-error TS(2339): Property 'logger' does not exist on type '{ match(... Remove this comment to see the full error message
               this.logger.warn('Attempt at offering an inverse relationship on a remote resource. Aborting...');
               return;
             }
@@ -158,6 +166,7 @@ const InferenceRemoteSchema = {
               webId: 'system'
             });
 
+            // @ts-expect-error TS(2339): Property 'broker' does not exist on type '{ match(... Remove this comment to see the full error message
             if (this.broker.cacher) {
               await ctx.call('ldp.cache.invalidateResource', { resourceUri: relationship.subject });
             }

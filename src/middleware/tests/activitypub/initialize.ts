@@ -1,3 +1,4 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'fs-e... Remove this comment to see the full error message
 import fse from 'fs-extra';
 import path from 'path';
 import urlJoin from 'url-join';
@@ -6,6 +7,7 @@ import { AuthLocalService } from '@semapps/auth';
 import { CoreService } from '@semapps/core';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { FULL_OBJECT_TYPES, FULL_ACTOR_TYPES } from '@semapps/activitypub';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import CONFIG from '../config.ts';
 import { clearDataset, clearQueue } from '../utils.ts';
 
@@ -16,7 +18,7 @@ const containers = [
   }
 ];
 
-const initialize = async (port, mainDataset, accountsDataset, queueServiceDb = 0) => {
+const initialize = async (port: any, mainDataset: any, accountsDataset: any, queueServiceDb = 0) => {
   const baseUrl = `http://localhost:${port}/`;
   const queueServiceUrl = `redis://localhost:6379/${queueServiceDb}`;
 
@@ -26,6 +28,7 @@ const initialize = async (port, mainDataset, accountsDataset, queueServiceDb = 0
 
   const broker = new ServiceBroker({
     nodeID: `server${port}`,
+    // @ts-expect-error TS(2322): Type '{ name: "CacherMiddleware"; created(broker: ... Remove this comment to see the full error message
     middlewares: [CacherMiddleware(CONFIG.ACTIVATE_CACHE), WebAclMiddleware({ baseUrl })],
     logger: {
       type: 'Console',
@@ -38,6 +41,7 @@ const initialize = async (port, mainDataset, accountsDataset, queueServiceDb = 0
   // Remove all actors keys
   await fse.emptyDir(path.resolve(__dirname, './actors'));
 
+  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "core"; settin... Remove this comment to see the full error message
   broker.createService({
     mixins: [CoreService],
     settings: {
@@ -65,6 +69,7 @@ const initialize = async (port, mainDataset, accountsDataset, queueServiceDb = 0
     }
   });
 
+  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "auth"; mixins... Remove this comment to see the full error message
   broker.createService({
     mixins: [AuthLocalService],
     settings: {

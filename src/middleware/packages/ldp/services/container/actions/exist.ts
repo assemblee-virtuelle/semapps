@@ -8,6 +8,7 @@ const Schema = defineAction({
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     // Matches container with or without trailing slash
     const containerUri = ctx.params.containerUri.replace(/\/+$/, '');
@@ -19,6 +20,7 @@ const Schema = defineAction({
         PREFIX ldp: <http://www.w3.org/ns/ldp#>
         ASK
         WHERE { 
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           ${isRemoteContainer ? `GRAPH <${this.settings.mirrorGraphName}> {` : ''}
           ?container a ldp:Container .
           FILTER(?container IN (<${containerUri}>, <${`${containerUri}/`}>)) .

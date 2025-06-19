@@ -27,12 +27,15 @@ const TypeRegistrationsSchema = {
         let { types, containerUri, webId, isPrivate } = ctx.params;
 
         // Wait for the container with type registrations to be created
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const typeRegistrationsContainerUri = await this.actions.getContainerUri({ webId });
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         await this.actions.waitForContainerCreation({ containerUri: typeRegistrationsContainerUri });
 
         const expandedTypes = await ctx.call('jsonld.parser.expandTypes', { types });
 
         // Check if the provided container is already registered
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const existingRegistration = await this.actions.getByContainerUri({ containerUri, webId });
 
         if (existingRegistration) {
@@ -40,11 +43,13 @@ const TypeRegistrationsSchema = {
             types: existingRegistration['solid:forClass']
           });
 
-          const newExpandedTypes = expandedTypes.filter(t => !oldExpandedTypes.includes(t));
+          const newExpandedTypes = expandedTypes.filter((t: any) => !oldExpandedTypes.includes(t));
 
           if (newExpandedTypes.length > 0) {
             for (const expandedType of newExpandedTypes) {
+              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               this.logger.info(`Adding type ${expandedType} to type registration ${existingRegistration.id}`);
+              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               await this.actions.patch({
                 resourceUri: existingRegistration.id,
                 triplesToAdd: [
@@ -58,10 +63,12 @@ const TypeRegistrationsSchema = {
               });
             }
           } else {
+            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             this.logger.info(`The container ${containerUri} is already registered. Skipping...`);
           }
         } else {
           // Create the type registration
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           const registrationUri = await this.actions.post(
             {
               resource: {
@@ -100,6 +107,7 @@ const TypeRegistrationsSchema = {
             resourceUri: indexUri,
             triplesToAdd: [
               triple(
+                // @ts-expect-error TS(2345): Argument of type 'NamedNode<any>' is not assignabl... Remove this comment to see the full error message
                 namedNode(indexUri),
                 namedNode('http://www.w3.org/ns/solid/terms#hasTypeRegistration'),
                 namedNode(registrationUri)
@@ -128,6 +136,7 @@ const TypeRegistrationsSchema = {
       async handler(ctx) {
         const { containerUri, appUri, webId } = ctx.params;
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         let registration = await this.actions.getByContainerUri({ containerUri, webId }, { parentCtx: ctx });
         if (!registration) throw new Error(`No registration found for container ${containerUri}`);
 
@@ -158,6 +167,7 @@ const TypeRegistrationsSchema = {
       async handler(ctx) {
         const { containerUri, appUri, webId } = ctx.params;
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         let registration = await this.actions.getByContainerUri({ containerUri, webId }, { parentCtx: ctx });
         if (!registration) throw new Error(`No registration found for container ${containerUri}`);
 
@@ -191,6 +201,7 @@ const TypeRegistrationsSchema = {
 
         const [expandedType] = await ctx.call('jsonld.parser.expandTypes', { types: [type] });
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const filteredContainer = await this.actions.list(
           {
             filters: { 'http://www.w3.org/ns/solid/terms#forClass': expandedType },
@@ -213,6 +224,7 @@ const TypeRegistrationsSchema = {
       async handler(ctx) {
         const { containerUri, webId } = ctx.params;
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const filteredContainer = await this.actions.list(
           {
             filters: { 'http://www.w3.org/ns/solid/terms#instanceContainer': containerUri },
@@ -235,9 +247,10 @@ const TypeRegistrationsSchema = {
       async handler(ctx) {
         const { type, webId } = ctx.params;
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const registrations = await this.actions.getByType({ type, webId }, { parentCtx: ctx });
 
-        return registrations.map(r => r['solid:instanceContainer']);
+        return registrations.map((r: any) => r['solid:instanceContainer']);
       }
     }),
 
@@ -256,12 +269,14 @@ const TypeRegistrationsSchema = {
         // Delete all existing type registration of the given user
         // We don't use ldp.container.clear to ensure the delete hook below is called
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const typeRegistrationsContainerUri = await this.actions.getContainerUri({ webId });
         const typeRegistrationsUris = await ctx.call('ldp.container.getUris', {
           containerUri: typeRegistrationsContainerUri
         });
 
         for (const typeRegistrationUri of typeRegistrationsUris) {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           await this.actions.delete({ resourceUri: typeRegistrationUri, webId: 'system' });
         }
 
@@ -271,13 +286,18 @@ const TypeRegistrationsSchema = {
         const podUrl = await ctx.call('solid-storage.getUrl', { webId });
 
         for (const options of Object.values(registeredContainers)) {
+          // @ts-expect-error TS(18046): 'options' is of type 'unknown'.
           if (options.typeIndex) {
+            // @ts-expect-error TS(18046): 'options' is of type 'unknown'.
             const containerUri = urlJoin(podUrl, options.path);
+            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             await this.actions.register(
               {
+                // @ts-expect-error TS(18046): 'options' is of type 'unknown'.
                 types: arrayOf(options.acceptedTypes),
                 containerUri,
                 webId,
+                // @ts-expect-error TS(18046): 'options' is of type 'unknown'.
                 isPrivate: options.typeIndex === 'private'
               },
               { parentCtx: ctx }
@@ -290,11 +310,13 @@ const TypeRegistrationsSchema = {
   events: {
     'ldp.container.created': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'containerUri' does not exist on type 'Se... Remove this comment to see the full error message
         const { containerUri, options, webId } = ctx.params;
 
         if (options?.typeIndex) {
           await ctx.call('type-indexes.waitForIndexCreation', { type: options.typeIndex, webId });
 
+          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
           await this.actions.register(
             {
               types: arrayOf(options?.acceptedTypes),

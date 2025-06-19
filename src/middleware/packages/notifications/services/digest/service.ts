@@ -1,3 +1,4 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'mole... Remove this comment to see the full error message
 import MailService from 'moleculer-mail';
 import cronParser from 'cron-parser';
 import { TripleStoreAdapter } from '@semapps/triplestore';
@@ -23,6 +24,7 @@ const DigestNotificationsService = {
   },
   dependencies: ['digest.subscription'],
   created() {
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "digest.subscr... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [DigestSubscriptionService],
       adapter: new TripleStoreAdapter({ type: 'DigestSubscription', dataset: this.settings.subscriptionsDataset })
@@ -46,8 +48,10 @@ const DigestNotificationsService = {
 
         const currentDate = timestamp ? new Date(timestamp) : new Date();
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const interval = cronParser.parseExpression(this.settings.frequencies[frequency], {
           currentDate,
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           tz: this.settings.timeZone
         });
 
@@ -75,14 +79,18 @@ const DigestNotificationsService = {
                   activity,
                   locale: subscription.locale || account.locale
                 });
+                // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
                 if (notification && (await this.filterNotification(notification, subscription, notifications))) {
                   notifications.push(notification);
                   if (notification.category) {
+                    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                     if (!notificationsByCategories[notification.category])
+                      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                       notificationsByCategories[notification.category] = {
                         category: notification.category,
                         notifications: []
                       };
+                    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                     notificationsByCategories[notification.category].notifications.push(notification);
                   }
                 }
@@ -90,6 +98,7 @@ const DigestNotificationsService = {
 
               // If we have at least one notification, send email
               if (notifications.length > 0) {
+                // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
                 await this.actions.send(
                   {
                     to: subscription.email || account.email,
@@ -120,6 +129,7 @@ const DigestNotificationsService = {
             }
           } catch (e) {
             failures.push({
+              // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
               error: e.message,
               subscription
             });
@@ -141,7 +151,8 @@ const DigestNotificationsService = {
     build: [
       {
         name: '*' as const,
-        process(job) {
+        process(job: any) {
+          // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ name:... Remove this comment to see the full error message
           return this.actions.build({ frequency: job.name, timestamp: job.opts.prevMillis });
         }
       }

@@ -35,6 +35,7 @@ const FollowService = {
       async handler(ctx) {
         const { follower, following } = ctx.params;
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (this.isLocalActor(following)) {
           const actor = await ctx.call('activitypub.actor.get', { actorUri: following });
           if (actor.followers) {
@@ -46,6 +47,7 @@ const FollowService = {
         }
 
         // Add reverse relation
+        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         if (this.isLocalActor(follower)) {
           const actor = await ctx.call('activitypub.actor.get', { actorUri: follower });
           if (actor.following) {
@@ -64,6 +66,7 @@ const FollowService = {
       async handler(ctx) {
         const { follower, following } = ctx.params;
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (this.isLocalActor(following)) {
           const actor = await ctx.call('activitypub.actor.get', { actorUri: following });
           if (actor.followers) {
@@ -75,6 +78,7 @@ const FollowService = {
         }
 
         // Add reverse relation
+        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         if (this.isLocalActor(follower)) {
           const actor = await ctx.call('activitypub.actor.get', { actorUri: follower });
           if (actor.following) {
@@ -93,6 +97,7 @@ const FollowService = {
       async handler(ctx) {
         const { follower, following } = ctx.params;
 
+        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         if (!this.isLocalActor(follower))
           throw new Error('The method activitypub.follow.isFollowing currently only works with local actors');
 
@@ -128,10 +133,12 @@ const FollowService = {
       async handler(ctx) {
         const { dataset } = ctx.params;
         await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           collection: this.settings.followersCollectionOptions,
           dataset
         });
         await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           collection: this.settings.followingCollectionOptions,
           dataset
         });
@@ -143,10 +150,11 @@ const FollowService = {
       match: {
         type: ACTIVITY_TYPES.FOLLOW
       },
-      async onReceive(ctx, activity) {
+      async onReceive(ctx: any, activity: any) {
         const { '@context': context, ...activityObject } = activity;
         const actor = await ctx.call('activitypub.actor.get', { actorUri: activity.object });
 
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
         await this.actions.addFollower(
           {
             follower: activity.actor,
@@ -173,7 +181,8 @@ const FollowService = {
           type: ACTIVITY_TYPES.FOLLOW
         }
       },
-      async onReceive(ctx, activity) {
+      async onReceive(ctx: any, activity: any) {
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
         await this.actions.addFollower(
           {
             follower: activity.object.actor,
@@ -190,7 +199,8 @@ const FollowService = {
           type: ACTIVITY_TYPES.FOLLOW
         }
       },
-      async onEmit(ctx, activity) {
+      async onEmit(ctx: any, activity: any) {
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
         await this.actions.removeFollower(
           {
             follower: activity.object.actor || activity.actor,
@@ -199,7 +209,8 @@ const FollowService = {
           { parentCtx: ctx }
         );
       },
-      async onReceive(ctx, activity) {
+      async onReceive(ctx: any, activity: any) {
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
         await this.actions.removeFollower(
           {
             follower: activity.object.actor || activity.actor,
@@ -219,7 +230,8 @@ const FollowService = {
           }
         }
       },
-      async onReceive(ctx, activity) {
+      async onReceive(ctx: any, activity: any) {
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
         await this.actions.removeFollower(
           {
             follower: activity.object.object.actor || activity.actor,

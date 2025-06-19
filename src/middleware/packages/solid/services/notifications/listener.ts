@@ -1,10 +1,13 @@
 import path from 'path';
 import urlJoin from 'url-join';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'node... Remove this comment to see the full error message
 import fetch from 'node-fetch';
 import LinkHeader from 'http-link-header';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
 import { uuidv4 as v4 } from 'uuid';
 import DbService from 'moleculer-db';
 import { parseHeader, negotiateContentType, parseJson } from '@semapps/middlewares';
+// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { notify } from '@semapps/ontologies';
 import { TripleStoreAdapter } from '@semapps/triplestore';
 import { ServiceSchema, defineAction } from 'moleculer';
@@ -52,8 +55,9 @@ const SolidNotificationsListenerSchema = {
         const appActor = await ctx.call('app.get');
 
         // Check if a listener already exist
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const existingListener = this.listeners.find(
-          listener => listener.resourceUri === resourceUri && listener.actionName === actionName
+          (listener: any) => listener.resourceUri === resourceUri && listener.actionName === actionName
         );
 
         if (existingListener) {
@@ -68,12 +72,16 @@ const SolidNotificationsListenerSchema = {
             // If the channel still exist, registration is not needed
             return existingListener;
           } catch (e) {
+            // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
             if (e.code === 404) {
+              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               this.logger.warn(
                 `Channel ${existingListener.channelUri} doesn't exist anymore. Registering a new channel...`
               );
+              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               this.actions.remove({ id: existingListener['@id'] }, { parentCtx: ctx });
-              this.listeners = this.listeners.filter(l => l['@id'] !== existingListener['@id']);
+              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+              this.listeners = this.listeners.filter((l: any) => l['@id'] !== existingListener['@id']);
             } else {
               throw e;
             }
@@ -81,23 +89,24 @@ const SolidNotificationsListenerSchema = {
         }
 
         // Discover webhook endpoint
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const storageDescription = await this.getSolidEndpoint(resourceUri);
         if (!storageDescription) throw new Error(`No storageDescription found for resourceUri ${resourceUri}`);
 
         // Fetch all subscriptions URLs
         const results = await Promise.all(
-          storageDescription['notify:subscription'].map(channelSubscriptionUrl =>
+          storageDescription['notify:subscription'].map((channelSubscriptionUrl: any) =>
             fetch(channelSubscriptionUrl, {
               headers: {
                 Accept: 'application/ld+json'
               }
-            }).then(res => res.ok && res.json())
+            }).then((res: any) => res.ok && res.json())
           )
         );
 
         // Find webhook channel
         const webhookSubscription = results.find(
-          subscription => subscription && subscription['notify:channelType'] === 'notify:WebhookChannel2023'
+          (subscription: any) => subscription && subscription['notify:channelType'] === 'notify:WebhookChannel2023'
         );
 
         if (!webhookSubscription) throw new Error(`No webhook subscription URL found for resourceUri ${resourceUri}`);
@@ -105,16 +114,19 @@ const SolidNotificationsListenerSchema = {
         // Ensure webhookSubscription['notify:feature'] are correct
 
         // Generate a webhook path
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const webhookUrl = urlJoin(this.settings.baseUrl, '.webhooks', uuidv4());
 
         // Persist listener on the settings dataset
         // We must do it before creating the webhook channel, in case the webhook is called immediately
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         let listener = await this._create(ctx, {
           webhookUrl,
           resourceUri,
           actionName
         });
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.listeners.push(listener);
 
         // Create a webhook channel (authenticate with HTTP signature)
@@ -135,8 +147,11 @@ const SolidNotificationsListenerSchema = {
 
         // Keep track of the channel URI, to be able to check if it still exists
         listener.channelUri = body.id;
+        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         await this._update(ctx, listener);
-        const listenerIndex = this.listeners.findIndex(l => l['@id'] === listener['@id']);
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+        const listenerIndex = this.listeners.findIndex((l: any) => l['@id'] === listener['@id']);
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.listeners[listenerIndex] = listener;
 
         return listener;
@@ -146,9 +161,11 @@ const SolidNotificationsListenerSchema = {
     transfer: defineAction({
       async handler(ctx) {
         const { uuid, ...data } = ctx.params;
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const webhookUrl = urlJoin(this.settings.baseUrl, '.webhooks', uuid);
 
-        const listener = this.listeners.find(l => l.webhookUrl === webhookUrl);
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+        const listener = this.listeners.find((l: any) => l.webhookUrl === webhookUrl);
 
         if (listener) {
           try {
@@ -157,6 +174,7 @@ const SolidNotificationsListenerSchema = {
           } catch (e) {
             // Ignore errors that the actions may generate (otherwise 404 errors will be considered as non-existing webhooks)
           }
+          // @ts-expect-error TS(2339): Property '$statusCode' does not exist on type '{}'... Remove this comment to see the full error message
           ctx.meta.$statusCode = 200;
         } else {
           throw new MoleculerError(`No webhook found with URL ${webhookUrl}`, 404, 'NOT_FOUND');

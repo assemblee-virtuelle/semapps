@@ -28,6 +28,7 @@ const CollectionsRegistryService = {
         );
 
         // Persist the collection in memory
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.registeredCollections.push({ path, name, attachToTypes, ...options });
       }
     }),
@@ -55,8 +56,10 @@ const CollectionsRegistryService = {
         const collectionUri = urlJoin(objectUri, path);
 
         const exists = await ctx.call('activitypub.collection.exist', { resourceUri: collectionUri });
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (!exists && !this.collectionsInCreation.includes(collectionUri)) {
           // Prevent race conditions by keeping the collections being created in memory
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.collectionsInCreation.push(collectionUri);
 
           // Create the collection
@@ -70,6 +73,7 @@ const CollectionsRegistryService = {
               'semapps:sortOrder': sortOrder
             },
             contentType: MIME_TYPES.JSON,
+            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             webId: this.settings.podProvider ? getWebIdFromUri(objectUri) : 'system',
             permissions, // Handled by the WebAclMiddleware, if present
             forcedResourceUri: path ? collectionUri : undefined // Bypass the automatic URI generation
@@ -80,6 +84,7 @@ const CollectionsRegistryService = {
             'ldp.resource.patch',
             {
               resourceUri: objectUri,
+              // @ts-expect-error TS(2345): Argument of type 'NamedNode<never>' is not assigna... Remove this comment to see the full error message
               triplesToAdd: [quad(namedNode(objectUri), namedNode(attachPredicate), namedNode(collectionUri))],
               webId: 'system'
             },
@@ -91,7 +96,8 @@ const CollectionsRegistryService = {
           );
 
           // Now the collection has been created, we can remove it (this way we don't use too much memory)
-          this.collectionsInCreation = this.collectionsInCreation.filter(c => c !== collectionUri);
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+          this.collectionsInCreation = this.collectionsInCreation.filter((c: any) => c !== collectionUri);
         }
 
         return collectionUri;
@@ -101,6 +107,7 @@ const CollectionsRegistryService = {
     deleteCollection: defineAction({
       async handler(ctx) {
         const { objectUri, collection } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'path' does not exist on type 'never'.
         const resourceUri = urlJoin(objectUri, collection.path);
 
         const exists = await ctx.call('activitypub.collection.exist', { resourceUri, webId: 'system' });
@@ -113,20 +120,27 @@ const CollectionsRegistryService = {
 
     createAndAttachMissingCollections: defineAction({
       async handler(ctx) {
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         for (const collection of this.registeredCollections) {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.info(`Looking for containers with types: ${JSON.stringify(collection.attachToTypes)}`);
 
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           const accounts = await this.broker.call('auth.account.find');
-          const datasets = this.settings.podProvider ? accounts.map(a => a.username) : [undefined];
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+          const datasets = this.settings.podProvider ? accounts.map((a: any) => a.username) : [undefined];
 
           for (let dataset of datasets) {
             // Find all containers where we want to attach this collection
             const containers = await ctx.call('ldp.registry.getByType', { type: collection.attachToTypes, dataset });
             for (const container of Object.values(containers)) {
+              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               const containerUri = urlJoin(this.settings.baseUri, container.fullPath);
+              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               this.logger.info(`Looking for resources in container ${containerUri}`);
               const resources = await ctx.call('ldp.container.getUris', { containerUri });
               for (const resourceUri of resources) {
+                // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
                 await this.actions.createAndAttachCollection(
                   {
                     objectUri: resourceUri,
@@ -148,15 +162,24 @@ const CollectionsRegistryService = {
         let { attachPredicate, ordered, summary, dereferenceItems, itemsPerPage, sortPredicate, sortOrder } =
           collection || {};
 
+        // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
         attachPredicate = await ctx.call('jsonld.parser.expandPredicate', { predicate: attachPredicate });
         sortPredicate =
           sortPredicate && (await ctx.call('jsonld.parser.expandPredicate', { predicate: sortPredicate }));
         sortOrder = sortOrder && (await ctx.call('jsonld.parser.expandPredicate', { predicate: sortOrder }));
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const accounts = await this.broker.call('auth.account.find');
-        const datasets = dataset ? [dataset] : this.settings.podProvider ? accounts.map(a => a.username) : [undefined];
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+        const datasets = dataset
+          ? [dataset]
+          : this.settings.podProvider
+            ? accounts.map((a: any) => a.username)
+            : [undefined];
 
+        // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
         for (dataset of datasets) {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.info(
             `Getting all collections in dataset ${dataset} attached with predicate ${attachPredicate}...`
           );
@@ -173,8 +196,10 @@ const CollectionsRegistryService = {
             dataset
           });
 
-          for (const collectionUri of results.map(r => r.collectionUri.value)) {
+          for (const collectionUri of results.map((r: any) => r.collectionUri.value)) {
+            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             if (this.isLocalObject(collectionUri, urlJoin(this.settings.baseUri, dataset))) {
+              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               this.logger.info(`Updating options of ${collectionUri}...`);
               await ctx.call('triplestore.update', {
                 query: `
@@ -220,10 +245,10 @@ const CollectionsRegistryService = {
     getCollectionsByType(types) {
       types = arrayOf(types);
       return types.length > 0
-        ? this.registeredCollections.filter(collection =>
+        ? this.registeredCollections.filter((collection: any) =>
             types
-              .map(type => type.replace(AS_PREFIX, '')) // Remove AS prefix if it is set
-              .some(type =>
+              .map((type: any) => type.replace(AS_PREFIX, '')) // Remove AS prefix if it is set
+              .some((type: any) =>
                 Array.isArray(collection.attachToTypes)
                   ? collection.attachToTypes.includes(type)
                   : collection.attachToTypes === type
@@ -260,16 +285,21 @@ const CollectionsRegistryService = {
   events: {
     'ldp.resource.created': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Ser... Remove this comment to see the full error message
         const { resourceUri, newData, webId } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'getCollectionsByType' does not exist on ... Remove this comment to see the full error message
         const collections = this.getCollectionsByType(newData.type || newData['@type']);
         for (const collection of collections) {
+          // @ts-expect-error TS(2339): Property 'isActor' does not exist on type 'Service... Remove this comment to see the full error message
           if (this.isActor(newData.type || newData['@type'])) {
             // If the resource is an actor, use the resource URI as the webId
+            // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
             await this.actions.createAndAttachCollection(
               { objectUri: resourceUri, collection, webId: resourceUri },
               { parentCtx: ctx }
             );
           } else {
+            // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
             await this.actions.createAndAttachCollection(
               { objectUri: resourceUri, collection, webId },
               { parentCtx: ctx }
@@ -281,18 +311,24 @@ const CollectionsRegistryService = {
 
     'ldp.resource.updated': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Ser... Remove this comment to see the full error message
         const { resourceUri, newData, oldData, webId } = ctx.params;
         // Check if we need to create collection only if the type has changed
+        // @ts-expect-error TS(2339): Property 'hasTypeChanged' does not exist on type '... Remove this comment to see the full error message
         if (this.hasTypeChanged(oldData, newData)) {
+          // @ts-expect-error TS(2339): Property 'getCollectionsByType' does not exist on ... Remove this comment to see the full error message
           const collections = this.getCollectionsByType(newData.type || newData['@type']);
           for (const collection of collections) {
+            // @ts-expect-error TS(2339): Property 'isActor' does not exist on type 'Service... Remove this comment to see the full error message
             if (this.isActor(newData.type || newData['@type'])) {
               // If the resource is an actor, use the resource URI as the webId
+              // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
               await this.actions.createAndAttachCollection(
                 { objectUri: resourceUri, collection, webId: resourceUri },
                 { parentCtx: ctx }
               );
             } else {
+              // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
               await this.actions.createAndAttachCollection(
                 { objectUri: resourceUri, collection, webId },
                 { parentCtx: ctx }
@@ -305,19 +341,24 @@ const CollectionsRegistryService = {
 
     'ldp.resource.patched': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Ser... Remove this comment to see the full error message
         const { resourceUri, triplesAdded, webId } = ctx.params;
         if (triplesAdded) {
           for (const triple of triplesAdded) {
             if (triple.predicate.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
+              // @ts-expect-error TS(2339): Property 'getCollectionsByType' does not exist on ... Remove this comment to see the full error message
               const collections = this.getCollectionsByType(triple.object.value);
               for (const collection of collections) {
+                // @ts-expect-error TS(2339): Property 'isActor' does not exist on type 'Service... Remove this comment to see the full error message
                 if (this.isActor(triple.object.value)) {
                   // If the resource is an actor, use the resource URI as the webId
+                  // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
                   await this.actions.createAndAttachCollection(
                     { objectUri: resourceUri, collection, webId: resourceUri },
                     { parentCtx: ctx }
                   );
                 } else {
+                  // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
                   await this.actions.createAndAttachCollection(
                     { objectUri: resourceUri, collection, webId },
                     { parentCtx: ctx }
@@ -332,9 +373,12 @@ const CollectionsRegistryService = {
 
     'ldp.resource.deleted': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'oldData' does not exist on type 'Service... Remove this comment to see the full error message
         const { oldData } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'getCollectionsByType' does not exist on ... Remove this comment to see the full error message
         const collections = this.getCollectionsByType(oldData.type || oldData['@type']);
         for (const collection of collections) {
+          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
           await this.actions.deleteCollection(
             { objectUri: oldData.id || oldData['@id'], collection },
             { parentCtx: ctx }

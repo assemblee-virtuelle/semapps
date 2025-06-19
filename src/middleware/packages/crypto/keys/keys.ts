@@ -1,8 +1,11 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'node... Remove this comment to see the full error message
 import fetch from 'node-fetch';
 import { generateKeyPair } from 'crypto';
 import { namedNode, triple } from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
+// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { sec } from '@semapps/ontologies';
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
 import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 import { arrayOf } from '../utils/utils.ts';
@@ -35,18 +38,21 @@ const KeysService = {
   dependencies: ['ontologies', 'keys.container', 'keys.public-container', 'signature.keypair', 'keys.migration'],
   async created() {
     // Start keys-container and public-keys-container services.
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "keys.containe... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [KeyContainerService],
       settings: {
         podProvider: this.settings.podProvider
       }
     });
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "keys.public-c... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [PublicKeyContainerService],
       settings: {
         podProvider: this.settings.podProvider
       }
     });
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "keys.migratio... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [MigrationService],
       settings: {
@@ -56,6 +62,7 @@ const KeysService = {
     });
 
     // Legacy service.
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "signature.key... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [KeyPairService],
       settings: {
@@ -82,6 +89,7 @@ const KeysService = {
       },
       async handler(ctx) {
         const { keyType } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const webId = ctx.params.webId || ctx.meta.webId;
 
         // Get the key container, to search by type.
@@ -92,7 +100,7 @@ const KeysService = {
 
         // Check if key type is present.
         const matchedKeys = container['ldp:contains'].filter(
-          keyResource =>
+          (keyResource: any) =>
             arrayOf(keyResource.type || keyResource['@type']).includes(keyType) && keyResource.controller === webId
         );
 
@@ -123,6 +131,7 @@ const KeysService = {
 
         if (publicKeys.length === 0) {
           // No keys found, we create a new one.
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           const newKey = await this.actions.createKeyForActor(
             { webId, attachToWebId: true, keyType },
             { parentCtx: ctx }
@@ -135,6 +144,7 @@ const KeysService = {
           publicKeys.map(async key => {
             const publicKeyId = key.id || key['@id'];
             return await ctx.call('keys.container.get', {
+              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               resourceUri: await this.actions.findPrivateKeyUri({ publicKeyUri: publicKeyId }, { parentCtx: ctx }),
               accept: MIME_TYPES.JSON,
               webId
@@ -159,6 +169,7 @@ const KeysService = {
         withPrivateKey: { type: 'boolean', default: false }
       },
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const { keyId, keyType, withPrivateKey, webId = ctx.meta.webId } = ctx.params;
 
         // Get key from parameters, id (URI) or the one associated with the webId (in that priority).
@@ -200,6 +211,7 @@ const KeysService = {
       async handler(ctx) {
         const { webId, keyType, attachToWebId, publishKey } = ctx.params;
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const generatedKey = await this.actions.generateKey({ keyType }, { parentCtx: ctx });
 
         const keyObject = {
@@ -215,6 +227,7 @@ const KeysService = {
         keyObject.id = keyUri;
 
         if (publishKey || attachToWebId) {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           const publicKeyUri = await this.actions.publishPublicKeyLocally(
             { keyObject: keyObject, keyId: keyObject.id, webId },
             { parentCtx: ctx }
@@ -223,6 +236,7 @@ const KeysService = {
           keyObject['rdfs:seeAlso'] = publicKeyUri;
 
           if (attachToWebId) {
+            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             await this.actions.attachPublicKeyToWebId({ webId, keyObject: keyObject }, { parentCtx: ctx });
           }
         }
@@ -243,9 +257,11 @@ const KeysService = {
         const { keyType } = ctx.params;
 
         if (keyType === KEY_TYPES.ED25519) {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           return await this.actions.generateEd25519Key();
         }
         if (keyType === KEY_TYPES.RSA) {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           return await this.actions.generateRsaKey();
         }
 
@@ -332,6 +348,7 @@ const KeysService = {
       },
       async handler(ctx) {
         const { webId } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'id' does not exist on type 'never'.
         const keyId = ctx.params.keyId || ctx.params.keyObject?.id || ctx.params.keyObject?.['@id'];
         if (!keyId) throw new Error('Either keyId or keyObject with id must be given.');
 
@@ -344,7 +361,8 @@ const KeysService = {
         // The rdfs:seeAlso points to the public key resource. If it doesn't exist, publish it.
         const publicKeyId = keyObject['rdfs:seeAlso']
           ? keyObject['rdfs:seeAlso']
-          : await this.actions.publishPublicKeyLocally({ keyObject, webId }, { parentCtx: ctx });
+          : // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+            await this.actions.publishPublicKeyLocally({ keyObject, webId }, { parentCtx: ctx });
 
         const webIdDocument = await ctx.call('webid.get', {
           resourceUri: webId,
@@ -364,6 +382,7 @@ const KeysService = {
         // For RSA keys, there must not be more than one key in the webId (this might break compatibility with APub implementations).
         // Therefore, remove the current key from the webId, if present.
         if (isRsaKey && webIdDocument.publicKey) {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           await this.actions.detachFromWebId(
             { webId, publicKeyId: webIdDocument.publicKey.id || webIdDocument.publicKey['@id'] },
             { parentCtx: ctx }
@@ -378,6 +397,7 @@ const KeysService = {
         // Add public key triples to webId document.
         await ctx.call('ldp.resource.patch', {
           resourceUri: webId,
+          // @ts-expect-error TS(2345): Argument of type 'NamedNode<string>' is not assign... Remove this comment to see the full error message
           triplesToAdd: [triple(namedNode(webId), namedNode(keyPredicate), namedNode(publicKeyId))],
           webId
         });
@@ -397,7 +417,9 @@ const KeysService = {
           resourceUri: webId,
           triplesToRemove: [
             // The key may be stored in publicKey or assertionMethod field, depending on key type.
+            // @ts-expect-error TS(2345): Argument of type 'NamedNode<string>' is not assign... Remove this comment to see the full error message
             triple(namedNode(webId), namedNode('https://w3id.org/security#publicKey'), namedNode(publicKeyId)),
+            // @ts-expect-error TS(2345): Argument of type 'NamedNode<string>' is not assign... Remove this comment to see the full error message
             triple(namedNode(webId), namedNode('https://w3id.org/security#assertionMethod'), namedNode(publicKeyId))
           ],
           webId
@@ -413,13 +435,16 @@ const KeysService = {
         webId: { type: 'string', optional: true }
       },
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const webId = ctx.params.webId || ctx.meta.webId;
+        // @ts-expect-error TS(2339): Property 'id' does not exist on type 'never'.
         const privateKeyUri = ctx.params.keyId || ctx.params.keyObject?.id || ctx.params.keyObject?.['@id'];
         const keyObject =
           ctx.params.keyObject ||
           (await ctx.call('ldp.resource.get', { resourceUri: privateKeyUri, accept: MIME_TYPES.JSON }));
 
         // First, get the public key part.
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const publicKeyObject = await this.actions.getPublicKeyObject({ keyObject }, { parentCtx: ctx });
 
         // Then, store it in the `/public-key` container.
@@ -434,6 +459,7 @@ const KeysService = {
           resourceUri: privateKeyUri,
           triplesToAdd: [
             triple(
+              // @ts-expect-error TS(2345): Argument of type 'NamedNode<any>' is not assignabl... Remove this comment to see the full error message
               namedNode(privateKeyUri),
               namedNode('http://www.w3.org/2000/01/rdf-schema#seeAlso'),
               namedNode(publicKeyUri)
@@ -455,7 +481,9 @@ const KeysService = {
         webId: { type: 'string', optional: true }
       },
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'id' does not exist on type 'never'.
         const resourceUri = ctx.params.resourceUri || ctx.params.keyObject?.id || ctx.params.keyObject?.['@id'];
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const webId = ctx.params.webId || ctx.meta.webId;
         const keyObject =
           ctx.params.keyObject || (await ctx.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON, webId }));
@@ -470,6 +498,7 @@ const KeysService = {
         const publicKeyId = keyObject['rdfs:seeAlso'];
         if (publicKeyId) {
           // Try to detach from webId. Will have no effect, if not attached.
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           await this.actions.detachFromWebId({ webId, publicKeyId }, { parentCtx: ctx });
         }
       }
@@ -551,6 +580,7 @@ const KeysService = {
         keyId: { type: 'string', optional: true }
       },
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'id' does not exist on type 'never'.
         const keyId = ctx.params.keyId || ctx.params.keyObject?.id || ctx.params.keyObject?.['@id'];
         const keyObject =
           ctx.params.keyObject || (await ctx.call('ldp.resource.get', { resourceUri: keyId, accept: MIME_TYPES.JSON }));
@@ -622,14 +652,17 @@ const KeysService = {
   events: {
     'keys.migration.migrated': defineServiceEvent({
       async handler() {
+        // @ts-expect-error TS(2339): Property 'isMigrated' does not exist on type 'Serv... Remove this comment to see the full error message
         this.isMigrated = true;
       }
     }),
 
     'auth.registered': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'ServiceEv... Remove this comment to see the full error message
         const { webId } = ctx.params;
 
+        // @ts-expect-error TS(2339): Property 'isMigrated' does not exist on type 'Serv... Remove this comment to see the full error message
         if (!this.isMigrated) {
           // Key creation will be handled by legacy service.
           return;
@@ -655,7 +688,9 @@ const KeysService = {
 
         // Create, publish and attach keys to the webId.
         await Promise.all([
+          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
           this.actions.createKeyForActor({ webId, attachToWebId: true, keyType: KEY_TYPES.RSA }, { parentCtx: ctx }),
+          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
           this.actions.createKeyForActor({ webId, attachToWebId: true, keyType: KEY_TYPES.ED25519 }, { parentCtx: ctx })
         ]);
       }

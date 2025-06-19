@@ -1,3 +1,4 @@
+// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { E as Errors } from 'moleculer-web';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { ServiceSchema, defineAction } from 'moleculer';
@@ -34,17 +35,21 @@ const InboxService = {
       async handler(ctx) {
         const { collectionUri, ...activity } = ctx.params;
 
+        // @ts-expect-error TS(2339): Property 'startsWith' does not exist on type 'neve... Remove this comment to see the full error message
         if (!collectionUri || !collectionUri.startsWith('http')) {
           throw new Error(`The collectionUri ${collectionUri} is not a valid URL`);
         }
 
         if (!(await ctx.call('ldp.resource.exist', { resourceUri: collectionUri, webId: 'system' }))) {
+          // @ts-expect-error TS(2304): Cannot find name 'E'.
           throw E.NotFoundError();
         }
 
         // Ensure the actor in the activity is the same as the posting actor
         // (When posting, the webId is the one of the poster)
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         if (activity.actor !== ctx.meta.webId) {
+          // @ts-expect-error TS(2304): Cannot find name 'E'.
           throw new E.UnAuthorizedError('INVALID_ACTOR', 'Activity actor is not the same as the posting actor');
         }
 
@@ -52,15 +57,19 @@ const InboxService = {
 
         // Verify that the account exists and has not been deleted
         const account = await ctx.call('auth.account.findByWebId', { webId: inboxOwner });
+        // @ts-expect-error TS(2304): Cannot find name 'E'.
         if (!account) throw new E.NotFoundError();
         if (account.deletedAt) throw new MoleculerError(`User does not exist anymore`, 410, 'GONE');
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (this.settings.podProvider) {
+          // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
           ctx.meta.dataset = account.username;
         }
 
         // We want the next operations to be done by the system
         // TODO check if we can avoid this, as this is a bad practice
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         ctx.meta.webId = 'system';
 
         const collectionExists = await ctx.call('activitypub.collection.exist', {
@@ -68,25 +77,32 @@ const InboxService = {
           webId: 'system'
         });
         if (!collectionExists) {
+          // @ts-expect-error TS(2304): Cannot find name 'E'.
           throw new E.NotFoundError();
         }
 
+        // @ts-expect-error TS(2339): Property 'skipSignatureValidation' does not exist ... Remove this comment to see the full error message
         if (!ctx.meta.skipSignatureValidation) {
+          // @ts-expect-error TS(2339): Property 'rawBody' does not exist on type '{}'.
           if (!ctx.meta.rawBody || !ctx.meta.originalHeaders)
             throw new Error(`Cannot validate HTTP signature because of missing meta (rawBody or originalHeaders)`);
 
           const validDigest = await ctx.call('signature.verifyDigest', {
+            // @ts-expect-error TS(2339): Property 'rawBody' does not exist on type '{}'.
             body: ctx.meta.rawBody, // Stored by parseJson middleware
+            // @ts-expect-error TS(2339): Property 'originalHeaders' does not exist on type ... Remove this comment to see the full error message
             headers: ctx.meta.originalHeaders
           });
 
           const { isValid: validSignature } = await ctx.call('signature.verifyHttpSignature', {
             url: collectionUri,
             method: 'POST',
+            // @ts-expect-error TS(2339): Property 'originalHeaders' does not exist on type ... Remove this comment to see the full error message
             headers: ctx.meta.originalHeaders
           });
 
           if (!validDigest || !validSignature) {
+            // @ts-expect-error TS(2304): Cannot find name 'E'.
             throw new E.UnAuthorizedError('INVALID_SIGNATURE');
           }
         }
@@ -94,14 +110,17 @@ const InboxService = {
         // TODO check activity is valid
 
         try {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           await this.broker.call('activitypub.side-effects.processInbox', { activity, recipients: [inboxOwner] });
         } catch (e) {
           // If some processors failed, log error message but don't stop
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.error(e.message);
         }
 
         // If this is a transient activity, we have no way to retrieve it
         // so do not store it in the inbox (Mastodon works the same way)
+        // @ts-expect-error TS(2339): Property 'includes' does not exist on type 'never'... Remove this comment to see the full error message
         if (activity.id && !activity.id.includes('#')) {
           // Save the remote activity in the local triple store
           await ctx.call('ldp.remote.store', {
@@ -114,6 +133,7 @@ const InboxService = {
           // Attach the activity to the activities container, in order to use the container options
           await ctx.call('activitypub.activity.attach', {
             resourceUri: activity.id,
+            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             webId: this.settings.podProvider ? inboxOwner : 'system'
           });
 
@@ -153,7 +173,9 @@ const InboxService = {
         const { collectionUri, fromDate, toDate } = ctx.params;
 
         const filters = [];
+        // @ts-expect-error TS(2339): Property 'toISOString' does not exist on type 'nev... Remove this comment to see the full error message
         if (fromDate) filters.push(`?published >= "${fromDate.toISOString()}"^^xsd:dateTime`);
+        // @ts-expect-error TS(2339): Property 'toISOString' does not exist on type 'nev... Remove this comment to see the full error message
         if (toDate) filters.push(`?published < "${toDate.toISOString()}"^^xsd:dateTime`);
 
         const results = await ctx.call('triplestore.query', {
@@ -175,7 +197,9 @@ const InboxService = {
 
         const activities = [];
 
-        for (const activityUri of results.filter(node => node.activityUri).map(node => node.activityUri.value)) {
+        for (const activityUri of results
+          .filter((node: any) => node.activityUri)
+          .map((node: any) => node.activityUri.value)) {
           const activity = await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' });
           activities.push(activity);
         }
@@ -188,6 +212,7 @@ const InboxService = {
       async handler(ctx) {
         const { dataset } = ctx.params;
         await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           collection: this.settings.collectionOptions,
           dataset
         });

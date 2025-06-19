@@ -13,6 +13,7 @@ export const action = defineAction({
     await ctx.call('triplestore.update', {
       query: `
         PREFIX acl: <http://www.w3.org/ns/auth/acl#>
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         WITH <${this.settings.graphName}>
         DELETE { ?auth ?p2 ?o }
         WHERE { ?auth ?p <${resourceUri}>.
@@ -24,6 +25,7 @@ export const action = defineAction({
 
     ctx.emit(
       'webacl.resource.deleted',
+      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       { uri: resourceUri, dataset: ctx.meta.dataset, isContainer },
       { meta: { webId: null, dataset: null } }
     );

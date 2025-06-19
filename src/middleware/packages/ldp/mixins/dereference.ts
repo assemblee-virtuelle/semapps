@@ -62,6 +62,7 @@ const Schema = {
         delete result['@context'];
         return result;
       } catch (e) {
+        // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
         if (e.code === 403 || e.code === 404) {
           return resourceUri;
         } else {
@@ -149,6 +150,7 @@ const Schema = {
       get: ['handleAfterGet']
     }
   }
+  // @ts-expect-error TS(1360): Type '{ dependencies: string[]; methods: { getWith... Remove this comment to see the full error message
 } satisfies ServiceSchema;
 
 export default Schema;

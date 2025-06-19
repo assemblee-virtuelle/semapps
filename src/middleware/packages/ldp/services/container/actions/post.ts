@@ -36,6 +36,7 @@ const Schema = defineAction({
   },
   async handler(ctx) {
     let { resource, containerUri, slug, contentType, file, forcedResourceUri } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     let isContainer = false;
     let expandedResource;
@@ -45,9 +46,11 @@ const Schema = defineAction({
 
     if (!file) {
       // Adds the default context, if it is missing
+      // @ts-expect-error TS(18048): 'resource' is possibly 'undefined'.
       if (contentType === MIME_TYPES.JSON && !resource['@context']) {
         resource = {
           '@context': await ctx.call('jsonld.context.get'),
+          // @ts-expect-error TS(2698): Spread types may only be created from object types... Remove this comment to see the full error message
           ...resource
         };
       }
@@ -76,6 +79,7 @@ const Schema = defineAction({
     const containerExist = await ctx.call('ldp.container.exist', { containerUri, webId });
     if (!containerExist) {
       throw new MoleculerError(
+        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
         `Cannot create resource in non-existing container ${containerUri} (webId ${webId} / dataset ${ctx.meta.dataset})`,
         400,
         'BAD_REQUEST'
@@ -107,6 +111,7 @@ const Schema = defineAction({
         await ctx.call(controlledActions.create || 'ldp.resource.create', {
           resource: {
             '@id': resourceUri,
+            // @ts-expect-error TS(2698): Spread types may only be created from object types... Remove this comment to see the full error message
             ...resource
           },
           contentType,
@@ -124,6 +129,7 @@ const Schema = defineAction({
       throw e;
     }
 
+    // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
     if (!ctx.meta.skipEmitEvent) {
       ctx.emit(
         'ldp.container.attached',

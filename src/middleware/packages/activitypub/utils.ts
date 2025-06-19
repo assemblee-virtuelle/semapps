@@ -1,5 +1,6 @@
 import { ACTIVITY_TYPES } from './constants.ts';
 
+// @ts-expect-error TS(7023): 'objectCurrentToId' implicitly has return type 'an... Remove this comment to see the full error message
 const objectCurrentToId = (activityJson: any) => {
   if (activityJson.object && typeof activityJson.object === 'object' && activityJson.object.current) {
     const { current, ...object } = activityJson.object;
@@ -14,6 +15,7 @@ const objectCurrentToId = (activityJson: any) => {
   return activityJson;
 };
 
+// @ts-expect-error TS(7023): 'objectIdToCurrent' implicitly has return type 'an... Remove this comment to see the full error message
 const objectIdToCurrent = (activityJson: any) => {
   // If the activity has an object predicate, and this object is not an activity
   if (
@@ -41,6 +43,7 @@ const collectionPermissionsWithAnonRead = (webId: any) => {
   };
 
   if (webId !== 'anon' && webId !== 'system') {
+    // @ts-expect-error TS(2339): Property 'user' does not exist on type '{ anon: { ... Remove this comment to see the full error message
     permissions.user = {
       uri: webId,
       read: true,

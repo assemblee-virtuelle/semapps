@@ -22,53 +22,69 @@ const Schema = defineAction({
   },
   async handler(ctx) {
     const { resourceUri, accept, jsonContext, ...rest } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     // Without webId, we have no way to know which dataset to look in, so get from network
     const strategy =
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       this.settings.podProvider && (!webId || webId === 'anon' || webId === 'system')
         ? 'networkOnly'
         : ctx.params.strategy;
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     if (!(await this.actions.isRemote({ resourceUri }, { parentCtx: ctx }))) {
       throw new Error(
+        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
         `The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId} / dataset ${ctx.meta.dataset})`
       );
     }
 
     switch (strategy) {
       case 'cacheFirst':
-        return this.actions
-          .getStored(cleanUndefined({ resourceUri, webId, accept, jsonContext, ...rest }), { parentCtx: ctx })
-          .catch(e => {
-            if (e.code === 404) {
-              return this.actions.getNetwork(cleanUndefined({ resourceUri, webId, accept, jsonContext }), {
-                parentCtx: ctx
-              });
-            } else {
-              throw e;
-            }
-          });
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+        return (
+          this.actions
+            // @ts-expect-error TS(2339): Property 'getStored' does not exist on type 'strin... Remove this comment to see the full error message
+            .getStored(cleanUndefined({ resourceUri, webId, accept, jsonContext, ...rest }), { parentCtx: ctx })
+            .catch((e: any) => {
+              if (e.code === 404) {
+                // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+                return this.actions.getNetwork(cleanUndefined({ resourceUri, webId, accept, jsonContext }), {
+                  parentCtx: ctx
+                });
+              } else {
+                throw e;
+              }
+            })
+        );
 
       case 'networkFirst':
-        return this.actions
-          .getNetwork(cleanUndefined({ resourceUri, webId, accept, jsonContext }), { parentCtx: ctx })
-          .catch(e => {
-            if (e.code === 404) {
-              return this.actions.getStored(cleanUndefined({ resourceUri, webId, accept, jsonContext, ...rest }), {
-                parentCtx: ctx
-              });
-            } else {
-              throw e;
-            }
-          });
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+        return (
+          this.actions
+            // @ts-expect-error TS(2339): Property 'getNetwork' does not exist on type 'stri... Remove this comment to see the full error message
+            .getNetwork(cleanUndefined({ resourceUri, webId, accept, jsonContext }), { parentCtx: ctx })
+            .catch((e: any) => {
+              if (e.code === 404) {
+                // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+                return this.actions.getStored(cleanUndefined({ resourceUri, webId, accept, jsonContext, ...rest }), {
+                  parentCtx: ctx
+                });
+              } else {
+                throw e;
+              }
+            })
+        );
 
       case 'cacheOnly':
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         return this.actions.getStored(cleanUndefined({ resourceUri, webId, accept, jsonContext, ...rest }), {
           parentCtx: ctx
         });
 
       case 'networkOnly':
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         return this.actions.getNetwork(cleanUndefined({ resourceUri, webId, accept, jsonContext }), { parentCtx: ctx });
 
       case 'staleWhileRevalidate':

@@ -3,17 +3,20 @@ import { OBJECT_TYPES, ACTIVITY_TYPES, PUBLIC_URI } from '@semapps/activitypub';
 import { MIME_TYPES } from '@semapps/mime-types';
 import initialize from './initialize.ts';
 
+// @ts-expect-error TS(2304): Cannot find name 'jest'.
 jest.setTimeout(50000);
 const NUM_USERS = 2;
 
-describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', mode => {
-  let broker;
-  const actors = [];
-  let alice;
-  let bob;
-  let aliceMessageUri;
+// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
+describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', (mode: any) => {
+  let broker: any;
+  const actors: any = [];
+  let alice: any;
+  let bob: any;
+  let aliceMessageUri: any;
   let bobMessageUri;
 
+  // @ts-expect-error TS(2304): Cannot find name 'beforeAll'.
   beforeAll(async () => {
     if (mode === 'single-server') {
       broker = await initialize(3000, 'testData', 'settings');
@@ -29,7 +32,8 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', m
       }
       const { webId } = await broker[i].call('auth.signup', require(`./data/actor${i}.json`));
       actors[i] = await broker[i].call('activitypub.actor.awaitCreateComplete', { actorUri: webId });
-      actors[i].call = (actionName, params, options = {}) =>
+      actors[i].call = (actionName: any, params: any, options = {}) =>
+        // @ts-expect-error TS(2339): Property 'meta' does not exist on type '{}'.
         broker[i].call(actionName, params, { ...options, meta: { ...options.meta, webId } });
     }
 
@@ -37,6 +41,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', m
     bob = actors[2];
   });
 
+  // @ts-expect-error TS(2304): Cannot find name 'afterAll'.
   afterAll(async () => {
     if (mode === 'multi-server') {
       for (let i = 1; i <= NUM_USERS; i++) {
@@ -47,6 +52,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', m
     }
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Bob likes Alice message', async () => {
     const createActivity = await alice.call('activitypub.outbox.post', {
       collectionUri: alice.outbox,
@@ -69,6 +75,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', m
 
     // Ensure the /likes collection has been created
     await waitForExpect(async () => {
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(
         alice.call('ldp.resource.get', {
           resourceUri: aliceMessageUri,
@@ -81,6 +88,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', m
 
     // Ensure Bob has been added to the /likes collection
     await waitForExpect(async () => {
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(
         alice.call('activitypub.collection.get', {
           resourceUri: `${aliceMessageUri}/likes`,
@@ -94,6 +102,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', m
 
     // Ensure the note has been added to Bob's /liked collection
     await waitForExpect(async () => {
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(
         bob.call('activitypub.collection.get', {
           resourceUri: `${bob.id}/liked`,
@@ -106,6 +115,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', m
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Bob undo his like', async () => {
     await bob.call('activitypub.outbox.post', {
       collectionUri: bob.outbox,
@@ -124,6 +134,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', m
         resourceUri: `${aliceMessageUri}/likes`,
         accept: MIME_TYPES.JSON
       });
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(likes.items).toHaveLength(0);
     });
 
@@ -133,6 +144,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', m
         resourceUri: `${bob.id}/liked`,
         accept: MIME_TYPES.JSON
       });
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(liked.items).toHaveLength(0);
     });
   });

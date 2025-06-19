@@ -1,5 +1,6 @@
 import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
+// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { voidOntology } from '@semapps/ontologies';
 import { JsonLdSerializer } from 'jsonld-streaming-serializer';
 import { DataFactory, Writer } from 'n3';
@@ -17,11 +18,11 @@ const prefixes = {
   xsd: 'http://www.w3.org/2001/XMLSchema#'
 };
 
-function streamToString(stream) {
+function streamToString(stream: any) {
   let res = '';
   return new Promise((resolve, reject) => {
-    stream.on('data', chunk => (res += chunk));
-    stream.on('error', err => reject(err));
+    stream.on('data', (chunk: any) => (res += chunk));
+    stream.on('error', (err: any) => reject(err));
     stream.on('end', () => resolve(res));
   });
 }
@@ -49,15 +50,16 @@ const jsonContext = {
   'void:classPartition': { '@type': '@id' }
 };
 
-const addClassPartition = (serverUrl, partition, graph, scalar) => {
+const addClassPartition = (serverUrl: any, partition: any, graph: any, scalar: any) => {
   const blank = blankNode(`b${scalar}`);
+  // @ts-expect-error TS(2339): Property 'data' does not exist on type 'BlankNode'... Remove this comment to see the full error message
   blank.data = [
     {
       s: blankNode(`b${scalar}`),
       p: namedNode('http://rdfs.org/ns/void#uriSpace'),
       o: literal(partition['http://rdfs.org/ns/void#uriSpace'])
     },
-    ...partition['http://rdfs.org/ns/void#class'].map(t => {
+    ...partition['http://rdfs.org/ns/void#class'].map((t: any) => {
       return { s: blankNode(`b${scalar}`), p: namedNode('http://rdfs.org/ns/void#class'), o: namedNode(t) };
     }),
     {
@@ -70,9 +72,11 @@ const addClassPartition = (serverUrl, partition, graph, scalar) => {
     }
   ];
   if (partition['http://semapps.org/ns/core#doNotMirror'])
+    // @ts-expect-error TS(2339): Property 'data' does not exist on type 'BlankNode'... Remove this comment to see the full error message
     blank.data.push({
       s: blankNode(`b${scalar}`),
       p: namedNode('http://semapps.org/ns/core#doNotMirror'),
+      // @ts-expect-error TS(2345): Argument of type 'boolean' is not assignable to pa... Remove this comment to see the full error message
       o: literal(true, namedNode('http://www.w3.org/2001/XMLSchema#boolean'))
     });
 
@@ -80,15 +84,15 @@ const addClassPartition = (serverUrl, partition, graph, scalar) => {
 };
 
 const addMirrorServer = async (
-  baseUrl,
-  serverUrl,
-  graph,
-  hasSparql,
-  containers,
-  mirrorGraph,
-  ctx,
-  nextScalar,
-  originalVoid
+  baseUrl: any,
+  serverUrl: any,
+  graph: any,
+  hasSparql: any,
+  containers: any,
+  mirrorGraph: any,
+  ctx: any,
+  nextScalar: any,
+  originalVoid: any
 ) => {
   const thisServer = createFragmentURL(baseUrl, serverUrl);
 
@@ -124,6 +128,7 @@ const addMirrorServer = async (
       for (const p of arrayOf(originalPartitions)) {
         // we skip empty containers and doNotMirror containers
         if (p['void:entities'] === '0' || p['semapps:doNotMirror']) continue;
+        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         partitionsMap[p['void:uriSpace']] = p;
       }
     }
@@ -136,13 +141,14 @@ const addMirrorServer = async (
 
     const partition = {
       'http://rdfs.org/ns/void#uriSpace': p,
-      'http://rdfs.org/ns/void#class': types.map(type => type.t.value)
+      'http://rdfs.org/ns/void#class': types.map((type: any) => type.t.value)
     };
 
     const count = await ctx.call('triplestore.query', {
       query: `SELECT (COUNT (?o) as ?count) FROM <${mirrorGraph}> { <${p}> <http://www.w3.org/ns/ldp#contains> ?o }`
     });
 
+    // @ts-expect-error TS(2551): Property 'http://rdfs.org/ns/void#entities' does n... Remove this comment to see the full error message
     partition['http://rdfs.org/ns/void#entities'] = Number(count[0].count.value);
 
     addClassPartition(thisServer, partition, graph, nextScalar + i);
@@ -194,6 +200,7 @@ const VoidSchema = {
             return json;
           }
         } catch (e) {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.warn(`Silently ignored error when fetching void endpoint: ${e.message}`);
         }
       }
@@ -208,13 +215,16 @@ const VoidSchema = {
         const accept = ctx.params.accept || MIME_TYPES.TURTLE;
 
         const ontologies = await ctx.call('ontologies.list');
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const partitions = await this.getContainers(ctx);
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const { origin } = new URL(this.settings.baseUrl);
         const url = urlJoin(origin, '.well-known/void');
 
         // first we compile the local data void information (local containers)
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const thisServer = createFragmentURL(url, this.settings.baseUrl);
 
         const graph = [];
@@ -223,24 +233,30 @@ const VoidSchema = {
           p: namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
           o: namedNode('http://rdfs.org/ns/void#Dataset')
         });
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (this.settings.title) {
           graph.push({
             s: namedNode(thisServer),
             p: namedNode('http://purl.org/dc/terms/title'),
+            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             o: literal(this.settings.title)
           });
         }
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (this.settings.description) {
           graph.push({
             s: namedNode(thisServer),
             p: namedNode('http://purl.org/dc/terms/description'),
+            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             o: literal(this.settings.description)
           });
         }
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (this.settings.license) {
           graph.push({
             s: namedNode(thisServer),
             p: namedNode('http://purl.org/dc/terms/license'),
+            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             o: namedNode(this.settings.license)
           });
         }
@@ -257,13 +273,15 @@ const VoidSchema = {
         graph.push({
           s: namedNode(thisServer),
           p: namedNode('http://rdfs.org/ns/void#uriSpace'),
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           o: literal(this.settings.baseUrl)
         });
 
         const services = await ctx.call('$node.services');
         const hasSparql =
-          services.filter(s => s.name === 'sparqlEndpoint').length > 0
-            ? urlJoin(this.settings.baseUrl, 'sparql')
+          services.filter((s: any) => s.name === 'sparqlEndpoint').length > 0
+            ? // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+              urlJoin(this.settings.baseUrl, 'sparql')
             : undefined;
         if (hasSparql)
           graph.push({
@@ -275,6 +293,7 @@ const VoidSchema = {
         graph.push({
           s: namedNode(thisServer),
           p: namedNode('http://rdfs.org/ns/void#rootResource'),
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           o: namedNode(this.settings.baseUrl)
         });
         for (const ontology of ontologies) {
@@ -293,17 +312,21 @@ const VoidSchema = {
         // then we move on to the mirrored data (containers that have been mirrored from remote servers)
 
         const serversContainers = await ctx.call('triplestore.query', {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           query: `SELECT DISTINCT ?s FROM <${this.settings.mirrorGraphName}> { ?s <http://www.w3.org/ns/ldp#contains> ?o }`
         });
 
         const serversMap = {};
-        for (const s of serversContainers.map(sc => sc.s.value)) {
+        for (const s of serversContainers.map((sc: any) => sc.s.value)) {
           const res = s.match(regexProtocolAndHostAndPort);
           if (res) {
             const name = urlJoin(res[0], '/');
+            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
             let serverName = serversMap[name];
             if (!serverName) {
+              // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
               serversMap[name] = [];
+              // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
               serverName = serversMap[name];
             }
             serverName.push(s);
@@ -316,8 +339,10 @@ const VoidSchema = {
           if (json) {
             const mapServers = {};
             for (const s of json['@graph']) {
+              // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
               mapServers[s['@id']] = s;
             }
+            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
             const server = mapServers[createFragmentURL('', serverUrl)];
             originalVoid = server;
           }
@@ -327,15 +352,19 @@ const VoidSchema = {
             serverUrl,
             graph,
             hasSparql,
+            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
             serversMap[serverUrl],
+            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             this.settings.mirrorGraphName,
             ctx,
             scalar,
             originalVoid
           );
+          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           scalar += serversMap[serverUrl].length;
         }
 
+        // @ts-expect-error TS(2339): Property '$responseType' does not exist on type '{... Remove this comment to see the full error message
         ctx.meta.$responseType = accept;
 
         // TODO use Etag instead to keep track of changes in VOID
@@ -344,12 +373,14 @@ const VoidSchema = {
         //   Vary: 'authorization'
         // };
 
+        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         return await this.formatOutput(ctx, graph, url, accept === MIME_TYPES.JSON);
       }
     }),
 
     api_get: defineAction({
       handler: async function api(ctx) {
+        // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
         let { accept } = ctx.meta.headers;
         if (accept.includes('*/*')) accept = MIME_TYPES.JSON;
         else if (accept && accept !== MIME_TYPES.JSON && accept !== MIME_TYPES.TURTLE)
@@ -368,16 +399,21 @@ const VoidSchema = {
 
       const res = await Promise.all(
         Object.values(registeredContainers)
+          // @ts-expect-error TS(18046): 'c' is of type 'unknown'.
           .filter(c => c.acceptedTypes)
           .map(async c => {
             const partition = {
+              // @ts-expect-error TS(18046): 'c' is of type 'unknown'.
               'http://rdfs.org/ns/void#uriSpace': urlJoin(baseUrl, c.path),
+              // @ts-expect-error TS(18046): 'c' is of type 'unknown'.
               'http://rdfs.org/ns/void#class': arrayOf(c.acceptedTypes)
             };
+            // @ts-expect-error TS(18046): 'c' is of type 'unknown'.
             if (c.excludeFromMirror) partition['http://semapps.org/ns/core#doNotMirror'] = true;
             const count = await ctx.call('triplestore.query', {
               query: `SELECT (COUNT (?o) as ?count) { <${partition['http://rdfs.org/ns/void#uriSpace']}> <http://www.w3.org/ns/ldp#contains> ?o }`
             });
+            // @ts-expect-error TS(2551): Property 'http://rdfs.org/ns/void#entities' does n... Remove this comment to see the full error message
             partition['http://rdfs.org/ns/void#entities'] = Number(count[0].count.value);
             return partition;
           })
@@ -392,9 +428,9 @@ const VoidSchema = {
             prefixes: { ...prefixes, ...prefix, '': `${voidUrl}#` },
             format: 'Turtle'
           });
-          output.forEach(f => {
+          output.forEach((f: any) => {
             if (f.o.termType === 'BlankNode') {
-              const predicates = f.o.data.map(p => {
+              const predicates = f.o.data.map((p: any) => {
                 let obj = p.o;
                 if (Array.isArray(obj)) obj = writer.list(obj);
                 return {
@@ -436,6 +472,7 @@ const VoidSchema = {
       }
       mySerializer.end();
 
+      // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
       const jsonLd = JSON.parse(await streamToString(mySerializer));
 
       const compactJsonLd = await ctx.call('jsonld.parser.frame', {

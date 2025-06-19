@@ -1,13 +1,16 @@
+// @ts-expect-error TS(2724): '"fs"' has no exported member named 'fsPromises'. ... Remove this comment to see the full error message
 import { fsPromises as promises } from 'fs';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'sani... Remove this comment to see the full error message
 import sanitizeHtml from 'sanitize-html';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'goog... Remove this comment to see the full error message
 import googlelibphonenumberModule from 'google-libphonenumber';
 
 const PNF = googlelibphonenumberModule.PhoneNumberFormat;
 const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
 
-const convertToIsoString = str => str && new Date(str).toISOString();
+const convertToIsoString = (str: any) => str && new Date(str).toISOString();
 
-const formatPhoneNumber = (number, countryCode) => {
+const formatPhoneNumber = (number: any, countryCode: any) => {
   if (number && countryCode) {
     try {
       const parsedNumber = phoneUtil.parseAndKeepRawInput(number, countryCode);
@@ -19,19 +22,20 @@ const formatPhoneNumber = (number, countryCode) => {
   }
 };
 
-const frenchAddressSearch = async query => {
+const frenchAddressSearch = async (query: any) => {
   const url = new URL('https://api-adresse.data.gouv.fr/search/');
   url.searchParams.set('q', query);
   const response = await fetch(url.toString());
 
   if (response.ok) {
     const json = await response.json();
+    // @ts-expect-error TS(18046): 'json' is of type 'unknown'.
     return json.features[0];
   }
   return false;
 };
 
-const frenchAddressReverseSearch = async (lat, lon) => {
+const frenchAddressReverseSearch = async (lat: any, lon: any) => {
   const url = new URL('https://api-adresse.data.gouv.fr/reverse/');
   url.searchParams.set('lat', lat);
   url.searchParams.set('lon', lon);
@@ -39,15 +43,17 @@ const frenchAddressReverseSearch = async (lat, lon) => {
 
   if (response.ok) {
     const json = await response.json();
+    // @ts-expect-error TS(18046): 'json' is of type 'unknown'.
     return json.features.length > 0 ? json.features[0] : false;
   }
   return false;
 };
 
-const removeHtmlTags = text => sanitizeHtml(text, { allowedTags: [] }).trim();
+const removeHtmlTags = (text: any) => sanitizeHtml(text, { allowedTags: [] }).trim();
 
-const isDir = async path => {
+const isDir = async (path: any) => {
   try {
+    // @ts-expect-error TS(2552): Cannot find name 'fsPromises'. Did you mean 'promi... Remove this comment to see the full error message
     const stat = await fsPromises.lstat(path);
     const value = stat.isDirectory();
     return value;

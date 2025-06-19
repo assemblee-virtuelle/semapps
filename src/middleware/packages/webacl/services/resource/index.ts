@@ -1,16 +1,28 @@
 import urlJoin from 'url-join';
 import { ServiceSchema, defineAction } from 'moleculer';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import addRights from './actions/addRights.ts';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import awaitReadRight from './actions/awaitReadRight.ts';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import deleteAllRights from './actions/deleteAllRights.ts';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import deleteAllUserRights from './actions/deleteAllUserRights.ts';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import getLink from './actions/getLink.ts';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import getRights from './actions/getRights.ts';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import getUsersWithReadRights from './actions/getUsersWithReadRights.ts';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import hasRights from './actions/hasRights.ts';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import isPublic from './actions/isPublic.ts';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import refreshContainersRights from './actions/refreshContainersRights.ts';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import removeRights from './actions/removeRights.ts';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import setRights from './actions/setRights.ts';
 
 import {
@@ -28,7 +40,7 @@ import {
 
 const { MoleculerError } = require('moleculer').Errors;
 
-const filterAclsOnlyAgent = acl => agentPredicates.includes(acl.p.value);
+const filterAclsOnlyAgent = (acl: any) => agentPredicates.includes(acl.p.value);
 
 /**
  * Server for handling webacl resource and container rights.
@@ -74,6 +86,7 @@ const WebaclResourceSchema = {
   hooks: {
     before: {
       '*'(ctx) {
+        // @ts-expect-error TS(2339): Property 'podProvider' does not exist on type 'str... Remove this comment to see the full error message
         if (this.settings.podProvider && !ctx.meta.dataset && ctx.params.resourceUri) {
           ctx.meta.dataset = getDatasetFromUri(ctx.params.resourceUri);
         }
@@ -114,9 +127,13 @@ const WebaclResourceSchema = {
 
       const document = [];
 
+      // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
       document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', graphName)));
+      // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
       document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', graphName)));
+      // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
       document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', graphName)));
+      // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
       document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName)));
 
       if (isContainer) {
@@ -135,6 +152,7 @@ const WebaclResourceSchema = {
     compileAuthorizationNodesMap(nodes) {
       const result = {};
       for (const node of nodes) {
+        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         result[node.auth] = result[node.auth] ? result[node.auth] + 1 : 1;
       }
       return result;

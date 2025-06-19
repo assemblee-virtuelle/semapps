@@ -1,11 +1,15 @@
 import { randomUUID } from 'node:crypto';
 import { MIME_TYPES } from '@semapps/mime-types';
 
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import { cryptosuite } from '@digitalbazaar/eddsa-rdfc-2022-cryptosuite';
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import vc from '@digitalbazaar/vc';
 
 /** @type {import('@digitalbazaar/ed25519-multikey')} */
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
 
 import { ServiceSchema, defineAction } from 'moleculer';
@@ -28,7 +32,7 @@ const VCHolderService = {
   name: 'crypto.vc.holder' as const,
   dependencies: ['jsonld', 'jsonld.context'],
   async started() {
-    this.documentLoader = async (url, options) => {
+    this.documentLoader = async (url: any, options: any) => {
       return await this.broker.call('jsonld.document-loader.loadWithCache', { url, options });
     };
   },
@@ -68,6 +72,7 @@ const VCHolderService = {
         const {
           presentation: presentationParam,
           options: { challenge, domain, proofPurpose = 'assertionMethod' },
+          // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
           webId = ctx.meta.webId,
           keyObject = undefined,
           keyId = undefined,
@@ -93,10 +98,14 @@ const VCHolderService = {
         // Create presentation.
         const presentation = {
           ...vc.createPresentation({
+            // @ts-expect-error TS(2783): '@context' is specified more than once, so this us... Remove this comment to see the full error message
             '@context': credentialsContext,
+            // @ts-expect-error TS(2783): 'type' is specified more than once, so this usage ... Remove this comment to see the full error message
             type: ['VerifiablePresentation'],
+            // @ts-expect-error TS(2783): 'id' is specified more than once, so this usage wi... Remove this comment to see the full error message
             id: !presentationParam.id && !ctx.params.options.persist && `urn:uuid:${randomUUID()}`,
             ...presentationParam,
+            // @ts-expect-error TS(2339): Property 'holder' does not exist on type '{ verifi... Remove this comment to see the full error message
             holder: presentationParam?.holder || webId
           })
         };
@@ -104,7 +113,8 @@ const VCHolderService = {
         // Create the VP resource, if the id is not set.
         const presentationWithId = presentation.id
           ? presentation
-          : await this.createPresentationResource(presentation, noAnonRead, webId);
+          : // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
+            await this.createPresentationResource(presentation, noAnonRead, webId);
 
         // Sign presentation.
         const signedPresentation = await vc.signPresentation({

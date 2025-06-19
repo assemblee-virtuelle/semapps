@@ -13,6 +13,7 @@ const Schema = defineAction({
     }
   },
   async handler(ctx) {
+    // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
     const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
     const { graphName } = ctx.params;
 
@@ -21,6 +22,7 @@ const Schema = defineAction({
 
     // Launch the query 3 times, so that blank nodes within orphan blank nodes are also deleted
     for (let i = 0; i < 3; i++) {
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       await this.actions.update(
         {
           query: `

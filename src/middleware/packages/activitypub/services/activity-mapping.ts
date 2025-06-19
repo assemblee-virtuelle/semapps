@@ -17,6 +17,7 @@ const ActivityMappingService = {
 
     for (const [name, fn] of Object.entries(this.settings.handlebars.helpers)) {
       this.logger.info(`Registering handlebars helper ${name}`);
+      // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
       Handlebars.registerHelper(name, fn);
     }
 
@@ -30,19 +31,27 @@ const ActivityMappingService = {
         let { activity, locale, ...rest } = ctx.params;
 
         // If the activity is an Announce, match the announced activity
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (this.settings.matchAnnouncedActivities && activity.type === ACTIVITY_TYPES.ANNOUNCE) {
           const announcedActivity =
+            // @ts-expect-error TS(2339): Property 'object' does not exist on type 'never'.
             typeof activity.object === 'string'
-              ? await ctx.call('activitypub.object.get', { objectUri: activity.object, actorUri: 'system' })
-              : activity.object;
+              ? // @ts-expect-error TS(2339): Property 'object' does not exist on type 'never'.
+                await ctx.call('activitypub.object.get', { objectUri: activity.object, actorUri: 'system' })
+              : // @ts-expect-error TS(2339): Property 'object' does not exist on type 'never'.
+                activity.object;
 
+          // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
           activity = {
+            // @ts-expect-error TS(2339): Property 'actor' does not exist on type 'never'.
             actor: activity.actor, // Ensure the actor is defined
             ...announcedActivity
           };
         }
 
+        // @ts-expect-error TS(2488): Type 'string | number | boolean | any[] | Record<a... Remove this comment to see the full error message
         for (const mapper of this.mappers) {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           const dereferencedActivity = await this.matchActivity(ctx, mapper.match, activity);
 
           // If we have a match...
@@ -50,15 +59,19 @@ const ActivityMappingService = {
             // If mapping is false, we want the activity to be ignored
             if (mapper.mapping === false) return;
 
+            // @ts-expect-error TS(2339): Property 'actor' does not exist on type 'never'.
             const emitter = await ctx.call('activitypub.actor.get', { actorUri: activity.actor });
 
             let emitterProfile = {};
             try {
               emitterProfile = emitter.url
-                ? await ctx.call('activitypub.actor.getProfile', { actorUri: activity.actor })
+                ? // @ts-expect-error TS(2339): Property 'actor' does not exist on type 'never'.
+                  await ctx.call('activitypub.actor.getProfile', { actorUri: activity.actor })
                 : {};
             } catch (e) {
+              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               this.logger.warn(
+                // @ts-expect-error TS(2339): Property 'actor' does not exist on type 'never'.
                 `Could not get profile of actor ${activity.actor} (webId ${ctx.meta.webId} / dataset ${ctx.meta.dataset})`
               );
             }
@@ -72,7 +85,9 @@ const ActivityMappingService = {
                   return [key, value(templateParams)];
                 }
                 // If we have an object with locales mapping, look for the right locale
+                // @ts-expect-error TS(18046): 'value' is of type 'unknown'.
                 if (value[locale]) {
+                  // @ts-expect-error TS(18046): 'value' is of type 'unknown'.
                   return [key, value[locale](templateParams)];
                 }
                 throw new Error(`No ${locale} locale found for key ${key}`);
@@ -89,13 +104,16 @@ const ActivityMappingService = {
 
         if (!match || mapping === undefined) throw new Error('No object defined for match or mapping property');
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.mappers.push({
           match,
+          // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
           mapping: this.compileObject(mapping),
           priority
         });
 
         // Reorder cached mappings
+        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         this.prioritizeMappers();
       }
     }),
@@ -111,7 +129,7 @@ const ActivityMappingService = {
       return matchActivity(ctx, pattern, activityOrObject);
     },
     prioritizeMappers() {
-      this.mappers.sort((a, b) => b.priority - a.priority);
+      this.mappers.sort((a: any, b: any) => b.priority - a.priority);
     },
     compileObject(object) {
       return (

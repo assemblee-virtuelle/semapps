@@ -1,9 +1,11 @@
 import urlJoin from 'url-join';
+// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { E as Errors } from 'moleculer-web';
 import { SpecialEndpointMixin, ControlledContainerMixin, getDatasetFromUri, arrayOf } from '@semapps/ldp';
 import { ACTIVITY_TYPES } from '@semapps/activitypub';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { namedNode } from '@rdfjs/data-model';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
 import { uuidV4 as v4 } from 'uuid';
 import moment from 'moment';
 import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
@@ -81,10 +83,13 @@ const Schema = {
         const type = ctx.params.type || ctx.params['@type'];
         const topic = ctx.params.topic || ctx.params['notify:topic'];
         const sendToParam = ctx.params.sendTo || ctx.params['notify:sendTo'];
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const { webId } = ctx.meta;
 
         // TODO: Use ldo objects; This will only check for the json type and not parse json-ld variants...
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (!this.settings.acceptedTypes.includes(type) && this.settings.channelType !== type)
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           throw new Error(`Only one of ${this.settings.acceptedTypes} is accepted on this endpoint`);
 
         // Ensure topic exist (LDP resource, container or collection)
@@ -92,6 +97,7 @@ const Schema = {
           resourceUri: topic,
           webId: 'system'
         });
+        // @ts-expect-error TS(2304): Cannot find name 'E'.
         if (!exists) throw new E.BadRequestError('Cannot watch non-existing resource');
 
         // Ensure topic can be watched by the authenticated agent
@@ -101,22 +107,29 @@ const Schema = {
           webId
         });
         // TODO: Should a client without read rights know about the existence of that resource?
+        // @ts-expect-error TS(2304): Cannot find name 'E'.
         if (!rights.read) throw new E.ForbiddenError('You need acl:Read rights on the resource');
 
         // Find container URI from topic (must be stored on same Pod)
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const topicWebId = urlJoin(this.settings.baseUrl, getDatasetFromUri(topic));
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const channelContainerUri = await this.actions.getContainerUri({ webId: topicWebId }, { parentCtx: ctx });
 
         // Create receiveFrom URI if needed (e.g. for web sockets).
         const receiveFrom =
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           (this.settings.sendOrReceive === 'receive' && (await this.createReceiveFromUri(topic, webId))) || undefined;
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const sendTo = (this.settings.sendOrReceive === 'send' && sendToParam) || undefined;
 
         // Post channel on Pod
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const channelUri = await this.actions.post(
           {
             containerUri: channelContainerUri,
             resource: {
+              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               type: this.settings.typePredicate,
               'notify:topic': topic,
               'notify:sendTo': sendTo,
@@ -136,10 +149,14 @@ const Schema = {
           receiveFrom,
           webId: topicWebId
         };
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.channels.push(channel);
+        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         this.onChannelCreated(channel);
 
+        // @ts-expect-error TS(2339): Property '$responseType' does not exist on type '{... Remove this comment to see the full error message
         ctx.meta.$responseType = 'application/ld+json';
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         return this.actions.get(
           {
             resourceUri: channelUri,
@@ -166,59 +183,75 @@ const Schema = {
   events: {
     'ldp.resource.created': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Ser... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'onResourceEvent' does not exist on type ... Remove this comment to see the full error message
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.CREATE, newData['dc:modified']);
       }
     }),
 
     'ldp.resource.updated': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Ser... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'onResourceEvent' does not exist on type ... Remove this comment to see the full error message
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.UPDATE, newData['dc:modified']);
       }
     }),
 
     'ldp.resource.patched': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Ser... Remove this comment to see the full error message
         const { resourceUri } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'onResourceEvent' does not exist on type ... Remove this comment to see the full error message
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.UPDATE, await this.getModified(resourceUri));
       }
     }),
 
     'ldp.resource.deleted': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Ser... Remove this comment to see the full error message
         const { resourceUri } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'onResourceEvent' does not exist on type ... Remove this comment to see the full error message
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.DELETE, new Date().toISOString());
       }
     }),
 
     'ldp.container.attached': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'containerUri' does not exist on type 'Se... Remove this comment to see the full error message
         const { containerUri, resourceUri } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'onContainerOrCollectionEvent' does not e... Remove this comment to see the full error message
         this.onContainerOrCollectionEvent(containerUri, resourceUri, ACTIVITY_TYPES.ADD);
       }
     }),
 
     'ldp.container.detached': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'containerUri' does not exist on type 'Se... Remove this comment to see the full error message
         const { containerUri, resourceUri } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'onContainerOrCollectionEvent' does not e... Remove this comment to see the full error message
         this.onContainerOrCollectionEvent(containerUri, resourceUri, ACTIVITY_TYPES.REMOVE);
       }
     }),
 
     'activitypub.collection.added': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'collectionUri' does not exist on type 'S... Remove this comment to see the full error message
         const { collectionUri, itemUri, item } = ctx.params;
         // Mastodon sometimes send unfetchable activities (like `Accept` activities)
         // In this case, we receive the activity as `item` and `itemUri` is undefined
         // We will send a notification to the listener with the whole activity
+        // @ts-expect-error TS(2339): Property 'onContainerOrCollectionEvent' does not e... Remove this comment to see the full error message
         this.onContainerOrCollectionEvent(collectionUri, itemUri || item, ACTIVITY_TYPES.ADD);
       }
     }),
 
     'activitypub.collection.removed': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'collectionUri' does not exist on type 'S... Remove this comment to see the full error message
         const { collectionUri, itemUri } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'onContainerOrCollectionEvent' does not e... Remove this comment to see the full error message
         this.onContainerOrCollectionEvent(collectionUri, itemUri, ACTIVITY_TYPES.REMOVE);
       }
     })
@@ -230,12 +263,13 @@ const Schema = {
     getMatchingChannels(topic) {
       const now = new Date();
       const matchedChannels = this.channels
-        .filter(c => c.topic === topic)
-        .filter(c => (c.startAt ? new Date(c.startAt) <= now : true))
-        .filter(c => (c.endAt ? new Date(c.endAt) > now : true))
+        .filter((c: any) => c.topic === topic)
+        .filter((c: any) => (c.startAt ? new Date(c.startAt) <= now : true))
+        .filter((c: any) => (c.endAt ? new Date(c.endAt) > now : true))
         // Check if rate is exceeded.
-        .filter(c => {
+        .filter((c: any) => {
           if (!(c.lastTriggered && c.rate)) return true;
+          // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
           return moment.duration(c.rate).asMilliseconds() < now - c.lastTriggered;
         });
 
@@ -244,6 +278,7 @@ const Schema = {
     onContainerOrCollectionEvent(containerOrCollectionUri, resourceUriOrResource, type) {
       const activity = {
         '@context': ['https://www.w3.org/ns/activitystreams', 'https://www.w3.org/ns/solid/notifications-context/v1'],
+        // @ts-expect-error TS(2304): Cannot find name 'uuidV4'.
         id: `urn:uuid:${uuidV4()}`,
         type,
         object: resourceUriOrResource,
@@ -254,6 +289,7 @@ const Schema = {
     onResourceEvent(resourceUri, type, state) {
       const activity = {
         '@context': ['https://www.w3.org/ns/activitystreams', 'https://www.w3.org/ns/solid/notifications-context/v1'],
+        // @ts-expect-error TS(2304): Cannot find name 'uuidV4'.
         id: `urn:uuid:${uuidV4()}`,
         type,
         object: resourceUri,
@@ -272,7 +308,7 @@ const Schema = {
 
       // Trigger onEvent for each channel (handled by implementing service).
       await Promise.all(
-        channelsToTrigger.map(async channel => {
+        channelsToTrigger.map(async (channel: any) => {
           await this.onEvent(channel, activity);
         })
       );
@@ -306,6 +342,7 @@ const Schema = {
             });
           }
         } catch (e) {
+          // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
           this.logger.error(`Could not load notifications channels of ${webId}. Error: ${e.message}`);
         }
       }
@@ -334,13 +371,17 @@ const Schema = {
     after: {
       delete(ctx, res) {
         const { resourceUri } = ctx.params;
-        const channel = this.channels.find(c => c.id === resourceUri);
-        this.channels = this.channels.filter(c => c.id !== resourceUri);
+        // @ts-expect-error TS(2339): Property 'find' does not exist on type 'string | A... Remove this comment to see the full error message
+        const channel = this.channels.find((c: any) => c.id === resourceUri);
+        // @ts-expect-error TS(2339): Property 'filter' does not exist on type 'string |... Remove this comment to see the full error message
+        this.channels = this.channels.filter((c: any) => c.id !== resourceUri);
+        // @ts-expect-error TS(2349): This expression is not callable.
         this.onChannelDeleted(channel);
         return res;
       }
     }
   }
+  // @ts-expect-error TS(1360): Type '{ mixins: ({ settings: { baseUrl: null; sett... Remove this comment to see the full error message
 } satisfies ServiceSchema;
 
 export default Schema;

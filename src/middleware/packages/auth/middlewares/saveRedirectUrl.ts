@@ -1,4 +1,4 @@
-const saveRedirectUrl = (req, res, next) => {
+const saveRedirectUrl = (req: any, res: any, next: any) => {
   // Persist referer on the session to get it back after redirection
   // If the redirectUrl is already in the session, use it as default value
   req.session.redirectUrl =

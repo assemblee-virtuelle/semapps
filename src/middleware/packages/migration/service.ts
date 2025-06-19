@@ -17,11 +17,14 @@ const MigrationSchema = {
       async handler(ctx) {
         const { oldPredicate, newPredicate, dataset } = ctx.params;
 
+        // @ts-expect-error TS(2339): Property 'startsWith' does not exist on type 'neve... Remove this comment to see the full error message
         if (!oldPredicate.startsWith('http'))
           throw new Error(`oldPredicate must be a full URI. Received: ${oldPredicate}`);
+        // @ts-expect-error TS(2339): Property 'startsWith' does not exist on type 'neve... Remove this comment to see the full error message
         if (!newPredicate.startsWith('http'))
           throw new Error(`newPredicate must be a full URI. Received: ${oldPredicate}`);
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.logger.info(`Replacing predicate ${oldPredicate} with ${newPredicate}...`);
 
         await ctx.call('triplestore.update', {
@@ -45,8 +48,10 @@ const MigrationSchema = {
         for (let oldResourceUri of resourcesUris) {
           const newResourceUri = oldResourceUri.replace(oldContainerUri, newContainerUri);
 
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           await this.actions.moveResource({ oldResourceUri, newResourceUri, dataset }, { parentCtx: ctx });
 
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.info(
             `All resources moved. You should consider deleting the old container with this command: call ldp.container.delete --containerUri ${oldContainerUri} --webId system`
           );
@@ -58,6 +63,7 @@ const MigrationSchema = {
       async handler(ctx) {
         const { oldResourceUri, newResourceUri, dataset } = ctx.params;
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.logger.info(`Moving resource ${oldResourceUri} to ${newResourceUri}...`);
 
         await ctx.call('triplestore.update', {
@@ -105,6 +111,7 @@ const MigrationSchema = {
           webId: 'system'
         });
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         await this.actions.moveAclRights({ newResourceUri, oldResourceUri, dataset }, { parentCtx: ctx });
       }
     }),
@@ -113,6 +120,7 @@ const MigrationSchema = {
       async handler(ctx) {
         const { oldGroupUri, newGroupUri, dataset } = ctx.params;
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.logger.info(`Moving ACL group ${oldGroupUri} to ${newGroupUri}...`);
 
         await ctx.call('triplestore.update', {
@@ -137,6 +145,7 @@ const MigrationSchema = {
           webId: 'system'
         });
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         await this.actions.moveAclRights(
           { newResourceUri: newGroupUri, oldResourceUri: oldGroupUri, dataset },
           { parentCtx: ctx }
@@ -149,9 +158,12 @@ const MigrationSchema = {
         const { oldResourceUri, newResourceUri, dataset } = ctx.params;
 
         for (const right of ['Read', 'Append', 'Write', 'Control']) {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           const oldResourceAclUri = `${getAclUriFromResourceUri(this.settings.baseUrl, oldResourceUri)}#${right}`;
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           const newResourceAclUri = `${getAclUriFromResourceUri(this.settings.baseUrl, newResourceUri)}#${right}`;
 
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.info(`Moving ACL rights ${oldResourceAclUri} to ${newResourceAclUri}...`);
 
           await ctx.call('triplestore.update', {

@@ -11,7 +11,7 @@ export const action = defineAction({
     const { resourceUri, webId, timeout } = ctx.params;
     return new Promise(resolve => {
       let i = 0;
-      let interval;
+      let interval: any;
       const checkRights = () => {
         ctx
           .call('webacl.resource.hasRights', {
@@ -19,7 +19,7 @@ export const action = defineAction({
             rights: { read: true },
             webId
           })
-          .then(rights => {
+          .then((rights: any) => {
             if (rights.read === true) {
               if (interval) clearInterval(interval);
               resolve(true);

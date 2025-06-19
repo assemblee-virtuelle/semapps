@@ -45,9 +45,11 @@ const LdpContainerSchema = {
     before: {
       '*'(ctx) {
         if (
+          // @ts-expect-error TS(2339): Property 'podProvider' does not exist on type 'str... Remove this comment to see the full error message
           this.settings.podProvider &&
           !ctx.meta.dataset &&
           ctx.params.containerUri &&
+          // @ts-expect-error TS(2339): Property 'baseUrl' does not exist on type 'string ... Remove this comment to see the full error message
           ctx.params.containerUri.startsWith(this.settings.baseUrl)
         ) {
           // this.logger.warn(`No dataset found when calling ${ctx.action.name} with URI ${ctx.params.containerUri}`);

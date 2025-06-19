@@ -1,4 +1,4 @@
-const localLogout = (req, res, next) => {
+const localLogout = (req: any, res: any, next: any) => {
   req.logout(); // Passport logout
   next();
 };

@@ -12,10 +12,12 @@ const Schema = defineAction({
   async handler(ctx) {
     const { type } = ctx.params;
     const types = await ctx.call('jsonld.parser.expandTypes', { types: type });
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const registeredContainers = await this.actions.list({}, { parentCtx: ctx });
 
     return Object.values(registeredContainers).find(container =>
-      types.some(t =>
+      // @ts-expect-error TS(18046): 'container' is of type 'unknown'.
+      types.some((t: any) =>
         Array.isArray(container.acceptedTypes) ? container.acceptedTypes.includes(t) : container.acceptedTypes === t
       )
     );

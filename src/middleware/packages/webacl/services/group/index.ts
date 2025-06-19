@@ -1,13 +1,22 @@
 import urlJoin from 'url-join';
 import { ServiceSchema, defineAction } from 'moleculer';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import createAction from './actions/create.ts';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import deleteAction from './actions/delete.ts';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import existAction from './actions/exist.ts';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import addMemberAction from './actions/addMember.ts';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import getMembersAction from './actions/getMembers.ts';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import getUriAction from './actions/getUri.ts';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import isMemberAction from './actions/isMember.ts';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import removeMemberAction from './actions/removeMember.ts';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import getGroupsAction from './actions/getGroups.ts';
 
 const WebaclGroupSchema = {
@@ -51,8 +60,10 @@ const WebaclGroupSchema = {
 
       await Promise.all(
         members
-          .filter(memberUri => !superAdmins.includes(memberUri))
-          .map(memberUri => this.actions.removeMember({ groupUri: superAdminsGroupUri, memberUri, webId: 'system' }))
+          .filter((memberUri: any) => !superAdmins.includes(memberUri))
+          .map((memberUri: any) =>
+            this.actions.removeMember({ groupUri: superAdminsGroupUri, memberUri, webId: 'system' })
+          )
       );
     }
 
@@ -117,6 +128,7 @@ const WebaclGroupSchema = {
   hooks: {
     before: {
       '*'(ctx) {
+        // @ts-expect-error TS(2339): Property 'podProvider' does not exist on type 'str... Remove this comment to see the full error message
         if (this.settings.podProvider && !ctx.meta.dataset) {
           if (ctx.params.groupUri) {
             const groupPath = new URL(ctx.params.groupUri).pathname;

@@ -1,25 +1,31 @@
 import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
 import initialize from './initialize.ts';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import CONFIG from '../config.ts';
 
+// @ts-expect-error TS(2304): Cannot find name 'jest'.
 jest.setTimeout(50000);
-let broker;
+let broker: any;
 
+// @ts-expect-error TS(2304): Cannot find name 'beforeAll'.
 beforeAll(async () => {
   broker = await initialize(3000, 'testData', 'settings');
 });
 
+// @ts-expect-error TS(2304): Cannot find name 'afterAll'.
 afterAll(async () => {
   if (broker) await broker.stop();
 });
 
+// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe('Collections', () => {
-  const items = [];
-  let collectionUri;
-  let orderedCollectionUri;
-  let cursorBasedCollectionUri;
+  const items: any = [];
+  let collectionUri: any;
+  let orderedCollectionUri: any;
+  let cursorBasedCollectionUri: any;
 
+  // @ts-expect-error TS(2304): Cannot find name 'beforeAll'.
   beforeAll(async () => {
     // Create test items
     for (let i = 0; i < 10; i++) {
@@ -81,13 +87,16 @@ describe('Collections', () => {
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Collection exists', async () => {
     const collectionExist = await broker.call('activitypub.collection.exist', {
       resourceUri: collectionUri
     });
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(collectionExist).toBeTruthy();
 
     const collection = await broker.call('activitypub.collection.get', { resourceUri: collectionUri });
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(collection).toMatchObject({
       id: collectionUri,
       type: 'Collection',
@@ -96,12 +105,14 @@ describe('Collections', () => {
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Get collection with custom jsonContext', async () => {
     const collection = await broker.call('activitypub.collection.get', {
       resourceUri: collectionUri,
       jsonContext: { as: 'https://www.w3.org/ns/activitystreams#' }
     });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(collection).toMatchObject({
       '@id': collectionUri,
       '@type': 'as:Collection',
@@ -110,15 +121,18 @@ describe('Collections', () => {
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Ordered collection exists', async () => {
     const collectionExist = await broker.call('activitypub.collection.exist', {
       resourceUri: orderedCollectionUri
     });
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(collectionExist).toBeTruthy();
 
     const collection = await broker.call('activitypub.collection.get', {
       resourceUri: orderedCollectionUri
     });
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(collection).toMatchObject({
       id: orderedCollectionUri,
       type: 'OrderedCollection',
@@ -129,6 +143,7 @@ describe('Collections', () => {
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Add and remove item from collection', async () => {
     await broker.call('activitypub.collection.add', {
       collectionUri,
@@ -139,6 +154,7 @@ describe('Collections', () => {
       resourceUri: collectionUri
     });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(collection).toMatchObject({
       id: collectionUri,
       type: 'Collection',
@@ -155,15 +171,18 @@ describe('Collections', () => {
       resourceUri: collectionUri
     });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(collection).toMatchObject({
       id: collectionUri,
       type: 'Collection',
       summary: 'My non-ordered collection'
     });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(collection.items).toBeUndefinedOrEmptyArray();
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Get collection with dereference items', async () => {
     const collectionWithDereferenceUri = await broker.call('activitypub.collection.post', {
       resource: {
@@ -184,6 +203,7 @@ describe('Collections', () => {
       resourceUri: collectionWithDereferenceUri
     });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(collection).toMatchObject({
       id: collectionWithDereferenceUri,
       type: 'Collection',
@@ -197,6 +217,7 @@ describe('Collections', () => {
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Items are sorted in descending order (default)', async () => {
     await broker.call('activitypub.collection.add', {
       collectionUri: orderedCollectionUri,
@@ -222,12 +243,14 @@ describe('Collections', () => {
       resourceUri: orderedCollectionUri
     });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(collection).toMatchObject({
       id: orderedCollectionUri,
       orderedItems: [items[6], items[4], items[2], items[0]]
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Items are sorted in ascending order', async () => {
     const ascOrderedCollectionUri = await broker.call('activitypub.collection.post', {
       resource: {
@@ -264,15 +287,18 @@ describe('Collections', () => {
       resourceUri: ascOrderedCollectionUri
     });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(collection).toMatchObject({
       id: ascOrderedCollectionUri,
       orderedItems: [items[0], items[2], items[4], items[6]]
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
   describe('Pagination', () => {
-    let paginatedCollectionUri;
+    let paginatedCollectionUri: any;
 
+    // @ts-expect-error TS(2304): Cannot find name 'beforeAll'.
     beforeAll(async () => {
       // Create collection for pagination tests
       paginatedCollectionUri = await broker.call('activitypub.collection.post', {
@@ -294,11 +320,13 @@ describe('Collections', () => {
       }
     });
 
+    // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
     test('Should return first and last page links for unpaginated request', async () => {
       const collection = await broker.call('activitypub.collection.get', {
         resourceUri: paginatedCollectionUri
       });
 
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(collection).toMatchObject({
         id: paginatedCollectionUri,
         first: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[0])}`,
@@ -306,39 +334,49 @@ describe('Collections', () => {
       });
     });
 
+    // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
     test('Should navigate forward with afterEq cursor', async () => {
       const collection = await broker.call('activitypub.collection.get', {
         resourceUri: paginatedCollectionUri,
         afterEq: items[0]
       });
 
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(collection).toMatchObject({
         id: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[0])}`,
         type: 'CollectionPage',
         partOf: paginatedCollectionUri,
         next: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[4])}`
       });
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(collection.items).toHaveLength(4);
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(collection.items).toEqual([items[0], items[1], items[2], items[3]]);
     });
 
+    // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
     test('Should navigate backward with beforeEq cursor', async () => {
       const collection = await broker.call('activitypub.collection.get', {
         resourceUri: paginatedCollectionUri,
         beforeEq: items[5]
       });
 
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(collection).toMatchObject({
         id: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[5])}`,
         type: 'CollectionPage',
         partOf: paginatedCollectionUri,
         prev: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[1])}`
       });
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(collection.items).toHaveLength(4);
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(collection.items).toEqual([items[2], items[3], items[4], items[5]]);
     });
 
+    // @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
     describe('Edge Cases', () => {
+      // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
       test('Should handle empty collection', async () => {
         const emptyCollectionUri = await broker.call('activitypub.collection.post', {
           resource: {
@@ -354,15 +392,20 @@ describe('Collections', () => {
           resourceUri: emptyCollectionUri
         });
 
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(collection).toMatchObject({
           id: emptyCollectionUri,
           type: 'Collection'
         });
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(collection.first).toBeUndefined();
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(collection.last).toBeUndefined();
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(collection.items).toBeUndefinedOrEmptyArray();
       });
 
+      // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
       test('Should handle collection with exactly itemsPerPage items', async () => {
         const exactCollectionUri = await broker.call('activitypub.collection.post', {
           resource: {
@@ -387,14 +430,18 @@ describe('Collections', () => {
           afterEq: items[0]
         });
 
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(collection).toMatchObject({
           type: 'CollectionPage',
           partOf: exactCollectionUri
         });
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(collection.next).toBeUndefined();
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(collection.items).toHaveLength(4);
       });
 
+      // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
       test('Should handle last page with remaining items', async () => {
         // Get last page of main paginated collection (should have 2 items)
         const collection = await broker.call('activitypub.collection.get', {
@@ -402,12 +449,16 @@ describe('Collections', () => {
           afterEq: items[8]
         });
 
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(collection.items).toHaveLength(2);
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(collection.next).toBeUndefined();
       });
     });
 
+    // @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
     describe('Data Consistency', () => {
+      // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
       test('Should maintain consistent page size across navigation', async () => {
         // Navigate through all pages and verify each has correct size (except last)
         let cursor = items[0];
@@ -421,11 +472,13 @@ describe('Collections', () => {
           });
 
           if (page.next) {
+            // @ts-expect-error TS(2304): Cannot find name 'expect'.
             expect(page.items).toHaveLength(4);
           }
 
           // Check for duplicates
-          page.items.forEach(item => {
+          page.items.forEach((item: any) => {
+            // @ts-expect-error TS(2304): Cannot find name 'expect'.
             expect(seenItems.has(item)).toBeFalsy();
             seenItems.add(item);
           });
@@ -435,11 +488,14 @@ describe('Collections', () => {
         }
 
         // With 10 items and page size 4, we should have 3 pages
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(pageCount).toBe(3);
         // Should have seen all items exactly once
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(seenItems.size).toBe(10);
       });
 
+      // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
       test('Should handle navigation between pages consistently', async () => {
         // Forward navigation
         const firstPage = await broker.call('activitypub.collection.get', {
@@ -460,14 +516,18 @@ describe('Collections', () => {
         });
 
         // Verify we get back to the same items
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(firstPage.items).toEqual(prevPage.items);
       });
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
   describe('Error Handling', () => {
+    // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
     test('Should return 404 when collection does not exist', async () => {
       const nonExistentUri = urlJoin(CONFIG.HOME_URL, 'as/collection/non-existent');
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(
         broker.call('activitypub.collection.get', {
           resourceUri: nonExistentUri
@@ -475,8 +535,10 @@ describe('Collections', () => {
       ).rejects.toThrow('Not found');
     });
 
+    // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
     test('Should return 404 when cursor not found in collection', async () => {
       const invalidCursorUri = urlJoin(CONFIG.HOME_URL, 'as/object/non-existent');
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(
         broker.call('activitypub.collection.get', {
           resourceUri: cursorBasedCollectionUri,
@@ -485,7 +547,9 @@ describe('Collections', () => {
       ).rejects.toThrow('Cursor not found');
     });
 
+    // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
     test('Should reject when both beforeEq and afterEq are provided', async () => {
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(
         broker.call('activitypub.collection.get', {
           resourceUri: cursorBasedCollectionUri,
@@ -495,8 +559,10 @@ describe('Collections', () => {
       ).rejects.toThrow('Cannot get a collection with both beforeEq and afterEq');
     });
 
+    // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
     test('Should handle malformed collection URI', async () => {
       const malformedUri = 'not-a-valid-uri';
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(
         broker.call('activitypub.collection.get', {
           resourceUri: malformedUri

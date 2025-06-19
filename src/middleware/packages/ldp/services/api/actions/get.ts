@@ -4,7 +4,7 @@ import { cleanUndefined, parseJson } from '../../../utils.ts';
 
 const { MoleculerError } = require('moleculer').Errors;
 
-export default async function get(ctx) {
+export default async function get(this: any, ctx: any) {
   try {
     const { username, slugParts } = ctx.params;
 
@@ -115,8 +115,11 @@ export default async function get(ctx) {
 
     return res;
   } catch (e) {
+    // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
     if (e.code !== 404 && e.code !== 403) console.error(e);
+    // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
     ctx.meta.$statusCode = e.code || 500;
+    // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
     ctx.meta.$statusMessage = e.message;
   }
 }

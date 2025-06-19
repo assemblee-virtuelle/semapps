@@ -43,6 +43,7 @@ const Schema = defineAction({
       } else if (isURL(b)) {
         return [b, a];
       } else if (isObject(b)) {
+        // @ts-expect-error TS(2698): Spread types may only be created from object types... Remove this comment to see the full error message
         return { ...a, ...b };
       }
     }

@@ -4,6 +4,7 @@ import { defineAction } from 'moleculer';
 const Schema = defineAction({
   visibility: 'public',
   params: {
+    // @ts-expect-error TS(2769): No overload matches this call.
     resourceUri: 'string'
   },
   cache: {
@@ -23,7 +24,7 @@ const Schema = defineAction({
       webId: 'system'
     });
 
-    return result.map(node => node.type.value);
+    return result.map((node: any) => node.type.value);
   }
 });
 

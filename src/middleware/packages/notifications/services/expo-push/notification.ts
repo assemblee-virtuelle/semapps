@@ -19,8 +19,10 @@ const ExpoPushNotificationService = {
   actions: {
     send: defineAction({
       async handler(ctx) {
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         await this.actions.queue(ctx.params, { parentCtx: ctx });
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.actions.processQueue({}, { parentCtx: ctx });
       }
     }),
@@ -34,6 +36,7 @@ const ExpoPushNotificationService = {
         });
 
         for (const device of devices) {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           await this.actions.create(
             {
               deviceId: device.id,
@@ -53,19 +56,23 @@ const ExpoPushNotificationService = {
 
     processQueue: defineAction({
       async handler(ctx) {
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const notifications = await this.findByStatus('queued', ctx);
 
         for (const notification of notifications) {
           const message = JSON.parse(notification['semapps:message']);
 
           if (!Expo.isExpoPushToken(message.to)) {
+            // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
             await this.markAsError(notification['@id'], `${message.to} is not a valid Expo push token`, ctx);
           } else {
+            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             const receipt = await this.expo.sendPushNotificationsAsync([message]);
 
             // NOTE: Not all tickets have IDs; for example, tickets for notifications
             // that could not be enqueued will have error information and no receipt ID.
             if (receipt[0].id) {
+              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               await this.actions.update(
                 {
                   '@id': notification['@id'],
@@ -79,6 +86,7 @@ const ExpoPushNotificationService = {
               // must handle it appropriately. The error codes are listed in the Expo
               // documentation:
               // https://docs.expo.io/versions/latest/guides/push-notifications#response-format
+              // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
               await this.markAsError(notification['@id'], receipt.details.error, ctx);
             }
           }
@@ -88,26 +96,32 @@ const ExpoPushNotificationService = {
 
     checkReceipts: defineAction({
       async handler(ctx) {
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const notifications = await this.findByStatus('processed', ctx);
 
         if (notifications) {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           const receiptIdChunks = this.expo.chunkPushNotificationReceiptIds(
-            notifications.map(notification => notification['semapps:receiptId'])
+            notifications.map((notification: any) => notification['semapps:receiptId'])
           );
 
           // Like sending notifications, there are different strategies you could use
           // to retrieve batches of receipts from the Expo service.
           for (const chunk of receiptIdChunks) {
             try {
+              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               const receipts = await this.expo.getPushNotificationReceiptsAsync(chunk);
 
               // The receipts specify whether Apple or Google successfully received the
               // notification and information about an error, if one occurred.
               for (const receiptId in receipts) {
                 let { status, message, details } = receipts[receiptId];
-                const notificationId = notifications.find(notification => notification.receiptId === receiptId)['@id'];
+                const notificationId = notifications.find((notification: any) => notification.receiptId === receiptId)[
+                  '@id'
+                ];
 
                 if (status === 'ok') {
+                  // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
                   await this.actions.update(
                     {
                       '@id': notificationId,
@@ -124,6 +138,7 @@ const ExpoPushNotificationService = {
                     message = `Error code ${details.error}. ${message}`;
                   }
 
+                  // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
                   await this.markAsError(notificationId, message, ctx);
                 }
               }

@@ -1,22 +1,25 @@
 import fs from 'fs';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'byte... Remove this comment to see the full error message
 import bytes from 'bytes';
 import rdfparseModule from 'rdf-parse';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'stre... Remove this comment to see the full error message
 import streamifyString from 'streamify-string';
 import { variable } from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
 
+// @ts-expect-error TS(2339): Property 'default' does not exist on type 'RdfPars... Remove this comment to see the full error message
 const rdfParser = rdfparseModule.default;
 const { MoleculerError } = require('moleculer').Errors;
 
 // TODO put each method in a different file (problems with "this" not working)
 module.exports = {
-  streamToFile(inputStream, filePath, maxSize) {
+  streamToFile(inputStream: any, filePath: any, maxSize: any) {
     return new Promise((resolve, reject) => {
       const fileWriteStream = fs.createWriteStream(filePath);
       const maxSizeInBytes = maxSize && bytes.parse(maxSize);
       let fileSize = 0;
       inputStream
-        .on('data', chunk => {
+        .on('data', (chunk: any) => {
           if (maxSizeInBytes) {
             fileSize += chunk.length;
             if (fileSize > maxSizeInBytes) {
@@ -30,28 +33,30 @@ module.exports = {
         .on('error', reject);
     });
   },
-  async bodyToTriples(body, contentType) {
+  async bodyToTriples(body: any, contentType: any) {
     if (contentType === MIME_TYPES.JSON) {
       return await this.broker.call('jsonld.parser.toQuads', { input: body });
     }
     if (!(typeof body === 'string')) throw new MoleculerError('no body provided', 400, 'BAD_REQUEST');
     return new Promise((resolve, reject) => {
       const textStream = streamifyString(body);
-      const res = [];
+      const res: any = [];
       rdfParser
         .parse(textStream, { contentType })
-        .on('data', quad => res.push(quad))
-        .on('error', error => reject(error))
+        .on('data', (quad: any) => res.push(quad))
+        .on('error', (error: any) => reject(error))
         .on('end', () => resolve(res));
     });
   },
   // Filter out triples whose subject is not the resource itself
   // We don't want to update or delete resources with IDs
-  filterOtherNamedNodes(triples, resourceUri) {
-    return triples.filter(triple => !(triple.subject.termType === 'NamedNode' && triple.subject.value !== resourceUri));
+  filterOtherNamedNodes(triples: any, resourceUri: any) {
+    return triples.filter(
+      (triple: any) => !(triple.subject.termType === 'NamedNode' && triple.subject.value !== resourceUri)
+    );
   },
-  convertBlankNodesToVars(triples, blankNodesVarsMap) {
-    return triples.map(triple => {
+  convertBlankNodesToVars(triples: any, blankNodesVarsMap: any) {
+    return triples.map((triple: any) => {
       if (triple.subject.termType === 'BlankNode') {
         triple.subject = variable(triple.subject.value);
       }
@@ -62,10 +67,10 @@ module.exports = {
     });
   },
   // Exclude from triples1 the triples which also exist in triples2
-  getTriplesDifference(triples1, triples2) {
-    return triples1.filter(t1 => !triples2.some(t2 => t1.equals(t2)));
+  getTriplesDifference(triples1: any, triples2: any) {
+    return triples1.filter((t1: any) => !triples2.some((t2: any) => t1.equals(t2)));
   },
-  nodeToString(node) {
+  nodeToString(node: any) {
     switch (node.termType) {
       case 'Variable':
         return `?${node.value}`;
@@ -86,26 +91,28 @@ module.exports = {
         throw new Error(`Unknown node type: ${node.termType}`);
     }
   },
-  buildJsonVariable(identifier, triples) {
-    const blankVariables = triples.filter(t => t.subject.value.localeCompare(identifier) === 0);
+  buildJsonVariable(identifier: any, triples: any) {
+    const blankVariables = triples.filter((t: any) => t.subject.value.localeCompare(identifier) === 0);
     const json = {};
     let allIdentifiers = [identifier];
     for (const blankVariable of blankVariables) {
       if (blankVariable.object.termType === 'Variable') {
         const jsonVariable = this.buildJsonVariable(blankVariable.object.value, triples);
+        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         json[blankVariable.predicate.value] = jsonVariable.json;
         allIdentifiers = allIdentifiers.concat(jsonVariable.allIdentifiers);
       } else {
+        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         json[blankVariable.predicate.value] = blankVariable.object.value;
       }
     }
     return { json, allIdentifiers };
   },
-  removeDuplicatedVariables(triples) {
-    const roots = triples.filter(n => n.object.termType === 'Variable' && n.subject.termType !== 'Variable');
-    const rootsIdentifiers = roots.reduce((previousValue, currentValue) => {
+  removeDuplicatedVariables(triples: any) {
+    const roots = triples.filter((n: any) => n.object.termType === 'Variable' && n.subject.termType !== 'Variable');
+    const rootsIdentifiers = roots.reduce((previousValue: any, currentValue: any) => {
       const result = previousValue;
-      if (!result.find(i => i.localeCompare(currentValue.object.value) === 0)) {
+      if (!result.find((i: any) => i.localeCompare(currentValue.object.value) === 0)) {
         result.push(currentValue.object.value);
       }
       return result;
@@ -119,9 +126,10 @@ module.exports = {
         allIdentifiers: jsonVariable.allIdentifiers
       });
     }
-    const keepVariables = [];
+    const keepVariables: any = [];
     const duplicatedVariables = [];
     for (var rootJson of rootsJson) {
+      // @ts-expect-error TS(7006): Parameter 'kp' implicitly has an 'any' type.
       if (keepVariables.find(kp => kp.stringified.localeCompare(rootJson.stringified) === 0)) {
         duplicatedVariables.push(rootJson);
       } else {
@@ -130,19 +138,19 @@ module.exports = {
     }
     const allRemovedIdentifiers = duplicatedVariables.map(dv => dv.allIdentifiers).flat();
     const removedDuplicatedVariables = triples.filter(
-      t => !allRemovedIdentifiers.includes(t.object.value) && !allRemovedIdentifiers.includes(t.subject.value)
+      (t: any) => !allRemovedIdentifiers.includes(t.object.value) && !allRemovedIdentifiers.includes(t.subject.value)
     );
     return removedDuplicatedVariables;
   },
-  triplesToString(triples) {
+  triplesToString(triples: any) {
     return triples
       .map(
-        triple =>
+        (triple: any) =>
           `${this.nodeToString(triple.subject)} <${triple.predicate.value}> ${this.nodeToString(triple.object)} .`
       )
       .join('\n');
   },
-  bindNewBlankNodes(triples) {
-    return triples.map(triple => `BIND (BNODE() AS ?${triple.object.value}) .`).join('\n');
+  bindNewBlankNodes(triples: any) {
+    return triples.map((triple: any) => `BIND (BNODE() AS ?${triple.object.value}) .`).join('\n');
   }
 };

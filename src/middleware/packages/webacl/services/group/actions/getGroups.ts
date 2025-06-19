@@ -1,6 +1,6 @@
 import { defineAction } from 'moleculer';
 
-export const api = async function api(ctx) {
+export const api = async function api(this: any, ctx: any) {
   if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;
   return await ctx.call('webacl.group.getGroups', {});
 };
@@ -11,6 +11,7 @@ export const action = defineAction({
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     let groups;
@@ -25,6 +26,7 @@ export const action = defineAction({
           PREFIX foaf: <http://xmlns.com/foaf/0.1/>
           SELECT ?g 
           WHERE 
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           { GRAPH <${this.settings.graphName}>
             { ?g a vcard:Group.
             ?auth a acl:Authorization;
@@ -45,6 +47,7 @@ export const action = defineAction({
           PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
           SELECT ?g 
           WHERE { 
+            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             GRAPH <${this.settings.graphName}>
             { ?g a vcard:Group } 
           }
@@ -53,6 +56,6 @@ export const action = defineAction({
       });
     }
 
-    return groups.map(m => m.g.value);
+    return groups.map((m: any) => m.g.value);
   }
 });

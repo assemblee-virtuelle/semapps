@@ -44,22 +44,22 @@ const webAclContext = {
   }
 };
 
-function streamToString(stream) {
+function streamToString(stream: any) {
   let res = '';
   return new Promise((resolve, reject) => {
-    stream.on('data', chunk => (res += chunk));
-    stream.on('error', err => reject(err));
+    stream.on('data', (chunk: any) => (res += chunk));
+    stream.on('error', (err: any) => reject(err));
     stream.on('end', () => resolve(res));
   });
 }
 
-async function formatOutput(ctx, output, resourceAclUri, jsonLD) {
+async function formatOutput(ctx: any, output: any, resourceAclUri: any, jsonLD: any) {
   const turtle = await new Promise((resolve, reject) => {
     const writer = new Writer({
       prefixes: { ...prefixes, '': `${resourceAclUri}#` },
       format: 'Turtle'
     });
-    output.forEach(f => writer.addQuad(f.auth, f.p, f.o));
+    output.forEach((f: any) => writer.addQuad(f.auth, f.p, f.o));
     writer.end((error, res) => {
       resolve(res);
     });
@@ -72,9 +72,10 @@ async function formatOutput(ctx, output, resourceAclUri, jsonLD) {
     baseIRI: resourceAclUri
   });
 
-  output.forEach(f => mySerializer.write(quad(f.auth, f.p, f.o)));
+  output.forEach((f: any) => mySerializer.write(quad(f.auth, f.p, f.o)));
   mySerializer.end();
 
+  // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
   const jsonLd = JSON.parse(await streamToString(mySerializer));
 
   const compactJsonLd = await ctx.call('jsonld.parser.frame', {
@@ -93,21 +94,23 @@ async function formatOutput(ctx, output, resourceAclUri, jsonLD) {
   return compactJsonLd;
 }
 
-async function filterAcls(hasControl, uaSearchParam, acls) {
+async function filterAcls(hasControl: any, uaSearchParam: any, acls: any) {
   if (hasControl || uaSearchParam.system) return acls;
 
-  const filtered = acls.filter(acl => filterAgentAcl(acl, uaSearchParam, false));
+  const filtered = acls.filter((acl: any) => filterAgentAcl(acl, uaSearchParam, false));
   if (filtered.length) {
-    const header = acls.filter(acl => filterAgentAcl(acl, uaSearchParam, true));
+    const header = acls.filter((acl: any) => filterAgentAcl(acl, uaSearchParam, true));
     return header.concat(filtered);
   }
 
   return [];
 }
 
-async function getPermissions(ctx, resourceUri, baseUrl, user, graphName, isContainer) {
+async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: any, graphName: any, isContainer: any) {
   const resourceAclUri = getAclUriFromResourceUri(baseUrl, resourceUri);
+  // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
   const controls = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName);
+  // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
   const uaSearchParam = getUserAgentSearchParam(user);
   let hasControl = checkAgentPresent(controls, uaSearchParam);
   let groups;
@@ -140,6 +143,7 @@ async function getPermissions(ctx, resourceUri, baseUrl, user, graphName, isCont
     const appends = await getAuthorizationNode(ctx, containerUri, aclUri, 'Append', graphName, true);
 
     // we keep all the authorization nodes we found
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     containersMap[containerUri] = {
       reads,
       writes,
@@ -152,8 +156,11 @@ async function getPermissions(ctx, resourceUri, baseUrl, user, graphName, isCont
   }
 
   // we finish to get all the ACLs for the resource itself
+  // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
   const reads = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', graphName);
+  // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
   const writes = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', graphName);
+  // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
   const appends = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', graphName);
 
   const document = [];
@@ -171,16 +178,20 @@ async function getPermissions(ctx, resourceUri, baseUrl, user, graphName, isCont
   }
 
   for (const [key, value] of Object.entries(containersMap)) {
+    // @ts-expect-error TS(18046): 'value' is of type 'unknown'.
     document.push(...(await filterAcls(hasControl, uaSearchParam, value.reads)));
+    // @ts-expect-error TS(18046): 'value' is of type 'unknown'.
     document.push(...(await filterAcls(hasControl, uaSearchParam, value.writes)));
+    // @ts-expect-error TS(18046): 'value' is of type 'unknown'.
     document.push(...(await filterAcls(hasControl, uaSearchParam, value.appends)));
+    // @ts-expect-error TS(18046): 'value' is of type 'unknown'.
     document.push(...(await filterAcls(hasControl, uaSearchParam, value.controls)));
   }
 
   return await formatOutput(ctx, document, resourceAclUri, ctx.meta.$responseType === MIME_TYPES.JSON);
 }
 
-export const api = async function api(ctx) {
+export const api = async function api(this: any, ctx: any) {
   const { accept } = ctx.meta.headers;
   let { slugParts } = ctx.params;
 
@@ -209,13 +220,17 @@ export const action = defineAction({
   },
   async handler(ctx) {
     let { resourceUri, webId, accept, skipResourceCheck } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     webId = webId || ctx.meta.webId || 'anon';
 
     accept = accept || MIME_TYPES.TURTLE;
+    // @ts-expect-error TS(2339): Property '$responseType' does not exist on type '{... Remove this comment to see the full error message
     ctx.meta.$responseType = accept;
 
+    // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
     const isContainer = !skipResourceCheck && (await this.checkResourceOrContainerExists(ctx, resourceUri));
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     return await getPermissions(ctx, resourceUri, this.settings.baseUrl, webId, this.settings.graphName, isContainer);
   }
 });

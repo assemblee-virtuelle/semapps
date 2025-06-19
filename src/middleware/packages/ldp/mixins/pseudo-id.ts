@@ -90,6 +90,7 @@ const Schema = {
       list: ['handleAfterGet']
     }
   }
+  // @ts-expect-error TS(1360): Type '{ dependencies: string[]; settings: { pseudo... Remove this comment to see the full error message
 } satisfies ServiceSchema;
 
 export default Schema;

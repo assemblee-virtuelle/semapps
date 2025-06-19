@@ -1,3 +1,4 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'mole... Remove this comment to see the full error message
 import Schedule from 'moleculer-schedule';
 import { ServiceSchema, defineAction } from 'moleculer';
 import deleteAction from './actions/delete.ts';
@@ -29,6 +30,7 @@ const LdpRemoteSchema = {
     runCron: defineAction({
       // Used by tests
       handler() {
+        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         this.updateSingleMirroredResources();
       }
     })
@@ -36,7 +38,7 @@ const LdpRemoteSchema = {
   methods: {
     async proxyAvailable() {
       const services = await this.broker.call('$node.services');
-      return services.some(s => s.name === 'signature.proxy');
+      return services.some((s: any) => s.name === 'signature.proxy');
     },
     async updateSingleMirroredResources() {
       if (!this.settings.podProvider) {
@@ -51,7 +53,7 @@ const LdpRemoteSchema = {
           `
         });
 
-        for (const resourceUri of singles.map(node => node.s.value)) {
+        for (const resourceUri of singles.map((node: any) => node.s.value)) {
           try {
             await this.actions.store({
               resourceUri,
@@ -59,6 +61,7 @@ const LdpRemoteSchema = {
               mirrorGraph: true
             });
           } catch (e) {
+            // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
             if (e.code === 403 || e.code === 404 || e.code === 401) {
               await this.actions.delete({ resourceUri });
             } else {

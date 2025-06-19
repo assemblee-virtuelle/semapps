@@ -64,23 +64,27 @@ const SynchronizerService = {
       match: {
         type: ACTIVITY_TYPES.CREATE
       },
-      async onReceive(ctx, activity, recipientUri) {
+      async onReceive(ctx: any, activity: any, recipientUri: any) {
+        // @ts-expect-error TS(2339): Property 'isValid' does not exist on type '{ match... Remove this comment to see the full error message
         if (await this.isValid(activity, recipientUri)) {
           for (let resource of arrayOf(activity.object)) {
             const resourceUri = typeof resource === 'string' ? resource : resource['@id'] || resource.id;
 
             // Ignore if the resource is on the same server
+            // @ts-expect-error TS(2339): Property 'isLocal' does not exist on type '{ match... Remove this comment to see the full error message
             if (!this.isLocal(resourceUri, recipientUri)) {
               resource = await ctx.call(
                 'ldp.remote.store',
                 typeof resource === 'string'
                   ? {
                       resourceUri: resource,
+                      // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ matc... Remove this comment to see the full error message
                       mirrorGraph: this.settings.mirrorGraph,
                       webId: recipientUri
                     }
                   : {
                       resource: { '@context': activity['@context'], ...resource },
+                      // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ matc... Remove this comment to see the full error message
                       mirrorGraph: this.settings.mirrorGraph,
                       webId: recipientUri
                     }
@@ -88,6 +92,7 @@ const SynchronizerService = {
 
               const type = resource['@type'] || resource.type;
 
+              // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ matc... Remove this comment to see the full error message
               if (activity.target && this.settings.synchronizeContainers) {
                 for (const containerUri of arrayOf(activity.target)) {
                   await ctx.call('ldp.container.attach', {
@@ -98,9 +103,11 @@ const SynchronizerService = {
                 }
               }
 
+              // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ matc... Remove this comment to see the full error message
               if (this.settings.attachToLocalContainers) {
                 let containerUri;
 
+                // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ matc... Remove this comment to see the full error message
                 if (this.settings.podProvider) {
                   // If this is a Pod provider, try to find the container with the type-registrations service
                   [containerUri] = await ctx.call('type-registrations.findContainersUris', {
@@ -121,6 +128,7 @@ const SynchronizerService = {
                 if (containerUri) {
                   await ctx.call('ldp.container.attach', { containerUri, resourceUri, webId: recipientUri });
                 } else {
+                  // @ts-expect-error TS(2339): Property 'logger' does not exist on type '{ match:... Remove this comment to see the full error message
                   this.logger.warn(
                     `Cannot attach resource ${resourceUri} of type "${type}", no matching local containers were found`
                   );
@@ -135,7 +143,8 @@ const SynchronizerService = {
       match: {
         type: ACTIVITY_TYPES.UPDATE
       },
-      async onReceive(ctx, activity, recipientUri) {
+      async onReceive(ctx: any, activity: any, recipientUri: any) {
+        // @ts-expect-error TS(2339): Property 'isValid' does not exist on type '{ match... Remove this comment to see the full error message
         if (await this.isValid(activity, recipientUri)) {
           for (let resource of arrayOf(activity.object)) {
             resource = await ctx.call(
@@ -143,11 +152,13 @@ const SynchronizerService = {
               typeof resource === 'string'
                 ? {
                     resourceUri: resource,
+                    // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ matc... Remove this comment to see the full error message
                     mirrorGraph: this.settings.mirrorGraph,
                     webId: recipientUri
                   }
                 : {
                     resource: { '@context': activity['@context'], ...resource },
+                    // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ matc... Remove this comment to see the full error message
                     mirrorGraph: this.settings.mirrorGraph,
                     webId: recipientUri
                   }
@@ -160,7 +171,8 @@ const SynchronizerService = {
       match: {
         type: ACTIVITY_TYPES.DELETE
       },
-      async onReceive(ctx, activity, recipientUri) {
+      async onReceive(ctx: any, activity: any, recipientUri: any) {
+        // @ts-expect-error TS(2339): Property 'isValid' does not exist on type '{ match... Remove this comment to see the full error message
         if (await this.isValid(activity, recipientUri)) {
           for (const resource of arrayOf(activity.object)) {
             const resourceUri = typeof resource === 'string' ? resource : resource.id || resource['@id'];
@@ -175,11 +187,14 @@ const SynchronizerService = {
                 webId: recipientUri
               });
             } catch (e) {
+              // @ts-expect-error TS(2339): Property 'logger' does not exist on type '{ match:... Remove this comment to see the full error message
               this.logger.warn(
+                // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
                 `Remote resource ${resourceUri} not deleted as it was not found on local dataset. Error ${e.message}`
               );
             }
 
+            // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ matc... Remove this comment to see the full error message
             if (activity.target && this.settings.synchronizeContainers) {
               for (const containerUri of arrayOf(activity.target)) {
                 await ctx.call('ldp.container.detach', {
@@ -200,8 +215,10 @@ const SynchronizerService = {
           type: OBJECT_TYPES.RELATIONSHIP
         }
       },
-      async onReceive(ctx, activity, recipientUri) {
+      async onReceive(ctx: any, activity: any, recipientUri: any) {
+        // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ matc... Remove this comment to see the full error message
         if (this.settings.synchronizeContainers) {
+          // @ts-expect-error TS(2339): Property 'isValid' does not exist on type '{ match... Remove this comment to see the full error message
           if (await this.isValid(activity, recipientUri)) {
             const predicate = await ctx.call('jsonld.parser.expandPredicate', {
               predicate: activity.object.relationship,
@@ -225,8 +242,10 @@ const SynchronizerService = {
           type: OBJECT_TYPES.RELATIONSHIP
         }
       },
-      async onReceive(ctx, activity, recipientUri) {
+      async onReceive(ctx: any, activity: any, recipientUri: any) {
+        // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ matc... Remove this comment to see the full error message
         if (this.settings.synchronizeContainers) {
+          // @ts-expect-error TS(2339): Property 'isValid' does not exist on type '{ match... Remove this comment to see the full error message
           if (await this.isValid(activity, recipientUri)) {
             const predicate = await ctx.call('jsonld.parser.expandPredicate', {
               predicate: activity.object.relationship,

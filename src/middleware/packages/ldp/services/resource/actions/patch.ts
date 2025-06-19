@@ -2,7 +2,7 @@ import { defineAction } from 'moleculer';
 
 const { MoleculerError } = require('moleculer').Errors;
 
-function checkTriplesSubjectIsResource(triples, resourceUri) {
+function checkTriplesSubjectIsResource(triples: any, resourceUri: any) {
   for (const triple of triples) {
     switch (triple.subject.termType) {
       case 'NamedNode':
@@ -43,6 +43,7 @@ const Schema = defineAction({
   },
   async handler(ctx) {
     let { resourceUri, triplesToAdd, triplesToRemove, skipInferenceCheck, webId } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     webId = webId || ctx.meta.webId || 'anon';
 
     if (await ctx.call('ldp.remote.isRemote', { resourceUri }))
@@ -62,6 +63,7 @@ const Schema = defineAction({
 
     if (triplesToRemove) {
       checkTriplesSubjectIsResource(triplesToRemove, resourceUri);
+      // @ts-expect-error TS(2345): Argument of type '{ updateType: string; delete: { ... Remove this comment to see the full error message
       sparqlUpdate.updates.push({
         updateType: 'delete',
         delete: [{ type: 'bgp', triples: triplesToRemove }]
@@ -70,6 +72,7 @@ const Schema = defineAction({
 
     if (triplesToAdd) {
       checkTriplesSubjectIsResource(triplesToAdd, resourceUri);
+      // @ts-expect-error TS(2345): Argument of type '{ updateType: string; insert: { ... Remove this comment to see the full error message
       sparqlUpdate.updates.push({
         updateType: 'insert',
         insert: [{ type: 'bgp', triples: triplesToAdd }]
@@ -87,9 +90,11 @@ const Schema = defineAction({
       triplesRemoved: triplesToRemove,
       skipInferenceCheck,
       webId,
+      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       dataset: ctx.meta.dataset
     };
 
+    // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
     if (!ctx.meta.skipEmitEvent) {
       ctx.emit('ldp.resource.patched', returnValues, { meta: { webId: null, dataset: null } });
     }

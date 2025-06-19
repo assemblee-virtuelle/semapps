@@ -12,7 +12,7 @@ import {
   saveDatasetMeta
 } from '@semapps/middlewares';
 
-const transformRouteParamsToSlugParts = (req, res, next) => {
+const transformRouteParamsToSlugParts = (req: any, res: any, next: any) => {
   req.$params.slugParts = [];
   if (req.$params.username) {
     req.$params.slugParts.push(req.$params.username);
@@ -25,7 +25,7 @@ const transformRouteParamsToSlugParts = (req, res, next) => {
   next();
 };
 
-function getPodsRoute(basePath) {
+function getPodsRoute(basePath: any) {
   const middlewares = [
     parseUrl,
     parseHeader,

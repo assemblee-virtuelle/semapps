@@ -1,6 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
 
-export default async function post(ctx) {
+export default async function post(this: any, ctx: any) {
   const { username, slugParts, body, ...resource } = ctx.params;
 
   const resourceUri = this.getUriFromSlugParts(slugParts, username);
@@ -30,8 +30,11 @@ export default async function post(ctx) {
       'Content-Length': 0
     };
   } catch (e) {
+    // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
     if (e.code !== 404 && e.code !== 403) console.error(e);
+    // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
     ctx.meta.$statusCode = e.code || 500;
+    // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
     ctx.meta.$statusMessage = e.message;
   }
 }

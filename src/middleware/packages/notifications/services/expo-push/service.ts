@@ -14,6 +14,7 @@ const ExpoPushService = {
   },
   dependencies: ['api'],
   created() {
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "expo-push.dev... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [ExpoPushDeviceService],
       settings: {
@@ -21,6 +22,7 @@ const ExpoPushService = {
       }
     });
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "expo-push.not... Remove this comment to see the full error message
     this.broker.createService({ mixins: [ExpoPushNotificationService] });
   },
   async started() {

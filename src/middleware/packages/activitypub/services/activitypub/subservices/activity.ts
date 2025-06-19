@@ -1,3 +1,4 @@
+// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { E as Errors } from 'moleculer-web';
 import { ControlledContainerMixin } from '@semapps/ldp';
 import { MIME_TYPES } from '@semapps/mime-types';
@@ -33,6 +34,7 @@ const ActivityService = {
   actions: {
     forbidden: defineAction({
       handler() {
+        // @ts-expect-error TS(2304): Cannot find name 'E'.
         throw new E.ForbiddenError();
       }
     }),
@@ -42,6 +44,7 @@ const ActivityService = {
         const { activity } = ctx.params;
         const output = [];
 
+        // @ts-expect-error TS(2339): Property 'actor' does not exist on type 'never'.
         const actor = activity.actor ? await ctx.call('activitypub.actor.get', { actorUri: activity.actor }) : {};
 
         for (const predicates of ['to', 'bto', 'cc', 'bcc']) {
@@ -58,9 +61,11 @@ const ActivityService = {
                 case actor.followers:
                   // Ignore remote followers list
                   // TODO Fetch remote followers list ?
+                  // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
                   if (recipient.startsWith(this.settings.baseUri)) {
                     const collection = await ctx.call('activitypub.collection.get', {
                       resourceUri: recipient,
+                      // @ts-expect-error TS(2339): Property 'actor' does not exist on type 'never'.
                       webId: activity.actor
                     });
                     if (collection && collection.items) output.push(...arrayOf(collection.items));
@@ -84,8 +89,10 @@ const ActivityService = {
     getLocalRecipients: defineAction({
       async handler(ctx) {
         const { activity } = ctx.params;
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const recipients = await this.actions.getRecipients({ activity }, { parentCtx: ctx });
-        return recipients.filter(recipientUri => this.isLocalActor(recipientUri));
+        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
+        return recipients.filter((recipientUri: any) => this.isLocalActor(recipientUri));
       }
     }),
 
@@ -94,8 +101,10 @@ const ActivityService = {
         const { activity } = ctx.params;
         // We accept all three representations, as required by https://www.w3.org/TR/activitypub/#public-addressing
         const publicRepresentations = [PUBLIC_URI, 'Public', 'as:Public'];
+        // @ts-expect-error TS(2339): Property 'to' does not exist on type 'never'.
         return arrayOf(activity.to).length > 0
-          ? arrayOf(activity.to).some(r => publicRepresentations.includes(r))
+          ? // @ts-expect-error TS(2339): Property 'to' does not exist on type 'never'.
+            arrayOf(activity.to).some(r => publicRepresentations.includes(r))
           : false;
       }
     })
