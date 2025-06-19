@@ -1,7 +1,6 @@
-const appendPrefix = types => Object.fromEntries(Object.entries(types).map(([key, value]) => [key, AS_PREFIX + value]));
-
+const appendPrefix = (types: any) =>
+  Object.fromEntries(Object.entries(types).map(([key, value]) => [key, AS_PREFIX + value]));
 const AS_PREFIX = 'https://www.w3.org/ns/activitystreams#';
-
 const PUBLIC_URI = `${AS_PREFIX}Public`;
 
 const ACTIVITY_TYPES = {
@@ -58,13 +57,7 @@ const OBJECT_TYPES = {
   VIDEO: 'Video'
 };
 
-module.exports = {
-  AS_PREFIX,
-  PUBLIC_URI,
-  ACTIVITY_TYPES,
-  ACTOR_TYPES,
-  OBJECT_TYPES,
-  FULL_ACTIVITY_TYPES: appendPrefix(ACTIVITY_TYPES),
-  FULL_ACTOR_TYPES: appendPrefix(ACTOR_TYPES),
-  FULL_OBJECT_TYPES: appendPrefix(OBJECT_TYPES)
-};
+export { AS_PREFIX, PUBLIC_URI, ACTIVITY_TYPES, ACTOR_TYPES, OBJECT_TYPES };
+export const FULL_ACTIVITY_TYPES = appendPrefix(ACTIVITY_TYPES);
+export const FULL_ACTOR_TYPES = appendPrefix(ACTOR_TYPES);
+export const FULL_OBJECT_TYPES = appendPrefix(OBJECT_TYPES);
