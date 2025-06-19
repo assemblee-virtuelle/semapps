@@ -2,10 +2,10 @@ import fetch from 'node-fetch';
 import urlJoin from 'url-join';
 import initialize from './initialize.ts';
 import CONFIG from '../config.ts';
-import ont1 from './ontologies/ont1.json';
-import ont2 from './ontologies/ont2.json';
-import ont3 from './ontologies/ont3.json';
-import ont4 from './ontologies/ont4.json';
+import ont1 from './ontologies/ont1.json' with { type: 'json' };
+import ont2 from './ontologies/ont2.json' with { type: 'json' };
+import ont3 from './ontologies/ont3.json' with { type: 'json' };
+import ont4 from './ontologies/ont4.json' with { type: 'json' };
 jest.setTimeout(10000);
 const localContextUri = urlJoin(CONFIG.HOME_URL, '.well-known/context.jsonld');
 
