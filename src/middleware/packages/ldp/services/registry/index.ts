@@ -1,5 +1,5 @@
 import urlJoin from 'url-join';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 import getByTypeAction from './actions/getByType.ts';
 import getByUriAction from './actions/getByUri.ts';
 import getUriAction from './actions/getUri.ts';
@@ -37,22 +37,24 @@ const LdpRegistrySchema = {
     }
   },
   events: {
-    async 'auth.registered'(ctx) {
-      const { webId, accountData } = ctx.params;
-      // We want to add user's containers only in Pod provider config
-      if (this.settings.podProvider) {
-        const storageUrl = await ctx.call('solid-storage.getUrl', { webId });
-        const registeredContainers = await this.actions.list({ dataset: accountData.username }, { parentCtx: ctx });
-        // Go through each registered containers
-        for (const options of Object.values(registeredContainers)) {
-          await ctx.call('ldp.container.createAndAttach', {
-            containerUri: urlJoin(storageUrl, options.path),
-            options,
-            webId
-          });
+    'auth.registered': defineServiceEvent({
+      async handler(ctx) {
+        const { webId, accountData } = ctx.params;
+        // We want to add user's containers only in Pod provider config
+        if (this.settings.podProvider) {
+          const storageUrl = await ctx.call('solid-storage.getUrl', { webId });
+          const registeredContainers = await this.actions.list({ dataset: accountData.username }, { parentCtx: ctx });
+          // Go through each registered containers
+          for (const options of Object.values(registeredContainers)) {
+            await ctx.call('ldp.container.createAndAttach', {
+              containerUri: urlJoin(storageUrl, options.path),
+              options,
+              webId
+            });
+          }
         }
       }
-    }
+    })
   }
 } satisfies ServiceSchema;
 

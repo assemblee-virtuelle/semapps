@@ -1,7 +1,7 @@
 import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { arrayOf } from '@semapps/ldp';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 import { ACTOR_TYPES } from '../constants.ts';
 import { getSlugFromUri, getContainerFromUri } from '../utils.ts';
 
@@ -78,13 +78,15 @@ const BotMixin = {
     })
   },
   events: {
-    'activitypub.inbox.received'(ctx) {
-      if (this.inboxReceived) {
-        if (ctx.params.recipients.includes(this.settings.actor.uri)) {
-          this.inboxReceived(ctx.params.activity);
+    'activitypub.inbox.received': defineServiceEvent({
+      handler(ctx) {
+        if (this.inboxReceived) {
+          if (ctx.params.recipients.includes(this.settings.actor.uri)) {
+            this.inboxReceived(ctx.params.activity);
+          }
         }
       }
-    }
+    })
   },
   methods: {
     async getFollowers() {

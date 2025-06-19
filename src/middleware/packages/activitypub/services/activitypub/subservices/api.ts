@@ -14,7 +14,7 @@ import {
   saveDatasetMeta
 } from '@semapps/middlewares';
 
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 import { FULL_ACTOR_TYPES } from '../../../constants.ts';
 
 const ApiService = {
@@ -84,22 +84,24 @@ const ApiService = {
     })
   },
   events: {
-    async 'ldp.registry.registered'(ctx) {
-      const { container } = ctx.params;
-      const { pathname: basePath } = new URL(this.settings.baseUri);
-      const resourcesWithContainerPath = await this.broker.call('ldp.getSetting', {
-        key: 'resourcesWithContainerPath'
-      });
-      if (
-        !this.settings.podProvider &&
-        resourcesWithContainerPath &&
-        arrayOf(container.acceptedTypes).some(type => Object.values(FULL_ACTOR_TYPES).includes(type))
-      ) {
-        await ctx.call('api.addRoute', {
-          route: this.getBoxesRoute(path.join(basePath, `${container.fullPath}/:actorSlug`))
+    'ldp.registry.registered': defineServiceEvent({
+      async handler(ctx) {
+        const { container } = ctx.params;
+        const { pathname: basePath } = new URL(this.settings.baseUri);
+        const resourcesWithContainerPath = await this.broker.call('ldp.getSetting', {
+          key: 'resourcesWithContainerPath'
         });
+        if (
+          !this.settings.podProvider &&
+          resourcesWithContainerPath &&
+          arrayOf(container.acceptedTypes).some(type => Object.values(FULL_ACTOR_TYPES).includes(type))
+        ) {
+          await ctx.call('api.addRoute', {
+            route: this.getBoxesRoute(path.join(basePath, `${container.fullPath}/:actorSlug`))
+          });
+        }
       }
-    }
+    })
   },
   methods: {
     getBoxesRoute(actorsPath) {

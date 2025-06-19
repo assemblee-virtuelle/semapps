@@ -4,7 +4,7 @@ import fetch from 'node-fetch';
 import { generateKeyPair } from 'crypto';
 import { namedNode, blankNode, literal, triple } from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 import { KEY_TYPES } from '../constants.ts';
 
 /**
@@ -226,18 +226,23 @@ const SignatureService = {
     }
   },
   events: {
-    async 'auth.registered'(ctx) {
-      const { webId } = ctx.params;
-      if (this.isMigrated) {
-        return;
-      }
+    'auth.registered': defineServiceEvent({
+      async handler(ctx) {
+        const { webId } = ctx.params;
+        if (this.isMigrated) {
+          return;
+        }
 
-      await this.actions.generate({ actorUri: webId }, { parentCtx: ctx });
-      await this.actions.attachPublicKey({ actorUri: webId }, { parentCtx: ctx });
-    },
-    async 'keys.migration.migrated'(ctx) {
-      this.isMigrated = true;
-    }
+        await this.actions.generate({ actorUri: webId }, { parentCtx: ctx });
+        await this.actions.attachPublicKey({ actorUri: webId }, { parentCtx: ctx });
+      }
+    }),
+
+    'keys.migration.migrated': defineServiceEvent({
+      async handler(ctx) {
+        this.isMigrated = true;
+      }
+    })
   }
 } satisfies ServiceSchema;
 

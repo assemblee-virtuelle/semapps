@@ -13,4 +13,4 @@ export {
   JsonLdParserService,
   uriSchemes
 };
-export const { isRegisteredURI } = require('./utils/utils');
+import { isRegisteredURI } from './utils/utils.ts';

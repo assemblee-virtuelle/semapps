@@ -1,5 +1,5 @@
 import { dc } from '@semapps/ontologies';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 import { getDatasetFromUri } from '../utils.ts';
 
 const Schema = {
@@ -69,21 +69,29 @@ const Schema = {
     })
   },
   events: {
-    async 'ldp.resource.created'(ctx) {
-      const { resourceUri, newData, webId, dataset } = ctx.params;
-      this.actions.tagCreatedResource(
-        { resourceUri, newData, webId: ctx.meta.impersonatedUser || webId, dataset },
-        { parentCtx: ctx }
-      );
-    },
-    async 'ldp.resource.updated'(ctx) {
-      const { resourceUri, dataset } = ctx.params;
-      this.actions.tagUpdatedResource({ resourceUri, dataset }, { parentCtx: ctx });
-    },
-    async 'ldp.resource.patched'(ctx) {
-      const { resourceUri, dataset } = ctx.params;
-      this.actions.tagUpdatedResource({ resourceUri, dataset }, { parentCtx: ctx });
-    }
+    'ldp.resource.created': defineServiceEvent({
+      async handler(ctx) {
+        const { resourceUri, newData, webId, dataset } = ctx.params;
+        this.actions.tagCreatedResource(
+          { resourceUri, newData, webId: ctx.meta.impersonatedUser || webId, dataset },
+          { parentCtx: ctx }
+        );
+      }
+    }),
+
+    'ldp.resource.updated': defineServiceEvent({
+      async handler(ctx) {
+        const { resourceUri, dataset } = ctx.params;
+        this.actions.tagUpdatedResource({ resourceUri, dataset }, { parentCtx: ctx });
+      }
+    }),
+
+    'ldp.resource.patched': defineServiceEvent({
+      async handler(ctx) {
+        const { resourceUri, dataset } = ctx.params;
+        this.actions.tagUpdatedResource({ resourceUri, dataset }, { parentCtx: ctx });
+      }
+    })
   }
 } satisfies ServiceSchema;
 

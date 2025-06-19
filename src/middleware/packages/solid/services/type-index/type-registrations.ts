@@ -2,7 +2,7 @@ import urlJoin from 'url-join';
 import { namedNode, triple } from '@rdfjs/data-model';
 import { ControlledContainerMixin, arrayOf } from '@semapps/ldp';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 
 const TypeRegistrationsSchema = {
   name: 'type-registrations' as const,
@@ -288,23 +288,25 @@ const TypeRegistrationsSchema = {
     })
   },
   events: {
-    async 'ldp.container.created'(ctx) {
-      const { containerUri, options, webId } = ctx.params;
+    'ldp.container.created': defineServiceEvent({
+      async handler(ctx) {
+        const { containerUri, options, webId } = ctx.params;
 
-      if (options?.typeIndex) {
-        await ctx.call('type-indexes.waitForIndexCreation', { type: options.typeIndex, webId });
+        if (options?.typeIndex) {
+          await ctx.call('type-indexes.waitForIndexCreation', { type: options.typeIndex, webId });
 
-        await this.actions.register(
-          {
-            types: arrayOf(options?.acceptedTypes),
-            containerUri,
-            webId,
-            isPrivate: options.typeIndex === 'private'
-          },
-          { parentCtx: ctx }
-        );
+          await this.actions.register(
+            {
+              types: arrayOf(options?.acceptedTypes),
+              containerUri,
+              webId,
+              isPrivate: options.typeIndex === 'private'
+            },
+            { parentCtx: ctx }
+          );
+        }
       }
-    }
+    })
   },
   hooks: {
     after: {

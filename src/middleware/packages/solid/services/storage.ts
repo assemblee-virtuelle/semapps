@@ -1,7 +1,7 @@
 import urlJoin from 'url-join';
 import { triple, namedNode } from '@rdfjs/data-model';
 import { pim } from '@semapps/ontologies';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 
 /** @type {import('moleculer').ServiceSchema} */
 const SolidStorageSchema = {
@@ -55,42 +55,44 @@ const SolidStorageSchema = {
     })
   },
   events: {
-    async 'auth.registered'(ctx) {
-      const { webId } = ctx.params;
+    'auth.registered': defineServiceEvent({
+      async handler(ctx) {
+        const { webId } = ctx.params;
 
-      const storageUrl = await this.actions.getUrl({ webId }, { parentCtx: ctx });
+        const storageUrl = await this.actions.getUrl({ webId }, { parentCtx: ctx });
 
-      // Attach the storage URL to the webId
-      await ctx.call('ldp.resource.patch', {
-        resourceUri: webId,
-        triplesToAdd: [
-          triple(namedNode(webId), namedNode('http://www.w3.org/ns/pim/space#storage'), namedNode(storageUrl))
-        ],
-        webId: 'system'
-      });
+        // Attach the storage URL to the webId
+        await ctx.call('ldp.resource.patch', {
+          resourceUri: webId,
+          triplesToAdd: [
+            triple(namedNode(webId), namedNode('http://www.w3.org/ns/pim/space#storage'), namedNode(storageUrl))
+          ],
+          webId: 'system'
+        });
 
-      // Give full rights to user on his storage
-      await ctx.call('webacl.resource.addRights', {
-        resourceUri: storageUrl,
-        additionalRights: {
-          user: {
-            uri: webId,
-            read: true,
-            write: true,
-            control: true
-          },
-          default: {
+        // Give full rights to user on his storage
+        await ctx.call('webacl.resource.addRights', {
+          resourceUri: storageUrl,
+          additionalRights: {
             user: {
               uri: webId,
               read: true,
               write: true,
               control: true
+            },
+            default: {
+              user: {
+                uri: webId,
+                read: true,
+                write: true,
+                control: true
+              }
             }
-          }
-        },
-        webId: 'system'
-      });
-    }
+          },
+          webId: 'system'
+        });
+      }
+    })
   }
 } satisfies ServiceSchema;
 

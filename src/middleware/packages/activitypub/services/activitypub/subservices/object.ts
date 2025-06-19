@@ -1,6 +1,6 @@
 import { getType } from '@semapps/ldp';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 import { OBJECT_TYPES, ACTIVITY_TYPES } from '../../../constants.ts';
 
 const ObjectService = {
@@ -204,26 +204,28 @@ const ObjectService = {
     })
   },
   events: {
-    async 'ldp.resource.deleted'(ctx) {
-      // Check if tombstones are globally activated
-      if (this.settings.activateTombstones) {
-        const { resourceUri, containersUris, oldData, dataset } = ctx.params;
+    'ldp.resource.deleted': defineServiceEvent({
+      async handler(ctx) {
+        // Check if tombstones are globally activated
+        if (this.settings.activateTombstones) {
+          const { resourceUri, containersUris, oldData, dataset } = ctx.params;
 
-        // If the resource was in no container, skip...
-        if (containersUris.length > 0) {
-          // Check if tombstones are activated for this specific container
-          const containerOptions = await ctx.call('ldp.registry.getByUri', {
-            containerUri: containersUris[0],
-            dataset
-          });
+          // If the resource was in no container, skip...
+          if (containersUris.length > 0) {
+            // Check if tombstones are activated for this specific container
+            const containerOptions = await ctx.call('ldp.registry.getByUri', {
+              containerUri: containersUris[0],
+              dataset
+            });
 
-          if (containerOptions.activateTombstones !== false && ctx.meta.activateTombstones !== false) {
-            const formerType = oldData.type || oldData['@type'];
-            await this.actions.createTombstone({ resourceUri, formerType }, { meta: { dataset }, parentCtx: ctx });
+            if (containerOptions.activateTombstones !== false && ctx.meta.activateTombstones !== false) {
+              const formerType = oldData.type || oldData['@type'];
+              await this.actions.createTombstone({ resourceUri, formerType }, { meta: { dataset }, parentCtx: ctx });
+            }
           }
         }
       }
-    }
+    })
   }
 } satisfies ServiceSchema;
 

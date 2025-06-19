@@ -6,7 +6,7 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import { namedNode } from '@rdfjs/data-model';
 import { uuidV4 as v4 } from 'uuid';
 import moment from 'moment';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 
 /**
  * Solid Notification Channel mixin.
@@ -164,41 +164,64 @@ const Schema = {
     })
   },
   events: {
-    async 'ldp.resource.created'(ctx) {
-      const { resourceUri, newData } = ctx.params;
-      this.onResourceEvent(resourceUri, ACTIVITY_TYPES.CREATE, newData['dc:modified']);
-    },
-    async 'ldp.resource.updated'(ctx) {
-      const { resourceUri, newData } = ctx.params;
-      this.onResourceEvent(resourceUri, ACTIVITY_TYPES.UPDATE, newData['dc:modified']);
-    },
-    async 'ldp.resource.patched'(ctx) {
-      const { resourceUri } = ctx.params;
-      this.onResourceEvent(resourceUri, ACTIVITY_TYPES.UPDATE, await this.getModified(resourceUri));
-    },
-    async 'ldp.resource.deleted'(ctx) {
-      const { resourceUri } = ctx.params;
-      this.onResourceEvent(resourceUri, ACTIVITY_TYPES.DELETE, new Date().toISOString());
-    },
-    async 'ldp.container.attached'(ctx) {
-      const { containerUri, resourceUri } = ctx.params;
-      this.onContainerOrCollectionEvent(containerUri, resourceUri, ACTIVITY_TYPES.ADD);
-    },
-    async 'ldp.container.detached'(ctx) {
-      const { containerUri, resourceUri } = ctx.params;
-      this.onContainerOrCollectionEvent(containerUri, resourceUri, ACTIVITY_TYPES.REMOVE);
-    },
-    async 'activitypub.collection.added'(ctx) {
-      const { collectionUri, itemUri, item } = ctx.params;
-      // Mastodon sometimes send unfetchable activities (like `Accept` activities)
-      // In this case, we receive the activity as `item` and `itemUri` is undefined
-      // We will send a notification to the listener with the whole activity
-      this.onContainerOrCollectionEvent(collectionUri, itemUri || item, ACTIVITY_TYPES.ADD);
-    },
-    async 'activitypub.collection.removed'(ctx) {
-      const { collectionUri, itemUri } = ctx.params;
-      this.onContainerOrCollectionEvent(collectionUri, itemUri, ACTIVITY_TYPES.REMOVE);
-    }
+    'ldp.resource.created': defineServiceEvent({
+      async handler(ctx) {
+        const { resourceUri, newData } = ctx.params;
+        this.onResourceEvent(resourceUri, ACTIVITY_TYPES.CREATE, newData['dc:modified']);
+      }
+    }),
+
+    'ldp.resource.updated': defineServiceEvent({
+      async handler(ctx) {
+        const { resourceUri, newData } = ctx.params;
+        this.onResourceEvent(resourceUri, ACTIVITY_TYPES.UPDATE, newData['dc:modified']);
+      }
+    }),
+
+    'ldp.resource.patched': defineServiceEvent({
+      async handler(ctx) {
+        const { resourceUri } = ctx.params;
+        this.onResourceEvent(resourceUri, ACTIVITY_TYPES.UPDATE, await this.getModified(resourceUri));
+      }
+    }),
+
+    'ldp.resource.deleted': defineServiceEvent({
+      async handler(ctx) {
+        const { resourceUri } = ctx.params;
+        this.onResourceEvent(resourceUri, ACTIVITY_TYPES.DELETE, new Date().toISOString());
+      }
+    }),
+
+    'ldp.container.attached': defineServiceEvent({
+      async handler(ctx) {
+        const { containerUri, resourceUri } = ctx.params;
+        this.onContainerOrCollectionEvent(containerUri, resourceUri, ACTIVITY_TYPES.ADD);
+      }
+    }),
+
+    'ldp.container.detached': defineServiceEvent({
+      async handler(ctx) {
+        const { containerUri, resourceUri } = ctx.params;
+        this.onContainerOrCollectionEvent(containerUri, resourceUri, ACTIVITY_TYPES.REMOVE);
+      }
+    }),
+
+    'activitypub.collection.added': defineServiceEvent({
+      async handler(ctx) {
+        const { collectionUri, itemUri, item } = ctx.params;
+        // Mastodon sometimes send unfetchable activities (like `Accept` activities)
+        // In this case, we receive the activity as `item` and `itemUri` is undefined
+        // We will send a notification to the listener with the whole activity
+        this.onContainerOrCollectionEvent(collectionUri, itemUri || item, ACTIVITY_TYPES.ADD);
+      }
+    }),
+
+    'activitypub.collection.removed': defineServiceEvent({
+      async handler(ctx) {
+        const { collectionUri, itemUri } = ctx.params;
+        this.onContainerOrCollectionEvent(collectionUri, itemUri, ACTIVITY_TYPES.REMOVE);
+      }
+    })
   },
   methods: {
     async getModified(resourceUri) {

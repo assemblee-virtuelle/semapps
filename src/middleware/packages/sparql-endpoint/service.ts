@@ -1,6 +1,6 @@
 import path from 'path';
 import urlJoin from 'url-join';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 import getRoute from './getRoute.ts';
 
 const SparqlEndpointService = {
@@ -54,16 +54,18 @@ const SparqlEndpointService = {
     })
   },
   events: {
-    async 'auth.registered'(ctx) {
-      const { webId } = ctx.params;
-      if (this.settings.podProvider) {
-        await ctx.call('activitypub.actor.addEndpoint', {
-          actorUri: webId,
-          predicate: 'http://rdfs.org/ns/void#sparqlEndpoint',
-          endpoint: urlJoin(webId, 'sparql')
-        });
+    'auth.registered': defineServiceEvent({
+      async handler(ctx) {
+        const { webId } = ctx.params;
+        if (this.settings.podProvider) {
+          await ctx.call('activitypub.actor.addEndpoint', {
+            actorUri: webId,
+            predicate: 'http://rdfs.org/ns/void#sparqlEndpoint',
+            endpoint: urlJoin(webId, 'sparql')
+          });
+        }
       }
-    }
+    })
   }
 } satisfies ServiceSchema;
 

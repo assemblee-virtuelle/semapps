@@ -4,7 +4,7 @@ import { namedNode, triple } from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { sec } from '@semapps/ontologies';
 import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 import { arrayOf } from '../utils/utils.ts';
 import { KEY_TYPES } from '../constants.ts';
 import KeyContainerService from './key-container.ts';
@@ -620,37 +620,46 @@ const KeysService = {
     }
   },
   events: {
-    async 'keys.migration.migrated'() {
-      this.isMigrated = true;
-    },
-    async 'auth.registered'(ctx) {
-      const { webId } = ctx.params;
-
-      if (!this.isMigrated) {
-        // Key creation will be handled by legacy service.
-        return;
+    'keys.migration.migrated': defineServiceEvent({
+      async handler() {
+        this.isMigrated = true;
       }
+    }),
 
-      // Wait for the key containers to be created.
-      const keyContainerUri = await ctx.call('keys.container.getContainerUri', { webId }, { parentCtx: ctx });
-      const publicKeyContainerUri = await ctx.call(
-        'keys.public-container.getContainerUri',
-        { webId },
-        { parentCtx: ctx }
-      );
-      await ctx.call('keys.container.waitForContainerCreation', { containerUri: keyContainerUri }, { parentCtx: ctx });
-      await ctx.call(
-        'keys.container.waitForContainerCreation',
-        { containerUri: publicKeyContainerUri },
-        { parentCtx: ctx }
-      );
+    'auth.registered': defineServiceEvent({
+      async handler(ctx) {
+        const { webId } = ctx.params;
 
-      // Create, publish and attach keys to the webId.
-      await Promise.all([
-        this.actions.createKeyForActor({ webId, attachToWebId: true, keyType: KEY_TYPES.RSA }, { parentCtx: ctx }),
-        this.actions.createKeyForActor({ webId, attachToWebId: true, keyType: KEY_TYPES.ED25519 }, { parentCtx: ctx })
-      ]);
-    }
+        if (!this.isMigrated) {
+          // Key creation will be handled by legacy service.
+          return;
+        }
+
+        // Wait for the key containers to be created.
+        const keyContainerUri = await ctx.call('keys.container.getContainerUri', { webId }, { parentCtx: ctx });
+        const publicKeyContainerUri = await ctx.call(
+          'keys.public-container.getContainerUri',
+          { webId },
+          { parentCtx: ctx }
+        );
+        await ctx.call(
+          'keys.container.waitForContainerCreation',
+          { containerUri: keyContainerUri },
+          { parentCtx: ctx }
+        );
+        await ctx.call(
+          'keys.container.waitForContainerCreation',
+          { containerUri: publicKeyContainerUri },
+          { parentCtx: ctx }
+        );
+
+        // Create, publish and attach keys to the webId.
+        await Promise.all([
+          this.actions.createKeyForActor({ webId, attachToWebId: true, keyType: KEY_TYPES.RSA }, { parentCtx: ctx }),
+          this.actions.createKeyForActor({ webId, attachToWebId: true, keyType: KEY_TYPES.ED25519 }, { parentCtx: ctx })
+        ]);
+      }
+    })
   }
 } satisfies ServiceSchema;
 

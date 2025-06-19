@@ -1,5 +1,5 @@
 import { MIME_TYPES } from '@semapps/mime-types';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 
 const LdpCacheSchema = {
   name: 'ldp.cache' as const,
@@ -47,59 +47,91 @@ const LdpCacheSchema = {
     })
   },
   events: {
-    async 'ldp.resource.deleted'(ctx) {
-      const { resourceUri, dataset } = ctx.params;
-      await this.actions.invalidateResource({ resourceUri, dataset }, { parentCtx: ctx });
-    },
-    async 'ldp.resource.updated'(ctx) {
-      const { resourceUri, dataset } = ctx.params;
-      await this.actions.invalidateResource({ resourceUri, dataset }, { parentCtx: ctx });
-    },
-    async 'ldp.resource.patched'(ctx) {
-      const { resourceUri, dataset } = ctx.params;
-      await this.actions.invalidateResource({ resourceUri, dataset }, { parentCtx: ctx });
-    },
-    async 'ldp.container.attached'(ctx) {
-      const { containerUri } = ctx.params;
-      await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
-    },
-    async 'ldp.container.patched'(ctx) {
-      const { containerUri } = ctx.params;
-      await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
-    },
-    async 'ldp.container.deleted'(ctx) {
-      const { containerUri } = ctx.params;
-      await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
-    },
-    async 'ldp.container.detached'(ctx) {
-      const { containerUri } = ctx.params;
-      await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
-    },
-    async 'ldp.remote.deleted'(ctx) {
-      const { resourceUri, dataset } = ctx.params;
-      await this.actions.invalidateResource({ resourceUri, dataset }, { parentCtx: ctx });
-    },
-    async 'ldp.remote.stored'(ctx) {
-      const { resourceUri, dataset } = ctx.params;
-      await this.actions.invalidateResource({ resourceUri, dataset }, { parentCtx: ctx });
-    },
-    // Invalidate cache also when ACL rights are changed
-    async 'webacl.resource.updated'(ctx) {
-      const { uri, isContainer, dataset } = ctx.params;
-      if (isContainer) {
-        await this.actions.invalidateContainer({ containerUri: uri }, { parentCtx: ctx });
-      } else {
-        await this.actions.invalidateResource({ resourceUri: uri, dataset }, { parentCtx: ctx });
+    'ldp.resource.deleted': defineServiceEvent({
+      async handler(ctx) {
+        const { resourceUri, dataset } = ctx.params;
+        await this.actions.invalidateResource({ resourceUri, dataset }, { parentCtx: ctx });
       }
-    },
-    async 'webacl.resource.deleted'(ctx) {
-      const { uri, isContainer, dataset } = ctx.params;
-      if (isContainer) {
-        await this.actions.invalidateContainer({ containerUri: uri }, { parentCtx: ctx });
-      } else {
-        await this.actions.invalidateResource({ resourceUri: uri, dataset }, { parentCtx: ctx });
+    }),
+
+    'ldp.resource.updated': defineServiceEvent({
+      async handler(ctx) {
+        const { resourceUri, dataset } = ctx.params;
+        await this.actions.invalidateResource({ resourceUri, dataset }, { parentCtx: ctx });
       }
-    }
+    }),
+
+    'ldp.resource.patched': defineServiceEvent({
+      async handler(ctx) {
+        const { resourceUri, dataset } = ctx.params;
+        await this.actions.invalidateResource({ resourceUri, dataset }, { parentCtx: ctx });
+      }
+    }),
+
+    'ldp.container.attached': defineServiceEvent({
+      async handler(ctx) {
+        const { containerUri } = ctx.params;
+        await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
+      }
+    }),
+
+    'ldp.container.patched': defineServiceEvent({
+      async handler(ctx) {
+        const { containerUri } = ctx.params;
+        await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
+      }
+    }),
+
+    'ldp.container.deleted': defineServiceEvent({
+      async handler(ctx) {
+        const { containerUri } = ctx.params;
+        await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
+      }
+    }),
+
+    'ldp.container.detached': defineServiceEvent({
+      async handler(ctx) {
+        const { containerUri } = ctx.params;
+        await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
+      }
+    }),
+
+    'ldp.remote.deleted': defineServiceEvent({
+      async handler(ctx) {
+        const { resourceUri, dataset } = ctx.params;
+        await this.actions.invalidateResource({ resourceUri, dataset }, { parentCtx: ctx });
+      }
+    }),
+
+    'ldp.remote.stored': defineServiceEvent({
+      async handler(ctx) {
+        const { resourceUri, dataset } = ctx.params;
+        await this.actions.invalidateResource({ resourceUri, dataset }, { parentCtx: ctx });
+      }
+    }),
+
+    'webacl.resource.updated': defineServiceEvent({
+      // Invalidate cache also when ACL rights are changed
+      async handler(ctx) {
+        const { uri, isContainer, dataset } = ctx.params;
+        if (isContainer) {
+          await this.actions.invalidateContainer({ containerUri: uri }, { parentCtx: ctx });
+        } else {
+          await this.actions.invalidateResource({ resourceUri: uri, dataset }, { parentCtx: ctx });
+        }
+      }
+    }),
+
+    'webacl.resource.deleted': defineServiceEvent({
+      async handler(ctx) {
+        const { uri, isContainer, dataset } = ctx.params;
+        if (isContainer) {
+          await this.actions.invalidateContainer({ containerUri: uri }, { parentCtx: ctx });
+        } else {
+          await this.actions.invalidateResource({ resourceUri: uri, dataset }, { parentCtx: ctx });
+        }
+      }
+    })
   }
 } satisfies ServiceSchema;
 

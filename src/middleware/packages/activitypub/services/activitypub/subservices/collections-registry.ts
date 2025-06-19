@@ -2,7 +2,7 @@ import urlJoin from 'url-join';
 import { quad, namedNode } from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { getWebIdFromUri, arrayOf } from '@semapps/ldp';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 import { ACTOR_TYPES, FULL_ACTOR_TYPES, AS_PREFIX } from '../../../constants.ts';
 
 const CollectionsRegistryService = {
@@ -258,28 +258,9 @@ const CollectionsRegistryService = {
     }
   },
   events: {
-    async 'ldp.resource.created'(ctx) {
-      const { resourceUri, newData, webId } = ctx.params;
-      const collections = this.getCollectionsByType(newData.type || newData['@type']);
-      for (const collection of collections) {
-        if (this.isActor(newData.type || newData['@type'])) {
-          // If the resource is an actor, use the resource URI as the webId
-          await this.actions.createAndAttachCollection(
-            { objectUri: resourceUri, collection, webId: resourceUri },
-            { parentCtx: ctx }
-          );
-        } else {
-          await this.actions.createAndAttachCollection(
-            { objectUri: resourceUri, collection, webId },
-            { parentCtx: ctx }
-          );
-        }
-      }
-    },
-    async 'ldp.resource.updated'(ctx) {
-      const { resourceUri, newData, oldData, webId } = ctx.params;
-      // Check if we need to create collection only if the type has changed
-      if (this.hasTypeChanged(oldData, newData)) {
+    'ldp.resource.created': defineServiceEvent({
+      async handler(ctx) {
+        const { resourceUri, newData, webId } = ctx.params;
         const collections = this.getCollectionsByType(newData.type || newData['@type']);
         for (const collection of collections) {
           if (this.isActor(newData.type || newData['@type'])) {
@@ -296,41 +277,71 @@ const CollectionsRegistryService = {
           }
         }
       }
-    },
-    async 'ldp.resource.patched'(ctx) {
-      const { resourceUri, triplesAdded, webId } = ctx.params;
-      if (triplesAdded) {
-        for (const triple of triplesAdded) {
-          if (triple.predicate.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
-            const collections = this.getCollectionsByType(triple.object.value);
-            for (const collection of collections) {
-              if (this.isActor(triple.object.value)) {
-                // If the resource is an actor, use the resource URI as the webId
-                await this.actions.createAndAttachCollection(
-                  { objectUri: resourceUri, collection, webId: resourceUri },
-                  { parentCtx: ctx }
-                );
-              } else {
-                await this.actions.createAndAttachCollection(
-                  { objectUri: resourceUri, collection, webId },
-                  { parentCtx: ctx }
-                );
+    }),
+
+    'ldp.resource.updated': defineServiceEvent({
+      async handler(ctx) {
+        const { resourceUri, newData, oldData, webId } = ctx.params;
+        // Check if we need to create collection only if the type has changed
+        if (this.hasTypeChanged(oldData, newData)) {
+          const collections = this.getCollectionsByType(newData.type || newData['@type']);
+          for (const collection of collections) {
+            if (this.isActor(newData.type || newData['@type'])) {
+              // If the resource is an actor, use the resource URI as the webId
+              await this.actions.createAndAttachCollection(
+                { objectUri: resourceUri, collection, webId: resourceUri },
+                { parentCtx: ctx }
+              );
+            } else {
+              await this.actions.createAndAttachCollection(
+                { objectUri: resourceUri, collection, webId },
+                { parentCtx: ctx }
+              );
+            }
+          }
+        }
+      }
+    }),
+
+    'ldp.resource.patched': defineServiceEvent({
+      async handler(ctx) {
+        const { resourceUri, triplesAdded, webId } = ctx.params;
+        if (triplesAdded) {
+          for (const triple of triplesAdded) {
+            if (triple.predicate.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
+              const collections = this.getCollectionsByType(triple.object.value);
+              for (const collection of collections) {
+                if (this.isActor(triple.object.value)) {
+                  // If the resource is an actor, use the resource URI as the webId
+                  await this.actions.createAndAttachCollection(
+                    { objectUri: resourceUri, collection, webId: resourceUri },
+                    { parentCtx: ctx }
+                  );
+                } else {
+                  await this.actions.createAndAttachCollection(
+                    { objectUri: resourceUri, collection, webId },
+                    { parentCtx: ctx }
+                  );
+                }
               }
             }
           }
         }
       }
-    },
-    async 'ldp.resource.deleted'(ctx) {
-      const { oldData } = ctx.params;
-      const collections = this.getCollectionsByType(oldData.type || oldData['@type']);
-      for (const collection of collections) {
-        await this.actions.deleteCollection(
-          { objectUri: oldData.id || oldData['@id'], collection },
-          { parentCtx: ctx }
-        );
+    }),
+
+    'ldp.resource.deleted': defineServiceEvent({
+      async handler(ctx) {
+        const { oldData } = ctx.params;
+        const collections = this.getCollectionsByType(oldData.type || oldData['@type']);
+        for (const collection of collections) {
+          await this.actions.deleteCollection(
+            { objectUri: oldData.id || oldData['@id'], collection },
+            { parentCtx: ctx }
+          );
+        }
       }
-    }
+    })
   }
 } satisfies ServiceSchema;
 

@@ -1,4 +1,4 @@
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 
 const WebaclCacheSchema = {
   name: 'webacl.cache' as const,
@@ -68,31 +68,45 @@ const WebaclCacheSchema = {
     })
   },
   events: {
-    async 'webacl.resource.updated'(ctx) {
-      const { uri, isContainer, defaultRightsUpdated } = ctx.params;
-      await this.actions.invalidateResourceRights(
-        { uri, specificUriOnly: !isContainer || !defaultRightsUpdated },
-        { parentCtx: ctx }
-      );
-    },
-    async 'webacl.resource.deleted'(ctx) {
-      const { uri, isContainer } = ctx.params;
-      await this.actions.invalidateResourceRights({ uri, specificUriOnly: !isContainer }, { parentCtx: ctx });
-    },
-    async 'webacl.resource.user-deleted'(ctx) {
-      const { webId } = ctx.params;
-      await this.actions.invalidateAllUserRights({ uri: webId }, { parentCtx: ctx });
-    },
-    async 'webacl.group.member-added'(ctx) {
-      const { groupUri, memberUri } = ctx.params;
-      await this.actions.invalidateResourceRights({ uri: groupUri, specificUriOnly: true }, { parentCtx: ctx });
-      await this.actions.invalidateAllUserRights({ uri: memberUri }, { parentCtx: ctx });
-    },
-    async 'webacl.group.member-removed'(ctx) {
-      const { groupUri, memberUri } = ctx.params;
-      await this.actions.invalidateResourceRights({ uri: groupUri, specificUriOnly: true }, { parentCtx: ctx });
-      await this.actions.invalidateAllUserRights({ uri: memberUri }, { parentCtx: ctx });
-    }
+    'webacl.resource.updated': defineServiceEvent({
+      async handler(ctx) {
+        const { uri, isContainer, defaultRightsUpdated } = ctx.params;
+        await this.actions.invalidateResourceRights(
+          { uri, specificUriOnly: !isContainer || !defaultRightsUpdated },
+          { parentCtx: ctx }
+        );
+      }
+    }),
+
+    'webacl.resource.deleted': defineServiceEvent({
+      async handler(ctx) {
+        const { uri, isContainer } = ctx.params;
+        await this.actions.invalidateResourceRights({ uri, specificUriOnly: !isContainer }, { parentCtx: ctx });
+      }
+    }),
+
+    'webacl.resource.user-deleted': defineServiceEvent({
+      async handler(ctx) {
+        const { webId } = ctx.params;
+        await this.actions.invalidateAllUserRights({ uri: webId }, { parentCtx: ctx });
+      }
+    }),
+
+    'webacl.group.member-added': defineServiceEvent({
+      async handler(ctx) {
+        const { groupUri, memberUri } = ctx.params;
+        await this.actions.invalidateResourceRights({ uri: groupUri, specificUriOnly: true }, { parentCtx: ctx });
+        await this.actions.invalidateAllUserRights({ uri: memberUri }, { parentCtx: ctx });
+      }
+    }),
+
+    'webacl.group.member-removed': defineServiceEvent({
+      async handler(ctx) {
+        const { groupUri, memberUri } = ctx.params;
+        await this.actions.invalidateResourceRights({ uri: groupUri, specificUriOnly: true }, { parentCtx: ctx });
+        await this.actions.invalidateAllUserRights({ uri: memberUri }, { parentCtx: ctx });
+      }
+    })
   }
 } satisfies ServiceSchema;
 

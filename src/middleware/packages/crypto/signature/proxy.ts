@@ -3,7 +3,7 @@ import urlJoin from 'url-join';
 import { parseHeader, parseFile, saveDatasetMeta } from '@semapps/middlewares';
 import fetch from 'node-fetch';
 import { E as Errors } from 'moleculer-web';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 
 const stream2buffer = stream => {
   return new Promise((resolve, reject) => {
@@ -146,19 +146,21 @@ const ProxyService = {
     })
   },
   events: {
-    async 'auth.registered'(ctx) {
-      const { webId } = ctx.params;
-      if (this.settings.podProvider) {
-        const services = await ctx.call('$node.services');
-        if (services.filter(s => s.name === 'activitypub.actor')) {
-          await ctx.call('activitypub.actor.addEndpoint', {
-            actorUri: webId,
-            predicate: 'https://www.w3.org/ns/activitystreams#proxyUrl',
-            endpoint: urlJoin(webId, 'proxy')
-          });
+    'auth.registered': defineServiceEvent({
+      async handler(ctx) {
+        const { webId } = ctx.params;
+        if (this.settings.podProvider) {
+          const services = await ctx.call('$node.services');
+          if (services.filter(s => s.name === 'activitypub.actor')) {
+            await ctx.call('activitypub.actor.addEndpoint', {
+              actorUri: webId,
+              predicate: 'https://www.w3.org/ns/activitystreams#proxyUrl',
+              endpoint: urlJoin(webId, 'proxy')
+            });
+          }
         }
       }
-    }
+    })
   }
 } satisfies ServiceSchema;
 

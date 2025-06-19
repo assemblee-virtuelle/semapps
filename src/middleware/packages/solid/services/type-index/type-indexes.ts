@@ -2,7 +2,7 @@ import { ControlledContainerMixin, DereferenceMixin, delay, arrayOf } from '@sem
 import { solid, skos, apods } from '@semapps/ontologies';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { namedNode, triple } from '@rdfjs/data-model';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 import TypeRegistrationsService from './type-registrations.ts';
 
 const TypeIndexesSchema = {
@@ -192,20 +192,22 @@ const TypeIndexesSchema = {
     }
   },
   events: {
-    async 'auth.registered'(ctx) {
-      const { webId } = ctx.params;
+    'auth.registered': defineServiceEvent({
+      async handler(ctx) {
+        const { webId } = ctx.params;
 
-      // Wait until the /solid/type-index container has been created for the user
-      const indexesContainerUri = await this.actions.getContainerUri({ webId }, { parentCtx: ctx });
-      await this.actions.waitForContainerCreation({ containerUri: indexesContainerUri }, { parentCtx: ctx });
+        // Wait until the /solid/type-index container has been created for the user
+        const indexesContainerUri = await this.actions.getContainerUri({ webId }, { parentCtx: ctx });
+        await this.actions.waitForContainerCreation({ containerUri: indexesContainerUri }, { parentCtx: ctx });
 
-      // Wait until the /solid/type-registration container has been created for the user
-      const registrationsContainerUri = await ctx.call('type-registrations.getContainerUri', { webId });
-      await ctx.call('type-registrations.waitForContainerCreation', { containerUri: registrationsContainerUri });
+        // Wait until the /solid/type-registration container has been created for the user
+        const registrationsContainerUri = await ctx.call('type-registrations.getContainerUri', { webId });
+        await ctx.call('type-registrations.waitForContainerCreation', { containerUri: registrationsContainerUri });
 
-      await this.actions.createPublicIndex({ webId }, { parentCtx: ctx });
-      await this.actions.createPrivateIndex({ webId }, { parentCtx: ctx });
-    }
+        await this.actions.createPublicIndex({ webId }, { parentCtx: ctx });
+        await this.actions.createPrivateIndex({ webId }, { parentCtx: ctx });
+      }
+    })
   }
 } satisfies ServiceSchema;
 

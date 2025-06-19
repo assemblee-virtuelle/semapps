@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import { namedNode, literal, triple, variable } from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { arrayOf } from '@semapps/ldp';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 import { ACTOR_TYPES, AS_PREFIX } from '../../../constants.ts';
 import { getSlugFromUri, waitForResource } from '../../../utils.ts';
 
@@ -189,24 +189,32 @@ const ActorService = {
     }
   },
   events: {
-    async 'ldp.resource.created'(ctx) {
-      const { resourceUri, newData } = ctx.params;
-      if (this.isActor(newData)) {
-        await this.actions.appendActorData({ actorUri: resourceUri }, { parentCtx: ctx });
-        await ctx.call('signature.keypair.generate', { actorUri: resourceUri });
-        await ctx.call('signature.keypair.attachPublicKey', { actorUri: resourceUri });
+    'ldp.resource.created': defineServiceEvent({
+      async handler(ctx) {
+        const { resourceUri, newData } = ctx.params;
+        if (this.isActor(newData)) {
+          await this.actions.appendActorData({ actorUri: resourceUri }, { parentCtx: ctx });
+          await ctx.call('signature.keypair.generate', { actorUri: resourceUri });
+          await ctx.call('signature.keypair.attachPublicKey', { actorUri: resourceUri });
+        }
       }
-    },
-    async 'ldp.resource.deleted'(ctx) {
-      const { resourceUri, oldData } = ctx.params;
-      if (this.isActor(oldData)) {
-        await ctx.call('keys.deleteAllKeysForWebId', { webId: resourceUri });
+    }),
+
+    'ldp.resource.deleted': defineServiceEvent({
+      async handler(ctx) {
+        const { resourceUri, oldData } = ctx.params;
+        if (this.isActor(oldData)) {
+          await ctx.call('keys.deleteAllKeysForWebId', { webId: resourceUri });
+        }
       }
-    },
-    async 'auth.registered'(ctx) {
-      const { webId } = ctx.params;
-      await this.actions.appendActorData({ actorUri: webId }, { parentCtx: ctx });
-    }
+    }),
+
+    'auth.registered': defineServiceEvent({
+      async handler(ctx) {
+        const { webId } = ctx.params;
+        await this.actions.appendActorData({ actorUri: webId }, { parentCtx: ctx });
+      }
+    })
   }
 } satisfies ServiceSchema;
 
