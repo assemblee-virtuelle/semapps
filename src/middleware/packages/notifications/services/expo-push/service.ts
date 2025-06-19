@@ -1,7 +1,7 @@
 import path from 'path';
+import { ServiceSchema } from 'moleculer';
 import ExpoPushDeviceService from './device.ts';
 import ExpoPushNotificationService from './notification.ts';
-import { ServiceSchema } from 'moleculer';
 
 const ExpoPushService = {
   name: 'expo-push' as const,

@@ -7,6 +7,7 @@ import { getSlugFromUri } from '@semapps/ldp';
 import { fetchServer } from '../utils.ts';
 import initialize from './initialize.ts';
 import CONFIG from '../config.ts';
+
 jest.setTimeout(20000);
 let broker;
 

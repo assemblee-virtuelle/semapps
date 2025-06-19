@@ -1,7 +1,7 @@
 import urlJoin from 'url-join';
 import { uuidV4 as v4 } from 'uuid';
-import NotificationChannelMixin from './notification-channel.mixin.ts';
 import { ServiceSchema } from 'moleculer';
+import NotificationChannelMixin from './notification-channel.mixin.ts';
 
 /** @type {import('moleculer').ServiceSchema} */
 const WebSocketChannel2023Service = {

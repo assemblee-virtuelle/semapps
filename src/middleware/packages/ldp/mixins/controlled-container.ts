@@ -1,6 +1,6 @@
 import { MIME_TYPES } from '@semapps/mime-types';
-import { delay, getParentContainerUri } from '../utils.ts';
 import { ServiceSchema, defineAction } from 'moleculer';
+import { delay, getParentContainerUri } from '../utils.ts';
 
 const Schema = {
   settings: {

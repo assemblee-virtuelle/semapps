@@ -1,7 +1,7 @@
 import { Strategy } from 'passport-cas2';
 import { E as Errors } from 'moleculer-web';
-import AuthSSOMixin from '../mixins/auth.sso.ts';
 import { ServiceSchema } from 'moleculer';
+import AuthSSOMixin from '../mixins/auth.sso.ts';
 
 const AuthCASService = {
   name: 'auth' as const,

@@ -4,6 +4,7 @@ import NotificationsProviderService from './services/notifications/provider.ts';
 import NotificationsListenerService from './services/notifications/listener.ts';
 import PreferencesFileService from './services/preferences-file.ts';
 import TypeIndexesService from './services/type-index/type-indexes.ts';
+
 export {
   StorageService,
   EndpointService,

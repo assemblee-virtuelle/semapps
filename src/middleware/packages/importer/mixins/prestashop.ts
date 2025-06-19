@@ -1,7 +1,7 @@
 import urlJoin from 'url-join';
+import { ServiceSchema } from 'moleculer';
 import ImporterMixin from './importer.ts';
 import { convertToIsoString } from '../utils.ts';
-import { ServiceSchema } from 'moleculer';
 
 const Schema = {
   mixins: [ImporterMixin],

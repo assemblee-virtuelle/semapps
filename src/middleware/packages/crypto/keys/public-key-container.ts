@@ -1,8 +1,8 @@
 import { triple, namedNode } from '@rdfjs/data-model';
 import { ControlledContainerMixin } from '@semapps/ldp';
 import { E as Errors } from 'moleculer-web';
-import { KEY_TYPES } from '../constants.ts';
 import { ServiceSchema, defineAction } from 'moleculer';
+import { KEY_TYPES } from '../constants.ts';
 
 /**
  * Container to store the public keys of actors only.

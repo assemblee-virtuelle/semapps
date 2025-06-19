@@ -1,7 +1,7 @@
+import { ServiceSchema, defineAction } from 'moleculer';
 import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
 import { ACTIVITY_TYPES, ACTOR_TYPES } from '../../../constants.ts';
 import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
 
 const LikeService = {
   name: 'activitypub.like' as const,
@@ -177,11 +177,11 @@ const LikeService = {
         const aclGroupBase = `${origin}/_groups${pathname}`; // URL of type http://localhost:3000/_groups/alice
         return (
           uri === actorUri ||
-          uri.startsWith(actorUri + '/') ||
+          uri.startsWith(`${actorUri}/`) ||
           uri === aclBase ||
-          uri.startsWith(aclBase + '/') ||
+          uri.startsWith(`${aclBase}/`) ||
           uri === aclGroupBase ||
-          uri.startsWith(aclGroupBase + '/')
+          uri.startsWith(`${aclGroupBase}/`)
         );
       } else {
         return uri.startsWith(this.settings.baseUri);

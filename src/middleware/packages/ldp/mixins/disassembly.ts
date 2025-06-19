@@ -1,6 +1,6 @@
 import { MIME_TYPES } from '@semapps/mime-types';
-import { arrayOf } from '../utils.ts';
 import { ServiceSchema } from 'moleculer';
+import { arrayOf } from '../utils.ts';
 
 const Schema = {
   settings: {

@@ -1,6 +1,6 @@
 import urlJoin from 'url-join';
-import ImporterMixin from './importer.ts';
 import { ServiceSchema } from 'moleculer';
+import ImporterMixin from './importer.ts';
 
 const Schema = {
   mixins: [ImporterMixin],

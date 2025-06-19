@@ -1,11 +1,11 @@
 import urlJoin from 'url-join';
+import { ServiceSchema, defineAction } from 'moleculer';
 import getByTypeAction from './actions/getByType.ts';
 import getByUriAction from './actions/getByUri.ts';
 import getUriAction from './actions/getUri.ts';
 import listAction from './actions/list.ts';
 import registerAction from './actions/register.ts';
 import defaultOptions from './defaultOptions.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
 
 const LdpRegistrySchema = {
   name: 'ldp.registry' as const,

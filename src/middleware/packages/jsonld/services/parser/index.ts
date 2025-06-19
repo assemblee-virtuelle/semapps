@@ -1,8 +1,8 @@
 import jsonld from 'jsonld';
 import { JsonLdParser } from 'jsonld-streaming-parser';
 import streamifyString from 'streamify-string';
-import { arrayOf, isURI } from '../../utils/utils.ts';
 import { ServiceSchema, defineAction } from 'moleculer';
+import { arrayOf, isURI } from '../../utils/utils.ts';
 
 const JsonldParserSchema = {
   name: 'jsonld.parser' as const,

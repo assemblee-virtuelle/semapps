@@ -1,5 +1,6 @@
 import urlJoin from 'url-join';
 
+import { defineAction } from 'moleculer';
 import {
   getAuthorizationNode,
   checkAgentPresent,
@@ -8,8 +9,6 @@ import {
   getUserAgentSearchParam,
   getAclUriFromResourceUri
 } from '../../../utils.ts';
-
-import { defineAction } from 'moleculer';
 
 const perms = {
   read: 'Read',

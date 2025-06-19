@@ -1,9 +1,8 @@
 import { SparqlJsonParser } from 'sparqljson-parse';
 import sparqljsModule from 'sparqljs';
-const SparqlGenerator = sparqljsModule.Generator;
-const { MoleculerError } = require('moleculer').Errors;
 import fetch from 'node-fetch';
 import { throw403, throw500 } from '@semapps/middlewares';
+import { ServiceSchema, defineAction } from 'moleculer';
 import countTriplesOfSubject from './actions/countTriplesOfSubject.ts';
 import deleteOrphanBlankNodes from './actions/deleteOrphanBlankNodes.ts';
 import dropAll from './actions/dropAll.ts';
@@ -12,7 +11,9 @@ import query from './actions/query.ts';
 import update from './actions/update.ts';
 import tripleExist from './actions/tripleExist.ts';
 import DatasetService from './subservices/dataset.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
+
+const SparqlGenerator = sparqljsModule.Generator;
+const { MoleculerError } = require('moleculer').Errors;
 
 const TripleStoreService = {
   name: 'triplestore' as const,

@@ -1,10 +1,11 @@
 import fs from 'fs';
 import bytes from 'bytes';
 import rdfparseModule from 'rdf-parse';
-const rdfParser = rdfparseModule.default;
 import streamifyString from 'streamify-string';
 import { variable } from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
+
+const rdfParser = rdfparseModule.default;
 const { MoleculerError } = require('moleculer').Errors;
 
 // TODO put each method in a different file (problems with "this" not working)

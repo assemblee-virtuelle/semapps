@@ -1,12 +1,12 @@
 import urlJoin from 'url-join';
 import { Issuer, Strategy, custom } from 'openid-client';
 
+import { ServiceSchema } from 'moleculer';
+import AuthSSOMixin from '../mixins/auth.sso.ts';
+
 custom.setHttpOptionsDefaults({
   timeout: 10000
 });
-
-import AuthSSOMixin from '../mixins/auth.sso.ts';
-import { ServiceSchema } from 'moleculer';
 
 const AuthOIDCService = {
   name: 'auth' as const,

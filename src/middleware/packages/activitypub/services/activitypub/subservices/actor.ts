@@ -2,9 +2,9 @@ import fetch from 'node-fetch';
 import { namedNode, literal, triple, variable } from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { arrayOf } from '@semapps/ldp';
+import { ServiceSchema, defineAction } from 'moleculer';
 import { ACTOR_TYPES, AS_PREFIX } from '../../../constants.ts';
 import { getSlugFromUri, waitForResource } from '../../../utils.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
 
 /** @type {import('moleculer').ServiceSchema} */
 const ActorService = {

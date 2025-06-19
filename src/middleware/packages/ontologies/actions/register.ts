@@ -1,5 +1,5 @@
-import { isURL, arrayOf } from '../utils.ts';
 import { defineAction } from 'moleculer';
+import { isURL, arrayOf } from '../utils.ts';
 
 const Schema = defineAction({
   visibility: 'public',

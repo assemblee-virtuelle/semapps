@@ -1,4 +1,5 @@
 import { TripleStoreAdapter } from '@semapps/triplestore';
+import { ServiceSchema, defineAction } from 'moleculer';
 import OntologiesRegistryService from './sub-services/registry.ts';
 import findPrefixAction from './actions/findPrefix.ts';
 import findNamespaceAction from './actions/findNamespace.ts';
@@ -8,7 +9,6 @@ import getRdfPrefixesAction from './actions/getRdfPrefixes.ts';
 import listAction from './actions/list.ts';
 import prefixToUriAction from './actions/prefixToUri.ts';
 import registerAction from './actions/register.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
 
 const OntologiesSchema = {
   name: 'ontologies' as const,

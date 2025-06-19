@@ -4,6 +4,7 @@ import path from 'path';
 import urlJoin from 'url-join';
 import format from 'string-template';
 import { ServiceSchema, defineAction } from 'moleculer';
+
 const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
 /** @type {import('moleculer').ServiceSchema} */

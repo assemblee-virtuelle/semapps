@@ -1,5 +1,5 @@
 import urlJoin from 'url-join';
-const { MoleculerError } = require('moleculer').Errors;
+import { ServiceSchema, defineAction } from 'moleculer';
 import addRights from './actions/addRights.ts';
 import awaitReadRight from './actions/awaitReadRight.ts';
 import deleteAllRights from './actions/deleteAllRights.ts';
@@ -26,7 +26,8 @@ import {
   getDatasetFromUri
 } from '../../utils.ts';
 
-import { ServiceSchema, defineAction } from 'moleculer';
+const { MoleculerError } = require('moleculer').Errors;
+
 const filterAclsOnlyAgent = acl => agentPredicates.includes(acl.p.value);
 
 /**

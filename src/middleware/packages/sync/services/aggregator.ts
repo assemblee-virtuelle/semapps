@@ -1,6 +1,6 @@
 import { ActivitiesHandlerMixin, ACTIVITY_TYPES } from '@semapps/activitypub';
-import SynchronizerService from './synchronizer.ts';
 import { ServiceSchema } from 'moleculer';
+import SynchronizerService from './synchronizer.ts';
 
 const AggregatorSchema = {
   name: 'aggregator' as const,

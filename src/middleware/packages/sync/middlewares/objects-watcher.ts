@@ -1,4 +1,5 @@
 import { PUBLIC_URI, ACTIVITY_TYPES } from '@semapps/activitypub';
+
 const handledLdpActions = ['ldp.container.post', 'ldp.resource.put', 'ldp.resource.patch', 'ldp.resource.delete'];
 
 const handledWacActions = [

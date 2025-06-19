@@ -1,9 +1,9 @@
 import urlJoin from 'url-join';
+import { ServiceSchema } from 'moleculer';
 import JsonLdApiService from './services/api/index.ts';
 import JsonLdContextService from './services/context/index.ts';
 import JsonLdDocumentLoaderService from './services/document-loader/index.ts';
 import JsonLdParserService from './services/parser/index.ts';
-import { ServiceSchema } from 'moleculer';
 
 const JsonldSchema = {
   name: 'jsonld' as const,

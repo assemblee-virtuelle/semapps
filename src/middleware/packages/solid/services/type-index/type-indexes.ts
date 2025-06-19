@@ -2,8 +2,8 @@ import { ControlledContainerMixin, DereferenceMixin, delay, arrayOf } from '@sem
 import { solid, skos, apods } from '@semapps/ontologies';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { namedNode, triple } from '@rdfjs/data-model';
-import TypeRegistrationsService from './type-registrations.ts';
 import { ServiceSchema, defineAction } from 'moleculer';
+import TypeRegistrationsService from './type-registrations.ts';
 
 const TypeIndexesSchema = {
   name: 'type-indexes' as const,

@@ -1,6 +1,5 @@
 import path from 'path';
-import ApiGatewayService from 'moleculer-web';
-import { E as Errors } from 'moleculer-web';
+import ApiGatewayService, { E as Errors } from 'moleculer-web';
 import { ActivityPubService, FULL_ACTOR_TYPES } from '@semapps/activitypub';
 import { JsonLdService } from '@semapps/jsonld';
 import { LdpService, DocumentTaggerMixin } from '@semapps/ldp';

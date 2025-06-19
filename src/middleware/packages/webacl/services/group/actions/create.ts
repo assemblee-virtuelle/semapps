@@ -1,8 +1,9 @@
-const { MoleculerError } = require('moleculer').Errors;
 import createSlug from 'speakingurl';
 import urlJoin from 'url-join';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import { defineAction } from 'moleculer';
+
+const { MoleculerError } = require('moleculer').Errors;
 
 export const api = async function api(ctx) {
   if (!ctx.meta.headers?.slug) throw new MoleculerError('needs a slug in your POST (json)', 400, 'BAD_REQUEST');

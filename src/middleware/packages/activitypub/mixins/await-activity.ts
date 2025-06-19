@@ -68,7 +68,6 @@ const AwaitActivityMixin = {
       }
     })
   }
-  // @ts-expect-error
 } satisfies ServiceSchema;
 
 export default AwaitActivityMixin;

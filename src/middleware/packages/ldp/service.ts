@@ -1,4 +1,5 @@
 import { ldp, semapps } from '@semapps/ontologies';
+import { ServiceSchema, defineAction } from 'moleculer';
 import LdpApiService from './services/api/index.ts';
 import LdpContainerService from './services/container/index.ts';
 import LdpCacheService from './services/cache/index.ts';
@@ -6,7 +7,6 @@ import LdpLinkHeaderService from './services/link-header/index.ts';
 import LdpRegistryService from './services/registry/index.ts';
 import LdpRemoteService from './services/remote/index.ts';
 import LdpResourceService from './services/resource/index.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
 
 const LdpSchema = {
   name: 'ldp' as const,

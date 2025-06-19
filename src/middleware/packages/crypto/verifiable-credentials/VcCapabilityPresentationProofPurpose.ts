@@ -1,8 +1,8 @@
+import { arrayOf, deepStrictEqual } from '../utils/utils.ts';
+
 const {
   purposes: { AuthenticationProofPurpose }
 } = require('jsonld-signatures');
-
-import { arrayOf, deepStrictEqual } from '../utils/utils.ts';
 
 /**
  * Create an instance of this class when verifying capability VC presentations using

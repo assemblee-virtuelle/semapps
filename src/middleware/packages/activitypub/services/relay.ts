@@ -1,8 +1,8 @@
 import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
+import { ServiceSchema, defineAction } from 'moleculer';
 import { ACTOR_TYPES } from '../constants.ts';
 import { delay } from '../utils.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
 
 const RelayService = {
   name: 'activitypub.relay' as const,

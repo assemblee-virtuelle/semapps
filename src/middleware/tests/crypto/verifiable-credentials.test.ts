@@ -1,7 +1,8 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import path from 'node:path';
-import initialize from './initialize.ts';
 import { ServiceSchema } from 'moleculer';
+import initialize from './initialize.ts';
+
 jest.setTimeout(45_000);
 
 const getChallengeFrom = async actor => {

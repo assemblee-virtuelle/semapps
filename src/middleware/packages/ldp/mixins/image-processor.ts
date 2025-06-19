@@ -1,7 +1,8 @@
 import sharp from 'sharp';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { arrayOf } from '../utils.ts';
 import { ServiceSchema, defineAction } from 'moleculer';
+import { arrayOf } from '../utils.ts';
+
 const SUPPORTED_IMAGES_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 const Schema = {

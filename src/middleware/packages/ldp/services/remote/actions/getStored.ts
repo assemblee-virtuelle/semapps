@@ -1,7 +1,8 @@
 import { MIME_TYPES } from '@semapps/mime-types';
-const { MoleculerError } = require('moleculer').Errors;
-import { buildBlankNodesQuery } from '../../../utils.ts';
 import { defineAction } from 'moleculer';
+import { buildBlankNodesQuery } from '../../../utils.ts';
+
+const { MoleculerError } = require('moleculer').Errors;
 
 const Schema = defineAction({
   visibility: 'public',

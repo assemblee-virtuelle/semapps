@@ -2,6 +2,7 @@ import { triple, namedNode } from 'rdf-data-model';
 import waitForExpect from 'wait-for-expect';
 import { MIME_TYPES } from '@semapps/mime-types';
 import initialize from './initialize.ts';
+
 jest.setTimeout(100000);
 let server1;
 let server2;

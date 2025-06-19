@@ -2,9 +2,9 @@ import { createSign, createHash } from 'crypto';
 import { parseRequest, verifySignature } from 'http-signature';
 import { createAuthzHeader, createSignatureString } from 'http-signature-header';
 import { E as Errors } from 'moleculer-web';
+import { ServiceSchema, defineAction } from 'moleculer';
 import { KEY_TYPES } from '../constants.ts';
 import { arrayOf } from '../utils/utils.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
 
 const HttpSignatureService = {
   // TODO: Rename to signature.http-signatures in a major release.

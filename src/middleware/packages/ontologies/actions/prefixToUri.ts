@@ -1,5 +1,6 @@
-import { isURL } from '../utils.ts';
 import { defineAction } from 'moleculer';
+import { isURL } from '../utils.ts';
+
 const regexPrefix = /^([^:]+):([^:]+)$/gm;
 
 const Schema = defineAction({

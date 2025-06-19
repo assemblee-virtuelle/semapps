@@ -9,4 +9,4 @@ export const SETTINGS_DATASET = process.env.SEMAPPS_SETTINGS_DATASET;
 export const JENA_USER = process.env.SEMAPPS_JENA_USER;
 export const JENA_PASSWORD = process.env.SEMAPPS_JENA_PASSWORD;
 export const ACTIVATE_CACHE = process.env.SEMAPPS_ACTIVATE_CACHE === 'true';
-export const FUSEKI_BASE = process.env.FUSEKI_BASE;
+export const { FUSEKI_BASE } = process.env;

@@ -2,10 +2,10 @@ import fetch from 'node-fetch';
 import { E as Errors } from 'moleculer-web';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { getType, arrayOf } from '@semapps/ldp';
+import { ServiceSchema, defineAction } from 'moleculer';
 import { collectionPermissionsWithAnonRead, getSlugFromUri, objectIdToCurrent } from '../../../utils.ts';
 import { ACTOR_TYPES } from '../../../constants.ts';
 import AwaitActivityMixin from '../../../mixins/await-activity.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
 
 const queueOptions =
   process.env.NODE_ENV === 'test'

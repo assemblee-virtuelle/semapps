@@ -2,6 +2,7 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import { ACTIVITY_TYPES, OBJECT_TYPES, PUBLIC_URI } from '@semapps/activitypub';
 import waitForExpect from 'wait-for-expect';
 import initialize from './initialize.ts';
+
 jest.setTimeout(50_000);
 let broker;
 let broker2;

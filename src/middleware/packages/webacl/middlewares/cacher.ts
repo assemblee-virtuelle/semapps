@@ -1,4 +1,5 @@
 import { Cachers } from 'moleculer';
+
 let cacher;
 
 // It has been suggested to put this middleware in Moleculer core code:
