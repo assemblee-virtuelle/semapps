@@ -1,6 +1,6 @@
 import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { voidOntology as void } from '@semapps/ontologies';
+import { voidOntology } from '@semapps/ontologies';
 import { JsonLdSerializer } from 'jsonld-streaming-serializer';
 import { DataFactory, Writer } from 'n3';
 const { quad, namedNode, literal, blankNode } = DataFactory;

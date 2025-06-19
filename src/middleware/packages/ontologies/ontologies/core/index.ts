@@ -11,6 +11,6 @@ import sec from './sec.json';
 import semapps from './semapps.json';
 import skos from './skos.json';
 import vcard from './vcard.json';
-import void from './void.json';
+import voidOntology from './void.json';
 import xsd from './xsd.json';
-export { acl, as, cred, dc, did, foaf, ldp, rdf, rdfs, sec, semapps, skos, vcard, void, xsd };
+export { acl, as, cred, dc, did, foaf, ldp, rdf, rdfs, sec, semapps, skos, vcard, voidOntology, xsd };
