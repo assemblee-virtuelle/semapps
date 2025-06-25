@@ -21,45 +21,67 @@ const dataProvider = originalConfig => {
   // Keep in memory for refresh
   let config = { ...originalConfig };
 
-  const prepareConfig = async () => {
-    config.dataServers ??= {};
+  const prepareConfig = async loadFromCache => {
+    // Get the config immediately from cache and fetch the latest version in background
+    if (loadFromCache) {
+      const cachedConfig = localStorage.getItem('dataProvider.cache');
+      if (cachedConfig) {
+        config.dataServers = JSON.parse(localStorage.getItem('dataProvider.dataServers'));
+        config.ontologies = JSON.parse(localStorage.getItem('dataProvider.ontologies'));
+        config.jsonContext = JSON.parse(localStorage.getItem('dataProvider.jsonContext'));
+        config.resources = JSON.parse(localStorage.getItem('dataProvider.resources'));
+        config.httpClient = httpClient(config.dataServers);
+        config.ready = true; // Mark config as ready so that waitForPrepareConfig is not blocked
+      }
+    }
+
+    let newConfig = { ...originalConfig };
+
+    newConfig.dataServers ??= {};
 
     // Configure httpClient with initial data servers, so that plugins may use it
-    config.httpClient = httpClient(config.dataServers);
+    newConfig.httpClient = httpClient(originalConfig.dataServers);
     // Useful for debugging.
-    document.httpClient = config.httpClient;
+    document.httpClient = newConfig.httpClient;
 
-    for (const plugin of config.plugins) {
+    for (const plugin of newConfig.plugins) {
       if (plugin.transformConfig) {
-        config = await plugin.transformConfig(config);
+        newConfig = await plugin.transformConfig(newConfig);
       }
     }
 
     // Configure again httpClient with possibly updated data servers
-    config.httpClient = httpClient(config.dataServers);
+    newConfig.httpClient = httpClient(newConfig.dataServers);
 
-    if (!config.ontologies && config.jsonContext) {
-      config.ontologies = await getOntologiesFromContext(config.jsonContext);
-    } else if (!config.jsonContext && config.ontologies) {
-      config.jsonContext = config.ontologies;
-    } else if (!config.jsonContext && !config.ontologies) {
+    if (!newConfig.ontologies && newConfig.jsonContext) {
+      newConfig.ontologies = await getOntologiesFromContext(newConfig.jsonContext);
+    } else if (!newConfig.jsonContext && newConfig.ontologies) {
+      newConfig.jsonContext = newConfig.ontologies;
+    } else if (!newConfig.jsonContext && !newConfig.ontologies) {
       throw new Error(`Either the JSON context or the ontologies must be set`);
     }
 
-    if (!config.returnFailedResources) config.returnFailedResources = false;
+    if (!newConfig.returnFailedResources) newConfig.returnFailedResources = false;
 
-    config = await normalizeConfig(config);
+    config = await normalizeConfig(newConfig);
+    config.ready = true;
+
+    localStorage.setItem('dataProvider.dataServers', JSON.stringify(config.dataServers));
+    localStorage.setItem('dataProvider.ontologies', JSON.stringify(config.ontologies));
+    localStorage.setItem('dataProvider.jsonContext', JSON.stringify(config.jsonContext));
+    localStorage.setItem('dataProvider.resources', JSON.stringify(config.resources));
+    localStorage.setItem('dataProvider.cache', true);
 
     console.log('Config after plugins', config);
   };
 
   // Immediately call the preload plugins
-  const prepareConfigPromise = prepareConfig();
+  const prepareConfigPromise = prepareConfig(true);
 
   const waitForPrepareConfig =
     method =>
     async (...arg) => {
-      await prepareConfigPromise; // Return immediately if plugins have already been loaded
+      if (!config.ready) await prepareConfigPromise; // Return immediately if plugins have already been loaded
       return method(config)(...arg);
     };
 
@@ -86,7 +108,7 @@ const dataProvider = originalConfig => {
     getConfig: waitForPrepareConfig(c => () => c),
     refreshConfig: async () => {
       config = { ...originalConfig };
-      await prepareConfig();
+      await prepareConfig(false);
       return config;
     }
   };
