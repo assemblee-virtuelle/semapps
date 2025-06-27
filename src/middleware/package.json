@@ -33,7 +33,7 @@
     "lerna": "^8.0.1",
     "nx": "17.2.5",
     "prettier": "^3.1.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.8.0"
   },
   "workspaces": [
     "packages/*",

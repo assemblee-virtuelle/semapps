@@ -63,10 +63,7 @@ declare global {
       trace(...args: any[]): void;
     }
 
-    type ActionHandler<Params extends unknown = Record<string, any>, ReturnType = unknown> = ((
-      ctx: Context<Params>
-    ) => Promise<ReturnType> | ReturnType) &
-      ThisType<Service>;
+    type ActionHandler<Params extends Record<string, any> = Record<string, any>> = (ctx: Context<Params>) => any;
 
     interface HotReloadOptions {
       modules?: string[];
@@ -435,10 +432,14 @@ declare global {
       maxQueueSize?: number;
     }
 
-    type ActionCacheEnabledFuncType = (ctx: Context<any, any>) => boolean;
+    type ActionCacheEnabledFuncType<
+      P extends Record<string, any> = Record<string, any>,
+      R extends object = {},
+      L = Moleculer.GenericObject
+    > = (ctx: Context<P, R, L>) => boolean;
 
-    interface ActionCacheOptions<P = Record<string, unknown>, M = unknown> {
-      enabled?: boolean | ActionCacheEnabledFuncType;
+    interface ActionCacheOptions<P = Record<string, unknown>, M = GenericObject> {
+      enabled?: boolean | ActionCacheEnabledFuncType<P, M>;
       ttl?: number;
       keys?: string[];
       keygen?: CacherKeygenFunc<P, M>;
@@ -472,11 +473,13 @@ declare global {
      */
 
     /** A schema like: `{p1: {type: "string"}, p2: {type: "boolean"}}` */
-    type ValidatorSchema = Record<
-      string,
-      ParameterSchema | ValidationRuleObject | ValidationRuleObject[] // Space for improvements.
-    > &
-      ValidationSchemaMetaKeys;
+    // TODO: DEBUG-REMOVE
+    // type ValidatorSchema = Record<
+    //   string,
+    //   ParameterSchema | ValidationRuleObject | ValidationRuleObject[] // Space for improvements.
+    // > &
+    //   ValidationSchemaMetaKeys;
+    type ValidatorSchema = Record<string, ParameterSchema>;
 
     /** Schema of a single parameter, like `{type: "boolean", optional: true}` */
     type ParameterSchema<DefaultType extends any = undefined> = (
@@ -613,31 +616,30 @@ declare global {
     /**
      * Calls an action by name with appropriate parameter typing. For known actions, enforces correct parameter requirements;
      * for unknown action names, defaults to an unknown parameter type.
+     *
      */
-    type Call = {
-      <ActionName extends keyof AllActions | (string & {})>(
-        actionName: ActionName,
-        ...args: ActionName extends keyof AllActions
-          ? HasAtLeastOneRequiredParam<AllActions[ActionName]> extends true
-            ? [params: ParamTypeOfAction<AllActions[ActionName]>, opts?: CallingOptions]
-            : [params?: ParamTypeOfAction<AllActions[ActionName]>, opts?: CallingOptions]
-          : [params?: unknown, opts?: CallingOptions]
-      ): Promisify<ActionName extends keyof AllActions ? ReturnType<HandlerOfAction<AllActions[ActionName]>> : unknown>;
-    };
+    type Call<Meta extends any = any> = <AName extends ActionName = ActionName, Action = AllActions[AName]>(
+      actionName: AName,
+      ...args: AName extends keyof AllActions
+        ? HasAtLeastOneRequiredParam<Action> extends true
+          ? [params: ParamTypeOfAction<Action>, opts?: CallingOptions<Meta>]
+          : [params?: ParamTypeOfAction<Action>, opts?: CallingOptions<Meta>]
+        : [params?: Record<string, any>, opts?: CallingOptions<Meta>]
+    ) => Promisify<AName extends keyof AllActions ? ReturnType<HandlerOfAction<Action>> : unknown>;
 
     /**
      * Service registry that every service should extend
      * using global [declaration merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html)
      * as follow:
      * ```ts
-     * const service = defineService({
+     * const service = {
      *  name: 'service1',
-     *  actions: {
+     *  actions: defineAction({
      *    action1: {
      *      params: { stringParam: {} }
      *    }
-     *  }
-     * });
+     *  })
+     * } satisfies ServiceSchema;
      *
      * declare global {
      *   export namespace Moleculer {
@@ -648,12 +650,12 @@ declare global {
      * }
      * ```
      *
-     **/
+     */
     interface AllServices {}
 
     // Since `AvailableServices` is not typed strongly, we do that here to see the services explicitly.
     type AllServices_ = {
-      [S in string & keyof AllServices]: AllServices[S];
+      [S in (string & {}) & keyof AllServices]: AllServices[S];
     };
 
     type ActionNameOfAction<Service extends ServiceSchema, Action extends string> =
@@ -679,7 +681,7 @@ declare global {
     /** Creates a type with the structure Record<`version.service.name`, ServiceActionsSchema>  */
     type ActionsOfServices<Services extends Record<string, ServiceSchema>> = Record<
       keyof ActionsOfServices_<Services>,
-      ServiceActionsSchema
+      ActionSchema | ActionHandler
     > &
       UnionToIntersect<ActionsOfServices_<Services>>;
 
@@ -689,29 +691,43 @@ declare global {
      * `Record<"[v1.]serviceName.actionName": ServiceActionsSchema>`
      *
      **/
-    type AllActions = ActionsOfServices<AllServices_>;
-    type names = keyof AllActions;
-    // ALSO TODO: Why is `this` not bound when schema is defined in `defineSchema` without `satisfies`?
+    // TODO: DEBUG-REMOVE
+    type AllActions = UnionToIntersect<ActionsOfServices_<AllServices>>;
+    // TODO: DEBUG-REMOVE?
+    type ActionName = keyof AllActions | (string & {});
 
-    type ActionSchema<ParamSchema extends ValidatorSchema = ValidatorSchema> = {
+    type ActionSchemaBase<
+      ParamSchema extends ValidatorSchema = ValidatorSchema,
+      Handler extends ActionHandler<TypeFromSchema<ParamSchema>> = ActionHandler<TypeFromSchema<ParamSchema>>
+    > = {
       name?: string;
       visibility?: ActionVisibility;
       params?: ParamSchema;
       service?: Service;
-      cache?: boolean | ActionCacheOptions; //<TypeFromSchema<ParamSchema>>;
-      handler?: ActionHandler<TypeFromSchema<ParamSchema>>;
+      cache?: boolean | ActionCacheOptions;
+      handler: Handler;
       tracing?: boolean | TracingActionOptions;
       bulkhead?: BulkheadOptions;
       circuitBreaker?: BrokerCircuitBreakerOptions;
       retryPolicy?: RetryPolicyOptions;
       fallback?: string | FallbackHandler;
       hooks?: ActionHooks;
+    };
 
+    // === TODO === IS THIS SEPARATION STILL NECESSARY?
+    type ActionSchema<
+      ParamSchema extends ValidatorSchema = ValidatorSchema,
+      Handler extends ActionHandler<TypeFromSchema<ParamSchema>> = ActionHandler<TypeFromSchema<ParamSchema>>
+    > = ActionSchemaBase<ParamSchema, Handler> & {
       // See https://github.com/moleculerjs/moleculer/issues/467#issuecomment-705583471
       [key: string]: string | boolean | any[] | number | Record<any, any> | null | undefined;
     };
 
-    function defineAction<P extends ValidatorSchema>(schema: ActionSchema<P>): ActionSchema<P>;
+    /** TODO: DOCUMENTATION */
+    function defineAction<
+      const Schema extends ValidatorSchema,
+      const Handler extends ActionHandler<TypeFromSchema<Schema>>
+    >(schema: ActionSchema<Schema, Handler>): ActionSchema<Schema, Handler>;
     function defineServiceEvent<P extends ValidatorSchema>(schema: ServiceEvent<P>): ServiceEvent<P>;
 
     interface EventSchema<Schema extends FastestValidationSchema = {}> {
@@ -759,7 +775,11 @@ declare global {
       disconnected(): void;
     }
 
-    class Context<Params = unknown, Meta extends object = {}, Locals = GenericObject> {
+    class Context<
+      Params extends Record<string, any> = Record<string, any>,
+      Meta extends object = {},
+      Locals = GenericObject
+    > {
       constructor(broker: ServiceBroker, endpoint: Endpoint);
 
       id: string;
@@ -863,7 +883,7 @@ declare global {
 
     type ServiceMethods = { [key: string]: (...args: any[]) => any } & ThisType<Service>;
 
-    type CallMiddlewareHandler = (actionName: string, params: any, opts: CallingOptions) => Promise<any>;
+    type CallMiddlewareHandler = (actionName: ActionName, params: any, opts: CallingOptions) => Promise<any>;
     type Middleware = {
       [name: string]:
         | ((handler: ActionHandler, action: ActionSchema) => any)
@@ -995,7 +1015,7 @@ declare global {
        * @param interval The time we will wait before once again checking if the service(s) are available (In milliseconds)
        */
       waitForServices(
-        serviceNames: string | string[] | ServiceDependency[],
+        serviceNames: (keyof AllServices | (string & {})) | (keyof AllServices | (string & {}))[] | ServiceDependency[],
         timeout?: number,
         interval?: number
       ): Promise<WaitForServicesResult>;
@@ -1174,7 +1194,7 @@ declare global {
       action: Context['action'];
     }
     interface BrokerErrorHandlerInfoBroker {
-      actionName: string;
+      actionName: ActionName;
       params: unknown;
       opts: CallingOptions;
       nodeId?: string;
@@ -1314,7 +1334,7 @@ declare global {
       sampled: boolean;
     }
 
-    interface CallingOptions {
+    interface CallingOptions<Meta extends GenericObject = GenericObject> {
       timeout?: number;
       retries?: number;
       fallbackResponse?: FallbackResponse | FallbackResponse[] | FallbackResponseHandler;
@@ -1328,12 +1348,12 @@ declare global {
       caller?: string;
     }
 
-    interface MCallCallingOptions extends CallingOptions {
+    interface MCallCallingOptions<Meta extends GenericObject = GenericObject> extends CallingOptions<Meta> {
       settled?: boolean;
     }
 
     interface CallDefinition<P extends GenericObject = GenericObject> {
-      action: string;
+      action: ActionName;
       params: P;
     }
 
@@ -1432,19 +1452,19 @@ declare global {
 
       getLocalService(name: string | ServiceSearchObj): Service;
       waitForServices(
-        serviceNames: string | string[] | ServiceSearchObj[],
+        serviceNames: (keyof AllServices | (string & {})) | (keyof AllServices | (string & {}))[] | ServiceSearchObj[],
         timeout?: number,
         interval?: number,
         logger?: LoggerInstance
       ): Promise<void>;
 
       findNextActionEndpoint(
-        actionName: string,
+        actionName: ActionName,
         opts?: GenericObject,
         ctx?: Context
       ): ActionEndpoint | Errors.MoleculerRetryableError;
 
-      call: Call;
+      // call: Call;
       mcall<T>(def: Record<string, MCallDefinition>, opts?: MCallCallingOptions): Promise<Record<string, T>>;
       mcall<T>(def: MCallDefinition[], opts?: MCallCallingOptions): Promise<T[]>;
 
@@ -1589,7 +1609,7 @@ declare global {
     }
 
     type CacherKeygenFunc<P = Record<string, unknown>, M = unknown> = (
-      actionName: string,
+      actionName: ActionName,
       params: P,
       meta: M,
       keys?: string[]
@@ -1629,8 +1649,13 @@ declare global {
         set(key: string, data: any, ttl?: number): Promise<any>;
         del(key: string | string[]): Promise<any>;
         clean(match?: string | string[]): Promise<any>;
-        getCacheKey(actionName: string, params: object, meta: object, keys: string[] | null): string;
-        defaultKeygen(actionName: string, params: object | null, meta: object | null, keys: string[] | null): string;
+        getCacheKey(actionName: ActionName, params: object, meta: object, keys: string[] | null): string;
+        defaultKeygen(
+          actionName: ActionName,
+          params: object | null,
+          meta: object | null,
+          keys: string[] | null
+        ): string;
         tryLock(key: string | string[], ttl?: number): Promise<() => Promise<void>>;
         lock(key: string | string[], ttl?: number): Promise<() => Promise<void>>;
       }
@@ -1958,13 +1983,13 @@ declare global {
     class ActionCatalog {
       add(node: BrokerNode, service: ServiceItem, action: ActionSchema): EndpointList;
 
-      get(actionName: string): EndpointList | undefined;
+      get(actionName: ActionName): EndpointList | undefined;
 
-      isAvailable(actionName: string): boolean;
+      isAvailable(actionName: ActionName): boolean;
 
       removeByService(service: ServiceItem): void;
 
-      remove(actionName: string, nodeID: string): void;
+      remove(actionName: ActionName, nodeID: string): void;
 
       list(opts: ActionCatalogListOptions): ActionCatalogListResult[];
     }
@@ -2230,5 +2255,4 @@ declare global {
   }
 }
 
-// @ts-expect-error TS(1203): Export assignment cannot be used when targeting EC... Remove this comment to see the full error message
 export = Moleculer;

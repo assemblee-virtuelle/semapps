@@ -18,7 +18,8 @@
     "resolvePackageJsonImports": true,
     "allowSyntheticDefaultImports": true,
     "allowImportingTsExtensions": true,
-    "rootDir": "./"
+    "rootDir": "./",
+    "typeRoots": ["./types/", "./node_modules/@types/"]
   },
   "include": ["**/*.js", "**/*.ts"],
   "exclude": []
