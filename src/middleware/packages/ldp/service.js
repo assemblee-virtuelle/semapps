@@ -6,6 +6,7 @@ const LdpLinkHeaderService = require('./services/link-header');
 const LdpRegistryService = require('./services/registry');
 const LdpRemoteService = require('./services/remote');
 const LdpResourceService = require('./services/resource');
+const PermissionsService = require('./services/permissions');
 
 module.exports = {
   name: 'ldp',
@@ -83,6 +84,8 @@ module.exports = {
         podProvider
       }
     });
+
+    this.broker.createService({ mixins: [PermissionsService] });
 
     this.broker.createService({ mixins: [LdpLinkHeaderService] });
 

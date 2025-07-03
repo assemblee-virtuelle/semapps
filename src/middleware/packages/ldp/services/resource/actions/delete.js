@@ -15,6 +15,8 @@ module.exports = {
       return await ctx.call('ldp.remote.delete', { resourceUri, webId });
     }
 
+    await ctx.call('permissions.check', { uri: resourceUri, type: 'resource', mode: 'acl:Write', webId });
+
     // Save the current data, to be able to send it through the event
     // If the resource does not exist, it will throw a 404 error
     const oldData = await ctx.call(

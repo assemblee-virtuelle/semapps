@@ -128,7 +128,7 @@ const CoreService = {
 
     if (this.settings.ldp !== false) {
       this.broker.createService({
-        mixins: [DocumentTaggerMixin, LdpService],
+        mixins: this.settings.ldp.documentTagger !== false ? [DocumentTaggerMixin, LdpService] : [LdpService],
         settings: {
           baseUrl,
           containers: containers || (this.settings.mirror !== false ? [botsContainer] : []),
@@ -179,7 +179,7 @@ const CoreService = {
     if (this.settings.triplestore !== false) {
       // If WebACL service is disabled, don't create a secure dataset
       // We define a constant here, because this.settings.webacl is not available inside the started method
-      const secure = this.settings.webacl !== false;
+      const secure = this.settings.triplestore?.secure !== false && this.settings.webacl !== false;
 
       this.broker.createService({
         mixins: [TripleStoreService],

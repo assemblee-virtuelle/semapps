@@ -31,6 +31,8 @@ module.exports = {
       return await ctx.call('ldp.remote.get', ctx.params);
     }
 
+    await ctx.call('permissions.check', { uri: resourceUri, type: 'resource', mode: 'acl:Read', webId });
+
     const { accept } = {
       ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
       ...ctx.params

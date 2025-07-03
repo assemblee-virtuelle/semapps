@@ -1,7 +1,8 @@
 const { acl, vcard, rdfs } = require('@semapps/ontologies');
 const WebAclResourceService = require('./services/resource');
-const WebAclGroupService = require('./services/group');
 const WebAclCacheService = require('./services/cache');
+const WebAclGroupService = require('./services/group');
+const WebAclAuthorizerService = require('./services/authorizer');
 const getRoutes = require('./routes/getRoutes');
 
 module.exports = {
@@ -35,32 +36,14 @@ module.exports = {
       }
     });
 
+    this.broker.createService({ mixins: [WebAclAuthorizerService] });
+
     // Only create this service if a cacher is defined
     if (this.broker.cacher) {
       this.broker.createService({ mixins: [WebAclCacheService] });
     }
   },
   async started() {
-    if (!this.settings.podProvider) {
-      // Testing if there is a secure graph. you should not start the webAcl service if you created an unsecure main dataset.
-      await this.broker.waitForServices(['triplestore']);
-
-      let hasWebAcl = false;
-      try {
-        await this.broker.call('triplestore.query', {
-          query: `ASK WHERE { GRAPH <${this.settings.graphName}> { ?s ?p ?o } }`,
-          webId: 'anon'
-        });
-      } catch (e) {
-        if (e.code === 403) hasWebAcl = true;
-      }
-      if (!hasWebAcl) {
-        throw new Error(
-          'Error when starting the webAcl service: the main dataset is not secure. You must use the triplestore.dataset.create action with the `secure: true` param'
-        );
-      }
-    }
-
     const { pathname: basePath } = new URL(this.settings.baseUrl);
 
     for (const route of getRoutes(basePath, this.settings.podProvider)) {
