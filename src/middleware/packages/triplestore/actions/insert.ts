@@ -5,6 +5,7 @@ import { defineAction } from 'moleculer';
 const Schema = defineAction({
   visibility: 'public',
   params: {
+    // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
     resource: {
       type: 'multi',
       // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
@@ -34,15 +35,13 @@ const Schema = defineAction({
     // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
     let dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
-    const rdf =
-      contentType === MIME_TYPES.JSON
-        ? await ctx.call('jsonld.parser.toRDF', {
+    // Convert JSON-LD to N-Quads
+    const rdf = await ctx.call('jsonld.parser.toRDF', {
             input: resource,
             options: {
               format: 'application/n-quads'
             }
-          })
-        : resource;
+    });
 
     if (!dataset) throw new Error(`No dataset defined for triplestore insert: ${rdf}`);
     if (dataset !== '*' && !(await ctx.call('triplestore.dataset.exist', { dataset })))

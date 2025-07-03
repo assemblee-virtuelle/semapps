@@ -18,11 +18,9 @@ const Schema = defineAction({
     // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-    const isRemoteContainer = await ctx.call('ldp.remote.isRemote', { resourceUri: containerUri });
-
     const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri, webId });
     if (!resourceExists) {
-      const childContainerExists = await this.actions.exist({ containerUri: resourceUri, webId }, { parentCtx: ctx });
+      const childContainerExists = await this.actions.exist({ containerUri: resourceUri }, { parentCtx: ctx });
       if (!childContainerExists) {
         throw new MoleculerError(`Cannot attach non-existing resource or container: ${resourceUri}`, 404, 'NOT_FOUND');
       }
@@ -31,10 +29,13 @@ const Schema = defineAction({
     const containerExists = await this.actions.exist({ containerUri, webId }, { parentCtx: ctx });
     if (!containerExists) throw new Error(`Cannot attach to a non-existing container: ${containerUri}`);
 
-    await ctx.call('triplestore.insert', {
-      resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>`,
-      webId,
-      graphName: isRemoteContainer ? this.settings.mirrorGraphName : undefined
+    await ctx.call('triplestore.update', {
+      query: sanitizeSparqlQuery`
+        INSERT DATA { 
+          <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> 
+        }
+      `,
+      webId: 'system'
     });
 
     const returnValues = {

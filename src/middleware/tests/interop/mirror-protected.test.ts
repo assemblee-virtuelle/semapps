@@ -60,7 +60,6 @@ describe('Resource on server1 is shared with user on server2', () => {
         '@type': 'Resource',
         label: 'My protected resource'
       },
-      contentType: MIME_TYPES.JSON,
       containerUri: 'http://localhost:3001/protected-resources',
       webId: 'system'
     });

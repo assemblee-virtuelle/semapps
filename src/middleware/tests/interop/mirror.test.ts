@@ -58,7 +58,6 @@ describe('Server2 mirror server1', () => {
         '@type': 'Resource',
         label: 'My resource'
       },
-      contentType: MIME_TYPES.JSON,
       containerUri: 'http://localhost:3001/resources'
     });
 
@@ -86,8 +85,7 @@ describe('Server2 mirror server1', () => {
         '@id': resourceUri,
         '@type': 'Resource',
         label: 'My resource updated'
-      },
-      contentType: MIME_TYPES.JSON
+      }
     });
 
     await waitForExpect(async () => {

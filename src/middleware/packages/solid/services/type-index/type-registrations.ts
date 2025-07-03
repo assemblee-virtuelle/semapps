@@ -71,7 +71,6 @@ const TypeRegistrationsSchema = {
                 'solid:forClass': expandedTypes,
                 'solid:instanceContainer': containerUri
               },
-              contentType: MIME_TYPES.JSON,
               webId
             },
             { parentCtx: ctx }
@@ -139,11 +138,7 @@ const TypeRegistrationsSchema = {
         // If no default app is defined for this type, use this one
         if (!registration['apods:defaultApp']) registration['apods:defaultApp'] = appUri;
 
-        await ctx.call('type-registrations.put', {
-          resource: registration,
-          contentType: MIME_TYPES.JSON,
-          webId
-        });
+        await ctx.call('type-registrations.put', { resource: registration, webId });
       }
     }),
 
@@ -176,7 +171,6 @@ const TypeRegistrationsSchema = {
 
         await ctx.call('type-registrations.put', {
           resource: registration,
-          contentType: MIME_TYPES.JSON,
           webId
         });
       }

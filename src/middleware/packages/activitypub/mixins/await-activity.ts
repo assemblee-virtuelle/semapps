@@ -20,7 +20,6 @@ const AwaitActivityMixin = {
         try {
           const resource = await ctx.call('ldp.resource.get', {
             resourceUri,
-            accept: MIME_TYPES.JSON,
             webId
           });
           return resource; // First get the resource, then return it, otherwise the try/catch will not work

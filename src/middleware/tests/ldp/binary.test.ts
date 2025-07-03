@@ -81,12 +81,7 @@ describe('Binary handling of LDP server', () => {
   });
 
   test('Get image as resource (via Moleculer action)', async () => {
-    await expect(
-      broker.call('ldp.resource.get', {
-        resourceUri: fileUri,
-        accept: MIME_TYPES.JSON
-      })
-    ).resolves.toMatchObject({
+    await expect(broker.call('ldp.resource.get', { resourceUri: fileUri })).resolves.toMatchObject({
       '@id': fileUri,
       '@type': 'semapps:File',
       'semapps:fileName': fileName,

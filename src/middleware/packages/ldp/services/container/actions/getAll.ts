@@ -15,7 +15,6 @@ const Schema = defineAction({
           ?containerUri a ldp:Container .
         }
       `,
-      accept: MIME_TYPES.JSON,
       dataset: ctx.params.dataset,
       webId: 'system'
     });

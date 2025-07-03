@@ -30,9 +30,8 @@ async function getCollectionMetadata(ctx: any, collectionUri: any, webId: any, d
         OPTIONAL { <${collectionUri}> semapps:sortOrder ?sortOrder . }
       }
     `,
-    accept: MIME_TYPES.JSON,
     dataset,
-    webId
+    webId: 'system'
   });
 
   if (results.length === 0) {
@@ -51,7 +50,6 @@ async function verifyCursorExists(ctx: any, collectionUri: any, cursor: any, dat
         BIND (EXISTS{ <${collectionUri}> as:items <${cursor}> } AS ?itemExists)
       }
     `,
-    accept: MIME_TYPES.JSON,
     dataset,
     webId: 'system'
   });
@@ -95,7 +93,6 @@ async function fetchCollectionItemURIs(ctx: any, collectionUri: any, options: an
           : ''
       }
     `,
-    accept: MIME_TYPES.JSON,
     dataset,
     webId: 'system'
   });
@@ -179,7 +176,6 @@ async function selectAndDereferenceItems(ctx: any, allItemURIs: any, options: an
         try {
           let item = await ctx.call('ldp.resource.get', {
             resourceUri: itemUri,
-            accept: MIME_TYPES.JSON,
             webId: ctx.meta.impersonatedUser || webId
           });
           delete item['@context']; // Don't keep the items individual context
@@ -298,6 +294,8 @@ const Schema = defineAction({
     // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const localContext = await ctx.call('jsonld.context.get');
+
+    await ctx.call('permissions.check', { uri: collectionUri, type: 'resource', mode: 'acl:Read', webId });
 
     // Get dataset here since we can't call the method from internal functions
     const dataset = this.getCollectionDataset(collectionUri);

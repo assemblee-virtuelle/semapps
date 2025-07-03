@@ -20,7 +20,7 @@ const Schema = defineAction({
     jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
   },
   cache: {
-    keys: ['containerUri', 'accept', 'filters', 'doNotIncludeResources', 'jsonContext', 'webId', '#webId']
+    keys: ['containerUri', 'filters', 'doNotIncludeResources', 'jsonContext', 'webId', '#webId']
   },
   async handler(ctx) {
     const { containerUri, filters, doNotIncludeResources, jsonContext } = ctx.params;
@@ -28,13 +28,10 @@ const Schema = defineAction({
     // @ts-expect-error
     webId = webId || ctx.meta.webId || 'anon';
 
-    const { accept } = {
-      ...(await ctx.call('ldp.registry.getByUri', { containerUri })),
-      ...ctx.params
-    };
+    await ctx.call('permissions.check', { uri: containerUri, type: 'container', mode: 'acl:Read', webId });
 
-    if (accept !== MIME_TYPES.JSON)
-      throw new Error(`LDP containers can only be returned with JSON-LD format at the moment.`);
+    if (accept && accept !== MIME_TYPES.JSON)
+      throw new Error(`The ldp.container.get action now only support JSON-LD. Provided: ${accept}`);
 
     let containerResults = await ctx.call('triplestore.query', {
       query: `
@@ -88,8 +85,7 @@ const Schema = defineAction({
               cleanUndefined({
                 resourceUri,
                 webId,
-                jsonContext,
-                accept
+                jsonContext
               })
             );
 

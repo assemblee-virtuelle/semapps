@@ -92,7 +92,6 @@ const Schema = {
               readableStream: response.body,
               mimetype: mediaData.mime_type
             },
-            contentType: MIME_TYPES.JSON,
             webId: 'system'
           });
         } else {

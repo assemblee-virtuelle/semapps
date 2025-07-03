@@ -3,7 +3,7 @@ import path from 'node:path';
 import { ServiceSchema } from 'moleculer';
 import { VC_API_PATH } from '../constants';
 
-const middlewares = [parseHeader, parseJson, negotiateAccept];
+const middlewares = [parseHeader, negotiateAccept, negotiateContentType, parseRawBody, parseJson];
 
 /**
  *

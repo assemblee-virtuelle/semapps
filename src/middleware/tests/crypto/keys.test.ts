@@ -59,14 +59,7 @@ describe('keys', () => {
         const [keyPair] = await broker.call('keys.getByType', { webId: user.webId, keyType: KEY_TYPES.RSA });
 
         const webIdDocument = await waitForResource(500, 'publicKey', 5, () =>
-          broker.call(
-            'webid.get',
-            {
-              resourceUri: user.webId,
-              accept: MIME_TYPES.JSON
-            },
-            { meta: { $cache: false } }
-          )
+          broker.call('webid.get', { resourceUri: user.webId }, { meta: { $cache: false } })
         );
 
         expect(webIdDocument).toBeDefined();
@@ -89,7 +82,6 @@ describe('keys', () => {
 
         const webIdDocument = await broker.call('webid.get', {
           resourceUri: user.webId,
-          accept: MIME_TYPES.JSON,
           webId: user.webId
         });
         expect(
@@ -100,7 +92,6 @@ describe('keys', () => {
         await broker.call('keys.attachPublicKeyToWebId', { webId: user.webId, keyId: keyPair['@id'] || keyPair.id });
         const webIdDocumentNew = await broker.call('webid.get', {
           resourceUri: user.webId,
-          accept: MIME_TYPES.JSON,
           webId: user.webId
         });
         expect(
@@ -121,7 +112,6 @@ describe('keys', () => {
         // Expect webId not to have key.
         const webIdDocument = await broker.call('webid.get', {
           resourceUri: user.webId,
-          accept: MIME_TYPES.JSON,
           webId: user.webId
         });
         expect(
@@ -150,7 +140,6 @@ describe('keys', () => {
         // Expect webId to not have old key but new key.
         const webIdDocumentNew = await broker.call('webid.get', {
           resourceUri: user.webId,
-          accept: MIME_TYPES.JSON,
           webId: user.webId
         });
         expect(
@@ -167,7 +156,6 @@ describe('keys', () => {
         // Expect publicKey to be present in `/public-keys` container.
         const publicKey = await broker.call('keys.public-container.get', {
           resourceUri: newKeyPair['rdfs:seeAlso'],
-          accept: MIME_TYPES.JSON,
           webId: user.webId
         });
         expect(publicKey).toBeTruthy();
@@ -186,10 +174,9 @@ describe('keys', () => {
         await expect(
           broker.call('keys.container.get', {
             resourceUri: keyPair['@id'] || keyPair.id,
-            webId: user2.webId,
-            accept: MIME_TYPES.JSON
+            webId: user2.webId
           })
-        ).rejects.toMatchObject({ data: { status: 'Forbidden' } });
+        ).rejects.toThrow('Forbidden');
       });
 
       test('second key present in keys and public-keys container only', async () => {
@@ -202,7 +189,6 @@ describe('keys', () => {
 
         const publicKey = await broker.call('keys.container.get', {
           resourceUri: keyPair['rdfs:seeAlso'],
-          accept: MIME_TYPES.JSON,
           webId: user.webId
         });
         expect(publicKey).toBeTruthy();
@@ -210,7 +196,6 @@ describe('keys', () => {
         // Should not be present in webId.
         const webIdDocument = await broker.call('webid.get', {
           resourceUri: user.webId,
-          accept: MIME_TYPES.JSON,
           webId: user.webId
         });
         expect(
@@ -228,7 +213,6 @@ describe('keys', () => {
         // Expect the new key to be findable in the webId and the old one to be removed.
         const webIdDocument = await broker.call('webid.get', {
           resourceUri: user.webId,
-          accept: MIME_TYPES.JSON,
           webId: user.webId
         });
         // Expect the public key of the webId to be the key published in the public key container (referenced rdfs:seeAlso).
@@ -248,7 +232,6 @@ describe('keys', () => {
         // Should not be present in webId.
         const webIdDocument = await broker.call('webid.get', {
           resourceUri: user.webId,
-          accept: MIME_TYPES.JSON,
           webId: user.webId
         });
         expect(
@@ -294,14 +277,7 @@ describe('keys', () => {
       test('public key present in webId', async () => {
         const [keyPair] = await broker.call('keys.getByType', { webId: user.webId, keyType: KEY_TYPES.ED25519 });
 
-        const webIdDocument = await broker.call(
-          'webid.get',
-          {
-            resourceUri: user.webId,
-            accept: MIME_TYPES.JSON
-          },
-          { meta: { $cache: false } }
-        );
+        const webIdDocument = await broker.call('webid.get', { resourceUri: user.webId }, { meta: { $cache: false } });
         expect(webIdDocument.assertionMethod).toBeDefined();
         expect(
           arrayOf(webIdDocument.assertionMethod).find(
@@ -320,7 +296,6 @@ describe('keys', () => {
 
         const webIdDocument = await broker.call('webid.get', {
           resourceUri: user.webId,
-          accept: MIME_TYPES.JSON,
           webId: user.webId
         });
         expect(
@@ -333,7 +308,6 @@ describe('keys', () => {
         await broker.call('keys.attachPublicKeyToWebId', { webId: user.webId, keyId: keyPair['@id'] || keyPair.id });
         const webIdDocumentNew = await broker.call('webid.get', {
           resourceUri: user.webId,
-          accept: MIME_TYPES.JSON,
           webId: user.webId
         });
         expect(
@@ -356,7 +330,6 @@ describe('keys', () => {
         // Expect webId not to have key.
         const webIdDocument = await broker.call('webid.get', {
           resourceUri: user.webId,
-          accept: MIME_TYPES.JSON,
           webId: user.webId
         });
         expect(
@@ -387,7 +360,6 @@ describe('keys', () => {
         // Expect webId to not have old key but new key.
         const webIdDocumentNew = await broker.call('webid.get', {
           resourceUri: user.webId,
-          accept: MIME_TYPES.JSON,
           webId: user.webId
         });
         expect(
@@ -404,7 +376,6 @@ describe('keys', () => {
         // Expect publicKey to be present in `/public-keys` container.
         const publicKey = await broker.call('keys.public-container.get', {
           resourceUri: newKeyPair['rdfs:seeAlso'],
-          accept: MIME_TYPES.JSON,
           webId: user.webId
         });
         expect(publicKey).toBeTruthy();
@@ -423,10 +394,9 @@ describe('keys', () => {
         await expect(
           broker.call('keys.container.get', {
             resourceUri: keyPair.id || keyPair['@id'],
-            webId: user2.webId,
-            accept: MIME_TYPES.JSON
+            webId: user2.webId
           })
-        ).rejects.toMatchObject({ data: { status: 'Forbidden' } });
+        ).rejects.toThrow('Forbidden');
       });
 
       test('second addable to webId', async () => {
@@ -440,7 +410,6 @@ describe('keys', () => {
         // Expect the new key to be findable in the webId
         const webIdDocument = await broker.call('webid.get', {
           resourceUri: user.webId,
-          accept: MIME_TYPES.JSON,
           webId: user.webId
         });
         // Expect the public key of the webId to be the key published in the public key container (referenced by rdfs:seeAlso).
@@ -503,10 +472,7 @@ describe('keys', () => {
         const { publicKey, privateKey } = await broker.call('signature.keypair.get', { actorUri: user.webId });
         expect(publicKey).toBeDefined();
         expect(privateKey).toBeDefined();
-        const webIdDocument = await broker.call('webid.get', {
-          resourceUri: user.webId,
-          accept: MIME_TYPES.JSON
-        });
+        const webIdDocument = await broker.call('webid.get', { resourceUri: user.webId });
         expect(webIdDocument).toBeDefined();
         expect(webIdDocument.publicKey).toBeDefined();
         expect(webIdDocument.publicKey.publicKeyPem).toBe(publicKey);
@@ -533,10 +499,7 @@ describe('keys', () => {
           const { publicKey, privateKey } = await broker.call('signature.keypair.get', { actorUri: user.webId });
           expect(publicKey).toBeDefined();
           expect(privateKey).toBeDefined();
-          const webIdDocument = await broker.call('webid.get', {
-            resourceUri: user.webId,
-            accept: MIME_TYPES.JSON
-          });
+          const webIdDocument = await broker.call('webid.get', { resourceUri: user.webId });
           expect(webIdDocument).toBeDefined();
           expect(webIdDocument.publicKey.publicKeyPem).toBe(publicKey);
           expect(webIdDocument.privateKey).toBeUndefined();
@@ -560,8 +523,7 @@ describe('keys', () => {
           const [keyPair] = await broker.call('keys.getByType', { webId: user.webId, keyType: KEY_TYPES.RSA });
 
           const webIdDocument = await broker.call('webid.get', {
-            resourceUri: user.webId,
-            accept: MIME_TYPES.JSON
+            resourceUri: user.webId
           });
           expect(webIdDocument).toBeDefined();
           const { publicKey } = webIdDocument;

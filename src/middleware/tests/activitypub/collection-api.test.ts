@@ -35,8 +35,7 @@ describe('Collections API', () => {
             name: `Note #${i}`,
             content: `Contenu de ma note #${i}`,
             published: `2021-01-0${i}T00:00:00.000Z`
-          },
-          contentType: MIME_TYPES.JSON
+          }
         })
       );
     }

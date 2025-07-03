@@ -27,8 +27,7 @@ const setUpUser = async (broker: any, username: any) => {
   });
   user.webIdDoc = await broker.call('ldp.resource.get', {
     resourceUri: user.webId,
-    webId: 'system',
-    accept: MIME_TYPES.JSON
+    webId: 'system'
   });
 
   user.fetch = async (uri: any, init: any) => {

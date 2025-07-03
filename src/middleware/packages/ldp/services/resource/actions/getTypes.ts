@@ -20,7 +20,6 @@ const Schema = defineAction({
           <${resourceUri}> a ?type .
         }
       `,
-      accept: MIME_TYPES.JSON,
       webId: 'system'
     });
 

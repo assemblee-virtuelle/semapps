@@ -13,6 +13,8 @@ const Schema = defineAction({
     // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
+    await ctx.call('permissions.check', { uri: containerUri, type: 'container', mode: 'acl:Write', webId });
+
     await ctx.call('triplestore.update', {
       query: sanitizeSparqlQuery`
         DELETE

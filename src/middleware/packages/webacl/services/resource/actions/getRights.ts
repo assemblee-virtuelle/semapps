@@ -6,8 +6,6 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import { defineAction } from 'moleculer';
 import {
   getAuthorizationNode,
-  checkAgentPresent,
-  getUserGroups,
   findParentContainers,
   filterAgentAcl,
   getAclUriFromResourceUri,
@@ -167,6 +165,28 @@ async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: an
 
   const document = [];
 
+  // Check if the user has a acl:Control permission
+  // If so, it will return all WAC permissions associated with the resource
+  // Otherwise only the permissions associated with the given user will be returned
+
+  const hasControl = await ctx.call('permissions.has', {
+    uri: resourceUri,
+    type: isContainer ? 'container' : 'resource',
+    mode: 'acl:Control',
+    webId: user
+  });
+
+  // Get the ACL for the resource
+
+  // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
+  const reads = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', graphName);
+  // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
+  const writes = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', graphName);
+  // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
+  const appends = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', graphName);
+  // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
+  const controls = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName);
+
   document.push(...(await filterAcls(hasControl, uaSearchParam, reads)));
   document.push(...(await filterAcls(hasControl, uaSearchParam, writes)));
   document.push(...(await filterAcls(hasControl, uaSearchParam, appends)));
@@ -190,6 +210,8 @@ async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: an
     document.push(...(await filterAcls(hasControl, uaSearchParam, value.controls)));
   }
 
+  // Format output
+
   return await formatOutput(ctx, document, resourceAclUri, ctx.meta.$responseType === MIME_TYPES.JSON);
 }
 
@@ -205,7 +227,7 @@ export const api = async function api(this: any, ctx: any) {
 
   return await ctx.call('webacl.resource.getRights', {
     resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
-    accept: accept
+    accept
   });
 };
 
@@ -213,7 +235,7 @@ export const action = defineAction({
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
-    accept: { type: 'string', optional: true },
+    accept: { type: 'string', default: MIME_TYPES.JSON },
     webId: { type: 'string', optional: true },
     skipResourceCheck: { type: 'boolean', default: false }
   },

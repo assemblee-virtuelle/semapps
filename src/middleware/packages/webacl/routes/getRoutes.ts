@@ -25,9 +25,6 @@ const getRoutes = (basePath: string, podProvider: any) => {
           type: ['text/turtle', 'application/ld+json']
         }
       },
-      onBeforeCall(ctx, route, req) {
-        ctx.meta.body = req.body;
-      },
       aliases: {
         'PATCH /:slugParts*': [parseHeader, 'webacl.resource.api_addRights'],
         'PUT /:slugParts*': [parseHeader, 'webacl.resource.api_setRights'],

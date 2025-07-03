@@ -3,11 +3,10 @@ import path from 'path';
 import {
   parseUrl,
   parseHeader,
-  parseSparql,
+  parseRawBody,
   negotiateContentType,
   negotiateAccept,
   parseJson,
-  parseTurtle,
   parseFile,
   saveDatasetMeta
 } from '@semapps/middlewares';
@@ -18,9 +17,8 @@ function getCatchAllRoute(basePath: any, podProvider: any) {
     parseHeader,
     negotiateContentType,
     negotiateAccept,
-    parseSparql,
+    parseRawBody,
     parseJson,
-    parseTurtle,
     parseFile,
     saveDatasetMeta
   ];

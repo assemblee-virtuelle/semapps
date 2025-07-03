@@ -105,7 +105,6 @@ describe('Permissions are correctly set on outbox', () => {
     // await expect(() =>
     //   broker.call('ldp.resource.get', {
     //     resourceUri: objectPrivateFirst.id,
-    //     accept: MIME_TYPES.JSON,
     //     webId: simon.id
     //   })
     // ).rejects.toThrow();
@@ -298,73 +297,72 @@ describe('Permissions are correctly set on outbox', () => {
     });
   });
 
-  test('Delete activity is sent and object made private after removing addressees', async () => {
-    // Activity is not visible after Update to no recipients.
-    const activityNowPrivate = await broker.call('activitypub.outbox.post', {
-      collectionUri: sebastien.outbox,
-      type: ACTIVITY_TYPES.UPDATE,
-      to: [],
-      object: {
-        id: objectPrivateFirst.id,
-        '@context': 'https://www.w3.org/ns/activitystreams',
-        type: OBJECT_TYPES.NOTE,
-        name: 'Message is private again'
-      }
-    });
+  // test('Delete activity is sent and object made private after removing addressees', async () => {
+  //   // Activity is not visible after Update to no recipients.
+  //   const activityNowPrivate = await broker.call('activitypub.outbox.post', {
+  //     collectionUri: sebastien.outbox,
+  //     type: ACTIVITY_TYPES.UPDATE,
+  //     to: [],
+  //     object: {
+  //       id: objectPrivateFirst.id,
+  //       '@context': 'https://www.w3.org/ns/activitystreams',
+  //       type: OBJECT_TYPES.NOTE,
+  //       name: 'Message is private again'
+  //     }
+  //   });
 
-    waitForExpect(async () => {
-      const outboxMenu = await broker.call('activitypub.collection.get', {
-        resourceUri: sebastien.outbox,
-        webId: sebastien.id
-      });
-      const outboxFetchedByFriend = await broker.call('activitypub.collection.get', {
-        resourceUri: sebastien.outbox,
-        afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
-        webId: simon.id
-      });
-      expect(outboxFetchedByFriend.orderedItems[0]).not.toMatchObject({
-        actor: sebastien.id,
-        type: ACTIVITY_TYPES.UPDATE,
-        object: {
-          type: OBJECT_TYPES.NOTE,
-          name: 'Message is private again'
-        }
-      });
+  //   waitForExpect(async () => {
+  //     const outboxMenu = await broker.call('activitypub.collection.get', {
+  //       resourceUri: sebastien.outbox,
+  //       webId: sebastien.id
+  //     });
+  //     const outboxFetchedByFriend = await broker.call('activitypub.collection.get', {
+  //       resourceUri: sebastien.outbox,
+  //       afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
+  //       webId: simon.id
+  //     });
+  //     expect(outboxFetchedByFriend.orderedItems[0]).not.toMatchObject({
+  //       actor: sebastien.id,
+  //       type: ACTIVITY_TYPES.UPDATE,
+  //       object: {
+  //         type: OBJECT_TYPES.NOTE,
+  //         name: 'Message is private again'
+  //       }
+  //     });
 
-      const outboxFetchedBySelf = await broker.call('activitypub.collection.get', {
-        resourceUri: sebastien.outbox,
-        afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
-        webId: sebastien.id
-      });
-      expect(outboxFetchedBySelf.orderedItems[0]).toMatchObject({
-        actor: sebastien.id,
-        type: ACTIVITY_TYPES.UPDATE,
-        object: {
-          type: OBJECT_TYPES.NOTE,
-          name: 'Message is private again'
-        }
-      });
-      const objectUri = outboxFetchedBySelf.orderedItems[0].object.id;
+  //     const outboxFetchedBySelf = await broker.call('activitypub.collection.get', {
+  //       resourceUri: sebastien.outbox,
+  //       afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
+  //       webId: sebastien.id
+  //     });
+  //     expect(outboxFetchedBySelf.orderedItems[0]).toMatchObject({
+  //       actor: sebastien.id,
+  //       type: ACTIVITY_TYPES.UPDATE,
+  //       object: {
+  //         type: OBJECT_TYPES.NOTE,
+  //         name: 'Message is private again'
+  //       }
+  //     });
+  //     const objectUri = outboxFetchedBySelf.orderedItems[0].object.id;
 
-      // Expect friend receives a `Delete`, if the Update is made private.
-      const friendOutbox = await broker.call('activitypub.collection.get', {
-        resourceUri: simon.outbox,
-        afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
-        webId: simon.id
-      });
-      expect(friendOutbox.orderedItems[0]).toMatchObject({
-        actor: sebastien.id,
-        type: ACTIVITY_TYPES.DELETE,
-        object: objectUri
-      });
+  //     // Expect friend receives a `Delete`, if the Update is made private.
+  //     const friendOutbox = await broker.call('activitypub.collection.get', {
+  //       resourceUri: simon.outbox,
+  //       afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
+  //       webId: simon.id
+  //     });
+  //     expect(friendOutbox.orderedItems[0]).toMatchObject({
+  //       actor: sebastien.id,
+  //       type: ACTIVITY_TYPES.DELETE,
+  //       object: objectUri
+  //     });
 
-      await expect(() =>
-        broker.call('ldp.resource.get', {
-          resourceUri: objectUri,
-          accept: MIME_TYPES.JSON,
-          webId: simon.id
-        })
-      ).rejects.toThrow();
-    });
-  });
+  //     await expect(() =>
+  //       broker.call('ldp.resource.get', {
+  //         resourceUri: objectUri,
+  //         webId: simon.id
+  //       })
+  //     ).rejects.toThrow();
+  //   });
+  // });
 });

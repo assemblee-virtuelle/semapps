@@ -33,7 +33,6 @@ describe('An inference is added between server1 et server2', () => {
         '@type': 'Resource',
         label: 'My parent resource'
       },
-      contentType: MIME_TYPES.JSON,
       containerUri: 'http://localhost:3001/resources'
     });
 
@@ -48,15 +47,12 @@ describe('An inference is added between server1 et server2', () => {
           '@id': resourceUri1
         }
       },
-      contentType: MIME_TYPES.JSON,
       containerUri: 'http://localhost:3002/resources'
     });
 
     // @ts-expect-error
     await waitForExpect(async () => {
-      await expect(
-        server1.call('ldp.resource.get', { resourceUri: resourceUri1, accept: MIME_TYPES.JSON })
-      ).resolves.toMatchObject({
+      await expect(server1.call('ldp.resource.get', { resourceUri: resourceUri1 })).resolves.toMatchObject({
         id: resourceUri1,
         'pair:hasPart': resourceUri2
       });
@@ -77,9 +73,7 @@ describe('An inference is added between server1 et server2', () => {
 
     // @ts-expect-error
     await waitForExpect(async () => {
-      await expect(
-        server2.call('ldp.resource.get', { resourceUri: resourceUri2, accept: MIME_TYPES.JSON })
-      ).resolves.toMatchObject({
+      await expect(server2.call('ldp.resource.get', { resourceUri: resourceUri2 })).resolves.toMatchObject({
         id: resourceUri2,
         'pair:inspiredBy': resourceUri1
       });
@@ -99,15 +93,14 @@ describe('An inference is added between server1 et server2', () => {
         partOf: {
           '@id': resourceUri1
         }
-      },
-      contentType: MIME_TYPES.JSON
+      }
     });
 
     // @ts-expect-error
     await waitForExpect(async () => {
-      await expect(
-        server1.call('ldp.resource.get', { resourceUri: resourceUri1, accept: MIME_TYPES.JSON })
-      ).resolves.not.toHaveProperty('pair:hasInspired');
+      await expect(server1.call('ldp.resource.get', { resourceUri: resourceUri1 })).resolves.not.toHaveProperty(
+        'pair:hasInspired'
+      );
     });
   });
 
@@ -116,9 +109,10 @@ describe('An inference is added between server1 et server2', () => {
 
     // @ts-expect-error
     await waitForExpect(async () => {
-      await expect(
-        server1.call('ldp.resource.get', { resourceUri: resourceUri1, accept: MIME_TYPES.JSON })
-      ).resolves.not.toHaveProperty('pair:hasPart');
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
+      await expect(server1.call('ldp.resource.get', { resourceUri: resourceUri1 })).resolves.not.toHaveProperty(
+        'pair:hasPart'
+      );
     });
   });
 });

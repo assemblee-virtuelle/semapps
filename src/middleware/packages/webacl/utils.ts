@@ -33,8 +33,11 @@ const findParentContainers = async (ctx: Context, resource: any) => {
   const query = `PREFIX ldp: <http://www.w3.org/ns/ldp#>\n${RESOURCE_CONTAINERS_QUERY(resource)}`;
 
   return await ctx.call('triplestore.query', {
-    query,
-    accept: MIME_TYPES.SPARQL_JSON,
+    query: `
+      PREFIX ldp: <http://www.w3.org/ns/ldp#>
+      SELECT ?container
+      WHERE { ?container ldp:contains <${resourceUri}> . }
+    `,
     webId: 'system'
   });
 };
@@ -64,7 +67,6 @@ const getUserGroups = async (ctx: any, user: any, graphName: any) => {
 
   const groups = await ctx.call('triplestore.query', {
     query,
-    accept: MIME_TYPES.JSON,
     webId: 'system'
   });
 
@@ -102,7 +104,6 @@ const getAuthorizationNode = async (
 
   const auths = await ctx.call('triplestore.query', {
     query,
-    accept: MIME_TYPES.JSON,
     webId: 'system'
   });
 

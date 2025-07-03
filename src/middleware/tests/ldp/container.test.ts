@@ -34,8 +34,7 @@ describe('LDP container tests', () => {
 
     await expect(
       broker.call('ldp.container.get', {
-        containerUri: `${CONFIG.HOME_URL}objects`,
-        accept: MIME_TYPES.JSON
+        containerUri: `${CONFIG.HOME_URL}objects`
       })
     ).resolves.toMatchObject({
       '@id': `${CONFIG.HOME_URL}objects`,
@@ -63,7 +62,6 @@ describe('LDP container tests', () => {
     await expect(
       broker.call('ldp.container.get', {
         containerUri: `${CONFIG.HOME_URL}`,
-        accept: MIME_TYPES.JSON,
         webId: 'system'
       })
     ).resolves.toMatchObject({
@@ -78,7 +76,6 @@ describe('LDP container tests', () => {
     await expect(
       broker.call('ldp.container.get', {
         containerUri: `${CONFIG.HOME_URL}parent`,
-        accept: MIME_TYPES.JSON,
         webId: 'system'
       })
     ).resolves.toMatchObject({
@@ -94,7 +91,6 @@ describe('LDP container tests', () => {
   test('Post a resource in a container', async () => {
     resourceUri = await broker.call('ldp.container.post', {
       containerUri: `${CONFIG.HOME_URL}resources`,
-      contentType: MIME_TYPES.JSON,
       resource: {
         '@context': {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
@@ -106,8 +102,7 @@ describe('LDP container tests', () => {
 
     await expect(
       broker.call('ldp.container.get', {
-        containerUri: `${CONFIG.HOME_URL}resources`,
-        accept: MIME_TYPES.JSON
+        containerUri: `${CONFIG.HOME_URL}resources`
       })
     ).resolves.toMatchObject({
       '@id': `${CONFIG.HOME_URL}resources`,
@@ -126,7 +121,6 @@ describe('LDP container tests', () => {
     await expect(
       broker.call('ldp.container.post', {
         containerUri: `${CONFIG.HOME_URL}unknownContainer`,
-        contentType: MIME_TYPES.JSON,
         resource: {
           '@context': {
             '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
@@ -151,7 +145,6 @@ describe('LDP container tests', () => {
     await expect(
       broker.call('ldp.container.get', {
         containerUri: `${CONFIG.HOME_URL}resources`,
-        accept: MIME_TYPES.JSON,
         jsonContext: {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
         }
@@ -175,7 +168,6 @@ describe('LDP container tests', () => {
   test('Get container with filters param', async () => {
     await broker.call('ldp.container.post', {
       containerUri: `${CONFIG.HOME_URL}resources`,
-      contentType: MIME_TYPES.JSON,
       resource: {
         '@context': {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
@@ -188,8 +180,7 @@ describe('LDP container tests', () => {
     // Get without filters param
     await expect(
       broker.call('ldp.container.get', {
-        containerUri: `${CONFIG.HOME_URL}resources`,
-        accept: MIME_TYPES.JSON
+        containerUri: `${CONFIG.HOME_URL}resources`
       })
     ).resolves.toMatchObject({
       '@id': `${CONFIG.HOME_URL}resources`,
@@ -208,7 +199,6 @@ describe('LDP container tests', () => {
     await expect(
       broker.call('ldp.container.get', {
         containerUri: `${CONFIG.HOME_URL}resources`,
-        accept: MIME_TYPES.JSON,
         filters: {
           'pair:label': 'My project 2'
         }
@@ -227,7 +217,6 @@ describe('LDP container tests', () => {
   test('Get container without resources', async () => {
     const container = await broker.call('ldp.container.get', {
       containerUri: `${CONFIG.HOME_URL}resources`,
-      accept: MIME_TYPES.JSON,
       doNotIncludeResources: true
     });
 
@@ -243,8 +232,7 @@ describe('LDP container tests', () => {
     // Project 1 should have disappeared from the container
     await expect(
       broker.call('ldp.container.get', {
-        containerUri: `${CONFIG.HOME_URL}resources`,
-        accept: MIME_TYPES.JSON
+        containerUri: `${CONFIG.HOME_URL}resources`
       })
     ).resolves.toMatchObject({
       '@id': `${CONFIG.HOME_URL}resources`,
@@ -265,10 +253,7 @@ describe('LDP container tests', () => {
     // Container should now be empty
     // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await waitForExpect(async () => {
-      const container = await broker.call('ldp.container.get', {
-        containerUri: `${CONFIG.HOME_URL}resources`,
-        accept: MIME_TYPES.JSON
-      });
+      const container = await broker.call('ldp.container.get', { containerUri: `${CONFIG.HOME_URL}resources` });
 
       expect(container['ldp:contains']).toHaveLength(0);
     });

@@ -90,7 +90,6 @@ const Schema = defineAction({
     await ctx.call('triplestore.insert', {
       resource,
       graphName,
-      contentType: MIME_TYPES.JSON,
       webId: 'system',
       dataset
     });

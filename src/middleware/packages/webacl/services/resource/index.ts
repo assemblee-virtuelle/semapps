@@ -97,8 +97,7 @@ const WebaclResourceSchema = {
 
       if (resourceUri.startsWith(urlJoin(this.settings.baseUrl, '_groups'))) {
         const exists = await aclGroupExists(resourceUri, ctx, this.settings.graphName);
-        if (!exists)
-          throw new MoleculerError(`Cannot get permissions of non-existing ACL group ${resourceUri}`, 404, 'NOT_FOUND');
+        if (!exists) throw new MoleculerError(`WAC group not found ${resourceUri}`, 404, 'NOT_FOUND');
         return false; // it is never a container
       }
       // it can be a container or a resource
@@ -107,11 +106,7 @@ const WebaclResourceSchema = {
         // it must be a resource then!
         const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId: 'system' });
         if (!resourceExist) {
-          throw new MoleculerError(
-            `Cannot get permissions of non-existing container or resource ${resourceUri} (webId ${ctx.meta.webId} / dataset ${ctx.meta.dataset})`,
-            404,
-            'NOT_FOUND'
-          );
+          throw new MoleculerError(`Container or resource not found ${resourceUri}`, 404, 'NOT_FOUND');
         }
         return false;
       }

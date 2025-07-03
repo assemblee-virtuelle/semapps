@@ -33,7 +33,7 @@ class TripleStoreAdapter {
     await this.broker.call('triplestore.dataset.create', {
       // @ts-expect-error TS(2339): Property 'dataset' does not exist on type 'TripleS... Remove this comment to see the full error message
       dataset: this.dataset,
-      secure: false
+      secure: false // TODO Remove when we switch to Fuseki 5
     });
   }
 

@@ -61,10 +61,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
     aliceMessageUri = createActivity.object.id;
 
     // Check the object has been created
-    const message = await alice.call('ldp.resource.get', {
-      resourceUri: aliceMessageUri,
-      accept: MIME_TYPES.JSON
-    });
+    const message = await alice.call('ldp.resource.get', { resourceUri: aliceMessageUri });
     expect(message).toMatchObject({
       type: OBJECT_TYPES.NOTE,
       attributedTo: alice.id,
@@ -90,12 +87,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
 
     // @ts-expect-error
     await waitForExpect(async () => {
-      await expect(
-        alice.call('ldp.resource.get', {
-          resourceUri: aliceMessageUri,
-          accept: MIME_TYPES.JSON
-        })
-      ).resolves.toMatchObject({
+      await expect(alice.call('ldp.resource.get', { resourceUri: aliceMessageUri })).resolves.toMatchObject({
         replies: `${aliceMessageUri}/replies`
       });
     });
@@ -103,10 +95,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
     // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
-        alice.call('activitypub.collection.get', {
-          resourceUri: `${aliceMessageUri}/replies`,
-          accept: MIME_TYPES.JSON
-        })
+        alice.call('activitypub.collection.get', { resourceUri: `${aliceMessageUri}/replies` })
       ).resolves.toMatchObject({
         type: 'Collection',
         items: {
@@ -130,14 +119,10 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
 
     // @ts-expect-error
     await waitForExpect(async () => {
-      await expect(
-        alice.call('ldp.resource.get', {
-          resourceUri: bobMessageUri,
-          accept: MIME_TYPES.JSON
-        })
-      ).resolves.toMatchObject({
+      await expect(alice.call('ldp.resource.get', { resourceUri: bobMessageUri })).resolves.toMatchObject({
         type: OBJECT_TYPES.TOMBSTONE,
         formerType: 'as:Note',
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         deleted: expect.anything()
       });
     });

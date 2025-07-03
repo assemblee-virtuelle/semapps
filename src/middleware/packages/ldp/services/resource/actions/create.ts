@@ -15,7 +15,8 @@ const Schema = defineAction({
       optional: true
     },
     contentType: {
-      type: 'string'
+      type: 'string',
+      optional: true
     }
   },
   async handler(ctx) {
@@ -23,6 +24,9 @@ const Schema = defineAction({
     // @ts-expect-error
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const resourceUri = resource.id || resource['@id'];
+
+    if (contentType && contentType !== MIME_TYPES.JSON)
+      throw new Error(`The ldp.resource.create action now only support JSON-LD. Provided: ${contentType}`);
 
     if (await ctx.call('ldp.remote.isRemote', { resourceUri }))
       throw new MoleculerError('Remote resources cannot be created', 403, 'FORBIDDEN');
@@ -32,23 +36,20 @@ const Schema = defineAction({
       ...ctx.params
     };
 
-    const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId });
+    const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId: 'system' });
     if (resourceExist) {
       throw new MoleculerError(`A resource already exist with URI ${resourceUri}`, 400, 'BAD_REQUEST');
     }
 
     // Adds the default context, if it is missing
-    if (contentType === MIME_TYPES.JSON && !resource['@context']) {
+    if (!resource['@context']) {
       resource = {
         '@context': await ctx.call('jsonld.context.get'),
         ...resource
       };
     }
 
-    if (contentType !== MIME_TYPES.JSON && !resource.body)
-      throw new MoleculerError('The resource must contain a body member (a string)', 400, 'BAD_REQUEST');
-
-    let newTriples = await this.bodyToTriples(body || resource, contentType);
+    let newTriples = await ctx.call('jsonld.parser.toQuads', { input: resource });
     // see PUT
     newTriples = this.filterOtherNamedNodes(newTriples, resourceUri);
     // see PUT
@@ -77,8 +78,7 @@ const Schema = defineAction({
       (controlledActions && controlledActions.get) || 'ldp.resource.get',
       {
         resourceUri,
-        accept: MIME_TYPES.JSON,
-        webId
+        webId: 'system' // Avoid errors if the resource creator has no read rights
       },
       { meta: { $cache: false } }
     );

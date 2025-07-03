@@ -18,20 +18,16 @@ const Schema = {
         if (contentType === MIME_TYPES.JSON) {
           // @ts-expect-error
           await this.createDisassembly(ctx, resource);
-        }
       },
       async put(ctx) {
-        const { resource, contentType } = ctx.params;
-        if (contentType === MIME_TYPES.JSON) {
+        const { resource } = ctx.params;
           const oldData = await ctx.call('ldp.resource.get', {
             resourceUri: resource.id || resource['@id'],
-            accept: MIME_TYPES.JSON,
             webId: 'system'
           });
           // @ts-expect-error
           await this.updateDisassembly(ctx, resource, oldData);
         }
-      }
     },
     after: {
       async delete(ctx, res) {
@@ -58,7 +54,6 @@ const Schema = {
                 '@context': newData['@context'],
                 ...resourceWithoutId
               },
-              contentType: MIME_TYPES.JSON,
               webId: 'system'
             });
             uriAdded.push({ '@id': newResourceUri, '@type': '@id' });
@@ -96,7 +91,6 @@ const Schema = {
                 '@context': newData['@context'],
                 ...resource
               },
-              contentType: MIME_TYPES.JSON,
               webId: 'system'
             });
             uriAdded.push({ '@id': newResourceUri, '@type': '@id' });
@@ -126,7 +120,6 @@ const Schema = {
                   '@context': newData['@context'],
                   ...resource
                 },
-                contentType: MIME_TYPES.JSON,
                 webId: 'system'
               });
             } catch (error) {

@@ -397,7 +397,8 @@ const VoidSchema = {
             // @ts-expect-error TS(18046): 'c' is of type 'unknown'.
             if (c.excludeFromMirror) partition['http://semapps.org/ns/core#doNotMirror'] = true;
             const count = await ctx.call('triplestore.query', {
-              query: `SELECT (COUNT (?o) as ?count) { <${partition['http://rdfs.org/ns/void#uriSpace']}> <http://www.w3.org/ns/ldp#contains> ?o }`
+              query: `SELECT (COUNT (?o) as ?count) { <${partition['http://rdfs.org/ns/void#uriSpace']}> <http://www.w3.org/ns/ldp#contains> ?o }`,
+              webId: 'system'
             });
             // @ts-expect-error TS(2551): Property 'http://rdfs.org/ns/void#entities' does n... Remove this comment to see the full error message
             partition['http://rdfs.org/ns/void#entities'] = Number(count[0].count.value);

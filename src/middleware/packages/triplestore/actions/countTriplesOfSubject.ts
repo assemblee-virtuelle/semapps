@@ -37,7 +37,6 @@ const Schema = defineAction({
           <${ctx.params.uri}> ?p ?v
         }
       `,
-      accept: MIME_TYPES.JSON,
       webId,
       dataset
     });

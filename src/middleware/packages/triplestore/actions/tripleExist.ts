@@ -45,7 +45,6 @@ const Schema = defineAction({
             : { type: 'bgp', triples: [triple] }
         ]
       },
-      accept: MIME_TYPES.JSON,
       webId,
       dataset
     });

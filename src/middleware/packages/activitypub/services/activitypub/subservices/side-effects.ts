@@ -86,7 +86,6 @@ const ActivitypubSideEffectsSchema = {
           'ldp.resource.get',
           {
             resourceUri,
-            accept: MIME_TYPES.JSON,
             webId
           },
           { meta: { dataset } }

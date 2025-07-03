@@ -32,9 +32,8 @@ describe('Collections', () => {
             '@type': 'Note',
             name: `Note #${i}`,
             content: `Contenu de ma note #${i}`,
-            published: `2021-01-0${i}T00:00:00.000Z`
-          },
-          contentType: MIME_TYPES.JSON
+            published: `2021-01-0${i + 1}T00:00:00.000Z`
+          }
         })
       );
     }
@@ -45,7 +44,6 @@ describe('Collections', () => {
         type: 'Collection',
         summary: 'My non-ordered collection'
       },
-      contentType: MIME_TYPES.JSON,
       webId: 'system'
     });
 
@@ -56,7 +54,6 @@ describe('Collections', () => {
         summary: 'My ordered collection',
         'semapps:dereferenceItems': false
       },
-      contentType: MIME_TYPES.JSON,
       webId: 'system'
     });
 
@@ -67,7 +64,6 @@ describe('Collections', () => {
         summary: 'Cursor test collection',
         'semapps:itemsPerPage': 2
       },
-      contentType: MIME_TYPES.JSON,
       webId: 'system'
     });
 
@@ -173,7 +169,6 @@ describe('Collections', () => {
         summary: 'My non-ordered collection with dereferenceItems: true',
         'semapps:dereferenceItems': true
       },
-      contentType: MIME_TYPES.JSON,
       webId: 'system'
     });
 
@@ -238,7 +233,6 @@ describe('Collections', () => {
         'semapps:sortPredicate': 'as:published',
         'semapps:sortOrder': 'semapps:AscOrder'
       },
-      contentType: MIME_TYPES.JSON,
       webId: 'system'
     });
 
@@ -283,7 +277,6 @@ describe('Collections', () => {
           summary: 'My paginated collection',
           'semapps:itemsPerPage': 4
         },
-        contentType: MIME_TYPES.JSON,
         webId: 'system'
       });
 
@@ -348,7 +341,6 @@ describe('Collections', () => {
             summary: 'Empty collection',
             'semapps:itemsPerPage': 4
           },
-          contentType: MIME_TYPES.JSON,
           webId: 'system'
         });
 
@@ -373,7 +365,6 @@ describe('Collections', () => {
             summary: 'Exact size collection',
             'semapps:itemsPerPage': 4
           },
-          contentType: MIME_TYPES.JSON,
           webId: 'system'
         });
 
@@ -476,7 +467,7 @@ describe('Collections', () => {
         broker.call('activitypub.collection.get', {
           resourceUri: nonExistentUri
         })
-      ).rejects.toThrow('Not found');
+      ).rejects.toThrow('not found');
     });
 
     test('Should return 404 when cursor not found in collection', async () => {

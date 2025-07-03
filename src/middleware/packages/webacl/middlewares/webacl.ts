@@ -76,35 +76,6 @@ const addRightsToNewUser = async (ctx: any, userUri: any) => {
 };
 
 /**
- * Check, if a capability grants access to the resource.
- */
-const hasValidCapability = async (ctx, resourceUri, mode) => {
-  const { capabilityPresentation } = ctx.meta.authorization;
-  const vcs = arrayOf(capabilityPresentation.verifiableCredential);
-
-  // Check if every VC contains a valid `hasAuthorization` property.
-  const allHaveAuth = vcs.every(vc => {
-    const auth = vc.credentialSubject?.['apods:hasAuthorization'];
-    return (
-      arrayOf(auth.type).includes('acl:Authorization') &&
-      arrayOf(auth['acl:mode']).includes(mode) &&
-      arrayOf(auth['acl:accessTo'].id ?? auth['acl:accessTo']).includes(resourceUri)
-    );
-  });
-  if (!allHaveAuth) return false;
-
-  // Check if issuer of first VC actually has control over it.
-  const hasRights = await ctx.call('webacl.resource.hasRights', {
-    resourceUri,
-    webId: vcs[0].issuer,
-    rights: { control: true }
-  });
-  if (!hasRights?.control) return false;
-
-  return true;
-};
-
-/**
  * Middleware that ensures that requests are conforming ACL records.
  * @type {import('moleculer').Middleware}
  */
@@ -113,61 +84,9 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
   async started() {
     if (!baseUrl) throw new Error('The baseUrl config is missing for the WebACL middleware');
   },
-  localAction: (next, action) => {
-    if (action.name === 'ldp.resource.get') {
-      /*
-       * VERIFY AUTHORIZATIONS
-       * This allows us to quickly check the permissions for GET operations using the Redis cache
-       * This way, we don't need to add the webId in the Redis cache key and it is more efficient
-       */
-      return async ctx => {
-        const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-        const bypass = () => {
-          ctx.params.aclVerified = true;
-          return next(ctx);
-        };
-
-        if (webId === 'system') {
-          return bypass();
-        }
-
-        const resourceUri = ctx.params.resourceUri || ctx.params.resource.id || ctx.params.resource['@id'];
-
-        if (await ctx.call('ldp.remote.isRemote', { resourceUri })) {
-          // Bypass if mirrored resource as WebACL are not activated in mirror graph
-          if ((await ctx.call('ldp.remote.getGraph', { resourceUri })) === 'http://semapps.org/mirror') {
-            return bypass();
-          }
-          return next(ctx);
-        }
-
-        // If the logged user is fetching is own POD, bypass ACL check
-        // End with a trailing slash, otherwise "bob" will have access to the pod of "bobby" !
-        if (podProvider && resourceUri.startsWith(`${webId}/`)) {
-          return bypass();
-        }
-
-        const result = await ctx.call('webacl.resource.hasRights', {
-          resourceUri,
-          rights: { read: true }, // Check only the read permissions to improve performances
-          webId
-        });
-
-        if (result.read) {
-          return bypass();
-        }
-
-        // Check, if there is a valid capability.
-        if (ctx.meta.authorization?.capabilityPresentation) {
-          if (await hasValidCapability(ctx, resourceUri, 'acl:Read')) {
-            return bypass();
-          }
-        }
-
-        throw403();
-      };
-    } else if (modifyActions.includes(action.name)) {
-      return async ctx => {
+  localAction: (next: any, action: any) => {
+    if (modifyActions.includes(action.name)) {
+      return async (ctx: any) => {
         const webId = ctx.params.webId || ctx.meta.webId || 'anon';
         let actionReturnValue;
 

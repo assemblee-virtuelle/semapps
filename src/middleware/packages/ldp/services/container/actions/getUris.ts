@@ -17,7 +17,6 @@ const Schema = defineAction({
           <${containerUri}> ldp:contains ?resourceUri .
         }
       `,
-      accept: MIME_TYPES.JSON,
       webId: 'system'
     });
 
