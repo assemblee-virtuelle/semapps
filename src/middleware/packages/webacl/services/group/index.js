@@ -68,10 +68,7 @@ module.exports = {
         await this.actions.create({ groupSlug: 'superadmins', webId: 'system' });
       }
 
-      const rootContainerExist = await this.broker.call('ldp.container.exist', {
-        containerUri: this.settings.baseUrl,
-        webId: 'system'
-      });
+      const rootContainerExist = await this.broker.call('ldp.container.exist', { containerUri: this.settings.baseUrl });
 
       if (!rootContainerExist) {
         throw new Error('To give superadmins rights, you must setup a root container');

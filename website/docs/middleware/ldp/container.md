@@ -80,10 +80,9 @@ Check if a container exists
 
 ##### Parameters
 
-| Property       | Type     | Default             | Description               |
-| -------------- | -------- | ------------------- | ------------------------- |
-| `containerUri` | `String` | **required**        | URI of container to check |
-| `webId`        | `String` | Logged user's webId | User doing the action     |
+| Property       | Type     | Default      | Description               |
+| -------------- | -------- | ------------ | ------------------------- |
+| `containerUri` | `String` | **required** | URI of container to check |
 
 ##### Return
 

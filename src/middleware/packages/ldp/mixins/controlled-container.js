@@ -108,14 +108,11 @@ module.exports = {
 
       do {
         if (containerExist === false) await delay(1000);
-        containerExist = await ctx.call('ldp.container.exist', { containerUri, webId: 'system' });
+        containerExist = await ctx.call('ldp.container.exist', { containerUri });
       } while (!containerExist);
 
       const parentContainerUri = getParentContainerUri(containerUri);
-      const parentContainerExist = await ctx.call('ldp.container.exist', {
-        containerUri: parentContainerUri,
-        webId: 'system'
-      });
+      const parentContainerExist = await ctx.call('ldp.container.exist', { containerUri: parentContainerUri });
 
       // If a parent container exist, check that the child container has been attached
       // Otherwise, it may fail

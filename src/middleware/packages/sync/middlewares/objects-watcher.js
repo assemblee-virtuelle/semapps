@@ -141,10 +141,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
             case 'webacl.resource.deleteAllRights':
               // If we are modifying rights of an ACL group, ignore
               if (new URL(ctx.params.resourceUri).pathname.startsWith('/_groups/')) return await next(ctx);
-              const containerExist = await ctx.call('ldp.container.exist', {
-                containerUri: ctx.params.resourceUri,
-                webId: 'system'
-              });
+              const containerExist = await ctx.call('ldp.container.exist', { containerUri: ctx.params.resourceUri });
               if (containerExist) {
                 // We don't want to announce containers right changes
                 return await next(ctx);
@@ -184,10 +181,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
 
             case 'webacl.resource.deleteAllRights':
               // Ensure the resource has not already been deleted (this action is used by the WebAclMiddleware when resources are deleted)
-              const containerExist = await ctx.call('ldp.container.exist', {
-                containerUri: ctx.params.resourceUri,
-                webId: 'system'
-              });
+              const containerExist = await ctx.call('ldp.container.exist', { containerUri: ctx.params.resourceUri });
               const resourceExist = await ctx.call('ldp.resource.exist', {
                 resourceUri: ctx.params.resourceUri,
                 acceptTombstones: false, // Ignore Tombstones
