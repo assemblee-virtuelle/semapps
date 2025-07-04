@@ -1,3 +1,11 @@
+// If we ask for append permission, also look for write permission
+const modeMapping = {
+  'acl:Read': ['read'],
+  'acl:Append': ['append', 'write'],
+  'acl:Write': ['write'],
+  'acl:Control': ['control']
+};
+
 module.exports = {
   name: 'webacl.authorizer',
   dependencies: 'permissions',
@@ -10,17 +18,16 @@ module.exports = {
 
       if (type === 'resource' || type === 'container') {
         // Convert acl:Read to read
-        const shortMode = mode.replace('acl:', '').toLowerCase();
+        const modesToCheck = modeMapping[mode];
 
         const rights = await ctx.call('webacl.resource.hasRights', {
           resourceUri: uri,
           webId,
-          rights: {
-            [shortMode]: true
-          }
+          rights: Object.fromEntries(modesToCheck.map(m => [m, true]))
         });
 
-        return rights[shortMode];
+        // Return true if there is at least one true value
+        return Object.values(rights).some(r => r);
       }
 
       return undefined;
