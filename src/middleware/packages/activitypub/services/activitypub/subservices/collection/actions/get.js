@@ -290,6 +290,8 @@ module.exports = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const localContext = await ctx.call('jsonld.context.get');
 
+    await ctx.call('permissions.check', { uri: collectionUri, type: 'resource', mode: 'acl:Read', webId });
+
     // Get dataset here since we can't call the method from internal functions
     const dataset = this.getCollectionDataset(collectionUri);
 

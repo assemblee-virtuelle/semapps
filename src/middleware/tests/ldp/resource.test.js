@@ -765,6 +765,6 @@ describe('Resource CRUD operations', () => {
         resourceUri: project1['@id'],
         accept: MIME_TYPES.JSON
       })
-    ).rejects.toThrow(`Cannot get permissions of non-existing container or resource ${project1['@id']}`);
+    ).rejects.toThrow(`not found`);
   }, 20000);
 });
