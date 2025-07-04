@@ -3,11 +3,9 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 module.exports = {
   visibility: 'public',
   params: {
-    containerUri: { type: 'string' },
-    webId: { type: 'string', optional: true }
+    containerUri: { type: 'string' }
   },
   async handler(ctx) {
-    const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     // Matches container with or without trailing slash
     const containerUri = ctx.params.containerUri.replace(/\/+$/, '');
 
@@ -25,7 +23,7 @@ module.exports = {
         }
       `,
       accept: MIME_TYPES.JSON,
-      webId
+      webId: 'system'
     });
   }
 };

@@ -7,7 +7,7 @@ module.exports = {
     async handler(ctx) {
       const { resourceUri } = ctx.params;
 
-      const isContainer = await ctx.call('ldp.container.exist', { containerUri: resourceUri, webId: 'system' });
+      const isContainer = await ctx.call('ldp.container.exist', { containerUri: resourceUri });
 
       await ctx.call('triplestore.update', {
         query: `
