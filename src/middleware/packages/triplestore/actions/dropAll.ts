@@ -14,8 +14,6 @@ const Schema = defineAction({
     }
   },
   async handler(ctx) {
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
-    const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
     const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
@@ -25,8 +23,7 @@ const Schema = defineAction({
     return await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
       body: 'update=CLEAR+ALL',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'X-SemappsUser': webId
+        'Content-Type': 'application/x-www-form-urlencoded'
       }
     });
   }
