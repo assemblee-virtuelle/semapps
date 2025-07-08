@@ -27,7 +27,6 @@ module.exports = {
   },
   async handler(ctx) {
     const { resource, contentType, graphName } = ctx.params;
-    const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     let dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
     const rdf =
@@ -53,7 +52,6 @@ module.exports = {
         body: graphName ? `INSERT DATA { GRAPH <${graphName}> { ${rdf} } }` : `INSERT DATA { ${rdf} }`,
         headers: {
           'Content-Type': 'application/sparql-update',
-          'X-SemappsUser': webId,
           Authorization: this.Authorization
         }
       });

@@ -1,6 +1,7 @@
 services:
   fuseki_tests:
-    image: semapps/jena-fuseki-webacl
+    # image: semapps/jena-fuseki-webacl
+    image: stain/jena-fuseki:5.1.0
     container_name: fuseki_tests
     restart: always
     volumes:

@@ -13,7 +13,6 @@ module.exports = {
     }
   },
   async handler(ctx) {
-    const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
     if (!(await ctx.call('triplestore.dataset.exist', { dataset })))
@@ -22,8 +21,7 @@ module.exports = {
     return await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
       body: 'update=CLEAR+ALL',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'X-SemappsUser': webId
+        'Content-Type': 'application/x-www-form-urlencoded'
       }
     });
   }
