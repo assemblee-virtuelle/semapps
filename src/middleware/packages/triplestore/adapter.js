@@ -22,7 +22,7 @@ class TripleStoreAdapter {
 
     await this.broker.call('triplestore.dataset.create', {
       dataset: this.dataset,
-      secure: false
+      secure: false // TODO Remove when we switch to Fuseki 5
     });
   }
 

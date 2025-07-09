@@ -114,7 +114,7 @@ module.exports = {
 
       await ctx.call('triplestore.update', {
         query,
-        webId
+        webId: 'system'
       });
 
       // Get the new data, with the same formatting as the old data

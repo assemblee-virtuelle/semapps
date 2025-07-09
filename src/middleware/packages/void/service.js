@@ -371,7 +371,8 @@ module.exports = {
             };
             if (c.excludeFromMirror) partition['http://semapps.org/ns/core#doNotMirror'] = true;
             const count = await ctx.call('triplestore.query', {
-              query: `SELECT (COUNT (?o) as ?count) { <${partition['http://rdfs.org/ns/void#uriSpace']}> <http://www.w3.org/ns/ldp#contains> ?o }`
+              query: `SELECT (COUNT (?o) as ?count) { <${partition['http://rdfs.org/ns/void#uriSpace']}> <http://www.w3.org/ns/ldp#contains> ?o }`,
+              webId: 'system'
             });
             partition['http://rdfs.org/ns/void#entities'] = Number(count[0].count.value);
             return partition;

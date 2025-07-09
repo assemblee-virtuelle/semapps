@@ -21,7 +21,7 @@ module.exports = {
         'http://purl.org/dc/terms/description': description
       },
       contentType: MIME_TYPES.JSON,
-      webId
+      webId: 'system'
     });
 
     ctx.emit('ldp.container.created', { containerUri, options, webId });

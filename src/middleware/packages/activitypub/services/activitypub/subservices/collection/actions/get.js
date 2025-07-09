@@ -28,7 +28,7 @@ async function getCollectionMetadata(ctx, collectionUri, webId, dataset) {
     `,
     accept: MIME_TYPES.JSON,
     dataset,
-    webId
+    webId: 'system'
   });
 
   if (results.length === 0) {

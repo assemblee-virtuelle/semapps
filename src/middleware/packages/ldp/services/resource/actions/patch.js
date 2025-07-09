@@ -83,7 +83,7 @@ module.exports = {
 
     await ctx.call('triplestore.update', {
       query: sparqlUpdate,
-      webId
+      webId: 'system'
     });
 
     const returnValues = {

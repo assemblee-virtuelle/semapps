@@ -11,6 +11,14 @@ module.exports = {
     const { resourceUri, acceptTombstones } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
+    const hasReadRight = await ctx.call('permissions.has', {
+      uri: resourceUri,
+      type: 'resource',
+      mode: 'acl:Read',
+      webId
+    });
+    if (!hasReadRight) return false;
+
     let exist = await ctx.call('triplestore.tripleExist', {
       triple: triple(namedNode(resourceUri), variable('p'), variable('s')),
       webId
