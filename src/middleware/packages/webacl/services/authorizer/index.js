@@ -1,6 +1,6 @@
-// If we ask for append permission, also look for write permission
+// A acl:Write permission implicitly gives acl:Read and acl:Append permissions
 const modeMapping = {
-  'acl:Read': ['read'],
+  'acl:Read': ['read', 'write'],
   'acl:Append': ['append', 'write'],
   'acl:Write': ['write'],
   'acl:Control': ['control']
