@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'authorizer',
+  name: 'authorizer-bot',
   settings: {
     rules: []
   },
