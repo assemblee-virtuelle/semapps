@@ -18,7 +18,6 @@ module.exports = {
   },
   async handler(ctx) {
     let { query } = ctx.params;
-    const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     let dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
     if (!dataset) throw new Error(`No dataset defined for triplestore update: ${query}`);
@@ -36,7 +35,6 @@ module.exports = {
         body: query,
         headers: {
           'Content-Type': 'application/sparql-update',
-          'X-SemappsUser': webId
         }
       });
     }
