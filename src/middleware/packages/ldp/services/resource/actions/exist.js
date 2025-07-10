@@ -11,24 +11,16 @@ module.exports = {
     const { resourceUri, acceptTombstones } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-    const hasReadRight = await ctx.call('permissions.has', {
-      uri: resourceUri,
-      type: 'resource',
-      mode: 'acl:Read',
-      webId
-    });
-    if (!hasReadRight) return false;
-
     let exist = await ctx.call('triplestore.tripleExist', {
       triple: triple(namedNode(resourceUri), variable('p'), variable('s')),
-      webId
+      webId: 'system'
     });
 
     // If this is a remote URI and the resource is not found in default graph, also look in mirror graph
     if (!exist && (await ctx.call('ldp.remote.isRemote', { resourceUri }))) {
       exist = await ctx.call('triplestore.tripleExist', {
         triple: triple(namedNode(resourceUri), variable('p'), variable('s')),
-        webId,
+        webId: 'system',
         graphName: this.settings.mirrorGraphName
       });
     }
@@ -37,6 +29,20 @@ module.exports = {
     if (exist && !acceptTombstones) {
       const types = await this.actions.getTypes({ resourceUri }, { parentCtx: ctx });
       if (types.includes('https://www.w3.org/ns/activitystreams#Tombstone')) return false;
+    }
+
+    // Ensure the logged user has the right to see the resource
+    // TODO Verify if we really need this kind of check
+    if (
+      exist &&
+      !(await ctx.call('permissions.has', {
+        uri: resourceUri,
+        type: 'resource',
+        mode: 'acl:Read',
+        webId
+      }))
+    ) {
+      return false;
     }
 
     return exist;
