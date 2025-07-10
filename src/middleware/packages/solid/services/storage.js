@@ -31,7 +31,7 @@ module.exports = {
 
       await ctx.call('triplestore.dataset.create', {
         dataset: username,
-        secure: true
+        secure: false // TODO Remove when we switch to Fuseki 5
       });
 
       ctx.meta.dataset = username;

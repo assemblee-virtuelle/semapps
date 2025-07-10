@@ -473,7 +473,7 @@ describe('Collections', () => {
         broker.call('activitypub.collection.get', {
           resourceUri: nonExistentUri
         })
-      ).rejects.toThrow('Not found');
+      ).rejects.toThrow('not found');
     });
 
     test('Should return 404 when cursor not found in collection', async () => {

@@ -17,8 +17,9 @@ module.exports = {
   },
   async handler(ctx) {
     const { containerUri, filters, doNotIncludeResources, jsonContext } = ctx.params;
-    let { webId } = ctx.params;
-    webId = webId || ctx.meta.webId || 'anon';
+    const webId = ctx.params.webId || ctx.meta.webId || 'anon';
+
+    await ctx.call('permissions.check', { uri: containerUri, type: 'container', mode: 'acl:Read', webId });
 
     const { accept } = {
       ...(await ctx.call('ldp.registry.getByUri', { containerUri })),
@@ -44,11 +45,7 @@ module.exports = {
     });
 
     if (Object.keys(containerResults).length === 1 && containerResults['@context']) {
-      throw new MoleculerError(
-        `Container not found ${containerUri} (webId ${webId} / dataset ${ctx.meta.dataset})`,
-        404,
-        'NOT_FOUND'
-      );
+      throw new MoleculerError(`Container not found ${containerUri}`, 404, 'NOT_FOUND');
     }
 
     if (!doNotIncludeResources) {

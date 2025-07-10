@@ -183,7 +183,7 @@ describe('keys', () => {
             webId: user2.webId,
             accept: MIME_TYPES.JSON
           })
-        ).rejects.toMatchObject({ data: { status: 'Forbidden' } });
+        ).rejects.toThrow('Forbidden');
       });
 
       test('second key present in keys and public-keys container only', async () => {
@@ -416,7 +416,7 @@ describe('keys', () => {
             webId: user2.webId,
             accept: MIME_TYPES.JSON
           })
-        ).rejects.toMatchObject({ data: { status: 'Forbidden' } });
+        ).rejects.toThrow('Forbidden');
       });
 
       test('second addable to webId', async () => {

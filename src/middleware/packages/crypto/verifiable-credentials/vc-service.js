@@ -1,4 +1,5 @@
 const { did, cred } = require('@semapps/ontologies');
+const VCAuthorizerService = require('./vc-authorizer-service');
 const VCHolderService = require('./vc-holder-service');
 const VCIssuerService = require('./vc-issuer-service');
 const VCVerifierService = require('./vc-verifier-service');
@@ -35,6 +36,7 @@ const VCService = {
   created() {
     const { enableApi, podProvider } = this.settings;
     this.broker.createService({ mixins: [VCIssuerService] });
+    this.broker.createService({ mixins: [VCAuthorizerService] });
     this.broker.createService({ mixins: [VCHolderService] });
     this.broker.createService({ mixins: [VCVerifierService] });
     this.broker.createService({ mixins: [DataIntegrityService] });

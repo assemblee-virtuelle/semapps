@@ -38,6 +38,8 @@ module.exports = {
     let isContainer = false;
     let expandedResource;
 
+    await ctx.call('permissions.check', { uri: containerUri, type: 'container', mode: 'acl:Append', webId });
+
     // Remove undefined values as this may cause problems
     resource = resource && cleanUndefined(resource);
 

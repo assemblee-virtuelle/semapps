@@ -8,6 +8,7 @@ module.exports = {
   LdpLinkHeaderService: require('./services/link-header'),
   LdpRegistryService: require('./services/registry'),
   LdpResourceService: require('./services/resource'),
+  PermissionsService: require('./services/permissions'),
   // Mixins
   ControlledContainerMixin: require('./mixins/controlled-container'),
   DereferenceMixin: require('./mixins/dereference'),

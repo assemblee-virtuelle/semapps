@@ -26,7 +26,7 @@ module.exports = {
       ...ctx.params
     };
 
-    const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId });
+    const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId: 'system' });
     if (resourceExist) {
       throw new MoleculerError(`A resource already exist with URI ${resourceUri}`, 400, 'BAD_REQUEST');
     }
@@ -72,7 +72,7 @@ module.exports = {
       {
         resourceUri,
         accept: MIME_TYPES.JSON,
-        webId
+        webId: 'system' // Avoid errors if the resource creator has no read rights
       },
       { meta: { $cache: false } }
     );

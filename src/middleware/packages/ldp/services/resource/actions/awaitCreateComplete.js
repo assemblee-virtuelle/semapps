@@ -17,8 +17,7 @@ module.exports = {
       rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
       optional: true
     },
-    forceSemantic: { type: 'boolean', optional: true },
-    aclVerified: { type: 'boolean', optional: true }
+    forceSemantic: { type: 'boolean', optional: true }
   },
   async handler(ctx) {
     const { resourceUri, predicates = [], delayMs = 1000, maxTries = 30, webId = 'system', ...rest } = ctx.params;
