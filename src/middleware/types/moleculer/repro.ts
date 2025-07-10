@@ -1,6 +1,8 @@
 /* eslint-disable lines-between-class-members */
 /* eslint-disable max-classes-per-file */
 
+import { CallingOptions, ServiceEvent } from 'moleculer';
+
 // Reproduction
 
 interface AllServices {}
@@ -11,55 +13,99 @@ interface AllServices {
   S2: { name: 's2'; actions: { a2: (s2p: string) => '2' } };
 }
 interface AllServices {
-  S3: {
-    name: 's3';
-    actions: {
-      a3: typeof a3Action;
-      a4: typeof a4Action;
-    };
-  };
+  S3: typeof S3;
 }
 
-//
-//
-const a3Action = defineAction({
-  params: { a3p: { type: 'string' } },
-  handler: async ctx => {
-    const ps = ctx.params;
+const S3 = {
+  name: 's3' as const,
+  actions: {
+    a3Action: defineAction({
+      params: { a3p: { type: 'string' } },
+      handler: async ctx => {
+        const ps = ctx.params;
 
-    const a3Result: number = await ctx.call('a4', { a3p: '' });
+        const a3Result = await ctx.call('s3.a3Action', { a3p: 2 });
 
-    return ps.a3p;
+        return ps.a3p;
+      }
+    }),
+    a4Action
   }
-});
-const a4Action = {
+} satisfies ServiceSchema;
+//
+//
+// const a3Action = defineAction({
+//   params: { a3p: { type: 'string' } },
+//   handler: async ctx => {
+//     const ps = ctx.params;
+
+//     const a3Result = await ctx.call('s3.a4Action', { a3p: 2 });
+
+//     return ps.a3p;
+//   }
+// });
+const a4Action = defineAction({
   params: { a3p: { type: 'string' } },
   handler: async ctx => {
     const ps = ctx.params;
-    const a3Result: string = await ctx.call('a3');
+    const a3Result: string = await ctx.call('s3.a3Action', {});
     return 3;
   }
-} satisfies ActionSchema;
+} as const);
 
 //
 //
-function defineAction<
-  const Schema extends ValidatorSchema,
-  const Handler extends ActionHandler<TypeFromSchema<Schema>>
->(schema: ActionSchema<Schema, Handler>): ActionSchema<Schema, Handler>;
-
+// Service and Action Name things
 type ServiceKey = keyof AllServices;
 type ServiceName = AllServices[ServiceKey]['name'];
 
-type AllActions = UnionToIntersect<ActionOfService<AllServices>>;
+type AllActions = UnionToIntersect<ActionsOfServices<AllServices>>;
 type ActionName = keyof AllActions;
 
-type ActionOfService<Services extends AllServices> = {
+type AllServices_ = {
+  [S in (string & {}) & keyof AllServices]: AllServices[S];
+};
+
+type ActionNameOfAction<Service extends ServiceSchema, Action extends string> =
+  // Version
+  `${Service['version'] extends string ? `${Service['version']}.` : Service['version'] extends number ? `v${Service['version']}.` : ``}${
+    // Service name
+    `${Service['name']}.${
+      // Action name
+      Action
+    }`
+  }`;
+
+// Creates Record<action name, ServiceActionsSchema>
+type ActionsOfServices_<Services extends Record<string, ServiceSchema>> = {
   [SK in keyof Services]: {
-    [A in keyof Services[SK]['actions'] as A & string]: Services[SK]['actions'][A];
+    [A in keyof Services[SK]['actions'] as ActionNameOfAction<Services[SK], A & string>]: Services[SK]['actions'][A];
   };
 }[keyof Services];
 
+/** Creates a type with the structure Record<`version.service.name`, ServiceActionsSchema>  */
+type ActionsOfServices<Services extends Record<string, ServiceSchema>> = Record<
+  keyof ActionsOfServices_<Services>,
+  ActionSchema | ActionHandler
+> &
+  UnionToIntersect<ActionsOfServices_<Services>>;
+
+// Schemas
+interface ServiceSchema<S = ServiceSettingSchema> {
+  name: string;
+  version?: string | number;
+  settings?: S;
+  actions?: ServiceActionsSchema;
+  [name: string]: any;
+}
+type ServiceActionsSchema<S = ServiceSettingSchema> = {
+  [key: string]: ActionSchema | ActionHandler | boolean;
+} & ThisType<S>;
+
+interface ServiceSettingSchema {
+  [name: string]: any;
+}
+//
 type Call<Meta extends any = any> = <AName extends ActionName = ActionName, Action = AllActions[AName]>(
   actionName: AName,
   ...args: AName extends keyof AllActions
@@ -207,13 +253,22 @@ type HasAtLeastOneRequiredParam<A extends ActionHandler | ActionSchema> =
  * Infers the parameter type required by a given action. If the action requires at least one parameter,
  * it is mandatory; otherwise, it is optional.
  */
-type ParamForAction<A extends ActionSchema | ActionHandler> =
+type ParamOfAction<A extends ActionSchema | ActionHandler> =
   HasAtLeastOneRequiredParam<A> extends true ? ParamTypeOfAction<A> : ParamTypeOfAction<A> | undefined;
 
 // To make the return type of ActionHandlerFn be inferred at call-time, you can remove the explicit R parameter from the function definition and let TypeScript infer it from the function implementation or usage.
 // Alternatively, you can use a generic function signature and let the type be inferred from the return statement.
 
-type ActionHandler<Params extends Record<string, any> = Record<string, any>> = (ctx: Context<Params>) => any;
+/**
+ * A version of the Context for action handlers that breaks the recursive type dependency.
+ * It omits the fully typed `call` method, which depends on `AllActions`.
+ * The runtime `ctx` object will still have the typed `call` method.
+ */
+type HandlerContext<P = unknown> = Omit<Context<P>, 'call'> & {
+  call: <AName extends string = string>(actionName: AName, params?: any, opts?: CallingOptions) => Promise<any>;
+};
+
+type ActionHandler<Params extends Record<string, any> = Record<string, any>> = (ctx: HandlerContext<Params>) => any;
 
 // ActionSchema base interface for explicit properties
 interface ActionSchemaBase<
@@ -233,3 +288,9 @@ type ActionSchema<
   // See https://github.com/moleculerjs/moleculer/issues/467#issuecomment-705583471
   [key: string]: string | boolean | any[] | number | Record<any, any> | null | undefined;
 };
+
+function defineAction<Schema extends ValidatorSchema, Handler extends ActionHandler<TypeFromSchema<Schema>>>(
+  schema: ActionSchema<Schema, Handler>
+): ActionSchema<Schema, Handler>;
+
+function defineServiceEvent<P extends ValidatorSchema>(schema: ServiceEvent<P>): ServiceEvent<P>;
