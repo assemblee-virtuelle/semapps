@@ -57,7 +57,7 @@ describe('Permissions are correctly set on inbox', () => {
         resourceUri,
         webId: 'anon'
       })
-    ).rejects.toThrow('Not found');
+    ).rejects.toThrow('not found');
   });
 
   test('Post private message to friend', async () => {

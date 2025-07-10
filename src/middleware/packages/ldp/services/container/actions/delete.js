@@ -10,6 +10,8 @@ module.exports = {
     const { containerUri } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
+    await ctx.call('permissions.check', { uri: containerUri, type: 'container', mode: 'acl:Write', webId });
+
     await ctx.call('triplestore.update', {
       query: sanitizeSparqlQuery`
         DELETE

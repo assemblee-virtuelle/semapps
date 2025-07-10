@@ -8,8 +8,6 @@ const { MoleculerError } = require('moleculer').Errors;
 
 const {
   getAuthorizationNode,
-  checkAgentPresent,
-  getUserGroups,
   findParentContainers,
   filterAgentAcl,
   getAclUriFromResourceUri,
@@ -93,7 +91,7 @@ async function formatOutput(ctx, output, resourceAclUri, jsonLD) {
 }
 
 async function filterAcls(hasControl, uaSearchParam, acls) {
-  if (hasControl || uaSearchParam.system) return acls;
+  if (hasControl) return acls;
 
   const filtered = acls.filter(acl => filterAgentAcl(acl, uaSearchParam, false));
   if (filtered.length) {
@@ -106,56 +104,26 @@ async function filterAcls(hasControl, uaSearchParam, acls) {
 
 async function getPermissions(ctx, resourceUri, baseUrl, user, graphName, isContainer) {
   const resourceAclUri = getAclUriFromResourceUri(baseUrl, resourceUri);
-  const controls = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName);
   const uaSearchParam = getUserAgentSearchParam(user);
-  let hasControl = checkAgentPresent(controls, uaSearchParam);
-  let groups;
+  const document = [];
 
-  if (!hasControl && user !== 'anon' && user !== 'system') {
-    // retrieve the groups of the user
-    groups = await getUserGroups(ctx, user, graphName);
-    uaSearchParam.groups = groups;
-    // we check again for the groups. maybe user has control from a group
-    hasControl = checkAgentPresent(controls, uaSearchParam);
-  }
+  // Check if the user has a acl:Control permission
+  // If so, it will return all WAC permissions associated with the resource
+  // Otherwise only the permissions associated with the given user will be returned
 
-  // we continue to search for control perms, now in the parent containers (but we take everything anyway)
+  const hasControl = await ctx.call('permissions.has', {
+    uri: resourceUri,
+    type: isContainer ? 'container' : 'resource',
+    mode: 'acl:Control',
+    webId: user
+  });
 
-  const parentContainers = await findParentContainers(ctx, resourceUri);
-  const containersMap = {};
+  // Get the ACL for the resource
 
-  while (parentContainers.length) {
-    const container = parentContainers.shift();
-    const containerUri = container.container.value;
-    const aclUri = getAclUriFromResourceUri(baseUrl, containerUri);
-    const containerControls = await getAuthorizationNode(ctx, containerUri, aclUri, 'Control', graphName, true);
-
-    if (!hasControl) {
-      hasControl = checkAgentPresent(containerControls, uaSearchParam);
-    }
-
-    const reads = await getAuthorizationNode(ctx, containerUri, aclUri, 'Read', graphName, true);
-    const writes = await getAuthorizationNode(ctx, containerUri, aclUri, 'Write', graphName, true);
-    const appends = await getAuthorizationNode(ctx, containerUri, aclUri, 'Append', graphName, true);
-
-    // we keep all the authorization nodes we found
-    containersMap[containerUri] = {
-      reads,
-      writes,
-      appends,
-      controls: containerControls
-    };
-
-    const moreParentContainers = await findParentContainers(ctx, containerUri);
-    parentContainers.push(...moreParentContainers);
-  }
-
-  // we finish to get all the ACLs for the resource itself
   const reads = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', graphName);
   const writes = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', graphName);
   const appends = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', graphName);
-
-  const document = [];
+  const controls = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName);
 
   document.push(...(await filterAcls(hasControl, uaSearchParam, reads)));
   document.push(...(await filterAcls(hasControl, uaSearchParam, writes)));
@@ -169,12 +137,41 @@ async function getPermissions(ctx, resourceUri, baseUrl, user, graphName, isCont
     document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName, true)));
   }
 
-  for (const [key, value] of Object.entries(containersMap)) {
+  // Get the ACLs for all the parent containers
+
+  const parentContainers = await findParentContainers(ctx, resourceUri);
+  const containersMap = {};
+
+  while (parentContainers.length) {
+    const container = parentContainers.shift();
+    const containerUri = container.container.value;
+    const aclUri = getAclUriFromResourceUri(baseUrl, containerUri);
+
+    const reads = await getAuthorizationNode(ctx, containerUri, aclUri, 'Read', graphName, true);
+    const writes = await getAuthorizationNode(ctx, containerUri, aclUri, 'Write', graphName, true);
+    const appends = await getAuthorizationNode(ctx, containerUri, aclUri, 'Append', graphName, true);
+    const controls = await getAuthorizationNode(ctx, containerUri, aclUri, 'Control', graphName, true);
+
+    // we keep all the authorization nodes we found
+    containersMap[containerUri] = {
+      reads,
+      writes,
+      appends,
+      controls
+    };
+
+    const moreParentContainers = await findParentContainers(ctx, containerUri);
+    parentContainers.push(...moreParentContainers);
+  }
+
+  for (const value of Object.values(containersMap)) {
     document.push(...(await filterAcls(hasControl, uaSearchParam, value.reads)));
     document.push(...(await filterAcls(hasControl, uaSearchParam, value.writes)));
     document.push(...(await filterAcls(hasControl, uaSearchParam, value.appends)));
     document.push(...(await filterAcls(hasControl, uaSearchParam, value.controls)));
   }
+
+  // Format output
 
   return await formatOutput(ctx, document, resourceAclUri, ctx.meta.$responseType === MIME_TYPES.JSON);
 }

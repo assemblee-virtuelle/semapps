@@ -1,12 +1,15 @@
 const path = require('path');
 const { ServiceBroker } = require('moleculer');
 const { CoreService } = require('@semapps/core');
-const { pair } = require('@semapps/ontologies');
+const { as } = require('@semapps/ontologies');
 const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
 const { AuthLocalService } = require('@semapps/auth');
+const { clearDataset } = require('../utils');
 const CONFIG = require('../config');
 
 const initialize = async () => {
+  await clearDataset(CONFIG.MAIN_DATASET);
+
   const broker = new ServiceBroker({
     middlewares: [CacherMiddleware(CONFIG.ACTIVATE_CACHE), WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
     logger: {
@@ -26,11 +29,38 @@ const initialize = async () => {
         url: CONFIG.SPARQL_ENDPOINT,
         user: CONFIG.JENA_USER,
         password: CONFIG.JENA_PASSWORD,
-        mainDataset: CONFIG.MAIN_DATASET
+        mainDataset: CONFIG.MAIN_DATASET,
+        secure: false // TODO Remove when we move to Fuseki 5
       },
-      ontologies: [pair],
-      containers: ['/resources'],
+      ontologies: [as],
+      containers: [
+        {
+          path: '/resources'
+        },
+        {
+          path: '/resources2',
+          permissions: {},
+          newResourcesPermissions: webId => {
+            switch (webId) {
+              case 'anon':
+                return {};
+              case 'system':
+                return {};
+              default:
+                return {
+                  user: {
+                    uri: webId,
+                    read: true // This is required, otherwise there will be an error when a user post a resource
+                  }
+                };
+            }
+          }
+        }
+      ],
       activitypub: false,
+      ldp: {
+        documentTagger: false
+      },
       mirror: false,
       void: false,
       webfinger: false,

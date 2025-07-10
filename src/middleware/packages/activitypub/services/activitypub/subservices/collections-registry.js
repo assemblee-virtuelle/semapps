@@ -114,8 +114,7 @@ const CollectionsRegistryService = {
               await this.actions.createAndAttachCollection(
                 {
                   objectUri: resourceUri,
-                  collection,
-                  webId: 'system'
+                  collection
                 },
                 { parentCtx: ctx }
               );
@@ -236,46 +235,34 @@ const CollectionsRegistryService = {
   },
   events: {
     async 'ldp.resource.created'(ctx) {
-      const { resourceUri, newData, webId } = ctx.params;
+      const { resourceUri, newData } = ctx.params;
       const collections = this.getCollectionsByType(newData.type || newData['@type']);
       for (const collection of collections) {
         if (this.isActor(newData.type || newData['@type'])) {
           // If the resource is an actor, use the resource URI as the webId
-          await this.actions.createAndAttachCollection(
-            { objectUri: resourceUri, collection, webId: resourceUri },
-            { parentCtx: ctx }
-          );
+          await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection }, { parentCtx: ctx });
         } else {
-          await this.actions.createAndAttachCollection(
-            { objectUri: resourceUri, collection, webId },
-            { parentCtx: ctx }
-          );
+          await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection }, { parentCtx: ctx });
         }
       }
     },
     async 'ldp.resource.updated'(ctx) {
-      const { resourceUri, newData, oldData, webId } = ctx.params;
+      const { resourceUri, newData, oldData } = ctx.params;
       // Check if we need to create collection only if the type has changed
       if (this.hasTypeChanged(oldData, newData)) {
         const collections = this.getCollectionsByType(newData.type || newData['@type']);
         for (const collection of collections) {
           if (this.isActor(newData.type || newData['@type'])) {
             // If the resource is an actor, use the resource URI as the webId
-            await this.actions.createAndAttachCollection(
-              { objectUri: resourceUri, collection, webId: resourceUri },
-              { parentCtx: ctx }
-            );
+            await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection }, { parentCtx: ctx });
           } else {
-            await this.actions.createAndAttachCollection(
-              { objectUri: resourceUri, collection, webId },
-              { parentCtx: ctx }
-            );
+            await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection }, { parentCtx: ctx });
           }
         }
       }
     },
     async 'ldp.resource.patched'(ctx) {
-      const { resourceUri, triplesAdded, webId } = ctx.params;
+      const { resourceUri, triplesAdded } = ctx.params;
       if (triplesAdded) {
         for (const triple of triplesAdded) {
           if (triple.predicate.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
@@ -284,12 +271,12 @@ const CollectionsRegistryService = {
               if (this.isActor(triple.object.value)) {
                 // If the resource is an actor, use the resource URI as the webId
                 await this.actions.createAndAttachCollection(
-                  { objectUri: resourceUri, collection, webId: resourceUri },
+                  { objectUri: resourceUri, collection },
                   { parentCtx: ctx }
                 );
               } else {
                 await this.actions.createAndAttachCollection(
-                  { objectUri: resourceUri, collection, webId },
+                  { objectUri: resourceUri, collection },
                   { parentCtx: ctx }
                 );
               }

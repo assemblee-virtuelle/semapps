@@ -131,7 +131,7 @@ const ObjectService = {
           if (activity.object) {
             const resourceUri = typeof activity.object === 'string' ? activity.object : activity.object.id;
             // If the resource is already deleted, it means it was an announcement
-            if (await ctx.call('ldp.resource.exist', { resourceUri, webId: actorUri })) {
+            if (await ctx.call('ldp.resource.exist', { resourceUri, webId: 'system' })) {
               const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri });
 
               await ctx.call(

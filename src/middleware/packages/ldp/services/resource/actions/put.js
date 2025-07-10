@@ -88,6 +88,13 @@ module.exports = {
       // If the exact same data have been posted, skip
       newData = oldData;
     } else {
+      if (triplesToRemove.length > 0) {
+        await ctx.call('permissions.check', { uri: resourceUri, type: 'resource', mode: 'acl:Write', webId });
+      } else {
+        // If we only add new triples, we don't need the acl:Write permission
+        await ctx.call('permissions.check', { uri: resourceUri, type: 'resource', mode: 'acl:Append', webId });
+      }
+
       // Keep track of blank nodes to use in WHERE clause
       const newBlankNodes = this.getTriplesDifference(newTriples, oldTriples).filter(
         triple => triple.object.termType === 'Variable'
@@ -107,7 +114,7 @@ module.exports = {
 
       await ctx.call('triplestore.update', {
         query,
-        webId
+        webId: 'system'
       });
 
       // Get the new data, with the same formatting as the old data

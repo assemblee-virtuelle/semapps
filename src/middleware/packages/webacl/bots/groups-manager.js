@@ -11,7 +11,7 @@ module.exports = {
   dependencies: ['webacl.group'],
   async started() {
     for (const rule of this.settings.rules) {
-      if (!(await this.broker.call('webacl.group.exist', { groupSlug: rule.groupSlug, webId: 'system' }))) {
+      if (!(await this.broker.call('webacl.group.exist', { groupSlug: rule.groupSlug }))) {
         this.logger.info(`Group ${rule.groupSlug} doesn't exist, creating it...`);
         await this.broker.call('webacl.group.create', { groupSlug: rule.groupSlug, webId: 'system' });
       }

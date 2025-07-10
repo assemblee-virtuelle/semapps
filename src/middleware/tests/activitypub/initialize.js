@@ -47,7 +47,8 @@ const initialize = async (port, mainDataset, accountsDataset, queueServiceDb = 0
         url: CONFIG.SPARQL_ENDPOINT,
         user: CONFIG.JENA_USER,
         password: CONFIG.JENA_PASSWORD,
-        mainDataset
+        mainDataset,
+        secure: false // TODO Remove when we move to Fuseki 5
       },
       containers,
       void: false,

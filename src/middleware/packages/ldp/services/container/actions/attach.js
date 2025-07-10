@@ -18,7 +18,7 @@ module.exports = {
 
     const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri, webId });
     if (!resourceExists) {
-      const childContainerExists = await this.actions.exist({ containerUri: resourceUri, webId }, { parentCtx: ctx });
+      const childContainerExists = await this.actions.exist({ containerUri: resourceUri }, { parentCtx: ctx });
       if (!childContainerExists) {
         throw new MoleculerError(`Cannot attach non-existing resource or container: ${resourceUri}`, 404, 'NOT_FOUND');
       }
@@ -29,7 +29,7 @@ module.exports = {
 
     await ctx.call('triplestore.insert', {
       resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>`,
-      webId,
+      webId: 'system',
       graphName: isRemoteContainer ? this.settings.mirrorGraphName : undefined
     });
 

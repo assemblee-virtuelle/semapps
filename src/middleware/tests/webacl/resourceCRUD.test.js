@@ -7,6 +7,8 @@ const initialize = require('./initialize');
 
 jest.setTimeout(20000);
 
+const ALICE_WEBID = 'http://localhost:3000/alice';
+
 let broker;
 
 beforeAll(async () => {
@@ -19,49 +21,51 @@ afterAll(async () => {
 
 describe('middleware CRUD resource with perms', () => {
   test('A call to ldp.container.post fails if anonymous user, because container access denied', async () => {
-    // this is because containers only get Read perms for anonymous users.
-
-    try {
-      const urlParamsPost = {
-        resource: {
-          '@context': {
-            '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+    await expect(
+      broker.call(
+        'ldp.container.post',
+        {
+          resource: {
+            '@context': {
+              '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+            },
+            '@type': 'Project',
+            description: 'myProject',
+            label: 'myTitle'
           },
-          '@type': 'Project',
-          description: 'myProject',
-          label: 'myTitle'
+          contentType: MIME_TYPES.JSON,
+          containerUri: `${CONFIG.HOME_URL}resources`
         },
-        contentType: MIME_TYPES.JSON,
-        containerUri: `${CONFIG.HOME_URL}resources`
-      };
-      await broker.call('ldp.container.post', urlParamsPost, { meta: { webId: 'anon' } });
-    } catch (e) {
-      expect(e.code).toEqual(403);
-    }
+        { meta: { webId: 'anon' } }
+      )
+    ).rejects.toThrow();
   }, 20000);
 
   let resourceUri;
 
   test('A call to ldp.container.post creates some default permissions', async () => {
-    try {
-      const urlParamsPost = {
+    resourceUri = await broker.call(
+      'ldp.container.post',
+      {
         resource: {
-          '@context': {
-            '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
-          },
-          '@type': 'Project',
-          description: 'myProject',
-          label: 'myTitle'
+          type: 'Event',
+          name: 'My event #1'
         },
         contentType: MIME_TYPES.JSON,
         containerUri: `${CONFIG.HOME_URL}resources`
-      };
-      const webId = 'http://a/user';
-      resourceUri = await broker.call('ldp.container.post', urlParamsPost, { meta: { webId } });
-      const project1 = await broker.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON, webId });
-      expect(project1['pair:description']).toBe('myProject');
+      },
+      { meta: { webId: ALICE_WEBID } }
+    );
 
-      const resourceRights = await broker.call('webacl.resource.hasRights', {
+    await expect(
+      broker.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON, webId: ALICE_WEBID })
+    ).resolves.toMatchObject({
+      type: 'Event',
+      name: 'My event #1'
+    });
+
+    await expect(
+      broker.call('webacl.resource.hasRights', {
         resourceUri,
         rights: {
           read: true,
@@ -69,19 +73,14 @@ describe('middleware CRUD resource with perms', () => {
           append: true,
           control: true
         },
-        webId
-      });
-
-      expect(resourceRights).toMatchObject({
-        read: true,
-        write: true,
-        append: false,
-        control: true
-      });
-    } catch (e) {
-      console.log(e);
-      expect(e).toBe(null);
-    }
+        webId: ALICE_WEBID
+      })
+    ).resolves.toMatchObject({
+      read: true,
+      write: true,
+      append: false,
+      control: true
+    });
   }, 20000);
 
   test('The ACL URI is returned in headers of GET and HEAD calls', async () => {
@@ -103,28 +102,21 @@ describe('middleware CRUD resource with perms', () => {
   }, 20000);
 
   test('A call to ldp.resource.delete removes all its permissions', async () => {
-    try {
-      const urlParamsPost = {
-        resourceUri,
-        webId: 'http://a/user'
-      };
+    await broker.call('ldp.resource.delete', {
+      resourceUri,
+      webId: ALICE_WEBID
+    });
 
-      await broker.call('ldp.resource.delete', urlParamsPost);
-
-      const result = await broker.call('triplestore.query', {
-        query: `PREFIX acl: <http://www.w3.org/ns/auth/acl#>
+    const result = await broker.call('triplestore.query', {
+      query: `PREFIX acl: <http://www.w3.org/ns/auth/acl#>
           SELECT ?auth ?p2 ?o WHERE { GRAPH <http://semapps.org/webacl> { 
           ?auth ?p <${resourceUri}>.
           FILTER (?p IN (acl:accessTo, acl:default ) )
           ?auth ?p2 ?o  } }`,
-        webId: 'system',
-        accept: MIME_TYPES.JSON
-      });
+      webId: 'system',
+      accept: MIME_TYPES.JSON
+    });
 
-      expect(result.length).toBe(0);
-    } catch (e) {
-      console.log(e);
-      expect(e).toBe(null);
-    }
+    expect(result.length).toBe(0);
   }, 20000);
 });

@@ -62,17 +62,12 @@ module.exports = {
 
         isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
 
-        // check that the user has Control perm.
-        // bypass this check if user is 'system'
-        if (webId !== 'system') {
-          const { control } = await ctx.call('webacl.resource.hasRights', {
-            resourceUri,
-            rights: { control: true },
-            webId
-          });
-          if (!control)
-            throw new MoleculerError('Access denied ! user must have Control permission', 403, 'ACCESS_DENIED');
-        }
+        await ctx.call('permissions.check', {
+          uri: resourceUri,
+          type: isContainer ? 'container' : 'resource',
+          mode: 'acl:Control',
+          webId
+        });
 
         const aclUri = getAclUriFromResourceUri(this.settings.baseUrl, resourceUri);
 

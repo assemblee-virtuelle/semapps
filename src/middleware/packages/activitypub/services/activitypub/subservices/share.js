@@ -25,8 +25,7 @@ const ShareService = {
       // Create the /shares collection and attach it to the object, unless it already exists
       const collectionUri = await ctx.call('activitypub.collections-registry.createAndAttachCollection', {
         objectUri,
-        collection: this.settings.collectionOptions,
-        webId: 'system'
+        collection: this.settings.collectionOptions
       });
 
       // Add the announce to the shares collection
