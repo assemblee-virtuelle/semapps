@@ -50,41 +50,23 @@ describe('Resource CRUD operations', () => {
     expect(project1['pair:description']).toBe('myProject');
   }, 20000);
 
-  test('Get resource in JSON-LD format', async () => {
+  test('Get resource', async () => {
     const newProject = await broker.call('ldp.resource.get', {
       accept: MIME_TYPES.JSON,
       resourceUri: project1['@id']
     });
-    expect(newProject['pair:description']).toBe('myProject');
-  }, 20000);
-
-  test('Get resource in turtle format', async () => {
-    const newProject = await broker.call('ldp.resource.get', {
-      accept: MIME_TYPES.TURTLE,
-      resourceUri: project1['@id']
+    expect(newProject).toMatchObject({
+      '@context': 'http://localhost:3000/.well-known/context.jsonld',
+      '@id': project1['@id'],
+      '@type': 'pair:Project',
+      'pair:affiliates': expect.arrayContaining([
+        'http://localhost:3000/users/guillaume',
+        'http://localhost:3000/users/sebastien'
+      ]),
+      'pair:description': 'myProject',
+      'pair:hasLocation': expect.objectContaining({ 'pair:description': 'The place to be', 'pair:label': 'Paris' }),
+      'pair:label': 'myTitle'
     });
-    expect(newProject).toMatch(new RegExp(`<${project1['@id']}>`));
-    expect(newProject).toMatch(new RegExp(`a.*pair:Project`));
-    expect(newProject).toMatch(new RegExp(`pair:description.*"myProject"`));
-    expect(newProject).toMatch(new RegExp(`pair:label.*"myTitle"`));
-  }, 20000);
-
-  test('Get resource in triple format', async () => {
-    const newProject = await broker.call('ldp.resource.get', {
-      accept: MIME_TYPES.TRIPLE,
-      resourceUri: project1['@id']
-    });
-    expect(newProject).toMatch(
-      new RegExp(
-        `<${project1['@id']}>.*<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>.*<http://virtual-assembly.org/ontologies/pair#Project>`
-      )
-    );
-    expect(newProject).toMatch(
-      new RegExp(`<${project1['@id']}>.*<http://virtual-assembly.org/ontologies/pair#description>.*"myProject"`)
-    );
-    expect(newProject).toMatch(
-      new RegExp(`<${project1['@id']}>.*<http://virtual-assembly.org/ontologies/pair#label>.*"myTitle"`)
-    );
   }, 20000);
 
   test('Put resource', async () => {

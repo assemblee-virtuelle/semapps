@@ -1,4 +1,5 @@
 const jsonld = require('jsonld');
+const N3 = require('n3');
 const { JsonLdParser } = require('jsonld-streaming-parser');
 const streamifyString = require('streamify-string');
 const { arrayOf, isURI } = require('../../utils/utils');
@@ -42,9 +43,28 @@ module.exports = {
       const { dataset, options } = ctx.params;
       return this.jsonld.fromRDF(dataset, options);
     },
-    toRDF(ctx) {
-      const { input, options } = ctx.params;
-      return this.jsonld.toRDF(input, options);
+    async toRDF(ctx) {
+      const { input, options = {} } = ctx.params;
+      const { format } = options;
+
+      if (!format || format === 'application/n-quads') {
+        return await this.jsonld.toRDF(input, options);
+      } else {
+        // Since JSONLD.js does not support output other than N-Quads, use N3 for that
+        const quads = await this.actions.toQuads({ input }, { parentCtx: ctx });
+        const prefixes = await ctx.call('ontologies.getPrefixes');
+        return new Promise((resolve, reject) => {
+          const writer = new N3.Writer({ format, prefixes });
+          writer.addQuads(quads.reverse()); // We reverse quads in order to have the type first
+          writer.end((error, result) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(result);
+            }
+          });
+        });
+      }
     },
     // Return quads in RDF.JS data model
     // (this.jsonld.toRDF does not use the same model)
