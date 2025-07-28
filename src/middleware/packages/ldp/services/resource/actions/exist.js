@@ -1,5 +1,3 @@
-const { triple, namedNode, variable } = require('@rdfjs/data-model');
-
 module.exports = {
   visibility: 'public',
   params: {
@@ -11,19 +9,24 @@ module.exports = {
     const { resourceUri, acceptTombstones } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-    let exist = await ctx.call('triplestore.tripleExist', {
-      triple: triple(namedNode(resourceUri), variable('p'), variable('s')),
+    // Returns true if a graph with the resource URI exist
+    let exist = await ctx.call('triplestore.query', {
+      query: `
+        ASK {
+          GRAPH <${resourceUri}> {}
+        }
+      `,
       webId: 'system'
     });
 
-    // If this is a remote URI and the resource is not found in default graph, also look in mirror graph
-    if (!exist && (await ctx.call('ldp.remote.isRemote', { resourceUri }))) {
-      exist = await ctx.call('triplestore.tripleExist', {
-        triple: triple(namedNode(resourceUri), variable('p'), variable('s')),
-        webId: 'system',
-        graphName: this.settings.mirrorGraphName
-      });
-    }
+    // // If this is a remote URI and the resource is not found in default graph, also look in mirror graph
+    // if (!exist && (await ctx.call('ldp.remote.isRemote', { resourceUri }))) {
+    //   exist = await ctx.call('triplestore.tripleExist', {
+    //     triple: triple(namedNode(resourceUri), variable('p'), variable('s')),
+    //     webId: 'system',
+    //     graphName: this.settings.mirrorGraphName
+    //   });
+    // }
 
     // If resource exists but we don't want tombstones, check the resource type
     if (exist && !acceptTombstones) {

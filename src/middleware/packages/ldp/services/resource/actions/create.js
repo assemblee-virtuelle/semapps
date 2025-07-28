@@ -1,5 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { getId } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
@@ -14,9 +15,9 @@ module.exports = {
     }
   },
   async handler(ctx) {
-    let { resource, contentType, body } = ctx.params;
+    let { resource, contentType } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-    const resourceUri = resource.id || resource['@id'];
+    const resourceUri = getId(resource);
 
     if (await ctx.call('ldp.remote.isRemote', { resourceUri }))
       throw new MoleculerError('Remote resources cannot be created', 403, 'FORBIDDEN');
@@ -42,28 +43,30 @@ module.exports = {
     if (contentType !== MIME_TYPES.JSON && !resource.body)
       throw new MoleculerError('The resource must contain a body member (a string)', 400, 'BAD_REQUEST');
 
-    let newTriples = await this.bodyToTriples(body || resource, contentType);
-    // see PUT
-    newTriples = this.filterOtherNamedNodes(newTriples, resourceUri);
-    // see PUT
-    newTriples = this.convertBlankNodesToVars(newTriples);
-    // see PUT
-    newTriples = this.removeDuplicatedVariables(newTriples);
+    // let newTriples = await this.bodyToTriples(body || resource, contentType);
+    // // see PUT
+    // newTriples = this.filterOtherNamedNodes(newTriples, resourceUri);
+    // // see PUT
+    // newTriples = this.convertBlankNodesToVars(newTriples);
+    // // see PUT
+    // newTriples = this.removeDuplicatedVariables(newTriples);
 
-    const triplesToAdd = newTriples.reverse();
+    // const triplesToAdd = newTriples.reverse();
 
-    const newBlankNodes = newTriples.filter(triple => triple.object.termType === 'Variable');
+    // const newBlankNodes = newTriples.filter(triple => triple.object.termType === 'Variable');
 
-    // Generate the query
-    let query = '';
-    if (triplesToAdd.length > 0) query += `INSERT { ${this.triplesToString(triplesToAdd)} } `;
-    query += 'WHERE { ';
-    if (newBlankNodes.length > 0) query += this.bindNewBlankNodes(newBlankNodes);
-    query += ` }`;
+    // // Generate the query
+    // let query = '';
+    // if (triplesToAdd.length > 0) query += `INSERT { ${this.triplesToString(triplesToAdd)} } `;
+    // query += 'WHERE { ';
+    // if (newBlankNodes.length > 0) query += this.bindNewBlankNodes(newBlankNodes);
+    // query += ` }`;
 
-    await ctx.call('triplestore.update', {
-      query,
-      webId
+    await ctx.call('triplestore.insert', {
+      resource,
+      contentType,
+      webId,
+      graphName: resourceUri
     });
 
     // TODO See if using controlledAction is still necessary now blank nodes are automatically detected

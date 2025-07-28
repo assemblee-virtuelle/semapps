@@ -1,6 +1,5 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { buildBlankNodesQuery } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
@@ -40,17 +39,18 @@ module.exports = {
       ...ctx.params
     };
 
-    const blankNodesQuery = buildBlankNodesQuery(4);
+    // const blankNodesQuery = buildBlankNodesQuery(4);
 
     let result = await ctx.call('triplestore.query', {
       query: `
         ${await ctx.call('ontologies.getRdfPrefixes')}
         CONSTRUCT  {
-          ${blankNodesQuery.construct}
+          ?s ?p ?o 
         }
         WHERE {
-          BIND(<${resourceUri}> AS ?s1) .
-          ${blankNodesQuery.where}
+          GRAPH <${resourceUri}> {
+            ?s ?p ?o
+          }
         }
       `,
       accept,
