@@ -1,11 +1,6 @@
-import urlJoin from 'url-join';
-import { MIME_TYPES } from '@semapps/mime-types';
-// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
-import { foaf, schema } from '@semapps/ontologies';
-import { ControlledContainerMixin, DereferenceMixin, getDatasetFromUri } from '@semapps/ldp';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ControlledContainerMixin, DereferenceMixin } from '@semapps/ldp';
+import Moleculer, { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 
-/** @type {import('moleculer').ServiceSchema} */
 const WebIdService = {
   name: 'webid' as const,
   mixins: [ControlledContainerMixin, DereferenceMixin],
@@ -28,101 +23,19 @@ const WebIdService = {
   async created() {
     if (!this.settings.baseUrl) throw new Error('The baseUrl setting is required for webId service.');
   },
-  async started() {
-    await this.broker.call('ontologies.register', foaf);
-    await this.broker.call('ontologies.register', schema);
-  },
   actions: {
-    get: defineAction({
+    foo: {
       handler(ctx) {
-        // Always get WebID as system and on the correct dataset, since they are public
-        return ctx.call(
-          'ldp.resource.get',
-          {
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-            accept: this.settings.accept,
-            ...ctx.params,
-            webId: 'system'
-          },
-          {
-            meta: {
-              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-              dataset: this.settings.podProvider ? getDatasetFromUri(ctx.params.resourceUri) : undefined
-            }
-          }
-        );
+        ctx.call('ldp.cache.generate', {});
       }
-    }),
-
+    },
     createWebId: defineAction({
-      /**
-       * This should only be called after the user has been authenticated
-       */
-      async handler(ctx) {
-        let { email, nick, name, familyName, homepage, ...rest } = ctx.params;
-
-        if (!nick && email) {
-          // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
-          nick = email.split('@')[0].toLowerCase();
-        }
-
-        let webId;
-
-        const resource = {
-          '@type': 'foaf:Person',
-          'foaf:nick': nick,
-          'foaf:email': email,
-          'foaf:name': name,
-          'foaf:familyName': familyName,
-          'foaf:homepage': homepage,
-          ...rest
-        };
-
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-        if (this.settings.podProvider) {
-          // In Pod provider config, there is no LDP container for the webId, so we must create it directly
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-          webId = urlJoin(this.settings.baseUrl, nick);
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-          await this.actions.create(
-            {
-              resource: {
-                '@id': webId,
-                ...resource
-              },
-              contentType: MIME_TYPES.JSON,
-              webId: 'system'
-            },
-            { parentCtx: ctx }
-          );
-        } else {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-          if (!this.settings.path) throw new Error('The path setting is required');
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-          webId = await this.actions.post(
-            {
-              resource,
-              slug: nick,
-              contentType: MIME_TYPES.JSON,
-              webId: 'system'
-            },
-            { parentCtx: ctx }
-          );
-        }
-
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-        const webIdData = await this.actions.get(
-          {
-            resourceUri: webId,
-            accept: MIME_TYPES.JSON,
-            webId: 'system'
-          },
-          { parentCtx: ctx }
-        );
-
-        ctx.emit('webid.created', webIdData, { meta: { webId: null, dataset: null } });
-
-        return webId;
+      params: {
+        param1: { type: 'string' }
+      },
+      handler: ctx => {
+        const ps = ctx.params.param1;
+        return 'hi';
       }
     })
   }
@@ -133,7 +46,13 @@ export default WebIdService;
 declare global {
   export namespace Moleculer {
     export interface AllServices {
-      [WebIdService.name]: typeof WebIdService;
+      WebIdServiceKey: typeof WebIdService;
     }
+
+    // type ServiceNames = keyof AllServices
+    // type names = keyof AllActions;
   }
 }
+
+// Type from schema param not working?
+// ActionsOfServices was a fail

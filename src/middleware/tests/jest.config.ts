@@ -5,7 +5,7 @@ const config = {
     '\\.[jt]sx?$': ['esbuild-jest', { rootMode: 'upward' }]
   },
   transformIgnorePatterns: [],
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js']
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts']
 };
 
 export default config;
