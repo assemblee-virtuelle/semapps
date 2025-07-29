@@ -1,9 +1,6 @@
 const fs = require('fs');
 const bytes = require('bytes');
-const rdfParser = require('rdf-parse').default;
-const streamifyString = require('streamify-string');
 const { variable } = require('@rdfjs/data-model');
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { MoleculerError } = require('moleculer').Errors;
 
 // TODO put each method in a different file (problems with "this" not working)
@@ -28,27 +25,12 @@ module.exports = {
         .on('error', reject);
     });
   },
-  async bodyToTriples(body, contentType) {
-    if (contentType === MIME_TYPES.JSON) {
-      return await this.broker.call('jsonld.parser.toQuads', { input: body });
-    }
-    if (!(typeof body === 'string')) throw new MoleculerError('no body provided', 400, 'BAD_REQUEST');
-    return new Promise((resolve, reject) => {
-      const textStream = streamifyString(body);
-      const res = [];
-      rdfParser
-        .parse(textStream, { contentType })
-        .on('data', quad => res.push(quad))
-        .on('error', error => reject(error))
-        .on('end', () => resolve(res));
-    });
-  },
   // Filter out triples whose subject is not the resource itself
   // We don't want to update or delete resources with IDs
   filterOtherNamedNodes(triples, resourceUri) {
     return triples.filter(triple => !(triple.subject.termType === 'NamedNode' && triple.subject.value !== resourceUri));
   },
-  convertBlankNodesToVars(triples, blankNodesVarsMap) {
+  convertBlankNodesToVars(triples) {
     return triples.map(triple => {
       if (triple.subject.termType === 'BlankNode') {
         triple.subject = variable(triple.subject.value);

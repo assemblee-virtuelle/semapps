@@ -1,7 +1,8 @@
 const { MoleculerError } = require('moleculer').Errors;
+const { MIME_TYPES } = require('@semapps/mime-types');
 
 module.exports = async function post(ctx) {
-  const { username, slugParts, body, ...resource } = ctx.params;
+  let { username, slugParts, ...resource } = ctx.params;
 
   const resourceUri = this.getUriFromSlugParts(slugParts, username);
   const resourceId = resource['@id'] || resource.id;
@@ -19,11 +20,15 @@ module.exports = async function post(ctx) {
   }
 
   try {
-    await ctx.call(controlledActions.put || 'ldp.resource.put', {
-      resource,
-      contentType: ctx.meta.headers['content-type'],
-      body
-    });
+    const contentType = ctx.meta.headers['content-type'];
+
+    // If the body is in Turtle or N-Triples, first convert it to JSON-LD
+    if (contentType && contentType !== MIME_TYPES.JSON) {
+      resource = await ctx.call('jsonld.parser.fromRDF', { input: ctx.meta.rawBody, options: { format: contentType } });
+    }
+
+    await ctx.call(controlledActions.put || 'ldp.resource.put', { resource });
+
     ctx.meta.$statusCode = 204;
     ctx.meta.$responseHeaders = {
       Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',

@@ -12,19 +12,19 @@ module.exports = {
       type: 'string',
       optional: true
     },
-    body: {
+    contentType: {
       type: 'string',
       optional: true
-    },
-    contentType: {
-      type: 'string'
     }
   },
   async handler(ctx) {
-    let { resource, contentType, body } = ctx.params;
+    let { resource, contentType } = ctx.params;
     let { webId } = ctx.params;
     webId = webId || ctx.meta.webId || 'anon';
     let newData;
+
+    if (contentType && contentType !== MIME_TYPES.JSON)
+      throw new Error(`The ldp.resource.put action now only support JSON-LD. Provided: ${contentType}`);
 
     // Remove undefined values as this may cause problems
     resource = resource && cleanUndefined(resource);
@@ -55,15 +55,15 @@ module.exports = {
     );
 
     // Adds the default context, if it is missing
-    if (contentType === MIME_TYPES.JSON && !resource['@context']) {
+    if (!resource['@context']) {
       resource = {
         '@context': await ctx.call('jsonld.context.get'),
         ...resource
       };
     }
 
-    let oldTriples = await this.bodyToTriples(oldData, MIME_TYPES.JSON);
-    let newTriples = await this.bodyToTriples(body || resource, contentType);
+    let oldTriples = await ctx.call('jsonld.parser.toQuads', { input: oldData });
+    let newTriples = await ctx.call('jsonld.parser.toQuads', { input: resource });
 
     // Filter out triples whose subject is not the resource itself
     // We don't want to update or delete resources with IDs

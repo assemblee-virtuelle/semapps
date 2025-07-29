@@ -21,7 +21,8 @@ module.exports = {
       optional: true
     },
     contentType: {
-      type: 'string'
+      type: 'string',
+      optional: true
     },
     webId: {
       type: 'string',
@@ -38,6 +39,9 @@ module.exports = {
     let isContainer = false;
     let expandedResource;
 
+    if (contentType && contentType !== MIME_TYPES.JSON)
+      throw new Error(`The ldp.container.post action now only support JSON-LD. Provided: ${contentType}`);
+
     await ctx.call('permissions.check', { uri: containerUri, type: 'container', mode: 'acl:Append', webId });
 
     // Remove undefined values as this may cause problems
@@ -45,7 +49,7 @@ module.exports = {
 
     if (!file) {
       // Adds the default context, if it is missing
-      if (contentType === MIME_TYPES.JSON && !resource['@context']) {
+      if (!resource['@context']) {
         resource = {
           '@context': await ctx.call('jsonld.context.get'),
           ...resource
@@ -109,7 +113,6 @@ module.exports = {
             '@id': resourceUri,
             ...resource
           },
-          contentType,
           webId
         });
       }

@@ -107,4 +107,59 @@ describe('Content negotiation', () => {
       )
     );
   });
+
+  test('Post resource in Turtle format', async () => {
+    const { headers, status, statusText } = await fetchServer(containerUri, {
+      method: 'POST',
+      body: `
+        @prefix pair: <http://virtual-assembly.org/ontologies/pair#>.
+        <> a pair:Project;
+          pair:label "myProject 2" .
+      `,
+      headers: new fetch.Headers({
+        'Content-Type': MIME_TYPES.TURTLE
+      })
+    });
+
+    expect(status).toBe(201);
+
+    const project2Uri = headers.get('Location');
+
+    const project2 = await broker.call('ldp.resource.get', {
+      resourceUri: project2Uri
+    });
+    expect(project2).toMatchObject({
+      '@context': 'http://localhost:3000/.well-known/context.jsonld',
+      '@id': project2Uri,
+      '@type': 'pair:Project',
+      'pair:label': 'myProject 2'
+    });
+  });
+
+  test('Post resource in N-Triples format', async () => {
+    const { headers, status, statusText } = await fetchServer(containerUri, {
+      method: 'POST',
+      body: `
+        <> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://virtual-assembly.org/ontologies/pair#Project> .
+        <> <http://virtual-assembly.org/ontologies/pair#label> "myProject 3" .
+      `,
+      headers: new fetch.Headers({
+        'Content-Type': MIME_TYPES.TRIPLE
+      })
+    });
+
+    expect(status).toBe(201);
+
+    const project3Uri = headers.get('Location');
+
+    const project2 = await broker.call('ldp.resource.get', {
+      resourceUri: project3Uri
+    });
+    expect(project2).toMatchObject({
+      '@context': 'http://localhost:3000/.well-known/context.jsonld',
+      '@id': project3Uri,
+      '@type': 'pair:Project',
+      'pair:label': 'myProject 3'
+    });
+  });
 });
