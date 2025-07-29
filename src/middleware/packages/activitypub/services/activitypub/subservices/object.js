@@ -183,7 +183,6 @@ const ObjectService = {
             '@type': 'http://www.w3.org/2001/XMLSchema#dateTime'
           }
         },
-        contentType: MIME_TYPES.JSON,
         webId: 'system'
       });
     }

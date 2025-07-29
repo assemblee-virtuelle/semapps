@@ -155,7 +155,6 @@ class TripleStoreAdapter {
           '@type': this.type,
           ...resource
         },
-        contentType: MIME_TYPES.JSON,
         dataset: this.dataset
       })
       .then(() => this.findById(resource['@id']));
