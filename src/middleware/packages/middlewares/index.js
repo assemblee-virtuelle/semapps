@@ -21,15 +21,22 @@ const parseHeader = async (req, res, next) => {
 };
 
 const parseRawBody = (req, res, next) => {
-  let data = '';
-  req.on('data', chunk => {
-    data += chunk;
-  });
-  req.on('end', () => {
-    if (data.length > 0) req.$ctx.meta.rawBody = data;
+  const contentType = req.$ctx.meta.headers['content-type'];
+  // We don't want to parse the raw body for files, otherwise the stream will not be available anymore
+  if (handledMimeTypes.includes(contentType)) {
+    let data = '';
+    req.on('data', chunk => {
+      data += chunk;
+    });
+    req.on('end', () => {
+      if (data.length > 0) req.$ctx.meta.rawBody = data;
+      req.$ctx.meta.rawBodyParsed = true; // Used to detect if the middleware was added
+      next();
+    });
+  } else {
     req.$ctx.meta.rawBodyParsed = true; // Used to detect if the middleware was added
     next();
-  });
+  }
 };
 
 const negotiateContentType = (req, res, next) => {
