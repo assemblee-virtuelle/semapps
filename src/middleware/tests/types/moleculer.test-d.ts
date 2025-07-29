@@ -14,7 +14,7 @@ const actionWithComplexParam = defineAction({
     }
   },
   handler(ctx) {
-    expectTypeOf(ctx.params).toExtend<{
+    expectTypeOf(ctx.params).branded.toEqualTypeOf<{
       optionalParam?: string;
       defaultParam?: string;
       stringParam: string;
@@ -52,16 +52,16 @@ const testVersionedService2 = {
   name: 'test-service2-versioned' as const,
   version: 2 as const, // Version as number
   actions: {
-    actionWithStringParamReturnsNum: defineAction({
+    actionWithStringParamReturnsNum: {
       params: { stringParam: { type: 'string' } },
       handler(ctx) {
-        // @ts-expect-error
+        // @ts-expect-error -- Without defineAction, params is not bound to handler.
         expectTypeOf(ctx.params).toExtend<{ stringParam: string }>();
 
         const number: number = 2;
         return number;
       }
-    }),
+    },
     actionWithoutParamsReturnsStringArr: defineAction({
       handler() {
         return [''];
@@ -82,7 +82,8 @@ const testVersionedService3 = {
         optionalNumParam: { type: 'number', optional: true }
       },
       async handler(ctx) {
-        expectTypeOf(ctx.params).toExtend<{ optionalNumParam?: number }>();
+        // @ts-expect-error -- This is a TODO: defineAction within ServiceSchema type doesn't bind :<
+        expectTypeOf(ctx.params).toEqualTypeOf<{ optionalNumParam?: number }>();
 
         return 'return value of actionWithNumParamReturnsString';
       }
@@ -95,17 +96,18 @@ const externalAction = defineAction({
     length: { type: 'number' }
   },
   async handler(ctx) {
-    expectTypeOf(ctx.params).toExtend<{ length: number }>();
+    expectTypeOf(ctx.params).toMatchObjectType<{ length: number }>();
 
     const { length } = ctx.params;
 
     return `list was called successfully with length param ${length * 2}`;
   }
 });
+
 const testService4ExternalAction = {
   name: 'test-service4-external-action' as const,
   actions: {
-    // @ts-expect-error The type definition is broken (I think the contravariance of the `handler`).
+    // @ts-expect-error TODO: This is likely coming from the same issue as the defineAction ctx.params that don't bind within ServiceSchema definitions.
     externalAction
   }
 } satisfies ServiceSchema;

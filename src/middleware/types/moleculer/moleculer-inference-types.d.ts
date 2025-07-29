@@ -1,5 +1,6 @@
 /* eslint-disable max-classes-per-file */
 /* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
 /* eslint-disable import/prefer-default-export */
 /* eslint-disable lines-between-class-members */
 /* eslint-disable no-dupe-class-members */
@@ -173,7 +174,7 @@ declare global {
      *      async handler(ctx) {...}
      *    })
      *  }
-     * } satisfies ServiceSchema;
+     * };
      *
      * declare global {
      *   export namespace Moleculer {
@@ -249,8 +250,7 @@ declare global {
 
       // See https://github.com/moleculerjs/moleculer/issues/467#issuecomment-705583471
       [key: string]: string | boolean | any[] | number | Record<any, any> | null | undefined;
-    };
-
+    }; // ThisType<Service>?
     /**
      * Calls an action by name with appropriate parameter typing. For known actions, enforces correct parameter requirements;
      * for unknown action names, defaults to an unknown parameter type.
@@ -282,6 +282,7 @@ declare global {
     >(
       schema: ActionSchema<ParameterValidationSchema, Handler, Ret> & ThisType<Service>
     ): ActionSchema<ParameterValidationSchema, Handler, Ret>;
+    // function defineAction<const T>(val: T & ThisType<Service>): T;
 
     /**
      * Dummy function that enforces type safety on `ServiceEvent` definitions so that
