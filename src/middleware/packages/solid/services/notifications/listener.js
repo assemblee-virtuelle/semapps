@@ -5,7 +5,7 @@ const LinkHeader = require('http-link-header');
 const { v4: uuidv4 } = require('uuid');
 const DbService = require('moleculer-db');
 const { MoleculerError } = require('moleculer').Errors;
-const { parseHeader, negotiateContentType, parseJson } = require('@semapps/middlewares');
+const { parseHeader, parseRawBody, negotiateContentType, parseJson } = require('@semapps/middlewares');
 const { notify } = require('@semapps/ontologies');
 const { TripleStoreAdapter } = require('@semapps/triplestore');
 
@@ -36,7 +36,13 @@ module.exports = {
         authorization: false,
         authentication: false,
         aliases: {
-          'POST /': [parseHeader, negotiateContentType, parseJson, 'solid-notifications.listener.transfer']
+          'POST /': [
+            parseHeader,
+            parseRawBody,
+            negotiateContentType,
+            parseJson,
+            'solid-notifications.listener.transfer'
+          ]
         },
         bodyParsers: false
       }

@@ -18,7 +18,7 @@ module.exports = {
     if (!contentType || (contentType !== MIME_TYPES.JSON && contentType !== MIME_TYPES.TURTLE))
       throw new MoleculerError(`Content type not supported : ${contentType}`, 400, 'BAD_REQUEST');
 
-    const addedRights = await convertBodyToTriples(ctx.meta.body, contentType);
+    const addedRights = await convertBodyToTriples(ctx.meta.rawBody, contentType);
     if (addedRights.length === 0) throw new MoleculerError('Nothing to add', 400, 'BAD_REQUEST');
 
     // This is the root container

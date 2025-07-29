@@ -1,7 +1,7 @@
 const urlJoin = require('url-join');
 const { namedNode, triple } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { parseUrl, parseHeader, negotiateAccept, parseJson, parseTurtle } = require('@semapps/middlewares');
+const { parseUrl, parseHeader, parseRawBody, negotiateAccept, parseJson } = require('@semapps/middlewares');
 
 module.exports = {
   settings: {
@@ -18,7 +18,7 @@ module.exports = {
     if (!this.settings.settingsDataset)
       throw new Error(`The settingsDataset must be specified for service ${this.name}`);
 
-    const middlewares = [parseUrl, parseHeader, negotiateAccept, parseJson, parseTurtle];
+    const middlewares = [parseUrl, parseHeader, parseRawBody, negotiateAccept, parseJson];
 
     let aliases = {};
     aliases['GET /'] = [...middlewares, `${this.name}.endpointGet`];

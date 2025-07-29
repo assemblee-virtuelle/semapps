@@ -1,5 +1,5 @@
 const path = require('path');
-const { parseHeader, negotiateContentType, negotiateAccept, parseJson } = require('@semapps/middlewares');
+const { parseHeader, parseRawBody, negotiateContentType, negotiateAccept, parseJson } = require('@semapps/middlewares');
 
 const onError = (req, res, err) => {
   const { type, code, message, data, name } = err;
@@ -10,7 +10,7 @@ const onError = (req, res, err) => {
 };
 
 const getRoutes = (basePath, podProvider) => {
-  const middlewares = [parseHeader, parseJson, negotiateContentType, negotiateAccept];
+  const middlewares = [parseHeader, parseRawBody, negotiateContentType, negotiateAccept, parseJson];
 
   return [
     {
@@ -24,9 +24,6 @@ const getRoutes = (basePath, podProvider) => {
         text: {
           type: ['text/turtle', 'application/ld+json']
         }
-      },
-      onBeforeCall(ctx, route, req) {
-        ctx.meta.body = req.body;
       },
       aliases: {
         'PATCH /:slugParts*': [parseHeader, 'webacl.resource.api_addRights'],

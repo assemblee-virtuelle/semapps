@@ -3,6 +3,8 @@ const { negotiateTypeMime, MIME_TYPES } = require('@semapps/mime-types');
 const Busboy = require('busboy');
 const streams = require('memory-streams');
 
+const handledMimeTypes = [MIME_TYPES.JSON, MIME_TYPES.TURTLE, MIME_TYPES.TRIPLE, MIME_TYPES.SPARQL_UPDATE];
+
 // Put requested URL and query string in meta so that services may use them independently
 // Set here https://github.com/moleculerjs/moleculer-web/blob/c6ec80056a64ea15c57d6e2b946ce978d673ae92/src/index.js#L151-L161
 const parseUrl = async (req, res, next) => {
@@ -18,9 +20,25 @@ const parseHeader = async (req, res, next) => {
   next();
 };
 
+const parseRawBody = (req, res, next) => {
+  let data = '';
+  req.on('data', chunk => {
+    data += chunk;
+  });
+  req.on('end', () => {
+    if (data.length > 0) req.$ctx.meta.rawBody = data;
+    req.$ctx.meta.rawBodyParsed = true; // Used to detect if the middleware was added
+    next();
+  });
+};
+
 const negotiateContentType = (req, res, next) => {
   if (!req.$ctx.meta.headers)
     throw new Error(`The parseHeader middleware must be added before the negotiateContentType middleware`);
+
+  if (!req.$ctx.meta.rawBodyParsed)
+    throw new Error(`The parseRawBody middleware must be added before the parseJson middleware`);
+
   if (req.$ctx.meta.headers['content-type'] !== undefined && req.method !== 'DELETE') {
     try {
       req.$ctx.meta.headers['content-type'] = negotiateTypeMime(req.$ctx.meta.headers['content-type']);
@@ -28,9 +46,11 @@ const negotiateContentType = (req, res, next) => {
     } catch (e) {
       next();
     }
-  } else if (req.$params.body) {
-    next(
-      new MoleculerError('Content-Type has to be specified for a non-empty body ', 400, 'CONTENT_TYPE_NOT_SPECIFIED')
+  } else if (req.$ctx.meta.rawBody) {
+    throw new MoleculerError(
+      'Content-Type has to be specified for a non-empty body ',
+      400,
+      'CONTENT_TYPE_NOT_SPECIFIED'
     );
   } else {
     next();
@@ -74,51 +94,13 @@ const negotiateAccept = (req, res, next) => {
   }
 };
 
-const getRawBody = req => {
-  return new Promise((resolve, reject) => {
-    let data = '';
-    req.on('data', chunk => {
-      data += chunk;
-    });
-    req.on('end', () => {
-      resolve(data.length > 0 ? data : undefined);
-    });
-  });
-};
-
-const parseSparql = async (req, res, next) => {
-  if (!req.$ctx.meta.headers)
-    throw new Error(`The parseHeader middleware must be added before the parseSparql middleware`);
-  if (
-    !req.$ctx.meta.parser &&
-    (req.originalUrl.includes('/sparql') ||
-      (req.$ctx.meta.headers['content-type'] && req.$ctx.meta.headers['content-type'].includes('sparql')))
-  ) {
-    req.$ctx.meta.parser = 'sparql';
-    // TODO Store in req.$ctx.meta.rawBody
-    req.$params.body = await getRawBody(req);
-  }
-  next();
-};
-
-const parseTurtle = async (req, res, next) => {
-  if (!req.$ctx.meta.headers)
-    throw new Error(`The parseHeader middleware must be added before the parseTurtle middleware`);
-  if (
-    !req.$ctx.meta.parser &&
-    req.$ctx.meta.headers['content-type'] &&
-    req.$ctx.meta.headers['content-type'].includes('turtle')
-  ) {
-    req.$ctx.meta.parser = 'turtle';
-    // TODO Store in req.$ctx.meta.rawBody
-    req.$params.body = await getRawBody(req);
-  }
-  next();
-};
-
 const parseJson = async (req, res, next) => {
   if (!req.$ctx.meta.headers)
     throw new Error(`The parseHeader middleware must be added before the parseJson middleware`);
+
+  if (!req.$ctx.meta.rawBodyParsed)
+    throw new Error(`The parseRawBody middleware must be added before the parseJson middleware`);
+
   let mimeType = null;
   try {
     if (req.$ctx.meta.headers['content-type']) {
@@ -129,18 +111,13 @@ const parseJson = async (req, res, next) => {
   }
 
   try {
-    if (!req.$ctx.meta.parser && mimeType === MIME_TYPES.JSON) {
-      const body = await getRawBody(req);
-      if (body) {
-        const json = JSON.parse(body);
-        req.$params = { ...json, ...req.$params };
-        // Keep raw body in meta as we need it for digest header verification
-        req.$ctx.meta.rawBody = body;
-      }
-      req.$ctx.meta.parser = 'json';
+    if (mimeType === MIME_TYPES.JSON && req.$ctx.meta.rawBody) {
+      const json = JSON.parse(req.$ctx.meta.rawBody);
+      req.$params = { ...json, ...req.$params };
     }
     next();
   } catch (e) {
+    // If JSON parsing failed, ignore
     next(e);
   }
 };
@@ -148,11 +125,11 @@ const parseJson = async (req, res, next) => {
 const parseFile = (req, res, next) => {
   if (!req.$ctx.meta.headers)
     throw new Error(`The parseHeader middleware must be added before the parseFile middleware`);
-  if (!req.$ctx.meta.parser && (req.method === 'POST' || req.method === 'PUT')) {
-    if (
-      req.$ctx.meta.headers['content-type'] &&
-      req.$ctx.meta.headers['content-type'].includes('multipart/form-data')
-    ) {
+
+  const contentType = req.$ctx.meta.headers['content-type'];
+
+  if (!handledMimeTypes.includes(contentType) && (req.method === 'POST' || req.method === 'PUT')) {
+    if (contentType.includes('multipart/form-data')) {
       const busboy = new Busboy({ headers: req.$ctx.meta.headers });
       const files = [];
       busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
@@ -179,7 +156,7 @@ const parseFile = (req, res, next) => {
       req.$params.files = [
         {
           readableStream: req,
-          mimetype: req.$ctx.meta.headers['content-type']
+          mimetype: contentType
         }
       ];
       req.$ctx.meta.parser = 'file';
@@ -198,11 +175,10 @@ const saveDatasetMeta = (req, res, next) => {
 module.exports = {
   parseUrl,
   parseHeader,
-  parseSparql,
+  parseRawBody,
   negotiateContentType,
   negotiateAccept,
   parseJson,
-  parseTurtle,
   parseFile,
   saveDatasetMeta,
   throw400,
