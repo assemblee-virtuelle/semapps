@@ -4,12 +4,7 @@ module.exports = {
   visibility: 'public',
   params: {
     resource: {
-      type: 'multi',
-      rules: [{ type: 'string' }, { type: 'object' }]
-    },
-    contentType: {
-      type: 'string',
-      optional: true
+      type: 'object'
     },
     webId: {
       type: 'string',
@@ -29,15 +24,13 @@ module.exports = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     let dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
-    const rdf =
-      typeof resource === 'string'
-        ? resource
-        : await ctx.call('jsonld.parser.toRDF', {
-            input: resource,
-            options: {
-              format: 'application/n-quads'
-            }
-          });
+    // Convert JSON-LD to N-Quads
+    const rdf = await ctx.call('jsonld.parser.toRDF', {
+      input: resource,
+      options: {
+        format: 'application/n-quads'
+      }
+    });
 
     if (!dataset) throw new Error(`No dataset defined for triplestore insert: ${rdf}`);
     if (dataset !== '*' && !(await ctx.call('triplestore.dataset.exist', { dataset })))

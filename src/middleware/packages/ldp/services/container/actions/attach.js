@@ -1,4 +1,5 @@
 const { MoleculerError } = require('moleculer').Errors;
+const { sanitizeSparqlQuery } = require('@semapps/triplestore');
 
 module.exports = {
   visibility: 'public',
@@ -14,8 +15,6 @@ module.exports = {
     const { containerUri, resourceUri } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-    const isRemoteContainer = await ctx.call('ldp.remote.isRemote', { resourceUri: containerUri });
-
     const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri, webId });
     if (!resourceExists) {
       const childContainerExists = await this.actions.exist({ containerUri: resourceUri }, { parentCtx: ctx });
@@ -27,10 +26,13 @@ module.exports = {
     const containerExists = await this.actions.exist({ containerUri, webId }, { parentCtx: ctx });
     if (!containerExists) throw new Error(`Cannot attach to a non-existing container: ${containerUri}`);
 
-    await ctx.call('triplestore.insert', {
-      resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>`,
-      webId: 'system',
-      graphName: isRemoteContainer ? this.settings.mirrorGraphName : undefined
+    await ctx.call('triplestore.update', {
+      query: sanitizeSparqlQuery`
+        INSERT DATA { 
+          <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> 
+        }
+      `,
+      webId: 'system'
     });
 
     const returnValues = {
@@ -40,7 +42,7 @@ module.exports = {
       dataset: ctx.meta.dataset
     };
 
-    if (!isRemoteContainer && !ctx.meta.skipEmitEvent) {
+    if (!ctx.meta.skipEmitEvent) {
       ctx.emit('ldp.container.attached', returnValues, { meta: { webId: null, dataset: null } });
     }
 

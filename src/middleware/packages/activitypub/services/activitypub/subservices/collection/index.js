@@ -177,8 +177,12 @@ const CollectionService = {
       if (!collectionExist)
         throw new Error(`Cannot attach to a non-existing collection: ${collectionUri} (dataset: ${ctx.meta.dataset})`);
 
-      await ctx.call('triplestore.insert', {
-        resource: sanitizeSparqlQuery`<${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>`,
+      await ctx.call('triplestore.update', {
+        query: sanitizeSparqlQuery`
+          INSERT DATA { 
+            <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>
+          }
+        `,
         dataset: this.getCollectionDataset(collectionUri),
         webId: 'system'
       });
