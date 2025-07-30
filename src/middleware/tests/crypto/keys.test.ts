@@ -38,19 +38,27 @@ afterAll(async () => {
 describe('keys', () => {
   describe('with new service', () => {
     beforeAll(async () => {
+      // @ts-expect-error
       await setUp();
     });
 
     describe('RSA key', () => {
       test('exists', async () => {
         const keyPairs = await broker.call('keys.getByType', { webId: user.webId, keyType: KEY_TYPES.RSA });
+
         expect(keyPairs).toHaveLength(1);
         const keyPair = keyPairs[0];
+
         expect(keyPair).toBeTruthy();
+
         expect(keyPair['@id'] || keyPair.id).toBeDefined();
+
         expect(keyPair.publicKeyPem).toBeDefined();
+
         expect(keyPair.privateKeyPem).toBeDefined();
+
         expect(keyPair.owner).toBeDefined();
+
         expect(keyPair.controller).toBeDefined();
       });
 
@@ -71,10 +79,14 @@ describe('keys', () => {
         expect(webIdDocument).toBeDefined();
         const publicKeys = arrayOf(webIdDocument.publicKey);
         // There should only be one public key advertised in the webId by default.
+
         expect(publicKeys.length).toBe(1);
         const matchingPublicKey = publicKeys.find(publicKey => publicKey.publicKeyPem === keyPair.publicKeyPem);
+
         expect(matchingPublicKey).toBeDefined();
+
         expect(matchingPublicKey.owner).toBe(user.webId);
+
         expect(matchingPublicKey.controller).toBe(user.webId);
       });
 
@@ -91,6 +103,7 @@ describe('keys', () => {
           accept: MIME_TYPES.JSON,
           webId: user.webId
         });
+
         expect(
           arrayOf(webIdDocument.publicKey).find(publicKey => publicKey.publicKeyPem === keyPair.publicKeyPem)
         ).toBeUndefined();
@@ -102,6 +115,7 @@ describe('keys', () => {
           accept: MIME_TYPES.JSON,
           webId: user.webId
         });
+
         expect(
           arrayOf(webIdDocumentNew.publicKey).find(publicKey => publicKey.publicKeyPem === keyPair.publicKeyPem)
         ).toBeDefined();
@@ -112,6 +126,7 @@ describe('keys', () => {
           webId: user.webId,
           keyType: KEY_TYPES.RSA
         });
+
         expect(oldKeyPair).toBeTruthy();
 
         // Delete
@@ -123,10 +138,12 @@ describe('keys', () => {
           accept: MIME_TYPES.JSON,
           webId: user.webId
         });
+
         expect(
           arrayOf(webIdDocument.publicKey).find(publicKey => publicKey.publicKeyPem === oldKeyPair.publicKeyPem)
         ).toBeUndefined();
         // Expect key not to be present in `/public-keys` container.
+
         await expect(
           broker.call('ldp.resource.exist', {
             resourceUri: oldKeyPair['rdfs:seeAlso'],
@@ -140,10 +157,15 @@ describe('keys', () => {
           keyType: KEY_TYPES.RSA,
           attachToWebId: true
         });
+
         expect(newKeyPair).toBeTruthy();
+
         expect(newKeyPair.id || newKeyPair['@id']).toBeDefined();
+
         expect(newKeyPair.publicKeyPem).toBeDefined();
+
         expect(newKeyPair.privateKeyPem).toBeDefined();
+
         expect(newKeyPair.publicKeyPem).not.toBe(oldKeyPair.publicKeyPem);
 
         // Expect webId to not have old key but new key.
@@ -152,9 +174,11 @@ describe('keys', () => {
           accept: MIME_TYPES.JSON,
           webId: user.webId
         });
+
         expect(
           arrayOf(webIdDocumentNew.publicKey).some(publicKey => publicKey.publicKeyPem === oldKeyPair.publicKeyPem)
         ).toBeFalsy();
+
         expect(
           arrayOf(webIdDocumentNew.publicKey).some(publicKey => publicKey.publicKeyPem === newKeyPair.publicKeyPem)
         ).toBeTruthy();
@@ -165,9 +189,13 @@ describe('keys', () => {
           accept: MIME_TYPES.JSON,
           webId: user.webId
         });
+
         expect(publicKey).toBeTruthy();
+
         expect(publicKey.publicKeyPem).toBe(newKeyPair.publicKeyPem);
+
         expect(publicKey.owner).toBe(user.webId);
+
         expect(publicKey.privateKeyPem).toBeUndefined();
       });
 
@@ -176,6 +204,7 @@ describe('keys', () => {
           webId: user.webId,
           keyType: KEY_TYPES.RSA
         });
+
         expect(keyPair).toBeTruthy();
 
         await expect(
@@ -200,6 +229,7 @@ describe('keys', () => {
           accept: MIME_TYPES.JSON,
           webId: user.webId
         });
+
         expect(publicKey).toBeTruthy();
 
         // Should not be present in webId.
@@ -208,6 +238,7 @@ describe('keys', () => {
           accept: MIME_TYPES.JSON,
           webId: user.webId
         });
+
         expect(
           arrayOf(webIdDocument.publicKey).find(pKey => pKey.publicKeyPem === keyPair.publicKeyPem)
         ).toBeUndefined();
@@ -227,6 +258,7 @@ describe('keys', () => {
           webId: user.webId
         });
         // Expect the public key of the webId to be the key published in the public key container (referenced rdfs:seeAlso).
+
         expect(webIdDocument.publicKey.id || webIdDocument.publicKey['@id']).toBe(keyPair['rdfs:seeAlso']);
       });
 
@@ -246,6 +278,7 @@ describe('keys', () => {
           accept: MIME_TYPES.JSON,
           webId: user.webId
         });
+
         expect(
           arrayOf(webIdDocument.publicKey).find(pKey => pKey.publicKeyPem === keyPair.publicKeyPem)
         ).toBeUndefined();
@@ -256,9 +289,11 @@ describe('keys', () => {
           webId: user.webId,
           keyType: KEY_TYPES.RSA
         });
+
         expect(webIdKeys).toHaveLength(1);
         webIdKeys.forEach((key: any) => {
           expect(key.publicKeyPem).toBeTruthy();
+
           expect(key.privateKeyPem).toBeTruthy();
         });
       });
@@ -267,22 +302,32 @@ describe('keys', () => {
     describe('ED25519 key', () => {
       test('exists', async () => {
         const keyPairs = await broker.call('keys.getByType', { webId: user.webId, keyType: KEY_TYPES.ED25519 });
+
         expect(keyPairs).toHaveLength(1);
         const keyPair = keyPairs[0];
+
         expect(keyPair).toBeTruthy();
+
         expect(keyPair['@id'] || keyPair.id).toBeDefined();
+
         expect(keyPair.publicKeyMultibase).toBeDefined();
+
         expect(keyPair.secretKeyMultibase).toBeDefined();
+
         expect(keyPair.owner).toBeDefined();
+
         expect(keyPair.controller).toBeDefined();
       });
 
       test('public key present in public-key container', async () => {
         const [keyPair] = await broker.call('keys.getByType', { webId: user.webId, keyType: KEY_TYPES.ED25519 });
+
         expect(keyPair['rdfs:seeAlso']).toBeDefined();
 
         const publicKey = await broker.call('keys.public-container.get', { resourceUri: keyPair['rdfs:seeAlso'] });
+
         expect(publicKey.publicKeyMultibase).toBe(keyPair.publicKeyMultibase);
+
         expect(publicKey.secretKeyMultibase).toBeUndefined();
       });
 
@@ -297,7 +342,9 @@ describe('keys', () => {
           },
           { meta: { $cache: false } }
         );
+
         expect(webIdDocument.assertionMethod).toBeDefined();
+
         expect(
           arrayOf(webIdDocument.assertionMethod).find(
             assertionMethod => assertionMethod.publicKeyMultibase === keyPair.publicKeyMultibase
@@ -318,6 +365,7 @@ describe('keys', () => {
           accept: MIME_TYPES.JSON,
           webId: user.webId
         });
+
         expect(
           arrayOf(webIdDocument.assertionMethod).find(key => key.publicKeyMultibase === keyPair.publicKeyMultibase)
         ).toBeUndefined();
@@ -329,6 +377,7 @@ describe('keys', () => {
           accept: MIME_TYPES.JSON,
           webId: user.webId
         });
+
         expect(
           arrayOf(webIdDocumentNew.assertionMethod).find(key => key.publicKeyMultibase === keyPair.publicKeyMultibase)
         ).toBeDefined();
@@ -339,6 +388,7 @@ describe('keys', () => {
           webId: user.webId,
           keyType: KEY_TYPES.ED25519
         });
+
         expect(oldKeyPair).toBeTruthy();
 
         // Delete
@@ -350,12 +400,14 @@ describe('keys', () => {
           accept: MIME_TYPES.JSON,
           webId: user.webId
         });
+
         expect(
           arrayOf(webIdDocument.assertionMethod).find(
             publicKey => publicKey.publicKeyMultibase === oldKeyPair.publicKeyMultibase
           )
         ).toBeUndefined();
         // Expect key not to be present in `/public-keys` container.
+
         await expect(
           broker.call('ldp.resource.exist', {
             resourceUri: oldKeyPair['rdfs:seeAlso'],
@@ -369,10 +421,15 @@ describe('keys', () => {
           keyType: KEY_TYPES.ED25519,
           attachToWebId: true
         });
+
         expect(newKeyPair).toBeTruthy();
+
         expect(newKeyPair.id || newKeyPair['@id']).toBeDefined();
+
         expect(newKeyPair.publicKeyMultibase).toBeDefined();
+
         expect(newKeyPair.secretKeyMultibase).toBeDefined();
+
         expect(newKeyPair.publicKeyMultibase).not.toBe(oldKeyPair.publicKeyMultibase);
 
         // Expect webId to not have old key but new key.
@@ -381,11 +438,13 @@ describe('keys', () => {
           accept: MIME_TYPES.JSON,
           webId: user.webId
         });
+
         expect(
           arrayOf(webIdDocumentNew.assertionMethod).some(
             publicKey => publicKey.publicKeyMultibase === oldKeyPair.publicKeyMultibase
           )
         ).toBeFalsy();
+
         expect(
           arrayOf(webIdDocumentNew.assertionMethod).some(
             publicKey => publicKey.publicKeyMultibase === newKeyPair.publicKeyMultibase
@@ -398,9 +457,13 @@ describe('keys', () => {
           accept: MIME_TYPES.JSON,
           webId: user.webId
         });
+
         expect(publicKey).toBeTruthy();
+
         expect(publicKey.publicKeyMultibase).toBe(newKeyPair.publicKeyMultibase);
+
         expect(publicKey.owner).toBe(user.webId);
+
         expect(publicKey.secretKeyMultibase).toBeUndefined();
       });
 
@@ -409,6 +472,7 @@ describe('keys', () => {
           webId: user.webId,
           keyType: KEY_TYPES.ED25519
         });
+
         expect(keyPair).toBeTruthy();
 
         await expect(
@@ -435,9 +499,11 @@ describe('keys', () => {
           webId: user.webId
         });
         // Expect the public key of the webId to be the key published in the public key container (referenced by rdfs:seeAlso).
+
         expect(
           arrayOf(webIdDocument.assertionMethod).find(key => (key.id || key['@id']) === keyPair['rdfs:seeAlso'])
         ).toBeTruthy();
+
         expect(webIdDocument.assertionMethod.length).toBeGreaterThan(1);
       });
 
@@ -446,9 +512,11 @@ describe('keys', () => {
           webId: user.webId,
           keyType: KEY_TYPES.ED25519
         });
+
         expect(webIdKeys.length).toBeGreaterThan(0);
         webIdKeys.forEach((key: any) => {
           expect(key.publicKeyMultibase).toBeTruthy();
+
           expect(key.secretKeyMultibase).toBeTruthy();
         });
       });
@@ -483,7 +551,9 @@ describe('keys', () => {
 
       test('key gettable', async () => {
         const { publicKey, privateKey } = await broker.call('signature.keypair.get', { actorUri: user.webId });
+
         expect(publicKey).toBeDefined();
+
         expect(privateKey).toBeDefined();
         // Save them for later validation
         publicKeyPemBeforeMigration = publicKey;
@@ -492,18 +562,25 @@ describe('keys', () => {
 
       test('key in webId', async () => {
         const { publicKey, privateKey } = await broker.call('signature.keypair.get', { actorUri: user.webId });
+
         expect(publicKey).toBeDefined();
+
         expect(privateKey).toBeDefined();
         const webIdDocument = await broker.call('webid.get', {
           resourceUri: user.webId,
           accept: MIME_TYPES.JSON
         });
+
         expect(webIdDocument).toBeDefined();
+
         expect(webIdDocument.publicKey).toBeDefined();
+
         expect(webIdDocument.publicKey.publicKeyPem).toBe(publicKey);
+
         expect(webIdDocument.privateKey).toBeUndefined();
       });
     });
+
     describe('After migration', () => {
       beforeAll(async () => {
         await broker.call('keys.migration.migrateKeysToDb');
@@ -514,22 +591,31 @@ describe('keys', () => {
       describe('With old service', () => {
         test('key gettable and the same as before', async () => {
           const { publicKey, privateKey } = await broker.call('signature.keypair.get', { actorUri: user.webId });
+
           expect(publicKey).toBeDefined();
+
           expect(privateKey).toBeDefined();
+
           expect(publicKey).toBe(publicKeyPemBeforeMigration);
+
           expect(privateKey).toBe(privateKeyPemBeforeMigration);
         });
 
         test('key in webId', async () => {
           const { publicKey, privateKey } = await broker.call('signature.keypair.get', { actorUri: user.webId });
+
           expect(publicKey).toBeDefined();
+
           expect(privateKey).toBeDefined();
           const webIdDocument = await broker.call('webid.get', {
             resourceUri: user.webId,
             accept: MIME_TYPES.JSON
           });
+
           expect(webIdDocument).toBeDefined();
+
           expect(webIdDocument.publicKey.publicKeyPem).toBe(publicKey);
+
           expect(webIdDocument.privateKey).toBeUndefined();
         });
       });
@@ -537,13 +623,20 @@ describe('keys', () => {
       describe('With new service', () => {
         test('key gettable and remained the same', async () => {
           const keyPairs = await broker.call('keys.getByType', { webId: user.webId, keyType: KEY_TYPES.RSA });
+
           expect(keyPairs).toHaveLength(1);
           const keyPair = keyPairs[0];
+
           expect(keyPair).toBeTruthy();
+
           expect(keyPair['@id'] || keyPair.id).toBeDefined();
+
           expect(keyPair.owner).toBeDefined();
+
           expect(keyPair.controller).toBeDefined();
+
           expect(keyPair.publicKeyPem).toBe(publicKeyPemBeforeMigration);
+
           expect(keyPair.privateKeyPem).toBe(privateKeyPemBeforeMigration);
         });
 
@@ -554,13 +647,19 @@ describe('keys', () => {
             resourceUri: user.webId,
             accept: MIME_TYPES.JSON
           });
+
           expect(webIdDocument).toBeDefined();
           const { publicKey } = webIdDocument;
           // There should only be one public key advertised in the webId by default.
+
           expect(publicKey).toBeDefined();
+
           expect(publicKey.owner).toBe(user.webId);
+
           expect(publicKey.controller).toBe(user.webId);
+
           expect(publicKey.publicKeyPem).toBe(keyPair.publicKeyPem);
+
           expect(publicKey.privateKeyPem).toBeUndefined();
         });
       });

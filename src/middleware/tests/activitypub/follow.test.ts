@@ -28,6 +28,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
       const { webId } = await broker[i].call('auth.signup', require(`./data/actor${i}.json`));
       actors[i] = await broker[i].call('activitypub.actor.awaitCreateComplete', { actorUri: webId });
       actors[i].call = (actionName: any, params: any, options = {}) =>
+        // @ts-expect-error
         broker[i].call(actionName, params, { ...options, meta: { ...options.meta, webId } });
     }
 
@@ -55,12 +56,14 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
       to: alice.id
     });
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
         alice.call('activitypub.collection.includes', { collectionUri: alice.followers, itemUri: bob.id })
       ).resolves.toBeTruthy();
     });
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       const inboxMenu = await bob.call('activitypub.collection.get', {
         resourceUri: bob.inbox,
@@ -72,8 +75,11 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
         afterEq: new URL(inboxMenu?.first).searchParams.get('afterEq'),
         webId: bob.id
       });
+
       expect(inbox).not.toBeNull();
+
       expect(inbox.orderedItems).toHaveLength(1);
+
       expect(inbox.orderedItems[0]).toMatchObject({
         type: ACTIVITY_TYPES.ACCEPT,
         actor: alice.id,
@@ -101,6 +107,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
       }
     });
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       const inboxMenu = await bob.call('activitypub.collection.get', {
         resourceUri: bob.inbox,
@@ -113,7 +120,9 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
       });
 
       expect(inbox).not.toBeNull();
+
       expect(inbox.orderedItems).toHaveLength(2);
+
       expect(inbox.orderedItems[0]).toMatchObject({
         id: createActivity.id
       });
@@ -130,6 +139,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
       to: [alice.id, `${bob.id}/followers`]
     });
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
         alice.call('activitypub.collection.includes', { collectionUri: alice.followers, itemUri: bob.id })

@@ -41,6 +41,7 @@ describe('Permissions are correctly set on outbox', () => {
 
     expect(sebastien).toMatchObject({
       id: sebastienUri,
+
       type: expect.arrayContaining(['Person', 'foaf:Person']),
       preferredUsername: 'srosset81',
       'foaf:nick': 'srosset81',
@@ -52,6 +53,7 @@ describe('Permissions are correctly set on outbox', () => {
   });
 
   let objectPrivateFirst: any;
+
   test('Post private message to self', async () => {
     await broker.call('activitypub.outbox.post', {
       collectionUri: sebastien.outbox,
@@ -61,6 +63,7 @@ describe('Permissions are correctly set on outbox', () => {
     });
 
     // Get outbox as self
+    // @ts-expect-error
     await waitForExpect(async () => {
       const outboxMenu = await broker.call('activitypub.collection.get', {
         resourceUri: sebastien.outbox,
@@ -71,7 +74,9 @@ describe('Permissions are correctly set on outbox', () => {
         afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: sebastien.id
       });
+
       expect(outbox.orderedItems).toHaveLength(1);
+
       expect(outbox.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.CREATE,
@@ -87,6 +92,7 @@ describe('Permissions are correctly set on outbox', () => {
     });
 
     // Get outbox as anonymous
+    // @ts-expect-error
     await waitForExpect(async () => {
       const outboxMenu = await broker.call('activitypub.collection.get', {
         resourceUri: sebastien.outbox,
@@ -97,6 +103,7 @@ describe('Permissions are correctly set on outbox', () => {
         afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: 'anon'
       });
+
       expect(outbox.orderedItems).toHaveLength(0);
     });
 
@@ -121,6 +128,7 @@ describe('Permissions are correctly set on outbox', () => {
     });
 
     // Get outbox as friend
+    // @ts-expect-error
     await waitForExpect(async () => {
       const outboxMenu = await broker.call('activitypub.collection.get', {
         resourceUri: sebastien.outbox,
@@ -131,7 +139,9 @@ describe('Permissions are correctly set on outbox', () => {
         afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: simon.id
       });
+
       expect(outbox.orderedItems).toHaveLength(1);
+
       expect(outbox.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.CREATE,
@@ -143,6 +153,7 @@ describe('Permissions are correctly set on outbox', () => {
     });
 
     // Get outbox as anonymous
+    // @ts-expect-error
     await waitForExpect(async () => {
       const outboxMenu = await broker.call('activitypub.collection.get', {
         resourceUri: sebastien.outbox,
@@ -153,6 +164,7 @@ describe('Permissions are correctly set on outbox', () => {
         afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: 'anon'
       });
+
       expect(outbox.orderedItems).toHaveLength(0);
     });
   });
@@ -167,6 +179,7 @@ describe('Permissions are correctly set on outbox', () => {
     });
 
     // Get outbox as friend
+    // @ts-expect-error
     await waitForExpect(async () => {
       const outboxMenu = await broker.call('activitypub.collection.get', {
         resourceUri: sebastien.outbox,
@@ -177,7 +190,9 @@ describe('Permissions are correctly set on outbox', () => {
         afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: simon.id
       });
+
       expect(outbox.orderedItems).toHaveLength(2);
+
       expect(outbox.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.CREATE,
@@ -189,6 +204,7 @@ describe('Permissions are correctly set on outbox', () => {
     });
 
     // Get outbox as anonymous
+    // @ts-expect-error
     await waitForExpect(async () => {
       const outboxMenu = await broker.call('activitypub.collection.get', {
         resourceUri: sebastien.outbox,
@@ -199,7 +215,9 @@ describe('Permissions are correctly set on outbox', () => {
         afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: 'anon'
       });
+
       expect(outbox.orderedItems).toHaveLength(1);
+
       expect(outbox.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.CREATE,
@@ -224,9 +242,11 @@ describe('Permissions are correctly set on outbox', () => {
         name: 'Message is now visible to friend' as const
       }
     });
+
     expect(objectPrivateFirst?.id).toBe(activityUpdatedForFriend.object.id);
 
     // Get outbox as friend.
+    // @ts-expect-error
     await waitForExpect(async () => {
       const outboxMenu = await broker.call('activitypub.collection.get', {
         resourceUri: sebastien.outbox,
@@ -237,6 +257,7 @@ describe('Permissions are correctly set on outbox', () => {
         afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: simon.id
       });
+
       expect(outboxFetchedByFriend.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.UPDATE,
@@ -257,6 +278,7 @@ describe('Permissions are correctly set on outbox', () => {
       afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
       webId: simon.id
     });
+
     expect(outboxFetchedByAnon.orderedItems[0].object?.name).toBe('Message is now visible to friend');
   });
 
@@ -273,9 +295,11 @@ describe('Permissions are correctly set on outbox', () => {
         name: 'Message is now public' as const
       }
     });
+
     expect(objectPrivateFirst.id).toBe(activityUpdatedForPublic.object.id);
 
     // Get outbox as anon.
+    // @ts-expect-error
     await waitForExpect(async () => {
       const outboxMenu = await broker.call('activitypub.collection.get', {
         resourceUri: sebastien.outbox,
@@ -286,6 +310,7 @@ describe('Permissions are correctly set on outbox', () => {
         afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: 'anon'
       });
+
       expect(outboxFetchedByAnon.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.UPDATE,
@@ -311,6 +336,7 @@ describe('Permissions are correctly set on outbox', () => {
       }
     });
 
+    // @ts-expect-error
     waitForExpect(async () => {
       const outboxMenu = await broker.call('activitypub.collection.get', {
         resourceUri: sebastien.outbox,
@@ -321,6 +347,7 @@ describe('Permissions are correctly set on outbox', () => {
         afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: simon.id
       });
+
       expect(outboxFetchedByFriend.orderedItems[0]).not.toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.UPDATE,
@@ -335,6 +362,7 @@ describe('Permissions are correctly set on outbox', () => {
         afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: sebastien.id
       });
+
       expect(outboxFetchedBySelf.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.UPDATE,
@@ -351,6 +379,7 @@ describe('Permissions are correctly set on outbox', () => {
         afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: simon.id
       });
+
       expect(friendOutbox.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.DELETE,

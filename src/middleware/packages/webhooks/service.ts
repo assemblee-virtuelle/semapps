@@ -19,6 +19,7 @@ const WebhooksService = {
   async started() {
     this.settings.allowedActions.forEach((actionName: any) => {
       if (!this.actions[actionName]) {
+        // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
         throw new ServiceSchemaError(`Missing action "${actionName}" in service settings!`);
       }
     });
@@ -34,18 +35,15 @@ const WebhooksService = {
         let webhook;
 
         try {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           webhook = await this.actions.get({ id: hash }, { parentCtx: ctx });
         } catch (e) {
           throw new MoleculerError('Webhook not found', 404, 'NOT_FOUND');
         }
 
         if (this.createJob) {
-          // @ts-expect-error TS(2349): This expression is not callable.
           this.createJob('webhooks', webhook.action, { data, user: webhook.user });
         } else {
           // If no queue service is defined, run webhook immediately
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           return await this.actions[webhook.action]({ data, user: webhook.user }, { parentCtx: ctx });
         }
       }
@@ -57,12 +55,10 @@ const WebhooksService = {
         const userUri = ctx.meta.webId || ctx.params.userUri;
         const { action } = ctx.params;
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (!userUri || userUri === 'anon' || !action || !this.settings.allowedActions.includes(action)) {
           throw new MoleculerError('Bad request', 400, 'BAD_REQUEST');
         }
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const webhook = await this.actions.create(
           {
             '@type': 'Webhook',
@@ -81,7 +77,7 @@ const WebhooksService = {
         return [
           // Unsecured routes
           {
-            // @ts-expect-error TS(2345): Argument of type 'Context<{ [x: string]: never; $$... Remove this comment to see the full error message
+            // @ts-expect-error TS(2345): Argument of type 'Context<Optionalize<{ [x: string... Remove this comment to see the full error message
             path: path.join(basePath, '/webhooks'),
             name: 'webhooks-process' as const,
             bodyParsers: { json: true },
@@ -93,7 +89,7 @@ const WebhooksService = {
           },
           // Secured routes
           {
-            // @ts-expect-error TS(2345): Argument of type 'Context<{ [x: string]: never; $$... Remove this comment to see the full error message
+            // @ts-expect-error TS(2345): Argument of type 'Context<Optionalize<{ [x: string... Remove this comment to see the full error message
             path: path.join(basePath, '/webhooks'),
             name: 'webhooks-generate' as const,
             bodyParsers: { json: true },

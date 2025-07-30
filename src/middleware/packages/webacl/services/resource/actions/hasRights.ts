@@ -103,6 +103,7 @@ export const action = defineAction({
     rights: {
       type: 'object',
       optional: true,
+      // @ts-expect-error TS(2353): Object literal may only specify known properties, ... Remove this comment to see the full error message
       strict: true,
       props: {
         read: { type: 'boolean', optional: true },
@@ -116,7 +117,7 @@ export const action = defineAction({
   cache: {
     enabled(ctx) {
       // Do not cache remote resources as we have no mecanism to clear this cache
-      // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Boolea... Remove this comment to see the full error message
+      // @ts-expect-error TS(18046): 'ctx.params.resourceUri' is of type 'unknown'.
       return ctx.params.resourceUri.startsWith(this.settings.baseUrl);
     },
     keys: ['resourceUri', 'rights', 'webId']
@@ -125,14 +126,10 @@ export const action = defineAction({
     let { resourceUri, webId, rights } = ctx.params;
     // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     webId = webId || ctx.meta.webId || 'anon';
-    // @ts-expect-error TS(2322): Type '{}' is not assignable to type 'undefined'.
     rights = rights || {};
-    // @ts-expect-error TS(2769): No overload matches this call.
     if (Object.keys(rights).length === 0) rights = { read: true, write: true, append: true, control: true };
 
-    // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
     await this.checkResourceOrContainerExists(ctx, resourceUri);
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     return await hasPermissions(ctx, resourceUri, rights, this.settings.baseUrl, webId, this.settings.graphName);
   }
 });

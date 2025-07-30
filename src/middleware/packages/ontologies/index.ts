@@ -7,6 +7,7 @@ import * as custom from './ontologies/custom/index.ts';
 
 export * from './ontologies/core/index.ts';
 export * from './ontologies/solid/index.ts';
+// @ts-expect-error TS(2308): Module './ontologies/core/index.ts' has already ex... Remove this comment to see the full error message
 export * from './ontologies/custom/index.ts';
 
 export { OntologiesService, OntologiesRegistryService };

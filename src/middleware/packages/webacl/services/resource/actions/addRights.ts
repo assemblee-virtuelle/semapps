@@ -42,10 +42,13 @@ export const action = defineAction({
     webId: { type: 'string', optional: true },
     // addedRights is an array of objects of the form { auth: 'http://localhost:3000/_acl/container29#Control',  p: 'http://www.w3.org/ns/auth/acl#agent',  o: 'https://data.virtual-assembly.org/users/sebastien.rosset' }
     // you will most likely prefer to use additionalRights instead.
+    // @ts-expect-error TS(2353): Object literal may only specify known properties, ... Remove this comment to see the full error message
     addedRights: { type: 'array', optional: true, min: 1 },
     // newRights is used to add rights to a non existing resource.
+    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     newRights: { type: 'object', optional: true },
     // additionalRights is used to add rights to an existing resource.
+    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     additionalRights: { type: 'object', optional: true }
   },
   async handler(ctx) {
@@ -61,7 +64,6 @@ export const action = defineAction({
       if (!addedRights && !additionalRights)
         throw new MoleculerError('please use addedRights or additionalRights, none were provided', 403, 'BAD_REQUEST');
 
-      // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
       isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
 
       // check that the user has Control perm.
@@ -76,46 +78,37 @@ export const action = defineAction({
           throw new MoleculerError('Access denied ! user must have Control permission', 403, 'ACCESS_DENIED');
       }
 
-      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       const aclUri = getAclUriFromResourceUri(this.settings.baseUrl, resourceUri);
 
       if (!addedRights) {
         // we process additionalRights only if addedRights was not set.
-        // @ts-expect-error TS(2322): Type '{ auth: string; p: string; o: string; }[]' i... Remove this comment to see the full error message
         addedRights = processRights(additionalRights, `${aclUri}#`);
-        // @ts-expect-error TS(18048): 'additionalRights' is possibly 'undefined'.
         if (isContainer && additionalRights.default)
-          // @ts-expect-error TS(18048): 'addedRights' is possibly 'undefined'.
           addedRights = addedRights.concat(processRights(additionalRights.default, `${aclUri}#Default`));
-        // @ts-expect-error TS(18048): 'addedRights' is possibly 'undefined'.
         if (addedRights.length === 0) new MoleculerError('No additional permissions to add!', 400, 'BAD_REQUEST');
       } else {
         // filter out all the addedRights that are not for the resource
+        // @ts-expect-error TS(7006): Parameter 'a' implicitly has an 'any' type.
         addedRights = addedRights.filter(a => filterTriplesForResource(a, aclUri, isContainer));
         if (addedRights.length === 0)
           throw new MoleculerError('The rights cannot be added because they are incorrect', 400, 'BAD_REQUEST');
       }
 
-      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       const currentPerms = await this.getExistingPerms(
         ctx,
         resourceUri,
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.settings.baseUrl,
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.settings.graphName,
         isContainer
       );
 
       // find the difference between addedRights and currentPerms. add only what is not existent yet.
-      // @ts-expect-error TS(18048): 'addedRights' is possibly 'undefined'.
       difference = addedRights.filter(
         (x: any) => !currentPerms.some((y: any) => x.auth === y.auth && x.o === y.o && x.p === y.p)
       );
       if (difference.length === 0) return;
 
       // compile a list of Authorization already present. if some of them don't exist, we need to create them here below
-      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       currentAuths = this.compileAuthorizationNodesMap(currentPerms);
     } else if (newRights) {
       // TODO: check that the resource doesn't exist. otherwise, raise an error
@@ -127,23 +120,19 @@ export const action = defineAction({
         );
 
       // we set new rights for a non existing resource
-      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       const aclUri = `${getAclUriFromResourceUri(this.settings.baseUrl, resourceUri)}#`;
       difference = processRights(newRights, aclUri);
       // we do add default container permissions if any is set in newRights. but we cannot know for sure
       // that the resource that will be created will be a container. we don't want to add default permissions on a resource !
       // please be careful, as programmers, not to call newRights with 'default' perms for a resource.
       // it should only be used for containers
-      // @ts-expect-error TS(2339): Property 'default' does not exist on type 'never'.
       if (newRights.default) difference = difference.concat(processRights(newRights.default, `${aclUri}Default`));
       currentAuths = {};
     }
 
     let addRequest = '';
-    // @ts-expect-error TS(18048): 'difference' is possibly 'undefined'.
     for (const add of difference) {
       if (!currentAuths[add.auth]) {
-        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         addRequest += this.generateNewAuthNode(add.auth);
         currentAuths[add.auth] = true;
       }
@@ -153,7 +142,6 @@ export const action = defineAction({
     await ctx.call('triplestore.insert', {
       resource: addRequest,
       webId: 'system',
-      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       graphName: this.settings.graphName
     });
 
@@ -163,16 +151,16 @@ export const action = defineAction({
       ctx.emit('webacl.resource.created', returnValues, { meta: { webId: null, dataset: null } });
       return returnValues;
     }
-    // @ts-expect-error TS(18048): 'difference' is possibly 'undefined'.
+    // @ts-expect-error TS(7006): Parameter 'triple' implicitly has an 'any' type.
     const defaultRightsUpdated = isContainer && difference.some(triple => triple.auth.includes('#Default'));
-    // @ts-expect-error TS(18048): 'difference' is possibly 'undefined'.
     const addPublicRead = difference.some(
+      // @ts-expect-error TS(7006): Parameter 'triple' implicitly has an 'any' type.
       triple => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
     );
     const addDefaultPublicRead =
       isContainer &&
-      // @ts-expect-error TS(18048): 'difference' is possibly 'undefined'.
       difference.some(
+        // @ts-expect-error TS(7006): Parameter 'triple' implicitly has an 'any' type.
         triple =>
           triple.auth.includes('#DefaultRead') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
       );

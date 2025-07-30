@@ -2,7 +2,7 @@ import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { getSlugFromUri } from '@semapps/ldp';
 import { fetchServer } from '../utils.ts';
-import CONFIG from '../config.ts';
+import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
 
 jest.setTimeout(20000);
@@ -35,6 +35,7 @@ describe('middleware CRUD resource with perms', () => {
       };
       await broker.call('ldp.container.post', urlParamsPost, { meta: { webId: 'anon' } });
     } catch (e) {
+      // @ts-expect-error
       expect(e.code).toEqual(403);
     }
   }, 20000);
@@ -58,6 +59,7 @@ describe('middleware CRUD resource with perms', () => {
       const webId = 'http://a/user';
       resourceUri = await broker.call('ldp.container.post', urlParamsPost, { meta: { webId } });
       const project1 = await broker.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON, webId });
+
       expect(project1['pair:description']).toBe('myProject');
 
       const resourceRights = await broker.call('webacl.resource.hasRights', {
@@ -79,6 +81,7 @@ describe('middleware CRUD resource with perms', () => {
       });
     } catch (e) {
       console.log(e);
+
       expect(e).toBe(null);
     }
   }, 20000);
@@ -89,6 +92,7 @@ describe('middleware CRUD resource with perms', () => {
     });
 
     expect(result.headers.get('Link')).toMatch(
+      // @ts-expect-error
       `<${urlJoin(CONFIG.HOME_URL, '_acl', 'resources', getSlugFromUri(resourceUri))}>; rel=acl`
     );
 
@@ -97,6 +101,7 @@ describe('middleware CRUD resource with perms', () => {
     });
 
     expect(result.headers.get('Link')).toMatch(
+      // @ts-expect-error
       `<${urlJoin(CONFIG.HOME_URL, '_acl', 'resources', getSlugFromUri(resourceUri))}>; rel=acl`
     );
   }, 20000);
@@ -123,6 +128,7 @@ describe('middleware CRUD resource with perms', () => {
       expect(result.length).toBe(0);
     } catch (e) {
       console.log(e);
+
       expect(e).toBe(null);
     }
   }, 20000);

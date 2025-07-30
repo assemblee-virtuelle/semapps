@@ -11,6 +11,7 @@ const relay1 = 'http://localhost:3001/as/actor/relay';
 const relay2 = 'http://localhost:3002/as/actor/relay';
 
 beforeAll(async () => {
+  // @ts-expect-error
   server1 = await initialize(3001, 'testData1', 'settings1', 1);
 
   // Wait for Relay actor creation, or server2 won't be able to mirror server1
@@ -30,6 +31,7 @@ describe('Server2 mirror server1', () => {
   let resourceUri: any;
 
   test('Server2 follow server1', async () => {
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
         server1.call('activitypub.collection.includes', {
@@ -41,6 +43,7 @@ describe('Server2 mirror server1', () => {
   });
 
   test('Server1 resources container is mirrored on server2', async () => {
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
         server2.call('ldp.container.exist', { containerUri: 'http://localhost:3001/resources' })
@@ -61,12 +64,14 @@ describe('Server2 mirror server1', () => {
       containerUri: 'http://localhost:3001/resources'
     });
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
         server2.call('ldp.container.includes', { containerUri: 'http://localhost:3001/resources', resourceUri })
       ).resolves.toBeTruthy();
     });
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })).resolves.toMatchObject({
         id: resourceUri,
@@ -89,6 +94,7 @@ describe('Server2 mirror server1', () => {
       contentType: MIME_TYPES.JSON
     });
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })).resolves.toMatchObject({
         id: resourceUri,
@@ -110,6 +116,7 @@ describe('Server2 mirror server1', () => {
       ]
     });
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
         server2.call('ldp.container.includes', { containerUri: 'http://localhost:3002/resources', resourceUri })
@@ -117,6 +124,7 @@ describe('Server2 mirror server1', () => {
     });
 
     // Since server1 is mirrored by server2, we don't need to mark it as singleMirroredResource
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })).resolves.not.toHaveProperty(
         'semapps:singleMirroredResource'
@@ -127,12 +135,14 @@ describe('Server2 mirror server1', () => {
   test('Resource deleted on server1 is deleted on server2', async () => {
     await server1.call('ldp.resource.delete', { resourceUri });
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
         server2.call('ldp.container.includes', { containerUri: 'http://localhost:3001/resources', resourceUri })
       ).resolves.toBeFalsy();
     });
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })).rejects.toThrow();
     });

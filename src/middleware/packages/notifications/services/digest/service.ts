@@ -48,10 +48,8 @@ const DigestNotificationsService = {
 
         const currentDate = timestamp ? new Date(timestamp) : new Date();
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const interval = cronParser.parseExpression(this.settings.frequencies[frequency], {
           currentDate,
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           tz: this.settings.timeZone
         });
 
@@ -79,7 +77,6 @@ const DigestNotificationsService = {
                   activity,
                   locale: subscription.locale || account.locale
                 });
-                // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
                 if (notification && (await this.filterNotification(notification, subscription, notifications))) {
                   notifications.push(notification);
                   if (notification.category) {
@@ -98,7 +95,6 @@ const DigestNotificationsService = {
 
               // If we have at least one notification, send email
               if (notifications.length > 0) {
-                // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
                 await this.actions.send(
                   {
                     to: subscription.email || account.email,

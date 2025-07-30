@@ -40,24 +40,19 @@ const Schema = {
 
             const { width, height, format } = await image.metadata();
 
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             if (width > this.settings.imageProcessor.maxWidth || height > this.settings.imageProcessor.maxHeight) {
-              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               const maxSize = this.getMaxSize(width, height);
               image = image.resize({ width: maxSize.width, height: maxSize.height });
             }
 
             switch (format) {
               case 'jpeg':
-                // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
                 image = await image.jpeg(this.settings.imageProcessor.jpeg || {});
                 break;
               case 'png':
-                // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
                 image = await image.png(this.settings.imageProcessor.png || {});
                 break;
               case 'webp':
-                // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
                 image = await image.webp(this.settings.imageProcessor.webp || {});
                 break;
               default:
@@ -69,7 +64,7 @@ const Schema = {
             await sharp(buffer).toFile(metadata.localPath);
           }
         } catch (e) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+          // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
           this.logger.warn(`Image processing failed (${e.message})`);
         }
       }
@@ -78,20 +73,15 @@ const Schema = {
     processAllImages: defineAction({
       async handler(ctx) {
         const { webId } = ctx.params;
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const container = await this.actions.list({ webId }, { parentCtx: ctx });
         if (container['ldp:contains']) {
           const resources = arrayOf(container['ldp:contains']);
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.info(`Processing ${resources.length} images...`);
           for (const resource of resources) {
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             this.logger.info(`Processing image ${resource.id}...`);
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             await this.actions.processImage({ resourceUri: resource.id }, { parentCtx: ctx });
           }
         }
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.logger.info('Finished !');
       }
     })

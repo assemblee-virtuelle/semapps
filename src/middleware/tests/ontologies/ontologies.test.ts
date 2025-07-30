@@ -1,13 +1,15 @@
+// @ts-expect-error
 import fetch from 'node-fetch';
 import urlJoin from 'url-join';
 import initialize from './initialize.ts';
-import CONFIG from '../config.ts';
+import * as CONFIG from '../config.ts';
 import ont1 from './ontologies/ont1.json' with { type: 'json' };
 import ont2 from './ontologies/ont2.json' with { type: 'json' };
 import ont3 from './ontologies/ont3.json' with { type: 'json' };
 import ont4 from './ontologies/ont4.json' with { type: 'json' };
 
 jest.setTimeout(10000);
+// @ts-expect-error
 const localContextUri = urlJoin(CONFIG.HOME_URL, '.well-known/context.jsonld');
 
 describe.each([false, true])('Register ontologies with cacher %s', (cacher: any) => {
@@ -16,6 +18,7 @@ describe.each([false, true])('Register ontologies with cacher %s', (cacher: any)
   beforeAll(async () => {
     broker = await initialize(cacher);
   });
+
   afterAll(async () => {
     if (broker) await broker.stop();
   });
@@ -24,7 +27,9 @@ describe.each([false, true])('Register ontologies with cacher %s', (cacher: any)
     await broker.call('ontologies.register', { ...ont1 });
 
     await expect(broker.call('ontologies.get', { prefix: ont1.prefix })).resolves.toMatchObject(ont1);
+
     await expect(broker.call('ontologies.get', { namespace: ont1.namespace })).resolves.toMatchObject(ont1);
+
     await expect(broker.call('ontologies.get', { uri: `${ont1.namespace}MyClass` })).resolves.toMatchObject(ont1);
 
     await expect(broker.call('ontologies.list')).resolves.toEqual(
@@ -81,7 +86,9 @@ describe.each([false, true])('Register ontologies with cacher %s', (cacher: any)
     await expect(broker.call('ontologies.list')).resolves.toEqual(
       expect.arrayContaining([
         expect.objectContaining(ont1),
+
         expect.objectContaining(ont2),
+
         expect.objectContaining(ont3)
       ])
     );
@@ -89,6 +96,7 @@ describe.each([false, true])('Register ontologies with cacher %s', (cacher: any)
     await expect(broker.call('jsonld.context.get')).resolves.toEqual([ont1.jsonldContext, localContextUri]);
 
     // Only the ontologies 2 and 3 should be included
+
     await expect(fetch(localContextUri).then((res: any) => res.json())).resolves.toEqual({
       '@context': {
         ont2: 'https://www.w3.org/ns/ontology2#',
@@ -110,12 +118,15 @@ describe.each([false, true])('Register ontologies with cacher %s', (cacher: any)
 
   test('Find prefixes with prefix.cc', async () => {
     let result = await broker.call('ontologies.findPrefix', { uri: 'http://xmlns.com/foaf/0.1/name' });
+
     expect(result).toBe('foaf');
 
     result = await broker.call('ontologies.findPrefix', { uri: 'http://xmlns.com/foaf/0.1/' });
+
     expect(result).toBe('foaf');
 
     result = await broker.call('ontologies.findPrefix', { uri: 'http://xmlns.com/foaf' });
+
     expect(result).toBeNull();
 
     await expect(broker.call('ontologies.findPrefix', { uri: 'foaf:name' })).rejects.toThrow();

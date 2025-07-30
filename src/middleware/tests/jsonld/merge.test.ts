@@ -4,6 +4,7 @@ jest.setTimeout(10000);
 let broker: any;
 
 beforeAll(async () => {
+  // @ts-expect-error
   broker = await initialize(false, false);
 });
 
@@ -116,8 +117,13 @@ const testCases = {
 
 test.each(Object.keys(testCases))('Merging %s JSON-LD contexts', async (key: any) => {
   const newContext = await broker.call('jsonld.context.merge', {
+    // @ts-expect-error
     a: testCases[key].a,
+
+    // @ts-expect-error
     b: testCases[key].b
   });
+
+  // @ts-expect-error
   expect(newContext).toEqual(testCases[key].expected);
 });

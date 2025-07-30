@@ -1,5 +1,4 @@
 import { SingleResourceContainerMixin } from '@semapps/ldp';
-// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { pim } from '@semapps/ontologies';
 import { namedNode, triple } from '@rdfjs/data-model';
 import { ServiceSchema } from 'moleculer';
@@ -26,7 +25,6 @@ const SolidPreferencesFileSchema = {
           resourceUri: ctx.params.webId,
           triplesToAdd: [
             triple(
-              // @ts-expect-error TS(2345): Argument of type 'NamedNode<any>' is not assignabl... Remove this comment to see the full error message
               namedNode(ctx.params.webId),
               namedNode('http://www.w3.org/ns/pim/space#preferencesFile'),
               namedNode(res)

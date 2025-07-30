@@ -1,6 +1,7 @@
 import { MIME_TYPES } from '@semapps/mime-types';
+// @ts-expect-error
 import { quad, namedNode, blankNode, literal } from 'rdf-data-model';
-import CONFIG from '../config.ts';
+import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
 
 jest.setTimeout(50000);
@@ -48,6 +49,7 @@ describe('Resource CRUD operations', () => {
       resourceUri,
       accept: MIME_TYPES.JSON
     });
+
     expect(project1['pair:description']).toBe('myProject');
   }, 20000);
 
@@ -56,6 +58,7 @@ describe('Resource CRUD operations', () => {
       accept: MIME_TYPES.JSON,
       resourceUri: project1['@id']
     });
+
     expect(newProject['pair:description']).toBe('myProject');
   }, 20000);
 
@@ -64,9 +67,13 @@ describe('Resource CRUD operations', () => {
       accept: MIME_TYPES.TURTLE,
       resourceUri: project1['@id']
     });
+
     expect(newProject).toMatch(new RegExp(`<${project1['@id']}>`));
+
     expect(newProject).toMatch(new RegExp(`a.*pair:Project`));
+
     expect(newProject).toMatch(new RegExp(`pair:description.*"myProject"`));
+
     expect(newProject).toMatch(new RegExp(`pair:label.*"myTitle"`));
   }, 20000);
 
@@ -75,14 +82,17 @@ describe('Resource CRUD operations', () => {
       accept: MIME_TYPES.TRIPLE,
       resourceUri: project1['@id']
     });
+
     expect(newProject).toMatch(
       new RegExp(
         `<${project1['@id']}>.*<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>.*<http://virtual-assembly.org/ontologies/pair#Project>`
       )
     );
+
     expect(newProject).toMatch(
       new RegExp(`<${project1['@id']}>.*<http://virtual-assembly.org/ontologies/pair#description>.*"myProject"`)
     );
+
     expect(newProject).toMatch(
       new RegExp(`<${project1['@id']}>.*<http://virtual-assembly.org/ontologies/pair#label>.*"myTitle"`)
     );
@@ -119,7 +129,9 @@ describe('Resource CRUD operations', () => {
         'pair:label': 'Nantes'
       }
     });
+
     expect(updatedProject['pair:label']).toBeUndefined();
+
     expect(updatedProject['pair:hasLocation']['pair:description']).toBeUndefined();
   }, 20000);
 
@@ -166,7 +178,9 @@ describe('Resource CRUD operations', () => {
         }
       ]
     });
+
     expect(updatedProject['pair:label']).toBeUndefined();
+
     expect(updatedProject['pair:hasLocation']['pair:description']).toBeUndefined();
 
     resourceUpdated.hasLocation = [
@@ -267,10 +281,12 @@ describe('Resource CRUD operations', () => {
     resourceUpdated.hasLocation = [
       {
         label: 'Compiegne',
+        // @ts-expect-error
         description: 'the place to be'
       },
       {
         label: 'Compiegne',
+        // @ts-expect-error
         description: 'or not'
       }
     ];
@@ -301,6 +317,7 @@ describe('Resource CRUD operations', () => {
       ]
     });
 
+    // @ts-expect-error
     resourceUpdated.hasLocation = undefined;
 
     await broker.call('ldp.resource.put', {
@@ -316,6 +333,7 @@ describe('Resource CRUD operations', () => {
 
     expect(updatedProject['pair:hasLocation']).toBeUndefined();
 
+    // @ts-expect-error
     resourceUpdated['petr:openingTimesDay'] = [
       { 'petr:endingTime': '2021-10-07T09:40:56.131Z', 'petr:startingTime': '2021-10-07T06:40:56.123Z' }
     ];
@@ -339,6 +357,7 @@ describe('Resource CRUD operations', () => {
       }
     });
 
+    // @ts-expect-error
     resourceUpdated['petr:openingTimesDay'] = [
       { 'petr:endingTime': '2021-10-07T09:40:56.131Z', 'petr:startingTime': '2021-10-07T06:40:56.123Z' },
       { 'petr:startingTime': '2021-10-07T10:44:54.883Z', 'petr:endingTime': '2021-10-07T16:44:54.888Z' }
@@ -400,6 +419,7 @@ describe('Resource CRUD operations', () => {
       }
     });
 
+    // @ts-expect-error
     resourceToPost.hasLocation = [
       {
         label: 'Paris',
@@ -443,6 +463,7 @@ describe('Resource CRUD operations', () => {
       ]
     });
 
+    // @ts-expect-error
     resourceToPost.hasLocation = [
       {
         label: 'Paris',
@@ -569,6 +590,7 @@ describe('Resource CRUD operations', () => {
   }, 20000);
 
   // Ensure dereferenced resources with IDs are not deleted by PUT
+
   test('PUT resource with ID', async () => {
     const themeUri = await broker.call('ldp.container.post', {
       containerUri: 'http://localhost:3000/themes',
@@ -743,6 +765,7 @@ describe('Resource CRUD operations', () => {
     expect(project).toMatchObject({
       '@id': projectUri,
       'pair:label': 'ActivityPods',
+
       'pair:hasLocation': expect.arrayContaining([
         {
           '@type': 'pair:Place',

@@ -22,6 +22,7 @@ const broker = new ServiceBroker({
 beforeAll(async () => {
   await clearDataset(CONFIG.MAIN_DATASET);
 
+  // @ts-expect-error
   broker.createService({
     mixins: [CoreService],
     settings: {
@@ -62,7 +63,9 @@ describe('WebId user creation', () => {
       homepage: 'http://example.org/myPage'
     };
 
+    // @ts-expect-error
     const webId = await broker.call('webid.createWebId', profileData);
+
     expect(webId).toBe(`${CONFIG.HOME_URL}users/${profileData.nick}`);
   }, 20000);
 });

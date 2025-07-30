@@ -1,9 +1,12 @@
 import urlJoin from 'url-join';
+
+// @ts-expect-error
 import fetch from 'node-fetch';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { fetchServer } from '../utils.ts';
 import initialize from './initialize.ts';
-import CONFIG from '../config.ts';
+
+import * as CONFIG from '../config.ts';
 
 jest.setTimeout(50000);
 let broker: any;
@@ -18,6 +21,7 @@ afterAll(async () => {
 
 describe('Collections API', () => {
   const items: any = [];
+  // @ts-expect-error
   const collectionsContainersUri = urlJoin(CONFIG.HOME_URL, 'as/collection');
   let collectionUri: any;
   let localContext: any;
@@ -26,6 +30,7 @@ describe('Collections API', () => {
     for (let i = 0; i < 10; i++) {
       items.push(
         await broker.call('ldp.container.post', {
+          // @ts-expect-error
           containerUri: urlJoin(CONFIG.HOME_URL, 'as/object'),
           resource: {
             '@context': 'https://www.w3.org/ns/activitystreams',
@@ -38,6 +43,7 @@ describe('Collections API', () => {
         })
       );
     }
+
     expect(items).toHaveLength(10);
   });
 
@@ -133,7 +139,8 @@ describe('Collections API', () => {
       }),
       body: `
         PREFIX as: <https://www.w3.org/ns/activitystreams#>
-                INSERT DATA { <${paginatedCollectionUri}> as:items ${items.map(item => `<${item}>`).join(', ')} . };
+                
+                INSERT DATA { <${paginatedCollectionUri}> as:items ${items.map((item: string) => `<${item}>`).join(', ')} . };
       `
     });
 
@@ -159,6 +166,7 @@ describe('Collections API', () => {
         type: 'CollectionPage',
         partOf: paginatedCollectionUri,
         next: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[4])}`,
+
         items: expect.arrayContaining([items[0], items[1], items[2], items[3]])
       }
     });
@@ -171,6 +179,7 @@ describe('Collections API', () => {
         type: 'CollectionPage',
         partOf: paginatedCollectionUri,
         prev: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[7])}`,
+
         items: expect.arrayContaining([items[8], items[9]])
       }
     });

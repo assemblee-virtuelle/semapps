@@ -13,6 +13,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
   let bob: any;
   let aliceMessageUri: any;
   let publicShareActivity: any;
+
   beforeAll(async () => {
     if (mode === 'single-server') {
       broker = await initialize(3000, 'testData', 'settings');
@@ -26,9 +27,11 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
       } else {
         broker[i] = broker;
       }
+
       const { webId } = await broker[i].call('auth.signup', require(`./data/actor${i}.json`));
       actors[i] = await broker[i].call('activitypub.actor.awaitCreateComplete', { actorUri: webId });
       actors[i].call = (actionName: any, params: any, options = {}) =>
+        // @ts-expect-error
         broker[i].call(actionName, params, { ...options, meta: { ...options.meta, webId } });
     }
 
@@ -75,6 +78,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
     });
 
     // Ensure the /shares collection has been created
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
         alice.call('ldp.resource.get', {
@@ -87,6 +91,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
     });
 
     // Ensure only the public announce activity has been added to the /shares collection
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
         alice.call('activitypub.collection.get', {
@@ -110,6 +115,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
     });
 
     // Ensure the public announce activity has been removed from the /shares collection
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
         alice.call('activitypub.collection.get', {

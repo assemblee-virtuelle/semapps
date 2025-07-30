@@ -52,7 +52,6 @@ const LikeService = {
 
         const likesCollectionUri = await ctx.call('activitypub.collections-registry.createAndAttachCollection', {
           objectUri,
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           collection: this.settings.likesCollectionOptions
         });
 
@@ -99,12 +98,10 @@ const LikeService = {
       async handler(ctx) {
         const { dataset } = ctx.params;
         await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           collection: this.settings.likesCollectionOptions,
           dataset
         });
         await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           collection: this.settings.likedCollectionOptions,
           dataset
         });

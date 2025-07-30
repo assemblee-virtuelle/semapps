@@ -19,18 +19,20 @@ const LdpRemoteSchema = {
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
     delete: deleteAction,
     get: getAction,
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
     getGraph: getGraphAction,
     getNetwork: getNetworkAction,
     getStored: getStoredAction,
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
     isRemote: isRemoteAction,
     store: storeAction,
 
     runCron: defineAction({
       // Used by tests
       handler() {
-        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         this.updateSingleMirroredResources();
       }
     })

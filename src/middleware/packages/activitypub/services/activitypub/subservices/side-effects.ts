@@ -25,11 +25,9 @@ const ActivitypubSideEffectsSchema = {
       async handler(ctx) {
         const { matcher, actionName, boxTypes, key, capabilityGrantMatchFnGenerator, priority = 10 } = ctx.params;
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.processors.push({ matcher, actionName, boxTypes, key, priority, capabilityGrantMatchFnGenerator });
 
         // Sort processors by priority
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.processors.sort((a: any, b: any) => a.priority - b.priority);
       }
     }),
@@ -41,10 +39,8 @@ const ActivitypubSideEffectsSchema = {
       async handler(ctx) {
         const { activity } = ctx.params;
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const job = await this.createJob(
           'processOutbox',
-          // @ts-expect-error TS(2339): Property 'id' does not exist on type 'never'.
           activity.id,
           { activity },
           { removeOnComplete: { age: 259200 } } // Keep completed jobs for 3 days
@@ -62,10 +58,8 @@ const ActivitypubSideEffectsSchema = {
       async handler(ctx) {
         const { activity, recipients } = ctx.params;
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const job = await this.createJob(
           'processInbox',
-          // @ts-expect-error TS(2339): Property 'id' does not exist on type 'never'.
           activity.id,
           { activity, recipients },
           { removeOnComplete: { age: 259200 } } // Keep completed jobs for 3 days

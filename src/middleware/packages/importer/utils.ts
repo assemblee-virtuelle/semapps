@@ -52,7 +52,7 @@ const removeHtmlTags = (text: any) => sanitizeHtml(text, { allowedTags: [] }).tr
 
 const isDir = async (path: any) => {
   try {
-    // @ts-expect-error TS(2552): Cannot find name 'fsPromises'. Did you mean 'promi... Remove this comment to see the full error message
+    // @ts-expect-error TS(2552): Cannot find name 'fsPromises'. Did you mean 'Promi... Remove this comment to see the full error message
     const stat = await fsPromises.lstat(path);
     const value = stat.isDirectory();
     return value;

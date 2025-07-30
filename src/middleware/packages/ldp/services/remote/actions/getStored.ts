@@ -9,9 +9,11 @@ const Schema = defineAction({
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
+    // @ts-expect-error TS(2322): Type '{ type: "string"; default: string; }' is not... Remove this comment to see the full error message
     accept: { type: 'string', default: MIME_TYPES.JSON },
     jsonContext: {
       type: 'multi',
+      // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
       rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
       optional: true
     },
@@ -29,7 +31,6 @@ const Schema = defineAction({
       ...ctx.params
     };
 
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const graphName = await this.actions.getGraph({ resourceUri, webId }, { parentCtx: ctx });
 
     // If resource exists

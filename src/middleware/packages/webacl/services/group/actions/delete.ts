@@ -29,7 +29,7 @@ export const action = defineAction({
 
     if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');
 
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+    // @ts-expect-error TS(2345): Argument of type 'TypeFromSchemaParam<{ type: "str... Remove this comment to see the full error message
     if (!groupUri) groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
 
     // TODO: check that the group exists ?
@@ -48,10 +48,7 @@ export const action = defineAction({
     await ctx.call('triplestore.update', {
       query: sanitizeSparqlQuery`
         DELETE WHERE { 
-          GRAPH <${
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-            this.settings.graphName
-          }> { 
+          GRAPH <${this.settings.graphName}> { 
             <${groupUri}> ?p ?o. 
           } 
         }
@@ -61,7 +58,6 @@ export const action = defineAction({
 
     await ctx.call('webacl.resource.deleteAllRights', { resourceUri: groupUri });
 
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     await removeAgentGroupOrAgentFromAuthorizations(groupUri, true, this.settings.graphName, ctx);
   }
 });

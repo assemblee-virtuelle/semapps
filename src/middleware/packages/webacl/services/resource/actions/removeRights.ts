@@ -7,15 +7,16 @@ const { MoleculerError } = MoleculerErrors;
 export const action = defineAction({
   visibility: 'public',
   params: {
+    // @ts-expect-error TS(2322): Type '{ type: "string"; optional: false; }' is not... Remove this comment to see the full error message
     resourceUri: { type: 'string', optional: false },
     webId: { type: 'string', optional: true },
     /** In nested json format (e.g. `{anon: {read: true}}`) */
+    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: false; }' is not... Remove this comment to see the full error message
     rights: { type: 'object', optional: false }
   },
   async handler(ctx) {
     let { resourceUri, rights, webId } = ctx.params;
 
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const aclUri = getAclUriFromResourceUri(this.settings.baseUrl, resourceUri);
 
     // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
@@ -30,23 +31,17 @@ export const action = defineAction({
       if (!control) throw new MoleculerError('Access denied ! user must have Control permission', 403, 'ACCESS_DENIED');
     }
 
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
 
     let processedRights = processRights(rights, `${aclUri}#`);
-    // @ts-expect-error TS(2339): Property 'default' does not exist on type 'never'.
     if (isContainer && rights.default)
-      // @ts-expect-error TS(2339): Property 'default' does not exist on type 'never'.
       processedRights = processedRights.concat(processRights(rights.default, `${aclUri}#Default`));
 
     await ctx.call('triplestore.update', {
       query: `
         PREFIX acl: <http://www.w3.org/ns/auth/acl#>
         DELETE DATA {
-          GRAPH <${
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-            this.settings.graphName
-          }> {
+          GRAPH <${this.settings.graphName}> {
             ${processedRights.map(right => `<${right.auth}> <${right.p}> <${right.o}> .`).join('\n')}
           }
         }

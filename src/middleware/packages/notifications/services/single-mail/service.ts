@@ -27,7 +27,7 @@ const SingleMailNotificationsService = {
   events: {
     'activitypub.inbox.received': defineServiceEvent({
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'activity' does not exist on type 'Servic... Remove this comment to see the full error message
+        // @ts-expect-error TS(2339): Property 'activity' does not exist on type 'Option... Remove this comment to see the full error message
         const { activity, recipients } = ctx.params;
 
         // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message

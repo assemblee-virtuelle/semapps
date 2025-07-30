@@ -22,7 +22,6 @@ const GroupsManagerSchema = {
     refreshAll: defineAction({
       async handler(ctx) {
         const usersContainer = await ctx.call('ldp.container.get', {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           containerUri: this.settings.usersContainer,
           accept: MIME_TYPES.JSON,
           webId: 'system'
@@ -30,13 +29,9 @@ const GroupsManagerSchema = {
 
         for (const user of arrayOf(usersContainer['ldp:contains'])) {
           const userUri = user['@id'] || user.id;
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.info(`Refreshing user ${userUri}...`);
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           for (const rule of this.settings.rules) {
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             if (this.matchRule(rule, user)) {
-              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               this.logger.info(`Adding user ${userUri} to group ${rule.groupSlug}`);
               await ctx.call('webacl.group.addMember', {
                 groupSlug: rule.groupSlug,
@@ -44,7 +39,6 @@ const GroupsManagerSchema = {
                 webId: 'system'
               });
             } else {
-              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               this.logger.info(`Removing user ${userUri} from group ${rule.groupSlug} (if it exists)`);
               await ctx.call('webacl.group.removeMember', {
                 groupSlug: rule.groupSlug,
@@ -76,7 +70,7 @@ const GroupsManagerSchema = {
   events: {
     'ldp.resource.created': defineServiceEvent({
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Ser... Remove this comment to see the full error message
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
         // @ts-expect-error TS(2339): Property 'isUser' does not exist on type 'ServiceE... Remove this comment to see the full error message
         if (this.isUser(newData)) {
@@ -99,7 +93,7 @@ const GroupsManagerSchema = {
 
     'ldp.resource.updated': defineServiceEvent({
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Ser... Remove this comment to see the full error message
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
         // @ts-expect-error TS(2339): Property 'isUser' does not exist on type 'ServiceE... Remove this comment to see the full error message
         if (this.isUser(newData)) {
@@ -130,7 +124,7 @@ const GroupsManagerSchema = {
 
     'ldp.resource.deleted': defineServiceEvent({
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Ser... Remove this comment to see the full error message
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, oldData } = ctx.params;
         // @ts-expect-error TS(2339): Property 'isUser' does not exist on type 'ServiceE... Remove this comment to see the full error message
         if (this.isUser(oldData)) {

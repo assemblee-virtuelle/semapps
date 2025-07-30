@@ -28,7 +28,6 @@ const ReplyService = {
         // Create the /replies collection and attach it to the object, unless it already exists
         const collectionUri = await ctx.call('activitypub.collections-registry.createAndAttachCollection', {
           objectUri,
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           collection: this.settings.collectionOptions,
           webId: 'system'
         });
@@ -75,7 +74,6 @@ const ReplyService = {
       async handler(ctx) {
         const { dataset } = ctx.params;
         await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           collection: this.settings.collectionOptions,
           dataset
         });

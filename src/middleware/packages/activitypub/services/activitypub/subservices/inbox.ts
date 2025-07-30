@@ -33,7 +33,6 @@ const InboxService = {
       async handler(ctx) {
         const { collectionUri, ...activity } = ctx.params;
 
-        // @ts-expect-error TS(2339): Property 'startsWith' does not exist on type 'neve... Remove this comment to see the full error message
         if (!collectionUri || !collectionUri.startsWith('http')) {
           throw new Error(`The collectionUri ${collectionUri} is not a valid URL`);
         }
@@ -59,7 +58,6 @@ const InboxService = {
         if (!account) throw new E.NotFoundError();
         if (account.deletedAt) throw new MoleculerError(`User does not exist anymore`, 410, 'GONE');
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (this.settings.podProvider) {
           // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
           ctx.meta.dataset = account.username;
@@ -108,17 +106,15 @@ const InboxService = {
         // TODO check activity is valid
 
         try {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           await this.broker.call('activitypub.side-effects.processInbox', { activity, recipients: [inboxOwner] });
         } catch (e) {
           // If some processors failed, log error message but don't stop
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+          // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
           this.logger.error(e.message);
         }
 
         // If this is a transient activity, we have no way to retrieve it
         // so do not store it in the inbox (Mastodon works the same way)
-        // @ts-expect-error TS(2339): Property 'includes' does not exist on type 'never'... Remove this comment to see the full error message
         if (activity.id && !activity.id.includes('#')) {
           // Save the remote activity in the local triple store
           await ctx.call('ldp.remote.store', {
@@ -131,7 +127,6 @@ const InboxService = {
           // Attach the activity to the activities container, in order to use the container options
           await ctx.call('activitypub.activity.attach', {
             resourceUri: activity.id,
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             webId: this.settings.podProvider ? inboxOwner : 'system'
           });
 
@@ -171,9 +166,7 @@ const InboxService = {
         const { collectionUri, fromDate, toDate } = ctx.params;
 
         const filters = [];
-        // @ts-expect-error TS(2339): Property 'toISOString' does not exist on type 'nev... Remove this comment to see the full error message
         if (fromDate) filters.push(`?published >= "${fromDate.toISOString()}"^^xsd:dateTime`);
-        // @ts-expect-error TS(2339): Property 'toISOString' does not exist on type 'nev... Remove this comment to see the full error message
         if (toDate) filters.push(`?published < "${toDate.toISOString()}"^^xsd:dateTime`);
 
         const results = await ctx.call('triplestore.query', {
@@ -210,7 +203,6 @@ const InboxService = {
       async handler(ctx) {
         const { dataset } = ctx.params;
         await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           collection: this.settings.collectionOptions,
           dataset
         });

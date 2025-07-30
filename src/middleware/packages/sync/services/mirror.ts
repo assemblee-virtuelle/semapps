@@ -63,20 +63,17 @@ const MirrorSchema = {
         const remoteRelayActorUri = await ctx.call('webfinger.getRemoteUri', { account: `relay@${serverDomainName}` });
 
         const alreadyFollowing = await ctx.call('activitypub.follow.isFollowing', {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           follower: this.relayActor.id,
           following: remoteRelayActorUri
         });
 
         if (alreadyFollowing) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.info(`Already mirrored and following: ${serverUrl}`);
           return remoteRelayActorUri;
         }
 
         // If not, we will now mirror and then follow the remote relay actor
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.logger.info(`Mirroring ${serverUrl}`);
 
         const voidUrl = urlJoin(serverUrl, '/.well-known/void');
@@ -132,7 +129,6 @@ const MirrorSchema = {
               for (const pref of prefixes) {
                 sparqlQuery += `PREFIX ${pref[1]}\n`;
               }
-              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               sparqlQuery += `INSERT DATA { GRAPH <${this.settings.graphName}> { \n`;
               sparqlQuery += container.replace(regexPrefix, '');
               sparqlQuery += '} }';
@@ -144,23 +140,17 @@ const MirrorSchema = {
 
         // Unmark any single mirrored resources that belong to this server we just mirrored
         // because we don't need to periodically watch them anymore
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const singles = await this.broker.call('triplestore.query', {
           query: `SELECT DISTINCT ?s WHERE { 
-          GRAPH <${
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-            this.settings.graphName
-          }> { 
+          GRAPH <${this.settings.graphName}> { 
           ?s <http://semapps.org/ns/core#singleMirroredResource> <${serverUrl}> } }`
         });
 
         for (const single of singles) {
           try {
             const resourceUri = single.s.value;
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             await this.broker.call('triplestore.update', {
               webId: 'system',
-              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               query: `DELETE WHERE { GRAPH <${this.settings.graphName}> { 
               <${resourceUri}> <http://semapps.org/ns/core#singleMirroredResource> ?q. } }`
             });
@@ -169,19 +159,15 @@ const MirrorSchema = {
           }
         }
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.logger.info('Mirroring done.');
 
         // Now subscribing to the Relay actor in order to receive updates
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.logger.info(`Following remote relay actor ${remoteRelayActorUri}`);
 
         await ctx.call('activitypub.outbox.post', {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           collectionUri: this.relayActor.outbox,
           '@context': 'https://www.w3.org/ns/activitystreams',
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           actor: this.relayActor.id,
           type: ACTIVITY_TYPES.FOLLOW,
           object: remoteRelayActorUri,

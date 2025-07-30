@@ -7,8 +7,10 @@ const Schema = defineAction({
   params: {
     query: {
       type: 'multi',
+      // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
       rules: [{ type: 'string' }, { type: 'object' }]
     },
+    // @ts-expect-error TS(2322): Type '{ type: "string"; default: string; }' is not... Remove this comment to see the full error message
     accept: {
       type: 'string',
       default: MIME_TYPES.JSON
@@ -33,13 +35,11 @@ const Schema = defineAction({
     if (!(await ctx.call('triplestore.dataset.exist', { dataset })))
       throw new Error(`The dataset ${dataset} doesn't exist`);
 
-    // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
     if (typeof query === 'object') query = this.generateSparqlQuery(query);
 
     const acceptNegotiatedType = negotiateType(accept);
     const acceptType = acceptNegotiatedType.mime;
 
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const response = await this.fetch(urlJoin(this.settings.url, dataset, 'query'), {
       body: query,
       headers: {
@@ -69,7 +69,6 @@ const Schema = defineAction({
       case 'SELECT':
         if (acceptType === MIME_TYPES.JSON || acceptType === MIME_TYPES.SPARQL_JSON) {
           const jsonResult = await response.json();
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           return await this.sparqlJsonParser.parseJsonResults(jsonResult);
         }
         return await response.text();

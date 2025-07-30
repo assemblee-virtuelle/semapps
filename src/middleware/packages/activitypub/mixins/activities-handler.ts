@@ -36,11 +36,9 @@ const ActivitiesHandlerMixin = {
       async handler(ctx) {
         const { key, boxType, dereferencedActivity, actorUri } = ctx.params;
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const activityHandler = this.schema.activities[key];
 
         if (!activityHandler) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.warn(`Cannot process activity because no handler with key ${key} found`);
           return dereferencedActivity;
         }
@@ -50,7 +48,6 @@ const ActivitiesHandlerMixin = {
         } else if (boxType === 'outbox' && activityHandler.onEmit) {
           return await activityHandler.onEmit.bind(this)(ctx, dereferencedActivity, actorUri);
         } else {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.warn(
             `Cannot process activity because no onReceive or onEmit methods are associated with with key ${key}`
           );

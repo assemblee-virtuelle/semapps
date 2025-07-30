@@ -9,7 +9,6 @@ import rdfparseModule from 'rdf-parse';
 import { Errors as MoleculerErrors } from 'moleculer';
 const { MoleculerError } = MoleculerErrors;
 
-// @ts-expect-error TS(2339): Property 'default' does not exist on type 'RdfPars... Remove this comment to see the full error message
 const rdfParser = rdfparseModule.default;
 
 const RESOURCE_CONTAINERS_QUERY = (resource: any) => `SELECT ?container

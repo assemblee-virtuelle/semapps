@@ -199,7 +199,7 @@ const VoidSchema = {
             return json;
           }
         } catch (e) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+          // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
           this.logger.warn(`Silently ignored error when fetching void endpoint: ${e.message}`);
         }
       }
@@ -214,16 +214,13 @@ const VoidSchema = {
         const accept = ctx.params.accept || MIME_TYPES.TURTLE;
 
         const ontologies = await ctx.call('ontologies.list');
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const partitions = await this.getContainers(ctx);
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const { origin } = new URL(this.settings.baseUrl);
         const url = urlJoin(origin, '.well-known/void');
 
         // first we compile the local data void information (local containers)
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const thisServer = createFragmentURL(url, this.settings.baseUrl);
 
         const graph = [];
@@ -232,30 +229,24 @@ const VoidSchema = {
           p: namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
           o: namedNode('http://rdfs.org/ns/void#Dataset')
         });
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (this.settings.title) {
           graph.push({
             s: namedNode(thisServer),
             p: namedNode('http://purl.org/dc/terms/title'),
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             o: literal(this.settings.title)
           });
         }
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (this.settings.description) {
           graph.push({
             s: namedNode(thisServer),
             p: namedNode('http://purl.org/dc/terms/description'),
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             o: literal(this.settings.description)
           });
         }
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (this.settings.license) {
           graph.push({
             s: namedNode(thisServer),
             p: namedNode('http://purl.org/dc/terms/license'),
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             o: namedNode(this.settings.license)
           });
         }
@@ -272,7 +263,6 @@ const VoidSchema = {
         graph.push({
           s: namedNode(thisServer),
           p: namedNode('http://rdfs.org/ns/void#uriSpace'),
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           o: literal(this.settings.baseUrl)
         });
 
@@ -309,7 +299,6 @@ const VoidSchema = {
         // then we move on to the mirrored data (containers that have been mirrored from remote servers)
 
         const serversContainers = await ctx.call('triplestore.query', {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           query: `SELECT DISTINCT ?s FROM <${this.settings.mirrorGraphName}> { ?s <http://www.w3.org/ns/ldp#contains> ?o }`
         });
 
@@ -351,7 +340,6 @@ const VoidSchema = {
             hasSparql,
             // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
             serversMap[serverUrl],
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             this.settings.mirrorGraphName,
             ctx,
             scalar,
@@ -370,7 +358,6 @@ const VoidSchema = {
         //   Vary: 'authorization'
         // };
 
-        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         return await this.formatOutput(ctx, graph, url, accept === MIME_TYPES.JSON);
       }
     }),

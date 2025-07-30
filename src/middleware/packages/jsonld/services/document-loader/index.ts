@@ -1,5 +1,6 @@
 import jsonld from 'jsonld';
 import fsModule from 'fs';
+// @ts-expect-error
 import LRU from 'lru-cache';
 import { ServiceSchema, defineAction } from 'moleculer';
 
@@ -55,7 +56,6 @@ const JsonldDocumentLoaderSchema = {
     loadWithCache: defineAction({
       async handler(ctx) {
         const { url, options } = ctx.params;
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (url === this.settings.localContextUri) {
           // For local context, get it directly as it is frequently updated
           // We will use the Redis cache to avoid compiling it every time
@@ -65,7 +65,6 @@ const JsonldDocumentLoaderSchema = {
             document: await ctx.call('jsonld.context.getLocal')
           };
         }
-        // @ts-expect-error TS(2339): Property 'noCache' does not exist on type 'never'.
         if (cache.has(url) && !options?.noCache) {
           return cache.get(url);
         }

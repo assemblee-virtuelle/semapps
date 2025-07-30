@@ -6,11 +6,12 @@ import { getSlugFromUri, getContainerFromUri } from '../../../utils.ts';
 import { Errors as MoleculerErrors } from 'moleculer';
 const { MoleculerError } = MoleculerErrors;
 
-// @ts-expect-error TS(2769): No overload matches this call.
 const Schema = defineAction({
   visibility: 'public',
   params: {
+    // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'Parameter... Remove this comment to see the full error message
     resourceUri: 'string',
+    // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'Parameter... Remove this comment to see the full error message
     file: 'object'
   },
   async handler(ctx) {
@@ -26,7 +27,6 @@ const Schema = defineAction({
     }
 
     try {
-      // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
       await this.streamToFile(file.readableStream, localPath, this.settings.binary.maxSize);
     } catch (e) {
       // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
@@ -34,6 +34,7 @@ const Schema = defineAction({
         throw e; // File too large
       } else {
         console.error(e);
+        // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
         throw new MoleculerError(e, 500, 'Server Error');
       }
     }
@@ -42,9 +43,7 @@ const Schema = defineAction({
       '@context': { '@vocab': 'http://semapps.org/ns/core#' },
       '@id': resourceUri,
       '@type': 'File',
-      // @ts-expect-error TS(2339): Property 'encoding' does not exist on type 'never'... Remove this comment to see the full error message
       encoding: file.encoding,
-      // @ts-expect-error TS(2339): Property 'mimetype' does not exist on type 'never'... Remove this comment to see the full error message
       mimeType: file.mimetype,
       localPath,
       fileName

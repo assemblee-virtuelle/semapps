@@ -1,4 +1,3 @@
-// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { ldp, semapps } from '@semapps/ontologies';
 import { ServiceSchema, defineAction } from 'moleculer';
 import LdpApiService from './services/api/index.ts';
@@ -36,8 +35,8 @@ const LdpSchema = {
       binary
     } = this.settings;
 
-    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "ldp.container... Remove this comment to see the full error message
     this.broker.createService({
+      // @ts-expect-error TS(2322): Type '{ name: "ldp.container"; settings: { baseUrl... Remove this comment to see the full error message
       mixins: [LdpContainerService],
       settings: {
         baseUrl,
@@ -47,8 +46,8 @@ const LdpSchema = {
       hooks: this.schema.hooksContainer || {}
     });
 
-    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "ldp.resource"... Remove this comment to see the full error message
     this.broker.createService({
+      // @ts-expect-error TS(2322): Type '{ name: "ldp.resource"; settings: { baseUrl:... Remove this comment to see the full error message
       mixins: [LdpResourceService],
       settings: {
         baseUrl,
@@ -61,8 +60,8 @@ const LdpSchema = {
       hooks: this.schema.hooksResource || {}
     });
 
-    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "ldp.remote"; ... Remove this comment to see the full error message
     this.broker.createService({
+      // @ts-expect-error TS(2322): Type '{ name: "ldp.remote"; mixins: any[]; setting... Remove this comment to see the full error message
       mixins: [LdpRemoteService],
       settings: {
         baseUrl,
@@ -71,8 +70,8 @@ const LdpSchema = {
       }
     });
 
-    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "ldp.registry"... Remove this comment to see the full error message
     this.broker.createService({
+      // @ts-expect-error TS(2322): Type '{ name: "ldp.registry"; settings: { baseUrl:... Remove this comment to see the full error message
       mixins: [LdpRegistryService],
       settings: {
         baseUrl,
@@ -91,7 +90,7 @@ const LdpSchema = {
       }
     });
 
-    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "ldp.link-head... Remove this comment to see the full error message
+    // @ts-expect-error TS(2322): Type '{ name: "ldp.link-header"; actions: { get: A... Remove this comment to see the full error message
     this.broker.createService({ mixins: [LdpLinkHeaderService] });
 
     // Only create this service if a cacher is defined
@@ -108,14 +107,12 @@ const LdpSchema = {
   actions: {
     getBaseUrl: defineAction({
       handler() {
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         return this.settings.baseUrl;
       }
     }),
 
     getBasePath: defineAction({
       handler() {
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const { pathname } = new URL(this.settings.baseUrl);
         return pathname;
       }
@@ -124,7 +121,6 @@ const LdpSchema = {
     getSetting: defineAction({
       handler(ctx) {
         const { key } = ctx.params;
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         return this.settings[key];
       }
     })

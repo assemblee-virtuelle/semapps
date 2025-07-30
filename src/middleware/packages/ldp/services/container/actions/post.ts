@@ -15,10 +15,12 @@ const Schema = defineAction({
       type: 'string',
       optional: true
     },
+    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     resource: {
       type: 'object',
       optional: true
     },
+    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     file: {
       type: 'object',
       optional: true
@@ -47,11 +49,9 @@ const Schema = defineAction({
 
     if (!file) {
       // Adds the default context, if it is missing
-      // @ts-expect-error TS(18048): 'resource' is possibly 'undefined'.
       if (contentType === MIME_TYPES.JSON && !resource['@context']) {
         resource = {
           '@context': await ctx.call('jsonld.context.get'),
-          // @ts-expect-error TS(2698): Spread types may only be created from object types... Remove this comment to see the full error message
           ...resource
         };
       }
@@ -112,7 +112,6 @@ const Schema = defineAction({
         await ctx.call(controlledActions.create || 'ldp.resource.create', {
           resource: {
             '@id': resourceUri,
-            // @ts-expect-error TS(2698): Spread types may only be created from object types... Remove this comment to see the full error message
             ...resource
           },
           contentType,

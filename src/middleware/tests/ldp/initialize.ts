@@ -7,7 +7,7 @@ import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { AuthLocalService } from '@semapps/auth';
 import { ControlledContainerMixin } from '@semapps/ldp';
 import { fileURLToPath } from 'url';
-import CONFIG from '../config.ts';
+import * as CONFIG from '../config.ts';
 import { clearDataset } from '../utils.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -56,6 +56,7 @@ const initialize = async () => {
   }
 
   const broker = new ServiceBroker({
+    // @ts-expect-error TS(2322): Type '{ name: "CacherMiddleware"; created(broker: ... Remove this comment to see the full error message
     middlewares: [CacherMiddleware(CONFIG.ACTIVATE_CACHE), WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
     logger: {
       type: 'Console',
@@ -65,6 +66,7 @@ const initialize = async () => {
     }
   });
 
+  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "core"; settin... Remove this comment to see the full error message
   broker.createService({
     mixins: [CoreService],
     settings: {
@@ -88,6 +90,7 @@ const initialize = async () => {
     }
   });
 
+  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "auth"; mixins... Remove this comment to see the full error message
   broker.createService({
     mixins: [AuthLocalService],
     settings: {

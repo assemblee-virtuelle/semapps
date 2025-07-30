@@ -74,7 +74,6 @@ const CollectionService = {
         }
 
         if (triplesToAdd) {
-          // @ts-expect-error TS(2488): Type 'never' must have a '[Symbol.iterator]()' met... Remove this comment to see the full error message
           for (const triple of triplesToAdd) {
             if (
               triple.subject.value === collectionUri &&
@@ -87,7 +86,6 @@ const CollectionService = {
         }
 
         if (triplesToRemove) {
-          // @ts-expect-error TS(2488): Type 'never' must have a '[Symbol.iterator]()' met... Remove this comment to see the full error message
           for (const triple of triplesToRemove) {
             if (
               triple.subject.value === collectionUri &&
@@ -104,14 +102,11 @@ const CollectionService = {
     post: defineAction({
       async handler(ctx) {
         if (!ctx.params.containerUri) {
-          // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
           ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
         }
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         await this.actions.waitForContainerCreation({ containerUri: ctx.params.containerUri });
 
-        // @ts-expect-error TS(2339): Property 'type' does not exist on type 'never'.
         const ordered = arrayOf(ctx.params.resource.type).includes('OrderedCollection');
 
         // TODO Use ShEx to check collection validity
@@ -122,13 +117,10 @@ const CollectionService = {
         }
 
         // Set default values
-        // @ts-expect-error TS(2322): Type 'false' is not assignable to type 'never'.
         if (!ctx.params.resource['semapps:dereferenceItems']) ctx.params.resource['semapps:dereferenceItems'] = false;
         if (ordered) {
           if (!ctx.params.resource['semapps:sortPredicate'])
-            // @ts-expect-error TS(2322): Type '"as:published"' is not assignable to type 'n... Remove this comment to see the full error message
             ctx.params.resource['semapps:sortPredicate'] = 'as:published';
-          // @ts-expect-error TS(2322): Type '"semapps:DescOrder"' is not assignable to ty... Remove this comment to see the full error message
           if (!ctx.params.resource['semapps:sortOrder']) ctx.params.resource['semapps:sortOrder'] = 'semapps:DescOrder';
         }
 
@@ -154,7 +146,6 @@ const CollectionService = {
             }
           `,
           accept: MIME_TYPES.JSON,
-          // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
           dataset: this.getCollectionDataset(collectionUri),
           webId: 'system'
         });
@@ -182,7 +173,6 @@ const CollectionService = {
             }
           `,
           accept: MIME_TYPES.JSON,
-          // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
           dataset: this.getCollectionDataset(collectionUri),
           webId: 'system'
         });
@@ -197,7 +187,6 @@ const CollectionService = {
        */
       async handler(ctx) {
         let { collectionUri, item, itemUri } = ctx.params;
-        // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
         if (!itemUri && item) itemUri = typeof item === 'object' ? item.id || item['@id'] : item;
         if (!itemUri) throw new Error('No valid item URI provided for activitypub.collection.add');
 
@@ -215,7 +204,6 @@ const CollectionService = {
 
         await ctx.call('triplestore.insert', {
           resource: sanitizeSparqlQuery`<${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>`,
-          // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
           dataset: this.getCollectionDataset(collectionUri),
           webId: 'system'
         });
@@ -235,7 +223,6 @@ const CollectionService = {
        */
       async handler(ctx) {
         let { collectionUri, item, itemUri } = ctx.params;
-        // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
         if (!itemUri && item) itemUri = typeof item === 'object' ? item.id || item['@id'] : item;
         if (!itemUri) throw new Error('No valid item URI provided for activitypub.collection.remove');
 
@@ -248,7 +235,6 @@ const CollectionService = {
             WHERE
             { <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}> }
           `,
-          // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
           dataset: this.getCollectionDataset(collectionUri),
           webId: 'system'
         });
@@ -268,7 +254,6 @@ const CollectionService = {
        * @param collectionUri The full URI of the collection
        */
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'replace' does not exist on type 'never'.
         const collectionUri = ctx.params.collectionUri.replace(/\/+$/, '');
         await ctx.call('triplestore.update', {
           query: sanitizeSparqlQuery`
@@ -282,7 +267,6 @@ const CollectionService = {
               ?s1 ?p1 ?o1 .
             } 
           `,
-          // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
           dataset: this.getCollectionDataset(collectionUri),
           webId: 'system'
         });
@@ -311,7 +295,6 @@ const CollectionService = {
             }
           `,
           accept: MIME_TYPES.JSON,
-          // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
           dataset: this.getCollectionDataset(collectionUri),
           webId: 'system'
         });

@@ -1,3 +1,4 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'json... Remove this comment to see the full error message
 import jsigs from 'jsonld-signatures';
 import { arrayOf } from '../utils/utils.ts';
 
@@ -83,10 +84,12 @@ class VcCapabilityPresentationProofPurpose extends AuthenticationProofPurpose {
     }
 
     // Verify that the number of derivatives in chain is not exceeded.
+    // @ts-expect-error TS(2339): Property 'maxChainLength' does not exist on type '... Remove this comment to see the full error message
     if (credentialsOrdered.length > this.maxChainLength) {
       return {
         valid: false,
         error: new Error(
+          // @ts-expect-error TS(2339): Property 'maxChainLength' does not exist on type '... Remove this comment to see the full error message
           `Number of VCs in chain exceeds max allowed. Allowed: ${this.maxChainLength}. Present: ${credentialsOrdered.length}`
         )
       };

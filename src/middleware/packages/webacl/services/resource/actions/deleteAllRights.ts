@@ -13,10 +13,7 @@ export const action = defineAction({
     await ctx.call('triplestore.update', {
       query: `
         PREFIX acl: <http://www.w3.org/ns/auth/acl#>
-        WITH <${
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-          this.settings.graphName
-        }>
+        WITH <${this.settings.graphName}>
         DELETE { ?auth ?p2 ?o }
         WHERE { ?auth ?p <${resourceUri}>.
           FILTER (?p IN (acl:accessTo, acl:default ) )

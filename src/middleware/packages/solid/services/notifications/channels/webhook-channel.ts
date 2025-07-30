@@ -40,7 +40,6 @@ const WebhookChannel2023Service = {
       async handler(ctx) {
         const { appUri, webId } = ctx.params;
         const { origin: appOrigin } = new URL(appUri);
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         return this.channels.filter((c: any) => c.webId === webId && c.sendTo.startsWith(appOrigin));
       }
     }),
@@ -48,10 +47,8 @@ const WebhookChannel2023Service = {
     deleteAppChannels: defineAction({
       async handler(ctx) {
         const { appUri, webId } = ctx.params;
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const appChannels = await this.actions.getAppChannels({ appUri, webId }, { parentCtx: ctx });
         for (const appChannel of appChannels) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           await this.actions.delete({ resourceUri: appChannel.id, webId: appChannel.webId });
         }
       }

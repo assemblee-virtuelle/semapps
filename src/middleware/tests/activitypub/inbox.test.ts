@@ -40,6 +40,7 @@ describe('Permissions are correctly set on inbox', () => {
 
     expect(sebastien).toMatchObject({
       id: sebastienUri,
+
       type: expect.arrayContaining(['Person', 'foaf:Person']),
       preferredUsername: 'srosset81',
       'foaf:nick': 'srosset81',
@@ -52,6 +53,7 @@ describe('Permissions are correctly set on inbox', () => {
 
   test('Inbox response for an actor that does not exist', async () => {
     const resourceUri = simon.inbox.replace('simonlouvet', 'unknown'); // 'http://localhost:3000/as/actor/simonlouvet/inbox',
+
     await expect(
       broker.call('activitypub.collection.get', {
         resourceUri,
@@ -70,13 +72,16 @@ describe('Permissions are correctly set on inbox', () => {
     });
 
     // Get inbox as recipient
+    // @ts-expect-error
     await waitForExpect(async () => {
       const inbox = await broker.call('activitypub.collection.get', {
         resourceUri: simon.inbox,
         afterEq: item.id,
         webId: simon.id
       });
+
       expect(inbox.orderedItems).toHaveLength(1);
+
       expect(inbox.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.CREATE,
@@ -88,13 +93,16 @@ describe('Permissions are correctly set on inbox', () => {
     });
 
     // Get inbox as emitter
+    // @ts-expect-error
     await waitForExpect(async () => {
       const inbox = await broker.call('activitypub.collection.get', {
         resourceUri: simon.inbox,
         afterEq: item.id,
         webId: sebastien.id
       });
+
       expect(inbox.orderedItems).toHaveLength(1);
+
       expect(inbox.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.CREATE,
@@ -106,12 +114,14 @@ describe('Permissions are correctly set on inbox', () => {
     });
 
     // Get inbox as anonymous
+    // @ts-expect-error
     await waitForExpect(async () => {
       const inbox = await broker.call('activitypub.collection.get', {
         resourceUri: simon.inbox,
         afterEq: item.id,
         webId: 'anon'
       });
+
       expect(inbox.orderedItems.length).toBe(0);
     });
   });
@@ -126,6 +136,7 @@ describe('Permissions are correctly set on inbox', () => {
     });
 
     // Get inbox as recipient
+    // @ts-expect-error
     await waitForExpect(async () => {
       const inboxMenu = await broker.call('activitypub.collection.get', {
         resourceUri: simon.inbox,
@@ -138,6 +149,7 @@ describe('Permissions are correctly set on inbox', () => {
       });
 
       expect(inbox.orderedItems).toHaveLength(2);
+
       expect(inbox.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.CREATE,
@@ -149,6 +161,7 @@ describe('Permissions are correctly set on inbox', () => {
     });
 
     // Get inbox as emitter
+    // @ts-expect-error
     await waitForExpect(async () => {
       const inboxMenu = await broker.call('activitypub.collection.get', {
         resourceUri: simon.inbox,
@@ -159,7 +172,9 @@ describe('Permissions are correctly set on inbox', () => {
         afterEq: new URL(inboxMenu?.first).searchParams.get('afterEq'),
         webId: sebastien.id
       });
+
       expect(inbox.orderedItems).toHaveLength(2);
+
       expect(inbox.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.CREATE,
@@ -171,6 +186,7 @@ describe('Permissions are correctly set on inbox', () => {
     });
 
     // Get inbox as anonymous
+    // @ts-expect-error
     await waitForExpect(async () => {
       const inboxMenu = await broker.call('activitypub.collection.get', {
         resourceUri: simon.inbox,
@@ -181,7 +197,9 @@ describe('Permissions are correctly set on inbox', () => {
         afterEq: new URL(inboxMenu?.first).searchParams.get('afterEq'),
         webId: 'anon'
       });
+
       expect(inbox.orderedItems).toHaveLength(1);
+
       expect(inbox.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.CREATE,

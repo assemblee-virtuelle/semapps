@@ -29,19 +29,16 @@ const AuthAccountSchema = {
         // FORMAT AND VERIFY PASSWORD
 
         if (password) {
-          // @ts-expect-error TS(2339): Property 'length' does not exist on type 'never'.
           if (password.length < this.settings.minPasswordLength) {
             throw new Error('password.too-short');
           }
 
-          // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
           password = await this.hashPassword(password);
         }
 
         // FORMAT AND VERIFY EMAIL
 
         if (email) {
-          // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
           email = email.toLowerCase();
 
           const emailExists = await ctx.call('auth.account.emailExists', { email });
@@ -59,31 +56,25 @@ const AuthAccountSchema = {
         if (username) {
           // @ts-expect-error TS(2339): Property 'isSystemCall' does not exist on type '{}... Remove this comment to see the full error message
           if (!ctx.meta.isSystemCall) {
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             const { isValid, error } = await this.isValidUsername(ctx, username);
             if (!isValid) throw new Error(error);
           }
         } else if (email) {
           // If username is not provided, find one automatically from the email (without errors)
-          // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
           username = createSlug(email.split('@')[0].toLowerCase());
 
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           let { isValid, error } = await this.isValidUsername(ctx, username);
 
           if (!isValid) {
             if (error === 'username.invalid' || error === 'username.too-short') {
               // If username generated from email is invalid, use a generic name
-              // @ts-expect-error TS(2322): Type '"user"' is not assignable to type 'never'.
               username = 'user';
             }
 
             // If necessary, add a number after the username
             let i = 0;
             do {
-              // @ts-expect-error TS(2322): Type 'number' is not assignable to type 'never'.
               username = i === 0 ? username : username + i;
-              // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
               ({ isValid } = await this.isValidUsername(ctx, username));
             } while (!isValid);
           }
@@ -91,7 +82,6 @@ const AuthAccountSchema = {
           throw new Error('You must provide at least a username or an email address');
         }
 
-        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         return await this._create(ctx, {
           ...rest,
           uuid,
@@ -107,7 +97,6 @@ const AuthAccountSchema = {
       async handler(ctx) {
         const { accountUri, webId } = ctx.params;
 
-        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         return await this._update(ctx, {
           '@id': accountUri,
           webId
@@ -120,14 +109,11 @@ const AuthAccountSchema = {
         const { username, password } = ctx.params;
 
         // If the username includes a @, assume it is an email
-        // @ts-expect-error TS(2339): Property 'includes' does not exist on type 'never'... Remove this comment to see the full error message
         const query = username.includes('@') ? { email: username } : { username };
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const accounts = await this._find(ctx, { query });
 
         if (accounts.length > 0) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           const passwordMatch = await this.comparePassword(password, accounts[0].hashedPassword);
           if (passwordMatch) {
             return accounts[0];
@@ -142,7 +128,6 @@ const AuthAccountSchema = {
     usernameExists: defineAction({
       async handler(ctx) {
         const { username } = ctx.params;
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const accounts = await this._find(ctx, { query: { username } });
         return accounts.length > 0;
       }
@@ -151,7 +136,6 @@ const AuthAccountSchema = {
     emailExists: defineAction({
       async handler(ctx) {
         const { email } = ctx.params;
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const accounts = await this._find(ctx, { query: { email } });
         return accounts.length > 0;
       }
@@ -161,7 +145,6 @@ const AuthAccountSchema = {
       /** Overwrite find method, to filter accounts with tombstone. */
       async handler(ctx) {
         /** @type {object[]} */
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const accounts = await this._find(ctx, ctx.params);
         return accounts.filter((account: any) => !account.deletedAt);
       }
@@ -170,7 +153,6 @@ const AuthAccountSchema = {
     findByUsername: defineAction({
       async handler(ctx) {
         const { username } = ctx.params;
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const accounts = await this._find(ctx, { query: { username } });
         return accounts.length > 0 ? accounts[0] : null;
       }
@@ -179,7 +161,6 @@ const AuthAccountSchema = {
     findByWebId: defineAction({
       async handler(ctx) {
         const { webId } = ctx.params;
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const accounts = await this._find(ctx, { query: { webId } });
         return accounts.length > 0 ? accounts[0] : null;
       }
@@ -188,7 +169,6 @@ const AuthAccountSchema = {
     findByEmail: defineAction({
       async handler(ctx) {
         const { email } = ctx.params;
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const accounts = await this._find(ctx, { query: { email } });
         return accounts.length > 0 ? accounts[0] : null;
       }
@@ -197,11 +177,9 @@ const AuthAccountSchema = {
     setPassword: defineAction({
       async handler(ctx) {
         const { webId, password } = ctx.params;
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const hashedPassword = await this.hashPassword(password);
         const account = await ctx.call('auth.account.findByWebId', { webId });
 
-        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         return await this._update(ctx, {
           '@id': account['@id'],
           hashedPassword
@@ -212,7 +190,6 @@ const AuthAccountSchema = {
     setNewPassword: defineAction({
       async handler(ctx) {
         const { webId, token, password } = ctx.params;
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const hashedPassword = await this.hashPassword(password);
         const account = await ctx.call('auth.account.findByWebId', { webId });
 
@@ -220,7 +197,6 @@ const AuthAccountSchema = {
           throw new Error('auth.password.invalid_reset_token');
         }
 
-        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         return await this._update(ctx, {
           '@id': account['@id'],
           hashedPassword,
@@ -232,11 +208,9 @@ const AuthAccountSchema = {
     generateResetPasswordToken: defineAction({
       async handler(ctx) {
         const { webId } = ctx.params;
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const resetPasswordToken = await this.generateResetPasswordToken();
         const account = await ctx.call('auth.account.findByWebId', { webId });
 
-        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         await this._update(ctx, {
           '@id': account['@id'],
           resetPasswordToken
@@ -275,7 +249,6 @@ const AuthAccountSchema = {
         // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const { webId } = ctx.meta;
         const account = await ctx.call('auth.account.findByWebId', { webId });
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const passwordMatch = await this.comparePassword(currentPassword, account.hashedPassword);
         let params = {};
 
@@ -284,7 +257,6 @@ const AuthAccountSchema = {
         }
 
         if (newPassword) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           const hashedPassword = await this.hashPassword(newPassword);
           params = { ...params, hashedPassword };
         }
@@ -298,7 +270,6 @@ const AuthAccountSchema = {
           params = { ...params, email };
         }
 
-        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         return await this._update(ctx, {
           '@id': account['@id'],
           ...params
@@ -312,7 +283,6 @@ const AuthAccountSchema = {
         const account = await ctx.call('auth.account.findByWebId', { webId });
 
         if (account) {
-          // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
           await this._remove(ctx, { id: account['@id'] });
           return true;
         }
@@ -327,7 +297,6 @@ const AuthAccountSchema = {
         const { webId } = ctx.params;
         const account = await ctx.call('auth.account.findByWebId', { webId });
 
-        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         return await this._update(ctx, {
           // Set all values to undefined...
           ...Object.fromEntries(Object.keys(account).map(key => [key, null])),

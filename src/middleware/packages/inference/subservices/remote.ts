@@ -29,7 +29,6 @@ const InferenceRemoteSchema = {
         add: { type: 'boolean', optional: false }
       },
       async handler(ctx) {
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (this.settings.offerToRemoteServers) {
           const serverDomainName = new URL(ctx.params.subject).host;
           const remoteRelayActorUri = await ctx.call('webfinger.getRemoteUri', {
@@ -38,10 +37,8 @@ const InferenceRemoteSchema = {
 
           if (remoteRelayActorUri) {
             await ctx.call('activitypub.outbox.post', {
-              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               collectionUri: this.relayActor.outbox,
               '@context': 'https://www.w3.org/ns/activitystreams',
-              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               actor: this.relayActor.id,
               type: ACTIVITY_TYPES.OFFER,
               object: {
@@ -83,7 +80,6 @@ const InferenceRemoteSchema = {
                 });
               }
             } catch (e) {
-              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               this.logger.warn(
                 // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
                 `Error while connecting to remove server for offering inverse relationship: ${e.message}`

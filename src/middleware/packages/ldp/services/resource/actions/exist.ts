@@ -14,7 +14,6 @@ const Schema = defineAction({
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     let exist = await ctx.call('triplestore.tripleExist', {
-      // @ts-expect-error TS(2345): Argument of type 'NamedNode<string>' is not assign... Remove this comment to see the full error message
       triple: triple(namedNode(resourceUri), variable('p'), variable('s')),
       webId
     });
@@ -22,17 +21,14 @@ const Schema = defineAction({
     // If this is a remote URI and the resource is not found in default graph, also look in mirror graph
     if (!exist && (await ctx.call('ldp.remote.isRemote', { resourceUri }))) {
       exist = await ctx.call('triplestore.tripleExist', {
-        // @ts-expect-error TS(2345): Argument of type 'NamedNode<string>' is not assign... Remove this comment to see the full error message
         triple: triple(namedNode(resourceUri), variable('p'), variable('s')),
         webId,
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         graphName: this.settings.mirrorGraphName
       });
     }
 
     // If resource exists but we don't want tombstones, check the resource type
     if (exist && !acceptTombstones) {
-      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       const types = await this.actions.getTypes({ resourceUri }, { parentCtx: ctx });
       if (types.includes('https://www.w3.org/ns/activitystreams#Tombstone')) return false;
     }

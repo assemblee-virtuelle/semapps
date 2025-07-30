@@ -87,9 +87,7 @@ const Schema = {
         const { webId } = ctx.meta;
 
         // TODO: Use ldo objects; This will only check for the json type and not parse json-ld variants...
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (!this.settings.acceptedTypes.includes(type) && this.settings.channelType !== type)
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           throw new Error(`Only one of ${this.settings.acceptedTypes} is accepted on this endpoint`);
 
         // Ensure topic exist (LDP resource, container or collection)
@@ -97,7 +95,6 @@ const Schema = {
           resourceUri: topic,
           webId: 'system'
         });
-        // @ts-expect-error TS(2304): Cannot find name 'E'.
         if (!exists) throw new E.BadRequestError('Cannot watch non-existing resource');
 
         // Ensure topic can be watched by the authenticated agent
@@ -107,29 +104,23 @@ const Schema = {
           webId
         });
         // TODO: Should a client without read rights know about the existence of that resource?
-        // @ts-expect-error TS(2304): Cannot find name 'E'.
         if (!rights.read) throw new E.ForbiddenError('You need acl:Read rights on the resource');
 
         // Find container URI from topic (must be stored on same Pod)
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
         const topicWebId = urlJoin(this.settings.baseUrl, getDatasetFromUri(topic));
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const channelContainerUri = await this.actions.getContainerUri({ webId: topicWebId }, { parentCtx: ctx });
 
         // Create receiveFrom URI if needed (e.g. for web sockets).
         const receiveFrom =
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           (this.settings.sendOrReceive === 'receive' && (await this.createReceiveFromUri(topic, webId))) || undefined;
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const sendTo = (this.settings.sendOrReceive === 'send' && sendToParam) || undefined;
 
         // Post channel on Pod
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const channelUri = await this.actions.post(
           {
             containerUri: channelContainerUri,
             resource: {
-              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               type: this.settings.typePredicate,
               'notify:topic': topic,
               'notify:sendTo': sendTo,
@@ -149,14 +140,11 @@ const Schema = {
           receiveFrom,
           webId: topicWebId
         };
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.channels.push(channel);
-        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         this.onChannelCreated(channel);
 
         // @ts-expect-error TS(2339): Property '$responseType' does not exist on type '{... Remove this comment to see the full error message
         ctx.meta.$responseType = 'application/ld+json';
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         return this.actions.get(
           {
             resourceUri: channelUri,
@@ -183,7 +171,7 @@ const Schema = {
   events: {
     'ldp.resource.created': defineServiceEvent({
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Ser... Remove this comment to see the full error message
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
         // @ts-expect-error TS(2339): Property 'onResourceEvent' does not exist on type ... Remove this comment to see the full error message
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.CREATE, newData['dc:modified']);
@@ -192,7 +180,7 @@ const Schema = {
 
     'ldp.resource.updated': defineServiceEvent({
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Ser... Remove this comment to see the full error message
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
         // @ts-expect-error TS(2339): Property 'onResourceEvent' does not exist on type ... Remove this comment to see the full error message
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.UPDATE, newData['dc:modified']);
@@ -201,7 +189,7 @@ const Schema = {
 
     'ldp.resource.patched': defineServiceEvent({
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Ser... Remove this comment to see the full error message
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri } = ctx.params;
         // @ts-expect-error TS(2339): Property 'onResourceEvent' does not exist on type ... Remove this comment to see the full error message
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.UPDATE, await this.getModified(resourceUri));
@@ -210,7 +198,7 @@ const Schema = {
 
     'ldp.resource.deleted': defineServiceEvent({
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Ser... Remove this comment to see the full error message
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri } = ctx.params;
         // @ts-expect-error TS(2339): Property 'onResourceEvent' does not exist on type ... Remove this comment to see the full error message
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.DELETE, new Date().toISOString());
@@ -219,7 +207,7 @@ const Schema = {
 
     'ldp.container.attached': defineServiceEvent({
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'containerUri' does not exist on type 'Se... Remove this comment to see the full error message
+        // @ts-expect-error TS(2339): Property 'containerUri' does not exist on type 'Op... Remove this comment to see the full error message
         const { containerUri, resourceUri } = ctx.params;
         // @ts-expect-error TS(2339): Property 'onContainerOrCollectionEvent' does not e... Remove this comment to see the full error message
         this.onContainerOrCollectionEvent(containerUri, resourceUri, ACTIVITY_TYPES.ADD);
@@ -228,7 +216,7 @@ const Schema = {
 
     'ldp.container.detached': defineServiceEvent({
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'containerUri' does not exist on type 'Se... Remove this comment to see the full error message
+        // @ts-expect-error TS(2339): Property 'containerUri' does not exist on type 'Op... Remove this comment to see the full error message
         const { containerUri, resourceUri } = ctx.params;
         // @ts-expect-error TS(2339): Property 'onContainerOrCollectionEvent' does not e... Remove this comment to see the full error message
         this.onContainerOrCollectionEvent(containerUri, resourceUri, ACTIVITY_TYPES.REMOVE);
@@ -237,7 +225,7 @@ const Schema = {
 
     'activitypub.collection.added': defineServiceEvent({
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'collectionUri' does not exist on type 'S... Remove this comment to see the full error message
+        // @ts-expect-error TS(2339): Property 'collectionUri' does not exist on type 'O... Remove this comment to see the full error message
         const { collectionUri, itemUri, item } = ctx.params;
         // Mastodon sometimes send unfetchable activities (like `Accept` activities)
         // In this case, we receive the activity as `item` and `itemUri` is undefined
@@ -249,7 +237,7 @@ const Schema = {
 
     'activitypub.collection.removed': defineServiceEvent({
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'collectionUri' does not exist on type 'S... Remove this comment to see the full error message
+        // @ts-expect-error TS(2339): Property 'collectionUri' does not exist on type 'O... Remove this comment to see the full error message
         const { collectionUri, itemUri } = ctx.params;
         // @ts-expect-error TS(2339): Property 'onContainerOrCollectionEvent' does not e... Remove this comment to see the full error message
         this.onContainerOrCollectionEvent(collectionUri, itemUri, ACTIVITY_TYPES.REMOVE);
@@ -258,6 +246,7 @@ const Schema = {
   },
   methods: {
     async getModified(resourceUri) {
+      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       return await this.broker.call('ldp.resource.get', { resourceUri, webId: 'system' })?.['dc:modified'];
     },
     getMatchingChannels(topic) {
@@ -278,7 +267,7 @@ const Schema = {
     onContainerOrCollectionEvent(containerOrCollectionUri, resourceUriOrResource, type) {
       const activity = {
         '@context': ['https://www.w3.org/ns/activitystreams', 'https://www.w3.org/ns/solid/notifications-context/v1'],
-        // @ts-expect-error TS(2304): Cannot find name 'uuidV4'.
+        // @ts-expect-error TS(2552): Cannot find name 'uuidV4'. Did you mean 'uuidv4'?
         id: `urn:uuid:${uuidV4()}`,
         type,
         object: resourceUriOrResource,
@@ -289,7 +278,7 @@ const Schema = {
     onResourceEvent(resourceUri, type, state) {
       const activity = {
         '@context': ['https://www.w3.org/ns/activitystreams', 'https://www.w3.org/ns/solid/notifications-context/v1'],
-        // @ts-expect-error TS(2304): Cannot find name 'uuidV4'.
+        // @ts-expect-error TS(2552): Cannot find name 'uuidV4'. Did you mean 'uuidv4'?
         id: `urn:uuid:${uuidV4()}`,
         type,
         object: resourceUri,

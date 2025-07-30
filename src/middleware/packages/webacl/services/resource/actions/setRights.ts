@@ -40,6 +40,7 @@ export const action = defineAction({
     resourceUri: { type: 'string' },
     webId: { type: 'string', optional: true },
     // newRights is an array of objects of the form { auth: 'http://localhost:3000/_acl/container29#Control',  p: 'http://www.w3.org/ns/auth/acl#agent',  o: 'https://data.virtual-assembly.org/users/sebastien.rosset' }
+    // @ts-expect-error TS(2322): Type '{ type: "array"; optional: false; min: numbe... Remove this comment to see the full error message
     newRights: { type: 'array', optional: false, min: 1 }
     // minimum is one right : We cannot leave a resource without rights.
   },
@@ -48,7 +49,6 @@ export const action = defineAction({
     // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     webId = webId || ctx.meta.webId || 'anon';
 
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
 
     // check that the user has Control perm.
@@ -61,53 +61,44 @@ export const action = defineAction({
     if (!control) throw new MoleculerError('Access denied ! user must have Control permission', 403, 'ACCESS_DENIED');
 
     // filter out all the newRights that are not for the resource
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const aclUri = getAclUriFromResourceUri(this.settings.baseUrl, resourceUri);
+    // @ts-expect-error TS(7006): Parameter 'a' implicitly has an 'any' type.
     newRights = newRights.filter(a => filterTriplesForResource(a, aclUri, isContainer));
 
     if (newRights.length === 0)
       throw new MoleculerError('The rights cannot be changed because they are incorrect', 400, 'BAD_REQUEST');
 
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const currentPerms = await this.getExistingPerms(
       ctx,
       resourceUri,
-      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       this.settings.baseUrl,
-      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       this.settings.graphName,
       isContainer
     );
 
     // find the difference between newRights and currentPerms. add only what is not existent yet. and remove those that are not needed anymore
     const differenceAdd = newRights.filter(
-      // @ts-expect-error TS(2339): Property 'auth' does not exist on type 'never'.
+      // @ts-expect-error TS(7006): Parameter 'x' implicitly has an 'any' type.
       x => !currentPerms.some((y: any) => x.auth === y.auth && x.o === y.o && x.p === y.p)
     );
     const differenceDelete = currentPerms.filter(
-      // @ts-expect-error TS(2339): Property 'auth' does not exist on type 'never'.
+      // @ts-expect-error TS(7006): Parameter 'y' implicitly has an 'any' type.
       (x: any) => !newRights.some(y => x.auth === y.auth && x.o === y.o && x.p === y.p)
     );
 
     if (differenceAdd.length === 0 && differenceDelete.length === 0) return;
 
     // compile a list of Authorization already present. because if some of them don't exist, we need to create them
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const currentAuths = this.compileAuthorizationNodesMap(currentPerms);
 
     let addRequest = '';
     for (const add of differenceAdd) {
-      // @ts-expect-error TS(2339): Property 'auth' does not exist on type 'never'.
       if (!currentAuths[add.auth]) {
-        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         addRequest += this.generateNewAuthNode(add.auth);
-        // @ts-expect-error TS(2339): Property 'auth' does not exist on type 'never'.
         currentAuths[add.auth] = 1;
       } else {
-        // @ts-expect-error TS(2339): Property 'auth' does not exist on type 'never'.
         currentAuths[add.auth] += 1;
       }
-      // @ts-expect-error TS(2339): Property 'auth' does not exist on type 'never'.
       addRequest += `<${add.auth}> <${add.p}> <${add.o}>.\n`;
     }
 
@@ -120,26 +111,24 @@ export const action = defineAction({
     for (const [auth, count] of Object.entries(currentAuths)) {
       // @ts-expect-error TS(18046): 'count' is of type 'unknown'.
       if (count < 1) {
-        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         deleteRequest += this.generateNewAuthNode(auth);
       }
     }
 
     // we do the 2 calls in one, so it is in the same transaction, and will rollback in case of failure.
     await ctx.call('triplestore.update', {
-      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       query: `INSERT DATA { GRAPH <${this.settings.graphName}> { ${addRequest} } }; DELETE DATA { GRAPH <${this.settings.graphName}> { ${deleteRequest} } }`,
       webId: 'system'
     });
 
     const defaultRightsUpdated =
       isContainer &&
-      // @ts-expect-error TS(2339): Property 'auth' does not exist on type 'never'.
+      // @ts-expect-error TS(7006): Parameter 'triple' implicitly has an 'any' type.
       (differenceAdd.some(triple => triple.auth.includes('#Default')) ||
         differenceDelete.some((triple: any) => triple.auth.includes('#Default')));
 
     const addPublicRead = differenceAdd.some(
-      // @ts-expect-error TS(2339): Property 'auth' does not exist on type 'never'.
+      // @ts-expect-error TS(7006): Parameter 'triple' implicitly has an 'any' type.
       triple => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
     );
     const removePublicRead = differenceDelete.some(
@@ -148,8 +137,8 @@ export const action = defineAction({
     const addDefaultPublicRead =
       isContainer &&
       differenceAdd.some(
+        // @ts-expect-error TS(7006): Parameter 'triple' implicitly has an 'any' type.
         triple =>
-          // @ts-expect-error TS(2339): Property 'auth' does not exist on type 'never'.
           triple.auth.includes('#DefaultRead') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
       );
     const removeDefaultPublicRead =

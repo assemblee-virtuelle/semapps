@@ -5,7 +5,7 @@ import { JsonLdService } from '@semapps/jsonld';
 import { OntologiesService } from '@semapps/ontologies';
 import { TripleStoreService } from '@semapps/triplestore';
 import { fileURLToPath } from 'url';
-import CONFIG from '../config.ts';
+import * as CONFIG from '../config.ts';
 import { clearDataset } from '../utils.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -23,6 +23,7 @@ export default async (cacher: any, persistRegistry: any) => {
     cacher // If true, will use Moleculer MemoryCacher
   });
 
+  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "jsonld"; sett... Remove this comment to see the full error message
   broker.createService({
     mixins: [JsonLdService],
     settings: {
@@ -42,6 +43,7 @@ export default async (cacher: any, persistRegistry: any) => {
   });
 
   broker.createService({
+    // @ts-expect-error TS(2322): Type '{ name: "triplestore"; settings: { url: null... Remove this comment to see the full error message
     mixins: [TripleStoreService],
     settings: {
       url: CONFIG.SPARQL_ENDPOINT,
@@ -51,8 +53,10 @@ export default async (cacher: any, persistRegistry: any) => {
     }
   });
 
+  // @ts-expect-error TS(2345): Argument of type '{ mixins: (Moleculer.ServiceSche... Remove this comment to see the full error message
   broker.createService({ mixins: [ApiGatewayService] });
 
+  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "ontologies"; ... Remove this comment to see the full error message
   broker.createService({
     mixins: [OntologiesService],
     settings: {

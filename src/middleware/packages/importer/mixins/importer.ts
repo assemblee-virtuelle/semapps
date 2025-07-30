@@ -97,95 +97,66 @@ const Schema = {
     freshImport: defineAction({
       async handler(ctx) {
         if (ctx.params.clear === undefined || ctx.params.clear === true) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.info('Clearing all existing data...');
 
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           await this.actions.deleteImported();
         }
 
-        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         await this.prepare();
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (this.settings.source.getAllCompact) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.info('Fetching compact list...');
 
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           const compactResults = await this.list(this.settings.source.getAllCompact);
 
           if (compactResults) {
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             this.logger.info(
               `Importing ${compactResults.length} items from ${
-                // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
                 typeof this.settings.source.getAllCompact === 'string'
-                  ? // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-                    this.settings.source.getAllCompact
-                  : // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-                    this.settings.source.getAllCompact.url
+                  ? this.settings.source.getAllCompact
+                  : this.settings.source.getAllCompact.url
               }...`
             );
 
             for (const data of compactResults) {
-              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               const sourceUri = this.settings.source.getOneFull(data);
-              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               const destUri = await this.actions.importOne({ sourceUri }, { parentCtx: ctx });
-              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               if (destUri) this.imported[sourceUri] = destUri;
             }
           } else {
             throw new Error(
               `Error fetching the endpoint ${
-                // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
                 typeof this.settings.source.getAllCompact === 'string'
-                  ? // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-                    this.settings.source.getAllCompact
-                  : // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-                    this.settings.source.getAllCompact.url
+                  ? this.settings.source.getAllCompact
+                  : this.settings.source.getAllCompact.url
               }...`
             );
           }
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         } else if (this.settings.source.getAllFull) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.info('Fetching full list...');
 
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           const fullResults = await this.list(this.settings.source.getAllFull);
 
           if (fullResults) {
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             this.logger.info(
               `Importing ${fullResults.length} items from ${
-                // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
                 typeof this.settings.source.getAllFull === 'string'
-                  ? // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-                    this.settings.source.getAllFull
-                  : // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-                    this.settings.source.getAllFull.url
+                  ? this.settings.source.getAllFull
+                  : this.settings.source.getAllFull.url
               }...`
             );
 
             for (const data of fullResults) {
-              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               const sourceUri = this.settings.source.getOneFull && this.settings.source.getOneFull(data);
-              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               const destUri = await this.actions.importOne({ sourceUri, data }, { parentCtx: ctx });
-              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               if (destUri) this.imported[sourceUri] = destUri;
             }
           } else {
             throw new Error(
               `Error fetching the endpoint ${
-                // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
                 typeof this.settings.source.getAllFull === 'string'
-                  ? // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-                    this.settings.source.getAllFull
-                  : // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-                    this.settings.source.getAllFull.url
+                  ? this.settings.source.getAllFull
+                  : this.settings.source.getAllFull.url
               }...`
             );
           }
@@ -193,7 +164,6 @@ const Schema = {
           throw new Error('You must define the setting source.getAllCompact or source.getAllFull');
         }
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.logger.info(`Import finished !`);
       }
     }),
@@ -201,16 +171,12 @@ const Schema = {
     synchronize: defineAction({
       handler() {
         if (this.createJob) {
-          // @ts-expect-error TS(2349): This expression is not callable.
           this.createJob(this.name, 'synchronize', {});
         } else {
           // If QueueMixin is not available, call method with fake job object
-          // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
           return this.processSynchronize({
             data: {},
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             progress: (number: any) => this.logger.info(`Progress: ${number}%`),
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             log: (message: any) => this.logger.info(message)
           });
         }
@@ -222,22 +188,18 @@ const Schema = {
         let { sourceUri, destUri, data } = ctx.params;
 
         if (!data) {
-          // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
           data = await this.getOne(sourceUri);
 
           if (!data) {
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             this.logger.warn(`Invalid ${sourceUri}...`);
             return false; // False = delete resource if it exists
           }
         }
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const resource = await this.transform(data);
 
         // If resource is false, it means it is not published
         if (!resource) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.info(`Skipping ${sourceUri} (not published)...`);
           return false; // False = delete resource if it exists
         }
@@ -249,18 +211,14 @@ const Schema = {
           });
 
           const oldUpdatedDate = oldData['dc:modified'];
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           const newUpdatedDate = this.getField('updated', data);
 
           if (!oldUpdatedDate || !newUpdatedDate || new Date(newUpdatedDate) > new Date(oldUpdatedDate)) {
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             this.logger.info(`Reimporting ${sourceUri}...`);
 
             const oldDataToKeep =
-              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               this.settings.dest.predicatesToKeep.length > 0
                 ? Object.fromEntries(
-                    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
                     Object.entries(oldData).filter(([key]) => this.settings.dest.predicatesToKeep.includes(key))
                   )
                 : {};
@@ -272,67 +230,52 @@ const Schema = {
                   ...resource,
                   ...oldDataToKeep,
                   'dc:source': sourceUri,
-                  // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
                   'dc:created': resource['dc:created'] || this.getField('created', data),
-                  // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
                   'dc:modified': resource['dc:modified'] || this.getField('updated', data),
-                  // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
                   'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri
                 },
                 contentType: MIME_TYPES.JSON,
                 webId: 'system'
               });
             } catch (e) {
-              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+              // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
               this.logger.warn(`Unable to update ${destUri} (Error message: ${e.message})`);
               return false;
             }
           } else {
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             this.logger.info(`Skipping ${sourceUri} (not changed)...`);
             return true; // True = skipping
           }
         } else {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.info(`Importing ${sourceUri}...`);
 
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           if (!this.settings.dest.containerUri) {
             throw new Error(`Cannot import as dest.containerUri setting is not defined`);
           }
 
           try {
-            // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
             destUri = await ctx.call('ldp.container.post', {
               containerUri:
-                // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
                 typeof this.settings.dest.containerUri === 'string'
-                  ? // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-                    this.settings.dest.containerUri
-                  : // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-                    this.settings.dest.containerUri(resource),
-              // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
+                  ? this.settings.dest.containerUri
+                  : this.settings.dest.containerUri(resource),
               slug: this.getField('slug', data),
               resource: {
                 ...resource,
                 'dc:source': sourceUri,
-                // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
                 'dc:created': resource['dc:created'] || this.getField('created', data),
-                // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
                 'dc:modified': resource['dc:modified'] || this.getField('updated', data),
-                // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
                 'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri
               },
               contentType: MIME_TYPES.JSON,
               webId: 'system'
             });
           } catch (e) {
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+            // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
             this.logger.warn(`Unable to import ${sourceUri} (Error message: ${e.message})`);
             return false;
           }
 
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.info(`Done! Resource URL: ${destUri}`);
         }
 
@@ -342,9 +285,7 @@ const Schema = {
 
     deleteImported: defineAction({
       async handler(ctx) {
-        // @ts-expect-error TS(2769): No overload matches this call.
         for (const resourceUri of Object.values(this.imported)) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.info(`Deleting ${resourceUri}...`);
 
           // TODO also delete blank nodes attached to the resources
@@ -360,14 +301,12 @@ const Schema = {
 
     list: defineAction({
       async handler(ctx) {
-        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         return await this.list(ctx.params.url || this.settings.source.getAllFull);
       }
     }),
 
     getOne: defineAction({
       async handler(ctx) {
-        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         return await this.getOne(this.settings.source.getOneFull(ctx.params.data));
       }
     }),

@@ -1,5 +1,4 @@
 import fs from 'fs';
-// @ts-expect-error TS(2305): Module '"path"' has no exported member 'pathJoin'.
 import { join as pathJoin } from 'path';
 
 const fsRemove = async (removeFiles: any, subDir: any, remoteServer: any) => {

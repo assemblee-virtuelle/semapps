@@ -13,6 +13,7 @@ const Schema = defineAction({
     containerUri: { type: 'string' },
     title: { type: 'string', optional: true },
     description: { type: 'string', optional: true },
+    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     options: { type: 'object', optional: true },
     webId: { type: 'string', optional: true } // Required in Pod provider config
   },
@@ -24,15 +25,12 @@ const Schema = defineAction({
     if (!exists) {
       let parentContainerUri;
 
-      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       if (this.settings.podProvider && (!webId || webId === 'anon' || webId === 'system'))
         throw new Error(`The webId param is required in Pod provider config. Provided: ${webId}`);
 
-      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       const rootContainerUri = this.settings.podProvider
         ? await ctx.call('solid-storage.getUrl', { webId })
-        : // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-          urlJoin(this.settings.baseUrl, '/');
+        : urlJoin(this.settings.baseUrl, '/');
 
       const containerPath = containerUri.replace(rootContainerUri, '/');
 
@@ -41,7 +39,6 @@ const Schema = defineAction({
         parentContainerUri = getParentContainerUri(containerUri);
 
         // if it is the root container, add a trailing slash
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (!this.settings.podProvider && urlJoin(parentContainerUri, '/') === rootContainerUri) {
           parentContainerUri = urlJoin(parentContainerUri, '/');
         }
@@ -53,7 +50,6 @@ const Schema = defineAction({
 
         if (!parentExists) {
           // Recursively create the parent containers, without title/description/permissions
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           await this.actions.createAndAttach(
             { containerUri: parentContainerUri, options: { permissions: {} }, webId },
             { parentCtx: ctx }
@@ -62,14 +58,12 @@ const Schema = defineAction({
       }
 
       // Then create the container
-      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       await this.actions.create(
         {
           containerUri,
           title,
           description,
           options,
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           webId: this.settings.podProvider ? webId : 'system'
         },
         { parentCtx: ctx }
@@ -77,7 +71,6 @@ const Schema = defineAction({
 
       // Then attach the container to its parent container
       if (parentContainerUri) {
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         await this.actions.attach(
           {
             containerUri: parentContainerUri,

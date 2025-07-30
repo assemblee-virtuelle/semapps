@@ -29,6 +29,7 @@ const S3 = {
         return ps.a3p;
       }
     }),
+    // @ts-expect-error TS(2448): Block-scoped variable 'a4Action' used before its d... Remove this comment to see the full error message
     a4Action
   }
 } satisfies ServiceSchema;
@@ -59,6 +60,7 @@ const a4Action = defineAction({
 type ServiceKey = keyof AllServices;
 type ServiceName = AllServices[ServiceKey]['name'];
 
+// @ts-expect-error TS(2344): Type 'AllServices' does not satisfy the constraint... Remove this comment to see the full error message
 type AllActions = UnionToIntersect<ActionsOfServices<AllServices>>;
 type ActionName = keyof AllActions;
 
@@ -109,14 +111,21 @@ interface ServiceSettingSchema {
 type Call<Meta extends any = any> = <AName extends ActionName = ActionName, Action = AllActions[AName]>(
   actionName: AName,
   ...args: AName extends keyof AllActions
-    ? HasAtLeastOneRequiredParam<Action> extends true
-      ? [params: ParamTypeOfAction<Action>, opts?: CallingOptions<Meta>]
-      : [params?: ParamTypeOfAction<Action>, opts?: CallingOptions<Meta>]
-    : [params?: Record<string, any>, opts?: CallingOptions<Meta>]
+    ? // @ts-expect-error TS(2344): Type 'Action' does not satisfy the constraint 'Act... Remove this comment to see the full error message
+      HasAtLeastOneRequiredParam<Action> extends true
+      ? // @ts-expect-error TS(2344): Type 'Action' does not satisfy the constraint 'Act... Remove this comment to see the full error message
+        [params: ParamTypeOfAction<Action>, opts?: CallingOptions<Meta>]
+      : // @ts-expect-error TS(2344): Type 'Action' does not satisfy the constraint 'Act... Remove this comment to see the full error message
+        [params?: ParamTypeOfAction<Action>, opts?: CallingOptions<Meta>]
+    : // @ts-expect-error TS(2344): Type 'Meta' does not satisfy the constraint 'Gener... Remove this comment to see the full error message
+      [params?: Record<string, any>, opts?: CallingOptions<Meta>]
+  // @ts-expect-error TS(2344): Type 'HandlerOfAction<Action>' does not satisfy th... Remove this comment to see the full error message
 ) => Promisify<AName extends keyof AllActions ? ReturnType<HandlerOfAction<Action>> : unknown>;
 
 class Context<Params extends Record<string, any> = Record<string, any>> {
+  // @ts-expect-error TS(2564): Property 'params' has no initializer and is not de... Remove this comment to see the full error message
   params: Params;
+  // @ts-expect-error TS(2564): Property 'call' has no initializer and is not defi... Remove this comment to see the full error message
   call: Call;
 }
 
@@ -176,7 +185,8 @@ type TypeFromParsedParam<
     : T extends 'multi'
       ? MultiType<MultiTypeSchemas>
       : T extends 'object'
-        ? TypeFromSchema<ObjectSchema>
+        ? // @ts-expect-error TS(2344): Type 'ObjectSchema' does not satisfy the constrain... Remove this comment to see the full error message
+          TypeFromSchema<ObjectSchema>
         : never;
 
 /** Fastest-validator types with primitive mapping.  */
@@ -216,7 +226,8 @@ type Promisify<O> = O extends Promise<any> ? O : Promise<O>;
 
 /** Get the parameter type of an action, if it exists. */
 type ParamTypeOfAction<Action extends ActionHandler | ActionSchema> = 'params' extends keyof Action
-  ? TypeFromSchema<Action['params']>
+  ? // @ts-expect-error TS(2344): Type 'Action["params"]' does not satisfy the const... Remove this comment to see the full error message
+    TypeFromSchema<Action['params']>
   : unknown;
 
 /** Handler function from Handler (which can be a function or a action definitions). */
@@ -264,6 +275,7 @@ type ParamOfAction<A extends ActionSchema | ActionHandler> =
  * It omits the fully typed `call` method, which depends on `AllActions`.
  * The runtime `ctx` object will still have the typed `call` method.
  */
+// @ts-expect-error TS(2344): Type 'P' does not satisfy the constraint 'Record<s... Remove this comment to see the full error message
 type HandlerContext<P = unknown> = Omit<Context<P>, 'call'> & {
   call: <AName extends string = string>(actionName: AName, params?: any, opts?: CallingOptions) => Promise<any>;
 };
@@ -289,8 +301,10 @@ type ActionSchema<
   [key: string]: string | boolean | any[] | number | Record<any, any> | null | undefined;
 };
 
+// @ts-expect-error TS(2391): Function implementation is missing or not immediat... Remove this comment to see the full error message
 function defineAction<Schema extends ValidatorSchema, Handler extends ActionHandler<TypeFromSchema<Schema>>>(
   schema: ActionSchema<Schema, Handler>
 ): ActionSchema<Schema, Handler>;
 
+// @ts-expect-error TS(2391): Function implementation is missing or not immediat... Remove this comment to see the full error message
 function defineServiceEvent<P extends ValidatorSchema>(schema: ServiceEvent<P>): ServiceEvent<P>;

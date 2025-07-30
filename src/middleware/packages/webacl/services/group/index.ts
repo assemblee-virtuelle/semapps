@@ -20,10 +20,12 @@ const WebaclGroupSchema = {
   },
   dependencies: ['triplestore', 'webacl.resource', 'ldp.container'],
   actions: {
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ groupSlug: { type: "string"; ... Remove this comment to see the full error message
     getUri: getUriAction.action,
     isMember: isMemberAction.action,
     exist: existAction.action,
     // Actions accessible through the API
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ groupSlug: { type: "string"; ... Remove this comment to see the full error message
     addMember: addMemberAction.action,
     api_addMember: addMemberAction.api,
     create: createAction.action,
@@ -34,6 +36,7 @@ const WebaclGroupSchema = {
     api_getGroups: getGroupsAction.api,
     getMembers: getMembersAction.action,
     api_getMembers: getMembersAction.api,
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ groupSlug: { type: "string"; ... Remove this comment to see the full error message
     removeMember: removeMemberAction.action,
     api_removeMember: removeMemberAction.api
   },

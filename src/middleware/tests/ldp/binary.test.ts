@@ -1,15 +1,17 @@
+// @ts-expect-error
 import fetch from 'node-fetch';
 import fs from 'fs';
-import { join as pathJoin } from 'path';
+import { join as pathJoin, dirname } from 'path';
 import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { getSlugFromUri } from '@semapps/ldp';
 import { fileURLToPath } from 'url';
 import { fetchServer } from '../utils.ts';
 import initialize from './initialize.ts';
-import CONFIG from '../config.ts';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+import * as CONFIG from '../config.ts';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 jest.setTimeout(20000);
 let broker: any;
@@ -30,6 +32,7 @@ describe('Binary handling of LDP server', () => {
   test('Post image to container', async () => {
     const readStream = fs.createReadStream(pathJoin(__dirname, 'av-icon.png'));
 
+    // @ts-expect-error
     const { headers } = await fetchServer(urlJoin(CONFIG.HOME_URL, 'files'), {
       method: 'POST',
       body: readStream,
@@ -39,6 +42,7 @@ describe('Binary handling of LDP server', () => {
     });
 
     fileUri = headers.get('Location');
+
     expect(fileUri).not.toBeNull();
 
     filePath = fileUri.replace(CONFIG.HOME_URL, '');
@@ -48,6 +52,7 @@ describe('Binary handling of LDP server', () => {
   });
 
   test('Get container', async () => {
+    // @ts-expect-error
     await expect(fetchServer(urlJoin(CONFIG.HOME_URL, 'files'))).resolves.toMatchObject({
       json: {
         '@type': ['ldp:Container', 'ldp:BasicContainer'],
@@ -72,7 +77,9 @@ describe('Binary handling of LDP server', () => {
     });
 
     expect(headers.get('Content-Length')).toBe('3181');
+
     expect(headers.get('Cache-Control')).toBe('public, max-age=31536000');
+
     expect(headers.get('Content-Type')).toBe('image/png');
 
     expect(body).toContain('PNG');
@@ -108,6 +115,7 @@ describe('Binary handling of LDP server', () => {
       status: 404
     });
 
+    // @ts-expect-error
     await expect(fetchServer(urlJoin(CONFIG.HOME_URL, 'files'))).resolves.toMatchObject({
       json: {
         '@type': ['ldp:Container', 'ldp:BasicContainer'],

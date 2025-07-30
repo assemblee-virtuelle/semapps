@@ -13,6 +13,7 @@ import vc from '@digitalbazaar/vc';
 import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
 
 import { ServiceSchema, defineAction } from 'moleculer';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'json... Remove this comment to see the full error message
 import jsigs from 'jsonld-signatures';
 import { KEY_TYPES, credentialsContext } from '../constants.ts';
 
@@ -47,6 +48,7 @@ const VCHolderService = {
         presentation: {
           type: 'object',
           params: {
+            // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
             verifiableCredential: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }] },
             '@context': { type: 'string', optional: true },
             id: { type: 'string', optional: true },
@@ -59,11 +61,14 @@ const VCHolderService = {
             challenge: { type: 'string' },
             domain: { type: 'string', optional: true },
             proofPurpose: { type: 'string', optional: true },
+            // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
             persist: { type: 'boolean', default: false }
           }
         },
+        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         keyObject: { type: 'object', optional: true },
         keyId: { type: 'string', optional: true },
+        // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
         noAnonRead: { type: 'boolean', default: false },
         webId: { type: 'string', optional: true }
       },
@@ -97,14 +102,10 @@ const VCHolderService = {
         // Create presentation.
         const presentation = {
           ...vc.createPresentation({
-            // @ts-expect-error TS(2783): '@context' is specified more than once, so this us... Remove this comment to see the full error message
             '@context': credentialsContext,
-            // @ts-expect-error TS(2783): 'type' is specified more than once, so this usage ... Remove this comment to see the full error message
             type: ['VerifiablePresentation'],
-            // @ts-expect-error TS(2783): 'id' is specified more than once, so this usage wi... Remove this comment to see the full error message
             id: !presentationParam.id && !ctx.params.options.persist && `urn:uuid:${randomUUID()}`,
             ...presentationParam,
-            // @ts-expect-error TS(2339): Property 'holder' does not exist on type '{ verifi... Remove this comment to see the full error message
             holder: presentationParam?.holder || webId
           })
         };
@@ -112,8 +113,7 @@ const VCHolderService = {
         // Create the VP resource, if the id is not set.
         const presentationWithId = presentation.id
           ? presentation
-          : // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
-            await this.createPresentationResource(presentation, noAnonRead, webId);
+          : await this.createPresentationResource(presentation, noAnonRead, webId);
 
         // Sign presentation.
         const signedPresentation = await vc.signPresentation({

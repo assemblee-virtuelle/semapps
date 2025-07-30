@@ -63,7 +63,6 @@ const VCPresentationContainer = {
         return await ctx.call('ldp.resource.put', {
           ...ctx.params,
           resource: {
-            // @ts-expect-error TS(2698): Spread types may only be created from object types... Remove this comment to see the full error message
             ...resource,
             '@context': credentialsContextNoGraphProof
           }
@@ -79,10 +78,8 @@ const VCPresentationContainer = {
         const { resource } = ctx.params;
         return await ctx.call('ldp.container.post', {
           ...ctx.params,
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           containerUri: await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx }),
           resource: {
-            // @ts-expect-error TS(2698): Spread types may only be created from object types... Remove this comment to see the full error message
             ...resource,
             '@context': credentialsContextNoGraphProof
           }

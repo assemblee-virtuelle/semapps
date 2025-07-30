@@ -30,6 +30,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', (
       const { webId } = await broker[i].call('auth.signup', require(`./data/actor${i}.json`));
       actors[i] = await broker[i].call('activitypub.actor.awaitCreateComplete', { actorUri: webId });
       actors[i].call = (actionName: any, params: any, options = {}) =>
+        // @ts-expect-error
         broker[i].call(actionName, params, { ...options, meta: { ...options.meta, webId } });
     }
 
@@ -68,6 +69,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', (
     });
 
     // Ensure the /likes collection has been created
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
         alice.call('ldp.resource.get', {
@@ -80,6 +82,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', (
     });
 
     // Ensure Bob has been added to the /likes collection
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
         alice.call('activitypub.collection.get', {
@@ -93,6 +96,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', (
     });
 
     // Ensure the note has been added to Bob's /liked collection
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
         bob.call('activitypub.collection.get', {
@@ -119,20 +123,24 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', (
     });
 
     // Ensure Bob has been removed from the /likes collection
+    // @ts-expect-error
     await waitForExpect(async () => {
       const likes = await alice.call('activitypub.collection.get', {
         resourceUri: `${aliceMessageUri}/likes`,
         accept: MIME_TYPES.JSON
       });
+
       expect(likes.items).toHaveLength(0);
     });
 
     // Ensure the note has been removed from Bob's /liked collection
+    // @ts-expect-error
     await waitForExpect(async () => {
       const liked = await bob.call('activitypub.collection.get', {
         resourceUri: `${bob.id}/liked`,
         accept: MIME_TYPES.JSON
       });
+
       expect(liked.items).toHaveLength(0);
     });
   });

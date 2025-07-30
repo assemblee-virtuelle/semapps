@@ -9,7 +9,6 @@ export const action = defineAction({
   handler(ctx) {
     const { uri } = ctx.params;
     return {
-      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       uri: getAclUriFromResourceUri(this.settings.baseUrl, uri),
       rel: 'acl'
     };

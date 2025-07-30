@@ -63,6 +63,7 @@ afterAll(async () => {
 
 describe('verifiable credentials', () => {
   beforeAll(async () => {
+    // @ts-expect-error
     await setUp();
     await broker.call('crypto.vc.issuer.credential-container.waitForContainerCreation');
   });
@@ -143,6 +144,7 @@ describe('verifiable credentials', () => {
           }
         })
       });
+
       expect(verifiableCredential.type).not.toBe('VALIDATION_ERROR');
 
       delete verifiableCredential.credentialSubject.description;
@@ -151,6 +153,7 @@ describe('verifiable credentials', () => {
         method: 'POST',
         body: JSON.stringify({ verifiableCredential })
       });
+
       expect(validationResult.type).not.toBe('VALIDATION_ERROR');
 
       expect(validationResult.verified).toBe(false);
@@ -207,6 +210,7 @@ describe('verifiable credentials', () => {
           }
         })
       });
+
       expect(credential.type).not.toBe('VALIDATION_ERROR');
 
       const verifiablePresentation = await bob.fetch(path.join(vcApiEndpoint, 'presentations'), {
@@ -220,6 +224,7 @@ describe('verifiable credentials', () => {
           }
         })
       });
+
       expect(verifiablePresentation.type).not.toBe('VALIDATION_ERROR');
       delete verifiablePresentation.proof;
 
@@ -245,6 +250,7 @@ describe('verifiable credentials', () => {
           }
         })
       });
+
       expect(credential.type).not.toBe('VALIDATION_ERROR');
 
       const verifiablePresentation = await bob.fetch(path.join(vcApiEndpoint, 'presentations'), {
@@ -258,6 +264,7 @@ describe('verifiable credentials', () => {
           }
         })
       });
+
       expect(verifiablePresentation.type).not.toBe('VALIDATION_ERROR');
 
       verifiablePresentation.verifiableCredential[0].credentialSubject.description = 'Modified!';
@@ -443,6 +450,7 @@ describe('verifiable credentials', () => {
       );
 
       expect(validationResult.verified).toBe(false);
+
       expect(validationResult.error?.errors?.[0].message).toMatch(
         'Invoker of capability is not the subject of the last capability'
       );

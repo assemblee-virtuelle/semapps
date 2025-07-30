@@ -14,7 +14,6 @@ const DigestSubscriptionSchema = {
     findByWebId: defineAction({
       async handler(ctx) {
         const { webId } = ctx.params;
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const subscriptions = await this._find(ctx, { query: { webId } });
         return subscriptions.length > 0 ? subscriptions[0] : null;
       }

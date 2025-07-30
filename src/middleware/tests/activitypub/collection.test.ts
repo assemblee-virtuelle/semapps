@@ -1,7 +1,8 @@
 import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
 import initialize from './initialize.ts';
-import CONFIG from '../config.ts';
+
+import * as CONFIG from '../config.ts';
 
 jest.setTimeout(50000);
 let broker: any;
@@ -25,6 +26,7 @@ describe('Collections', () => {
     for (let i = 0; i < 10; i++) {
       items.push(
         await broker.call('ldp.container.post', {
+          // @ts-ignore
           containerUri: urlJoin(CONFIG.HOME_URL, 'as/object'),
           resource: {
             '@context': 'https://www.w3.org/ns/activitystreams',
@@ -85,9 +87,11 @@ describe('Collections', () => {
     const collectionExist = await broker.call('activitypub.collection.exist', {
       resourceUri: collectionUri
     });
+
     expect(collectionExist).toBeTruthy();
 
     const collection = await broker.call('activitypub.collection.get', { resourceUri: collectionUri });
+
     expect(collection).toMatchObject({
       id: collectionUri,
       type: 'Collection',
@@ -114,11 +118,13 @@ describe('Collections', () => {
     const collectionExist = await broker.call('activitypub.collection.exist', {
       resourceUri: orderedCollectionUri
     });
+
     expect(collectionExist).toBeTruthy();
 
     const collection = await broker.call('activitypub.collection.get', {
       resourceUri: orderedCollectionUri
     });
+
     expect(collection).toMatchObject({
       id: orderedCollectionUri,
       type: 'OrderedCollection',
@@ -161,6 +167,7 @@ describe('Collections', () => {
       summary: 'My non-ordered collection'
     });
 
+    // @ts-ignore
     expect(collection.items).toBeUndefinedOrEmptyArray();
   });
 
@@ -318,7 +325,9 @@ describe('Collections', () => {
         partOf: paginatedCollectionUri,
         next: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[4])}`
       });
+
       expect(collection.items).toHaveLength(4);
+
       expect(collection.items).toEqual([items[0], items[1], items[2], items[3]]);
     });
 
@@ -334,7 +343,9 @@ describe('Collections', () => {
         partOf: paginatedCollectionUri,
         prev: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[1])}`
       });
+
       expect(collection.items).toHaveLength(4);
+
       expect(collection.items).toEqual([items[2], items[3], items[4], items[5]]);
     });
 
@@ -358,8 +369,12 @@ describe('Collections', () => {
           id: emptyCollectionUri,
           type: 'Collection'
         });
+
         expect(collection.first).toBeUndefined();
+
         expect(collection.last).toBeUndefined();
+
+        // @ts-ignore
         expect(collection.items).toBeUndefinedOrEmptyArray();
       });
 
@@ -391,7 +406,9 @@ describe('Collections', () => {
           type: 'CollectionPage',
           partOf: exactCollectionUri
         });
+
         expect(collection.next).toBeUndefined();
+
         expect(collection.items).toHaveLength(4);
       });
 
@@ -403,6 +420,7 @@ describe('Collections', () => {
         });
 
         expect(collection.items).toHaveLength(2);
+
         expect(collection.next).toBeUndefined();
       });
     });
@@ -435,8 +453,10 @@ describe('Collections', () => {
         }
 
         // With 10 items and page size 4, we should have 3 pages
+
         expect(pageCount).toBe(3);
         // Should have seen all items exactly once
+
         expect(seenItems.size).toBe(10);
       });
 
@@ -460,6 +480,7 @@ describe('Collections', () => {
         });
 
         // Verify we get back to the same items
+
         expect(firstPage.items).toEqual(prevPage.items);
       });
     });
@@ -467,7 +488,9 @@ describe('Collections', () => {
 
   describe('Error Handling', () => {
     test('Should return 404 when collection does not exist', async () => {
+      // @ts-ignore
       const nonExistentUri = urlJoin(CONFIG.HOME_URL, 'as/collection/non-existent');
+
       await expect(
         broker.call('activitypub.collection.get', {
           resourceUri: nonExistentUri
@@ -476,7 +499,9 @@ describe('Collections', () => {
     });
 
     test('Should return 404 when cursor not found in collection', async () => {
+      // @ts-ignore
       const invalidCursorUri = urlJoin(CONFIG.HOME_URL, 'as/object/non-existent');
+
       await expect(
         broker.call('activitypub.collection.get', {
           resourceUri: cursorBasedCollectionUri,
@@ -497,6 +522,7 @@ describe('Collections', () => {
 
     test('Should handle malformed collection URI', async () => {
       const malformedUri = 'not-a-valid-uri';
+
       await expect(
         broker.call('activitypub.collection.get', {
           resourceUri: malformedUri

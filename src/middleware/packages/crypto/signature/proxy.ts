@@ -52,23 +52,18 @@ const ProxyService = {
         const actorUri = ctx.meta.webId;
 
         // Only user can query his own proxy URL
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (this.settings.podProvider) {
           const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
-          // @ts-expect-error TS(2304): Cannot find name 'E'.
           if (account.username !== ctx.params.username) throw new E.ForbiddenError();
         }
 
         // If a file is uploaded, convert it to a Buffer
         const body =
-          // @ts-expect-error TS(2339): Property 'length' does not exist on type 'never'.
           ctx.params.files && ctx.params.files.length > 0
-            ? // @ts-expect-error TS(2339): Property 'readableStream' does not exist on type '... Remove this comment to see the full error message
-              await stream2buffer(ctx.params.files[0].readableStream)
+            ? await stream2buffer(ctx.params.files[0].readableStream)
             : ctx.params.body;
 
         try {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           const response = await this.actions.query(
             {
               url,
@@ -115,17 +110,14 @@ const ProxyService = {
         if (
           headers &&
           typeof headers === 'object' &&
-          // @ts-expect-error TS(2339): Property 'constructor' does not exist on type 'nev... Remove this comment to see the full error message
           (headers.constructor.name === 'Headers' || headers.constructor.name === '_Headers')
         ) {
-          // @ts-expect-error TS(2322): Type '{ [k: string]: any; }' is not assignable to ... Remove this comment to see the full error message
           headers = Object.fromEntries(headers);
         }
 
         const response = await fetch(url, {
           method,
           headers: {
-            // @ts-expect-error TS(2698): Spread types may only be created from object types... Remove this comment to see the full error message
             ...headers,
             ...signatureHeaders
           },
@@ -165,7 +157,7 @@ const ProxyService = {
   events: {
     'auth.registered': defineServiceEvent({
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'ServiceEv... Remove this comment to see the full error message
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
         // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
         if (this.settings.podProvider) {

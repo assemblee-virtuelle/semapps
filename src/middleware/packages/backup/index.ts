@@ -62,9 +62,7 @@ const BackupService = {
   actions: {
     backupAll: defineAction({
       async handler(ctx) {
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         await this.actions.backupDatasets({}, { parentCtx: ctx });
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         await this.actions.backupOtherDirs({}, { parentCtx: ctx });
       }
     }),
@@ -74,22 +72,18 @@ const BackupService = {
         // Generate a new backup of all datasets
         const datasets = await ctx.call('triplestore.dataset.list');
         for (const dataset of datasets) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.info(`Backing up dataset: ${dataset}`);
           await ctx.call('triplestore.dataset.backup', { dataset });
         }
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const backupsDirPath = pathJoin(this.settings.localServer.fusekiBase, 'backups');
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const copied = await this.actions.copyToRemoteServer(
           { path: backupsDirPath, subDir: 'datasets' },
           { parentCtx: ctx }
         );
 
         // If there was an error on copy, don't delete the backups
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (copied && this.settings.deleteFusekiBackupsAfterCopy) {
           emptyDirSync(backupsDirPath);
         }
@@ -98,19 +92,15 @@ const BackupService = {
 
     backupOtherDirs: defineAction({
       async handler(ctx) {
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const { otherDirsPaths } = this.settings.localServer;
 
         if (!otherDirsPaths) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.info('No otherDirPaths defined, skipping backup...');
           return;
         }
 
         for (const [key, path] of Object.entries(otherDirsPaths)) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.info(`Backing up directory: ${path}`);
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           await this.actions.copyToRemoteServer({ path, subDir: key }, { parentCtx: ctx });
         }
       }
@@ -119,12 +109,10 @@ const BackupService = {
     copyToRemoteServer: defineAction({
       async handler(ctx) {
         const { path, subDir } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'copyMethod' does not exist on type 'stri... Remove this comment to see the full error message
         const { copyMethod, remoteServer } = this.settings;
 
         // Path is mandatory for all copy methods
         if (!remoteServer.path) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.info('No remote server config defined, skipping remote backup...');
           return false;
         }
@@ -145,7 +133,7 @@ const BackupService = {
           }
           return true;
         } catch (e) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+          // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
           this.logger.error(`Failed to copy ${path} to remote server with ${copyMethod}. Error: ${e.message}`);
           return false;
         }
@@ -159,11 +147,8 @@ const BackupService = {
       async handler(ctx) {
         const { dataset } = ctx.params;
         const {
-          // @ts-expect-error TS(2339): Property 'copyMethod' does not exist on type 'stri... Remove this comment to see the full error message
           copyMethod,
-          // @ts-expect-error TS(2339): Property 'remoteServer' does not exist on type 'st... Remove this comment to see the full error message
           remoteServer,
-          // @ts-expect-error TS(2339): Property 'localServer' does not exist on type 'str... Remove this comment to see the full error message
           localServer: { fusekiBase }
         } = this.settings;
 
@@ -203,10 +188,8 @@ const BackupService = {
         // File format: <dataset-name>_<iso timestamp, but with _ instead of T and : replaced by `-`>
         const backupsPattern = RegExp(`^${dataset}_.{10}_.{8}\\.nq\\.gz$`);
         const filenames = await fs.promises
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           .readdir(pathJoin(this.settings.localServer.fusekiBase, 'backups'))
           .then(files => files.filter(file => backupsPattern.test(file)))
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           .then(files => files.map(file => pathJoin(this.settings.localServer.fusekiBase, 'backups', file)));
 
         return filenames;

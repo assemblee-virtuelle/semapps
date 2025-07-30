@@ -1,5 +1,6 @@
 import urlJoin from 'url-join';
-import CONFIG from '../config.ts';
+
+import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
 
 jest.setTimeout(20000);
@@ -18,9 +19,11 @@ describe('middleware CRUD group with perms', () => {
     try {
       const res = await broker.call('webacl.group.create', { groupSlug: 'mygroup5' });
 
+      // @ts-expect-error
       expect(res.groupUri).toBe(urlJoin(CONFIG.HOME_URL, '_groups', 'mygroup5'));
     } catch (e) {
       console.log(e);
+
       expect(e).toEqual(null);
     }
   }, 20000);
@@ -29,9 +32,11 @@ describe('middleware CRUD group with perms', () => {
     try {
       const res = await broker.call('webacl.group.create', { groupSlug: 'mygroup10', webId: 'http://test/user3' });
 
+      // @ts-expect-error
       expect(res.groupUri).toBe(urlJoin(CONFIG.HOME_URL, '_groups', 'mygroup10'));
     } catch (e) {
       console.log(e);
+
       expect(e).toEqual(null);
     }
   }, 20000);
@@ -46,6 +51,7 @@ describe('middleware CRUD group with perms', () => {
       expect(members).toEqual(expect.arrayContaining(['http://test/user1', 'http://test/user2']));
     } catch (e) {
       console.log(e);
+
       expect(e).toEqual(null);
     }
   }, 20000);
@@ -54,6 +60,7 @@ describe('middleware CRUD group with perms', () => {
     try {
       await broker.call('webacl.group.delete', { groupSlug: 'mygroup10' });
     } catch (e) {
+      // @ts-expect-error
       expect(e.code).toEqual(403);
     }
   }, 20000);
@@ -62,6 +69,7 @@ describe('middleware CRUD group with perms', () => {
     try {
       await broker.call('webacl.group.delete', { groupSlug: 'mygroup10', webId: 'http://test/user2' });
     } catch (e) {
+      // @ts-expect-error
       expect(e.code).toEqual(403);
     }
   }, 20000);
@@ -71,6 +79,7 @@ describe('middleware CRUD group with perms', () => {
       await broker.call('webacl.group.delete', { groupSlug: 'mygroup10', webId: 'http://test/user3' });
     } catch (e) {
       console.log(e);
+
       expect(e).toEqual(null);
     }
   }, 20000);
@@ -80,6 +89,7 @@ describe('middleware CRUD group with perms', () => {
       await broker.call('webacl.group.delete', { groupSlug: 'mygroup5' });
     } catch (e) {
       console.log(e);
+
       expect(e).toEqual(null);
     }
   }, 20000);

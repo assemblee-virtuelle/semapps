@@ -37,11 +37,10 @@ export const action = defineAction({
 
     if (!groupUri) {
       groupSlug = createSlug(groupSlug, { lang: 'fr', custom: { '.': '.', '/': '/' } });
-      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+      // @ts-expect-error TS(2345): Argument of type 'TypeFromSchemaParam<{ type: "str... Remove this comment to see the full error message
       groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
     }
 
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     if (await this.actions.exist({ groupUri, webId: 'system' }, { parentCtx: ctx })) {
       throw new MoleculerError('Group already exists', 400, 'BAD_REQUEST');
     }
@@ -77,10 +76,7 @@ export const action = defineAction({
       query: sanitizeSparqlQuery`
         PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
         INSERT DATA { 
-          GRAPH <${
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-            this.settings.graphName
-          }> { 
+          GRAPH <${this.settings.graphName}> { 
             <${groupUri}> a vcard:Group 
           } 
         }

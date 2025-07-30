@@ -30,6 +30,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
       const { webId } = await broker[i].call('auth.signup', require(`./data/actor${i}.json`));
       actors[i] = await broker[i].call('activitypub.actor.awaitCreateComplete', { actorUri: webId });
       actors[i].call = (actionName: any, params: any, options = {}) =>
+        // @ts-expect-error
         broker[i].call(actionName, params, { ...options, meta: { ...options.meta, webId } });
     }
 
@@ -64,6 +65,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
       resourceUri: aliceMessageUri,
       accept: MIME_TYPES.JSON
     });
+
     expect(message).toMatchObject({
       type: OBJECT_TYPES.NOTE,
       attributedTo: alice.id,
@@ -71,6 +73,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
     });
 
     // Ensure the /replies collection has not been created yet
+
     expect(message.replies).not.toBeDefined();
   });
 
@@ -87,6 +90,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
 
     bobMessageUri = createActivity.object.id;
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
         alice.call('ldp.resource.get', {
@@ -98,6 +102,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
       });
     });
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
         alice.call('activitypub.collection.get', {
@@ -125,6 +130,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
       to: alice.id
     });
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
         alice.call('ldp.resource.get', {
@@ -134,15 +140,19 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
       ).resolves.toMatchObject({
         type: OBJECT_TYPES.TOMBSTONE,
         formerType: 'as:Note',
+
         deleted: expect.anything()
       });
     });
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       const replies = await alice.call('activitypub.collection.get', {
         resourceUri: `${aliceMessageUri}/replies`,
         accept: MIME_TYPES.JSON
       });
+
+      // @ts-expect-error
       expect(replies.items).toBeUndefinedOrEmptyArray();
     });
   });

@@ -35,7 +35,7 @@ const AuthCASService = {
               done(null, loginData);
             })
             .catch((e: any) => {
-              // @ts-expect-error TS(2304): Cannot find name 'E'.
+              // @ts-expect-error TS(2552): Cannot find name 'E'. Did you mean 'e'?
               done(new E.UnAuthorizedError(e.message), false);
             });
         }

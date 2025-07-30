@@ -54,7 +54,6 @@ const ApiService = {
         const { actorSlug, ...activity } = ctx.params;
         // @ts-expect-error TS(2339): Property 'requestUrl' does not exist on type '{}'.
         const { requestUrl } = ctx.meta;
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const { origin } = new URL(this.settings.baseUri);
 
         await ctx.call('activitypub.inbox.post', {
@@ -72,7 +71,6 @@ const ApiService = {
         let { actorSlug, ...activity } = ctx.params;
         // @ts-expect-error TS(2339): Property 'requestUrl' does not exist on type '{}'.
         const { requestUrl } = ctx.meta;
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const { origin } = new URL(this.settings.baseUri);
 
         activity = await ctx.call('activitypub.outbox.post', {
@@ -96,7 +94,7 @@ const ApiService = {
   events: {
     'ldp.registry.registered': defineServiceEvent({
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'container' does not exist on type 'Servi... Remove this comment to see the full error message
+        // @ts-expect-error TS(2339): Property 'container' does not exist on type 'Optio... Remove this comment to see the full error message
         const { container } = ctx.params;
         // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
         const { pathname: basePath } = new URL(this.settings.baseUri);

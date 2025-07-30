@@ -3,7 +3,6 @@ import sparqljsModule from 'sparqljs';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'node... Remove this comment to see the full error message
 import fetch from 'node-fetch';
 import { throw403, throw500 } from '@semapps/middlewares';
-import { ServiceSchema, defineAction } from 'moleculer';
 import countTriplesOfSubject from './actions/countTriplesOfSubject.ts';
 import deleteOrphanBlankNodes from './actions/deleteOrphanBlankNodes.ts';
 import dropAll from './actions/dropAll.ts';
@@ -12,9 +11,9 @@ import query from './actions/query.ts';
 import update from './actions/update.ts';
 import tripleExist from './actions/tripleExist.ts';
 import DatasetService from './subservices/dataset.ts';
+import { Errors as MoleculerErrors, ServiceSchema } from 'moleculer';
 
 const SparqlGenerator = sparqljsModule.Generator;
-import { Errors as MoleculerErrors } from 'moleculer';
 const { MoleculerError } = MoleculerErrors;
 
 const TripleStoreService = {
@@ -58,6 +57,7 @@ const TripleStoreService = {
     update,
     query,
     dropAll,
+    // @ts-expect-error
     countTriplesOfSubject,
     tripleExist,
     deleteOrphanBlankNodes
@@ -105,7 +105,7 @@ export default TripleStoreService;
 declare global {
   export namespace Moleculer {
     export interface AllServices {
-      [TripleStoreService.name]: typeof TripleStoreService;
+      // [TripleStoreService.name]: typeof TripleStoreService;
     }
   }
 }

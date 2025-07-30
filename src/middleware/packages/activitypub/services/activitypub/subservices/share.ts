@@ -27,13 +27,11 @@ const ShareService = {
         // Create the /shares collection and attach it to the object, unless it already exists
         const collectionUri = await ctx.call('activitypub.collections-registry.createAndAttachCollection', {
           objectUri,
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           collection: this.settings.collectionOptions,
           webId: 'system'
         });
 
         // Add the announce to the shares collection
-        // @ts-expect-error TS(2339): Property 'id' does not exist on type 'never'.
         await ctx.call('activitypub.collection.add', { collectionUri, item: announce.id });
       }
     }),
@@ -48,7 +46,6 @@ const ShareService = {
         if (object?.shares) {
           await ctx.call('activitypub.collection.remove', {
             collectionUri: object.shares,
-            // @ts-expect-error TS(2339): Property 'id' does not exist on type 'never'.
             item: announce.id
           });
         }
@@ -59,7 +56,6 @@ const ShareService = {
       async handler(ctx) {
         const { dataset } = ctx.params;
         await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           collection: this.settings.collectionOptions,
           dataset
         });

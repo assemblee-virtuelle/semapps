@@ -22,12 +22,10 @@ const ChallengeService = {
     create: defineAction({
       handler() {
         if (!this.cleanupTimerSetUp) {
-          // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
           this.startCleanupTimer();
         }
 
         const challenge = crypto.randomUUID();
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.challenges[challenge] = { issued: Date.now() };
 
         return { challenge };
@@ -51,20 +49,16 @@ const ChallengeService = {
         const { challenge } = ctx.params;
 
         // Does challenge exist?
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (!this.challenges[challenge]) {
           return { valid: false, error: new Error('Challenge not found or has expired.') };
         }
 
         // Is challenge expired?
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (Date.now() - this.challenges[challenge].issued > this.settings.challengeExpirationMs) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           delete this.challenges[challenge];
           return { valid: false, error: new Error('Challenge not found or has expired.') };
         }
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         delete this.challenges[challenge];
 
         return { valid: true };
@@ -74,11 +68,9 @@ const ChallengeService = {
     cleanElapsed: defineAction({
       handler() {
         const now = Date.now();
-        // @ts-expect-error TS(2769): No overload matches this call.
+        // @ts-expect-error TS(2339): Property 'issued' does not exist on type 'unknown'... Remove this comment to see the full error message
         for (const [challenge, { issued }] of Object.entries(this.challenges)) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           if (now - issued > this.settings.challengeExpirationMs) {
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             delete this.challenges[challenge];
           }
         }

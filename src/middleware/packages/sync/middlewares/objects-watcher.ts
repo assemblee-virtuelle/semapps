@@ -63,8 +63,8 @@ const ObjectsWatcherMiddleware = (config = {}) => {
   };
 
   const isExcluded = (containersUris: any) => {
-    // @ts-expect-error TS(7006): Parameter 'pathRegex' implicitly has an 'any' type... Remove this comment to see the full error message
     return containersUris.some((uri: any) =>
+      // @ts-expect-error TS(7006): Parameter 'pathRegex' implicitly has an 'any' type... Remove this comment to see the full error message
       excludedContainersPathRegex.some(pathRegex => pathRegex.test(new URL(uri).pathname))
     );
   };

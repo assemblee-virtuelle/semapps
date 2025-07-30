@@ -154,7 +154,7 @@ const InferenceSchema = {
   events: {
     'ldp.resource.created': defineServiceEvent({
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'newData' does not exist on type 'Service... Remove this comment to see the full error message
+        // @ts-expect-error TS(2339): Property 'newData' does not exist on type 'Optiona... Remove this comment to see the full error message
         let { newData } = ctx.params;
         newData = await ctx.call('jsonld.parser.expand', { input: newData });
 
@@ -194,7 +194,7 @@ const InferenceSchema = {
 
     'ldp.resource.deleted': defineServiceEvent({
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'oldData' does not exist on type 'Service... Remove this comment to see the full error message
+        // @ts-expect-error TS(2339): Property 'oldData' does not exist on type 'Optiona... Remove this comment to see the full error message
         let { oldData } = ctx.params;
         oldData = await ctx.call('jsonld.parser.expand', { input: oldData });
 
@@ -229,7 +229,7 @@ const InferenceSchema = {
 
     'ldp.resource.updated': defineServiceEvent({
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'oldData' does not exist on type 'Service... Remove this comment to see the full error message
+        // @ts-expect-error TS(2339): Property 'oldData' does not exist on type 'Optiona... Remove this comment to see the full error message
         let { oldData, newData } = ctx.params;
         oldData = await ctx.call('jsonld.parser.expand', { input: oldData });
         newData = await ctx.call('jsonld.parser.expand', { input: newData });
@@ -305,7 +305,7 @@ const InferenceSchema = {
 
     'ldp.resource.patched': defineServiceEvent({
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'triplesAdded' does not exist on type 'Se... Remove this comment to see the full error message
+        // @ts-expect-error TS(2339): Property 'triplesAdded' does not exist on type 'Op... Remove this comment to see the full error message
         const { triplesAdded, triplesRemoved, skipInferenceCheck } = ctx.params;
 
         // If the patch is done following a remote inference offer
@@ -376,7 +376,7 @@ const InferenceSchema = {
 
     'ontologies.registered': defineServiceEvent({
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'owl' does not exist on type 'ServiceEven... Remove this comment to see the full error message
+        // @ts-expect-error TS(2339): Property 'owl' does not exist on type 'Optionalize... Remove this comment to see the full error message
         const { owl } = ctx.params;
         if (owl) {
           // @ts-expect-error TS(2339): Property 'findInverseRelations' does not exist on ... Remove this comment to see the full error message

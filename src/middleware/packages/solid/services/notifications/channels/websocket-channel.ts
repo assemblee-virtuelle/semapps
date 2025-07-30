@@ -80,7 +80,7 @@ const WebSocketChannel2023Service = {
         '.notifications',
         'WebSocketChannel2023',
         'socket',
-        // @ts-expect-error TS(2304): Cannot find name 'uuidV4'.
+        // @ts-expect-error TS(2552): Cannot find name 'uuidV4'. Did you mean 'uuidv4'?
         uuidV4()
       );
     }

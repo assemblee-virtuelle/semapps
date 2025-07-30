@@ -12,6 +12,7 @@ import vc from '@digitalbazaar/vc';
 import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
 
 import { ServiceSchema, defineAction } from 'moleculer';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'json... Remove this comment to see the full error message
 import jsigs from 'jsonld-signatures';
 import { KEY_TYPES, credentialsContext } from '../constants.ts';
 
@@ -62,12 +63,14 @@ const VCCredentialService = {
         credential: {
           type: 'object',
           params: {
+            // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
             credentialSubject: { type: 'object' },
             '@context': { type: 'string', optional: true },
             id: { type: 'string', optional: true },
             type: { type: 'multi', rules: [{ type: 'string' }, { type: 'array', items: 'string' }], optional: true },
             validFrom: { type: 'string', optional: true },
             validUntil: { type: 'string', optional: true },
+            // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
             proof: { type: 'multi', optional: true, rules: [{ type: 'object' }, { type: 'array', items: 'object' }] }
           }
         },
@@ -75,23 +78,24 @@ const VCCredentialService = {
           type: 'object',
           default: {},
           params: {
+            // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
             proofPurpose: { type: 'object', optional: true }
           }
         },
         webId: { type: 'string', optional: true },
+        // @ts-expect-error TS(2322): Type '{ type: "boolean"; optional: true; default: ... Remove this comment to see the full error message
         noAnonRead: { type: 'boolean', optional: true, default: false },
+        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         keyObject: { type: 'object', optional: true },
         keyId: { type: 'string', optional: true }
       },
       async handler(ctx) {
         const {
           credential: receivedCredential,
-          // @ts-expect-error TS(2339): Property 'proofPurpose' does not exist on type 'Ty... Remove this comment to see the full error message
           options: { proofPurpose = 'assertionMethod' },
           // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
           webId = ctx.meta.webId,
           noAnonRead = false,
-          // @ts-expect-error TS(2339): Property 'purpose' does not exist on type '{ crede... Remove this comment to see the full error message
           purpose = new AssertionProofPurpose({ term: proofPurpose }),
           keyObject = undefined,
           keyId = undefined
@@ -108,9 +112,7 @@ const VCCredentialService = {
         const signingKeyInstance = await Ed25519Multikey.from(key);
 
         const credential = {
-          // @ts-expect-error TS(2783): '@context' is specified more than once, so this us... Remove this comment to see the full error message
           '@context': credentialsContext,
-          // @ts-expect-error TS(2783): 'type' is specified more than once, so this usage ... Remove this comment to see the full error message
           type: ['VerifiableCredential'],
           issuer: webId,
           ...receivedCredential
@@ -119,8 +121,7 @@ const VCCredentialService = {
         // Create the VC resource, if the id is not set.
         const credentialResource = credential.id
           ? credential
-          : // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
-            await this.createCredentialResource(credential, noAnonRead, webId);
+          : await this.createCredentialResource(credential, noAnonRead, webId);
 
         // Get signature suite
         const suite = new DataIntegrityProof({

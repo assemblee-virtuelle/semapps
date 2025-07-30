@@ -8,7 +8,10 @@ let server1: any;
 let server2: any;
 
 beforeAll(async () => {
+  // @ts-expect-error
   server1 = await initialize(3001, 'testData1', 'settings1', 1);
+
+  // @ts-expect-error
   server2 = await initialize(3002, 'testData2', 'settings2', 2);
 });
 
@@ -33,6 +36,7 @@ describe('Server2 imports a single resource from server1', () => {
       containerUri: 'http://localhost:3001/resources'
     });
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
         server1.call('ldp.container.includes', { containerUri: 'http://localhost:3001/resources', resourceUri })
@@ -52,12 +56,14 @@ describe('Server2 imports a single resource from server1', () => {
       ]
     });
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
         server2.call('ldp.container.includes', { containerUri: 'http://localhost:3002/resources', resourceUri })
       ).resolves.toBeTruthy();
     });
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })).resolves.toMatchObject({
         id: resourceUri,
@@ -84,6 +90,7 @@ describe('Server2 imports a single resource from server1', () => {
     // Force call of updateSingleMirroredResources
     await server2.call('ldp.remote.runCron');
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })).resolves.toMatchObject({
         id: resourceUri,
@@ -100,6 +107,7 @@ describe('Server2 imports a single resource from server1', () => {
     // Force call of updateSingleMirroredResources
     await server2.call('ldp.remote.runCron');
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })).rejects.toThrow();
     });

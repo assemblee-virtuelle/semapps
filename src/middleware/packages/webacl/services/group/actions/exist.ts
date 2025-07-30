@@ -19,17 +19,14 @@ export const action = defineAction({
     const webId = ctx.params.webId || ctx.meta.webId;
 
     if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+    // @ts-expect-error TS(2345): Argument of type 'TypeFromSchemaParam<{ type: "str... Remove this comment to see the full error message
     if (!groupUri) groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
 
     return await ctx.call('triplestore.query', {
       query: sanitizeSparqlQuery`
         PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
         ASK WHERE { 
-          GRAPH <${
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-            this.settings.graphName
-          }> {
+          GRAPH <${this.settings.graphName}> {
             <${groupUri}> a vcard:Group .
           } 
         }

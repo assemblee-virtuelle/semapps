@@ -282,6 +282,7 @@ const Schema = defineAction({
     webId: { type: 'string', optional: true },
     jsonContext: {
       type: 'multi',
+      // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
       rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
       optional: true
     }
@@ -297,7 +298,6 @@ const Schema = defineAction({
     const localContext = await ctx.call('jsonld.context.get');
 
     // Get dataset here since we can't call the method from internal functions
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const dataset = this.getCollectionDataset(collectionUri);
 
     sanitizeSparqlUri(collectionUri);

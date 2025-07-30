@@ -70,11 +70,9 @@ const Schema = {
           'ldp.resource.patch',
           {
             resourceUri: this.endpointUrl,
-            // @ts-expect-error TS(2345): Argument of type 'NamedNode<string>' is not assign... Remove this comment to see the full error message
             triplesToAdd: [triple(namedNode(this.endpointUrl), predicate, object)],
             webId: 'system'
           },
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           { meta: { dataset: this.settings.settingsDataset, skipEmitEvent: true, skipObjectsWatcher: true } }
         );
       }
@@ -93,7 +91,6 @@ const Schema = {
             accept: ctx.meta.headers?.accept,
             webId: 'system'
           },
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           { meta: { dataset: this.settings.settingsDataset } }
         );
       }

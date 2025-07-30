@@ -19,7 +19,6 @@ const Schema = defineAction({
       if (isRemoteContainer) return; // indeed, we never have the root container on a mirror.
       containerUri = urlJoin(containerUri, '/');
     }
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const containerExists = await this.actions.exist({ containerUri, webId }, { parentCtx: ctx });
     if (!containerExists && isRemoteContainer) return;
     if (!containerExists) throw new Error(`Cannot detach from a non-existing container: ${containerUri}`);
@@ -29,14 +28,7 @@ const Schema = defineAction({
         DELETE
         WHERE
         { 
-          ${
-            isRemoteContainer
-              ? `GRAPH <${
-                  // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-                  this.settings.mirrorGraphName
-                }> {`
-              : ''
-          }
+          ${isRemoteContainer ? `GRAPH <${this.settings.mirrorGraphName}> {` : ''}
           <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> 
           ${isRemoteContainer ? '}' : ''}
         }

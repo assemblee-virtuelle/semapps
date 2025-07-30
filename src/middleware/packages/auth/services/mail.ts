@@ -24,17 +24,13 @@ const AuthMailSchema = {
       async handler(ctx) {
         const { account, token } = ctx.params;
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         await this.actions.send(
           {
-            // @ts-expect-error TS(2339): Property 'email' does not exist on type 'never'.
             to: account.email,
             template: 'reset-password',
-            // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
             locale: this.getTemplateLocale(account.preferredLocale || this.settings.defaults.locale),
             data: {
               account,
-              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               resetUrl: `${urlJoin(this.settings.defaults.frontUrl, 'login')}?new_password=true&token=${token}`
             }
           },

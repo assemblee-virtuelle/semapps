@@ -43,7 +43,7 @@ const testService1 = {
       return 23 as number;
     },
 
-    // @ts-expect-error The type definition is broken (I think the contravariance of the `handler`).
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ optionalParam: { type: "strin... Remove this comment to see the full error message
     actionWithComplexParam
   }
 } satisfies ServiceSchema;
@@ -55,7 +55,7 @@ const testVersionedService2 = {
     actionWithStringParamReturnsNum: {
       params: { stringParam: { type: 'string' } },
       handler(ctx) {
-        // @ts-expect-error -- Without defineAction, params is not bound to handler.
+        // @ts-expect-error TS(2344): Type '{ stringParam: string; }' does not satisfy t... Remove this comment to see the full error message
         expectTypeOf(ctx.params).toExtend<{ stringParam: string }>();
 
         const number: number = 2;
@@ -82,7 +82,7 @@ const testVersionedService3 = {
         optionalNumParam: { type: 'number', optional: true }
       },
       async handler(ctx) {
-        // @ts-expect-error -- This is a TODO: defineAction within ServiceSchema type doesn't bind :<
+        // @ts-expect-error TS(2344): Type '{ optionalNumParam?: number | undefined; }' ... Remove this comment to see the full error message
         expectTypeOf(ctx.params).toEqualTypeOf<{ optionalNumParam?: number }>();
 
         return 'return value of actionWithNumParamReturnsString';
@@ -107,7 +107,7 @@ const externalAction = defineAction({
 const testService4ExternalAction = {
   name: 'test-service4-external-action' as const,
   actions: {
-    // @ts-expect-error TODO: This is likely coming from the same issue as the defineAction ctx.params that don't bind within ServiceSchema definitions.
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ length: { type: "number"; }; ... Remove this comment to see the full error message
     externalAction
   }
 } satisfies ServiceSchema;
@@ -152,9 +152,9 @@ const testCallService = {
           })
         ).toEqualTypeOf<Promise<string>>();
 
-        // @ts-expect-error --- `stringParam` does not accept value `3`
+        // @ts-expect-error TS(2322): Type 'number' is not assignable to type 'string'.
         await ctx.call('v2.test-service2-versioned.actionWithStringParamReturnsNum', { stringParam: 3 });
-        // @ts-expect-error --- `stringParam` is required
+        // @ts-expect-error TS(2554): Expected 2-3 arguments, but got 1.
         await ctx.call('v2.test-service2-versioned.actionWithStringParamReturnsNum');
       }
     })

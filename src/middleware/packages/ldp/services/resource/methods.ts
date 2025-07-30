@@ -6,14 +6,13 @@ import rdfparseModule from 'rdf-parse';
 import streamifyString from 'streamify-string';
 import { variable } from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
-
-// @ts-expect-error TS(2339): Property 'default' does not exist on type 'RdfPars... Remove this comment to see the full error message
-const rdfParser = rdfparseModule.default;
 import { Errors as MoleculerErrors } from 'moleculer';
+
+const rdfParser = rdfparseModule.default;
 const { MoleculerError } = MoleculerErrors;
 
 // TODO put each method in a different file (problems with "this" not working)
-module.exports = {
+export default {
   streamToFile(inputStream: any, filePath: any, maxSize: any) {
     return new Promise((resolve, reject) => {
       const fileWriteStream = fs.createWriteStream(filePath);
@@ -36,6 +35,7 @@ module.exports = {
   },
   async bodyToTriples(body: any, contentType: any) {
     if (contentType === MIME_TYPES.JSON) {
+      // @ts-expect-error
       return await this.broker.call('jsonld.parser.toQuads', { input: body });
     }
     if (!(typeof body === 'string')) throw new MoleculerError('no body provided', 400, 'BAD_REQUEST');

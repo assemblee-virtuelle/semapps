@@ -2,7 +2,8 @@ import { ACTIVITY_TYPES, OBJECT_TYPES } from '@semapps/activitypub';
 import { MIME_TYPES } from '@semapps/mime-types';
 import waitForExpect from 'wait-for-expect';
 import initialize from './initialize.ts';
-import CONFIG from '../config.ts';
+
+import * as CONFIG from '../config.ts';
 
 jest.setTimeout(50000);
 let broker: any;
@@ -55,8 +56,10 @@ describe('Create/Update/Delete objects', () => {
     });
 
     expect(createActivity.object).toHaveProperty('id');
+
     expect(createActivity.object).not.toHaveProperty('current');
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
         broker.call('activitypub.collection.includes', { collectionUri: sebastien.outbox, itemUri: createActivity.id })
@@ -70,7 +73,9 @@ describe('Create/Update/Delete objects', () => {
       resourceUri: objectUri,
       accept: MIME_TYPES.JSON
     });
+
     expect(object).toHaveProperty('type', OBJECT_TYPES.ARTICLE);
+
     expect(object).toHaveProperty('id', objectUri);
   });
 
@@ -98,7 +103,9 @@ describe('Create/Update/Delete objects', () => {
       },
       to: sebastien.followers
     });
+
     expect(updateActivity.object).not.toHaveProperty('current');
+
     expect(updateActivity.object).not.toHaveProperty('name');
 
     // Check the object has been updated
@@ -106,6 +113,7 @@ describe('Create/Update/Delete objects', () => {
       resourceUri: objectUri,
       accept: MIME_TYPES.JSON
     });
+
     expect(object).toMatchObject({
       id: objectUri,
       type: OBJECT_TYPES.ARTICLE,
@@ -121,6 +129,7 @@ describe('Create/Update/Delete objects', () => {
       object: objectUri
     });
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
         broker.call('ldp.resource.get', {
@@ -130,6 +139,7 @@ describe('Create/Update/Delete objects', () => {
       ).resolves.toMatchObject({
         type: OBJECT_TYPES.TOMBSTONE,
         formerType: 'as:Article',
+
         deleted: expect.anything()
       });
     });

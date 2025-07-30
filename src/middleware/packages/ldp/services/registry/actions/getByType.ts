@@ -7,17 +7,17 @@ import { defineAction } from 'moleculer';
 const Schema = defineAction({
   visibility: 'public',
   params: {
+    // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
     type: { type: 'multi', rules: [{ type: 'string' }, { type: 'array' }] }
   },
   async handler(ctx) {
     const { type } = ctx.params;
     const types = await ctx.call('jsonld.parser.expandTypes', { types: type });
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const registeredContainers = await this.actions.list({}, { parentCtx: ctx });
 
     return Object.values(registeredContainers).find(container =>
-      // @ts-expect-error TS(18046): 'container' is of type 'unknown'.
       types.some((t: any) =>
+        // @ts-expect-error TS(18046): 'container' is of type 'unknown'.
         Array.isArray(container.acceptedTypes) ? container.acceptedTypes.includes(t) : container.acceptedTypes === t
       )
     );

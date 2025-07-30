@@ -16,29 +16,24 @@ const KeysMigrationSchema = {
       /** Migrates cryptographic RSA keys from filesystem storage to the `/keys` ldp containers */
       async handler(ctx) {
         // Check actorsKeyPairsDir for existing keys.
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (!fs.existsSync(this.settings.actorsKeyPairsDir)) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.warn("No keys to migrate, actorsKeyPairsDir doesn't exist.");
           return;
         }
 
         const accounts = await ctx.call('auth.account.find');
         const usernamesByKey = fs
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           .readdirSync(this.settings.actorsKeyPairsDir)
           .filter(fn => fn.endsWith('.key'))
           .map(file => file.substring(0, file.length - 4));
 
         if (usernamesByKey.length === 0) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.warn("No keys to migrate, actorsKeyPairsDir doesn't contain any key files.");
           return;
         }
 
         let errorUsernames = [];
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.logger.info(`=== Migrating keys from filesystem to LDP ===`);
 
         // This can cause deadlocks otherwise.
@@ -48,10 +43,9 @@ const KeysMigrationSchema = {
         for (const { webId, username } of accounts) {
           // Do the migration process.
           try {
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             this.logger.info(`Migrating key of ${webId}`);
 
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+            // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
             if (this.settings.podProvider) ctx.meta.dataset = username;
 
             const { publicKey, privateKey } = await ctx.call('signature.keypair.get', {
@@ -60,21 +54,17 @@ const KeysMigrationSchema = {
             });
 
             // Delete public key material from webId (later replaced with references to the public key resources).
-            // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
             await this.deleteKeysFromWebId(ctx, webId);
 
             // Create key resources in db and link to webIds.
-            // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
             await this.attachOrCreateToDb(ctx, webId, publicKey, privateKey);
           } catch (err) {
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             this.logger.error(`An error occurred during migration. Key of ${webId} could not be migrated.`, err);
 
             errorUsernames.push(username);
 
             // Try to revert to initial state.
             try {
-              // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
               await this.deleteKeysFromWebId(ctx, webId);
             } catch (_) {
               // pass
@@ -88,16 +78,12 @@ const KeysMigrationSchema = {
         // Keys are stored in db now.
         // Finally, move fs keys to ./old folder
         const keyFiles = fs
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           .readdirSync(this.settings.actorsKeyPairsDir)
           .filter(fn => fn.endsWith('.key') || fn.endsWith('.key.pub'));
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         fs.mkdirSync(path.join(this.settings.actorsKeyPairsDir, 'old'), { recursive: true });
         keyFiles.map(keyFile =>
           fs.renameSync(
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             path.join(this.settings.actorsKeyPairsDir, keyFile),
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             path.join(this.settings.actorsKeyPairsDir, 'old', keyFile)
           )
         );
@@ -108,25 +94,21 @@ const KeysMigrationSchema = {
         const usersWithoutKeys = accountNames.filter((accName: any) => !usernamesByKey.includes(accName));
 
         if (errorUsernames.length > 0) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.warn(`During the migration, the following accounts generated errors:`, errorUsernames);
         }
         if (keysWithoutRegisteredUser.length > 0) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.warn(
             `During the migration, the following keys were found that did not have a registered user associated:`,
             keysWithoutRegisteredUser
           );
         }
         if (usersWithoutKeys.length > 0) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.warn(
             `During the migration, the following accounts were found that did not have key pairs. New ones were created:`,
             usersWithoutKeys
           );
         }
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.logger.info('=== Keys migration completed ===');
         await ctx.emit('keys.migration.migrated');
       }
@@ -136,19 +118,16 @@ const KeysMigrationSchema = {
       /** Returns true, if the server has migrated to the new keys service yet, i.e. keys are stored in the user dataset, not on fs. */
       async handler() {
         // If the `actorsKeyPairsDir` setting is not set, we assume migration has happened or was never needed.
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (!this.settings.actorsKeyPairsDir) {
           return true;
         }
 
         // Check actorsKeyPairsDir for existing keys.
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (!fs.existsSync(this.settings.actorsKeyPairsDir)) {
           return true;
         }
 
         const anyKeyFile = fs
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           .readdirSync(this.settings.actorsKeyPairsDir)
           .find(fn => fn.endsWith('.key') || fn.endsWith('.key.pub'));
 

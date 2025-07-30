@@ -1,4 +1,3 @@
-// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { acl, vcard, rdfs } from '@semapps/ontologies';
 import { ServiceSchema } from 'moleculer';
 import WebAclResourceService from './services/resource/index.ts';
@@ -18,8 +17,8 @@ const WebaclSchema = {
   async created() {
     const { baseUrl, graphName, podProvider, superAdmins } = this.settings;
 
-    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "webacl.resour... Remove this comment to see the full error message
     this.broker.createService({
+      // @ts-expect-error TS(2322): Type '{ name: "webacl.resource"; settings: { baseU... Remove this comment to see the full error message
       mixins: [WebAclResourceService],
       settings: {
         baseUrl,
@@ -28,8 +27,8 @@ const WebaclSchema = {
       }
     });
 
-    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "webacl.group"... Remove this comment to see the full error message
     this.broker.createService({
+      // @ts-expect-error TS(2322): Type '{ name: "webacl.group"; settings: { baseUrl:... Remove this comment to see the full error message
       mixins: [WebAclGroupService],
       settings: {
         baseUrl,

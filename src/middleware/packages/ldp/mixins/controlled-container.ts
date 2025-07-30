@@ -45,7 +45,6 @@ const Schema = {
     post: defineAction({
       async handler(ctx) {
         if (!ctx.params.containerUri) {
-          // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
           ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
         }
         return await ctx.call('ldp.container.post', ctx.params);
@@ -55,7 +54,6 @@ const Schema = {
     list: defineAction({
       async handler(ctx) {
         if (!ctx.params.containerUri) {
-          // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
           ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
         }
         return ctx.call('ldp.container.get', ctx.params);
@@ -65,7 +63,6 @@ const Schema = {
     attach: defineAction({
       async handler(ctx) {
         if (!ctx.params.containerUri) {
-          // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
           ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
         }
         return ctx.call('ldp.container.attach', ctx.params);
@@ -75,7 +72,6 @@ const Schema = {
     detach: defineAction({
       async handler(ctx) {
         if (!ctx.params.containerUri) {
-          // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
           ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
         }
         return ctx.call('ldp.container.detach', ctx.params);
@@ -85,7 +81,7 @@ const Schema = {
     get: defineAction({
       handler(ctx) {
         const containerParams = {};
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+        // @ts-expect-error TS(2339): Property 'accept' does not exist on type '{}'.
         if (this.settings.accept) containerParams.accept = this.settings.accept;
         return ctx.call('ldp.resource.get', {
           ...containerParams,
@@ -133,7 +129,6 @@ const Schema = {
     getContainerUri: defineAction({
       handler(ctx) {
         return ctx.call('ldp.registry.getUri', {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           path: this.settings.path,
           // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
           webId: ctx.params?.webId || ctx.meta?.webId
@@ -148,7 +143,6 @@ const Schema = {
         let containerAttached;
 
         if (!containerUri) {
-          // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
           containerUri = await this.actions.getContainerUri(
             // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
             { webId: ctx.params.webId || ctx.meta.webId },

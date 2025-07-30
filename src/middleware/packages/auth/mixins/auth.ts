@@ -119,7 +119,6 @@ const AuthMixin = {
       async handler(ctx) {
         const { route, req, res } = ctx.params;
         // Extract method and token from authorization header.
-        // @ts-expect-error TS(2339): Property 'headers' does not exist on type 'never'.
         const [method, token] = req.headers.authorization?.split(' ') || [];
 
         if (!token) {
@@ -140,15 +139,12 @@ const AuthMixin = {
           }
 
           // Check if token is a capability.
-          // @ts-expect-error TS(2339): Property 'opts' does not exist on type 'never'.
           if (route.opts.authorizeWithCapability) {
-            // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
             return this.validateCapability(ctx, token);
           }
 
           // Invalid token
           // TODO make sure token is deleted client-side
-          // @ts-expect-error TS(2304): Cannot find name 'E'.
           return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
         }
 
@@ -165,15 +161,12 @@ const AuthMixin = {
         const { route, req, res } = ctx.params;
         // Extract token from authorization header (do not take the Bearer part)
         /** @type {[string, string]} */
-        // @ts-expect-error TS(2339): Property 'headers' does not exist on type 'never'.
         const [method, token] = req.headers.authorization && req.headers.authorization.split(' ');
 
         if (!token) {
-          // @ts-expect-error TS(2304): Cannot find name 'E'.
           return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
         }
         if (method !== 'Bearer') {
-          // @ts-expect-error TS(2304): Cannot find name 'E'.
           return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
         }
 
@@ -188,13 +181,10 @@ const AuthMixin = {
         }
 
         // Check if token is a capability.
-        // @ts-expect-error TS(2339): Property 'opts' does not exist on type 'never'.
         if (route.opts.authorizeWithCapability) {
-          // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
           return this.validateCapability(ctx, token);
         }
 
-        // @ts-expect-error TS(2304): Cannot find name 'E'.
         return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
       }
     }),
@@ -219,12 +209,10 @@ const AuthMixin = {
       const hasCapabilityService = ctx.broker.registry.actions.isAvailable(
         'crypto.vc.verifier.verifyCapabilityPresentation'
       );
-      // @ts-expect-error TS(2304): Cannot find name 'E'.
       if (!hasCapabilityService) return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
 
       // Decode JTW to JSON.
       const decodedToken = await ctx.call('auth.jwt.decodeToken', { token });
-      // @ts-expect-error TS(2304): Cannot find name 'E'.
       if (!decodedToken) return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
 
       // Verify that decoded JSON token is a valid VC presentation.
@@ -238,7 +226,6 @@ const AuthMixin = {
           maxChainLength: ctx.params.route.opts.maxChainLength
         }
       });
-      // @ts-expect-error TS(2304): Cannot find name 'E'.
       if (!isCapSignatureVerified) return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
 
       // VC Capability is verified.

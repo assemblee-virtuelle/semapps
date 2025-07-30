@@ -5,6 +5,7 @@ import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
 // @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import vc from '@digitalbazaar/vc';
 import { ServiceSchema, defineAction } from 'moleculer';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'json... Remove this comment to see the full error message
 import jsigs from 'jsonld-signatures';
 import VCCapabilityPresentationProofPurpose from './VcCapabilityPresentationProofPurpose.ts';
 import VCPurpose from './VcPurpose.ts';
@@ -44,7 +45,9 @@ const VCPresentationService = {
             issuer: { type: 'string', optional: true },
             validFrom: { type: 'string', optional: true },
             validUntil: { type: 'string', optional: true },
+            // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
             credentialSubject: { type: 'object' },
+            // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
             proof: { type: 'multi', optional: true, rules: [{ type: 'object' }, { type: 'array', items: 'object' }] }
           }
         },
@@ -52,6 +55,7 @@ const VCPresentationService = {
           type: 'object',
           default: {},
           params: {
+            // @ts-expect-error TS(2322): Type '{ type: "string"; default: string; }' is not... Remove this comment to see the full error message
             proofPurpose: { type: 'string', default: 'assertionMethod' }
           }
         }
@@ -59,7 +63,6 @@ const VCPresentationService = {
       async handler(ctx) {
         const {
           verifiableCredential,
-          // @ts-expect-error TS(2339): Property 'proofPurpose' does not exist on type 'Ty... Remove this comment to see the full error message
           options: { proofPurpose = 'assertionMethod' }
         } = ctx.params;
 
@@ -86,6 +89,7 @@ const VCPresentationService = {
      */
     verifyPresentation: defineAction({
       params: {
+        // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
         verifiablePresentation: { type: 'object' },
         options: {
           type: 'object',
@@ -94,16 +98,18 @@ const VCPresentationService = {
             challenge: { type: 'string', optional: true },
             domain: { type: 'string', optional: true },
             proofPurpose: { type: 'string', optional: true },
+            // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
             unsignedPresentation: { type: 'boolean', default: false }
           }
         },
+        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         credentialPurpose: { type: 'object', optional: true },
+        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         presentationPurpose: { type: 'object', optional: true }
       },
       async handler(ctx) {
         const {
           verifiablePresentation: presentation,
-          // @ts-expect-error TS(2339): Property 'challenge' does not exist on type 'TypeF... Remove this comment to see the full error message
           options: { challenge = presentation?.proof?.challenge, proofPurpose: term, domain, unsignedPresentation }
         } = ctx.params;
 
@@ -139,7 +145,6 @@ const VCPresentationService = {
           });
           return verificationResult;
         } catch (e) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.error('Error verifying presentation:', e);
           // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
           return { verified: false, error: e.message };
@@ -154,11 +159,13 @@ const VCPresentationService = {
      */
     verifyCapabilityPresentation: defineAction({
       params: {
+        // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
         verifiablePresentation: { type: 'object' },
         options: {
           type: 'object',
           default: {},
           params: {
+            // @ts-expect-error TS(2322): Type '{ type: "number"; default: number; }' is not... Remove this comment to see the full error message
             maxChainLength: { type: 'number', default: 2 },
             challenge: { type: 'string', optional: true },
             domain: { type: 'string', optional: true }
@@ -171,11 +178,8 @@ const VCPresentationService = {
           options: {
             // Challenge may be empty when invoker is anonymous and VC was issued to no particular holder.
             // The VCCapabilityPresentationProofPurpose will take care of this case.
-            // @ts-expect-error TS(2339): Property 'challenge' does not exist on type 'TypeF... Remove this comment to see the full error message
             challenge = presentation?.proof?.challenge,
-            // @ts-expect-error TS(2339): Property 'domain' does not exist on type 'TypeFrom... Remove this comment to see the full error message
             domain,
-            // @ts-expect-error TS(2339): Property 'maxChainLength' does not exist on type '... Remove this comment to see the full error message
             maxChainLength = 2
           }
         } = ctx.params;
@@ -187,7 +191,6 @@ const VCPresentationService = {
         });
         const credentialPurpose = new VCPurpose();
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const verificationResult = await this.actions.verifyPresentation({
           ...ctx.params,
           options: {
@@ -199,12 +202,10 @@ const VCPresentationService = {
         });
 
         // Order the VCs in the presentation by issuance date.
-        // @ts-expect-error TS(2339): Property 'verifiableCredential' does not exist on ... Remove this comment to see the full error message
         const orderedCredentials = arrayOf(presentation.verifiableCredential).sort(
           // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
           (c1, c2) => new Date(c1.issuanceDate || c1.proof.created) - new Date(c2.issuanceDate || c2.proof.created)
         );
-        // @ts-expect-error TS(2339): Property 'verifiableCredential' does not exist on ... Remove this comment to see the full error message
         presentation.verifiableCredential = orderedCredentials;
 
         return { ...verificationResult, presentation };

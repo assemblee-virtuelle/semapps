@@ -1,6 +1,7 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import waitForExpect from 'wait-for-expect';
-import CONFIG from '../config.ts';
+
+import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
 
 jest.setTimeout(20000);
@@ -50,7 +51,9 @@ describe('LDP container tests', () => {
     });
 
     // Intermediate containers have no permissions
+
     expect(broker.call('ldp.container.exist', { containerUri: `${CONFIG.HOME_URL}parent` })).resolves.toBeFalsy();
+
     expect(
       broker.call('ldp.container.exist', { containerUri: `${CONFIG.HOME_URL}parent`, webId: 'system' })
     ).resolves.toBeTruthy();
@@ -185,6 +188,7 @@ describe('LDP container tests', () => {
     });
 
     // Get without filters param
+
     await expect(
       broker.call('ldp.container.get', {
         containerUri: `${CONFIG.HOME_URL}resources`,
@@ -204,6 +208,7 @@ describe('LDP container tests', () => {
     });
 
     // Get with filters param
+
     await expect(
       broker.call('ldp.container.get', {
         containerUri: `${CONFIG.HOME_URL}resources`,
@@ -240,6 +245,7 @@ describe('LDP container tests', () => {
     });
 
     // Project 1 should have disappeared from the container
+
     await expect(
       broker.call('ldp.container.get', {
         containerUri: `${CONFIG.HOME_URL}resources`,
@@ -262,6 +268,7 @@ describe('LDP container tests', () => {
     });
 
     // Container should now be empty
+    // @ts-expect-error
     await waitForExpect(async () => {
       const container = await broker.call('ldp.container.get', {
         containerUri: `${CONFIG.HOME_URL}resources`,

@@ -192,8 +192,8 @@ const CoreService = {
       // We define a constant here, because this.settings.webacl is not available inside the started method
       const secure = this.settings.webacl !== false;
 
-      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "triplestore";... Remove this comment to see the full error message
       this.broker.createService({
+        // @ts-expect-error TS(2322): Type '{ name: "triplestore"; settings: { url: null... Remove this comment to see the full error message
         mixins: [TripleStoreService],
         settings: {
           ...triplestore

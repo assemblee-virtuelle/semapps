@@ -27,17 +27,12 @@ const Schema = {
       async handler(ctx) {
         const { webId } = ctx.params;
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const containerUri = await this.actions.getContainerUri({ webId }, { parentCtx: ctx });
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         await this.actions.waitForContainerCreation({ containerUri }, { parentCtx: ctx });
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         let resource = this.settings.initialValue;
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (!resource.type && !resource['@type']) resource.type = this.settings.acceptedTypes;
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         return await this.actions.post(
           { containerUri, resource, contentType: MIME_TYPES.JSON, webId },
           { parentCtx: ctx }
@@ -47,7 +42,6 @@ const Schema = {
 
     getResourceUri: defineAction({
       async handler(ctx) {
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
         const resourcesUris = await ctx.call('ldp.container.getUris', { containerUri });
         return resourcesUris[0];
@@ -56,7 +50,6 @@ const Schema = {
 
     exist: defineAction({
       async handler(ctx) {
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const resourceUri = await this.actions.getResourceUri({ webId: ctx.params.webId }, { parentCtx: ctx });
         return !!resourceUri;
       }
@@ -71,14 +64,12 @@ const Schema = {
         do {
           attempts += 1;
           if (attempts > 1) await delay(1000);
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           const resourceUri = await this.actions.getResourceUri({ webId });
 
           // Now wait for resources to have been effectively created, because when we call the ldp.container.post action,
           // the ldp:contains predicate is added first (to ensure WAC permissions work) and then the resource is created
           if (resourceUri) {
             try {
-              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               resource = await this.actions.get(
                 { resourceUri, webId: 'system' },
                 { parentCtx: ctx, meta: { $cache: false } }
@@ -125,7 +116,7 @@ const Schema = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
         if (this.settings.podProvider) {
-          // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'ServiceEv... Remove this comment to see the full error message
+          // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
           const { webId } = ctx.params;
           // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
           await this.actions.initializeResource({ webId });

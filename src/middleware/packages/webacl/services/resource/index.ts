@@ -54,13 +54,20 @@ const WebaclResourceSchema = {
   },
   actions: {
     addRights: addRights.action,
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
     awaitReadRight: awaitReadRight.action,
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
     deleteAllRights: deleteAllRights.action,
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ webId: { type: "string"; opti... Remove this comment to see the full error message
     deleteAllUserRights: deleteAllUserRights.action,
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ uri: { type: "string"; option... Remove this comment to see the full error message
     getLink: getLink.action,
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
     getRights: getRights.action,
     hasRights: hasRights.action,
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
     isPublic: isPublic.action,
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
     getUsersWithReadRights: getUsersWithReadRights.action,
     refreshContainersRights: refreshContainersRights.action,
     removeRights: removeRights.action,

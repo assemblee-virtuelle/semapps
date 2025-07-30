@@ -10,7 +10,6 @@ export const action = defineAction({
   async handler(ctx) {
     const { resourceUri } = ctx.params;
 
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const authorizations = await this.actions.getRights(
       { resourceUri, accept: MIME_TYPES.JSON, webId: 'system' },
       { parentCtx: ctx }

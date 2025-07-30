@@ -44,15 +44,12 @@ const SignatureService = {
           return key.publicKeyPem;
         }
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const { publicKey } = await this.actions.get({ actorUri }, { parentCtx: ctx });
         if (publicKey) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.info(`Key for ${actorUri} already exists, skipping...`);
           return publicKey;
         }
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const { privateKeyPath, publicKeyPath } = await this.actions.getPaths({ actorUri }, { parentCtx: ctx });
 
         return new Promise((resolve, reject) => {
@@ -93,7 +90,6 @@ const SignatureService = {
           return;
         }
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const { privateKeyPath, publicKeyPath } = await this.actions.getPaths({ actorUri }, { parentCtx: ctx });
 
         try {
@@ -110,7 +106,6 @@ const SignatureService = {
         const { actorUri } = ctx.params;
 
         if (this.isMigrated) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.logger.info(
             `The keys service has been migrated. Key setup is handled by the keys service. This function will not have an effect`
           );
@@ -125,17 +120,13 @@ const SignatureService = {
 
         // Ensure a public key is not already attached
         if (!actor.publicKey) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           const { publicKey } = await this.actions.get({ actorUri }, { parentCtx: ctx });
 
           await ctx.call('ldp.resource.patch', {
             resourceUri: actorUri,
             triplesToAdd: [
-              // @ts-expect-error TS(2345): Argument of type 'NamedNode<never>' is not assigna... Remove this comment to see the full error message
               triple(namedNode(actorUri), namedNode('https://w3id.org/security#publicKey'), blankNode('b0')),
-              // @ts-expect-error TS(2345): Argument of type 'BlankNode' is not assignable to ... Remove this comment to see the full error message
               triple(blankNode('b0'), namedNode('https://w3id.org/security#owner'), namedNode(actorUri)),
-              // @ts-expect-error TS(2345): Argument of type 'BlankNode' is not assignable to ... Remove this comment to see the full error message
               triple(blankNode('b0'), namedNode('https://w3id.org/security#publicKeyPem'), literal(publicKey))
             ],
             webId: 'system'
@@ -151,9 +142,7 @@ const SignatureService = {
         const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
 
         if (account) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           const privateKeyPath = path.join(this.settings.actorsKeyPairsDir, `${account.username}.key`);
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           const publicKeyPath = path.join(this.settings.actorsKeyPairsDir, `${account.username}.key.pub`);
           return { privateKeyPath, publicKeyPath };
         }
@@ -174,7 +163,6 @@ const SignatureService = {
           };
         }
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const { publicKeyPath, privateKeyPath } = await this.actions.getPaths({ actorUri }, { parentCtx: ctx });
         try {
           const publicKey = await fs.promises.readFile(publicKeyPath, { encoding: 'utf8' });
@@ -244,7 +232,7 @@ const SignatureService = {
   events: {
     'auth.registered': defineServiceEvent({
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'ServiceEv... Remove this comment to see the full error message
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
         // @ts-expect-error TS(2339): Property 'isMigrated' does not exist on type 'Serv... Remove this comment to see the full error message
         if (this.isMigrated) {

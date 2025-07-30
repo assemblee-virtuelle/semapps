@@ -24,7 +24,6 @@ const JsonldParserSchema = {
     compact: defineAction({
       handler(ctx) {
         const { input, context, options } = ctx.params;
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         return this.jsonld.compact(input, context, options);
       }
     }),
@@ -32,7 +31,6 @@ const JsonldParserSchema = {
     expand: defineAction({
       handler(ctx) {
         const { input, options } = ctx.params;
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         return this.jsonld.expand(input, options);
       }
     }),
@@ -40,7 +38,6 @@ const JsonldParserSchema = {
     flatten: defineAction({
       handler(ctx) {
         const { input, context, options } = ctx.params;
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         return this.jsonld.flatten(input, context, options);
       }
     }),
@@ -48,7 +45,6 @@ const JsonldParserSchema = {
     frame: defineAction({
       handler(ctx) {
         const { input, frame, options } = ctx.params;
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         return this.jsonld.frame(input, frame, options);
       }
     }),
@@ -56,7 +52,6 @@ const JsonldParserSchema = {
     normalize: defineAction({
       handler(ctx) {
         const { input, options } = ctx.params;
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         return this.jsonld.normalize(input, options);
       }
     }),
@@ -64,7 +59,6 @@ const JsonldParserSchema = {
     fromRDF: defineAction({
       handler(ctx) {
         const { dataset, options } = ctx.params;
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         return this.jsonld.fromRDF(dataset, options);
       }
     }),
@@ -72,7 +66,6 @@ const JsonldParserSchema = {
     toRDF: defineAction({
       handler(ctx) {
         const { input, options } = ctx.params;
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         return this.jsonld.toRDF(input, options);
       }
     }),
@@ -87,9 +80,7 @@ const JsonldParserSchema = {
           const jsonString = typeof input === 'object' ? JSON.stringify(input) : input;
           const textStream = streamifyString(jsonString);
           const res: any = [];
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.jsonLdParser
-            // @ts-expect-error TS(2339): Property 'import' does not exist on type 'string |... Remove this comment to see the full error message
             .import(textStream)
             .on('data', (quad: any) => res.push(quad))
             .on('error', (error: any) => reject(error))
@@ -108,10 +99,8 @@ const JsonldParserSchema = {
         if (isURI(predicate)) return predicate;
 
         // If no context is provided, use default context
-        // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
         if (!context) context = await ctx.call('jsonld.context.get');
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const result = await this.actions.expand(
           { input: { '@context': context, [predicate]: '' } },
           { parentCtx: ctx }
@@ -140,10 +129,8 @@ const JsonldParserSchema = {
         if (arrayOf(types).every(type => isURI(type))) return arrayOf(types);
 
         // If no context is provided, use default context
-        // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
         if (!context) context = await ctx.call('jsonld.context.get');
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const result = await this.actions.expand(
           { input: { '@context': context, '@type': types } },
           { parentCtx: ctx }

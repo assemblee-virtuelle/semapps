@@ -1,4 +1,6 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'node... Remove this comment to see the full error message
 import fetch from 'node-fetch';
+// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
 import { ServiceSchema, defineAction } from 'moleculer';
 import { MIME_TYPES } from '@semapps/mime-types';
@@ -67,14 +69,12 @@ const OutboxService = {
           );
         }
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         if (this.settings.podProvider) {
           // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
           ctx.meta.dataset = getSlugFromUri(actorUri);
         }
 
         if (!activity['@context']) {
-          // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
           activity['@context'] = await ctx.call('jsonld.context.get');
         }
 
@@ -89,18 +89,15 @@ const OutboxService = {
         }
 
         if (!activity.actor) {
-          // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
           activity.actor = actorUri;
         }
 
         // Use the current time for the activity's publish date
-        // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'never'.
         activity.published = new Date().toISOString();
 
         if (transient === true) {
           // Object or actor URI + hash with lower case activity
           activityUri = `${activity.object || activity.actor}#${arrayOf(getType(activity))[0].toLowerCase()}`;
-          // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'never'.
           activity = { id: activityUri, ...activity };
         } else {
           const activitiesContainerUri = await ctx.call('activitypub.activity.getContainerUri', {
@@ -140,13 +137,11 @@ const OutboxService = {
         const recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
 
         for (const recipientUri of recipients) {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           if (this.isLocalActor(recipientUri)) {
             const account = await ctx.call('auth.account.findByWebId', { webId: recipientUri });
             if (account) {
               localRecipients.push(recipientUri);
             } else {
-              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
               this.logger.warn(`No local account found with webId ${recipientUri}`);
             }
           } else {
@@ -156,7 +151,6 @@ const OutboxService = {
 
         // Post to remote recipients
         for (const recipientUri of remoteRecipients) {
-          // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
           this.createJob('remotePost', recipientUri, { recipientUri, activity }, queueOptions);
         }
 
@@ -166,7 +160,6 @@ const OutboxService = {
         // Post to local recipients
         if (localRecipients.length > 0) {
           // Call directly (but without waiting)
-          // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
           this.localPost(localRecipients, activity);
         }
 
@@ -178,7 +171,6 @@ const OutboxService = {
       async handler(ctx) {
         const { dataset } = ctx.params;
         await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           collection: this.settings.collectionOptions,
           dataset
         });

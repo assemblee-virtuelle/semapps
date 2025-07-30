@@ -31,9 +31,7 @@ const WebfingerService = {
       async handler(ctx) {
         const { resource } = ctx.params;
 
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const usernameMatchRegex = new RegExp(`^acct:([\\w-_.]*)@${this.settings.domainName}$`);
-        // @ts-expect-error TS(2339): Property 'match' does not exist on type 'never'.
         const matches = resource?.match(usernameMatchRegex);
 
         if (matches) {
@@ -63,7 +61,6 @@ const WebfingerService = {
       // TODO add cache if response.ok
       async handler(ctx) {
         const { account } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'split' does not exist on type 'never'.
         const splitAccount = account.split('@');
         const domainName = splitAccount.pop();
         const userName = splitAccount.pop();

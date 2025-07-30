@@ -11,6 +11,7 @@ const relay1 = 'http://localhost:3001/as/actor/relay';
 const relay2 = 'http://localhost:3002/as/actor/relay';
 
 beforeAll(async () => {
+  // @ts-expect-error
   server1 = await initialize(3001, 'testData1', 'settings1', 1);
 
   // Wait for Relay actor creation, or server2 won't be able to mirror server1
@@ -31,6 +32,7 @@ describe('Resource on server1 is shared with user on server2', () => {
   let user2: any;
 
   test('Server2 follow server1', async () => {
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
         server1.call('activitypub.collection.includes', {
@@ -75,6 +77,7 @@ describe('Resource on server1 is shared with user on server2', () => {
       webId: 'system'
     });
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       const outboxMenu = await server1.call('activitypub.collection.get', {
         resourceUri: `${relay1}/outbox`,
@@ -87,6 +90,7 @@ describe('Resource on server1 is shared with user on server2', () => {
       });
 
       expect(inbox).not.toBeNull();
+
       expect(inbox.orderedItems[0]).toMatchObject({
         type: ACTIVITY_TYPES.CREATE,
         actor: relay1,
@@ -108,6 +112,7 @@ describe('Resource on server1 is shared with user on server2', () => {
       webId: 'system'
     });
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       const outboxMenu = await server1.call('activitypub.collection.get', {
         resourceUri: `${relay1}/outbox`,
@@ -120,6 +125,7 @@ describe('Resource on server1 is shared with user on server2', () => {
       });
 
       expect(inbox).not.toBeNull();
+
       expect(inbox.orderedItems[0]).toMatchObject({
         type: ACTIVITY_TYPES.DELETE,
         actor: relay1,

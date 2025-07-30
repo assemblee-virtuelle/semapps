@@ -1,8 +1,11 @@
 import urlJoin from 'url-join';
+
+// @ts-expect-error
 import fetch from 'node-fetch';
 import waitForExpect from 'wait-for-expect';
 import { fetchServer } from '../utils.ts';
-import CONFIG from '../config.ts';
+
+import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
 
 jest.setTimeout(20000);
@@ -17,6 +20,7 @@ afterAll(async () => {
 });
 
 describe('LDP handling through API', () => {
+  // @ts-expect-error
   const containerUri = urlJoin(CONFIG.HOME_URL, 'resources');
   let resourceUri: any;
   let subContainerUri: any;
@@ -52,6 +56,7 @@ describe('LDP handling through API', () => {
 
   test('Get resource with JsonLdContext header', async () => {
     // Use string
+
     await expect(
       fetchServer(resourceUri, {
         headers: new fetch.Headers({
@@ -65,6 +70,7 @@ describe('LDP handling through API', () => {
     });
 
     // Use object
+
     await expect(
       fetchServer(resourceUri, {
         headers: new fetch.Headers({
@@ -78,6 +84,7 @@ describe('LDP handling through API', () => {
     });
 
     // Use array
+
     await expect(
       fetchServer(resourceUri, {
         headers: new fetch.Headers({
@@ -129,6 +136,7 @@ describe('LDP handling through API', () => {
   });
 
   // See https://www.w3.org/TR/ldp/#prefer-parameters
+
   test('Get container with minimal representation', async () => {
     const { json, headers } = await fetchServer(containerUri, {
       headers: new fetch.Headers({
@@ -137,6 +145,7 @@ describe('LDP handling through API', () => {
     });
 
     expect(json['ldp:contains']).toBeUndefined();
+
     expect(headers.get('Preference-Applied')).toBe('return=representation');
   });
 
@@ -259,6 +268,7 @@ describe('LDP handling through API', () => {
 
     subContainerUri = headers.get('Location');
 
+    // @ts-expect-error
     expect(subContainerUri).toBe(urlJoin(CONFIG.HOME_URL, 'resources', 'sub-resources'));
 
     await expect(fetchServer(subContainerUri)).resolves.toMatchObject({
@@ -287,6 +297,7 @@ describe('LDP handling through API', () => {
     const { json } = await fetchServer(containerUri);
 
     // Sub-containers appear as ldp:Resource
+
     expect(json).toMatchObject({
       'ldp:contains': [
         {
@@ -297,6 +308,7 @@ describe('LDP handling through API', () => {
     });
 
     // The content of sub-containers is not displayed
+
     expect(json['ldp:contains'][0]['ldp:contains']).toBeUndefined();
 
     await expect(fetchServer(subContainerUri)).resolves.toMatchObject({
@@ -334,6 +346,7 @@ describe('LDP handling through API', () => {
       status: 204
     });
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(fetchServer(subContainerUri)).resolves.toMatchObject({
         status: 404
@@ -348,6 +361,7 @@ describe('LDP handling through API', () => {
     });
 
     // Sub-resource should NOT be deleted with the sub-container
+
     await expect(fetchServer(subResourceUri)).resolves.toMatchObject({
       json: {
         '@type': 'pair:Project',
