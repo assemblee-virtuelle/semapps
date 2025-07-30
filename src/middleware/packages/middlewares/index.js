@@ -20,31 +20,11 @@ const parseHeader = async (req, res, next) => {
   next();
 };
 
-const parseRawBody = (req, res, next) => {
-  const contentType = req.$ctx.meta.headers['content-type'];
-  // We don't want to parse the raw body for files, otherwise the stream will not be available anymore
-  if (handledMimeTypes.includes(contentType)) {
-    let data = '';
-    req.on('data', chunk => {
-      data += chunk;
-    });
-    req.on('end', () => {
-      if (data.length > 0) req.$ctx.meta.rawBody = data;
-      req.$ctx.meta.rawBodyParsed = true; // Used to detect if the middleware was added
-      next();
-    });
-  } else {
-    req.$ctx.meta.rawBodyParsed = true; // Used to detect if the middleware was added
-    next();
-  }
-};
-
 const negotiateContentType = (req, res, next) => {
   if (!req.$ctx.meta.headers)
     throw new Error(`The parseHeader middleware must be added before the negotiateContentType middleware`);
 
-  if (!req.$ctx.meta.rawBodyParsed)
-    throw new Error(`The parseRawBody middleware must be added before the parseJson middleware`);
+  req.$ctx.meta.contentTypeNegotiated = true;
 
   if (req.$ctx.meta.headers['content-type'] !== undefined && req.method !== 'DELETE') {
     try {
@@ -64,28 +44,10 @@ const negotiateContentType = (req, res, next) => {
   }
 };
 
-/** @type {(msg: string) => never} */
-const throw400 = msg => {
-  throw new MoleculerError(msg, 400, 'BAD_REQUEST', { status: 'Bad Request', text: msg });
-};
-
-/** @type {(msg: string) => never} */
-const throw403 = msg => {
-  throw new MoleculerError('Forbidden', 403, 'ACCESS_DENIED', { status: 'Forbidden', text: msg });
-};
-
-/** @type {(msg: string) => never} */
-const throw404 = msg => {
-  throw new MoleculerError('Forbidden', 404, 'NOT_FOUND', { status: 'Not found', text: msg });
-};
-
-const throw500 = msg => {
-  throw new MoleculerError(msg, 500, 'INTERNAL_SERVER_ERROR', { status: 'Server Error', text: msg });
-};
-
 const negotiateAccept = (req, res, next) => {
   if (!req.$ctx.meta.headers)
     throw new Error(`The parseHeader middleware must be added before the negotiateAccept middleware`);
+
   if (req.$ctx.meta.headers.accept === '*/*') {
     delete req.$ctx.meta.headers.accept;
   }
@@ -101,6 +63,27 @@ const negotiateAccept = (req, res, next) => {
   }
 };
 
+const parseRawBody = (req, res, next) => {
+  if (!req.$ctx.meta.contentTypeNegotiated)
+    throw new Error(`The negotiateContentType middleware must be added before the parseRawBody middleware`);
+
+  // We don't want to parse the raw body for files, otherwise the stream will not be available anymore
+  if (handledMimeTypes.includes(req.$ctx.meta.headers['content-type'])) {
+    let data = '';
+    req.on('data', chunk => {
+      data += chunk;
+    });
+    req.on('end', () => {
+      if (data.length > 0) req.$ctx.meta.rawBody = data;
+      req.$ctx.meta.rawBodyParsed = true; // Used to detect if the middleware was added
+      next();
+    });
+  } else {
+    req.$ctx.meta.rawBodyParsed = true; // Used to detect if the middleware was added
+    next();
+  }
+};
+
 const parseJson = async (req, res, next) => {
   if (!req.$ctx.meta.headers)
     throw new Error(`The parseHeader middleware must be added before the parseJson middleware`);
@@ -108,25 +91,16 @@ const parseJson = async (req, res, next) => {
   if (!req.$ctx.meta.rawBodyParsed)
     throw new Error(`The parseRawBody middleware must be added before the parseJson middleware`);
 
-  let mimeType = null;
-  try {
-    if (req.$ctx.meta.headers['content-type']) {
-      mimeType = negotiateTypeMime(req.$ctx.meta.headers['content-type']);
-    }
-  } catch (e) {
-    // Do nothing if mime type is not found
-  }
-
-  try {
-    if (mimeType === MIME_TYPES.JSON && req.$ctx.meta.rawBody) {
+  if (req.$ctx.meta.headers['content-type'] === MIME_TYPES.JSON && req.$ctx.meta.rawBody) {
+    try {
       const json = JSON.parse(req.$ctx.meta.rawBody);
       req.$params = { ...json, ...req.$params };
+    } catch (e) {
+      // If JSON parsing failed, ignore
     }
-    next();
-  } catch (e) {
-    // If JSON parsing failed, ignore
-    next(e);
   }
+
+  next();
 };
 
 const parseFile = (req, res, next) => {
@@ -177,6 +151,25 @@ const parseFile = (req, res, next) => {
 const saveDatasetMeta = (req, res, next) => {
   req.$ctx.meta.dataset = req.$params.username;
   next();
+};
+
+/** @type {(msg: string) => never} */
+const throw400 = msg => {
+  throw new MoleculerError(msg, 400, 'BAD_REQUEST', { status: 'Bad Request', text: msg });
+};
+
+/** @type {(msg: string) => never} */
+const throw403 = msg => {
+  throw new MoleculerError('Forbidden', 403, 'ACCESS_DENIED', { status: 'Forbidden', text: msg });
+};
+
+/** @type {(msg: string) => never} */
+const throw404 = msg => {
+  throw new MoleculerError('Forbidden', 404, 'NOT_FOUND', { status: 'Not found', text: msg });
+};
+
+const throw500 = msg => {
+  throw new MoleculerError(msg, 500, 'INTERNAL_SERVER_ERROR', { status: 'Server Error', text: msg });
 };
 
 module.exports = {

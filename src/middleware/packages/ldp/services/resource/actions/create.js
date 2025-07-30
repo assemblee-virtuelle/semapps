@@ -72,7 +72,6 @@ module.exports = {
       (controlledActions && controlledActions.get) || 'ldp.resource.get',
       {
         resourceUri,
-        accept: MIME_TYPES.JSON,
         webId: 'system' // Avoid errors if the resource creator has no read rights
       },
       { meta: { $cache: false } }

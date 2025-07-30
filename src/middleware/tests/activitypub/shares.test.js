@@ -77,12 +77,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
 
     // Ensure the /shares collection has been created
     await waitForExpect(async () => {
-      await expect(
-        alice.call('ldp.resource.get', {
-          resourceUri: aliceMessageUri,
-          accept: MIME_TYPES.JSON
-        })
-      ).resolves.toMatchObject({
+      await expect(alice.call('ldp.resource.get', { resourceUri: aliceMessageUri })).resolves.toMatchObject({
         shares: `${aliceMessageUri}/shares`
       });
     });

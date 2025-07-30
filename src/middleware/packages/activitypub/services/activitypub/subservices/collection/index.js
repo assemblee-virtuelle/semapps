@@ -16,7 +16,6 @@ const CollectionService = {
       'https://www.w3.org/ns/activitystreams#Collection',
       'https://www.w3.org/ns/activitystreams#OrderedCollection'
     ],
-    accept: MIME_TYPES.JSON,
     activateTombstones: false,
     permissions: {},
     // These default permissions can be overridden by providing

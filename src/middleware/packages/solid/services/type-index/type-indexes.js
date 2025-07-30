@@ -37,7 +37,6 @@ module.exports = {
           resource: {
             type: ['solid:TypeIndex', 'solid:ListedDocument']
           },
-          contentType: MIME_TYPES.JSON,
           webId
         },
         { parentCtx: ctx }
@@ -102,7 +101,6 @@ module.exports = {
 
       const user = await ctx.call('ldp.resource.get', {
         resourceUri: webId,
-        accept: MIME_TYPES.JSON,
         webId
       });
 

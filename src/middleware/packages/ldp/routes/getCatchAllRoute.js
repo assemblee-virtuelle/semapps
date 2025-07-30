@@ -14,9 +14,9 @@ function getCatchAllRoute(basePath, podProvider) {
   const middlewares = [
     parseUrl,
     parseHeader,
-    parseRawBody,
     negotiateContentType,
     negotiateAccept,
+    parseRawBody,
     parseJson,
     parseFile,
     saveDatasetMeta

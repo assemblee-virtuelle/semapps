@@ -1,7 +1,13 @@
 const urlJoin = require('url-join');
 const { namedNode, triple } = require('@rdfjs/data-model');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { parseUrl, parseHeader, parseRawBody, negotiateAccept, parseJson } = require('@semapps/middlewares');
+const {
+  parseUrl,
+  parseHeader,
+  parseRawBody,
+  negotiateAccept,
+  negotiateContentType,
+  parseJson
+} = require('@semapps/middlewares');
 
 module.exports = {
   settings: {
@@ -18,7 +24,7 @@ module.exports = {
     if (!this.settings.settingsDataset)
       throw new Error(`The settingsDataset must be specified for service ${this.name}`);
 
-    const middlewares = [parseUrl, parseHeader, parseRawBody, negotiateAccept, parseJson];
+    const middlewares = [parseUrl, parseHeader, negotiateAccept, negotiateContentType, parseRawBody, parseJson];
 
     let aliases = {};
     aliases['GET /'] = [...middlewares, `${this.name}.endpointGet`];
@@ -51,7 +57,6 @@ module.exports = {
             id: this.endpointUrl,
             ...this.settings.endpoint.initialData
           },
-          contentType: MIME_TYPES.JSON,
           webId: 'system'
         },
         { meta: { dataset: this.settings.settingsDataset, skipEmitEvent: true, skipObjectsWatcher: true } }
@@ -79,7 +84,6 @@ module.exports = {
         'ldp.resource.get',
         {
           resourceUri: this.endpointUrl,
-          accept: ctx.meta.headers?.accept,
           webId: 'system'
         },
         { meta: { dataset: this.settings.settingsDataset } }

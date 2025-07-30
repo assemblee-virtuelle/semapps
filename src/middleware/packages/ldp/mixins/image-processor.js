@@ -27,7 +27,6 @@ module.exports = {
       const metadata = await ctx.call('ldp.resource.get', {
         resourceUri,
         jsonContext: { '@vocab': 'http://semapps.org/ns/core#' },
-        accept: MIME_TYPES.JSON,
         webId: 'system'
       });
 

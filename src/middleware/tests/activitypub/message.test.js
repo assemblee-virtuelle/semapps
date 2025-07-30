@@ -61,10 +61,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
     aliceMessageUri = createActivity.object.id;
 
     // Check the object has been created
-    const message = await alice.call('ldp.resource.get', {
-      resourceUri: aliceMessageUri,
-      accept: MIME_TYPES.JSON
-    });
+    const message = await alice.call('ldp.resource.get', { resourceUri: aliceMessageUri });
     expect(message).toMatchObject({
       type: OBJECT_TYPES.NOTE,
       attributedTo: alice.id,
@@ -89,12 +86,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
     bobMessageUri = createActivity.object.id;
 
     await waitForExpect(async () => {
-      await expect(
-        alice.call('ldp.resource.get', {
-          resourceUri: aliceMessageUri,
-          accept: MIME_TYPES.JSON
-        })
-      ).resolves.toMatchObject({
+      await expect(alice.call('ldp.resource.get', { resourceUri: aliceMessageUri })).resolves.toMatchObject({
         replies: `${aliceMessageUri}/replies`
       });
     });
@@ -127,12 +119,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
     });
 
     await waitForExpect(async () => {
-      await expect(
-        alice.call('ldp.resource.get', {
-          resourceUri: bobMessageUri,
-          accept: MIME_TYPES.JSON
-        })
-      ).resolves.toMatchObject({
+      await expect(alice.call('ldp.resource.get', { resourceUri: bobMessageUri })).resolves.toMatchObject({
         type: OBJECT_TYPES.TOMBSTONE,
         formerType: 'as:Note',
         deleted: expect.anything()

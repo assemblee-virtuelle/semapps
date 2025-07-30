@@ -38,8 +38,8 @@ module.exports = {
         aliases: {
           'POST /': [
             parseHeader,
-            parseRawBody,
             negotiateContentType,
+            parseRawBody,
             parseJson,
             'solid-notifications.listener.transfer'
           ]

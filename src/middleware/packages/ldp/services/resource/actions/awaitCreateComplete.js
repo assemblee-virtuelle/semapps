@@ -1,4 +1,3 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { waitForResource } = require('../../../utils');
 
 /** @type {import('moleculer').ServiceActionsSchema} */
@@ -27,7 +26,6 @@ module.exports = {
         'ldp.resource.get',
         {
           resourceUri: resourceUri,
-          accept: MIME_TYPES.JSON,
           webId,
           ...rest
         },

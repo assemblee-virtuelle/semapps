@@ -20,8 +20,7 @@ const ObjectService = {
       return await ctx.call('ldp.resource.get', {
         resourceUri: objectUri,
         webId: actorUri,
-        ...rest,
-        accept: MIME_TYPES.JSON
+        ...rest
       });
     },
     // If an object is passed directly, wrap it in a Create activity
@@ -90,7 +89,6 @@ const ObjectService = {
             {
               containerUri,
               resource: activity.object,
-              contentType: MIME_TYPES.JSON,
               webId: actorUri
             },
             {
@@ -114,7 +112,6 @@ const ObjectService = {
             controlledActions?.put || 'ldp.resource.put',
             {
               resource: activity.object,
-              contentType: MIME_TYPES.JSON,
               webId: actorUri
             },
             {

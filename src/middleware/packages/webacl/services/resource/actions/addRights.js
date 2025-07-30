@@ -127,11 +127,12 @@ module.exports = {
         addRequest += `<${add.auth}> <${add.p}> <${add.o}>.\n`;
       }
 
-      await ctx.call('triplestore.insert', {
-        resource: addRequest,
-        webId: 'system',
-        graphName: this.settings.graphName
-      });
+      if (addRequest.length > 0) {
+        await ctx.call('triplestore.update', {
+          query: `INSERT DATA { GRAPH <${this.settings.graphName}> { ${addRequest} } }`,
+          webId: 'system'
+        });
+      }
 
       if (newRights) {
         const returnValues = { uri: resourceUri, created: true, isContainer };

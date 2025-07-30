@@ -72,8 +72,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', m
     await waitForExpect(async () => {
       await expect(
         alice.call('ldp.resource.get', {
-          resourceUri: aliceMessageUri,
-          accept: MIME_TYPES.JSON
+          resourceUri: aliceMessageUri
         })
       ).resolves.toMatchObject({
         likes: `${aliceMessageUri}/likes`

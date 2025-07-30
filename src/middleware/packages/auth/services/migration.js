@@ -1,4 +1,3 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { getSlugFromUri } = require('@semapps/ldp');
 
 module.exports = {
@@ -7,7 +6,7 @@ module.exports = {
     async migrateUsersToAccounts(ctx) {
       const { usersContainer, emailPredicate, usernamePredicate } = ctx.params;
 
-      const results = await ctx.call('ldp.container.get', { containerUri: usersContainer, accept: MIME_TYPES.JSON });
+      const results = await ctx.call('ldp.container.get', { containerUri: usersContainer });
 
       for (const user of results['ldp:contains']) {
         if (user[emailPredicate]) {

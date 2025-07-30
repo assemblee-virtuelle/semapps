@@ -127,7 +127,7 @@ const VCCredentialService = {
         if (!receivedCredential.id)
           await ctx.call(
             'crypto.vc.issuer.credential-container.put',
-            { resource: signedCredential, contentType: MIME_TYPES.JSON, webId: 'system' },
+            { resource: signedCredential, webId: 'system' },
             { meta: { skipEmitEvent: true } }
           );
 
@@ -140,7 +140,6 @@ const VCCredentialService = {
     async createCredentialResource(credential, noAnonRead, webId) {
       const resourceUri = await this.broker.call('crypto.vc.issuer.credential-container.post', {
         resource: credential,
-        contentType: MIME_TYPES.JSON,
         webId
       });
 
@@ -148,8 +147,7 @@ const VCCredentialService = {
       const resource = await this.broker.call('crypto.vc.issuer.credential-container.get', {
         resourceUri,
         jsonContext: credentialsContext,
-        webId: 'system',
-        accept: MIME_TYPES.JSON
+        webId: 'system'
       });
 
       // Set resource rights.

@@ -120,7 +120,6 @@ module.exports = {
             'notify:sendTo': sendTo,
             'notify:receiveFrom': receiveFrom
           },
-          contentType: MIME_TYPES.JSON,
           webId: 'system'
         },
         { parentCtx: ctx }

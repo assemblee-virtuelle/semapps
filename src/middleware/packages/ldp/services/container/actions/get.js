@@ -71,8 +71,7 @@ module.exports = {
               cleanUndefined({
                 resourceUri,
                 webId,
-                jsonContext,
-                accept
+                jsonContext
               })
             );
 

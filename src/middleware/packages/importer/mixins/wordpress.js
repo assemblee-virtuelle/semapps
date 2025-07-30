@@ -1,7 +1,6 @@
 const urlJoin = require('url-join');
 const fetch = require('node-fetch');
 const { getSlugFromUri, delay } = require('@semapps/ldp');
-const { MIME_TYPES } = require('@semapps/mime-types');
 const ImporterMixin = require('./importer');
 
 module.exports = {
@@ -90,7 +89,6 @@ module.exports = {
               readableStream: response.body,
               mimetype: mediaData.mime_type
             },
-            contentType: MIME_TYPES.JSON,
             webId: 'system'
           });
         } else {

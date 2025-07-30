@@ -1,4 +1,3 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { ACTIVITY_TYPES, OBJECT_TYPES, PUBLIC_URI } = require('@semapps/activitypub');
 const waitForExpect = require('wait-for-expect');
 const initialize = require('./initialize');
@@ -105,7 +104,6 @@ describe('Permissions are correctly set on outbox', () => {
     // await expect(() =>
     //   broker.call('ldp.resource.get', {
     //     resourceUri: objectPrivateFirst.id,
-    //     accept: MIME_TYPES.JSON,
     //     webId: simon.id
     //   })
     // ).rejects.toThrow();
@@ -360,7 +358,6 @@ describe('Permissions are correctly set on outbox', () => {
       await expect(() =>
         broker.call('ldp.resource.get', {
           resourceUri: objectUri,
-          accept: MIME_TYPES.JSON,
           webId: simon.id
         })
       ).rejects.toThrow();

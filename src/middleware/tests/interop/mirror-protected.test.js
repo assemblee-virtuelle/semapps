@@ -1,6 +1,5 @@
 const urlJoin = require('url-join');
 const waitForExpect = require('wait-for-expect');
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { ACTIVITY_TYPES } = require('@semapps/activitypub');
 const initialize = require('./initialize');
 
@@ -60,7 +59,6 @@ describe('Resource on server1 is shared with user on server2', () => {
         '@type': 'Resource',
         label: 'My protected resource'
       },
-      contentType: MIME_TYPES.JSON,
       containerUri: 'http://localhost:3001/protected-resources',
       webId: 'system'
     });

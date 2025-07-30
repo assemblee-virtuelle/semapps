@@ -97,9 +97,9 @@ const ApiService = {
       const middlewares = [
         parseUrl,
         parseHeader,
-        parseRawBody,
         negotiateContentType,
         negotiateAccept,
+        parseRawBody,
         parseJson,
         parseFile,
         saveDatasetMeta

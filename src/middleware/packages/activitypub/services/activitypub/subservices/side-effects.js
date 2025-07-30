@@ -1,6 +1,5 @@
 const { credentialsContext } = require('@semapps/crypto');
 const { arrayOf } = require('@semapps/ldp');
-const { MIME_TYPES } = require('@semapps/mime-types');
 const matchActivity = require('../../../utils/matchActivity');
 
 /**
@@ -74,7 +73,6 @@ module.exports = {
           'ldp.resource.get',
           {
             resourceUri,
-            accept: MIME_TYPES.JSON,
             webId
           },
           { meta: { dataset } }

@@ -1,11 +1,9 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { delay, getParentContainerUri } = require('../utils');
 
 module.exports = {
   settings: {
     path: null,
     acceptedTypes: null,
-    accept: MIME_TYPES.JSON,
     permissions: null,
     newResourcesPermissions: null,
     controlledActions: {},

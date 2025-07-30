@@ -1,5 +1,3 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
-
 module.exports = {
   name: 'ldp.cache',
   dependencies: ['ldp.container'],
@@ -8,7 +6,7 @@ module.exports = {
       const containersUris = await ctx.call('ldp.container.getAll');
       for (const containerUri of containersUris) {
         try {
-          await ctx.call('ldp.container.get', { containerUri, accept: MIME_TYPES.JSON });
+          await ctx.call('ldp.container.get', { containerUri });
           this.logger.info(`Generated cache for container ${containerUri}`);
         } catch (e) {
           this.logger.warn(`Error when generating cache for container ${containerUri}`);

@@ -2,7 +2,6 @@ const fetch = require('node-fetch');
 const fs = require('fs');
 const { join: pathJoin } = require('path');
 const urlJoin = require('url-join');
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { getSlugFromUri } = require('@semapps/ldp');
 const { fetchServer } = require('../utils');
 const initialize = require('./initialize');
@@ -75,12 +74,7 @@ describe('Binary handling of LDP server', () => {
   });
 
   test('Get image as resource (via Moleculer action)', async () => {
-    await expect(
-      broker.call('ldp.resource.get', {
-        resourceUri: fileUri,
-        accept: MIME_TYPES.JSON
-      })
-    ).resolves.toMatchObject({
+    await expect(broker.call('ldp.resource.get', { resourceUri: fileUri })).resolves.toMatchObject({
       '@id': fileUri,
       '@type': 'semapps:File',
       'semapps:fileName': fileName,

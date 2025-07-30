@@ -44,7 +44,6 @@ module.exports = {
       'ldp.resource.get',
       {
         resourceUri,
-        accept: MIME_TYPES.JSON,
         webId
       },
       {
@@ -123,7 +122,6 @@ module.exports = {
         'ldp.resource.get',
         {
           resourceUri,
-          accept: MIME_TYPES.JSON,
           webId
         },
         {

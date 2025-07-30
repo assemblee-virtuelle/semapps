@@ -175,7 +175,6 @@ async function selectAndDereferenceItems(ctx, allItemURIs, options, webId, curso
         try {
           let item = await ctx.call('ldp.resource.get', {
             resourceUri: itemUri,
-            accept: MIME_TYPES.JSON,
             webId: ctx.meta.impersonatedUser || webId
           });
           delete item['@context']; // Don't keep the items individual context

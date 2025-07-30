@@ -1,5 +1,4 @@
 const { randomUUID } = require('node:crypto');
-const { MIME_TYPES } = require('@semapps/mime-types');
 const {
   purposes: { AuthenticationProofPurpose }
 } = require('jsonld-signatures');
@@ -115,7 +114,7 @@ const VCHolderService = {
         if (!presentationParam.id && ctx.params.options.persist)
           await ctx.call(
             'crypto.vc.holder.presentation-container.put',
-            { resource: signedPresentation, contentType: MIME_TYPES.JSON, webId: 'system' },
+            { resource: signedPresentation, webId: 'system' },
             { meta: { skipEmitEvent: true } }
           );
 
@@ -130,15 +129,13 @@ const VCHolderService = {
       // Post presentation to container (will add metadata).
       const resourceUri = await this.broker.call('crypto.vc.holder.presentation-container.post', {
         resource: presentation,
-        contentType: MIME_TYPES.JSON,
         webId
       });
 
       // Get the presentation resource.
       const resource = await this.broker.call('crypto.vc.holder.presentation-container.get', {
         resourceUri,
-        webId: 'system',
-        accept: MIME_TYPES.JSON
+        webId: 'system'
       });
 
       // Set resource rights.

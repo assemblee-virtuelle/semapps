@@ -1,4 +1,3 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { namedNode, triple, literal } = require('@rdfjs/data-model');
 const CONFIG = require('../config');
 const initialize = require('./initialize');
@@ -30,14 +29,12 @@ describe('Permissions check on a specific resource', () => {
         type: 'Event',
         name: 'My event #1'
       },
-      contentType: MIME_TYPES.JSON,
       webId: 'system'
     });
 
     await expect(
       broker.call('ldp.resource.get', {
         resourceUri,
-        accept: MIME_TYPES.JSON,
         webId: ALICE_WEBID
       })
     ).rejects.toThrow('Forbidden');
@@ -63,7 +60,6 @@ describe('Permissions check on a specific resource', () => {
           type: 'Event',
           name: 'My event #1 - edited'
         },
-        contentType: MIME_TYPES.JSON,
         webId: ALICE_WEBID
       })
     ).rejects.toThrow('Forbidden');
@@ -88,7 +84,6 @@ describe('Permissions check on a specific resource', () => {
     await expect(
       broker.call('ldp.resource.get', {
         resourceUri,
-        accept: MIME_TYPES.JSON,
         webId: ALICE_WEBID
       })
     ).resolves.toBeDefined();
@@ -96,7 +91,6 @@ describe('Permissions check on a specific resource', () => {
     await expect(
       broker.call('ldp.container.get', {
         containerUri,
-        accept: MIME_TYPES.JSON,
         webId: ALICE_WEBID
       })
     ).rejects.toThrow('Forbidden');
@@ -114,7 +108,6 @@ describe('Permissions check on a specific resource', () => {
     await expect(
       broker.call('ldp.container.get', {
         containerUri,
-        accept: MIME_TYPES.JSON,
         webId: ALICE_WEBID
       })
     ).resolves.toMatchObject({
@@ -142,7 +135,6 @@ describe('Permissions check on a specific resource', () => {
     await expect(
       broker.call('ldp.resource.get', {
         resourceUri,
-        accept: MIME_TYPES.JSON,
         webId: BOB_WEBID
       })
     ).resolves.toBeDefined();
@@ -156,7 +148,6 @@ describe('Permissions check on a specific resource', () => {
           type: 'Event',
           name: 'My event #2'
         },
-        contentType: MIME_TYPES.JSON,
         webId: ALICE_WEBID
       })
     ).rejects.toThrow();
@@ -178,7 +169,6 @@ describe('Permissions check on a specific resource', () => {
           type: 'Event',
           name: 'My event #2'
         },
-        contentType: MIME_TYPES.JSON,
         webId: ALICE_WEBID
       })
     ).resolves.toBeDefined();
@@ -216,7 +206,6 @@ describe('Permissions check on a specific resource', () => {
           content: 'Welcome everybody',
           startTime: '2014-12-31T23:00:00-08:00'
         },
-        contentType: MIME_TYPES.JSON,
         webId: ALICE_WEBID
       })
     ).resolves.toBeDefined();
@@ -244,7 +233,6 @@ describe('Permissions check on a specific resource', () => {
           type: 'Event',
           name: 'My event #1 - edited'
         },
-        contentType: MIME_TYPES.JSON,
         webId: ALICE_WEBID
       })
     ).rejects.toThrow();
@@ -280,7 +268,6 @@ describe('Permissions check on a specific resource', () => {
           type: 'Event',
           name: 'My event #1 - edited'
         },
-        contentType: MIME_TYPES.JSON,
         webId: ALICE_WEBID
       })
     ).resolves.toBeDefined();

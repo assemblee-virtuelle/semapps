@@ -33,7 +33,6 @@ describe('middleware CRUD resource with perms', () => {
             description: 'myProject',
             label: 'myTitle'
           },
-          contentType: MIME_TYPES.JSON,
           containerUri: `${CONFIG.HOME_URL}resources`
         },
         { meta: { webId: 'anon' } }
@@ -51,15 +50,12 @@ describe('middleware CRUD resource with perms', () => {
           type: 'Event',
           name: 'My event #1'
         },
-        contentType: MIME_TYPES.JSON,
         containerUri: `${CONFIG.HOME_URL}resources`
       },
       { meta: { webId: ALICE_WEBID } }
     );
 
-    await expect(
-      broker.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON, webId: ALICE_WEBID })
-    ).resolves.toMatchObject({
+    await expect(broker.call('ldp.resource.get', { resourceUri, webId: ALICE_WEBID })).resolves.toMatchObject({
       type: 'Event',
       name: 'My event #1'
     });

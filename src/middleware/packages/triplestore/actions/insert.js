@@ -1,5 +1,4 @@
 const urlJoin = require('url-join');
-const { MIME_TYPES } = require('@semapps/mime-types');
 
 module.exports = {
   visibility: 'public',
@@ -26,19 +25,19 @@ module.exports = {
     }
   },
   async handler(ctx) {
-    const { resource, contentType, graphName } = ctx.params;
+    const { resource, graphName } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     let dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
-    if (contentType && contentType !== MIME_TYPES.JSON)
-      throw new Error(`The triplestore.insert action now only support JSON-LD. Provided: ${contentType}`);
-
-    const rdf = await ctx.call('jsonld.parser.toRDF', {
-      input: resource,
-      options: {
-        format: 'application/n-quads'
-      }
-    });
+    const rdf =
+      typeof resource === 'string'
+        ? resource
+        : await ctx.call('jsonld.parser.toRDF', {
+            input: resource,
+            options: {
+              format: 'application/n-quads'
+            }
+          });
 
     if (!dataset) throw new Error(`No dataset defined for triplestore insert: ${rdf}`);
     if (dataset !== '*' && !(await ctx.call('triplestore.dataset.exist', { dataset })))

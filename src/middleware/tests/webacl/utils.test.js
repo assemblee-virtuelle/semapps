@@ -1,5 +1,4 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { namedNode, triple, literal } = require('@rdfjs/data-model');
 const CONFIG = require('../config');
 const initialize = require('./initialize');
 
@@ -29,7 +28,6 @@ describe('Test various actions of the webacl.resource service', () => {
         type: 'Event',
         name: 'My event #1'
       },
-      contentType: MIME_TYPES.JSON,
       webId: 'system'
     });
 

@@ -197,7 +197,6 @@ module.exports = {
       if (destUri) {
         const oldData = await ctx.call('ldp.resource.get', {
           resourceUri: destUri,
-          accept: MIME_TYPES.JSON,
           webId: 'system'
         });
 
@@ -225,7 +224,6 @@ module.exports = {
                 'dc:modified': resource['dc:modified'] || this.getField('updated', data),
                 'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri
               },
-              contentType: MIME_TYPES.JSON,
               webId: 'system'
             });
           } catch (e) {
@@ -257,7 +255,6 @@ module.exports = {
               'dc:modified': resource['dc:modified'] || this.getField('updated', data),
               'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri
             },
-            contentType: MIME_TYPES.JSON,
             webId: 'system'
           });
         } catch (e) {

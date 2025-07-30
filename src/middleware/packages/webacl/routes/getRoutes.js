@@ -10,7 +10,7 @@ const onError = (req, res, err) => {
 };
 
 const getRoutes = (basePath, podProvider) => {
-  const middlewares = [parseHeader, parseRawBody, negotiateContentType, negotiateAccept, parseJson];
+  const middlewares = [parseHeader, negotiateContentType, negotiateAccept, parseRawBody, parseJson];
 
   return [
     {
