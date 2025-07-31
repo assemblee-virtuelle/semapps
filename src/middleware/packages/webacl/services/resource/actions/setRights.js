@@ -17,7 +17,7 @@ module.exports = {
     if (!contentType || (contentType !== MIME_TYPES.JSON && contentType !== MIME_TYPES.TURTLE))
       throw new MoleculerError(`Content type not supported : ${contentType}`, 400, 'BAD_REQUEST');
 
-    const newRights = await convertBodyToTriples(ctx.meta.body, contentType);
+    const newRights = await convertBodyToTriples(ctx.meta.rawBody, contentType);
     if (newRights.length === 0) throw new MoleculerError('PUT rights cannot be empty', 400, 'BAD_REQUEST');
 
     // This is the root container

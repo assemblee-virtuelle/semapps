@@ -1,5 +1,4 @@
 const { MoleculerError } = require('moleculer').Errors;
-const { MIME_TYPES } = require('@semapps/mime-types');
 const ControlledContainerMixin = require('./controlled-container');
 const { delay } = require('../utils');
 
@@ -30,10 +29,7 @@ module.exports = {
       let resource = this.settings.initialValue;
       if (!resource.type && !resource['@type']) resource.type = this.settings.acceptedTypes;
 
-      return await this.actions.post(
-        { containerUri, resource, contentType: MIME_TYPES.JSON, webId },
-        { parentCtx: ctx }
-      );
+      return await this.actions.post({ containerUri, resource, webId }, { parentCtx: ctx });
     },
     async getResourceUri(ctx) {
       const containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });

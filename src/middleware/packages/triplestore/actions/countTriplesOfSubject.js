@@ -1,5 +1,3 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
-
 module.exports = {
   visibility: 'public',
   params: {
@@ -34,7 +32,6 @@ module.exports = {
           <${ctx.params.uri}> ?p ?v
         }
       `,
-      accept: MIME_TYPES.JSON,
       webId,
       dataset
     });

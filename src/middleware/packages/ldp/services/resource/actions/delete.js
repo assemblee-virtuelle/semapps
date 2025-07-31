@@ -1,5 +1,4 @@
 const fs = require('fs');
-const { MIME_TYPES } = require('@semapps/mime-types');
 
 module.exports = {
   visibility: 'public',
@@ -23,7 +22,6 @@ module.exports = {
       'ldp.resource.get',
       {
         resourceUri,
-        accept: MIME_TYPES.JSON,
         webId
       },
       {

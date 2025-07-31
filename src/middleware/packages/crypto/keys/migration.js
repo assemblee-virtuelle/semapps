@@ -1,4 +1,3 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
 const fs = require('fs');
 const path = require('path');
 const { KEY_TYPES } = require('../constants');
@@ -161,7 +160,6 @@ module.exports = {
         };
         const keyId = await ctx.call('keys.container.post', {
           resource: keyResource,
-          contentType: MIME_TYPES.JSON,
           webId
         });
         keyResource.id = keyId;

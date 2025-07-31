@@ -1,6 +1,5 @@
 const waitForExpect = require('wait-for-expect');
 const { OBJECT_TYPES, ACTIVITY_TYPES, PUBLIC_URI } = require('@semapps/activitypub');
-const { MIME_TYPES } = require('@semapps/mime-types');
 const initialize = require('./initialize');
 
 jest.setTimeout(50000);
@@ -13,7 +12,6 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', m
   let alice;
   let bob;
   let aliceMessageUri;
-  let bobMessageUri;
 
   beforeAll(async () => {
     if (mode === 'single-server') {
@@ -72,8 +70,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', m
     await waitForExpect(async () => {
       await expect(
         alice.call('ldp.resource.get', {
-          resourceUri: aliceMessageUri,
-          accept: MIME_TYPES.JSON
+          resourceUri: aliceMessageUri
         })
       ).resolves.toMatchObject({
         likes: `${aliceMessageUri}/likes`
@@ -83,10 +80,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', m
     // Ensure Bob has been added to the /likes collection
     await waitForExpect(async () => {
       await expect(
-        alice.call('activitypub.collection.get', {
-          resourceUri: `${aliceMessageUri}/likes`,
-          accept: MIME_TYPES.JSON
-        })
+        alice.call('activitypub.collection.get', { resourceUri: `${aliceMessageUri}/likes` })
       ).resolves.toMatchObject({
         type: 'Collection',
         items: bob.id
@@ -95,12 +89,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', m
 
     // Ensure the note has been added to Bob's /liked collection
     await waitForExpect(async () => {
-      await expect(
-        bob.call('activitypub.collection.get', {
-          resourceUri: `${bob.id}/liked`,
-          accept: MIME_TYPES.JSON
-        })
-      ).resolves.toMatchObject({
+      await expect(bob.call('activitypub.collection.get', { resourceUri: `${bob.id}/liked` })).resolves.toMatchObject({
         type: 'Collection',
         items: aliceMessageUri
       });
@@ -121,19 +110,13 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', m
 
     // Ensure Bob has been removed from the /likes collection
     await waitForExpect(async () => {
-      const likes = await alice.call('activitypub.collection.get', {
-        resourceUri: `${aliceMessageUri}/likes`,
-        accept: MIME_TYPES.JSON
-      });
+      const likes = await alice.call('activitypub.collection.get', { resourceUri: `${aliceMessageUri}/likes` });
       expect(likes.items).toHaveLength(0);
     });
 
     // Ensure the note has been removed from Bob's /liked collection
     await waitForExpect(async () => {
-      const liked = await bob.call('activitypub.collection.get', {
-        resourceUri: `${bob.id}/liked`,
-        accept: MIME_TYPES.JSON
-      });
+      const liked = await bob.call('activitypub.collection.get', { resourceUri: `${bob.id}/liked` });
       expect(liked.items).toHaveLength(0);
     });
   });

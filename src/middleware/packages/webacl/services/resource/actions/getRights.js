@@ -189,14 +189,14 @@ module.exports = {
 
     return await ctx.call('webacl.resource.getRights', {
       resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
-      accept: accept
+      accept
     });
   },
   action: {
     visibility: 'public',
     params: {
       resourceUri: { type: 'string' },
-      accept: { type: 'string', optional: true },
+      accept: { type: 'string', default: MIME_TYPES.JSON },
       webId: { type: 'string', optional: true },
       skipResourceCheck: { type: 'boolean', default: false }
     },

@@ -1,5 +1,3 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
-
 module.exports = {
   visibility: 'public',
   params: {
@@ -16,7 +14,6 @@ module.exports = {
           <${containerUri}> ldp:contains ?resourceUri .
         }
       `,
-      accept: MIME_TYPES.JSON,
       webId: 'system'
     });
 

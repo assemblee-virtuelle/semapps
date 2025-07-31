@@ -1,4 +1,3 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { Errors: E } = require('moleculer-web');
 const { hasType } = require('../../../utils');
 
@@ -85,7 +84,6 @@ module.exports = {
     await ctx.call('triplestore.insert', {
       resource,
       graphName,
-      contentType: MIME_TYPES.JSON,
       webId: 'system',
       dataset
     });

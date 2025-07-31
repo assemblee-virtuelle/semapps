@@ -1,4 +1,3 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { getContainerFromUri } = require('../../../utils');
 
 module.exports = {
@@ -27,7 +26,6 @@ module.exports = {
           ?containerUri ldp:contains <${resourceUri}> .
         }
       `,
-      accept: MIME_TYPES.JSON,
       dataset,
       webId: 'system'
     });

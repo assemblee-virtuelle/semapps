@@ -39,8 +39,8 @@ module.exports = {
       }
 
       if (triples.length > 0) {
-        await ctx.call('triplestore.insert', {
-          resource: triples.join('\n'),
+        await ctx.call('triplestore.update', {
+          query: `INSERT DATA { ${triples.join('\n')} }`,
           dataset: this.settings.podProvider ? dataset || getDatasetFromUri(resourceUri) : undefined,
           webId: 'system'
         });

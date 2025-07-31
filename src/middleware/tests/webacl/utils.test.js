@@ -1,5 +1,3 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { namedNode, triple, literal } = require('@rdfjs/data-model');
 const CONFIG = require('../config');
 const initialize = require('./initialize');
 
@@ -29,7 +27,6 @@ describe('Test various actions of the webacl.resource service', () => {
         type: 'Event',
         name: 'My event #1'
       },
-      contentType: MIME_TYPES.JSON,
       webId: 'system'
     });
 
@@ -54,11 +51,7 @@ describe('Test various actions of the webacl.resource service', () => {
       control: true
     });
 
-    const rights = await broker.call('webacl.resource.getRights', {
-      resourceUri,
-      accept: MIME_TYPES.JSON,
-      webId: ALICE_WEBID
-    });
+    const rights = await broker.call('webacl.resource.getRights', { resourceUri, webId: ALICE_WEBID });
 
     expect(rights['@graph']).toHaveLength(3);
 
@@ -91,10 +84,7 @@ describe('Test various actions of the webacl.resource service', () => {
   });
 
   test('Anonymous user cannot see Alice rights', async () => {
-    const rights = await broker.call('webacl.resource.getRights', {
-      resourceUri,
-      accept: MIME_TYPES.JSON
-    });
+    const rights = await broker.call('webacl.resource.getRights', { resourceUri });
 
     await expect(
       broker.call('webacl.resource.hasRights', {
@@ -143,11 +133,7 @@ describe('Test various actions of the webacl.resource service', () => {
       control: false
     });
 
-    const rights = await broker.call('webacl.resource.getRights', {
-      resourceUri,
-      accept: MIME_TYPES.JSON,
-      webId: BOB_WEBID
-    });
+    const rights = await broker.call('webacl.resource.getRights', { resourceUri, webId: BOB_WEBID });
 
     expect(rights['@graph']).toHaveLength(2);
 

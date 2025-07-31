@@ -1,5 +1,4 @@
 const { arrayOf } = require('@semapps/ldp');
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { hasType } = require('../utils');
 
 module.exports = {
@@ -21,7 +20,6 @@ module.exports = {
     async refreshAll(ctx) {
       const usersContainer = await ctx.call('ldp.container.get', {
         containerUri: this.settings.usersContainer,
-        accept: MIME_TYPES.JSON,
         webId: 'system'
       });
 

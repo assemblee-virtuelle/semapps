@@ -1,4 +1,3 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { arrayOf } = require('../utils');
 
 module.exports = {
@@ -13,21 +12,16 @@ module.exports = {
   hooks: {
     before: {
       async create(ctx) {
-        const { resource, contentType } = ctx.params;
-        if (contentType === MIME_TYPES.JSON) {
-          await this.createDisassembly(ctx, resource);
-        }
+        const { resource } = ctx.params;
+        await this.createDisassembly(ctx, resource);
       },
       async put(ctx) {
-        const { resource, contentType } = ctx.params;
-        if (contentType === MIME_TYPES.JSON) {
-          const oldData = await ctx.call('ldp.resource.get', {
-            resourceUri: resource.id || resource['@id'],
-            accept: MIME_TYPES.JSON,
-            webId: 'system'
-          });
-          await this.updateDisassembly(ctx, resource, oldData);
-        }
+        const { resource } = ctx.params;
+        const oldData = await ctx.call('ldp.resource.get', {
+          resourceUri: resource.id || resource['@id'],
+          webId: 'system'
+        });
+        await this.updateDisassembly(ctx, resource, oldData);
       }
     },
     after: {
@@ -54,7 +48,6 @@ module.exports = {
                 '@context': newData['@context'],
                 ...resourceWithoutId
               },
-              contentType: MIME_TYPES.JSON,
               webId: 'system'
             });
             uriAdded.push({ '@id': newResourceUri, '@type': '@id' });
@@ -92,7 +85,6 @@ module.exports = {
                 '@context': newData['@context'],
                 ...resource
               },
-              contentType: MIME_TYPES.JSON,
               webId: 'system'
             });
             uriAdded.push({ '@id': newResourceUri, '@type': '@id' });
@@ -122,7 +114,6 @@ module.exports = {
                   '@context': newData['@context'],
                   ...resource
                 },
-                contentType: MIME_TYPES.JSON,
                 webId: 'system'
               });
             } catch (error) {

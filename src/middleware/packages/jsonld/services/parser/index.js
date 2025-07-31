@@ -1,6 +1,9 @@
 const jsonld = require('jsonld');
+const N3 = require('n3');
 const { JsonLdParser } = require('jsonld-streaming-parser');
+const { JsonLdSerializer } = require('jsonld-streaming-serializer');
 const streamifyString = require('streamify-string');
+const rdfParser = require('rdf-parse').default;
 const { arrayOf, isURI } = require('../../utils/utils');
 
 module.exports = {
@@ -11,6 +14,7 @@ module.exports = {
     this.jsonld.documentLoader = (url, options) =>
       this.broker.call('jsonld.document-loader.loadWithCache', { url, options });
 
+    // Options: https://github.com/rubensworks/jsonld-streaming-parser.js?tab=readme-ov-file#configuration
     this.jsonLdParser = new JsonLdParser({
       documentLoader: {
         load: url => this.broker.call('jsonld.document-loader.loadWithCache', { url }).then(context => context.document)
@@ -38,13 +42,57 @@ module.exports = {
       const { input, options } = ctx.params;
       return this.jsonld.normalize(input, options);
     },
-    fromRDF(ctx) {
-      const { dataset, options } = ctx.params;
-      return this.jsonld.fromRDF(dataset, options);
+    async fromRDF(ctx) {
+      const { input, options = {} } = ctx.params;
+      const { format } = options;
+
+      if (!format || format === 'application/n-quads') {
+        return await this.jsonld.fromRDF(input, options);
+      } else {
+        const quads = await this.rdfToQuads(input, format);
+
+        const context = await ctx.call('jsonld.context.get');
+
+        // Options: https://github.com/rubensworks/jsonld-streaming-serializer.js?tab=readme-ov-file#configuration
+        const jsonLdSerializer = new JsonLdSerializer();
+        quads.forEach(quad => jsonLdSerializer.write(quad));
+        jsonLdSerializer.end();
+
+        const jsonLd = JSON.parse(await this.streamToString(jsonLdSerializer));
+
+        return await this.actions.frame(
+          {
+            input: jsonLd,
+            frame: { '@context': context }
+            // Force results to be in a @graph, even if we have a single result
+            // options: { omitGraph: false }
+          },
+          { parentCtx: ctx }
+        );
+      }
     },
-    toRDF(ctx) {
-      const { input, options } = ctx.params;
-      return this.jsonld.toRDF(input, options);
+    async toRDF(ctx) {
+      const { input, options = {} } = ctx.params;
+      const { format } = options;
+
+      if (!format || format === 'application/n-quads') {
+        return await this.jsonld.toRDF(input, options);
+      } else {
+        // Since JSONLD.js does not support output other than N-Quads, use N3 for that
+        const quads = await this.actions.toQuads({ input }, { parentCtx: ctx });
+        const prefixes = await ctx.call('ontologies.getPrefixes');
+        return new Promise((resolve, reject) => {
+          const writer = new N3.Writer({ format, prefixes });
+          writer.addQuads(quads.reverse()); // We reverse quads in order to have the type first
+          writer.end((error, result) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(result);
+            }
+          });
+        });
+      }
     },
     // Return quads in RDF.JS data model
     // (this.jsonld.toRDF does not use the same model)
@@ -109,6 +157,27 @@ module.exports = {
       }
 
       return expandedTypes;
+    }
+  },
+  methods: {
+    streamToString(stream) {
+      let res = '';
+      return new Promise((resolve, reject) => {
+        stream.on('data', chunk => (res += chunk));
+        stream.on('error', err => reject(err));
+        stream.on('end', () => resolve(res));
+      });
+    },
+    rdfToQuads(input, format) {
+      return new Promise((resolve, reject) => {
+        const textStream = streamifyString(input);
+        const res = [];
+        rdfParser
+          .parse(textStream, { contentType: format })
+          .on('data', quad => res.push(quad))
+          .on('error', error => reject(error))
+          .on('end', () => resolve(res));
+      });
     }
   }
 };

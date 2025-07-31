@@ -1,6 +1,5 @@
 const waitForExpect = require('wait-for-expect');
 const { OBJECT_TYPES, ACTIVITY_TYPES } = require('@semapps/activitypub');
-const { MIME_TYPES } = require('@semapps/mime-types');
 const initialize = require('./initialize');
 
 jest.setTimeout(70000);
@@ -61,10 +60,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
     aliceMessageUri = createActivity.object.id;
 
     // Check the object has been created
-    const message = await alice.call('ldp.resource.get', {
-      resourceUri: aliceMessageUri,
-      accept: MIME_TYPES.JSON
-    });
+    const message = await alice.call('ldp.resource.get', { resourceUri: aliceMessageUri });
     expect(message).toMatchObject({
       type: OBJECT_TYPES.NOTE,
       attributedTo: alice.id,
@@ -89,22 +85,14 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
     bobMessageUri = createActivity.object.id;
 
     await waitForExpect(async () => {
-      await expect(
-        alice.call('ldp.resource.get', {
-          resourceUri: aliceMessageUri,
-          accept: MIME_TYPES.JSON
-        })
-      ).resolves.toMatchObject({
+      await expect(alice.call('ldp.resource.get', { resourceUri: aliceMessageUri })).resolves.toMatchObject({
         replies: `${aliceMessageUri}/replies`
       });
     });
 
     await waitForExpect(async () => {
       await expect(
-        alice.call('activitypub.collection.get', {
-          resourceUri: `${aliceMessageUri}/replies`,
-          accept: MIME_TYPES.JSON
-        })
+        alice.call('activitypub.collection.get', { resourceUri: `${aliceMessageUri}/replies` })
       ).resolves.toMatchObject({
         type: 'Collection',
         items: {
@@ -127,12 +115,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
     });
 
     await waitForExpect(async () => {
-      await expect(
-        alice.call('ldp.resource.get', {
-          resourceUri: bobMessageUri,
-          accept: MIME_TYPES.JSON
-        })
-      ).resolves.toMatchObject({
+      await expect(alice.call('ldp.resource.get', { resourceUri: bobMessageUri })).resolves.toMatchObject({
         type: OBJECT_TYPES.TOMBSTONE,
         formerType: 'as:Note',
         deleted: expect.anything()
@@ -140,10 +123,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
     });
 
     await waitForExpect(async () => {
-      const replies = await alice.call('activitypub.collection.get', {
-        resourceUri: `${aliceMessageUri}/replies`,
-        accept: MIME_TYPES.JSON
-      });
+      const replies = await alice.call('activitypub.collection.get', { resourceUri: `${aliceMessageUri}/replies` });
       expect(replies.items).toBeUndefinedOrEmptyArray();
     });
   });

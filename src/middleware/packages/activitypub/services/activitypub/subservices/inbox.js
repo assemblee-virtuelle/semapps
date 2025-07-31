@@ -1,6 +1,5 @@
 const { Errors: E } = require('moleculer-web');
 const { MoleculerError } = require('moleculer').Errors;
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { objectIdToCurrent, collectionPermissionsWithAnonRead } = require('../../../utils');
 const { ACTOR_TYPES } = require('../../../constants');
 const AwaitActivityMixin = require('../../../mixins/await-activity');
@@ -73,7 +72,7 @@ const InboxService = {
           throw new Error(`Cannot validate HTTP signature because of missing meta (rawBody or originalHeaders)`);
 
         const validDigest = await ctx.call('signature.verifyDigest', {
-          body: ctx.meta.rawBody, // Stored by parseJson middleware
+          body: ctx.meta.rawBody, // Stored by parseRawBody middleware
           headers: ctx.meta.originalHeaders
         });
 
@@ -163,7 +162,6 @@ const InboxService = {
           }
           ORDER BY ?published
         `,
-        accept: MIME_TYPES.JSON,
         webId: 'system'
       });
 

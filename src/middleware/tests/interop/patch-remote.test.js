@@ -1,6 +1,5 @@
 const waitForExpect = require('wait-for-expect');
 const { triple, namedNode } = require('@rdfjs/data-model');
-const { MIME_TYPES } = require('@semapps/mime-types');
 const initialize = require('./initialize');
 
 jest.setTimeout(50000);
@@ -29,7 +28,6 @@ describe('Server2 imports a single resource from server1', () => {
         '@type': 'Resource',
         label: 'My resource'
       },
-      contentType: MIME_TYPES.JSON,
       containerUri: 'http://localhost:3001/resources'
     });
 
@@ -77,8 +75,7 @@ describe('Server2 imports a single resource from server1', () => {
         '@id': resourceUri,
         '@type': 'Resource',
         label: 'My resource updated'
-      },
-      contentType: MIME_TYPES.JSON
+      }
     });
 
     // Force call of updateSingleMirroredResources

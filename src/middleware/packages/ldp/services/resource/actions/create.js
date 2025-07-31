@@ -10,13 +10,17 @@ module.exports = {
       optional: true
     },
     contentType: {
-      type: 'string'
+      type: 'string',
+      optional: true
     }
   },
   async handler(ctx) {
-    let { resource, contentType, body } = ctx.params;
+    let { resource, contentType } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const resourceUri = resource.id || resource['@id'];
+
+    if (contentType && contentType !== MIME_TYPES.JSON)
+      throw new Error(`The ldp.resource.create action now only support JSON-LD. Provided: ${contentType}`);
 
     if (await ctx.call('ldp.remote.isRemote', { resourceUri }))
       throw new MoleculerError('Remote resources cannot be created', 403, 'FORBIDDEN');
@@ -32,17 +36,14 @@ module.exports = {
     }
 
     // Adds the default context, if it is missing
-    if (contentType === MIME_TYPES.JSON && !resource['@context']) {
+    if (!resource['@context']) {
       resource = {
         '@context': await ctx.call('jsonld.context.get'),
         ...resource
       };
     }
 
-    if (contentType !== MIME_TYPES.JSON && !resource.body)
-      throw new MoleculerError('The resource must contain a body member (a string)', 400, 'BAD_REQUEST');
-
-    let newTriples = await this.bodyToTriples(body || resource, contentType);
+    let newTriples = await ctx.call('jsonld.parser.toQuads', { input: resource });
     // see PUT
     newTriples = this.filterOtherNamedNodes(newTriples, resourceUri);
     // see PUT
@@ -71,7 +72,6 @@ module.exports = {
       (controlledActions && controlledActions.get) || 'ldp.resource.get',
       {
         resourceUri,
-        accept: MIME_TYPES.JSON,
         webId: 'system' // Avoid errors if the resource creator has no read rights
       },
       { meta: { $cache: false } }

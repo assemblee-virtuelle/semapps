@@ -1,6 +1,5 @@
 const urlJoin = require('url-join');
 const { ServiceSchemaError } = require('moleculer').Errors;
-const { MIME_TYPES } = require('@semapps/mime-types');
 
 class LdpAdapter {
   constructor({ resourceService = 'ldp.resource', containerService = 'ldp.container' } = {}) {
@@ -50,8 +49,7 @@ class LdpAdapter {
     return this.broker.call(`${this.containerService}.get`, {
       containerUri: this.service.schema.settings.containerUri,
       filters: filters.query,
-      jsonContext: this.service.schema.settings.context,
-      accept: MIME_TYPES.JSON
+      jsonContext: this.service.schema.settings.context
     });
   }
 
@@ -71,8 +69,7 @@ class LdpAdapter {
     }
     return this.broker.call(`${this.resourceService}.get`, {
       resourceUri: _id,
-      jsonContext: this.service.schema.settings.context,
-      accept: MIME_TYPES.JSON
+      jsonContext: this.service.schema.settings.context
     });
   }
 
@@ -108,8 +105,7 @@ class LdpAdapter {
           '@context': this.service.schema.settings.context,
           ...resource
         },
-        slug,
-        contentType: MIME_TYPES.JSON
+        slug
       })
       .then(resourceUri => {
         this.broker.call(`${this.containerService}.attach`, {
@@ -152,8 +148,7 @@ class LdpAdapter {
           '@context': this.service.schema.settings.context,
           '@id': _id,
           ...resource
-        },
-        contentType: MIME_TYPES.JSON
+        }
       })
       .then(resourceUri => this.findById(resourceUri));
   }
