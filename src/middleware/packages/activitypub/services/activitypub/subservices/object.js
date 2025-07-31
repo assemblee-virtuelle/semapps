@@ -1,5 +1,4 @@
 const { getType } = require('@semapps/ldp');
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../../../constants');
 
 const ObjectService = {
@@ -156,7 +155,6 @@ const ObjectService = {
           'ldp.resource.get',
           {
             resourceUri: objectUri,
-            accept: MIME_TYPES.JSON,
             webId: actorUri
           },
           { meta: { $cache: false } }

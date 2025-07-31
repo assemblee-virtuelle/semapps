@@ -145,7 +145,6 @@ const CollectionsRegistryService = {
               ?objectUri <${attachPredicate}> ?collectionUri 
             }
           `,
-          accept: MIME_TYPES.JSON,
           webId: 'system',
           dataset
         });

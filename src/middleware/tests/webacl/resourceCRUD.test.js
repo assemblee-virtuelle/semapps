@@ -1,5 +1,4 @@
 const urlJoin = require('url-join');
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { getSlugFromUri } = require('@semapps/ldp');
 const { fetchServer } = require('../utils');
 const CONFIG = require('../config');
@@ -109,8 +108,7 @@ describe('middleware CRUD resource with perms', () => {
           ?auth ?p <${resourceUri}>.
           FILTER (?p IN (acl:accessTo, acl:default ) )
           ?auth ?p2 ?o  } }`,
-      webId: 'system',
-      accept: MIME_TYPES.JSON
+      webId: 'system'
     });
 
     expect(result.length).toBe(0);

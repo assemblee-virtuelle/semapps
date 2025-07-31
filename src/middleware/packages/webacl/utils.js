@@ -6,9 +6,6 @@ const { Parser } = require('n3');
 const streamifyString = require('streamify-string');
 const rdfParser = require('rdf-parse').default;
 
-const RESOURCE_CONTAINERS_QUERY = resource => `SELECT ?container
-  WHERE { ?container ldp:contains <${resource}> . }`;
-
 const getSlugFromUri = str => str.match(new RegExp(`.*/(.*)`))[1];
 
 const hasType = (resource, type) => {
@@ -23,12 +20,13 @@ const getDatasetFromUri = uri => {
   if (parts.length > 1) return parts[1];
 };
 
-const findParentContainers = async (ctx, resource) => {
-  const query = `PREFIX ldp: <http://www.w3.org/ns/ldp#>\n${RESOURCE_CONTAINERS_QUERY(resource)}`;
-
+const findParentContainers = async (ctx, resourceUri) => {
   return await ctx.call('triplestore.query', {
-    query,
-    accept: MIME_TYPES.SPARQL_JSON,
+    query: `
+      PREFIX ldp: <http://www.w3.org/ns/ldp#>
+      SELECT ?container
+      WHERE { ?container ldp:contains <${resourceUri}> . }
+    `,
     webId: 'system'
   });
 };
@@ -58,7 +56,6 @@ const getUserGroups = async (ctx, user, graphName) => {
 
   const groups = await ctx.call('triplestore.query', {
     query,
-    accept: MIME_TYPES.JSON,
     webId: 'system'
   });
 
@@ -84,7 +81,6 @@ const getAuthorizationNode = async (ctx, resourceUri, resourceAclUri, mode, grap
 
   const auths = await ctx.call('triplestore.query', {
     query,
-    accept: MIME_TYPES.JSON,
     webId: 'system'
   });
 

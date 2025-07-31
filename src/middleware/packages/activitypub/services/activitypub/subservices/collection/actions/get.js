@@ -1,4 +1,3 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { sanitizeSparqlUri } = require('@semapps/triplestore');
 const { MoleculerError } = require('moleculer').Errors;
 const { getValueFromDataType } = require('../../../../../utils');
@@ -26,7 +25,6 @@ async function getCollectionMetadata(ctx, collectionUri, webId, dataset) {
         OPTIONAL { <${collectionUri}> semapps:sortOrder ?sortOrder . }
       }
     `,
-    accept: MIME_TYPES.JSON,
     dataset,
     webId: 'system'
   });
@@ -47,7 +45,6 @@ async function verifyCursorExists(ctx, collectionUri, cursor, dataset) {
         BIND (EXISTS{ <${collectionUri}> as:items <${cursor}> } AS ?itemExists)
       }
     `,
-    accept: MIME_TYPES.JSON,
     dataset,
     webId: 'system'
   });
@@ -91,7 +88,6 @@ async function fetchCollectionItemURIs(ctx, collectionUri, options, dataset) {
           : ''
       }
     `,
-    accept: MIME_TYPES.JSON,
     dataset,
     webId: 'system'
   });

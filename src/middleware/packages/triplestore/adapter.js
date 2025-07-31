@@ -65,7 +65,6 @@ class TripleStoreAdapter {
             }
           }
         `,
-        accept: MIME_TYPES.JSON,
         dataset: this.dataset
       })
       .then(result => {
@@ -106,7 +105,6 @@ class TripleStoreAdapter {
             <${sanitizeSparqlUri(_id)}> ?p ?o .
           }
         `,
-        accept: MIME_TYPES.JSON,
         dataset: this.dataset
       })
       .then(result => {

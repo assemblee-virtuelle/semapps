@@ -1,6 +1,5 @@
 const { Errors: E } = require('moleculer-web');
 const { MoleculerError } = require('moleculer').Errors;
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { objectIdToCurrent, collectionPermissionsWithAnonRead } = require('../../../utils');
 const { ACTOR_TYPES } = require('../../../constants');
 const AwaitActivityMixin = require('../../../mixins/await-activity');
@@ -163,7 +162,6 @@ const InboxService = {
           }
           ORDER BY ?published
         `,
-        accept: MIME_TYPES.JSON,
         webId: 'system'
       });
 

@@ -1,6 +1,5 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { ControlledContainerMixin, arrayOf, getDatasetFromUri } = require('@semapps/ldp');
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { sanitizeSparqlQuery } = require('@semapps/triplestore');
 const { Errors: E } = require('moleculer-web');
 const getAction = require('./actions/get');
@@ -129,7 +128,6 @@ const CollectionService = {
             <${collectionUri}> as:items ?items .
           }
         `,
-        accept: MIME_TYPES.JSON,
         dataset: this.getCollectionDataset(collectionUri),
         webId: 'system'
       });
@@ -153,7 +151,6 @@ const CollectionService = {
             <${collectionUri}> as:items <${itemUri}> .
           }
         `,
-        accept: MIME_TYPES.JSON,
         dataset: this.getCollectionDataset(collectionUri),
         webId: 'system'
       });
@@ -263,7 +260,6 @@ const CollectionService = {
             ?actorUri ${prefix}:${collectionKey} <${collectionUri}>
           }
         `,
-        accept: MIME_TYPES.JSON,
         dataset: this.getCollectionDataset(collectionUri),
         webId: 'system'
       });

@@ -2,7 +2,6 @@ const urlJoin = require('url-join');
 const { Errors: E } = require('moleculer-web');
 const { SpecialEndpointMixin, ControlledContainerMixin, getDatasetFromUri, arrayOf } = require('@semapps/ldp');
 const { ACTIVITY_TYPES } = require('@semapps/activitypub');
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { namedNode } = require('@rdfjs/data-model');
 const { v4: uuidV4 } = require('uuid');
 const moment = require('moment');
@@ -140,7 +139,6 @@ module.exports = {
       return this.actions.get(
         {
           resourceUri: channelUri,
-          accept: MIME_TYPES.JSON,
           webId: 'system'
         },
         { parentCtx: ctx }
