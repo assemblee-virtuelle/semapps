@@ -4,8 +4,7 @@ import { generateKeyPair } from 'crypto';
 import { namedNode, triple } from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { sec } from '@semapps/ontologies';
-// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
-import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
+import * as Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
 import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 import { arrayOf } from '../utils/utils.ts';
 import { KEY_TYPES } from '../constants.ts';
@@ -13,8 +12,6 @@ import KeyContainerService from './key-container.ts';
 import PublicKeyContainerService from './public-key-container.ts';
 import MigrationService from './migration.ts';
 import { KeyPairService } from '../signature/index.ts';
-
-/** @type {import('@digitalbazaar/ed25519-multikey')} */
 
 /**
  * Service for managing keys (creating, storing, retrieving).

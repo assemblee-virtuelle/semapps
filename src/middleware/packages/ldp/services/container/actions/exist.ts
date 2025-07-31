@@ -20,7 +20,6 @@ const Schema = defineAction({
         PREFIX ldp: <http://www.w3.org/ns/ldp#>
         ASK
         WHERE { 
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           ${isRemoteContainer ? `GRAPH <${this.settings.mirrorGraphName}> {` : ''}
           ?container a ldp:Container .
           FILTER(?container IN (<${containerUri}>, <${`${containerUri}/`}>)) .

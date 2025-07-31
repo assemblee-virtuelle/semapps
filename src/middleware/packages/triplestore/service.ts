@@ -81,8 +81,14 @@ const TripleStoreService = {
           // the 3 lines below (until the else) can be removed once we switch to jena-fuseki version 4.0.0 or above
           if (response.status === 500 && text.includes('permissions violation')) {
             throw403(text);
+          } else if (text.includes('Bad Request.')) {
+            throw500(
+              `The SPARQL query was invalid. Error message: ${response.statusText}.\nQuery: ${body}.\nEndpoint: ${url}`
+            );
           } else {
-            throw500(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}. Query: ${body}`);
+            throw500(
+              `The SPARQL engine returned an error. Error message: ${response.statusText}.\nQuery: ${body}\nEndpoint ${url}`
+            );
           }
         }
       }
