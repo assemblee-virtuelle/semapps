@@ -104,14 +104,24 @@ const OutboxService = {
             webId: actorUri
           });
 
+          // -- Persist Activity --
+          // There might be a capability attached which cannot be persisted, if it has a non-resolvable id.
+          // So we won't persist it and re-attach it afterwards.
+          let { capability, ...activityToPersist } = activity;
+
           activityUri = await ctx.call('activitypub.activity.post', {
             containerUri: activitiesContainerUri,
-            resource: activity,
+            resource: activityToPersist,
             contentType: MIME_TYPES.JSON,
             webId: 'system' // Post as system since there is no write permission to the activities container
           });
 
-          activity = await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' });
+          // Refetch because persisting has side-effects.
+          // And reattach capability for further processing (if present).
+          activity = {
+            ...(await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' })),
+            capability
+          };
         }
 
         try {
@@ -197,8 +207,6 @@ const OutboxService = {
         this.logger.error(e.message);
       }
 
-      // We do not want the capability persisted...
-
       for (const recipientUri of recipients) {
         try {
           const account = await this.broker.call('auth.account.findByWebId', { webId: recipientUri });
@@ -216,33 +224,47 @@ const OutboxService = {
             { meta: { dataset } }
           );
 
-          // Attach activity to the inbox of the recipient
-          await this.broker.call(
-            'activitypub.collection.add',
-            {
-              collectionUri: recipientInbox,
-              item: activity
-            },
-            { meta: { dataset } }
-          );
-
-          if (this.settings.podProvider) {
-            // Store the activity in the dataset of the recipient
-            await this.broker.call('ldp.remote.store', {
-              resource: objectIdToCurrent(activity),
-              mirrorGraph: false, // Store in default graph as activity may not be public
-              keepInSync: false, // Activities are immutable
-              webId: recipientUri,
-              dataset
-            });
-
+          if (activity.id && !activity.id.includes('#')) {
+            // Attach activity to the inbox of the recipient
             await this.broker.call(
-              'activitypub.activity.attach',
+              'activitypub.collection.add',
               {
-                resourceUri: activity.id,
-                webId: recipientUri
+                collectionUri: recipientInbox,
+                item: activity
               },
               { meta: { dataset } }
+            );
+
+            if (this.settings.podProvider) {
+              // Store the activity in the dataset of the recipient
+              await this.broker.call('ldp.remote.store', {
+                resource: objectIdToCurrent(activity),
+                mirrorGraph: false, // Store in default graph as activity may not be public
+                keepInSync: false, // Activities are immutable
+                webId: recipientUri,
+                dataset
+              });
+
+              await this.broker.call(
+                'activitypub.activity.attach',
+                {
+                  resourceUri: activity.id,
+                  webId: recipientUri
+                },
+                { meta: { dataset } }
+              );
+            }
+          } else {
+            // If the activity is transient, pass the full object
+            // This will be used in particular for Solid notifications
+            // which will send the full activity to the listeners
+            this.broker.emit(
+              'activitypub.collection.added',
+              {
+                collectionUri: recipientInbox,
+                item: activity
+              },
+              { meta: { webId: null, dataset: null } }
             );
           }
 

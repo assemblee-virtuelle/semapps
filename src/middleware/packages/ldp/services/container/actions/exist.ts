@@ -4,12 +4,9 @@ import { defineAction } from 'moleculer';
 const Schema = defineAction({
   visibility: 'public',
   params: {
-    containerUri: { type: 'string' },
-    webId: { type: 'string', optional: true }
+    containerUri: { type: 'string' }
   },
   async handler(ctx) {
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
-    const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     // Matches container with or without trailing slash
     const containerUri = ctx.params.containerUri.replace(/\/+$/, '');
 
@@ -27,7 +24,7 @@ const Schema = defineAction({
         }
       `,
       accept: MIME_TYPES.JSON,
-      webId
+      webId: 'system'
     });
   }
 });

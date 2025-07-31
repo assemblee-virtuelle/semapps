@@ -102,7 +102,7 @@ const WebaclResourceSchema = {
         return false; // it is never a container
       }
       // it can be a container or a resource
-      const containerExist = await ctx.call('ldp.container.exist', { containerUri: resourceUri, webId: 'system' });
+      const containerExist = await ctx.call('ldp.container.exist', { containerUri: resourceUri });
       if (!containerExist) {
         // it must be a resource then!
         const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId: 'system' });

@@ -12,6 +12,9 @@
     "interop:accessScenario": {
       "@type": "@id"
     },
+    "interop:preferredScope": {
+      "@type": "@id"
+    },
     "interop:applicationAuthor": {
       "@type": "@id"
     },

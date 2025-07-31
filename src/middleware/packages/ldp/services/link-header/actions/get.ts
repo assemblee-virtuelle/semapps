@@ -13,9 +13,11 @@ const Schema = defineAction({
     for (const actionName of this.registeredActionNames) {
       const params = await ctx.call(actionName, { uri });
 
-      if (!params.uri) throw new Error(`An uri should be returned from the ${actionName} action`);
+      if (params) {
+        if (!params.uri) throw new Error(`An uri should be returned from the ${actionName} action`);
 
-      linkHeader.set(params);
+        linkHeader.set(params);
+      }
     }
 
     // Get container-specific headers (if any)

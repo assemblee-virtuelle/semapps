@@ -15,11 +15,12 @@ const fetchDataRegistry = (): Plugin => ({
 
     // If the user is logged in
     if (token) {
-      if (!config.dataServers.user)
-        throw new Error(`You must configure the user storage first with the configureUserStorage plugin`);
-
       const payload: { [k: string]: string | number } = jwtDecode(token);
       const webId = (payload.webId as string) || (payload.webid as string); // Currently we must deal with both formats
+
+      if (!config.dataServers[webId])
+        throw new Error(`You must configure the user storage first with the configureUserStorage plugin`);
+
       const { json: user } = await config.httpClient(webId);
       const { json: registrySet } = await config.httpClient(user['interop:hasRegistrySet']);
       const { json: dataRegistry } = await config.httpClient(registrySet['interop:hasDataRegistry']);
@@ -33,7 +34,7 @@ const fetchDataRegistry = (): Plugin => ({
 
         const newConfig = { ...config } as Configuration;
 
-        newConfig.dataServers.user.containers?.push(...results.flat());
+        newConfig.dataServers[webId].containers?.push(...results.flat());
 
         return newConfig;
       }

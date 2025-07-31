@@ -20,7 +20,7 @@ const Schema = defineAction({
   async handler(ctx) {
     const { containerUri, title, description, options, webId } = ctx.params;
 
-    const exists = await ctx.call('ldp.container.exist', { containerUri, webId: 'system' });
+    const exists = await ctx.call('ldp.container.exist', { containerUri });
 
     if (!exists) {
       let parentContainerUri;
@@ -43,10 +43,7 @@ const Schema = defineAction({
           parentContainerUri = urlJoin(parentContainerUri, '/');
         }
 
-        const parentExists = await ctx.call('ldp.container.exist', {
-          containerUri: parentContainerUri,
-          webId: 'system'
-        });
+        const parentExists = await ctx.call('ldp.container.exist', { containerUri: parentContainerUri });
 
         if (!parentExists) {
           // Recursively create the parent containers, without title/description/permissions

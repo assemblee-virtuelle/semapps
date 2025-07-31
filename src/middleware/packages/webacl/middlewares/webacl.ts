@@ -381,6 +381,8 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
           const webId = ctx.params.webId || ctx.meta.webId || 'anon';
           const dataset = ctx.params.dataset || ctx.meta.dataset;
 
+          if (!dataset) throw new Error(`The dataset param or meta is missing when calling ${action.name}`);
+
           // If the webId is the owner of the Pod, bypass WAC checks
           if (urlJoin(baseUrl, dataset) === webId) {
             ctx.params.webId = 'system';

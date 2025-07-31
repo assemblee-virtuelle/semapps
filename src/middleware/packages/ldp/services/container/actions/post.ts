@@ -77,7 +77,7 @@ const Schema = defineAction({
     const resourceUri =
       forcedResourceUri || (await ctx.call('ldp.resource.generateId', { containerUri, slug, isContainer }));
 
-    const containerExist = await ctx.call('ldp.container.exist', { containerUri, webId });
+    const containerExist = await ctx.call('ldp.container.exist', { containerUri });
     if (!containerExist) {
       throw new MoleculerError(
         // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.

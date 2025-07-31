@@ -48,13 +48,19 @@ const Schema = defineAction({
     const resourcesAdded = [];
     const resourcesRemoved = [];
 
-    const containerExist = await ctx.call('ldp.container.exist', { containerUri, webId });
+    const containerExist = await ctx.call('ldp.container.exist', { containerUri });
     if (!containerExist) {
       throw new MoleculerError(`Cannot update content of non-existing container ${containerUri}`, 400, 'BAD_REQUEST');
     }
 
     if (!triplesToAdd && !triplesToRemove)
       throw new MoleculerError('No triples to add or to remove', 400, 'BAD_REQUEST');
+
+    if (triplesToRemove) {
+      await ctx.call('permissions.check', { uri: containerUri, type: 'container', mode: 'acl:Write', webId });
+    } else {
+      await ctx.call('permissions.check', { uri: containerUri, type: 'container', mode: 'acl:Append', webId });
+    }
 
     if (triplesToAdd) {
       for (const triple of triplesToAdd) {

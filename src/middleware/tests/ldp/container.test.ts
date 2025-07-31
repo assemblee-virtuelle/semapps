@@ -50,15 +50,14 @@ describe('LDP container tests', () => {
       webId: 'system'
     });
 
-    // Intermediate containers have no permissions
-
-    expect(broker.call('ldp.container.exist', { containerUri: `${CONFIG.HOME_URL}parent` })).resolves.toBeFalsy();
-
-    expect(
-      broker.call('ldp.container.exist', { containerUri: `${CONFIG.HOME_URL}parent`, webId: 'system' })
+    await expect(
+      broker.call('ldp.container.exist', { containerUri: `${CONFIG.HOME_URL}parent` })
     ).resolves.toBeTruthy();
 
-    expect(
+    // Intermediate containers have no permissions
+    await expect(broker.call('ldp.container.get', { containerUri: `${CONFIG.HOME_URL}parent` })).rejects.toThrow();
+
+    await expect(
       broker.call('ldp.container.exist', { containerUri: `${CONFIG.HOME_URL}parent/child` })
     ).resolves.toBeTruthy();
 
