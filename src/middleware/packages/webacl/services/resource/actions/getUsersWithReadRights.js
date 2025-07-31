@@ -1,4 +1,3 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { arrayOf } = require('@semapps/ldp');
 
 module.exports = {
@@ -10,10 +9,7 @@ module.exports = {
     async handler(ctx) {
       const { resourceUri } = ctx.params;
 
-      const authorizations = await this.actions.getRights(
-        { resourceUri, accept: MIME_TYPES.JSON, webId: 'system' },
-        { parentCtx: ctx }
-      );
+      const authorizations = await this.actions.getRights({ resourceUri, webId: 'system' }, { parentCtx: ctx });
       const readAuthorization =
         authorizations['@graph'] && authorizations['@graph'].find(auth => auth['@id'] === '#Read');
 
