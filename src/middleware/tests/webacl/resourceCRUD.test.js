@@ -1,5 +1,4 @@
 const urlJoin = require('url-join');
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { getSlugFromUri } = require('@semapps/ldp');
 const { fetchServer } = require('../utils');
 const CONFIG = require('../config');
@@ -33,7 +32,6 @@ describe('middleware CRUD resource with perms', () => {
             description: 'myProject',
             label: 'myTitle'
           },
-          contentType: MIME_TYPES.JSON,
           containerUri: `${CONFIG.HOME_URL}resources`
         },
         { meta: { webId: 'anon' } }
@@ -51,15 +49,12 @@ describe('middleware CRUD resource with perms', () => {
           type: 'Event',
           name: 'My event #1'
         },
-        contentType: MIME_TYPES.JSON,
         containerUri: `${CONFIG.HOME_URL}resources`
       },
       { meta: { webId: ALICE_WEBID } }
     );
 
-    await expect(
-      broker.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON, webId: ALICE_WEBID })
-    ).resolves.toMatchObject({
+    await expect(broker.call('ldp.resource.get', { resourceUri, webId: ALICE_WEBID })).resolves.toMatchObject({
       type: 'Event',
       name: 'My event #1'
     });
@@ -113,8 +108,7 @@ describe('middleware CRUD resource with perms', () => {
           ?auth ?p <${resourceUri}>.
           FILTER (?p IN (acl:accessTo, acl:default ) )
           ?auth ?p2 ?o  } }`,
-      webId: 'system',
-      accept: MIME_TYPES.JSON
+      webId: 'system'
     });
 
     expect(result.length).toBe(0);

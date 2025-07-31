@@ -1,6 +1,5 @@
 const { Errors: E } = require('moleculer-web');
 const { ControlledContainerMixin } = require('@semapps/ldp');
-const { MIME_TYPES } = require('@semapps/mime-types');
 const setRightsHandler = require('./activity-handlers/setRightsHandler');
 const { objectCurrentToId, objectIdToCurrent, arrayOf } = require('../../../utils');
 const { PUBLIC_URI, FULL_ACTIVITY_TYPES } = require('../../../constants');
@@ -15,7 +14,6 @@ const ActivityService = {
     // ControlledContainerMixin settings
     path: '/as/activity',
     acceptedTypes: Object.values(FULL_ACTIVITY_TYPES),
-    accept: MIME_TYPES.JSON,
     permissions: {},
     newResourcesPermissions: {},
     readOnly: true,

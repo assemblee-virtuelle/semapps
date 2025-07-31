@@ -1,8 +1,8 @@
-const { parseHeader, negotiateAccept, parseJson } = require('@semapps/middlewares');
+const { parseHeader, parseRawBody, negotiateAccept, negotiateContentType, parseJson } = require('@semapps/middlewares');
 const path = require('node:path');
 const { VC_API_PATH } = require('../constants');
 
-const middlewares = [parseHeader, parseJson, negotiateAccept];
+const middlewares = [parseHeader, negotiateAccept, negotiateContentType, parseRawBody, parseJson];
 
 /**
  *

@@ -2,11 +2,10 @@ const path = require('path');
 const {
   parseUrl,
   parseHeader,
-  parseSparql,
+  parseRawBody,
   negotiateContentType,
   negotiateAccept,
   parseJson,
-  parseTurtle,
   parseFile,
   saveDatasetMeta
 } = require('@semapps/middlewares');
@@ -30,9 +29,8 @@ function getPodsRoute(basePath) {
     parseHeader,
     negotiateContentType,
     negotiateAccept,
-    parseSparql,
+    parseRawBody,
     parseJson,
-    parseTurtle,
     parseFile,
     saveDatasetMeta,
     transformRouteParamsToSlugParts

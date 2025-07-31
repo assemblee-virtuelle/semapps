@@ -1,5 +1,4 @@
 const { getType } = require('@semapps/ldp');
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../../../constants');
 
 const ObjectService = {
@@ -20,8 +19,7 @@ const ObjectService = {
       return await ctx.call('ldp.resource.get', {
         resourceUri: objectUri,
         webId: actorUri,
-        ...rest,
-        accept: MIME_TYPES.JSON
+        ...rest
       });
     },
     // If an object is passed directly, wrap it in a Create activity
@@ -90,7 +88,6 @@ const ObjectService = {
             {
               containerUri,
               resource: activity.object,
-              contentType: MIME_TYPES.JSON,
               webId: actorUri
             },
             {
@@ -114,7 +111,6 @@ const ObjectService = {
             controlledActions?.put || 'ldp.resource.put',
             {
               resource: activity.object,
-              contentType: MIME_TYPES.JSON,
               webId: actorUri
             },
             {
@@ -159,7 +155,6 @@ const ObjectService = {
           'ldp.resource.get',
           {
             resourceUri: objectUri,
-            accept: MIME_TYPES.JSON,
             webId: actorUri
           },
           { meta: { $cache: false } }
@@ -183,7 +178,6 @@ const ObjectService = {
             '@type': 'http://www.w3.org/2001/XMLSchema#dateTime'
           }
         },
-        contentType: MIME_TYPES.JSON,
         webId: 'system'
       });
     }

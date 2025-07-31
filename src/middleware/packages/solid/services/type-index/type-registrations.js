@@ -1,7 +1,6 @@
 const urlJoin = require('url-join');
 const { namedNode, triple } = require('@rdfjs/data-model');
 const { ControlledContainerMixin, arrayOf } = require('@semapps/ldp');
-const { MIME_TYPES } = require('@semapps/mime-types');
 
 module.exports = {
   name: 'type-registrations',
@@ -68,7 +67,6 @@ module.exports = {
                 'solid:forClass': expandedTypes,
                 'solid:instanceContainer': containerUri
               },
-              contentType: MIME_TYPES.JSON,
               webId
             },
             { parentCtx: ctx }
@@ -135,11 +133,7 @@ module.exports = {
         // If no default app is defined for this type, use this one
         if (!registration['apods:defaultApp']) registration['apods:defaultApp'] = appUri;
 
-        await ctx.call('type-registrations.put', {
-          resource: registration,
-          contentType: MIME_TYPES.JSON,
-          webId
-        });
+        await ctx.call('type-registrations.put', { resource: registration, webId });
       }
     },
     /**
@@ -171,7 +165,6 @@ module.exports = {
 
         await ctx.call('type-registrations.put', {
           resource: registration,
-          contentType: MIME_TYPES.JSON,
           webId
         });
       }

@@ -1,5 +1,4 @@
 const { ACTIVITY_TYPES, OBJECT_TYPES } = require('@semapps/activitypub');
-const { MIME_TYPES } = require('@semapps/mime-types');
 const waitForExpect = require('wait-for-expect');
 const initialize = require('./initialize');
 const CONFIG = require('../config');
@@ -66,10 +65,7 @@ describe('Create/Update/Delete objects', () => {
     objectUri = createActivity.object.id;
 
     // Check the object has been created in the container
-    const object = await broker.call('ldp.resource.get', {
-      resourceUri: objectUri,
-      accept: MIME_TYPES.JSON
-    });
+    const object = await broker.call('ldp.resource.get', { resourceUri: objectUri });
     expect(object).toHaveProperty('type', OBJECT_TYPES.ARTICLE);
     expect(object).toHaveProperty('id', objectUri);
   });
@@ -102,10 +98,7 @@ describe('Create/Update/Delete objects', () => {
     expect(updateActivity.object).not.toHaveProperty('name');
 
     // Check the object has been updated
-    const object = await broker.call('ldp.resource.get', {
-      resourceUri: objectUri,
-      accept: MIME_TYPES.JSON
-    });
+    const object = await broker.call('ldp.resource.get', { resourceUri: objectUri });
     expect(object).toMatchObject({
       id: objectUri,
       type: OBJECT_TYPES.ARTICLE,
@@ -122,12 +115,7 @@ describe('Create/Update/Delete objects', () => {
     });
 
     await waitForExpect(async () => {
-      await expect(
-        broker.call('ldp.resource.get', {
-          resourceUri: objectUri,
-          accept: MIME_TYPES.JSON
-        })
-      ).resolves.toMatchObject({
+      await expect(broker.call('ldp.resource.get', { resourceUri: objectUri })).resolves.toMatchObject({
         type: OBJECT_TYPES.TOMBSTONE,
         formerType: 'as:Article',
         deleted: expect.anything()

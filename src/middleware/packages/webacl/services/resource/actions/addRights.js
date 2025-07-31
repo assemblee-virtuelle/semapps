@@ -18,7 +18,7 @@ module.exports = {
     if (!contentType || (contentType !== MIME_TYPES.JSON && contentType !== MIME_TYPES.TURTLE))
       throw new MoleculerError(`Content type not supported : ${contentType}`, 400, 'BAD_REQUEST');
 
-    const addedRights = await convertBodyToTriples(ctx.meta.body, contentType);
+    const addedRights = await convertBodyToTriples(ctx.meta.rawBody, contentType);
     if (addedRights.length === 0) throw new MoleculerError('Nothing to add', 400, 'BAD_REQUEST');
 
     // This is the root container
@@ -127,11 +127,12 @@ module.exports = {
         addRequest += `<${add.auth}> <${add.p}> <${add.o}>.\n`;
       }
 
-      await ctx.call('triplestore.insert', {
-        resource: addRequest,
-        webId: 'system',
-        graphName: this.settings.graphName
-      });
+      if (addRequest.length > 0) {
+        await ctx.call('triplestore.update', {
+          query: `INSERT DATA { GRAPH <${this.settings.graphName}> { ${addRequest} } }`,
+          webId: 'system'
+        });
+      }
 
       if (newRights) {
         const returnValues = { uri: resourceUri, created: true, isContainer };

@@ -1,4 +1,3 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { isObject, arrayOf } = require('../utils');
 
 /**
@@ -54,8 +53,7 @@ module.exports = {
       // Get the resource.
       try {
         let result = await ctx.call('ldp.resource.get', {
-          resourceUri,
-          accept: MIME_TYPES.JSON
+          resourceUri
         });
         // Delete the context from the result
         delete result['@context'];

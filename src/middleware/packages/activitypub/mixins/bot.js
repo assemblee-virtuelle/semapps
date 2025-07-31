@@ -1,5 +1,4 @@
 const urlJoin = require('url-join');
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { arrayOf } = require('@semapps/ldp');
 const { ACTOR_TYPES } = require('../constants');
 const { getSlugFromUri, getContainerFromUri } = require('../utils');
@@ -54,7 +53,6 @@ const BotMixin = {
             preferredUsername: actorSettings.username,
             name: actorSettings.name
           },
-          contentType: MIME_TYPES.JSON,
           webId: 'system'
         });
       } catch (e) {

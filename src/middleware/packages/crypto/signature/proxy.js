@@ -56,7 +56,7 @@ const ProxyService = {
       const body =
         ctx.params.files && ctx.params.files.length > 0
           ? await stream2buffer(ctx.params.files[0].readableStream)
-          : ctx.params.body;
+          : ctx.meta.rawBody;
 
       try {
         const response = await this.actions.query(

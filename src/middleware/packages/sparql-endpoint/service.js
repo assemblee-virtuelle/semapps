@@ -23,7 +23,7 @@ const SparqlEndpointService = {
   },
   actions: {
     async query(ctx) {
-      const query = ctx.params.query || ctx.params.body;
+      const query = ctx.params.query || ctx.meta.rawBody;
       const accept = ctx.params.accept || ctx.meta.headers?.accept || this.settings.defaultAccept;
 
       if (this.settings.podProvider) {

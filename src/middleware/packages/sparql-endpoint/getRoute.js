@@ -1,6 +1,12 @@
-const { parseHeader, negotiateAccept, parseSparql, saveDatasetMeta } = require('@semapps/middlewares');
+const {
+  parseHeader,
+  parseRawBody,
+  negotiateAccept,
+  saveDatasetMeta,
+  negotiateContentType
+} = require('@semapps/middlewares');
 
-const middlewares = [parseHeader, parseSparql, negotiateAccept, saveDatasetMeta];
+const middlewares = [parseHeader, negotiateAccept, negotiateContentType, parseRawBody, saveDatasetMeta];
 
 function getRoute(path) {
   return {

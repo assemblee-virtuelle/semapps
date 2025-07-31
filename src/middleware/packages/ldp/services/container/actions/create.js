@@ -1,5 +1,3 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
-
 module.exports = {
   visibility: 'public',
   params: {
@@ -20,7 +18,6 @@ module.exports = {
         'http://purl.org/dc/terms/title': title,
         'http://purl.org/dc/terms/description': description
       },
-      contentType: MIME_TYPES.JSON,
       webId: 'system'
     });
 

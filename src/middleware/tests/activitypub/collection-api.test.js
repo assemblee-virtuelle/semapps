@@ -1,6 +1,5 @@
 const urlJoin = require('url-join');
 const fetch = require('node-fetch');
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { fetchServer } = require('../utils');
 const initialize = require('./initialize');
 const CONFIG = require('../config');
@@ -33,8 +32,7 @@ describe('Collections API', () => {
             name: `Note #${i}`,
             content: `Contenu de ma note #${i}`,
             published: `2021-01-0${i}T00:00:00.000Z`
-          },
-          contentType: MIME_TYPES.JSON
+          }
         })
       );
     }

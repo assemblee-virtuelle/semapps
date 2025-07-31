@@ -19,11 +19,14 @@ module.exports = {
       const isRemote = await ctx.call('ldp.remote.isRemote', { resourceUri: ctx.params.resourceUri });
       return !isRemote;
     },
-    keys: ['resourceUri', 'accept', 'jsonContext']
+    keys: ['resourceUri', 'jsonContext']
   },
   async handler(ctx) {
-    const { resourceUri, jsonContext } = ctx.params;
+    const { resourceUri, accept, jsonContext } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
+
+    if (accept && accept !== MIME_TYPES.JSON)
+      throw new Error(`The ldp.resource.get action now only support JSON-LD. Provided: ${accept}`);
 
     if (await ctx.call('ldp.remote.isRemote', { resourceUri })) {
       return await ctx.call('ldp.remote.get', ctx.params);
@@ -33,13 +36,6 @@ module.exports = {
     if (!resourceExist) throw new MoleculerError(`Resource not found ${resourceUri}`, 404, 'NOT_FOUND');
 
     await ctx.call('permissions.check', { uri: resourceUri, type: 'resource', mode: 'acl:Read', webId });
-
-    const { accept } = {
-      ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
-      ...ctx.params
-    };
-
-    // const blankNodesQuery = buildBlankNodesQuery(4);
 
     let result = await ctx.call('triplestore.query', {
       query: `
@@ -53,21 +49,16 @@ module.exports = {
           }
         }
       `,
-      accept,
       webId: 'system'
     });
 
-    // If we asked for JSON-LD, frame it using the correct context in order to have clean, consistent results
-    if (accept === MIME_TYPES.JSON) {
-      result = await ctx.call('jsonld.parser.frame', {
-        input: result,
-        frame: {
-          '@context': jsonContext || (await ctx.call('jsonld.context.get')),
-          '@id': resourceUri
-        }
-      });
-    }
-
-    return result;
+    // Frame the result using the correct context in order to have clean, consistent results
+    return await ctx.call('jsonld.parser.frame', {
+      input: result,
+      frame: {
+        '@context': jsonContext || (await ctx.call('jsonld.context.get')),
+        '@id': resourceUri
+      }
+    });
   }
 };

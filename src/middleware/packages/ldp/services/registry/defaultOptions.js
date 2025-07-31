@@ -1,5 +1,4 @@
 module.exports = {
-  accept: 'text/turtle',
   readOnly: false,
   excludeFromMirror: false,
   permissions: webId => {

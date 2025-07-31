@@ -1,4 +1,3 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { quad, namedNode, blankNode, literal } = require('rdf-data-model');
 const CONFIG = require('../config');
 const initialize = require('./initialize');
@@ -39,52 +38,27 @@ describe('Resource CRUD operations', () => {
           description: 'The place to be'
         }
       },
-      contentType: MIME_TYPES.JSON,
       containerUri: `${CONFIG.HOME_URL}resources`
     });
 
-    project1 = await broker.call('ldp.resource.get', {
-      resourceUri,
-      accept: MIME_TYPES.JSON
-    });
+    project1 = await broker.call('ldp.resource.get', { resourceUri });
     expect(project1['pair:description']).toBe('myProject');
   }, 20000);
 
-  test('Get resource in JSON-LD format', async () => {
-    const newProject = await broker.call('ldp.resource.get', {
-      accept: MIME_TYPES.JSON,
-      resourceUri: project1['@id']
+  test('Get resource', async () => {
+    const newProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
+    expect(newProject).toMatchObject({
+      '@context': 'http://localhost:3000/.well-known/context.jsonld',
+      '@id': project1['@id'],
+      '@type': 'pair:Project',
+      'pair:affiliates': expect.arrayContaining([
+        'http://localhost:3000/users/guillaume',
+        'http://localhost:3000/users/sebastien'
+      ]),
+      'pair:description': 'myProject',
+      'pair:hasLocation': expect.objectContaining({ 'pair:description': 'The place to be', 'pair:label': 'Paris' }),
+      'pair:label': 'myTitle'
     });
-    expect(newProject['pair:description']).toBe('myProject');
-  }, 20000);
-
-  test('Get resource in turtle format', async () => {
-    const newProject = await broker.call('ldp.resource.get', {
-      accept: MIME_TYPES.TURTLE,
-      resourceUri: project1['@id']
-    });
-    expect(newProject).toMatch(new RegExp(`<${project1['@id']}>`));
-    expect(newProject).toMatch(new RegExp(`a.*pair:Project`));
-    expect(newProject).toMatch(new RegExp(`pair:description.*"myProject"`));
-    expect(newProject).toMatch(new RegExp(`pair:label.*"myTitle"`));
-  }, 20000);
-
-  test('Get resource in triple format', async () => {
-    const newProject = await broker.call('ldp.resource.get', {
-      accept: MIME_TYPES.TRIPLE,
-      resourceUri: project1['@id']
-    });
-    expect(newProject).toMatch(
-      new RegExp(
-        `<${project1['@id']}>.*<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>.*<http://virtual-assembly.org/ontologies/pair#Project>`
-      )
-    );
-    expect(newProject).toMatch(
-      new RegExp(`<${project1['@id']}>.*<http://virtual-assembly.org/ontologies/pair#description>.*"myProject"`)
-    );
-    expect(newProject).toMatch(
-      new RegExp(`<${project1['@id']}>.*<http://virtual-assembly.org/ontologies/pair#label>.*"myTitle"`)
-    );
   }, 20000);
 
   test('Put resource', async () => {
@@ -101,15 +75,10 @@ describe('Resource CRUD operations', () => {
         hasLocation: {
           label: 'Nantes'
         }
-      },
-      accept: MIME_TYPES.JSON,
-      contentType: MIME_TYPES.JSON
+      }
     });
 
-    const updatedProject = await broker.call('ldp.resource.get', {
-      resourceUri: project1['@id'],
-      accept: MIME_TYPES.JSON
-    });
+    const updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -142,16 +111,9 @@ describe('Resource CRUD operations', () => {
         }
       ]
     };
-    await broker.call('ldp.resource.put', {
-      resource: resourceUpdated,
-      accept: MIME_TYPES.JSON,
-      contentType: MIME_TYPES.JSON
-    });
+    await broker.call('ldp.resource.put', { resource: resourceUpdated });
 
-    let updatedProject = await broker.call('ldp.resource.get', {
-      resourceUri: project1['@id'],
-      accept: MIME_TYPES.JSON
-    });
+    let updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -174,16 +136,9 @@ describe('Resource CRUD operations', () => {
       }
     ];
 
-    await broker.call('ldp.resource.put', {
-      resource: resourceUpdated,
-      accept: MIME_TYPES.JSON,
-      contentType: MIME_TYPES.JSON
-    });
+    await broker.call('ldp.resource.put', { resource: resourceUpdated });
 
-    updatedProject = await broker.call('ldp.resource.get', {
-      resourceUri: project1['@id'],
-      accept: MIME_TYPES.JSON
-    });
+    updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -205,16 +160,9 @@ describe('Resource CRUD operations', () => {
       }
     ];
 
-    await broker.call('ldp.resource.put', {
-      resource: resourceUpdated,
-      accept: MIME_TYPES.JSON,
-      contentType: MIME_TYPES.JSON
-    });
+    await broker.call('ldp.resource.put', { resource: resourceUpdated });
 
-    updatedProject = await broker.call('ldp.resource.get', {
-      resourceUri: project1['@id'],
-      accept: MIME_TYPES.JSON
-    });
+    updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -244,16 +192,9 @@ describe('Resource CRUD operations', () => {
       }
     ];
 
-    await broker.call('ldp.resource.put', {
-      resource: resourceUpdated,
-      accept: MIME_TYPES.JSON,
-      contentType: MIME_TYPES.JSON
-    });
+    await broker.call('ldp.resource.put', { resource: resourceUpdated });
 
-    updatedProject = await broker.call('ldp.resource.get', {
-      resourceUri: project1['@id'],
-      accept: MIME_TYPES.JSON
-    });
+    updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -274,16 +215,9 @@ describe('Resource CRUD operations', () => {
       }
     ];
 
-    await broker.call('ldp.resource.put', {
-      resource: resourceUpdated,
-      accept: MIME_TYPES.JSON,
-      contentType: MIME_TYPES.JSON
-    });
+    await broker.call('ldp.resource.put', { resource: resourceUpdated });
 
-    updatedProject = await broker.call('ldp.resource.get', {
-      resourceUri: project1['@id'],
-      accept: MIME_TYPES.JSON
-    });
+    updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -302,16 +236,9 @@ describe('Resource CRUD operations', () => {
 
     resourceUpdated.hasLocation = undefined;
 
-    await broker.call('ldp.resource.put', {
-      resource: resourceUpdated,
-      accept: MIME_TYPES.JSON,
-      contentType: MIME_TYPES.JSON
-    });
+    await broker.call('ldp.resource.put', { resource: resourceUpdated });
 
-    updatedProject = await broker.call('ldp.resource.get', {
-      resourceUri: project1['@id'],
-      accept: MIME_TYPES.JSON
-    });
+    updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
 
     expect(updatedProject['pair:hasLocation']).toBeUndefined();
 
@@ -319,16 +246,9 @@ describe('Resource CRUD operations', () => {
       { 'petr:endingTime': '2021-10-07T09:40:56.131Z', 'petr:startingTime': '2021-10-07T06:40:56.123Z' }
     ];
 
-    await broker.call('ldp.resource.put', {
-      resource: resourceUpdated,
-      accept: MIME_TYPES.JSON,
-      contentType: MIME_TYPES.JSON
-    });
+    await broker.call('ldp.resource.put', { resource: resourceUpdated });
 
-    updatedProject = await broker.call('ldp.resource.get', {
-      resourceUri: project1['@id'],
-      accept: MIME_TYPES.JSON
-    });
+    updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -343,16 +263,9 @@ describe('Resource CRUD operations', () => {
       { 'petr:startingTime': '2021-10-07T10:44:54.883Z', 'petr:endingTime': '2021-10-07T16:44:54.888Z' }
     ];
 
-    await broker.call('ldp.resource.put', {
-      resource: resourceUpdated,
-      accept: MIME_TYPES.JSON,
-      contentType: MIME_TYPES.JSON
-    });
+    await broker.call('ldp.resource.put', { resource: resourceUpdated });
 
-    updatedProject = await broker.call('ldp.resource.get', {
-      resourceUri: project1['@id'],
-      accept: MIME_TYPES.JSON
-    });
+    updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -381,14 +294,10 @@ describe('Resource CRUD operations', () => {
 
     const resourceUri = await broker.call('ldp.container.post', {
       resource: resourceToPost,
-      contentType: MIME_TYPES.JSON,
       containerUri: `${CONFIG.HOME_URL}resources2`
     });
 
-    project2 = await broker.call('ldp.resource.get', {
-      resourceUri,
-      accept: MIME_TYPES.JSON
-    });
+    project2 = await broker.call('ldp.resource.get', { resourceUri });
 
     expect(project2).toMatchObject({
       'pair:hasLocation': {
@@ -416,14 +325,10 @@ describe('Resource CRUD operations', () => {
 
     const resourceUri3 = await broker.call('ldp.container.post', {
       resource: resourceToPost,
-      contentType: MIME_TYPES.JSON,
       containerUri: `${CONFIG.HOME_URL}resources2`
     });
 
-    const project3 = await broker.call('ldp.resource.get', {
-      resourceUri: resourceUri3,
-      accept: MIME_TYPES.JSON
-    });
+    const project3 = await broker.call('ldp.resource.get', { resourceUri: resourceUri3 });
 
     expect(project3).toMatchObject({
       'pair:hasLocation': [
@@ -459,14 +364,10 @@ describe('Resource CRUD operations', () => {
 
     const resourceUri4 = await broker.call('ldp.container.post', {
       resource: resourceToPost,
-      contentType: MIME_TYPES.JSON,
       containerUri: `${CONFIG.HOME_URL}resources2`
     });
 
-    const project4 = await broker.call('ldp.resource.get', {
-      resourceUri: resourceUri4,
-      accept: MIME_TYPES.JSON
-    });
+    const project4 = await broker.call('ldp.resource.get', { resourceUri: resourceUri4 });
 
     expect(project4).toMatchObject({
       'pair:hasLocation': {
@@ -501,16 +402,9 @@ describe('Resource CRUD operations', () => {
       ]
     };
 
-    await broker.call('ldp.resource.put', {
-      resource: resourceUpdated,
-      accept: MIME_TYPES.JSON,
-      contentType: MIME_TYPES.JSON
-    });
+    await broker.call('ldp.resource.put', { resource: resourceUpdated });
 
-    let updatedProject = await broker.call('ldp.resource.get', {
-      resourceUri: project2['@id'],
-      accept: MIME_TYPES.JSON
-    });
+    let updatedProject = await broker.call('ldp.resource.get', { resourceUri: project2['@id'] });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -545,16 +439,9 @@ describe('Resource CRUD operations', () => {
       }
     ];
 
-    await broker.call('ldp.resource.put', {
-      resource: resourceUpdated,
-      accept: MIME_TYPES.JSON,
-      contentType: MIME_TYPES.JSON
-    });
+    await broker.call('ldp.resource.put', { resource: resourceUpdated });
 
-    updatedProject = await broker.call('ldp.resource.get', {
-      resourceUri: project2['@id'],
-      accept: MIME_TYPES.JSON
-    });
+    updatedProject = await broker.call('ldp.resource.get', { resourceUri: project2['@id'] });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -578,7 +465,6 @@ describe('Resource CRUD operations', () => {
         '@type': 'Theme',
         label: 'Permaculture'
       },
-      contentType: MIME_TYPES.JSON,
       slug: 'Permaculture'
     });
 
@@ -594,8 +480,7 @@ describe('Resource CRUD operations', () => {
         hasTopic: {
           '@id': themeUri
         }
-      },
-      contentType: MIME_TYPES.JSON
+      }
     });
 
     // Remove the relation to the theme
@@ -607,15 +492,11 @@ describe('Resource CRUD operations', () => {
         '@type': 'Project',
         '@id': project1['@id'],
         label: 'myTitle'
-      },
-      contentType: MIME_TYPES.JSON
+      }
     });
 
     // Ensure the theme has not been deleted
-    const theme = await broker.call('ldp.resource.get', {
-      resourceUri: themeUri,
-      accept: MIME_TYPES.JSON
-    });
+    const theme = await broker.call('ldp.resource.get', { resourceUri: themeUri });
 
     expect(theme).toMatchObject({
       '@id': themeUri,
@@ -634,7 +515,6 @@ describe('Resource CRUD operations', () => {
         '@type': 'Project',
         label: 'SemanticApps'
       },
-      contentType: MIME_TYPES.JSON,
       slug: 'SemApps'
     });
 
@@ -654,14 +534,10 @@ describe('Resource CRUD operations', () => {
           namedNode('http://virtual-assembly.org/ontologies/pair#label'),
           literal('SemanticApps')
         )
-      ],
-      contentType: MIME_TYPES.JSON
+      ]
     });
 
-    const project = await broker.call('ldp.resource.get', {
-      resourceUri: projectUri,
-      accept: MIME_TYPES.JSON
-    });
+    const project = await broker.call('ldp.resource.get', { resourceUri: projectUri });
 
     expect(project).toMatchObject({
       '@id': projectUri,
@@ -680,7 +556,6 @@ describe('Resource CRUD operations', () => {
         '@type': 'Project',
         label: 'ActivityPods'
       },
-      contentType: MIME_TYPES.JSON,
       slug: 'ActivityPods'
     });
 
@@ -698,14 +573,10 @@ describe('Resource CRUD operations', () => {
           namedNode('http://virtual-assembly.org/ontologies/pair#Place')
         ),
         quad(blankNode('b_0'), namedNode('http://virtual-assembly.org/ontologies/pair#label'), literal('Paris'))
-      ],
-      contentType: MIME_TYPES.JSON
+      ]
     });
 
-    let project = await broker.call('ldp.resource.get', {
-      resourceUri: projectUri,
-      accept: MIME_TYPES.JSON
-    });
+    let project = await broker.call('ldp.resource.get', { resourceUri: projectUri });
 
     expect(project).toMatchObject({
       '@id': projectUri,
@@ -730,14 +601,10 @@ describe('Resource CRUD operations', () => {
           namedNode('http://virtual-assembly.org/ontologies/pair#Place')
         ),
         quad(blankNode('b_0'), namedNode('http://virtual-assembly.org/ontologies/pair#label'), literal('Compiègne'))
-      ],
-      contentType: MIME_TYPES.JSON
+      ]
     });
 
-    project = await broker.call('ldp.resource.get', {
-      resourceUri: projectUri,
-      accept: MIME_TYPES.JSON
-    });
+    project = await broker.call('ldp.resource.get', { resourceUri: projectUri });
 
     expect(project).toMatchObject({
       '@id': projectUri,
@@ -760,11 +627,6 @@ describe('Resource CRUD operations', () => {
       resourceUri: project1['@id']
     });
 
-    await expect(
-      broker.call('ldp.resource.get', {
-        resourceUri: project1['@id'],
-        accept: MIME_TYPES.JSON
-      })
-    ).rejects.toThrow(`not found`);
+    await expect(broker.call('ldp.resource.get', { resourceUri: project1['@id'] })).rejects.toThrow(`not found`);
   }, 20000);
 });

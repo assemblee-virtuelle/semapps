@@ -1,6 +1,5 @@
 const waitForExpect = require('wait-for-expect');
 const { OBJECT_TYPES, ACTIVITY_TYPES, PUBLIC_URI } = require('@semapps/activitypub');
-const { MIME_TYPES } = require('@semapps/mime-types');
 const initialize = require('./initialize');
 
 jest.setTimeout(50000);
@@ -77,12 +76,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
 
     // Ensure the /shares collection has been created
     await waitForExpect(async () => {
-      await expect(
-        alice.call('ldp.resource.get', {
-          resourceUri: aliceMessageUri,
-          accept: MIME_TYPES.JSON
-        })
-      ).resolves.toMatchObject({
+      await expect(alice.call('ldp.resource.get', { resourceUri: aliceMessageUri })).resolves.toMatchObject({
         shares: `${aliceMessageUri}/shares`
       });
     });
@@ -90,10 +84,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
     // Ensure only the public announce activity has been added to the /shares collection
     await waitForExpect(async () => {
       await expect(
-        alice.call('activitypub.collection.get', {
-          resourceUri: `${aliceMessageUri}/shares`,
-          accept: MIME_TYPES.JSON
-        })
+        alice.call('activitypub.collection.get', { resourceUri: `${aliceMessageUri}/shares` })
       ).resolves.toMatchObject({
         type: 'Collection',
         items: publicShareActivity.id
@@ -113,10 +104,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
     // Ensure the public announce activity has been removed from the /shares collection
     await waitForExpect(async () => {
       await expect(
-        alice.call('activitypub.collection.get', {
-          resourceUri: `${aliceMessageUri}/shares`,
-          accept: MIME_TYPES.JSON
-        })
+        alice.call('activitypub.collection.get', { resourceUri: `${aliceMessageUri}/shares` })
       ).resolves.not.toMatchObject({
         items: publicShareActivity.id
       });

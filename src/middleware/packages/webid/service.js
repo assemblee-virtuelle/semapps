@@ -1,5 +1,4 @@
 const urlJoin = require('url-join');
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { foaf, schema } = require('@semapps/ontologies');
 const { ControlledContainerMixin, DereferenceMixin, getDatasetFromUri } = require('@semapps/ldp');
 
@@ -36,7 +35,6 @@ const WebIdService = {
       return ctx.call(
         'ldp.resource.get',
         {
-          accept: this.settings.accept,
           ...ctx.params,
           webId: 'system'
         },
@@ -78,7 +76,6 @@ const WebIdService = {
               '@id': webId,
               ...resource
             },
-            contentType: MIME_TYPES.JSON,
             webId: 'system'
           },
           { parentCtx: ctx }
@@ -89,7 +86,6 @@ const WebIdService = {
           {
             resource,
             slug: nick,
-            contentType: MIME_TYPES.JSON,
             webId: 'system'
           },
           { parentCtx: ctx }
@@ -99,7 +95,6 @@ const WebIdService = {
       const webIdData = await this.actions.get(
         {
           resourceUri: webId,
-          accept: MIME_TYPES.JSON,
           webId: 'system'
         },
         { parentCtx: ctx }
