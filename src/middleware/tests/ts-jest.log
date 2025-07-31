@@ -1,0 +1,2 @@
+{"context":{"logLevel":20,"namespace":"Importer","package":"ts-jest","version":"29.4.0"},"message":"creating Importer singleton","sequence":1,"time":"2025-07-31T08:54:14.704Z"}
+{"context":{"logLevel":20,"namespace":"jest-preset","package":"ts-jest","version":"29.4.0"},"message":"creating default ESM Jest preset","sequence":2,"time":"2025-07-31T08:54:14.726Z"}

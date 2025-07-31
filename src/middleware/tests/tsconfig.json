@@ -1,0 +1,15 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["jest"],
+    "isolatedModules": false
+  },
+  "include": [
+    "**/*.js",
+    "**/*.ts",
+    "tests/jest.setup.cjs",
+    "tests/jest.config.cjs",
+    "tests/babel.config.cjs",
+    "tests/babel.config.cjs"
+  ]
+}

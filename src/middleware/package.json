@@ -19,8 +19,6 @@
     "@types/dotenv-flow": "^3.3.3",
     "@typescript-eslint/eslint-plugin": "^7.1.1",
     "@typescript-eslint/parser": "^7.5.0",
-    "esbuild": "^0.25.4",
-    "esbuild-jest": "^0.5.0",
     "eslint": "^8.2.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^9.1.0",
@@ -40,7 +38,7 @@
     "tests"
   ],
   "dependencies": {
-    "moleculer": "^0.14.0"
+    "moleculer": "^0.14.35"
   },
   "engines": {
     "node": ">=22.12.0"
