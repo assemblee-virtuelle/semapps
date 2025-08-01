@@ -16,6 +16,5 @@
     "esModuleInterop": true,
     "resolvePackageJsonImports": true
   },
-  "include": ["**/*.js", "**/*.ts"],
   "exclude": []
 }
