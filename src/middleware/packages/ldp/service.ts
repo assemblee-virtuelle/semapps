@@ -7,9 +7,10 @@ import LdpRegistryService from './services/registry/index.ts';
 import LdpRemoteService from './services/remote/index.ts';
 import LdpResourceService from './services/resource/index.ts';
 import PermissionsService from './services/permissions/index.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 const LdpSchema = {
-  name: 'ldp',
+  name: 'ldp' as const,
   settings: {
     baseUrl: null,
     containers: [],
@@ -100,18 +101,34 @@ const LdpSchema = {
     await this.broker.call('ontologies.register', semapps);
   },
   actions: {
-    getBaseUrl() {
-      return this.settings.baseUrl;
-    },
-    getBasePath() {
-      const { pathname } = new URL(this.settings.baseUrl);
-      return pathname;
-    },
-    getSetting(ctx) {
-      const { key } = ctx.params;
-      return this.settings[key];
-    }
+    getBaseUrl: defineAction({
+      handler() {
+        return this.settings.baseUrl;
+      }
+    }),
+
+    getBasePath: defineAction({
+      handler() {
+        const { pathname } = new URL(this.settings.baseUrl);
+        return pathname;
+      }
+    }),
+
+    getSetting: defineAction({
+      handler(ctx) {
+        const { key } = ctx.params;
+        return this.settings[key];
+      }
+    })
   }
-};
+} satisfies ServiceSchema;
 
 export default LdpSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [LdpSchema.name]: typeof LdpSchema;
+    }
+  }
+}

@@ -1,5 +1,6 @@
 import urlJoin from 'url-join';
 import ImporterMixin from './importer.ts';
+import { ServiceSchema } from 'moleculer';
 
 const Schema = {
   mixins: [ImporterMixin],
@@ -54,6 +55,6 @@ const Schema = {
       return results && results.data && results.data.events && results.data.events.elements;
     }
   }
-};
+} satisfies Partial<ServiceSchema>;
 
 export default Schema;

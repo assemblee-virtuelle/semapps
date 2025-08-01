@@ -1,4 +1,5 @@
 import { arrayOf } from '../utils.ts';
+import { ServiceSchema } from 'moleculer';
 
 const Schema = {
   settings: {
@@ -144,6 +145,6 @@ const Schema = {
       }
     }
   }
-};
+} satisfies Partial<ServiceSchema>;
 
 export default Schema;

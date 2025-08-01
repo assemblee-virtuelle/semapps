@@ -1,9 +1,10 @@
 import path from 'path';
 import urlJoin from 'url-join';
 import getRoute from './getRoute.ts';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 
 const SparqlEndpointService = {
-  name: 'sparqlEndpoint',
+  name: 'sparqlEndpoint' as const,
   settings: {
     defaultAccept: 'text/turtle',
     ignoreAcl: false,
@@ -22,46 +23,58 @@ const SparqlEndpointService = {
     }
   },
   actions: {
-    async query(ctx) {
-      const query = ctx.params.query || ctx.meta.rawBody;
-      const accept = ctx.params.accept || ctx.meta.headers?.accept || this.settings.defaultAccept;
+    query: defineAction({
+      async handler(ctx) {
+        const query = ctx.params.query || ctx.meta.rawBody;
+        const accept = ctx.params.accept || ctx.meta.headers?.accept || this.settings.defaultAccept;
 
-      if (this.settings.podProvider) {
-        const [account] = await ctx.call('auth.account.find', { query: { username: ctx.params.username } });
-        if (!account) throw new Error(`No account found with username ${ctx.params.username}`);
+        if (this.settings.podProvider) {
+          const [account] = await ctx.call('auth.account.find', { query: { username: ctx.params.username } });
+          if (!account) throw new Error(`No account found with username ${ctx.params.username}`);
 
-        if (account.webId !== ctx.meta.webId && account.webId !== ctx.meta.impersonatedUser) {
-          throw new Error(`You can only query your own SPARQL endpoint`);
+          if (account.webId !== ctx.meta.webId && account.webId !== ctx.meta.impersonatedUser) {
+            throw new Error(`You can only query your own SPARQL endpoint`);
+          }
         }
+
+        const response = await ctx.call('triplestore.query', {
+          query,
+          accept,
+          dataset: this.settings.podProvider ? ctx.params.username : undefined,
+          // In Pod provider config, query as system when the Pod owner is querying his own data
+          webId: this.settings.ignoreAcl ? 'system' : ctx.meta.webId
+        });
+
+        if (ctx.meta.$responseType === undefined) {
+          ctx.meta.$responseType = ctx.meta.responseType || accept;
+        }
+
+        return response;
       }
-
-      const response = await ctx.call('triplestore.query', {
-        query,
-        accept,
-        dataset: this.settings.podProvider ? ctx.params.username : undefined,
-        // In Pod provider config, query as system when the Pod owner is querying his own data
-        webId: this.settings.ignoreAcl ? 'system' : ctx.meta.webId
-      });
-
-      if (ctx.meta.$responseType === undefined) {
-        ctx.meta.$responseType = ctx.meta.responseType || accept;
-      }
-
-      return response;
-    }
+    })
   },
   events: {
-    async 'auth.registered'(ctx) {
-      const { webId } = ctx.params;
-      if (this.settings.podProvider) {
-        await ctx.call('activitypub.actor.addEndpoint', {
-          actorUri: webId,
-          predicate: 'http://rdfs.org/ns/void#sparqlEndpoint',
-          endpoint: urlJoin(webId, 'sparql')
-        });
+    'auth.registered': defineServiceEvent({
+      async handler(ctx) {
+        const { webId } = ctx.params;
+        if (this.settings.podProvider) {
+          await ctx.call('activitypub.actor.addEndpoint', {
+            actorUri: webId,
+            predicate: 'http://rdfs.org/ns/void#sparqlEndpoint',
+            endpoint: urlJoin(webId, 'sparql')
+          });
+        }
       }
-    }
+    })
   }
-};
+} satisfies ServiceSchema;
 
 export default SparqlEndpointService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [SparqlEndpointService.name]: typeof SparqlEndpointService;
+    }
+  }
+}

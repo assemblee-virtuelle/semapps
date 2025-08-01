@@ -2,6 +2,7 @@ import urlJoin from 'url-join';
 import fetch from 'node-fetch';
 import { getSlugFromUri, delay } from '@semapps/ldp';
 import ImporterMixin from './importer.ts';
+import { ServiceSchema } from 'moleculer';
 
 const Schema = {
   mixins: [ImporterMixin],
@@ -97,6 +98,6 @@ const Schema = {
       }
     }
   }
-};
+} satisfies Partial<ServiceSchema>;
 
 export default Schema;

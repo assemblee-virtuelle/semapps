@@ -3,6 +3,7 @@ import cronParser from 'cron-parser';
 import { promises as fsPromises } from 'fs';
 import { ACTIVITY_TYPES, PUBLIC_URI } from '@semapps/activitypub';
 import { isDir } from '../utils.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 const Schema = {
   settings: {
@@ -90,133 +91,171 @@ const Schema = {
     }
   },
   actions: {
-    async freshImport(ctx) {
-      if (ctx.params.clear === undefined || ctx.params.clear === true) {
-        this.logger.info('Clearing all existing data...');
+    freshImport: defineAction({
+      async handler(ctx) {
+        if (ctx.params.clear === undefined || ctx.params.clear === true) {
+          this.logger.info('Clearing all existing data...');
 
-        await this.actions.deleteImported();
-      }
+          await this.actions.deleteImported();
+        }
 
-      await this.prepare();
+        await this.prepare();
 
-      if (this.settings.source.getAllCompact) {
-        this.logger.info('Fetching compact list...');
+        if (this.settings.source.getAllCompact) {
+          this.logger.info('Fetching compact list...');
 
-        const compactResults = await this.list(this.settings.source.getAllCompact);
+          const compactResults = await this.list(this.settings.source.getAllCompact);
 
-        if (compactResults) {
-          this.logger.info(
-            `Importing ${compactResults.length} items from ${
-              typeof this.settings.source.getAllCompact === 'string'
-                ? this.settings.source.getAllCompact
-                : this.settings.source.getAllCompact.url
-            }...`
-          );
+          if (compactResults) {
+            this.logger.info(
+              `Importing ${compactResults.length} items from ${
+                typeof this.settings.source.getAllCompact === 'string'
+                  ? this.settings.source.getAllCompact
+                  : this.settings.source.getAllCompact.url
+              }...`
+            );
 
-          for (const data of compactResults) {
-            const sourceUri = this.settings.source.getOneFull(data);
-            const destUri = await this.actions.importOne({ sourceUri }, { parentCtx: ctx });
-            if (destUri) this.imported[sourceUri] = destUri;
+            for (const data of compactResults) {
+              const sourceUri = this.settings.source.getOneFull(data);
+              const destUri = await this.actions.importOne({ sourceUri }, { parentCtx: ctx });
+              if (destUri) this.imported[sourceUri] = destUri;
+            }
+          } else {
+            throw new Error(
+              `Error fetching the endpoint ${
+                typeof this.settings.source.getAllCompact === 'string'
+                  ? this.settings.source.getAllCompact
+                  : this.settings.source.getAllCompact.url
+              }...`
+            );
+          }
+        } else if (this.settings.source.getAllFull) {
+          this.logger.info('Fetching full list...');
+
+          const fullResults = await this.list(this.settings.source.getAllFull);
+
+          if (fullResults) {
+            this.logger.info(
+              `Importing ${fullResults.length} items from ${
+                typeof this.settings.source.getAllFull === 'string'
+                  ? this.settings.source.getAllFull
+                  : this.settings.source.getAllFull.url
+              }...`
+            );
+
+            for (const data of fullResults) {
+              const sourceUri = this.settings.source.getOneFull && this.settings.source.getOneFull(data);
+              const destUri = await this.actions.importOne({ sourceUri, data }, { parentCtx: ctx });
+              if (destUri) this.imported[sourceUri] = destUri;
+            }
+          } else {
+            throw new Error(
+              `Error fetching the endpoint ${
+                typeof this.settings.source.getAllFull === 'string'
+                  ? this.settings.source.getAllFull
+                  : this.settings.source.getAllFull.url
+              }...`
+            );
           }
         } else {
-          throw new Error(
-            `Error fetching the endpoint ${
-              typeof this.settings.source.getAllCompact === 'string'
-                ? this.settings.source.getAllCompact
-                : this.settings.source.getAllCompact.url
-            }...`
-          );
+          throw new Error('You must define the setting source.getAllCompact or source.getAllFull');
         }
-      } else if (this.settings.source.getAllFull) {
-        this.logger.info('Fetching full list...');
 
-        const fullResults = await this.list(this.settings.source.getAllFull);
+        this.logger.info(`Import finished !`);
+      }
+    }),
 
-        if (fullResults) {
-          this.logger.info(
-            `Importing ${fullResults.length} items from ${
-              typeof this.settings.source.getAllFull === 'string'
-                ? this.settings.source.getAllFull
-                : this.settings.source.getAllFull.url
-            }...`
-          );
-
-          for (const data of fullResults) {
-            const sourceUri = this.settings.source.getOneFull && this.settings.source.getOneFull(data);
-            const destUri = await this.actions.importOne({ sourceUri, data }, { parentCtx: ctx });
-            if (destUri) this.imported[sourceUri] = destUri;
-          }
+    synchronize: defineAction({
+      handler() {
+        if (this.createJob) {
+          this.createJob(this.name, 'synchronize', {});
         } else {
-          throw new Error(
-            `Error fetching the endpoint ${
-              typeof this.settings.source.getAllFull === 'string'
-                ? this.settings.source.getAllFull
-                : this.settings.source.getAllFull.url
-            }...`
-          );
+          // If QueueMixin is not available, call method with fake job object
+          return this.processSynchronize({
+            data: {},
+            progress: number => this.logger.info(`Progress: ${number}%`),
+            log: message => this.logger.info(message)
+          });
         }
-      } else {
-        throw new Error('You must define the setting source.getAllCompact or source.getAllFull');
       }
+    }),
 
-      this.logger.info(`Import finished !`);
-    },
-    synchronize() {
-      if (this.createJob) {
-        this.createJob(this.name, 'synchronize', {});
-      } else {
-        // If QueueMixin is not available, call method with fake job object
-        return this.processSynchronize({
-          data: {},
-          progress: number => this.logger.info(`Progress: ${number}%`),
-          log: message => this.logger.info(message)
-        });
-      }
-    },
-    async importOne(ctx) {
-      let { sourceUri, destUri, data } = ctx.params;
-
-      if (!data) {
-        data = await this.getOne(sourceUri);
+    importOne: defineAction({
+      async handler(ctx) {
+        let { sourceUri, destUri, data } = ctx.params;
 
         if (!data) {
-          this.logger.warn(`Invalid ${sourceUri}...`);
+          data = await this.getOne(sourceUri);
+
+          if (!data) {
+            this.logger.warn(`Invalid ${sourceUri}...`);
+            return false; // False = delete resource if it exists
+          }
+        }
+
+        const resource = await this.transform(data);
+
+        // If resource is false, it means it is not published
+        if (!resource) {
+          this.logger.info(`Skipping ${sourceUri} (not published)...`);
           return false; // False = delete resource if it exists
         }
-      }
+        if (destUri) {
+          const oldData = await ctx.call('ldp.resource.get', {
+            resourceUri: destUri,
+            webId: 'system'
+          });
 
-      const resource = await this.transform(data);
+          const oldUpdatedDate = oldData['dc:modified'];
+          const newUpdatedDate = this.getField('updated', data);
 
-      // If resource is false, it means it is not published
-      if (!resource) {
-        this.logger.info(`Skipping ${sourceUri} (not published)...`);
-        return false; // False = delete resource if it exists
-      }
-      if (destUri) {
-        const oldData = await ctx.call('ldp.resource.get', {
-          resourceUri: destUri,
-          webId: 'system'
-        });
+          if (!oldUpdatedDate || !newUpdatedDate || new Date(newUpdatedDate) > new Date(oldUpdatedDate)) {
+            this.logger.info(`Reimporting ${sourceUri}...`);
 
-        const oldUpdatedDate = oldData['dc:modified'];
-        const newUpdatedDate = this.getField('updated', data);
+            const oldDataToKeep =
+              this.settings.dest.predicatesToKeep.length > 0
+                ? Object.fromEntries(
+                    Object.entries(oldData).filter(([key]) => this.settings.dest.predicatesToKeep.includes(key))
+                  )
+                : {};
 
-        if (!oldUpdatedDate || !newUpdatedDate || new Date(newUpdatedDate) > new Date(oldUpdatedDate)) {
-          this.logger.info(`Reimporting ${sourceUri}...`);
+            try {
+              await ctx.call('ldp.resource.put', {
+                resource: {
+                  '@id': destUri,
+                  ...resource,
+                  ...oldDataToKeep,
+                  'dc:source': sourceUri,
+                  'dc:created': resource['dc:created'] || this.getField('created', data),
+                  'dc:modified': resource['dc:modified'] || this.getField('updated', data),
+                  'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri
+                },
+                webId: 'system'
+              });
+            } catch (e) {
+              this.logger.warn(`Unable to update ${destUri} (Error message: ${e.message})`);
+              return false;
+            }
+          } else {
+            this.logger.info(`Skipping ${sourceUri} (not changed)...`);
+            return true; // True = skipping
+          }
+        } else {
+          this.logger.info(`Importing ${sourceUri}...`);
 
-          const oldDataToKeep =
-            this.settings.dest.predicatesToKeep.length > 0
-              ? Object.fromEntries(
-                  Object.entries(oldData).filter(([key]) => this.settings.dest.predicatesToKeep.includes(key))
-                )
-              : {};
+          if (!this.settings.dest.containerUri) {
+            throw new Error(`Cannot import as dest.containerUri setting is not defined`);
+          }
 
           try {
-            await ctx.call('ldp.resource.put', {
+            destUri = await ctx.call('ldp.container.post', {
+              containerUri:
+                typeof this.settings.dest.containerUri === 'string'
+                  ? this.settings.dest.containerUri
+                  : this.settings.dest.containerUri(resource),
+              slug: this.getField('slug', data),
               resource: {
-                '@id': destUri,
                 ...resource,
-                ...oldDataToKeep,
                 'dc:source': sourceUri,
                 'dc:created': resource['dc:created'] || this.getField('created', data),
                 'dc:modified': resource['dc:modified'] || this.getField('updated', data),
@@ -225,68 +264,50 @@ const Schema = {
               webId: 'system'
             });
           } catch (e) {
-            this.logger.warn(`Unable to update ${destUri} (Error message: ${e.message})`);
+            this.logger.warn(`Unable to import ${sourceUri} (Error message: ${e.message})`);
             return false;
           }
-        } else {
-          this.logger.info(`Skipping ${sourceUri} (not changed)...`);
-          return true; // True = skipping
-        }
-      } else {
-        this.logger.info(`Importing ${sourceUri}...`);
 
-        if (!this.settings.dest.containerUri) {
-          throw new Error(`Cannot import as dest.containerUri setting is not defined`);
+          this.logger.info(`Done! Resource URL: ${destUri}`);
         }
 
-        try {
-          destUri = await ctx.call('ldp.container.post', {
-            containerUri:
-              typeof this.settings.dest.containerUri === 'string'
-                ? this.settings.dest.containerUri
-                : this.settings.dest.containerUri(resource),
-            slug: this.getField('slug', data),
-            resource: {
-              ...resource,
-              'dc:source': sourceUri,
-              'dc:created': resource['dc:created'] || this.getField('created', data),
-              'dc:modified': resource['dc:modified'] || this.getField('updated', data),
-              'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri
-            },
+        return destUri;
+      }
+    }),
+
+    deleteImported: defineAction({
+      async handler(ctx) {
+        for (const resourceUri of Object.values(this.imported)) {
+          this.logger.info(`Deleting ${resourceUri}...`);
+
+          // TODO also delete blank nodes attached to the resources
+          await ctx.call('ldp.resource.delete', {
+            resourceUri,
             webId: 'system'
           });
-        } catch (e) {
-          this.logger.warn(`Unable to import ${sourceUri} (Error message: ${e.message})`);
-          return false;
         }
 
-        this.logger.info(`Done! Resource URL: ${destUri}`);
+        this.imported = {};
       }
+    }),
 
-      return destUri;
-    },
-    async deleteImported(ctx) {
-      for (const resourceUri of Object.values(this.imported)) {
-        this.logger.info(`Deleting ${resourceUri}...`);
-
-        // TODO also delete blank nodes attached to the resources
-        await ctx.call('ldp.resource.delete', {
-          resourceUri,
-          webId: 'system'
-        });
+    list: defineAction({
+      async handler(ctx) {
+        return await this.list(ctx.params.url || this.settings.source.getAllFull);
       }
+    }),
 
-      this.imported = {};
-    },
-    async list(ctx) {
-      return await this.list(ctx.params.url || this.settings.source.getAllFull);
-    },
-    async getOne(ctx) {
-      return await this.getOne(this.settings.source.getOneFull(ctx.params.data));
-    },
-    getImported() {
-      return this.imported;
-    }
+    getOne: defineAction({
+      async handler(ctx) {
+        return await this.getOne(this.settings.source.getOneFull(ctx.params.data));
+      }
+    }),
+
+    getImported: defineAction({
+      handler() {
+        return this.imported;
+      }
+    })
   },
   methods: {
     async prepare() {
@@ -523,6 +544,6 @@ const Schema = {
       };
     }
   }
-};
+} satisfies Partial<ServiceSchema>;
 
 export default Schema;

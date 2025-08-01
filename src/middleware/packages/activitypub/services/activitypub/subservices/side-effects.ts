@@ -1,6 +1,7 @@
 import { credentialsContext } from '@semapps/crypto';
 import { arrayOf } from '@semapps/ldp';
 import matchActivity from '../../../utils/matchActivity.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 /**
  * Allow any service to process activities just after they are posted to the inbox or outbox.
@@ -8,7 +9,7 @@ import matchActivity from '../../../utils/matchActivity.ts';
  * We recommend to use the ActivitiesHandlerMixin to make it easier to use this service.
  */
 const ActivitypubSideEffectsSchema = {
-  name: 'activitypub.side-effects',
+  name: 'activitypub.side-effects' as const,
   settings: {
     podProvider: false
   },
@@ -16,51 +17,62 @@ const ActivitypubSideEffectsSchema = {
     this.processors = [];
   },
   actions: {
-    /**
-     * Add a new processor to handle activities
-     */
-    async addProcessor(ctx) {
-      const { matcher, actionName, boxTypes, key, capabilityGrantMatchFnGenerator, priority = 10 } = ctx.params;
+    addProcessor: defineAction({
+      /**
+       * Add a new processor to handle activities
+       */
+      async handler(ctx) {
+        const { matcher, actionName, boxTypes, key, capabilityGrantMatchFnGenerator, priority = 10 } = ctx.params;
 
-      this.processors.push({ matcher, actionName, boxTypes, key, priority, capabilityGrantMatchFnGenerator });
+        this.processors.push({ matcher, actionName, boxTypes, key, priority, capabilityGrantMatchFnGenerator });
 
-      // Sort processors by priority
-      this.processors.sort((a, b) => a.priority - b.priority);
-    },
-    /**
-     * Called by activitypub.outbox.post when an activity is posted
-     */
-    async processOutbox(ctx) {
-      const { activity } = ctx.params;
+        // Sort processors by priority
+        this.processors.sort((a, b) => a.priority - b.priority);
+      }
+    }),
 
-      const job = await this.createJob(
-        'processOutbox',
-        activity.id,
-        { activity },
-        { removeOnComplete: { age: 259200 } } // Keep completed jobs for 3 days
-      );
+    processOutbox: defineAction({
+      /**
+       * Called by activitypub.outbox.post when an activity is posted
+       */
+      async handler(ctx) {
+        const { activity } = ctx.params;
 
-      await job.finished();
-    },
-    /**
-     * Called by activitypub.inbox.post when an activity is received
-     * and by activitypub.outbox.post when an activity is sent to a local actor
-     */
-    async processInbox(ctx) {
-      const { activity, recipients } = ctx.params;
+        const job = await this.createJob(
+          'processOutbox',
+          activity.id,
+          { activity },
+          { removeOnComplete: { age: 259200 } } // Keep completed jobs for 3 days
+        );
 
-      const job = await this.createJob(
-        'processInbox',
-        activity.id,
-        { activity, recipients },
-        { removeOnComplete: { age: 259200 } } // Keep completed jobs for 3 days
-      );
+        await job.finished();
+      }
+    }),
 
-      await job.finished();
-    },
-    getProcessors() {
-      return this.processors;
-    }
+    processInbox: defineAction({
+      /**
+       * Called by activitypub.inbox.post when an activity is received
+       * and by activitypub.outbox.post when an activity is sent to a local actor
+       */
+      async handler(ctx) {
+        const { activity, recipients } = ctx.params;
+
+        const job = await this.createJob(
+          'processInbox',
+          activity.id,
+          { activity, recipients },
+          { removeOnComplete: { age: 259200 } } // Keep completed jobs for 3 days
+        );
+
+        await job.finished();
+      }
+    }),
+
+    getProcessors: defineAction({
+      handler() {
+        return this.processors;
+      }
+    })
   },
   methods: {
     matchActivity(pattern, activity, fetcher) {
@@ -415,6 +427,14 @@ const ActivitypubSideEffectsSchema = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
 
 export default ActivitypubSideEffectsSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [ActivitypubSideEffectsSchema.name]: typeof ActivitypubSideEffectsSchema;
+    }
+  }
+}

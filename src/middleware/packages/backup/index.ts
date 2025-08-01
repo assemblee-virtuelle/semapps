@@ -8,13 +8,14 @@ import ftpCopy from './utils/ftpCopy.ts';
 import rsyncCopy from './utils/rsyncCopy.ts';
 import ftpRemove from './utils/ftpRemove.ts';
 import fsRemove from './utils/fsRemove.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 /**
  * @typedef {import('moleculer').Context} Context
  */
 
 const BackupService = {
-  name: 'backup',
+  name: 'backup' as const,
   settings: {
     localServer: {
       fusekiBase: null,
@@ -56,74 +57,86 @@ const BackupService = {
     }
   },
   actions: {
-    async backupAll(ctx) {
-      await this.actions.backupDatasets({}, { parentCtx: ctx });
-      await this.actions.backupOtherDirs({}, { parentCtx: ctx });
-    },
-    async backupDatasets(ctx) {
-      // Generate a new backup of all datasets
-      const datasets = await ctx.call('triplestore.dataset.list');
-      for (const dataset of datasets) {
-        this.logger.info(`Backing up dataset: ${dataset}`);
-        await ctx.call('triplestore.dataset.backup', { dataset });
+    backupAll: defineAction({
+      async handler(ctx) {
+        await this.actions.backupDatasets({}, { parentCtx: ctx });
+        await this.actions.backupOtherDirs({}, { parentCtx: ctx });
       }
+    }),
 
-      const backupsDirPath = pathJoin(this.settings.localServer.fusekiBase, 'backups');
-
-      const copied = await this.actions.copyToRemoteServer(
-        { path: backupsDirPath, subDir: 'datasets' },
-        { parentCtx: ctx }
-      );
-
-      // If there was an error on copy, don't delete the backups
-      if (copied && this.settings.deleteFusekiBackupsAfterCopy) {
-        emptyDirSync(backupsDirPath);
-      }
-    },
-    async backupOtherDirs(ctx) {
-      const { otherDirsPaths } = this.settings.localServer;
-
-      if (!otherDirsPaths) {
-        this.logger.info('No otherDirPaths defined, skipping backup...');
-        return;
-      }
-
-      for (const [key, path] of Object.entries(otherDirsPaths)) {
-        this.logger.info(`Backing up directory: ${path}`);
-        await this.actions.copyToRemoteServer({ path, subDir: key }, { parentCtx: ctx });
-      }
-    },
-    async copyToRemoteServer(ctx) {
-      const { path, subDir } = ctx.params;
-      const { copyMethod, remoteServer } = this.settings;
-
-      // Path is mandatory for all copy methods
-      if (!remoteServer.path) {
-        this.logger.info('No remote server config defined, skipping remote backup...');
-        return false;
-      }
-
-      try {
-        switch (copyMethod) {
-          case 'rsync':
-            await rsyncCopy(path, subDir, remoteServer, false);
-            break;
-
-          case 'ftp':
-            await ftpCopy(path, subDir, remoteServer);
-            break;
-
-          case 'fs':
-            await fsCopy(path, subDir, remoteServer);
-            break;
+    backupDatasets: defineAction({
+      async handler(ctx) {
+        // Generate a new backup of all datasets
+        const datasets = await ctx.call('triplestore.dataset.list');
+        for (const dataset of datasets) {
+          this.logger.info(`Backing up dataset: ${dataset}`);
+          await ctx.call('triplestore.dataset.backup', { dataset });
         }
-        return true;
-      } catch (e) {
-        this.logger.error(`Failed to copy ${path} to remote server with ${copyMethod}. Error: ${e.message}`);
-        return false;
+
+        const backupsDirPath = pathJoin(this.settings.localServer.fusekiBase, 'backups');
+
+        const copied = await this.actions.copyToRemoteServer(
+          { path: backupsDirPath, subDir: 'datasets' },
+          { parentCtx: ctx }
+        );
+
+        // If there was an error on copy, don't delete the backups
+        if (copied && this.settings.deleteFusekiBackupsAfterCopy) {
+          emptyDirSync(backupsDirPath);
+        }
       }
-    },
-    deleteDataset: {
+    }),
+
+    backupOtherDirs: defineAction({
+      async handler(ctx) {
+        const { otherDirsPaths } = this.settings.localServer;
+
+        if (!otherDirsPaths) {
+          this.logger.info('No otherDirPaths defined, skipping backup...');
+          return;
+        }
+
+        for (const [key, path] of Object.entries(otherDirsPaths)) {
+          this.logger.info(`Backing up directory: ${path}`);
+          await this.actions.copyToRemoteServer({ path, subDir: key }, { parentCtx: ctx });
+        }
+      }
+    }),
+
+    copyToRemoteServer: defineAction({
+      async handler(ctx) {
+        const { path, subDir } = ctx.params;
+        const { copyMethod, remoteServer } = this.settings;
+
+        // Path is mandatory for all copy methods
+        if (!remoteServer.path) {
+          this.logger.info('No remote server config defined, skipping remote backup...');
+          return false;
+        }
+
+        try {
+          switch (copyMethod) {
+            case 'rsync':
+              await rsyncCopy(path, subDir, remoteServer, false);
+              break;
+
+            case 'ftp':
+              await ftpCopy(path, subDir, remoteServer);
+              break;
+
+            case 'fs':
+              await fsCopy(path, subDir, remoteServer);
+              break;
+          }
+          return true;
+        } catch (e) {
+          this.logger.error(`Failed to copy ${path} to remote server with ${copyMethod}. Error: ${e.message}`);
+          return false;
+        }
+      }
+    }),
+
+    deleteDataset: defineAction({
       params: {
         dataset: { type: 'string' }
       },
@@ -161,21 +174,32 @@ const BackupService = {
           }
         }
       }
-    },
-    // Returns an array of file paths to the backups relative to `this.settings.localServer.fusekiBase`.
-    async listBackupsForDataset(ctx) {
-      const { dataset } = ctx.params;
+    }),
 
-      // File format: <dataset-name>_<iso timestamp, but with _ instead of T and : replaced by `-`>
-      const backupsPattern = RegExp(`^${dataset}_.{10}_.{8}\\.nq\\.gz$`);
-      const filenames = await fs.promises
-        .readdir(pathJoin(this.settings.localServer.fusekiBase, 'backups'))
-        .then(files => files.filter(file => backupsPattern.test(file)))
-        .then(files => files.map(file => pathJoin(this.settings.localServer.fusekiBase, 'backups', file)));
+    listBackupsForDataset: defineAction({
+      // Returns an array of file paths to the backups relative to `this.settings.localServer.fusekiBase`.
+      async handler(ctx) {
+        const { dataset } = ctx.params;
 
-      return filenames;
-    }
+        // File format: <dataset-name>_<iso timestamp, but with _ instead of T and : replaced by `-`>
+        const backupsPattern = RegExp(`^${dataset}_.{10}_.{8}\\.nq\\.gz$`);
+        const filenames = await fs.promises
+          .readdir(pathJoin(this.settings.localServer.fusekiBase, 'backups'))
+          .then(files => files.filter(file => backupsPattern.test(file)))
+          .then(files => files.map(file => pathJoin(this.settings.localServer.fusekiBase, 'backups', file)));
+
+        return filenames;
+      }
+    })
   }
-};
+} satisfies ServiceSchema;
 
 export default BackupService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [BackupService.name]: typeof BackupService;
+    }
+  }
+}

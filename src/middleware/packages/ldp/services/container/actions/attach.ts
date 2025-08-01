@@ -1,7 +1,8 @@
 const { MoleculerError } = require('moleculer').Errors;
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
+import { defineAction } from 'moleculer';
 
-const Schema = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     containerUri: { type: 'string' },
@@ -48,6 +49,6 @@ const Schema = {
 
     return returnValues;
   }
-};
+});
 
 export default Schema;

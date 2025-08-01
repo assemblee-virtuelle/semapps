@@ -1,7 +1,8 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import { cleanUndefined } from '../../../utils.ts';
+import { defineAction } from 'moleculer';
 
-const Schema = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -78,6 +79,6 @@ const Schema = {
         throw new Error(`Unknown strategy: ${strategy}`);
     }
   }
-};
+});
 
 export default Schema;

@@ -1,6 +1,7 @@
 import urlJoin from 'url-join';
+import { defineAction } from 'moleculer';
 
-const Schema = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     webId: {
@@ -27,6 +28,6 @@ const Schema = {
       }
     });
   }
-};
+});
 
 export default Schema;

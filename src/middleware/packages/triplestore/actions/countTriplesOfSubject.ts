@@ -1,4 +1,6 @@
-const Schema = {
+import { defineAction } from 'moleculer';
+
+const Schema = defineAction({
   visibility: 'public',
   params: {
     uri: {
@@ -38,6 +40,6 @@ const Schema = {
 
     return results.length;
   }
-};
+});
 
 export default Schema;

@@ -1,6 +1,7 @@
 import { sanitizeSparqlUri } from '@semapps/triplestore';
 const { MoleculerError } = require('moleculer').Errors;
 import { getValueFromDataType } from '../../../../../utils.ts';
+import { defineAction } from 'moleculer';
 
 /**
  * Retrieves the collection metadata from the triplestore
@@ -265,7 +266,7 @@ function formatResponse(
   };
 }
 
-const Schema = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -338,6 +339,6 @@ const Schema = {
       context: jsonContext || localContext
     });
   }
-};
+});
 
 export default Schema;

@@ -1,7 +1,8 @@
 import { isURL } from '../utils.ts';
+import { defineAction } from 'moleculer';
 const regexPrefix = /^([^:]+):([^:]+)$/gm;
 
-const Schema = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     value: 'string'
@@ -23,6 +24,6 @@ const Schema = {
 
     return value.replace(`${ontology.prefix}:`, ontology.namespace);
   }
-};
+});
 
 export default Schema;

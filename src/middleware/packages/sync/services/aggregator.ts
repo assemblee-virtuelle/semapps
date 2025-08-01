@@ -1,8 +1,9 @@
 import { ActivitiesHandlerMixin, ACTIVITY_TYPES } from '@semapps/activitypub';
 import SynchronizerService from './synchronizer.ts';
+import { ServiceSchema } from 'moleculer';
 
 const AggregatorSchema = {
-  name: 'aggregator',
+  name: 'aggregator' as const,
   mixins: [ActivitiesHandlerMixin],
   settings: {
     acceptFollowOffers: true,
@@ -45,6 +46,14 @@ const AggregatorSchema = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
 
 export default AggregatorSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [AggregatorSchema.name]: typeof AggregatorSchema;
+    }
+  }
+}

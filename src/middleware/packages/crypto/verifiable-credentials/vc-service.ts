@@ -8,6 +8,7 @@ import VCApiService from './vc-api-service.ts';
 import VCCredentialContainer from './vc-credential-container.ts';
 import VCPresentationContainer from './vc-presentation-container.ts';
 import ChallengeService from './challenge-service.ts';
+import { ServiceSchema } from 'moleculer';
 
 /**
  * Root service for Verifiable Credential and the VC API.
@@ -27,7 +28,7 @@ import ChallengeService from './challenge-service.ts';
  * @type {import('moleculer').ServiceSchema}
  */
 const VCService = {
-  name: 'crypto.vc',
+  name: 'crypto.vc' as const,
   dependencies: ['ontologies'],
   settings: {
     podProvider: false,
@@ -56,6 +57,14 @@ const VCService = {
     this.broker.call('ontologies.register', did);
     this.broker.call('ontologies.register', cred);
   }
-};
+} satisfies ServiceSchema;
 
 export default VCService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [VCService.name]: typeof VCService;
+    }
+  }
+}

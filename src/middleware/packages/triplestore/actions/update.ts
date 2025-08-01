@@ -1,6 +1,7 @@
 import urlJoin from 'url-join';
+import { defineAction } from 'moleculer';
 
-const Schema = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     query: {
@@ -41,6 +42,6 @@ const Schema = {
       });
     }
   }
-};
+});
 
 export default Schema;

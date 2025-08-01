@@ -1,6 +1,7 @@
 import { triple, namedNode, variable } from '@rdfjs/data-model';
+import { defineAction } from 'moleculer';
 
-const Schema = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -47,6 +48,6 @@ const Schema = {
 
     return exist;
   }
-};
+});
 
 export default Schema;

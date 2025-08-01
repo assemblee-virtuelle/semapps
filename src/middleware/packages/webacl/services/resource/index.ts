@@ -26,6 +26,7 @@ import {
   getDatasetFromUri
 } from '../../utils.ts';
 
+import { ServiceSchema, defineAction } from 'moleculer';
 const filterAclsOnlyAgent = acl => agentPredicates.includes(acl.p.value);
 
 /**
@@ -39,7 +40,7 @@ const filterAclsOnlyAgent = acl => agentPredicates.includes(acl.p.value);
  *  - organized by user, group, anon, anyUser. See the documentation for the details.
  */
 const WebaclResourceSchema = {
-  name: 'webacl.resource',
+  name: 'webacl.resource' as const,
   settings: {
     baseUrl: null,
     graphName: null,
@@ -143,6 +144,14 @@ const WebaclResourceSchema = {
       return cmd;
     }
   }
-};
+} satisfies ServiceSchema;
 
 export default WebaclResourceSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [WebaclResourceSchema.name]: typeof WebaclResourceSchema;
+    }
+  }
+}

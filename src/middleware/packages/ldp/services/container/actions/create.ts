@@ -1,4 +1,6 @@
-const Schema = {
+import { defineAction } from 'moleculer';
+
+const Schema = defineAction({
   visibility: 'public',
   params: {
     containerUri: { type: 'string' },
@@ -23,6 +25,6 @@ const Schema = {
 
     ctx.emit('ldp.container.created', { containerUri, options, webId });
   }
-};
+});
 
 export default Schema;

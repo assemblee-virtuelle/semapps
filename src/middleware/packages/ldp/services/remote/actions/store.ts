@@ -1,7 +1,8 @@
 import { Errors as E } from 'moleculer-web';
 import { hasType } from '../../../utils.ts';
+import { defineAction } from 'moleculer';
 
-const Schema = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     resourceUri: { type: 'string', optional: true },
@@ -98,6 +99,6 @@ const Schema = {
 
     return resource;
   }
-};
+});
 
 export default Schema;

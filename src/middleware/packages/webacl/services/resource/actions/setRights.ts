@@ -10,6 +10,8 @@ import {
   FULL_FOAF_AGENT
 } from '../../../utils.ts';
 
+import { defineAction } from 'moleculer';
+
 export const api = async function api(ctx) {
   const contentType = ctx.meta.headers['content-type'];
   let { slugParts } = ctx.params;
@@ -31,7 +33,7 @@ export const api = async function api(ctx) {
   ctx.meta.$statusCode = 204;
 };
 
-export const action = {
+export const action = defineAction({
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -149,4 +151,4 @@ export const action = {
     ctx.emit('webacl.resource.updated', returnValues, { meta: { webId: null, dataset: null } });
     return returnValues;
   }
-};
+});

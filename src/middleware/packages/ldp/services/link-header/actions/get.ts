@@ -1,6 +1,7 @@
 import LinkHeader from 'http-link-header';
+import { defineAction } from 'moleculer';
 
-const Schema = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     uri: { type: 'string' }
@@ -32,6 +33,6 @@ const Schema = {
 
     return linkHeader.toString();
   }
-};
+});
 
 export default Schema;

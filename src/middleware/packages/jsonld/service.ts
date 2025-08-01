@@ -3,9 +3,10 @@ import JsonLdApiService from './services/api/index.ts';
 import JsonLdContextService from './services/context/index.ts';
 import JsonLdDocumentLoaderService from './services/document-loader/index.ts';
 import JsonLdParserService from './services/parser/index.ts';
+import { ServiceSchema } from 'moleculer';
 
 const JsonldSchema = {
-  name: 'jsonld',
+  name: 'jsonld' as const,
   settings: {
     baseUri: null,
     localContextPath: '.well-known/context.jsonld',
@@ -54,6 +55,14 @@ const JsonldSchema = {
       }
     });
   }
-};
+} satisfies ServiceSchema;
 
 export default JsonldSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [JsonldSchema.name]: typeof JsonldSchema;
+    }
+  }
+}

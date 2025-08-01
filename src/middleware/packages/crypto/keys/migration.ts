@@ -1,131 +1,136 @@
 import fs from 'fs';
 import path from 'path';
 import { KEY_TYPES } from '../constants.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 /** @type {import('moleculer').ServiceSchema} */
 const KeysMigrationSchema = {
-  name: 'keys.migration',
+  name: 'keys.migration' as const,
   settings: {
     actorsKeyPairsDir: null,
     podProvider: false
   },
   actions: {
-    /** Migrates cryptographic RSA keys from filesystem storage to the `/keys` ldp containers */
-    async migrateKeysToDb(ctx) {
-      // Check actorsKeyPairsDir for existing keys.
-      if (!fs.existsSync(this.settings.actorsKeyPairsDir)) {
-        this.logger.warn("No keys to migrate, actorsKeyPairsDir doesn't exist.");
-        return;
-      }
-
-      const accounts = await ctx.call('auth.account.find');
-      const usernamesByKey = fs
-        .readdirSync(this.settings.actorsKeyPairsDir)
-        .filter(fn => fn.endsWith('.key'))
-        .map(file => file.substring(0, file.length - 4));
-
-      if (usernamesByKey.length === 0) {
-        this.logger.warn("No keys to migrate, actorsKeyPairsDir doesn't contain any key files.");
-        return;
-      }
-
-      let errorUsernames = [];
-
-      this.logger.info(`=== Migrating keys from filesystem to LDP ===`);
-
-      // This can cause deadlocks otherwise.
-      ctx.meta.skipObjectsWatcher = true;
-
-      for (const { webId, username } of accounts) {
-        // Do the migration process.
-        try {
-          this.logger.info(`Migrating key of ${webId}`);
-
-          if (this.settings.podProvider) ctx.meta.dataset = username;
-
-          const { publicKey, privateKey } = await ctx.call('signature.keypair.get', {
-            actorUri: webId,
-            webId: 'system'
-          });
-
-          // Delete public key material from webId (later replaced with references to the public key resources).
-          await this.deleteKeysFromWebId(ctx, webId);
-
-          // Create key resources in db and link to webIds.
-          await this.attachOrCreateToDb(ctx, webId, publicKey, privateKey);
-        } catch (err) {
-          this.logger.error(`An error occurred during migration. Key of ${webId} could not be migrated.`, err);
-
-          errorUsernames.push(username);
-
-          // Try to revert to initial state.
-          try {
-            await this.deleteKeysFromWebId(ctx, webId);
-          } catch (_) {
-            // pass
-          }
-
-          // Re-add possibly deleted publicKeys to webId document. This will do nothing if keys are attached.
-          await ctx.call('signature.keypair.attachPublicKey', { actorUri: webId });
+    migrateKeysToDb: defineAction({
+      /** Migrates cryptographic RSA keys from filesystem storage to the `/keys` ldp containers */
+      async handler(ctx) {
+        // Check actorsKeyPairsDir for existing keys.
+        if (!fs.existsSync(this.settings.actorsKeyPairsDir)) {
+          this.logger.warn("No keys to migrate, actorsKeyPairsDir doesn't exist.");
+          return;
         }
-      }
 
-      // Keys are stored in db now.
-      // Finally, move fs keys to ./old folder
-      const keyFiles = fs
-        .readdirSync(this.settings.actorsKeyPairsDir)
-        .filter(fn => fn.endsWith('.key') || fn.endsWith('.key.pub'));
-      fs.mkdirSync(path.join(this.settings.actorsKeyPairsDir, 'old'), { recursive: true });
-      keyFiles.map(keyFile =>
-        fs.renameSync(
-          path.join(this.settings.actorsKeyPairsDir, keyFile),
-          path.join(this.settings.actorsKeyPairsDir, 'old', keyFile)
-        )
-      );
+        const accounts = await ctx.call('auth.account.find');
+        const usernamesByKey = fs
+          .readdirSync(this.settings.actorsKeyPairsDir)
+          .filter(fn => fn.endsWith('.key'))
+          .map(file => file.substring(0, file.length - 4));
 
-      // Stats about missing accounts and key-pairs.
-      const accountNames = accounts.map(acc => acc.username);
-      const keysWithoutRegisteredUser = usernamesByKey.filter(keyName => !accountNames.includes(keyName));
-      const usersWithoutKeys = accountNames.filter(accName => !usernamesByKey.includes(accName));
+        if (usernamesByKey.length === 0) {
+          this.logger.warn("No keys to migrate, actorsKeyPairsDir doesn't contain any key files.");
+          return;
+        }
 
-      if (errorUsernames.length > 0) {
-        this.logger.warn(`During the migration, the following accounts generated errors:`, errorUsernames);
-      }
-      if (keysWithoutRegisteredUser.length > 0) {
-        this.logger.warn(
-          `During the migration, the following keys were found that did not have a registered user associated:`,
-          keysWithoutRegisteredUser
+        let errorUsernames = [];
+
+        this.logger.info(`=== Migrating keys from filesystem to LDP ===`);
+
+        // This can cause deadlocks otherwise.
+        ctx.meta.skipObjectsWatcher = true;
+
+        for (const { webId, username } of accounts) {
+          // Do the migration process.
+          try {
+            this.logger.info(`Migrating key of ${webId}`);
+
+            if (this.settings.podProvider) ctx.meta.dataset = username;
+
+            const { publicKey, privateKey } = await ctx.call('signature.keypair.get', {
+              actorUri: webId,
+              webId: 'system'
+            });
+
+            // Delete public key material from webId (later replaced with references to the public key resources).
+            await this.deleteKeysFromWebId(ctx, webId);
+
+            // Create key resources in db and link to webIds.
+            await this.attachOrCreateToDb(ctx, webId, publicKey, privateKey);
+          } catch (err) {
+            this.logger.error(`An error occurred during migration. Key of ${webId} could not be migrated.`, err);
+
+            errorUsernames.push(username);
+
+            // Try to revert to initial state.
+            try {
+              await this.deleteKeysFromWebId(ctx, webId);
+            } catch (_) {
+              // pass
+            }
+
+            // Re-add possibly deleted publicKeys to webId document. This will do nothing if keys are attached.
+            await ctx.call('signature.keypair.attachPublicKey', { actorUri: webId });
+          }
+        }
+
+        // Keys are stored in db now.
+        // Finally, move fs keys to ./old folder
+        const keyFiles = fs
+          .readdirSync(this.settings.actorsKeyPairsDir)
+          .filter(fn => fn.endsWith('.key') || fn.endsWith('.key.pub'));
+        fs.mkdirSync(path.join(this.settings.actorsKeyPairsDir, 'old'), { recursive: true });
+        keyFiles.map(keyFile =>
+          fs.renameSync(
+            path.join(this.settings.actorsKeyPairsDir, keyFile),
+            path.join(this.settings.actorsKeyPairsDir, 'old', keyFile)
+          )
         );
+
+        // Stats about missing accounts and key-pairs.
+        const accountNames = accounts.map(acc => acc.username);
+        const keysWithoutRegisteredUser = usernamesByKey.filter(keyName => !accountNames.includes(keyName));
+        const usersWithoutKeys = accountNames.filter(accName => !usernamesByKey.includes(accName));
+
+        if (errorUsernames.length > 0) {
+          this.logger.warn(`During the migration, the following accounts generated errors:`, errorUsernames);
+        }
+        if (keysWithoutRegisteredUser.length > 0) {
+          this.logger.warn(
+            `During the migration, the following keys were found that did not have a registered user associated:`,
+            keysWithoutRegisteredUser
+          );
+        }
+        if (usersWithoutKeys.length > 0) {
+          this.logger.warn(
+            `During the migration, the following accounts were found that did not have key pairs. New ones were created:`,
+            usersWithoutKeys
+          );
+        }
+
+        this.logger.info('=== Keys migration completed ===');
+        await ctx.emit('keys.migration.migrated');
       }
-      if (usersWithoutKeys.length > 0) {
-        this.logger.warn(
-          `During the migration, the following accounts were found that did not have key pairs. New ones were created:`,
-          usersWithoutKeys
-        );
+    }),
+
+    isMigrated: defineAction({
+      /** Returns true, if the server has migrated to the new keys service yet, i.e. keys are stored in the user dataset, not on fs. */
+      async handler() {
+        // If the `actorsKeyPairsDir` setting is not set, we assume migration has happened or was never needed.
+        if (!this.settings.actorsKeyPairsDir) {
+          return true;
+        }
+
+        // Check actorsKeyPairsDir for existing keys.
+        if (!fs.existsSync(this.settings.actorsKeyPairsDir)) {
+          return true;
+        }
+
+        const anyKeyFile = fs
+          .readdirSync(this.settings.actorsKeyPairsDir)
+          .find(fn => fn.endsWith('.key') || fn.endsWith('.key.pub'));
+
+        return !anyKeyFile;
       }
-
-      this.logger.info('=== Keys migration completed ===');
-      await ctx.emit('keys.migration.migrated');
-    },
-
-    /** Returns true, if the server has migrated to the new keys service yet, i.e. keys are stored in the user dataset, not on fs. */
-    async isMigrated() {
-      // If the `actorsKeyPairsDir` setting is not set, we assume migration has happened or was never needed.
-      if (!this.settings.actorsKeyPairsDir) {
-        return true;
-      }
-
-      // Check actorsKeyPairsDir for existing keys.
-      if (!fs.existsSync(this.settings.actorsKeyPairsDir)) {
-        return true;
-      }
-
-      const anyKeyFile = fs
-        .readdirSync(this.settings.actorsKeyPairsDir)
-        .find(fn => fn.endsWith('.key') || fn.endsWith('.key.pub'));
-
-      return !anyKeyFile;
-    }
+    })
   },
   methods: {
     // Delete old public key blank node and data from the webId.
@@ -175,6 +180,14 @@ const KeysMigrationSchema = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
 
 export default KeysMigrationSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [KeysMigrationSchema.name]: typeof KeysMigrationSchema;
+    }
+  }
+}

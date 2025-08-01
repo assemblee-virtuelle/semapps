@@ -12,6 +12,7 @@ import vc from '@digitalbazaar/vc';
 import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
 
 import { KEY_TYPES, credentialsContext } from '../constants.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 /**
  * Service for verifying, reading, and revoking Verifiable Credentials.
@@ -21,7 +22,7 @@ import { KEY_TYPES, credentialsContext } from '../constants.ts';
  * @type {import('moleculer').ServiceSchema}
  */
 const VCCredentialService = {
-  name: 'crypto.vc.issuer',
+  name: 'crypto.vc.issuer' as const,
   settings: {
     podProvider: null
   },
@@ -53,7 +54,7 @@ const VCCredentialService = {
      * @param {object} ctx.params - The parameters for creating the VC.
      * @returns {object} The signed credential.
      */
-    createVC: {
+    createVC: defineAction({
       params: {
         credential: {
           type: 'object',
@@ -136,7 +137,7 @@ const VCCredentialService = {
 
         return signedCredential;
       }
-    }
+    })
   },
   methods: {
     /** Creates an ldp resource from the presentation and sets rights. */
@@ -173,6 +174,14 @@ const VCCredentialService = {
       return resource;
     }
   }
-};
+} satisfies ServiceSchema;
 
 export default VCCredentialService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [VCCredentialService.name]: typeof VCCredentialService;
+    }
+  }
+}

@@ -1,11 +1,12 @@
 import fetch from 'node-fetch';
 import N3 from 'n3';
 import { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin, matchActivity } from '@semapps/activitypub';
+import { ServiceSchema, defineAction } from 'moleculer';
 const { DataFactory } = N3;
 const { triple, namedNode } = DataFactory;
 
 const InferenceRemoteSchema = {
-  name: 'inference.remote',
+  name: 'inference.remote' as const,
   mixins: [ActivitiesHandlerMixin],
   settings: {
     baseUrl: null,
@@ -17,7 +18,7 @@ const InferenceRemoteSchema = {
     this.relayActor = await this.broker.call('activitypub.relay.getActor');
   },
   actions: {
-    offerInference: {
+    offerInference: defineAction({
       visibility: 'public',
       params: {
         subject: { type: 'string', optional: false },
@@ -84,7 +85,7 @@ const InferenceRemoteSchema = {
           }
         }
       }
-    }
+    })
   },
   activities: {
     offerInference: {
@@ -164,6 +165,14 @@ const InferenceRemoteSchema = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
 
 export default InferenceRemoteSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [InferenceRemoteSchema.name]: typeof InferenceRemoteSchema;
+    }
+  }
+}

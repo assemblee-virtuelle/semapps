@@ -11,9 +11,10 @@ import getTypesAction from './actions/getTypes.ts';
 import uploadAction from './actions/upload.ts';
 import methods from './methods.ts';
 import { getDatasetFromUri } from '../../utils.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 const LdpResourceSchema = {
-  name: 'ldp.resource',
+  name: 'ldp.resource' as const,
   settings: {
     baseUrl: null,
     podProvider: false,
@@ -52,6 +53,14 @@ const LdpResourceSchema = {
     }
   },
   methods
-};
+} satisfies ServiceSchema;
 
 export default LdpResourceSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [LdpResourceSchema.name]: typeof LdpResourceSchema;
+    }
+  }
+}

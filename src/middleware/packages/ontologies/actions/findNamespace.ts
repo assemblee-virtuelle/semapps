@@ -1,6 +1,7 @@
 import fetch from 'node-fetch';
+import { defineAction } from 'moleculer';
 
-const Schema = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     prefix: 'string'
@@ -18,6 +19,6 @@ const Schema = {
 
     return null;
   }
-};
+});
 
 export default Schema;

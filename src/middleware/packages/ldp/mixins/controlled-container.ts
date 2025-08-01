@@ -1,4 +1,5 @@
 import { delay, getParentContainerUri } from '../utils.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 const Schema = {
   settings: {
@@ -39,93 +40,134 @@ const Schema = {
     if (!path) this.settings.path = registration.path;
   },
   actions: {
-    async post(ctx) {
-      if (!ctx.params.containerUri) {
-        ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
+    post: defineAction({
+      async handler(ctx) {
+        if (!ctx.params.containerUri) {
+          ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
+        }
+        return await ctx.call('ldp.container.post', ctx.params);
       }
-      return await ctx.call('ldp.container.post', ctx.params);
-    },
-    async list(ctx) {
-      if (!ctx.params.containerUri) {
-        ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
-      }
-      return ctx.call('ldp.container.get', ctx.params);
-    },
-    async attach(ctx) {
-      if (!ctx.params.containerUri) {
-        ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
-      }
-      return ctx.call('ldp.container.attach', ctx.params);
-    },
-    async detach(ctx) {
-      if (!ctx.params.containerUri) {
-        ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
-      }
-      return ctx.call('ldp.container.detach', ctx.params);
-    },
-    get(ctx) {
-      const containerParams = {};
-      if (this.settings.accept) containerParams.accept = this.settings.accept;
-      return ctx.call('ldp.resource.get', {
-        ...containerParams,
-        ...ctx.params
-      });
-    },
-    getHeaderLinks(ctx) {
-      return [];
-    },
-    create(ctx) {
-      return ctx.call('ldp.resource.create', ctx.params);
-    },
-    patch(ctx) {
-      return ctx.call('ldp.resource.patch', ctx.params);
-    },
-    put(ctx) {
-      return ctx.call('ldp.resource.put', ctx.params);
-    },
-    delete(ctx) {
-      return ctx.call('ldp.resource.delete', ctx.params);
-    },
-    exist(ctx) {
-      return ctx.call('ldp.resource.exist', ctx.params);
-    },
-    getContainerUri(ctx) {
-      return ctx.call('ldp.registry.getUri', { path: this.settings.path, webId: ctx.params?.webId || ctx.meta?.webId });
-    },
-    async waitForContainerCreation(ctx) {
-      let { containerUri } = ctx.params;
-      let containerExist;
-      let containerAttached;
+    }),
 
-      if (!containerUri) {
-        containerUri = await this.actions.getContainerUri(
-          { webId: ctx.params.webId || ctx.meta.webId },
-          { parentCtx: ctx }
-        );
+    list: defineAction({
+      async handler(ctx) {
+        if (!ctx.params.containerUri) {
+          ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
+        }
+        return ctx.call('ldp.container.get', ctx.params);
       }
+    }),
 
-      do {
-        if (containerExist === false) await delay(1000);
-        containerExist = await ctx.call('ldp.container.exist', { containerUri });
-      } while (!containerExist);
+    attach: defineAction({
+      async handler(ctx) {
+        if (!ctx.params.containerUri) {
+          ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
+        }
+        return ctx.call('ldp.container.attach', ctx.params);
+      }
+    }),
 
-      const parentContainerUri = getParentContainerUri(containerUri);
-      const parentContainerExist = await ctx.call('ldp.container.exist', { containerUri: parentContainerUri });
+    detach: defineAction({
+      async handler(ctx) {
+        if (!ctx.params.containerUri) {
+          ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
+        }
+        return ctx.call('ldp.container.detach', ctx.params);
+      }
+    }),
 
-      // If a parent container exist, check that the child container has been attached
-      // Otherwise, it may fail
-      if (parentContainerExist) {
+    get: defineAction({
+      handler(ctx) {
+        const containerParams = {};
+        if (this.settings.accept) containerParams.accept = this.settings.accept;
+        return ctx.call('ldp.resource.get', {
+          ...containerParams,
+          ...ctx.params
+        });
+      }
+    }),
+
+    getHeaderLinks: defineAction({
+      handler(ctx) {
+        return [];
+      }
+    }),
+
+    create: defineAction({
+      handler(ctx) {
+        return ctx.call('ldp.resource.create', ctx.params);
+      }
+    }),
+
+    patch: defineAction({
+      handler(ctx) {
+        return ctx.call('ldp.resource.patch', ctx.params);
+      }
+    }),
+
+    put: defineAction({
+      handler(ctx) {
+        return ctx.call('ldp.resource.put', ctx.params);
+      }
+    }),
+
+    delete: defineAction({
+      handler(ctx) {
+        return ctx.call('ldp.resource.delete', ctx.params);
+      }
+    }),
+
+    exist: defineAction({
+      handler(ctx) {
+        return ctx.call('ldp.resource.exist', ctx.params);
+      }
+    }),
+
+    getContainerUri: defineAction({
+      handler(ctx) {
+        return ctx.call('ldp.registry.getUri', {
+          path: this.settings.path,
+          webId: ctx.params?.webId || ctx.meta?.webId
+        });
+      }
+    }),
+
+    waitForContainerCreation: defineAction({
+      async handler(ctx) {
+        let { containerUri } = ctx.params;
+        let containerExist;
+        let containerAttached;
+
+        if (!containerUri) {
+          containerUri = await this.actions.getContainerUri(
+            { webId: ctx.params.webId || ctx.meta.webId },
+            { parentCtx: ctx }
+          );
+        }
+
         do {
-          if (containerAttached === false) await delay(1000);
-          containerAttached = await ctx.call('ldp.container.includes', {
-            containerUri: parentContainerUri,
-            resourceUri: containerUri,
-            webId: 'system'
-          });
-        } while (!containerAttached);
+          if (containerExist === false) await delay(1000);
+          containerExist = await ctx.call('ldp.container.exist', { containerUri });
+        } while (!containerExist);
+
+        const parentContainerUri = getParentContainerUri(containerUri);
+        const parentContainerExist = await ctx.call('ldp.container.exist', { containerUri: parentContainerUri });
+
+        // If a parent container exist, check that the child container has been attached
+        // Otherwise, it may fail
+        if (parentContainerExist) {
+          do {
+            if (containerAttached === false) await delay(1000);
+            containerAttached = await ctx.call('ldp.container.includes', {
+              containerUri: parentContainerUri,
+              resourceUri: containerUri,
+              webId: 'system'
+            });
+          } while (!containerAttached);
+        }
       }
-    }
+    })
   }
-};
+} satisfies Partial<ServiceSchema>;
 
 export default Schema;

@@ -6,9 +6,10 @@ import getNetworkAction from './actions/getNetwork.ts';
 import getStoredAction from './actions/getStored.ts';
 import isRemoteAction from './actions/isRemote.ts';
 import storeAction from './actions/store.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 const LdpRemoteSchema = {
-  name: 'ldp.remote',
+  name: 'ldp.remote' as const,
   mixins: [Schedule],
   settings: {
     baseUrl: null,
@@ -24,9 +25,13 @@ const LdpRemoteSchema = {
     getStored: getStoredAction,
     isRemote: isRemoteAction,
     store: storeAction,
-    runCron() {
-      this.updateSingleMirroredResources();
-    } // Used by tests
+
+    runCron: defineAction({
+      // Used by tests
+      handler() {
+        this.updateSingleMirroredResources();
+      }
+    })
   },
   methods: {
     async proxyAvailable() {
@@ -72,6 +77,14 @@ const LdpRemoteSchema = {
       handler: 'updateSingleMirroredResources'
     }
   ]
-};
+} satisfies ServiceSchema;
 
 export default LdpRemoteSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [LdpRemoteSchema.name]: typeof LdpRemoteSchema;
+    }
+  }
+}

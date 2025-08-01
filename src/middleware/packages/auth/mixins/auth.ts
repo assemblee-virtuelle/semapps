@@ -3,6 +3,7 @@ import { Errors as E } from 'moleculer-web';
 import { TripleStoreAdapter } from '@semapps/triplestore';
 import AuthAccountService from '../services/account.ts';
 import AuthJWTService from '../services/jwt.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 /**
  * Auth Mixin that handles authentication and authorization for routes
@@ -109,24 +110,64 @@ const AuthMixin = {
     }
   },
   actions: {
-    // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
-    async authenticate(ctx) {
-      const { route, req, res } = ctx.params;
-      // Extract method and token from authorization header.
-      const [method, token] = req.headers.authorization?.split(' ') || [];
+    authenticate: defineAction({
+      // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
+      async handler(ctx) {
+        const { route, req, res } = ctx.params;
+        // Extract method and token from authorization header.
+        const [method, token] = req.headers.authorization?.split(' ') || [];
 
-      if (!token) {
-        // No token
+        if (!token) {
+          // No token
+          ctx.meta.webId = 'anon';
+          return Promise.resolve(null);
+        }
+
+        if (method === 'Bearer') {
+          const payload = await ctx.call('auth.jwt.verifyServerSignedToken', { token });
+          if (payload) {
+            ctx.meta.tokenPayload = payload;
+            ctx.meta.webId = payload.webId;
+            return Promise.resolve(payload);
+          }
+
+          // Check if token is a capability.
+          if (route.opts.authorizeWithCapability) {
+            return this.validateCapability(ctx, token);
+          }
+
+          // Invalid token
+          // TODO make sure token is deleted client-side
+          return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
+        }
+
+        // No valid auth method given.
         ctx.meta.webId = 'anon';
         return Promise.resolve(null);
       }
+    }),
 
-      if (method === 'Bearer') {
-        const payload = await ctx.call('auth.jwt.verifyServerSignedToken', { token });
-        if (payload) {
-          ctx.meta.tokenPayload = payload;
-          ctx.meta.webId = payload.webId;
-          return Promise.resolve(payload);
+    authorize: defineAction({
+      // See https://moleculer.services/docs/0.13/moleculer-web.html#Authorization
+      async handler(ctx) {
+        const { route, req, res } = ctx.params;
+        // Extract token from authorization header (do not take the Bearer part)
+        /** @type {[string, string]} */
+        const [method, token] = req.headers.authorization && req.headers.authorization.split(' ');
+
+        if (!token) {
+          return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
+        }
+        if (method !== 'Bearer') {
+          return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
+        }
+
+        // Validate if the token was signed by server (registered user).
+        const serverSignedPayload = await ctx.call('auth.jwt.verifyServerSignedToken', { token });
+        if (serverSignedPayload) {
+          ctx.meta.tokenPayload = serverSignedPayload;
+          ctx.meta.webId = serverSignedPayload.webId;
+          return Promise.resolve(serverSignedPayload);
         }
 
         // Check if token is a capability.
@@ -134,54 +175,20 @@ const AuthMixin = {
           return this.validateCapability(ctx, token);
         }
 
-        // Invalid token
-        // TODO make sure token is deleted client-side
         return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
       }
+    }),
 
-      // No valid auth method given.
-      ctx.meta.webId = 'anon';
-      return Promise.resolve(null);
-    },
-
-    // See https://moleculer.services/docs/0.13/moleculer-web.html#Authorization
-    async authorize(ctx) {
-      const { route, req, res } = ctx.params;
-      // Extract token from authorization header (do not take the Bearer part)
-      /** @type {[string, string]} */
-      const [method, token] = req.headers.authorization && req.headers.authorization.split(' ');
-
-      if (!token) {
-        return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
+    impersonate: defineAction({
+      async handler(ctx) {
+        const { webId } = ctx.params;
+        return await ctx.call('auth.jwt.generateServerSignedToken', {
+          payload: {
+            webId
+          }
+        });
       }
-      if (method !== 'Bearer') {
-        return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
-      }
-
-      // Validate if the token was signed by server (registered user).
-      const serverSignedPayload = await ctx.call('auth.jwt.verifyServerSignedToken', { token });
-      if (serverSignedPayload) {
-        ctx.meta.tokenPayload = serverSignedPayload;
-        ctx.meta.webId = serverSignedPayload.webId;
-        return Promise.resolve(serverSignedPayload);
-      }
-
-      // Check if token is a capability.
-      if (route.opts.authorizeWithCapability) {
-        return this.validateCapability(ctx, token);
-      }
-
-      return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
-    },
-
-    async impersonate(ctx) {
-      const { webId } = ctx.params;
-      return await ctx.call('auth.jwt.generateServerSignedToken', {
-        payload: {
-          webId
-        }
-      });
-    }
+    })
   },
   methods: {
     async validateCapability(ctx, token) {
@@ -241,6 +248,6 @@ const AuthMixin = {
       }
     }
   }
-};
+} satisfies Partial<ServiceSchema>;
 
 export default AuthMixin;

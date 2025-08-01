@@ -1,9 +1,10 @@
 import { SingleResourceContainerMixin } from '@semapps/ldp';
 import { pim } from '@semapps/ontologies';
 import { namedNode, triple } from '@rdfjs/data-model';
+import { ServiceSchema } from 'moleculer';
 
 const SolidPreferencesFileSchema = {
-  name: 'solid-preferences-file',
+  name: 'solid-preferences-file' as const,
   mixins: [SingleResourceContainerMixin],
   settings: {
     acceptedTypes: ['pim:ConfigurationFile'],
@@ -35,6 +36,14 @@ const SolidPreferencesFileSchema = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
 
 export default SolidPreferencesFileSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [SolidPreferencesFileSchema.name]: typeof SolidPreferencesFileSchema;
+    }
+  }
+}

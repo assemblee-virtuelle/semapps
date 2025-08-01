@@ -2,6 +2,7 @@ const { MoleculerError } = require('moleculer').Errors;
 import urlJoin from 'url-join';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import { removeAgentGroupOrAgentFromAuthorizations } from '../../../utils.ts';
+import { defineAction } from 'moleculer';
 
 export const api = async function api(ctx) {
   if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;
@@ -12,7 +13,7 @@ export const api = async function api(ctx) {
   ctx.meta.$statusCode = 204;
 };
 
-export const action = {
+export const action = defineAction({
   visibility: 'public',
   params: {
     groupSlug: { type: 'string', optional: true, min: 1, trim: true },
@@ -55,4 +56,4 @@ export const action = {
 
     await removeAgentGroupOrAgentFromAuthorizations(groupUri, true, this.settings.graphName, ctx);
   }
-};
+});
