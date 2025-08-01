@@ -5,7 +5,7 @@ import { JsonLdService } from '@semapps/jsonld';
 import { OntologiesService } from '@semapps/ontologies';
 import { TripleStoreService } from '@semapps/triplestore';
 import { fileURLToPath } from 'url';
-import CONFIG from '../config.ts';
+import * as CONFIG from '../config.ts';
 import { clearDataset } from '../utils.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

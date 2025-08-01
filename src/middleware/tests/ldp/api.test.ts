@@ -2,7 +2,7 @@ import urlJoin from 'url-join';
 import fetch from 'node-fetch';
 import waitForExpect from 'wait-for-expect';
 import { fetchServer } from '../utils.ts';
-import CONFIG from '../config.ts';
+import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
 jest.setTimeout(20000);
 let broker;

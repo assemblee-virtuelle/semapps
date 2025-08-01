@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 import urlJoin from 'url-join';
 import initialize from './initialize.ts';
-import CONFIG from '../config.ts';
+import * as CONFIG from '../config.ts';
 import ont1 from './ontologies/ont1.json' with { type: 'json' };
 import ont2 from './ontologies/ont2.json' with { type: 'json' };
 import ont3 from './ontologies/ont3.json' with { type: 'json' };
