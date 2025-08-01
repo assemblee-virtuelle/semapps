@@ -12,9 +12,11 @@
     "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "lint-files": "eslint --ext .js,.jsx,.ts,.tsx",
     "typecheck": "tsc --noEmit",
-    "preinstall": "git config core.hooksPath .git-hooks"
+    "preinstall": "git config core.hooksPath .git-hooks",
+    "postinstall": "types/patch-moleculer-types.sh"
   },
   "devDependencies": {
+    "@types/dotenv-flow": "^3.3.3",
     "@typescript-eslint/eslint-plugin": "^7.1.1",
     "@typescript-eslint/parser": "^7.5.0",
     "eslint": "^8.2.0",
