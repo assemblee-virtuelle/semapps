@@ -1,0 +1,16 @@
+import acl from './acl.json';
+import as from './as.json';
+import cred from './cred.json';
+import dc from './dc.json';
+import did from './did.json';
+import foaf from './foaf.json';
+import ldp from './ldp.json';
+import rdf from './rdf.json';
+import rdfs from './rdfs.json';
+import sec from './sec.json';
+import semapps from './semapps.json';
+import skos from './skos.json';
+import vcard from './vcard.json';
+import void from './void.json';
+import xsd from './xsd.json';
+export { acl, as, cred, dc, did, foaf, ldp, rdf, rdfs, sec, semapps, skos, vcard, void, xsd };

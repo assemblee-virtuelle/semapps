@@ -1,0 +1,10 @@
+import mp from './mp.json';
+import oasis from './oasis.json';
+import og from './og.json';
+import pair from './pair.json';
+import petr from './petr.json';
+import schema from './schema.json';
+import skos from './skos.json';
+import syreen from './syreen.json';
+import tutor from './tutor.json';
+export { mp, oasis, og, pair, petr, schema, skos, syreen, tutor };
