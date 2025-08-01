@@ -1,5 +1,5 @@
 expect.extend({
-  //An assertion to check if a value is undefined or an empty array
+  // An assertion to check if a value is undefined or an empty array
   toBeUndefinedOrEmptyArray(received) {
     const pass = received === undefined || (Array.isArray(received) && received.length === 0);
     if (pass) {
