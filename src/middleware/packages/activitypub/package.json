@@ -26,7 +26,8 @@
   },
   "gitHead": "06cb2decdab424e8686a5d77cc3364fbf1912439",
   "engines": {
-    "node": ">=14"
+    "node": ">=22.10.0"
   },
-  "type": "module"
+  "type": "module",
+  "main": "./index.ts"
 }

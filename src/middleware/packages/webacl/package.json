@@ -32,10 +32,11 @@
   },
   "gitHead": "684ba335d0759920f4134f550431b3c3af8e2599",
   "engines": {
-    "node": ">=14"
+    "node": ">=22.10.0"
   },
   "devDependencies": {
     "@types/url-join": "^4.0.1"
   },
-  "type": "module"
+  "type": "module",
+  "main": "./index.ts"
 }

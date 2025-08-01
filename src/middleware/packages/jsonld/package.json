@@ -22,7 +22,8 @@
     "access": "public"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=22.10.0"
   },
-  "type": "module"
+  "type": "module",
+  "main": "./index.ts"
 }
