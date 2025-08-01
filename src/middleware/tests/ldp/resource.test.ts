@@ -1,6 +1,6 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import { quad, namedNode, blankNode, literal } from 'rdf-data-model';
-import CONFIG from '../config.ts';
+import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
 jest.setTimeout(50000);
 let broker;

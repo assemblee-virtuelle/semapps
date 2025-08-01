@@ -7,7 +7,7 @@ import { getSlugFromUri } from '@semapps/ldp';
 import { fileURLToPath } from 'url';
 import { fetchServer } from '../utils.ts';
 import initialize from './initialize.ts';
-import CONFIG from '../config.ts';
+import * as CONFIG from '../config.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
