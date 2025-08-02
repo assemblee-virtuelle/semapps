@@ -167,13 +167,13 @@ const AuthLocalService = {
         {
           passReqToCallback: true // We want to have access to req below
         },
-        (req, username, password, done) => {
+        (req: any, username: any, password: any, done: any) => {
           req.$ctx
             .call('auth.login', req.$params)
-            .then(returnedData => {
+            .then((returnedData: any) => {
               done(null, returnedData);
             })
-            .catch(e => {
+            .catch((e: any) => {
               done(new MoleculerError(e.message, 401), false);
             });
         }

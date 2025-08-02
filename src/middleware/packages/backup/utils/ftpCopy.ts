@@ -2,7 +2,7 @@ import fs from 'fs';
 import Client from 'ssh2-sftp-client';
 import { join as pathJoin } from 'path';
 
-const ftpCopy = (path, subDir, remoteServer) => {
+const ftpCopy = (path: any, subDir: any, remoteServer: any) => {
   return new Promise((resolve, reject) => {
     const sftp = new Client();
     sftp
@@ -26,7 +26,7 @@ const ftpCopy = (path, subDir, remoteServer) => {
           }
         });
       })
-      .catch(e => reject(e));
+      .catch((e: any) => reject(e));
   });
 };
 

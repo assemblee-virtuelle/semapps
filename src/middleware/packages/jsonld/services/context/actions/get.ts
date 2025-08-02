@@ -4,7 +4,7 @@ const Schema = defineAction({
   visibility: 'public',
   cache: true,
   async handler(ctx) {
-    let context = [];
+    let context: any = [];
 
     const ontologies = await ctx.call('ontologies.list');
 

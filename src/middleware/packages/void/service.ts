@@ -19,11 +19,11 @@ const prefixes = {
   xsd: 'http://www.w3.org/2001/XMLSchema#'
 };
 
-function streamToString(stream) {
+function streamToString(stream: any) {
   let res = '';
   return new Promise((resolve, reject) => {
-    stream.on('data', chunk => (res += chunk));
-    stream.on('error', err => reject(err));
+    stream.on('data', (chunk: any) => (res += chunk));
+    stream.on('error', (err: any) => reject(err));
     stream.on('end', () => resolve(res));
   });
 }
@@ -51,7 +51,7 @@ const jsonContext = {
   'void:classPartition': { '@type': '@id' }
 };
 
-const addClassPartition = (serverUrl, partition, graph, scalar) => {
+const addClassPartition = (serverUrl: any, partition: any, graph: any, scalar: any) => {
   const blank = blankNode(`b${scalar}`);
   blank.data = [
     {
@@ -59,7 +59,7 @@ const addClassPartition = (serverUrl, partition, graph, scalar) => {
       p: namedNode('http://rdfs.org/ns/void#uriSpace'),
       o: literal(partition['http://rdfs.org/ns/void#uriSpace'])
     },
-    ...partition['http://rdfs.org/ns/void#class'].map(t => {
+    ...partition['http://rdfs.org/ns/void#class'].map((t: any) => {
       return { s: blankNode(`b${scalar}`), p: namedNode('http://rdfs.org/ns/void#class'), o: namedNode(t) };
     }),
     {
@@ -82,15 +82,15 @@ const addClassPartition = (serverUrl, partition, graph, scalar) => {
 };
 
 const addMirrorServer = async (
-  baseUrl,
-  serverUrl,
-  graph,
-  hasSparql,
-  containers,
-  mirrorGraph,
-  ctx,
-  nextScalar,
-  originalVoid
+  baseUrl: any,
+  serverUrl: any,
+  graph: any,
+  hasSparql: any,
+  containers: any,
+  mirrorGraph: any,
+  ctx: any,
+  nextScalar: any,
+  originalVoid: any
 ) => {
   const thisServer = createFragmentURL(baseUrl, serverUrl);
 
@@ -138,7 +138,7 @@ const addMirrorServer = async (
 
     const partition = {
       'http://rdfs.org/ns/void#uriSpace': p,
-      'http://rdfs.org/ns/void#class': types.map(type => type.t.value)
+      'http://rdfs.org/ns/void#class': types.map((type: any) => type.t.value)
     };
 
     const count = await ctx.call('triplestore.query', {
@@ -264,7 +264,7 @@ const VoidSchema = {
 
         const services = await ctx.call('$node.services');
         const hasSparql =
-          services.filter(s => s.name === 'sparqlEndpoint').length > 0
+          services.filter((s: any) => s.name === 'sparqlEndpoint').length > 0
             ? urlJoin(this.settings.baseUrl, 'sparql')
             : undefined;
         if (hasSparql)
@@ -299,7 +299,7 @@ const VoidSchema = {
         });
 
         const serversMap = {};
-        for (const s of serversContainers.map(sc => sc.s.value)) {
+        for (const s of serversContainers.map((sc: any) => sc.s.value)) {
           const res = s.match(regexProtocolAndHostAndPort);
           if (res) {
             const name = urlJoin(res[0], '/');
@@ -395,9 +395,9 @@ const VoidSchema = {
             prefixes: { ...prefixes, ...prefix, '': `${voidUrl}#` },
             format: 'Turtle'
           });
-          output.forEach(f => {
+          output.forEach((f: any) => {
             if (f.o.termType === 'BlankNode') {
-              const predicates = f.o.data.map(p => {
+              const predicates = f.o.data.map((p: any) => {
                 let obj = p.o;
                 if (Array.isArray(obj)) obj = writer.list(obj);
                 return {

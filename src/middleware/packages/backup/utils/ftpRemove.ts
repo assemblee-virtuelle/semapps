@@ -1,7 +1,7 @@
 import Client from 'ssh2-sftp-client';
 import { join as pathJoin } from 'path';
 
-const ftpRemove = (removeFiles, remoteServer) => {
+const ftpRemove = (removeFiles: any, remoteServer: any) => {
   return new Promise((resolve, reject) => {
     const sftp = new Client();
     sftp
@@ -17,7 +17,7 @@ const ftpRemove = (removeFiles, remoteServer) => {
         }
         resolve();
       })
-      .catch(e => reject(e));
+      .catch((e: any) => reject(e));
   });
 };
 

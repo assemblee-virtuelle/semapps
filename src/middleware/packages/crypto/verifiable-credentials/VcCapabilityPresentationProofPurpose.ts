@@ -37,7 +37,7 @@ class VcCapabilityPresentationProofPurpose extends AuthenticationProofPurpose {
    *
    * @returns {Promise<{valid: boolean, error: Error}>} Validation result.
    */
-  async validate(proof, options) {
+  async validate(proof: any, options: any) {
     if (!proof || !options) {
       throw new Error('Proof and options are required.');
     }

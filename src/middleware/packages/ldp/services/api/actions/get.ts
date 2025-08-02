@@ -6,7 +6,7 @@ import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
-export default async function get(ctx) {
+export default async function get(this: any, ctx: any) {
   try {
     const { username, slugParts } = ctx.params;
 

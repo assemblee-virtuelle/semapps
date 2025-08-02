@@ -15,7 +15,7 @@ const modifyActions = [
 
 const tripleStoreActions = ['triplestore.insert', 'triplestore.query', 'triplestore.update', 'triplestore.dropAll'];
 
-const addRightsToNewResource = async (ctx, resourceUri, webId) => {
+const addRightsToNewResource = async (ctx: any, resourceUri: any, webId: any) => {
   const { newResourcesPermissions } = await ctx.call('ldp.registry.getByUri', { resourceUri });
   const newRights =
     typeof newResourcesPermissions === 'function' ? newResourcesPermissions(webId, ctx) : newResourcesPermissions;
@@ -35,7 +35,7 @@ const addRightsToNewResource = async (ctx, resourceUri, webId) => {
   );
 };
 
-const addRightsToNewUser = async (ctx, userUri) => {
+const addRightsToNewUser = async (ctx: any, userUri: any) => {
   // Manually add the permissions for the user resource now that we have its webId
   // First delete the default permissions added by the middleware when we called ldp.resource.create
   await ctx.call(
@@ -78,14 +78,14 @@ const addRightsToNewUser = async (ctx, userUri) => {
  * Middleware that ensures that requests are conforming ACL records.
  * @type {import('moleculer').Middleware}
  */
-const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://semapps.org/webacl' }) => ({
+const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://semapps.org/webacl' }: any) => ({
   name: 'WebAclMiddleware',
   async started() {
     if (!baseUrl) throw new Error('The baseUrl config is missing for the WebACL middleware');
   },
-  localAction: (next, action) => {
+  localAction: (next: any, action: any) => {
     if (modifyActions.includes(action.name)) {
-      return async ctx => {
+      return async (ctx: any) => {
         const webId = ctx.params.webId || ctx.meta.webId || 'anon';
         let actionReturnValue;
 
@@ -293,7 +293,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
         return actionReturnValue;
       };
     } else if (tripleStoreActions.includes(action.name)) {
-      return async ctx => {
+      return async (ctx: any) => {
         if (podProvider) {
           const webId = ctx.params.webId || ctx.meta.webId || 'anon';
           const dataset = ctx.params.dataset || ctx.meta.dataset;

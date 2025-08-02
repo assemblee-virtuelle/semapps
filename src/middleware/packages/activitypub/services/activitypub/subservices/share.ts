@@ -63,7 +63,7 @@ const ShareService = {
   },
   activities: {
     shareObject: {
-      async match(activity, fetcher) {
+      async match(activity: any, fetcher: any) {
         const { match, dereferencedActivity } = await matchActivity(
           {
             // looking for an announce activity
@@ -77,12 +77,12 @@ const ShareService = {
           dereferencedActivity
         };
       },
-      async onReceive(ctx, activity) {
+      async onReceive(ctx: any, activity: any) {
         await this.actions.addShare({ objectUri: activity.object, announce: activity }, { parentCtx: ctx });
       }
     },
     unshareObject: {
-      async match(activity, fetcher) {
+      async match(activity: any, fetcher: any) {
         const { match, dereferencedActivity } = await matchActivity(
           {
             // looking for an undo activity targeting an announce activity
@@ -96,7 +96,7 @@ const ShareService = {
         );
         return { match, dereferencedActivity };
       },
-      async onReceive(ctx, activity) {
+      async onReceive(ctx: any, activity: any) {
         await this.actions.removeShare(
           { objectUri: activity.object?.object, announce: activity.object },
           { parentCtx: ctx }

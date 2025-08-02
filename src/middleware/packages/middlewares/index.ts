@@ -10,20 +10,20 @@ const handledMimeTypes = [MIME_TYPES.JSON, MIME_TYPES.TURTLE, MIME_TYPES.TRIPLE,
 
 // Put requested URL and query string in meta so that services may use them independently
 // Set here https://github.com/moleculerjs/moleculer-web/blob/c6ec80056a64ea15c57d6e2b946ce978d673ae92/src/index.js#L151-L161
-const parseUrl = async (req, res, next) => {
+const parseUrl = async (req: any, res: any, next: any) => {
   req.$ctx.meta.requestUrl = req.parsedUrl;
   req.$ctx.meta.queryString = req.query;
   next();
 };
 
-const parseHeader = async (req, res, next) => {
+const parseHeader = async (req: any, res: any, next: any) => {
   req.$ctx.meta.headers = req.headers ? { ...req.headers } : {};
   // Also remember original headers (needed for HTTP signatures verification and files type negociation)
   req.$ctx.meta.originalHeaders = req.headers ? { ...req.headers } : {};
   next();
 };
 
-const negotiateContentType = (req, res, next) => {
+const negotiateContentType = (req: any, res: any, next: any) => {
   if (!req.$ctx.meta.headers)
     throw new Error(`The parseHeader middleware must be added before the negotiateContentType middleware`);
 
@@ -47,7 +47,7 @@ const negotiateContentType = (req, res, next) => {
   }
 };
 
-const negotiateAccept = (req, res, next) => {
+const negotiateAccept = (req: any, res: any, next: any) => {
   if (!req.$ctx.meta.headers)
     throw new Error(`The parseHeader middleware must be added before the negotiateAccept middleware`);
 
@@ -66,14 +66,14 @@ const negotiateAccept = (req, res, next) => {
   }
 };
 
-const parseRawBody = (req, res, next) => {
+const parseRawBody = (req: any, res: any, next: any) => {
   if (!req.$ctx.meta.contentTypeNegotiated)
     throw new Error(`The negotiateContentType middleware must be added before the parseRawBody middleware`);
 
   // We don't want to parse the raw body for files, otherwise the stream will not be available anymore
   if (handledMimeTypes.includes(req.$ctx.meta.headers['content-type'])) {
     let data = '';
-    req.on('data', chunk => {
+    req.on('data', (chunk: any) => {
       data += chunk;
     });
     req.on('end', () => {
@@ -87,7 +87,7 @@ const parseRawBody = (req, res, next) => {
   }
 };
 
-const parseJson = async (req, res, next) => {
+const parseJson = async (req: any, res: any, next: any) => {
   if (!req.$ctx.meta.headers)
     throw new Error(`The parseHeader middleware must be added before the parseJson middleware`);
 
@@ -106,7 +106,7 @@ const parseJson = async (req, res, next) => {
   next();
 };
 
-const parseFile = (req, res, next) => {
+const parseFile = (req: any, res: any, next: any) => {
   if (!req.$ctx.meta.headers)
     throw new Error(`The parseHeader middleware must be added before the parseFile middleware`);
 
@@ -115,10 +115,10 @@ const parseFile = (req, res, next) => {
   if (!handledMimeTypes.includes(contentType) && (req.method === 'POST' || req.method === 'PUT')) {
     if (contentType.includes('multipart/form-data')) {
       const busboy = new Busboy({ headers: req.$ctx.meta.headers });
-      const files = [];
-      busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+      const files: any = [];
+      busboy.on('file', (fieldname: any, file: any, filename: any, encoding: any, mimetype: any) => {
         const readableStream = new streams.ReadableStream();
-        file.on('data', data => readableStream.push(data));
+        file.on('data', (data: any) => readableStream.push(data));
         files.push({
           fieldname,
           readableStream,
@@ -127,7 +127,7 @@ const parseFile = (req, res, next) => {
           mimetype
         });
       });
-      busboy.on('field', (fieldname, val) => {
+      busboy.on('field', (fieldname: any, val: any) => {
         req.$params[fieldname] = val;
       });
       busboy.on('finish', () => {
@@ -151,27 +151,27 @@ const parseFile = (req, res, next) => {
   }
 };
 
-const saveDatasetMeta = (req, res, next) => {
+const saveDatasetMeta = (req: any, res: any, next: any) => {
   req.$ctx.meta.dataset = req.$params.username;
   next();
 };
 
 /** @type {(msg: string) => never} */
-const throw400 = msg => {
+const throw400 = (msg: any) => {
   throw new MoleculerError(msg, 400, 'BAD_REQUEST', { status: 'Bad Request', text: msg });
 };
 
 /** @type {(msg: string) => never} */
-const throw403 = msg => {
+const throw403 = (msg: any) => {
   throw new MoleculerError('Forbidden', 403, 'ACCESS_DENIED', { status: 'Forbidden', text: msg });
 };
 
 /** @type {(msg: string) => never} */
-const throw404 = msg => {
+const throw404 = (msg: any) => {
   throw new MoleculerError('Forbidden', 404, 'NOT_FOUND', { status: 'Not found', text: msg });
 };
 
-const throw500 = msg => {
+const throw500 = (msg: any) => {
   throw new MoleculerError(msg, 500, 'INTERNAL_SERVER_ERROR', { status: 'Server Error', text: msg });
 };
 

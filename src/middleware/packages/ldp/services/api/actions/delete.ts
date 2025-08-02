@@ -1,4 +1,4 @@
-export default async function patch(ctx) {
+export default async function patch(this: any, ctx: any) {
   try {
     const { username, slugParts } = ctx.params;
 

@@ -4,12 +4,12 @@ const Schema = defineAction({
   visibility: 'public',
   cache: true,
   async handler(ctx) {
-    let context = [];
+    let context: any = [];
 
     let ontologies = await ctx.call('ontologies.list');
 
     // Do not include ontologies which want to preserve their context URI
-    ontologies = ontologies.filter(ont => ont.preserveContextUri !== true);
+    ontologies = ontologies.filter((ont: any) => ont.preserveContextUri !== true);
 
     for (const ontology of ontologies) {
       if (ontology.jsonldContext) {
@@ -17,7 +17,7 @@ const Schema = defineAction({
       }
     }
 
-    const prefixes = Object.fromEntries(ontologies.map(ont => [ont.prefix, ont.namespace]));
+    const prefixes = Object.fromEntries(ontologies.map((ont: any) => [ont.prefix, ont.namespace]));
 
     context = await ctx.call('jsonld.context.parse', {
       context: [...context, prefixes]

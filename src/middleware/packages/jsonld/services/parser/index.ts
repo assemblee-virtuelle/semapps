@@ -12,7 +12,7 @@ const JsonldParserSchema = {
   dependencies: ['jsonld.document-loader'],
   async started() {
     this.jsonld = jsonld;
-    this.jsonld.documentLoader = (url, options) =>
+    this.jsonld.documentLoader = (url: any, options: any) =>
       this.broker.call('jsonld.document-loader.loadWithCache', { url, options });
 
     // Options: https://github.com/rubensworks/jsonld-streaming-parser.js?tab=readme-ov-file#configuration
@@ -72,7 +72,7 @@ const JsonldParserSchema = {
 
           // Options: https://github.com/rubensworks/jsonld-streaming-serializer.js?tab=readme-ov-file#configuration
           const jsonLdSerializer = new JsonLdSerializer();
-          quads.forEach(quad => jsonLdSerializer.write(quad));
+          quads.forEach((quad: any) => jsonLdSerializer.write(quad));
           jsonLdSerializer.end();
 
           const jsonLd = JSON.parse(await this.streamToString(jsonLdSerializer));
@@ -125,11 +125,11 @@ const JsonldParserSchema = {
         return new Promise((resolve, reject) => {
           const jsonString = typeof input === 'object' ? JSON.stringify(input) : input;
           const textStream = streamifyString(jsonString);
-          const res = [];
+          const res: any = [];
           this.jsonLdParser
             .import(textStream)
-            .on('data', quad => res.push(quad))
-            .on('error', error => reject(error))
+            .on('data', (quad: any) => res.push(quad))
+            .on('error', (error: any) => reject(error))
             .on('end', () => resolve(res));
         });
       }
@@ -199,15 +199,15 @@ const JsonldParserSchema = {
     streamToString(stream) {
       let res = '';
       return new Promise((resolve, reject) => {
-        stream.on('data', chunk => (res += chunk));
-        stream.on('error', err => reject(err));
+        stream.on('data', (chunk: any) => (res += chunk));
+        stream.on('error', (err: any) => reject(err));
         stream.on('end', () => resolve(res));
       });
     },
     rdfToQuads(input, format) {
       return new Promise((resolve, reject) => {
         const textStream = streamifyString(input);
-        const res = [];
+        const res: any = [];
         rdfParser
           .parse(textStream, { contentType: format })
           .on('data', quad => res.push(quad))

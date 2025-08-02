@@ -27,7 +27,7 @@ const ActivitypubSideEffectsSchema = {
         this.processors.push({ matcher, actionName, boxTypes, key, priority, capabilityGrantMatchFnGenerator });
 
         // Sort processors by priority
-        this.processors.sort((a, b) => a.priority - b.priority);
+        this.processors.sort((a: any, b: any) => a.priority - b.priority);
       }
     }),
 
@@ -285,7 +285,7 @@ const ActivitypubSideEffectsSchema = {
       // the activitypub.outbox.post action is called by a processor, the jobs queue will halt
       // (the first job will stay in active state, the other one in pending state)
       concurrency: 5,
-      async process(job) {
+      async process(job: any) {
         const { activity, recipients } = job.data;
         const startTime = performance.now();
         let errors = [];
@@ -306,7 +306,7 @@ const ActivitypubSideEffectsSchema = {
             const dataset = this.settings.podProvider
               ? await this.broker.call('auth.account.findDatasetByWebId', { webId: recipientUri })
               : undefined;
-            const fetcher = resourceUri => this.fetch(resourceUri, recipientUri, dataset);
+            const fetcher = (resourceUri: any) => this.fetch(resourceUri, recipientUri, dataset);
 
             for (const processor of this.processors) {
               if (processor.boxTypes.includes('inbox')) {
@@ -360,7 +360,7 @@ const ActivitypubSideEffectsSchema = {
       // the activitypub.outbox.post action is called by a processor, the jobs queue will halt
       // (the first job will stay in active state, the other one in pending state)
       concurrency: 5,
-      async process(job) {
+      async process(job: any) {
         const { activity } = job.data;
         const emitterUri = activity.actor;
         const startTime = performance.now();
@@ -370,7 +370,7 @@ const ActivitypubSideEffectsSchema = {
         const dataset = this.settings.podProvider
           ? await this.broker.call('auth.account.findDatasetByWebId', { webId: emitterUri })
           : undefined;
-        const fetcher = resourceUri => this.fetch(resourceUri, emitterUri, dataset);
+        const fetcher = (resourceUri: any) => this.fetch(resourceUri, emitterUri, dataset);
 
         for (const processor of this.processors) {
           if (processor.boxTypes.includes('outbox')) {

@@ -13,7 +13,7 @@ const { MoleculerError } = Errors;
  * @param {string} webId - The webId of the user requesting the collection
  * @returns {Promise<object>} The collection metadata
  */
-async function getCollectionMetadata(ctx, collectionUri, webId, dataset) {
+async function getCollectionMetadata(ctx: any, collectionUri: any, webId: any, dataset: any) {
   const results = await ctx.call('triplestore.query', {
     query: `
       PREFIX as: <https://www.w3.org/ns/activitystreams#>
@@ -40,7 +40,7 @@ async function getCollectionMetadata(ctx, collectionUri, webId, dataset) {
   return Object.fromEntries(Object.entries(results[0]).map(([key, result]) => [key, getValueFromDataType(result)]));
 }
 
-async function verifyCursorExists(ctx, collectionUri, cursor, dataset) {
+async function verifyCursorExists(ctx: any, collectionUri: any, cursor: any, dataset: any) {
   const cursorResult = await ctx.call('triplestore.query', {
     query: `
       PREFIX as: <https://www.w3.org/ns/activitystreams#>
@@ -58,7 +58,7 @@ async function verifyCursorExists(ctx, collectionUri, cursor, dataset) {
   }
 }
 
-async function validateCursorParams(ctx, collectionUri, beforeEq, afterEq, dataset) {
+async function validateCursorParams(ctx: any, collectionUri: any, beforeEq: any, afterEq: any, dataset: any) {
   if (beforeEq && afterEq) {
     throw new MoleculerError('Cannot get a collection with both beforeEq and afterEq', 400, 'BAD_REQUEST');
   }
@@ -74,7 +74,7 @@ async function validateCursorParams(ctx, collectionUri, beforeEq, afterEq, datas
  * @param {object} options - The collection options
  * @returns {Promise<Array>} The collection item URIs
  */
-async function fetchCollectionItemURIs(ctx, collectionUri, options, dataset) {
+async function fetchCollectionItemURIs(ctx: any, collectionUri: any, options: any, dataset: any) {
   const result = await ctx.call('triplestore.query', {
     query: `
       PREFIX as: <https://www.w3.org/ns/activitystreams#>
@@ -98,7 +98,7 @@ async function fetchCollectionItemURIs(ctx, collectionUri, options, dataset) {
 
   // Filter out the nodes that don't have an itemUri
   // and return the itemUris values instead of the nodes
-  return result.filter(node => node.itemUri).map(node => node.itemUri.value);
+  return result.filter((node: any) => node.itemUri).map((node: any) => node.itemUri.value);
 }
 
 /**
@@ -111,7 +111,7 @@ async function fetchCollectionItemURIs(ctx, collectionUri, options, dataset) {
  * @param {string} afterEq - The cursor to start the pagination from
  * @returns {object} The paginated items, previous cursor, next cursor, first item, last item
  */
-function applyPagination(allItemURIs, beforeEq, afterEq) {
+function applyPagination(allItemURIs: any, beforeEq: any, afterEq: any) {
   let prevCursorUri;
   let nextCursorUri;
   let itemURIs = allItemURIs;
@@ -121,13 +121,13 @@ function applyPagination(allItemURIs, beforeEq, afterEq) {
   if (beforeEq) {
     // If there is a beforeEq cursor, reduce the items array to the items before the cursor, including the cursor itself
     // and determine the cursor uri to use for the "next" link
-    const index = itemURIs.findIndex(item => item === beforeEq);
+    const index = itemURIs.findIndex((item: any) => item === beforeEq);
     nextCursorUri = itemURIs[index + 1];
     itemURIs = itemURIs.slice(0, index + 1);
   } else if (afterEq) {
     // If there is an afterEq cursor, reduce the items array to the items after the cursor, including the cursor itself
     // and determine the cursor uri to use for the "prev" link
-    const index = itemURIs.findIndex(item => item === afterEq);
+    const index = itemURIs.findIndex((item: any) => item === afterEq);
     prevCursorUri = itemURIs[index - 1];
     itemURIs = itemURIs.slice(index);
   }
@@ -153,7 +153,7 @@ function applyPagination(allItemURIs, beforeEq, afterEq) {
  * @param {object} cursorDirection - The direction of the requested cursor
  * @returns {object} The selected and (possibly) dereferenced items, previous item uri, next item uri
  */
-async function selectAndDereferenceItems(ctx, allItemURIs, options, webId, cursorDirection) {
+async function selectAndDereferenceItems(ctx: any, allItemURIs: any, options: any, webId: any, cursorDirection: any) {
   let selectedItems = [];
   let itemUri = null;
   let nextItemUri = null;
@@ -209,7 +209,7 @@ async function selectAndDereferenceItems(ctx, allItemURIs, options, webId, curso
   };
 }
 
-const formatOptions = options => ({
+const formatOptions = (options: any) => ({
   summary: options.summary,
   'semapps:dereferenceItems': options.dereferenceItems,
   'semapps:itemsPerPage': options.itemsPerPage,
@@ -218,7 +218,7 @@ const formatOptions = options => ({
 });
 
 function formatResponse(
-  ctx,
+  ctx: any,
   {
     items,
     options,
@@ -230,7 +230,7 @@ function formatResponse(
     beforeEq,
     afterEq,
     localContext
-  }
+  }: any
 ) {
   const itemsProp = options.ordered ? 'orderedItems' : 'items';
 

@@ -70,7 +70,7 @@ const Schema = {
         webId: 'system'
       });
 
-      this.imported = Object.fromEntries(result.map(node => [node.sourceUri.value, node.id.value]));
+      this.imported = Object.fromEntries(result.map((node: any) => [node.sourceUri.value, node.id.value]));
     } else {
       this.imported = {};
     }
@@ -173,8 +173,8 @@ const Schema = {
           // If QueueMixin is not available, call method with fake job object
           return this.processSynchronize({
             data: {},
-            progress: number => this.logger.info(`Progress: ${number}%`),
-            log: message => this.logger.info(message)
+            progress: (number: any) => this.logger.info(`Progress: ${number}%`),
+            log: (message: any) => this.logger.info(message)
           });
         }
       }
@@ -440,10 +440,12 @@ const Schema = {
       const oldSourceUris = Object.keys(this.imported);
 
       if (this.settings.source.getAllCompact) {
-        newSourceUris = results.map(data => this.settings.source.getOneFull(data));
+        newSourceUris = results.map((data: any) => this.settings.source.getOneFull(data));
       } else {
         // If we have no compact results, put the data in an object so that we can easily use it with importOne
-        mappedFullResults = Object.fromEntries(results.map(data => [this.settings.source.getOneFull(data), data]));
+        mappedFullResults = Object.fromEntries(
+          results.map((data: any) => [this.settings.source.getOneFull(data), data])
+        );
         newSourceUris = Object.keys(mappedFullResults);
       }
 
@@ -476,7 +478,7 @@ const Schema = {
       // CREATED RESOURCES
       /// ////////////////////////////////////////
 
-      const urisToCreate = newSourceUris.filter(uri => !oldSourceUris.includes(uri));
+      const urisToCreate = newSourceUris.filter((uri: any) => !oldSourceUris.includes(uri));
       for (const sourceUri of urisToCreate) {
         this.logger.info(`Resource ${sourceUri} did not exist, importing it...`);
 
@@ -499,13 +501,13 @@ const Schema = {
       /// ////////////////////////////////////////
 
       const urisToUpdate = results
-        .filter(data => {
+        .filter((data: any) => {
           // If an updated field is available in compact results, filter out items outside of the time frame
           const updated = this.getField('updated', data);
           return updated ? fromDate < new Date(updated) && new Date(updated) > toDate : true;
         })
-        .map(data => this.settings.source.getOneFull(data))
-        .filter(uri => !urisToCreate.includes(uri));
+        .map((data: any) => this.settings.source.getOneFull(data))
+        .filter((uri: any) => !urisToCreate.includes(uri));
 
       for (const sourceUri of urisToUpdate) {
         const result = await this.actions.importOne({

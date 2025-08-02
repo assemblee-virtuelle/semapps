@@ -10,7 +10,7 @@ class LdpAdapter {
     this.containerService = containerService;
   }
 
-  init(broker, service) {
+  init(broker: any, service: any) {
     this.broker = broker;
     this.service = service;
   }
@@ -48,7 +48,7 @@ class LdpAdapter {
    *  - searchFields
    *  - query
    */
-  find(filters) {
+  find(filters: any) {
     return this.broker.call(`${this.containerService}.get`, {
       containerUri: this.service.schema.settings.containerUri,
       filters: filters.query,
@@ -59,14 +59,14 @@ class LdpAdapter {
   /**
    * Find an entity by query
    */
-  findOne(query) {
+  findOne(query: any) {
     throw new Error('Method not implemented');
   }
 
   /**
    * Find an entity by ID.
    */
-  findById(_id) {
+  findById(_id: any) {
     if (!_id.startsWith('http')) {
       _id = urlJoin(this.service.schema.settings.containerUri, _id);
     }
@@ -79,8 +79,8 @@ class LdpAdapter {
   /**
    * Find all entities by IDs
    */
-  findByIds(ids) {
-    return Promise.all(ids.map(id => this.findById(id)));
+  findByIds(ids: any) {
+    return Promise.all(ids.map((id: any) => this.findById(id)));
   }
 
   /**
@@ -92,13 +92,13 @@ class LdpAdapter {
    *  - query
    */
   count(filters = {}) {
-    return this.find(filters).then(result => result['ldp:contains'].length);
+    return this.find(filters).then((result: any) => result['ldp:contains'].length);
   }
 
   /**
    * Insert an entity
    */
-  insert(entity) {
+  insert(entity: any) {
     const { slug, ...resource } = entity;
 
     return this.broker
@@ -110,7 +110,7 @@ class LdpAdapter {
         },
         slug
       })
-      .then(resourceUri => {
+      .then((resourceUri: any) => {
         this.broker.call(`${this.containerService}.attach`, {
           containerUri: this.service.schema.settings.containerUri,
           resourceUri
@@ -123,21 +123,21 @@ class LdpAdapter {
   /**
    * Insert multiple entities
    */
-  insertMany(entities) {
+  insertMany(entities: any) {
     throw new Error('Method not implemented');
   }
 
   /**
    * Update many entities by `query` and `update`
    */
-  updateMany(query, update) {
+  updateMany(query: any, update: any) {
     throw new Error('Method not implemented');
   }
 
   /**
    * Update an entity by ID
    */
-  updateById(_id, update) {
+  updateById(_id: any, update: any) {
     const { id, '@id': arobaseId, ...resource } = update.$set;
 
     // Check ID and transform it to URI if necessary
@@ -153,20 +153,20 @@ class LdpAdapter {
           ...resource
         }
       })
-      .then(resourceUri => this.findById(resourceUri));
+      .then((resourceUri: any) => this.findById(resourceUri));
   }
 
   /**
    * Remove many entities which are matched by `query`
    */
-  removeMany(query) {
+  removeMany(query: any) {
     throw new Error('Method not implemented');
   }
 
   /**
    * Remove an entity by ID
    */
-  removeById(_id) {
+  removeById(_id: any) {
     return this.broker
       .call(`${this.resourceService}.delete`, {
         resourceUri: _id
@@ -190,21 +190,21 @@ class LdpAdapter {
   /**
    * Convert DB entity to JSON object
    */
-  entityToObject(entity) {
+  entityToObject(entity: any) {
     return entity;
   }
 
   /**
    * Transforms 'idField' into MongoDB's '_id'
    */
-  beforeSaveTransformID(entity, idField) {
+  beforeSaveTransformID(entity: any, idField: any) {
     return entity;
   }
 
   /**
    * Transforms MongoDB's '_id' into user defined 'idField'
    */
-  afterRetrieveTransformID(entity, idField) {
+  afterRetrieveTransformID(entity: any, idField: any) {
     return entity;
   }
 }

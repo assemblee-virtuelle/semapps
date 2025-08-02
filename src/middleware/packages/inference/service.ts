@@ -105,7 +105,7 @@ const InferenceSchema = {
     },
     triplesToString(triples) {
       return triples
-        .map(triple => `<${triple.subject.id}> <${triple.predicate.id}> <${triple.object.id}> .`)
+        .map((triple: any) => `<${triple.subject.id}> <${triple.predicate.id}> <${triple.object.id}> .`)
         .join('\n');
     },
     generateInsertQuery(triples) {
@@ -143,7 +143,7 @@ const InferenceSchema = {
     },
     // Exclude from triples1 the triples which also exist in triples2
     getTriplesDifference(triples1, triples2) {
-      return triples1.filter(t1 => !triples2.some(t2 => t1.equals(t2)));
+      return triples1.filter((t1: any) => !triples2.some((t2: any) => t1.equals(t2)));
     }
   },
   events: {

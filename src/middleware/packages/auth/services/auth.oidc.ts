@@ -53,13 +53,13 @@ const AuthOIDCService = {
           params,
           passReqToCallback: true
         },
-        (req, tokenset, userinfo, done) => {
+        (req: any, tokenset: any, userinfo: any, done: any) => {
           req.$ctx
             .call('auth.loginOrSignup', { ssoData: userinfo })
-            .then(loginData => {
+            .then((loginData: any) => {
               done(null, loginData);
             })
-            .catch(e => {
+            .catch((e: any) => {
               console.error(e);
               done(null, false);
             });

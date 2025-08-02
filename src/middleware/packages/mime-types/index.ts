@@ -5,8 +5,8 @@ import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
-const negotiateType = function (incomingType) {
-  const availableMediaTypes = [];
+const negotiateType = function (incomingType: any) {
+  const availableMediaTypes: any = [];
   const negotiatorType = incomingType;
   TYPES_REPO.forEach(trSupported => {
     trSupported.mimeFull.forEach(tr => availableMediaTypes.push(tr));
@@ -23,21 +23,21 @@ const negotiateType = function (incomingType) {
   throw new MoleculerError(`Type not supported : ${incomingType}`, 400, 'TYPE_NOT_SUPPORTED');
 };
 
-const negotiateTypeMime = function (incomingType) {
+const negotiateTypeMime = function (incomingType: any) {
   return negotiateType(incomingType).mime;
 };
 
-const negotiateTypeN3 = function (incomingType) {
+const negotiateTypeN3 = function (incomingType: any) {
   return negotiateType(incomingType).N3Mapping;
 };
 
-const negotiateTypeFuseki = function (incomingType) {
+const negotiateTypeFuseki = function (incomingType: any) {
   return negotiateType(incomingType).fusekiMapping;
 };
 
 // Return true if the provided `type` is accepted by the allowedTypes.
 // Note that allowedTypes may include wild cards such as "image/*"
-const isMimeTypeMatching = (type, types) => {
+const isMimeTypeMatching = (type: any, types: any) => {
   const negotiator = new Negotiator({
     headers: {
       accept: Array.isArray(types) ? types.join(', ') : types

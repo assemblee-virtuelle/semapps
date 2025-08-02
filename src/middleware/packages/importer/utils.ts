@@ -5,9 +5,9 @@ import googlelibphonenumberModule from 'google-libphonenumber';
 const PNF = googlelibphonenumberModule.PhoneNumberFormat;
 const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
 
-const convertToIsoString = str => str && new Date(str).toISOString();
+const convertToIsoString = (str: any) => str && new Date(str).toISOString();
 
-const formatPhoneNumber = (number, countryCode) => {
+const formatPhoneNumber = (number: any, countryCode: any) => {
   if (number && countryCode) {
     try {
       const parsedNumber = phoneUtil.parseAndKeepRawInput(number, countryCode);
@@ -19,7 +19,7 @@ const formatPhoneNumber = (number, countryCode) => {
   }
 };
 
-const frenchAddressSearch = async query => {
+const frenchAddressSearch = async (query: any) => {
   const url = new URL('https://api-adresse.data.gouv.fr/search/');
   url.searchParams.set('q', query);
   const response = await fetch(url.toString());
@@ -31,7 +31,7 @@ const frenchAddressSearch = async query => {
   return false;
 };
 
-const frenchAddressReverseSearch = async (lat, lon) => {
+const frenchAddressReverseSearch = async (lat: any, lon: any) => {
   const url = new URL('https://api-adresse.data.gouv.fr/reverse/');
   url.searchParams.set('lat', lat);
   url.searchParams.set('lon', lon);
@@ -44,9 +44,9 @@ const frenchAddressReverseSearch = async (lat, lon) => {
   return false;
 };
 
-const removeHtmlTags = text => sanitizeHtml(text, { allowedTags: [] }).trim();
+const removeHtmlTags = (text: any) => sanitizeHtml(text, { allowedTags: [] }).trim();
 
-const isDir = async path => {
+const isDir = async (path: any) => {
   try {
     const stat = await fsPromises.lstat(path);
     const value = stat.isDirectory();

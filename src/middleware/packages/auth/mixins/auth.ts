@@ -92,10 +92,10 @@ const AuthMixin = {
     if (!this.passportId) throw new Error('this.passportId must be set in the service creation.');
 
     this.passport = passport;
-    this.passport.serializeUser((user, done) => {
+    this.passport.serializeUser((user: any, done: any) => {
       done(null, user);
     });
-    this.passport.deserializeUser((user, done) => {
+    this.passport.deserializeUser((user: any, done: any) => {
       done(null, user);
     });
 
@@ -232,7 +232,9 @@ const AuthMixin = {
     },
     pickWebIdData(data) {
       if (this.settings.webIdSelection.length > 0) {
-        return Object.fromEntries(this.settings.webIdSelection.filter(key => key in data).map(key => [key, data[key]]));
+        return Object.fromEntries(
+          this.settings.webIdSelection.filter((key: any) => key in data).map((key: any) => [key, data[key]])
+        );
       } else {
         // TODO do not return anything if webIdSelection is empty, to conform with pickAccountData
         return data || {};
@@ -241,7 +243,7 @@ const AuthMixin = {
     pickAccountData(data) {
       if (this.settings.accountSelection.length > 0) {
         return Object.fromEntries(
-          this.settings.accountSelection.filter(key => key in data).map(key => [key, data[key]])
+          this.settings.accountSelection.filter((key: any) => key in data).map((key: any) => [key, data[key]])
         );
       } else {
         return {};

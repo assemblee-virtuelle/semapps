@@ -1,7 +1,7 @@
 import Rsync from 'rsync';
 import { join as pathJoin } from 'path';
 
-const rsyncCopy = (path, subDir, remoteServer, syncDelete = false) => {
+const rsyncCopy = (path: any, subDir: any, remoteServer: any, syncDelete = false) => {
   // Setup rsync to remote server
   const rsync = new Rsync()
     .flags('arv')
@@ -13,7 +13,7 @@ const rsyncCopy = (path, subDir, remoteServer, syncDelete = false) => {
 
   return new Promise((resolve, reject) => {
     console.log(`Rsync started with command: ${rsync.command()}`);
-    rsync.execute(error => {
+    rsync.execute((error: any) => {
       if (error) {
         reject(error);
       } else {

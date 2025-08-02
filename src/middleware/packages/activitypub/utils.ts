@@ -1,6 +1,6 @@
 import { ACTIVITY_TYPES } from './constants.ts';
 
-const objectCurrentToId = activityJson => {
+const objectCurrentToId = (activityJson: any) => {
   if (activityJson.object && typeof activityJson.object === 'object' && activityJson.object.current) {
     const { current, ...object } = activityJson.object;
     return {
@@ -14,7 +14,7 @@ const objectCurrentToId = activityJson => {
   return activityJson;
 };
 
-const objectIdToCurrent = activityJson => {
+const objectIdToCurrent = (activityJson: any) => {
   // If the activity has an object predicate, and this object is not an activity
   if (
     activityJson.object &&
@@ -33,7 +33,7 @@ const objectIdToCurrent = activityJson => {
   return activityJson;
 };
 
-const collectionPermissionsWithAnonRead = webId => {
+const collectionPermissionsWithAnonRead = (webId: any) => {
   const permissions = {
     anon: {
       read: true
@@ -52,14 +52,14 @@ const collectionPermissionsWithAnonRead = webId => {
   return permissions;
 };
 
-const getSlugFromUri = str => str.match(new RegExp(`.*/(.*)`))[1];
+const getSlugFromUri = (str: any) => str.match(new RegExp(`.*/(.*)`))[1];
 
 /** @deprecated Use the ldp.resource.getContainers action instead */
-const getContainerFromUri = str => str.match(new RegExp(`(.*)/.*`))[1];
+const getContainerFromUri = (str: any) => str.match(new RegExp(`(.*)/.*`))[1];
 
-const delay = t => new Promise(resolve => setTimeout(resolve, t));
+const delay = (t: any) => new Promise(resolve => setTimeout(resolve, t));
 
-const arrayOf = value => {
+const arrayOf = (value: any) => {
   // If the field is null-ish, we suppose there are no values.
   if (value === null || value === undefined) {
     return [];
@@ -79,8 +79,8 @@ const arrayOf = value => {
  * `undefined`.
  * @type {import("./utilTypes").waitForResource}
  */
-const waitForResource = async (delayMs, fieldNames, maxTries, callback) => {
-  let result;
+const waitForResource = async (delayMs: any, fieldNames: any, maxTries: any, callback: any) => {
+  let result: any;
   for (let i = 0; i < maxTries; i += 1) {
     result = await callback();
     // If a result (and the expected field, if required) is present, return.
@@ -90,7 +90,7 @@ const waitForResource = async (delayMs, fieldNames, maxTries, callback) => {
     await delay(delayMs);
   }
 
-  const missingProperties = result && fieldNames.filter(fieldName => !Object.keys(result).includes(fieldName));
+  const missingProperties = result && fieldNames.filter((fieldName: any) => !Object.keys(result).includes(fieldName));
 
   throw new Error(
     `Waiting for resource failed. No results after ${maxTries} tries. The resource is ${
@@ -99,7 +99,7 @@ const waitForResource = async (delayMs, fieldNames, maxTries, callback) => {
   );
 };
 
-const getValueFromDataType = result => {
+const getValueFromDataType = (result: any) => {
   switch (result.datatype?.value) {
     case 'http://www.w3.org/2001/XMLSchema#boolean':
       return result.value === 'true';

@@ -89,7 +89,7 @@ const DatasetService = {
 
         if (response.ok) {
           const json = await response.json();
-          return json.datasets.map(dataset => dataset['ds.name'].substring(1));
+          return json.datasets.map((dataset: any) => dataset['ds.name'].substring(1));
         }
         return [];
       }

@@ -13,7 +13,7 @@ class VCPurpose extends CredentialIssuancePurpose {
    *
    * @returns {Promise<{valid: boolean, error: Error}>} Resolves on completion.
    */
-  async validate(proof, properties) {
+  async validate(proof: any, properties: any) {
     const { documentLoader, document } = properties;
 
     // Check validity periods.
@@ -26,7 +26,7 @@ class VCPurpose extends CredentialIssuancePurpose {
 
     // Validate that VC still exists by fetching it with the document loader and the noCache option.
     const vc = await documentLoader(document.id, { noCache: true })
-      .then(res => res.document)
+      .then((res: any) => res.document)
       .catch(() => null);
     if (!vc) {
       return { valid: false, error: new Error('The VC does not exist.') };

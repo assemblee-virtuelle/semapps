@@ -1,4 +1,5 @@
-const appendPrefix = types => Object.fromEntries(Object.entries(types).map(([key, value]) => [key, AS_PREFIX + value]));
+const appendPrefix = (types: any) =>
+  Object.fromEntries(Object.entries(types).map(([key, value]) => [key, AS_PREFIX + value]));
 const AS_PREFIX = 'https://www.w3.org/ns/activitystreams#';
 const PUBLIC_URI = `${AS_PREFIX}Public`;
 

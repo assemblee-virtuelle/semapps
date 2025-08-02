@@ -6,14 +6,14 @@
  */
 const FakeQueueMixin = {
   methods: {
-    async createJob(queueName, jobName, data, opts) {
+    async createJob(queueName: any, jobName: any, data: any, opts: any) {
       this.logger.warn(`QueueMixin not configured, calling job directly`);
       if (!this.schema.queues[queueName]) throw new Error(`No queue found with key ${queueName}`);
       try {
         // TODO add all job properties https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#job
         await this.schema.queues[queueName].process.bind(this)({
           data,
-          log: (...args) => {
+          log: (...args: any[]) => {
             this.logger.info(...args);
           },
           progress: () => {}

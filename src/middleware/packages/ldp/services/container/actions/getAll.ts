@@ -18,7 +18,7 @@ const Schema = defineAction({
       webId: 'system'
     });
 
-    return result.map(node => node.containerUri.value);
+    return result.map((node: any) => node.containerUri.value);
   }
 });
 

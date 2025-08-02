@@ -90,7 +90,7 @@ const SingleMailNotificationsService = {
   queues: {
     sendMail: {
       name: '*',
-      async process(job) {
+      async process(job: any) {
         job.progress(0);
         const result = await this.actions.send(job.data);
         job.progress(100);

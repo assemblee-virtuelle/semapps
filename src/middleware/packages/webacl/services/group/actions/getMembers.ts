@@ -6,7 +6,7 @@ import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
-export const api = async function api(ctx) {
+export const api = async function api(this: any, ctx: any) {
   if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;
   return await ctx.call('webacl.group.getMembers', {
     groupSlug: this.settings.podProvider ? `${ctx.params.username}/${ctx.params.id}` : ctx.params.id
@@ -54,6 +54,6 @@ export const action = defineAction({
       webId: 'system'
     });
 
-    return members.map(m => m.m.value);
+    return members.map((m: any) => m.m.value);
   }
 });

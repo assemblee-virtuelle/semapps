@@ -4,7 +4,7 @@ import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
-export default async function post(ctx) {
+export default async function post(this: any, ctx: any) {
   let { username, slugParts, ...resource } = ctx.params;
 
   const resourceUri = this.getUriFromSlugParts(slugParts, username);

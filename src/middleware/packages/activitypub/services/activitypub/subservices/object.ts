@@ -186,7 +186,9 @@ const ObjectService = {
           resource: {
             '@id': resourceUri,
             '@type': 'https://www.w3.org/ns/activitystreams#Tombstone',
-            'https://www.w3.org/ns/activitystreams#formerType': expandedFormerTypes.map(type => ({ '@id': type })),
+            'https://www.w3.org/ns/activitystreams#formerType': expandedFormerTypes.map((type: any) => ({
+              '@id': type
+            })),
             'https://www.w3.org/ns/activitystreams#deleted': {
               '@value': new Date().toISOString(),
               '@type': 'http://www.w3.org/2001/XMLSchema#dateTime'

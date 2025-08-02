@@ -90,7 +90,7 @@ const InferenceRemoteSchema = {
   },
   activities: {
     offerInference: {
-      async match(activity, fetcher) {
+      async match(activity: any, fetcher: any) {
         let { match, dereferencedActivity } = await matchActivity(
           {
             type: ACTIVITY_TYPES.OFFER,
@@ -123,7 +123,7 @@ const InferenceRemoteSchema = {
 
         return { match, dereferencedActivity };
       },
-      async onReceive(ctx, activity, recipientUri) {
+      async onReceive(ctx: any, activity: any, recipientUri: any) {
         if (this.settings.acceptFromRemoteServers && recipientUri === this.relayActor.id) {
           const relationship = activity.object.object;
           if (relationship.subject && relationship.relationship && relationship.object) {

@@ -27,7 +27,7 @@ const Schema = {
     if (this.settings.source.wordpress.type === 'posts') {
       this.settings.source.apiUrl = this.settings.source.wordpress.baseUrl;
       this.settings.source.getAllCompact = urlJoin(this.settings.source.wordpress.baseUrl, 'wp-json/wp/v2/posts');
-      this.settings.source.getOneFull = data =>
+      this.settings.source.getOneFull = (data: any) =>
         urlJoin(this.settings.source.wordpress.baseUrl, 'wp-json/wp/v2/posts', `${data.id}`);
       if (this.settings.source.wordpress.appPassword) {
         this.settings.source.basicAuth = {

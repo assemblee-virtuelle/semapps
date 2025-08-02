@@ -131,7 +131,7 @@ describe('Collections API', () => {
       }),
       body: `
         PREFIX as: <https://www.w3.org/ns/activitystreams#>
-        INSERT DATA { <${paginatedCollectionUri}> as:items ${items.map(item => `<${item}>`).join(', ')} . };
+        INSERT DATA { <${paginatedCollectionUri}> as:items ${items.map((item: any) => `<${item}>`).join(', ')} . };
       `
     });
 

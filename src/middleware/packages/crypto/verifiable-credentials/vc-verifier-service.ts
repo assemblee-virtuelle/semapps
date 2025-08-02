@@ -22,7 +22,7 @@ const VCPresentationService = {
   name: 'crypto.vc.verifier' as const,
   dependencies: ['ldp', 'jsonld'],
   async started() {
-    this.documentLoader = async (url, options) => {
+    this.documentLoader = async (url: any, options: any) => {
       return await this.broker.call('jsonld.document-loader.loadWithCache', { url, options });
     };
   },
