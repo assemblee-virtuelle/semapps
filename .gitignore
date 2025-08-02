@@ -11,8 +11,8 @@ lerna-debug.log
 .classpath
 .project
 .settings
-# conflict
 *.orig
 .nx
 .yalc
 yalc.lock
+.yarn
