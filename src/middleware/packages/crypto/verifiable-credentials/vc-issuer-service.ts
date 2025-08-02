@@ -2,10 +2,9 @@ import { MIME_TYPES } from '@semapps/mime-types';
 
 import { cryptosuite } from '@digitalbazaar/eddsa-rdfc-2022-cryptosuite';
 import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
-import vc from '@digitalbazaar/vc';
+import * as vc from '@digitalbazaar/vc';
 
-/** @type {import('@digitalbazaar/ed25519-multikey')} */
-import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
+import * as Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
 
 import { ServiceSchema, defineAction } from 'moleculer';
 import { KEY_TYPES, credentialsContext } from '../constants.ts';
