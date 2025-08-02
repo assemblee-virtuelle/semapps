@@ -18,8 +18,7 @@
     "resolvePackageJsonImports": true,
     "allowSyntheticDefaultImports": true,
     "allowImportingTsExtensions": true,
-    "rootDir": "./",
-    "typeRoots": ["./types", "./pod-provider/backend/types"]
+    "rootDir": "./"
   },
   "exclude": []
 }
