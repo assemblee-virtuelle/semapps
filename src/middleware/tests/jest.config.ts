@@ -3,18 +3,8 @@
  * https://jestjs.io/docs/configuration
  */
 
-import { createDefaultEsmPreset } from 'ts-jest';
-
-const tsJestTransformCfg = createDefaultEsmPreset().transform;
-
 /** @type {import("jest").Config} * */
 const config = {
-  // ts-node
-  // testEnvironment: 'node',
-  // transform: {
-  //   ...tsJestTransformCfg
-  // },
-
   // babel-jest
   extensionsToTreatAsEsm: ['.ts'],
   transformIgnorePatterns: [],
