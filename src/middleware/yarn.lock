@@ -2546,6 +2546,13 @@
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.3.tgz#6209321eb2c1712a7e7466422b8cb1fc0d9dd5d8"
   integrity sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==
 
+"@types/streamify-string@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@types/streamify-string/-/streamify-string-1.0.4.tgz#93254a61c44e2760b450ccec520ef9c4de5247f2"
+  integrity sha512-lFME26GYMkG5C9ydkqaIZ9Jnylk0yhEO2MYpKCf1CifCq32alaXfhi3HcquydYnOGM/VTb9S++JRFZ44rBvRZQ==
+  dependencies:
+    "@types/node" "*"
+
 "@types/url-join@^4.0.1":
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/@types/url-join/-/url-join-4.0.3.tgz#09ede6753b846a274301b9bd3a6ed117050daecd"

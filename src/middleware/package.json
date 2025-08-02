@@ -19,6 +19,7 @@
     "@types/dotenv-flow": "^3.3.3",
     "@types/ioredis": "^4.27.0",
     "@types/node-fetch": "^2.6.13",
+    "@types/streamify-string": "^1.0.4",
     "@typescript-eslint/eslint-plugin": "^7.1.1",
     "@typescript-eslint/parser": "^7.5.0",
     "eslint": "^8.2.0",
