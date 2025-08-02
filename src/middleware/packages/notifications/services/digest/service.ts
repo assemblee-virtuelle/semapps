@@ -1,3 +1,4 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'mole... Remove this comment to see the full error message
 import MailService from 'moleculer-mail';
 import cronParser from 'cron-parser';
 import { TripleStoreAdapter } from '@semapps/triplestore';
@@ -23,6 +24,7 @@ const DigestNotificationsService = {
   },
   dependencies: ['digest.subscription'],
   created() {
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "digest.subscr... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [DigestSubscriptionService],
       adapter: new TripleStoreAdapter({ type: 'DigestSubscription', dataset: this.settings.subscriptionsDataset })
@@ -78,11 +80,14 @@ const DigestNotificationsService = {
                 if (notification && (await this.filterNotification(notification, subscription, notifications))) {
                   notifications.push(notification);
                   if (notification.category) {
+                    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                     if (!notificationsByCategories[notification.category])
+                      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                       notificationsByCategories[notification.category] = {
                         category: notification.category,
                         notifications: []
                       };
+                    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                     notificationsByCategories[notification.category].notifications.push(notification);
                   }
                 }
@@ -120,6 +125,7 @@ const DigestNotificationsService = {
             }
           } catch (e) {
             failures.push({
+              // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
               error: e.message,
               subscription
             });
@@ -142,6 +148,7 @@ const DigestNotificationsService = {
       {
         name: '*',
         process(job: any) {
+          // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ name:... Remove this comment to see the full error message
           return this.actions.build({ frequency: job.name, timestamp: job.opts.prevMillis });
         }
       }

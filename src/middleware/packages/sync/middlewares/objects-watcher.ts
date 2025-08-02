@@ -10,6 +10,7 @@ const handledWacActions = [
 ];
 
 const ObjectsWatcherMiddleware = (config = {}) => {
+  // @ts-expect-error TS(2339): Property 'baseUrl' does not exist on type '{}'.
   const { baseUrl, podProvider = false, postWithoutRecipients = false, transientActivities = false } = config;
   let relayActor: any;
   let excludedContainersPathRegex: any = [];
@@ -63,6 +64,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
 
   const isExcluded = (containersUris: any) => {
     return containersUris.some((uri: any) =>
+      // @ts-expect-error TS(7006): Parameter 'pathRegex' implicitly has an 'any' type... Remove this comment to see the full error message
       excludedContainersPathRegex.some(pathRegex => pathRegex.test(new URL(uri).pathname))
     );
   };
@@ -95,7 +97,9 @@ const ObjectsWatcherMiddleware = (config = {}) => {
 
       const containers = await broker.call('ldp.registry.list');
       for (const container of Object.values(containers)) {
+        // @ts-expect-error TS(18046): 'container' is of type 'unknown'.
         if (container.excludeFromMirror === true && !excludedContainersPathRegex.includes(container.pathRegex)) {
+          // @ts-expect-error TS(18046): 'container' is of type 'unknown'.
           excludedContainersPathRegex.push(container.pathRegex);
         }
       }
@@ -287,6 +291,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
               if (actionReturnValue.isContainer && actionReturnValue.addDefaultPublicRead) {
                 const subUris = await ctx.call('ldp.container.getUris', { containerUri: ctx.params.resourceUri });
                 // TODO check that sub-resources did not already have public read rights individually (must be done before)
+                // @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
                 outboxPost(ctx, ctx.params.resourceUri, {
                   type: ACTIVITY_TYPES.CREATE,
                   object: subUris,
@@ -297,6 +302,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
               if (actionReturnValue.isContainer && actionReturnValue.removeDefaultPublicRead) {
                 const subUris = await ctx.call('ldp.container.getUris', { containerUri: ctx.params.resourceUri });
                 // TODO check that sub-resources did not already have public read rights individually (must be done before)
+                // @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
                 outboxPost(ctx, ctx.params.resourceUri, {
                   type: ACTIVITY_TYPES.DELETE,
                   object: subUris,

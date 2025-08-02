@@ -19,6 +19,7 @@ const ActorService = {
       async handler(ctx) {
         const { actorUri, webId } = ctx.params;
         // If dataset is not in the meta, assume that actor is remote
+        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
         if (ctx.meta.dataset && !(await ctx.call('ldp.remote.isRemote', { resourceUri: actorUri }))) {
           try {
             // Don't return immediately the promise, or we won't be able to catch errors
@@ -76,6 +77,7 @@ const ActorService = {
               triple(
                 namedNode(actorUri),
                 namedNode(predicate),
+                // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
                 typeof subject === 'string' && subject.startsWith('http') ? namedNode(subject) : literal(subject)
               )
             ),
@@ -190,8 +192,11 @@ const ActorService = {
   events: {
     'ldp.resource.created': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'isActor' does not exist on type 'Service... Remove this comment to see the full error message
         if (this.isActor(newData)) {
+          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
           await this.actions.appendActorData({ actorUri: resourceUri }, { parentCtx: ctx });
           await ctx.call('signature.keypair.generate', { actorUri: resourceUri });
           await ctx.call('signature.keypair.attachPublicKey', { actorUri: resourceUri });
@@ -201,7 +206,9 @@ const ActorService = {
 
     'ldp.resource.deleted': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, oldData } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'isActor' does not exist on type 'Service... Remove this comment to see the full error message
         if (this.isActor(oldData)) {
           await ctx.call('keys.deleteAllKeysForWebId', { webId: resourceUri });
         }
@@ -210,7 +217,9 @@ const ActorService = {
 
     'auth.registered': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.appendActorData({ actorUri: webId }, { parentCtx: ctx });
       }
     })

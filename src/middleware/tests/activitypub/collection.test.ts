@@ -24,6 +24,7 @@ describe('Collections', () => {
     for (let i = 0; i < 10; i++) {
       items.push(
         await broker.call('ldp.container.post', {
+          // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
           containerUri: urlJoin(CONFIG.HOME_URL, 'as/object'),
           resource: {
             '@context': 'https://www.w3.org/ns/activitystreams',
@@ -156,6 +157,7 @@ describe('Collections', () => {
       summary: 'My non-ordered collection'
     });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(collection.items).toBeUndefinedOrEmptyArray();
   });
 
@@ -351,6 +353,7 @@ describe('Collections', () => {
         });
         expect(collection.first).toBeUndefined();
         expect(collection.last).toBeUndefined();
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(collection.items).toBeUndefinedOrEmptyArray();
       });
 
@@ -457,6 +460,7 @@ describe('Collections', () => {
 
   describe('Error Handling', () => {
     test('Should return 404 when collection does not exist', async () => {
+      // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
       const nonExistentUri = urlJoin(CONFIG.HOME_URL, 'as/collection/non-existent');
       await expect(
         broker.call('activitypub.collection.get', {
@@ -466,6 +470,7 @@ describe('Collections', () => {
     });
 
     test('Should return 404 when cursor not found in collection', async () => {
+      // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
       const invalidCursorUri = urlJoin(CONFIG.HOME_URL, 'as/object/non-existent');
       await expect(
         broker.call('activitypub.collection.get', {

@@ -13,6 +13,7 @@ const Schema = defineAction({
     containerUri: { type: 'string' },
     title: { type: 'string', optional: true },
     description: { type: 'string', optional: true },
+    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     options: { type: 'object', optional: true },
     webId: { type: 'string', optional: true } // Required in Pod provider config
   },

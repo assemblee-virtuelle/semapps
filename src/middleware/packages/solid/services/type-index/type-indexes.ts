@@ -19,6 +19,7 @@ const TypeIndexesSchema = {
   },
   dependencies: ['ontologies'],
   created() {
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "type-registra... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [TypeRegistrationsService]
     });
@@ -145,6 +146,7 @@ const TypeIndexesSchema = {
                 : await this.actions.getPublicIndex({ webId });
           } catch (e) {
             // Ignore 404 errors
+            // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
             if (e.code !== 404) throw e;
           }
         } while (!indexUri || attempts > 30);
@@ -166,6 +168,7 @@ const TypeIndexesSchema = {
         const { webId } = ctx.params;
 
         const containers = await ctx.call('ldp.registry.list');
+        // @ts-expect-error TS(18046): 'container' is of type 'unknown'.
         const numContainersWithTypeIndex = Object.values(containers).filter(container => container.typeIndex).length;
 
         let numTypeRegistrations;
@@ -192,17 +195,22 @@ const TypeIndexesSchema = {
   events: {
     'auth.registered': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
 
         // Wait until the /solid/type-index container has been created for the user
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         const indexesContainerUri = await this.actions.getContainerUri({ webId }, { parentCtx: ctx });
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.waitForContainerCreation({ containerUri: indexesContainerUri }, { parentCtx: ctx });
 
         // Wait until the /solid/type-registration container has been created for the user
         const registrationsContainerUri = await ctx.call('type-registrations.getContainerUri', { webId });
         await ctx.call('type-registrations.waitForContainerCreation', { containerUri: registrationsContainerUri });
 
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.createPublicIndex({ webId }, { parentCtx: ctx });
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.createPrivateIndex({ webId }, { parentCtx: ctx });
       }
     })

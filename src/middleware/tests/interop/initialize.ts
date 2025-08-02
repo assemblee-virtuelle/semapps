@@ -1,8 +1,9 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'fs-e... Remove this comment to see the full error message
 import fse from 'fs-extra';
 import path from 'path';
 import urlJoin from 'url-join';
 import Redis from 'ioredis';
-import { ServiceBroker } from 'moleculer';
+import { ServiceBroker, ServiceSchema } from 'moleculer';
 import { FULL_ACTOR_TYPES, RelayService } from '@semapps/activitypub';
 import { AuthLocalService } from '@semapps/auth';
 import { CoreService } from '@semapps/core';
@@ -14,6 +15,7 @@ import { fileURLToPath } from 'url';
 import * as CONFIG from '../config.ts';
 import { clearDataset } from '../utils.ts';
 
+// @ts-expect-error TS(1470): The 'import.meta' meta-property is not allowed in ... Remove this comment to see the full error message
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const containers = [
@@ -54,8 +56,11 @@ const initialize = async (
   const broker = new ServiceBroker({
     nodeID: `server${port}`,
     middlewares: [
+      // @ts-expect-error TS(2322): Type '{ name: string; created(broker: any): void; ... Remove this comment to see the full error message
       CacherMiddleware(CONFIG.ACTIVATE_CACHE),
+      // @ts-expect-error TS(2322): Type '{ name: string; started(): Promise<void>; lo... Remove this comment to see the full error message
       WebAclMiddleware({ baseUrl }),
+      // @ts-expect-error TS(2322): Type '{ name: string; started(broker: any): Promis... Remove this comment to see the full error message
       ObjectsWatcherMiddleware({ baseUrl })
     ],
     logger: {
@@ -66,6 +71,7 @@ const initialize = async (
     }
   });
 
+  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "core"; settin... Remove this comment to see the full error message
   broker.createService({
     mixins: [CoreService],
     settings: {
@@ -94,9 +100,11 @@ const initialize = async (
     }
   });
 
+  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub.r... Remove this comment to see the full error message
   broker.createService({ mixins: [RelayService] });
 
   if (serverToMirror) {
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "mirror"; sett... Remove this comment to see the full error message
     broker.createService({
       mixins: [MirrorService],
       settings: {
@@ -105,6 +113,7 @@ const initialize = async (
     });
   }
 
+  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "auth"; mixins... Remove this comment to see the full error message
   broker.createService({
     mixins: [AuthLocalService],
     settings: {
@@ -114,6 +123,7 @@ const initialize = async (
     }
   });
 
+  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "inference"; s... Remove this comment to see the full error message
   broker.createService({
     mixins: [InferenceService],
     settings: {

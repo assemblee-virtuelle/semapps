@@ -1,4 +1,4 @@
-import { ServiceBroker } from 'moleculer';
+import { ServiceBroker, ServiceSchema, defineAction } from 'moleculer';
 import fs from 'fs';
 import path, { join as pathJoin } from 'path';
 import { CoreService } from '@semapps/core';
@@ -10,6 +10,7 @@ import { fileURLToPath } from 'url';
 import * as CONFIG from '../config.ts';
 import { clearDataset } from '../utils.ts';
 
+// @ts-expect-error TS(1470): The 'import.meta' meta-property is not allowed in ... Remove this comment to see the full error message
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Give write permission on all containers to anonymous users
@@ -56,6 +57,7 @@ const initialize = async () => {
   }
 
   const broker = new ServiceBroker({
+    // @ts-expect-error TS(2322): Type '{ name: string; created(broker: any): void; ... Remove this comment to see the full error message
     middlewares: [CacherMiddleware(CONFIG.ACTIVATE_CACHE), WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
     logger: {
       type: 'Console',
@@ -65,6 +67,7 @@ const initialize = async () => {
     }
   });
 
+  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "core"; settin... Remove this comment to see the full error message
   broker.createService({
     mixins: [CoreService],
     settings: {
@@ -89,6 +92,7 @@ const initialize = async () => {
     }
   });
 
+  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "auth"; mixins... Remove this comment to see the full error message
   broker.createService({
     mixins: [AuthLocalService],
     settings: {
@@ -99,21 +103,23 @@ const initialize = async () => {
   });
 
   broker.createService({
-    name: 'event',
+    name: 'event' as const,
     mixins: [ControlledContainerMixin],
     settings: {
       acceptedTypes: ['pair:Event'],
       permissions
     },
     actions: {
-      getHeaderLinks() {
-        return [
-          {
-            uri: 'http://foo.bar',
-            rel: 'http://foo.baz'
-          }
-        ];
-      }
+      getHeaderLinks: defineAction({
+        handler() {
+          return [
+            {
+              uri: 'http://foo.bar',
+              rel: 'http://foo.baz'
+            }
+          ];
+        }
+      })
     }
   });
 

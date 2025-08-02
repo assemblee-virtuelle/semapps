@@ -8,13 +8,16 @@ const { MoleculerError } = Errors;
 export const action = defineAction({
   visibility: 'public',
   params: {
+    // @ts-expect-error TS(2322): Type '{ type: "string"; optional: false; }' is not... Remove this comment to see the full error message
     resourceUri: { type: 'string', optional: false },
     webId: { type: 'string', optional: true },
     /** In nested json format (e.g. `{anon: {read: true}}`) */
+    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: false; }' is not... Remove this comment to see the full error message
     rights: { type: 'object', optional: false }
   },
   async handler(ctx) {
     let { resourceUri, rights } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     const aclUri = getAclUriFromResourceUri(this.settings.baseUrl, resourceUri);
@@ -60,6 +63,7 @@ export const action = defineAction({
       {
         uri: resourceUri,
         webId,
+        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
         dataset: ctx.meta.dataset,
         isContainer,
         defaultRightsUpdated,

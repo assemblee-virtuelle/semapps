@@ -8,6 +8,7 @@ export const action = defineAction({
 
     const containers = await ctx.call('ldp.registry.list');
 
+    // @ts-expect-error TS(2339): Property 'permissions' does not exist on type 'unk... Remove this comment to see the full error message
     for (const { permissions, podsContainer, path } of Object.values(containers)) {
       if (permissions && !podsContainer) {
         const baseUrl = this.settings.podProvider
@@ -50,6 +51,7 @@ export const action = defineAction({
             isContainer: true,
             removePublicRead,
             removeDefaultPublicRead,
+            // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
             dataset: ctx.meta.dataset
           },
           { meta: { webId: null, dataset: null } }

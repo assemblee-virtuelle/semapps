@@ -4,6 +4,7 @@ import { defineAction } from 'moleculer';
 const Schema = defineAction({
   visibility: 'public',
   params: {
+    // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
     resource: {
       type: 'object'
     },
@@ -22,7 +23,9 @@ const Schema = defineAction({
   },
   async handler(ctx) {
     const { resource, graphName } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
+    // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
     let dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
     // Convert JSON-LD to N-Quads

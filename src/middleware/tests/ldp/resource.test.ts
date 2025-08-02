@@ -1,3 +1,4 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'rdf-... Remove this comment to see the full error message
 import { quad, namedNode, blankNode, literal } from 'rdf-data-model';
 import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
@@ -208,10 +209,12 @@ describe('Resource CRUD operations', () => {
     resourceUpdated.hasLocation = [
       {
         label: 'Compiegne',
+        // @ts-expect-error TS(2353): Object literal may only specify known properties, ... Remove this comment to see the full error message
         description: 'the place to be'
       },
       {
         label: 'Compiegne',
+        // @ts-expect-error TS(2353): Object literal may only specify known properties, ... Remove this comment to see the full error message
         description: 'or not'
       }
     ];
@@ -235,6 +238,7 @@ describe('Resource CRUD operations', () => {
       ]
     });
 
+    // @ts-expect-error TS(2322): Type 'undefined' is not assignable to type '{ labe... Remove this comment to see the full error message
     resourceUpdated.hasLocation = undefined;
 
     await broker.call('ldp.resource.put', { resource: resourceUpdated });
@@ -243,6 +247,7 @@ describe('Resource CRUD operations', () => {
 
     expect(updatedProject['pair:hasLocation']).toBeUndefined();
 
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     resourceUpdated['petr:openingTimesDay'] = [
       { 'petr:endingTime': '2021-10-07T09:40:56.131Z', 'petr:startingTime': '2021-10-07T06:40:56.123Z' }
     ];
@@ -259,6 +264,7 @@ describe('Resource CRUD operations', () => {
       }
     });
 
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     resourceUpdated['petr:openingTimesDay'] = [
       { 'petr:endingTime': '2021-10-07T09:40:56.131Z', 'petr:startingTime': '2021-10-07T06:40:56.123Z' },
       { 'petr:startingTime': '2021-10-07T10:44:54.883Z', 'petr:endingTime': '2021-10-07T16:44:54.888Z' }
@@ -309,6 +315,7 @@ describe('Resource CRUD operations', () => {
       }
     });
 
+    // @ts-expect-error TS(2739): Type '{ label: string; hasPostalAddress: { address... Remove this comment to see the full error message
     resourceToPost.hasLocation = [
       {
         label: 'Paris',
@@ -348,6 +355,7 @@ describe('Resource CRUD operations', () => {
       ]
     });
 
+    // @ts-expect-error TS(2739): Type '{ label: string; hasPostalAddress: { address... Remove this comment to see the full error message
     resourceToPost.hasLocation = [
       {
         label: 'Paris',

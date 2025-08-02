@@ -10,6 +10,7 @@ const relay1 = 'http://localhost:3001/as/actor/relay';
 const relay2 = 'http://localhost:3002/as/actor/relay';
 
 beforeAll(async () => {
+  // @ts-expect-error TS(2554): Expected 5 arguments, but got 4.
   server1 = await initialize(3001, 'testData1', 'settings1', 1);
 
   // Wait for Relay actor creation, or server2 won't be able to mirror server1
@@ -118,6 +119,7 @@ describe('Resource on server1 is shared with user on server2', () => {
       });
 
       expect(inbox).not.toBeNull();
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(inbox.orderedItems[0]).toMatchObject({
         type: ACTIVITY_TYPES.DELETE,
         actor: relay1,

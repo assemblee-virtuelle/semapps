@@ -28,6 +28,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
       const { webId } = await broker[i].call('auth.signup', require(`./data/actor${i}.json`));
       actors[i] = await broker[i].call('activitypub.actor.awaitCreateComplete', { actorUri: webId });
       actors[i].call = (actionName: any, params: any, options = {}) =>
+        // @ts-expect-error TS(2339): Property 'meta' does not exist on type '{}'.
         broker[i].call(actionName, params, { ...options, meta: { ...options.meta, webId } });
     }
 
@@ -102,6 +103,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
 
     // Ensure the public announce activity has been removed from the /shares collection
     await waitForExpect(async () => {
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(
         alice.call('activitypub.collection.get', { resourceUri: `${aliceMessageUri}/shares` })
       ).resolves.not.toMatchObject({

@@ -54,13 +54,20 @@ const WebaclResourceSchema = {
   },
   actions: {
     addRights: addRights.action,
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
     awaitReadRight: awaitReadRight.action,
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
     deleteAllRights: deleteAllRights.action,
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ webId: { type: "string"; opti... Remove this comment to see the full error message
     deleteAllUserRights: deleteAllUserRights.action,
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ uri: { type: "string"; option... Remove this comment to see the full error message
     getLink: getLink.action,
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
     getRights: getRights.action,
     hasRights: hasRights.action,
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
     isPublic: isPublic.action,
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
     getUsersWithReadRights: getUsersWithReadRights.action,
     refreshContainersRights: refreshContainersRights.action,
     removeRights: removeRights.action,
@@ -74,6 +81,7 @@ const WebaclResourceSchema = {
   hooks: {
     before: {
       '*'(ctx) {
+        // @ts-expect-error TS(2339): Property 'podProvider' does not exist on type 'str... Remove this comment to see the full error message
         if (this.settings.podProvider && !ctx.meta.dataset && ctx.params.resourceUri) {
           ctx.meta.dataset = getDatasetFromUri(ctx.params.resourceUri);
         }
@@ -109,9 +117,13 @@ const WebaclResourceSchema = {
 
       const document = [];
 
+      // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
       document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', graphName)));
+      // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
       document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', graphName)));
+      // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
       document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', graphName)));
+      // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
       document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName)));
 
       if (isContainer) {
@@ -130,6 +142,7 @@ const WebaclResourceSchema = {
     compileAuthorizationNodesMap(nodes) {
       const result = {};
       for (const node of nodes) {
+        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         result[node.auth] = result[node.auth] ? result[node.auth] + 1 : 1;
       }
       return result;

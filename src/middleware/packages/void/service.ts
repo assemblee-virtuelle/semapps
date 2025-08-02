@@ -53,6 +53,7 @@ const jsonContext = {
 
 const addClassPartition = (serverUrl: any, partition: any, graph: any, scalar: any) => {
   const blank = blankNode(`b${scalar}`);
+  // @ts-expect-error TS(2339): Property 'data' does not exist on type 'BlankNode'... Remove this comment to see the full error message
   blank.data = [
     {
       s: blankNode(`b${scalar}`),
@@ -72,9 +73,11 @@ const addClassPartition = (serverUrl: any, partition: any, graph: any, scalar: a
     }
   ];
   if (partition['http://semapps.org/ns/core#doNotMirror'])
+    // @ts-expect-error TS(2339): Property 'data' does not exist on type 'BlankNode'... Remove this comment to see the full error message
     blank.data.push({
       s: blankNode(`b${scalar}`),
       p: namedNode('http://semapps.org/ns/core#doNotMirror'),
+      // @ts-expect-error TS(2345): Argument of type 'boolean' is not assignable to pa... Remove this comment to see the full error message
       o: literal(true, namedNode('http://www.w3.org/2001/XMLSchema#boolean'))
     });
 
@@ -126,6 +129,7 @@ const addMirrorServer = async (
       for (const p of arrayOf(originalPartitions)) {
         // we skip empty containers and doNotMirror containers
         if (p['void:entities'] === '0' || p['semapps:doNotMirror']) continue;
+        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         partitionsMap[p['void:uriSpace']] = p;
       }
     }
@@ -145,6 +149,7 @@ const addMirrorServer = async (
       query: `SELECT (COUNT (?o) as ?count) FROM <${mirrorGraph}> { <${p}> <http://www.w3.org/ns/ldp#contains> ?o }`
     });
 
+    // @ts-expect-error TS(2551): Property 'http://rdfs.org/ns/void#entities' does n... Remove this comment to see the full error message
     partition['http://rdfs.org/ns/void#entities'] = Number(count[0].count.value);
 
     addClassPartition(thisServer, partition, graph, nextScalar + i);
@@ -196,6 +201,7 @@ const VoidSchema = {
             return json;
           }
         } catch (e) {
+          // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
           this.logger.warn(`Silently ignored error when fetching void endpoint: ${e.message}`);
         }
       }
@@ -303,9 +309,12 @@ const VoidSchema = {
           const res = s.match(regexProtocolAndHostAndPort);
           if (res) {
             const name = urlJoin(res[0], '/');
+            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
             let serverName = serversMap[name];
             if (!serverName) {
+              // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
               serversMap[name] = [];
+              // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
               serverName = serversMap[name];
             }
             serverName.push(s);
@@ -318,8 +327,10 @@ const VoidSchema = {
           if (json) {
             const mapServers = {};
             for (const s of json['@graph']) {
+              // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
               mapServers[s['@id']] = s;
             }
+            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
             const server = mapServers[createFragmentURL('', serverUrl)];
             originalVoid = server;
           }
@@ -329,15 +340,18 @@ const VoidSchema = {
             serverUrl,
             graph,
             hasSparql,
+            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
             serversMap[serverUrl],
             this.settings.mirrorGraphName,
             ctx,
             scalar,
             originalVoid
           );
+          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           scalar += serversMap[serverUrl].length;
         }
 
+        // @ts-expect-error TS(2339): Property '$responseType' does not exist on type '{... Remove this comment to see the full error message
         ctx.meta.$responseType = accept;
 
         // TODO use Etag instead to keep track of changes in VOID
@@ -352,6 +366,7 @@ const VoidSchema = {
 
     api_get: defineAction({
       handler: async function api(ctx) {
+        // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
         let { accept } = ctx.meta.headers;
         if (accept.includes('*/*')) accept = MIME_TYPES.JSON;
         else if (accept && accept !== MIME_TYPES.JSON && accept !== MIME_TYPES.TURTLE)
@@ -370,17 +385,22 @@ const VoidSchema = {
 
       const res = await Promise.all(
         Object.values(registeredContainers)
+          // @ts-expect-error TS(18046): 'c' is of type 'unknown'.
           .filter(c => c.acceptedTypes)
           .map(async c => {
             const partition = {
+              // @ts-expect-error TS(18046): 'c' is of type 'unknown'.
               'http://rdfs.org/ns/void#uriSpace': urlJoin(baseUrl, c.path),
+              // @ts-expect-error TS(18046): 'c' is of type 'unknown'.
               'http://rdfs.org/ns/void#class': arrayOf(c.acceptedTypes)
             };
+            // @ts-expect-error TS(18046): 'c' is of type 'unknown'.
             if (c.excludeFromMirror) partition['http://semapps.org/ns/core#doNotMirror'] = true;
             const count = await ctx.call('triplestore.query', {
               query: `SELECT (COUNT (?o) as ?count) { <${partition['http://rdfs.org/ns/void#uriSpace']}> <http://www.w3.org/ns/ldp#contains> ?o }`,
               webId: 'system'
             });
+            // @ts-expect-error TS(2551): Property 'http://rdfs.org/ns/void#entities' does n... Remove this comment to see the full error message
             partition['http://rdfs.org/ns/void#entities'] = Number(count[0].count.value);
             return partition;
           })
@@ -439,6 +459,7 @@ const VoidSchema = {
       }
       mySerializer.end();
 
+      // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
       const jsonLd = JSON.parse(await streamToString(mySerializer));
 
       const compactJsonLd = await ctx.call('jsonld.parser.frame', {

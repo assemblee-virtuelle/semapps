@@ -17,12 +17,14 @@ describe('middleware CRUD group with perms', () => {
   test('Ensure a call as anonymous to webacl.group.create succeeds', async () => {
     const res = await broker.call('webacl.group.create', { groupSlug: 'mygroup5' });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(res.groupUri).toBe(urlJoin(CONFIG.HOME_URL, '_groups', 'mygroup5'));
   }, 20000);
 
   test('Ensure a call as user to webacl.group.create succeeds', async () => {
     const res = await broker.call('webacl.group.create', { groupSlug: 'mygroup10', webId: 'http://test/user3' });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(res.groupUri).toBe(urlJoin(CONFIG.HOME_URL, '_groups', 'mygroup10'));
   }, 20000);
 

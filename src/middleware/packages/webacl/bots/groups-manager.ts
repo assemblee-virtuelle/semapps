@@ -68,10 +68,15 @@ const GroupsManagerSchema = {
   events: {
     'ldp.resource.created': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'isUser' does not exist on type 'ServiceE... Remove this comment to see the full error message
         if (this.isUser(newData)) {
+          // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
           for (const rule of this.settings.rules) {
+            // @ts-expect-error TS(2339): Property 'matchRule' does not exist on type 'Servi... Remove this comment to see the full error message
             if (this.matchRule(rule, newData)) {
+              // @ts-expect-error TS(2339): Property 'logger' does not exist on type 'ServiceE... Remove this comment to see the full error message
               this.logger.info(`Adding user ${resourceUri} to group ${rule.groupSlug}`);
               await ctx.call('webacl.group.addMember', {
                 groupSlug: rule.groupSlug,
@@ -86,10 +91,15 @@ const GroupsManagerSchema = {
 
     'ldp.resource.updated': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'isUser' does not exist on type 'ServiceE... Remove this comment to see the full error message
         if (this.isUser(newData)) {
+          // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
           for (const rule of this.settings.rules) {
+            // @ts-expect-error TS(2339): Property 'matchRule' does not exist on type 'Servi... Remove this comment to see the full error message
             if (this.matchRule(rule, newData)) {
+              // @ts-expect-error TS(2339): Property 'logger' does not exist on type 'ServiceE... Remove this comment to see the full error message
               this.logger.info(`Adding user ${resourceUri} to group ${rule.groupSlug}`);
               await ctx.call('webacl.group.addMember', {
                 groupSlug: rule.groupSlug,
@@ -97,6 +107,7 @@ const GroupsManagerSchema = {
                 webId: 'system'
               });
             } else {
+              // @ts-expect-error TS(2339): Property 'logger' does not exist on type 'ServiceE... Remove this comment to see the full error message
               this.logger.info(`Removing user ${resourceUri} from group ${rule.groupSlug} (if it exists)`);
               await ctx.call('webacl.group.removeMember', {
                 groupSlug: rule.groupSlug,
@@ -111,9 +122,13 @@ const GroupsManagerSchema = {
 
     'ldp.resource.deleted': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, oldData } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'isUser' does not exist on type 'ServiceE... Remove this comment to see the full error message
         if (this.isUser(oldData)) {
+          // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
           for (const rule of this.settings.rules) {
+            // @ts-expect-error TS(2339): Property 'logger' does not exist on type 'ServiceE... Remove this comment to see the full error message
             this.logger.info(`Removing user ${resourceUri} from group ${rule.groupSlug} (if it exists)`);
             await ctx.call('webacl.group.removeMember', {
               groupSlug: rule.groupSlug,

@@ -1,4 +1,6 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'pass... Remove this comment to see the full error message
 import passport from 'passport';
+// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
 import { TripleStoreAdapter } from '@semapps/triplestore';
 import { ServiceSchema, defineAction } from 'moleculer';
@@ -77,11 +79,13 @@ const AuthMixin = {
     const { jwtPath, reservedUsernames, minPasswordLength, minUsernameLength, accountsDataset, podProvider } =
       this.settings;
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "auth.jwt"; se... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [AuthJWTService],
       settings: { jwtPath }
     });
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "auth.account"... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [AuthAccountService],
       settings: { reservedUsernames, minPasswordLength, minUsernameLength },
@@ -119,6 +123,7 @@ const AuthMixin = {
 
         if (!token) {
           // No token
+          // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
           ctx.meta.webId = 'anon';
           return Promise.resolve(null);
         }
@@ -126,7 +131,9 @@ const AuthMixin = {
         if (method === 'Bearer') {
           const payload = await ctx.call('auth.jwt.verifyServerSignedToken', { token });
           if (payload) {
+            // @ts-expect-error TS(2339): Property 'tokenPayload' does not exist on type '{}... Remove this comment to see the full error message
             ctx.meta.tokenPayload = payload;
+            // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
             ctx.meta.webId = payload.webId;
             return Promise.resolve(payload);
           }
@@ -142,6 +149,7 @@ const AuthMixin = {
         }
 
         // No valid auth method given.
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         ctx.meta.webId = 'anon';
         return Promise.resolve(null);
       }
@@ -165,7 +173,9 @@ const AuthMixin = {
         // Validate if the token was signed by server (registered user).
         const serverSignedPayload = await ctx.call('auth.jwt.verifyServerSignedToken', { token });
         if (serverSignedPayload) {
+          // @ts-expect-error TS(2339): Property 'tokenPayload' does not exist on type '{}... Remove this comment to see the full error message
           ctx.meta.tokenPayload = serverSignedPayload;
+          // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
           ctx.meta.webId = serverSignedPayload.webId;
           return Promise.resolve(serverSignedPayload);
         }

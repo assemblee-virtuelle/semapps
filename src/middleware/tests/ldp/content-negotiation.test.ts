@@ -17,6 +17,7 @@ afterAll(async () => {
 });
 
 describe('Content negotiation', () => {
+  // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
   const containerUri = urlJoin(CONFIG.HOME_URL, 'resources');
   let projectUri: any;
   let project2Uri: any;

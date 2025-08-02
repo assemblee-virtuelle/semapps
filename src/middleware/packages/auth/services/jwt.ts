@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'json... Remove this comment to see the full error message
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { ServiceSchema, defineAction } from 'moleculer';

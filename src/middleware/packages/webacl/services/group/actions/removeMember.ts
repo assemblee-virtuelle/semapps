@@ -29,11 +29,13 @@ export const action = defineAction({
   },
   async handler(ctx) {
     let { groupSlug, groupUri, memberUri } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');
     if (!memberUri) throw new MoleculerError('needs a memberUri', 400, 'BAD_REQUEST');
 
+    // @ts-expect-error TS(2345): Argument of type 'TypeFromSchemaParam<{ type: "str... Remove this comment to see the full error message
     if (!groupUri) groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
 
     // TODO: check that the member exists and is in the group ?

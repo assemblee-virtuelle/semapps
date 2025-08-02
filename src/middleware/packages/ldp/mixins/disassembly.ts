@@ -14,6 +14,7 @@ const Schema = {
     before: {
       async create(ctx) {
         const { resource } = ctx.params;
+        // @ts-expect-error TS(2349): This expression is not callable.
         await this.createDisassembly(ctx, resource);
       },
       async put(ctx) {
@@ -22,11 +23,13 @@ const Schema = {
           resourceUri: resource.id || resource['@id'],
           webId: 'system'
         });
+        // @ts-expect-error TS(2349): This expression is not callable.
         await this.updateDisassembly(ctx, resource, oldData);
       }
     },
     after: {
       async delete(ctx, res) {
+        // @ts-expect-error TS(2349): This expression is not callable.
         await this.deleteDisassembly(ctx, res.oldData);
         return res;
       }

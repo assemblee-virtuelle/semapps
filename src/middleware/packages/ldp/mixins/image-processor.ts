@@ -1,3 +1,4 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'shar... Remove this comment to see the full error message
 import sharp from 'sharp';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { ServiceSchema, defineAction } from 'moleculer';
@@ -62,6 +63,7 @@ const Schema = {
             await sharp(buffer).toFile(metadata.localPath);
           }
         } catch (e) {
+          // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
           this.logger.warn(`Image processing failed (${e.message})`);
         }
       }
@@ -95,6 +97,7 @@ const Schema = {
   hooks: {
     after: {
       async create(ctx, res) {
+        // @ts-expect-error TS(2339): Property 'processImage' does not exist on type 'st... Remove this comment to see the full error message
         await this.actions.processImage({ resourceUri: res.resourceUri }, { parentCtx: ctx });
         return res;
       }

@@ -10,7 +10,9 @@ const { MoleculerError } = Errors;
 const Schema = defineAction({
   visibility: 'public',
   params: {
+    // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'Parameter... Remove this comment to see the full error message
     resourceUri: 'string',
+    // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'Parameter... Remove this comment to see the full error message
     file: 'object'
   },
   async handler(ctx) {
@@ -28,10 +30,12 @@ const Schema = defineAction({
     try {
       await this.streamToFile(file.readableStream, localPath, this.settings.binary.maxSize);
     } catch (e) {
+      // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
       if (e.code === 413) {
         throw e; // File too large
       } else {
         console.error(e);
+        // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
         throw new MoleculerError(e, 500, 'Server Error');
       }
     }

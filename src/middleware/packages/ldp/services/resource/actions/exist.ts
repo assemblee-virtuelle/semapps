@@ -10,6 +10,7 @@ const Schema = defineAction({
   },
   async handler(ctx) {
     const { resourceUri, acceptTombstones } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     let exist = await ctx.call('triplestore.tripleExist', {

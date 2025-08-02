@@ -20,6 +20,7 @@ export const action = defineAction({
 
     ctx.emit(
       'webacl.resource.user-deleted',
+      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       { webId, dataset: ctx.meta.dataset },
       { meta: { webId: null, dataset: null } }
     );

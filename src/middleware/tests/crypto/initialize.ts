@@ -1,7 +1,8 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'fs-e... Remove this comment to see the full error message
 import fse from 'fs-extra';
 import fs from 'fs';
 import path from 'path';
-import { ServiceBroker } from 'moleculer';
+import { ServiceBroker, ServiceSchema } from 'moleculer';
 import { AuthLocalService } from '@semapps/auth';
 import { CoreService } from '@semapps/core';
 import { VerifiableCredentialsService } from '@semapps/crypto';
@@ -10,6 +11,7 @@ import { fileURLToPath } from 'url';
 import * as CONFIG from '../config.ts';
 import { clearDataset } from '../utils.ts';
 
+// @ts-expect-error TS(1470): The 'import.meta' meta-property is not allowed in ... Remove this comment to see the full error message
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const initialize = async (port: any, withOldKeyStore = false) => {
@@ -19,6 +21,7 @@ const initialize = async (port: any, withOldKeyStore = false) => {
   const baseUrl = `http://localhost:${port}/`;
 
   const broker = new ServiceBroker({
+    // @ts-expect-error TS(2322): Type '{ name: string; created(broker: any): void; ... Remove this comment to see the full error message
     middlewares: [CacherMiddleware(CONFIG.ACTIVATE_CACHE), WebAclMiddleware({ baseUrl })],
     logger: {
       type: 'Console',
@@ -35,6 +38,7 @@ const initialize = async (port: any, withOldKeyStore = false) => {
     fs.writeFileSync(path.resolve(__dirname, '../actors', 'placeholder.key'), '');
   }
 
+  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "core"; settin... Remove this comment to see the full error message
   broker.createService({
     mixins: [CoreService],
     settings: {
@@ -61,6 +65,7 @@ const initialize = async (port: any, withOldKeyStore = false) => {
     }
   });
 
+  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "auth"; mixins... Remove this comment to see the full error message
   broker.createService({
     mixins: [AuthLocalService],
     settings: {
@@ -70,6 +75,7 @@ const initialize = async (port: any, withOldKeyStore = false) => {
     }
   });
 
+  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "crypto.vc"; d... Remove this comment to see the full error message
   broker.createService({
     mixins: [VerifiableCredentialsService],
     settings: {

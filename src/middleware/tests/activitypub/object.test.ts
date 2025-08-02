@@ -118,6 +118,7 @@ describe('Create/Update/Delete objects', () => {
       await expect(broker.call('ldp.resource.get', { resourceUri: objectUri })).resolves.toMatchObject({
         type: OBJECT_TYPES.TOMBSTONE,
         formerType: 'as:Article',
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         deleted: expect.anything()
       });
     });

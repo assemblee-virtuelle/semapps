@@ -19,6 +19,7 @@ const AuthMigrationSchema = {
                 webId: user.id
               });
             } catch (e) {
+              // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
               console.log(`Unable to create account for user ${user.id}. Error message: ${e.message}`);
             }
           } else {

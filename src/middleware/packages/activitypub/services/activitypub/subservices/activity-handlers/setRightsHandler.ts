@@ -61,6 +61,7 @@ const setRightsHandler = {
 
     // When a new activity is created, ensure the emitter has read rights as well.
     // Don't do that on podProvider config, because the Pod owner already has all rights.
+    // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ matc... Remove this comment to see the full error message
     if (!this.settings.podProvider) {
       if (!newRecipients.includes(activity.actor)) newRecipients.push(activity.actor);
     }
@@ -87,8 +88,10 @@ const setRightsHandler = {
           anon: activityIsPublic
         });
       } catch (e) {
+        // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
         if (e.code === 404) {
           // Ignore cases when the object is deleted before the Create or Update activity have been sent
+          // @ts-expect-error TS(2339): Property 'logger' does not exist on type '{ match:... Remove this comment to see the full error message
           this.logger.warn(`Could not add read rights on object ${objectUri} because it does not exist anymore.`);
         } else {
           throw e;

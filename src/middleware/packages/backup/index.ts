@@ -1,5 +1,6 @@
 import { CronJob } from 'cron';
 import fs from 'fs';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'fs-e... Remove this comment to see the full error message
 import { emptyDirSync } from 'fs-extra';
 import pathModule from 'path';
 import { ServiceSchema, defineAction } from 'moleculer';
@@ -131,6 +132,7 @@ const BackupService = {
           }
           return true;
         } catch (e) {
+          // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
           this.logger.error(`Failed to copy ${path} to remote server with ${copyMethod}. Error: ${e.message}`);
           return false;
         }

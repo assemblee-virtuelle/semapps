@@ -8,10 +8,12 @@ const Schema = defineAction({
   },
   async handler(ctx) {
     const { resourceUri } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId;
 
     if (!(await this.actions.isRemote({ resourceUri }, { parentCtx: ctx }))) {
       throw new Error(
+        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
         `The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId} / dataset ${ctx.meta.dataset})`
       );
     }
@@ -21,6 +23,7 @@ const Schema = defineAction({
         throw new Error(`Cannot delete remote resource in cache without a webId (Provided: ${webId})`);
       }
       const account = await ctx.call('auth.account.findByWebId', { webId });
+      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       ctx.meta.dataset = account.username;
     }
 
@@ -55,9 +58,11 @@ const Schema = defineAction({
       resourceUri,
       oldData,
       webId,
+      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       dataset: ctx.meta.dataset
     };
 
+    // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
     if (!ctx.meta.skipEmitEvent) {
       ctx.emit('ldp.remote.deleted', returnValues, { meta: { webId: null, dataset: null } });
     }

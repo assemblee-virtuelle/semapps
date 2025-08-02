@@ -22,6 +22,7 @@ export const api = async function api(this: any, ctx: any) {
     throw new MoleculerError(`Content type not supported : ${contentType}`, 400, 'BAD_REQUEST');
 
   const newRights = await convertBodyToTriples(ctx.meta.rawBody, contentType);
+  // @ts-expect-error TS(18046): 'newRights' is of type 'unknown'.
   if (newRights.length === 0) throw new MoleculerError('PUT rights cannot be empty', 400, 'BAD_REQUEST');
 
   // This is the root container
@@ -41,11 +42,13 @@ export const action = defineAction({
     resourceUri: { type: 'string' },
     webId: { type: 'string', optional: true },
     // newRights is an array of objects of the form { auth: 'http://localhost:3000/_acl/container29#Control',  p: 'http://www.w3.org/ns/auth/acl#agent',  o: 'https://data.virtual-assembly.org/users/sebastien.rosset' }
+    // @ts-expect-error TS(2322): Type '{ type: "array"; optional: false; min: numbe... Remove this comment to see the full error message
     newRights: { type: 'array', optional: false, min: 1 }
     // minimum is one right : We cannot leave a resource without rights.
   },
   async handler(ctx) {
     let { webId, newRights, resourceUri } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     webId = webId || ctx.meta.webId || 'anon';
 
     const isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
@@ -103,6 +106,7 @@ export const action = defineAction({
     }
 
     for (const [auth, count] of Object.entries(currentAuths)) {
+      // @ts-expect-error TS(18046): 'count' is of type 'unknown'.
       if (count < 1) {
         deleteRequest += this.generateNewAuthNode(auth);
       }
@@ -141,6 +145,7 @@ export const action = defineAction({
     const returnValues = {
       uri: resourceUri,
       webId,
+      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       dataset: ctx.meta.dataset,
       created: false,
       isContainer,

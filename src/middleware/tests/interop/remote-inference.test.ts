@@ -1,3 +1,4 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'rdf-... Remove this comment to see the full error message
 import { triple, namedNode } from 'rdf-data-model';
 import waitForExpect from 'wait-for-expect';
 import initialize from './initialize.ts';
@@ -7,7 +8,9 @@ let server1: any;
 let server2: any;
 
 beforeAll(async () => {
+  // @ts-expect-error TS(2554): Expected 5 arguments, but got 4.
   server1 = await initialize(3001, 'testData1', 'settings1', 1);
+  // @ts-expect-error TS(2554): Expected 5 arguments, but got 4.
   server2 = await initialize(3002, 'testData2', 'settings2', 2);
 });
 
@@ -101,6 +104,7 @@ describe('An inference is added between server1 et server2', () => {
     await server2.call('ldp.resource.delete', { resourceUri: resourceUri2 });
 
     await waitForExpect(async () => {
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(server1.call('ldp.resource.get', { resourceUri: resourceUri1 })).resolves.not.toHaveProperty(
         'pair:hasPart'
       );

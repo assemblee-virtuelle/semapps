@@ -1,3 +1,4 @@
+// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
 import { ServiceSchema, defineAction } from 'moleculer';
 import { objectIdToCurrent, collectionPermissionsWithAnonRead } from '../../../utils.ts';
@@ -45,6 +46,7 @@ const InboxService = {
 
         // Ensure the actor in the activity is the same as the posting actor
         // (When posting, the webId is the one of the poster)
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         if (activity.actor !== ctx.meta.webId) {
           throw new E.UnAuthorizedError('INVALID_ACTOR', 'Activity actor is not the same as the posting actor');
         }
@@ -57,11 +59,13 @@ const InboxService = {
         if (account.deletedAt) throw new MoleculerError(`User does not exist anymore`, 410, 'GONE');
 
         if (this.settings.podProvider) {
+          // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
           ctx.meta.dataset = account.username;
         }
 
         // We want the next operations to be done by the system
         // TODO check if we can avoid this, as this is a bad practice
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         ctx.meta.webId = 'system';
 
         const collectionExists = await ctx.call('activitypub.collection.exist', {
@@ -72,18 +76,23 @@ const InboxService = {
           throw new E.NotFoundError();
         }
 
+        // @ts-expect-error TS(2339): Property 'skipSignatureValidation' does not exist ... Remove this comment to see the full error message
         if (!ctx.meta.skipSignatureValidation) {
+          // @ts-expect-error TS(2339): Property 'rawBody' does not exist on type '{}'.
           if (!ctx.meta.rawBody || !ctx.meta.originalHeaders)
             throw new Error(`Cannot validate HTTP signature because of missing meta (rawBody or originalHeaders)`);
 
           const validDigest = await ctx.call('signature.verifyDigest', {
+            // @ts-expect-error TS(2339): Property 'rawBody' does not exist on type '{}'.
             body: ctx.meta.rawBody, // Stored by parseRawBody middleware
+            // @ts-expect-error TS(2339): Property 'originalHeaders' does not exist on type ... Remove this comment to see the full error message
             headers: ctx.meta.originalHeaders
           });
 
           const { isValid: validSignature } = await ctx.call('signature.verifyHttpSignature', {
             url: collectionUri,
             method: 'POST',
+            // @ts-expect-error TS(2339): Property 'originalHeaders' does not exist on type ... Remove this comment to see the full error message
             headers: ctx.meta.originalHeaders
           });
 
@@ -98,6 +107,7 @@ const InboxService = {
           await this.broker.call('activitypub.side-effects.processInbox', { activity, recipients: [inboxOwner] });
         } catch (e) {
           // If some processors failed, log error message but don't stop
+          // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
           this.logger.error(e.message);
         }
 

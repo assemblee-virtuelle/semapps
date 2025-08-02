@@ -20,6 +20,7 @@ const OntologiesSchema = {
   async created() {
     const { persistRegistry, settingsDataset } = this.settings;
     if (persistRegistry) {
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "ontologies.re... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [OntologiesRegistryService],
         adapter: new TripleStoreAdapter({ type: 'Ontology', dataset: settingsDataset })

@@ -6,8 +6,11 @@ import hasAction from './actions/has.ts';
 const PermissionsSchema = {
   name: 'permissions' as const,
   actions: {
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ actionName: { type: "string";... Remove this comment to see the full error message
     addAuthorizer: addAuthorizerAction,
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ uri: { type: "string"; }; typ... Remove this comment to see the full error message
     check: checkAction,
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ uri: { type: "string"; }; typ... Remove this comment to see the full error message
     has: hasAction
   },
   async started() {

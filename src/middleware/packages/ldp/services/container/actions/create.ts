@@ -6,11 +6,13 @@ const Schema = defineAction({
     containerUri: { type: 'string' },
     title: { type: 'string', optional: true },
     description: { type: 'string', optional: true },
+    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     options: { type: 'object', optional: true },
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
     const { containerUri, title, description, options } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     await ctx.call('triplestore.insert', {

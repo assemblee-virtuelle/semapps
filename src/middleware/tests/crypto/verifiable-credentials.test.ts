@@ -62,6 +62,7 @@ afterAll(async () => {
 
 describe('verifiable credentials', () => {
   beforeAll(async () => {
+    // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
     await setUp();
     await broker.call('crypto.vc.issuer.credential-container.waitForContainerCreation');
   });
@@ -498,6 +499,7 @@ describe('verifiable credentials', () => {
         { meta: { webId: alice.webId } }
       );
 
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(validationResult.verified).toBeFalsy();
     });
   });

@@ -1,3 +1,4 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'mole... Remove this comment to see the full error message
 import QueueMixin from 'moleculer-bull';
 import { notify } from '@semapps/ontologies';
 import { ServiceSchema } from 'moleculer';

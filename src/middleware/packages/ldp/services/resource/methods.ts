@@ -1,4 +1,5 @@
 import fs from 'fs';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'byte... Remove this comment to see the full error message
 import bytes from 'bytes';
 import { variable } from '@rdfjs/data-model';
 
@@ -78,9 +79,11 @@ module.exports = {
     for (const blankVariable of blankVariables) {
       if (blankVariable.object.termType === 'Variable') {
         const jsonVariable = this.buildJsonVariable(blankVariable.object.value, triples);
+        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         json[blankVariable.predicate.value] = jsonVariable.json;
         allIdentifiers = allIdentifiers.concat(jsonVariable.allIdentifiers);
       } else {
+        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         json[blankVariable.predicate.value] = blankVariable.object.value;
       }
     }
@@ -107,6 +110,7 @@ module.exports = {
     const keepVariables: any = [];
     const duplicatedVariables = [];
     for (var rootJson of rootsJson) {
+      // @ts-expect-error TS(7006): Parameter 'kp' implicitly has an 'any' type.
       if (keepVariables.find(kp => kp.stringified.localeCompare(rootJson.stringified) === 0)) {
         duplicatedVariables.push(rootJson);
       } else {

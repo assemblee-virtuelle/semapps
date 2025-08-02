@@ -233,6 +233,7 @@ const Schema = {
                 webId: 'system'
               });
             } catch (e) {
+              // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
               this.logger.warn(`Unable to update ${destUri} (Error message: ${e.message})`);
               return false;
             }
@@ -264,6 +265,7 @@ const Schema = {
               webId: 'system'
             });
           } catch (e) {
+            // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
             this.logger.warn(`Unable to import ${sourceUri} (Error message: ${e.message})`);
             return false;
           }
@@ -466,6 +468,7 @@ const Schema = {
 
         await this.postActivity(ACTIVITY_TYPES.DELETE, this.imported[sourceUri]);
 
+        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         deletedUris[sourceUri] = this.imported[sourceUri];
 
         // Remove resource from local cache
@@ -482,11 +485,13 @@ const Schema = {
       for (const sourceUri of urisToCreate) {
         this.logger.info(`Resource ${sourceUri} did not exist, importing it...`);
 
+        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         const destUri = await this.actions.importOne({ sourceUri, data: mappedFullResults[sourceUri] });
 
         if (destUri) {
           await this.postActivity(ACTIVITY_TYPES.CREATE, destUri);
 
+          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           createdUris[sourceUri] = destUri;
 
           // Add resource to local cache
@@ -513,6 +518,7 @@ const Schema = {
         const result = await this.actions.importOne({
           sourceUri,
           destUri: this.imported[sourceUri],
+          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           data: mappedFullResults[sourceUri]
         });
 
@@ -524,6 +530,7 @@ const Schema = {
 
           await this.postActivity(ACTIVITY_TYPES.DELETE, this.imported[sourceUri]);
 
+          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           deletedUris[sourceUri] = this.imported[sourceUri];
 
           // Remove resource from local cache
@@ -533,6 +540,7 @@ const Schema = {
         } else {
           await this.postActivity(ACTIVITY_TYPES.UPDATE, this.imported[sourceUri]);
 
+          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           updatedUris[sourceUri] = this.imported[sourceUri];
         }
       }

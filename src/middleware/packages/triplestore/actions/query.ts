@@ -7,8 +7,10 @@ const Schema = defineAction({
   params: {
     query: {
       type: 'multi',
+      // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
       rules: [{ type: 'string' }, { type: 'object' }]
     },
+    // @ts-expect-error TS(2322): Type '{ type: "string"; default: string; }' is not... Remove this comment to see the full error message
     accept: {
       type: 'string',
       default: MIME_TYPES.JSON
@@ -24,7 +26,9 @@ const Schema = defineAction({
   },
   async handler(ctx) {
     let { accept, query } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
+    // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
     const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
     if (!dataset) throw new Error(`No dataset defined for triplestore query: ${query}`);
@@ -48,9 +52,11 @@ const Schema = defineAction({
     // we don't use the property ctx.meta.$responseType because we are not in a HTTP API call here
     // we are in an moleculer Action.
     // we use a different name (without the $) and then retrieve this value in the API action (sparqlendpoint.query) to set the $responseType
+    // @ts-expect-error TS(2339): Property 'responseType' does not exist on type '{}... Remove this comment to see the full error message
     ctx.meta.responseType = response.headers.get('content-type');
 
     const regex = /(CONSTRUCT|SELECT|ASK).*/gm;
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     const verb = regex.exec(query)[1];
     switch (verb) {
       case 'ASK':

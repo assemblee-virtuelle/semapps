@@ -82,6 +82,7 @@ describe('middleware CRUD resource with perms', () => {
     });
 
     expect(result.headers.get('Link')).toMatch(
+      // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
       `<${urlJoin(CONFIG.HOME_URL, '_acl', 'resources', getSlugFromUri(resourceUri))}>; rel=acl`
     );
 
@@ -90,6 +91,7 @@ describe('middleware CRUD resource with perms', () => {
     });
 
     expect(result.headers.get('Link')).toMatch(
+      // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
       `<${urlJoin(CONFIG.HOME_URL, '_acl', 'resources', getSlugFromUri(resourceUri))}>; rel=acl`
     );
   }, 20000);
@@ -109,6 +111,7 @@ describe('middleware CRUD resource with perms', () => {
       webId: 'system'
     });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(result.length).toBe(0);
   }, 20000);
 });

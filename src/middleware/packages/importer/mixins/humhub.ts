@@ -27,6 +27,7 @@ const Schema = {
       fieldsMapping: {
         // We don't use arrow function as we need to have access to this.settings
         slug: function (data: any) {
+          // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ slug... Remove this comment to see the full error message
           switch (this.settings.source.humhub.type) {
             case 'user':
             case 'space':
@@ -36,14 +37,18 @@ const Schema = {
               return data.content.metadata.guid;
           }
         },
+        // @ts-expect-error TS(7023): 'created' implicitly has return type 'any' because... Remove this comment to see the full error message
         created: function (data: any) {
+          // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ slug... Remove this comment to see the full error message
           switch (this.settings.source.humhub.type) {
             case 'calendar':
             case 'post':
               return convertToIsoString(data.content.metadata.created_at);
           }
         },
+        // @ts-expect-error TS(7023): 'updated' implicitly has return type 'any' because... Remove this comment to see the full error message
         updated: function (data: any) {
+          // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ slug... Remove this comment to see the full error message
           switch (this.settings.source.humhub.type) {
             case 'calendar':
             case 'post':

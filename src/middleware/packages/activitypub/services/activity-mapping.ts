@@ -17,6 +17,7 @@ const ActivityMappingService = {
 
     for (const [name, fn] of Object.entries(this.settings.handlebars.helpers)) {
       this.logger.info(`Registering handlebars helper ${name}`);
+      // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
       Handlebars.registerHelper(name, fn);
     }
 
@@ -59,6 +60,7 @@ const ActivityMappingService = {
                 : {};
             } catch (e) {
               this.logger.warn(
+                // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
                 `Could not get profile of actor ${activity.actor} (webId ${ctx.meta.webId} / dataset ${ctx.meta.dataset})`
               );
             }
@@ -72,7 +74,9 @@ const ActivityMappingService = {
                   return [key, value(templateParams)];
                 }
                 // If we have an object with locales mapping, look for the right locale
+                // @ts-expect-error TS(18046): 'value' is of type 'unknown'.
                 if (value[locale]) {
+                  // @ts-expect-error TS(18046): 'value' is of type 'unknown'.
                   return [key, value[locale](templateParams)];
                 }
                 throw new Error(`No ${locale} locale found for key ${key}`);
