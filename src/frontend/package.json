@@ -35,7 +35,7 @@
     "nx": "^17.2.5",
     "parcel": "^2.13.3",
     "prettier": "^3.1.1",
-    "typescript": "^5.1.6",
+    "typescript": "^5.9.2",
     "yalc": "1.0.0-pre.53"
   },
   "workspaces": [
