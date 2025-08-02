@@ -5,7 +5,9 @@ import { Errors as E } from 'moleculer-web';
 import { ServiceSchema, defineAction } from 'moleculer';
 import getAction from './actions/get.ts';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 const CollectionService = {
   name: 'activitypub.collection' as const,

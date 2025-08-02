@@ -1,7 +1,9 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import { defineAction } from 'moleculer';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 const Schema = defineAction({
   visibility: 'public',

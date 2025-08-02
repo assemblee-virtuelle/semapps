@@ -2,7 +2,9 @@ import urlJoin from 'url-join';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import { defineAction } from 'moleculer';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 export const action = defineAction({
   visibility: 'public',

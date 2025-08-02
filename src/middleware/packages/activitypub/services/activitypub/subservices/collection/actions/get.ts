@@ -3,7 +3,9 @@ import { sanitizeSparqlUri } from '@semapps/triplestore';
 import { defineAction } from 'moleculer';
 import { getValueFromDataType } from '../../../../../utils.ts';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 /**
  * Retrieves the collection metadata from the triplestore

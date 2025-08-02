@@ -5,7 +5,9 @@ import { Parser } from 'n3';
 import streamifyString from 'streamify-string';
 import rdfparseModule from 'rdf-parse';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 const rdfParser = rdfparseModule.default;
 

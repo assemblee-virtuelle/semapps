@@ -10,7 +10,9 @@ import {
   FULL_FOAF_AGENT
 } from '../../../utils.ts';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 export const api = async function api(ctx) {
   const contentType = ctx.meta.headers['content-type'];

@@ -15,7 +15,9 @@ import {
 } from '../../../utils.ts';
 
 const { quad } = DataFactory;
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 const prefixes = {
   acl: 'http://www.w3.org/ns/auth/acl#',
