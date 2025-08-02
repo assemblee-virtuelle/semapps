@@ -3424,6 +3424,8 @@ __metadata:
     rdf-parse: "npm:^1.7.0"
     streamify-string: "npm:^1.0.1"
     url-join: "npm:^4.0.1"
+  peerDependencies:
+    moleculer: ^0.14.35
   languageName: unknown
   linkType: soft
 
@@ -4149,6 +4151,15 @@ __metadata:
   version: 2.0.3
   resolution: "@types/stack-utils@npm:2.0.3"
   checksum: 10c0/1f4658385ae936330581bcb8aa3a066df03867d90281cdf89cc356d404bd6579be0f11902304e1f775d92df22c6dd761d4451c804b0a4fba973e06211e9bd77c
+  languageName: node
+  linkType: hard
+
+"@types/streamify-string@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "@types/streamify-string@npm:1.0.4"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/5686610fb3d7b242ff6dd01ca6b9925296b4425c3a94f605bd71eeb5c746991e15131b42a81637f937c3de4f5894f42bb65d18a2f61a6b4ded50d055a9b206e2
   languageName: node
   linkType: hard
 
@@ -14560,6 +14571,7 @@ __metadata:
     "@types/dotenv-flow": "npm:^3.3.3"
     "@types/ioredis": "npm:^4.27.0"
     "@types/node-fetch": "npm:^2.6.13"
+    "@types/streamify-string": "npm:^1.0.4"
     "@typescript-eslint/eslint-plugin": "npm:^7.1.1"
     "@typescript-eslint/parser": "npm:^7.5.0"
     eslint: "npm:^8.2.0"

@@ -18,6 +18,9 @@
   "devDependencies": {
     "@types/jsonld": "1.5.15"
   },
+  "peerDependencies": {
+    "moleculer": "^0.14.35"
+  },
   "publishConfig": {
     "access": "public"
   },
