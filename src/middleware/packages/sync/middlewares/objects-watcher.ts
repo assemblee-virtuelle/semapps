@@ -11,14 +11,14 @@ const handledWacActions = [
 
 const ObjectsWatcherMiddleware = (config = {}) => {
   const { baseUrl, podProvider = false, postWithoutRecipients = false, transientActivities = false } = config;
-  let relayActor;
-  let excludedContainersPathRegex = [];
+  let relayActor: any;
+  let excludedContainersPathRegex: any = [];
   let initialized = false;
   let cacherActivated = false;
 
   if (!baseUrl) throw new Error('The baseUrl setting is missing from ObjectsWatcherMiddleware');
 
-  const isHandled = actionName => {
+  const isHandled = (actionName: any) => {
     // In a Pod provider config, we want to handle only LDP-related actions
     // The AnnouncerService takes care of resources sharing with other users
     if (podProvider) {
@@ -29,7 +29,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
   };
 
   /** Get owner WebID of resource (by looking at the slash URI). */
-  const getActor = async (ctx, resourceUri) => {
+  const getActor = async (ctx: any, resourceUri: any) => {
     if (podProvider) {
       const url = new URL(resourceUri);
       const podOwnerUri = `${url.origin}/${url.pathname.split('/')[1]}`;
@@ -38,7 +38,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
     return relayActor;
   };
 
-  const clearWebAclCache = async (ctx, resourceUri, containerUri) => {
+  const clearWebAclCache = async (ctx: any, resourceUri: any, containerUri: any) => {
     if (cacherActivated) {
       // TODO Use WebAclMiddleware instead of events to clear cache immediately
       // https://github.com/assemblee-virtuelle/semapps/issues/1127
@@ -50,24 +50,24 @@ const ObjectsWatcherMiddleware = (config = {}) => {
     }
   };
 
-  const getRecipients = async (ctx, resourceUri) => {
+  const getRecipients = async (ctx: any, resourceUri: any) => {
     const isPublic = await ctx.call('webacl.resource.isPublic', { resourceUri });
     const actor = await getActor(ctx, resourceUri);
     const usersWithReadRights = await ctx.call('webacl.resource.getUsersWithReadRights', { resourceUri });
-    const recipients = usersWithReadRights.filter(u => u !== actor.id);
+    const recipients = usersWithReadRights.filter((u: any) => u !== actor.id);
     if (isPublic) {
       return [...recipients, actor.followers, PUBLIC_URI];
     }
     return recipients;
   };
 
-  const isExcluded = containersUris => {
-    return containersUris.some(uri =>
+  const isExcluded = (containersUris: any) => {
+    return containersUris.some((uri: any) =>
       excludedContainersPathRegex.some(pathRegex => pathRegex.test(new URL(uri).pathname))
     );
   };
 
-  const outboxPost = async (ctx, resourceUri, recipients, activity) => {
+  const outboxPost = async (ctx: any, resourceUri: any, recipients: any, activity: any) => {
     if (recipients.length > 0 || postWithoutRecipients) {
       const actor = await getActor(ctx, resourceUri);
 
@@ -87,7 +87,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
 
   return {
     name: 'ObjectsWatcherMiddleware',
-    async started(broker) {
+    async started(broker: any) {
       if (!podProvider) {
         await broker.waitForServices('activitypub.relay');
         relayActor = await broker.call('activitypub.relay.getActor');
@@ -103,9 +103,9 @@ const ObjectsWatcherMiddleware = (config = {}) => {
       initialized = true;
       cacherActivated = !!broker.cacher;
     },
-    localAction: (next, action) => {
+    localAction: (next: any, action: any) => {
       if (isHandled(action.name)) {
-        return async ctx => {
+        return async (ctx: any) => {
           // Don't handle actions until middleware is fully started
           // Otherwise, the creation of the relay actor calls the middleware before it started
           if (!initialized) return await next(ctx);
@@ -116,7 +116,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
           let resourceUri;
           let containerUri;
           let oldContainers;
-          let oldRecipients;
+          let oldRecipients: any;
 
           switch (action.name) {
             case 'ldp.container.post':
@@ -245,7 +245,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
                 // Clear cache now otherwise getRecipients() may return the old cache rights
                 await clearWebAclCache(ctx, resourceUri, containerUri);
                 const newRecipients = await getRecipients(ctx, ctx.params.resourceUri);
-                const recipientsAdded = newRecipients.filter(u => !oldRecipients.includes(u));
+                const recipientsAdded = newRecipients.filter((u: any) => !oldRecipients.includes(u));
                 if (recipientsAdded.length > 0) {
                   const containers = await ctx.call('ldp.resource.getContainers', {
                     resourceUri: ctx.params.resourceUri
@@ -266,7 +266,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
               const newRecipients = await getRecipients(ctx, ctx.params.resourceUri);
               const containers = await ctx.call('ldp.resource.getContainers', { resourceUri: ctx.params.resourceUri });
 
-              const recipientsAdded = newRecipients.filter(u => !oldRecipients.includes(u));
+              const recipientsAdded = newRecipients.filter((u: any) => !oldRecipients.includes(u));
               if (recipientsAdded.length > 0) {
                 outboxPost(ctx, ctx.params.resourceUri, recipientsAdded, {
                   type: ACTIVITY_TYPES.CREATE,
@@ -275,7 +275,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
                 });
               }
 
-              const recipientsRemoved = oldRecipients.filter(u => !newRecipients.includes(u));
+              const recipientsRemoved = oldRecipients.filter((u: any) => !newRecipients.includes(u));
               if (recipientsRemoved.length > 0) {
                 outboxPost(ctx, ctx.params.resourceUri, recipientsRemoved, {
                   type: ACTIVITY_TYPES.DELETE,
@@ -314,7 +314,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
                 // Clear cache now otherwise getRecipients() may return the old cache rights
                 await clearWebAclCache(ctx, resourceUri, containerUri);
                 const newRecipients = await getRecipients(ctx, ctx.params.resourceUri);
-                const recipientsRemoved = oldRecipients.filter(u => !newRecipients.includes(u));
+                const recipientsRemoved = oldRecipients.filter((u: any) => !newRecipients.includes(u));
                 if (recipientsRemoved.length > 0 && !newRecipients.includes(PUBLIC_URI)) {
                   const containers = await ctx.call('ldp.resource.getContainers', {
                     resourceUri: ctx.params.resourceUri
@@ -337,9 +337,9 @@ const ObjectsWatcherMiddleware = (config = {}) => {
       // Do not use the middleware for this action
       return next;
     },
-    localEvent(next, event) {
+    localEvent(next: any, event: any) {
       if (event.name === 'ldp.registry.registered') {
-        return async ctx => {
+        return async (ctx: any) => {
           const { container } = ctx.params;
           if (container.excludeFromMirror === true && !excludedContainersPathRegex.includes(container.pathRegex)) {
             excludedContainersPathRegex.push(container.pathRegex);

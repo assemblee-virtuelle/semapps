@@ -56,7 +56,7 @@ const Schema = defineAction({
 
     const triplesToAdd = newTriples.reverse();
 
-    const newBlankNodes = newTriples.filter(triple => triple.object.termType === 'Variable');
+    const newBlankNodes = newTriples.filter((triple: any) => triple.object.termType === 'Variable');
 
     // Generate the query
     let query = '';

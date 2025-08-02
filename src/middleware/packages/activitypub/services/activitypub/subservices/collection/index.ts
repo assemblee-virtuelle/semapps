@@ -25,7 +25,7 @@ const CollectionService = {
     permissions: {},
     // These default permissions can be overridden by providing
     // a `permissions` param when calling activitypub.collection.post
-    newResourcesPermissions: webId => {
+    newResourcesPermissions: (webId: any) => {
       switch (webId) {
         case 'anon':
         case 'system':

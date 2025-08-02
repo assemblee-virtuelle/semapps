@@ -12,7 +12,7 @@ import {
   saveDatasetMeta
 } from '@semapps/middlewares';
 
-function getCatchAllRoute(basePath, podProvider) {
+function getCatchAllRoute(basePath: any, podProvider: any) {
   const middlewares = [
     parseUrl,
     parseHeader,

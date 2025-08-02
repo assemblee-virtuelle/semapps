@@ -230,11 +230,11 @@ const Schema = {
     getMatchingChannels(topic) {
       const now = new Date();
       const matchedChannels = this.channels
-        .filter(c => c.topic === topic)
-        .filter(c => (c.startAt ? new Date(c.startAt) <= now : true))
-        .filter(c => (c.endAt ? new Date(c.endAt) > now : true))
+        .filter((c: any) => c.topic === topic)
+        .filter((c: any) => (c.startAt ? new Date(c.startAt) <= now : true))
+        .filter((c: any) => (c.endAt ? new Date(c.endAt) > now : true))
         // Check if rate is exceeded.
-        .filter(c => {
+        .filter((c: any) => {
           if (!(c.lastTriggered && c.rate)) return true;
           return moment.duration(c.rate).asMilliseconds() < now - c.lastTriggered;
         });
@@ -272,7 +272,7 @@ const Schema = {
 
       // Trigger onEvent for each channel (handled by implementing service).
       await Promise.all(
-        channelsToTrigger.map(async channel => {
+        channelsToTrigger.map(async (channel: any) => {
           await this.onEvent(channel, activity);
         })
       );
@@ -334,8 +334,8 @@ const Schema = {
     after: {
       delete(ctx, res) {
         const { resourceUri } = ctx.params;
-        const channel = this.channels.find(c => c.id === resourceUri);
-        this.channels = this.channels.filter(c => c.id !== resourceUri);
+        const channel = this.channels.find((c: any) => c.id === resourceUri);
+        this.channels = this.channels.filter((c: any) => c.id !== resourceUri);
         this.onChannelDeleted(channel);
         return res;
       }

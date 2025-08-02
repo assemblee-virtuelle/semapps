@@ -32,7 +32,7 @@ const AggregatorSchema = {
           type: ACTIVITY_TYPES.FOLLOW
         }
       },
-      async onReceive(ctx, activity, recipientUri) {
+      async onReceive(ctx: any, activity: any, recipientUri: any) {
         if (this.settings.acceptFollowOffers && recipientUri === this.relayActor.id) {
           return await ctx.call('activitypub.outbox.post', {
             collectionUri: this.relayActor.outbox,

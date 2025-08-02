@@ -7,20 +7,20 @@ const { MoleculerError } = Errors;
 
 // Put requested URL and query string in meta so that services may use them independently
 // Set here https://github.com/moleculerjs/moleculer-web/blob/c6ec80056a64ea15c57d6e2b946ce978d673ae92/src/index.js#L151-L161
-const parseUrl = async (req, res, next) => {
+const parseUrl = async (req: any, res: any, next: any) => {
   req.$ctx.meta.requestUrl = req.parsedUrl;
   req.$ctx.meta.queryString = req.query;
   next();
 };
 
-const parseHeader = async (req, res, next) => {
+const parseHeader = async (req: any, res: any, next: any) => {
   req.$ctx.meta.headers = req.headers ? { ...req.headers } : {};
   // Also remember original headers (needed for HTTP signatures verification and files type negociation)
   req.$ctx.meta.originalHeaders = req.headers ? { ...req.headers } : {};
   next();
 };
 
-const negotiateContentType = (req, res, next) => {
+const negotiateContentType = (req: any, res: any, next: any) => {
   if (!req.$ctx.meta.headers)
     throw new Error(`The parseHeader middleware must be added before the negotiateContentType middleware`);
   if (req.$ctx.meta.headers['content-type'] !== undefined && req.method !== 'DELETE') {
@@ -79,7 +79,7 @@ const negotiateAccept = (req, res, next) => {
 const getRawBody = req => {
   return new Promise((resolve, reject) => {
     let data = '';
-    req.on('data', chunk => {
+    req.on('data', (chunk: any) => {
       data += chunk;
     });
     req.on('end', () => {
@@ -118,7 +118,7 @@ const parseTurtle = async (req, res, next) => {
   next();
 };
 
-const parseJson = async (req, res, next) => {
+const parseJson = async (req: any, res: any, next: any) => {
   if (!req.$ctx.meta.headers)
     throw new Error(`The parseHeader middleware must be added before the parseJson middleware`);
   let mimeType = null;
@@ -147,7 +147,7 @@ const parseJson = async (req, res, next) => {
   }
 };
 
-const parseFile = (req, res, next) => {
+const parseFile = (req: any, res: any, next: any) => {
   if (!req.$ctx.meta.headers)
     throw new Error(`The parseHeader middleware must be added before the parseFile middleware`);
   if (!req.$ctx.meta.parser && (req.method === 'POST' || req.method === 'PUT')) {
@@ -156,10 +156,10 @@ const parseFile = (req, res, next) => {
       req.$ctx.meta.headers['content-type'].includes('multipart/form-data')
     ) {
       const busboy = new Busboy({ headers: req.$ctx.meta.headers });
-      const files = [];
-      busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+      const files: any = [];
+      busboy.on('file', (fieldname: any, file: any, filename: any, encoding: any, mimetype: any) => {
         const readableStream = new streams.ReadableStream();
-        file.on('data', data => readableStream.push(data));
+        file.on('data', (data: any) => readableStream.push(data));
         files.push({
           fieldname,
           readableStream,
@@ -168,7 +168,7 @@ const parseFile = (req, res, next) => {
           mimetype
         });
       });
-      busboy.on('field', (fieldname, val) => {
+      busboy.on('field', (fieldname: any, val: any) => {
         req.$params[fieldname] = val;
       });
       busboy.on('finish', () => {
@@ -192,7 +192,7 @@ const parseFile = (req, res, next) => {
   }
 };
 
-const saveDatasetMeta = (req, res, next) => {
+const saveDatasetMeta = (req: any, res: any, next: any) => {
   req.$ctx.meta.dataset = req.$params.username;
   next();
 };

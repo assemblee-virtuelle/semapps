@@ -70,7 +70,7 @@ const AuthorizerSchema = {
             const newUsers = this.getUsers(rule, newData);
             const oldUsers = this.getUsers(rule, oldData);
 
-            const usersToAdd = newUsers.filter(t1 => !oldUsers.some(t2 => t1 === t2));
+            const usersToAdd = newUsers.filter((t1: any) => !oldUsers.some((t2: any) => t1 === t2));
             for (const userUri of usersToAdd) {
               await ctx.call('webacl.resource.addRights', {
                 resourceUri,
@@ -91,7 +91,7 @@ const AuthorizerSchema = {
               });
             }
 
-            const usersToRemove = oldUsers.filter(t1 => !newUsers.some(t2 => t1 === t2));
+            const usersToRemove = oldUsers.filter((t1: any) => !newUsers.some((t2: any) => t1 === t2));
             for (const userUri of usersToRemove) {
               await ctx.call('webacl.resource.removeRights', {
                 resourceUri,

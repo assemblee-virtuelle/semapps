@@ -68,7 +68,7 @@ const WebfingerService = {
 
         if (response.ok) {
           const json = await response.json();
-          const link = json.links.find(l => l.type === 'application/activity+json');
+          const link = json.links.find((l: any) => l.type === 'application/activity+json');
           if (link) {
             return link.href;
           }

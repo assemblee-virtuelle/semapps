@@ -22,7 +22,7 @@ const VCCredentialsContainer = {
     acceptedTypes: ['https://www.w3.org/2018/credentials#VerifiableCredential'],
     typeIndex: 'private',
     podProvider: null,
-    permissions: (webId, ctx) => {
+    permissions: (webId: any, ctx: any) => {
       // If not a pod provider, the container is shared, so any user can append (not read arbitrary VCs though).
       return {
         anyUser: {
@@ -32,7 +32,7 @@ const VCCredentialsContainer = {
         }
       };
     },
-    newResourcesPermissions: webId => {
+    newResourcesPermissions: (webId: any) => {
       if (webId === 'anon') throw new Error('Credential resource must be created for registered webId.');
       if (webId === 'system') return {};
 

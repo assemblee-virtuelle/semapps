@@ -113,7 +113,7 @@ const LikeService = {
       match: {
         type: ACTIVITY_TYPES.LIKE
       },
-      async onEmit(ctx, activity, emitterUri) {
+      async onEmit(ctx: any, activity: any, emitterUri: any) {
         if (!activity?.object) throw new Error(`No object in the Like activity`);
         await this.actions.addObjectToActorLikedCollection(
           { actorUri: activity.actor, objectUri: activity.object },
@@ -127,7 +127,7 @@ const LikeService = {
           );
         }
       },
-      async onReceive(ctx, activity, recipientUri) {
+      async onReceive(ctx: any, activity: any, recipientUri: any) {
         if (this.isLocalObject(activity.object, recipientUri)) {
           if (!activity?.object) throw new Error(`No object in the Like activity`);
           await this.actions.addActorToObjectLikesCollection(
@@ -144,7 +144,7 @@ const LikeService = {
           type: ACTIVITY_TYPES.LIKE
         }
       },
-      async onEmit(ctx, activity, emitterUri) {
+      async onEmit(ctx: any, activity: any, emitterUri: any) {
         if (!activity.object?.object) throw new Error(`No object in the Like activity`);
         await this.actions.removeObjectFromActorLikedCollection(
           { actorUri: activity.actor, objectUri: activity.object.object },
@@ -158,7 +158,7 @@ const LikeService = {
           );
         }
       },
-      async onReceive(ctx, activity, recipientUri) {
+      async onReceive(ctx: any, activity: any, recipientUri: any) {
         if (this.isLocalObject(activity.object.object, recipientUri)) {
           if (!activity.object?.object) throw new Error(`No object in the Like activity`);
           await this.actions.removeActorFromObjectLikesCollection(

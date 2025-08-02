@@ -23,7 +23,7 @@ const Schema = defineAction({
       webId: 'system'
     });
 
-    return result.map(node => node.type.value);
+    return result.map((node: any) => node.type.value);
   }
 });
 

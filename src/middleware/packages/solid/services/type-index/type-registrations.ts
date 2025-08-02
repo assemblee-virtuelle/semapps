@@ -40,7 +40,7 @@ const TypeRegistrationsSchema = {
             types: existingRegistration['solid:forClass']
           });
 
-          const newExpandedTypes = expandedTypes.filter(t => !oldExpandedTypes.includes(t));
+          const newExpandedTypes = expandedTypes.filter((t: any) => !oldExpandedTypes.includes(t));
 
           if (newExpandedTypes.length > 0) {
             for (const expandedType of newExpandedTypes) {
@@ -237,7 +237,7 @@ const TypeRegistrationsSchema = {
 
         const registrations = await this.actions.getByType({ type, webId }, { parentCtx: ctx });
 
-        return registrations.map(r => r['solid:instanceContainer']);
+        return registrations.map((r: any) => r['solid:instanceContainer']);
       }
     }),
 

@@ -9,7 +9,7 @@ const fsPromises = fsModule.promises;
 const defaultDocumentLoader = !process.versions.bun
   ? jsonld.documentLoaders.node()
   : /** Document loader using the modern fetch API.  */
-    async (url, options) => {
+    async (url: any, options: any) => {
       const fetchResult = await fetch(url, {
         headers: {
           accept: 'application/json, application/ld+json, application/activity+json',

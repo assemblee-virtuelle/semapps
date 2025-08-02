@@ -143,7 +143,7 @@ const FollowService = {
       match: {
         type: ACTIVITY_TYPES.FOLLOW
       },
-      async onReceive(ctx, activity) {
+      async onReceive(ctx: any, activity: any) {
         const { '@context': context, ...activityObject } = activity;
         const actor = await ctx.call('activitypub.actor.get', { actorUri: activity.object });
 
@@ -173,7 +173,7 @@ const FollowService = {
           type: ACTIVITY_TYPES.FOLLOW
         }
       },
-      async onReceive(ctx, activity) {
+      async onReceive(ctx: any, activity: any) {
         await this.actions.addFollower(
           {
             follower: activity.object.actor,
@@ -190,7 +190,7 @@ const FollowService = {
           type: ACTIVITY_TYPES.FOLLOW
         }
       },
-      async onEmit(ctx, activity) {
+      async onEmit(ctx: any, activity: any) {
         await this.actions.removeFollower(
           {
             follower: activity.object.actor || activity.actor,
@@ -199,7 +199,7 @@ const FollowService = {
           { parentCtx: ctx }
         );
       },
-      async onReceive(ctx, activity) {
+      async onReceive(ctx: any, activity: any) {
         await this.actions.removeFollower(
           {
             follower: activity.object.actor || activity.actor,
@@ -219,7 +219,7 @@ const FollowService = {
           }
         }
       },
-      async onReceive(ctx, activity) {
+      async onReceive(ctx: any, activity: any) {
         await this.actions.removeFollower(
           {
             follower: activity.object.object.actor || activity.actor,

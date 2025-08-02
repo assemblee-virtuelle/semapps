@@ -46,22 +46,22 @@ const webAclContext = {
   }
 };
 
-function streamToString(stream) {
+function streamToString(stream: any) {
   let res = '';
   return new Promise((resolve, reject) => {
-    stream.on('data', chunk => (res += chunk));
-    stream.on('error', err => reject(err));
+    stream.on('data', (chunk: any) => (res += chunk));
+    stream.on('error', (err: any) => reject(err));
     stream.on('end', () => resolve(res));
   });
 }
 
-async function formatOutput(ctx, output, resourceAclUri, jsonLD) {
+async function formatOutput(ctx: any, output: any, resourceAclUri: any, jsonLD: any) {
   const turtle = await new Promise((resolve, reject) => {
     const writer = new Writer({
       prefixes: { ...prefixes, '': `${resourceAclUri}#` },
       format: 'Turtle'
     });
-    output.forEach(f => writer.addQuad(f.auth, f.p, f.o));
+    output.forEach((f: any) => writer.addQuad(f.auth, f.p, f.o));
     writer.end((error, res) => {
       resolve(res);
     });
@@ -74,7 +74,7 @@ async function formatOutput(ctx, output, resourceAclUri, jsonLD) {
     baseIRI: resourceAclUri
   });
 
-  output.forEach(f => mySerializer.write(quad(f.auth, f.p, f.o)));
+  output.forEach((f: any) => mySerializer.write(quad(f.auth, f.p, f.o)));
   mySerializer.end();
 
   const jsonLd = JSON.parse(await streamToString(mySerializer));
@@ -95,19 +95,19 @@ async function formatOutput(ctx, output, resourceAclUri, jsonLD) {
   return compactJsonLd;
 }
 
-async function filterAcls(hasControl, uaSearchParam, acls) {
+async function filterAcls(hasControl: any, uaSearchParam: any, acls: any) {
   if (hasControl || uaSearchParam.system) return acls;
 
-  const filtered = acls.filter(acl => filterAgentAcl(acl, uaSearchParam, false));
+  const filtered = acls.filter((acl: any) => filterAgentAcl(acl, uaSearchParam, false));
   if (filtered.length) {
-    const header = acls.filter(acl => filterAgentAcl(acl, uaSearchParam, true));
+    const header = acls.filter((acl: any) => filterAgentAcl(acl, uaSearchParam, true));
     return header.concat(filtered);
   }
 
   return [];
 }
 
-async function getPermissions(ctx, resourceUri, baseUrl, user, graphName, isContainer) {
+async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: any, graphName: any, isContainer: any) {
   const resourceAclUri = getAclUriFromResourceUri(baseUrl, resourceUri);
   const controls = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName);
   const uaSearchParam = getUserAgentSearchParam(user);
@@ -182,7 +182,7 @@ async function getPermissions(ctx, resourceUri, baseUrl, user, graphName, isCont
   return await formatOutput(ctx, document, resourceAclUri, ctx.meta.$responseType === MIME_TYPES.JSON);
 }
 
-export const api = async function api(ctx) {
+export const api = async function api(this: any, ctx: any) {
   const { accept } = ctx.meta.headers;
   let { slugParts } = ctx.params;
 

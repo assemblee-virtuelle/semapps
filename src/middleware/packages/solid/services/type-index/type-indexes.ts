@@ -188,7 +188,7 @@ const TypeIndexesSchema = {
   methods: {
     async preferencesFileAvailable() {
       const services = await this.broker.call('$node.services');
-      return services.some(s => s.name === 'solid-preferences-file');
+      return services.some((s: any) => s.name === 'solid-preferences-file');
     }
   },
   events: {

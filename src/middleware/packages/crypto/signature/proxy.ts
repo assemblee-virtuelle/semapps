@@ -5,12 +5,12 @@ import fetch from 'node-fetch';
 import { Errors as E } from 'moleculer-web';
 import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 
-const stream2buffer = stream => {
+const stream2buffer = (stream: any) => {
   return new Promise((resolve, reject) => {
-    const _buf = [];
-    stream.on('data', chunk => _buf.push(chunk));
+    const _buf: any = [];
+    stream.on('data', (chunk: any) => _buf.push(chunk));
     stream.on('end', () => resolve(Buffer.concat(_buf)));
-    stream.on('error', err => reject(err));
+    stream.on('error', (err: any) => reject(err));
   });
 };
 
@@ -151,7 +151,7 @@ const ProxyService = {
         const { webId } = ctx.params;
         if (this.settings.podProvider) {
           const services = await ctx.call('$node.services');
-          if (services.filter(s => s.name === 'activitypub.actor')) {
+          if (services.filter((s: any) => s.name === 'activitypub.actor')) {
             await ctx.call('activitypub.actor.addEndpoint', {
               actorUri: webId,
               predicate: 'https://www.w3.org/ns/activitystreams#proxyUrl',

@@ -15,7 +15,7 @@ export const action = defineAction({
       { parentCtx: ctx }
     );
     const readAuthorization =
-      authorizations['@graph'] && authorizations['@graph'].find(auth => auth['@id'] === '#Read');
+      authorizations['@graph'] && authorizations['@graph'].find((auth: any) => auth['@id'] === '#Read');
 
     let usersWithReadRights = [];
 

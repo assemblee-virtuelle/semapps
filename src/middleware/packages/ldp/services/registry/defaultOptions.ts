@@ -2,7 +2,7 @@ const Schema = {
   accept: 'text/turtle',
   readOnly: false,
   excludeFromMirror: false,
-  permissions: webId => {
+  permissions: (webId: any) => {
     switch (webId) {
       case 'anon':
         return {
@@ -33,7 +33,7 @@ const Schema = {
         };
     }
   },
-  newResourcesPermissions: webId => {
+  newResourcesPermissions: (webId: any) => {
     switch (webId) {
       case 'anon':
         return {

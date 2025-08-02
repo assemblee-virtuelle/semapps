@@ -68,7 +68,7 @@ const Schema = {
       for (const disassemblyConfig of this.settings.disassembly) {
         const uriAdded = [];
         const uriRemoved = [];
-        let uriKept = [];
+        let uriKept: any = [];
 
         const oldDisassemblyValue = arrayOf(oldData[disassemblyConfig.path]);
         const newDisassemblyValue = arrayOf(newData[disassemblyConfig.path]);

@@ -28,7 +28,7 @@ const VCHolderService = {
   name: 'crypto.vc.holder' as const,
   dependencies: ['jsonld', 'jsonld.context'],
   async started() {
-    this.documentLoader = async (url, options) => {
+    this.documentLoader = async (url: any, options: any) => {
       return await this.broker.call('jsonld.document-loader.loadWithCache', { url, options });
     };
   },

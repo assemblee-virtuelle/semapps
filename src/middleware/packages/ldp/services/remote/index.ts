@@ -36,7 +36,7 @@ const LdpRemoteSchema = {
   methods: {
     async proxyAvailable() {
       const services = await this.broker.call('$node.services');
-      return services.some(s => s.name === 'signature.proxy');
+      return services.some((s: any) => s.name === 'signature.proxy');
     },
     async updateSingleMirroredResources() {
       if (!this.settings.podProvider) {
@@ -51,7 +51,7 @@ const LdpRemoteSchema = {
           `
         });
 
-        for (const resourceUri of singles.map(node => node.s.value)) {
+        for (const resourceUri of singles.map((node: any) => node.s.value)) {
           try {
             await this.actions.store({
               resourceUri,

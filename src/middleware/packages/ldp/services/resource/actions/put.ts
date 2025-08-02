@@ -94,10 +94,10 @@ const Schema = defineAction({
     } else {
       // Keep track of blank nodes to use in WHERE clause
       const newBlankNodes = this.getTriplesDifference(newTriples, oldTriples).filter(
-        triple => triple.object.termType === 'Variable'
+        (triple: any) => triple.object.termType === 'Variable'
       );
       const existingBlankNodes = oldTriples.filter(
-        triple => triple.object.termType === 'Variable' || triple.subject.termType === 'Variable'
+        (triple: any) => triple.object.termType === 'Variable' || triple.subject.termType === 'Variable'
       );
 
       // Generate the query

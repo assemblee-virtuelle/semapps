@@ -10,13 +10,13 @@ import matchActivity from '../utils/matchActivity.ts';
  */
 const AwaitActivityMixin = {
   actions: {
-    async awaitActivity(ctx) {
+    async awaitActivity(ctx: any) {
       const { collectionUri, matcher, maxTries = 60, delayMs = 500, publishedAfter } = ctx.params;
       const webId = ctx.params.webId || ctx.meta.webId || 'anon';
       let match = false;
       let dereferencedActivity;
 
-      const fetcher = async resourceUri => {
+      const fetcher = async (resourceUri: any) => {
         try {
           const resource = await ctx.call('ldp.resource.get', {
             resourceUri,

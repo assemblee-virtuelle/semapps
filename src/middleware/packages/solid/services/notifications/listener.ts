@@ -53,7 +53,7 @@ const SolidNotificationsListenerSchema = {
 
         // Check if a listener already exist
         const existingListener = this.listeners.find(
-          listener => listener.resourceUri === resourceUri && listener.actionName === actionName
+          (listener: any) => listener.resourceUri === resourceUri && listener.actionName === actionName
         );
 
         if (existingListener) {
@@ -73,7 +73,7 @@ const SolidNotificationsListenerSchema = {
                 `Channel ${existingListener.channelUri} doesn't exist anymore. Registering a new channel...`
               );
               this.actions.remove({ id: existingListener['@id'] }, { parentCtx: ctx });
-              this.listeners = this.listeners.filter(l => l['@id'] !== existingListener['@id']);
+              this.listeners = this.listeners.filter((l: any) => l['@id'] !== existingListener['@id']);
             } else {
               throw e;
             }
@@ -86,7 +86,7 @@ const SolidNotificationsListenerSchema = {
 
         // Fetch all subscriptions URLs
         const results = await Promise.all(
-          storageDescription['notify:subscription'].map(channelSubscriptionUrl =>
+          storageDescription['notify:subscription'].map((channelSubscriptionUrl: any) =>
             fetch(channelSubscriptionUrl, {
               headers: {
                 Accept: 'application/ld+json'
@@ -136,7 +136,7 @@ const SolidNotificationsListenerSchema = {
         // Keep track of the channel URI, to be able to check if it still exists
         listener.channelUri = body.id;
         await this._update(ctx, listener);
-        const listenerIndex = this.listeners.findIndex(l => l['@id'] === listener['@id']);
+        const listenerIndex = this.listeners.findIndex((l: any) => l['@id'] === listener['@id']);
         this.listeners[listenerIndex] = listener;
 
         return listener;
@@ -148,7 +148,7 @@ const SolidNotificationsListenerSchema = {
         const { uuid, ...data } = ctx.params;
         const webhookUrl = urlJoin(this.settings.baseUrl, '.webhooks', uuid);
 
-        const listener = this.listeners.find(l => l.webhookUrl === webhookUrl);
+        const listener = this.listeners.find((l: any) => l.webhookUrl === webhookUrl);
 
         if (listener) {
           try {

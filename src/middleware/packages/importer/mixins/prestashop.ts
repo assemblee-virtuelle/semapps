@@ -17,8 +17,8 @@ const Schema = {
       },
       fieldsMapping: {
         slug: 'link_rewrite',
-        created: data => convertToIsoString(data.date_add),
-        updated: data => convertToIsoString(data.date_upd)
+        created: (data: any) => convertToIsoString(data.date_add),
+        updated: (data: any) => convertToIsoString(data.date_upd)
       }
     }
   },
@@ -38,7 +38,7 @@ const Schema = {
       'api',
       this.settings.source.prestashop.type
     )}?display=[id,date_upd]`;
-    this.settings.source.getOneFull = data =>
+    this.settings.source.getOneFull = (data: any) =>
       urlJoin(this.settings.source.prestashop.baseUrl, 'api', this.settings.source.prestashop.type, `${data.id}`);
     this.settings.source.headers.Authorization = `Basic ${Buffer.from(
       `${this.settings.source.prestashop.wsKey}:`

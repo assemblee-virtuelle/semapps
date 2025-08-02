@@ -9,7 +9,7 @@ const JsonldParserSchema = {
   dependencies: ['jsonld.document-loader'],
   async started() {
     this.jsonld = jsonld;
-    this.jsonld.documentLoader = (url, options) =>
+    this.jsonld.documentLoader = (url: any, options: any) =>
       this.broker.call('jsonld.document-loader.loadWithCache', { url, options });
 
     this.jsonLdParser = new JsonLdParser({
@@ -77,11 +77,11 @@ const JsonldParserSchema = {
         return new Promise((resolve, reject) => {
           const jsonString = typeof input === 'object' ? JSON.stringify(input) : input;
           const textStream = streamifyString(jsonString);
-          const res = [];
+          const res: any = [];
           this.jsonLdParser
             .import(textStream)
-            .on('data', quad => res.push(quad))
-            .on('error', error => reject(error))
+            .on('data', (quad: any) => res.push(quad))
+            .on('error', (error: any) => reject(error))
             .on('end', () => resolve(res));
         });
       }

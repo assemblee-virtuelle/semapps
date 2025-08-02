@@ -1,4 +1,4 @@
-const arrayOf = value => {
+const arrayOf = (value: any) => {
   // If the field is null-ish, we suppose there are no values.
   if (value === null || value === undefined) {
     return [];
@@ -11,5 +11,5 @@ const arrayOf = value => {
   return [value];
 };
 
-const isURL = value => (typeof value === 'string' || value instanceof String) && value.startsWith('http');
+const isURL = (value: any) => (typeof value === 'string' || value instanceof String) && value.startsWith('http');
 export { arrayOf, isURL };

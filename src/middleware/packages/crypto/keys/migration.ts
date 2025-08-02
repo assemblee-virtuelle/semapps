@@ -87,9 +87,9 @@ const KeysMigrationSchema = {
         );
 
         // Stats about missing accounts and key-pairs.
-        const accountNames = accounts.map(acc => acc.username);
+        const accountNames = accounts.map((acc: any) => acc.username);
         const keysWithoutRegisteredUser = usernamesByKey.filter(keyName => !accountNames.includes(keyName));
-        const usersWithoutKeys = accountNames.filter(accName => !usernamesByKey.includes(accName));
+        const usersWithoutKeys = accountNames.filter((accName: any) => !usernamesByKey.includes(accName));
 
         if (errorUsernames.length > 0) {
           this.logger.warn(`During the migration, the following accounts generated errors:`, errorUsernames);

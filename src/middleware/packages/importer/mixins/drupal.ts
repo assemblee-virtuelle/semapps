@@ -18,8 +18,8 @@ const Schema = {
       },
       fieldsMapping: {
         slug: 'uuid',
-        created: data => convertToIsoString(data.published),
-        updated: data => convertToIsoString(data.updated)
+        created: (data: any) => convertToIsoString(data.published),
+        updated: (data: any) => convertToIsoString(data.updated)
       }
     }
   },
@@ -27,7 +27,7 @@ const Schema = {
     async list(url) {
       const data = await this.fetch(url);
       if (data && data.nodes) {
-        return data.nodes.map(n => n.node);
+        return data.nodes.map((n: any) => n.node);
       }
       return false;
     },

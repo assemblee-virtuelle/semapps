@@ -39,7 +39,7 @@ const WebhookChannel2023Service = {
       async handler(ctx) {
         const { appUri, webId } = ctx.params;
         const { origin: appOrigin } = new URL(appUri);
-        return this.channels.filter(c => c.webId === webId && c.sendTo.startsWith(appOrigin));
+        return this.channels.filter((c: any) => c.webId === webId && c.sendTo.startsWith(appOrigin));
       }
     }),
 
@@ -61,7 +61,7 @@ const WebhookChannel2023Service = {
   queues: {
     webhookPost: {
       name: '*',
-      async process(job) {
+      async process(job: any) {
         const { channel, activity } = job.data;
 
         try {
