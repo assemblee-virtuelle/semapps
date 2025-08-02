@@ -130,6 +130,7 @@ describe('Create/Update/Delete objects', () => {
       ).resolves.toMatchObject({
         type: OBJECT_TYPES.TOMBSTONE,
         formerType: 'as:Article',
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         deleted: expect.anything()
       });
     });

@@ -36,6 +36,7 @@ const SolidStorageSchema = {
           secure: true
         });
 
+        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
         ctx.meta.dataset = username;
 
         // Create the storage root container so that the LdpRegistryService can create the default containers
@@ -57,8 +58,10 @@ const SolidStorageSchema = {
   events: {
     'auth.registered': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
 
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         const storageUrl = await this.actions.getUrl({ webId }, { parentCtx: ctx });
 
         // Attach the storage URL to the webId

@@ -1,5 +1,6 @@
 import jsonld from 'jsonld';
 import fsModule from 'fs';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'lru-... Remove this comment to see the full error message
 import LRU from 'lru-cache';
 import { ServiceSchema, defineAction } from 'moleculer';
 
@@ -7,7 +8,8 @@ const fsPromises = fsModule.promises;
 
 /** Use document loader depending on node / bun runtime. */
 const defaultDocumentLoader = !process.versions.bun
-  ? jsonld.documentLoaders.node()
+  ? // @ts-expect-error TS(2339): Property 'documentLoaders' does not exist on type ... Remove this comment to see the full error message
+    jsonld.documentLoaders.node()
   : /** Document loader using the modern fetch API.  */
     async (url: any, options: any) => {
       const fetchResult = await fetch(url, {
@@ -16,10 +18,12 @@ const defaultDocumentLoader = !process.versions.bun
           ...options?.headers
         },
         redirect: options?.maxRedirects <= 0 ? 'error' : 'follow',
+        // @ts-expect-error TS(2353): Object literal may only specify known properties, ... Remove this comment to see the full error message
         follow: options?.maxRedirects
       });
 
       const linkHeaderVal = fetchResult.headers.get('link');
+      // @ts-expect-error TS(2339): Property 'util' does not exist on type 'typeof imp... Remove this comment to see the full error message
       const parsedLinks = !(linkHeaderVal || linkHeaderVal === '') ? {} : jsonld.util.parseLinkHeader(linkHeaderVal);
       const contextUrl = parsedLinks['http://www.w3.org/ns/json-ld#context'] || null;
 
@@ -39,6 +43,7 @@ const JsonldDocumentLoaderSchema = {
   async started() {
     for (const contextFile of this.settings.cachedContextFiles) {
       const contextFileContent = await fsPromises.readFile(contextFile.file);
+      // @ts-expect-error TS(2345): Argument of type 'Buffer<ArrayBufferLike>' is not ... Remove this comment to see the full error message
       const contextJson = JSON.parse(contextFileContent);
       cache.set(contextFile.uri, {
         contextUrl: null,

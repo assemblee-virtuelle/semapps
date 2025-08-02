@@ -1,10 +1,12 @@
 import urlJoin from 'url-join';
 import path from 'path';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'mole... Remove this comment to see the full error message
 import MailService from 'moleculer-mail';
 import { getSlugFromUri } from '@semapps/ldp';
 import { ServiceSchema, defineServiceEvent } from 'moleculer';
 import { fileURLToPath } from 'url';
 
+// @ts-expect-error TS(1470): The 'import.meta' meta-property is not allowed in ... Remove this comment to see the full error message
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const delay = (t: any) => new Promise(resolve => setTimeout(resolve, t));
 
@@ -26,9 +28,12 @@ const SingleMailNotificationsService = {
   events: {
     'activitypub.inbox.received': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'activity' does not exist on type 'Option... Remove this comment to see the full error message
         const { activity, recipients } = ctx.params;
 
+        // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
         if (this.settings.delay) {
+          // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
           await delay(this.settings.delay);
         }
 
@@ -36,21 +41,28 @@ const SingleMailNotificationsService = {
           const account = await ctx.call('auth.account.findByWebId', { webId: recipientUri });
 
           if (account) {
+            // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
             ctx.meta.webId = recipientUri;
+            // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
             ctx.meta.dataset = this.settings.podProvider ? getSlugFromUri(recipientUri) : undefined;
 
+            // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
             const locale = account?.preferredLocale || this.settings.defaultLocale;
             const notification = await ctx.call('activity-mapping.map', { activity, locale });
 
+            // @ts-expect-error TS(2339): Property 'filterNotification' does not exist on ty... Remove this comment to see the full error message
             if (notification && (await this.filterNotification(notification, activity, recipientUri))) {
               if (notification.actionLink)
+                // @ts-expect-error TS(2339): Property 'formatLink' does not exist on type 'Serv... Remove this comment to see the full error message
                 notification.actionLink = await this.formatLink(notification.actionLink, recipientUri);
 
+              // @ts-expect-error TS(2339): Property 'queueMail' does not exist on type 'Servi... Remove this comment to see the full error message
               await this.queueMail(ctx, notification.key, {
                 to: account.email,
                 locale,
                 data: {
                   ...notification,
+                  // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
                   color: this.settings.color,
                   descriptionWithBr: notification.description
                     ? notification.description.replace(/\r\n|\r|\n/g, '<br />')
@@ -59,6 +71,7 @@ const SingleMailNotificationsService = {
               });
             }
           } else {
+            // @ts-expect-error TS(2339): Property 'logger' does not exist on type 'ServiceE... Remove this comment to see the full error message
             this.logger.warn(`No account found for local recipient ${recipientUri}`);
           }
         }
@@ -90,8 +103,10 @@ const SingleMailNotificationsService = {
   queues: {
     sendMail: {
       name: '*',
+      // @ts-expect-error TS(7023): 'process' implicitly has return type 'any' because... Remove this comment to see the full error message
       async process(job: any) {
         job.progress(0);
+        // @ts-expect-error TS(7022): 'result' implicitly has type 'any' because it does... Remove this comment to see the full error message
         const result = await this.actions.send(job.data);
         job.progress(100);
         return result;

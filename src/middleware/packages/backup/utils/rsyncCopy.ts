@@ -1,3 +1,4 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'rsyn... Remove this comment to see the full error message
 import Rsync from 'rsync';
 import { join as pathJoin } from 'path';
 
@@ -18,6 +19,7 @@ const rsyncCopy = (path: any, subDir: any, remoteServer: any, syncDelete = false
         reject(error);
       } else {
         console.log('Rsync finished !');
+        // @ts-expect-error TS(2794): Expected 1 arguments, but got 0. Did you forget to... Remove this comment to see the full error message
         resolve();
       }
     });

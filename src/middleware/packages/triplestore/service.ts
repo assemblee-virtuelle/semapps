@@ -34,6 +34,7 @@ const TripleStoreService = {
     this.subservices = {};
 
     if (dataset !== false) {
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "triplestore.d... Remove this comment to see the full error message
       this.subservices.dataset = this.broker.createService({
         mixins: [DatasetService],
         settings: {
@@ -57,6 +58,7 @@ const TripleStoreService = {
     update,
     query,
     dropAll,
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ uri: { type: "string"; }; web... Remove this comment to see the full error message
     countTriplesOfSubject,
     tripleExist,
     deleteOrphanBlankNodes

@@ -29,9 +29,11 @@ const errorCases = {
 
 describe('Get container path', () => {
   test.each(Object.keys(successCases))('Success with resourceType %s', async (resourceType: any) => {
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(broker.call('ldp.container.getPath', { resourceType })).resolves.toBe(successCases[resourceType]);
   });
   test.each(Object.keys(errorCases))('Error With resourceType %s', async (resourceType: any) => {
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(broker.call('ldp.container.getPath', { resourceType })).rejects.toThrow(errorCases[resourceType]);
   });
 });

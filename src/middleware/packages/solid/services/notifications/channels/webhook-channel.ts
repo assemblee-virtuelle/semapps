@@ -77,6 +77,7 @@ const WebhookChannel2023Service = {
           });
 
           if (response.status >= 400) {
+            // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ name:... Remove this comment to see the full error message
             await this.actions.delete({ resourceUri: channel.id, webId: channel.webId });
             throw new Error(
               `Webhook ${channel.sendTo} returned a ${response.status} error (${response.statusText}). It has been deleted.`
@@ -88,11 +89,13 @@ const WebhookChannel2023Service = {
           return { ok: response.ok, status: response.status, statusText: response.statusText };
         } catch (e) {
           if (job.attemptsMade + 1 >= job.opts.attempts) {
+            // @ts-expect-error TS(2339): Property 'logger' does not exist on type '{ name: ... Remove this comment to see the full error message
             this.logger.warn(`Webhook ${channel.sendTo} failed ${job.opts.attempts} times, deleting it...`);
             // DO NOT DELETE YET TO IMPROVE MONITORING
             // await this.actions.delete({ resourceUri: channel.id, webId: channel.webId });
           }
 
+          // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
           throw new Error(`Posting to webhook ${channel.sendTo} failed. Error: ${e.message}`);
         }
       }

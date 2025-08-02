@@ -26,6 +26,7 @@ const Schema = defineAction({
       const path = new URL(containerUri).pathname.replace(basePath, '/');
       const registeredContainers = await this.actions.list({}, { parentCtx: ctx });
       const containerOptions =
+        // @ts-expect-error TS(18046): 'container' is of type 'unknown'.
         Object.values(registeredContainers).find(container => container.pathRegex.test(path)) || {};
       return { ...this.settings.defaultOptions, ...containerOptions };
     }

@@ -23,6 +23,7 @@ export const api = async function api(this: any, ctx: any) {
     throw new MoleculerError(`Content type not supported : ${contentType}`, 400, 'BAD_REQUEST');
 
   const addedRights = await convertBodyToTriples(ctx.meta.body, contentType);
+  // @ts-expect-error
   if (addedRights.length === 0) throw new MoleculerError('Nothing to add', 400, 'BAD_REQUEST');
 
   // This is the root container
@@ -43,14 +44,18 @@ export const action = defineAction({
     webId: { type: 'string', optional: true },
     // addedRights is an array of objects of the form { auth: 'http://localhost:3000/_acl/container29#Control',  p: 'http://www.w3.org/ns/auth/acl#agent',  o: 'https://data.virtual-assembly.org/users/sebastien.rosset' }
     // you will most likely prefer to use additionalRights instead.
+    // @ts-expect-error TS(2353): Object literal may only specify known properties, ... Remove this comment to see the full error message
     addedRights: { type: 'array', optional: true, min: 1 },
     // newRights is used to add rights to a non existing resource.
+    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     newRights: { type: 'object', optional: true },
     // additionalRights is used to add rights to an existing resource.
+    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     additionalRights: { type: 'object', optional: true }
   },
   async handler(ctx) {
     let { webId, addedRights, resourceUri, newRights, additionalRights } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     webId = webId || ctx.meta.webId || 'anon';
 
     let difference;
@@ -159,6 +164,7 @@ export const action = defineAction({
 
     const returnValues = {
       uri: resourceUri,
+      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       dataset: ctx.meta.dataset,
       webId,
       created: false,

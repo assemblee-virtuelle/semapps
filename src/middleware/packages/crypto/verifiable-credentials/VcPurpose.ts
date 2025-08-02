@@ -1,3 +1,4 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import { CredentialIssuancePurpose } from '@digitalbazaar/vc';
 
 /**

@@ -33,9 +33,13 @@ const AuthorizerSchema = {
   events: {
     'ldp.resource.created': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
         for (const rule of this.settings.rules) {
+          // @ts-expect-error TS(2339): Property 'matchRule' does not exist on type 'Servi... Remove this comment to see the full error message
           if (this.matchRule(rule, newData)) {
+            // @ts-expect-error TS(2339): Property 'getUsers' does not exist on type 'Servic... Remove this comment to see the full error message
             const users = this.getUsers(rule, newData);
             for (const user of users) {
               await ctx.call('webacl.resource.addRights', {
@@ -63,11 +67,16 @@ const AuthorizerSchema = {
 
     'ldp.resource.updated': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData, oldData } = ctx.params;
 
+        // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
         for (const rule of this.settings.rules) {
+          // @ts-expect-error TS(2339): Property 'matchRule' does not exist on type 'Servi... Remove this comment to see the full error message
           if (this.matchRule(rule, newData)) {
+            // @ts-expect-error TS(2339): Property 'getUsers' does not exist on type 'Servic... Remove this comment to see the full error message
             const newUsers = this.getUsers(rule, newData);
+            // @ts-expect-error TS(2339): Property 'getUsers' does not exist on type 'Servic... Remove this comment to see the full error message
             const oldUsers = this.getUsers(rule, oldData);
 
             const usersToAdd = newUsers.filter((t1: any) => !oldUsers.some((t2: any) => t1 === t2));

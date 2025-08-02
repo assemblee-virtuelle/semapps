@@ -19,6 +19,7 @@ export const listDatasets = async () => {
 };
 
 export const clearDataset = (dataset: any) =>
+  // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
   fetch(urlJoin(CONFIG.SPARQL_ENDPOINT, dataset, 'update'), {
     method: 'POST',
     body: 'update=CLEAR+ALL', // DROP+ALL is not working with WebACL datasets !
@@ -30,30 +31,40 @@ export const clearDataset = (dataset: any) =>
 
 export const fetchServer = (url: any, options = {}) => {
   if (!url) throw new Error('No url provided to fetchServer');
+  // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
   if (!options.headers) options.headers = new fetch.Headers();
 
+  // @ts-expect-error TS(2339): Property 'method' does not exist on type '{}'.
   switch (options.method) {
     case 'POST':
     case 'PATCH':
     case 'PUT':
+      // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
       if (!options.headers.has('Accept')) options.headers.set('Accept', 'application/ld+json');
+      // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
       if (!options.headers.has('Content-Type')) options.headers.set('Content-Type', 'application/ld+json');
       break;
     case 'DELETE':
       break;
     case 'GET':
     default:
+      // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
       if (!options.headers.has('Accept')) options.headers.set('Accept', 'application/ld+json');
       break;
   }
 
+  // @ts-expect-error TS(2339): Property 'body' does not exist on type '{}'.
   if (options.body && options.headers.get('Content-Type').includes('json')) {
+    // @ts-expect-error TS(2339): Property 'body' does not exist on type '{}'.
     options.body = JSON.stringify(options.body);
   }
 
   return fetch(url, {
+    // @ts-expect-error TS(2339): Property 'method' does not exist on type '{}'.
     method: options.method || 'GET',
+    // @ts-expect-error TS(2339): Property 'body' does not exist on type '{}'.
     body: options.body,
+    // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
     headers: options.headers
   })
     .then(response =>

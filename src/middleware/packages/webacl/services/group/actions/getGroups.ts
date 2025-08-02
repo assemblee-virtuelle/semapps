@@ -11,6 +11,7 @@ export const action = defineAction({
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     let groups;

@@ -9,6 +9,7 @@ import { Context, Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
+// @ts-expect-error TS(2339): Property 'default' does not exist on type 'RdfPars... Remove this comment to see the full error message
 const rdfParser = rdfparseModule.default;
 
 const RESOURCE_CONTAINERS_QUERY = (resource: any) => `SELECT ?container
@@ -171,6 +172,7 @@ function getUserAgentSearchParam(user: any, groups: any) {
 
 const checkAgentPresent = (acls: any, agentSearchParam: any) => {
   for (const acl of acls) {
+    // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
     const res = filterAgentAcl(acl, agentSearchParam);
     if (res) return true;
   }

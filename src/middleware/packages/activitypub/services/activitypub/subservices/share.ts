@@ -74,11 +74,13 @@ const ShareService = {
           fetcher
         );
         return {
+          // @ts-expect-error TS(2339): Property 'broker' does not exist on type '{ match(... Remove this comment to see the full error message
           match: match && (await this.broker.call('activitypub.activity.isPublic', { activity })),
           dereferencedActivity
         };
       },
       async onReceive(ctx: any, activity: any) {
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
         await this.actions.addShare({ objectUri: activity.object, announce: activity }, { parentCtx: ctx });
       }
     },
@@ -98,6 +100,7 @@ const ShareService = {
         return { match, dereferencedActivity };
       },
       async onReceive(ctx: any, activity: any) {
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
         await this.actions.removeShare(
           { objectUri: activity.object?.object, announce: activity.object },
           { parentCtx: ctx }

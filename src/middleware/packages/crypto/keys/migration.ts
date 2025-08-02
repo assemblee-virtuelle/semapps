@@ -37,6 +37,7 @@ const KeysMigrationSchema = {
         this.logger.info(`=== Migrating keys from filesystem to LDP ===`);
 
         // This can cause deadlocks otherwise.
+        // @ts-expect-error TS(2339): Property 'skipObjectsWatcher' does not exist on ty... Remove this comment to see the full error message
         ctx.meta.skipObjectsWatcher = true;
 
         for (const { webId, username } of accounts) {
@@ -44,6 +45,7 @@ const KeysMigrationSchema = {
           try {
             this.logger.info(`Migrating key of ${webId}`);
 
+            // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
             if (this.settings.podProvider) ctx.meta.dataset = username;
 
             const { publicKey, privateKey } = await ctx.call('signature.keypair.get', {
@@ -169,6 +171,7 @@ const KeysMigrationSchema = {
           contentType: MIME_TYPES.JSON,
           webId
         });
+        // @ts-expect-error TS(2339): Property 'id' does not exist on type '{ '@type': s... Remove this comment to see the full error message
         keyResource.id = keyId;
         // Publish key.
         await ctx.call(

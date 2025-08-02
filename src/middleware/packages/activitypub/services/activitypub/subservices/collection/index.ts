@@ -1,6 +1,7 @@
 import { ControlledContainerMixin, arrayOf, getDatasetFromUri } from '@semapps/ldp';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
+// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
 import { ServiceSchema, defineAction } from 'moleculer';
 import getAction from './actions/get.ts';
@@ -63,6 +64,7 @@ const CollectionService = {
     patch: defineAction({
       async handler(ctx) {
         const { resourceUri: collectionUri, triplesToAdd, triplesToRemove } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
         const collectionExist = await ctx.call('activitypub.collection.exist', { resourceUri: collectionUri, webId });
@@ -199,6 +201,7 @@ const CollectionService = {
         const collectionExist = await ctx.call('activitypub.collection.exist', { resourceUri: collectionUri });
         if (!collectionExist)
           throw new Error(
+            // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
             `Cannot attach to a non-existing collection: ${collectionUri} (dataset: ${ctx.meta.dataset})`
           );
 

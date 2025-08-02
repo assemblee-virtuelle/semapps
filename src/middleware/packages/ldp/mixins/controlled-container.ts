@@ -81,6 +81,7 @@ const Schema = {
     get: defineAction({
       handler(ctx) {
         const containerParams = {};
+        // @ts-expect-error TS(2339): Property 'accept' does not exist on type '{}'.
         if (this.settings.accept) containerParams.accept = this.settings.accept;
         return ctx.call('ldp.resource.get', {
           ...containerParams,
@@ -129,6 +130,7 @@ const Schema = {
       handler(ctx) {
         return ctx.call('ldp.registry.getUri', {
           path: this.settings.path,
+          // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
           webId: ctx.params?.webId || ctx.meta?.webId
         });
       }
@@ -142,6 +144,7 @@ const Schema = {
 
         if (!containerUri) {
           containerUri = await this.actions.getContainerUri(
+            // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
             { webId: ctx.params.webId || ctx.meta.webId },
             { parentCtx: ctx }
           );

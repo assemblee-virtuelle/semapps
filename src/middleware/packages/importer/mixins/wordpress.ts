@@ -71,6 +71,7 @@ const Schema = {
             this.logger.warn(`Could not get ${mediaUrl}. Trying again in 30 seconds...`);
             await delay(30000);
           } else {
+            // @ts-expect-error TS(2769): No overload matches this call.
             throw new Error(e);
           }
         }

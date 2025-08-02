@@ -7,6 +7,7 @@ import { defineAction } from 'moleculer';
 const Schema = defineAction({
   visibility: 'public',
   params: {
+    // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
     type: { type: 'multi', rules: [{ type: 'string' }, { type: 'array' }] }
   },
   async handler(ctx) {
@@ -16,6 +17,7 @@ const Schema = defineAction({
 
     return Object.values(registeredContainers).find(container =>
       types.some((t: any) =>
+        // @ts-expect-error TS(18046): 'container' is of type 'unknown'.
         Array.isArray(container.acceptedTypes) ? container.acceptedTypes.includes(t) : container.acceptedTypes === t
       )
     );

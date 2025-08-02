@@ -10,9 +10,11 @@ const Schema = defineAction({
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
+    // @ts-expect-error TS(2322): Type '{ type: "string"; default: string; }' is not... Remove this comment to see the full error message
     accept: { type: 'string', default: MIME_TYPES.JSON },
     jsonContext: {
       type: 'multi',
+      // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
       rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
       optional: true
     },
@@ -20,6 +22,7 @@ const Schema = defineAction({
   },
   async handler(ctx) {
     const { resourceUri, jsonContext } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     // No options will be returned by ldp.registry.getByUri unless the resource is in a local container (this is the case for activities)
@@ -65,6 +68,7 @@ const Schema = defineAction({
 
       return result;
     } else {
+      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       throw new MoleculerError(`Resource Not found ${resourceUri} in dataset ${ctx.meta.dataset}`, 404, 'NOT_FOUND');
     }
   }

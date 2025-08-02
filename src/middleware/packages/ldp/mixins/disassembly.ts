@@ -16,6 +16,7 @@ const Schema = {
       async create(ctx) {
         const { resource, contentType } = ctx.params;
         if (contentType === MIME_TYPES.JSON) {
+          // @ts-expect-error
           await this.createDisassembly(ctx, resource);
         }
       },
@@ -27,12 +28,14 @@ const Schema = {
             accept: MIME_TYPES.JSON,
             webId: 'system'
           });
+          // @ts-expect-error
           await this.updateDisassembly(ctx, resource, oldData);
         }
       }
     },
     after: {
       async delete(ctx, res) {
+        // @ts-expect-error TS(2349): This expression is not callable.
         await this.deleteDisassembly(ctx, res.oldData);
         return res;
       }

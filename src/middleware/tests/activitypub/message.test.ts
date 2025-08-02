@@ -30,6 +30,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
       const { webId } = await broker[i].call('auth.signup', require(`./data/actor${i}.json`));
       actors[i] = await broker[i].call('activitypub.actor.awaitCreateComplete', { actorUri: webId });
       actors[i].call = (actionName: any, params: any, options = {}) =>
+        // @ts-expect-error TS(2339): Property 'meta' does not exist on type '{}'.
         broker[i].call(actionName, params, { ...options, meta: { ...options.meta, webId } });
     }
 
@@ -87,6 +88,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
 
     bobMessageUri = createActivity.object.id;
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
         alice.call('ldp.resource.get', {
@@ -98,6 +100,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
       });
     });
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
         alice.call('activitypub.collection.get', {
@@ -125,6 +128,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
       to: alice.id
     });
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
         alice.call('ldp.resource.get', {
@@ -138,11 +142,13 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
       });
     });
 
+    // @ts-expect-error
     await waitForExpect(async () => {
       const replies = await alice.call('activitypub.collection.get', {
         resourceUri: `${aliceMessageUri}/replies`,
         accept: MIME_TYPES.JSON
       });
+      // @ts-expect-error
       expect(replies.items).toBeUndefinedOrEmptyArray();
     });
   });

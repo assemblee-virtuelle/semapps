@@ -35,6 +35,7 @@ describe('middleware CRUD resource with perms', () => {
       };
       await broker.call('ldp.container.post', urlParamsPost, { meta: { webId: 'anon' } });
     } catch (e) {
+      // @ts-expect-error
       expect(e.code).toEqual(403);
     }
   }, 20000);
@@ -89,6 +90,7 @@ describe('middleware CRUD resource with perms', () => {
     });
 
     expect(result.headers.get('Link')).toMatch(
+      // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
       `<${urlJoin(CONFIG.HOME_URL, '_acl', 'resources', getSlugFromUri(resourceUri))}>; rel=acl`
     );
 
@@ -97,6 +99,7 @@ describe('middleware CRUD resource with perms', () => {
     });
 
     expect(result.headers.get('Link')).toMatch(
+      // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
       `<${urlJoin(CONFIG.HOME_URL, '_acl', 'resources', getSlugFromUri(resourceUri))}>; rel=acl`
     );
   }, 20000);

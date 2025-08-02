@@ -7,21 +7,25 @@ const Schema = defineAction({
   params: {
     resourceUri: { type: 'string' },
     webId: { type: 'string', optional: true },
+    // @ts-expect-error TS(2322): Type '{ type: "string"; default: string; }' is not... Remove this comment to see the full error message
     accept: { type: 'string', default: MIME_TYPES.JSON },
     jsonContext: {
       type: 'multi',
+      // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
       rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
       optional: true
     },
     // Inspired from https://developer.chrome.com/docs/workbox/caching-strategies-overview/#caching-strategies
     strategy: {
       type: 'enum',
+      // @ts-expect-error TS(2353): Object literal may only specify known properties, ... Remove this comment to see the full error message
       values: ['cacheFirst', 'networkFirst', 'cacheOnly', 'networkOnly', 'staleWhileRevalidate'],
       default: 'cacheFirst'
     }
   },
   async handler(ctx) {
     const { resourceUri, accept, jsonContext, ...rest } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     // Without webId, we have no way to know which dataset to look in, so get from network
@@ -32,6 +36,7 @@ const Schema = defineAction({
 
     if (!(await this.actions.isRemote({ resourceUri }, { parentCtx: ctx }))) {
       throw new Error(
+        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
         `The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId} / dataset ${ctx.meta.dataset})`
       );
     }

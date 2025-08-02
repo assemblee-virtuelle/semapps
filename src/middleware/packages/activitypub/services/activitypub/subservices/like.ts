@@ -115,12 +115,15 @@ const LikeService = {
       },
       async onEmit(ctx: any, activity: any, emitterUri: any) {
         if (!activity?.object) throw new Error(`No object in the Like activity`);
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
         await this.actions.addObjectToActorLikedCollection(
           { actorUri: activity.actor, objectUri: activity.object },
           { parentCtx: ctx }
         );
         // In case there is no recipient, add the actor immediately to the collection
+        // @ts-expect-error TS(2339): Property 'isLocalObject' does not exist on type '{... Remove this comment to see the full error message
         if (this.isLocalObject(activity.object, emitterUri)) {
+          // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
           await this.actions.addActorToObjectLikesCollection(
             { actorUri: activity.actor, objectUri: activity.object },
             { parentCtx: ctx }
@@ -128,8 +131,10 @@ const LikeService = {
         }
       },
       async onReceive(ctx: any, activity: any, recipientUri: any) {
+        // @ts-expect-error TS(2339): Property 'isLocalObject' does not exist on type '{... Remove this comment to see the full error message
         if (this.isLocalObject(activity.object, recipientUri)) {
           if (!activity?.object) throw new Error(`No object in the Like activity`);
+          // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
           await this.actions.addActorToObjectLikesCollection(
             { actorUri: activity.actor, objectUri: activity.object },
             { parentCtx: ctx }
@@ -146,12 +151,15 @@ const LikeService = {
       },
       async onEmit(ctx: any, activity: any, emitterUri: any) {
         if (!activity.object?.object) throw new Error(`No object in the Like activity`);
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
         await this.actions.removeObjectFromActorLikedCollection(
           { actorUri: activity.actor, objectUri: activity.object.object },
           { parentCtx: ctx }
         );
         // In case there is no recipient, remove the actor immediately from the collection
+        // @ts-expect-error TS(2339): Property 'isLocalObject' does not exist on type '{... Remove this comment to see the full error message
         if (this.isLocalObject(activity.object.object, emitterUri)) {
+          // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
           await this.actions.removeActorFromObjectLikesCollection(
             { actorUri: activity.actor, objectUri: activity.object.object },
             { parentCtx: ctx }
@@ -159,8 +167,10 @@ const LikeService = {
         }
       },
       async onReceive(ctx: any, activity: any, recipientUri: any) {
+        // @ts-expect-error TS(2339): Property 'isLocalObject' does not exist on type '{... Remove this comment to see the full error message
         if (this.isLocalObject(activity.object.object, recipientUri)) {
           if (!activity.object?.object) throw new Error(`No object in the Like activity`);
+          // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
           await this.actions.removeActorFromObjectLikesCollection(
             { actorUri: activity.actor, objectUri: activity.object.object },
             { parentCtx: ctx }

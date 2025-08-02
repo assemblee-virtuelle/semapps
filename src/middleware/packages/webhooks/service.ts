@@ -10,6 +10,7 @@ const { MoleculerError, ServiceSchemaError } = Errors;
 const WebhooksService = {
   name: 'webhooks' as const,
   mixins: [DbService],
+  // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
   adapter: new TripleStoreAdapter(),
   settings: {
     containerUri: null,
@@ -20,6 +21,7 @@ const WebhooksService = {
   async started() {
     this.settings.allowedActions.forEach((actionName: any) => {
       if (!this.actions[actionName]) {
+        // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
         throw new ServiceSchemaError(`Missing action "${actionName}" in service settings!`);
       }
     });
@@ -51,6 +53,7 @@ const WebhooksService = {
 
     generate: defineAction({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const userUri = ctx.meta.webId || ctx.params.userUri;
         const { action } = ctx.params;
 
@@ -76,6 +79,7 @@ const WebhooksService = {
         return [
           // Unsecured routes
           {
+            // @ts-expect-error TS(2345): Argument of type 'Context<Optionalize<{ [x: string... Remove this comment to see the full error message
             path: path.join(basePath, '/webhooks'),
             name: 'webhooks-process',
             bodyParsers: { json: true },
@@ -87,6 +91,7 @@ const WebhooksService = {
           },
           // Secured routes
           {
+            // @ts-expect-error TS(2345): Argument of type 'Context<Optionalize<{ [x: string... Remove this comment to see the full error message
             path: path.join(basePath, '/webhooks'),
             name: 'webhooks-generate',
             bodyParsers: { json: true },
@@ -103,7 +108,9 @@ const WebhooksService = {
   queues: {
     webhooks: {
       name: '*',
+      // @ts-expect-error TS(7023): 'process' implicitly has return type 'any' because... Remove this comment to see the full error message
       async process(job: any) {
+        // @ts-expect-error TS(7022): 'result' implicitly has type 'any' because it does... Remove this comment to see the full error message
         const result = await this.actions[job.name](job.data);
 
         job.progress(100);

@@ -36,6 +36,7 @@ const LdpSchema = {
     } = this.settings;
 
     this.broker.createService({
+      // @ts-expect-error TS(2322): Type '{ name: "ldp.container"; settings: { baseUrl... Remove this comment to see the full error message
       mixins: [LdpContainerService],
       settings: {
         baseUrl,
@@ -46,6 +47,7 @@ const LdpSchema = {
     });
 
     this.broker.createService({
+      // @ts-expect-error TS(2322): Type '{ name: "ldp.resource"; settings: { baseUrl:... Remove this comment to see the full error message
       mixins: [LdpResourceService],
       settings: {
         baseUrl,
@@ -59,6 +61,7 @@ const LdpSchema = {
     });
 
     this.broker.createService({
+      // @ts-expect-error TS(2322): Type '{ name: "ldp.remote"; mixins: any[]; setting... Remove this comment to see the full error message
       mixins: [LdpRemoteService],
       settings: {
         baseUrl,
@@ -68,6 +71,7 @@ const LdpSchema = {
     });
 
     this.broker.createService({
+      // @ts-expect-error TS(2322): Type '{ name: "ldp.registry"; settings: { baseUrl:... Remove this comment to see the full error message
       mixins: [LdpRegistryService],
       settings: {
         baseUrl,
@@ -77,6 +81,7 @@ const LdpSchema = {
       }
     });
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "ldp.api"; set... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [LdpApiService],
       settings: {
@@ -85,10 +90,12 @@ const LdpSchema = {
       }
     });
 
+    // @ts-expect-error
     this.broker.createService({ mixins: [LdpLinkHeaderService] });
 
     // Only create this service if a cacher is defined
     if (this.broker.cacher) {
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "ldp.cache"; d... Remove this comment to see the full error message
       this.broker.createService({ mixins: [LdpCacheService] });
     }
   },

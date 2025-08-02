@@ -29,6 +29,7 @@ const JsonldSchema = {
       localContextUri = urlJoin(baseUri, localContextPath);
     }
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "jsonld.docume... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [JsonLdDocumentLoaderService],
       settings: {
@@ -37,6 +38,7 @@ const JsonldSchema = {
       }
     });
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "jsonld.contex... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [JsonLdContextService],
       settings: {
@@ -44,10 +46,12 @@ const JsonldSchema = {
       }
     });
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "jsonld.parser... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [JsonLdParserService]
     });
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "jsonld.api"; ... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [JsonLdApiService],
       settings: {

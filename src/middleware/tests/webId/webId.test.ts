@@ -22,6 +22,7 @@ const broker = new ServiceBroker({
 beforeAll(async () => {
   await clearDataset(CONFIG.MAIN_DATASET);
 
+  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "core"; settin... Remove this comment to see the full error message
   broker.createService({
     mixins: [CoreService],
     settings: {

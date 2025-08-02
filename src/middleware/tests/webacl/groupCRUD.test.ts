@@ -18,6 +18,7 @@ describe('middleware CRUD group with perms', () => {
     try {
       const res = await broker.call('webacl.group.create', { groupSlug: 'mygroup5' });
 
+      // @ts-expect-error
       expect(res.groupUri).toBe(urlJoin(CONFIG.HOME_URL, '_groups', 'mygroup5'));
     } catch (e) {
       console.log(e);
@@ -29,6 +30,7 @@ describe('middleware CRUD group with perms', () => {
     try {
       const res = await broker.call('webacl.group.create', { groupSlug: 'mygroup10', webId: 'http://test/user3' });
 
+      // @ts-expect-error
       expect(res.groupUri).toBe(urlJoin(CONFIG.HOME_URL, '_groups', 'mygroup10'));
     } catch (e) {
       console.log(e);

@@ -8,6 +8,7 @@ import ont3 from './ontologies/ont3.json' with { type: 'json' };
 import ont4 from './ontologies/ont4.json' with { type: 'json' };
 
 jest.setTimeout(10000);
+// @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
 const localContextUri = urlJoin(CONFIG.HOME_URL, '.well-known/context.jsonld');
 
 describe.each([false, true])('Register ontologies with cacher %s', (cacher: any) => {

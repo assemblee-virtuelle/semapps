@@ -38,6 +38,7 @@ afterAll(async () => {
 describe('keys', () => {
   describe('with new service', () => {
     beforeAll(async () => {
+      // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
       await setUp();
     });
 
@@ -569,6 +570,7 @@ describe('keys', () => {
           expect(publicKey.owner).toBe(user.webId);
           expect(publicKey.controller).toBe(user.webId);
           expect(publicKey.publicKeyPem).toBe(keyPair.publicKeyPem);
+          // @ts-expect-error TS(2304): Cannot find name 'expect'.
           expect(publicKey.privateKeyPem).toBeUndefined();
         });
       });

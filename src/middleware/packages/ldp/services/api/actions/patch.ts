@@ -29,7 +29,9 @@ export default async function patch(this: any, ctx: any) {
 
       const triplesByOperation = Object.fromEntries(
         parsedQuery.updates
+          // @ts-expect-error
           .filter(p => ACCEPTED_OPERATIONS.includes(p.updateType))
+          // @ts-expect-error
           .map(p => [p.updateType, p[p.updateType][0].triples])
       );
 
@@ -74,8 +76,11 @@ export default async function patch(this: any, ctx: any) {
     };
     ctx.meta.$statusCode = 204;
   } catch (e) {
+    // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
     if (!e.code || e.code < 400) console.error(e);
+    // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
     ctx.meta.$statusCode = e.code || 500;
+    // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
     ctx.meta.$statusMessage = e.message;
   }
 }

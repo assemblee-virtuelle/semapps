@@ -1,27 +1,37 @@
 /* eslint-disable class-methods-use-this */
 import { MIME_TYPES } from '@semapps/mime-types';
 
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
 import { v4 as uuidv4 } from 'uuid';
 import { frame } from 'jsonld';
 import { sanitizeSparqlUri, sanitizeSparqlString } from './utils.ts';
 
 class TripleStoreAdapter {
   constructor({ type, dataset, baseUri, ontology = 'http://semapps.org/ns/core#' }: any) {
+    // @ts-expect-error TS(2339): Property 'type' does not exist on type 'TripleStor... Remove this comment to see the full error message
     this.type = type;
+    // @ts-expect-error TS(2339): Property 'baseUri' does not exist on type 'TripleS... Remove this comment to see the full error message
     this.baseUri = baseUri || `urn:${type}:`;
+    // @ts-expect-error TS(2339): Property 'dataset' does not exist on type 'TripleS... Remove this comment to see the full error message
     this.dataset = dataset;
+    // @ts-expect-error TS(2339): Property 'ontology' does not exist on type 'Triple... Remove this comment to see the full error message
     this.ontology = ontology;
   }
 
   init(broker: any, service: any) {
+    // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'TripleSt... Remove this comment to see the full error message
     this.broker = broker;
+    // @ts-expect-error TS(2339): Property 'service' does not exist on type 'TripleS... Remove this comment to see the full error message
     this.service = service;
   }
 
   async connect() {
+    // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'TripleSt... Remove this comment to see the full error message
     await this.broker.waitForServices(['triplestore'], 120000);
 
+    // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'TripleSt... Remove this comment to see the full error message
     await this.broker.call('triplestore.dataset.create', {
+      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type 'TripleS... Remove this comment to see the full error message
       dataset: this.dataset,
       secure: false
     });
@@ -48,6 +58,7 @@ class TripleStoreAdapter {
     // Ensure that the value does not contain SPARQL injection
     if (query) Object.values(query).forEach(value => sanitizeSparqlString(value));
 
+    // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'TripleSt... Remove this comment to see the full error message
     return this.broker
       .call('triplestore.query', {
         query: `
@@ -55,11 +66,15 @@ class TripleStoreAdapter {
             ?s ?p ?o
           }
           WHERE {
-            ?s a <${this.ontology + this.type}> .
+            ?s a <${
+              // @ts-expect-error TS(2339): Property 'ontology' does not exist on type 'Triple... Remove this comment to see the full error message
+              this.ontology + this.type
+            }> .
             ?s ?p ?o .
             ${
               query
                 ? Object.keys(query)
+                    // @ts-expect-error TS(2339): Property 'ontology' does not exist on type 'Triple... Remove this comment to see the full error message
                     .map(predicate => `?s <${this.ontology + predicate}> "${query[predicate]}"`)
                     .join(' . ')
                 : ''
@@ -67,10 +82,12 @@ class TripleStoreAdapter {
           }
         `,
         accept: MIME_TYPES.JSON,
+        // @ts-expect-error
         dataset: this.dataset
       })
       .then((result: any) => {
         return frame(result, {
+          // @ts-expect-error TS(2339): Property 'ontology' does not exist on type 'Triple... Remove this comment to see the full error message
           '@context': { '@vocab': this.ontology }
         });
       })
@@ -99,6 +116,7 @@ class TripleStoreAdapter {
    * Find an entity by ID.
    */
   findById(_id: any) {
+    // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'TripleSt... Remove this comment to see the full error message
     return this.broker
       .call('triplestore.query', {
         query: `
@@ -108,10 +126,12 @@ class TripleStoreAdapter {
           }
         `,
         accept: MIME_TYPES.JSON,
+        // @ts-expect-error
         dataset: this.dataset
       })
       .then((result: any) => {
         return frame(result, {
+          // @ts-expect-error TS(2339): Property 'ontology' does not exist on type 'Triple... Remove this comment to see the full error message
           '@context': { '@vocab': this.ontology },
           '@id': _id
         });
@@ -142,21 +162,27 @@ class TripleStoreAdapter {
    */
   insert(entity: any) {
     const { slug, ...resource } = entity;
+    // @ts-expect-error TS(2339): Property 'baseUri' does not exist on type 'TripleS... Remove this comment to see the full error message
     resource['@id'] = this.baseUri + (slug || uuidv4());
 
     // Ensure no predicates include an ontology
     const keyWithOntology = Object.keys(resource).find(key => key.includes(':'));
     if (keyWithOntology)
+      // @ts-expect-error TS(2339): Property 'type' does not exist on type 'TripleStor... Remove this comment to see the full error message
       throw new Error(`Cannot create a ${this.type} with key ${keyWithOntology} (no ontology allowed)`);
 
+    // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'TripleSt... Remove this comment to see the full error message
     return this.broker
       .call('triplestore.insert', {
         resource: {
+          // @ts-expect-error TS(2339): Property 'ontology' does not exist on type 'Triple... Remove this comment to see the full error message
           '@context': { '@vocab': this.ontology },
+          // @ts-expect-error TS(2339): Property 'type' does not exist on type 'TripleStor... Remove this comment to see the full error message
           '@type': this.type,
           ...resource
         },
         contentType: MIME_TYPES.JSON,
+        // @ts-expect-error
         dataset: this.dataset
       })
       .then(() => this.findById(resource['@id']));
@@ -189,6 +215,7 @@ class TripleStoreAdapter {
     return this.findById(_id)
       .then((oldData: any) => {
         newData = { ...oldData, ...newData };
+        // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'TripleSt... Remove this comment to see the full error message
         return this.broker.call('triplestore.update', {
           query: `
             DELETE {
@@ -210,6 +237,7 @@ class TripleStoreAdapter {
                       })
                       .map(
                         predicate =>
+                          // @ts-expect-error TS(2339): Property 'ontology' does not exist on type 'Triple... Remove this comment to see the full error message
                           `<${_id}> <${this.ontology + predicate}> ${
                             Array.isArray(newData[predicate])
                               ? newData[predicate].map(o => `"${o}"`).join(', ')
@@ -225,6 +253,7 @@ class TripleStoreAdapter {
             }
           `,
           contentType: MIME_TYPES.JSON,
+          // @ts-expect-error TS(2339): Property 'dataset' does not exist on type 'TripleS... Remove this comment to see the full error message
           dataset: this.dataset
         });
       })
@@ -242,9 +271,11 @@ class TripleStoreAdapter {
    * Remove an entity by ID
    */
   removeById(_id: any) {
+    // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'TripleSt... Remove this comment to see the full error message
     return this.broker
       .call('triplestore.update', {
         query: `DELETE WHERE { <${_id}> ?p ?o . }`,
+        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type 'TripleS... Remove this comment to see the full error message
         dataset: this.dataset
       })
       .then(() => {

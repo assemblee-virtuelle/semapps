@@ -1,3 +1,4 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'mole... Remove this comment to see the full error message
 import Schedule from 'moleculer-schedule';
 import { ServiceSchema, defineAction } from 'moleculer';
 import deleteAction from './actions/delete.ts';
@@ -18,11 +19,14 @@ const LdpRemoteSchema = {
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
     delete: deleteAction,
     get: getAction,
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
     getGraph: getGraphAction,
     getNetwork: getNetworkAction,
     getStored: getStoredAction,
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
     isRemote: isRemoteAction,
     store: storeAction,
 
@@ -59,6 +63,7 @@ const LdpRemoteSchema = {
               mirrorGraph: true
             });
           } catch (e) {
+            // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
             if (e.code === 403 || e.code === 404 || e.code === 401) {
               await this.actions.delete({ resourceUri });
             } else {

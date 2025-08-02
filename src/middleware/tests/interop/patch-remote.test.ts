@@ -8,7 +8,9 @@ let server1: any;
 let server2: any;
 
 beforeAll(async () => {
+  // @ts-expect-error TS(2554): Expected 5 arguments, but got 4.
   server1 = await initialize(3001, 'testData1', 'settings1', 1);
+  // @ts-expect-error TS(2554): Expected 5 arguments, but got 4.
   server2 = await initialize(3002, 'testData2', 'settings2', 2);
 });
 
@@ -101,6 +103,7 @@ describe('Server2 imports a single resource from server1', () => {
     await server2.call('ldp.remote.runCron');
 
     await waitForExpect(async () => {
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })).rejects.toThrow();
     });
   });

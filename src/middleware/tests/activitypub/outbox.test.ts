@@ -286,6 +286,7 @@ describe('Permissions are correctly set on outbox', () => {
         afterEq: new URL(outboxMenu?.first).searchParams.get('afterEq'),
         webId: 'anon'
       });
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(outboxFetchedByAnon.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.UPDATE,

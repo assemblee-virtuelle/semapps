@@ -30,6 +30,7 @@ describe('Binary handling of LDP server', () => {
   test('Post image to container', async () => {
     const readStream = fs.createReadStream(pathJoin(__dirname, 'av-icon.png'));
 
+    // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
     const { headers } = await fetchServer(urlJoin(CONFIG.HOME_URL, 'files'), {
       method: 'POST',
       body: readStream,
@@ -48,6 +49,7 @@ describe('Binary handling of LDP server', () => {
   });
 
   test('Get container', async () => {
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(fetchServer(urlJoin(CONFIG.HOME_URL, 'files'))).resolves.toMatchObject({
       json: {
         '@type': ['ldp:Container', 'ldp:BasicContainer'],
@@ -108,6 +110,7 @@ describe('Binary handling of LDP server', () => {
       status: 404
     });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(fetchServer(urlJoin(CONFIG.HOME_URL, 'files'))).resolves.toMatchObject({
       json: {
         '@type': ['ldp:Container', 'ldp:BasicContainer'],

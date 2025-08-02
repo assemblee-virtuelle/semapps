@@ -13,12 +13,17 @@ const Schema = defineAction({
     fullPath: { type: 'string', optional: true },
     name: { type: 'string', optional: true },
     accept: { type: 'string', optional: true },
+    // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
     acceptedTypes: { type: 'multi', rules: [{ type: 'array' }, { type: 'string' }], optional: true },
     shapeTreeUri: { type: 'string', optional: true },
     excludeFromMirror: { type: 'boolean', optional: true },
+    // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: true; }' is not ... Remove this comment to see the full error message
     activateTombstones: { type: 'boolean', default: true },
+    // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
     permissions: { type: 'multi', rules: [{ type: 'object' }, { type: 'function' }], optional: true },
+    // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
     newResourcesPermissions: { type: 'multi', rules: [{ type: 'object' }, { type: 'function' }], optional: true },
+    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     controlledActions: { type: 'object', optional: true },
     readOnly: { type: 'boolean', optional: true },
     typeIndex: { type: 'string', optional: true }
@@ -37,6 +42,7 @@ const Schema = defineAction({
         const [shapeType] = await ctx.call('shacl.getTypes', { resourceUri: shapeUri });
         options.acceptedTypes = shapeType;
       } catch (e) {
+        // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
         throw new Error(`Could not get type from shape ${options.shapeTreeUri}. Error: ${e.message}`);
       }
     }

@@ -263,6 +263,7 @@ describe('LDP container tests', () => {
     });
 
     // Container should now be empty
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await waitForExpect(async () => {
       const container = await broker.call('ldp.container.get', {
         containerUri: `${CONFIG.HOME_URL}resources`,

@@ -17,6 +17,7 @@ afterAll(async () => {
 });
 
 describe('LDP handling through API', () => {
+  // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
   const containerUri = urlJoin(CONFIG.HOME_URL, 'resources');
   let resourceUri: any;
   let subContainerUri: any;
@@ -259,6 +260,7 @@ describe('LDP handling through API', () => {
 
     subContainerUri = headers.get('Location');
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(subContainerUri).toBe(urlJoin(CONFIG.HOME_URL, 'resources', 'sub-resources'));
 
     await expect(fetchServer(subContainerUri)).resolves.toMatchObject({
@@ -334,6 +336,7 @@ describe('LDP handling through API', () => {
       status: 204
     });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await waitForExpect(async () => {
       await expect(fetchServer(subContainerUri)).resolves.toMatchObject({
         status: 404

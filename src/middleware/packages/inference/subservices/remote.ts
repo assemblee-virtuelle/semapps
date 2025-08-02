@@ -80,6 +80,7 @@ const InferenceRemoteSchema = {
               }
             } catch (e) {
               this.logger.warn(
+                // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
                 `Error while connecting to remove server for offering inverse relationship: ${e.message}`
               );
             }
@@ -124,10 +125,12 @@ const InferenceRemoteSchema = {
         return { match, dereferencedActivity };
       },
       async onReceive(ctx: any, activity: any, recipientUri: any) {
+        // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ matc... Remove this comment to see the full error message
         if (this.settings.acceptFromRemoteServers && recipientUri === this.relayActor.id) {
           const relationship = activity.object.object;
           if (relationship.subject && relationship.relationship && relationship.object) {
             if (await ctx.call('ldp.remote.isRemote', { resourceUri: relationship.subject })) {
+              // @ts-expect-error TS(2339): Property 'logger' does not exist on type '{ match(... Remove this comment to see the full error message
               this.logger.warn('Attempt at offering an inverse relationship on a remote resource. Aborting...');
               return;
             }
@@ -158,6 +161,7 @@ const InferenceRemoteSchema = {
               webId: 'system'
             });
 
+            // @ts-expect-error TS(2339): Property 'broker' does not exist on type '{ match(... Remove this comment to see the full error message
             if (this.broker.cacher) {
               await ctx.call('ldp.cache.invalidateResource', { resourceUri: relationship.subject });
             }

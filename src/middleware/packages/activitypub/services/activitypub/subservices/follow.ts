@@ -147,6 +147,7 @@ const FollowService = {
         const { '@context': context, ...activityObject } = activity;
         const actor = await ctx.call('activitypub.actor.get', { actorUri: activity.object });
 
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
         await this.actions.addFollower(
           {
             follower: activity.actor,
@@ -174,6 +175,7 @@ const FollowService = {
         }
       },
       async onReceive(ctx: any, activity: any) {
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
         await this.actions.addFollower(
           {
             follower: activity.object.actor,
@@ -191,6 +193,7 @@ const FollowService = {
         }
       },
       async onEmit(ctx: any, activity: any) {
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
         await this.actions.removeFollower(
           {
             follower: activity.object.actor || activity.actor,
@@ -200,6 +203,7 @@ const FollowService = {
         );
       },
       async onReceive(ctx: any, activity: any) {
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
         await this.actions.removeFollower(
           {
             follower: activity.object.actor || activity.actor,
@@ -220,6 +224,7 @@ const FollowService = {
         }
       },
       async onReceive(ctx: any, activity: any) {
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
         await this.actions.removeFollower(
           {
             follower: activity.object.object.actor || activity.actor,

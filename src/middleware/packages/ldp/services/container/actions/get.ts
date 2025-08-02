@@ -12,8 +12,11 @@ const Schema = defineAction({
     containerUri: { type: 'string', optional: true },
     webId: { type: 'string', optional: true },
     accept: { type: 'string', optional: true },
+    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     filters: { type: 'object', optional: true },
+    // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
     doNotIncludeResources: { type: 'boolean', default: false },
+    // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
     jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
   },
   cache: {
@@ -22,6 +25,7 @@ const Schema = defineAction({
   async handler(ctx) {
     const { containerUri, filters, doNotIncludeResources, jsonContext } = ctx.params;
     let { webId } = ctx.params;
+    // @ts-expect-error
     webId = webId || ctx.meta.webId || 'anon';
 
     const { accept } = {
@@ -49,6 +53,7 @@ const Schema = defineAction({
 
     if (Object.keys(containerResults).length === 1 && containerResults['@context']) {
       throw new MoleculerError(
+        // @ts-expect-error
         `Container not found ${containerUri} (webId ${webId} / dataset ${ctx.meta.dataset})`,
         404,
         'NOT_FOUND'
@@ -103,6 +108,7 @@ const Schema = defineAction({
             }
           } catch (e) {
             // Ignore a resource if it is not found
+            // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
             if (e.name !== 'MoleculerError') throw e;
           }
           return [];

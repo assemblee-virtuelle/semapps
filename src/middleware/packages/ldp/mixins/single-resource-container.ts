@@ -90,18 +90,21 @@ const Schema = {
     before: {
       async get(ctx) {
         if (!ctx.params.resourceUri) {
+          // @ts-expect-error TS(2339): Property 'getResourceUri' does not exist on type '... Remove this comment to see the full error message
           ctx.params.resourceUri = await this.actions.getResourceUri({ webId: ctx.params.webId }, { parentCtx: ctx });
           if (!ctx.params.resourceUri) throw new MoleculerError('Resource not found', 404, 'NOT_FOUND');
         }
       },
       async patch(ctx) {
         if (!ctx.params.resourceUri) {
+          // @ts-expect-error TS(2339): Property 'getResourceUri' does not exist on type '... Remove this comment to see the full error message
           ctx.params.resourceUri = await this.actions.getResourceUri({ webId: ctx.params.webId }, { parentCtx: ctx });
           if (!ctx.params.resourceUri) throw new MoleculerError('Resource not found', 404, 'NOT_FOUND');
         }
       },
       async put(ctx) {
         if (!ctx.params.resourceUri) {
+          // @ts-expect-error TS(2339): Property 'getResourceUri' does not exist on type '... Remove this comment to see the full error message
           ctx.params.resourceUri = await this.actions.getResourceUri({ webId: ctx.params.webId }, { parentCtx: ctx });
           if (!ctx.params.resourceUri) throw new MoleculerError('Resource not found', 404, 'NOT_FOUND');
         }
@@ -111,8 +114,11 @@ const Schema = {
   events: {
     'auth.registered': defineServiceEvent({
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
         if (this.settings.podProvider) {
+          // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
           const { webId } = ctx.params;
+          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
           await this.actions.initializeResource({ webId });
         }
       }

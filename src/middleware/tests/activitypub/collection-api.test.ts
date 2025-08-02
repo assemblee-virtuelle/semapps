@@ -18,6 +18,7 @@ afterAll(async () => {
 
 describe('Collections API', () => {
   const items: any = [];
+  // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
   const collectionsContainersUri = urlJoin(CONFIG.HOME_URL, 'as/collection');
   let collectionUri: any;
   let localContext: any;
@@ -26,6 +27,7 @@ describe('Collections API', () => {
     for (let i = 0; i < 10; i++) {
       items.push(
         await broker.call('ldp.container.post', {
+          // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
           containerUri: urlJoin(CONFIG.HOME_URL, 'as/object'),
           resource: {
             '@context': 'https://www.w3.org/ns/activitystreams',
@@ -171,6 +173,7 @@ describe('Collections API', () => {
         type: 'CollectionPage',
         partOf: paginatedCollectionUri,
         prev: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[7])}`,
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         items: expect.arrayContaining([items[8], items[9]])
       }
     });

@@ -1,5 +1,7 @@
 import { promises as fsPromises } from 'fs';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'sani... Remove this comment to see the full error message
 import sanitizeHtml from 'sanitize-html';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'goog... Remove this comment to see the full error message
 import googlelibphonenumberModule from 'google-libphonenumber';
 
 const PNF = googlelibphonenumberModule.PhoneNumberFormat;
@@ -26,6 +28,7 @@ const frenchAddressSearch = async (query: any) => {
 
   if (response.ok) {
     const json = await response.json();
+    // @ts-expect-error TS(18046): 'json' is of type 'unknown'.
     return json.features[0];
   }
   return false;
@@ -39,6 +42,7 @@ const frenchAddressReverseSearch = async (lat: any, lon: any) => {
 
   if (response.ok) {
     const json = await response.json();
+    // @ts-expect-error TS(18046): 'json' is of type 'unknown'.
     return json.features.length > 0 ? json.features[0] : false;
   }
   return false;

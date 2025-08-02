@@ -28,6 +28,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
       const { webId } = await broker[i].call('auth.signup', require(`./data/actor${i}.json`));
       actors[i] = await broker[i].call('activitypub.actor.awaitCreateComplete', { actorUri: webId });
       actors[i].call = (actionName: any, params: any, options = {}) =>
+        // @ts-expect-error TS(2339): Property 'meta' does not exist on type '{}'.
         broker[i].call(actionName, params, { ...options, meta: { ...options.meta, webId } });
     }
 
@@ -55,12 +56,14 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
       to: alice.id
     });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await waitForExpect(async () => {
       await expect(
         alice.call('activitypub.collection.includes', { collectionUri: alice.followers, itemUri: bob.id })
       ).resolves.toBeTruthy();
     });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await waitForExpect(async () => {
       const inboxMenu = await bob.call('activitypub.collection.get', {
         resourceUri: bob.inbox,
@@ -130,6 +133,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
       to: [alice.id, `${bob.id}/followers`]
     });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await waitForExpect(async () => {
       await expect(
         alice.call('activitypub.collection.includes', { collectionUri: alice.followers, itemUri: bob.id })
