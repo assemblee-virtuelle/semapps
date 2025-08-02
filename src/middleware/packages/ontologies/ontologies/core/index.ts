@@ -13,4 +13,21 @@ import skos from './skos.json' with { type: 'json' };
 import vcard from './vcard.json' with { type: 'json' };
 import voidOntology from './void.json' with { type: 'json' };
 import xsd from './xsd.json' with { type: 'json' };
-export { acl, as, cred, dc, did, foaf, ldp, rdf, rdfs, sec, semapps, skos, vcard, voidOntology as void, xsd };
+export {
+  acl,
+  as,
+  cred,
+  dc,
+  did,
+  foaf,
+  ldp,
+  rdf,
+  rdfs,
+  sec,
+  semapps,
+  skos,
+  vcard,
+  voidOntology as void,
+  xsd,
+  voidOntology
+};
