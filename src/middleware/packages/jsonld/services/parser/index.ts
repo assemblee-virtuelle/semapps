@@ -3,11 +3,9 @@ import N3 from 'n3';
 import { JsonLdParser } from 'jsonld-streaming-parser';
 import { JsonLdSerializer } from 'jsonld-streaming-serializer';
 import streamifyString from 'streamify-string';
-import rdfparseModule from 'rdf-parse';
+import rdfParser from 'rdf-parse';
 import { ServiceSchema, defineAction } from 'moleculer';
 import { arrayOf, isURI } from '../../utils/utils.ts';
-
-const rdfParser = rdfparseModule.default;
 
 const JsonldParserSchema = {
   name: 'jsonld.parser' as const,
