@@ -5,7 +5,7 @@ import { fetchServer } from '../utils.ts';
 import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
 jest.setTimeout(20000);
-let broker;
+let broker: any;
 
 beforeAll(async () => {
   broker = await initialize();
@@ -38,7 +38,7 @@ describe('middleware CRUD resource with perms', () => {
     }
   }, 20000);
 
-  let resourceUri;
+  let resourceUri: any;
 
   test('A call to ldp.container.post creates some default permissions', async () => {
     try {

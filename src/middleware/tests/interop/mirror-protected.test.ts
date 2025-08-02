@@ -4,8 +4,8 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import { ACTIVITY_TYPES } from '@semapps/activitypub';
 import initialize from './initialize.ts';
 jest.setTimeout(50000);
-let server1;
-let server2;
+let server1: any;
+let server2: any;
 const relay1 = 'http://localhost:3001/as/actor/relay';
 const relay2 = 'http://localhost:3002/as/actor/relay';
 
@@ -26,8 +26,8 @@ afterAll(async () => {
 });
 
 describe('Resource on server1 is shared with user on server2', () => {
-  let resourceUri;
-  let user2;
+  let resourceUri: any;
+  let user2: any;
 
   test('Server2 follow server1', async () => {
     await waitForExpect(async () => {

@@ -3,7 +3,7 @@ import { quad, namedNode, blankNode, literal } from 'rdf-data-model';
 import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
 jest.setTimeout(50000);
-let broker;
+let broker: any;
 
 beforeAll(async () => {
   broker = await initialize();
@@ -14,8 +14,8 @@ afterAll(async () => {
 });
 
 describe('Resource CRUD operations', () => {
-  let project1;
-  let project2;
+  let project1: any;
+  let project2: any;
 
   test('Post resource in container', async () => {
     const resourceUri = await broker.call('ldp.container.post', {

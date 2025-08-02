@@ -3,7 +3,7 @@ import initialize from './initialize.ts';
 jest.setTimeout(20000);
 const ALICE_WEBID = 'http://localhost:3000/alice';
 const BOB_WEBID = 'http://localhost:3000/bob';
-let broker;
+let broker: any;
 
 beforeAll(async () => {
   broker = await initialize();
@@ -15,7 +15,7 @@ afterAll(async () => {
 
 describe('Test various actions of the webacl.resource service', () => {
   const containerUri = `${CONFIG.HOME_URL}resources2`; // Container with no default permissions
-  let resourceUri;
+  let resourceUri: any;
 
   test('Alice see her rights correctly', async () => {
     resourceUri = await broker.call('ldp.container.post', {
