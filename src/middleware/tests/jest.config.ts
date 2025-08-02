@@ -2,9 +2,9 @@
  * For a detailed explanation regarding each configuration property, visit:
  * https://jestjs.io/docs/configuration
  */
+import { Config } from 'jest';
 
-/** @type {import("jest").Config} * */
-const config = {
+const config: Config = {
   // babel-jest
   extensionsToTreatAsEsm: ['.ts'],
   transformIgnorePatterns: [],
