@@ -195,7 +195,10 @@ class TripleStoreAdapter {
               <${sanitizeSparqlUri(_id)}> ?p ?o .
             }
             INSERT {
-              <${sanitizeSparqlUri(_id)}> a <${this.ontology + this.type}> .
+              <${sanitizeSparqlUri(_id)}> a <${
+                // @ts-expect-error TS(2339): Property 'ontology' does not exist on type 'Triple... Remove this comment to see the full error message
+                this.ontology + this.type
+              }> .
               ${
                 newData
                   ? Object.keys(newData)
