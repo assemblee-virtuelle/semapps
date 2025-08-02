@@ -9,6 +9,9 @@
     "moleculer-db": "^0.8.16",
     "node-fetch": "^2.6.6"
   },
+  "devDependencies": {
+    "moleculer": "^0.14.35"
+  },
   "publishConfig": {
     "access": "public"
   },
