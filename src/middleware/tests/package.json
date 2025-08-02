@@ -48,6 +48,7 @@
     "@babel/preset-typescript": "^7.27.1",
     "@jest/globals": "^30.0.5",
     "@types/jest": "^30.0.0",
+    "@types/ioredis": "^4.27.0",
     "babel-jest": "^30.0.5",
     "babel-plugin-transform-import-meta": "^2.3.3",
     "babel-preset-vite": "^1.1.3"
