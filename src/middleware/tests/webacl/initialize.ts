@@ -4,8 +4,8 @@ import { CoreService } from '@semapps/core';
 import { pair } from '@semapps/ontologies';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { AuthLocalService } from '@semapps/auth';
-import { clearDataset } from '../utils.ts';
 import { fileURLToPath } from 'url';
+import { clearDataset } from '../utils.ts';
 import * as CONFIG from '../config.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

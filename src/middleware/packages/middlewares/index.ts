@@ -1,7 +1,9 @@
-const { MoleculerError } = require('moleculer').Errors;
 import { negotiateTypeMime, MIME_TYPES } from '@semapps/mime-types';
 import Busboy from 'busboy';
 import streams from 'memory-streams';
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 // Put requested URL and query string in meta so that services may use them independently
 // Set here https://github.com/moleculerjs/moleculer-web/blob/c6ec80056a64ea15c57d6e2b946ce978d673ae92/src/index.js#L151-L161

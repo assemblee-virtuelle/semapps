@@ -1,6 +1,6 @@
+import { ServiceSchema, defineAction } from 'moleculer';
 import getAction from './actions/get.ts';
 import registerAction from './actions/register.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
 
 const LdpLinkHeaderSchema = {
   name: 'ldp.link-header' as const,

@@ -1,9 +1,9 @@
 import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { arrayOf } from '@semapps/ldp';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 import { ACTOR_TYPES } from '../constants.ts';
 import { getSlugFromUri, getContainerFromUri } from '../utils.ts';
-import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 
 const BotMixin = {
   settings: {

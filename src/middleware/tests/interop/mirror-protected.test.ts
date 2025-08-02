@@ -3,6 +3,7 @@ import waitForExpect from 'wait-for-expect';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { ACTIVITY_TYPES } from '@semapps/activitypub';
 import initialize from './initialize.ts';
+
 jest.setTimeout(50000);
 let server1: any;
 let server2: any;

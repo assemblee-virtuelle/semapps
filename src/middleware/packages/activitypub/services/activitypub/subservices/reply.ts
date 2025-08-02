@@ -1,9 +1,9 @@
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
+import { ServiceSchema, defineAction } from 'moleculer';
 import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
 import { ACTIVITY_TYPES, OBJECT_TYPES } from '../../../constants.ts';
 import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
 import matchActivity from '../../../utils/matchActivity.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
 
 const ReplyService = {
   name: 'activitypub.reply' as const,
@@ -137,11 +137,11 @@ const ReplyService = {
         const aclGroupBase = `${origin}/_groups${pathname}`; // URL of type http://localhost:3000/_groups/alice
         return (
           uri === actorUri ||
-          uri.startsWith(actorUri + '/') ||
+          uri.startsWith(`${actorUri}/`) ||
           uri === aclBase ||
-          uri.startsWith(aclBase + '/') ||
+          uri.startsWith(`${aclBase}/`) ||
           uri === aclGroupBase ||
-          uri.startsWith(aclGroupBase + '/')
+          uri.startsWith(`${aclGroupBase}/`)
         );
       } else {
         return uri.startsWith(this.settings.baseUri);

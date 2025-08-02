@@ -1,7 +1,7 @@
 import path from 'path';
 import urlJoin from 'url-join';
-import getRoute from './getRoute.ts';
 import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import getRoute from './getRoute.ts';
 
 const SparqlEndpointService = {
   name: 'sparqlEndpoint' as const,

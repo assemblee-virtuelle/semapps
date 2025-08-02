@@ -65,7 +65,8 @@ const ObjectService = {
             });
 
             // TODO: attach to all matching containers
-            let container, containerUri;
+            let container;
+            let containerUri;
 
             if (this.settings.podProvider) {
               // If this is a Pod provider, find the container with the type-registrations service

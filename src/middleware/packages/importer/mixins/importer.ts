@@ -3,8 +3,8 @@ import cronParser from 'cron-parser';
 import { promises as fsPromises } from 'fs';
 import { ACTIVITY_TYPES, PUBLIC_URI } from '@semapps/activitypub';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { isDir } from '../utils.ts';
 import { ServiceSchema, defineAction } from 'moleculer';
+import { isDir } from '../utils.ts';
 
 const Schema = {
   settings: {

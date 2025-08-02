@@ -8,6 +8,7 @@ import MobilizonImporterMixin from './mixins/mobilizon.ts';
 import PrestaShopImporterMixin from './mixins/prestashop.ts';
 import YesWikiImporterMixin from './mixins/yeswiki.ts';
 import WordpressImporterMixin from './mixins/wordpress.ts';
+
 export * from './utils.ts';
 export {
   ImporterMixin,

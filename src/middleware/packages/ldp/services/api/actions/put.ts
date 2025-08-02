@@ -1,4 +1,6 @@
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 export default async function post(ctx) {
   const { username, slugParts, body, ...resource } = ctx.params;

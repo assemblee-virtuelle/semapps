@@ -1,4 +1,5 @@
 import uriSchemes from './uriSchemes.ts';
+
 const isURL = value => (typeof value === 'string' || value instanceof String) && value.startsWith('http');
 
 /** If the value starts with `http` or `urn:` */

@@ -1,5 +1,7 @@
-const { MoleculerError } = require('moleculer').Errors;
 import sparqljsModule from 'sparqljs';
+
+const { MoleculerError } = require('moleculer').Errors;
+
 const SparqlParser = sparqljsModule.Parser;
 const parser = new SparqlParser();
 const ACCEPTED_OPERATIONS = ['insert', 'delete'];

@@ -1,7 +1,6 @@
 import { arrayOf } from '@semapps/ldp';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { hasType } from '../utils.ts';
-import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 
 const GroupsManagerSchema = {
   name: 'groups-manager' as const,

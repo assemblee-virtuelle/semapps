@@ -1,4 +1,5 @@
 import noGraphCredentialContext from './utils/noGraphCredentialContext.ts';
+
 const VC_API_PATH = '/vc/v0.3';
 
 /**

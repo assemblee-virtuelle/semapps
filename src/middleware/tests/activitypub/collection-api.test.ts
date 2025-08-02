@@ -4,6 +4,7 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import { fetchServer } from '../utils.ts';
 import initialize from './initialize.ts';
 import * as CONFIG from '../config.ts';
+
 jest.setTimeout(50000);
 let broker: any;
 

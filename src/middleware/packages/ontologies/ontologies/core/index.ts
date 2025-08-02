@@ -13,6 +13,7 @@ import skos from './skos.json' with { type: 'json' };
 import vcard from './vcard.json' with { type: 'json' };
 import voidOntology from './void.json' with { type: 'json' };
 import xsd from './xsd.json' with { type: 'json' };
+
 export {
   acl,
   as,

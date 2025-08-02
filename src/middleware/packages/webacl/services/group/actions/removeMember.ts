@@ -1,7 +1,8 @@
-const { MoleculerError } = require('moleculer').Errors;
 import urlJoin from 'url-join';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import { defineAction } from 'moleculer';
+
+const { MoleculerError } = require('moleculer').Errors;
 
 export const api = async function api(ctx) {
   if (!ctx.params.deleteUserUri)

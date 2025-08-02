@@ -2,8 +2,8 @@ import urlJoin from 'url-join';
 import { quad, namedNode } from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { getWebIdFromUri, arrayOf } from '@semapps/ldp';
-import { ACTOR_TYPES, FULL_ACTOR_TYPES, AS_PREFIX } from '../../../constants.ts';
 import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { ACTOR_TYPES, FULL_ACTOR_TYPES, AS_PREFIX } from '../../../constants.ts';
 
 const CollectionsRegistryService = {
   name: 'activitypub.collections-registry' as const,
@@ -246,11 +246,11 @@ const CollectionsRegistryService = {
         const aclGroupBase = `${origin}/_groups${pathname}`; // URL of type http://localhost:3000/_groups/alice
         return (
           uri === actorUri ||
-          uri.startsWith(actorUri + '/') ||
+          uri.startsWith(`${actorUri}/`) ||
           uri === aclBase ||
-          uri.startsWith(aclBase + '/') ||
+          uri.startsWith(`${aclBase}/`) ||
           uri === aclGroupBase ||
-          uri.startsWith(aclGroupBase + '/')
+          uri.startsWith(`${aclGroupBase}/`)
         );
       } else {
         return uri.startsWith(this.settings.baseUri);

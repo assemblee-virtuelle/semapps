@@ -1,6 +1,6 @@
 import { MIME_TYPES } from '@semapps/mime-types';
-import { isObject, arrayOf } from '../utils.ts';
 import { ServiceSchema } from 'moleculer';
+import { isObject, arrayOf } from '../utils.ts';
 
 /**
  * @description MoleculerJS mixin to be applied on the ControlledContainerMixin within a Semapps project.

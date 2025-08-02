@@ -1,10 +1,10 @@
 import { ContextParser } from 'jsonld-context-parser';
+import { ServiceSchema, defineAction } from 'moleculer';
 import getAction from './actions/get.ts';
 import getLocalAction from './actions/getLocal.ts';
 import mergeAction from './actions/merge.ts';
 import parseAction from './actions/parse.ts';
 import validateAction from './actions/validate.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
 
 const JsonldContextSchema = {
   name: 'jsonld.context' as const,

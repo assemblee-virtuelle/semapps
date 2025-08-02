@@ -4,8 +4,8 @@ import fetch from 'node-fetch';
 import { generateKeyPair } from 'crypto';
 import { namedNode, blankNode, literal, triple } from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { KEY_TYPES } from '../constants.ts';
 import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { KEY_TYPES } from '../constants.ts';
 
 /**
  * Deprecated Service.

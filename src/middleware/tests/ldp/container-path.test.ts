@@ -1,4 +1,5 @@
 import initialize from './initialize.ts';
+
 jest.setTimeout(10000);
 let broker: any;
 

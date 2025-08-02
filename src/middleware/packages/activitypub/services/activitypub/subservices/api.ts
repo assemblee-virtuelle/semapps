@@ -14,8 +14,8 @@ import {
   saveDatasetMeta
 } from '@semapps/middlewares';
 
-import { FULL_ACTOR_TYPES } from '../../../constants.ts';
 import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { FULL_ACTOR_TYPES } from '../../../constants.ts';
 
 const ApiService = {
   name: 'activitypub.api' as const,

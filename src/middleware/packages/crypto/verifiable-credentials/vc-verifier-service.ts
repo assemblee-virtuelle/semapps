@@ -1,14 +1,14 @@
-const {
-  purposes: { AuthenticationProofPurpose }
-} = require('jsonld-signatures');
-
 import { cryptosuite } from '@digitalbazaar/eddsa-rdfc-2022-cryptosuite';
 import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
 import vc from '@digitalbazaar/vc';
+import { ServiceSchema, defineAction } from 'moleculer';
 import VCCapabilityPresentationProofPurpose from './VcCapabilityPresentationProofPurpose.ts';
 import VCPurpose from './VcPurpose.ts';
 import { arrayOf } from '../utils/utils.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
+
+const {
+  purposes: { AuthenticationProofPurpose }
+} = require('jsonld-signatures');
 
 /**
  * Service for verifying and creating Verifiable Presentations
