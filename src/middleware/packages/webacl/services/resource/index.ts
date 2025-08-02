@@ -1,17 +1,17 @@
 import urlJoin from 'url-join';
-import { ServiceSchema, defineAction } from 'moleculer';
-import addRights from './actions/addRights.ts';
-import awaitReadRight from './actions/awaitReadRight.ts';
-import deleteAllRights from './actions/deleteAllRights.ts';
-import deleteAllUserRights from './actions/deleteAllUserRights.ts';
-import getLink from './actions/getLink.ts';
-import getRights from './actions/getRights.ts';
-import getUsersWithReadRights from './actions/getUsersWithReadRights.ts';
-import hasRights from './actions/hasRights.ts';
-import isPublic from './actions/isPublic.ts';
-import refreshContainersRights from './actions/refreshContainersRights.ts';
-import removeRights from './actions/removeRights.ts';
-import setRights from './actions/setRights.ts';
+import { ServiceSchema, defineAction, Errors } from 'moleculer';
+import * as addRights from './actions/addRights.ts';
+import * as awaitReadRight from './actions/awaitReadRight.ts';
+import * as deleteAllRights from './actions/deleteAllRights.ts';
+import * as deleteAllUserRights from './actions/deleteAllUserRights.ts';
+import * as getLink from './actions/getLink.ts';
+import * as getRights from './actions/getRights.ts';
+import * as getUsersWithReadRights from './actions/getUsersWithReadRights.ts';
+import * as hasRights from './actions/hasRights.ts';
+import * as isPublic from './actions/isPublic.ts';
+import * as refreshContainersRights from './actions/refreshContainersRights.ts';
+import * as removeRights from './actions/removeRights.ts';
+import * as setRights from './actions/setRights.ts';
 
 import {
   getAuthorizationNode,
@@ -26,7 +26,7 @@ import {
   getDatasetFromUri
 } from '../../utils.ts';
 
-const { MoleculerError } = require('moleculer').Errors;
+const { MoleculerError } = Errors;
 
 const filterAclsOnlyAgent = acl => agentPredicates.includes(acl.p.value);
 

@@ -2,7 +2,9 @@ import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 import ControlledContainerMixin from './controlled-container.ts';
 import { delay } from '../utils.ts';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 const Schema = {
   mixins: [ControlledContainerMixin],

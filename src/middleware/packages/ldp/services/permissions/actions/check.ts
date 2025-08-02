@@ -1,6 +1,8 @@
 import { defineAction } from 'moleculer';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 /**
  * Calls "has" action and throws error if no authorization was granted

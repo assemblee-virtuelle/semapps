@@ -2,7 +2,9 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import { v4 as uuidv4 } from 'uuid';
 import mime from 'mime-types';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 export default async function post(ctx) {
   try {

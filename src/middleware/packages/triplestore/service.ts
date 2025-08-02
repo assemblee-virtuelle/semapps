@@ -13,7 +13,9 @@ import tripleExist from './actions/tripleExist.ts';
 import DatasetService from './subservices/dataset.ts';
 
 const SparqlGenerator = sparqljsModule.Generator;
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 const TripleStoreService = {
   name: 'triplestore' as const,

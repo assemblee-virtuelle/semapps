@@ -4,7 +4,9 @@ import { objectIdToCurrent, collectionPermissionsWithAnonRead } from '../../../u
 import { ACTOR_TYPES } from '../../../constants.ts';
 import AwaitActivityMixin from '../../../mixins/await-activity.ts';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 /** @type {import('moleculer').ServiceSchema} */
 const InboxService = {

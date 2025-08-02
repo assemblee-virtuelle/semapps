@@ -1,7 +1,9 @@
 import { isMimeTypeMatching } from '@semapps/mime-types';
 import { ServiceSchema } from 'moleculer';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 const Schema = {
   settings: {

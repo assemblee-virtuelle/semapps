@@ -2,7 +2,9 @@ import { negotiateTypeMime, MIME_TYPES } from '@semapps/mime-types';
 import Busboy from 'busboy';
 import streams from 'memory-streams';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 const handledMimeTypes = [MIME_TYPES.JSON, MIME_TYPES.TURTLE, MIME_TYPES.TRIPLE, MIME_TYPES.SPARQL_UPDATE];
 

@@ -1,7 +1,9 @@
 import { defineAction } from 'moleculer';
 import { isMirror } from '../../../utils.ts';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 const checkTripleValidity = (triple, containerUri) => {
   if (triple.subject.value !== containerUri) {

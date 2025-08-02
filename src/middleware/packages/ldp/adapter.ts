@@ -1,6 +1,8 @@
 import urlJoin from 'url-join';
 
-const { ServiceSchemaError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { ServiceSchemaError } = Errors;
 
 class LdpAdapter {
   constructor({ resourceService = 'ldp.resource', containerService = 'ldp.container' } = {}) {

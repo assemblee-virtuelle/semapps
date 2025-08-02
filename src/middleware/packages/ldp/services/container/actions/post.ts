@@ -3,7 +3,9 @@ import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import { defineAction } from 'moleculer';
 import { cleanUndefined } from '../../../utils.ts';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 const Schema = defineAction({
   visibility: 'public',
