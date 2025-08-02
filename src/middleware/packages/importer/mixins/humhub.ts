@@ -1,7 +1,8 @@
 import urlJoin from 'url-join';
+import { ServiceSchema } from 'moleculer';
 import ImporterMixin from './importer.ts';
 import { convertToIsoString } from '../utils.ts';
-import { ServiceSchema } from 'moleculer';
+
 const allowedTypes = ['user', 'space', 'calendar', 'post'];
 
 const getSlugByUrl = url => {

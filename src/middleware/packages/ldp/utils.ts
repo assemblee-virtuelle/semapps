@@ -1,4 +1,5 @@
 import urlJoin from 'url-join';
+
 const regexPrefix = new RegExp('^@prefix ([\\w-]*: +<.*>) .', 'gm');
 const regexProtocolAndHostAndPort = new RegExp('^http(s)?:\\/\\/([\\w-\\.:]*)');
 

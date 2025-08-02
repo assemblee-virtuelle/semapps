@@ -2,6 +2,7 @@ import urlJoin from 'url-join';
 import waitForExpect from 'wait-for-expect';
 import { triple, namedNode } from '@rdfjs/data-model';
 import initialize from './initialize.ts';
+
 jest.setTimeout(100000);
 let server1: any;
 let server2: any;

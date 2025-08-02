@@ -1,10 +1,11 @@
 import path from 'path';
 import { Strategy } from 'passport-local';
+import { ServiceSchema, defineAction } from 'moleculer';
 import AuthMixin from '../mixins/auth.ts';
 import sendToken from '../middlewares/sendToken.ts';
-const { MoleculerError } = require('moleculer').Errors;
 import AuthMailService from './mail.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
+
+const { MoleculerError } = require('moleculer').Errors;
 
 /** @type {import('moleculer').ServiceSchema} */
 const AuthLocalService = {

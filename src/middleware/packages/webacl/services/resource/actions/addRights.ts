@@ -1,7 +1,7 @@
-const { MoleculerError } = require('moleculer').Errors;
 import { MIME_TYPES } from '@semapps/mime-types';
 import urlJoin from 'url-join';
 
+import { defineAction } from 'moleculer';
 import {
   getAclUriFromResourceUri,
   convertBodyToTriples,
@@ -11,7 +11,7 @@ import {
   FULL_AGENTCLASS_URI
 } from '../../../utils.ts';
 
-import { defineAction } from 'moleculer';
+const { MoleculerError } = require('moleculer').Errors;
 
 export const api = async function api(ctx) {
   const contentType = ctx.meta.headers['content-type'];

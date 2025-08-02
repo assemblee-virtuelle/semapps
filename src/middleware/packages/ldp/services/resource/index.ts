@@ -1,3 +1,4 @@
+import { ServiceSchema, defineAction } from 'moleculer';
 import awaitCreateCompleteAction from './actions/awaitCreateComplete.ts';
 import getAction from './actions/get.ts';
 import createAction from './actions/create.ts';
@@ -11,7 +12,6 @@ import getTypesAction from './actions/getTypes.ts';
 import uploadAction from './actions/upload.ts';
 import methods from './methods.ts';
 import { getDatasetFromUri } from '../../utils.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
 
 const LdpResourceSchema = {
   name: 'ldp.resource' as const,

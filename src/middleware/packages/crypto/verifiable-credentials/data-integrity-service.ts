@@ -1,17 +1,17 @@
 import jsigs from 'jsonld-signatures';
 
-const {
-  purposes: { AssertionProofPurpose }
-} = require('jsonld-signatures');
-
 import { cryptosuite } from '@digitalbazaar/eddsa-rdfc-2022-cryptosuite';
 import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
 
 /** @type {import('@digitalbazaar/ed25519-multikey')} */
 import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
 
-import { KEY_TYPES } from '../constants.ts';
 import { ServiceSchema, defineAction } from 'moleculer';
+import { KEY_TYPES } from '../constants.ts';
+
+const {
+  purposes: { AssertionProofPurpose }
+} = require('jsonld-signatures');
 
 /**
  * Data integrity service for signing objects using the [VC data integrity spec](https://www.w3.org/TR/vc-data-integrity/).

@@ -1,4 +1,5 @@
 import { defineAction } from 'moleculer';
+
 const { MoleculerError } = require('moleculer').Errors;
 
 function checkTriplesSubjectIsResource(triples, resourceUri) {

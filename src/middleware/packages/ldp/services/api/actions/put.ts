@@ -1,5 +1,6 @@
-const { MoleculerError } = require('moleculer').Errors;
 import { MIME_TYPES } from '@semapps/mime-types';
+
+const { MoleculerError } = require('moleculer').Errors;
 
 export default async function post(ctx) {
   let { username, slugParts, ...resource } = ctx.params;

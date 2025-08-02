@@ -1,5 +1,5 @@
-import { getContainerFromUri } from '../../../utils.ts';
 import { defineAction } from 'moleculer';
+import { getContainerFromUri } from '../../../utils.ts';
 
 const Schema = defineAction({
   visibility: 'public',

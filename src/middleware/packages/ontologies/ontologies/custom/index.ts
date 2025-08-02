@@ -7,4 +7,5 @@ import schema from './schema.json' with { type: 'json' };
 import skos from './skos.json' with { type: 'json' };
 import syreen from './syreen.json' with { type: 'json' };
 import tutor from './tutor.json' with { type: 'json' };
+
 export { mp, oasis, og, pair, petr, schema, skos, syreen, tutor };

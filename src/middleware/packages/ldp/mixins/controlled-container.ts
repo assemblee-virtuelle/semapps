@@ -1,5 +1,5 @@
-import { delay, getParentContainerUri } from '../utils.ts';
 import { ServiceSchema, defineAction } from 'moleculer';
+import { delay, getParentContainerUri } from '../utils.ts';
 
 const Schema = {
   settings: {

@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
-import { isURL } from '../utils.ts';
 import { defineAction } from 'moleculer';
+import { isURL } from '../utils.ts';
 
 const Schema = defineAction({
   visibility: 'public',

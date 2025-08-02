@@ -1,8 +1,9 @@
 import path from 'path';
 import fs from 'fs';
-const { MoleculerError } = require('moleculer').Errors;
-import { getSlugFromUri, getContainerFromUri } from '../../../utils.ts';
 import { defineAction } from 'moleculer';
+import { getSlugFromUri, getContainerFromUri } from '../../../utils.ts';
+
+const { MoleculerError } = require('moleculer').Errors;
 
 const Schema = defineAction({
   visibility: 'public',

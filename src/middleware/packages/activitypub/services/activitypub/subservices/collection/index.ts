@@ -1,9 +1,10 @@
-const { MoleculerError } = require('moleculer').Errors;
 import { ControlledContainerMixin, arrayOf, getDatasetFromUri } from '@semapps/ldp';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import { Errors as E } from 'moleculer-web';
-import getAction from './actions/get.ts';
 import { ServiceSchema, defineAction } from 'moleculer';
+import getAction from './actions/get.ts';
+
+const { MoleculerError } = require('moleculer').Errors;
 
 const CollectionService = {
   name: 'activitypub.collection' as const,

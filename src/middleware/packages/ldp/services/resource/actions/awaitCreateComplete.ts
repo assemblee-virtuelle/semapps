@@ -1,5 +1,5 @@
-import { waitForResource } from '../../../utils.ts';
 import { defineAction } from 'moleculer';
+import { waitForResource } from '../../../utils.ts';
 
 /** @type {import('moleculer').ServiceActionsSchema} */
 const Schema = defineAction({

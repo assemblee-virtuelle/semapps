@@ -47,11 +47,11 @@ const SynchronizerService = {
         const aclGroupBase = `${origin}/_groups${pathname}`; // URL of type http://localhost:3000/_groups/alice
         return (
           url === actorUri ||
-          url.startsWith(actorUri + '/') ||
+          url.startsWith(`${actorUri}/`) ||
           url === aclBase ||
-          url.startsWith(aclBase + '/') ||
+          url.startsWith(`${aclBase}/`) ||
           url === aclGroupBase ||
-          url.startsWith(aclGroupBase + '/')
+          url.startsWith(`${aclGroupBase}/`)
         );
       } else {
         const { origin } = new URL(actorUri);

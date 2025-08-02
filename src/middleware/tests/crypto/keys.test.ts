@@ -2,6 +2,7 @@ import { KEY_TYPES } from '@semapps/crypto';
 import { arrayOf, waitForResource } from '@semapps/ldp';
 import { wait } from '../utils.ts';
 import initialize from './initialize.ts';
+
 jest.setTimeout(100_000);
 
 /** @type {import('moleculer').ServiceBroker} */

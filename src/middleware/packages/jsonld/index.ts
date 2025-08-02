@@ -4,6 +4,7 @@ import JsonLdContextService from './services/context/index.ts';
 import JsonLdDocumentLoaderService from './services/document-loader/index.ts';
 import JsonLdParserService from './services/parser/index.ts';
 import uriSchemes from './utils/uriSchemes.ts';
+
 export {
   JsonLdService,
   JsonLdApiService,
@@ -12,4 +13,4 @@ export {
   JsonLdParserService,
   uriSchemes
 };
-export const isRegisteredURI = require('./utils/utils').isRegisteredURI;
+export const { isRegisteredURI } = require('./utils/utils');

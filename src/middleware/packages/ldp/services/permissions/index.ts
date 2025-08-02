@@ -1,7 +1,7 @@
+import { ServiceSchema, defineAction } from 'moleculer';
 import addAuthorizerAction from './actions/addAuthorizer.ts';
 import checkAction from './actions/check.ts';
 import hasAction from './actions/has.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
 
 const PermissionsSchema = {
   name: 'permissions' as const,

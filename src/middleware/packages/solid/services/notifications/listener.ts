@@ -4,11 +4,12 @@ import fetch from 'node-fetch';
 import LinkHeader from 'http-link-header';
 import { v4 as uuidv4 } from 'uuid';
 import DbService from 'moleculer-db';
-const { MoleculerError } = require('moleculer').Errors;
 import { parseHeader, parseRawBody, negotiateContentType, parseJson } from '@semapps/middlewares';
 import { notify } from '@semapps/ontologies';
 import { TripleStoreAdapter } from '@semapps/triplestore';
 import { ServiceSchema, defineAction } from 'moleculer';
+
+const { MoleculerError } = require('moleculer').Errors;
 
 const SolidNotificationsListenerSchema = {
   name: 'solid-notifications.listener' as const,

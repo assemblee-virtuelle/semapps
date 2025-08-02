@@ -1,9 +1,9 @@
 import fetch from 'node-fetch';
 import { namedNode, literal, triple, variable } from '@rdfjs/data-model';
 import { arrayOf } from '@semapps/ldp';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 import { ACTOR_TYPES, AS_PREFIX } from '../../../constants.ts';
 import { getSlugFromUri, waitForResource } from '../../../utils.ts';
-import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 
 /** @type {import('moleculer').ServiceSchema} */
 const ActorService = {

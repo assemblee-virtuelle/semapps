@@ -1,5 +1,6 @@
 import QueueMixin from 'moleculer-bull';
 import { as, sec } from '@semapps/ontologies';
+import { ServiceSchema } from 'moleculer';
 import ActorService from './subservices/actor.ts';
 import ActivityService from './subservices/activity.ts';
 import ApiService from './subservices/api.ts';
@@ -14,7 +15,6 @@ import ReplyService from './subservices/reply.ts';
 import ShareService from './subservices/share.ts';
 import SideEffectsService from './subservices/side-effects.ts';
 import FakeQueueMixin from '../../mixins/fake-queue.ts';
-import { ServiceSchema } from 'moleculer';
 
 const ActivityPubService = {
   name: 'activitypub' as const,
