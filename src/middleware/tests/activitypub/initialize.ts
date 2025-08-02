@@ -18,7 +18,7 @@ const containers = [
   }
 ];
 
-const initialize = async (port, mainDataset, accountsDataset, queueServiceDb = 0) => {
+const initialize = async (port: any, mainDataset: any, accountsDataset: any, queueServiceDb = 0) => {
   const baseUrl = `http://localhost:${port}/`;
   const queueServiceUrl = `redis://localhost:6379/${queueServiceDb}`;
 

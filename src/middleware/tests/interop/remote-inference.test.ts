@@ -2,8 +2,8 @@ import { triple, namedNode } from 'rdf-data-model';
 import waitForExpect from 'wait-for-expect';
 import initialize from './initialize.ts';
 jest.setTimeout(100000);
-let server1;
-let server2;
+let server1: any;
+let server2: any;
 
 beforeAll(async () => {
   server1 = await initialize(3001, 'testData1', 'settings1', 1);
@@ -16,8 +16,8 @@ afterAll(async () => {
 });
 
 describe('An inference is added between server1 et server2', () => {
-  let resourceUri1;
-  let resourceUri2;
+  let resourceUri1: any;
+  let resourceUri2: any;
 
   test('An remote relationship is added on create', async () => {
     resourceUri1 = await server1.call('ldp.container.post', {

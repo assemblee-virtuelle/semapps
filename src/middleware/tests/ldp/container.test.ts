@@ -2,7 +2,7 @@ import waitForExpect from 'wait-for-expect';
 import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
 jest.setTimeout(20000);
-let broker;
+let broker: any;
 
 beforeAll(async () => {
   broker = await initialize();
@@ -13,7 +13,7 @@ afterAll(async () => {
 });
 
 describe('LDP container tests', () => {
-  let resourceUri;
+  let resourceUri: any;
 
   test('Ensure container created in LdpService settings exists', async () => {
     await expect(broker.call('ldp.container.exist', { containerUri: `${CONFIG.HOME_URL}resources` })).resolves.toBe(

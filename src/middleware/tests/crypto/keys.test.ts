@@ -5,12 +5,12 @@ import initialize from './initialize.ts';
 jest.setTimeout(100_000);
 
 /** @type {import('moleculer').ServiceBroker} */
-let broker;
+let broker: any;
 
-let user;
-let user2;
+let user: any;
+let user2: any;
 
-const setUp = async withOldKeyStore => {
+const setUp = async (withOldKeyStore: any) => {
   ({ broker } = await initialize(3000, withOldKeyStore));
   user = await broker.call('auth.signup', {
     username: 'alice',
@@ -63,7 +63,7 @@ describe('keys', () => {
         const publicKeys = arrayOf(webIdDocument.publicKey);
         // There should only be one public key advertised in the webId by default.
         expect(publicKeys.length).toBe(1);
-        const matchingPublicKey = publicKeys.find(publicKey => publicKey.publicKeyPem === keyPair.publicKeyPem);
+        const matchingPublicKey = publicKeys.find((publicKey: any) => publicKey.publicKeyPem === keyPair.publicKeyPem);
         expect(matchingPublicKey).toBeDefined();
         expect(matchingPublicKey.owner).toBe(user.webId);
         expect(matchingPublicKey.controller).toBe(user.webId);
@@ -82,7 +82,7 @@ describe('keys', () => {
           webId: user.webId
         });
         expect(
-          arrayOf(webIdDocument.publicKey).find(publicKey => publicKey.publicKeyPem === keyPair.publicKeyPem)
+          arrayOf(webIdDocument.publicKey).find((publicKey: any) => publicKey.publicKeyPem === keyPair.publicKeyPem)
         ).toBeUndefined();
 
         // Attach key again.
@@ -92,7 +92,7 @@ describe('keys', () => {
           webId: user.webId
         });
         expect(
-          arrayOf(webIdDocumentNew.publicKey).find(publicKey => publicKey.publicKeyPem === keyPair.publicKeyPem)
+          arrayOf(webIdDocumentNew.publicKey).find((publicKey: any) => publicKey.publicKeyPem === keyPair.publicKeyPem)
         ).toBeDefined();
       });
 
@@ -112,7 +112,7 @@ describe('keys', () => {
           webId: user.webId
         });
         expect(
-          arrayOf(webIdDocument.publicKey).find(publicKey => publicKey.publicKeyPem === oldKeyPair.publicKeyPem)
+          arrayOf(webIdDocument.publicKey).find((publicKey: any) => publicKey.publicKeyPem === oldKeyPair.publicKeyPem)
         ).toBeUndefined();
         // Expect key not to be present in `/public-keys` container.
         await expect(
@@ -140,10 +140,14 @@ describe('keys', () => {
           webId: user.webId
         });
         expect(
-          arrayOf(webIdDocumentNew.publicKey).some(publicKey => publicKey.publicKeyPem === oldKeyPair.publicKeyPem)
+          arrayOf(webIdDocumentNew.publicKey).some(
+            (publicKey: any) => publicKey.publicKeyPem === oldKeyPair.publicKeyPem
+          )
         ).toBeFalsy();
         expect(
-          arrayOf(webIdDocumentNew.publicKey).some(publicKey => publicKey.publicKeyPem === newKeyPair.publicKeyPem)
+          arrayOf(webIdDocumentNew.publicKey).some(
+            (publicKey: any) => publicKey.publicKeyPem === newKeyPair.publicKeyPem
+          )
         ).toBeTruthy();
 
         // Expect publicKey to be present in `/public-keys` container.
@@ -192,7 +196,7 @@ describe('keys', () => {
           webId: user.webId
         });
         expect(
-          arrayOf(webIdDocument.publicKey).find(pKey => pKey.publicKeyPem === keyPair.publicKeyPem)
+          arrayOf(webIdDocument.publicKey).find((pKey: any) => pKey.publicKeyPem === keyPair.publicKeyPem)
         ).toBeUndefined();
       });
 
@@ -228,7 +232,7 @@ describe('keys', () => {
           webId: user.webId
         });
         expect(
-          arrayOf(webIdDocument.publicKey).find(pKey => pKey.publicKeyPem === keyPair.publicKeyPem)
+          arrayOf(webIdDocument.publicKey).find((pKey: any) => pKey.publicKeyPem === keyPair.publicKeyPem)
         ).toBeUndefined();
       });
 
@@ -238,7 +242,7 @@ describe('keys', () => {
           keyType: KEY_TYPES.RSA
         });
         expect(webIdKeys).toHaveLength(1);
-        webIdKeys.forEach(key => {
+        webIdKeys.forEach((key: any) => {
           expect(key.publicKeyPem).toBeTruthy();
           expect(key.privateKeyPem).toBeTruthy();
         });
@@ -274,7 +278,7 @@ describe('keys', () => {
         expect(webIdDocument.assertionMethod).toBeDefined();
         expect(
           arrayOf(webIdDocument.assertionMethod).find(
-            assertionMethod => assertionMethod.publicKeyMultibase === keyPair.publicKeyMultibase
+            (assertionMethod: any) => assertionMethod.publicKeyMultibase === keyPair.publicKeyMultibase
           )
         ).toBeDefined();
       });
@@ -292,7 +296,9 @@ describe('keys', () => {
           webId: user.webId
         });
         expect(
-          arrayOf(webIdDocument.assertionMethod).find(key => key.publicKeyMultibase === keyPair.publicKeyMultibase)
+          arrayOf(webIdDocument.assertionMethod).find(
+            (key: any) => key.publicKeyMultibase === keyPair.publicKeyMultibase
+          )
         ).toBeUndefined();
 
         // Attach key again.
@@ -302,7 +308,9 @@ describe('keys', () => {
           webId: user.webId
         });
         expect(
-          arrayOf(webIdDocumentNew.assertionMethod).find(key => key.publicKeyMultibase === keyPair.publicKeyMultibase)
+          arrayOf(webIdDocumentNew.assertionMethod).find(
+            (key: any) => key.publicKeyMultibase === keyPair.publicKeyMultibase
+          )
         ).toBeDefined();
       });
 
@@ -323,7 +331,7 @@ describe('keys', () => {
         });
         expect(
           arrayOf(webIdDocument.assertionMethod).find(
-            publicKey => publicKey.publicKeyMultibase === oldKeyPair.publicKeyMultibase
+            (publicKey: any) => publicKey.publicKeyMultibase === oldKeyPair.publicKeyMultibase
           )
         ).toBeUndefined();
         // Expect key not to be present in `/public-keys` container.
@@ -353,12 +361,12 @@ describe('keys', () => {
         });
         expect(
           arrayOf(webIdDocumentNew.assertionMethod).some(
-            publicKey => publicKey.publicKeyMultibase === oldKeyPair.publicKeyMultibase
+            (publicKey: any) => publicKey.publicKeyMultibase === oldKeyPair.publicKeyMultibase
           )
         ).toBeFalsy();
         expect(
           arrayOf(webIdDocumentNew.assertionMethod).some(
-            publicKey => publicKey.publicKeyMultibase === newKeyPair.publicKeyMultibase
+            (publicKey: any) => publicKey.publicKeyMultibase === newKeyPair.publicKeyMultibase
           )
         ).toBeTruthy();
 
@@ -403,7 +411,7 @@ describe('keys', () => {
         });
         // Expect the public key of the webId to be the key published in the public key container (referenced by rdfs:seeAlso).
         expect(
-          arrayOf(webIdDocument.assertionMethod).find(key => (key.id || key['@id']) === keyPair['rdfs:seeAlso'])
+          arrayOf(webIdDocument.assertionMethod).find((key: any) => (key.id || key['@id']) === keyPair['rdfs:seeAlso'])
         ).toBeTruthy();
         expect(webIdDocument.assertionMethod.length).toBeGreaterThan(1);
       });
@@ -414,7 +422,7 @@ describe('keys', () => {
           keyType: KEY_TYPES.ED25519
         });
         expect(webIdKeys.length).toBeGreaterThan(0);
-        webIdKeys.forEach(key => {
+        webIdKeys.forEach((key: any) => {
           expect(key.publicKeyMultibase).toBeTruthy();
           expect(key.secretKeyMultibase).toBeTruthy();
         });
@@ -431,8 +439,8 @@ describe('keys', () => {
 
     // To store the key and validate if it remained the same after migration.
     // A bit hacky, sorry.
-    let publicKeyPemBeforeMigration;
-    let privateKeyPemBeforeMigration;
+    let publicKeyPemBeforeMigration: any;
+    let privateKeyPemBeforeMigration: any;
 
     describe('Before migration', () => {
       test('new keys service not usable before migration', async () => {

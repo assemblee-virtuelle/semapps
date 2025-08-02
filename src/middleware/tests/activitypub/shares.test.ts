@@ -4,13 +4,13 @@ import initialize from './initialize.ts';
 jest.setTimeout(50000);
 const NUM_USERS = 2;
 
-describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', mode => {
-  let broker;
-  const actors = [];
-  let alice;
-  let bob;
-  let aliceMessageUri;
-  let publicShareActivity;
+describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', (mode: any) => {
+  let broker: any;
+  const actors: any = [];
+  let alice: any;
+  let bob: any;
+  let aliceMessageUri: any;
+  let publicShareActivity: any;
   beforeAll(async () => {
     if (mode === 'single-server') {
       broker = await initialize(3000, 'testData', 'settings');
@@ -26,7 +26,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
       }
       const { webId } = await broker[i].call('auth.signup', require(`./data/actor${i}.json`));
       actors[i] = await broker[i].call('activitypub.actor.awaitCreateComplete', { actorUri: webId });
-      actors[i].call = (actionName, params, options = {}) =>
+      actors[i].call = (actionName: any, params: any, options = {}) =>
         broker[i].call(actionName, params, { ...options, meta: { ...options.meta, webId } });
     }
 

@@ -3,8 +3,8 @@ import waitForExpect from 'wait-for-expect';
 import { triple, namedNode } from '@rdfjs/data-model';
 import initialize from './initialize.ts';
 jest.setTimeout(100000);
-let server1;
-let server2;
+let server1: any;
+let server2: any;
 const relay1 = 'http://localhost:3001/as/actor/relay';
 const relay2 = 'http://localhost:3002/as/actor/relay';
 
@@ -25,7 +25,7 @@ afterAll(async () => {
 });
 
 describe('Server2 mirror server1', () => {
-  let resourceUri;
+  let resourceUri: any;
 
   test('Server2 follow server1', async () => {
     await waitForExpect(async () => {
