@@ -1,9 +1,9 @@
-const path = require('path');
-const fs = require('fs');
+import path from 'path';
+import fs from 'fs';
 const { MoleculerError } = require('moleculer').Errors;
-const { getSlugFromUri, getContainerFromUri } = require('../../../utils');
+import { getSlugFromUri, getContainerFromUri } from '../../../utils.ts';
 
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     resourceUri: 'string',
@@ -43,3 +43,5 @@ module.exports = {
     };
   }
 };
+
+export default Schema;

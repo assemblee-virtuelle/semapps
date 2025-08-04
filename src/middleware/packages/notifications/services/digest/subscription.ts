@@ -1,7 +1,7 @@
-const DbService = require('moleculer-db');
-const { TripleStoreAdapter } = require('@semapps/triplestore');
+import DbService from 'moleculer-db';
+import { TripleStoreAdapter } from '@semapps/triplestore';
 
-module.exports = {
+const DigestSubscriptionSchema = {
   name: 'digest.subscription',
   mixins: [DbService],
   adapter: new TripleStoreAdapter({ type: 'DigestSubscription', dataset: 'settings' }),
@@ -17,3 +17,5 @@ module.exports = {
     }
   }
 };
+
+export default DigestSubscriptionSchema;

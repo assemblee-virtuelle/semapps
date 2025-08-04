@@ -1,6 +1,6 @@
-const path = require('path');
-const ExpoPushDeviceService = require('./device');
-const ExpoPushNotificationService = require('./notification');
+import path from 'path';
+import ExpoPushDeviceService from './device.ts';
+import ExpoPushNotificationService from './notification.ts';
 
 const ExpoPushService = {
   name: 'expo-push',
@@ -45,4 +45,4 @@ const ExpoPushService = {
   }
 };
 
-module.exports = ExpoPushService;
+export default ExpoPushService;

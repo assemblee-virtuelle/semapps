@@ -1,7 +1,7 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { delay, getParentContainerUri } = require('../utils');
+import { MIME_TYPES } from '@semapps/mime-types';
+import { delay, getParentContainerUri } from '../utils.ts';
 
-module.exports = {
+const Schema = {
   settings: {
     path: null,
     acceptedTypes: null,
@@ -129,3 +129,5 @@ module.exports = {
     }
   }
 };
+
+export default Schema;

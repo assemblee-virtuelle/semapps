@@ -1,13 +1,12 @@
-const urlJoin = require('url-join');
-const fetch = require('node-fetch');
+import urlJoin from 'url-join';
+import fetch from 'node-fetch';
 const { MoleculerError } = require('moleculer').Errors;
-const { createFragmentURL, arrayOf } = require('@semapps/ldp');
-const { ACTIVITY_TYPES } = require('@semapps/activitypub');
-const SynchronizerService = require('./synchronizer');
-
+import { createFragmentURL, arrayOf } from '@semapps/ldp';
+import { ACTIVITY_TYPES } from '@semapps/activitypub';
+import SynchronizerService from './synchronizer.ts';
 const regexPrefix = new RegExp('^@prefix ([\\w-]*: +<.*>) .', 'gm');
 
-module.exports = {
+const MirrorSchema = {
   name: 'mirror',
   settings: {
     graphName: 'http://semapps.org/mirror',
@@ -173,3 +172,5 @@ module.exports = {
     }
   }
 };
+
+export default MirrorSchema;

@@ -1,10 +1,8 @@
-const waitForExpect = require('wait-for-expect');
-const { OBJECT_TYPES, ACTIVITY_TYPES } = require('@semapps/activitypub');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const initialize = require('./initialize');
-
+import waitForExpect from 'wait-for-expect';
+import { OBJECT_TYPES, ACTIVITY_TYPES } from '@semapps/activitypub';
+import { MIME_TYPES } from '@semapps/mime-types';
+import initialize from './initialize.ts';
 jest.setTimeout(70000);
-
 const NUM_USERS = 2;
 
 describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages', mode => {

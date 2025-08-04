@@ -1,6 +1,6 @@
-const { getType } = require('@semapps/ldp');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../../../constants');
+import { getType } from '@semapps/ldp';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { OBJECT_TYPES, ACTIVITY_TYPES } from '../../../constants.ts';
 
 const ObjectService = {
   name: 'activitypub.object',
@@ -212,4 +212,4 @@ const ObjectService = {
   }
 };
 
-module.exports = ObjectService;
+export default ObjectService;

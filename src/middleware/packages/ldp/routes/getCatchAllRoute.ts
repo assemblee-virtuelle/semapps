@@ -1,5 +1,6 @@
-const path = require('path');
-const {
+import path from 'path';
+
+import {
   parseUrl,
   parseHeader,
   parseSparql,
@@ -9,7 +10,7 @@ const {
   parseTurtle,
   parseFile,
   saveDatasetMeta
-} = require('@semapps/middlewares');
+} from '@semapps/middlewares';
 
 function getCatchAllRoute(basePath, podProvider) {
   const middlewares = [
@@ -47,4 +48,4 @@ function getCatchAllRoute(basePath, podProvider) {
   };
 }
 
-module.exports = getCatchAllRoute;
+export default getCatchAllRoute;

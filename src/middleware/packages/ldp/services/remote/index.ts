@@ -1,13 +1,13 @@
-const Schedule = require('moleculer-schedule');
-const deleteAction = require('./actions/delete');
-const getAction = require('./actions/get');
-const getGraphAction = require('./actions/getGraph');
-const getNetworkAction = require('./actions/getNetwork');
-const getStoredAction = require('./actions/getStored');
-const isRemoteAction = require('./actions/isRemote');
-const storeAction = require('./actions/store');
+import Schedule from 'moleculer-schedule';
+import deleteAction from './actions/delete.ts';
+import getAction from './actions/get.ts';
+import getGraphAction from './actions/getGraph.ts';
+import getNetworkAction from './actions/getNetwork.ts';
+import getStoredAction from './actions/getStored.ts';
+import isRemoteAction from './actions/isRemote.ts';
+import storeAction from './actions/store.ts';
 
-module.exports = {
+const LdpRemoteSchema = {
   name: 'ldp.remote',
   mixins: [Schedule],
   settings: {
@@ -73,3 +73,5 @@ module.exports = {
     }
   ]
 };
+
+export default LdpRemoteSchema;

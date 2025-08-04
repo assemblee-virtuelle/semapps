@@ -1,10 +1,10 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
-const fs = require('fs');
-const path = require('path');
-const { KEY_TYPES } = require('../constants');
+import { MIME_TYPES } from '@semapps/mime-types';
+import fs from 'fs';
+import path from 'path';
+import { KEY_TYPES } from '../constants.ts';
 
 /** @type {import('moleculer').ServiceSchema} */
-module.exports = {
+const KeysMigrationSchema = {
   name: 'keys.migration',
   settings: {
     actorsKeyPairsDir: null,
@@ -178,3 +178,5 @@ module.exports = {
     }
   }
 };
+
+export default KeysMigrationSchema;

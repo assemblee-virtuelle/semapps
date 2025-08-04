@@ -1,7 +1,7 @@
-const path = require('path');
-const DbService = require('moleculer-db');
+import path from 'path';
+import DbService from 'moleculer-db';
 const { MoleculerError, ServiceSchemaError } = require('moleculer').Errors;
-const { TripleStoreAdapter } = require('@semapps/triplestore');
+import { TripleStoreAdapter } from '@semapps/triplestore';
 
 const WebhooksService = {
   name: 'webhooks',
@@ -104,4 +104,4 @@ const WebhooksService = {
   }
 };
 
-module.exports = WebhooksService;
+export default WebhooksService;

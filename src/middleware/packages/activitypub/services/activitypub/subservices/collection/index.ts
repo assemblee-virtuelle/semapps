@@ -1,9 +1,9 @@
 const { MoleculerError } = require('moleculer').Errors;
-const { ControlledContainerMixin, arrayOf, getDatasetFromUri } = require('@semapps/ldp');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { sanitizeSparqlQuery } = require('@semapps/triplestore');
-const { Errors: E } = require('moleculer-web');
-const getAction = require('./actions/get');
+import { ControlledContainerMixin, arrayOf, getDatasetFromUri } from '@semapps/ldp';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { sanitizeSparqlQuery } from '@semapps/triplestore';
+import { Errors as E } from 'moleculer-web';
+import getAction from './actions/get.ts';
 
 const CollectionService = {
   name: 'activitypub.collection',
@@ -276,4 +276,4 @@ const CollectionService = {
   }
 };
 
-module.exports = CollectionService;
+export default CollectionService;

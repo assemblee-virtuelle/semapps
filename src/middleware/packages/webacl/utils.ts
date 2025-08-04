@@ -1,10 +1,11 @@
-const { arrayOf } = require('@semapps/ldp');
-const { MIME_TYPES } = require('@semapps/mime-types');
+import { arrayOf } from '@semapps/ldp';
+import { MIME_TYPES } from '@semapps/mime-types';
 const { MoleculerError } = require('moleculer').Errors;
-const urlJoin = require('url-join');
-const { Parser } = require('n3');
-const streamifyString = require('streamify-string');
-const rdfParser = require('rdf-parse').default;
+import urlJoin from 'url-join';
+import { Parser } from 'n3';
+import streamifyString from 'streamify-string';
+import rdfparseModule from 'rdf-parse';
+const rdfParser = rdfparseModule.default;
 
 const RESOURCE_CONTAINERS_QUERY = resource => `SELECT ?container
   WHERE { ?container ldp:contains <${resource}> . }`;
@@ -36,8 +37,8 @@ const findParentContainers = async (ctx, resource) => {
 const USER_GROUPS_QUERY = (member, ACLGraphName) => {
   return `SELECT ?group
   WHERE {
-	{ ?group vcard:hasMember <${member}> . }
-	UNION { GRAPH <${ACLGraphName}> { ?group vcard:hasMember <${member}> . } }
+    { ?group vcard:hasMember <${member}> . }
+    UNION { GRAPH <${ACLGraphName}> { ?group vcard:hasMember <${member}> . } }
   UNION
    {
     ?group ?anyLink <${member}> .
@@ -193,7 +194,6 @@ function filterAndConvertTriple(quad, property) {
 }
 
 const AuthorizationSuffixes = ['Read', 'Write', 'Append', 'Control'];
-
 const AuthorizationDefaultSuffixes = ['DefaultRead', 'DefaultWrite', 'DefaultAppend', 'DefaultControl'];
 
 function filterTriplesForResource(triple, resourceAclUri, allowDefault) {
@@ -295,7 +295,7 @@ const processRights = (rights, aclUri) => {
   return list;
 };
 
-module.exports = {
+export {
   getSlugFromUri,
   hasType,
   getDatasetFromUri,

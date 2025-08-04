@@ -48,4 +48,4 @@ const ActivitiesHandlerMixin = {
   }
 };
 
-module.exports = ActivitiesHandlerMixin;
+export default ActivitiesHandlerMixin;

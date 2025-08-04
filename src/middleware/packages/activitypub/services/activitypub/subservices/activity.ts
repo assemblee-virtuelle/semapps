@@ -1,10 +1,10 @@
-const { Errors: E } = require('moleculer-web');
-const { ControlledContainerMixin } = require('@semapps/ldp');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const setRightsHandler = require('./activity-handlers/setRightsHandler');
-const { objectCurrentToId, objectIdToCurrent, arrayOf } = require('../../../utils');
-const { PUBLIC_URI, FULL_ACTIVITY_TYPES } = require('../../../constants');
-const ActivitiesHandlerMixin = require('../../../mixins/activities-handler');
+import { Errors as E } from 'moleculer-web';
+import { ControlledContainerMixin } from '@semapps/ldp';
+import { MIME_TYPES } from '@semapps/mime-types';
+import setRightsHandler from './activity-handlers/setRightsHandler.ts';
+import { objectCurrentToId, objectIdToCurrent, arrayOf } from '../../../utils.ts';
+import { PUBLIC_URI, FULL_ACTIVITY_TYPES } from '../../../constants.ts';
+import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
 
 const ActivityService = {
   name: 'activitypub.activity',
@@ -115,4 +115,4 @@ const ActivityService = {
   }
 };
 
-module.exports = ActivityService;
+export default ActivityService;

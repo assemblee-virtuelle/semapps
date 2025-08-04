@@ -1,9 +1,9 @@
-const path = require('path');
-const { Strategy } = require('passport-local');
-const AuthMixin = require('../mixins/auth');
-const sendToken = require('../middlewares/sendToken');
+import path from 'path';
+import { Strategy } from 'passport-local';
+import AuthMixin from '../mixins/auth.ts';
+import sendToken from '../middlewares/sendToken.ts';
 const { MoleculerError } = require('moleculer').Errors;
-const AuthMailService = require('./mail');
+import AuthMailService from './mail.ts';
 
 /** @type {import('moleculer').ServiceSchema} */
 const AuthLocalService = {
@@ -235,4 +235,4 @@ const AuthLocalService = {
   }
 };
 
-module.exports = AuthLocalService;
+export default AuthLocalService;

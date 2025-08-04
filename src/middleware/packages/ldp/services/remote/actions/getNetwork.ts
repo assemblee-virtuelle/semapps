@@ -1,8 +1,8 @@
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 const { MoleculerError } = require('moleculer').Errors;
-const { MIME_TYPES } = require('@semapps/mime-types');
+import { MIME_TYPES } from '@semapps/mime-types';
 
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -58,3 +58,5 @@ module.exports = {
     }
   }
 };
+
+export default Schema;

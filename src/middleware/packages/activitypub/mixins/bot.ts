@@ -1,8 +1,8 @@
-const urlJoin = require('url-join');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { arrayOf } = require('@semapps/ldp');
-const { ACTOR_TYPES } = require('../constants');
-const { getSlugFromUri, getContainerFromUri } = require('../utils');
+import urlJoin from 'url-join';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { arrayOf } from '@semapps/ldp';
+import { ACTOR_TYPES } from '../constants.ts';
+import { getSlugFromUri, getContainerFromUri } from '../utils.ts';
 
 const BotMixin = {
   settings: {
@@ -93,4 +93,4 @@ const BotMixin = {
   }
 };
 
-module.exports = BotMixin;
+export default BotMixin;

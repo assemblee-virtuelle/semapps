@@ -1,12 +1,13 @@
 const {
   purposes: { AuthenticationProofPurpose }
 } = require('jsonld-signatures');
-const { cryptosuite } = require('@digitalbazaar/eddsa-rdfc-2022-cryptosuite');
-const { DataIntegrityProof } = require('@digitalbazaar/data-integrity');
-const vc = require('@digitalbazaar/vc');
-const VCCapabilityPresentationProofPurpose = require('./VcCapabilityPresentationProofPurpose');
-const VCPurpose = require('./VcPurpose');
-const { arrayOf } = require('../utils/utils');
+
+import { cryptosuite } from '@digitalbazaar/eddsa-rdfc-2022-cryptosuite';
+import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
+import vc from '@digitalbazaar/vc';
+import VCCapabilityPresentationProofPurpose from './VcCapabilityPresentationProofPurpose.ts';
+import VCPurpose from './VcPurpose.ts';
+import { arrayOf } from '../utils/utils.ts';
 
 /**
  * Service for verifying and creating Verifiable Presentations
@@ -197,4 +198,4 @@ const VCPresentationService = {
   }
 };
 
-module.exports = VCPresentationService;
+export default VCPresentationService;

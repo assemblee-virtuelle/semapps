@@ -1,7 +1,7 @@
-const urlJoin = require('url-join');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { foaf, schema } = require('@semapps/ontologies');
-const { ControlledContainerMixin, DereferenceMixin, getDatasetFromUri } = require('@semapps/ldp');
+import urlJoin from 'url-join';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { foaf, schema } from '@semapps/ontologies';
+import { ControlledContainerMixin, DereferenceMixin, getDatasetFromUri } from '@semapps/ldp';
 
 /** @type {import('moleculer').ServiceSchema} */
 const WebIdService = {
@@ -112,4 +112,4 @@ const WebIdService = {
   }
 };
 
-module.exports = WebIdService;
+export default WebIdService;

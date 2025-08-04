@@ -1,9 +1,9 @@
 const { MoleculerError } = require('moleculer').Errors;
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { v4: uuidv4 } = require('uuid');
-const mime = require('mime-types');
+import { MIME_TYPES } from '@semapps/mime-types';
+import { v4 as uuidv4 } from 'uuid';
+import mime from 'mime-types';
 
-module.exports = async function post(ctx) {
+export default async function post(ctx) {
   try {
     const { username, slugParts, ...resource } = ctx.params;
 
@@ -46,4 +46,4 @@ module.exports = async function post(ctx) {
     ctx.meta.$statusCode = e.code || 500;
     ctx.meta.$statusMessage = e.message;
   }
-};
+}

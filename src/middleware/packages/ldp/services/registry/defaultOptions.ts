@@ -1,4 +1,4 @@
-module.exports = {
+const Schema = {
   accept: 'text/turtle',
   readOnly: false,
   excludeFromMirror: false,
@@ -67,3 +67,5 @@ module.exports = {
   },
   controlledActions: {}
 };
+
+export default Schema;

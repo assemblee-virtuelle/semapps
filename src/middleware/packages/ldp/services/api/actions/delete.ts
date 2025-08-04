@@ -1,4 +1,4 @@
-module.exports = async function patch(ctx) {
+export default async function patch(ctx) {
   try {
     const { username, slugParts } = ctx.params;
 
@@ -22,4 +22,4 @@ module.exports = async function patch(ctx) {
     ctx.meta.$statusCode = e.code || 500;
     ctx.meta.$statusMessage = e.message;
   }
-};
+}

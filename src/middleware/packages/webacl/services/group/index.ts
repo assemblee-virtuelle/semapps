@@ -1,15 +1,15 @@
-const urlJoin = require('url-join');
-const createAction = require('./actions/create');
-const deleteAction = require('./actions/delete');
-const existAction = require('./actions/exist');
-const addMemberAction = require('./actions/addMember');
-const getMembersAction = require('./actions/getMembers');
-const getUriAction = require('./actions/getUri');
-const isMemberAction = require('./actions/isMember');
-const removeMemberAction = require('./actions/removeMember');
-const getGroupsAction = require('./actions/getGroups');
+import urlJoin from 'url-join';
+import createAction from './actions/create.ts';
+import deleteAction from './actions/delete.ts';
+import existAction from './actions/exist.ts';
+import addMemberAction from './actions/addMember.ts';
+import getMembersAction from './actions/getMembers.ts';
+import getUriAction from './actions/getUri.ts';
+import isMemberAction from './actions/isMember.ts';
+import removeMemberAction from './actions/removeMember.ts';
+import getGroupsAction from './actions/getGroups.ts';
 
-module.exports = {
+const WebaclGroupSchema = {
   name: 'webacl.group',
   settings: {
     baseUrl: null,
@@ -131,3 +131,5 @@ module.exports = {
     }
   }
 };
+
+export default WebaclGroupSchema;

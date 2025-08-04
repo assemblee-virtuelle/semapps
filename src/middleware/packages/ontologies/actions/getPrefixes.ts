@@ -1,4 +1,4 @@
-module.exports = {
+const Schema = {
   visibility: 'public',
   cache: true,
   async handler(ctx) {
@@ -10,3 +10,5 @@ module.exports = {
     );
   }
 };
+
+export default Schema;

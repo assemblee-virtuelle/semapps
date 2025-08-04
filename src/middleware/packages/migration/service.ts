@@ -1,7 +1,7 @@
-const { getAclUriFromResourceUri } = require('@semapps/webacl');
-const { getContainerFromUri } = require('@semapps/ldp');
+import { getAclUriFromResourceUri } from '@semapps/webacl';
+import { getContainerFromUri } from '@semapps/ldp';
 
-module.exports = {
+const MigrationSchema = {
   name: 'migration',
   settings: {
     baseUrl: undefined
@@ -179,3 +179,5 @@ module.exports = {
     }
   }
 };
+
+export default MigrationSchema;

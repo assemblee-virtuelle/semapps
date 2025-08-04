@@ -1,6 +1,6 @@
-const LinkHeader = require('http-link-header');
+import LinkHeader from 'http-link-header';
 
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     uri: { type: 'string' }
@@ -33,3 +33,5 @@ module.exports = {
     return linkHeader.toString();
   }
 };
+
+export default Schema;

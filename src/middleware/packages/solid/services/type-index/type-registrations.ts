@@ -1,9 +1,9 @@
-const urlJoin = require('url-join');
-const { namedNode, triple } = require('@rdfjs/data-model');
-const { ControlledContainerMixin, arrayOf } = require('@semapps/ldp');
-const { MIME_TYPES } = require('@semapps/mime-types');
+import urlJoin from 'url-join';
+import { namedNode, triple } from '@rdfjs/data-model';
+import { ControlledContainerMixin, arrayOf } from '@semapps/ldp';
+import { MIME_TYPES } from '@semapps/mime-types';
 
-module.exports = {
+const TypeRegistrationsSchema = {
   name: 'type-registrations',
   mixins: [ControlledContainerMixin],
   settings: {
@@ -320,3 +320,5 @@ module.exports = {
     }
   }
 };
+
+export default TypeRegistrationsSchema;

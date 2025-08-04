@@ -1,10 +1,10 @@
-const path = require('path');
-const { ServiceBroker } = require('moleculer');
-const { CoreService } = require('@semapps/core');
-const CONFIG = require('../config');
-const { clearDataset } = require('../utils');
-
+import path from 'path';
+import { ServiceBroker } from 'moleculer';
+import { CoreService } from '@semapps/core';
+import CONFIG from '../config.ts';
+import { clearDataset } from '../utils.ts';
 jest.setTimeout(20000);
+
 const broker = new ServiceBroker({
   logger: {
     type: 'Console',

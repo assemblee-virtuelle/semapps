@@ -1,8 +1,8 @@
-const path = require('path');
-const urlJoin = require('url-join');
-const { parseHeader, parseFile, saveDatasetMeta } = require('@semapps/middlewares');
-const fetch = require('node-fetch');
-const { Errors: E } = require('moleculer-web');
+import path from 'path';
+import urlJoin from 'url-join';
+import { parseHeader, parseFile, saveDatasetMeta } from '@semapps/middlewares';
+import fetch from 'node-fetch';
+import { Errors as E } from 'moleculer-web';
 
 const stream2buffer = stream => {
   return new Promise((resolve, reject) => {
@@ -156,4 +156,4 @@ const ProxyService = {
   }
 };
 
-module.exports = ProxyService;
+export default ProxyService;

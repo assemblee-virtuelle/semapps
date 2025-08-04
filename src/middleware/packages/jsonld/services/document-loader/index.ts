@@ -1,6 +1,7 @@
-const jsonld = require('jsonld');
-const fsPromises = require('fs').promises;
-const LRU = require('lru-cache');
+import jsonld from 'jsonld';
+import fsModule from 'fs';
+const fsPromises = fsModule.promises;
+import LRU from 'lru-cache';
 
 /** Use document loader depending on node / bun runtime. */
 const defaultDocumentLoader = !process.versions.bun
@@ -27,7 +28,7 @@ const defaultDocumentLoader = !process.versions.bun
 
 const cache = new LRU({ max: 500 });
 
-module.exports = {
+const JsonldDocumentLoaderSchema = {
   name: 'jsonld.document-loader',
   settings: {
     cachedContextFiles: [],
@@ -81,3 +82,5 @@ module.exports = {
     }
   }
 };
+
+export default JsonldDocumentLoaderSchema;

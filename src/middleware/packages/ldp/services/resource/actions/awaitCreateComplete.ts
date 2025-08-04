@@ -1,8 +1,8 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { waitForResource } = require('../../../utils');
+import { MIME_TYPES } from '@semapps/mime-types';
+import { waitForResource } from '../../../utils.ts';
 
 /** @type {import('moleculer').ServiceActionsSchema} */
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -37,3 +37,5 @@ module.exports = {
     );
   }
 };
+
+export default Schema;

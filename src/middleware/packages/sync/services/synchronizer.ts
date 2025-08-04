@@ -1,5 +1,5 @@
-const { arrayOf } = require('@semapps/ldp');
-const { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin } = require('@semapps/activitypub');
+import { arrayOf } from '@semapps/ldp';
+import { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin } from '@semapps/activitypub';
 
 const SynchronizerService = {
   name: 'synchronizer',
@@ -245,4 +245,4 @@ const SynchronizerService = {
   }
 };
 
-module.exports = SynchronizerService;
+export default SynchronizerService;

@@ -1,7 +1,7 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { cleanUndefined } = require('../../../utils');
+import { MIME_TYPES } from '@semapps/mime-types';
+import { cleanUndefined } from '../../../utils.ts';
 
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -79,3 +79,5 @@ module.exports = {
     }
   }
 };
+
+export default Schema;

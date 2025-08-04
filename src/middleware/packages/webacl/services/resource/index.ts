@@ -1,18 +1,19 @@
-const urlJoin = require('url-join');
+import urlJoin from 'url-join';
 const { MoleculerError } = require('moleculer').Errors;
-const addRights = require('./actions/addRights');
-const awaitReadRight = require('./actions/awaitReadRight');
-const deleteAllRights = require('./actions/deleteAllRights');
-const deleteAllUserRights = require('./actions/deleteAllUserRights');
-const getLink = require('./actions/getLink');
-const getRights = require('./actions/getRights');
-const getUsersWithReadRights = require('./actions/getUsersWithReadRights');
-const hasRights = require('./actions/hasRights');
-const isPublic = require('./actions/isPublic');
-const refreshContainersRights = require('./actions/refreshContainersRights');
-const removeRights = require('./actions/removeRights');
-const setRights = require('./actions/setRights');
-const {
+import addRights from './actions/addRights.ts';
+import awaitReadRight from './actions/awaitReadRight.ts';
+import deleteAllRights from './actions/deleteAllRights.ts';
+import deleteAllUserRights from './actions/deleteAllUserRights.ts';
+import getLink from './actions/getLink.ts';
+import getRights from './actions/getRights.ts';
+import getUsersWithReadRights from './actions/getUsersWithReadRights.ts';
+import hasRights from './actions/hasRights.ts';
+import isPublic from './actions/isPublic.ts';
+import refreshContainersRights from './actions/refreshContainersRights.ts';
+import removeRights from './actions/removeRights.ts';
+import setRights from './actions/setRights.ts';
+
+import {
   getAuthorizationNode,
   getAclUriFromResourceUri,
   aclGroupExists,
@@ -23,7 +24,7 @@ const {
   FULL_TYPE_URI,
   ACL_NS,
   getDatasetFromUri
-} = require('../../utils');
+} from '../../utils.ts';
 
 const filterAclsOnlyAgent = acl => agentPredicates.includes(acl.p.value);
 
@@ -37,7 +38,7 @@ const filterAclsOnlyAgent = acl => agentPredicates.includes(acl.p.value);
  * - The nested json format as used in "additionalRights" (https://semapps.org/docs/middleware/webacl/resource#addrights)
  *  - organized by user, group, anon, anyUser. See the documentation for the details.
  */
-module.exports = {
+const WebaclResourceSchema = {
   name: 'webacl.resource',
   settings: {
     baseUrl: null,
@@ -148,3 +149,5 @@ module.exports = {
     }
   }
 };
+
+export default WebaclResourceSchema;

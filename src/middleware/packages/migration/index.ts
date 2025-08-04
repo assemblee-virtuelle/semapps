@@ -1,3 +1,2 @@
-module.exports = {
-  MigrationService: require('./service')
-};
+import MigrationService from './service.ts';
+export { MigrationService };

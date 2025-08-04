@@ -1,12 +1,12 @@
-const { did, cred } = require('@semapps/ontologies');
-const VCHolderService = require('./vc-holder-service');
-const VCIssuerService = require('./vc-issuer-service');
-const VCVerifierService = require('./vc-verifier-service');
-const DataIntegrityService = require('./data-integrity-service');
-const VCApiService = require('./vc-api-service');
-const VCCredentialContainer = require('./vc-credential-container');
-const VCPresentationContainer = require('./vc-presentation-container');
-const ChallengeService = require('./challenge-service');
+import { did, cred } from '@semapps/ontologies';
+import VCHolderService from './vc-holder-service.ts';
+import VCIssuerService from './vc-issuer-service.ts';
+import VCVerifierService from './vc-verifier-service.ts';
+import DataIntegrityService from './data-integrity-service.ts';
+import VCApiService from './vc-api-service.ts';
+import VCCredentialContainer from './vc-credential-container.ts';
+import VCPresentationContainer from './vc-presentation-container.ts';
+import ChallengeService from './challenge-service.ts';
 
 /**
  * Root service for Verifiable Credential and the VC API.
@@ -56,4 +56,4 @@ const VCService = {
   }
 };
 
-module.exports = VCService;
+export default VCService;

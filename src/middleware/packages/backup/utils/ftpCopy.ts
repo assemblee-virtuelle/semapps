@@ -1,6 +1,6 @@
-const fs = require('fs');
-const Client = require('ssh2-sftp-client');
-const { join: pathJoin } = require('path');
+import fs from 'fs';
+import Client from 'ssh2-sftp-client';
+import { join as pathJoin } from 'path';
 
 const ftpCopy = (path, subDir, remoteServer) => {
   return new Promise((resolve, reject) => {
@@ -30,4 +30,4 @@ const ftpCopy = (path, subDir, remoteServer) => {
   });
 };
 
-module.exports = ftpCopy;
+export default ftpCopy;

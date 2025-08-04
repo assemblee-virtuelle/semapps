@@ -1,9 +1,9 @@
-const fs = require('fs');
+import fs from 'fs';
 const { MoleculerError } = require('moleculer').Errors;
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { cleanUndefined, parseJson } = require('../../../utils');
+import { MIME_TYPES } from '@semapps/mime-types';
+import { cleanUndefined, parseJson } from '../../../utils.ts';
 
-module.exports = async function get(ctx) {
+export default async function get(ctx) {
   try {
     const { username, slugParts } = ctx.params;
 
@@ -118,4 +118,4 @@ module.exports = async function get(ctx) {
     ctx.meta.$statusCode = e.code || 500;
     ctx.meta.$statusMessage = e.message;
   }
-};
+}

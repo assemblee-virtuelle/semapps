@@ -328,4 +328,4 @@ const noGraphCredentialContext = {
   }
 };
 
-module.exports = noGraphCredentialContext;
+export default noGraphCredentialContext;

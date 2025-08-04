@@ -1,5 +1,5 @@
-const DbService = require('moleculer-db');
-const { TripleStoreAdapter } = require('@semapps/triplestore');
+import DbService from 'moleculer-db';
+import { TripleStoreAdapter } from '@semapps/triplestore';
 
 const ExpoPushDeviceService = {
   name: 'expo-push.device',
@@ -83,4 +83,4 @@ const ExpoPushDeviceService = {
   }
 };
 
-module.exports = ExpoPushDeviceService;
+export default ExpoPushDeviceService;

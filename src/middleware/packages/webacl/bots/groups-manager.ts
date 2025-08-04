@@ -1,8 +1,8 @@
-const { arrayOf } = require('@semapps/ldp');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { hasType } = require('../utils');
+import { arrayOf } from '@semapps/ldp';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { hasType } from '../utils.ts';
 
-module.exports = {
+const GroupsManagerSchema = {
   name: 'groups-manager',
   settings: {
     usersContainer: null,
@@ -117,3 +117,5 @@ module.exports = {
     }
   }
 };
+
+export default GroupsManagerSchema;

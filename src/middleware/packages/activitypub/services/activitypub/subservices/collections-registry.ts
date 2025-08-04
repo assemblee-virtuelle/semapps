@@ -1,8 +1,8 @@
-const urlJoin = require('url-join');
-const { quad, namedNode } = require('@rdfjs/data-model');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { getWebIdFromUri, arrayOf } = require('@semapps/ldp');
-const { ACTOR_TYPES, FULL_ACTOR_TYPES, AS_PREFIX } = require('../../../constants');
+import urlJoin from 'url-join';
+import { quad, namedNode } from '@rdfjs/data-model';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { getWebIdFromUri, arrayOf } from '@semapps/ldp';
+import { ACTOR_TYPES, FULL_ACTOR_TYPES, AS_PREFIX } from '../../../constants.ts';
 
 const CollectionsRegistryService = {
   name: 'activitypub.collections-registry',
@@ -311,4 +311,4 @@ const CollectionsRegistryService = {
   }
 };
 
-module.exports = CollectionsRegistryService;
+export default CollectionsRegistryService;

@@ -1,5 +1,5 @@
-const { ControlledContainerMixin, PseudoIdMixin } = require('@semapps/ldp');
-const { credentialsContext, credentialsContextNoGraphProof } = require('../constants');
+import { ControlledContainerMixin, PseudoIdMixin } from '@semapps/ldp';
+import { credentialsContext, credentialsContextNoGraphProof } from '../constants.ts';
 
 /**
  * Container for Verifiable Presentations. Posting to this container will create a new VP.
@@ -85,4 +85,4 @@ const VCPresentationContainer = {
   }
 };
 
-module.exports = VCPresentationContainer;
+export default VCPresentationContainer;

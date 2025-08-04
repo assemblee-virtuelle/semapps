@@ -1,4 +1,4 @@
-module.exports = {
+const Schema = {
   visibility: 'public',
   cache: true,
   async handler(ctx) {
@@ -9,3 +9,5 @@ module.exports = {
       .join('\n');
   }
 };
+
+export default Schema;

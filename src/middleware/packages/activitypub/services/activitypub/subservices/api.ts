@@ -1,7 +1,8 @@
-const urlJoin = require('url-join');
-const path = require('path');
-const { arrayOf } = require('@semapps/ldp');
-const {
+import urlJoin from 'url-join';
+import path from 'path';
+import { arrayOf } from '@semapps/ldp';
+
+import {
   parseUrl,
   parseHeader,
   parseSparql,
@@ -11,8 +12,9 @@ const {
   parseTurtle,
   parseFile,
   saveDatasetMeta
-} = require('@semapps/middlewares');
-const { FULL_ACTOR_TYPES } = require('../../../constants');
+} from '@semapps/middlewares';
+
+import { FULL_ACTOR_TYPES } from '../../../constants.ts';
 
 const ApiService = {
   name: 'activitypub.api',
@@ -124,4 +126,4 @@ const ApiService = {
   }
 };
 
-module.exports = ApiService;
+export default ApiService;

@@ -1,7 +1,7 @@
 /**
  * Find the container options for a container URI
  */
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     containerUri: { type: 'string', optional: true },
@@ -30,3 +30,5 @@ module.exports = {
     return this.settings.defaultOptions;
   }
 };
+
+export default Schema;

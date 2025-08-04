@@ -1,8 +1,5 @@
-const utils = require('./utils');
-
-module.exports = {
-  DatasetService: require('./subservices/dataset'),
-  TripleStoreAdapter: require('./adapter'),
-  TripleStoreService: require('./service'),
-  ...utils
-};
+import DatasetService from './subservices/dataset.ts';
+import TripleStoreAdapter from './adapter.ts';
+import TripleStoreService from './service.ts';
+export * from './utils.ts';
+export { DatasetService, TripleStoreAdapter, TripleStoreService };

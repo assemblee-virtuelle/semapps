@@ -1,8 +1,8 @@
-const urlJoin = require('url-join');
-const ImporterMixin = require('./importer');
-const { convertToIsoString } = require('../utils');
+import urlJoin from 'url-join';
+import ImporterMixin from './importer.ts';
+import { convertToIsoString } from '../utils.ts';
 
-module.exports = {
+const Schema = {
   mixins: [ImporterMixin],
   settings: {
     source: {
@@ -60,3 +60,5 @@ module.exports = {
     }
   }
 };
+
+export default Schema;

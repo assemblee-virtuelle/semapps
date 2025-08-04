@@ -1,6 +1,6 @@
-const DbService = require('moleculer-db');
-const { Expo } = require('expo-server-sdk');
-const { TripleStoreAdapter } = require('@semapps/triplestore');
+import DbService from 'moleculer-db';
+import { Expo } from 'expo-server-sdk';
+import { TripleStoreAdapter } from '@semapps/triplestore';
 
 const ExpoPushNotificationService = {
   name: 'expo-push.notification',
@@ -152,4 +152,4 @@ const ExpoPushNotificationService = {
   }
 };
 
-module.exports = ExpoPushNotificationService;
+export default ExpoPushNotificationService;

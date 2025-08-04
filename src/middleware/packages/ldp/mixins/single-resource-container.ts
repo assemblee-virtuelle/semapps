@@ -1,9 +1,9 @@
 const { MoleculerError } = require('moleculer').Errors;
-const { MIME_TYPES } = require('@semapps/mime-types');
-const ControlledContainerMixin = require('./controlled-container');
-const { delay } = require('../utils');
+import { MIME_TYPES } from '@semapps/mime-types';
+import ControlledContainerMixin from './controlled-container.ts';
+import { delay } from '../utils.ts';
 
-module.exports = {
+const Schema = {
   mixins: [ControlledContainerMixin],
   settings: {
     initialValue: {},
@@ -104,3 +104,5 @@ module.exports = {
     }
   }
 };
+
+export default Schema;

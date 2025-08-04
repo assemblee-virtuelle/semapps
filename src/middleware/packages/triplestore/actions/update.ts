@@ -1,6 +1,6 @@
-const urlJoin = require('url-join');
+import urlJoin from 'url-join';
 
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     query: {
@@ -42,3 +42,5 @@ module.exports = {
     }
   }
 };
+
+export default Schema;

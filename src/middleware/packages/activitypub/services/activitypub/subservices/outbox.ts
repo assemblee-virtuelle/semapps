@@ -1,10 +1,10 @@
-const fetch = require('node-fetch');
-const { Errors: E } = require('moleculer-web');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { getType, arrayOf } = require('@semapps/ldp');
-const { collectionPermissionsWithAnonRead, getSlugFromUri, objectIdToCurrent } = require('../../../utils');
-const { ACTOR_TYPES } = require('../../../constants');
-const AwaitActivityMixin = require('../../../mixins/await-activity');
+import fetch from 'node-fetch';
+import { Errors as E } from 'moleculer-web';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { getType, arrayOf } from '@semapps/ldp';
+import { collectionPermissionsWithAnonRead, getSlugFromUri, objectIdToCurrent } from '../../../utils.ts';
+import { ACTOR_TYPES } from '../../../constants.ts';
+import AwaitActivityMixin from '../../../mixins/await-activity.ts';
 
 const queueOptions =
   process.env.NODE_ENV === 'test'
@@ -318,4 +318,4 @@ const OutboxService = {
   }
 };
 
-module.exports = OutboxService;
+export default OutboxService;

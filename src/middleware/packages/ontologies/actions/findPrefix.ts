@@ -1,7 +1,7 @@
-const fetch = require('node-fetch');
-const { isURL } = require('../utils');
+import fetch from 'node-fetch';
+import { isURL } from '../utils.ts';
 
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     uri: 'string'
@@ -24,3 +24,5 @@ module.exports = {
     return null;
   }
 };
+
+export default Schema;

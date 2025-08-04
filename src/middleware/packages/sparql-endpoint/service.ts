@@ -1,6 +1,6 @@
-const path = require('path');
-const urlJoin = require('url-join');
-const getRoute = require('./getRoute');
+import path from 'path';
+import urlJoin from 'url-join';
+import getRoute from './getRoute.ts';
 
 const SparqlEndpointService = {
   name: 'sparqlEndpoint',
@@ -64,4 +64,4 @@ const SparqlEndpointService = {
   }
 };
 
-module.exports = SparqlEndpointService;
+export default SparqlEndpointService;

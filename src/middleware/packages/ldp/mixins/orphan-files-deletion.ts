@@ -1,6 +1,6 @@
-const { CronJob } = require('cron');
+import { CronJob } from 'cron';
 
-module.exports = {
+const Schema = {
   settings: {
     orphanFilesDeletion: {
       cronJob: {
@@ -58,3 +58,5 @@ module.exports = {
     this.cronJob?.stop();
   }
 };
+
+export default Schema;

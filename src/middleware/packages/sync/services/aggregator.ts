@@ -1,7 +1,7 @@
-const { ActivitiesHandlerMixin, ACTIVITY_TYPES } = require('@semapps/activitypub');
-const SynchronizerService = require('./synchronizer');
+import { ActivitiesHandlerMixin, ACTIVITY_TYPES } from '@semapps/activitypub';
+import SynchronizerService from './synchronizer.ts';
 
-module.exports = {
+const AggregatorSchema = {
   name: 'aggregator',
   mixins: [ActivitiesHandlerMixin],
   settings: {
@@ -46,3 +46,5 @@ module.exports = {
     }
   }
 };
+
+export default AggregatorSchema;

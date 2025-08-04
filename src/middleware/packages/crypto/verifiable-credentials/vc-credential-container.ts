@@ -1,6 +1,6 @@
-const path = require('node:path');
-const { ControlledContainerMixin, PseudoIdMixin } = require('@semapps/ldp');
-const { credentialsContext, credentialsContextNoGraphProof, VC_API_PATH } = require('../constants');
+import path from 'node:path';
+import { ControlledContainerMixin, PseudoIdMixin } from '@semapps/ldp';
+import { credentialsContext, credentialsContextNoGraphProof, VC_API_PATH } from '../constants.ts';
 
 /**
  * Container for Verifiable Credentials. Posting to this container will create a new VC.
@@ -93,4 +93,4 @@ const VCCredentialsContainer = {
   }
 };
 
-module.exports = VCCredentialsContainer;
+export default VCCredentialsContainer;

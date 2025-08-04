@@ -1,6 +1,6 @@
-const { FULL_ACTOR_TYPES, FULL_OBJECT_TYPES } = require('./constants');
+import { FULL_ACTOR_TYPES, FULL_OBJECT_TYPES } from './constants.ts';
 
-module.exports = [
+export default [
   {
     path: '/as/actor',
     acceptedTypes: Object.values(FULL_ACTOR_TYPES)

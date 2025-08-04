@@ -1,14 +1,14 @@
-const { triple, namedNode } = require('@rdfjs/data-model');
-const { ControlledContainerMixin } = require('@semapps/ldp');
-const { Errors: E } = require('moleculer-web');
-const { KEY_TYPES } = require('../constants');
+import { triple, namedNode } from '@rdfjs/data-model';
+import { ControlledContainerMixin } from '@semapps/ldp';
+import { Errors as E } from 'moleculer-web';
+import { KEY_TYPES } from '../constants.ts';
 
 /**
  * Container to store the public keys of actors only.
  * Anonymous read is allowed by default.
  *
  */
-module.exports = {
+const KeysPublicContainerSchema = {
   name: 'keys.public-container',
   mixins: [ControlledContainerMixin],
   settings: {
@@ -76,3 +76,5 @@ module.exports = {
     }
   }
 };
+
+export default KeysPublicContainerSchema;

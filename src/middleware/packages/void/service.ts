@@ -1,13 +1,12 @@
-const urlJoin = require('url-join');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { void: voidOntology } = require('@semapps/ontologies');
-const { JsonLdSerializer } = require('jsonld-streaming-serializer');
-const { DataFactory, Writer } = require('n3');
-
+import urlJoin from 'url-join';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { void as voidOntology } from '@semapps/ontologies';
+import { JsonLdSerializer } from 'jsonld-streaming-serializer';
+import { DataFactory, Writer } from 'n3';
 const { quad, namedNode, literal, blankNode } = DataFactory;
 const { MoleculerError } = require('moleculer').Errors;
-const { createFragmentURL, regexProtocolAndHostAndPort, arrayOf } = require('@semapps/ldp');
-const { parseHeader } = require('@semapps/middlewares');
+import { createFragmentURL, regexProtocolAndHostAndPort, arrayOf } from '@semapps/ldp';
+import { parseHeader } from '@semapps/middlewares';
 
 const prefixes = {
   dc: 'http://purl.org/dc/terms/',
@@ -148,7 +147,7 @@ const addMirrorServer = async (
   }
 };
 
-module.exports = {
+const VoidSchema = {
   name: 'void',
   settings: {
     baseUrl: null,
@@ -450,3 +449,5 @@ module.exports = {
     }
   }
 };
+
+export default VoidSchema;

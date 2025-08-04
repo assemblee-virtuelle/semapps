@@ -1,6 +1,6 @@
-const urlJoin = require('url-join');
-const { v4: uuidV4 } = require('uuid');
-const NotificationChannelMixin = require('./notification-channel.mixin');
+import urlJoin from 'url-join';
+import { v4 as uuidV4 } from 'uuid';
+import NotificationChannelMixin from './notification-channel.mixin.ts';
 
 /** @type {import('moleculer').ServiceSchema} */
 const WebSocketChannel2023Service = {
@@ -84,4 +84,4 @@ const WebSocketChannel2023Service = {
   }
 };
 
-module.exports = WebSocketChannel2023Service;
+export default WebSocketChannel2023Service;

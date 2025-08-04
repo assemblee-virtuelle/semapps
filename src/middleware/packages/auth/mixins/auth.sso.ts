@@ -1,9 +1,9 @@
-const path = require('path');
-const session = require('express-session');
-const AuthMixin = require('./auth');
-const saveRedirectUrl = require('../middlewares/saveRedirectUrl');
-const redirectToFront = require('../middlewares/redirectToFront');
-const localLogout = require('../middlewares/localLogout');
+import path from 'path';
+import session from 'express-session';
+import AuthMixin from './auth.ts';
+import saveRedirectUrl from '../middlewares/saveRedirectUrl.ts';
+import redirectToFront from '../middlewares/redirectToFront.ts';
+import localLogout from '../middlewares/localLogout.ts';
 
 const AuthSSOMixin = {
   mixins: [AuthMixin],
@@ -90,4 +90,4 @@ const AuthSSOMixin = {
   }
 };
 
-module.exports = AuthSSOMixin;
+export default AuthSSOMixin;

@@ -1,7 +1,7 @@
-const MailService = require('moleculer-mail');
-const cronParser = require('cron-parser');
-const { TripleStoreAdapter } = require('@semapps/triplestore');
-const DigestSubscriptionService = require('./subscription');
+import MailService from 'moleculer-mail';
+import cronParser from 'cron-parser';
+import { TripleStoreAdapter } from '@semapps/triplestore';
+import DigestSubscriptionService from './subscription.ts';
 
 const DigestNotificationsService = {
   name: 'digest',
@@ -146,4 +146,4 @@ const DigestNotificationsService = {
   }
 };
 
-module.exports = DigestNotificationsService;
+export default DigestNotificationsService;

@@ -1,6 +1,6 @@
-const { isURL, isObject, mergeObjectInArray } = require('../../../utils/utils');
+import { isURL, isObject, mergeObjectInArray } from '../../../utils/utils.ts';
 
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     a: {
@@ -49,3 +49,5 @@ module.exports = {
     throw new Error('Could not merge JSON-LD contexts');
   }
 };
+
+export default Schema;

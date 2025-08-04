@@ -1,9 +1,9 @@
-const urlJoin = require('url-join');
-const { triple, namedNode } = require('@rdfjs/data-model');
-const { pim } = require('@semapps/ontologies');
+import urlJoin from 'url-join';
+import { triple, namedNode } from '@rdfjs/data-model';
+import { pim } from '@semapps/ontologies';
 
 /** @type {import('moleculer').ServiceSchema} */
-module.exports = {
+const SolidStorageSchema = {
   name: 'solid-storage',
   settings: {
     baseUrl: null,
@@ -87,3 +87,5 @@ module.exports = {
     }
   }
 };
+
+export default SolidStorageSchema;

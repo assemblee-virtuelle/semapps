@@ -1,9 +1,9 @@
-const fetch = require('node-fetch');
-const { namedNode, literal, triple, variable } = require('@rdfjs/data-model');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { arrayOf } = require('@semapps/ldp');
-const { ACTOR_TYPES, AS_PREFIX } = require('../../../constants');
-const { getSlugFromUri, waitForResource } = require('../../../utils');
+import fetch from 'node-fetch';
+import { namedNode, literal, triple, variable } from '@rdfjs/data-model';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { arrayOf } from '@semapps/ldp';
+import { ACTOR_TYPES, AS_PREFIX } from '../../../constants.ts';
+import { getSlugFromUri, waitForResource } from '../../../utils.ts';
 
 /** @type {import('moleculer').ServiceSchema} */
 const ActorService = {
@@ -194,4 +194,4 @@ const ActorService = {
   }
 };
 
-module.exports = ActorService;
+export default ActorService;

@@ -3,4 +3,4 @@ const localLogout = (req, res, next) => {
   next();
 };
 
-module.exports = localLogout;
+export default localLogout;

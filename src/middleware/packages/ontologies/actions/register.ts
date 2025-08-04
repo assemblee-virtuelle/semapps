@@ -1,6 +1,6 @@
-const { isURL, arrayOf } = require('../utils');
+import { isURL, arrayOf } from '../utils.ts';
 
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     prefix: 'string',
@@ -57,3 +57,5 @@ module.exports = {
     ctx.emit('ontologies.registered', { prefix, namespace, owl, jsonldContext, preserveContextUri });
   }
 };
+
+export default Schema;

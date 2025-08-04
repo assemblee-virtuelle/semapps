@@ -16,7 +16,7 @@ function checkTriplesSubjectIsResource(triples, resourceUri) {
   }
 }
 
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     resourceUri: {
@@ -95,3 +95,5 @@ module.exports = {
     return returnValues;
   }
 };
+
+export default Schema;

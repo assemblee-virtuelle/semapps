@@ -1,12 +1,13 @@
-const urlJoin = require('url-join');
-const {
+import urlJoin from 'url-join';
+
+import {
   getAuthorizationNode,
   checkAgentPresent,
   getUserGroups,
   findParentContainers,
   getUserAgentSearchParam,
   getAclUriFromResourceUri
-} = require('../../../utils');
+} from '../../../utils.ts';
 
 const perms = {
   read: 'Read',
@@ -79,51 +80,50 @@ async function hasPermissions(ctx, resourceUri, askedRights, baseUrl, user, grap
   return resultRights;
 }
 
-module.exports = {
-  api: async function api(ctx) {
-    let { slugParts } = ctx.params;
+export const api = async function api(ctx) {
+  let { slugParts } = ctx.params;
 
-    // This is the root container
-    if (!slugParts || slugParts.length === 0) slugParts = ['/'];
+  // This is the root container
+  if (!slugParts || slugParts.length === 0) slugParts = ['/'];
 
-    return await ctx.call('webacl.resource.hasRights', {
-      resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
-      rights: ctx.params.rights,
-      webId: ctx.meta.webId
-    });
+  return await ctx.call('webacl.resource.hasRights', {
+    resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
+    rights: ctx.params.rights,
+    webId: ctx.meta.webId
+  });
+};
+
+export const action = {
+  visibility: 'public',
+  params: {
+    resourceUri: { type: 'string' },
+    rights: {
+      type: 'object',
+      optional: true,
+      strict: true,
+      props: {
+        read: { type: 'boolean', optional: true },
+        write: { type: 'boolean', optional: true },
+        append: { type: 'boolean', optional: true },
+        control: { type: 'boolean', optional: true }
+      }
+    },
+    webId: { type: 'string', optional: true }
   },
-  action: {
-    visibility: 'public',
-    params: {
-      resourceUri: { type: 'string' },
-      rights: {
-        type: 'object',
-        optional: true,
-        strict: true,
-        props: {
-          read: { type: 'boolean', optional: true },
-          write: { type: 'boolean', optional: true },
-          append: { type: 'boolean', optional: true },
-          control: { type: 'boolean', optional: true }
-        }
-      },
-      webId: { type: 'string', optional: true }
+  cache: {
+    enabled(ctx) {
+      // Do not cache remote resources as we have no mecanism to clear this cache
+      return ctx.params.resourceUri.startsWith(this.settings.baseUrl);
     },
-    cache: {
-      enabled(ctx) {
-        // Do not cache remote resources as we have no mecanism to clear this cache
-        return ctx.params.resourceUri.startsWith(this.settings.baseUrl);
-      },
-      keys: ['resourceUri', 'rights', 'webId']
-    },
-    async handler(ctx) {
-      let { resourceUri, webId, rights } = ctx.params;
-      webId = webId || ctx.meta.webId || 'anon';
-      rights = rights || {};
-      if (Object.keys(rights).length === 0) rights = { read: true, write: true, append: true, control: true };
+    keys: ['resourceUri', 'rights', 'webId']
+  },
+  async handler(ctx) {
+    let { resourceUri, webId, rights } = ctx.params;
+    webId = webId || ctx.meta.webId || 'anon';
+    rights = rights || {};
+    if (Object.keys(rights).length === 0) rights = { read: true, write: true, append: true, control: true };
 
-      await this.checkResourceOrContainerExists(ctx, resourceUri);
-      return await hasPermissions(ctx, resourceUri, rights, this.settings.baseUrl, webId, this.settings.graphName);
-    }
+    await this.checkResourceOrContainerExists(ctx, resourceUri);
+    return await hasPermissions(ctx, resourceUri, rights, this.settings.baseUrl, webId, this.settings.graphName);
   }
 };

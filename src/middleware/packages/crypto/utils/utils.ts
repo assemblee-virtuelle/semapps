@@ -1,4 +1,4 @@
-const assert = require('node:assert');
+import assert from 'node:assert';
 
 /**
  * Converts a value to an array. If the value is undefined or null, returns an empty array.
@@ -35,4 +35,4 @@ const deepStrictEqual = (object1, object2) => {
   return true;
 };
 
-module.exports = { arrayOf, deepStrictEqual };
+export { arrayOf, deepStrictEqual };

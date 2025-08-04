@@ -1,6 +1,6 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
+import { MIME_TYPES } from '@semapps/mime-types';
 
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     containerUri: { type: 'string' }
@@ -27,3 +27,5 @@ module.exports = {
     });
   }
 };
+
+export default Schema;

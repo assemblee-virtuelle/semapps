@@ -1,9 +1,9 @@
-const { createSign, createHash } = require('crypto');
-const { parseRequest, verifySignature } = require('http-signature');
-const { createAuthzHeader, createSignatureString } = require('http-signature-header');
-const { Errors: E } = require('moleculer-web');
-const { KEY_TYPES } = require('../constants');
-const { arrayOf } = require('../utils/utils');
+import { createSign, createHash } from 'crypto';
+import { parseRequest, verifySignature } from 'http-signature';
+import { createAuthzHeader, createSignatureString } from 'http-signature-header';
+import { Errors as E } from 'moleculer-web';
+import { KEY_TYPES } from '../constants.ts';
+import { arrayOf } from '../utils/utils.ts';
 
 const HttpSignatureService = {
   // TODO: Rename to signature.http-signatures in a major release.
@@ -142,4 +142,4 @@ const HttpSignatureService = {
   }
 };
 
-module.exports = HttpSignatureService;
+export default HttpSignatureService;

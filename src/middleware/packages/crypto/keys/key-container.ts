@@ -1,7 +1,7 @@
-const { ControlledContainerMixin } = require('@semapps/ldp');
-const { Errors: E } = require('moleculer-web');
-const { arrayOf } = require('../utils/utils');
-const { KEY_TYPES } = require('../constants');
+import { ControlledContainerMixin } from '@semapps/ldp';
+import { Errors as E } from 'moleculer-web';
+import { arrayOf } from '../utils/utils.ts';
+import { KEY_TYPES } from '../constants.ts';
 
 /**
  * DANGER ZONE
@@ -11,7 +11,7 @@ const { KEY_TYPES } = require('../constants');
  * Watch out with permissions. This should be strictly limited to the owner and privileged apps.
  * @type {import('moleculer').ServiceSchema}
  */
-module.exports = {
+const KeysContainerSchema = {
   name: 'keys.container',
   mixins: [ControlledContainerMixin],
   settings: {
@@ -77,3 +77,5 @@ module.exports = {
     }
   }
 };
+
+export default KeysContainerSchema;

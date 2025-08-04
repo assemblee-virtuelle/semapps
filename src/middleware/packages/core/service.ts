@@ -1,17 +1,17 @@
-const path = require('path');
-const ApiGatewayService = require('moleculer-web');
-const { Errors: E } = require('moleculer-web');
-const { ActivityPubService, FULL_ACTOR_TYPES } = require('@semapps/activitypub');
-const { JsonLdService } = require('@semapps/jsonld');
-const { LdpService, DocumentTaggerMixin } = require('@semapps/ldp');
-const { OntologiesService } = require('@semapps/ontologies');
-const { SparqlEndpointService } = require('@semapps/sparql-endpoint');
-const { TripleStoreService } = require('@semapps/triplestore');
-const { VoidService } = require('@semapps/void');
-const { WebAclService } = require('@semapps/webacl');
-const { WebfingerService } = require('@semapps/webfinger');
-const { KeysService, SignatureService } = require('@semapps/crypto');
-const { WebIdService } = require('@semapps/webid');
+import path from 'path';
+import ApiGatewayService from 'moleculer-web';
+import { Errors as E } from 'moleculer-web';
+import { ActivityPubService, FULL_ACTOR_TYPES } from '@semapps/activitypub';
+import { JsonLdService } from '@semapps/jsonld';
+import { LdpService, DocumentTaggerMixin } from '@semapps/ldp';
+import { OntologiesService } from '@semapps/ontologies';
+import { SparqlEndpointService } from '@semapps/sparql-endpoint';
+import { TripleStoreService } from '@semapps/triplestore';
+import { VoidService } from '@semapps/void';
+import { WebAclService } from '@semapps/webacl';
+import { WebfingerService } from '@semapps/webfinger';
+import { KeysService, SignatureService } from '@semapps/crypto';
+import { WebIdService } from '@semapps/webid';
 
 const botsContainer = {
   path: '/as/application',
@@ -229,4 +229,4 @@ const CoreService = {
   }
 };
 
-module.exports = CoreService;
+export default CoreService;

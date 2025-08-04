@@ -1,7 +1,7 @@
-const dashify = require('dashify');
-const { isURL } = require('../../../utils');
+import dashify from 'dashify';
+import { isURL } from '../../../utils.ts';
 
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     resourceType: 'string'
@@ -37,3 +37,5 @@ module.exports = {
     return `/${prefix}/${dashify(className)}`;
   }
 };
+
+export default Schema;

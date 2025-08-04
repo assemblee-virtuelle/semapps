@@ -1,7 +1,6 @@
-const { parseHeader, negotiateAccept, parseJson } = require('@semapps/middlewares');
-const path = require('node:path');
-const { VC_API_PATH } = require('../constants');
-
+import { parseHeader, negotiateAccept, parseJson } from '@semapps/middlewares';
+import path from 'node:path';
+import { VC_API_PATH } from '../constants.ts';
 const middlewares = [parseHeader, parseJson, negotiateAccept];
 
 /**
@@ -85,4 +84,4 @@ const VCApiService = {
   }
 };
 
-module.exports = VCApiService;
+export default VCApiService;

@@ -1,8 +1,7 @@
-const urlJoin = require('url-join');
-const path = require('path');
-const MailService = require('moleculer-mail');
-const { getSlugFromUri } = require('@semapps/ldp');
-
+import urlJoin from 'url-join';
+import path from 'path';
+import MailService from 'moleculer-mail';
+import { getSlugFromUri } from '@semapps/ldp';
 const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
 const SingleMailNotificationsService = {
@@ -95,4 +94,4 @@ const SingleMailNotificationsService = {
   }
 };
 
-module.exports = SingleMailNotificationsService;
+export default SingleMailNotificationsService;

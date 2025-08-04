@@ -1,5 +1,5 @@
-const path = require('path');
-const urlJoin = require('url-join');
+import path from 'path';
+import urlJoin from 'url-join';
 
 const NodeinfoService = {
   name: 'nodeinfo',
@@ -89,4 +89,4 @@ const NodeinfoService = {
   }
 };
 
-module.exports = NodeinfoService;
+export default NodeinfoService;

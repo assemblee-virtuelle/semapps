@@ -1,7 +1,7 @@
 const { MoleculerError } = require('moleculer').Errors;
-const { isMimeTypeMatching } = require('@semapps/mime-types');
+import { isMimeTypeMatching } from '@semapps/mime-types';
 
-module.exports = {
+const Schema = {
   settings: {
     mimeTypes: {
       accepted: [],
@@ -32,3 +32,5 @@ module.exports = {
     }
   }
 };
+
+export default Schema;

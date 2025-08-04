@@ -1,4 +1,4 @@
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     actionName: { type: 'string' }
@@ -8,3 +8,5 @@ module.exports = {
     this.registeredActionNames.push(actionName);
   }
 };
+
+export default Schema;

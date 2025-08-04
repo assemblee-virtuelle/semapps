@@ -1,4 +1,4 @@
-const crypto = require('node:crypto');
+import crypto from 'node:crypto';
 
 /**
  * Service to generate challenges upon request.
@@ -88,4 +88,4 @@ const ChallengeService = {
   }
 };
 
-module.exports = ChallengeService;
+export default ChallengeService;

@@ -1,10 +1,10 @@
-const { ControlledContainerMixin, DereferenceMixin, delay, arrayOf } = require('@semapps/ldp');
-const { solid, skos, apods } = require('@semapps/ontologies');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { namedNode, triple } = require('@rdfjs/data-model');
-const TypeRegistrationsService = require('./type-registrations');
+import { ControlledContainerMixin, DereferenceMixin, delay, arrayOf } from '@semapps/ldp';
+import { solid, skos, apods } from '@semapps/ontologies';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { namedNode, triple } from '@rdfjs/data-model';
+import TypeRegistrationsService from './type-registrations.ts';
 
-module.exports = {
+const TypeIndexesSchema = {
   name: 'type-indexes',
   mixins: [ControlledContainerMixin, DereferenceMixin],
   settings: {
@@ -188,3 +188,5 @@ module.exports = {
     }
   }
 };
+
+export default TypeIndexesSchema;

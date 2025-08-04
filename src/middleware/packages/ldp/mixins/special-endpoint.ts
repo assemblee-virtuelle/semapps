@@ -1,9 +1,9 @@
-const urlJoin = require('url-join');
-const { namedNode, triple } = require('@rdfjs/data-model');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { parseUrl, parseHeader, negotiateAccept, parseJson, parseTurtle } = require('@semapps/middlewares');
+import urlJoin from 'url-join';
+import { namedNode, triple } from '@rdfjs/data-model';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { parseUrl, parseHeader, negotiateAccept, parseJson, parseTurtle } from '@semapps/middlewares';
 
-module.exports = {
+const Schema = {
   settings: {
     baseUrl: null,
     settingsDataset: null,
@@ -87,3 +87,5 @@ module.exports = {
     }
   }
 };
+
+export default Schema;

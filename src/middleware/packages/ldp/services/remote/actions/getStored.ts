@@ -1,8 +1,8 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
+import { MIME_TYPES } from '@semapps/mime-types';
 const { MoleculerError } = require('moleculer').Errors;
-const { buildBlankNodesQuery } = require('../../../utils');
+import { buildBlankNodesQuery } from '../../../utils.ts';
 
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -65,3 +65,5 @@ module.exports = {
     }
   }
 };
+
+export default Schema;

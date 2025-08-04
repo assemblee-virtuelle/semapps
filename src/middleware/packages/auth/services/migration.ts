@@ -1,7 +1,7 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { getSlugFromUri } = require('@semapps/ldp');
+import { MIME_TYPES } from '@semapps/mime-types';
+import { getSlugFromUri } from '@semapps/ldp';
 
-module.exports = {
+const AuthMigrationSchema = {
   name: 'auth.migration',
   actions: {
     async migrateUsersToAccounts(ctx) {
@@ -27,3 +27,5 @@ module.exports = {
     }
   }
 };
+
+export default AuthMigrationSchema;

@@ -1,10 +1,10 @@
-const urlJoin = require('url-join');
+import urlJoin from 'url-join';
 
 /**
  * Get the container URI based on its path
  * In Pod provider config, the webId is required to find the Pod root
  */
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     path: { type: 'string' },
@@ -23,3 +23,5 @@ module.exports = {
     }
   }
 };
+
+export default Schema;

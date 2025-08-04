@@ -1,6 +1,6 @@
-const { triple, namedNode, variable } = require('@rdfjs/data-model');
+import { triple, namedNode, variable } from '@rdfjs/data-model';
 
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -34,3 +34,5 @@ module.exports = {
     return exist;
   }
 };
+
+export default Schema;

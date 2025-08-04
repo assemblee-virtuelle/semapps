@@ -1,14 +1,17 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
+import { MIME_TYPES } from '@semapps/mime-types';
+
 const {
   purposes: { AssertionProofPurpose }
 } = require('jsonld-signatures');
-const { cryptosuite } = require('@digitalbazaar/eddsa-rdfc-2022-cryptosuite');
-const { DataIntegrityProof } = require('@digitalbazaar/data-integrity');
-const vc = require('@digitalbazaar/vc');
-/** @type {import('@digitalbazaar/ed25519-multikey')} */
-const Ed25519Multikey = require('@digitalbazaar/ed25519-multikey');
 
-const { KEY_TYPES, credentialsContext } = require('../constants');
+import { cryptosuite } from '@digitalbazaar/eddsa-rdfc-2022-cryptosuite';
+import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
+import vc from '@digitalbazaar/vc';
+
+/** @type {import('@digitalbazaar/ed25519-multikey')} */
+import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
+
+import { KEY_TYPES, credentialsContext } from '../constants.ts';
 
 /**
  * Service for verifying, reading, and revoking Verifiable Credentials.
@@ -174,4 +177,4 @@ const VCCredentialService = {
   }
 };
 
-module.exports = VCCredentialService;
+export default VCCredentialService;

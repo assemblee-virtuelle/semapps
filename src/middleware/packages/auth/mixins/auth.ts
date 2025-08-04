@@ -1,8 +1,8 @@
-const passport = require('passport');
-const { Errors: E } = require('moleculer-web');
-const { TripleStoreAdapter } = require('@semapps/triplestore');
-const AuthAccountService = require('../services/account');
-const AuthJWTService = require('../services/jwt');
+import passport from 'passport';
+import { Errors as E } from 'moleculer-web';
+import { TripleStoreAdapter } from '@semapps/triplestore';
+import AuthAccountService from '../services/account.ts';
+import AuthJWTService from '../services/jwt.ts';
 
 /**
  * Auth Mixin that handles authentication and authorization for routes
@@ -243,4 +243,4 @@ const AuthMixin = {
   }
 };
 
-module.exports = AuthMixin;
+export default AuthMixin;

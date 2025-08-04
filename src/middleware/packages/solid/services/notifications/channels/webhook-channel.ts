@@ -1,5 +1,5 @@
-const fetch = require('node-fetch');
-const NotificationChannelMixin = require('./notification-channel.mixin');
+import fetch from 'node-fetch';
+import NotificationChannelMixin from './notification-channel.mixin.ts';
 
 const queueOptions =
   process.env.NODE_ENV === 'test'
@@ -94,4 +94,4 @@ const WebhookChannel2023Service = {
   }
 };
 
-module.exports = WebhookChannel2023Service;
+export default WebhookChannel2023Service;

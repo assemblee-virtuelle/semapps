@@ -1,7 +1,7 @@
-const getAction = require('./actions/get');
-const registerAction = require('./actions/register');
+import getAction from './actions/get.ts';
+import registerAction from './actions/register.ts';
 
-module.exports = {
+const LdpLinkHeaderSchema = {
   name: 'ldp.link-header',
   actions: {
     get: getAction,
@@ -11,3 +11,5 @@ module.exports = {
     this.registeredActionNames = [];
   }
 };
+
+export default LdpLinkHeaderSchema;

@@ -1,13 +1,13 @@
-const bcrypt = require('bcrypt');
-const createSlug = require('speakingurl');
-const DbService = require('moleculer-db');
-const { TripleStoreAdapter } = require('@semapps/triplestore');
-const crypto = require('crypto');
+import bcrypt from 'bcrypt';
+import createSlug from 'speakingurl';
+import DbService from 'moleculer-db';
+import { TripleStoreAdapter } from '@semapps/triplestore';
+import crypto from 'crypto';
 
 // Taken from https://stackoverflow.com/a/9204568/7900695
 const emailRegexp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-module.exports = {
+const AuthAccountSchema = {
   name: 'auth.account',
   mixins: [DbService],
   adapter: new TripleStoreAdapter({ type: 'AuthAccount', dataset: 'settings' }),
@@ -313,3 +313,5 @@ module.exports = {
     }
   }
 };
+
+export default AuthAccountSchema;

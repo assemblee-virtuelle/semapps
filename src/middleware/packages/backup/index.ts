@@ -1,12 +1,14 @@
-const { CronJob } = require('cron');
-const fs = require('fs');
-const { emptyDirSync } = require('fs-extra');
-const pathJoin = require('path').join;
-const fsCopy = require('./utils/fsCopy');
-const ftpCopy = require('./utils/ftpCopy');
-const rsyncCopy = require('./utils/rsyncCopy');
-const ftpRemove = require('./utils/ftpRemove');
-const fsRemove = require('./utils/fsRemove');
+import { CronJob } from 'cron';
+import fs from 'fs';
+import { emptyDirSync } from 'fs-extra';
+import pathModule from 'path';
+const pathJoin = pathModule.join;
+import fsCopy from './utils/fsCopy.ts';
+import ftpCopy from './utils/ftpCopy.ts';
+import rsyncCopy from './utils/rsyncCopy.ts';
+import ftpRemove from './utils/ftpRemove.ts';
+import fsRemove from './utils/fsRemove.ts';
+
 /**
  * @typedef {import('moleculer').Context} Context
  */
@@ -176,4 +178,4 @@ const BackupService = {
   }
 };
 
-module.exports = BackupService;
+export default BackupService;

@@ -1,4 +1,4 @@
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     containerUri: { type: 'string' },
@@ -22,3 +22,5 @@ module.exports = {
     return num === 0;
   }
 };
+
+export default Schema;

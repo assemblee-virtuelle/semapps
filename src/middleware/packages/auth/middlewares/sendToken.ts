@@ -3,4 +3,4 @@ const sendToken = (req, res) => {
   res.end(JSON.stringify({ token: req.user.token, webId: req.user.webId, newUser: req.user.newUser }));
 };
 
-module.exports = sendToken;
+export default sendToken;

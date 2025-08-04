@@ -1,9 +1,8 @@
-const fetch = require('node-fetch');
-const fs = require('fs');
-const path = require('path');
-const urlJoin = require('url-join');
-const format = require('string-template');
-
+import fetch from 'node-fetch';
+import fs from 'fs';
+import path from 'path';
+import urlJoin from 'url-join';
+import format from 'string-template';
 const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
 /** @type {import('moleculer').ServiceSchema} */
@@ -160,4 +159,4 @@ const DatasetService = {
   }
 };
 
-module.exports = DatasetService;
+export default DatasetService;

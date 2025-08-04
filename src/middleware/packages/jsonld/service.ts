@@ -1,10 +1,10 @@
-const urlJoin = require('url-join');
-const JsonLdApiService = require('./services/api');
-const JsonLdContextService = require('./services/context');
-const JsonLdDocumentLoaderService = require('./services/document-loader');
-const JsonLdParserService = require('./services/parser');
+import urlJoin from 'url-join';
+import JsonLdApiService from './services/api/index.ts';
+import JsonLdContextService from './services/context/index.ts';
+import JsonLdDocumentLoaderService from './services/document-loader/index.ts';
+import JsonLdParserService from './services/parser/index.ts';
 
-module.exports = {
+const JsonldSchema = {
   name: 'jsonld',
   settings: {
     baseUri: null,
@@ -55,3 +55,5 @@ module.exports = {
     });
   }
 };
+
+export default JsonldSchema;

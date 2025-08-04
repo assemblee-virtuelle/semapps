@@ -1,9 +1,9 @@
-const QueueMixin = require('moleculer-bull');
-const { notify } = require('@semapps/ontologies');
-const WebhookChannelService = require('./channels/webhook-channel');
-const WebSocketChannelService = require('./channels/websocket-channel');
+import QueueMixin from 'moleculer-bull';
+import { notify } from '@semapps/ontologies';
+import WebhookChannelService from './channels/webhook-channel.ts';
+import WebSocketChannelService from './channels/websocket-channel.ts';
 
-module.exports = {
+const SolidNotificationsProviderSchema = {
   name: 'solid-notifications.provider',
   settings: {
     baseUrl: null,
@@ -42,3 +42,5 @@ module.exports = {
     await this.broker.call('ontologies.register', notify);
   }
 };
+
+export default SolidNotificationsProviderSchema;

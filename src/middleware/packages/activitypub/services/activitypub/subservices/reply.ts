@@ -1,8 +1,8 @@
-const { sanitizeSparqlQuery } = require('@semapps/triplestore');
-const ActivitiesHandlerMixin = require('../../../mixins/activities-handler');
-const { ACTIVITY_TYPES, OBJECT_TYPES } = require('../../../constants');
-const { collectionPermissionsWithAnonRead } = require('../../../utils');
-const matchActivity = require('../../../utils/matchActivity');
+import { sanitizeSparqlQuery } from '@semapps/triplestore';
+import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
+import { ACTIVITY_TYPES, OBJECT_TYPES } from '../../../constants.ts';
+import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
+import matchActivity from '../../../utils/matchActivity.ts';
 
 const ReplyService = {
   name: 'activitypub.reply',
@@ -138,4 +138,4 @@ const ReplyService = {
   }
 };
 
-module.exports = ReplyService;
+export default ReplyService;

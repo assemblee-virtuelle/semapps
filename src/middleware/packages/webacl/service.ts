@@ -1,10 +1,10 @@
-const { acl, vcard, rdfs } = require('@semapps/ontologies');
-const WebAclResourceService = require('./services/resource');
-const WebAclGroupService = require('./services/group');
-const WebAclCacheService = require('./services/cache');
-const getRoutes = require('./routes/getRoutes');
+import { acl, vcard, rdfs } from '@semapps/ontologies';
+import WebAclResourceService from './services/resource/index.ts';
+import WebAclGroupService from './services/group/index.ts';
+import WebAclCacheService from './services/cache/index.ts';
+import getRoutes from './routes/getRoutes.ts';
 
-module.exports = {
+const WebaclSchema = {
   name: 'webacl',
   settings: {
     baseUrl: null,
@@ -72,3 +72,5 @@ module.exports = {
     await this.broker.call('ontologies.register', rdfs);
   }
 };
+
+export default WebaclSchema;

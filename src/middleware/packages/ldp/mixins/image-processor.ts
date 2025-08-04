@@ -1,10 +1,9 @@
-const sharp = require('sharp');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { arrayOf } = require('../utils');
-
+import sharp from 'sharp';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { arrayOf } from '../utils.ts';
 const SUPPORTED_IMAGES_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
-module.exports = {
+const Schema = {
   settings: {
     imageProcessor: {
       maxWidth: 1900,
@@ -96,3 +95,5 @@ module.exports = {
     }
   }
 };
+
+export default Schema;

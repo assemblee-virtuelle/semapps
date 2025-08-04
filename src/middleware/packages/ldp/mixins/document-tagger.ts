@@ -1,7 +1,7 @@
-const { dc } = require('@semapps/ontologies');
-const { getDatasetFromUri } = require('../utils');
+import { dc } from '@semapps/ontologies';
+import { getDatasetFromUri } from '../utils.ts';
 
-module.exports = {
+const Schema = {
   settings: {
     documentPredicates: {
       created: 'http://purl.org/dc/terms/created',
@@ -80,3 +80,5 @@ module.exports = {
     }
   }
 };
+
+export default Schema;

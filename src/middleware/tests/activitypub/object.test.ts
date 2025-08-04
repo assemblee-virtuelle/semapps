@@ -1,16 +1,15 @@
-const { ACTIVITY_TYPES, OBJECT_TYPES } = require('@semapps/activitypub');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const waitForExpect = require('wait-for-expect');
-const initialize = require('./initialize');
-const CONFIG = require('../config');
-
+import { ACTIVITY_TYPES, OBJECT_TYPES } from '@semapps/activitypub';
+import { MIME_TYPES } from '@semapps/mime-types';
+import waitForExpect from 'wait-for-expect';
+import initialize from './initialize.ts';
+import CONFIG from '../config.ts';
 jest.setTimeout(50000);
-
 let broker;
 
 beforeAll(async () => {
   broker = await initialize(3000, 'testData', 'settings');
 });
+
 afterAll(async () => {
   if (broker) await broker.stop();
 });

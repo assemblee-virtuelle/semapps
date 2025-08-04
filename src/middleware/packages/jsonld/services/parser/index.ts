@@ -1,9 +1,9 @@
-const jsonld = require('jsonld');
-const { JsonLdParser } = require('jsonld-streaming-parser');
-const streamifyString = require('streamify-string');
-const { arrayOf, isURI } = require('../../utils/utils');
+import jsonld from 'jsonld';
+import { JsonLdParser } from 'jsonld-streaming-parser';
+import streamifyString from 'streamify-string';
+import { arrayOf, isURI } from '../../utils/utils.ts';
 
-module.exports = {
+const JsonldParserSchema = {
   name: 'jsonld.parser',
   dependencies: ['jsonld.document-loader'],
   async started() {
@@ -112,3 +112,5 @@ module.exports = {
     }
   }
 };
+
+export default JsonldParserSchema;

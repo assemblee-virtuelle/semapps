@@ -1,10 +1,11 @@
-const urlJoin = require('url-join');
-const { Issuer, Strategy, custom } = require('openid-client');
+import urlJoin from 'url-join';
+import { Issuer, Strategy, custom } from 'openid-client';
 
 custom.setHttpOptionsDefaults({
   timeout: 10000
 });
-const AuthSSOMixin = require('../mixins/auth.sso');
+
+import AuthSSOMixin from '../mixins/auth.sso.ts';
 
 const AuthOIDCService = {
   name: 'auth',
@@ -67,4 +68,4 @@ const AuthOIDCService = {
   }
 };
 
-module.exports = AuthOIDCService;
+export default AuthOIDCService;

@@ -9,7 +9,7 @@
  *
  * @type {import('moleculer').ServiceSchema}
  */
-module.exports = {
+const Schema = {
   dependencies: ['ldp.resource'],
   settings: {
     pseudoIdPredicate: 'urn:tmp:pseudoId'
@@ -89,3 +89,5 @@ module.exports = {
     }
   }
 };
+
+export default Schema;

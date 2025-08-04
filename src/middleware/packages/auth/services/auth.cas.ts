@@ -1,6 +1,6 @@
-const { Strategy } = require('passport-cas2');
-const { Errors: E } = require('moleculer-web');
-const AuthSSOMixin = require('../mixins/auth.sso');
+import { Strategy } from 'passport-cas2';
+import { Errors as E } from 'moleculer-web';
+import AuthSSOMixin from '../mixins/auth.sso.ts';
 
 const AuthCASService = {
   name: 'auth',
@@ -42,4 +42,4 @@ const AuthCASService = {
   }
 };
 
-module.exports = AuthCASService;
+export default AuthCASService;

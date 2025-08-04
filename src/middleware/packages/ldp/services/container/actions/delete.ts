@@ -1,6 +1,6 @@
-const { sanitizeSparqlQuery } = require('@semapps/triplestore');
+import { sanitizeSparqlQuery } from '@semapps/triplestore';
 
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     containerUri: 'string',
@@ -43,3 +43,5 @@ module.exports = {
     return returnValues;
   }
 };
+
+export default Schema;

@@ -1,6 +1,6 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { delay } = require('../utils');
-const matchActivity = require('../utils/matchActivity');
+import { MIME_TYPES } from '@semapps/mime-types';
+import { delay } from '../utils.ts';
+import matchActivity from '../utils/matchActivity.ts';
 
 /**
  * Mixin used by the OutboxService and InboxService
@@ -67,4 +67,4 @@ const AwaitActivityMixin = {
   }
 };
 
-module.exports = AwaitActivityMixin;
+export default AwaitActivityMixin;

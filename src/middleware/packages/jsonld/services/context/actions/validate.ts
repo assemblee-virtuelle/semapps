@@ -1,4 +1,4 @@
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     context: {
@@ -17,3 +17,5 @@ module.exports = {
     }
   }
 };
+
+export default Schema;

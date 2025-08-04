@@ -1,14 +1,12 @@
-const fetch = require('node-fetch');
-const urlJoin = require('url-join');
-const initialize = require('./initialize');
-const CONFIG = require('../config');
-const ont1 = require('./ontologies/ont1.json');
-const ont2 = require('./ontologies/ont2.json');
-const ont3 = require('./ontologies/ont3.json');
-const ont4 = require('./ontologies/ont4.json');
-
+import fetch from 'node-fetch';
+import urlJoin from 'url-join';
+import initialize from './initialize.ts';
+import CONFIG from '../config.ts';
+import ont1 from './ontologies/ont1.json';
+import ont2 from './ontologies/ont2.json';
+import ont3 from './ontologies/ont3.json';
+import ont4 from './ontologies/ont4.json';
 jest.setTimeout(10000);
-
 const localContextUri = urlJoin(CONFIG.HOME_URL, '.well-known/context.jsonld');
 
 describe.each([false, true])('Register ontologies with cacher %s', cacher => {

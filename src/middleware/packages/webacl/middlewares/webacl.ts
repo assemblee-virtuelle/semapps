@@ -1,7 +1,7 @@
-const urlJoin = require('url-join');
-const { throw403 } = require('@semapps/middlewares');
-const { arrayOf, defaultContainerOptions } = require('@semapps/ldp');
-const { getSlugFromUri } = require('../utils');
+import urlJoin from 'url-join';
+import { throw403 } from '@semapps/middlewares';
+import { arrayOf, defaultContainerOptions } from '@semapps/ldp';
+import { getSlugFromUri } from '../utils.ts';
 
 const modifyActions = [
   'ldp.resource.create',
@@ -396,4 +396,4 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
   }
 });
 
-module.exports = WebAclMiddleware;
+export default WebAclMiddleware;

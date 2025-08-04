@@ -1,7 +1,7 @@
-const urlJoin = require('url-join');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { ACTOR_TYPES } = require('../constants');
-const { delay } = require('../utils');
+import urlJoin from 'url-join';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { ACTOR_TYPES } from '../constants.ts';
+import { delay } from '../utils.ts';
 
 const RelayService = {
   name: 'activitypub.relay',
@@ -80,4 +80,4 @@ const RelayService = {
   }
 };
 
-module.exports = RelayService;
+export default RelayService;

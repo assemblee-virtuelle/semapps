@@ -1,5 +1,5 @@
 const { MoleculerError } = require('moleculer').Errors;
-const { isMirror } = require('../../../utils');
+import { isMirror } from '../../../utils.ts';
 
 const checkTripleValidity = (triple, containerUri) => {
   if (triple.subject.value !== containerUri) {
@@ -17,7 +17,7 @@ const checkTripleValidity = (triple, containerUri) => {
   }
 };
 
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     containerUri: {
@@ -117,3 +117,5 @@ module.exports = {
     }
   }
 };
+
+export default Schema;

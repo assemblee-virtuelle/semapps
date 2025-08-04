@@ -1,7 +1,7 @@
-const urlJoin = require('url-join');
-const { MIME_TYPES, negotiateType } = require('@semapps/mime-types');
+import urlJoin from 'url-join';
+import { MIME_TYPES, negotiateType } from '@semapps/mime-types';
 
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     query: {
@@ -77,3 +77,5 @@ module.exports = {
     }
   }
 };
+
+export default Schema;

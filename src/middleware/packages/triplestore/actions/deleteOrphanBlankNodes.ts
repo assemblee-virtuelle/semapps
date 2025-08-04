@@ -1,4 +1,4 @@
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     dataset: {
@@ -40,3 +40,5 @@ module.exports = {
     }
   }
 };
+
+export default Schema;

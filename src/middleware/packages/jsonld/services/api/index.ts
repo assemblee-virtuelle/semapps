@@ -1,4 +1,4 @@
-module.exports = {
+const JsonldApiSchema = {
   name: 'jsonld.api',
   settings: {
     localContextPath: null
@@ -25,3 +25,5 @@ module.exports = {
     }
   }
 };
+
+export default JsonldApiSchema;

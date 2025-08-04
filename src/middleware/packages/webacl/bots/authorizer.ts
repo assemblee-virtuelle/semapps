@@ -1,4 +1,4 @@
-module.exports = {
+const AuthorizerSchema = {
   name: 'authorizer',
   settings: {
     rules: []
@@ -110,3 +110,5 @@ module.exports = {
     }
   }
 };
+
+export default AuthorizerSchema;

@@ -1,7 +1,7 @@
-const urlJoin = require('url-join');
-const ImporterMixin = require('./importer');
+import urlJoin from 'url-join';
+import ImporterMixin from './importer.ts';
 
-module.exports = {
+const Schema = {
   mixins: [ImporterMixin],
   settings: {
     source: {
@@ -55,3 +55,5 @@ module.exports = {
     }
   }
 };
+
+export default Schema;

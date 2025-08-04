@@ -1,5 +1,5 @@
-const Rsync = require('rsync');
-const { join: pathJoin } = require('path');
+import Rsync from 'rsync';
+import { join as pathJoin } from 'path';
 
 const rsyncCopy = (path, subDir, remoteServer, syncDelete = false) => {
   // Setup rsync to remote server
@@ -24,4 +24,4 @@ const rsyncCopy = (path, subDir, remoteServer, syncDelete = false) => {
   });
 };
 
-module.exports = rsyncCopy;
+export default rsyncCopy;

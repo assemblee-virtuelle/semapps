@@ -1,13 +1,13 @@
-const { KEY_TYPES } = require('@semapps/crypto');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { arrayOf, waitForResource } = require('@semapps/ldp');
-const { wait } = require('../utils');
-const initialize = require('./initialize');
-
+import { KEY_TYPES } from '@semapps/crypto';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { arrayOf, waitForResource } from '@semapps/ldp';
+import { wait } from '../utils.ts';
+import initialize from './initialize.ts';
 jest.setTimeout(100_000);
 
 /** @type {import('moleculer').ServiceBroker} */
 let broker;
+
 let user;
 let user2;
 

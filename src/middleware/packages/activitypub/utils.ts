@@ -1,4 +1,4 @@
-const { ACTIVITY_TYPES } = require('./constants');
+import { ACTIVITY_TYPES } from './constants.ts';
 
 const objectCurrentToId = activityJson => {
   if (activityJson.object && typeof activityJson.object === 'object' && activityJson.object.current) {
@@ -112,7 +112,7 @@ const getValueFromDataType = result => {
   }
 };
 
-module.exports = {
+export {
   objectCurrentToId,
   objectIdToCurrent,
   collectionPermissionsWithAnonRead,

@@ -1,7 +1,7 @@
-const DbService = require('moleculer-db');
-const { TripleStoreAdapter } = require('@semapps/triplestore');
+import DbService from 'moleculer-db';
+import { TripleStoreAdapter } from '@semapps/triplestore';
 
-module.exports = {
+const OntologiesRegistrySchema = {
   name: 'ontologies.registry',
   mixins: [DbService],
   adapter: new TripleStoreAdapter({ type: 'Ontology', dataset: 'settings' }),
@@ -42,3 +42,5 @@ module.exports = {
     }
   }
 };
+
+export default OntologiesRegistrySchema;

@@ -1,6 +1,6 @@
-const urlJoin = require('url-join');
+import urlJoin from 'url-join';
 const { ServiceSchemaError } = require('moleculer').Errors;
-const { MIME_TYPES } = require('@semapps/mime-types');
+import { MIME_TYPES } from '@semapps/mime-types';
 
 class LdpAdapter {
   constructor({ resourceService = 'ldp.resource', containerService = 'ldp.container' } = {}) {
@@ -211,4 +211,4 @@ class LdpAdapter {
   }
 }
 
-module.exports = LdpAdapter;
+export default LdpAdapter;

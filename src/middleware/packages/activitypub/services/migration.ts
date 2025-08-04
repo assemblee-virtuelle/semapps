@@ -1,4 +1,4 @@
-module.exports = {
+const ActivitypubMigrationSchema = {
   name: 'activitypub.migration',
   actions: {
     async updateCollectionsOptions(ctx) {
@@ -30,3 +30,5 @@ module.exports = {
     }
   }
 };
+
+export default ActivitypubMigrationSchema;

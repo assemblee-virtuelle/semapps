@@ -1,13 +1,13 @@
-const { ldp, semapps } = require('@semapps/ontologies');
-const LdpApiService = require('./services/api');
-const LdpContainerService = require('./services/container');
-const LdpCacheService = require('./services/cache');
-const LdpLinkHeaderService = require('./services/link-header');
-const LdpRegistryService = require('./services/registry');
-const LdpRemoteService = require('./services/remote');
-const LdpResourceService = require('./services/resource');
+import { ldp, semapps } from '@semapps/ontologies';
+import LdpApiService from './services/api/index.ts';
+import LdpContainerService from './services/container/index.ts';
+import LdpCacheService from './services/cache/index.ts';
+import LdpLinkHeaderService from './services/link-header/index.ts';
+import LdpRegistryService from './services/registry/index.ts';
+import LdpRemoteService from './services/remote/index.ts';
+import LdpResourceService from './services/resource/index.ts';
 
-module.exports = {
+const LdpSchema = {
   name: 'ldp',
   settings: {
     baseUrl: null,
@@ -110,3 +110,5 @@ module.exports = {
     }
   }
 };
+
+export default LdpSchema;

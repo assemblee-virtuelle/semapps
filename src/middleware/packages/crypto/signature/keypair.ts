@@ -1,10 +1,10 @@
-const fs = require('fs');
-const path = require('path');
-const fetch = require('node-fetch');
-const { generateKeyPair } = require('crypto');
-const { namedNode, blankNode, literal, triple } = require('@rdfjs/data-model');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { KEY_TYPES } = require('../constants');
+import fs from 'fs';
+import path from 'path';
+import fetch from 'node-fetch';
+import { generateKeyPair } from 'crypto';
+import { namedNode, blankNode, literal, triple } from '@rdfjs/data-model';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { KEY_TYPES } from '../constants.ts';
 
 /**
  * Deprecated Service.
@@ -228,4 +228,4 @@ const SignatureService = {
   }
 };
 
-module.exports = SignatureService;
+export default SignatureService;

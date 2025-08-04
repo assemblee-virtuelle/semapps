@@ -1,6 +1,6 @@
-const { SpecialEndpointMixin } = require('@semapps/ldp');
+import { SpecialEndpointMixin } from '@semapps/ldp';
 
-module.exports = {
+const SolidEndpointSchema = {
   name: 'solid-endpoint',
   mixins: [SpecialEndpointMixin],
   settings: {
@@ -26,3 +26,5 @@ module.exports = {
     }
   }
 };
+
+export default SolidEndpointSchema;

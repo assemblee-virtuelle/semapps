@@ -1,8 +1,8 @@
-const path = require('path');
-const urlJoin = require('url-join');
-const MailService = require('moleculer-mail');
+import path from 'path';
+import urlJoin from 'url-join';
+import MailService from 'moleculer-mail';
 
-module.exports = {
+const AuthMailSchema = {
   name: 'auth.mail',
   mixins: [MailService],
   settings: {
@@ -47,3 +47,5 @@ module.exports = {
     }
   }
 };
+
+export default AuthMailSchema;

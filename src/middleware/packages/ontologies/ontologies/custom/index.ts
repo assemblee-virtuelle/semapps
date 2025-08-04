@@ -1,11 +1,10 @@
-module.exports = {
-  mp: require('./mp.json'),
-  oasis: require('./oasis.json'),
-  og: require('./og.json'),
-  pair: require('./pair.json'),
-  petr: require('./petr.json'),
-  schema: require('./schema.json'),
-  skos: require('./skos.json'),
-  syreen: require('./syreen.json'),
-  tutor: require('./tutor.json')
-};
+import mp from './mp.json';
+import oasis from './oasis.json';
+import og from './og.json';
+import pair from './pair.json';
+import petr from './petr.json';
+import schema from './schema.json';
+import skos from './skos.json';
+import syreen from './syreen.json';
+import tutor from './tutor.json';
+export { mp, oasis, og, pair, petr, schema, skos, syreen, tutor };

@@ -1,6 +1,6 @@
-const urlJoin = require('url-join');
+import urlJoin from 'url-join';
 
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     containerUri: { type: 'string' },
@@ -47,3 +47,5 @@ module.exports = {
     }
   }
 };
+
+export default Schema;

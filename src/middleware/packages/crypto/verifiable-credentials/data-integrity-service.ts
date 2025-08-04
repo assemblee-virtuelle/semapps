@@ -1,12 +1,16 @@
-const jsigs = require('jsonld-signatures');
+import jsigs from 'jsonld-signatures';
+
 const {
   purposes: { AssertionProofPurpose }
 } = require('jsonld-signatures');
-const { cryptosuite } = require('@digitalbazaar/eddsa-rdfc-2022-cryptosuite');
-const { DataIntegrityProof } = require('@digitalbazaar/data-integrity');
+
+import { cryptosuite } from '@digitalbazaar/eddsa-rdfc-2022-cryptosuite';
+import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
+
 /** @type {import('@digitalbazaar/ed25519-multikey')} */
-const Ed25519Multikey = require('@digitalbazaar/ed25519-multikey');
-const { KEY_TYPES } = require('../constants');
+import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
+
+import { KEY_TYPES } from '../constants.ts';
 
 /**
  * Data integrity service for signing objects using the [VC data integrity spec](https://www.w3.org/TR/vc-data-integrity/).
@@ -107,4 +111,4 @@ const DataIntegrityService = {
   }
 };
 
-module.exports = DataIntegrityService;
+export default DataIntegrityService;

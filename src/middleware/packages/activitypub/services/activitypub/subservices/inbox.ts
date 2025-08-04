@@ -1,9 +1,9 @@
-const { Errors: E } = require('moleculer-web');
+import { Errors as E } from 'moleculer-web';
 const { MoleculerError } = require('moleculer').Errors;
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { objectIdToCurrent, collectionPermissionsWithAnonRead } = require('../../../utils');
-const { ACTOR_TYPES } = require('../../../constants');
-const AwaitActivityMixin = require('../../../mixins/await-activity');
+import { MIME_TYPES } from '@semapps/mime-types';
+import { objectIdToCurrent, collectionPermissionsWithAnonRead } from '../../../utils.ts';
+import { ACTOR_TYPES } from '../../../constants.ts';
+import AwaitActivityMixin from '../../../mixins/await-activity.ts';
 
 /** @type {import('moleculer').ServiceSchema} */
 const InboxService = {
@@ -186,4 +186,4 @@ const InboxService = {
   }
 };
 
-module.exports = InboxService;
+export default InboxService;

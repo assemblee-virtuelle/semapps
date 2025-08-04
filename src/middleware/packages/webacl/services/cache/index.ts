@@ -1,4 +1,4 @@
-module.exports = {
+const WebaclCacheSchema = {
   name: 'webacl.cache',
   actions: {
     // Invalidate the WebACL cache of the given resource
@@ -79,3 +79,5 @@ module.exports = {
     }
   }
 };
+
+export default WebaclCacheSchema;

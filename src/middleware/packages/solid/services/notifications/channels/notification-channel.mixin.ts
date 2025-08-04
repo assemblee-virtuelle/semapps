@@ -1,11 +1,11 @@
-const urlJoin = require('url-join');
-const { Errors: E } = require('moleculer-web');
-const { SpecialEndpointMixin, ControlledContainerMixin, getDatasetFromUri, arrayOf } = require('@semapps/ldp');
-const { ACTIVITY_TYPES } = require('@semapps/activitypub');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { namedNode } = require('@rdfjs/data-model');
-const { v4: uuidV4 } = require('uuid');
-const moment = require('moment');
+import urlJoin from 'url-join';
+import { Errors as E } from 'moleculer-web';
+import { SpecialEndpointMixin, ControlledContainerMixin, getDatasetFromUri, arrayOf } from '@semapps/ldp';
+import { ACTIVITY_TYPES } from '@semapps/activitypub';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { namedNode } from '@rdfjs/data-model';
+import { v4 as uuidV4 } from 'uuid';
+import moment from 'moment';
 
 /**
  * Solid Notification Channel mixin.
@@ -19,7 +19,7 @@ const moment = require('moment');
  *
  * Note: modifying a channel resource using the ldp API will not take effect until a server restart.
  */
-module.exports = {
+const Schema = {
   // name: 'solid-notifications.provider.<ChannelType>',
   mixins: [ControlledContainerMixin, SpecialEndpointMixin],
   settings: {
@@ -310,3 +310,5 @@ module.exports = {
     }
   }
 };
+
+export default Schema;

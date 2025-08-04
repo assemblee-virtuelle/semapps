@@ -1,11 +1,11 @@
-const fetch = require('node-fetch');
-const cronParser = require('cron-parser');
-const { promises: fsPromises } = require('fs');
-const { ACTIVITY_TYPES, PUBLIC_URI } = require('@semapps/activitypub');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { isDir } = require('../utils');
+import fetch from 'node-fetch';
+import cronParser from 'cron-parser';
+import { promises as fsPromises } from 'fs';
+import { ACTIVITY_TYPES, PUBLIC_URI } from '@semapps/activitypub';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { isDir } from '../utils.ts';
 
-module.exports = {
+const Schema = {
   settings: {
     source: {
       apiUrl: null,
@@ -529,3 +529,5 @@ module.exports = {
     }
   }
 };
+
+export default Schema;

@@ -1,13 +1,13 @@
-const path = require('path');
-const { ServiceBroker } = require('moleculer');
-const ApiGatewayService = require('moleculer-web');
-const { JsonLdService } = require('@semapps/jsonld');
-const { OntologiesService } = require('@semapps/ontologies');
-const { TripleStoreService } = require('@semapps/triplestore');
-const CONFIG = require('../config');
-const { clearDataset } = require('../utils');
+import path from 'path';
+import { ServiceBroker } from 'moleculer';
+import ApiGatewayService from 'moleculer-web';
+import { JsonLdService } from '@semapps/jsonld';
+import { OntologiesService } from '@semapps/ontologies';
+import { TripleStoreService } from '@semapps/triplestore';
+import CONFIG from '../config.ts';
+import { clearDataset } from '../utils.ts';
 
-module.exports = async (cacher, persistRegistry) => {
+export default async (cacher, persistRegistry) => {
   await clearDataset(CONFIG.SETTINGS_DATASET);
 
   const broker = new ServiceBroker({

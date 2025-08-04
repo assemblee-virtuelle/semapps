@@ -1,12 +1,10 @@
-const urlJoin = require('url-join');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { getSlugFromUri } = require('@semapps/ldp');
-const { fetchServer } = require('../utils');
-const CONFIG = require('../config');
-const initialize = require('./initialize');
-
+import urlJoin from 'url-join';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { getSlugFromUri } from '@semapps/ldp';
+import { fetchServer } from '../utils.ts';
+import CONFIG from '../config.ts';
+import initialize from './initialize.ts';
 jest.setTimeout(20000);
-
 let broker;
 
 beforeAll(async () => {

@@ -1,7 +1,7 @@
-const fs = require('fs');
-const path = require('path');
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
+import fs from 'fs';
+import path from 'path';
+import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 
 /**
  * Service that creates and validates JSON web tokens(JWT).
@@ -10,7 +10,7 @@ const crypto = require('crypto');
  *
  * TODO: Tokens do not expire.
  */
-module.exports = {
+const AuthJwtSchema = {
   name: 'auth.jwt',
   settings: {
     jwtPath: null
@@ -99,3 +99,5 @@ module.exports = {
     }
   }
 };
+
+export default AuthJwtSchema;

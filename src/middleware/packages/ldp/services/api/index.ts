@@ -1,14 +1,14 @@
-const urlJoin = require('url-join');
-const deleteAction = require('./actions/delete');
-const getAction = require('./actions/get');
-const headAction = require('./actions/head');
-const patchAction = require('./actions/patch');
-const postAction = require('./actions/post');
-const putAction = require('./actions/put');
-const getCatchAllRoute = require('../../routes/getCatchAllRoute');
-const getPodsRoute = require('../../routes/getPodsRoute');
+import urlJoin from 'url-join';
+import deleteAction from './actions/delete.ts';
+import getAction from './actions/get.ts';
+import headAction from './actions/head.ts';
+import patchAction from './actions/patch.ts';
+import postAction from './actions/post.ts';
+import putAction from './actions/put.ts';
+import getCatchAllRoute from '../../routes/getCatchAllRoute.ts';
+import getPodsRoute from '../../routes/getPodsRoute.ts';
 
-module.exports = {
+const LdpApiSchema = {
   name: 'ldp.api',
   settings: {
     baseUrl: null,
@@ -47,3 +47,5 @@ module.exports = {
     }
   }
 };
+
+export default LdpApiSchema;

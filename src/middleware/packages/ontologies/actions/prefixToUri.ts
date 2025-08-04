@@ -1,8 +1,7 @@
-const { isURL } = require('../utils');
-
+import { isURL } from '../utils.ts';
 const regexPrefix = /^([^:]+):([^:]+)$/gm;
 
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     value: 'string'
@@ -25,3 +24,5 @@ module.exports = {
     return value.replace(`${ontology.prefix}:`, ontology.namespace);
   }
 };
+
+export default Schema;

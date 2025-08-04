@@ -1,15 +1,15 @@
-const path = require('path');
-const urlJoin = require('url-join');
-const fetch = require('node-fetch');
-const LinkHeader = require('http-link-header');
-const { v4: uuidv4 } = require('uuid');
-const DbService = require('moleculer-db');
+import path from 'path';
+import urlJoin from 'url-join';
+import fetch from 'node-fetch';
+import LinkHeader from 'http-link-header';
+import { v4 as uuidv4 } from 'uuid';
+import DbService from 'moleculer-db';
 const { MoleculerError } = require('moleculer').Errors;
-const { parseHeader, negotiateContentType, parseJson } = require('@semapps/middlewares');
-const { notify } = require('@semapps/ontologies');
-const { TripleStoreAdapter } = require('@semapps/triplestore');
+import { parseHeader, negotiateContentType, parseJson } from '@semapps/middlewares';
+import { notify } from '@semapps/ontologies';
+import { TripleStoreAdapter } from '@semapps/triplestore';
 
-module.exports = {
+const SolidNotificationsListenerSchema = {
   name: 'solid-notifications.listener',
   mixins: [DbService],
   adapter: new TripleStoreAdapter({ type: 'WebhookChannelListener', dataset: 'settings' }),
@@ -192,3 +192,5 @@ module.exports = {
     }
   }
 };
+
+export default SolidNotificationsListenerSchema;

@@ -1,6 +1,6 @@
-const Handlebars = require('handlebars');
-const matchActivity = require('../utils/matchActivity');
-const { ACTIVITY_TYPES } = require('../constants');
+import Handlebars from 'handlebars';
+import matchActivity from '../utils/matchActivity.ts';
+import { ACTIVITY_TYPES } from '../constants.ts';
 
 const ActivityMappingService = {
   name: 'activity-mapping',
@@ -120,4 +120,4 @@ const ActivityMappingService = {
   }
 };
 
-module.exports = ActivityMappingService;
+export default ActivityMappingService;

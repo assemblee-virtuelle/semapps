@@ -1,5 +1,4 @@
-const { Cachers } = require('moleculer');
-
+import { Cachers } from 'moleculer';
 let cacher;
 
 // It has been suggested to put this middleware in Moleculer core code:
@@ -27,4 +26,4 @@ const CacherMiddleware = opts => ({
   }
 });
 
-module.exports = CacherMiddleware;
+export default CacherMiddleware;

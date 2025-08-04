@@ -1,4 +1,4 @@
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 
 const WebfingerService = {
   name: 'webfinger',
@@ -72,4 +72,4 @@ const WebfingerService = {
   }
 };
 
-module.exports = WebfingerService;
+export default WebfingerService;

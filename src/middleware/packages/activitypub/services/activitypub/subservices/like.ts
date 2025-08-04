@@ -1,6 +1,6 @@
-const ActivitiesHandlerMixin = require('../../../mixins/activities-handler');
-const { ACTIVITY_TYPES, ACTOR_TYPES } = require('../../../constants');
-const { collectionPermissionsWithAnonRead } = require('../../../utils');
+import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
+import { ACTIVITY_TYPES, ACTOR_TYPES } from '../../../constants.ts';
+import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
 
 const LikeService = {
   name: 'activitypub.like',
@@ -175,4 +175,4 @@ const LikeService = {
   }
 };
 
-module.exports = LikeService;
+export default LikeService;

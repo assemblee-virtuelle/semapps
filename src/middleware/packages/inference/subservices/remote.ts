@@ -1,11 +1,10 @@
-const fetch = require('node-fetch');
-const N3 = require('n3');
-const { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin, matchActivity } = require('@semapps/activitypub');
-
+import fetch from 'node-fetch';
+import N3 from 'n3';
+import { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin, matchActivity } from '@semapps/activitypub';
 const { DataFactory } = N3;
 const { triple, namedNode } = DataFactory;
 
-module.exports = {
+const InferenceRemoteSchema = {
   name: 'inference.remote',
   mixins: [ActivitiesHandlerMixin],
   settings: {
@@ -166,3 +165,5 @@ module.exports = {
     }
   }
 };
+
+export default InferenceRemoteSchema;

@@ -1,6 +1,6 @@
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     prefix: 'string'
@@ -19,3 +19,5 @@ module.exports = {
     return null;
   }
 };
+
+export default Schema;

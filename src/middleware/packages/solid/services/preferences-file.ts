@@ -1,8 +1,8 @@
-const { SingleResourceContainerMixin } = require('@semapps/ldp');
-const { pim } = require('@semapps/ontologies');
-const { namedNode, triple } = require('@rdfjs/data-model');
+import { SingleResourceContainerMixin } from '@semapps/ldp';
+import { pim } from '@semapps/ontologies';
+import { namedNode, triple } from '@rdfjs/data-model';
 
-module.exports = {
+const SolidPreferencesFileSchema = {
   name: 'solid-preferences-file',
   mixins: [SingleResourceContainerMixin],
   settings: {
@@ -36,3 +36,5 @@ module.exports = {
     }
   }
 };
+
+export default SolidPreferencesFileSchema;

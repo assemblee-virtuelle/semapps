@@ -11,4 +11,4 @@ const redirectToFront = (req, res) => {
   res.end();
 };
 
-module.exports = redirectToFront;
+export default redirectToFront;

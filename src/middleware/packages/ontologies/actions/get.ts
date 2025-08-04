@@ -1,4 +1,4 @@
-module.exports = {
+const Schema = {
   visibility: 'public',
   params: {
     prefix: { type: 'string', optional: true },
@@ -27,3 +27,5 @@ module.exports = {
     return ontology;
   }
 };
+
+export default Schema;

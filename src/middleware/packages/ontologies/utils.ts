@@ -12,8 +12,4 @@ const arrayOf = value => {
 };
 
 const isURL = value => (typeof value === 'string' || value instanceof String) && value.startsWith('http');
-
-module.exports = {
-  arrayOf,
-  isURL
-};
+export { arrayOf, isURL };
