@@ -1,6 +1,7 @@
 import { parseHeader, negotiateAccept, parseJson } from '@semapps/middlewares';
 import path from 'node:path';
 import { ServiceSchema } from 'moleculer';
+import { VC_API_PATH } from '../constants';
 
 const middlewares = [parseHeader, parseJson, negotiateAccept];
 
@@ -13,7 +14,6 @@ const middlewares = [parseHeader, parseJson, negotiateAccept];
  *
  * WARNING: Changing things here can have security implications.
  *
- * @type {import('moleculer').ServiceSchema}
  */
 const VCApiService = {
   name: 'crypto.vc.api' as const,
