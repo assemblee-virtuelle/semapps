@@ -8,9 +8,10 @@ import getRdfPrefixesAction from './actions/getRdfPrefixes.ts';
 import listAction from './actions/list.ts';
 import prefixToUriAction from './actions/prefixToUri.ts';
 import registerAction from './actions/register.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 const OntologiesSchema = {
-  name: 'ontologies',
+  name: 'ontologies' as const,
   settings: {
     ontologies: [],
     persistRegistry: false,
@@ -51,6 +52,14 @@ const OntologiesSchema = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
 
 export default OntologiesSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [OntologiesSchema.name]: typeof OntologiesSchema;
+    }
+  }
+}

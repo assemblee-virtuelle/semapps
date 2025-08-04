@@ -1,9 +1,10 @@
 import { arrayOf } from '@semapps/ldp';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { hasType } from '../utils.ts';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 
 const GroupsManagerSchema = {
-  name: 'groups-manager',
+  name: 'groups-manager' as const,
   settings: {
     usersContainer: null,
     rules: []
@@ -18,35 +19,37 @@ const GroupsManagerSchema = {
     }
   },
   actions: {
-    async refreshAll(ctx) {
-      const usersContainer = await ctx.call('ldp.container.get', {
-        containerUri: this.settings.usersContainer,
-        accept: MIME_TYPES.JSON,
-        webId: 'system'
-      });
+    refreshAll: defineAction({
+      async handler(ctx) {
+        const usersContainer = await ctx.call('ldp.container.get', {
+          containerUri: this.settings.usersContainer,
+          accept: MIME_TYPES.JSON,
+          webId: 'system'
+        });
 
-      for (const user of arrayOf(usersContainer['ldp:contains'])) {
-        const userUri = user['@id'] || user.id;
-        this.logger.info(`Refreshing user ${userUri}...`);
-        for (const rule of this.settings.rules) {
-          if (this.matchRule(rule, user)) {
-            this.logger.info(`Adding user ${userUri} to group ${rule.groupSlug}`);
-            await ctx.call('webacl.group.addMember', {
-              groupSlug: rule.groupSlug,
-              memberUri: user.id,
-              webId: 'system'
-            });
-          } else {
-            this.logger.info(`Removing user ${userUri} from group ${rule.groupSlug} (if it exists)`);
-            await ctx.call('webacl.group.removeMember', {
-              groupSlug: rule.groupSlug,
-              memberUri: user.id,
-              webId: 'system'
-            });
+        for (const user of arrayOf(usersContainer['ldp:contains'])) {
+          const userUri = user['@id'] || user.id;
+          this.logger.info(`Refreshing user ${userUri}...`);
+          for (const rule of this.settings.rules) {
+            if (this.matchRule(rule, user)) {
+              this.logger.info(`Adding user ${userUri} to group ${rule.groupSlug}`);
+              await ctx.call('webacl.group.addMember', {
+                groupSlug: rule.groupSlug,
+                memberUri: user.id,
+                webId: 'system'
+              });
+            } else {
+              this.logger.info(`Removing user ${userUri} from group ${rule.groupSlug} (if it exists)`);
+              await ctx.call('webacl.group.removeMember', {
+                groupSlug: rule.groupSlug,
+                memberUri: user.id,
+                webId: 'system'
+              });
+            }
           }
         }
       }
-    }
+    })
   },
   methods: {
     matchRule(rule, record) {
@@ -65,33 +68,54 @@ const GroupsManagerSchema = {
     }
   },
   events: {
-    async 'ldp.resource.created'(ctx) {
-      const { resourceUri, newData } = ctx.params;
-      if (this.isUser(newData)) {
-        for (const rule of this.settings.rules) {
-          if (this.matchRule(rule, newData)) {
-            this.logger.info(`Adding user ${resourceUri} to group ${rule.groupSlug}`);
-            await ctx.call('webacl.group.addMember', {
-              groupSlug: rule.groupSlug,
-              memberUri: resourceUri,
-              webId: 'system'
-            });
+    'ldp.resource.created': defineServiceEvent({
+      async handler(ctx) {
+        const { resourceUri, newData } = ctx.params;
+        if (this.isUser(newData)) {
+          for (const rule of this.settings.rules) {
+            if (this.matchRule(rule, newData)) {
+              this.logger.info(`Adding user ${resourceUri} to group ${rule.groupSlug}`);
+              await ctx.call('webacl.group.addMember', {
+                groupSlug: rule.groupSlug,
+                memberUri: resourceUri,
+                webId: 'system'
+              });
+            }
           }
         }
       }
-    },
-    async 'ldp.resource.updated'(ctx) {
-      const { resourceUri, newData } = ctx.params;
-      if (this.isUser(newData)) {
-        for (const rule of this.settings.rules) {
-          if (this.matchRule(rule, newData)) {
-            this.logger.info(`Adding user ${resourceUri} to group ${rule.groupSlug}`);
-            await ctx.call('webacl.group.addMember', {
-              groupSlug: rule.groupSlug,
-              memberUri: resourceUri,
-              webId: 'system'
-            });
-          } else {
+    }),
+
+    'ldp.resource.updated': defineServiceEvent({
+      async handler(ctx) {
+        const { resourceUri, newData } = ctx.params;
+        if (this.isUser(newData)) {
+          for (const rule of this.settings.rules) {
+            if (this.matchRule(rule, newData)) {
+              this.logger.info(`Adding user ${resourceUri} to group ${rule.groupSlug}`);
+              await ctx.call('webacl.group.addMember', {
+                groupSlug: rule.groupSlug,
+                memberUri: resourceUri,
+                webId: 'system'
+              });
+            } else {
+              this.logger.info(`Removing user ${resourceUri} from group ${rule.groupSlug} (if it exists)`);
+              await ctx.call('webacl.group.removeMember', {
+                groupSlug: rule.groupSlug,
+                memberUri: resourceUri,
+                webId: 'system'
+              });
+            }
+          }
+        }
+      }
+    }),
+
+    'ldp.resource.deleted': defineServiceEvent({
+      async handler(ctx) {
+        const { resourceUri, oldData } = ctx.params;
+        if (this.isUser(oldData)) {
+          for (const rule of this.settings.rules) {
             this.logger.info(`Removing user ${resourceUri} from group ${rule.groupSlug} (if it exists)`);
             await ctx.call('webacl.group.removeMember', {
               groupSlug: rule.groupSlug,
@@ -101,21 +125,16 @@ const GroupsManagerSchema = {
           }
         }
       }
-    },
-    async 'ldp.resource.deleted'(ctx) {
-      const { resourceUri, oldData } = ctx.params;
-      if (this.isUser(oldData)) {
-        for (const rule of this.settings.rules) {
-          this.logger.info(`Removing user ${resourceUri} from group ${rule.groupSlug} (if it exists)`);
-          await ctx.call('webacl.group.removeMember', {
-            groupSlug: rule.groupSlug,
-            memberUri: resourceUri,
-            webId: 'system'
-          });
-        }
-      }
-    }
+    })
   }
-};
+} satisfies ServiceSchema;
 
 export default GroupsManagerSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [GroupsManagerSchema.name]: typeof GroupsManagerSchema;
+    }
+  }
+}

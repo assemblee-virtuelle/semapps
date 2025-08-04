@@ -2,9 +2,10 @@ import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { ACTOR_TYPES } from '../constants.ts';
 import { delay } from '../utils.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 const RelayService = {
-  name: 'activitypub.relay',
+  name: 'activitypub.relay' as const,
   settings: {
     actor: {
       username: 'relay',
@@ -71,13 +72,21 @@ const RelayService = {
     this.relayActor = await this.broker.call('activitypub.actor.awaitCreateComplete', { actorUri });
   },
   actions: {
-    getActor: {
+    getActor: defineAction({
       visibility: 'public',
       handler() {
         return this.relayActor;
       }
-    }
+    })
   }
-};
+} satisfies ServiceSchema;
 
 export default RelayService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [RelayService.name]: typeof RelayService;
+    }
+  }
+}

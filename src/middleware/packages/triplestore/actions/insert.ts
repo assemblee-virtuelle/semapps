@@ -1,7 +1,8 @@
 import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
+import { defineAction } from 'moleculer';
 
-const Schema = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     resource: {
@@ -59,6 +60,6 @@ const Schema = {
       });
     }
   }
-};
+});
 
 export default Schema;

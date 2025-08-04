@@ -1,6 +1,7 @@
 import { parseHeader, negotiateAccept, parseJson } from '@semapps/middlewares';
 import path from 'node:path';
 import { VC_API_PATH } from '../constants.ts';
+import { ServiceSchema } from 'moleculer';
 const middlewares = [parseHeader, parseJson, negotiateAccept];
 
 /**
@@ -15,7 +16,7 @@ const middlewares = [parseHeader, parseJson, negotiateAccept];
  * @type {import('moleculer').ServiceSchema}
  */
 const VCApiService = {
-  name: 'crypto.vc.api',
+  name: 'crypto.vc.api' as const,
   dependencies: ['api', 'ldp'],
   settings: {
     podProvider: null
@@ -82,6 +83,14 @@ const VCApiService = {
       }
     });
   }
-};
+} satisfies ServiceSchema;
 
 export default VCApiService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [VCApiService.name]: typeof VCApiService;
+    }
+  }
+}

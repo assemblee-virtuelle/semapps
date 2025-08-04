@@ -1,6 +1,7 @@
 import { MIME_TYPES } from '@semapps/mime-types';
+import { defineAction } from 'moleculer';
 
-const Schema = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     triple: {
@@ -46,6 +47,6 @@ const Schema = {
       dataset
     });
   }
-};
+});
 
 export default Schema;

@@ -2,9 +2,10 @@ import urlJoin from 'url-join';
 import { namedNode, triple } from '@rdfjs/data-model';
 import { ControlledContainerMixin, arrayOf } from '@semapps/ldp';
 import { MIME_TYPES } from '@semapps/mime-types';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 
 const TypeRegistrationsSchema = {
-  name: 'type-registrations',
+  name: 'type-registrations' as const,
   mixins: [ControlledContainerMixin],
   settings: {
     acceptedTypes: ['solid:TypeRegistration'],
@@ -14,7 +15,7 @@ const TypeRegistrationsSchema = {
     activateTombstones: false
   },
   actions: {
-    register: {
+    register: defineAction({
       visibility: 'public',
       params: {
         types: { type: 'array' },
@@ -110,13 +111,14 @@ const TypeRegistrationsSchema = {
           return registrationUri;
         }
       }
-    },
+    }),
+
     /**
      * Bind an application to a certain type of resources
      * If no other app is bound with this type yet, it will be marked as the default app
      * Otherwise, the app will be added to the list of available apps, that the user can switch to
      */
-    bindApp: {
+    bindApp: defineAction({
       visibility: 'public',
       params: {
         containerUri: { type: 'string' },
@@ -141,11 +143,12 @@ const TypeRegistrationsSchema = {
           webId
         });
       }
-    },
+    }),
+
     /**
      * Unbind an application from a certain type of resource (Mirror of the above action.)
      */
-    unbindApp: {
+    unbindApp: defineAction({
       visibility: 'public',
       params: {
         containerUri: { type: 'string' },
@@ -175,8 +178,9 @@ const TypeRegistrationsSchema = {
           webId
         });
       }
-    },
-    getByType: {
+    }),
+
+    getByType: defineAction({
       visibility: 'public',
       params: {
         type: { type: 'string' },
@@ -198,8 +202,9 @@ const TypeRegistrationsSchema = {
         // There can be several TypeRegistration per type
         return arrayOf(filteredContainer['ldp:contains']);
       }
-    },
-    getByContainerUri: {
+    }),
+
+    getByContainerUri: defineAction({
       visibility: 'public',
       params: {
         containerUri: { type: 'string' },
@@ -219,8 +224,9 @@ const TypeRegistrationsSchema = {
         // There should be only one TypeRegistration per container
         return arrayOf(filteredContainer['ldp:contains'])[0];
       }
-    },
-    findContainersUris: {
+    }),
+
+    findContainersUris: defineAction({
       visibility: 'public',
       params: {
         type: { type: 'string' },
@@ -233,12 +239,13 @@ const TypeRegistrationsSchema = {
 
         return registrations.map(r => r['solid:instanceContainer']);
       }
-    },
+    }),
+
     /**
      * Reset the public and private registries of the given user
      * Based on the information found on the LDP registry
      */
-    resetFromRegistry: {
+    resetFromRegistry: defineAction({
       visibility: 'public',
       params: {
         webId: { type: 'string' }
@@ -278,26 +285,28 @@ const TypeRegistrationsSchema = {
           }
         }
       }
-    }
+    })
   },
   events: {
-    async 'ldp.container.created'(ctx) {
-      const { containerUri, options, webId } = ctx.params;
+    'ldp.container.created': defineServiceEvent({
+      async handler(ctx) {
+        const { containerUri, options, webId } = ctx.params;
 
-      if (options?.typeIndex) {
-        await ctx.call('type-indexes.waitForIndexCreation', { type: options.typeIndex, webId });
+        if (options?.typeIndex) {
+          await ctx.call('type-indexes.waitForIndexCreation', { type: options.typeIndex, webId });
 
-        await this.actions.register(
-          {
-            types: arrayOf(options?.acceptedTypes),
-            containerUri,
-            webId,
-            isPrivate: options.typeIndex === 'private'
-          },
-          { parentCtx: ctx }
-        );
+          await this.actions.register(
+            {
+              types: arrayOf(options?.acceptedTypes),
+              containerUri,
+              webId,
+              isPrivate: options.typeIndex === 'private'
+            },
+            { parentCtx: ctx }
+          );
+        }
       }
-    }
+    })
   },
   hooks: {
     after: {
@@ -319,6 +328,14 @@ const TypeRegistrationsSchema = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
 
 export default TypeRegistrationsSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [TypeRegistrationsSchema.name]: typeof TypeRegistrationsSchema;
+    }
+  }
+}

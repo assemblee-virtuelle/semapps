@@ -2,10 +2,11 @@ import urlJoin from 'url-join';
 import path from 'path';
 import MailService from 'moleculer-mail';
 import { getSlugFromUri } from '@semapps/ldp';
+import { ServiceSchema, defineServiceEvent } from 'moleculer';
 const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
 const SingleMailNotificationsService = {
-  name: 'notifications.single-mail',
+  name: 'notifications.single-mail' as const,
   mixins: [MailService],
   settings: {
     defaultLocale: 'en',
@@ -20,44 +21,46 @@ const SingleMailNotificationsService = {
     data: {}
   },
   events: {
-    async 'activitypub.inbox.received'(ctx) {
-      const { activity, recipients } = ctx.params;
+    'activitypub.inbox.received': defineServiceEvent({
+      async handler(ctx) {
+        const { activity, recipients } = ctx.params;
 
-      if (this.settings.delay) {
-        await delay(this.settings.delay);
-      }
+        if (this.settings.delay) {
+          await delay(this.settings.delay);
+        }
 
-      for (const recipientUri of recipients) {
-        const account = await ctx.call('auth.account.findByWebId', { webId: recipientUri });
+        for (const recipientUri of recipients) {
+          const account = await ctx.call('auth.account.findByWebId', { webId: recipientUri });
 
-        if (account) {
-          ctx.meta.webId = recipientUri;
-          ctx.meta.dataset = this.settings.podProvider ? getSlugFromUri(recipientUri) : undefined;
+          if (account) {
+            ctx.meta.webId = recipientUri;
+            ctx.meta.dataset = this.settings.podProvider ? getSlugFromUri(recipientUri) : undefined;
 
-          const locale = account?.preferredLocale || this.settings.defaultLocale;
-          const notification = await ctx.call('activity-mapping.map', { activity, locale });
+            const locale = account?.preferredLocale || this.settings.defaultLocale;
+            const notification = await ctx.call('activity-mapping.map', { activity, locale });
 
-          if (notification && (await this.filterNotification(notification, activity, recipientUri))) {
-            if (notification.actionLink)
-              notification.actionLink = await this.formatLink(notification.actionLink, recipientUri);
+            if (notification && (await this.filterNotification(notification, activity, recipientUri))) {
+              if (notification.actionLink)
+                notification.actionLink = await this.formatLink(notification.actionLink, recipientUri);
 
-            await this.queueMail(ctx, notification.key, {
-              to: account.email,
-              locale,
-              data: {
-                ...notification,
-                color: this.settings.color,
-                descriptionWithBr: notification.description
-                  ? notification.description.replace(/\r\n|\r|\n/g, '<br />')
-                  : undefined
-              }
-            });
+              await this.queueMail(ctx, notification.key, {
+                to: account.email,
+                locale,
+                data: {
+                  ...notification,
+                  color: this.settings.color,
+                  descriptionWithBr: notification.description
+                    ? notification.description.replace(/\r\n|\r|\n/g, '<br />')
+                    : undefined
+                }
+              });
+            }
+          } else {
+            this.logger.warn(`No account found for local recipient ${recipientUri}`);
           }
-        } else {
-          this.logger.warn(`No account found for local recipient ${recipientUri}`);
         }
       }
-    }
+    })
   },
   methods: {
     // Optional method called for each notification
@@ -92,6 +95,14 @@ const SingleMailNotificationsService = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
 
 export default SingleMailNotificationsService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [SingleMailNotificationsService.name]: typeof SingleMailNotificationsService;
+    }
+  }
+}

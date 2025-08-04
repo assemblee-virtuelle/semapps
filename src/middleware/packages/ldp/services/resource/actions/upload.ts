@@ -2,8 +2,9 @@ import path from 'path';
 import fs from 'fs';
 const { MoleculerError } = require('moleculer').Errors;
 import { getSlugFromUri, getContainerFromUri } from '../../../utils.ts';
+import { defineAction } from 'moleculer';
 
-const Schema = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     resourceUri: 'string',
@@ -42,6 +43,6 @@ const Schema = {
       fileName
     };
   }
-};
+});
 
 export default Schema;

@@ -1,8 +1,9 @@
 const { MoleculerError } = require('moleculer').Errors;
 import { MIME_TYPES } from '@semapps/mime-types';
 import { buildBlankNodesQuery } from '../../../utils.ts';
+import { defineAction } from 'moleculer';
 
-const Schema = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -75,6 +76,6 @@ const Schema = {
       throw new MoleculerError(`Resource not found ${resourceUri}`, 404, 'NOT_FOUND');
     }
   }
-};
+});
 
 export default Schema;

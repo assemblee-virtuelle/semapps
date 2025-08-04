@@ -1,3 +1,5 @@
+import { ServiceSchema } from 'moleculer';
+
 /**
  * MoleculerJS mixin to be applied on the ControlledContainerMixin.
  * Adds support for adding different subjects to the same resource/named graph than the resource URI itself.
@@ -88,6 +90,6 @@ const Schema = {
       list: ['handleAfterGet']
     }
   }
-};
+} satisfies Partial<ServiceSchema>;
 
 export default Schema;

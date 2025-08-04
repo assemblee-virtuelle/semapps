@@ -8,6 +8,7 @@ import vc from '@digitalbazaar/vc';
 import VCCapabilityPresentationProofPurpose from './VcCapabilityPresentationProofPurpose.ts';
 import VCPurpose from './VcPurpose.ts';
 import { arrayOf } from '../utils/utils.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 /**
  * Service for verifying and creating Verifiable Presentations
@@ -18,7 +19,7 @@ import { arrayOf } from '../utils/utils.ts';
  * @type {import('moleculer').ServiceSchema}
  */
 const VCPresentationService = {
-  name: 'crypto.vc.verifier',
+  name: 'crypto.vc.verifier' as const,
   dependencies: ['ldp', 'jsonld'],
   async started() {
     this.documentLoader = async (url, options) => {
@@ -30,7 +31,7 @@ const VCPresentationService = {
     /**
      * Verify a verifiable credential.
      */
-    verifyVC: {
+    verifyVC: defineAction({
       params: {
         verifiableCredential: {
           type: 'object',
@@ -74,12 +75,12 @@ const VCPresentationService = {
 
         return verificationResult;
       }
-    },
+    }),
 
     /**
      * Verify a presentation.
      */
-    verifyPresentation: {
+    verifyPresentation: defineAction({
       params: {
         verifiablePresentation: { type: 'object' },
         options: {
@@ -137,14 +138,14 @@ const VCPresentationService = {
           return { verified: false, error: e.message };
         }
       }
-    },
+    }),
 
     /**
      * Verify a capability presentation.
      * @param {object} ctx.params - The parameters for verifying the capability presentation.
      * @returns {object} The verification result.
      */
-    verifyCapabilityPresentation: {
+    verifyCapabilityPresentation: defineAction({
       params: {
         verifiablePresentation: { type: 'object' },
         options: {
@@ -194,8 +195,16 @@ const VCPresentationService = {
 
         return { ...verificationResult, presentation };
       }
-    }
+    })
   }
-};
+} satisfies ServiceSchema;
 
 export default VCPresentationService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [VCPresentationService.name]: typeof VCPresentationService;
+    }
+  }
+}

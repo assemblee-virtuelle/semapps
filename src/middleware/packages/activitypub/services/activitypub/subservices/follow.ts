@@ -1,9 +1,10 @@
 import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
 import { ACTIVITY_TYPES, ACTOR_TYPES } from '../../../constants.ts';
 import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 const FollowService = {
-  name: 'activitypub.follow',
+  name: 'activitypub.follow' as const,
   mixins: [ActivitiesHandlerMixin],
   settings: {
     baseUri: null,
@@ -30,95 +31,112 @@ const FollowService = {
     await this.broker.call('activitypub.collections-registry.register', this.settings.followingCollectionOptions);
   },
   actions: {
-    async addFollower(ctx) {
-      const { follower, following } = ctx.params;
+    addFollower: defineAction({
+      async handler(ctx) {
+        const { follower, following } = ctx.params;
 
-      if (this.isLocalActor(following)) {
-        const actor = await ctx.call('activitypub.actor.get', { actorUri: following });
-        if (actor.followers) {
-          await ctx.call('activitypub.collection.add', {
-            collectionUri: actor.followers,
-            item: follower
-          });
+        if (this.isLocalActor(following)) {
+          const actor = await ctx.call('activitypub.actor.get', { actorUri: following });
+          if (actor.followers) {
+            await ctx.call('activitypub.collection.add', {
+              collectionUri: actor.followers,
+              item: follower
+            });
+          }
         }
-      }
 
-      // Add reverse relation
-      if (this.isLocalActor(follower)) {
+        // Add reverse relation
+        if (this.isLocalActor(follower)) {
+          const actor = await ctx.call('activitypub.actor.get', { actorUri: follower });
+          if (actor.following) {
+            await ctx.call('activitypub.collection.add', {
+              collectionUri: actor.following,
+              item: following
+            });
+          }
+        }
+
+        ctx.emit('activitypub.follow.added', { follower, following }, { meta: { webId: null, dataset: null } });
+      }
+    }),
+
+    removeFollower: defineAction({
+      async handler(ctx) {
+        const { follower, following } = ctx.params;
+
+        if (this.isLocalActor(following)) {
+          const actor = await ctx.call('activitypub.actor.get', { actorUri: following });
+          if (actor.followers) {
+            await ctx.call('activitypub.collection.remove', {
+              collectionUri: actor.followers,
+              item: follower
+            });
+          }
+        }
+
+        // Add reverse relation
+        if (this.isLocalActor(follower)) {
+          const actor = await ctx.call('activitypub.actor.get', { actorUri: follower });
+          if (actor.following) {
+            await ctx.call('activitypub.collection.remove', {
+              collectionUri: actor.following,
+              item: following
+            });
+          }
+        }
+
+        ctx.emit('activitypub.follow.removed', { follower, following }, { meta: { webId: null, dataset: null } });
+      }
+    }),
+
+    isFollowing: defineAction({
+      async handler(ctx) {
+        const { follower, following } = ctx.params;
+
+        if (!this.isLocalActor(follower))
+          throw new Error('The method activitypub.follow.isFollowing currently only works with local actors');
+
         const actor = await ctx.call('activitypub.actor.get', { actorUri: follower });
-        if (actor.following) {
-          await ctx.call('activitypub.collection.add', {
-            collectionUri: actor.following,
-            item: following
-          });
-        }
+        return await ctx.call('activitypub.collection.includes', {
+          collectionUri: actor.following,
+          itemUri: following
+        });
       }
+    }),
 
-      ctx.emit('activitypub.follow.added', { follower, following }, { meta: { webId: null, dataset: null } });
-    },
-    async removeFollower(ctx) {
-      const { follower, following } = ctx.params;
+    listFollowers: defineAction({
+      async handler(ctx) {
+        const { collectionUri } = ctx.params;
 
-      if (this.isLocalActor(following)) {
-        const actor = await ctx.call('activitypub.actor.get', { actorUri: following });
-        if (actor.followers) {
-          await ctx.call('activitypub.collection.remove', {
-            collectionUri: actor.followers,
-            item: follower
-          });
-        }
+        return await ctx.call('activitypub.collection.get', {
+          resourceUri: collectionUri
+        });
       }
+    }),
 
-      // Add reverse relation
-      if (this.isLocalActor(follower)) {
-        const actor = await ctx.call('activitypub.actor.get', { actorUri: follower });
-        if (actor.following) {
-          await ctx.call('activitypub.collection.remove', {
-            collectionUri: actor.following,
-            item: following
-          });
-        }
+    listFollowing: defineAction({
+      async handler(ctx) {
+        const { collectionUri } = ctx.params;
+
+        return await ctx.call('activitypub.collection.get', {
+          resourceUri: collectionUri
+        });
       }
+    }),
 
-      ctx.emit('activitypub.follow.removed', { follower, following }, { meta: { webId: null, dataset: null } });
-    },
-    async isFollowing(ctx) {
-      const { follower, following } = ctx.params;
-
-      if (!this.isLocalActor(follower))
-        throw new Error('The method activitypub.follow.isFollowing currently only works with local actors');
-
-      const actor = await ctx.call('activitypub.actor.get', { actorUri: follower });
-      return await ctx.call('activitypub.collection.includes', {
-        collectionUri: actor.following,
-        itemUri: following
-      });
-    },
-    async listFollowers(ctx) {
-      const { collectionUri } = ctx.params;
-
-      return await ctx.call('activitypub.collection.get', {
-        resourceUri: collectionUri
-      });
-    },
-    async listFollowing(ctx) {
-      const { collectionUri } = ctx.params;
-
-      return await ctx.call('activitypub.collection.get', {
-        resourceUri: collectionUri
-      });
-    },
-    async updateCollectionsOptions(ctx) {
-      const { dataset } = ctx.params;
-      await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
-        collection: this.settings.followersCollectionOptions,
-        dataset
-      });
-      await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
-        collection: this.settings.followingCollectionOptions,
-        dataset
-      });
-    }
+    updateCollectionsOptions: defineAction({
+      async handler(ctx) {
+        const { dataset } = ctx.params;
+        await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
+          collection: this.settings.followersCollectionOptions,
+          dataset
+        });
+        await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
+          collection: this.settings.followingCollectionOptions,
+          dataset
+        });
+      }
+    })
   },
   activities: {
     follow: {
@@ -217,6 +235,14 @@ const FollowService = {
       return uri.startsWith(this.settings.baseUri);
     }
   }
-};
+} satisfies ServiceSchema;
 
 export default FollowService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [FollowService.name]: typeof FollowService;
+    }
+  }
+}

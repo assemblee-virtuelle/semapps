@@ -1,4 +1,6 @@
-const Schema = {
+import { defineAction } from 'moleculer';
+
+const Schema = defineAction({
   visibility: 'public',
   params: {
     containerUri: { type: 'string' },
@@ -21,6 +23,6 @@ const Schema = {
     const num = Number(res[0].count.value);
     return num === 0;
   }
-};
+});
 
 export default Schema;

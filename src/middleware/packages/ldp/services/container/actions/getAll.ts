@@ -1,6 +1,7 @@
 import { MIME_TYPES } from '@semapps/mime-types';
+import { defineAction } from 'moleculer';
 
-const Schema = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     dataset: { type: 'string', optional: true }
@@ -21,6 +22,6 @@ const Schema = {
 
     return result.map(node => node.containerUri.value);
   }
-};
+});
 
 export default Schema;

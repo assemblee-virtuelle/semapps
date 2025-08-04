@@ -1,4 +1,6 @@
-export const action = {
+import { defineAction } from 'moleculer';
+
+export const action = defineAction({
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' }
@@ -12,4 +14,4 @@ export const action = {
     });
     return read;
   }
-};
+});

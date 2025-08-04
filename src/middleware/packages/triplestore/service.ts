@@ -12,9 +12,10 @@ import query from './actions/query.ts';
 import update from './actions/update.ts';
 import tripleExist from './actions/tripleExist.ts';
 import DatasetService from './subservices/dataset.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 const TripleStoreService = {
-  name: 'triplestore',
+  name: 'triplestore' as const,
   settings: {
     url: null,
     user: null,
@@ -93,6 +94,14 @@ const TripleStoreService = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
 
 export default TripleStoreService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [TripleStoreService.name]: typeof TripleStoreService;
+    }
+  }
+}

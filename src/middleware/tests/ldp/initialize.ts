@@ -1,4 +1,4 @@
-import { ServiceBroker } from 'moleculer';
+import { ServiceBroker, ServiceSchema, defineAction } from 'moleculer';
 import fs from 'fs';
 import { join as pathJoin } from 'path';
 import { CoreService } from '@semapps/core';
@@ -96,21 +96,23 @@ const initialize = async () => {
   });
 
   broker.createService({
-    name: 'event',
+    name: 'event' as const,
     mixins: [ControlledContainerMixin],
     settings: {
       acceptedTypes: ['pair:Event'],
       permissions
     },
     actions: {
-      getHeaderLinks() {
-        return [
-          {
-            uri: 'http://foo.bar',
-            rel: 'http://foo.baz'
-          }
-        ];
-      }
+      getHeaderLinks: defineAction({
+        handler() {
+          return [
+            {
+              uri: 'http://foo.bar',
+              rel: 'http://foo.baz'
+            }
+          ];
+        }
+      })
     }
   });
 

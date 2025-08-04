@@ -14,9 +14,10 @@ import ReplyService from './subservices/reply.ts';
 import ShareService from './subservices/share.ts';
 import SideEffectsService from './subservices/side-effects.ts';
 import FakeQueueMixin from '../../mixins/fake-queue.ts';
+import { ServiceSchema } from 'moleculer';
 
 const ActivityPubService = {
-  name: 'activitypub',
+  name: 'activitypub' as const,
   settings: {
     baseUri: null,
     podProvider: false,
@@ -144,6 +145,14 @@ const ActivityPubService = {
     await this.broker.call('ontologies.register', as);
     await this.broker.call('ontologies.register', sec);
   }
-};
+} satisfies ServiceSchema;
 
 export default ActivityPubService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [ActivityPubService.name]: typeof ActivityPubService;
+    }
+  }
+}

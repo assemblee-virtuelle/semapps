@@ -1,7 +1,8 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import { arrayOf } from '@semapps/ldp';
+import { defineAction } from 'moleculer';
 
-export const action = {
+export const action = defineAction({
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' }
@@ -31,4 +32,4 @@ export const action = {
     // Deduplicate (users might be in multiple groups).
     return [...new Set(usersWithReadRights)];
   }
-};
+});

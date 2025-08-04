@@ -2,6 +2,7 @@ const { MoleculerError } = require('moleculer').Errors;
 import createSlug from 'speakingurl';
 import urlJoin from 'url-join';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
+import { defineAction } from 'moleculer';
 
 export const api = async function api(ctx) {
   if (!ctx.meta.headers?.slug) throw new MoleculerError('needs a slug in your POST (json)', 400, 'BAD_REQUEST');
@@ -20,7 +21,7 @@ export const api = async function api(ctx) {
   ctx.meta.$statusCode = 201;
 };
 
-export const action = {
+export const action = defineAction({
   visibility: 'public',
   params: {
     groupUri: { type: 'string', optional: true },
@@ -78,4 +79,4 @@ export const action = {
 
     return { groupUri };
   }
-};
+});

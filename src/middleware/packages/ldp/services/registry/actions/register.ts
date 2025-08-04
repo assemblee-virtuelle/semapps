@@ -3,8 +3,9 @@ import pathModule from 'path';
 const pathJoin = pathModule.join;
 import { pathToRegexp } from 'path-to-regexp';
 import { arrayOf } from '../../../utils.ts';
+import { defineAction } from 'moleculer';
 
-const Schema = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     path: { type: 'string', optional: true },
@@ -89,6 +90,6 @@ const Schema = {
 
     return options;
   }
-};
+});
 
 export default Schema;

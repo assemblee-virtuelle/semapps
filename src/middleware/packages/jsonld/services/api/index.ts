@@ -1,5 +1,7 @@
+import { ServiceSchema, defineAction } from 'moleculer';
+
 const JsonldApiSchema = {
-  name: 'jsonld.api',
+  name: 'jsonld.api' as const,
   settings: {
     localContextPath: null
   },
@@ -19,11 +21,21 @@ const JsonldApiSchema = {
     });
   },
   actions: {
-    async getContext(ctx) {
-      ctx.meta.$responseType = 'application/ld+json';
-      return await ctx.call('jsonld.context.getLocal');
-    }
+    getContext: defineAction({
+      async handler(ctx) {
+        ctx.meta.$responseType = 'application/ld+json';
+        return await ctx.call('jsonld.context.getLocal');
+      }
+    })
   }
-};
+} satisfies ServiceSchema;
 
 export default JsonldApiSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [JsonldApiSchema.name]: typeof JsonldApiSchema;
+    }
+  }
+}

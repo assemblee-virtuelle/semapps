@@ -1,6 +1,7 @@
 const { MoleculerError } = require('moleculer').Errors;
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import urlJoin from 'url-join';
+import { defineAction } from 'moleculer';
 
 export const api = async function api(ctx) {
   if (!ctx.params.memberUri) throw new MoleculerError('needs a memberUri in your PATCH (json)', 400, 'BAD_REQUEST');
@@ -14,7 +15,7 @@ export const api = async function api(ctx) {
   ctx.meta.$statusCode = 204;
 };
 
-export const action = {
+export const action = defineAction({
   visibility: 'public',
   params: {
     groupSlug: { type: 'string', optional: true, min: 1, trim: true },
@@ -60,4 +61,4 @@ export const action = {
 
     ctx.emit('webacl.group.member-added', { groupUri, memberUri }, { meta: { webId: null, dataset: null } });
   }
-};
+});

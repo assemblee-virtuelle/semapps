@@ -1,8 +1,9 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import { waitForResource } from '../../../utils.ts';
+import { defineAction } from 'moleculer';
 
 /** @type {import('moleculer').ServiceActionsSchema} */
-const Schema = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -36,6 +37,6 @@ const Schema = {
       )
     );
   }
-};
+});
 
 export default Schema;

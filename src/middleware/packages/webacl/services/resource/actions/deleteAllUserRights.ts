@@ -1,4 +1,6 @@
-export const action = {
+import { defineAction } from 'moleculer';
+
+export const action = defineAction({
   visibility: 'public',
   params: {
     webId: { type: 'string', optional: false }
@@ -22,4 +24,4 @@ export const action = {
       { meta: { webId: null, dataset: null } }
     );
   }
-};
+});

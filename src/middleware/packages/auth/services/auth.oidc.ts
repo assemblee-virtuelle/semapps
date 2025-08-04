@@ -6,9 +6,10 @@ custom.setHttpOptionsDefaults({
 });
 
 import AuthSSOMixin from '../mixins/auth.sso.ts';
+import { ServiceSchema } from 'moleculer';
 
 const AuthOIDCService = {
-  name: 'auth',
+  name: 'auth' as const,
   mixins: [AuthSSOMixin],
   settings: {
     baseUrl: null,
@@ -66,6 +67,14 @@ const AuthOIDCService = {
       );
     }
   }
-};
+} satisfies ServiceSchema;
 
 export default AuthOIDCService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [AuthOIDCService.name]: typeof AuthOIDCService;
+    }
+  }
+}

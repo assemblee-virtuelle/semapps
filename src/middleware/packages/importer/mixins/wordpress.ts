@@ -3,6 +3,7 @@ import fetch from 'node-fetch';
 import { getSlugFromUri, delay } from '@semapps/ldp';
 import { MIME_TYPES } from '@semapps/mime-types';
 import ImporterMixin from './importer.ts';
+import { ServiceSchema } from 'moleculer';
 
 const Schema = {
   mixins: [ImporterMixin],
@@ -99,6 +100,6 @@ const Schema = {
       }
     }
   }
-};
+} satisfies Partial<ServiceSchema>;
 
 export default Schema;

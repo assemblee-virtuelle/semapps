@@ -1,7 +1,8 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import { getContainerFromUri } from '../../../utils.ts';
+import { defineAction } from 'moleculer';
 
-const Schema = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     resourceUri: 'string',
@@ -34,6 +35,6 @@ const Schema = {
 
     return result.map(node => node.containerUri.value);
   }
-};
+});
 
 export default Schema;

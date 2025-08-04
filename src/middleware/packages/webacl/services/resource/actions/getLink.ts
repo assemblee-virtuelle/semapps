@@ -1,6 +1,7 @@
 import { getAclUriFromResourceUri } from '../../../utils.ts';
+import { defineAction } from 'moleculer';
 
-export const action = {
+export const action = defineAction({
   visibility: 'public',
   params: {
     uri: { type: 'string', optional: false }
@@ -12,4 +13,4 @@ export const action = {
       rel: 'acl'
     };
   }
-};
+});

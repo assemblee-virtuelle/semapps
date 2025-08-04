@@ -7,9 +7,10 @@ import postAction from './actions/post.ts';
 import putAction from './actions/put.ts';
 import getCatchAllRoute from '../../routes/getCatchAllRoute.ts';
 import getPodsRoute from '../../routes/getPodsRoute.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 const LdpApiSchema = {
-  name: 'ldp.api',
+  name: 'ldp.api' as const,
   settings: {
     baseUrl: null,
     podProvider: false
@@ -46,6 +47,14 @@ const LdpApiSchema = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
 
 export default LdpApiSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [LdpApiSchema.name]: typeof LdpApiSchema;
+    }
+  }
+}

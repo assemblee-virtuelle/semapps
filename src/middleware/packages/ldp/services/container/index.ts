@@ -14,9 +14,10 @@ import includesAction from './actions/includes.ts';
 import postAction from './actions/post.ts';
 import patchAction from './actions/patch.ts';
 import { getDatasetFromUri } from '../../utils.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 const LdpContainerSchema = {
-  name: 'ldp.container',
+  name: 'ldp.container' as const,
   settings: {
     baseUrl: null,
     podProvider: false,
@@ -55,6 +56,14 @@ const LdpContainerSchema = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
 
 export default LdpContainerSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [LdpContainerSchema.name]: typeof LdpContainerSchema;
+    }
+  }
+}

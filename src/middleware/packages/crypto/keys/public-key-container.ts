@@ -2,6 +2,7 @@ import { triple, namedNode } from '@rdfjs/data-model';
 import { ControlledContainerMixin } from '@semapps/ldp';
 import { Errors as E } from 'moleculer-web';
 import { KEY_TYPES } from '../constants.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 /**
  * Container to store the public keys of actors only.
@@ -9,7 +10,7 @@ import { KEY_TYPES } from '../constants.ts';
  *
  */
 const KeysPublicContainerSchema = {
-  name: 'keys.public-container',
+  name: 'keys.public-container' as const,
   mixins: [ControlledContainerMixin],
   settings: {
     path: '/public-key',
@@ -49,9 +50,11 @@ const KeysPublicContainerSchema = {
   },
 
   actions: {
-    async forbidden(ctx) {
-      throw new E.ForbiddenError();
-    }
+    forbidden: defineAction({
+      async handler(ctx) {
+        throw new E.ForbiddenError();
+      }
+    })
   },
 
   hooks: {
@@ -75,6 +78,14 @@ const KeysPublicContainerSchema = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
 
 export default KeysPublicContainerSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [KeysPublicContainerSchema.name]: typeof KeysPublicContainerSchema;
+    }
+  }
+}

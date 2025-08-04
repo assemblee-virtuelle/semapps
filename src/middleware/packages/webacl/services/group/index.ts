@@ -8,9 +8,10 @@ import getUriAction from './actions/getUri.ts';
 import isMemberAction from './actions/isMember.ts';
 import removeMemberAction from './actions/removeMember.ts';
 import getGroupsAction from './actions/getGroups.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 const WebaclGroupSchema = {
-  name: 'webacl.group',
+  name: 'webacl.group' as const,
   settings: {
     baseUrl: null,
     graphName: null,
@@ -130,6 +131,14 @@ const WebaclGroupSchema = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
 
 export default WebaclGroupSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [WebaclGroupSchema.name]: typeof WebaclGroupSchema;
+    }
+  }
+}

@@ -2,6 +2,7 @@ import urlJoin from 'url-join';
 import { namedNode, triple } from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { parseUrl, parseHeader, negotiateAccept, parseJson, parseTurtle } from '@semapps/middlewares';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 const Schema = {
   settings: {
@@ -59,33 +60,38 @@ const Schema = {
     }
   },
   actions: {
-    async endpointAdd(ctx) {
-      const { predicate, object } = ctx.params;
+    endpointAdd: defineAction({
+      async handler(ctx) {
+        const { predicate, object } = ctx.params;
 
-      await ctx.call(
-        'ldp.resource.patch',
-        {
-          resourceUri: this.endpointUrl,
-          triplesToAdd: [triple(namedNode(this.endpointUrl), predicate, object)],
-          webId: 'system'
-        },
-        { meta: { dataset: this.settings.settingsDataset, skipEmitEvent: true, skipObjectsWatcher: true } }
-      );
-    },
-    async endpointGet(ctx) {
-      ctx.meta.$responseType = ctx.meta.headers?.accept;
+        await ctx.call(
+          'ldp.resource.patch',
+          {
+            resourceUri: this.endpointUrl,
+            triplesToAdd: [triple(namedNode(this.endpointUrl), predicate, object)],
+            webId: 'system'
+          },
+          { meta: { dataset: this.settings.settingsDataset, skipEmitEvent: true, skipObjectsWatcher: true } }
+        );
+      }
+    }),
 
-      return await ctx.call(
-        'ldp.resource.get',
-        {
-          resourceUri: this.endpointUrl,
-          accept: ctx.meta.headers?.accept,
-          webId: 'system'
-        },
-        { meta: { dataset: this.settings.settingsDataset } }
-      );
-    }
+    endpointGet: defineAction({
+      async handler(ctx) {
+        ctx.meta.$responseType = ctx.meta.headers?.accept;
+
+        return await ctx.call(
+          'ldp.resource.get',
+          {
+            resourceUri: this.endpointUrl,
+            accept: ctx.meta.headers?.accept,
+            webId: 'system'
+          },
+          { meta: { dataset: this.settings.settingsDataset } }
+        );
+      }
+    })
   }
-};
+} satisfies Partial<ServiceSchema>;
 
 export default Schema;

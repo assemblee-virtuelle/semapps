@@ -1,5 +1,6 @@
 import ImporterMixin from './importer.ts';
 import { convertToIsoString } from '../utils.ts';
+import { ServiceSchema } from 'moleculer';
 
 const Schema = {
   mixins: [ImporterMixin],
@@ -46,6 +47,6 @@ const Schema = {
       return false;
     }
   }
-};
+} satisfies Partial<ServiceSchema>;
 
 export default Schema;

@@ -6,6 +6,7 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import { namedNode } from '@rdfjs/data-model';
 import { v4 as uuidV4 } from 'uuid';
 import moment from 'moment';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 
 /**
  * Solid Notification Channel mixin.
@@ -72,124 +73,155 @@ const Schema = {
     this.loadChannelsFromDb({ removeOldChannels: true });
   },
   actions: {
-    // Action called by the SpecialEndpointMixin when POSTing to the endpoint
-    async endpointPost(ctx) {
-      // Expect format https://communitysolidserver.github.io/CommunitySolidServer/latest/usage/notifications/#webhooks
-      // Correct context: https://github.com/solid/vocab/blob/main/solid-notifications-context.jsonld
-      const type = ctx.params.type || ctx.params['@type'];
-      const topic = ctx.params.topic || ctx.params['notify:topic'];
-      const sendToParam = ctx.params.sendTo || ctx.params['notify:sendTo'];
-      const { webId } = ctx.meta;
+    endpointPost: defineAction({
+      // Action called by the SpecialEndpointMixin when POSTing to the endpoint
+      async handler(ctx) {
+        // Expect format https://communitysolidserver.github.io/CommunitySolidServer/latest/usage/notifications/#webhooks
+        // Correct context: https://github.com/solid/vocab/blob/main/solid-notifications-context.jsonld
+        const type = ctx.params.type || ctx.params['@type'];
+        const topic = ctx.params.topic || ctx.params['notify:topic'];
+        const sendToParam = ctx.params.sendTo || ctx.params['notify:sendTo'];
+        const { webId } = ctx.meta;
 
-      // TODO: Use ldo objects; This will only check for the json type and not parse json-ld variants...
-      if (!this.settings.acceptedTypes.includes(type) && this.settings.channelType !== type)
-        throw new Error(`Only one of ${this.settings.acceptedTypes} is accepted on this endpoint`);
+        // TODO: Use ldo objects; This will only check for the json type and not parse json-ld variants...
+        if (!this.settings.acceptedTypes.includes(type) && this.settings.channelType !== type)
+          throw new Error(`Only one of ${this.settings.acceptedTypes} is accepted on this endpoint`);
 
-      // Ensure topic exist (LDP resource, container or collection)
-      const exists = await ctx.call('ldp.resource.exist', {
-        resourceUri: topic,
-        webId: 'system'
-      });
-      if (!exists) throw new E.BadRequestError('Cannot watch non-existing resource');
+        // Ensure topic exist (LDP resource, container or collection)
+        const exists = await ctx.call('ldp.resource.exist', {
+          resourceUri: topic,
+          webId: 'system'
+        });
+        if (!exists) throw new E.BadRequestError('Cannot watch non-existing resource');
 
-      // Ensure topic can be watched by the authenticated agent
-      const rights = await ctx.call('webacl.resource.hasRights', {
-        resourceUri: topic,
-        rights: { read: true },
-        webId
-      });
-      // TODO: Should a client without read rights know about the existence of that resource?
-      if (!rights.read) throw new E.ForbiddenError('You need acl:Read rights on the resource');
+        // Ensure topic can be watched by the authenticated agent
+        const rights = await ctx.call('webacl.resource.hasRights', {
+          resourceUri: topic,
+          rights: { read: true },
+          webId
+        });
+        // TODO: Should a client without read rights know about the existence of that resource?
+        if (!rights.read) throw new E.ForbiddenError('You need acl:Read rights on the resource');
 
-      // Find container URI from topic (must be stored on same Pod)
-      const topicWebId = urlJoin(this.settings.baseUrl, getDatasetFromUri(topic));
-      const channelContainerUri = await this.actions.getContainerUri({ webId: topicWebId }, { parentCtx: ctx });
+        // Find container URI from topic (must be stored on same Pod)
+        const topicWebId = urlJoin(this.settings.baseUrl, getDatasetFromUri(topic));
+        const channelContainerUri = await this.actions.getContainerUri({ webId: topicWebId }, { parentCtx: ctx });
 
-      // Create receiveFrom URI if needed (e.g. for web sockets).
-      const receiveFrom =
-        (this.settings.sendOrReceive === 'receive' && (await this.createReceiveFromUri(topic, webId))) || undefined;
-      const sendTo = (this.settings.sendOrReceive === 'send' && sendToParam) || undefined;
+        // Create receiveFrom URI if needed (e.g. for web sockets).
+        const receiveFrom =
+          (this.settings.sendOrReceive === 'receive' && (await this.createReceiveFromUri(topic, webId))) || undefined;
+        const sendTo = (this.settings.sendOrReceive === 'send' && sendToParam) || undefined;
 
-      // Post channel on Pod
-      const channelUri = await this.actions.post(
-        {
-          containerUri: channelContainerUri,
-          resource: {
-            type: this.settings.typePredicate,
-            'notify:topic': topic,
-            'notify:sendTo': sendTo,
-            'notify:receiveFrom': receiveFrom
+        // Post channel on Pod
+        const channelUri = await this.actions.post(
+          {
+            containerUri: channelContainerUri,
+            resource: {
+              type: this.settings.typePredicate,
+              'notify:topic': topic,
+              'notify:sendTo': sendTo,
+              'notify:receiveFrom': receiveFrom
+            },
+            contentType: MIME_TYPES.JSON,
+            webId: 'system'
           },
-          contentType: MIME_TYPES.JSON,
-          webId: 'system'
-        },
-        { parentCtx: ctx }
-      );
+          { parentCtx: ctx }
+        );
 
-      // Keep track of channel internally.
-      const channel = {
-        id: channelUri,
-        topic,
-        sendTo,
-        receiveFrom,
-        webId: topicWebId
-      };
-      this.channels.push(channel);
-      this.onChannelCreated(channel);
+        // Keep track of channel internally.
+        const channel = {
+          id: channelUri,
+          topic,
+          sendTo,
+          receiveFrom,
+          webId: topicWebId
+        };
+        this.channels.push(channel);
+        this.onChannelCreated(channel);
 
-      ctx.meta.$responseType = 'application/ld+json';
-      return this.actions.get(
-        {
-          resourceUri: channelUri,
-          accept: MIME_TYPES.JSON,
-          webId: 'system'
-        },
-        { parentCtx: ctx }
-      );
-    },
-    getCache() {
-      return this.channels;
-    },
-    resetCache() {
-      this.channels = [];
-    }
+        ctx.meta.$responseType = 'application/ld+json';
+        return this.actions.get(
+          {
+            resourceUri: channelUri,
+            accept: MIME_TYPES.JSON,
+            webId: 'system'
+          },
+          { parentCtx: ctx }
+        );
+      }
+    }),
+
+    getCache: defineAction({
+      handler() {
+        return this.channels;
+      }
+    }),
+
+    resetCache: defineAction({
+      handler() {
+        this.channels = [];
+      }
+    })
   },
   events: {
-    async 'ldp.resource.created'(ctx) {
-      const { resourceUri, newData } = ctx.params;
-      this.onResourceEvent(resourceUri, ACTIVITY_TYPES.CREATE, newData['dc:modified']);
-    },
-    async 'ldp.resource.updated'(ctx) {
-      const { resourceUri, newData } = ctx.params;
-      this.onResourceEvent(resourceUri, ACTIVITY_TYPES.UPDATE, newData['dc:modified']);
-    },
-    async 'ldp.resource.patched'(ctx) {
-      const { resourceUri } = ctx.params;
-      this.onResourceEvent(resourceUri, ACTIVITY_TYPES.UPDATE, await this.getModified(resourceUri));
-    },
-    async 'ldp.resource.deleted'(ctx) {
-      const { resourceUri } = ctx.params;
-      this.onResourceEvent(resourceUri, ACTIVITY_TYPES.DELETE, new Date().toISOString());
-    },
-    async 'ldp.container.attached'(ctx) {
-      const { containerUri, resourceUri } = ctx.params;
-      this.onContainerOrCollectionEvent(containerUri, resourceUri, ACTIVITY_TYPES.ADD);
-    },
-    async 'ldp.container.detached'(ctx) {
-      const { containerUri, resourceUri } = ctx.params;
-      this.onContainerOrCollectionEvent(containerUri, resourceUri, ACTIVITY_TYPES.REMOVE);
-    },
-    async 'activitypub.collection.added'(ctx) {
-      const { collectionUri, itemUri, item } = ctx.params;
-      // Mastodon sometimes send unfetchable activities (like `Accept` activities)
-      // In this case, we receive the activity as `item` and `itemUri` is undefined
-      // We will send a notification to the listener with the whole activity
-      this.onContainerOrCollectionEvent(collectionUri, itemUri || item, ACTIVITY_TYPES.ADD);
-    },
-    async 'activitypub.collection.removed'(ctx) {
-      const { collectionUri, itemUri } = ctx.params;
-      this.onContainerOrCollectionEvent(collectionUri, itemUri, ACTIVITY_TYPES.REMOVE);
-    }
+    'ldp.resource.created': defineServiceEvent({
+      async handler(ctx) {
+        const { resourceUri, newData } = ctx.params;
+        this.onResourceEvent(resourceUri, ACTIVITY_TYPES.CREATE, newData['dc:modified']);
+      }
+    }),
+
+    'ldp.resource.updated': defineServiceEvent({
+      async handler(ctx) {
+        const { resourceUri, newData } = ctx.params;
+        this.onResourceEvent(resourceUri, ACTIVITY_TYPES.UPDATE, newData['dc:modified']);
+      }
+    }),
+
+    'ldp.resource.patched': defineServiceEvent({
+      async handler(ctx) {
+        const { resourceUri } = ctx.params;
+        this.onResourceEvent(resourceUri, ACTIVITY_TYPES.UPDATE, await this.getModified(resourceUri));
+      }
+    }),
+
+    'ldp.resource.deleted': defineServiceEvent({
+      async handler(ctx) {
+        const { resourceUri } = ctx.params;
+        this.onResourceEvent(resourceUri, ACTIVITY_TYPES.DELETE, new Date().toISOString());
+      }
+    }),
+
+    'ldp.container.attached': defineServiceEvent({
+      async handler(ctx) {
+        const { containerUri, resourceUri } = ctx.params;
+        this.onContainerOrCollectionEvent(containerUri, resourceUri, ACTIVITY_TYPES.ADD);
+      }
+    }),
+
+    'ldp.container.detached': defineServiceEvent({
+      async handler(ctx) {
+        const { containerUri, resourceUri } = ctx.params;
+        this.onContainerOrCollectionEvent(containerUri, resourceUri, ACTIVITY_TYPES.REMOVE);
+      }
+    }),
+
+    'activitypub.collection.added': defineServiceEvent({
+      async handler(ctx) {
+        const { collectionUri, itemUri, item } = ctx.params;
+        // Mastodon sometimes send unfetchable activities (like `Accept` activities)
+        // In this case, we receive the activity as `item` and `itemUri` is undefined
+        // We will send a notification to the listener with the whole activity
+        this.onContainerOrCollectionEvent(collectionUri, itemUri || item, ACTIVITY_TYPES.ADD);
+      }
+    }),
+
+    'activitypub.collection.removed': defineServiceEvent({
+      async handler(ctx) {
+        const { collectionUri, itemUri } = ctx.params;
+        this.onContainerOrCollectionEvent(collectionUri, itemUri, ACTIVITY_TYPES.REMOVE);
+      }
+    })
   },
   methods: {
     async getModified(resourceUri) {
@@ -309,6 +341,6 @@ const Schema = {
       }
     }
   }
-};
+} satisfies Partial<ServiceSchema>;
 
 export default Schema;

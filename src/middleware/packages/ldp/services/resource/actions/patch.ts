@@ -1,3 +1,4 @@
+import { defineAction } from 'moleculer';
 const { MoleculerError } = require('moleculer').Errors;
 
 function checkTriplesSubjectIsResource(triples, resourceUri) {
@@ -16,7 +17,7 @@ function checkTriplesSubjectIsResource(triples, resourceUri) {
   }
 }
 
-const Schema = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     resourceUri: {
@@ -94,6 +95,6 @@ const Schema = {
 
     return returnValues;
   }
-};
+});
 
 export default Schema;

@@ -1,6 +1,7 @@
 import urlJoin from 'url-join';
+import { defineAction } from 'moleculer';
 
-export const action = {
+export const action = defineAction({
   visibility: 'public',
   params: {
     groupSlug: { type: 'string', optional: false, trim: true }
@@ -9,4 +10,4 @@ export const action = {
     const { groupSlug } = ctx.params;
     return urlJoin(this.settings.baseUrl, '_groups', groupSlug);
   }
-};
+});

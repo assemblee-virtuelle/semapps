@@ -1,10 +1,11 @@
 import urlJoin from 'url-join';
 import { v4 as uuidV4 } from 'uuid';
 import NotificationChannelMixin from './notification-channel.mixin.ts';
+import { ServiceSchema } from 'moleculer';
 
 /** @type {import('moleculer').ServiceSchema} */
 const WebSocketChannel2023Service = {
-  name: 'solid-notifications.provider.websocket',
+  name: 'solid-notifications.provider.websocket' as const,
   mixins: [NotificationChannelMixin],
   settings: {
     channelType: 'WebSocketChannel2023',
@@ -82,6 +83,14 @@ const WebSocketChannel2023Service = {
       );
     }
   }
-};
+} satisfies ServiceSchema;
 
 export default WebSocketChannel2023Service;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [WebSocketChannel2023Service.name]: typeof WebSocketChannel2023Service;
+    }
+  }
+}

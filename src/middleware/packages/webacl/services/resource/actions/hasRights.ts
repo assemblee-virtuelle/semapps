@@ -9,6 +9,8 @@ import {
   getAclUriFromResourceUri
 } from '../../../utils.ts';
 
+import { defineAction } from 'moleculer';
+
 const perms = {
   read: 'Read',
   write: 'Write',
@@ -93,7 +95,7 @@ export const api = async function api(ctx) {
   });
 };
 
-export const action = {
+export const action = defineAction({
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -126,4 +128,4 @@ export const action = {
     await this.checkResourceOrContainerExists(ctx, resourceUri);
     return await hasPermissions(ctx, resourceUri, rights, this.settings.baseUrl, webId, this.settings.graphName);
   }
-};
+});

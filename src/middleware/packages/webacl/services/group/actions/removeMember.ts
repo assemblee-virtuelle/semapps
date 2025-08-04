@@ -1,6 +1,7 @@
 const { MoleculerError } = require('moleculer').Errors;
 import urlJoin from 'url-join';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
+import { defineAction } from 'moleculer';
 
 export const api = async function api(ctx) {
   if (!ctx.params.deleteUserUri)
@@ -15,7 +16,7 @@ export const api = async function api(ctx) {
   ctx.meta.$statusCode = 204;
 };
 
-export const action = {
+export const action = defineAction({
   visibility: 'public',
   params: {
     groupSlug: { type: 'string', optional: true, min: 1, trim: true },
@@ -60,4 +61,4 @@ export const action = {
 
     ctx.emit('webacl.group.member-removed', { groupUri, memberUri }, { meta: { webId: null, dataset: null } });
   }
-};
+});

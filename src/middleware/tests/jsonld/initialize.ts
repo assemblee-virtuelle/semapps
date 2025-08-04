@@ -1,5 +1,5 @@
 import path from 'path';
-import { ServiceBroker } from 'moleculer';
+import { ServiceBroker, ServiceSchema } from 'moleculer';
 import ApiGatewayService from 'moleculer-web';
 import { JsonLdService } from '@semapps/jsonld';
 import { OntologiesService } from '@semapps/ontologies';

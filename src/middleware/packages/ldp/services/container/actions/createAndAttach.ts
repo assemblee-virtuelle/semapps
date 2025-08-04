@@ -1,12 +1,13 @@
 import urlJoin from 'url-join';
 import { getParentContainerUri } from '../../../utils.ts';
+import { defineAction } from 'moleculer';
 
 /**
  * Create a container and attach it to its parent container(s)
  * Recursively create the parent container(s) if they don't exist
  * In Pod provider config, the webId is required to find the Pod root
  */
-const Schema = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     containerUri: { type: 'string' },
@@ -77,6 +78,6 @@ const Schema = {
       }
     }
   }
-};
+});
 
 export default Schema;

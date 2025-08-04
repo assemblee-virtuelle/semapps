@@ -3,9 +3,10 @@ import N3 from 'n3';
 const { DataFactory } = N3;
 const { triple, namedNode } = DataFactory;
 import RemoteService from './subservices/remote.ts';
+import { ServiceSchema, defineServiceEvent } from 'moleculer';
 
 const InferenceSchema = {
-  name: 'inference',
+  name: 'inference' as const,
   settings: {
     baseUrl: null,
     acceptFromRemoteServers: false,
@@ -145,182 +146,204 @@ const InferenceSchema = {
     }
   },
   events: {
-    async 'ldp.resource.created'(ctx) {
-      let { newData } = ctx.params;
-      newData = await ctx.call('jsonld.parser.expand', { input: newData });
+    'ldp.resource.created': defineServiceEvent({
+      async handler(ctx) {
+        let { newData } = ctx.params;
+        newData = await ctx.call('jsonld.parser.expand', { input: newData });
 
-      let triplesToAdd = this.generateInverseTriplesFromResource(newData[0]);
+        let triplesToAdd = this.generateInverseTriplesFromResource(newData[0]);
 
-      const [addLocals, addRemotes] = this.splitLocalAndRemote(triplesToAdd);
+        const [addLocals, addRemotes] = this.splitLocalAndRemote(triplesToAdd);
 
-      // Avoid adding inverse link to non-existent resources
-      triplesToAdd = await this.filterMissingResources(ctx, addLocals);
+        // Avoid adding inverse link to non-existent resources
+        triplesToAdd = await this.filterMissingResources(ctx, addLocals);
 
-      // local data
-      if (triplesToAdd.length > 0) {
-        await ctx.call('triplestore.update', { query: this.generateInsertQuery(triplesToAdd), webId: 'system' });
-        this.cleanResourcesCache(ctx, triplesToAdd);
-      }
+        // local data
+        if (triplesToAdd.length > 0) {
+          await ctx.call('triplestore.update', { query: this.generateInsertQuery(triplesToAdd), webId: 'system' });
+          this.cleanResourcesCache(ctx, triplesToAdd);
+        }
 
-      // remote data
-      if (this.settings.offerToRemoteServers) {
-        for (const triple of addRemotes) {
-          await this.broker.call('inference.remote.offerInference', {
-            subject: triple.subject.id,
-            predicate: triple.predicate.id,
-            object: triple.object.id,
-            add: true
-          });
+        // remote data
+        if (this.settings.offerToRemoteServers) {
+          for (const triple of addRemotes) {
+            await this.broker.call('inference.remote.offerInference', {
+              subject: triple.subject.id,
+              predicate: triple.predicate.id,
+              object: triple.object.id,
+              add: true
+            });
+          }
         }
       }
-    },
-    async 'ldp.resource.deleted'(ctx) {
-      let { oldData } = ctx.params;
-      oldData = await ctx.call('jsonld.parser.expand', { input: oldData });
+    }),
 
-      const triplesToRemove = this.generateInverseTriplesFromResource(oldData[0]);
+    'ldp.resource.deleted': defineServiceEvent({
+      async handler(ctx) {
+        let { oldData } = ctx.params;
+        oldData = await ctx.call('jsonld.parser.expand', { input: oldData });
 
-      const [removeLocals, removeRemotes] = this.splitLocalAndRemote(triplesToRemove);
+        const triplesToRemove = this.generateInverseTriplesFromResource(oldData[0]);
 
-      if (removeLocals.length > 0) {
-        await ctx.call('triplestore.update', { query: this.generateDeleteQuery(removeLocals), webId: 'system' });
-        this.cleanResourcesCache(ctx, removeLocals);
-      }
+        const [removeLocals, removeRemotes] = this.splitLocalAndRemote(triplesToRemove);
 
-      // remote data
-      if (this.settings.offerToRemoteServers) {
-        for (const triple of removeRemotes) {
-          await this.broker.call('inference.remote.offerInference', {
-            subject: triple.subject.id,
-            predicate: triple.predicate.id,
-            object: triple.object.id,
-            add: false
-          });
+        if (removeLocals.length > 0) {
+          await ctx.call('triplestore.update', { query: this.generateDeleteQuery(removeLocals), webId: 'system' });
+          this.cleanResourcesCache(ctx, removeLocals);
+        }
+
+        // remote data
+        if (this.settings.offerToRemoteServers) {
+          for (const triple of removeRemotes) {
+            await this.broker.call('inference.remote.offerInference', {
+              subject: triple.subject.id,
+              predicate: triple.predicate.id,
+              object: triple.object.id,
+              add: false
+            });
+          }
         }
       }
-    },
-    async 'ldp.resource.updated'(ctx) {
-      let { oldData, newData } = ctx.params;
-      oldData = await ctx.call('jsonld.parser.expand', { input: oldData });
-      newData = await ctx.call('jsonld.parser.expand', { input: newData });
+    }),
 
-      const triplesToRemove = this.generateInverseTriplesFromResource(oldData[0]);
-      const triplesToAdd = this.generateInverseTriplesFromResource(newData[0]);
+    'ldp.resource.updated': defineServiceEvent({
+      async handler(ctx) {
+        let { oldData, newData } = ctx.params;
+        oldData = await ctx.call('jsonld.parser.expand', { input: oldData });
+        newData = await ctx.call('jsonld.parser.expand', { input: newData });
 
-      // Filter out triples which are removed and added at the same time
-      const filteredTriplesToAdd = this.getTriplesDifference(triplesToAdd, triplesToRemove);
-      const filteredTriplesToRemove = this.getTriplesDifference(triplesToRemove, triplesToAdd);
+        const triplesToRemove = this.generateInverseTriplesFromResource(oldData[0]);
+        const triplesToAdd = this.generateInverseTriplesFromResource(newData[0]);
 
-      let [addLocals, addRemotes] = this.splitLocalAndRemote(filteredTriplesToAdd);
-      const [removeLocals, removeRemotes] = this.splitLocalAndRemote(filteredTriplesToRemove);
+        // Filter out triples which are removed and added at the same time
+        const filteredTriplesToAdd = this.getTriplesDifference(triplesToAdd, triplesToRemove);
+        const filteredTriplesToRemove = this.getTriplesDifference(triplesToRemove, triplesToAdd);
 
-      // Dealing with locals first
+        let [addLocals, addRemotes] = this.splitLocalAndRemote(filteredTriplesToAdd);
+        const [removeLocals, removeRemotes] = this.splitLocalAndRemote(filteredTriplesToRemove);
 
-      // Avoid adding inverse link to non-existent resources
-      addLocals = await this.filterMissingResources(ctx, addLocals);
+        // Dealing with locals first
 
-      if (removeLocals.length > 0) {
-        await ctx.call('triplestore.update', {
-          query: this.generateDeleteQuery(removeLocals),
-          webId: 'system'
-        });
-        this.cleanResourcesCache(ctx, removeLocals);
-      }
+        // Avoid adding inverse link to non-existent resources
+        addLocals = await this.filterMissingResources(ctx, addLocals);
 
-      if (addLocals.length > 0) {
-        await ctx.call('triplestore.update', {
-          query: this.generateInsertQuery(addLocals),
-          webId: 'system'
-        });
-        this.cleanResourcesCache(ctx, addLocals);
-      }
-
-      // Dealing with remotes
-
-      // remote relationships are sent to relay actor of remote server
-      if (this.settings.offerToRemoteServers) {
-        for (const triple of addRemotes) {
-          await this.broker.call('inference.remote.offerInference', {
-            subject: triple.subject.id,
-            predicate: triple.predicate.id,
-            object: triple.object.id,
-            add: true
+        if (removeLocals.length > 0) {
+          await ctx.call('triplestore.update', {
+            query: this.generateDeleteQuery(removeLocals),
+            webId: 'system'
           });
+          this.cleanResourcesCache(ctx, removeLocals);
         }
-        for (const triple of removeRemotes) {
-          await this.broker.call('inference.remote.offerInference', {
-            subject: triple.subject.id,
-            predicate: triple.predicate.id,
-            object: triple.object.id,
-            add: false
+
+        if (addLocals.length > 0) {
+          await ctx.call('triplestore.update', {
+            query: this.generateInsertQuery(addLocals),
+            webId: 'system'
           });
+          this.cleanResourcesCache(ctx, addLocals);
         }
-      }
-    },
-    async 'ldp.resource.patched'(ctx) {
-      const { triplesAdded, triplesRemoved, skipInferenceCheck } = ctx.params;
 
-      // If the patch is done following a remote inference offer
-      if (skipInferenceCheck) return;
+        // Dealing with remotes
 
-      const triplesToAdd = this.generateInverseTriples(triplesAdded);
-      const triplesToRemove = this.generateInverseTriples(triplesRemoved);
-
-      let [addLocals, addRemotes] = this.splitLocalAndRemote(triplesToAdd);
-      const [removeLocals, removeRemotes] = this.splitLocalAndRemote(triplesToRemove);
-
-      // Dealing with locals first
-
-      // Avoid adding inverse link to non-existent resources
-      addLocals = await this.filterMissingResources(ctx, addLocals);
-
-      if (removeLocals.length > 0) {
-        await ctx.call('triplestore.update', {
-          query: this.generateDeleteQuery(removeLocals),
-          webId: 'system'
-        });
-        this.cleanResourcesCache(ctx, removeLocals);
-      }
-
-      if (addLocals.length > 0) {
-        await ctx.call('triplestore.update', {
-          query: this.generateInsertQuery(addLocals),
-          webId: 'system'
-        });
-        this.cleanResourcesCache(ctx, addLocals);
-      }
-
-      // Dealing with remotes
-
-      // remote relationships are sent to relay actor of remote server
-      if (this.settings.offerToRemoteServers) {
-        for (const triple of addRemotes) {
-          await this.broker.call('inference.remote.offerInference', {
-            subject: triple.subject.id,
-            predicate: triple.predicate.id,
-            object: triple.object.id,
-            add: true
-          });
-        }
-        for (const triple of removeRemotes) {
-          await this.broker.call('inference.remote.offerInference', {
-            subject: triple.subject.id,
-            predicate: triple.predicate.id,
-            object: triple.object.id,
-            add: false
-          });
+        // remote relationships are sent to relay actor of remote server
+        if (this.settings.offerToRemoteServers) {
+          for (const triple of addRemotes) {
+            await this.broker.call('inference.remote.offerInference', {
+              subject: triple.subject.id,
+              predicate: triple.predicate.id,
+              object: triple.object.id,
+              add: true
+            });
+          }
+          for (const triple of removeRemotes) {
+            await this.broker.call('inference.remote.offerInference', {
+              subject: triple.subject.id,
+              predicate: triple.predicate.id,
+              object: triple.object.id,
+              add: false
+            });
+          }
         }
       }
-    },
-    async 'ontologies.registered'(ctx) {
-      const { owl } = ctx.params;
-      if (owl) {
-        const result = await this.findInverseRelations(owl);
-        this.logger.info(`Found ${Object.keys(result).length} inverse relations in ${owl}`);
-        this.inverseRelations = { ...this.inverseRelations, ...result };
+    }),
+
+    'ldp.resource.patched': defineServiceEvent({
+      async handler(ctx) {
+        const { triplesAdded, triplesRemoved, skipInferenceCheck } = ctx.params;
+
+        // If the patch is done following a remote inference offer
+        if (skipInferenceCheck) return;
+
+        const triplesToAdd = this.generateInverseTriples(triplesAdded);
+        const triplesToRemove = this.generateInverseTriples(triplesRemoved);
+
+        let [addLocals, addRemotes] = this.splitLocalAndRemote(triplesToAdd);
+        const [removeLocals, removeRemotes] = this.splitLocalAndRemote(triplesToRemove);
+
+        // Dealing with locals first
+
+        // Avoid adding inverse link to non-existent resources
+        addLocals = await this.filterMissingResources(ctx, addLocals);
+
+        if (removeLocals.length > 0) {
+          await ctx.call('triplestore.update', {
+            query: this.generateDeleteQuery(removeLocals),
+            webId: 'system'
+          });
+          this.cleanResourcesCache(ctx, removeLocals);
+        }
+
+        if (addLocals.length > 0) {
+          await ctx.call('triplestore.update', {
+            query: this.generateInsertQuery(addLocals),
+            webId: 'system'
+          });
+          this.cleanResourcesCache(ctx, addLocals);
+        }
+
+        // Dealing with remotes
+
+        // remote relationships are sent to relay actor of remote server
+        if (this.settings.offerToRemoteServers) {
+          for (const triple of addRemotes) {
+            await this.broker.call('inference.remote.offerInference', {
+              subject: triple.subject.id,
+              predicate: triple.predicate.id,
+              object: triple.object.id,
+              add: true
+            });
+          }
+          for (const triple of removeRemotes) {
+            await this.broker.call('inference.remote.offerInference', {
+              subject: triple.subject.id,
+              predicate: triple.predicate.id,
+              object: triple.object.id,
+              add: false
+            });
+          }
+        }
       }
-    }
+    }),
+
+    'ontologies.registered': defineServiceEvent({
+      async handler(ctx) {
+        const { owl } = ctx.params;
+        if (owl) {
+          const result = await this.findInverseRelations(owl);
+          this.logger.info(`Found ${Object.keys(result).length} inverse relations in ${owl}`);
+          this.inverseRelations = { ...this.inverseRelations, ...result };
+        }
+      }
+    })
   }
-};
+} satisfies ServiceSchema;
 
 export default InferenceSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [InferenceSchema.name]: typeof InferenceSchema;
+    }
+  }
+}

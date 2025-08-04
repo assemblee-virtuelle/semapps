@@ -1,7 +1,8 @@
 import dashify from 'dashify';
 import { isURL } from '../../../utils.ts';
+import { defineAction } from 'moleculer';
 
-const Schema = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     resourceType: 'string'
@@ -36,6 +37,6 @@ const Schema = {
 
     return `/${prefix}/${dashify(className)}`;
   }
-};
+});
 
 export default Schema;

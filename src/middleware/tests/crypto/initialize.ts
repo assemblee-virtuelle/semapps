@@ -1,7 +1,7 @@
 import fse from 'fs-extra';
 import fs from 'fs';
 import path from 'path';
-import { ServiceBroker } from 'moleculer';
+import { ServiceBroker, ServiceSchema } from 'moleculer';
 import { AuthLocalService } from '@semapps/auth';
 import { CoreService } from '@semapps/core';
 import { VerifiableCredentialsService } from '@semapps/crypto';

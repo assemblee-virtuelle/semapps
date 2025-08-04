@@ -1,7 +1,8 @@
 import fetch from 'node-fetch';
 import { isURL } from '../utils.ts';
+import { defineAction } from 'moleculer';
 
-const Schema = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     uri: 'string'
@@ -23,6 +24,6 @@ const Schema = {
 
     return null;
   }
-};
+});
 
 export default Schema;

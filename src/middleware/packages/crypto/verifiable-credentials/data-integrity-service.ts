@@ -11,6 +11,7 @@ import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
 import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
 
 import { KEY_TYPES } from '../constants.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 /**
  * Data integrity service for signing objects using the [VC data integrity spec](https://www.w3.org/TR/vc-data-integrity/).
@@ -22,7 +23,7 @@ import { KEY_TYPES } from '../constants.ts';
  * @type {import('moleculer').ServiceSchema}
  */
 const DataIntegrityService = {
-  name: 'crypto.vc.data-integrity',
+  name: 'crypto.vc.data-integrity' as const,
   dependencies: ['ldp', 'api'],
 
   async started() {
@@ -36,7 +37,7 @@ const DataIntegrityService = {
      * Verify an object.
      * @param {object} ctx.params.object - The object to verify.
      */
-    verifyObject: {
+    verifyObject: defineAction({
       params: {
         object: { type: 'object' },
         options: {
@@ -61,7 +62,7 @@ const DataIntegrityService = {
 
         return jsigs.verify(object, { purpose, documentLoader: this.documentLoader, suite });
       }
-    },
+    }),
 
     /**
      * Sign an object.
@@ -71,7 +72,7 @@ const DataIntegrityService = {
      * @param {object} [ctx.params.keyObject] - The key object to use.
      * @param {string} [ctx.params.keyId] - The key ID to use.
      */
-    signObject: {
+    signObject: defineAction({
       params: {
         object: { type: 'object' },
         options: { type: 'object', optional: true, params: { proofPurpose: { type: 'string', optional: true } } },
@@ -107,8 +108,16 @@ const DataIntegrityService = {
 
         return jsigs.sign(object, { purpose, documentLoader: this.documentLoader, suite });
       }
-    }
+    })
   }
-};
+} satisfies ServiceSchema;
 
 export default DataIntegrityService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [DataIntegrityService.name]: typeof DataIntegrityService;
+    }
+  }
+}

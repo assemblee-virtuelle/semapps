@@ -13,6 +13,7 @@ import vc from '@digitalbazaar/vc';
 import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
 
 import { KEY_TYPES, credentialsContext } from '../constants.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 /**
  * Service for verifying and creating Verifiable Presentations
@@ -24,7 +25,7 @@ import { KEY_TYPES, credentialsContext } from '../constants.ts';
  * @type {import('moleculer').ServiceSchema}
  */
 const VCHolderService = {
-  name: 'crypto.vc.holder',
+  name: 'crypto.vc.holder' as const,
   dependencies: ['jsonld', 'jsonld.context'],
   async started() {
     this.documentLoader = async (url, options) => {
@@ -38,7 +39,7 @@ const VCHolderService = {
      * @param {object} ctx.params - The parameters for creating the presentation.
      * @returns {object} The signed presentation.
      */
-    createPresentation: {
+    createPresentation: defineAction({
       params: {
         presentation: {
           type: 'object',
@@ -125,7 +126,7 @@ const VCHolderService = {
 
         return signedPresentation;
       }
-    }
+    })
   },
 
   methods: {
@@ -166,6 +167,14 @@ const VCHolderService = {
       return resource;
     }
   }
-};
+} satisfies ServiceSchema;
 
 export default VCHolderService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [VCHolderService.name]: typeof VCHolderService;
+    }
+  }
+}

@@ -3,6 +3,7 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import { arrayOf } from '@semapps/ldp';
 import { ACTOR_TYPES } from '../constants.ts';
 import { getSlugFromUri, getContainerFromUri } from '../utils.ts';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 
 const BotMixin = {
   settings: {
@@ -70,18 +71,22 @@ const BotMixin = {
     }
   },
   actions: {
-    getUri() {
-      return this.settings.actor.uri;
-    }
+    getUri: defineAction({
+      handler() {
+        return this.settings.actor.uri;
+      }
+    })
   },
   events: {
-    'activitypub.inbox.received'(ctx) {
-      if (this.inboxReceived) {
-        if (ctx.params.recipients.includes(this.settings.actor.uri)) {
-          this.inboxReceived(ctx.params.activity);
+    'activitypub.inbox.received': defineServiceEvent({
+      handler(ctx) {
+        if (this.inboxReceived) {
+          if (ctx.params.recipients.includes(this.settings.actor.uri)) {
+            this.inboxReceived(ctx.params.activity);
+          }
         }
       }
-    }
+    })
   },
   methods: {
     async getFollowers() {
@@ -91,6 +96,6 @@ const BotMixin = {
       return arrayOf(result?.items);
     }
   }
-};
+} satisfies Partial<ServiceSchema>;
 
 export default BotMixin;

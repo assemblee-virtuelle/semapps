@@ -3,6 +3,7 @@ import urlJoin from 'url-join';
 import { parseHeader, parseFile, saveDatasetMeta } from '@semapps/middlewares';
 import fetch from 'node-fetch';
 import { Errors as E } from 'moleculer-web';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 
 const stream2buffer = stream => {
   return new Promise((resolve, reject) => {
@@ -14,7 +15,7 @@ const stream2buffer = stream => {
 };
 
 const ProxyService = {
-  name: 'signature.proxy',
+  name: 'signature.proxy' as const,
   settings: {
     podProvider: false
   },
@@ -40,120 +41,135 @@ const ProxyService = {
     }
   },
   actions: {
-    async api_query(ctx) {
-      const url = ctx.params.id;
-      const method = ctx.params.method || 'GET';
-      const headers = JSON.parse(ctx.params.headers) || { accept: 'application/json' };
-      const actorUri = ctx.meta.webId;
+    api_query: defineAction({
+      async handler(ctx) {
+        const url = ctx.params.id;
+        const method = ctx.params.method || 'GET';
+        const headers = JSON.parse(ctx.params.headers) || { accept: 'application/json' };
+        const actorUri = ctx.meta.webId;
 
-      // Only user can query his own proxy URL
-      if (this.settings.podProvider) {
-        const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
-        if (account.username !== ctx.params.username) throw new E.ForbiddenError();
-      }
-
-      // If a file is uploaded, convert it to a Buffer
-      const body =
-        ctx.params.files && ctx.params.files.length > 0
-          ? await stream2buffer(ctx.params.files[0].readableStream)
-          : ctx.params.body;
-
-      try {
-        const response = await this.actions.query(
-          {
-            url,
-            method,
-            headers,
-            body,
-            actorUri
-          },
-          {
-            parentCtx: ctx
-          }
-        );
-        ctx.meta.$statusCode = response.status;
-        ctx.meta.$statusMessage = response.statusText;
-        ctx.meta.$responseHeaders = response.headers;
-        return response.body;
-      } catch (e) {
-        if (e.code !== 404 && e.code !== 403) console.error(e);
-        ctx.meta.$statusCode = !e.code ? 500 : e.code === 'ECONNREFUSED' ? 502 : e.code;
-        ctx.meta.$statusMessage = e.message;
-      }
-    },
-    async query(ctx) {
-      let { url, method, headers, body, actorUri } = ctx.params;
-
-      const signatureHeaders = await ctx.call('signature.generateSignatureHeaders', {
-        url,
-        method,
-        body,
-        actorUri
-      });
-
-      // Convert Headers object if necessary (otherwise we can't destructure it below)
-      // Note: if we use NodeJS built-in Headers instead of node-fetch Headers, the constructor name is _Headers
-      if (
-        headers &&
-        typeof headers === 'object' &&
-        (headers.constructor.name === 'Headers' || headers.constructor.name === '_Headers')
-      ) {
-        headers = Object.fromEntries(headers);
-      }
-
-      const response = await fetch(url, {
-        method,
-        headers: {
-          ...headers,
-          ...signatureHeaders
-        },
-        body
-      });
-
-      if (response.ok) {
-        let responseBody = await response.text();
-        try {
-          responseBody = JSON.parse(responseBody);
-        } catch (e) {
-          // Do nothing if body is not JSON
+        // Only user can query his own proxy URL
+        if (this.settings.podProvider) {
+          const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
+          if (account.username !== ctx.params.username) throw new E.ForbiddenError();
         }
 
-        // Remove headers that we don't want to be transfered
-        response.headers.delete('content-length');
-        response.headers.delete('connection');
-        response.headers.delete('content-encoding');
+        // If a file is uploaded, convert it to a Buffer
+        const body =
+          ctx.params.files && ctx.params.files.length > 0
+            ? await stream2buffer(ctx.params.files[0].readableStream)
+            : ctx.params.body;
 
-        return {
-          ok: true,
-          body: responseBody,
-          headers: Object.fromEntries(response.headers.entries()),
-          status: response.status,
-          statusText: response.statusText
-        };
-      } else {
-        return {
-          ok: false,
-          status: response.status,
-          statusText: response.statusText
-        };
+        try {
+          const response = await this.actions.query(
+            {
+              url,
+              method,
+              headers,
+              body,
+              actorUri
+            },
+            {
+              parentCtx: ctx
+            }
+          );
+          ctx.meta.$statusCode = response.status;
+          ctx.meta.$statusMessage = response.statusText;
+          ctx.meta.$responseHeaders = response.headers;
+          return response.body;
+        } catch (e) {
+          if (e.code !== 404 && e.code !== 403) console.error(e);
+          ctx.meta.$statusCode = !e.code ? 500 : e.code === 'ECONNREFUSED' ? 502 : e.code;
+          ctx.meta.$statusMessage = e.message;
+        }
       }
-    }
+    }),
+
+    query: defineAction({
+      async handler(ctx) {
+        let { url, method, headers, body, actorUri } = ctx.params;
+
+        const signatureHeaders = await ctx.call('signature.generateSignatureHeaders', {
+          url,
+          method,
+          body,
+          actorUri
+        });
+
+        // Convert Headers object if necessary (otherwise we can't destructure it below)
+        // Note: if we use NodeJS built-in Headers instead of node-fetch Headers, the constructor name is _Headers
+        if (
+          headers &&
+          typeof headers === 'object' &&
+          (headers.constructor.name === 'Headers' || headers.constructor.name === '_Headers')
+        ) {
+          headers = Object.fromEntries(headers);
+        }
+
+        const response = await fetch(url, {
+          method,
+          headers: {
+            ...headers,
+            ...signatureHeaders
+          },
+          body
+        });
+
+        if (response.ok) {
+          let responseBody = await response.text();
+          try {
+            responseBody = JSON.parse(responseBody);
+          } catch (e) {
+            // Do nothing if body is not JSON
+          }
+
+          // Remove headers that we don't want to be transfered
+          response.headers.delete('content-length');
+          response.headers.delete('connection');
+          response.headers.delete('content-encoding');
+
+          return {
+            ok: true,
+            body: responseBody,
+            headers: Object.fromEntries(response.headers.entries()),
+            status: response.status,
+            statusText: response.statusText
+          };
+        } else {
+          return {
+            ok: false,
+            status: response.status,
+            statusText: response.statusText
+          };
+        }
+      }
+    })
   },
   events: {
-    async 'auth.registered'(ctx) {
-      const { webId } = ctx.params;
-      if (this.settings.podProvider) {
-        const services = await ctx.call('$node.services');
-        if (services.filter(s => s.name === 'activitypub.actor')) {
-          await ctx.call('activitypub.actor.addEndpoint', {
-            actorUri: webId,
-            predicate: 'https://www.w3.org/ns/activitystreams#proxyUrl',
-            endpoint: urlJoin(webId, 'proxy')
-          });
+    'auth.registered': defineServiceEvent({
+      async handler(ctx) {
+        const { webId } = ctx.params;
+        if (this.settings.podProvider) {
+          const services = await ctx.call('$node.services');
+          if (services.filter(s => s.name === 'activitypub.actor')) {
+            await ctx.call('activitypub.actor.addEndpoint', {
+              actorUri: webId,
+              predicate: 'https://www.w3.org/ns/activitystreams#proxyUrl',
+              endpoint: urlJoin(webId, 'proxy')
+            });
+          }
         }
       }
-    }
+    })
   }
-};
+} satisfies ServiceSchema;
 
 export default ProxyService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [ProxyService.name]: typeof ProxyService;
+    }
+  }
+}

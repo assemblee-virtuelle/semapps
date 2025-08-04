@@ -1,5 +1,5 @@
 import path from 'path';
-import { ServiceBroker } from 'moleculer';
+import { ServiceBroker, ServiceSchema } from 'moleculer';
 import { CoreService } from '@semapps/core';
 import { pair } from '@semapps/ontologies';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';

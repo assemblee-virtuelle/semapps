@@ -12,6 +12,7 @@ import { WebAclService } from '@semapps/webacl';
 import { WebfingerService } from '@semapps/webfinger';
 import { KeysService, SignatureService } from '@semapps/crypto';
 import { WebIdService } from '@semapps/webid';
+import { ServiceSchema } from 'moleculer';
 
 const botsContainer = {
   path: '/as/application',
@@ -25,7 +26,7 @@ const botsContainer = {
 
 /** @type {import('moleculer').ServiceSchema<CoreServiceSettings>} */
 const CoreService = {
-  name: 'core',
+  name: 'core' as const,
   settings: {
     baseUrl: undefined,
     baseDir: undefined,
@@ -227,6 +228,14 @@ const CoreService = {
       });
     }
   }
-};
+} satisfies ServiceSchema;
 
 export default CoreService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [CoreService.name]: typeof CoreService;
+    }
+  }
+}

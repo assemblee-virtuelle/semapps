@@ -5,9 +5,10 @@ import setRightsHandler from './activity-handlers/setRightsHandler.ts';
 import { objectCurrentToId, objectIdToCurrent, arrayOf } from '../../../utils.ts';
 import { PUBLIC_URI, FULL_ACTIVITY_TYPES } from '../../../constants.ts';
 import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 const ActivityService = {
-  name: 'activitypub.activity',
+  name: 'activitypub.activity' as const,
   mixins: [ControlledContainerMixin, ActivitiesHandlerMixin],
   settings: {
     baseUri: null,
@@ -30,63 +31,74 @@ const ActivityService = {
   },
   dependencies: ['ldp.container'],
   actions: {
-    forbidden() {
-      throw new E.ForbiddenError();
-    },
-    async getRecipients(ctx) {
-      const { activity } = ctx.params;
-      const output = [];
+    forbidden: defineAction({
+      handler() {
+        throw new E.ForbiddenError();
+      }
+    }),
 
-      const actor = activity.actor ? await ctx.call('activitypub.actor.get', { actorUri: activity.actor }) : {};
+    getRecipients: defineAction({
+      async handler(ctx) {
+        const { activity } = ctx.params;
+        const output = [];
 
-      for (const predicates of ['to', 'bto', 'cc', 'bcc']) {
-        if (activity[predicates]) {
-          for (const recipient of arrayOf(activity[predicates])) {
-            switch (recipient) {
-              // Skip public URI
-              case PUBLIC_URI:
-              case 'as:Public':
-              case 'Public':
-                break;
+        const actor = activity.actor ? await ctx.call('activitypub.actor.get', { actorUri: activity.actor }) : {};
 
-              // Sender's followers list
-              case actor.followers:
-                // Ignore remote followers list
-                // TODO Fetch remote followers list ?
-                if (recipient.startsWith(this.settings.baseUri)) {
-                  const collection = await ctx.call('activitypub.collection.get', {
-                    resourceUri: recipient,
-                    webId: activity.actor
-                  });
-                  if (collection && collection.items) output.push(...arrayOf(collection.items));
-                }
-                break;
+        for (const predicates of ['to', 'bto', 'cc', 'bcc']) {
+          if (activity[predicates]) {
+            for (const recipient of arrayOf(activity[predicates])) {
+              switch (recipient) {
+                // Skip public URI
+                case PUBLIC_URI:
+                case 'as:Public':
+                case 'Public':
+                  break;
 
-              // Simple actor URI
-              default:
-                output.push(recipient);
-                break;
+                // Sender's followers list
+                case actor.followers:
+                  // Ignore remote followers list
+                  // TODO Fetch remote followers list ?
+                  if (recipient.startsWith(this.settings.baseUri)) {
+                    const collection = await ctx.call('activitypub.collection.get', {
+                      resourceUri: recipient,
+                      webId: activity.actor
+                    });
+                    if (collection && collection.items) output.push(...arrayOf(collection.items));
+                  }
+                  break;
+
+                // Simple actor URI
+                default:
+                  output.push(recipient);
+                  break;
+              }
             }
           }
         }
-      }
 
-      // Remove duplicates
-      return [...new Set(output)];
-    },
-    async getLocalRecipients(ctx) {
-      const { activity } = ctx.params;
-      const recipients = await this.actions.getRecipients({ activity }, { parentCtx: ctx });
-      return recipients.filter(recipientUri => this.isLocalActor(recipientUri));
-    },
-    isPublic(ctx) {
-      const { activity } = ctx.params;
-      // We accept all three representations, as required by https://www.w3.org/TR/activitypub/#public-addressing
-      const publicRepresentations = [PUBLIC_URI, 'Public', 'as:Public'];
-      return arrayOf(activity.to).length > 0
-        ? arrayOf(activity.to).some(r => publicRepresentations.includes(r))
-        : false;
-    }
+        // Remove duplicates
+        return [...new Set(output)];
+      }
+    }),
+
+    getLocalRecipients: defineAction({
+      async handler(ctx) {
+        const { activity } = ctx.params;
+        const recipients = await this.actions.getRecipients({ activity }, { parentCtx: ctx });
+        return recipients.filter(recipientUri => this.isLocalActor(recipientUri));
+      }
+    }),
+
+    isPublic: defineAction({
+      handler(ctx) {
+        const { activity } = ctx.params;
+        // We accept all three representations, as required by https://www.w3.org/TR/activitypub/#public-addressing
+        const publicRepresentations = [PUBLIC_URI, 'Public', 'as:Public'];
+        return arrayOf(activity.to).length > 0
+          ? arrayOf(activity.to).some(r => publicRepresentations.includes(r))
+          : false;
+      }
+    })
   },
   methods: {
     isLocalActor(uri) {
@@ -113,6 +125,14 @@ const ActivityService = {
   activities: {
     setRights: setRightsHandler
   }
-};
+} satisfies ServiceSchema;
 
 export default ActivityService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [ActivityService.name]: typeof ActivityService;
+    }
+  }
+}

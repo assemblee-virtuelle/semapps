@@ -1,9 +1,10 @@
 import path from 'path';
 import ExpoPushDeviceService from './device.ts';
 import ExpoPushNotificationService from './notification.ts';
+import { ServiceSchema } from 'moleculer';
 
 const ExpoPushService = {
-  name: 'expo-push',
+  name: 'expo-push' as const,
   settings: {
     baseUrl: null,
     newDeviceNotification: {
@@ -43,6 +44,14 @@ const ExpoPushService = {
       }
     });
   }
-};
+} satisfies ServiceSchema;
 
 export default ExpoPushService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [ExpoPushService.name]: typeof ExpoPushService;
+    }
+  }
+}
