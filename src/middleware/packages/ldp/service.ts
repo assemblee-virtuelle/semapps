@@ -7,6 +7,7 @@ import LdpLinkHeaderService from './services/link-header/index.ts';
 import LdpRegistryService from './services/registry/index.ts';
 import LdpRemoteService from './services/remote/index.ts';
 import LdpResourceService from './services/resource/index.ts';
+import PermissionsService from './services/permissions/index.ts';
 
 const LdpSchema = {
   name: 'ldp' as const,
@@ -89,6 +90,9 @@ const LdpSchema = {
         podProvider
       }
     });
+
+    // @ts-expect-error
+    this.broker.createService({ mixins: [PermissionsService] });
 
     // @ts-expect-error
     this.broker.createService({ mixins: [LdpLinkHeaderService] });
