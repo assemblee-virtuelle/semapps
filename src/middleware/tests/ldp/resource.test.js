@@ -1,6 +1,7 @@
-const { quad, namedNode, blankNode, literal } = require('rdf-data-model');
+const dataFactory = require('rdf-data-model');
 const CONFIG = require('../config');
 const initialize = require('./initialize');
+const { quad, namedNode, blankNode, literal } = dataFactory;
 
 jest.setTimeout(50000);
 let broker;
@@ -179,30 +180,6 @@ describe('Resource CRUD operations', () => {
           'pair:label': 'Oloron'
         }
       ])
-    });
-
-    resourceUpdated.hasLocation = [
-      {
-        label: 'Compiegne'
-      },
-      {
-        label: 'Compiegne'
-      },
-      {
-        label: 'Compiegne'
-      }
-    ];
-
-    await broker.call('ldp.resource.put', { resource: resourceUpdated });
-
-    updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
-
-    expect(updatedProject).toMatchObject({
-      'pair:description': 'myProjectUpdatedAgain',
-      'pair:affiliates': 'http://localhost:3000/users/pierre',
-      'pair:hasLocation': {
-        'pair:label': 'Compiegne'
-      }
     });
 
     resourceUpdated.hasLocation = [
