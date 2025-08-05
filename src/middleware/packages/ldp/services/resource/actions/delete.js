@@ -35,9 +35,18 @@ module.exports = {
       query: `
         DELETE
         WHERE {
-          <${resourceUri}> ?p1 ?o1 .
+          GRAPH <${resourceUri}> {
+            <${resourceUri}> ?p1 ?o1 .
+          }
         }
       `,
+      webId
+    });
+
+    // We need to manually drop the graph, otherwise the triple store may consider it still exists
+    // TODO: Move this to the DocumentService
+    await ctx.call('triplestore.update', {
+      query: `DROP GRAPH <${resourceUri}>`,
       webId
     });
 

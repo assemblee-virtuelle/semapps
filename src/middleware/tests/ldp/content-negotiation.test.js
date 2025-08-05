@@ -18,7 +18,7 @@ afterAll(async () => {
 
 describe('Content negotiation', () => {
   const containerUri = urlJoin(CONFIG.HOME_URL, 'resources');
-  let projectUri, project2Uri, project3Uri;
+  let projectUri, project2Uri, project3Uri, project4Uri;
 
   test('Post resource in JSON-LD', async () => {
     const { headers } = await fetchServer(containerUri, {
@@ -216,5 +216,61 @@ describe('Content negotiation', () => {
       'pair:label': 'myProject 3 - updated',
       'pair:description': 'A description'
     });
+  });
+
+  test('Post resource with sub-resources in Turtle format', async () => {
+    const { headers, status } = await fetchServer(containerUri, {
+      method: 'POST',
+      body: `
+        @prefix pair: <http://virtual-assembly.org/ontologies/pair#>.
+        <> a pair:Project ;
+          pair:label "myProject 4" ;
+          pair:hasPart <#task1> .
+
+        <#task1> a pair:Task ;
+          pair:label "myTask 1" .
+      `,
+      headers: new fetch.Headers({
+        'Content-Type': MIME_TYPES.TURTLE
+      })
+    });
+
+    expect(status).toBe(201);
+
+    project4Uri = headers.get('Location');
+
+    const project4 = await broker.call('ldp.resource.get', {
+      resourceUri: project4Uri
+    });
+
+    expect(project4).toMatchObject({
+      '@context': 'http://localhost:3000/.well-known/context.jsonld',
+      '@graph': expect.arrayContaining([
+        {
+          '@id': project4Uri,
+          '@type': 'pair:Project',
+          'pair:hasPart': `${project4Uri}#task1`,
+          'pair:label': 'myProject 4'
+        },
+        {
+          '@id': `${project4Uri}#task1`,
+          '@type': 'pair:Task',
+          'pair:label': 'myTask 1'
+        }
+      ])
+    });
+  });
+
+  test('Get resource with sub-resources in Turtle format', async () => {
+    const { body } = await fetchServer(project4Uri, {
+      headers: new fetch.Headers({
+        Accept: MIME_TYPES.TURTLE
+      })
+    });
+
+    expect(body).toMatch(new RegExp(`<${project4Uri}> a pair:Project`));
+    expect(body).toMatch(new RegExp(`pair:label "myProject 4"`));
+    expect(body).toMatch(new RegExp(`<${project4Uri}#task1> a pair:Task`));
+    expect(body).toMatch(new RegExp(`pair:label "myTask 1"`));
   });
 });

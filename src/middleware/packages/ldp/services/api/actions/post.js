@@ -20,7 +20,6 @@ module.exports = async function post(ctx) {
           input: ctx.meta.rawBody,
           options: { format: contentType }
         });
-        delete resource['@id']; // Since no URI is provided, the @id will be ./ but that will not work with ldp.container.post
       }
 
       resourceUri = await ctx.call(controlledActions.post || 'ldp.container.post', {

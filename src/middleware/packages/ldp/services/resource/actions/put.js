@@ -103,7 +103,7 @@ module.exports = {
       );
 
       // Generate the query
-      let query = '';
+      let query = `WITH <${resourceUri}>\n`;
       if (triplesToRemove.length > 0) query += `DELETE { ${this.triplesToString(triplesToRemove)} } `;
       if (triplesToAdd.length > 0) query += `INSERT { ${this.triplesToString(triplesToAdd)} } `;
       query += 'WHERE { ';

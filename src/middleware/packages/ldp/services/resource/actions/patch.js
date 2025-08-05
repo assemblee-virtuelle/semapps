@@ -1,4 +1,5 @@
 const { MoleculerError } = require('moleculer').Errors;
+const { namedNode } = require('@rdfjs/data-model');
 
 function checkTriplesSubjectIsResource(triples, resourceUri) {
   for (const triple of triples) {
@@ -69,7 +70,7 @@ module.exports = {
       checkTriplesSubjectIsResource(triplesToRemove, resourceUri);
       sparqlUpdate.updates.push({
         updateType: 'delete',
-        delete: [{ type: 'bgp', triples: triplesToRemove }]
+        delete: [{ type: 'graph', triples: triplesToRemove, name: namedNode(resourceUri) }]
       });
     }
 
@@ -77,7 +78,7 @@ module.exports = {
       checkTriplesSubjectIsResource(triplesToAdd, resourceUri);
       sparqlUpdate.updates.push({
         updateType: 'insert',
-        insert: [{ type: 'bgp', triples: triplesToAdd }]
+        insert: [{ type: 'graph', triples: triplesToAdd, name: namedNode(resourceUri) }]
       });
     }
 

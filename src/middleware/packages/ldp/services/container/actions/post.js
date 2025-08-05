@@ -113,11 +113,18 @@ module.exports = {
         });
       } else {
         const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
+
+        // Change relative URIs to full URIs
+        const resourceWithBase = resource['@graph']
+          ? await ctx.call('jsonld.parser.changeBase', {
+              input: resource,
+              base: resourceUri
+            })
+          : { ...resource, '@id': resourceUri };
+
         await ctx.call(controlledActions.create || 'ldp.resource.create', {
-          resource: {
-            '@id': resourceUri,
-            ...resource
-          },
+          resource: resourceWithBase,
+          resourceUri,
           webId
         });
       }

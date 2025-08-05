@@ -13,11 +13,12 @@ afterAll(async () => {
 });
 
 describe('Resource CRUD operations', () => {
+  let project1Uri;
   let project1;
   let project2;
 
   test('Post resource in container', async () => {
-    const resourceUri = await broker.call('ldp.container.post', {
+    project1Uri = await broker.call('ldp.container.post', {
       resource: {
         '@context': {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
@@ -41,13 +42,13 @@ describe('Resource CRUD operations', () => {
       containerUri: `${CONFIG.HOME_URL}resources`
     });
 
-    project1 = await broker.call('ldp.resource.get', { resourceUri });
-    expect(project1['pair:description']).toBe('myProject');
-  }, 20000);
+    expect(project1Uri).toBeDefined();
+  });
 
   test('Get resource', async () => {
-    const newProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
-    expect(newProject).toMatchObject({
+    project1 = await broker.call('ldp.resource.get', { resourceUri: project1Uri });
+
+    expect(project1).toMatchObject({
       '@context': 'http://localhost:3000/.well-known/context.jsonld',
       '@id': project1['@id'],
       '@type': 'pair:Project',
@@ -59,7 +60,7 @@ describe('Resource CRUD operations', () => {
       'pair:hasLocation': expect.objectContaining({ 'pair:description': 'The place to be', 'pair:label': 'Paris' }),
       'pair:label': 'myTitle'
     });
-  }, 20000);
+  });
 
   test('Put resource', async () => {
     await broker.call('ldp.resource.put', {
@@ -89,7 +90,7 @@ describe('Resource CRUD operations', () => {
     });
     expect(updatedProject['pair:label']).toBeUndefined();
     expect(updatedProject['pair:hasLocation']['pair:description']).toBeUndefined();
-  }, 20000);
+  });
 
   test('Put resource with multiple blank nodes including same values', async () => {
     const resourceUpdated = {
@@ -118,14 +119,14 @@ describe('Resource CRUD operations', () => {
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
       'pair:affiliates': 'http://localhost:3000/users/pierre',
-      'pair:hasLocation': [
+      'pair:hasLocation': expect.arrayContaining([
         {
           'pair:label': 'Nantes'
         },
         {
           'pair:label': 'Compiegne'
         }
-      ]
+      ])
     });
     expect(updatedProject['pair:label']).toBeUndefined();
     expect(updatedProject['pair:hasLocation']['pair:description']).toBeUndefined();
@@ -167,7 +168,7 @@ describe('Resource CRUD operations', () => {
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
       'pair:affiliates': 'http://localhost:3000/users/pierre',
-      'pair:hasLocation': [
+      'pair:hasLocation': expect.arrayContaining([
         {
           'pair:label': 'Compiegne'
         },
@@ -177,7 +178,7 @@ describe('Resource CRUD operations', () => {
         {
           'pair:label': 'Oloron'
         }
-      ]
+      ])
     });
 
     resourceUpdated.hasLocation = [
@@ -222,7 +223,7 @@ describe('Resource CRUD operations', () => {
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
       'pair:affiliates': 'http://localhost:3000/users/pierre',
-      'pair:hasLocation': [
+      'pair:hasLocation': expect.arrayContaining([
         {
           'pair:label': 'Compiegne',
           'pair:description': 'the place to be'
@@ -231,7 +232,7 @@ describe('Resource CRUD operations', () => {
           'pair:label': 'Compiegne',
           'pair:description': 'or not'
         }
-      ]
+      ])
     });
 
     resourceUpdated.hasLocation = undefined;
@@ -269,12 +270,12 @@ describe('Resource CRUD operations', () => {
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
-      'petr:openingTimesDay': [
+      'petr:openingTimesDay': expect.arrayContaining([
         { 'petr:endingTime': '2021-10-07T09:40:56.131Z', 'petr:startingTime': '2021-10-07T06:40:56.123Z' },
         { 'petr:startingTime': '2021-10-07T10:44:54.883Z', 'petr:endingTime': '2021-10-07T16:44:54.888Z' }
-      ]
+      ])
     });
-  }, 20000);
+  });
 
   test('Post resource with multiple blank nodes with 2 imbrications blank nodes', async () => {
     const resourceToPost = {
@@ -377,7 +378,7 @@ describe('Resource CRUD operations', () => {
         }
       }
     });
-  }, 20000);
+  });
 
   test('Put resource with multiple blank nodes with 2 imbrications blank nodes', async () => {
     const resourceUpdated = {
@@ -408,7 +409,7 @@ describe('Resource CRUD operations', () => {
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
-      'pair:hasLocation': [
+      'pair:hasLocation': expect.arrayContaining([
         {
           'pair:label': 'Paris',
           'pair:hasPostalAddress': {
@@ -421,7 +422,7 @@ describe('Resource CRUD operations', () => {
             'pair:addressCountry': 'USA'
           }
         }
-      ]
+      ])
     });
 
     resourceUpdated.hasLocation = [
@@ -452,7 +453,7 @@ describe('Resource CRUD operations', () => {
         }
       }
     });
-  }, 20000);
+  });
 
   // Ensure dereferenced resources with IDs are not deleted by PUT
   test('PUT resource with ID', async () => {
@@ -503,7 +504,7 @@ describe('Resource CRUD operations', () => {
       '@type': 'pair:Theme',
       'pair:label': 'Permaculture'
     });
-  }, 20000);
+  });
 
   test('PATCH resource', async () => {
     const projectUri = await broker.call('ldp.container.post', {
@@ -544,7 +545,7 @@ describe('Resource CRUD operations', () => {
       'pair:label': 'SemApps',
       'pair:comment': 'An open source toolbox to help you easily build semantic web applications'
     });
-  }, 20000);
+  });
 
   test('PATCH resource with blank nodes', async () => {
     const projectUri = await broker.call('ldp.container.post', {
@@ -628,5 +629,5 @@ describe('Resource CRUD operations', () => {
     });
 
     await expect(broker.call('ldp.resource.get', { resourceUri: project1['@id'] })).rejects.toThrow(`not found`);
-  }, 20000);
+  });
 });

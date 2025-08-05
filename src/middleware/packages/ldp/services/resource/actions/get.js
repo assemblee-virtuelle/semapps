@@ -1,5 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { arrayOf } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
@@ -37,7 +38,7 @@ module.exports = {
 
     await ctx.call('permissions.check', { uri: resourceUri, type: 'resource', mode: 'acl:Read', webId });
 
-    let result = await ctx.call('triplestore.query', {
+    const result = await ctx.call('triplestore.query', {
       query: `
         ${await ctx.call('ontologies.getRdfPrefixes')}
         CONSTRUCT  {
@@ -52,12 +53,22 @@ module.exports = {
       webId: 'system'
     });
 
+    const frame = { '@context': jsonContext || (await ctx.call('jsonld.context.get')) };
+
+    // If the graph contains only blank nodes, we want them to be embedded in the resource
+    // Otherwise we want this action to return a @graph with all resources
+    const graphWithBlankNodesOnly = arrayOf(result['@graph']).every(
+      node => node['@id'].startsWith('_:b') || node['@id'] === resourceUri
+    );
+
+    if (graphWithBlankNodesOnly) frame['@id'] = resourceUri;
+
     // Frame the result using the correct context in order to have clean, consistent results
     return await ctx.call('jsonld.parser.frame', {
       input: result,
-      frame: {
-        '@context': jsonContext || (await ctx.call('jsonld.context.get')),
-        '@id': resourceUri
+      frame,
+      options: {
+        embed: graphWithBlankNodesOnly ? '@once' : '@never'
       }
     });
   }

@@ -60,15 +60,29 @@ module.exports = {
 
         const jsonLd = JSON.parse(await this.streamToString(jsonLdSerializer));
 
-        return await this.actions.frame(
+        const contextWithNullBase = await ctx.call('jsonld.context.merge', {
+          a: context,
+          b: { '@base': null }
+        });
+
+        const framedResource = await this.actions.frame(
           {
             input: jsonLd,
-            frame: { '@context': context }
-            // Force results to be in a @graph, even if we have a single result
-            // options: { omitGraph: false }
+            frame: {
+              '@context': contextWithNullBase
+            },
+            options: {
+              base: null, // If we don't set base to null (here and in the frame), empty IRIs will be turned to ./
+              embed: '@never' // If a resource refers to another resource in the same graph, we don't want it to be embedded
+            }
           },
           { parentCtx: ctx }
         );
+
+        // See if it is necessary to remove the base ?
+        framedResource['@context'] = context;
+
+        return framedResource;
       }
     },
     async toRDF(ctx) {
@@ -157,6 +171,20 @@ module.exports = {
       }
 
       return expandedTypes;
+    },
+    async changeBase(ctx) {
+      const { input, base } = ctx.params;
+
+      const contextWithBase = await ctx.call('jsonld.context.merge', { a: input['@context'], b: { '@base': base } });
+
+      return await this.actions.frame(
+        {
+          input: { ...input, '@context': contextWithBase },
+          frame: { '@context': input['@context'] },
+          options: { embed: '@never' }
+        },
+        { parentCtx: ctx }
+      );
     }
   },
   methods: {
