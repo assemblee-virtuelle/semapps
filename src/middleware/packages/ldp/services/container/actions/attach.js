@@ -28,8 +28,11 @@ module.exports = {
 
     await ctx.call('triplestore.update', {
       query: sanitizeSparqlQuery`
+        PREFIX ldp: <http://www.w3.org/ns/ldp#>
         INSERT DATA { 
-          <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> 
+          GRAPH <${containerUri}> {
+            <${containerUri}> ldp:contains <${resourceUri}> 
+          }
         }
       `,
       webId: 'system'

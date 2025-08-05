@@ -18,6 +18,7 @@ module.exports = {
         'http://purl.org/dc/terms/title': title,
         'http://purl.org/dc/terms/description': description
       },
+      graphName: containerUri,
       webId: 'system'
     });
 

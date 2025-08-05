@@ -371,12 +371,20 @@ describe('Resource CRUD operations', () => {
     const project4 = await broker.call('ldp.resource.get', { resourceUri: resourceUri4 });
 
     expect(project4).toMatchObject({
-      'pair:hasLocation': {
-        'pair:label': 'Paris',
-        'pair:hasPostalAddress': {
-          'pair:addressCountry': 'France'
+      'pair:hasLocation': [
+        {
+          'pair:label': 'Paris',
+          'pair:hasPostalAddress': {
+            'pair:addressCountry': 'France'
+          }
+        },
+        {
+          'pair:label': 'Paris',
+          'pair:hasPostalAddress': {
+            'pair:addressCountry': 'France'
+          }
         }
-      }
+      ]
     });
   });
 

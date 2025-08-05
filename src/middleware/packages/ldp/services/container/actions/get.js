@@ -30,6 +30,7 @@ module.exports = {
         CONSTRUCT  {
           <${containerUri}> ?p ?o .
         }
+        FROM <${containerUri}>
         WHERE {
           <${containerUri}> ?p ?o .
           MINUS { <${containerUri}> ldp:contains ?o } .
@@ -50,6 +51,7 @@ module.exports = {
         query: `
           ${await ctx.call('ontologies.getRdfPrefixes')}
           SELECT ?s1
+          FROM <${containerUri}>
           WHERE {
             <${containerUri}> <http://www.w3.org/ns/ldp#contains> ?s1 .
             ${filtersQuery.where}

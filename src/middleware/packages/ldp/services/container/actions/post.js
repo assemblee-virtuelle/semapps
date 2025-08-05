@@ -92,8 +92,11 @@ module.exports = {
     // TODO Add temporary ACLs to the resource so that it can be created, then link it to the container ?
     await ctx.call('triplestore.update', {
       query: sanitizeSparqlQuery`
+        PREFIX ldp: <http://www.w3.org/ns/ldp#>
         INSERT DATA {
-          <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>
+          GRAPH <${containerUri}> {
+            <${containerUri}> ldp:contains <${resourceUri}>
+          }
         }
       `,
       webId
@@ -131,7 +134,13 @@ module.exports = {
     } catch (e) {
       // If there was an error inserting the resource, detach it from the container
       await ctx.call('triplestore.update', {
-        query: `DELETE WHERE { <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> }`,
+        query: `
+          PREFIX ldp: <http://www.w3.org/ns/ldp#>
+          DELETE WHERE { 
+            GRAPH <${containerUri}> {
+              <${containerUri}> ldp:contains <${resourceUri}> 
+            }
+          }`,
         webId
       });
 
