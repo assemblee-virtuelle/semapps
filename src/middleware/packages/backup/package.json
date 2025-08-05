@@ -7,7 +7,6 @@
   "dependencies": {
     "cron": "^1.8.2",
     "fs-extra": "^10.0.0",
-    "moleculer": "^0.14.31",
     "rsync": "^0.6.1",
     "ssh2-sftp-client": "^7.2.1"
   },
@@ -18,5 +17,8 @@
     "node": ">=22.10.0"
   },
   "type": "module",
-  "main": "./index.ts"
+  "main": "./index.ts",
+  "peerDependencies": {
+    "moleculer": "^0.14.31"
+  }
 }
