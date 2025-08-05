@@ -22,5 +22,8 @@
     "node": ">=22.10.0"
   },
   "type": "module",
-  "main": "./index.ts"
+  "main": "./index.ts",
+  "peerDependencies": {
+    "moleculer": "^0.14.31"
+  }
 }

@@ -9,7 +9,6 @@
     "@semapps/middlewares": "1.1.4",
     "@semapps/mime-types": "1.1.4",
     "@semapps/triplestore": "1.1.4",
-    "moleculer": "^0.14.18",
     "moleculer-web": "^0.10.0-beta1",
     "url-join": "^4.0.1"
   },
@@ -21,5 +20,8 @@
     "node": ">=22.10.0"
   },
   "type": "module",
-  "main": "./index.ts"
+  "main": "./index.ts",
+  "peerDependencies": {
+    "moleculer": "^0.14.31"
+  }
 }

@@ -8,7 +8,6 @@
     "@semapps/activitypub": "1.1.4",
     "@semapps/ldp": "1.1.4",
     "@semapps/mime-types": "1.1.4",
-    "moleculer": "^0.14.17",
     "node-fetch": "^2.6.6",
     "url-join": "^4.0.1"
   },
@@ -19,5 +18,8 @@
     "node": ">=22.10.0"
   },
   "type": "module",
-  "main": "./index.ts"
+  "main": "./index.ts",
+  "peerDependencies": {
+    "moleculer": "^0.14.31"
+  }
 }

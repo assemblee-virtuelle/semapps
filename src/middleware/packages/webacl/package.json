@@ -23,7 +23,6 @@
     "@semapps/ontologies": "1.1.4",
     "@semapps/triplestore": "1.1.4",
     "jsonld-streaming-serializer": "^1.2.0",
-    "moleculer": "^0.14.18",
     "n3": "^1.8.0",
     "rdf-parse": "^1.7.0",
     "speakingurl": "^14.0.1",
@@ -38,5 +37,8 @@
     "@types/url-join": "^4.0.1"
   },
   "type": "module",
-  "main": "./index.ts"
+  "main": "./index.ts",
+  "peerDependencies": {
+    "moleculer": "^0.14.31"
+  }
 }
