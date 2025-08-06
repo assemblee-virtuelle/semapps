@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "lib": ["ESNext"],
-    "allowJs": true,
+    "allowJs": false,
     "checkJs": false,
     "resolveJsonModule": true,
     "declaration": true,
@@ -18,7 +18,9 @@
     "resolvePackageJsonImports": true,
     "allowSyntheticDefaultImports": true,
     "allowImportingTsExtensions": true,
-    "rootDir": "./"
+    "outDir": "dist/",
+    "rootDir": "./",
+    "typeRoots": ["node_modules/types", "types"]
   },
-  "exclude": []
+  "exclude": ["**/dist"]
 }
