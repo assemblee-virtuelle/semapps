@@ -40,26 +40,23 @@ const negotiateContentType = (req: any, res: any, next: any) => {
   }
 };
 
-/** @type {(msg: string) => never} */
-const throw400 = msg => {
+const throw400 = (msg: string) => {
   throw new MoleculerError(msg, 400, 'BAD_REQUEST', { status: 'Bad Request', text: msg });
 };
 
-/** @type {(msg: string) => never} */
-const throw403 = msg => {
+const throw403 = (msg: string) => {
   throw new MoleculerError('Forbidden', 403, 'ACCESS_DENIED', { status: 'Forbidden', text: msg });
 };
 
-/** @type {(msg: string) => never} */
-const throw404 = msg => {
+const throw404 = (msg: string) => {
   throw new MoleculerError('Forbidden', 404, 'NOT_FOUND', { status: 'Not found', text: msg });
 };
 
-const throw500 = msg => {
+const throw500 = (msg: string) => {
   throw new MoleculerError(msg, 500, 'INTERNAL_SERVER_ERROR', { status: 'Server Error', text: msg });
 };
 
-const negotiateAccept = (req, res, next) => {
+const negotiateAccept = (req: any, res: any, next: any) => {
   if (!req.$ctx.meta.headers)
     throw new Error(`The parseHeader middleware must be added before the negotiateAccept middleware`);
   if (req.$ctx.meta.headers.accept === '*/*') {
@@ -77,7 +74,7 @@ const negotiateAccept = (req, res, next) => {
   }
 };
 
-const getRawBody = req => {
+const getRawBody = (req: any) => {
   return new Promise((resolve, reject) => {
     let data = '';
     req.on('data', (chunk: any) => {
@@ -89,7 +86,7 @@ const getRawBody = req => {
   });
 };
 
-const parseSparql = async (req, res, next) => {
+const parseSparql = async (req: any, res: any, next: any) => {
   if (!req.$ctx.meta.headers)
     throw new Error(`The parseHeader middleware must be added before the parseSparql middleware`);
   if (
@@ -104,7 +101,7 @@ const parseSparql = async (req, res, next) => {
   next();
 };
 
-const parseTurtle = async (req, res, next) => {
+const parseTurtle = async (req: any, res: any, next: any) => {
   if (!req.$ctx.meta.headers)
     throw new Error(`The parseHeader middleware must be added before the parseTurtle middleware`);
   if (
@@ -135,6 +132,7 @@ const parseJson = async (req: any, res: any, next: any) => {
     if (!req.$ctx.meta.parser && mimeType === MIME_TYPES.JSON) {
       const body = await getRawBody(req);
       if (body) {
+        // @ts-expect-error
         const json = JSON.parse(body);
         req.$params = { ...json, ...req.$params };
         // Keep raw body in meta as we need it for digest header verification
@@ -161,6 +159,7 @@ const parseFile = (req: any, res: any, next: any) => {
       busboy.on('file', (fieldname: any, file: any, filename: any, encoding: any, mimetype: any) => {
         // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
         const readableStream = new streams.ReadableStream();
+        // @ts-expect-error
         file.on('data', (data: any) => readableStream.push(data));
         files.push({
           fieldname,

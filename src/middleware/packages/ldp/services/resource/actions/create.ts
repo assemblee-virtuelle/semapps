@@ -20,6 +20,7 @@ const Schema = defineAction({
   },
   async handler(ctx) {
     let { resource, contentType, body } = ctx.params;
+    // @ts-expect-error
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const resourceUri = resource.id || resource['@id'];
 

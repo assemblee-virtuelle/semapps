@@ -2,16 +2,17 @@ import fs from 'fs';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'byte... Remove this comment to see the full error message
 import bytes from 'bytes';
 import rdfparseModule from 'rdf-parse';
-const rdfParser = rdfparseModule.default;
 import streamifyString from 'streamify-string';
 import { variable } from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { Errors } from 'moleculer';
 
+const rdfParser = rdfparseModule.default;
+
 const { MoleculerError } = Errors;
 
 // TODO put each method in a different file (problems with "this" not working)
-module.exports = {
+export default {
   streamToFile(inputStream: any, filePath: any, maxSize: any) {
     return new Promise((resolve, reject) => {
       const fileWriteStream = fs.createWriteStream(filePath);
@@ -32,18 +33,22 @@ module.exports = {
         .on('error', reject);
     });
   },
+  // @ts-expect-error
   async bodyToTriples(body, contentType) {
     if (contentType === MIME_TYPES.JSON) {
+      // @ts-expect-error
       return await this.broker.call('jsonld.parser.toQuads', { input: body });
     }
     if (!(typeof body === 'string')) throw new MoleculerError('no body provided', 400, 'BAD_REQUEST');
     return new Promise((resolve, reject) => {
       const textStream = streamifyString(body);
+      // @ts-expect-error
       const res = [];
       rdfParser
         .parse(textStream, { contentType })
         .on('data', quad => res.push(quad))
         .on('error', error => reject(error))
+        // @ts-expect-error
         .on('end', () => resolve(res));
     });
   },

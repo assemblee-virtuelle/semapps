@@ -188,8 +188,10 @@ const BackupService = {
         const backupsPattern = RegExp(`^${dataset}_.{10}_.{8}\\.nq\\.gz$`);
         const filenames = await fs.promises
           .readdir(pathJoin(this.settings.localServer.fusekiBase, 'backups'))
-          .then(files => files.filter(file => backupsPattern.test(file)))
-          .then(files => files.map(file => pathJoin(this.settings.localServer.fusekiBase, 'backups', file)));
+          .then((files: any) => files.filter((file: any) => backupsPattern.test(file)))
+          .then((files: any) =>
+            files.map((file: any) => pathJoin(this.settings.localServer.fusekiBase, 'backups', file))
+          );
 
         return filenames;
       }

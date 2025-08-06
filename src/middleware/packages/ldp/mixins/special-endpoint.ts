@@ -87,6 +87,7 @@ const Schema = {
           'ldp.resource.get',
           {
             resourceUri: this.endpointUrl,
+            // @ts-expect-error
             accept: ctx.meta.headers?.accept,
             webId: 'system'
           },
