@@ -27,7 +27,7 @@
     "vc-js": "^0.6.4"
   },
   "peerDependencies": {
-    "moleculer": "^0.14.31",
+    "moleculer": "^0.14.35",
     "moleculer-web": "^0.10.0-beta1"
   },
   "publishConfig": {

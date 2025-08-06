@@ -33,7 +33,7 @@
     "ioredis": "^4.27.0",
     "jest": "^30.0.5",
     "lru-cache": "10.1.0",
-    "moleculer": "^0.14.17",
+    "moleculer": "^0.14.35",
     "moleculer-web": "^0.10.7",
     "node-fetch": "^2.6.6",
     "rdf-data-model": "^1.0.0",
