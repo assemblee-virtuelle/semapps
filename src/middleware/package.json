@@ -4,7 +4,7 @@
   "license": "Apache-2.0",
   "type": "module",
   "scripts": {
-    "build": "lerna exec --parallel --scope \"@semapps/**\" -- tsc --build",
+    "build": "lerna exec --parallel --scope \"@semapps/**\" -- 'tsc --build | echo'",
     "version": "lerna version --force-publish='*' --exact --tag-version-prefix='middleware-v'",
     "publish": "lerna publish from-package --dist-tag latest",
     "prettier": "prettier --write '**/*.{js,ts,json}'",
@@ -13,7 +13,8 @@
     "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "lint-files": "eslint --ext .js,.jsx,.ts,.tsx",
     "typecheck": "tsc --noEmit",
-    "preinstall": "git config core.hooksPath .git-hooks"
+    "preinstall": "git config core.hooksPath .git-hooks",
+    "prepack": "yarn build"
   },
   "devDependencies": {
     "@types/dotenv-flow": "^3.3.3",
