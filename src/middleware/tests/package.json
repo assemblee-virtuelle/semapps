@@ -5,8 +5,7 @@
   "scripts": {
     "test": "yarn test:types && yarn test:jest",
     "test:types": "./test-types.sh",
-    "test:jest": "jest --detectOpenHandles --verbose true --silent false",
-    "postinstall": "cd .. && yarn run postinstall"
+    "test:jest": "jest --detectOpenHandles --verbose true --silent false"
   },
   "author": "SemApps Team",
   "license": "Apache-2.0",
