@@ -9,7 +9,8 @@
     "@semapps/webacl": "1.1.4"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "main": "./dist/index.js"
   },
   "engines": {
     "node": ">=22.10.0"

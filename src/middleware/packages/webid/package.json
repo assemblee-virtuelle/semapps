@@ -12,7 +12,8 @@
     "url-join": "^4.0.1"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "main": "./dist/index.js"
   },
   "gitHead": "f65a5a67d02782b0539d12ed482e8cc4149e5d36",
   "engines": {

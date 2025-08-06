@@ -19,7 +19,8 @@
     "moleculer": "^0.14.35"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "main": "./dist/index.js"
   },
   "engines": {
     "node": ">=22.10.0"

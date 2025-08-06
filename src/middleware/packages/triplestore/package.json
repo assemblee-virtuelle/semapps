@@ -17,7 +17,8 @@
     "uuid": "^9.0.1"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "main": "./dist/index.js"
   },
   "peerDependencies": {
     "moleculer": "^0.14.35"
