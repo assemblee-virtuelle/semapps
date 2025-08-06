@@ -10,7 +10,6 @@ import generateIdAction from './actions/generateId.ts';
 import getContainersAction from './actions/getContainers.ts';
 import getTypesAction from './actions/getTypes.ts';
 import uploadAction from './actions/upload.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import methods from './methods.ts';
 import { getDatasetFromUri } from '../../utils.ts';
 

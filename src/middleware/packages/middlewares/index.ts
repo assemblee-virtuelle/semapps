@@ -120,6 +120,7 @@ const parseFile = (req: any, res: any, next: any) => {
       busboy.on('file', (fieldname: any, file: any, filename: any, encoding: any, mimetype: any) => {
         // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
         const readableStream = new streams.ReadableStream();
+        // @ts-expect-error
         file.on('data', (data: any) => readableStream.push(data));
         files.push({
           fieldname,

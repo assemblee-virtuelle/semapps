@@ -21,7 +21,7 @@ const Schema = defineAction({
   },
   async handler(ctx) {
     let { resource, contentType } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
+    // @ts-expect-error
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const resourceUri = resource.id || resource['@id'];
 
