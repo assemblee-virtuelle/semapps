@@ -2,7 +2,7 @@ const path = require('path');
 const { ServiceBroker } = require('moleculer');
 const { CoreService } = require('@semapps/core');
 const CONFIG = require('../config');
-const { clearDataset } = require('../utils');
+const { dropDataset } = require('../utils');
 
 jest.setTimeout(20000);
 const broker = new ServiceBroker({
@@ -16,7 +16,7 @@ const broker = new ServiceBroker({
 });
 
 beforeAll(async () => {
-  await clearDataset(CONFIG.MAIN_DATASET);
+  await dropDataset(CONFIG.MAIN_DATASET);
 
   broker.createService({
     mixins: [CoreService],
