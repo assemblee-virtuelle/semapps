@@ -1,6 +1,5 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { sanitizeSparqlQuery } = require('@semapps/triplestore');
 const { cleanUndefined } = require('../../../utils');
 
 module.exports = {
@@ -73,11 +72,6 @@ module.exports = {
       }
     }
 
-    // The forcedResourceUri param allows Moleculer service to bypass URI generation
-    // It is used by ActivityStreams collections to provide URIs like {actorUri}/inbox
-    const resourceUri =
-      forcedResourceUri || (await ctx.call('ldp.resource.generateId', { containerUri, slug, isContainer }));
-
     const containerExist = await ctx.call('ldp.container.exist', { containerUri });
     if (!containerExist) {
       throw new MoleculerError(
@@ -87,66 +81,44 @@ module.exports = {
       );
     }
 
-    // We must add this first, so that the container's ACLs are taken into account
-    // But this create race conditions, especially when testing, since uncreated resources are linked to containers
-    // TODO Add temporary ACLs to the resource so that it can be created, then link it to the container ?
-    await ctx.call('triplestore.update', {
-      query: sanitizeSparqlQuery`
-        PREFIX ldp: <http://www.w3.org/ns/ldp#>
-        INSERT DATA {
-          GRAPH <${containerUri}> {
-            <${containerUri}> ldp:contains <${resourceUri}>
-          }
-        }
-      `,
-      webId
-    });
+    // The forcedResourceUri param allows Moleculer service to bypass URI generation
+    // It is used by ActivityStreams collections to provide URIs like {actorUri}/inbox
+    // TODO Use UUIDs for containers and collections https://github.com/assemblee-virtuelle/semapps/issues/1266
+    const resourceUri =
+      forcedResourceUri || (await ctx.call('ldp.resource.generateId', { containerUri, slug, isContainer }));
+    await ctx.call('triplestore.document.create', { documentUri: resourceUri });
 
-    try {
-      if (file) {
-        resource = await ctx.call('ldp.resource.upload', { resourceUri, file });
-      }
+    if (file) {
+      resource = await ctx.call('ldp.resource.upload', { resourceUri, file });
+    }
 
-      if (isContainer) {
-        await ctx.call('ldp.container.create', {
-          containerUri: resourceUri,
-          title: expandedResource['http://purl.org/dc/terms/title']?.[0]['@value'],
-          description: expandedResource['http://purl.org/dc/terms/description']?.[0]['@value'],
-          webId
-        });
-      } else {
-        const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
-
-        // Change relative URIs to full URIs
-        const resourceWithBase = resource['@graph']
-          ? await ctx.call('jsonld.parser.changeBase', {
-              input: resource,
-              base: resourceUri
-            })
-          : { ...resource, '@id': resourceUri };
-
-        await ctx.call(controlledActions.create || 'ldp.resource.create', {
-          resource: resourceWithBase,
-          resourceUri,
-          webId
-        });
-      }
-    } catch (e) {
-      // If there was an error inserting the resource, detach it from the container
-      await ctx.call('triplestore.update', {
-        query: `
-          PREFIX ldp: <http://www.w3.org/ns/ldp#>
-          DELETE WHERE { 
-            GRAPH <${containerUri}> {
-              <${containerUri}> ldp:contains <${resourceUri}> 
-            }
-          }`,
+    if (isContainer) {
+      await ctx.call('ldp.container.create', {
+        containerUri: resourceUri,
+        title: expandedResource['http://purl.org/dc/terms/title']?.[0]['@value'],
+        description: expandedResource['http://purl.org/dc/terms/description']?.[0]['@value'],
         webId
       });
+    } else {
+      const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
 
-      // Re-throw the error so that it's displayed by the API function
-      throw e;
+      // Change relative URIs to full URIs
+      const resourceWithBase = resource['@graph']
+        ? await ctx.call('jsonld.parser.changeBase', {
+            input: resource,
+            base: resourceUri
+          })
+        : { ...resource, '@id': resourceUri };
+
+      await ctx.call(controlledActions.create || 'ldp.resource.create', {
+        resource: resourceWithBase,
+        resourceUri,
+        webId
+      });
     }
+
+    // Attach the resource to the parent container
+    await this.actions.attach({ containerUri, resourceUri, webId }, { meta: { skipEmitEvent: true }, parentCtx: ctx });
 
     if (!ctx.meta.skipEmitEvent) {
       ctx.emit(

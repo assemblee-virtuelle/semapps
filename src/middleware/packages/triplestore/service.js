@@ -11,6 +11,7 @@ const query = require('./actions/query');
 const update = require('./actions/update');
 const tripleExist = require('./actions/tripleExist');
 const DatasetService = require('./subservices/dataset');
+const DocumentService = require('./subservices/document');
 
 const TripleStoreService = {
   name: 'triplestore',
@@ -21,15 +22,15 @@ const TripleStoreService = {
     mainDataset: null,
     fusekiBase: null,
     // Sub-services customization
-    dataset: {}
+    dataset: {},
+    document: {}
   },
   dependencies: ['jsonld.parser'],
   async created() {
-    const { url, user, password, dataset, fusekiBase } = this.settings;
-    this.subservices = {};
+    const { url, user, password, fusekiBase, dataset, document } = this.settings;
 
     if (dataset !== false) {
-      this.subservices.dataset = this.broker.createService({
+      this.broker.createService({
         mixins: [DatasetService],
         settings: {
           url,
@@ -38,6 +39,13 @@ const TripleStoreService = {
           fusekiBase,
           ...dataset
         }
+      });
+    }
+
+    if (document !== false) {
+      this.broker.createService({
+        mixins: [DocumentService],
+        settings: document
       });
     }
   },

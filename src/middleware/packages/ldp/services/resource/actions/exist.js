@@ -9,24 +9,7 @@ module.exports = {
     const { resourceUri, acceptTombstones } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-    // Returns true if a graph with the resource URI exist
-    let exist = await ctx.call('triplestore.query', {
-      query: `
-        ASK {
-          GRAPH <${resourceUri}> {}
-        }
-      `,
-      webId: 'system'
-    });
-
-    // // If this is a remote URI and the resource is not found in default graph, also look in mirror graph
-    // if (!exist && (await ctx.call('ldp.remote.isRemote', { resourceUri }))) {
-    //   exist = await ctx.call('triplestore.tripleExist', {
-    //     triple: triple(namedNode(resourceUri), variable('p'), variable('s')),
-    //     webId: 'system',
-    //     graphName: this.settings.mirrorGraphName
-    //   });
-    // }
+    const exist = await ctx.call('triplestore.document.exist', { documentUri: resourceUri });
 
     // If resource exists but we don't want tombstones, check the resource type
     if (exist && !acceptTombstones) {

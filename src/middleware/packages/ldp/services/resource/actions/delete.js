@@ -43,12 +43,7 @@ module.exports = {
       webId
     });
 
-    // We need to manually drop the graph, otherwise the triple store may consider it still exists
-    // TODO: Move this to the DocumentService
-    await ctx.call('triplestore.update', {
-      query: `DROP GRAPH <${resourceUri}>`,
-      webId
-    });
+    await ctx.call('triplestore.document.delete', { documentUri: resourceUri });
 
     // We must detach the resource from the containers after deletion, otherwise the permissions may fail
     const containersUris = await ctx.call('ldp.resource.getContainers', { resourceUri });
