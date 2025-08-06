@@ -10,7 +10,8 @@
     "node-fetch": "^2.6.6"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "main": "./dist/index.js"
   },
   "engines": {
     "node": ">=22.10.0"

@@ -31,7 +31,8 @@
     "moleculer-web": "^0.10.0-beta1"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "main": "./dist/index.js"
   },
   "engines": {
     "node": ">=22.10.0"

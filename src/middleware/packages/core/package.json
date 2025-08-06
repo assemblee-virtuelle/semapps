@@ -20,7 +20,8 @@
     "url-join": "^4.0.1"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "main": "./dist/index.js"
   },
   "engines": {
     "node": ">=22.10.0"
