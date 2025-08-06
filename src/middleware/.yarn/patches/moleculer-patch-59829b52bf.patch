@@ -1,0 +1,12 @@
+diff --git a/index.d.ts b/index.d.ts
+index 7d6b805083e25dbdec51ecb6cdc2ee42d4902910..ef11e70f8ffea96219b1dfdb2f6d4262fe07aa89 100644
+--- a/index.d.ts
++++ b/index.d.ts
+@@ -1,4 +1,7 @@
+ // Replacement template for moleculer namespace (making it global).
++import "./moleculer-inference-types";
++import "./non-action-based"
++
+ declare global {
+   export namespace Moleculer {}
+ }
