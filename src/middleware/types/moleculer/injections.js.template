@@ -1,7 +1,0 @@
-// Those are patched identity function (used for typescript purposes only).
-function defineAction(actionSchema) {
-  return actionSchema;
-}
-function defineServiceEvent(serviceEvent) {
-  return serviceEvent;
-}
