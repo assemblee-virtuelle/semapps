@@ -10,14 +10,19 @@
     "@semapps/mime-types": "1.1.4",
     "@semapps/ontologies": "1.1.4",
     "jsonld-streaming-serializer": "^1.2.0",
-    "moleculer": "^0.14.17",
     "n3": "^1.8.0",
     "url-join": "^4.0.1"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "main": "./dist/index.js"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=22.10.0"
+  },
+  "type": "module",
+  "main": "./index.ts",
+  "peerDependencies": {
+    "moleculer": "^0.14.35"
   }
 }

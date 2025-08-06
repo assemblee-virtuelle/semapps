@@ -6,7 +6,7 @@
 ROOT_DIR=$(git rev-parse --show-toplevel)
 cd "$ROOT_DIR"/src/frontend
 
-echo "=== Running typecheck for frontend ==="
+echo "=== Running typecheck ==="
 
 yarn typecheck > /dev/null
 if [ $? -ne 0 ]; then

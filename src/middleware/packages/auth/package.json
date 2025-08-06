@@ -12,7 +12,6 @@
     "bcrypt": "^5.0.1",
     "express-session": "^1.17.0",
     "jsonwebtoken": "^9.0.2",
-    "moleculer": "^0.14.17",
     "moleculer-db": "^0.8.16",
     "moleculer-mail": "^1.2.5",
     "moleculer-web": "^0.10.0-beta1",
@@ -25,9 +24,15 @@
     "url-join": "^4.0.1"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "main": "./dist/index.js"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=22.10.0"
+  },
+  "type": "module",
+  "main": "./index.ts",
+  "peerDependencies": {
+    "moleculer": "^0.14.35"
   }
 }

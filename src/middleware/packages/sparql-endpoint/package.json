@@ -9,15 +9,20 @@
     "@semapps/middlewares": "1.1.4",
     "@semapps/mime-types": "1.1.4",
     "@semapps/triplestore": "1.1.4",
-    "moleculer": "^0.14.18",
     "moleculer-web": "^0.10.0-beta1",
     "url-join": "^4.0.1"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "main": "./dist/index.js"
   },
   "gitHead": "684ba335d0759920f4134f550431b3c3af8e2599",
   "engines": {
-    "node": ">=14"
+    "node": ">=22.10.0"
+  },
+  "type": "module",
+  "main": "./index.ts",
+  "peerDependencies": {
+    "moleculer": "^0.14.35"
   }
 }
