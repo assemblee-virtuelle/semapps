@@ -11,7 +11,7 @@ const { pair } = require('@semapps/ontologies');
 const { MirrorService, ObjectsWatcherMiddleware } = require('@semapps/sync');
 const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
 const CONFIG = require('../config');
-const { clearDataset } = require('../utils');
+const { dropDataset } = require('../utils');
 
 const containers = [
   {
@@ -28,8 +28,8 @@ const containers = [
 
 const initialize = async (port, mainDataset, accountsDataset, queueServiceDb, serverToMirror) => {
   // Clear datasets
-  await clearDataset(mainDataset);
-  await clearDataset(accountsDataset);
+  await dropDataset(mainDataset);
+  await dropDataset(accountsDataset);
 
   // Clear queue
   const queueServiceUrl = `redis://localhost:6379/${queueServiceDb}`;

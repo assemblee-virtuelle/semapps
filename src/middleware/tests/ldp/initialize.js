@@ -8,7 +8,7 @@ const { AuthLocalService } = require('@semapps/auth');
 const { ControlledContainerMixin } = require('@semapps/ldp');
 const path = require('path');
 const CONFIG = require('../config');
-const { clearDataset } = require('../utils');
+const { dropDataset } = require('../utils');
 
 // Give write permission on all containers to anonymous users
 const permissions = {
@@ -46,7 +46,7 @@ const containers = [
 ];
 
 const initialize = async () => {
-  await clearDataset(CONFIG.MAIN_DATASET);
+  await dropDataset(CONFIG.MAIN_DATASET);
 
   const uploadsPath = pathJoin(__dirname, '../uploads');
   if (fs.existsSync(uploadsPath)) {

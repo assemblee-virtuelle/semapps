@@ -4,11 +4,11 @@ const { CoreService } = require('@semapps/core');
 const { as } = require('@semapps/ontologies');
 const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
 const { AuthLocalService } = require('@semapps/auth');
-const { clearDataset } = require('../utils');
+const { dropDataset } = require('../utils');
 const CONFIG = require('../config');
 
 const initialize = async () => {
-  await clearDataset(CONFIG.MAIN_DATASET);
+  await dropDataset(CONFIG.MAIN_DATASET);
 
   const broker = new ServiceBroker({
     middlewares: [CacherMiddleware(CONFIG.ACTIVATE_CACHE), WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],

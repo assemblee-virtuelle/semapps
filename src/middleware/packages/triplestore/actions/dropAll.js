@@ -20,7 +20,7 @@ module.exports = {
       throw new Error(`The dataset ${dataset} doesn't exist`);
 
     return await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
-      body: 'update=CLEAR+ALL',
+      body: 'update=DROP+ALL',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'X-SemappsUser': webId

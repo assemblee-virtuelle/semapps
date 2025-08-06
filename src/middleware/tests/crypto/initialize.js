@@ -7,11 +7,11 @@ const { CoreService } = require('@semapps/core');
 const { VerifiableCredentialsService } = require('@semapps/crypto');
 const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
 const CONFIG = require('../config');
-const { clearDataset } = require('../utils');
+const { dropDataset } = require('../utils');
 
 const initialize = async (port, withOldKeyStore = false) => {
-  await clearDataset(CONFIG.MAIN_DATASET);
-  await clearDataset(CONFIG.SETTINGS_DATASET);
+  await dropDataset(CONFIG.MAIN_DATASET);
+  await dropDataset(CONFIG.SETTINGS_DATASET);
 
   const baseUrl = `http://localhost:${port}/`;
 

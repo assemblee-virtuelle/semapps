@@ -5,10 +5,10 @@ const { JsonLdService } = require('@semapps/jsonld');
 const { OntologiesService } = require('@semapps/ontologies');
 const { TripleStoreService } = require('@semapps/triplestore');
 const CONFIG = require('../config');
-const { clearDataset } = require('../utils');
+const { dropDataset } = require('../utils');
 
 module.exports = async cacher => {
-  await clearDataset(CONFIG.SETTINGS_DATASET);
+  await dropDataset(CONFIG.SETTINGS_DATASET);
 
   const broker = new ServiceBroker({
     logger: {

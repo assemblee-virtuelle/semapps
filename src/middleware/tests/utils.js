@@ -18,10 +18,10 @@ const listDatasets = async () => {
   }
 };
 
-const clearDataset = dataset =>
+const dropDataset = dataset =>
   fetch(urlJoin(CONFIG.SPARQL_ENDPOINT, dataset, 'update'), {
     method: 'POST',
-    body: 'update=CLEAR+ALL', // DROP+ALL is not working with WebACL datasets !
+    body: 'update=DROP+ALL',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
       Authorization: `Basic ${Buffer.from(`${CONFIG.JENA_USER}:${CONFIG.JENA_PASSWORD}`).toString('base64')}`
@@ -88,7 +88,7 @@ const wait = ms =>
   });
 
 module.exports = {
-  clearDataset,
+  dropDataset,
   listDatasets,
   fetchServer,
   clearQueue,
