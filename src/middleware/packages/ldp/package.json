@@ -15,7 +15,6 @@
     "dashify": "^2.0.0",
     "http-link-header": "^1.1.1",
     "mime-types": "^2.1.35",
-    "moleculer": "^0.14.17",
     "moleculer-db": "^0.8.16",
     "moleculer-schedule": "^0.2.3",
     "moleculer-web": "^0.10.0-beta1",
@@ -30,10 +29,16 @@
     "uuid": "^9.0.1"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "main": "./dist/index.js"
   },
   "gitHead": "06cb2decdab424e8686a5d77cc3364fbf1912439",
   "engines": {
-    "node": ">=14"
+    "node": ">=22.10.0"
+  },
+  "type": "module",
+  "main": "./index.ts",
+  "peerDependencies": {
+    "moleculer": "^0.14.35"
   }
 }

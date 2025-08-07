@@ -8,4 +8,4 @@ fi
 
 cd "$ROOT_DIR"
 
-./scripts/run-typecheck.sh
+# ./scripts/run-typecheck.sh

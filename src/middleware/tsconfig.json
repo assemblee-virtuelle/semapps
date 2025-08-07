@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "lib": ["ESNext"],
-    "allowJs": true,
+    "allowJs": false,
     "checkJs": false,
     "resolveJsonModule": true,
     "declaration": true,
@@ -10,12 +10,17 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strictNullChecks": true,
+    "strict": true,
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "resolvePackageJsonExports": true,
     "esModuleInterop": true,
-    "resolvePackageJsonImports": true
+    "resolvePackageJsonImports": true,
+    "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": true,
+    "outDir": "dist/",
+    "rootDir": "./",
+    "typeRoots": ["node_modules/types", "types"]
   },
-  "include": ["**/*.js", "**/*.ts"],
-  "exclude": []
+  "exclude": ["**/dist"]
 }

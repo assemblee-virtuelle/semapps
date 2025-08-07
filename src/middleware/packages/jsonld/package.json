@@ -18,10 +18,16 @@
   "devDependencies": {
     "@types/jsonld": "1.5.15"
   },
+  "peerDependencies": {
+    "moleculer": "^0.14.35"
+  },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "main": "./dist/index.js"
   },
   "engines": {
-    "node": ">=14"
-  }
+    "node": ">=22.10.0"
+  },
+  "type": "module",
+  "main": "./index.ts"
 }

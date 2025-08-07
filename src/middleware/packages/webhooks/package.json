@@ -7,15 +7,20 @@
   "dependencies": {
     "@semapps/ldp": "1.0.10",
     "@semapps/triplestore": "1.0.10",
-    "moleculer": "^0.14.18",
     "moleculer-db": "^0.8.15",
     "url-join": "^4.0.1"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "main": "./dist/index.js"
   },
   "gitHead": "06cb2decdab424e8686a5d77cc3364fbf1912439",
   "engines": {
-    "node": ">=14"
+    "node": ">=22.10.0"
+  },
+  "type": "module",
+  "main": "./index.ts",
+  "peerDependencies": {
+    "moleculer": "^0.14.35"
   }
 }
