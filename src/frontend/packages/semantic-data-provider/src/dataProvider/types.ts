@@ -131,7 +131,7 @@ export type SemanticDataProvider = DataProvider & {
   fetch: FetchJsonFn;
   /**
    * A fetch function used to make authenticated HTTP requests. Uses a proxy for remote resources, if necessary.
-   * Signature is the same as the default `fetch` function.
+   * Signature is the same as the browser's default @see {fetch} function.
    */
   authFetch: (uri: string, options: fetchUtils.Options) => ReturnType<typeof fetch>;
   /**
