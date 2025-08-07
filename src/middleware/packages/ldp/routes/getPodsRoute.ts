@@ -3,11 +3,10 @@ import path from 'path';
 import {
   parseUrl,
   parseHeader,
-  parseSparql,
+  parseRawBody,
   negotiateContentType,
   negotiateAccept,
   parseJson,
-  parseTurtle,
   parseFile,
   saveDatasetMeta
 } from '@semapps/middlewares';
@@ -31,9 +30,8 @@ function getPodsRoute(basePath: any) {
     parseHeader,
     negotiateContentType,
     negotiateAccept,
-    parseSparql,
+    parseRawBody,
     parseJson,
-    parseTurtle,
     parseFile,
     saveDatasetMeta,
     transformRouteParamsToSlugParts

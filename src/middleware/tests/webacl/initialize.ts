@@ -1,7 +1,7 @@
 import path from 'path';
 import { ServiceBroker, ServiceSchema } from 'moleculer';
 import { CoreService } from '@semapps/core';
-import { pair } from '@semapps/ontologies';
+import { as } from '@semapps/ontologies';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { AuthLocalService } from '@semapps/auth';
 import { fileURLToPath } from 'url';
@@ -12,6 +12,8 @@ import * as CONFIG from '../config.ts';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const initialize = async () => {
+  await clearDataset(CONFIG.MAIN_DATASET);
+
   const broker = new ServiceBroker({
     // @ts-expect-error TS(2322): Type '{ name: string; created(broker: any): void; ... Remove this comment to see the full error message
     middlewares: [CacherMiddleware(CONFIG.ACTIVATE_CACHE), WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
@@ -33,11 +35,38 @@ const initialize = async () => {
         url: CONFIG.SPARQL_ENDPOINT,
         user: CONFIG.JENA_USER,
         password: CONFIG.JENA_PASSWORD,
-        mainDataset: CONFIG.MAIN_DATASET
+        mainDataset: CONFIG.MAIN_DATASET,
+        secure: false // TODO Remove when we move to Fuseki 5
       },
-      ontologies: [pair],
-      containers: ['/resources'],
+      ontologies: [as],
+      containers: [
+        {
+          path: '/resources'
+        },
+        {
+          path: '/resources2',
+          permissions: {},
+          newResourcesPermissions: (webId: any) => {
+            switch (webId) {
+              case 'anon':
+                return {};
+              case 'system':
+                return {};
+              default:
+                return {
+                  user: {
+                    uri: webId,
+                    read: true // This is required, otherwise there will be an error when a user post a resource
+                  }
+                };
+            }
+          }
+        }
+      ],
       activitypub: false,
+      ldp: {
+        documentTagger: false
+      },
       mirror: false,
       void: false,
       webfinger: false,

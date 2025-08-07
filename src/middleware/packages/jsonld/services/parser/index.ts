@@ -1,6 +1,9 @@
 import jsonld from 'jsonld';
+import N3 from 'n3';
 import { JsonLdParser } from 'jsonld-streaming-parser';
+import { JsonLdSerializer } from 'jsonld-streaming-serializer';
 import streamifyString from 'streamify-string';
+import rdfParser from 'rdf-parse';
 import { ServiceSchema, defineAction } from 'moleculer';
 import { arrayOf, isURI } from '../../utils/utils.ts';
 
@@ -12,6 +15,7 @@ const JsonldParserSchema = {
     this.jsonld.documentLoader = (url: any, options: any) =>
       this.broker.call('jsonld.document-loader.loadWithCache', { url, options });
 
+    // Options: https://github.com/rubensworks/jsonld-streaming-parser.js?tab=readme-ov-file#configuration
     this.jsonLdParser = new JsonLdParser({
       documentLoader: {
         load: url => this.broker.call('jsonld.document-loader.loadWithCache', { url }).then(context => context.document)
@@ -55,16 +59,60 @@ const JsonldParserSchema = {
     }),
 
     fromRDF: defineAction({
-      handler(ctx) {
-        const { dataset, options } = ctx.params;
-        return this.jsonld.fromRDF(dataset, options);
+      async handler(ctx) {
+        const { input, options = {} } = ctx.params;
+        const { format } = options;
+
+        if (!format || format === 'application/n-quads') {
+          return await this.jsonld.fromRDF(input, options);
+        } else {
+          const quads = await this.rdfToQuads(input, format);
+
+          const context = await ctx.call('jsonld.context.get');
+
+          // Options: https://github.com/rubensworks/jsonld-streaming-serializer.js?tab=readme-ov-file#configuration
+          const jsonLdSerializer = new JsonLdSerializer();
+          quads.forEach((quad: any) => jsonLdSerializer.write(quad));
+          jsonLdSerializer.end();
+
+          const jsonLd = JSON.parse(await this.streamToString(jsonLdSerializer));
+
+          return await this.actions.frame(
+            {
+              input: jsonLd,
+              frame: { '@context': context }
+              // Force results to be in a @graph, even if we have a single result
+              // options: { omitGraph: false }
+            },
+            { parentCtx: ctx }
+          );
+        }
       }
     }),
 
     toRDF: defineAction({
-      handler(ctx) {
-        const { input, options } = ctx.params;
-        return this.jsonld.toRDF(input, options);
+      async handler(ctx) {
+        const { input, options = {} } = ctx.params;
+        const { format } = options;
+
+        if (!format || format === 'application/n-quads') {
+          return await this.jsonld.toRDF(input, options);
+        } else {
+          // Since JSONLD.js does not support output other than N-Quads, use N3 for that
+          const quads = await this.actions.toQuads({ input }, { parentCtx: ctx });
+          const prefixes = await ctx.call('ontologies.getPrefixes');
+          return new Promise((resolve, reject) => {
+            const writer = new N3.Writer({ format, prefixes });
+            writer.addQuads(quads.reverse()); // We reverse quads in order to have the type first
+            writer.end((error, result) => {
+              if (error) {
+                reject(error);
+              } else {
+                resolve(result);
+              }
+            });
+          });
+        }
       }
     }),
 
@@ -146,6 +194,27 @@ const JsonldParserSchema = {
         return expandedTypes;
       }
     })
+  },
+  methods: {
+    streamToString(stream) {
+      let res = '';
+      return new Promise((resolve, reject) => {
+        stream.on('data', (chunk: any) => (res += chunk));
+        stream.on('error', (err: any) => reject(err));
+        stream.on('end', () => resolve(res));
+      });
+    },
+    rdfToQuads(input, format) {
+      return new Promise((resolve, reject) => {
+        const textStream = streamifyString(input);
+        const res: any = [];
+        rdfParser
+          .parse(textStream, { contentType: format })
+          .on('data', quad => res.push(quad))
+          .on('error', error => reject(error))
+          .on('end', () => resolve(res));
+      });
+    }
   }
 } satisfies ServiceSchema;
 

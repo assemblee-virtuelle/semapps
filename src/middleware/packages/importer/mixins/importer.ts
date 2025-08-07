@@ -2,7 +2,6 @@ import fetch from 'node-fetch';
 import cronParser from 'cron-parser';
 import { promises as fsPromises } from 'fs';
 import { ACTIVITY_TYPES, PUBLIC_URI } from '@semapps/activitypub';
-import { MIME_TYPES } from '@semapps/mime-types';
 import { ServiceSchema, defineAction } from 'moleculer';
 import { isDir } from '../utils.ts';
 
@@ -68,7 +67,6 @@ const Schema = {
             FILTER STRSTARTS(STR(?sourceUri), "${this.settings.source.apiUrl}")
           }
         `,
-        accept: MIME_TYPES.JSON,
         webId: 'system'
       });
 
@@ -205,7 +203,6 @@ const Schema = {
         if (destUri) {
           const oldData = await ctx.call('ldp.resource.get', {
             resourceUri: destUri,
-            accept: MIME_TYPES.JSON,
             webId: 'system'
           });
 
@@ -233,7 +230,6 @@ const Schema = {
                   'dc:modified': resource['dc:modified'] || this.getField('updated', data),
                   'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri
                 },
-                contentType: MIME_TYPES.JSON,
                 webId: 'system'
               });
             } catch (e) {
@@ -266,7 +262,6 @@ const Schema = {
                 'dc:modified': resource['dc:modified'] || this.getField('updated', data),
                 'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri
               },
-              contentType: MIME_TYPES.JSON,
               webId: 'system'
             });
           } catch (e) {

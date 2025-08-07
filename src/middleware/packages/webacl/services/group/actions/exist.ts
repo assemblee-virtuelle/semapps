@@ -10,12 +10,10 @@ export const action = defineAction({
   visibility: 'public',
   params: {
     groupSlug: { type: 'string', optional: true, min: 1, trim: true },
-    groupUri: { type: 'string', optional: true, trim: true },
-    webId: { type: 'string', optional: true }
+    groupUri: { type: 'string', optional: true, trim: true }
   },
   async handler(ctx) {
     let { groupUri, groupSlug } = ctx.params;
-    const webId = ctx.params.webId || ctx.meta.webId;
 
     if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');
     // @ts-expect-error TS(2345): Argument of type 'TypeFromSchemaParam<{ type: "str... Remove this comment to see the full error message
@@ -30,7 +28,7 @@ export const action = defineAction({
           } 
         }
       `,
-      webId
+      webId: 'system'
     });
   }
 });

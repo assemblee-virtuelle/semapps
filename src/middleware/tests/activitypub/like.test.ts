@@ -1,6 +1,5 @@
 import waitForExpect from 'wait-for-expect';
 import { OBJECT_TYPES, ACTIVITY_TYPES, PUBLIC_URI } from '@semapps/activitypub';
-import { MIME_TYPES } from '@semapps/mime-types';
 import initialize from './initialize.ts';
 
 jest.setTimeout(50000);
@@ -68,12 +67,10 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', (
     });
 
     // Ensure the /likes collection has been created
-    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
         alice.call('ldp.resource.get', {
-          resourceUri: aliceMessageUri,
-          accept: MIME_TYPES.JSON
+          resourceUri: aliceMessageUri
         })
       ).resolves.toMatchObject({
         likes: `${aliceMessageUri}/likes`
@@ -81,13 +78,9 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', (
     });
 
     // Ensure Bob has been added to the /likes collection
-    // @ts-expect-error
     await waitForExpect(async () => {
       await expect(
-        alice.call('activitypub.collection.get', {
-          resourceUri: `${aliceMessageUri}/likes`,
-          accept: MIME_TYPES.JSON
-        })
+        alice.call('activitypub.collection.get', { resourceUri: `${aliceMessageUri}/likes` })
       ).resolves.toMatchObject({
         type: 'Collection',
         items: bob.id
@@ -95,14 +88,8 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', (
     });
 
     // Ensure the note has been added to Bob's /liked collection
-    // @ts-expect-error
     await waitForExpect(async () => {
-      await expect(
-        bob.call('activitypub.collection.get', {
-          resourceUri: `${bob.id}/liked`,
-          accept: MIME_TYPES.JSON
-        })
-      ).resolves.toMatchObject({
+      await expect(bob.call('activitypub.collection.get', { resourceUri: `${bob.id}/liked` })).resolves.toMatchObject({
         type: 'Collection',
         items: aliceMessageUri
       });
@@ -122,22 +109,15 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange likes', (
     });
 
     // Ensure Bob has been removed from the /likes collection
-    // @ts-expect-error
     await waitForExpect(async () => {
-      const likes = await alice.call('activitypub.collection.get', {
-        resourceUri: `${aliceMessageUri}/likes`,
-        accept: MIME_TYPES.JSON
-      });
+      const likes = await alice.call('activitypub.collection.get', { resourceUri: `${aliceMessageUri}/likes` });
       expect(likes.items).toHaveLength(0);
     });
 
     // Ensure the note has been removed from Bob's /liked collection
-    // @ts-expect-error
     await waitForExpect(async () => {
-      const liked = await bob.call('activitypub.collection.get', {
-        resourceUri: `${bob.id}/liked`,
-        accept: MIME_TYPES.JSON
-      });
+      const liked = await bob.call('activitypub.collection.get', { resourceUri: `${bob.id}/liked` });
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(liked.items).toHaveLength(0);
     });
   });

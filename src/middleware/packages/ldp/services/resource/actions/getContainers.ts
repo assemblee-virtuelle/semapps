@@ -1,4 +1,3 @@
-import { MIME_TYPES } from '@semapps/mime-types';
 import { defineAction } from 'moleculer';
 import { getContainerFromUri } from '../../../utils.ts';
 
@@ -30,7 +29,6 @@ const Schema = defineAction({
           ?containerUri ldp:contains <${resourceUri}> .
         }
       `,
-      accept: MIME_TYPES.JSON,
       dataset,
       webId: 'system'
     });

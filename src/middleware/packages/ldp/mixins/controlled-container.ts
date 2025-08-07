@@ -1,4 +1,3 @@
-import { MIME_TYPES } from '@semapps/mime-types';
 import { ServiceSchema, defineAction } from 'moleculer';
 import { delay, getParentContainerUri } from '../utils.ts';
 
@@ -6,7 +5,6 @@ const Schema = {
   settings: {
     path: null,
     acceptedTypes: null,
-    accept: MIME_TYPES.JSON,
     permissions: null,
     newResourcesPermissions: null,
     controlledActions: {},

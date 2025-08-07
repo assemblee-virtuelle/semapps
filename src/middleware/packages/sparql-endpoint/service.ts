@@ -26,8 +26,9 @@ const SparqlEndpointService = {
   actions: {
     query: defineAction({
       async handler(ctx) {
-        const query = ctx.params.query || ctx.params.body;
-        // @ts-expect-error
+        // @ts-expect-error TS(2339): Property 'rawBody' does not exist on type '{}'.
+        const query = ctx.params.query || ctx.meta.rawBody;
+        // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
         const accept = ctx.params.accept || ctx.meta.headers?.accept || this.settings.defaultAccept;
 
         if (this.settings.podProvider) {

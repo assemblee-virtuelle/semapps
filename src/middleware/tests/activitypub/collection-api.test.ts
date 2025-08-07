@@ -1,6 +1,5 @@
 import urlJoin from 'url-join';
 import fetch from 'node-fetch';
-import { MIME_TYPES } from '@semapps/mime-types';
 import { fetchServer } from '../utils.ts';
 import initialize from './initialize.ts';
 import * as CONFIG from '../config.ts';
@@ -35,8 +34,7 @@ describe('Collections API', () => {
             name: `Note #${i}`,
             content: `Contenu de ma note #${i}`,
             published: `2021-01-0${i}T00:00:00.000Z`
-          },
-          contentType: MIME_TYPES.JSON
+          }
         })
       );
     }

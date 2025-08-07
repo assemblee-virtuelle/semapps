@@ -1,4 +1,3 @@
-import { MIME_TYPES } from '@semapps/mime-types';
 import { defineAction } from 'moleculer';
 
 const Schema = defineAction({
@@ -15,7 +14,6 @@ const Schema = defineAction({
           ?containerUri a ldp:Container .
         }
       `,
-      accept: MIME_TYPES.JSON,
       dataset: ctx.params.dataset,
       webId: 'system'
     });

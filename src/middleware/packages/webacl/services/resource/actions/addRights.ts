@@ -22,8 +22,8 @@ export const api = async function api(this: any, ctx: any) {
   if (!contentType || (contentType !== MIME_TYPES.JSON && contentType !== MIME_TYPES.TURTLE))
     throw new MoleculerError(`Content type not supported : ${contentType}`, 400, 'BAD_REQUEST');
 
-  const addedRights = await convertBodyToTriples(ctx.meta.body, contentType);
-  // @ts-expect-error
+  const addedRights = await convertBodyToTriples(ctx.meta.rawBody, contentType);
+  // @ts-expect-error TS(18046): 'addedRights' is of type 'unknown'.
   if (addedRights.length === 0) throw new MoleculerError('Nothing to add', 400, 'BAD_REQUEST');
 
   // This is the root container
@@ -68,17 +68,12 @@ export const action = defineAction({
 
       isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
 
-      // check that the user has Control perm.
-      // bypass this check if user is 'system'
-      if (webId !== 'system') {
-        const { control } = await ctx.call('webacl.resource.hasRights', {
-          resourceUri,
-          rights: { control: true },
-          webId
-        });
-        if (!control)
-          throw new MoleculerError('Access denied ! user must have Control permission', 403, 'ACCESS_DENIED');
-      }
+      await ctx.call('permissions.check', {
+        uri: resourceUri,
+        type: isContainer ? 'container' : 'resource',
+        mode: 'acl:Control',
+        webId
+      });
 
       const aclUri = getAclUriFromResourceUri(this.settings.baseUrl, resourceUri);
 
@@ -140,11 +135,12 @@ export const action = defineAction({
       addRequest += `<${add.auth}> <${add.p}> <${add.o}>.\n`;
     }
 
-    await ctx.call('triplestore.insert', {
-      resource: addRequest,
-      webId: 'system',
-      graphName: this.settings.graphName
-    });
+    if (addRequest.length > 0) {
+      await ctx.call('triplestore.update', {
+        query: `INSERT DATA { GRAPH <${this.settings.graphName}> { ${addRequest} } }`,
+        webId: 'system'
+      });
+    }
 
     if (newRights) {
       const returnValues = { uri: resourceUri, created: true, isContainer };

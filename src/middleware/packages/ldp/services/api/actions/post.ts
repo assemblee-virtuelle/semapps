@@ -10,18 +10,28 @@ const { MoleculerError } = Errors;
 
 export default async function post(this: any, ctx: any) {
   try {
-    const { username, slugParts, ...resource } = ctx.params;
+    let { username, slugParts, ...resource } = ctx.params;
 
     const containerUri = this.getUriFromSlugParts(slugParts, username);
 
     let resourceUri;
     const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
     if (ctx.meta.parser !== 'file') {
+      const contentType = ctx.meta.headers['content-type'];
+
+      // If the resource is Turtle or N-Triples, first convert it to JSON-LD
+      if (contentType && contentType !== MIME_TYPES.JSON) {
+        resource = await ctx.call('jsonld.parser.fromRDF', {
+          input: ctx.meta.rawBody,
+          options: { format: contentType }
+        });
+        delete resource['@id']; // Since no URI is provided, the @id will be ./ but that will not work with ldp.container.post
+      }
+
       resourceUri = await ctx.call(controlledActions.post || 'ldp.container.post', {
         containerUri,
         slug: ctx.meta.headers.slug,
-        resource,
-        contentType: ctx.meta.headers['content-type']
+        resource
       });
     } else {
       if (ctx.params.files.length > 1) {

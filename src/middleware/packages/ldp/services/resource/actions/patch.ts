@@ -59,6 +59,13 @@ const Schema = defineAction({
     if (!triplesToAdd && !triplesToRemove)
       throw new MoleculerError('No triples to add or to remove', 400, 'BAD_REQUEST');
 
+    if (triplesToRemove) {
+      await ctx.call('permissions.check', { uri: resourceUri, type: 'resource', mode: 'acl:Write', webId });
+    } else {
+      // If we only add new triples, we don't need the acl:Write permission
+      await ctx.call('permissions.check', { uri: resourceUri, type: 'resource', mode: 'acl:Append', webId });
+    }
+
     // Build the SPARQL update
     const sparqlUpdate = {
       type: 'update',
@@ -85,7 +92,7 @@ const Schema = defineAction({
 
     await ctx.call('triplestore.update', {
       query: sparqlUpdate,
-      webId
+      webId: 'system'
     });
 
     const returnValues = {

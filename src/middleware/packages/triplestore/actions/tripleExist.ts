@@ -1,4 +1,3 @@
-import { MIME_TYPES } from '@semapps/mime-types';
 import { defineAction } from 'moleculer';
 
 const Schema = defineAction({
@@ -45,7 +44,6 @@ const Schema = defineAction({
             : { type: 'bgp', triples: [triple] }
         ]
       },
-      accept: MIME_TYPES.JSON,
       webId,
       dataset
     });

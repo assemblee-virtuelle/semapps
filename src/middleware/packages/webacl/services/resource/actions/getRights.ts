@@ -6,8 +6,6 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import { defineAction } from 'moleculer';
 import {
   getAuthorizationNode,
-  checkAgentPresent,
-  getUserGroups,
   findParentContainers,
   filterAgentAcl,
   getAclUriFromResourceUri,
@@ -97,7 +95,7 @@ async function formatOutput(ctx: any, output: any, resourceAclUri: any, jsonLD: 
 }
 
 async function filterAcls(hasControl: any, uaSearchParam: any, acls: any) {
-  if (hasControl || uaSearchParam.system) return acls;
+  if (hasControl) return acls;
 
   const filtered = acls.filter((acl: any) => filterAgentAcl(acl, uaSearchParam, false));
   if (filtered.length) {
@@ -110,62 +108,31 @@ async function filterAcls(hasControl: any, uaSearchParam: any, acls: any) {
 
 async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: any, graphName: any, isContainer: any) {
   const resourceAclUri = getAclUriFromResourceUri(baseUrl, resourceUri);
-  // @ts-expect-error
-  const controls = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName);
-  // @ts-expect-error
+  // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
   const uaSearchParam = getUserAgentSearchParam(user);
-  let hasControl = checkAgentPresent(controls, uaSearchParam);
-  let groups;
+  const document = [];
 
-  if (!hasControl && user !== 'anon' && user !== 'system') {
-    // retrieve the groups of the user
-    groups = await getUserGroups(ctx, user, graphName);
-    uaSearchParam.groups = groups;
-    // we check again for the groups. maybe user has control from a group
-    hasControl = checkAgentPresent(controls, uaSearchParam);
-  }
+  // Check if the user has a acl:Control permission
+  // If so, it will return all WAC permissions associated with the resource
+  // Otherwise only the permissions associated with the given user will be returned
 
-  // we continue to search for control perms, now in the parent containers (but we take everything anyway)
+  const hasControl = await ctx.call('permissions.has', {
+    uri: resourceUri,
+    type: isContainer ? 'container' : 'resource',
+    mode: 'acl:Control',
+    webId: user
+  });
 
-  const parentContainers = await findParentContainers(ctx, resourceUri);
-  const containersMap = {};
+  // Get the ACL for the resource
 
-  while (parentContainers.length) {
-    const container = parentContainers.shift();
-    const containerUri = container.container.value;
-    const aclUri = getAclUriFromResourceUri(baseUrl, containerUri);
-    const containerControls = await getAuthorizationNode(ctx, containerUri, aclUri, 'Control', graphName, true);
-
-    if (!hasControl) {
-      hasControl = checkAgentPresent(containerControls, uaSearchParam);
-    }
-
-    const reads = await getAuthorizationNode(ctx, containerUri, aclUri, 'Read', graphName, true);
-    const writes = await getAuthorizationNode(ctx, containerUri, aclUri, 'Write', graphName, true);
-    const appends = await getAuthorizationNode(ctx, containerUri, aclUri, 'Append', graphName, true);
-
-    // we keep all the authorization nodes we found
-    // @ts-expect-error
-    containersMap[containerUri] = {
-      reads,
-      writes,
-      appends,
-      controls: containerControls
-    };
-
-    const moreParentContainers = await findParentContainers(ctx, containerUri);
-    parentContainers.push(...moreParentContainers);
-  }
-
-  // we finish to get all the ACLs for the resource itself
-  // @ts-expect-error
+  // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
   const reads = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', graphName);
   // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
   const writes = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', graphName);
   // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
   const appends = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', graphName);
-
-  const document = [];
+  // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
+  const controls = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName);
 
   document.push(...(await filterAcls(hasControl, uaSearchParam, reads)));
   document.push(...(await filterAcls(hasControl, uaSearchParam, writes)));
@@ -179,8 +146,36 @@ async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: an
     document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName, true)));
   }
 
-  for (const [key, value] of Object.entries(containersMap)) {
-    // @ts-expect-error
+  // Get the ACLs for all the parent containers
+
+  const parentContainers = await findParentContainers(ctx, resourceUri);
+  const containersMap = {};
+
+  while (parentContainers.length) {
+    const container = parentContainers.shift();
+    const containerUri = container.container.value;
+    const aclUri = getAclUriFromResourceUri(baseUrl, containerUri);
+
+    const reads = await getAuthorizationNode(ctx, containerUri, aclUri, 'Read', graphName, true);
+    const writes = await getAuthorizationNode(ctx, containerUri, aclUri, 'Write', graphName, true);
+    const appends = await getAuthorizationNode(ctx, containerUri, aclUri, 'Append', graphName, true);
+    const controls = await getAuthorizationNode(ctx, containerUri, aclUri, 'Control', graphName, true);
+
+    // we keep all the authorization nodes we found
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+    containersMap[containerUri] = {
+      reads,
+      writes,
+      appends,
+      controls
+    };
+
+    const moreParentContainers = await findParentContainers(ctx, containerUri);
+    parentContainers.push(...moreParentContainers);
+  }
+
+  for (const value of Object.values(containersMap)) {
+    // @ts-expect-error TS(18046): 'value' is of type 'unknown'.
     document.push(...(await filterAcls(hasControl, uaSearchParam, value.reads)));
     // @ts-expect-error TS(18046): 'value' is of type 'unknown'.
     document.push(...(await filterAcls(hasControl, uaSearchParam, value.writes)));
@@ -189,6 +184,8 @@ async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: an
     // @ts-expect-error TS(18046): 'value' is of type 'unknown'.
     document.push(...(await filterAcls(hasControl, uaSearchParam, value.controls)));
   }
+
+  // Format output
 
   return await formatOutput(ctx, document, resourceAclUri, ctx.meta.$responseType === MIME_TYPES.JSON);
 }
@@ -205,7 +202,7 @@ export const api = async function api(this: any, ctx: any) {
 
   return await ctx.call('webacl.resource.getRights', {
     resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
-    accept: accept
+    accept
   });
 };
 
@@ -213,7 +210,7 @@ export const action = defineAction({
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
-    accept: { type: 'string', optional: true },
+    accept: { type: 'string', default: MIME_TYPES.JSON },
     webId: { type: 'string', optional: true },
     skipResourceCheck: { type: 'boolean', default: false }
   },

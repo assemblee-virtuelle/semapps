@@ -3,7 +3,6 @@ import path from 'path';
 import fetch from 'node-fetch';
 import { generateKeyPair } from 'crypto';
 import { namedNode, blankNode, literal, triple } from '@rdfjs/data-model';
-import { MIME_TYPES } from '@semapps/mime-types';
 import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 import { KEY_TYPES } from '../constants.ts';
 
@@ -113,7 +112,6 @@ const SignatureService = {
 
         const actor = await ctx.call('ldp.resource.get', {
           resourceUri: actorUri,
-          accept: MIME_TYPES.JSON,
           webId: actorUri
         });
 

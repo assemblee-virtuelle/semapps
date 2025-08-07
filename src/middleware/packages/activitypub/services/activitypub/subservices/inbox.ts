@@ -1,6 +1,5 @@
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
-import { MIME_TYPES } from '@semapps/mime-types';
 import { ServiceSchema, defineAction } from 'moleculer';
 import { objectIdToCurrent, collectionPermissionsWithAnonRead } from '../../../utils.ts';
 import { ACTOR_TYPES } from '../../../constants.ts';
@@ -84,9 +83,9 @@ const InboxService = {
             throw new Error(`Cannot validate HTTP signature because of missing meta (rawBody or originalHeaders)`);
 
           const validDigest = await ctx.call('signature.verifyDigest', {
-            // @ts-expect-error
-            body: ctx.meta.rawBody, // Stored by parseJson middleware
-            // @ts-expect-error
+            // @ts-expect-error TS(2339): Property 'rawBody' does not exist on type '{}'.
+            body: ctx.meta.rawBody, // Stored by parseRawBody middleware
+            // @ts-expect-error TS(2339): Property 'originalHeaders' does not exist on type ... Remove this comment to see the full error message
             headers: ctx.meta.originalHeaders
           });
 
@@ -181,7 +180,6 @@ const InboxService = {
             }
             ORDER BY ?published
           `,
-          accept: MIME_TYPES.JSON,
           webId: 'system'
         });
 

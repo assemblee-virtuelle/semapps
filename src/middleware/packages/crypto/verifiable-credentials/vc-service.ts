@@ -1,5 +1,6 @@
 import { did, cred } from '@semapps/ontologies';
 import { ServiceSchema } from 'moleculer';
+import VCAuthorizerService from './vc-authorizer-service.ts';
 import VCHolderService from './vc-holder-service.ts';
 import VCIssuerService from './vc-issuer-service.ts';
 import VCVerifierService from './vc-verifier-service.ts';
@@ -37,7 +38,9 @@ const VCService = {
     const { enableApi, podProvider } = this.settings;
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "crypto.vc.iss... Remove this comment to see the full error message
     this.broker.createService({ mixins: [VCIssuerService] });
-    // @ts-expect-error
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "vc.guard"; de... Remove this comment to see the full error message
+    this.broker.createService({ mixins: [VCAuthorizerService] });
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "crypto.vc.hol... Remove this comment to see the full error message
     this.broker.createService({ mixins: [VCHolderService] });
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "crypto.vc.ver... Remove this comment to see the full error message
     this.broker.createService({ mixins: [VCVerifierService] });

@@ -1,7 +1,6 @@
 import { getType } from '@semapps/ldp';
-import { MIME_TYPES } from '@semapps/mime-types';
-import { OBJECT_TYPES, ACTIVITY_TYPES } from '../../../constants.ts';
 import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { OBJECT_TYPES, ACTIVITY_TYPES } from '../../../constants.ts';
 
 const ObjectService = {
   name: 'activitypub.object' as const,
@@ -22,8 +21,7 @@ const ObjectService = {
         return await ctx.call('ldp.resource.get', {
           resourceUri: objectUri,
           webId: actorUri,
-          ...rest,
-          accept: MIME_TYPES.JSON
+          ...rest
         });
       }
     }),
@@ -101,7 +99,6 @@ const ObjectService = {
               {
                 containerUri,
                 resource: activity.object,
-                contentType: MIME_TYPES.JSON,
                 webId: actorUri
               },
               {
@@ -125,7 +122,6 @@ const ObjectService = {
               controlledActions?.put || 'ldp.resource.put',
               {
                 resource: activity.object,
-                contentType: MIME_TYPES.JSON,
                 webId: actorUri
               },
               {
@@ -142,7 +138,7 @@ const ObjectService = {
             if (activity.object) {
               const resourceUri = typeof activity.object === 'string' ? activity.object : activity.object.id;
               // If the resource is already deleted, it means it was an announcement
-              if (await ctx.call('ldp.resource.exist', { resourceUri, webId: actorUri })) {
+              if (await ctx.call('ldp.resource.exist', { resourceUri, webId: 'system' })) {
                 const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri });
 
                 await ctx.call(
@@ -170,7 +166,6 @@ const ObjectService = {
             'ldp.resource.get',
             {
               resourceUri: objectUri,
-              accept: MIME_TYPES.JSON,
               webId: actorUri
             },
             { meta: { $cache: false } }
@@ -199,7 +194,6 @@ const ObjectService = {
               '@type': 'http://www.w3.org/2001/XMLSchema#dateTime'
             }
           },
-          contentType: MIME_TYPES.JSON,
           webId: 'system'
         });
       }

@@ -1,5 +1,4 @@
-import { MIME_TYPES } from '@semapps/mime-types';
-// @ts-expect-error
+// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
 import { defineAction } from 'moleculer';
 import { hasType } from '../../../utils.ts';
@@ -90,7 +89,6 @@ const Schema = defineAction({
     await ctx.call('triplestore.insert', {
       resource,
       graphName,
-      contentType: MIME_TYPES.JSON,
       webId: 'system',
       dataset
     });

@@ -33,7 +33,7 @@ const SolidStorageSchema = {
 
         await ctx.call('triplestore.dataset.create', {
           dataset: username,
-          secure: true
+          secure: false // TODO Remove when we switch to Fuseki 5
         });
 
         // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.

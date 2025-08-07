@@ -1,5 +1,6 @@
 import path from 'path';
-import { parseHeader, negotiateContentType, negotiateAccept, parseJson } from '@semapps/middlewares';
+
+import { parseHeader, parseRawBody, negotiateContentType, negotiateAccept, parseJson } from '@semapps/middlewares';
 
 const onError = (req: any, res: any, err: any) => {
   const { type, code, message, data, name } = err;
@@ -9,8 +10,8 @@ const onError = (req: any, res: any, err: any) => {
   res.end(JSON.stringify({ type, code, message, data, name }));
 };
 
-const getRoutes = (basePath: string, podProvider: any) => {
-  const middlewares = [parseHeader, parseJson, negotiateContentType, negotiateAccept];
+const getRoutes = (basePath: any, podProvider: any) => {
+  const middlewares = [parseHeader, negotiateContentType, negotiateAccept, parseRawBody, parseJson];
 
   return [
     {
@@ -24,9 +25,6 @@ const getRoutes = (basePath: string, podProvider: any) => {
         text: {
           type: ['text/turtle', 'application/ld+json']
         }
-      },
-      onBeforeCall(ctx, route, req) {
-        ctx.meta.body = req.body;
       },
       aliases: {
         'PATCH /:slugParts*': [parseHeader, 'webacl.resource.api_addRights'],

@@ -57,6 +57,7 @@ module.exports = {
         'middleware/ldp/container',
         'middleware/ldp/link-header',
         'middleware/ldp/registry',
+        'middleware/ldp/permissions',
         'middleware/ldp/controlled-container',
         'middleware/ldp/single-resource-container',
         'middleware/ldp/document-tagger',
