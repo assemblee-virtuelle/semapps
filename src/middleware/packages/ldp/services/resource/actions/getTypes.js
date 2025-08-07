@@ -13,7 +13,9 @@ module.exports = {
       query: `
         SELECT ?type
         WHERE {
-          <${resourceUri}> a ?type .
+          GRAPH <${resourceUri}> {
+            <${resourceUri}> a ?type .
+          }
         }
       `,
       webId: 'system'

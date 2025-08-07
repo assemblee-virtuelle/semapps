@@ -13,7 +13,13 @@ module.exports = {
     const { dataset } = ctx.meta;
 
     const res = await ctx.call('triplestore.query', {
-      query: `SELECT (COUNT (?o) as ?count) { <${containerUri}> <http://www.w3.org/ns/ldp#contains> ?o }`,
+      query: `
+        SELECT (COUNT (?o) as ?count) {
+          GRAPH <${containerUri}> {
+            <${containerUri}> <http://www.w3.org/ns/ldp#contains> ?o 
+          }
+        }
+      `,
       webId,
       dataset
     });

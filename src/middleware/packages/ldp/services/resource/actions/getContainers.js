@@ -23,7 +23,9 @@ module.exports = {
         PREFIX ldp: <http://www.w3.org/ns/ldp#>
         SELECT ?containerUri
         WHERE {
-          ?containerUri ldp:contains <${resourceUri}> .
+          GRAPH ?containerUri {
+            ?containerUri ldp:contains <${resourceUri}> .
+          }
         }
       `,
       dataset,

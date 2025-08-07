@@ -9,7 +9,9 @@ module.exports = {
         PREFIX ldp: <http://www.w3.org/ns/ldp#>
         SELECT ?containerUri
         WHERE {
-          ?containerUri a ldp:Container .
+          GRAPH ?g {
+            ?containerUri a ldp:Container .
+          }
         }
       `,
       dataset: ctx.params.dataset,

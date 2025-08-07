@@ -24,11 +24,10 @@ module.exports = {
     await ctx.call('triplestore.update', {
       query: `
         DELETE
-        WHERE
-        { 
-          ${isRemoteContainer ? `GRAPH <${this.settings.mirrorGraphName}> {` : ''}
-          <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> 
-          ${isRemoteContainer ? '}' : ''}
+        WHERE { 
+          GRAPH <${containerUri}> {
+            <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> 
+          }
         }
       `,
       webId
