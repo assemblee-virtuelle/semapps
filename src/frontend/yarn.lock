@@ -3327,19 +3327,6 @@
   dependencies:
     event-emitter-promisify "^1.1.0"
 
-"@ldo/connected-solid@^1.0.0-alpha.24":
-  version "1.0.0-alpha.24"
-  resolved "https://registry.yarnpkg.com/@ldo/connected-solid/-/connected-solid-1.0.0-alpha.24.tgz#36591f06ba7abef0723728209c7a124e868ae1f2"
-  integrity sha512-/dIG090kABEwF1TzX+u1yh8HH3gzlMrxiC3Gl84BwLtjq6cv0D01kk8bynepoT8ecNbS0wv16e5pprhhS2vSvg==
-  dependencies:
-    "@ldo/dataset" "^1.0.0-alpha.21"
-    "@ldo/ldo" "^1.0.0-alpha.21"
-    "@ldo/rdf-utils" "^1.0.0-alpha.21"
-    "@solid-notifications/subscription" "^0.1.2"
-    cross-fetch "^3.1.6"
-    http-link-header "^1.1.1"
-    ws "^8.18.0"
-
 "@ldo/connected-solid@^1.0.0-alpha.30":
   version "1.0.0-alpha.30"
   resolved "https://registry.yarnpkg.com/@ldo/connected-solid/-/connected-solid-1.0.0-alpha.30.tgz#e1b473cee2db76115155b4c3d7189211ac805a98"
@@ -3354,15 +3341,6 @@
     http-link-header "^1.1.1"
     ws "^8.18.0"
 
-"@ldo/connected@^1.0.0-alpha.24":
-  version "1.0.0-alpha.24"
-  resolved "https://registry.yarnpkg.com/@ldo/connected/-/connected-1.0.0-alpha.24.tgz#3188a1fbb231f915b48ca76524179aa05865096f"
-  integrity sha512-atnFaCtXWPNTwu+VNzGHq19LgBuDilMIo+rF4hZ3UvX/VCP+8I9lf8f42qu9JHdHwkMWMUAjBPx9wHpUKmQMvQ==
-  dependencies:
-    "@ldo/dataset" "^1.0.0-alpha.21"
-    "@ldo/ldo" "^1.0.0-alpha.21"
-    "@ldo/rdf-utils" "^1.0.0-alpha.21"
-
 "@ldo/connected@^1.0.0-alpha.30":
   version "1.0.0-alpha.30"
   resolved "https://registry.yarnpkg.com/@ldo/connected/-/connected-1.0.0-alpha.30.tgz#4883ca6bc80169b6fc6bfc52e7d58f9ca213190f"
@@ -3371,16 +3349,6 @@
     "@ldo/dataset" "^1.0.0-alpha.30"
     "@ldo/ldo" "^1.0.0-alpha.30"
     "@ldo/rdf-utils" "^1.0.0-alpha.30"
-
-"@ldo/dataset@^1.0.0-alpha.21":
-  version "1.0.0-alpha.21"
-  resolved "https://registry.yarnpkg.com/@ldo/dataset/-/dataset-1.0.0-alpha.21.tgz#19b4fd5565ce0813cdddf27a8bae558641709515"
-  integrity sha512-ol2ggzDWTwVMhWSDN/7IMX+tQjvU7F8f4vG3Z95u0+UAmNqNFqOppwMbDi/1bfBvWFbrue2Xam0blW1rcAIDYQ==
-  dependencies:
-    "@ldo/rdf-utils" "^1.0.0-alpha.21"
-    "@rdfjs/dataset" "^1.1.0"
-    buffer "^6.0.3"
-    readable-stream "^4.2.0"
 
 "@ldo/dataset@^1.0.0-alpha.30":
   version "1.0.0-alpha.30"
@@ -3392,25 +3360,6 @@
     buffer "^6.0.3"
     readable-stream "^4.2.0"
 
-"@ldo/dataset@^1.0.0-alpha.9":
-  version "1.0.0-alpha.9"
-  resolved "https://registry.yarnpkg.com/@ldo/dataset/-/dataset-1.0.0-alpha.9.tgz#c7b1d8a24b700c46d4f8f0fc1cc22f50ab92e3af"
-  integrity sha512-JjyKHMt3n+8UdccnD19vx8Fy2cHf4ID4pffV8gk95pGGZ3SnFXkgXVNZEtnBswVARwMEFLIIp53k2Dc6uivF5w==
-  dependencies:
-    "@ldo/rdf-utils" "^1.0.0-alpha.9"
-    "@rdfjs/dataset" "^1.1.0"
-    buffer "^6.0.3"
-    readable-stream "^4.2.0"
-
-"@ldo/jsonld-dataset-proxy@^1.0.0-alpha.21":
-  version "1.0.0-alpha.21"
-  resolved "https://registry.yarnpkg.com/@ldo/jsonld-dataset-proxy/-/jsonld-dataset-proxy-1.0.0-alpha.21.tgz#497674a4056b7202ab5e28a32b2612dbb06a9938"
-  integrity sha512-gRAQC9lGWMmeY84q8B16gh7EK1jAT+/Zlul2wuQ40+VshHKEYdYjmlH8Ah4RkyqqXN+fHQK0W/Lh5u5dCM4sXg==
-  dependencies:
-    "@ldo/rdf-utils" "^1.0.0-alpha.21"
-    "@ldo/subscribable-dataset" "^1.0.0-alpha.21"
-    jsonld2graphobject "^0.0.4"
-
 "@ldo/jsonld-dataset-proxy@^1.0.0-alpha.30":
   version "1.0.0-alpha.30"
   resolved "https://registry.yarnpkg.com/@ldo/jsonld-dataset-proxy/-/jsonld-dataset-proxy-1.0.0-alpha.30.tgz#1e32e2941a44f58fa21451ebd68939d9eb8f2edd"
@@ -3419,28 +3368,6 @@
     "@ldo/rdf-utils" "^1.0.0-alpha.30"
     "@ldo/subscribable-dataset" "^1.0.0-alpha.30"
     jsonld2graphobject "^0.0.4"
-
-"@ldo/jsonld-dataset-proxy@^1.0.0-alpha.9":
-  version "1.0.0-alpha.9"
-  resolved "https://registry.yarnpkg.com/@ldo/jsonld-dataset-proxy/-/jsonld-dataset-proxy-1.0.0-alpha.9.tgz#280145012e4c9241b839b16e4c5f5f98dbf9aae8"
-  integrity sha512-QBTsP1DBwTEeX6RUpqgOld+paK4IuQYdwafwcHsfcdGAZq9lR58a95jrT7fiP3pVyvUzZsnuh2NJYzhSEav3ZQ==
-  dependencies:
-    "@ldo/rdf-utils" "^1.0.0-alpha.9"
-    "@ldo/subscribable-dataset" "^1.0.0-alpha.9"
-    "@rdfjs/data-model" "^1.2.0"
-    "@rdfjs/dataset" "^1.1.0"
-    jsonld2graphobject "^0.0.4"
-
-"@ldo/ldo@^1.0.0-alpha.21":
-  version "1.0.0-alpha.21"
-  resolved "https://registry.yarnpkg.com/@ldo/ldo/-/ldo-1.0.0-alpha.21.tgz#5dbd77522ce1f64cecf64dbee43519c5047f3678"
-  integrity sha512-ii957JykwW579fPlDCCW/S21H0OAHTkGqSUgCAlfAywhyQmvkOK9pUnJq8QgxJ8htPQMhIX+IR87qo+NUhsVMg==
-  dependencies:
-    "@ldo/dataset" "^1.0.0-alpha.21"
-    "@ldo/jsonld-dataset-proxy" "^1.0.0-alpha.21"
-    "@ldo/subscribable-dataset" "^1.0.0-alpha.21"
-    buffer "^6.0.3"
-    readable-stream "^4.3.0"
 
 "@ldo/ldo@^1.0.0-alpha.30":
   version "1.0.0-alpha.30"
@@ -3453,40 +3380,10 @@
     buffer "^6.0.3"
     readable-stream "^4.3.0"
 
-"@ldo/ldo@^1.0.0-alpha.9":
-  version "1.0.0-alpha.9"
-  resolved "https://registry.yarnpkg.com/@ldo/ldo/-/ldo-1.0.0-alpha.9.tgz#e580110f0166d993396b1fd0bcf558d99834f72f"
-  integrity sha512-38latZSy4TEdh6oMRCUVKsA6jIi9VXJkxDAwXRHuZ7kjIW7p7hig0E2PSoJnUaawklIhRFs5ZdikXsVdiYT3Ow==
-  dependencies:
-    "@ldo/dataset" "^1.0.0-alpha.9"
-    "@ldo/jsonld-dataset-proxy" "^1.0.0-alpha.9"
-    "@ldo/subscribable-dataset" "^1.0.0-alpha.9"
-    "@rdfjs/data-model" "^1.2.0"
-    buffer "^6.0.3"
-    readable-stream "^4.3.0"
-
-"@ldo/rdf-utils@^1.0.0-alpha.21":
-  version "1.0.0-alpha.21"
-  resolved "https://registry.yarnpkg.com/@ldo/rdf-utils/-/rdf-utils-1.0.0-alpha.21.tgz#af89a69bbcc58d38fd89f76ef4134a9b8c3b312f"
-  integrity sha512-qCyRNywItYrDqvqQAunAUw3QfGHjUUHQpI4s6qng6CaStl7Uk6m2XAEfozALa/aoOmUCBhM14V5qDcw6AiCuRg==
-  dependencies:
-    "@rdfjs/data-model" "^1.2.0"
-    n3 "^1.17.1"
-    rdf-string "^1.6.3"
-
 "@ldo/rdf-utils@^1.0.0-alpha.30":
   version "1.0.0-alpha.30"
   resolved "https://registry.yarnpkg.com/@ldo/rdf-utils/-/rdf-utils-1.0.0-alpha.30.tgz#5e8af46e14388771303d87a18b9d845fc0381306"
   integrity sha512-nYCaf//tysYOhQfj1SmYTvuRzAK1VCENMOFYJlF0oNKIK/pEqXOkxFKt8yhkNEZ5e9BZ5ofLmGFeyj3OLiYivw==
-  dependencies:
-    "@rdfjs/data-model" "^1.2.0"
-    n3 "^1.17.1"
-    rdf-string "^1.6.3"
-
-"@ldo/rdf-utils@^1.0.0-alpha.9":
-  version "1.0.0-alpha.9"
-  resolved "https://registry.yarnpkg.com/@ldo/rdf-utils/-/rdf-utils-1.0.0-alpha.9.tgz#86a75cd4a1f8f332720f0374dbd2d0de0288bdaf"
-  integrity sha512-Nn6UwLvvII2ynEXHQW3fSkmA4iWbSHXi8exvKOmu5iJHsTDbwwOHic+JlEsXIhQYO0z39twQDXQpGh2mNWMYfQ==
   dependencies:
     "@rdfjs/data-model" "^1.2.0"
     n3 "^1.17.1"
@@ -3515,15 +3412,6 @@
     "@ldo/react" "^1.0.0-alpha.30"
     cross-fetch "^3.1.6"
 
-"@ldo/subscribable-dataset@^1.0.0-alpha.21":
-  version "1.0.0-alpha.21"
-  resolved "https://registry.yarnpkg.com/@ldo/subscribable-dataset/-/subscribable-dataset-1.0.0-alpha.21.tgz#92db09d43cf64e8471b64e49a5875d78a1ec71d8"
-  integrity sha512-B9WlB/HXPTBEKB1i9wa0v2kX7iTwKpyNaFJtJff0hLwmcKGiwh7HzU9a3V9jOBkz6GL5iUhHFwu+Vp9joe54Xw==
-  dependencies:
-    "@ldo/dataset" "^1.0.0-alpha.21"
-    "@ldo/rdf-utils" "^1.0.0-alpha.21"
-    uuid "^11.1.0"
-
 "@ldo/subscribable-dataset@^1.0.0-alpha.30":
   version "1.0.0-alpha.30"
   resolved "https://registry.yarnpkg.com/@ldo/subscribable-dataset/-/subscribable-dataset-1.0.0-alpha.30.tgz#b4e6e906ad156b9b1d19abe2b7f02718910684b6"
@@ -3531,15 +3419,6 @@
   dependencies:
     "@ldo/dataset" "^1.0.0-alpha.30"
     "@ldo/rdf-utils" "^1.0.0-alpha.30"
-    uuid "^11.1.0"
-
-"@ldo/subscribable-dataset@^1.0.0-alpha.9":
-  version "1.0.0-alpha.9"
-  resolved "https://registry.yarnpkg.com/@ldo/subscribable-dataset/-/subscribable-dataset-1.0.0-alpha.9.tgz#e907117acf371428e474742b0194c7165e9cffef"
-  integrity sha512-mWJPQ/gIpAQFHapKpNzzIla80I4MgjPVBdqzeSF+SaajiKY+e6FHRwDj38Ew4+piZm+6Sj1M6BeKwKteOPIBfQ==
-  dependencies:
-    "@ldo/dataset" "^1.0.0-alpha.9"
-    "@ldo/rdf-utils" "^1.0.0-alpha.9"
     uuid "^11.1.0"
 
 "@lerna/create@8.0.1":

@@ -2997,7 +2997,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@semapps/backup@workspace:packages/backup"
   dependencies:
-    cron: "npm:^1.8.2"
+    cron: "npm:^4.3.3"
     fs-extra: "npm:^10.0.0"
     rsync: "npm:^0.6.1"
     ssh2-sftp-client: "npm:^7.2.1"
@@ -5971,16 +5971,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cron@npm:^1.8.2":
-  version: 1.8.3
-  resolution: "cron@npm:1.8.3"
-  dependencies:
-    luxon: "npm:^1.23.x"
-  checksum: 10c0/f3cd0960c34bebe8ac70404120ad1822bceb4cca216b0951a997e5a673c8b140d73b567633248485811cfced99926cdf4ff624e067cf26ec72d5cfce06f0468c
-  languageName: node
-  linkType: hard
-
-"cron@npm:^4.1.4":
+"cron@npm:^4.1.4, cron@npm:^4.3.3":
   version: 4.3.3
   resolution: "cron@npm:4.3.3"
   dependencies:
@@ -10952,13 +10943,6 @@ __metadata:
   dependencies:
     yallist: "npm:^4.0.0"
   checksum: 10c0/cb53e582785c48187d7a188d3379c181b5ca2a9c78d2bce3e7dee36f32761d1c42983da3fe12b55cb74e1779fa94cdc2e5367c028a9b35317184ede0c07a30a9
-  languageName: node
-  linkType: hard
-
-"luxon@npm:^1.23.x":
-  version: 1.28.1
-  resolution: "luxon@npm:1.28.1"
-  checksum: 10c0/5c561ce4364bb2301ca5811c74d11a9e087f82164109c7997dc8f0959e64d51259d8e630914dca2edc6702525ce5ab066a4b85caa19d04be71f10e79ffe2bc84
   languageName: node
   linkType: hard
 

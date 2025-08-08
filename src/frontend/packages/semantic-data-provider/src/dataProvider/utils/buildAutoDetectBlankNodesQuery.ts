@@ -1,4 +1,4 @@
-import { triple, variable } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 
 const buildAutoDetectBlankNodesQuery = (depth: any, baseQuery: any) => {
   const construct = [...baseQuery.construct];
@@ -7,7 +7,7 @@ const buildAutoDetectBlankNodesQuery = (depth: any, baseQuery: any) => {
     const whereQueries = [];
     whereQueries.push([baseQuery.where]);
     for (let i = 1; i <= depth; i++) {
-      construct.push(triple(variable(`o${i}`), variable(`p${i + 1}`), variable(`o${i + 1}`)));
+      construct.push(rdf.triple(rdf.variable(`o${i}`), rdf.variable(`p${i + 1}`), rdf.variable(`o${i + 1}`)));
       whereQueries.push([
         ...whereQueries[whereQueries.length - 1],
         {
@@ -15,10 +15,10 @@ const buildAutoDetectBlankNodesQuery = (depth: any, baseQuery: any) => {
           expression: {
             type: 'operation',
             operator: 'isblank',
-            args: [variable(`o${i}`)]
+            args: [rdf.variable(`o${i}`)]
           }
         },
-        triple(variable(`o${i}`), variable(`p${i + 1}`), variable(`o${i + 1}`))
+        rdf.triple(rdf.variable(`o${i}`), rdf.variable(`p${i + 1}`), rdf.variable(`o${i + 1}`))
       ]);
     }
     where = {

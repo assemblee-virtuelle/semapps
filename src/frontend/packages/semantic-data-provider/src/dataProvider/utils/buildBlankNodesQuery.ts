@@ -1,6 +1,6 @@
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'cryp... Remove this comment to see the full error message
 import md5 from 'crypto-js/md5';
-import { namedNode, triple, variable } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import getUriFromPrefix from './getUriFromPrefix';
 
 // Transform ['ont:predicate1/ont:predicate2'] to ['ont:predicate1', 'ont:predicate1/ont:predicate2']
@@ -52,12 +52,12 @@ const buildBlankNodesQuery = (blankNodes: any, baseQuery: any, ontologies: any) 
       const parentVarName = parentNode ? generateSparqlVarName(parentNode) : '1';
 
       const query = [
-        triple(
-          variable(`s${parentVarName}`),
-          namedNode(getUriFromPrefix(predicate, ontologies)),
-          variable(`s${varName}`)
+        rdf.triple(
+          rdf.variable(`s${parentVarName}`),
+          rdf.namedNode(getUriFromPrefix(predicate, ontologies)),
+          rdf.variable(`s${varName}`)
         ),
-        triple(variable(`s${varName}`), variable(`p${varName}`), variable(`o${varName}`))
+        rdf.triple(rdf.variable(`s${varName}`), rdf.variable(`p${varName}`), rdf.variable(`o${varName}`))
       ];
 
       queries.push({
