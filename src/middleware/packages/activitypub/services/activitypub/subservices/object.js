@@ -167,6 +167,10 @@ const ObjectService = {
       const { resourceUri, formerType } = ctx.params;
       const expandedFormerTypes = await ctx.call('jsonld.parser.expandTypes', { types: formerType });
 
+      // We need to recreate the document as it has been deleted
+      // TODO See how we can avoid this since it will not work with NextGraph
+      await ctx.call('triplestore.document.create', { documentUri: resourceUri });
+
       // Insert directly the Tombstone in the triple store to avoid resource creation side-effects
       await ctx.call('triplestore.insert', {
         resource: {
@@ -178,6 +182,7 @@ const ObjectService = {
             '@type': 'http://www.w3.org/2001/XMLSchema#dateTime'
           }
         },
+        graphName: resourceUri,
         webId: 'system'
       });
     }

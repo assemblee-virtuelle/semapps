@@ -1,5 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { sanitizeSparqlQuery } = require('@semapps/triplestore');
 const { cleanUndefined } = require('../../../utils');
 
 module.exports = {
@@ -88,37 +89,62 @@ module.exports = {
       forcedResourceUri || (await ctx.call('ldp.resource.generateId', { containerUri, slug, isContainer }));
     await ctx.call('triplestore.document.create', { documentUri: resourceUri });
 
-    if (file) {
-      resource = await ctx.call('ldp.resource.upload', { resourceUri, file });
-    }
+    // We must add this first, otherwise side effects will not find the container of the created resource
+    // But this create race conditions, especially when testing, since uncreated resources are linked to containers
+    await ctx.call('triplestore.update', {
+      query: sanitizeSparqlQuery`
+        INSERT DATA {
+          GRAPH <${containerUri}> {
+            <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>
+          }
+        }
+      `,
+      webId
+    });
 
-    if (isContainer) {
-      await ctx.call('ldp.container.create', {
-        containerUri: resourceUri,
-        title: expandedResource['http://purl.org/dc/terms/title']?.[0]['@value'],
-        description: expandedResource['http://purl.org/dc/terms/description']?.[0]['@value'],
+    try {
+      if (file) {
+        resource = await ctx.call('ldp.resource.upload', { resourceUri, file });
+      }
+
+      if (isContainer) {
+        await ctx.call('ldp.container.create', {
+          containerUri: resourceUri,
+          title: expandedResource['http://purl.org/dc/terms/title']?.[0]['@value'],
+          description: expandedResource['http://purl.org/dc/terms/description']?.[0]['@value'],
+          webId
+        });
+      } else {
+        const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
+
+        // Change relative URIs to full URIs
+        const resourceWithBase = resource['@graph']
+          ? await ctx.call('jsonld.parser.changeBase', {
+              input: resource,
+              base: resourceUri
+            })
+          : { ...resource, '@id': resourceUri };
+
+        await ctx.call(controlledActions.create || 'ldp.resource.create', {
+          resource: resourceWithBase,
+          resourceUri,
+          webId
+        });
+      }
+    } catch (e) {
+      // If there was an error inserting the resource, detach it from the container
+      await ctx.call('triplestore.update', {
+        query: `
+          DELETE WHERE { 
+            GRAPH <${containerUri}> {  
+              <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> 
+            }
+          }`,
         webId
       });
-    } else {
-      const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
 
-      // Change relative URIs to full URIs
-      const resourceWithBase = resource['@graph']
-        ? await ctx.call('jsonld.parser.changeBase', {
-            input: resource,
-            base: resourceUri
-          })
-        : { ...resource, '@id': resourceUri };
-
-      await ctx.call(controlledActions.create || 'ldp.resource.create', {
-        resource: resourceWithBase,
-        resourceUri,
-        webId
-      });
+      throw e;
     }
-
-    // Attach the resource to the parent container
-    await this.actions.attach({ containerUri, resourceUri, webId }, { meta: { skipEmitEvent: true }, parentCtx: ctx });
 
     if (!ctx.meta.skipEmitEvent) {
       ctx.emit(

@@ -16,13 +16,15 @@ async function getCollectionMetadata(ctx, collectionUri, webId, dataset) {
       PREFIX semapps: <http://semapps.org/ns/core#>
       SELECT ?ordered ?summary ?dereferenceItems ?itemsPerPage ?sortPredicate ?sortOrder
       WHERE {
-        <${collectionUri}> a <https://www.w3.org/ns/activitystreams#Collection> . # This will return [] if the user has no read permission
-        BIND (EXISTS{<${collectionUri}> a <https://www.w3.org/ns/activitystreams#OrderedCollection>} AS ?ordered)
-        OPTIONAL { <${collectionUri}> as:summary ?summary . }
-        OPTIONAL { <${collectionUri}> semapps:dereferenceItems ?dereferenceItems . }
-        OPTIONAL { <${collectionUri}> semapps:itemsPerPage ?itemsPerPage . }
-        OPTIONAL { <${collectionUri}> semapps:sortPredicate ?sortPredicate . }
-        OPTIONAL { <${collectionUri}> semapps:sortOrder ?sortOrder . }
+        GRAPH <${collectionUri}> {
+          <${collectionUri}> a <https://www.w3.org/ns/activitystreams#Collection> . # This will return [] if the user has no read permission
+          BIND (EXISTS{<${collectionUri}> a <https://www.w3.org/ns/activitystreams#OrderedCollection>} AS ?ordered)
+          OPTIONAL { <${collectionUri}> as:summary ?summary . }
+          OPTIONAL { <${collectionUri}> semapps:dereferenceItems ?dereferenceItems . }
+          OPTIONAL { <${collectionUri}> semapps:itemsPerPage ?itemsPerPage . }
+          OPTIONAL { <${collectionUri}> semapps:sortPredicate ?sortPredicate . }
+          OPTIONAL { <${collectionUri}> semapps:sortOrder ?sortOrder . }
+        }
       }
     `,
     dataset,
@@ -42,7 +44,9 @@ async function verifyCursorExists(ctx, collectionUri, cursor, dataset) {
       PREFIX as: <https://www.w3.org/ns/activitystreams#>
       SELECT ?itemExists
       WHERE {
-        BIND (EXISTS{ <${collectionUri}> as:items <${cursor}> } AS ?itemExists)
+        GRAPH <${collectionUri}> {
+          BIND (EXISTS{ <${collectionUri}> as:items <${cursor}> } AS ?itemExists)
+        }
       }
     `,
     dataset,
@@ -71,15 +75,26 @@ async function validateCursorParams(ctx, collectionUri, beforeEq, afterEq, datas
  * @returns {Promise<Array>} The collection item URIs
  */
 async function fetchCollectionItemURIs(ctx, collectionUri, options, dataset) {
-  const result = await ctx.call('triplestore.query', {
-    query: `
+  const query = `
       PREFIX as: <https://www.w3.org/ns/activitystreams#>
       SELECT DISTINCT ?itemUri
       WHERE {
-        <${collectionUri}> a as:Collection .
-        OPTIONAL { 
-          <${collectionUri}> as:items ?itemUri . 
-          ${options.ordered ? `OPTIONAL { ?itemUri <${options.sortPredicate}> ?order . }` : ''}
+        GRAPH <${collectionUri}> {
+          <${collectionUri}> a as:Collection .
+          OPTIONAL { 
+            <${collectionUri}> as:items ?itemUri . 
+          }
+        }
+        ${
+          options.ordered
+            ? `
+              OPTIONAL {
+                GRAPH ?g { 
+                  ?itemUri <${options.sortPredicate}> ?order . 
+                }
+              }
+              `
+            : ''
         }
       }
       ${
@@ -87,7 +102,10 @@ async function fetchCollectionItemURIs(ctx, collectionUri, options, dataset) {
           ? `ORDER BY ${options.sortOrder === 'http://semapps.org/ns/core#DescOrder' ? 'DESC' : 'ASC'}( ?order )`
           : ''
       }
-    `,
+    `;
+
+  const result = await ctx.call('triplestore.query', {
+    query,
     dataset,
     webId: 'system'
   });

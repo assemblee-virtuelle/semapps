@@ -142,34 +142,32 @@ describe('Collections API', () => {
         summary: 'My paginated collection',
         'semapps:dereferenceItems': false,
         'semapps:itemsPerPage': 4,
-        first: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[0])}`,
-        last: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[items.length - 1])}`
-        // first: `${paginatedCollectionUri}?page=1`,
-        // last: `${paginatedCollectionUri}?page=3`
+        first: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[9])}`,
+        last: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[0])}`
       }
     });
 
     await expect(
-      fetchServer(`${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[0])}`)
+      fetchServer(`${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[9])}`)
     ).resolves.toMatchObject({
       json: {
-        id: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[0])}`,
+        id: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[9])}`,
         type: 'CollectionPage',
         partOf: paginatedCollectionUri,
-        next: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[4])}`,
-        items: expect.arrayContaining([items[0], items[1], items[2], items[3]])
+        next: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[5])}`,
+        items: expect.arrayContaining([items[9], items[8], items[7], items[6]])
       }
     });
 
     await expect(
-      fetchServer(`${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[8])}`)
+      fetchServer(`${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[1])}`)
     ).resolves.toMatchObject({
       json: {
-        id: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[8])}`,
+        id: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[1])}`,
         type: 'CollectionPage',
         partOf: paginatedCollectionUri,
-        prev: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[7])}`,
-        items: expect.arrayContaining([items[8], items[9]])
+        prev: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[2])}`,
+        items: expect.arrayContaining([items[1], items[0]])
       }
     });
   });

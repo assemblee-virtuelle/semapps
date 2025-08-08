@@ -89,7 +89,8 @@ const ActorService = {
               updateType: 'insertdelete',
               insert: [
                 {
-                  type: 'bgp',
+                  type: 'graph',
+                  name: namedNode(actorUri),
                   triples: [
                     triple(
                       namedNode(actorUri),
@@ -106,7 +107,8 @@ const ActorService = {
                   type: 'optional',
                   patterns: [
                     {
-                      type: 'bgp',
+                      type: 'graph',
+                      name: namedNode(actorUri),
                       triples: [
                         triple(
                           namedNode(actorUri),

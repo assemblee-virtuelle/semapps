@@ -294,25 +294,25 @@ describe('Collections', () => {
 
       expect(collection).toMatchObject({
         id: paginatedCollectionUri,
-        first: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[0])}`,
-        last: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[items.length - 1])}`
+        first: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[9])}`,
+        last: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[0])}`
       });
     });
 
     test('Should navigate forward with afterEq cursor', async () => {
       const collection = await broker.call('activitypub.collection.get', {
         resourceUri: paginatedCollectionUri,
-        afterEq: items[0]
+        afterEq: items[9]
       });
 
       expect(collection).toMatchObject({
-        id: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[0])}`,
+        id: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[9])}`,
         type: 'CollectionPage',
         partOf: paginatedCollectionUri,
-        next: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[4])}`
+        next: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[5])}`
       });
       expect(collection.items).toHaveLength(4);
-      expect(collection.items).toEqual([items[0], items[1], items[2], items[3]]);
+      expect(collection.items).toEqual([items[9], items[8], items[7], items[6]]);
     });
 
     test('Should navigate backward with beforeEq cursor', async () => {
@@ -325,10 +325,10 @@ describe('Collections', () => {
         id: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[5])}`,
         type: 'CollectionPage',
         partOf: paginatedCollectionUri,
-        prev: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[1])}`
+        prev: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[9])}`
       });
       expect(collection.items).toHaveLength(4);
-      expect(collection.items).toEqual([items[2], items[3], items[4], items[5]]);
+      expect(collection.items).toEqual([items[8], items[7], items[6], items[5]]);
     });
 
     describe('Edge Cases', () => {
@@ -375,7 +375,7 @@ describe('Collections', () => {
 
         const collection = await broker.call('activitypub.collection.get', {
           resourceUri: exactCollectionUri,
-          afterEq: items[0]
+          afterEq: items[3]
         });
 
         expect(collection).toMatchObject({
@@ -390,7 +390,7 @@ describe('Collections', () => {
         // Get last page of main paginated collection (should have 2 items)
         const collection = await broker.call('activitypub.collection.get', {
           resourceUri: paginatedCollectionUri,
-          afterEq: items[8]
+          afterEq: items[1]
         });
 
         expect(collection.items).toHaveLength(2);
@@ -401,7 +401,7 @@ describe('Collections', () => {
     describe('Data Consistency', () => {
       test('Should maintain consistent page size across navigation', async () => {
         // Navigate through all pages and verify each has correct size (except last)
-        let cursor = items[0];
+        let cursor = items[9];
         let pageCount = 0;
         let seenItems = new Set();
 
@@ -435,13 +435,13 @@ describe('Collections', () => {
         // Forward navigation
         const firstPage = await broker.call('activitypub.collection.get', {
           resourceUri: paginatedCollectionUri,
-          afterEq: items[0]
+          afterEq: items[9]
         });
 
         // Get the next page
         const nextPage = await broker.call('activitypub.collection.get', {
           resourceUri: paginatedCollectionUri,
-          afterEq: items[4]
+          afterEq: items[5]
         });
 
         // Navigate back

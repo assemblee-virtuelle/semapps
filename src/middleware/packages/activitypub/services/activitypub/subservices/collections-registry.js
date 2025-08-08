@@ -142,7 +142,9 @@ const CollectionsRegistryService = {
           query: `
             SELECT ?collectionUri
             WHERE {
-              ?objectUri <${attachPredicate}> ?collectionUri 
+              GRAPH ?g {
+                ?objectUri <${attachPredicate}> ?collectionUri 
+              }
             }
           `,
           webId: 'system',
@@ -156,6 +158,7 @@ const CollectionsRegistryService = {
               query: `
                 PREFIX as: <https://www.w3.org/ns/activitystreams#>
                 PREFIX semapps: <http://semapps.org/ns/core#>
+                WITH <${collectionUri}>
                 DELETE {
                   <${collectionUri}> 
                     a ?type ;

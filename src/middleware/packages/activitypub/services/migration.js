@@ -19,10 +19,14 @@ module.exports = {
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           PREFIX ldp: <http://www.w3.org/ns/ldp#>
           INSERT {
-            <${collectionsContainerUri}> ldp:contains ?collectionUri
+            GRAPH <${collectionsContainerUri}> {
+              <${collectionsContainerUri}> ldp:contains ?collectionUri
+            }
           }
           WHERE {
-            ?collectionUri a as:Collection
+            GRAPH ?g {
+              ?collectionUri a as:Collection
+            }
           }
         `,
         webId: 'system'

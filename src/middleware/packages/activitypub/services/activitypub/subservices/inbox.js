@@ -155,10 +155,14 @@ const InboxService = {
           PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
           SELECT DISTINCT ?activityUri 
           WHERE {
-            <${collectionUri}> a as:Collection .
-            <${collectionUri}> as:items ?activityUri . 
-            ?activityUri as:published ?published . 
-            ${filters ? `FILTER (${filters.join(' && ')})` : ''}
+            GRAPH <${collectionUri}> {
+              <${collectionUri}> a as:Collection .
+              <${collectionUri}> as:items ?activityUri . 
+            }
+            GRAPH ?g {
+              ?activityUri as:published ?published . 
+              ${filters ? `FILTER (${filters.join(' && ')})` : ''}
+            }
           }
           ORDER BY ?published
         `,
