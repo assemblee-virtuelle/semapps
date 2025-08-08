@@ -3,7 +3,8 @@ import $85cNH$react, {useState as $85cNH$useState, useCallback as $85cNH$useCall
 import {useRecordContext as $85cNH$useRecordContext, useGetIdentity as $85cNH$useGetIdentity, useNotify as $85cNH$useNotify, Form as $85cNH$Form, useDataProvider as $85cNH$useDataProvider, TextField as $85cNH$TextField, DateField as $85cNH$DateField, RichTextField as $85cNH$RichTextField, useGetMany as $85cNH$useGetMany, useList as $85cNH$useList, ListContextProvider as $85cNH$ListContextProvider, fetchUtils as $85cNH$fetchUtils, useGetList as $85cNH$useGetList} from "react-admin";
 import {RichTextInput as $85cNH$RichTextInput, DefaultEditorOptions as $85cNH$DefaultEditorOptions} from "ra-input-rich-text";
 import $85cNH$tiptapextensionplaceholder from "@tiptap/extension-placeholder";
-import {makeStyles as $85cNH$makeStyles, Box as $85cNH$Box, Avatar as $85cNH$Avatar, Button as $85cNH$Button, Typography as $85cNH$Typography, CircularProgress as $85cNH$CircularProgress} from "@mui/material";
+import {Box as $85cNH$Box, Avatar as $85cNH$Avatar, Button as $85cNH$Button, Typography as $85cNH$Typography, CircularProgress as $85cNH$CircularProgress} from "@mui/material";
+import $85cNH$muistylesmakeStyles from "@mui/styles/makeStyles";
 import $85cNH$muiiconsmaterialSend from "@mui/icons-material/Send";
 import {useDataModel as $85cNH$useDataModel, getOrCreateWsChannel as $85cNH$getOrCreateWsChannel} from "@semapps/semantic-data-provider";
 import {AuthDialog as $85cNH$AuthDialog} from "@semapps/auth-provider";
@@ -25,6 +26,7 @@ import {ReactRenderer as $85cNH$ReactRenderer} from "@tiptap/react";
 import $85cNH$tippyjs from "tippy.js";
 
 // Components
+
 
 
 
@@ -783,7 +785,7 @@ const $40f4c00d51a137ec$var$CustomMention = (0, $85cNH$tiptapextensionmention).e
 var $40f4c00d51a137ec$export$2e2bcd8739ae039 = $40f4c00d51a137ec$var$CustomMention;
 
 
-const $3047004939eff50c$var$useStyles = (0, $85cNH$makeStyles)((theme)=>({
+const $3047004939eff50c$var$useStyles = (0, $85cNH$muistylesmakeStyles)((theme)=>({
         form: {
             marginTop: -12 // Negative margin to keep the form close to the label
         },
@@ -982,7 +984,8 @@ var $3047004939eff50c$export$2e2bcd8739ae039 = $3047004939eff50c$var$PostComment
 
 
 
-const $74ea3002402ef672$var$useStyles = (0, $85cNH$makeStyles)(()=>({
+
+const $74ea3002402ef672$var$useStyles = (0, $85cNH$muistylesmakeStyles)(()=>({
         container: {
             paddingLeft: 80,
             marginTop: 8,
@@ -1539,7 +1542,7 @@ var $d33ef82068985aa5$export$2e2bcd8739ae039 = $d33ef82068985aa5$var$useWebfinge
 
 
 
-const $2d6cf763aa4118ce$var$useStyles = (0, $85cNH$makeStyles)((theme)=>({
+const $2d6cf763aa4118ce$var$useStyles = (0, $85cNH$muistylesmakeStyles)((theme)=>({
         items: {
             background: '#fff',
             borderRadius: '0.5rem',

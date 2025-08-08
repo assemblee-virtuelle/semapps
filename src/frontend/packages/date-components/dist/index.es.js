@@ -9,7 +9,8 @@ import {LocalizationProvider as $5Ihaz$LocalizationProvider} from "@mui/x-date-p
 import {AdapterDateFns as $5Ihaz$AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
 import $5Ihaz$fullcalendarreact from "@fullcalendar/react";
 import $5Ihaz$fullcalendardaygrid from "@fullcalendar/daygrid";
-import {makeStyles as $5Ihaz$makeStyles, useTheme as $5Ihaz$useTheme} from "@mui/material";
+import {useTheme as $5Ihaz$useTheme} from "@mui/material";
+import $5Ihaz$muistylesmakeStyles from "@mui/styles/makeStyles";
 import {useSearchParams as $5Ihaz$useSearchParams, useNavigate as $5Ihaz$useNavigate} from "react-router-dom";
 import $5Ihaz$fullcalendarlist from "@fullcalendar/list";
 
@@ -91,6 +92,7 @@ var $610808f89222f9cc$export$2e2bcd8739ae039 = $610808f89222f9cc$var$Picker;
 
 
 
+
 const $cb9049d6e1676554$var$useFullCalendarProps = ({ label: label, startDate: startDate, endDate: endDate, linkType: linkType = 'edit' })=>{
     const { data: data, isLoading: isLoading, resource: resource } = (0, $5Ihaz$useListContext)();
     const [searchParams, setSearchParams] = (0, $5Ihaz$useSearchParams)();
@@ -141,7 +143,7 @@ const $cb9049d6e1676554$var$useFullCalendarProps = ({ label: label, startDate: s
 var $cb9049d6e1676554$export$2e2bcd8739ae039 = $cb9049d6e1676554$var$useFullCalendarProps;
 
 
-const $e2ca335ee375606a$var$useGlobalStyles = (0, $5Ihaz$makeStyles)((theme)=>({
+const $e2ca335ee375606a$var$useGlobalStyles = (0, $5Ihaz$muistylesmakeStyles)((theme)=>({
         '@global': {
             '.fc-button': {
                 backgroundColor: `${theme.palette.primary.main} !important`,
@@ -182,7 +184,7 @@ var $e2ca335ee375606a$export$2e2bcd8739ae039 = $e2ca335ee375606a$var$CalendarLis
 
 
 
-const $165f9618c6b47a8a$var$useGlobalStyles = (0, $5Ihaz$makeStyles)((theme)=>({
+const $165f9618c6b47a8a$var$useGlobalStyles = (0, $5Ihaz$muistylesmakeStyles)((theme)=>({
         '@global': {
             '.fc-button': {
                 backgroundColor: `${theme.palette.primary.main} !important`,

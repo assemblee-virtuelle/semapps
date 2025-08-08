@@ -1,7 +1,8 @@
 import {jsxs as $9pxSs$jsxs, jsx as $9pxSs$jsx, Fragment as $9pxSs$Fragment} from "react/jsx-runtime";
 import $9pxSs$react, {useState as $9pxSs$useState, useMemo as $9pxSs$useMemo, useCallback as $9pxSs$useCallback, useEffect as $9pxSs$useEffect, cloneElement as $9pxSs$cloneElement, Children as $9pxSs$Children} from "react";
 import {useRecordContext as $9pxSs$useRecordContext, RecordContextProvider as $9pxSs$RecordContextProvider, ReferenceArrayField as $9pxSs$ReferenceArrayField, ReferenceField as $9pxSs$ReferenceField, usePermissions as $9pxSs$usePermissions, useShowContext as $9pxSs$useShowContext, useDataProvider as $9pxSs$useDataProvider, useTranslate as $9pxSs$useTranslate, useRefresh as $9pxSs$useRefresh, useNotify as $9pxSs$useNotify, useGetResourceLabel as $9pxSs$useGetResourceLabel, Button as $9pxSs$Button, useCreatePath as $9pxSs$useCreatePath, useResourceDefinition as $9pxSs$useResourceDefinition, useListContext as $9pxSs$useListContext, Link as $9pxSs$Link} from "react-admin";
-import {makeStyles as $9pxSs$makeStyles, Box as $9pxSs$Box, Avatar as $9pxSs$Avatar, Chip as $9pxSs$Chip, Dialog as $9pxSs$Dialog, DialogTitle as $9pxSs$DialogTitle, DialogContent as $9pxSs$DialogContent, TextField as $9pxSs$TextField, DialogActions as $9pxSs$DialogActions, List as $9pxSs$List, ListItem as $9pxSs$ListItem, ListItemAvatar as $9pxSs$ListItemAvatar, ListItemText as $9pxSs$ListItemText, ListItemSecondaryAction as $9pxSs$ListItemSecondaryAction, IconButton as $9pxSs$IconButton, CircularProgress as $9pxSs$CircularProgress, LinearProgress as $9pxSs$LinearProgress} from "@mui/material";
+import {Box as $9pxSs$Box, Avatar as $9pxSs$Avatar, Chip as $9pxSs$Chip, Dialog as $9pxSs$Dialog, DialogTitle as $9pxSs$DialogTitle, DialogContent as $9pxSs$DialogContent, TextField as $9pxSs$TextField, DialogActions as $9pxSs$DialogActions, List as $9pxSs$List, ListItem as $9pxSs$ListItem, ListItemAvatar as $9pxSs$ListItemAvatar, ListItemText as $9pxSs$ListItemText, ListItemSecondaryAction as $9pxSs$ListItemSecondaryAction, IconButton as $9pxSs$IconButton, CircularProgress as $9pxSs$CircularProgress, LinearProgress as $9pxSs$LinearProgress} from "@mui/material";
+import $9pxSs$muistylesmakeStyles from "@mui/styles/makeStyles";
 import $9pxSs$muiiconsmaterialLaunch from "@mui/icons-material/Launch";
 import {useForm as $9pxSs$useForm} from "react-hook-form";
 import $9pxSs$muiiconsmaterialAdd from "@mui/icons-material/Add";
@@ -22,7 +23,8 @@ import {FiGitlab as $9pxSs$FiGitlab} from "react-icons/fi";
 
 
 
-const $5c87e5d7d581d67b$var$useStyles = (0, $9pxSs$makeStyles)((theme)=>({
+
+const $5c87e5d7d581d67b$var$useStyles = (0, $9pxSs$muistylesmakeStyles)((theme)=>({
         parent: (props)=>({
                 position: 'relative',
                 ...props.parent
@@ -169,7 +171,9 @@ var $1f65f29fec99ca27$export$2e2bcd8739ae039 = $1f65f29fec99ca27$var$ReferenceFi
 
 
 
-const $9c81e78348e78627$var$useStyles = (0, $9pxSs$makeStyles)((theme)=>({
+
+
+const $9c81e78348e78627$var$useStyles = (0, $9pxSs$muistylesmakeStyles)((theme)=>({
         root: {
             width: '100%',
             maxWidth: '100%',
@@ -350,7 +354,7 @@ const $9c81e78348e78627$var$ResultsList = ({ keyword: keyword, source: source, r
 var $9c81e78348e78627$export$2e2bcd8739ae039 = $9c81e78348e78627$var$ResultsList;
 
 
-const $f69e47c3360a9d50$var$useStyles = (0, $9pxSs$makeStyles)(()=>({
+const $f69e47c3360a9d50$var$useStyles = (0, $9pxSs$muistylesmakeStyles)(()=>({
         title: {
             paddingBottom: 8
         },
@@ -564,6 +568,7 @@ var $1f2029a3cc194da1$export$2e2bcd8739ae039 = $1f2029a3cc194da1$var$QuickAppend
 
 
 
+
 const $c74598dffc3989d2$var$defaultdomainMapping = {
     'github.com': {
         label: 'GitHub',
@@ -611,7 +616,7 @@ const $c74598dffc3989d2$var$defaultdomainMapping = {
         contrastText: 'white'
     }
 };
-const $c74598dffc3989d2$var$useStyles = (0, $9pxSs$makeStyles)(()=>({
+const $c74598dffc3989d2$var$useStyles = (0, $9pxSs$muistylesmakeStyles)(()=>({
         link: {
             textDecoration: 'unset',
             '& :hover': {

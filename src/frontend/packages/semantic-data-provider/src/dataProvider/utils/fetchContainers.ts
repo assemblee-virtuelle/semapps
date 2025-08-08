@@ -2,6 +2,7 @@ import jsonld, { ContextDefinition } from 'jsonld';
 import { GetListParams } from 'react-admin';
 import arrayOf from './arrayOf';
 import { Configuration, Container, DataServerKey } from '../types';
+import fetchSelectedResources from './fetchSelectedResources';
 
 type LDPContainerType = 'ldp:Container' | 'ldp:BasicContainer';
 
@@ -43,26 +44,22 @@ const isObject = (val: any) => {
   return val != null && typeof val === 'object' && !Array.isArray(val);
 };
 
-const fetchContainers = async (
-  containers: Container[],
-  params: GetListParams,
-  { httpClient, jsonContext }: Configuration
-) => {
-  const fetchPromises = containers.map(container =>
-    httpClient(container.uri)
-      .then(async ({ json }) => {
-        const jsonResponse: LDPContainer = json;
+const fetchContainers = async (containers: Container[], params: GetListParams, config: Configuration) => {
+  const { httpClient, jsonContext } = config;
+
+  // Fetch simultaneously all containers
+  const results = await Promise.all(
+    containers
+      .filter(c => !c.selectedResources)
+      .map(async container => {
+        let { json }: { json: LDPContainer } = await httpClient(container.uri);
 
         // If container's context is different, compact it to have an uniform result
         // TODO deep compare if the context is an object
-        // This is most likely an array of two strings
-        if (jsonResponse['@context'] !== jsonContext) {
-          return jsonld.compact(jsonResponse, jsonContext as ContextDefinition) as unknown as Promise<LDPContainer>;
+        if (json['@context'] !== jsonContext) {
+          json = (await jsonld.compact(json, jsonContext as ContextDefinition)) as unknown as LDPContainer;
         }
 
-        return jsonResponse;
-      })
-      .then((json: LDPContainer) => {
         if (!isValidLDPContainer(json)) {
           throw new Error(`${container.uri} is not a LDP container`);
         }
@@ -74,9 +71,15 @@ const fetchContainers = async (
       })
   );
 
-  // Fetch simultaneously all containers
-  const results = await Promise.all(fetchPromises);
   let resources = results.flat();
+
+  // Append selected resources (if any)
+  const selectedResources = await fetchSelectedResources(
+    containers,
+    resources.map(r => r.id),
+    config
+  );
+  resources = resources.concat(selectedResources);
 
   resources = resources.map(resource => {
     resource.id = resource.id || resource['@id'];

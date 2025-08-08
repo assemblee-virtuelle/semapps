@@ -1,7 +1,8 @@
 import {jsx as $2An97$jsx, jsxs as $2An97$jsxs, Fragment as $2An97$Fragment} from "react/jsx-runtime";
 import $2An97$react, {cloneElement as $2An97$cloneElement, Children as $2An97$Children, useEffect as $2An97$useEffect, createElement as $2An97$createElement, useState as $2An97$useState} from "react";
 import {useListContext as $2An97$useListContext, useCreatePath as $2An97$useCreatePath, sanitizeListRestProps as $2An97$sanitizeListRestProps, RecordContextProvider as $2An97$RecordContextProvider, ChipField as $2An97$ChipField, Link as $2An97$Link, useResourceContext as $2An97$useResourceContext, useGetList as $2An97$useGetList, useResourceDefinition as $2An97$useResourceDefinition, FilterList as $2An97$FilterList, FilterListItem as $2An97$FilterListItem, List as $2An97$List, TopToolbar as $2An97$TopToolbar, CreateButton as $2An97$CreateButton, ExportButton as $2An97$ExportButton, Button as $2An97$Button} from "react-admin";
-import {makeStyles as $2An97$makeStyles, LinearProgress as $2An97$LinearProgress, Grid as $2An97$Grid, Card as $2An97$Card, CardActionArea as $2An97$CardActionArea, CardMedia as $2An97$CardMedia, CardContent as $2An97$CardContent, CardActions as $2An97$CardActions, useMediaQuery as $2An97$useMediaQuery} from "@mui/material";
+import {LinearProgress as $2An97$LinearProgress, Grid as $2An97$Grid, Card as $2An97$Card, CardActionArea as $2An97$CardActionArea, CardMedia as $2An97$CardMedia, CardContent as $2An97$CardContent, CardActions as $2An97$CardActions, useMediaQuery as $2An97$useMediaQuery} from "@mui/material";
+import $2An97$muistylesmakeStyles from "@mui/styles/makeStyles";
 import $2An97$muiiconsmaterialAddCircle from "@mui/icons-material/AddCircle";
 import $2An97$muiiconsmaterialLaunch from "@mui/icons-material/Launch";
 import {useGetExternalLink as $2An97$useGetExternalLink, useContainers as $2An97$useContainers} from "@semapps/semantic-data-provider";
@@ -15,7 +16,8 @@ import {useLocation as $2An97$useLocation} from "react-router";
 
 
 
-const $ac8d3f9fb7c659a5$var$useStyles = (0, $2An97$makeStyles)(()=>({
+
+const $ac8d3f9fb7c659a5$var$useStyles = (0, $2An97$muistylesmakeStyles)(()=>({
         root: {
             display: 'flex',
             flexWrap: 'wrap'
@@ -196,7 +198,8 @@ var $468733f6384b7c1b$export$2e2bcd8739ae039 = $468733f6384b7c1b$var$GridList;
 
 
 
-const $c1a0c00844004930$var$useStyles = (0, $2An97$makeStyles)(()=>({
+
+const $c1a0c00844004930$var$useStyles = (0, $2An97$muistylesmakeStyles)(()=>({
         grid: {
             display: 'flex',
             marginLeft: -20,

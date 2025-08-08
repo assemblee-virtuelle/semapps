@@ -2,6 +2,7 @@ var $5MILa$reactjsxruntime = require("react/jsx-runtime");
 var $5MILa$react = require("react");
 var $5MILa$reactadmin = require("react-admin");
 var $5MILa$muimaterial = require("@mui/material");
+var $5MILa$muistylesmakeStyles = require("@mui/styles/makeStyles");
 var $5MILa$muiiconsmaterialAddCircle = require("@mui/icons-material/AddCircle");
 var $5MILa$muiiconsmaterialLaunch = require("@mui/icons-material/Launch");
 var $5MILa$semappssemanticdataprovider = require("@semapps/semantic-data-provider");
@@ -32,7 +33,8 @@ $parcel$export(module.exports, "ViewsButtons", () => $a87c7903c3d176d8$export$2e
 
 
 
-const $a973de69cdff0648$var$useStyles = (0, $5MILa$muimaterial.makeStyles)(()=>({
+
+const $a973de69cdff0648$var$useStyles = (0, ($parcel$interopDefault($5MILa$muistylesmakeStyles)))(()=>({
         root: {
             display: 'flex',
             flexWrap: 'wrap'
@@ -213,7 +215,8 @@ var $5a120b619addcf4f$export$2e2bcd8739ae039 = $5a120b619addcf4f$var$GridList;
 
 
 
-const $160200afc5f7ef6a$var$useStyles = (0, $5MILa$muimaterial.makeStyles)(()=>({
+
+const $160200afc5f7ef6a$var$useStyles = (0, ($parcel$interopDefault($5MILa$muistylesmakeStyles)))(()=>({
         grid: {
             display: 'flex',
             marginLeft: -20,

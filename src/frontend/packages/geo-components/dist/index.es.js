@@ -1,7 +1,7 @@
 import {jsx as $4dBGn$jsx, jsxs as $4dBGn$jsxs, Fragment as $4dBGn$Fragment} from "react/jsx-runtime";
 import $4dBGn$react, {useState as $4dBGn$useState, useMemo as $4dBGn$useMemo, useEffect as $4dBGn$useEffect} from "react";
 import {useRecordContext as $4dBGn$useRecordContext, useResourceContext as $4dBGn$useResourceContext, useLocale as $4dBGn$useLocale, useTranslate as $4dBGn$useTranslate, useInput as $4dBGn$useInput, FieldTitle as $4dBGn$FieldTitle, InputHelperText as $4dBGn$InputHelperText, useListContext as $4dBGn$useListContext, RecordContextProvider as $4dBGn$RecordContextProvider, useResourceDefinition as $4dBGn$useResourceDefinition, ShowButton as $4dBGn$ShowButton, EditButton as $4dBGn$EditButton} from "react-admin";
-import {TextField as $4dBGn$TextField, Grid as $4dBGn$Grid, Typography as $4dBGn$Typography, makeStyles as $4dBGn$makeStyles, useMediaQuery as $4dBGn$useMediaQuery, Box as $4dBGn$Box, Drawer as $4dBGn$Drawer, IconButton as $4dBGn$IconButton} from "@mui/material";
+import {TextField as $4dBGn$TextField, Grid as $4dBGn$Grid, Typography as $4dBGn$Typography, useMediaQuery as $4dBGn$useMediaQuery, Box as $4dBGn$Box, Drawer as $4dBGn$Drawer, IconButton as $4dBGn$IconButton} from "@mui/material";
 import $4dBGn$muimaterialAutocomplete from "@mui/material/Autocomplete";
 import $4dBGn$muiiconsmaterialLocationOn from "@mui/icons-material/LocationOn";
 import $4dBGn$autosuggesthighlightmatch from "autosuggest-highlight/match";
@@ -9,6 +9,7 @@ import $4dBGn$autosuggesthighlightparse from "autosuggest-highlight/parse";
 import $4dBGn$lodashthrottle from "lodash.throttle";
 import {styled as $4dBGn$styled} from "@mui/system";
 import {useLocation as $4dBGn$useLocation, useSearchParams as $4dBGn$useSearchParams} from "react-router-dom";
+import $4dBGn$muistylesmakeStyles from "@mui/styles/makeStyles";
 import $4dBGn$muimaterialCircularProgress from "@mui/material/CircularProgress";
 import "leaflet-defaulticon-compatibility";
 import {Marker as $4dBGn$Marker, Popup as $4dBGn$Popup, Polyline as $4dBGn$Polyline, MapContainer as $4dBGn$MapContainer, TileLayer as $4dBGn$TileLayer, useMapEvents as $4dBGn$useMapEvents, useMap as $4dBGn$useMap} from "react-leaflet";
@@ -198,6 +199,7 @@ var $987f89af98b5a0b6$export$2e2bcd8739ae039 = $987f89af98b5a0b6$var$LocationInp
 
 
 
+
 // Taken from https://github.com/changey/react-leaflet-markercluster/blob/60992857087c181ada1e8e6659a6666a13c1f868/src/react-leaflet-markercluster.js
 // @ts-expect-error TS(7031): Binding element '_c' implicitly has an 'any' type.
 function $3be63165004362ea$var$createMarkerCluster({ children: _c, ...props }, context) {
@@ -281,7 +283,8 @@ var $cb9d4bbdbfa10423$export$2e2bcd8739ae039 = $cb9d4bbdbfa10423$var$QueryString
 
 
 
-const $5f1b540baeb2942f$var$useStyles = (0, $4dBGn$makeStyles)(()=>({
+
+const $5f1b540baeb2942f$var$useStyles = (0, $4dBGn$muistylesmakeStyles)(()=>({
         closeButton: {
             position: 'absolute',
             zIndex: 1400,
@@ -325,7 +328,7 @@ const $5f1b540baeb2942f$var$MobileDrawer = ({ popupContent: popupContent, onClos
 var $5f1b540baeb2942f$export$2e2bcd8739ae039 = $5f1b540baeb2942f$var$MobileDrawer;
 
 
-const $0a155f5c43a344bc$var$useStyles = (0, $4dBGn$makeStyles)(()=>({
+const $0a155f5c43a344bc$var$useStyles = (0, $4dBGn$muistylesmakeStyles)(()=>({
         isLoading: {
             zIndex: 1000,
             position: 'absolute',

@@ -1,19 +1,24 @@
 {
   "name": "@semapps/middlewares",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "description": "Express Middlewares for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "@semapps/mime-types": "1.1.3",
+    "@semapps/mime-types": "1.1.4",
     "busboy": "^0.3.1",
-    "memory-streams": "^0.1.3",
-    "moleculer": "^0.14.18"
+    "memory-streams": "^0.1.3"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "main": "./dist/index.js"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=22.10.0"
+  },
+  "type": "module",
+  "main": "./index.ts",
+  "peerDependencies": {
+    "moleculer": "^0.14.35"
   }
 }

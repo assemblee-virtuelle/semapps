@@ -10,6 +10,7 @@ var $3RhHq$muixdatepickersAdapterDateFns = require("@mui/x-date-pickers/AdapterD
 var $3RhHq$fullcalendarreact = require("@fullcalendar/react");
 var $3RhHq$fullcalendardaygrid = require("@fullcalendar/daygrid");
 var $3RhHq$muimaterial = require("@mui/material");
+var $3RhHq$muistylesmakeStyles = require("@mui/styles/makeStyles");
 var $3RhHq$reactrouterdom = require("react-router-dom");
 var $3RhHq$fullcalendarlist = require("@fullcalendar/list");
 
@@ -106,6 +107,7 @@ var $c332daa71b957685$export$2e2bcd8739ae039 = $c332daa71b957685$var$Picker;
 
 
 
+
 const $270c79206b8dbb68$var$useFullCalendarProps = ({ label: label, startDate: startDate, endDate: endDate, linkType: linkType = 'edit' })=>{
     const { data: data, isLoading: isLoading, resource: resource } = (0, $3RhHq$reactadmin.useListContext)();
     const [searchParams, setSearchParams] = (0, $3RhHq$reactrouterdom.useSearchParams)();
@@ -156,7 +158,7 @@ const $270c79206b8dbb68$var$useFullCalendarProps = ({ label: label, startDate: s
 var $270c79206b8dbb68$export$2e2bcd8739ae039 = $270c79206b8dbb68$var$useFullCalendarProps;
 
 
-const $7d9b1d3645bfb046$var$useGlobalStyles = (0, $3RhHq$muimaterial.makeStyles)((theme)=>({
+const $7d9b1d3645bfb046$var$useGlobalStyles = (0, ($parcel$interopDefault($3RhHq$muistylesmakeStyles)))((theme)=>({
         '@global': {
             '.fc-button': {
                 backgroundColor: `${theme.palette.primary.main} !important`,
@@ -197,7 +199,7 @@ var $7d9b1d3645bfb046$export$2e2bcd8739ae039 = $7d9b1d3645bfb046$var$CalendarLis
 
 
 
-const $f30a06264cfbf3f1$var$useGlobalStyles = (0, $3RhHq$muimaterial.makeStyles)((theme)=>({
+const $f30a06264cfbf3f1$var$useGlobalStyles = (0, ($parcel$interopDefault($3RhHq$muistylesmakeStyles)))((theme)=>({
         '@global': {
             '.fc-button': {
                 backgroundColor: `${theme.palette.primary.main} !important`,

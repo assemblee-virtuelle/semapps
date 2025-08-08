@@ -4,6 +4,7 @@ var $583VT$reactadmin = require("react-admin");
 var $583VT$rainputrichtext = require("ra-input-rich-text");
 var $583VT$tiptapextensionplaceholder = require("@tiptap/extension-placeholder");
 var $583VT$muimaterial = require("@mui/material");
+var $583VT$muistylesmakeStyles = require("@mui/styles/makeStyles");
 var $583VT$muiiconsmaterialSend = require("@mui/icons-material/Send");
 var $583VT$semappssemanticdataprovider = require("@semapps/semantic-data-provider");
 var $583VT$semappsauthprovider = require("@semapps/auth-provider");
@@ -48,6 +49,7 @@ $parcel$export(module.exports, "ACTOR_TYPES", () => $ca4f6bb216ebdfdd$export$964
 $parcel$export(module.exports, "OBJECT_TYPES", () => $ca4f6bb216ebdfdd$export$c49cfb2681596b20);
 $parcel$export(module.exports, "PUBLIC_URI", () => $ca4f6bb216ebdfdd$export$4d8d554031975581);
 // Components
+
 
 
 
@@ -806,7 +808,7 @@ const $b8eb0286f5686802$var$CustomMention = (0, ($parcel$interopDefault($583VT$t
 var $b8eb0286f5686802$export$2e2bcd8739ae039 = $b8eb0286f5686802$var$CustomMention;
 
 
-const $a2b68b573919c8a3$var$useStyles = (0, $583VT$muimaterial.makeStyles)((theme)=>({
+const $a2b68b573919c8a3$var$useStyles = (0, ($parcel$interopDefault($583VT$muistylesmakeStyles)))((theme)=>({
         form: {
             marginTop: -12 // Negative margin to keep the form close to the label
         },
@@ -1005,7 +1007,8 @@ var $a2b68b573919c8a3$export$2e2bcd8739ae039 = $a2b68b573919c8a3$var$PostComment
 
 
 
-const $0120d12473c65b5c$var$useStyles = (0, $583VT$muimaterial.makeStyles)(()=>({
+
+const $0120d12473c65b5c$var$useStyles = (0, ($parcel$interopDefault($583VT$muistylesmakeStyles)))(()=>({
         container: {
             paddingLeft: 80,
             marginTop: 8,
@@ -1562,7 +1565,7 @@ var $10f3abf411a5e9d4$export$2e2bcd8739ae039 = $10f3abf411a5e9d4$var$useWebfinge
 
 
 
-const $d217d582899c7580$var$useStyles = (0, $583VT$muimaterial.makeStyles)((theme)=>({
+const $d217d582899c7580$var$useStyles = (0, ($parcel$interopDefault($583VT$muistylesmakeStyles)))((theme)=>({
         items: {
             background: '#fff',
             borderRadius: '0.5rem',

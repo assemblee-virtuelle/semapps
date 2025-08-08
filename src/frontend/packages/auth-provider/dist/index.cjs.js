@@ -7,6 +7,7 @@ var $4Uj5b$reactadmin = require("react-admin");
 var $4Uj5b$semappssemanticdataprovider = require("@semapps/semantic-data-provider");
 var $4Uj5b$muiiconsmaterialShare = require("@mui/icons-material/Share");
 var $4Uj5b$muimaterial = require("@mui/material");
+var $4Uj5b$muistylesmakeStyles = require("@mui/styles/makeStyles");
 var $4Uj5b$muimaterialAutocomplete = require("@mui/material/Autocomplete");
 var $4Uj5b$muiiconsmaterialPerson = require("@mui/icons-material/Person");
 var $4Uj5b$muisystem = require("@mui/system");
@@ -21,6 +22,7 @@ var $4Uj5b$muiiconsmaterialLock = require("@mui/icons-material/Lock");
 var $4Uj5b$speakingurl = require("speakingurl");
 var $4Uj5b$reacthookform = require("react-hook-form");
 var $4Uj5b$muiiconsmaterial = require("@mui/icons-material");
+var $4Uj5b$muistyles = require("@mui/styles");
 var $4Uj5b$muiiconsmaterialAccountCircle = require("@mui/icons-material/AccountCircle");
 var $4Uj5b$lodashisEqual = require("lodash/isEqual");
 
@@ -668,7 +670,9 @@ var $436b98c09d4bfc58$export$2e2bcd8739ae039 = $436b98c09d4bfc58$var$CreateWithP
 
 
 
-const $0fe99d8ef25120fc$var$useStyles = (0, $4Uj5b$muimaterial.makeStyles)(()=>({
+
+
+const $0fe99d8ef25120fc$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))(()=>({
         list: {
             padding: 0,
             width: '100%'
@@ -776,6 +780,7 @@ var $0fe99d8ef25120fc$export$2e2bcd8739ae039 = $0fe99d8ef25120fc$var$AddPermissi
 
 
 
+
 const $6ad8b01b8ba81118$var$AgentIcon = ({ agent: agent })=>{
     switch(agent.predicate){
         case 0, $09c536abc6cea017$export$2703254089a859eb:
@@ -791,7 +796,7 @@ const $6ad8b01b8ba81118$var$AgentIcon = ({ agent: agent })=>{
 var $6ad8b01b8ba81118$export$2e2bcd8739ae039 = $6ad8b01b8ba81118$var$AgentIcon;
 
 
-const $950ca392943fda1f$var$useStyles = (0, $4Uj5b$muimaterial.makeStyles)(()=>({
+const $950ca392943fda1f$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))(()=>({
         listItem: {
             paddingLeft: 4,
             paddingRight: 36
@@ -1030,7 +1035,7 @@ const $88e412417ca399a1$var$useAgents = (uri)=>{
 var $88e412417ca399a1$export$2e2bcd8739ae039 = $88e412417ca399a1$var$useAgents;
 
 
-const $d7753b9837c85814$var$useStyles = (0, $4Uj5b$muimaterial.makeStyles)(()=>({
+const $d7753b9837c85814$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))(()=>({
         title: {
             paddingBottom: 8
         },
@@ -1678,6 +1683,7 @@ var $f9e45ac9fbccef57$export$2e2bcd8739ae039 = $f9e45ac9fbccef57$var$validatePas
 
 
 
+
 /**
  * @typedef {object} Color
  * @property {number} red
@@ -1714,7 +1720,7 @@ function $bf8434ea21da792a$export$2e2bcd8739ae039(props) {
     };
     const fade = Math.max(0, Math.min(1, (currentVal - minVal) / (maxVal - minVal)));
     const currentColor = $bf8434ea21da792a$var$colorGradient(fade, color1, color2);
-    const StyledLinearProgress = (0, $4Uj5b$muimaterial.withStyles)({
+    const StyledLinearProgress = (0, $4Uj5b$muistyles.withStyles)({
         colorPrimary: {
             backgroundColor: 'black' // '#e0e0e0'
         },
@@ -2528,7 +2534,8 @@ var $be1129164d40878e$export$2e2bcd8739ae039 = $be1129164d40878e$var$ResetPasswo
 
 
 
-const $d40c6416028cfc15$var$useStyles = (0, $4Uj5b$muimaterial.makeStyles)((theme)=>({
+
+const $d40c6416028cfc15$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))((theme)=>({
         '@global': {
             body: {
                 backgroundColor: theme.palette.secondary.main

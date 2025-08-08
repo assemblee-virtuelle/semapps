@@ -6,7 +6,8 @@ import $1obPJ$react, {useEffect as $1obPJ$useEffect, useState as $1obPJ$useState
 import {CreateActions as $1obPJ$CreateActions, useResourceContext as $1obPJ$useResourceContext, Create as $1obPJ$Create, usePermissions as $1obPJ$usePermissions, useNotify as $1obPJ$useNotify, useRedirect as $1obPJ$useRedirect, useGetRecordId as $1obPJ$useGetRecordId, Edit as $1obPJ$Edit, useResourceDefinition as $1obPJ$useResourceDefinition, useRecordContext as $1obPJ$useRecordContext, TopToolbar as $1obPJ$TopToolbar, ListButton as $1obPJ$ListButton, ShowButton as $1obPJ$ShowButton, Button as $1obPJ$Button, useTranslate as $1obPJ$useTranslate, useGetList as $1obPJ$useGetList, useDataProvider as $1obPJ$useDataProvider, Loading as $1obPJ$Loading, Error as $1obPJ$Error, useAuthProvider as $1obPJ$useAuthProvider, Toolbar as $1obPJ$Toolbar, SaveButton as $1obPJ$SaveButton, DeleteButton as $1obPJ$DeleteButton, EditButton as $1obPJ$EditButton, List as $1obPJ$List1, CreateButton as $1obPJ$CreateButton, ExportButton as $1obPJ$ExportButton, Show as $1obPJ$Show, useLogin as $1obPJ$useLogin, useGetIdentity as $1obPJ$useGetIdentity, Form as $1obPJ$Form, useSafeSetState as $1obPJ$useSafeSetState, useLocaleState as $1obPJ$useLocaleState, TextInput as $1obPJ$TextInput, required as $1obPJ$required, minLength as $1obPJ$minLength, email as $1obPJ$email, Notification as $1obPJ$Notification, Resource as $1obPJ$Resource, useUserMenu as $1obPJ$useUserMenu, UserMenu as $1obPJ$UserMenu, Logout as $1obPJ$Logout, useGetPermissions as $1obPJ$useGetPermissions} from "react-admin";
 import {useCreateContainerUri as $1obPJ$useCreateContainerUri} from "@semapps/semantic-data-provider";
 import $1obPJ$muiiconsmaterialShare from "@mui/icons-material/Share";
-import {makeStyles as $1obPJ$makeStyles, Dialog as $1obPJ$Dialog, DialogTitle as $1obPJ$DialogTitle, DialogContent as $1obPJ$DialogContent, DialogActions as $1obPJ$DialogActions, TextField as $1obPJ$TextField, List as $1obPJ$List, ListItem as $1obPJ$ListItem, ListItemAvatar as $1obPJ$ListItemAvatar, Avatar as $1obPJ$Avatar, ListItemText as $1obPJ$ListItemText, ListItemSecondaryAction as $1obPJ$ListItemSecondaryAction, IconButton as $1obPJ$IconButton, Menu as $1obPJ$Menu, MenuItem as $1obPJ$MenuItem, ListItemIcon as $1obPJ$ListItemIcon, useMediaQuery as $1obPJ$useMediaQuery, DialogContentText as $1obPJ$DialogContentText, Button as $1obPJ$Button1, Card as $1obPJ$Card, Typography as $1obPJ$Typography, CardActions as $1obPJ$CardActions, Box as $1obPJ$Box, CardContent as $1obPJ$CardContent, withStyles as $1obPJ$withStyles, LinearProgress as $1obPJ$LinearProgress} from "@mui/material";
+import {Dialog as $1obPJ$Dialog, DialogTitle as $1obPJ$DialogTitle, DialogContent as $1obPJ$DialogContent, DialogActions as $1obPJ$DialogActions, TextField as $1obPJ$TextField, List as $1obPJ$List, ListItem as $1obPJ$ListItem, ListItemAvatar as $1obPJ$ListItemAvatar, Avatar as $1obPJ$Avatar, ListItemText as $1obPJ$ListItemText, ListItemSecondaryAction as $1obPJ$ListItemSecondaryAction, IconButton as $1obPJ$IconButton, Menu as $1obPJ$Menu, MenuItem as $1obPJ$MenuItem, ListItemIcon as $1obPJ$ListItemIcon, useMediaQuery as $1obPJ$useMediaQuery, DialogContentText as $1obPJ$DialogContentText, Button as $1obPJ$Button1, Card as $1obPJ$Card, Typography as $1obPJ$Typography, CardActions as $1obPJ$CardActions, Box as $1obPJ$Box, CardContent as $1obPJ$CardContent, LinearProgress as $1obPJ$LinearProgress} from "@mui/material";
+import $1obPJ$muistylesmakeStyles from "@mui/styles/makeStyles";
 import $1obPJ$muimaterialAutocomplete from "@mui/material/Autocomplete";
 import $1obPJ$muiiconsmaterialPerson from "@mui/icons-material/Person";
 import {styled as $1obPJ$styled} from "@mui/system";
@@ -21,6 +22,7 @@ import $1obPJ$muiiconsmaterialLock from "@mui/icons-material/Lock";
 import $1obPJ$speakingurl from "speakingurl";
 import {useFormContext as $1obPJ$useFormContext} from "react-hook-form";
 import {VisibilityOff as $1obPJ$VisibilityOff, Visibility as $1obPJ$Visibility} from "@mui/icons-material";
+import {withStyles as $1obPJ$withStyles} from "@mui/styles";
 import $1obPJ$muiiconsmaterialAccountCircle from "@mui/icons-material/AccountCircle";
 import $1obPJ$lodashisEqual from "lodash/isEqual";
 
@@ -612,7 +614,9 @@ var $555a60066c55ca73$export$2e2bcd8739ae039 = $555a60066c55ca73$var$CreateWithP
 
 
 
-const $8e7d7e56831aa2ef$var$useStyles = (0, $1obPJ$makeStyles)(()=>({
+
+
+const $8e7d7e56831aa2ef$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
         list: {
             padding: 0,
             width: '100%'
@@ -720,6 +724,7 @@ var $8e7d7e56831aa2ef$export$2e2bcd8739ae039 = $8e7d7e56831aa2ef$var$AddPermissi
 
 
 
+
 const $5038212710cd44fa$var$AgentIcon = ({ agent: agent })=>{
     switch(agent.predicate){
         case 0, $dd9154ee844248d7$export$2703254089a859eb:
@@ -735,7 +740,7 @@ const $5038212710cd44fa$var$AgentIcon = ({ agent: agent })=>{
 var $5038212710cd44fa$export$2e2bcd8739ae039 = $5038212710cd44fa$var$AgentIcon;
 
 
-const $2c2af8264d5cc27a$var$useStyles = (0, $1obPJ$makeStyles)(()=>({
+const $2c2af8264d5cc27a$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
         listItem: {
             paddingLeft: 4,
             paddingRight: 36
@@ -974,7 +979,7 @@ const $9437ede267ca0f1e$var$useAgents = (uri)=>{
 var $9437ede267ca0f1e$export$2e2bcd8739ae039 = $9437ede267ca0f1e$var$useAgents;
 
 
-const $9461085805fdfe26$var$useStyles = (0, $1obPJ$makeStyles)(()=>({
+const $9461085805fdfe26$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
         title: {
             paddingBottom: 8
         },
@@ -1615,6 +1620,7 @@ const $79d99fa54c4682fc$var$validatePasswordStrength = (scorer = (0, $76384d8f83
         return undefined;
     };
 var $79d99fa54c4682fc$export$2e2bcd8739ae039 = $79d99fa54c4682fc$var$validatePasswordStrength;
+
 
 
 
@@ -2472,7 +2478,8 @@ var $4c941e9b40342087$export$2e2bcd8739ae039 = $4c941e9b40342087$var$ResetPasswo
 
 
 
-const $771ddf0b1808bdd9$var$useStyles = (0, $1obPJ$makeStyles)((theme)=>({
+
+const $771ddf0b1808bdd9$var$useStyles = (0, $1obPJ$muistylesmakeStyles)((theme)=>({
         '@global': {
             body: {
                 backgroundColor: theme.palette.secondary.main

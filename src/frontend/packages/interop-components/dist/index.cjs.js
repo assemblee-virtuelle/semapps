@@ -2,6 +2,7 @@ var $as47w$reactjsxruntime = require("react/jsx-runtime");
 var $as47w$react = require("react");
 var $as47w$reactadmin = require("react-admin");
 var $as47w$muimaterial = require("@mui/material");
+var $as47w$muistylesmakeStyles = require("@mui/styles/makeStyles");
 var $as47w$muimaterialAutocomplete = require("@mui/material/Autocomplete");
 var $as47w$muiiconsmaterialLanguage = require("@mui/icons-material/Language");
 var $as47w$muiiconsmaterialAdd = require("@mui/icons-material/Add");
@@ -47,7 +48,8 @@ $parcel$export(module.exports, "useSync", () => $b20f9c36b772f8b4$export$2e2bcd8
 
 
 
-const $1e0deedc4d046342$var$useStyles = (0, $as47w$muimaterial.makeStyles)((theme)=>({
+
+const $1e0deedc4d046342$var$useStyles = (0, ($parcel$interopDefault($as47w$muistylesmakeStyles)))((theme)=>({
         icon: {
             color: theme.palette.text.secondary,
             marginRight: theme.spacing(2)
@@ -295,6 +297,7 @@ var $acd5a98386bab789$export$2e2bcd8739ae039 = $acd5a98386bab789$var$LexiconCrea
 
 
 
+
 const $4c9b9c00273623b7$var$useFork = (resourceId)=>{
     const dataProvider = (0, $as47w$reactadmin.useDataProvider)();
     const redirect = (0, $as47w$reactadmin.useRedirect)();
@@ -439,7 +442,7 @@ const $29020659369365dd$var$ImportForm = ({ stripProperties: stripProperties })=
 var $29020659369365dd$export$2e2bcd8739ae039 = $29020659369365dd$var$ImportForm;
 
 
-const $0a2a9df1212fcaa1$var$useStyles = (0, $as47w$muimaterial.makeStyles)(()=>({
+const $0a2a9df1212fcaa1$var$useStyles = (0, ($parcel$interopDefault($as47w$muistylesmakeStyles)))(()=>({
         tab: {
             maxWidth: 'unset',
             padding: '6px 24px'
@@ -447,7 +450,6 @@ const $0a2a9df1212fcaa1$var$useStyles = (0, $as47w$muimaterial.makeStyles)(()=>(
     }));
 const $0a2a9df1212fcaa1$var$CreateOrImportForm = ({ stripProperties: stripProperties, ...rest })=>{
     const [tab, setTab] = (0, $as47w$react.useState)(0);
-    // @ts-expect-error TS(2349): This expression is not callable.
     const classes = $0a2a9df1212fcaa1$var$useStyles();
     const xs = (0, $as47w$muimaterial.useMediaQuery)((theme)=>theme.breakpoints.down('sm'), {
         noSsr: true

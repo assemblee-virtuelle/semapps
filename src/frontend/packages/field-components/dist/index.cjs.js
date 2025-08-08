@@ -2,6 +2,7 @@ var $gJbUX$reactjsxruntime = require("react/jsx-runtime");
 var $gJbUX$react = require("react");
 var $gJbUX$reactadmin = require("react-admin");
 var $gJbUX$muimaterial = require("@mui/material");
+var $gJbUX$muistylesmakeStyles = require("@mui/styles/makeStyles");
 var $gJbUX$muiiconsmaterialLaunch = require("@mui/icons-material/Launch");
 var $gJbUX$reacthookform = require("react-hook-form");
 var $gJbUX$muiiconsmaterialAdd = require("@mui/icons-material/Add");
@@ -37,7 +38,8 @@ $parcel$export(module.exports, "SeparatedListField", () => $d392e56952d41657$exp
 
 
 
-const $3f018d83d5c220cb$var$useStyles = (0, $gJbUX$muimaterial.makeStyles)((theme)=>({
+
+const $3f018d83d5c220cb$var$useStyles = (0, ($parcel$interopDefault($gJbUX$muistylesmakeStyles)))((theme)=>({
         parent: (props)=>({
                 position: 'relative',
                 ...props.parent
@@ -184,7 +186,9 @@ var $b30f322c513cbc10$export$2e2bcd8739ae039 = $b30f322c513cbc10$var$ReferenceFi
 
 
 
-const $f47ebe41860d457c$var$useStyles = (0, $gJbUX$muimaterial.makeStyles)((theme)=>({
+
+
+const $f47ebe41860d457c$var$useStyles = (0, ($parcel$interopDefault($gJbUX$muistylesmakeStyles)))((theme)=>({
         root: {
             width: '100%',
             maxWidth: '100%',
@@ -365,7 +369,7 @@ const $f47ebe41860d457c$var$ResultsList = ({ keyword: keyword, source: source, r
 var $f47ebe41860d457c$export$2e2bcd8739ae039 = $f47ebe41860d457c$var$ResultsList;
 
 
-const $e2e32dffa6383430$var$useStyles = (0, $gJbUX$muimaterial.makeStyles)(()=>({
+const $e2e32dffa6383430$var$useStyles = (0, ($parcel$interopDefault($gJbUX$muistylesmakeStyles)))(()=>({
         title: {
             paddingBottom: 8
         },
@@ -579,6 +583,7 @@ var $c15a04bb86f69ac4$export$2e2bcd8739ae039 = $c15a04bb86f69ac4$var$QuickAppend
 
 
 
+
 const $8e04b489ede64e08$var$defaultdomainMapping = {
     'github.com': {
         label: 'GitHub',
@@ -626,7 +631,7 @@ const $8e04b489ede64e08$var$defaultdomainMapping = {
         contrastText: 'white'
     }
 };
-const $8e04b489ede64e08$var$useStyles = (0, $gJbUX$muimaterial.makeStyles)(()=>({
+const $8e04b489ede64e08$var$useStyles = (0, ($parcel$interopDefault($gJbUX$muistylesmakeStyles)))(()=>({
         link: {
             textDecoration: 'unset',
             '& :hover': {

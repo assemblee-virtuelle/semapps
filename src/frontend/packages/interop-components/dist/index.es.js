@@ -1,7 +1,8 @@
 import {jsxs as $4od2P$jsxs, jsx as $4od2P$jsx, Fragment as $4od2P$Fragment} from "react/jsx-runtime";
 import $4od2P$react, {useState as $4od2P$useState, useCallback as $4od2P$useCallback, forwardRef as $4od2P$forwardRef, useMemo as $4od2P$useMemo, useEffect as $4od2P$useEffect, createElement as $4od2P$createElement} from "react";
 import {useCreateSuggestionContext as $4od2P$useCreateSuggestionContext, useResourceContext as $4od2P$useResourceContext, useCreate as $4od2P$useCreate, useLocale as $4od2P$useLocale, useTranslate as $4od2P$useTranslate, useNotify as $4od2P$useNotify, useInput as $4od2P$useInput, FieldTitle as $4od2P$FieldTitle, InputHelperText as $4od2P$InputHelperText, SimpleForm as $4od2P$SimpleForm, TextInput as $4od2P$TextInput, RadioButtonGroupInput as $4od2P$RadioButtonGroupInput, useDataProvider as $4od2P$useDataProvider, useRedirect as $4od2P$useRedirect, useSaveContext as $4od2P$useSaveContext, required as $4od2P$required} from "react-admin";
-import {Dialog as $4od2P$Dialog, DialogContent as $4od2P$DialogContent, DialogActions as $4od2P$DialogActions, Button as $4od2P$Button, makeStyles as $4od2P$makeStyles, TextField as $4od2P$TextField, Grid as $4od2P$Grid, Typography as $4od2P$Typography, useMediaQuery as $4od2P$useMediaQuery, Box as $4od2P$Box, Tabs as $4od2P$Tabs, Tab as $4od2P$Tab, Divider as $4od2P$Divider} from "@mui/material";
+import {Dialog as $4od2P$Dialog, DialogContent as $4od2P$DialogContent, DialogActions as $4od2P$DialogActions, Button as $4od2P$Button, TextField as $4od2P$TextField, Grid as $4od2P$Grid, Typography as $4od2P$Typography, useMediaQuery as $4od2P$useMediaQuery, Box as $4od2P$Box, Tabs as $4od2P$Tabs, Tab as $4od2P$Tab, Divider as $4od2P$Divider} from "@mui/material";
+import $4od2P$muistylesmakeStyles from "@mui/styles/makeStyles";
 import $4od2P$muimaterialAutocomplete from "@mui/material/Autocomplete";
 import $4od2P$muiiconsmaterialLanguage from "@mui/icons-material/Language";
 import $4od2P$muiiconsmaterialAdd from "@mui/icons-material/Add";
@@ -29,7 +30,8 @@ import $4od2P$muiiconsmaterialStarBorder from "@mui/icons-material/StarBorder";
 
 
 
-const $00e489946b9a2205$var$useStyles = (0, $4od2P$makeStyles)((theme)=>({
+
+const $00e489946b9a2205$var$useStyles = (0, $4od2P$muistylesmakeStyles)((theme)=>({
         icon: {
             color: theme.palette.text.secondary,
             marginRight: theme.spacing(2)
@@ -277,6 +279,7 @@ var $4ac3b388dff428b8$export$2e2bcd8739ae039 = $4ac3b388dff428b8$var$LexiconCrea
 
 
 
+
 const $12e15770de6a8666$var$useFork = (resourceId)=>{
     const dataProvider = (0, $4od2P$useDataProvider)();
     const redirect = (0, $4od2P$useRedirect)();
@@ -421,7 +424,7 @@ const $0781a61c2e5768aa$var$ImportForm = ({ stripProperties: stripProperties })=
 var $0781a61c2e5768aa$export$2e2bcd8739ae039 = $0781a61c2e5768aa$var$ImportForm;
 
 
-const $8f282f96efc98334$var$useStyles = (0, $4od2P$makeStyles)(()=>({
+const $8f282f96efc98334$var$useStyles = (0, $4od2P$muistylesmakeStyles)(()=>({
         tab: {
             maxWidth: 'unset',
             padding: '6px 24px'
@@ -429,7 +432,6 @@ const $8f282f96efc98334$var$useStyles = (0, $4od2P$makeStyles)(()=>({
     }));
 const $8f282f96efc98334$var$CreateOrImportForm = ({ stripProperties: stripProperties, ...rest })=>{
     const [tab, setTab] = (0, $4od2P$useState)(0);
-    // @ts-expect-error TS(2349): This expression is not callable.
     const classes = $8f282f96efc98334$var$useStyles();
     const xs = (0, $4od2P$useMediaQuery)((theme)=>theme.breakpoints.down('sm'), {
         noSsr: true

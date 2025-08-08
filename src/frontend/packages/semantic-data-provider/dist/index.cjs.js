@@ -1,6 +1,5 @@
 var $bkNnK$ldoconnected = require("@ldo/connected");
 var $bkNnK$ldoconnectedsolid = require("@ldo/connected-solid");
-var $bkNnK$ldoldo = require("@ldo/ldo");
 var $bkNnK$speakingurl = require("speakingurl");
 var $bkNnK$jsonld = require("jsonld");
 var $bkNnK$rdfjsdatamodel = require("@rdfjs/data-model");
@@ -13,7 +12,7 @@ var $bkNnK$httplinkheader = require("http-link-header");
 var $bkNnK$changecase = require("change-case");
 var $bkNnK$react = require("react");
 var $bkNnK$reactjsxruntime = require("react/jsx-runtime");
-var $bkNnK$muimaterial = require("@mui/material");
+var $bkNnK$muistylesmakeStyles = require("@mui/styles/makeStyles");
 
 
 function $parcel$exportWildcard(dest, source) {
@@ -69,7 +68,6 @@ $parcel$export(module.exports, "ReificationArrayInput", () => $ef83a7754e7f8331$
 $parcel$export(module.exports, "createWsChannel", () => $84ab912646919f8c$export$28772ab4c256e709);
 $parcel$export(module.exports, "getOrCreateWsChannel", () => $84ab912646919f8c$export$8d60734939c59ced);
 $parcel$export(module.exports, "createSolidNotificationChannel", () => $84ab912646919f8c$export$3edfe18db119b920);
-
 
 
 
@@ -362,6 +360,19 @@ const $e6fbab1f303bdb93$var$arrayOf = (value)=>{
 var $e6fbab1f303bdb93$export$2e2bcd8739ae039 = $e6fbab1f303bdb93$var$arrayOf;
 
 
+
+// Fetch the selected resources of the provided containers
+// Filter out resources that are provided (can avoid loading a resource twice)
+const $448b8598c73a447a$var$fetchSelectedResources = async (containers, excludedResourcesUris, config)=>{
+    let selectedResourcesUris = containers.filter((c)=>c.selectedResources).map((c)=>c.selectedResources).flat();
+    // Filter out resources which are already included in the SPARQL query results
+    selectedResourcesUris = selectedResourcesUris.filter((uri)=>!excludedResourcesUris.includes(uri));
+    const selectedResources = await Promise.all(selectedResourcesUris.map((resourceUri)=>(0, $6e277d32991a95da$export$2e2bcd8739ae039)(resourceUri, config)));
+    return selectedResources;
+};
+var $448b8598c73a447a$export$2e2bcd8739ae039 = $448b8598c73a447a$var$fetchSelectedResources;
+
+
 const $8c999cc29c8d6a6c$var$isValidLDPContainer = (container)=>{
     const resourceType = container.type || container['@type'];
     return Array.isArray(resourceType) ? resourceType.includes('ldp:Container') : resourceType === 'ldp:Container';
@@ -369,24 +380,24 @@ const $8c999cc29c8d6a6c$var$isValidLDPContainer = (container)=>{
 const $8c999cc29c8d6a6c$var$isObject = (val)=>{
     return val != null && typeof val === 'object' && !Array.isArray(val);
 };
-const $8c999cc29c8d6a6c$var$fetchContainers = async (containers, params, { httpClient: httpClient, jsonContext: jsonContext })=>{
-    const fetchPromises = containers.map((container)=>httpClient(container.uri).then(async ({ json: json })=>{
-            const jsonResponse = json;
-            // If container's context is different, compact it to have an uniform result
-            // TODO deep compare if the context is an object
-            // This is most likely an array of two strings
-            if (jsonResponse['@context'] !== jsonContext) return (0, ($parcel$interopDefault($bkNnK$jsonld))).compact(jsonResponse, jsonContext);
-            return jsonResponse;
-        }).then((json)=>{
-            if (!$8c999cc29c8d6a6c$var$isValidLDPContainer(json)) throw new Error(`${container.uri} is not a LDP container`);
-            return (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(json['ldp:contains']).map((resource)=>({
-                    '@context': json['@context'],
-                    ...resource
-                }));
-        }));
+const $8c999cc29c8d6a6c$var$fetchContainers = async (containers, params, config)=>{
+    const { httpClient: httpClient, jsonContext: jsonContext } = config;
     // Fetch simultaneously all containers
-    const results = await Promise.all(fetchPromises);
+    const results = await Promise.all(containers.filter((c)=>!c.selectedResources).map(async (container)=>{
+        let { json: json } = await httpClient(container.uri);
+        // If container's context is different, compact it to have an uniform result
+        // TODO deep compare if the context is an object
+        if (json['@context'] !== jsonContext) json = await (0, ($parcel$interopDefault($bkNnK$jsonld))).compact(json, jsonContext);
+        if (!$8c999cc29c8d6a6c$var$isValidLDPContainer(json)) throw new Error(`${container.uri} is not a LDP container`);
+        return (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(json['ldp:contains']).map((resource)=>({
+                '@context': json['@context'],
+                ...resource
+            }));
+    }));
     let resources = results.flat();
+    // Append selected resources (if any)
+    const selectedResources = await (0, $448b8598c73a447a$export$2e2bcd8739ae039)(containers, resources.map((r)=>r.id), config);
+    resources = resources.concat(selectedResources);
     resources = resources.map((resource)=>{
         resource.id = resource.id || resource['@id'];
         return resource;
@@ -796,6 +807,7 @@ const $1d6ef12386121fca$var$buildSparqlQuery = ({ containersUris: containersUris
 var $1d6ef12386121fca$export$2e2bcd8739ae039 = $1d6ef12386121fca$var$buildSparqlQuery;
 
 
+
 const $fdadbcf8133b8b4f$var$compare = (a, b)=>{
     switch(typeof a){
         case 'string':
@@ -807,16 +819,19 @@ const $fdadbcf8133b8b4f$var$compare = (a, b)=>{
     }
 };
 const $fdadbcf8133b8b4f$var$fetchSparqlEndpoints = async (containers, resourceId, params, config)=>{
-    const { dataServers: dataServers, resources: resources, httpClient: httpClient, jsonContext: jsonContext, ontologies: ontologies } = config;
-    const dataModel = resources[resourceId];
-    const serversToQuery = containers.reduce((acc, cur)=>{
+    const { dataServers: dataServers, httpClient: httpClient, jsonContext: jsonContext, ontologies: ontologies } = config;
+    const dataModel = config.resources[resourceId];
+    // Find servers to query with SPARQL
+    // (Ignore containers with selected resources, they will be fetched below)
+    const serversToQuery = containers.filter((c)=>!c.selectedResources).reduce((acc, cur)=>{
         if (!acc.includes(cur.server)) acc.push(cur.server);
         return acc;
     }, []);
-    const sparqlQueryPromises = serversToQuery.map((serverKey)=>new Promise((resolve, reject)=>{
+    // Run simultaneous SPARQL queries
+    const results = await Promise.all(serversToQuery.map((serverKey)=>new Promise((resolve, reject)=>{
             const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes;
             const sparqlQuery = (0, $1d6ef12386121fca$export$2e2bcd8739ae039)({
-                containersUris: containers.filter((c)=>c.server === serverKey).map((c)=>c.uri),
+                containersUris: containers.filter((c)=>c.server === serverKey && !c.selectedResources).map((c)=>c.uri),
                 params: params,
                 dataModel: dataModel,
                 ontologies: ontologies
@@ -856,17 +871,18 @@ const $fdadbcf8133b8b4f$var$fetchSparqlEndpoints = async (containers, resourceId
                         ...resource
                     })) || []);
             }).catch((e)=>reject(e));
-        }));
-    // Run simultaneous SPARQL queries
-    let results = await Promise.all(sparqlQueryPromises);
-    if (results.length === 0) return {
+        })));
+    // Merge results from all SPARQL servers
+    let resources = results.flat();
+    // Append selected resources to SPARQL query results
+    const selectedResources = await (0, $448b8598c73a447a$export$2e2bcd8739ae039)(containers, resources.map((r)=>r.id), config);
+    resources = resources.concat(selectedResources);
+    if (resources.length === 0) return {
         data: [],
         total: 0
     };
-    // Merge all results in one array
-    results = [].concat(...results);
     // Add id in addition to @id, as this is what React-Admin expects
-    let returnData = results.map((item)=>{
+    let returnData = resources.map((item)=>{
         item.id = item.id || item['@id'];
         return item;
     });
@@ -953,6 +969,7 @@ const $7529ad20819ad9cc$var$getManyReferenceMethod = (config)=>async (resourceId
             ...params.filter,
             [params.target]: params.id
         };
+        // @ts-expect-error ts(2790): The operand of a 'delete' operator must be optional.
         delete params.target;
         return await (0, $95cbc03f25caf72a$export$2e2bcd8739ae039)(config)(resourceId, params);
     };
@@ -1034,51 +1051,45 @@ var $ceaafb56f75454f0$export$2e2bcd8739ae039 = $ceaafb56f75454f0$var$updateMetho
 
 
 
-/*
- * HTTP client used by all calls in data provider and auth provider
- * Do proxy calls if a proxy endpoint is available and the server is different from the auth server
- */ const $7b89a2ed7adfd139$var$httpClient = (dataServers)=>(url, options = {})=>{
+/**
+ *
+ * @param dataServers Data servers configuration
+ * @param fetchFn The fetch function to use for the actual fetch call, e.g. `fetchUtils.fetchJson` or `fetch`
+ * @returns
+ */ const $837f5837e4147e21$var$fetchBase = (dataServers, fetchFn)=>(url, options = {})=>{
         if (!url) throw new Error(`No URL provided on httpClient call`);
         const authServerKey = (0, $0a5fcc1f7fc2050f$export$2e2bcd8739ae039)('authServer', dataServers);
+        if (!authServerKey) throw new Error(`No auth server configured in data servers`);
         const serverKey = (0, $68523d444fbb0b63$export$2e2bcd8739ae039)(url, dataServers);
-        const useProxy = serverKey !== authServerKey && dataServers[authServerKey]?.proxyUrl && dataServers[serverKey]?.noProxy !== true;
-        // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
-        if (!options.headers) options.headers = new Headers();
-        // @ts-expect-error TS(2339): Property 'method' does not exist on type '{}'.
+        const headers = new Headers(options.headers);
         switch(options.method){
             case 'POST':
             case 'PATCH':
             case 'PUT':
-                // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
-                if (!options.headers.has('Accept')) options.headers.set('Accept', 'application/ld+json');
-                // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
-                if (!options.headers.has('Content-Type')) options.headers.set('Content-Type', 'application/ld+json');
+                if (!headers.has('Accept')) headers.set('Accept', 'application/ld+json');
+                if (!headers.has('Content-Type')) headers.set('Content-Type', 'application/ld+json');
                 break;
             case 'DELETE':
                 break;
             case 'GET':
             default:
-                // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
-                if (!options.headers.has('Accept')) options.headers.set('Accept', 'application/ld+json');
+                if (!headers.has('Accept')) headers.set('Accept', 'application/ld+json');
                 break;
         }
-        if (useProxy) {
+        // Use proxy if...
+        if (serverKey !== authServerKey && // The server is different from the auth server.
+        dataServers[authServerKey]?.proxyUrl && // A proxy URL is configured on the auth server.
+        dataServers[serverKey]?.noProxy !== true // The server does not explicitly disable the proxy.
+        ) {
+            // To the proxy endpoint, we post the URL, method, headers and body (if any) as multipart/form-data.
             const formData = new FormData();
             formData.append('id', url);
-            // @ts-expect-error TS(2339): Property 'method' does not exist on type '{}'.
             formData.append('method', options.method || 'GET');
-            // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
-            formData.append('headers', JSON.stringify(Object.fromEntries(options.headers.entries())));
-            // @ts-expect-error TS(2339): Property 'body' does not exist on type '{}'.
-            if (options.body) {
-                // @ts-expect-error TS(2339): Property 'body' does not exist on type '{}'.
-                if (options.body instanceof File) // @ts-expect-error TS(2339): Property 'body' does not exist on type '{}'.
-                formData.append('body', options.body, options.body.name);
-                else // @ts-expect-error TS(2339): Property 'body' does not exist on type '{}'.
-                formData.append('body', options.body);
-            }
-            // Post to proxy endpoint with multipart/form-data format
-            return (0, $bkNnK$reactadmin.fetchUtils).fetchJson(dataServers[authServerKey].proxyUrl, {
+            formData.append('headers', JSON.stringify(Object.fromEntries(headers.entries())));
+            if (options.body instanceof File) formData.append('body', options.body, options.body.name);
+            else if (options.body instanceof Blob || typeof options.body === 'string') formData.append('body', options.body);
+            // POST request to proxy endpoint.
+            return fetchFn(dataServers[authServerKey].proxyUrl, {
                 method: 'POST',
                 headers: new Headers({
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -1086,15 +1097,38 @@ var $ceaafb56f75454f0$export$2e2bcd8739ae039 = $ceaafb56f75454f0$var$updateMetho
                 body: formData
             });
         }
-        // Add token if the server is the same as the auth server
+        // Add token if the server is the same as the auth server.
         if (serverKey === authServerKey) {
             const token = localStorage.getItem('token');
-            // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
-            if (token) options.headers.set('Authorization', `Bearer ${token}`);
+            if (token) headers.set('Authorization', `Bearer ${token}`);
         }
-        return (0, $bkNnK$reactadmin.fetchUtils).fetchJson(url, options);
+        options.headers = headers;
+        return fetchFn(url, options);
     };
-var $7b89a2ed7adfd139$export$2e2bcd8739ae039 = $7b89a2ed7adfd139$var$httpClient;
+/**
+ * Creates a fetch function that can be used to make calls to the data servers and which returns data formatted as JSON.
+ * It will use the proxy endpoint if available and if the server is different from the auth server.
+ * It will also set the Accept and Content-Type headers to `application/ld+json` for `POST`, `PATCH`, `PUT` and `GET` requests.
+ * @param dataServers Data servers configuration
+ * @returns A function with react-admin's fetchJson signature that can be used to make calls to the data servers.
+ *
+ */ const $837f5837e4147e21$export$64d1f38a5d384966 = (dataServers)=>{
+    const fetchBaseFn = $837f5837e4147e21$var$fetchBase(dataServers, (0, $bkNnK$reactadmin.fetchUtils).fetchJson);
+    return (url, options)=>{
+        return fetchBaseFn(url, options);
+    };
+};
+/**
+ * Creates an authenticated fetch function that can be used to make calls to the data servers.
+ * It will use the proxy endpoint if available and if the server is different from the auth server.
+ * @param dataServers Data servers configuration
+ * @returns A function that can be used to make authenticated fetch calls.
+ */ const $837f5837e4147e21$export$467927aad8938eb1 = (dataServers)=>{
+    const fetchBaseFn = $837f5837e4147e21$var$fetchBase(dataServers, fetch);
+    return (url, options)=>{
+        return fetchBaseFn(url, options);
+    };
+};
 
 
 
@@ -1215,39 +1249,52 @@ const $fcf4eee3b18e8350$var$getOntologiesFromContext = async (context)=>{
 var $fcf4eee3b18e8350$export$2e2bcd8739ae039 = $fcf4eee3b18e8350$var$getOntologiesFromContext;
 
 
-/** @type {(originalConfig: Configuration) => SemanticDataProvider} */ const $5eeade28ff354aaa$var$dataProvider = (originalConfig)=>{
+const $5eeade28ff354aaa$var$dataProvider = (originalConfig)=>{
     // Keep in memory for refresh
-    let config = {
-        ...originalConfig
-    };
+    let config;
     const prepareConfig = async ()=>{
-        config.dataServers ??= {};
-        // Configure httpClient with initial data servers, so that plugins may use it
-        config.httpClient = (0, $7b89a2ed7adfd139$export$2e2bcd8739ae039)(config.dataServers);
-        for (const plugin of config.plugins)if (plugin.transformConfig) config = await plugin.transformConfig(config);
-        // Configure again httpClient with possibly updated data servers
-        config.httpClient = (0, $7b89a2ed7adfd139$export$2e2bcd8739ae039)(config.dataServers);
+        const fetchJson = (0, $837f5837e4147e21$export$64d1f38a5d384966)(originalConfig.dataServers);
+        const authFetchFn = (0, $837f5837e4147e21$export$467927aad8938eb1)(originalConfig.dataServers);
         const dataset = (0, $bkNnK$ldoconnected.createConnectedLdoDataset)([
             (0, $bkNnK$ldoconnectedsolid.solidConnectedPlugin)
         ]);
         dataset.setContext('solid', {
-            fetch: fetchFn
+            fetch: authFetchFn
         });
-        // Attach httpClient to global document -- useful for debugging.
-        // @ts-expect-error TS(2339): Property 'httpClient' does not exist on type 'Document'.
+        config = {
+            ...originalConfig,
+            httpClient: fetchJson,
+            authFetch: authFetchFn,
+            dataset: dataset
+        };
+        config.dataServers ??= {};
+        // Load plugins.
+        for (const plugin of config.plugins)if (plugin.transformConfig) config = await plugin.transformConfig(config);
+        // Configure httpClient & authFetch again with possibly updated data servers
+        config.httpClient = (0, $837f5837e4147e21$export$64d1f38a5d384966)(config.dataServers);
+        config.authFetch = (0, $837f5837e4147e21$export$467927aad8938eb1)(config.dataServers);
+        dataset.setContext('solid', {
+            fetch: config.authFetch
+        });
+        // Create the LDO dataset with the solidConnectedPlugin. It will be used to manage the RDF data.
+        config.dataset = dataset;
+        // Useful for debugging: Attach httpClient & authFetch to global document.
+        // @ts-expect-error TS(2339)
         document.httpClient = config.httpClient;
+        // @ts-expect-error TS(2339)
+        document.authFetch = authFetchFn;
         if (!config.ontologies && config.jsonContext) config.ontologies = await (0, $fcf4eee3b18e8350$export$2e2bcd8739ae039)(config.jsonContext);
         else if (!config.jsonContext && config.ontologies) config.jsonContext = config.ontologies;
         else if (!config.jsonContext && !config.ontologies) throw new Error(`Either the JSON context or the ontologies must be set`);
         if (!config.returnFailedResources) config.returnFailedResources = false;
         config = await (0, $5e24772571dd1677$export$2e2bcd8739ae039)(config);
-        console.log('Config after plugins', config);
+        console.debug('Config after plugins', config);
     };
     // Immediately call the preload plugins
     const prepareConfigPromise = prepareConfig();
-    const waitForPrepareConfig = (method)=>async (...arg)=>{
+    const waitForPrepareConfig = (method)=>async (...args)=>{
             await prepareConfigPromise; // Return immediately if plugins have already been loaded
-            return method(config)(...arg);
+            return method(config)(...args);
         };
     return {
         getList: waitForPrepareConfig((0, $95cbc03f25caf72a$export$2e2bcd8739ae039)),
@@ -1266,15 +1313,13 @@ var $fcf4eee3b18e8350$export$2e2bcd8739ae039 = $fcf4eee3b18e8350$var$getOntologi
         getDataModels: waitForPrepareConfig((0, $2789979a990866f4$export$2e2bcd8739ae039)),
         getDataServers: waitForPrepareConfig((0, $5a7f64ef6101d5f8$export$2e2bcd8739ae039)),
         getLocalDataServers: (0, $5a7f64ef6101d5f8$export$2e2bcd8739ae039)(originalConfig),
-        fetch: waitForPrepareConfig((c)=>(0, $7b89a2ed7adfd139$export$2e2bcd8739ae039)(c.dataServers)),
-        ldoDataset: (0, $bkNnK$ldoldo.createLdoDataset)(),
+        httpClient: waitForPrepareConfig((c)=>(0, $837f5837e4147e21$export$64d1f38a5d384966)(c.dataServers)),
+        authFetch: waitForPrepareConfig((c)=>(0, $837f5837e4147e21$export$467927aad8938eb1)(c.dataServers)),
+        getDataset: waitForPrepareConfig((c)=>()=>c.dataset),
         uploadFile: waitForPrepareConfig((c)=>(rawFile)=>(0, $6fcb30f76390d142$export$a5575dbeeffdad98)(rawFile, c)),
         expandTypes: waitForPrepareConfig((c)=>(types)=>(0, $9ab033d1ec46b5da$export$2e2bcd8739ae039)(types, c.jsonContext)),
         getConfig: waitForPrepareConfig((c)=>()=>c),
         refreshConfig: async ()=>{
-            config = {
-                ...originalConfig
-            };
             await prepareConfig();
             return config;
         }
@@ -1311,7 +1356,7 @@ var $8c4c0f0b55649ce6$export$2e2bcd8739ae039 = $8c4c0f0b55649ce6$var$getPrefixFr
                     const newConfig = {
                         ...config
                     };
-                    newConfig.dataServers.user = {
+                    newConfig.dataServers[webId] = {
                         pod: true,
                         default: true,
                         authServer: true,
@@ -1332,6 +1377,7 @@ var $8c4c0f0b55649ce6$export$2e2bcd8739ae039 = $8c4c0f0b55649ce6$var$getPrefixFr
         }
     });
 var $89358cee13a17a31$export$2e2bcd8739ae039 = $89358cee13a17a31$var$configureUserStorage;
+
 
 
 
@@ -1372,7 +1418,8 @@ const $37dc42f6e1c3b4af$var$getContainerFromDataRegistration = async (dataRegist
             '@container': '@language'
         }
     });
-    const { baseUrl: baseUrl } = config.dataServers.user;
+    const userStorage = (0, $0a5fcc1f7fc2050f$export$2e2bcd8739ae039)('default', config.dataServers);
+    const { baseUrl: baseUrl } = config.dataServers[userStorage];
     const containerPath = dataRegistration.id.replace(baseUrl, '');
     const container = {
         path: containerPath,
@@ -1398,7 +1445,9 @@ var $37dc42f6e1c3b4af$export$2e2bcd8739ae039 = $37dc42f6e1c3b4af$var$getContaine
  * Return a function that look if an app (clientId) is registered with an user (webId)
  * If not, it redirects to the endpoint provided by the user's authorization agent
  * See https://solid.github.io/data-interoperability-panel/specification/#authorization-agent
- */ const $c512de108ef5d674$var$fetchAppRegistration = ()=>({
+ */ const $c512de108ef5d674$var$fetchAppRegistration = (pluginConfig = {})=>{
+    const { includeSelectedResources: includeSelectedResources = true } = pluginConfig;
+    return {
         transformConfig: async (config)=>{
             const token = localStorage.getItem('token');
             // If the user is logged in
@@ -1420,15 +1469,27 @@ var $37dc42f6e1c3b4af$export$2e2bcd8739ae039 = $37dc42f6e1c3b4af$var$getContaine
                             const newConfig = {
                                 ...config
                             };
-                            // Load data grants concurrently to improve performances
+                            // Load access grants concurrently to improve performances
                             const results = await Promise.all((0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(appRegistration['interop:hasAccessGrant']).map(async (accessGrantUri)=>{
                                 const { json: accessGrant } = await config.httpClient(accessGrantUri);
-                                return Promise.all((0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(accessGrant['interop:hasDataGrant']).map(async (dataGrantUri)=>{
-                                    const { json: dataGrant } = await config.httpClient(dataGrantUri);
-                                    return (0, $37dc42f6e1c3b4af$export$2e2bcd8739ae039)(dataGrant['interop:hasDataRegistration'], config);
-                                }));
+                                const container = await (0, $37dc42f6e1c3b4af$export$2e2bcd8739ae039)(accessGrant['interop:hasDataRegistration'], config);
+                                container.server = accessGrant['interop:dataOwner'];
+                                if (accessGrant['interop:scopeOfGrant'] === 'interop:AllFromRegistry') return container;
+                                else if (accessGrant['interop:scopeOfGrant'] === 'interop:SelectedFromRegistry') {
+                                    if (!includeSelectedResources) return undefined;
+                                    container.selectedResources = (0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(accessGrant['interop:hasDataInstance']);
+                                    return container;
+                                }
                             }));
-                            newConfig.dataServers.user.containers = results.flat();
+                            // Put data shared by other users in other servers (storages)
+                            for (const container of results.flat().filter((i)=>i !== undefined))if (!newConfig.dataServers[container.server]) newConfig.dataServers[container.server] = {
+                                pod: true,
+                                baseUrl: `${container.server}/data`,
+                                containers: [
+                                    container
+                                ]
+                            };
+                            else newConfig.dataServers[container.server].containers.push(container);
                             return newConfig;
                         }
                     }
@@ -1436,7 +1497,8 @@ var $37dc42f6e1c3b4af$export$2e2bcd8739ae039 = $37dc42f6e1c3b4af$var$getContaine
             }
             return config;
         }
-    });
+    };
+};
 var $c512de108ef5d674$export$2e2bcd8739ae039 = $c512de108ef5d674$var$fetchAppRegistration;
 
 
@@ -1453,9 +1515,9 @@ var $c512de108ef5d674$export$2e2bcd8739ae039 = $c512de108ef5d674$var$fetchAppReg
             const token = localStorage.getItem('token');
             // If the user is logged in
             if (token) {
-                if (!config.dataServers.user) throw new Error(`You must configure the user storage first with the configureUserStorage plugin`);
                 const payload = (0, ($parcel$interopDefault($bkNnK$jwtdecode)))(token);
                 const webId = payload.webId || payload.webid; // Currently we must deal with both formats
+                if (!config.dataServers[webId]) throw new Error(`You must configure the user storage first with the configureUserStorage plugin`);
                 const { json: user } = await config.httpClient(webId);
                 const { json: registrySet } = await config.httpClient(user['interop:hasRegistrySet']);
                 const { json: dataRegistry } = await config.httpClient(registrySet['interop:hasDataRegistry']);
@@ -1466,7 +1528,7 @@ var $c512de108ef5d674$export$2e2bcd8739ae039 = $c512de108ef5d674$var$fetchAppReg
                     const newConfig = {
                         ...config
                     };
-                    newConfig.dataServers.user.containers?.push(...results.flat());
+                    newConfig.dataServers[webId].containers?.push(...results.flat());
                     return newConfig;
                 }
             }
@@ -1492,9 +1554,9 @@ var $cd772adda3024172$export$2e2bcd8739ae039 = $cd772adda3024172$var$fetchDataRe
             const token = localStorage.getItem('token');
             // If the user is logged in
             if (token) {
-                if (!config.dataServers.user) throw new Error(`You must configure the user storage first with the configureUserStorage plugin`);
                 const payload = (0, ($parcel$interopDefault($bkNnK$jwtdecode)))(token);
                 const webId = payload.webId || payload.webid; // Currently we must deal with both formats
+                if (!config.dataServers[webId]) throw new Error(`You must configure the user storage first with the configureUserStorage plugin`);
                 const { json: user } = await config.httpClient(webId);
                 const typeRegistrations = {
                     public: [],
@@ -1523,17 +1585,17 @@ var $cd772adda3024172$export$2e2bcd8739ae039 = $cd772adda3024172$var$fetchDataRe
                                     separateNumbers: true
                                 })
                             },
-                            path: typeRegistration['solid:instanceContainer'].replace(newConfig.dataServers.user.baseUrl, ''),
+                            path: typeRegistration['solid:instanceContainer'].replace(newConfig.dataServers[webId].baseUrl, ''),
                             types: await (0, $9ab033d1ec46b5da$export$2e2bcd8739ae039)(types, user['@context']),
                             private: mode === 'private'
                         };
-                        const containerIndex = newConfig.dataServers.user.containers.findIndex((c)=>c.path === container.path);
+                        const containerIndex = newConfig.dataServers[webId].containers.findIndex((c)=>c.path === container.path);
                         if (containerIndex !== -1) // If a container with this URI already exist, add type registration information if they are not set
-                        newConfig.dataServers.user.containers[containerIndex] = {
+                        newConfig.dataServers[webId].containers[containerIndex] = {
                             ...container,
-                            ...newConfig.dataServers.user.containers[containerIndex]
+                            ...newConfig.dataServers[webId].containers[containerIndex]
                         };
-                        else newConfig.dataServers.user.containers.push(container);
+                        else newConfig.dataServers[webId].containers.push(container);
                     }
                     return newConfig;
                 }
@@ -2024,7 +2086,7 @@ var $62e4c61f126cac5e$export$2e2bcd8739ae039 = $62e4c61f126cac5e$var$GroupedRefe
 
 
 
-const $ef83a7754e7f8331$var$useReferenceInputStyles = (0, $bkNnK$muimaterial.makeStyles)({
+const $ef83a7754e7f8331$var$useReferenceInputStyles = (0, ($parcel$interopDefault($bkNnK$muistylesmakeStyles)))({
     form: {
         display: 'flex'
     },
@@ -2032,7 +2094,7 @@ const $ef83a7754e7f8331$var$useReferenceInputStyles = (0, $bkNnK$muimaterial.mak
         paddingRight: '20px'
     }
 });
-const $ef83a7754e7f8331$var$useHideInputStyles = (0, $bkNnK$muimaterial.makeStyles)({
+const $ef83a7754e7f8331$var$useHideInputStyles = (0, ($parcel$interopDefault($bkNnK$muistylesmakeStyles)))({
     root: {
         display: 'none'
     }
