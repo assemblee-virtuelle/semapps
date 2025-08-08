@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import fetch from 'node-fetch';
 import { generateKeyPair } from 'crypto';
-import { namedNode, blankNode, literal, triple } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 import { KEY_TYPES } from '../constants.ts';
@@ -124,9 +124,21 @@ const SignatureService = {
           await ctx.call('ldp.resource.patch', {
             resourceUri: actorUri,
             triplesToAdd: [
-              triple(namedNode(actorUri), namedNode('https://w3id.org/security#publicKey'), blankNode('b0')),
-              triple(blankNode('b0'), namedNode('https://w3id.org/security#owner'), namedNode(actorUri)),
-              triple(blankNode('b0'), namedNode('https://w3id.org/security#publicKeyPem'), literal(publicKey))
+              rdf.triple(
+                rdf.namedNode(actorUri),
+                rdf.namedNode('https://w3id.org/security#publicKey'),
+                rdf.blankNode('b0')
+              ),
+              rdf.triple(
+                rdf.blankNode('b0'),
+                rdf.namedNode('https://w3id.org/security#owner'),
+                rdf.namedNode(actorUri)
+              ),
+              rdf.triple(
+                rdf.blankNode('b0'),
+                rdf.namedNode('https://w3id.org/security#publicKeyPem'),
+                rdf.literal(publicKey)
+              )
             ],
             webId: 'system'
           });

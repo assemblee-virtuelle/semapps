@@ -1,4 +1,4 @@
-import { triple, namedNode } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import { ControlledContainerMixin } from '@semapps/ldp';
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
@@ -69,11 +69,11 @@ const KeysPublicContainerSchema = {
         await ctx.call('ldp.resource.patch', {
           resourceUri: privateKeyId,
           triplesToRemove: [
-            triple(
+            rdf.triple(
               // @ts-expect-error TS(2345): Argument of type 'Promisify<any>' is not assignabl... Remove this comment to see the full error message
-              namedNode(privateKeyId),
-              namedNode('http://www.w3.org/2000/01/rdf-schema#seeAlso'),
-              namedNode(resourceUri)
+              rdf.namedNode(privateKeyId),
+              rdf.namedNode('http://www.w3.org/2000/01/rdf-schema#seeAlso'),
+              rdf.namedNode(resourceUri)
             )
           ]
         });

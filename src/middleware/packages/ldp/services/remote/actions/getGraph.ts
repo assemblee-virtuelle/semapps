@@ -1,4 +1,4 @@
-import { triple, namedNode, variable } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import { defineAction } from 'moleculer';
 
 const Schema = defineAction({
@@ -10,7 +10,7 @@ const Schema = defineAction({
     const { resourceUri } = ctx.params;
 
     let exist = await ctx.call('triplestore.tripleExist', {
-      triple: triple(namedNode(resourceUri), variable('p'), variable('s')),
+      triple: rdf.triple(rdf.namedNode(resourceUri), rdf.variable('p'), rdf.variable('s')),
       webId: 'system'
     });
 
@@ -18,7 +18,7 @@ const Schema = defineAction({
       return undefined; // Default graph
     }
     exist = await ctx.call('triplestore.tripleExist', {
-      triple: triple(namedNode(resourceUri), variable('p'), variable('s')),
+      triple: rdf.triple(rdf.namedNode(resourceUri), rdf.variable('p'), rdf.variable('s')),
       graphName: this.settings.mirrorGraphName
     });
 

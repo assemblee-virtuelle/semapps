@@ -1,5 +1,5 @@
 import urlJoin from 'url-join';
-import { quad, namedNode } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { getWebIdFromUri, arrayOf } from '@semapps/ldp';
 import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
@@ -80,7 +80,9 @@ const CollectionsRegistryService = {
             'ldp.resource.patch',
             {
               resourceUri: objectUri,
-              triplesToAdd: [quad(namedNode(objectUri), namedNode(attachPredicate), namedNode(collectionUri))],
+              triplesToAdd: [
+                rdf.quad(rdf.namedNode(objectUri), rdf.namedNode(attachPredicate), rdf.namedNode(collectionUri))
+              ],
               webId: 'system'
             },
             {

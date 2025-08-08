@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@mui/material": "^7.1.0",
-    "@rdfjs/types": "^1.1.0",
+    "@rdfjs/types": "^2.0.1",
     "@types/http-link-header": "^1.0.7",
     "@types/jsonld": "^1.5.14",
     "@types/sparqljs": "^3.1.11",

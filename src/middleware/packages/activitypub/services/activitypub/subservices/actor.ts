@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { namedNode, literal, triple, variable } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { arrayOf } from '@semapps/ldp';
 import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';

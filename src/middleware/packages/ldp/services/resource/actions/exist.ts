@@ -1,4 +1,4 @@
-import { triple, namedNode, variable } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import { defineAction } from 'moleculer';
 
 const Schema = defineAction({
@@ -14,14 +14,14 @@ const Schema = defineAction({
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     let exist = await ctx.call('triplestore.tripleExist', {
-      triple: triple(namedNode(resourceUri), variable('p'), variable('s')),
+      triple: rdf.triple(rdf.namedNode(resourceUri), rdf.variable('p'), rdf.variable('s')),
       webId
     });
 
     // If this is a remote URI and the resource is not found in default graph, also look in mirror graph
     if (!exist && (await ctx.call('ldp.remote.isRemote', { resourceUri }))) {
       exist = await ctx.call('triplestore.tripleExist', {
-        triple: triple(namedNode(resourceUri), variable('p'), variable('s')),
+        triple: rdf.triple(rdf.namedNode(resourceUri), rdf.variable('p'), rdf.variable('s')),
         webId,
         graphName: this.settings.mirrorGraphName
       });

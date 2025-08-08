@@ -4,7 +4,7 @@ import { Errors as E } from 'moleculer-web';
 import { SpecialEndpointMixin, ControlledContainerMixin, getDatasetFromUri, arrayOf } from '@semapps/ldp';
 import { ACTIVITY_TYPES } from '@semapps/activitypub';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { namedNode } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
 import { v4 as uuidV4 } from 'uuid';
 import moment from 'moment';
@@ -65,8 +65,8 @@ const Schema = {
     const { channelType } = this.settings;
 
     await this.broker.call('solid-endpoint.endpointAdd', {
-      predicate: namedNode('http://www.w3.org/ns/solid/notifications#subscription'),
-      object: namedNode(urlJoin(this.settings.baseUrl, '.notifications', channelType))
+      predicate: rdf.namedNode('http://www.w3.org/ns/solid/notifications#subscription'),
+      object: rdf.namedNode(urlJoin(this.settings.baseUrl, '.notifications', channelType))
     });
 
     this.channels = [];

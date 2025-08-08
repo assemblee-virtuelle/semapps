@@ -1,5 +1,5 @@
 import urlJoin from 'url-join';
-import { triple, namedNode } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import { pim } from '@semapps/ontologies';
 import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 
@@ -68,7 +68,11 @@ const SolidStorageSchema = {
         await ctx.call('ldp.resource.patch', {
           resourceUri: webId,
           triplesToAdd: [
-            triple(namedNode(webId), namedNode('http://www.w3.org/ns/pim/space#storage'), namedNode(storageUrl))
+            rdf.triple(
+              rdf.namedNode(webId),
+              rdf.namedNode('http://www.w3.org/ns/pim/space#storage'),
+              rdf.namedNode(storageUrl)
+            )
           ],
           webId: 'system'
         });

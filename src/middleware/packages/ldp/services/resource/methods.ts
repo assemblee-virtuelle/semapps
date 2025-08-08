@@ -3,7 +3,7 @@ import fs from 'fs';
 import bytes from 'bytes';
 import rdfparseModule from 'rdf-parse';
 import streamifyString from 'streamify-string';
-import { variable } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { Errors } from 'moleculer';
 
@@ -62,10 +62,10 @@ export default {
   convertBlankNodesToVars(triples: any) {
     return triples.map((triple: any) => {
       if (triple.subject.termType === 'BlankNode') {
-        triple.subject = variable(triple.subject.value);
+        triple.subject = rdf.variable(triple.subject.value);
       }
       if (triple.object.termType === 'BlankNode') {
-        triple.object = variable(triple.object.value);
+        triple.object = rdf.variable(triple.object.value);
       }
       return triple;
     });

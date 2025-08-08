@@ -1,6 +1,6 @@
 import { SingleResourceContainerMixin } from '@semapps/ldp';
 import { pim } from '@semapps/ontologies';
-import { namedNode, triple } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import { ServiceSchema } from 'moleculer';
 
 const SolidPreferencesFileSchema = {
@@ -24,10 +24,10 @@ const SolidPreferencesFileSchema = {
         await ctx.call('ldp.resource.patch', {
           resourceUri: ctx.params.webId,
           triplesToAdd: [
-            triple(
-              namedNode(ctx.params.webId),
-              namedNode('http://www.w3.org/ns/pim/space#preferencesFile'),
-              namedNode(res)
+            rdf.triple(
+              rdf.namedNode(ctx.params.webId),
+              rdf.namedNode('http://www.w3.org/ns/pim/space#preferencesFile'),
+              rdf.namedNode(res)
             )
           ],
           webId: 'system'

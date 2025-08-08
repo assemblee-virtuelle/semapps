@@ -26,7 +26,7 @@
     "@rdfjs/dataset": "^2.0.2",
     "@rdfjs/parser-jsonld": "^2.1.3",
     "@rdfjs/parser-n3": "^2.1.0",
-    "@rdfjs/types": "^1.0.1",
+    "@rdfjs/types": "^2.0.1",
     "@semapps/auth-provider": "1.1.4",
     "@semapps/field-components": "1.1.4",
     "@semapps/semantic-data-provider": "1.1.4",
