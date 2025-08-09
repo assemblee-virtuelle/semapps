@@ -1,7 +1,7 @@
 import jsonld from 'jsonld';
 import rdf from 'rdf-ext';
 import ParserN3 from '@rdfjs/parser-n3';
-import { Readable } from 'stream';
+import { Readable } from 'readable-stream';
 import { Quad } from '@rdfjs/types';
 
 export const arrayOf = <T>(value: T | T[]) => {

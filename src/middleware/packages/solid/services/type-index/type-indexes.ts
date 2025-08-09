@@ -60,7 +60,7 @@ const TypeIndexesSchema = {
         await ctx.call('ldp.resource.patch', {
           resourceUri: webId,
           triplesToAdd: [
-            rdf.triple(
+            rdf.quad(
               rdf.namedNode(webId),
               rdf.namedNode('http://www.w3.org/ns/solid/terms#publicTypeIndex'),
               rdf.namedNode(indexUri)
@@ -98,7 +98,7 @@ const TypeIndexesSchema = {
         await ctx.call('solid-preferences-file.patch', {
           resourceUri: preferencesUri,
           triplesToAdd: [
-            rdf.triple(
+            rdf.quad(
               rdf.namedNode(preferencesUri),
               rdf.namedNode('http://www.w3.org/ns/solid/terms#privateTypeIndex'),
               rdf.namedNode(indexUri)

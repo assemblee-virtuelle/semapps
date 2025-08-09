@@ -1,6 +1,6 @@
 import rdf from 'rdf-ext';
 import { Validator } from 'shacl-engine';
-import { ActivityStreamsShape } from '@activitypods/shape-definitions';
+import { activitystreams } from '@activitypods/shape-definitions';
 import { LdoBase, LdoDataset, ShapeType } from '@ldo/ldo';
 import { parseJsonLd } from '../utils';
 import { parseTurtle } from './streamUtils';
@@ -24,7 +24,7 @@ const getActivityStreamsValidator = async (): Promise<Validator> => {
   }
 
   try {
-    const shapeDataset = await parseTurtle(ActivityStreamsShape);
+    const shapeDataset = await parseTurtle(activitystreams);
 
     // Create and cache the SHACL validator using the dataset
     validatorCache.activityStreams = new Validator(shapeDataset, { factory: rdf, debug: true });
@@ -36,7 +36,7 @@ const getActivityStreamsValidator = async (): Promise<Validator> => {
     );
   }
 
-  const shapeDataset = await parseTurtle(ActivityStreamsShape);
+  const shapeDataset = await parseTurtle(activitystreams);
 
   // Create and cache the SHACL validator using the dataset
   validatorCache.activityStreams = new Validator(shapeDataset, { factory: rdf, debug: true });
