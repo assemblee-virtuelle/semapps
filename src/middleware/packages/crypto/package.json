@@ -37,5 +37,8 @@
   "engines": {
     "node": ">=22.10.0"
   },
-  "main": "./index.ts"
+  "main": "./index.ts",
+  "devDependencies": {
+    "@types/rdfjs__data-model": "^2.0.9"
+  }
 }

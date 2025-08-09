@@ -70,7 +70,7 @@ const Schema = {
           'ldp.resource.patch',
           {
             resourceUri: this.endpointUrl,
-            triplesToAdd: [rdf.triple(rdf.namedNode(this.endpointUrl), predicate, object)],
+            triplesToAdd: [rdf.quad(rdf.namedNode(this.endpointUrl), predicate, object)],
             webId: 'system'
           },
           { meta: { dataset: this.settings.settingsDataset, skipEmitEvent: true, skipObjectsWatcher: true } }

@@ -6,6 +6,7 @@
   "author": "Virtual Assembly",
   "dependencies": {
     "@rdfjs/data-model": "^2.1.1",
+    "@rdfjs/types": "^2.0.1",
     "@semapps/middlewares": "1.1.4",
     "@semapps/mime-types": "1.1.4",
     "@semapps/ontologies": "1.1.4",

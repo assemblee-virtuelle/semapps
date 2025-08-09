@@ -7,7 +7,7 @@ const buildAutoDetectBlankNodesQuery = (depth: any, baseQuery: any) => {
     const whereQueries = [];
     whereQueries.push([baseQuery.where]);
     for (let i = 1; i <= depth; i++) {
-      construct.push(rdf.triple(rdf.variable(`o${i}`), rdf.variable(`p${i + 1}`), rdf.variable(`o${i + 1}`)));
+      construct.push(rdf.quad(rdf.variable(`o${i}`), rdf.variable(`p${i + 1}`), rdf.variable(`o${i + 1}`)));
       whereQueries.push([
         ...whereQueries[whereQueries.length - 1],
         {
@@ -18,7 +18,7 @@ const buildAutoDetectBlankNodesQuery = (depth: any, baseQuery: any) => {
             args: [rdf.variable(`o${i}`)]
           }
         },
-        rdf.triple(rdf.variable(`o${i}`), rdf.variable(`p${i + 1}`), rdf.variable(`o${i + 1}`))
+        rdf.quad(rdf.variable(`o${i}`), rdf.variable(`p${i + 1}`), rdf.variable(`o${i + 1}`))
       ]);
     }
     where = {

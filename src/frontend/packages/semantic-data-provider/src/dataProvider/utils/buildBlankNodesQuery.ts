@@ -52,12 +52,12 @@ const buildBlankNodesQuery = (blankNodes: any, baseQuery: any, ontologies: any) 
       const parentVarName = parentNode ? generateSparqlVarName(parentNode) : '1';
 
       const query = [
-        rdf.triple(
+        rdf.quad(
           rdf.variable(`s${parentVarName}`),
           rdf.namedNode(getUriFromPrefix(predicate, ontologies)),
           rdf.variable(`s${varName}`)
         ),
-        rdf.triple(rdf.variable(`s${varName}`), rdf.variable(`p${varName}`), rdf.variable(`o${varName}`))
+        rdf.quad(rdf.variable(`s${varName}`), rdf.variable(`p${varName}`), rdf.variable(`o${varName}`))
       ];
 
       queries.push({

@@ -124,17 +124,13 @@ const SignatureService = {
           await ctx.call('ldp.resource.patch', {
             resourceUri: actorUri,
             triplesToAdd: [
-              rdf.triple(
+              rdf.quad(
                 rdf.namedNode(actorUri),
                 rdf.namedNode('https://w3id.org/security#publicKey'),
                 rdf.blankNode('b0')
               ),
-              rdf.triple(
-                rdf.blankNode('b0'),
-                rdf.namedNode('https://w3id.org/security#owner'),
-                rdf.namedNode(actorUri)
-              ),
-              rdf.triple(
+              rdf.quad(rdf.blankNode('b0'), rdf.namedNode('https://w3id.org/security#owner'), rdf.namedNode(actorUri)),
+              rdf.quad(
                 rdf.blankNode('b0'),
                 rdf.namedNode('https://w3id.org/security#publicKeyPem'),
                 rdf.literal(publicKey)

@@ -69,7 +69,7 @@ const KeysPublicContainerSchema = {
         await ctx.call('ldp.resource.patch', {
           resourceUri: privateKeyId,
           triplesToRemove: [
-            rdf.triple(
+            rdf.quad(
               // @ts-expect-error TS(2345): Argument of type 'Promisify<any>' is not assignabl... Remove this comment to see the full error message
               rdf.namedNode(privateKeyId),
               rdf.namedNode('http://www.w3.org/2000/01/rdf-schema#seeAlso'),

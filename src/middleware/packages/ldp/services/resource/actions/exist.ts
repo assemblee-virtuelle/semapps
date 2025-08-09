@@ -14,14 +14,14 @@ const Schema = defineAction({
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     let exist = await ctx.call('triplestore.tripleExist', {
-      triple: rdf.triple(rdf.namedNode(resourceUri), rdf.variable('p'), rdf.variable('s')),
+      triple: rdf.quad(rdf.namedNode(resourceUri), rdf.variable('p'), rdf.variable('s')),
       webId
     });
 
     // If this is a remote URI and the resource is not found in default graph, also look in mirror graph
     if (!exist && (await ctx.call('ldp.remote.isRemote', { resourceUri }))) {
       exist = await ctx.call('triplestore.tripleExist', {
-        triple: rdf.triple(rdf.namedNode(resourceUri), rdf.variable('p'), rdf.variable('s')),
+        triple: rdf.quad(rdf.namedNode(resourceUri), rdf.variable('p'), rdf.variable('s')),
         webId,
         graphName: this.settings.mirrorGraphName
       });

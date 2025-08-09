@@ -68,7 +68,7 @@ const SolidStorageSchema = {
         await ctx.call('ldp.resource.patch', {
           resourceUri: webId,
           triplesToAdd: [
-            rdf.triple(
+            rdf.quad(
               rdf.namedNode(webId),
               rdf.namedNode('http://www.w3.org/ns/pim/space#storage'),
               rdf.namedNode(storageUrl)

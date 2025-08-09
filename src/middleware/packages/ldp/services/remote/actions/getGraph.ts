@@ -10,7 +10,7 @@ const Schema = defineAction({
     const { resourceUri } = ctx.params;
 
     let exist = await ctx.call('triplestore.tripleExist', {
-      triple: rdf.triple(rdf.namedNode(resourceUri), rdf.variable('p'), rdf.variable('s')),
+      triple: rdf.quad(rdf.namedNode(resourceUri), rdf.variable('p'), rdf.variable('s')),
       webId: 'system'
     });
 
@@ -18,7 +18,7 @@ const Schema = defineAction({
       return undefined; // Default graph
     }
     exist = await ctx.call('triplestore.tripleExist', {
-      triple: rdf.triple(rdf.namedNode(resourceUri), rdf.variable('p'), rdf.variable('s')),
+      triple: rdf.quad(rdf.namedNode(resourceUri), rdf.variable('p'), rdf.variable('s')),
       graphName: this.settings.mirrorGraphName
     });
 

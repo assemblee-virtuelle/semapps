@@ -389,7 +389,7 @@ const KeysService = {
         // Add public key triples to webId document.
         await ctx.call('ldp.resource.patch', {
           resourceUri: webId,
-          triplesToAdd: [rdf.triple(rdf.namedNode(webId), rdf.namedNode(keyPredicate), rdf.namedNode(publicKeyId))],
+          triplesToAdd: [rdf.quad(rdf.namedNode(webId), rdf.namedNode(keyPredicate), rdf.namedNode(publicKeyId))],
           webId
         });
       }
@@ -408,12 +408,12 @@ const KeysService = {
           resourceUri: webId,
           triplesToRemove: [
             // The key may be stored in publicKey or assertionMethod field, depending on key type.
-            rdf.triple(
+            rdf.quad(
               rdf.namedNode(webId),
               rdf.namedNode('https://w3id.org/security#publicKey'),
               rdf.namedNode(publicKeyId)
             ),
-            rdf.triple(
+            rdf.quad(
               rdf.namedNode(webId),
               rdf.namedNode('https://w3id.org/security#assertionMethod'),
               rdf.namedNode(publicKeyId)
@@ -454,7 +454,7 @@ const KeysService = {
         await ctx.call('ldp.resource.patch', {
           resourceUri: privateKeyUri,
           triplesToAdd: [
-            rdf.triple(
+            rdf.quad(
               rdf.namedNode(privateKeyUri),
               rdf.namedNode('http://www.w3.org/2000/01/rdf-schema#seeAlso'),
               rdf.namedNode(publicKeyUri)
