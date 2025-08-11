@@ -42,7 +42,7 @@ const DatasetService = {
 
     create: defineAction({
       async handler(ctx) {
-        const { dataset, secure } = ctx.params;
+        const { dataset } = ctx.params;
         if (!dataset) throw new Error('Unable to create dataset. The parameter dataset is missing');
         const exist = await this.actions.exist({ dataset }, { parentCtx: ctx });
         if (!exist) {
@@ -52,21 +52,17 @@ const DatasetService = {
           if (dataset.endsWith('Acl') || dataset.endsWith('Mirror'))
             throw new Error(`Error when creating dataset ${dataset}. Its name cannot end with Acl or Mirror`);
 
-          const templateFilePath = path.join(__dirname, '../templates', secure ? 'secure-dataset.ttl' : 'dataset.ttl');
-          const template = await fs.promises.readFile(templateFilePath, 'utf8');
-          const assembler = format(template, { dataset: dataset });
-          response = await fetch(urlJoin(this.settings.url, '$/datasets'), {
+          response = await fetch(urlJoin(this.settings.url, '$/datasets') + `?dbName=${dataset}&dbType=tdb2`, {
             method: 'POST',
-            headers: { ...this.headers, 'Content-Type': 'text/turtle' },
-            body: assembler
+            headers: this.headers,
           });
 
           if (response.status === 200) {
             await this.actions.waitForCreation({ dataset }, { parentCtx: ctx });
-            this.logger.info(`Created ${secure ? 'secure' : 'unsecure'} dataset ${dataset}`);
+            this.logger.info(`Created dataset ${dataset}`);
           } else {
             this.logger.info(await response.text());
-            throw new Error(`Error when creating ${secure ? 'secure' : 'unsecure'} dataset ${dataset}`);
+            throw new Error(`Error when creating dataset ${dataset}`);
           }
         }
       }
@@ -98,13 +94,7 @@ const DatasetService = {
 
     isSecure: defineAction({
       async handler(ctx) {
-        const { dataset } = ctx.params;
-        // Check if http://semapps.org/webacl graph exists
-        return await ctx.call('triplestore.query', {
-          query: `ASK WHERE { GRAPH <http://semapps.org/webacl> { ?s ?p ?o } }`,
-          dataset,
-          webId: 'system'
-        });
+        return false;
       }
     }),
 
@@ -149,12 +139,6 @@ const DatasetService = {
         if (!iKnowWhatImDoing) {
           throw new Error('Please confirm that you know what you are doing by setting `iKnowWhatImDoing` to `true`.');
         }
-        const isSecure = await this.actions.isSecure({ dataset });
-
-        if (isSecure && !this.settings.fusekiBase)
-          throw new Error(
-            'Please provide the fusekiBase dir setting to the triplestore service, to delete a secure dataset.'
-          );
 
         const response = await fetch(urlJoin(this.settings.url, '$/datasets', dataset), {
           method: 'DELETE',
@@ -162,22 +146,6 @@ const DatasetService = {
         });
         if (!response.ok) {
           throw new Error(`Failed to delete dataset ${dataset}: ${response.statusText}`);
-        }
-
-        // If this is a secure dataset, we need to delete stuff manually.
-        if (isSecure) {
-          const dbDir = path.join(this.settings.fusekiBase, 'databases', dataset);
-          const dbAclDir = path.join(this.settings.fusekiBase, 'databases', `${dataset}Acl`);
-          const dbMirrorDir = path.join(this.settings.fusekiBase, 'databases', `${dataset}Mirror`);
-          const confFile = path.join(this.settings.fusekiBase, 'configuration', `${dataset}.ttl`);
-
-          // Delete all, if present.
-          await Promise.all([
-            fs.promises.rm(dbDir, { recursive: true, force: true }),
-            fs.promises.rm(dbAclDir, { recursive: true, force: true }),
-            fs.promises.rm(dbMirrorDir, { recursive: true, force: true }),
-            fs.promises.rm(confFile, { force: true })
-          ]);
         }
       }
     })

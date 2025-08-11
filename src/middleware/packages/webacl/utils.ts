@@ -5,16 +5,12 @@ import { Parser } from 'n3';
 import streamifyString from 'streamify-string';
 import rdfparseModule from 'rdf-parse';
 
-import { Context, Errors } from 'moleculer';
+import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
 // @ts-expect-error TS(2339): Property 'default' does not exist on type 'RdfPars... Remove this comment to see the full error message
 const rdfParser = rdfparseModule.default;
-
-const RESOURCE_CONTAINERS_QUERY = (resource: any) => `SELECT ?container
-  WHERE { ?container ldp:contains <${resource}> . }`;
-
 const getSlugFromUri = (str: any) => str.match(new RegExp(`.*/(.*)`))[1];
 
 const hasType = (resource: any, type: any) => {
@@ -29,12 +25,13 @@ const getDatasetFromUri = (uri: any) => {
   if (parts.length > 1) return parts[1];
 };
 
-const findParentContainers = async (ctx: Context, resource: any) => {
-  const query = `PREFIX ldp: <http://www.w3.org/ns/ldp#>\n${RESOURCE_CONTAINERS_QUERY(resource)}`;
-
+const findParentContainers = async (ctx: any, resourceUri: any) => {
   return await ctx.call('triplestore.query', {
-    query,
-    accept: MIME_TYPES.SPARQL_JSON,
+    query: `
+      PREFIX ldp: <http://www.w3.org/ns/ldp#>
+      SELECT ?container
+      WHERE { ?container ldp:contains <${resourceUri}> . }
+    `,
     webId: 'system'
   });
 };
@@ -64,7 +61,6 @@ const getUserGroups = async (ctx: any, user: any, graphName: any) => {
 
   const groups = await ctx.call('triplestore.query', {
     query,
-    accept: MIME_TYPES.JSON,
     webId: 'system'
   });
 
@@ -102,7 +98,6 @@ const getAuthorizationNode = async (
 
   const auths = await ctx.call('triplestore.query', {
     query,
-    accept: MIME_TYPES.JSON,
     webId: 'system'
   });
 

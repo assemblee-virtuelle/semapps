@@ -20,8 +20,6 @@ const Schema = defineAction({
   },
   async handler(ctx) {
     let { query } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
-    const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
     let dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
@@ -40,7 +38,6 @@ const Schema = defineAction({
         body: query,
         headers: {
           'Content-Type': 'application/sparql-update',
-          'X-SemappsUser': webId
         }
       });
     }

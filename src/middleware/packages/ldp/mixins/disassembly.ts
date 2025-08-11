@@ -1,4 +1,3 @@
-import { MIME_TYPES } from '@semapps/mime-types';
 import { ServiceSchema } from 'moleculer';
 import { arrayOf } from '../utils.ts';
 
@@ -14,23 +13,18 @@ const Schema = {
   hooks: {
     before: {
       async create(ctx) {
-        const { resource, contentType } = ctx.params;
-        if (contentType === MIME_TYPES.JSON) {
-          // @ts-expect-error
-          await this.createDisassembly(ctx, resource);
-        }
+        const { resource } = ctx.params;
+        // @ts-expect-error TS(2349): This expression is not callable.
+        await this.createDisassembly(ctx, resource);
       },
       async put(ctx) {
-        const { resource, contentType } = ctx.params;
-        if (contentType === MIME_TYPES.JSON) {
-          const oldData = await ctx.call('ldp.resource.get', {
-            resourceUri: resource.id || resource['@id'],
-            accept: MIME_TYPES.JSON,
-            webId: 'system'
-          });
-          // @ts-expect-error
-          await this.updateDisassembly(ctx, resource, oldData);
-        }
+        const { resource } = ctx.params;
+        const oldData = await ctx.call('ldp.resource.get', {
+          resourceUri: resource.id || resource['@id'],
+          webId: 'system'
+        });
+        // @ts-expect-error TS(2349): This expression is not callable.
+        await this.updateDisassembly(ctx, resource, oldData);
       }
     },
     after: {
@@ -58,7 +52,6 @@ const Schema = {
                 '@context': newData['@context'],
                 ...resourceWithoutId
               },
-              contentType: MIME_TYPES.JSON,
               webId: 'system'
             });
             uriAdded.push({ '@id': newResourceUri, '@type': '@id' });
@@ -96,7 +89,6 @@ const Schema = {
                 '@context': newData['@context'],
                 ...resource
               },
-              contentType: MIME_TYPES.JSON,
               webId: 'system'
             });
             uriAdded.push({ '@id': newResourceUri, '@type': '@id' });
@@ -126,7 +118,6 @@ const Schema = {
                   '@context': newData['@context'],
                   ...resource
                 },
-                contentType: MIME_TYPES.JSON,
                 webId: 'system'
               });
             } catch (error) {

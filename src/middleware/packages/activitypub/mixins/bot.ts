@@ -1,5 +1,4 @@
 import urlJoin from 'url-join';
-import { MIME_TYPES } from '@semapps/mime-types';
 import { arrayOf } from '@semapps/ldp';
 import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 import { ACTOR_TYPES } from '../constants.ts';
@@ -55,7 +54,6 @@ const BotMixin = {
             preferredUsername: actorSettings.username,
             name: actorSettings.name
           },
-          contentType: MIME_TYPES.JSON,
           webId: 'system'
         });
       } catch (e) {

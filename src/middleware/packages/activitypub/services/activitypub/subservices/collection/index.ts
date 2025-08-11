@@ -1,5 +1,4 @@
 import { ControlledContainerMixin, arrayOf, getDatasetFromUri } from '@semapps/ldp';
-import { MIME_TYPES } from '@semapps/mime-types';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
@@ -21,7 +20,6 @@ const CollectionService = {
       'https://www.w3.org/ns/activitystreams#Collection',
       'https://www.w3.org/ns/activitystreams#OrderedCollection'
     ],
-    accept: MIME_TYPES.JSON,
     activateTombstones: false,
     permissions: {},
     // These default permissions can be overridden by providing
@@ -148,7 +146,6 @@ const CollectionService = {
               <${collectionUri}> as:items ?items .
             }
           `,
-          accept: MIME_TYPES.JSON,
           dataset: this.getCollectionDataset(collectionUri),
           webId: 'system'
         });
@@ -175,7 +172,6 @@ const CollectionService = {
               <${collectionUri}> as:items <${itemUri}> .
             }
           `,
-          accept: MIME_TYPES.JSON,
           dataset: this.getCollectionDataset(collectionUri),
           webId: 'system'
         });
@@ -205,8 +201,12 @@ const CollectionService = {
             `Cannot attach to a non-existing collection: ${collectionUri} (dataset: ${ctx.meta.dataset})`
           );
 
-        await ctx.call('triplestore.insert', {
-          resource: sanitizeSparqlQuery`<${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>`,
+        await ctx.call('triplestore.update', {
+          query: sanitizeSparqlQuery`
+            INSERT DATA { 
+              <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>
+            }
+          `,
           dataset: this.getCollectionDataset(collectionUri),
           webId: 'system'
         });
@@ -297,7 +297,6 @@ const CollectionService = {
               ?actorUri ${prefix}:${collectionKey} <${collectionUri}>
             }
           `,
-          accept: MIME_TYPES.JSON,
           dataset: this.getCollectionDataset(collectionUri),
           webId: 'system'
         });

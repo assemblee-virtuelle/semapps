@@ -1,22 +1,12 @@
 import urlJoin from 'url-join';
-import { MIME_TYPES } from '@semapps/mime-types';
 import { defineAction } from 'moleculer';
 
 const Schema = defineAction({
   visibility: 'public',
   params: {
+    // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
     resource: {
-      type: 'multi',
-      // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
-      rules: [{ type: 'string' }, { type: 'object' }]
-    },
-    contentType: {
-      type: 'string',
-      optional: true
-    },
-    webId: {
-      type: 'string',
-      optional: true
+      type: 'object'
     },
     graphName: {
       type: 'string',
@@ -28,21 +18,17 @@ const Schema = defineAction({
     }
   },
   async handler(ctx) {
-    const { resource, contentType, graphName } = ctx.params;
-    // @ts-expect-error
-    const webId = ctx.params.webId || ctx.meta.webId || 'anon';
+    const { resource, graphName } = ctx.params;
     // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
     let dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
-    const rdf =
-      contentType === MIME_TYPES.JSON
-        ? await ctx.call('jsonld.parser.toRDF', {
-            input: resource,
-            options: {
-              format: 'application/n-quads'
-            }
-          })
-        : resource;
+    // Convert JSON-LD to N-Quads
+    const rdf = await ctx.call('jsonld.parser.toRDF', {
+      input: resource,
+      options: {
+        format: 'application/n-quads'
+      }
+    });
 
     if (!dataset) throw new Error(`No dataset defined for triplestore insert: ${rdf}`);
     if (dataset !== '*' && !(await ctx.call('triplestore.dataset.exist', { dataset })))
@@ -57,7 +43,6 @@ const Schema = defineAction({
         body: graphName ? `INSERT DATA { GRAPH <${graphName}> { ${rdf} } }` : `INSERT DATA { ${rdf} }`,
         headers: {
           'Content-Type': 'application/sparql-update',
-          'X-SemappsUser': webId,
           Authorization: this.Authorization
         }
       });

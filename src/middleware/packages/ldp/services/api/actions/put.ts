@@ -1,10 +1,11 @@
+import { MIME_TYPES } from '@semapps/mime-types';
 import { defineAction, Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
 export default defineAction({
   async handler(ctx) {
-    const { username, slugParts, body, ...resource } = ctx.params;
+    let { username, slugParts, ...resource } = ctx.params;
 
     const resourceUri = this.getUriFromSlugParts(slugParts, username);
     const resourceId = resource['@id'] || resource.id;
@@ -23,12 +24,20 @@ export default defineAction({
     }
 
     try {
-      await ctx.call(controlledActions.put || 'ldp.resource.put', {
-        resource,
-        // @ts-expect-error
-        contentType: ctx.meta.headers['content-type'],
-        body
-      });
+      // @ts-expect-error
+      const contentType = ctx.meta.headers['content-type'];
+
+      // If the body is in Turtle or N-Triples, first convert it to JSON-LD
+      if (contentType && contentType !== MIME_TYPES.JSON) {
+        resource = await ctx.call('jsonld.parser.fromRDF', {
+          // @ts-expect-error
+          input: ctx.meta.rawBody,
+          options: { format: contentType }
+        });
+      }
+
+      await ctx.call(controlledActions.put || 'ldp.resource.put', { resource });
+
       // @ts-expect-error
       ctx.meta.$statusCode = 204;
       // @ts-expect-error

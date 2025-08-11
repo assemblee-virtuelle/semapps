@@ -1,4 +1,3 @@
-import { MIME_TYPES } from '@semapps/mime-types';
 import fs from 'fs';
 import path from 'path';
 import { ServiceSchema, defineAction } from 'moleculer';
@@ -168,7 +167,6 @@ const KeysMigrationSchema = {
         };
         const keyId = await ctx.call('keys.container.post', {
           resource: keyResource,
-          contentType: MIME_TYPES.JSON,
           webId
         });
         // @ts-expect-error TS(2339): Property 'id' does not exist on type '{ '@type': s... Remove this comment to see the full error message

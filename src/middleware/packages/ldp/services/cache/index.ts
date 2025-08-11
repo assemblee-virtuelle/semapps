@@ -1,4 +1,3 @@
-import { MIME_TYPES } from '@semapps/mime-types';
 import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 
 const LdpCacheSchema = {
@@ -10,7 +9,7 @@ const LdpCacheSchema = {
         const containersUris = await ctx.call('ldp.container.getAll');
         for (const containerUri of containersUris) {
           try {
-            await ctx.call('ldp.container.get', { containerUri, accept: MIME_TYPES.JSON });
+            await ctx.call('ldp.container.get', { containerUri });
             this.logger.info(`Generated cache for container ${containerUri}`);
           } catch (e) {
             this.logger.warn(`Error when generating cache for container ${containerUri}`);

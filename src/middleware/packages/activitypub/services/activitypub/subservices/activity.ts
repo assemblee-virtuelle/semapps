@@ -1,7 +1,6 @@
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
 import { ControlledContainerMixin } from '@semapps/ldp';
-import { MIME_TYPES } from '@semapps/mime-types';
 import { ServiceSchema, defineAction } from 'moleculer';
 import setRightsHandler from './activity-handlers/setRightsHandler.ts';
 import { objectCurrentToId, objectIdToCurrent, arrayOf } from '../../../utils.ts';
@@ -17,7 +16,6 @@ const ActivityService = {
     // ControlledContainerMixin settings
     path: '/as/activity',
     acceptedTypes: Object.values(FULL_ACTIVITY_TYPES),
-    accept: MIME_TYPES.JSON,
     permissions: {},
     newResourcesPermissions: {},
     readOnly: true,

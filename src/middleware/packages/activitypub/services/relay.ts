@@ -1,5 +1,4 @@
 import urlJoin from 'url-join';
-import { MIME_TYPES } from '@semapps/mime-types';
 import { ServiceSchema, defineAction } from 'moleculer';
 import { ACTOR_TYPES } from '../constants.ts';
 import { delay } from '../utils.ts';
@@ -58,7 +57,6 @@ const RelayService = {
             preferredUsername: actorSettings.username,
             name: actorSettings.name
           },
-          contentType: MIME_TYPES.JSON,
           webId: 'system'
         });
       } catch (e) {

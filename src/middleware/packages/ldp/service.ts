@@ -91,10 +91,10 @@ const LdpSchema = {
       }
     });
 
-    // @ts-expect-error
+    // @ts-expect-error TS(2322): Type '{ name: "permissions"; actions: { addAuthori... Remove this comment to see the full error message
     this.broker.createService({ mixins: [PermissionsService] });
 
-    // @ts-expect-error
+    // @ts-expect-error TS(2322): Type '{ name: "ldp.link-header"; actions: { get: A... Remove this comment to see the full error message
     this.broker.createService({ mixins: [LdpLinkHeaderService] });
 
     // Only create this service if a cacher is defined

@@ -1,4 +1,3 @@
-import { MIME_TYPES } from '@semapps/mime-types';
 import { defineAction } from 'moleculer';
 
 const Schema = defineAction({
@@ -20,7 +19,6 @@ const Schema = defineAction({
           <${resourceUri}> a ?type .
         }
       `,
-      accept: MIME_TYPES.JSON,
       webId: 'system'
     });
 

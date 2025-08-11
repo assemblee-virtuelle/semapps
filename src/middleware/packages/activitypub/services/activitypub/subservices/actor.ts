@@ -1,6 +1,5 @@
 import fetch from 'node-fetch';
 import { namedNode, literal, triple, variable } from '@rdfjs/data-model';
-import { MIME_TYPES } from '@semapps/mime-types';
 import { arrayOf } from '@semapps/ldp';
 import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 import { ACTOR_TYPES, AS_PREFIX } from '../../../constants.ts';
@@ -24,7 +23,7 @@ const ActorService = {
         if (ctx.meta.dataset && !(await ctx.call('ldp.remote.isRemote', { resourceUri: actorUri }))) {
           try {
             // Don't return immediately the promise, or we won't be able to catch errors
-            const actor = await ctx.call('ldp.resource.get', { resourceUri: actorUri, accept: MIME_TYPES.JSON, webId });
+            const actor = await ctx.call('ldp.resource.get', { resourceUri: actorUri, webId });
             return actor;
           } catch (e) {
             console.error(e);
@@ -45,7 +44,7 @@ const ActorService = {
         const actor = await this.actions.get({ actorUri, webId }, { parentCtx: ctx });
         // If the URL is not in the same domain as the actor, it is most likely not a profile
         if (actor.url && new URL(actor.url).host === new URL(actorUri).host) {
-          return await ctx.call('ldp.resource.get', { resourceUri: actor.url, accept: MIME_TYPES.JSON, webId });
+          return await ctx.call('ldp.resource.get', { resourceUri: actor.url, webId });
         }
       }
     }),

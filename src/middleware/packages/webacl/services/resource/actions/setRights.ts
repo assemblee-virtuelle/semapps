@@ -21,8 +21,8 @@ export const api = async function api(this: any, ctx: any) {
   if (!contentType || (contentType !== MIME_TYPES.JSON && contentType !== MIME_TYPES.TURTLE))
     throw new MoleculerError(`Content type not supported : ${contentType}`, 400, 'BAD_REQUEST');
 
-  const newRights = await convertBodyToTriples(ctx.meta.body, contentType);
-  // @ts-expect-error
+  const newRights = await convertBodyToTriples(ctx.meta.rawBody, contentType);
+  // @ts-expect-error TS(18046): 'newRights' is of type 'unknown'.
   if (newRights.length === 0) throw new MoleculerError('PUT rights cannot be empty', 400, 'BAD_REQUEST');
 
   // This is the root container
@@ -53,14 +53,12 @@ export const action = defineAction({
 
     const isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
 
-    // check that the user has Control perm.
-    // TODO: bypass this check if user is 'system' (use system as a super-admin) ?
-    const { control } = await ctx.call('webacl.resource.hasRights', {
-      resourceUri,
-      rights: { control: true },
+    await ctx.call('permissions.check', {
+      uri: resourceUri,
+      type: isContainer ? 'container' : 'resource',
+      mode: 'acl:Control',
       webId
     });
-    if (!control) throw new MoleculerError('Access denied ! user must have Control permission', 403, 'ACCESS_DENIED');
 
     // filter out all the newRights that are not for the resource
     const aclUri = getAclUriFromResourceUri(this.settings.baseUrl, resourceUri);

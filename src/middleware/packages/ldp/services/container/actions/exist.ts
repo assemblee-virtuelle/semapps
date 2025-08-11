@@ -1,4 +1,3 @@
-import { MIME_TYPES } from '@semapps/mime-types';
 import { defineAction } from 'moleculer';
 
 const Schema = defineAction({
@@ -23,7 +22,6 @@ const Schema = defineAction({
           ${isRemoteContainer ? '}' : ''}
         }
       `,
-      accept: MIME_TYPES.JSON,
       webId: 'system'
     });
   }

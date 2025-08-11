@@ -1,7 +1,6 @@
 import urlJoin from 'url-join';
 import { namedNode, triple } from '@rdfjs/data-model';
 import { ControlledContainerMixin, arrayOf } from '@semapps/ldp';
-import { MIME_TYPES } from '@semapps/mime-types';
 import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 
 const TypeRegistrationsSchema = {
@@ -71,7 +70,6 @@ const TypeRegistrationsSchema = {
                 'solid:forClass': expandedTypes,
                 'solid:instanceContainer': containerUri
               },
-              contentType: MIME_TYPES.JSON,
               webId
             },
             { parentCtx: ctx }
@@ -139,11 +137,7 @@ const TypeRegistrationsSchema = {
         // If no default app is defined for this type, use this one
         if (!registration['apods:defaultApp']) registration['apods:defaultApp'] = appUri;
 
-        await ctx.call('type-registrations.put', {
-          resource: registration,
-          contentType: MIME_TYPES.JSON,
-          webId
-        });
+        await ctx.call('type-registrations.put', { resource: registration, webId });
       }
     }),
 
@@ -176,7 +170,6 @@ const TypeRegistrationsSchema = {
 
         await ctx.call('type-registrations.put', {
           resource: registration,
-          contentType: MIME_TYPES.JSON,
           webId
         });
       }

@@ -1,7 +1,8 @@
-import { MIME_TYPES } from '@semapps/mime-types';
-import { ServiceSchema, defineAction, defineServiceEvent, Errors } from 'moleculer';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 import ControlledContainerMixin from './controlled-container.ts';
 import { delay } from '../utils.ts';
+
+import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
@@ -33,10 +34,7 @@ const Schema = {
         let resource = this.settings.initialValue;
         if (!resource.type && !resource['@type']) resource.type = this.settings.acceptedTypes;
 
-        return await this.actions.post(
-          { containerUri, resource, contentType: MIME_TYPES.JSON, webId },
-          { parentCtx: ctx }
-        );
+        return await this.actions.post({ containerUri, resource, webId }, { parentCtx: ctx });
       }
     }),
 

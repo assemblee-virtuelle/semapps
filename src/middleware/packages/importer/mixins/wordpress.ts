@@ -1,7 +1,6 @@
 import urlJoin from 'url-join';
 import fetch from 'node-fetch';
 import { getSlugFromUri, delay } from '@semapps/ldp';
-import { MIME_TYPES } from '@semapps/mime-types';
 import { ServiceSchema } from 'moleculer';
 import ImporterMixin from './importer.ts';
 
@@ -92,7 +91,6 @@ const Schema = {
               readableStream: response.body,
               mimetype: mediaData.mime_type
             },
-            contentType: MIME_TYPES.JSON,
             webId: 'system'
           });
         } else {

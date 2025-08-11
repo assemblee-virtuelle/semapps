@@ -5,11 +5,10 @@ import { arrayOf } from '@semapps/ldp';
 import {
   parseUrl,
   parseHeader,
-  parseSparql,
+  parseRawBody,
   negotiateContentType,
   negotiateAccept,
   parseJson,
-  parseTurtle,
   parseFile,
   saveDatasetMeta
 } from '@semapps/middlewares';
@@ -123,9 +122,8 @@ const ApiService = {
         parseHeader,
         negotiateContentType,
         negotiateAccept,
-        parseSparql,
+        parseRawBody,
         parseJson,
-        parseTurtle,
         parseFile,
         saveDatasetMeta
       ];
@@ -134,7 +132,7 @@ const ApiService = {
         name: this.settings.podProvider ? 'boxes' : `boxes${actorsPath}`,
         path: actorsPath,
         // Disable the body parsers so that we can parse the body ourselves
-        // (Moleculer-web doesn't handle non-JSON bodies, so we must do it)
+        // (Moleculer-web doesn't handle non-JSON bodies, so we must do it ourselves)
         bodyParsers: false,
         authorization: false,
         authentication: true,

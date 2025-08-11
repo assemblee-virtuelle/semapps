@@ -1,7 +1,7 @@
 import { ServiceSchema, defineServiceEvent } from 'moleculer';
 
-const AuthorizerSchema = {
-  name: 'authorizer' as const,
+const AuthorizerBotSchema = {
+  name: 'authorizer-bot' as const,
   settings: {
     rules: []
   },
@@ -127,12 +127,12 @@ const AuthorizerSchema = {
   }
 } satisfies ServiceSchema;
 
-export default AuthorizerSchema;
+export default AuthorizerBotSchema;
 
 declare global {
   export namespace Moleculer {
     export interface AllServices {
-      [AuthorizerSchema.name]: typeof AuthorizerSchema;
+      [AuthorizerBotSchema.name]: typeof AuthorizerBotSchema;
     }
   }
 }

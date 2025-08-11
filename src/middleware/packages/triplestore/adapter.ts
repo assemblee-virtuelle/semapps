@@ -33,7 +33,7 @@ class TripleStoreAdapter {
     await this.broker.call('triplestore.dataset.create', {
       // @ts-expect-error TS(2339): Property 'dataset' does not exist on type 'TripleS... Remove this comment to see the full error message
       dataset: this.dataset,
-      secure: false
+      secure: false // TODO Remove when we switch to Fuseki 5
     });
   }
 
@@ -81,8 +81,7 @@ class TripleStoreAdapter {
             }
           }
         `,
-        accept: MIME_TYPES.JSON,
-        // @ts-expect-error
+        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type 'TripleS... Remove this comment to see the full error message
         dataset: this.dataset
       })
       .then((result: any) => {
@@ -125,8 +124,7 @@ class TripleStoreAdapter {
             <${sanitizeSparqlUri(_id)}> ?p ?o .
           }
         `,
-        accept: MIME_TYPES.JSON,
-        // @ts-expect-error
+        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type 'TripleS... Remove this comment to see the full error message
         dataset: this.dataset
       })
       .then((result: any) => {
@@ -181,8 +179,7 @@ class TripleStoreAdapter {
           '@type': this.type,
           ...resource
         },
-        contentType: MIME_TYPES.JSON,
-        // @ts-expect-error
+        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type 'TripleS... Remove this comment to see the full error message
         dataset: this.dataset
       })
       .then(() => this.findById(resource['@id']));

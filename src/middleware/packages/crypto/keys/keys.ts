@@ -91,10 +91,7 @@ const KeysService = {
         const webId = ctx.params.webId || ctx.meta.webId;
 
         // Get the key container, to search by type.
-        const container = await ctx.call('keys.container.list', {
-          webId,
-          accept: MIME_TYPES.JSON
-        });
+        const container = await ctx.call('keys.container.list', { webId });
 
         // Check if key type is present.
         const matchedKeys = container['ldp:contains'].filter(
@@ -119,7 +116,7 @@ const KeysService = {
       },
       async handler(ctx) {
         const { keyType, webId } = ctx.params;
-        const webIdDoc = await ctx.call('webid.get', { resourceUri: webId, accept: MIME_TYPES.JSON, webId: 'system' });
+        const webIdDoc = await ctx.call('webid.get', { resourceUri: webId, webId: 'system' });
 
         // RSA keys are stored in `publicKey` field, everything else in `assertionMethod`
         const publicKeys =
@@ -142,7 +139,6 @@ const KeysService = {
             const publicKeyId = key.id || key['@id'];
             return await ctx.call('keys.container.get', {
               resourceUri: await this.actions.findPrivateKeyUri({ publicKeyUri: publicKeyId }, { parentCtx: ctx }),
-              accept: MIME_TYPES.JSON,
               webId
             });
           })
@@ -175,7 +171,7 @@ const KeysService = {
         // Note: Key purposes are not regarded, as they are currently not used.
         const keyObject =
           ctx.params.keyObject || keyId
-            ? await ctx.call('keys.container.get', { resourceUri: keyId, webId, accept: MIME_TYPES.JSON })
+            ? await ctx.call('keys.container.get', { resourceUri: keyId, webId })
             : (await ctx.call('keys.getOrCreateWebIdKeys', { webId, keyType }))[0];
 
         // We need the key object to have the public key's id, so it is resolvable.
@@ -219,8 +215,7 @@ const KeysService = {
         };
         const keyUri = await ctx.call('keys.container.post', {
           webId,
-          resource: keyObject,
-          contentType: MIME_TYPES.JSON
+          resource: keyObject
         });
         keyObject.id = keyUri;
 
@@ -346,9 +341,7 @@ const KeysService = {
         const keyId = ctx.params.keyId || ctx.params.keyObject?.id || ctx.params.keyObject?.['@id'];
         if (!keyId) throw new Error('Either keyId or keyObject with id must be given.');
 
-        const keyObject =
-          ctx.params.keyObject ||
-          (await ctx.call('ldp.resource.get', { resourceUri: keyId, accept: MIME_TYPES.JSON, webId }));
+        const keyObject = ctx.params.keyObject || (await ctx.call('ldp.resource.get', { resourceUri: keyId, webId }));
 
         const isRsaKey = arrayOf(keyObject.type || keyObject['@type']).includes(KEY_TYPES.RSA);
 
@@ -359,7 +352,6 @@ const KeysService = {
 
         const webIdDocument = await ctx.call('webid.get', {
           resourceUri: webId,
-          accept: MIME_TYPES.JSON,
           webId: webId
         });
         // Ensure the same public key is not attached already.
@@ -428,9 +420,7 @@ const KeysService = {
         // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const webId = ctx.params.webId || ctx.meta.webId;
         const privateKeyUri = ctx.params.keyId || ctx.params.keyObject?.id || ctx.params.keyObject?.['@id'];
-        const keyObject =
-          ctx.params.keyObject ||
-          (await ctx.call('ldp.resource.get', { resourceUri: privateKeyUri, accept: MIME_TYPES.JSON }));
+        const keyObject = ctx.params.keyObject || (await ctx.call('ldp.resource.get', { resourceUri: privateKeyUri }));
 
         // First, get the public key part.
         const publicKeyObject = await this.actions.getPublicKeyObject({ keyObject }, { parentCtx: ctx });
@@ -438,7 +428,6 @@ const KeysService = {
         // Then, store it in the `/public-key` container.
         const publicKeyUri = await ctx.call('keys.public-container.post', {
           resource: publicKeyObject,
-          contentType: MIME_TYPES.JSON,
           webId: webId
         });
 
@@ -472,8 +461,7 @@ const KeysService = {
         const resourceUri = ctx.params.resourceUri || ctx.params.keyObject?.id || ctx.params.keyObject?.['@id'];
         // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const webId = ctx.params.webId || ctx.meta.webId;
-        const keyObject =
-          ctx.params.keyObject || (await ctx.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON, webId }));
+        const keyObject = ctx.params.keyObject || (await ctx.call('ldp.resource.get', { resourceUri, webId }));
 
         await ctx.call('keys.container.delete', { resourceUri, webId });
         // Delete corresponding public key in the `public-key` container, if present.
@@ -497,7 +485,7 @@ const KeysService = {
       },
       async handler(ctx) {
         const { webId } = ctx.params;
-        const keys = await ctx.call('keys.container.list', { webId, accept: MIME_TYPES.JSON });
+        const keys = await ctx.call('keys.container.list', { webId });
         for (const key of keys['ldp:contains']) {
           await ctx.call('keys.delete', { resourceUri: key.id, webId });
         }
@@ -568,8 +556,7 @@ const KeysService = {
       },
       async handler(ctx) {
         const keyId = ctx.params.keyId || ctx.params.keyObject?.id || ctx.params.keyObject?.['@id'];
-        const keyObject =
-          ctx.params.keyObject || (await ctx.call('ldp.resource.get', { resourceUri: keyId, accept: MIME_TYPES.JSON }));
+        const keyObject = ctx.params.keyObject || (await ctx.call('ldp.resource.get', { resourceUri: keyId }));
 
         const keyType = keyObject['@type'] || keyObject.type;
 
