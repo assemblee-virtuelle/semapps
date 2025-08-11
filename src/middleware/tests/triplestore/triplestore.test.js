@@ -81,10 +81,17 @@ describe.each(['fuseki'])('Triplestore service tests with %s', triplestore => {
   });
 
   describe('Insert action', () => {
-    test('Insert RDF data as string', async () => {
-      const rdfData = '<http://example.org/subject> <http://example.org/predicate> "object" .';
+    test('Insert JSON-LD data', async () => {
+      const jsonLdData = {
+        "@context": {
+          "ex": "http://example.org/",
+          "predicate": "ex:predicate"
+        },
+        "@id": "http://example.org/subject",
+        "predicate": "object"
+      };
       await broker.call('triplestore.insert', {
-        resource: rdfData,
+        resource: jsonLdData,
         dataset: testDataset
       });
       const result = await broker.call('triplestore.query', {
@@ -97,7 +104,7 @@ describe.each(['fuseki'])('Triplestore service tests with %s', triplestore => {
       expect(result[0].o.value).toBe('object');
     });
 
-    test('Insert JSON-LD data', async () => {
+    test('Insert JSON-LD data with type', async () => {
       const jsonLdData = {
         "@context": {
           "ex": "http://example.org/",
@@ -110,7 +117,6 @@ describe.each(['fuseki'])('Triplestore service tests with %s', triplestore => {
       };
       await broker.call('triplestore.insert', {
         resource: jsonLdData,
-        contentType: 'application/ld+json',
         dataset: testDataset
       });
       const result = await broker.call('triplestore.query', {
@@ -121,10 +127,17 @@ describe.each(['fuseki'])('Triplestore service tests with %s', triplestore => {
     });
 
     test('Insert data with graph name', async () => {
-      const rdfData = '<http://example.org/subject> <http://example.org/predicate> "object" .';
+      const jsonLdData = {
+        "@context": {
+          "ex": "http://example.org/",
+          "predicate": "ex:predicate"
+        },
+        "@id": "http://example.org/subject",
+        "predicate": "object"
+      };
       const graphName = 'http://example.org/graph';
       await broker.call('triplestore.insert', {
-        resource: rdfData,
+        resource: jsonLdData,
         graphName,
         dataset: testDataset
       });
@@ -140,9 +153,16 @@ describe.each(['fuseki'])('Triplestore service tests with %s', triplestore => {
       // Create the second dataset
       await broker.call('triplestore.dataset.create', { dataset: secondDataset });
 
-      const rdfData = '<http://example.org/subject> <http://example.org/predicate> "object" .';
+      const jsonLdData = {
+        "@context": {
+          "ex": "http://example.org/",
+          "predicate": "ex:predicate"
+        },
+        "@id": "http://example.org/subject",
+        "predicate": "object"
+      };
       await broker.call('triplestore.insert', {
-        resource: rdfData,
+        resource: jsonLdData,
         dataset: '*'
       });
 
@@ -168,9 +188,16 @@ describe.each(['fuseki'])('Triplestore service tests with %s', triplestore => {
     });
 
     test('Insert should fail with non-existent dataset', async () => {
-      const rdfData = '<http://example.org/subject> <http://example.org/predicate> "object" .';
+      const jsonLdData = {
+        "@context": {
+          "ex": "http://example.org/",
+          "predicate": "ex:predicate"
+        },
+        "@id": "http://example.org/subject",
+        "predicate": "object"
+      };
       await expect(broker.call('triplestore.insert', {
-        resource: rdfData,
+        resource: jsonLdData,
         dataset: 'non_existent_dataset'
       })).rejects.toThrow("The dataset non_existent_dataset doesn't exist");
     });
@@ -179,16 +206,34 @@ describe.each(['fuseki'])('Triplestore service tests with %s', triplestore => {
   describe('Query action', () => {
     beforeEach(async () => {
       // Insert test data
-      const rdfData = `
-        <http://example.org/person1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/Person> .
-        <http://example.org/person1> <http://example.org/name> "John Doe" .
-        <http://example.org/person2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/Person> .
-        <http://example.org/person2> <http://example.org/name> "Jane Smith" .
-      `;
+      const jsonLdData = [
+        {
+          "@context": {
+            "ex": "http://example.org/",
+            "name": "ex:name",
+            "type": "@type"
+          },
+          "@id": "http://example.org/person1",
+          "type": "http://example.org/Person",
+          "name": "John Doe"
+        },
+        {
+          "@context": {
+            "ex": "http://example.org/",
+            "name": "ex:name",
+            "type": "@type"
+          },
+          "@id": "http://example.org/person2",
+          "type": "http://example.org/Person",
+          "name": "Jane Smith"
+        }
+      ];
+      for (const data of jsonLdData) {
       await broker.call('triplestore.insert', {
-        resource: rdfData,
-        dataset: testDataset
-      });
+          resource: data,
+          dataset: testDataset
+        });
+      }
     });
 
     test('SELECT query with JSON result', async () => {
@@ -288,12 +333,18 @@ describe.each(['fuseki'])('Triplestore service tests with %s', triplestore => {
   describe('Update action', () => {
     beforeEach(async () => {
       // Insert test data
-      const rdfData = `
-        <http://example.org/person1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/Person> .
-        <http://example.org/person1> <http://example.org/name> "John Doe" .
-      `;
+      const jsonLdData = {
+        "@context": {
+          "ex": "http://example.org/",
+          "name": "ex:name",
+          "type": "@type"
+        },
+        "@id": "http://example.org/person1",
+        "type": "http://example.org/Person",
+        "name": "John Doe"
+      };
       await broker.call('triplestore.insert', {
-        resource: rdfData,
+        resource: jsonLdData,
         dataset: testDataset
       });
     });
@@ -365,9 +416,22 @@ describe.each(['fuseki'])('Triplestore service tests with %s', triplestore => {
       await broker.call('triplestore.dataset.create', { dataset: secondDataset });
 
       // Insert the same data into both datasets
-      const initialData = '<http://example.org/person1> <http://example.org/age> "29" .';
-      await broker.call('triplestore.insert', { resource: initialData, dataset: testDataset });
-      await broker.call('triplestore.insert', { resource: initialData, dataset: secondDataset });
+      const initialData = {
+        "@context": {
+          "ex": "http://example.org/",
+          "age": "ex:age"
+        },
+        "@id": "http://example.org/person1",
+        "age": "29"
+      };
+      await broker.call('triplestore.insert', { 
+        resource: initialData, 
+        dataset: testDataset 
+      });
+      await broker.call('triplestore.insert', { 
+        resource: initialData, 
+        dataset: secondDataset 
+      });
 
       // Perform the update with wildcard
       const updateQuery = `
@@ -418,12 +482,18 @@ describe.each(['fuseki'])('Triplestore service tests with %s', triplestore => {
   describe('DropAll action', () => {
     beforeEach(async () => {
       // Insert test data
-      const rdfData = `
-        <http://example.org/person1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/Person> .
-        <http://example.org/person1> <http://example.org/name> "John Doe" .
-      `;
+      const jsonLdData = {
+        "@context": {
+          "ex": "http://example.org/",
+          "name": "ex:name",
+          "type": "@type"
+        },
+        "@id": "http://example.org/person1",
+        "type": "http://example.org/Person",
+        "name": "John Doe"
+      };
       await broker.call('triplestore.insert', {
-        resource: rdfData,
+        resource: jsonLdData,
         dataset: testDataset
       });
     });
@@ -457,18 +527,48 @@ describe.each(['fuseki'])('Triplestore service tests with %s', triplestore => {
   describe('DeleteOrphanBlankNodes action', () => {
     beforeEach(async () => {
       // Insert test data with blank nodes
-      const rdfData = `
-        <http://example.org/person1> <http://example.org/address> _:address1 .
-        _:address1 <http://example.org/street> "123 Main St" .
-        _:address1 <http://example.org/city> "New York" .
-        <http://example.org/person2> <http://example.org/address> _:address2 .
-        _:address2 <http://example.org/street> "456 Oak Ave" .
-        _:orphan <http://example.org/street> "Orphan Street" .
-      `;
-      await broker.call('triplestore.insert', {
-        resource: rdfData,
-        dataset: testDataset
-      });
+      const jsonLdData = [
+        {
+          "@context": {
+            "ex": "http://example.org/",
+            "address": "ex:address",
+            "street": "ex:street",
+            "city": "ex:city"
+          },
+          "@id": "http://example.org/person1",
+          "address": {
+            "@id": "_:address1",
+            "street": "123 Main St",
+            "city": "New York"
+          }
+        },
+        {
+          "@context": {
+            "ex": "http://example.org/",
+            "address": "ex:address",
+            "street": "ex:street"
+          },
+          "@id": "http://example.org/person2",
+          "address": {
+            "@id": "_:address2",
+            "street": "456 Oak Ave"
+          }
+        },
+        {
+          "@context": {
+            "ex": "http://example.org/",
+            "street": "ex:street"
+          },
+          "@id": "_:orphan",
+          "street": "Orphan Street"
+        }
+      ];
+      for (const data of jsonLdData) {
+        await broker.call('triplestore.insert', {
+          resource: data,
+          dataset: testDataset
+        });
+      }
     });
 
     test('Delete orphan blank nodes', async () => {
@@ -492,11 +592,16 @@ describe.each(['fuseki'])('Triplestore service tests with %s', triplestore => {
 
     test('Delete orphan blank nodes in specific graph', async () => {
       const graphName = 'http://example.org/graph';
-      const rdfData = `
-        _:orphan <http://example.org/street> "Orphan Street" .
-      `;
+      const jsonLdData = {
+        "@context": {
+          "ex": "http://example.org/",
+          "street": "ex:street"
+        },
+        "@id": "_:orphan",
+        "street": "Orphan Street"
+      };
       await broker.call('triplestore.insert', {
-        resource: rdfData,
+        resource: jsonLdData,
         graphName,
         dataset: testDataset
       });

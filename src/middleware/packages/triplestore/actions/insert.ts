@@ -8,10 +8,6 @@ const Schema = defineAction({
     resource: {
       type: 'object'
     },
-    webId: {
-      type: 'string',
-      optional: true
-    },
     graphName: {
       type: 'string',
       optional: true
@@ -47,7 +43,6 @@ const Schema = defineAction({
         body: graphName ? `INSERT DATA { GRAPH <${graphName}> { ${rdf} } }` : `INSERT DATA { ${rdf} }`,
         headers: {
           'Content-Type': 'application/sparql-update',
-          'X-SemappsUser': webId,
           Authorization: this.Authorization
         }
       });
