@@ -1,12 +1,12 @@
 const path = require('path');
 const { ServiceBroker } = require('moleculer');
-const { TripleStoreService } = require('@semapps/triplestore');
+const { TripleStoreService } = require('../../packages/triplestore-ng');
+// const { TripleStoreService } = require('@semapps/triplestore');
 const CONFIG = require('../config');
 const { clearDataset } = require('../utils');
 const { JsonLdService } = require('@semapps/jsonld');
 const { OntologiesService } = require('@semapps/ontologies');
 const ApiGatewayService = require('moleculer-web');
-
 
 module.exports = async triplestore => {
   await clearDataset(CONFIG.SETTINGS_DATASET);
@@ -23,7 +23,7 @@ module.exports = async triplestore => {
   broker.createService({
     mixins: [JsonLdService],
     settings: {
-      baseUri: CONFIG.HOME_URL,
+      baseUri: CONFIG.HOME_URL
     }
   });
 
@@ -32,11 +32,11 @@ module.exports = async triplestore => {
   broker.createService({
     mixins: [OntologiesService],
     settings: {
-      persistRegistry: true,
+      persistRegistry: false,
+      // persistRegistry: true,
       settingsDataset: CONFIG.SETTINGS_DATASET
     }
   });
-
 
   broker.createService({
     mixins: [TripleStoreService],
@@ -44,9 +44,27 @@ module.exports = async triplestore => {
       url: CONFIG.SPARQL_ENDPOINT,
       user: CONFIG.JENA_USER,
       password: CONFIG.JENA_PASSWORD,
-      mainDataset: CONFIG.MAIN_DATASET
+      mainDataset: CONFIG.MAIN_DATASET,
+      nextgraphAdminUserId: 'XOct97tUc-ccyFUGe5sDUkHyXdTQ7LtGW1RVyYZzIYgA',
+      nextgraphMappingsNuri:
+        'did:ng:o:5ZwPgEib6okmEbVlWRJVfGUNnbdtmQpC_x1uTy9wjcoA:v:asrmmGCr1WTq3oAGkgtVwUxsJgA5MIsV2FIYhDRyPagA',
+      nextgraphConfig: {
+        server_peer_id: 'zT_iEzpHeO5znVU9ZYcvenJjb8pWrRWFzEO6eUE_SrAA',
+        admin_user_key: 'dwtQ9wWEovJwv6_3VArHKHRyr_zLAuR2_bFB1LiLfqEA',
+        client_peer_key: 'ryv9v1Y3jJqdQYH-_rMxGTGyDtC_eOaA0a4ibRLhmX4A',
+        server_addr: '127.0.0.1:14400'
+      }
     }
   });
+  // broker.createService({
+  //   mixins: [TripleStoreService],
+  //   settings: {
+  //     url: CONFIG.SPARQL_ENDPOINT,
+  //     user: CONFIG.JENA_USER,
+  //     password: CONFIG.JENA_PASSWORD,
+  //     mainDataset: CONFIG.MAIN_DATASET,
+  //   }
+  // });
 
   await broker.start();
 

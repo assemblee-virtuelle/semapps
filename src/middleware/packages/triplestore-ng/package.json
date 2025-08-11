@@ -1,0 +1,28 @@
+{
+  "name": "@semapps/triplestore-ng",
+  "version": "1.1.4",
+  "description": "Triple store module for SemApps",
+  "license": "Apache-2.0",
+  "author": "Virtual Assembly",
+  "dependencies": {
+    "@semapps/middlewares": "1.1.4",
+    "@semapps/mime-types": "1.1.4",
+    "jsonld": "^3.3.2",
+    "moleculer": "^0.14.29",
+    "negotiator": "^0.6.2",
+    "nextgraph": "file:../../../../../../../NG/nextgraph-rs/ng-sdk-js/pkg-node",
+    "node-fetch": "^2.6.6",
+    "sparqljs": "^3.5.2",
+    "sparqljson-parse": "^1.5.1",
+    "string-template": "^1.0.0",
+    "url-join": "^4.0.1",
+    "uuid": "^9.0.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "06cb2decdab424e8686a5d77cc3364fbf1912439",
+  "engines": {
+    "node": ">=14"
+  }
+}
