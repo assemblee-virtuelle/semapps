@@ -8,6 +8,7 @@ module.exports = {
     resourceUri: { type: 'string' },
     webId: { type: 'string', optional: true },
     accept: { type: 'string', optional: true },
+    noGraph: { type: 'boolean', default: false },
     jsonContext: {
       type: 'multi',
       rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
@@ -23,7 +24,7 @@ module.exports = {
     keys: ['resourceUri', 'jsonContext']
   },
   async handler(ctx) {
-    const { resourceUri, accept, jsonContext } = ctx.params;
+    const { resourceUri, accept, noGraph, jsonContext } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (accept && accept !== MIME_TYPES.JSON)
@@ -61,14 +62,14 @@ module.exports = {
       node => node['@id'].startsWith('_:b') || node['@id'] === resourceUri
     );
 
-    if (graphWithBlankNodesOnly) frame['@id'] = resourceUri;
+    if (graphWithBlankNodesOnly || noGraph) frame['@id'] = resourceUri;
 
     // Frame the result using the correct context in order to have clean, consistent results
     return await ctx.call('jsonld.parser.frame', {
       input: result,
       frame,
       options: {
-        embed: graphWithBlankNodesOnly ? '@once' : '@never'
+        embed: graphWithBlankNodesOnly || noGraph ? '@once' : '@never'
       }
     });
   }
