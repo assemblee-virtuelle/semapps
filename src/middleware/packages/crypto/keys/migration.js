@@ -135,13 +135,13 @@ module.exports = {
       await ctx.call('triplestore.update', {
         query: `
           PREFIX sec: <https://w3id.org/security#>   
-          DELETE {
-            <${webId}> sec:publicKey  ?o .
-            ?o  ?p1  ?o1 .
-          }
-          WHERE {
-            <${webId}>  sec:publicKey  ?o .
-            ?o ?p1 ?o1 .
+          DELETE WHERE {
+            GRAPH <${webId}> {
+              <${webId}> sec:publicKey ?o .
+            }
+            GRAPH ?g {
+              ?o ?p1 ?o1 .
+            }
           }
         `,
         webId: 'system'

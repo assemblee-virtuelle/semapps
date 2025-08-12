@@ -31,17 +31,7 @@ module.exports = {
       }
     );
 
-    await ctx.call('triplestore.update', {
-      query: `
-        DELETE
-        WHERE {
-          GRAPH <${resourceUri}> {
-            <${resourceUri}> ?p1 ?o1 .
-          }
-        }
-      `,
-      webId
-    });
+    await ctx.call('triplestore.document.clear', { documentUri: resourceUri });
 
     await ctx.call('triplestore.document.delete', { documentUri: resourceUri });
 

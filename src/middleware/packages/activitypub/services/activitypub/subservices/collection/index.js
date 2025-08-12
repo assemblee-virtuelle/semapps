@@ -181,7 +181,6 @@ const CollectionService = {
       await ctx.call('triplestore.update', {
         query: sanitizeSparqlQuery`
           INSERT DATA { 
-            <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>
             GRAPH <${collectionUri}> {
               <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>
             }

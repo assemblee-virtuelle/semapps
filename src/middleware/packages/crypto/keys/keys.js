@@ -583,7 +583,9 @@ const KeysService = {
           query: `
             SELECT ?privateKey 
             WHERE {
-              ?privateKey <http://www.w3.org/2000/01/rdf-schema#seeAlso> <${publicKeyUri}> .
+              GRAPH ?g {
+                ?privateKey <http://www.w3.org/2000/01/rdf-schema#seeAlso> <${publicKeyUri}> .
+              }
             }
           `,
           webId: 'system'
