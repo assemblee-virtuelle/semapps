@@ -1,16 +1,14 @@
-const urlJoin = require('url-join');
-const ng = require('nextgraph');
+import urlJoin from 'url-join';
+import { defineAction } from 'moleculer';
+import ng from 'nextgraph';
 
-module.exports = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     query: {
       type: 'multi',
+      // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
       rules: [{ type: 'string' }, { type: 'object' }]
-    },
-    webId: {
-      type: 'string',
-      optional: true
     },
     dataset: {
       type: 'string',
@@ -19,25 +17,20 @@ module.exports = {
   },
   async handler(ctx) {
     let { query } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
     let dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
+
+    if (typeof query === 'object') query = this.generateSparqlQuery(query);
 
     if (!dataset) throw new Error(`No dataset defined for triplestore update: ${query}`);
     if (dataset !== '*' && !(await ctx.call('triplestore.dataset.exist', { dataset })))
       throw new Error(`The dataset ${dataset} doesn't exist`);
-
-    if (typeof query === 'object') query = this.generateSparqlQuery(query);
 
     // Handle wildcard
     const datasets = dataset === '*' ? await ctx.call('triplestore.dataset.list') : [dataset];
 
     for (dataset of datasets) {
       if (datasets.length > 1) this.logger.info(`Updating dataset ${dataset}...`);
-      // await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
-      //   body: query,
-      //   headers: {
-      //     'Content-Type': 'application/sparql-update',
-      //   }
-      // });
       try {
         const session = await ctx.call('triplestore.dataset.openSession', { dataset }, { parentCtx: ctx });
         await ng.sparql_update(session.session_id, query);
@@ -48,4 +41,6 @@ module.exports = {
       }
     }
   }
-};
+});
+
+export default Schema; 

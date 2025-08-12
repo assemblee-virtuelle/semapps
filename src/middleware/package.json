@@ -52,5 +52,8 @@
     "moleculer@npm:^0.14.29": "patch:moleculer@patch%3Amoleculer@npm%253A0.14.35%23~/.yarn/patches/moleculer-npm-0.14.35-b9acbe0879.patch%3A%3Aversion=0.14.35&hash=b9970b#~/.yarn/patches/moleculer-patch-59829b52bf.patch",
     "moleculer@npm:^0.14.18": "patch:moleculer@patch%3Amoleculer@npm%253A0.14.35%23~/.yarn/patches/moleculer-npm-0.14.35-b9acbe0879.patch%3A%3Aversion=0.14.35&hash=b9970b#~/.yarn/patches/moleculer-patch-59829b52bf.patch",
     "moleculer@npm:^0.14.17": "patch:moleculer@patch%3Amoleculer@npm%253A0.14.35%23~/.yarn/patches/moleculer-npm-0.14.35-b9acbe0879.patch%3A%3Aversion=0.14.35&hash=b9970b#~/.yarn/patches/moleculer-patch-59829b52bf.patch"
+  },
+  "dependencies": {
+    "nextgraph": "/home/sylvain/NG/nextgraph-rs/ng-sdk-js/pkg-node"
   }
 }

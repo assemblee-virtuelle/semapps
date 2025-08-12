@@ -1,52 +1,32 @@
-const urlJoin = require('url-join');
-const ng = require('nextgraph');
+import urlJoin from 'url-join';
+import { defineAction } from 'moleculer';
+import ng from 'nextgraph';
 
-module.exports = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
-    webId: {
-      type: 'string',
-      optional: true
-    },
     dataset: {
       type: 'string',
       optional: true
     }
   },
   async handler(ctx) {
+    // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
     const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
-    if (!dataset) throw new Error('Unable to drop all data. The parameter dataset is missing');
 
+    if (!dataset) throw new Error('No dataset defined for triplestore dropAll');
     if (!(await ctx.call('triplestore.dataset.exist', { dataset })))
       throw new Error(`The dataset ${dataset} doesn't exist`);
 
     try {
       const session = await ctx.call('triplestore.dataset.openSession', { dataset }, { parentCtx: ctx });
-
-      // Clear all triples in the default graph
-      await ng.sparql_update(
-        session.session_id,
-        `
-        DELETE {
-          ?s ?p ?o
-        }
-        WHERE {
-          ?s ?p ?o
-        }
-      `
-      );
-
+      await ng.sparql_update(session.session_id, 'DELETE { ?s ?p ?o } WHERE { ?s ?p ?o }');
       await ctx.call('triplestore.dataset.closeSession', { sessionId: session.session_id }, { parentCtx: ctx });
     } catch (error) {
       this.logger.error(`Failed to drop all data from dataset ${dataset}:`, error);
       throw error;
     }
-
-    // return await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
-    //   body: 'update=CLEAR+ALL',
-    //   headers: {
-    //     'Content-Type': 'application/x-www-form-urlencoded'
-    //   }
-    // });
   }
-};
+});
+
+export default Schema; 

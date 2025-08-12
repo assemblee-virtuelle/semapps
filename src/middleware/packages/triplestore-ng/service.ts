@@ -1,43 +1,46 @@
-const { SparqlJsonParser } = require('sparqljson-parse');
-const SparqlGenerator = require('sparqljs').Generator;
-const { MoleculerError } = require('moleculer').Errors;
-const fetch = require('node-fetch');
-const { throw403, throw500 } = require('@semapps/middlewares');
-const countTriplesOfSubject = require('./actions/countTriplesOfSubject');
-const deleteOrphanBlankNodes = require('./actions/deleteOrphanBlankNodes');
-const dropAll = require('./actions/dropAll');
-const insert = require('./actions/insert');
-const query = require('./actions/query');
-const update = require('./actions/update');
-const tripleExist = require('./actions/tripleExist');
-const DatasetService = require('./subservices/dataset');
-const ng = require('nextgraph');
+import { SparqlJsonParser } from 'sparqljson-parse';
+import sparqljsModule from 'sparqljs';
+import fetch from 'node-fetch';
+import { throw403, throw500 } from '@semapps/middlewares';
+import { ServiceSchema, defineAction, Errors } from 'moleculer';
+import countTriplesOfSubject from './actions/countTriplesOfSubject.ts';
+import deleteOrphanBlankNodes from './actions/deleteOrphanBlankNodes.ts';
+import dropAll from './actions/dropAll.ts';
+import insert from './actions/insert.ts';
+import query from './actions/query.ts';
+import update from './actions/update.ts';
+import tripleExist from './actions/tripleExist.ts';
+import DatasetService from './subservices/dataset.ts';
+import ng from 'nextgraph';
+
+const SparqlGenerator = sparqljsModule.Generator;
+const { MoleculerError } = Errors;
 
 const TripleStoreService = {
-  name: 'triplestore',
+  name: 'triplestore' as const,
   settings: {
     url: null,
     user: null,
     password: null,
     mainDataset: null,
+    nextgraphConfig: null,
+    nextgraphAdminUserId: null,
+    nextgraphMappingsNuri: null,
     // Sub-services customization
     dataset: {}
   },
   dependencies: ['jsonld.parser'],
   async created() {
-    const { nextgraphConfig, nextgraphAdminUserId, nextgraphMappingsNuri } = this.settings;
+    const { nextgraphConfig, nextgraphAdminUserId, nextgraphMappingsNuri, dataset } = this.settings;
     if (!nextgraphConfig) {
       throw new Error('NextGraph config is missing');
     }
-    // this.nextgraphConfig = nextgraphConfig;
     if (!nextgraphAdminUserId) {
       throw new Error('NextGraph admin user id is missing');
     }
-    // this.nextgraphAdminUserId = nextgraphAdminUserId;
     if (!nextgraphMappingsNuri) {
       throw new Error('NextGraph mappings nuri is missing');
     }
-    // this.nextgraphMappingsNuri = nextgraphMappingsNuri;
 
     this.subservices = {};
     await ng.init_headless(nextgraphConfig);
@@ -49,16 +52,19 @@ const TripleStoreService = {
       throw err;
     }
 
-    this.subservices.dataset = this.broker.createService({
-      mixins: [DatasetService],
-      settings: {
-        nextgraphAdminUserId,
-        nextgraphMappingsNuri,
-        nextgraphConfig,
-        adminSessionid: this.adminSessionid,
-        ...this.settings.dataset
-      }
-    });
+    if (dataset !== false) {
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "triplestore.d... Remove this comment to see the full error message
+      this.subservices.dataset = this.broker.createService({
+        mixins: [DatasetService],
+        settings: {
+          nextgraphAdminUserId,
+          nextgraphMappingsNuri,
+          nextgraphConfig,
+          adminSessionid: this.adminSessionid,
+          ...dataset
+        }
+      });
+    }
   },
   started() {
     this.sparqlJsonParser = new SparqlJsonParser();
@@ -74,6 +80,7 @@ const TripleStoreService = {
     update,
     query,
     dropAll,
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ uri: { type: "string"; }; web... Remove this comment to see the full error message
     countTriplesOfSubject,
     tripleExist,
     deleteOrphanBlankNodes
@@ -114,6 +121,14 @@ const TripleStoreService = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
 
-module.exports = TripleStoreService;
+export default TripleStoreService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [TripleStoreService.name]: typeof TripleStoreService;
+    }
+  } 
+}

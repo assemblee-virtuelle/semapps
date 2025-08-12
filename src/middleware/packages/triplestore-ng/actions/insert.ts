@@ -1,22 +1,15 @@
-const urlJoin = require('url-join');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const ng = require('nextgraph');
+import urlJoin from 'url-join';
+import { defineAction } from 'moleculer';
+import { MIME_TYPES } from '@semapps/mime-types';
+import ng from 'nextgraph';
 
-module.exports = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
+    // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
     resource: {
       type: 'multi',
-      rules: [{ type: 'string' }, { type: 'object' }]
-    },
-    contentType: {
-      type: 'string',
-      optional: true
-    },
-    //TODO : should be removed ?
-    webId: {
-      type: 'string',
-      optional: true
+      rules: [{ type: 'string' }, { type: 'object', params: {} }]
     },
     graphName: {
       type: 'string',
@@ -28,18 +21,16 @@ module.exports = {
     }
   },
   async handler(ctx) {
-    const { resource, contentType, graphName } = ctx.params;
+    const { resource, graphName } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
     let dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
-    const rdf =
-      contentType === MIME_TYPES.JSON
-        ? await ctx.call('jsonld.parser.toRDF', {
+    const rdf = await ctx.call('jsonld.parser.toRDF', {
             input: resource,
             options: {
               format: 'application/n-quads'
             }
-          })
-        : resource;
+          });
 
     if (!dataset) throw new Error(`No dataset defined for triplestore insert: ${rdf}`);
     if (dataset !== '*' && !(await ctx.call('triplestore.dataset.exist', { dataset })))
@@ -50,13 +41,6 @@ module.exports = {
 
     for (dataset of datasets) {
       if (datasets.length > 1) this.logger.info(`Inserting into dataset ${dataset}...`);
-      // await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
-      //   body: graphName ? `INSERT DATA { GRAPH <${graphName}> { ${rdf} } }` : `INSERT DATA { ${rdf} }`,
-      //   headers: {
-      //     'Content-Type': 'application/sparql-update',
-      //     Authorization: this.Authorization
-      //   }
-      // });
       try {
         const session = await ctx.call('triplestore.dataset.openSession', { dataset }, { parentCtx: ctx });
         await ng.sparql_update(
@@ -70,4 +54,6 @@ module.exports = {
       }
     }
   }
-};
+});
+
+export default Schema; 
