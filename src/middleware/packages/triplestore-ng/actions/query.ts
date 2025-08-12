@@ -68,9 +68,9 @@ const Schema = defineAction({
 
         case 'CONSTRUCT':
           if (acceptType === MIME_TYPES.TURTLE || acceptType === MIME_TYPES.TRIPLE) {
-            return result;
+            return await this.convertRdfJsToTurtle(result);
           }
-          return await this.convertRdfJsToTurtle(result);
+          return await ctx.call('jsonld.parser.fromQuads', { input: result });
 
         default:
           throw new Error('SPARQL Verb not supported');
@@ -78,36 +78,6 @@ const Schema = defineAction({
     } catch (error) {
       this.logger.error(`Failed to query dataset ${dataset}:`, error);
       throw error;
-    }
-  },
-  methods: {
-    convertRdfJsToTurtle(quads: any) {
-      return new Promise((resolve, reject) => {
-        const writer = new Writer({
-          format: 'Turtle',
-          prefixes: {
-            // Add common prefixes if needed
-            rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-            rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
-            xsd: 'http://www.w3.org/2001/XMLSchema#'
-          }
-        });
-
-        // Add all quads
-        quads.forEach((quad: any) => {
-          writer.addQuad(quad);
-        });
-
-        // Get the result
-        writer.end((error, result) => {
-          if (error) {
-            this.logger.error('Error converting to Turtle:', error);
-            reject(error);
-          } else {
-            resolve(result);
-          }
-        });
-      });
     }
   }
 });

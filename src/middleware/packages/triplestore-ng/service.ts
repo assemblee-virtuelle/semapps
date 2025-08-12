@@ -12,6 +12,7 @@ import update from './actions/update.ts';
 import tripleExist from './actions/tripleExist.ts';
 import DatasetService from './subservices/dataset.ts';
 import ng from 'nextgraph';
+import { Writer } from 'n3';
 
 const SparqlGenerator = sparqljsModule.Generator;
 const { MoleculerError } = Errors;
@@ -119,6 +120,34 @@ const TripleStoreService = {
         console.error(e);
         throw new MoleculerError(`Invalid SPARQL.js object: ${JSON.stringify(query)}`, 400, 'BAD_REQUEST');
       }
+    },
+    convertRdfJsToTurtle(quads: any) {
+      return new Promise((resolve, reject) => {
+        const writer = new Writer({
+          format: 'Turtle',
+          prefixes: {
+            // Add common prefixes if needed
+            rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+            rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
+            xsd: 'http://www.w3.org/2001/XMLSchema#'
+          }
+        });
+
+        // Add all quads
+        quads.forEach((quad: any) => {
+          writer.addQuad(quad);
+        });
+
+        // Get the result
+        writer.end((error: any, result: any) => {
+          if (error) {
+            this.logger.error('Error converting to Turtle:', error);
+            reject(error);
+          } else {
+            resolve(result);
+          }
+        });
+      });
     }
   }
 } satisfies ServiceSchema;

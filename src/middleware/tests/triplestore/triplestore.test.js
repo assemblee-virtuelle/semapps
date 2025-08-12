@@ -2,7 +2,7 @@ const initialize = require('./initialize');
 
 jest.setTimeout(30000);
 
-describe.each(['fuseki'])('Triplestore service tests with %s', triplestore => {
+describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', triplestore => {
   let broker;
   const testDataset = 'test_dataset';
 
@@ -126,27 +126,29 @@ describe.each(['fuseki'])('Triplestore service tests with %s', triplestore => {
       expect(result).toHaveLength(1);
     });
 
-    test('Insert data with graph name', async () => {
-      const jsonLdData = {
-        "@context": {
-          "ex": "http://example.org/",
-          "predicate": "ex:predicate"
-        },
-        "@id": "http://example.org/subject",
-        "predicate": "object"
-      };
-      const graphName = 'http://example.org/graph';
-      await broker.call('triplestore.insert', {
-        resource: jsonLdData,
-        graphName,
-        dataset: testDataset
+    if (triplestore === 'fuseki') {
+      test('Insert data with graph name', async () => {
+        const jsonLdData = {
+          "@context": {
+            "ex": "http://example.org/",
+            "predicate": "ex:predicate"
+          },
+          "@id": "http://example.org/subject",
+          "predicate": "object"
+        };
+        const graphName = 'http://example.org/graph';
+        await broker.call('triplestore.insert', {
+          resource: jsonLdData,
+          graphName,
+          dataset: testDataset
+        });
+        const result = await broker.call('triplestore.query', {
+          query: `SELECT * FROM <${graphName}> WHERE { ?s ?p ?o }`,
+          dataset: testDataset
+        });
+        expect(result).toHaveLength(1);
       });
-      const result = await broker.call('triplestore.query', {
-        query: `SELECT * FROM <${graphName}> WHERE { ?s ?p ?o }`,
-        dataset: testDataset
-      });
-      expect(result).toHaveLength(1);
-    });
+    }
 
     test('Insert data with wildcard dataset inserts into all datasets', async () => {
       const secondDataset = 'test_dataset2';
@@ -590,31 +592,33 @@ describe.each(['fuseki'])('Triplestore service tests with %s', triplestore => {
       expect(result.length).toBe(3);
     });
 
-    test('Delete orphan blank nodes in specific graph', async () => {
-      const graphName = 'http://example.org/graph';
-      const jsonLdData = {
-        "@context": {
-          "ex": "http://example.org/",
-          "street": "ex:street"
-        },
-        "@id": "_:orphan",
-        "street": "Orphan Street"
-      };
-      await broker.call('triplestore.insert', {
-        resource: jsonLdData,
-        graphName,
-        dataset: testDataset
+    if (triplestore === 'fuseki') {
+      test('Delete orphan blank nodes in specific graph', async () => {
+        const graphName = 'http://example.org/graph';
+        const jsonLdData = {
+          "@context": {
+            "ex": "http://example.org/",
+            "street": "ex:street"
+          },
+          "@id": "_:orphan",
+          "street": "Orphan Street"
+        };
+        await broker.call('triplestore.insert', {
+          resource: jsonLdData,
+          graphName,
+          dataset: testDataset
+        });
+        await broker.call('triplestore.deleteOrphanBlankNodes', {
+          graphName,
+          dataset: testDataset
+        });
+        const result = await broker.call('triplestore.query', {
+          query: `SELECT * FROM <${graphName}> WHERE { ?s ?p ?o . FILTER(isBLANK(?s)) }`,
+          dataset: testDataset
+        });
+        expect(result).toHaveLength(0);
       });
-      await broker.call('triplestore.deleteOrphanBlankNodes', {
-        graphName,
-        dataset: testDataset
-      });
-      const result = await broker.call('triplestore.query', {
-        query: `SELECT * FROM <${graphName}> WHERE { ?s ?p ?o . FILTER(isBLANK(?s)) }`,
-        dataset: testDataset
-      });
-      expect(result).toHaveLength(0);
-    });
+    }
 
     test('DeleteOrphanBlankNodes should fail with non-existent dataset', async () => {
       await expect(broker.call('triplestore.deleteOrphanBlankNodes', {

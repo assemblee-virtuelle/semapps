@@ -144,16 +144,69 @@ const DatasetService = {
     }),
 
     delete: defineAction({
+      params: {
+        dataset: { type: 'string' },
+        iKnowWhatImDoing: { type: 'boolean' }
+      },
       async handler(ctx) {
-        const { dataset, confirm } = ctx.params;
-        if (!dataset) throw new Error('Unable to delete dataset. The parameter dataset is missing');
-        if (!confirm) throw new Error('Unable to delete dataset. The parameter confirm is missing');
+        const { dataset, iKnowWhatImDoing } = ctx.params;
 
-        const exist = await this.actions.exist({ dataset }, { parentCtx: ctx });
-        if (exist) {
-          this.logger.info(`Deleting dataset ${dataset}...`);
-          // TODO: Implement dataset deletion
-          this.logger.info(`Dataset ${dataset} deleted`);
+        if (!iKnowWhatImDoing) {
+          throw new Error('Please confirm that you know what you are doing by setting `iKnowWhatImDoing` to `true`.');
+        }
+
+        if (!dataset) {
+          throw new Error('Unable to delete mapping. The parameter dataset is missing');
+        }
+
+        try {
+          // First, check if the mapping exists
+          const checkResponse = await ng.sparql_query(
+            this.adminSessionid,
+            `
+            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+            
+            SELECT ?mapping ?userId WHERE {
+              GRAPH <${this.nextgraphMappingsNuri}> {
+                ?mapping a skos:Concept ;
+                  skos:prefLabel "${dataset}" ;
+                  skos:notation ?userId .
+              }
+            }
+          `
+          );
+
+          if (!(checkResponse.results.bindings.length > 0)) {
+            this.logger.warn(`No mapping found for dataset: ${dataset}`);
+            return; // Nothing to delete
+          }
+
+          const mappingUri = checkResponse.results.bindings[0].mapping.value;
+          const userId = checkResponse.results.bindings[0].userId.value;
+
+          // Delete the mapping from the graph
+          await ng.sparql_update(
+            this.adminSessionid,
+            `
+            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+            
+            DELETE DATA { 
+              GRAPH <${this.nextgraphMappingsNuri}> { 
+                <${mappingUri}> 
+                  a skos:Concept ;
+                  skos:prefLabel "${dataset}" ;
+                  skos:notation "${userId}" .
+              } 
+            }
+          `
+          );
+
+          this.logger.info(`Successfully deleted mapping for dataset: ${dataset} (userId: ${userId})`);
+
+          // TODO : See with Niko about user deletion in nextgraph then if possible delete the actual user
+        } catch (error) {
+          this.logger.error(`Failed to delete mapping for dataset ${dataset}:`, error);
+          throw new Error(`Failed to delete mapping for dataset ${dataset}: ${error.message}`);
         }
       }
     }),
