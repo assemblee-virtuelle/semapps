@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 const { Errors: E } = require('moleculer-web');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { getType, arrayOf } = require('@semapps/ldp');
-const { collectionPermissionsWithAnonRead, getSlugFromUri, objectIdToCurrent } = require('../../../utils');
+const { collectionPermissionsWithAnonRead, getSlugFromUri } = require('../../../utils');
 const { ACTOR_TYPES } = require('../../../constants');
 const AwaitActivityMixin = require('../../../mixins/await-activity');
 
@@ -225,8 +225,7 @@ const OutboxService = {
             if (this.settings.podProvider) {
               // Store the activity in the dataset of the recipient
               await this.broker.call('ldp.remote.store', {
-                resource: objectIdToCurrent(activity),
-                mirrorGraph: false, // Store in default graph as activity may not be public
+                resource: activity,
                 keepInSync: false, // Activities are immutable
                 webId: recipientUri,
                 dataset

@@ -1,6 +1,6 @@
 const { Errors: E } = require('moleculer-web');
 const { MoleculerError } = require('moleculer').Errors;
-const { objectIdToCurrent, collectionPermissionsWithAnonRead } = require('../../../utils');
+const { collectionPermissionsWithAnonRead } = require('../../../utils');
 const { ACTOR_TYPES } = require('../../../constants');
 const AwaitActivityMixin = require('../../../mixins/await-activity');
 
@@ -101,8 +101,7 @@ const InboxService = {
       if (activity.id && !activity.id.includes('#')) {
         // Save the remote activity in the local triple store
         await ctx.call('ldp.remote.store', {
-          resource: objectIdToCurrent(activity),
-          mirrorGraph: false, // Store in default graph as activity may not be public
+          resource: activity,
           keepInSync: false, // Activities are immutable
           webId: inboxOwner
         });

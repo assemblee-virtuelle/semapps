@@ -1,38 +1,3 @@
-const { ACTIVITY_TYPES } = require('./constants');
-
-const objectCurrentToId = activityJson => {
-  if (activityJson.object && typeof activityJson.object === 'object' && activityJson.object.current) {
-    const { current, ...object } = activityJson.object;
-    return {
-      ...activityJson,
-      object: {
-        id: current,
-        ...objectCurrentToId(object)
-      }
-    };
-  }
-  return activityJson;
-};
-
-const objectIdToCurrent = activityJson => {
-  // If the activity has an object predicate, and this object is not an activity
-  if (
-    activityJson.object &&
-    typeof activityJson.object === 'object' &&
-    !Object.values(ACTIVITY_TYPES).includes(activityJson.object.type)
-  ) {
-    const { id, '@id': arobaseId, ...object } = activityJson.object;
-    return {
-      ...activityJson,
-      object: {
-        current: id || arobaseId,
-        ...objectIdToCurrent(object)
-      }
-    };
-  }
-  return activityJson;
-};
-
 const collectionPermissionsWithAnonRead = webId => {
   const permissions = {
     anon: {
@@ -113,8 +78,6 @@ const getValueFromDataType = result => {
 };
 
 module.exports = {
-  objectCurrentToId,
-  objectIdToCurrent,
   collectionPermissionsWithAnonRead,
   getSlugFromUri,
   getContainerFromUri,

@@ -1,7 +1,7 @@
 const { Errors: E } = require('moleculer-web');
 const { ControlledContainerMixin } = require('@semapps/ldp');
 const setRightsHandler = require('./activity-handlers/setRightsHandler');
-const { objectCurrentToId, objectIdToCurrent, arrayOf } = require('../../../utils');
+const { arrayOf } = require('../../../utils');
 const { PUBLIC_URI, FULL_ACTIVITY_TYPES } = require('../../../constants');
 const ActivitiesHandlerMixin = require('../../../mixins/activities-handler');
 
@@ -97,14 +97,9 @@ const ActivityService = {
         if (typeof ctx.params.resourceUri === 'object') {
           ctx.params.resourceUri = ctx.params.resourceUri.id || ctx.params.resourceUri['@id'];
         }
-      },
-      create(ctx) {
-        ctx.params.resource = objectIdToCurrent(ctx.params.resource);
-      }
-    },
-    after: {
-      get(ctx, res) {
-        return objectCurrentToId(res);
+
+        // We always want the get method to return a single resource
+        ctx.params.noGraph = true;
       }
     }
   },
