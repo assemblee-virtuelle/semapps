@@ -22,32 +22,19 @@ module.exports = {
       ctx.meta.dataset = account.username;
     }
 
-    const graphName = await this.actions.getGraph({ resourceUri }, { parentCtx: ctx });
-    if (graphName === false) throw new Error(`No graph found with resource ${resourceUri} (webId: ${webId})`);
+    const exist = await ctx.call('triplestore.document.exist', { documentUri: resourceUri });
+    if (!exist) throw new Error(`No document found with resource ${resourceUri} (webId: ${webId})`);
 
     const oldData = await this.actions.getStored({ resourceUri, webId }, { parentCtx: ctx });
 
-    await ctx.call('triplestore.update', {
-      query: `
-        DELETE
-        WHERE { 
-          ${graphName ? `GRAPH <${graphName}> {` : ''}
-            <${resourceUri}> ?p1 ?o1 .
-          ${graphName ? '}' : ''}
-        }
-      `,
-      webId: 'system'
-    });
+    await ctx.call('triplestore.document.clear', { documentUri: resourceUri });
+    await ctx.call('triplestore.document.delete', { documentUri: resourceUri });
 
     // Detach from all containers with the mirrored resource
     const containers = await ctx.call('ldp.resource.getContainers', { resourceUri });
     for (const containerUri of containers) {
       await ctx.call('ldp.container.detach', { containerUri, resourceUri, webId: 'system' });
     }
-
-    ctx.call('triplestore.deleteOrphanBlankNodes', {
-      graphName
-    });
 
     const returnValues = {
       resourceUri,

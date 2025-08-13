@@ -1,12 +1,11 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { cleanUndefined } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
+    noGraph: { type: 'boolean', default: false },
     webId: { type: 'string', optional: true },
-    accept: { type: 'string', default: MIME_TYPES.JSON },
     jsonContext: {
       type: 'multi',
       rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
@@ -20,7 +19,7 @@ module.exports = {
     }
   },
   async handler(ctx) {
-    const { resourceUri, accept, jsonContext, ...rest } = ctx.params;
+    const { resourceUri, jsonContext, ...rest } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     // Without webId, we have no way to know which dataset to look in, so get from network
@@ -38,10 +37,10 @@ module.exports = {
     switch (strategy) {
       case 'cacheFirst':
         return this.actions
-          .getStored(cleanUndefined({ resourceUri, webId, accept, jsonContext, ...rest }), { parentCtx: ctx })
+          .getStored(cleanUndefined({ resourceUri, webId, jsonContext, ...rest }), { parentCtx: ctx })
           .catch(e => {
             if (e.code === 404) {
-              return this.actions.getNetwork(cleanUndefined({ resourceUri, webId, accept, jsonContext }), {
+              return this.actions.getNetwork(cleanUndefined({ resourceUri, webId, jsonContext }), {
                 parentCtx: ctx
               });
             } else {
@@ -51,10 +50,10 @@ module.exports = {
 
       case 'networkFirst':
         return this.actions
-          .getNetwork(cleanUndefined({ resourceUri, webId, accept, jsonContext }), { parentCtx: ctx })
+          .getNetwork(cleanUndefined({ resourceUri, webId, jsonContext }), { parentCtx: ctx })
           .catch(e => {
             if (e.code === 404) {
-              return this.actions.getStored(cleanUndefined({ resourceUri, webId, accept, jsonContext, ...rest }), {
+              return this.actions.getStored(cleanUndefined({ resourceUri, webId, jsonContext, ...rest }), {
                 parentCtx: ctx
               });
             } else {
@@ -63,12 +62,12 @@ module.exports = {
           });
 
       case 'cacheOnly':
-        return this.actions.getStored(cleanUndefined({ resourceUri, webId, accept, jsonContext, ...rest }), {
+        return this.actions.getStored(cleanUndefined({ resourceUri, webId, jsonContext, ...rest }), {
           parentCtx: ctx
         });
 
       case 'networkOnly':
-        return this.actions.getNetwork(cleanUndefined({ resourceUri, webId, accept, jsonContext }), { parentCtx: ctx });
+        return this.actions.getNetwork(cleanUndefined({ resourceUri, webId, jsonContext }), { parentCtx: ctx });
 
       case 'staleWhileRevalidate':
         // Not implemented yet

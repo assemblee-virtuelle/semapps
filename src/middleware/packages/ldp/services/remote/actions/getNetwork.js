@@ -6,7 +6,6 @@ module.exports = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
-    accept: { type: 'string', default: MIME_TYPES.JSON },
     jsonContext: {
       type: 'multi',
       rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
@@ -15,9 +14,9 @@ module.exports = {
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
-    const { resourceUri, accept, jsonContext } = ctx.params;
+    const { resourceUri, jsonContext } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-    const headers = new fetch.Headers({ accept });
+    const headers = new fetch.Headers({ accept: MIME_TYPES.JSON });
     if (jsonContext) headers.set('JsonLdContext', JSON.stringify(jsonContext));
 
     if (!(await this.actions.isRemote({ resourceUri }, { parentCtx: ctx }))) {
@@ -47,11 +46,7 @@ module.exports = {
     } else {
       const response = await fetch(resourceUri, { headers });
       if (response.ok) {
-        if (accept === MIME_TYPES.JSON) {
-          return await response.json();
-        } else {
-          return await response.text();
-        }
+        return await response.json();
       } else {
         throw new MoleculerError(response.statusText, response.status);
       }

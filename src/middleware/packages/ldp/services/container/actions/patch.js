@@ -72,7 +72,6 @@ module.exports = {
               await ctx.call('ldp.remote.store', {
                 resourceUri,
                 keepInSync: true,
-                mirrorGraph: true,
                 webId
               });
 

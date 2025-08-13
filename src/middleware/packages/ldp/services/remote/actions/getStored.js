@@ -1,12 +1,10 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { MoleculerError } = require('moleculer').Errors;
-const { buildBlankNodesQuery } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
-    accept: { type: 'string', default: MIME_TYPES.JSON },
     jsonContext: {
       type: 'multi',
       rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
@@ -15,53 +13,41 @@ module.exports = {
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
-    const { resourceUri, jsonContext } = ctx.params;
+    const { resourceUri, jsonContext, noGraph } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-    // No options will be returned by ldp.registry.getByUri unless the resource is in a local container (this is the case for activities)
-    // TODO Store the context of the original resource ?
-    const { accept } = {
-      ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
-      ...ctx.params
-    };
+    const exist = await ctx.call('triplestore.document.exist', { documentUri: resourceUri });
 
-    const graphName = await this.actions.getGraph({ resourceUri, webId }, { parentCtx: ctx });
-
-    // If resource exists
-    if (graphName !== false) {
-      const blankNodesQuery = buildBlankNodesQuery(4);
-
-      let result = await ctx.call('triplestore.query', {
-        query: `
-          ${await ctx.call('ontologies.getRdfPrefixes')}
-          CONSTRUCT  {
-            ${blankNodesQuery.construct}
-          }
-          WHERE {
-            ${graphName ? `GRAPH <${graphName}> {` : ''}
-              BIND(<${resourceUri}> AS ?s1) .
-              ${blankNodesQuery.where}
-            ${graphName ? '}' : ''}
-          }
-        `,
-        accept,
-        webId
-      });
-
-      // If we asked for JSON-LD, frame it in order to have clean, consistent results
-      if (accept === MIME_TYPES.JSON) {
-        result = await ctx.call('jsonld.parser.frame', {
-          input: result,
-          frame: {
-            '@context': jsonContext || (await ctx.call('jsonld.context.get')),
-            '@id': resourceUri
-          }
-        });
-      }
-
-      return result;
-    } else {
+    if (!exist)
       throw new MoleculerError(`Resource Not found ${resourceUri} in dataset ${ctx.meta.dataset}`, 404, 'NOT_FOUND');
-    }
+
+    const result = await ctx.call('triplestore.query', {
+      query: `
+        ${await ctx.call('ontologies.getRdfPrefixes')}
+        CONSTRUCT  {
+          ?s ?p ?o 
+        }
+        WHERE {
+          GRAPH <${resourceUri}> {
+            ?s ?p ?o .
+          }
+        }
+      `,
+      webId
+    });
+
+    // Frame the result using the correct context in order to have clean, consistent results
+    const result2 = await ctx.call('jsonld.parser.frame', {
+      input: result,
+      frame: {
+        '@context': jsonContext || (await ctx.call('jsonld.context.get')),
+        '@id': resourceUri
+      },
+      options: {
+        embed: '@once'
+      }
+    });
+
+    return result2;
   }
 };

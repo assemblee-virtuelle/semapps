@@ -14,7 +14,6 @@ module.exports = {
     baseUrl: null,
     containers: [],
     podProvider: false,
-    mirrorGraphName: 'http://semapps.org/mirror',
     defaultContainerOptions: {},
     preferredViewForResource: null,
     resourcesWithContainerPath: true,
@@ -29,7 +28,6 @@ module.exports = {
       containers,
       podProvider,
       defaultContainerOptions,
-      mirrorGraphName,
       preferredViewForResource,
       resourcesWithContainerPath,
       binary
@@ -39,8 +37,7 @@ module.exports = {
       mixins: [LdpContainerService],
       settings: {
         baseUrl,
-        podProvider,
-        mirrorGraphName
+        podProvider
       },
       hooks: this.schema.hooksContainer || {}
     });
@@ -50,7 +47,6 @@ module.exports = {
       settings: {
         baseUrl,
         podProvider,
-        mirrorGraphName,
         preferredViewForResource,
         resourcesWithContainerPath,
         binary
@@ -62,8 +58,7 @@ module.exports = {
       mixins: [LdpRemoteService],
       settings: {
         baseUrl,
-        podProvider,
-        mirrorGraphName
+        podProvider
       }
     });
 

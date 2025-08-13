@@ -19,8 +19,7 @@ module.exports = {
   name: 'ldp.container',
   settings: {
     baseUrl: null,
-    podProvider: false,
-    mirrorGraphName: null
+    podProvider: false
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {

@@ -1,7 +1,6 @@
 const Schedule = require('moleculer-schedule');
 const deleteAction = require('./actions/delete');
 const getAction = require('./actions/get');
-const getGraphAction = require('./actions/getGraph');
 const getNetworkAction = require('./actions/getNetwork');
 const getStoredAction = require('./actions/getStored');
 const isRemoteAction = require('./actions/isRemote');
@@ -12,14 +11,12 @@ module.exports = {
   mixins: [Schedule],
   settings: {
     baseUrl: null,
-    podProvider: false,
-    mirrorGraphName: null
+    podProvider: false
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
     delete: deleteAction,
     get: getAction,
-    getGraph: getGraphAction,
     getNetwork: getNetworkAction,
     getStored: getStoredAction,
     isRemote: isRemoteAction,
@@ -39,7 +36,7 @@ module.exports = {
           query: `
             SELECT DISTINCT ?s 
             WHERE { 
-              GRAPH <${this.settings.mirrorGraphName}> { 
+              GRAPH ?g { 
                 ?s <http://semapps.org/ns/core#singleMirroredResource> ?o 
               }
             }
@@ -50,8 +47,7 @@ module.exports = {
           try {
             await this.actions.store({
               resourceUri,
-              keepInSync: true,
-              mirrorGraph: true
+              keepInSync: true
             });
           } catch (e) {
             if (e.code === 403 || e.code === 404 || e.code === 401) {
