@@ -6,7 +6,7 @@ import { Configuration, Plugin } from '../types';
  * Adds `dataServers.user` properties to configuration (baseUrl, sparqlEndpoint, proxyUrl, ...).
  */
 const configureUserStorage = (): Plugin => ({
-  transformConfig: async (config: Configuration) => {
+  transformConfig: async config => {
     const token = localStorage.getItem('token');
 
     // If the user is logged in
@@ -16,7 +16,7 @@ const configureUserStorage = (): Plugin => ({
       const { json: user } = await config.httpClient(webId);
 
       if (user) {
-        const newConfig = { ...config } as Configuration;
+        const newConfig = { ...config };
 
         newConfig.dataServers[webId] = {
           pod: true,

@@ -87,7 +87,7 @@ const fetchBase =
  * @returns A function with react-admin's fetchJson signature that can be used to make calls to the data servers.
  *
  */
-const httpClient = (dataServers: DataServersConfig) => {
+const createHttpClient = (dataServers: DataServersConfig) => {
   const fetchBaseFn = fetchBase(dataServers, fetchUtils.fetchJson);
 
   return (url: string, options: fetchUtils.Options) => {
@@ -101,12 +101,14 @@ const httpClient = (dataServers: DataServersConfig) => {
  * @param dataServers Data servers configuration
  * @returns A function that can be used to make authenticated fetch calls.
  */
-const authFetch = (dataServers: DataServersConfig) => {
+const createAuthFetch = (dataServers: DataServersConfig) => {
   const fetchBaseFn = fetchBase(dataServers, fetch);
 
-  return (url: string, options: fetchUtils.Options) => {
+  const fetchFunction: typeof fetch = (url: string, options) => {
     return fetchBaseFn(url, options);
   };
+
+  return fetchFunction;
 };
 
-export { httpClient, authFetch };
+export { createHttpClient, createAuthFetch };

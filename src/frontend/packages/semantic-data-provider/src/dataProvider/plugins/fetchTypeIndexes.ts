@@ -12,7 +12,7 @@ import expandTypes from '../utils/expandTypes';
  * @returns {Configuration} The configuration with the data registrations added to `dataServers.user.containers`
  */
 const fetchTypeIndexes = (): Plugin => ({
-  transformConfig: async (config: Configuration) => {
+  transformConfig: async config => {
     const token = localStorage.getItem('token');
 
     // If the user is logged in
@@ -46,7 +46,7 @@ const fetchTypeIndexes = (): Plugin => ({
       }
 
       if (typeRegistrations.public.length > 0 || typeRegistrations.private.length > 0) {
-        const newConfig = { ...config } as Configuration;
+        const newConfig = { ...config };
 
         for (const mode of Object.keys(typeRegistrations)) {
           for (const typeRegistration of typeRegistrations[mode as keyof typeof typeRegistrations]) {

@@ -1,9 +1,11 @@
 import rdf from 'rdf-ext';
 import { Validator } from 'shacl-engine';
-import { activitystreams } from '@activitypods/shape-definitions';
+import { jsonld } from '@activitypods/shape-definitions';
 import { LdoBase, LdoDataset, ShapeType } from '@ldo/ldo';
 import { parseJsonLd } from '../utils';
 import { parseTurtle } from './streamUtils';
+
+const activitystreams = jsonld.activitystreams;
 
 // Cache of SHACL validators
 const validatorCache: Record<string, Validator> = {};

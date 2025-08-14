@@ -680,7 +680,8 @@ const $8e7d7e56831aa2ef$var$AddPermissionsForm = ({ agents: agents, addPermissio
                 margin: "dense",
                 fullWidth: true
             }),
-        renderOption: (props, option)=>/*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$List), {
+        renderOption: (props, option)=>// @ts-expect-error TS(2769)
+            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$List), {
                 dense: true,
                 className: classes.list,
                 ...props,

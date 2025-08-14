@@ -1,7 +1,7 @@
 import jsonld, { ContextDefinition } from 'jsonld';
 import { GetListParams } from 'react-admin';
 import arrayOf from './arrayOf';
-import { Configuration, Container, DataServerKey } from '../types';
+import { Configuration, Container, DataServerKey, RuntimeConfiguration } from '../types';
 import fetchSelectedResources from './fetchSelectedResources';
 
 type LDPContainerType = 'ldp:Container' | 'ldp:BasicContainer';
@@ -44,7 +44,7 @@ const isObject = (val: any) => {
   return val != null && typeof val === 'object' && !Array.isArray(val);
 };
 
-const fetchContainers = async (containers: Container[], params: GetListParams, config: Configuration) => {
+const fetchContainers = async (containers: Container[], params: GetListParams, config: RuntimeConfiguration) => {
   const { httpClient, jsonContext } = config;
 
   // Fetch simultaneously all containers

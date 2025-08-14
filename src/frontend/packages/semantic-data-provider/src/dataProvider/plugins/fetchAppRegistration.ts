@@ -16,7 +16,7 @@ type PluginConfiguration = {
 const fetchAppRegistration = (pluginConfig = {} as PluginConfiguration): Plugin => {
   const { includeSelectedResources = true } = pluginConfig;
   return {
-    transformConfig: async (config: Configuration) => {
+    transformConfig: async config => {
       const token = localStorage.getItem('token');
 
       // If the user is logged in
@@ -39,7 +39,7 @@ const fetchAppRegistration = (pluginConfig = {} as PluginConfiguration): Plugin 
               const appRegistrationUri = registeredAgentLinkHeader[0].anchor;
               const { json: appRegistration } = await config.httpClient(appRegistrationUri);
 
-              const newConfig = { ...config } as Configuration;
+              const newConfig = { ...config };
 
               // Load access grants concurrently to improve performances
               const results = await Promise.all(

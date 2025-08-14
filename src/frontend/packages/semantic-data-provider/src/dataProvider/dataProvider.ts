@@ -11,7 +11,7 @@ import getManyReferenceMethod from './methods/getManyReference';
 import getOneMethod from './methods/getOne';
 import patchMethod from './methods/patch';
 import updateMethod from './methods/update';
-import { httpClient, authFetch } from './fetchUtil';
+import { createHttpClient, createAuthFetch } from './fetchUtil';
 import { uploadFile } from './utils/handleFiles';
 import normalizeConfig from './utils/normalizeConfig';
 import expandTypes from './utils/expandTypes';
@@ -23,8 +23,8 @@ const dataProvider = (originalConfig: Configuration): SemanticDataProvider => {
   let config: RuntimeConfiguration;
 
   const prepareConfig = async () => {
-    const fetchJson = httpClient(originalConfig.dataServers);
-    const authFetchFn = authFetch(originalConfig.dataServers);
+    const fetchJson = createHttpClient(originalConfig.dataServers);
+    const authFetchFn = createAuthFetch(originalConfig.dataServers);
 
     const dataset = createConnectedLdoDataset([solidConnectedPlugin]);
     dataset.setContext('solid', { fetch: authFetchFn });
@@ -46,8 +46,8 @@ const dataProvider = (originalConfig: Configuration): SemanticDataProvider => {
     }
 
     // Configure httpClient & authFetch again with possibly updated data servers
-    config.httpClient = httpClient(config.dataServers);
-    config.authFetch = authFetch(config.dataServers);
+    config.httpClient = createHttpClient(config.dataServers);
+    config.authFetch = createAuthFetch(config.dataServers);
     dataset.setContext('solid', { fetch: config.authFetch });
 
     // Create the LDO dataset with the solidConnectedPlugin. It will be used to manage the RDF data.
@@ -101,8 +101,8 @@ const dataProvider = (originalConfig: Configuration): SemanticDataProvider => {
     getDataModels: waitForPrepareConfig(getDataModelsMethod),
     getDataServers: waitForPrepareConfig(getDataServersMethod),
     getLocalDataServers: getDataServersMethod(originalConfig),
-    httpClient: waitForPrepareConfig(c => httpClient(c.dataServers)),
-    authFetch: waitForPrepareConfig(c => authFetch(c.dataServers)),
+    fetch: waitForPrepareConfig(c => createHttpClient(c.dataServers)),
+    authFetch: waitForPrepareConfig(c => createAuthFetch(c.dataServers)),
     getDataset: waitForPrepareConfig(c => () => c.dataset),
     uploadFile: waitForPrepareConfig(c => (rawFile: any) => uploadFile(rawFile, c)),
     expandTypes: waitForPrepareConfig(c => (types: any) => expandTypes(types, c.jsonContext)),

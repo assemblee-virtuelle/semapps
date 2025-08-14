@@ -736,7 +736,8 @@ const $0fe99d8ef25120fc$var$AddPermissionsForm = ({ agents: agents, addPermissio
                 margin: "dense",
                 fullWidth: true
             }),
-        renderOption: (props, option)=>/*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.List), {
+        renderOption: (props, option)=>// @ts-expect-error TS(2769)
+            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.List), {
                 dense: true,
                 className: classes.list,
                 ...props,

@@ -19,7 +19,7 @@ const Schema = defineAction({
     excludeFromMirror: { type: 'boolean', optional: true },
     // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: true; }' is not ... Remove this comment to see the full error message
     activateTombstones: { type: 'boolean', default: true },
-    // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
+    // @ts-expect-eslugParts(rror TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
     permissions: { type: 'multi', rules: [{ type: 'object' }, { type: 'function' }], optional: true },
     // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
     newResourcesPermissions: { type: 'multi', rules: [{ type: 'object' }, { type: 'function' }], optional: true },

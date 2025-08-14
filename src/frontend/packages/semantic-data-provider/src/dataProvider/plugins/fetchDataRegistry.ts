@@ -10,7 +10,7 @@ import getContainerFromDataRegistration from '../utils/getContainerFromDataRegis
  * @returns {Configuration} The configuration with the data registrations added to `dataServers.user.containers`
  */
 const fetchDataRegistry = (): Plugin => ({
-  transformConfig: async (config: Configuration) => {
+  transformConfig: async config => {
     const token = localStorage.getItem('token');
 
     // If the user is logged in
@@ -32,7 +32,7 @@ const fetchDataRegistry = (): Plugin => ({
           })
         );
 
-        const newConfig = { ...config } as Configuration;
+        const newConfig = { ...config };
 
         newConfig.dataServers[webId].containers?.push(...results.flat());
 

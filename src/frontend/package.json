@@ -14,7 +14,7 @@
     "lint-files": "eslint --ext .js,.jsx,.ts,.tsx",
     "typecheck": "tsc --noEmit",
     "preinstall": "git config core.hooksPath .git-hooks",
-    "test-watch": "nx watch --all -- nx run $NX_PROJECT_NAME:build"
+    "watch": "nx watch --all -- nx run \\$NX_PROJECT_NAME:build"
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.9",
