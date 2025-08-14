@@ -1216,7 +1216,13 @@ const $9808be090468fc68$var$dataProvider = (originalConfig)=>{
         };
         config.dataServers ??= {};
         // Load plugins.
-        for (const plugin of config.plugins)if (plugin.transformConfig) config = await plugin.transformConfig(config);
+        for (const plugin of config.plugins){
+            if (plugin.transformConfig) try {
+                config = await plugin.transformConfig(config);
+            } catch (error) {
+                console.error('Error setting up data provider plugin', plugin.name, error);
+            }
+        }
         // Configure httpClient & authFetch again with possibly updated data servers
         config.httpClient = (0, $00b6445d7042c29d$export$5ff1805767bd358a)(config.dataServers);
         config.authFetch = (0, $00b6445d7042c29d$export$1ac69e0fa5b5498b)(config.dataServers);
@@ -1292,6 +1298,7 @@ var $861da9be2c0e62eb$export$2e2bcd8739ae039 = $861da9be2c0e62eb$var$getPrefixFr
 /**
  * Adds `dataServers.user` properties to configuration (baseUrl, sparqlEndpoint, proxyUrl, ...).
  */ const $cdd3c71a628eeefe$var$configureUserStorage = ()=>({
+        name: 'configureUserStorage',
         transformConfig: async (config)=>{
             const token = localStorage.getItem('token');
             // If the user is logged in
@@ -1395,6 +1402,7 @@ var $d7a7484a035f15cd$export$2e2bcd8739ae039 = $d7a7484a035f15cd$var$getContaine
  */ const $2c257b4237cb14ca$var$fetchAppRegistration = (pluginConfig = {})=>{
     const { includeSelectedResources: includeSelectedResources = true } = pluginConfig;
     return {
+        name: 'fetchAppRegistration',
         transformConfig: async (config)=>{
             const token = localStorage.getItem('token');
             // If the user is logged in
@@ -1458,6 +1466,7 @@ var $2c257b4237cb14ca$export$2e2bcd8739ae039 = $2c257b4237cb14ca$var$fetchAppReg
  *
  * @returns {Configuration} The configuration with the data registrations added to `dataServers.user.containers`
  */ const $91255e144bb55afc$var$fetchDataRegistry = ()=>({
+        name: 'fetchDataRegistry',
         transformConfig: async (config)=>{
             const token = localStorage.getItem('token');
             // If the user is logged in
@@ -1466,7 +1475,9 @@ var $2c257b4237cb14ca$export$2e2bcd8739ae039 = $2c257b4237cb14ca$var$fetchAppReg
                 const webId = payload.webId || payload.webid; // Currently we must deal with both formats
                 if (!config.dataServers[webId]) throw new Error(`You must configure the user storage first with the configureUserStorage plugin`);
                 const { json: user } = await config.httpClient(webId);
+                if (!user['interop:hasRegistrySet']) throw new Error(`User ${webId} is missing interop:hasRegistrySet`);
                 const { json: registrySet } = await config.httpClient(user['interop:hasRegistrySet']);
+                if (!registrySet['interop:hasDataRegistry']) throw new Error(`User ${webId} is missing interop:hasDataRegistry`);
                 const { json: dataRegistry } = await config.httpClient(registrySet['interop:hasDataRegistry']);
                 if (dataRegistry['interop:hasDataRegistration']) {
                     const results = await Promise.all(dataRegistry['interop:hasDataRegistration'].map((dataRegistrationUri)=>{
@@ -1497,6 +1508,7 @@ var $91255e144bb55afc$export$2e2bcd8739ae039 = $91255e144bb55afc$var$fetchDataRe
  *
  * @returns {Configuration} The configuration with the data registrations added to `dataServers.user.containers`
  */ const $2d5f75df63129ebc$var$fetchTypeIndexes = ()=>({
+        name: 'fetchTypeIndexes',
         transformConfig: async (config)=>{
             const token = localStorage.getItem('token');
             // If the user is logged in
@@ -1556,6 +1568,7 @@ var $2d5f75df63129ebc$export$2e2bcd8739ae039 = $2d5f75df63129ebc$var$fetchTypeIn
 
 
 const $a87fd63d8fca0380$var$fetchVoidEndpoints = ()=>({
+        name: 'fetchVoidEndpoints',
         transformConfig: async (config)=>{
             let results = [];
             try {

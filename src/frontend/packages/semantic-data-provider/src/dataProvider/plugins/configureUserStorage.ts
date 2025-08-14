@@ -6,6 +6,7 @@ import { Configuration, Plugin } from '../types';
  * Adds `dataServers.user` properties to configuration (baseUrl, sparqlEndpoint, proxyUrl, ...).
  */
 const configureUserStorage = (): Plugin => ({
+  name: 'configureUserStorage',
   transformConfig: async config => {
     const token = localStorage.getItem('token');
 

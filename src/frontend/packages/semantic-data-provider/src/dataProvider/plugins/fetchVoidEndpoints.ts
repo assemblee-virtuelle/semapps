@@ -3,6 +3,7 @@ import arrayOf from '../utils/arrayOf';
 import expandTypes from '../utils/expandTypes';
 
 const fetchVoidEndpoints = (): Plugin => ({
+  name: 'fetchVoidEndpoints',
   transformConfig: async config => {
     let results = [] as VoidResults[];
 

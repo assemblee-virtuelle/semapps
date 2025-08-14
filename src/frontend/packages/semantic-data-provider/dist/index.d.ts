@@ -92,6 +92,7 @@ export interface RuntimeUtils {
 export interface RuntimeConfiguration extends Configuration, RuntimeUtils {}
 export type Plugin = {
   transformConfig: (config: RuntimeConfiguration) => Promise<RuntimeConfiguration>;
+  name?: string;
 };
 export type SemanticDataProvider = DataProvider & {
   getDataModels: () => Promise<Record<string, DataModel>>;

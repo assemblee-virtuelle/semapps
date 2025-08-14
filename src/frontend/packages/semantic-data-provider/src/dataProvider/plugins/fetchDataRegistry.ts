@@ -10,6 +10,7 @@ import getContainerFromDataRegistration from '../utils/getContainerFromDataRegis
  * @returns {Configuration} The configuration with the data registrations added to `dataServers.user.containers`
  */
 const fetchDataRegistry = (): Plugin => ({
+  name: 'fetchDataRegistry',
   transformConfig: async config => {
     const token = localStorage.getItem('token');
 
@@ -22,7 +23,11 @@ const fetchDataRegistry = (): Plugin => ({
         throw new Error(`You must configure the user storage first with the configureUserStorage plugin`);
 
       const { json: user } = await config.httpClient(webId);
+
+      if (!user['interop:hasRegistrySet']) throw new Error(`User ${webId} is missing interop:hasRegistrySet`);
       const { json: registrySet } = await config.httpClient(user['interop:hasRegistrySet']);
+
+      if (!registrySet['interop:hasDataRegistry']) throw new Error(`User ${webId} is missing interop:hasDataRegistry`);
       const { json: dataRegistry } = await config.httpClient(registrySet['interop:hasDataRegistry']);
 
       if (dataRegistry['interop:hasDataRegistration']) {

@@ -41,7 +41,11 @@ const dataProvider = (originalConfig: Configuration): SemanticDataProvider => {
     // Load plugins.
     for (const plugin of config.plugins) {
       if (plugin.transformConfig) {
-        config = await plugin.transformConfig(config);
+        try {
+          config = await plugin.transformConfig(config);
+        } catch (error) {
+          console.error('Error setting up data provider plugin', plugin.name, error);
+        }
       }
     }
 

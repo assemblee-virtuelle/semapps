@@ -16,6 +16,7 @@ type PluginConfiguration = {
 const fetchAppRegistration = (pluginConfig = {} as PluginConfiguration): Plugin => {
   const { includeSelectedResources = true } = pluginConfig;
   return {
+    name: 'fetchAppRegistration',
     transformConfig: async config => {
       const token = localStorage.getItem('token');
 

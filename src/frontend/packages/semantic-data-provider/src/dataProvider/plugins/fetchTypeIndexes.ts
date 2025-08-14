@@ -12,6 +12,7 @@ import expandTypes from '../utils/expandTypes';
  * @returns {Configuration} The configuration with the data registrations added to `dataServers.user.containers`
  */
 const fetchTypeIndexes = (): Plugin => ({
+  name: 'fetchTypeIndexes',
   transformConfig: async config => {
     const token = localStorage.getItem('token');
 
