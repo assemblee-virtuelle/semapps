@@ -1,11 +1,11 @@
 import React from 'react';
 import { TextField, RichTextField, DateField } from 'react-admin';
 import { Box, Typography, CircularProgress } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from 'tss-react/mui';
 import { useDataModel } from '@semapps/semantic-data-provider';
 import { AvatarWithLabelField, ReferenceField } from '@semapps/field-components';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles()(() => ({
   container: {
     paddingLeft: 80,
     marginTop: 8,
@@ -51,7 +51,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 const CommentsList = ({ comments, userResource, loading }: any) => {
-  const classes = useStyles();
+  const { classes } = useStyles();
   const userDataModel = useDataModel(userResource);
 
   return (

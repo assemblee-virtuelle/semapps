@@ -2,7 +2,7 @@ var $5MILa$reactjsxruntime = require("react/jsx-runtime");
 var $5MILa$react = require("react");
 var $5MILa$reactadmin = require("react-admin");
 var $5MILa$muimaterial = require("@mui/material");
-var $5MILa$muistylesmakeStyles = require("@mui/styles/makeStyles");
+var $5MILa$tssreactmui = require("tss-react/mui");
 var $5MILa$muiiconsmaterialAddCircle = require("@mui/icons-material/AddCircle");
 var $5MILa$muiiconsmaterialLaunch = require("@mui/icons-material/Launch");
 var $5MILa$semappssemanticdataprovider = require("@semapps/semantic-data-provider");
@@ -34,7 +34,7 @@ $parcel$export(module.exports, "ViewsButtons", () => $a87c7903c3d176d8$export$2e
 
 
 
-const $a973de69cdff0648$var$useStyles = (0, ($parcel$interopDefault($5MILa$muistylesmakeStyles)))(()=>({
+const $a973de69cdff0648$var$useStyles = (0, $5MILa$tssreactmui.makeStyles)()(()=>({
         root: {
             display: 'flex',
             flexWrap: 'wrap'
@@ -69,8 +69,9 @@ const $a973de69cdff0648$var$ChipList = (props)=>{
     const { data: data, isLoading: isLoading, resource: resource } = (0, $5MILa$reactadmin.useListContext)(props);
     const getExternalLink = (0, $5MILa$semappssemanticdataprovider.useGetExternalLink)(externalLinks);
     const createPath = (0, $5MILa$reactadmin.useCreatePath)();
-    // @ts-expect-error TS(2349): This expression is not callable.
-    const classes = $a973de69cdff0648$var$useStyles(props);
+    const { classes: classes } = $a973de69cdff0648$var$useStyles(props, {
+        props: props
+    });
     const Component = component;
     if (isLoading) return /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$muimaterial.LinearProgress), {});
     return /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsxs)(Component, {
@@ -216,7 +217,7 @@ var $5a120b619addcf4f$export$2e2bcd8739ae039 = $5a120b619addcf4f$var$GridList;
 
 
 
-const $160200afc5f7ef6a$var$useStyles = (0, ($parcel$interopDefault($5MILa$muistylesmakeStyles)))(()=>({
+const $160200afc5f7ef6a$var$useStyles = (0, $5MILa$tssreactmui.makeStyles)()(()=>({
         grid: {
             display: 'flex',
             marginLeft: -20,
@@ -254,8 +255,7 @@ const $160200afc5f7ef6a$var$useStyles = (0, ($parcel$interopDefault($5MILa$muist
     1050: 2,
     700: 1
 }, linkType: linkType = 'edit' })=>{
-    // @ts-expect-error TS(2349): This expression is not callable.
-    const classes = $160200afc5f7ef6a$var$useStyles();
+    const { classes: classes } = $160200afc5f7ef6a$var$useStyles();
     const { data: data, resource: resource } = (0, $5MILa$reactadmin.useListContext)();
     const createPath = (0, $5MILa$reactadmin.useCreatePath)();
     return /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, ($parcel$interopDefault($5MILa$reactmasonrycss))), {

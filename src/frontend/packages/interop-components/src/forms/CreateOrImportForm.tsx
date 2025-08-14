@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { SimpleForm } from 'react-admin';
 import { Box, Tabs, Tab, Divider, useMediaQuery } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from 'tss-react/mui';
 import ImportForm from './ImportForm';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles()(() => ({
   tab: {
     maxWidth: 'unset',
     padding: '6px 24px'
@@ -13,7 +13,7 @@ const useStyles = makeStyles(() => ({
 
 const CreateOrImportForm = ({ stripProperties, ...rest }: any) => {
   const [tab, setTab] = useState(0);
-  const classes = useStyles();
+  const { classes } = useStyles();
   const xs = useMediaQuery(theme => theme.breakpoints.down('sm'), { noSsr: true });
   return (
     <>

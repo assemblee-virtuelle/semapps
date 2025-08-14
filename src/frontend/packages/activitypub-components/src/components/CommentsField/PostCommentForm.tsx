@@ -3,7 +3,7 @@ import { Form, useGetIdentity, useNotify, useRecordContext } from 'react-admin';
 import { RichTextInput, DefaultEditorOptions } from 'ra-input-rich-text';
 import Placeholder from '@tiptap/extension-placeholder';
 import { Button, Box, Avatar } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from 'tss-react/mui';
 import SendIcon from '@mui/icons-material/Send';
 import { useDataModel } from '@semapps/semantic-data-provider';
 import { AuthDialog } from '@semapps/auth-provider';
@@ -11,7 +11,7 @@ import { OBJECT_TYPES, PUBLIC_URI } from '../../constants';
 import useOutbox from '../../hooks/useOutbox';
 import CustomMention from './CustomMention';
 
-const useStyles = makeStyles((theme: any) => ({
+const useStyles = makeStyles()(theme => ({
   form: {
     marginTop: -12 // Negative margin to keep the form close to the label
   },
@@ -64,7 +64,7 @@ const PostCommentForm = ({ context, placeholder, helperText, mentions, userResou
   const record = useRecordContext();
   const { data: identity, isLoading } = useGetIdentity();
   const userDataModel = useDataModel(userResource);
-  const classes = useStyles();
+  const { classes } = useStyles();
   const notify = useNotify();
   const outbox = useOutbox();
   const [expanded, setExpanded] = useState(false);

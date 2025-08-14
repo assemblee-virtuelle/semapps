@@ -9,7 +9,7 @@ var $CiwlJ$autosuggesthighlightparse = require("autosuggest-highlight/parse");
 var $CiwlJ$lodashthrottle = require("lodash.throttle");
 var $CiwlJ$muisystem = require("@mui/system");
 var $CiwlJ$reactrouterdom = require("react-router-dom");
-var $CiwlJ$muistylesmakeStyles = require("@mui/styles/makeStyles");
+var $CiwlJ$tssreactmui = require("tss-react/mui");
 var $CiwlJ$muimaterialCircularProgress = require("@mui/material/CircularProgress");
 require("leaflet-defaulticon-compatibility");
 var $CiwlJ$reactleaflet = require("react-leaflet");
@@ -297,7 +297,7 @@ var $ab90bbfd446d4383$export$2e2bcd8739ae039 = $ab90bbfd446d4383$var$QueryString
 
 
 
-const $efe09602b0f4247d$var$useStyles = (0, ($parcel$interopDefault($CiwlJ$muistylesmakeStyles)))(()=>({
+const $efe09602b0f4247d$var$useStyles = (0, $CiwlJ$tssreactmui.makeStyles)()(()=>({
         closeButton: {
             position: 'absolute',
             zIndex: 1400,
@@ -306,8 +306,7 @@ const $efe09602b0f4247d$var$useStyles = (0, ($parcel$interopDefault($CiwlJ$muist
         }
     }));
 const $efe09602b0f4247d$var$MobileDrawer = ({ popupContent: popupContent, onClose: onClose })=>{
-    // @ts-expect-error TS(2349): This expression is not callable.
-    const classes = $efe09602b0f4247d$var$useStyles();
+    const { classes: classes } = $efe09602b0f4247d$var$useStyles();
     const record = (0, $CiwlJ$reactadmin.useRecordContext)();
     const map = (0, $CiwlJ$reactleaflet.useMap)();
     (0, $CiwlJ$react.useEffect)(()=>{
@@ -341,7 +340,7 @@ const $efe09602b0f4247d$var$MobileDrawer = ({ popupContent: popupContent, onClos
 var $efe09602b0f4247d$export$2e2bcd8739ae039 = $efe09602b0f4247d$var$MobileDrawer;
 
 
-const $f5d69bc0c861d418$var$useStyles = (0, ($parcel$interopDefault($CiwlJ$muistylesmakeStyles)))(()=>({
+const $f5d69bc0c861d418$var$useStyles = (0, $CiwlJ$tssreactmui.makeStyles)()(()=>({
         isLoading: {
             zIndex: 1000,
             position: 'absolute',
@@ -363,8 +362,7 @@ const $f5d69bc0c861d418$var$MapList = ({ latitude: latitude, longitude: longitud
         noSsr: true
     });
     const [drawerRecord, setDrawerRecord] = (0, $CiwlJ$react.useState)(null);
-    // @ts-expect-error TS(2349): This expression is not callable.
-    const classes = $f5d69bc0c861d418$var$useStyles();
+    const { classes: classes } = $f5d69bc0c861d418$var$useStyles();
     // Get the zoom and center from query string, if available
     const location = (0, $CiwlJ$reactrouterdom.useLocation)();
     const query = new URLSearchParams(location.search);

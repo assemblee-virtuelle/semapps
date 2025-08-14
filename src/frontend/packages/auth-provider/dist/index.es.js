@@ -7,7 +7,7 @@ import {CreateActions as $1obPJ$CreateActions, useResourceContext as $1obPJ$useR
 import {useCreateContainerUri as $1obPJ$useCreateContainerUri} from "@semapps/semantic-data-provider";
 import $1obPJ$muiiconsmaterialShare from "@mui/icons-material/Share";
 import {Dialog as $1obPJ$Dialog, DialogTitle as $1obPJ$DialogTitle, DialogContent as $1obPJ$DialogContent, DialogActions as $1obPJ$DialogActions, TextField as $1obPJ$TextField, List as $1obPJ$List, ListItem as $1obPJ$ListItem, ListItemAvatar as $1obPJ$ListItemAvatar, Avatar as $1obPJ$Avatar, ListItemText as $1obPJ$ListItemText, ListItemSecondaryAction as $1obPJ$ListItemSecondaryAction, IconButton as $1obPJ$IconButton, Menu as $1obPJ$Menu, MenuItem as $1obPJ$MenuItem, ListItemIcon as $1obPJ$ListItemIcon, useMediaQuery as $1obPJ$useMediaQuery, DialogContentText as $1obPJ$DialogContentText, Button as $1obPJ$Button1, Card as $1obPJ$Card, Typography as $1obPJ$Typography, CardActions as $1obPJ$CardActions, Box as $1obPJ$Box, CardContent as $1obPJ$CardContent, LinearProgress as $1obPJ$LinearProgress} from "@mui/material";
-import $1obPJ$muistylesmakeStyles from "@mui/styles/makeStyles";
+import {makeStyles as $1obPJ$makeStyles, withStyles as $1obPJ$withStyles} from "tss-react/mui";
 import $1obPJ$muimaterialAutocomplete from "@mui/material/Autocomplete";
 import $1obPJ$muiiconsmaterialPerson from "@mui/icons-material/Person";
 import {styled as $1obPJ$styled} from "@mui/system";
@@ -22,7 +22,6 @@ import $1obPJ$muiiconsmaterialLock from "@mui/icons-material/Lock";
 import $1obPJ$speakingurl from "speakingurl";
 import {useFormContext as $1obPJ$useFormContext} from "react-hook-form";
 import {VisibilityOff as $1obPJ$VisibilityOff, Visibility as $1obPJ$Visibility} from "@mui/icons-material";
-import {withStyles as $1obPJ$withStyles} from "@mui/styles";
 import $1obPJ$muiiconsmaterialAccountCircle from "@mui/icons-material/AccountCircle";
 import $1obPJ$lodashisEqual from "lodash/isEqual";
 
@@ -153,7 +152,7 @@ const $82adcd05a20fe158$var$authProvider = ({ dataProvider: dataProvider, authTy
             }
         },
         handleCallback: async ()=>{
-            const { searchParams: searchParams } = new URL(window.location);
+            const { searchParams: searchParams } = new URL(window.location.href);
             if (authType === $82adcd05a20fe158$var$AUTH_TYPE_SOLID_OIDC) {
                 // @ts-expect-error TS(2345): Argument of type 'string | null' is not assignable... Remove this comment to see the full error message
                 const issuer = new URL(searchParams.get('iss'));
@@ -616,7 +615,7 @@ var $555a60066c55ca73$export$2e2bcd8739ae039 = $555a60066c55ca73$var$CreateWithP
 
 
 
-const $8e7d7e56831aa2ef$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
+const $8e7d7e56831aa2ef$var$useStyles = (0, $1obPJ$makeStyles)()(()=>({
         list: {
             padding: 0,
             width: '100%'
@@ -626,7 +625,7 @@ const $8e7d7e56831aa2ef$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
         }
     }));
 const $8e7d7e56831aa2ef$var$AddPermissionsForm = ({ agents: agents, addPermission: addPermission })=>{
-    const classes = $8e7d7e56831aa2ef$var$useStyles();
+    const { classes: classes } = $8e7d7e56831aa2ef$var$useStyles();
     const translate = (0, $1obPJ$useTranslate)();
     const [value, setValue] = (0, $1obPJ$useState)(null);
     const [inputValue, setInputValue] = (0, $1obPJ$useState)('');
@@ -681,8 +680,7 @@ const $8e7d7e56831aa2ef$var$AddPermissionsForm = ({ agents: agents, addPermissio
                 margin: "dense",
                 fullWidth: true
             }),
-        renderOption: (props, option)=>// @ts-expect-error TS(2769)
-            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$List), {
+        renderOption: (props, option)=>/*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$List), {
                 dense: true,
                 className: classes.list,
                 ...props,
@@ -740,7 +738,7 @@ const $5038212710cd44fa$var$AgentIcon = ({ agent: agent })=>{
 var $5038212710cd44fa$export$2e2bcd8739ae039 = $5038212710cd44fa$var$AgentIcon;
 
 
-const $2c2af8264d5cc27a$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
+const $2c2af8264d5cc27a$var$useStyles = (0, $1obPJ$makeStyles)()(()=>({
         listItem: {
             paddingLeft: 4,
             paddingRight: 36
@@ -759,7 +757,7 @@ const $2c2af8264d5cc27a$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
         }
     }));
 const $2c2af8264d5cc27a$var$AgentItem = ({ isContainer: isContainer, agent: agent, addPermission: addPermission, removePermission: removePermission })=>{
-    const classes = $2c2af8264d5cc27a$var$useStyles();
+    const { classes: classes } = $2c2af8264d5cc27a$var$useStyles();
     const translate = (0, $1obPJ$useTranslate)();
     const dataProvider = (0, $1obPJ$useDataProvider)();
     const [anchorEl, setAnchorEl] = (0, $1obPJ$react).useState(null);
@@ -979,7 +977,7 @@ const $9437ede267ca0f1e$var$useAgents = (uri)=>{
 var $9437ede267ca0f1e$export$2e2bcd8739ae039 = $9437ede267ca0f1e$var$useAgents;
 
 
-const $9461085805fdfe26$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
+const $9461085805fdfe26$var$useStyles = (0, $1obPJ$makeStyles)()(()=>({
         title: {
             paddingBottom: 8
         },
@@ -997,7 +995,7 @@ const $9461085805fdfe26$var$useStyles = (0, $1obPJ$muistylesmakeStyles)(()=>({
         }
     }));
 const $9461085805fdfe26$var$PermissionsDialog = ({ open: open, onClose: onClose, uri: uri, isContainer: isContainer })=>{
-    const classes = $9461085805fdfe26$var$useStyles();
+    const { classes: classes } = $9461085805fdfe26$var$useStyles();
     const translate = (0, $1obPJ$useTranslate)();
     const { agents: agents, addPermission: addPermission, removePermission: removePermission } = (0, $9437ede267ca0f1e$export$2e2bcd8739ae039)(uri);
     return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Dialog), {
@@ -1664,14 +1662,14 @@ function $f8f986295854a691$export$2e2bcd8739ae039(props) {
     };
     const fade = Math.max(0, Math.min(1, (currentVal - minVal) / (maxVal - minVal)));
     const currentColor = $f8f986295854a691$var$colorGradient(fade, color1, color2);
-    const StyledLinearProgress = (0, $1obPJ$withStyles)({
+    const StyledLinearProgress = (0, $1obPJ$withStyles)((0, $1obPJ$LinearProgress), {
         colorPrimary: {
             backgroundColor: 'black' // '#e0e0e0'
         },
         barColorPrimary: {
             backgroundColor: currentColor
         }
-    })((0, $1obPJ$LinearProgress));
+    });
     return /*#__PURE__*/ (0, $1obPJ$jsx)(StyledLinearProgress, {
         ...restProps,
         value: 100 * fade,
@@ -2479,14 +2477,12 @@ var $4c941e9b40342087$export$2e2bcd8739ae039 = $4c941e9b40342087$var$ResetPasswo
 
 
 
-const $771ddf0b1808bdd9$var$useStyles = (0, $1obPJ$muistylesmakeStyles)((theme)=>({
-        '@global': {
-            body: {
-                backgroundColor: theme.palette.secondary.main
-            }
-        },
+// TODO jss-to-tss-react codemod: '@global' is not supported by tss-react.
+// See https://mui.com/material-ui/customization/how-to-customize/#4-global-css-override for alternatives.
+const $771ddf0b1808bdd9$var$useStyles = (0, $1obPJ$makeStyles)()((theme)=>({
         root: {
             backgroundColor: theme.palette.secondary.main,
+            minHeight: '100%',
             [theme.breakpoints.down('sm')]: {
                 padding: '1em'
             }
@@ -2508,45 +2504,41 @@ const $771ddf0b1808bdd9$var$useStyles = (0, $1obPJ$muistylesmakeStyles)((theme)=
         }
     }));
 const $771ddf0b1808bdd9$var$SimpleBox = ({ title: title, icon: icon, text: text, children: children })=>{
-    const classes = $771ddf0b1808bdd9$var$useStyles();
-    return /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Box), {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        className: classes.root,
-        children: [
-            /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Card), {
-                className: classes.card,
-                children: [
-                    /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Box), {
-                        p: 2,
-                        display: "flex",
-                        justifyContent: "start",
-                        children: [
-                            icon && /*#__PURE__*/ (0, $1obPJ$react).cloneElement(icon, {
-                                fontSize: 'large',
-                                className: classes.icon
-                            }),
-                            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Typography), {
+    const { classes: classes } = $771ddf0b1808bdd9$var$useStyles();
+    return /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Fragment), {
+        children: /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Box), {
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            className: classes.root,
+            children: [
+                /*#__PURE__*/ (0, $1obPJ$jsxs)((0, $1obPJ$Card), {
+                    className: classes.card,
+                    children: [
+                        /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Box), {
+                            p: 2,
+                            display: "flex",
+                            justifyContent: "start",
+                            children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Typography), {
                                 variant: "h4",
                                 className: classes.title,
                                 children: title
                             })
-                        ]
-                    }),
-                    /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Box), {
-                        pl: 2,
-                        pr: 2,
-                        children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Typography), {
-                            variant: "body1",
-                            children: text
-                        })
-                    }),
-                    children
-                ]
-            }),
-            /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Notification), {})
-        ]
+                        }),
+                        /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Box), {
+                            pl: 2,
+                            pr: 2,
+                            children: /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Typography), {
+                                variant: "body1",
+                                children: text
+                            })
+                        }),
+                        children
+                    ]
+                }),
+                /*#__PURE__*/ (0, $1obPJ$jsx)((0, $1obPJ$Notification), {})
+            ]
+        })
     });
 };
 var $771ddf0b1808bdd9$export$2e2bcd8739ae039 = $771ddf0b1808bdd9$var$SimpleBox;

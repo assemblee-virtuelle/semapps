@@ -11,13 +11,13 @@ import {
   Menu,
   MenuItem
 } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from 'tss-react/mui';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
 import { GROUP_AGENT, USER_AGENT, ANONYMOUS_AGENT, resourceRightsLabels, containerRightsLabels } from '../../constants';
 import AgentIcon from './AgentIcon';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles()(() => ({
   listItem: {
     paddingLeft: 4,
     paddingRight: 36
@@ -37,7 +37,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 const AgentItem = ({ isContainer, agent, addPermission, removePermission }: any) => {
-  const classes = useStyles();
+  const { classes } = useStyles();
   const translate = useTranslate();
   const dataProvider = useDataProvider();
   const [anchorEl, setAnchorEl] = React.useState(null);

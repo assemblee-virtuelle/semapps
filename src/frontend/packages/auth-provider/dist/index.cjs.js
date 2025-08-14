@@ -7,7 +7,7 @@ var $4Uj5b$reactadmin = require("react-admin");
 var $4Uj5b$semappssemanticdataprovider = require("@semapps/semantic-data-provider");
 var $4Uj5b$muiiconsmaterialShare = require("@mui/icons-material/Share");
 var $4Uj5b$muimaterial = require("@mui/material");
-var $4Uj5b$muistylesmakeStyles = require("@mui/styles/makeStyles");
+var $4Uj5b$tssreactmui = require("tss-react/mui");
 var $4Uj5b$muimaterialAutocomplete = require("@mui/material/Autocomplete");
 var $4Uj5b$muiiconsmaterialPerson = require("@mui/icons-material/Person");
 var $4Uj5b$muisystem = require("@mui/system");
@@ -22,7 +22,6 @@ var $4Uj5b$muiiconsmaterialLock = require("@mui/icons-material/Lock");
 var $4Uj5b$speakingurl = require("speakingurl");
 var $4Uj5b$reacthookform = require("react-hook-form");
 var $4Uj5b$muiiconsmaterial = require("@mui/icons-material");
-var $4Uj5b$muistyles = require("@mui/styles");
 var $4Uj5b$muiiconsmaterialAccountCircle = require("@mui/icons-material/AccountCircle");
 var $4Uj5b$lodashisEqual = require("lodash/isEqual");
 
@@ -209,7 +208,7 @@ const $3e2f5a5cfc042f4b$var$authProvider = ({ dataProvider: dataProvider, authTy
             }
         },
         handleCallback: async ()=>{
-            const { searchParams: searchParams } = new URL(window.location);
+            const { searchParams: searchParams } = new URL(window.location.href);
             if (authType === $3e2f5a5cfc042f4b$var$AUTH_TYPE_SOLID_OIDC) {
                 // @ts-expect-error TS(2345): Argument of type 'string | null' is not assignable... Remove this comment to see the full error message
                 const issuer = new URL(searchParams.get('iss'));
@@ -672,7 +671,7 @@ var $436b98c09d4bfc58$export$2e2bcd8739ae039 = $436b98c09d4bfc58$var$CreateWithP
 
 
 
-const $0fe99d8ef25120fc$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))(()=>({
+const $0fe99d8ef25120fc$var$useStyles = (0, $4Uj5b$tssreactmui.makeStyles)()(()=>({
         list: {
             padding: 0,
             width: '100%'
@@ -682,7 +681,7 @@ const $0fe99d8ef25120fc$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
         }
     }));
 const $0fe99d8ef25120fc$var$AddPermissionsForm = ({ agents: agents, addPermission: addPermission })=>{
-    const classes = $0fe99d8ef25120fc$var$useStyles();
+    const { classes: classes } = $0fe99d8ef25120fc$var$useStyles();
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     const [value, setValue] = (0, $4Uj5b$react.useState)(null);
     const [inputValue, setInputValue] = (0, $4Uj5b$react.useState)('');
@@ -737,8 +736,7 @@ const $0fe99d8ef25120fc$var$AddPermissionsForm = ({ agents: agents, addPermissio
                 margin: "dense",
                 fullWidth: true
             }),
-        renderOption: (props, option)=>// @ts-expect-error TS(2769)
-            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.List), {
+        renderOption: (props, option)=>/*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.List), {
                 dense: true,
                 className: classes.list,
                 ...props,
@@ -796,7 +794,7 @@ const $6ad8b01b8ba81118$var$AgentIcon = ({ agent: agent })=>{
 var $6ad8b01b8ba81118$export$2e2bcd8739ae039 = $6ad8b01b8ba81118$var$AgentIcon;
 
 
-const $950ca392943fda1f$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))(()=>({
+const $950ca392943fda1f$var$useStyles = (0, $4Uj5b$tssreactmui.makeStyles)()(()=>({
         listItem: {
             paddingLeft: 4,
             paddingRight: 36
@@ -815,7 +813,7 @@ const $950ca392943fda1f$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
         }
     }));
 const $950ca392943fda1f$var$AgentItem = ({ isContainer: isContainer, agent: agent, addPermission: addPermission, removePermission: removePermission })=>{
-    const classes = $950ca392943fda1f$var$useStyles();
+    const { classes: classes } = $950ca392943fda1f$var$useStyles();
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     const dataProvider = (0, $4Uj5b$reactadmin.useDataProvider)();
     const [anchorEl, setAnchorEl] = (0, ($parcel$interopDefault($4Uj5b$react))).useState(null);
@@ -1035,7 +1033,7 @@ const $88e412417ca399a1$var$useAgents = (uri)=>{
 var $88e412417ca399a1$export$2e2bcd8739ae039 = $88e412417ca399a1$var$useAgents;
 
 
-const $d7753b9837c85814$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))(()=>({
+const $d7753b9837c85814$var$useStyles = (0, $4Uj5b$tssreactmui.makeStyles)()(()=>({
         title: {
             paddingBottom: 8
         },
@@ -1053,7 +1051,7 @@ const $d7753b9837c85814$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
         }
     }));
 const $d7753b9837c85814$var$PermissionsDialog = ({ open: open, onClose: onClose, uri: uri, isContainer: isContainer })=>{
-    const classes = $d7753b9837c85814$var$useStyles();
+    const { classes: classes } = $d7753b9837c85814$var$useStyles();
     const translate = (0, $4Uj5b$reactadmin.useTranslate)();
     const { agents: agents, addPermission: addPermission, removePermission: removePermission } = (0, $88e412417ca399a1$export$2e2bcd8739ae039)(uri);
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Dialog), {
@@ -1720,14 +1718,14 @@ function $bf8434ea21da792a$export$2e2bcd8739ae039(props) {
     };
     const fade = Math.max(0, Math.min(1, (currentVal - minVal) / (maxVal - minVal)));
     const currentColor = $bf8434ea21da792a$var$colorGradient(fade, color1, color2);
-    const StyledLinearProgress = (0, $4Uj5b$muistyles.withStyles)({
+    const StyledLinearProgress = (0, $4Uj5b$tssreactmui.withStyles)((0, $4Uj5b$muimaterial.LinearProgress), {
         colorPrimary: {
             backgroundColor: 'black' // '#e0e0e0'
         },
         barColorPrimary: {
             backgroundColor: currentColor
         }
-    })((0, $4Uj5b$muimaterial.LinearProgress));
+    });
     return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)(StyledLinearProgress, {
         ...restProps,
         value: 100 * fade,
@@ -2535,14 +2533,12 @@ var $be1129164d40878e$export$2e2bcd8739ae039 = $be1129164d40878e$var$ResetPasswo
 
 
 
-const $d40c6416028cfc15$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muistylesmakeStyles)))((theme)=>({
-        '@global': {
-            body: {
-                backgroundColor: theme.palette.secondary.main
-            }
-        },
+// TODO jss-to-tss-react codemod: '@global' is not supported by tss-react.
+// See https://mui.com/material-ui/customization/how-to-customize/#4-global-css-override for alternatives.
+const $d40c6416028cfc15$var$useStyles = (0, $4Uj5b$tssreactmui.makeStyles)()((theme)=>({
         root: {
             backgroundColor: theme.palette.secondary.main,
+            minHeight: '100%',
             [theme.breakpoints.down('sm')]: {
                 padding: '1em'
             }
@@ -2564,45 +2560,41 @@ const $d40c6416028cfc15$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
         }
     }));
 const $d40c6416028cfc15$var$SimpleBox = ({ title: title, icon: icon, text: text, children: children })=>{
-    const classes = $d40c6416028cfc15$var$useStyles();
-    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Box), {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        className: classes.root,
-        children: [
-            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Card), {
-                className: classes.card,
-                children: [
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Box), {
-                        p: 2,
-                        display: "flex",
-                        justifyContent: "start",
-                        children: [
-                            icon && /*#__PURE__*/ (0, ($parcel$interopDefault($4Uj5b$react))).cloneElement(icon, {
-                                fontSize: 'large',
-                                className: classes.icon
-                            }),
-                            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
+    const { classes: classes } = $d40c6416028cfc15$var$useStyles();
+    return /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactjsxruntime.Fragment), {
+        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Box), {
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            className: classes.root,
+            children: [
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsxs)((0, $4Uj5b$muimaterial.Card), {
+                    className: classes.card,
+                    children: [
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Box), {
+                            p: 2,
+                            display: "flex",
+                            justifyContent: "start",
+                            children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
                                 variant: "h4",
                                 className: classes.title,
                                 children: title
                             })
-                        ]
-                    }),
-                    /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Box), {
-                        pl: 2,
-                        pr: 2,
-                        children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
-                            variant: "body1",
-                            children: text
-                        })
-                    }),
-                    children
-                ]
-            }),
-            /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Notification), {})
-        ]
+                        }),
+                        /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Box), {
+                            pl: 2,
+                            pr: 2,
+                            children: /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$muimaterial.Typography), {
+                                variant: "body1",
+                                children: text
+                            })
+                        }),
+                        children
+                    ]
+                }),
+                /*#__PURE__*/ (0, $4Uj5b$reactjsxruntime.jsx)((0, $4Uj5b$reactadmin.Notification), {})
+            ]
+        })
     });
 };
 var $d40c6416028cfc15$export$2e2bcd8739ae039 = $d40c6416028cfc15$var$SimpleBox;

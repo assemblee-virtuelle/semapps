@@ -8,12 +8,12 @@ import {
   Link
 } from 'react-admin';
 import { LinearProgress } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from 'tss-react/mui';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import LaunchIcon from '@mui/icons-material/Launch';
 import { useGetExternalLink } from '@semapps/semantic-data-provider';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles()(() => ({
   root: {
     display: 'flex',
     flexWrap: 'wrap'
@@ -62,8 +62,9 @@ const ChipList = (props: any) => {
   const getExternalLink = useGetExternalLink(externalLinks);
   const createPath = useCreatePath();
 
-  // @ts-expect-error TS(2349): This expression is not callable.
-  const classes = useStyles(props);
+  const { classes } = useStyles(props, {
+    props: props
+  });
   const Component = component;
 
   if (isLoading) return <LinearProgress />;

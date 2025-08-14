@@ -4,7 +4,7 @@ import {useRecordContext as $85cNH$useRecordContext, useGetIdentity as $85cNH$us
 import {RichTextInput as $85cNH$RichTextInput, DefaultEditorOptions as $85cNH$DefaultEditorOptions} from "ra-input-rich-text";
 import $85cNH$tiptapextensionplaceholder from "@tiptap/extension-placeholder";
 import {Box as $85cNH$Box, Avatar as $85cNH$Avatar, Button as $85cNH$Button, Typography as $85cNH$Typography, CircularProgress as $85cNH$CircularProgress} from "@mui/material";
-import $85cNH$muistylesmakeStyles from "@mui/styles/makeStyles";
+import {makeStyles as $85cNH$makeStyles} from "tss-react/mui";
 import $85cNH$muiiconsmaterialSend from "@mui/icons-material/Send";
 import {useDataModel as $85cNH$useDataModel, getOrCreateWsChannel as $85cNH$getOrCreateWsChannel} from "@semapps/semantic-data-provider";
 import {AuthDialog as $85cNH$AuthDialog} from "@semapps/auth-provider";
@@ -12,9 +12,9 @@ import {useQueries as $85cNH$useQueries, useQueryClient as $85cNH$useQueryClient
 import $85cNH$jsonld from "jsonld";
 import $85cNH$rdfext from "rdf-ext";
 import $85cNH$rdfjsparsern3 from "@rdfjs/parser-n3";
-import {Readable as $85cNH$Readable} from "stream";
+import {Readable as $85cNH$Readable} from "readable-stream";
 import {Validator as $85cNH$Validator} from "shacl-engine";
-import {ActivityStreamsShape as $85cNH$ActivityStreamsShape} from "@activitypods/shape-definitions";
+import {jsonld as $85cNH$jsonld1} from "@activitypods/shape-definitions";
 import {ReadableWebToNodeStream as $85cNH$ReadableWebToNodeStream} from "readable-web-to-node-stream";
 import {mergeAttributes as $85cNH$mergeAttributes} from "@tiptap/core";
 import $85cNH$tiptapextensionmention from "@tiptap/extension-mention";
@@ -199,6 +199,7 @@ const $58194f7610fd9353$export$7304a15200aa09e5 = async (turtleData)=>{
 };
 
 
+const $25cb6caf33e2f460$var$activitystreams = (0, $85cNH$jsonld1).activitystreams;
 // Cache of SHACL validators
 const $25cb6caf33e2f460$var$validatorCache = {};
 /**
@@ -213,7 +214,7 @@ const $25cb6caf33e2f460$var$validatorCache = {};
     // Check if the validator is already cached
     if ($25cb6caf33e2f460$var$validatorCache.activityStreams) return $25cb6caf33e2f460$var$validatorCache.activityStreams;
     try {
-        const shapeDataset = await (0, $58194f7610fd9353$export$7304a15200aa09e5)((0, $85cNH$ActivityStreamsShape));
+        const shapeDataset = await (0, $58194f7610fd9353$export$7304a15200aa09e5)($25cb6caf33e2f460$var$activitystreams);
         // Create and cache the SHACL validator using the dataset
         $25cb6caf33e2f460$var$validatorCache.activityStreams = new (0, $85cNH$Validator)(shapeDataset, {
             factory: (0, $85cNH$rdfext),
@@ -223,7 +224,7 @@ const $25cb6caf33e2f460$var$validatorCache = {};
     } catch (error) {
         throw new Error(`Failed to create ActivityStreams validator: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
-    const shapeDataset = await (0, $58194f7610fd9353$export$7304a15200aa09e5)((0, $85cNH$ActivityStreamsShape));
+    const shapeDataset = await (0, $58194f7610fd9353$export$7304a15200aa09e5)($25cb6caf33e2f460$var$activitystreams);
     // Create and cache the SHACL validator using the dataset
     $25cb6caf33e2f460$var$validatorCache.activityStreams = new (0, $85cNH$Validator)(shapeDataset, {
         factory: (0, $85cNH$rdfext),
@@ -785,7 +786,7 @@ const $40f4c00d51a137ec$var$CustomMention = (0, $85cNH$tiptapextensionmention).e
 var $40f4c00d51a137ec$export$2e2bcd8739ae039 = $40f4c00d51a137ec$var$CustomMention;
 
 
-const $3047004939eff50c$var$useStyles = (0, $85cNH$muistylesmakeStyles)((theme)=>({
+const $3047004939eff50c$var$useStyles = (0, $85cNH$makeStyles)()((theme)=>({
         form: {
             marginTop: -12 // Negative margin to keep the form close to the label
         },
@@ -836,7 +837,7 @@ const $3047004939eff50c$var$PostCommentForm = ({ context: context, placeholder: 
     const record = (0, $85cNH$useRecordContext)();
     const { data: identity, isLoading: isLoading } = (0, $85cNH$useGetIdentity)();
     const userDataModel = (0, $85cNH$useDataModel)(userResource);
-    const classes = $3047004939eff50c$var$useStyles();
+    const { classes: classes } = $3047004939eff50c$var$useStyles();
     const notify = (0, $85cNH$useNotify)();
     const outbox = (0, $4d1d40fdbcd30589$export$2e2bcd8739ae039)();
     const [expanded, setExpanded] = (0, $85cNH$useState)(false);
@@ -985,7 +986,7 @@ var $3047004939eff50c$export$2e2bcd8739ae039 = $3047004939eff50c$var$PostComment
 
 
 
-const $74ea3002402ef672$var$useStyles = (0, $85cNH$muistylesmakeStyles)(()=>({
+const $74ea3002402ef672$var$useStyles = (0, $85cNH$makeStyles)()(()=>({
         container: {
             paddingLeft: 80,
             marginTop: 8,
@@ -1030,7 +1031,7 @@ const $74ea3002402ef672$var$useStyles = (0, $85cNH$muistylesmakeStyles)(()=>({
         }
     }));
 const $74ea3002402ef672$var$CommentsList = ({ comments: comments, userResource: userResource, loading: loading })=>{
-    const classes = $74ea3002402ef672$var$useStyles();
+    const { classes: classes } = $74ea3002402ef672$var$useStyles();
     const userDataModel = (0, $85cNH$useDataModel)(userResource);
     return /*#__PURE__*/ (0, $85cNH$jsxs)((0, $85cNH$Box), {
         position: "relative",
@@ -1542,7 +1543,7 @@ var $d33ef82068985aa5$export$2e2bcd8739ae039 = $d33ef82068985aa5$var$useWebfinge
 
 
 
-const $2d6cf763aa4118ce$var$useStyles = (0, $85cNH$muistylesmakeStyles)((theme)=>({
+const $2d6cf763aa4118ce$var$useStyles = (0, $85cNH$makeStyles)()((theme)=>({
         items: {
             background: '#fff',
             borderRadius: '0.5rem',
@@ -1569,7 +1570,7 @@ const $2d6cf763aa4118ce$var$useStyles = (0, $85cNH$muistylesmakeStyles)((theme)=
     }));
 var $2d6cf763aa4118ce$export$2e2bcd8739ae039 = /*#__PURE__*/ (0, $85cNH$forwardRef)((props, ref)=>{
     const [selectedIndex, setSelectedIndex] = (0, $85cNH$useState)(0);
-    const classes = $2d6cf763aa4118ce$var$useStyles();
+    const { classes: classes } = $2d6cf763aa4118ce$var$useStyles();
     const selectItem = (index)=>{
         // @ts-expect-error TS(2339): Property 'items' does not exist on type '{}'.
         const item = props.items[index];

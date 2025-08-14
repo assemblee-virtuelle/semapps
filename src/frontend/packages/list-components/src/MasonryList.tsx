@@ -1,10 +1,10 @@
 import React from 'react';
 import { useListContext, Link, useCreatePath, RecordContextProvider } from 'react-admin';
 import { Card, CardActionArea, CardMedia, CardContent, CardActions } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from 'tss-react/mui';
 import Masonry from 'react-masonry-css';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles()(() => ({
   grid: {
     display: 'flex',
     marginLeft: -20,
@@ -46,8 +46,7 @@ const MasonryList = ({
   breakpointCols = { default: 3, 1050: 2, 700: 1 },
   linkType = 'edit'
 }: any) => {
-  // @ts-expect-error TS(2349): This expression is not callable.
-  const classes = useStyles();
+  const { classes } = useStyles();
   const { data, resource } = useListContext();
   const createPath = useCreatePath();
   return (

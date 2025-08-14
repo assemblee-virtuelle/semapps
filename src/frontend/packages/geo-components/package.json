@@ -18,18 +18,18 @@
     "@react-leaflet/core": "^2.1.0",
     "autosuggest-highlight": "^3.1.1",
     "lodash.throttle": "^4.1.1",
-    "react-leaflet": "4.0.2"
+    "react-leaflet": "4.0.2",
+    "tss-react": "^4.9.19"
   },
   "peerDependencies": {
-    "@mui/icons-material": "^5.13.1",
-    "@mui/material": "^5.13.1",
-    "@mui/styles": "^5.13.1",
-    "@mui/system": "^5.13.1",
+    "@mui/icons-material": "^7.1.0",
+    "@mui/material": "^7.1.0",
+    "@mui/system": "^7.1.0",
     "leaflet": "^1.8.0",
     "leaflet-defaulticon-compatibility": "^0.1.1",
     "leaflet.markercluster": "^1.5.3",
     "react": "^18.2.0",
-    "react-admin": "^5.8.3",
+    "react-admin": "^5.10.1",
     "react-router-dom": "^6.1.0"
   },
   "publishConfig": {
@@ -44,7 +44,7 @@
     "leaflet-defaulticon-compatibility": "^0.1.1",
     "leaflet.markercluster": "^1.5.3",
     "react": "^18.2.0",
-    "react-admin": "^5.8.3",
+    "react-admin": "^5.10.1",
     "react-router-dom": "^7.6.1"
   }
 }

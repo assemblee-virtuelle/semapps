@@ -9,7 +9,7 @@ import {
   InputHelperText
 } from 'react-admin';
 import { TextField, Typography, Grid } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from 'tss-react/mui';
 import Autocomplete from '@mui/material/Autocomplete';
 import LanguageIcon from '@mui/icons-material/Language';
 import AddIcon from '@mui/icons-material/Add';
@@ -17,7 +17,7 @@ import { default as highlightMatch } from 'autosuggest-highlight/match';
 import { default as highlightParse } from 'autosuggest-highlight/parse';
 import throttle from 'lodash.throttle';
 
-const useStyles = makeStyles((theme: any) => ({
+const useStyles = makeStyles()(theme => ({
   icon: {
     color: theme.palette.text.secondary,
     marginRight: theme.spacing(2)
@@ -45,8 +45,7 @@ const LexiconAutocompleteInput = forwardRef(
   // @ts-expect-error TS(2339): Property 'fetchLexicon' does not exist on type '{}... Remove this comment to see the full error message
   ({ fetchLexicon, source, defaultValue, label, parse, optionText = 'label', helperText, ...rest }, ref) => {
     const resource = useResourceContext();
-    // @ts-expect-error TS(2349): This expression is not callable.
-    const classes = useStyles();
+    const { classes } = useStyles();
     const locale = useLocale();
     const translate = useTranslate();
     const notify = useNotify();
@@ -162,11 +161,8 @@ const LexiconAutocompleteInput = forwardRef(
           const matches = highlightMatch(option.label, keyword);
           const parts = highlightParse(option.label, matches);
           return (
-            // @ts-expect-error TS(2769): No overload matches this call.
             <Grid container alignItems="center" {...props} key={option.uri || 'create'}>
-              {/* @ts-expect-error TS(2769): No overload matches this call. */}
               <Grid item>{React.createElement(option.icon || LanguageIcon, { className: classes.icon })}</Grid>
-              {/* @ts-expect-error TS(2769): No overload matches this call. */}
               <Grid item xs>
                 {typeof parts === 'string'
                   ? parts

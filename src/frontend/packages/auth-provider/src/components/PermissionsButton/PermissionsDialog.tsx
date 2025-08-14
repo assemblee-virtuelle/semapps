@@ -1,12 +1,12 @@
 import React from 'react';
 import { Button, useTranslate } from 'react-admin';
 import { Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from 'tss-react/mui';
 import AddPermissionsForm from './AddPermissionsForm';
 import EditPermissionsForm from './EditPermissionsForm';
 import useAgents from '../../hooks/useAgents';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles()(() => ({
   title: {
     paddingBottom: 8
   },
@@ -25,7 +25,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 const PermissionsDialog = ({ open, onClose, uri, isContainer }: any) => {
-  const classes = useStyles();
+  const { classes } = useStyles();
   const translate = useTranslate();
   const { agents, addPermission, removePermission } = useAgents(uri);
 

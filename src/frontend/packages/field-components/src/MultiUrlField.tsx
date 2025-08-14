@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRecordContext } from 'react-admin';
 import { Chip, Avatar } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from 'tss-react/mui';
 import LanguageIcon from '@mui/icons-material/Language';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import GitHubIcon from '@mui/icons-material/GitHub';
@@ -55,7 +55,7 @@ const defaultdomainMapping = {
   }
 };
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles()(() => ({
   link: {
     textDecoration: 'unset',
     '& :hover': {
@@ -76,7 +76,7 @@ const useStyles = makeStyles(() => ({
 const MultiUrlField = ({ source, domainMapping }: any) => {
   const newDomainMapping = { ...defaultdomainMapping, ...domainMapping };
   const record = useRecordContext();
-  const classes = useStyles();
+  const { classes } = useStyles();
   // @ts-expect-error TS(2532): Object is possibly 'undefined'.
   const urlArray = record[source] ? (Array.isArray(record[source]) ? record[source] : [record[source]]) : [];
   return urlArray.map((url: any, index: any) => {

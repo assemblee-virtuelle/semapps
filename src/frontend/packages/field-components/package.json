@@ -17,14 +17,14 @@
   "dependencies": {
     "@semapps/semantic-data-provider": "1.1.4",
     "lodash.debounce": "^4.0.8",
-    "react-icons": "^4.4.0"
+    "react-icons": "^4.4.0",
+    "tss-react": "^4.9.19"
   },
   "peerDependencies": {
-    "@mui/icons-material": "^5.13.1",
-    "@mui/material": "^5.13.1",
-    "@mui/styles": "^5.13.1",
+    "@mui/icons-material": "^7.1.0",
+    "@mui/material": "^7.1.0",
     "react": "^18.2.0",
-    "react-admin": "^5.8.3",
+    "react-admin": "^5.10.1",
     "react-hook-form": "^7.43.9"
   },
   "publishConfig": {
@@ -35,7 +35,7 @@
     "@mui/icons-material": "^7.1.0",
     "@mui/material": "^7.1.0",
     "react": "^18.2.0",
-    "react-admin": "^5.8.3",
+    "react-admin": "^5.10.1",
     "react-hook-form": "^7.43.9"
   }
 }

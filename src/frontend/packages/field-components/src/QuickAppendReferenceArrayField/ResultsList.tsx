@@ -19,13 +19,13 @@ import {
   Avatar,
   CircularProgress
 } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from 'tss-react/mui';
 import AddIcon from '@mui/icons-material/Add';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import ErrorIcon from '@mui/icons-material/Error';
 import { useDataServers, useDataModel } from '@semapps/semantic-data-provider';
 
-const useStyles = makeStyles((theme: any) => ({
+const useStyles = makeStyles()(theme => ({
   root: {
     width: '100%',
     maxWidth: '100%',
@@ -49,7 +49,7 @@ const getServerName = (resourceUri: any, dataServers: any) => {
 };
 
 const ResultsList = ({ keyword, source, reference, appendLink, switchToCreate }: any) => {
-  const classes = useStyles();
+  const { classes } = useStyles();
   const [loading, setLoading] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [results, setResults] = useState([]);

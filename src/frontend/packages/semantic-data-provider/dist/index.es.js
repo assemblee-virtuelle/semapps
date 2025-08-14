@@ -2,7 +2,7 @@ import {createConnectedLdoDataset as $fj9kP$createConnectedLdoDataset} from "@ld
 import {solidConnectedPlugin as $fj9kP$solidConnectedPlugin} from "@ldo/connected-solid";
 import $fj9kP$speakingurl from "speakingurl";
 import $fj9kP$jsonld from "jsonld";
-import $fj9kP$rdfjsdatamodel, {triple as $fj9kP$triple, variable as $fj9kP$variable, namedNode as $fj9kP$namedNode} from "@rdfjs/data-model";
+import $fj9kP$rdfjsdatamodel from "@rdfjs/data-model";
 import {Generator as $fj9kP$Generator} from "sparqljs";
 import $fj9kP$cryptojsmd5 from "crypto-js/md5";
 import {fetchUtils as $fj9kP$fetchUtils, useDataProvider as $fj9kP$useDataProvider, DataProviderContext as $fj9kP$DataProviderContext, useRecordContext as $fj9kP$useRecordContext, useGetList as $fj9kP$useGetList, ArrayInput as $fj9kP$ArrayInput, SimpleFormIterator as $fj9kP$SimpleFormIterator, TextInput as $fj9kP$TextInput} from "react-admin";
@@ -12,7 +12,7 @@ import $fj9kP$httplinkheader from "http-link-header";
 import {capitalCase as $fj9kP$capitalCase} from "change-case";
 import $fj9kP$react, {useState as $fj9kP$useState, useEffect as $fj9kP$useEffect, useMemo as $fj9kP$useMemo, useCallback as $fj9kP$useCallback, useContext as $fj9kP$useContext} from "react";
 import {jsx as $fj9kP$jsx, Fragment as $fj9kP$Fragment, jsxs as $fj9kP$jsxs} from "react/jsx-runtime";
-import $fj9kP$muistylesmakeStyles from "@mui/styles/makeStyles";
+import {makeStyles as $fj9kP$makeStyles} from "tss-react/mui";
 
 
 
@@ -471,11 +471,11 @@ const $4e30f9af2d448bb4$var$defaultToArray = (value)=>!value ? [] : Array.isArra
         value
     ];
 // We need to always include the type or React-Admin will not work properly
-const $4e30f9af2d448bb4$var$typeQuery = (0, $fj9kP$triple)((0, $fj9kP$variable)('s1'), (0, $fj9kP$namedNode)('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), (0, $fj9kP$variable)('type'));
+const $4e30f9af2d448bb4$var$typeQuery = (0, $fj9kP$rdfjsdatamodel).quad((0, $fj9kP$rdfjsdatamodel).variable('s1'), (0, $fj9kP$rdfjsdatamodel).namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), (0, $fj9kP$rdfjsdatamodel).variable('type'));
 const $4e30f9af2d448bb4$var$buildBaseQuery = (predicates, ontologies)=>{
     let baseTriples;
     if (predicates) {
-        baseTriples = $4e30f9af2d448bb4$var$defaultToArray(predicates).map((predicate, i)=>(0, $fj9kP$triple)((0, $fj9kP$variable)('s1'), (0, $fj9kP$namedNode)((0, $4872a1c30c1fc60e$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $fj9kP$variable)(`o${i + 1}`)));
+        baseTriples = $4e30f9af2d448bb4$var$defaultToArray(predicates).map((predicate, i)=>(0, $fj9kP$rdfjsdatamodel).quad((0, $fj9kP$rdfjsdatamodel).variable('s1'), (0, $fj9kP$rdfjsdatamodel).namedNode((0, $4872a1c30c1fc60e$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $fj9kP$rdfjsdatamodel).variable(`o${i + 1}`)));
         return {
             construct: [
                 $4e30f9af2d448bb4$var$typeQuery,
@@ -493,7 +493,7 @@ const $4e30f9af2d448bb4$var$buildBaseQuery = (predicates, ontologies)=>{
         };
     }
     baseTriples = [
-        (0, $fj9kP$triple)((0, $fj9kP$variable)('s1'), (0, $fj9kP$variable)('p1'), (0, $fj9kP$variable)('o1'))
+        (0, $fj9kP$rdfjsdatamodel).quad((0, $fj9kP$rdfjsdatamodel).variable('s1'), (0, $fj9kP$rdfjsdatamodel).variable('p1'), (0, $fj9kP$rdfjsdatamodel).variable('o1'))
     ];
     return {
         construct: baseTriples,
@@ -540,8 +540,8 @@ const $8ad7b5ebbca2bb3e$var$buildBlankNodesQuery = (blankNodes, baseQuery, ontol
             const varName = $8ad7b5ebbca2bb3e$var$generateSparqlVarName(node);
             const parentVarName = parentNode ? $8ad7b5ebbca2bb3e$var$generateSparqlVarName(parentNode) : '1';
             const query = [
-                (0, $fj9kP$triple)((0, $fj9kP$variable)(`s${parentVarName}`), (0, $fj9kP$namedNode)((0, $4872a1c30c1fc60e$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $fj9kP$variable)(`s${varName}`)),
-                (0, $fj9kP$triple)((0, $fj9kP$variable)(`s${varName}`), (0, $fj9kP$variable)(`p${varName}`), (0, $fj9kP$variable)(`o${varName}`))
+                (0, $fj9kP$rdfjsdatamodel).quad((0, $fj9kP$rdfjsdatamodel).variable(`s${parentVarName}`), (0, $fj9kP$rdfjsdatamodel).namedNode((0, $4872a1c30c1fc60e$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $fj9kP$rdfjsdatamodel).variable(`s${varName}`)),
+                (0, $fj9kP$rdfjsdatamodel).quad((0, $fj9kP$rdfjsdatamodel).variable(`s${varName}`), (0, $fj9kP$rdfjsdatamodel).variable(`p${varName}`), (0, $fj9kP$rdfjsdatamodel).variable(`o${varName}`))
             ];
             queries.push({
                 node: node,
@@ -581,7 +581,7 @@ const $6aa919fd3fcf3e9c$var$buildAutoDetectBlankNodesQuery = (depth, baseQuery)=
             baseQuery.where
         ]);
         for(let i = 1; i <= depth; i++){
-            construct.push((0, $fj9kP$triple)((0, $fj9kP$variable)(`o${i}`), (0, $fj9kP$variable)(`p${i + 1}`), (0, $fj9kP$variable)(`o${i + 1}`)));
+            construct.push((0, $fj9kP$rdfjsdatamodel).quad((0, $fj9kP$rdfjsdatamodel).variable(`o${i}`), (0, $fj9kP$rdfjsdatamodel).variable(`p${i + 1}`), (0, $fj9kP$rdfjsdatamodel).variable(`o${i + 1}`)));
             whereQueries.push([
                 ...whereQueries[whereQueries.length - 1],
                 {
@@ -590,11 +590,11 @@ const $6aa919fd3fcf3e9c$var$buildAutoDetectBlankNodesQuery = (depth, baseQuery)=
                         type: 'operation',
                         operator: 'isblank',
                         args: [
-                            (0, $fj9kP$variable)(`o${i}`)
+                            (0, $fj9kP$rdfjsdatamodel).variable(`o${i}`)
                         ]
                     }
                 },
-                (0, $fj9kP$triple)((0, $fj9kP$variable)(`o${i}`), (0, $fj9kP$variable)(`p${i + 1}`), (0, $fj9kP$variable)(`o${i + 1}`))
+                (0, $fj9kP$rdfjsdatamodel).quad((0, $fj9kP$rdfjsdatamodel).variable(`o${i}`), (0, $fj9kP$rdfjsdatamodel).variable(`p${i + 1}`), (0, $fj9kP$rdfjsdatamodel).variable(`o${i + 1}`))
             ]);
         }
         where = {
@@ -1058,7 +1058,7 @@ var $c5031381f4dfc62d$export$2e2bcd8739ae039 = $c5031381f4dfc62d$var$updateMetho
  * @param dataServers Data servers configuration
  * @returns A function with react-admin's fetchJson signature that can be used to make calls to the data servers.
  *
- */ const $00b6445d7042c29d$export$64d1f38a5d384966 = (dataServers)=>{
+ */ const $00b6445d7042c29d$export$5ff1805767bd358a = (dataServers)=>{
     const fetchBaseFn = $00b6445d7042c29d$var$fetchBase(dataServers, (0, $fj9kP$fetchUtils).fetchJson);
     return (url, options)=>{
         return fetchBaseFn(url, options);
@@ -1069,11 +1069,12 @@ var $c5031381f4dfc62d$export$2e2bcd8739ae039 = $c5031381f4dfc62d$var$updateMetho
  * It will use the proxy endpoint if available and if the server is different from the auth server.
  * @param dataServers Data servers configuration
  * @returns A function that can be used to make authenticated fetch calls.
- */ const $00b6445d7042c29d$export$467927aad8938eb1 = (dataServers)=>{
+ */ const $00b6445d7042c29d$export$1ac69e0fa5b5498b = (dataServers)=>{
     const fetchBaseFn = $00b6445d7042c29d$var$fetchBase(dataServers, fetch);
-    return (url, options)=>{
+    const fetchFunction = (url, options)=>{
         return fetchBaseFn(url, options);
     };
+    return fetchFunction;
 };
 
 
@@ -1199,8 +1200,8 @@ const $9808be090468fc68$var$dataProvider = (originalConfig)=>{
     // Keep in memory for refresh
     let config;
     const prepareConfig = async ()=>{
-        const fetchJson = (0, $00b6445d7042c29d$export$64d1f38a5d384966)(originalConfig.dataServers);
-        const authFetchFn = (0, $00b6445d7042c29d$export$467927aad8938eb1)(originalConfig.dataServers);
+        const fetchJson = (0, $00b6445d7042c29d$export$5ff1805767bd358a)(originalConfig.dataServers);
+        const authFetchFn = (0, $00b6445d7042c29d$export$1ac69e0fa5b5498b)(originalConfig.dataServers);
         const dataset = (0, $fj9kP$createConnectedLdoDataset)([
             (0, $fj9kP$solidConnectedPlugin)
         ]);
@@ -1217,8 +1218,8 @@ const $9808be090468fc68$var$dataProvider = (originalConfig)=>{
         // Load plugins.
         for (const plugin of config.plugins)if (plugin.transformConfig) config = await plugin.transformConfig(config);
         // Configure httpClient & authFetch again with possibly updated data servers
-        config.httpClient = (0, $00b6445d7042c29d$export$64d1f38a5d384966)(config.dataServers);
-        config.authFetch = (0, $00b6445d7042c29d$export$467927aad8938eb1)(config.dataServers);
+        config.httpClient = (0, $00b6445d7042c29d$export$5ff1805767bd358a)(config.dataServers);
+        config.authFetch = (0, $00b6445d7042c29d$export$1ac69e0fa5b5498b)(config.dataServers);
         dataset.setContext('solid', {
             fetch: config.authFetch
         });
@@ -1259,8 +1260,8 @@ const $9808be090468fc68$var$dataProvider = (originalConfig)=>{
         getDataModels: waitForPrepareConfig((0, $52333268224773ef$export$2e2bcd8739ae039)),
         getDataServers: waitForPrepareConfig((0, $294fdd580f2e7246$export$2e2bcd8739ae039)),
         getLocalDataServers: (0, $294fdd580f2e7246$export$2e2bcd8739ae039)(originalConfig),
-        httpClient: waitForPrepareConfig((c)=>(0, $00b6445d7042c29d$export$64d1f38a5d384966)(c.dataServers)),
-        authFetch: waitForPrepareConfig((c)=>(0, $00b6445d7042c29d$export$467927aad8938eb1)(c.dataServers)),
+        fetch: waitForPrepareConfig((c)=>(0, $00b6445d7042c29d$export$5ff1805767bd358a)(c.dataServers)),
+        authFetch: waitForPrepareConfig((c)=>(0, $00b6445d7042c29d$export$1ac69e0fa5b5498b)(c.dataServers)),
         getDataset: waitForPrepareConfig((c)=>()=>c.dataset),
         uploadFile: waitForPrepareConfig((c)=>(rawFile)=>(0, $b17c43e3301545ca$export$a5575dbeeffdad98)(rawFile, c)),
         expandTypes: waitForPrepareConfig((c)=>(types)=>(0, $36aa010ec46eaf45$export$2e2bcd8739ae039)(types, c.jsonContext)),
@@ -2032,7 +2033,7 @@ var $207a50667fa8cffa$export$2e2bcd8739ae039 = $207a50667fa8cffa$var$GroupedRefe
 
 
 
-const $1a24ef5e038900c4$var$useReferenceInputStyles = (0, $fj9kP$muistylesmakeStyles)({
+const $1a24ef5e038900c4$var$useReferenceInputStyles = (0, $fj9kP$makeStyles)()({
     form: {
         display: 'flex'
     },
@@ -2040,17 +2041,15 @@ const $1a24ef5e038900c4$var$useReferenceInputStyles = (0, $fj9kP$muistylesmakeSt
         paddingRight: '20px'
     }
 });
-const $1a24ef5e038900c4$var$useHideInputStyles = (0, $fj9kP$muistylesmakeStyles)({
+const $1a24ef5e038900c4$var$useHideInputStyles = (0, $fj9kP$makeStyles)()({
     root: {
         display: 'none'
     }
 });
 const $1a24ef5e038900c4$var$ReificationArrayInput = (props)=>{
     const { reificationClass: reificationClass, children: children, ...otherProps } = props;
-    // @ts-expect-error TS(2349): This expression is not callable.
-    const flexFormClasses = $1a24ef5e038900c4$var$useReferenceInputStyles();
-    // @ts-expect-error TS(2349): This expression is not callable.
-    const hideInputStyles = $1a24ef5e038900c4$var$useHideInputStyles();
+    const { classes: flexFormClasses } = $1a24ef5e038900c4$var$useReferenceInputStyles();
+    const { classes: hideInputStyles } = $1a24ef5e038900c4$var$useHideInputStyles();
     return /*#__PURE__*/ (0, $fj9kP$jsx)((0, $fj9kP$ArrayInput), {
         ...otherProps,
         children: /*#__PURE__*/ (0, $fj9kP$jsxs)((0, $fj9kP$SimpleFormIterator), {

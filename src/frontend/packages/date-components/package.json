@@ -21,24 +21,23 @@
     "@fullcalendar/daygrid": "^5.7.2",
     "@fullcalendar/list": "^5.7.2",
     "@fullcalendar/react": "^5.7.0",
-    "@mui/x-date-pickers": "^6.6.0",
-    "date-fns": "~2.8.1"
+    "@mui/x-date-pickers": "^7.1.0",
+    "date-fns": "~2.8.1",
+    "tss-react": "^4.9.19"
   },
   "peerDependencies": {
-    "@mui/material": "^5.13.1",
-    "@mui/styles": "^5.13.1",
+    "@mui/material": "^7.1.0",
     "react": "^18.2.0",
-    "react-admin": "^5.8.3",
+    "react-admin": "^5.10.1",
     "react-router-dom": "^6.1.0"
   },
   "publishConfig": {
     "access": "public"
   },
   "devDependencies": {
+    "@mui/material": "^7.1.0",
     "react": "^18.2.0",
-    "react-admin": "^5.8.3",
-    "react-router-dom": "^7.6.1",
-    "@mui/material": "^5.13.1",
-    "@mui/styles": "^5.13.1"
+    "react-admin": "^5.10.1",
+    "react-router-dom": "^7.6.1"
   }
 }

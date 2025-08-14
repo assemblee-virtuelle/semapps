@@ -4,7 +4,7 @@ var $583VT$reactadmin = require("react-admin");
 var $583VT$rainputrichtext = require("ra-input-rich-text");
 var $583VT$tiptapextensionplaceholder = require("@tiptap/extension-placeholder");
 var $583VT$muimaterial = require("@mui/material");
-var $583VT$muistylesmakeStyles = require("@mui/styles/makeStyles");
+var $583VT$tssreactmui = require("tss-react/mui");
 var $583VT$muiiconsmaterialSend = require("@mui/icons-material/Send");
 var $583VT$semappssemanticdataprovider = require("@semapps/semantic-data-provider");
 var $583VT$semappsauthprovider = require("@semapps/auth-provider");
@@ -12,7 +12,7 @@ var $583VT$tanstackreactquery = require("@tanstack/react-query");
 var $583VT$jsonld = require("jsonld");
 var $583VT$rdfext = require("rdf-ext");
 var $583VT$rdfjsparsern3 = require("@rdfjs/parser-n3");
-var $583VT$stream = require("stream");
+var $583VT$readablestream = require("readable-stream");
 var $583VT$shaclengine = require("shacl-engine");
 var $583VT$activitypodsshapedefinitions = require("@activitypods/shape-definitions");
 var $583VT$readablewebtonodestream = require("readable-web-to-node-stream");
@@ -155,7 +155,7 @@ const $03510abb28fd3d8a$export$2684df65fa35e98e = async (jsonLdObject)=>{
     });
     // Parse N-Quads string to RDF/JS quads
     const parser = new (0, ($parcel$interopDefault($583VT$rdfjsparsern3)))();
-    const quadStream = parser.import((0, $583VT$stream.Readable).from([
+    const quadStream = parser.import((0, $583VT$readablestream.Readable).from([
         nquads
     ]));
     const dataset = await (0, ($parcel$interopDefault($583VT$rdfext))).dataset().import(quadStream);
@@ -168,7 +168,7 @@ const $03510abb28fd3d8a$export$7089f01fea2fc5c2 = async (jsonLdObject)=>{
     });
     // Parse N-Quads string to RDF/JS quads
     const parser = new (0, ($parcel$interopDefault($583VT$rdfjsparsern3)))();
-    const quadStream = parser.import((0, $583VT$stream.Readable).from([
+    const quadStream = parser.import((0, $583VT$readablestream.Readable).from([
         nquads
     ]));
     // Convert the quad stream to an array of quads
@@ -222,6 +222,7 @@ const $a370eba7b7eca32b$export$7304a15200aa09e5 = async (turtleData)=>{
 };
 
 
+const $24b34de916fb30a8$var$activitystreams = (0, $583VT$activitypodsshapedefinitions.jsonld).activitystreams;
 // Cache of SHACL validators
 const $24b34de916fb30a8$var$validatorCache = {};
 /**
@@ -236,7 +237,7 @@ const $24b34de916fb30a8$var$validatorCache = {};
     // Check if the validator is already cached
     if ($24b34de916fb30a8$var$validatorCache.activityStreams) return $24b34de916fb30a8$var$validatorCache.activityStreams;
     try {
-        const shapeDataset = await (0, $a370eba7b7eca32b$export$7304a15200aa09e5)((0, $583VT$activitypodsshapedefinitions.ActivityStreamsShape));
+        const shapeDataset = await (0, $a370eba7b7eca32b$export$7304a15200aa09e5)($24b34de916fb30a8$var$activitystreams);
         // Create and cache the SHACL validator using the dataset
         $24b34de916fb30a8$var$validatorCache.activityStreams = new (0, $583VT$shaclengine.Validator)(shapeDataset, {
             factory: (0, ($parcel$interopDefault($583VT$rdfext))),
@@ -246,7 +247,7 @@ const $24b34de916fb30a8$var$validatorCache = {};
     } catch (error) {
         throw new Error(`Failed to create ActivityStreams validator: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
-    const shapeDataset = await (0, $a370eba7b7eca32b$export$7304a15200aa09e5)((0, $583VT$activitypodsshapedefinitions.ActivityStreamsShape));
+    const shapeDataset = await (0, $a370eba7b7eca32b$export$7304a15200aa09e5)($24b34de916fb30a8$var$activitystreams);
     // Create and cache the SHACL validator using the dataset
     $24b34de916fb30a8$var$validatorCache.activityStreams = new (0, $583VT$shaclengine.Validator)(shapeDataset, {
         factory: (0, ($parcel$interopDefault($583VT$rdfext))),
@@ -808,7 +809,7 @@ const $b8eb0286f5686802$var$CustomMention = (0, ($parcel$interopDefault($583VT$t
 var $b8eb0286f5686802$export$2e2bcd8739ae039 = $b8eb0286f5686802$var$CustomMention;
 
 
-const $a2b68b573919c8a3$var$useStyles = (0, ($parcel$interopDefault($583VT$muistylesmakeStyles)))((theme)=>({
+const $a2b68b573919c8a3$var$useStyles = (0, $583VT$tssreactmui.makeStyles)()((theme)=>({
         form: {
             marginTop: -12 // Negative margin to keep the form close to the label
         },
@@ -859,7 +860,7 @@ const $a2b68b573919c8a3$var$PostCommentForm = ({ context: context, placeholder: 
     const record = (0, $583VT$reactadmin.useRecordContext)();
     const { data: identity, isLoading: isLoading } = (0, $583VT$reactadmin.useGetIdentity)();
     const userDataModel = (0, $583VT$semappssemanticdataprovider.useDataModel)(userResource);
-    const classes = $a2b68b573919c8a3$var$useStyles();
+    const { classes: classes } = $a2b68b573919c8a3$var$useStyles();
     const notify = (0, $583VT$reactadmin.useNotify)();
     const outbox = (0, $456aea3814dded7d$export$2e2bcd8739ae039)();
     const [expanded, setExpanded] = (0, $583VT$react.useState)(false);
@@ -1008,7 +1009,7 @@ var $a2b68b573919c8a3$export$2e2bcd8739ae039 = $a2b68b573919c8a3$var$PostComment
 
 
 
-const $0120d12473c65b5c$var$useStyles = (0, ($parcel$interopDefault($583VT$muistylesmakeStyles)))(()=>({
+const $0120d12473c65b5c$var$useStyles = (0, $583VT$tssreactmui.makeStyles)()(()=>({
         container: {
             paddingLeft: 80,
             marginTop: 8,
@@ -1053,7 +1054,7 @@ const $0120d12473c65b5c$var$useStyles = (0, ($parcel$interopDefault($583VT$muist
         }
     }));
 const $0120d12473c65b5c$var$CommentsList = ({ comments: comments, userResource: userResource, loading: loading })=>{
-    const classes = $0120d12473c65b5c$var$useStyles();
+    const { classes: classes } = $0120d12473c65b5c$var$useStyles();
     const userDataModel = (0, $583VT$semappssemanticdataprovider.useDataModel)(userResource);
     return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsxs)((0, $583VT$muimaterial.Box), {
         position: "relative",
@@ -1565,7 +1566,7 @@ var $10f3abf411a5e9d4$export$2e2bcd8739ae039 = $10f3abf411a5e9d4$var$useWebfinge
 
 
 
-const $d217d582899c7580$var$useStyles = (0, ($parcel$interopDefault($583VT$muistylesmakeStyles)))((theme)=>({
+const $d217d582899c7580$var$useStyles = (0, $583VT$tssreactmui.makeStyles)()((theme)=>({
         items: {
             background: '#fff',
             borderRadius: '0.5rem',
@@ -1592,7 +1593,7 @@ const $d217d582899c7580$var$useStyles = (0, ($parcel$interopDefault($583VT$muist
     }));
 var $d217d582899c7580$export$2e2bcd8739ae039 = /*#__PURE__*/ (0, $583VT$react.forwardRef)((props, ref)=>{
     const [selectedIndex, setSelectedIndex] = (0, $583VT$react.useState)(0);
-    const classes = $d217d582899c7580$var$useStyles();
+    const { classes: classes } = $d217d582899c7580$var$useStyles();
     const selectItem = (index)=>{
         // @ts-expect-error TS(2339): Property 'items' does not exist on type '{}'.
         const item = props.items[index];

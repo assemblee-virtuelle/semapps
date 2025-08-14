@@ -2,7 +2,7 @@ var $as47w$reactjsxruntime = require("react/jsx-runtime");
 var $as47w$react = require("react");
 var $as47w$reactadmin = require("react-admin");
 var $as47w$muimaterial = require("@mui/material");
-var $as47w$muistylesmakeStyles = require("@mui/styles/makeStyles");
+var $as47w$tssreactmui = require("tss-react/mui");
 var $as47w$muimaterialAutocomplete = require("@mui/material/Autocomplete");
 var $as47w$muiiconsmaterialLanguage = require("@mui/icons-material/Language");
 var $as47w$muiiconsmaterialAdd = require("@mui/icons-material/Add");
@@ -49,7 +49,7 @@ $parcel$export(module.exports, "useSync", () => $b20f9c36b772f8b4$export$2e2bcd8
 
 
 
-const $1e0deedc4d046342$var$useStyles = (0, ($parcel$interopDefault($as47w$muistylesmakeStyles)))((theme)=>({
+const $1e0deedc4d046342$var$useStyles = (0, $as47w$tssreactmui.makeStyles)()((theme)=>({
         icon: {
             color: theme.palette.text.secondary,
             marginRight: theme.spacing(2)
@@ -65,8 +65,7 @@ const $1e0deedc4d046342$var$capitalizeFirstLetter = (string)=>string && string.c
 const $1e0deedc4d046342$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $as47w$react.forwardRef)(// @ts-expect-error TS(2339): Property 'fetchLexicon' does not exist on type '{}... Remove this comment to see the full error message
 ({ fetchLexicon: fetchLexicon, source: source, defaultValue: defaultValue, label: label, parse: parse, optionText: optionText = 'label', helperText: helperText, ...rest }, ref)=>{
     const resource = (0, $as47w$reactadmin.useResourceContext)();
-    // @ts-expect-error TS(2349): This expression is not callable.
-    const classes = $1e0deedc4d046342$var$useStyles();
+    const { classes: classes } = $1e0deedc4d046342$var$useStyles();
     const locale = (0, $as47w$reactadmin.useLocale)();
     const translate = (0, $as47w$reactadmin.useTranslate)();
     const notify = (0, $as47w$reactadmin.useNotify)();
@@ -176,8 +175,7 @@ const $1e0deedc4d046342$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $as47w$
         renderOption: (props, option)=>{
             const matches = (0, ($parcel$interopDefault($as47w$autosuggesthighlightmatch)))(option.label, keyword);
             const parts = (0, ($parcel$interopDefault($as47w$autosuggesthighlightparse)))(option.label, matches);
-            return(// @ts-expect-error TS(2769): No overload matches this call.
-            /*#__PURE__*/ (0, $as47w$react.createElement)((0, $as47w$muimaterial.Grid), {
+            return /*#__PURE__*/ (0, $as47w$react.createElement)((0, $as47w$muimaterial.Grid), {
                 container: true,
                 alignItems: "center",
                 ...props,
@@ -207,7 +205,7 @@ const $1e0deedc4d046342$var$LexiconAutocompleteInput = /*#__PURE__*/ (0, $as47w$
                         ]
                     })
                 ]
-            }));
+            });
         }
     });
 });
@@ -442,7 +440,7 @@ const $29020659369365dd$var$ImportForm = ({ stripProperties: stripProperties })=
 var $29020659369365dd$export$2e2bcd8739ae039 = $29020659369365dd$var$ImportForm;
 
 
-const $0a2a9df1212fcaa1$var$useStyles = (0, ($parcel$interopDefault($as47w$muistylesmakeStyles)))(()=>({
+const $0a2a9df1212fcaa1$var$useStyles = (0, $as47w$tssreactmui.makeStyles)()(()=>({
         tab: {
             maxWidth: 'unset',
             padding: '6px 24px'
@@ -450,7 +448,7 @@ const $0a2a9df1212fcaa1$var$useStyles = (0, ($parcel$interopDefault($as47w$muist
     }));
 const $0a2a9df1212fcaa1$var$CreateOrImportForm = ({ stripProperties: stripProperties, ...rest })=>{
     const [tab, setTab] = (0, $as47w$react.useState)(0);
-    const classes = $0a2a9df1212fcaa1$var$useStyles();
+    const { classes: classes } = $0a2a9df1212fcaa1$var$useStyles();
     const xs = (0, $as47w$muimaterial.useMediaQuery)((theme)=>theme.breakpoints.down('sm'), {
         noSsr: true
     });

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { ArrayInput, SimpleFormIterator, TextInput } from 'react-admin';
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from 'tss-react/mui';
 
-const useReferenceInputStyles = makeStyles({
+const useReferenceInputStyles = makeStyles()({
   form: {
     display: 'flex'
   },
@@ -11,7 +11,7 @@ const useReferenceInputStyles = makeStyles({
   }
 });
 
-const useHideInputStyles = makeStyles({
+const useHideInputStyles = makeStyles()({
   root: {
     display: 'none'
   }
@@ -19,10 +19,8 @@ const useHideInputStyles = makeStyles({
 
 const ReificationArrayInput = (props: any) => {
   const { reificationClass, children, ...otherProps } = props;
-  // @ts-expect-error TS(2349): This expression is not callable.
-  const flexFormClasses = useReferenceInputStyles();
-  // @ts-expect-error TS(2349): This expression is not callable.
-  const hideInputStyles = useHideInputStyles();
+  const { classes: flexFormClasses } = useReferenceInputStyles();
+  const { classes: hideInputStyles } = useHideInputStyles();
 
   return (
     <ArrayInput {...otherProps}>

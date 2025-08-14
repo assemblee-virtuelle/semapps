@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useListContext, RecordContextProvider } from 'react-admin';
 import { useLocation } from 'react-router-dom';
 import { useMediaQuery, Box } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from 'tss-react/mui';
 import CircularProgress from '@mui/material/CircularProgress';
 import 'leaflet-defaulticon-compatibility';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
@@ -11,7 +11,7 @@ import DefaultPopupContent from './DefaultPopupContent';
 import QueryStringUpdater from './QueryStringUpdater';
 import MobileDrawer from './MobileDrawer';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles()(() => ({
   isLoading: {
     zIndex: 1000,
     position: 'absolute',
@@ -43,8 +43,8 @@ const MapList = ({
   const { data, isLoading } = useListContext();
   const xs = useMediaQuery(theme => theme.breakpoints.down('sm'), { noSsr: true });
   const [drawerRecord, setDrawerRecord] = useState(null);
-  // @ts-expect-error TS(2349): This expression is not callable.
-  const classes = useStyles();
+
+  const { classes } = useStyles();
 
   // Get the zoom and center from query string, if available
   const location = useLocation();

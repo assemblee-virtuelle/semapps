@@ -1,14 +1,16 @@
 import React from 'react';
 import { useRecordContext } from 'react-admin';
 import { Box, Avatar, Chip } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from 'tss-react/mui';
 import LaunchIcon from '@mui/icons-material/Launch';
 
-const useStyles = makeStyles((theme: any) => ({
-  parent: (props: any) => ({
+// TODO jss-to-tss-react codemod: Unable to handle style definition reliably. Unsupported arrow function syntax.
+// Arrow function has parameter type of Identifier instead of ObjectPattern (for example `(props) => ({...})` instead of `({color}) => ({...})`).
+const useStyles = makeStyles<{ parent: any }>()((theme, { parent }) => ({
+  parent: {
     position: 'relative',
-    ...props.parent
-  }),
+    ...parent
+  },
   square: {
     width: '100%',
     paddingBottom: '100%',
@@ -56,7 +58,9 @@ const AvatarWithLabelField = ({
   classes,
   ...rest
 }: any) => {
-  classes = useStyles(classes);
+  classes = useStyles(classes, {
+    props: classes
+  });
   const record = useRecordContext();
 
   // @ts-expect-error TS(2532): Object is possibly 'undefined'.

@@ -2,7 +2,7 @@ var $gJbUX$reactjsxruntime = require("react/jsx-runtime");
 var $gJbUX$react = require("react");
 var $gJbUX$reactadmin = require("react-admin");
 var $gJbUX$muimaterial = require("@mui/material");
-var $gJbUX$muistylesmakeStyles = require("@mui/styles/makeStyles");
+var $gJbUX$tssreactmui = require("tss-react/mui");
 var $gJbUX$muiiconsmaterialLaunch = require("@mui/icons-material/Launch");
 var $gJbUX$reacthookform = require("react-hook-form");
 var $gJbUX$muiiconsmaterialAdd = require("@mui/icons-material/Add");
@@ -39,11 +39,13 @@ $parcel$export(module.exports, "SeparatedListField", () => $d392e56952d41657$exp
 
 
 
-const $3f018d83d5c220cb$var$useStyles = (0, ($parcel$interopDefault($gJbUX$muistylesmakeStyles)))((theme)=>({
-        parent: (props)=>({
-                position: 'relative',
-                ...props.parent
-            }),
+// TODO jss-to-tss-react codemod: Unable to handle style definition reliably. Unsupported arrow function syntax.
+// Arrow function has parameter type of Identifier instead of ObjectPattern (for example `(props) => ({...})` instead of `({color}) => ({...})`).
+const $3f018d83d5c220cb$var$useStyles = (0, $gJbUX$tssreactmui.makeStyles)()((theme, { parent: parent })=>({
+        parent: {
+            position: 'relative',
+            ...parent
+        },
         square: {
             width: '100%',
             paddingBottom: '100%',
@@ -80,7 +82,9 @@ const $3f018d83d5c220cb$var$useStyles = (0, ($parcel$interopDefault($gJbUX$muist
     }));
 const $3f018d83d5c220cb$var$handleClick = ()=>{};
 const $3f018d83d5c220cb$var$AvatarWithLabelField = ({ label: label, defaultLabel: defaultLabel, image: image, fallback: fallback, externalLink: externalLink = false, labelColor: labelColor = 'secondary', classes: classes, ...rest })=>{
-    classes = $3f018d83d5c220cb$var$useStyles(classes);
+    classes = $3f018d83d5c220cb$var$useStyles(classes, {
+        props: classes
+    });
     const record = (0, $gJbUX$reactadmin.useRecordContext)();
     // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const computedLabel = (typeof label === 'function' ? label(record) : record[label]) || defaultLabel;
@@ -188,7 +192,7 @@ var $b30f322c513cbc10$export$2e2bcd8739ae039 = $b30f322c513cbc10$var$ReferenceFi
 
 
 
-const $f47ebe41860d457c$var$useStyles = (0, ($parcel$interopDefault($gJbUX$muistylesmakeStyles)))((theme)=>({
+const $f47ebe41860d457c$var$useStyles = (0, $gJbUX$tssreactmui.makeStyles)()((theme)=>({
         root: {
             width: '100%',
             maxWidth: '100%',
@@ -210,7 +214,7 @@ const $f47ebe41860d457c$var$getServerName = (resourceUri, dataServers)=>{
     return server ? server.name : 'Inconnu';
 };
 const $f47ebe41860d457c$var$ResultsList = ({ keyword: keyword, source: source, reference: reference, appendLink: appendLink, switchToCreate: switchToCreate })=>{
-    const classes = $f47ebe41860d457c$var$useStyles();
+    const { classes: classes } = $f47ebe41860d457c$var$useStyles();
     const [loading, setLoading] = (0, $gJbUX$react.useState)(false);
     const [loaded, setLoaded] = (0, $gJbUX$react.useState)(false);
     const [results, setResults] = (0, $gJbUX$react.useState)([]);
@@ -369,7 +373,7 @@ const $f47ebe41860d457c$var$ResultsList = ({ keyword: keyword, source: source, r
 var $f47ebe41860d457c$export$2e2bcd8739ae039 = $f47ebe41860d457c$var$ResultsList;
 
 
-const $e2e32dffa6383430$var$useStyles = (0, ($parcel$interopDefault($gJbUX$muistylesmakeStyles)))(()=>({
+const $e2e32dffa6383430$var$useStyles = (0, $gJbUX$tssreactmui.makeStyles)()(()=>({
         title: {
             paddingBottom: 8
         },
@@ -388,7 +392,7 @@ const $e2e32dffa6383430$var$useStyles = (0, ($parcel$interopDefault($gJbUX$muist
         }
     }));
 const $e2e32dffa6383430$var$QuickAppendDialog = ({ open: open, onClose: onClose, subjectUri: subjectUri, source: source, reference: reference })=>{
-    const classes = $e2e32dffa6383430$var$useStyles();
+    const { classes: classes } = $e2e32dffa6383430$var$useStyles();
     const { resource: resource } = (0, $gJbUX$reactadmin.useShowContext)();
     const [keyword, setKeyword] = (0, $gJbUX$react.useState)('');
     const [panel, setPanel] = (0, $gJbUX$react.useState)('find');
@@ -631,7 +635,7 @@ const $8e04b489ede64e08$var$defaultdomainMapping = {
         contrastText: 'white'
     }
 };
-const $8e04b489ede64e08$var$useStyles = (0, ($parcel$interopDefault($gJbUX$muistylesmakeStyles)))(()=>({
+const $8e04b489ede64e08$var$useStyles = (0, $gJbUX$tssreactmui.makeStyles)()(()=>({
         link: {
             textDecoration: 'unset',
             '& :hover': {
@@ -654,7 +658,7 @@ const $8e04b489ede64e08$var$MultiUrlField = ({ source: source, domainMapping: do
         ...domainMapping
     };
     const record = (0, $gJbUX$reactadmin.useRecordContext)();
-    const classes = $8e04b489ede64e08$var$useStyles();
+    const { classes: classes } = $8e04b489ede64e08$var$useStyles();
     // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const urlArray = record[source] ? Array.isArray(record[source]) ? record[source] : [
         record[source]

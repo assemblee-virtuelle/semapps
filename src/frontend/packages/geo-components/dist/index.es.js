@@ -9,7 +9,7 @@ import $4dBGn$autosuggesthighlightparse from "autosuggest-highlight/parse";
 import $4dBGn$lodashthrottle from "lodash.throttle";
 import {styled as $4dBGn$styled} from "@mui/system";
 import {useLocation as $4dBGn$useLocation, useSearchParams as $4dBGn$useSearchParams} from "react-router-dom";
-import $4dBGn$muistylesmakeStyles from "@mui/styles/makeStyles";
+import {makeStyles as $4dBGn$makeStyles} from "tss-react/mui";
 import $4dBGn$muimaterialCircularProgress from "@mui/material/CircularProgress";
 import "leaflet-defaulticon-compatibility";
 import {Marker as $4dBGn$Marker, Popup as $4dBGn$Popup, Polyline as $4dBGn$Polyline, MapContainer as $4dBGn$MapContainer, TileLayer as $4dBGn$TileLayer, useMapEvents as $4dBGn$useMapEvents, useMap as $4dBGn$useMap} from "react-leaflet";
@@ -284,7 +284,7 @@ var $cb9d4bbdbfa10423$export$2e2bcd8739ae039 = $cb9d4bbdbfa10423$var$QueryString
 
 
 
-const $5f1b540baeb2942f$var$useStyles = (0, $4dBGn$muistylesmakeStyles)(()=>({
+const $5f1b540baeb2942f$var$useStyles = (0, $4dBGn$makeStyles)()(()=>({
         closeButton: {
             position: 'absolute',
             zIndex: 1400,
@@ -293,8 +293,7 @@ const $5f1b540baeb2942f$var$useStyles = (0, $4dBGn$muistylesmakeStyles)(()=>({
         }
     }));
 const $5f1b540baeb2942f$var$MobileDrawer = ({ popupContent: popupContent, onClose: onClose })=>{
-    // @ts-expect-error TS(2349): This expression is not callable.
-    const classes = $5f1b540baeb2942f$var$useStyles();
+    const { classes: classes } = $5f1b540baeb2942f$var$useStyles();
     const record = (0, $4dBGn$useRecordContext)();
     const map = (0, $4dBGn$useMap)();
     (0, $4dBGn$useEffect)(()=>{
@@ -328,7 +327,7 @@ const $5f1b540baeb2942f$var$MobileDrawer = ({ popupContent: popupContent, onClos
 var $5f1b540baeb2942f$export$2e2bcd8739ae039 = $5f1b540baeb2942f$var$MobileDrawer;
 
 
-const $0a155f5c43a344bc$var$useStyles = (0, $4dBGn$muistylesmakeStyles)(()=>({
+const $0a155f5c43a344bc$var$useStyles = (0, $4dBGn$makeStyles)()(()=>({
         isLoading: {
             zIndex: 1000,
             position: 'absolute',
@@ -350,8 +349,7 @@ const $0a155f5c43a344bc$var$MapList = ({ latitude: latitude, longitude: longitud
         noSsr: true
     });
     const [drawerRecord, setDrawerRecord] = (0, $4dBGn$useState)(null);
-    // @ts-expect-error TS(2349): This expression is not callable.
-    const classes = $0a155f5c43a344bc$var$useStyles();
+    const { classes: classes } = $0a155f5c43a344bc$var$useStyles();
     // Get the zoom and center from query string, if available
     const location = (0, $4dBGn$useLocation)();
     const query = new URLSearchParams(location.search);

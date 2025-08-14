@@ -1,4 +1,4 @@
-import {jsx as $5Ihaz$jsx, jsxs as $5Ihaz$jsxs} from "react/jsx-runtime";
+import {jsx as $5Ihaz$jsx, jsxs as $5Ihaz$jsxs, Fragment as $5Ihaz$Fragment} from "react/jsx-runtime";
 import "@fullcalendar/react/dist/vdom";
 import {DatePicker as $5Ihaz$DatePicker} from "@mui/x-date-pickers/DatePicker";
 import {TimePicker as $5Ihaz$TimePicker} from "@mui/x-date-pickers/TimePicker";
@@ -9,8 +9,7 @@ import {LocalizationProvider as $5Ihaz$LocalizationProvider} from "@mui/x-date-p
 import {AdapterDateFns as $5Ihaz$AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
 import $5Ihaz$fullcalendarreact from "@fullcalendar/react";
 import $5Ihaz$fullcalendardaygrid from "@fullcalendar/daygrid";
-import {useTheme as $5Ihaz$useTheme} from "@mui/material";
-import $5Ihaz$muistylesmakeStyles from "@mui/styles/makeStyles";
+import {useTheme as $5Ihaz$useTheme, GlobalStyles as $5Ihaz$GlobalStyles} from "@mui/material";
 import {useSearchParams as $5Ihaz$useSearchParams, useNavigate as $5Ihaz$useNavigate} from "react-router-dom";
 import $5Ihaz$fullcalendarlist from "@fullcalendar/list";
 
@@ -92,7 +91,6 @@ var $610808f89222f9cc$export$2e2bcd8739ae039 = $610808f89222f9cc$var$Picker;
 
 
 
-
 const $cb9049d6e1676554$var$useFullCalendarProps = ({ label: label, startDate: startDate, endDate: endDate, linkType: linkType = 'edit' })=>{
     const { data: data, isLoading: isLoading, resource: resource } = (0, $5Ihaz$useListContext)();
     const [searchParams, setSearchParams] = (0, $5Ihaz$useSearchParams)();
@@ -143,37 +141,38 @@ const $cb9049d6e1676554$var$useFullCalendarProps = ({ label: label, startDate: s
 var $cb9049d6e1676554$export$2e2bcd8739ae039 = $cb9049d6e1676554$var$useFullCalendarProps;
 
 
-const $e2ca335ee375606a$var$useGlobalStyles = (0, $5Ihaz$muistylesmakeStyles)((theme)=>({
-        '@global': {
-            '.fc-button': {
-                backgroundColor: `${theme.palette.primary.main} !important`,
-                border: 'none !important',
-                opacity: '1 !important'
-            },
-            '.fc-day-today': {
-                backgroundColor: `${theme.palette.secondary.light} !important`
-            },
-            // Overwrite violet color of links
-            'a.fc-daygrid-dot-event': {
-                color: 'black !important'
-            }
-        }
-    }));
 const $e2ca335ee375606a$var$CalendarList = (props)=>{
     const theme = (0, $5Ihaz$useTheme)();
     const fullCalendarProps = (0, $cb9049d6e1676554$export$2e2bcd8739ae039)(props);
-    // @ts-expect-error TS(2349): This expression is not callable.
-    $e2ca335ee375606a$var$useGlobalStyles();
-    return(// @ts-expect-error TS(2769): No overload matches this call.
-    /*#__PURE__*/ (0, $5Ihaz$jsx)((0, $5Ihaz$fullcalendarreact), {
-        plugins: [
-            (0, $5Ihaz$fullcalendardaygrid)
-        ],
-        locale: props.locale,
-        initialView: "dayGridMonth",
-        eventBackgroundColor: theme.palette.primary.main,
-        ...fullCalendarProps
-    }));
+    return /*#__PURE__*/ (0, $5Ihaz$jsxs)((0, $5Ihaz$Fragment), {
+        children: [
+            /*#__PURE__*/ (0, $5Ihaz$jsx)((0, $5Ihaz$GlobalStyles), {
+                styles: (theme)=>({
+                        '.fc-button': {
+                            backgroundColor: `${theme.palette.primary.main} !important`,
+                            border: 'none !important',
+                            opacity: '1 !important'
+                        },
+                        '.fc-day-today': {
+                            backgroundColor: `${theme.palette.secondary.light} !important`
+                        },
+                        // Overwrite violet color of links
+                        'a.fc-daygrid-dot-event': {
+                            color: 'black !important'
+                        }
+                    })
+            }),
+            /*#__PURE__*/ (0, $5Ihaz$jsx)((0, $5Ihaz$fullcalendarreact), {
+                plugins: [
+                    (0, $5Ihaz$fullcalendardaygrid)
+                ],
+                locale: props.locale,
+                initialView: "dayGridMonth",
+                eventBackgroundColor: theme.palette.primary.main,
+                ...fullCalendarProps
+            })
+        ]
+    });
 };
 var $e2ca335ee375606a$export$2e2bcd8739ae039 = $e2ca335ee375606a$var$CalendarList;
 
@@ -184,26 +183,29 @@ var $e2ca335ee375606a$export$2e2bcd8739ae039 = $e2ca335ee375606a$var$CalendarLis
 
 
 
-const $165f9618c6b47a8a$var$useGlobalStyles = (0, $5Ihaz$muistylesmakeStyles)((theme)=>({
-        '@global': {
-            '.fc-button': {
-                backgroundColor: `${theme.palette.primary.main} !important`,
-                border: 'none !important',
-                opacity: '1 !important'
-            }
-        }
-    }));
 const $165f9618c6b47a8a$var$DaysList = (props)=>{
     const fullCalendarProps = (0, $cb9049d6e1676554$export$2e2bcd8739ae039)(props);
-    $165f9618c6b47a8a$var$useGlobalStyles();
-    // @ts-expect-error TS(2769): No overload matches this call.
-    return /*#__PURE__*/ (0, $5Ihaz$jsx)((0, $5Ihaz$fullcalendarreact), {
-        plugins: [
-            (0, $5Ihaz$fullcalendarlist)
-        ],
-        locale: props.locale,
-        initialView: "listMonth",
-        ...fullCalendarProps
+    return /*#__PURE__*/ (0, $5Ihaz$jsxs)((0, $5Ihaz$Fragment), {
+        children: [
+            /*#__PURE__*/ (0, $5Ihaz$jsx)((0, $5Ihaz$GlobalStyles), {
+                styles: (theme)=>({
+                        '.fc-button': {
+                            backgroundColor: `${theme.palette.primary.main} !important`,
+                            border: 'none !important',
+                            opacity: '1 !important'
+                        }
+                    })
+            }),
+            /*#__PURE__*/ (0, $5Ihaz$jsx)((0, $5Ihaz$fullcalendarreact), {
+                plugins: [
+                    (0, $5Ihaz$fullcalendarlist)
+                ],
+                locale: props.locale,
+                initialView: "listMonth",
+                ...fullCalendarProps
+            }),
+            ";"
+        ]
     });
 };
 var $165f9618c6b47a8a$export$2e2bcd8739ae039 = $165f9618c6b47a8a$var$DaysList;

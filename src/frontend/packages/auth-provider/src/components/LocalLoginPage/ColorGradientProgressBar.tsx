@@ -1,6 +1,6 @@
 import React from 'react';
 import { LinearProgress } from '@mui/material';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 
 /**
  * @typedef {object} Color
@@ -48,14 +48,14 @@ export default function ColorGradientProgressBar(props: any) {
   const fade = Math.max(0, Math.min(1, (currentVal - minVal) / (maxVal - minVal)));
   const currentColor = colorGradient(fade, color1, color2);
 
-  const StyledLinearProgress = withStyles({
+  const StyledLinearProgress = withStyles(LinearProgress, {
     colorPrimary: {
       backgroundColor: 'black' // '#e0e0e0'
     },
     barColorPrimary: {
       backgroundColor: currentColor
     }
-  })(LinearProgress);
+  });
 
   return <StyledLinearProgress {...restProps} value={100 * fade} variant="determinate" />;
 }

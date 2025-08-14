@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useGetList, useTranslate } from 'react-admin';
 import { TextField, List, ListItem, ListItemAvatar, ListItemText, Avatar } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from 'tss-react/mui';
 import Autocomplete from '@mui/material/Autocomplete';
 import PersonIcon from '@mui/icons-material/Person';
 import { USER_AGENT, ACL_READ } from '../../constants';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles()(() => ({
   list: {
     padding: 0,
     width: '100%'
@@ -17,7 +17,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 const AddPermissionsForm = ({ agents, addPermission }: any) => {
-  const classes = useStyles();
+  const { classes } = useStyles();
   const translate = useTranslate();
   const [value, setValue] = useState(null);
   const [inputValue, setInputValue] = useState('');
