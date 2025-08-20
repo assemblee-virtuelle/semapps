@@ -14375,7 +14375,6 @@ __metadata:
     "@types/dotenv-flow": "npm:^3.3.3"
     "@types/ioredis": "npm:^4.27.0"
     "@types/node-fetch": "npm:^2.6.13"
-    "@types/rdfjs__data-model": "npm:^2.0.9"
     "@types/streamify-string": "npm:^1.0.4"
     "@typescript-eslint/eslint-plugin": "npm:^7.1.1"
     "@typescript-eslint/parser": "npm:^7.5.0"

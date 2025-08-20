@@ -1,26 +1,7 @@
 import { RefObject, MutableRefObject } from 'react';
-import {
-  RefetchOptions,
-  InfiniteData,
-  QueryObserverResult,
-  FetchNextPageOptions,
-  InfiniteQueryObserverResult,
-  FetchPreviousPageOptions,
-  FetchStatus
-} from '@tanstack/react-query';
-import {
-  RefetchOptions as _RefetchOptions1,
-  InfiniteData as _InfiniteData1,
-  QueryObserverResult as _QueryObserverResult1,
-  FetchNextPageOptions as _FetchNextPageOptions1,
-  InfiniteQueryObserverResult as _InfiniteQueryObserverResult1
-} from '@tanstack/query-core';
 import { Identifier } from 'react-admin';
 import { JSX } from 'react/jsx-runtime';
 import { LdoBase, ShapeType } from '@ldo/ldo';
-import { SolidConnectedPlugin } from '@ldo/connected-solid';
-import { ConnectedLdoDataset } from '@ldo/connected';
-import { OrderedCollectionPage } from '@activitypods/ldo-shapes';
 export const ACTIVITY_TYPES: {
   ACCEPT: string;
   ADD: string;
@@ -223,17 +204,15 @@ export const useCollection: (
 ) =>
   | {
       items: any[];
-      error: false | (Error | null)[];
-      refetch: (options?: RefetchOptions) => Promise<QueryObserverResult<InfiniteData<any, unknown>, Error>>;
-      fetchNextPage: (
-        options?: FetchNextPageOptions
-      ) => Promise<InfiniteQueryObserverResult<InfiniteData<any, unknown>, Error>>;
+      error: false | any[];
+      refetch: any;
+      fetchNextPage: any;
       addItem: (item: string | any, shouldRefetch?: boolean | number) => void;
       removeItem: (item: string | any, shouldRefetch?: boolean) => void;
-      hasNextPage: boolean;
-      isLoading: boolean;
-      isFetching: boolean;
-      isFetchingNextPage: boolean;
+      hasNextPage: any;
+      isLoading: any;
+      isFetching: any;
+      isFetchingNextPage: any;
       url: any;
       hasLiveUpdates: {
         status: string;
@@ -245,17 +224,15 @@ export const useCollection: (
   | {
       totalItems: number;
       items: any[];
-      error: false | (Error | null)[];
-      refetch: (options?: RefetchOptions) => Promise<QueryObserverResult<InfiniteData<any, unknown>, Error>>;
-      fetchNextPage: (
-        options?: FetchNextPageOptions
-      ) => Promise<InfiniteQueryObserverResult<InfiniteData<any, unknown>, Error>>;
+      error: false | any[];
+      refetch: any;
+      fetchNextPage: any;
       addItem: (item: string | any, shouldRefetch?: boolean | number) => void;
       removeItem: (item: string | any, shouldRefetch?: boolean) => void;
-      hasNextPage: boolean;
-      isLoading: boolean;
-      isFetching: boolean;
-      isFetchingNextPage: boolean;
+      hasNextPage: any;
+      isLoading: any;
+      isFetching: any;
+      isFetchingNextPage: any;
       url: any;
       hasLiveUpdates: {
         status: string;
@@ -275,17 +252,15 @@ export const useCollection: (
  */
 export const useOutbox: (options?: UseCollectionOptions) =>
   | {
-      error: false | (Error | null)[];
-      refetch: (options?: _RefetchOptions1) => Promise<_QueryObserverResult1<_InfiniteData1<any, unknown>, Error>>;
-      fetchNextPage: (
-        options?: _FetchNextPageOptions1
-      ) => Promise<_InfiniteQueryObserverResult1<_InfiniteData1<any, unknown>, Error>>;
-      addItem: (item: string | any, shouldRefetch?: boolean | number) => void;
-      removeItem: (item: string | any, shouldRefetch?: boolean) => void;
-      hasNextPage: boolean;
-      isLoading: boolean;
-      isFetching: boolean;
-      isFetchingNextPage: boolean;
+      error: false | any[];
+      refetch: any;
+      fetchNextPage: any;
+      addItem: (item: any, shouldRefetch?: number | boolean) => void;
+      removeItem: (item: any, shouldRefetch?: boolean) => void;
+      hasNextPage: any;
+      isLoading: any;
+      isFetching: any;
+      isFetchingNextPage: any;
       hasLiveUpdates: {
         status: string;
         error?: any;
@@ -300,17 +275,15 @@ export const useOutbox: (options?: UseCollectionOptions) =>
     }
   | {
       totalItems: number;
-      error: false | (Error | null)[];
-      refetch: (options?: _RefetchOptions1) => Promise<_QueryObserverResult1<_InfiniteData1<any, unknown>, Error>>;
-      fetchNextPage: (
-        options?: _FetchNextPageOptions1
-      ) => Promise<_InfiniteQueryObserverResult1<_InfiniteData1<any, unknown>, Error>>;
-      addItem: (item: string | any, shouldRefetch?: boolean | number) => void;
-      removeItem: (item: string | any, shouldRefetch?: boolean) => void;
-      hasNextPage: boolean;
-      isLoading: boolean;
-      isFetching: boolean;
-      isFetchingNextPage: boolean;
+      error: false | any[];
+      refetch: any;
+      fetchNextPage: any;
+      addItem: (item: any, shouldRefetch?: number | boolean) => void;
+      removeItem: (item: any, shouldRefetch?: boolean) => void;
+      hasNextPage: any;
+      isLoading: any;
+      isFetching: any;
+      isFetchingNextPage: any;
       hasLiveUpdates: {
         status: string;
         error?: any;
@@ -338,919 +311,7 @@ interface UseTypedCollectionOptions<ItemType extends LdoBase> {
 export const useTypedCollection: <ItemType extends LdoBase>(
   collectionUri: string,
   options: UseCollectionOptions & UseTypedCollectionOptions<ItemType>
-) =>
-  | {
-      items: ItemType[];
-      liveUpdatesStatus: {
-        error?: any;
-        status: 'error' | 'closed' | 'connected' | 'connecting' | 'disabled';
-      };
-      fetchNext: (noItems?: number) => void;
-      fetchPrevious: (noItems?: number) => void;
-      totalItems: number | undefined;
-      isPaginated: boolean | undefined;
-      data: InfiniteData<
-        | {
-            itemIds: never[];
-            dataset: null;
-            data: null;
-            pageUri?: undefined;
-          }
-        | {
-            itemIds: string[];
-            dataset: null;
-            pageUri: string;
-            data: null;
-          }
-        | {
-            dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-            itemIds: string[];
-            pageUri: string;
-            data: OrderedCollectionPage;
-          },
-        unknown
-      >;
-      error: Error;
-      isError: true;
-      isPending: false;
-      isLoading: false;
-      isLoadingError: false;
-      isRefetchError: true;
-      isSuccess: false;
-      isPlaceholderData: false;
-      status: 'error';
-      fetchNextPage: (options?: FetchNextPageOptions) => Promise<
-        InfiniteQueryObserverResult<
-          InfiniteData<
-            | {
-                itemIds: never[];
-                dataset: null;
-                data: null;
-                pageUri?: undefined;
-              }
-            | {
-                itemIds: string[];
-                dataset: null;
-                pageUri: string;
-                data: null;
-              }
-            | {
-                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-                itemIds: string[];
-                pageUri: string;
-                data: OrderedCollectionPage;
-              },
-            unknown
-          >,
-          Error
-        >
-      >;
-      fetchPreviousPage: (options?: FetchPreviousPageOptions) => Promise<
-        InfiniteQueryObserverResult<
-          InfiniteData<
-            | {
-                itemIds: never[];
-                dataset: null;
-                data: null;
-                pageUri?: undefined;
-              }
-            | {
-                itemIds: string[];
-                dataset: null;
-                pageUri: string;
-                data: null;
-              }
-            | {
-                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-                itemIds: string[];
-                pageUri: string;
-                data: OrderedCollectionPage;
-              },
-            unknown
-          >,
-          Error
-        >
-      >;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-      isFetchNextPageError: boolean;
-      isFetchingNextPage: boolean;
-      isFetchPreviousPageError: boolean;
-      isFetchingPreviousPage: boolean;
-      dataUpdatedAt: number;
-      errorUpdatedAt: number;
-      failureCount: number;
-      failureReason: Error | null;
-      errorUpdateCount: number;
-      isFetched: boolean;
-      isFetchedAfterMount: boolean;
-      isFetching: boolean;
-      isInitialLoading: boolean;
-      isPaused: boolean;
-      isRefetching: boolean;
-      isStale: boolean;
-      isEnabled: boolean;
-      refetch: (options?: RefetchOptions) => Promise<
-        QueryObserverResult<
-          InfiniteData<
-            | {
-                itemIds: never[];
-                dataset: null;
-                data: null;
-                pageUri?: undefined;
-              }
-            | {
-                itemIds: string[];
-                dataset: null;
-                pageUri: string;
-                data: null;
-              }
-            | {
-                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-                itemIds: string[];
-                pageUri: string;
-                data: OrderedCollectionPage;
-              },
-            unknown
-          >,
-          Error
-        >
-      >;
-      fetchStatus: FetchStatus;
-      promise: Promise<
-        InfiniteData<
-          | {
-              itemIds: never[];
-              dataset: null;
-              data: null;
-              pageUri?: undefined;
-            }
-          | {
-              itemIds: string[];
-              dataset: null;
-              pageUri: string;
-              data: null;
-            }
-          | {
-              dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-              itemIds: string[];
-              pageUri: string;
-              data: OrderedCollectionPage;
-            },
-          unknown
-        >
-      >;
-    }
-  | {
-      items: ItemType[];
-      liveUpdatesStatus: {
-        error?: any;
-        status: 'error' | 'closed' | 'connected' | 'connecting' | 'disabled';
-      };
-      fetchNext: (noItems?: number) => void;
-      fetchPrevious: (noItems?: number) => void;
-      totalItems: number | undefined;
-      isPaginated: boolean | undefined;
-      data: InfiniteData<
-        | {
-            itemIds: never[];
-            dataset: null;
-            data: null;
-            pageUri?: undefined;
-          }
-        | {
-            itemIds: string[];
-            dataset: null;
-            pageUri: string;
-            data: null;
-          }
-        | {
-            dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-            itemIds: string[];
-            pageUri: string;
-            data: OrderedCollectionPage;
-          },
-        unknown
-      >;
-      error: null;
-      isError: false;
-      isPending: false;
-      isLoading: false;
-      isLoadingError: false;
-      isRefetchError: false;
-      isFetchNextPageError: false;
-      isFetchPreviousPageError: false;
-      isSuccess: true;
-      isPlaceholderData: false;
-      status: 'success';
-      fetchNextPage: (options?: FetchNextPageOptions) => Promise<
-        InfiniteQueryObserverResult<
-          InfiniteData<
-            | {
-                itemIds: never[];
-                dataset: null;
-                data: null;
-                pageUri?: undefined;
-              }
-            | {
-                itemIds: string[];
-                dataset: null;
-                pageUri: string;
-                data: null;
-              }
-            | {
-                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-                itemIds: string[];
-                pageUri: string;
-                data: OrderedCollectionPage;
-              },
-            unknown
-          >,
-          Error
-        >
-      >;
-      fetchPreviousPage: (options?: FetchPreviousPageOptions) => Promise<
-        InfiniteQueryObserverResult<
-          InfiniteData<
-            | {
-                itemIds: never[];
-                dataset: null;
-                data: null;
-                pageUri?: undefined;
-              }
-            | {
-                itemIds: string[];
-                dataset: null;
-                pageUri: string;
-                data: null;
-              }
-            | {
-                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-                itemIds: string[];
-                pageUri: string;
-                data: OrderedCollectionPage;
-              },
-            unknown
-          >,
-          Error
-        >
-      >;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-      isFetchingNextPage: boolean;
-      isFetchingPreviousPage: boolean;
-      dataUpdatedAt: number;
-      errorUpdatedAt: number;
-      failureCount: number;
-      failureReason: Error | null;
-      errorUpdateCount: number;
-      isFetched: boolean;
-      isFetchedAfterMount: boolean;
-      isFetching: boolean;
-      isInitialLoading: boolean;
-      isPaused: boolean;
-      isRefetching: boolean;
-      isStale: boolean;
-      isEnabled: boolean;
-      refetch: (options?: RefetchOptions) => Promise<
-        QueryObserverResult<
-          InfiniteData<
-            | {
-                itemIds: never[];
-                dataset: null;
-                data: null;
-                pageUri?: undefined;
-              }
-            | {
-                itemIds: string[];
-                dataset: null;
-                pageUri: string;
-                data: null;
-              }
-            | {
-                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-                itemIds: string[];
-                pageUri: string;
-                data: OrderedCollectionPage;
-              },
-            unknown
-          >,
-          Error
-        >
-      >;
-      fetchStatus: FetchStatus;
-      promise: Promise<
-        InfiniteData<
-          | {
-              itemIds: never[];
-              dataset: null;
-              data: null;
-              pageUri?: undefined;
-            }
-          | {
-              itemIds: string[];
-              dataset: null;
-              pageUri: string;
-              data: null;
-            }
-          | {
-              dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-              itemIds: string[];
-              pageUri: string;
-              data: OrderedCollectionPage;
-            },
-          unknown
-        >
-      >;
-    }
-  | {
-      items: ItemType[];
-      liveUpdatesStatus: {
-        error?: any;
-        status: 'error' | 'closed' | 'connected' | 'connecting' | 'disabled';
-      };
-      fetchNext: (noItems?: number) => void;
-      fetchPrevious: (noItems?: number) => void;
-      totalItems: number | undefined;
-      isPaginated: boolean | undefined;
-      data: undefined;
-      error: Error;
-      isError: true;
-      isPending: false;
-      isLoading: false;
-      isLoadingError: true;
-      isRefetchError: false;
-      isFetchNextPageError: false;
-      isFetchPreviousPageError: false;
-      isSuccess: false;
-      isPlaceholderData: false;
-      status: 'error';
-      fetchNextPage: (options?: FetchNextPageOptions) => Promise<
-        InfiniteQueryObserverResult<
-          InfiniteData<
-            | {
-                itemIds: never[];
-                dataset: null;
-                data: null;
-                pageUri?: undefined;
-              }
-            | {
-                itemIds: string[];
-                dataset: null;
-                pageUri: string;
-                data: null;
-              }
-            | {
-                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-                itemIds: string[];
-                pageUri: string;
-                data: OrderedCollectionPage;
-              },
-            unknown
-          >,
-          Error
-        >
-      >;
-      fetchPreviousPage: (options?: FetchPreviousPageOptions) => Promise<
-        InfiniteQueryObserverResult<
-          InfiniteData<
-            | {
-                itemIds: never[];
-                dataset: null;
-                data: null;
-                pageUri?: undefined;
-              }
-            | {
-                itemIds: string[];
-                dataset: null;
-                pageUri: string;
-                data: null;
-              }
-            | {
-                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-                itemIds: string[];
-                pageUri: string;
-                data: OrderedCollectionPage;
-              },
-            unknown
-          >,
-          Error
-        >
-      >;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-      isFetchingNextPage: boolean;
-      isFetchingPreviousPage: boolean;
-      dataUpdatedAt: number;
-      errorUpdatedAt: number;
-      failureCount: number;
-      failureReason: Error | null;
-      errorUpdateCount: number;
-      isFetched: boolean;
-      isFetchedAfterMount: boolean;
-      isFetching: boolean;
-      isInitialLoading: boolean;
-      isPaused: boolean;
-      isRefetching: boolean;
-      isStale: boolean;
-      isEnabled: boolean;
-      refetch: (options?: RefetchOptions) => Promise<
-        QueryObserverResult<
-          InfiniteData<
-            | {
-                itemIds: never[];
-                dataset: null;
-                data: null;
-                pageUri?: undefined;
-              }
-            | {
-                itemIds: string[];
-                dataset: null;
-                pageUri: string;
-                data: null;
-              }
-            | {
-                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-                itemIds: string[];
-                pageUri: string;
-                data: OrderedCollectionPage;
-              },
-            unknown
-          >,
-          Error
-        >
-      >;
-      fetchStatus: FetchStatus;
-      promise: Promise<
-        InfiniteData<
-          | {
-              itemIds: never[];
-              dataset: null;
-              data: null;
-              pageUri?: undefined;
-            }
-          | {
-              itemIds: string[];
-              dataset: null;
-              pageUri: string;
-              data: null;
-            }
-          | {
-              dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-              itemIds: string[];
-              pageUri: string;
-              data: OrderedCollectionPage;
-            },
-          unknown
-        >
-      >;
-    }
-  | {
-      items: ItemType[];
-      liveUpdatesStatus: {
-        error?: any;
-        status: 'error' | 'closed' | 'connected' | 'connecting' | 'disabled';
-      };
-      fetchNext: (noItems?: number) => void;
-      fetchPrevious: (noItems?: number) => void;
-      totalItems: number | undefined;
-      isPaginated: boolean | undefined;
-      data: undefined;
-      error: null;
-      isError: false;
-      isPending: true;
-      isLoading: true;
-      isLoadingError: false;
-      isRefetchError: false;
-      isFetchNextPageError: false;
-      isFetchPreviousPageError: false;
-      isSuccess: false;
-      isPlaceholderData: false;
-      status: 'pending';
-      fetchNextPage: (options?: FetchNextPageOptions) => Promise<
-        InfiniteQueryObserverResult<
-          InfiniteData<
-            | {
-                itemIds: never[];
-                dataset: null;
-                data: null;
-                pageUri?: undefined;
-              }
-            | {
-                itemIds: string[];
-                dataset: null;
-                pageUri: string;
-                data: null;
-              }
-            | {
-                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-                itemIds: string[];
-                pageUri: string;
-                data: OrderedCollectionPage;
-              },
-            unknown
-          >,
-          Error
-        >
-      >;
-      fetchPreviousPage: (options?: FetchPreviousPageOptions) => Promise<
-        InfiniteQueryObserverResult<
-          InfiniteData<
-            | {
-                itemIds: never[];
-                dataset: null;
-                data: null;
-                pageUri?: undefined;
-              }
-            | {
-                itemIds: string[];
-                dataset: null;
-                pageUri: string;
-                data: null;
-              }
-            | {
-                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-                itemIds: string[];
-                pageUri: string;
-                data: OrderedCollectionPage;
-              },
-            unknown
-          >,
-          Error
-        >
-      >;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-      isFetchingNextPage: boolean;
-      isFetchingPreviousPage: boolean;
-      dataUpdatedAt: number;
-      errorUpdatedAt: number;
-      failureCount: number;
-      failureReason: Error | null;
-      errorUpdateCount: number;
-      isFetched: boolean;
-      isFetchedAfterMount: boolean;
-      isFetching: boolean;
-      isInitialLoading: boolean;
-      isPaused: boolean;
-      isRefetching: boolean;
-      isStale: boolean;
-      isEnabled: boolean;
-      refetch: (options?: RefetchOptions) => Promise<
-        QueryObserverResult<
-          InfiniteData<
-            | {
-                itemIds: never[];
-                dataset: null;
-                data: null;
-                pageUri?: undefined;
-              }
-            | {
-                itemIds: string[];
-                dataset: null;
-                pageUri: string;
-                data: null;
-              }
-            | {
-                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-                itemIds: string[];
-                pageUri: string;
-                data: OrderedCollectionPage;
-              },
-            unknown
-          >,
-          Error
-        >
-      >;
-      fetchStatus: FetchStatus;
-      promise: Promise<
-        InfiniteData<
-          | {
-              itemIds: never[];
-              dataset: null;
-              data: null;
-              pageUri?: undefined;
-            }
-          | {
-              itemIds: string[];
-              dataset: null;
-              pageUri: string;
-              data: null;
-            }
-          | {
-              dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-              itemIds: string[];
-              pageUri: string;
-              data: OrderedCollectionPage;
-            },
-          unknown
-        >
-      >;
-    }
-  | {
-      items: ItemType[];
-      liveUpdatesStatus: {
-        error?: any;
-        status: 'error' | 'closed' | 'connected' | 'connecting' | 'disabled';
-      };
-      fetchNext: (noItems?: number) => void;
-      fetchPrevious: (noItems?: number) => void;
-      totalItems: number | undefined;
-      isPaginated: boolean | undefined;
-      data: undefined;
-      error: null;
-      isError: false;
-      isPending: true;
-      isLoadingError: false;
-      isRefetchError: false;
-      isFetchNextPageError: false;
-      isFetchPreviousPageError: false;
-      isSuccess: false;
-      isPlaceholderData: false;
-      status: 'pending';
-      fetchNextPage: (options?: FetchNextPageOptions) => Promise<
-        InfiniteQueryObserverResult<
-          InfiniteData<
-            | {
-                itemIds: never[];
-                dataset: null;
-                data: null;
-                pageUri?: undefined;
-              }
-            | {
-                itemIds: string[];
-                dataset: null;
-                pageUri: string;
-                data: null;
-              }
-            | {
-                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-                itemIds: string[];
-                pageUri: string;
-                data: OrderedCollectionPage;
-              },
-            unknown
-          >,
-          Error
-        >
-      >;
-      fetchPreviousPage: (options?: FetchPreviousPageOptions) => Promise<
-        InfiniteQueryObserverResult<
-          InfiniteData<
-            | {
-                itemIds: never[];
-                dataset: null;
-                data: null;
-                pageUri?: undefined;
-              }
-            | {
-                itemIds: string[];
-                dataset: null;
-                pageUri: string;
-                data: null;
-              }
-            | {
-                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-                itemIds: string[];
-                pageUri: string;
-                data: OrderedCollectionPage;
-              },
-            unknown
-          >,
-          Error
-        >
-      >;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-      isFetchingNextPage: boolean;
-      isFetchingPreviousPage: boolean;
-      dataUpdatedAt: number;
-      errorUpdatedAt: number;
-      failureCount: number;
-      failureReason: Error | null;
-      errorUpdateCount: number;
-      isFetched: boolean;
-      isFetchedAfterMount: boolean;
-      isFetching: boolean;
-      isLoading: boolean;
-      isInitialLoading: boolean;
-      isPaused: boolean;
-      isRefetching: boolean;
-      isStale: boolean;
-      isEnabled: boolean;
-      refetch: (options?: RefetchOptions) => Promise<
-        QueryObserverResult<
-          InfiniteData<
-            | {
-                itemIds: never[];
-                dataset: null;
-                data: null;
-                pageUri?: undefined;
-              }
-            | {
-                itemIds: string[];
-                dataset: null;
-                pageUri: string;
-                data: null;
-              }
-            | {
-                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-                itemIds: string[];
-                pageUri: string;
-                data: OrderedCollectionPage;
-              },
-            unknown
-          >,
-          Error
-        >
-      >;
-      fetchStatus: FetchStatus;
-      promise: Promise<
-        InfiniteData<
-          | {
-              itemIds: never[];
-              dataset: null;
-              data: null;
-              pageUri?: undefined;
-            }
-          | {
-              itemIds: string[];
-              dataset: null;
-              pageUri: string;
-              data: null;
-            }
-          | {
-              dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-              itemIds: string[];
-              pageUri: string;
-              data: OrderedCollectionPage;
-            },
-          unknown
-        >
-      >;
-    }
-  | {
-      items: ItemType[];
-      liveUpdatesStatus: {
-        error?: any;
-        status: 'error' | 'closed' | 'connected' | 'connecting' | 'disabled';
-      };
-      fetchNext: (noItems?: number) => void;
-      fetchPrevious: (noItems?: number) => void;
-      totalItems: number | undefined;
-      isPaginated: boolean | undefined;
-      data: InfiniteData<
-        | {
-            itemIds: never[];
-            dataset: null;
-            data: null;
-            pageUri?: undefined;
-          }
-        | {
-            itemIds: string[];
-            dataset: null;
-            pageUri: string;
-            data: null;
-          }
-        | {
-            dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-            itemIds: string[];
-            pageUri: string;
-            data: OrderedCollectionPage;
-          },
-        unknown
-      >;
-      isError: false;
-      error: null;
-      isPending: false;
-      isLoading: false;
-      isLoadingError: false;
-      isRefetchError: false;
-      isSuccess: true;
-      isPlaceholderData: true;
-      isFetchNextPageError: false;
-      isFetchPreviousPageError: false;
-      status: 'success';
-      fetchNextPage: (options?: FetchNextPageOptions) => Promise<
-        InfiniteQueryObserverResult<
-          InfiniteData<
-            | {
-                itemIds: never[];
-                dataset: null;
-                data: null;
-                pageUri?: undefined;
-              }
-            | {
-                itemIds: string[];
-                dataset: null;
-                pageUri: string;
-                data: null;
-              }
-            | {
-                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-                itemIds: string[];
-                pageUri: string;
-                data: OrderedCollectionPage;
-              },
-            unknown
-          >,
-          Error
-        >
-      >;
-      fetchPreviousPage: (options?: FetchPreviousPageOptions) => Promise<
-        InfiniteQueryObserverResult<
-          InfiniteData<
-            | {
-                itemIds: never[];
-                dataset: null;
-                data: null;
-                pageUri?: undefined;
-              }
-            | {
-                itemIds: string[];
-                dataset: null;
-                pageUri: string;
-                data: null;
-              }
-            | {
-                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-                itemIds: string[];
-                pageUri: string;
-                data: OrderedCollectionPage;
-              },
-            unknown
-          >,
-          Error
-        >
-      >;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-      isFetchingNextPage: boolean;
-      isFetchingPreviousPage: boolean;
-      dataUpdatedAt: number;
-      errorUpdatedAt: number;
-      failureCount: number;
-      failureReason: Error | null;
-      errorUpdateCount: number;
-      isFetched: boolean;
-      isFetchedAfterMount: boolean;
-      isFetching: boolean;
-      isInitialLoading: boolean;
-      isPaused: boolean;
-      isRefetching: boolean;
-      isStale: boolean;
-      isEnabled: boolean;
-      refetch: (options?: RefetchOptions) => Promise<
-        QueryObserverResult<
-          InfiniteData<
-            | {
-                itemIds: never[];
-                dataset: null;
-                data: null;
-                pageUri?: undefined;
-              }
-            | {
-                itemIds: string[];
-                dataset: null;
-                pageUri: string;
-                data: null;
-              }
-            | {
-                dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-                itemIds: string[];
-                pageUri: string;
-                data: OrderedCollectionPage;
-              },
-            unknown
-          >,
-          Error
-        >
-      >;
-      fetchStatus: FetchStatus;
-      promise: Promise<
-        InfiniteData<
-          | {
-              itemIds: never[];
-              dataset: null;
-              data: null;
-              pageUri?: undefined;
-            }
-          | {
-              itemIds: string[];
-              dataset: null;
-              pageUri: string;
-              data: null;
-            }
-          | {
-              dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
-              itemIds: string[];
-              pageUri: string;
-              data: OrderedCollectionPage;
-            },
-          unknown
-        >
-      >;
-    };
+) => any;
 /**
  * Hook to fetch the inbox of the logged user.
  * Returns the same data as the useCollection hooks, plus:
@@ -1261,17 +322,15 @@ export const useTypedCollection: <ItemType extends LdoBase>(
  */
 export const useInbox: (options?: UseCollectionOptions) =>
   | {
-      error: false | (Error | null)[];
-      refetch: (options?: _RefetchOptions1) => Promise<_QueryObserverResult1<_InfiniteData1<any, unknown>, Error>>;
-      fetchNextPage: (
-        options?: _FetchNextPageOptions1
-      ) => Promise<_InfiniteQueryObserverResult1<_InfiniteData1<any, unknown>, Error>>;
-      addItem: (item: string | any, shouldRefetch?: boolean | number) => void;
-      removeItem: (item: string | any, shouldRefetch?: boolean) => void;
-      hasNextPage: boolean;
-      isLoading: boolean;
-      isFetching: boolean;
-      isFetchingNextPage: boolean;
+      error: false | any[];
+      refetch: any;
+      fetchNextPage: any;
+      addItem: (item: any, shouldRefetch?: number | boolean) => void;
+      removeItem: (item: any, shouldRefetch?: boolean) => void;
+      hasNextPage: any;
+      isLoading: any;
+      isFetching: any;
+      isFetchingNextPage: any;
       hasLiveUpdates: {
         status: string;
         error?: any;
@@ -1285,17 +344,15 @@ export const useInbox: (options?: UseCollectionOptions) =>
     }
   | {
       totalItems: number;
-      error: false | (Error | null)[];
-      refetch: (options?: _RefetchOptions1) => Promise<_QueryObserverResult1<_InfiniteData1<any, unknown>, Error>>;
-      fetchNextPage: (
-        options?: _FetchNextPageOptions1
-      ) => Promise<_InfiniteQueryObserverResult1<_InfiniteData1<any, unknown>, Error>>;
-      addItem: (item: string | any, shouldRefetch?: boolean | number) => void;
-      removeItem: (item: string | any, shouldRefetch?: boolean) => void;
-      hasNextPage: boolean;
-      isLoading: boolean;
-      isFetching: boolean;
-      isFetchingNextPage: boolean;
+      error: false | any[];
+      refetch: any;
+      fetchNextPage: any;
+      addItem: (item: any, shouldRefetch?: number | boolean) => void;
+      removeItem: (item: any, shouldRefetch?: boolean) => void;
+      hasNextPage: any;
+      isLoading: any;
+      isFetching: any;
+      isFetchingNextPage: any;
       hasLiveUpdates: {
         status: string;
         error?: any;

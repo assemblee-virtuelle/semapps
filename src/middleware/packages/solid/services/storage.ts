@@ -58,11 +58,11 @@ const SolidStorageSchema = {
   events: {
     'auth.registered': defineServiceEvent({
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
+        this.logger.info('Storage event registration entered. WebId', webId);
 
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         const storageUrl = await this.actions.getUrl({ webId }, { parentCtx: ctx });
+        this.logger.info('Storage URL is', storageUrl, 'Patching to webId doc');
 
         // Attach the storage URL to the webId
         await ctx.call('ldp.resource.patch', {
@@ -76,6 +76,8 @@ const SolidStorageSchema = {
           ],
           webId: 'system'
         });
+
+        this.logger.info('Storage URL patched. Now adding rights to store');
 
         // Give full rights to user on his storage
         await ctx.call('webacl.resource.addRights', {
@@ -98,6 +100,8 @@ const SolidStorageSchema = {
           },
           webId: 'system'
         });
+
+        this.logger.info('ACL rights added to ', storageUrl);
       }
     })
   }
