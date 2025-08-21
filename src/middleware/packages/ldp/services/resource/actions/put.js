@@ -1,3 +1,4 @@
+const { diffLines } = require('diff');
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { cleanUndefined } = require('../../../utils');
@@ -61,20 +62,20 @@ module.exports = {
       };
     }
 
-    let oldTriples = await ctx.call('jsonld.parser.toQuads', { input: oldData });
-    let newTriples = await ctx.call('jsonld.parser.toQuads', { input: resource });
+    let oldTriples = await ctx.call('jsonld.parser.normalizeToQuads', { input: oldData });
+    let newTriples = await ctx.call('jsonld.parser.normalizeToQuads', { input: resource });
 
     // Filter out triples whose subject is not the resource itself
     // We don't want to update or delete resources with IDs
-    oldTriples = this.filterOtherNamedNodes(oldTriples, resourceUri);
-    newTriples = this.filterOtherNamedNodes(newTriples, resourceUri);
+    // oldTriples = this.filterOtherNamedNodes(oldTriples, resourceUri);
+    // newTriples = this.filterOtherNamedNodes(newTriples, resourceUri);
 
     // blank nodes are convert to variable for sparql query (?variable)
     oldTriples = this.convertBlankNodesToVars(oldTriples);
     newTriples = this.convertBlankNodesToVars(newTriples);
 
     // same values blackNodes removing because those duplicated values blank nodes cause indiscriminate blank resultings in bug wahen trying to delete both
-    newTriples = this.removeDuplicatedVariables(newTriples);
+    // newTriples = this.removeDuplicatedVariables(newTriples);
 
     // Triples to add are reversed, so that blank nodes are linked to resource before being assigned data properties
     // Triples to remove are not reversed, because we want to remove the data properties before unlinking it from the resource

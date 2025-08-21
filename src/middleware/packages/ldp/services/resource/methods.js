@@ -1,7 +1,8 @@
 const fs = require('fs');
 const bytes = require('bytes');
-const { variable } = require('@rdfjs/data-model');
+const dataFactory = require('@rdfjs/data-model').default;
 const { MoleculerError } = require('moleculer').Errors;
+const { variable, quad } = dataFactory;
 
 // TODO put each method in a different file (problems with "this" not working)
 module.exports = {
@@ -31,14 +32,14 @@ module.exports = {
     return triples.filter(triple => !(triple.subject.termType === 'NamedNode' && triple.subject.value !== resourceUri));
   },
   convertBlankNodesToVars(triples) {
-    return triples.map(triple => {
-      if (triple.subject.termType === 'BlankNode') {
-        triple.subject = variable(triple.subject.value);
+    return triples.map(t => {
+      if (t.subject.termType === 'BlankNode') {
+        return quad(variable(t.subject.value), t.predicate, t.object, t.graph);
       }
-      if (triple.object.termType === 'BlankNode') {
-        triple.object = variable(triple.object.value);
+      if (t.object.termType === 'BlankNode') {
+        return quad(t.subject, t.predicate, variable(t.object.value), t.graph);
       }
-      return triple;
+      return t;
     });
   },
   // Exclude from triples1 the triples which also exist in triples2

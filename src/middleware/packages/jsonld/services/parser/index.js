@@ -42,6 +42,11 @@ module.exports = {
       const { input, options } = ctx.params;
       return this.jsonld.normalize(input, options);
     },
+    async normalizeToQuads(ctx) {
+      const { input, options } = ctx.params;
+      const normalizedQuads = await this.jsonld.normalize(input, options);
+      return this.rdfToQuads(normalizedQuads, 'application/n-quads');
+    },
     async fromRDF(ctx) {
       const { input, options = {} } = ctx.params;
       const { format } = options;
