@@ -1,7 +1,7 @@
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema, ActionSchema } from 'moleculer';
 import { expectTypeOf } from 'expect-type';
 
-const actionWithComplexParam = defineAction({
+const actionWithComplexParam = {
   params: {
     optionalParam: { type: 'string', optional: true },
     defaultParam: { type: 'string', default: 'default value' },
@@ -25,7 +25,7 @@ const actionWithComplexParam = defineAction({
 
     return null;
   }
-});
+} satisfies ActionSchema;
 
 const testService1 = {
   name: 'test-service1' as const,
@@ -62,11 +62,11 @@ const testVersionedService2 = {
         return number;
       }
     },
-    actionWithoutParamsReturnsStringArr: defineAction({
+    actionWithoutParamsReturnsStringArr: {
       handler() {
         return [''];
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 
@@ -74,7 +74,7 @@ const testVersionedService3 = {
   name: 'test-service3-versioned' as const,
   version: 'v3' as const, // Version as string
   actions: {
-    actionWithDocumentedNumParamReturnsString: defineAction({
+    actionWithDocumentedNumParamReturnsString: {
       params: {
         /**
          * **You can have documentation here and even parameter renaming is supported. **
@@ -87,11 +87,11 @@ const testVersionedService3 = {
 
         return 'return value of actionWithNumParamReturnsString';
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 
-const externalAction = defineAction({
+const externalAction = {
   params: {
     length: { type: 'number' }
   },
@@ -102,7 +102,7 @@ const externalAction = defineAction({
 
     return `list was called successfully with length param ${length * 2}`;
   }
-});
+} satisfies ActionSchema;
 
 const testService4ExternalAction = {
   name: 'test-service4-external-action' as const,
@@ -115,7 +115,7 @@ const testService4ExternalAction = {
 const testCallService = {
   name: 'test-call-service',
   actions: {
-    testAction: defineAction({
+    testAction: {
       params: {},
       async handler(ctx) {
         expectTypeOf(ctx.call('not.registered.returns.any')).toEqualTypeOf<Promise<any>>(); // okay because unknown
@@ -157,7 +157,7 @@ const testCallService = {
         // @ts-expect-error TS(2554): Expected 2-3 arguments, but got 1.
         await ctx.call('v2.test-service2-versioned.actionWithStringParamReturnsNum');
       }
-    })
+    }
   },
   methods: {
     async m1(v1) {

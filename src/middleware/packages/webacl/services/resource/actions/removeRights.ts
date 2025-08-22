@@ -1,11 +1,11 @@
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 import { getAclUriFromResourceUri, processRights, FULL_AGENTCLASS_URI, FULL_FOAF_AGENT } from '../../../utils.ts';
 
 import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
-export const action = defineAction({
+export const action = {
   visibility: 'public',
   params: {
     // @ts-expect-error TS(2322): Type '{ type: "string"; optional: false; }' is not... Remove this comment to see the full error message
@@ -75,4 +75,4 @@ export const action = defineAction({
       { meta: { webId: null, dataset: null } }
     );
   }
-});
+} satisfies ActionSchema;

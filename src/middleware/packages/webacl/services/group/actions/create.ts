@@ -2,7 +2,7 @@
 import createSlug from 'speakingurl';
 import urlJoin from 'url-join';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
 import { Errors } from 'moleculer';
 
@@ -25,7 +25,7 @@ export const api = async function api(this: any, ctx: any) {
   ctx.meta.$statusCode = 201;
 };
 
-export const action = defineAction({
+export const action = {
   visibility: 'public',
   params: {
     groupUri: { type: 'string', optional: true },
@@ -88,4 +88,4 @@ export const action = defineAction({
 
     return { groupUri };
   }
-});
+} satisfies ActionSchema;

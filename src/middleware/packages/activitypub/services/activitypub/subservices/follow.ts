@@ -1,4 +1,4 @@
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
 import { ACTIVITY_TYPES, ACTOR_TYPES } from '../../../constants.ts';
 import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
@@ -31,7 +31,7 @@ const FollowService = {
     await this.broker.call('activitypub.collections-registry.register', this.settings.followingCollectionOptions);
   },
   actions: {
-    addFollower: defineAction({
+    addFollower: {
       async handler(ctx) {
         const { follower, following } = ctx.params;
 
@@ -58,9 +58,9 @@ const FollowService = {
 
         ctx.emit('activitypub.follow.added', { follower, following }, { meta: { webId: null, dataset: null } });
       }
-    }),
+    },
 
-    removeFollower: defineAction({
+    removeFollower: {
       async handler(ctx) {
         const { follower, following } = ctx.params;
 
@@ -87,9 +87,9 @@ const FollowService = {
 
         ctx.emit('activitypub.follow.removed', { follower, following }, { meta: { webId: null, dataset: null } });
       }
-    }),
+    },
 
-    isFollowing: defineAction({
+    isFollowing: {
       async handler(ctx) {
         const { follower, following } = ctx.params;
 
@@ -102,9 +102,9 @@ const FollowService = {
           itemUri: following
         });
       }
-    }),
+    },
 
-    listFollowers: defineAction({
+    listFollowers: {
       async handler(ctx) {
         const { collectionUri } = ctx.params;
 
@@ -112,9 +112,9 @@ const FollowService = {
           resourceUri: collectionUri
         });
       }
-    }),
+    },
 
-    listFollowing: defineAction({
+    listFollowing: {
       async handler(ctx) {
         const { collectionUri } = ctx.params;
 
@@ -122,9 +122,9 @@ const FollowService = {
           resourceUri: collectionUri
         });
       }
-    }),
+    },
 
-    updateCollectionsOptions: defineAction({
+    updateCollectionsOptions: {
       async handler(ctx) {
         const { dataset } = ctx.params;
         await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
@@ -136,7 +136,7 @@ const FollowService = {
           dataset
         });
       }
-    })
+    }
   },
   activities: {
     follow: {

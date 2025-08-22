@@ -1,8 +1,8 @@
-import { defineAction, Errors } from 'moleculer';
+import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
-export default defineAction({
+export default {
   async handler(ctx) {
     const { username, slugParts, body, ...resource } = ctx.params;
 
@@ -45,4 +45,4 @@ export default defineAction({
       ctx.meta.$statusMessage = e.message;
     }
   }
-});
+};

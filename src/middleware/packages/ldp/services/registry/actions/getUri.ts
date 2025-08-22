@@ -1,11 +1,11 @@
 import urlJoin from 'url-join';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
 /**
  * Get the container URI based on its path
  * In Pod provider config, the webId is required to find the Pod root
  */
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     path: { type: 'string' },
@@ -23,6 +23,6 @@ const Schema = defineAction({
       return urlJoin(this.settings.baseUrl, path);
     }
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

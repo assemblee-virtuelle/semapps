@@ -1,6 +1,6 @@
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import urlJoin from 'url-join';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
 import { Errors } from 'moleculer';
 
@@ -18,7 +18,7 @@ export const api = async function api(this: any, ctx: any) {
   ctx.meta.$statusCode = 204;
 };
 
-export const action = defineAction({
+export const action = {
   visibility: 'public',
   params: {
     groupSlug: { type: 'string', optional: true, min: 1, trim: true },
@@ -66,4 +66,4 @@ export const action = defineAction({
 
     ctx.emit('webacl.group.member-added', { groupUri, memberUri }, { meta: { webId: null, dataset: null } });
   }
-});
+} satisfies ActionSchema;

@@ -1,5 +1,5 @@
 import { MIME_TYPES } from '@semapps/mime-types';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import { delay, getParentContainerUri } from '../utils.ts';
 
 const Schema = {
@@ -42,43 +42,43 @@ const Schema = {
     if (!path) this.settings.path = registration.path;
   },
   actions: {
-    post: defineAction({
+    post: {
       async handler(ctx) {
         if (!ctx.params.containerUri) {
           ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
         }
         return await ctx.call('ldp.container.post', ctx.params);
       }
-    }),
+    },
 
-    list: defineAction({
+    list: {
       async handler(ctx) {
         if (!ctx.params.containerUri) {
           ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
         }
         return ctx.call('ldp.container.get', ctx.params);
       }
-    }),
+    },
 
-    attach: defineAction({
+    attach: {
       async handler(ctx) {
         if (!ctx.params.containerUri) {
           ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
         }
         return ctx.call('ldp.container.attach', ctx.params);
       }
-    }),
+    },
 
-    detach: defineAction({
+    detach: {
       async handler(ctx) {
         if (!ctx.params.containerUri) {
           ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
         }
         return ctx.call('ldp.container.detach', ctx.params);
       }
-    }),
+    },
 
-    get: defineAction({
+    get: {
       handler(ctx) {
         const containerParams = {};
         // @ts-expect-error TS(2339): Property 'accept' does not exist on type '{}'.
@@ -88,45 +88,45 @@ const Schema = {
           ...ctx.params
         });
       }
-    }),
+    },
 
-    getHeaderLinks: defineAction({
+    getHeaderLinks: {
       handler(ctx) {
         return [];
       }
-    }),
+    },
 
-    create: defineAction({
+    create: {
       handler(ctx) {
         return ctx.call('ldp.resource.create', ctx.params);
       }
-    }),
+    },
 
-    patch: defineAction({
+    patch: {
       handler(ctx) {
         return ctx.call('ldp.resource.patch', ctx.params);
       }
-    }),
+    },
 
-    put: defineAction({
+    put: {
       handler(ctx) {
         return ctx.call('ldp.resource.put', ctx.params);
       }
-    }),
+    },
 
-    delete: defineAction({
+    delete: {
       handler(ctx) {
         return ctx.call('ldp.resource.delete', ctx.params);
       }
-    }),
+    },
 
-    exist: defineAction({
+    exist: {
       handler(ctx) {
         return ctx.call('ldp.resource.exist', ctx.params);
       }
-    }),
+    },
 
-    getContainerUri: defineAction({
+    getContainerUri: {
       handler(ctx) {
         return ctx.call('ldp.registry.getUri', {
           path: this.settings.path,
@@ -134,9 +134,9 @@ const Schema = {
           webId: ctx.params?.webId || ctx.meta?.webId
         });
       }
-    }),
+    },
 
-    waitForContainerCreation: defineAction({
+    waitForContainerCreation: {
       async handler(ctx) {
         let { containerUri } = ctx.params;
         let containerExist;
@@ -171,7 +171,7 @@ const Schema = {
           } while (!containerAttached);
         }
       }
-    })
+    }
   }
 } satisfies Partial<ServiceSchema>;
 

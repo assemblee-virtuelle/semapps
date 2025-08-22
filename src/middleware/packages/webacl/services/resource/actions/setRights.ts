@@ -1,7 +1,7 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import urlJoin from 'url-join';
 
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 import {
   getAclUriFromResourceUri,
   convertBodyToTriples,
@@ -36,7 +36,7 @@ export const api = async function api(this: any, ctx: any) {
   ctx.meta.$statusCode = 204;
 };
 
-export const action = defineAction({
+export const action = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -160,4 +160,4 @@ export const action = defineAction({
     ctx.emit('webacl.resource.updated', returnValues, { meta: { webId: null, dataset: null } });
     return returnValues;
   }
-});
+} satisfies ActionSchema;

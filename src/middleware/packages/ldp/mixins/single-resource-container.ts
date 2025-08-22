@@ -1,5 +1,5 @@
 import { MIME_TYPES } from '@semapps/mime-types';
-import { ServiceSchema, defineAction, defineServiceEvent, Errors } from 'moleculer';
+import { ServiceSchema, Errors } from 'moleculer';
 import ControlledContainerMixin from './controlled-container.ts';
 import { delay } from '../utils.ts';
 
@@ -23,7 +23,7 @@ const Schema = {
     }
   },
   actions: {
-    initializeResource: defineAction({
+    initializeResource: {
       async handler(ctx) {
         const { webId } = ctx.params;
 
@@ -38,24 +38,24 @@ const Schema = {
           { parentCtx: ctx }
         );
       }
-    }),
+    },
 
-    getResourceUri: defineAction({
+    getResourceUri: {
       async handler(ctx) {
         const containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
         const resourcesUris = await ctx.call('ldp.container.getUris', { containerUri });
         return resourcesUris[0];
       }
-    }),
+    },
 
-    exist: defineAction({
+    exist: {
       async handler(ctx) {
         const resourceUri = await this.actions.getResourceUri({ webId: ctx.params.webId }, { parentCtx: ctx });
         return !!resourceUri;
       }
-    }),
+    },
 
-    waitForResourceCreation: defineAction({
+    waitForResourceCreation: {
       async handler(ctx) {
         const { webId } = ctx.params;
         let resource;
@@ -84,7 +84,7 @@ const Schema = {
 
         return resource.id || resource['@id'];
       }
-    })
+    }
   },
   hooks: {
     before: {
@@ -112,7 +112,7 @@ const Schema = {
     }
   },
   events: {
-    'auth.registered': defineServiceEvent({
+    'auth.registered': {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
         if (this.settings.podProvider) {
@@ -122,7 +122,7 @@ const Schema = {
           await this.actions.initializeResource({ webId });
         }
       }
-    })
+    }
   }
 } satisfies Partial<ServiceSchema>;
 

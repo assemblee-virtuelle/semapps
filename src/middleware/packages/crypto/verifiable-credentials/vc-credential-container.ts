@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { ControlledContainerMixin, PseudoIdMixin } from '@semapps/ldp';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import { credentialsContext, credentialsContextNoGraphProof, VC_API_PATH } from '../constants.ts';
 
 /**
@@ -52,7 +52,7 @@ const VCCredentialsContainer = {
    * We can't handle that internally so we use a copy of the context with the `@graph`s removed.
    */
   actions: {
-    get: defineAction({
+    get: {
       async handler(ctx) {
         const resource = await ctx.call('ldp.resource.get', {
           ...ctx.params,
@@ -66,9 +66,9 @@ const VCCredentialsContainer = {
         };
         return { ...resource, '@context': credentialsContext };
       }
-    }),
+    },
 
-    put: defineAction({
+    put: {
       async handler(ctx) {
         const { resource } = ctx.params;
         return await ctx.call('ldp.resource.put', {
@@ -79,9 +79,9 @@ const VCCredentialsContainer = {
           }
         });
       }
-    }),
+    },
 
-    post: defineAction({
+    post: {
       async handler(ctx) {
         const { resource } = ctx.params;
         return await ctx.call('ldp.container.post', {
@@ -93,9 +93,9 @@ const VCCredentialsContainer = {
           }
         });
       }
-    }),
+    },
 
-    list: defineAction({
+    list: {
       async handler(ctx) {
         const container = await ctx.call('ldp.container.list', {
           ...ctx.params,
@@ -103,7 +103,7 @@ const VCCredentialsContainer = {
         });
         return { ...container, '@context': credentialsContext };
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

@@ -1,5 +1,5 @@
 import { ControlledContainerMixin, PseudoIdMixin } from '@semapps/ldp';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import { credentialsContext, credentialsContextNoGraphProof } from '../constants.ts';
 
 /**
@@ -41,7 +41,7 @@ const VCPresentationContainer = {
    * We can't handle that internally so we use a copy of the context with the `@graph`s removed.
    */
   actions: {
-    get: defineAction({
+    get: {
       async handler(ctx) {
         const resource = await ctx.call('ldp.resource.get', {
           ...ctx.params,
@@ -55,9 +55,9 @@ const VCPresentationContainer = {
         };
         return { ...resource, '@context': credentialsContext };
       }
-    }),
+    },
 
-    put: defineAction({
+    put: {
       async handler(ctx) {
         const { resource } = ctx.params;
         return await ctx.call('ldp.resource.put', {
@@ -68,9 +68,9 @@ const VCPresentationContainer = {
           }
         });
       }
-    }),
+    },
 
-    post: defineAction({
+    post: {
       async handler(ctx) {
         // FIXME: The action fails to store the VC with the VP.
         // This is okay because persisting VPs is not required
@@ -85,9 +85,9 @@ const VCPresentationContainer = {
           }
         });
       }
-    }),
+    },
 
-    list: defineAction({
+    list: {
       async handler(ctx) {
         const container = await ctx.call('ldp.container.list', {
           ...ctx.params,
@@ -95,7 +95,7 @@ const VCPresentationContainer = {
         });
         return { ...container, '@context': credentialsContext };
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

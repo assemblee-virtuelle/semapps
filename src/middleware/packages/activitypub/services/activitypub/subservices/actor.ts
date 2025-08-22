@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import { namedNode, literal, triple, variable } from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { arrayOf } from '@semapps/ldp';
-import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import { ACTOR_TYPES, AS_PREFIX } from '../../../constants.ts';
 import { getSlugFromUri, waitForResource } from '../../../utils.ts';
 
@@ -16,7 +16,7 @@ const ActorService = {
     podProvider: false
   },
   actions: {
-    get: defineAction({
+    get: {
       async handler(ctx) {
         const { actorUri, webId } = ctx.params;
         // If dataset is not in the meta, assume that actor is remote
@@ -37,9 +37,9 @@ const ActorService = {
           return actor;
         }
       }
-    }),
+    },
 
-    getProfile: defineAction({
+    getProfile: {
       async handler(ctx) {
         const { actorUri, webId } = ctx.params;
         const actor = await this.actions.get({ actorUri, webId }, { parentCtx: ctx });
@@ -48,9 +48,9 @@ const ActorService = {
           return await ctx.call('ldp.resource.get', { resourceUri: actor.url, accept: MIME_TYPES.JSON, webId });
         }
       }
-    }),
+    },
 
-    appendActorData: defineAction({
+    appendActorData: {
       async handler(ctx) {
         const { actorUri } = ctx.params;
         const userData = await this.actions.get({ actorUri, webId: 'system' }, { parentCtx: ctx });
@@ -86,9 +86,9 @@ const ActorService = {
           });
         }
       }
-    }),
+    },
 
-    addEndpoint: defineAction({
+    addEndpoint: {
       async handler(ctx) {
         const { actorUri, predicate, endpoint } = ctx.params;
 
@@ -160,9 +160,9 @@ const ActorService = {
           dataset
         });
       }
-    }),
+    },
 
-    awaitCreateComplete: defineAction({
+    awaitCreateComplete: {
       async handler(ctx) {
         const { actorUri, additionalKeys = [], delayMs = 1000, maxTries = 20 } = ctx.params;
         const keysToCheck = ['publicKey', 'outbox', 'inbox', 'followers', 'following', ...additionalKeys];
@@ -174,16 +174,16 @@ const ActorService = {
           async () => await this.actions.get({ actorUri, webId: 'system' }, { parentCtx: ctx, meta: { $cache: false } })
         );
       }
-    }),
+    },
 
-    getCollectionUri: defineAction({
+    getCollectionUri: {
       cache: true,
       async handler(ctx) {
         const { actorUri, predicate, webId } = ctx.params;
         const actor = await this.actions.get({ actorUri, webId }, { parentCtx: ctx });
         return actor && actor[predicate];
       }
-    })
+    }
   },
   methods: {
     isActor(resource) {
@@ -191,7 +191,7 @@ const ActorService = {
     }
   },
   events: {
-    'ldp.resource.created': defineServiceEvent({
+    'ldp.resource.created': {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
@@ -203,9 +203,9 @@ const ActorService = {
           await ctx.call('signature.keypair.attachPublicKey', { actorUri: resourceUri });
         }
       }
-    }),
+    },
 
-    'ldp.resource.deleted': defineServiceEvent({
+    'ldp.resource.deleted': {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, oldData } = ctx.params;
@@ -214,16 +214,16 @@ const ActorService = {
           await ctx.call('keys.deleteAllKeysForWebId', { webId: resourceUri });
         }
       }
-    }),
+    },
 
-    'auth.registered': defineServiceEvent({
+    'auth.registered': {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
         // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.appendActorData({ actorUri: webId }, { parentCtx: ctx });
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

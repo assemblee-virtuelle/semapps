@@ -2,7 +2,7 @@ import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { foaf, schema } from '@semapps/ontologies';
 import { ControlledContainerMixin, DereferenceMixin, getDatasetFromUri } from '@semapps/ldp';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 /** @type {import('moleculer').ServiceSchema} */
 const WebIdService = {
@@ -32,7 +32,7 @@ const WebIdService = {
     await this.broker.call('ontologies.register', schema);
   },
   actions: {
-    get: defineAction({
+    get: {
       handler(ctx) {
         // Always get WebID as system and on the correct dataset, since they are public
         return ctx.call(
@@ -49,9 +49,9 @@ const WebIdService = {
           }
         );
       }
-    }),
+    },
 
-    createWebId: defineAction({
+    createWebId: {
       /**
        * This should only be called after the user has been authenticated
        */
@@ -114,7 +114,7 @@ const WebIdService = {
 
         return webId;
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

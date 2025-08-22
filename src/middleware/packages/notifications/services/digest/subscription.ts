@@ -1,6 +1,6 @@
 import DbService from 'moleculer-db';
 import { TripleStoreAdapter } from '@semapps/triplestore';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const DigestSubscriptionSchema = {
   name: 'digest.subscription' as const,
@@ -11,13 +11,13 @@ const DigestSubscriptionSchema = {
   },
   dependencies: ['triplestore'],
   actions: {
-    findByWebId: defineAction({
+    findByWebId: {
       async handler(ctx) {
         const { webId } = ctx.params;
         const subscriptions = await this._find(ctx, { query: { webId } });
         return subscriptions.length > 0 ? subscriptions[0] : null;
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

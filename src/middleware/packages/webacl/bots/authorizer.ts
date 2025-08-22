@@ -1,4 +1,4 @@
-import { ServiceSchema, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const AuthorizerSchema = {
   name: 'authorizer' as const,
@@ -31,7 +31,7 @@ const AuthorizerSchema = {
     }
   },
   events: {
-    'ldp.resource.created': defineServiceEvent({
+    'ldp.resource.created': {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
@@ -63,9 +63,9 @@ const AuthorizerSchema = {
           }
         }
       }
-    }),
+    },
 
-    'ldp.resource.updated': defineServiceEvent({
+    'ldp.resource.updated': {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData, oldData } = ctx.params;
@@ -123,7 +123,7 @@ const AuthorizerSchema = {
           }
         }
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 
