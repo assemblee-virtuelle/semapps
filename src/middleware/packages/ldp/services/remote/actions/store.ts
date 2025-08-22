@@ -1,10 +1,10 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 // @ts-expect-error
 import { Errors as E } from 'moleculer-web';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 import { hasType } from '../../../utils.ts';
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string', optional: true },
@@ -106,6 +106,6 @@ const Schema = defineAction({
 
     return resource;
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

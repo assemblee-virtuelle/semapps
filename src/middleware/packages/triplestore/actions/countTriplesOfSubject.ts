@@ -1,7 +1,7 @@
 import { MIME_TYPES } from '@semapps/mime-types';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     uri: {
@@ -44,6 +44,6 @@ const Schema = defineAction({
 
     return results.length;
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

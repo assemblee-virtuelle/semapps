@@ -1,12 +1,12 @@
 import urlJoin from 'url-join';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
 import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
-export const action = defineAction({
+export const action = {
   visibility: 'public',
   params: {
     groupSlug: { type: 'string', optional: true, min: 1, trim: true },
@@ -33,4 +33,4 @@ export const action = defineAction({
       webId
     });
   }
-});
+} satisfies ActionSchema;

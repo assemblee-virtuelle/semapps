@@ -3,7 +3,7 @@ import passport from 'passport';
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
 import { TripleStoreAdapter } from '@semapps/triplestore';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import AuthAccountService from '../services/account.ts';
 import AuthJWTService from '../services/jwt.ts';
 
@@ -114,7 +114,7 @@ const AuthMixin = {
     }
   },
   actions: {
-    authenticate: defineAction({
+    authenticate: {
       // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
       async handler(ctx) {
         const { route, req, res } = ctx.params;
@@ -153,9 +153,9 @@ const AuthMixin = {
         ctx.meta.webId = 'anon';
         return Promise.resolve(null);
       }
-    }),
+    },
 
-    authorize: defineAction({
+    authorize: {
       // See https://moleculer.services/docs/0.13/moleculer-web.html#Authorization
       async handler(ctx) {
         const { route, req, res } = ctx.params;
@@ -187,9 +187,9 @@ const AuthMixin = {
 
         return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
       }
-    }),
+    },
 
-    impersonate: defineAction({
+    impersonate: {
       async handler(ctx) {
         const { webId } = ctx.params;
         return await ctx.call('auth.jwt.generateServerSignedToken', {
@@ -198,7 +198,7 @@ const AuthMixin = {
           }
         });
       }
-    })
+    }
   },
   methods: {
     async validateCapability(ctx, token) {

@@ -14,7 +14,7 @@ import {
   saveDatasetMeta
 } from '@semapps/middlewares';
 
-import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import { FULL_ACTOR_TYPES } from '../../../constants.ts';
 
 const ApiService = {
@@ -49,7 +49,7 @@ const ApiService = {
     }
   },
   actions: {
-    inbox: defineAction({
+    inbox: {
       async handler(ctx) {
         const { actorSlug, ...activity } = ctx.params;
         // @ts-expect-error TS(2339): Property 'requestUrl' does not exist on type '{}'.
@@ -64,9 +64,9 @@ const ApiService = {
         // @ts-expect-error TS(2339): Property '$statusCode' does not exist on type '{}'... Remove this comment to see the full error message
         ctx.meta.$statusCode = 202;
       }
-    }),
+    },
 
-    outbox: defineAction({
+    outbox: {
       async handler(ctx) {
         let { actorSlug, ...activity } = ctx.params;
         // @ts-expect-error TS(2339): Property 'requestUrl' does not exist on type '{}'.
@@ -89,10 +89,10 @@ const ApiService = {
         // @ts-expect-error TS(2339): Property '$statusCode' does not exist on type '{}'... Remove this comment to see the full error message
         ctx.meta.$statusCode = 201;
       }
-    })
+    }
   },
   events: {
-    'ldp.registry.registered': defineServiceEvent({
+    'ldp.registry.registered': {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'container' does not exist on type 'Optio... Remove this comment to see the full error message
         const { container } = ctx.params;
@@ -114,7 +114,7 @@ const ApiService = {
           });
         }
       }
-    })
+    }
   },
   methods: {
     getBoxesRoute(actorsPath) {

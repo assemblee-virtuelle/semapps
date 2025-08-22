@@ -1,7 +1,7 @@
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 import { isURL, arrayOf } from '../utils.ts';
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'Parameter... Remove this comment to see the full error message
@@ -62,6 +62,6 @@ const Schema = defineAction({
 
     ctx.emit('ontologies.registered', { prefix, namespace, owl, jsonldContext, preserveContextUri });
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

@@ -1,7 +1,7 @@
 // @ts-expect-error
 import path from 'path';
 import urlJoin from 'url-join';
-import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import getRoute from './getRoute.ts';
 
 const SparqlEndpointService = {
@@ -24,7 +24,7 @@ const SparqlEndpointService = {
     }
   },
   actions: {
-    query: defineAction({
+    query: {
       async handler(ctx) {
         const query = ctx.params.query || ctx.params.body;
         // @ts-expect-error
@@ -57,10 +57,10 @@ const SparqlEndpointService = {
 
         return response;
       }
-    })
+    }
   },
   events: {
-    'auth.registered': defineServiceEvent({
+    'auth.registered': {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
@@ -73,7 +73,7 @@ const SparqlEndpointService = {
           });
         }
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

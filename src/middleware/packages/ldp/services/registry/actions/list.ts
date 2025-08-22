@@ -1,10 +1,10 @@
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   handler() {
     return this.registeredContainers;
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

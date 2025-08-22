@@ -1,7 +1,7 @@
 import { MIME_TYPES } from '@semapps/mime-types';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     containerUri: { type: 'string' },
@@ -29,6 +29,6 @@ const Schema = defineAction({
 
     ctx.emit('ldp.container.created', { containerUri, options, webId });
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

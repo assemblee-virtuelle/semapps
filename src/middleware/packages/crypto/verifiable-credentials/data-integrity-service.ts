@@ -9,7 +9,7 @@ import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
 // @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import * as Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
 
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import { KEY_TYPES } from '../constants.ts';
 
 const {
@@ -40,7 +40,7 @@ const DataIntegrityService = {
      * Verify an object.
      * @param {object} ctx.params.object - The object to verify.
      */
-    verifyObject: defineAction({
+    verifyObject: {
       params: {
         // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
         object: { type: 'object' },
@@ -68,7 +68,7 @@ const DataIntegrityService = {
 
         return jsigs.verify(object, { purpose, documentLoader: this.documentLoader, suite });
       }
-    }),
+    },
 
     /**
      * Sign an object.
@@ -78,7 +78,7 @@ const DataIntegrityService = {
      * @param {object} [ctx.params.keyObject] - The key object to use.
      * @param {string} [ctx.params.keyId] - The key ID to use.
      */
-    signObject: defineAction({
+    signObject: {
       params: {
         // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
         object: { type: 'object' },
@@ -118,7 +118,7 @@ const DataIntegrityService = {
 
         return jsigs.sign(object, { purpose, documentLoader: this.documentLoader, suite });
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

@@ -4,7 +4,7 @@ import { cryptosuite } from '@digitalbazaar/eddsa-rdfc-2022-cryptosuite';
 import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
 // @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import * as vc from '@digitalbazaar/vc';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import VCCapabilityPresentationProofPurpose from './VcCapabilityPresentationProofPurpose.ts';
 import VCPurpose from './VcPurpose.ts';
 import { arrayOf } from '../utils/utils.ts';
@@ -34,7 +34,7 @@ const VCPresentationService = {
     /**
      * Verify a verifiable credential.
      */
-    verifyVC: defineAction({
+    verifyVC: {
       params: {
         verifiableCredential: {
           type: 'object',
@@ -82,12 +82,12 @@ const VCPresentationService = {
 
         return verificationResult;
       }
-    }),
+    },
 
     /**
      * Verify a presentation.
      */
-    verifyPresentation: defineAction({
+    verifyPresentation: {
       params: {
         // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
         verifiablePresentation: { type: 'object' },
@@ -150,14 +150,14 @@ const VCPresentationService = {
           return { verified: false, error: e.message };
         }
       }
-    }),
+    },
 
     /**
      * Verify a capability presentation.
      * @param {object} ctx.params - The parameters for verifying the capability presentation.
      * @returns {object} The verification result.
      */
-    verifyCapabilityPresentation: defineAction({
+    verifyCapabilityPresentation: {
       params: {
         // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
         verifiablePresentation: { type: 'object' },
@@ -210,7 +210,7 @@ const VCPresentationService = {
 
         return { ...verificationResult, presentation };
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

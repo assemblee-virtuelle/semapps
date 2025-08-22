@@ -1,4 +1,4 @@
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
 import { ACTIVITY_TYPES, ACTOR_TYPES } from '../../../constants.ts';
 import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
@@ -30,7 +30,7 @@ const LikeService = {
     await this.broker.call('activitypub.collections-registry.register', this.settings.likedCollectionOptions);
   },
   actions: {
-    addObjectToActorLikedCollection: defineAction({
+    addObjectToActorLikedCollection: {
       async handler(ctx) {
         const { actorUri, objectUri } = ctx.params;
 
@@ -44,9 +44,9 @@ const LikeService = {
           });
         }
       }
-    }),
+    },
 
-    addActorToObjectLikesCollection: defineAction({
+    addActorToObjectLikesCollection: {
       async handler(ctx) {
         const { actorUri, objectUri } = ctx.params;
 
@@ -60,9 +60,9 @@ const LikeService = {
           item: actorUri
         });
       }
-    }),
+    },
 
-    removeObjectFromActorLikedCollection: defineAction({
+    removeObjectFromActorLikedCollection: {
       async handler(ctx) {
         const { actorUri, objectUri } = ctx.params;
 
@@ -76,9 +76,9 @@ const LikeService = {
           });
         }
       }
-    }),
+    },
 
-    removeActorFromObjectLikesCollection: defineAction({
+    removeActorFromObjectLikesCollection: {
       async handler(ctx) {
         const { actorUri, objectUri } = ctx.params;
 
@@ -92,9 +92,9 @@ const LikeService = {
           });
         }
       }
-    }),
+    },
 
-    updateCollectionsOptions: defineAction({
+    updateCollectionsOptions: {
       async handler(ctx) {
         const { dataset } = ctx.params;
         await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
@@ -106,7 +106,7 @@ const LikeService = {
           dataset
         });
       }
-    })
+    }
   },
   activities: {
     likeObject: {

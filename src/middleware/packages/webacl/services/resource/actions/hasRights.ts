@@ -1,6 +1,6 @@
 import urlJoin from 'url-join';
 
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 import {
   getAuthorizationNode,
   checkAgentPresent,
@@ -96,7 +96,7 @@ export const api = async function api(this: any, ctx: any) {
   });
 };
 
-export const action = defineAction({
+export const action = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -132,4 +132,4 @@ export const action = defineAction({
     await this.checkResourceOrContainerExists(ctx, resourceUri);
     return await hasPermissions(ctx, resourceUri, rights, this.settings.baseUrl, webId, this.settings.graphName);
   }
-});
+} satisfies ActionSchema;

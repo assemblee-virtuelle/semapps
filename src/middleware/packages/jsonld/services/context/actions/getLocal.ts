@@ -1,6 +1,6 @@
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   cache: true,
   async handler(ctx) {
@@ -27,6 +27,6 @@ const Schema = defineAction({
       '@context': context
     };
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

@@ -8,7 +8,7 @@ import DbService from 'moleculer-db';
 import { parseHeader, negotiateContentType, parseJson } from '@semapps/middlewares';
 import { notify } from '@semapps/ontologies';
 import { TripleStoreAdapter } from '@semapps/triplestore';
-import { Errors, ServiceSchema, defineAction } from 'moleculer';
+import { Errors, ServiceSchema } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
@@ -46,7 +46,7 @@ const SolidNotificationsListenerSchema = {
     });
   },
   actions: {
-    register: defineAction({
+    register: {
       async handler(ctx) {
         const { resourceUri, actionName } = ctx.params;
 
@@ -143,9 +143,9 @@ const SolidNotificationsListenerSchema = {
 
         return listener;
       }
-    }),
+    },
 
-    transfer: defineAction({
+    transfer: {
       async handler(ctx) {
         const { uuid, ...data } = ctx.params;
         const webhookUrl = urlJoin(this.settings.baseUrl, '.webhooks', uuid);
@@ -165,13 +165,13 @@ const SolidNotificationsListenerSchema = {
           throw new MoleculerError(`No webhook found with URL ${webhookUrl}`, 404, 'NOT_FOUND');
         }
       }
-    }),
+    },
 
-    getCache: defineAction({
+    getCache: {
       handler() {
         return this.listeners;
       }
-    })
+    }
   },
   methods: {
     async getSolidEndpoint(resourceUri) {

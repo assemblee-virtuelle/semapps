@@ -1,7 +1,7 @@
 import path from 'path';
 import DbService from 'moleculer-db';
 import { TripleStoreAdapter } from '@semapps/triplestore';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 import { Errors } from 'moleculer';
 
@@ -31,7 +31,7 @@ const WebhooksService = {
     }
   },
   actions: {
-    process: defineAction({
+    process: {
       async handler(ctx) {
         const { hash, ...data } = ctx.params;
         let webhook;
@@ -49,9 +49,9 @@ const WebhooksService = {
           return await this.actions[webhook.action]({ data, user: webhook.user }, { parentCtx: ctx });
         }
       }
-    }),
+    },
 
-    generate: defineAction({
+    generate: {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const userUri = ctx.meta.webId || ctx.params.userUri;
@@ -72,9 +72,9 @@ const WebhooksService = {
 
         return webhook['@id'];
       }
-    }),
+    },
 
-    getApiRoutes: defineAction({
+    getApiRoutes: {
       handler(basePath) {
         return [
           // Unsecured routes
@@ -103,7 +103,7 @@ const WebhooksService = {
           }
         ];
       }
-    })
+    }
   },
   queues: {
     webhooks: {

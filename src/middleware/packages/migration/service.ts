@@ -1,6 +1,6 @@
 import { getAclUriFromResourceUri } from '@semapps/webacl';
 import { getContainerFromUri } from '@semapps/ldp';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const MigrationSchema = {
   name: 'migration' as const,
@@ -13,7 +13,7 @@ const MigrationSchema = {
     }
   },
   actions: {
-    replacePredicate: defineAction({
+    replacePredicate: {
       async handler(ctx) {
         const { oldPredicate, newPredicate, dataset } = ctx.params;
 
@@ -34,9 +34,9 @@ const MigrationSchema = {
           webId: 'system'
         });
       }
-    }),
+    },
 
-    moveResourcesToContainer: defineAction({
+    moveResourcesToContainer: {
       async handler(ctx) {
         const { oldContainerUri, newContainerUri, dataset } = ctx.params;
 
@@ -52,9 +52,9 @@ const MigrationSchema = {
           );
         }
       }
-    }),
+    },
 
-    moveResource: defineAction({
+    moveResource: {
       async handler(ctx) {
         const { oldResourceUri, newResourceUri, dataset } = ctx.params;
 
@@ -107,9 +107,9 @@ const MigrationSchema = {
 
         await this.actions.moveAclRights({ newResourceUri, oldResourceUri, dataset }, { parentCtx: ctx });
       }
-    }),
+    },
 
-    moveAclGroup: defineAction({
+    moveAclGroup: {
       async handler(ctx) {
         const { oldGroupUri, newGroupUri, dataset } = ctx.params;
 
@@ -142,9 +142,9 @@ const MigrationSchema = {
           { parentCtx: ctx }
         );
       }
-    }),
+    },
 
-    moveAclRights: defineAction({
+    moveAclRights: {
       async handler(ctx) {
         const { oldResourceUri, newResourceUri, dataset } = ctx.params;
 
@@ -166,9 +166,9 @@ const MigrationSchema = {
           });
         }
       }
-    }),
+    },
 
-    clearUserRights: defineAction({
+    clearUserRights: {
       async handler(ctx) {
         const { userUri, dataset } = ctx.params;
 
@@ -194,7 +194,7 @@ const MigrationSchema = {
           webId: 'system'
         });
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

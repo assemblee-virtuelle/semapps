@@ -1,12 +1,12 @@
 import urlJoin from 'url-join';
 import pathModule from 'path';
 import { pathToRegexp } from 'path-to-regexp';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 import { arrayOf } from '../../../utils.ts';
 
 const pathJoin = pathModule.join;
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     path: { type: 'string', optional: true },
@@ -97,6 +97,6 @@ const Schema = defineAction({
 
     return options;
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

@@ -3,7 +3,7 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import getAction from './actions/get.ts';
 
 import { Errors } from 'moleculer';
@@ -55,13 +55,13 @@ const CollectionService = {
   },
   dependencies: ['triplestore', 'ldp.resource'],
   actions: {
-    put: defineAction({
+    put: {
       handler() {
         throw new E.ForbiddenError();
       }
-    }),
+    },
 
-    patch: defineAction({
+    patch: {
       async handler(ctx) {
         const { resourceUri: collectionUri, triplesToAdd, triplesToRemove } = ctx.params;
         // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
@@ -100,9 +100,9 @@ const CollectionService = {
           }
         }
       }
-    }),
+    },
 
-    post: defineAction({
+    post: {
       async handler(ctx) {
         if (!ctx.params.containerUri) {
           ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
@@ -129,9 +129,9 @@ const CollectionService = {
 
         return await ctx.call('ldp.container.post', ctx.params);
       }
-    }),
+    },
 
-    isEmpty: defineAction({
+    isEmpty: {
       /*
        * Checks if the collection is empty
        * @param collectionUri The full URI of the collection
@@ -154,9 +154,9 @@ const CollectionService = {
         });
         return Number(res[0].count.value) === 0;
       }
-    }),
+    },
 
-    includes: defineAction({
+    includes: {
       /*
        * Checks if an item is in a collection
        * @param collectionUri The full URI of the collection
@@ -180,9 +180,9 @@ const CollectionService = {
           webId: 'system'
         });
       }
-    }),
+    },
 
-    add: defineAction({
+    add: {
       /*
        * Attach an object to a collection
        * @param collectionUri The full URI of the collection
@@ -216,9 +216,9 @@ const CollectionService = {
           itemUri
         });
       }
-    }),
+    },
 
-    remove: defineAction({
+    remove: {
       /*
        * Detach an object from a collection
        * @param collectionUri The full URI of the collection
@@ -247,11 +247,11 @@ const CollectionService = {
           itemUri
         });
       }
-    }),
+    },
 
     get: getAction,
 
-    clear: defineAction({
+    clear: {
       /*
        * Empty the collection, deleting all items it contains.
        * @param collectionUri The full URI of the collection
@@ -274,9 +274,9 @@ const CollectionService = {
           webId: 'system'
         });
       }
-    }),
+    },
 
-    getOwner: defineAction({
+    getOwner: {
       /*
        * Get the owner of collections attached to actors
        * @param collectionUri The full URI of the collection
@@ -304,7 +304,7 @@ const CollectionService = {
 
         return results.length > 0 ? results[0].actorUri.value : null;
       }
-    })
+    }
   },
   methods: {
     getCollectionDataset(collectionUri) {

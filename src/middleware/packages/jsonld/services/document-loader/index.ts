@@ -2,7 +2,7 @@ import jsonld from 'jsonld';
 import fsModule from 'fs';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'lru-... Remove this comment to see the full error message
 import LRU from 'lru-cache';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const fsPromises = fsModule.promises;
 
@@ -53,7 +53,7 @@ const JsonldDocumentLoaderSchema = {
     }
   },
   actions: {
-    loadWithCache: defineAction({
+    loadWithCache: {
       async handler(ctx) {
         const { url, options } = ctx.params;
         if (url === this.settings.localContextUri) {
@@ -75,17 +75,17 @@ const JsonldDocumentLoaderSchema = {
         cache.set(url, context);
         return context;
       }
-    }),
+    },
 
-    getCache: defineAction({
+    getCache: {
       handler(ctx) {
         const { uri } = ctx.params;
         const context = cache.get(uri);
         return context?.document;
       }
-    }),
+    },
 
-    setCache: defineAction({
+    setCache: {
       handler(ctx) {
         const { uri, json } = ctx.params;
         cache.set(uri, {
@@ -94,7 +94,7 @@ const JsonldDocumentLoaderSchema = {
           document: json
         });
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

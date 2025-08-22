@@ -1,5 +1,5 @@
 import urlJoin from 'url-join';
-import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import getByTypeAction from './actions/getByType.ts';
 import getByUriAction from './actions/getByUri.ts';
 import getUriAction from './actions/getUri.ts';
@@ -38,7 +38,7 @@ const LdpRegistrySchema = {
     }
   },
   events: {
-    'auth.registered': defineServiceEvent({
+    'auth.registered': {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId, accountData } = ctx.params;
@@ -59,7 +59,7 @@ const LdpRegistrySchema = {
           }
         }
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

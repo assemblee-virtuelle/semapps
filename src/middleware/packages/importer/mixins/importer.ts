@@ -3,7 +3,7 @@ import cronParser from 'cron-parser';
 import { promises as fsPromises } from 'fs';
 import { ACTIVITY_TYPES, PUBLIC_URI } from '@semapps/activitypub';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import { isDir } from '../utils.ts';
 
 const Schema = {
@@ -93,7 +93,7 @@ const Schema = {
     }
   },
   actions: {
-    freshImport: defineAction({
+    freshImport: {
       async handler(ctx) {
         if (ctx.params.clear === undefined || ctx.params.clear === true) {
           this.logger.info('Clearing all existing data...');
@@ -165,9 +165,9 @@ const Schema = {
 
         this.logger.info(`Import finished !`);
       }
-    }),
+    },
 
-    synchronize: defineAction({
+    synchronize: {
       handler() {
         if (this.createJob) {
           this.createJob(this.name, 'synchronize', {});
@@ -180,9 +180,9 @@ const Schema = {
           });
         }
       }
-    }),
+    },
 
-    importOne: defineAction({
+    importOne: {
       async handler(ctx) {
         let { sourceUri, destUri, data } = ctx.params;
 
@@ -280,9 +280,9 @@ const Schema = {
 
         return destUri;
       }
-    }),
+    },
 
-    deleteImported: defineAction({
+    deleteImported: {
       async handler(ctx) {
         for (const resourceUri of Object.values(this.imported)) {
           this.logger.info(`Deleting ${resourceUri}...`);
@@ -296,25 +296,25 @@ const Schema = {
 
         this.imported = {};
       }
-    }),
+    },
 
-    list: defineAction({
+    list: {
       async handler(ctx) {
         return await this.list(ctx.params.url || this.settings.source.getAllFull);
       }
-    }),
+    },
 
-    getOne: defineAction({
+    getOne: {
       async handler(ctx) {
         return await this.getOne(this.settings.source.getOneFull(ctx.params.data));
       }
-    }),
+    },
 
-    getImported: defineAction({
+    getImported: {
       handler() {
         return this.imported;
       }
-    })
+    }
   },
   methods: {
     async prepare() {

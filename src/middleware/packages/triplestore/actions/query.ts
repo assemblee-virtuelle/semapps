@@ -1,8 +1,8 @@
 import urlJoin from 'url-join';
 import { MIME_TYPES, negotiateType } from '@semapps/mime-types';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     query: {
@@ -83,6 +83,6 @@ const Schema = defineAction({
         throw new Error('SPARQL Verb not supported');
     }
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;
