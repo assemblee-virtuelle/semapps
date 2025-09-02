@@ -1,4 +1,4 @@
-import DataFactory from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import buildBaseQuery from './buildBaseQuery';
 import buildBlankNodesQuery from './buildBlankNodesQuery';
 import buildAutoDetectBlankNodesQuery from './buildAutoDetectBlankNodesQuery';
@@ -6,20 +6,13 @@ import getUriFromPrefix from './getUriFromPrefix';
 
 const SparqlGenerator = require('sparqljs').Generator;
 
-const { literal, namedNode, triple, variable } = DataFactory;
-
 const generator = new SparqlGenerator({
   /* prefixes, baseIRI, factory, sparqlStar */
 });
 
 const reservedFilterKeys = ['q', 'sparqlWhere', 'blankNodes', 'blankNodesDepth', '_servers', '_predicates'];
 
-const buildSparqlQuery = ({
-  containersUris,
-  params,
-  dataModel,
-  ontologies
-}: any) => {
+const buildSparqlQuery = ({ containersUris, params, dataModel, ontologies }: any) => {
   const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes;
   const predicates = params.filter?._predicates || dataModel.list?.predicates;
   const blankNodesDepth = params.filter?.blankNodesDepth ?? dataModel.list?.blankNodesDepth ?? 2;
@@ -38,16 +31,16 @@ const buildSparqlQuery = ({
     {
       type: 'values',
       values: containersUris.map((containerUri: any) => ({
-        '?containerUri': namedNode(containerUri)
+        '?containerUri': rdf.namedNode(containerUri)
       }))
     },
-    triple(variable('containerUri'), namedNode('http://www.w3.org/ns/ldp#contains'), variable('s1')),
+    rdf.quad(rdf.variable('containerUri'), rdf.namedNode('http://www.w3.org/ns/ldp#contains'), rdf.variable('s1')),
     {
       type: 'filter',
       expression: {
         type: 'operation',
         operator: 'isiri',
-        args: [variable('s1')]
+        args: [rdf.variable('s1')]
       }
     }
   ];
@@ -60,10 +53,10 @@ const buildSparqlQuery = ({
       {
         "sparqlWhere": {
           "type": "bgp",
-          "triples": [{
-            "subject": {"termType": "Variable", "value": "s1"},
+          "rdf.quads": [{
+            "subject": {"termType": "rdf.variable", "value": "s1"},
             "predicate": {"termType": "NameNode", "value": "http://virtual-assembly.org/ontologies/pair#label"},
-            "object": {"termType": "Literal", "value": "My Organization"}
+            "object": {"termType": "rdf.literal", "value": "My Organization"}
           }]
         }
       }
@@ -88,15 +81,15 @@ const buildSparqlQuery = ({
         patterns: [
           {
             queryType: 'SELECT',
-            variables: [variable('s1')],
+            variables: [rdf.variable('s1')],
             where: [
-              triple(variable('s1'), variable('p1'), variable('o1')),
+              rdf.quad(rdf.variable('s1'), rdf.variable('p1'), rdf.variable('o1')),
               {
                 type: 'filter',
                 expression: {
                   type: 'operation',
                   operator: 'isliteral',
-                  args: [variable('o1')]
+                  args: [rdf.variable('o1')]
                 }
               },
               {
@@ -112,12 +105,12 @@ const buildSparqlQuery = ({
                         {
                           type: 'operation',
                           operator: 'str',
-                          args: [variable('o1')]
+                          args: [rdf.variable('o1')]
                         }
                       ]
                     },
                     // @ts-expect-error TS(2554): Expected 1-2 arguments, but got 3.
-                    literal(filter.q.toLowerCase(), '', namedNode('http://www.w3.org/2001/XMLSchema#string'))
+                    rdf.literal(filter.q.toLowerCase(), '', rdf.namedNode('http://www.w3.org/2001/XMLSchema#string'))
                   ]
                 }
               }
@@ -134,11 +127,11 @@ const buildSparqlQuery = ({
     Object.entries(filter).forEach(([predicate, object]) => {
       if (!reservedFilterKeys.includes(predicate)) {
         resourceWhere.unshift(
-          triple(
-            variable('s1'),
-            namedNode(getUriFromPrefix(predicate, ontologies)),
+          rdf.quad(
+            rdf.variable('s1'),
+            rdf.namedNode(getUriFromPrefix(predicate, ontologies)),
             // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
-            namedNode(getUriFromPrefix(object, ontologies))
+            rdf.namedNode(getUriFromPrefix(object, ontologies))
           )
         );
       }
@@ -159,7 +152,7 @@ const buildSparqlQuery = ({
     resourceWhere.push(baseQuery.where);
   }
 
-  // @ts-expect-error TS(2345): Argument of type '(Quad | { type: string; values: ... Remove this comment to see the full error message
+  // @ts-expect-error TS(2345): Argument of type '(uad | { type: string; values: ... Remove this comment to see the full error message
   sparqlJsParams.where.push(containerWhere, resourceWhere);
 
   return generator.stringify(sparqlJsParams);

@@ -22,7 +22,7 @@
     "@ldo/connected-solid": "^1.0.0-alpha.30",
     "@ldo/ldo": "^1.0.0-alpha.30",
     "@ldo/solid-react": "^1.0.0-alpha.30",
-    "@rdfjs/data-model": "^2.1.0",
+    "@rdfjs/data-model": "2.1.1",
     "@rdfjs/dataset": "^2.0.2",
     "@rdfjs/parser-jsonld": "^2.1.3",
     "@rdfjs/parser-n3": "^2.1.0",

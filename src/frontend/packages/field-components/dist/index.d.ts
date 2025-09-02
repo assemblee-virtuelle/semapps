@@ -18,7 +18,7 @@ export const QuickAppendReferenceArrayField: ({
   children,
   ...otherProps
 }: any) => JSX.Element;
-export const MultiUrlField: ({ source, domainMapping }: any) => any;
+export const MultiUrlField: ({ source, domainMapping }: any) => (JSX.Element | null)[];
 export const SeparatedListField: (props: any) => JSX.Element;
 
 //# sourceMappingURL=index.d.ts.map

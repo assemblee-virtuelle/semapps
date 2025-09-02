@@ -614,7 +614,6 @@ var $6aa919fd3fcf3e9c$export$2e2bcd8739ae039 = $6aa919fd3fcf3e9c$var$buildAutoDe
 
 
 var $dcde11998342d30d$require$SparqlGenerator = $fj9kP$Generator;
-const { literal: $dcde11998342d30d$var$literal, namedNode: $dcde11998342d30d$var$namedNode, triple: $dcde11998342d30d$var$triple, variable: $dcde11998342d30d$var$variable } = (0, $fj9kP$rdfjsdatamodel);
 const $dcde11998342d30d$var$generator = new $dcde11998342d30d$require$SparqlGenerator({
 });
 const $dcde11998342d30d$var$reservedFilterKeys = [
@@ -645,17 +644,17 @@ const $dcde11998342d30d$var$buildSparqlQuery = ({ containersUris: containersUris
         {
             type: 'values',
             values: containersUris.map((containerUri)=>({
-                    '?containerUri': $dcde11998342d30d$var$namedNode(containerUri)
+                    '?containerUri': (0, $fj9kP$rdfjsdatamodel).namedNode(containerUri)
                 }))
         },
-        $dcde11998342d30d$var$triple($dcde11998342d30d$var$variable('containerUri'), $dcde11998342d30d$var$namedNode('http://www.w3.org/ns/ldp#contains'), $dcde11998342d30d$var$variable('s1')),
+        (0, $fj9kP$rdfjsdatamodel).quad((0, $fj9kP$rdfjsdatamodel).variable('containerUri'), (0, $fj9kP$rdfjsdatamodel).namedNode('http://www.w3.org/ns/ldp#contains'), (0, $fj9kP$rdfjsdatamodel).variable('s1')),
         {
             type: 'filter',
             expression: {
                 type: 'operation',
                 operator: 'isiri',
                 args: [
-                    $dcde11998342d30d$var$variable('s1')
+                    (0, $fj9kP$rdfjsdatamodel).variable('s1')
                 ]
             }
         }
@@ -667,10 +666,10 @@ const $dcde11998342d30d$var$buildSparqlQuery = ({ containersUris: containersUris
       {
         "sparqlWhere": {
           "type": "bgp",
-          "triples": [{
-            "subject": {"termType": "Variable", "value": "s1"},
+          "rdf.quads": [{
+            "subject": {"termType": "rdf.variable", "value": "s1"},
             "predicate": {"termType": "NameNode", "value": "http://virtual-assembly.org/ontologies/pair#label"},
-            "object": {"termType": "Literal", "value": "My Organization"}
+            "object": {"termType": "rdf.literal", "value": "My Organization"}
           }]
         }
       }
@@ -687,17 +686,17 @@ const $dcde11998342d30d$var$buildSparqlQuery = ({ containersUris: containersUris
                 {
                     queryType: 'SELECT',
                     variables: [
-                        $dcde11998342d30d$var$variable('s1')
+                        (0, $fj9kP$rdfjsdatamodel).variable('s1')
                     ],
                     where: [
-                        $dcde11998342d30d$var$triple($dcde11998342d30d$var$variable('s1'), $dcde11998342d30d$var$variable('p1'), $dcde11998342d30d$var$variable('o1')),
+                        (0, $fj9kP$rdfjsdatamodel).quad((0, $fj9kP$rdfjsdatamodel).variable('s1'), (0, $fj9kP$rdfjsdatamodel).variable('p1'), (0, $fj9kP$rdfjsdatamodel).variable('o1')),
                         {
                             type: 'filter',
                             expression: {
                                 type: 'operation',
                                 operator: 'isliteral',
                                 args: [
-                                    $dcde11998342d30d$var$variable('o1')
+                                    (0, $fj9kP$rdfjsdatamodel).variable('o1')
                                 ]
                             }
                         },
@@ -715,13 +714,13 @@ const $dcde11998342d30d$var$buildSparqlQuery = ({ containersUris: containersUris
                                                 type: 'operation',
                                                 operator: 'str',
                                                 args: [
-                                                    $dcde11998342d30d$var$variable('o1')
+                                                    (0, $fj9kP$rdfjsdatamodel).variable('o1')
                                                 ]
                                             }
                                         ]
                                     },
                                     // @ts-expect-error TS(2554): Expected 1-2 arguments, but got 3.
-                                    $dcde11998342d30d$var$literal(filter.q.toLowerCase(), '', $dcde11998342d30d$var$namedNode('http://www.w3.org/2001/XMLSchema#string'))
+                                    (0, $fj9kP$rdfjsdatamodel).literal(filter.q.toLowerCase(), '', (0, $fj9kP$rdfjsdatamodel).namedNode('http://www.w3.org/2001/XMLSchema#string'))
                                 ]
                             }
                         }
@@ -734,8 +733,8 @@ const $dcde11998342d30d$var$buildSparqlQuery = ({ containersUris: containersUris
         // SPARQL keyword a = filter based on the class of a resource (example => 'a': 'pair:OrganizationType')
         // Other filters are based on a value (example => 'petr:hasAudience': 'http://localhost:3000/audiences/tout-public')
         Object.entries(filter).forEach(([predicate, object])=>{
-            if (!$dcde11998342d30d$var$reservedFilterKeys.includes(predicate)) resourceWhere.unshift($dcde11998342d30d$var$triple($dcde11998342d30d$var$variable('s1'), $dcde11998342d30d$var$namedNode((0, $4872a1c30c1fc60e$export$2e2bcd8739ae039)(predicate, ontologies)), // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
-            $dcde11998342d30d$var$namedNode((0, $4872a1c30c1fc60e$export$2e2bcd8739ae039)(object, ontologies))));
+            if (!$dcde11998342d30d$var$reservedFilterKeys.includes(predicate)) resourceWhere.unshift((0, $fj9kP$rdfjsdatamodel).quad((0, $fj9kP$rdfjsdatamodel).variable('s1'), (0, $fj9kP$rdfjsdatamodel).namedNode((0, $4872a1c30c1fc60e$export$2e2bcd8739ae039)(predicate, ontologies)), // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
+            (0, $fj9kP$rdfjsdatamodel).namedNode((0, $4872a1c30c1fc60e$export$2e2bcd8739ae039)(object, ontologies))));
         });
     }
     // Blank nodes
@@ -746,7 +745,7 @@ const $dcde11998342d30d$var$buildSparqlQuery = ({ containersUris: containersUris
         // @ts-expect-error TS(2769): No overload matches this call.
         sparqlJsParams.template = sparqlJsParams.template.concat(blankNodesQuery.construct);
     } else resourceWhere.push(baseQuery.where);
-    // @ts-expect-error TS(2345): Argument of type '(Quad | { type: string; values: ... Remove this comment to see the full error message
+    // @ts-expect-error TS(2345): Argument of type '(uad | { type: string; values: ... Remove this comment to see the full error message
     sparqlJsParams.where.push(containerWhere, resourceWhere);
     return $dcde11998342d30d$var$generator.stringify(sparqlJsParams);
 };

@@ -668,7 +668,6 @@ var $4eb51c383b9eb050$export$2e2bcd8739ae039 = $4eb51c383b9eb050$var$buildAutoDe
 
 
 var $1d6ef12386121fca$require$SparqlGenerator = $bkNnK$sparqljs.Generator;
-const { literal: $1d6ef12386121fca$var$literal, namedNode: $1d6ef12386121fca$var$namedNode, triple: $1d6ef12386121fca$var$triple, variable: $1d6ef12386121fca$var$variable } = (0, ($parcel$interopDefault($bkNnK$rdfjsdatamodel)));
 const $1d6ef12386121fca$var$generator = new $1d6ef12386121fca$require$SparqlGenerator({
 });
 const $1d6ef12386121fca$var$reservedFilterKeys = [
@@ -699,17 +698,17 @@ const $1d6ef12386121fca$var$buildSparqlQuery = ({ containersUris: containersUris
         {
             type: 'values',
             values: containersUris.map((containerUri)=>({
-                    '?containerUri': $1d6ef12386121fca$var$namedNode(containerUri)
+                    '?containerUri': (0, ($parcel$interopDefault($bkNnK$rdfjsdatamodel))).namedNode(containerUri)
                 }))
         },
-        $1d6ef12386121fca$var$triple($1d6ef12386121fca$var$variable('containerUri'), $1d6ef12386121fca$var$namedNode('http://www.w3.org/ns/ldp#contains'), $1d6ef12386121fca$var$variable('s1')),
+        (0, ($parcel$interopDefault($bkNnK$rdfjsdatamodel))).quad((0, ($parcel$interopDefault($bkNnK$rdfjsdatamodel))).variable('containerUri'), (0, ($parcel$interopDefault($bkNnK$rdfjsdatamodel))).namedNode('http://www.w3.org/ns/ldp#contains'), (0, ($parcel$interopDefault($bkNnK$rdfjsdatamodel))).variable('s1')),
         {
             type: 'filter',
             expression: {
                 type: 'operation',
                 operator: 'isiri',
                 args: [
-                    $1d6ef12386121fca$var$variable('s1')
+                    (0, ($parcel$interopDefault($bkNnK$rdfjsdatamodel))).variable('s1')
                 ]
             }
         }
@@ -721,10 +720,10 @@ const $1d6ef12386121fca$var$buildSparqlQuery = ({ containersUris: containersUris
       {
         "sparqlWhere": {
           "type": "bgp",
-          "triples": [{
-            "subject": {"termType": "Variable", "value": "s1"},
+          "rdf.quads": [{
+            "subject": {"termType": "rdf.variable", "value": "s1"},
             "predicate": {"termType": "NameNode", "value": "http://virtual-assembly.org/ontologies/pair#label"},
-            "object": {"termType": "Literal", "value": "My Organization"}
+            "object": {"termType": "rdf.literal", "value": "My Organization"}
           }]
         }
       }
@@ -741,17 +740,17 @@ const $1d6ef12386121fca$var$buildSparqlQuery = ({ containersUris: containersUris
                 {
                     queryType: 'SELECT',
                     variables: [
-                        $1d6ef12386121fca$var$variable('s1')
+                        (0, ($parcel$interopDefault($bkNnK$rdfjsdatamodel))).variable('s1')
                     ],
                     where: [
-                        $1d6ef12386121fca$var$triple($1d6ef12386121fca$var$variable('s1'), $1d6ef12386121fca$var$variable('p1'), $1d6ef12386121fca$var$variable('o1')),
+                        (0, ($parcel$interopDefault($bkNnK$rdfjsdatamodel))).quad((0, ($parcel$interopDefault($bkNnK$rdfjsdatamodel))).variable('s1'), (0, ($parcel$interopDefault($bkNnK$rdfjsdatamodel))).variable('p1'), (0, ($parcel$interopDefault($bkNnK$rdfjsdatamodel))).variable('o1')),
                         {
                             type: 'filter',
                             expression: {
                                 type: 'operation',
                                 operator: 'isliteral',
                                 args: [
-                                    $1d6ef12386121fca$var$variable('o1')
+                                    (0, ($parcel$interopDefault($bkNnK$rdfjsdatamodel))).variable('o1')
                                 ]
                             }
                         },
@@ -769,13 +768,13 @@ const $1d6ef12386121fca$var$buildSparqlQuery = ({ containersUris: containersUris
                                                 type: 'operation',
                                                 operator: 'str',
                                                 args: [
-                                                    $1d6ef12386121fca$var$variable('o1')
+                                                    (0, ($parcel$interopDefault($bkNnK$rdfjsdatamodel))).variable('o1')
                                                 ]
                                             }
                                         ]
                                     },
                                     // @ts-expect-error TS(2554): Expected 1-2 arguments, but got 3.
-                                    $1d6ef12386121fca$var$literal(filter.q.toLowerCase(), '', $1d6ef12386121fca$var$namedNode('http://www.w3.org/2001/XMLSchema#string'))
+                                    (0, ($parcel$interopDefault($bkNnK$rdfjsdatamodel))).literal(filter.q.toLowerCase(), '', (0, ($parcel$interopDefault($bkNnK$rdfjsdatamodel))).namedNode('http://www.w3.org/2001/XMLSchema#string'))
                                 ]
                             }
                         }
@@ -788,8 +787,8 @@ const $1d6ef12386121fca$var$buildSparqlQuery = ({ containersUris: containersUris
         // SPARQL keyword a = filter based on the class of a resource (example => 'a': 'pair:OrganizationType')
         // Other filters are based on a value (example => 'petr:hasAudience': 'http://localhost:3000/audiences/tout-public')
         Object.entries(filter).forEach(([predicate, object])=>{
-            if (!$1d6ef12386121fca$var$reservedFilterKeys.includes(predicate)) resourceWhere.unshift($1d6ef12386121fca$var$triple($1d6ef12386121fca$var$variable('s1'), $1d6ef12386121fca$var$namedNode((0, $108795c3831be99f$export$2e2bcd8739ae039)(predicate, ontologies)), // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
-            $1d6ef12386121fca$var$namedNode((0, $108795c3831be99f$export$2e2bcd8739ae039)(object, ontologies))));
+            if (!$1d6ef12386121fca$var$reservedFilterKeys.includes(predicate)) resourceWhere.unshift((0, ($parcel$interopDefault($bkNnK$rdfjsdatamodel))).quad((0, ($parcel$interopDefault($bkNnK$rdfjsdatamodel))).variable('s1'), (0, ($parcel$interopDefault($bkNnK$rdfjsdatamodel))).namedNode((0, $108795c3831be99f$export$2e2bcd8739ae039)(predicate, ontologies)), // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
+            (0, ($parcel$interopDefault($bkNnK$rdfjsdatamodel))).namedNode((0, $108795c3831be99f$export$2e2bcd8739ae039)(object, ontologies))));
         });
     }
     // Blank nodes
@@ -800,7 +799,7 @@ const $1d6ef12386121fca$var$buildSparqlQuery = ({ containersUris: containersUris
         // @ts-expect-error TS(2769): No overload matches this call.
         sparqlJsParams.template = sparqlJsParams.template.concat(blankNodesQuery.construct);
     } else resourceWhere.push(baseQuery.where);
-    // @ts-expect-error TS(2345): Argument of type '(Quad | { type: string; values: ... Remove this comment to see the full error message
+    // @ts-expect-error TS(2345): Argument of type '(uad | { type: string; values: ... Remove this comment to see the full error message
     sparqlJsParams.where.push(containerWhere, resourceWhere);
     return $1d6ef12386121fca$var$generator.stringify(sparqlJsParams);
 };

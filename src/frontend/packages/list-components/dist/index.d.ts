@@ -1,5 +1,5 @@
 import { JSX } from 'react/jsx-runtime';
-import { RaRecord, Identifier } from 'react-admin';
+import { RaRecord } from 'react-admin';
 import React from 'react';
 export const ChipList: (props: any) => JSX.Element;
 export const GridList: ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, xl }: any) => JSX.Element | null;
@@ -33,7 +33,7 @@ type Props = {
   icon?: JSX.Element;
   showCounters?: boolean;
 };
-export const ReferenceFilter: <ReferenceType extends RaRecord<Identifier>>({
+export const ReferenceFilter: <ReferenceType extends RaRecord>({
   reference,
   source,
   inverseSource,
