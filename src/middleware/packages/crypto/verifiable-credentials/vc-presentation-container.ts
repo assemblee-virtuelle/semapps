@@ -89,7 +89,7 @@ const VCPresentationContainer = {
 
     list: defineAction({
       async handler(ctx) {
-        const container = await ctx.call('ldp.container.list', {
+        const container = await ctx.call('ldp.container.get', {
           ...ctx.params,
           jsonContext: credentialsContextNoGraphProof
         });
