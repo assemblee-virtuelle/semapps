@@ -1,7 +1,7 @@
 import urlJoin from 'url-join';
 import rdf from '@rdfjs/data-model';
 import { pim } from '@semapps/ontologies';
-import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 /** @type {import('moleculer').ServiceSchema} */
 const SolidStorageSchema = {
@@ -26,7 +26,7 @@ const SolidStorageSchema = {
     });
   },
   actions: {
-    create: defineAction({
+    create: {
       async handler(ctx) {
         const { username } = ctx.params;
         if (!username) throw new Error('Cannot create Solid storage without a username');
@@ -45,18 +45,18 @@ const SolidStorageSchema = {
 
         return storageRootUri;
       }
-    }),
+    },
 
-    getUrl: defineAction({
+    getUrl: {
       async handler(ctx) {
         const { webId } = ctx.params;
         // This is faster, but later we should use the 'pim:storage' property of the webId
         return urlJoin(webId, this.settings.pathName);
       }
-    })
+    }
   },
   events: {
-    'auth.registered': defineServiceEvent({
+    'auth.registered': {
       async handler(ctx) {
         const { webId } = ctx.params;
         this.logger.info('Storage event registration entered. WebId', webId);
@@ -103,7 +103,7 @@ const SolidStorageSchema = {
 
         this.logger.info('ACL rights added to ', storageUrl);
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

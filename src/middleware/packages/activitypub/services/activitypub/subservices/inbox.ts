@@ -1,7 +1,7 @@
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import { objectIdToCurrent, collectionPermissionsWithAnonRead } from '../../../utils.ts';
 import { ACTOR_TYPES } from '../../../constants.ts';
 import AwaitActivityMixin from '../../../mixins/await-activity.ts';
@@ -33,7 +33,7 @@ const InboxService = {
     await this.broker.call('activitypub.collections-registry.register', this.settings.collectionOptions);
   },
   actions: {
-    post: defineAction({
+    post: {
       async handler(ctx) {
         const { collectionUri, ...activity } = ctx.params;
 
@@ -158,9 +158,9 @@ const InboxService = {
           { meta: { webId: null, dataset: null } }
         );
       }
-    }),
+    },
 
-    getByDates: defineAction({
+    getByDates: {
       async handler(ctx) {
         const { collectionUri, fromDate, toDate } = ctx.params;
 
@@ -196,9 +196,9 @@ const InboxService = {
 
         return activities;
       }
-    }),
+    },
 
-    updateCollectionsOptions: defineAction({
+    updateCollectionsOptions: {
       async handler(ctx) {
         const { dataset } = ctx.params;
         await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
@@ -206,7 +206,7 @@ const InboxService = {
           dataset
         });
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

@@ -1,6 +1,6 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import { sanitizeSparqlUri } from '@semapps/triplestore';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 import { getValueFromDataType } from '../../../../../utils.ts';
 
 import { Errors } from 'moleculer';
@@ -275,7 +275,7 @@ function formatResponse(
   };
 }
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -350,6 +350,6 @@ const Schema = defineAction({
       context: jsonContext || localContext
     });
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

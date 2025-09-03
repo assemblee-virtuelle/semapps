@@ -1,7 +1,7 @@
 import path from 'path';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'pass... Remove this comment to see the full error message
 import { Strategy } from 'passport-local';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import AuthMixin from '../mixins/auth.ts';
 import sendToken from '../middlewares/sendToken.ts';
 import AuthMailService from './mail.ts';
@@ -53,7 +53,7 @@ const AuthLocalService = {
     }
   },
   actions: {
-    signup: defineAction({
+    signup: {
       async handler(ctx) {
         const { username, email, password, ...rest } = ctx.params;
 
@@ -90,9 +90,9 @@ const AuthLocalService = {
           throw e;
         }
       }
-    }),
+    },
 
-    login: defineAction({
+    login: {
       async handler(ctx) {
         const { username, password } = ctx.params;
 
@@ -104,9 +104,9 @@ const AuthLocalService = {
 
         return { token, webId: accountData.webId, newUser: false };
       }
-    }),
+    },
 
-    logout: defineAction({
+    logout: {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property '$statusCode' does not exist on type '{}'... Remove this comment to see the full error message
         ctx.meta.$statusCode = 302;
@@ -115,9 +115,9 @@ const AuthLocalService = {
         // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         ctx.emit('auth.disconnected', { webId: ctx.meta.webId });
       }
-    }),
+    },
 
-    redirectToForm: defineAction({
+    redirectToForm: {
       async handler(ctx) {
         if (this.settings.formUrl) {
           const formUrl = new URL(this.settings.formUrl);
@@ -134,9 +134,9 @@ const AuthLocalService = {
           throw new Error('No formUrl defined in auth.local settings');
         }
       }
-    }),
+    },
 
-    resetPassword: defineAction({
+    resetPassword: {
       async handler(ctx) {
         const { email } = ctx.params;
 
@@ -153,9 +153,9 @@ const AuthLocalService = {
           token
         });
       }
-    }),
+    },
 
-    setNewPassword: defineAction({
+    setNewPassword: {
       async handler(ctx) {
         const { email, token, password } = ctx.params;
 
@@ -167,7 +167,7 @@ const AuthLocalService = {
 
         await ctx.call('auth.account.setNewPassword', { webId: account.webId, token, password });
       }
-    })
+    }
   },
   methods: {
     getStrategy() {

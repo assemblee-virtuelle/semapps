@@ -1,6 +1,6 @@
 import DbService from 'moleculer-db';
 import { TripleStoreAdapter } from '@semapps/triplestore';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const OntologiesRegistrySchema = {
   name: 'ontologies.registry' as const,
@@ -10,30 +10,30 @@ const OntologiesRegistrySchema = {
     idField: '@id'
   },
   actions: {
-    getByPrefix: defineAction({
+    getByPrefix: {
       async handler(ctx) {
         const { prefix } = ctx.params;
         const [ontology] = await this._find(ctx, { query: { prefix } });
         return ontology && { prefix: ontology.prefix, namespace: ontology.namespace };
       }
-    }),
+    },
 
-    getByNamespace: defineAction({
+    getByNamespace: {
       async handler(ctx) {
         const { namespace } = ctx.params;
         const [ontology] = await this._find(ctx, { query: { namespace } });
         return ontology && { prefix: ontology.prefix, namespace: ontology.namespace };
       }
-    }),
+    },
 
-    list: defineAction({
+    list: {
       async handler(ctx) {
         const ontologies = await this._list(ctx, {});
         return ontologies.rows.map(({ prefix, namespace }: any) => ({ prefix, namespace }));
       }
-    }),
+    },
 
-    updateOrCreate: defineAction({
+    updateOrCreate: {
       async handler(ctx) {
         const { prefix, namespace } = ctx.params;
 
@@ -51,7 +51,7 @@ const OntologiesRegistrySchema = {
           });
         }
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

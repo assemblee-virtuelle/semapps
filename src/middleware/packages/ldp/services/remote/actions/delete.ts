@@ -1,6 +1,6 @@
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -69,6 +69,6 @@ const Schema = defineAction({
 
     return returnValues;
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

@@ -10,7 +10,7 @@ import * as vc from '@digitalbazaar/vc';
 // @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import * as Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
 
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import { KEY_TYPES, credentialsContext } from '../constants.ts';
 
 const {
@@ -57,7 +57,7 @@ const VCCredentialService = {
      * @param {object} ctx.params - The parameters for creating the VC.
      * @returns {object} The signed credential.
      */
-    createVC: defineAction({
+    createVC: {
       params: {
         credential: {
           type: 'object',
@@ -146,7 +146,7 @@ const VCCredentialService = {
 
         return signedCredential;
       }
-    })
+    }
   },
   methods: {
     /** Creates an ldp resource from the presentation and sets rights. */

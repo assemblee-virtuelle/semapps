@@ -1,5 +1,5 @@
 import { dc } from '@semapps/ontologies';
-import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import { getDatasetFromUri } from '../utils.ts';
 
 const Schema = {
@@ -14,7 +14,7 @@ const Schema = {
     await this.broker.call('ontologies.register', dc);
   },
   actions: {
-    tagCreatedResource: defineAction({
+    tagCreatedResource: {
       async handler(ctx) {
         const { resourceUri, newData, webId, dataset } = ctx.params;
         const now = new Date();
@@ -48,9 +48,9 @@ const Schema = {
           });
         }
       }
-    }),
+    },
 
-    tagUpdatedResource: defineAction({
+    tagUpdatedResource: {
       async handler(ctx) {
         const { resourceUri, dataset } = ctx.params;
         const now = new Date();
@@ -66,10 +66,10 @@ const Schema = {
           webId: 'system'
         });
       }
-    })
+    }
   },
   events: {
-    'ldp.resource.created': defineServiceEvent({
+    'ldp.resource.created': {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData, webId, dataset } = ctx.params;
@@ -80,25 +80,25 @@ const Schema = {
           { parentCtx: ctx }
         );
       }
-    }),
+    },
 
-    'ldp.resource.updated': defineServiceEvent({
+    'ldp.resource.updated': {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, dataset } = ctx.params;
         // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         this.actions.tagUpdatedResource({ resourceUri, dataset }, { parentCtx: ctx });
       }
-    }),
+    },
 
-    'ldp.resource.patched': defineServiceEvent({
+    'ldp.resource.patched': {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, dataset } = ctx.params;
         // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         this.actions.tagUpdatedResource({ resourceUri, dataset }, { parentCtx: ctx });
       }
-    })
+    }
   }
 } satisfies Partial<ServiceSchema>;
 

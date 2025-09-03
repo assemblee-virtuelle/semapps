@@ -3,7 +3,7 @@ import { DataFactory, Writer } from 'n3';
 import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
 
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 import {
   getAuthorizationNode,
   checkAgentPresent,
@@ -209,7 +209,7 @@ export const api = async function api(this: any, ctx: any) {
   });
 };
 
-export const action = defineAction({
+export const action = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -233,4 +233,4 @@ export const action = defineAction({
 
     return await getPermissions(ctx, resourceUri, this.settings.baseUrl, webId, this.settings.graphName, isContainer);
   }
-});
+} satisfies ActionSchema;

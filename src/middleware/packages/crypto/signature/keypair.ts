@@ -4,7 +4,7 @@ import fetch from 'node-fetch';
 import { generateKeyPair } from 'crypto';
 import rdf from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import { KEY_TYPES } from '../constants.ts';
 
 /**
@@ -31,7 +31,7 @@ const SignatureService = {
     this.isMigrated = await this.broker.call('keys.migration.isMigrated');
   },
   actions: {
-    generate: defineAction({
+    generate: {
       async handler(ctx) {
         const { actorUri } = ctx.params;
 
@@ -77,9 +77,9 @@ const SignatureService = {
           );
         });
       }
-    }),
+    },
 
-    delete: defineAction({
+    delete: {
       async handler(ctx) {
         const { actorUri } = ctx.params;
 
@@ -98,9 +98,9 @@ const SignatureService = {
           console.log(`Could not delete key pair for actor ${actorUri}`);
         }
       }
-    }),
+    },
 
-    attachPublicKey: defineAction({
+    attachPublicKey: {
       async handler(ctx) {
         const { actorUri } = ctx.params;
 
@@ -140,9 +140,9 @@ const SignatureService = {
           });
         }
       }
-    }),
+    },
 
-    getPaths: defineAction({
+    getPaths: {
       async handler(ctx) {
         const { actorUri } = ctx.params;
 
@@ -155,9 +155,9 @@ const SignatureService = {
         }
         throw new Error(`No account found with URI ${actorUri}`);
       }
-    }),
+    },
 
-    get: defineAction({
+    get: {
       async handler(ctx) {
         const { actorUri } = ctx.params;
 
@@ -179,9 +179,9 @@ const SignatureService = {
           return {};
         }
       }
-    }),
+    },
 
-    getRemotePublicKey: defineAction({
+    getRemotePublicKey: {
       async handler(ctx) {
         const { actorUri } = ctx.params;
 
@@ -208,7 +208,7 @@ const SignatureService = {
           return actor.publicKey.publicKeyPem;
         }
       }
-    })
+    }
   },
   hooks: {
     before: {
@@ -237,7 +237,7 @@ const SignatureService = {
     }
   },
   events: {
-    'auth.registered': defineServiceEvent({
+    'auth.registered': {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
@@ -251,14 +251,14 @@ const SignatureService = {
         // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.attachPublicKey({ actorUri: webId }, { parentCtx: ctx });
       }
-    }),
+    },
 
-    'keys.migration.migrated': defineServiceEvent({
+    'keys.migration.migrated': {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'isMigrated' does not exist on type 'Serv... Remove this comment to see the full error message
         this.isMigrated = true;
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

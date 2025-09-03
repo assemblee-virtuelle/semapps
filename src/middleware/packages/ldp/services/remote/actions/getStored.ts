@@ -1,12 +1,12 @@
 import { MIME_TYPES } from '@semapps/mime-types';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 import { buildBlankNodesQuery } from '../../../utils.ts';
 
 import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -72,6 +72,6 @@ const Schema = defineAction({
       throw new MoleculerError(`Resource Not found ${resourceUri} in dataset ${ctx.meta.dataset}`, 404, 'NOT_FOUND');
     }
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

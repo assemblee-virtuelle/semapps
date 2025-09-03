@@ -1,7 +1,7 @@
 import rdf from '@rdfjs/data-model';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -23,18 +23,20 @@ const Schema = defineAction({
       exist = await ctx.call('triplestore.tripleExist', {
         triple: rdf.quad(rdf.namedNode(resourceUri), rdf.variable('p'), rdf.variable('s')),
         webId,
+        // @ts-expect-error TS(2339): Property 'mirrorGraphName' does not exist on type '... Remove this comment to see the full error message
         graphName: this.settings.mirrorGraphName
       });
     }
 
     // If resource exists but we don't want tombstones, check the resource type
     if (exist && !acceptTombstones) {
+      // @ts-expect-error TS(2339): Property 'getTypes' does not exist on type '... Remove this comment to see the full error message
       const types = await this.actions.getTypes({ resourceUri }, { parentCtx: ctx });
       if (types.includes('https://www.w3.org/ns/activitystreams#Tombstone')) return false;
     }
 
     return exist;
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

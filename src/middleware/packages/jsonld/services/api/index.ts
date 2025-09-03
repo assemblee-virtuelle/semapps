@@ -1,4 +1,4 @@
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const JsonldApiSchema = {
   name: 'jsonld.api' as const,
@@ -21,13 +21,13 @@ const JsonldApiSchema = {
     });
   },
   actions: {
-    getContext: defineAction({
+    getContext: {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property '$responseType' does not exist on type '{... Remove this comment to see the full error message
         ctx.meta.$responseType = 'application/ld+json';
         return await ctx.call('jsonld.context.getLocal');
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

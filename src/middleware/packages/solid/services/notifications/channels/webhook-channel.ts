@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import NotificationChannelMixin from './notification-channel.mixin.ts';
 
 const queueOptions =
@@ -35,15 +35,15 @@ const WebhookChannel2023Service = {
     if (!this.createJob) throw new Error('The QueueMixin must be configured with this service');
   },
   actions: {
-    getAppChannels: defineAction({
+    getAppChannels: {
       async handler(ctx) {
         const { appUri, webId } = ctx.params;
         const { origin: appOrigin } = new URL(appUri);
         return this.channels.filter((c: any) => c.webId === webId && c.sendTo.startsWith(appOrigin));
       }
-    }),
+    },
 
-    deleteAppChannels: defineAction({
+    deleteAppChannels: {
       async handler(ctx) {
         const { appUri, webId } = ctx.params;
         const appChannels = await this.actions.getAppChannels({ appUri, webId }, { parentCtx: ctx });
@@ -51,7 +51,7 @@ const WebhookChannel2023Service = {
           await this.actions.delete({ resourceUri: appChannel.id, webId: appChannel.webId });
         }
       }
-    })
+    }
   },
   methods: {
     onEvent(channel, activity) {

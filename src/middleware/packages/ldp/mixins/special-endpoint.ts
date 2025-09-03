@@ -2,7 +2,7 @@ import urlJoin from 'url-join';
 import rdf from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { parseUrl, parseHeader, negotiateAccept, parseJson, parseTurtle } from '@semapps/middlewares';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const Schema = {
   settings: {
@@ -62,7 +62,7 @@ const Schema = {
     }
   },
   actions: {
-    endpointAdd: defineAction({
+    endpointAdd: {
       async handler(ctx) {
         const { predicate, object } = ctx.params;
 
@@ -76,9 +76,9 @@ const Schema = {
           { meta: { dataset: this.settings.settingsDataset, skipEmitEvent: true, skipObjectsWatcher: true } }
         );
       }
-    }),
+    },
 
-    endpointGet: defineAction({
+    endpointGet: {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property '$responseType' does not exist on type '{... Remove this comment to see the full error message
         ctx.meta.$responseType = ctx.meta.headers?.accept;
@@ -94,7 +94,7 @@ const Schema = {
           { meta: { dataset: this.settings.settingsDataset } }
         );
       }
-    })
+    }
   }
 } satisfies Partial<ServiceSchema>;
 

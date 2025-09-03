@@ -1,6 +1,6 @@
 import DbService from 'moleculer-db';
 import { TripleStoreAdapter } from '@semapps/triplestore';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const ExpoPushDeviceService = {
   name: 'expo-push.device' as const,
@@ -14,7 +14,7 @@ const ExpoPushDeviceService = {
     }
   },
   actions: {
-    subscribe: defineAction({
+    subscribe: {
       async handler(ctx) {
         const { name, yearClass, userUri, pushToken } = ctx.params;
 
@@ -61,9 +61,9 @@ const ExpoPushDeviceService = {
 
         return device;
       }
-    }),
+    },
 
-    findUsersDevices: defineAction({
+    findUsersDevices: {
       async handler(ctx) {
         const devices = [];
 
@@ -85,7 +85,7 @@ const ExpoPushDeviceService = {
 
         return devices;
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 
