@@ -25,6 +25,11 @@ const JsonldApiSchema = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property '$responseType' does not exist on type '{... Remove this comment to see the full error message
         ctx.meta.$responseType = 'application/ld+json';
+        // Set cache to 25s
+        // @ts-expect-error TS(2339): Property '$responseHeaders' does not exist on type '{... Remove this comment to see the full error message
+        if (!ctx.meta.$responseHeaders) ctx.meta.$responseHeaders = {};
+        // @ts-expect-error TS(2339): Property '$responseHeaders' does not exist on type '{... Remove this comment to see the full error message
+        ctx.meta.$responseHeaders['Cache-Control'] = 'public, max-age=25, s-maxage=10';
         return await ctx.call('jsonld.context.getLocal');
       }
     }
