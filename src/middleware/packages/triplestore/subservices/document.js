@@ -11,7 +11,7 @@ const DocumentService = {
 
       if (!documentUri) uuidv4();
 
-      if (await this.actions.exist({ documentUri }, { parentCtx: ctx })) {
+      if (await this.actions.exist({ documentUri, dataset }, { parentCtx: ctx })) {
         throw new Error(`Cannot create document as it already exists`);
       }
 
