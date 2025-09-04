@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'activitypub.migration',
+  name: 'migration-0-7-0',
   actions: {
     async updateCollectionsOptions(ctx) {
       await ctx.call('activitypub.follow.updateCollectionsOptions');

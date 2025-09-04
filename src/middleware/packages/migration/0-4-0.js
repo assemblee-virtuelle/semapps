@@ -1,7 +1,7 @@
 const { getSlugFromUri } = require('@semapps/ldp');
 
 module.exports = {
-  name: 'auth.migration',
+  name: 'migration-0-4-0',
   actions: {
     async migrateUsersToAccounts(ctx) {
       const { usersContainer, emailPredicate, usernamePredicate } = ctx.params;
