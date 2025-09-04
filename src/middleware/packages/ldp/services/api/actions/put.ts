@@ -17,7 +17,6 @@ export default {
 
     const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri });
 
-    // @ts-expect-error
     if (ctx.meta.parser === 'file') {
       throw new MoleculerError(`PUT method is not supported for non-RDF resources`, 400, 'BAD_REQUEST');
     }
@@ -25,11 +24,9 @@ export default {
     try {
       await ctx.call(controlledActions.put || 'ldp.resource.put', {
         resource,
-        // @ts-expect-error
         contentType: ctx.meta.headers['content-type'],
         body
       });
-      // @ts-expect-error
       ctx.meta.$statusCode = 204;
       // @ts-expect-error
       ctx.meta.$responseHeaders = {

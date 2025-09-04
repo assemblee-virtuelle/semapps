@@ -209,7 +209,6 @@ const ObjectService = {
     'ldp.resource.deleted': {
       async handler(ctx) {
         // Check if tombstones are globally activated
-        // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
         if (this.settings.activateTombstones) {
           // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
           const { resourceUri, containersUris, oldData, dataset } = ctx.params;

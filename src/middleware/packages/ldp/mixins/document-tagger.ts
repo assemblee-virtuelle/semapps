@@ -73,7 +73,6 @@ const Schema = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData, webId, dataset } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         this.actions.tagCreatedResource(
           // @ts-expect-error TS(2339): Property 'impersonatedUser' does not exist on type... Remove this comment to see the full error message
           { resourceUri, newData, webId: ctx.meta.impersonatedUser || webId, dataset },
@@ -86,7 +85,6 @@ const Schema = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, dataset } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         this.actions.tagUpdatedResource({ resourceUri, dataset }, { parentCtx: ctx });
       }
     },

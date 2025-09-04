@@ -78,7 +78,6 @@ const ActorService = {
               rdf.quad(
                 rdf.namedNode(actorUri),
                 rdf.namedNode(predicate),
-                // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
                 typeof subject === 'string' && subject.startsWith('http')
                   ? rdf.namedNode(subject)
                   : rdf.literal(subject)
@@ -197,9 +196,7 @@ const ActorService = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'isActor' does not exist on type 'Service... Remove this comment to see the full error message
         if (this.isActor(newData)) {
-          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
           await this.actions.appendActorData({ actorUri: resourceUri }, { parentCtx: ctx });
           await ctx.call('signature.keypair.generate', { actorUri: resourceUri });
           await ctx.call('signature.keypair.attachPublicKey', { actorUri: resourceUri });
@@ -211,7 +208,6 @@ const ActorService = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, oldData } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'isActor' does not exist on type 'Service... Remove this comment to see the full error message
         if (this.isActor(oldData)) {
           await ctx.call('keys.deleteAllKeysForWebId', { webId: resourceUri });
         }

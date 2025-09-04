@@ -51,7 +51,6 @@ const LdpCacheSchema = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, dataset } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.invalidateResource({ resourceUri, dataset }, { parentCtx: ctx });
       }
     },
@@ -60,7 +59,6 @@ const LdpCacheSchema = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, dataset } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.invalidateResource({ resourceUri, dataset }, { parentCtx: ctx });
       }
     },
@@ -69,7 +67,6 @@ const LdpCacheSchema = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, dataset } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.invalidateResource({ resourceUri, dataset }, { parentCtx: ctx });
       }
     },
@@ -78,7 +75,6 @@ const LdpCacheSchema = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'containerUri' does not exist on type 'Op... Remove this comment to see the full error message
         const { containerUri } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
       }
     },
@@ -87,7 +83,6 @@ const LdpCacheSchema = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'containerUri' does not exist on type 'Op... Remove this comment to see the full error message
         const { containerUri } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
       }
     },
@@ -96,7 +91,6 @@ const LdpCacheSchema = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'containerUri' does not exist on type 'Op... Remove this comment to see the full error message
         const { containerUri } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
       }
     },
@@ -105,7 +99,6 @@ const LdpCacheSchema = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'containerUri' does not exist on type 'Op... Remove this comment to see the full error message
         const { containerUri } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
       }
     },
@@ -114,7 +107,6 @@ const LdpCacheSchema = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, dataset } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.invalidateResource({ resourceUri, dataset }, { parentCtx: ctx });
       }
     },
@@ -123,7 +115,6 @@ const LdpCacheSchema = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, dataset } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.invalidateResource({ resourceUri, dataset }, { parentCtx: ctx });
       }
     },
@@ -134,10 +125,8 @@ const LdpCacheSchema = {
         // @ts-expect-error TS(2339): Property 'uri' does not exist on type 'Optionalize... Remove this comment to see the full error message
         const { uri, isContainer, dataset } = ctx.params;
         if (isContainer) {
-          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
           await this.actions.invalidateContainer({ containerUri: uri }, { parentCtx: ctx });
         } else {
-          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
           await this.actions.invalidateResource({ resourceUri: uri, dataset }, { parentCtx: ctx });
         }
       }
@@ -148,7 +137,6 @@ const LdpCacheSchema = {
         // @ts-expect-error TS(2339): Property 'uri' does not exist on type 'Optionalize... Remove this comment to see the full error message
         const { uri, isContainer, dataset } = ctx.params;
         if (isContainer) {
-          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
           await this.actions.invalidateContainer({ containerUri: uri }, { parentCtx: ctx });
         } else {
           // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
