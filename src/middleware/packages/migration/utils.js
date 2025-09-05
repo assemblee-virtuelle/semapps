@@ -22,6 +22,21 @@ const buildBlankNodesQuery = depth => {
   return { construct, where };
 };
 
+const objectCurrentToId = activityJson => {
+  if (activityJson.object && typeof activityJson.object === 'object' && activityJson.object.current) {
+    const { current, ...object } = activityJson.object;
+    return {
+      ...activityJson,
+      object: {
+        id: current,
+        ...objectCurrentToId(object)
+      }
+    };
+  }
+  return activityJson;
+};
+
 module.exports = {
-  buildBlankNodesQuery
+  buildBlankNodesQuery,
+  objectCurrentToId
 };

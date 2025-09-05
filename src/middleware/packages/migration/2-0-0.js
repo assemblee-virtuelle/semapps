@@ -1,11 +1,18 @@
-const { buildBlankNodesQuery } = require('./utils');
+const urlJoin = require('url-join');
+const { buildBlankNodesQuery, objectCurrentToId } = require('./utils');
 
 const blankNodesQuery = buildBlankNodesQuery(4);
 
 module.exports = {
   name: 'migration-2-0-0',
   settings: {
+    baseUrl: undefined,
     podProvider: false
+  },
+  created() {
+    if (!this.settings.baseUrl) {
+      throw new Error('The baseUrl setting is mandatory');
+    }
   },
   actions: {
     async moveAllToNamedGraph(ctx) {
@@ -33,18 +40,7 @@ module.exports = {
 
       if (this.settings.podProvider) {
         // Move WebID (not linked from a container)
-        const webIdResult = await ctx.call('triplestore.query', {
-          query: `
-            PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-            SELECT ?webId
-            WHERE {
-              ?webId a foaf:Person .
-            }
-          `,
-          webId: 'system'
-        });
-        const webId = webIdResult[0].webId.value;
-
+        const webId = urlJoin(this.settings.baseUrl, ctx.meta.dataset);
         await this.actions.moveResourceToNamedGraph({ resourceUri: webId }, { parentCtx: ctx });
       }
 
@@ -195,6 +191,54 @@ module.exports = {
         `,
         webId: 'system'
       });
+    },
+    /**
+     * Replace the as:current predicate with the ID
+     * Must be called *after* the moveAllToNamedGraph action
+     */
+    async migrateCurrentPredicate(ctx) {
+      const { dataset } = ctx.params;
+
+      ctx.meta.dataset = dataset || ctx.meta.dataset;
+      if (this.settings.podProvider) ctx.meta.webId = urlJoin(this.settings.baseUrl, ctx.meta.dataset);
+
+      const result = await ctx.call('triplestore.query', {
+        query: `
+          PREFIX as: <https://www.w3.org/ns/activitystreams#>
+          SELECT ?resourceUri
+          WHERE {
+            GRAPH ?resourceUri {
+              ?s1 as:current ?current .
+            }
+          }
+        `,
+        webId: 'system'
+      });
+      const activitiesUris = result.map(node => node.resourceUri.value);
+
+      this.logger.info(`Found ${activitiesUris.length} activities needing migration`);
+
+      for (const activityUri of activitiesUris) {
+        this.logger.info(`Migrating activity ${activityUri}...`);
+
+        const activity = await ctx.call('activitypub.activity.get', { resourceUri: activityUri });
+
+        console.log('before', activity);
+
+        const activityWithId = objectCurrentToId(activity);
+
+        console.log('after', activityWithId);
+
+        if (await ctx.call('ldp.remote.isRemote', { resourceUri: activityUri })) {
+          await ctx.call('ldp.remote.store', {
+            resource: activityWithId,
+            webId: ctx.meta.webId,
+            dataset: ctx.meta.dataset
+          });
+        } else {
+          await ctx.call('activitypub.activity.put', { resource: activityWithId });
+        }
+      }
     }
   }
 };
