@@ -94,7 +94,7 @@ module.exports = {
         try {
           await ctx.call('ldp.container.detach', { containerUri, resourceUri, webId });
 
-          // If the mirrored resource is not attached to any container anymore, it must be deleted.
+          // If the imported resource is not attached to any container anymore, it must be deleted.
           const containers = await ctx.call('ldp.resource.getContainers', { resourceUri });
           if (containers.length === 0 && isMirror(resourceUri, this.settings.baseUrl)) {
             await ctx.call('ldp.remote.delete', { resourceUri });

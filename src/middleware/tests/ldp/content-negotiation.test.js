@@ -75,7 +75,7 @@ describe('Content negotiation', () => {
       })
     });
 
-    expect(body).toMatch(new RegExp(`<${containerUri}> a ldp:BasicContainer, ldp:Container`));
+    expect(body).toMatch(new RegExp(`<${containerUri}> a ldp:Container, ldp:BasicContainer`));
     expect(body).toMatch(new RegExp(`ldp:contains <${projectUri}>`));
 
     expect(body).toMatch(new RegExp(`<${projectUri}> a pair:Project`));
@@ -243,21 +243,17 @@ describe('Content negotiation', () => {
       resourceUri: project4Uri
     });
 
+    // In JSON-LD, blank nodes are automatically embedded
     expect(project4).toMatchObject({
       '@context': 'http://localhost:3000/.well-known/context.jsonld',
-      '@graph': expect.arrayContaining([
-        {
-          '@id': project4Uri,
-          '@type': 'pair:Project',
-          'pair:hasPart': `${project4Uri}#task1`,
-          'pair:label': 'myProject 4'
-        },
-        {
-          '@id': `${project4Uri}#task1`,
-          '@type': 'pair:Task',
-          'pair:label': 'myTask 1'
-        }
-      ])
+      '@id': project4Uri,
+      '@type': 'pair:Project',
+      'pair:hasPart': {
+        '@id': `${project4Uri}#task1`,
+        '@type': 'pair:Task',
+        'pair:label': 'myTask 1'
+      },
+      'pair:label': 'myProject 4'
     });
   });
 

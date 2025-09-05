@@ -6,7 +6,6 @@ const SynchronizerService = {
   mixins: [ActivitiesHandlerMixin],
   settings: {
     podProvider: false,
-    mirrorGraph: true,
     synchronizeContainers: true,
     attachToLocalContainers: false
   },
@@ -75,12 +74,10 @@ const SynchronizerService = {
                 typeof resource === 'string'
                   ? {
                       resourceUri: resource,
-                      mirrorGraph: this.settings.mirrorGraph,
                       webId: recipientUri
                     }
                   : {
                       resource: { '@context': activity['@context'], ...resource },
-                      mirrorGraph: this.settings.mirrorGraph,
                       webId: recipientUri
                     }
               );
@@ -142,12 +139,10 @@ const SynchronizerService = {
               typeof resource === 'string'
                 ? {
                     resourceUri: resource,
-                    mirrorGraph: this.settings.mirrorGraph,
                     webId: recipientUri
                   }
                 : {
                     resource: { '@context': activity['@context'], ...resource },
-                    mirrorGraph: this.settings.mirrorGraph,
                     webId: recipientUri
                   }
             );

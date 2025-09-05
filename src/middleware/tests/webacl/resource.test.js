@@ -1,6 +1,7 @@
 const { namedNode, triple, literal } = require('@rdfjs/data-model');
 const CONFIG = require('../config');
 const initialize = require('./initialize');
+const waitForExpect = require('wait-for-expect');
 
 jest.setTimeout(20000);
 
@@ -132,12 +133,14 @@ describe('Permissions check on a specific resource', () => {
       webId: 'system'
     });
 
-    await expect(
-      broker.call('ldp.resource.get', {
-        resourceUri,
-        webId: BOB_WEBID
-      })
-    ).resolves.toBeDefined();
+    await waitForExpect(async () => {
+      await expect(
+        broker.call('ldp.resource.get', {
+          resourceUri,
+          webId: BOB_WEBID
+        })
+      ).resolves.toBeDefined();
+    });
   });
 
   test('Post data without append permission on container', async () => {

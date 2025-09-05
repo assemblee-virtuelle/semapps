@@ -1,16 +1,13 @@
 const urlJoin = require('url-join');
 const fetch = require('node-fetch');
 const { MoleculerError } = require('moleculer').Errors;
-const { createFragmentURL, arrayOf } = require('@semapps/ldp');
+const { createFragmentURL, arrayOf, getId } = require('@semapps/ldp');
 const { ACTIVITY_TYPES } = require('@semapps/activitypub');
 const SynchronizerService = require('./synchronizer');
-
-const regexPrefix = new RegExp('^@prefix ([\\w-]*: +<.*>) .', 'gm');
 
 module.exports = {
   name: 'mirror',
   settings: {
-    graphName: 'http://semapps.org/mirror',
     servers: []
   },
   dependencies: [
@@ -27,7 +24,6 @@ module.exports = {
       mixins: [SynchronizerService],
       settings: {
         podProvider: false,
-        mirrorGraph: true,
         synchronizeContainers: true,
         attachToLocalContainers: false
       }
@@ -104,30 +100,54 @@ module.exports = {
 
         if (partitions) {
           for (const p of arrayOf(partitions)) {
-            // we skip empty containers and doNotMirror containers
+            // Skip containers marked as "doNotMirror"
             if (p['semapps:doNotMirror']) continue;
 
             const rep = await fetch(p['void:uriSpace'], {
               method: 'GET',
               headers: {
-                Accept: 'text/turtle'
+                Accept: 'application/ld+json'
               }
             });
 
             if (rep.ok) {
-              const container = await rep.text();
+              const container = await rep.json();
+              const containerUri = getId(container);
 
-              const prefixes = [...container.matchAll(regexPrefix)];
+              this.logger.info(`Storing remote container ${containerUri}...`);
 
-              let sparqlQuery = '';
-              for (const pref of prefixes) {
-                sparqlQuery += `PREFIX ${pref[1]}\n`;
+              // Don't use ldp.container.create to avoid side effects
+              await ctx.call('triplestore.update', {
+                query: `
+                  PREFIX ldp: <http://www.w3.org/ns/ldp#>
+                  INSERT DATA {
+                    GRAPH <${containerUri}> {
+                      <${containerUri}> a ldp:Container, ldp:BasicContainer .
+                    }
+                  }
+                `,
+                webId: 'system'
+              });
+
+              for (const resource of arrayOf(container['ldp:contains'])) {
+                const resourceUri = getId(resource);
+                this.logger.info(`Storing remote resource ${resourceUri}...`);
+
+                await ctx.call('ldp.remote.store', { resource });
+
+                // Don't use ldp.container.attach to avoid side effects
+                await ctx.call('triplestore.update', {
+                  query: `
+                    PREFIX ldp: <http://www.w3.org/ns/ldp#>
+                    INSERT DATA {
+                      GRAPH <${containerUri}> {
+                        <${containerUri}> ldp:contains <${resourceUri}> .
+                      }
+                    }
+                  `,
+                  webId: 'system'
+                });
               }
-              sparqlQuery += `INSERT DATA { GRAPH <${this.settings.graphName}> { \n`;
-              sparqlQuery += container.replace(regexPrefix, '');
-              sparqlQuery += '} }';
-
-              await ctx.call('triplestore.update', { query: sparqlQuery });
             }
           }
         }
@@ -135,21 +155,32 @@ module.exports = {
         // Unmark any single mirrored resources that belong to this server we just mirrored
         // because we don't need to periodically watch them anymore
         const singles = await this.broker.call('triplestore.query', {
-          query: `SELECT DISTINCT ?s WHERE { 
-          GRAPH <${this.settings.graphName}> { 
-          ?s <http://semapps.org/ns/core#singleMirroredResource> <${serverUrl}> } }`
+          query: `
+            SELECT DISTINCT ?s 
+            WHERE { 
+              GRAPH ?g { 
+                ?s <http://semapps.org/ns/core#singleMirroredResource> <${serverUrl}> 
+              }
+            }
+          `,
+          webId: 'system'
         });
 
         for (const single of singles) {
           try {
             const resourceUri = single.s.value;
             await this.broker.call('triplestore.update', {
-              webId: 'system',
-              query: `DELETE WHERE { GRAPH <${this.settings.graphName}> { 
-              <${resourceUri}> <http://semapps.org/ns/core#singleMirroredResource> ?q. } }`
+              query: `
+                DELETE WHERE { 
+                  GRAPH ?g { 
+                    <${resourceUri}> <http://semapps.org/ns/core#singleMirroredResource> ?q . 
+                  }
+                }
+              `,
+              webId: 'system'
             });
           } catch (e) {
-            // fail silently
+            // Fail silently
           }
         }
 

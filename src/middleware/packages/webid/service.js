@@ -13,6 +13,7 @@ const WebIdService = {
     path: '/foaf/person',
     acceptedTypes: ['http://xmlns.com/foaf/0.1/Person'],
     podsContainer: false,
+    excludeFromMirror: true,
     // DereferenceMixin
     dereferencePlan: [
       {

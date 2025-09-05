@@ -223,11 +223,7 @@ module.exports = {
 
         const activity = await ctx.call('activitypub.activity.get', { resourceUri: activityUri });
 
-        console.log('before', activity);
-
         const activityWithId = objectCurrentToId(activity);
-
-        console.log('after', activityWithId);
 
         if (await ctx.call('ldp.remote.isRemote', { resourceUri: activityUri })) {
           await ctx.call('ldp.remote.store', {

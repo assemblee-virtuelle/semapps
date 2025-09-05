@@ -64,11 +64,6 @@ module.exports = {
     let oldTriples = await ctx.call('jsonld.parser.toQuads', { input: oldData });
     let newTriples = await ctx.call('jsonld.parser.toQuads', { input: resource });
 
-    // Filter out triples whose subject is not the resource itself
-    // We don't want to update or delete resources with IDs
-    oldTriples = this.filterOtherNamedNodes(oldTriples, resourceUri);
-    newTriples = this.filterOtherNamedNodes(newTriples, resourceUri);
-
     // blank nodes are convert to variable for sparql query (?variable)
     oldTriples = this.convertBlankNodesToVars(oldTriples);
     newTriples = this.convertBlankNodesToVars(newTriples);

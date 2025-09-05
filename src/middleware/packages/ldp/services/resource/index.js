@@ -17,7 +17,6 @@ module.exports = {
   settings: {
     baseUrl: null,
     podProvider: false,
-    mirrorGraphName: null,
     preferredViewForResource: null,
     binary: {
       maxSize: '50Mb'

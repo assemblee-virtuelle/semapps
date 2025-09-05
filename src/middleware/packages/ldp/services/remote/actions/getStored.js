@@ -13,7 +13,7 @@ module.exports = {
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
-    const { resourceUri, jsonContext, noGraph } = ctx.params;
+    const { resourceUri, jsonContext } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     const exist = await ctx.call('triplestore.document.exist', { documentUri: resourceUri });
@@ -36,18 +36,9 @@ module.exports = {
       webId
     });
 
-    // Frame the result using the correct context in order to have clean, consistent results
-    const result2 = await ctx.call('jsonld.parser.frame', {
+    return await ctx.call('jsonld.parser.frameAndEmbed', {
       input: result,
-      frame: {
-        '@context': jsonContext || (await ctx.call('jsonld.context.get')),
-        '@id': resourceUri
-      },
-      options: {
-        embed: '@once'
-      }
+      jsonContext: jsonContext || (await ctx.call('jsonld.context.get'))
     });
-
-    return result2;
   }
 };

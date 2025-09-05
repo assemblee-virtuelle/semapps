@@ -97,7 +97,7 @@ describe('LDP handling through API', () => {
   test('Get container', async () => {
     await expect(fetchServer(containerUri)).resolves.toMatchObject({
       json: {
-        '@type': ['ldp:Container', 'ldp:BasicContainer'],
+        '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
         'ldp:contains': [
           {
             '@id': resourceUri,
@@ -117,7 +117,7 @@ describe('LDP handling through API', () => {
       })
     ).resolves.toMatchObject({
       json: {
-        type: ['ldp:Container', 'ldp:BasicContainer'],
+        type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
         'ldp:contains': [
           {
             id: resourceUri,
@@ -234,7 +234,7 @@ describe('LDP handling through API', () => {
 
     await expect(fetchServer(containerUri)).resolves.toMatchObject({
       json: {
-        '@type': ['ldp:Container', 'ldp:BasicContainer'],
+        '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
         'ldp:contains': []
       }
     });
@@ -263,7 +263,7 @@ describe('LDP handling through API', () => {
 
     await expect(fetchServer(subContainerUri)).resolves.toMatchObject({
       json: {
-        '@type': ['ldp:Container', 'ldp:BasicContainer'],
+        '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
         'dc:title': 'Sub-resources',
         'dc:description': 'Used to test dynamic containers creation'
       }
@@ -291,7 +291,7 @@ describe('LDP handling through API', () => {
       'ldp:contains': [
         {
           '@id': subContainerUri,
-          '@type': ['ldp:Container', 'ldp:BasicContainer', 'ldp:Resource']
+          '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer', 'ldp:Resource'])
         }
       ]
     });
@@ -342,7 +342,7 @@ describe('LDP handling through API', () => {
 
     await expect(fetchServer(containerUri)).resolves.toMatchObject({
       json: {
-        '@type': ['ldp:Container', 'ldp:BasicContainer'],
+        '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
         'ldp:contains': []
       }
     });

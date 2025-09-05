@@ -1,7 +1,6 @@
 const fse = require('fs-extra');
 const path = require('path');
 const urlJoin = require('url-join');
-const Redis = require('ioredis');
 const { ServiceBroker } = require('moleculer');
 const { FULL_ACTOR_TYPES, RelayService } = require('@semapps/activitypub');
 const { AuthLocalService } = require('@semapps/auth');
@@ -11,7 +10,7 @@ const { pair } = require('@semapps/ontologies');
 const { MirrorService, ObjectsWatcherMiddleware } = require('@semapps/sync');
 const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
 const CONFIG = require('../config');
-const { dropDataset } = require('../utils');
+const { dropDataset, clearQueue } = require('../utils');
 
 const containers = [
   {
@@ -27,15 +26,12 @@ const containers = [
 ];
 
 const initialize = async (port, mainDataset, accountsDataset, queueServiceDb, serverToMirror) => {
+  const queueServiceUrl = `redis://localhost:6379/${queueServiceDb}`;
+
   // Clear datasets
   await dropDataset(mainDataset);
   await dropDataset(accountsDataset);
-
-  // Clear queue
-  const queueServiceUrl = `redis://localhost:6379/${queueServiceDb}`;
-  const redisClient = new Redis(queueServiceUrl);
-  const result = await redisClient.flushdb();
-  redisClient.disconnect();
+  await clearQueue(queueServiceUrl);
 
   // Remove all actors keys
   await fse.emptyDir(path.resolve(__dirname, './actors'));
@@ -77,7 +73,6 @@ const initialize = async (port, mainDataset, accountsDataset, queueServiceDb, se
       api: {
         port
       },
-      mirror: serverToMirror ? { servers: [serverToMirror] } : true,
       webid: {
         path: '/as/actor',
         acceptedTypes: [FULL_ACTOR_TYPES.PERSON, FULL_ACTOR_TYPES.APPLICATION]

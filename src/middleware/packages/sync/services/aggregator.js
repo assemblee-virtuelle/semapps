@@ -5,8 +5,7 @@ module.exports = {
   name: 'aggregator',
   mixins: [ActivitiesHandlerMixin],
   settings: {
-    acceptFollowOffers: true,
-    mirrorGraph: true
+    acceptFollowOffers: true
   },
   dependencies: ['activitypub.relay'],
   created() {
@@ -14,7 +13,6 @@ module.exports = {
       mixins: [SynchronizerService],
       settings: {
         podProvider: false,
-        mirrorGraph: this.settings.mirrorGraph,
         synchronizeContainers: false,
         attachToLocalContainers: true
       }

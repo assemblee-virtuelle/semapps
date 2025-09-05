@@ -16,11 +16,15 @@ const ActorService = {
   actions: {
     async get(ctx) {
       const { actorUri, webId } = ctx.params;
+      // Check if the actor is remote
       // If dataset is not in the meta, assume that actor is remote
-      if (ctx.meta.dataset && !(await ctx.call('ldp.remote.isRemote', { resourceUri: actorUri }))) {
+      if (
+        !(await ctx.call('ldp.remote.isRemote', { resourceUri: actorUri })) &&
+        (!this.settings.podProvider || ctx.meta.dataset)
+      ) {
         try {
           // Don't return immediately the promise, or we won't be able to catch errors
-          const actor = await ctx.call('ldp.resource.get', { resourceUri: actorUri, webId });
+          const actor = await ctx.call('webid.get', { resourceUri: actorUri, webId });
           return actor;
         } catch (e) {
           console.error(e);

@@ -25,7 +25,11 @@ const findParentContainers = async (ctx, resourceUri) => {
     query: `
       PREFIX ldp: <http://www.w3.org/ns/ldp#>
       SELECT ?container
-      WHERE { ?container ldp:contains <${resourceUri}> . }
+      WHERE { 
+        GRAPH ?g {
+          ?container ldp:contains <${resourceUri}> . 
+        }
+      }
     `,
     webId: 'system'
   });

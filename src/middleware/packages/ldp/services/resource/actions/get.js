@@ -1,6 +1,5 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { arrayOf } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
@@ -8,7 +7,6 @@ module.exports = {
     resourceUri: { type: 'string' },
     webId: { type: 'string', optional: true },
     accept: { type: 'string', optional: true },
-    noGraph: { type: 'boolean', default: false },
     jsonContext: {
       type: 'multi',
       rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
@@ -24,7 +22,7 @@ module.exports = {
     keys: ['resourceUri', 'jsonContext']
   },
   async handler(ctx) {
-    const { resourceUri, accept, noGraph, jsonContext } = ctx.params;
+    const { resourceUri, accept, jsonContext } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (accept && accept !== MIME_TYPES.JSON)
@@ -54,23 +52,9 @@ module.exports = {
       webId: 'system'
     });
 
-    const frame = { '@context': jsonContext || (await ctx.call('jsonld.context.get')) };
-
-    // If the graph contains only blank nodes, we want them to be embedded in the resource
-    // Otherwise we want this action to return a @graph with all resources
-    const graphWithBlankNodesOnly = arrayOf(result['@graph']).every(
-      node => node['@id'].startsWith('_:b') || node['@id'] === resourceUri
-    );
-
-    if (graphWithBlankNodesOnly || noGraph) frame['@id'] = resourceUri;
-
-    // Frame the result using the correct context in order to have clean, consistent results
-    return await ctx.call('jsonld.parser.frame', {
+    return await ctx.call('jsonld.parser.frameAndEmbed', {
       input: result,
-      frame,
-      options: {
-        embed: graphWithBlankNodesOnly || noGraph ? '@once' : '@never'
-      }
+      jsonContext: jsonContext || (await ctx.call('jsonld.context.get'))
     });
   }
 };

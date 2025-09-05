@@ -108,12 +108,11 @@ const OutboxService = {
           webId: 'system' // Post as system since there is no write permission to the activities container
         });
 
-        // Refetch because persisting has side-effects.
-        // And reattach capability for further processing (if present).
-        activity = {
-          ...(await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' })),
-          capability
-        };
+        // Refetch because persisting has side-effects
+        activity = await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' });
+
+        // Reattach capability for further processing
+        if (capability) activity.capability = capability;
       }
 
       try {

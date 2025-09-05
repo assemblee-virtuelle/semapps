@@ -6,7 +6,7 @@ const { DataFactory, Writer } = require('n3');
 
 const { quad, namedNode, literal, blankNode } = DataFactory;
 const { MoleculerError } = require('moleculer').Errors;
-const { createFragmentURL, regexProtocolAndHostAndPort, arrayOf } = require('@semapps/ldp');
+const { createFragmentURL, arrayOf } = require('@semapps/ldp');
 const { parseHeader } = require('@semapps/middlewares');
 
 const prefixes = {
@@ -78,81 +78,10 @@ const addClassPartition = (serverUrl, partition, graph, scalar) => {
   graph.push({ s: namedNode(serverUrl), p: namedNode('http://rdfs.org/ns/void#classPartition'), o: blank });
 };
 
-const addMirrorServer = async (
-  baseUrl,
-  serverUrl,
-  graph,
-  hasSparql,
-  containers,
-  mirrorGraph,
-  ctx,
-  nextScalar,
-  originalVoid
-) => {
-  const thisServer = createFragmentURL(baseUrl, serverUrl);
-
-  graph.push({
-    s: namedNode(thisServer),
-    p: namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-    o: namedNode('http://rdfs.org/ns/void#Dataset')
-  });
-  // graph.push({
-  //   s: namedNode(thisServer),
-  //   p: namedNode('http://purl.org/dc/terms/modified'),
-  //   o: literal('2020-11-17', namedNode('http://www.w3.org/2001/XMLSchema#date'))
-  // });
-  graph.push({
-    s: namedNode(thisServer),
-    p: namedNode('http://rdfs.org/ns/void#feature'),
-    o: namedNode('http://www.w3.org/ns/formats/N-Triples')
-  });
-  graph.push({ s: namedNode(thisServer), p: namedNode('http://rdfs.org/ns/void#uriSpace'), o: literal(serverUrl) });
-
-  if (hasSparql)
-    graph.push({
-      s: namedNode(thisServer),
-      p: namedNode('http://rdfs.org/ns/void#sparqlEndpoint'),
-      o: namedNode(hasSparql)
-    });
-
-  const partitionsMap = {};
-  if (originalVoid) {
-    const originalPartitions = originalVoid['void:classPartition'];
-
-    if (originalPartitions) {
-      for (const p of arrayOf(originalPartitions)) {
-        // we skip empty containers and doNotMirror containers
-        if (p['void:entities'] === '0' || p['semapps:doNotMirror']) continue;
-        partitionsMap[p['void:uriSpace']] = p;
-      }
-    }
-  }
-
-  for (const [i, p] of containers.entries()) {
-    const types = await ctx.call('triplestore.query', {
-      query: `SELECT DISTINCT ?t FROM <${mirrorGraph}> { <${p}> <http://www.w3.org/ns/ldp#contains> ?o. ?o <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?t }`
-    });
-
-    const partition = {
-      'http://rdfs.org/ns/void#uriSpace': p,
-      'http://rdfs.org/ns/void#class': types.map(type => type.t.value)
-    };
-
-    const count = await ctx.call('triplestore.query', {
-      query: `SELECT (COUNT (?o) as ?count) FROM <${mirrorGraph}> { <${p}> <http://www.w3.org/ns/ldp#contains> ?o }`
-    });
-
-    partition['http://rdfs.org/ns/void#entities'] = Number(count[0].count.value);
-
-    addClassPartition(thisServer, partition, graph, nextScalar + i);
-  }
-};
-
 module.exports = {
   name: 'void',
   settings: {
     baseUrl: null,
-    mirrorGraphName: 'http://semapps.org/mirror',
     title: null,
     description: null,
     license: null
@@ -210,8 +139,6 @@ module.exports = {
 
         const { origin } = new URL(this.settings.baseUrl);
         const url = urlJoin(origin, '.well-known/void');
-
-        // first we compile the local data void information (local containers)
 
         const thisServer = createFragmentURL(url, this.settings.baseUrl);
 
@@ -285,53 +212,6 @@ module.exports = {
 
         for (const [i, p] of partitions.entries()) {
           addClassPartition(thisServer, p, graph, i);
-        }
-        let scalar = partitions.length;
-
-        // then we move on to the mirrored data (containers that have been mirrored from remote servers)
-
-        const serversContainers = await ctx.call('triplestore.query', {
-          query: `SELECT DISTINCT ?s FROM <${this.settings.mirrorGraphName}> { ?s <http://www.w3.org/ns/ldp#contains> ?o }`
-        });
-
-        const serversMap = {};
-        for (const s of serversContainers.map(sc => sc.s.value)) {
-          const res = s.match(regexProtocolAndHostAndPort);
-          if (res) {
-            const name = urlJoin(res[0], '/');
-            let serverName = serversMap[name];
-            if (!serverName) {
-              serversMap[name] = [];
-              serverName = serversMap[name];
-            }
-            serverName.push(s);
-          }
-        }
-
-        for (const serverUrl of Object.keys(serversMap)) {
-          let originalVoid;
-          const json = await ctx.call('void.getRemote', { serverUrl });
-          if (json) {
-            const mapServers = {};
-            for (const s of json['@graph']) {
-              mapServers[s['@id']] = s;
-            }
-            const server = mapServers[createFragmentURL('', serverUrl)];
-            originalVoid = server;
-          }
-
-          await addMirrorServer(
-            url,
-            serverUrl,
-            graph,
-            hasSparql,
-            serversMap[serverUrl],
-            this.settings.mirrorGraphName,
-            ctx,
-            scalar,
-            originalVoid
-          );
-          scalar += serversMap[serverUrl].length;
         }
 
         ctx.meta.$responseType = accept;

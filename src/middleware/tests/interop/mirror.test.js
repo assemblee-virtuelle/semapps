@@ -105,7 +105,8 @@ describe('Server2 mirror server1', () => {
           namedNode('http://www.w3.org/ns/ldp#contains'),
           namedNode(resourceUri)
         )
-      ]
+      ],
+      webId: 'system'
     });
 
     await waitForExpect(async () => {

@@ -131,7 +131,7 @@ const CoreService = {
         mixins: this.settings.ldp.documentTagger !== false ? [DocumentTaggerMixin, LdpService] : [LdpService],
         settings: {
           baseUrl,
-          containers: containers || (this.settings.mirror !== false ? [botsContainer] : []),
+          containers: containers || [botsContainer],
           ...this.settings.ldp
         }
       });

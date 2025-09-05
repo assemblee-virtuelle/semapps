@@ -45,7 +45,7 @@ describe('Binary handling of LDP server', () => {
   test('Get container', async () => {
     await expect(fetchServer(urlJoin(CONFIG.HOME_URL, 'files'))).resolves.toMatchObject({
       json: {
-        '@type': ['ldp:Container', 'ldp:BasicContainer'],
+        '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
         'ldp:contains': [
           {
             '@id': fileUri,
@@ -100,7 +100,7 @@ describe('Binary handling of LDP server', () => {
 
     await expect(fetchServer(urlJoin(CONFIG.HOME_URL, 'files'))).resolves.toMatchObject({
       json: {
-        '@type': ['ldp:Container', 'ldp:BasicContainer'],
+        '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
         'ldp:contains': []
       }
     });

@@ -30,7 +30,7 @@ module.exports = {
     await ctx.call('triplestore.document.clear', { documentUri: resourceUri });
     await ctx.call('triplestore.document.delete', { documentUri: resourceUri });
 
-    // Detach from all containers with the mirrored resource
+    // Detach from all containers
     const containers = await ctx.call('ldp.resource.getContainers', { resourceUri });
     for (const containerUri of containers) {
       await ctx.call('ldp.container.detach', { containerUri, resourceUri, webId: 'system' });
