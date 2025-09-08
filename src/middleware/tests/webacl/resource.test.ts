@@ -1,12 +1,9 @@
-const { namedNode, triple, literal } = require('@rdfjs/data-model');
-const CONFIG = require('../config');
-const initialize = require('./initialize');
-
+import { namedNode, triple, literal } from '@rdfjs/data-model';
+import CONFIG from '../config.ts';
+import initialize from './initialize.ts';
 jest.setTimeout(20000);
-
 const ALICE_WEBID = 'http://localhost:3000/alice';
 const BOB_WEBID = 'http://localhost:3000/bob';
-
 let broker;
 
 beforeAll(async () => {

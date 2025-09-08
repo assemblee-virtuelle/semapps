@@ -1,14 +1,14 @@
-const { ServiceBroker } = require('moleculer');
-const fs = require('fs');
-const { join: pathJoin } = require('path');
-const { CoreService } = require('@semapps/core');
-const { pair, petr } = require('@semapps/ontologies');
-const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
-const { AuthLocalService } = require('@semapps/auth');
-const { ControlledContainerMixin } = require('@semapps/ldp');
-const path = require('path');
-const CONFIG = require('../config');
-const { dropDataset } = require('../utils');
+import { ServiceBroker, defineAction } from 'moleculer';
+import fs from 'fs';
+import { join as pathJoin } from 'path';
+import { CoreService } from '@semapps/core';
+import { pair, petr } from '@semapps/ontologies';
+import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
+import { AuthLocalService } from '@semapps/auth';
+import { ControlledContainerMixin } from '@semapps/ldp';
+import path from 'path';
+import CONFIG from '../config.ts';
+import { dropDataset } from '../utils.ts';
 
 // Give write permission on all containers to anonymous users
 const permissions = {
@@ -97,21 +97,23 @@ const initialize = async () => {
   });
 
   broker.createService({
-    name: 'event',
+    name: 'event' as const,
     mixins: [ControlledContainerMixin],
     settings: {
       acceptedTypes: ['pair:Event'],
       permissions
     },
     actions: {
-      getHeaderLinks() {
-        return [
-          {
-            uri: 'http://foo.bar',
-            rel: 'http://foo.baz'
-          }
-        ];
-      }
+      getHeaderLinks: defineAction({
+        handler() {
+          return [
+            {
+              uri: 'http://foo.bar',
+              rel: 'http://foo.baz'
+            }
+          ];
+        }
+      })
     }
   });
 
@@ -120,4 +122,4 @@ const initialize = async () => {
   return broker;
 };
 
-module.exports = initialize;
+export default initialize;

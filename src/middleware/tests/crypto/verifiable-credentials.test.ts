@@ -1,7 +1,6 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
-const path = require('node:path');
-const initialize = require('./initialize');
-
+import { MIME_TYPES } from '@semapps/mime-types';
+import path from 'node:path';
+import initialize from './initialize.ts';
 jest.setTimeout(45_000);
 
 const getChallengeFrom = async actor => {
@@ -11,6 +10,7 @@ const getChallengeFrom = async actor => {
 
 /** @type {import('moleculer').ServiceBroker} */
 let broker;
+
 let baseUrl;
 let vcApiEndpoint;
 let alice;
@@ -46,6 +46,7 @@ const setUpUser = async (broker, username) => {
 
   return user;
 };
+
 const setUp = async withOldKeyStore => {
   ({ broker, baseUrl } = await initialize(3000, withOldKeyStore));
   vcApiEndpoint = path.join(baseUrl, 'vc/v0.3/');

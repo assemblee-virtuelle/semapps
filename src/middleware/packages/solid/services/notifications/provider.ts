@@ -1,10 +1,11 @@
-const QueueMixin = require('moleculer-bull');
-const { notify } = require('@semapps/ontologies');
-const WebhookChannelService = require('./channels/webhook-channel');
-const WebSocketChannelService = require('./channels/websocket-channel');
+import QueueMixin from 'moleculer-bull';
+import { notify } from '@semapps/ontologies';
+import WebhookChannelService from './channels/webhook-channel.ts';
+import WebSocketChannelService from './channels/websocket-channel.ts';
+import { ServiceSchema } from 'moleculer';
 
-module.exports = {
-  name: 'solid-notifications.provider',
+const SolidNotificationsProviderSchema = {
+  name: 'solid-notifications.provider' as const,
   settings: {
     baseUrl: null,
     settingsDataset: null,
@@ -24,7 +25,7 @@ module.exports = {
 
     if (channels.webhook) {
       this.broker.createService({
-        name: 'solid-notifications.provider.webhook',
+        name: 'solid-notifications.provider.webhook' as const,
         mixins: [WebhookChannelService, QueueMixin(queueServiceUrl)],
         settings: { baseUrl, settingsDataset }
       });
@@ -32,7 +33,7 @@ module.exports = {
 
     if (channels.websocket) {
       this.broker.createService({
-        name: 'solid-notifications.provider.websocket',
+        name: 'solid-notifications.provider.websocket' as const,
         mixins: [WebSocketChannelService],
         settings: { baseUrl, settingsDataset }
       });
@@ -41,4 +42,14 @@ module.exports = {
   async started() {
     await this.broker.call('ontologies.register', notify);
   }
-};
+} satisfies ServiceSchema;
+
+export default SolidNotificationsProviderSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [SolidNotificationsProviderSchema.name]: typeof SolidNotificationsProviderSchema;
+    }
+  }
+}

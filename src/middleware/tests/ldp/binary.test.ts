@@ -1,18 +1,18 @@
-const fetch = require('node-fetch');
-const fs = require('fs');
-const { join: pathJoin } = require('path');
-const urlJoin = require('url-join');
-const { getSlugFromUri } = require('@semapps/ldp');
-const { fetchServer } = require('../utils');
-const initialize = require('./initialize');
-const CONFIG = require('../config');
-
+import fetch from 'node-fetch';
+import fs from 'fs';
+import { join as pathJoin } from 'path';
+import urlJoin from 'url-join';
+import { getSlugFromUri } from '@semapps/ldp';
+import { fetchServer } from '../utils.ts';
+import initialize from './initialize.ts';
+import CONFIG from '../config.ts';
 jest.setTimeout(20000);
 let broker;
 
 beforeAll(async () => {
   broker = await initialize();
 });
+
 afterAll(async () => {
   if (broker) await broker.stop();
 });

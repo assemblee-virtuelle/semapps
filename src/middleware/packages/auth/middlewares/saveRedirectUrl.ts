@@ -6,4 +6,4 @@ const saveRedirectUrl = (req, res, next) => {
   next();
 };
 
-module.exports = saveRedirectUrl;
+export default saveRedirectUrl;

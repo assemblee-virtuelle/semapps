@@ -1,13 +1,10 @@
-const urlJoin = require('url-join');
-const { getSlugFromUri } = require('@semapps/ldp');
-const { fetchServer } = require('../utils');
-const CONFIG = require('../config');
-const initialize = require('./initialize');
-
+import urlJoin from 'url-join';
+import { getSlugFromUri } from '@semapps/ldp';
+import { fetchServer } from '../utils.ts';
+import CONFIG from '../config.ts';
+import initialize from './initialize.ts';
 jest.setTimeout(20000);
-
 const ALICE_WEBID = 'http://localhost:3000/alice';
-
 let broker;
 
 beforeAll(async () => {

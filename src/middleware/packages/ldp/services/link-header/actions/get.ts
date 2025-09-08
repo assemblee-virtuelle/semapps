@@ -1,6 +1,7 @@
-const LinkHeader = require('http-link-header');
+import LinkHeader from 'http-link-header';
+import { defineAction } from 'moleculer';
 
-module.exports = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     uri: { type: 'string' }
@@ -32,4 +33,6 @@ module.exports = {
 
     return linkHeader.toString();
   }
-};
+});
+
+export default Schema;

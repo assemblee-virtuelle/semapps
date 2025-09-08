@@ -1,4 +1,6 @@
-module.exports = {
+import { defineAction } from 'moleculer';
+
+const Schema = defineAction({
   visibility: 'public',
   cache: true,
   async handler(ctx) {
@@ -25,4 +27,6 @@ module.exports = {
       '@context': context
     };
   }
-};
+});
+
+export default Schema;

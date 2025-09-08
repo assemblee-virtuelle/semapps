@@ -1,8 +1,9 @@
-const getAction = require('./actions/get');
-const registerAction = require('./actions/register');
+import getAction from './actions/get.ts';
+import registerAction from './actions/register.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
-module.exports = {
-  name: 'ldp.link-header',
+const LdpLinkHeaderSchema = {
+  name: 'ldp.link-header' as const,
   actions: {
     get: getAction,
     register: registerAction
@@ -10,4 +11,14 @@ module.exports = {
   async started() {
     this.registeredActionNames = [];
   }
-};
+} satisfies ServiceSchema;
+
+export default LdpLinkHeaderSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [LdpLinkHeaderSchema.name]: typeof LdpLinkHeaderSchema;
+    }
+  }
+}

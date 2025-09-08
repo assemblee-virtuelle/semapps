@@ -1,10 +1,10 @@
-const {
+import {
   parseHeader,
   parseRawBody,
   negotiateAccept,
   saveDatasetMeta,
   negotiateContentType
-} = require('@semapps/middlewares');
+} from '@semapps/middlewares';
 
 const middlewares = [parseHeader, negotiateAccept, negotiateContentType, parseRawBody, saveDatasetMeta];
 
@@ -35,4 +35,4 @@ function getRoute(path) {
   };
 }
 
-module.exports = getRoute;
+export default getRoute;

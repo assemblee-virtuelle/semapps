@@ -1,11 +1,8 @@
-const CONFIG = require('../config');
-const initialize = require('./initialize');
-
+import CONFIG from '../config.ts';
+import initialize from './initialize.ts';
 jest.setTimeout(20000);
-
 const ALICE_WEBID = 'http://localhost:3000/alice';
 const BOB_WEBID = 'http://localhost:3000/bob';
-
 let broker;
 
 beforeAll(async () => {

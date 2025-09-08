@@ -1,9 +1,16 @@
-module.exports = {
-  AuthorizerService: require('./services/authorizer'),
-  EndpointService: require('./services/endpoint'),
-  NotificationsProviderService: require('./services/notifications/provider'),
-  NotificationsListenerService: require('./services/notifications/listener'),
-  PreferencesFileService: require('./services/preferences-file'),
-  StorageService: require('./services/storage'),
-  TypeIndexesService: require('./services/type-index/type-indexes')
+import AuthorizerService from './services/authorizer.ts';
+import EndpointService from './services/endpoint.ts';
+import NotificationsProviderService from './services/notifications/provider.ts';
+import NotificationsListenerService from './services/notifications/listener.ts';
+import PreferencesFileService from './services/preferences-file.ts';
+import StorageService from './services/storage.ts';
+import TypeIndexesService from './services/type-index/type-indexes.ts';
+export {
+  AuthorizerService,
+  EndpointService,
+  NotificationsProviderService,
+  NotificationsListenerService,
+  PreferencesFileService,
+  StorageService,
+  TypeIndexesService
 };

@@ -1,10 +1,9 @@
-const urlJoin = require('url-join');
-const fetch = require('node-fetch');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { fetchServer } = require('../utils');
-const CONFIG = require('../config');
-const initialize = require('./initialize');
-
+import urlJoin from 'url-join';
+import fetch from 'node-fetch';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { fetchServer } from '../utils.ts';
+import CONFIG from '../config.ts';
+import initialize from './initialize.ts';
 jest.setTimeout(20000);
 let broker;
 

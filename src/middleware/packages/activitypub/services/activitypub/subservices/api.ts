@@ -1,7 +1,8 @@
-const urlJoin = require('url-join');
-const path = require('path');
-const { arrayOf } = require('@semapps/ldp');
-const {
+import urlJoin from 'url-join';
+import path from 'path';
+import { arrayOf } from '@semapps/ldp';
+
+import {
   parseUrl,
   parseHeader,
   parseRawBody,
@@ -10,11 +11,13 @@ const {
   parseJson,
   parseFile,
   saveDatasetMeta
-} = require('@semapps/middlewares');
-const { FULL_ACTOR_TYPES } = require('../../../constants');
+} from '@semapps/middlewares';
+
+import { FULL_ACTOR_TYPES } from '../../../constants.ts';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 
 const ApiService = {
-  name: 'activitypub.api',
+  name: 'activitypub.api' as const,
   settings: {
     baseUri: null,
     podProvider: false
@@ -43,54 +46,61 @@ const ApiService = {
     }
   },
   actions: {
-    async inbox(ctx) {
-      const { actorSlug, ...activity } = ctx.params;
-      const { requestUrl } = ctx.meta;
-      const { origin } = new URL(this.settings.baseUri);
+    inbox: defineAction({
+      async handler(ctx) {
+        const { actorSlug, ...activity } = ctx.params;
+        const { requestUrl } = ctx.meta;
+        const { origin } = new URL(this.settings.baseUri);
 
-      await ctx.call('activitypub.inbox.post', {
-        collectionUri: urlJoin(origin, requestUrl),
-        ...activity
-      });
+        await ctx.call('activitypub.inbox.post', {
+          collectionUri: urlJoin(origin, requestUrl),
+          ...activity
+        });
 
-      ctx.meta.$statusCode = 202;
-    },
-    async outbox(ctx) {
-      let { actorSlug, ...activity } = ctx.params;
-      const { requestUrl } = ctx.meta;
-      const { origin } = new URL(this.settings.baseUri);
+        ctx.meta.$statusCode = 202;
+      }
+    }),
 
-      activity = await ctx.call('activitypub.outbox.post', {
-        collectionUri: urlJoin(origin, requestUrl),
-        ...activity
-      });
+    outbox: defineAction({
+      async handler(ctx) {
+        let { actorSlug, ...activity } = ctx.params;
+        const { requestUrl } = ctx.meta;
+        const { origin } = new URL(this.settings.baseUri);
 
-      ctx.meta.$responseHeaders = {
-        Location: activity.id || activity['@id'],
-        'Content-Length': 0
-      };
-      // We need to set this also here (in addition to above) or we get a Moleculer warning
-      ctx.meta.$location = activity.id || activity['@id'];
-      ctx.meta.$statusCode = 201;
-    }
+        activity = await ctx.call('activitypub.outbox.post', {
+          collectionUri: urlJoin(origin, requestUrl),
+          ...activity
+        });
+
+        ctx.meta.$responseHeaders = {
+          Location: activity.id || activity['@id'],
+          'Content-Length': 0
+        };
+        // We need to set this also here (in addition to above) or we get a Moleculer warning
+        ctx.meta.$location = activity.id || activity['@id'];
+        ctx.meta.$statusCode = 201;
+      }
+    })
   },
   events: {
-    async 'ldp.registry.registered'(ctx) {
-      const { container } = ctx.params;
-      const { pathname: basePath } = new URL(this.settings.baseUri);
-      const resourcesWithContainerPath = await this.broker.call('ldp.getSetting', {
-        key: 'resourcesWithContainerPath'
-      });
-      if (
-        !this.settings.podProvider &&
-        resourcesWithContainerPath &&
-        arrayOf(container.acceptedTypes).some(type => Object.values(FULL_ACTOR_TYPES).includes(type))
-      ) {
-        await ctx.call('api.addRoute', {
-          route: this.getBoxesRoute(path.join(basePath, `${container.fullPath}/:actorSlug`))
+    'ldp.registry.registered': defineServiceEvent({
+      async handler(ctx) {
+        const { container } = ctx.params;
+        const { pathname: basePath } = new URL(this.settings.baseUri);
+        const resourcesWithContainerPath = await this.broker.call('ldp.getSetting', {
+          key: 'resourcesWithContainerPath'
         });
+        if (
+          !this.settings.podProvider &&
+          resourcesWithContainerPath &&
+          arrayOf(container.acceptedTypes).some(type => Object.values(FULL_ACTOR_TYPES).includes(type))
+        ) {
+          await ctx.call('api.addRoute', {
+            route: this.getBoxesRoute(path.join(basePath, `${container.fullPath}/:actorSlug`))
+          });
+        }
       }
-    }
+    })
   },
   methods: {
     getBoxesRoute(actorsPath) {
@@ -120,6 +130,14 @@ const ApiService = {
       };
     }
   }
-};
+} satisfies ServiceSchema;
 
-module.exports = ApiService;
+export default ApiService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [ApiService.name]: typeof ApiService;
+    }
+  }
+}

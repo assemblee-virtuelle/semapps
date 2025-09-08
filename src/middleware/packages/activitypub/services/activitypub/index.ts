@@ -1,22 +1,23 @@
-const QueueMixin = require('moleculer-bull');
-const { as, sec } = require('@semapps/ontologies');
-const ActorService = require('./subservices/actor');
-const ActivityService = require('./subservices/activity');
-const ApiService = require('./subservices/api');
-const CollectionService = require('./subservices/collection');
-const FollowService = require('./subservices/follow');
-const InboxService = require('./subservices/inbox');
-const LikeService = require('./subservices/like');
-const ObjectService = require('./subservices/object');
-const OutboxService = require('./subservices/outbox');
-const CollectionsRegistryService = require('./subservices/collections-registry');
-const ReplyService = require('./subservices/reply');
-const ShareService = require('./subservices/share');
-const SideEffectsService = require('./subservices/side-effects');
-const FakeQueueMixin = require('../../mixins/fake-queue');
+import QueueMixin from 'moleculer-bull';
+import { as, sec } from '@semapps/ontologies';
+import ActorService from './subservices/actor.ts';
+import ActivityService from './subservices/activity.ts';
+import ApiService from './subservices/api.ts';
+import CollectionService from './subservices/collection/index.ts';
+import FollowService from './subservices/follow.ts';
+import InboxService from './subservices/inbox.ts';
+import LikeService from './subservices/like.ts';
+import ObjectService from './subservices/object.ts';
+import OutboxService from './subservices/outbox.ts';
+import CollectionsRegistryService from './subservices/collections-registry.ts';
+import ReplyService from './subservices/reply.ts';
+import ShareService from './subservices/share.ts';
+import SideEffectsService from './subservices/side-effects.ts';
+import FakeQueueMixin from '../../mixins/fake-queue.ts';
+import { ServiceSchema } from 'moleculer';
 
 const ActivityPubService = {
-  name: 'activitypub',
+  name: 'activitypub' as const,
   settings: {
     baseUri: null,
     podProvider: false,
@@ -144,6 +145,14 @@ const ActivityPubService = {
     await this.broker.call('ontologies.register', as);
     await this.broker.call('ontologies.register', sec);
   }
-};
+} satisfies ServiceSchema;
 
-module.exports = ActivityPubService;
+export default ActivityPubService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [ActivityPubService.name]: typeof ActivityPubService;
+    }
+  }
+}

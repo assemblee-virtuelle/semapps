@@ -1,6 +1,1 @@
-module.exports = {
-  visibility: 'public',
-  handler() {
-    return this.registeredContainers;
-  }
-};
+export const visibility = 'public';

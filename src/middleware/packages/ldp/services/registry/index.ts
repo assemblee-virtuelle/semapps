@@ -1,13 +1,14 @@
-const urlJoin = require('url-join');
-const getByTypeAction = require('./actions/getByType');
-const getByUriAction = require('./actions/getByUri');
-const getUriAction = require('./actions/getUri');
-const listAction = require('./actions/list');
-const registerAction = require('./actions/register');
-const defaultOptions = require('./defaultOptions');
+import urlJoin from 'url-join';
+import getByTypeAction from './actions/getByType.ts';
+import getByUriAction from './actions/getByUri.ts';
+import getUriAction from './actions/getUri.ts';
+import listAction from './actions/list.ts';
+import registerAction from './actions/register.ts';
+import defaultOptions from './defaultOptions.ts';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 
-module.exports = {
-  name: 'ldp.registry',
+const LdpRegistrySchema = {
+  name: 'ldp.registry' as const,
   settings: {
     baseUrl: null,
     containers: [],
@@ -36,21 +37,33 @@ module.exports = {
     }
   },
   events: {
-    async 'auth.registered'(ctx) {
-      const { webId, accountData } = ctx.params;
-      // We want to add user's containers only in Pod provider config
-      if (this.settings.podProvider) {
-        const storageUrl = await ctx.call('solid-storage.getUrl', { webId });
-        const registeredContainers = await this.actions.list({ dataset: accountData.username }, { parentCtx: ctx });
-        // Go through each registered containers
-        for (const options of Object.values(registeredContainers)) {
-          await ctx.call('ldp.container.createAndAttach', {
-            containerUri: urlJoin(storageUrl, options.path),
-            options,
-            webId
-          });
+    'auth.registered': defineServiceEvent({
+      async handler(ctx) {
+        const { webId, accountData } = ctx.params;
+        // We want to add user's containers only in Pod provider config
+        if (this.settings.podProvider) {
+          const storageUrl = await ctx.call('solid-storage.getUrl', { webId });
+          const registeredContainers = await this.actions.list({ dataset: accountData.username }, { parentCtx: ctx });
+          // Go through each registered containers
+          for (const options of Object.values(registeredContainers)) {
+            await ctx.call('ldp.container.createAndAttach', {
+              containerUri: urlJoin(storageUrl, options.path),
+              options,
+              webId
+            });
+          }
         }
       }
+    })
+  }
+} satisfies ServiceSchema;
+
+export default LdpRegistrySchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [LdpRegistrySchema.name]: typeof LdpRegistrySchema;
     }
   }
-};
+}

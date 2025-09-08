@@ -1,4 +1,6 @@
-module.exports = {
+import { defineAction } from 'moleculer';
+
+const Schema = defineAction({
   visibility: 'public',
   params: {
     containerUri: { type: 'string' }
@@ -12,4 +14,6 @@ module.exports = {
       (await ctx.call('triplestore.document.exist', { documentUri: `${containerUri}/` }))
     );
   }
-};
+});
+
+export default Schema;

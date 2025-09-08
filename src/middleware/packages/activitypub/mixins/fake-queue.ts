@@ -27,4 +27,4 @@ const FakeQueueMixin = {
   }
 };
 
-module.exports = FakeQueueMixin;
+export default FakeQueueMixin;

@@ -1,13 +1,18 @@
-const { randomUUID } = require('node:crypto');
+import { randomUUID } from 'node:crypto';
+
 const {
   purposes: { AuthenticationProofPurpose }
 } = require('jsonld-signatures');
-const { cryptosuite } = require('@digitalbazaar/eddsa-rdfc-2022-cryptosuite');
-const { DataIntegrityProof } = require('@digitalbazaar/data-integrity');
-const vc = require('@digitalbazaar/vc');
+
+import { cryptosuite } from '@digitalbazaar/eddsa-rdfc-2022-cryptosuite';
+import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
+import vc from '@digitalbazaar/vc';
+
 /** @type {import('@digitalbazaar/ed25519-multikey')} */
-const Ed25519Multikey = require('@digitalbazaar/ed25519-multikey');
-const { KEY_TYPES, credentialsContext } = require('../constants');
+import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
+
+import { KEY_TYPES, credentialsContext } from '../constants.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 /**
  * Service for verifying and creating Verifiable Presentations
@@ -19,7 +24,7 @@ const { KEY_TYPES, credentialsContext } = require('../constants');
  * @type {import('moleculer').ServiceSchema}
  */
 const VCHolderService = {
-  name: 'crypto.vc.holder',
+  name: 'crypto.vc.holder' as const,
   dependencies: ['jsonld', 'jsonld.context'],
   async started() {
     this.documentLoader = async (url, options) => {
@@ -33,7 +38,7 @@ const VCHolderService = {
      * @param {object} ctx.params - The parameters for creating the presentation.
      * @returns {object} The signed presentation.
      */
-    createPresentation: {
+    createPresentation: defineAction({
       params: {
         presentation: {
           type: 'object',
@@ -120,7 +125,7 @@ const VCHolderService = {
 
         return signedPresentation;
       }
-    }
+    })
   },
 
   methods: {
@@ -159,6 +164,14 @@ const VCHolderService = {
       return resource;
     }
   }
-};
+} satisfies ServiceSchema;
 
-module.exports = VCHolderService;
+export default VCHolderService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [VCHolderService.name]: typeof VCHolderService;
+    }
+  }
+}

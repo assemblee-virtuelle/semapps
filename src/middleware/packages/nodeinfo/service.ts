@@ -1,8 +1,9 @@
-const path = require('path');
-const urlJoin = require('url-join');
+import path from 'path';
+import urlJoin from 'url-join';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 const NodeinfoService = {
-  name: 'nodeinfo',
+  name: 'nodeinfo' as const,
   settings: {
     baseUrl: null,
     software: {
@@ -57,36 +58,55 @@ const NodeinfoService = {
     });
   },
   actions: {
-    addLink(ctx) {
-      const { rel, href } = ctx.params;
-      this.links.push({ rel, href });
-    },
-    getLinks() {
-      return {
-        links: this.links
-      };
-    },
-    async getSchema(ctx) {
-      const users = await this.actions.getUsersCount({}, { parentCtx: ctx });
-      return {
-        version: '2.1',
-        software: this.settings.software,
-        protocols: this.settings.protocols,
-        services: this.settings.services,
-        openRegistrations: this.settings.openRegistrations,
-        usage: { users },
-        metadata: this.settings.metadata
-      };
-    },
-    // Overwrite this method to return your users count
-    async getUsersCount() {
-      return {
-        total: 0,
-        activeHalfYear: 0,
-        activeMonth: 0
-      };
+    addLink: defineAction({
+      handler(ctx) {
+        const { rel, href } = ctx.params;
+        this.links.push({ rel, href });
+      }
+    }),
+
+    getLinks: defineAction({
+      handler() {
+        return {
+          links: this.links
+        };
+      }
+    }),
+
+    getSchema: defineAction({
+      async handler(ctx) {
+        const users = await this.actions.getUsersCount({}, { parentCtx: ctx });
+        return {
+          version: '2.1',
+          software: this.settings.software,
+          protocols: this.settings.protocols,
+          services: this.settings.services,
+          openRegistrations: this.settings.openRegistrations,
+          usage: { users },
+          metadata: this.settings.metadata
+        };
+      }
+    }),
+
+    getUsersCount: defineAction({
+      // Overwrite this method to return your users count
+      async handler() {
+        return {
+          total: 0,
+          activeHalfYear: 0,
+          activeMonth: 0
+        };
+      }
+    })
+  }
+} satisfies ServiceSchema;
+
+export default NodeinfoService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [NodeinfoService.name]: typeof NodeinfoService;
     }
   }
-};
-
-module.exports = NodeinfoService;
+}

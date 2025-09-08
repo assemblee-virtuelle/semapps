@@ -1,6 +1,7 @@
-const fs = require('fs');
+import fs from 'fs';
+import { defineAction } from 'moleculer';
 
-module.exports = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     resourceUri: 'string',
@@ -65,4 +66,6 @@ module.exports = {
 
     return returnValues;
   }
-};
+});
+
+export default Schema;

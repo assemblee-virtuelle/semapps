@@ -1,12 +1,13 @@
-const { acl, vcard, rdfs } = require('@semapps/ontologies');
-const WebAclResourceService = require('./services/resource');
-const WebAclCacheService = require('./services/cache');
-const WebAclGroupService = require('./services/group');
-const WebAclAuthorizerService = require('./services/authorizer');
-const getRoutes = require('./routes/getRoutes');
+import { acl, vcard, rdfs } from '@semapps/ontologies';
+import WebAclResourceService from './services/resource/index.ts';
+import WebAclCacheService from './services/cache/index.ts';
+import WebAclGroupService from './services/group/index.ts';
+import WebAclAuthorizerService from './services/authorizer/index.ts';
+import getRoutes from './routes/getRoutes.ts';
+import { ServiceSchema } from 'moleculer';
 
-module.exports = {
-  name: 'webacl',
+const WebaclSchema = {
+  name: 'webacl' as const,
   settings: {
     baseUrl: null,
     graphName: 'http://semapps.org/webacl',
@@ -54,4 +55,14 @@ module.exports = {
     await this.broker.call('ontologies.register', vcard);
     await this.broker.call('ontologies.register', rdfs);
   }
-};
+} satisfies ServiceSchema;
+
+export default WebaclSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [WebaclSchema.name]: typeof WebaclSchema;
+    }
+  }
+}

@@ -1,6 +1,7 @@
-const { sanitizeSparqlQuery } = require('@semapps/triplestore');
+import { sanitizeSparqlQuery } from '@semapps/triplestore';
+import { defineAction } from 'moleculer';
 
-module.exports = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     containerUri: 'string',
@@ -48,4 +49,6 @@ module.exports = {
 
     return returnValues;
   }
-};
+});
+
+export default Schema;

@@ -77,7 +77,7 @@ const getValueFromDataType = result => {
   }
 };
 
-module.exports = {
+export {
   collectionPermissionsWithAnonRead,
   getSlugFromUri,
   getContainerFromUri,

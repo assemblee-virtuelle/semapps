@@ -1,9 +1,7 @@
-const urlJoin = require('url-join');
-const initialize = require('./initialize');
-const CONFIG = require('../config');
-
+import urlJoin from 'url-join';
+import initialize from './initialize.ts';
+import CONFIG from '../config.ts';
 jest.setTimeout(50000);
-
 let broker;
 
 beforeAll(async () => {

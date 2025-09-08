@@ -68,7 +68,4 @@ const TYPES_REPO = [
   }
 ];
 
-module.exports = {
-  MIME_TYPES,
-  TYPES_REPO
-};
+export { MIME_TYPES, TYPES_REPO };

@@ -1,7 +1,9 @@
+import { defineAction } from 'moleculer';
+
 /**
  * Find the container options for a container URI
  */
-module.exports = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     containerUri: { type: 'string', optional: true },
@@ -29,4 +31,6 @@ module.exports = {
     }
     return this.settings.defaultOptions;
   }
-};
+});
+
+export default Schema;

@@ -1,4 +1,4 @@
-const { CredentialIssuancePurpose } = require('@digitalbazaar/vc');
+import { CredentialIssuancePurpose } from '@digitalbazaar/vc';
 
 /**
  * VC purpose that is the same as the vc.CredentialIssuancePurpose but checks validFrom and validUntil.
@@ -41,4 +41,4 @@ class VCPurpose extends CredentialIssuancePurpose {
   }
 }
 
-module.exports = VCPurpose;
+export default VCPurpose;

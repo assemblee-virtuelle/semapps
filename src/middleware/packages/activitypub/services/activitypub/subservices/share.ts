@@ -1,10 +1,11 @@
-const ActivitiesHandlerMixin = require('../../../mixins/activities-handler');
-const { ACTIVITY_TYPES, OBJECT_TYPES } = require('../../../constants');
-const { collectionPermissionsWithAnonRead } = require('../../../utils');
-const matchActivity = require('../../../utils/matchActivity');
+import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
+import { ACTIVITY_TYPES, OBJECT_TYPES } from '../../../constants.ts';
+import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
+import matchActivity from '../../../utils/matchActivity.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 const ShareService = {
-  name: 'activitypub.share',
+  name: 'activitypub.share' as const,
   mixins: [ActivitiesHandlerMixin],
   settings: {
     baseUri: null,
@@ -19,38 +20,46 @@ const ShareService = {
   },
   dependencies: ['activitypub.outbox', 'activitypub.collection'],
   actions: {
-    async addShare(ctx) {
-      const { objectUri, announce } = ctx.params;
+    addShare: defineAction({
+      async handler(ctx) {
+        const { objectUri, announce } = ctx.params;
 
-      // Create the /shares collection and attach it to the object, unless it already exists
-      const collectionUri = await ctx.call('activitypub.collections-registry.createAndAttachCollection', {
-        objectUri,
-        collection: this.settings.collectionOptions
-      });
+        // Create the /shares collection and attach it to the object, unless it already exists
+        const collectionUri = await ctx.call('activitypub.collections-registry.createAndAttachCollection', {
+          objectUri,
+          collection: this.settings.collectionOptions
+        });
 
-      // Add the announce to the shares collection
-      await ctx.call('activitypub.collection.add', { collectionUri, item: announce.id });
-    },
-    async removeShare(ctx) {
-      const { objectUri, announce } = ctx.params;
+        // Add the announce to the shares collection
+        await ctx.call('activitypub.collection.add', { collectionUri, item: announce.id });
+      }
+    }),
 
-      const object = await ctx.call('activitypub.object.get', { objectUri });
+    removeShare: defineAction({
+      async handler(ctx) {
+        const { objectUri, announce } = ctx.params;
 
-      // If a shares collection is attached to the object, detach the announce
-      if (object?.shares) {
-        await ctx.call('activitypub.collection.remove', {
-          collectionUri: object.shares,
-          item: announce.id
+        const object = await ctx.call('activitypub.object.get', { objectUri });
+
+        // If a shares collection is attached to the object, detach the announce
+        if (object?.shares) {
+          await ctx.call('activitypub.collection.remove', {
+            collectionUri: object.shares,
+            item: announce.id
+          });
+        }
+      }
+    }),
+
+    updateCollectionsOptions: defineAction({
+      async handler(ctx) {
+        const { dataset } = ctx.params;
+        await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
+          collection: this.settings.collectionOptions,
+          dataset
         });
       }
-    },
-    async updateCollectionsOptions(ctx) {
-      const { dataset } = ctx.params;
-      await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
-        collection: this.settings.collectionOptions,
-        dataset
-      });
-    }
+    })
   },
   activities: {
     shareObject: {
@@ -95,6 +104,14 @@ const ShareService = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
 
-module.exports = ShareService;
+export default ShareService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [ShareService.name]: typeof ShareService;
+    }
+  }
+}

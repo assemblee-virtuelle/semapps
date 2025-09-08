@@ -1,4 +1,6 @@
-module.exports = {
+import { defineAction } from 'moleculer';
+
+const Schema = defineAction({
   visibility: 'public',
   params: {
     containerUri: { type: 'string' },
@@ -28,4 +30,6 @@ module.exports = {
       webId
     });
   }
-};
+});
+
+export default Schema;

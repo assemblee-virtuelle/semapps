@@ -1,6 +1,7 @@
-const { cleanUndefined } = require('../../../utils');
+import { cleanUndefined } from '../../../utils.ts';
+import { defineAction } from 'moleculer';
 
-module.exports = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -77,4 +78,6 @@ module.exports = {
         throw new Error(`Unknown strategy: ${strategy}`);
     }
   }
-};
+});
+
+export default Schema;

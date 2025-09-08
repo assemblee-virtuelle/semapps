@@ -1,5 +1,5 @@
-const { hasType, getId } = require('@semapps/ldp');
-const { ACTIVITY_TYPES } = require('../../../../constants');
+import { hasType, getId } from '@semapps/ldp';
+import { ACTIVITY_TYPES } from '../../../../constants.ts';
 
 // const removeReadRights = async ({ ctx, recipientUris, resourceUri, skipObjectsWatcher, anon }) => {
 //   if (recipientUris === 0 && !anon) return;
@@ -133,4 +133,4 @@ const setRightsHandler = {
   }
 };
 
-module.exports = setRightsHandler;
+export default setRightsHandler;

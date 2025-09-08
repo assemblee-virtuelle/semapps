@@ -1,13 +1,15 @@
-const urlJoin = require('url-join');
-const { Issuer, Strategy, custom } = require('openid-client');
+import urlJoin from 'url-join';
+import { Issuer, Strategy, custom } from 'openid-client';
 
 custom.setHttpOptionsDefaults({
   timeout: 10000
 });
-const AuthSSOMixin = require('../mixins/auth.sso');
+
+import AuthSSOMixin from '../mixins/auth.sso.ts';
+import { ServiceSchema } from 'moleculer';
 
 const AuthOIDCService = {
-  name: 'auth',
+  name: 'auth' as const,
   mixins: [AuthSSOMixin],
   settings: {
     baseUrl: null,
@@ -65,6 +67,14 @@ const AuthOIDCService = {
       );
     }
   }
-};
+} satisfies ServiceSchema;
 
-module.exports = AuthOIDCService;
+export default AuthOIDCService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [AuthOIDCService.name]: typeof AuthOIDCService;
+    }
+  }
+}

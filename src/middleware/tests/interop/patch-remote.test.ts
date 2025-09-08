@@ -1,9 +1,7 @@
-const waitForExpect = require('wait-for-expect');
-const { triple, namedNode } = require('@rdfjs/data-model');
-const initialize = require('./initialize');
-
+import waitForExpect from 'wait-for-expect';
+import { triple, namedNode } from '@rdfjs/data-model';
+import initialize from './initialize.ts';
 jest.setTimeout(50000);
-
 let server1;
 let server2;
 
@@ -11,6 +9,7 @@ beforeAll(async () => {
   server1 = await initialize(3001, 'testData1', 'settings1', 1);
   server2 = await initialize(3002, 'testData2', 'settings2', 2);
 });
+
 afterAll(async () => {
   if (server1) await server1.stop();
   if (server2) await server2.stop();

@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   // Commonly used
   'http:',
   'https:',

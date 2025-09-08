@@ -1,11 +1,11 @@
-const initialize = require('../ontologies/initialize');
-
+import initialize from '../ontologies/initialize.ts';
 jest.setTimeout(10000);
 let broker;
 
 beforeAll(async () => {
   broker = await initialize(false, false);
 });
+
 afterAll(async () => {
   if (broker) await broker.stop();
 });

@@ -1,5 +1,4 @@
-const noGraphCredentialContext = require('./utils/noGraphCredentialContext');
-
+import noGraphCredentialContext from './utils/noGraphCredentialContext.ts';
 const VC_API_PATH = '/vc/v0.3';
 
 /**
@@ -50,9 +49,4 @@ const KEY_TYPES = {
   KEY: 'https://w3id.org/security#Key'
 };
 
-module.exports = {
-  VC_API_PATH,
-  KEY_TYPES,
-  credentialsContext,
-  credentialsContextNoGraphProof
-};
+export { VC_API_PATH, KEY_TYPES, credentialsContext, credentialsContextNoGraphProof };

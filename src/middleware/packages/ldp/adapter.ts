@@ -1,4 +1,4 @@
-const urlJoin = require('url-join');
+import urlJoin from 'url-join';
 const { ServiceSchemaError } = require('moleculer').Errors;
 
 class LdpAdapter {
@@ -206,4 +206,4 @@ class LdpAdapter {
   }
 }
 
-module.exports = LdpAdapter;
+export default LdpAdapter;

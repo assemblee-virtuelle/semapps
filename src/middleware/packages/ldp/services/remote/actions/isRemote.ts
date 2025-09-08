@@ -1,6 +1,7 @@
-const urlJoin = require('url-join');
+import urlJoin from 'url-join';
+import { defineAction } from 'moleculer';
 
-module.exports = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -30,4 +31,6 @@ module.exports = {
       }
     }
   }
-};
+});
+
+export default Schema;

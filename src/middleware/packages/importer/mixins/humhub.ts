@@ -1,7 +1,7 @@
-const urlJoin = require('url-join');
-const ImporterMixin = require('./importer');
-const { convertToIsoString } = require('../utils');
-
+import urlJoin from 'url-join';
+import ImporterMixin from './importer.ts';
+import { convertToIsoString } from '../utils.ts';
+import { ServiceSchema } from 'moleculer';
 const allowedTypes = ['user', 'space', 'calendar', 'post'];
 
 const getSlugByUrl = url => {
@@ -14,7 +14,7 @@ const getSlugByUrl = url => {
   }
 };
 
-module.exports = {
+const Schema = {
   mixins: [ImporterMixin],
   settings: {
     source: {
@@ -109,4 +109,6 @@ module.exports = {
       return results;
     }
   }
-};
+} satisfies ServiceSchema;
+
+export default Schema;

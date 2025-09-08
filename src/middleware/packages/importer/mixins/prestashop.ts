@@ -1,8 +1,9 @@
-const urlJoin = require('url-join');
-const ImporterMixin = require('./importer');
-const { convertToIsoString } = require('../utils');
+import urlJoin from 'url-join';
+import ImporterMixin from './importer.ts';
+import { convertToIsoString } from '../utils.ts';
+import { ServiceSchema } from 'moleculer';
 
-module.exports = {
+const Schema = {
   mixins: [ImporterMixin],
   settings: {
     source: {
@@ -59,4 +60,6 @@ module.exports = {
       return false;
     }
   }
-};
+} satisfies ServiceSchema;
+
+export default Schema;

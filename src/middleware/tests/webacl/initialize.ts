@@ -1,11 +1,11 @@
-const path = require('path');
-const { ServiceBroker } = require('moleculer');
-const { CoreService } = require('@semapps/core');
-const { as } = require('@semapps/ontologies');
-const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
-const { AuthLocalService } = require('@semapps/auth');
-const { dropDataset } = require('../utils');
-const CONFIG = require('../config');
+import path from 'path';
+import { ServiceBroker } from 'moleculer';
+import { CoreService } from '@semapps/core';
+import { as } from '@semapps/ontologies';
+import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
+import { AuthLocalService } from '@semapps/auth';
+import { dropDataset } from '../utils.ts';
+import CONFIG from '../config.ts';
 
 const initialize = async () => {
   await dropDataset(CONFIG.MAIN_DATASET);
@@ -84,4 +84,4 @@ const initialize = async () => {
   return broker;
 };
 
-module.exports = initialize;
+export default initialize;

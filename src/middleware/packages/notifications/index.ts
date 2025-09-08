@@ -1,5 +1,4 @@
-module.exports = {
-  DigestNotificationsService: require('./services/digest/service'),
-  ExpoPushNotificationsService: require('./services/expo-push/service'),
-  SingleMailNotificationsService: require('./services/single-mail/service')
-};
+import DigestNotificationsService from './services/digest/service.ts';
+import ExpoPushNotificationsService from './services/expo-push/service.ts';
+import SingleMailNotificationsService from './services/single-mail/service.ts';
+export { DigestNotificationsService, ExpoPushNotificationsService, SingleMailNotificationsService };

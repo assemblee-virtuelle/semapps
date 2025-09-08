@@ -1,15 +1,16 @@
-const fetch = require('node-fetch');
-const { generateKeyPair } = require('crypto');
-const { namedNode, triple } = require('@rdfjs/data-model');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { sec } = require('@semapps/ontologies');
-const Ed25519Multikey = require('@digitalbazaar/ed25519-multikey');
-const { arrayOf } = require('../utils/utils');
-const { KEY_TYPES } = require('../constants');
-const KeyContainerService = require('./key-container');
-const PublicKeyContainerService = require('./public-key-container');
-const MigrationService = require('./migration');
-const { KeyPairService } = require('../signature');
+import fetch from 'node-fetch';
+import { generateKeyPair } from 'crypto';
+import { namedNode, triple } from '@rdfjs/data-model';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { sec } from '@semapps/ontologies';
+import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
+import { arrayOf } from '../utils/utils.ts';
+import { KEY_TYPES } from '../constants.ts';
+import KeyContainerService from './key-container.ts';
+import PublicKeyContainerService from './public-key-container.ts';
+import MigrationService from './migration.ts';
+import { KeyPairService } from '../signature/index.ts';
+import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
 
 /** @type {import('@digitalbazaar/ed25519-multikey')} */
 
@@ -26,7 +27,7 @@ const { KeyPairService } = require('../signature');
  * @type {import('moleculer').ServiceSchema}
  */
 const KeysService = {
-  name: 'keys',
+  name: 'keys' as const,
   settings: {
     podProvider: false,
     actorsKeyPairsDir: null
@@ -74,7 +75,7 @@ const KeysService = {
      * Returns all available keys of the given `keyType` in the `/key` container.
      * If none is available `[]` is returned.
      */
-    getByType: {
+    getByType: defineAction({
       params: {
         keyType: { type: 'string' },
         webId: { type: 'string', optional: true }
@@ -94,7 +95,7 @@ const KeysService = {
 
         return matchedKeys;
       }
-    },
+    }),
 
     /**
      * Gets the keys by type that are present in the actor's webId.
@@ -102,7 +103,7 @@ const KeysService = {
      * TODO: If this becomes a performance bottleneck, we can use SPARQL queries.
      * @returns An array of keys present in the webId.
      */
-    getOrCreateWebIdKeys: {
+    getOrCreateWebIdKeys: defineAction({
       params: {
         keyType: { type: 'string' },
         webId: { type: 'string' }
@@ -137,14 +138,14 @@ const KeysService = {
           })
         );
       }
-    },
+    }),
 
     /**
      * Returns a signing key instance for a given key or key type. If no key is available, a new one is created.
      * Currently supports Ed25519Multikey only.
      * @returns {object} The Multikey object.
      */
-    getMultikey: {
+    getMultikey: defineAction({
       params: {
         webId: { type: 'string' },
         keyObject: { type: 'object', optional: true },
@@ -177,7 +178,7 @@ const KeysService = {
 
         return keyObject;
       }
-    },
+    }),
 
     /**
      * Generates key, stores it in the `/key` container.
@@ -185,7 +186,7 @@ const KeysService = {
      * If `attachToWebId` is true (not default), it will publish the key and attach the key to the webId document.
      * @returns {object} The key resource as located in the `/key` container.
      */
-    createKeyForActor: {
+    createKeyForActor: defineAction({
       params: {
         webId: { type: 'string' },
         keyType: { type: 'string' },
@@ -223,13 +224,13 @@ const KeysService = {
 
         return keyObject;
       }
-    },
+    }),
 
     /**
      * Generate a key of the type specified.
      * Type must be in the form of a {@link KEY_TYPES} URI.
      */
-    generateKey: {
+    generateKey: defineAction({
       params: {
         keyType: { type: 'string' }
       },
@@ -245,13 +246,13 @@ const KeysService = {
 
         throw new Error('Key type not supported.');
       }
-    },
+    }),
 
     /**
      * Generate ED25519 key pair.
      * @returns {object} Key pair in [MultiKey format](https://www.w3.org/TR/controller-document/#Multikey).
      */
-    generateEd25519Key: {
+    generateEd25519Key: defineAction({
       params: {},
       async handler() {
         const keyPair = await Ed25519Multikey.generate();
@@ -265,7 +266,7 @@ const KeysService = {
         keyObject['@type'] = [KEY_TYPES.ED25519, KEY_TYPES.MULTI_KEY, KEY_TYPES.VERIFICATION_METHOD];
         return keyObject;
       }
-    },
+    }),
 
     /**
      * Generate a RSA key pair and returns public and private key in spki pkcs8 PEM encodings, respectively.
@@ -276,7 +277,7 @@ const KeysService = {
      *    'privateKeyPem': privateKeyPkcs8PemString }
      *  ```
      */
-    generateRsaKey: {
+    generateRsaKey: defineAction({
       params: {},
       async handler() {
         return new Promise((resolve, reject) => {
@@ -307,7 +308,7 @@ const KeysService = {
           );
         });
       }
-    },
+    }),
 
     /**
      * Attaches a given key to the webId document.
@@ -318,7 +319,7 @@ const KeysService = {
      * @param {string} ctx.keyId The id of the public-private key pair resource.
      * @param {string} ctx.keyObject Alternatively, the public-private key pair resource itself.
      */
-    attachPublicKeyToWebId: {
+    attachPublicKeyToWebId: defineAction({
       params: {
         webId: { type: 'string' },
         keyId: { type: 'string', optional: true },
@@ -373,10 +374,10 @@ const KeysService = {
           webId
         });
       }
-    },
+    }),
 
     /** Given a key object, remove the key from the webId document. */
-    detachFromWebId: {
+    detachFromWebId: defineAction({
       params: {
         webId: { type: 'string' },
         publicKeyId: { type: 'string' }
@@ -394,10 +395,10 @@ const KeysService = {
           webId
         });
       }
-    },
+    }),
 
     /** Given a local key (stored in `/key`), add the public key part to the `/public-key` container. */
-    publishPublicKeyLocally: {
+    publishPublicKeyLocally: defineAction({
       params: {
         keyId: { type: 'string', optional: true },
         keyObject: { type: 'object', optional: true },
@@ -431,12 +432,12 @@ const KeysService = {
         });
         return publicKeyUri;
       }
-    },
+    }),
 
     /**
      * Removes key from `key` container and detaches it from webId document and `public-key` container.
      */
-    delete: {
+    delete: defineAction({
       params: {
         resourceUri: { type: 'string', optional: true },
         keyObject: { type: 'object', optional: true },
@@ -460,10 +461,10 @@ const KeysService = {
           await this.actions.detachFromWebId({ webId, publicKeyId }, { parentCtx: ctx });
         }
       }
-    },
+    }),
 
     /** Delete all keys belonging to an actor. */
-    deleteAllKeysForWebId: {
+    deleteAllKeysForWebId: defineAction({
       params: {
         webId: { type: 'string' }
       },
@@ -474,14 +475,14 @@ const KeysService = {
           await ctx.call('keys.delete', { resourceUri: key.id, webId });
         }
       }
-    },
+    }),
 
     /**
      * Fetches remote keys from a webId (publicKey or assertionMethod field).
      * Returns all keys of the given `keyType` or all, if `keyType` is `null`.
      * Does not filter outdated keys.
      */
-    getRemotePublicKeys: {
+    getRemotePublicKeys: defineAction({
       params: {
         webId: { type: 'string' },
         keyType: { type: 'string', optional: true, default: KEY_TYPES.RSA, nullable: true }
@@ -527,12 +528,12 @@ const KeysService = {
 
         return keyObjects;
       }
-    },
+    }),
 
     /**
      * Returns the public key part of a given `keyObject`.
      */
-    getPublicKeyObject: {
+    getPublicKeyObject: defineAction({
       params: {
         keyObject: { type: 'object', optional: true },
         keyId: { type: 'string', optional: true }
@@ -570,9 +571,9 @@ const KeysService = {
         /** @type {never} Not implemented yet. */
         throw new Error(`Key type ${keyType} not supported.`);
       }
-    },
+    }),
 
-    findPrivateKeyUri: {
+    findPrivateKeyUri: defineAction({
       params: {
         publicKeyUri: { type: 'string' }
       },
@@ -593,7 +594,7 @@ const KeysService = {
 
         return queryResult[0]?.privateKey?.value;
       }
-    }
+    })
   },
   methods: {},
   hooks: {
@@ -608,38 +609,55 @@ const KeysService = {
     }
   },
   events: {
-    async 'keys.migration.migrated'() {
-      this.isMigrated = true;
-    },
-    async 'auth.registered'(ctx) {
-      const { webId } = ctx.params;
-
-      if (!this.isMigrated) {
-        // Key creation will be handled by legacy service.
-        return;
+    'keys.migration.migrated': defineServiceEvent({
+      async handler() {
+        this.isMigrated = true;
       }
+    }),
 
-      // Wait for the key containers to be created.
-      const keyContainerUri = await ctx.call('keys.container.getContainerUri', { webId }, { parentCtx: ctx });
-      const publicKeyContainerUri = await ctx.call(
-        'keys.public-container.getContainerUri',
-        { webId },
-        { parentCtx: ctx }
-      );
-      await ctx.call('keys.container.waitForContainerCreation', { containerUri: keyContainerUri }, { parentCtx: ctx });
-      await ctx.call(
-        'keys.container.waitForContainerCreation',
-        { containerUri: publicKeyContainerUri },
-        { parentCtx: ctx }
-      );
+    'auth.registered': defineServiceEvent({
+      async handler(ctx) {
+        const { webId } = ctx.params;
 
-      // Create, publish and attach keys to the webId.
-      await Promise.all([
-        this.actions.createKeyForActor({ webId, attachToWebId: true, keyType: KEY_TYPES.RSA }, { parentCtx: ctx }),
-        this.actions.createKeyForActor({ webId, attachToWebId: true, keyType: KEY_TYPES.ED25519 }, { parentCtx: ctx })
-      ]);
+        if (!this.isMigrated) {
+          // Key creation will be handled by legacy service.
+          return;
+        }
+
+        // Wait for the key containers to be created.
+        const keyContainerUri = await ctx.call('keys.container.getContainerUri', { webId }, { parentCtx: ctx });
+        const publicKeyContainerUri = await ctx.call(
+          'keys.public-container.getContainerUri',
+          { webId },
+          { parentCtx: ctx }
+        );
+        await ctx.call(
+          'keys.container.waitForContainerCreation',
+          { containerUri: keyContainerUri },
+          { parentCtx: ctx }
+        );
+        await ctx.call(
+          'keys.container.waitForContainerCreation',
+          { containerUri: publicKeyContainerUri },
+          { parentCtx: ctx }
+        );
+
+        // Create, publish and attach keys to the webId.
+        await Promise.all([
+          this.actions.createKeyForActor({ webId, attachToWebId: true, keyType: KEY_TYPES.RSA }, { parentCtx: ctx }),
+          this.actions.createKeyForActor({ webId, attachToWebId: true, keyType: KEY_TYPES.ED25519 }, { parentCtx: ctx })
+        ]);
+      }
+    })
+  }
+} satisfies ServiceSchema;
+
+export default KeysService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [KeysService.name]: typeof KeysService;
     }
   }
-};
-
-module.exports = KeysService;
+}

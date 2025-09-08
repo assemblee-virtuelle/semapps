@@ -1,6 +1,7 @@
-const { getContainerFromUri } = require('../../../utils');
+import { getContainerFromUri } from '../../../utils.ts';
+import { defineAction } from 'moleculer';
 
-module.exports = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     resourceUri: 'string',
@@ -34,4 +35,6 @@ module.exports = {
 
     return result.map(node => node.containerUri.value);
   }
-};
+});
+
+export default Schema;

@@ -1,4 +1,6 @@
-module.exports = {
+import { defineAction } from 'moleculer';
+
+const Schema = defineAction({
   visibility: 'public',
   params: {
     actionName: { type: 'string' },
@@ -12,4 +14,6 @@ module.exports = {
     // Re-order all authorizers by priority
     this.authorizers.sort((a, b) => b.priority - a.priority);
   }
-};
+});
+
+export default Schema;

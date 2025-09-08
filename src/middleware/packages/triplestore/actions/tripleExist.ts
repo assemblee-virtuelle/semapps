@@ -1,4 +1,6 @@
-module.exports = {
+import { defineAction } from 'moleculer';
+
+const Schema = defineAction({
   visibility: 'public',
   params: {
     triple: {
@@ -43,4 +45,6 @@ module.exports = {
       dataset
     });
   }
-};
+});
+
+export default Schema;

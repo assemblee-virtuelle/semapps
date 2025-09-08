@@ -1,9 +1,10 @@
-const urlJoin = require('url-join');
-const fetch = require('node-fetch');
-const { getSlugFromUri, delay } = require('@semapps/ldp');
-const ImporterMixin = require('./importer');
+import urlJoin from 'url-join';
+import fetch from 'node-fetch';
+import { getSlugFromUri, delay } from '@semapps/ldp';
+import ImporterMixin from './importer.ts';
+import { ServiceSchema } from 'moleculer';
 
-module.exports = {
+const Schema = {
   mixins: [ImporterMixin],
   settings: {
     source: {
@@ -97,4 +98,6 @@ module.exports = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
+
+export default Schema;

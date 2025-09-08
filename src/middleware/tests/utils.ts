@@ -1,7 +1,7 @@
-const urlJoin = require('url-join');
-const fetch = require('node-fetch');
-const Redis = require('ioredis');
-const CONFIG = require('./config');
+import urlJoin from 'url-join';
+import fetch from 'node-fetch';
+import Redis from 'ioredis';
+import CONFIG from './config.ts';
 
 const listDatasets = async () => {
   const response = await fetch(`${CONFIG.SPARQL_ENDPOINT}$/datasets`, {
@@ -87,10 +87,4 @@ const wait = ms =>
     setTimeout(resolve, ms);
   });
 
-module.exports = {
-  dropDataset,
-  listDatasets,
-  fetchServer,
-  clearQueue,
-  wait
-};
+export { dropDataset, listDatasets, fetchServer, clearQueue, wait };

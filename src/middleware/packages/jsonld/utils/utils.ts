@@ -1,9 +1,10 @@
-const uriSchemes = require('./uriSchemes');
-
+import uriSchemes from './uriSchemes.ts';
 const isURL = value => (typeof value === 'string' || value instanceof String) && value.startsWith('http');
+
 /** If the value starts with `http` or `urn:` */
 const isURI = value =>
   (typeof value === 'string' || value instanceof String) && (value.startsWith('http') || value.startsWith('urn:'));
+
 /** If the value starts with a IANA registered or common URI scheme */
 const isRegisteredURI = value =>
   (typeof value === 'string' || value instanceof String) && uriSchemes.some(scheme => value.startsWith(scheme));
@@ -38,11 +39,4 @@ const arrayOf = value => {
   return [value];
 };
 
-module.exports = {
-  isURL,
-  isURI,
-  isRegisteredURI,
-  isObject,
-  mergeObjectInArray,
-  arrayOf
-};
+export { isURL, isURI, isRegisteredURI, isObject, mergeObjectInArray, arrayOf };

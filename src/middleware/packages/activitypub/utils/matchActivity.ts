@@ -1,4 +1,4 @@
-const { arrayOf } = require('@semapps/ldp');
+import { arrayOf } from '@semapps/ldp';
 
 /**
  * Match an activity against a pattern
@@ -47,4 +47,4 @@ const matchActivity = async (matcher, activity, fetcher) => {
   return { match: true, dereferencedActivity };
 };
 
-module.exports = matchActivity;
+export default matchActivity;

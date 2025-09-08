@@ -1,15 +1,16 @@
-const { ldp, semapps } = require('@semapps/ontologies');
-const LdpApiService = require('./services/api');
-const LdpContainerService = require('./services/container');
-const LdpCacheService = require('./services/cache');
-const LdpLinkHeaderService = require('./services/link-header');
-const LdpRegistryService = require('./services/registry');
-const LdpRemoteService = require('./services/remote');
-const LdpResourceService = require('./services/resource');
-const PermissionsService = require('./services/permissions');
+import { ldp, semapps } from '@semapps/ontologies';
+import LdpApiService from './services/api/index.ts';
+import LdpContainerService from './services/container/index.ts';
+import LdpCacheService from './services/cache/index.ts';
+import LdpLinkHeaderService from './services/link-header/index.ts';
+import LdpRegistryService from './services/registry/index.ts';
+import LdpRemoteService from './services/remote/index.ts';
+import LdpResourceService from './services/resource/index.ts';
+import PermissionsService from './services/permissions/index.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
-module.exports = {
-  name: 'ldp',
+const LdpSchema = {
+  name: 'ldp' as const,
   settings: {
     baseUrl: null,
     containers: [],
@@ -95,16 +96,34 @@ module.exports = {
     await this.broker.call('ontologies.register', semapps);
   },
   actions: {
-    getBaseUrl() {
-      return this.settings.baseUrl;
-    },
-    getBasePath() {
-      const { pathname } = new URL(this.settings.baseUrl);
-      return pathname;
-    },
-    getSetting(ctx) {
-      const { key } = ctx.params;
-      return this.settings[key];
+    getBaseUrl: defineAction({
+      handler() {
+        return this.settings.baseUrl;
+      }
+    }),
+
+    getBasePath: defineAction({
+      handler() {
+        const { pathname } = new URL(this.settings.baseUrl);
+        return pathname;
+      }
+    }),
+
+    getSetting: defineAction({
+      handler(ctx) {
+        const { key } = ctx.params;
+        return this.settings[key];
+      }
+    })
+  }
+} satisfies ServiceSchema;
+
+export default LdpSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [LdpSchema.name]: typeof LdpSchema;
     }
   }
-};
+}

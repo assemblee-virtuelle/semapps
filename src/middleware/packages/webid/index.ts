@@ -1,3 +1,2 @@
-module.exports = {
-  WebIdService: require('./service')
-};
+import WebIdService from './service.ts';
+export { WebIdService };

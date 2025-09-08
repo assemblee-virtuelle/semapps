@@ -1,4 +1,6 @@
-module.exports = {
+import { defineAction } from 'moleculer';
+
+const Schema = defineAction({
   visibility: 'public',
   cache: true,
   async handler(ctx) {
@@ -9,4 +11,6 @@ module.exports = {
         .map(ontology => [ontology.prefix, ontology.namespace])
     );
   }
-};
+});
+
+export default Schema;

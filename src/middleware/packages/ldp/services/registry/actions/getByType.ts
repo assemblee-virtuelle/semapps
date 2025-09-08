@@ -1,8 +1,10 @@
+import { defineAction } from 'moleculer';
+
 /**
  * Find the container options for a resource type
  * This only returns containers registered with the LDP registry, not the ones registered with the TypeIndex.
  */
-module.exports = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     type: { type: 'multi', rules: [{ type: 'string' }, { type: 'array' }] }
@@ -18,4 +20,6 @@ module.exports = {
       )
     );
   }
-};
+});
+
+export default Schema;

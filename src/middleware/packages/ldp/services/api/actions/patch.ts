@@ -1,10 +1,10 @@
 const { MoleculerError } = require('moleculer').Errors;
-const SparqlParser = require('sparqljs').Parser;
-
+import sparqljsModule from 'sparqljs';
+const SparqlParser = sparqljsModule.Parser;
 const parser = new SparqlParser();
 const ACCEPTED_OPERATIONS = ['insert', 'delete'];
 
-module.exports = async function patch(ctx) {
+export default async function patch(ctx) {
   try {
     const { username, slugParts } = ctx.params;
 
@@ -70,4 +70,4 @@ module.exports = async function patch(ctx) {
     ctx.meta.$statusCode = e.code || 500;
     ctx.meta.$statusMessage = e.message;
   }
-};
+}

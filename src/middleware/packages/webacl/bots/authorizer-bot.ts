@@ -1,5 +1,7 @@
-module.exports = {
-  name: 'authorizer-bot',
+import { ServiceSchema, defineServiceEvent } from 'moleculer';
+
+const AuthorizerBotSchema = {
+  name: 'authorizer-bot' as const,
   settings: {
     rules: []
   },
@@ -29,84 +31,99 @@ module.exports = {
     }
   },
   events: {
-    async 'ldp.resource.created'(ctx) {
-      const { resourceUri, newData } = ctx.params;
-      for (const rule of this.settings.rules) {
-        if (this.matchRule(rule, newData)) {
-          const users = this.getUsers(rule, newData);
-          for (const user of users) {
-            await ctx.call('webacl.resource.addRights', {
-              resourceUri,
-              additionalRights: {
-                user: {
-                  uri: user,
-                  ...rule.rights
-                }
-              },
-              webId: 'system'
-            });
-          }
-          if (users.length > 0) {
-            ctx.emit('authorizer.added', {
-              resourceUri,
-              users,
-              rule
-            });
-          }
-        }
-      }
-    },
-    async 'ldp.resource.updated'(ctx) {
-      const { resourceUri, newData, oldData } = ctx.params;
-
-      for (const rule of this.settings.rules) {
-        if (this.matchRule(rule, newData)) {
-          const newUsers = this.getUsers(rule, newData);
-          const oldUsers = this.getUsers(rule, oldData);
-
-          const usersToAdd = newUsers.filter(t1 => !oldUsers.some(t2 => t1 === t2));
-          for (const userUri of usersToAdd) {
-            await ctx.call('webacl.resource.addRights', {
-              resourceUri,
-              additionalRights: {
-                user: {
-                  uri: userUri,
-                  ...rule.rights
-                }
-              },
-              webId: 'system'
-            });
-          }
-          if (usersToAdd.length > 0) {
-            ctx.emit('authorizer.added', {
-              resourceUri,
-              users: usersToAdd,
-              rule
-            });
-          }
-
-          const usersToRemove = oldUsers.filter(t1 => !newUsers.some(t2 => t1 === t2));
-          for (const userUri of usersToRemove) {
-            await ctx.call('webacl.resource.removeRights', {
-              resourceUri,
-              rights: {
-                user: {
-                  uri: userUri,
-                  ...rule.rights
-                }
-              },
-              webId: 'system'
-            });
-          }
-          if (usersToRemove.length > 0) {
-            ctx.emit('authorizer.removed', {
-              resourceUri,
-              users: usersToRemove,
-              rule
-            });
+    'ldp.resource.created': defineServiceEvent({
+      async handler(ctx) {
+        const { resourceUri, newData } = ctx.params;
+        for (const rule of this.settings.rules) {
+          if (this.matchRule(rule, newData)) {
+            const users = this.getUsers(rule, newData);
+            for (const user of users) {
+              await ctx.call('webacl.resource.addRights', {
+                resourceUri,
+                additionalRights: {
+                  user: {
+                    uri: user,
+                    ...rule.rights
+                  }
+                },
+                webId: 'system'
+              });
+            }
+            if (users.length > 0) {
+              ctx.emit('authorizer.added', {
+                resourceUri,
+                users,
+                rule
+              });
+            }
           }
         }
       }
+    }),
+
+    'ldp.resource.updated': defineServiceEvent({
+      async handler(ctx) {
+        const { resourceUri, newData, oldData } = ctx.params;
+
+        for (const rule of this.settings.rules) {
+          if (this.matchRule(rule, newData)) {
+            const newUsers = this.getUsers(rule, newData);
+            const oldUsers = this.getUsers(rule, oldData);
+
+            const usersToAdd = newUsers.filter(t1 => !oldUsers.some(t2 => t1 === t2));
+            for (const userUri of usersToAdd) {
+              await ctx.call('webacl.resource.addRights', {
+                resourceUri,
+                additionalRights: {
+                  user: {
+                    uri: userUri,
+                    ...rule.rights
+                  }
+                },
+                webId: 'system'
+              });
+            }
+            if (usersToAdd.length > 0) {
+              ctx.emit('authorizer.added', {
+                resourceUri,
+                users: usersToAdd,
+                rule
+              });
+            }
+
+            const usersToRemove = oldUsers.filter(t1 => !newUsers.some(t2 => t1 === t2));
+            for (const userUri of usersToRemove) {
+              await ctx.call('webacl.resource.removeRights', {
+                resourceUri,
+                rights: {
+                  user: {
+                    uri: userUri,
+                    ...rule.rights
+                  }
+                },
+                webId: 'system'
+              });
+            }
+            if (usersToRemove.length > 0) {
+              ctx.emit('authorizer.removed', {
+                resourceUri,
+                users: usersToRemove,
+                rule
+              });
+            }
+          }
+        }
+      }
+    })
+  }
+} satisfies ServiceSchema;
+
+export default AuthorizerBotSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [AuthorizerBotSchema.name]: typeof AuthorizerBotSchema;
     }
   }
-};
+}

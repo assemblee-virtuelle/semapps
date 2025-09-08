@@ -1,13 +1,13 @@
-const fse = require('fs-extra');
-const fs = require('fs');
-const path = require('path');
-const { ServiceBroker } = require('moleculer');
-const { AuthLocalService } = require('@semapps/auth');
-const { CoreService } = require('@semapps/core');
-const { VerifiableCredentialsService } = require('@semapps/crypto');
-const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
-const CONFIG = require('../config');
-const { dropDataset } = require('../utils');
+import fse from 'fs-extra';
+import fs from 'fs';
+import path from 'path';
+import { ServiceBroker } from 'moleculer';
+import { AuthLocalService } from '@semapps/auth';
+import { CoreService } from '@semapps/core';
+import { VerifiableCredentialsService } from '@semapps/crypto';
+import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
+import CONFIG from '../config.ts';
+import { dropDataset } from '../utils.ts';
 
 const initialize = async (port, withOldKeyStore = false) => {
   await dropDataset(CONFIG.MAIN_DATASET);
@@ -97,4 +97,4 @@ const initialize = async (port, withOldKeyStore = false) => {
   return { broker, baseUrl };
 };
 
-module.exports = initialize;
+export default initialize;

@@ -1,5 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
-const { namedNode } = require('@rdfjs/data-model');
+import { namedNode } from '@rdfjs/data-model';
+import { defineAction } from 'moleculer';
 
 function checkTriplesSubjectIsResource(triples, resourceUri) {
   for (const triple of triples) {
@@ -17,7 +18,7 @@ function checkTriplesSubjectIsResource(triples, resourceUri) {
   }
 }
 
-module.exports = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     resourceUri: {
@@ -102,4 +103,6 @@ module.exports = {
 
     return returnValues;
   }
-};
+});
+
+export default Schema;

@@ -1,5 +1,6 @@
-const path = require('path');
-const { parseHeader, parseRawBody, negotiateContentType, negotiateAccept, parseJson } = require('@semapps/middlewares');
+import path from 'path';
+
+import { parseHeader, parseRawBody, negotiateContentType, negotiateAccept, parseJson } from '@semapps/middlewares';
 
 const onError = (req, res, err) => {
   const { type, code, message, data, name } = err;
@@ -67,4 +68,4 @@ const getRoutes = (basePath, podProvider) => {
   ];
 };
 
-module.exports = getRoutes;
+export default getRoutes;

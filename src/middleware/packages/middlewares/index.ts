@@ -1,8 +1,7 @@
 const { MoleculerError } = require('moleculer').Errors;
-const { negotiateTypeMime, MIME_TYPES } = require('@semapps/mime-types');
-const Busboy = require('busboy');
-const streams = require('memory-streams');
-
+import { negotiateTypeMime, MIME_TYPES } from '@semapps/mime-types';
+import Busboy from 'busboy';
+import streams from 'memory-streams';
 const handledMimeTypes = [MIME_TYPES.JSON, MIME_TYPES.TURTLE, MIME_TYPES.TRIPLE, MIME_TYPES.SPARQL_UPDATE];
 
 // Put requested URL and query string in meta so that services may use them independently
@@ -172,7 +171,7 @@ const throw500 = msg => {
   throw new MoleculerError(msg, 500, 'INTERNAL_SERVER_ERROR', { status: 'Server Error', text: msg });
 };
 
-module.exports = {
+export {
   parseUrl,
   parseHeader,
   parseRawBody,

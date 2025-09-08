@@ -1,9 +1,10 @@
-const addAuthorizerAction = require('./actions/addAuthorizer');
-const checkAction = require('./actions/check');
-const hasAction = require('./actions/has');
+import addAuthorizerAction from './actions/addAuthorizer.ts';
+import checkAction from './actions/check.ts';
+import hasAction from './actions/has.ts';
+import { ServiceSchema, defineAction } from 'moleculer';
 
-module.exports = {
-  name: 'permissions',
+const PermissionsSchema = {
+  name: 'permissions' as const,
   actions: {
     addAuthorizer: addAuthorizerAction,
     check: checkAction,
@@ -12,4 +13,14 @@ module.exports = {
   async started() {
     this.authorizers = [];
   }
-};
+} satisfies ServiceSchema;
+
+export default PermissionsSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [PermissionsSchema.name]: typeof PermissionsSchema;
+    }
+  }
+}

@@ -1,13 +1,13 @@
-const urlJoin = require('url-join');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { void: voidOntology } = require('@semapps/ontologies');
-const { JsonLdSerializer } = require('jsonld-streaming-serializer');
-const { DataFactory, Writer } = require('n3');
-
+import urlJoin from 'url-join';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { void as voidOntology } from '@semapps/ontologies';
+import { JsonLdSerializer } from 'jsonld-streaming-serializer';
+import { DataFactory, Writer } from 'n3';
 const { quad, namedNode, literal, blankNode } = DataFactory;
 const { MoleculerError } = require('moleculer').Errors;
-const { createFragmentURL, regexProtocolAndHostAndPort, arrayOf } = require('@semapps/ldp');
-const { parseHeader } = require('@semapps/middlewares');
+import { createFragmentURL, regexProtocolAndHostAndPort, arrayOf } from '@semapps/ldp';
+import { parseHeader } from '@semapps/middlewares';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 const prefixes = {
   dc: 'http://purl.org/dc/terms/',
@@ -148,8 +148,8 @@ const addMirrorServer = async (
   }
 };
 
-module.exports = {
-  name: 'void',
+const VoidSchema = {
+  name: 'void' as const,
   settings: {
     baseUrl: null,
     mirrorGraphName: 'http://semapps.org/mirror',
@@ -174,7 +174,7 @@ module.exports = {
     });
   },
   actions: {
-    getRemote: {
+    getRemote: defineAction({
       visibility: 'public',
       params: {
         serverUrl: { type: 'string', optional: false }
@@ -196,8 +196,9 @@ module.exports = {
           this.logger.warn(`Silently ignored error when fetching void endpoint: ${e.message}`);
         }
       }
-    },
-    get: {
+    }),
+
+    get: defineAction({
       visibility: 'public',
       params: {
         accept: { type: 'string', optional: true }
@@ -344,17 +345,20 @@ module.exports = {
 
         return await this.formatOutput(ctx, graph, url, accept === MIME_TYPES.JSON);
       }
-    },
-    api_get: async function api(ctx) {
-      let { accept } = ctx.meta.headers;
-      if (accept.includes('*/*')) accept = MIME_TYPES.JSON;
-      else if (accept && accept !== MIME_TYPES.JSON && accept !== MIME_TYPES.TURTLE)
-        throw new MoleculerError(`Accept not supported : ${accept}`, 400, 'ACCEPT_NOT_SUPPORTED');
+    }),
 
-      return await ctx.call('void.get', {
-        accept: accept
-      });
-    }
+    api_get: defineAction({
+      handler: async function api(ctx) {
+        let { accept } = ctx.meta.headers;
+        if (accept.includes('*/*')) accept = MIME_TYPES.JSON;
+        else if (accept && accept !== MIME_TYPES.JSON && accept !== MIME_TYPES.TURTLE)
+          throw new MoleculerError(`Accept not supported : ${accept}`, 400, 'ACCEPT_NOT_SUPPORTED');
+
+        return await ctx.call('void.get', {
+          accept: accept
+        });
+      }
+    })
   },
   methods: {
     async getContainers(ctx) {
@@ -450,4 +454,14 @@ module.exports = {
       return compactJsonLd;
     }
   }
-};
+} satisfies ServiceSchema;
+
+export default VoidSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [VoidSchema.name]: typeof VoidSchema;
+    }
+  }
+}

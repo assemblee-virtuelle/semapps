@@ -1,7 +1,8 @@
-const fs = require('fs');
-const path = require('path');
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
+import fs from 'fs';
+import path from 'path';
+import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 /**
  * Service that creates and validates JSON web tokens(JWT).
@@ -10,8 +11,8 @@ const crypto = require('crypto');
  *
  * TODO: Tokens do not expire.
  */
-module.exports = {
-  name: 'auth.jwt',
+const AuthJwtSchema = {
+  name: 'auth.jwt' as const,
   settings: {
     jwtPath: null
   },
@@ -31,71 +32,95 @@ module.exports = {
     this.publicKey = fs.readFileSync(publicKeyPath);
   },
   actions: {
-    generateKeyPair(ctx) {
-      const { privateKeyPath, publicKeyPath } = ctx.params;
+    generateKeyPair: defineAction({
+      handler(ctx) {
+        const { privateKeyPath, publicKeyPath } = ctx.params;
 
-      return new Promise((resolve, reject) => {
-        crypto.generateKeyPair(
-          'rsa',
-          {
-            modulusLength: 4096,
-            publicKeyEncoding: {
-              type: 'spki',
-              format: 'pem'
+        return new Promise((resolve, reject) => {
+          crypto.generateKeyPair(
+            'rsa',
+            {
+              modulusLength: 4096,
+              publicKeyEncoding: {
+                type: 'spki',
+                format: 'pem'
+              },
+              privateKeyEncoding: {
+                type: 'pkcs8',
+                format: 'pem'
+              }
             },
-            privateKeyEncoding: {
-              type: 'pkcs8',
-              format: 'pem'
+            (err, publicKey, privateKey) => {
+              if (err) {
+                reject(err);
+              } else {
+                fs.writeFile(privateKeyPath, privateKey, err => {
+                  if (err) {
+                    reject(err);
+                  } else {
+                    fs.writeFile(publicKeyPath, publicKey, err => {
+                      if (err) {
+                        reject(err);
+                      } else {
+                        resolve({ privateKey, publicKey });
+                      }
+                    });
+                  }
+                });
+              }
             }
-          },
-          (err, publicKey, privateKey) => {
-            if (err) {
-              reject(err);
-            } else {
-              fs.writeFile(privateKeyPath, privateKey, err => {
-                if (err) {
-                  reject(err);
-                } else {
-                  fs.writeFile(publicKeyPath, publicKey, err => {
-                    if (err) {
-                      reject(err);
-                    } else {
-                      resolve({ privateKey, publicKey });
-                    }
-                  });
-                }
-              });
-            }
-          }
-        );
-      });
-    },
-    async generateServerSignedToken(ctx) {
-      const { payload } = ctx.params;
-      return jwt.sign(payload, this.privateKey, { algorithm: 'RS256' });
-    },
-    /** Verifies that the token was signed by this server. */
-    async verifyServerSignedToken(ctx) {
-      const { token } = ctx.params;
-      try {
-        return jwt.verify(token, this.publicKey, { algorithms: ['RS256'] });
-      } catch (err) {
-        return false;
+          );
+        });
       }
-    },
-    async generateUnsignedToken(ctx) {
-      const { payload } = ctx.params;
-      const token = jwt.sign(payload, null, { algorithm: 'none' });
-      return token;
-    },
-    // Warning, this does NOT verify if signature is valid
-    async decodeToken(ctx) {
-      const { token } = ctx.params;
-      try {
-        return jwt.decode(token);
-      } catch (err) {
-        return false;
+    }),
+
+    generateServerSignedToken: defineAction({
+      async handler(ctx) {
+        const { payload } = ctx.params;
+        return jwt.sign(payload, this.privateKey, { algorithm: 'RS256' });
       }
+    }),
+
+    verifyServerSignedToken: defineAction({
+      /** Verifies that the token was signed by this server. */
+      async handler(ctx) {
+        const { token } = ctx.params;
+        try {
+          return jwt.verify(token, this.publicKey, { algorithms: ['RS256'] });
+        } catch (err) {
+          return false;
+        }
+      }
+    }),
+
+    generateUnsignedToken: defineAction({
+      async handler(ctx) {
+        const { payload } = ctx.params;
+        const token = jwt.sign(payload, null, { algorithm: 'none' });
+        return token;
+      }
+    }),
+
+    decodeToken: defineAction({
+      // Warning, this does NOT verify if signature is valid
+      async handler(ctx) {
+        const { token } = ctx.params;
+        try {
+          return jwt.decode(token);
+        } catch (err) {
+          return false;
+        }
+      }
+    })
+  }
+} satisfies ServiceSchema;
+
+export default AuthJwtSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [AuthJwtSchema.name]: typeof AuthJwtSchema;
     }
   }
-};
+}

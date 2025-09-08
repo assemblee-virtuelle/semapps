@@ -1,4 +1,5 @@
-const { arrayOf } = require('@semapps/ldp');
+import { arrayOf } from '@semapps/ldp';
+import { ServiceSchema, defineAction } from 'moleculer';
 
 // Check, if a capability grants access to the resource.
 const hasValidCapability = async (ctx, resourceUri, mode) => {
@@ -27,23 +28,35 @@ const hasValidCapability = async (ctx, resourceUri, mode) => {
   return true;
 };
 
-module.exports = {
-  name: 'vc.guard',
+const VcGuardSchema = {
+  name: 'vc.guard' as const,
   dependencies: 'permissions',
   async started() {
     await this.broker.call('permissions.addAuthorizer', { actionName: `${this.name}.hasPermission` });
   },
   actions: {
-    async hasPermission(ctx) {
-      const { uri, mode } = ctx.params;
+    hasPermission: defineAction({
+      async handler(ctx) {
+        const { uri, mode } = ctx.params;
 
-      if (ctx.meta.authorization?.capabilityPresentation) {
-        if (await hasValidCapability(ctx, uri, mode)) {
-          return true;
+        if (ctx.meta.authorization?.capabilityPresentation) {
+          if (await hasValidCapability(ctx, uri, mode)) {
+            return true;
+          }
         }
-      }
 
-      return undefined;
+        return undefined;
+      }
+    })
+  }
+} satisfies ServiceSchema;
+
+export default VcGuardSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [VcGuardSchema.name]: typeof VcGuardSchema;
     }
   }
-};
+}

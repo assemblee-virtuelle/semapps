@@ -1,5 +1,6 @@
-const path = require('path');
-const {
+import path from 'path';
+
+import {
   parseUrl,
   parseHeader,
   parseRawBody,
@@ -8,7 +9,7 @@ const {
   parseJson,
   parseFile,
   saveDatasetMeta
-} = require('@semapps/middlewares');
+} from '@semapps/middlewares';
 
 const transformRouteParamsToSlugParts = (req, res, next) => {
   req.$params.slugParts = [];
@@ -57,4 +58,4 @@ function getPodsRoute(basePath) {
   };
 }
 
-module.exports = getPodsRoute;
+export default getPodsRoute;

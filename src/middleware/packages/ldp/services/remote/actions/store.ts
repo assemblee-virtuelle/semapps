@@ -1,7 +1,8 @@
-const { Errors: E } = require('moleculer-web');
-const { hasType } = require('../../../utils');
+import { Errors as E } from 'moleculer-web';
+import { hasType } from '../../../utils.ts';
+import { defineAction } from 'moleculer';
 
-module.exports = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     resourceUri: { type: 'string', optional: true },
@@ -82,4 +83,6 @@ module.exports = {
 
     return resource;
   }
-};
+});
+
+export default Schema;

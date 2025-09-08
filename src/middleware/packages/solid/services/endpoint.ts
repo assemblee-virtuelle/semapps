@@ -1,7 +1,8 @@
-const { SpecialEndpointMixin } = require('@semapps/ldp');
+import { SpecialEndpointMixin } from '@semapps/ldp';
+import { ServiceSchema, defineAction } from 'moleculer';
 
-module.exports = {
-  name: 'solid-endpoint',
+const SolidEndpointSchema = {
+  name: 'solid-endpoint' as const,
   mixins: [SpecialEndpointMixin],
   settings: {
     baseUrl: null,
@@ -18,11 +19,23 @@ module.exports = {
     await this.broker.call('ldp.link-header.register', { actionName: 'solid-endpoint.getLink' });
   },
   actions: {
-    getLink() {
-      return {
-        uri: this.endpointUrl,
-        rel: 'http://www.w3.org/ns/solid/terms#storageDescription'
-      };
+    getLink: defineAction({
+      handler() {
+        return {
+          uri: this.endpointUrl,
+          rel: 'http://www.w3.org/ns/solid/terms#storageDescription'
+        };
+      }
+    })
+  }
+} satisfies ServiceSchema;
+
+export default SolidEndpointSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [SolidEndpointSchema.name]: typeof SolidEndpointSchema;
     }
   }
-};
+}

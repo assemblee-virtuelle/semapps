@@ -1,4 +1,6 @@
-module.exports = {
+import { defineAction } from 'moleculer';
+
+const Schema = defineAction({
   visibility: 'public',
   params: {
     containerUri: { type: 'string' },
@@ -16,4 +18,6 @@ module.exports = {
       await ctx.call('ldp.resource.delete', { resourceUri, webId });
     }
   }
-};
+});
+
+export default Schema;

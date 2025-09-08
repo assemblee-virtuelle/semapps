@@ -1,9 +1,7 @@
-const { ACTIVITY_TYPES, OBJECT_TYPES } = require('@semapps/activitypub');
-const waitForExpect = require('wait-for-expect');
-const initialize = require('./initialize');
-
+import { ACTIVITY_TYPES, OBJECT_TYPES } from '@semapps/activitypub';
+import waitForExpect from 'wait-for-expect';
+import initialize from './initialize.ts';
 jest.setTimeout(50_000);
-
 const NUM_USERS = 2;
 
 describe.each(['single-server', 'multi-server'])('In mode %s, posting to followers', mode => {

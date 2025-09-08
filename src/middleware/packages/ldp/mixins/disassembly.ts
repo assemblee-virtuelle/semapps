@@ -1,6 +1,7 @@
-const { arrayOf } = require('../utils');
+import { arrayOf } from '../utils.ts';
+import { ServiceSchema } from 'moleculer';
 
-module.exports = {
+const Schema = {
   settings: {
     disassembly: [] // Example: [{ path: 'pair:hasLocation', container: 'http://localhost:3000/places' }]
   },
@@ -144,4 +145,6 @@ module.exports = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
+
+export default Schema;

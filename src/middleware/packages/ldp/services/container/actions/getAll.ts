@@ -1,4 +1,6 @@
-module.exports = {
+import { defineAction } from 'moleculer';
+
+const Schema = defineAction({
   visibility: 'public',
   params: {
     dataset: { type: 'string', optional: true }
@@ -20,4 +22,6 @@ module.exports = {
 
     return result.map(node => node.containerUri.value);
   }
-};
+});
+
+export default Schema;

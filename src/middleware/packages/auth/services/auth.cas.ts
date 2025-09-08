@@ -1,9 +1,10 @@
-const { Strategy } = require('passport-cas2');
-const { Errors: E } = require('moleculer-web');
-const AuthSSOMixin = require('../mixins/auth.sso');
+import { Strategy } from 'passport-cas2';
+import { Errors as E } from 'moleculer-web';
+import AuthSSOMixin from '../mixins/auth.sso.ts';
+import { ServiceSchema } from 'moleculer';
 
 const AuthCASService = {
-  name: 'auth',
+  name: 'auth' as const,
   mixins: [AuthSSOMixin],
   settings: {
     baseUrl: null,
@@ -40,6 +41,14 @@ const AuthCASService = {
       );
     }
   }
-};
+} satisfies ServiceSchema;
 
-module.exports = AuthCASService;
+export default AuthCASService;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [AuthCASService.name]: typeof AuthCASService;
+    }
+  }
+}

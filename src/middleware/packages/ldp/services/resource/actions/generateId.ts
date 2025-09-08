@@ -1,8 +1,9 @@
-const createSlug = require('speakingurl');
-const { v4: uuidv4 } = require('uuid');
-const urlJoin = require('url-join');
+import createSlug from 'speakingurl';
+import { v4 as uuidv4 } from 'uuid';
+import urlJoin from 'url-join';
+import { defineAction } from 'moleculer';
 
-module.exports = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     containerUri: 'string',
@@ -59,4 +60,6 @@ module.exports = {
 
     return urlJoin(containerUri, slug || uuid);
   }
-};
+});
+
+export default Schema;

@@ -1,9 +1,10 @@
-const path = require('path');
-const fs = require('fs');
+import path from 'path';
+import fs from 'fs';
 const { MoleculerError } = require('moleculer').Errors;
-const { getSlugFromUri, getContainerFromUri } = require('../../../utils');
+import { getSlugFromUri, getContainerFromUri } from '../../../utils.ts';
+import { defineAction } from 'moleculer';
 
-module.exports = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     resourceUri: 'string',
@@ -42,4 +43,6 @@ module.exports = {
       fileName
     };
   }
-};
+});
+
+export default Schema;

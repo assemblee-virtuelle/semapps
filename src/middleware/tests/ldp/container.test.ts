@@ -1,13 +1,13 @@
-const waitForExpect = require('wait-for-expect');
-const CONFIG = require('../config');
-const initialize = require('./initialize');
-
+import waitForExpect from 'wait-for-expect';
+import CONFIG from '../config.ts';
+import initialize from './initialize.ts';
 jest.setTimeout(20000);
 let broker;
 
 beforeAll(async () => {
   broker = await initialize();
 });
+
 afterAll(async () => {
   if (broker) await broker.stop();
 });

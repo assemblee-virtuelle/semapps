@@ -1,8 +1,8 @@
-const { isURL } = require('../utils');
-
+import { isURL } from '../utils.ts';
+import { defineAction } from 'moleculer';
 const regexPrefix = /^([^:]+):([^:]+)$/gm;
 
-module.exports = {
+const Schema = defineAction({
   visibility: 'public',
   params: {
     value: 'string'
@@ -24,4 +24,6 @@ module.exports = {
 
     return value.replace(`${ontology.prefix}:`, ontology.namespace);
   }
-};
+});
+
+export default Schema;

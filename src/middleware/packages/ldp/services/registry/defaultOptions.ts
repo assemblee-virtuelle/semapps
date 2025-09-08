@@ -1,4 +1,4 @@
-module.exports = {
+const Schema = {
   readOnly: false,
   excludeFromMirror: false,
   permissions: webId => {
@@ -66,3 +66,5 @@ module.exports = {
   },
   controlledActions: {}
 };
+
+export default Schema;

@@ -1,9 +1,10 @@
-const path = require('path');
-const urlJoin = require('url-join');
-const MailService = require('moleculer-mail');
+import path from 'path';
+import urlJoin from 'url-join';
+import MailService from 'moleculer-mail';
+import { ServiceSchema, defineAction } from 'moleculer';
 
-module.exports = {
-  name: 'auth.mail',
+const AuthMailSchema = {
+  name: 'auth.mail' as const,
   mixins: [MailService],
   settings: {
     defaults: {
@@ -15,24 +16,26 @@ module.exports = {
     transport: null
   },
   actions: {
-    async sendResetPasswordEmail(ctx) {
-      const { account, token } = ctx.params;
+    sendResetPasswordEmail: defineAction({
+      async handler(ctx) {
+        const { account, token } = ctx.params;
 
-      await this.actions.send(
-        {
-          to: account.email,
-          template: 'reset-password',
-          locale: this.getTemplateLocale(account.preferredLocale || this.settings.defaults.locale),
-          data: {
-            account,
-            resetUrl: `${urlJoin(this.settings.defaults.frontUrl, 'login')}?new_password=true&token=${token}`
+        await this.actions.send(
+          {
+            to: account.email,
+            template: 'reset-password',
+            locale: this.getTemplateLocale(account.preferredLocale || this.settings.defaults.locale),
+            data: {
+              account,
+              resetUrl: `${urlJoin(this.settings.defaults.frontUrl, 'login')}?new_password=true&token=${token}`
+            }
+          },
+          {
+            parentCtx: ctx
           }
-        },
-        {
-          parentCtx: ctx
-        }
-      );
-    }
+        );
+      }
+    })
   },
   methods: {
     getTemplateLocale(userLocale) {
@@ -46,4 +49,14 @@ module.exports = {
       }
     }
   }
-};
+} satisfies ServiceSchema;
+
+export default AuthMailSchema;
+
+declare global {
+  export namespace Moleculer {
+    export interface AllServices {
+      [AuthMailSchema.name]: typeof AuthMailSchema;
+    }
+  }
+}

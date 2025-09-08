@@ -1,17 +1,17 @@
-const fse = require('fs-extra');
-const path = require('path');
-const urlJoin = require('url-join');
-const Redis = require('ioredis');
-const { ServiceBroker } = require('moleculer');
-const { FULL_ACTOR_TYPES, RelayService } = require('@semapps/activitypub');
-const { AuthLocalService } = require('@semapps/auth');
-const { CoreService } = require('@semapps/core');
-const { InferenceService } = require('@semapps/inference');
-const { pair } = require('@semapps/ontologies');
-const { MirrorService, ObjectsWatcherMiddleware } = require('@semapps/sync');
-const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
-const CONFIG = require('../config');
-const { dropDataset } = require('../utils');
+import fse from 'fs-extra';
+import path from 'path';
+import urlJoin from 'url-join';
+import Redis from 'ioredis';
+import { ServiceBroker } from 'moleculer';
+import { FULL_ACTOR_TYPES, RelayService } from '@semapps/activitypub';
+import { AuthLocalService } from '@semapps/auth';
+import { CoreService } from '@semapps/core';
+import { InferenceService } from '@semapps/inference';
+import { pair } from '@semapps/ontologies';
+import { MirrorService, ObjectsWatcherMiddleware } from '@semapps/sync';
+import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
+import CONFIG from '../config.ts';
+import { dropDataset } from '../utils.ts';
 
 const containers = [
   {
@@ -131,4 +131,4 @@ const initialize = async (port, mainDataset, accountsDataset, queueServiceDb, se
   return broker;
 };
 
-module.exports = initialize;
+export default initialize;

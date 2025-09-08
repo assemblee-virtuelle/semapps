@@ -1,8 +1,6 @@
-const urlJoin = require('url-join');
-const initialize = require('./initialize');
-
+import urlJoin from 'url-join';
+import initialize from './initialize.ts';
 jest.setTimeout(70000);
-
 const NUM_USERS = 1;
 
 describe('Actors are correctly created', () => {

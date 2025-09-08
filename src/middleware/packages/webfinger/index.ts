@@ -1,3 +1,2 @@
-module.exports = {
-  WebfingerService: require('./service')
-};
+import WebfingerService from './service.ts';
+export { WebfingerService };
