@@ -12,13 +12,13 @@ const listDatasets = async () => {
 
   if (response.ok) {
     const json = await response.json();
-    return json.datasets.map(dataset => dataset['ds.name'].substring(1));
+    return json.datasets.map((dataset: any) => dataset['ds.name'].substring(1));
   } else {
     return [];
   }
 };
 
-const dropDataset = dataset =>
+const dropDataset = (dataset: any) =>
   fetch(urlJoin(CONFIG.SPARQL_ENDPOINT, dataset, 'update'), {
     method: 'POST',
     body: 'update=DROP+ALL',
@@ -28,7 +28,7 @@ const dropDataset = dataset =>
     }
   });
 
-const fetchServer = (url, options = {}) => {
+const fetchServer = (url: any, options = {}) => {
   if (!url) throw new Error('No url provided to fetchServer');
   if (!options.headers) options.headers = new fetch.Headers();
 
@@ -75,14 +75,14 @@ const fetchServer = (url, options = {}) => {
     });
 };
 
-const clearQueue = async queueServiceUrl => {
+const clearQueue = async (queueServiceUrl: any) => {
   // Clear queue
   const redisClient = new Redis(queueServiceUrl);
   const result = await redisClient.flushdb();
   redisClient.disconnect();
 };
 
-const wait = ms =>
+const wait = (ms: any) =>
   new Promise(resolve => {
     setTimeout(resolve, ms);
   });

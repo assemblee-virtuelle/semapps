@@ -5,7 +5,7 @@ import initialize from './initialize.ts';
 import CONFIG from '../config.ts';
 
 jest.setTimeout(20000);
-let broker;
+let broker: any;
 
 beforeAll(async () => {
   broker = await initialize();

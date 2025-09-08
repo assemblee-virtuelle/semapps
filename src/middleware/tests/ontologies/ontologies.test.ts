@@ -10,8 +10,8 @@ import ont4 from './ontologies/ont4.json' with { type: 'json' };
 jest.setTimeout(10000);
 const localContextUri = urlJoin(CONFIG.HOME_URL, '.well-known/context.jsonld');
 
-describe.each([false, true])('Register ontologies with cacher %s', cacher => {
-  let broker;
+describe.each([false, true])('Register ontologies with cacher %s', (cacher: any) => {
+  let broker: any;
 
   beforeAll(async () => {
     broker = await initialize(cacher);

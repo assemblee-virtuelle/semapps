@@ -152,7 +152,7 @@ const BackupService = {
         const deleteFilenames = await ctx.call('backup.listBackupsForDataset', { dataset });
 
         // Delete all backups locally.
-        await Promise.all(deleteFilenames.map(file => fs.promises.rm(file)));
+        await Promise.all(deleteFilenames.map((file: any) => fs.promises.rm(file)));
 
         // Delete backups from remote.fusekiBase
         if (remoteServer.path) {

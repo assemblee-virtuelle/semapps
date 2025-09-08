@@ -7,7 +7,7 @@ import { TripleStoreService } from '@semapps/triplestore';
 import CONFIG from '../config.ts';
 import { dropDataset } from '../utils.ts';
 
-export default async cacher => {
+export default async (cacher: any) => {
   await dropDataset(CONFIG.SETTINGS_DATASET);
 
   const broker = new ServiceBroker({

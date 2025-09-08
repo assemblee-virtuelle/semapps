@@ -4,7 +4,7 @@ import mime from 'mime-types';
 
 const { MoleculerError } = require('moleculer').Errors;
 
-export default async function post(ctx) {
+export default async function post(this: any, ctx: any) {
   try {
     let { username, slugParts, ...resource } = ctx.params;
 

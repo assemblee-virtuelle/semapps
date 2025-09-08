@@ -3,8 +3,8 @@ import waitForExpect from 'wait-for-expect';
 import initialize from './initialize.ts';
 
 jest.setTimeout(50_000);
-let broker;
-let broker2;
+let broker: any;
+let broker2: any;
 
 beforeAll(async () => {
   broker = await initialize(3000, 'testData', 'settings');
@@ -16,8 +16,8 @@ afterAll(async () => {
 });
 
 describe('Permissions are correctly set on inbox', () => {
-  let simon;
-  let sebastien;
+  let simon: any;
+  let sebastien: any;
 
   test('Create actor', async () => {
     const { webId: sebastienUri } = await broker.call('auth.signup', {

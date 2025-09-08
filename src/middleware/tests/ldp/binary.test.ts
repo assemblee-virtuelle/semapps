@@ -8,7 +8,7 @@ import initialize from './initialize.ts';
 import CONFIG from '../config.ts';
 
 jest.setTimeout(20000);
-let broker;
+let broker: any;
 
 beforeAll(async () => {
   broker = await initialize();
@@ -19,9 +19,9 @@ afterAll(async () => {
 });
 
 describe('Binary handling of LDP server', () => {
-  let fileUri;
-  let filePath;
-  let fileName;
+  let fileUri: any;
+  let filePath: any;
+  let fileName: any;
 
   test('Post image to container', async () => {
     const readStream = fs.createReadStream(pathJoin(__dirname, 'av-icon.png'));

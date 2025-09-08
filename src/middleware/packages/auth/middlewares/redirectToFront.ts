@@ -1,4 +1,4 @@
-const redirectToFront = (req, res) => {
+const redirectToFront = (req: any, res: any) => {
   // Redirect browser to the redirect URL pushed in session
   const redirectUrl = new URL(req.session.redirectUrl);
   if (req.user) {

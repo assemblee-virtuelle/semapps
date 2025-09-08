@@ -29,7 +29,7 @@ const OntologiesRegistrySchema = {
     list: {
       async handler(ctx) {
         const ontologies = await this._list(ctx, {});
-        return ontologies.rows.map(({ prefix, namespace }) => ({ prefix, namespace }));
+        return ontologies.rows.map(({ prefix, namespace }: any) => ({ prefix, namespace }));
       }
     },
 

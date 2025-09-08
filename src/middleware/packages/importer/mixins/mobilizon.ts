@@ -44,7 +44,8 @@ const Schema = {
         `
         })
       };
-      this.settings.source.getOneFull = data => urlJoin(this.settings.source.mobilizon.baseUrl, 'events', data.uuid);
+      this.settings.source.getOneFull = (data: any) =>
+        urlJoin(this.settings.source.mobilizon.baseUrl, 'events', data.uuid);
     } else {
       throw new Error('The MobilizonImporterMixin can only import events for now');
     }

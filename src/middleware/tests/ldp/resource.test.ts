@@ -3,7 +3,7 @@ import CONFIG from '../config.ts';
 import initialize from './initialize.ts';
 
 jest.setTimeout(50000);
-let broker;
+let broker: any;
 
 beforeAll(async () => {
   broker = await initialize();
@@ -14,9 +14,9 @@ afterAll(async () => {
 });
 
 describe('Resource CRUD operations', () => {
-  let project1Uri;
-  let project1;
-  let project2;
+  let project1Uri: any;
+  let project1: any;
+  let project2: any;
 
   test('Post resource in container', async () => {
     project1Uri = await broker.call('ldp.container.post', {

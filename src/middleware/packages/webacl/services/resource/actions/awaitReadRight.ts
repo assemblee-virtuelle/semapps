@@ -11,7 +11,7 @@ export const action = {
     const { resourceUri, webId, timeout } = ctx.params;
     return new Promise(resolve => {
       let i = 0;
-      let interval;
+      let interval: any;
       const checkRights = () => {
         ctx
           .call('webacl.resource.hasRights', {

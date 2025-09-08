@@ -3,7 +3,7 @@ import initialize from './initialize.ts';
 import CONFIG from '../config.ts';
 
 jest.setTimeout(50000);
-let broker;
+let broker: any;
 
 beforeAll(async () => {
   broker = await initialize(3000, 'testData', 'settings');
@@ -14,10 +14,10 @@ afterAll(async () => {
 });
 
 describe('Collections', () => {
-  const items = [];
-  let collectionUri;
-  let orderedCollectionUri;
-  let cursorBasedCollectionUri;
+  const items: any = [];
+  let collectionUri: any;
+  let orderedCollectionUri: any;
+  let cursorBasedCollectionUri: any;
 
   beforeAll(async () => {
     // Create test items
@@ -264,7 +264,7 @@ describe('Collections', () => {
   });
 
   describe('Pagination', () => {
-    let paginatedCollectionUri;
+    let paginatedCollectionUri: any;
 
     beforeAll(async () => {
       // Create collection for pagination tests
@@ -415,7 +415,7 @@ describe('Collections', () => {
           }
 
           // Check for duplicates
-          page.items.forEach(item => {
+          page.items.forEach((item: any) => {
             expect(seenItems.has(item)).toBeFalsy();
             seenItems.add(item);
           });

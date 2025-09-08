@@ -3,8 +3,8 @@ import { triple, namedNode } from '@rdfjs/data-model';
 import initialize from './initialize.ts';
 
 jest.setTimeout(50000);
-let server1;
-let server2;
+let server1: any;
+let server2: any;
 
 beforeAll(async () => {
   server1 = await initialize(3001, 'testData1', 'settings1', 1);
@@ -17,7 +17,7 @@ afterAll(async () => {
 });
 
 describe('Server2 imports a single resource from server1', () => {
-  let resourceUri;
+  let resourceUri: any;
 
   test('Resource is posted on server1', async () => {
     resourceUri = await server1.call('ldp.container.post', {

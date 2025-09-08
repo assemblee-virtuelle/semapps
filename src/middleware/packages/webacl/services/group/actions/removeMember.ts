@@ -4,7 +4,7 @@ import { ActionSchema } from 'moleculer';
 
 const { MoleculerError } = require('moleculer').Errors;
 
-export const api = async function api(ctx) {
+export const api = async function api(this: any, ctx: any) {
   if (!ctx.params.deleteUserUri)
     throw new MoleculerError('needs a deleteUserUri in your POST (json)', 400, 'BAD_REQUEST');
   if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;

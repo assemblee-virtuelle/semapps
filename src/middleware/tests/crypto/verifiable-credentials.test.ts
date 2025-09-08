@@ -4,21 +4,21 @@ import initialize from './initialize.ts';
 
 jest.setTimeout(45_000);
 
-const getChallengeFrom = async actor => {
+const getChallengeFrom = async (actor: any) => {
   const { challenge } = await actor.fetch(path.join(vcApiEndpoint, 'challenges'), { method: 'POST' });
   return challenge;
 };
 
 /** @type {import('moleculer').ServiceBroker} */
-let broker;
+let broker: any;
 
 let baseUrl;
-let vcApiEndpoint;
-let alice;
-let bob;
-let craig;
+let vcApiEndpoint: any;
+let alice: any;
+let bob: any;
+let craig: any;
 
-const setUpUser = async (broker, username) => {
+const setUpUser = async (broker: any, username: any) => {
   const user = await broker.call('auth.signup', {
     username,
     email: `${username}@test.example`,
@@ -30,7 +30,7 @@ const setUpUser = async (broker, username) => {
     webId: 'system'
   });
 
-  user.fetch = async (uri, init) => {
+  user.fetch = async (uri: any, init: any) => {
     return await fetch(uri, {
       ...init,
       headers: {
@@ -48,7 +48,7 @@ const setUpUser = async (broker, username) => {
   return user;
 };
 
-const setUp = async withOldKeyStore => {
+const setUp = async (withOldKeyStore: any) => {
   ({ broker, baseUrl } = await initialize(3000, withOldKeyStore));
   vcApiEndpoint = path.join(baseUrl, 'vc/v0.3/');
   alice = await setUpUser(broker, 'alice');

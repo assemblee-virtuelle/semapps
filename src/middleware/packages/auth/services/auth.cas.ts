@@ -28,13 +28,13 @@ const AuthCASService = {
           casURL: this.settings.casUrl,
           passReqToCallback: true
         },
-        (req, username, profile, done) => {
+        (req: any, username: any, profile: any, done: any) => {
           req.$ctx
             .call('auth.loginOrSignup', { ssoData: { username, ...profile } })
-            .then(loginData => {
+            .then((loginData: any) => {
               done(null, loginData);
             })
-            .catch(e => {
+            .catch((e: any) => {
               done(new E.UnAuthorizedError(e.message), false);
             });
         }

@@ -141,7 +141,7 @@ const DigestNotificationsService = {
     build: [
       {
         name: '*',
-        process(job) {
+        process(job: any) {
           return this.actions.build({ frequency: job.name, timestamp: job.opts.prevMillis });
         }
       }

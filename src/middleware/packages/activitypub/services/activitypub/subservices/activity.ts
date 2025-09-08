@@ -83,7 +83,7 @@ const ActivityService = {
       async handler(ctx) {
         const { activity } = ctx.params;
         const recipients = await this.actions.getRecipients({ activity }, { parentCtx: ctx });
-        return recipients.filter(recipientUri => this.isLocalActor(recipientUri));
+        return recipients.filter((recipientUri: any) => this.isLocalActor(recipientUri));
       }
     },
 

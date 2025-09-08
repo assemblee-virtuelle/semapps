@@ -2,7 +2,7 @@ import { arrayOf } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
 
 // Check, if a capability grants access to the resource.
-const hasValidCapability = async (ctx, resourceUri, mode) => {
+const hasValidCapability = async (ctx: any, resourceUri: any, mode: any) => {
   const { capabilityPresentation } = ctx.meta.authorization;
   const vcs = arrayOf(capabilityPresentation.verifiableCredential);
 

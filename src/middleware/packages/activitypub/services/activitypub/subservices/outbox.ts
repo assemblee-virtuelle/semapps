@@ -275,7 +275,7 @@ const OutboxService = {
   queues: {
     remotePost: {
       name: '*',
-      async process(job) {
+      async process(job: any) {
         const { activity, recipientUri } = job.data;
 
         // During tests, do not do post to remote servers

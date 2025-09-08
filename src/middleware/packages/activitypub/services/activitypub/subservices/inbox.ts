@@ -176,7 +176,9 @@ const InboxService = {
 
         const activities = [];
 
-        for (const activityUri of results.filter(node => node.activityUri).map(node => node.activityUri.value)) {
+        for (const activityUri of results
+          .filter((node: any) => node.activityUri)
+          .map((node: any) => node.activityUri.value)) {
           const activity = await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' });
           activities.push(activity);
         }

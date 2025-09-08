@@ -6,7 +6,7 @@ import initialize from './initialize.ts';
 
 jest.setTimeout(20000);
 const ALICE_WEBID = 'http://localhost:3000/alice';
-let broker;
+let broker: any;
 
 beforeAll(async () => {
   broker = await initialize();
@@ -37,7 +37,7 @@ describe('middleware CRUD resource with perms', () => {
     ).rejects.toThrow();
   }, 20000);
 
-  let resourceUri;
+  let resourceUri: any;
 
   test('A call to ldp.container.post creates some default permissions', async () => {
     resourceUri = await broker.call(

@@ -1,7 +1,7 @@
 import initialize from '../ontologies/initialize.ts';
 
 jest.setTimeout(10000);
-let broker;
+let broker: any;
 
 beforeAll(async () => {
   broker = await initialize(false, false);
@@ -114,7 +114,7 @@ const testCases = {
   }
 };
 
-test.each(Object.keys(testCases))('Merging %s JSON-LD contexts', async key => {
+test.each(Object.keys(testCases))('Merging %s JSON-LD contexts', async (key: any) => {
   const newContext = await broker.call('jsonld.context.merge', {
     a: testCases[key].a,
     b: testCases[key].b

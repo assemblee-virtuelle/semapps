@@ -21,7 +21,7 @@ const Schema = {
       webId: 'system'
     });
 
-    return result.map(node => node.resourceUri.value);
+    return result.map((node: any) => node.resourceUri.value);
   }
 } satisfies ActionSchema;
 

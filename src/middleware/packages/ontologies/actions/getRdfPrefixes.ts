@@ -6,8 +6,8 @@ const Schema = {
   async handler(ctx) {
     const ontologies = await this.actions.list({}, { parentCtx: ctx });
     return ontologies
-      .sort((a, b) => (a.prefix < b.prefix ? -1 : a.prefix > b.prefix ? 1 : 0))
-      .map(ontology => `PREFIX ${ontology.prefix}: <${ontology.namespace}>`)
+      .sort((a: any, b: any) => (a.prefix < b.prefix ? -1 : a.prefix > b.prefix ? 1 : 0))
+      .map((ontology: any) => `PREFIX ${ontology.prefix}: <${ontology.namespace}>`)
       .join('\n');
   }
 } satisfies ActionSchema;

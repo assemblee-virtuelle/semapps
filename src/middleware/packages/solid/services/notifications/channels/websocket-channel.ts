@@ -28,10 +28,10 @@ const WebSocketChannel2023Service = {
       route: `/.notifications/WebSocketChannel2023/socket/:id`,
       handlers: {
         /** @param {import('@activitypods/core/services/websocket/websocket.mixin').Connection} connection */
-        onConnection: connection => {
+        onConnection: (connection: any) => {
           this.logger.debug('onConnection', connection.requestUrl);
 
-          const channel = this.channels.find(c => c.receiveFrom === connection.requestUrl);
+          const channel = this.channels.find((c: any) => c.receiveFrom === connection.requestUrl);
           // Check if the requested channel is registered.
           if (!channel) {
             connection.webSocket.close(404, 'Channel not found.');
@@ -39,15 +39,15 @@ const WebSocketChannel2023Service = {
           }
           this.socketConnections.push(connection);
         },
-        onClose: (event, connection) => {
+        onClose: (event: any, connection: any) => {
           this.logger.debug('onClose', connection.requestUrl);
-          this.socketConnections = this.socketConnections.filter(c => c !== connection);
+          this.socketConnections = this.socketConnections.filter((c: any) => c !== connection);
         },
         // onMessage: (message, connection) => {
         //   this.logger.debug('onMessage', message, connection.requestUrl);
         //   // We don't expect any messages.
         // },
-        onError: (event, connection) => {
+        onError: (event: any, connection: any) => {
           this.logger.debug('onError', event, connection.requestUrl);
           // There is nothing to handle here.
         }
@@ -58,8 +58,8 @@ const WebSocketChannel2023Service = {
     onChannelDeleted(channel) {
       // Close open connections (is removed from array on close event).
       this.socketConnections
-        .filter(socketConnection => socketConnection.requestUrl === channel.receiveFrom)
-        .forEach(connection => connection.webSocket.close(1001, 'The channel was deleted.'));
+        .filter((socketConnection: any) => socketConnection.requestUrl === channel.receiveFrom)
+        .forEach((connection: any) => connection.webSocket.close(1001, 'The channel was deleted.'));
     },
     onEvent(channel, activity) {
       const message = JSON.stringify({
@@ -68,8 +68,8 @@ const WebSocketChannel2023Service = {
       });
 
       this.socketConnections
-        .filter(socketConnection => socketConnection.requestUrl === channel.receiveFrom)
-        .forEach(connection => connection.webSocket.send(message));
+        .filter((socketConnection: any) => socketConnection.requestUrl === channel.receiveFrom)
+        .forEach((connection: any) => connection.webSocket.send(message));
     },
     createReceiveFromUri() {
       // Create a random URI to be registered for `receiveFrom` for a new channel under `this.channels`.

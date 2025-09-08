@@ -40,7 +40,7 @@ const initialize = async () => {
         {
           path: '/resources2',
           permissions: {},
-          newResourcesPermissions: webId => {
+          newResourcesPermissions: (webId: any) => {
             switch (webId) {
               case 'anon':
                 return {};

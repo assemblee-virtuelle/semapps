@@ -5,7 +5,7 @@ import initialize from './initialize.ts';
 import CONFIG from '../config.ts';
 
 jest.setTimeout(50000);
-let broker;
+let broker: any;
 
 beforeAll(async () => {
   broker = await initialize(3000, 'testData', 'settings');
@@ -16,10 +16,10 @@ afterAll(async () => {
 });
 
 describe('Collections API', () => {
-  const items = [];
+  const items: any = [];
   const collectionsContainersUri = urlJoin(CONFIG.HOME_URL, 'as/collection');
-  let collectionUri;
-  let localContext;
+  let collectionUri: any;
+  let localContext: any;
 
   test('Create ressources', async () => {
     for (let i = 0; i < 10; i++) {

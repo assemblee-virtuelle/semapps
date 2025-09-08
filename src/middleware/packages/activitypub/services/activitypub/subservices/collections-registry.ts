@@ -91,7 +91,7 @@ const CollectionsRegistryService = {
           );
 
           // Now the collection has been created, we can remove it (this way we don't use too much memory)
-          this.collectionsInCreation = this.collectionsInCreation.filter(c => c !== collectionUri);
+          this.collectionsInCreation = this.collectionsInCreation.filter((c: any) => c !== collectionUri);
         }
 
         return collectionUri;
@@ -117,7 +117,7 @@ const CollectionsRegistryService = {
           this.logger.info(`Looking for containers with types: ${JSON.stringify(collection.attachToTypes)}`);
 
           const accounts = await this.broker.call('auth.account.find');
-          const datasets = this.settings.podProvider ? accounts.map(a => a.username) : [undefined];
+          const datasets = this.settings.podProvider ? accounts.map((a: any) => a.username) : [undefined];
 
           for (let dataset of datasets) {
             // Find all containers where we want to attach this collection
@@ -153,7 +153,11 @@ const CollectionsRegistryService = {
         sortOrder = sortOrder && (await ctx.call('jsonld.parser.expandPredicate', { predicate: sortOrder }));
 
         const accounts = await this.broker.call('auth.account.find');
-        const datasets = dataset ? [dataset] : this.settings.podProvider ? accounts.map(a => a.username) : [undefined];
+        const datasets = dataset
+          ? [dataset]
+          : this.settings.podProvider
+            ? accounts.map((a: any) => a.username)
+            : [undefined];
 
         for (dataset of datasets) {
           this.logger.info(
@@ -173,7 +177,7 @@ const CollectionsRegistryService = {
             dataset
           });
 
-          for (const collectionUri of results.map(r => r.collectionUri.value)) {
+          for (const collectionUri of results.map((r: any) => r.collectionUri.value)) {
             if (this.isLocalObject(collectionUri, urlJoin(this.settings.baseUri, dataset))) {
               this.logger.info(`Updating options of ${collectionUri}...`);
               await ctx.call('triplestore.update', {
@@ -221,10 +225,10 @@ const CollectionsRegistryService = {
     getCollectionsByType(types) {
       types = arrayOf(types);
       return types.length > 0
-        ? this.registeredCollections.filter(collection =>
+        ? this.registeredCollections.filter((collection: any) =>
             types
-              .map(type => type.replace(AS_PREFIX, '')) // Remove AS prefix if it is set
-              .some(type =>
+              .map((type: any) => type.replace(AS_PREFIX, '')) // Remove AS prefix if it is set
+              .some((type: any) =>
                 Array.isArray(collection.attachToTypes)
                   ? collection.attachToTypes.includes(type)
                   : collection.attachToTypes === type

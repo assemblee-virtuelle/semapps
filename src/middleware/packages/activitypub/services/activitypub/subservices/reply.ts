@@ -87,7 +87,7 @@ const ReplyService = {
   },
   activities: {
     postReply: {
-      async match(activity, fetcher) {
+      async match(activity: any, fetcher: any) {
         const { match, dereferencedActivity } = await matchActivity(
           {
             type: ACTIVITY_TYPES.CREATE,
@@ -101,7 +101,7 @@ const ReplyService = {
         // We have a match only if there is a inReplyTo predicate to the object
         return { match: match && dereferencedActivity.object.inReplyTo, dereferencedActivity };
       },
-      async onEmit(ctx, activity, emitterUri) {
+      async onEmit(ctx: any, activity: any, emitterUri: any) {
         if (this.isLocalObject(activity.object.inReplyTo, emitterUri)) {
           await this.actions.addReply(
             { objectUri: activity.object.inReplyTo, replyUri: activity.object.id },
@@ -109,7 +109,7 @@ const ReplyService = {
           );
         }
       },
-      async onReceive(ctx, activity, recipientUri) {
+      async onReceive(ctx: any, activity: any, recipientUri: any) {
         if (this.isLocalObject(activity.object.inReplyTo, recipientUri)) {
           await this.actions.addReply(
             { objectUri: activity.object.inReplyTo, replyUri: activity.object.id },
@@ -126,10 +126,10 @@ const ReplyService = {
           formerType: 'as:Note' // JSON-LD doesn't remove prefixes for subjects
         }
       },
-      async onEmit(ctx, activity) {
+      async onEmit(ctx: any, activity: any) {
         await this.actions.removeFromAllRepliesCollections({ objectUri: activity.object.id }, { parentCtx: ctx });
       },
-      async onReceive(ctx, activity) {
+      async onReceive(ctx: any, activity: any) {
         await this.actions.removeFromAllRepliesCollections({ objectUri: activity.object.id }, { parentCtx: ctx });
       }
     }

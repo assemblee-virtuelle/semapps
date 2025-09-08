@@ -4,7 +4,7 @@ import { cleanUndefined, parseJson } from '../../../utils.ts';
 
 const { MoleculerError } = require('moleculer').Errors;
 
-export default async function get(ctx) {
+export default async function get(this: any, ctx: any) {
   try {
     const { username, slugParts } = ctx.params;
 

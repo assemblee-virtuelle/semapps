@@ -111,7 +111,7 @@ const ActivityMappingService = {
       return matchActivity(ctx, pattern, activityOrObject);
     },
     prioritizeMappers() {
-      this.mappers.sort((a, b) => b.priority - a.priority);
+      this.mappers.sort((a: any, b: any) => b.priority - a.priority);
     },
     compileObject(object) {
       return (

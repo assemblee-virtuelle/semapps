@@ -26,7 +26,13 @@ const containers = [
   }
 ];
 
-const initialize = async (port, mainDataset, accountsDataset, queueServiceDb, serverToMirror) => {
+const initialize = async (
+  port: any,
+  mainDataset: any,
+  accountsDataset: any,
+  queueServiceDb: any,
+  serverToMirror: any
+) => {
   // Clear datasets
   await dropDataset(mainDataset);
   await dropDataset(accountsDataset);

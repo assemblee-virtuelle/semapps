@@ -6,7 +6,7 @@ import CONFIG from '../config.ts';
 import initialize from './initialize.ts';
 
 jest.setTimeout(20000);
-let broker;
+let broker: any;
 
 beforeAll(async () => {
   broker = await initialize();
@@ -18,9 +18,9 @@ afterAll(async () => {
 
 describe('LDP handling through API', () => {
   const containerUri = urlJoin(CONFIG.HOME_URL, 'resources');
-  let resourceUri;
-  let subContainerUri;
-  let subResourceUri;
+  let resourceUri: any;
+  let subContainerUri: any;
+  let subResourceUri: any;
 
   test('Create resource', async () => {
     const { headers } = await fetchServer(containerUri, {

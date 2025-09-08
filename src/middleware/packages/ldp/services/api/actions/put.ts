@@ -2,7 +2,7 @@ import { MIME_TYPES } from '@semapps/mime-types';
 
 const { MoleculerError } = require('moleculer').Errors;
 
-export default async function post(ctx) {
+export default async function post(this: any, ctx: any) {
   let { username, slugParts, ...resource } = ctx.params;
 
   const resourceUri = this.getUriFromSlugParts(slugParts, username);

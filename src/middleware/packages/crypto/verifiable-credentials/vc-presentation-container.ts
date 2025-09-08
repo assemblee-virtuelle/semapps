@@ -23,7 +23,7 @@ const VCPresentationContainer = {
     acceptedTypes: ['https://www.w3.org/2018/credentials#VerifiablePresentation'],
     typeIndex: 'private',
     podProvider: null,
-    permissions: (webId, ctx) => {
+    permissions: (webId: any, ctx: any) => {
       // If not a pod provider, the container is shared, so any user can append.
       return {
         anyUser: {

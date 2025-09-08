@@ -9,7 +9,7 @@ import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import CONFIG from '../config.ts';
 import { dropDataset } from '../utils.ts';
 
-const initialize = async (port, withOldKeyStore = false) => {
+const initialize = async (port: any, withOldKeyStore = false) => {
   await dropDataset(CONFIG.MAIN_DATASET);
   await dropDataset(CONFIG.SETTINGS_DATASET);
 

@@ -51,8 +51,10 @@ const WebaclGroupSchema = {
 
       await Promise.all(
         members
-          .filter(memberUri => !superAdmins.includes(memberUri))
-          .map(memberUri => this.actions.removeMember({ groupUri: superAdminsGroupUri, memberUri, webId: 'system' }))
+          .filter((memberUri: any) => !superAdmins.includes(memberUri))
+          .map((memberUri: any) =>
+            this.actions.removeMember({ groupUri: superAdminsGroupUri, memberUri, webId: 'system' })
+          )
       );
     }
 

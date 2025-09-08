@@ -63,7 +63,7 @@ const Schema = {
         webId
       });
 
-      const resourcesUris = resourcesResults?.map(node => node.s1.value);
+      const resourcesUris = resourcesResults?.map((node: any) => node.s1.value);
 
       // Request each resources (in parallel)
       containerResults['http://www.w3.org/ns/ldp#contains'] = await Promise.all(

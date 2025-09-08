@@ -6,12 +6,12 @@ import initialize from './initialize.ts';
 jest.setTimeout(100_000);
 
 /** @type {import('moleculer').ServiceBroker} */
-let broker;
+let broker: any;
 
-let user;
-let user2;
+let user: any;
+let user2: any;
 
-const setUp = async withOldKeyStore => {
+const setUp = async (withOldKeyStore: any) => {
   ({ broker } = await initialize(3000, withOldKeyStore));
   user = await broker.call('auth.signup', {
     username: 'alice',
@@ -239,7 +239,7 @@ describe('keys', () => {
           keyType: KEY_TYPES.RSA
         });
         expect(webIdKeys).toHaveLength(1);
-        webIdKeys.forEach(key => {
+        webIdKeys.forEach((key: any) => {
           expect(key.publicKeyPem).toBeTruthy();
           expect(key.privateKeyPem).toBeTruthy();
         });
@@ -415,7 +415,7 @@ describe('keys', () => {
           keyType: KEY_TYPES.ED25519
         });
         expect(webIdKeys.length).toBeGreaterThan(0);
-        webIdKeys.forEach(key => {
+        webIdKeys.forEach((key: any) => {
           expect(key.publicKeyMultibase).toBeTruthy();
           expect(key.secretKeyMultibase).toBeTruthy();
         });
@@ -432,8 +432,8 @@ describe('keys', () => {
 
     // To store the key and validate if it remained the same after migration.
     // A bit hacky, sorry.
-    let publicKeyPemBeforeMigration;
-    let privateKeyPemBeforeMigration;
+    let publicKeyPemBeforeMigration: any;
+    let privateKeyPemBeforeMigration: any;
 
     describe('Before migration', () => {
       test('new keys service not usable before migration', async () => {

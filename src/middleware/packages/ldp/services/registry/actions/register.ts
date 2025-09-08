@@ -29,7 +29,7 @@ const Schema = {
     // TODO Remove this when we stop using the type for the container path
     if (!options.acceptedTypes && options.shapeTreeUri) {
       const services = await this.broker.call('$node.services');
-      if (!services.some(s => s.name === 'shape-trees') && !services.some(s => s.name === 'shacl'))
+      if (!services.some((s: any) => s.name === 'shape-trees') && !services.some((s: any) => s.name === 'shacl'))
         throw new Error('If you use shapeTreeUri in container options, you need the shape-trees and shacl service');
 
       try {

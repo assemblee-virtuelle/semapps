@@ -143,7 +143,7 @@ const AuthAccountSchema = {
       async handler(ctx) {
         /** @type {object[]} */
         const accounts = await this._find(ctx, ctx.params);
-        return accounts.filter(account => !account.deletedAt);
+        return accounts.filter((account: any) => !account.deletedAt);
       }
     },
 
@@ -332,7 +332,7 @@ const AuthAccountSchema = {
     },
     async hashPassword(password) {
       return new Promise((resolve, reject) => {
-        bcrypt.hash(password, 10, (err, hash) => {
+        bcrypt.hash(password, 10, (err: any, hash: any) => {
           if (err) {
             reject(err);
           } else {
@@ -343,7 +343,7 @@ const AuthAccountSchema = {
     },
     async comparePassword(password, hash) {
       return new Promise(resolve => {
-        bcrypt.compare(password, hash, (err, res) => {
+        bcrypt.compare(password, hash, (err: any, res: any) => {
           if (res === true) {
             resolve(true);
           } else {

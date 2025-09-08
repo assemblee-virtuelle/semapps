@@ -3,7 +3,7 @@ import { isMirror } from '../../../utils.ts';
 
 const { MoleculerError } = require('moleculer').Errors;
 
-const checkTripleValidity = (triple, containerUri) => {
+const checkTripleValidity = (triple: any, containerUri: any) => {
   if (triple.subject.value !== containerUri) {
     throw new MoleculerError(
       `The subject must be the container URI. Provided ${triple.subject.value}`,

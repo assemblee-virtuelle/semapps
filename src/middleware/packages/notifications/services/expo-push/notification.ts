@@ -92,7 +92,7 @@ const ExpoPushNotificationService = {
 
         if (notifications) {
           const receiptIdChunks = this.expo.chunkPushNotificationReceiptIds(
-            notifications.map(notification => notification['semapps:receiptId'])
+            notifications.map((notification: any) => notification['semapps:receiptId'])
           );
 
           // Like sending notifications, there are different strategies you could use
@@ -105,7 +105,9 @@ const ExpoPushNotificationService = {
               // notification and information about an error, if one occurred.
               for (const receiptId in receipts) {
                 let { status, message, details } = receipts[receiptId];
-                const notificationId = notifications.find(notification => notification.receiptId === receiptId)['@id'];
+                const notificationId = notifications.find((notification: any) => notification.receiptId === receiptId)[
+                  '@id'
+                ];
 
                 if (status === 'ok') {
                   await this.actions.update(

@@ -12,7 +12,7 @@ const Schema = {
     this.authorizers.push({ actionName, priority });
 
     // Re-order all authorizers by priority
-    this.authorizers.sort((a, b) => b.priority - a.priority);
+    this.authorizers.sort((a: any, b: any) => b.priority - a.priority);
   }
 } satisfies ActionSchema;
 

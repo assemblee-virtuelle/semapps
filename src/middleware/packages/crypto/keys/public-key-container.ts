@@ -15,7 +15,7 @@ const KeysPublicContainerSchema = {
   settings: {
     path: '/public-key',
     acceptedTypes: Object.values(KEY_TYPES),
-    permissions: (webId, ctx) => {
+    permissions: (webId: any, ctx: any) => {
       // If no pod provider, the container is shared, so any user can append.
       return {
         anyUser: {
@@ -25,7 +25,7 @@ const KeysPublicContainerSchema = {
         }
       };
     },
-    newResourcesPermissions: webId => {
+    newResourcesPermissions: (webId: any) => {
       if (webId === 'anon' || webId === 'system') throw new Error('Key resource must be created for registered webId.');
 
       return {

@@ -39,7 +39,7 @@ const Schema = {
       case 'cacheFirst':
         return this.actions
           .getStored(cleanUndefined({ resourceUri, webId, jsonContext, ...rest }), { parentCtx: ctx })
-          .catch(e => {
+          .catch((e: any) => {
             if (e.code === 404) {
               return this.actions.getNetwork(cleanUndefined({ resourceUri, webId, jsonContext }), {
                 parentCtx: ctx
@@ -52,7 +52,7 @@ const Schema = {
       case 'networkFirst':
         return this.actions
           .getNetwork(cleanUndefined({ resourceUri, webId, jsonContext }), { parentCtx: ctx })
-          .catch(e => {
+          .catch((e: any) => {
             if (e.code === 404) {
               return this.actions.getStored(cleanUndefined({ resourceUri, webId, jsonContext, ...rest }), {
                 parentCtx: ctx

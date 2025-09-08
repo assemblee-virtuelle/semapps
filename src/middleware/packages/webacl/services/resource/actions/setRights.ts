@@ -12,7 +12,7 @@ import {
 
 const { MoleculerError } = require('moleculer').Errors;
 
-export const api = async function api(ctx) {
+export const api = async function api(this: any, ctx: any) {
   const contentType = ctx.meta.headers['content-type'];
   let { slugParts } = ctx.params;
 
@@ -57,7 +57,7 @@ export const action = {
 
     // filter out all the newRights that are not for the resource
     const aclUri = getAclUriFromResourceUri(this.settings.baseUrl, resourceUri);
-    newRights = newRights.filter(a => filterTriplesForResource(a, aclUri, isContainer));
+    newRights = newRights.filter((a: any) => filterTriplesForResource(a, aclUri, isContainer));
 
     if (newRights.length === 0)
       throw new MoleculerError('The rights cannot be changed because they are incorrect', 400, 'BAD_REQUEST');
@@ -72,10 +72,10 @@ export const action = {
 
     // find the difference between newRights and currentPerms. add only what is not existent yet. and remove those that are not needed anymore
     const differenceAdd = newRights.filter(
-      x => !currentPerms.some(y => x.auth === y.auth && x.o === y.o && x.p === y.p)
+      (x: any) => !currentPerms.some((y: any) => x.auth === y.auth && x.o === y.o && x.p === y.p)
     );
     const differenceDelete = currentPerms.filter(
-      x => !newRights.some(y => x.auth === y.auth && x.o === y.o && x.p === y.p)
+      (x: any) => !newRights.some((y: any) => x.auth === y.auth && x.o === y.o && x.p === y.p)
     );
 
     if (differenceAdd.length === 0 && differenceDelete.length === 0) return;
@@ -114,25 +114,25 @@ export const action = {
 
     const defaultRightsUpdated =
       isContainer &&
-      (differenceAdd.some(triple => triple.auth.includes('#Default')) ||
-        differenceDelete.some(triple => triple.auth.includes('#Default')));
+      (differenceAdd.some((triple: any) => triple.auth.includes('#Default')) ||
+        differenceDelete.some((triple: any) => triple.auth.includes('#Default')));
 
     const addPublicRead = differenceAdd.some(
-      triple => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
+      (triple: any) => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
     );
     const removePublicRead = differenceDelete.some(
-      triple => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
+      (triple: any) => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
     );
     const addDefaultPublicRead =
       isContainer &&
       differenceAdd.some(
-        triple =>
+        (triple: any) =>
           triple.auth.includes('#DefaultRead') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
       );
     const removeDefaultPublicRead =
       isContainer &&
       differenceDelete.some(
-        triple =>
+        (triple: any) =>
           triple.auth.includes('#DefaultRead') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
       );
 

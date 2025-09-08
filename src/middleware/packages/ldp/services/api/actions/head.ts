@@ -1,4 +1,4 @@
-export default async function head(ctx) {
+export default async function head(this: any, ctx: any) {
   try {
     const { username, slugParts } = ctx.params;
     const uri = this.getUriFromSlugParts(slugParts, username);

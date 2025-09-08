@@ -3,7 +3,7 @@ import urlJoin from 'url-join';
 const regexPrefix = new RegExp('^@prefix ([\\w-]*: +<.*>) .', 'gm');
 const regexProtocolAndHostAndPort = new RegExp('^http(s)?:\\/\\/([\\w-\\.:]*)');
 
-function createFragmentURL(baseUrl, serverUrl) {
+function createFragmentURL(baseUrl: any, serverUrl: any) {
   let fragment = 'me';
   const res = serverUrl.match(regexProtocolAndHostAndPort);
   if (res) fragment = res[2].replace('-', '_').replace('.', '_').replace(':', '_');
@@ -11,17 +11,17 @@ function createFragmentURL(baseUrl, serverUrl) {
   return urlJoin(baseUrl, `#${fragment}`);
 }
 
-const isMirror = (resourceUri, baseUrl) => {
+const isMirror = (resourceUri: any, baseUrl: any) => {
   return !urlJoin(resourceUri, '/').startsWith(baseUrl);
 };
 
-const isURL = value => (typeof value === 'string' || value instanceof String) && value.startsWith('http');
+const isURL = (value: any) => (typeof value === 'string' || value instanceof String) && value.startsWith('http');
 
 /** If the value starts with `http` or `urn:` */
-const isURI = value =>
+const isURI = (value: any) =>
   (typeof value === 'string' || value instanceof String) && (value.startsWith('http') || value.startsWith('urn:'));
 
-const buildFiltersQuery = filters => {
+const buildFiltersQuery = (filters: any) => {
   let where = '';
   if (filters) {
     Object.keys(filters).forEach((predicate, i) => {
@@ -42,16 +42,16 @@ const buildFiltersQuery = filters => {
   return { where };
 };
 
-const isObject = value => typeof value === 'object' && !Array.isArray(value) && value !== null;
-const getSlugFromUri = uri => uri.match(new RegExp(`.*/(.*)`))[1];
+const isObject = (value: any) => typeof value === 'object' && !Array.isArray(value) && value !== null;
+const getSlugFromUri = (uri: any) => uri.match(new RegExp(`.*/(.*)`))[1];
 
 /** @deprecated Use the ldp.resource.getContainers action instead */
-const getContainerFromUri = uri => uri.match(new RegExp(`(.*)/.*`))[1];
+const getContainerFromUri = (uri: any) => uri.match(new RegExp(`(.*)/.*`))[1];
 
-const getParentContainerUri = uri => uri.match(new RegExp(`(.*)/.*`))[1];
-const getParentContainerPath = path => path.match(new RegExp(`(.*)/.*`))[1];
+const getParentContainerUri = (uri: any) => uri.match(new RegExp(`(.*)/.*`))[1];
+const getParentContainerPath = (path: any) => path.match(new RegExp(`(.*)/.*`))[1];
 
-const getPathFromUri = uri => {
+const getPathFromUri = (uri: any) => {
   try {
     const urlObject = new URL(uri);
     return urlObject.pathname;
@@ -61,7 +61,7 @@ const getPathFromUri = uri => {
 };
 
 // Transforms "http://localhost:3000/alice/data" to "alice"
-const getDatasetFromUri = uri => {
+const getDatasetFromUri = (uri: any) => {
   const path = getPathFromUri(uri);
   if (path) {
     const parts = path.split('/');
@@ -72,7 +72,7 @@ const getDatasetFromUri = uri => {
 };
 
 // Transforms "http://localhost:3000/alice/data" to "http://localhost:3000/alice"
-const getWebIdFromUri = uri => {
+const getWebIdFromUri = (uri: any) => {
   const path = getPathFromUri(uri);
   if (path) {
     const parts = path.split('/');
@@ -85,26 +85,26 @@ const getWebIdFromUri = uri => {
   }
 };
 
-const getId = resource => resource.id || resource['@id'];
-const getType = resource => resource.type || resource['@type'];
+const getId = (resource: any) => resource.id || resource['@id'];
+const getType = (resource: any) => resource.type || resource['@type'];
 
-const hasType = (resource, type) => {
+const hasType = (resource: any, type: any) => {
   const resourceType = getType(resource);
   return Array.isArray(resourceType) ? resourceType.includes(type) : resourceType === type;
 };
 
-const isContainer = resource => hasType(resource, 'ldp:Container');
+const isContainer = (resource: any) => hasType(resource, 'ldp:Container');
 
 /** @deprecated Use arrayOf instead */
-const defaultToArray = value => (!value ? undefined : Array.isArray(value) ? value : [value]);
+const defaultToArray = (value: any) => (!value ? undefined : Array.isArray(value) ? value : [value]);
 
-const delay = t => new Promise(resolve => setTimeout(resolve, t));
+const delay = (t: any) => new Promise(resolve => setTimeout(resolve, t));
 
 // Remove undefined values from object
-const cleanUndefined = obj =>
+const cleanUndefined = (obj: any) =>
   Object.keys(obj).reduce((acc, key) => (obj[key] === undefined ? acc : { ...acc, [key]: obj[key] }), {});
 
-const parseJson = json => {
+const parseJson = (json: any) => {
   try {
     if (json) {
       return JSON.parse(json);
@@ -115,7 +115,7 @@ const parseJson = json => {
   return json;
 };
 
-const arrayOf = value => {
+const arrayOf = (value: any) => {
   // If the field is null-ish, we suppose there are no values.
   if (value === null || value === undefined) {
     return [];
@@ -135,7 +135,7 @@ const arrayOf = value => {
  * `undefined`.
  * @type {import("./utilTypes").waitForResource}
  */
-const waitForResource = async (delayMs, fieldNames, maxTries, callback) => {
+const waitForResource = async (delayMs: any, fieldNames: any, maxTries: any, callback: any) => {
   for (let i = 0; i < maxTries; i += 1) {
     const result = await callback();
     // If a result (and the expected field, if required) is present, return.

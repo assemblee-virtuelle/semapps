@@ -93,15 +93,15 @@ const HttpSignatureService = {
 
         // Check, if one of the keys is able to verify the signature.
         const { isValid: keyValid, publicKey: publicKeyPem } = publicKeys
-          .flatMap(key => key.publicKeyPem || [])
-          .map(pubKeyPem => {
+          .flatMap((key: any) => key.publicKeyPem || [])
+          .map((pubKeyPem: any) => {
             try {
               return { isValid: verifySignature(parsedSignature, pubKeyPem), publicKey: pubKeyPem };
             } catch (e) {
               return { isValid: false };
             }
           })
-          .find(({ isValid }) => isValid) || { isValid: false, publicKey: null };
+          .find(({ isValid }: any) => isValid) || { isValid: false, publicKey: null };
 
         return { isValid: keyValid, actorUri, publicKeyPem };
       }

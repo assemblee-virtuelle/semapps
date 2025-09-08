@@ -28,7 +28,7 @@ import {
 
 const { MoleculerError } = require('moleculer').Errors;
 
-const filterAclsOnlyAgent = acl => agentPredicates.includes(acl.p.value);
+const filterAclsOnlyAgent = (acl: any) => agentPredicates.includes(acl.p.value);
 
 /**
  * Server for handling webacl resource and container rights.

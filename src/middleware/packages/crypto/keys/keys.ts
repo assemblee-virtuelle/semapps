@@ -89,7 +89,7 @@ const KeysService = {
 
         // Check if key type is present.
         const matchedKeys = container['ldp:contains'].filter(
-          keyResource =>
+          (keyResource: any) =>
             arrayOf(keyResource.type || keyResource['@type']).includes(keyType) && keyResource.controller === webId
         );
 

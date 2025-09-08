@@ -3,7 +3,7 @@ import { ActionSchema } from 'moleculer';
 
 const { MoleculerError } = require('moleculer').Errors;
 
-function checkTriplesSubjectIsResource(triples, resourceUri) {
+function checkTriplesSubjectIsResource(triples: any, resourceUri: any) {
   for (const triple of triples) {
     switch (triple.subject.termType) {
       case 'NamedNode':

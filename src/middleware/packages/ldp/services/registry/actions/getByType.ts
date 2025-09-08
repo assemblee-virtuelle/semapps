@@ -15,7 +15,7 @@ const Schema = {
     const registeredContainers = await this.actions.list({}, { parentCtx: ctx });
 
     return Object.values(registeredContainers).find(container =>
-      types.some(t =>
+      types.some((t: any) =>
         Array.isArray(container.acceptedTypes) ? container.acceptedTypes.includes(t) : container.acceptedTypes === t
       )
     );

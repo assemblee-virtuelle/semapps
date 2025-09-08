@@ -1,7 +1,7 @@
 import initialize from './initialize.ts';
 
 jest.setTimeout(10000);
-let broker;
+let broker: any;
 
 beforeAll(async () => {
   broker = await initialize();
@@ -28,10 +28,10 @@ const errorCases = {
 };
 
 describe('Get container path', () => {
-  test.each(Object.keys(successCases))('Success with resourceType %s', async resourceType => {
+  test.each(Object.keys(successCases))('Success with resourceType %s', async (resourceType: any) => {
     await expect(broker.call('ldp.container.getPath', { resourceType })).resolves.toBe(successCases[resourceType]);
   });
-  test.each(Object.keys(errorCases))('Error With resourceType %s', async resourceType => {
+  test.each(Object.keys(errorCases))('Error With resourceType %s', async (resourceType: any) => {
     await expect(broker.call('ldp.container.getPath', { resourceType })).rejects.toThrow(errorCases[resourceType]);
   });
 });

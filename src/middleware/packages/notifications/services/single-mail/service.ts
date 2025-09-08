@@ -4,7 +4,7 @@ import MailService from 'moleculer-mail';
 import { getSlugFromUri } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
 
-const delay = t => new Promise(resolve => setTimeout(resolve, t));
+const delay = (t: any) => new Promise(resolve => setTimeout(resolve, t));
 
 const SingleMailNotificationsService = {
   name: 'notifications.single-mail' as const,
@@ -88,7 +88,7 @@ const SingleMailNotificationsService = {
   queues: {
     sendMail: {
       name: '*',
-      async process(job) {
+      async process(job: any) {
         job.progress(0);
         const result = await this.actions.send(job.data);
         job.progress(100);

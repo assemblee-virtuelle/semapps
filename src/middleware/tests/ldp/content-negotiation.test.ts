@@ -6,7 +6,7 @@ import CONFIG from '../config.ts';
 import initialize from './initialize.ts';
 
 jest.setTimeout(20000);
-let broker;
+let broker: any;
 
 beforeAll(async () => {
   broker = await initialize();
@@ -18,10 +18,10 @@ afterAll(async () => {
 
 describe('Content negotiation', () => {
   const containerUri = urlJoin(CONFIG.HOME_URL, 'resources');
-  let projectUri;
-  let project2Uri;
-  let project3Uri;
-  let project4Uri;
+  let projectUri: any;
+  let project2Uri: any;
+  let project3Uri: any;
+  let project4Uri: any;
 
   test('Post resource in JSON-LD', async () => {
     const { headers } = await fetchServer(containerUri, {

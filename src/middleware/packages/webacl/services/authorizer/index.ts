@@ -25,7 +25,7 @@ const WebaclAuthorizerSchema = {
           const rights = await ctx.call('webacl.resource.hasRights', {
             resourceUri: uri,
             webId,
-            rights: Object.fromEntries(modesToCheck.map(m => [m, true]))
+            rights: Object.fromEntries(modesToCheck.map((m: any) => [m, true]))
           });
 
           // Return true if there is at least one true value

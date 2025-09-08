@@ -5,9 +5,9 @@ jest.setTimeout(70000);
 const NUM_USERS = 1;
 
 describe('Actors are correctly created', () => {
-  let broker;
-  const actors = [];
-  let alice;
+  let broker: any;
+  const actors: any = [];
+  let alice: any;
 
   beforeAll(async () => {
     broker = await initialize(3000, 'testData', 'settings');
@@ -15,7 +15,7 @@ describe('Actors are correctly created', () => {
     for (let i = 1; i <= NUM_USERS; i++) {
       const { webId } = await broker.call('auth.signup', require(`./data/actor${i}.json`));
       actors[i] = await broker.call('activitypub.actor.awaitCreateComplete', { actorUri: webId });
-      actors[i].call = (actionName, params, options = {}) =>
+      actors[i].call = (actionName: any, params: any, options = {}) =>
         broker.call(actionName, params, { ...options, meta: { ...options.meta, webId } });
     }
 

@@ -16,7 +16,7 @@ const WebhooksService = {
   },
   dependencies: ['api', 'ldp'],
   async started() {
-    this.settings.allowedActions.forEach(actionName => {
+    this.settings.allowedActions.forEach((actionName: any) => {
       if (!this.actions[actionName]) {
         throw new ServiceSchemaError(`Missing action "${actionName}" in service settings!`);
       }
@@ -101,7 +101,7 @@ const WebhooksService = {
   queues: {
     webhooks: {
       name: '*',
-      async process(job) {
+      async process(job: any) {
         const result = await this.actions[job.name](job.data);
 
         job.progress(100);

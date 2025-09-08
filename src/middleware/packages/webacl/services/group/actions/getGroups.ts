@@ -1,6 +1,6 @@
 import { ActionSchema } from 'moleculer';
 
-export const api = async function api(ctx) {
+export const api = async function api(this: any, ctx: any) {
   if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;
   return await ctx.call('webacl.group.getGroups', {});
 };
@@ -53,6 +53,6 @@ export const action = {
       });
     }
 
-    return groups.map(m => m.g.value);
+    return groups.map((m: any) => m.g.value);
   }
 } satisfies ActionSchema;

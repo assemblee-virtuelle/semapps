@@ -64,7 +64,7 @@ const SynchronizerService = {
       match: {
         type: ACTIVITY_TYPES.CREATE
       },
-      async onReceive(ctx, activity, recipientUri) {
+      async onReceive(ctx: any, activity: any, recipientUri: any) {
         if (await this.isValid(activity, recipientUri)) {
           for (let resource of arrayOf(activity.object)) {
             const resourceUri = typeof resource === 'string' ? resource : resource['@id'] || resource.id;
@@ -135,7 +135,7 @@ const SynchronizerService = {
       match: {
         type: ACTIVITY_TYPES.UPDATE
       },
-      async onReceive(ctx, activity, recipientUri) {
+      async onReceive(ctx: any, activity: any, recipientUri: any) {
         if (await this.isValid(activity, recipientUri)) {
           for (let resource of arrayOf(activity.object)) {
             resource = await ctx.call(
@@ -160,7 +160,7 @@ const SynchronizerService = {
       match: {
         type: ACTIVITY_TYPES.DELETE
       },
-      async onReceive(ctx, activity, recipientUri) {
+      async onReceive(ctx: any, activity: any, recipientUri: any) {
         if (await this.isValid(activity, recipientUri)) {
           for (const resource of arrayOf(activity.object)) {
             const resourceUri = typeof resource === 'string' ? resource : resource.id || resource['@id'];
@@ -200,7 +200,7 @@ const SynchronizerService = {
           type: OBJECT_TYPES.RELATIONSHIP
         }
       },
-      async onReceive(ctx, activity, recipientUri) {
+      async onReceive(ctx: any, activity: any, recipientUri: any) {
         if (this.settings.synchronizeContainers) {
           if (await this.isValid(activity, recipientUri)) {
             const predicate = await ctx.call('jsonld.parser.expandPredicate', {
@@ -225,7 +225,7 @@ const SynchronizerService = {
           type: OBJECT_TYPES.RELATIONSHIP
         }
       },
-      async onReceive(ctx, activity, recipientUri) {
+      async onReceive(ctx: any, activity: any, recipientUri: any) {
         if (this.settings.synchronizeContainers) {
           if (await this.isValid(activity, recipientUri)) {
             const predicate = await ctx.call('jsonld.parser.expandPredicate', {

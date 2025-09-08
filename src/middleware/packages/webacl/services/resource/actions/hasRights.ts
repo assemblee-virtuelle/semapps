@@ -18,14 +18,14 @@ const perms = {
 };
 
 async function checkRights(
-  askedRights,
-  resultRights,
-  ctx,
-  resourceUri,
-  resourceAclUri,
-  uaSearchParam,
-  graphName,
-  isContainerDefault
+  askedRights: any,
+  resultRights: any,
+  ctx: any,
+  resourceUri: any,
+  resourceAclUri: any,
+  uaSearchParam: any,
+  graphName: any,
+  isContainerDefault: any
 ) {
   for (const [p1, p2] of Object.entries(perms)) {
     if (askedRights[p1] && !resultRights[p1]) {
@@ -43,7 +43,7 @@ async function checkRights(
   }
 }
 
-async function hasPermissions(ctx, resourceUri, askedRights, baseUrl, user, graphName) {
+async function hasPermissions(ctx: any, resourceUri: any, askedRights: any, baseUrl: any, user: any, graphName: any) {
   const resourceAclUri = getAclUriFromResourceUri(baseUrl, resourceUri);
   const resultRights = {};
   let groups;
@@ -81,7 +81,7 @@ async function hasPermissions(ctx, resourceUri, askedRights, baseUrl, user, grap
   return resultRights;
 }
 
-export const api = async function api(ctx) {
+export const api = async function api(this: any, ctx: any) {
   let { slugParts } = ctx.params;
 
   // This is the root container
