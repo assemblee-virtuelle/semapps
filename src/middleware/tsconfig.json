@@ -14,7 +14,8 @@
     "moduleResolution": "NodeNext",
     "resolvePackageJsonExports": true,
     "esModuleInterop": true,
-    "resolvePackageJsonImports": true
+    "resolvePackageJsonImports": true,
+    "allowImportingTsExtensions": true
   },
   "include": ["**/*.js", "**/*.ts"],
   "exclude": []
