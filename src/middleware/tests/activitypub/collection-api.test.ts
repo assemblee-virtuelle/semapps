@@ -147,6 +147,7 @@ describe('Collections API', () => {
       body: `
         PREFIX as: <https://www.w3.org/ns/activitystreams#>
         // @ts-expect-error TS(7006): Parameter 'item' implicitly has an 'any' type.
+        // @ts-expect-error TS(7006): Parameter 'item' implicitly has an 'any' type.
         INSERT DATA { <${paginatedCollectionUri}> as:items ${items.map(item => `<${item}>`).join(', ')} . };
       `
     });

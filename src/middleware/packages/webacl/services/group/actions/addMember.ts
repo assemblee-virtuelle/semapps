@@ -58,6 +58,7 @@ export const action = {
         PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
         INSERT DATA { 
           // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           GRAPH <${this.settings.graphName}> { 
             <${groupUri}> vcard:hasMember <${memberUri}> 
           }

@@ -14,7 +14,6 @@
     "@semapps/triplestore": "1.1.4",
     "@semapps/webid": "1.1.4",
     "http-link-header": "^1.1.1",
-    "moleculer": "^0.14.19",
     "moleculer-bull": "^0.2.5",
     "moleculer-db": "^0.8.16",
     "moleculer-web": "^0.10.0-beta1",
@@ -24,10 +23,15 @@
     "uuid": "^9.0.1"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "main": "./dist/index.js"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=22.10.0"
   },
-  "type": "module"
+  "type": "module",
+  "main": "./index.ts",
+  "peerDependencies": {
+    "moleculer": "^0.14.35"
+  }
 }

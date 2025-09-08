@@ -16,15 +16,19 @@
     "@semapps/webacl": "1.1.4",
     "@semapps/webfinger": "1.1.4",
     "@semapps/webid": "1.1.4",
-    "moleculer": "^0.14.19",
     "moleculer-web": "^0.10.0-beta1",
     "url-join": "^4.0.1"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "main": "./dist/index.js"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=22.10.0"
   },
-  "type": "module"
+  "type": "module",
+  "main": "./index.ts",
+  "peerDependencies": {
+    "moleculer": "^0.14.35"
+  }
 }

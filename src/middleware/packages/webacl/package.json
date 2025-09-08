@@ -6,7 +6,8 @@
   "homepage": "https://github.com/assemblee-virtuelle/semapps#readme",
   "license": "Apache-2.0",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "main": "./dist/index.js"
   },
   "repository": {
     "type": "git",
@@ -23,7 +24,6 @@
     "@semapps/ontologies": "1.1.4",
     "@semapps/triplestore": "1.1.4",
     "jsonld-streaming-serializer": "^1.2.0",
-    "moleculer": "^0.14.18",
     "n3": "^1.8.0",
     "rdf-parse": "^1.7.0",
     "speakingurl": "^14.0.1",
@@ -32,10 +32,14 @@
   },
   "gitHead": "684ba335d0759920f4134f550431b3c3af8e2599",
   "engines": {
-    "node": ">=14"
+    "node": ">=22.10.0"
   },
   "devDependencies": {
     "@types/url-join": "^4.0.1"
   },
-  "type": "module"
+  "type": "module",
+  "main": "./index.ts",
+  "peerDependencies": {
+    "moleculer": "^0.14.35"
+  }
 }

@@ -8,7 +8,6 @@
     "@semapps/middlewares": "1.1.4",
     "@semapps/mime-types": "1.1.4",
     "jsonld": "^3.3.2",
-    "moleculer": "^0.14.29",
     "negotiator": "^0.6.2",
     "node-fetch": "^2.6.6",
     "sparqljs": "^3.5.2",
@@ -18,11 +17,16 @@
     "uuid": "^9.0.1"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "main": "./dist/index.js"
+  },
+  "peerDependencies": {
+    "moleculer": "^0.14.35"
   },
   "gitHead": "06cb2decdab424e8686a5d77cc3364fbf1912439",
   "engines": {
-    "node": ">=14"
+    "node": ">=22.10.0"
   },
-  "type": "module"
+  "type": "module",
+  "main": "./index.ts"
 }
