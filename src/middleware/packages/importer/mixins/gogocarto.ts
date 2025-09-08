@@ -42,6 +42,6 @@ const Schema = {
       return result.data;
     }
   }
-} satisfies ServiceSchema;
+} satisfies Partial<ServiceSchema>;
 
 export default Schema;

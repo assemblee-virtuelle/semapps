@@ -90,6 +90,6 @@ const Schema = {
       list: ['handleAfterGet']
     }
   }
-} satisfies ServiceSchema;
+} satisfies Partial<ServiceSchema>;
 
 export default Schema;

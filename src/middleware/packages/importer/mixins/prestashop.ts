@@ -60,6 +60,6 @@ const Schema = {
       return false;
     }
   }
-} satisfies ServiceSchema;
+} satisfies Partial<ServiceSchema>;
 
 export default Schema;

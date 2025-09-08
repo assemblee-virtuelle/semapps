@@ -248,6 +248,6 @@ const AuthMixin = {
       }
     }
   }
-} satisfies ServiceSchema;
+} satisfies Partial<ServiceSchema>;
 
 export default AuthMixin;

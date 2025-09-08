@@ -50,6 +50,6 @@ const ActivitiesHandlerMixin = {
       }
     })
   }
-} satisfies ServiceSchema;
+} satisfies Partial<ServiceSchema>;
 
 export default ActivitiesHandlerMixin;

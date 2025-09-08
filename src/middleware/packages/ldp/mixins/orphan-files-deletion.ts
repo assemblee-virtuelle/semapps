@@ -67,6 +67,6 @@ const Schema = {
   stopped() {
     this.cronJob?.stop();
   }
-} satisfies ServiceSchema;
+} satisfies Partial<ServiceSchema>;
 
 export default Schema;

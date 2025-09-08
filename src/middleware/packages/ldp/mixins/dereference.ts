@@ -147,6 +147,6 @@ const Schema = {
       get: ['handleAfterGet']
     }
   }
-} satisfies ServiceSchema;
+} satisfies Partial<ServiceSchema>;
 
 export default Schema;

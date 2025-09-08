@@ -55,6 +55,6 @@ const Schema = {
       return results && results.data && results.data.events && results.data.events.elements;
     }
   }
-} satisfies ServiceSchema;
+} satisfies Partial<ServiceSchema>;
 
 export default Schema;

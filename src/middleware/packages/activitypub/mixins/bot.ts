@@ -94,6 +94,6 @@ const BotMixin = {
       return arrayOf(result?.items);
     }
   }
-} satisfies ServiceSchema;
+} satisfies Partial<ServiceSchema>;
 
 export default BotMixin;

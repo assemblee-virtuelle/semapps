@@ -94,6 +94,6 @@ const AuthSSOMixin = {
       ];
     }
   }
-} satisfies ServiceSchema;
+} satisfies Partial<ServiceSchema>;
 
 export default AuthSSOMixin;

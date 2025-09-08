@@ -113,6 +113,6 @@ const Schema = {
       }
     })
   }
-} satisfies ServiceSchema;
+} satisfies Partial<ServiceSchema>;
 
 export default Schema;
