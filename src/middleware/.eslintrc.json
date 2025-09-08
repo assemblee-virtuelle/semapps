@@ -14,7 +14,7 @@
   // "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": "latest",
-    "sourceType": "script" // Allows for the use of imports
+    "sourceType": "module"
   },
   "plugins": [
     "jsdoc",
