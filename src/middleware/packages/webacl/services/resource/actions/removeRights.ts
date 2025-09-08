@@ -2,9 +2,9 @@ const { MoleculerError } = require('moleculer').Errors;
 
 import { getAclUriFromResourceUri, processRights, FULL_AGENTCLASS_URI, FULL_FOAF_AGENT } from '../../../utils.ts';
 
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
-export const action = defineAction({
+export const action = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string', optional: false },
@@ -68,4 +68,4 @@ export const action = defineAction({
       { meta: { webId: null, dataset: null } }
     );
   }
-});
+} satisfies ActionSchema;

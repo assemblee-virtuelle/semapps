@@ -1,7 +1,7 @@
 import path from 'path';
 import urlJoin from 'url-join';
 import MailService from 'moleculer-mail';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const AuthMailSchema = {
   name: 'auth.mail' as const,
@@ -16,7 +16,7 @@ const AuthMailSchema = {
     transport: null
   },
   actions: {
-    sendResetPasswordEmail: defineAction({
+    sendResetPasswordEmail: {
       async handler(ctx) {
         const { account, token } = ctx.params;
 
@@ -35,7 +35,7 @@ const AuthMailSchema = {
           }
         );
       }
-    })
+    }
   },
   methods: {
     getTemplateLocale(userLocale) {

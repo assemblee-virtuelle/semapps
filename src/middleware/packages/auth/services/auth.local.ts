@@ -4,7 +4,7 @@ import AuthMixin from '../mixins/auth.ts';
 import sendToken from '../middlewares/sendToken.ts';
 const { MoleculerError } = require('moleculer').Errors;
 import AuthMailService from './mail.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 /** @type {import('moleculer').ServiceSchema} */
 const AuthLocalService = {
@@ -48,7 +48,7 @@ const AuthLocalService = {
     }
   },
   actions: {
-    signup: defineAction({
+    signup: {
       async handler(ctx) {
         const { username, email, password, ...rest } = ctx.params;
 
@@ -84,9 +84,9 @@ const AuthLocalService = {
           throw e;
         }
       }
-    }),
+    },
 
-    login: defineAction({
+    login: {
       async handler(ctx) {
         const { username, password } = ctx.params;
 
@@ -98,17 +98,17 @@ const AuthLocalService = {
 
         return { token, webId: accountData.webId, newUser: false };
       }
-    }),
+    },
 
-    logout: defineAction({
+    logout: {
       async handler(ctx) {
         ctx.meta.$statusCode = 302;
         ctx.meta.$location = ctx.params.redirectUrl || this.settings.formUrl;
         ctx.emit('auth.disconnected', { webId: ctx.meta.webId });
       }
-    }),
+    },
 
-    redirectToForm: defineAction({
+    redirectToForm: {
       async handler(ctx) {
         if (this.settings.formUrl) {
           const formUrl = new URL(this.settings.formUrl);
@@ -123,9 +123,9 @@ const AuthLocalService = {
           throw new Error('No formUrl defined in auth.local settings');
         }
       }
-    }),
+    },
 
-    resetPassword: defineAction({
+    resetPassword: {
       async handler(ctx) {
         const { email } = ctx.params;
 
@@ -142,9 +142,9 @@ const AuthLocalService = {
           token
         });
       }
-    }),
+    },
 
-    setNewPassword: defineAction({
+    setNewPassword: {
       async handler(ctx) {
         const { email, token, password } = ctx.params;
 
@@ -156,7 +156,7 @@ const AuthLocalService = {
 
         await ctx.call('auth.account.setNewPassword', { webId: account.webId, token, password });
       }
-    })
+    }
   },
   methods: {
     getStrategy() {

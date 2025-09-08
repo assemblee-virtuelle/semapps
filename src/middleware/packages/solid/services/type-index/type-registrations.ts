@@ -1,7 +1,7 @@
 import urlJoin from 'url-join';
 import { namedNode, triple } from '@rdfjs/data-model';
 import { ControlledContainerMixin, arrayOf } from '@semapps/ldp';
-import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const TypeRegistrationsSchema = {
   name: 'type-registrations' as const,
@@ -14,7 +14,7 @@ const TypeRegistrationsSchema = {
     activateTombstones: false
   },
   actions: {
-    register: defineAction({
+    register: {
       visibility: 'public',
       params: {
         types: { type: 'array' },
@@ -109,14 +109,14 @@ const TypeRegistrationsSchema = {
           return registrationUri;
         }
       }
-    }),
+    },
 
     /**
      * Bind an application to a certain type of resources
      * If no other app is bound with this type yet, it will be marked as the default app
      * Otherwise, the app will be added to the list of available apps, that the user can switch to
      */
-    bindApp: defineAction({
+    bindApp: {
       visibility: 'public',
       params: {
         containerUri: { type: 'string' },
@@ -137,12 +137,12 @@ const TypeRegistrationsSchema = {
 
         await ctx.call('type-registrations.put', { resource: registration, webId });
       }
-    }),
+    },
 
     /**
      * Unbind an application from a certain type of resource (Mirror of the above action.)
      */
-    unbindApp: defineAction({
+    unbindApp: {
       visibility: 'public',
       params: {
         containerUri: { type: 'string' },
@@ -171,9 +171,9 @@ const TypeRegistrationsSchema = {
           webId
         });
       }
-    }),
+    },
 
-    getByType: defineAction({
+    getByType: {
       visibility: 'public',
       params: {
         type: { type: 'string' },
@@ -195,9 +195,9 @@ const TypeRegistrationsSchema = {
         // There can be several TypeRegistration per type
         return arrayOf(filteredContainer['ldp:contains']);
       }
-    }),
+    },
 
-    getByContainerUri: defineAction({
+    getByContainerUri: {
       visibility: 'public',
       params: {
         containerUri: { type: 'string' },
@@ -217,9 +217,9 @@ const TypeRegistrationsSchema = {
         // There should be only one TypeRegistration per container
         return arrayOf(filteredContainer['ldp:contains'])[0];
       }
-    }),
+    },
 
-    findContainersUris: defineAction({
+    findContainersUris: {
       visibility: 'public',
       params: {
         type: { type: 'string' },
@@ -232,13 +232,13 @@ const TypeRegistrationsSchema = {
 
         return registrations.map(r => r['solid:instanceContainer']);
       }
-    }),
+    },
 
     /**
      * Reset the public and private registries of the given user
      * Based on the information found on the LDP registry
      */
-    resetFromRegistry: defineAction({
+    resetFromRegistry: {
       visibility: 'public',
       params: {
         webId: { type: 'string' }
@@ -278,10 +278,10 @@ const TypeRegistrationsSchema = {
           }
         }
       }
-    })
+    }
   },
   events: {
-    'ldp.container.created': defineServiceEvent({
+    'ldp.container.created': {
       async handler(ctx) {
         const { containerUri, options, webId } = ctx.params;
 
@@ -299,7 +299,7 @@ const TypeRegistrationsSchema = {
           );
         }
       }
-    })
+    }
   },
   hooks: {
     after: {

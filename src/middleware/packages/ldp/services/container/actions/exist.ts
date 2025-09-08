@@ -1,6 +1,6 @@
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     containerUri: { type: 'string' }
@@ -14,6 +14,6 @@ const Schema = defineAction({
       (await ctx.call('triplestore.document.exist', { documentUri: `${containerUri}/` }))
     );
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

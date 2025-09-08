@@ -14,7 +14,7 @@ import {
 } from '@semapps/middlewares';
 
 import { FULL_ACTOR_TYPES } from '../../../constants.ts';
-import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const ApiService = {
   name: 'activitypub.api' as const,
@@ -46,7 +46,7 @@ const ApiService = {
     }
   },
   actions: {
-    inbox: defineAction({
+    inbox: {
       async handler(ctx) {
         const { actorSlug, ...activity } = ctx.params;
         const { requestUrl } = ctx.meta;
@@ -59,9 +59,9 @@ const ApiService = {
 
         ctx.meta.$statusCode = 202;
       }
-    }),
+    },
 
-    outbox: defineAction({
+    outbox: {
       async handler(ctx) {
         let { actorSlug, ...activity } = ctx.params;
         const { requestUrl } = ctx.meta;
@@ -80,10 +80,10 @@ const ApiService = {
         ctx.meta.$location = activity.id || activity['@id'];
         ctx.meta.$statusCode = 201;
       }
-    })
+    }
   },
   events: {
-    'ldp.registry.registered': defineServiceEvent({
+    'ldp.registry.registered': {
       async handler(ctx) {
         const { container } = ctx.params;
         const { pathname: basePath } = new URL(this.settings.baseUri);
@@ -100,7 +100,7 @@ const ApiService = {
           });
         }
       }
-    })
+    }
   },
   methods: {
     getBoxesRoute(actorsPath) {

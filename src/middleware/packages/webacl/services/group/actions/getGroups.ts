@@ -1,11 +1,11 @@
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
 export const api = async function api(ctx) {
   if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;
   return await ctx.call('webacl.group.getGroups', {});
 };
 
-export const action = defineAction({
+export const action = {
   visibility: 'public',
   params: {
     webId: { type: 'string', optional: true }
@@ -55,4 +55,4 @@ export const action = defineAction({
 
     return groups.map(m => m.g.value);
   }
-});
+} satisfies ActionSchema;

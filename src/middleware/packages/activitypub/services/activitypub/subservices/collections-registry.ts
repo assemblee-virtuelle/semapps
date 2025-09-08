@@ -3,7 +3,7 @@ import { quad, namedNode } from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { getWebIdFromUri, arrayOf } from '@semapps/ldp';
 import { ACTOR_TYPES, FULL_ACTOR_TYPES, AS_PREFIX } from '../../../constants.ts';
-import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const CollectionsRegistryService = {
   name: 'activitypub.collections-registry' as const,
@@ -17,7 +17,7 @@ const CollectionsRegistryService = {
     this.collectionsInCreation = [];
   },
   actions: {
-    register: defineAction({
+    register: {
       async handler(ctx) {
         let { path, name, attachToTypes, ...options } = ctx.params;
         if (!name) name = path;
@@ -30,15 +30,15 @@ const CollectionsRegistryService = {
         // Persist the collection in memory
         this.registeredCollections.push({ path, name, attachToTypes, ...options });
       }
-    }),
+    },
 
-    list: defineAction({
+    list: {
       handler() {
         return this.registeredCollections;
       }
-    }),
+    },
 
-    createAndAttachCollection: defineAction({
+    createAndAttachCollection: {
       async handler(ctx) {
         const { objectUri, collection } = ctx.params;
         const {
@@ -96,9 +96,9 @@ const CollectionsRegistryService = {
 
         return collectionUri;
       }
-    }),
+    },
 
-    deleteCollection: defineAction({
+    deleteCollection: {
       async handler(ctx) {
         const { objectUri, collection } = ctx.params;
         const resourceUri = urlJoin(objectUri, collection.path);
@@ -109,9 +109,9 @@ const CollectionsRegistryService = {
           await ctx.call('activitypub.collection.delete', { resourceUri, webId: 'system' });
         }
       }
-    }),
+    },
 
-    createAndAttachMissingCollections: defineAction({
+    createAndAttachMissingCollections: {
       async handler(ctx) {
         for (const collection of this.registeredCollections) {
           this.logger.info(`Looking for containers with types: ${JSON.stringify(collection.attachToTypes)}`);
@@ -139,9 +139,9 @@ const CollectionsRegistryService = {
           }
         }
       }
-    }),
+    },
 
-    updateCollectionsOptions: defineAction({
+    updateCollectionsOptions: {
       async handler(ctx) {
         let { collection, dataset } = ctx.params;
         let { attachPredicate, ordered, summary, dereferenceItems, itemsPerPage, sortPredicate, sortOrder } =
@@ -214,7 +214,7 @@ const CollectionsRegistryService = {
           }
         }
       }
-    })
+    }
   },
   methods: {
     // Get the collections attached to the given type
@@ -259,7 +259,7 @@ const CollectionsRegistryService = {
     }
   },
   events: {
-    'ldp.resource.created': defineServiceEvent({
+    'ldp.resource.created': {
       async handler(ctx) {
         const { resourceUri, newData } = ctx.params;
         const collections = this.getCollectionsByType(newData.type || newData['@type']);
@@ -272,9 +272,9 @@ const CollectionsRegistryService = {
           }
         }
       }
-    }),
+    },
 
-    'ldp.resource.updated': defineServiceEvent({
+    'ldp.resource.updated': {
       async handler(ctx) {
         const { resourceUri, newData, oldData } = ctx.params;
         // Check if we need to create collection only if the type has changed
@@ -290,9 +290,9 @@ const CollectionsRegistryService = {
           }
         }
       }
-    }),
+    },
 
-    'ldp.resource.patched': defineServiceEvent({
+    'ldp.resource.patched': {
       async handler(ctx) {
         const { resourceUri, triplesAdded } = ctx.params;
         if (triplesAdded) {
@@ -317,9 +317,9 @@ const CollectionsRegistryService = {
           }
         }
       }
-    }),
+    },
 
-    'ldp.resource.deleted': defineServiceEvent({
+    'ldp.resource.deleted': {
       async handler(ctx) {
         const { oldData } = ctx.params;
         const collections = this.getCollectionsByType(oldData.type || oldData['@type']);
@@ -330,7 +330,7 @@ const CollectionsRegistryService = {
           );
         }
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

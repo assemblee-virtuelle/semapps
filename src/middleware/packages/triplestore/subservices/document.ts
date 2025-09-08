@@ -1,11 +1,11 @@
 import { v4 as uuidv4 } from 'uuid';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 /** @type {import('moleculer').ServiceSchema} */
 const DocumentService = {
   name: 'triplestore.document' as const,
   actions: {
-    create: defineAction({
+    create: {
       async handler(ctx) {
         // TODO Do not allow to pass the document URI on creation
         let { documentUri } = ctx.params;
@@ -25,9 +25,9 @@ const DocumentService = {
 
         return documentUri;
       }
-    }),
+    },
 
-    exist: defineAction({
+    exist: {
       async handler(ctx) {
         const { documentUri } = ctx.params;
         const dataset = ctx.params.dataset || ctx.meta.dataset;
@@ -38,9 +38,9 @@ const DocumentService = {
           dataset
         });
       }
-    }),
+    },
 
-    clear: defineAction({
+    clear: {
       async handler(ctx) {
         const { documentUri } = ctx.params;
         const dataset = ctx.params.dataset || ctx.meta.dataset;
@@ -58,9 +58,9 @@ const DocumentService = {
           dataset
         });
       }
-    }),
+    },
 
-    delete: defineAction({
+    delete: {
       async handler(ctx) {
         const { documentUri } = ctx.params;
         const dataset = ctx.params.dataset || ctx.meta.dataset;
@@ -72,7 +72,7 @@ const DocumentService = {
           dataset
         });
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

@@ -1,4 +1,4 @@
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const JsonldApiSchema = {
   name: 'jsonld.api' as const,
@@ -21,12 +21,12 @@ const JsonldApiSchema = {
     });
   },
   actions: {
-    getContext: defineAction({
+    getContext: {
       async handler(ctx) {
         ctx.meta.$responseType = 'application/ld+json';
         return await ctx.call('jsonld.context.getLocal');
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

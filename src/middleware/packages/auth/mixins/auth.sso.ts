@@ -4,7 +4,7 @@ import AuthMixin from './auth.ts';
 import saveRedirectUrl from '../middlewares/saveRedirectUrl.ts';
 import redirectToFront from '../middlewares/redirectToFront.ts';
 import localLogout from '../middlewares/localLogout.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const AuthSSOMixin = {
   mixins: [AuthMixin],
@@ -19,7 +19,7 @@ const AuthSSOMixin = {
     selectSsoData: null
   },
   actions: {
-    loginOrSignup: defineAction({
+    loginOrSignup: {
       async handler(ctx) {
         const { ssoData } = ctx.params;
 
@@ -69,7 +69,7 @@ const AuthSSOMixin = {
 
         return { token, newUser };
       }
-    })
+    }
   },
   methods: {
     getApiRoutes(basePath) {

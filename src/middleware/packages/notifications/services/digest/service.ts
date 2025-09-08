@@ -2,7 +2,7 @@ import MailService from 'moleculer-mail';
 import cronParser from 'cron-parser';
 import { TripleStoreAdapter } from '@semapps/triplestore';
 import DigestSubscriptionService from './subscription.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const DigestNotificationsService = {
   name: 'digest' as const,
@@ -38,7 +38,7 @@ const DigestNotificationsService = {
     }
   },
   actions: {
-    build: defineAction({
+    build: {
       async handler(ctx) {
         const { frequency, timestamp } = ctx.params;
         const success = [];
@@ -128,7 +128,7 @@ const DigestNotificationsService = {
 
         return { failures, success };
       }
-    })
+    }
   },
   methods: {
     // Optional method called for each notification

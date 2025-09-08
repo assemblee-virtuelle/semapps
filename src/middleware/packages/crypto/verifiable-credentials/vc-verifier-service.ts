@@ -8,7 +8,7 @@ import vc from '@digitalbazaar/vc';
 import VCCapabilityPresentationProofPurpose from './VcCapabilityPresentationProofPurpose.ts';
 import VCPurpose from './VcPurpose.ts';
 import { arrayOf } from '../utils/utils.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 /**
  * Service for verifying and creating Verifiable Presentations
@@ -31,7 +31,7 @@ const VCPresentationService = {
     /**
      * Verify a verifiable credential.
      */
-    verifyVC: defineAction({
+    verifyVC: {
       params: {
         verifiableCredential: {
           type: 'object',
@@ -75,12 +75,12 @@ const VCPresentationService = {
 
         return verificationResult;
       }
-    }),
+    },
 
     /**
      * Verify a presentation.
      */
-    verifyPresentation: defineAction({
+    verifyPresentation: {
       params: {
         verifiablePresentation: { type: 'object' },
         options: {
@@ -138,14 +138,14 @@ const VCPresentationService = {
           return { verified: false, error: e.message };
         }
       }
-    }),
+    },
 
     /**
      * Verify a capability presentation.
      * @param {object} ctx.params - The parameters for verifying the capability presentation.
      * @returns {object} The verification result.
      */
-    verifyCapabilityPresentation: defineAction({
+    verifyCapabilityPresentation: {
       params: {
         verifiablePresentation: { type: 'object' },
         options: {
@@ -195,7 +195,7 @@ const VCPresentationService = {
 
         return { ...verificationResult, presentation };
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

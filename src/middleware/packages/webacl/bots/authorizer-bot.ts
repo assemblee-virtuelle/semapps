@@ -1,4 +1,4 @@
-import { ServiceSchema, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const AuthorizerBotSchema = {
   name: 'authorizer-bot' as const,
@@ -31,7 +31,7 @@ const AuthorizerBotSchema = {
     }
   },
   events: {
-    'ldp.resource.created': defineServiceEvent({
+    'ldp.resource.created': {
       async handler(ctx) {
         const { resourceUri, newData } = ctx.params;
         for (const rule of this.settings.rules) {
@@ -59,9 +59,9 @@ const AuthorizerBotSchema = {
           }
         }
       }
-    }),
+    },
 
-    'ldp.resource.updated': defineServiceEvent({
+    'ldp.resource.updated': {
       async handler(ctx) {
         const { resourceUri, newData, oldData } = ctx.params;
 
@@ -114,7 +114,7 @@ const AuthorizerBotSchema = {
           }
         }
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

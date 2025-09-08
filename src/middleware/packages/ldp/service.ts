@@ -7,7 +7,7 @@ import LdpRegistryService from './services/registry/index.ts';
 import LdpRemoteService from './services/remote/index.ts';
 import LdpResourceService from './services/resource/index.ts';
 import PermissionsService from './services/permissions/index.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const LdpSchema = {
   name: 'ldp' as const,
@@ -96,25 +96,25 @@ const LdpSchema = {
     await this.broker.call('ontologies.register', semapps);
   },
   actions: {
-    getBaseUrl: defineAction({
+    getBaseUrl: {
       handler() {
         return this.settings.baseUrl;
       }
-    }),
+    },
 
-    getBasePath: defineAction({
+    getBasePath: {
       handler() {
         const { pathname } = new URL(this.settings.baseUrl);
         return pathname;
       }
-    }),
+    },
 
-    getSetting: defineAction({
+    getSetting: {
       handler(ctx) {
         const { key } = ctx.params;
         return this.settings[key];
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

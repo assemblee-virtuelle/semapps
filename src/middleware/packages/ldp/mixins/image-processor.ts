@@ -1,7 +1,7 @@
 import sharp from 'sharp';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { arrayOf } from '../utils.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 const SUPPORTED_IMAGES_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 const Schema = {
@@ -21,7 +21,7 @@ const Schema = {
     }
   },
   actions: {
-    processImage: defineAction({
+    processImage: {
       async handler(ctx) {
         const { resourceUri } = ctx.params;
 
@@ -64,9 +64,9 @@ const Schema = {
           this.logger.warn(`Image processing failed (${e.message})`);
         }
       }
-    }),
+    },
 
-    processAllImages: defineAction({
+    processAllImages: {
       async handler(ctx) {
         const { webId } = ctx.params;
         const container = await this.actions.list({ webId }, { parentCtx: ctx });
@@ -80,7 +80,7 @@ const Schema = {
         }
         this.logger.info('Finished !');
       }
-    })
+    }
   },
   methods: {
     getMaxSize(width, height) {

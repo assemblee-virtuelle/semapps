@@ -1,7 +1,7 @@
 import { isURL, isObject, mergeObjectInArray } from '../../../utils/utils.ts';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     a: {
@@ -49,6 +49,6 @@ const Schema = defineAction({
 
     throw new Error('Could not merge JSON-LD contexts');
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

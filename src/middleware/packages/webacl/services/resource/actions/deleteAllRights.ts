@@ -1,6 +1,6 @@
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
-export const action = defineAction({
+export const action = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string', optional: false }
@@ -28,4 +28,4 @@ export const action = defineAction({
       { meta: { webId: null, dataset: null } }
     );
   }
-});
+} satisfies ActionSchema;

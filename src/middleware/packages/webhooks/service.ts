@@ -2,7 +2,7 @@ import path from 'path';
 import DbService from 'moleculer-db';
 const { MoleculerError, ServiceSchemaError } = require('moleculer').Errors;
 import { TripleStoreAdapter } from '@semapps/triplestore';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const WebhooksService = {
   name: 'webhooks' as const,
@@ -26,7 +26,7 @@ const WebhooksService = {
     }
   },
   actions: {
-    process: defineAction({
+    process: {
       async handler(ctx) {
         const { hash, ...data } = ctx.params;
         let webhook;
@@ -44,9 +44,9 @@ const WebhooksService = {
           return await this.actions[webhook.action]({ data, user: webhook.user }, { parentCtx: ctx });
         }
       }
-    }),
+    },
 
-    generate: defineAction({
+    generate: {
       async handler(ctx) {
         const userUri = ctx.meta.webId || ctx.params.userUri;
         const { action } = ctx.params;
@@ -66,9 +66,9 @@ const WebhooksService = {
 
         return webhook['@id'];
       }
-    }),
+    },
 
-    getApiRoutes: defineAction({
+    getApiRoutes: {
       handler(basePath) {
         return [
           // Unsecured routes
@@ -95,7 +95,7 @@ const WebhooksService = {
           }
         ];
       }
-    })
+    }
   },
   queues: {
     webhooks: {

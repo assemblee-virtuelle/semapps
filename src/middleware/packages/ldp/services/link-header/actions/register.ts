@@ -1,6 +1,6 @@
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     actionName: { type: 'string' }
@@ -9,6 +9,6 @@ const Schema = defineAction({
     const { actionName } = ctx.params;
     this.registeredActionNames.push(actionName);
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

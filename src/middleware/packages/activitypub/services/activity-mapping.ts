@@ -1,7 +1,7 @@
 import Handlebars from 'handlebars';
 import matchActivity from '../utils/matchActivity.ts';
 import { ACTIVITY_TYPES } from '../constants.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const ActivityMappingService = {
   name: 'activity-mapping' as const,
@@ -25,7 +25,7 @@ const ActivityMappingService = {
     }
   },
   actions: {
-    map: defineAction({
+    map: {
       async handler(ctx) {
         let { activity, locale, ...rest } = ctx.params;
 
@@ -81,9 +81,9 @@ const ActivityMappingService = {
           }
         }
       }
-    }),
+    },
 
-    addMapper: defineAction({
+    addMapper: {
       async handler(ctx) {
         const { match, mapping, priority = 1 } = ctx.params;
 
@@ -98,13 +98,13 @@ const ActivityMappingService = {
         // Reorder cached mappings
         this.prioritizeMappers();
       }
-    }),
+    },
 
-    getMappers: defineAction({
+    getMappers: {
       handler() {
         return this.mappers;
       }
-    })
+    }
   },
   methods: {
     matchActivity(ctx, pattern, activityOrObject) {

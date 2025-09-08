@@ -1,6 +1,6 @@
 import { getType } from '@semapps/ldp';
 import { OBJECT_TYPES, ACTIVITY_TYPES } from '../../../constants.ts';
-import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const ObjectService = {
   name: 'activitypub.object' as const,
@@ -11,7 +11,7 @@ const ObjectService = {
   },
   dependencies: ['ldp.resource'],
   actions: {
-    get: defineAction({
+    get: {
       async handler(ctx) {
         const { objectUri, actorUri, ...rest } = ctx.params;
 
@@ -24,9 +24,9 @@ const ObjectService = {
           ...rest
         });
       }
-    }),
+    },
 
-    wrap: defineAction({
+    wrap: {
       // If an object is passed directly, wrap it in a Create activity
       async handler(ctx) {
         const { activity } = ctx.params;
@@ -45,9 +45,9 @@ const ObjectService = {
           return activity;
         }
       }
-    }),
+    },
 
-    process: defineAction({
+    process: {
       async handler(ctx) {
         let { activity, actorUri } = ctx.params;
         let objectUri;
@@ -173,9 +173,9 @@ const ObjectService = {
 
         return activity;
       }
-    }),
+    },
 
-    createTombstone: defineAction({
+    createTombstone: {
       async handler(ctx) {
         const { resourceUri, formerType } = ctx.params;
         const expandedFormerTypes = await ctx.call('jsonld.parser.expandTypes', { types: formerType });
@@ -199,10 +199,10 @@ const ObjectService = {
           webId: 'system'
         });
       }
-    })
+    }
   },
   events: {
-    'ldp.resource.deleted': defineServiceEvent({
+    'ldp.resource.deleted': {
       async handler(ctx) {
         // Check if tombstones are globally activated
         if (this.settings.activateTombstones) {
@@ -223,7 +223,7 @@ const ObjectService = {
           }
         }
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

@@ -8,7 +8,7 @@ import ftpCopy from './utils/ftpCopy.ts';
 import rsyncCopy from './utils/rsyncCopy.ts';
 import ftpRemove from './utils/ftpRemove.ts';
 import fsRemove from './utils/fsRemove.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 /**
  * @typedef {import('moleculer').Context} Context
@@ -57,14 +57,14 @@ const BackupService = {
     }
   },
   actions: {
-    backupAll: defineAction({
+    backupAll: {
       async handler(ctx) {
         await this.actions.backupDatasets({}, { parentCtx: ctx });
         await this.actions.backupOtherDirs({}, { parentCtx: ctx });
       }
-    }),
+    },
 
-    backupDatasets: defineAction({
+    backupDatasets: {
       async handler(ctx) {
         // Generate a new backup of all datasets
         const datasets = await ctx.call('triplestore.dataset.list');
@@ -85,9 +85,9 @@ const BackupService = {
           emptyDirSync(backupsDirPath);
         }
       }
-    }),
+    },
 
-    backupOtherDirs: defineAction({
+    backupOtherDirs: {
       async handler(ctx) {
         const { otherDirsPaths } = this.settings.localServer;
 
@@ -101,9 +101,9 @@ const BackupService = {
           await this.actions.copyToRemoteServer({ path, subDir: key }, { parentCtx: ctx });
         }
       }
-    }),
+    },
 
-    copyToRemoteServer: defineAction({
+    copyToRemoteServer: {
       async handler(ctx) {
         const { path, subDir } = ctx.params;
         const { copyMethod, remoteServer } = this.settings;
@@ -134,9 +134,9 @@ const BackupService = {
           return false;
         }
       }
-    }),
+    },
 
-    deleteDataset: defineAction({
+    deleteDataset: {
       params: {
         dataset: { type: 'string' }
       },
@@ -174,9 +174,9 @@ const BackupService = {
           }
         }
       }
-    }),
+    },
 
-    listBackupsForDataset: defineAction({
+    listBackupsForDataset: {
       // Returns an array of file paths to the backups relative to `this.settings.localServer.fusekiBase`.
       async handler(ctx) {
         const { dataset } = ctx.params;
@@ -190,7 +190,7 @@ const BackupService = {
 
         return filenames;
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

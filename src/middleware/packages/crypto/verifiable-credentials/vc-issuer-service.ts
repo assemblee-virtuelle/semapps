@@ -12,7 +12,7 @@ import vc from '@digitalbazaar/vc';
 import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
 
 import { KEY_TYPES, credentialsContext } from '../constants.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 /**
  * Service for verifying, reading, and revoking Verifiable Credentials.
@@ -54,7 +54,7 @@ const VCCredentialService = {
      * @param {object} ctx.params - The parameters for creating the VC.
      * @returns {object} The signed credential.
      */
-    createVC: defineAction({
+    createVC: {
       params: {
         credential: {
           type: 'object',
@@ -137,7 +137,7 @@ const VCCredentialService = {
 
         return signedCredential;
       }
-    })
+    }
   },
   methods: {
     /** Creates an ldp resource from the presentation and sets rights. */

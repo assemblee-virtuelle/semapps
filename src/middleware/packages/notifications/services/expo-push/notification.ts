@@ -1,7 +1,7 @@
 import DbService from 'moleculer-db';
 import { Expo } from 'expo-server-sdk';
 import { TripleStoreAdapter } from '@semapps/triplestore';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const ExpoPushNotificationService = {
   name: 'expo-push.notification' as const,
@@ -17,15 +17,15 @@ const ExpoPushNotificationService = {
     setInterval(this.actions.checkReceipts, 5 * 60 * 1000);
   },
   actions: {
-    send: defineAction({
+    send: {
       async handler(ctx) {
         await this.actions.queue(ctx.params, { parentCtx: ctx });
 
         this.actions.processQueue({}, { parentCtx: ctx });
       }
-    }),
+    },
 
-    queue: defineAction({
+    queue: {
       async handler(ctx) {
         const { to, message, data } = ctx.params;
 
@@ -49,9 +49,9 @@ const ExpoPushNotificationService = {
           );
         }
       }
-    }),
+    },
 
-    processQueue: defineAction({
+    processQueue: {
       async handler(ctx) {
         const notifications = await this.findByStatus('queued', ctx);
 
@@ -84,9 +84,9 @@ const ExpoPushNotificationService = {
           }
         }
       }
-    }),
+    },
 
-    checkReceipts: defineAction({
+    checkReceipts: {
       async handler(ctx) {
         const notifications = await this.findByStatus('processed', ctx);
 
@@ -133,7 +133,7 @@ const ExpoPushNotificationService = {
           }
         }
       }
-    })
+    }
   },
   methods: {
     async findByStatus(status, ctx) {

@@ -3,7 +3,7 @@ import urlJoin from 'url-join';
 import { parseHeader, parseFile, saveDatasetMeta } from '@semapps/middlewares';
 import fetch from 'node-fetch';
 import { Errors as E } from 'moleculer-web';
-import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const stream2buffer = stream => {
   return new Promise((resolve, reject) => {
@@ -41,7 +41,7 @@ const ProxyService = {
     }
   },
   actions: {
-    api_query: defineAction({
+    api_query: {
       async handler(ctx) {
         const url = ctx.params.id;
         const method = ctx.params.method || 'GET';
@@ -83,9 +83,9 @@ const ProxyService = {
           ctx.meta.$statusMessage = e.message;
         }
       }
-    }),
+    },
 
-    query: defineAction({
+    query: {
       async handler(ctx) {
         let { url, method, headers, body, actorUri } = ctx.params;
 
@@ -143,10 +143,10 @@ const ProxyService = {
           };
         }
       }
-    })
+    }
   },
   events: {
-    'auth.registered': defineServiceEvent({
+    'auth.registered': {
       async handler(ctx) {
         const { webId } = ctx.params;
         if (this.settings.podProvider) {
@@ -160,7 +160,7 @@ const ProxyService = {
           }
         }
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

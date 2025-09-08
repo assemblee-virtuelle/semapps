@@ -1,7 +1,7 @@
 import urlJoin from 'url-join';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
-export const action = defineAction({
+export const action = {
   visibility: 'public',
   params: {
     groupSlug: { type: 'string', optional: false, trim: true }
@@ -10,4 +10,4 @@ export const action = defineAction({
     const { groupSlug } = ctx.params;
     return urlJoin(this.settings.baseUrl, '_groups', groupSlug);
   }
-});
+} satisfies ActionSchema;

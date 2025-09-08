@@ -5,7 +5,7 @@ import getUriAction from './actions/getUri.ts';
 import listAction from './actions/list.ts';
 import registerAction from './actions/register.ts';
 import defaultOptions from './defaultOptions.ts';
-import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const LdpRegistrySchema = {
   name: 'ldp.registry' as const,
@@ -37,7 +37,7 @@ const LdpRegistrySchema = {
     }
   },
   events: {
-    'auth.registered': defineServiceEvent({
+    'auth.registered': {
       async handler(ctx) {
         const { webId, accountData } = ctx.params;
         // We want to add user's containers only in Pod provider config
@@ -54,7 +54,7 @@ const LdpRegistrySchema = {
           }
         }
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

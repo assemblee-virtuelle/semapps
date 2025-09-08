@@ -1,9 +1,9 @@
 import createSlug from 'speakingurl';
 import { v4 as uuidv4 } from 'uuid';
 import urlJoin from 'url-join';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     containerUri: 'string',
@@ -60,6 +60,6 @@ const Schema = defineAction({
 
     return urlJoin(containerUri, slug || uuid);
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

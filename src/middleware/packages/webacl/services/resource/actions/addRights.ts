@@ -11,7 +11,7 @@ import {
   FULL_AGENTCLASS_URI
 } from '../../../utils.ts';
 
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
 export const api = async function api(ctx) {
   const contentType = ctx.meta.headers['content-type'];
@@ -34,7 +34,7 @@ export const api = async function api(ctx) {
   ctx.meta.$statusCode = 204;
 };
 
-export const action = defineAction({
+export const action = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -162,4 +162,4 @@ export const action = defineAction({
     ctx.emit('webacl.resource.updated', returnValues, { meta: { webId: null, dataset: null } });
     return returnValues;
   }
-});
+} satisfies ActionSchema;

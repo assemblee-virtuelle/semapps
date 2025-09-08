@@ -1,6 +1,6 @@
 import { arrayOf } from '@semapps/ldp';
 import { hasType } from '../utils.ts';
-import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const GroupsManagerSchema = {
   name: 'groups-manager' as const,
@@ -18,7 +18,7 @@ const GroupsManagerSchema = {
     }
   },
   actions: {
-    refreshAll: defineAction({
+    refreshAll: {
       async handler(ctx) {
         const usersContainer = await ctx.call('ldp.container.get', {
           containerUri: this.settings.usersContainer,
@@ -47,7 +47,7 @@ const GroupsManagerSchema = {
           }
         }
       }
-    })
+    }
   },
   methods: {
     matchRule(rule, record) {
@@ -66,7 +66,7 @@ const GroupsManagerSchema = {
     }
   },
   events: {
-    'ldp.resource.created': defineServiceEvent({
+    'ldp.resource.created': {
       async handler(ctx) {
         const { resourceUri, newData } = ctx.params;
         if (this.isUser(newData)) {
@@ -82,9 +82,9 @@ const GroupsManagerSchema = {
           }
         }
       }
-    }),
+    },
 
-    'ldp.resource.updated': defineServiceEvent({
+    'ldp.resource.updated': {
       async handler(ctx) {
         const { resourceUri, newData } = ctx.params;
         if (this.isUser(newData)) {
@@ -107,9 +107,9 @@ const GroupsManagerSchema = {
           }
         }
       }
-    }),
+    },
 
-    'ldp.resource.deleted': defineServiceEvent({
+    'ldp.resource.deleted': {
       async handler(ctx) {
         const { resourceUri, oldData } = ctx.params;
         if (this.isUser(oldData)) {
@@ -123,7 +123,7 @@ const GroupsManagerSchema = {
           }
         }
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

@@ -1,9 +1,9 @@
 const { MoleculerError } = require('moleculer').Errors;
 import urlJoin from 'url-join';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
-export const action = defineAction({
+export const action = {
   visibility: 'public',
   params: {
     groupSlug: { type: 'string', optional: true, min: 1, trim: true },
@@ -27,4 +27,4 @@ export const action = defineAction({
       webId: 'system'
     });
   }
-});
+} satisfies ActionSchema;

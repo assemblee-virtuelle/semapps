@@ -1,6 +1,6 @@
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     triple: {
@@ -45,6 +45,6 @@ const Schema = defineAction({
       dataset
     });
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

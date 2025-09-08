@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 /**
  * Service that creates and validates JSON web tokens(JWT).
@@ -32,7 +32,7 @@ const AuthJwtSchema = {
     this.publicKey = fs.readFileSync(publicKeyPath);
   },
   actions: {
-    generateKeyPair: defineAction({
+    generateKeyPair: {
       handler(ctx) {
         const { privateKeyPath, publicKeyPath } = ctx.params;
 
@@ -72,16 +72,16 @@ const AuthJwtSchema = {
           );
         });
       }
-    }),
+    },
 
-    generateServerSignedToken: defineAction({
+    generateServerSignedToken: {
       async handler(ctx) {
         const { payload } = ctx.params;
         return jwt.sign(payload, this.privateKey, { algorithm: 'RS256' });
       }
-    }),
+    },
 
-    verifyServerSignedToken: defineAction({
+    verifyServerSignedToken: {
       /** Verifies that the token was signed by this server. */
       async handler(ctx) {
         const { token } = ctx.params;
@@ -91,17 +91,17 @@ const AuthJwtSchema = {
           return false;
         }
       }
-    }),
+    },
 
-    generateUnsignedToken: defineAction({
+    generateUnsignedToken: {
       async handler(ctx) {
         const { payload } = ctx.params;
         const token = jwt.sign(payload, null, { algorithm: 'none' });
         return token;
       }
-    }),
+    },
 
-    decodeToken: defineAction({
+    decodeToken: {
       // Warning, this does NOT verify if signature is valid
       async handler(ctx) {
         const { token } = ctx.params;
@@ -111,7 +111,7 @@ const AuthJwtSchema = {
           return false;
         }
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

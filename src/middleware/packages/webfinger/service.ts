@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const WebfingerService = {
   name: 'webfinger' as const,
@@ -26,7 +26,7 @@ const WebfingerService = {
     });
   },
   actions: {
-    get: defineAction({
+    get: {
       async handler(ctx) {
         const { resource } = ctx.params;
 
@@ -53,9 +53,9 @@ const WebfingerService = {
 
         ctx.meta.$statusCode = 404;
       }
-    }),
+    },
 
-    getRemoteUri: defineAction({
+    getRemoteUri: {
       // TODO add cache if response.ok
       async handler(ctx) {
         const { account } = ctx.params;
@@ -74,7 +74,7 @@ const WebfingerService = {
           }
         }
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

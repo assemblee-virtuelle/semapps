@@ -3,7 +3,7 @@ import N3 from 'n3';
 const { DataFactory } = N3;
 const { triple, namedNode } = DataFactory;
 import RemoteService from './subservices/remote.ts';
-import { ServiceSchema, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const InferenceSchema = {
   name: 'inference' as const,
@@ -146,7 +146,7 @@ const InferenceSchema = {
     }
   },
   events: {
-    'ldp.resource.created': defineServiceEvent({
+    'ldp.resource.created': {
       async handler(ctx) {
         let { newData } = ctx.params;
         newData = await ctx.call('jsonld.parser.expand', { input: newData });
@@ -176,9 +176,9 @@ const InferenceSchema = {
           }
         }
       }
-    }),
+    },
 
-    'ldp.resource.deleted': defineServiceEvent({
+    'ldp.resource.deleted': {
       async handler(ctx) {
         let { oldData } = ctx.params;
         oldData = await ctx.call('jsonld.parser.expand', { input: oldData });
@@ -204,9 +204,9 @@ const InferenceSchema = {
           }
         }
       }
-    }),
+    },
 
-    'ldp.resource.updated': defineServiceEvent({
+    'ldp.resource.updated': {
       async handler(ctx) {
         let { oldData, newData } = ctx.params;
         oldData = await ctx.call('jsonld.parser.expand', { input: oldData });
@@ -265,9 +265,9 @@ const InferenceSchema = {
           }
         }
       }
-    }),
+    },
 
-    'ldp.resource.patched': defineServiceEvent({
+    'ldp.resource.patched': {
       async handler(ctx) {
         const { triplesAdded, triplesRemoved, skipInferenceCheck } = ctx.params;
 
@@ -323,9 +323,9 @@ const InferenceSchema = {
           }
         }
       }
-    }),
+    },
 
-    'ontologies.registered': defineServiceEvent({
+    'ontologies.registered': {
       async handler(ctx) {
         const { owl } = ctx.params;
         if (owl) {
@@ -334,7 +334,7 @@ const InferenceSchema = {
           this.inverseRelations = { ...this.inverseRelations, ...result };
         }
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

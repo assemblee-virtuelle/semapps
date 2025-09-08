@@ -1,11 +1,11 @@
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   cache: true,
   handler() {
     return Object.values(this.ontologies);
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

@@ -1,4 +1,4 @@
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const ActivitiesHandlerMixin = {
   dependencies: ['activitypub.side-effects'],
@@ -26,7 +26,7 @@ const ActivitiesHandlerMixin = {
     }
   },
   actions: {
-    processActivity: defineAction({
+    processActivity: {
       async handler(ctx) {
         const { key, boxType, dereferencedActivity, actorUri } = ctx.params;
 
@@ -48,7 +48,7 @@ const ActivitiesHandlerMixin = {
           return dereferencedActivity;
         }
       }
-    })
+    }
   }
 } satisfies Partial<ServiceSchema>;
 

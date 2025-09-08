@@ -3,7 +3,7 @@ import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
 import { ACTIVITY_TYPES, OBJECT_TYPES } from '../../../constants.ts';
 import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
 import matchActivity from '../../../utils/matchActivity.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const ReplyService = {
   name: 'activitypub.reply' as const,
@@ -21,7 +21,7 @@ const ReplyService = {
   },
   dependencies: ['activitypub.outbox', 'activitypub.collection'],
   actions: {
-    addReply: defineAction({
+    addReply: {
       async handler(ctx) {
         const { objectUri, replyUri } = ctx.params;
 
@@ -33,9 +33,9 @@ const ReplyService = {
 
         await ctx.call('activitypub.collection.add', { collectionUri, item: replyUri });
       }
-    }),
+    },
 
-    removeReply: defineAction({
+    removeReply: {
       async handler(ctx) {
         const { objectUri, replyUri } = ctx.params;
 
@@ -46,9 +46,9 @@ const ReplyService = {
           await ctx.call('activitypub.collection.remove', { collectionUri: object.replies, item: replyUri });
         }
       }
-    }),
+    },
 
-    removeFromAllRepliesCollections: defineAction({
+    removeFromAllRepliesCollections: {
       async handler(ctx) {
         const { objectUri } = ctx.params;
 
@@ -73,9 +73,9 @@ const ReplyService = {
           webId: 'system'
         });
       }
-    }),
+    },
 
-    updateCollectionsOptions: defineAction({
+    updateCollectionsOptions: {
       async handler(ctx) {
         const { dataset } = ctx.params;
         await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
@@ -83,7 +83,7 @@ const ReplyService = {
           dataset
         });
       }
-    })
+    }
   },
   activities: {
     postReply: {

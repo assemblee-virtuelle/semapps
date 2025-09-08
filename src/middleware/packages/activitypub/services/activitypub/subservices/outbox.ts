@@ -5,7 +5,7 @@ import { getType, arrayOf } from '@semapps/ldp';
 import { collectionPermissionsWithAnonRead, getSlugFromUri } from '../../../utils.ts';
 import { ACTOR_TYPES } from '../../../constants.ts';
 import AwaitActivityMixin from '../../../mixins/await-activity.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const queueOptions =
   process.env.NODE_ENV === 'test'
@@ -42,7 +42,7 @@ const OutboxService = {
     await this.broker.call('activitypub.collections-registry.register', this.settings.collectionOptions);
   },
   actions: {
-    post: defineAction({
+    post: {
       async handler(ctx) {
         let { collectionUri, username, transient, ...activity } = ctx.params;
         let activityUri;
@@ -169,9 +169,9 @@ const OutboxService = {
 
         return activity;
       }
-    }),
+    },
 
-    updateCollectionsOptions: defineAction({
+    updateCollectionsOptions: {
       async handler(ctx) {
         const { dataset } = ctx.params;
         await ctx.call('activitypub.collections-registry.updateCollectionsOptions', {
@@ -179,7 +179,7 @@ const OutboxService = {
           dataset
         });
       }
-    })
+    }
   },
   methods: {
     isLocalActor(uri) {

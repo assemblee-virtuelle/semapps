@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 import N3 from 'n3';
 import { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin, matchActivity } from '@semapps/activitypub';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 const { DataFactory } = N3;
 const { triple, namedNode } = DataFactory;
 
@@ -18,7 +18,7 @@ const InferenceRemoteSchema = {
     this.relayActor = await this.broker.call('activitypub.relay.getActor');
   },
   actions: {
-    offerInference: defineAction({
+    offerInference: {
       visibility: 'public',
       params: {
         subject: { type: 'string', optional: false },
@@ -85,7 +85,7 @@ const InferenceRemoteSchema = {
           }
         }
       }
-    })
+    }
   },
   activities: {
     offerInference: {

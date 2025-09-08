@@ -13,7 +13,7 @@ import {
   getUserAgentSearchParam
 } from '../../../utils.ts';
 
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
 const prefixes = {
   acl: 'http://www.w3.org/ns/auth/acl#',
@@ -193,7 +193,7 @@ export const api = async function api(ctx) {
   });
 };
 
-export const action = defineAction({
+export const action = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -215,4 +215,4 @@ export const action = defineAction({
 
     return await getPermissions(ctx, resourceUri, this.settings.baseUrl, webId, this.settings.graphName, isContainer);
   }
-});
+} satisfies ActionSchema;

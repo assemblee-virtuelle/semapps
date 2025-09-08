@@ -1,6 +1,6 @@
 import path from 'path';
 import urlJoin from 'url-join';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const NodeinfoService = {
   name: 'nodeinfo' as const,
@@ -58,22 +58,22 @@ const NodeinfoService = {
     });
   },
   actions: {
-    addLink: defineAction({
+    addLink: {
       handler(ctx) {
         const { rel, href } = ctx.params;
         this.links.push({ rel, href });
       }
-    }),
+    },
 
-    getLinks: defineAction({
+    getLinks: {
       handler() {
         return {
           links: this.links
         };
       }
-    }),
+    },
 
-    getSchema: defineAction({
+    getSchema: {
       async handler(ctx) {
         const users = await this.actions.getUsersCount({}, { parentCtx: ctx });
         return {
@@ -86,9 +86,9 @@ const NodeinfoService = {
           metadata: this.settings.metadata
         };
       }
-    }),
+    },
 
-    getUsersCount: defineAction({
+    getUsersCount: {
       // Overwrite this method to return your users count
       async handler() {
         return {
@@ -97,7 +97,7 @@ const NodeinfoService = {
           activeMonth: 0
         };
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

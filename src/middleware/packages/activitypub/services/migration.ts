@@ -1,9 +1,9 @@
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const ActivitypubMigrationSchema = {
   name: 'activitypub.migration' as const,
   actions: {
-    updateCollectionsOptions: defineAction({
+    updateCollectionsOptions: {
       async handler(ctx) {
         await ctx.call('activitypub.follow.updateCollectionsOptions');
         await ctx.call('activitypub.inbox.updateCollectionsOptions');
@@ -11,9 +11,9 @@ const ActivitypubMigrationSchema = {
         await ctx.call('activitypub.like.updateCollectionsOptions');
         await ctx.call('activitypub.reply.updateCollectionsOptions');
       }
-    }),
+    },
 
-    addCollectionsToContainer: defineAction({
+    addCollectionsToContainer: {
       // This shouldn't be used in Pod provider config
       async handler(ctx) {
         const collectionsContainerUri = await ctx.call('activitypub.collection.getContainerUri');
@@ -38,7 +38,7 @@ const ActivitypubMigrationSchema = {
           webId: 'system'
         });
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

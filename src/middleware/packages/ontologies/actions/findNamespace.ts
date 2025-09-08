@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     prefix: 'string'
@@ -19,6 +19,6 @@ const Schema = defineAction({
 
     return null;
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

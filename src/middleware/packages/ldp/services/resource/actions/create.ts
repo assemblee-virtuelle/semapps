@@ -1,8 +1,8 @@
 const { MoleculerError } = require('moleculer').Errors;
 import { MIME_TYPES } from '@semapps/mime-types';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     resource: { type: 'object' },
@@ -74,6 +74,6 @@ const Schema = defineAction({
 
     return returnValues;
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

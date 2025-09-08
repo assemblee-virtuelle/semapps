@@ -1,6 +1,6 @@
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     context: {
@@ -14,6 +14,6 @@ const Schema = defineAction({
     const { contextRaw } = await this.contextParser.parse(context, options);
     return contextRaw;
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

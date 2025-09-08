@@ -1,4 +1,4 @@
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const SolidAuthorizerSchema = {
   name: 'solid-authorizer' as const,
@@ -7,7 +7,7 @@ const SolidAuthorizerSchema = {
     await this.broker.call('permissions.addAuthorizer', { actionName: `${this.name}.hasPermission`, priority: 1 });
   },
   actions: {
-    hasPermission: defineAction({
+    hasPermission: {
       async handler(ctx) {
         const { uri, webId } = ctx.params;
 
@@ -18,7 +18,7 @@ const SolidAuthorizerSchema = {
 
         return undefined;
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

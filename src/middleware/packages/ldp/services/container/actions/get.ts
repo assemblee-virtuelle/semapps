@@ -1,9 +1,9 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 const { MoleculerError } = require('moleculer').Errors;
 import { buildFiltersQuery, isContainer, cleanUndefined, arrayOf } from '../../../utils.ts';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     containerUri: { type: 'string', optional: true },
@@ -115,6 +115,6 @@ const Schema = defineAction({
 
     return compactResults;
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

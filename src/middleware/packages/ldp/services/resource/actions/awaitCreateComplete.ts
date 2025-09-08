@@ -1,8 +1,8 @@
 import { waitForResource } from '../../../utils.ts';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
 /** @type {import('moleculer').ServiceActionsSchema} */
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -34,6 +34,6 @@ const Schema = defineAction({
       )
     );
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

@@ -1,7 +1,7 @@
 const { MoleculerError } = require('moleculer').Errors;
 import ControlledContainerMixin from './controlled-container.ts';
 import { delay } from '../utils.ts';
-import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const Schema = {
   mixins: [ControlledContainerMixin],
@@ -21,7 +21,7 @@ const Schema = {
     }
   },
   actions: {
-    initializeResource: defineAction({
+    initializeResource: {
       async handler(ctx) {
         const { webId } = ctx.params;
 
@@ -33,24 +33,24 @@ const Schema = {
 
         return await this.actions.post({ containerUri, resource, webId }, { parentCtx: ctx });
       }
-    }),
+    },
 
-    getResourceUri: defineAction({
+    getResourceUri: {
       async handler(ctx) {
         const containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
         const resourcesUris = await ctx.call('ldp.container.getUris', { containerUri });
         return resourcesUris[0];
       }
-    }),
+    },
 
-    exist: defineAction({
+    exist: {
       async handler(ctx) {
         const resourceUri = await this.actions.getResourceUri({ webId: ctx.params.webId }, { parentCtx: ctx });
         return !!resourceUri;
       }
-    }),
+    },
 
-    waitForResourceCreation: defineAction({
+    waitForResourceCreation: {
       async handler(ctx) {
         const { webId } = ctx.params;
         let resource;
@@ -79,7 +79,7 @@ const Schema = {
 
         return resource.id || resource['@id'];
       }
-    })
+    }
   },
   hooks: {
     before: {
@@ -104,14 +104,14 @@ const Schema = {
     }
   },
   events: {
-    'auth.registered': defineServiceEvent({
+    'auth.registered': {
       async handler(ctx) {
         if (this.settings.podProvider) {
           const { webId } = ctx.params;
           await this.actions.initializeResource({ webId });
         }
       }
-    })
+    }
   }
 } satisfies Partial<ServiceSchema>;
 

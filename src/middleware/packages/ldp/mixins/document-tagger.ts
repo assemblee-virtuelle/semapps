@@ -1,6 +1,6 @@
 import { dc } from '@semapps/ontologies';
 import { getDatasetFromUri } from '../utils.ts';
-import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const Schema = {
   settings: {
@@ -14,7 +14,7 @@ const Schema = {
     await this.broker.call('ontologies.register', dc);
   },
   actions: {
-    tagCreatedResource: defineAction({
+    tagCreatedResource: {
       async handler(ctx) {
         const { resourceUri, newData, webId, dataset } = ctx.params;
         const now = new Date();
@@ -48,9 +48,9 @@ const Schema = {
           });
         }
       }
-    }),
+    },
 
-    tagUpdatedResource: defineAction({
+    tagUpdatedResource: {
       async handler(ctx) {
         const { resourceUri, dataset } = ctx.params;
         const now = new Date();
@@ -67,10 +67,10 @@ const Schema = {
           webId: 'system'
         });
       }
-    })
+    }
   },
   events: {
-    'ldp.resource.created': defineServiceEvent({
+    'ldp.resource.created': {
       async handler(ctx) {
         const { resourceUri, newData, webId, dataset } = ctx.params;
         this.actions.tagCreatedResource(
@@ -78,21 +78,21 @@ const Schema = {
           { parentCtx: ctx }
         );
       }
-    }),
+    },
 
-    'ldp.resource.updated': defineServiceEvent({
+    'ldp.resource.updated': {
       async handler(ctx) {
         const { resourceUri, dataset } = ctx.params;
         this.actions.tagUpdatedResource({ resourceUri, dataset }, { parentCtx: ctx });
       }
-    }),
+    },
 
-    'ldp.resource.patched': defineServiceEvent({
+    'ldp.resource.patched': {
       async handler(ctx) {
         const { resourceUri, dataset } = ctx.params;
         this.actions.tagUpdatedResource({ resourceUri, dataset }, { parentCtx: ctx });
       }
-    })
+    }
   }
 } satisfies Partial<ServiceSchema>;
 

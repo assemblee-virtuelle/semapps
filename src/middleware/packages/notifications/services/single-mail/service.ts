@@ -2,7 +2,7 @@ import urlJoin from 'url-join';
 import path from 'path';
 import MailService from 'moleculer-mail';
 import { getSlugFromUri } from '@semapps/ldp';
-import { ServiceSchema, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
 const SingleMailNotificationsService = {
@@ -21,7 +21,7 @@ const SingleMailNotificationsService = {
     data: {}
   },
   events: {
-    'activitypub.inbox.received': defineServiceEvent({
+    'activitypub.inbox.received': {
       async handler(ctx) {
         const { activity, recipients } = ctx.params;
 
@@ -60,7 +60,7 @@ const SingleMailNotificationsService = {
           }
         }
       }
-    })
+    }
   },
   methods: {
     // Optional method called for each notification

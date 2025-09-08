@@ -1,7 +1,7 @@
 const { MoleculerError } = require('moleculer').Errors;
 import urlJoin from 'url-join';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
 export const api = async function api(ctx) {
   if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;
@@ -10,7 +10,7 @@ export const api = async function api(ctx) {
   });
 };
 
-export const action = defineAction({
+export const action = {
   visibility: 'public',
   params: {
     groupSlug: { type: 'string', optional: true, min: 1, trim: true },
@@ -53,4 +53,4 @@ export const action = defineAction({
 
     return members.map(m => m.m.value);
   }
-});
+} satisfies ActionSchema;

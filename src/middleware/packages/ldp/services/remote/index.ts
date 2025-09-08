@@ -5,7 +5,7 @@ import getNetworkAction from './actions/getNetwork.ts';
 import getStoredAction from './actions/getStored.ts';
 import isRemoteAction from './actions/isRemote.ts';
 import storeAction from './actions/store.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const LdpRemoteSchema = {
   name: 'ldp.remote' as const,
@@ -23,12 +23,12 @@ const LdpRemoteSchema = {
     isRemote: isRemoteAction,
     store: storeAction,
 
-    runCron: defineAction({
+    runCron: {
       // Used by tests
       handler() {
         this.updateSingleMirroredResources();
       }
-    })
+    }
   },
   methods: {
     async proxyAvailable() {

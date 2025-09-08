@@ -3,7 +3,7 @@ import createSlug from 'speakingurl';
 import DbService from 'moleculer-db';
 import { TripleStoreAdapter } from '@semapps/triplestore';
 import crypto from 'crypto';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 // Taken from https://stackoverflow.com/a/9204568/7900695
 const emailRegexp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -20,7 +20,7 @@ const AuthAccountSchema = {
   },
   dependencies: ['triplestore'],
   actions: {
-    create: defineAction({
+    create: {
       async handler(ctx) {
         let { uuid, username, password, email, webId, ...rest } = ctx.params;
 
@@ -88,9 +88,9 @@ const AuthAccountSchema = {
           webId
         });
       }
-    }),
+    },
 
-    attachWebId: defineAction({
+    attachWebId: {
       async handler(ctx) {
         const { accountUri, webId } = ctx.params;
 
@@ -99,9 +99,9 @@ const AuthAccountSchema = {
           webId
         });
       }
-    }),
+    },
 
-    verify: defineAction({
+    verify: {
       async handler(ctx) {
         const { username, password } = ctx.params;
 
@@ -120,58 +120,58 @@ const AuthAccountSchema = {
           throw new Error('account.not-found');
         }
       }
-    }),
+    },
 
-    usernameExists: defineAction({
+    usernameExists: {
       async handler(ctx) {
         const { username } = ctx.params;
         const accounts = await this._find(ctx, { query: { username } });
         return accounts.length > 0;
       }
-    }),
+    },
 
-    emailExists: defineAction({
+    emailExists: {
       async handler(ctx) {
         const { email } = ctx.params;
         const accounts = await this._find(ctx, { query: { email } });
         return accounts.length > 0;
       }
-    }),
+    },
 
-    find: defineAction({
+    find: {
       /** Overwrite find method, to filter accounts with tombstone. */
       async handler(ctx) {
         /** @type {object[]} */
         const accounts = await this._find(ctx, ctx.params);
         return accounts.filter(account => !account.deletedAt);
       }
-    }),
+    },
 
-    findByUsername: defineAction({
+    findByUsername: {
       async handler(ctx) {
         const { username } = ctx.params;
         const accounts = await this._find(ctx, { query: { username } });
         return accounts.length > 0 ? accounts[0] : null;
       }
-    }),
+    },
 
-    findByWebId: defineAction({
+    findByWebId: {
       async handler(ctx) {
         const { webId } = ctx.params;
         const accounts = await this._find(ctx, { query: { webId } });
         return accounts.length > 0 ? accounts[0] : null;
       }
-    }),
+    },
 
-    findByEmail: defineAction({
+    findByEmail: {
       async handler(ctx) {
         const { email } = ctx.params;
         const accounts = await this._find(ctx, { query: { email } });
         return accounts.length > 0 ? accounts[0] : null;
       }
-    }),
+    },
 
-    setPassword: defineAction({
+    setPassword: {
       async handler(ctx) {
         const { webId, password } = ctx.params;
         const hashedPassword = await this.hashPassword(password);
@@ -182,9 +182,9 @@ const AuthAccountSchema = {
           hashedPassword
         });
       }
-    }),
+    },
 
-    setNewPassword: defineAction({
+    setNewPassword: {
       async handler(ctx) {
         const { webId, token, password } = ctx.params;
         const hashedPassword = await this.hashPassword(password);
@@ -200,9 +200,9 @@ const AuthAccountSchema = {
           resetPasswordToken: undefined
         });
       }
-    }),
+    },
 
-    generateResetPasswordToken: defineAction({
+    generateResetPasswordToken: {
       async handler(ctx) {
         const { webId } = ctx.params;
         const resetPasswordToken = await this.generateResetPasswordToken();
@@ -215,17 +215,17 @@ const AuthAccountSchema = {
 
         return resetPasswordToken;
       }
-    }),
+    },
 
-    findDatasetByWebId: defineAction({
+    findDatasetByWebId: {
       async handler(ctx) {
         const webId = ctx.params.webId || ctx.meta.webId;
         const account = await ctx.call('auth.account.findByWebId', { webId });
         return account?.username;
       }
-    }),
+    },
 
-    findSettingsByWebId: defineAction({
+    findSettingsByWebId: {
       async handler(ctx) {
         const webId = ctx.meta.webId;
 
@@ -236,9 +236,9 @@ const AuthAccountSchema = {
           preferredLocale: account.preferredLocale
         };
       }
-    }),
+    },
 
-    updateAccountSettings: defineAction({
+    updateAccountSettings: {
       async handler(ctx) {
         const { currentPassword, email, newPassword } = ctx.params;
         const { webId } = ctx.meta;
@@ -269,9 +269,9 @@ const AuthAccountSchema = {
           ...params
         });
       }
-    }),
+    },
 
-    deleteByWebId: defineAction({
+    deleteByWebId: {
       async handler(ctx) {
         const { webId } = ctx.params;
         const account = await ctx.call('auth.account.findByWebId', { webId });
@@ -283,9 +283,9 @@ const AuthAccountSchema = {
 
         return false;
       }
-    }),
+    },
 
-    setTombstone: defineAction({
+    setTombstone: {
       // Remove email and password from an account, set deletedAt timestamp.
       async handler(ctx) {
         const { webId } = ctx.params;
@@ -302,7 +302,7 @@ const AuthAccountSchema = {
           deletedAt: new Date().toISOString()
         });
       }
-    })
+    }
   },
   methods: {
     async isValidUsername(ctx, username) {

@@ -1,10 +1,10 @@
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 const { MoleculerError } = require('moleculer').Errors;
 
 /**
  * Calls "has" action and throws error if no authorization was granted
  */
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     uri: { type: 'string' },
@@ -17,6 +17,6 @@ const Schema = defineAction({
       throw new MoleculerError('Forbidden', 403, 'ACCESS_DENIED');
     }
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

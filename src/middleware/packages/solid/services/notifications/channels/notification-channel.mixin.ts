@@ -5,7 +5,7 @@ import { ACTIVITY_TYPES } from '@semapps/activitypub';
 import { namedNode } from '@rdfjs/data-model';
 import { v4 as uuidV4 } from 'uuid';
 import moment from 'moment';
-import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 /**
  * Solid Notification Channel mixin.
@@ -72,7 +72,7 @@ const Schema = {
     this.loadChannelsFromDb({ removeOldChannels: true });
   },
   actions: {
-    endpointPost: defineAction({
+    endpointPost: {
       // Action called by the SpecialEndpointMixin when POSTing to the endpoint
       async handler(ctx) {
         // Expect format https://communitysolidserver.github.io/CommunitySolidServer/latest/usage/notifications/#webhooks
@@ -146,64 +146,64 @@ const Schema = {
           { parentCtx: ctx }
         );
       }
-    }),
+    },
 
-    getCache: defineAction({
+    getCache: {
       handler() {
         return this.channels;
       }
-    }),
+    },
 
-    resetCache: defineAction({
+    resetCache: {
       handler() {
         this.channels = [];
       }
-    })
+    }
   },
   events: {
-    'ldp.resource.created': defineServiceEvent({
+    'ldp.resource.created': {
       async handler(ctx) {
         const { resourceUri, newData } = ctx.params;
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.CREATE, newData['dc:modified']);
       }
-    }),
+    },
 
-    'ldp.resource.updated': defineServiceEvent({
+    'ldp.resource.updated': {
       async handler(ctx) {
         const { resourceUri, newData } = ctx.params;
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.UPDATE, newData['dc:modified']);
       }
-    }),
+    },
 
-    'ldp.resource.patched': defineServiceEvent({
+    'ldp.resource.patched': {
       async handler(ctx) {
         const { resourceUri } = ctx.params;
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.UPDATE, await this.getModified(resourceUri));
       }
-    }),
+    },
 
-    'ldp.resource.deleted': defineServiceEvent({
+    'ldp.resource.deleted': {
       async handler(ctx) {
         const { resourceUri } = ctx.params;
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.DELETE, new Date().toISOString());
       }
-    }),
+    },
 
-    'ldp.container.attached': defineServiceEvent({
+    'ldp.container.attached': {
       async handler(ctx) {
         const { containerUri, resourceUri } = ctx.params;
         this.onContainerOrCollectionEvent(containerUri, resourceUri, ACTIVITY_TYPES.ADD);
       }
-    }),
+    },
 
-    'ldp.container.detached': defineServiceEvent({
+    'ldp.container.detached': {
       async handler(ctx) {
         const { containerUri, resourceUri } = ctx.params;
         this.onContainerOrCollectionEvent(containerUri, resourceUri, ACTIVITY_TYPES.REMOVE);
       }
-    }),
+    },
 
-    'activitypub.collection.added': defineServiceEvent({
+    'activitypub.collection.added': {
       async handler(ctx) {
         const { collectionUri, itemUri, item } = ctx.params;
         // Mastodon sometimes send unfetchable activities (like `Accept` activities)
@@ -211,14 +211,14 @@ const Schema = {
         // We will send a notification to the listener with the whole activity
         this.onContainerOrCollectionEvent(collectionUri, itemUri || item, ACTIVITY_TYPES.ADD);
       }
-    }),
+    },
 
-    'activitypub.collection.removed': defineServiceEvent({
+    'activitypub.collection.removed': {
       async handler(ctx) {
         const { collectionUri, itemUri } = ctx.params;
         this.onContainerOrCollectionEvent(collectionUri, itemUri, ACTIVITY_TYPES.REMOVE);
       }
-    })
+    }
   },
   methods: {
     async getModified(resourceUri) {

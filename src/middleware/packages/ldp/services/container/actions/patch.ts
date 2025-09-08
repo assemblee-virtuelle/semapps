@@ -1,6 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
 import { isMirror } from '../../../utils.ts';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
 const checkTripleValidity = (triple, containerUri) => {
   if (triple.subject.value !== containerUri) {
@@ -18,7 +18,7 @@ const checkTripleValidity = (triple, containerUri) => {
   }
 };
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     containerUri: {
@@ -116,6 +116,6 @@ const Schema = defineAction({
       );
     }
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

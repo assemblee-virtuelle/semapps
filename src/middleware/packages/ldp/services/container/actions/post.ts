@@ -2,9 +2,9 @@ const { MoleculerError } = require('moleculer').Errors;
 import { MIME_TYPES } from '@semapps/mime-types';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import { cleanUndefined } from '../../../utils.ts';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     containerUri: {
@@ -161,6 +161,6 @@ const Schema = defineAction({
 
     return resourceUri;
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

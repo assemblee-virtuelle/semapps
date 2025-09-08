@@ -4,7 +4,7 @@ const { MoleculerError } = require('moleculer').Errors;
 import { createFragmentURL, arrayOf } from '@semapps/ldp';
 import { ACTIVITY_TYPES } from '@semapps/activitypub';
 import SynchronizerService from './synchronizer.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 const regexPrefix = new RegExp('^@prefix ([\\w-]*: +<.*>) .', 'gm');
 
 const MirrorSchema = {
@@ -45,7 +45,7 @@ const MirrorSchema = {
     }
   },
   actions: {
-    mirror: defineAction({
+    mirror: {
       visibility: 'public',
       params: {
         serverUrl: { type: 'string', optional: false }
@@ -170,7 +170,7 @@ const MirrorSchema = {
 
         return remoteRelayActorUri;
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

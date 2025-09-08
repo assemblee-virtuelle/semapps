@@ -1,9 +1,9 @@
 import fetch from 'node-fetch';
 const { MoleculerError } = require('moleculer').Errors;
 import { MIME_TYPES } from '@semapps/mime-types';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -53,6 +53,6 @@ const Schema = defineAction({
       }
     }
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

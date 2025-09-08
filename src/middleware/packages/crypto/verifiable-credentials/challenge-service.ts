@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 /**
  * Service to generate challenges upon request.
@@ -19,7 +19,7 @@ const ChallengeService = {
     this.challenges = {};
   },
   actions: {
-    create: defineAction({
+    create: {
       handler() {
         if (!this.cleanupTimerSetUp) {
           this.startCleanupTimer();
@@ -30,21 +30,21 @@ const ChallengeService = {
 
         return { challenge };
       }
-    }),
+    },
 
-    getAll: defineAction({
+    getAll: {
       handler() {
         return this.challenges;
       }
-    }),
+    },
 
-    clearAll: defineAction({
+    clearAll: {
       handler() {
         this.challenges = {};
       }
-    }),
+    },
 
-    validate: defineAction({
+    validate: {
       handler(ctx) {
         const { challenge } = ctx.params;
 
@@ -63,9 +63,9 @@ const ChallengeService = {
 
         return { valid: true };
       }
-    }),
+    },
 
-    cleanElapsed: defineAction({
+    cleanElapsed: {
       handler() {
         const now = Date.now();
         for (const [challenge, { issued }] of Object.entries(this.challenges)) {
@@ -74,7 +74,7 @@ const ChallengeService = {
           }
         }
       }
-    })
+    }
   },
   methods: {
     startCleanupTimer() {

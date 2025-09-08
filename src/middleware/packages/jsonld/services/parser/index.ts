@@ -6,7 +6,7 @@ import streamifyString from 'streamify-string';
 import rdfparseModule from 'rdf-parse';
 const rdfParser = rdfparseModule.default;
 import { arrayOf, isURI } from '../../utils/utils.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const JsonldParserSchema = {
   name: 'jsonld.parser' as const,
@@ -24,42 +24,42 @@ const JsonldParserSchema = {
     });
   },
   actions: {
-    compact: defineAction({
+    compact: {
       handler(ctx) {
         const { input, context, options } = ctx.params;
         return this.jsonld.compact(input, context, options);
       }
-    }),
+    },
 
-    expand: defineAction({
+    expand: {
       handler(ctx) {
         const { input, options } = ctx.params;
         return this.jsonld.expand(input, options);
       }
-    }),
+    },
 
-    flatten: defineAction({
+    flatten: {
       handler(ctx) {
         const { input, context, options } = ctx.params;
         return this.jsonld.flatten(input, context, options);
       }
-    }),
+    },
 
-    frame: defineAction({
+    frame: {
       handler(ctx) {
         const { input, frame, options } = ctx.params;
         return this.jsonld.frame(input, frame, options);
       }
-    }),
+    },
 
-    normalize: defineAction({
+    normalize: {
       handler(ctx) {
         const { input, options } = ctx.params;
         return this.jsonld.normalize(input, options);
       }
-    }),
+    },
 
-    fromRDF: defineAction({
+    fromRDF: {
       async handler(ctx) {
         const { input, options = {} } = ctx.params;
         const { format } = options;
@@ -103,9 +103,9 @@ const JsonldParserSchema = {
           return framedResource;
         }
       }
-    }),
+    },
 
-    toRDF: defineAction({
+    toRDF: {
       async handler(ctx) {
         const { input, options = {} } = ctx.params;
         const { format } = options;
@@ -129,9 +129,9 @@ const JsonldParserSchema = {
           });
         }
       }
-    }),
+    },
 
-    toQuads: defineAction({
+    toQuads: {
       // Return quads in RDF.JS data model
       // (this.jsonld.toRDF does not use the same model)
       // https://github.com/rdfjs/data-model-spec
@@ -148,9 +148,9 @@ const JsonldParserSchema = {
             .on('end', () => resolve(res));
         });
       }
-    }),
+    },
 
-    expandPredicate: defineAction({
+    expandPredicate: {
       // TODO move to ontologies service ??
       async handler(ctx) {
         let { predicate, context } = ctx.params;
@@ -178,9 +178,9 @@ const JsonldParserSchema = {
 
         return expandedPredicate;
       }
-    }),
+    },
 
-    expandTypes: defineAction({
+    expandTypes: {
       async handler(ctx) {
         let { types, context } = ctx.params;
 
@@ -208,9 +208,9 @@ const JsonldParserSchema = {
 
         return expandedTypes;
       }
-    }),
+    },
 
-    changeBase: defineAction({
+    changeBase: {
       async handler(ctx) {
         const { input, base } = ctx.params;
 
@@ -225,7 +225,7 @@ const JsonldParserSchema = {
           { parentCtx: ctx }
         );
       }
-    })
+    }
   },
   methods: {
     streamToString(stream) {

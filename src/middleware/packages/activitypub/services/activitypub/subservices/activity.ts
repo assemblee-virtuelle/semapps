@@ -4,7 +4,7 @@ import setRightsHandler from './activity-handlers/setRightsHandler.ts';
 import { arrayOf } from '../../../utils.ts';
 import { PUBLIC_URI, FULL_ACTIVITY_TYPES } from '../../../constants.ts';
 import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const ActivityService = {
   name: 'activitypub.activity' as const,
@@ -29,13 +29,13 @@ const ActivityService = {
   },
   dependencies: ['ldp.container'],
   actions: {
-    forbidden: defineAction({
+    forbidden: {
       handler() {
         throw new E.ForbiddenError();
       }
-    }),
+    },
 
-    getRecipients: defineAction({
+    getRecipients: {
       async handler(ctx) {
         const { activity } = ctx.params;
         const output = [];
@@ -77,17 +77,17 @@ const ActivityService = {
         // Remove duplicates
         return [...new Set(output)];
       }
-    }),
+    },
 
-    getLocalRecipients: defineAction({
+    getLocalRecipients: {
       async handler(ctx) {
         const { activity } = ctx.params;
         const recipients = await this.actions.getRecipients({ activity }, { parentCtx: ctx });
         return recipients.filter(recipientUri => this.isLocalActor(recipientUri));
       }
-    }),
+    },
 
-    isPublic: defineAction({
+    isPublic: {
       handler(ctx) {
         const { activity } = ctx.params;
         // We accept all three representations, as required by https://www.w3.org/TR/activitypub/#public-addressing
@@ -96,7 +96,7 @@ const ActivityService = {
           ? arrayOf(activity.to).some(r => publicRepresentations.includes(r))
           : false;
       }
-    })
+    }
   },
   methods: {
     isLocalActor(uri) {

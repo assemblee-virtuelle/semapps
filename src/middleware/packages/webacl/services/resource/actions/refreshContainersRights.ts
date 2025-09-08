@@ -1,7 +1,7 @@
 import urlJoin from 'url-join';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
-export const action = defineAction({
+export const action = {
   visibility: 'public',
   async handler(ctx) {
     const { webId } = ctx.params;
@@ -57,4 +57,4 @@ export const action = defineAction({
       }
     }
   }
-});
+} satisfies ActionSchema;

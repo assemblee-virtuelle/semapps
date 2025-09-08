@@ -1,4 +1,4 @@
-import { ServiceBroker, defineAction } from 'moleculer';
+import { ServiceBroker } from 'moleculer';
 import fs from 'fs';
 import { join as pathJoin } from 'path';
 import { CoreService } from '@semapps/core';
@@ -104,7 +104,7 @@ const initialize = async () => {
       permissions
     },
     actions: {
-      getHeaderLinks: defineAction({
+      getHeaderLinks: {
         handler() {
           return [
             {
@@ -113,7 +113,7 @@ const initialize = async () => {
             }
           ];
         }
-      })
+      }
     }
   });
 

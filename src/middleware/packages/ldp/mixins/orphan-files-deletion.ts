@@ -1,5 +1,5 @@
 import { CronJob } from 'cron';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const Schema = {
   settings: {
@@ -12,7 +12,7 @@ const Schema = {
   },
   dependencies: ['triplestore', 'ldp.resource'],
   actions: {
-    checkOrphanFiles: defineAction({
+    checkOrphanFiles: {
       async handler(ctx) {
         try {
           this.logger.info('OrphanFilesDeletion - Check...');
@@ -53,7 +53,7 @@ const Schema = {
           this.logger.error(`OrphanFilesDeletion - Error: ${error.message}`);
         }
       }
-    })
+    }
   },
   created() {
     this.actions.checkOrphanFiles();

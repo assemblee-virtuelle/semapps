@@ -1,7 +1,7 @@
 import { credentialsContext } from '@semapps/crypto';
 import { arrayOf } from '@semapps/ldp';
 import matchActivity from '../../../utils/matchActivity.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 /**
  * Allow any service to process activities just after they are posted to the inbox or outbox.
@@ -17,7 +17,7 @@ const ActivitypubSideEffectsSchema = {
     this.processors = [];
   },
   actions: {
-    addProcessor: defineAction({
+    addProcessor: {
       /**
        * Add a new processor to handle activities
        */
@@ -29,9 +29,9 @@ const ActivitypubSideEffectsSchema = {
         // Sort processors by priority
         this.processors.sort((a, b) => a.priority - b.priority);
       }
-    }),
+    },
 
-    processOutbox: defineAction({
+    processOutbox: {
       /**
        * Called by activitypub.outbox.post when an activity is posted
        */
@@ -47,9 +47,9 @@ const ActivitypubSideEffectsSchema = {
 
         await job.finished();
       }
-    }),
+    },
 
-    processInbox: defineAction({
+    processInbox: {
       /**
        * Called by activitypub.inbox.post when an activity is received
        * and by activitypub.outbox.post when an activity is sent to a local actor
@@ -66,13 +66,13 @@ const ActivitypubSideEffectsSchema = {
 
         await job.finished();
       }
-    }),
+    },
 
-    getProcessors: defineAction({
+    getProcessors: {
       handler() {
         return this.processors;
       }
-    })
+    }
   },
   methods: {
     matchActivity(pattern, activity, fetcher) {

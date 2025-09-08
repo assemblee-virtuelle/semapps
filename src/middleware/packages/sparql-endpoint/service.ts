@@ -1,7 +1,7 @@
 import path from 'path';
 import urlJoin from 'url-join';
 import getRoute from './getRoute.ts';
-import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const SparqlEndpointService = {
   name: 'sparqlEndpoint' as const,
@@ -23,7 +23,7 @@ const SparqlEndpointService = {
     }
   },
   actions: {
-    query: defineAction({
+    query: {
       async handler(ctx) {
         const query = ctx.params.query || ctx.meta.rawBody;
         const accept = ctx.params.accept || ctx.meta.headers?.accept || this.settings.defaultAccept;
@@ -51,10 +51,10 @@ const SparqlEndpointService = {
 
         return response;
       }
-    })
+    }
   },
   events: {
-    'auth.registered': defineServiceEvent({
+    'auth.registered': {
       async handler(ctx) {
         const { webId } = ctx.params;
         if (this.settings.podProvider) {
@@ -65,7 +65,7 @@ const SparqlEndpointService = {
           });
         }
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

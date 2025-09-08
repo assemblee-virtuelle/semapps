@@ -7,7 +7,7 @@ const { quad, namedNode, literal, blankNode } = DataFactory;
 const { MoleculerError } = require('moleculer').Errors;
 import { createFragmentURL, regexProtocolAndHostAndPort, arrayOf } from '@semapps/ldp';
 import { parseHeader } from '@semapps/middlewares';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const prefixes = {
   dc: 'http://purl.org/dc/terms/',
@@ -174,7 +174,7 @@ const VoidSchema = {
     });
   },
   actions: {
-    getRemote: defineAction({
+    getRemote: {
       visibility: 'public',
       params: {
         serverUrl: { type: 'string', optional: false }
@@ -196,9 +196,9 @@ const VoidSchema = {
           this.logger.warn(`Silently ignored error when fetching void endpoint: ${e.message}`);
         }
       }
-    }),
+    },
 
-    get: defineAction({
+    get: {
       visibility: 'public',
       params: {
         accept: { type: 'string', optional: true }
@@ -345,9 +345,9 @@ const VoidSchema = {
 
         return await this.formatOutput(ctx, graph, url, accept === MIME_TYPES.JSON);
       }
-    }),
+    },
 
-    api_get: defineAction({
+    api_get: {
       handler: async function api(ctx) {
         let { accept } = ctx.meta.headers;
         if (accept.includes('*/*')) accept = MIME_TYPES.JSON;
@@ -358,7 +358,7 @@ const VoidSchema = {
           accept: accept
         });
       }
-    })
+    }
   },
   methods: {
     async getContainers(ctx) {
