@@ -1,6 +1,6 @@
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'mole... Remove this comment to see the full error message
 import Schedule from 'moleculer-schedule';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import deleteAction from './actions/delete.ts';
 import getAction from './actions/get.ts';
 import getGraphAction from './actions/getGraph.ts';
@@ -30,12 +30,12 @@ const LdpRemoteSchema = {
     isRemote: isRemoteAction,
     store: storeAction,
 
-    runCron: defineAction({
+    runCron: {
       // Used by tests
       handler() {
         this.updateSingleMirroredResources();
       }
-    })
+    }
   },
   methods: {
     async proxyAvailable() {

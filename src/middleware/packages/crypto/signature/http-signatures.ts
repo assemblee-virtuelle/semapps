@@ -5,7 +5,7 @@ import { parseRequest, verifySignature } from 'http-signature';
 import { createAuthzHeader, createSignatureString } from 'http-signature-header';
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import { KEY_TYPES } from '../constants.ts';
 import { arrayOf } from '../utils/utils.ts';
 
@@ -13,7 +13,7 @@ const HttpSignatureService = {
   // TODO: Rename to signature.http-signatures in a major release.
   name: 'signature' as const,
   actions: {
-    generateSignatureHeaders: defineAction({
+    generateSignatureHeaders: {
       async handler(ctx) {
         const { url, method, body, actorUri } = ctx.params;
         // TODO: Use new service.
@@ -49,16 +49,16 @@ const HttpSignatureService = {
 
         return headers;
       }
-    }),
+    },
 
-    verifyDigest: defineAction({
+    verifyDigest: {
       async handler(ctx) {
         const { body, headers } = ctx.params;
         return headers.digest ? this.buildDigest(body) === headers.digest : true;
       }
-    }),
+    },
 
-    verifyHttpSignature: defineAction({
+    verifyHttpSignature: {
       /**
        * Given url, path, method, headers, validates a given http signature.
        * If the signature is valid, it returns the actorUri and the publicKeyPem used to verify the signature.
@@ -110,9 +110,9 @@ const HttpSignatureService = {
 
         return { isValid: keyValid, actorUri, publicKeyPem };
       }
-    }),
+    },
 
-    authenticate: defineAction({
+    authenticate: {
       // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
       async handler(ctx) {
         const { route, req, res } = ctx.params;
@@ -134,9 +134,9 @@ const HttpSignatureService = {
         ctx.meta.webId = 'anon';
         return Promise.resolve(null);
       }
-    }),
+    },
 
-    authorize: defineAction({
+    authorize: {
       // See https://moleculer.services/docs/0.13/moleculer-web.html#Authorization
       async handler(ctx) {
         const { route, req, res } = ctx.params;
@@ -158,7 +158,7 @@ const HttpSignatureService = {
         ctx.meta.webId = 'anon';
         return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
       }
-    })
+    }
   },
   methods: {
     buildDigest(body) {

@@ -1,10 +1,10 @@
 import { getSlugFromUri } from '@semapps/ldp';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const AuthMigrationSchema = {
   name: 'auth.migration' as const,
   actions: {
-    migrateUsersToAccounts: defineAction({
+    migrateUsersToAccounts: {
       async handler(ctx) {
         const { usersContainer, emailPredicate, usernamePredicate } = ctx.params;
 
@@ -27,7 +27,7 @@ const AuthMigrationSchema = {
           }
         }
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

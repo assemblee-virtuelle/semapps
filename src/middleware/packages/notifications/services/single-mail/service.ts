@@ -3,7 +3,7 @@ import path from 'path';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'mole... Remove this comment to see the full error message
 import MailService from 'moleculer-mail';
 import { getSlugFromUri } from '@semapps/ldp';
-import { ServiceSchema, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import { fileURLToPath } from 'url';
 
 // @ts-expect-error TS(1470): The 'import.meta' meta-property is not allowed in ... Remove this comment to see the full error message
@@ -26,7 +26,7 @@ const SingleMailNotificationsService = {
     data: {}
   },
   events: {
-    'activitypub.inbox.received': defineServiceEvent({
+    'activitypub.inbox.received': {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'activity' does not exist on type 'Option... Remove this comment to see the full error message
         const { activity, recipients } = ctx.params;
@@ -76,7 +76,7 @@ const SingleMailNotificationsService = {
           }
         }
       }
-    })
+    }
   },
   methods: {
     // Optional method called for each notification

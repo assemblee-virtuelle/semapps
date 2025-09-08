@@ -2,7 +2,7 @@ import { ControlledContainerMixin, DereferenceMixin, delay, arrayOf } from '@sem
 import { solid, skos, apods } from '@semapps/ontologies';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { namedNode, triple } from '@rdfjs/data-model';
-import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import TypeRegistrationsService from './type-registrations.ts';
 
 const TypeIndexesSchema = {
@@ -31,7 +31,7 @@ const TypeIndexesSchema = {
     await this.broker.call('ontologies.register', apods);
   },
   actions: {
-    createPublicIndex: defineAction({
+    createPublicIndex: {
       async handler(ctx) {
         const { webId } = ctx.params;
 
@@ -64,9 +64,9 @@ const TypeIndexesSchema = {
           webId
         });
       }
-    }),
+    },
 
-    createPrivateIndex: defineAction({
+    createPrivateIndex: {
       async handler(ctx) {
         const { webId } = ctx.params;
 
@@ -102,9 +102,9 @@ const TypeIndexesSchema = {
           webId
         });
       }
-    }),
+    },
 
-    getPublicIndex: defineAction({
+    getPublicIndex: {
       async handler(ctx) {
         const { webId } = ctx.params;
 
@@ -115,9 +115,9 @@ const TypeIndexesSchema = {
 
         return user['solid:publicTypeIndex'];
       }
-    }),
+    },
 
-    getPrivateIndex: defineAction({
+    getPrivateIndex: {
       async handler(ctx) {
         const { webId } = ctx.params;
 
@@ -128,9 +128,9 @@ const TypeIndexesSchema = {
 
         return preferencesFileUri?.['solid:privateTypeIndex'];
       }
-    }),
+    },
 
-    waitForIndexCreation: defineAction({
+    waitForIndexCreation: {
       async handler(ctx) {
         const { type, webId } = ctx.params;
         let indexUri;
@@ -158,9 +158,9 @@ const TypeIndexesSchema = {
 
         return indexUri;
       }
-    }),
+    },
 
-    awaitCreateComplete: defineAction({
+    awaitCreateComplete: {
       /**
        * Wait until all type registrations have been created for the newly-created user
        */
@@ -184,7 +184,7 @@ const TypeIndexesSchema = {
             );
         } while (numTypeRegistrations < numContainersWithTypeIndex);
       }
-    })
+    }
   },
   methods: {
     async preferencesFileAvailable() {
@@ -193,7 +193,7 @@ const TypeIndexesSchema = {
     }
   },
   events: {
-    'auth.registered': defineServiceEvent({
+    'auth.registered': {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
@@ -213,7 +213,7 @@ const TypeIndexesSchema = {
         // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.createPrivateIndex({ webId }, { parentCtx: ctx });
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

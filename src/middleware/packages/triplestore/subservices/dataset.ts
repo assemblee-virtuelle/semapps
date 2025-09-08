@@ -4,7 +4,7 @@ import path from 'path';
 import urlJoin from 'url-join';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'stri... Remove this comment to see the full error message
 import format from 'string-template';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -24,7 +24,7 @@ const DatasetService = {
     };
   },
   actions: {
-    backup: defineAction({
+    backup: {
       async handler(ctx) {
         const { dataset } = ctx.params;
 
@@ -38,9 +38,9 @@ const DatasetService = {
         const { taskId } = await response.json();
         await this.actions.waitForTaskCompletion({ taskId }, { parentCtx: ctx });
       }
-    }),
+    },
 
-    create: defineAction({
+    create: {
       async handler(ctx) {
         const { dataset, secure } = ctx.params;
         if (!dataset) throw new Error('Unable to create dataset. The parameter dataset is missing');
@@ -70,9 +70,9 @@ const DatasetService = {
           }
         }
       }
-    }),
+    },
 
-    exist: defineAction({
+    exist: {
       async handler(ctx) {
         const { dataset } = ctx.params;
         const response = await fetch(urlJoin(this.settings.url, '$/datasets/', dataset), {
@@ -80,9 +80,9 @@ const DatasetService = {
         });
         return response.status === 200;
       }
-    }),
+    },
 
-    list: defineAction({
+    list: {
       async handler() {
         const response = await fetch(urlJoin(this.settings.url, '$/datasets'), {
           headers: this.headers
@@ -94,9 +94,9 @@ const DatasetService = {
         }
         return [];
       }
-    }),
+    },
 
-    isSecure: defineAction({
+    isSecure: {
       async handler(ctx) {
         const { dataset } = ctx.params;
         // Check if http://semapps.org/webacl graph exists
@@ -106,9 +106,9 @@ const DatasetService = {
           webId: 'system'
         });
       }
-    }),
+    },
 
-    waitForCreation: defineAction({
+    waitForCreation: {
       async handler(ctx) {
         const { dataset } = ctx.params;
         let datasetExist;
@@ -117,9 +117,9 @@ const DatasetService = {
           datasetExist = await this.actions.exist({ dataset }, { parentCtx: ctx });
         } while (!datasetExist);
       }
-    }),
+    },
 
-    waitForTaskCompletion: defineAction({
+    waitForTaskCompletion: {
       async handler(ctx) {
         const { taskId } = ctx.params;
         let task;
@@ -137,9 +137,9 @@ const DatasetService = {
           }
         } while (!task || !task.finished);
       }
-    }),
+    },
 
-    delete: defineAction({
+    delete: {
       params: {
         dataset: { type: 'string' },
         iKnowWhatImDoing: { type: 'boolean' }
@@ -180,7 +180,7 @@ const DatasetService = {
           ]);
         }
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

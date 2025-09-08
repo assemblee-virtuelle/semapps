@@ -1,4 +1,4 @@
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 import { isMirror } from '../../../utils.ts';
 
 import { Errors } from 'moleculer';
@@ -21,7 +21,7 @@ const checkTripleValidity = (triple: any, containerUri: any) => {
   }
 };
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     containerUri: {
@@ -128,6 +128,6 @@ const Schema = defineAction({
       );
     }
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

@@ -3,7 +3,7 @@ import fs from 'fs';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'fs-e... Remove this comment to see the full error message
 import { emptyDirSync } from 'fs-extra';
 import pathModule from 'path';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import fsCopy from './utils/fsCopy.ts';
 import ftpCopy from './utils/ftpCopy.ts';
 import rsyncCopy from './utils/rsyncCopy.ts';
@@ -59,14 +59,14 @@ const BackupService = {
     }
   },
   actions: {
-    backupAll: defineAction({
+    backupAll: {
       async handler(ctx) {
         await this.actions.backupDatasets({}, { parentCtx: ctx });
         await this.actions.backupOtherDirs({}, { parentCtx: ctx });
       }
-    }),
+    },
 
-    backupDatasets: defineAction({
+    backupDatasets: {
       async handler(ctx) {
         // Generate a new backup of all datasets
         const datasets = await ctx.call('triplestore.dataset.list');
@@ -87,9 +87,9 @@ const BackupService = {
           emptyDirSync(backupsDirPath);
         }
       }
-    }),
+    },
 
-    backupOtherDirs: defineAction({
+    backupOtherDirs: {
       async handler(ctx) {
         const { otherDirsPaths } = this.settings.localServer;
 
@@ -103,9 +103,9 @@ const BackupService = {
           await this.actions.copyToRemoteServer({ path, subDir: key }, { parentCtx: ctx });
         }
       }
-    }),
+    },
 
-    copyToRemoteServer: defineAction({
+    copyToRemoteServer: {
       async handler(ctx) {
         const { path, subDir } = ctx.params;
         const { copyMethod, remoteServer } = this.settings;
@@ -137,9 +137,9 @@ const BackupService = {
           return false;
         }
       }
-    }),
+    },
 
-    deleteDataset: defineAction({
+    deleteDataset: {
       params: {
         dataset: { type: 'string' }
       },
@@ -177,9 +177,9 @@ const BackupService = {
           }
         }
       }
-    }),
+    },
 
-    listBackupsForDataset: defineAction({
+    listBackupsForDataset: {
       // Returns an array of file paths to the backups relative to `this.settings.localServer.fusekiBase`.
       async handler(ctx) {
         const { dataset } = ctx.params;
@@ -195,7 +195,7 @@ const BackupService = {
 
         return filenames;
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

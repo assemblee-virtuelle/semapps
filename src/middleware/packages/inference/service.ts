@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import N3 from 'n3';
-import { ServiceSchema, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import RemoteService from './subservices/remote.ts';
 
 const { DataFactory } = N3;
@@ -151,7 +151,7 @@ const InferenceSchema = {
     }
   },
   events: {
-    'ldp.resource.created': defineServiceEvent({
+    'ldp.resource.created': {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'newData' does not exist on type 'Optiona... Remove this comment to see the full error message
         let { newData } = ctx.params;
@@ -189,9 +189,9 @@ const InferenceSchema = {
           }
         }
       }
-    }),
+    },
 
-    'ldp.resource.deleted': defineServiceEvent({
+    'ldp.resource.deleted': {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'oldData' does not exist on type 'Optiona... Remove this comment to see the full error message
         let { oldData } = ctx.params;
@@ -224,9 +224,9 @@ const InferenceSchema = {
           }
         }
       }
-    }),
+    },
 
-    'ldp.resource.updated': defineServiceEvent({
+    'ldp.resource.updated': {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'oldData' does not exist on type 'Optiona... Remove this comment to see the full error message
         let { oldData, newData } = ctx.params;
@@ -300,9 +300,9 @@ const InferenceSchema = {
           }
         }
       }
-    }),
+    },
 
-    'ldp.resource.patched': defineServiceEvent({
+    'ldp.resource.patched': {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'triplesAdded' does not exist on type 'Op... Remove this comment to see the full error message
         const { triplesAdded, triplesRemoved, skipInferenceCheck } = ctx.params;
@@ -371,9 +371,9 @@ const InferenceSchema = {
           }
         }
       }
-    }),
+    },
 
-    'ontologies.registered': defineServiceEvent({
+    'ontologies.registered': {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'owl' does not exist on type 'Optionalize... Remove this comment to see the full error message
         const { owl } = ctx.params;
@@ -386,7 +386,7 @@ const InferenceSchema = {
           this.inverseRelations = { ...this.inverseRelations, ...result };
         }
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

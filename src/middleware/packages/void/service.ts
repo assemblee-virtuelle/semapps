@@ -5,7 +5,7 @@ import { JsonLdSerializer } from 'jsonld-streaming-serializer';
 import { DataFactory, Writer } from 'n3';
 import { createFragmentURL, regexProtocolAndHostAndPort, arrayOf } from '@semapps/ldp';
 import { parseHeader } from '@semapps/middlewares';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const { quad, namedNode, literal, blankNode } = DataFactory;
 import { Errors } from 'moleculer';
@@ -182,7 +182,7 @@ const VoidSchema = {
     });
   },
   actions: {
-    getRemote: defineAction({
+    getRemote: {
       visibility: 'public',
       params: {
         serverUrl: { type: 'string', optional: false }
@@ -205,9 +205,9 @@ const VoidSchema = {
           this.logger.warn(`Silently ignored error when fetching void endpoint: ${e.message}`);
         }
       }
-    }),
+    },
 
-    get: defineAction({
+    get: {
       visibility: 'public',
       params: {
         accept: { type: 'string', optional: true }
@@ -362,9 +362,9 @@ const VoidSchema = {
 
         return await this.formatOutput(ctx, graph, url, accept === MIME_TYPES.JSON);
       }
-    }),
+    },
 
-    api_get: defineAction({
+    api_get: {
       handler: async function api(ctx) {
         // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
         let { accept } = ctx.meta.headers;
@@ -376,7 +376,7 @@ const VoidSchema = {
           accept: accept
         });
       }
-    })
+    }
   },
   methods: {
     async getContainers(ctx) {

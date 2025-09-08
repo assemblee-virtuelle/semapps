@@ -1,9 +1,9 @@
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 import { hasType } from '../../../utils.ts';
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string', optional: true },
@@ -104,6 +104,6 @@ const Schema = defineAction({
 
     return resource;
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

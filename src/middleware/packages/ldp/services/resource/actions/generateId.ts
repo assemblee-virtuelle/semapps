@@ -3,9 +3,9 @@ import createSlug from 'speakingurl';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
 import { v4 as uuidv4 } from 'uuid';
 import urlJoin from 'url-join';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'Parameter... Remove this comment to see the full error message
@@ -65,6 +65,6 @@ const Schema = defineAction({
 
     return urlJoin(containerUri, slug || uuid);
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

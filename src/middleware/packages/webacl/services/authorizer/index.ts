@@ -1,4 +1,4 @@
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 // A acl:Write permission implicitly gives acl:Read and acl:Append permissions
 const modeMapping = {
@@ -15,7 +15,7 @@ const WebaclAuthorizerSchema = {
     await this.broker.call('permissions.addAuthorizer', { actionName: `${this.name}.hasPermission` });
   },
   actions: {
-    hasPermission: defineAction({
+    hasPermission: {
       async handler(ctx) {
         const { uri, type, mode, webId } = ctx.params;
 
@@ -35,7 +35,7 @@ const WebaclAuthorizerSchema = {
 
         return undefined;
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

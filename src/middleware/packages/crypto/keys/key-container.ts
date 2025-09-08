@@ -1,7 +1,7 @@
 import { ControlledContainerMixin } from '@semapps/ldp';
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import { arrayOf } from '../utils/utils.ts';
 import { KEY_TYPES } from '../constants.ts';
 
@@ -51,13 +51,13 @@ const KeysContainerSchema = {
     }
   },
   actions: {
-    forbidden: defineAction({
+    forbidden: {
       async handler(ctx) {
         throw new E.ForbiddenError();
       }
-    }),
+    },
 
-    get: defineAction({
+    get: {
       /**
        * Get action that sets the multikey context and multikey type for those keys correctly. This is required by the spec.
        * See:
@@ -81,7 +81,7 @@ const KeysContainerSchema = {
 
         return resource;
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

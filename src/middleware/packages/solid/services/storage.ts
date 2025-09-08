@@ -1,7 +1,7 @@
 import urlJoin from 'url-join';
 import { triple, namedNode } from '@rdfjs/data-model';
 import { pim } from '@semapps/ontologies';
-import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 /** @type {import('moleculer').ServiceSchema} */
 const SolidStorageSchema = {
@@ -26,7 +26,7 @@ const SolidStorageSchema = {
     });
   },
   actions: {
-    create: defineAction({
+    create: {
       async handler(ctx) {
         const { username } = ctx.params;
         if (!username) throw new Error('Cannot create Solid storage without a username');
@@ -45,18 +45,18 @@ const SolidStorageSchema = {
 
         return storageRootUri;
       }
-    }),
+    },
 
-    getUrl: defineAction({
+    getUrl: {
       async handler(ctx) {
         const { webId } = ctx.params;
         // This is faster, but later we should use the 'pim:storage' property of the webId
         return urlJoin(webId, this.settings.pathName);
       }
-    })
+    }
   },
   events: {
-    'auth.registered': defineServiceEvent({
+    'auth.registered': {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
@@ -95,7 +95,7 @@ const SolidStorageSchema = {
           webId: 'system'
         });
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

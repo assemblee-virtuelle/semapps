@@ -2,7 +2,7 @@ import urlJoin from 'url-join';
 import fetch from 'node-fetch';
 import { createFragmentURL, arrayOf } from '@semapps/ldp';
 import { ACTIVITY_TYPES } from '@semapps/activitypub';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import SynchronizerService from './synchronizer.ts';
 
 import { Errors } from 'moleculer';
@@ -50,7 +50,7 @@ const MirrorSchema = {
     }
   },
   actions: {
-    mirror: defineAction({
+    mirror: {
       visibility: 'public',
       params: {
         serverUrl: { type: 'string', optional: false }
@@ -177,7 +177,7 @@ const MirrorSchema = {
 
         return remoteRelayActorUri;
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

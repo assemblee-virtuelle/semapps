@@ -1,5 +1,5 @@
 import { ldp, semapps } from '@semapps/ontologies';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import LdpApiService from './services/api/index.ts';
 import LdpContainerService from './services/container/index.ts';
 import LdpCacheService from './services/cache/index.ts';
@@ -109,25 +109,25 @@ const LdpSchema = {
     await this.broker.call('ontologies.register', semapps);
   },
   actions: {
-    getBaseUrl: defineAction({
+    getBaseUrl: {
       handler() {
         return this.settings.baseUrl;
       }
-    }),
+    },
 
-    getBasePath: defineAction({
+    getBasePath: {
       handler() {
         const { pathname } = new URL(this.settings.baseUrl);
         return pathname;
       }
-    }),
+    },
 
-    getSetting: defineAction({
+    getSetting: {
       handler(ctx) {
         const { key } = ctx.params;
         return this.settings[key];
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

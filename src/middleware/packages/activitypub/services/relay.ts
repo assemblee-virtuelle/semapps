@@ -1,5 +1,5 @@
 import urlJoin from 'url-join';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import { ACTOR_TYPES } from '../constants.ts';
 import { delay } from '../utils.ts';
 
@@ -70,12 +70,12 @@ const RelayService = {
     this.relayActor = await this.broker.call('activitypub.actor.awaitCreateComplete', { actorUri });
   },
   actions: {
-    getActor: defineAction({
+    getActor: {
       visibility: 'public',
       handler() {
         return this.relayActor;
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

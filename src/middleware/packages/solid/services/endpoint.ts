@@ -1,5 +1,5 @@
 import { SpecialEndpointMixin } from '@semapps/ldp';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 
 const SolidEndpointSchema = {
   name: 'solid-endpoint' as const,
@@ -19,14 +19,14 @@ const SolidEndpointSchema = {
     await this.broker.call('ldp.link-header.register', { actionName: 'solid-endpoint.getLink' });
   },
   actions: {
-    getLink: defineAction({
+    getLink: {
       handler() {
         return {
           uri: this.endpointUrl,
           rel: 'http://www.w3.org/ns/solid/terms#storageDescription'
         };
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

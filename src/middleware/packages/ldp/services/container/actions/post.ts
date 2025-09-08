@@ -1,13 +1,13 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 import { cleanUndefined } from '../../../utils.ts';
 
 import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     containerUri: {
@@ -155,6 +155,6 @@ const Schema = defineAction({
 
     return resourceUri;
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

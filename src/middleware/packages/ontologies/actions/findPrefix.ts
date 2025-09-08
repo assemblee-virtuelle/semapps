@@ -1,8 +1,8 @@
 import fetch from 'node-fetch';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 import { isURL } from '../utils.ts';
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'Parameter... Remove this comment to see the full error message
@@ -25,6 +25,6 @@ const Schema = defineAction({
 
     return null;
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

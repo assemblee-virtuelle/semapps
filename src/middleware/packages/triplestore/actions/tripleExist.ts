@@ -1,6 +1,6 @@
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
@@ -48,6 +48,6 @@ const Schema = defineAction({
       dataset
     });
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

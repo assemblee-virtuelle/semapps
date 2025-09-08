@@ -1,7 +1,7 @@
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
 import { ControlledContainerMixin } from '@semapps/ldp';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import setRightsHandler from './activity-handlers/setRightsHandler.ts';
 import { objectCurrentToId, objectIdToCurrent, arrayOf } from '../../../utils.ts';
 import { PUBLIC_URI, FULL_ACTIVITY_TYPES } from '../../../constants.ts';
@@ -30,13 +30,13 @@ const ActivityService = {
   },
   dependencies: ['ldp.container'],
   actions: {
-    forbidden: defineAction({
+    forbidden: {
       handler() {
         throw new E.ForbiddenError();
       }
-    }),
+    },
 
-    getRecipients: defineAction({
+    getRecipients: {
       async handler(ctx) {
         const { activity } = ctx.params;
         const output = [];
@@ -78,17 +78,17 @@ const ActivityService = {
         // Remove duplicates
         return [...new Set(output)];
       }
-    }),
+    },
 
-    getLocalRecipients: defineAction({
+    getLocalRecipients: {
       async handler(ctx) {
         const { activity } = ctx.params;
         const recipients = await this.actions.getRecipients({ activity }, { parentCtx: ctx });
         return recipients.filter((recipientUri: any) => this.isLocalActor(recipientUri));
       }
-    }),
+    },
 
-    isPublic: defineAction({
+    isPublic: {
       handler(ctx) {
         const { activity } = ctx.params;
         // We accept all three representations, as required by https://www.w3.org/TR/activitypub/#public-addressing
@@ -97,7 +97,7 @@ const ActivityService = {
           ? arrayOf(activity.to).some(r => publicRepresentations.includes(r))
           : false;
       }
-    })
+    }
   },
   methods: {
     isLocalActor(uri) {

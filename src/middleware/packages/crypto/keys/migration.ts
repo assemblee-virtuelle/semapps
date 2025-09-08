@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import { KEY_TYPES } from '../constants.ts';
 
 /** @type {import('moleculer').ServiceSchema} */
@@ -11,7 +11,7 @@ const KeysMigrationSchema = {
     podProvider: false
   },
   actions: {
-    migrateKeysToDb: defineAction({
+    migrateKeysToDb: {
       /** Migrates cryptographic RSA keys from filesystem storage to the `/keys` ldp containers */
       async handler(ctx) {
         // Check actorsKeyPairsDir for existing keys.
@@ -111,9 +111,9 @@ const KeysMigrationSchema = {
         this.logger.info('=== Keys migration completed ===');
         await ctx.emit('keys.migration.migrated');
       }
-    }),
+    },
 
-    isMigrated: defineAction({
+    isMigrated: {
       /** Returns true, if the server has migrated to the new keys service yet, i.e. keys are stored in the user dataset, not on fs. */
       async handler() {
         // If the `actorsKeyPairsDir` setting is not set, we assume migration has happened or was never needed.
@@ -132,7 +132,7 @@ const KeysMigrationSchema = {
 
         return !anyKeyFile;
       }
-    })
+    }
   },
   methods: {
     // Delete old public key blank node and data from the webId.

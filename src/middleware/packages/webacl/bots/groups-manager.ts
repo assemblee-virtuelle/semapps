@@ -1,5 +1,5 @@
 import { arrayOf } from '@semapps/ldp';
-import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import { hasType } from '../utils.ts';
 
 const GroupsManagerSchema = {
@@ -18,7 +18,7 @@ const GroupsManagerSchema = {
     }
   },
   actions: {
-    refreshAll: defineAction({
+    refreshAll: {
       async handler(ctx) {
         const usersContainer = await ctx.call('ldp.container.get', {
           containerUri: this.settings.usersContainer,
@@ -47,7 +47,7 @@ const GroupsManagerSchema = {
           }
         }
       }
-    })
+    }
   },
   methods: {
     matchRule(rule, record) {
@@ -66,7 +66,7 @@ const GroupsManagerSchema = {
     }
   },
   events: {
-    'ldp.resource.created': defineServiceEvent({
+    'ldp.resource.created': {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
@@ -87,9 +87,9 @@ const GroupsManagerSchema = {
           }
         }
       }
-    }),
+    },
 
-    'ldp.resource.updated': defineServiceEvent({
+    'ldp.resource.updated': {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
@@ -118,9 +118,9 @@ const GroupsManagerSchema = {
           }
         }
       }
-    }),
+    },
 
-    'ldp.resource.deleted': defineServiceEvent({
+    'ldp.resource.deleted': {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, oldData } = ctx.params;
@@ -138,7 +138,7 @@ const GroupsManagerSchema = {
           }
         }
       }
-    })
+    }
   }
 } satisfies ServiceSchema;
 

@@ -1,9 +1,9 @@
 import { MIME_TYPES } from '@semapps/mime-types';
-import { defineAction, Errors } from 'moleculer';
+import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
-export default defineAction({
+export default {
   async handler(ctx) {
     let { username, slugParts, ...resource } = ctx.params;
 
@@ -54,4 +54,4 @@ export default defineAction({
       ctx.meta.$statusMessage = e.message;
     }
   }
-});
+};

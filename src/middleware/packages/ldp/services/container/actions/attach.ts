@@ -1,11 +1,11 @@
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
-import { defineAction } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 
 import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
-const Schema = defineAction({
+const Schema = {
   visibility: 'public',
   params: {
     containerUri: { type: 'string' },
@@ -55,6 +55,6 @@ const Schema = defineAction({
 
     return returnValues;
   }
-});
+} satisfies ActionSchema;
 
 export default Schema;

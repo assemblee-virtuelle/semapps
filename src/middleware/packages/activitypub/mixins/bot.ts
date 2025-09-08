@@ -1,6 +1,6 @@
 import urlJoin from 'url-join';
 import { arrayOf } from '@semapps/ldp';
-import { ServiceSchema, defineAction, defineServiceEvent } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import { ACTOR_TYPES } from '../constants.ts';
 import { getSlugFromUri, getContainerFromUri } from '../utils.ts';
 
@@ -69,14 +69,14 @@ const BotMixin = {
     }
   },
   actions: {
-    getUri: defineAction({
+    getUri: {
       handler() {
         return this.settings.actor.uri;
       }
-    })
+    }
   },
   events: {
-    'activitypub.inbox.received': defineServiceEvent({
+    'activitypub.inbox.received': {
       handler(ctx) {
         // @ts-expect-error TS(2339): Property 'inboxReceived' does not exist on type 'S... Remove this comment to see the full error message
         if (this.inboxReceived) {
@@ -87,7 +87,7 @@ const BotMixin = {
           }
         }
       }
-    })
+    }
   },
   methods: {
     async getFollowers() {
