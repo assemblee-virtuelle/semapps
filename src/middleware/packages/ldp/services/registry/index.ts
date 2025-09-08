@@ -19,7 +19,6 @@ const LdpRegistrySchema = {
   actions: {
     getByType: getByTypeAction,
     getByUri: getByUriAction,
-    // @ts-expect-error TS(2322): Type 'ActionSchema<{ path: { type: "string"; }; we... Remove this comment to see the full error message
     getUri: getUriAction,
     list: listAction,
     register: registerAction
@@ -43,7 +42,6 @@ const LdpRegistrySchema = {
         // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId, accountData } = ctx.params;
         // We want to add user's containers only in Pod provider config
-        // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
         if (this.settings.podProvider) {
           const storageUrl = await ctx.call('solid-storage.getUrl', { webId });
           // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message

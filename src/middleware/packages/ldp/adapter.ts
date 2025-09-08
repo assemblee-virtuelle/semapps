@@ -118,7 +118,6 @@ class LdpAdapter {
   insert(entity: any) {
     const { slug, ...resource } = entity;
 
-    // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'LdpAdapt... Remove this comment to see the full error message
     return (
       this.broker
         // @ts-expect-error TS(2339): Property 'resourceService' does not exist on type ... Remove this comment to see the full error message
@@ -171,7 +170,6 @@ class LdpAdapter {
     // @ts-expect-error TS(2339): Property 'service' does not exist on type 'LdpAdap... Remove this comment to see the full error message
     if (!_id.startsWith('http')) _id = urlJoin(this.service.schema.settings.containerUri, _id);
 
-    // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'LdpAdapt... Remove this comment to see the full error message
     return (
       this.broker
         // @ts-expect-error TS(2339): Property 'resourceService' does not exist on type ... Remove this comment to see the full error message

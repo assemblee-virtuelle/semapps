@@ -1,4 +1,3 @@
-// @ts-expect-error
 import path from 'path';
 import urlJoin from 'url-join';
 import { ServiceSchema } from 'moleculer';

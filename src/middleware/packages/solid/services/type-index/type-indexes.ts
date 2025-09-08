@@ -19,7 +19,6 @@ const TypeIndexesSchema = {
   },
   dependencies: ['ontologies'],
   created() {
-    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "type-registra... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [TypeRegistrationsService]
     });
@@ -199,16 +198,13 @@ const TypeIndexesSchema = {
         const { webId } = ctx.params;
 
         // Wait until the /solid/type-index container has been created for the user
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         const indexesContainerUri = await this.actions.getContainerUri({ webId }, { parentCtx: ctx });
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.waitForContainerCreation({ containerUri: indexesContainerUri }, { parentCtx: ctx });
 
         // Wait until the /solid/type-registration container has been created for the user
         const registrationsContainerUri = await ctx.call('type-registrations.getContainerUri', { webId });
         await ctx.call('type-registrations.waitForContainerCreation', { containerUri: registrationsContainerUri });
 
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.createPublicIndex({ webId }, { parentCtx: ctx });
         // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.createPrivateIndex({ webId }, { parentCtx: ctx });

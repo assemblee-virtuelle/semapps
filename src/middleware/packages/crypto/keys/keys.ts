@@ -625,7 +625,6 @@ const KeysService = {
   events: {
     'keys.migration.migrated': {
       async handler() {
-        // @ts-expect-error TS(2339): Property 'isMigrated' does not exist on type 'Serv... Remove this comment to see the full error message
         this.isMigrated = true;
       }
     },
@@ -635,7 +634,6 @@ const KeysService = {
         // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
 
-        // @ts-expect-error TS(2339): Property 'isMigrated' does not exist on type 'Serv... Remove this comment to see the full error message
         if (!this.isMigrated) {
           // Key creation will be handled by legacy service.
           return;
@@ -661,7 +659,6 @@ const KeysService = {
 
         // Create, publish and attach keys to the webId.
         await Promise.all([
-          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
           this.actions.createKeyForActor({ webId, attachToWebId: true, keyType: KEY_TYPES.RSA }, { parentCtx: ctx }),
           // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
           this.actions.createKeyForActor({ webId, attachToWebId: true, keyType: KEY_TYPES.ED25519 }, { parentCtx: ctx })

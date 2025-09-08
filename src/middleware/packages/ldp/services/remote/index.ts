@@ -19,10 +19,8 @@ const LdpRemoteSchema = {
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
-    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
     delete: deleteAction,
     get: getAction,
-    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
     getGraph: getGraphAction,
     getNetwork: getNetworkAction,
     getStored: getStoredAction,
