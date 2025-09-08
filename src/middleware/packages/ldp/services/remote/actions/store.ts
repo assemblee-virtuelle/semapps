@@ -1,6 +1,6 @@
 import { Errors as E } from 'moleculer-web';
-import { hasType } from '../../../utils.ts';
 import { ActionSchema } from 'moleculer';
+import { hasType } from '../../../utils.ts';
 
 const Schema = {
   visibility: 'public',

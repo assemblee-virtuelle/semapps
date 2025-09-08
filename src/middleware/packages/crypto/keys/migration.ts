@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { KEY_TYPES } from '../constants.ts';
 import { ServiceSchema } from 'moleculer';
+import { KEY_TYPES } from '../constants.ts';
 
 /** @type {import('moleculer').ServiceSchema} */
 const KeysMigrationSchema = {

@@ -2,6 +2,7 @@ import urlJoin from 'url-join';
 import waitForExpect from 'wait-for-expect';
 import { ACTIVITY_TYPES } from '@semapps/activitypub';
 import initialize from './initialize.ts';
+
 jest.setTimeout(50000);
 let server1;
 let server2;

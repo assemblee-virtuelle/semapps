@@ -1,10 +1,12 @@
 import urlJoin from 'url-join';
 import fetch from 'node-fetch';
-const { MoleculerError } = require('moleculer').Errors;
 import { createFragmentURL, arrayOf } from '@semapps/ldp';
 import { ACTIVITY_TYPES } from '@semapps/activitypub';
-import SynchronizerService from './synchronizer.ts';
 import { ServiceSchema } from 'moleculer';
+import SynchronizerService from './synchronizer.ts';
+
+const { MoleculerError } = require('moleculer').Errors;
+
 const regexPrefix = new RegExp('^@prefix ([\\w-]*: +<.*>) .', 'gm');
 
 const MirrorSchema = {

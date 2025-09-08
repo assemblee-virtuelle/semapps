@@ -3,8 +3,8 @@ import path from 'path';
 import fetch from 'node-fetch';
 import { generateKeyPair } from 'crypto';
 import { namedNode, blankNode, literal, triple } from '@rdfjs/data-model';
-import { KEY_TYPES } from '../constants.ts';
 import { ServiceSchema } from 'moleculer';
+import { KEY_TYPES } from '../constants.ts';
 
 /**
  * Deprecated Service.

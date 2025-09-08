@@ -1,6 +1,7 @@
 import urlJoin from 'url-join';
 import initialize from './initialize.ts';
 import CONFIG from '../config.ts';
+
 jest.setTimeout(50000);
 let broker;
 

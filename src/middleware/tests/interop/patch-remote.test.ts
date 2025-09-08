@@ -1,6 +1,7 @@
 import waitForExpect from 'wait-for-expect';
 import { triple, namedNode } from '@rdfjs/data-model';
 import initialize from './initialize.ts';
+
 jest.setTimeout(50000);
 let server1;
 let server2;

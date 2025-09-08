@@ -1,6 +1,7 @@
-const { MoleculerError } = require('moleculer').Errors;
 import { namedNode } from '@rdfjs/data-model';
 import { ActionSchema } from 'moleculer';
+
+const { MoleculerError } = require('moleculer').Errors;
 
 function checkTriplesSubjectIsResource(triples, resourceUri) {
   for (const triple of triples) {

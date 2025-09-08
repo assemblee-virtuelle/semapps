@@ -1,8 +1,8 @@
 import QueueMixin from 'moleculer-bull';
 import { notify } from '@semapps/ontologies';
+import { ServiceSchema } from 'moleculer';
 import WebhookChannelService from './channels/webhook-channel.ts';
 import WebSocketChannelService from './channels/websocket-channel.ts';
-import { ServiceSchema } from 'moleculer';
 
 const SolidNotificationsProviderSchema = {
   name: 'solid-notifications.provider' as const,

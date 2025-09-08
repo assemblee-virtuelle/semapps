@@ -1,10 +1,10 @@
 import { Errors as E } from 'moleculer-web';
 import { ControlledContainerMixin } from '@semapps/ldp';
+import { ServiceSchema } from 'moleculer';
 import setRightsHandler from './activity-handlers/setRightsHandler.ts';
 import { arrayOf } from '../../../utils.ts';
 import { PUBLIC_URI, FULL_ACTIVITY_TYPES } from '../../../constants.ts';
 import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
-import { ServiceSchema } from 'moleculer';
 
 const ActivityService = {
   name: 'activitypub.activity' as const,

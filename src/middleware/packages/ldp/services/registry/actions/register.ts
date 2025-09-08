@@ -1,9 +1,10 @@
 import urlJoin from 'url-join';
 import pathModule from 'path';
-const pathJoin = pathModule.join;
 import { pathToRegexp } from 'path-to-regexp';
-import { arrayOf } from '../../../utils.ts';
 import { ActionSchema } from 'moleculer';
+import { arrayOf } from '../../../utils.ts';
+
+const pathJoin = pathModule.join;
 
 const Schema = {
   visibility: 'public',

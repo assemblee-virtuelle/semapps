@@ -1,7 +1,8 @@
-const { MoleculerError } = require('moleculer').Errors;
 import urlJoin from 'url-join';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import { ActionSchema } from 'moleculer';
+
+const { MoleculerError } = require('moleculer').Errors;
 
 export const api = async function api(ctx) {
   if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;

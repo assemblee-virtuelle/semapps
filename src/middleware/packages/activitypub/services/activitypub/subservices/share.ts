@@ -1,8 +1,8 @@
+import { ServiceSchema } from 'moleculer';
 import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
 import { ACTIVITY_TYPES, OBJECT_TYPES } from '../../../constants.ts';
 import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
 import matchActivity from '../../../utils/matchActivity.ts';
-import { ServiceSchema } from 'moleculer';
 
 const ShareService = {
   name: 'activitypub.share' as const,

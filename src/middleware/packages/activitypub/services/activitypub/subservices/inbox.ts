@@ -1,9 +1,10 @@
 import { Errors as E } from 'moleculer-web';
-const { MoleculerError } = require('moleculer').Errors;
+import { ServiceSchema } from 'moleculer';
 import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
 import { ACTOR_TYPES } from '../../../constants.ts';
 import AwaitActivityMixin from '../../../mixins/await-activity.ts';
-import { ServiceSchema } from 'moleculer';
+
+const { MoleculerError } = require('moleculer').Errors;
 
 /** @type {import('moleculer').ServiceSchema} */
 const InboxService = {

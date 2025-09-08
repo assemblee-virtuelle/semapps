@@ -4,9 +4,10 @@ import { JsonLdParser } from 'jsonld-streaming-parser';
 import { JsonLdSerializer } from 'jsonld-streaming-serializer';
 import streamifyString from 'streamify-string';
 import rdfparseModule from 'rdf-parse';
-const rdfParser = rdfparseModule.default;
-import { arrayOf, isURI } from '../../utils/utils.ts';
 import { ServiceSchema } from 'moleculer';
+import { arrayOf, isURI } from '../../utils/utils.ts';
+
+const rdfParser = rdfparseModule.default;
 
 const JsonldParserSchema = {
   name: 'jsonld.parser' as const,

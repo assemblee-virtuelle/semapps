@@ -1,11 +1,11 @@
 import Schedule from 'moleculer-schedule';
+import { ServiceSchema } from 'moleculer';
 import deleteAction from './actions/delete.ts';
 import getAction from './actions/get.ts';
 import getNetworkAction from './actions/getNetwork.ts';
 import getStoredAction from './actions/getStored.ts';
 import isRemoteAction from './actions/isRemote.ts';
 import storeAction from './actions/store.ts';
-import { ServiceSchema } from 'moleculer';
 
 const LdpRemoteSchema = {
   name: 'ldp.remote' as const,

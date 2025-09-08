@@ -1,3 +1,4 @@
+import { ServiceSchema, defineAction } from 'moleculer';
 import attachAction from './actions/attach.ts';
 import clearAction from './actions/clear.ts';
 import createAction from './actions/create.ts';
@@ -14,7 +15,6 @@ import includesAction from './actions/includes.ts';
 import postAction from './actions/post.ts';
 import patchAction from './actions/patch.ts';
 import { getDatasetFromUri } from '../../utils.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
 
 const LdpContainerSchema = {
   name: 'ldp.container' as const,

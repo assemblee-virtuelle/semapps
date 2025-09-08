@@ -1,5 +1,5 @@
-import { cleanUndefined } from '../../../utils.ts';
 import { ActionSchema } from 'moleculer';
+import { cleanUndefined } from '../../../utils.ts';
 
 const Schema = {
   visibility: 'public',

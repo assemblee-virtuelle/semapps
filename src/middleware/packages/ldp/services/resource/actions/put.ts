@@ -1,7 +1,8 @@
-const { MoleculerError } = require('moleculer').Errors;
 import { MIME_TYPES } from '@semapps/mime-types';
-import { cleanUndefined } from '../../../utils.ts';
 import { ActionSchema } from 'moleculer';
+import { cleanUndefined } from '../../../utils.ts';
+
+const { MoleculerError } = require('moleculer').Errors;
 
 const Schema = {
   visibility: 'public',

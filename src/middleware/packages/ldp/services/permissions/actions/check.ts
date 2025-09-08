@@ -1,4 +1,5 @@
 import { ActionSchema } from 'moleculer';
+
 const { MoleculerError } = require('moleculer').Errors;
 
 /**

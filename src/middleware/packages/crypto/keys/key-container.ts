@@ -1,8 +1,8 @@
 import { ControlledContainerMixin } from '@semapps/ldp';
 import { Errors as E } from 'moleculer-web';
+import { ServiceSchema } from 'moleculer';
 import { arrayOf } from '../utils/utils.ts';
 import { KEY_TYPES } from '../constants.ts';
-import { ServiceSchema } from 'moleculer';
 
 /**
  * DANGER ZONE

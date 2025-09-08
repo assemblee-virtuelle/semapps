@@ -1,10 +1,9 @@
 import { JsonLdSerializer } from 'jsonld-streaming-serializer';
 import { DataFactory, Writer } from 'n3';
-const { quad } = DataFactory;
 import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
-const { MoleculerError } = require('moleculer').Errors;
 
+import { ActionSchema } from 'moleculer';
 import {
   getAuthorizationNode,
   findParentContainers,
@@ -13,7 +12,8 @@ import {
   getUserAgentSearchParam
 } from '../../../utils.ts';
 
-import { ActionSchema } from 'moleculer';
+const { quad } = DataFactory;
+const { MoleculerError } = require('moleculer').Errors;
 
 const prefixes = {
   acl: 'http://www.w3.org/ns/auth/acl#',

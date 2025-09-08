@@ -1,4 +1,5 @@
 import urlJoin from 'url-join';
+
 const { ServiceSchemaError } = require('moleculer').Errors;
 
 class LdpAdapter {

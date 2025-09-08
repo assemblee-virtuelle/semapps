@@ -1,6 +1,7 @@
-const { MoleculerError } = require('moleculer').Errors;
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import { ActionSchema } from 'moleculer';
+
+const { MoleculerError } = require('moleculer').Errors;
 
 const Schema = {
   visibility: 'public',

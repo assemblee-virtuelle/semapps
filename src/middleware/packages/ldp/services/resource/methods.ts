@@ -1,6 +1,7 @@
 import fs from 'fs';
 import bytes from 'bytes';
 import { variable } from '@rdfjs/data-model';
+
 const { MoleculerError } = require('moleculer').Errors;
 
 // TODO put each method in a different file (problems with "this" not working)

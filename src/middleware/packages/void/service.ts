@@ -3,11 +3,12 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import { void as voidOntology } from '@semapps/ontologies';
 import { JsonLdSerializer } from 'jsonld-streaming-serializer';
 import { DataFactory, Writer } from 'n3';
-const { quad, namedNode, literal, blankNode } = DataFactory;
-const { MoleculerError } = require('moleculer').Errors;
 import { createFragmentURL, regexProtocolAndHostAndPort, arrayOf } from '@semapps/ldp';
 import { parseHeader } from '@semapps/middlewares';
 import { ServiceSchema } from 'moleculer';
+
+const { quad, namedNode, literal, blankNode } = DataFactory;
+const { MoleculerError } = require('moleculer').Errors;
 
 const prefixes = {
   dc: 'http://purl.org/dc/terms/',

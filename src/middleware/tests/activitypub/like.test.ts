@@ -1,6 +1,7 @@
 import waitForExpect from 'wait-for-expect';
 import { OBJECT_TYPES, ACTIVITY_TYPES, PUBLIC_URI } from '@semapps/activitypub';
 import initialize from './initialize.ts';
+
 jest.setTimeout(50000);
 const NUM_USERS = 2;
 

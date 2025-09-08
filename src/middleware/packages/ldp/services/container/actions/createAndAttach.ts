@@ -1,6 +1,6 @@
 import urlJoin from 'url-join';
-import { getParentContainerUri } from '../../../utils.ts';
 import { ActionSchema } from 'moleculer';
+import { getParentContainerUri } from '../../../utils.ts';
 
 /**
  * Create a container and attach it to its parent container(s)

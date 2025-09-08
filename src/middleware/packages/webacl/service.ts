@@ -1,10 +1,10 @@
 import { acl, vcard, rdfs } from '@semapps/ontologies';
+import { ServiceSchema } from 'moleculer';
 import WebAclResourceService from './services/resource/index.ts';
 import WebAclCacheService from './services/cache/index.ts';
 import WebAclGroupService from './services/group/index.ts';
 import WebAclAuthorizerService from './services/authorizer/index.ts';
 import getRoutes from './routes/getRoutes.ts';
-import { ServiceSchema } from 'moleculer';
 
 const WebaclSchema = {
   name: 'webacl' as const,

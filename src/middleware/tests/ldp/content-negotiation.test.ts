@@ -4,6 +4,7 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import { fetchServer } from '../utils.ts';
 import CONFIG from '../config.ts';
 import initialize from './initialize.ts';
+
 jest.setTimeout(20000);
 let broker;
 
@@ -17,7 +18,10 @@ afterAll(async () => {
 
 describe('Content negotiation', () => {
   const containerUri = urlJoin(CONFIG.HOME_URL, 'resources');
-  let projectUri, project2Uri, project3Uri, project4Uri;
+  let projectUri;
+  let project2Uri;
+  let project3Uri;
+  let project4Uri;
 
   test('Post resource in JSON-LD', async () => {
     const { headers } = await fetchServer(containerUri, {

@@ -1,6 +1,7 @@
 import { quad, namedNode, blankNode, literal } from 'rdf-data-model';
 import CONFIG from '../config.ts';
 import initialize from './initialize.ts';
+
 jest.setTimeout(50000);
 let broker;
 

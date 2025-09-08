@@ -2,6 +2,7 @@ import { ACTIVITY_TYPES, OBJECT_TYPES } from '@semapps/activitypub';
 import waitForExpect from 'wait-for-expect';
 import initialize from './initialize.ts';
 import CONFIG from '../config.ts';
+
 jest.setTimeout(50000);
 let broker;
 

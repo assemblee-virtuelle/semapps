@@ -1,7 +1,7 @@
 import { credentialsContext } from '@semapps/crypto';
 import { arrayOf } from '@semapps/ldp';
-import matchActivity from '../../../utils/matchActivity.ts';
 import { ServiceSchema } from 'moleculer';
+import matchActivity from '../../../utils/matchActivity.ts';
 
 /**
  * Allow any service to process activities just after they are posted to the inbox or outbox.

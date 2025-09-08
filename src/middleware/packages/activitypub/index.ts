@@ -6,6 +6,7 @@ import BotMixin from './mixins/bot.ts';
 import ActivitiesHandlerMixin from './mixins/activities-handler.ts';
 import matchActivity from './utils/matchActivity.ts';
 import containers from './containers.ts';
+
 export * from './constants.ts';
 export {
   ActivityPubService,

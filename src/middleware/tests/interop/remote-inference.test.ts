@@ -1,6 +1,7 @@
 import { triple, namedNode } from 'rdf-data-model';
 import waitForExpect from 'wait-for-expect';
 import initialize from './initialize.ts';
+
 jest.setTimeout(100000);
 let server1;
 let server2;

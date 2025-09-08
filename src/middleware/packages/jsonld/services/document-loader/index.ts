@@ -1,8 +1,9 @@
 import jsonld from 'jsonld';
 import fsModule from 'fs';
-const fsPromises = fsModule.promises;
 import LRU from 'lru-cache';
 import { ServiceSchema } from 'moleculer';
+
+const fsPromises = fsModule.promises;
 
 /** Use document loader depending on node / bun runtime. */
 const defaultDocumentLoader = !process.versions.bun

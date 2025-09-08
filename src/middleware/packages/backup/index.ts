@@ -2,13 +2,14 @@ import { CronJob } from 'cron';
 import fs from 'fs';
 import { emptyDirSync } from 'fs-extra';
 import pathModule from 'path';
-const pathJoin = pathModule.join;
+import { ServiceSchema } from 'moleculer';
 import fsCopy from './utils/fsCopy.ts';
 import ftpCopy from './utils/ftpCopy.ts';
 import rsyncCopy from './utils/rsyncCopy.ts';
 import ftpRemove from './utils/ftpRemove.ts';
 import fsRemove from './utils/fsRemove.ts';
-import { ServiceSchema } from 'moleculer';
+
+const pathJoin = pathModule.join;
 
 /**
  * @typedef {import('moleculer').Context} Context

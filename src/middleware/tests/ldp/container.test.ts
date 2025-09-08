@@ -1,6 +1,7 @@
 import waitForExpect from 'wait-for-expect';
 import CONFIG from '../config.ts';
 import initialize from './initialize.ts';
+
 jest.setTimeout(20000);
 let broker;
 

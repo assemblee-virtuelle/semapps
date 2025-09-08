@@ -1,5 +1,5 @@
-import { getAclUriFromResourceUri } from '../../../utils.ts';
 import { ActionSchema } from 'moleculer';
+import { getAclUriFromResourceUri } from '../../../utils.ts';
 
 export const action = {
   visibility: 'public',

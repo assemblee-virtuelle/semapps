@@ -3,6 +3,7 @@ import { ServiceBroker } from 'moleculer';
 import { CoreService } from '@semapps/core';
 import CONFIG from '../config.ts';
 import { dropDataset } from '../utils.ts';
+
 jest.setTimeout(20000);
 
 const broker = new ServiceBroker({

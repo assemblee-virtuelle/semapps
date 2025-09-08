@@ -1,6 +1,7 @@
-const { MoleculerError } = require('moleculer').Errors;
-import { isMirror } from '../../../utils.ts';
 import { ActionSchema } from 'moleculer';
+import { isMirror } from '../../../utils.ts';
+
+const { MoleculerError } = require('moleculer').Errors;
 
 const checkTripleValidity = (triple, containerUri) => {
   if (triple.subject.value !== containerUri) {
@@ -40,8 +41,8 @@ const Schema = {
   async handler(ctx) {
     const { containerUri, triplesToAdd, triplesToRemove } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-    const resourcesAdded = [],
-      resourcesRemoved = [];
+    const resourcesAdded = [];
+    const resourcesRemoved = [];
 
     const containerExist = await ctx.call('ldp.container.exist', { containerUri });
     if (!containerExist) {

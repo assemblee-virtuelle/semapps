@@ -1,12 +1,11 @@
 import { ServiceBroker } from 'moleculer';
 import fs from 'fs';
-import { join as pathJoin } from 'path';
+import path, { join as pathJoin } from 'path';
 import { CoreService } from '@semapps/core';
 import { pair, petr } from '@semapps/ontologies';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { AuthLocalService } from '@semapps/auth';
 import { ControlledContainerMixin } from '@semapps/ldp';
-import path from 'path';
 import CONFIG from '../config.ts';
 import { dropDataset } from '../utils.ts';
 

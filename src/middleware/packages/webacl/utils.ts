@@ -1,10 +1,12 @@
 import { arrayOf } from '@semapps/ldp';
 import { MIME_TYPES } from '@semapps/mime-types';
-const { MoleculerError } = require('moleculer').Errors;
 import urlJoin from 'url-join';
 import { Parser } from 'n3';
 import streamifyString from 'streamify-string';
 import rdfparseModule from 'rdf-parse';
+
+const { MoleculerError } = require('moleculer').Errors;
+
 const rdfParser = rdfparseModule.default;
 const getSlugFromUri = str => str.match(new RegExp(`.*/(.*)`))[1];
 

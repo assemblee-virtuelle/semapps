@@ -1,9 +1,5 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 
-const {
-  purposes: { AssertionProofPurpose }
-} = require('jsonld-signatures');
-
 import { cryptosuite } from '@digitalbazaar/eddsa-rdfc-2022-cryptosuite';
 import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
 import vc from '@digitalbazaar/vc';
@@ -11,8 +7,12 @@ import vc from '@digitalbazaar/vc';
 /** @type {import('@digitalbazaar/ed25519-multikey')} */
 import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
 
-import { KEY_TYPES, credentialsContext } from '../constants.ts';
 import { ServiceSchema } from 'moleculer';
+import { KEY_TYPES, credentialsContext } from '../constants.ts';
+
+const {
+  purposes: { AssertionProofPurpose }
+} = require('jsonld-signatures');
 
 /**
  * Service for verifying, reading, and revoking Verifiable Credentials.

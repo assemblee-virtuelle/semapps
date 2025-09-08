@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { ControlledContainerMixin, PseudoIdMixin } from '@semapps/ldp';
-import { credentialsContext, credentialsContextNoGraphProof, VC_API_PATH } from '../constants.ts';
 import { ServiceSchema } from 'moleculer';
+import { credentialsContext, credentialsContextNoGraphProof, VC_API_PATH } from '../constants.ts';
 
 /**
  * Container for Verifiable Credentials. Posting to this container will create a new VC.

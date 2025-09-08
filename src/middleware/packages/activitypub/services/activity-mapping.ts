@@ -1,7 +1,7 @@
 import Handlebars from 'handlebars';
+import { ServiceSchema } from 'moleculer';
 import matchActivity from '../utils/matchActivity.ts';
 import { ACTIVITY_TYPES } from '../constants.ts';
-import { ServiceSchema } from 'moleculer';
 
 const ActivityMappingService = {
   name: 'activity-mapping' as const,

@@ -1,7 +1,8 @@
-const { MoleculerError } = require('moleculer').Errors;
+import { ServiceSchema } from 'moleculer';
 import ControlledContainerMixin from './controlled-container.ts';
 import { delay } from '../utils.ts';
-import { ServiceSchema } from 'moleculer';
+
+const { MoleculerError } = require('moleculer').Errors;
 
 const Schema = {
   mixins: [ControlledContainerMixin],

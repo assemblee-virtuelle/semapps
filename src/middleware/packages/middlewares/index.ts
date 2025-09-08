@@ -1,7 +1,9 @@
-const { MoleculerError } = require('moleculer').Errors;
 import { negotiateTypeMime, MIME_TYPES } from '@semapps/mime-types';
 import Busboy from 'busboy';
 import streams from 'memory-streams';
+
+const { MoleculerError } = require('moleculer').Errors;
+
 const handledMimeTypes = [MIME_TYPES.JSON, MIME_TYPES.TURTLE, MIME_TYPES.TRIPLE, MIME_TYPES.SPARQL_UPDATE];
 
 // Put requested URL and query string in meta so that services may use them independently

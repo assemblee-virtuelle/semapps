@@ -1,7 +1,7 @@
+import { ServiceSchema } from 'moleculer';
 import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
 import { ACTIVITY_TYPES, ACTOR_TYPES } from '../../../constants.ts';
 import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
-import { ServiceSchema } from 'moleculer';
 
 const FollowService = {
   name: 'activitypub.follow' as const,

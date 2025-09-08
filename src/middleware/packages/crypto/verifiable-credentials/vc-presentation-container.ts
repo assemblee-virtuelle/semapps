@@ -1,6 +1,6 @@
 import { ControlledContainerMixin, PseudoIdMixin } from '@semapps/ldp';
-import { credentialsContext, credentialsContextNoGraphProof } from '../constants.ts';
 import { ServiceSchema } from 'moleculer';
+import { credentialsContext, credentialsContextNoGraphProof } from '../constants.ts';
 
 /**
  * Container for Verifiable Presentations. Posting to this container will create a new VP.

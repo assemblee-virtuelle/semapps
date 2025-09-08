@@ -1,5 +1,6 @@
 import urlJoin from 'url-join';
 import initialize from './initialize.ts';
+
 jest.setTimeout(70000);
 const NUM_USERS = 1;
 

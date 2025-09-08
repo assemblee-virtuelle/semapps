@@ -1,10 +1,10 @@
 import path from 'path';
 import session from 'express-session';
+import { ServiceSchema } from 'moleculer';
 import AuthMixin from './auth.ts';
 import saveRedirectUrl from '../middlewares/saveRedirectUrl.ts';
 import redirectToFront from '../middlewares/redirectToFront.ts';
 import localLogout from '../middlewares/localLogout.ts';
-import { ServiceSchema } from 'moleculer';
 
 const AuthSSOMixin = {
   mixins: [AuthMixin],

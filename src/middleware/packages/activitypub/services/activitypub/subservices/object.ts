@@ -1,6 +1,6 @@
 import { getType } from '@semapps/ldp';
-import { OBJECT_TYPES, ACTIVITY_TYPES } from '../../../constants.ts';
 import { ServiceSchema } from 'moleculer';
+import { OBJECT_TYPES, ACTIVITY_TYPES } from '../../../constants.ts';
 
 const ObjectService = {
   name: 'activitypub.object' as const,
@@ -63,7 +63,8 @@ const ObjectService = {
             });
 
             // TODO: attach to all matching containers
-            let container, containerUri;
+            let container;
+            let containerUri;
 
             if (this.settings.podProvider) {
               // If this is a Pod provider, find the container with the type-registrations service

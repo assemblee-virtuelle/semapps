@@ -227,7 +227,7 @@ const AuthAccountSchema = {
 
     findSettingsByWebId: {
       async handler(ctx) {
-        const webId = ctx.meta.webId;
+        const { webId } = ctx.meta;
 
         const account = await ctx.call('auth.account.findByWebId', { webId });
 

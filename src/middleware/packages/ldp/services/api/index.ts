@@ -1,4 +1,5 @@
 import urlJoin from 'url-join';
+import { ServiceSchema, defineAction } from 'moleculer';
 import deleteAction from './actions/delete.ts';
 import getAction from './actions/get.ts';
 import headAction from './actions/head.ts';
@@ -7,7 +8,6 @@ import postAction from './actions/post.ts';
 import putAction from './actions/put.ts';
 import getCatchAllRoute from '../../routes/getCatchAllRoute.ts';
 import getPodsRoute from '../../routes/getPodsRoute.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
 
 const LdpApiSchema = {
   name: 'ldp.api' as const,

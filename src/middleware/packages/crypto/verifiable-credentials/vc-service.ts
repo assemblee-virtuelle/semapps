@@ -1,4 +1,5 @@
 import { did, cred } from '@semapps/ontologies';
+import { ServiceSchema } from 'moleculer';
 import VCAuthorizerService from './vc-authorizer-service.ts';
 import VCHolderService from './vc-holder-service.ts';
 import VCIssuerService from './vc-issuer-service.ts';
@@ -8,7 +9,6 @@ import VCApiService from './vc-api-service.ts';
 import VCCredentialContainer from './vc-credential-container.ts';
 import VCPresentationContainer from './vc-presentation-container.ts';
 import ChallengeService from './challenge-service.ts';
-import { ServiceSchema } from 'moleculer';
 
 /**
  * Root service for Verifiable Credential and the VC API.

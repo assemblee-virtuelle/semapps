@@ -1,8 +1,9 @@
 import path from 'path';
 import DbService from 'moleculer-db';
-const { MoleculerError, ServiceSchemaError } = require('moleculer').Errors;
 import { TripleStoreAdapter } from '@semapps/triplestore';
 import { ServiceSchema } from 'moleculer';
+
+const { MoleculerError, ServiceSchemaError } = require('moleculer').Errors;
 
 const WebhooksService = {
   name: 'webhooks' as const,

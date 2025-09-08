@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
-import NotificationChannelMixin from './notification-channel.mixin.ts';
 import { ServiceSchema } from 'moleculer';
+import NotificationChannelMixin from './notification-channel.mixin.ts';
 
 const queueOptions =
   process.env.NODE_ENV === 'test'

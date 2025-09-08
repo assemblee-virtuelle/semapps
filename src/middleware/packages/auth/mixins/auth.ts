@@ -1,9 +1,9 @@
 import passport from 'passport';
 import { Errors as E } from 'moleculer-web';
 import { TripleStoreAdapter } from '@semapps/triplestore';
+import { ServiceSchema } from 'moleculer';
 import AuthAccountService from '../services/account.ts';
 import AuthJWTService from '../services/jwt.ts';
-import { ServiceSchema } from 'moleculer';
 
 /**
  * Auth Mixin that handles authentication and authorization for routes

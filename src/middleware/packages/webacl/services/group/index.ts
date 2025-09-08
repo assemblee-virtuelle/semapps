@@ -1,4 +1,5 @@
 import urlJoin from 'url-join';
+import { ServiceSchema, defineAction } from 'moleculer';
 import createAction from './actions/create.ts';
 import deleteAction from './actions/delete.ts';
 import existAction from './actions/exist.ts';
@@ -8,7 +9,6 @@ import getUriAction from './actions/getUri.ts';
 import isMemberAction from './actions/isMember.ts';
 import removeMemberAction from './actions/removeMember.ts';
 import getGroupsAction from './actions/getGroups.ts';
-import { ServiceSchema, defineAction } from 'moleculer';
 
 const WebaclGroupSchema = {
   name: 'webacl.group' as const,

@@ -1,9 +1,10 @@
 import fetch from 'node-fetch';
 import N3 from 'n3';
+import { ServiceSchema } from 'moleculer';
+import RemoteService from './subservices/remote.ts';
+
 const { DataFactory } = N3;
 const { triple, namedNode } = DataFactory;
-import RemoteService from './subservices/remote.ts';
-import { ServiceSchema } from 'moleculer';
 
 const InferenceSchema = {
   name: 'inference' as const,

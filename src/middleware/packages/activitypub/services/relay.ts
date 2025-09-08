@@ -1,7 +1,7 @@
 import urlJoin from 'url-join';
+import { ServiceSchema } from 'moleculer';
 import { ACTOR_TYPES } from '../constants.ts';
 import { delay } from '../utils.ts';
-import { ServiceSchema } from 'moleculer';
 
 const RelayService = {
   name: 'activitypub.relay' as const,
