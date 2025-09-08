@@ -1,6 +1,5 @@
 import { namedNode, triple, literal } from '@rdfjs/data-model';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import CONFIG from '../config.ts';
+import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
 
 // @ts-expect-error TS(2304): Cannot find name 'jest'.
@@ -9,7 +8,6 @@ const ALICE_WEBID = 'http://localhost:3000/alice';
 const BOB_WEBID = 'http://localhost:3000/bob';
 let broker: any;
 
-// @ts-expect-error TS(2304): Cannot find name 'beforeAll'.
 beforeAll(async () => {
   broker = await initialize();
 });

@@ -1,8 +1,16 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import { ActionSchema } from 'moleculer';
+<<<<<<< HEAD
 import { arrayOf } from '../../../utils.ts';
 
 const { MoleculerError } = require('moleculer').Errors;
+=======
+import { buildBlankNodesQuery } from '../../../utils.ts';
+
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
+>>>>>>> 2.0
 
 const Schema = {
   visibility: 'public',
@@ -29,7 +37,11 @@ const Schema = {
     keys: ['resourceUri', 'jsonContext']
   },
   async handler(ctx) {
+<<<<<<< HEAD
     const { resourceUri, accept, noGraph, jsonContext } = ctx.params;
+=======
+    const { resourceUri, accept, jsonContext } = ctx.params;
+>>>>>>> 2.0
     // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 

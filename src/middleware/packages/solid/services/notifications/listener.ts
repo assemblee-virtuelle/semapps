@@ -6,12 +6,21 @@ import LinkHeader from 'http-link-header';
 import { v4 as uuidv4 } from 'uuid';
 import DbService from 'moleculer-db';
 import { parseHeader, parseRawBody, negotiateContentType, parseJson } from '@semapps/middlewares';
+<<<<<<< HEAD
 // @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
+=======
+>>>>>>> 2.0
 import { notify } from '@semapps/ontologies';
 import { TripleStoreAdapter } from '@semapps/triplestore';
 import { ServiceSchema } from 'moleculer';
 
+<<<<<<< HEAD
 const { MoleculerError } = require('moleculer').Errors;
+=======
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
+>>>>>>> 2.0
 
 const SolidNotificationsListenerSchema = {
   name: 'solid-notifications.listener' as const,

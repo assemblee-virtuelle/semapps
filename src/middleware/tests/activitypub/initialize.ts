@@ -2,15 +2,17 @@
 import fse from 'fs-extra';
 import path from 'path';
 import urlJoin from 'url-join';
-import { ServiceBroker } from 'moleculer';
+import { ServiceBroker, ServiceSchema } from 'moleculer';
 import { AuthLocalService } from '@semapps/auth';
 import { CoreService } from '@semapps/core';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { FULL_OBJECT_TYPES, FULL_ACTOR_TYPES } from '@semapps/activitypub';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import CONFIG from '../config.ts';
-import { dropDataset, clearQueue } from '../utils.ts';
+import { fileURLToPath } from 'url';
+import * as CONFIG from '../config.ts';
+import { clearDataset, clearQueue } from '../utils.ts';
 
+// @ts-expect-error TS(1470): The 'import.meta' meta-property is not allowed in ... Remove this comment to see the full error message
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const containers = [
   {
     path: '/as/object',

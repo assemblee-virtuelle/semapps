@@ -1,9 +1,11 @@
 import path from 'path';
-import { ServiceBroker } from 'moleculer';
+import { ServiceBroker, ServiceSchema } from 'moleculer';
 import { CoreService } from '@semapps/core';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import CONFIG from '../config.ts';
-import { dropDataset } from '../utils.ts';
+import { fileURLToPath } from 'url';
+import * as CONFIG from '../config.ts';
+import { clearDataset } from '../utils.ts';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // @ts-expect-error TS(2304): Cannot find name 'jest'.
 jest.setTimeout(20000);

@@ -1,5 +1,4 @@
 import urlJoin from 'url-join';
-// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { foaf, schema } from '@semapps/ontologies';
 import { ControlledContainerMixin, DereferenceMixin, getDatasetFromUri } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';

@@ -11,6 +11,11 @@ const Schema = {
     resource: { type: 'object', optional: true },
     // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
     keepInSync: { type: 'boolean', default: false },
+<<<<<<< HEAD
+=======
+    // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
+    mirrorGraph: { type: 'boolean', default: false },
+>>>>>>> 2.0
     webId: { type: 'string', optional: true },
     dataset: { type: 'string', optional: true }
   },

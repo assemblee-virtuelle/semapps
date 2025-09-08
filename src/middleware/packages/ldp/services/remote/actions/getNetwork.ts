@@ -2,12 +2,23 @@ import fetch from 'node-fetch';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { ActionSchema } from 'moleculer';
 
+<<<<<<< HEAD
 const { MoleculerError } = require('moleculer').Errors;
+=======
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
+>>>>>>> 2.0
 
 const Schema = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
+<<<<<<< HEAD
+=======
+    // @ts-expect-error TS(2322): Type '{ type: "string"; default: string; }' is not... Remove this comment to see the full error message
+    accept: { type: 'string', default: MIME_TYPES.JSON },
+>>>>>>> 2.0
     jsonContext: {
       type: 'multi',
       // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
@@ -17,7 +28,11 @@ const Schema = {
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
+<<<<<<< HEAD
     const { resourceUri, jsonContext } = ctx.params;
+=======
+    const { resourceUri, accept, jsonContext } = ctx.params;
+>>>>>>> 2.0
     // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const headers = new fetch.Headers({ accept: MIME_TYPES.JSON });

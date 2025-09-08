@@ -3,6 +3,13 @@ import urlJoin from 'url-join';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'mole... Remove this comment to see the full error message
 import MailService from 'moleculer-mail';
 import { ServiceSchema } from 'moleculer';
+<<<<<<< HEAD
+=======
+import { fileURLToPath } from 'url';
+
+// @ts-expect-error TS(1470): The 'import.meta' meta-property is not allowed in ... Remove this comment to see the full error message
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+>>>>>>> 2.0
 
 const AuthMailSchema = {
   name: 'auth.mail' as const,

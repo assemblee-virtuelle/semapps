@@ -13,7 +13,10 @@ const Schema = {
   },
   async handler(ctx) {
     const { context, options } = ctx.params;
+<<<<<<< HEAD
     // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+=======
+>>>>>>> 2.0
     const { contextRaw } = await this.contextParser.parse(context, options);
     return contextRaw;
   }

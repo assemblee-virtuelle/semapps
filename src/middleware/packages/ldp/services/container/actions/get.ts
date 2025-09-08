@@ -2,7 +2,9 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import { ActionSchema } from 'moleculer';
 import { buildFiltersQuery, isContainer, cleanUndefined, arrayOf } from '../../../utils.ts';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 const Schema = {
   visibility: 'public',

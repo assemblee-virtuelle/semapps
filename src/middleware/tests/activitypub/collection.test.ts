@@ -1,13 +1,11 @@
 import urlJoin from 'url-join';
 import initialize from './initialize.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import CONFIG from '../config.ts';
+import * as CONFIG from '../config.ts';
 
 // @ts-expect-error TS(2304): Cannot find name 'jest'.
 jest.setTimeout(50000);
 let broker: any;
 
-// @ts-expect-error TS(2304): Cannot find name 'beforeAll'.
 beforeAll(async () => {
   broker = await initialize(3000, 'testData', 'settings');
 });
@@ -30,6 +28,7 @@ describe('Collections', () => {
     for (let i = 0; i < 10; i++) {
       items.push(
         await broker.call('ldp.container.post', {
+          // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
           containerUri: urlJoin(CONFIG.HOME_URL, 'as/object'),
           resource: {
             '@context': 'https://www.w3.org/ns/activitystreams',
@@ -468,7 +467,6 @@ describe('Collections', () => {
 
           // Check for duplicates
           page.items.forEach((item: any) => {
-            // @ts-expect-error TS(2304): Cannot find name 'expect'.
             expect(seenItems.has(item)).toBeFalsy();
             seenItems.add(item);
           });
@@ -516,6 +514,7 @@ describe('Collections', () => {
   describe('Error Handling', () => {
     // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
     test('Should return 404 when collection does not exist', async () => {
+      // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
       const nonExistentUri = urlJoin(CONFIG.HOME_URL, 'as/collection/non-existent');
       // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(
@@ -527,6 +526,7 @@ describe('Collections', () => {
 
     // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
     test('Should return 404 when cursor not found in collection', async () => {
+      // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
       const invalidCursorUri = urlJoin(CONFIG.HOME_URL, 'as/object/non-existent');
       // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(

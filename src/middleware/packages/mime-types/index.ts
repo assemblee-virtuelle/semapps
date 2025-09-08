@@ -2,7 +2,13 @@
 import Negotiator from 'negotiator';
 import { MIME_TYPES, TYPES_REPO } from './constants.ts';
 
+<<<<<<< HEAD
 const { MoleculerError } = require('moleculer').Errors;
+=======
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
+>>>>>>> 2.0
 
 const negotiateType = function (incomingType: any) {
   const availableMediaTypes: any = [];

@@ -1,15 +1,17 @@
-import { ServiceBroker } from 'moleculer';
+import { ServiceBroker, ServiceSchema } from 'moleculer';
 import fs from 'fs';
 import path, { join as pathJoin } from 'path';
 import { CoreService } from '@semapps/core';
-// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { pair, petr } from '@semapps/ontologies';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { AuthLocalService } from '@semapps/auth';
 import { ControlledContainerMixin } from '@semapps/ldp';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import CONFIG from '../config.ts';
-import { dropDataset } from '../utils.ts';
+import { fileURLToPath } from 'url';
+import * as CONFIG from '../config.ts';
+import { clearDataset } from '../utils.ts';
+
+// @ts-expect-error TS(1470): The 'import.meta' meta-property is not allowed in ... Remove this comment to see the full error message
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Give write permission on all containers to anonymous users
 const permissions = {

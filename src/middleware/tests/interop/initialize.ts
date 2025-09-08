@@ -3,18 +3,20 @@ import fse from 'fs-extra';
 import path from 'path';
 import urlJoin from 'url-join';
 import Redis from 'ioredis';
-import { ServiceBroker } from 'moleculer';
+import { ServiceBroker, ServiceSchema } from 'moleculer';
 import { FULL_ACTOR_TYPES, RelayService } from '@semapps/activitypub';
 import { AuthLocalService } from '@semapps/auth';
 import { CoreService } from '@semapps/core';
 import { InferenceService } from '@semapps/inference';
-// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { pair } from '@semapps/ontologies';
 import { MirrorService, ObjectsWatcherMiddleware } from '@semapps/sync';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import CONFIG from '../config.ts';
-import { dropDataset } from '../utils.ts';
+import { fileURLToPath } from 'url';
+import * as CONFIG from '../config.ts';
+import { clearDataset } from '../utils.ts';
+
+// @ts-expect-error TS(1470): The 'import.meta' meta-property is not allowed in ... Remove this comment to see the full error message
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const containers = [
   {

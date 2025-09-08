@@ -7,7 +7,6 @@ jest.setTimeout(50000);
 let server1: any;
 let server2: any;
 
-// @ts-expect-error TS(2304): Cannot find name 'beforeAll'.
 beforeAll(async () => {
   // @ts-expect-error TS(2554): Expected 5 arguments, but got 4.
   server1 = await initialize(3001, 'testData1', 'settings1', 1);
@@ -15,7 +14,6 @@ beforeAll(async () => {
   server2 = await initialize(3002, 'testData2', 'settings2', 2);
 });
 
-// @ts-expect-error TS(2304): Cannot find name 'afterAll'.
 afterAll(async () => {
   if (server1) await server1.stop();
   if (server2) await server2.stop();

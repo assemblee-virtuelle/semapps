@@ -3,7 +3,9 @@ import DbService from 'moleculer-db';
 import { TripleStoreAdapter } from '@semapps/triplestore';
 import { ServiceSchema } from 'moleculer';
 
-const { MoleculerError, ServiceSchemaError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError, ServiceSchemaError } = Errors;
 
 const WebhooksService = {
   name: 'webhooks' as const,
@@ -19,6 +21,7 @@ const WebhooksService = {
   async started() {
     this.settings.allowedActions.forEach((actionName: any) => {
       if (!this.actions[actionName]) {
+        // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
         throw new ServiceSchemaError(`Missing action "${actionName}" in service settings!`);
       }
     });

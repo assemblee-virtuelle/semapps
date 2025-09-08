@@ -1,7 +1,9 @@
 import { ActionSchema } from 'moleculer';
 import { isMirror } from '../../../utils.ts';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 const checkTripleValidity = (triple: any, containerUri: any) => {
   if (triple.subject.value !== containerUri) {
@@ -86,7 +88,7 @@ const Schema = {
               await ctx.call('ldp.container.attach', { containerUri, resourceUri, webId });
               resourcesAdded.push(resourceUri);
             } catch (e2) {
-              // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+              // @ts-expect-error TS(18046): 'e2' is of type 'unknown'.
               this.logger.warn(`Error while importing ${resourceUri} : ${e2.message}`);
             }
           }
@@ -112,7 +114,7 @@ const Schema = {
           resourcesRemoved.push(resourceUri);
         } catch (e) {
           // Fail silently
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+          // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
           this.logger.warn(`Error when detaching ${resourceUri} from ${containerUri}: ${e.message}`);
         }
       }

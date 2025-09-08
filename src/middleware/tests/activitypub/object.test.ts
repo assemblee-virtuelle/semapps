@@ -1,19 +1,16 @@
 import { ACTIVITY_TYPES, OBJECT_TYPES } from '@semapps/activitypub';
 import waitForExpect from 'wait-for-expect';
 import initialize from './initialize.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import CONFIG from '../config.ts';
+import * as CONFIG from '../config.ts';
 
 // @ts-expect-error TS(2304): Cannot find name 'jest'.
 jest.setTimeout(50000);
 let broker: any;
 
-// @ts-expect-error TS(2304): Cannot find name 'beforeAll'.
 beforeAll(async () => {
   broker = await initialize(3000, 'testData', 'settings');
 });
 
-// @ts-expect-error TS(2304): Cannot find name 'afterAll'.
 afterAll(async () => {
   if (broker) await broker.stop();
 });

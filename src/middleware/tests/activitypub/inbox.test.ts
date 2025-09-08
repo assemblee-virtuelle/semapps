@@ -7,13 +7,11 @@ jest.setTimeout(50_000);
 let broker: any;
 let broker2: any;
 
-// @ts-expect-error TS(2304): Cannot find name 'beforeAll'.
 beforeAll(async () => {
   broker = await initialize(3000, 'testData', 'settings');
   broker2 = broker;
 });
 
-// @ts-expect-error TS(2304): Cannot find name 'afterAll'.
 afterAll(async () => {
   if (broker) await broker.stop();
 });

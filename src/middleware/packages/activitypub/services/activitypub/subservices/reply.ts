@@ -56,6 +56,7 @@ const ReplyService = {
           query: sanitizeSparqlQuery`
             PREFIX as: <https://www.w3.org/ns/activitystreams#>
             DELETE {
+<<<<<<< HEAD
               GRAPH ?g1 {
                 ?collection as:items <${objectUri}> .
               }
@@ -68,6 +69,14 @@ const ReplyService = {
               GRAPH ?g2 {
                 ?object as:replies ?collection .
               }
+=======
+              ?collection as:items <${objectUri}> .
+            } 
+            WHERE {
+              ?collection as:items <${objectUri}> .
+              ?collection a as:Collection .
+              ?object as:replies ?collection .
+>>>>>>> 2.0
             }
           `,
           webId: 'system'

@@ -6,7 +6,6 @@ import initialize from './initialize.ts';
 jest.setTimeout(70000);
 const NUM_USERS = 2;
 
-// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages', (mode: any) => {
   let broker: any;
   const actors: any = [];

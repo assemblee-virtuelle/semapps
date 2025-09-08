@@ -25,6 +25,7 @@ const ActivitypubMigrationSchema = {
             PREFIX as: <https://www.w3.org/ns/activitystreams#>
             PREFIX ldp: <http://www.w3.org/ns/ldp#>
             INSERT {
+<<<<<<< HEAD
               GRAPH <${collectionsContainerUri}> {
                 <${collectionsContainerUri}> ldp:contains ?collectionUri
               }
@@ -33,6 +34,12 @@ const ActivitypubMigrationSchema = {
               GRAPH ?g {
                 ?collectionUri a as:Collection
               }
+=======
+              <${collectionsContainerUri}> ldp:contains ?collectionUri
+            }
+            WHERE {
+              ?collectionUri a as:Collection
+>>>>>>> 2.0
             }
           `,
           webId: 'system'

@@ -6,6 +6,7 @@ const LdpLinkHeaderSchema = {
   name: 'ldp.link-header' as const,
   actions: {
     get: getAction,
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ actionName: { type: "string";... Remove this comment to see the full error message
     register: registerAction
   },
   async started() {

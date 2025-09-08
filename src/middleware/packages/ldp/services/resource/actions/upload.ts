@@ -3,7 +3,13 @@ import fs from 'fs';
 import { ActionSchema } from 'moleculer';
 import { getSlugFromUri, getContainerFromUri } from '../../../utils.ts';
 
+<<<<<<< HEAD
 const { MoleculerError } = require('moleculer').Errors;
+=======
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
+>>>>>>> 2.0
 
 const Schema = {
   visibility: 'public',
@@ -34,6 +40,7 @@ const Schema = {
         throw e; // File too large
       } else {
         console.error(e);
+        // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
         throw new MoleculerError(e, 500, 'Server Error');
       }
     }

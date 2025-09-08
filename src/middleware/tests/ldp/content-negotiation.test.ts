@@ -2,8 +2,7 @@ import urlJoin from 'url-join';
 import fetch from 'node-fetch';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { fetchServer } from '../utils.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import CONFIG from '../config.ts';
+import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
 
 // @ts-expect-error TS(2304): Cannot find name 'jest'.
@@ -22,6 +21,7 @@ afterAll(async () => {
 
 // @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe('Content negotiation', () => {
+  // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
   const containerUri = urlJoin(CONFIG.HOME_URL, 'resources');
   let projectUri: any;
   let project2Uri: any;

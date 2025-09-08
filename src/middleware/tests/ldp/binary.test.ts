@@ -1,12 +1,14 @@
 import fetch from 'node-fetch';
 import fs from 'fs';
-import { join as pathJoin } from 'path';
+import path, { join as pathJoin } from 'path';
 import urlJoin from 'url-join';
 import { getSlugFromUri } from '@semapps/ldp';
+import { fileURLToPath } from 'url';
 import { fetchServer } from '../utils.ts';
 import initialize from './initialize.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import CONFIG from '../config.ts';
+import * as CONFIG from '../config.ts';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // @ts-expect-error TS(2304): Cannot find name 'jest'.
 jest.setTimeout(20000);
@@ -17,7 +19,6 @@ beforeAll(async () => {
   broker = await initialize();
 });
 
-// @ts-expect-error TS(2304): Cannot find name 'afterAll'.
 afterAll(async () => {
   if (broker) await broker.stop();
 });
@@ -32,6 +33,7 @@ describe('Binary handling of LDP server', () => {
   test('Post image to container', async () => {
     const readStream = fs.createReadStream(pathJoin(__dirname, 'av-icon.png'));
 
+    // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
     const { headers } = await fetchServer(urlJoin(CONFIG.HOME_URL, 'files'), {
       method: 'POST',
       body: readStream,

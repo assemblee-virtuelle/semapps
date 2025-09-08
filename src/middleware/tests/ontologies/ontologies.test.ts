@@ -1,8 +1,7 @@
 import fetch from 'node-fetch';
 import urlJoin from 'url-join';
 import initialize from './initialize.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import CONFIG from '../config.ts';
+import * as CONFIG from '../config.ts';
 import ont1 from './ontologies/ont1.json' with { type: 'json' };
 import ont2 from './ontologies/ont2.json' with { type: 'json' };
 import ont3 from './ontologies/ont3.json' with { type: 'json' };
@@ -10,9 +9,9 @@ import ont4 from './ontologies/ont4.json' with { type: 'json' };
 
 // @ts-expect-error TS(2304): Cannot find name 'jest'.
 jest.setTimeout(10000);
+// @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
 const localContextUri = urlJoin(CONFIG.HOME_URL, '.well-known/context.jsonld');
 
-// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe.each([false, true])('Register ontologies with cacher %s', (cacher: any) => {
   let broker: any;
 

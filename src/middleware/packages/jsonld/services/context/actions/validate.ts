@@ -16,7 +16,11 @@ const Schema = {
       await this.contextParser.parse(context);
       return true;
     } catch (e) {
+<<<<<<< HEAD
       // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+=======
+      // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
+>>>>>>> 2.0
       this.logger.warn(`Could not parse context. Error: ${e.message}`);
       return false;
     }

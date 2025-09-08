@@ -1,7 +1,9 @@
 import { ActionSchema } from 'moleculer';
 import { getAclUriFromResourceUri, processRights, FULL_AGENTCLASS_URI, FULL_FOAF_AGENT } from '../../../utils.ts';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 export const action = {
   visibility: 'public',
@@ -18,10 +20,8 @@ export const action = {
     // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const aclUri = getAclUriFromResourceUri(this.settings.baseUrl, resourceUri);
 
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
 
     await ctx.call('permissions.check', {
@@ -39,7 +39,6 @@ export const action = {
       query: `
         PREFIX acl: <http://www.w3.org/ns/auth/acl#>
         DELETE DATA {
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           GRAPH <${this.settings.graphName}> {
             ${processedRights.map(right => `<${right.auth}> <${right.p}> <${right.o}> .`).join('\n')}
           }

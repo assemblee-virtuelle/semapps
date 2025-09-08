@@ -10,7 +10,9 @@ import {
   FULL_FOAF_AGENT
 } from '../../../utils.ts';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 export const api = async function api(this: any, ctx: any) {
   const contentType = ctx.meta.headers['content-type'];
@@ -49,7 +51,6 @@ export const action = {
     // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     webId = webId || ctx.meta.webId || 'anon';
 
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
 
     await ctx.call('permissions.check', {
@@ -60,20 +61,16 @@ export const action = {
     });
 
     // filter out all the newRights that are not for the resource
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const aclUri = getAclUriFromResourceUri(this.settings.baseUrl, resourceUri);
     newRights = newRights.filter((a: any) => filterTriplesForResource(a, aclUri, isContainer));
 
     if (newRights.length === 0)
       throw new MoleculerError('The rights cannot be changed because they are incorrect', 400, 'BAD_REQUEST');
 
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const currentPerms = await this.getExistingPerms(
       ctx,
       resourceUri,
-      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       this.settings.baseUrl,
-      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       this.settings.graphName,
       isContainer
     );
@@ -89,13 +86,11 @@ export const action = {
     if (differenceAdd.length === 0 && differenceDelete.length === 0) return;
 
     // compile a list of Authorization already present. because if some of them don't exist, we need to create them
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const currentAuths = this.compileAuthorizationNodesMap(currentPerms);
 
     let addRequest = '';
     for (const add of differenceAdd) {
       if (!currentAuths[add.auth]) {
-        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         addRequest += this.generateNewAuthNode(add.auth);
         currentAuths[add.auth] = 1;
       } else {
@@ -113,14 +108,12 @@ export const action = {
     for (const [auth, count] of Object.entries(currentAuths)) {
       // @ts-expect-error TS(18046): 'count' is of type 'unknown'.
       if (count < 1) {
-        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         deleteRequest += this.generateNewAuthNode(auth);
       }
     }
 
     // we do the 2 calls in one, so it is in the same transaction, and will rollback in case of failure.
     await ctx.call('triplestore.update', {
-      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       query: `INSERT DATA { GRAPH <${this.settings.graphName}> { ${addRequest} } }; DELETE DATA { GRAPH <${this.settings.graphName}> { ${deleteRequest} } }`,
       webId: 'system'
     });

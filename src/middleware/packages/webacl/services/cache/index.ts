@@ -109,6 +109,7 @@ const WebaclCacheSchema = {
         // @ts-expect-error TS(2339): Property 'groupUri' does not exist on type 'Option... Remove this comment to see the full error message
         const { groupUri, memberUri } = ctx.params;
         await this.actions.invalidateResourceRights({ uri: groupUri, specificUriOnly: true }, { parentCtx: ctx });
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.invalidateAllUserRights({ uri: memberUri }, { parentCtx: ctx });
       }
     }

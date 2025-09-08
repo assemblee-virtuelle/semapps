@@ -16,10 +16,17 @@ const Schema = {
       // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       ontology = this.ontologies[prefix] || false;
     } else if (namespace) {
+<<<<<<< HEAD
       // @ts-expect-error TS(2769): No overload matches this call.
       ontology = Object.values(this.ontologies).find(o => o.namespace === namespace);
     } else if (uri) {
       // @ts-expect-error TS(2769): No overload matches this call.
+=======
+      // @ts-expect-error TS(18046): 'o' is of type 'unknown'.
+      ontology = Object.values(this.ontologies).find(o => o.namespace === namespace);
+    } else if (uri) {
+      // @ts-expect-error TS(18046): 'o' is of type 'unknown'.
+>>>>>>> 2.0
       ontology = Object.values(this.ontologies).find(o => uri.startsWith(o.namespace));
     } else {
       throw new Error('You must provide a prefix, namespace or uri parameter');

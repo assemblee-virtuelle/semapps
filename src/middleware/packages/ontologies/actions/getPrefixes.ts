@@ -4,7 +4,10 @@ const Schema = {
   visibility: 'public',
   cache: true,
   async handler(ctx) {
+<<<<<<< HEAD
     // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+=======
+>>>>>>> 2.0
     const ontologies = await this.actions.list({}, { parentCtx: ctx });
     return Object.fromEntries(
       ontologies

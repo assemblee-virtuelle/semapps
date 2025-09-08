@@ -1,6 +1,9 @@
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'mole... Remove this comment to see the full error message
 import QueueMixin from 'moleculer-bull';
+<<<<<<< HEAD
 // @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
+=======
+>>>>>>> 2.0
 import { notify } from '@semapps/ontologies';
 import { ServiceSchema } from 'moleculer';
 import WebhookChannelService from './channels/webhook-channel.ts';

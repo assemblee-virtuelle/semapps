@@ -341,6 +341,10 @@ const InferenceSchema = {
         if (owl) {
           const result = await this.findInverseRelations(owl);
           this.logger.info(`Found ${Object.keys(result).length} inverse relations in ${owl}`);
+<<<<<<< HEAD
+=======
+          // @ts-expect-error TS(2339): Property 'inverseRelations' does not exist on type... Remove this comment to see the full error message
+>>>>>>> 2.0
           this.inverseRelations = { ...this.inverseRelations, ...result };
         }
       }

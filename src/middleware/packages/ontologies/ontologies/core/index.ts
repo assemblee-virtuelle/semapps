@@ -11,8 +11,32 @@ import sec from './sec.json' with { type: 'json' };
 import semapps from './semapps.json' with { type: 'json' };
 import skos from './skos.json' with { type: 'json' };
 import vcard from './vcard.json' with { type: 'json' };
+<<<<<<< HEAD
 // @ts-expect-error TS(1141): String literal expected.
 import void from './void.json' with { type: 'json' };
 import xsd from './xsd.json' with { type: 'json' };
 // @ts-expect-error TS(2304): Cannot find name 'void'.
 export { acl, as, cred, dc, did, foaf, ldp, rdf, rdfs, sec, semapps, skos, vcard, void, xsd };
+=======
+import voidOntology from './void.json' with { type: 'json' };
+import xsd from './xsd.json' with { type: 'json' };
+
+export {
+  acl,
+  as,
+  cred,
+  dc,
+  did,
+  foaf,
+  ldp,
+  rdf,
+  rdfs,
+  sec,
+  semapps,
+  skos,
+  vcard,
+  voidOntology as void,
+  xsd,
+  voidOntology
+};
+>>>>>>> 2.0

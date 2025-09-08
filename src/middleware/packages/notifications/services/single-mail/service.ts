@@ -4,7 +4,13 @@ import path from 'path';
 import MailService from 'moleculer-mail';
 import { getSlugFromUri } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
+<<<<<<< HEAD
 
+=======
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+>>>>>>> 2.0
 const delay = (t: any) => new Promise(resolve => setTimeout(resolve, t));
 
 const SingleMailNotificationsService = {
@@ -61,6 +67,10 @@ const SingleMailNotificationsService = {
               });
             }
           } else {
+<<<<<<< HEAD
+=======
+            // @ts-expect-error TS(2339): Property 'logger' does not exist on type 'ServiceE... Remove this comment to see the full error message
+>>>>>>> 2.0
             this.logger.warn(`No account found for local recipient ${recipientUri}`);
           }
         }

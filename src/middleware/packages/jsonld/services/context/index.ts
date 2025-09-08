@@ -32,11 +32,16 @@ const JsonldContextSchema = {
   actions: {
     get: getAction,
     getLocal: getLocalAction,
+<<<<<<< HEAD
     // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { a: { type:... Remove this comment to see the full error message
     merge: mergeAction,
     // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { context: {... Remove this comment to see the full error message
     parse: parseAction,
     // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { context: {... Remove this comment to see the full error message
+=======
+    merge: mergeAction,
+    parse: parseAction,
+>>>>>>> 2.0
     validate: validateAction
   }
 } satisfies ServiceSchema;

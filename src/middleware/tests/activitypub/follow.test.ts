@@ -6,7 +6,6 @@ import initialize from './initialize.ts';
 jest.setTimeout(50_000);
 const NUM_USERS = 2;
 
-// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe.each(['single-server', 'multi-server'])('In mode %s, posting to followers', (mode: any) => {
   let broker: any;
   const actors: any = [];
@@ -61,6 +60,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
       to: alice.id
     });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await waitForExpect(async () => {
       // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(
@@ -68,6 +68,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
       ).resolves.toBeTruthy();
     });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await waitForExpect(async () => {
       const inboxMenu = await bob.call('activitypub.collection.get', {
         resourceUri: bob.inbox,
@@ -149,6 +150,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
       to: [alice.id, `${bob.id}/followers`]
     });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await waitForExpect(async () => {
       // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(

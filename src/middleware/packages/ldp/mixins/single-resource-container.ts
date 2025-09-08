@@ -2,7 +2,13 @@ import { ServiceSchema } from 'moleculer';
 import ControlledContainerMixin from './controlled-container.ts';
 import { delay } from '../utils.ts';
 
+<<<<<<< HEAD
 const { MoleculerError } = require('moleculer').Errors;
+=======
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
+>>>>>>> 2.0
 
 const Schema = {
   mixins: [ControlledContainerMixin],
@@ -113,6 +119,10 @@ const Schema = {
         if (this.settings.podProvider) {
           // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
           const { webId } = ctx.params;
+<<<<<<< HEAD
+=======
+          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
+>>>>>>> 2.0
           await this.actions.initializeResource({ webId });
         }
       }

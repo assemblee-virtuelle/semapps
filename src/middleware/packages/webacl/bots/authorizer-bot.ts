@@ -70,6 +70,7 @@ const AuthorizerBotSchema = {
         for (const rule of this.settings.rules) {
           if (this.matchRule(rule, newData)) {
             const newUsers = this.getUsers(rule, newData);
+            // @ts-expect-error TS(2339): Property 'getUsers' does not exist on type 'Servic... Remove this comment to see the full error message
             const oldUsers = this.getUsers(rule, oldData);
 
             const usersToAdd = newUsers.filter((t1: any) => !oldUsers.some((t2: any) => t1 === t2));

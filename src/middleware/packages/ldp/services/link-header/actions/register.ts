@@ -7,7 +7,6 @@ const Schema = {
   },
   handler(ctx) {
     const { actionName } = ctx.params;
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     this.registeredActionNames.push(actionName);
   }
 } satisfies ActionSchema;

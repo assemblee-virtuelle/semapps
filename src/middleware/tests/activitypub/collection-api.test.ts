@@ -2,19 +2,16 @@ import urlJoin from 'url-join';
 import fetch from 'node-fetch';
 import { fetchServer } from '../utils.ts';
 import initialize from './initialize.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import CONFIG from '../config.ts';
+import * as CONFIG from '../config.ts';
 
 // @ts-expect-error TS(2304): Cannot find name 'jest'.
 jest.setTimeout(50000);
 let broker: any;
 
-// @ts-expect-error TS(2304): Cannot find name 'beforeAll'.
 beforeAll(async () => {
   broker = await initialize(3000, 'testData', 'settings');
 });
 
-// @ts-expect-error TS(2304): Cannot find name 'afterAll'.
 afterAll(async () => {
   if (broker) await broker.stop();
 });
@@ -22,6 +19,7 @@ afterAll(async () => {
 // @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe('Collections API', () => {
   const items: any = [];
+  // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
   const collectionsContainersUri = urlJoin(CONFIG.HOME_URL, 'as/collection');
   let collectionUri: any;
   let localContext: any;
@@ -31,6 +29,7 @@ describe('Collections API', () => {
     for (let i = 0; i < 10; i++) {
       items.push(
         await broker.call('ldp.container.post', {
+          // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
           containerUri: urlJoin(CONFIG.HOME_URL, 'as/object'),
           resource: {
             '@context': 'https://www.w3.org/ns/activitystreams',
@@ -146,9 +145,7 @@ describe('Collections API', () => {
       }),
       body: `
         PREFIX as: <https://www.w3.org/ns/activitystreams#>
-        // @ts-expect-error TS(7006): Parameter 'item' implicitly has an 'any' type.
-        // @ts-expect-error TS(7006): Parameter 'item' implicitly has an 'any' type.
-        INSERT DATA { <${paginatedCollectionUri}> as:items ${items.map(item => `<${item}>`).join(', ')} . };
+        INSERT DATA { <${paginatedCollectionUri}> as:items ${items.map((item: any) => `<${item}>`).join(', ')} . };
       `
     });
 
@@ -187,9 +184,9 @@ describe('Collections API', () => {
         id: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[1])}`,
         type: 'CollectionPage',
         partOf: paginatedCollectionUri,
-        prev: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[2])}`,
+        prev: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[7])}`,
         // @ts-expect-error TS(2304): Cannot find name 'expect'.
-        items: expect.arrayContaining([items[1], items[0]])
+        items: expect.arrayContaining([items[8], items[9]])
       }
     });
   });

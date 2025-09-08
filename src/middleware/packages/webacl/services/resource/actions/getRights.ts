@@ -13,7 +13,9 @@ import {
 } from '../../../utils.ts';
 
 const { quad } = DataFactory;
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 const prefixes = {
   acl: 'http://www.w3.org/ns/auth/acl#',
@@ -208,10 +210,8 @@ export const action = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
-    // @ts-expect-error TS(2322): Type '{ type: "string"; default: string; }' is not... Remove this comment to see the full error message
     accept: { type: 'string', default: MIME_TYPES.JSON },
     webId: { type: 'string', optional: true },
-    // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
     skipResourceCheck: { type: 'boolean', default: false }
   },
   cache: {
@@ -226,10 +226,8 @@ export const action = {
     // @ts-expect-error TS(2339): Property '$responseType' does not exist on type '{... Remove this comment to see the full error message
     ctx.meta.$responseType = accept;
 
-    // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
     const isContainer = !skipResourceCheck && (await this.checkResourceOrContainerExists(ctx, resourceUri));
 
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     return await getPermissions(ctx, resourceUri, this.settings.baseUrl, webId, this.settings.graphName, isContainer);
   }
 } satisfies ActionSchema;

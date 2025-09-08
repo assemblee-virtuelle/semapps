@@ -181,10 +181,13 @@ const ObjectService = {
         const { resourceUri, formerType } = ctx.params;
         const expandedFormerTypes = await ctx.call('jsonld.parser.expandTypes', { types: formerType });
 
+<<<<<<< HEAD
         // We need to recreate the document as it has been deleted
         // TODO See how we can avoid this since it will not work with NextGraph
         await ctx.call('triplestore.document.create', { documentUri: resourceUri });
 
+=======
+>>>>>>> 2.0
         // Insert directly the Tombstone in the triple store to avoid resource creation side-effects
         await ctx.call('triplestore.insert', {
           resource: {
@@ -198,7 +201,10 @@ const ObjectService = {
               '@type': 'http://www.w3.org/2001/XMLSchema#dateTime'
             }
           },
+<<<<<<< HEAD
           graphName: resourceUri,
+=======
+>>>>>>> 2.0
           webId: 'system'
         });
       }
@@ -223,6 +229,10 @@ const ObjectService = {
             // @ts-expect-error TS(2339): Property 'activateTombstones' does not exist on ty... Remove this comment to see the full error message
             if (containerOptions.activateTombstones !== false && ctx.meta.activateTombstones !== false) {
               const formerType = oldData.type || oldData['@type'];
+<<<<<<< HEAD
+=======
+              // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
+>>>>>>> 2.0
               await this.actions.createTombstone({ resourceUri, formerType }, { meta: { dataset }, parentCtx: ctx });
             }
           }

@@ -4,7 +4,11 @@ import { Errors as E } from 'moleculer-web';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { getType, arrayOf } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
+<<<<<<< HEAD
 import { collectionPermissionsWithAnonRead, getSlugFromUri } from '../../../utils.ts';
+=======
+import { collectionPermissionsWithAnonRead, getSlugFromUri, objectIdToCurrent } from '../../../utils.ts';
+>>>>>>> 2.0
 import { ACTOR_TYPES } from '../../../constants.ts';
 import AwaitActivityMixin from '../../../mixins/await-activity.ts';
 
@@ -237,7 +241,12 @@ const OutboxService = {
             if (this.settings.podProvider) {
               // Store the activity in the dataset of the recipient
               await this.broker.call('ldp.remote.store', {
+<<<<<<< HEAD
                 resource: activity,
+=======
+                resource: objectIdToCurrent(activity),
+                mirrorGraph: false, // Store in default graph as activity may not be public
+>>>>>>> 2.0
                 keepInSync: false, // Activities are immutable
                 webId: recipientUri,
                 dataset

@@ -1,10 +1,9 @@
 import urlJoin from 'url-join';
 import fetch from 'node-fetch';
 import Redis from 'ioredis';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import CONFIG from './config.ts';
+import * as CONFIG from './config.ts';
 
-const listDatasets = async () => {
+export const listDatasets = async () => {
   const response = await fetch(`${CONFIG.SPARQL_ENDPOINT}$/datasets`, {
     headers: {
       Authorization: `Basic ${Buffer.from(`${CONFIG.JENA_USER}:${CONFIG.JENA_PASSWORD}`).toString('base64')}`
@@ -19,7 +18,8 @@ const listDatasets = async () => {
   }
 };
 
-const dropDataset = (dataset: any) =>
+export const clearDataset = (dataset: any) =>
+  // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
   fetch(urlJoin(CONFIG.SPARQL_ENDPOINT, dataset, 'update'), {
     method: 'POST',
     body: 'update=DROP+ALL',
@@ -29,7 +29,7 @@ const dropDataset = (dataset: any) =>
     }
   });
 
-const fetchServer = (url: any, options = {}) => {
+export const fetchServer = (url: any, options = {}) => {
   if (!url) throw new Error('No url provided to fetchServer');
   // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
   if (!options.headers) options.headers = new fetch.Headers();
@@ -86,16 +86,14 @@ const fetchServer = (url: any, options = {}) => {
     });
 };
 
-const clearQueue = async (queueServiceUrl: any) => {
+export const clearQueue = async (queueServiceUrl: any) => {
   // Clear queue
   const redisClient = new Redis(queueServiceUrl);
   const result = await redisClient.flushdb();
   redisClient.disconnect();
 };
 
-const wait = (ms: any) =>
+export const wait = (ms: any) =>
   new Promise(resolve => {
     setTimeout(resolve, ms);
   });
-
-export { dropDataset, listDatasets, fetchServer, clearQueue, wait };

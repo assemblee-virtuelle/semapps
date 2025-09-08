@@ -1,7 +1,6 @@
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'rdf-... Remove this comment to see the full error message
 import { quad, namedNode, blankNode, literal } from 'rdf-data-model';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import CONFIG from '../config.ts';
+import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
 
 // @ts-expect-error TS(2304): Cannot find name 'jest'.
@@ -13,14 +12,12 @@ beforeAll(async () => {
   broker = await initialize();
 });
 
-// @ts-expect-error TS(2304): Cannot find name 'afterAll'.
 afterAll(async () => {
   if (broker) await broker.stop();
 });
 
 // @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe('Resource CRUD operations', () => {
-  let project1Uri: any;
   let project1: any;
   let project2: any;
 

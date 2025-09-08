@@ -2,7 +2,13 @@ import fs from 'fs';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { cleanUndefined, parseJson } from '../../../utils.ts';
 
+<<<<<<< HEAD
 const { MoleculerError } = require('moleculer').Errors;
+=======
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
+>>>>>>> 2.0
 
 export default async function get(this: any, ctx: any) {
   try {

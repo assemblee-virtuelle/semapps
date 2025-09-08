@@ -102,8 +102,12 @@ const ActorService = {
                 updateType: 'insertdelete',
                 insert: [
                   {
+<<<<<<< HEAD
                     type: 'graph',
                     name: namedNode(actorUri),
+=======
+                    type: 'bgp',
+>>>>>>> 2.0
                     triples: [
                       triple(
                         namedNode(actorUri),
@@ -120,8 +124,12 @@ const ActorService = {
                     type: 'optional',
                     patterns: [
                       {
+<<<<<<< HEAD
                         type: 'graph',
                         name: namedNode(actorUri),
+=======
+                        type: 'bgp',
+>>>>>>> 2.0
                         triples: [
                           triple(
                             namedNode(actorUri),
@@ -218,6 +226,10 @@ const ActorService = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
+<<<<<<< HEAD
+=======
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
+>>>>>>> 2.0
         await this.actions.appendActorData({ actorUri: webId }, { parentCtx: ctx });
       }
     }

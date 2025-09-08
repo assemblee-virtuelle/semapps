@@ -26,7 +26,6 @@ export const action = {
           PREFIX foaf: <http://xmlns.com/foaf/0.1/>
           SELECT ?g 
           WHERE 
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           { GRAPH <${this.settings.graphName}>
             { ?g a vcard:Group.
             ?auth a acl:Authorization;
@@ -47,7 +46,6 @@ export const action = {
           PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
           SELECT ?g 
           WHERE { 
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             GRAPH <${this.settings.graphName}>
             { ?g a vcard:Group } 
           }

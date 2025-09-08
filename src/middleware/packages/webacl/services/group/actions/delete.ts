@@ -3,7 +3,9 @@ import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import { ActionSchema } from 'moleculer';
 import { removeAgentGroupOrAgentFromAuthorizations } from '../../../utils.ts';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 export const api = async function api(this: any, ctx: any) {
   if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;
@@ -17,9 +19,7 @@ export const api = async function api(this: any, ctx: any) {
 export const action = {
   visibility: 'public',
   params: {
-    // @ts-expect-error TS(2353): Object literal may only specify known properties, ... Remove this comment to see the full error message
     groupSlug: { type: 'string', optional: true, min: 1, trim: true },
-    // @ts-expect-error TS(2353): Object literal may only specify known properties, ... Remove this comment to see the full error message
     groupUri: { type: 'string', optional: true, trim: true },
     webId: { type: 'string', optional: true }
   },
@@ -30,7 +30,7 @@ export const action = {
 
     if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');
 
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+    // @ts-expect-error TS(2345): Argument of type 'TypeFromSchemaParam<{ type: "str... Remove this comment to see the full error message
     if (!groupUri) groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
 
     // TODO: check that the group exists ?
@@ -49,7 +49,6 @@ export const action = {
     await ctx.call('triplestore.update', {
       query: sanitizeSparqlQuery`
         DELETE WHERE { 
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           GRAPH <${this.settings.graphName}> { 
             <${groupUri}> ?p ?o. 
           } 
@@ -60,7 +59,6 @@ export const action = {
 
     await ctx.call('webacl.resource.deleteAllRights', { resourceUri: groupUri });
 
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     await removeAgentGroupOrAgentFromAuthorizations(groupUri, true, this.settings.graphName, ctx);
   }
 } satisfies ActionSchema;

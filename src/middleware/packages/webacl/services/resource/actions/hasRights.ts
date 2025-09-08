@@ -129,9 +129,7 @@ export const action = {
     rights = rights || {};
     if (Object.keys(rights).length === 0) rights = { read: true, write: true, append: true, control: true };
 
-    // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
     await this.checkResourceOrContainerExists(ctx, resourceUri);
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     return await hasPermissions(ctx, resourceUri, rights, this.settings.baseUrl, webId, this.settings.graphName);
   }
 } satisfies ActionSchema;

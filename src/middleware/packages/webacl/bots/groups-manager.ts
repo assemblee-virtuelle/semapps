@@ -117,6 +117,7 @@ const GroupsManagerSchema = {
         const { resourceUri, oldData } = ctx.params;
         if (this.isUser(oldData)) {
           for (const rule of this.settings.rules) {
+            // @ts-expect-error TS(2339): Property 'logger' does not exist on type 'ServiceE... Remove this comment to see the full error message
             this.logger.info(`Removing user ${resourceUri} from group ${rule.groupSlug} (if it exists)`);
             await ctx.call('webacl.group.removeMember', {
               groupSlug: rule.groupSlug,

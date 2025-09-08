@@ -3,6 +3,7 @@ import N3 from 'n3';
 import { JsonLdParser } from 'jsonld-streaming-parser';
 import { JsonLdSerializer } from 'jsonld-streaming-serializer';
 import streamifyString from 'streamify-string';
+<<<<<<< HEAD
 import rdfparseModule from 'rdf-parse';
 import { ServiceSchema } from 'moleculer';
 import { arrayOf, isURI } from '../../utils/utils.ts';
@@ -10,6 +11,12 @@ import { arrayOf, isURI } from '../../utils/utils.ts';
 // @ts-expect-error TS(2339): Property 'default' does not exist on type 'RdfPars... Remove this comment to see the full error message
 const rdfParser = rdfparseModule.default;
 
+=======
+import rdfParser from 'rdf-parse';
+import { ServiceSchema } from 'moleculer';
+import { arrayOf, isURI } from '../../utils/utils.ts';
+
+>>>>>>> 2.0
 const JsonldParserSchema = {
   name: 'jsonld.parser' as const,
   dependencies: ['jsonld.document-loader'],
@@ -80,6 +87,7 @@ const JsonldParserSchema = {
 
           const jsonLd = JSON.parse(await this.streamToString(jsonLdSerializer));
 
+<<<<<<< HEAD
           const contextWithNullBase = await ctx.call('jsonld.context.merge', {
             a: context,
             b: { '@base': null }
@@ -103,6 +111,17 @@ const JsonldParserSchema = {
           framedResource['@context'] = context;
 
           return framedResource;
+=======
+          return await this.actions.frame(
+            {
+              input: jsonLd,
+              frame: { '@context': context }
+              // Force results to be in a @graph, even if we have a single result
+              // options: { omitGraph: false }
+            },
+            { parentCtx: ctx }
+          );
+>>>>>>> 2.0
         }
       }
     },
@@ -210,6 +229,7 @@ const JsonldParserSchema = {
 
         return expandedTypes;
       }
+<<<<<<< HEAD
     },
 
     changeBase: {
@@ -227,6 +247,8 @@ const JsonldParserSchema = {
           { parentCtx: ctx }
         );
       }
+=======
+>>>>>>> 2.0
     }
   },
   methods: {
@@ -244,8 +266,13 @@ const JsonldParserSchema = {
         const res: any = [];
         rdfParser
           .parse(textStream, { contentType: format })
+<<<<<<< HEAD
           .on('data', (quad: any) => res.push(quad))
           .on('error', (error: any) => reject(error))
+=======
+          .on('data', quad => res.push(quad))
+          .on('error', error => reject(error))
+>>>>>>> 2.0
           .on('end', () => resolve(res));
       });
     }

@@ -31,10 +31,16 @@ const Schema = {
       // Use the root container URI
       // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       containerUri = this.settings.podProvider
+<<<<<<< HEAD
         ? // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           await ctx.call('solid-storage.getUrl', { webId: urlJoin(this.settings.baseUrl, ctx.meta.dataset) })
         : // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           this.settings.baseUrl;
+=======
+        ? // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
+          await ctx.call('solid-storage.getUrl', { webId: urlJoin(this.settings.baseUrl, ctx.meta.dataset) })
+        : this.settings.baseUrl;
+>>>>>>> 2.0
     }
 
     let resourceAlreadyExists = await ctx.call('ldp.resource.exist', {

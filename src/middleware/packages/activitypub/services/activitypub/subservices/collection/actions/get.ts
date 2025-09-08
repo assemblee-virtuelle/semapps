@@ -2,7 +2,13 @@ import { sanitizeSparqlUri } from '@semapps/triplestore';
 import { ActionSchema } from 'moleculer';
 import { getValueFromDataType } from '../../../../../utils.ts';
 
+<<<<<<< HEAD
 const { MoleculerError } = require('moleculer').Errors;
+=======
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
+>>>>>>> 2.0
 
 /**
  * Retrieves the collection metadata from the triplestore
@@ -77,7 +83,12 @@ async function validateCursorParams(ctx: any, collectionUri: any, beforeEq: any,
  * @returns {Promise<Array>} The collection item URIs
  */
 async function fetchCollectionItemURIs(ctx: any, collectionUri: any, options: any, dataset: any) {
+<<<<<<< HEAD
   const query = `
+=======
+  const result = await ctx.call('triplestore.query', {
+    query: `
+>>>>>>> 2.0
       PREFIX as: <https://www.w3.org/ns/activitystreams#>
       SELECT DISTINCT ?itemUri
       WHERE {

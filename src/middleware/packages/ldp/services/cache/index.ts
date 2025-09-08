@@ -138,6 +138,10 @@ const LdpCacheSchema = {
         if (isContainer) {
           await this.actions.invalidateContainer({ containerUri: uri }, { parentCtx: ctx });
         } else {
+<<<<<<< HEAD
+=======
+          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
+>>>>>>> 2.0
           await this.actions.invalidateResource({ resourceUri: uri, dataset }, { parentCtx: ctx });
         }
       }

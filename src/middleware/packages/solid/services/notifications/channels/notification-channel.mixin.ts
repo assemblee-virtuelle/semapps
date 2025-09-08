@@ -229,6 +229,10 @@ const Schema = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'collectionUri' does not exist on type 'O... Remove this comment to see the full error message
         const { collectionUri, itemUri } = ctx.params;
+<<<<<<< HEAD
+=======
+        // @ts-expect-error TS(2339): Property 'onContainerOrCollectionEvent' does not e... Remove this comment to see the full error message
+>>>>>>> 2.0
         this.onContainerOrCollectionEvent(collectionUri, itemUri, ACTIVITY_TYPES.REMOVE);
       }
     }

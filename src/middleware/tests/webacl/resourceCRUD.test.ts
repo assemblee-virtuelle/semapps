@@ -1,8 +1,7 @@
 import urlJoin from 'url-join';
 import { getSlugFromUri } from '@semapps/ldp';
 import { fetchServer } from '../utils.ts';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import CONFIG from '../config.ts';
+import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
 
 // @ts-expect-error TS(2304): Cannot find name 'jest'.
@@ -10,7 +9,6 @@ jest.setTimeout(20000);
 const ALICE_WEBID = 'http://localhost:3000/alice';
 let broker: any;
 
-// @ts-expect-error TS(2304): Cannot find name 'beforeAll'.
 beforeAll(async () => {
   broker = await initialize();
 });
@@ -94,6 +92,7 @@ describe('middleware CRUD resource with perms', () => {
 
     // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(result.headers.get('Link')).toMatch(
+      // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
       `<${urlJoin(CONFIG.HOME_URL, '_acl', 'resources', getSlugFromUri(resourceUri))}>; rel=acl`
     );
 
@@ -103,6 +102,7 @@ describe('middleware CRUD resource with perms', () => {
 
     // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(result.headers.get('Link')).toMatch(
+      // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
       `<${urlJoin(CONFIG.HOME_URL, '_acl', 'resources', getSlugFromUri(resourceUri))}>; rel=acl`
     );
   }, 20000);

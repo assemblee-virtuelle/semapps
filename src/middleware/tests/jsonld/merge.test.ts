@@ -10,7 +10,6 @@ beforeAll(async () => {
   broker = await initialize(false, false);
 });
 
-// @ts-expect-error TS(2304): Cannot find name 'afterAll'.
 afterAll(async () => {
   if (broker) await broker.stop();
 });

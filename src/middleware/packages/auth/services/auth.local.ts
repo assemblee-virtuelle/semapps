@@ -6,7 +6,13 @@ import AuthMixin from '../mixins/auth.ts';
 import sendToken from '../middlewares/sendToken.ts';
 import AuthMailService from './mail.ts';
 
+<<<<<<< HEAD
 const { MoleculerError } = require('moleculer').Errors;
+=======
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
+>>>>>>> 2.0
 
 /** @type {import('moleculer').ServiceSchema} */
 const AuthLocalService = {

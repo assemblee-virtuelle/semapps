@@ -242,6 +242,10 @@ const SignatureService = {
 
     'keys.migration.migrated': {
       async handler(ctx) {
+<<<<<<< HEAD
+=======
+        // @ts-expect-error TS(2339): Property 'isMigrated' does not exist on type 'Serv... Remove this comment to see the full error message
+>>>>>>> 2.0
         this.isMigrated = true;
       }
     }

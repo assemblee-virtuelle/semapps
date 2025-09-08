@@ -1,6 +1,5 @@
 import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
-// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { void as voidOntology } from '@semapps/ontologies';
 import { JsonLdSerializer } from 'jsonld-streaming-serializer';
 import { DataFactory, Writer } from 'n3';
@@ -9,7 +8,9 @@ import { parseHeader } from '@semapps/middlewares';
 import { ServiceSchema } from 'moleculer';
 
 const { quad, namedNode, literal, blankNode } = DataFactory;
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 const prefixes = {
   dc: 'http://purl.org/dc/terms/',

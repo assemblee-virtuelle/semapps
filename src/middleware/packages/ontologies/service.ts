@@ -32,17 +32,25 @@ const OntologiesSchema = {
     await this.registerAll();
   },
   actions: {
+<<<<<<< HEAD
     // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { uri: strin... Remove this comment to see the full error message
     findPrefix: findPrefixAction,
     // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { prefix: st... Remove this comment to see the full error message
+=======
+    findPrefix: findPrefixAction,
+>>>>>>> 2.0
     findNamespace: findNamespaceAction,
     get: getAction,
     getPrefixes: getPrefixesAction,
     getRdfPrefixes: getRdfPrefixesAction,
     list: listAction,
+<<<<<<< HEAD
     // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { value: str... Remove this comment to see the full error message
     prefixToUri: prefixToUriAction,
     // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { prefix: st... Remove this comment to see the full error message
+=======
+    prefixToUri: prefixToUriAction,
+>>>>>>> 2.0
     register: registerAction
   },
   methods: {

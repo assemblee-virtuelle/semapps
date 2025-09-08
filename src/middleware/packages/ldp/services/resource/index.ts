@@ -10,7 +10,10 @@ import generateIdAction from './actions/generateId.ts';
 import getContainersAction from './actions/getContainers.ts';
 import getTypesAction from './actions/getTypes.ts';
 import uploadAction from './actions/upload.ts';
+<<<<<<< HEAD
 // @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
+=======
+>>>>>>> 2.0
 import methods from './methods.ts';
 import { getDatasetFromUri } from '../../utils.ts';
 
@@ -27,6 +30,7 @@ const LdpResourceSchema = {
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
+<<<<<<< HEAD
     // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resourceUr... Remove this comment to see the full error message
     awaitCreateComplete: awaitCreateCompleteAction,
     // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resource: ... Remove this comment to see the full error message
@@ -47,6 +51,19 @@ const LdpResourceSchema = {
     // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resource: ... Remove this comment to see the full error message
     put: putAction,
     // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resourceUr... Remove this comment to see the full error message
+=======
+    awaitCreateComplete: awaitCreateCompleteAction,
+    create: createAction,
+    delete: deleteAction,
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
+    exist: existAction,
+    generateId: generateIdAction,
+    get: getAction,
+    getContainers: getContainersAction,
+    getTypes: getTypesAction,
+    patch: patchAction,
+    put: putAction,
+>>>>>>> 2.0
     upload: uploadAction
   },
   hooks: {

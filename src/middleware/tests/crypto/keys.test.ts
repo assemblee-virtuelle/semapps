@@ -82,8 +82,7 @@ describe('keys', () => {
         // There should only be one public key advertised in the webId by default.
         // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(publicKeys.length).toBe(1);
-        const matchingPublicKey = publicKeys.find(publicKey => publicKey.publicKeyPem === keyPair.publicKeyPem);
-        // @ts-expect-error TS(2304): Cannot find name 'expect'.
+        const matchingPublicKey = publicKeys.find((publicKey: any) => publicKey.publicKeyPem === keyPair.publicKeyPem);
         expect(matchingPublicKey).toBeDefined();
         // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(matchingPublicKey.owner).toBe(user.webId);
@@ -106,7 +105,7 @@ describe('keys', () => {
         });
         // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(
-          arrayOf(webIdDocument.publicKey).find(publicKey => publicKey.publicKeyPem === keyPair.publicKeyPem)
+          arrayOf(webIdDocument.publicKey).find((publicKey: any) => publicKey.publicKeyPem === keyPair.publicKeyPem)
         ).toBeUndefined();
 
         // Attach key again.
@@ -117,7 +116,7 @@ describe('keys', () => {
         });
         // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(
-          arrayOf(webIdDocumentNew.publicKey).find(publicKey => publicKey.publicKeyPem === keyPair.publicKeyPem)
+          arrayOf(webIdDocumentNew.publicKey).find((publicKey: any) => publicKey.publicKeyPem === keyPair.publicKeyPem)
         ).toBeDefined();
       });
 
@@ -140,7 +139,7 @@ describe('keys', () => {
         });
         // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(
-          arrayOf(webIdDocument.publicKey).find(publicKey => publicKey.publicKeyPem === oldKeyPair.publicKeyPem)
+          arrayOf(webIdDocument.publicKey).find((publicKey: any) => publicKey.publicKeyPem === oldKeyPair.publicKeyPem)
         ).toBeUndefined();
         // Expect key not to be present in `/public-keys` container.
         // @ts-expect-error TS(2304): Cannot find name 'expect'.
@@ -175,11 +174,15 @@ describe('keys', () => {
         });
         // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(
-          arrayOf(webIdDocumentNew.publicKey).some(publicKey => publicKey.publicKeyPem === oldKeyPair.publicKeyPem)
+          arrayOf(webIdDocumentNew.publicKey).some(
+            (publicKey: any) => publicKey.publicKeyPem === oldKeyPair.publicKeyPem
+          )
         ).toBeFalsy();
         // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(
-          arrayOf(webIdDocumentNew.publicKey).some(publicKey => publicKey.publicKeyPem === newKeyPair.publicKeyPem)
+          arrayOf(webIdDocumentNew.publicKey).some(
+            (publicKey: any) => publicKey.publicKeyPem === newKeyPair.publicKeyPem
+          )
         ).toBeTruthy();
 
         // Expect publicKey to be present in `/public-keys` container.
@@ -238,7 +241,7 @@ describe('keys', () => {
         });
         // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(
-          arrayOf(webIdDocument.publicKey).find(pKey => pKey.publicKeyPem === keyPair.publicKeyPem)
+          arrayOf(webIdDocument.publicKey).find((pKey: any) => pKey.publicKeyPem === keyPair.publicKeyPem)
         ).toBeUndefined();
       });
 
@@ -279,7 +282,7 @@ describe('keys', () => {
         });
         // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(
-          arrayOf(webIdDocument.publicKey).find(pKey => pKey.publicKeyPem === keyPair.publicKeyPem)
+          arrayOf(webIdDocument.publicKey).find((pKey: any) => pKey.publicKeyPem === keyPair.publicKeyPem)
         ).toBeUndefined();
       });
 
@@ -292,7 +295,6 @@ describe('keys', () => {
         // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(webIdKeys).toHaveLength(1);
         webIdKeys.forEach((key: any) => {
-          // @ts-expect-error TS(2304): Cannot find name 'expect'.
           expect(key.publicKeyPem).toBeTruthy();
           // @ts-expect-error TS(2304): Cannot find name 'expect'.
           expect(key.privateKeyPem).toBeTruthy();
@@ -345,7 +347,7 @@ describe('keys', () => {
         // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(
           arrayOf(webIdDocument.assertionMethod).find(
-            assertionMethod => assertionMethod.publicKeyMultibase === keyPair.publicKeyMultibase
+            (assertionMethod: any) => assertionMethod.publicKeyMultibase === keyPair.publicKeyMultibase
           )
         ).toBeDefined();
       });
@@ -365,7 +367,9 @@ describe('keys', () => {
         });
         // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(
-          arrayOf(webIdDocument.assertionMethod).find(key => key.publicKeyMultibase === keyPair.publicKeyMultibase)
+          arrayOf(webIdDocument.assertionMethod).find(
+            (key: any) => key.publicKeyMultibase === keyPair.publicKeyMultibase
+          )
         ).toBeUndefined();
 
         // Attach key again.
@@ -376,7 +380,9 @@ describe('keys', () => {
         });
         // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(
-          arrayOf(webIdDocumentNew.assertionMethod).find(key => key.publicKeyMultibase === keyPair.publicKeyMultibase)
+          arrayOf(webIdDocumentNew.assertionMethod).find(
+            (key: any) => key.publicKeyMultibase === keyPair.publicKeyMultibase
+          )
         ).toBeDefined();
       });
 
@@ -400,7 +406,7 @@ describe('keys', () => {
         // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(
           arrayOf(webIdDocument.assertionMethod).find(
-            publicKey => publicKey.publicKeyMultibase === oldKeyPair.publicKeyMultibase
+            (publicKey: any) => publicKey.publicKeyMultibase === oldKeyPair.publicKeyMultibase
           )
         ).toBeUndefined();
         // Expect key not to be present in `/public-keys` container.
@@ -437,13 +443,13 @@ describe('keys', () => {
         // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(
           arrayOf(webIdDocumentNew.assertionMethod).some(
-            publicKey => publicKey.publicKeyMultibase === oldKeyPair.publicKeyMultibase
+            (publicKey: any) => publicKey.publicKeyMultibase === oldKeyPair.publicKeyMultibase
           )
         ).toBeFalsy();
         // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(
           arrayOf(webIdDocumentNew.assertionMethod).some(
-            publicKey => publicKey.publicKeyMultibase === newKeyPair.publicKeyMultibase
+            (publicKey: any) => publicKey.publicKeyMultibase === newKeyPair.publicKeyMultibase
           )
         ).toBeTruthy();
 
@@ -497,7 +503,7 @@ describe('keys', () => {
         // Expect the public key of the webId to be the key published in the public key container (referenced by rdfs:seeAlso).
         // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(
-          arrayOf(webIdDocument.assertionMethod).find(key => (key.id || key['@id']) === keyPair['rdfs:seeAlso'])
+          arrayOf(webIdDocument.assertionMethod).find((key: any) => (key.id || key['@id']) === keyPair['rdfs:seeAlso'])
         ).toBeTruthy();
         // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(webIdDocument.assertionMethod.length).toBeGreaterThan(1);
@@ -512,7 +518,6 @@ describe('keys', () => {
         // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(webIdKeys.length).toBeGreaterThan(0);
         webIdKeys.forEach((key: any) => {
-          // @ts-expect-error TS(2304): Cannot find name 'expect'.
           expect(key.publicKeyMultibase).toBeTruthy();
           // @ts-expect-error TS(2304): Cannot find name 'expect'.
           expect(key.secretKeyMultibase).toBeTruthy();

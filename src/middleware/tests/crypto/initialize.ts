@@ -2,19 +2,21 @@
 import fse from 'fs-extra';
 import fs from 'fs';
 import path from 'path';
-import { ServiceBroker } from 'moleculer';
+import { ServiceBroker, ServiceSchema } from 'moleculer';
 import { AuthLocalService } from '@semapps/auth';
 import { CoreService } from '@semapps/core';
-// @ts-expect-error TS(2305): Module '"@semapps/crypto"' has no exported member ... Remove this comment to see the full error message
 import { VerifiableCredentialsService } from '@semapps/crypto';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import CONFIG from '../config.ts';
-import { dropDataset } from '../utils.ts';
+import { fileURLToPath } from 'url';
+import * as CONFIG from '../config.ts';
+import { clearDataset } from '../utils.ts';
+
+// @ts-expect-error TS(1470): The 'import.meta' meta-property is not allowed in ... Remove this comment to see the full error message
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const initialize = async (port: any, withOldKeyStore = false) => {
-  await dropDataset(CONFIG.MAIN_DATASET);
-  await dropDataset(CONFIG.SETTINGS_DATASET);
+  await clearDataset(CONFIG.MAIN_DATASET);
+  await clearDataset(CONFIG.SETTINGS_DATASET);
 
   const baseUrl = `http://localhost:${port}/`;
 
@@ -73,7 +75,7 @@ const initialize = async (port: any, withOldKeyStore = false) => {
     }
   });
 
-  // @ts-expect-error TS(2345): Argument of type '{ mixins: any[]; settings: { pod... Remove this comment to see the full error message
+  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "crypto.vc"; d... Remove this comment to see the full error message
   broker.createService({
     mixins: [VerifiableCredentialsService],
     settings: {

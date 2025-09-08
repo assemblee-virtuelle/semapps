@@ -1,6 +1,12 @@
 import urlJoin from 'url-join';
 
+<<<<<<< HEAD
 const { ServiceSchemaError } = require('moleculer').Errors;
+=======
+import { Errors } from 'moleculer';
+
+const { ServiceSchemaError } = Errors;
+>>>>>>> 2.0
 
 class LdpAdapter {
   constructor({ resourceService = 'ldp.resource', containerService = 'ldp.container' } = {}) {
@@ -20,6 +26,10 @@ class LdpAdapter {
   async connect() {
     // @ts-expect-error TS(2339): Property 'service' does not exist on type 'LdpAdap... Remove this comment to see the full error message
     if (!this.service.schema.settings.containerUri) {
+<<<<<<< HEAD
+=======
+      // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
+>>>>>>> 2.0
       throw new ServiceSchemaError(
         // @ts-expect-error TS(2339): Property 'service' does not exist on type 'LdpAdap... Remove this comment to see the full error message
         `Missing \`containerUri\` definition in settings of service ${this.service.schema.name}`
@@ -115,7 +125,10 @@ class LdpAdapter {
   insert(entity: any) {
     const { slug, ...resource } = entity;
 
+<<<<<<< HEAD
     // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'LdpAdapt... Remove this comment to see the full error message
+=======
+>>>>>>> 2.0
     return (
       this.broker
         // @ts-expect-error TS(2339): Property 'resourceService' does not exist on type ... Remove this comment to see the full error message
@@ -168,7 +181,10 @@ class LdpAdapter {
     // @ts-expect-error TS(2339): Property 'service' does not exist on type 'LdpAdap... Remove this comment to see the full error message
     if (!_id.startsWith('http')) _id = urlJoin(this.service.schema.settings.containerUri, _id);
 
+<<<<<<< HEAD
     // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'LdpAdapt... Remove this comment to see the full error message
+=======
+>>>>>>> 2.0
     return (
       this.broker
         // @ts-expect-error TS(2339): Property 'resourceService' does not exist on type ... Remove this comment to see the full error message

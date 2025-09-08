@@ -1,6 +1,5 @@
 import waitForExpect from 'wait-for-expect';
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-import CONFIG from '../config.ts';
+import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
 
 // @ts-expect-error TS(2304): Cannot find name 'jest'.
@@ -12,7 +11,6 @@ beforeAll(async () => {
   broker = await initialize();
 });
 
-// @ts-expect-error TS(2304): Cannot find name 'afterAll'.
 afterAll(async () => {
   if (broker) await broker.stop();
 });
@@ -285,6 +283,7 @@ describe('LDP container tests', () => {
     });
 
     // Container should now be empty
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await waitForExpect(async () => {
       const container = await broker.call('ldp.container.get', { containerUri: `${CONFIG.HOME_URL}resources` });
 

@@ -5,7 +5,9 @@ import { Parser } from 'n3';
 import streamifyString from 'streamify-string';
 import rdfparseModule from 'rdf-parse';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 // @ts-expect-error TS(2339): Property 'default' does not exist on type 'RdfPars... Remove this comment to see the full error message
 const rdfParser = rdfparseModule.default;

@@ -5,7 +5,13 @@ import { ACTIVITY_TYPES } from '@semapps/activitypub';
 import { ServiceSchema } from 'moleculer';
 import SynchronizerService from './synchronizer.ts';
 
+<<<<<<< HEAD
 const { MoleculerError } = require('moleculer').Errors;
+=======
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
+>>>>>>> 2.0
 
 const regexPrefix = new RegExp('^@prefix ([\\w-]*: +<.*>) .', 'gm');
 

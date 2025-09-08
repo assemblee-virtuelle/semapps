@@ -5,7 +5,13 @@ import { Errors as E } from 'moleculer-web';
 import { ServiceSchema } from 'moleculer';
 import getAction from './actions/get.ts';
 
+<<<<<<< HEAD
 const { MoleculerError } = require('moleculer').Errors;
+=======
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
+>>>>>>> 2.0
 
 const CollectionService = {
   name: 'activitypub.collection' as const,
@@ -141,9 +147,13 @@ const CollectionService = {
             PREFIX as: <https://www.w3.org/ns/activitystreams#>
             SELECT ( Count(?items) as ?count )
             WHERE {
+<<<<<<< HEAD
               GRAPH <${collectionUri}> {
                 <${collectionUri}> as:items ?items .
               }
+=======
+              <${collectionUri}> as:items ?items .
+>>>>>>> 2.0
             }
           `,
           dataset: this.getCollectionDataset(collectionUri),
@@ -168,10 +178,15 @@ const CollectionService = {
             PREFIX as: <https://www.w3.org/ns/activitystreams#>
             ASK
             WHERE {
+<<<<<<< HEAD
               GRAPH <${collectionUri}> {
                 <${collectionUri}> a as:Collection .
                 <${collectionUri}> as:items <${itemUri}> .
               }
+=======
+              <${collectionUri}> a as:Collection .
+              <${collectionUri}> as:items <${itemUri}> .
+>>>>>>> 2.0
             }
           `,
           dataset: this.getCollectionDataset(collectionUri),
@@ -206,9 +221,13 @@ const CollectionService = {
         await ctx.call('triplestore.update', {
           query: sanitizeSparqlQuery`
             INSERT DATA { 
+<<<<<<< HEAD
               GRAPH <${collectionUri}> {
                 <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>
               }
+=======
+              <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>
+>>>>>>> 2.0
             }
           `,
           dataset: this.getCollectionDataset(collectionUri),
@@ -239,11 +258,16 @@ const CollectionService = {
         await ctx.call('triplestore.update', {
           query: sanitizeSparqlQuery`
             DELETE
+<<<<<<< HEAD
             WHERE { 
               GRAPH <${collectionUri}> {
                 <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}> 
               }
             }
+=======
+            WHERE
+            { <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}> }
+>>>>>>> 2.0
           `,
           dataset: this.getCollectionDataset(collectionUri),
           webId: 'system'
@@ -256,7 +280,10 @@ const CollectionService = {
       }
     },
 
+<<<<<<< HEAD
     // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resourceUr... Remove this comment to see the full error message
+=======
+>>>>>>> 2.0
     get: getAction,
 
     clear: {
@@ -265,11 +292,16 @@ const CollectionService = {
        * @param collectionUri The full URI of the collection
        */
       async handler(ctx) {
+<<<<<<< HEAD
         const { collectionUri } = ctx.params;
+=======
+        const collectionUri = ctx.params.collectionUri.replace(/\/+$/, '');
+>>>>>>> 2.0
         await ctx.call('triplestore.update', {
           query: sanitizeSparqlQuery`
             PREFIX as: <https://www.w3.org/ns/activitystreams#> 
             DELETE {
+<<<<<<< HEAD
               GRAPH ?g1 {
                 ?s1 ?p1 ?o1 .
               }
@@ -281,6 +313,14 @@ const CollectionService = {
               GRAPH ?g1 {
                 ?s1 ?p1 ?o1 .
               }
+=======
+              ?s1 ?p1 ?o1 .
+            }
+            WHERE { 
+              FILTER(?container IN (<${collectionUri}>, <${`${collectionUri}/`}>)) .
+              ?container as:items ?s1 .
+              ?s1 ?p1 ?o1 .
+>>>>>>> 2.0
             } 
           `,
           dataset: this.getCollectionDataset(collectionUri),
@@ -307,9 +347,13 @@ const CollectionService = {
             PREFIX ldp: <http://www.w3.org/ns/ldp#>
             SELECT ?actorUri
             WHERE { 
+<<<<<<< HEAD
               GRAPH ?g {
                 ?actorUri ${prefix}:${collectionKey} <${collectionUri}>
               }
+=======
+              ?actorUri ${prefix}:${collectionKey} <${collectionUri}>
+>>>>>>> 2.0
             }
           `,
           dataset: this.getCollectionDataset(collectionUri),

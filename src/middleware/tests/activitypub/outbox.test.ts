@@ -7,13 +7,11 @@ jest.setTimeout(50_000);
 let broker: any;
 let broker2: any;
 
-// @ts-expect-error TS(2304): Cannot find name 'beforeAll'.
 beforeAll(async () => {
   broker = await initialize(3000, 'testData', 'settings');
   broker2 = broker;
 });
 
-// @ts-expect-error TS(2304): Cannot find name 'afterAll'.
 afterAll(async () => {
   if (broker) await broker.stop();
 });
@@ -58,7 +56,6 @@ describe('Permissions are correctly set on outbox', () => {
   });
 
   let objectPrivateFirst: any;
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Post private message to self', async () => {
     await broker.call('activitypub.outbox.post', {
       collectionUri: sebastien.outbox,

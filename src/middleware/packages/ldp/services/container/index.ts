@@ -20,12 +20,18 @@ const LdpContainerSchema = {
   name: 'ldp.container' as const,
   settings: {
     baseUrl: null,
+<<<<<<< HEAD
     podProvider: false
+=======
+    podProvider: false,
+    mirrorGraphName: null
+>>>>>>> 2.0
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
     attach: attachAction,
     clear: clearAction,
+<<<<<<< HEAD
     // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { containerU... Remove this comment to see the full error message
     create: createAction,
     // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { containerU... Remove this comment to see the full error message
@@ -45,6 +51,21 @@ const LdpContainerSchema = {
     // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { containerU... Remove this comment to see the full error message
     post: postAction,
     // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { containerU... Remove this comment to see the full error message
+=======
+    create: createAction,
+    createAndAttach: createAndAttachAction,
+    delete: deleteAction,
+    detach: detachAction,
+    exist: existAction,
+    get: getAction,
+    getAll: getAllAction,
+    getPath: getPathAction,
+    getUris: getUrisAction,
+    includes: includesAction,
+    // @ts-expect-error TS(2322): Type 'ActionSchema<{ containerUri: { type: "string... Remove this comment to see the full error message
+    isEmpty: isEmptyAction,
+    post: postAction,
+>>>>>>> 2.0
     patch: patchAction
   },
   hooks: {

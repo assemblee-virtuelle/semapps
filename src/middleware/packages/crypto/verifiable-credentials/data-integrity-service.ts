@@ -6,9 +6,14 @@ import { cryptosuite } from '@digitalbazaar/eddsa-rdfc-2022-cryptosuite';
 // @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
 
+<<<<<<< HEAD
 /** @type {import('@digitalbazaar/ed25519-multikey')} */
 // @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
+=======
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
+import * as Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
+>>>>>>> 2.0
 
 import { ServiceSchema } from 'moleculer';
 import { KEY_TYPES } from '../constants.ts';

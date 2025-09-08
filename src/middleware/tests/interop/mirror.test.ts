@@ -23,7 +23,6 @@ beforeAll(async () => {
   server2 = await initialize(3002, 'testData2', 'settings2', 2, 'http://localhost:3001');
 });
 
-// @ts-expect-error TS(2304): Cannot find name 'afterAll'.
 afterAll(async () => {
   if (server1) await server1.stop();
   if (server2) await server2.stop();

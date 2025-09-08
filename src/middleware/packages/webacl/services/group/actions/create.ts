@@ -4,7 +4,9 @@ import urlJoin from 'url-join';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import { ActionSchema } from 'moleculer';
 
-const { MoleculerError } = require('moleculer').Errors;
+import { Errors } from 'moleculer';
+
+const { MoleculerError } = Errors;
 
 export const api = async function api(this: any, ctx: any) {
   if (!ctx.meta.headers?.slug) throw new MoleculerError('needs a slug in your POST (json)', 400, 'BAD_REQUEST');
@@ -27,7 +29,6 @@ export const action = {
   visibility: 'public',
   params: {
     groupUri: { type: 'string', optional: true },
-    // @ts-expect-error TS(2353): Object literal may only specify known properties, ... Remove this comment to see the full error message
     groupSlug: { type: 'string', optional: true, min: 1, trim: true },
     webId: { type: 'string', optional: true }
   },
@@ -38,11 +39,10 @@ export const action = {
 
     if (!groupUri) {
       groupSlug = createSlug(groupSlug, { lang: 'fr', custom: { '.': '.', '/': '/' } });
-      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+      // @ts-expect-error TS(2345): Argument of type 'TypeFromSchemaParam<{ type: "str... Remove this comment to see the full error message
       groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
     }
 
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     if (await this.actions.exist({ groupUri, webId: 'system' }, { parentCtx: ctx })) {
       throw new MoleculerError('Group already exists', 400, 'BAD_REQUEST');
     }
@@ -78,7 +78,6 @@ export const action = {
       query: sanitizeSparqlQuery`
         PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
         INSERT DATA { 
-          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           GRAPH <${this.settings.graphName}> { 
             <${groupUri}> a vcard:Group 
           } 

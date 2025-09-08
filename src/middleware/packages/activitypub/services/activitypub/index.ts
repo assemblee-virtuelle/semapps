@@ -1,6 +1,9 @@
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'mole... Remove this comment to see the full error message
 import QueueMixin from 'moleculer-bull';
+<<<<<<< HEAD
 // @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
+=======
+>>>>>>> 2.0
 import { as, sec } from '@semapps/ontologies';
 import { ServiceSchema } from 'moleculer';
 import ActorService from './subservices/actor.ts';
@@ -47,8 +50,13 @@ const ActivityPubService = {
       settings: { podProvider }
     });
 
+<<<<<<< HEAD
     this.broker.createService({
       // @ts-expect-error TS(2322): Type '{ name: "activitypub.collection"; mixins: { ... Remove this comment to see the full error message
+=======
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub.c... Remove this comment to see the full error message
+    this.broker.createService({
+>>>>>>> 2.0
       mixins: [CollectionService],
       settings: {
         podProvider,
