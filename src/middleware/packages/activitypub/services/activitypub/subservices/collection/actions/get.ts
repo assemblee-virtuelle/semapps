@@ -196,6 +196,7 @@ async function selectAndDereferenceItems(ctx: any, allItemURIs: any, options: an
           delete item['@context']; // Don't keep the items individual context
           selectedItems.push(item);
         } catch (e) {
+          // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
           if (e.code === 404 || e.code === 403) {
             ctx.broker.logger.debug(`Item not found with URI: ${itemUri}`);
           } else {
@@ -294,20 +295,25 @@ const Schema = {
     webId: { type: 'string', optional: true },
     jsonContext: {
       type: 'multi',
+      // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
       rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
       optional: true
     }
   },
   async handler(ctx) {
     const { resourceUri: collectionUri, jsonContext } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'queryString' does not exist on type '{}'... Remove this comment to see the full error message
     const beforeEq = ctx.params.beforeEq || ctx.meta.queryString?.beforeEq; // cursor param when moving backwards
+    // @ts-expect-error TS(2339): Property 'queryString' does not exist on type '{}'... Remove this comment to see the full error message
     const afterEq = ctx.params.afterEq || ctx.meta.queryString?.afterEq; // cursor param when moving forwards
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const localContext = await ctx.call('jsonld.context.get');
 
     await ctx.call('permissions.check', { uri: collectionUri, type: 'resource', mode: 'acl:Read', webId });
 
     // Get dataset here since we can't call the method from internal functions
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const dataset = this.getCollectionDataset(collectionUri);
 
     sanitizeSparqlUri(collectionUri);

@@ -1,3 +1,4 @@
+// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
 import { ActionSchema } from 'moleculer';
 import { hasType } from '../../../utils.ts';
@@ -6,7 +7,9 @@ const Schema = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string', optional: true },
+    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     resource: { type: 'object', optional: true },
+    // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
     keepInSync: { type: 'boolean', default: false },
     webId: { type: 'string', optional: true },
     dataset: { type: 'string', optional: true }
@@ -19,6 +22,7 @@ const Schema = {
     }
 
     if (!resource) {
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       resource = await this.actions.getNetwork({ resourceUri, webId }, { parentCtx: ctx });
     }
 
@@ -31,6 +35,7 @@ const Schema = {
       resourceUri = resource.id || resource['@id'];
     }
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     if (!(await this.actions.isRemote({ resourceUri, dataset }, { parentCtx: ctx }))) {
       throw new Error(
         `The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId} / dataset ${dataset}))`
@@ -45,6 +50,7 @@ const Schema = {
       };
     }
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     if (!dataset && this.settings.podProvider) {
       if (!webId) {
         throw new Error(`In Pod provider config, a webId or dataset param must be provided to ldp.remote.store`);
@@ -73,6 +79,7 @@ const Schema = {
       dataset
     });
 
+    // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
     if (!ctx.meta.skipEmitEvent) {
       ctx.emit(
         'ldp.remote.stored',

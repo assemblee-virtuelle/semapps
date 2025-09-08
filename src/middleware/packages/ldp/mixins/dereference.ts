@@ -60,6 +60,7 @@ const Schema = {
         delete result['@context'];
         return result;
       } catch (e) {
+        // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
         if (e.code === 403 || e.code === 404) {
           return resourceUri;
         } else {

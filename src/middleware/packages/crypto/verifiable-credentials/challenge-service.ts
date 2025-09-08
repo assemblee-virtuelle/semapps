@@ -68,6 +68,7 @@ const ChallengeService = {
     cleanElapsed: {
       handler() {
         const now = Date.now();
+        // @ts-expect-error TS(2339): Property 'issued' does not exist on type 'unknown'... Remove this comment to see the full error message
         for (const [challenge, { issued }] of Object.entries(this.challenges)) {
           if (now - issued > this.settings.challengeExpirationMs) {
             delete this.challenges[challenge];

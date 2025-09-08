@@ -209,6 +209,7 @@ const ObjectService = {
       async handler(ctx) {
         // Check if tombstones are globally activated
         if (this.settings.activateTombstones) {
+          // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
           const { resourceUri, containersUris, oldData, dataset } = ctx.params;
 
           // If the resource was in no container, skip...
@@ -219,6 +220,7 @@ const ObjectService = {
               dataset
             });
 
+            // @ts-expect-error TS(2339): Property 'activateTombstones' does not exist on ty... Remove this comment to see the full error message
             if (containerOptions.activateTombstones !== false && ctx.meta.activateTombstones !== false) {
               const formerType = oldData.type || oldData['@type'];
               await this.actions.createTombstone({ resourceUri, formerType }, { meta: { dataset }, parentCtx: ctx });

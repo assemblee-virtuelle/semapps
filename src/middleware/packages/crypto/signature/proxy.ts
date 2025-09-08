@@ -2,6 +2,7 @@ import path from 'path';
 import urlJoin from 'url-join';
 import { parseHeader, parseFile, saveDatasetMeta } from '@semapps/middlewares';
 import fetch from 'node-fetch';
+// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
 import { ServiceSchema } from 'moleculer';
 
@@ -46,6 +47,7 @@ const ProxyService = {
         const url = ctx.params.id;
         const method = ctx.params.method || 'GET';
         const headers = JSON.parse(ctx.params.headers) || { accept: 'application/json' };
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const actorUri = ctx.meta.webId;
 
         // Only user can query his own proxy URL
@@ -58,7 +60,8 @@ const ProxyService = {
         const body =
           ctx.params.files && ctx.params.files.length > 0
             ? await stream2buffer(ctx.params.files[0].readableStream)
-            : ctx.meta.rawBody;
+            : // @ts-expect-error TS(2339): Property 'rawBody' does not exist on type '{}'.
+              ctx.meta.rawBody;
 
         try {
           const response = await this.actions.query(
@@ -73,13 +76,19 @@ const ProxyService = {
               parentCtx: ctx
             }
           );
+          // @ts-expect-error TS(2339): Property '$statusCode' does not exist on type '{}'... Remove this comment to see the full error message
           ctx.meta.$statusCode = response.status;
+          // @ts-expect-error TS(2339): Property '$statusMessage' does not exist on type '... Remove this comment to see the full error message
           ctx.meta.$statusMessage = response.statusText;
+          // @ts-expect-error TS(2339): Property '$responseHeaders' does not exist on type... Remove this comment to see the full error message
           ctx.meta.$responseHeaders = response.headers;
           return response.body;
         } catch (e) {
+          // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
           if (e.code !== 404 && e.code !== 403) console.error(e);
+          // @ts-expect-error TS(2339): Property '$statusCode' does not exist on type '{}'... Remove this comment to see the full error message
           ctx.meta.$statusCode = !e.code ? 500 : e.code === 'ECONNREFUSED' ? 502 : e.code;
+          // @ts-expect-error TS(2339): Property '$statusMessage' does not exist on type '... Remove this comment to see the full error message
           ctx.meta.$statusMessage = e.message;
         }
       }
@@ -148,6 +157,7 @@ const ProxyService = {
   events: {
     'auth.registered': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
         if (this.settings.podProvider) {
           const services = await ctx.call('$node.services');

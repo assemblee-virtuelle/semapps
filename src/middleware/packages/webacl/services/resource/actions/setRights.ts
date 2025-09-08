@@ -20,6 +20,7 @@ export const api = async function api(this: any, ctx: any) {
     throw new MoleculerError(`Content type not supported : ${contentType}`, 400, 'BAD_REQUEST');
 
   const newRights = await convertBodyToTriples(ctx.meta.rawBody, contentType);
+  // @ts-expect-error TS(18046): 'newRights' is of type 'unknown'.
   if (newRights.length === 0) throw new MoleculerError('PUT rights cannot be empty', 400, 'BAD_REQUEST');
 
   // This is the root container
@@ -39,13 +40,16 @@ export const action = {
     resourceUri: { type: 'string' },
     webId: { type: 'string', optional: true },
     // newRights is an array of objects of the form { auth: 'http://localhost:3000/_acl/container29#Control',  p: 'http://www.w3.org/ns/auth/acl#agent',  o: 'https://data.virtual-assembly.org/users/sebastien.rosset' }
+    // @ts-expect-error TS(2322): Type '{ type: "array"; optional: false; min: numbe... Remove this comment to see the full error message
     newRights: { type: 'array', optional: false, min: 1 }
     // minimum is one right : We cannot leave a resource without rights.
   },
   async handler(ctx) {
     let { webId, newRights, resourceUri } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     webId = webId || ctx.meta.webId || 'anon';
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
 
     await ctx.call('permissions.check', {
@@ -56,16 +60,20 @@ export const action = {
     });
 
     // filter out all the newRights that are not for the resource
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const aclUri = getAclUriFromResourceUri(this.settings.baseUrl, resourceUri);
     newRights = newRights.filter((a: any) => filterTriplesForResource(a, aclUri, isContainer));
 
     if (newRights.length === 0)
       throw new MoleculerError('The rights cannot be changed because they are incorrect', 400, 'BAD_REQUEST');
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const currentPerms = await this.getExistingPerms(
       ctx,
       resourceUri,
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       this.settings.baseUrl,
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       this.settings.graphName,
       isContainer
     );
@@ -81,11 +89,13 @@ export const action = {
     if (differenceAdd.length === 0 && differenceDelete.length === 0) return;
 
     // compile a list of Authorization already present. because if some of them don't exist, we need to create them
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const currentAuths = this.compileAuthorizationNodesMap(currentPerms);
 
     let addRequest = '';
     for (const add of differenceAdd) {
       if (!currentAuths[add.auth]) {
+        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         addRequest += this.generateNewAuthNode(add.auth);
         currentAuths[add.auth] = 1;
       } else {
@@ -101,13 +111,16 @@ export const action = {
     }
 
     for (const [auth, count] of Object.entries(currentAuths)) {
+      // @ts-expect-error TS(18046): 'count' is of type 'unknown'.
       if (count < 1) {
+        // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
         deleteRequest += this.generateNewAuthNode(auth);
       }
     }
 
     // we do the 2 calls in one, so it is in the same transaction, and will rollback in case of failure.
     await ctx.call('triplestore.update', {
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       query: `INSERT DATA { GRAPH <${this.settings.graphName}> { ${addRequest} } }; DELETE DATA { GRAPH <${this.settings.graphName}> { ${deleteRequest} } }`,
       webId: 'system'
     });
@@ -139,6 +152,7 @@ export const action = {
     const returnValues = {
       uri: resourceUri,
       webId,
+      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       dataset: ctx.meta.dataset,
       created: false,
       isContainer,

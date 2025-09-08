@@ -1,4 +1,6 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'mole... Remove this comment to see the full error message
 import QueueMixin from 'moleculer-bull';
+// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { as, sec } from '@semapps/ontologies';
 import { ServiceSchema } from 'moleculer';
 import ActorService from './subservices/actor.ts';
@@ -39,12 +41,14 @@ const ActivityPubService = {
       activateTombstones
     } = this.settings;
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: any[]; settings: { pod... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [SideEffectsService, queueServiceUrl ? QueueMixin(queueServiceUrl) : FakeQueueMixin],
       settings: { podProvider }
     });
 
     this.broker.createService({
+      // @ts-expect-error TS(2322): Type '{ name: "activitypub.collection"; mixins: { ... Remove this comment to see the full error message
       mixins: [CollectionService],
       settings: {
         podProvider,
@@ -52,6 +56,7 @@ const ActivityPubService = {
       }
     });
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub.c... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [CollectionsRegistryService],
       settings: {
@@ -60,6 +65,7 @@ const ActivityPubService = {
       }
     });
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub.a... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [ActorService],
       settings: {
@@ -69,6 +75,7 @@ const ActivityPubService = {
       }
     });
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub.a... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [ApiService],
       settings: {
@@ -77,6 +84,7 @@ const ActivityPubService = {
       }
     });
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub.o... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [ObjectService],
       settings: {
@@ -86,6 +94,7 @@ const ActivityPubService = {
       }
     });
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub.a... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [ActivityService],
       settings: {
@@ -95,6 +104,7 @@ const ActivityPubService = {
       }
     });
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub.f... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [FollowService],
       settings: {
@@ -102,6 +112,7 @@ const ActivityPubService = {
       }
     });
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub.i... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [InboxService],
       settings: {
@@ -109,6 +120,7 @@ const ActivityPubService = {
       }
     });
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub.l... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [LikeService],
       settings: {
@@ -117,6 +129,7 @@ const ActivityPubService = {
       }
     });
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub.s... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [ShareService],
       settings: {
@@ -125,6 +138,7 @@ const ActivityPubService = {
       }
     });
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub.r... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [ReplyService],
       settings: {
@@ -133,6 +147,7 @@ const ActivityPubService = {
       }
     });
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: any[]; settings: { bas... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [OutboxService, queueServiceUrl ? QueueMixin(queueServiceUrl) : FakeQueueMixin],
       settings: {

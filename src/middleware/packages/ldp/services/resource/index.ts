@@ -10,6 +10,7 @@ import generateIdAction from './actions/generateId.ts';
 import getContainersAction from './actions/getContainers.ts';
 import getTypesAction from './actions/getTypes.ts';
 import uploadAction from './actions/upload.ts';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import methods from './methods.ts';
 import { getDatasetFromUri } from '../../utils.ts';
 
@@ -26,25 +27,37 @@ const LdpResourceSchema = {
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
+    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resourceUr... Remove this comment to see the full error message
     awaitCreateComplete: awaitCreateCompleteAction,
+    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resource: ... Remove this comment to see the full error message
     create: createAction,
+    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resourceUr... Remove this comment to see the full error message
     delete: deleteAction,
     exist: existAction,
+    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { containerU... Remove this comment to see the full error message
     generateId: generateIdAction,
+    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resourceUr... Remove this comment to see the full error message
     get: getAction,
+    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resourceUr... Remove this comment to see the full error message
     getContainers: getContainersAction,
+    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resourceUr... Remove this comment to see the full error message
     getTypes: getTypesAction,
+    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resourceUr... Remove this comment to see the full error message
     patch: patchAction,
+    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resource: ... Remove this comment to see the full error message
     put: putAction,
+    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resourceUr... Remove this comment to see the full error message
     upload: uploadAction
   },
   hooks: {
     before: {
       '*'(ctx) {
+        // @ts-expect-error TS(2339): Property 'podProvider' does not exist on type 'str... Remove this comment to see the full error message
         if (this.settings.podProvider && !ctx.meta.dataset) {
           // If we have a pod provider, guess the dataset from the URI
           const uri =
             ctx.params.resourceUri || (ctx.params.resource && (ctx.params.resource.id || ctx.params.resource['@id']));
+          // @ts-expect-error TS(2339): Property 'baseUrl' does not exist on type 'string ... Remove this comment to see the full error message
           if (uri && uri.startsWith(this.settings.baseUrl)) {
             ctx.meta.dataset = getDatasetFromUri(uri);
           }

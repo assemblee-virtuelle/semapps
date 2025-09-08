@@ -102,7 +102,9 @@ const ReplyService = {
         return { match: match && dereferencedActivity.object.inReplyTo, dereferencedActivity };
       },
       async onEmit(ctx: any, activity: any, emitterUri: any) {
+        // @ts-expect-error TS(2339): Property 'isLocalObject' does not exist on type '{... Remove this comment to see the full error message
         if (this.isLocalObject(activity.object.inReplyTo, emitterUri)) {
+          // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
           await this.actions.addReply(
             { objectUri: activity.object.inReplyTo, replyUri: activity.object.id },
             { parentCtx: ctx }
@@ -110,7 +112,9 @@ const ReplyService = {
         }
       },
       async onReceive(ctx: any, activity: any, recipientUri: any) {
+        // @ts-expect-error TS(2339): Property 'isLocalObject' does not exist on type '{... Remove this comment to see the full error message
         if (this.isLocalObject(activity.object.inReplyTo, recipientUri)) {
+          // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
           await this.actions.addReply(
             { objectUri: activity.object.inReplyTo, replyUri: activity.object.id },
             { parentCtx: ctx }
@@ -127,9 +131,11 @@ const ReplyService = {
         }
       },
       async onEmit(ctx: any, activity: any) {
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
         await this.actions.removeFromAllRepliesCollections({ objectUri: activity.object.id }, { parentCtx: ctx });
       },
       async onReceive(ctx: any, activity: any) {
+        // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
         await this.actions.removeFromAllRepliesCollections({ objectUri: activity.object.id }, { parentCtx: ctx });
       }
     }

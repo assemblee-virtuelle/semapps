@@ -20,18 +20,23 @@ export const api = async function api(this: any, ctx: any) {
 export const action = {
   visibility: 'public',
   params: {
+    // @ts-expect-error TS(2353): Object literal may only specify known properties, ... Remove this comment to see the full error message
     groupSlug: { type: 'string', optional: true, min: 1, trim: true },
+    // @ts-expect-error TS(2353): Object literal may only specify known properties, ... Remove this comment to see the full error message
     groupUri: { type: 'string', optional: true, trim: true },
+    // @ts-expect-error TS(2322): Type '{ type: "string"; optional: false; trim: tru... Remove this comment to see the full error message
     memberUri: { type: 'string', optional: false, trim: true },
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
     let { groupSlug, groupUri, memberUri } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');
     if (!memberUri) throw new MoleculerError('needs a memberUri', 400, 'BAD_REQUEST');
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     if (!groupUri) groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
 
     // TODO: check that the member exists and is in the group ?
@@ -52,6 +57,7 @@ export const action = {
       query: sanitizeSparqlQuery`
         PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
         DELETE DATA { 
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           GRAPH <${this.settings.graphName}> { 
             <${groupUri}> vcard:hasMember <${memberUri}>
           }  

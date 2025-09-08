@@ -1,5 +1,8 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import { cryptosuite } from '@digitalbazaar/eddsa-rdfc-2022-cryptosuite';
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import vc from '@digitalbazaar/vc';
 import { ServiceSchema } from 'moleculer';
 import VCCapabilityPresentationProofPurpose from './VcCapabilityPresentationProofPurpose.ts';
@@ -42,7 +45,9 @@ const VCPresentationService = {
             issuer: { type: 'string', optional: true },
             validFrom: { type: 'string', optional: true },
             validUntil: { type: 'string', optional: true },
+            // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
             credentialSubject: { type: 'object' },
+            // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
             proof: { type: 'multi', optional: true, rules: [{ type: 'object' }, { type: 'array', items: 'object' }] }
           }
         },
@@ -50,6 +55,7 @@ const VCPresentationService = {
           type: 'object',
           default: {},
           params: {
+            // @ts-expect-error TS(2322): Type '{ type: "string"; default: string; }' is not... Remove this comment to see the full error message
             proofPurpose: { type: 'string', default: 'assertionMethod' }
           }
         }
@@ -60,6 +66,7 @@ const VCPresentationService = {
           options: { proofPurpose = 'assertionMethod' }
         } = ctx.params;
 
+        // @ts-expect-error TS(2554): Expected 0 arguments, but got 1.
         const purpose = new VCPurpose({ term: proofPurpose });
 
         const suite = new DataIntegrityProof({
@@ -82,6 +89,7 @@ const VCPresentationService = {
      */
     verifyPresentation: {
       params: {
+        // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
         verifiablePresentation: { type: 'object' },
         options: {
           type: 'object',
@@ -90,10 +98,13 @@ const VCPresentationService = {
             challenge: { type: 'string', optional: true },
             domain: { type: 'string', optional: true },
             proofPurpose: { type: 'string', optional: true },
+            // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
             unsignedPresentation: { type: 'boolean', default: false }
           }
         },
+        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         credentialPurpose: { type: 'object', optional: true },
+        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         presentationPurpose: { type: 'object', optional: true }
       },
       async handler(ctx) {
@@ -135,6 +146,7 @@ const VCPresentationService = {
           return verificationResult;
         } catch (e) {
           this.logger.error('Error verifying presentation:', e);
+          // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
           return { verified: false, error: e.message };
         }
       }
@@ -147,11 +159,13 @@ const VCPresentationService = {
      */
     verifyCapabilityPresentation: {
       params: {
+        // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
         verifiablePresentation: { type: 'object' },
         options: {
           type: 'object',
           default: {},
           params: {
+            // @ts-expect-error TS(2322): Type '{ type: "number"; default: number; }' is not... Remove this comment to see the full error message
             maxChainLength: { type: 'number', default: 2 },
             challenge: { type: 'string', optional: true },
             domain: { type: 'string', optional: true }
@@ -189,6 +203,7 @@ const VCPresentationService = {
 
         // Order the VCs in the presentation by issuance date.
         const orderedCredentials = arrayOf(presentation.verifiableCredential).sort(
+          // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
           (c1, c2) => new Date(c1.issuanceDate || c1.proof.created) - new Date(c2.issuanceDate || c2.proof.created)
         );
         presentation.verifiableCredential = orderedCredentials;

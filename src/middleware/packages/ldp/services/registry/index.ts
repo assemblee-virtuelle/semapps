@@ -3,6 +3,7 @@ import { ServiceSchema } from 'moleculer';
 import getByTypeAction from './actions/getByType.ts';
 import getByUriAction from './actions/getByUri.ts';
 import getUriAction from './actions/getUri.ts';
+// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
 import listAction from './actions/list.ts';
 import registerAction from './actions/register.ts';
 import defaultOptions from './defaultOptions.ts';
@@ -17,10 +18,12 @@ const LdpRegistrySchema = {
   },
   dependencies: ['ldp.container', 'api'],
   actions: {
+    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { type: { ty... Remove this comment to see the full error message
     getByType: getByTypeAction,
     getByUri: getByUriAction,
     getUri: getUriAction,
     list: listAction,
+    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { path: { ty... Remove this comment to see the full error message
     register: registerAction
   },
   async started() {
@@ -39,6 +42,7 @@ const LdpRegistrySchema = {
   events: {
     'auth.registered': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId, accountData } = ctx.params;
         // We want to add user's containers only in Pod provider config
         if (this.settings.podProvider) {
@@ -47,6 +51,7 @@ const LdpRegistrySchema = {
           // Go through each registered containers
           for (const options of Object.values(registeredContainers)) {
             await ctx.call('ldp.container.createAndAttach', {
+              // @ts-expect-error TS(18046): 'options' is of type 'unknown'.
               containerUri: urlJoin(storageUrl, options.path),
               options,
               webId

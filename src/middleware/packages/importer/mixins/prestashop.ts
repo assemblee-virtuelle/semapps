@@ -53,6 +53,7 @@ const Schema = {
       const result = await this.fetch(url);
       if (result) {
         return {
+          // @ts-expect-error TS(2698): Spread types may only be created from object types... Remove this comment to see the full error message
           ...Object.values(result)[0],
           type: Object.keys(result)[0]
         };

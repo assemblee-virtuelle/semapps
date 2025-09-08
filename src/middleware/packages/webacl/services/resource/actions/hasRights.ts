@@ -53,6 +53,7 @@ async function hasPermissions(ctx: any, resourceUri: any, askedRights: any, base
   }
   const uaSearchParam = getUserAgentSearchParam(user, groups);
 
+  // @ts-expect-error TS(2554): Expected 8 arguments, but got 7.
   await checkRights(askedRights, resultRights, ctx, resourceUri, resourceAclUri, uaSearchParam, graphName);
 
   if (Object.keys(askedRights).length !== Object.keys(resultRights).length) {
@@ -75,6 +76,7 @@ async function hasPermissions(ctx: any, resourceUri: any, askedRights: any, base
 
   // we put some false values if needed
   for (const p1 of Object.keys(perms)) {
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     if (askedRights[p1] && !resultRights[p1]) resultRights[p1] = false;
   }
 
@@ -101,6 +103,7 @@ export const action = {
     rights: {
       type: 'object',
       optional: true,
+      // @ts-expect-error TS(2353): Object literal may only specify known properties, ... Remove this comment to see the full error message
       strict: true,
       props: {
         read: { type: 'boolean', optional: true },
@@ -114,17 +117,21 @@ export const action = {
   cache: {
     enabled(ctx) {
       // Do not cache remote resources as we have no mecanism to clear this cache
+      // @ts-expect-error TS(18046): 'ctx.params.resourceUri' is of type 'unknown'.
       return ctx.params.resourceUri.startsWith(this.settings.baseUrl);
     },
     keys: ['resourceUri', 'rights', 'webId']
   },
   async handler(ctx) {
     let { resourceUri, webId, rights } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     webId = webId || ctx.meta.webId || 'anon';
     rights = rights || {};
     if (Object.keys(rights).length === 0) rights = { read: true, write: true, append: true, control: true };
 
+    // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
     await this.checkResourceOrContainerExists(ctx, resourceUri);
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     return await hasPermissions(ctx, resourceUri, rights, this.settings.baseUrl, webId, this.settings.graphName);
   }
 } satisfies ActionSchema;

@@ -5,6 +5,7 @@ export const action = {
   params: {
     resourceUri: { type: 'string' },
     webId: { type: 'string' },
+    // @ts-expect-error TS(2322): Type '{ type: "number"; default: number; }' is not... Remove this comment to see the full error message
     timeout: { type: 'number', default: 10000 }
   },
   handler(ctx) {

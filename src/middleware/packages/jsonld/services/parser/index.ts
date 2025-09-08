@@ -7,6 +7,7 @@ import rdfparseModule from 'rdf-parse';
 import { ServiceSchema } from 'moleculer';
 import { arrayOf, isURI } from '../../utils/utils.ts';
 
+// @ts-expect-error TS(2339): Property 'default' does not exist on type 'RdfPars... Remove this comment to see the full error message
 const rdfParser = rdfparseModule.default;
 
 const JsonldParserSchema = {

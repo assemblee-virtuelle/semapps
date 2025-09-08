@@ -70,6 +70,7 @@ const WebaclCacheSchema = {
   events: {
     'webacl.resource.updated': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'uri' does not exist on type 'Optionalize... Remove this comment to see the full error message
         const { uri, isContainer, defaultRightsUpdated } = ctx.params;
         await this.actions.invalidateResourceRights(
           { uri, specificUriOnly: !isContainer || !defaultRightsUpdated },
@@ -80,6 +81,7 @@ const WebaclCacheSchema = {
 
     'webacl.resource.deleted': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'uri' does not exist on type 'Optionalize... Remove this comment to see the full error message
         const { uri, isContainer } = ctx.params;
         await this.actions.invalidateResourceRights({ uri, specificUriOnly: !isContainer }, { parentCtx: ctx });
       }
@@ -87,6 +89,7 @@ const WebaclCacheSchema = {
 
     'webacl.resource.user-deleted': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
         await this.actions.invalidateAllUserRights({ uri: webId }, { parentCtx: ctx });
       }
@@ -94,6 +97,7 @@ const WebaclCacheSchema = {
 
     'webacl.group.member-added': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'groupUri' does not exist on type 'Option... Remove this comment to see the full error message
         const { groupUri, memberUri } = ctx.params;
         await this.actions.invalidateResourceRights({ uri: groupUri, specificUriOnly: true }, { parentCtx: ctx });
         await this.actions.invalidateAllUserRights({ uri: memberUri }, { parentCtx: ctx });
@@ -102,6 +106,7 @@ const WebaclCacheSchema = {
 
     'webacl.group.member-removed': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'groupUri' does not exist on type 'Option... Remove this comment to see the full error message
         const { groupUri, memberUri } = ctx.params;
         await this.actions.invalidateResourceRights({ uri: groupUri, specificUriOnly: true }, { parentCtx: ctx });
         await this.actions.invalidateAllUserRights({ uri: memberUri }, { parentCtx: ctx });

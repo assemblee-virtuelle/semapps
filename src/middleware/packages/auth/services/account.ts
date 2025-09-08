@@ -1,4 +1,6 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'bcry... Remove this comment to see the full error message
 import bcrypt from 'bcrypt';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'spea... Remove this comment to see the full error message
 import createSlug from 'speakingurl';
 import DbService from 'moleculer-db';
 import { TripleStoreAdapter } from '@semapps/triplestore';
@@ -52,6 +54,7 @@ const AuthAccountSchema = {
         // FORMAT AND VERIFY USERNAME
 
         if (username) {
+          // @ts-expect-error TS(2339): Property 'isSystemCall' does not exist on type '{}... Remove this comment to see the full error message
           if (!ctx.meta.isSystemCall) {
             const { isValid, error } = await this.isValidUsername(ctx, username);
             if (!isValid) throw new Error(error);
@@ -219,6 +222,7 @@ const AuthAccountSchema = {
 
     findDatasetByWebId: {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const webId = ctx.params.webId || ctx.meta.webId;
         const account = await ctx.call('auth.account.findByWebId', { webId });
         return account?.username;
@@ -227,6 +231,7 @@ const AuthAccountSchema = {
 
     findSettingsByWebId: {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const { webId } = ctx.meta;
 
         const account = await ctx.call('auth.account.findByWebId', { webId });
@@ -241,6 +246,7 @@ const AuthAccountSchema = {
     updateAccountSettings: {
       async handler(ctx) {
         const { currentPassword, email, newPassword } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const { webId } = ctx.meta;
         const account = await ctx.call('auth.account.findByWebId', { webId });
         const passwordMatch = await this.comparePassword(currentPassword, account.hashedPassword);

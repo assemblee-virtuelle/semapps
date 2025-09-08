@@ -51,6 +51,7 @@ const WebfingerService = {
           }
         }
 
+        // @ts-expect-error TS(2339): Property '$statusCode' does not exist on type '{}'... Remove this comment to see the full error message
         ctx.meta.$statusCode = 404;
       }
     },

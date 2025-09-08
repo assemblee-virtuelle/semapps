@@ -9,6 +9,7 @@ export const action = {
   async handler(ctx) {
     const { resourceUri } = ctx.params;
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const authorizations = await this.actions.getRights({ resourceUri, webId: 'system' }, { parentCtx: ctx });
     const readAuthorization =
       authorizations['@graph'] && authorizations['@graph'].find((auth: any) => auth['@id'] === '#Read');

@@ -3,6 +3,7 @@ import { ActionSchema } from 'moleculer';
 const Schema = {
   visibility: 'public',
   params: {
+    // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
     triple: {
       type: 'object'
     },
@@ -21,7 +22,9 @@ const Schema = {
   },
   async handler(ctx) {
     const { triple, graphName } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
+    // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
     const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
     if (!(await ctx.call('triplestore.dataset.exist', { dataset })))

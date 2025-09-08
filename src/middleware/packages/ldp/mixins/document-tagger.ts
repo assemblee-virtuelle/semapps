@@ -1,3 +1,4 @@
+// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { dc } from '@semapps/ontologies';
 import { ServiceSchema } from 'moleculer';
 import { getDatasetFromUri } from '../utils.ts';
@@ -72,8 +73,10 @@ const Schema = {
   events: {
     'ldp.resource.created': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData, webId, dataset } = ctx.params;
         this.actions.tagCreatedResource(
+          // @ts-expect-error TS(2339): Property 'impersonatedUser' does not exist on type... Remove this comment to see the full error message
           { resourceUri, newData, webId: ctx.meta.impersonatedUser || webId, dataset },
           { parentCtx: ctx }
         );
@@ -82,6 +85,7 @@ const Schema = {
 
     'ldp.resource.updated': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, dataset } = ctx.params;
         this.actions.tagUpdatedResource({ resourceUri, dataset }, { parentCtx: ctx });
       }
@@ -89,6 +93,7 @@ const Schema = {
 
     'ldp.resource.patched': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, dataset } = ctx.params;
         this.actions.tagUpdatedResource({ resourceUri, dataset }, { parentCtx: ctx });
       }

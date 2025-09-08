@@ -23,9 +23,11 @@ const AwaitActivityMixin = {
           });
           return resource; // First get the resource, then return it, otherwise the try/catch will not work
         } catch (e) {
+          // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
           if (e.status === 401 || e.status === 403 || e.status === 404) {
             return false;
           } else {
+            // @ts-expect-error TS(2769): No overload matches this call.
             throw new Error(e);
           }
         }

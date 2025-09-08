@@ -1,4 +1,6 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'pass... Remove this comment to see the full error message
 import { Strategy } from 'passport-cas2';
+// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
 import { ServiceSchema } from 'moleculer';
 import AuthSSOMixin from '../mixins/auth.sso.ts';

@@ -17,6 +17,7 @@ class VcCapabilityPresentationProofPurpose extends AuthenticationProofPurpose {
    */
   constructor(options = {}) {
     super({ ...options, term: 'assertionMethod' });
+    // @ts-expect-error TS(2339): Property 'maxChainLength' does not exist on type '... Remove this comment to see the full error message
     this.maxChainLength = options.maxChainLength || 2;
   }
 
@@ -44,6 +45,7 @@ class VcCapabilityPresentationProofPurpose extends AuthenticationProofPurpose {
     const { document: presentation } = options;
     // Sort credentials so that we can infer the order of the capability chain.
     const credentialsOrdered = arrayOf(presentation.verifiableCredential).sort(
+      // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
       (c1, c2) => new Date(c1.issuanceDate || c1.proof.created) - new Date(c2.issuanceDate || c2.proof.created)
     );
 

@@ -9,6 +9,7 @@ const Schema = {
     resourceUri: { type: 'string' },
     jsonContext: {
       type: 'multi',
+      // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
       rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
       optional: true
     },
@@ -16,11 +17,13 @@ const Schema = {
   },
   async handler(ctx) {
     const { resourceUri, jsonContext, noGraph } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     const exist = await ctx.call('triplestore.document.exist', { documentUri: resourceUri });
 
     if (!exist)
+      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       throw new MoleculerError(`Resource Not found ${resourceUri} in dataset ${ctx.meta.dataset}`, 404, 'NOT_FOUND');
 
     const result = await ctx.call('triplestore.query', {

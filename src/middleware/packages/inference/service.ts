@@ -17,6 +17,7 @@ const InferenceSchema = {
   created() {
     const { baseUrl, acceptFromRemoteServers, offerToRemoteServers } = this.settings;
     if (acceptFromRemoteServers || offerToRemoteServers) {
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "inference.rem... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [RemoteService],
         settings: {
@@ -53,13 +54,16 @@ const InferenceSchema = {
               if (err) reject(err);
               if (quad) {
                 if (quad.predicate.id === 'http://www.w3.org/2002/07/owl#inverseOf') {
+                  // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                   rel[quad.object.id] = quad.subject.id;
+                  // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                   rel[quad.subject.id] = quad.object.id;
                 } else if (
                   quad.predicate.id === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' &&
                   quad.object.id === 'http://www.w3.org/2002/07/owl#SymmetricProperty'
                 ) {
                   // SymmetricProperty implies an inverse relation with the same properties
+                  // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                   rel[quad.subject.id] = quad.subject.id;
                 }
               } else {
@@ -149,6 +153,7 @@ const InferenceSchema = {
   events: {
     'ldp.resource.created': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'newData' does not exist on type 'Optiona... Remove this comment to see the full error message
         let { newData } = ctx.params;
         newData = await ctx.call('jsonld.parser.expand', { input: newData });
 
@@ -181,6 +186,7 @@ const InferenceSchema = {
 
     'ldp.resource.deleted': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'oldData' does not exist on type 'Optiona... Remove this comment to see the full error message
         let { oldData } = ctx.params;
         oldData = await ctx.call('jsonld.parser.expand', { input: oldData });
 
@@ -209,6 +215,7 @@ const InferenceSchema = {
 
     'ldp.resource.updated': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'oldData' does not exist on type 'Optiona... Remove this comment to see the full error message
         let { oldData, newData } = ctx.params;
         oldData = await ctx.call('jsonld.parser.expand', { input: oldData });
         newData = await ctx.call('jsonld.parser.expand', { input: newData });
@@ -270,6 +277,7 @@ const InferenceSchema = {
 
     'ldp.resource.patched': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'triplesAdded' does not exist on type 'Op... Remove this comment to see the full error message
         const { triplesAdded, triplesRemoved, skipInferenceCheck } = ctx.params;
 
         // If the patch is done following a remote inference offer
@@ -328,6 +336,7 @@ const InferenceSchema = {
 
     'ontologies.registered': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'owl' does not exist on type 'Optionalize... Remove this comment to see the full error message
         const { owl } = ctx.params;
         if (owl) {
           const result = await this.findInverseRelations(owl);

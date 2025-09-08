@@ -1,10 +1,14 @@
 import { randomUUID } from 'node:crypto';
 
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import { cryptosuite } from '@digitalbazaar/eddsa-rdfc-2022-cryptosuite';
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import vc from '@digitalbazaar/vc';
 
 /** @type {import('@digitalbazaar/ed25519-multikey')} */
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
 
 import { ServiceSchema } from 'moleculer';
@@ -43,6 +47,7 @@ const VCHolderService = {
         presentation: {
           type: 'object',
           params: {
+            // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
             verifiableCredential: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }] },
             '@context': { type: 'string', optional: true },
             id: { type: 'string', optional: true },
@@ -55,11 +60,14 @@ const VCHolderService = {
             challenge: { type: 'string' },
             domain: { type: 'string', optional: true },
             proofPurpose: { type: 'string', optional: true },
+            // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
             persist: { type: 'boolean', default: false }
           }
         },
+        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         keyObject: { type: 'object', optional: true },
         keyId: { type: 'string', optional: true },
+        // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
         noAnonRead: { type: 'boolean', default: false },
         webId: { type: 'string', optional: true }
       },
@@ -67,6 +75,7 @@ const VCHolderService = {
         const {
           presentation: presentationParam,
           options: { challenge, domain, proofPurpose = 'assertionMethod' },
+          // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
           webId = ctx.meta.webId,
           keyObject = undefined,
           keyId = undefined,

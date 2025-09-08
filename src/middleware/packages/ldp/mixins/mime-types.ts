@@ -22,6 +22,7 @@ const Schema = {
     before: {
       async post(ctx) {
         const { file } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'mimeTypes' does not exist on type 'strin... Remove this comment to see the full error message
         const { mimeTypes } = this.settings;
 
         if (

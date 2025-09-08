@@ -1,3 +1,4 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'spea... Remove this comment to see the full error message
 import createSlug from 'speakingurl';
 import urlJoin from 'url-join';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
@@ -26,33 +27,40 @@ export const action = {
   visibility: 'public',
   params: {
     groupUri: { type: 'string', optional: true },
+    // @ts-expect-error TS(2353): Object literal may only specify known properties, ... Remove this comment to see the full error message
     groupSlug: { type: 'string', optional: true, min: 1, trim: true },
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
     let { groupUri, groupSlug } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (!groupUri) {
       groupSlug = createSlug(groupSlug, { lang: 'fr', custom: { '.': '.', '/': '/' } });
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
     }
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     if (await this.actions.exist({ groupUri, webId: 'system' }, { parentCtx: ctx })) {
       throw new MoleculerError('Group already exists', 400, 'BAD_REQUEST');
     }
 
     const newRights = {};
     if (webId === 'anon') {
+      // @ts-expect-error TS(2339): Property 'anon' does not exist on type '{}'.
       newRights.anon = {
         read: true,
         write: true
       };
     } else if (webId === 'system') {
+      // @ts-expect-error TS(2339): Property 'anon' does not exist on type '{}'.
       newRights.anon = {
         read: true
       };
     } else {
+      // @ts-expect-error TS(2339): Property 'user' does not exist on type '{}'.
       newRights.user = {
         uri: webId,
         read: true,
@@ -70,6 +78,7 @@ export const action = {
       query: sanitizeSparqlQuery`
         PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
         INSERT DATA { 
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           GRAPH <${this.settings.graphName}> { 
             <${groupUri}> a vcard:Group 
           } 

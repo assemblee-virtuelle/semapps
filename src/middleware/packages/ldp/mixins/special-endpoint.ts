@@ -30,7 +30,9 @@ const Schema = {
     const middlewares = [parseUrl, parseHeader, negotiateAccept, negotiateContentType, parseRawBody, parseJson];
 
     let aliases = {};
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     aliases['GET /'] = [...middlewares, `${this.name}.endpointGet`];
+    // @ts-expect-error TS(2774): This condition will always return true since this ... Remove this comment to see the full error message
     if (this.actions.endpointPost) aliases['POST /'] = [...middlewares, `${this.name}.endpointPost`];
 
     await this.broker.call('api.addRoute', {
@@ -85,6 +87,7 @@ const Schema = {
 
     endpointGet: {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property '$responseType' does not exist on type '{... Remove this comment to see the full error message
         ctx.meta.$responseType = ctx.meta.headers?.accept;
 
         return await ctx.call(

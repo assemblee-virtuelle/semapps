@@ -9,6 +9,7 @@ const CacherMiddleware = (opts: any) => ({
 
   created(broker: any) {
     if (opts) {
+      // @ts-expect-error TS(2339): Property 'resolve' does not exist on type 'typeof ... Remove this comment to see the full error message
       broker.cacher = Cachers.resolve(opts);
       broker.cacher.init(broker);
       cacher = broker.cacher.middleware();

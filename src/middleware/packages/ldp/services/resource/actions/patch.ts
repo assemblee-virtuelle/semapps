@@ -25,10 +25,12 @@ const Schema = {
     resourceUri: {
       type: 'string'
     },
+    // @ts-expect-error TS(2322): Type '{ type: "array"; optional: true; }' is not a... Remove this comment to see the full error message
     triplesToAdd: {
       type: 'array',
       optional: true
     },
+    // @ts-expect-error TS(2322): Type '{ type: "array"; optional: true; }' is not a... Remove this comment to see the full error message
     triplesToRemove: {
       type: 'array',
       optional: true
@@ -44,6 +46,7 @@ const Schema = {
   },
   async handler(ctx) {
     let { resourceUri, triplesToAdd, triplesToRemove, skipInferenceCheck, webId } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     webId = webId || ctx.meta.webId || 'anon';
 
     if (await ctx.call('ldp.remote.isRemote', { resourceUri }))
@@ -70,6 +73,7 @@ const Schema = {
 
     if (triplesToRemove) {
       checkTriplesSubjectIsResource(triplesToRemove, resourceUri);
+      // @ts-expect-error TS(2345): Argument of type '{ updateType: string; delete: { ... Remove this comment to see the full error message
       sparqlUpdate.updates.push({
         updateType: 'delete',
         delete: [{ type: 'graph', triples: triplesToRemove, name: namedNode(resourceUri) }]
@@ -78,6 +82,7 @@ const Schema = {
 
     if (triplesToAdd) {
       checkTriplesSubjectIsResource(triplesToAdd, resourceUri);
+      // @ts-expect-error TS(2345): Argument of type '{ updateType: string; insert: { ... Remove this comment to see the full error message
       sparqlUpdate.updates.push({
         updateType: 'insert',
         insert: [{ type: 'graph', triples: triplesToAdd, name: namedNode(resourceUri) }]
@@ -95,9 +100,11 @@ const Schema = {
       triplesRemoved: triplesToRemove,
       skipInferenceCheck,
       webId,
+      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       dataset: ctx.meta.dataset
     };
 
+    // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
     if (!ctx.meta.skipEmitEvent) {
       ctx.emit('ldp.resource.patched', returnValues, { meta: { webId: null, dataset: null } });
     }

@@ -7,6 +7,7 @@ import rdfparseModule from 'rdf-parse';
 
 const { MoleculerError } = require('moleculer').Errors;
 
+// @ts-expect-error TS(2339): Property 'default' does not exist on type 'RdfPars... Remove this comment to see the full error message
 const rdfParser = rdfparseModule.default;
 const getSlugFromUri = (str: any) => str.match(new RegExp(`.*/(.*)`))[1];
 
@@ -164,6 +165,7 @@ function getUserAgentSearchParam(user: any, groups: any) {
 
 const checkAgentPresent = (acls: any, agentSearchParam: any) => {
   for (const acl of acls) {
+    // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
     const res = filterAgentAcl(acl, agentSearchParam);
     if (res) return true;
   }

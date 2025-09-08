@@ -26,27 +26,36 @@ const LdpContainerSchema = {
   actions: {
     attach: attachAction,
     clear: clearAction,
+    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { containerU... Remove this comment to see the full error message
     create: createAction,
+    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { containerU... Remove this comment to see the full error message
     createAndAttach: createAndAttachAction,
+    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { containerU... Remove this comment to see the full error message
     delete: deleteAction,
     detach: detachAction,
     exist: existAction,
+    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { containerU... Remove this comment to see the full error message
     get: getAction,
     getAll: getAllAction,
+    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resourceTy... Remove this comment to see the full error message
     getPath: getPathAction,
     getUris: getUrisAction,
     includes: includesAction,
     isEmpty: isEmptyAction,
+    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { containerU... Remove this comment to see the full error message
     post: postAction,
+    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { containerU... Remove this comment to see the full error message
     patch: patchAction
   },
   hooks: {
     before: {
       '*'(ctx) {
         if (
+          // @ts-expect-error TS(2339): Property 'podProvider' does not exist on type 'str... Remove this comment to see the full error message
           this.settings.podProvider &&
           !ctx.meta.dataset &&
           ctx.params.containerUri &&
+          // @ts-expect-error TS(2339): Property 'baseUrl' does not exist on type 'string ... Remove this comment to see the full error message
           ctx.params.containerUri.startsWith(this.settings.baseUrl)
         ) {
           // this.logger.warn(`No dataset found when calling ${ctx.action.name} with URI ${ctx.params.containerUri}`);

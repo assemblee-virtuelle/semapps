@@ -24,11 +24,15 @@ const Schema = {
     if (containerUri) {
       const basePath = await ctx.call('ldp.getBasePath');
       const path = new URL(containerUri).pathname.replace(basePath, '/');
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       const registeredContainers = await this.actions.list({}, { parentCtx: ctx });
       const containerOptions =
+        // @ts-expect-error TS(18046): 'container' is of type 'unknown'.
         Object.values(registeredContainers).find(container => container.pathRegex.test(path)) || {};
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       return { ...this.settings.defaultOptions, ...containerOptions };
     }
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     return this.settings.defaultOptions;
   }
 } satisfies ActionSchema;

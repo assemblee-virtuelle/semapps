@@ -6,6 +6,7 @@ const collectionPermissionsWithAnonRead = (webId: any) => {
   };
 
   if (webId !== 'anon' && webId !== 'system') {
+    // @ts-expect-error TS(2339): Property 'user' does not exist on type '{ anon: { ... Remove this comment to see the full error message
     permissions.user = {
       uri: webId,
       read: true,

@@ -1,4 +1,5 @@
 import { SingleResourceContainerMixin } from '@semapps/ldp';
+// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { pim } from '@semapps/ontologies';
 import { namedNode, triple } from '@rdfjs/data-model';
 import { ServiceSchema } from 'moleculer';

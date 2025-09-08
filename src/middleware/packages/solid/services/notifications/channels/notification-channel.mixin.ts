@@ -1,8 +1,10 @@
 import urlJoin from 'url-join';
+// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
 import { SpecialEndpointMixin, ControlledContainerMixin, getDatasetFromUri, arrayOf } from '@semapps/ldp';
 import { ACTIVITY_TYPES } from '@semapps/activitypub';
 import { namedNode } from '@rdfjs/data-model';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
 import { v4 as uuidV4 } from 'uuid';
 import moment from 'moment';
 import { ServiceSchema } from 'moleculer';
@@ -80,6 +82,7 @@ const Schema = {
         const type = ctx.params.type || ctx.params['@type'];
         const topic = ctx.params.topic || ctx.params['notify:topic'];
         const sendToParam = ctx.params.sendTo || ctx.params['notify:sendTo'];
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const { webId } = ctx.meta;
 
         // TODO: Use ldo objects; This will only check for the json type and not parse json-ld variants...
@@ -103,6 +106,7 @@ const Schema = {
         if (!rights.read) throw new E.ForbiddenError('You need acl:Read rights on the resource');
 
         // Find container URI from topic (must be stored on same Pod)
+        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
         const topicWebId = urlJoin(this.settings.baseUrl, getDatasetFromUri(topic));
         const channelContainerUri = await this.actions.getContainerUri({ webId: topicWebId }, { parentCtx: ctx });
 
@@ -137,6 +141,7 @@ const Schema = {
         this.channels.push(channel);
         this.onChannelCreated(channel);
 
+        // @ts-expect-error TS(2339): Property '$responseType' does not exist on type '{... Remove this comment to see the full error message
         ctx.meta.$responseType = 'application/ld+json';
         return this.actions.get(
           {
@@ -163,6 +168,7 @@ const Schema = {
   events: {
     'ldp.resource.created': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.CREATE, newData['dc:modified']);
       }
@@ -170,6 +176,7 @@ const Schema = {
 
     'ldp.resource.updated': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.UPDATE, newData['dc:modified']);
       }
@@ -177,6 +184,7 @@ const Schema = {
 
     'ldp.resource.patched': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri } = ctx.params;
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.UPDATE, await this.getModified(resourceUri));
       }
@@ -184,6 +192,7 @@ const Schema = {
 
     'ldp.resource.deleted': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri } = ctx.params;
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.DELETE, new Date().toISOString());
       }
@@ -191,6 +200,7 @@ const Schema = {
 
     'ldp.container.attached': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'containerUri' does not exist on type 'Op... Remove this comment to see the full error message
         const { containerUri, resourceUri } = ctx.params;
         this.onContainerOrCollectionEvent(containerUri, resourceUri, ACTIVITY_TYPES.ADD);
       }
@@ -198,6 +208,7 @@ const Schema = {
 
     'ldp.container.detached': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'containerUri' does not exist on type 'Op... Remove this comment to see the full error message
         const { containerUri, resourceUri } = ctx.params;
         this.onContainerOrCollectionEvent(containerUri, resourceUri, ACTIVITY_TYPES.REMOVE);
       }
@@ -205,6 +216,7 @@ const Schema = {
 
     'activitypub.collection.added': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'collectionUri' does not exist on type 'O... Remove this comment to see the full error message
         const { collectionUri, itemUri, item } = ctx.params;
         // Mastodon sometimes send unfetchable activities (like `Accept` activities)
         // In this case, we receive the activity as `item` and `itemUri` is undefined
@@ -215,6 +227,7 @@ const Schema = {
 
     'activitypub.collection.removed': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'collectionUri' does not exist on type 'O... Remove this comment to see the full error message
         const { collectionUri, itemUri } = ctx.params;
         this.onContainerOrCollectionEvent(collectionUri, itemUri, ACTIVITY_TYPES.REMOVE);
       }
@@ -222,6 +235,7 @@ const Schema = {
   },
   methods: {
     async getModified(resourceUri) {
+      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       return await this.broker.call('ldp.resource.get', { resourceUri, webId: 'system' })?.['dc:modified'];
     },
     getMatchingChannels(topic) {
@@ -233,6 +247,7 @@ const Schema = {
         // Check if rate is exceeded.
         .filter((c: any) => {
           if (!(c.lastTriggered && c.rate)) return true;
+          // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
           return moment.duration(c.rate).asMilliseconds() < now - c.lastTriggered;
         });
 
@@ -303,6 +318,7 @@ const Schema = {
             });
           }
         } catch (e) {
+          // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
           this.logger.error(`Could not load notifications channels of ${webId}. Error: ${e.message}`);
         }
       }
@@ -331,8 +347,11 @@ const Schema = {
     after: {
       delete(ctx, res) {
         const { resourceUri } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'find' does not exist on type 'string | A... Remove this comment to see the full error message
         const channel = this.channels.find((c: any) => c.id === resourceUri);
+        // @ts-expect-error TS(2339): Property 'filter' does not exist on type 'string |... Remove this comment to see the full error message
         this.channels = this.channels.filter((c: any) => c.id !== resourceUri);
+        // @ts-expect-error TS(2349): This expression is not callable.
         this.onChannelDeleted(channel);
         return res;
       }

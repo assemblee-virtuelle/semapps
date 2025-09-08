@@ -1,5 +1,6 @@
 import urlJoin from 'url-join';
 import path from 'path';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'mole... Remove this comment to see the full error message
 import MailService from 'moleculer-mail';
 import { getSlugFromUri } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
@@ -24,6 +25,7 @@ const SingleMailNotificationsService = {
   events: {
     'activitypub.inbox.received': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'activity' does not exist on type 'Option... Remove this comment to see the full error message
         const { activity, recipients } = ctx.params;
 
         if (this.settings.delay) {
@@ -34,7 +36,9 @@ const SingleMailNotificationsService = {
           const account = await ctx.call('auth.account.findByWebId', { webId: recipientUri });
 
           if (account) {
+            // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
             ctx.meta.webId = recipientUri;
+            // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
             ctx.meta.dataset = this.settings.podProvider ? getSlugFromUri(recipientUri) : undefined;
 
             const locale = account?.preferredLocale || this.settings.defaultLocale;
@@ -88,8 +92,10 @@ const SingleMailNotificationsService = {
   queues: {
     sendMail: {
       name: '*',
+      // @ts-expect-error TS(7023): 'process' implicitly has return type 'any' because... Remove this comment to see the full error message
       async process(job: any) {
         job.progress(0);
+        // @ts-expect-error TS(7022): 'result' implicitly has type 'any' because it does... Remove this comment to see the full error message
         const result = await this.actions.send(job.data);
         job.progress(100);
         return result;

@@ -1,6 +1,9 @@
 import { createSign, createHash } from 'crypto';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'http... Remove this comment to see the full error message
 import { parseRequest, verifySignature } from 'http-signature';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'http... Remove this comment to see the full error message
 import { createAuthzHeader, createSignatureString } from 'http-signature-header';
+// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
 import { ServiceSchema } from 'moleculer';
 import { KEY_TYPES } from '../constants.ts';
@@ -22,6 +25,7 @@ const HttpSignatureService = {
         const headers = { Date: new Date().toUTCString() };
         const includeHeaders = ['(request-target)', 'host', 'date'];
         if (body) {
+          // @ts-expect-error TS(2339): Property 'Digest' does not exist on type '{ Date: ... Remove this comment to see the full error message
           headers.Digest = this.buildDigest(body);
           includeHeaders.push('digest');
         }
@@ -35,6 +39,7 @@ const HttpSignatureService = {
         signer.update(signatureString);
         const signatureHash = signer.sign(privateKeyPem).toString('base64');
 
+        // @ts-expect-error TS(2339): Property 'Signature' does not exist on type '{ Dat... Remove this comment to see the full error message
         headers.Signature = createAuthzHeader({
           includeHeaders,
           keyId: actorUri,
@@ -117,12 +122,15 @@ const HttpSignatureService = {
             { parentCtx: ctx }
           );
           if (isValid) {
+            // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
             ctx.meta.webId = actorUri;
             return Promise.resolve();
           }
+          // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
           ctx.meta.webId = 'anon';
           return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
         }
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         ctx.meta.webId = 'anon';
         return Promise.resolve(null);
       }
@@ -138,12 +146,15 @@ const HttpSignatureService = {
             { parentCtx: ctx }
           );
           if (isValid) {
+            // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
             ctx.meta.webId = actorUri;
             return Promise.resolve();
           }
+          // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
           ctx.meta.webId = 'anon';
           return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
         }
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         ctx.meta.webId = 'anon';
         return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
       }

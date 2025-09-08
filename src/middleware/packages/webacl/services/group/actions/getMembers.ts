@@ -14,16 +14,20 @@ export const api = async function api(this: any, ctx: any) {
 export const action = {
   visibility: 'public',
   params: {
+    // @ts-expect-error TS(2353): Object literal may only specify known properties, ... Remove this comment to see the full error message
     groupSlug: { type: 'string', optional: true, min: 1, trim: true },
+    // @ts-expect-error TS(2353): Object literal may only specify known properties, ... Remove this comment to see the full error message
     groupUri: { type: 'string', optional: true, trim: true },
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
     let { groupSlug, groupUri } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     if (!groupUri) groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
 
     // TODO: check that the group exists ?
@@ -44,6 +48,7 @@ export const action = {
         PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
         SELECT ?m 
         WHERE { 
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           GRAPH <${this.settings.graphName}> { 
             <${groupUri}> vcard:hasMember ?m 
           } 

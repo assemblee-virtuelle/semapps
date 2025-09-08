@@ -50,6 +50,7 @@ const Schema = {
             this.logger.info(`OrphanFilesDeletion - ${file.value} deleted`);
           }
         } catch (error) {
+          // @ts-expect-error TS(18046): 'error' is of type 'unknown'.
           this.logger.error(`OrphanFilesDeletion - Error: ${error.message}`);
         }
       }

@@ -123,6 +123,7 @@ const CollectionsRegistryService = {
             // Find all containers where we want to attach this collection
             const containers = await ctx.call('ldp.registry.getByType', { type: collection.attachToTypes, dataset });
             for (const container of Object.values(containers)) {
+              // @ts-expect-error TS(18046): 'container' is of type 'unknown'.
               const containerUri = urlJoin(this.settings.baseUri, container.fullPath);
               this.logger.info(`Looking for resources in container ${containerUri}`);
               const resources = await ctx.call('ldp.container.getUris', { containerUri });
@@ -265,6 +266,7 @@ const CollectionsRegistryService = {
   events: {
     'ldp.resource.created': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
         const collections = this.getCollectionsByType(newData.type || newData['@type']);
         for (const collection of collections) {
@@ -280,6 +282,7 @@ const CollectionsRegistryService = {
 
     'ldp.resource.updated': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData, oldData } = ctx.params;
         // Check if we need to create collection only if the type has changed
         if (this.hasTypeChanged(oldData, newData)) {
@@ -298,6 +301,7 @@ const CollectionsRegistryService = {
 
     'ldp.resource.patched': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, triplesAdded } = ctx.params;
         if (triplesAdded) {
           for (const triple of triplesAdded) {
@@ -325,6 +329,7 @@ const CollectionsRegistryService = {
 
     'ldp.resource.deleted': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'oldData' does not exist on type 'Optiona... Remove this comment to see the full error message
         const { oldData } = ctx.params;
         const collections = this.getCollectionsByType(oldData.type || oldData['@type']);
         for (const collection of collections) {

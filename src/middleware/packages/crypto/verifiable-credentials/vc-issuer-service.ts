@@ -1,10 +1,14 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import { cryptosuite } from '@digitalbazaar/eddsa-rdfc-2022-cryptosuite';
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import vc from '@digitalbazaar/vc';
 
 /** @type {import('@digitalbazaar/ed25519-multikey')} */
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
 
 import { ServiceSchema } from 'moleculer';
@@ -59,12 +63,14 @@ const VCCredentialService = {
         credential: {
           type: 'object',
           params: {
+            // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
             credentialSubject: { type: 'object' },
             '@context': { type: 'string', optional: true },
             id: { type: 'string', optional: true },
             type: { type: 'multi', rules: [{ type: 'string' }, { type: 'array', items: 'string' }], optional: true },
             validFrom: { type: 'string', optional: true },
             validUntil: { type: 'string', optional: true },
+            // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
             proof: { type: 'multi', optional: true, rules: [{ type: 'object' }, { type: 'array', items: 'object' }] }
           }
         },
@@ -72,11 +78,14 @@ const VCCredentialService = {
           type: 'object',
           default: {},
           params: {
+            // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
             proofPurpose: { type: 'object', optional: true }
           }
         },
         webId: { type: 'string', optional: true },
+        // @ts-expect-error TS(2322): Type '{ type: "boolean"; optional: true; default: ... Remove this comment to see the full error message
         noAnonRead: { type: 'boolean', optional: true, default: false },
+        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         keyObject: { type: 'object', optional: true },
         keyId: { type: 'string', optional: true }
       },
@@ -84,6 +93,7 @@ const VCCredentialService = {
         const {
           credential: receivedCredential,
           options: { proofPurpose = 'assertionMethod' },
+          // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
           webId = ctx.meta.webId,
           noAnonRead = false,
           purpose = new AssertionProofPurpose({ term: proofPurpose }),

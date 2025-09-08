@@ -2,7 +2,9 @@ import fetch from 'node-fetch';
 import { generateKeyPair } from 'crypto';
 import { namedNode, triple } from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
+// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { sec } from '@semapps/ontologies';
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
 import { ServiceSchema } from 'moleculer';
 import { arrayOf } from '../utils/utils.ts';
@@ -35,18 +37,21 @@ const KeysService = {
   dependencies: ['ontologies', 'keys.container', 'keys.public-container', 'signature.keypair', 'keys.migration'],
   async created() {
     // Start keys-container and public-keys-container services.
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "keys.containe... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [KeyContainerService],
       settings: {
         podProvider: this.settings.podProvider
       }
     });
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "keys.public-c... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [PublicKeyContainerService],
       settings: {
         podProvider: this.settings.podProvider
       }
     });
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "keys.migratio... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [MigrationService],
       settings: {
@@ -56,6 +61,7 @@ const KeysService = {
     });
 
     // Legacy service.
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "signature.key... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [KeyPairService],
       settings: {
@@ -82,6 +88,7 @@ const KeysService = {
       },
       async handler(ctx) {
         const { keyType } = ctx.params;
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const webId = ctx.params.webId || ctx.meta.webId;
 
         // Get the key container, to search by type.
@@ -148,13 +155,17 @@ const KeysService = {
     getMultikey: {
       params: {
         webId: { type: 'string' },
+        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         keyObject: { type: 'object', optional: true },
         keyId: { type: 'string', optional: true },
+        // @ts-expect-error TS(2322): Type '{ type: "string"; default: string; }' is not... Remove this comment to see the full error message
         keyType: { type: 'string', default: KEY_TYPES.ED25519 },
         /** Add the secret key to the key object, if not set (or the public key id is provided), it will be removed. */
+        // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
         withPrivateKey: { type: 'boolean', default: false }
       },
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const { keyId, keyType, withPrivateKey, webId = ctx.meta.webId } = ctx.params;
 
         // Get key from parameters, id (URI) or the one associated with the webId (in that priority).
@@ -190,7 +201,9 @@ const KeysService = {
       params: {
         webId: { type: 'string' },
         keyType: { type: 'string' },
+        // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
         attachToWebId: { type: 'boolean', default: false },
+        // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: true; }' is not ... Remove this comment to see the full error message
         publishKey: { type: 'boolean', default: true }
       },
       async handler(ctx) {
@@ -323,6 +336,7 @@ const KeysService = {
       params: {
         webId: { type: 'string' },
         keyId: { type: 'string', optional: true },
+        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         keyObject: { type: 'object', optional: true }
       },
       async handler(ctx) {
@@ -401,10 +415,12 @@ const KeysService = {
     publishPublicKeyLocally: {
       params: {
         keyId: { type: 'string', optional: true },
+        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         keyObject: { type: 'object', optional: true },
         webId: { type: 'string', optional: true }
       },
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const webId = ctx.params.webId || ctx.meta.webId;
         const privateKeyUri = ctx.params.keyId || ctx.params.keyObject?.id || ctx.params.keyObject?.['@id'];
         const keyObject = ctx.params.keyObject || (await ctx.call('ldp.resource.get', { resourceUri: privateKeyUri }));
@@ -440,11 +456,13 @@ const KeysService = {
     delete: {
       params: {
         resourceUri: { type: 'string', optional: true },
+        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         keyObject: { type: 'object', optional: true },
         webId: { type: 'string', optional: true }
       },
       async handler(ctx) {
         const resourceUri = ctx.params.resourceUri || ctx.params.keyObject?.id || ctx.params.keyObject?.['@id'];
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const webId = ctx.params.webId || ctx.meta.webId;
         const keyObject = ctx.params.keyObject || (await ctx.call('ldp.resource.get', { resourceUri, webId }));
 
@@ -485,6 +503,7 @@ const KeysService = {
     getRemotePublicKeys: {
       params: {
         webId: { type: 'string' },
+        // @ts-expect-error TS(2322): Type '{ type: "string"; optional: true; default: s... Remove this comment to see the full error message
         keyType: { type: 'string', optional: true, default: KEY_TYPES.RSA, nullable: true }
       },
       async handler(ctx) {
@@ -535,6 +554,7 @@ const KeysService = {
      */
     getPublicKeyObject: {
       params: {
+        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         keyObject: { type: 'object', optional: true },
         keyId: { type: 'string', optional: true }
       },
@@ -617,6 +637,7 @@ const KeysService = {
 
     'auth.registered': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
 
         if (!this.isMigrated) {

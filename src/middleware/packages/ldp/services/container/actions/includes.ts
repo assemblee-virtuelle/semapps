@@ -11,6 +11,7 @@ const Schema = {
     }
   },
   async handler(ctx) {
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const containerUri = ctx.params.containerUri.replace(/\/+$/, '');
     const resourceUri = ctx.params.resourceUri.replace(/\/+$/, '');

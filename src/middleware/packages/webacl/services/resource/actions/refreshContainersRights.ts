@@ -8,19 +8,24 @@ export const action = {
 
     const containers = await ctx.call('ldp.registry.list');
 
+    // @ts-expect-error TS(2339): Property 'permissions' does not exist on type 'unk... Remove this comment to see the full error message
     for (const { permissions, podsContainer, path } of Object.values(containers)) {
       if (permissions && !podsContainer) {
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         const baseUrl = this.settings.podProvider
           ? await ctx.call('solid-storage.getUrl', { webId })
-          : this.settings.baseUrl;
+          : // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+            this.settings.baseUrl;
 
         const containerUri = urlJoin(baseUrl, path);
 
         const containerRights =
           typeof permissions === 'function'
-            ? permissions(this.settings.podProvider ? webId : 'system', ctx)
+            ? // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
+              permissions(this.settings.podProvider ? webId : 'system', ctx)
             : permissions;
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         this.logger.info(`Refreshing rights for container ${containerUri}...`);
 
         const publicPermissions = await ctx.call('webacl.resource.hasRights', {
@@ -50,6 +55,7 @@ export const action = {
             isContainer: true,
             removePublicRead,
             removeDefaultPublicRead,
+            // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
             dataset: ctx.meta.dataset
           },
           { meta: { webId: null, dataset: null } }

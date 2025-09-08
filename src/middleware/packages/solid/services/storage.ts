@@ -1,5 +1,6 @@
 import urlJoin from 'url-join';
 import { triple, namedNode } from '@rdfjs/data-model';
+// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { pim } from '@semapps/ontologies';
 import { ServiceSchema } from 'moleculer';
 
@@ -36,6 +37,7 @@ const SolidStorageSchema = {
           secure: false // TODO Remove when we switch to Fuseki 5
         });
 
+        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
         ctx.meta.dataset = username;
 
         // Create the storage root container so that the LdpRegistryService can create the default containers
@@ -57,6 +59,7 @@ const SolidStorageSchema = {
   events: {
     'auth.registered': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
 
         const storageUrl = await this.actions.getUrl({ webId }, { parentCtx: ctx });

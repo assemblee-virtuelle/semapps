@@ -33,6 +33,7 @@ const TripleStoreService = {
     const { url, user, password, fusekiBase, dataset, document } = this.settings;
 
     if (dataset !== false) {
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "triplestore.d... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [DatasetService],
         settings: {
@@ -46,6 +47,7 @@ const TripleStoreService = {
     }
 
     if (document !== false) {
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "triplestore.d... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [DocumentService],
         settings: document
@@ -59,11 +61,15 @@ const TripleStoreService = {
     });
   },
   actions: {
+    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resource: ... Remove this comment to see the full error message
     insert,
+    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { query: { t... Remove this comment to see the full error message
     update,
+    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { query: { t... Remove this comment to see the full error message
     query,
     dropAll,
     countTriplesOfSubject,
+    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { triple: { ... Remove this comment to see the full error message
     tripleExist,
     deleteOrphanBlankNodes
   },

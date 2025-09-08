@@ -207,18 +207,21 @@ const SignatureService = {
         if (this.hasWarnedMigration) return;
 
         if (this.isMigrated) {
+          // @ts-expect-error TS(2339): Property 'info' does not exist on type 'string | A... Remove this comment to see the full error message
           this.logger.info(
             'The keys service has been migrated. ' +
               'Key requests and setup are redirected to and handled in the new service. ' +
               'This service might be removed in a future version.'
           );
         } else {
+          // @ts-expect-error TS(2339): Property 'warn' does not exist on type 'string | A... Remove this comment to see the full error message
           this.logger.warn(
             'The keys service has not been migrated yet. ' +
               'This service is still handling key requests and setup. ' +
               'Please migrate to the new keys service.'
           );
         }
+        // @ts-expect-error TS(2322): Type 'boolean' is not assignable to type 'string |... Remove this comment to see the full error message
         this.hasWarnedMigration = true;
       }
     }
@@ -226,6 +229,7 @@ const SignatureService = {
   events: {
     'auth.registered': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
         if (this.isMigrated) {
           return;

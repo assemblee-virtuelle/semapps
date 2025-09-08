@@ -1,4 +1,5 @@
 import { negotiateTypeMime, MIME_TYPES } from '@semapps/mime-types';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'busb... Remove this comment to see the full error message
 import Busboy from 'busboy';
 import streams from 'memory-streams';
 
@@ -115,6 +116,7 @@ const parseFile = (req: any, res: any, next: any) => {
       const busboy = new Busboy({ headers: req.$ctx.meta.headers });
       const files: any = [];
       busboy.on('file', (fieldname: any, file: any, filename: any, encoding: any, mimetype: any) => {
+        // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
         const readableStream = new streams.ReadableStream();
         file.on('data', (data: any) => readableStream.push(data));
         files.push({

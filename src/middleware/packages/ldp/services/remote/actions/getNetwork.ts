@@ -10,6 +10,7 @@ const Schema = {
     resourceUri: { type: 'string' },
     jsonContext: {
       type: 'multi',
+      // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
       rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
       optional: true
     },
@@ -17,12 +18,15 @@ const Schema = {
   },
   async handler(ctx) {
     const { resourceUri, jsonContext } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const headers = new fetch.Headers({ accept: MIME_TYPES.JSON });
     if (jsonContext) headers.set('JsonLdContext', JSON.stringify(jsonContext));
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     if (!(await this.actions.isRemote({ resourceUri }, { parentCtx: ctx }))) {
       throw new Error(
+        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
         `The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId} / dataset ${ctx.meta.dataset})`
       );
     }
@@ -31,7 +35,9 @@ const Schema = {
       webId &&
       webId !== 'system' &&
       webId !== 'anon' &&
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       webId.startsWith(this.settings.baseUrl) &&
+      // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
       (await this.proxyAvailable())
     ) {
       const response = await ctx.call('signature.proxy.query', {

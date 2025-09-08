@@ -23,6 +23,7 @@ const JsonldApiSchema = {
   actions: {
     getContext: {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property '$responseType' does not exist on type '{... Remove this comment to see the full error message
         ctx.meta.$responseType = 'application/ld+json';
         return await ctx.call('jsonld.context.getLocal');
       }

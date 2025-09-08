@@ -4,6 +4,7 @@ import { ActionSchema } from 'moleculer';
 const Schema = {
   visibility: 'public',
   params: {
+    // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
     resource: {
       type: 'object'
     },
@@ -22,7 +23,9 @@ const Schema = {
   },
   async handler(ctx) {
     const { resource, graphName } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
+    // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
     let dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
     // Convert JSON-LD to N-Quads
@@ -41,7 +44,9 @@ const Schema = {
     const datasets = dataset === '*' ? await ctx.call('triplestore.dataset.list') : [dataset];
 
     for (dataset of datasets) {
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       if (datasets.length > 1) this.logger.info(`Inserting into dataset ${dataset}...`);
+      // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
       await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
         body: graphName ? `INSERT DATA { GRAPH <${graphName}> { ${rdf} } }` : `INSERT DATA { ${rdf} }`,
         headers: {

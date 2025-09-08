@@ -1,3 +1,4 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'nego... Remove this comment to see the full error message
 import Negotiator from 'negotiator';
 import { MIME_TYPES, TYPES_REPO } from './constants.ts';
 

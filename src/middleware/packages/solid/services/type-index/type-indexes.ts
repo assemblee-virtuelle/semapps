@@ -1,4 +1,5 @@
 import { ControlledContainerMixin, DereferenceMixin, delay, arrayOf } from '@semapps/ldp';
+// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { solid, skos, apods } from '@semapps/ontologies';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { namedNode, triple } from '@rdfjs/data-model';
@@ -20,6 +21,7 @@ const TypeIndexesSchema = {
   dependencies: ['ontologies'],
   created() {
     this.broker.createService({
+      // @ts-expect-error TS(2322): Type '{ name: "type-registrations"; mixins: { sett... Remove this comment to see the full error message
       mixins: [TypeRegistrationsService]
     });
   },
@@ -145,6 +147,7 @@ const TypeIndexesSchema = {
                 : await this.actions.getPublicIndex({ webId });
           } catch (e) {
             // Ignore 404 errors
+            // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
             if (e.code !== 404) throw e;
           }
         } while (!indexUri || attempts > 30);
@@ -166,6 +169,7 @@ const TypeIndexesSchema = {
         const { webId } = ctx.params;
 
         const containers = await ctx.call('ldp.registry.list');
+        // @ts-expect-error TS(18046): 'container' is of type 'unknown'.
         const numContainersWithTypeIndex = Object.values(containers).filter(container => container.typeIndex).length;
 
         let numTypeRegistrations;
@@ -192,6 +196,7 @@ const TypeIndexesSchema = {
   events: {
     'auth.registered': {
       async handler(ctx) {
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
 
         // Wait until the /solid/type-index container has been created for the user

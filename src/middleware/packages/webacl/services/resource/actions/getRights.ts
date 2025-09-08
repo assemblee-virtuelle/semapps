@@ -73,6 +73,7 @@ async function formatOutput(ctx: any, output: any, resourceAclUri: any, jsonLD: 
   output.forEach((f: any) => mySerializer.write(quad(f.auth, f.p, f.o)));
   mySerializer.end();
 
+  // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
   const jsonLd = JSON.parse(await streamToString(mySerializer));
 
   const compactJsonLd = await ctx.call('jsonld.parser.frame', {
@@ -105,6 +106,7 @@ async function filterAcls(hasControl: any, uaSearchParam: any, acls: any) {
 
 async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: any, graphName: any, isContainer: any) {
   const resourceAclUri = getAclUriFromResourceUri(baseUrl, resourceUri);
+  // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
   const uaSearchParam = getUserAgentSearchParam(user);
   const document = [];
 
@@ -121,9 +123,13 @@ async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: an
 
   // Get the ACL for the resource
 
+  // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
   const reads = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', graphName);
+  // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
   const writes = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', graphName);
+  // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
   const appends = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', graphName);
+  // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
   const controls = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName);
 
   document.push(...(await filterAcls(hasControl, uaSearchParam, reads)));
@@ -154,6 +160,7 @@ async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: an
     const controls = await getAuthorizationNode(ctx, containerUri, aclUri, 'Control', graphName, true);
 
     // we keep all the authorization nodes we found
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     containersMap[containerUri] = {
       reads,
       writes,
@@ -166,9 +173,13 @@ async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: an
   }
 
   for (const value of Object.values(containersMap)) {
+    // @ts-expect-error TS(18046): 'value' is of type 'unknown'.
     document.push(...(await filterAcls(hasControl, uaSearchParam, value.reads)));
+    // @ts-expect-error TS(18046): 'value' is of type 'unknown'.
     document.push(...(await filterAcls(hasControl, uaSearchParam, value.writes)));
+    // @ts-expect-error TS(18046): 'value' is of type 'unknown'.
     document.push(...(await filterAcls(hasControl, uaSearchParam, value.appends)));
+    // @ts-expect-error TS(18046): 'value' is of type 'unknown'.
     document.push(...(await filterAcls(hasControl, uaSearchParam, value.controls)));
   }
 
@@ -197,8 +208,10 @@ export const action = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
+    // @ts-expect-error TS(2322): Type '{ type: "string"; default: string; }' is not... Remove this comment to see the full error message
     accept: { type: 'string', default: MIME_TYPES.JSON },
     webId: { type: 'string', optional: true },
+    // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
     skipResourceCheck: { type: 'boolean', default: false }
   },
   cache: {
@@ -206,13 +219,17 @@ export const action = {
   },
   async handler(ctx) {
     let { resourceUri, webId, accept, skipResourceCheck } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     webId = webId || ctx.meta.webId || 'anon';
 
     accept = accept || MIME_TYPES.TURTLE;
+    // @ts-expect-error TS(2339): Property '$responseType' does not exist on type '{... Remove this comment to see the full error message
     ctx.meta.$responseType = accept;
 
+    // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
     const isContainer = !skipResourceCheck && (await this.checkResourceOrContainerExists(ctx, resourceUri));
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     return await getPermissions(ctx, resourceUri, this.settings.baseUrl, webId, this.settings.graphName, isContainer);
   }
 } satisfies ActionSchema;

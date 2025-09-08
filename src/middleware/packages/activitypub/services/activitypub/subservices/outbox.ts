@@ -1,4 +1,5 @@
 import fetch from 'node-fetch';
+// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { getType, arrayOf } from '@semapps/ldp';
@@ -58,14 +59,17 @@ const OutboxService = {
         }
 
         // Ensure logged user is posting to his own outbox
+        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         if (ctx.meta.webId && ctx.meta.webId !== 'system' && actorUri !== ctx.meta.webId) {
           throw new E.UnAuthorizedError(
             'UNAUTHORIZED',
+            // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
             `Forbidden to post to the outbox ${collectionUri} (webId ${ctx.meta.webId})`
           );
         }
 
         if (this.settings.podProvider) {
+          // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
           ctx.meta.dataset = getSlugFromUri(actorUri);
         }
 
@@ -76,6 +80,7 @@ const OutboxService = {
         // Wrap object in Create activity, if necessary
         activity = await ctx.call('activitypub.object.wrap', { activity });
 
+        // @ts-expect-error TS(2339): Property 'doNotProcessObject' does not exist on ty... Remove this comment to see the full error message
         if (!ctx.meta.doNotProcessObject && transient !== true) {
           // Process object create, update or delete
           // and return an activity with the object ID
@@ -197,6 +202,7 @@ const OutboxService = {
       } catch (e) {
         console.error(e);
         // If some processors failed, log error message but don't stop
+        // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
         this.logger.error(e.message);
       }
 
@@ -262,6 +268,7 @@ const OutboxService = {
 
           success.push(recipientUri);
         } catch (e) {
+          // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
           this.logger.warn(`Error when posting activity to local actor ${recipientUri}: ${e.message}`);
           failures.push(recipientUri);
         }
@@ -275,12 +282,14 @@ const OutboxService = {
   queues: {
     remotePost: {
       name: '*',
+      // @ts-expect-error TS(7023): 'process' implicitly has return type 'any' because... Remove this comment to see the full error message
       async process(job: any) {
         const { activity, recipientUri } = job.data;
 
         // During tests, do not do post to remote servers
         if (process.env.NODE_ENV === 'test' && !recipientUri.startsWith('http://localhost')) return;
 
+        // @ts-expect-error TS(7022): 'recipientInbox' implicitly has type 'any' because... Remove this comment to see the full error message
         const recipientInbox = await this.broker.call('activitypub.actor.getCollectionUri', {
           actorUri: recipientUri,
           predicate: 'inbox',
@@ -293,6 +302,7 @@ const OutboxService = {
 
         const body = JSON.stringify(activity);
 
+        // @ts-expect-error TS(7022): 'signatureHeaders' implicitly has type 'any' becau... Remove this comment to see the full error message
         const signatureHeaders = await this.broker.call('signature.generateSignatureHeaders', {
           url: recipientInbox,
           method: 'POST',
@@ -300,6 +310,7 @@ const OutboxService = {
           actorUri: activity.actor
         });
 
+        // @ts-expect-error TS(7022): 'response' implicitly has type 'any' because it do... Remove this comment to see the full error message
         const response = await fetch(recipientInbox, {
           method: 'POST',
           headers: {

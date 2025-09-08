@@ -25,6 +25,7 @@ const MirrorSchema = {
     'ldp.registry'
   ],
   created() {
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "synchronizer"... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [SynchronizerService],
       settings: {
@@ -50,6 +51,7 @@ const MirrorSchema = {
     mirror: {
       visibility: 'public',
       params: {
+        // @ts-expect-error TS(2322): Type '{ type: "string"; optional: false; }' is not... Remove this comment to see the full error message
         serverUrl: { type: 'string', optional: false }
       },
       async handler(ctx) {
@@ -88,8 +90,10 @@ const MirrorSchema = {
         const json = await response.json();
         const mapServers = {};
         for (const s of json['@graph']) {
+          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           mapServers[s['@id']] = s;
         }
+        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         const server = mapServers[createFragmentURL('', serverUrl)];
         if (!server)
           throw new MoleculerError(

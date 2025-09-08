@@ -39,6 +39,7 @@ const VcGuardSchema = {
       async handler(ctx) {
         const { uri, mode } = ctx.params;
 
+        // @ts-expect-error TS(2339): Property 'authorization' does not exist on type '{... Remove this comment to see the full error message
         if (ctx.meta.authorization?.capabilityPresentation) {
           if (await hasValidCapability(ctx, uri, mode)) {
             return true;

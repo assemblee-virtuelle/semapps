@@ -6,17 +6,22 @@ const { MoleculerError } = require('moleculer').Errors;
 export const action = {
   visibility: 'public',
   params: {
+    // @ts-expect-error TS(2322): Type '{ type: "string"; optional: false; }' is not... Remove this comment to see the full error message
     resourceUri: { type: 'string', optional: false },
     webId: { type: 'string', optional: true },
     /** In nested json format (e.g. `{anon: {read: true}}`) */
+    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: false; }' is not... Remove this comment to see the full error message
     rights: { type: 'object', optional: false }
   },
   async handler(ctx) {
     let { resourceUri, rights } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const aclUri = getAclUriFromResourceUri(this.settings.baseUrl, resourceUri);
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
 
     await ctx.call('permissions.check', {
@@ -34,6 +39,7 @@ export const action = {
       query: `
         PREFIX acl: <http://www.w3.org/ns/auth/acl#>
         DELETE DATA {
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           GRAPH <${this.settings.graphName}> {
             ${processedRights.map(right => `<${right.auth}> <${right.p}> <${right.o}> .`).join('\n')}
           }
@@ -58,6 +64,7 @@ export const action = {
       {
         uri: resourceUri,
         webId,
+        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
         dataset: ctx.meta.dataset,
         isContainer,
         defaultRightsUpdated,

@@ -2,9 +2,11 @@ import path from 'path';
 import urlJoin from 'url-join';
 import fetch from 'node-fetch';
 import LinkHeader from 'http-link-header';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
 import { v4 as uuidv4 } from 'uuid';
 import DbService from 'moleculer-db';
 import { parseHeader, parseRawBody, negotiateContentType, parseJson } from '@semapps/middlewares';
+// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { notify } from '@semapps/ontologies';
 import { TripleStoreAdapter } from '@semapps/triplestore';
 import { ServiceSchema } from 'moleculer';
@@ -74,6 +76,7 @@ const SolidNotificationsListenerSchema = {
             // If the channel still exist, registration is not needed
             return existingListener;
           } catch (e) {
+            // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
             if (e.code === 404) {
               this.logger.warn(
                 `Channel ${existingListener.channelUri} doesn't exist anymore. Registering a new channel...`
@@ -163,6 +166,7 @@ const SolidNotificationsListenerSchema = {
           } catch (e) {
             // Ignore errors that the actions may generate (otherwise 404 errors will be considered as non-existing webhooks)
           }
+          // @ts-expect-error TS(2339): Property '$statusCode' does not exist on type '{}'... Remove this comment to see the full error message
           ctx.meta.$statusCode = 200;
         } else {
           throw new MoleculerError(`No webhook found with URL ${webhookUrl}`, 404, 'NOT_FOUND');
@@ -182,6 +186,7 @@ const SolidNotificationsListenerSchema = {
 
       try {
         const response = await fetch(resourceUri, { method: 'HEAD' });
+        // @ts-expect-error TS(2345): Argument of type 'string | null' is not assignable... Remove this comment to see the full error message
         const linkHeader = LinkHeader.parse(response.headers.get('Link'));
         const storageDescriptionLinkHeader = linkHeader.rel('http://www.w3.org/ns/solid/terms#storageDescription');
         solidEndpointUrl = storageDescriptionLinkHeader[0].uri;

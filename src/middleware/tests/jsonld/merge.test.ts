@@ -1,12 +1,16 @@
 import initialize from '../ontologies/initialize.ts';
 
+// @ts-expect-error TS(2304): Cannot find name 'jest'.
 jest.setTimeout(10000);
 let broker: any;
 
+// @ts-expect-error TS(2304): Cannot find name 'beforeAll'.
 beforeAll(async () => {
+  // @ts-expect-error TS(2554): Expected 1 arguments, but got 2.
   broker = await initialize(false, false);
 });
 
+// @ts-expect-error TS(2304): Cannot find name 'afterAll'.
 afterAll(async () => {
   if (broker) await broker.stop();
 });
@@ -114,10 +118,14 @@ const testCases = {
   }
 };
 
+// @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
 test.each(Object.keys(testCases))('Merging %s JSON-LD contexts', async (key: any) => {
   const newContext = await broker.call('jsonld.context.merge', {
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     a: testCases[key].a,
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     b: testCases[key].b
   });
+  // @ts-expect-error TS(2304): Cannot find name 'expect'.
   expect(newContext).toEqual(testCases[key].expected);
 });

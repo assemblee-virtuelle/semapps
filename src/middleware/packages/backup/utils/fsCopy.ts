@@ -1,3 +1,4 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'fs-e... Remove this comment to see the full error message
 import fs from 'fs-extra';
 import { join as pathJoin } from 'path';
 
