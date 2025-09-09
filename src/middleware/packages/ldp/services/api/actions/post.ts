@@ -56,7 +56,7 @@ export default async function post(this: any, ctx: any) {
     ctx.meta.$statusCode = 201;
   } catch (e) {
     // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
-    if (e.code < 400 && e.code >= 500) console.error(e);
+    if (!e.code || (e.code < 400 && e.code >= 500)) console.error(e);
     // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
     ctx.meta.$statusCode = e.code || 500;
     // @ts-expect-error TS(18046): 'e' is of type 'unknown'.

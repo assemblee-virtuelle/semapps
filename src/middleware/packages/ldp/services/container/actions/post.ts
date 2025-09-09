@@ -1,9 +1,7 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
-import { ActionSchema } from 'moleculer';
+import { ActionSchema, Errors } from 'moleculer';
 import { cleanUndefined } from '../../../utils.ts';
-
-import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 

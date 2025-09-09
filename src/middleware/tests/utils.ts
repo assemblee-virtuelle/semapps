@@ -18,7 +18,7 @@ export const listDatasets = async () => {
   }
 };
 
-export const clearDataset = (dataset: any) =>
+export const dropDataset = (dataset: any) =>
   // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
   fetch(urlJoin(CONFIG.SPARQL_ENDPOINT, dataset, 'update'), {
     method: 'POST',

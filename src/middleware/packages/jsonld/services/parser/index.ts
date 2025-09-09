@@ -3,12 +3,10 @@ import N3 from 'n3';
 import { JsonLdParser } from 'jsonld-streaming-parser';
 import { JsonLdSerializer } from 'jsonld-streaming-serializer';
 import streamifyString from 'streamify-string';
-import rdfparseModule from 'rdf-parse';
+import rdfParser from 'rdf-parse';
 import { ServiceSchema } from 'moleculer';
 import { getId, isObject } from '@semapps/ldp';
 import { arrayOf, isURI } from '../../utils/utils.ts';
-
-const rdfParser = rdfparseModule.default;
 
 const JsonldParserSchema = {
   name: 'jsonld.parser' as const,
@@ -185,12 +183,13 @@ const JsonldParserSchema = {
     // Frame an input according to a context and try to embed all nodes in a single node
     // If this is not possible (cam happen with complex documents), return a @graph without embedding
     async frameAndEmbed(ctx) {
-      const { input, jsonContext } = ctx.params;
+      const { input } = ctx.params;
+      const jsonContext = ctx.params.jsonContext || (await ctx.call('jsonld.context.get'));
 
       // Frame and embed the input
       const result = await ctx.call('jsonld.parser.frame', {
         input,
-        frame: { '@context': jsonContext || (await ctx.call('jsonld.context.get')) },
+        frame: { '@context': jsonContext },
         options: {
           embed: '@once',
           omitGraph: false // Force to return a @graph property

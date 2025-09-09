@@ -1,6 +1,5 @@
 import { namedNode } from '@rdfjs/data-model';
-import { ActionSchema } from 'moleculer';
-import { Errors } from 'moleculer';
+import { ActionSchema, Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 

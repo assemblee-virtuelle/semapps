@@ -3,12 +3,11 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import { void as voidOntology } from '@semapps/ontologies';
 import { JsonLdSerializer } from 'jsonld-streaming-serializer';
 import { DataFactory, Writer } from 'n3';
-import { createFragmentURL, regexProtocolAndHostAndPort, arrayOf } from '@semapps/ldp';
+import { createFragmentURL, arrayOf } from '@semapps/ldp';
 import { parseHeader } from '@semapps/middlewares';
-import { ServiceSchema } from 'moleculer';
+import { ServiceSchema, Errors } from 'moleculer';
 
 const { quad, namedNode, literal, blankNode } = DataFactory;
-import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 

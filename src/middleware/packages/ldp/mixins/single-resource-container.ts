@@ -1,7 +1,6 @@
-import { ServiceSchema } from 'moleculer';
+import { ServiceSchema, Errors } from 'moleculer';
 import ControlledContainerMixin from './controlled-container.ts';
 import { delay } from '../utils.ts';
-import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 

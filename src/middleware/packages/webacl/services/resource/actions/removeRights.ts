@@ -1,7 +1,5 @@
-import { ActionSchema } from 'moleculer';
+import { ActionSchema, Errors } from 'moleculer';
 import { getAclUriFromResourceUri, processRights, FULL_AGENTCLASS_URI, FULL_FOAF_AGENT } from '../../../utils.ts';
-
-import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 

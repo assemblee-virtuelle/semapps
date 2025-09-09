@@ -1,6 +1,4 @@
-import { MIME_TYPES } from '@semapps/mime-types';
-import { ActionSchema } from 'moleculer';
-import { Errors } from 'moleculer';
+import { ActionSchema, Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
@@ -39,19 +37,10 @@ const Schema = {
       webId
     });
 
-    // Frame the result using the correct context in order to have clean, consistent results
-    const result2 = await ctx.call('jsonld.parser.frame', {
+    return await ctx.call('jsonld.parser.frameAndEmbed', {
       input: result,
-      frame: {
-        '@context': jsonContext || (await ctx.call('jsonld.context.get')),
-        '@id': resourceUri
-      },
-      options: {
-        embed: '@once'
-      }
+      context: jsonContext || (await ctx.call('jsonld.context.get'))
     });
-
-    return result2;
   }
 } satisfies ActionSchema;
 

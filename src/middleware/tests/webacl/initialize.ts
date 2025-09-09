@@ -5,7 +5,7 @@ import { as } from '@semapps/ontologies';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { AuthLocalService } from '@semapps/auth';
 import { fileURLToPath } from 'url';
-import { clearDataset } from '../utils.ts';
+import { dropDataset } from '../utils.ts';
 import * as CONFIG from '../config.ts';
 
 // @ts-expect-error TS(1470): The 'import.meta' meta-property is not allowed in ... Remove this comment to see the full error message

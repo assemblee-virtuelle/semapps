@@ -1,6 +1,5 @@
 import { MIME_TYPES } from '@semapps/mime-types';
-import { ActionSchema } from 'moleculer';
-import { Errors } from 'moleculer';
+import { ActionSchema, Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 

@@ -1,7 +1,6 @@
 import { sanitizeSparqlUri } from '@semapps/triplestore';
-import { ActionSchema } from 'moleculer';
+import { ActionSchema, Errors } from 'moleculer';
 import { getValueFromDataType } from '../../../../../utils.ts';
-import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 

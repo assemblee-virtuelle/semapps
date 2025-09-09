@@ -5,7 +5,6 @@ const Schema = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
-    noGraph: { type: 'boolean', default: false },
     webId: { type: 'string', optional: true },
     jsonContext: {
       type: 'multi',

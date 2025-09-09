@@ -6,12 +6,12 @@ import { OntologiesService } from '@semapps/ontologies';
 import { TripleStoreService } from '@semapps/triplestore';
 import { fileURLToPath } from 'url';
 import * as CONFIG from '../config.ts';
-import { clearDataset } from '../utils.ts';
+import { dropDataset } from '../utils.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default async (cacher: any) => {
-  await clearDataset(CONFIG.SETTINGS_DATASET);
+  await dropDataset(CONFIG.SETTINGS_DATASET);
 
   const broker = new ServiceBroker({
     logger: {

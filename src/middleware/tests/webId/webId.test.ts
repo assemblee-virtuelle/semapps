@@ -3,7 +3,7 @@ import { ServiceBroker, ServiceSchema } from 'moleculer';
 import { CoreService } from '@semapps/core';
 import { fileURLToPath } from 'url';
 import * as CONFIG from '../config.ts';
-import { clearDataset } from '../utils.ts';
+import { dropDataset } from '../utils.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

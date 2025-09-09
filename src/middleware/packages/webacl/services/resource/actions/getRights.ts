@@ -2,8 +2,7 @@ import { JsonLdSerializer } from 'jsonld-streaming-serializer';
 import { DataFactory, Writer } from 'n3';
 import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
-
-import { ActionSchema } from 'moleculer';
+import { ActionSchema, Errors } from 'moleculer';
 import {
   getAuthorizationNode,
   findParentContainers,
@@ -13,8 +12,6 @@ import {
 } from '../../../utils.ts';
 
 const { quad } = DataFactory;
-import { Errors } from 'moleculer';
-
 const { MoleculerError } = Errors;
 
 const prefixes = {

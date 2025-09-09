@@ -1,8 +1,5 @@
 import { MIME_TYPES } from '@semapps/mime-types';
-import { ActionSchema } from 'moleculer';
-import { arrayOf } from '../../../utils.ts';
-
-import { Errors } from 'moleculer';
+import { ActionSchema, Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
@@ -12,11 +9,8 @@ const Schema = {
     resourceUri: { type: 'string' },
     webId: { type: 'string', optional: true },
     accept: { type: 'string', optional: true },
-    // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
-    noGraph: { type: 'boolean', default: false },
     jsonContext: {
       type: 'multi',
-      // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
       rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
       optional: true
     }
@@ -31,8 +25,7 @@ const Schema = {
     keys: ['resourceUri', 'jsonContext']
   },
   async handler(ctx) {
-    const { resourceUri, accept, noGraph, jsonContext } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
+    const { resourceUri, accept, jsonContext } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (accept && accept !== MIME_TYPES.JSON)
@@ -62,24 +55,9 @@ const Schema = {
       webId: 'system'
     });
 
-    const frame = { '@context': jsonContext || (await ctx.call('jsonld.context.get')) };
-
-    // If the graph contains only blank nodes, we want them to be embedded in the resource
-    // Otherwise we want this action to return a @graph with all resources
-    const graphWithBlankNodesOnly = arrayOf(result['@graph']).every(
-      node => node['@id'].startsWith('_:b') || node['@id'] === resourceUri
-    );
-
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-    if (graphWithBlankNodesOnly || noGraph) frame['@id'] = resourceUri;
-
-    // Frame the result using the correct context in order to have clean, consistent results
-    return await ctx.call('jsonld.parser.frame', {
+    return await ctx.call('jsonld.parser.frameAndEmbed', {
       input: result,
-      frame,
-      options: {
-        embed: graphWithBlankNodesOnly || noGraph ? '@once' : '@never'
-      }
+      jsonContext
     });
   }
 } satisfies ActionSchema;
