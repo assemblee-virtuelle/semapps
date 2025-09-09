@@ -1004,8 +1004,10 @@ var $c5031381f4dfc62d$export$2e2bcd8739ae039 = $c5031381f4dfc62d$var$updateMetho
  */ const $00b6445d7042c29d$var$fetchBase = (dataServers, fetchFn)=>(url, options = {})=>{
         if (!url) throw new Error(`No URL provided on httpClient call`);
         const authServerKey = (0, $aed10b8332b5d58a$export$2e2bcd8739ae039)('authServer', dataServers);
-        if (!authServerKey) throw new Error(`No auth server configured in data servers`);
         const serverKey = (0, $2ae722513e522d60$export$2e2bcd8739ae039)(url, dataServers);
+        const useProxy = serverKey !== authServerKey && // The server is different from the auth server.
+        !!dataServers[authServerKey]?.proxyUrl && // A proxy URL is configured on the auth server.
+        dataServers[serverKey]?.noProxy !== true; // The server does not explicitly disable the proxy.
         const headers = new Headers(options.headers);
         switch(options.method){
             case 'POST':
@@ -1021,11 +1023,7 @@ var $c5031381f4dfc62d$export$2e2bcd8739ae039 = $c5031381f4dfc62d$var$updateMetho
                 if (!headers.has('Accept')) headers.set('Accept', 'application/ld+json');
                 break;
         }
-        // Use proxy if...
-        if (serverKey !== authServerKey && // The server is different from the auth server.
-        dataServers[authServerKey]?.proxyUrl && // A proxy URL is configured on the auth server.
-        dataServers[serverKey]?.noProxy !== true // The server does not explicitly disable the proxy.
-        ) {
+        if (useProxy) {
             // To the proxy endpoint, we post the URL, method, headers and body (if any) as multipart/form-data.
             const formData = new FormData();
             formData.append('id', url);

@@ -25,7 +25,7 @@
     "@mui/material": "^7.1.0",
     "react": "^18.2.0",
     "react-admin": "^5.10.1",
-    "react-router": "^6.1.0"
+    "react-router": "^7.8.2"
   },
   "publishConfig": {
     "access": "public"
@@ -35,6 +35,6 @@
     "@mui/material": "^7.1.0",
     "react": "^18.2.0",
     "react-admin": "^5.10.1",
-    "react-router": "^6.1.0"
+    "react-router": "^7.8.2"
   }
 }

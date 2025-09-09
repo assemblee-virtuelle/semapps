@@ -18,9 +18,12 @@ const fetchBase =
     if (!url) throw new Error(`No URL provided on httpClient call`);
 
     const authServerKey = getServerKeyFromType('authServer', dataServers);
-    if (!authServerKey) throw new Error(`No auth server configured in data servers`);
-
     const serverKey = getServerKeyFromUri(url, dataServers);
+
+    const useProxy =
+      serverKey !== authServerKey && // The server is different from the auth server.
+      !!dataServers[authServerKey!]?.proxyUrl && // A proxy URL is configured on the auth server.
+      dataServers[serverKey]?.noProxy !== true; // The server does not explicitly disable the proxy.
 
     const headers = new Headers(options.headers);
 
@@ -41,12 +44,7 @@ const fetchBase =
         break;
     }
 
-    // Use proxy if...
-    if (
-      serverKey !== authServerKey && // The server is different from the auth server.
-      dataServers[authServerKey]?.proxyUrl && // A proxy URL is configured on the auth server.
-      dataServers[serverKey]?.noProxy !== true // The server does not explicitly disable the proxy.
-    ) {
+    if (useProxy) {
       // To the proxy endpoint, we post the URL, method, headers and body (if any) as multipart/form-data.
       const formData = new FormData();
 
@@ -61,7 +59,7 @@ const fetchBase =
       }
 
       // POST request to proxy endpoint.
-      return fetchFn(dataServers[authServerKey].proxyUrl, {
+      return fetchFn(dataServers[authServerKey!].proxyUrl!, {
         method: 'POST',
         headers: new Headers({
           Authorization: `Bearer ${localStorage.getItem('token')}`

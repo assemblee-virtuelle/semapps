@@ -16,8 +16,8 @@
     "watch": "nodemon --ext ts,tsx,js --watch src --exec 'yarn build'"
   },
   "dependencies": {
-    "@activitypods/ldo-shapes": "^0.1.1",
-    "@activitypods/shape-definitions": "^0.1.1",
+    "@activitypods/ldo-shapes": "^0.2.0",
+    "@activitypods/shape-definitions": "^0.2.1",
     "@ldo/connected": "^1.0.0-alpha.30",
     "@ldo/connected-solid": "^1.0.0-alpha.30",
     "@ldo/ldo": "^1.0.0-alpha.30",
