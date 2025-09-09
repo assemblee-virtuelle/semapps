@@ -78,18 +78,10 @@ const BotMixin = {
   events: {
     'activitypub.inbox.received': {
       handler(ctx) {
-<<<<<<< HEAD
         if (this.inboxReceived) {
           // @ts-expect-error TS(2339): Property 'recipients' does not exist on type 'Opti... Remove this comment to see the full error message
           if (ctx.params.recipients.includes(this.settings.actor.uri)) {
             // @ts-expect-error TS(2339): Property 'activity' does not exist on type 'Option... Remove this comment to see the full error message
-=======
-        // @ts-expect-error TS(2339): Property 'inboxReceived' does not exist on type 'S... Remove this comment to see the full error message
-        if (this.inboxReceived) {
-          // @ts-expect-error TS(2339): Property 'recipients' does not exist on type 'Opti... Remove this comment to see the full error message
-          if (ctx.params.recipients.includes(this.settings.actor.uri)) {
-            // @ts-expect-error TS(2339): Property 'inboxReceived' does not exist on type 'S... Remove this comment to see the full error message
->>>>>>> 2.0
             this.inboxReceived(ctx.params.activity);
           }
         }

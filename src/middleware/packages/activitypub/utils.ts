@@ -1,43 +1,3 @@
-<<<<<<< HEAD
-=======
-import { ACTIVITY_TYPES } from './constants.ts';
-
-// @ts-expect-error TS(7023): 'objectCurrentToId' implicitly has return type 'an... Remove this comment to see the full error message
-const objectCurrentToId = (activityJson: any) => {
-  if (activityJson.object && typeof activityJson.object === 'object' && activityJson.object.current) {
-    const { current, ...object } = activityJson.object;
-    return {
-      ...activityJson,
-      object: {
-        id: current,
-        ...objectCurrentToId(object)
-      }
-    };
-  }
-  return activityJson;
-};
-
-// @ts-expect-error TS(7023): 'objectIdToCurrent' implicitly has return type 'an... Remove this comment to see the full error message
-const objectIdToCurrent = (activityJson: any) => {
-  // If the activity has an object predicate, and this object is not an activity
-  if (
-    activityJson.object &&
-    typeof activityJson.object === 'object' &&
-    !Object.values(ACTIVITY_TYPES).includes(activityJson.object.type)
-  ) {
-    const { id, '@id': arobaseId, ...object } = activityJson.object;
-    return {
-      ...activityJson,
-      object: {
-        current: id || arobaseId,
-        ...objectIdToCurrent(object)
-      }
-    };
-  }
-  return activityJson;
-};
-
->>>>>>> 2.0
 const collectionPermissionsWithAnonRead = (webId: any) => {
   const permissions = {
     anon: {
@@ -119,11 +79,6 @@ const getValueFromDataType = (result: any) => {
 };
 
 export {
-<<<<<<< HEAD
-=======
-  objectCurrentToId,
-  objectIdToCurrent,
->>>>>>> 2.0
   collectionPermissionsWithAnonRead,
   getSlugFromUri,
   getContainerFromUri,

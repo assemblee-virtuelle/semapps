@@ -1,8 +1,5 @@
 import { ControlledContainerMixin, DereferenceMixin, delay, arrayOf } from '@semapps/ldp';
-<<<<<<< HEAD
 // @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
-=======
->>>>>>> 2.0
 import { solid, skos, apods } from '@semapps/ontologies';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { namedNode, triple } from '@rdfjs/data-model';
@@ -23,11 +20,8 @@ const TypeIndexesSchema = {
   },
   dependencies: ['ontologies'],
   created() {
+    // @ts-expect-error TS(2322): Type '{ name: "type-registrations"; mixins: { sett... Remove this comment to see the full error message
     this.broker.createService({
-<<<<<<< HEAD
-      // @ts-expect-error TS(2322): Type '{ name: "type-registrations"; mixins: { sett... Remove this comment to see the full error message
-=======
->>>>>>> 2.0
       mixins: [TypeRegistrationsService]
     });
   },
@@ -214,10 +208,6 @@ const TypeIndexesSchema = {
         await ctx.call('type-registrations.waitForContainerCreation', { containerUri: registrationsContainerUri });
 
         await this.actions.createPublicIndex({ webId }, { parentCtx: ctx });
-<<<<<<< HEAD
-=======
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
->>>>>>> 2.0
         await this.actions.createPrivateIndex({ webId }, { parentCtx: ctx });
       }
     }

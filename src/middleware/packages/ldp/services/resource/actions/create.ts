@@ -1,25 +1,15 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import { ActionSchema } from 'moleculer';
-
-<<<<<<< HEAD
-const { MoleculerError } = require('moleculer').Errors;
-=======
 import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
->>>>>>> 2.0
 
 const Schema = {
   visibility: 'public',
   params: {
-<<<<<<< HEAD
     // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
     resource: { type: 'object' },
     resourceUri: { type: 'string' },
-=======
-    // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'Parameter... Remove this comment to see the full error message
-    resource: 'object',
->>>>>>> 2.0
     webId: {
       type: 'string',
       optional: true
@@ -30,13 +20,8 @@ const Schema = {
     }
   },
   async handler(ctx) {
-<<<<<<< HEAD
     let { resource, resourceUri, contentType } = ctx.params;
     // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
-=======
-    let { resource, contentType } = ctx.params;
-    // @ts-expect-error
->>>>>>> 2.0
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (contentType && contentType !== MIME_TYPES.JSON)
@@ -63,36 +48,11 @@ const Schema = {
       };
     }
 
-<<<<<<< HEAD
     await ctx.call('triplestore.insert', {
       resource,
       contentType,
       webId,
       graphName: resourceUri
-=======
-    let newTriples = await ctx.call('jsonld.parser.toQuads', { input: resource });
-    // see PUT
-    newTriples = this.filterOtherNamedNodes(newTriples, resourceUri);
-    // see PUT
-    newTriples = this.convertBlankNodesToVars(newTriples);
-    // see PUT
-    newTriples = this.removeDuplicatedVariables(newTriples);
-
-    const triplesToAdd = newTriples.reverse();
-
-    const newBlankNodes = newTriples.filter((triple: any) => triple.object.termType === 'Variable');
-
-    // Generate the query
-    let query = '';
-    if (triplesToAdd.length > 0) query += `INSERT { ${this.triplesToString(triplesToAdd)} } `;
-    query += 'WHERE { ';
-    if (newBlankNodes.length > 0) query += this.bindNewBlankNodes(newBlankNodes);
-    query += ` }`;
-
-    await ctx.call('triplestore.update', {
-      query,
-      webId
->>>>>>> 2.0
     });
 
     // TODO See if using controlledAction is still necessary now blank nodes are automatically detected

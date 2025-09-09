@@ -2,7 +2,7 @@ import { SparqlJsonParser } from 'sparqljson-parse';
 import sparqljsModule from 'sparqljs';
 import fetch from 'node-fetch';
 import { throw403, throw500 } from '@semapps/middlewares';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema, Errors } from 'moleculer';
 import countTriplesOfSubject from './actions/countTriplesOfSubject.ts';
 import deleteOrphanBlankNodes from './actions/deleteOrphanBlankNodes.ts';
 import dropAll from './actions/dropAll.ts';
@@ -11,18 +11,10 @@ import query from './actions/query.ts';
 import update from './actions/update.ts';
 import tripleExist from './actions/tripleExist.ts';
 import DatasetService from './subservices/dataset.ts';
-<<<<<<< HEAD
 import DocumentService from './subservices/document.ts';
 
 const SparqlGenerator = sparqljsModule.Generator;
-const { MoleculerError } = require('moleculer').Errors;
-=======
-
-const SparqlGenerator = sparqljsModule.Generator;
-import { Errors } from 'moleculer';
-
 const { MoleculerError } = Errors;
->>>>>>> 2.0
 
 const TripleStoreService = {
   name: 'triplestore' as const,
@@ -33,7 +25,6 @@ const TripleStoreService = {
     mainDataset: null,
     fusekiBase: null,
     // Sub-services customization
-<<<<<<< HEAD
     dataset: {},
     document: {}
   },
@@ -44,18 +35,6 @@ const TripleStoreService = {
     if (dataset !== false) {
       // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "triplestore.d... Remove this comment to see the full error message
       this.broker.createService({
-=======
-    dataset: {}
-  },
-  dependencies: ['jsonld.parser'],
-  async created() {
-    const { url, user, password, dataset, fusekiBase } = this.settings;
-    this.subservices = {};
-
-    if (dataset !== false) {
-      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "triplestore.d... Remove this comment to see the full error message
-      this.subservices.dataset = this.broker.createService({
->>>>>>> 2.0
         mixins: [DatasetService],
         settings: {
           url,
@@ -66,7 +45,6 @@ const TripleStoreService = {
         }
       });
     }
-<<<<<<< HEAD
 
     if (document !== false) {
       // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "triplestore.d... Remove this comment to see the full error message
@@ -75,8 +53,6 @@ const TripleStoreService = {
         settings: document
       });
     }
-=======
->>>>>>> 2.0
   },
   started() {
     this.sparqlJsonParser = new SparqlJsonParser();
@@ -85,24 +61,11 @@ const TripleStoreService = {
     });
   },
   actions: {
-<<<<<<< HEAD
-    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resource: ... Remove this comment to see the full error message
-    insert,
-    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { query: { t... Remove this comment to see the full error message
-    update,
-    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { query: { t... Remove this comment to see the full error message
-    query,
-    dropAll,
-    countTriplesOfSubject,
-    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { triple: { ... Remove this comment to see the full error message
-=======
     insert,
     update,
     query,
     dropAll,
-    // @ts-expect-error TS(2322): Type 'ActionSchema<{ uri: { type: "string"; }; web... Remove this comment to see the full error message
     countTriplesOfSubject,
->>>>>>> 2.0
     tripleExist,
     deleteOrphanBlankNodes
   },

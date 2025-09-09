@@ -1,9 +1,5 @@
 import urlJoin from 'url-join';
 import { triple, namedNode } from '@rdfjs/data-model';
-<<<<<<< HEAD
-// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
-=======
->>>>>>> 2.0
 import { pim } from '@semapps/ontologies';
 import { ServiceSchema } from 'moleculer';
 
@@ -65,10 +61,6 @@ const SolidStorageSchema = {
         // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
 
-<<<<<<< HEAD
-=======
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
->>>>>>> 2.0
         const storageUrl = await this.actions.getUrl({ webId }, { parentCtx: ctx });
 
         // Attach the storage URL to the webId

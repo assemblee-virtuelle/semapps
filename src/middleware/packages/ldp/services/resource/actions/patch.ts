@@ -1,17 +1,9 @@
-<<<<<<< HEAD
 import { namedNode } from '@rdfjs/data-model';
 import { ActionSchema } from 'moleculer';
-
-const { MoleculerError } = require('moleculer').Errors;
-
-=======
-import { ActionSchema } from 'moleculer';
-
 import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
->>>>>>> 2.0
 function checkTriplesSubjectIsResource(triples: any, resourceUri: any) {
   for (const triple of triples) {
     switch (triple.subject.termType) {

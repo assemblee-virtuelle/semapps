@@ -10,10 +10,7 @@ import { TripleStoreService } from '@semapps/triplestore';
 import { VoidService } from '@semapps/void';
 import { WebAclService } from '@semapps/webacl';
 import { WebfingerService } from '@semapps/webfinger';
-<<<<<<< HEAD
 // @ts-expect-error TS(2305): Module '"@semapps/crypto"' has no exported member ... Remove this comment to see the full error message
-=======
->>>>>>> 2.0
 import { KeysService, SignatureService } from '@semapps/crypto';
 import { WebIdService } from '@semapps/webid';
 import { ServiceSchema } from 'moleculer';
@@ -148,11 +145,7 @@ const CoreService = {
     }
 
     if (this.settings.signature !== false) {
-<<<<<<< HEAD
       // @ts-expect-error TS(2345): Argument of type '{ mixins: any[]; settings: any; ... Remove this comment to see the full error message
-=======
-      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "signature"; a... Remove this comment to see the full error message
->>>>>>> 2.0
       this.broker.createService({
         mixins: [SignatureService],
         settings: {
@@ -173,11 +166,7 @@ const CoreService = {
     }
 
     if (this.settings.keys !== false) {
-<<<<<<< HEAD
       // @ts-expect-error TS(2345): Argument of type '{ mixins: any[]; settings: any; ... Remove this comment to see the full error message
-=======
-      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "keys"; settin... Remove this comment to see the full error message
->>>>>>> 2.0
       this.broker.createService({
         mixins: [KeysService],
         settings: {

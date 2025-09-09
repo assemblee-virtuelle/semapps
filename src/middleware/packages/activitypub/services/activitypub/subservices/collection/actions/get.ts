@@ -1,14 +1,9 @@
 import { sanitizeSparqlUri } from '@semapps/triplestore';
 import { ActionSchema } from 'moleculer';
 import { getValueFromDataType } from '../../../../../utils.ts';
-
-<<<<<<< HEAD
-const { MoleculerError } = require('moleculer').Errors;
-=======
 import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
->>>>>>> 2.0
 
 /**
  * Retrieves the collection metadata from the triplestore
@@ -83,39 +78,34 @@ async function validateCursorParams(ctx: any, collectionUri: any, beforeEq: any,
  * @returns {Promise<Array>} The collection item URIs
  */
 async function fetchCollectionItemURIs(ctx: any, collectionUri: any, options: any, dataset: any) {
-<<<<<<< HEAD
   const query = `
-=======
-  const result = await ctx.call('triplestore.query', {
-    query: `
->>>>>>> 2.0
-      PREFIX as: <https://www.w3.org/ns/activitystreams#>
-      SELECT DISTINCT ?itemUri
-      WHERE {
-        GRAPH <${collectionUri}> {
-          <${collectionUri}> a as:Collection .
-          OPTIONAL { 
-            <${collectionUri}> as:items ?itemUri . 
-          }
-        }
-        ${
-          options.ordered
-            ? `
-              OPTIONAL {
-                GRAPH ?g { 
-                  ?itemUri <${options.sortPredicate}> ?order . 
-                }
-              }
-              `
-            : ''
+    PREFIX as: <https://www.w3.org/ns/activitystreams#>
+    SELECT DISTINCT ?itemUri
+    WHERE {
+      GRAPH <${collectionUri}> {
+        <${collectionUri}> a as:Collection .
+        OPTIONAL { 
+          <${collectionUri}> as:items ?itemUri . 
         }
       }
       ${
         options.ordered
-          ? `ORDER BY ${options.sortOrder === 'http://semapps.org/ns/core#DescOrder' ? 'DESC' : 'ASC'}( ?order )`
+          ? `
+            OPTIONAL {
+              GRAPH ?g { 
+                ?itemUri <${options.sortPredicate}> ?order . 
+              }
+            }
+            `
           : ''
       }
-    `;
+    }
+    ${
+      options.ordered
+        ? `ORDER BY ${options.sortOrder === 'http://semapps.org/ns/core#DescOrder' ? 'DESC' : 'ASC'}( ?order )`
+        : ''
+    }
+  `;
 
   const result = await ctx.call('triplestore.query', {
     query,

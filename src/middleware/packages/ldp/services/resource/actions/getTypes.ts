@@ -16,13 +16,9 @@ const Schema = {
       query: `
         SELECT ?type
         WHERE {
-<<<<<<< HEAD
           GRAPH <${resourceUri}> {
             <${resourceUri}> a ?type .
           }
-=======
-          <${resourceUri}> a ?type .
->>>>>>> 2.0
         }
       `,
       webId: 'system'

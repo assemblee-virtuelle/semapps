@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 // @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
-=======
->>>>>>> 2.0
 import { ldp, semapps } from '@semapps/ontologies';
 import { ServiceSchema } from 'moleculer';
 import LdpApiService from './services/api/index.ts';
@@ -19,10 +16,6 @@ const LdpSchema = {
     baseUrl: null,
     containers: [],
     podProvider: false,
-<<<<<<< HEAD
-=======
-    mirrorGraphName: 'http://semapps.org/mirror',
->>>>>>> 2.0
     defaultContainerOptions: {},
     preferredViewForResource: null,
     resourcesWithContainerPath: true,
@@ -37,26 +30,17 @@ const LdpSchema = {
       containers,
       podProvider,
       defaultContainerOptions,
-<<<<<<< HEAD
-=======
-      mirrorGraphName,
->>>>>>> 2.0
       preferredViewForResource,
       resourcesWithContainerPath,
       binary
     } = this.settings;
 
+    // @ts-expect-error TS(2322): Type '{ name: "ldp.container"; settings: { baseUrl... Remove this comment to see the full error message
     this.broker.createService({
-      // @ts-expect-error TS(2322): Type '{ name: "ldp.container"; settings: { baseUrl... Remove this comment to see the full error message
       mixins: [LdpContainerService],
       settings: {
         baseUrl,
-<<<<<<< HEAD
         podProvider
-=======
-        podProvider,
-        mirrorGraphName
->>>>>>> 2.0
       },
       hooks: this.schema.hooksContainer || {}
     });
@@ -67,10 +51,6 @@ const LdpSchema = {
       settings: {
         baseUrl,
         podProvider,
-<<<<<<< HEAD
-=======
-        mirrorGraphName,
->>>>>>> 2.0
         preferredViewForResource,
         resourcesWithContainerPath,
         binary
@@ -78,17 +58,12 @@ const LdpSchema = {
       hooks: this.schema.hooksResource || {}
     });
 
+    // @ts-expect-error TS(2322): Type '{ name: "ldp.remote"; mixins: any[]; setting... Remove this comment to see the full error message
     this.broker.createService({
-      // @ts-expect-error TS(2322): Type '{ name: "ldp.remote"; mixins: any[]; setting... Remove this comment to see the full error message
       mixins: [LdpRemoteService],
       settings: {
         baseUrl,
-<<<<<<< HEAD
         podProvider
-=======
-        podProvider,
-        mirrorGraphName
->>>>>>> 2.0
       }
     });
 
@@ -112,17 +87,10 @@ const LdpSchema = {
       }
     });
 
-<<<<<<< HEAD
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "permissions";... Remove this comment to see the full error message
     this.broker.createService({ mixins: [PermissionsService] });
 
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "ldp.link-head... Remove this comment to see the full error message
-=======
-    // @ts-expect-error TS(2322): Type '{ name: "permissions"; actions: { addAuthori... Remove this comment to see the full error message
-    this.broker.createService({ mixins: [PermissionsService] });
-
-    // @ts-expect-error TS(2322): Type '{ name: "ldp.link-header"; actions: { get: A... Remove this comment to see the full error message
->>>>>>> 2.0
     this.broker.createService({ mixins: [LdpLinkHeaderService] });
 
     // Only create this service if a cacher is defined

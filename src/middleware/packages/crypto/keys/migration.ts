@@ -142,7 +142,6 @@ const KeysMigrationSchema = {
       await ctx.call('triplestore.update', {
         query: `
           PREFIX sec: <https://w3id.org/security#>   
-<<<<<<< HEAD
           DELETE WHERE {
             GRAPH <${webId}> {
               <${webId}> sec:publicKey ?o .
@@ -150,15 +149,6 @@ const KeysMigrationSchema = {
             GRAPH ?g {
               ?o ?p1 ?o1 .
             }
-=======
-          DELETE {
-            <${webId}> sec:publicKey  ?o .
-            ?o  ?p1  ?o1 .
-          }
-          WHERE {
-            <${webId}>  sec:publicKey  ?o .
-            ?o ?p1 ?o1 .
->>>>>>> 2.0
           }
         `,
         webId: 'system'

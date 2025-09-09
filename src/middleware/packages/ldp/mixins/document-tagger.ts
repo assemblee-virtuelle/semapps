@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 // @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
-=======
->>>>>>> 2.0
 import { dc } from '@semapps/ontologies';
 import { ServiceSchema } from 'moleculer';
 import { getDatasetFromUri } from '../utils.ts';
@@ -46,11 +43,7 @@ const Schema = {
 
         if (triples.length > 0) {
           await ctx.call('triplestore.update', {
-<<<<<<< HEAD
             query: `INSERT DATA { GRAPH <${resourceUri}> { ${triples.join('\n')} } }`,
-=======
-            query: `INSERT DATA { ${triples.join('\n')} }`,
->>>>>>> 2.0
             dataset: this.settings.podProvider ? dataset || getDatasetFromUri(resourceUri) : undefined,
             webId: 'system'
           });
@@ -64,10 +57,7 @@ const Schema = {
         const now = new Date();
         await ctx.call('triplestore.update', {
           query: `
-<<<<<<< HEAD
             WITH <${resourceUri}>
-=======
->>>>>>> 2.0
             DELETE { <${resourceUri}> <${this.settings.documentPredicates.updated}> ?updated }
             INSERT { <${resourceUri}> <${
               this.settings.documentPredicates.updated
@@ -103,12 +93,7 @@ const Schema = {
 
     'ldp.resource.patched': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, dataset } = ctx.params;
-<<<<<<< HEAD
-=======
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
->>>>>>> 2.0
         this.actions.tagUpdatedResource({ resourceUri, dataset }, { parentCtx: ctx });
       }
     }

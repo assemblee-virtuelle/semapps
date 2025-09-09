@@ -66,16 +66,10 @@ class TripleStoreAdapter {
             ?s ?p ?o
           }
           WHERE {
-<<<<<<< HEAD
-            // @ts-expect-error TS(2339): Property 'ontology' does not exist on type 'Triple... Remove this comment to see the full error message
-            // @ts-expect-error TS(2339): Property 'ontology' does not exist on type 'Triple... Remove this comment to see the full error message
-            ?s a <${this.ontology + this.type}> .
-=======
             ?s a <${
               // @ts-expect-error TS(2339): Property 'ontology' does not exist on type 'Triple... Remove this comment to see the full error message
               this.ontology + this.type
             }> .
->>>>>>> 2.0
             ?s ?p ?o .
             ${
               query
@@ -225,16 +219,10 @@ class TripleStoreAdapter {
               <${sanitizeSparqlUri(_id)}> ?p ?o .
             }
             INSERT {
-<<<<<<< HEAD
-              // @ts-expect-error TS(2339): Property 'ontology' does not exist on type 'Triple... Remove this comment to see the full error message
-              // @ts-expect-error TS(2339): Property 'ontology' does not exist on type 'Triple... Remove this comment to see the full error message
-              <${sanitizeSparqlUri(_id)}> a <${this.ontology + this.type}> .
-=======
               <${sanitizeSparqlUri(_id)}> a <${
                 // @ts-expect-error TS(2339): Property 'ontology' does not exist on type 'Triple... Remove this comment to see the full error message
                 this.ontology + this.type
               }> .
->>>>>>> 2.0
               ${
                 newData
                   ? Object.keys(newData)

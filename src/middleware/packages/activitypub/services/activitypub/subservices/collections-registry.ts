@@ -169,13 +169,9 @@ const CollectionsRegistryService = {
             query: `
               SELECT ?collectionUri
               WHERE {
-<<<<<<< HEAD
                 GRAPH ?g {
                   ?objectUri <${attachPredicate}> ?collectionUri 
                 }
-=======
-                ?objectUri <${attachPredicate}> ?collectionUri 
->>>>>>> 2.0
               }
             `,
             webId: 'system',
@@ -189,10 +185,7 @@ const CollectionsRegistryService = {
                 query: `
                   PREFIX as: <https://www.w3.org/ns/activitystreams#>
                   PREFIX semapps: <http://semapps.org/ns/core#>
-<<<<<<< HEAD
                   WITH <${collectionUri}>
-=======
->>>>>>> 2.0
                   DELETE {
                     <${collectionUri}> 
                       a ?type ;
@@ -340,10 +333,6 @@ const CollectionsRegistryService = {
         const { oldData } = ctx.params;
         const collections = this.getCollectionsByType(oldData.type || oldData['@type']);
         for (const collection of collections) {
-<<<<<<< HEAD
-=======
-          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
->>>>>>> 2.0
           await this.actions.deleteCollection(
             { objectUri: oldData.id || oldData['@id'], collection },
             { parentCtx: ctx }

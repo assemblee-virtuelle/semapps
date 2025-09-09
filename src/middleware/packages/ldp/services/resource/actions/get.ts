@@ -31,11 +31,7 @@ const Schema = {
     keys: ['resourceUri', 'jsonContext']
   },
   async handler(ctx) {
-<<<<<<< HEAD
     const { resourceUri, accept, noGraph, jsonContext } = ctx.params;
-=======
-    const { resourceUri, accept, jsonContext } = ctx.params;
->>>>>>> 2.0
     // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 

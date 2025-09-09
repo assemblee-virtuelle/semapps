@@ -18,16 +18,12 @@ const Schema = {
           this.logger.info('OrphanFilesDeletion - Check...');
 
           const containerUri = await this.actions.getContainerUri();
-<<<<<<< HEAD
 
           // Ignore ACL files
-=======
->>>>>>> 2.0
           const results = await ctx.call('triplestore.query', {
             query: `
               SELECT ?file
               WHERE {
-<<<<<<< HEAD
                 GRAPH <${containerUri}> {
                   <${containerUri}> <http://www.w3.org/ns/ldp#contains> ?file .
                 }
@@ -37,12 +33,6 @@ const Schema = {
                     FILTER(?s != <${containerUri}>)
                     FILTER(?p != <http://www.w3.org/ns/auth/acl#accessTo>)
                   }
-=======
-                <${containerUri}> <http://www.w3.org/ns/ldp#contains> ?file .
-                FILTER NOT EXISTS {
-                  ?s ?p ?file .
-                  FILTER(?s != <${containerUri}>)
->>>>>>> 2.0
                 }
               }
             `,

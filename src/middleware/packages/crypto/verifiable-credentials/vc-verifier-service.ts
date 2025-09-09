@@ -3,11 +3,7 @@ import { cryptosuite } from '@digitalbazaar/eddsa-rdfc-2022-cryptosuite';
 // @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
 // @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
-<<<<<<< HEAD
-import vc from '@digitalbazaar/vc';
-=======
 import * as vc from '@digitalbazaar/vc';
->>>>>>> 2.0
 import { ServiceSchema } from 'moleculer';
 import VCCapabilityPresentationProofPurpose from './VcCapabilityPresentationProofPurpose.ts';
 import VCPurpose from './VcPurpose.ts';

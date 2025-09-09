@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-export const visibility = 'public';
-=======
 import { ActionSchema } from 'moleculer';
 
 const Schema = {
@@ -11,4 +8,3 @@ const Schema = {
 } satisfies ActionSchema;
 
 export default Schema;
->>>>>>> 2.0

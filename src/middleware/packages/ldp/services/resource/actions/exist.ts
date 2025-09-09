@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-import { triple, namedNode, variable } from '@rdfjs/data-model';
->>>>>>> 2.0
 import { ActionSchema } from 'moleculer';
 
 const Schema = {

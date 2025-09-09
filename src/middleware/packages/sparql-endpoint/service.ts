@@ -64,10 +64,6 @@ const SparqlEndpointService = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
-<<<<<<< HEAD
-=======
-        // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
->>>>>>> 2.0
         if (this.settings.podProvider) {
           await ctx.call('activitypub.actor.addEndpoint', {
             actorUri: webId,

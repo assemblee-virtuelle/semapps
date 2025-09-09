@@ -3,10 +3,6 @@ import Schedule from 'moleculer-schedule';
 import { ServiceSchema } from 'moleculer';
 import deleteAction from './actions/delete.ts';
 import getAction from './actions/get.ts';
-<<<<<<< HEAD
-=======
-import getGraphAction from './actions/getGraph.ts';
->>>>>>> 2.0
 import getNetworkAction from './actions/getNetwork.ts';
 import getStoredAction from './actions/getStored.ts';
 import isRemoteAction from './actions/isRemote.ts';
@@ -17,35 +13,16 @@ const LdpRemoteSchema = {
   mixins: [Schedule],
   settings: {
     baseUrl: null,
-<<<<<<< HEAD
     podProvider: false
-=======
-    podProvider: false,
-    mirrorGraphName: null
->>>>>>> 2.0
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
     delete: deleteAction,
-<<<<<<< HEAD
-    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resourceUr... Remove this comment to see the full error message
     get: getAction,
-    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resourceUr... Remove this comment to see the full error message
-    getNetwork: getNetworkAction,
-    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resourceUr... Remove this comment to see the full error message
-    getStored: getStoredAction,
-    isRemote: isRemoteAction,
-    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resourceUr... Remove this comment to see the full error message
-=======
-    get: getAction,
-    getGraph: getGraphAction,
     getNetwork: getNetworkAction,
     getStored: getStoredAction,
-    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
     isRemote: isRemoteAction,
->>>>>>> 2.0
     store: storeAction,
-
     runCron: {
       // Used by tests
       handler() {
@@ -64,11 +41,7 @@ const LdpRemoteSchema = {
           query: `
             SELECT DISTINCT ?s 
             WHERE { 
-<<<<<<< HEAD
               GRAPH ?g { 
-=======
-              GRAPH <${this.settings.mirrorGraphName}> { 
->>>>>>> 2.0
                 ?s <http://semapps.org/ns/core#singleMirroredResource> ?o 
               }
             }
@@ -79,12 +52,7 @@ const LdpRemoteSchema = {
           try {
             await this.actions.store({
               resourceUri,
-<<<<<<< HEAD
               keepInSync: true
-=======
-              keepInSync: true,
-              mirrorGraph: true
->>>>>>> 2.0
             });
           } catch (e) {
             // @ts-expect-error TS(18046): 'e' is of type 'unknown'.

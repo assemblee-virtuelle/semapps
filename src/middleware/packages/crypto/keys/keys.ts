@@ -2,16 +2,9 @@ import fetch from 'node-fetch';
 import { generateKeyPair } from 'crypto';
 import { namedNode, triple } from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
-<<<<<<< HEAD
-// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
-import { sec } from '@semapps/ontologies';
-// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
-import Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
-=======
 import { sec } from '@semapps/ontologies';
 // @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import * as Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
->>>>>>> 2.0
 import { ServiceSchema } from 'moleculer';
 import { arrayOf } from '../utils/utils.ts';
 import { KEY_TYPES } from '../constants.ts';
@@ -672,10 +665,6 @@ const KeysService = {
         // Create, publish and attach keys to the webId.
         await Promise.all([
           this.actions.createKeyForActor({ webId, attachToWebId: true, keyType: KEY_TYPES.RSA }, { parentCtx: ctx }),
-<<<<<<< HEAD
-=======
-          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
->>>>>>> 2.0
           this.actions.createKeyForActor({ webId, attachToWebId: true, keyType: KEY_TYPES.ED25519 }, { parentCtx: ctx })
         ]);
       }

@@ -105,10 +105,6 @@ const ApiService = {
           arrayOf(container.acceptedTypes).some(type => Object.values(FULL_ACTOR_TYPES).includes(type))
         ) {
           await ctx.call('api.addRoute', {
-<<<<<<< HEAD
-=======
-            // @ts-expect-error TS(2339): Property 'getBoxesRoute' does not exist on type 'S... Remove this comment to see the full error message
->>>>>>> 2.0
             route: this.getBoxesRoute(path.join(basePath, `${container.fullPath}/:actorSlug`))
           });
         }

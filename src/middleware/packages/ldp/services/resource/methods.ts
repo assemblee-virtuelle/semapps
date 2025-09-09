@@ -32,7 +32,6 @@ export default {
         .on('error', reject);
     });
   },
-<<<<<<< HEAD:src/middleware/packages/ldp/services/resource/methods.ts
   // @ts-expect-error
   async bodyToTriples(body, contentType) {
     if (contentType === MIME_TYPES.JSON) {
@@ -52,19 +51,8 @@ export default {
         .on('end', () => resolve(res));
     });
   },
-  // Filter out triples whose subject is not the resource itself
-  // We don't want to update or delete resources with IDs
-  filterOtherNamedNodes(triples: any, resourceUri: any) {
-    return triples.filter(
-      (triple: any) => !(triple.subject.termType === 'NamedNode' && triple.subject.value !== resourceUri)
-    );
-  },
   convertBlankNodesToVars(triples: any) {
     return triples.map((triple: any) => {
-=======
-  convertBlankNodesToVars(triples) {
-    return triples.map(triple => {
->>>>>>> 222b281308a99e519f536b00d53ed2b31812d6e3:src/middleware/packages/ldp/services/resource/methods.js
       if (triple.subject.termType === 'BlankNode') {
         triple.subject = variable(triple.subject.value);
       }

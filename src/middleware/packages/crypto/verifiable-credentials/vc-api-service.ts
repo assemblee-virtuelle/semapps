@@ -1,8 +1,4 @@
 import { parseHeader, parseRawBody, negotiateAccept, negotiateContentType, parseJson } from '@semapps/middlewares';
-<<<<<<< HEAD
-
-=======
->>>>>>> 2.0
 import path from 'node:path';
 import { ServiceSchema } from 'moleculer';
 import { VC_API_PATH } from '../constants.ts';

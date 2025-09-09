@@ -1,18 +1,12 @@
 import path from 'path';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'pass... Remove this comment to see the full error message
 import { Strategy } from 'passport-local';
-import { ServiceSchema } from 'moleculer';
+import { ServiceSchema, Errors } from 'moleculer';
 import AuthMixin from '../mixins/auth.ts';
 import sendToken from '../middlewares/sendToken.ts';
 import AuthMailService from './mail.ts';
 
-<<<<<<< HEAD
-const { MoleculerError } = require('moleculer').Errors;
-=======
-import { Errors } from 'moleculer';
-
 const { MoleculerError } = Errors;
->>>>>>> 2.0
 
 /** @type {import('moleculer').ServiceSchema} */
 const AuthLocalService = {

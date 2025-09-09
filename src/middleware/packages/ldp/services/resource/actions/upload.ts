@@ -2,14 +2,9 @@ import path from 'path';
 import fs from 'fs';
 import { ActionSchema } from 'moleculer';
 import { getSlugFromUri, getContainerFromUri } from '../../../utils.ts';
-
-<<<<<<< HEAD
-const { MoleculerError } = require('moleculer').Errors;
-=======
 import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
->>>>>>> 2.0
 
 const Schema = {
   visibility: 'public',
