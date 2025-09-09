@@ -22,7 +22,7 @@ const buildBlankNodesQuery = (depth: any) => {
   return { construct, where };
 };
 
-const objectCurrentToId = activityJson => {
+const objectCurrentToId = (activityJson: any): any => {
   if (activityJson.object && typeof activityJson.object === 'object' && activityJson.object.current) {
     const { current, ...object } = activityJson.object;
     return {
@@ -36,4 +36,31 @@ const objectCurrentToId = activityJson => {
   return activityJson;
 };
 
-export { buildBlankNodesQuery, objectCurrentToId };
+// From deprecated PseudoIdMixin
+const pseudoIdToId = (obj: any): any => {
+  if (Array.isArray(obj)) {
+    return obj.map(pseudoIdToId);
+  }
+
+  if (typeof obj !== 'object') {
+    return obj;
+  }
+
+  const newObj = { ...obj };
+
+  if (newObj['urn:tmp:pseudoId']) {
+    newObj.id = newObj['urn:tmp:pseudoId'];
+
+    delete newObj['urn:tmp:pseudoId'];
+  }
+
+  for (const key in newObj) {
+    if (Object.hasOwn(newObj, key)) {
+      newObj[key] = pseudoIdToId(newObj[key]);
+    }
+  }
+
+  return newObj;
+};
+
+export { buildBlankNodesQuery, objectCurrentToId, pseudoIdToId };

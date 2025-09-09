@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { ControlledContainerMixin, PseudoIdMixin } from '@semapps/ldp';
+import { ControlledContainerMixin } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
 import { credentialsContext, credentialsContextNoGraphProof, VC_API_PATH } from '../constants.ts';
 
@@ -13,7 +13,7 @@ import { credentialsContext, credentialsContextNoGraphProof, VC_API_PATH } from 
  */
 const VCCredentialsContainer = {
   name: 'crypto.vc.issuer.credential-container' as const,
-  mixins: [ControlledContainerMixin, PseudoIdMixin],
+  mixins: [ControlledContainerMixin],
   dependencies: ['ontologies'],
   settings: {
     path: null,

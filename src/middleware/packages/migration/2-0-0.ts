@@ -1,6 +1,6 @@
 import { ServiceSchema } from 'moleculer';
 import urlJoin from 'url-join';
-import { buildBlankNodesQuery, objectCurrentToId } from './utils.ts';
+import { buildBlankNodesQuery, objectCurrentToId, pseudoIdToId } from './utils.ts';
 
 const blankNodesQuery = buildBlankNodesQuery(4);
 
@@ -18,8 +18,6 @@ export default {
   actions: {
     async moveAllToNamedGraph(ctx) {
       const { dataset } = ctx.params;
-
-      // @ts-expect-error
       ctx.meta.dataset = dataset || ctx.meta.dataset;
 
       // Find all containers in default graph
@@ -201,16 +199,14 @@ export default {
      */
     async migrateCurrentPredicate(ctx) {
       const { dataset } = ctx.params;
-
-      // @ts-expect-error
       ctx.meta.dataset = dataset || ctx.meta.dataset;
-      // @ts-expect-error
+
       if (this.settings.podProvider) ctx.meta.webId = urlJoin(this.settings.baseUrl, ctx.meta.dataset);
 
       const result = await ctx.call('triplestore.query', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
-          SELECT ?resourceUri
+          SELECT DISTINCT ?resourceUri
           WHERE {
             GRAPH ?resourceUri {
               ?s1 as:current ?current .
@@ -233,14 +229,48 @@ export default {
         if (await ctx.call('ldp.remote.isRemote', { resourceUri: activityUri })) {
           await ctx.call('ldp.remote.store', {
             resource: activityWithId,
-            // @ts-expect-error
             webId: ctx.meta.webId,
-            // @ts-expect-error
             dataset: ctx.meta.dataset
           });
         } else {
           await ctx.call('activitypub.activity.put', { resource: activityWithId });
         }
+      }
+    },
+    /**
+     * Replace the as:current predicate with the ID
+     * Must be called *after* the moveAllToNamedGraph action
+     */
+    async migratePseudoIds(ctx) {
+      const { dataset } = ctx.params;
+
+      ctx.meta.dataset = dataset || ctx.meta.dataset;
+
+      if (this.settings.podProvider) ctx.meta.webId = urlJoin(this.settings.baseUrl, ctx.meta.dataset);
+
+      const result = await ctx.call('triplestore.query', {
+        query: `
+        SELECT DISTINCT ?resourceUri
+        WHERE {
+          GRAPH ?resourceUri {
+            ?s1 <urn:tmp:pseudoId> ?pseudoId .
+          }
+        }
+      `,
+
+        webId: 'system'
+      });
+
+      const resourcesUris = result.map(node => node.resourceUri.value);
+
+      this.logger.info(`Found ${resourcesUris.length} resources needing migration`);
+
+      for (const resourceUri of resourcesUris) {
+        this.logger.info(`Migrating resource ${resourceUri}...`);
+
+        const resource = await ctx.call('ldp.resource.get', { resourceUri });
+
+        await ctx.call('ldp.resource.put', { resource: pseudoIdToId(resource) });
       }
     }
   }
