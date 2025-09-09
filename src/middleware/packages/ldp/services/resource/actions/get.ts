@@ -1,16 +1,10 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import { ActionSchema } from 'moleculer';
-<<<<<<< HEAD
 import { arrayOf } from '../../../utils.ts';
-
-const { MoleculerError } = require('moleculer').Errors;
-=======
-import { buildBlankNodesQuery } from '../../../utils.ts';
 
 import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
->>>>>>> 2.0
 
 const Schema = {
   visibility: 'public',

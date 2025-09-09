@@ -84,83 +84,10 @@ const addClassPartition = (serverUrl: any, partition: any, graph: any, scalar: a
   graph.push({ s: namedNode(serverUrl), p: namedNode('http://rdfs.org/ns/void#classPartition'), o: blank });
 };
 
-const addMirrorServer = async (
-  baseUrl: any,
-  serverUrl: any,
-  graph: any,
-  hasSparql: any,
-  containers: any,
-  mirrorGraph: any,
-  ctx: any,
-  nextScalar: any,
-  originalVoid: any
-) => {
-  const thisServer = createFragmentURL(baseUrl, serverUrl);
-
-  graph.push({
-    s: namedNode(thisServer),
-    p: namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-    o: namedNode('http://rdfs.org/ns/void#Dataset')
-  });
-  // graph.push({
-  //   s: namedNode(thisServer),
-  //   p: namedNode('http://purl.org/dc/terms/modified'),
-  //   o: literal('2020-11-17', namedNode('http://www.w3.org/2001/XMLSchema#date'))
-  // });
-  graph.push({
-    s: namedNode(thisServer),
-    p: namedNode('http://rdfs.org/ns/void#feature'),
-    o: namedNode('http://www.w3.org/ns/formats/N-Triples')
-  });
-  graph.push({ s: namedNode(thisServer), p: namedNode('http://rdfs.org/ns/void#uriSpace'), o: literal(serverUrl) });
-
-  if (hasSparql)
-    graph.push({
-      s: namedNode(thisServer),
-      p: namedNode('http://rdfs.org/ns/void#sparqlEndpoint'),
-      o: namedNode(hasSparql)
-    });
-
-  const partitionsMap = {};
-  if (originalVoid) {
-    const originalPartitions = originalVoid['void:classPartition'];
-
-    if (originalPartitions) {
-      for (const p of arrayOf(originalPartitions)) {
-        // we skip empty containers and doNotMirror containers
-        if (p['void:entities'] === '0' || p['semapps:doNotMirror']) continue;
-        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-        partitionsMap[p['void:uriSpace']] = p;
-      }
-    }
-  }
-
-  for (const [i, p] of containers.entries()) {
-    const types = await ctx.call('triplestore.query', {
-      query: `SELECT DISTINCT ?t FROM <${mirrorGraph}> { <${p}> <http://www.w3.org/ns/ldp#contains> ?o. ?o <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?t }`
-    });
-
-    const partition = {
-      'http://rdfs.org/ns/void#uriSpace': p,
-      'http://rdfs.org/ns/void#class': types.map((type: any) => type.t.value)
-    };
-
-    const count = await ctx.call('triplestore.query', {
-      query: `SELECT (COUNT (?o) as ?count) FROM <${mirrorGraph}> { <${p}> <http://www.w3.org/ns/ldp#contains> ?o }`
-    });
-
-    // @ts-expect-error TS(2551): Property 'http://rdfs.org/ns/void#entities' does n... Remove this comment to see the full error message
-    partition['http://rdfs.org/ns/void#entities'] = Number(count[0].count.value);
-
-    addClassPartition(thisServer, partition, graph, nextScalar + i);
-  }
-};
-
 const VoidSchema = {
   name: 'void' as const,
   settings: {
     baseUrl: null,
-    mirrorGraphName: 'http://semapps.org/mirror',
     title: null,
     description: null,
     license: null
@@ -221,8 +148,6 @@ const VoidSchema = {
 
         const { origin } = new URL(this.settings.baseUrl);
         const url = urlJoin(origin, '.well-known/void');
-
-        // first we compile the local data void information (local containers)
 
         const thisServer = createFragmentURL(url, this.settings.baseUrl);
 
@@ -296,60 +221,6 @@ const VoidSchema = {
 
         for (const [i, p] of partitions.entries()) {
           addClassPartition(thisServer, p, graph, i);
-        }
-        let scalar = partitions.length;
-
-        // then we move on to the mirrored data (containers that have been mirrored from remote servers)
-
-        const serversContainers = await ctx.call('triplestore.query', {
-          query: `SELECT DISTINCT ?s FROM <${this.settings.mirrorGraphName}> { ?s <http://www.w3.org/ns/ldp#contains> ?o }`
-        });
-
-        const serversMap = {};
-        for (const s of serversContainers.map((sc: any) => sc.s.value)) {
-          const res = s.match(regexProtocolAndHostAndPort);
-          if (res) {
-            const name = urlJoin(res[0], '/');
-            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-            let serverName = serversMap[name];
-            if (!serverName) {
-              // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-              serversMap[name] = [];
-              // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-              serverName = serversMap[name];
-            }
-            serverName.push(s);
-          }
-        }
-
-        for (const serverUrl of Object.keys(serversMap)) {
-          let originalVoid;
-          const json = await ctx.call('void.getRemote', { serverUrl });
-          if (json) {
-            const mapServers = {};
-            for (const s of json['@graph']) {
-              // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-              mapServers[s['@id']] = s;
-            }
-            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-            const server = mapServers[createFragmentURL('', serverUrl)];
-            originalVoid = server;
-          }
-
-          await addMirrorServer(
-            url,
-            serverUrl,
-            graph,
-            hasSparql,
-            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-            serversMap[serverUrl],
-            this.settings.mirrorGraphName,
-            ctx,
-            scalar,
-            originalVoid
-          );
-          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-          scalar += serversMap[serverUrl].length;
         }
 
         // @ts-expect-error TS(2339): Property '$responseType' does not exist on type '{... Remove this comment to see the full error message

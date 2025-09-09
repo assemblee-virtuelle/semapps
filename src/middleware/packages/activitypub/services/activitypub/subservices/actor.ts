@@ -18,12 +18,16 @@ const ActorService = {
     get: {
       async handler(ctx) {
         const { actorUri, webId } = ctx.params;
+        // Check if the actor is remote
         // If dataset is not in the meta, assume that actor is remote
-        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
-        if (ctx.meta.dataset && !(await ctx.call('ldp.remote.isRemote', { resourceUri: actorUri }))) {
+        if (
+          !(await ctx.call('ldp.remote.isRemote', { resourceUri: actorUri })) &&
+          // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
+          (!this.settings.podProvider || ctx.meta.dataset)
+        ) {
           try {
             // Don't return immediately the promise, or we won't be able to catch errors
-            const actor = await ctx.call('ldp.resource.get', { resourceUri: actorUri, webId });
+            const actor = await ctx.call('webid.get', { resourceUri: actorUri, webId });
             return actor;
           } catch (e) {
             console.error(e);
@@ -102,12 +106,8 @@ const ActorService = {
                 updateType: 'insertdelete',
                 insert: [
                   {
-<<<<<<< HEAD
                     type: 'graph',
                     name: namedNode(actorUri),
-=======
-                    type: 'bgp',
->>>>>>> 2.0
                     triples: [
                       triple(
                         namedNode(actorUri),
@@ -124,12 +124,8 @@ const ActorService = {
                     type: 'optional',
                     patterns: [
                       {
-<<<<<<< HEAD
                         type: 'graph',
                         name: namedNode(actorUri),
-=======
-                        type: 'bgp',
->>>>>>> 2.0
                         triples: [
                           triple(
                             namedNode(actorUri),
@@ -226,10 +222,6 @@ const ActorService = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
-<<<<<<< HEAD
-=======
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
->>>>>>> 2.0
         await this.actions.appendActorData({ actorUri: webId }, { parentCtx: ctx });
       }
     }

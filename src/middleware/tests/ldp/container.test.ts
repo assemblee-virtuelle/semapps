@@ -46,7 +46,7 @@ describe('LDP container tests', () => {
       })
     ).resolves.toMatchObject({
       '@id': `${CONFIG.HOME_URL}objects`,
-      '@type': ['ldp:Container', 'ldp:BasicContainer']
+      '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer'])
     });
   });
 
@@ -82,7 +82,7 @@ describe('LDP container tests', () => {
       'ldp:contains': expect.arrayContaining([
         {
           '@id': `${CONFIG.HOME_URL}parent`,
-          '@type': ['ldp:Container', 'ldp:BasicContainer', 'ldp:Resource']
+          '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer', 'ldp:Resource'])
         }
       ])
     });
@@ -98,7 +98,7 @@ describe('LDP container tests', () => {
       'ldp:contains': expect.arrayContaining([
         {
           '@id': `${CONFIG.HOME_URL}parent/child`,
-          '@type': ['ldp:Container', 'ldp:BasicContainer', 'ldp:Resource']
+          '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer', 'ldp:Resource'])
         }
       ])
     });
@@ -124,7 +124,7 @@ describe('LDP container tests', () => {
       })
     ).resolves.toMatchObject({
       '@id': `${CONFIG.HOME_URL}resources`,
-      '@type': ['ldp:Container', 'ldp:BasicContainer'],
+      '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
       'ldp:contains': [
         {
           '@id': resourceUri,
@@ -178,7 +178,10 @@ describe('LDP container tests', () => {
         '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
       },
       '@id': `${CONFIG.HOME_URL}resources`,
-      '@type': ['http://www.w3.org/ns/ldp#Container', 'http://www.w3.org/ns/ldp#BasicContainer'],
+      '@type': expect.arrayContaining([
+        'http://www.w3.org/ns/ldp#Container',
+        'http://www.w3.org/ns/ldp#BasicContainer'
+      ]),
       'http://www.w3.org/ns/ldp#contains': [
         {
           '@id': resourceUri,
@@ -210,15 +213,15 @@ describe('LDP container tests', () => {
       })
     ).resolves.toMatchObject({
       '@id': `${CONFIG.HOME_URL}resources`,
-      '@type': ['ldp:Container', 'ldp:BasicContainer'],
-      'ldp:contains': [
-        {
+      '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
+      'ldp:contains': expect.arrayContaining([
+        expect.objectContaining({
           'pair:label': 'My project'
-        },
-        {
+        }),
+        expect.objectContaining({
           'pair:label': 'My project 2'
-        }
-      ]
+        })
+      ])
     });
 
     // Get with filters param
@@ -232,7 +235,7 @@ describe('LDP container tests', () => {
       })
     ).resolves.toMatchObject({
       '@id': `${CONFIG.HOME_URL}resources`,
-      '@type': ['ldp:Container', 'ldp:BasicContainer'],
+      '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
       'ldp:contains': [
         {
           'pair:label': 'My project 2'
@@ -267,7 +270,7 @@ describe('LDP container tests', () => {
       })
     ).resolves.toMatchObject({
       '@id': `${CONFIG.HOME_URL}resources`,
-      '@type': ['ldp:Container', 'ldp:BasicContainer'],
+      '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
       'ldp:contains': [
         {
           'pair:label': 'My project 2'

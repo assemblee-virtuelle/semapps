@@ -59,10 +59,11 @@ const Schema = {
         query: `
           ${await ctx.call('ontologies.getRdfPrefixes')}
           SELECT ?s1
-          FROM <${containerUri}>
           WHERE {
-            <${containerUri}> <http://www.w3.org/ns/ldp#contains> ?s1 .
-            ${filtersQuery.where}
+            GRAPH <${containerUri}> {
+              <${containerUri}> <http://www.w3.org/ns/ldp#contains> ?s1 .
+            }
+            ${filtersQuery}
           }
         `,
         accept,

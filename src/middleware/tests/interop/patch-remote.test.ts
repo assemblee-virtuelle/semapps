@@ -54,7 +54,8 @@ describe('Server2 imports a single resource from server1', () => {
           namedNode('http://www.w3.org/ns/ldp#contains'),
           namedNode(resourceUri)
         )
-      ]
+      ],
+      webId: 'system'
     });
 
     await waitForExpect(async () => {

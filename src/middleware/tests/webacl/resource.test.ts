@@ -1,4 +1,5 @@
 import { namedNode, triple, literal } from '@rdfjs/data-model';
+import waitForExpect from 'wait-for-expect';
 import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
 
@@ -147,13 +148,14 @@ describe('Permissions check on a specific resource', () => {
       webId: 'system'
     });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await expect(
-      broker.call('ldp.resource.get', {
-        resourceUri,
-        webId: BOB_WEBID
-      })
-    ).resolves.toBeDefined();
+    await waitForExpect(async () => {
+      await expect(
+        broker.call('ldp.resource.get', {
+          resourceUri,
+          webId: BOB_WEBID
+        })
+      ).resolves.toBeDefined();
+    });
   });
 
   // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message

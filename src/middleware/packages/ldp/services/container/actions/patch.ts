@@ -104,7 +104,7 @@ const Schema = {
         try {
           await ctx.call('ldp.container.detach', { containerUri, resourceUri, webId });
 
-          // If the mirrored resource is not attached to any container anymore, it must be deleted.
+          // If the imported resource is not attached to any container anymore, it must be deleted.
           const containers = await ctx.call('ldp.resource.getContainers', { resourceUri });
           // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           if (containers.length === 0 && isMirror(resourceUri, this.settings.baseUrl)) {

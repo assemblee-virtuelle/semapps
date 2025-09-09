@@ -1,18 +1,9 @@
 import fs from 'fs';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'byte... Remove this comment to see the full error message
 import bytes from 'bytes';
-<<<<<<< HEAD
 import { variable } from '@rdfjs/data-model';
-
-const { MoleculerError } = require('moleculer').Errors;
-
-// TODO put each method in a different file (problems with "this" not working)
-module.exports = {
-=======
 import rdfparseModule from 'rdf-parse';
 import streamifyString from 'streamify-string';
-import { variable } from '@rdfjs/data-model';
-
 import { Errors } from 'moleculer';
 
 const rdfParser = rdfparseModule.default;
@@ -21,7 +12,6 @@ const { MoleculerError } = Errors;
 
 // TODO put each method in a different file (problems with "this" not working)
 export default {
->>>>>>> 2.0
   streamToFile(inputStream: any, filePath: any, maxSize: any) {
     return new Promise((resolve, reject) => {
       const fileWriteStream = fs.createWriteStream(filePath);
@@ -42,6 +32,7 @@ export default {
         .on('error', reject);
     });
   },
+<<<<<<< HEAD:src/middleware/packages/ldp/services/resource/methods.ts
   // @ts-expect-error
   async bodyToTriples(body, contentType) {
     if (contentType === MIME_TYPES.JSON) {
@@ -70,6 +61,10 @@ export default {
   },
   convertBlankNodesToVars(triples: any) {
     return triples.map((triple: any) => {
+=======
+  convertBlankNodesToVars(triples) {
+    return triples.map(triple => {
+>>>>>>> 222b281308a99e519f536b00d53ed2b31812d6e3:src/middleware/packages/ldp/services/resource/methods.js
       if (triple.subject.termType === 'BlankNode') {
         triple.subject = variable(triple.subject.value);
       }

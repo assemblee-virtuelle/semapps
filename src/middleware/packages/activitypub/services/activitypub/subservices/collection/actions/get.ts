@@ -200,7 +200,7 @@ async function selectAndDereferenceItems(ctx: any, allItemURIs: any, options: an
     if (itemUri) {
       if (options.dereferenceItems) {
         try {
-          let item = await ctx.call('activitypub.activity.get', {
+          let item = await ctx.call('ldp.resource.get', {
             resourceUri: itemUri,
             webId: ctx.meta.impersonatedUser || webId
           });

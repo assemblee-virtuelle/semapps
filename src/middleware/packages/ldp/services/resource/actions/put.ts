@@ -2,13 +2,9 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import { ActionSchema } from 'moleculer';
 import { cleanUndefined } from '../../../utils.ts';
 
-<<<<<<< HEAD
-const { MoleculerError } = require('moleculer').Errors;
-=======
 import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
->>>>>>> 2.0
 
 const Schema = {
   visibility: 'public',
@@ -74,13 +70,6 @@ const Schema = {
 
     let oldTriples = await ctx.call('jsonld.parser.toQuads', { input: oldData });
     let newTriples = await ctx.call('jsonld.parser.toQuads', { input: resource });
-
-    // Filter out triples whose subject is not the resource itself
-    // We don't want to update or delete resources with IDs
-    // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
-    oldTriples = this.filterOtherNamedNodes(oldTriples, resourceUri);
-    // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
-    newTriples = this.filterOtherNamedNodes(newTriples, resourceUri);
 
     // blank nodes are convert to variable for sparql query (?variable)
     // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message

@@ -10,10 +10,6 @@ import generateIdAction from './actions/generateId.ts';
 import getContainersAction from './actions/getContainers.ts';
 import getTypesAction from './actions/getTypes.ts';
 import uploadAction from './actions/upload.ts';
-<<<<<<< HEAD
-// @ts-expect-error TS(1192): Module '"/home/laurin/projects/virtual-assembly/se... Remove this comment to see the full error message
-=======
->>>>>>> 2.0
 import methods from './methods.ts';
 import { getDatasetFromUri } from '../../utils.ts';
 
@@ -22,7 +18,6 @@ const LdpResourceSchema = {
   settings: {
     baseUrl: null,
     podProvider: false,
-    mirrorGraphName: null,
     preferredViewForResource: null,
     binary: {
       maxSize: '50Mb'
@@ -30,40 +25,25 @@ const LdpResourceSchema = {
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
-<<<<<<< HEAD
-    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resourceUr... Remove this comment to see the full error message
+    // @ts-expect-error
     awaitCreateComplete: awaitCreateCompleteAction,
-    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resource: ... Remove this comment to see the full error message
+    // @ts-expect-error
     create: createAction,
-    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resourceUr... Remove this comment to see the full error message
+    // @ts-expect-error
     delete: deleteAction,
     exist: existAction,
-    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { containerU... Remove this comment to see the full error message
+    // @ts-expect-error
     generateId: generateIdAction,
-    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resourceUr... Remove this comment to see the full error message
-    get: getAction,
-    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resourceUr... Remove this comment to see the full error message
-    getContainers: getContainersAction,
-    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resourceUr... Remove this comment to see the full error message
-    getTypes: getTypesAction,
-    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resourceUr... Remove this comment to see the full error message
-    patch: patchAction,
-    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resource: ... Remove this comment to see the full error message
-    put: putAction,
-    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resourceUr... Remove this comment to see the full error message
-=======
-    awaitCreateComplete: awaitCreateCompleteAction,
-    create: createAction,
-    delete: deleteAction,
-    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
-    exist: existAction,
-    generateId: generateIdAction,
+    // @ts-expect-error
     get: getAction,
     getContainers: getContainersAction,
+    // @ts-expect-error
     getTypes: getTypesAction,
+    // @ts-expect-error
     patch: patchAction,
+    // @ts-expect-error
     put: putAction,
->>>>>>> 2.0
+    // @ts-expect-error
     upload: uploadAction
   },
   hooks: {

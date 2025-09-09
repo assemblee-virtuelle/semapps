@@ -94,9 +94,9 @@ describe('Content negotiation', () => {
       })
     });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    expect(body).toMatch(new RegExp(`<${containerUri}> a ldp:BasicContainer, ldp:Container`));
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
+    // @ts-expect-error
+    expect(body).toMatch(new RegExp(`<${containerUri}> a ldp:Container, ldp:BasicContainer`));
+    // @ts-expect-error
     expect(body).toMatch(new RegExp(`ldp:contains <${projectUri}>`));
 
     // @ts-expect-error TS(2304): Cannot find name 'expect'.
@@ -286,23 +286,17 @@ describe('Content negotiation', () => {
       resourceUri: project4Uri
     });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
+    // In JSON-LD, blank nodes are automatically embedded
     expect(project4).toMatchObject({
       '@context': 'http://localhost:3000/.well-known/context.jsonld',
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
-      '@graph': expect.arrayContaining([
-        {
-          '@id': project4Uri,
-          '@type': 'pair:Project',
-          'pair:hasPart': `${project4Uri}#task1`,
-          'pair:label': 'myProject 4'
-        },
-        {
-          '@id': `${project4Uri}#task1`,
-          '@type': 'pair:Task',
-          'pair:label': 'myTask 1'
-        }
-      ])
+      '@id': project4Uri,
+      '@type': 'pair:Project',
+      'pair:hasPart': {
+        '@id': `${project4Uri}#task1`,
+        '@type': 'pair:Task',
+        'pair:label': 'myTask 1'
+      },
+      'pair:label': 'myProject 4'
     });
   });
 
