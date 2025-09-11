@@ -12,7 +12,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "parcel build && yalc publish --push --changed",
+    "build": "parcel build --no-cache && yalc publish --push --changed",
     "watch": "nodemon --ext ts,tsx,js --watch src --exec 'yarn build'",
     "typecheck": "tsc --noEmit"
   },
@@ -22,16 +22,16 @@
     "react-mde": "^11.5.0"
   },
   "peerDependencies": {
-    "@mui/material": "^5.13.1",
+    "@mui/material": "^7.1.0",
     "react": "^18.2.0",
-    "react-admin": "^4.11.0"
+    "react-admin": "^5.10.1"
   },
   "publishConfig": {
     "access": "public"
   },
   "devDependencies": {
-    "@mui/material": "^5.13.1",
-    "react": "^18.2.0",
-    "react-admin": "^4.11.0"
+    "@mui/material": "^7.1.0",
+    "react-admin": "^5.10.1",
+    "react": "^18.2.0"
   }
 }

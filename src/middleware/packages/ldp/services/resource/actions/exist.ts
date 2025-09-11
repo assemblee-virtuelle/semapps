@@ -1,4 +1,4 @@
-import { triple, namedNode, variable } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import { ActionSchema } from 'moleculer';
 
 const Schema = {
@@ -14,21 +14,23 @@ const Schema = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     let exist = await ctx.call('triplestore.tripleExist', {
-      triple: triple(namedNode(resourceUri), variable('p'), variable('s')),
+      triple: rdf.quad(rdf.namedNode(resourceUri), rdf.variable('p'), rdf.variable('s')),
       webId
     });
 
     // If this is a remote URI and the resource is not found in default graph, also look in mirror graph
     if (!exist && (await ctx.call('ldp.remote.isRemote', { resourceUri }))) {
       exist = await ctx.call('triplestore.tripleExist', {
-        triple: triple(namedNode(resourceUri), variable('p'), variable('s')),
+        triple: rdf.quad(rdf.namedNode(resourceUri), rdf.variable('p'), rdf.variable('s')),
         webId,
+        // @ts-expect-error TS(2339): Property 'mirrorGraphName' does not exist on type '... Remove this comment to see the full error message
         graphName: this.settings.mirrorGraphName
       });
     }
 
     // If resource exists but we don't want tombstones, check the resource type
     if (exist && !acceptTombstones) {
+      // @ts-expect-error TS(2339): Property 'getTypes' does not exist on type '... Remove this comment to see the full error message
       const types = await this.actions.getTypes({ resourceUri }, { parentCtx: ctx });
       if (types.includes('https://www.w3.org/ns/activitystreams#Tombstone')) return false;
     }

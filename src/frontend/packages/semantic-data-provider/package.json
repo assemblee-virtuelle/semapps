@@ -15,27 +15,33 @@
     "watch": "nodemon --ext ts,tsx,js --watch src --exec 'yarn build'"
   },
   "dependencies": {
-    "@rdfjs/data-model": "^1.3.4",
+    "@ldo/connected": "^1.0.0-alpha.30",
+    "@ldo/connected-solid": "^1.0.0-alpha.30",
+    "@ldo/ldo": "^1.0.0-alpha.30",
+    "@rdfjs/data-model": "2.1.1",
     "change-case": "^5.4.4",
     "crypto-js": "^4.1.1",
     "http-link-header": "1.1.3",
-    "jsonld": "^5.2.0",
+    "jsonld": "^8.0.0",
     "jwt-decode": "^3.0.0",
     "sparqljs": "^3.5.1",
     "speakingurl": "^14.0.1",
+    "tss-react": "^4.9.19",
     "url-join": "^4.0.1"
   },
   "devDependencies": {
-    "@rdfjs/types": "^1.1.0",
+    "@rdfjs/types": "^2.0.1",
     "@types/http-link-header": "^1.0.7",
     "@types/jsonld": "^1.5.14",
     "@types/sparqljs": "^3.1.11",
-    "@types/url-join": "^4.0.1"
+    "@types/url-join": "^4.0.1",
+    "react": "^18.2.0",
+    "react-admin": "^5.10.1"
   },
   "peerDependencies": {
-    "@mui/styles": "^5.13.1",
+    "@mui/material": "^7.1.0",
     "react": "^18.2.0",
-    "react-admin": "^4.11.0"
+    "react-admin": "^5.10.1"
   },
   "publishConfig": {
     "access": "public"

@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { namedNode, literal, triple, variable } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { arrayOf } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
@@ -75,11 +75,12 @@ const ActorService = {
           await ctx.call('ldp.resource.patch', {
             resourceUri: actorUri,
             triplesToAdd: Object.entries(propertiesToAdd).map(([predicate, subject]) =>
-              triple(
-                namedNode(actorUri),
-                namedNode(predicate),
-                // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
-                typeof subject === 'string' && subject.startsWith('http') ? namedNode(subject) : literal(subject)
+              rdf.quad(
+                rdf.namedNode(actorUri),
+                rdf.namedNode(predicate),
+                typeof subject === 'string' && subject.startsWith('http')
+                  ? rdf.namedNode(subject)
+                  : rdf.literal(subject)
               )
             ),
             webId: 'system'
@@ -105,12 +106,12 @@ const ActorService = {
                   {
                     type: 'bgp',
                     triples: [
-                      triple(
-                        namedNode(actorUri),
-                        namedNode('https://www.w3.org/ns/activitystreams#endpoints'),
-                        variable('endpoints')
+                      rdf.quad(
+                        rdf.namedNode(actorUri),
+                        rdf.namedNode('https://www.w3.org/ns/activitystreams#endpoints'),
+                        rdf.variable('endpoints')
                       ),
-                      triple(variable('endpoints'), namedNode(predicate), namedNode(endpoint))
+                      rdf.quad(rdf.variable('endpoints'), rdf.namedNode(predicate), rdf.namedNode(endpoint))
                     ]
                   }
                 ],
@@ -122,10 +123,10 @@ const ActorService = {
                       {
                         type: 'bgp',
                         triples: [
-                          triple(
-                            namedNode(actorUri),
-                            namedNode('https://www.w3.org/ns/activitystreams#endpoints'),
-                            variable('b0')
+                          rdf.quad(
+                            rdf.namedNode(actorUri),
+                            rdf.namedNode('https://www.w3.org/ns/activitystreams#endpoints'),
+                            rdf.variable('b0')
                           )
                         ]
                       }
@@ -133,7 +134,7 @@ const ActorService = {
                   },
                   {
                     type: 'bind',
-                    variable: variable('endpoints'),
+                    variable: rdf.variable('endpoints'),
                     expression: {
                       type: 'operation',
                       operator: 'if',
@@ -141,9 +142,9 @@ const ActorService = {
                         {
                           type: 'operation',
                           operator: 'bound',
-                          args: [variable('b0')]
+                          args: [rdf.variable('b0')]
                         },
-                        variable('b0'),
+                        rdf.variable('b0'),
                         {
                           type: 'operation',
                           operator: 'BNODE',
@@ -195,9 +196,7 @@ const ActorService = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'isActor' does not exist on type 'Service... Remove this comment to see the full error message
         if (this.isActor(newData)) {
-          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
           await this.actions.appendActorData({ actorUri: resourceUri }, { parentCtx: ctx });
           await ctx.call('signature.keypair.generate', { actorUri: resourceUri });
           await ctx.call('signature.keypair.attachPublicKey', { actorUri: resourceUri });
@@ -209,7 +208,6 @@ const ActorService = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, oldData } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'isActor' does not exist on type 'Service... Remove this comment to see the full error message
         if (this.isActor(oldData)) {
           await ctx.call('keys.deleteAllKeysForWebId', { webId: resourceUri });
         }

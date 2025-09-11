@@ -1,7 +1,7 @@
 import { ControlledContainerMixin, DereferenceMixin, delay, arrayOf } from '@semapps/ldp';
 import { solid, skos, apods } from '@semapps/ontologies';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { namedNode, triple } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import { ServiceSchema } from 'moleculer';
 import TypeRegistrationsService from './type-registrations.ts';
 
@@ -19,8 +19,8 @@ const TypeIndexesSchema = {
   },
   dependencies: ['ontologies'],
   created() {
-    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "type-registra... Remove this comment to see the full error message
     this.broker.createService({
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "type-registra... Remove this comment to see the full error message
       mixins: [TypeRegistrationsService]
     });
   },
@@ -60,7 +60,11 @@ const TypeIndexesSchema = {
         await ctx.call('ldp.resource.patch', {
           resourceUri: webId,
           triplesToAdd: [
-            triple(namedNode(webId), namedNode('http://www.w3.org/ns/solid/terms#publicTypeIndex'), namedNode(indexUri))
+            rdf.quad(
+              rdf.namedNode(webId),
+              rdf.namedNode('http://www.w3.org/ns/solid/terms#publicTypeIndex'),
+              rdf.namedNode(indexUri)
+            )
           ],
           webId
         });
@@ -94,10 +98,10 @@ const TypeIndexesSchema = {
         await ctx.call('solid-preferences-file.patch', {
           resourceUri: preferencesUri,
           triplesToAdd: [
-            triple(
-              namedNode(preferencesUri),
-              namedNode('http://www.w3.org/ns/solid/terms#privateTypeIndex'),
-              namedNode(indexUri)
+            rdf.quad(
+              rdf.namedNode(preferencesUri),
+              rdf.namedNode('http://www.w3.org/ns/solid/terms#privateTypeIndex'),
+              rdf.namedNode(indexUri)
             )
           ],
           webId
@@ -201,18 +205,14 @@ const TypeIndexesSchema = {
         const { webId } = ctx.params;
 
         // Wait until the /solid/type-index container has been created for the user
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         const indexesContainerUri = await this.actions.getContainerUri({ webId }, { parentCtx: ctx });
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.waitForContainerCreation({ containerUri: indexesContainerUri }, { parentCtx: ctx });
 
         // Wait until the /solid/type-registration container has been created for the user
         const registrationsContainerUri = await ctx.call('type-registrations.getContainerUri', { webId });
         await ctx.call('type-registrations.waitForContainerCreation', { containerUri: registrationsContainerUri });
 
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.createPublicIndex({ webId }, { parentCtx: ctx });
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.createPrivateIndex({ webId }, { parentCtx: ctx });
       }
     }

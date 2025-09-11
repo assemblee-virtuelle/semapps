@@ -25,22 +25,17 @@ const LdpContainerSchema = {
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
-    // @ts-expect-error TS(2322): Type 'ActionSchema<{ containerUri: { type: "string... Remove this comment to see the full error message
     attach: attachAction,
-    // @ts-expect-error TS(2322): Type 'ActionSchema<{ containerUri: { type: "string... Remove this comment to see the full error message
     clear: clearAction,
     create: createAction,
     createAndAttach: createAndAttachAction,
     delete: deleteAction,
-    // @ts-expect-error TS(2322): Type 'ActionSchema<{ containerUri: { type: "string... Remove this comment to see the full error message
     detach: detachAction,
-    // @ts-expect-error TS(2322): Type 'ActionSchema<{ containerUri: { type: "string... Remove this comment to see the full error message
     exist: existAction,
     get: getAction,
     getAll: getAllAction,
     getPath: getPathAction,
     getUris: getUrisAction,
-    // @ts-expect-error TS(2322): Type 'ActionSchema<{ containerUri: { type: "string... Remove this comment to see the full error message
     includes: includesAction,
     // @ts-expect-error TS(2322): Type 'ActionSchema<{ containerUri: { type: "string... Remove this comment to see the full error message
     isEmpty: isEmptyAction,

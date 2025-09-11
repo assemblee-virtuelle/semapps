@@ -43,19 +43,25 @@ const LdpRegistrySchema = {
         // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId, accountData } = ctx.params;
         // We want to add user's containers only in Pod provider config
-        // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
+
         if (this.settings.podProvider) {
-          const storageUrl = await ctx.call('solid-storage.getUrl', { webId });
-          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
+          const storageUrl: string = await ctx.call('solid-storage.getUrl', { webId });
+
           const registeredContainers = await this.actions.list({ dataset: accountData.username }, { parentCtx: ctx });
-          // Go through each registered containers
+
+          // Go through each registered container.
           for (const options of Object.values(registeredContainers)) {
-            await ctx.call('ldp.container.createAndAttach', {
-              // @ts-expect-error TS(18046): 'options' is of type 'unknown'.
-              containerUri: urlJoin(storageUrl, options.path),
-              options,
-              webId
-            });
+            try {
+              this.logger.info('Trying to register container', options.path);
+              await ctx.call('ldp.container.createAndAttach', {
+                containerUri: urlJoin(storageUrl, options.path),
+                options,
+                webId
+              });
+              this.logger.info('SUCCESS FOR PATH', options.path);
+            } catch (error) {
+              // pass
+            }
           }
         }
       }

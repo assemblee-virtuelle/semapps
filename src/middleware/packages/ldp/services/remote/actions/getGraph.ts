@@ -1,4 +1,4 @@
-import { triple, namedNode, variable } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import { ActionSchema } from 'moleculer';
 
 const Schema = {
@@ -10,7 +10,7 @@ const Schema = {
     const { resourceUri } = ctx.params;
 
     let exist = await ctx.call('triplestore.tripleExist', {
-      triple: triple(namedNode(resourceUri), variable('p'), variable('s')),
+      triple: rdf.quad(rdf.namedNode(resourceUri), rdf.variable('p'), rdf.variable('s')),
       webId: 'system'
     });
 
@@ -18,11 +18,13 @@ const Schema = {
       return undefined; // Default graph
     }
     exist = await ctx.call('triplestore.tripleExist', {
-      triple: triple(namedNode(resourceUri), variable('p'), variable('s')),
+      triple: rdf.quad(rdf.namedNode(resourceUri), rdf.variable('p'), rdf.variable('s')),
+      // @ts-expect-error TS(2339): Property 'mirrorGraphName' does not exist on type '... Remove this comment to see the full error message
       graphName: this.settings.mirrorGraphName
     });
 
     if (exist) {
+      // @ts-expect-error TS(2339): Property 'mirrorGraphName' does not exist on type '... Remove this comment to see the full error message
       return this.settings.mirrorGraphName;
     }
     return false;

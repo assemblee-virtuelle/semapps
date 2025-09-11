@@ -1,6 +1,6 @@
 import urlJoin from 'url-join';
 import waitForExpect from 'wait-for-expect';
-import { triple, namedNode } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
 import initialize from './initialize.ts';
 

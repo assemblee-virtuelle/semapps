@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import fetch from 'node-fetch';
 import { generateKeyPair } from 'crypto';
-import { namedNode, blankNode, literal, triple } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { ServiceSchema } from 'moleculer';
 import { KEY_TYPES } from '../constants.ts';
@@ -124,9 +124,17 @@ const SignatureService = {
           await ctx.call('ldp.resource.patch', {
             resourceUri: actorUri,
             triplesToAdd: [
-              triple(namedNode(actorUri), namedNode('https://w3id.org/security#publicKey'), blankNode('b0')),
-              triple(blankNode('b0'), namedNode('https://w3id.org/security#owner'), namedNode(actorUri)),
-              triple(blankNode('b0'), namedNode('https://w3id.org/security#publicKeyPem'), literal(publicKey))
+              rdf.quad(
+                rdf.namedNode(actorUri),
+                rdf.namedNode('https://w3id.org/security#publicKey'),
+                rdf.blankNode('b0')
+              ),
+              rdf.quad(rdf.blankNode('b0'), rdf.namedNode('https://w3id.org/security#owner'), rdf.namedNode(actorUri)),
+              rdf.quad(
+                rdf.blankNode('b0'),
+                rdf.namedNode('https://w3id.org/security#publicKeyPem'),
+                rdf.literal(publicKey)
+              )
             ],
             webId: 'system'
           });
@@ -233,14 +241,11 @@ const SignatureService = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'isMigrated' does not exist on type 'Serv... Remove this comment to see the full error message
         if (this.isMigrated) {
           return;
         }
 
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.generate({ actorUri: webId }, { parentCtx: ctx });
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.attachPublicKey({ actorUri: webId }, { parentCtx: ctx });
       }
     },

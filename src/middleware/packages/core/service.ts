@@ -123,7 +123,6 @@ const CoreService = {
       });
     }
 
-    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "ontologies"; ... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [OntologiesService],
       settings: {

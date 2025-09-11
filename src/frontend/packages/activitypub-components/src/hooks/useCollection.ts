@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState, useEffect, useRef, RefObject } from 'react';
 import { useGetIdentity, useDataProvider } from 'react-admin';
-import { QueryFunction, useInfiniteQuery, useQueries, useQueryClient } from 'react-query';
+import { QueryFunction, useInfiniteQuery, useQueries, useQueryClient } from '@tanstack/react-query';
 import { getOrCreateWsChannel, SemanticDataProvider } from '@semapps/semantic-data-provider';
 import { arrayOf } from '../utils';
 import type { UseCollectionOptions, SolidNotification, AwaitActivityOptions } from '../types';
@@ -19,17 +19,18 @@ const useItemsFromPages = (pages: any[], dereferenceItems: boolean) => {
   }, [dereferenceItems, items]);
 
   // Dereference all items, if necessary (even if shouldDereference is false, the hook needs to be called).
-  const itemQueries = useQueries(
-    !shouldDereference
+  const itemQueries = useQueries({
+    queries: !shouldDereference
       ? emptyArray
       : items
           .filter(item => typeof item === 'string')
           .map(itemUri => ({
             queryKey: ['resource', itemUri],
             queryFn: async () => (await dataProvider.fetch(itemUri)).json,
+            // TODO: Collections don't have to contain activities only, do they?
             staleTime: Infinity // Activities are immutable, so no need to refetch..
           }))
-  );
+  });
 
   if (!shouldDereference) {
     return { loadedItems: items, isLoading: false, isFetching: false };
@@ -54,7 +55,7 @@ const useItemsFromPages = (pages: any[], dereferenceItems: boolean) => {
 };
 
 /**
- * Subscribe a collection. Supports pagination.
+ * Subscribe toa collection. Supports pagination.
  * @param predicateOrUrl The collection URI or the predicate to get the collection URI from the identity (webId).
  * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false }`
  */
@@ -74,7 +75,7 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
   // Get collectionUrl from webId predicate or URL.
   const collectionUrl = useMemo(() => {
     if (predicateOrUrl) {
-      if (predicateOrUrl.startsWith('http')) {
+      if (predicateOrUrl.startsWith('http') || predicateOrUrl.startsWith('did:ng:')) {
         return predicateOrUrl;
       }
       if (identity?.webIdData) {
@@ -137,6 +138,8 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
               `No context returned by the server.\nA context is required to expand the collection's items and validate them.`
             );
           }
+          // TODO: Research: Is this used with the multi-purpose viewer already?
+          // How can multiple shapes be validated? Can we get this typed here?
           const shaclValidator = await getShaclValidator(shaclShapeUri);
           const validatedResults = await validateItems(arrayOf(json[itemsKey]), shaclValidator, json['@context']);
 
@@ -165,10 +168,13 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
     isLoading: isLoadingPage,
     isFetching: isFetchingPage,
     isFetchingNextPage
-  } = useInfiniteQuery(['collection', { collectionUrl, shaclShapeUri }], fetchCollection, {
+  } = useInfiniteQuery({
+    queryKey: ['collection', { collectionUrl, shaclShapeUri }],
     enabled: !!(collectionUrl && identity?.id),
+    initialPageParam: collectionUrl,
     getNextPageParam: (lastPage: any) => lastPage.next,
-    getPreviousPageParam: (firstPage: any) => firstPage.prev
+    getPreviousPageParam: (firstPage: any) => firstPage.prev,
+    queryFn: fetchCollection
   });
 
   // Put all items together in a list (and dereference, if required).
@@ -205,9 +211,10 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
       });
       if (shouldRefetch) {
         setTimeout(
-          () =>
-            queryClient.refetchQueries(['collection', { collectionUrl }], {
-              active: true,
+          async () =>
+            queryClient.refetchQueries({
+              queryKey: ['collection', { collectionUrl }],
+              type: 'active',
               exact: true
             }),
           typeof shouldRefetch === 'number' ? shouldRefetch : 2000
@@ -244,8 +251,9 @@ const useCollection = (predicateOrUrl: string, options: UseCollectionOptions = {
       if (shouldRefetch) {
         setTimeout(
           () =>
-            queryClient.refetchQueries(['collection', { collectionUrl }], {
-              active: true,
+            queryClient.refetchQueries({
+              queryKey: ['collection', { collectionUrl }],
+              type: 'active',
               exact: true
             }),
           typeof shouldRefetch === 'number' ? shouldRefetch : 2000

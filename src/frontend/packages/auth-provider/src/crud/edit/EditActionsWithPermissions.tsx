@@ -16,11 +16,11 @@ import { Permissions } from '../../types';
 const EditActionsWithPermissions = () => {
   const { hasList, hasShow } = useResourceDefinition();
   const record = useRecordContext();
-  const { permissions } = usePermissions<Permissions | undefined>(record?.id);
+  const { permissions } = usePermissions<Permissions | undefined>({ uri: record?.id });
 
   const resource = useResourceContext();
   const containerUri = useCreateContainerUri(resource);
-  const { permissions: containerPermissions } = usePermissions<Permissions | undefined>(containerUri);
+  const { permissions: containerPermissions } = usePermissions<Permissions | undefined>({ uri: containerUri });
 
   return (
     <TopToolbar>

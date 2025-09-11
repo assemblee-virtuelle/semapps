@@ -1,5 +1,5 @@
 import urlJoin from 'url-join';
-import { namedNode, triple } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { parseUrl, parseHeader, negotiateAccept, parseJson, parseTurtle } from '@semapps/middlewares';
 import { ServiceSchema } from 'moleculer';
@@ -70,7 +70,7 @@ const Schema = {
           'ldp.resource.patch',
           {
             resourceUri: this.endpointUrl,
-            triplesToAdd: [triple(namedNode(this.endpointUrl), predicate, object)],
+            triplesToAdd: [rdf.quad(rdf.namedNode(this.endpointUrl), predicate, object)],
             webId: 'system'
           },
           { meta: { dataset: this.settings.settingsDataset, skipEmitEvent: true, skipObjectsWatcher: true } }

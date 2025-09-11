@@ -134,7 +134,12 @@ const MarkdownInput: FunctionComponent<Props> = props => {
         />
       </fieldset>
       <FormHelperText error={isDirty && invalid} margin="dense" variant="outlined">
-        <InputHelperText error={error?.message} helperText={helperText} touched={isTouched || isSubmitted} />
+        <InputHelperText
+          error={error?.message}
+          helperText={helperText}
+          // @ts-expect-error TS(2322): Type '{ error: string | undefined; helperText: str... Remove this comment to see the full error message
+          touched={isTouched || isSubmitted}
+        />
       </FormHelperText>
     </StyledFormControl>
   );
