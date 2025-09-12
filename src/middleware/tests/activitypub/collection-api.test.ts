@@ -184,9 +184,9 @@ describe('Collections API', () => {
         id: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[1])}`,
         type: 'CollectionPage',
         partOf: paginatedCollectionUri,
-        prev: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[7])}`,
+        prev: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[2])}`,
         // @ts-expect-error TS(2304): Cannot find name 'expect'.
-        items: expect.arrayContaining([items[8], items[9]])
+        items: expect.arrayContaining([items[1], items[0]])
       }
     });
   });

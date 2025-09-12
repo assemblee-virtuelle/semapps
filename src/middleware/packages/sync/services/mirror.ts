@@ -1,6 +1,6 @@
 import urlJoin from 'url-join';
 import fetch from 'node-fetch';
-import { createFragmentURL, arrayOf } from '@semapps/ldp';
+import { createFragmentURL, arrayOf, getId } from '@semapps/ldp';
 import { ACTIVITY_TYPES } from '@semapps/activitypub';
 import { ServiceSchema, Errors } from 'moleculer';
 import SynchronizerService from './synchronizer.ts';
