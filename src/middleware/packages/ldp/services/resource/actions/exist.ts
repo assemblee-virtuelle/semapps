@@ -13,7 +13,7 @@ const Schema = {
     // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-    const exist = await ctx.call('triplestore.document.exist', { documentUri: resourceUri });
+    const exist = await ctx.call('triplestore.named-graph.exist', { uri: resourceUri });
 
     // If resource exists but we don't want tombstones, check the resource type
     if (exist && !acceptTombstones) {

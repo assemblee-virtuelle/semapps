@@ -55,12 +55,12 @@ const Schema = {
     }
 
     // Check if the remote resource is already stored
-    const exist = await ctx.call('triplestore.document.exist', { documentUri: resourceUri, dataset });
+    const exist = await ctx.call('triplestore.named-graph.exist', { uri: resourceUri, dataset });
 
     if (!exist) {
-      await ctx.call('triplestore.document.create', { documentUri: resourceUri, dataset });
+      await ctx.call('triplestore.named-graph.create', { uri: resourceUri, dataset });
     } else {
-      await ctx.call('triplestore.document.clear', { documentUri: resourceUri, dataset });
+      await ctx.call('triplestore.named-graph.clear', { uri: resourceUri, dataset });
     }
 
     if (keepInSync) {

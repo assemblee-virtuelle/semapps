@@ -181,9 +181,9 @@ const ObjectService = {
         const { resourceUri, formerType } = ctx.params;
         const expandedFormerTypes = await ctx.call('jsonld.parser.expandTypes', { types: formerType });
 
-        // We need to recreate the document as it has been deleted
+        // We need to recreate the named graph as it has been deleted
         // TODO See how we can avoid this since it will not work with NextGraph
-        await ctx.call('triplestore.document.create', { documentUri: resourceUri });
+        await ctx.call('triplestore.named-graph.create', { uri: resourceUri });
 
         // Insert directly the Tombstone in the triple store to avoid resource creation side-effects
         await ctx.call('triplestore.insert', {

@@ -27,7 +27,7 @@ const Schema = {
       webId
     });
 
-    await ctx.call('triplestore.document.delete', { documentUri: containerUri });
+    await ctx.call('triplestore.named-graph.delete', { uri: containerUri });
 
     // Detach the container from parent containers after deletion, otherwise the permissions may fail
     const parentContainers = await ctx.call('ldp.resource.getContainers', { resourceUri: containerUri });

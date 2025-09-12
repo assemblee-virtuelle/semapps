@@ -93,7 +93,7 @@ const Schema = {
     // TODO Use UUIDs for containers and collections https://github.com/assemblee-virtuelle/semapps/issues/1266
     const resourceUri =
       forcedResourceUri || (await ctx.call('ldp.resource.generateId', { containerUri, slug, isContainer }));
-    await ctx.call('triplestore.document.create', { documentUri: resourceUri });
+    await ctx.call('triplestore.named-graph.create', { uri: resourceUri });
 
     // We must add this first, otherwise side effects will not find the container of the created resource
     // But this create race conditions, especially when testing, since uncreated resources are linked to containers

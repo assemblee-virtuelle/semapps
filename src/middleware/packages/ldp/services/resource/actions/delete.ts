@@ -34,9 +34,9 @@ const Schema = {
       }
     );
 
-    await ctx.call('triplestore.document.clear', { documentUri: resourceUri });
+    await ctx.call('triplestore.named-graph.clear', { uri: resourceUri });
 
-    await ctx.call('triplestore.document.delete', { documentUri: resourceUri });
+    await ctx.call('triplestore.named-graph.delete', { uri: resourceUri });
 
     // We must detach the resource from the containers after deletion, otherwise the permissions may fail
     const containersUris = await ctx.call('ldp.resource.getContainers', { resourceUri });

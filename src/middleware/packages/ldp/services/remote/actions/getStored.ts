@@ -17,7 +17,7 @@ const Schema = {
     const { resourceUri, jsonContext } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-    const exist = await ctx.call('triplestore.document.exist', { documentUri: resourceUri });
+    const exist = await ctx.call('triplestore.named-graph.exist', { uri: resourceUri });
 
     if (!exist)
       throw new MoleculerError(`Resource Not found ${resourceUri} in dataset ${ctx.meta.dataset}`, 404, 'NOT_FOUND');

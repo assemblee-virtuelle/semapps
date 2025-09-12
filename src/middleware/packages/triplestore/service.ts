@@ -11,7 +11,7 @@ import query from './actions/query.ts';
 import update from './actions/update.ts';
 import tripleExist from './actions/tripleExist.ts';
 import DatasetService from './subservices/dataset.ts';
-import DocumentService from './subservices/document.ts';
+import NamedGraphService from './subservices/named-graph.ts';
 
 const SparqlGenerator = sparqljsModule.Generator;
 const { MoleculerError } = Errors;
@@ -26,11 +26,11 @@ const TripleStoreService = {
     fusekiBase: null,
     // Sub-services customization
     dataset: {},
-    document: {}
+    namedGraph: {}
   },
   dependencies: ['jsonld.parser'],
   async created() {
-    const { url, user, password, fusekiBase, dataset, document } = this.settings;
+    const { url, user, password, fusekiBase, dataset, namedGraph } = this.settings;
 
     if (dataset !== false) {
       // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "triplestore.d... Remove this comment to see the full error message
@@ -46,11 +46,11 @@ const TripleStoreService = {
       });
     }
 
-    if (document !== false) {
+    if (namedGraph !== false) {
       // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "triplestore.d... Remove this comment to see the full error message
       this.broker.createService({
-        mixins: [DocumentService],
-        settings: document
+        mixins: [NamedGraphService],
+        settings: namedGraph
       });
     }
   },

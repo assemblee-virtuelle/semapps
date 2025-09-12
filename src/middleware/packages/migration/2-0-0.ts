@@ -76,7 +76,7 @@ export default {
     async moveContainerToNamedGraph(ctx) {
       const { containerUri } = ctx.params;
 
-      const containerExist = await ctx.call('triplestore.document.exist', { documentUri: containerUri });
+      const containerExist = await ctx.call('triplestore.named-graph.exist', { uri: containerUri });
 
       if (containerExist) {
         this.logger.warn(`Container ${containerUri} is already in a named graph, skipping...`);
@@ -93,7 +93,7 @@ export default {
           webId: 'system'
         });
 
-        await ctx.call('triplestore.document.create', { documentUri: containerUri });
+        await ctx.call('triplestore.named-graph.create', { uri: containerUri });
         await ctx.call('triplestore.insert', {
           resource: container,
           graphName: containerUri,
@@ -152,7 +152,7 @@ export default {
     async moveResourceToNamedGraph(ctx) {
       const { resourceUri } = ctx.params;
 
-      const resourceExist = await ctx.call('triplestore.document.exist', { documentUri: resourceUri });
+      const resourceExist = await ctx.call('triplestore.named-graph.exist', { uri: resourceUri });
 
       if (resourceExist) {
         this.logger.warn(`Resource ${resourceUri} is already in a named graph, skipping...`);
@@ -172,7 +172,7 @@ export default {
           webId: 'system'
         });
 
-        await ctx.call('triplestore.document.create', { documentUri: resourceUri });
+        await ctx.call('triplestore.named-graph.create', { uri: resourceUri });
         await ctx.call('triplestore.insert', {
           resource,
           graphName: resourceUri,
