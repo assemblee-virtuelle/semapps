@@ -95,20 +95,16 @@ const ApiService = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'container' does not exist on type 'Optio... Remove this comment to see the full error message
         const { container } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
         const { pathname: basePath } = new URL(this.settings.baseUri);
-        // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'ServiceE... Remove this comment to see the full error message
         const resourcesWithContainerPath = await this.broker.call('ldp.getSetting', {
           key: 'resourcesWithContainerPath'
         });
         if (
-          // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
           !this.settings.podProvider &&
           resourcesWithContainerPath &&
           arrayOf(container.acceptedTypes).some(type => Object.values(FULL_ACTOR_TYPES).includes(type))
         ) {
           await ctx.call('api.addRoute', {
-            // @ts-expect-error TS(2339): Property 'getBoxesRoute' does not exist on type 'S... Remove this comment to see the full error message
             route: this.getBoxesRoute(path.join(basePath, `${container.fullPath}/:actorSlug`))
           });
         }

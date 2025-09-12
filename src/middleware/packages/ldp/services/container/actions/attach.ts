@@ -1,7 +1,5 @@
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
-import { ActionSchema } from 'moleculer';
-
-import { Errors } from 'moleculer';
+import { ActionSchema, Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
@@ -22,19 +20,24 @@ const Schema = {
 
     const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri, webId });
     if (!resourceExists) {
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       const childContainerExists = await this.actions.exist({ containerUri: resourceUri }, { parentCtx: ctx });
       if (!childContainerExists) {
         throw new MoleculerError(`Cannot attach non-existing resource or container: ${resourceUri}`, 404, 'NOT_FOUND');
       }
     }
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const containerExists = await this.actions.exist({ containerUri, webId }, { parentCtx: ctx });
     if (!containerExists) throw new Error(`Cannot attach to a non-existing container: ${containerUri}`);
 
     await ctx.call('triplestore.update', {
       query: sanitizeSparqlQuery`
+        PREFIX ldp: <http://www.w3.org/ns/ldp#>
         INSERT DATA { 
-          <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> 
+          GRAPH <${containerUri}> {
+            <${containerUri}> ldp:contains <${resourceUri}> 
+          }
         }
       `,
       webId: 'system'

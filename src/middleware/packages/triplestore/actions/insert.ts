@@ -44,7 +44,9 @@ const Schema = {
     const datasets = dataset === '*' ? await ctx.call('triplestore.dataset.list') : [dataset];
 
     for (dataset of datasets) {
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       if (datasets.length > 1) this.logger.info(`Inserting into dataset ${dataset}...`);
+      // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
       await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
         body: graphName ? `INSERT DATA { GRAPH <${graphName}> { ${rdf} } }` : `INSERT DATA { ${rdf} }`,
         headers: {

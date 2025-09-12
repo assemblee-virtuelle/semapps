@@ -40,6 +40,7 @@ const JsonldSchema = {
 
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "jsonld.contex... Remove this comment to see the full error message
     this.broker.createService({
+      // @ts-expect-error TS(2322): Type '{ name: "jsonld.context"; settings: { localC... Remove this comment to see the full error message
       mixins: [JsonLdContextService],
       settings: {
         localContextUri

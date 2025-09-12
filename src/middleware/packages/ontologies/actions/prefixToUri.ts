@@ -22,6 +22,7 @@ const Schema = {
     // @ts-expect-error TS(18047): 'matchResults' is possibly 'null'.
     const prefix = matchResults[1];
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const ontology = await this.actions.get({ prefix });
     if (!ontology) throw new Error(`No ontology found with prefix ${prefix}`);
 

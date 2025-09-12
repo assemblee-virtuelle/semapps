@@ -1,9 +1,7 @@
 import sparqljsModule from 'sparqljs';
-
 import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
-
 const SparqlParser = sparqljsModule.Parser;
 const parser = new SparqlParser();
 const ACCEPTED_OPERATIONS = ['insert', 'delete'];
@@ -73,7 +71,7 @@ export default async function patch(this: any, ctx: any) {
     ctx.meta.$statusCode = 204;
   } catch (e) {
     // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
-    if (!e.code || e.code < 400) console.error(e);
+    if (!e.code || (e.code < 400 && e.code >= 500)) console.error(e);
     // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
     ctx.meta.$statusCode = e.code || 500;
     // @ts-expect-error TS(18046): 'e' is of type 'unknown'.

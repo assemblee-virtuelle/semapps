@@ -60,7 +60,6 @@ const ActivityMappingService = {
                 : {};
             } catch (e) {
               this.logger.warn(
-                // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
                 `Could not get profile of actor ${activity.actor} (webId ${ctx.meta.webId} / dataset ${ctx.meta.dataset})`
               );
             }

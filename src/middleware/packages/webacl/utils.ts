@@ -3,14 +3,8 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import urlJoin from 'url-join';
 import { Parser } from 'n3';
 import streamifyString from 'streamify-string';
-import rdfparseModule from 'rdf-parse';
+import rdfParser from 'rdf-parse';
 
-import { Errors } from 'moleculer';
-
-const { MoleculerError } = Errors;
-
-// @ts-expect-error TS(2339): Property 'default' does not exist on type 'RdfPars... Remove this comment to see the full error message
-const rdfParser = rdfparseModule.default;
 const getSlugFromUri = (str: any) => str.match(new RegExp(`.*/(.*)`))[1];
 
 const hasType = (resource: any, type: any) => {
@@ -30,7 +24,11 @@ const findParentContainers = async (ctx: any, resourceUri: any) => {
     query: `
       PREFIX ldp: <http://www.w3.org/ns/ldp#>
       SELECT ?container
-      WHERE { ?container ldp:contains <${resourceUri}> . }
+      WHERE { 
+        GRAPH ?g {
+          ?container ldp:contains <${resourceUri}> . 
+        }
+      }
     `,
     webId: 'system'
   });

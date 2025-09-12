@@ -2,10 +2,8 @@ import { ControlledContainerMixin, arrayOf, getDatasetFromUri } from '@semapps/l
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
-import { ServiceSchema } from 'moleculer';
+import { ServiceSchema, Errors } from 'moleculer';
 import getAction from './actions/get.ts';
-
-import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
@@ -143,7 +141,9 @@ const CollectionService = {
             PREFIX as: <https://www.w3.org/ns/activitystreams#>
             SELECT ( Count(?items) as ?count )
             WHERE {
-              <${collectionUri}> as:items ?items .
+              GRAPH <${collectionUri}> {
+                <${collectionUri}> as:items ?items .
+              }
             }
           `,
           dataset: this.getCollectionDataset(collectionUri),
@@ -168,8 +168,10 @@ const CollectionService = {
             PREFIX as: <https://www.w3.org/ns/activitystreams#>
             ASK
             WHERE {
-              <${collectionUri}> a as:Collection .
-              <${collectionUri}> as:items <${itemUri}> .
+              GRAPH <${collectionUri}> {
+                <${collectionUri}> a as:Collection .
+                <${collectionUri}> as:items <${itemUri}> .
+              }
             }
           `,
           dataset: this.getCollectionDataset(collectionUri),
@@ -204,7 +206,9 @@ const CollectionService = {
         await ctx.call('triplestore.update', {
           query: sanitizeSparqlQuery`
             INSERT DATA { 
-              <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>
+              GRAPH <${collectionUri}> {
+                <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>
+              }
             }
           `,
           dataset: this.getCollectionDataset(collectionUri),
@@ -235,8 +239,11 @@ const CollectionService = {
         await ctx.call('triplestore.update', {
           query: sanitizeSparqlQuery`
             DELETE
-            WHERE
-            { <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}> }
+            WHERE { 
+              GRAPH <${collectionUri}> {
+                <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}> 
+              }
+            }
           `,
           dataset: this.getCollectionDataset(collectionUri),
           webId: 'system'
@@ -249,6 +256,7 @@ const CollectionService = {
       }
     },
 
+    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resourceUr... Remove this comment to see the full error message
     get: getAction,
 
     clear: {
@@ -257,17 +265,22 @@ const CollectionService = {
        * @param collectionUri The full URI of the collection
        */
       async handler(ctx) {
-        const collectionUri = ctx.params.collectionUri.replace(/\/+$/, '');
+        const { collectionUri } = ctx.params;
         await ctx.call('triplestore.update', {
           query: sanitizeSparqlQuery`
             PREFIX as: <https://www.w3.org/ns/activitystreams#> 
             DELETE {
-              ?s1 ?p1 ?o1 .
+              GRAPH ?g1 {
+                ?s1 ?p1 ?o1 .
+              }
             }
             WHERE { 
-              FILTER(?container IN (<${collectionUri}>, <${`${collectionUri}/`}>)) .
-              ?container as:items ?s1 .
-              ?s1 ?p1 ?o1 .
+              GRAPH <${collectionUri}> {
+                <${collectionUri}> as:items ?s1 .
+              }
+              GRAPH ?g1 {
+                ?s1 ?p1 ?o1 .
+              }
             } 
           `,
           dataset: this.getCollectionDataset(collectionUri),
@@ -294,7 +307,9 @@ const CollectionService = {
             PREFIX ldp: <http://www.w3.org/ns/ldp#>
             SELECT ?actorUri
             WHERE { 
-              ?actorUri ${prefix}:${collectionKey} <${collectionUri}>
+              GRAPH ?g {
+                ?actorUri ${prefix}:${collectionKey} <${collectionUri}>
+              }
             }
           `,
           dataset: this.getCollectionDataset(collectionUri),

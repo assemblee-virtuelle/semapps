@@ -1,7 +1,7 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import urlJoin from 'url-join';
 
-import { ActionSchema } from 'moleculer';
+import { ActionSchema, Errors } from 'moleculer';
 import {
   getAclUriFromResourceUri,
   convertBodyToTriples,
@@ -10,8 +10,6 @@ import {
   FULL_FOAF_AGENT,
   FULL_AGENTCLASS_URI
 } from '../../../utils.ts';
-
-import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 

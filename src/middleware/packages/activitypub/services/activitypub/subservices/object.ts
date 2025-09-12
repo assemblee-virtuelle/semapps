@@ -181,6 +181,10 @@ const ObjectService = {
         const { resourceUri, formerType } = ctx.params;
         const expandedFormerTypes = await ctx.call('jsonld.parser.expandTypes', { types: formerType });
 
+        // We need to recreate the named graph as it has been deleted
+        // TODO See how we can avoid this since it will not work with NextGraph
+        await ctx.call('triplestore.named-graph.create', { uri: resourceUri });
+
         // Insert directly the Tombstone in the triple store to avoid resource creation side-effects
         await ctx.call('triplestore.insert', {
           resource: {
@@ -194,6 +198,7 @@ const ObjectService = {
               '@type': 'http://www.w3.org/2001/XMLSchema#dateTime'
             }
           },
+          graphName: resourceUri,
           webId: 'system'
         });
       }
@@ -203,7 +208,6 @@ const ObjectService = {
     'ldp.resource.deleted': {
       async handler(ctx) {
         // Check if tombstones are globally activated
-        // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
         if (this.settings.activateTombstones) {
           // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
           const { resourceUri, containersUris, oldData, dataset } = ctx.params;
@@ -219,7 +223,6 @@ const ObjectService = {
             // @ts-expect-error TS(2339): Property 'activateTombstones' does not exist on ty... Remove this comment to see the full error message
             if (containerOptions.activateTombstones !== false && ctx.meta.activateTombstones !== false) {
               const formerType = oldData.type || oldData['@type'];
-              // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
               await this.actions.createTombstone({ resourceUri, formerType }, { meta: { dataset }, parentCtx: ctx });
             }
           }

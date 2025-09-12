@@ -4,7 +4,7 @@ import { Errors as E } from 'moleculer-web';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { getType, arrayOf } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
-import { collectionPermissionsWithAnonRead, getSlugFromUri, objectIdToCurrent } from '../../../utils.ts';
+import { collectionPermissionsWithAnonRead, getSlugFromUri } from '../../../utils.ts';
 import { ACTOR_TYPES } from '../../../constants.ts';
 import AwaitActivityMixin from '../../../mixins/await-activity.ts';
 
@@ -115,12 +115,11 @@ const OutboxService = {
             webId: 'system' // Post as system since there is no write permission to the activities container
           });
 
-          // Refetch because persisting has side-effects.
-          // And reattach capability for further processing (if present).
-          activity = {
-            ...(await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' })),
-            capability
-          };
+          // Refetch because persisting has side-effects
+          activity = await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' });
+
+          // Reattach capability for further processing
+          if (capability) activity.capability = capability;
         }
 
         try {
@@ -237,8 +236,7 @@ const OutboxService = {
             if (this.settings.podProvider) {
               // Store the activity in the dataset of the recipient
               await this.broker.call('ldp.remote.store', {
-                resource: objectIdToCurrent(activity),
-                mirrorGraph: false, // Store in default graph as activity may not be public
+                resource: activity,
                 keepInSync: false, // Activities are immutable
                 webId: recipientUri,
                 dataset

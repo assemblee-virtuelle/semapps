@@ -3,7 +3,6 @@ import { foaf, schema } from '@semapps/ontologies';
 import { ControlledContainerMixin, DereferenceMixin, getDatasetFromUri } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
 
-/** @type {import('moleculer').ServiceSchema} */
 const WebIdService = {
   name: 'webid' as const,
   mixins: [ControlledContainerMixin, DereferenceMixin],

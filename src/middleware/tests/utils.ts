@@ -18,11 +18,11 @@ export const listDatasets = async () => {
   }
 };
 
-export const clearDataset = (dataset: any) =>
+export const dropDataset = (dataset: any) =>
   // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
   fetch(urlJoin(CONFIG.SPARQL_ENDPOINT, dataset, 'update'), {
     method: 'POST',
-    body: 'update=CLEAR+ALL', // DROP+ALL is not working with WebACL datasets !
+    body: 'update=DROP+ALL',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
       Authorization: `Basic ${Buffer.from(`${CONFIG.JENA_USER}:${CONFIG.JENA_PASSWORD}`).toString('base64')}`

@@ -17,6 +17,7 @@ const Schema = {
     // Because we have chosen not to use a common dataset for this kind of data
     // So we use the deprecated getContainerFromUri to find the container
     // TODO store actors in a proper LDP container, with its own dataset ?
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     if (this.settings.podProvider && `${getContainerFromUri(resourceUri)}/` === this.settings.baseUrl) {
       return [getContainerFromUri(resourceUri)];
     }
@@ -26,7 +27,9 @@ const Schema = {
         PREFIX ldp: <http://www.w3.org/ns/ldp#>
         SELECT ?containerUri
         WHERE {
-          ?containerUri ldp:contains <${resourceUri}> .
+          GRAPH ?containerUri {
+            ?containerUri ldp:contains <${resourceUri}> .
+          }
         }
       `,
       dataset,

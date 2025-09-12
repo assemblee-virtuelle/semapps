@@ -13,6 +13,7 @@ const Schema = {
   async handler(ctx) {
     const { type } = ctx.params;
     const types = await ctx.call('jsonld.parser.expandTypes', { types: type });
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const registeredContainers = await this.actions.list({}, { parentCtx: ctx });
 
     return Object.values(registeredContainers).find(container =>

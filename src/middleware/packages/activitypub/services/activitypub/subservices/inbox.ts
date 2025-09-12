@@ -1,15 +1,12 @@
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
 import { ServiceSchema } from 'moleculer';
-import { objectIdToCurrent, collectionPermissionsWithAnonRead } from '../../../utils.ts';
+import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
 import { ACTOR_TYPES } from '../../../constants.ts';
 import AwaitActivityMixin from '../../../mixins/await-activity.ts';
 
-import { Errors } from 'moleculer';
+const { MoleculerError } = require('moleculer').Errors;
 
-const { MoleculerError } = Errors;
-
-/** @type {import('moleculer').ServiceSchema} */
 const InboxService = {
   name: 'activitypub.inbox' as const,
   mixins: [AwaitActivityMixin],
@@ -116,8 +113,7 @@ const InboxService = {
         if (activity.id && !activity.id.includes('#')) {
           // Save the remote activity in the local triple store
           await ctx.call('ldp.remote.store', {
-            resource: objectIdToCurrent(activity),
-            mirrorGraph: false, // Store in default graph as activity may not be public
+            resource: activity,
             keepInSync: false, // Activities are immutable
             webId: inboxOwner
           });
@@ -173,10 +169,14 @@ const InboxService = {
             PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
             SELECT DISTINCT ?activityUri 
             WHERE {
-              <${collectionUri}> a as:Collection .
-              <${collectionUri}> as:items ?activityUri . 
-              ?activityUri as:published ?published . 
-              ${filters ? `FILTER (${filters.join(' && ')})` : ''}
+              GRAPH <${collectionUri}> {
+                <${collectionUri}> a as:Collection .
+                <${collectionUri}> as:items ?activityUri . 
+              }
+              GRAPH ?g {
+                ?activityUri as:published ?published . 
+                ${filters ? `FILTER (${filters.join(' && ')})` : ''}
+              }
             }
             ORDER BY ?published
           `,

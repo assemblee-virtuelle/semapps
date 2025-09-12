@@ -157,29 +157,22 @@ const InferenceSchema = {
         let { newData } = ctx.params;
         newData = await ctx.call('jsonld.parser.expand', { input: newData });
 
-        // @ts-expect-error TS(2339): Property 'generateInverseTriplesFromResource' does... Remove this comment to see the full error message
         let triplesToAdd = this.generateInverseTriplesFromResource(newData[0]);
 
-        // @ts-expect-error TS(2339): Property 'splitLocalAndRemote' does not exist on t... Remove this comment to see the full error message
         const [addLocals, addRemotes] = this.splitLocalAndRemote(triplesToAdd);
 
         // Avoid adding inverse link to non-existent resources
-        // @ts-expect-error TS(2339): Property 'filterMissingResources' does not exist o... Remove this comment to see the full error message
         triplesToAdd = await this.filterMissingResources(ctx, addLocals);
 
         // local data
         if (triplesToAdd.length > 0) {
-          // @ts-expect-error TS(2339): Property 'generateInsertQuery' does not exist on t... Remove this comment to see the full error message
           await ctx.call('triplestore.update', { query: this.generateInsertQuery(triplesToAdd), webId: 'system' });
-          // @ts-expect-error TS(2339): Property 'cleanResourcesCache' does not exist on t... Remove this comment to see the full error message
           this.cleanResourcesCache(ctx, triplesToAdd);
         }
 
         // remote data
-        // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
         if (this.settings.offerToRemoteServers) {
           for (const triple of addRemotes) {
-            // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'ServiceE... Remove this comment to see the full error message
             await this.broker.call('inference.remote.offerInference', {
               subject: triple.subject.id,
               predicate: triple.predicate.id,
@@ -197,24 +190,18 @@ const InferenceSchema = {
         let { oldData } = ctx.params;
         oldData = await ctx.call('jsonld.parser.expand', { input: oldData });
 
-        // @ts-expect-error TS(2339): Property 'generateInverseTriplesFromResource' does... Remove this comment to see the full error message
         const triplesToRemove = this.generateInverseTriplesFromResource(oldData[0]);
 
-        // @ts-expect-error TS(2339): Property 'splitLocalAndRemote' does not exist on t... Remove this comment to see the full error message
         const [removeLocals, removeRemotes] = this.splitLocalAndRemote(triplesToRemove);
 
         if (removeLocals.length > 0) {
-          // @ts-expect-error TS(2339): Property 'generateDeleteQuery' does not exist on t... Remove this comment to see the full error message
           await ctx.call('triplestore.update', { query: this.generateDeleteQuery(removeLocals), webId: 'system' });
-          // @ts-expect-error TS(2339): Property 'cleanResourcesCache' does not exist on t... Remove this comment to see the full error message
           this.cleanResourcesCache(ctx, removeLocals);
         }
 
         // remote data
-        // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
         if (this.settings.offerToRemoteServers) {
           for (const triple of removeRemotes) {
-            // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'ServiceE... Remove this comment to see the full error message
             await this.broker.call('inference.remote.offerInference', {
               subject: triple.subject.id,
               predicate: triple.predicate.id,
@@ -233,55 +220,42 @@ const InferenceSchema = {
         oldData = await ctx.call('jsonld.parser.expand', { input: oldData });
         newData = await ctx.call('jsonld.parser.expand', { input: newData });
 
-        // @ts-expect-error TS(2339): Property 'generateInverseTriplesFromResource' does... Remove this comment to see the full error message
         const triplesToRemove = this.generateInverseTriplesFromResource(oldData[0]);
-        // @ts-expect-error TS(2339): Property 'generateInverseTriplesFromResource' does... Remove this comment to see the full error message
         const triplesToAdd = this.generateInverseTriplesFromResource(newData[0]);
 
         // Filter out triples which are removed and added at the same time
-        // @ts-expect-error TS(2339): Property 'getTriplesDifference' does not exist on ... Remove this comment to see the full error message
         const filteredTriplesToAdd = this.getTriplesDifference(triplesToAdd, triplesToRemove);
-        // @ts-expect-error TS(2339): Property 'getTriplesDifference' does not exist on ... Remove this comment to see the full error message
         const filteredTriplesToRemove = this.getTriplesDifference(triplesToRemove, triplesToAdd);
 
-        // @ts-expect-error TS(2339): Property 'splitLocalAndRemote' does not exist on t... Remove this comment to see the full error message
         let [addLocals, addRemotes] = this.splitLocalAndRemote(filteredTriplesToAdd);
-        // @ts-expect-error TS(2339): Property 'splitLocalAndRemote' does not exist on t... Remove this comment to see the full error message
         const [removeLocals, removeRemotes] = this.splitLocalAndRemote(filteredTriplesToRemove);
 
         // Dealing with locals first
 
         // Avoid adding inverse link to non-existent resources
-        // @ts-expect-error TS(2339): Property 'filterMissingResources' does not exist o... Remove this comment to see the full error message
         addLocals = await this.filterMissingResources(ctx, addLocals);
 
         if (removeLocals.length > 0) {
           await ctx.call('triplestore.update', {
-            // @ts-expect-error TS(2339): Property 'generateDeleteQuery' does not exist on t... Remove this comment to see the full error message
             query: this.generateDeleteQuery(removeLocals),
             webId: 'system'
           });
-          // @ts-expect-error TS(2339): Property 'cleanResourcesCache' does not exist on t... Remove this comment to see the full error message
           this.cleanResourcesCache(ctx, removeLocals);
         }
 
         if (addLocals.length > 0) {
           await ctx.call('triplestore.update', {
-            // @ts-expect-error TS(2339): Property 'generateInsertQuery' does not exist on t... Remove this comment to see the full error message
             query: this.generateInsertQuery(addLocals),
             webId: 'system'
           });
-          // @ts-expect-error TS(2339): Property 'cleanResourcesCache' does not exist on t... Remove this comment to see the full error message
           this.cleanResourcesCache(ctx, addLocals);
         }
 
         // Dealing with remotes
 
         // remote relationships are sent to relay actor of remote server
-        // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
         if (this.settings.offerToRemoteServers) {
           for (const triple of addRemotes) {
-            // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'ServiceE... Remove this comment to see the full error message
             await this.broker.call('inference.remote.offerInference', {
               subject: triple.subject.id,
               predicate: triple.predicate.id,
@@ -290,7 +264,6 @@ const InferenceSchema = {
             });
           }
           for (const triple of removeRemotes) {
-            // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'ServiceE... Remove this comment to see the full error message
             await this.broker.call('inference.remote.offerInference', {
               subject: triple.subject.id,
               predicate: triple.predicate.id,
@@ -310,49 +283,38 @@ const InferenceSchema = {
         // If the patch is done following a remote inference offer
         if (skipInferenceCheck) return;
 
-        // @ts-expect-error TS(2339): Property 'generateInverseTriples' does not exist o... Remove this comment to see the full error message
         const triplesToAdd = this.generateInverseTriples(triplesAdded);
-        // @ts-expect-error TS(2339): Property 'generateInverseTriples' does not exist o... Remove this comment to see the full error message
         const triplesToRemove = this.generateInverseTriples(triplesRemoved);
 
-        // @ts-expect-error TS(2339): Property 'splitLocalAndRemote' does not exist on t... Remove this comment to see the full error message
         let [addLocals, addRemotes] = this.splitLocalAndRemote(triplesToAdd);
-        // @ts-expect-error TS(2339): Property 'splitLocalAndRemote' does not exist on t... Remove this comment to see the full error message
         const [removeLocals, removeRemotes] = this.splitLocalAndRemote(triplesToRemove);
 
         // Dealing with locals first
 
         // Avoid adding inverse link to non-existent resources
-        // @ts-expect-error TS(2339): Property 'filterMissingResources' does not exist o... Remove this comment to see the full error message
         addLocals = await this.filterMissingResources(ctx, addLocals);
 
         if (removeLocals.length > 0) {
           await ctx.call('triplestore.update', {
-            // @ts-expect-error TS(2339): Property 'generateDeleteQuery' does not exist on t... Remove this comment to see the full error message
             query: this.generateDeleteQuery(removeLocals),
             webId: 'system'
           });
-          // @ts-expect-error TS(2339): Property 'cleanResourcesCache' does not exist on t... Remove this comment to see the full error message
           this.cleanResourcesCache(ctx, removeLocals);
         }
 
         if (addLocals.length > 0) {
           await ctx.call('triplestore.update', {
-            // @ts-expect-error TS(2339): Property 'generateInsertQuery' does not exist on t... Remove this comment to see the full error message
             query: this.generateInsertQuery(addLocals),
             webId: 'system'
           });
-          // @ts-expect-error TS(2339): Property 'cleanResourcesCache' does not exist on t... Remove this comment to see the full error message
           this.cleanResourcesCache(ctx, addLocals);
         }
 
         // Dealing with remotes
 
         // remote relationships are sent to relay actor of remote server
-        // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
         if (this.settings.offerToRemoteServers) {
           for (const triple of addRemotes) {
-            // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'ServiceE... Remove this comment to see the full error message
             await this.broker.call('inference.remote.offerInference', {
               subject: triple.subject.id,
               predicate: triple.predicate.id,
@@ -361,7 +323,6 @@ const InferenceSchema = {
             });
           }
           for (const triple of removeRemotes) {
-            // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'ServiceE... Remove this comment to see the full error message
             await this.broker.call('inference.remote.offerInference', {
               subject: triple.subject.id,
               predicate: triple.predicate.id,
@@ -378,11 +339,8 @@ const InferenceSchema = {
         // @ts-expect-error TS(2339): Property 'owl' does not exist on type 'Optionalize... Remove this comment to see the full error message
         const { owl } = ctx.params;
         if (owl) {
-          // @ts-expect-error TS(2339): Property 'findInverseRelations' does not exist on ... Remove this comment to see the full error message
           const result = await this.findInverseRelations(owl);
-          // @ts-expect-error TS(2339): Property 'logger' does not exist on type 'ServiceE... Remove this comment to see the full error message
           this.logger.info(`Found ${Object.keys(result).length} inverse relations in ${owl}`);
-          // @ts-expect-error TS(2339): Property 'inverseRelations' does not exist on type... Remove this comment to see the full error message
           this.inverseRelations = { ...this.inverseRelations, ...result };
         }
       }

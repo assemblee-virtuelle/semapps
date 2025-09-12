@@ -2,7 +2,7 @@ import { SparqlJsonParser } from 'sparqljson-parse';
 import sparqljsModule from 'sparqljs';
 import fetch from 'node-fetch';
 import { throw403, throw500 } from '@semapps/middlewares';
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema, Errors } from 'moleculer';
 import countTriplesOfSubject from './actions/countTriplesOfSubject.ts';
 import deleteOrphanBlankNodes from './actions/deleteOrphanBlankNodes.ts';
 import dropAll from './actions/dropAll.ts';
@@ -11,10 +11,9 @@ import query from './actions/query.ts';
 import update from './actions/update.ts';
 import tripleExist from './actions/tripleExist.ts';
 import DatasetService from './subservices/dataset.ts';
+import NamedGraphService from './subservices/named-graph.ts';
 
 const SparqlGenerator = sparqljsModule.Generator;
-import { Errors } from 'moleculer';
-
 const { MoleculerError } = Errors;
 
 const TripleStoreService = {
@@ -26,16 +25,16 @@ const TripleStoreService = {
     mainDataset: null,
     fusekiBase: null,
     // Sub-services customization
-    dataset: {}
+    dataset: {},
+    namedGraph: {}
   },
   dependencies: ['jsonld.parser'],
   async created() {
-    const { url, user, password, dataset, fusekiBase } = this.settings;
-    this.subservices = {};
+    const { url, user, password, fusekiBase, dataset, namedGraph } = this.settings;
 
     if (dataset !== false) {
       // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "triplestore.d... Remove this comment to see the full error message
-      this.subservices.dataset = this.broker.createService({
+      this.broker.createService({
         mixins: [DatasetService],
         settings: {
           url,
@@ -44,6 +43,14 @@ const TripleStoreService = {
           fusekiBase,
           ...dataset
         }
+      });
+    }
+
+    if (namedGraph !== false) {
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "triplestore.d... Remove this comment to see the full error message
+      this.broker.createService({
+        mixins: [NamedGraphService],
+        settings: namedGraph
       });
     }
   },
@@ -58,7 +65,6 @@ const TripleStoreService = {
     update,
     query,
     dropAll,
-    // @ts-expect-error TS(2322): Type 'ActionSchema<{ uri: { type: "string"; }; web... Remove this comment to see the full error message
     countTriplesOfSubject,
     tripleExist,
     deleteOrphanBlankNodes

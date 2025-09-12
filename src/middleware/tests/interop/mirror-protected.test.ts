@@ -3,12 +3,14 @@ import waitForExpect from 'wait-for-expect';
 import { ACTIVITY_TYPES } from '@semapps/activitypub';
 import initialize from './initialize.ts';
 
+// @ts-expect-error TS(2304): Cannot find name 'jest'.
 jest.setTimeout(50000);
 let server1: any;
 let server2: any;
 const relay1 = 'http://localhost:3001/as/actor/relay';
 const relay2 = 'http://localhost:3002/as/actor/relay';
 
+// @ts-expect-error TS(2304): Cannot find name 'beforeAll'.
 beforeAll(async () => {
   // @ts-expect-error TS(2554): Expected 5 arguments, but got 4.
   server1 = await initialize(3001, 'testData1', 'settings1', 1);
@@ -26,12 +28,15 @@ afterAll(async () => {
   if (server2) await server2.stop();
 });
 
+// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe('Resource on server1 is shared with user on server2', () => {
   let resourceUri: any;
   let user2: any;
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Server2 follow server1', async () => {
     await waitForExpect(async () => {
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(
         server1.call('activitypub.collection.includes', {
           collectionUri: urlJoin(relay1, 'followers'),
@@ -41,6 +46,7 @@ describe('Resource on server1 is shared with user on server2', () => {
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Protected resource on server1 is shared with a specific user on server2', async () => {
     const { webId } = await server2.call('auth.signup', {
       username: 'srosset81',
@@ -85,7 +91,9 @@ describe('Resource on server1 is shared with user on server2', () => {
         webId: relay1
       });
 
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(inbox).not.toBeNull();
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(inbox.orderedItems[0]).toMatchObject({
         type: ACTIVITY_TYPES.CREATE,
         actor: relay1,
@@ -95,6 +103,7 @@ describe('Resource on server1 is shared with user on server2', () => {
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Protected resource is not shared anymore with a specific user', async () => {
     await server1.call('webacl.resource.removeRights', {
       resourceUri,
@@ -118,6 +127,7 @@ describe('Resource on server1 is shared with user on server2', () => {
         webId: relay1
       });
 
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(inbox).not.toBeNull();
       // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(inbox.orderedItems[0]).toMatchObject({

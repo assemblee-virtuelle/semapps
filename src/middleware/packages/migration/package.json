@@ -6,7 +6,8 @@
   "author": "Virtual Assembly",
   "dependencies": {
     "@semapps/ldp": "1.1.4",
-    "@semapps/webacl": "1.1.4"
+    "@semapps/webacl": "1.1.4",
+    "url-join": "^4.0.1"
   },
   "publishConfig": {
     "access": "public",

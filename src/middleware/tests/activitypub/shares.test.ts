@@ -2,6 +2,7 @@ import waitForExpect from 'wait-for-expect';
 import { OBJECT_TYPES, ACTIVITY_TYPES, PUBLIC_URI } from '@semapps/activitypub';
 import initialize from './initialize.ts';
 
+// @ts-expect-error TS(2304): Cannot find name 'jest'.
 jest.setTimeout(50000);
 const NUM_USERS = 2;
 
@@ -36,6 +37,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
     bob = actors[2];
   });
 
+  // @ts-expect-error TS(2304): Cannot find name 'afterAll'.
   afterAll(async () => {
     if (mode === 'multi-server') {
       for (let i = 1; i <= NUM_USERS; i++) {
@@ -46,6 +48,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
     }
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Bob shares Alice message', async () => {
     const createActivity = await alice.call('activitypub.outbox.post', {
       collectionUri: alice.outbox,
@@ -76,6 +79,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
 
     // Ensure the /shares collection has been created
     await waitForExpect(async () => {
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(alice.call('ldp.resource.get', { resourceUri: aliceMessageUri })).resolves.toMatchObject({
         shares: `${aliceMessageUri}/shares`
       });
@@ -83,6 +87,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
 
     // Ensure only the public announce activity has been added to the /shares collection
     await waitForExpect(async () => {
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(
         alice.call('activitypub.collection.get', { resourceUri: `${aliceMessageUri}/shares` })
       ).resolves.toMatchObject({
@@ -92,6 +97,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Bob undo his share', async () => {
     await bob.call('activitypub.outbox.post', {
       collectionUri: bob.outbox,

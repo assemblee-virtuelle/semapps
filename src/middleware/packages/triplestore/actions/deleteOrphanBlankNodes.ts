@@ -22,6 +22,7 @@ const Schema = {
 
     // Launch the query 3 times, so that blank nodes within orphan blank nodes are also deleted
     for (let i = 0; i < 3; i++) {
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       await this.actions.update(
         {
           query: `

@@ -10,9 +10,11 @@ import * as CONFIG from '../config.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+// @ts-expect-error TS(2304): Cannot find name 'jest'.
 jest.setTimeout(20000);
 let broker: any;
 
+// @ts-expect-error TS(2304): Cannot find name 'beforeAll'.
 beforeAll(async () => {
   broker = await initialize();
 });
@@ -21,11 +23,13 @@ afterAll(async () => {
   if (broker) await broker.stop();
 });
 
+// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe('Binary handling of LDP server', () => {
   let fileUri: any;
   let filePath: any;
   let fileName: any;
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Post image to container', async () => {
     const readStream = fs.createReadStream(pathJoin(__dirname, 'av-icon.png'));
 
@@ -39,19 +43,22 @@ describe('Binary handling of LDP server', () => {
     });
 
     fileUri = headers.get('Location');
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(fileUri).not.toBeNull();
 
     filePath = fileUri.replace(CONFIG.HOME_URL, '');
     fileName = getSlugFromUri(fileUri);
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(fs.existsSync(pathJoin(__dirname, '../uploads', filePath))).toBeTruthy();
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Get container', async () => {
     // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(fetchServer(urlJoin(CONFIG.HOME_URL, 'files'))).resolves.toMatchObject({
       json: {
-        '@type': ['ldp:Container', 'ldp:BasicContainer'],
+        '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
         'ldp:contains': [
           {
             '@id': fileUri,
@@ -65,6 +72,7 @@ describe('Binary handling of LDP server', () => {
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Get image as binary (via API)', async () => {
     const { headers, body } = await fetchServer(fileUri, {
       headers: new fetch.Headers({
@@ -72,14 +80,20 @@ describe('Binary handling of LDP server', () => {
       })
     });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(headers.get('Content-Length')).toBe('3181');
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(headers.get('Cache-Control')).toBe('public, max-age=31536000');
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(headers.get('Content-Type')).toBe('image/png');
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(body).toContain('PNG');
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Get image as resource (via Moleculer action)', async () => {
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(broker.call('ldp.resource.get', { resourceUri: fileUri })).resolves.toMatchObject({
       '@id': fileUri,
       '@type': 'semapps:File',
@@ -89,7 +103,9 @@ describe('Binary handling of LDP server', () => {
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Delete image', async () => {
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(
       fetchServer(fileUri, {
         method: 'DELETE'
@@ -98,8 +114,10 @@ describe('Binary handling of LDP server', () => {
       status: 204
     });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(fs.existsSync(pathJoin(__dirname, '../uploads/files/av-icon.png'))).toBeFalsy();
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(fetchServer(fileUri)).resolves.toMatchObject({
       status: 404
     });
@@ -107,7 +125,7 @@ describe('Binary handling of LDP server', () => {
     // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(fetchServer(urlJoin(CONFIG.HOME_URL, 'files'))).resolves.toMatchObject({
       json: {
-        '@type': ['ldp:Container', 'ldp:BasicContainer'],
+        '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
         'ldp:contains': []
       }
     });

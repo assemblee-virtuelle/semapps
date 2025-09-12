@@ -170,7 +170,6 @@ const Schema = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'onResourceEvent' does not exist on type ... Remove this comment to see the full error message
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.CREATE, newData['dc:modified']);
       }
     },
@@ -179,7 +178,6 @@ const Schema = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'onResourceEvent' does not exist on type ... Remove this comment to see the full error message
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.UPDATE, newData['dc:modified']);
       }
     },
@@ -188,7 +186,6 @@ const Schema = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'onResourceEvent' does not exist on type ... Remove this comment to see the full error message
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.UPDATE, await this.getModified(resourceUri));
       }
     },
@@ -197,7 +194,6 @@ const Schema = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'onResourceEvent' does not exist on type ... Remove this comment to see the full error message
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.DELETE, new Date().toISOString());
       }
     },
@@ -206,7 +202,6 @@ const Schema = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'containerUri' does not exist on type 'Op... Remove this comment to see the full error message
         const { containerUri, resourceUri } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'onContainerOrCollectionEvent' does not e... Remove this comment to see the full error message
         this.onContainerOrCollectionEvent(containerUri, resourceUri, ACTIVITY_TYPES.ADD);
       }
     },
@@ -215,7 +210,6 @@ const Schema = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'containerUri' does not exist on type 'Op... Remove this comment to see the full error message
         const { containerUri, resourceUri } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'onContainerOrCollectionEvent' does not e... Remove this comment to see the full error message
         this.onContainerOrCollectionEvent(containerUri, resourceUri, ACTIVITY_TYPES.REMOVE);
       }
     },
@@ -227,7 +221,6 @@ const Schema = {
         // Mastodon sometimes send unfetchable activities (like `Accept` activities)
         // In this case, we receive the activity as `item` and `itemUri` is undefined
         // We will send a notification to the listener with the whole activity
-        // @ts-expect-error TS(2339): Property 'onContainerOrCollectionEvent' does not e... Remove this comment to see the full error message
         this.onContainerOrCollectionEvent(collectionUri, itemUri || item, ACTIVITY_TYPES.ADD);
       }
     },
@@ -236,7 +229,6 @@ const Schema = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'collectionUri' does not exist on type 'O... Remove this comment to see the full error message
         const { collectionUri, itemUri } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'onContainerOrCollectionEvent' does not e... Remove this comment to see the full error message
         this.onContainerOrCollectionEvent(collectionUri, itemUri, ACTIVITY_TYPES.REMOVE);
       }
     }

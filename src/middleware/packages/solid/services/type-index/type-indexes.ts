@@ -1,4 +1,5 @@
 import { ControlledContainerMixin, DereferenceMixin, delay, arrayOf } from '@semapps/ldp';
+// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { solid, skos, apods } from '@semapps/ontologies';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { namedNode, triple } from '@rdfjs/data-model';
@@ -19,7 +20,7 @@ const TypeIndexesSchema = {
   },
   dependencies: ['ontologies'],
   created() {
-    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "type-registra... Remove this comment to see the full error message
+    // @ts-expect-error TS(2322): Type '{ name: "type-registrations"; mixins: { sett... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [TypeRegistrationsService]
     });
@@ -199,18 +200,14 @@ const TypeIndexesSchema = {
         const { webId } = ctx.params;
 
         // Wait until the /solid/type-index container has been created for the user
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         const indexesContainerUri = await this.actions.getContainerUri({ webId }, { parentCtx: ctx });
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.waitForContainerCreation({ containerUri: indexesContainerUri }, { parentCtx: ctx });
 
         // Wait until the /solid/type-registration container has been created for the user
         const registrationsContainerUri = await ctx.call('type-registrations.getContainerUri', { webId });
         await ctx.call('type-registrations.waitForContainerCreation', { containerUri: registrationsContainerUri });
 
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.createPublicIndex({ webId }, { parentCtx: ctx });
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.createPrivateIndex({ webId }, { parentCtx: ctx });
       }
     }

@@ -159,7 +159,6 @@ const ProxyService = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
         if (this.settings.podProvider) {
           const services = await ctx.call('$node.services');
           if (services.filter((s: any) => s.name === 'activitypub.actor')) {

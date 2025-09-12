@@ -8,12 +8,10 @@ const Schema = {
   },
   async handler(ctx) {
     const { resourceUri } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId;
 
     if (!(await this.actions.isRemote({ resourceUri }, { parentCtx: ctx }))) {
       throw new Error(
-        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
         `The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId} / dataset ${ctx.meta.dataset})`
       );
     }
@@ -27,42 +25,27 @@ const Schema = {
       ctx.meta.dataset = account.username;
     }
 
-    const graphName = await this.actions.getGraph({ resourceUri }, { parentCtx: ctx });
-    if (graphName === false) throw new Error(`No graph found with resource ${resourceUri} (webId: ${webId})`);
+    const exist = await ctx.call('triplestore.named-graph.exist', { uri: resourceUri });
+    if (!exist) throw new Error(`No named graph found with resource ${resourceUri} (webId: ${webId})`);
 
     const oldData = await this.actions.getStored({ resourceUri, webId }, { parentCtx: ctx });
 
-    await ctx.call('triplestore.update', {
-      query: `
-        DELETE
-        WHERE { 
-          ${graphName ? `GRAPH <${graphName}> {` : ''}
-            <${resourceUri}> ?p1 ?o1 .
-          ${graphName ? '}' : ''}
-        }
-      `,
-      webId: 'system'
-    });
+    await ctx.call('triplestore.named-graph.clear', { uri: resourceUri });
+    await ctx.call('triplestore.named-graph.delete', { uri: resourceUri });
 
-    // Detach from all containers with the mirrored resource
+    // Detach from all containers
     const containers = await ctx.call('ldp.resource.getContainers', { resourceUri });
     for (const containerUri of containers) {
       await ctx.call('ldp.container.detach', { containerUri, resourceUri, webId: 'system' });
     }
 
-    ctx.call('triplestore.deleteOrphanBlankNodes', {
-      graphName
-    });
-
     const returnValues = {
       resourceUri,
       oldData,
       webId,
-      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       dataset: ctx.meta.dataset
     };
 
-    // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
     if (!ctx.meta.skipEmitEvent) {
       ctx.emit('ldp.remote.deleted', returnValues, { meta: { webId: null, dataset: null } });
     }

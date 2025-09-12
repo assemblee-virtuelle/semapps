@@ -63,8 +63,10 @@ const Schema = {
           PREFIX dc: <http://purl.org/dc/terms/>
           SELECT ?id ?sourceUri
           WHERE {
-            ?id dc:source ?sourceUri.
-            FILTER STRSTARTS(STR(?sourceUri), "${this.settings.source.apiUrl}")
+            GRAPH ?id {
+              ?id dc:source ?sourceUri.
+              FILTER STRSTARTS(STR(?sourceUri), "${this.settings.source.apiUrl}")
+            }
           }
         `,
         webId: 'system'

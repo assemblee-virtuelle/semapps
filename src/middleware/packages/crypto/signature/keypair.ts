@@ -231,21 +231,17 @@ const SignatureService = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'isMigrated' does not exist on type 'Serv... Remove this comment to see the full error message
         if (this.isMigrated) {
           return;
         }
 
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.generate({ actorUri: webId }, { parentCtx: ctx });
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.attachPublicKey({ actorUri: webId }, { parentCtx: ctx });
       }
     },
 
     'keys.migration.migrated': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'isMigrated' does not exist on type 'Serv... Remove this comment to see the full error message
         this.isMigrated = true;
       }
     }

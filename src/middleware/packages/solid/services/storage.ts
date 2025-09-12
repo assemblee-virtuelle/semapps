@@ -3,7 +3,6 @@ import { triple, namedNode } from '@rdfjs/data-model';
 import { pim } from '@semapps/ontologies';
 import { ServiceSchema } from 'moleculer';
 
-/** @type {import('moleculer').ServiceSchema} */
 const SolidStorageSchema = {
   name: 'solid-storage' as const,
   settings: {
@@ -61,7 +60,6 @@ const SolidStorageSchema = {
         // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
 
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         const storageUrl = await this.actions.getUrl({ webId }, { parentCtx: ctx });
 
         // Attach the storage URL to the webId

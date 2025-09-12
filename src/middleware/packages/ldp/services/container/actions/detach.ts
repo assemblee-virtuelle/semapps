@@ -19,6 +19,7 @@ const Schema = {
       if (isRemoteContainer) return; // indeed, we never have the root container on a mirror.
       containerUri = urlJoin(containerUri, '/');
     }
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const containerExists = await this.actions.exist({ containerUri, webId }, { parentCtx: ctx });
     if (!containerExists && isRemoteContainer) return;
     if (!containerExists) throw new Error(`Cannot detach from a non-existing container: ${containerUri}`);
@@ -26,11 +27,10 @@ const Schema = {
     await ctx.call('triplestore.update', {
       query: `
         DELETE
-        WHERE
-        { 
-          ${isRemoteContainer ? `GRAPH <${this.settings.mirrorGraphName}> {` : ''}
-          <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> 
-          ${isRemoteContainer ? '}' : ''}
+        WHERE { 
+          GRAPH <${containerUri}> {
+            <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> 
+          }
         }
       `,
       webId

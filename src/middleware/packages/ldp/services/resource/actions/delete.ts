@@ -34,15 +34,9 @@ const Schema = {
       }
     );
 
-    await ctx.call('triplestore.update', {
-      query: `
-        DELETE
-        WHERE {
-          <${resourceUri}> ?p1 ?o1 .
-        }
-      `,
-      webId
-    });
+    await ctx.call('triplestore.named-graph.clear', { uri: resourceUri });
+
+    await ctx.call('triplestore.named-graph.delete', { uri: resourceUri });
 
     // We must detach the resource from the containers after deletion, otherwise the permissions may fail
     const containersUris = await ctx.call('ldp.resource.getContainers', { resourceUri });
