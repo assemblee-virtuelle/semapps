@@ -3,7 +3,6 @@ import { triple, namedNode } from '@rdfjs/data-model';
 import { pim } from '@semapps/ontologies';
 import { ServiceSchema } from 'moleculer';
 
-/** @type {import('moleculer').ServiceSchema} */
 const SolidStorageSchema = {
   name: 'solid-storage' as const,
   settings: {

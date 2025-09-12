@@ -57,6 +57,7 @@ const Schema = {
 
     return await ctx.call('jsonld.parser.frameAndEmbed', {
       input: result,
+      rootNode: resourceUri,
       jsonContext
     });
   }

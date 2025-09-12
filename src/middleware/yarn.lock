@@ -3423,6 +3423,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@semapps/jsonld@workspace:packages/jsonld"
   dependencies:
+    "@semapps/ldp": "npm:1.1.4"
     "@types/jsonld": "npm:1.5.15"
     jsonld: "npm:^3.3.2"
     jsonld-context-parser: "npm:^2.4.0"

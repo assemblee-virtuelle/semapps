@@ -2,7 +2,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceSchema } from 'moleculer';
 
-/** @type {import('moleculer').ServiceSchema} */
 const DocumentService = {
   name: 'triplestore.document' as const,
   actions: {

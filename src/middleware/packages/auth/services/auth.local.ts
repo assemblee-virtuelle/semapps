@@ -8,7 +8,6 @@ import AuthMailService from './mail.ts';
 
 const { MoleculerError } = Errors;
 
-/** @type {import('moleculer').ServiceSchema} */
 const AuthLocalService = {
   name: 'auth' as const,
   mixins: [AuthMixin],

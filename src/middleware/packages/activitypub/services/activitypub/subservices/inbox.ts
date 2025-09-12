@@ -7,7 +7,6 @@ import AwaitActivityMixin from '../../../mixins/await-activity.ts';
 
 const { MoleculerError } = require('moleculer').Errors;
 
-/** @type {import('moleculer').ServiceSchema} */
 const InboxService = {
   name: 'activitypub.inbox' as const,
   mixins: [AwaitActivityMixin],

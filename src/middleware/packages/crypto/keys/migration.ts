@@ -3,7 +3,6 @@ import path from 'path';
 import { ServiceSchema } from 'moleculer';
 import { KEY_TYPES } from '../constants.ts';
 
-/** @type {import('moleculer').ServiceSchema} */
 const KeysMigrationSchema = {
   name: 'keys.migration' as const,
   settings: {

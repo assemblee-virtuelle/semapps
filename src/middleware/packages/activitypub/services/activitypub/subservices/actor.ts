@@ -5,7 +5,6 @@ import { ServiceSchema } from 'moleculer';
 import { ACTOR_TYPES, AS_PREFIX } from '../../../constants.ts';
 import { getSlugFromUri, waitForResource } from '../../../utils.ts';
 
-/** @type {import('moleculer').ServiceSchema} */
 const ActorService = {
   name: 'activitypub.actor' as const,
   dependencies: ['activitypub.collection', 'ldp', 'signature'],

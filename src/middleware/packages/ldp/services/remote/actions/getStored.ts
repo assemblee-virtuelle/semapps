@@ -39,7 +39,8 @@ const Schema = {
 
     return await ctx.call('jsonld.parser.frameAndEmbed', {
       input: result,
-      context: jsonContext || (await ctx.call('jsonld.context.get'))
+      rootNode: resourceUri,
+      context: jsonContext
     });
   }
 } satisfies ActionSchema;

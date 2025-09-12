@@ -180,13 +180,13 @@ const JsonldParserSchema = {
       }
     },
 
-    // Frame an input according to a context and try to embed all nodes in a single node
-    // If this is not possible (cam happen with complex documents), return a @graph without embedding
+    // Frame an input according to a context and try to embed all nodes under a single root node
+    // If this is not possible (can happen with complex documents), return a @graph without embedding
     async frameAndEmbed(ctx) {
-      const { input } = ctx.params;
+      const { input, rootNode } = ctx.params;
       const jsonContext = ctx.params.jsonContext || (await ctx.call('jsonld.context.get'));
 
-      // Frame and embed the input
+      // Frame and embed the input without the root node, to count the number of nodes
       const result = await ctx.call('jsonld.parser.frame', {
         input,
         frame: { '@context': jsonContext },
@@ -196,17 +196,27 @@ const JsonldParserSchema = {
         }
       });
 
+      const allNodes = arrayOf(result['@graph']);
+
       // Traverse the entire JSON-LD structure to find all embedded objects URIs
       let embeddedObjectsUris = new Set();
-      this.collectEmbeddedObjectsUris(result['@graph'], embeddedObjectsUris);
+      this.collectEmbeddedObjectsUris(allNodes, embeddedObjectsUris);
 
       // Get the nodes in the @graph that were not embedded
-      const unembeddedNodes = result['@graph'].filter(
+      const unembeddedNodes = allNodes.filter(
         (node: any) => getId(node) && Object.keys(node).length > 1 && !embeddedObjectsUris.has(getId(node))
       );
 
-      if (unembeddedNodes.length === 1) {
-        // If all nodes can be embedded in a single node, reframe it with the @id
+      if (unembeddedNodes.length === 0 && allNodes.length > 0 && allNodes.some(node => getId(node) === rootNode)) {
+        // If all nodes are embedded into other nodes, it means we have mutual embedding
+        // In such case, frame the result according to the provided root node
+        return await ctx.call('jsonld.parser.frame', {
+          input,
+          frame: { '@context': jsonContext, '@id': rootNode },
+          options: { embed: '@once' }
+        });
+      } else if (unembeddedNodes.length === 1) {
+        // If all nodes can be embedded in a single node, reframe it with the @id of this node
         // (We cannot simply remove the embedded nodes, otherwise the blank nodes id will be visible)
         return await ctx.call('jsonld.parser.frame', {
           input,
