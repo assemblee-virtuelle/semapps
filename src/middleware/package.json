@@ -14,7 +14,8 @@
     "lint-files": "eslint --ext .js,.jsx,.ts,.tsx",
     "typecheck": "tsc --noEmit",
     "preinstall": "git config core.hooksPath .git-hooks",
-    "prepack": "yarn build"
+    "prepack": "yarn build && node ./scripts/switch-main-to-publish.js",
+    "postpack": "node ./scripts/revert-main-from-publish.js"
   },
   "devDependencies": {
     "@types/dotenv-flow": "^3.3.3",
