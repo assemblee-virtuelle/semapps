@@ -14,12 +14,14 @@ const Schema = {
   async handler(ctx) {
     const { path, webId } = ctx.params;
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     if (this.settings.podProvider) {
       if (webId === 'system' || webId === 'anon')
         throw new Error(`You must provide a real webId param in Pod provider config. Received: ${webId}`);
       const podUrl = await ctx.call('solid-storage.getUrl', { webId });
       return urlJoin(podUrl, path);
     } else {
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       return urlJoin(this.settings.baseUrl, path);
     }
   }

@@ -15,9 +15,11 @@ const Schema = {
       }
     }
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const localContext = await this.actions.getLocal({}, { parentCtx: ctx });
     // Include the local context only if it is not empty
     if (Object.keys(localContext['@context']).length > 0) {
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       context = context.concat(this.settings.localContextUri);
     }
 

@@ -19,11 +19,15 @@ const Schema = {
       query: sanitizeSparqlQuery`
         DELETE
         WHERE {
-          <${containerUri}> ?p1 ?o1 .
+          GRAPH <${containerUri}> {
+            <${containerUri}> ?p1 ?o1 .
+          }
         }
       `,
       webId
     });
+
+    await ctx.call('triplestore.named-graph.delete', { uri: containerUri });
 
     // Detach the container from parent containers after deletion, otherwise the permissions may fail
     const parentContainers = await ctx.call('ldp.resource.getContainers', { resourceUri: containerUri });

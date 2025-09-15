@@ -3,7 +3,6 @@ import Schedule from 'moleculer-schedule';
 import { ServiceSchema } from 'moleculer';
 import deleteAction from './actions/delete.ts';
 import getAction from './actions/get.ts';
-import getGraphAction from './actions/getGraph.ts';
 import getNetworkAction from './actions/getNetwork.ts';
 import getStoredAction from './actions/getStored.ts';
 import isRemoteAction from './actions/isRemote.ts';
@@ -14,22 +13,16 @@ const LdpRemoteSchema = {
   mixins: [Schedule],
   settings: {
     baseUrl: null,
-    podProvider: false,
-    mirrorGraphName: null
+    podProvider: false
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
-    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
     delete: deleteAction,
     get: getAction,
-    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
-    getGraph: getGraphAction,
     getNetwork: getNetworkAction,
     getStored: getStoredAction,
-    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
     isRemote: isRemoteAction,
     store: storeAction,
-
     runCron: {
       // Used by tests
       handler() {
@@ -48,7 +41,7 @@ const LdpRemoteSchema = {
           query: `
             SELECT DISTINCT ?s 
             WHERE { 
-              GRAPH <${this.settings.mirrorGraphName}> { 
+              GRAPH ?g { 
                 ?s <http://semapps.org/ns/core#singleMirroredResource> ?o 
               }
             }
@@ -59,8 +52,7 @@ const LdpRemoteSchema = {
           try {
             await this.actions.store({
               resourceUri,
-              keepInSync: true,
-              mirrorGraph: true
+              keepInSync: true
             });
           } catch (e) {
             // @ts-expect-error TS(18046): 'e' is of type 'unknown'.

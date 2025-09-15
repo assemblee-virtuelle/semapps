@@ -62,6 +62,7 @@ const Schema = {
             id: this.endpointUrl,
             ...this.settings.endpoint.initialData
           },
+          resourceUri: this.endpointUrl,
           webId: 'system'
         },
         { meta: { dataset: this.settings.settingsDataset, skipEmitEvent: true, skipObjectsWatcher: true } }

@@ -46,24 +46,24 @@ const isURI = (value: any) =>
   (typeof value === 'string' || value instanceof String) && (value.startsWith('http') || value.startsWith('urn:'));
 
 const buildFiltersQuery = (filters: any) => {
-  let where = '';
+  let query = '';
   if (filters) {
     Object.keys(filters).forEach((predicate, i) => {
       if (filters[predicate]) {
-        where += `
+        query += `
           FILTER EXISTS { 
-            ?s1 ${isURI(predicate) ? `<${predicate}>` : predicate} ${
+            GRAPH ?g1 { ?s1 ${isURI(predicate) ? `<${predicate}>` : predicate} ${
               isURI(filters[predicate]) ? `<${filters[predicate]}>` : `"${filters[predicate]}"`
-            } } .
+            } } }.
         `;
       } else {
-        where += `
-          FILTER NOT EXISTS { ?s1 ${isURI(predicate) ? `<${predicate}>` : predicate} ?unwanted${i} } .
+        query += `
+          FILTER NOT EXISTS { GRAPH ?g1 { ?s1 ${isURI(predicate) ? `<${predicate}>` : predicate} ?unwanted${i} } } .
         `;
       }
     });
   }
-  return { where };
+  return query;
 };
 
 const isObject = (value: any) => typeof value === 'object' && !Array.isArray(value) && value !== null;
@@ -194,7 +194,6 @@ export {
   isMirror,
   createFragmentURL,
   regexPrefix,
-  regexProtocolAndHostAndPort,
   waitForResource,
   arrayOf
 };

@@ -1,7 +1,9 @@
 import { namedNode, triple, literal } from '@rdfjs/data-model';
+import waitForExpect from 'wait-for-expect';
 import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
 
+// @ts-expect-error TS(2304): Cannot find name 'jest'.
 jest.setTimeout(20000);
 const ALICE_WEBID = 'http://localhost:3000/alice';
 const BOB_WEBID = 'http://localhost:3000/bob';
@@ -11,14 +13,17 @@ beforeAll(async () => {
   broker = await initialize();
 });
 
+// @ts-expect-error TS(2304): Cannot find name 'afterAll'.
 afterAll(async () => {
   await broker.stop();
 });
 
+// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe('Permissions check on a specific resource', () => {
   const containerUri = `${CONFIG.HOME_URL}resources2`; // Container with no default permissions
   let resourceUri: any;
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Get/patch/put/delete resource without permission', async () => {
     // When posting as system, no permissions are given on the resource
     resourceUri = await broker.call('ldp.container.post', {
@@ -30,6 +35,7 @@ describe('Permissions check on a specific resource', () => {
       webId: 'system'
     });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(
       broker.call('ldp.resource.get', {
         resourceUri,
@@ -37,6 +43,7 @@ describe('Permissions check on a specific resource', () => {
       })
     ).rejects.toThrow('Forbidden');
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(
       broker.call('ldp.resource.patch', {
         resourceUri,
@@ -51,6 +58,7 @@ describe('Permissions check on a specific resource', () => {
       })
     ).rejects.toThrow('Forbidden');
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(
       broker.call('ldp.resource.put', {
         resource: {
@@ -62,6 +70,7 @@ describe('Permissions check on a specific resource', () => {
       })
     ).rejects.toThrow('Forbidden');
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(
       broker.call('ldp.resource.delete', {
         resourceUri,
@@ -70,6 +79,7 @@ describe('Permissions check on a specific resource', () => {
     ).rejects.toThrow('Forbidden');
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Give Alice read permission on resource', async () => {
     await broker.call('webacl.resource.addRights', {
       resourceUri,
@@ -79,6 +89,7 @@ describe('Permissions check on a specific resource', () => {
       webId: 'system'
     });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(
       broker.call('ldp.resource.get', {
         resourceUri,
@@ -86,6 +97,7 @@ describe('Permissions check on a specific resource', () => {
       })
     ).resolves.toBeDefined();
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(
       broker.call('ldp.container.get', {
         containerUri,
@@ -94,6 +106,7 @@ describe('Permissions check on a specific resource', () => {
     ).rejects.toThrow('Forbidden');
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Give Alice read permission on container', async () => {
     await broker.call('webacl.resource.addRights', {
       resourceUri: containerUri,
@@ -103,6 +116,7 @@ describe('Permissions check on a specific resource', () => {
       webId: 'system'
     });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(
       broker.call('ldp.container.get', {
         containerUri,
@@ -110,8 +124,11 @@ describe('Permissions check on a specific resource', () => {
       })
     ).resolves.toMatchObject({
       id: containerUri,
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       'ldp:contains': expect.arrayContaining([
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect.objectContaining({
           id: resourceUri
         })
@@ -119,6 +136,7 @@ describe('Permissions check on a specific resource', () => {
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Give Bob default read permission on container', async () => {
     await broker.call('webacl.resource.addRights', {
       resourceUri: containerUri,
@@ -130,15 +148,19 @@ describe('Permissions check on a specific resource', () => {
       webId: 'system'
     });
 
-    await expect(
-      broker.call('ldp.resource.get', {
-        resourceUri,
-        webId: BOB_WEBID
-      })
-    ).resolves.toBeDefined();
+    await waitForExpect(async () => {
+      await expect(
+        broker.call('ldp.resource.get', {
+          resourceUri,
+          webId: BOB_WEBID
+        })
+      ).resolves.toBeDefined();
+    });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Post data without append permission on container', async () => {
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(
       broker.call('ldp.container.post', {
         containerUri,
@@ -151,6 +173,7 @@ describe('Permissions check on a specific resource', () => {
     ).rejects.toThrow();
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Give Alice append permission on container', async () => {
     await broker.call('webacl.resource.addRights', {
       resourceUri: containerUri,
@@ -160,6 +183,7 @@ describe('Permissions check on a specific resource', () => {
       webId: 'system'
     });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(
       broker.call('ldp.container.post', {
         containerUri,
@@ -172,6 +196,7 @@ describe('Permissions check on a specific resource', () => {
     ).resolves.toBeDefined();
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Give Alice append permission on resource', async () => {
     await broker.call('webacl.resource.addRights', {
       resourceUri,
@@ -181,6 +206,7 @@ describe('Permissions check on a specific resource', () => {
       webId: 'system'
     });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(
       broker.call('ldp.resource.patch', {
         resourceUri,
@@ -195,6 +221,7 @@ describe('Permissions check on a specific resource', () => {
       })
     ).resolves.toBeDefined();
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(
       broker.call('ldp.resource.put', {
         resource: {
@@ -209,6 +236,7 @@ describe('Permissions check on a specific resource', () => {
     ).resolves.toBeDefined();
 
     // We cannot remove content with acl:Append permission
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(
       broker.call('ldp.resource.patch', {
         resourceUri,
@@ -224,6 +252,7 @@ describe('Permissions check on a specific resource', () => {
     ).rejects.toThrow();
 
     // We cannot remove content with acl:Append permission
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(
       broker.call('ldp.resource.put', {
         resource: {
@@ -236,6 +265,7 @@ describe('Permissions check on a specific resource', () => {
     ).rejects.toThrow();
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Give Alice write permission on resource', async () => {
     await broker.call('webacl.resource.addRights', {
       resourceUri,
@@ -245,6 +275,7 @@ describe('Permissions check on a specific resource', () => {
       webId: 'system'
     });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(
       broker.call('ldp.resource.patch', {
         resourceUri,
@@ -259,6 +290,7 @@ describe('Permissions check on a specific resource', () => {
       })
     ).resolves.toBeDefined();
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(
       broker.call('ldp.resource.put', {
         resource: {
@@ -271,7 +303,9 @@ describe('Permissions check on a specific resource', () => {
     ).resolves.toBeDefined();
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Give Alice control permission on resource', async () => {
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(
       broker.call('webacl.resource.addRights', {
         resourceUri,
@@ -290,6 +324,7 @@ describe('Permissions check on a specific resource', () => {
       webId: 'system'
     });
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(
       broker.call('webacl.resource.addRights', {
         resourceUri,

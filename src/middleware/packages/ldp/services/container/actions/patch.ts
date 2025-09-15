@@ -1,7 +1,5 @@
-import { ActionSchema } from 'moleculer';
+import { ActionSchema, Errors } from 'moleculer';
 import { isMirror } from '../../../utils.ts';
-
-import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
@@ -75,12 +73,12 @@ const Schema = {
           // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
           if (e.code === 404 && isMirror(resourceUri, this.settings.baseUrl)) {
             // We need to import the remote resource
+            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             this.logger.info(`Importing ${resourceUri}...`);
             try {
               await ctx.call('ldp.remote.store', {
                 resourceUri,
                 keepInSync: true,
-                mirrorGraph: true,
                 webId
               });
 
@@ -104,8 +102,9 @@ const Schema = {
         try {
           await ctx.call('ldp.container.detach', { containerUri, resourceUri, webId });
 
-          // If the mirrored resource is not attached to any container anymore, it must be deleted.
+          // If the imported resource is not attached to any container anymore, it must be deleted.
           const containers = await ctx.call('ldp.resource.getContainers', { resourceUri });
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           if (containers.length === 0 && isMirror(resourceUri, this.settings.baseUrl)) {
             await ctx.call('ldp.remote.delete', { resourceUri });
           }

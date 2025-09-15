@@ -14,7 +14,6 @@ const queueOptions =
         backoff: { type: 'exponential', delay: '180000' }
       };
 
-/** @type {import('moleculer').ServiceSchema} */
 const WebhookChannel2023Service = {
   name: 'solid-notifications.provider.webhook' as const,
   mixins: [NotificationChannelMixin],

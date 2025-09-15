@@ -4,7 +4,6 @@ import { v4 as uuidV4 } from 'uuid';
 import { ServiceSchema } from 'moleculer';
 import NotificationChannelMixin from './notification-channel.mixin.ts';
 
-/** @type {import('moleculer').ServiceSchema} */
 const WebSocketChannel2023Service = {
   name: 'solid-notifications.provider.websocket' as const,
   mixins: [NotificationChannelMixin],

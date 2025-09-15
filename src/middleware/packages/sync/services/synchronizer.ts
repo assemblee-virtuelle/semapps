@@ -7,7 +7,6 @@ const SynchronizerService = {
   mixins: [ActivitiesHandlerMixin],
   settings: {
     podProvider: false,
-    mirrorGraph: true,
     synchronizeContainers: true,
     attachToLocalContainers: false
   },
@@ -78,14 +77,10 @@ const SynchronizerService = {
                 typeof resource === 'string'
                   ? {
                       resourceUri: resource,
-                      // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ matc... Remove this comment to see the full error message
-                      mirrorGraph: this.settings.mirrorGraph,
                       webId: recipientUri
                     }
                   : {
                       resource: { '@context': activity['@context'], ...resource },
-                      // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ matc... Remove this comment to see the full error message
-                      mirrorGraph: this.settings.mirrorGraph,
                       webId: recipientUri
                     }
               );
@@ -152,14 +147,10 @@ const SynchronizerService = {
               typeof resource === 'string'
                 ? {
                     resourceUri: resource,
-                    // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ matc... Remove this comment to see the full error message
-                    mirrorGraph: this.settings.mirrorGraph,
                     webId: recipientUri
                   }
                 : {
                     resource: { '@context': activity['@context'], ...resource },
-                    // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ matc... Remove this comment to see the full error message
-                    mirrorGraph: this.settings.mirrorGraph,
                     webId: recipientUri
                   }
             );

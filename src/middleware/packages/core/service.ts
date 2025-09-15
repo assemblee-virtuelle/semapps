@@ -10,6 +10,7 @@ import { TripleStoreService } from '@semapps/triplestore';
 import { VoidService } from '@semapps/void';
 import { WebAclService } from '@semapps/webacl';
 import { WebfingerService } from '@semapps/webfinger';
+// @ts-expect-error TS(2305): Module '"@semapps/crypto"' has no exported member ... Remove this comment to see the full error message
 import { KeysService, SignatureService } from '@semapps/crypto';
 import { WebIdService } from '@semapps/webid';
 import { ServiceSchema } from 'moleculer';
@@ -123,8 +124,8 @@ const CoreService = {
       });
     }
 
-    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "ontologies"; ... Remove this comment to see the full error message
     this.broker.createService({
+      // @ts-expect-error TS(2322): Type '{ name: "ontologies"; settings: { ontologies... Remove this comment to see the full error message
       mixins: [OntologiesService],
       settings: {
         ontologies
@@ -137,14 +138,14 @@ const CoreService = {
         mixins: this.settings.ldp.documentTagger !== false ? [DocumentTaggerMixin, LdpService] : [LdpService],
         settings: {
           baseUrl,
-          containers: containers || (this.settings.mirror !== false ? [botsContainer] : []),
+          containers: containers || [botsContainer],
           ...this.settings.ldp
         }
       });
     }
 
     if (this.settings.signature !== false) {
-      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "signature"; a... Remove this comment to see the full error message
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: any[]; settings: any; ... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [SignatureService],
         settings: {
@@ -165,7 +166,7 @@ const CoreService = {
     }
 
     if (this.settings.keys !== false) {
-      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "keys"; settin... Remove this comment to see the full error message
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: any[]; settings: any; ... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [KeysService],
         settings: {

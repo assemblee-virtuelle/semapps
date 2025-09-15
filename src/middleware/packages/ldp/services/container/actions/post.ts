@@ -1,9 +1,7 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
-import { ActionSchema } from 'moleculer';
+import { ActionSchema, Errors } from 'moleculer';
 import { cleanUndefined } from '../../../utils.ts';
-
-import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
@@ -80,11 +78,6 @@ const Schema = {
       }
     }
 
-    // The forcedResourceUri param allows Moleculer service to bypass URI generation
-    // It is used by ActivityStreams collections to provide URIs like {actorUri}/inbox
-    const resourceUri =
-      forcedResourceUri || (await ctx.call('ldp.resource.generateId', { containerUri, slug, isContainer }));
-
     const containerExist = await ctx.call('ldp.container.exist', { containerUri });
     if (!containerExist) {
       throw new MoleculerError(
@@ -95,13 +88,21 @@ const Schema = {
       );
     }
 
-    // We must add this first, so that the container's ACLs are taken into account
+    // The forcedResourceUri param allows Moleculer service to bypass URI generation
+    // It is used by ActivityStreams collections to provide URIs like {actorUri}/inbox
+    // TODO Use UUIDs for containers and collections https://github.com/assemblee-virtuelle/semapps/issues/1266
+    const resourceUri =
+      forcedResourceUri || (await ctx.call('ldp.resource.generateId', { containerUri, slug, isContainer }));
+    await ctx.call('triplestore.named-graph.create', { uri: resourceUri });
+
+    // We must add this first, otherwise side effects will not find the container of the created resource
     // But this create race conditions, especially when testing, since uncreated resources are linked to containers
-    // TODO Add temporary ACLs to the resource so that it can be created, then link it to the container ?
     await ctx.call('triplestore.update', {
       query: sanitizeSparqlQuery`
         INSERT DATA {
-          <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>
+          GRAPH <${containerUri}> {
+            <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>
+          }
         }
       `,
       webId
@@ -121,22 +122,33 @@ const Schema = {
         });
       } else {
         const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
+
+        // Change relative URIs to full URIs
+        const resourceWithBase = resource['@graph']
+          ? await ctx.call('jsonld.parser.changeBase', {
+              input: resource,
+              base: resourceUri
+            })
+          : { ...resource, '@id': resourceUri };
+
         await ctx.call(controlledActions.create || 'ldp.resource.create', {
-          resource: {
-            '@id': resourceUri,
-            ...resource
-          },
+          resource: resourceWithBase,
+          resourceUri,
           webId
         });
       }
     } catch (e) {
       // If there was an error inserting the resource, detach it from the container
       await ctx.call('triplestore.update', {
-        query: `DELETE WHERE { <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> }`,
+        query: `
+          DELETE WHERE { 
+            GRAPH <${containerUri}> {  
+              <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> 
+            }
+          }`,
         webId
       });
 
-      // Re-throw the error so that it's displayed by the API function
       throw e;
     }
 

@@ -1,4 +1,4 @@
-import { ControlledContainerMixin, PseudoIdMixin } from '@semapps/ldp';
+import { ControlledContainerMixin } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
 import { credentialsContext, credentialsContextNoGraphProof } from '../constants.ts';
 
@@ -15,7 +15,7 @@ import { credentialsContext, credentialsContextNoGraphProof } from '../constants
  */
 const VCPresentationContainer = {
   name: 'crypto.vc.holder.presentation-container' as const,
-  mixins: [ControlledContainerMixin, PseudoIdMixin],
+  mixins: [ControlledContainerMixin],
   settings: {
     path: null,
     excludeFromMirror: true,

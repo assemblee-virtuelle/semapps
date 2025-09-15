@@ -3,12 +3,14 @@ import waitForExpect from 'wait-for-expect';
 import { triple, namedNode } from '@rdfjs/data-model';
 import initialize from './initialize.ts';
 
+// @ts-expect-error TS(2304): Cannot find name 'jest'.
 jest.setTimeout(100000);
 let server1: any;
 let server2: any;
 const relay1 = 'http://localhost:3001/as/actor/relay';
 const relay2 = 'http://localhost:3002/as/actor/relay';
 
+// @ts-expect-error TS(2304): Cannot find name 'beforeAll'.
 beforeAll(async () => {
   // @ts-expect-error TS(2554): Expected 5 arguments, but got 4.
   server1 = await initialize(3001, 'testData1', 'settings1', 1);
@@ -26,11 +28,14 @@ afterAll(async () => {
   if (server2) await server2.stop();
 });
 
+// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe('Server2 mirror server1', () => {
   let resourceUri: any;
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Server2 follow server1', async () => {
     await waitForExpect(async () => {
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(
         server1.call('activitypub.collection.includes', {
           collectionUri: urlJoin(relay1, 'followers'),
@@ -40,14 +45,17 @@ describe('Server2 mirror server1', () => {
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Server1 resources container is mirrored on server2', async () => {
     await waitForExpect(async () => {
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(
         server2.call('ldp.container.exist', { containerUri: 'http://localhost:3001/resources' })
       ).resolves.toBeTruthy();
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Resource posted on server1 is mirrored on server2', async () => {
     resourceUri = await server1.call('ldp.container.post', {
       resource: {
@@ -61,12 +69,14 @@ describe('Server2 mirror server1', () => {
     });
 
     await waitForExpect(async () => {
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(
         server2.call('ldp.container.includes', { containerUri: 'http://localhost:3001/resources', resourceUri })
       ).resolves.toBeTruthy();
     });
 
     await waitForExpect(async () => {
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })).resolves.toMatchObject({
         id: resourceUri,
         type: 'pair:Resource',
@@ -75,6 +85,7 @@ describe('Server2 mirror server1', () => {
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Resource updated on server1 is updated on server2', async () => {
     await server1.call('ldp.resource.put', {
       resource: {
@@ -88,6 +99,7 @@ describe('Server2 mirror server1', () => {
     });
 
     await waitForExpect(async () => {
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })).resolves.toMatchObject({
         id: resourceUri,
         type: 'pair:Resource',
@@ -96,6 +108,7 @@ describe('Server2 mirror server1', () => {
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Resource on server1 is patched on server2 container', async () => {
     await server2.call('ldp.container.patch', {
       containerUri: 'http://localhost:3002/resources',
@@ -105,10 +118,12 @@ describe('Server2 mirror server1', () => {
           namedNode('http://www.w3.org/ns/ldp#contains'),
           namedNode(resourceUri)
         )
-      ]
+      ],
+      webId: 'system'
     });
 
     await waitForExpect(async () => {
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(
         server2.call('ldp.container.includes', { containerUri: 'http://localhost:3002/resources', resourceUri })
       ).resolves.toBeTruthy();
@@ -116,16 +131,19 @@ describe('Server2 mirror server1', () => {
 
     // Since server1 is mirrored by server2, we don't need to mark it as singleMirroredResource
     await waitForExpect(async () => {
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })).resolves.not.toHaveProperty(
         'semapps:singleMirroredResource'
       );
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Resource deleted on server1 is deleted on server2', async () => {
     await server1.call('ldp.resource.delete', { resourceUri });
 
     await waitForExpect(async () => {
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(
         server2.call('ldp.container.includes', { containerUri: 'http://localhost:3001/resources', resourceUri })
       ).resolves.toBeFalsy();

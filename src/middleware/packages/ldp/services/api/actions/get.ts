@@ -1,7 +1,6 @@
 import fs from 'fs';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { cleanUndefined, parseJson } from '../../../utils.ts';
-
 import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
@@ -110,7 +109,7 @@ export default async function get(this: any, ctx: any) {
     return res;
   } catch (e) {
     // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
-    if (e.code !== 404 && e.code !== 403) console.error(e);
+    if (!e.code || (e.code < 400 && e.code >= 500)) console.error(e);
     // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
     ctx.meta.$statusCode = e.code || 500;
     // @ts-expect-error TS(18046): 'e' is of type 'unknown'.

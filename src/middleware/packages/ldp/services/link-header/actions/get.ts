@@ -10,6 +10,7 @@ const Schema = {
     const { uri } = ctx.params;
     const linkHeader = new LinkHeader();
 
+    // @ts-expect-error TS(2488): Type 'string | number | boolean | any[] | Record<a... Remove this comment to see the full error message
     for (const actionName of this.registeredActionNames) {
       const params = await ctx.call(actionName, { uri });
 

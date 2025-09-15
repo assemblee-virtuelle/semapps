@@ -22,8 +22,9 @@ const Schema = {
     if (!(await ctx.call('triplestore.dataset.exist', { dataset })))
       throw new Error(`The dataset ${dataset} doesn't exist`);
 
+    // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
     return await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
-      body: 'update=CLEAR+ALL',
+      body: 'update=DROP+ALL',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'X-SemappsUser': webId

@@ -295,7 +295,6 @@ const TypeRegistrationsSchema = {
         if (options?.typeIndex) {
           await ctx.call('type-indexes.waitForIndexCreation', { type: options.typeIndex, webId });
 
-          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
           await this.actions.register(
             {
               types: arrayOf(options?.acceptedTypes),

@@ -1,8 +1,6 @@
 import { MIME_TYPES } from '@semapps/mime-types';
-import { ActionSchema } from 'moleculer';
+import { ActionSchema, Errors } from 'moleculer';
 import { buildFiltersQuery, isContainer, cleanUndefined, arrayOf } from '../../../utils.ts';
-
-import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
@@ -38,6 +36,7 @@ const Schema = {
         CONSTRUCT  {
           <${containerUri}> ?p ?o .
         }
+        FROM <${containerUri}>
         WHERE {
           <${containerUri}> ?p ?o .
           MINUS { <${containerUri}> ldp:contains ?o } .
@@ -59,8 +58,10 @@ const Schema = {
           ${await ctx.call('ontologies.getRdfPrefixes')}
           SELECT ?s1
           WHERE {
-            <${containerUri}> <http://www.w3.org/ns/ldp#contains> ?s1 .
-            ${filtersQuery.where}
+            GRAPH <${containerUri}> {
+              <${containerUri}> <http://www.w3.org/ns/ldp#contains> ?s1 .
+            }
+            ${filtersQuery}
           }
         `,
         accept,

@@ -3,7 +3,7 @@ import { Errors as E } from 'moleculer-web';
 import { ControlledContainerMixin } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
 import setRightsHandler from './activity-handlers/setRightsHandler.ts';
-import { objectCurrentToId, objectIdToCurrent, arrayOf } from '../../../utils.ts';
+import { arrayOf } from '../../../utils.ts';
 import { PUBLIC_URI, FULL_ACTIVITY_TYPES } from '../../../constants.ts';
 import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
 
@@ -110,14 +110,6 @@ const ActivityService = {
         if (typeof ctx.params.resourceUri === 'object') {
           ctx.params.resourceUri = ctx.params.resourceUri.id || ctx.params.resourceUri['@id'];
         }
-      },
-      create(ctx) {
-        ctx.params.resource = objectIdToCurrent(ctx.params.resource);
-      }
-    },
-    after: {
-      get(ctx, res) {
-        return objectCurrentToId(res);
       }
     }
   },

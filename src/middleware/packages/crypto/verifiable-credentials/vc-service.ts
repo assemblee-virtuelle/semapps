@@ -1,3 +1,4 @@
+// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { did, cred } from '@semapps/ontologies';
 import { ServiceSchema } from 'moleculer';
 import VCAuthorizerService from './vc-authorizer-service.ts';
@@ -36,15 +37,15 @@ const VCService = {
   },
   created() {
     const { enableApi, podProvider } = this.settings;
-    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "crypto.vc.iss... Remove this comment to see the full error message
+    // @ts-expect-error TS(2322): Type '{ name: "crypto.vc.issuer"; settings: { podP... Remove this comment to see the full error message
     this.broker.createService({ mixins: [VCIssuerService] });
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "vc.guard"; de... Remove this comment to see the full error message
     this.broker.createService({ mixins: [VCAuthorizerService] });
-    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "crypto.vc.hol... Remove this comment to see the full error message
+    // @ts-expect-error TS(2322): Type '{ name: "crypto.vc.holder"; dependencies: st... Remove this comment to see the full error message
     this.broker.createService({ mixins: [VCHolderService] });
-    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "crypto.vc.ver... Remove this comment to see the full error message
+    // @ts-expect-error TS(2322): Type '{ name: "crypto.vc.verifier"; dependencies: ... Remove this comment to see the full error message
     this.broker.createService({ mixins: [VCVerifierService] });
-    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "crypto.vc.dat... Remove this comment to see the full error message
+    // @ts-expect-error TS(2322): Type '{ name: "crypto.vc.data-integrity"; dependen... Remove this comment to see the full error message
     this.broker.createService({ mixins: [DataIntegrityService] });
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "crypto.vc.pre... Remove this comment to see the full error message
     this.broker.createService({ mixins: [ChallengeService] });

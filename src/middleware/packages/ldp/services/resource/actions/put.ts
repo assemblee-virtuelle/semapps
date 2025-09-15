@@ -1,8 +1,6 @@
 import { MIME_TYPES } from '@semapps/mime-types';
-import { ActionSchema } from 'moleculer';
+import { ActionSchema, Errors } from 'moleculer';
 import { cleanUndefined } from '../../../utils.ts';
-
-import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
@@ -71,23 +69,23 @@ const Schema = {
     let oldTriples = await ctx.call('jsonld.parser.toQuads', { input: oldData });
     let newTriples = await ctx.call('jsonld.parser.toQuads', { input: resource });
 
-    // Filter out triples whose subject is not the resource itself
-    // We don't want to update or delete resources with IDs
-    oldTriples = this.filterOtherNamedNodes(oldTriples, resourceUri);
-    newTriples = this.filterOtherNamedNodes(newTriples, resourceUri);
-
     // blank nodes are convert to variable for sparql query (?variable)
+    // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
     oldTriples = this.convertBlankNodesToVars(oldTriples);
+    // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
     newTriples = this.convertBlankNodesToVars(newTriples);
 
     // same values blackNodes removing because those duplicated values blank nodes cause indiscriminate blank resultings in bug wahen trying to delete both
+    // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
     newTriples = this.removeDuplicatedVariables(newTriples);
 
     // Triples to add are reversed, so that blank nodes are linked to resource before being assigned data properties
     // Triples to remove are not reversed, because we want to remove the data properties before unlinking it from the resource
     // This is needed, otherwise we have permissions violations with the WebACL (orphan blank nodes cannot be edited, except as "system")
+    // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
     const triplesToAdd = this.getTriplesDifference(newTriples, oldTriples).reverse();
 
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const triplesToRemove = this.getTriplesDifference(oldTriples, newTriples);
 
     if (triplesToAdd.length === 0 && triplesToRemove.length === 0) {
@@ -102,6 +100,7 @@ const Schema = {
       }
 
       // Keep track of blank nodes to use in WHERE clause
+      // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
       const newBlankNodes = this.getTriplesDifference(newTriples, oldTriples).filter(
         (triple: any) => triple.object.termType === 'Variable'
       );
@@ -110,11 +109,15 @@ const Schema = {
       );
 
       // Generate the query
-      let query = '';
+      let query = `WITH <${resourceUri}>\n`;
+      // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
       if (triplesToRemove.length > 0) query += `DELETE { ${this.triplesToString(triplesToRemove)} } `;
+      // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
       if (triplesToAdd.length > 0) query += `INSERT { ${this.triplesToString(triplesToAdd)} } `;
       query += 'WHERE { ';
+      // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
       if (existingBlankNodes.length > 0) query += this.triplesToString(existingBlankNodes);
+      // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
       if (newBlankNodes.length > 0) query += this.bindNewBlankNodes(newBlankNodes);
       query += ` }`;
 

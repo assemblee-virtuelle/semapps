@@ -3,6 +3,7 @@ import { triple, namedNode } from 'rdf-data-model';
 import waitForExpect from 'wait-for-expect';
 import initialize from './initialize.ts';
 
+// @ts-expect-error TS(2304): Cannot find name 'jest'.
 jest.setTimeout(100000);
 let server1: any;
 let server2: any;
@@ -19,10 +20,12 @@ afterAll(async () => {
   if (server2) await server2.stop();
 });
 
+// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe('An inference is added between server1 et server2', () => {
   let resourceUri1: any;
   let resourceUri2: any;
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('An remote relationship is added on create', async () => {
     resourceUri1 = await server1.call('ldp.container.post', {
       resource: {
@@ -50,6 +53,7 @@ describe('An inference is added between server1 et server2', () => {
     });
 
     await waitForExpect(async () => {
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(server1.call('ldp.resource.get', { resourceUri: resourceUri1 })).resolves.toMatchObject({
         id: resourceUri1,
         'pair:hasPart': resourceUri2
@@ -57,6 +61,7 @@ describe('An inference is added between server1 et server2', () => {
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('An remote relationship is added through patch', async () => {
     await server1.call('ldp.resource.patch', {
       resourceUri: resourceUri1,
@@ -70,6 +75,7 @@ describe('An inference is added between server1 et server2', () => {
     });
 
     await waitForExpect(async () => {
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(server2.call('ldp.resource.get', { resourceUri: resourceUri2 })).resolves.toMatchObject({
         id: resourceUri2,
         'pair:inspiredBy': resourceUri1
@@ -77,6 +83,7 @@ describe('An inference is added between server1 et server2', () => {
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('An remote relationship is removed through put', async () => {
     // Do not includes the new pair:inspiredBy property = remove it
     await server2.call('ldp.resource.put', {
@@ -94,12 +101,14 @@ describe('An inference is added between server1 et server2', () => {
     });
 
     await waitForExpect(async () => {
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(server1.call('ldp.resource.get', { resourceUri: resourceUri1 })).resolves.not.toHaveProperty(
         'pair:hasInspired'
       );
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('An remote relationship is removed through delete', async () => {
     await server2.call('ldp.resource.delete', { resourceUri: resourceUri2 });
 

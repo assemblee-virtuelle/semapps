@@ -46,7 +46,6 @@ const ActivityPubService = {
       settings: { podProvider }
     });
 
-    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub.c... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [CollectionService],
       settings: {
