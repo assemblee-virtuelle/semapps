@@ -20,12 +20,7 @@ const Schema = defineAction({
     if (!(await ctx.call('triplestore.dataset.exist', { dataset })))
       throw new Error(`The dataset ${dataset} doesn't exist`);
 
-    return await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
-      body: 'update=CLEAR+ALL',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    });
+    return await this.settings.adapter.dropAll(dataset);
   }
 });
 

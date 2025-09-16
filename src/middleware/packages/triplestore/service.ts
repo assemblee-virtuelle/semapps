@@ -1,95 +1,73 @@
 import { SparqlJsonParser } from 'sparqljson-parse';
 import sparqljsModule from 'sparqljs';
-import fetch from 'node-fetch';
-import { throw403, throw500 } from '@semapps/middlewares';
-import { ServiceSchema, defineAction } from 'moleculer';
-import countTriplesOfSubject from './actions/countTriplesOfSubject.ts';
-import deleteOrphanBlankNodes from './actions/deleteOrphanBlankNodes.ts';
+import { ServiceSchema, defineAction, Errors } from 'moleculer';
 import dropAll from './actions/dropAll.ts';
 import insert from './actions/insert.ts';
 import query from './actions/query.ts';
 import update from './actions/update.ts';
 import tripleExist from './actions/tripleExist.ts';
 import DatasetService from './subservices/dataset.ts';
+import { BackendInterface } from './adapters/base.ts';
 
 const SparqlGenerator = sparqljsModule.Generator;
-import { Errors } from 'moleculer';
-
 const { MoleculerError } = Errors;
 
 const TripleStoreService = {
   name: 'triplestore' as const,
   settings: {
-    url: null,
-    user: null,
-    password: null,
+    // All possible settings from both backends for backward compatibility
     mainDataset: null,
-    fusekiBase: null,
+    adapter: null as BackendInterface|null,
     // Sub-services customization
     dataset: {}
   },
   dependencies: ['jsonld.parser'],
+  
   async created() {
-    const { url, user, password, dataset, fusekiBase } = this.settings;
+    if (!this.settings.adapter) {
+      throw new Error('Adapter is required');
+    }
+    if (this.settings.adapter.setBroker) {
+      this.settings.adapter.setBroker(this.broker);
+    }
+    
+    // Create subservices
     this.subservices = {};
-
-    if (dataset !== false) {
+    if (this.settings.dataset !== false) {
       // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "triplestore.d... Remove this comment to see the full error message
       this.subservices.dataset = this.broker.createService({
         mixins: [DatasetService],
         settings: {
-          url,
-          user,
-          password,
-          fusekiBase,
-          ...dataset
+          adapter: this.settings.adapter,
+          ...this.settings.dataset
         }
       });
     }
   },
+  
   started() {
     this.sparqlJsonParser = new SparqlJsonParser();
     this.sparqlGenerator = new SparqlGenerator({
       /* prefixes, baseIRI, factory, sparqlStar */
     });
   },
+  
+  stopped() {
+    // Clean up backend if needed
+    if (this.backend && typeof this.backend.cleanup === 'function') {
+      this.backend.cleanup();
+    }
+  },
+  
   actions: {
     insert,
     update,
     query,
     dropAll,
-    // @ts-expect-error TS(2322): Type 'ActionSchema<{ uri: { type: "string"; }; web... Remove this comment to see the full error message
-    countTriplesOfSubject,
     tripleExist,
-    deleteOrphanBlankNodes
   },
+  
   methods: {
-    async fetch(url, { method = 'POST', body, headers }) {
-      const response = await fetch(url, {
-        method,
-        body,
-        headers: {
-          ...headers,
-          Authorization: `Basic ${Buffer.from(`${this.settings.user}:${this.settings.password}`).toString('base64')}`
-        }
-      });
-
-      if (!response.ok) {
-        const text = await response.text();
-        if (response.status === 403) {
-          throw403(text);
-        } else {
-          // the 3 lines below (until the else) can be removed once we switch to jena-fuseki version 4.0.0 or above
-          if (response.status === 500 && text.includes('permissions violation')) {
-            throw403(text);
-          } else {
-            throw500(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}. Query: ${body}`);
-          }
-        }
-      }
-
-      return response;
-    },
     generateSparqlQuery(query) {
       try {
         return this.sparqlGenerator.stringify(query);

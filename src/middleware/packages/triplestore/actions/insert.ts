@@ -38,14 +38,11 @@ const Schema = defineAction({
     const datasets = dataset === '*' ? await ctx.call('triplestore.dataset.list') : [dataset];
 
     for (dataset of datasets) {
-      if (datasets.length > 1) this.logger.info(`Inserting into dataset ${dataset}...`);
-      await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
-        body: graphName ? `INSERT DATA { GRAPH <${graphName}> { ${rdf} } }` : `INSERT DATA { ${rdf} }`,
-        headers: {
-          'Content-Type': 'application/sparql-update',
-          Authorization: this.Authorization
-        }
-      });
+    //test if graphName exists in the dataset
+    if (datasets.length > 1) this.logger.info(`Inserting into dataset ${dataset}...`);
+      const query = `INSERT DATA ${graphName ? ` { GRAPH <${graphName}>` : ''} { ${rdf} } ${graphName ? '}' : ''}`;
+
+      await this.settings.adapter.update(dataset, query);
     }
   }
 });

@@ -1,7 +1,6 @@
-const path = require('path');
 const { ServiceBroker } = require('moleculer');
-const { TripleStoreService: TripleStoreServiceNg } = require('../../packages/triplestore-ng');
-const { TripleStoreService: TripleStoreServiceFuseki } = require('@semapps/triplestore');
+const { TripleStoreService } = require('@semapps/triplestore');
+const { FusekiAdapter, NextGraphAdapter } = require('@semapps/triplestore');
 const CONFIG = require('../config');
 const { clearDataset } = require('../utils');
 const { JsonLdService } = require('@semapps/jsonld');
@@ -38,38 +37,37 @@ module.exports = async triplestore => {
     }
   });
 
+  let adapter;
   if (triplestore === 'ng') {
-    broker.createService({
-      mixins: [TripleStoreServiceNg],
-      settings: {
-        url: CONFIG.SPARQL_ENDPOINT,
-        user: CONFIG.JENA_USER,
-        password: CONFIG.JENA_PASSWORD,
-        mainDataset: CONFIG.MAIN_DATASET,
-        nextgraphAdminUserId: 'XOct97tUc-ccyFUGe5sDUkHyXdTQ7LtGW1RVyYZzIYgA',
-        nextgraphMappingsNuri:
-          'did:ng:o:5ZwPgEib6okmEbVlWRJVfGUNnbdtmQpC_x1uTy9wjcoA:v:asrmmGCr1WTq3oAGkgtVwUxsJgA5MIsV2FIYhDRyPagA',
-        nextgraphConfig: {
-          server_peer_id: 'zT_iEzpHeO5znVU9ZYcvenJjb8pWrRWFzEO6eUE_SrAA',
-          admin_user_key: 'dwtQ9wWEovJwv6_3VArHKHRyr_zLAuR2_bFB1LiLfqEA',
-          client_peer_key: 'ryv9v1Y3jJqdQYH-_rMxGTGyDtC_eOaA0a4ibRLhmX4A',
-          server_addr: '127.0.0.1:14400'
-        }
-      }
+    // The nextgraph adapter is created with a static factory
+    // This is done to handle async operations during initialization of the adapter
+    adapter = await NextGraphAdapter.create({
+      adminUserId: 'XOct97tUc-ccyFUGe5sDUkHyXdTQ7LtGW1RVyYZzIYgA',
+      mappingsNuri:
+        'did:ng:o:5ZwPgEib6okmEbVlWRJVfGUNnbdtmQpC_x1uTy9wjcoA:v:asrmmGCr1WTq3oAGkgtVwUxsJgA5MIsV2FIYhDRyPagA',
+      serverPeerId: 'zT_iEzpHeO5znVU9ZYcvenJjb8pWrRWFzEO6eUE_SrAA',
+      adminUserKey: 'dwtQ9wWEovJwv6_3VArHKHRyr_zLAuR2_bFB1LiLfqEA',
+      clientPeerKey: 'ryv9v1Y3jJqdQYH-_rMxGTGyDtC_eOaA0a4ibRLhmX4A',
+      serverAddr: '127.0.0.1:14400'
     });
   } else if (triplestore === 'fuseki') {
-    broker.createService({
-      mixins: [TripleStoreServiceFuseki],
-      settings: {
-        url: CONFIG.SPARQL_ENDPOINT,
-        user: CONFIG.JENA_USER,
-        password: CONFIG.JENA_PASSWORD,
-        mainDataset: CONFIG.MAIN_DATASET,
-      }
+    adapter = new FusekiAdapter({
+      url: CONFIG.SPARQL_ENDPOINT,
+      user: CONFIG.JENA_USER,
+      password: CONFIG.JENA_PASSWORD,
+      mainDataset: CONFIG.MAIN_DATASET
     });
   } else {
     throw new Error('Triplestore not supported');
   }
+
+  broker.createService({
+    mixins: [TripleStoreService],
+    settings: {
+      mainDataset: CONFIG.MAIN_DATASET,
+      adapter
+    }
+  });
 
   await broker.start();
 

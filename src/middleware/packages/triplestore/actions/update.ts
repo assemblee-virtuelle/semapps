@@ -1,4 +1,3 @@
-import urlJoin from 'url-join';
 import { defineAction } from 'moleculer';
 
 const Schema = defineAction({
@@ -34,12 +33,9 @@ const Schema = defineAction({
 
     for (dataset of datasets) {
       if (datasets.length > 1) this.logger.info(`Updating dataset ${dataset}...`);
-      await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
-        body: query,
-        headers: {
-          'Content-Type': 'application/sparql-update',
-        }
-      });
+      
+      // Use backend abstraction
+      await this.settings.adapter.update(dataset, query);
     }
   }
 });

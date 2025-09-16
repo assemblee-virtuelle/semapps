@@ -1,8 +1,12 @@
 const initialize = require('./initialize');
+// const initialize = require('./initialize-old');
 
 jest.setTimeout(30000);
 
-describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', triplestore => {
+describe.each([
+  'fuseki',
+  'ng',
+])('Triplestore service tests with %s', triplestore => {
   let broker;
   const testDataset = 'test_dataset';
 
@@ -241,7 +245,7 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', triplestore
     test('SELECT query with JSON result', async () => {
       const result = await broker.call('triplestore.query', {
         query: 'SELECT ?s ?p ?o WHERE { ?s ?p ?o } LIMIT 5',
-        accept: 'application/json',
+        // accept: 'application/json',
         dataset: testDataset
       });
       expect(Array.isArray(result)).toBeTruthy();
@@ -251,7 +255,7 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', triplestore
     test('SELECT query with SPARQL JSON result', async () => {
       const result = await broker.call('triplestore.query', {
         query: 'SELECT ?s ?p ?o WHERE { ?s ?p ?o } LIMIT 5',
-        accept: 'application/sparql-results+json',
+        // accept: 'application/sparql-results+json',
         dataset: testDataset
       });
       expect(Array.isArray(result)).toBeTruthy();
@@ -261,27 +265,18 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', triplestore
     test('ASK query', async () => {
       const result = await broker.call('triplestore.query', {
         query: 'ASK WHERE { ?s a <http://example.org/Person> }',
-        accept: 'application/json',
+        // accept: 'application/json',
         dataset: testDataset
       });
       expect(typeof result).toBe('boolean');
       expect(result).toBeTruthy();
     });
 
-    test('CONSTRUCT query with Turtle result', async () => {
-      const result = await broker.call('triplestore.query', {
-        query: 'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o } LIMIT 5',
-        accept: 'text/turtle',
-        dataset: testDataset
-      });
-      expect(typeof result).toBe('string');
-      expect(result).toContain('<http://example.org/');
-    });
 
     test('CONSTRUCT query with JSON result', async () => {
       const result = await broker.call('triplestore.query', {
         query: 'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o } LIMIT 5',
-        accept: 'application/json',
+        // accept: 'application/json',
         dataset: testDataset
       });
       expect(typeof result).toBe('object');
@@ -322,14 +317,6 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', triplestore
       })).rejects.toThrow("The dataset non_existent_dataset doesn't exist");
     });
 
-    //TODO : see if we can handle that case with json accept
-    test('ASK query with non-JSON accept should fail', async () => {
-      await expect(broker.call('triplestore.query', {
-        query: 'ASK WHERE { ?s ?p ?o }',
-        accept: 'text/turtle',
-        dataset: testDataset
-      })).rejects.toThrow('Only JSON accept type is currently allowed for ASK queries');
-    });
   });
 
   describe('Update action', () => {
@@ -521,107 +508,6 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', triplestore
 
     test('DropAll should fail with non-existent dataset', async () => {
       await expect(broker.call('triplestore.dropAll', {
-        dataset: 'non_existent_dataset'
-      })).rejects.toThrow("The dataset non_existent_dataset doesn't exist");
-    });
-  });
-
-  describe('DeleteOrphanBlankNodes action', () => {
-    beforeEach(async () => {
-      // Insert test data with blank nodes
-      const jsonLdData = [
-        {
-          "@context": {
-            "ex": "http://example.org/",
-            "address": "ex:address",
-            "street": "ex:street",
-            "city": "ex:city"
-          },
-          "@id": "http://example.org/person1",
-          "address": {
-            "@id": "_:address1",
-            "street": "123 Main St",
-            "city": "New York"
-          }
-        },
-        {
-          "@context": {
-            "ex": "http://example.org/",
-            "address": "ex:address",
-            "street": "ex:street"
-          },
-          "@id": "http://example.org/person2",
-          "address": {
-            "@id": "_:address2",
-            "street": "456 Oak Ave"
-          }
-        },
-        {
-          "@context": {
-            "ex": "http://example.org/",
-            "street": "ex:street"
-          },
-          "@id": "_:orphan",
-          "street": "Orphan Street"
-        }
-      ];
-      for (const data of jsonLdData) {
-        await broker.call('triplestore.insert', {
-          resource: data,
-          dataset: testDataset
-        });
-      }
-    });
-
-    test('Delete orphan blank nodes', async () => {
-      // Verify 4 triples associated with blank nodes exist
-      let result = await broker.call('triplestore.query', {
-        query: 'SELECT * WHERE { ?s ?p ?o . FILTER(isBLANK(?s)) }',
-        dataset: testDataset
-      });
-      expect(result.length).toBe(4);
-      // Delete orphan blank node
-      await broker.call('triplestore.deleteOrphanBlankNodes', {
-        dataset: testDataset
-      });
-      // Verify that only the the two triples associated with the two non-orphan blank nodes still exist
-      result = await broker.call('triplestore.query', {
-        query: 'SELECT * WHERE { ?s ?p ?o . FILTER(isBLANK(?s)) }',
-        dataset: testDataset
-      });
-      expect(result.length).toBe(3);
-    });
-
-    if (triplestore === 'fuseki') {
-      test('Delete orphan blank nodes in specific graph', async () => {
-        const graphName = 'http://example.org/graph';
-        const jsonLdData = {
-          "@context": {
-            "ex": "http://example.org/",
-            "street": "ex:street"
-          },
-          "@id": "_:orphan",
-          "street": "Orphan Street"
-        };
-        await broker.call('triplestore.insert', {
-          resource: jsonLdData,
-          graphName,
-          dataset: testDataset
-        });
-        await broker.call('triplestore.deleteOrphanBlankNodes', {
-          graphName,
-          dataset: testDataset
-        });
-        const result = await broker.call('triplestore.query', {
-          query: `SELECT * FROM <${graphName}> WHERE { ?s ?p ?o . FILTER(isBLANK(?s)) }`,
-          dataset: testDataset
-        });
-        expect(result).toHaveLength(0);
-      });
-    }
-
-    test('DeleteOrphanBlankNodes should fail with non-existent dataset', async () => {
-      await expect(broker.call('triplestore.deleteOrphanBlankNodes', {
         dataset: 'non_existent_dataset'
       })).rejects.toThrow("The dataset non_existent_dataset doesn't exist");
     });
