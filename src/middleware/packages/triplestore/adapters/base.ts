@@ -1,7 +1,9 @@
 import { Response } from 'node-fetch';
 
-export interface BackendInterface {
+export interface AdapterInterface {
   name: string;
+  init(initSettings: { broker: any }): Promise<void>;
+  cleanup(): Promise<void>;
   query(query: string, dataset?: string): Promise<any>;
   update(query: string, dataset?: string): Promise<void>;
   dropAll(dataset: string): Promise<void>;
@@ -12,8 +14,28 @@ export interface BackendInterface {
   backupDataset(dataset: string): Promise<void>;
 }
 
-export abstract class BaseAdapter implements BackendInterface {
+export abstract class BaseAdapter implements AdapterInterface {
   abstract name: string;
+
+  protected broker: any;
+
+  // Optional init method, override if needed
+  async init(initSettings: { broker: any }): Promise<void> {
+    this.broker = initSettings.broker;
+  }
+
+  protected getLogger() {
+    if (this.broker && this.broker.logger) {
+      return this.broker.logger;
+    }
+    return console; // Fallback to console
+  }
+
+
+  // Default no-op implementation, override if needed
+  async cleanup(): Promise<void> {
+    return Promise.resolve();
+  }
 
   abstract query(query: string, dataset?: string): Promise<any>;
 
@@ -30,9 +52,4 @@ export abstract class BaseAdapter implements BackendInterface {
   abstract deleteDataset(dataset: string): Promise<void>;
 
   abstract backupDataset(dataset: string): Promise<void>;
-
-  // Optional cleanup method
-  async cleanup(): Promise<void> {
-    // Default no-op implementation
-  }
 } 

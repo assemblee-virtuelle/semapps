@@ -1,16 +1,21 @@
-import fetch, { Response } from 'node-fetch';
+import fetch from 'node-fetch';
 import urlJoin from 'url-join';
 import { SparqlJsonParser } from 'sparqljson-parse';
-import { throw403, throw500 } from '@semapps/middlewares';
+import { throw403, throw500, throw404 } from '@semapps/middlewares';
+import { Errors } from 'moleculer';
 import { BaseAdapter } from './base.ts';
-import { MIME_TYPES, negotiateType } from '@semapps/mime-types';
 
 const delay = (t: any) => new Promise(resolve => setTimeout(resolve, t));
+const { MoleculerError } = Errors;
 
 export default class FusekiAdapter extends BaseAdapter {
   name = 'fuseki';
 
-  private settings: { url: string, user: string, password: string };
+  private settings: {
+    url: string, // The URL of the Fuseki server
+    user: string, // The username for the Fuseki server
+    password: string // The password for the Fuseki server
+  };
 
   private sparqlJsonParser: SparqlJsonParser;
 
@@ -21,10 +26,19 @@ export default class FusekiAdapter extends BaseAdapter {
     if (!settings.password) throw new Error('Password is required');
     this.settings = settings;
     this.sparqlJsonParser = new SparqlJsonParser();
-
   }
 
-  async fetch(url:string, { method = 'POST', body, headers }: { method?: string, body?: any, headers?: any }) {
+  /*
+   * Fetch the given URL with the given method, body and headers
+   * Intended to be used internally to call the Fuseki server
+   * 
+   * @param url - The URL to fetch
+   * @param method - The method to use (default is POST)
+   * @param body - The body to send (default is undefined)
+   * @param headers - The headers to send (default is Accept: application/json, and the authorization header)
+   * @returns The response from the URL
+   */
+  async fetch(url:string, { operation = 'unknown operation', method = 'POST', body, headers }: { operation?: string, method?: string, body?: any, headers?: any }) {
     const response = await fetch(url, {
       method,
       body,
@@ -35,17 +49,15 @@ export default class FusekiAdapter extends BaseAdapter {
       }
     });
 
-    if (!response.ok && response.status !== 404) {
+    if (!response.ok) {
       const text = await response.text();
-      if (response.status === 403) {
-        throw403(text);
+      // TODO : check if we could remove the comparison with 500 and permissions violation since we switched to jena-fuseki 5.0.0 or above
+      if (response.status === 403 || (response.status === 500 && text.includes('permissions violation'))) {
+        throw403(`Fuseki ${operation} failed: ${text}\nURL: ${url}\nQuery: ${body}`);
+      } else if (response.status === 404) {
+        throw404(`Fuseki ${operation} failed: ${text}\nURL: ${url}\nQuery: ${body}`);
       } else {
-        // the 3 lines below (until the else) can be removed once we switch to jena-fuseki version 4.0.0 or above
-        if (response.status === 500 && text.includes('permissions violation')) {
-          throw403(text);
-        } else {
-          throw500(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}. Query: ${body}`);
-        }
+        throw500(`Fuseki ${operation} failed: Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}. Query: ${body}`);
       }
     }
 
@@ -53,15 +65,12 @@ export default class FusekiAdapter extends BaseAdapter {
   }
 
   async query(dataset: string, query: string) {
-
-    const acceptNegotiatedType = negotiateType('application/json');
-    // const acceptType = acceptNegotiatedType.mime;
-
     const response = await this.fetch(urlJoin(this.settings.url, dataset, 'query'), {
+      operation: 'query',
       body: query,
       headers: {
         'Content-Type': 'application/sparql-query',
-        Accept: acceptNegotiatedType.fusekiMapping
+        Accept: 'application/ld+json, application/sparql-results+json'
       }
     });
 
@@ -71,98 +80,87 @@ export default class FusekiAdapter extends BaseAdapter {
     switch (verb) {
       case 'ASK':
         return (await response.json()).boolean;
-
       case 'SELECT':
-        const jsonResult = await response.json();
-        return await this.sparqlJsonParser.parseJsonResults(jsonResult);
+        return this.sparqlJsonParser.parseJsonResults(await response.json());
       case 'CONSTRUCT':
-        // const textResult = await response.text();
         return await response.json();
-
       default:
         throw new Error('SPARQL Verb not supported');
     }
-
   }
 
   async update(dataset: string, query: string) {
-    const response = await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
+    await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
+      operation: 'update',
       body: query,
       headers: {
         'Content-Type': 'application/sparql-update',
       }
     });
-
-    if (!response.ok) {
-      const text = await response.text();
-      if (response.status === 403) {
-        throw403(text);
-      } else {
-        throw500(`Update failed: ${response.statusText}. Query: ${query}`);
-      }
-    }
   }
 
   async dropAll(dataset: string) {
-    const response = await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
+    await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
+      operation: 'dropAll',
       body: 'update=CLEAR+ALL',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
     });
-    if (!response.ok) {
-      throw new Error(`Failed to drop all data from dataset ${dataset}: ${response.statusText}`);
-    }
   }
 
   async createDataset(dataset: string) {
-    const response = await this.fetch(urlJoin(this.settings.url, '$/datasets') + `?dbName=${dataset}&dbType=tdb2`, {
+    await this.fetch(urlJoin(this.settings.url, '$/datasets') + `?dbName=${dataset}&dbType=tdb2`, {
+      operation: 'createDataset',
       method: 'POST',
     });
-
-    if (response.status === 200) {
-      await this.waitForDatasetCreation(dataset);
-    } else {
-      throw new Error(`Error when creating dataset ${dataset}: ${await response.text()}`);
-    }
+    await this.waitForDatasetCreation(dataset);
+    this.getLogger().info(`Fuseki dataset created: ${dataset}`);
   }
 
   async datasetExists(dataset: string): Promise<boolean> {
-    const response = await this.fetch(urlJoin(this.settings.url, '$/datasets/', dataset), {});
-    return response.status === 200;
-
+    try {
+      const response = await this.fetch(urlJoin(this.settings.url, '$/datasets/', dataset), {
+        operation: 'datasetExists',
+      });
+      return response.status === 200;
+    } catch (error) {
+      if (!(error instanceof MoleculerError && error.code === 404)) throw error;
+      return false;
+    }
   }
 
   async listDatasets() {
-    const response = await this.fetch(urlJoin(this.settings.url, '$/datasets'), {method: 'GET'});
-
-    if (response.ok) {
-      const json = await response.json();
-      return json.datasets.map((dataset: any) => dataset['ds.name'].substring(1));
-    }
-    return [];
+    const response = await this.fetch(urlJoin(this.settings.url, '$/datasets'), {
+      operation: 'listDatasets',
+      method: 'GET'
+    });
+    const json = await response.json();
+    return json.datasets.map((dataset: any) => dataset['ds.name'].substring(1));
   }
 
   async deleteDataset(dataset: string) {
-    const response = await this.fetch(urlJoin(this.settings.url, '$/datasets', dataset), {
+    await this.fetch(urlJoin(this.settings.url, '$/datasets', dataset), {
+      operation: 'deleteDataset',
       method: 'DELETE'
     });
-    if (!response.ok) {
-      throw new Error(`Failed to delete dataset ${dataset}: ${response.statusText}`);
-    }
-}
+    this.getLogger().info(`Fuseki dataset deleted: ${dataset}`);
+  }
 
+  // TODO : see how we can test this
   async backupDataset(dataset: string) {
-        // Ask Fuseki to backup the given dataset
-        const response = await fetch(urlJoin(this.settings.url, '$/backup', dataset), {});
+    // Ask Fuseki to backup the given dataset
+    const response = await this.fetch(urlJoin(this.settings.url, '$/backup', dataset), {
+      operation: 'backupDataset',
+    });
 
-        // Wait for backup to complete
-        const { taskId } = await response.json();
-        await this.waitForTaskCompletion(taskId);
+    // Wait for backup to complete
+    const { taskId } = await response.json();
+    await this.waitForTaskCompletion(taskId);
+    this.getLogger().info(`Fuseki dataset backed up: ${dataset}`);
   }
 
   async waitForDatasetCreation(dataset: string) {
-    if (!dataset) throw new Error('Unable to wait for dataset creation. The parameter dataset is missing');
     let datasetExist;
     do {
       await delay(1000);
@@ -172,11 +170,10 @@ export default class FusekiAdapter extends BaseAdapter {
 
   async waitForTaskCompletion(taskId: string) {
     let task;
-
     do {
       await delay(1000);
-
       const response = await this.fetch(urlJoin(this.settings.url, '$/tasks/', `${taskId}`), {
+        operation: 'Wait for Task Completion',
         method: 'GET'
       });
 
@@ -185,5 +182,4 @@ export default class FusekiAdapter extends BaseAdapter {
       }
     } while (!task || !task.finished);
   }
-  
 } 

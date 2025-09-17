@@ -1,13 +1,12 @@
-import { SparqlJsonParser } from 'sparqljson-parse';
 import sparqljsModule from 'sparqljs';
-import { ServiceSchema, defineAction, Errors } from 'moleculer';
+import { ServiceSchema, Errors } from 'moleculer';
 import dropAll from './actions/dropAll.ts';
 import insert from './actions/insert.ts';
 import query from './actions/query.ts';
 import update from './actions/update.ts';
 import tripleExist from './actions/tripleExist.ts';
 import DatasetService from './subservices/dataset.ts';
-import { BackendInterface } from './adapters/base.ts';
+import { AdapterInterface } from './adapters/base.ts';
 
 const SparqlGenerator = sparqljsModule.Generator;
 const { MoleculerError } = Errors;
@@ -15,9 +14,8 @@ const { MoleculerError } = Errors;
 const TripleStoreService = {
   name: 'triplestore' as const,
   settings: {
-    // All possible settings from both backends for backward compatibility
     mainDataset: null,
-    adapter: null as BackendInterface|null,
+    adapter: null as AdapterInterface|null,
     // Sub-services customization
     dataset: {}
   },
@@ -27,9 +25,8 @@ const TripleStoreService = {
     if (!this.settings.adapter) {
       throw new Error('Adapter is required');
     }
-    if (this.settings.adapter.setBroker) {
-      this.settings.adapter.setBroker(this.broker);
-    }
+    // Initialize the adapter with 
+    await this.settings.adapter.init({ broker: this.broker });
     
     // Create subservices
     this.subservices = {};
@@ -46,17 +43,13 @@ const TripleStoreService = {
   },
   
   started() {
-    this.sparqlJsonParser = new SparqlJsonParser();
     this.sparqlGenerator = new SparqlGenerator({
       /* prefixes, baseIRI, factory, sparqlStar */
     });
   },
   
   stopped() {
-    // Clean up backend if needed
-    if (this.backend && typeof this.backend.cleanup === 'function') {
-      this.backend.cleanup();
-    }
+    this.settings.adapter.cleanup();
   },
   
   actions: {

@@ -39,12 +39,10 @@ module.exports = async triplestore => {
 
   let adapter;
   if (triplestore === 'ng') {
-    // The nextgraph adapter is created with a static factory
-    // This is done to handle async operations during initialization of the adapter
-    adapter = await NextGraphAdapter.create({
+    // TODO : Environmentalize the nextgraph settings.
+    adapter = new NextGraphAdapter({
       adminUserId: 'XOct97tUc-ccyFUGe5sDUkHyXdTQ7LtGW1RVyYZzIYgA',
-      mappingsNuri:
-        'did:ng:o:5ZwPgEib6okmEbVlWRJVfGUNnbdtmQpC_x1uTy9wjcoA:v:asrmmGCr1WTq3oAGkgtVwUxsJgA5MIsV2FIYhDRyPagA',
+      mappingsNuri: 'did:ng:o:5ZwPgEib6okmEbVlWRJVfGUNnbdtmQpC_x1uTy9wjcoA:v:asrmmGCr1WTq3oAGkgtVwUxsJgA5MIsV2FIYhDRyPagA',
       serverPeerId: 'zT_iEzpHeO5znVU9ZYcvenJjb8pWrRWFzEO6eUE_SrAA',
       adminUserKey: 'dwtQ9wWEovJwv6_3VArHKHRyr_zLAuR2_bFB1LiLfqEA',
       clientPeerKey: 'ryv9v1Y3jJqdQYH-_rMxGTGyDtC_eOaA0a4ibRLhmX4A',

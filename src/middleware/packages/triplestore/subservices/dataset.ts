@@ -1,11 +1,11 @@
 import { ServiceSchema, defineAction } from 'moleculer';
-import { BackendInterface } from '../adapters/base.ts';
+import { AdapterInterface } from '../adapters/base.ts';
 
 
 const DatasetService = {
   name: 'triplestore.dataset' as const,
   settings: {
-    backend: null as BackendInterface | null
+    backend: null as AdapterInterface | null
   },
   async created() {
     if (!this.settings.adapter) {
