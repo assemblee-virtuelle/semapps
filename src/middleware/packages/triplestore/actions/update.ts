@@ -20,8 +20,6 @@ const Schema = {
   },
   async handler(ctx) {
     let { query } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
-    const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
     let dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
@@ -38,14 +36,9 @@ const Schema = {
     for (dataset of datasets) {
       // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       if (datasets.length > 1) this.logger.info(`Updating dataset ${dataset}...`);
-      // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
-      await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
-        body: query,
-        headers: {
-          'Content-Type': 'application/sparql-update',
-          'X-SemappsUser': webId
-        }
-      });
+      
+      // Use backend abstraction
+      await this.settings.adapter.update(dataset, query);
     }
   }
 } satisfies ActionSchema;
