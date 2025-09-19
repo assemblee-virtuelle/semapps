@@ -4,7 +4,6 @@ import dropAll from './actions/dropAll.ts';
 import insert from './actions/insert.ts';
 import query from './actions/query.ts';
 import update from './actions/update.ts';
-import tripleExist from './actions/tripleExist.ts';
 import DatasetService from './subservices/dataset.ts';
 import { AdapterInterface } from './adapters/base.ts';
 
@@ -57,7 +56,6 @@ const TripleStoreService = {
     update,
     query,
     dropAll,
-    tripleExist,
   },
   
   methods: {

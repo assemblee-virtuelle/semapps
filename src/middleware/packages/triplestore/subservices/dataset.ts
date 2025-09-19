@@ -62,18 +62,6 @@ const DatasetService = {
       }
     }),
 
-    // waitForCreation: defineAction({
-    //   async handler(ctx) {
-    //     const { dataset } = ctx.params;
-    //     if (!dataset) throw new Error('Unable to wait for dataset creation. The parameter dataset is missing');
-    //     let datasetExist;
-    //     do {
-    //       await delay(1000);
-    //       datasetExist = await this.actions.exist({ dataset }, { parentCtx: ctx });
-    //     } while (!datasetExist);
-    //   }
-    // }),
-
     delete: defineAction({
       params: {
         dataset: { type: 'string' },

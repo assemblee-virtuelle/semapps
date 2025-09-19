@@ -110,6 +110,7 @@ export default class NextGraphAdapter extends BaseAdapter {
     let session: any;
     try {
       session = await this.openSession(dataset);
+      // TODO : Check if there is a drop statement in nextgraph to use instead of DELETE { ?s ?p ?o } WHERE { ?s ?p ?o }
       return await ng.sparql_update(session.session_id, 'DELETE { ?s ?p ?o } WHERE { ?s ?p ?o }');
     } catch (error) {
       throw new Error(`NextGraph dropAll failed: ${error}\nDataset: ${dataset}`);
@@ -130,13 +131,13 @@ export default class NextGraphAdapter extends BaseAdapter {
       await ng.sparql_update(
         this.adminSessionid,
         `
-        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        PREFIX semapps: <http://semapps.org/ns/core#>
         INSERT DATA { 
           GRAPH <${this.settings.mappingsNuri}> { 
             <${mappingUri}> 
-              a skos:Concept ;
-              skos:prefLabel "${dataset}" ;
-              skos:notation "${userId}" .
+              a semapps:Dataset ;
+              semapps:name "${dataset}" ;
+              semapps:value "${userId}" .
           } 
         }
       `
@@ -154,12 +155,12 @@ export default class NextGraphAdapter extends BaseAdapter {
       const response = await ng.sparql_query(
         this.adminSessionid,
         `
-        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        PREFIX semapps: <http://semapps.org/ns/core#>
         SELECT ?userId WHERE {
           GRAPH <${this.settings.mappingsNuri}> {
-            ?mapping a skos:Concept ;
-              skos:prefLabel "${dataset}" ;
-              skos:notation ?userId .
+            ?mapping a semapps:Dataset ;
+              semapps:name "${dataset}" ;
+              semapps:value ?userId .
           }
         }
       `
@@ -175,11 +176,11 @@ export default class NextGraphAdapter extends BaseAdapter {
       const response = await ng.sparql_query(
         this.adminSessionid,
         `
-        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        PREFIX semapps: <http://semapps.org/ns/core#>
         SELECT ?datasetName WHERE {
           GRAPH <${this.settings.mappingsNuri}> {
-            ?mapping a skos:Concept ;
-              skos:prefLabel ?datasetName .
+            ?mapping a semapps:Dataset ;
+              semapps:name ?datasetName .
           }
         }
       `
@@ -196,20 +197,20 @@ export default class NextGraphAdapter extends BaseAdapter {
       const checkResponse = await ng.sparql_query(
         this.adminSessionid,
         `
-          PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+          PREFIX semapps: <http://semapps.org/ns/core#>
           
           SELECT ?mapping ?userId WHERE {
             GRAPH <${this.settings.mappingsNuri}> {
-              ?mapping a skos:Concept ;
-                skos:prefLabel "${dataset}" ;
-                skos:notation ?userId .
+              ?mapping a semapps:Dataset ;
+                semapps:name "${dataset}" ;
+                semapps:value ?userId .
             }
           }
         `
       );
 
       if (!(checkResponse.results.bindings.length > 0)) {
-        this.getLogger().warn(`No nextgraph mapping found for dataset: ${dataset}`);
+        this.getLogger().warn(`Nextgraph delete dataset : No nextgraph mapping found for dataset: ${dataset}`);
         return; // Nothing to delete
       }
 
@@ -220,14 +221,14 @@ export default class NextGraphAdapter extends BaseAdapter {
       await ng.sparql_update(
         this.adminSessionid,
         `
-        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        PREFIX semapps: <http://semapps.org/ns/core#>
         
         DELETE DATA { 
           GRAPH <${this.settings.mappingsNuri}> { 
             <${mappingUri}> 
-              a skos:Concept ;
-              skos:prefLabel "${dataset}" ;
-              skos:notation "${userId}" .
+              a semapps:Dataset ;
+              semapps:name "${dataset}" ;
+              semapps:value "${userId}" .
           } 
         }
       `
@@ -268,12 +269,12 @@ export default class NextGraphAdapter extends BaseAdapter {
       const response = await ng.sparql_query(
         this.adminSessionid,
         `
-        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        PREFIX semapps: <http://semapps.org/ns/core#>
         SELECT ?userId WHERE {
           GRAPH <${this.settings.mappingsNuri}> {
-            ?mapping a skos:Concept ;
-              skos:prefLabel "${dataset}" ;
-              skos:notation ?userId .
+            ?mapping a semapps:Dataset ;
+              semapps:name "${dataset}" ;
+              semapps:value ?userId .
           }
         }
       `
