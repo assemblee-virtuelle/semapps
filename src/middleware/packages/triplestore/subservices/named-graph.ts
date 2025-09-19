@@ -19,7 +19,6 @@ const NamedGraphService = {
 
         await ctx.call('triplestore.update', {
           query: `INSERT DATA { GRAPH <${uri}> {} }`,
-          webId: 'system',
           dataset
         });
 
@@ -34,7 +33,6 @@ const NamedGraphService = {
 
         return await ctx.call('triplestore.query', {
           query: `ASK { GRAPH <${uri}> {} }`,
-          webId: 'system',
           dataset
         });
       }
@@ -54,7 +52,6 @@ const NamedGraphService = {
               }
             }
           `,
-          webId: 'system',
           dataset
         });
       }
@@ -68,7 +65,6 @@ const NamedGraphService = {
         // We need to manually drop the graph, otherwise Fuseki will consider it still exists
         await ctx.call('triplestore.update', {
           query: `DROP GRAPH <${uri}>`,
-          webId: 'system',
           dataset
         });
       }

@@ -6,6 +6,7 @@ import query from './actions/query.ts';
 import update from './actions/update.ts';
 import DatasetService from './subservices/dataset.ts';
 import NamedGraphService from './subservices/named-graph.ts';
+import { AdapterInterface } from './adapters/base.ts';
 
 const SparqlGenerator = sparqljsModule.Generator;
 const { MoleculerError } = Errors;
@@ -14,22 +15,22 @@ const TripleStoreService = {
   name: 'triplestore' as const,
   settings: {
     mainDataset: null,
-    adapter: null as AdapterInterface|null,
+    adapter: null as AdapterInterface | null,
     // Sub-services customization
     dataset: {},
     namedGraph: {}
   },
   dependencies: ['jsonld.parser'],
-  
+
   async created() {
     const { dataset, namedGraph, adapter } = this.settings;
 
     if (!adapter) {
       throw new Error('Adapter is required');
     }
-    // Initialize the adapter with 
+    // Initialize the adapter with
     await adapter.init({ broker: this.broker });
-    
+
     // Create subservices
     if (dataset !== false) {
       // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "triplestore.d... Remove this comment to see the full error message
@@ -50,24 +51,22 @@ const TripleStoreService = {
       });
     }
   },
-  
+
   started() {
-    this.sparqlGenerator = new SparqlGenerator({
-      /* prefixes, baseIRI, factory, sparqlStar */
-    });
+    this.sparqlGenerator = new SparqlGenerator({});
   },
-  
+
   stopped() {
     this.settings.adapter.cleanup();
   },
-  
+
   actions: {
     insert,
     update,
     query,
-    dropAll,
+    dropAll
   },
-  
+
   methods: {
     generateSparqlQuery(query) {
       try {

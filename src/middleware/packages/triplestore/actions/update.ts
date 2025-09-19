@@ -9,10 +9,6 @@ const Schema = {
       // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
       rules: [{ type: 'string' }, { type: 'object' }]
     },
-    webId: {
-      type: 'string',
-      optional: true
-    },
     dataset: {
       type: 'string',
       optional: true
@@ -36,7 +32,7 @@ const Schema = {
     for (dataset of datasets) {
       // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       if (datasets.length > 1) this.logger.info(`Updating dataset ${dataset}...`);
-      
+
       // Use backend abstraction
       await this.settings.adapter.update(dataset, query);
     }

@@ -4,10 +4,6 @@ import { ActionSchema } from 'moleculer';
 const Schema = {
   visibility: 'public',
   params: {
-    webId: {
-      type: 'string',
-      optional: true
-    },
     dataset: {
       type: 'string',
       optional: true

@@ -9,10 +9,6 @@ const Schema = {
       // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
       rules: [{ type: 'string' }, { type: 'object' }]
     },
-    webId: {
-      type: 'string',
-      optional: true
-    },
     dataset: {
       type: 'string',
       optional: true
@@ -30,10 +26,8 @@ const Schema = {
     // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
     if (typeof query === 'object') query = this.generateSparqlQuery(query);
 
-
     // Use backend implementation
     return await this.settings.adapter.query(dataset, query);
-
   }
 } satisfies ActionSchema;
 
