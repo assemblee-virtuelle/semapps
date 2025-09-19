@@ -1,5 +1,5 @@
 {
-  "name": "@semapps/triplestore-jena",
+  "name": "@semapps/triplestore",
   "version": "1.1.4",
   "description": "Triple store module for SemApps",
   "license": "Apache-2.0",

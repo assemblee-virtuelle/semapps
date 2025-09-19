@@ -37,6 +37,7 @@
     "node-fetch": "^2.6.6",
     "rdf-data-model": "^1.0.0",
     "supertest": "^4.0.2",
+    "ts-node": "^10.9.2",
     "url-join": "^4.0.1",
     "wait-for-expect": "^3.0.2"
   },

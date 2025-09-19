@@ -1,15 +1,11 @@
-const { ServiceBroker } = require('moleculer');
-const { TripleStoreService } = require('@semapps/triplestore');
-const { FusekiAdapter, NextGraphAdapter } = require('@semapps/triplestore');
-const CONFIG = require('../config');
-const { clearDataset } = require('../utils');
-const { JsonLdService } = require('@semapps/jsonld');
-const { OntologiesService } = require('@semapps/ontologies');
-const ApiGatewayService = require('moleculer-web');
+import { ServiceBroker } from 'moleculer';
+import { FusekiAdapter, NextGraphAdapter, TripleStoreService } from '@semapps/triplestore';
+import { JsonLdService } from '@semapps/jsonld';
+import { OntologiesService } from '@semapps/ontologies';
+import ApiGatewayService from 'moleculer-web';
+import * as CONFIG from '../config.ts';
 
-module.exports = async triplestore => {
-  await clearDataset(CONFIG.SETTINGS_DATASET);
-
+export default async triplestore => {
   const broker = new ServiceBroker({
     logger: {
       type: 'Console',
@@ -42,7 +38,8 @@ module.exports = async triplestore => {
     // TODO : Environmentalize the nextgraph settings.
     adapter = new NextGraphAdapter({
       adminUserId: 'XOct97tUc-ccyFUGe5sDUkHyXdTQ7LtGW1RVyYZzIYgA',
-      mappingsNuri: 'did:ng:o:5ZwPgEib6okmEbVlWRJVfGUNnbdtmQpC_x1uTy9wjcoA:v:asrmmGCr1WTq3oAGkgtVwUxsJgA5MIsV2FIYhDRyPagA',
+      mappingsNuri:
+        'did:ng:o:5ZwPgEib6okmEbVlWRJVfGUNnbdtmQpC_x1uTy9wjcoA:v:asrmmGCr1WTq3oAGkgtVwUxsJgA5MIsV2FIYhDRyPagA',
       serverPeerId: 'zT_iEzpHeO5znVU9ZYcvenJjb8pWrRWFzEO6eUE_SrAA',
       adminUserKey: 'dwtQ9wWEovJwv6_3VArHKHRyr_zLAuR2_bFB1LiLfqEA',
       clientPeerKey: 'ryv9v1Y3jJqdQYH-_rMxGTGyDtC_eOaA0a4ibRLhmX4A',
