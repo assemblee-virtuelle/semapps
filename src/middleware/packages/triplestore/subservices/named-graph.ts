@@ -4,14 +4,19 @@ import { ServiceSchema } from 'moleculer';
 
 const NamedGraphService = {
   name: 'triplestore.named-graph' as const,
+  settings: {
+    defaultDataset: null
+  },
   actions: {
     create: {
       async handler(ctx) {
         // TODO Do not allow to pass the named graph URI on creation
         let { uri } = ctx.params;
-        const dataset = ctx.params.dataset || ctx.meta.dataset;
+        const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.defaultDataset;
 
-        if (!uri) uuidv4();
+        if (!uri) {
+          uri = `http://example.org/graph/${uuidv4()}`;
+        }
 
         if (await this.actions.exist({ uri, dataset }, { parentCtx: ctx })) {
           throw new Error(`Cannot create named graph as it already exists`);
@@ -19,7 +24,6 @@ const NamedGraphService = {
 
         await ctx.call('triplestore.update', {
           query: `INSERT DATA { GRAPH <${uri}> {} }`,
-          webId: 'system',
           dataset
         });
 
@@ -30,11 +34,11 @@ const NamedGraphService = {
     exist: {
       async handler(ctx) {
         const { uri } = ctx.params;
-        const dataset = ctx.params.dataset || ctx.meta.dataset;
+        if (!uri) throw new Error('Unable to check if named graph exists. The parameter uri is missing');
+        const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.defaultDataset;
 
         return await ctx.call('triplestore.query', {
           query: `ASK { GRAPH <${uri}> {} }`,
-          webId: 'system',
           dataset
         });
       }
@@ -54,7 +58,6 @@ const NamedGraphService = {
               }
             }
           `,
-          webId: 'system',
           dataset
         });
       }
@@ -68,7 +71,6 @@ const NamedGraphService = {
         // We need to manually drop the graph, otherwise Fuseki will consider it still exists
         await ctx.call('triplestore.update', {
           query: `DROP GRAPH <${uri}>`,
-          webId: 'system',
           dataset
         });
       }

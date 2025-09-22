@@ -9,6 +9,7 @@
     "@semapps/mime-types": "1.1.4",
     "jsonld": "^3.3.2",
     "negotiator": "^0.6.2",
+    "nextgraph": "file:../../../../../../../NG/nextgraph-rs/ng-sdk-js/pkg-node",
     "node-fetch": "^2.6.6",
     "sparqljs": "^3.5.2",
     "sparqljson-parse": "^1.5.1",

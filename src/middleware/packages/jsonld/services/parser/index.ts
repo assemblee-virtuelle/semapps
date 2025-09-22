@@ -105,6 +105,31 @@ const JsonldParserSchema = {
       }
     },
 
+    fromQuads: {
+      async handler(ctx) {
+        const { input } = ctx.params;
+        
+        const context = await ctx.call('jsonld.context.get');
+
+        // Options: https://github.com/rubensworks/jsonld-streaming-serializer.js?tab=readme-ov-file#configuration
+        const jsonLdSerializer = new JsonLdSerializer();
+        input.forEach((quad: any) => jsonLdSerializer.write(quad));
+        jsonLdSerializer.end();
+
+        const jsonLd = JSON.parse(await this.streamToString(jsonLdSerializer));
+
+        return await this.actions.frame(
+          {
+            input: jsonLd,
+            frame: { '@context': context }
+            // Force results to be in a @graph, even if we have a single result
+            // options: { omitGraph: false }
+          },
+          { parentCtx: ctx }
+        );
+      }
+    },
+
     toRDF: {
       async handler(ctx) {
         const { input, options = {} } = ctx.params;
