@@ -20,7 +20,7 @@ const Schema = {
   async handler(ctx) {
     const { resource, graphName } = ctx.params;
     // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
-    let dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
+    let dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.defaultDataset;
 
     // Convert JSON-LD to N-Quads
     const rdf = await ctx.call('jsonld.parser.toRDF', {
@@ -38,8 +38,8 @@ const Schema = {
     const datasets = dataset === '*' ? await ctx.call('triplestore.dataset.list') : [dataset];
 
     for (dataset of datasets) {
-    //test if graphName exists in the dataset
-    if (datasets.length > 1) this.logger.info(`Inserting into dataset ${dataset}...`);
+      //test if graphName exists in the dataset
+      if (datasets.length > 1) this.logger.info(`Inserting into dataset ${dataset}...`);
       const query = graphName ? `INSERT DATA { GRAPH <${graphName}> { ${rdf} } }` : `INSERT DATA { ${rdf} }`;
 
       await this.settings.adapter.update(dataset, query);

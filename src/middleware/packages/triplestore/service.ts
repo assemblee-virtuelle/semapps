@@ -14,7 +14,7 @@ const { MoleculerError } = Errors;
 const TripleStoreService = {
   name: 'triplestore' as const,
   settings: {
-    mainDataset: null,
+    defaultDataset: null,
     adapter: null as AdapterInterface | null,
     // Sub-services customization
     dataset: {},
@@ -23,7 +23,7 @@ const TripleStoreService = {
   dependencies: ['jsonld.parser'],
 
   async created() {
-    const { dataset, namedGraph, adapter } = this.settings;
+    const { dataset, namedGraph, adapter, defaultDataset } = this.settings;
 
     if (!adapter) {
       throw new Error('Adapter is required');
@@ -47,7 +47,10 @@ const TripleStoreService = {
       // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "triplestore.d... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [NamedGraphService],
-        settings: namedGraph
+        settings: {
+          defaultDataset,
+          ...namedGraph
+        }
       });
     }
   },

@@ -14,16 +14,11 @@ type NextGraphAdapterSettings = {
 export default class NextGraphAdapter extends BaseAdapter {
   name = 'nextgraph';
 
-  private settings: NextGraphAdapterSettings;
+  private settings: { adminUserId: string; mappingsNuri: string };
 
   private adminSessionid: string = '';
 
-  private nextgraphConfig: { server_peer_id: string, admin_user_key: string, client_peer_key: string, server_addr: string } = {
-    server_peer_id: '',
-    admin_user_key: '',
-    client_peer_key: '',
-    server_addr: ''
-  };
+  private sdkConfig: { server_peer_id: string; admin_user_key: string; client_peer_key: string; server_addr: string };
 
   private sparqlJsonParser: SparqlJsonParser;
 
@@ -36,7 +31,18 @@ export default class NextGraphAdapter extends BaseAdapter {
     if (!settings.adminUserId) throw new Error('Admin user id is required');
     if (!settings.mappingsNuri) throw new Error('Mappings nuri is required');
 
-    this.settings = settings;
+    // Create the SDK config, used to initialize the adapter and to create datasets (users)
+    this.sdkConfig = {
+      server_peer_id: settings.serverPeerId,
+      admin_user_key: settings.adminUserKey,
+      client_peer_key: settings.clientPeerKey,
+      server_addr: settings.serverAddr
+    };
+
+    this.settings = {
+      adminUserId: settings.adminUserId,
+      mappingsNuri: settings.mappingsNuri
+    };
     this.sparqlJsonParser = new SparqlJsonParser();
   }
 
@@ -45,17 +51,9 @@ export default class NextGraphAdapter extends BaseAdapter {
     // TODO : see if it's an issue (can cause circular dependency or other calamities)
     this.broker = initSettings.broker;
 
-    // Initialize the nextgraph config, used to initialize the nextgraph backend and to create users
-    this.nextgraphConfig = {
-      server_peer_id: this.settings.serverPeerId,
-      admin_user_key: this.settings.adminUserKey,
-      client_peer_key: this.settings.clientPeerKey,
-      server_addr: this.settings.serverAddr
-    };
-
     try {
       // Initialize the nextgraph backend in headless mode
-      await ng.init_headless(this.nextgraphConfig);
+      await ng.init_headless(this.sdkConfig);
       // Start a session for the admin user (used to manage datasets)
       const session = await ng.session_headless_start(this.settings.adminUserId);
       this.adminSessionid = session.session_id;
@@ -87,8 +85,7 @@ export default class NextGraphAdapter extends BaseAdapter {
       }
     } catch (error) {
       throw new Error(`NextGraph query failed: ${error}\nQuery: ${query}\nDataset: ${dataset}`);
-    }
-    finally {
+    } finally {
       this.closeSession(session);
     }
   }
@@ -100,8 +97,7 @@ export default class NextGraphAdapter extends BaseAdapter {
       await ng.sparql_update(session.session_id, query);
     } catch (error) {
       throw new Error(`NextGraph update failed: ${error}\nQuery: ${query}\nDataset: ${dataset}`);
-    }
-    finally {
+    } finally {
       this.closeSession(session);
     }
   }
@@ -114,15 +110,14 @@ export default class NextGraphAdapter extends BaseAdapter {
       return await ng.sparql_update(session.session_id, 'DELETE { ?s ?p ?o } WHERE { ?s ?p ?o }');
     } catch (error) {
       throw new Error(`NextGraph dropAll failed: ${error}\nDataset: ${dataset}`);
-    }
-    finally {
+    } finally {
       this.closeSession(session);
     }
   }
 
   async createDataset(dataset: string) {
     try {
-      const userId = await ng.admin_create_user(this.nextgraphConfig);
+      const userId = await ng.admin_create_user(this.sdkConfig);
       // TODO: see about logger
       this.getLogger().info(`NextGraph user created for dataset ${dataset} with user id : ${userId}`);
 
@@ -143,7 +138,6 @@ export default class NextGraphAdapter extends BaseAdapter {
       `
       );
       this.getLogger().info(`Mapping created for dataset ${dataset} with mapping uri : ${mappingUri}`);
-
     } catch (error) {
       throw new Error(`NextGraph createDataset failed: ${error}\nDataset: ${dataset}`);
     }
@@ -151,7 +145,6 @@ export default class NextGraphAdapter extends BaseAdapter {
 
   async datasetExists(dataset: string): Promise<boolean> {
     try {
-      
       const response = await ng.sparql_query(
         this.adminSessionid,
         `
@@ -245,7 +238,6 @@ export default class NextGraphAdapter extends BaseAdapter {
     throw new Error('Backup not implemented for NextGraph');
   }
 
-
   async openSession(dataset: string) {
     try {
       const userId = await this.getUserIdForDataset(dataset);
@@ -298,4 +290,4 @@ export default class NextGraphAdapter extends BaseAdapter {
       }
     }
   }
-} 
+}

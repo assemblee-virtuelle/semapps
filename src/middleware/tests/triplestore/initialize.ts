@@ -49,8 +49,7 @@ export default async triplestore => {
     adapter = new FusekiAdapter({
       url: CONFIG.SPARQL_ENDPOINT,
       user: CONFIG.JENA_USER,
-      password: CONFIG.JENA_PASSWORD,
-      mainDataset: CONFIG.MAIN_DATASET
+      password: CONFIG.JENA_PASSWORD
     });
   } else {
     throw new Error('Triplestore not supported');
@@ -59,7 +58,7 @@ export default async triplestore => {
   broker.createService({
     mixins: [TripleStoreService],
     settings: {
-      mainDataset: CONFIG.MAIN_DATASET,
+      defaultDataset: CONFIG.MAIN_DATASET,
       adapter
     }
   });

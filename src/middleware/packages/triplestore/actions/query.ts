@@ -17,7 +17,7 @@ const Schema = {
   async handler(ctx) {
     let { query } = ctx.params;
     // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
-    const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
+    const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.defaultDataset;
 
     if (!dataset) throw new Error(`No dataset defined for triplestore query: ${query}`);
     if (!(await ctx.call('triplestore.dataset.exist', { dataset })))
