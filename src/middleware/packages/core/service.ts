@@ -10,10 +10,10 @@ import { TripleStoreService } from '@semapps/triplestore';
 import { VoidService } from '@semapps/void';
 import { WebAclService } from '@semapps/webacl';
 import { WebfingerService } from '@semapps/webfinger';
-// @ts-expect-error TS(2305): Module '"@semapps/crypto"' has no exported member ... Remove this comment to see the full error message
 import { KeysService, SignatureService } from '@semapps/crypto';
 import { WebIdService } from '@semapps/webid';
 import { ServiceSchema } from 'moleculer';
+import { CoreServiceSettings } from './serviceTypes.js';
 
 const botsContainer = {
   path: '/as/application',
@@ -21,11 +21,6 @@ const botsContainer = {
   readOnly: true
 };
 
-/**
- * @typedef {import('./serviceTypes').CoreServiceSettings} CoreServiceSettings
- */
-
-/** @type {import('moleculer').ServiceSchema<CoreServiceSettings>} */
 const CoreService = {
   name: 'core' as const,
   settings: {
@@ -124,8 +119,8 @@ const CoreService = {
       });
     }
 
+    // @ts-expect-error TS(2322): Type '{ name: "ontologies"; settings: { ontologies... Remove this comment to see the full error message
     this.broker.createService({
-      // @ts-expect-error TS(2322): Type '{ name: "ontologies"; settings: { ontologies... Remove this comment to see the full error message
       mixins: [OntologiesService],
       settings: {
         ontologies
@@ -192,8 +187,8 @@ const CoreService = {
       // We define a constant here, because this.settings.webacl is not available inside the started method
       const secure = this.settings.triplestore?.secure !== false && this.settings.webacl !== false;
 
+      // @ts-expect-error TS(2322): Type '{ name: "triplestore"; settings: { url: null... Remove this comment to see the full error message
       this.broker.createService({
-        // @ts-expect-error TS(2322): Type '{ name: "triplestore"; settings: { url: null... Remove this comment to see the full error message
         mixins: [TripleStoreService],
         settings: {
           ...triplestore
@@ -242,7 +237,7 @@ const CoreService = {
       });
     }
   }
-} satisfies ServiceSchema;
+} satisfies ServiceSchema<CoreServiceSettings>;
 
 export default CoreService;
 
