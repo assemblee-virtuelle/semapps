@@ -80,6 +80,7 @@ const WebIdService = {
                 '@id': webId,
                 ...resource
               },
+              resourceUri: webId,
               webId: 'system'
             },
             { parentCtx: ctx }
