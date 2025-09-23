@@ -5,7 +5,7 @@ import { removeAgentGroupOrAgentFromAuthorizations } from '../../../utils.ts';
 
 const { MoleculerError } = Errors;
 
-export const api = async function api(this: any, ctx: any) {
+export const api = async function api(ctx: any) {
   if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;
   await ctx.call('webacl.group.delete', {
     groupSlug: this.settings.podProvider ? `${ctx.params.username}/${ctx.params.id}` : ctx.params.id

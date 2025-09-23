@@ -83,7 +83,7 @@ async function hasPermissions(ctx: any, resourceUri: any, askedRights: any, base
   return resultRights;
 }
 
-export const api = async function api(this: any, ctx: any) {
+export const api = async function api(ctx: any) {
   let { slugParts } = ctx.params;
 
   // This is the root container

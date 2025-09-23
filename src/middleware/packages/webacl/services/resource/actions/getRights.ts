@@ -187,7 +187,7 @@ async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: an
   return await formatOutput(ctx, document, resourceAclUri, ctx.meta.$responseType === MIME_TYPES.JSON);
 }
 
-export const api = async function api(this: any, ctx: any) {
+export const api = async function api(ctx: any) {
   const { accept } = ctx.meta.headers;
   let { slugParts } = ctx.params;
 

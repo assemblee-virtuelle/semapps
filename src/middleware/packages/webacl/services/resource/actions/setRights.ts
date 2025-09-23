@@ -12,7 +12,7 @@ import {
 
 const { MoleculerError } = Errors;
 
-export const api = async function api(this: any, ctx: any) {
+export const api = async function api(ctx: any) {
   const contentType = ctx.meta.headers['content-type'];
   let { slugParts } = ctx.params;
 
