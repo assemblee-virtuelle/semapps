@@ -70,13 +70,15 @@ const Schema = {
 
       const resourcesUris = resourcesResults?.map((node: any) => node.s1.value);
 
+      const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
+
       // Request each resources (in parallel)
       containerResults['http://www.w3.org/ns/ldp#contains'] = await Promise.all(
         arrayOf(resourcesUris).flatMap(async resourceUri => {
           try {
             // We pass the accept/jsonContext parameters only if they are explicit
             const resource = await ctx.call(
-              'ldp.resource.get',
+              controlledActions?.get || 'ldp.resource.get',
               cleanUndefined({
                 resourceUri,
                 webId,
