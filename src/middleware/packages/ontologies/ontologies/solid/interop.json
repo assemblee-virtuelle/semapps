@@ -119,6 +119,12 @@
     },
     "interop:replaces": {
       "@type": "@id"
+    },
+    "interop:delegationAllowed": {
+      "@type": "xsd:boolean"
+    },
+    "interop:delegationLimit": {
+      "@type": "xsd:integer"
     }
   }
 }
