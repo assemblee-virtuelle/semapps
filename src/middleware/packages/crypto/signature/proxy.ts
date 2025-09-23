@@ -60,8 +60,7 @@ const ProxyService = {
         const body =
           ctx.params.files && ctx.params.files.length > 0
             ? await stream2buffer(ctx.params.files[0].readableStream)
-            : // @ts-expect-error TS(2339): Property 'rawBody' does not exist on type '{}'.
-              ctx.meta.rawBody;
+            : ctx.params.body;
 
         try {
           const response = await this.actions.query(
