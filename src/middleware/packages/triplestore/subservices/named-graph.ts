@@ -22,8 +22,10 @@ const NamedGraphService = {
           throw new Error(`Cannot create named graph as it already exists`);
         }
 
+        // Insert a placeholder triple to ensure the named graph persists in Fuseki 5.0
+        // This is necessary because Fuseki 5.0 doesn't maintain empty named graphs
         await ctx.call('triplestore.update', {
-          query: `INSERT DATA { GRAPH <${uri}> {} }`,
+          query: `INSERT DATA { GRAPH <${uri}> { <${uri}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Resource> } }`,
           dataset
         });
 
@@ -47,7 +49,14 @@ const NamedGraphService = {
     clear: {
       async handler(ctx) {
         const { uri } = ctx.params;
-        const dataset = ctx.params.dataset || ctx.meta.dataset;
+        const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.defaultDataset;
+
+        if (!uri) throw new Error('Unable to clear named graph. The parameter uri is missing');
+        if (!dataset) throw new Error('Unable to clear named graph. The parameter dataset is missing');
+
+        if (!(await this.actions.exist({ uri, dataset }, { parentCtx: ctx }))) {
+          throw new Error(`Cannot clear named graph as it doesn't exist`);
+        }
 
         await ctx.call('triplestore.update', {
           query: `
@@ -58,6 +67,12 @@ const NamedGraphService = {
               }
             }
           `,
+          dataset
+        });
+
+        // Re-insert the placeholder triple
+        await ctx.call('triplestore.update', {
+          query: `INSERT DATA { GRAPH <${uri}> { <${uri}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Resource> } }`,
           dataset
         });
       }

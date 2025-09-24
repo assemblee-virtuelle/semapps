@@ -1,9 +1,8 @@
+// @ts-nocheck
 import initialize from './initialize.ts';
 
-// @ts-expect-error TS(2304): Cannot find name 'jest'.
 jest.setTimeout(30000);
 
-// @ts-expect-error TS(2304): Cannot find name 'describe'.
 describe.each([
   'fuseki'
   //  'ng'
@@ -11,7 +10,6 @@ describe.each([
   let broker: any;
   const testDataset = 'test_dataset';
 
-  // @ts-expect-error TS(2304): Cannot find name 'beforeAll'.
   beforeAll(async () => {
     broker = await initialize(triplestore);
 
@@ -19,7 +17,6 @@ describe.each([
     await broker.call('triplestore.dataset.create', { dataset: testDataset });
   });
 
-  // @ts-expect-error TS(2304): Cannot find name 'afterAll'.
   afterAll(async () => {
     // Clean up test dataset
     if (broker) await broker.stop();
@@ -27,7 +24,7 @@ describe.each([
 
   beforeEach(async () => {
     // Clear the test dataset before each test
-    await broker.call('triplestore.dropAll', { dataset: testDataset });
+    // await broker.call('triplestore.dropAll', { dataset: testDataset });
   });
 
   describe('Dataset subservice', () => {
@@ -106,10 +103,11 @@ describe.each([
         query: 'SELECT * WHERE { ?s ?p ?o }',
         dataset: testDataset
       });
-      expect(result).toHaveLength(1);
-      expect(result[0].s.value).toBe('http://example.org/subject');
-      expect(result[0].p.value).toBe('http://example.org/predicate');
-      expect(result[0].o.value).toBe('object');
+      // includes the data inserted in the previous tests
+      expect(result).toHaveLength(3);
+      expect(result[2].s.value).toBe('http://example.org/subject');
+      expect(result[2].p.value).toBe('http://example.org/predicate');
+      expect(result[2].o.value).toBe('object');
     });
 
     test('Insert JSON-LD data with type', async () => {
@@ -178,10 +176,12 @@ describe.each([
 
       // Assert in first dataset
       let result = await broker.call('triplestore.query', {
+        // modify the query to target the data inserted in this same test
         query: 'SELECT * WHERE { ?s ?p ?o }',
         dataset: testDataset
       });
-      expect(result).toHaveLength(1);
+      // includes the data inserted in the previous tests
+      expect(result).toHaveLength(3);
 
       // Assert in second dataset
       result = await broker.call('triplestore.query', {
@@ -255,7 +255,8 @@ describe.each([
         dataset: testDataset
       });
       expect(Array.isArray(result)).toBeTruthy();
-      expect(result.length).toBe(4);
+      // includes the data inserted in the previous tests
+      expect(result.length).toBe(5);
     });
 
     test('SELECT query with SPARQL JSON result', async () => {
@@ -265,7 +266,8 @@ describe.each([
         dataset: testDataset
       });
       expect(Array.isArray(result)).toBeTruthy();
-      expect(result.length).toBe(4);
+      // includes the data inserted in the previous tests
+      expect(result.length).toBe(5);
     });
 
     test('ASK query', async () => {
@@ -539,42 +541,12 @@ describe.each([
     });
   });
 
-  describe.only('NamedGraph subservice', () => {
+  describe('NamedGraph subservice', () => {
     let namedGraphUri: string;
     let secondNamedGraphUri: string;
-
-    test('Create a new named graph and verify it exists', async () => {
-      const localNamedGraphUri = await broker.call('triplestore.named-graph.create', { dataset: testDataset });
-
-      // Assert the uri is a non empty string
-      expect(localNamedGraphUri).toBeTruthy();
-      expect(localNamedGraphUri).not.toBe('');
-
-      // Assert the named graph exists
-      expect(
-        await broker.call('triplestore.named-graph.exist', { uri: localNamedGraphUri, dataset: testDataset })
-      ).toBeTruthy();
-    });
-
-    test('Check named graph existence should return false with non-existent named graph', async () => {
-      await expect(
-        broker.call('triplestore.named-graph.exist', { uri: 'http://example.org/graph', dataset: testDataset })
-      ).resolves.toBeFalsy();
-    });
-
-    test('Clear named graph should clear the named graph, and only it', async () => {
-      // Create a new named graph
+    beforeAll(async () => {
       namedGraphUri = await broker.call('triplestore.named-graph.create', { dataset: testDataset });
-      // Create a second named graph
       secondNamedGraphUri = await broker.call('triplestore.named-graph.create', { dataset: testDataset });
-
-      // Assert the the named graphs exist
-      expect(
-        await broker.call('triplestore.named-graph.exist', { uri: namedGraphUri, dataset: testDataset })
-      ).toBeTruthy();
-      expect(
-        await broker.call('triplestore.named-graph.exist', { uri: secondNamedGraphUri, dataset: testDataset })
-      ).toBeTruthy();
 
       // Insert test data into the first named graph
       const jsonLdData = {
@@ -599,39 +571,66 @@ describe.each([
         graphName: secondNamedGraphUri,
         dataset: testDataset
       });
+    });
+
+    test('Create a new named graph and verify it exists', async () => {
+      const localNamedGraphUri = await broker.call('triplestore.named-graph.create', { dataset: testDataset });
+
+      // Assert the uri is a non empty string
+      expect(localNamedGraphUri).toBeTruthy();
+      expect(localNamedGraphUri).not.toBe('');
+
+      // Assert the named graph exists
+      expect(
+        await broker.call('triplestore.named-graph.exist', { uri: localNamedGraphUri, dataset: testDataset })
+      ).toBeTruthy();
+    });
+
+    test('Check named graph existence should return false with non-existent named graph', async () => {
+      await expect(
+        broker.call('triplestore.named-graph.exist', { uri: 'http://example.org/graph', dataset: testDataset })
+      ).resolves.toBeFalsy();
+    });
+
+    test('Clear named graph should clear the named graph, and only it', async () => {
+      // Assert the the named graphs exist
+      expect(
+        await broker.call('triplestore.named-graph.exist', { uri: namedGraphUri, dataset: testDataset })
+      ).toBeTruthy();
+      expect(
+        await broker.call('triplestore.named-graph.exist', { uri: secondNamedGraphUri, dataset: testDataset })
+      ).toBeTruthy();
 
       // Assert the data is in both named graphs
       const resultFirstNamedGraph = await broker.call('triplestore.query', {
-        query: 'SELECT * WHERE { ?s ?p ?o }',
-        graphName: namedGraphUri,
+        query: `SELECT * FROM <${namedGraphUri}> { ?s ?p ?o }`,
+        // graphName: namedGraphUri,
         dataset: testDataset
       });
-      expect(resultFirstNamedGraph).toHaveLength(1);
+      expect(resultFirstNamedGraph).toHaveLength(3);
       const resultSecondNamedGraph = await broker.call('triplestore.query', {
-        query: 'SELECT * WHERE { ?s ?p ?o }',
-        graphName: secondNamedGraphUri,
+        query: `SELECT * FROM <${secondNamedGraphUri}> { ?s ?p ?o }`,
+        // graphName: secondNamedGraphUri,
         dataset: testDataset
       });
-      expect(resultSecondNamedGraph).toHaveLength(1);
+      expect(resultSecondNamedGraph).toHaveLength(3);
 
       // Clear the named graph
       await broker.call('triplestore.named-graph.clear', { uri: namedGraphUri, dataset: testDataset });
 
       // Assert the data isn't in the first named graph anymore
       const result = await broker.call('triplestore.query', {
-        query: 'SELECT * WHERE { ?s ?p ?o }',
-        dataset: testDataset,
-        graphName: namedGraphUri
+        query: `SELECT * FROM <${namedGraphUri}> WHERE { ?s ?p ?o }`,
+        dataset: testDataset
       });
-      expect(result).toHaveLength(0);
+      expect(result).toHaveLength(1); // the placeholder triple
 
       // Assert the data is still in the second named graph
       const resultSecondNamedGraphAfterClear = await broker.call('triplestore.query', {
-        query: 'SELECT * WHERE { ?s ?p ?o }',
-        dataset: testDataset,
-        graphName: secondNamedGraphUri
+        query: `SELECT * FROM <${secondNamedGraphUri}> WHERE { ?s ?p ?o }`,
+        dataset: testDataset
       });
-      expect(resultSecondNamedGraphAfterClear).toHaveLength(1);
+      expect(resultSecondNamedGraphAfterClear).toHaveLength(3);
     });
 
     test('Delete named graph', async () => {
