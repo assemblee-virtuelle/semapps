@@ -1,4 +1,4 @@
-import { namedNode, triple, literal } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import waitForExpect from 'wait-for-expect';
 import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
@@ -48,10 +48,10 @@ describe('Permissions check on a specific resource', () => {
       broker.call('ldp.resource.patch', {
         resourceUri,
         triplesToAdd: [
-          triple(
-            namedNode(resourceUri),
-            namedNode('https://www.w3.org/ns/activitystreams#content'),
-            literal('Welcome everybody')
+          rdf.quad(
+            rdf.namedNode(resourceUri),
+            rdf.namedNode('https://www.w3.org/ns/activitystreams#content'),
+            rdf.literal('Welcome everybody')
           )
         ],
         webId: ALICE_WEBID
@@ -211,10 +211,10 @@ describe('Permissions check on a specific resource', () => {
       broker.call('ldp.resource.patch', {
         resourceUri,
         triplesToAdd: [
-          triple(
-            namedNode(resourceUri),
-            namedNode('https://www.w3.org/ns/activitystreams#content'),
-            literal('Welcome everybody')
+          rdf.quad(
+            rdf.namedNode(resourceUri),
+            rdf.namedNode('https://www.w3.org/ns/activitystreams#content'),
+            rdf.literal('Welcome everybody')
           )
         ],
         webId: ALICE_WEBID
@@ -241,10 +241,10 @@ describe('Permissions check on a specific resource', () => {
       broker.call('ldp.resource.patch', {
         resourceUri,
         triplesToRemove: [
-          triple(
-            namedNode(resourceUri),
-            namedNode('https://www.w3.org/ns/activitystreams#content'),
-            literal('Welcome everybody')
+          rdf.quad(
+            rdf.namedNode(resourceUri),
+            rdf.namedNode('https://www.w3.org/ns/activitystreams#content'),
+            rdf.literal('Welcome everybody')
           )
         ],
         webId: ALICE_WEBID
@@ -280,10 +280,10 @@ describe('Permissions check on a specific resource', () => {
       broker.call('ldp.resource.patch', {
         resourceUri,
         triplesToRemove: [
-          triple(
-            namedNode(resourceUri),
-            namedNode('https://www.w3.org/ns/activitystreams#content'),
-            literal('Welcome everybody')
+          rdf.quad(
+            rdf.namedNode(resourceUri),
+            rdf.namedNode('https://www.w3.org/ns/activitystreams#content'),
+            rdf.literal('Welcome everybody')
           )
         ],
         webId: ALICE_WEBID

@@ -41,17 +41,25 @@ const LdpRegistrySchema = {
       async handler(ctx) {
         const { webId, accountData } = ctx.params;
         // We want to add user's containers only in Pod provider config
+
         if (this.settings.podProvider) {
-          const storageUrl = await ctx.call('solid-storage.getUrl', { webId });
+          const storageUrl: string = await ctx.call('solid-storage.getUrl', { webId });
+
           const registeredContainers = await this.actions.list({ dataset: accountData.username }, { parentCtx: ctx });
-          // Go through each registered containers
+
+          // Go through each registered container.
           for (const options of Object.values(registeredContainers)) {
-            await ctx.call('ldp.container.createAndAttach', {
-              // @ts-expect-error TS(18046): 'options' is of type 'unknown'.
-              containerUri: urlJoin(storageUrl, options.path),
-              options,
-              webId
-            });
+            try {
+              this.logger.info('Trying to register container', options.path);
+              await ctx.call('ldp.container.createAndAttach', {
+                containerUri: urlJoin(storageUrl, options.path),
+                options,
+                webId
+              });
+              this.logger.info('SUCCESS FOR PATH', options.path);
+            } catch (error) {
+              // pass
+            }
           }
         }
       }

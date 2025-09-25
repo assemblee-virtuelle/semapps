@@ -1,4 +1,4 @@
-import { namedNode } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import { ActionSchema, Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
@@ -76,7 +76,7 @@ const Schema = {
       // @ts-expect-error TS(2345): Argument of type '{ updateType: string; delete: { ... Remove this comment to see the full error message
       sparqlUpdate.updates.push({
         updateType: 'delete',
-        delete: [{ type: 'graph', triples: triplesToRemove, name: namedNode(resourceUri) }]
+        delete: [{ type: 'graph', triples: triplesToRemove, name: rdf.namedNode(resourceUri) }]
       });
     }
 
@@ -85,7 +85,7 @@ const Schema = {
       // @ts-expect-error TS(2345): Argument of type '{ updateType: string; insert: { ... Remove this comment to see the full error message
       sparqlUpdate.updates.push({
         updateType: 'insert',
-        insert: [{ type: 'graph', triples: triplesToAdd, name: namedNode(resourceUri) }]
+        insert: [{ type: 'graph', triples: triplesToAdd, name: rdf.namedNode(resourceUri) }]
       });
     }
 

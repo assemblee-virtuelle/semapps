@@ -1,5 +1,5 @@
 import urlJoin from 'url-join';
-import { namedNode, triple } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 
 import {
   parseUrl,
@@ -78,7 +78,7 @@ const Schema = {
           'ldp.resource.patch',
           {
             resourceUri: this.endpointUrl,
-            triplesToAdd: [triple(namedNode(this.endpointUrl), predicate, object)],
+            triplesToAdd: [rdf.quad(rdf.namedNode(this.endpointUrl), predicate, object)],
             webId: 'system'
           },
           { meta: { dataset: this.settings.settingsDataset, skipEmitEvent: true, skipObjectsWatcher: true } }
@@ -88,7 +88,6 @@ const Schema = {
 
     endpointGet: {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property '$responseType' does not exist on type '{... Remove this comment to see the full error message
         ctx.meta.$responseType = ctx.meta.headers?.accept;
 
         return await ctx.call(

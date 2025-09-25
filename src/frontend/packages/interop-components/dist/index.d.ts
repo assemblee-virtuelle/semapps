@@ -1,32 +1,13 @@
-export const LexiconAutocompleteInput: React.ForwardRefExoticComponent<React.RefAttributes<any>>;
-export function LexiconCreateDialog({
-  fetchLexicon,
-  selectData
-}: {
-  fetchLexicon: any;
-  selectData: any;
-}): import('react/jsx-runtime').JSX.Element;
-export function useFork(resourceId: any): (remoteRecordUri: any, stripProperties?: any[]) => Promise<void>;
-export function useSync(resourceId: any): (remoteRecordUri: any) => Promise<void>;
-export function ImportForm({ stripProperties }: { stripProperties: any }): import('react/jsx-runtime').JSX.Element;
-export function CreateOrImportForm({
-  stripProperties,
-  ...rest
-}: {
-  [x: string]: any;
-  stripProperties: any;
-}): import('react/jsx-runtime').JSX.Element;
-export function LexiconImportForm({
-  fetchLexicon,
-  selectData
-}: {
-  fetchLexicon: any;
-  selectData: any;
-}): import('react/jsx-runtime').JSX.Element;
-export function fetchWikidata(apiUrl?: string): ({ keyword, locale }: { keyword: any; locale: any }) => Promise<any>;
-export function fetchESCO(
-  apiUrl?: string,
-  type?: string
-): ({ keyword, locale }: { keyword: any; locale: any }) => Promise<any>;
+import React from "react";
+import { JSX } from "react/jsx-runtime";
+export const LexiconAutocompleteInput: React.ForwardRefExoticComponent<React.RefAttributes<unknown>>;
+export const LexiconCreateDialog: ({ fetchLexicon, selectData }: any) => JSX.Element;
+export const useFork: (resourceId: any) => (remoteRecordUri: any, stripProperties?: never[]) => Promise<void>;
+export const useSync: (resourceId: any) => (remoteRecordUri: any) => Promise<void>;
+export const ImportForm: ({ stripProperties }: any) => JSX.Element;
+export const CreateOrImportForm: ({ stripProperties, ...rest }: any) => JSX.Element;
+export const LexiconImportForm: ({ fetchLexicon, selectData }: any) => JSX.Element;
+export const fetchWikidata: (apiUrl?: string) => ({ keyword, locale }: any) => Promise<any>;
+export const fetchESCO: (apiUrl?: string, type?: string) => ({ keyword, locale }: any) => Promise<any>;
 
 //# sourceMappingURL=index.d.ts.map

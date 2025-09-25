@@ -1,6 +1,6 @@
 {
   "name": "@semapps/input-components",
-  "version": "1.1.4",
+  "version": "1.2.0",
   "description": "React-Admin input components for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -15,15 +15,20 @@
     "watch": "nodemon --ext ts,tsx,js --watch src --exec 'yarn build'"
   },
   "dependencies": {
-    "@semapps/semantic-data-provider": "1.1.4"
+    "@semapps/semantic-data-provider": "1.2.0"
   },
   "peerDependencies": {
     "react": "^18.2.0",
-    "react-admin": "^4.11.0",
+    "react-admin": "^5.10.1",
     "react-hook-form": "^7.43.9"
   },
   "publishConfig": {
     "access": "public"
   },
-  "types": "dist/index.d.ts"
+  "types": "dist/index.d.ts",
+  "devDependencies": {
+    "react": "^18.2.0",
+    "react-admin": "^5.10.1",
+    "react-hook-form": "^7.43.9"
+  }
 }

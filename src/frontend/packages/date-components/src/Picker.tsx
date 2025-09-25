@@ -83,6 +83,7 @@ const Picker = <PickerProps,>({
             size: 'small',
             fullWidth,
             helperText: (
+              // @ts-expect-error TS(2322): Type '{ touched: boolean; error: string | undefine... Remove this comment to see the full error message
               <InputHelperText touched={isTouched || isSubmitted} error={error?.message} helperText={helperText} />
             )
           }

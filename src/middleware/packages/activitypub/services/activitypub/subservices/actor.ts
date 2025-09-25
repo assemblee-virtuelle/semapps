@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { namedNode, literal, triple, variable } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import { arrayOf } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
 import { ACTOR_TYPES, AS_PREFIX } from '../../../constants.ts';
@@ -77,11 +77,12 @@ const ActorService = {
           await ctx.call('ldp.resource.patch', {
             resourceUri: actorUri,
             triplesToAdd: Object.entries(propertiesToAdd).map(([predicate, subject]) =>
-              triple(
-                namedNode(actorUri),
-                namedNode(predicate),
-                // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
-                typeof subject === 'string' && subject.startsWith('http') ? namedNode(subject) : literal(subject)
+              rdf.quad(
+                rdf.namedNode(actorUri),
+                rdf.namedNode(predicate),
+                typeof subject === 'string' && subject.startsWith('http')
+                  ? rdf.namedNode(subject)
+                  : rdf.literal(subject)
               )
             ),
             webId: 'system'
@@ -108,12 +109,12 @@ const ActorService = {
                     type: 'graph',
                     name: namedNode(actorUri),
                     triples: [
-                      triple(
-                        namedNode(actorUri),
-                        namedNode('https://www.w3.org/ns/activitystreams#endpoints'),
-                        variable('endpoints')
+                      rdf.quad(
+                        rdf.namedNode(actorUri),
+                        rdf.namedNode('https://www.w3.org/ns/activitystreams#endpoints'),
+                        rdf.variable('endpoints')
                       ),
-                      triple(variable('endpoints'), namedNode(predicate), namedNode(endpoint))
+                      rdf.quad(rdf.variable('endpoints'), rdf.namedNode(predicate), rdf.namedNode(endpoint))
                     ]
                   }
                 ],
@@ -126,10 +127,10 @@ const ActorService = {
                         type: 'graph',
                         name: namedNode(actorUri),
                         triples: [
-                          triple(
-                            namedNode(actorUri),
-                            namedNode('https://www.w3.org/ns/activitystreams#endpoints'),
-                            variable('b0')
+                          rdf.quad(
+                            rdf.namedNode(actorUri),
+                            rdf.namedNode('https://www.w3.org/ns/activitystreams#endpoints'),
+                            rdf.variable('b0')
                           )
                         ]
                       }
@@ -137,7 +138,7 @@ const ActorService = {
                   },
                   {
                     type: 'bind',
-                    variable: variable('endpoints'),
+                    variable: rdf.variable('endpoints'),
                     expression: {
                       type: 'operation',
                       operator: 'if',
@@ -145,9 +146,9 @@ const ActorService = {
                         {
                           type: 'operation',
                           operator: 'bound',
-                          args: [variable('b0')]
+                          args: [rdf.variable('b0')]
                         },
-                        variable('b0'),
+                        rdf.variable('b0'),
                         {
                           type: 'operation',
                           operator: 'BNODE',

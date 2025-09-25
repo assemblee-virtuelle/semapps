@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import urlJoin from 'url-join';
 import useDataServers from './useDataServers';
 import findCreateContainerWithTypes from '../dataProvider/utils/findCreateContainerWithTypes';
 import getServerKeyFromType from '../dataProvider/utils/getServerKeyFromType';
@@ -10,8 +9,8 @@ const useGetCreateContainerUri = () => {
   const dataServers = useDataServers();
 
   const getCreateContainerUri = useCallback(
-    (resourceId: string) => {
-      if (!dataModels || !dataServers || !dataModels[resourceId]) {
+    (resourceId: string | undefined) => {
+      if (!resourceId || !dataModels || !dataServers || !dataModels[resourceId]) {
         return undefined;
       }
 

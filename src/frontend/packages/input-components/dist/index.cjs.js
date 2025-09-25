@@ -14,11 +14,11 @@ function $parcel$interopDefault(a) {
 }
 
 $parcel$export(module.exports, "ImageInput", () => $cdabe6ba421df206$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "MultiServerAutocompleteArrayInput", () => $bb612fb8f67b03e0$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "MultiServerAutocompleteInput", () => $6c505c4dc3e51ff8$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "MultiLinesInput", () => $9aa37fe333ef760c$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "ReferenceArrayInput", () => $83ac3fff69969204$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "ReferenceInput", () => $6fb40d62998d2ee1$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "MultiServerAutocompleteArrayInput", () => $d3e2e3d630c79213$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "MultiServerAutocompleteInput", () => $c7bb340c6cd07d6a$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "MultiLinesInput", () => $37456f889a58747f$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "ReferenceArrayInput", () => $90eab1227e899a49$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "ReferenceInput", () => $4202119289255271$export$2e2bcd8739ae039);
 /* eslint-disable react/react-in-jsx-scope */ 
 
 // Since we overwrite FileInput default parse, we must transform the file
@@ -64,11 +64,13 @@ var $cdabe6ba421df206$export$2e2bcd8739ae039 = $cdabe6ba421df206$var$ImageInput;
 
 
 
-const $a3ccd82fa8860009$var$OptionRenderer = ({ optionText: optionText, dataServers: dataServers })=>{
+const $db06f27b57b80fcf$var$OptionRenderer = ({ optionText: optionText, dataServers: dataServers })=>{
     const record = (0, $3asgq$reactadmin.useRecordContext)();
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const server = dataServers && Object.values(dataServers).find((server)=>record.id.startsWith(server.baseUrl));
     return /*#__PURE__*/ (0, $3asgq$reactjsxruntime.jsxs)("span", {
         children: [
+            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
             record[optionText],
             server && /*#__PURE__*/ (0, $3asgq$reactjsxruntime.jsxs)("em", {
                 className: "serverName",
@@ -84,17 +86,17 @@ const $a3ccd82fa8860009$var$OptionRenderer = ({ optionText: optionText, dataServ
         ]
     });
 };
-var $a3ccd82fa8860009$export$2e2bcd8739ae039 = $a3ccd82fa8860009$var$OptionRenderer;
+var $db06f27b57b80fcf$export$2e2bcd8739ae039 = $db06f27b57b80fcf$var$OptionRenderer;
 
 
-const $bb612fb8f67b03e0$var$MultiServerAutocompleteArrayInput = ({ optionText: optionText, ...rest })=>{
+const $d3e2e3d630c79213$var$MultiServerAutocompleteArrayInput = ({ optionText: optionText, ...rest })=>{
     const dataServers = (0, $3asgq$semappssemanticdataprovider.useDataServers)();
     const matchSuggestion = (0, $3asgq$react.useCallback)((filterValue, choice)=>choice[optionText].toLowerCase().match(filterValue.toLowerCase()), [
         optionText
     ]);
     return /*#__PURE__*/ (0, $3asgq$reactjsxruntime.jsx)((0, $3asgq$reactadmin.AutocompleteArrayInput), {
         matchSuggestion: matchSuggestion,
-        optionText: /*#__PURE__*/ (0, $3asgq$reactjsxruntime.jsx)((0, $a3ccd82fa8860009$export$2e2bcd8739ae039), {
+        optionText: /*#__PURE__*/ (0, $3asgq$reactjsxruntime.jsx)((0, $db06f27b57b80fcf$export$2e2bcd8739ae039), {
             optionText: optionText,
             dataServers: dataServers
         }),
@@ -102,14 +104,14 @@ const $bb612fb8f67b03e0$var$MultiServerAutocompleteArrayInput = ({ optionText: o
         ...rest
     });
 };
-var $bb612fb8f67b03e0$export$2e2bcd8739ae039 = $bb612fb8f67b03e0$var$MultiServerAutocompleteArrayInput;
+var $d3e2e3d630c79213$export$2e2bcd8739ae039 = $d3e2e3d630c79213$var$MultiServerAutocompleteArrayInput;
 
 
 
 
 
 
-const $6c505c4dc3e51ff8$var$MultiServerAutocompleteInput = ({ optionText: optionText, ...rest })=>{
+const $c7bb340c6cd07d6a$var$MultiServerAutocompleteInput = ({ optionText: optionText, ...rest })=>{
     const dataServers = (0, $3asgq$semappssemanticdataprovider.useDataServers)();
     // We cannot use OptionRenderer like MultiServerAutocompleteArrayInput because there is a bug with AutocompleteInput
     const optionTextWithServerName = (0, $3asgq$react.useCallback)((record)=>{
@@ -126,27 +128,27 @@ const $6c505c4dc3e51ff8$var$MultiServerAutocompleteInput = ({ optionText: option
         ...rest
     });
 };
-var $6c505c4dc3e51ff8$export$2e2bcd8739ae039 = $6c505c4dc3e51ff8$var$MultiServerAutocompleteInput;
+var $c7bb340c6cd07d6a$export$2e2bcd8739ae039 = $c7bb340c6cd07d6a$var$MultiServerAutocompleteInput;
 
 
 
 
 
-const $9aa37fe333ef760c$var$MultiLinesInput = (props)=>/*#__PURE__*/ (0, $3asgq$reactjsxruntime.jsx)((0, $3asgq$reactadmin.TextInput), {
+const $37456f889a58747f$var$MultiLinesInput = (props)=>/*#__PURE__*/ (0, $3asgq$reactjsxruntime.jsx)((0, $3asgq$reactadmin.TextInput), {
         multiline: true,
         minRows: 2,
         format: (value)=>value ? Array.isArray(value) ? value.join('\n') : value : '',
         parse: (value)=>value.split(/\r?\n/),
         ...props
     });
-var $9aa37fe333ef760c$export$2e2bcd8739ae039 = $9aa37fe333ef760c$var$MultiLinesInput;
+var $37456f889a58747f$export$2e2bcd8739ae039 = $37456f889a58747f$var$MultiLinesInput;
 
 
 
 
 
 
-const $83ac3fff69969204$var$ReferenceArrayInput = (props)=>{
+const $90eab1227e899a49$var$ReferenceArrayInput = (props)=>{
     const { field: { value: value, onChange: onChange } } = (0, $3asgq$reacthookform.useController)({
         name: props.source
     });
@@ -165,28 +167,28 @@ const $83ac3fff69969204$var$ReferenceArrayInput = (props)=>{
         ...props
     });
 };
-var $83ac3fff69969204$export$2e2bcd8739ae039 = $83ac3fff69969204$var$ReferenceArrayInput;
+var $90eab1227e899a49$export$2e2bcd8739ae039 = $90eab1227e899a49$var$ReferenceArrayInput;
 
 
 
 
 
-const $6fb40d62998d2ee1$var$format = (value)=>{
+const $4202119289255271$var$format = (value)=>{
     // If there is no value, return immediately
     if (!value) return value;
     // If the value is an object with an @id field, return the uri
     return typeof value === 'object' ? value.id || value['@id'] : value;
 };
-const $6fb40d62998d2ee1$var$ReferenceInput = ({ children: children, ...rest })=>{
+const $4202119289255271$var$ReferenceInput = ({ children: children, ...rest })=>{
     const child = (0, ($parcel$interopDefault($3asgq$react))).Children.only(children);
     return /*#__PURE__*/ (0, $3asgq$reactjsxruntime.jsx)((0, $3asgq$reactadmin.ReferenceInput), {
         ...rest,
         children: /*#__PURE__*/ (0, ($parcel$interopDefault($3asgq$react))).cloneElement(child, {
-            format: $6fb40d62998d2ee1$var$format
+            format: $4202119289255271$var$format
         })
     });
 };
-var $6fb40d62998d2ee1$export$2e2bcd8739ae039 = $6fb40d62998d2ee1$var$ReferenceInput;
+var $4202119289255271$export$2e2bcd8739ae039 = $4202119289255271$var$ReferenceInput;
 
 
 

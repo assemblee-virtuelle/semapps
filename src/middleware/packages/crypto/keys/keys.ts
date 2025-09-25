@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import { generateKeyPair } from 'crypto';
-import { namedNode, triple } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { sec } from '@semapps/ontologies';
 // @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
@@ -383,7 +383,7 @@ const KeysService = {
         // Add public key triples to webId document.
         await ctx.call('ldp.resource.patch', {
           resourceUri: webId,
-          triplesToAdd: [triple(namedNode(webId), namedNode(keyPredicate), namedNode(publicKeyId))],
+          triplesToAdd: [rdf.quad(rdf.namedNode(webId), rdf.namedNode(keyPredicate), rdf.namedNode(publicKeyId))],
           webId
         });
       }
@@ -402,8 +402,16 @@ const KeysService = {
           resourceUri: webId,
           triplesToRemove: [
             // The key may be stored in publicKey or assertionMethod field, depending on key type.
-            triple(namedNode(webId), namedNode('https://w3id.org/security#publicKey'), namedNode(publicKeyId)),
-            triple(namedNode(webId), namedNode('https://w3id.org/security#assertionMethod'), namedNode(publicKeyId))
+            rdf.quad(
+              rdf.namedNode(webId),
+              rdf.namedNode('https://w3id.org/security#publicKey'),
+              rdf.namedNode(publicKeyId)
+            ),
+            rdf.quad(
+              rdf.namedNode(webId),
+              rdf.namedNode('https://w3id.org/security#assertionMethod'),
+              rdf.namedNode(publicKeyId)
+            )
           ],
           webId
         });
@@ -437,10 +445,10 @@ const KeysService = {
         await ctx.call('ldp.resource.patch', {
           resourceUri: privateKeyUri,
           triplesToAdd: [
-            triple(
-              namedNode(privateKeyUri),
-              namedNode('http://www.w3.org/2000/01/rdf-schema#seeAlso'),
-              namedNode(publicKeyUri)
+            rdf.quad(
+              rdf.namedNode(privateKeyUri),
+              rdf.namedNode('http://www.w3.org/2000/01/rdf-schema#seeAlso'),
+              rdf.namedNode(publicKeyUri)
             )
           ],
           webId

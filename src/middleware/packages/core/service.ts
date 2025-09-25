@@ -119,7 +119,6 @@ const CoreService = {
       });
     }
 
-    // @ts-expect-error TS(2322): Type '{ name: "ontologies"; settings: { ontologies... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [OntologiesService],
       settings: {

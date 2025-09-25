@@ -1,3 +1,4 @@
+import { MIME_TYPES } from '@semapps/mime-types';
 import { ServiceSchema } from 'moleculer';
 
 const LdpCacheSchema = {

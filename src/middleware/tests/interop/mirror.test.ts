@@ -1,6 +1,6 @@
 import urlJoin from 'url-join';
 import waitForExpect from 'wait-for-expect';
-import { triple, namedNode } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import initialize from './initialize.ts';
 
 // @ts-expect-error TS(2304): Cannot find name 'jest'.
@@ -113,10 +113,10 @@ describe('Server2 mirror server1', () => {
     await server2.call('ldp.container.patch', {
       containerUri: 'http://localhost:3002/resources',
       triplesToAdd: [
-        triple(
-          namedNode('http://localhost:3002/resources'),
-          namedNode('http://www.w3.org/ns/ldp#contains'),
-          namedNode(resourceUri)
+        rdf.quad(
+          rdf.namedNode('http://localhost:3002/resources'),
+          rdf.namedNode('http://www.w3.org/ns/ldp#contains'),
+          rdf.namedNode(resourceUri)
         )
       ],
       webId: 'system'

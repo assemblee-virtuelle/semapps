@@ -1,0 +1,55 @@
+import React from 'react';
+import { Box, Card, GlobalStyles, Typography } from '@mui/material';
+import { Notification } from 'react-admin';
+import { makeStyles } from 'tss-react/mui';
+
+// TODO jss-to-tss-react codemod: '@global' is not supported by tss-react.
+// See https://mui.com/material-ui/customization/how-to-customize/#4-global-css-override for alternatives.
+const useStyles = makeStyles()(theme => ({
+  root: {
+    backgroundColor: theme.palette.secondary.main,
+    minHeight: '100%',
+    [theme.breakpoints.down('sm')]: {
+      padding: '1em'
+    }
+  },
+  card: {
+    width: '100%',
+    maxWidth: 450,
+    marginTop: '6em'
+  },
+  icon: {
+    marginTop: 5,
+    marginRight: 5
+  },
+  title: {
+    [theme.breakpoints.down('sm')]: {
+      fontWeight: 'bold',
+      marginTop: 12
+    }
+  }
+}));
+
+const SimpleBox = ({ title, icon, text, children }: any) => {
+  const { classes } = useStyles();
+  return (
+    <>
+      <Box display="flex" flexDirection="column" alignItems="center" className={classes.root}>
+        <Card className={classes.card}>
+          <Box p={2} display="flex" justifyContent="start">
+            <Typography variant="h4" className={classes.title}>
+              {title}
+            </Typography>
+          </Box>
+          <Box pl={2} pr={2}>
+            <Typography variant="body1">{text}</Typography>
+          </Box>
+          {children}
+        </Card>
+        <Notification />
+      </Box>
+    </>
+  );
+};
+
+export default SimpleBox;

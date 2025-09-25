@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-redundant-type-constituents */
 import { DataProvider, RaRecord, fetchUtils } from 'react-admin';
 import type { Quad } from '@rdfjs/types';
+import { ConnectedLdoDataset } from '@ldo/connected';
+import { SolidConnectedPlugin } from '@ldo/connected-solid';
 
 export type DataServerKey = string & { readonly _type?: 'DataServerKey' };
 export type ContainerURI = string & { readonly _type?: 'ContainerURI' };
@@ -82,7 +84,7 @@ export type DataModel = {
     server?: '@default' | '@auth' | '@pod' | DataServerKey;
 
     /** URL of the container where to create new resources. If specified, will bypass the create.server config */
-    container?: string[];
+    container?: string;
   };
   fieldsMapping?: {
     /** The predicate of the title */
@@ -90,11 +92,10 @@ export type DataModel = {
   };
 };
 
-export type FetchFn = typeof fetchUtils.fetchJson;
+export type FetchJsonFn = typeof fetchUtils.fetchJson;
 
-export type Configuration = {
+export interface Configuration {
   dataServers: DataServersConfig;
-  httpClient: FetchFn;
 
   /** Context from ontologies { prefix: IRI } or IRI, or array of IRI */
   jsonContext: string | string[] | Record<string, string>;
@@ -104,18 +105,43 @@ export type Configuration = {
   ontologies: Record<string, string>;
 
   plugins: Plugin[];
-};
+
+  returnFailedResources?: boolean;
+}
+
+/** Additional utilities available to plugins and methods which are not set in the configuration used for creating a data provider. */
+export interface RuntimeUtils {
+  httpClient: FetchJsonFn;
+  authFetch: (uri: string, options: fetchUtils.Options) => ReturnType<typeof fetch>;
+  dataset: ConnectedLdoDataset<SolidConnectedPlugin[]>;
+}
+export interface RuntimeConfiguration extends Configuration, RuntimeUtils {}
 
 export type Plugin = {
-  transformConfig: (config: Configuration) => Promise<Configuration>;
+  transformConfig: (config: RuntimeConfiguration) => Promise<RuntimeConfiguration>;
+  name?: string;
 };
 
 export type SemanticDataProvider = DataProvider & {
   getDataModels: () => Promise<Record<string, DataModel>>;
   getDataServers: () => Promise<DataServersConfig>;
-  fetch: FetchFn;
-  getConfig: () => Promise<Configuration>;
-  refreshConfig: () => Promise<Configuration>;
+  /**
+   * A fetch function used to make authenticated HTTP requests. Uses a proxy for remote resources, if necessary.
+   * Uses react-admin's @see {fetchUtils.fetchJson} signature and logic under the hood.
+   */
+  fetch: FetchJsonFn;
+  /**
+   * A fetch function used to make authenticated HTTP requests. Uses a proxy for remote resources, if necessary.
+   * Signature is the same as the browser's default @see {fetch} function.
+   */
+  authFetch: (uri: string, options: fetchUtils.Options) => ReturnType<typeof fetch>;
+  /**
+   * Get the connected LDO dataset which is used to store parsed RDF data and can be used to fetch data.
+   * You probably don't need to use this directly and should instead rely on react-admins utility functions.
+   */
+  getDataset: () => Promise<ConnectedLdoDataset<SolidConnectedPlugin[]>>;
+  getConfig: () => Promise<RuntimeConfiguration>;
+  refreshConfig: () => Promise<RuntimeConfiguration>;
   uploadFile: (rawFile: File) => Promise<string | null>;
   expandTypes: (types: string[]) => Promise<string[]>;
 };

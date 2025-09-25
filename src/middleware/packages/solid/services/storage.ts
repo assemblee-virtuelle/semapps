@@ -1,5 +1,5 @@
 import urlJoin from 'url-join';
-import { triple, namedNode } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import { pim } from '@semapps/ontologies';
 import { ServiceSchema } from 'moleculer';
 
@@ -57,19 +57,26 @@ const SolidStorageSchema = {
   events: {
     'auth.registered': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
+        this.logger.info('Storage event registration entered. WebId', webId);
 
         const storageUrl = await this.actions.getUrl({ webId }, { parentCtx: ctx });
+        this.logger.info('Storage URL is', storageUrl, 'Patching to webId doc');
 
         // Attach the storage URL to the webId
         await ctx.call('ldp.resource.patch', {
           resourceUri: webId,
           triplesToAdd: [
-            triple(namedNode(webId), namedNode('http://www.w3.org/ns/pim/space#storage'), namedNode(storageUrl))
+            rdf.quad(
+              rdf.namedNode(webId),
+              rdf.namedNode('http://www.w3.org/ns/pim/space#storage'),
+              rdf.namedNode(storageUrl)
+            )
           ],
           webId: 'system'
         });
+
+        this.logger.info('Storage URL patched. Now adding rights to store');
 
         // Give full rights to user on his storage
         await ctx.call('webacl.resource.addRights', {
@@ -92,6 +99,8 @@ const SolidStorageSchema = {
           },
           webId: 'system'
         });
+
+        this.logger.info('ACL rights added to ', storageUrl);
       }
     }
   }

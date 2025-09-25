@@ -76,10 +76,9 @@ const addRightsToNewUser = async (ctx: any, userUri: any) => {
 
 /**
  * Middleware that ensures that requests are conforming ACL records.
- * @type {import('moleculer').Middleware}
  */
 const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://semapps.org/webacl' }: any) => ({
-  name: 'WebAclMiddleware',
+  name: 'WebAclMiddleware' as const,
   async started() {
     if (!baseUrl) throw new Error('The baseUrl config is missing for the WebACL middleware');
   },

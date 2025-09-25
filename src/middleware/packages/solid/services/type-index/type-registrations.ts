@@ -1,5 +1,5 @@
 import urlJoin from 'url-join';
-import { namedNode, triple } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import { ControlledContainerMixin, arrayOf } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
 
@@ -49,10 +49,10 @@ const TypeRegistrationsSchema = {
               await this.actions.patch({
                 resourceUri: existingRegistration.id,
                 triplesToAdd: [
-                  triple(
-                    namedNode(existingRegistration.id),
-                    namedNode('http://www.w3.org/ns/solid/terms#forClass'),
-                    namedNode(expandedType)
+                  rdf.quad(
+                    rdf.namedNode(existingRegistration.id),
+                    rdf.namedNode('http://www.w3.org/ns/solid/terms#forClass'),
+                    rdf.namedNode(expandedType)
                   )
                 ],
                 webId
@@ -99,10 +99,10 @@ const TypeRegistrationsSchema = {
           await ctx.call('type-indexes.patch', {
             resourceUri: indexUri,
             triplesToAdd: [
-              triple(
-                namedNode(indexUri),
-                namedNode('http://www.w3.org/ns/solid/terms#hasTypeRegistration'),
-                namedNode(registrationUri)
+              rdf.quad(
+                rdf.namedNode(indexUri),
+                rdf.namedNode('http://www.w3.org/ns/solid/terms#hasTypeRegistration'),
+                rdf.namedNode(registrationUri)
               )
             ],
             webId

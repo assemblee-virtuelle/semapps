@@ -80,7 +80,7 @@ const FormContent = ({
     setHandleSubmit(() => async (values: FormValues) => {
       setLoading(true);
       authProvider
-        .setNewPassword({ ...values, token })
+        ?.setNewPassword({ ...values, token })
         .then(() => {
           setTimeout(() => {
             const url = new URL('/login', window.location.origin);
