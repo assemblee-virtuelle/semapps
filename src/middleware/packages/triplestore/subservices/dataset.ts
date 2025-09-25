@@ -6,6 +6,8 @@ import urlJoin from 'url-join';
 import format from 'string-template';
 import { ServiceSchema } from 'moleculer';
 import { fileURLToPath } from 'url';
+import datasetTemplate from '../templates/dataset.ttl.ts';
+import secureDatasetTemplate from '../templates/secure-dataset.ttl.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const delay = (t: any) => new Promise(resolve => setTimeout(resolve, t));
@@ -52,8 +54,8 @@ const DatasetService = {
           if (dataset.endsWith('Acl') || dataset.endsWith('Mirror'))
             throw new Error(`Error when creating dataset ${dataset}. Its name cannot end with Acl or Mirror`);
 
-          const templateFilePath = path.join(__dirname, '../templates', secure ? 'secure-dataset.ttl' : 'dataset.ttl');
-          const template = await fs.promises.readFile(templateFilePath, 'utf8');
+          const template = secure ? secureDatasetTemplate : datasetTemplate;
+
           const assembler = format(template, { dataset: dataset });
           response = await fetch(urlJoin(this.settings.url, '$/datasets'), {
             method: 'POST',

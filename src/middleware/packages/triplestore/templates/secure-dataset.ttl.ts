@@ -1,4 +1,4 @@
-# Licensed under the terms of http://www.apache.org/licenses/LICENSE-2.0
+export default `# Licensed under the terms of http://www.apache.org/licenses/LICENSE-2.0
 
 PREFIX :        <#>
 PREFIX fuseki:  <http://jena.apache.org/fuseki#>
@@ -97,3 +97,4 @@ sa:securedDataset rdf:type ja:RDFDataset ;
     fuseki:dataset          sa:securedDataset  ;
   
     .
+`;

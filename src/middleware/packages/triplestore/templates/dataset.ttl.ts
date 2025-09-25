@@ -1,4 +1,4 @@
-@prefix :      <http://base/#> .
+export default `@prefix :      <http://base/#> .
 @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix tdb2:  <http://jena.apache.org/2016/tdb#> .
 @prefix ja:    <http://jena.hpl.hp.com/2005/11/Assembler#> .
@@ -62,3 +62,4 @@ ja:RDFDatasetOne  rdfs:subClassOf  ja:RDFDataset .
 ja:RDFDatasetSink  rdfs:subClassOf  ja:RDFDataset .
 
 tdb2:DatasetTDB2  rdfs:subClassOf  ja:RDFDataset .
+`;
