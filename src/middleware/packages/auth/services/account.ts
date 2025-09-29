@@ -54,7 +54,6 @@ const AuthAccountSchema = {
         // FORMAT AND VERIFY USERNAME
 
         if (username) {
-          // @ts-expect-error TS(2339): Property 'isSystemCall' does not exist on type '{}... Remove this comment to see the full error message
           if (!ctx.meta.isSystemCall) {
             const { isValid, error } = await this.isValidUsername(ctx, username);
             if (!isValid) throw new Error(error);
@@ -222,7 +221,6 @@ const AuthAccountSchema = {
 
     findDatasetByWebId: {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const webId = ctx.params.webId || ctx.meta.webId;
         const account = await ctx.call('auth.account.findByWebId', { webId });
         return account?.username;
@@ -231,7 +229,6 @@ const AuthAccountSchema = {
 
     findSettingsByWebId: {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const { webId } = ctx.meta;
 
         const account = await ctx.call('auth.account.findByWebId', { webId });

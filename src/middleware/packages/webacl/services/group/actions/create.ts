@@ -32,7 +32,6 @@ export const action = {
   },
   async handler(ctx) {
     let { groupUri, groupSlug } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (!groupUri) {

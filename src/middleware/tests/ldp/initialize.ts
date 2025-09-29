@@ -10,7 +10,6 @@ import { fileURLToPath } from 'url';
 import * as CONFIG from '../config.ts';
 import { dropDataset } from '../utils.ts';
 
-// @ts-expect-error TS(1470): The 'import.meta' meta-property is not allowed in ... Remove this comment to see the full error message
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Give write permission on all containers to anonymous users

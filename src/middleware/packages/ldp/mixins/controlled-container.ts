@@ -128,7 +128,6 @@ const Schema = {
       handler(ctx) {
         return ctx.call('ldp.registry.getUri', {
           path: this.settings.path,
-          // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
           webId: ctx.params?.webId || ctx.meta?.webId
         });
       }

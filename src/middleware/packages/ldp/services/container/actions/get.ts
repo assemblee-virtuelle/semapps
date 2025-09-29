@@ -10,11 +10,8 @@ const Schema = {
     containerUri: { type: 'string', optional: true },
     webId: { type: 'string', optional: true },
     accept: { type: 'string', optional: true },
-    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     filters: { type: 'object', optional: true },
-    // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
     doNotIncludeResources: { type: 'boolean', default: false },
-    // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
     jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
   },
   cache: {

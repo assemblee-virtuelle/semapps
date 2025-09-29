@@ -47,7 +47,6 @@ const ProxyService = {
         const url = ctx.params.id;
         const method = ctx.params.method || 'GET';
         const headers = JSON.parse(ctx.params.headers) || { accept: 'application/json' };
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const actorUri = ctx.meta.webId;
 
         // Only user can query his own proxy URL
@@ -75,11 +74,8 @@ const ProxyService = {
               parentCtx: ctx
             }
           );
-          // @ts-expect-error TS(2339): Property '$statusCode' does not exist on type '{}'... Remove this comment to see the full error message
           ctx.meta.$statusCode = response.status;
-          // @ts-expect-error TS(2339): Property '$statusMessage' does not exist on type '... Remove this comment to see the full error message
           ctx.meta.$statusMessage = response.statusText;
-          // @ts-expect-error TS(2339): Property '$responseHeaders' does not exist on type... Remove this comment to see the full error message
           ctx.meta.$responseHeaders = response.headers;
           return response.body;
         } catch (e) {

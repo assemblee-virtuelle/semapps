@@ -2,7 +2,6 @@ import waitForExpect from 'wait-for-expect';
 import { OBJECT_TYPES, ACTIVITY_TYPES } from '@semapps/activitypub';
 import initialize from './initialize.ts';
 
-// @ts-expect-error TS(2304): Cannot find name 'jest'.
 jest.setTimeout(70000);
 const NUM_USERS = 2;
 
@@ -14,7 +13,6 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
   let aliceMessageUri: any;
   let bobMessageUri: any;
 
-  // @ts-expect-error TS(2304): Cannot find name 'beforeAll'.
   beforeAll(async () => {
     if (mode === 'single-server') {
       broker = await initialize(3000, 'testData', 'settings');
@@ -39,7 +37,6 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
     bob = actors[2];
   });
 
-  // @ts-expect-error TS(2304): Cannot find name 'afterAll'.
   afterAll(async () => {
     if (mode === 'multi-server') {
       for (let i = 1; i <= NUM_USERS; i++) {
@@ -50,7 +47,6 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
     }
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Alice send message to Bob', async () => {
     const createActivity = await alice.call('activitypub.outbox.post', {
       collectionUri: alice.outbox,
@@ -65,7 +61,6 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
 
     // Check the object has been created
     const message = await alice.call('ldp.resource.get', { resourceUri: aliceMessageUri });
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(message).toMatchObject({
       type: OBJECT_TYPES.NOTE,
       attributedTo: alice.id,
@@ -73,11 +68,9 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
     });
 
     // Ensure the /replies collection has not been created yet
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(message.replies).not.toBeDefined();
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Bob replies to Alice and his message appears in the /replies collection', async () => {
     const createActivity = await bob.call('activitypub.outbox.post', {
       collectionUri: bob.outbox,
@@ -92,14 +85,12 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
     bobMessageUri = createActivity.object.id;
 
     await waitForExpect(async () => {
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(alice.call('ldp.resource.get', { resourceUri: aliceMessageUri })).resolves.toMatchObject({
         replies: `${aliceMessageUri}/replies`
       });
     });
 
     await waitForExpect(async () => {
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(
         alice.call('activitypub.collection.get', { resourceUri: `${aliceMessageUri}/replies` })
       ).resolves.toMatchObject({
@@ -114,7 +105,6 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
     });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Bob deletes his message to Alice', async () => {
     await bob.call('activitypub.outbox.post', {
       collectionUri: bob.outbox,
@@ -125,7 +115,6 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
     });
 
     await waitForExpect(async () => {
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(alice.call('ldp.resource.get', { resourceUri: bobMessageUri })).resolves.toMatchObject({
         type: OBJECT_TYPES.TOMBSTONE,
         formerType: 'as:Note',

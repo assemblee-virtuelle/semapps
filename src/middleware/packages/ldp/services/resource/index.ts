@@ -25,23 +25,16 @@ const LdpResourceSchema = {
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
-    // @ts-expect-error
     awaitCreateComplete: awaitCreateCompleteAction,
-    // @ts-expect-error
     create: createAction,
-    // @ts-expect-error
     delete: deleteAction,
     exist: existAction,
-    // @ts-expect-error
     generateId: generateIdAction,
     // @ts-expect-error
     get: getAction,
     getContainers: getContainersAction,
-    // @ts-expect-error
     getTypes: getTypesAction,
-    // @ts-expect-error
     patch: patchAction,
-    // @ts-expect-error
     put: putAction,
     // @ts-expect-error
     upload: uploadAction

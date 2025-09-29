@@ -86,7 +86,6 @@ const GroupsManagerSchema = {
 
     'ldp.resource.updated': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
         if (this.isUser(newData)) {
           for (const rule of this.settings.rules) {
@@ -112,7 +111,6 @@ const GroupsManagerSchema = {
 
     'ldp.resource.deleted': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, oldData } = ctx.params;
         if (this.isUser(oldData)) {
           for (const rule of this.settings.rules) {

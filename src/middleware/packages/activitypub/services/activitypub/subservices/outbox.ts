@@ -59,17 +59,14 @@ const OutboxService = {
         }
 
         // Ensure logged user is posting to his own outbox
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         if (ctx.meta.webId && ctx.meta.webId !== 'system' && actorUri !== ctx.meta.webId) {
           throw new E.UnAuthorizedError(
             'UNAUTHORIZED',
-            // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
             `Forbidden to post to the outbox ${collectionUri} (webId ${ctx.meta.webId})`
           );
         }
 
         if (this.settings.podProvider) {
-          // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
           ctx.meta.dataset = getSlugFromUri(actorUri);
         }
 

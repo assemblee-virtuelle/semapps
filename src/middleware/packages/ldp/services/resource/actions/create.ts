@@ -6,7 +6,6 @@ const { MoleculerError } = Errors;
 const Schema = {
   visibility: 'public',
   params: {
-    // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
     resource: { type: 'object' },
     resourceUri: { type: 'string' },
     webId: {
@@ -20,7 +19,6 @@ const Schema = {
   },
   async handler(ctx) {
     let { resource, resourceUri, contentType } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (contentType && contentType !== MIME_TYPES.JSON)
@@ -68,7 +66,6 @@ const Schema = {
       resourceUri,
       newData,
       webId,
-      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       dataset: ctx.meta.dataset
     };
 

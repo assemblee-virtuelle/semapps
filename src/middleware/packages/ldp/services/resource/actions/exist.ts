@@ -4,13 +4,11 @@ const Schema = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
-    // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: true; }' is not ... Remove this comment to see the full error message
     acceptTombstones: { type: 'boolean', default: true },
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
     const { resourceUri, acceptTombstones } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     const exist = await ctx.call('triplestore.named-graph.exist', { uri: resourceUri });

@@ -21,7 +21,6 @@ const ActorService = {
         // If dataset is not in the meta, assume that actor is remote
         if (
           !(await ctx.call('ldp.remote.isRemote', { resourceUri: actorUri })) &&
-          // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
           (!this.settings.podProvider || ctx.meta.dataset)
         ) {
           try {
@@ -198,7 +197,6 @@ const ActorService = {
   events: {
     'ldp.resource.created': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
         if (this.isActor(newData)) {
           await this.actions.appendActorData({ actorUri: resourceUri }, { parentCtx: ctx });
@@ -210,7 +208,6 @@ const ActorService = {
 
     'ldp.resource.deleted': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, oldData } = ctx.params;
         if (this.isActor(oldData)) {
           await ctx.call('keys.deleteAllKeysForWebId', { webId: resourceUri });

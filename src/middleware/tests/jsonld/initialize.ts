@@ -43,7 +43,6 @@ export default async (cacher: any, persistRegistry: any) => {
   });
 
   broker.createService({
-    // @ts-expect-error TS(2322): Type '{ name: "triplestore"; settings: { url: null... Remove this comment to see the full error message
     mixins: [TripleStoreService],
     settings: {
       url: CONFIG.SPARQL_ENDPOINT,

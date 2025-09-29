@@ -15,19 +15,16 @@ const Schema = {
   },
   async handler(ctx) {
     const { containerUri, resourceUri } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri, webId });
     if (!resourceExists) {
-      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       const childContainerExists = await this.actions.exist({ containerUri: resourceUri }, { parentCtx: ctx });
       if (!childContainerExists) {
         throw new MoleculerError(`Cannot attach non-existing resource or container: ${resourceUri}`, 404, 'NOT_FOUND');
       }
     }
 
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     const containerExists = await this.actions.exist({ containerUri, webId }, { parentCtx: ctx });
     if (!containerExists) throw new Error(`Cannot attach to a non-existing container: ${containerUri}`);
 
@@ -47,7 +44,6 @@ const Schema = {
       containerUri,
       resourceUri,
       webId,
-      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       dataset: ctx.meta.dataset
     };
 

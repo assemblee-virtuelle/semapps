@@ -3,11 +3,9 @@ import { quad, namedNode, blankNode, literal } from 'rdf-data-model';
 import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
 
-// @ts-expect-error TS(2304): Cannot find name 'jest'.
 jest.setTimeout(50000);
 let broker: any;
 
-// @ts-expect-error TS(2304): Cannot find name 'beforeAll'.
 beforeAll(async () => {
   broker = await initialize();
 });
@@ -16,12 +14,10 @@ afterAll(async () => {
   if (broker) await broker.stop();
 });
 
-// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe('Resource CRUD operations', () => {
   let project1: any;
   let project2: any;
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Post resource in container', async () => {
     project1Uri = await broker.call('ldp.container.post', {
       resource: {
@@ -51,28 +47,23 @@ describe('Resource CRUD operations', () => {
     expect(project1Uri).toBeDefined();
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Get resource', async () => {
     project1 = await broker.call('ldp.resource.get', { resourceUri: project1Uri });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(project1).toMatchObject({
       '@context': 'http://localhost:3000/.well-known/context.jsonld',
       '@id': project1['@id'],
       '@type': 'pair:Project',
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       'pair:affiliates': expect.arrayContaining([
         'http://localhost:3000/users/guillaume',
         'http://localhost:3000/users/sebastien'
       ]),
       'pair:description': 'myProject',
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       'pair:hasLocation': expect.objectContaining({ 'pair:description': 'The place to be', 'pair:label': 'Paris' }),
       'pair:label': 'myTitle'
     });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Put resource', async () => {
     await broker.call('ldp.resource.put', {
       resource: {
@@ -92,7 +83,6 @@ describe('Resource CRUD operations', () => {
 
     const updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
       'pair:affiliates': 'http://localhost:3000/users/pierre',
@@ -100,13 +90,10 @@ describe('Resource CRUD operations', () => {
         'pair:label': 'Nantes'
       }
     });
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(updatedProject['pair:label']).toBeUndefined();
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(updatedProject['pair:hasLocation']['pair:description']).toBeUndefined();
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Put resource with multiple blank nodes including same values', async () => {
     const resourceUpdated = {
       '@context': {
@@ -131,11 +118,9 @@ describe('Resource CRUD operations', () => {
 
     let updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
       'pair:affiliates': 'http://localhost:3000/users/pierre',
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       'pair:hasLocation': expect.arrayContaining([
         {
           'pair:label': 'Nantes'
@@ -145,9 +130,7 @@ describe('Resource CRUD operations', () => {
         }
       ])
     });
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(updatedProject['pair:label']).toBeUndefined();
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(updatedProject['pair:hasLocation']['pair:description']).toBeUndefined();
 
     resourceUpdated.hasLocation = [
@@ -160,7 +143,6 @@ describe('Resource CRUD operations', () => {
 
     updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
       'pair:affiliates': 'http://localhost:3000/users/pierre',
@@ -185,11 +167,9 @@ describe('Resource CRUD operations', () => {
 
     updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
       'pair:affiliates': 'http://localhost:3000/users/pierre',
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       'pair:hasLocation': expect.arrayContaining([
         {
           'pair:label': 'Compiegne'
@@ -219,7 +199,6 @@ describe('Resource CRUD operations', () => {
 
     updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
       'pair:affiliates': 'http://localhost:3000/users/pierre',
@@ -245,11 +224,9 @@ describe('Resource CRUD operations', () => {
 
     updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
       'pair:affiliates': 'http://localhost:3000/users/pierre',
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       'pair:hasLocation': expect.arrayContaining([
         {
           'pair:label': 'Compiegne',
@@ -269,7 +246,6 @@ describe('Resource CRUD operations', () => {
 
     updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(updatedProject['pair:hasLocation']).toBeUndefined();
 
     // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
@@ -281,7 +257,6 @@ describe('Resource CRUD operations', () => {
 
     updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
       'petr:openingTimesDay': {
@@ -300,10 +275,8 @@ describe('Resource CRUD operations', () => {
 
     updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       'petr:openingTimesDay': expect.arrayContaining([
         { 'petr:endingTime': '2021-10-07T09:40:56.131Z', 'petr:startingTime': '2021-10-07T06:40:56.123Z' },
         { 'petr:startingTime': '2021-10-07T10:44:54.883Z', 'petr:endingTime': '2021-10-07T16:44:54.888Z' }
@@ -311,7 +284,6 @@ describe('Resource CRUD operations', () => {
     });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Post resource with multiple blank nodes with 2 imbrications blank nodes', async () => {
     const resourceToPost = {
       '@context': {
@@ -335,7 +307,6 @@ describe('Resource CRUD operations', () => {
 
     project2 = await broker.call('ldp.resource.get', { resourceUri });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(project2).toMatchObject({
       'pair:hasLocation': {
         'pair:label': 'Paris',
@@ -368,7 +339,6 @@ describe('Resource CRUD operations', () => {
 
     const project3 = await broker.call('ldp.resource.get', { resourceUri: resourceUri3 });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(project3).toMatchObject({
       'pair:hasLocation': [
         {
@@ -409,7 +379,6 @@ describe('Resource CRUD operations', () => {
 
     const project4 = await broker.call('ldp.resource.get', { resourceUri: resourceUri4 });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(project4).toMatchObject({
       'pair:hasLocation': [
         {
@@ -428,7 +397,6 @@ describe('Resource CRUD operations', () => {
     });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Put resource with multiple blank nodes with 2 imbrications blank nodes', async () => {
     const resourceUpdated = {
       '@context': {
@@ -456,10 +424,8 @@ describe('Resource CRUD operations', () => {
 
     let updatedProject = await broker.call('ldp.resource.get', { resourceUri: project2['@id'] });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       'pair:hasLocation': expect.arrayContaining([
         {
           'pair:label': 'Paris',
@@ -495,7 +461,6 @@ describe('Resource CRUD operations', () => {
 
     updatedProject = await broker.call('ldp.resource.get', { resourceUri: project2['@id'] });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
       'pair:hasLocation': {
@@ -508,7 +473,6 @@ describe('Resource CRUD operations', () => {
   });
 
   // Ensure dereferenced resources with IDs are not deleted by PUT
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('PUT resource with ID', async () => {
     const themeUri = await broker.call('ldp.container.post', {
       containerUri: 'http://localhost:3000/themes',
@@ -552,7 +516,6 @@ describe('Resource CRUD operations', () => {
     // Ensure the theme has not been deleted
     const theme = await broker.call('ldp.resource.get', { resourceUri: themeUri });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(theme).toMatchObject({
       '@id': themeUri,
       '@type': 'pair:Theme',
@@ -560,7 +523,6 @@ describe('Resource CRUD operations', () => {
     });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('PATCH resource', async () => {
     const projectUri = await broker.call('ldp.container.post', {
       containerUri: `${CONFIG.HOME_URL}resources`,
@@ -595,7 +557,6 @@ describe('Resource CRUD operations', () => {
 
     const project = await broker.call('ldp.resource.get', { resourceUri: projectUri });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(project).toMatchObject({
       '@id': projectUri,
       'pair:label': 'SemApps',
@@ -603,7 +564,6 @@ describe('Resource CRUD operations', () => {
     });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('PATCH resource with blank nodes', async () => {
     const projectUri = await broker.call('ldp.container.post', {
       containerUri: `${CONFIG.HOME_URL}resources`,
@@ -636,7 +596,6 @@ describe('Resource CRUD operations', () => {
 
     let project = await broker.call('ldp.resource.get', { resourceUri: projectUri });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(project).toMatchObject({
       '@id': projectUri,
       'pair:label': 'ActivityPods',
@@ -665,11 +624,9 @@ describe('Resource CRUD operations', () => {
 
     project = await broker.call('ldp.resource.get', { resourceUri: projectUri });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(project).toMatchObject({
       '@id': projectUri,
       'pair:label': 'ActivityPods',
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       'pair:hasLocation': expect.arrayContaining([
         {
           '@type': 'pair:Place',
@@ -683,7 +640,6 @@ describe('Resource CRUD operations', () => {
     });
   }, 20000);
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Delete resource', async () => {
     await broker.call('ldp.resource.delete', {
       resourceUri: project1['@id']

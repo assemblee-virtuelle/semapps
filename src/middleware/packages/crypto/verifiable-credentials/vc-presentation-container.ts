@@ -47,7 +47,6 @@ const VCPresentationContainer = {
           ...ctx.params,
           jsonContext: credentialsContextNoGraphProof
         });
-        // @ts-expect-error TS(2339): Property '$responseHeaders' does not exist on type... Remove this comment to see the full error message
         ctx.meta.$responseHeaders = {
           // @ts-expect-error TS(2339): Property '$responseHeaders' does not exist on type... Remove this comment to see the full error message
           ...ctx.meta.$responseHeaders,

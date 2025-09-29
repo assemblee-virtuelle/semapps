@@ -6,7 +6,6 @@ const Schema = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
-    // @ts-expect-error TS(2322): Type '{ type: "array"; optional: true; }' is not a... Remove this comment to see the full error message
     predicates: { type: 'array', optional: true },
     delayMs: { type: 'number', optional: true },
     maxTries: { type: 'number', optional: true },

@@ -1,10 +1,8 @@
 import initialize from '../ontologies/initialize.ts';
 
-// @ts-expect-error TS(2304): Cannot find name 'jest'.
 jest.setTimeout(10000);
 let broker: any;
 
-// @ts-expect-error TS(2304): Cannot find name 'beforeAll'.
 beforeAll(async () => {
   // @ts-expect-error TS(2554): Expected 1 arguments, but got 2.
   broker = await initialize(false, false);

@@ -47,7 +47,6 @@ const VCHolderService = {
         presentation: {
           type: 'object',
           params: {
-            // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
             verifiableCredential: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }] },
             '@context': { type: 'string', optional: true },
             id: { type: 'string', optional: true },
@@ -60,14 +59,11 @@ const VCHolderService = {
             challenge: { type: 'string' },
             domain: { type: 'string', optional: true },
             proofPurpose: { type: 'string', optional: true },
-            // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
             persist: { type: 'boolean', default: false }
           }
         },
-        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         keyObject: { type: 'object', optional: true },
         keyId: { type: 'string', optional: true },
-        // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
         noAnonRead: { type: 'boolean', default: false },
         webId: { type: 'string', optional: true }
       },

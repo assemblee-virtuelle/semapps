@@ -8,10 +8,8 @@ import { ActionSchema } from 'moleculer';
 const Schema = {
   visibility: 'public',
   params: {
-    // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'Parameter... Remove this comment to see the full error message
     containerUri: 'string',
     slug: { type: 'string', optional: true },
-    // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
     isContainer: { type: 'boolean', default: false }
   },
   async handler(ctx) {
@@ -26,15 +24,11 @@ const Schema = {
     }
 
     // Do not use the root container URI if the resource is a container
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     if ((!this.settings.resourcesWithContainerPath || !containerUri) && !isContainer) {
       // Use the root container URI
-      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       containerUri = this.settings.podProvider
-        ? // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-          await ctx.call('solid-storage.getUrl', { webId: urlJoin(this.settings.baseUrl, ctx.meta.dataset) })
-        : // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-          this.settings.baseUrl;
+        ? await ctx.call('solid-storage.getUrl', { webId: urlJoin(this.settings.baseUrl, ctx.meta.dataset) })
+        : this.settings.baseUrl;
     }
 
     let resourceAlreadyExists = await ctx.call('ldp.resource.exist', {

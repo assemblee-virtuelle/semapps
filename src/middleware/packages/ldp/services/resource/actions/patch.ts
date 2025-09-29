@@ -25,12 +25,10 @@ const Schema = {
     resourceUri: {
       type: 'string'
     },
-    // @ts-expect-error TS(2322): Type '{ type: "array"; optional: true; }' is not a... Remove this comment to see the full error message
     triplesToAdd: {
       type: 'array',
       optional: true
     },
-    // @ts-expect-error TS(2322): Type '{ type: "array"; optional: true; }' is not a... Remove this comment to see the full error message
     triplesToRemove: {
       type: 'array',
       optional: true
@@ -46,7 +44,6 @@ const Schema = {
   },
   async handler(ctx) {
     let { resourceUri, triplesToAdd, triplesToRemove, skipInferenceCheck, webId } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     webId = webId || ctx.meta.webId || 'anon';
 
     if (await ctx.call('ldp.remote.isRemote', { resourceUri }))
@@ -100,7 +97,6 @@ const Schema = {
       triplesRemoved: triplesToRemove,
       skipInferenceCheck,
       webId,
-      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       dataset: ctx.meta.dataset
     };
 

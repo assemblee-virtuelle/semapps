@@ -42,18 +42,14 @@ export const action = {
     webId: { type: 'string', optional: true },
     // addedRights is an array of objects of the form { auth: 'http://localhost:3000/_acl/container29#Control',  p: 'http://www.w3.org/ns/auth/acl#agent',  o: 'https://data.virtual-assembly.org/users/sebastien.rosset' }
     // you will most likely prefer to use additionalRights instead.
-    // @ts-expect-error TS(2353): Object literal may only specify known properties, ... Remove this comment to see the full error message
     addedRights: { type: 'array', optional: true, min: 1 },
     // newRights is used to add rights to a non existing resource.
-    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     newRights: { type: 'object', optional: true },
     // additionalRights is used to add rights to an existing resource.
-    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     additionalRights: { type: 'object', optional: true }
   },
   async handler(ctx) {
     let { webId, addedRights, resourceUri, newRights, additionalRights } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     webId = webId || ctx.meta.webId || 'anon';
 
     let difference;

@@ -283,7 +283,6 @@ const CollectionsRegistryService = {
 
     'ldp.resource.updated': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData, oldData } = ctx.params;
         // Check if we need to create collection only if the type has changed
         if (this.hasTypeChanged(oldData, newData)) {
@@ -302,7 +301,6 @@ const CollectionsRegistryService = {
 
     'ldp.resource.patched': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, triplesAdded } = ctx.params;
         if (triplesAdded) {
           for (const triple of triplesAdded) {

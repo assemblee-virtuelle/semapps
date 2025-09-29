@@ -26,7 +26,6 @@ export const action = {
   },
   async handler(ctx) {
     let { groupSlug, groupUri, memberUri } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');

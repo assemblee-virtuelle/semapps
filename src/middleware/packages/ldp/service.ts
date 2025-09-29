@@ -1,4 +1,3 @@
-// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { ldp, semapps } from '@semapps/ontologies';
 import { ServiceSchema } from 'moleculer';
 import LdpApiService from './services/api/index.ts';

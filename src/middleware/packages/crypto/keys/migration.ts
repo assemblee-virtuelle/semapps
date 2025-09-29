@@ -35,7 +35,6 @@ const KeysMigrationSchema = {
         this.logger.info(`=== Migrating keys from filesystem to LDP ===`);
 
         // This can cause deadlocks otherwise.
-        // @ts-expect-error TS(2339): Property 'skipObjectsWatcher' does not exist on ty... Remove this comment to see the full error message
         ctx.meta.skipObjectsWatcher = true;
 
         for (const { webId, username } of accounts) {

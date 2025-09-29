@@ -103,7 +103,6 @@ export const action = {
     rights: {
       type: 'object',
       optional: true,
-      // @ts-expect-error TS(2353): Object literal may only specify known properties, ... Remove this comment to see the full error message
       strict: true,
       props: {
         read: { type: 'boolean', optional: true },

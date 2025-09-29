@@ -15,12 +15,10 @@ const Schema = {
       type: 'string',
       optional: true
     },
-    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     resource: {
       type: 'object',
       optional: true
     },
-    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     file: {
       type: 'object',
       optional: true
@@ -40,7 +38,6 @@ const Schema = {
   },
   async handler(ctx) {
     let { resource, containerUri, slug, contentType, file, forcedResourceUri } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     let isContainer = false;
     let expandedResource;
@@ -81,7 +78,6 @@ const Schema = {
     const containerExist = await ctx.call('ldp.container.exist', { containerUri });
     if (!containerExist) {
       throw new MoleculerError(
-        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
         `Cannot create resource in non-existing container ${containerUri} (webId ${webId} / dataset ${ctx.meta.dataset})`,
         400,
         'BAD_REQUEST'

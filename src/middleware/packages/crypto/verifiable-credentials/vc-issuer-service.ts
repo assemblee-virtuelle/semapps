@@ -62,14 +62,12 @@ const VCCredentialService = {
         credential: {
           type: 'object',
           params: {
-            // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
             credentialSubject: { type: 'object' },
             '@context': { type: 'string', optional: true },
             id: { type: 'string', optional: true },
             type: { type: 'multi', rules: [{ type: 'string' }, { type: 'array', items: 'string' }], optional: true },
             validFrom: { type: 'string', optional: true },
             validUntil: { type: 'string', optional: true },
-            // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
             proof: { type: 'multi', optional: true, rules: [{ type: 'object' }, { type: 'array', items: 'object' }] }
           }
         },
@@ -77,14 +75,11 @@ const VCCredentialService = {
           type: 'object',
           default: {},
           params: {
-            // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
             proofPurpose: { type: 'object', optional: true }
           }
         },
         webId: { type: 'string', optional: true },
-        // @ts-expect-error TS(2322): Type '{ type: "boolean"; optional: true; default: ... Remove this comment to see the full error message
         noAnonRead: { type: 'boolean', optional: true, default: false },
-        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         keyObject: { type: 'object', optional: true },
         keyId: { type: 'string', optional: true }
       },

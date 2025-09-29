@@ -42,17 +42,14 @@ const DataIntegrityService = {
      */
     verifyObject: {
       params: {
-        // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
         object: { type: 'object' },
         options: {
           type: 'object',
           optional: true,
           params: {
-            // @ts-expect-error TS(2322): Type '{ type: "string"; default: string; }' is not... Remove this comment to see the full error message
             proofPurpose: { type: 'string', default: 'assertionMethod' }
           }
         },
-        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         purpose: { type: 'object', optional: true }
       },
       async handler(ctx) {
@@ -80,13 +77,10 @@ const DataIntegrityService = {
      */
     signObject: {
       params: {
-        // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
         object: { type: 'object' },
         options: { type: 'object', optional: true, params: { proofPurpose: { type: 'string', optional: true } } },
-        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         purpose: { type: 'object', optional: true },
         webId: { type: 'string', optional: true },
-        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         keyObject: { type: 'object', optional: true },
         keyId: { type: 'string', optional: true }
       },

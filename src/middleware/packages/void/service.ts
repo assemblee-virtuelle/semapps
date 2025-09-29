@@ -111,7 +111,6 @@ const VoidSchema = {
     getRemote: {
       visibility: 'public',
       params: {
-        // @ts-expect-error TS(2322): Type '{ type: "string"; optional: false; }' is not... Remove this comment to see the full error message
         serverUrl: { type: 'string', optional: false }
       },
       async handler(ctx) {
@@ -222,7 +221,6 @@ const VoidSchema = {
           addClassPartition(thisServer, p, graph, i);
         }
 
-        // @ts-expect-error TS(2339): Property '$responseType' does not exist on type '{... Remove this comment to see the full error message
         ctx.meta.$responseType = accept;
 
         // TODO use Etag instead to keep track of changes in VOID

@@ -5,21 +5,17 @@ import { fetchServer } from '../utils.ts';
 import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
 
-// @ts-expect-error TS(2304): Cannot find name 'jest'.
 jest.setTimeout(20000);
 let broker: any;
 
-// @ts-expect-error TS(2304): Cannot find name 'beforeAll'.
 beforeAll(async () => {
   broker = await initialize();
 });
 
-// @ts-expect-error TS(2304): Cannot find name 'afterAll'.
 afterAll(async () => {
   await broker.stop();
 });
 
-// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe('Content negotiation', () => {
   // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
   const containerUri = urlJoin(CONFIG.HOME_URL, 'resources');
@@ -28,7 +24,6 @@ describe('Content negotiation', () => {
   let project3Uri: any;
   let project4Uri: any;
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Post resource in JSON-LD', async () => {
     const { headers } = await fetchServer(containerUri, {
       method: 'POST',
@@ -44,11 +39,9 @@ describe('Content negotiation', () => {
 
     projectUri = headers.get('Location');
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(projectUri).not.toBeNull();
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Get resource in Turtle format', async () => {
     const { body } = await fetchServer(projectUri, {
       headers: new fetch.Headers({
@@ -56,15 +49,11 @@ describe('Content negotiation', () => {
       })
     });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(body).toMatch(new RegExp(`<${projectUri}> a pair:Project`));
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(body).toMatch(new RegExp(`pair:description.*"myProject"`));
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(body).toMatch(new RegExp(`pair:label.*"myLabel"`));
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Get resource in N-Triples format', async () => {
     const { body } = await fetchServer(projectUri, {
       headers: new fetch.Headers({
@@ -72,21 +61,17 @@ describe('Content negotiation', () => {
       })
     });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(body).toMatch(
       new RegExp(
         `<${projectUri}>.*<http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://virtual-assembly.org/ontologies/pair#Project>`
       )
     );
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(body).toMatch(
       new RegExp(`<${projectUri}>.*<http://virtual-assembly.org/ontologies/pair#description> "myProject"`)
     );
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(body).toMatch(new RegExp(`<${projectUri}>.*<http://virtual-assembly.org/ontologies/pair#label> "myLabel"`));
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Get container in Turtle format', async () => {
     const { body } = await fetchServer(containerUri, {
       headers: new fetch.Headers({
@@ -94,20 +79,14 @@ describe('Content negotiation', () => {
       })
     });
 
-    // @ts-expect-error
     expect(body).toMatch(new RegExp(`<${containerUri}> a ldp:Container, ldp:BasicContainer`));
-    // @ts-expect-error
     expect(body).toMatch(new RegExp(`ldp:contains <${projectUri}>`));
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(body).toMatch(new RegExp(`<${projectUri}> a pair:Project`));
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(body).toMatch(new RegExp(`pair:description.*"myProject"`));
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(body).toMatch(new RegExp(`pair:label.*"myLabel"`));
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Get container in N-Triples format', async () => {
     const { body } = await fetchServer(containerUri, {
       headers: new fetch.Headers({
@@ -115,21 +94,17 @@ describe('Content negotiation', () => {
       })
     });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(body).toMatch(
       new RegExp(
         `<${containerUri}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/ldp#BasicContainer>`
       )
     );
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(body).toMatch(
       new RegExp(
         `<${containerUri}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/ldp#Container>`
       )
     );
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(body).toMatch(new RegExp(`<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${projectUri}>`));
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(body).toMatch(
       new RegExp(
         `<${projectUri}>.*<http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://virtual-assembly.org/ontologies/pair#Project>`
@@ -137,7 +112,6 @@ describe('Content negotiation', () => {
     );
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Post resource in Turtle format', async () => {
     const { headers, status } = await fetchServer(containerUri, {
       method: 'POST',
@@ -151,7 +125,6 @@ describe('Content negotiation', () => {
       })
     });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(status).toBe(201);
 
     project2Uri = headers.get('Location');
@@ -159,7 +132,6 @@ describe('Content negotiation', () => {
     const project2 = await broker.call('ldp.resource.get', {
       resourceUri: project2Uri
     });
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(project2).toMatchObject({
       '@context': 'http://localhost:3000/.well-known/context.jsonld',
       '@id': project2Uri,
@@ -168,7 +140,6 @@ describe('Content negotiation', () => {
     });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Post resource in N-Triples format', async () => {
     const { headers, status } = await fetchServer(containerUri, {
       method: 'POST',
@@ -181,7 +152,6 @@ describe('Content negotiation', () => {
       })
     });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(status).toBe(201);
 
     project3Uri = headers.get('Location');
@@ -189,7 +159,6 @@ describe('Content negotiation', () => {
     const project2 = await broker.call('ldp.resource.get', {
       resourceUri: project3Uri
     });
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(project2).toMatchObject({
       '@context': 'http://localhost:3000/.well-known/context.jsonld',
       '@id': project3Uri,
@@ -198,7 +167,6 @@ describe('Content negotiation', () => {
     });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Update resource in Turtle format', async () => {
     const { status } = await fetchServer(project2Uri, {
       method: 'PUT',
@@ -213,13 +181,11 @@ describe('Content negotiation', () => {
       })
     });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(status).toBe(204);
 
     const project2 = await broker.call('ldp.resource.get', {
       resourceUri: project2Uri
     });
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(project2).toMatchObject({
       '@context': 'http://localhost:3000/.well-known/context.jsonld',
       '@id': project2Uri,
@@ -229,7 +195,6 @@ describe('Content negotiation', () => {
     });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Update resource in N-Triples format', async () => {
     const { status } = await fetchServer(project3Uri, {
       method: 'PUT',
@@ -243,13 +208,11 @@ describe('Content negotiation', () => {
       })
     });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(status).toBe(204);
 
     const project3 = await broker.call('ldp.resource.get', {
       resourceUri: project3Uri
     });
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(project3).toMatchObject({
       '@context': 'http://localhost:3000/.well-known/context.jsonld',
       '@id': project3Uri,
@@ -259,7 +222,6 @@ describe('Content negotiation', () => {
     });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Post resource with sub-resources in Turtle format', async () => {
     const { headers, status } = await fetchServer(containerUri, {
       method: 'POST',
@@ -277,7 +239,6 @@ describe('Content negotiation', () => {
       })
     });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(status).toBe(201);
 
     project4Uri = headers.get('Location');
@@ -300,7 +261,6 @@ describe('Content negotiation', () => {
     });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Get resource with sub-resources in Turtle format', async () => {
     const { body } = await fetchServer(project4Uri, {
       headers: new fetch.Headers({
@@ -308,11 +268,8 @@ describe('Content negotiation', () => {
       })
     });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(body).toMatch(new RegExp(`<${project4Uri}> a pair:Project`));
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(body).toMatch(new RegExp(`pair:label "myProject 4"`));
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(body).toMatch(new RegExp(`<${project4Uri}#task1> a pair:Task`));
     // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(body).toMatch(new RegExp(`pair:label "myTask 1"`));
