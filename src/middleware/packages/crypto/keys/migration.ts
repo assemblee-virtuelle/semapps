@@ -1,10 +1,8 @@
-import { MIME_TYPES } from '@semapps/mime-types';
 import fs from 'fs';
 import path from 'path';
 import { ServiceSchema } from 'moleculer';
 import { KEY_TYPES } from '../constants.ts';
 
-/** @type {import('moleculer').ServiceSchema} */
 const KeysMigrationSchema = {
   name: 'keys.migration' as const,
   settings: {
@@ -37,7 +35,6 @@ const KeysMigrationSchema = {
         this.logger.info(`=== Migrating keys from filesystem to LDP ===`);
 
         // This can cause deadlocks otherwise.
-        // @ts-expect-error TS(2339): Property 'skipObjectsWatcher' does not exist on ty... Remove this comment to see the full error message
         ctx.meta.skipObjectsWatcher = true;
 
         for (const { webId, username } of accounts) {
@@ -143,13 +140,13 @@ const KeysMigrationSchema = {
       await ctx.call('triplestore.update', {
         query: `
           PREFIX sec: <https://w3id.org/security#>   
-          DELETE {
-            <${webId}> sec:publicKey  ?o .
-            ?o  ?p1  ?o1 .
-          }
-          WHERE {
-            <${webId}>  sec:publicKey  ?o .
-            ?o ?p1 ?o1 .
+          DELETE WHERE {
+            GRAPH <${webId}> {
+              <${webId}> sec:publicKey ?o .
+            }
+            GRAPH ?g {
+              ?o ?p1 ?o1 .
+            }
           }
         `,
         webId: 'system'
@@ -168,7 +165,6 @@ const KeysMigrationSchema = {
         };
         const keyId = await ctx.call('keys.container.post', {
           resource: keyResource,
-          contentType: MIME_TYPES.JSON,
           webId
         });
         // @ts-expect-error TS(2339): Property 'id' does not exist on type '{ '@type': s... Remove this comment to see the full error message

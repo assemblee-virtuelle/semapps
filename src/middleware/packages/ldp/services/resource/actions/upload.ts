@@ -1,18 +1,14 @@
 import path from 'path';
 import fs from 'fs';
-import { ActionSchema } from 'moleculer';
+import { ActionSchema, Errors } from 'moleculer';
 import { getSlugFromUri, getContainerFromUri } from '../../../utils.ts';
-
-import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
 const Schema = {
   visibility: 'public',
   params: {
-    // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'Parameter... Remove this comment to see the full error message
     resourceUri: 'string',
-    // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'Parameter... Remove this comment to see the full error message
     file: 'object'
   },
   async handler(ctx) {
@@ -28,6 +24,7 @@ const Schema = {
     }
 
     try {
+      // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
       await this.streamToFile(file.readableStream, localPath, this.settings.binary.maxSize);
     } catch (e) {
       // @ts-expect-error TS(18046): 'e' is of type 'unknown'.

@@ -1,7 +1,6 @@
 import fetch from 'node-fetch';
 import { generateKeyPair } from 'crypto';
 import rdf from '@rdfjs/data-model';
-import { MIME_TYPES } from '@semapps/mime-types';
 import { sec } from '@semapps/ontologies';
 // @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import * as Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
@@ -87,19 +86,21 @@ const KeysService = {
       },
       async handler(ctx) {
         const { keyType } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const webId = ctx.params.webId || ctx.meta.webId;
 
         // Get the key container, to search by type.
-        const container = await ctx.call('keys.container.list', {
-          webId,
-          accept: MIME_TYPES.JSON
-        });
+        const container = await ctx.call('keys.container.list', { webId });
+
+        // Because edd2519 multikeys are allowed to have one key only, we filter like that.
+        // TODO: We only support those keys anyways. If we support other ones in the future,
+        // we need to refactor.
+        const keyTypeToFilterBy = keyType === KEY_TYPES.ED25519 ? 'sec:Multikey' : keyType;
 
         // Check if key type is present.
         const matchedKeys = container['ldp:contains'].filter(
           (keyResource: any) =>
-            arrayOf(keyResource.type || keyResource['@type']).includes(keyType) && keyResource.controller === webId
+            arrayOf(keyResource.type || keyResource['@type']).includes(keyTypeToFilterBy) &&
+            keyResource.controller === webId
         );
 
         return matchedKeys;
@@ -119,7 +120,7 @@ const KeysService = {
       },
       async handler(ctx) {
         const { keyType, webId } = ctx.params;
-        const webIdDoc = await ctx.call('webid.get', { resourceUri: webId, accept: MIME_TYPES.JSON, webId: 'system' });
+        const webIdDoc = await ctx.call('webid.get', { resourceUri: webId, webId: 'system' });
 
         // RSA keys are stored in `publicKey` field, everything else in `assertionMethod`
         const publicKeys =
@@ -142,7 +143,6 @@ const KeysService = {
             const publicKeyId = key.id || key['@id'];
             return await ctx.call('keys.container.get', {
               resourceUri: await this.actions.findPrivateKeyUri({ publicKeyUri: publicKeyId }, { parentCtx: ctx }),
-              accept: MIME_TYPES.JSON,
               webId
             });
           })
@@ -158,24 +158,20 @@ const KeysService = {
     getMultikey: {
       params: {
         webId: { type: 'string' },
-        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         keyObject: { type: 'object', optional: true },
         keyId: { type: 'string', optional: true },
-        // @ts-expect-error TS(2322): Type '{ type: "string"; default: string; }' is not... Remove this comment to see the full error message
         keyType: { type: 'string', default: KEY_TYPES.ED25519 },
         /** Add the secret key to the key object, if not set (or the public key id is provided), it will be removed. */
-        // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
         withPrivateKey: { type: 'boolean', default: false }
       },
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const { keyId, keyType, withPrivateKey, webId = ctx.meta.webId } = ctx.params;
 
         // Get key from parameters, id (URI) or the one associated with the webId (in that priority).
         // Note: Key purposes are not regarded, as they are currently not used.
         const keyObject =
           ctx.params.keyObject || keyId
-            ? await ctx.call('keys.container.get', { resourceUri: keyId, webId, accept: MIME_TYPES.JSON })
+            ? await ctx.call('keys.container.get', { resourceUri: keyId, webId })
             : (await ctx.call('keys.getOrCreateWebIdKeys', { webId, keyType }))[0];
 
         // We need the key object to have the public key's id, so it is resolvable.
@@ -219,8 +215,7 @@ const KeysService = {
         };
         const keyUri = await ctx.call('keys.container.post', {
           webId,
-          resource: keyObject,
-          contentType: MIME_TYPES.JSON
+          resource: keyObject
         });
         keyObject.id = keyUri;
 
@@ -338,7 +333,6 @@ const KeysService = {
       params: {
         webId: { type: 'string' },
         keyId: { type: 'string', optional: true },
-        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         keyObject: { type: 'object', optional: true }
       },
       async handler(ctx) {
@@ -346,9 +340,7 @@ const KeysService = {
         const keyId = ctx.params.keyId || ctx.params.keyObject?.id || ctx.params.keyObject?.['@id'];
         if (!keyId) throw new Error('Either keyId or keyObject with id must be given.');
 
-        const keyObject =
-          ctx.params.keyObject ||
-          (await ctx.call('ldp.resource.get', { resourceUri: keyId, accept: MIME_TYPES.JSON, webId }));
+        const keyObject = ctx.params.keyObject || (await ctx.call('ldp.resource.get', { resourceUri: keyId, webId }));
 
         const isRsaKey = arrayOf(keyObject.type || keyObject['@type']).includes(KEY_TYPES.RSA);
 
@@ -359,7 +351,6 @@ const KeysService = {
 
         const webIdDocument = await ctx.call('webid.get', {
           resourceUri: webId,
-          accept: MIME_TYPES.JSON,
           webId: webId
         });
         // Ensure the same public key is not attached already.
@@ -428,17 +419,13 @@ const KeysService = {
     publishPublicKeyLocally: {
       params: {
         keyId: { type: 'string', optional: true },
-        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         keyObject: { type: 'object', optional: true },
         webId: { type: 'string', optional: true }
       },
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const webId = ctx.params.webId || ctx.meta.webId;
         const privateKeyUri = ctx.params.keyId || ctx.params.keyObject?.id || ctx.params.keyObject?.['@id'];
-        const keyObject =
-          ctx.params.keyObject ||
-          (await ctx.call('ldp.resource.get', { resourceUri: privateKeyUri, accept: MIME_TYPES.JSON }));
+        const keyObject = ctx.params.keyObject || (await ctx.call('ldp.resource.get', { resourceUri: privateKeyUri }));
 
         // First, get the public key part.
         const publicKeyObject = await this.actions.getPublicKeyObject({ keyObject }, { parentCtx: ctx });
@@ -446,7 +433,6 @@ const KeysService = {
         // Then, store it in the `/public-key` container.
         const publicKeyUri = await ctx.call('keys.public-container.post', {
           resource: publicKeyObject,
-          contentType: MIME_TYPES.JSON,
           webId: webId
         });
 
@@ -472,16 +458,13 @@ const KeysService = {
     delete: {
       params: {
         resourceUri: { type: 'string', optional: true },
-        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         keyObject: { type: 'object', optional: true },
         webId: { type: 'string', optional: true }
       },
       async handler(ctx) {
         const resourceUri = ctx.params.resourceUri || ctx.params.keyObject?.id || ctx.params.keyObject?.['@id'];
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const webId = ctx.params.webId || ctx.meta.webId;
-        const keyObject =
-          ctx.params.keyObject || (await ctx.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON, webId }));
+        const keyObject = ctx.params.keyObject || (await ctx.call('ldp.resource.get', { resourceUri, webId }));
 
         await ctx.call('keys.container.delete', { resourceUri, webId });
         // Delete corresponding public key in the `public-key` container, if present.
@@ -505,7 +488,7 @@ const KeysService = {
       },
       async handler(ctx) {
         const { webId } = ctx.params;
-        const keys = await ctx.call('keys.container.list', { webId, accept: MIME_TYPES.JSON });
+        const keys = await ctx.call('keys.container.list', { webId });
         for (const key of keys['ldp:contains']) {
           await ctx.call('keys.delete', { resourceUri: key.id, webId });
         }
@@ -570,14 +553,12 @@ const KeysService = {
      */
     getPublicKeyObject: {
       params: {
-        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         keyObject: { type: 'object', optional: true },
         keyId: { type: 'string', optional: true }
       },
       async handler(ctx) {
         const keyId = ctx.params.keyId || ctx.params.keyObject?.id || ctx.params.keyObject?.['@id'];
-        const keyObject =
-          ctx.params.keyObject || (await ctx.call('ldp.resource.get', { resourceUri: keyId, accept: MIME_TYPES.JSON }));
+        const keyObject = ctx.params.keyObject || (await ctx.call('ldp.resource.get', { resourceUri: keyId }));
 
         const keyType = keyObject['@type'] || keyObject.type;
 
@@ -621,7 +602,9 @@ const KeysService = {
           query: `
             SELECT ?privateKey 
             WHERE {
-              ?privateKey <http://www.w3.org/2000/01/rdf-schema#seeAlso> <${publicKeyUri}> .
+              GRAPH ?g {
+                ?privateKey <http://www.w3.org/2000/01/rdf-schema#seeAlso> <${publicKeyUri}> .
+              }
             }
           `,
           webId: 'system'
@@ -681,7 +664,6 @@ const KeysService = {
         // Create, publish and attach keys to the webId.
         await Promise.all([
           this.actions.createKeyForActor({ webId, attachToWebId: true, keyType: KEY_TYPES.RSA }, { parentCtx: ctx }),
-          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
           this.actions.createKeyForActor({ webId, attachToWebId: true, keyType: KEY_TYPES.ED25519 }, { parentCtx: ctx })
         ]);
       }

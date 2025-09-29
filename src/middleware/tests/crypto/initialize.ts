@@ -9,14 +9,13 @@ import { VerifiableCredentialsService } from '@semapps/crypto';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { fileURLToPath } from 'url';
 import * as CONFIG from '../config.ts';
-import { clearDataset } from '../utils.ts';
+import { dropDataset } from '../utils.ts';
 
-// @ts-expect-error TS(1470): The 'import.meta' meta-property is not allowed in ... Remove this comment to see the full error message
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const initialize = async (port: any, withOldKeyStore = false) => {
-  await clearDataset(CONFIG.MAIN_DATASET);
-  await clearDataset(CONFIG.SETTINGS_DATASET);
+  await dropDataset(CONFIG.MAIN_DATASET);
+  await dropDataset(CONFIG.SETTINGS_DATASET);
 
   const baseUrl = `http://localhost:${port}/`;
 
@@ -48,7 +47,8 @@ const initialize = async (port: any, withOldKeyStore = false) => {
         url: CONFIG.SPARQL_ENDPOINT,
         user: CONFIG.JENA_USER,
         password: CONFIG.JENA_PASSWORD,
-        mainDataset: CONFIG.MAIN_DATASET
+        mainDataset: CONFIG.MAIN_DATASET,
+        secure: false // TODO Remove when we move to Fuseki 5
       },
       activitypub: false,
       webfinger: false,

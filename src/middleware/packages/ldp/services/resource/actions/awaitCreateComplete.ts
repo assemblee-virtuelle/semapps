@@ -1,4 +1,3 @@
-import { MIME_TYPES } from '@semapps/mime-types';
 import { ActionSchema } from 'moleculer';
 import { waitForResource } from '../../../utils.ts';
 
@@ -7,7 +6,6 @@ const Schema = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
-    // @ts-expect-error TS(2322): Type '{ type: "array"; optional: true; }' is not a... Remove this comment to see the full error message
     predicates: { type: 'array', optional: true },
     delayMs: { type: 'number', optional: true },
     maxTries: { type: 'number', optional: true },
@@ -20,8 +18,7 @@ const Schema = {
       rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
       optional: true
     },
-    forceSemantic: { type: 'boolean', optional: true },
-    aclVerified: { type: 'boolean', optional: true }
+    forceSemantic: { type: 'boolean', optional: true }
   },
   async handler(ctx) {
     const { resourceUri, predicates = [], delayMs = 1000, maxTries = 30, webId = 'system', ...rest } = ctx.params;
@@ -31,7 +28,6 @@ const Schema = {
         'ldp.resource.get',
         {
           resourceUri: resourceUri,
-          accept: MIME_TYPES.JSON,
           webId,
           ...rest
         },

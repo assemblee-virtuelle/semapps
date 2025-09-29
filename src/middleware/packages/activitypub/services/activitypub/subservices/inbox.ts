@@ -1,16 +1,12 @@
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
-import { MIME_TYPES } from '@semapps/mime-types';
-import { ServiceSchema } from 'moleculer';
-import { objectIdToCurrent, collectionPermissionsWithAnonRead } from '../../../utils.ts';
+import { ServiceSchema, Errors } from 'moleculer';
+import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
 import { ACTOR_TYPES } from '../../../constants.ts';
 import AwaitActivityMixin from '../../../mixins/await-activity.ts';
 
-import { Errors } from 'moleculer';
-
 const { MoleculerError } = Errors;
 
-/** @type {import('moleculer').ServiceSchema} */
 const InboxService = {
   name: 'activitypub.inbox' as const,
   mixins: [AwaitActivityMixin],
@@ -47,7 +43,6 @@ const InboxService = {
 
         // Ensure the actor in the activity is the same as the posting actor
         // (When posting, the webId is the one of the poster)
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         if (activity.actor !== ctx.meta.webId) {
           throw new E.UnAuthorizedError('INVALID_ACTOR', 'Activity actor is not the same as the posting actor');
         }
@@ -66,7 +61,6 @@ const InboxService = {
 
         // We want the next operations to be done by the system
         // TODO check if we can avoid this, as this is a bad practice
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         ctx.meta.webId = 'system';
 
         const collectionExists = await ctx.call('activitypub.collection.exist', {
@@ -77,16 +71,12 @@ const InboxService = {
           throw new E.NotFoundError();
         }
 
-        // @ts-expect-error TS(2339): Property 'skipSignatureValidation' does not exist ... Remove this comment to see the full error message
         if (!ctx.meta.skipSignatureValidation) {
-          // @ts-expect-error TS(2339): Property 'rawBody' does not exist on type '{}'.
           if (!ctx.meta.rawBody || !ctx.meta.originalHeaders)
             throw new Error(`Cannot validate HTTP signature because of missing meta (rawBody or originalHeaders)`);
 
           const validDigest = await ctx.call('signature.verifyDigest', {
-            // @ts-expect-error
-            body: ctx.meta.rawBody, // Stored by parseJson middleware
-            // @ts-expect-error
+            body: ctx.meta.rawBody, // Stored by parseRawBody middleware
             headers: ctx.meta.originalHeaders
           });
 
@@ -117,8 +107,7 @@ const InboxService = {
         if (activity.id && !activity.id.includes('#')) {
           // Save the remote activity in the local triple store
           await ctx.call('ldp.remote.store', {
-            resource: objectIdToCurrent(activity),
-            mirrorGraph: false, // Store in default graph as activity may not be public
+            resource: activity,
             keepInSync: false, // Activities are immutable
             webId: inboxOwner
           });
@@ -174,14 +163,17 @@ const InboxService = {
             PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
             SELECT DISTINCT ?activityUri 
             WHERE {
-              <${collectionUri}> a as:Collection .
-              <${collectionUri}> as:items ?activityUri . 
-              ?activityUri as:published ?published . 
-              ${filters ? `FILTER (${filters.join(' && ')})` : ''}
+              GRAPH <${collectionUri}> {
+                <${collectionUri}> a as:Collection .
+                <${collectionUri}> as:items ?activityUri . 
+              }
+              GRAPH ?g {
+                ?activityUri as:published ?published . 
+                ${filters ? `FILTER (${filters.join(' && ')})` : ''}
+              }
             }
             ORDER BY ?published
           `,
-          accept: MIME_TYPES.JSON,
           webId: 'system'
         });
 

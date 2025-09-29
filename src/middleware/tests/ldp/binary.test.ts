@@ -2,7 +2,6 @@ import fetch from 'node-fetch';
 import fs from 'fs';
 import path, { join as pathJoin } from 'path';
 import urlJoin from 'url-join';
-import { MIME_TYPES } from '@semapps/mime-types';
 import { getSlugFromUri } from '@semapps/ldp';
 import { fileURLToPath } from 'url';
 import { fetchServer } from '../utils.ts';
@@ -52,7 +51,7 @@ describe('Binary handling of LDP server', () => {
     // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(fetchServer(urlJoin(CONFIG.HOME_URL, 'files'))).resolves.toMatchObject({
       json: {
-        '@type': ['ldp:Container', 'ldp:BasicContainer'],
+        '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
         'ldp:contains': [
           {
             '@id': fileUri,
@@ -81,12 +80,7 @@ describe('Binary handling of LDP server', () => {
   });
 
   test('Get image as resource (via Moleculer action)', async () => {
-    await expect(
-      broker.call('ldp.resource.get', {
-        resourceUri: fileUri,
-        accept: MIME_TYPES.JSON
-      })
-    ).resolves.toMatchObject({
+    await expect(broker.call('ldp.resource.get', { resourceUri: fileUri })).resolves.toMatchObject({
       '@id': fileUri,
       '@type': 'semapps:File',
       'semapps:fileName': fileName,
@@ -106,6 +100,7 @@ describe('Binary handling of LDP server', () => {
 
     expect(fs.existsSync(pathJoin(__dirname, '../uploads/files/av-icon.png'))).toBeFalsy();
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(fetchServer(fileUri)).resolves.toMatchObject({
       status: 404
     });
@@ -113,7 +108,7 @@ describe('Binary handling of LDP server', () => {
     // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(fetchServer(urlJoin(CONFIG.HOME_URL, 'files'))).resolves.toMatchObject({
       json: {
-        '@type': ['ldp:Container', 'ldp:BasicContainer'],
+        '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
         'ldp:contains': []
       }
     });

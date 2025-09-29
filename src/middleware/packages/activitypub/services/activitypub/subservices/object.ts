@@ -1,7 +1,6 @@
 import { getType } from '@semapps/ldp';
-import { MIME_TYPES } from '@semapps/mime-types';
-import { OBJECT_TYPES, ACTIVITY_TYPES } from '../../../constants.ts';
 import { ServiceSchema } from 'moleculer';
+import { OBJECT_TYPES, ACTIVITY_TYPES } from '../../../constants.ts';
 
 const ObjectService = {
   name: 'activitypub.object' as const,
@@ -22,8 +21,7 @@ const ObjectService = {
         return await ctx.call('ldp.resource.get', {
           resourceUri: objectUri,
           webId: actorUri,
-          ...rest,
-          accept: MIME_TYPES.JSON
+          ...rest
         });
       }
     },
@@ -101,7 +99,6 @@ const ObjectService = {
               {
                 containerUri,
                 resource: activity.object,
-                contentType: MIME_TYPES.JSON,
                 webId: actorUri
               },
               {
@@ -125,7 +122,6 @@ const ObjectService = {
               controlledActions?.put || 'ldp.resource.put',
               {
                 resource: activity.object,
-                contentType: MIME_TYPES.JSON,
                 webId: actorUri
               },
               {
@@ -142,7 +138,7 @@ const ObjectService = {
             if (activity.object) {
               const resourceUri = typeof activity.object === 'string' ? activity.object : activity.object.id;
               // If the resource is already deleted, it means it was an announcement
-              if (await ctx.call('ldp.resource.exist', { resourceUri, webId: actorUri })) {
+              if (await ctx.call('ldp.resource.exist', { resourceUri, webId: 'system' })) {
                 const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri });
 
                 await ctx.call(
@@ -170,7 +166,6 @@ const ObjectService = {
             'ldp.resource.get',
             {
               resourceUri: objectUri,
-              accept: MIME_TYPES.JSON,
               webId: actorUri
             },
             { meta: { $cache: false } }
@@ -186,6 +181,10 @@ const ObjectService = {
         const { resourceUri, formerType } = ctx.params;
         const expandedFormerTypes = await ctx.call('jsonld.parser.expandTypes', { types: formerType });
 
+        // We need to recreate the named graph as it has been deleted
+        // TODO See how we can avoid this since it will not work with NextGraph
+        await ctx.call('triplestore.named-graph.create', { uri: resourceUri });
+
         // Insert directly the Tombstone in the triple store to avoid resource creation side-effects
         await ctx.call('triplestore.insert', {
           resource: {
@@ -199,7 +198,7 @@ const ObjectService = {
               '@type': 'http://www.w3.org/2001/XMLSchema#dateTime'
             }
           },
-          contentType: MIME_TYPES.JSON,
+          graphName: resourceUri,
           webId: 'system'
         });
       }
@@ -210,7 +209,6 @@ const ObjectService = {
       async handler(ctx) {
         // Check if tombstones are globally activated
         if (this.settings.activateTombstones) {
-          // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
           const { resourceUri, containersUris, oldData, dataset } = ctx.params;
 
           // If the resource was in no container, skip...
@@ -224,7 +222,6 @@ const ObjectService = {
             // @ts-expect-error TS(2339): Property 'activateTombstones' does not exist on ty... Remove this comment to see the full error message
             if (containerOptions.activateTombstones !== false && ctx.meta.activateTombstones !== false) {
               const formerType = oldData.type || oldData['@type'];
-              // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
               await this.actions.createTombstone({ resourceUri, formerType }, { meta: { dataset }, parentCtx: ctx });
             }
           }

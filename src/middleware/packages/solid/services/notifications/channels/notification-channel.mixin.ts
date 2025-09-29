@@ -3,7 +3,6 @@ import urlJoin from 'url-join';
 import { Errors as E } from 'moleculer-web';
 import { SpecialEndpointMixin, ControlledContainerMixin, getDatasetFromUri, arrayOf } from '@semapps/ldp';
 import { ACTIVITY_TYPES } from '@semapps/activitypub';
-import { MIME_TYPES } from '@semapps/mime-types';
 import rdf from '@rdfjs/data-model';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
 import { v4 as uuidV4 } from 'uuid';
@@ -126,7 +125,6 @@ const Schema = {
               'notify:sendTo': sendTo,
               'notify:receiveFrom': receiveFrom
             },
-            contentType: MIME_TYPES.JSON,
             webId: 'system'
           },
           { parentCtx: ctx }
@@ -148,7 +146,6 @@ const Schema = {
         return this.actions.get(
           {
             resourceUri: channelUri,
-            accept: MIME_TYPES.JSON,
             webId: 'system'
           },
           { parentCtx: ctx }
@@ -232,7 +229,6 @@ const Schema = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'collectionUri' does not exist on type 'O... Remove this comment to see the full error message
         const { collectionUri, itemUri } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'onContainerOrCollectionEvent' does not e... Remove this comment to see the full error message
         this.onContainerOrCollectionEvent(collectionUri, itemUri, ACTIVITY_TYPES.REMOVE);
       }
     }

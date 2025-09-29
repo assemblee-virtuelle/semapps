@@ -9,9 +9,8 @@ import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { FULL_OBJECT_TYPES, FULL_ACTOR_TYPES } from '@semapps/activitypub';
 import { fileURLToPath } from 'url';
 import * as CONFIG from '../config.ts';
-import { clearDataset, clearQueue } from '../utils.ts';
+import { dropDataset, clearQueue } from '../utils.ts';
 
-// @ts-expect-error TS(1470): The 'import.meta' meta-property is not allowed in ... Remove this comment to see the full error message
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const containers = [
   {
@@ -24,8 +23,8 @@ const initialize = async (port: any, mainDataset: any, accountsDataset: any, que
   const baseUrl = `http://localhost:${port}/`;
   const queueServiceUrl = `redis://localhost:6379/${queueServiceDb}`;
 
-  await clearDataset(mainDataset);
-  await clearDataset(accountsDataset);
+  await dropDataset(mainDataset);
+  await dropDataset(accountsDataset);
   await clearQueue(queueServiceUrl);
 
   const broker = new ServiceBroker({
@@ -53,7 +52,8 @@ const initialize = async (port: any, mainDataset: any, accountsDataset: any, que
         url: CONFIG.SPARQL_ENDPOINT,
         user: CONFIG.JENA_USER,
         password: CONFIG.JENA_PASSWORD,
-        mainDataset
+        mainDataset,
+        secure: false // TODO Remove when we move to Fuseki 5
       },
       containers,
       void: false,

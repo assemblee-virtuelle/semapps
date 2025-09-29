@@ -27,6 +27,7 @@ const errorCases = {
     'No registered ontology found for resourceType http://www.w3.org/ns/unknown#Event'
 };
 
+// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe('Get container path', () => {
   test.each(Object.keys(successCases))('Success with resourceType %s', async (resourceType: any) => {
     // @ts-expect-error TS(2304): Cannot find name 'expect'.

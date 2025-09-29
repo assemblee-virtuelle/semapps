@@ -1,8 +1,8 @@
 import urlJoin from 'url-join';
-import { MIME_TYPES } from '@semapps/mime-types';
 import { Errors } from 'moleculer';
 
 const { ServiceSchemaError } = Errors;
+
 class LdpAdapter {
   constructor({ resourceService = 'ldp.resource', containerService = 'ldp.container' } = {}) {
     // @ts-expect-error TS(2339): Property 'resourceService' does not exist on type ... Remove this comment to see the full error message
@@ -21,7 +21,6 @@ class LdpAdapter {
   async connect() {
     // @ts-expect-error TS(2339): Property 'service' does not exist on type 'LdpAdap... Remove this comment to see the full error message
     if (!this.service.schema.settings.containerUri) {
-      // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
       throw new ServiceSchemaError(
         // @ts-expect-error TS(2339): Property 'service' does not exist on type 'LdpAdap... Remove this comment to see the full error message
         `Missing \`containerUri\` definition in settings of service ${this.service.schema.name}`
@@ -64,9 +63,8 @@ class LdpAdapter {
       // @ts-expect-error TS(2339): Property 'service' does not exist on type 'LdpAdap... Remove this comment to see the full error message
       containerUri: this.service.schema.settings.containerUri,
       filters: filters.query,
-      // @ts-expect-error
-      jsonContext: this.service.schema.settings.context,
-      accept: MIME_TYPES.JSON
+      // @ts-expect-error TS(2339): Property 'service' does not exist on type 'LdpAdap... Remove this comment to see the full error message
+      jsonContext: this.service.schema.settings.context
     });
   }
 
@@ -88,9 +86,8 @@ class LdpAdapter {
     // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'LdpAdapt... Remove this comment to see the full error message
     return this.broker.call(`${this.resourceService}.get`, {
       resourceUri: _id,
-      // @ts-expect-error
-      jsonContext: this.service.schema.settings.context,
-      accept: MIME_TYPES.JSON
+      // @ts-expect-error TS(2339): Property 'service' does not exist on type 'LdpAdap... Remove this comment to see the full error message
+      jsonContext: this.service.schema.settings.context
     });
   }
 
@@ -120,22 +117,21 @@ class LdpAdapter {
     const { slug, ...resource } = entity;
 
     return (
-      // @ts-expect-error
+      // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'LdpAdapt... Remove this comment to see the full error message
       this.broker
-        // @ts-expect-error
+        // @ts-expect-error TS(2339): Property 'resourceService' does not exist on type ... Remove this comment to see the full error message
         .call(`${this.resourceService}.post`, {
-          // @ts-expect-error
+          // @ts-expect-error TS(2339): Property 'service' does not exist on type 'LdpAdap... Remove this comment to see the full error message
           containerUri: this.service.schema.settings.containerUri,
           resource: {
-            // @ts-expect-error
+            // @ts-expect-error TS(2339): Property 'service' does not exist on type 'LdpAdap... Remove this comment to see the full error message
             '@context': this.service.schema.settings.context,
             ...resource
           },
-          slug,
-          contentType: MIME_TYPES.JSON
+          slug
         })
         .then((resourceUri: any) => {
-          // @ts-expect-error
+          // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'LdpAdapt... Remove this comment to see the full error message
           this.broker.call(`${this.containerService}.attach`, {
             // @ts-expect-error TS(2339): Property 'service' does not exist on type 'LdpAdap... Remove this comment to see the full error message
             containerUri: this.service.schema.settings.containerUri,
@@ -174,17 +170,16 @@ class LdpAdapter {
     if (!_id.startsWith('http')) _id = urlJoin(this.service.schema.settings.containerUri, _id);
 
     return (
-      // @ts-expect-error
+      // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'LdpAdapt... Remove this comment to see the full error message
       this.broker
-        // @ts-expect-error
+        // @ts-expect-error TS(2339): Property 'resourceService' does not exist on type ... Remove this comment to see the full error message
         .call(`${this.resourceService}.put`, {
           resource: {
-            // @ts-expect-error
+            // @ts-expect-error TS(2339): Property 'service' does not exist on type 'LdpAdap... Remove this comment to see the full error message
             '@context': this.service.schema.settings.context,
             '@id': _id,
             ...resource
-          },
-          contentType: MIME_TYPES.JSON
+          }
         })
         .then((resourceUri: any) => this.findById(resourceUri))
     );
@@ -201,8 +196,8 @@ class LdpAdapter {
    * Remove an entity by ID
    */
   removeById(_id: any) {
+    // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'LdpAdapt... Remove this comment to see the full error message
     return (
-      // @ts-expect-error TS(2339): Property 'broker' does not exist on type 'LdpAdapt... Remove this comment to see the full error message
       this.broker
         // @ts-expect-error TS(2339): Property 'resourceService' does not exist on type ... Remove this comment to see the full error message
         .call(`${this.resourceService}.delete`, {

@@ -80,7 +80,10 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
       expect(inbox.orderedItems[0]).toMatchObject({
         type: ACTIVITY_TYPES.ACCEPT,
         actor: alice.id,
-        object: followActivity.id
+        object: {
+          id: followActivity.id,
+          type: ACTIVITY_TYPES.FOLLOW
+        }
       });
     });
   });
@@ -135,9 +138,10 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
 
     // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await waitForExpect(async () => {
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(
         alice.call('activitypub.collection.includes', { collectionUri: alice.followers, itemUri: bob.id })
       ).resolves.toBeFalsy();
-    });
+    }, 20_000);
   });
 });

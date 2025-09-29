@@ -28,8 +28,7 @@ const ReplyService = {
         // Create the /replies collection and attach it to the object, unless it already exists
         const collectionUri = await ctx.call('activitypub.collections-registry.createAndAttachCollection', {
           objectUri,
-          collection: this.settings.collectionOptions,
-          webId: 'system'
+          collection: this.settings.collectionOptions
         });
 
         await ctx.call('activitypub.collection.add', { collectionUri, item: replyUri });
@@ -57,12 +56,18 @@ const ReplyService = {
           query: sanitizeSparqlQuery`
             PREFIX as: <https://www.w3.org/ns/activitystreams#>
             DELETE {
-              ?collection as:items <${objectUri}> .
+              GRAPH ?g1 {
+                ?collection as:items <${objectUri}> .
+              }
             } 
             WHERE {
-              ?collection as:items <${objectUri}> .
-              ?collection a as:Collection .
-              ?object as:replies ?collection .
+              GRAPH ?g1 {
+                ?collection as:items <${objectUri}> .
+                ?collection a as:Collection .
+              }
+              GRAPH ?g2 {
+                ?object as:replies ?collection .
+              }
             }
           `,
           webId: 'system'

@@ -133,6 +133,7 @@ describe.each([false, true])('Register ontologies with cacher %s', (cacher: any)
   test('Get prefixes', async () => {
     const prefixes = await broker.call('ontologies.getPrefixes');
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(prefixes).toEqual({
       ont1: 'https://www.w3.org/ns/ontology1#',
       ont2: 'https://www.w3.org/ns/ontology2#',

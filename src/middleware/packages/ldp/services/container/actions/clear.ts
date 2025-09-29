@@ -14,6 +14,7 @@ const Schema = {
     this.logger.info(`Deleting ${resourcesUris.length} resources...`);
 
     for (let resourceUri of resourcesUris) {
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       this.logger.info(`Deleting ${resourceUri}...`);
       await ctx.call('ldp.resource.delete', { resourceUri, webId });
     }

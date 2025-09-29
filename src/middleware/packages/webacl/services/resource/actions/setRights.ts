@@ -1,7 +1,7 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import urlJoin from 'url-join';
 
-import { ActionSchema } from 'moleculer';
+import { ActionSchema, Errors } from 'moleculer';
 import {
   getAclUriFromResourceUri,
   convertBodyToTriples,
@@ -10,19 +10,17 @@ import {
   FULL_FOAF_AGENT
 } from '../../../utils.ts';
 
-import { Errors } from 'moleculer';
-
 const { MoleculerError } = Errors;
 
-export const api = async function api(this: any, ctx: any) {
+export const api = async function api(ctx: any) {
   const contentType = ctx.meta.headers['content-type'];
   let { slugParts } = ctx.params;
 
   if (!contentType || (contentType !== MIME_TYPES.JSON && contentType !== MIME_TYPES.TURTLE))
     throw new MoleculerError(`Content type not supported : ${contentType}`, 400, 'BAD_REQUEST');
 
-  const newRights = await convertBodyToTriples(ctx.meta.body, contentType);
-  // @ts-expect-error
+  const newRights = await convertBodyToTriples(ctx.meta.rawBody, contentType);
+  // @ts-expect-error TS(18046): 'newRights' is of type 'unknown'.
   if (newRights.length === 0) throw new MoleculerError('PUT rights cannot be empty', 400, 'BAD_REQUEST');
 
   // This is the root container
@@ -42,25 +40,21 @@ export const action = {
     resourceUri: { type: 'string' },
     webId: { type: 'string', optional: true },
     // newRights is an array of objects of the form { auth: 'http://localhost:3000/_acl/container29#Control',  p: 'http://www.w3.org/ns/auth/acl#agent',  o: 'https://data.virtual-assembly.org/users/sebastien.rosset' }
-    // @ts-expect-error TS(2322): Type '{ type: "array"; optional: false; min: numbe... Remove this comment to see the full error message
     newRights: { type: 'array', optional: false, min: 1 }
     // minimum is one right : We cannot leave a resource without rights.
   },
   async handler(ctx) {
     let { webId, newRights, resourceUri } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     webId = webId || ctx.meta.webId || 'anon';
 
     const isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
 
-    // check that the user has Control perm.
-    // TODO: bypass this check if user is 'system' (use system as a super-admin) ?
-    const { control } = await ctx.call('webacl.resource.hasRights', {
-      resourceUri,
-      rights: { control: true },
+    await ctx.call('permissions.check', {
+      uri: resourceUri,
+      type: isContainer ? 'container' : 'resource',
+      mode: 'acl:Control',
       webId
     });
-    if (!control) throw new MoleculerError('Access denied ! user must have Control permission', 403, 'ACCESS_DENIED');
 
     // filter out all the newRights that are not for the resource
     const aclUri = getAclUriFromResourceUri(this.settings.baseUrl, resourceUri);

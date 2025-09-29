@@ -1,10 +1,8 @@
 import urlJoin from 'url-join';
-import { MIME_TYPES } from '@semapps/mime-types';
 import { foaf, schema } from '@semapps/ontologies';
 import { ControlledContainerMixin, DereferenceMixin, getDatasetFromUri } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
 
-/** @type {import('moleculer').ServiceSchema} */
 const WebIdService = {
   name: 'webid' as const,
   mixins: [ControlledContainerMixin, DereferenceMixin],
@@ -38,7 +36,6 @@ const WebIdService = {
         return ctx.call(
           'ldp.resource.get',
           {
-            accept: this.settings.accept,
             ...ctx.params,
             webId: 'system'
           },
@@ -83,7 +80,7 @@ const WebIdService = {
                 '@id': webId,
                 ...resource
               },
-              contentType: MIME_TYPES.JSON,
+              resourceUri: webId,
               webId: 'system'
             },
             { parentCtx: ctx }
@@ -94,7 +91,6 @@ const WebIdService = {
             {
               resource,
               slug: nick,
-              contentType: MIME_TYPES.JSON,
               webId: 'system'
             },
             { parentCtx: ctx }
@@ -104,7 +100,6 @@ const WebIdService = {
         const webIdData = await this.actions.get(
           {
             resourceUri: webId,
-            accept: MIME_TYPES.JSON,
             webId: 'system'
           },
           { parentCtx: ctx }

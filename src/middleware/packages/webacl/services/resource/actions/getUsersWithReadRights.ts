@@ -1,4 +1,3 @@
-import { MIME_TYPES } from '@semapps/mime-types';
 import { arrayOf } from '@semapps/ldp';
 import { ActionSchema } from 'moleculer';
 
@@ -10,10 +9,7 @@ export const action = {
   async handler(ctx) {
     const { resourceUri } = ctx.params;
 
-    const authorizations = await this.actions.getRights(
-      { resourceUri, accept: MIME_TYPES.JSON, webId: 'system' },
-      { parentCtx: ctx }
-    );
+    const authorizations = await this.actions.getRights({ resourceUri, webId: 'system' }, { parentCtx: ctx });
     const readAuthorization =
       authorizations['@graph'] && authorizations['@graph'].find((auth: any) => auth['@id'] === '#Read');
 

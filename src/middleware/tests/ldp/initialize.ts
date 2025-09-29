@@ -8,9 +8,8 @@ import { AuthLocalService } from '@semapps/auth';
 import { ControlledContainerMixin } from '@semapps/ldp';
 import { fileURLToPath } from 'url';
 import * as CONFIG from '../config.ts';
-import { clearDataset } from '../utils.ts';
+import { dropDataset } from '../utils.ts';
 
-// @ts-expect-error TS(1470): The 'import.meta' meta-property is not allowed in ... Remove this comment to see the full error message
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Give write permission on all containers to anonymous users
@@ -49,7 +48,7 @@ const containers = [
 ];
 
 const initialize = async () => {
-  await clearDataset(CONFIG.MAIN_DATASET);
+  await dropDataset(CONFIG.MAIN_DATASET);
 
   const uploadsPath = pathJoin(__dirname, '../uploads');
   if (fs.existsSync(uploadsPath)) {
@@ -77,7 +76,8 @@ const initialize = async () => {
         url: CONFIG.SPARQL_ENDPOINT,
         user: CONFIG.JENA_USER,
         password: CONFIG.JENA_PASSWORD,
-        mainDataset: CONFIG.MAIN_DATASET
+        mainDataset: CONFIG.MAIN_DATASET,
+        secure: false // TODO Remove when we move to Fuseki 5
       },
       containers,
       ontologies: [pair, petr],

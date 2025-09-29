@@ -13,9 +13,8 @@ import { MirrorService, ObjectsWatcherMiddleware } from '@semapps/sync';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { fileURLToPath } from 'url';
 import * as CONFIG from '../config.ts';
-import { clearDataset } from '../utils.ts';
+import { dropDataset, clearQueue } from '../utils.ts';
 
-// @ts-expect-error TS(1470): The 'import.meta' meta-property is not allowed in ... Remove this comment to see the full error message
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const containers = [
@@ -38,15 +37,12 @@ const initialize = async (
   queueServiceDb: any,
   serverToMirror: any
 ) => {
-  // Clear datasets
-  await clearDataset(mainDataset);
-  await clearDataset(accountsDataset);
-
-  // Clear queue
   const queueServiceUrl = `redis://localhost:6379/${queueServiceDb}`;
-  const redisClient = new Redis(queueServiceUrl);
-  const result = await redisClient.flushdb();
-  redisClient.disconnect();
+
+  // Clear datasets
+  await dropDataset(mainDataset);
+  await dropDataset(accountsDataset);
+  await clearQueue(queueServiceUrl);
 
   // Remove all actors keys
   await fse.emptyDir(path.resolve(__dirname, './actors'));
@@ -81,7 +77,8 @@ const initialize = async (
         url: CONFIG.SPARQL_ENDPOINT,
         user: CONFIG.JENA_USER,
         password: CONFIG.JENA_PASSWORD,
-        mainDataset
+        mainDataset,
+        secure: false // TODO Remove when we move to Fuseki 5
       },
       containers,
       ontologies: [pair],
@@ -91,7 +88,6 @@ const initialize = async (
       api: {
         port
       },
-      mirror: serverToMirror ? { servers: [serverToMirror] } : true,
       webid: {
         path: '/as/actor',
         acceptedTypes: [FULL_ACTOR_TYPES.PERSON, FULL_ACTOR_TYPES.APPLICATION]

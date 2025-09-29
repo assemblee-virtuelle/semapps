@@ -19,8 +19,8 @@ const TypeIndexesSchema = {
   },
   dependencies: ['ontologies'],
   created() {
+    // @ts-expect-error TS(2322): Type '{ name: "type-registrations"; mixins: { sett... Remove this comment to see the full error message
     this.broker.createService({
-      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "type-registra... Remove this comment to see the full error message
       mixins: [TypeRegistrationsService]
     });
   },
@@ -40,7 +40,6 @@ const TypeIndexesSchema = {
             resource: {
               type: ['solid:TypeIndex', 'solid:ListedDocument']
             },
-            contentType: MIME_TYPES.JSON,
             webId
           },
           { parentCtx: ctx }
@@ -115,7 +114,6 @@ const TypeIndexesSchema = {
 
         const user = await ctx.call('ldp.resource.get', {
           resourceUri: webId,
-          accept: MIME_TYPES.JSON,
           webId
         });
 

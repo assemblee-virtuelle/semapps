@@ -1,4 +1,3 @@
-import { MIME_TYPES } from '@semapps/mime-types';
 import { getSlugFromUri } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
 
@@ -9,7 +8,7 @@ const AuthMigrationSchema = {
       async handler(ctx) {
         const { usersContainer, emailPredicate, usernamePredicate } = ctx.params;
 
-        const results = await ctx.call('ldp.container.get', { containerUri: usersContainer, accept: MIME_TYPES.JSON });
+        const results = await ctx.call('ldp.container.get', { containerUri: usersContainer });
 
         for (const user of results['ldp:contains']) {
           if (user[emailPredicate]) {

@@ -58,7 +58,6 @@ const RelayService = {
             preferredUsername: actorSettings.username,
             name: actorSettings.name
           },
-          contentType: MIME_TYPES.JSON,
           webId: 'system'
         });
       } catch (e) {

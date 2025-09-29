@@ -1,7 +1,7 @@
 import { ServiceSchema } from 'moleculer';
 
-const AuthorizerSchema = {
-  name: 'authorizer' as const,
+const AuthorizerBotSchema = {
+  name: 'authorizer-bot' as const,
   settings: {
     rules: []
   },
@@ -33,7 +33,6 @@ const AuthorizerSchema = {
   events: {
     'ldp.resource.created': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
         for (const rule of this.settings.rules) {
           if (this.matchRule(rule, newData)) {
@@ -64,7 +63,6 @@ const AuthorizerSchema = {
 
     'ldp.resource.updated': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData, oldData } = ctx.params;
 
         for (const rule of this.settings.rules) {
@@ -121,12 +119,12 @@ const AuthorizerSchema = {
   }
 } satisfies ServiceSchema;
 
-export default AuthorizerSchema;
+export default AuthorizerBotSchema;
 
 declare global {
   export namespace Moleculer {
     export interface AllServices {
-      [AuthorizerSchema.name]: typeof AuthorizerSchema;
+      [AuthorizerBotSchema.name]: typeof AuthorizerBotSchema;
     }
   }
 }

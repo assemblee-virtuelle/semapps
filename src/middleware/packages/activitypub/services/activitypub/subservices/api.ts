@@ -5,11 +5,10 @@ import { arrayOf } from '@semapps/ldp';
 import {
   parseUrl,
   parseHeader,
-  parseSparql,
+  parseRawBody,
   negotiateContentType,
   negotiateAccept,
   parseJson,
-  parseTurtle,
   parseFile,
   saveDatasetMeta
 } from '@semapps/middlewares';
@@ -52,7 +51,6 @@ const ApiService = {
     inbox: {
       async handler(ctx) {
         const { actorSlug, ...activity } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'requestUrl' does not exist on type '{}'.
         const { requestUrl } = ctx.meta;
         const { origin } = new URL(this.settings.baseUri);
 
@@ -61,7 +59,6 @@ const ApiService = {
           ...activity
         });
 
-        // @ts-expect-error TS(2339): Property '$statusCode' does not exist on type '{}'... Remove this comment to see the full error message
         ctx.meta.$statusCode = 202;
       }
     },
@@ -69,7 +66,6 @@ const ApiService = {
     outbox: {
       async handler(ctx) {
         let { actorSlug, ...activity } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'requestUrl' does not exist on type '{}'.
         const { requestUrl } = ctx.meta;
         const { origin } = new URL(this.settings.baseUri);
 
@@ -78,15 +74,12 @@ const ApiService = {
           ...activity
         });
 
-        // @ts-expect-error TS(2339): Property '$responseHeaders' does not exist on type... Remove this comment to see the full error message
         ctx.meta.$responseHeaders = {
           Location: activity.id || activity['@id'],
           'Content-Length': 0
         };
         // We need to set this also here (in addition to above) or we get a Moleculer warning
-        // @ts-expect-error TS(2339): Property '$location' does not exist on type '{}'.
         ctx.meta.$location = activity.id || activity['@id'];
-        // @ts-expect-error TS(2339): Property '$statusCode' does not exist on type '{}'... Remove this comment to see the full error message
         ctx.meta.$statusCode = 201;
       }
     }
@@ -106,7 +99,6 @@ const ApiService = {
           arrayOf(container.acceptedTypes).some(type => Object.values(FULL_ACTOR_TYPES).includes(type))
         ) {
           await ctx.call('api.addRoute', {
-            // @ts-expect-error TS(2339): Property 'getBoxesRoute' does not exist on type 'S... Remove this comment to see the full error message
             route: this.getBoxesRoute(path.join(basePath, `${container.fullPath}/:actorSlug`))
           });
         }
@@ -120,9 +112,8 @@ const ApiService = {
         parseHeader,
         negotiateContentType,
         negotiateAccept,
-        parseSparql,
+        parseRawBody,
         parseJson,
-        parseTurtle,
         parseFile,
         saveDatasetMeta
       ];
@@ -131,7 +122,7 @@ const ApiService = {
         name: this.settings.podProvider ? 'boxes' : `boxes${actorsPath}`,
         path: actorsPath,
         // Disable the body parsers so that we can parse the body ourselves
-        // (Moleculer-web doesn't handle non-JSON bodies, so we must do it)
+        // (Moleculer-web doesn't handle non-JSON bodies, so we must do it ourselves)
         bodyParsers: false,
         authorization: false,
         authentication: true,

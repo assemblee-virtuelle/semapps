@@ -39,6 +39,7 @@ const OntologiesSchema = {
     getRdfPrefixes: getRdfPrefixesAction,
     list: listAction,
     prefixToUri: prefixToUriAction,
+    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { prefix: st... Remove this comment to see the full error message
     register: registerAction
   },
   methods: {

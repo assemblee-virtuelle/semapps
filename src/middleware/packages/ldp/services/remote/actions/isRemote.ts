@@ -9,7 +9,6 @@ const Schema = {
   },
   async handler(ctx) {
     const { resourceUri } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
     const dataset = ctx.params.dataset || ctx.meta.dataset;
 
     if (!urlJoin(resourceUri, '/').startsWith(this.settings.baseUrl)) {
@@ -26,6 +25,7 @@ const Schema = {
             `Unable to know if ${resourceUri} is remote. In Pod provider config, the dataset must be provided`
           );
 
+        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         return !urlJoin(resourceUri, '/').startsWith(`${urlJoin(this.settings.baseUrl, dataset)}/`);
       } else {
         return false;

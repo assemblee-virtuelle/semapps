@@ -1,5 +1,4 @@
 import urlJoin from 'url-join';
-import { MIME_TYPES } from '@semapps/mime-types';
 import { arrayOf } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
 import { ACTOR_TYPES } from '../constants.ts';
@@ -55,7 +54,6 @@ const BotMixin = {
             preferredUsername: actorSettings.username,
             name: actorSettings.name
           },
-          contentType: MIME_TYPES.JSON,
           webId: 'system'
         });
       } catch (e) {
@@ -80,11 +78,9 @@ const BotMixin = {
   events: {
     'activitypub.inbox.received': {
       handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'inboxReceived' does not exist on type 'S... Remove this comment to see the full error message
         if (this.inboxReceived) {
-          // @ts-expect-error TS(2339): Property 'recipients' does not exist on type 'Opti... Remove this comment to see the full error message
           if (ctx.params.recipients.includes(this.settings.actor.uri)) {
-            // @ts-expect-error TS(2339): Property 'inboxReceived' does not exist on type 'S... Remove this comment to see the full error message
+            // @ts-expect-error TS(2339): Property 'activity' does not exist on type 'Option... Remove this comment to see the full error message
             this.inboxReceived(ctx.params.activity);
           }
         }

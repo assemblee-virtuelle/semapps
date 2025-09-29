@@ -1,6 +1,5 @@
-import { ActionSchema } from 'moleculer';
-
-import { Errors } from 'moleculer';
+import rdf from '@rdfjs/data-model';
+import { ActionSchema, Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
@@ -26,12 +25,10 @@ const Schema = {
     resourceUri: {
       type: 'string'
     },
-    // @ts-expect-error TS(2322): Type '{ type: "array"; optional: true; }' is not a... Remove this comment to see the full error message
     triplesToAdd: {
       type: 'array',
       optional: true
     },
-    // @ts-expect-error TS(2322): Type '{ type: "array"; optional: true; }' is not a... Remove this comment to see the full error message
     triplesToRemove: {
       type: 'array',
       optional: true
@@ -47,7 +44,6 @@ const Schema = {
   },
   async handler(ctx) {
     let { resourceUri, triplesToAdd, triplesToRemove, skipInferenceCheck, webId } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     webId = webId || ctx.meta.webId || 'anon';
 
     if (await ctx.call('ldp.remote.isRemote', { resourceUri }))
@@ -58,6 +54,13 @@ const Schema = {
 
     if (!triplesToAdd && !triplesToRemove)
       throw new MoleculerError('No triples to add or to remove', 400, 'BAD_REQUEST');
+
+    if (triplesToRemove) {
+      await ctx.call('permissions.check', { uri: resourceUri, type: 'resource', mode: 'acl:Write', webId });
+    } else {
+      // If we only add new triples, we don't need the acl:Write permission
+      await ctx.call('permissions.check', { uri: resourceUri, type: 'resource', mode: 'acl:Append', webId });
+    }
 
     // Build the SPARQL update
     const sparqlUpdate = {
@@ -70,7 +73,7 @@ const Schema = {
       // @ts-expect-error TS(2345): Argument of type '{ updateType: string; delete: { ... Remove this comment to see the full error message
       sparqlUpdate.updates.push({
         updateType: 'delete',
-        delete: [{ type: 'bgp', triples: triplesToRemove }]
+        delete: [{ type: 'graph', triples: triplesToRemove, name: rdf.namedNode(resourceUri) }]
       });
     }
 
@@ -79,13 +82,13 @@ const Schema = {
       // @ts-expect-error TS(2345): Argument of type '{ updateType: string; insert: { ... Remove this comment to see the full error message
       sparqlUpdate.updates.push({
         updateType: 'insert',
-        insert: [{ type: 'bgp', triples: triplesToAdd }]
+        insert: [{ type: 'graph', triples: triplesToAdd, name: rdf.namedNode(resourceUri) }]
       });
     }
 
     await ctx.call('triplestore.update', {
       query: sparqlUpdate,
-      webId
+      webId: 'system'
     });
 
     const returnValues = {
@@ -94,7 +97,6 @@ const Schema = {
       triplesRemoved: triplesToRemove,
       skipInferenceCheck,
       webId,
-      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       dataset: ctx.meta.dataset
     };
 

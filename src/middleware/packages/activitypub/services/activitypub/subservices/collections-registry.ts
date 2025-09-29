@@ -133,8 +133,7 @@ const CollectionsRegistryService = {
                 await this.actions.createAndAttachCollection(
                   {
                     objectUri: resourceUri,
-                    collection,
-                    webId: 'system'
+                    collection
                   },
                   { parentCtx: ctx }
                 );
@@ -172,10 +171,11 @@ const CollectionsRegistryService = {
             query: `
               SELECT ?collectionUri
               WHERE {
-                ?objectUri <${attachPredicate}> ?collectionUri 
+                GRAPH ?g {
+                  ?objectUri <${attachPredicate}> ?collectionUri 
+                }
               }
             `,
-            accept: MIME_TYPES.JSON,
             webId: 'system',
             dataset
           });
@@ -187,6 +187,7 @@ const CollectionsRegistryService = {
                 query: `
                   PREFIX as: <https://www.w3.org/ns/activitystreams#>
                   PREFIX semapps: <http://semapps.org/ns/core#>
+                  WITH <${collectionUri}>
                   DELETE {
                     <${collectionUri}> 
                       a ?type ;
@@ -267,21 +268,14 @@ const CollectionsRegistryService = {
   events: {
     'ldp.resource.created': {
       async handler(ctx) {
-        // @ts-expect-error
-        const { resourceUri, newData, webId } = ctx.params;
+        const { resourceUri, newData } = ctx.params;
         const collections = this.getCollectionsByType(newData.type || newData['@type']);
         for (const collection of collections) {
           if (this.isActor(newData.type || newData['@type'])) {
             // If the resource is an actor, use the resource URI as the webId
-            await this.actions.createAndAttachCollection(
-              { objectUri: resourceUri, collection, webId: resourceUri },
-              { parentCtx: ctx }
-            );
+            await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection }, { parentCtx: ctx });
           } else {
-            await this.actions.createAndAttachCollection(
-              { objectUri: resourceUri, collection, webId },
-              { parentCtx: ctx }
-            );
+            await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection }, { parentCtx: ctx });
           }
         }
       }
@@ -289,23 +283,16 @@ const CollectionsRegistryService = {
 
     'ldp.resource.updated': {
       async handler(ctx) {
-        // @ts-expect-error
-        const { resourceUri, newData, oldData, webId } = ctx.params;
+        const { resourceUri, newData, oldData } = ctx.params;
         // Check if we need to create collection only if the type has changed
         if (this.hasTypeChanged(oldData, newData)) {
           const collections = this.getCollectionsByType(newData.type || newData['@type']);
           for (const collection of collections) {
             if (this.isActor(newData.type || newData['@type'])) {
               // If the resource is an actor, use the resource URI as the webId
-              await this.actions.createAndAttachCollection(
-                { objectUri: resourceUri, collection, webId: resourceUri },
-                { parentCtx: ctx }
-              );
+              await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection }, { parentCtx: ctx });
             } else {
-              await this.actions.createAndAttachCollection(
-                { objectUri: resourceUri, collection, webId },
-                { parentCtx: ctx }
-              );
+              await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection }, { parentCtx: ctx });
             }
           }
         }
@@ -314,8 +301,7 @@ const CollectionsRegistryService = {
 
     'ldp.resource.patched': {
       async handler(ctx) {
-        // @ts-expect-error
-        const { resourceUri, triplesAdded, webId } = ctx.params;
+        const { resourceUri, triplesAdded } = ctx.params;
         if (triplesAdded) {
           for (const triple of triplesAdded) {
             if (triple.predicate.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
@@ -324,12 +310,12 @@ const CollectionsRegistryService = {
                 if (this.isActor(triple.object.value)) {
                   // If the resource is an actor, use the resource URI as the webId
                   await this.actions.createAndAttachCollection(
-                    { objectUri: resourceUri, collection, webId: resourceUri },
+                    { objectUri: resourceUri, collection },
                     { parentCtx: ctx }
                   );
                 } else {
                   await this.actions.createAndAttachCollection(
-                    { objectUri: resourceUri, collection, webId },
+                    { objectUri: resourceUri, collection },
                     { parentCtx: ctx }
                   );
                 }
@@ -346,7 +332,6 @@ const CollectionsRegistryService = {
         const { oldData } = ctx.params;
         const collections = this.getCollectionsByType(oldData.type || oldData['@type']);
         for (const collection of collections) {
-          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
           await this.actions.deleteCollection(
             { objectUri: oldData.id || oldData['@id'], collection },
             { parentCtx: ctx }

@@ -81,6 +81,7 @@ describe('pentest for the ACL groups API', () => {
       expect(e.type).toEqual('SPARQL_INJECTION');
 
       const members = await broker.call('webacl.group.getMembers', { groupSlug: 'mygroup1' });
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(members).toEqual(expect.arrayContaining(['http://localhost:3000/users/info1']));
 
       // clean up

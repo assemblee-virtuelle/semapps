@@ -3,17 +3,8 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import urlJoin from 'url-join';
 import { Parser } from 'n3';
 import streamifyString from 'streamify-string';
-import rdfparseModule from 'rdf-parse';
-
-import { Context, Errors } from 'moleculer';
-
-const { MoleculerError } = Errors;
-
-// @ts-expect-error TS(2339): Property 'default' does not exist on type 'RdfPars... Remove this comment to see the full error message
-const rdfParser = rdfparseModule.default;
-
-const RESOURCE_CONTAINERS_QUERY = (resource: any) => `SELECT ?container
-  WHERE { ?container ldp:contains <${resource}> . }`;
+import rdfParser from 'rdf-parse';
+import { throw400 } from '@semapps/middlewares';
 
 const getSlugFromUri = (str: any) => str.match(new RegExp(`.*/(.*)`))[1];
 
@@ -29,12 +20,17 @@ const getDatasetFromUri = (uri: any) => {
   if (parts.length > 1) return parts[1];
 };
 
-const findParentContainers = async (ctx: Context, resource: any) => {
-  const query = `PREFIX ldp: <http://www.w3.org/ns/ldp#>\n${RESOURCE_CONTAINERS_QUERY(resource)}`;
-
+const findParentContainers = async (ctx: any, resourceUri: any) => {
   return await ctx.call('triplestore.query', {
-    query,
-    accept: MIME_TYPES.SPARQL_JSON,
+    query: `
+      PREFIX ldp: <http://www.w3.org/ns/ldp#>
+      SELECT ?container
+      WHERE { 
+        GRAPH ?g {
+          ?container ldp:contains <${resourceUri}> . 
+        }
+      }
+    `,
     webId: 'system'
   });
 };
@@ -64,7 +60,6 @@ const getUserGroups = async (ctx: any, user: any, graphName: any) => {
 
   const groups = await ctx.call('triplestore.query', {
     query,
-    accept: MIME_TYPES.JSON,
     webId: 'system'
   });
 
@@ -102,7 +97,6 @@ const getAuthorizationNode = async (
 
   const auths = await ctx.call('triplestore.query', {
     query,
-    accept: MIME_TYPES.JSON,
     webId: 'system'
   });
 
@@ -222,12 +216,12 @@ function filterTriplesForResource(triple: any, resourceAclUri: any, allowDefault
   return false;
 }
 
-async function convertBodyToTriples(body: any, contentType: any) {
+async function convertBodyToTriples(body: any, contentType: string) {
   if (contentType === MIME_TYPES.TURTLE) {
     return new Promise((resolve, reject) => {
       const parser = new Parser({ format: 'turtle' });
       const res: any = [];
-      parser.parse(body, (error, quad, prefixes) => {
+      parser.parse(body, (error, quad) => {
         if (error) reject(error);
         else if (quad) {
           const q = filterAndConvertTriple(quad, 'id');
@@ -235,24 +229,27 @@ async function convertBodyToTriples(body: any, contentType: any) {
         } else resolve(res);
       });
     });
+  } else if (contentType === MIME_TYPES.JSON) {
+    // TODO use jsonld.toQuads actions ?
+    return new Promise((resolve, reject) => {
+      const textStream = streamifyString(body);
+      const res: any = [];
+      rdfParser
+        .parse(textStream, {
+          contentType: 'application/ld+json'
+        })
+        .on('data', (quad: any) => {
+          const q = filterAndConvertTriple(quad, 'value');
+          if (q) res.push(q);
+        })
+        .on('error', (error: any) => reject(error))
+        .on('end', () => {
+          resolve(res);
+        });
+    });
+  } else {
+    throw400(`Unknown content type ${contentType}`);
   }
-  // TODO use jsonld.toQuads actions ?
-  return new Promise((resolve, reject) => {
-    const textStream = streamifyString(body);
-    const res: any = [];
-    rdfParser
-      .parse(textStream, {
-        contentType: 'application/ld+json'
-      })
-      .on('data', (quad: any) => {
-        const q = filterAndConvertTriple(quad, 'value');
-        if (q) res.push(q);
-      })
-      .on('error', (error: any) => reject(error))
-      .on('end', () => {
-        resolve(res);
-      });
-  });
 }
 
 // TODO: if one day you code a delete Profile action (probably in webid service)

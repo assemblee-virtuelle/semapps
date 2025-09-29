@@ -20,8 +20,7 @@ const LdpContainerSchema = {
   name: 'ldp.container' as const,
   settings: {
     baseUrl: null,
-    podProvider: false,
-    mirrorGraphName: null
+    podProvider: false
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
@@ -37,7 +36,6 @@ const LdpContainerSchema = {
     getPath: getPathAction,
     getUris: getUrisAction,
     includes: includesAction,
-    // @ts-expect-error TS(2322): Type 'ActionSchema<{ containerUri: { type: "string... Remove this comment to see the full error message
     isEmpty: isEmptyAction,
     post: postAction,
     patch: patchAction

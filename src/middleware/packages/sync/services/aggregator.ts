@@ -6,8 +6,7 @@ const AggregatorSchema = {
   name: 'aggregator' as const,
   mixins: [ActivitiesHandlerMixin],
   settings: {
-    acceptFollowOffers: true,
-    mirrorGraph: true
+    acceptFollowOffers: true
   },
   dependencies: ['activitypub.relay'],
   created() {
@@ -16,7 +15,6 @@ const AggregatorSchema = {
       mixins: [SynchronizerService],
       settings: {
         podProvider: false,
-        mirrorGraph: this.settings.mirrorGraph,
         synchronizeContainers: false,
         attachToLocalContainers: true
       }

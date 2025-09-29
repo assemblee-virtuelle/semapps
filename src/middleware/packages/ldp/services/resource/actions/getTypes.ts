@@ -1,4 +1,3 @@
-import { MIME_TYPES } from '@semapps/mime-types';
 import { ActionSchema } from 'moleculer';
 
 const Schema = {
@@ -17,10 +16,11 @@ const Schema = {
       query: `
         SELECT ?type
         WHERE {
-          <${resourceUri}> a ?type .
+          GRAPH <${resourceUri}> {
+            <${resourceUri}> a ?type .
+          }
         }
       `,
-      accept: MIME_TYPES.JSON,
       webId: 'system'
     });
 

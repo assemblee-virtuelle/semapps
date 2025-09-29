@@ -19,7 +19,6 @@ const LdpRegistrySchema = {
   actions: {
     getByType: getByTypeAction,
     getByUri: getByUriAction,
-    // @ts-expect-error TS(2322): Type 'ActionSchema<{ path: { type: "string"; }; we... Remove this comment to see the full error message
     getUri: getUriAction,
     list: listAction,
     register: registerAction
@@ -40,7 +39,6 @@ const LdpRegistrySchema = {
   events: {
     'auth.registered': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId, accountData } = ctx.params;
         // We want to add user's containers only in Pod provider config
 

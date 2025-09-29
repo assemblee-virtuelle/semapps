@@ -4,7 +4,7 @@ import { ControlledContainerMixin } from '@semapps/ldp';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { ServiceSchema } from 'moleculer';
 import setRightsHandler from './activity-handlers/setRightsHandler.ts';
-import { objectCurrentToId, objectIdToCurrent, arrayOf } from '../../../utils.ts';
+import { arrayOf } from '../../../utils.ts';
 import { PUBLIC_URI, FULL_ACTIVITY_TYPES } from '../../../constants.ts';
 import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
 
@@ -17,7 +17,6 @@ const ActivityService = {
     // ControlledContainerMixin settings
     path: '/as/activity',
     acceptedTypes: Object.values(FULL_ACTIVITY_TYPES),
-    accept: MIME_TYPES.JSON,
     permissions: {},
     newResourcesPermissions: {},
     readOnly: true,
@@ -112,14 +111,6 @@ const ActivityService = {
         if (typeof ctx.params.resourceUri === 'object') {
           ctx.params.resourceUri = ctx.params.resourceUri.id || ctx.params.resourceUri['@id'];
         }
-      },
-      create(ctx) {
-        ctx.params.resource = objectIdToCurrent(ctx.params.resource);
-      }
-    },
-    after: {
-      get(ctx, res) {
-        return objectCurrentToId(res);
       }
     }
   },

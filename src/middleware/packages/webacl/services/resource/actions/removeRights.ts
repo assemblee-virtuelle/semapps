@@ -1,37 +1,30 @@
-import { ActionSchema } from 'moleculer';
+import { ActionSchema, Errors } from 'moleculer';
 import { getAclUriFromResourceUri, processRights, FULL_AGENTCLASS_URI, FULL_FOAF_AGENT } from '../../../utils.ts';
-
-import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
 export const action = {
   visibility: 'public',
   params: {
-    // @ts-expect-error TS(2322): Type '{ type: "string"; optional: false; }' is not... Remove this comment to see the full error message
     resourceUri: { type: 'string', optional: false },
     webId: { type: 'string', optional: true },
     /** In nested json format (e.g. `{anon: {read: true}}`) */
-    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: false; }' is not... Remove this comment to see the full error message
     rights: { type: 'object', optional: false }
   },
   async handler(ctx) {
-    let { resourceUri, rights, webId } = ctx.params;
+    let { resourceUri, rights } = ctx.params;
+    const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     const aclUri = getAclUriFromResourceUri(this.settings.baseUrl, resourceUri);
 
-    webId = webId || ctx.meta.webId || 'anon';
-
-    if (webId !== 'system') {
-      const { control } = await ctx.call('webacl.resource.hasRights', {
-        resourceUri,
-        rights: { control: true },
-        webId
-      });
-      if (!control) throw new MoleculerError('Access denied ! user must have Control permission', 403, 'ACCESS_DENIED');
-    }
-
     const isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
+
+    await ctx.call('permissions.check', {
+      uri: resourceUri,
+      type: isContainer ? 'container' : 'resource',
+      mode: 'acl:Control',
+      webId
+    });
 
     let processedRights = processRights(rights, `${aclUri}#`);
     if (isContainer && rights.default)

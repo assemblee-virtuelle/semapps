@@ -1,5 +1,4 @@
 import { ACTIVITY_TYPES, OBJECT_TYPES } from '@semapps/activitypub';
-import { MIME_TYPES } from '@semapps/mime-types';
 import waitForExpect from 'wait-for-expect';
 import initialize from './initialize.ts';
 import * as CONFIG from '../config.ts';
@@ -66,10 +65,7 @@ describe('Create/Update/Delete objects', () => {
     objectUri = createActivity.object.id;
 
     // Check the object has been created in the container
-    const object = await broker.call('ldp.resource.get', {
-      resourceUri: objectUri,
-      accept: MIME_TYPES.JSON
-    });
+    const object = await broker.call('ldp.resource.get', { resourceUri: objectUri });
     expect(object).toHaveProperty('type', OBJECT_TYPES.ARTICLE);
     expect(object).toHaveProperty('id', objectUri);
   });
@@ -102,10 +98,7 @@ describe('Create/Update/Delete objects', () => {
     expect(updateActivity.object).not.toHaveProperty('name');
 
     // Check the object has been updated
-    const object = await broker.call('ldp.resource.get', {
-      resourceUri: objectUri,
-      accept: MIME_TYPES.JSON
-    });
+    const object = await broker.call('ldp.resource.get', { resourceUri: objectUri });
     expect(object).toMatchObject({
       id: objectUri,
       type: OBJECT_TYPES.ARTICLE,
@@ -122,12 +115,7 @@ describe('Create/Update/Delete objects', () => {
     });
 
     await waitForExpect(async () => {
-      await expect(
-        broker.call('ldp.resource.get', {
-          resourceUri: objectUri,
-          accept: MIME_TYPES.JSON
-        })
-      ).resolves.toMatchObject({
+      await expect(broker.call('ldp.resource.get', { resourceUri: objectUri })).resolves.toMatchObject({
         type: OBJECT_TYPES.TOMBSTONE,
         formerType: 'as:Article',
         // @ts-expect-error TS(2304): Cannot find name 'expect'.

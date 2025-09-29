@@ -1,5 +1,6 @@
 import path from 'path';
-import { parseHeader, negotiateContentType, negotiateAccept, parseJson } from '@semapps/middlewares';
+
+import { parseHeader, parseRawBody, negotiateContentType, negotiateAccept, parseJson } from '@semapps/middlewares';
 
 const onError = (req: any, res: any, err: any) => {
   const { type, code, message, data, name } = err;
@@ -9,8 +10,8 @@ const onError = (req: any, res: any, err: any) => {
   res.end(JSON.stringify({ type, code, message, data, name }));
 };
 
-const getRoutes = (basePath: string, podProvider: any) => {
-  const middlewares = [parseHeader, parseJson, negotiateContentType, negotiateAccept];
+const getRoutes = (basePath: any, podProvider: any) => {
+  const middlewares = [parseHeader, negotiateContentType, negotiateAccept, parseRawBody, parseJson];
 
   return [
     {
@@ -18,19 +19,10 @@ const getRoutes = (basePath: string, podProvider: any) => {
       name: 'acl',
       authorization: false,
       authentication: true,
-      bodyParsers: {
-        json: false,
-        urlencoded: false,
-        text: {
-          type: ['text/turtle', 'application/ld+json']
-        }
-      },
-      onBeforeCall(ctx, route, req) {
-        ctx.meta.body = req.body;
-      },
+      bodyParsers: false,
       aliases: {
-        'PATCH /:slugParts*': [parseHeader, 'webacl.resource.api_addRights'],
-        'PUT /:slugParts*': [parseHeader, 'webacl.resource.api_setRights'],
+        'PATCH /:slugParts*': [...middlewares, 'webacl.resource.api_addRights'],
+        'PUT /:slugParts*': [...middlewares, 'webacl.resource.api_setRights'],
         'GET /:slugParts*': [...middlewares, 'webacl.resource.api_getRights']
       },
       onError
@@ -44,9 +36,7 @@ const getRoutes = (basePath: string, podProvider: any) => {
         'GET /:slugParts*': [...middlewares, 'webacl.resource.api_hasRights'],
         'POST /:slugParts*': [...middlewares, 'webacl.resource.api_hasRights']
       },
-      bodyParsers: {
-        json: false
-      },
+      bodyParsers: false,
       onError
     },
     {
@@ -55,16 +45,14 @@ const getRoutes = (basePath: string, podProvider: any) => {
       authorization: false,
       authentication: true,
       aliases: {
-        'POST /': [parseHeader, 'webacl.group.api_create'],
-        'GET /:id+': ['webacl.group.api_getMembers'],
-        'GET /': ['webacl.group.api_getGroups'],
-        'DELETE /:id+': ['webacl.group.api_delete'],
-        'PATCH /:id+': ['webacl.group.api_addMember'],
-        'PUT /:id+': ['webacl.group.api_removeMember']
+        'POST /': [...middlewares, 'webacl.group.api_create'],
+        'GET /:id+': [...middlewares, 'webacl.group.api_getMembers'],
+        'GET /': [...middlewares, 'webacl.group.api_getGroups'],
+        'DELETE /:id+': [...middlewares, 'webacl.group.api_delete'],
+        'PATCH /:id+': [...middlewares, 'webacl.group.api_addMember'],
+        'PUT /:id+': [...middlewares, 'webacl.group.api_removeMember']
       },
-      bodyParsers: {
-        json: true
-      },
+      bodyParsers: false,
       onError
     }
   ];

@@ -1,5 +1,5 @@
-import { ActionSchema } from 'moleculer';
-import { Errors } from 'moleculer';
+import { sanitizeSparqlQuery } from '@semapps/triplestore';
+import { ActionSchema, Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
@@ -15,14 +15,11 @@ const Schema = {
   },
   async handler(ctx) {
     const { containerUri, resourceUri } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-
-    const isRemoteContainer = await ctx.call('ldp.remote.isRemote', { resourceUri: containerUri });
 
     const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri, webId });
     if (!resourceExists) {
-      const childContainerExists = await this.actions.exist({ containerUri: resourceUri, webId }, { parentCtx: ctx });
+      const childContainerExists = await this.actions.exist({ containerUri: resourceUri }, { parentCtx: ctx });
       if (!childContainerExists) {
         throw new MoleculerError(`Cannot attach non-existing resource or container: ${resourceUri}`, 404, 'NOT_FOUND');
       }
@@ -31,22 +28,27 @@ const Schema = {
     const containerExists = await this.actions.exist({ containerUri, webId }, { parentCtx: ctx });
     if (!containerExists) throw new Error(`Cannot attach to a non-existing container: ${containerUri}`);
 
-    await ctx.call('triplestore.insert', {
-      resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>`,
-      webId,
-      graphName: isRemoteContainer ? this.settings.mirrorGraphName : undefined
+    await ctx.call('triplestore.update', {
+      query: sanitizeSparqlQuery`
+        PREFIX ldp: <http://www.w3.org/ns/ldp#>
+        INSERT DATA { 
+          GRAPH <${containerUri}> {
+            <${containerUri}> ldp:contains <${resourceUri}> 
+          }
+        }
+      `,
+      webId: 'system'
     });
 
     const returnValues = {
       containerUri,
       resourceUri,
       webId,
-      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       dataset: ctx.meta.dataset
     };
 
-    // @ts-expect-error
-    if (!isRemoteContainer && !ctx.meta.skipEmitEvent) {
+    // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
+    if (!ctx.meta.skipEmitEvent) {
       ctx.emit('ldp.container.attached', returnValues, { meta: { webId: null, dataset: null } });
     }
 

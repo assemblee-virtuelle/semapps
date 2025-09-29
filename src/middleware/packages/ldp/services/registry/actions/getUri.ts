@@ -20,6 +20,7 @@ const Schema = {
       const podUrl = await ctx.call('solid-storage.getUrl', { webId });
       return urlJoin(podUrl, path);
     } else {
+      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       return urlJoin(this.settings.baseUrl, path);
     }
   }

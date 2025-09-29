@@ -1,7 +1,6 @@
 import urlJoin from 'url-join';
 import rdf from '@rdfjs/data-model';
 import { ControlledContainerMixin, arrayOf } from '@semapps/ldp';
-import { MIME_TYPES } from '@semapps/mime-types';
 import { ServiceSchema } from 'moleculer';
 
 const TypeRegistrationsSchema = {
@@ -71,7 +70,6 @@ const TypeRegistrationsSchema = {
                 'solid:forClass': expandedTypes,
                 'solid:instanceContainer': containerUri
               },
-              contentType: MIME_TYPES.JSON,
               webId
             },
             { parentCtx: ctx }
@@ -139,11 +137,7 @@ const TypeRegistrationsSchema = {
         // If no default app is defined for this type, use this one
         if (!registration['apods:defaultApp']) registration['apods:defaultApp'] = appUri;
 
-        await ctx.call('type-registrations.put', {
-          resource: registration,
-          contentType: MIME_TYPES.JSON,
-          webId
-        });
+        await ctx.call('type-registrations.put', { resource: registration, webId });
       }
     },
 
@@ -176,7 +170,6 @@ const TypeRegistrationsSchema = {
 
         await ctx.call('type-registrations.put', {
           resource: registration,
-          contentType: MIME_TYPES.JSON,
           webId
         });
       }
@@ -302,7 +295,6 @@ const TypeRegistrationsSchema = {
         if (options?.typeIndex) {
           await ctx.call('type-indexes.waitForIndexCreation', { type: options.typeIndex, webId });
 
-          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
           await this.actions.register(
             {
               types: arrayOf(options?.acceptedTypes),

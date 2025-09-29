@@ -57,7 +57,7 @@ describe('Permissions are correctly set on inbox', () => {
         resourceUri,
         webId: 'anon'
       })
-    ).rejects.toThrow('Not found');
+    ).rejects.toThrow('not found');
   });
 
   test('Post private message to friend', async () => {
@@ -182,6 +182,7 @@ describe('Permissions are correctly set on inbox', () => {
         webId: 'anon'
       });
       expect(inbox.orderedItems).toHaveLength(1);
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(inbox.orderedItems[0]).toMatchObject({
         actor: sebastien.id,
         type: ACTIVITY_TYPES.CREATE,

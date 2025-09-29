@@ -1,6 +1,5 @@
 import { credentialsContext } from '@semapps/crypto';
 import { arrayOf } from '@semapps/ldp';
-import { MIME_TYPES } from '@semapps/mime-types';
 import { ServiceSchema } from 'moleculer';
 import matchActivity from '../../../utils/matchActivity.ts';
 
@@ -86,7 +85,6 @@ const ActivitypubSideEffectsSchema = {
           'ldp.resource.get',
           {
             resourceUri,
-            accept: MIME_TYPES.JSON,
             webId
           },
           { meta: { dataset } }

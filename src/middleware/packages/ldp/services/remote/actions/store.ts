@@ -1,5 +1,4 @@
-import { MIME_TYPES } from '@semapps/mime-types';
-// @ts-expect-error
+// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
 import { ActionSchema } from 'moleculer';
 import { hasType } from '../../../utils.ts';
@@ -8,25 +7,16 @@ const Schema = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string', optional: true },
-    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     resource: { type: 'object', optional: true },
-    // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
     keepInSync: { type: 'boolean', default: false },
-    // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
-    mirrorGraph: { type: 'boolean', default: false },
     webId: { type: 'string', optional: true },
     dataset: { type: 'string', optional: true }
   },
   async handler(ctx) {
-    let { resourceUri, resource, keepInSync, mirrorGraph, webId, dataset } = ctx.params;
-    const graphName = mirrorGraph ? this.settings.mirrorGraphName : undefined;
+    let { resourceUri, resource, keepInSync, webId, dataset } = ctx.params;
 
     if (!resource && !resourceUri) {
       throw new Error('You must provide the resourceUri or resource param');
-    }
-
-    if (keepInSync && !mirrorGraph) {
-      throw new Error('To be kept in sync, a remote resource must stored in the mirror graph');
     }
 
     if (!resource) {
@@ -64,42 +54,30 @@ const Schema = {
       dataset = account.username;
     }
 
-    // Delete the existing cached resource (if it exists)
-    await ctx.call('triplestore.update', {
-      query: `
-        DELETE
-        WHERE { 
-          ${graphName ? `GRAPH <${graphName}> {` : ''}
-            <${resourceUri}> ?p1 ?o1 .
-          ${graphName ? '}' : ''}
-        }
-      `,
-      webId: 'system',
-      dataset
-    });
+    // Check if the remote resource is already stored
+    const exist = await ctx.call('triplestore.named-graph.exist', { uri: resourceUri, dataset });
 
-    ctx.call('triplestore.deleteOrphanBlankNodes', {
-      dataset,
-      graphName
-    });
+    if (!exist) {
+      await ctx.call('triplestore.named-graph.create', { uri: resourceUri, dataset });
+    } else {
+      await ctx.call('triplestore.named-graph.clear', { uri: resourceUri, dataset });
+    }
 
     if (keepInSync) {
       resource['http://semapps.org/ns/core#singleMirroredResource'] = new URL(resourceUri).origin;
     }
 
     await ctx.call('triplestore.insert', {
-      resource,
-      graphName,
-      contentType: MIME_TYPES.JSON,
+      resource: resource,
+      graphName: resourceUri,
       webId: 'system',
       dataset
     });
 
-    // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
     if (!ctx.meta.skipEmitEvent) {
       ctx.emit(
         'ldp.remote.stored',
-        { resourceUri, resource, dataset, mirrorGraph, keepInSync, webId },
+        { resourceUri, resource, dataset, keepInSync, webId },
         { meta: { webId: null, dataset } }
       );
     }

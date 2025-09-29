@@ -3,25 +3,33 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import { v4 as uuidv4 } from 'uuid';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'mime... Remove this comment to see the full error message
 import mime from 'mime-types';
-
 import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
 export default async function post(this: any, ctx: any) {
   try {
-    const { username, slugParts, ...resource } = ctx.params;
+    let { username, slugParts, ...resource } = ctx.params;
 
     const containerUri = this.getUriFromSlugParts(slugParts, username);
 
     let resourceUri;
     const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
     if (ctx.meta.parser !== 'file') {
+      const contentType = ctx.meta.headers['content-type'];
+
+      // If the resource is Turtle or N-Triples, first convert it to JSON-LD
+      if (contentType && contentType !== MIME_TYPES.JSON) {
+        resource = await ctx.call('jsonld.parser.fromRDF', {
+          input: ctx.meta.rawBody,
+          options: { format: contentType }
+        });
+      }
+
       resourceUri = await ctx.call(controlledActions.post || 'ldp.container.post', {
         containerUri,
         slug: ctx.meta.headers.slug,
-        resource,
-        contentType: ctx.meta.headers['content-type']
+        resource
       });
     } else {
       if (ctx.params.files.length > 1) {
@@ -48,7 +56,7 @@ export default async function post(this: any, ctx: any) {
     ctx.meta.$statusCode = 201;
   } catch (e) {
     // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
-    if (e.code < 400 && e.code >= 500) console.error(e);
+    if (!e.code || (e.code < 400 && e.code >= 500)) console.error(e);
     // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
     ctx.meta.$statusCode = e.code || 500;
     // @ts-expect-error TS(18046): 'e' is of type 'unknown'.

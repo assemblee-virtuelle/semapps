@@ -123,7 +123,6 @@ const AuthMixin = {
 
         if (!token) {
           // No token
-          // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
           ctx.meta.webId = 'anon';
           return Promise.resolve(null);
         }
@@ -131,7 +130,6 @@ const AuthMixin = {
         if (method === 'Bearer') {
           const payload = await ctx.call('auth.jwt.verifyServerSignedToken', { token });
           if (payload) {
-            // @ts-expect-error TS(2339): Property 'tokenPayload' does not exist on type '{}... Remove this comment to see the full error message
             ctx.meta.tokenPayload = payload;
             // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
             ctx.meta.webId = payload.webId;
@@ -149,7 +147,6 @@ const AuthMixin = {
         }
 
         // No valid auth method given.
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         ctx.meta.webId = 'anon';
         return Promise.resolve(null);
       }

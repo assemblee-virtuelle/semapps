@@ -1,6 +1,6 @@
 services:
   fuseki_tests:
-    image: semapps/jena-fuseki-webacl
+    image: stain/jena-fuseki:5.1.0
     container_name: fuseki_tests
     restart: always
     volumes:
@@ -37,6 +37,20 @@ services:
       - '4567'
     environment:
       REDIS_HOST: 'redis'
+
+  tripleadmin:
+    image: mguihal/tripleadmin
+    container_name: tripleadmin
+    depends_on:
+      - fuseki_tests
+    ports:
+      - '3033:3033'
+    extra_hosts:
+      - 'localhost:host-gateway'
+    environment:
+      - TRIPLEADMIN_HOST=http://localhost:3040/
+      - TRIPLEADMIN_USERNAME=admin
+
 networks:
   default:
     name: middleware_tests_network

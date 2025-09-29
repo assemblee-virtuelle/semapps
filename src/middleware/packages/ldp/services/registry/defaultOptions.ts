@@ -1,5 +1,4 @@
 const Schema = {
-  accept: 'text/turtle',
   readOnly: false,
   excludeFromMirror: false,
   permissions: (webId: any) => {

@@ -3,7 +3,6 @@ import rdf from '@rdfjs/data-model';
 import { pim } from '@semapps/ontologies';
 import { ServiceSchema } from 'moleculer';
 
-/** @type {import('moleculer').ServiceSchema} */
 const SolidStorageSchema = {
   name: 'solid-storage' as const,
   settings: {
@@ -33,7 +32,7 @@ const SolidStorageSchema = {
 
         await ctx.call('triplestore.dataset.create', {
           dataset: username,
-          secure: true
+          secure: false // TODO Remove when we switch to Fuseki 5
         });
 
         // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.

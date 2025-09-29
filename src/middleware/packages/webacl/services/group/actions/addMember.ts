@@ -1,12 +1,10 @@
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import urlJoin from 'url-join';
-import { ActionSchema } from 'moleculer';
-
-import { Errors } from 'moleculer';
+import { ActionSchema, Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
-export const api = async function api(this: any, ctx: any) {
+export const api = async function api(ctx: any) {
   if (!ctx.params.memberUri) throw new MoleculerError('needs a memberUri in your PATCH (json)', 400, 'BAD_REQUEST');
   if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;
 
@@ -28,7 +26,6 @@ export const action = {
   },
   async handler(ctx) {
     let { groupSlug, groupUri, memberUri } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');

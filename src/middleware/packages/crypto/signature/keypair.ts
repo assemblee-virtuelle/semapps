@@ -3,7 +3,6 @@ import path from 'path';
 import fetch from 'node-fetch';
 import { generateKeyPair } from 'crypto';
 import rdf from '@rdfjs/data-model';
-import { MIME_TYPES } from '@semapps/mime-types';
 import { ServiceSchema } from 'moleculer';
 import { KEY_TYPES } from '../constants.ts';
 
@@ -113,7 +112,6 @@ const SignatureService = {
 
         const actor = await ctx.call('ldp.resource.get', {
           resourceUri: actorUri,
-          accept: MIME_TYPES.JSON,
           webId: actorUri
         });
 
@@ -252,7 +250,6 @@ const SignatureService = {
 
     'keys.migration.migrated': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'isMigrated' does not exist on type 'Serv... Remove this comment to see the full error message
         this.isMigrated = true;
       }
     }

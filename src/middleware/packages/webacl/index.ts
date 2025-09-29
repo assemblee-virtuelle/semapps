@@ -1,5 +1,5 @@
 import GroupsManagerBot from './bots/groups-manager.ts';
-import AuthorizerBot from './bots/authorizer.ts';
+import AuthorizerBot from './bots/authorizer-bot.ts';
 import WebAclService from './service.ts';
 import WebAclMiddleware from './middlewares/webacl.ts';
 import CacherMiddleware from './middlewares/cacher.ts';

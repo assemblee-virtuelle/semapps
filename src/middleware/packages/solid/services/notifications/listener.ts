@@ -2,13 +2,13 @@ import path from 'path';
 import urlJoin from 'url-join';
 import fetch from 'node-fetch';
 import LinkHeader from 'http-link-header';
+import { ServiceSchema, Errors } from 'moleculer';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
 import { v4 as uuidv4 } from 'uuid';
 import DbService from 'moleculer-db';
-import { parseHeader, negotiateContentType, parseJson } from '@semapps/middlewares';
+import { parseHeader, parseRawBody, negotiateContentType, parseJson } from '@semapps/middlewares';
 import { notify } from '@semapps/ontologies';
 import { TripleStoreAdapter } from '@semapps/triplestore';
-import { Errors, ServiceSchema } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
@@ -39,7 +39,13 @@ const SolidNotificationsListenerSchema = {
         authorization: false,
         authentication: false,
         aliases: {
-          'POST /': [parseHeader, negotiateContentType, parseJson, 'solid-notifications.listener.transfer']
+          'POST /': [
+            parseHeader,
+            negotiateContentType,
+            parseRawBody,
+            parseJson,
+            'solid-notifications.listener.transfer'
+          ]
         },
         bodyParsers: false
       }

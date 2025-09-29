@@ -24,5 +24,8 @@
   "main": "./index.ts",
   "peerDependencies": {
     "moleculer": "^0.14.35"
+  },
+  "devDependencies": {
+    "@types/node": "^24.5.2"
   }
 }

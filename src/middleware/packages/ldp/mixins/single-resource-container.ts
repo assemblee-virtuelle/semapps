@@ -1,4 +1,3 @@
-import { MIME_TYPES } from '@semapps/mime-types';
 import { ServiceSchema, Errors } from 'moleculer';
 import ControlledContainerMixin from './controlled-container.ts';
 import { delay } from '../utils.ts';
@@ -33,10 +32,7 @@ const Schema = {
         let resource = this.settings.initialValue;
         if (!resource.type && !resource['@type']) resource.type = this.settings.acceptedTypes;
 
-        return await this.actions.post(
-          { containerUri, resource, contentType: MIME_TYPES.JSON, webId },
-          { parentCtx: ctx }
-        );
+        return await this.actions.post({ containerUri, resource, webId }, { parentCtx: ctx });
       }
     },
 
@@ -117,7 +113,6 @@ const Schema = {
         if (this.settings.podProvider) {
           // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
           const { webId } = ctx.params;
-          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
           await this.actions.initializeResource({ webId });
         }
       }

@@ -1,7 +1,7 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import urlJoin from 'url-join';
 
-import { ActionSchema } from 'moleculer';
+import { ActionSchema, Errors } from 'moleculer';
 import {
   getAclUriFromResourceUri,
   convertBodyToTriples,
@@ -11,19 +11,17 @@ import {
   FULL_AGENTCLASS_URI
 } from '../../../utils.ts';
 
-import { Errors } from 'moleculer';
-
 const { MoleculerError } = Errors;
 
-export const api = async function api(this: any, ctx: any) {
+export const api = async function api(ctx: any) {
   const contentType = ctx.meta.headers['content-type'];
   let { slugParts } = ctx.params;
 
   if (!contentType || (contentType !== MIME_TYPES.JSON && contentType !== MIME_TYPES.TURTLE))
     throw new MoleculerError(`Content type not supported : ${contentType}`, 400, 'BAD_REQUEST');
 
-  const addedRights = await convertBodyToTriples(ctx.meta.body, contentType);
-  // @ts-expect-error
+  const addedRights = await convertBodyToTriples(ctx.meta.rawBody, contentType);
+  // @ts-expect-error TS(18046): 'addedRights' is of type 'unknown'.
   if (addedRights.length === 0) throw new MoleculerError('Nothing to add', 400, 'BAD_REQUEST');
 
   // This is the root container
@@ -44,18 +42,14 @@ export const action = {
     webId: { type: 'string', optional: true },
     // addedRights is an array of objects of the form { auth: 'http://localhost:3000/_acl/container29#Control',  p: 'http://www.w3.org/ns/auth/acl#agent',  o: 'https://data.virtual-assembly.org/users/sebastien.rosset' }
     // you will most likely prefer to use additionalRights instead.
-    // @ts-expect-error TS(2353): Object literal may only specify known properties, ... Remove this comment to see the full error message
     addedRights: { type: 'array', optional: true, min: 1 },
     // newRights is used to add rights to a non existing resource.
-    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     newRights: { type: 'object', optional: true },
     // additionalRights is used to add rights to an existing resource.
-    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     additionalRights: { type: 'object', optional: true }
   },
   async handler(ctx) {
     let { webId, addedRights, resourceUri, newRights, additionalRights } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     webId = webId || ctx.meta.webId || 'anon';
 
     let difference;
@@ -68,17 +62,12 @@ export const action = {
 
       isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
 
-      // check that the user has Control perm.
-      // bypass this check if user is 'system'
-      if (webId !== 'system') {
-        const { control } = await ctx.call('webacl.resource.hasRights', {
-          resourceUri,
-          rights: { control: true },
-          webId
-        });
-        if (!control)
-          throw new MoleculerError('Access denied ! user must have Control permission', 403, 'ACCESS_DENIED');
-      }
+      await ctx.call('permissions.check', {
+        uri: resourceUri,
+        type: isContainer ? 'container' : 'resource',
+        mode: 'acl:Control',
+        webId
+      });
 
       const aclUri = getAclUriFromResourceUri(this.settings.baseUrl, resourceUri);
 
@@ -140,11 +129,12 @@ export const action = {
       addRequest += `<${add.auth}> <${add.p}> <${add.o}>.\n`;
     }
 
-    await ctx.call('triplestore.insert', {
-      resource: addRequest,
-      webId: 'system',
-      graphName: this.settings.graphName
-    });
+    if (addRequest.length > 0) {
+      await ctx.call('triplestore.update', {
+        query: `INSERT DATA { GRAPH <${this.settings.graphName}> { ${addRequest} } }`,
+        webId: 'system'
+      });
+    }
 
     if (newRights) {
       const returnValues = { uri: resourceUri, created: true, isContainer };

@@ -122,15 +122,12 @@ const HttpSignatureService = {
             { parentCtx: ctx }
           );
           if (isValid) {
-            // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
             ctx.meta.webId = actorUri;
             return Promise.resolve();
           }
-          // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
           ctx.meta.webId = 'anon';
           return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
         }
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         ctx.meta.webId = 'anon';
         return Promise.resolve(null);
       }
@@ -146,11 +143,9 @@ const HttpSignatureService = {
             { parentCtx: ctx }
           );
           if (isValid) {
-            // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
             ctx.meta.webId = actorUri;
             return Promise.resolve();
           }
-          // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
           ctx.meta.webId = 'anon';
           return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
         }

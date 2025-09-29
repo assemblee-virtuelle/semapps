@@ -1,4 +1,3 @@
-import { MIME_TYPES } from '@semapps/mime-types';
 import { ActionSchema } from 'moleculer';
 
 const Schema = {
@@ -14,10 +13,11 @@ const Schema = {
         PREFIX ldp: <http://www.w3.org/ns/ldp#>
         SELECT ?resourceUri
         WHERE {
-          <${containerUri}> ldp:contains ?resourceUri .
+          GRAPH <${containerUri}> {
+            <${containerUri}> ldp:contains ?resourceUri .
+          }
         }
       `,
-      accept: MIME_TYPES.JSON,
       webId: 'system'
     });
 

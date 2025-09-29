@@ -83,7 +83,7 @@ async function hasPermissions(ctx: any, resourceUri: any, askedRights: any, base
   return resultRights;
 }
 
-export const api = async function api(this: any, ctx: any) {
+export const api = async function api(ctx: any) {
   let { slugParts } = ctx.params;
 
   // This is the root container
@@ -103,7 +103,6 @@ export const action = {
     rights: {
       type: 'object',
       optional: true,
-      // @ts-expect-error TS(2353): Object literal may only specify known properties, ... Remove this comment to see the full error message
       strict: true,
       props: {
         read: { type: 'boolean', optional: true },

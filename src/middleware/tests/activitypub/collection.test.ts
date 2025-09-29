@@ -1,5 +1,4 @@
 import urlJoin from 'url-join';
-import { MIME_TYPES } from '@semapps/mime-types';
 import initialize from './initialize.ts';
 import * as CONFIG from '../config.ts';
 
@@ -32,9 +31,8 @@ describe('Collections', () => {
             '@type': 'Note',
             name: `Note #${i}`,
             content: `Contenu de ma note #${i}`,
-            published: `2021-01-0${i}T00:00:00.000Z`
-          },
-          contentType: MIME_TYPES.JSON
+            published: `2021-01-0${i + 1}T00:00:00.000Z`
+          }
         })
       );
     }
@@ -45,7 +43,6 @@ describe('Collections', () => {
         type: 'Collection',
         summary: 'My non-ordered collection'
       },
-      contentType: MIME_TYPES.JSON,
       webId: 'system'
     });
 
@@ -56,7 +53,6 @@ describe('Collections', () => {
         summary: 'My ordered collection',
         'semapps:dereferenceItems': false
       },
-      contentType: MIME_TYPES.JSON,
       webId: 'system'
     });
 
@@ -67,7 +63,6 @@ describe('Collections', () => {
         summary: 'Cursor test collection',
         'semapps:itemsPerPage': 2
       },
-      contentType: MIME_TYPES.JSON,
       webId: 'system'
     });
 
@@ -173,7 +168,6 @@ describe('Collections', () => {
         summary: 'My non-ordered collection with dereferenceItems: true',
         'semapps:dereferenceItems': true
       },
-      contentType: MIME_TYPES.JSON,
       webId: 'system'
     });
 
@@ -238,7 +232,6 @@ describe('Collections', () => {
         'semapps:sortPredicate': 'as:published',
         'semapps:sortOrder': 'semapps:AscOrder'
       },
-      contentType: MIME_TYPES.JSON,
       webId: 'system'
     });
 
@@ -283,7 +276,6 @@ describe('Collections', () => {
           summary: 'My paginated collection',
           'semapps:itemsPerPage': 4
         },
-        contentType: MIME_TYPES.JSON,
         webId: 'system'
       });
 
@@ -303,25 +295,25 @@ describe('Collections', () => {
 
       expect(collection).toMatchObject({
         id: paginatedCollectionUri,
-        first: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[0])}`,
-        last: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[items.length - 1])}`
+        first: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[9])}`,
+        last: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[0])}`
       });
     });
 
     test('Should navigate forward with afterEq cursor', async () => {
       const collection = await broker.call('activitypub.collection.get', {
         resourceUri: paginatedCollectionUri,
-        afterEq: items[0]
+        afterEq: items[9]
       });
 
       expect(collection).toMatchObject({
-        id: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[0])}`,
+        id: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[9])}`,
         type: 'CollectionPage',
         partOf: paginatedCollectionUri,
-        next: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[4])}`
+        next: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[5])}`
       });
       expect(collection.items).toHaveLength(4);
-      expect(collection.items).toEqual([items[0], items[1], items[2], items[3]]);
+      expect(collection.items).toEqual([items[9], items[8], items[7], items[6]]);
     });
 
     test('Should navigate backward with beforeEq cursor', async () => {
@@ -334,10 +326,10 @@ describe('Collections', () => {
         id: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[5])}`,
         type: 'CollectionPage',
         partOf: paginatedCollectionUri,
-        prev: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[1])}`
+        prev: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[9])}`
       });
       expect(collection.items).toHaveLength(4);
-      expect(collection.items).toEqual([items[2], items[3], items[4], items[5]]);
+      expect(collection.items).toEqual([items[8], items[7], items[6], items[5]]);
     });
 
     describe('Edge Cases', () => {
@@ -348,7 +340,6 @@ describe('Collections', () => {
             summary: 'Empty collection',
             'semapps:itemsPerPage': 4
           },
-          contentType: MIME_TYPES.JSON,
           webId: 'system'
         });
 
@@ -373,7 +364,6 @@ describe('Collections', () => {
             summary: 'Exact size collection',
             'semapps:itemsPerPage': 4
           },
-          contentType: MIME_TYPES.JSON,
           webId: 'system'
         });
 
@@ -387,7 +377,7 @@ describe('Collections', () => {
 
         const collection = await broker.call('activitypub.collection.get', {
           resourceUri: exactCollectionUri,
-          afterEq: items[0]
+          afterEq: items[3]
         });
 
         expect(collection).toMatchObject({
@@ -402,7 +392,7 @@ describe('Collections', () => {
         // Get last page of main paginated collection (should have 2 items)
         const collection = await broker.call('activitypub.collection.get', {
           resourceUri: paginatedCollectionUri,
-          afterEq: items[8]
+          afterEq: items[1]
         });
 
         expect(collection.items).toHaveLength(2);
@@ -413,7 +403,7 @@ describe('Collections', () => {
     describe('Data Consistency', () => {
       test('Should maintain consistent page size across navigation', async () => {
         // Navigate through all pages and verify each has correct size (except last)
-        let cursor = items[0];
+        let cursor = items[9];
         let pageCount = 0;
         let seenItems = new Set();
 
@@ -447,13 +437,13 @@ describe('Collections', () => {
         // Forward navigation
         const firstPage = await broker.call('activitypub.collection.get', {
           resourceUri: paginatedCollectionUri,
-          afterEq: items[0]
+          afterEq: items[9]
         });
 
         // Get the next page
         const nextPage = await broker.call('activitypub.collection.get', {
           resourceUri: paginatedCollectionUri,
-          afterEq: items[4]
+          afterEq: items[5]
         });
 
         // Navigate back
@@ -476,7 +466,7 @@ describe('Collections', () => {
         broker.call('activitypub.collection.get', {
           resourceUri: nonExistentUri
         })
-      ).rejects.toThrow('Not found');
+      ).rejects.toThrow('not found');
     });
 
     test('Should return 404 when cursor not found in collection', async () => {
@@ -502,6 +492,7 @@ describe('Collections', () => {
 
     test('Should handle malformed collection URI', async () => {
       const malformedUri = 'not-a-valid-uri';
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(
         broker.call('activitypub.collection.get', {
           resourceUri: malformedUri

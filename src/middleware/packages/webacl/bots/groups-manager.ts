@@ -1,7 +1,5 @@
 import { arrayOf } from '@semapps/ldp';
-import { MIME_TYPES } from '@semapps/mime-types';
-import 'moleculer';
-
+import { ServiceSchema } from 'moleculer';
 import { hasType } from '../utils.ts';
 
 const GroupsManagerSchema = {
@@ -13,7 +11,7 @@ const GroupsManagerSchema = {
   dependencies: ['webacl.group'],
   async started() {
     for (const rule of this.settings.rules) {
-      if (!(await this.broker.call('webacl.group.exist', { groupSlug: rule.groupSlug, webId: 'system' }))) {
+      if (!(await this.broker.call('webacl.group.exist', { groupSlug: rule.groupSlug }))) {
         this.logger.info(`Group ${rule.groupSlug} doesn't exist, creating it...`);
         await this.broker.call('webacl.group.create', { groupSlug: rule.groupSlug, webId: 'system' });
       }
@@ -24,7 +22,6 @@ const GroupsManagerSchema = {
       async handler(ctx) {
         const usersContainer = await ctx.call('ldp.container.get', {
           containerUri: this.settings.usersContainer,
-          accept: MIME_TYPES.JSON,
           webId: 'system'
         });
 
@@ -72,13 +69,9 @@ const GroupsManagerSchema = {
     'ldp.resource.created': {
       async handler(ctx) {
         const { resourceUri, newData } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'isUser' does not exist on type 'ServiceE... Remove this comment to see the full error message
         if (this.isUser(newData)) {
-          // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
           for (const rule of this.settings.rules) {
-            // @ts-expect-error TS(2339): Property 'matchRule' does not exist on type 'Servi... Remove this comment to see the full error message
             if (this.matchRule(rule, newData)) {
-              // @ts-expect-error TS(2339): Property 'logger' does not exist on type 'ServiceE... Remove this comment to see the full error message
               this.logger.info(`Adding user ${resourceUri} to group ${rule.groupSlug}`);
               await ctx.call('webacl.group.addMember', {
                 groupSlug: rule.groupSlug,
@@ -94,13 +87,9 @@ const GroupsManagerSchema = {
     'ldp.resource.updated': {
       async handler(ctx) {
         const { resourceUri, newData } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'isUser' does not exist on type 'ServiceE... Remove this comment to see the full error message
         if (this.isUser(newData)) {
-          // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
           for (const rule of this.settings.rules) {
-            // @ts-expect-error TS(2339): Property 'matchRule' does not exist on type 'Servi... Remove this comment to see the full error message
             if (this.matchRule(rule, newData)) {
-              // @ts-expect-error TS(2339): Property 'logger' does not exist on type 'ServiceE... Remove this comment to see the full error message
               this.logger.info(`Adding user ${resourceUri} to group ${rule.groupSlug}`);
               await ctx.call('webacl.group.addMember', {
                 groupSlug: rule.groupSlug,
@@ -108,7 +97,6 @@ const GroupsManagerSchema = {
                 webId: 'system'
               });
             } else {
-              // @ts-expect-error TS(2339): Property 'logger' does not exist on type 'ServiceE... Remove this comment to see the full error message
               this.logger.info(`Removing user ${resourceUri} from group ${rule.groupSlug} (if it exists)`);
               await ctx.call('webacl.group.removeMember', {
                 groupSlug: rule.groupSlug,
@@ -123,11 +111,8 @@ const GroupsManagerSchema = {
 
     'ldp.resource.deleted': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, oldData } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'isUser' does not exist on type 'ServiceE... Remove this comment to see the full error message
         if (this.isUser(oldData)) {
-          // @ts-expect-error TS(2339): Property 'settings' does not exist on type 'Servic... Remove this comment to see the full error message
           for (const rule of this.settings.rules) {
             // @ts-expect-error TS(2339): Property 'logger' does not exist on type 'ServiceE... Remove this comment to see the full error message
             this.logger.info(`Removing user ${resourceUri} from group ${rule.groupSlug} (if it exists)`);

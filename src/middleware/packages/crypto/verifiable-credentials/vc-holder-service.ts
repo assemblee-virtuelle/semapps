@@ -1,5 +1,4 @@
 import { randomUUID } from 'node:crypto';
-import { MIME_TYPES } from '@semapps/mime-types';
 
 // @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import { cryptosuite } from '@digitalbazaar/eddsa-rdfc-2022-cryptosuite';
@@ -48,7 +47,6 @@ const VCHolderService = {
         presentation: {
           type: 'object',
           params: {
-            // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
             verifiableCredential: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }] },
             '@context': { type: 'string', optional: true },
             id: { type: 'string', optional: true },
@@ -61,14 +59,11 @@ const VCHolderService = {
             challenge: { type: 'string' },
             domain: { type: 'string', optional: true },
             proofPurpose: { type: 'string', optional: true },
-            // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
             persist: { type: 'boolean', default: false }
           }
         },
-        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         keyObject: { type: 'object', optional: true },
         keyId: { type: 'string', optional: true },
-        // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
         noAnonRead: { type: 'boolean', default: false },
         webId: { type: 'string', optional: true }
       },
@@ -129,7 +124,7 @@ const VCHolderService = {
         if (!presentationParam.id && ctx.params.options.persist)
           await ctx.call(
             'crypto.vc.holder.presentation-container.put',
-            { resource: signedPresentation, contentType: MIME_TYPES.JSON, webId: 'system' },
+            { resource: signedPresentation, webId: 'system' },
             { meta: { skipEmitEvent: true } }
           );
 
@@ -144,15 +139,13 @@ const VCHolderService = {
       // Post presentation to container (will add metadata).
       const resourceUri = await this.broker.call('crypto.vc.holder.presentation-container.post', {
         resource: presentation,
-        contentType: MIME_TYPES.JSON,
         webId
       });
 
       // Get the presentation resource.
       const resource = await this.broker.call('crypto.vc.holder.presentation-container.get', {
         resourceUri,
-        webId: 'system',
-        accept: MIME_TYPES.JSON
+        webId: 'system'
       });
 
       // Set resource rights.

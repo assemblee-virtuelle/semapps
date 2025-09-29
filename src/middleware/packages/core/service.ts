@@ -13,6 +13,7 @@ import { WebfingerService } from '@semapps/webfinger';
 import { KeysService, SignatureService } from '@semapps/crypto';
 import { WebIdService } from '@semapps/webid';
 import { ServiceSchema } from 'moleculer';
+import { CoreServiceSettings } from './serviceTypes.js';
 
 const botsContainer = {
   path: '/as/application',
@@ -20,11 +21,6 @@ const botsContainer = {
   readOnly: true
 };
 
-/**
- * @typedef {import('./serviceTypes').CoreServiceSettings} CoreServiceSettings
- */
-
-/** @type {import('moleculer').ServiceSchema<CoreServiceSettings>} */
 const CoreService = {
   name: 'core' as const,
   settings: {
@@ -133,17 +129,17 @@ const CoreService = {
     if (this.settings.ldp !== false) {
       // @ts-expect-error TS(2345): Argument of type '{ mixins: ({ name: "ldp"; settin... Remove this comment to see the full error message
       this.broker.createService({
-        mixins: [DocumentTaggerMixin, LdpService],
+        mixins: this.settings.ldp.documentTagger !== false ? [DocumentTaggerMixin, LdpService] : [LdpService],
         settings: {
           baseUrl,
-          containers: containers || (this.settings.mirror !== false ? [botsContainer] : []),
+          containers: containers || [botsContainer],
           ...this.settings.ldp
         }
       });
     }
 
     if (this.settings.signature !== false) {
-      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "signature"; a... Remove this comment to see the full error message
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: any[]; settings: any; ... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [SignatureService],
         settings: {
@@ -164,7 +160,7 @@ const CoreService = {
     }
 
     if (this.settings.keys !== false) {
-      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "keys"; settin... Remove this comment to see the full error message
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: any[]; settings: any; ... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [KeysService],
         settings: {
@@ -188,10 +184,10 @@ const CoreService = {
     if (this.settings.triplestore !== false) {
       // If WebACL service is disabled, don't create a secure dataset
       // We define a constant here, because this.settings.webacl is not available inside the started method
-      const secure = this.settings.webacl !== false;
+      const secure = this.settings.triplestore?.secure !== false && this.settings.webacl !== false;
 
+      // @ts-expect-error TS(2322): Type '{ name: "triplestore"; settings: { url: null... Remove this comment to see the full error message
       this.broker.createService({
-        // @ts-expect-error TS(2322): Type '{ name: "triplestore"; settings: { url: null... Remove this comment to see the full error message
         mixins: [TripleStoreService],
         settings: {
           ...triplestore
@@ -240,7 +236,7 @@ const CoreService = {
       });
     }
   }
-} satisfies ServiceSchema;
+} satisfies ServiceSchema<CoreServiceSettings>;
 
 export default CoreService;
 

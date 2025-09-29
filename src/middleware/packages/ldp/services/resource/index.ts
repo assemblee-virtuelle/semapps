@@ -18,7 +18,6 @@ const LdpResourceSchema = {
   settings: {
     baseUrl: null,
     podProvider: false,
-    mirrorGraphName: null,
     preferredViewForResource: null,
     binary: {
       maxSize: '50Mb'
@@ -29,14 +28,15 @@ const LdpResourceSchema = {
     awaitCreateComplete: awaitCreateCompleteAction,
     create: createAction,
     delete: deleteAction,
-    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
     exist: existAction,
     generateId: generateIdAction,
+    // @ts-expect-error
     get: getAction,
     getContainers: getContainersAction,
     getTypes: getTypesAction,
     patch: patchAction,
     put: putAction,
+    // @ts-expect-error
     upload: uploadAction
   },
   hooks: {

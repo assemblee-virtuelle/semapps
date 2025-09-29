@@ -1,13 +1,11 @@
 import fs from 'fs';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'byte... Remove this comment to see the full error message
 import bytes from 'bytes';
-import rdfparseModule from 'rdf-parse';
+import rdfParser from 'rdf-parse';
 import streamifyString from 'streamify-string';
 import rdf from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { Errors } from 'moleculer';
-
-const rdfParser = rdfparseModule.default;
 
 const { MoleculerError } = Errors;
 
@@ -51,13 +49,6 @@ export default {
         // @ts-expect-error
         .on('end', () => resolve(res));
     });
-  },
-  // Filter out triples whose subject is not the resource itself
-  // We don't want to update or delete resources with IDs
-  filterOtherNamedNodes(triples: any, resourceUri: any) {
-    return triples.filter(
-      (triple: any) => !(triple.subject.termType === 'NamedNode' && triple.subject.value !== resourceUri)
-    );
   },
   convertBlankNodesToVars(triples: any) {
     return triples.map((triple: any) => {

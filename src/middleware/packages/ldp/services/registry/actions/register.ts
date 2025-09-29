@@ -13,17 +13,13 @@ const Schema = {
     fullPath: { type: 'string', optional: true },
     name: { type: 'string', optional: true },
     accept: { type: 'string', optional: true },
-    // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
     acceptedTypes: { type: 'multi', rules: [{ type: 'array' }, { type: 'string' }], optional: true },
     shapeTreeUri: { type: 'string', optional: true },
     excludeFromMirror: { type: 'boolean', optional: true },
-    // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: true; }' is not ... Remove this comment to see the full error message
     activateTombstones: { type: 'boolean', default: true },
     // @ts-expect-eslugParts(rror TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
     permissions: { type: 'multi', rules: [{ type: 'object' }, { type: 'function' }], optional: true },
-    // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
     newResourcesPermissions: { type: 'multi', rules: [{ type: 'object' }, { type: 'function' }], optional: true },
-    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     controlledActions: { type: 'object', optional: true },
     readOnly: { type: 'boolean', optional: true },
     typeIndex: { type: 'string', optional: true }
@@ -91,6 +87,7 @@ const Schema = {
     options.pathRegex = pathToRegexp(options.fullPath);
 
     // Save the options
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     this.registeredContainers[options.name] = options;
 
     ctx.emit('ldp.registry.registered', { container: options }, { meta: { webId: null, dataset: null } });

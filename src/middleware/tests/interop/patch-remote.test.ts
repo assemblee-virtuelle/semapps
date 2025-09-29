@@ -1,6 +1,5 @@
 import waitForExpect from 'wait-for-expect';
 import rdf from '@rdfjs/data-model';
-import { MIME_TYPES } from '@semapps/mime-types';
 import initialize from './initialize.ts';
 
 jest.setTimeout(50000);
@@ -31,7 +30,6 @@ describe('Server2 imports a single resource from server1', () => {
         '@type': 'Resource',
         label: 'My resource'
       },
-      contentType: MIME_TYPES.JSON,
       containerUri: 'http://localhost:3001/resources'
     });
 
@@ -46,12 +44,13 @@ describe('Server2 imports a single resource from server1', () => {
     await server2.call('ldp.container.patch', {
       containerUri: 'http://localhost:3002/resources',
       triplesToAdd: [
-        triple(
-          namedNode('http://localhost:3002/resources'),
-          namedNode('http://www.w3.org/ns/ldp#contains'),
-          namedNode(resourceUri)
+        rdf.quad(
+          rdf.namedNode('http://localhost:3002/resources'),
+          rdf.namedNode('http://www.w3.org/ns/ldp#contains'),
+          rdf.namedNode(resourceUri)
         )
-      ]
+      ],
+      webId: 'system'
     });
 
     await waitForExpect(async () => {
@@ -79,8 +78,7 @@ describe('Server2 imports a single resource from server1', () => {
         '@id': resourceUri,
         '@type': 'Resource',
         label: 'My resource updated'
-      },
-      contentType: MIME_TYPES.JSON
+      }
     });
 
     // Force call of updateSingleMirroredResources

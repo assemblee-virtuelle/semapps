@@ -1,4 +1,3 @@
-import { MIME_TYPES } from '@semapps/mime-types';
 import { delay } from '../utils.ts';
 import matchActivity from '../utils/matchActivity.ts';
 
@@ -20,7 +19,6 @@ const AwaitActivityMixin = {
         try {
           const resource = await ctx.call('ldp.resource.get', {
             resourceUri,
-            accept: MIME_TYPES.JSON,
             webId
           });
           return resource; // First get the resource, then return it, otherwise the try/catch will not work

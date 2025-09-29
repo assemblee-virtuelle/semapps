@@ -1,12 +1,10 @@
 import fetch from 'node-fetch';
 import rdf from '@rdfjs/data-model';
-import { MIME_TYPES } from '@semapps/mime-types';
 import { arrayOf } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
 import { ACTOR_TYPES, AS_PREFIX } from '../../../constants.ts';
 import { getSlugFromUri, waitForResource } from '../../../utils.ts';
 
-/** @type {import('moleculer').ServiceSchema} */
 const ActorService = {
   name: 'activitypub.actor' as const,
   dependencies: ['activitypub.collection', 'ldp', 'signature'],
@@ -19,12 +17,15 @@ const ActorService = {
     get: {
       async handler(ctx) {
         const { actorUri, webId } = ctx.params;
+        // Check if the actor is remote
         // If dataset is not in the meta, assume that actor is remote
-        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
-        if (ctx.meta.dataset && !(await ctx.call('ldp.remote.isRemote', { resourceUri: actorUri }))) {
+        if (
+          !(await ctx.call('ldp.remote.isRemote', { resourceUri: actorUri })) &&
+          (!this.settings.podProvider || ctx.meta.dataset)
+        ) {
           try {
             // Don't return immediately the promise, or we won't be able to catch errors
-            const actor = await ctx.call('ldp.resource.get', { resourceUri: actorUri, accept: MIME_TYPES.JSON, webId });
+            const actor = await ctx.call('webid.get', { resourceUri: actorUri, webId });
             return actor;
           } catch (e) {
             console.error(e);
@@ -45,7 +46,7 @@ const ActorService = {
         const actor = await this.actions.get({ actorUri, webId }, { parentCtx: ctx });
         // If the URL is not in the same domain as the actor, it is most likely not a profile
         if (actor.url && new URL(actor.url).host === new URL(actorUri).host) {
-          return await ctx.call('ldp.resource.get', { resourceUri: actor.url, accept: MIME_TYPES.JSON, webId });
+          return await ctx.call('ldp.resource.get', { resourceUri: actor.url, webId });
         }
       }
     },
@@ -104,7 +105,8 @@ const ActorService = {
                 updateType: 'insertdelete',
                 insert: [
                   {
-                    type: 'bgp',
+                    type: 'graph',
+                    name: namedNode(actorUri),
                     triples: [
                       rdf.quad(
                         rdf.namedNode(actorUri),
@@ -121,7 +123,8 @@ const ActorService = {
                     type: 'optional',
                     patterns: [
                       {
-                        type: 'bgp',
+                        type: 'graph',
+                        name: namedNode(actorUri),
                         triples: [
                           rdf.quad(
                             rdf.namedNode(actorUri),
@@ -194,7 +197,6 @@ const ActorService = {
   events: {
     'ldp.resource.created': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
         if (this.isActor(newData)) {
           await this.actions.appendActorData({ actorUri: resourceUri }, { parentCtx: ctx });
@@ -206,7 +208,6 @@ const ActorService = {
 
     'ldp.resource.deleted': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, oldData } = ctx.params;
         if (this.isActor(oldData)) {
           await ctx.call('keys.deleteAllKeysForWebId', { webId: resourceUri });
@@ -218,7 +219,6 @@ const ActorService = {
       async handler(ctx) {
         // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.appendActorData({ actorUri: webId }, { parentCtx: ctx });
       }
     }

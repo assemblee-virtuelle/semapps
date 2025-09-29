@@ -1,8 +1,6 @@
 import { MIME_TYPES } from '@semapps/mime-types';
-import { ActionSchema } from 'moleculer';
+import { ActionSchema, Errors } from 'moleculer';
 import { buildFiltersQuery, isContainer, cleanUndefined, arrayOf } from '../../../utils.ts';
-
-import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
@@ -12,29 +10,22 @@ const Schema = {
     containerUri: { type: 'string', optional: true },
     webId: { type: 'string', optional: true },
     accept: { type: 'string', optional: true },
-    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     filters: { type: 'object', optional: true },
-    // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
     doNotIncludeResources: { type: 'boolean', default: false },
-    // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
     jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
   },
   cache: {
-    keys: ['containerUri', 'accept', 'filters', 'doNotIncludeResources', 'jsonContext', 'webId', '#webId']
+    keys: ['containerUri', 'filters', 'doNotIncludeResources', 'jsonContext', 'webId', '#webId']
   },
   async handler(ctx) {
-    const { containerUri, filters, doNotIncludeResources, jsonContext } = ctx.params;
-    let { webId } = ctx.params;
-    // @ts-expect-error
-    webId = webId || ctx.meta.webId || 'anon';
+    const { containerUri, accept, filters, doNotIncludeResources, jsonContext } = ctx.params;
+    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
+    const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-    const { accept } = {
-      ...(await ctx.call('ldp.registry.getByUri', { containerUri })),
-      ...ctx.params
-    };
+    await ctx.call('permissions.check', { uri: containerUri, type: 'container', mode: 'acl:Read', webId });
 
-    if (accept !== MIME_TYPES.JSON)
-      throw new Error(`LDP containers can only be returned with JSON-LD format at the moment.`);
+    if (accept && accept !== MIME_TYPES.JSON)
+      throw new Error(`The ldp.container.get action now only support JSON-LD. Provided: ${accept}`);
 
     let containerResults = await ctx.call('triplestore.query', {
       query: `
@@ -42,6 +33,7 @@ const Schema = {
         CONSTRUCT  {
           <${containerUri}> ?p ?o .
         }
+        FROM <${containerUri}>
         WHERE {
           <${containerUri}> ?p ?o .
           MINUS { <${containerUri}> ldp:contains ?o } .
@@ -52,12 +44,7 @@ const Schema = {
     });
 
     if (Object.keys(containerResults).length === 1 && containerResults['@context']) {
-      throw new MoleculerError(
-        // @ts-expect-error
-        `Container not found ${containerUri} (webId ${webId} / dataset ${ctx.meta.dataset})`,
-        404,
-        'NOT_FOUND'
-      );
+      throw new MoleculerError(`Container not found ${containerUri}`, 404, 'NOT_FOUND');
     }
 
     if (!doNotIncludeResources) {
@@ -68,8 +55,10 @@ const Schema = {
           ${await ctx.call('ontologies.getRdfPrefixes')}
           SELECT ?s1
           WHERE {
-            <${containerUri}> <http://www.w3.org/ns/ldp#contains> ?s1 .
-            ${filtersQuery.where}
+            GRAPH <${containerUri}> {
+              <${containerUri}> <http://www.w3.org/ns/ldp#contains> ?s1 .
+            }
+            ${filtersQuery}
           }
         `,
         accept,
@@ -78,18 +67,19 @@ const Schema = {
 
       const resourcesUris = resourcesResults?.map((node: any) => node.s1.value);
 
+      const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
+
       // Request each resources (in parallel)
       containerResults['http://www.w3.org/ns/ldp#contains'] = await Promise.all(
         arrayOf(resourcesUris).flatMap(async resourceUri => {
           try {
             // We pass the accept/jsonContext parameters only if they are explicit
             const resource = await ctx.call(
-              'ldp.resource.get',
+              controlledActions?.get || 'ldp.resource.get',
               cleanUndefined({
                 resourceUri,
                 webId,
-                jsonContext,
-                accept
+                jsonContext
               })
             );
 

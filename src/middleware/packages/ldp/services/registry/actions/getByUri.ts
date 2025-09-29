@@ -30,6 +30,7 @@ const Schema = {
         Object.values(registeredContainers).find(container => container.pathRegex.test(path)) || {};
       return { ...this.settings.defaultOptions, ...containerOptions };
     }
+    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     return this.settings.defaultOptions;
   }
 } satisfies ActionSchema;

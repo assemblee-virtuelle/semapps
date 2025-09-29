@@ -4,9 +4,9 @@ import LdpContainerService from './services/container/index.ts';
 import LdpLinkHeaderService from './services/link-header/index.ts';
 import LdpRegistryService from './services/registry/index.ts';
 import LdpResourceService from './services/resource/index.ts';
+import PermissionsService from './services/permissions/index.ts';
 import ControlledContainerMixin from './mixins/controlled-container.ts';
 import DereferenceMixin from './mixins/dereference.ts';
-import PseudoIdMixin from './mixins/pseudo-id.ts';
 import ImageProcessorMixin from './mixins/image-processor.ts';
 import MimeTypesMixin from './mixins/mime-types.ts';
 import DocumentTaggerMixin from './mixins/document-tagger.ts';
@@ -25,9 +25,9 @@ export {
   LdpLinkHeaderService,
   LdpRegistryService,
   LdpResourceService,
+  PermissionsService,
   ControlledContainerMixin,
   DereferenceMixin,
-  PseudoIdMixin,
   ImageProcessorMixin,
   MimeTypesMixin,
   DocumentTaggerMixin,

@@ -1,15 +1,12 @@
 import { MIME_TYPES } from '@semapps/mime-types';
-import { ActionSchema } from 'moleculer';
+import { ActionSchema, Errors } from 'moleculer';
 import { cleanUndefined } from '../../../utils.ts';
-
-import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
 const Schema = {
   visibility: 'public',
   params: {
-    // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
     resource: {
       type: 'object'
     },
@@ -17,20 +14,19 @@ const Schema = {
       type: 'string',
       optional: true
     },
-    body: {
+    contentType: {
       type: 'string',
       optional: true
-    },
-    contentType: {
-      type: 'string'
     }
   },
   async handler(ctx) {
-    let { resource, contentType, body } = ctx.params;
+    let { resource, contentType } = ctx.params;
     let { webId } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     webId = webId || ctx.meta.webId || 'anon';
     let newData;
+
+    if (contentType && contentType !== MIME_TYPES.JSON)
+      throw new Error(`The ldp.resource.put action now only support JSON-LD. Provided: ${contentType}`);
 
     // Remove undefined values as this may cause problems
     resource = resource && cleanUndefined(resource);
@@ -39,7 +35,6 @@ const Schema = {
 
     if (await ctx.call('ldp.remote.isRemote', { resourceUri }))
       throw new MoleculerError(
-        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
         `Remote resource ${resourceUri} cannot be modified (dataset: ${ctx.meta.dataset})`,
         403,
         'FORBIDDEN'
@@ -51,7 +46,6 @@ const Schema = {
       'ldp.resource.get',
       {
         resourceUri,
-        accept: MIME_TYPES.JSON,
         webId
       },
       {
@@ -62,20 +56,15 @@ const Schema = {
     );
 
     // Adds the default context, if it is missing
-    if (contentType === MIME_TYPES.JSON && !resource['@context']) {
+    if (!resource['@context']) {
       resource = {
         '@context': await ctx.call('jsonld.context.get'),
         ...resource
       };
     }
 
-    let oldTriples = await this.bodyToTriples(oldData, MIME_TYPES.JSON);
-    let newTriples = await this.bodyToTriples(body || resource, contentType);
-
-    // Filter out triples whose subject is not the resource itself
-    // We don't want to update or delete resources with IDs
-    oldTriples = this.filterOtherNamedNodes(oldTriples, resourceUri);
-    newTriples = this.filterOtherNamedNodes(newTriples, resourceUri);
+    let oldTriples = await ctx.call('jsonld.parser.toQuads', { input: oldData });
+    let newTriples = await ctx.call('jsonld.parser.toQuads', { input: resource });
 
     // blank nodes are convert to variable for sparql query (?variable)
     oldTriples = this.convertBlankNodesToVars(oldTriples);
@@ -95,6 +84,13 @@ const Schema = {
       // If the exact same data have been posted, skip
       newData = oldData;
     } else {
+      if (triplesToRemove.length > 0) {
+        await ctx.call('permissions.check', { uri: resourceUri, type: 'resource', mode: 'acl:Write', webId });
+      } else {
+        // If we only add new triples, we don't need the acl:Write permission
+        await ctx.call('permissions.check', { uri: resourceUri, type: 'resource', mode: 'acl:Append', webId });
+      }
+
       // Keep track of blank nodes to use in WHERE clause
       const newBlankNodes = this.getTriplesDifference(newTriples, oldTriples).filter(
         (triple: any) => triple.object.termType === 'Variable'
@@ -104,7 +100,7 @@ const Schema = {
       );
 
       // Generate the query
-      let query = '';
+      let query = `WITH <${resourceUri}>\n`;
       if (triplesToRemove.length > 0) query += `DELETE { ${this.triplesToString(triplesToRemove)} } `;
       if (triplesToAdd.length > 0) query += `INSERT { ${this.triplesToString(triplesToAdd)} } `;
       query += 'WHERE { ';
@@ -114,7 +110,7 @@ const Schema = {
 
       await ctx.call('triplestore.update', {
         query,
-        webId
+        webId: 'system'
       });
 
       // Get the new data, with the same formatting as the old data
@@ -123,7 +119,6 @@ const Schema = {
         'ldp.resource.get',
         {
           resourceUri,
-          accept: MIME_TYPES.JSON,
           webId
         },
         {
@@ -133,7 +128,6 @@ const Schema = {
         }
       );
 
-      // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
       if (!ctx.meta.skipEmitEvent) {
         ctx.emit(
           'ldp.resource.updated',
