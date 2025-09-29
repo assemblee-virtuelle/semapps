@@ -531,7 +531,6 @@ describe('keys', () => {
           expect(publicKey.owner).toBe(user.webId);
           expect(publicKey.controller).toBe(user.webId);
           expect(publicKey.publicKeyPem).toBe(keyPair.publicKeyPem);
-          // @ts-expect-error TS(2304): Cannot find name 'expect'.
           expect(publicKey.privateKeyPem).toBeUndefined();
         });
       });

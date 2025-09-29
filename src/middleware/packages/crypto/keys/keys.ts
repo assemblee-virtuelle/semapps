@@ -1,7 +1,6 @@
 import fetch from 'node-fetch';
 import { generateKeyPair } from 'crypto';
 import rdf from '@rdfjs/data-model';
-import { MIME_TYPES } from '@semapps/mime-types';
 import { sec } from '@semapps/ontologies';
 // @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import * as Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
@@ -92,10 +91,16 @@ const KeysService = {
         // Get the key container, to search by type.
         const container = await ctx.call('keys.container.list', { webId });
 
+        // Because edd2519 multikeys are allowed to have one key only, we filter like that.
+        // TODO: We only support those keys anyways. If we support other ones in the future,
+        // we need to refactor.
+        const keyTypeToFilterBy = keyType === KEY_TYPES.ED25519 ? 'sec:Multikey' : keyType;
+
         // Check if key type is present.
         const matchedKeys = container['ldp:contains'].filter(
           (keyResource: any) =>
-            arrayOf(keyResource.type || keyResource['@type']).includes(keyType) && keyResource.controller === webId
+            arrayOf(keyResource.type || keyResource['@type']).includes(keyTypeToFilterBy) &&
+            keyResource.controller === webId
         );
 
         return matchedKeys;
