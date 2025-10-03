@@ -1,9 +1,7 @@
-import { parseHeader, negotiateAccept, parseJson } from '@semapps/middlewares';
+import { parseHeader, negotiateAccept, parseJson, checkUsernameExists } from '@semapps/middlewares';
 import path from 'node:path';
 import { ServiceSchema } from 'moleculer';
 import { VC_API_PATH } from '../constants';
-
-const middlewares = [parseHeader, parseJson, negotiateAccept];
 
 /**
  *
@@ -29,6 +27,9 @@ const VCApiService = {
   async started() {
     const basePath = await this.broker.call('ldp.getBasePath');
     const apiPath = path.join(basePath, this.settings.podProvider ? '/:username([^/.][^/]+)' : '', VC_API_PATH);
+
+    let middlewares = [parseHeader, parseJson, negotiateAccept];
+    if (this.settings.podProvider) middlewares.unshift(checkUsernameExists);
 
     // Credential routes.
     await this.broker.call('api.addRoute', {
