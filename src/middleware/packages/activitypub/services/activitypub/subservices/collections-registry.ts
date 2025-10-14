@@ -71,8 +71,7 @@ const CollectionsRegistryService = {
             },
             contentType: MIME_TYPES.JSON,
             webId: this.settings.podProvider ? getWebIdFromUri(objectUri) : 'system',
-            permissions, // Handled by the WebAclMiddleware, if present
-            forcedResourceUri: path ? collectionUri : undefined // Bypass the automatic URI generation
+            permissions // Handled by the WebAclMiddleware, if present
           });
 
           // Attach it to the object

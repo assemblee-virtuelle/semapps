@@ -1,4 +1,4 @@
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import awaitCreateCompleteAction from './actions/awaitCreateComplete.ts';
 import getAction from './actions/get.ts';
 import createAction from './actions/create.ts';
@@ -6,7 +6,6 @@ import patchAction from './actions/patch.ts';
 import putAction from './actions/put.ts';
 import deleteAction from './actions/delete.ts';
 import existAction from './actions/exist.ts';
-import generateIdAction from './actions/generateId.ts';
 import getContainersAction from './actions/getContainers.ts';
 import getTypesAction from './actions/getTypes.ts';
 import uploadAction from './actions/upload.ts';
@@ -19,6 +18,7 @@ const LdpResourceSchema = {
     baseUrl: null,
     podProvider: false,
     preferredViewForResource: null,
+    allowSlugs: true,
     binary: {
       maxSize: '50Mb'
     }
@@ -29,14 +29,12 @@ const LdpResourceSchema = {
     create: createAction,
     delete: deleteAction,
     exist: existAction,
-    generateId: generateIdAction,
     // @ts-expect-error
     get: getAction,
     getContainers: getContainersAction,
     getTypes: getTypesAction,
     patch: patchAction,
     put: putAction,
-    // @ts-expect-error
     upload: uploadAction
   },
   hooks: {

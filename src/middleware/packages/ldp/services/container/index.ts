@@ -1,4 +1,5 @@
-import { ServiceSchema, defineAction } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
+import urlJoin from 'url-join';
 import attachAction from './actions/attach.ts';
 import clearAction from './actions/clear.ts';
 import createAction from './actions/create.ts';
@@ -20,7 +21,8 @@ const LdpContainerSchema = {
   name: 'ldp.container' as const,
   settings: {
     baseUrl: null,
-    podProvider: false
+    podProvider: false,
+    allowSlugs: true
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
@@ -39,6 +41,13 @@ const LdpContainerSchema = {
     isEmpty: isEmptyAction,
     post: postAction,
     patch: patchAction
+  },
+  methods: {
+    async getBaseUrl(ctx) {
+      return this.settings.podProvider
+        ? await ctx.call('solid-storage.getUrl', { webId: urlJoin(this.settings.baseUrl, ctx.meta.dataset) })
+        : this.settings.baseUrl;
+    }
   },
   hooks: {
     before: {

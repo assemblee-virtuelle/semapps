@@ -17,29 +17,23 @@ const LdpSchema = {
     podProvider: false,
     defaultContainerOptions: {},
     preferredViewForResource: null,
-    resourcesWithContainerPath: true,
+    allowSlugs: true,
     binary: {
       maxSize: '50Mb'
     }
   },
   dependencies: ['ldp.container', 'ldp.resource', 'ldp.registry', 'ontologies', 'jsonld'],
   async created() {
-    const {
-      baseUrl,
-      containers,
-      podProvider,
-      defaultContainerOptions,
-      preferredViewForResource,
-      resourcesWithContainerPath,
-      binary
-    } = this.settings;
+    const { baseUrl, containers, podProvider, defaultContainerOptions, preferredViewForResource, allowSlugs, binary } =
+      this.settings;
 
     // @ts-expect-error TS(2322): Type '{ name: "ldp.container"; settings: { baseUrl... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [LdpContainerService],
       settings: {
         baseUrl,
-        podProvider
+        podProvider,
+        allowSlugs
       },
       hooks: this.schema.hooksContainer || {}
     });
@@ -51,7 +45,7 @@ const LdpSchema = {
         baseUrl,
         podProvider,
         preferredViewForResource,
-        resourcesWithContainerPath,
+        allowSlugs,
         binary
       },
       hooks: this.schema.hooksResource || {}
