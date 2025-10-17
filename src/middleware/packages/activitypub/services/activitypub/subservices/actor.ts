@@ -106,7 +106,7 @@ const ActorService = {
                 insert: [
                   {
                     type: 'graph',
-                    name: namedNode(actorUri),
+                    name: rdf.namedNode(actorUri),
                     triples: [
                       rdf.quad(
                         rdf.namedNode(actorUri),

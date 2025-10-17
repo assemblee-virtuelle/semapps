@@ -67,7 +67,6 @@ const Schema = {
 
       // Then attach the container to its parent container
       if (parentContainerUri) {
-        // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
         await this.actions.attach(
           {
             containerUri: parentContainerUri,

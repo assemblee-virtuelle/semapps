@@ -76,8 +76,7 @@ module.exports = {
       },
       items: [
         'middleware/solid/pod',
-        'middleware/solid/type-indexes',
-        'middleware/solid/type-registrations',
+        'middleware/solid/type-index',
         'middleware/solid/notifications-provider',
         'middleware/solid/notifications-listener'
       ]

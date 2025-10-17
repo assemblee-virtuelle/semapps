@@ -13,7 +13,7 @@ const NamedGraphService = {
         const dataset = ctx.params.dataset || ctx.meta.dataset;
 
         // Ensure the slug does not contain special characters
-        if (slug) slug = createSlug(slug, { lang: 'en', custom: { '.': '.' } });
+        if (slug) slug = createSlug(slug, { lang: 'en', custom: { '.': '.', '/': '/' } });
 
         // Find an URI that does not already exists
         let uri;

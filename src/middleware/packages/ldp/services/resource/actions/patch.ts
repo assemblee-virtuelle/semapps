@@ -3,22 +3,6 @@ import { ActionSchema, Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
-function checkTriplesSubjectIsResource(triples: any, resourceUri: any) {
-  for (const triple of triples) {
-    switch (triple.subject.termType) {
-      case 'NamedNode':
-        // Ensure the subject is the same as the patched resource
-        if (triple.subject.value !== resourceUri) {
-          throw new MoleculerError('The SPARQL request must modify only the patched resource', 400, 'BAD_REQUEST');
-        }
-        break;
-      case 'BlankNode':
-        // Accept blank nodes, as they are necessarily linked to the patched resource
-        break;
-    }
-  }
-}
-
 const Schema = {
   visibility: 'public',
   params: {
@@ -69,7 +53,6 @@ const Schema = {
     };
 
     if (triplesToRemove) {
-      checkTriplesSubjectIsResource(triplesToRemove, resourceUri);
       // @ts-expect-error TS(2345): Argument of type '{ updateType: string; delete: { ... Remove this comment to see the full error message
       sparqlUpdate.updates.push({
         updateType: 'delete',
@@ -78,7 +61,6 @@ const Schema = {
     }
 
     if (triplesToAdd) {
-      checkTriplesSubjectIsResource(triplesToAdd, resourceUri);
       // @ts-expect-error TS(2345): Argument of type '{ updateType: string; insert: { ... Remove this comment to see the full error message
       sparqlUpdate.updates.push({
         updateType: 'insert',
