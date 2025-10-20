@@ -1,5 +1,4 @@
 import urlJoin from 'url-join';
-import { MIME_TYPES } from '@semapps/mime-types';
 import { ServiceSchema } from 'moleculer';
 import { ACTOR_TYPES } from '../constants.ts';
 import { delay } from '../utils.ts';
@@ -14,19 +13,18 @@ const RelayService = {
   },
   dependencies: ['activitypub', 'activitypub.follow', 'auth.account', 'ldp.container', 'ldp.registry'],
   async started() {
-    let appsContainer;
+    let containerUri: string;
     do {
-      appsContainer = await this.broker.call('ldp.registry.getByType', { type: ACTOR_TYPES.APPLICATION });
-      if (!appsContainer) {
+      containerUri = await this.broker.call('ldp.registry.getUri', { type: ACTOR_TYPES.APPLICATION });
+      if (!containerUri) {
         this.logger.warn("Waiting for a container that accepts the 'Application' type...");
         await delay(3000);
       }
-    } while (!appsContainer);
+    } while (!containerUri);
 
     const actorSettings = this.settings.actor;
     const actorExist = await this.broker.call('auth.account.usernameExists', { username: actorSettings.username });
 
-    const containerUri = await this.broker.call('ldp.registry.getUri', { path: appsContainer.path });
     const actorUri = urlJoin(containerUri, actorSettings.username);
 
     // Creating the local actor 'relay'

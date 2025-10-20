@@ -1,5 +1,5 @@
 import { ServiceSchema } from 'moleculer';
-import { delay, getParentContainerUri } from '../utils.ts';
+import { arrayOf, delay, getParentContainerUri } from '../utils.ts';
 
 const Schema = {
   settings: {
@@ -19,7 +19,7 @@ const Schema = {
   async started() {
     const { path, controlledActions, ...rest } = this.settings;
 
-    const registration = await this.broker.call('ldp.registry.register', {
+    await this.broker.call('ldp.registry.register', {
       path,
       name: this.name,
       controlledActions: {
@@ -35,9 +35,6 @@ const Schema = {
       },
       ...rest
     });
-
-    // If no path was defined in the settings, set the automatically generated path (so that it can be used below)
-    if (!path) this.settings.path = registration.path;
   },
   actions: {
     post: {
@@ -89,7 +86,7 @@ const Schema = {
     },
 
     getHeaderLinks: {
-      handler(ctx) {
+      handler() {
         return [];
       }
     },
@@ -125,9 +122,9 @@ const Schema = {
     },
 
     getContainerUri: {
-      handler(ctx) {
-        return ctx.call('ldp.registry.getUri', {
-          path: this.settings.path,
+      async handler(ctx) {
+        return await ctx.call('ldp.registry.getUri', {
+          type: arrayOf(this.settings.acceptedTypes)[0],
           webId: ctx.params?.webId || ctx.meta?.webId
         });
       }
@@ -141,7 +138,6 @@ const Schema = {
 
         if (!containerUri) {
           containerUri = await this.actions.getContainerUri(
-            // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
             { webId: ctx.params.webId || ctx.meta.webId },
             { parentCtx: ctx }
           );

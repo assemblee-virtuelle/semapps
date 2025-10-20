@@ -59,7 +59,7 @@ module.exports = {
         'middleware/ldp/registry',
         'middleware/ldp/permissions',
         'middleware/ldp/controlled-container',
-        'middleware/ldp/single-resource-container',
+        'middleware/ldp/controlled-resource',
         'middleware/ldp/document-tagger',
         'middleware/ldp/image-processor',
         'middleware/ldp/dereference'

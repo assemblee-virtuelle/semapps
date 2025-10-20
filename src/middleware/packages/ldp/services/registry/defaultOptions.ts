@@ -1,6 +1,9 @@
+import { ContainerOptions } from '../../types.ts';
+
 const Schema = {
   readOnly: false,
   excludeFromMirror: false,
+  typeIndex: 'public',
   permissions: (webId: any) => {
     switch (webId) {
       case 'anon':
@@ -65,6 +68,6 @@ const Schema = {
     }
   },
   controlledActions: {}
-};
+} as Partial<ContainerOptions>;
 
 export default Schema;

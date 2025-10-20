@@ -27,11 +27,6 @@ const Schema = {
     if (await ctx.call('ldp.remote.isRemote', { resourceUri }))
       throw new MoleculerError('Remote resources cannot be created', 403, 'FORBIDDEN');
 
-    const { controlledActions } = {
-      ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
-      ...ctx.params
-    };
-
     const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId: 'system' });
     if (resourceExist) {
       throw new MoleculerError(`A resource already exist with URI ${resourceUri}`, 400, 'BAD_REQUEST');
@@ -53,6 +48,7 @@ const Schema = {
     });
 
     // TODO See if using controlledAction is still necessary now blank nodes are automatically detected
+    const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri });
     const newData = await ctx.call(
       (controlledActions && controlledActions.get) || 'ldp.resource.get',
       {
@@ -69,7 +65,6 @@ const Schema = {
       dataset: ctx.meta.dataset
     };
 
-    // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
     if (!ctx.meta.skipEmitEvent) {
       ctx.emit('ldp.resource.created', returnValues, { meta: { webId: null, dataset: null } });
     }

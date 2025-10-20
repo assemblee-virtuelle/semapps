@@ -1,6 +1,7 @@
 import { getType } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
 import { OBJECT_TYPES, ACTIVITY_TYPES } from '../../../constants.ts';
+import { arrayOf } from '../../../utils.ts';
 
 const ObjectService = {
   name: 'activitypub.object' as const,
@@ -57,42 +58,20 @@ const ObjectService = {
             // If the object passed is an URI, this is an announcement and there is nothing to process
             if (typeof activity.object === 'string') break;
 
-            const types = await ctx.call('jsonld.parser.expandTypes', {
-              types: activity.object.type || activity.object['@type'],
-              context: activity['@context']
+            const types = arrayOf(activity.object['@type'] || activity.object.type);
+
+            const [containerUri] = await ctx.call('type-index.getContainersUris', {
+              type: types[0],
+              webId: actorUri
             });
-
-            // TODO: attach to all matching containers
-            let container;
-            let containerUri;
-
-            if (this.settings.podProvider) {
-              // If this is a Pod provider, find the container with the type-registrations service
-              for (const type of types) {
-                const containersUris = await ctx.call('type-registrations.findContainersUris', {
-                  type,
-                  webId: actorUri
-                });
-                if (containersUris.length > 0) {
-                  containerUri = containersUris[0];
-                  continue;
-                }
-              }
-            } else {
-              // Otherwise try to find it with the LdpRegistry
-              container = await ctx.call('ldp.registry.getByType', { type: types });
-              if (container) {
-                containerUri = await ctx.call('ldp.registry.getUri', {
-                  path: container.path,
-                  webId: actorUri
-                });
-              }
-            }
 
             if (!containerUri)
               throw new Error(
                 `Cannot create resource of type "${types.join(', ')}", no matching containers were found!`
               );
+
+            // Find if the container is controlled
+            const container = await ctx.call('ldp.registry.getByTypes', { types });
 
             objectUri = await ctx.call(
               container?.controlledActions?.post || 'ldp.container.post',

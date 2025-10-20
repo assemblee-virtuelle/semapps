@@ -60,12 +60,13 @@ const LdpSchema = {
       }
     });
 
+    // @ts-expect-error TS(2322): Type '{ name: "ldp.registry"; settings: { baseUrl:... Remove this comment to see the full error message
     this.broker.createService({
-      // @ts-expect-error TS(2322): Type '{ name: "ldp.registry"; settings: { baseUrl:... Remove this comment to see the full error message
       mixins: [LdpRegistryService],
       settings: {
         baseUrl,
         containers,
+        allowSlugs,
         defaultOptions: defaultContainerOptions,
         podProvider
       }

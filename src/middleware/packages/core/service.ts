@@ -7,6 +7,7 @@ import { LdpService, DocumentTaggerMixin } from '@semapps/ldp';
 import { OntologiesService } from '@semapps/ontologies';
 import { SparqlEndpointService } from '@semapps/sparql-endpoint';
 import { TripleStoreService } from '@semapps/triplestore';
+import { TypeIndexService } from '@semapps/solid';
 import { VoidService } from '@semapps/void';
 import { WebAclService } from '@semapps/webacl';
 import { WebfingerService } from '@semapps/webfinger';
@@ -44,6 +45,7 @@ const CoreService = {
     ldp: {},
     signature: {},
     sparqlEndpoint: {},
+    typeIndex: {},
     void: {},
     webacl: {},
     webfinger: {},
@@ -134,6 +136,15 @@ const CoreService = {
           baseUrl,
           containers: containers || [botsContainer],
           ...this.settings.ldp
+        }
+      });
+    }
+
+    if (this.settings.typeIndex !== false) {
+      this.broker.createService({
+        mixins: [TypeIndexService],
+        settings: {
+          ...this.settings.typeIndex
         }
       });
     }

@@ -1,23 +1,16 @@
-import urlJoin from 'url-join';
-import pathModule from 'path';
-import { pathToRegexp } from 'path-to-regexp';
 import { ActionSchema } from 'moleculer';
 import { arrayOf } from '../../../utils.ts';
-
-const pathJoin = pathModule.join;
 
 const Schema = {
   visibility: 'public',
   params: {
     path: { type: 'string', optional: true },
-    fullPath: { type: 'string', optional: true },
     name: { type: 'string', optional: true },
     accept: { type: 'string', optional: true },
     acceptedTypes: { type: 'multi', rules: [{ type: 'array' }, { type: 'string' }], optional: true },
     shapeTreeUri: { type: 'string', optional: true },
     excludeFromMirror: { type: 'boolean', optional: true },
     activateTombstones: { type: 'boolean', default: true },
-    // @ts-expect-eslugParts(rror TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
     permissions: { type: 'multi', rules: [{ type: 'object' }, { type: 'function' }], optional: true },
     newResourcesPermissions: { type: 'multi', rules: [{ type: 'object' }, { type: 'function' }], optional: true },
     controlledActions: { type: 'object', optional: true },
@@ -27,7 +20,7 @@ const Schema = {
   async handler(ctx) {
     let options = { ...this.settings.defaultOptions, ...ctx.params };
 
-    // TODO Remove this when we stop using the type for the container path
+    // Find the type from the shape tree if necessary
     if (!options.acceptedTypes && options.shapeTreeUri) {
       const services = await this.broker.call('$node.services');
       if (!services.some((s: any) => s.name === 'shape-trees') && !services.some((s: any) => s.name === 'shacl'))
@@ -46,24 +39,10 @@ const Schema = {
     options.acceptedTypes =
       options.acceptedTypes && (await ctx.call('jsonld.parser.expandTypes', { types: options.acceptedTypes }));
 
-    // If no path is provided, automatically find it based on the acceptedTypes
-    if (!options.path) {
-      if (!options.acceptedTypes || options.acceptedTypes.length !== 1) {
-        throw new Error(
-          `If no path is set for the ControlledContainerMixin, you must set one (and only one) acceptedTypes. Provided: ${arrayOf(
-            options?.acceptedTypes
-          ).join(', ')}`
-        );
-      }
-      // If the resource type is invalid, an error will be thrown here
-      options.path = await ctx.call('ldp.container.getPath', { resourceType: options.acceptedTypes[0] });
-      this.logger.debug(
-        `Automatically generated the path ${options.path} for resource type ${options.acceptedTypes[0]}`
-      );
-    }
-
-    if (!options.fullPath) options.fullPath = options.path;
     if (!options.name) options.name = options.path;
+
+    // If slugs are not allowed, we must registered this container with the type index
+    if ((!this.settings.allowSlugs || !options.path) && !options.typeIndex) options.typeIndex = 'public';
 
     if (options.jsonContext) {
       throw new Error('The jsonContext container option has been deprecated, please remove it');
@@ -75,19 +54,29 @@ const Schema = {
     if (options.podsContainer === true) {
       // Skip container creation for the root PODs container (it is not a real LDP container since no dataset have these data)
     } else if (this.settings.podProvider) {
-      // TODO see if we can base ourselves on a general config for the POD data path
-      options.fullPath = pathJoin('/:username([^/.][^/]+)', 'data', options.path);
+      // In Pod provider mode, the container is created when a new user is created
     } else {
-      await ctx.call('ldp.container.createAndAttach', {
-        containerUri: urlJoin(this.settings.baseUrl, options.path),
-        options
+      await this.broker.waitForServices(['type-index']);
+      let [containerUri] = await ctx.call('type-index.getContainersUris', {
+        type: arrayOf(options.acceptedTypes)[0],
+        isPrivate: options.typeIndex === 'private'
       });
+
+      if (containerUri && (await ctx.call('ldp.container.exist', { containerUri }))) {
+        this.logger.info(`Container for type ${options.acceptedTypes} already exists, skipping...`);
+      } else {
+        this.logger.info(`Creating container for ${options.acceptedTypes}...`);
+
+        containerUri = await ctx.call('triplestore.named-graph.create', {
+          baseUrl: this.settings.baseUrl,
+          slug: this.settings.allowSlugs ? options.path : undefined // TODO allow path in slug
+        });
+
+        await ctx.call('ldp.container.createAndAttach', { containerUri, options });
+      }
     }
 
-    options.pathRegex = pathToRegexp(options.fullPath);
-
     // Save the options
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     this.registeredContainers[options.name] = options;
 
     ctx.emit('ldp.registry.registered', { container: options }, { meta: { webId: null, dataset: null } });

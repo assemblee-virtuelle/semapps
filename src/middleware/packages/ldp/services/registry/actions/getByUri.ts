@@ -1,14 +1,16 @@
 import { ActionSchema } from 'moleculer';
+import { getWebIdFromUri } from '../../../utils.ts';
 
 /**
- * Find the container options for a container URI
+ * Find the container options for a container or resource URI
  */
-const Schema = {
+const GetByUriAction = {
   visibility: 'public',
   params: {
     containerUri: { type: 'string', optional: true },
     resourceUri: { type: 'string', optional: true }
   },
+  // cache: true,
   async handler(ctx) {
     let { containerUri, resourceUri } = ctx.params;
 
@@ -22,17 +24,18 @@ const Schema = {
     }
 
     if (containerUri) {
-      const basePath = await ctx.call('ldp.getBasePath');
-      const path = new URL(containerUri).pathname.replace(basePath, '/');
-      const registeredContainers = await this.actions.list({}, { parentCtx: ctx });
-      const containerOptions =
-        // @ts-expect-error TS(18046): 'container' is of type 'unknown'.
-        Object.values(registeredContainers).find(container => container.pathRegex.test(path)) || {};
+      const types = await ctx.call('type-index.getTypes', {
+        containerUri,
+        webId: this.settings.podProvider ? getWebIdFromUri(containerUri) : undefined
+      });
+
+      const containerOptions = await this.actions.getByTypes({ types }, { parentCtx: ctx });
+
       return { ...this.settings.defaultOptions, ...containerOptions };
+    } else {
+      return this.settings.defaultOptions;
     }
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-    return this.settings.defaultOptions;
   }
 } satisfies ActionSchema;
 
-export default Schema;
+export default GetByUriAction;
