@@ -3,7 +3,7 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import { void as voidOntology } from '@semapps/ontologies';
 import { JsonLdSerializer } from 'jsonld-streaming-serializer';
 import { DataFactory, Writer } from 'n3';
-import { createFragmentURL, arrayOf } from '@semapps/ldp';
+import { createFragmentURL, arrayOf, Registration } from '@semapps/ldp';
 import { parseHeader } from '@semapps/middlewares';
 import { ServiceSchema, Errors } from 'moleculer';
 
@@ -250,17 +250,14 @@ const VoidSchema = {
   methods: {
     async getContainers(ctx) {
       const { baseUrl } = this.settings;
-      const registeredContainers = await ctx.call('ldp.registry.list');
+      const registrations = (await ctx.call('ldp.registry.list')) as { [name: string]: Registration };
 
       const res = await Promise.all(
-        Object.values(registeredContainers)
-          // @ts-expect-error TS(18046): 'c' is of type 'unknown'.
+        Object.values(registrations)
           .filter(c => c.acceptedTypes)
           .map(async c => {
             const partition = {
-              // @ts-expect-error TS(18046): 'c' is of type 'unknown'.
               'http://rdfs.org/ns/void#uriSpace': urlJoin(baseUrl, c.path),
-              // @ts-expect-error TS(18046): 'c' is of type 'unknown'.
               'http://rdfs.org/ns/void#class': arrayOf(c.acceptedTypes)
             };
             // @ts-expect-error TS(18046): 'c' is of type 'unknown'.

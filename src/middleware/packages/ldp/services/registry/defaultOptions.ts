@@ -1,10 +1,11 @@
-import { ContainerOptions } from '../../types.ts';
+import { Registration } from '../../types.ts';
 
 const Schema = {
   readOnly: false,
+  isContainer: true,
   excludeFromMirror: false,
   typeIndex: 'public',
-  permissions: (webId: any) => {
+  permissions: webId => {
     switch (webId) {
       case 'anon':
         return {
@@ -35,7 +36,7 @@ const Schema = {
         };
     }
   },
-  newResourcesPermissions: (webId: any) => {
+  newResourcesPermissions: webId => {
     switch (webId) {
       case 'anon':
         return {
@@ -68,6 +69,6 @@ const Schema = {
     }
   },
   controlledActions: {}
-} as Partial<ContainerOptions>;
+} as Partial<Registration>;
 
 export default Schema;

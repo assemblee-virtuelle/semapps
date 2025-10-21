@@ -7,7 +7,7 @@ import { fetchServer } from '../utils.ts';
 jest.setTimeout(50000);
 let broker: any;
 
-describe.each([true, false])('ControlledContainerMixin with allowSlugs: %s', (allowSlugs: boolean) => {
+describe.each([false, true])('ControlledContainerMixin with allowSlugs: %s', (allowSlugs: boolean) => {
   beforeAll(async () => {
     broker = await initialize(allowSlugs);
 
@@ -34,9 +34,9 @@ describe.each([true, false])('ControlledContainerMixin with allowSlugs: %s', (al
   test('The container is registered and created', async () => {
     await broker.call('videos.waitForContainerCreation');
 
-    const registeredContainers = await broker.call('ldp.registry.list', { type: 'as:Video' });
-    expect(registeredContainers.videos).not.toBeUndefined();
-    numRegisteredContainers = registeredContainers.length;
+    const registrations = await broker.call('ldp.registry.list', { type: 'as:Video' });
+    expect(registrations.videos).not.toBeUndefined();
+    numRegisteredContainers = registrations.length;
 
     const containersUris = await broker.call('ldp.container.getAll');
     // With slugs, the WebIdService generates a /foaf and a /foaf/person containers
@@ -67,8 +67,8 @@ describe.each([true, false])('ControlledContainerMixin with allowSlugs: %s', (al
     await broker.start();
 
     // No new container has been registered
-    const registeredContainers = await broker.call('ldp.registry.list', { type: 'as:Video' });
-    expect(registeredContainers.length).toBe(numRegisteredContainers);
+    const registrations = await broker.call('ldp.registry.list', { type: 'as:Video' });
+    expect(registrations.length).toBe(numRegisteredContainers);
 
     // No new container has been created
     const containersUris = await broker.call('ldp.container.getAll');

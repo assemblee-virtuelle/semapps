@@ -10,7 +10,6 @@ const GetByUriAction = {
     containerUri: { type: 'string', optional: true },
     resourceUri: { type: 'string', optional: true }
   },
-  // cache: true,
   async handler(ctx) {
     let { containerUri, resourceUri } = ctx.params;
 
@@ -18,17 +17,25 @@ const GetByUriAction = {
       throw new Error('The param containerUri or resourceUri must be provided to ldp.registry.getByUri');
     }
 
-    if (!containerUri) {
-      const containers = await ctx.call('ldp.resource.getContainers', { resourceUri });
-      containerUri = containers[0];
+    let types = await ctx.call('type-index.getTypes', {
+      uri: containerUri || resourceUri,
+      webId: this.settings.podProvider ? getWebIdFromUri(containerUri) : undefined
+    });
+
+    // If this a resource, check if its container is registered
+    if (!types && resourceUri) {
+      [containerUri] = await ctx.call('ldp.resource.getContainers', { resourceUri });
+
+      if (containerUri) {
+        types = await ctx.call('type-index.getTypes', {
+          uri: containerUri,
+          isContainer: true,
+          webId: this.settings.podProvider ? getWebIdFromUri(containerUri) : undefined
+        });
+      }
     }
 
-    if (containerUri) {
-      const types = await ctx.call('type-index.getTypes', {
-        containerUri,
-        webId: this.settings.podProvider ? getWebIdFromUri(containerUri) : undefined
-      });
-
+    if (types) {
       const containerOptions = await this.actions.getByTypes({ types }, { parentCtx: ctx });
 
       return { ...this.settings.defaultOptions, ...containerOptions };

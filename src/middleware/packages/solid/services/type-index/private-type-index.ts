@@ -10,7 +10,8 @@ const PrivateTypeIndexService = {
     initialValue: {
       '@type': ['solid:TypeIndex', 'solid:UnlistedDocument']
     },
-    permissions: {}
+    permissions: {},
+    typeIndex: 'private'
   },
   hooks: {
     after: {

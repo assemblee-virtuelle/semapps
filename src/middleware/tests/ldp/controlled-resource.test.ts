@@ -5,7 +5,7 @@ import { fetchServer } from '../utils.ts';
 jest.setTimeout(50000);
 let broker: any;
 
-describe.each([true, false])('ControlledResourceMixin with allowSlugs: %s', (allowSlugs: boolean) => {
+describe.each([false, true])('ControlledResourceMixin with allowSlugs: %s', (allowSlugs: boolean) => {
   beforeAll(async () => {
     broker = await initialize(allowSlugs);
 

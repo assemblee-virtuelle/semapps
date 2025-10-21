@@ -10,7 +10,6 @@ interface ControlledActions {
 }
 
 export interface WacPermission {
-  uri?: string; // For users and groups
   read: boolean;
   write: boolean;
   append: boolean;
@@ -20,15 +19,16 @@ export interface WacPermission {
 export interface WacPermissionObject {
   anon?: WacPermission;
   anyUser?: WacPermission;
-  user?: WacPermission;
-  group?: WacPermission;
+  user?: { uri: string } & WacPermission;
+  group?: { uri: string } & WacPermission;
 }
 
 export type WacPermissionFunction = (webId: string) => WacPermissionObject;
 
-export interface ContainerOptions {
+export interface Registration {
+  name: string;
+  isContainer: boolean;
   path?: string;
-  name?: string;
   accept?: string; // Check if this is still used
   acceptedTypes?: string | string[];
   shapeTreeUri?: string;

@@ -1,21 +1,27 @@
 import { ActionSchema } from 'moleculer';
 
 /**
- * Get the container URI based on its type
- * Short cut to the TypeIndexService
+ * Get the container or resource URI based on its type
+ * Shortcut to the TypeIndexService
  */
 const GetUriAction = {
   visibility: 'public',
   params: {
     type: { type: 'string' },
+    isContainer: { type: 'boolean', default: true },
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
-    const { type, webId } = ctx.params;
+    const { type, isContainer, typeIndex, webId } = ctx.params;
 
-    const containersUris = await ctx.call('type-index.getContainersUris', { type, webId });
+    const [uri] = (await ctx.call('type-index.getUris', {
+      type,
+      isContainer,
+      isPrivate: typeIndex === 'private',
+      webId
+    })) as string[];
 
-    return containersUris?.[0];
+    return uri;
   }
 } satisfies ActionSchema;
 

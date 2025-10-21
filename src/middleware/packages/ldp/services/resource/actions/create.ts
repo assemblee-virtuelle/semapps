@@ -15,10 +15,11 @@ const Schema = {
     contentType: {
       type: 'string',
       optional: true
-    }
+    },
+    options: { type: 'object', optional: true }
   },
   async handler(ctx) {
-    let { resource, resourceUri, contentType } = ctx.params;
+    let { resource, resourceUri, contentType, options } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (contentType && contentType !== MIME_TYPES.JSON)
@@ -48,7 +49,7 @@ const Schema = {
     });
 
     // TODO See if using controlledAction is still necessary now blank nodes are automatically detected
-    const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri });
+    const { controlledActions } = options || (await ctx.call('ldp.registry.getByUri', { resourceUri }));
     const newData = await ctx.call(
       (controlledActions && controlledActions.get) || 'ldp.resource.get',
       {
@@ -62,7 +63,8 @@ const Schema = {
       resourceUri,
       newData,
       webId,
-      dataset: ctx.meta.dataset
+      dataset: ctx.meta.dataset,
+      options
     };
 
     if (!ctx.meta.skipEmitEvent) {

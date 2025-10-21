@@ -1,16 +1,16 @@
 import urlJoin from 'url-join';
 import { ActionSchema } from 'moleculer';
+import { Registration } from '@semapps/ldp';
 
 export const action = {
   visibility: 'public',
   async handler(ctx) {
     const { webId } = ctx.params;
 
-    const containers = await ctx.call('ldp.registry.list');
+    const containers: { [name: string]: Registration } = await ctx.call('ldp.registry.list');
 
-    // @ts-expect-error TS(2339): Property 'permissions' does not exist on type 'unk... Remove this comment to see the full error message
-    for (const { permissions, podsContainer, path } of Object.values(containers)) {
-      if (permissions && !podsContainer) {
+    for (const { permissions, path } of Object.values(containers)) {
+      if (permissions) {
         const baseUrl = this.settings.podProvider
           ? await ctx.call('solid-storage.getUrl', { webId })
           : this.settings.baseUrl;
@@ -51,7 +51,6 @@ export const action = {
             isContainer: true,
             removePublicRead,
             removeDefaultPublicRead,
-            // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
             dataset: ctx.meta.dataset
           },
           { meta: { webId: null, dataset: null } }

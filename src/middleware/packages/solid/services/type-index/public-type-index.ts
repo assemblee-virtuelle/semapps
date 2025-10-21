@@ -14,7 +14,8 @@ const PublicTypeIndexService = {
       anon: {
         read: true
       }
-    }
+    },
+    typeIndex: 'public'
   },
   hooks: {
     after: {

@@ -22,44 +22,44 @@ const TypeIndexService = {
       visibility: 'public',
       params: {
         types: { type: 'array' },
-        containerUri: { type: 'string' },
+        uri: { type: 'string' },
         webId: { type: 'string' },
+        isContainer: { type: 'boolean', default: true },
         isPrivate: { type: 'boolean', default: false }
       },
       async handler(ctx) {
-        let { types, containerUri, webId, isPrivate } = ctx.params;
+        let { types, uri, webId, isContainer, isPrivate } = ctx.params;
 
-        const expandedTypes = await ctx.call('jsonld.parser.expandTypes', { types });
-        const oldExpandedTypes = await this.actions.getTypes({ containerUri, webId });
+        const expandedTypes: string[] = await ctx.call('jsonld.parser.expandTypes', { types });
+        const oldExpandedTypes: string[] = await this.actions.getTypes({ uri, webId, isPrivate });
+
+        const typeIndexUri = await ctx.call(`${isPrivate ? 'private' : 'public'}-type-index.getUri`, { webId });
+
+        // Use a hash based on the URI (which should be unique !)
+        const typeRegistrationUri = `${typeIndexUri}#${getSlugFromUri(uri)}`;
 
         if (oldExpandedTypes.length > 0) {
-          throw new Error('Not implemented');
-          // const newExpandedTypes = expandedTypes.filter((t: any) => !oldExpandedTypes.includes(t));
+          const newExpandedTypes = expandedTypes.filter((t: any) => !oldExpandedTypes.includes(t));
 
-          // if (newExpandedTypes.length > 0) {
-          //   for (const expandedType of newExpandedTypes) {
-          //     this.logger.info(`Adding type ${expandedType} to type registration ${existingRegistration.id}`);
-          //     await this.actions.patch({
-          //       resourceUri: existingRegistration.id,
-          //       triplesToAdd: [
-          //         rdf.quad(
-          //           rdf.namedNode(existingRegistration.id),
-          //           rdf.namedNode('http://www.w3.org/ns/solid/terms#forClass'),
-          //           rdf.namedNode(expandedType)
-          //         )
-          //       ],
-          //       webId
-          //     });
-          // }
-          // } else {
-          //   this.logger.info(`The container ${containerUri} is already registered. Skipping...`);
-          // }
+          if (newExpandedTypes.length > 0) {
+            for (const expandedType of newExpandedTypes) {
+              this.logger.info(`Adding type ${expandedType} to type registration ${typeRegistrationUri}`);
+              await this.actions.patch({
+                resourceUri: typeIndexUri,
+                triplesToAdd: expandedTypes.map(type =>
+                  rdf.quad(
+                    rdf.namedNode(typeRegistrationUri),
+                    rdf.namedNode('http://www.w3.org/ns/solid/terms#forClass'),
+                    rdf.namedNode(type)
+                  )
+                ),
+                webId
+              });
+            }
+          } else {
+            this.logger.info(`The URI ${uri} is already registered. Skipping...`);
+          }
         } else {
-          const typeIndexUri = await ctx.call(`${isPrivate ? 'private' : 'public'}-type-index.getUri`, { webId });
-
-          // Generate a hash based on the container URI (which should be unique !)
-          const typeRegistrationUri = `${typeIndexUri}#${getSlugFromUri(containerUri)}`;
-
           // Add the type registration
           await ctx.call(
             'ldp.resource.patch',
@@ -73,8 +73,12 @@ const TypeIndexService = {
                 ),
                 rdf.quad(
                   rdf.namedNode(typeRegistrationUri),
-                  rdf.namedNode('http://www.w3.org/ns/solid/terms#instanceContainer'),
-                  rdf.namedNode(containerUri)
+                  rdf.namedNode(
+                    isContainer
+                      ? 'http://www.w3.org/ns/solid/terms#instanceContainer'
+                      : 'http://www.w3.org/ns/solid/terms#instance'
+                  ),
+                  rdf.namedNode(uri)
                 ),
                 ...expandedTypes.map(type =>
                   rdf.quad(
@@ -98,13 +102,13 @@ const TypeIndexService = {
     getTypes: {
       visibility: 'public',
       params: {
-        containerUri: { type: 'string' },
+        uri: { type: 'string' },
         webId: { type: 'string', optional: true },
         isPrivate: { type: 'boolean', optional: true }
       },
       cache: true,
       async handler(ctx) {
-        const { containerUri, webId, isPrivate } = ctx.params;
+        const { uri, webId, isPrivate } = ctx.params;
 
         // If isPrivate is not defined, search in both type indexes
         let typeIndexUris = [];
@@ -118,11 +122,12 @@ const TypeIndexService = {
             PREFIX solid: <http://www.w3.org/ns/solid/terms#>
             SELECT ?type
             WHERE {
-              VALUES ?typeIndexUri { ${typeIndexUris.map(uri => `<${uri}>`).join(' ')} }
+              VALUES ?typeIndexUri { ${typeIndexUris.map(typeIndexUri => `<${typeIndexUri}>`).join(' ')} }
+              VALUES ?instancePredicate { solid:instanceContainer solid:instance }
               GRAPH ?typeIndexUri {
                 ?typeRegistrationUri a solid:TypeRegistration .
                 ?typeRegistrationUri solid:forClass ?type .
-                ?typeRegistrationUri solid:instanceContainer <${containerUri}> .
+                ?typeRegistrationUri ?instancePredicate <${uri}> .
               }
             }
           `,
@@ -134,18 +139,19 @@ const TypeIndexService = {
       }
     },
 
-    getContainersUris: {
+    getUris: {
       visibility: 'public',
       params: {
         type: { type: 'string' },
         webId: { type: 'string', optional: true },
+        isContainer: { type: 'boolean', optional: true },
         isPrivate: { type: 'boolean', optional: true }
       },
       cache: true,
       async handler(ctx) {
-        const { type, webId, isPrivate } = ctx.params;
+        const { type, webId, isContainer, isPrivate } = ctx.params;
 
-        const [expandedType] = await ctx.call('jsonld.parser.expandTypes', { types: [type] });
+        const [expandedType] = (await ctx.call('jsonld.parser.expandTypes', { types: [type] })) as string[];
 
         // If isPrivate is not defined, search in both type indexes
         let typeIndexUris = [];
@@ -154,16 +160,22 @@ const TypeIndexService = {
         if (isPrivate === true || isPrivate === undefined)
           typeIndexUris.push(await ctx.call(`private-type-index.getUri`, { webId }));
 
+        // If isContainer is not defined, look for both containers and single resources
+        let instancePredicates = [];
+        if (isContainer === true || isContainer === undefined) instancePredicates.push('solid:instanceContainer');
+        if (isContainer === false || isContainer === undefined) instancePredicates.push('solid:instance');
+
         const results = await ctx.call('triplestore.query', {
           query: `
             PREFIX solid: <http://www.w3.org/ns/solid/terms#>
-            SELECT ?containerUri
+            SELECT ?uri
             WHERE {
               VALUES ?typeIndexUri { ${typeIndexUris.map(uri => `<${uri}>`).join(' ')} }
+              VALUES ?instancePredicate { ${instancePredicates.join(' ')} }
               GRAPH ?typeIndexUri {
                 ?typeRegistrationUri a solid:TypeRegistration .
                 ?typeRegistrationUri solid:forClass <${expandedType}> .
-                ?typeRegistrationUri solid:instanceContainer ?containerUri
+                ?typeRegistrationUri ?instancePredicate ?uri
               }
             }
           `,
@@ -171,7 +183,7 @@ const TypeIndexService = {
           dataset: isWebId(webId) ? getDatasetFromUri(webId) : undefined
         });
 
-        return results.map((r: any) => r.containerUri.value);
+        return results.map((r: any) => r.uri.value);
       }
     }
   },
@@ -180,20 +192,47 @@ const TypeIndexService = {
       async handler(ctx) {
         const { containerUri, options, webId } = ctx.params;
 
-        const serviceName = `${options.typeIndex === 'private' ? 'private' : 'public'}-type-index`;
+        if (options) {
+          const serviceName = `${options.typeIndex === 'private' ? 'private' : 'public'}-type-index`;
 
-        await this.broker.waitForServices([serviceName]);
-        await ctx.call(`${serviceName}.waitForCreation`, { webId });
+          await this.broker.waitForServices([serviceName]);
+          await ctx.call(`${serviceName}.waitForCreation`, { webId });
 
-        await this.actions.register(
-          {
-            types: arrayOf(options?.acceptedTypes),
-            containerUri,
-            webId,
-            isPrivate: options.typeIndex === 'private'
-          },
-          { parentCtx: ctx }
-        );
+          await this.actions.register(
+            {
+              types: arrayOf(options?.acceptedTypes),
+              uri: containerUri,
+              webId,
+              isContainer: true,
+              isPrivate: options.typeIndex === 'private'
+            },
+            { parentCtx: ctx }
+          );
+        }
+      }
+    },
+    'ldp.resource.created': {
+      async handler(ctx) {
+        const { resourceUri, options, webId } = ctx.params;
+
+        // When a controlled resource is created, we pass the registration as a parameter
+        if (options) {
+          const serviceName = `${options.typeIndex === 'private' ? 'private' : 'public'}-type-index`;
+
+          await this.broker.waitForServices([serviceName]);
+          await ctx.call(`${serviceName}.waitForCreation`, { webId });
+
+          await this.actions.register(
+            {
+              types: arrayOf(options?.acceptedTypes),
+              uri: resourceUri,
+              webId,
+              isContainer: false,
+              isPrivate: options.typeIndex === 'private'
+            },
+            { parentCtx: ctx }
+          );
+        }
       }
     }
   }

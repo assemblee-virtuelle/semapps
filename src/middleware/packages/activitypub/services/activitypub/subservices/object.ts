@@ -60,10 +60,11 @@ const ObjectService = {
 
             const types = arrayOf(activity.object['@type'] || activity.object.type);
 
-            const [containerUri] = await ctx.call('type-index.getContainersUris', {
+            const [containerUri] = (await ctx.call('type-index.getUris', {
               type: types[0],
+              isContainer: true,
               webId: actorUri
-            });
+            })) as string[];
 
             if (!containerUri)
               throw new Error(

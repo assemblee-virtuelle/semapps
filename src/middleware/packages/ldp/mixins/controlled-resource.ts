@@ -8,13 +8,33 @@ const ControlledResourceMixin = {
     slug: null,
     initialValue: {},
     permissions: {},
-    controlledActions: {}
+    controlledActions: {},
+    typeIndex: 'public'
   },
-  dependencies: ['ldp', 'triplestore.named-graph', 'webacl.resource'],
+  dependencies: ['ldp'],
   async started() {
-    if (!this.settings.podProvider) {
-      await this.actions.create({});
+    const { initialValue, controlledActions, typeIndex } = this.settings;
+
+    this.registration = {
+      name: this.name,
+      acceptedTypes: getType(initialValue),
+      isContainer: false,
+      controlledActions: {
+        get: `${this.name}.get`,
+        patch: `${this.name}.patch`,
+        ...controlledActions
+      },
+      typeIndex
+    };
+
+    const podProvider = await this.broker.call('ldp.getSetting', { key: 'podProvider' });
+    if (!podProvider) {
+      // Do not await to avoid a circular dependency (for the public/private type indexes)
+      this.actions.create({});
     }
+
+    // Do not await to avoid a circular dependency (for the public/private type indexes)
+    this.broker.call('ldp.registry.register', this.registration);
   },
   actions: {
     create: {
@@ -33,19 +53,13 @@ const ControlledResourceMixin = {
             slug: allowSlugs ? this.settings.slug : undefined
           });
 
+          // We pass the registration as a parameter so that the TypeIndexService can get them back in the ldp.resource.created event
           await ctx.call('ldp.resource.create', {
             resourceUri,
             resource: { '@id': resourceUri, ...resource },
+            options: this.registration,
             webId: 'system'
           });
-
-          if (this.settings.permissions) {
-            await ctx.call('webacl.resource.addRights', {
-              resourceUri,
-              additionalRights: this.settings.permissions,
-              webId: 'system'
-            });
-          }
 
           return resourceUri;
         }

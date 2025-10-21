@@ -1,7 +1,7 @@
 import { ServiceSchema } from 'moleculer';
 import { arrayOf, delay, getParentContainerUri } from '../utils.ts';
 
-const Schema = {
+const ControlledContainerMixin = {
   settings: {
     path: null,
     acceptedTypes: null,
@@ -11,8 +11,6 @@ const Schema = {
     readOnly: false,
     excludeFromMirror: false,
     activateTombstones: true,
-    podsContainer: false,
-    podProvider: false,
     typeIndex: undefined
   },
   dependencies: ['ldp'],
@@ -22,6 +20,7 @@ const Schema = {
     await this.broker.call('ldp.registry.register', {
       path,
       name: this.name,
+      isContainer: true,
       controlledActions: {
         post: `${this.name}.post`,
         list: `${this.name}.list`,
@@ -168,4 +167,4 @@ const Schema = {
   }
 } satisfies Partial<ServiceSchema>;
 
-export default Schema;
+export default ControlledContainerMixin;
