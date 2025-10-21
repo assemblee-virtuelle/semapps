@@ -1,7 +1,11 @@
+import { Registration } from '../../types.ts';
+
 const Schema = {
   readOnly: false,
+  isContainer: true,
   excludeFromMirror: false,
-  permissions: (webId: any) => {
+  typeIndex: 'public',
+  permissions: webId => {
     switch (webId) {
       case 'anon':
         return {
@@ -32,7 +36,7 @@ const Schema = {
         };
     }
   },
-  newResourcesPermissions: (webId: any) => {
+  newResourcesPermissions: webId => {
     switch (webId) {
       case 'anon':
         return {
@@ -65,6 +69,6 @@ const Schema = {
     }
   },
   controlledActions: {}
-};
+} as Partial<Registration>;
 
 export default Schema;

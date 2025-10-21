@@ -15,10 +15,11 @@ const Schema = {
     contentType: {
       type: 'string',
       optional: true
-    }
+    },
+    registration: { type: 'object', optional: true }
   },
   async handler(ctx) {
-    let { resource, resourceUri, contentType } = ctx.params;
+    let { resource, resourceUri, contentType, registration } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (contentType && contentType !== MIME_TYPES.JSON)
@@ -26,11 +27,6 @@ const Schema = {
 
     if (await ctx.call('ldp.remote.isRemote', { resourceUri }))
       throw new MoleculerError('Remote resources cannot be created', 403, 'FORBIDDEN');
-
-    const { controlledActions } = {
-      ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
-      ...ctx.params
-    };
 
     const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId: 'system' });
     if (resourceExist) {
@@ -52,7 +48,7 @@ const Schema = {
       graphName: resourceUri
     });
 
-    // TODO See if using controlledAction is still necessary now blank nodes are automatically detected
+    const { controlledActions } = registration || (await ctx.call('ldp.registry.getByUri', { resourceUri }));
     const newData = await ctx.call(
       (controlledActions && controlledActions.get) || 'ldp.resource.get',
       {
@@ -66,10 +62,10 @@ const Schema = {
       resourceUri,
       newData,
       webId,
-      dataset: ctx.meta.dataset
+      dataset: ctx.meta.dataset,
+      registration
     };
 
-    // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
     if (!ctx.meta.skipEmitEvent) {
       ctx.emit('ldp.resource.created', returnValues, { meta: { webId: null, dataset: null } });
     }

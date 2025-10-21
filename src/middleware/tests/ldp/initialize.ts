@@ -1,8 +1,8 @@
-import { ServiceBroker, ServiceSchema } from 'moleculer';
+import { ServiceBroker } from 'moleculer';
 import fs from 'fs';
 import path, { join as pathJoin } from 'path';
 import { CoreService } from '@semapps/core';
-import { pair, petr } from '@semapps/ontologies';
+import { as, pair, petr, solid, vcard } from '@semapps/ontologies';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { AuthLocalService } from '@semapps/auth';
 import { ControlledContainerMixin } from '@semapps/ldp';
@@ -47,7 +47,7 @@ const containers = [
   }
 ];
 
-const initialize = async () => {
+const initialize = async (allowSlugs = true) => {
   await dropDataset(CONFIG.MAIN_DATASET);
 
   const uploadsPath = pathJoin(__dirname, '../uploads');
@@ -66,8 +66,8 @@ const initialize = async () => {
     }
   });
 
-  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "core"; settin... Remove this comment to see the full error message
   broker.createService({
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "core"; settin... Remove this comment to see the full error message
     mixins: [CoreService],
     settings: {
       baseUrl: CONFIG.HOME_URL,
@@ -79,14 +79,15 @@ const initialize = async () => {
         mainDataset: CONFIG.MAIN_DATASET,
         secure: false // TODO Remove when we move to Fuseki 5
       },
-      containers,
-      ontologies: [pair, petr],
+      containers: [],
+      ontologies: [as, pair, petr, solid, vcard],
       activitypub: false,
       mirror: false,
       void: false,
       webfinger: false,
-      webid: {
-        path: '/users'
+      webid: false,
+      ldp: {
+        allowSlugs
       }
     }
   });
@@ -121,8 +122,6 @@ const initialize = async () => {
       }
     }
   });
-
-  await broker.start();
 
   return broker;
 };

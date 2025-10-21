@@ -1,10 +1,10 @@
 import { ActionSchema } from 'moleculer';
 
-const Schema = {
+const ListAction = {
   visibility: 'public',
   handler() {
-    return this.registeredContainers;
+    return this.registrations;
   }
 } satisfies ActionSchema;
 
-export default Schema;
+export default ListAction;

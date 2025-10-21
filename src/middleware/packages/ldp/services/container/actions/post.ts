@@ -30,14 +30,10 @@ const Schema = {
     webId: {
       type: 'string',
       optional: true
-    },
-    forcedResourceUri: {
-      type: 'string',
-      optional: true
     }
   },
   async handler(ctx) {
-    let { resource, containerUri, slug, contentType, file, forcedResourceUri } = ctx.params;
+    let { resource, containerUri, slug, contentType, file } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     let isContainer = false;
     let expandedResource;
@@ -84,12 +80,10 @@ const Schema = {
       );
     }
 
-    // The forcedResourceUri param allows Moleculer service to bypass URI generation
-    // It is used by ActivityStreams collections to provide URIs like {actorUri}/inbox
-    // TODO Use UUIDs for containers and collections https://github.com/assemblee-virtuelle/semapps/issues/1266
-    const resourceUri =
-      forcedResourceUri || (await ctx.call('ldp.resource.generateId', { containerUri, slug, isContainer }));
-    await ctx.call('triplestore.named-graph.create', { uri: resourceUri });
+    const resourceUri = await ctx.call('triplestore.named-graph.create', {
+      baseUrl: await this.getBaseUrl(ctx),
+      slug: this.settings.allowSlugs ? slug : undefined
+    });
 
     // We must add this first, otherwise side effects will not find the container of the created resource
     // But this create race conditions, especially when testing, since uncreated resources are linked to containers
@@ -148,7 +142,6 @@ const Schema = {
       throw e;
     }
 
-    // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
     if (!ctx.meta.skipEmitEvent) {
       ctx.emit(
         'ldp.container.attached',

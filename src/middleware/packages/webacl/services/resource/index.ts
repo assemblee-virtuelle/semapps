@@ -61,7 +61,6 @@ const WebaclResourceSchema = {
     getRights: getRights.action,
     hasRights: hasRights.action,
     isPublic: isPublic.action,
-    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
     getUsersWithReadRights: getUsersWithReadRights.action,
     refreshContainersRights: refreshContainersRights.action,
     removeRights: removeRights.action,

@@ -1,18 +1,16 @@
-import { SingleResourceContainerMixin } from '@semapps/ldp';
+import { ControlledResourceMixin } from '@semapps/ldp';
 import { pim } from '@semapps/ontologies';
 import rdf from '@rdfjs/data-model';
 import { ServiceSchema } from 'moleculer';
 
 const SolidPreferencesFileSchema = {
   name: 'solid-preferences-file' as const,
-  mixins: [SingleResourceContainerMixin],
+  mixins: [ControlledResourceMixin],
   settings: {
-    acceptedTypes: ['pim:ConfigurationFile'],
-    permissions: {},
-    newResourcesPermissions: {},
-    excludeFromMirror: true,
-    activateTombstones: false,
-    podProvider: true
+    initialValue: {
+      type: 'pim:ConfigurationFile'
+    },
+    permissions: {}
   },
   dependencies: ['ontologies'],
   async started() {
@@ -20,7 +18,7 @@ const SolidPreferencesFileSchema = {
   },
   hooks: {
     after: {
-      async post(ctx, res) {
+      async create(ctx, res) {
         await ctx.call('ldp.resource.patch', {
           resourceUri: ctx.params.webId,
           triplesToAdd: [

@@ -71,8 +71,7 @@ const CollectionsRegistryService = {
             },
             contentType: MIME_TYPES.JSON,
             webId: this.settings.podProvider ? getWebIdFromUri(objectUri) : 'system',
-            permissions, // Handled by the WebAclMiddleware, if present
-            forcedResourceUri: path ? collectionUri : undefined // Bypass the automatic URI generation
+            permissions // Handled by the WebAclMiddleware, if present
           });
 
           // Attach it to the object
@@ -123,7 +122,7 @@ const CollectionsRegistryService = {
 
           for (let dataset of datasets) {
             // Find all containers where we want to attach this collection
-            const containers = await ctx.call('ldp.registry.getByType', { type: collection.attachToTypes, dataset });
+            const containers = await ctx.call('ldp.registry.getByTypes', { types: collection.attachToTypes, dataset });
             for (const container of Object.values(containers)) {
               // @ts-expect-error TS(18046): 'container' is of type 'unknown'.
               const containerUri = urlJoin(this.settings.baseUri, container.fullPath);

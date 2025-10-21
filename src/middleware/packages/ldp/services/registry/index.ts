@@ -1,11 +1,11 @@
-import urlJoin from 'url-join';
 import { ServiceSchema } from 'moleculer';
-import getByTypeAction from './actions/getByType.ts';
-import getByUriAction from './actions/getByUri.ts';
-import getUriAction from './actions/getUri.ts';
-import listAction from './actions/list.ts';
-import registerAction from './actions/register.ts';
+import GetByTypesAction from './actions/getByTypes.ts';
+import GetByUriAction from './actions/getByUri.ts';
+import GetUriAction from './actions/getUri.ts';
+import ListAction from './actions/list.ts';
+import RegisterAction from './actions/register.ts';
 import defaultOptions from './defaultOptions.ts';
+import { Registration } from '../../types.ts';
 
 const LdpRegistrySchema = {
   name: 'ldp.registry' as const,
@@ -13,18 +13,19 @@ const LdpRegistrySchema = {
     baseUrl: null,
     containers: [],
     defaultOptions,
+    allowSlugs: true,
     podProvider: false
   },
   dependencies: ['ldp.container', 'api'],
   actions: {
-    getByType: getByTypeAction,
-    getByUri: getByUriAction,
-    getUri: getUriAction,
-    list: listAction,
-    register: registerAction
+    getByTypes: GetByTypesAction,
+    getByUri: GetByUriAction,
+    getUri: GetUriAction,
+    list: ListAction,
+    register: RegisterAction
   },
   async started() {
-    this.registeredContainers = {};
+    this.registrations = {} as { [name: string]: Registration };
     if (this.settings.podProvider) {
       // The auth.account service is a dependency only in POD provider config
       await this.broker.waitForServices(['auth.account']);
@@ -36,30 +37,66 @@ const LdpRegistrySchema = {
       await this.actions.register(container);
     }
   },
+  methods: {
+    async createContainer(registration: Registration, webId) {
+      try {
+        this.logger.info(`Creating container ${registration.name}...`);
+
+        const baseUrl = this.settings.podProvider
+          ? await this.broker.call('solid-storage.getUrl', { webId })
+          : this.settings.baseUrl;
+
+        const containerUri = await this.broker.call('triplestore.named-graph.create', {
+          baseUrl,
+          slug: this.settings.allowSlugs ? registration.path : undefined
+        });
+
+        await this.broker.call('ldp.container.createAndAttach', {
+          containerUri,
+          registration,
+          webId
+        });
+
+        return containerUri;
+      } catch (error) {
+        this.logger.warn(`Could not create container ${registration.name}...`);
+      }
+    }
+    // async createResource(registration: Registration, webId) {
+    //   try {
+    //     this.logger.info(`Creating resource ${registration.name}...`);
+
+    //     const baseUrl = this.settings.podProvider
+    //       ? await this.broker.call('solid-storage.getUrl', { webId })
+    //       : this.settings.baseUrl;
+
+    //     const resourceUri = await this.broker.call('triplestore.named-graph.create', {
+    //       baseUrl,
+    //       slug: this.settings.allowSlugs ? registration.path : undefined
+    //     });
+
+    //     await this.broker.call('ldp.resource.create', {
+    //       resourceUri,
+    //       resource: { '@id': resourceUri, '@type': registration.acceptedTypes },
+    //       permissions: registration.permissions,
+    //       webId: 'system'
+    //     });
+    //   } catch (error) {
+    //     this.logger.warn(`Could not create resource ${registration.name}...`);
+    //   }
+    // }
+  },
   events: {
     'auth.registered': {
       async handler(ctx) {
-        const { webId, accountData } = ctx.params;
-        // We want to add user's containers only in Pod provider config
-
+        const { webId } = ctx.params;
         if (this.settings.podProvider) {
-          const storageUrl: string = await ctx.call('solid-storage.getUrl', { webId });
-
-          const registeredContainers = await this.actions.list({ dataset: accountData.username }, { parentCtx: ctx });
-
-          // Go through each registered container.
-          for (const options of Object.values(registeredContainers)) {
-            try {
-              this.logger.info('Trying to register container', options.path);
-              await ctx.call('ldp.container.createAndAttach', {
-                containerUri: urlJoin(storageUrl, options.path),
-                options,
-                webId
-              });
-              this.logger.info('SUCCESS FOR PATH', options.path);
-            } catch (error) {
-              // pass
-            }
+          for (const registration of Object.values(this.registrations as { [name: string]: Registration })) {
+            if (registration.isContainer) {
+              await this.createContainer(registration, webId);
+            } /*else {
+              await this.createResource(registration, webId);
+            }*/
           }
         }
       }

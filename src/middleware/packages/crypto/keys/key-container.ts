@@ -42,6 +42,7 @@ const KeysContainerSchema = {
       };
     },
     excludeFromMirror: true,
+    typeIndex: 'private',
     // Disallow PATCH & PUT, to prevent keys from being overwritten
     controlledActions: {
       get: 'keys.container.get', // Returns key object with context and type required by Multikey spec.

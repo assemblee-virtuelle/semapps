@@ -45,6 +45,8 @@ const isURL = (value: any) => (typeof value === 'string' || value instanceof Str
 const isURI = (value: any) =>
   (typeof value === 'string' || value instanceof String) && (value.startsWith('http') || value.startsWith('urn:'));
 
+const isWebId = (value: any) => value !== 'system' && value !== 'anon' && isURL(value);
+
 const buildFiltersQuery = (filters: any) => {
   let query = '';
   if (filters) {
@@ -176,6 +178,7 @@ export {
   buildFiltersQuery,
   isURL,
   isURI,
+  isWebId,
   isObject,
   getSlugFromUri,
   getContainerFromUri,

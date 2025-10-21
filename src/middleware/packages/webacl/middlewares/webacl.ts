@@ -15,26 +15,6 @@ const modifyActions = [
 
 const tripleStoreActions = ['triplestore.insert', 'triplestore.query', 'triplestore.update', 'triplestore.dropAll'];
 
-const addRightsToNewResource = async (ctx: any, resourceUri: any, webId: any) => {
-  const { newResourcesPermissions } = await ctx.call('ldp.registry.getByUri', { resourceUri });
-  const newRights =
-    typeof newResourcesPermissions === 'function' ? newResourcesPermissions(webId, ctx) : newResourcesPermissions;
-
-  await ctx.call(
-    'webacl.resource.addRights',
-    {
-      webId: 'system',
-      resourceUri,
-      newRights
-    },
-    {
-      meta: {
-        skipObjectsWatcher: true
-      }
-    }
-  );
-};
-
 const addRightsToNewUser = async (ctx: any, userUri: any) => {
   // Manually add the permissions for the user resource now that we have its webId
   // First delete the default permissions added by the middleware when we called ldp.resource.create
@@ -93,19 +73,42 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
          */
         switch (action.name) {
           case 'ldp.resource.create': {
+            // On start, resource permissions are passed as parameters because the registry is not up yet
+            let permissions;
+            if (ctx.params.registration) {
+              // Use the permissions param (and not newResourcesPermission) because this is for controlled resources
+              permissions = ctx.params.registration?.permissions || defaultContainerOptions.permissions;
+            } else {
+              const registration = await ctx.call('ldp.registry.getByUri', { resourceUri: ctx.params.resourceUri });
+              permissions = registration?.newResourcesPermissions || defaultContainerOptions.permissions;
+            }
+
             // We must add the permissions before inserting the resource
-            await addRightsToNewResource(ctx, ctx.params.resourceUri, webId);
+            await ctx.call(
+              'webacl.resource.addRights',
+              {
+                webId: 'system',
+                resourceUri: ctx.params.resourceUri,
+                newRights: typeof permissions === 'function' ? permissions(webId, ctx) : permissions
+              },
+              {
+                meta: {
+                  skipObjectsWatcher: true
+                }
+              }
+            );
+
             break;
           }
 
           case 'ldp.container.create': {
             // On start, container permissions are passed as parameters because the registry is not up yet
             let permissions;
-            if (ctx.params.options?.permissions) {
-              permissions = ctx.params.options?.permissions;
+            if (ctx.params.registration) {
+              permissions = ctx.params.registration?.permissions || defaultContainerOptions.permissions;
             } else {
-              const options = await ctx.call('ldp.registry.getByUri', { containerUri: ctx.params.containerUri });
-              permissions = options?.permissions || defaultContainerOptions.permissions;
+              const registration = await ctx.call('ldp.registry.getByUri', { containerUri: ctx.params.containerUri });
+              permissions = registration?.permissions || defaultContainerOptions.permissions;
             }
 
             await ctx.call(

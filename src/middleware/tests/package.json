@@ -21,6 +21,7 @@
     "@semapps/middlewares": "1.2.0",
     "@semapps/mime-types": "1.2.0",
     "@semapps/ontologies": "1.2.0",
+    "@semapps/solid": "1.2.0",
     "@semapps/sync": "1.2.0",
     "@semapps/triplestore": "1.2.0",
     "@semapps/webacl": "1.2.0",

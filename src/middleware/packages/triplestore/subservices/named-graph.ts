@@ -1,5 +1,7 @@
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
 import { v4 as uuidv4 } from 'uuid';
+import createSlug from 'speakingurl';
+import urlJoin from 'url-join';
 import { ServiceSchema } from 'moleculer';
 
 const NamedGraphService = {
@@ -7,15 +9,27 @@ const NamedGraphService = {
   actions: {
     create: {
       async handler(ctx) {
-        // TODO Do not allow to pass the named graph URI on creation
-        let { uri } = ctx.params;
+        let { baseUrl, slug } = ctx.params;
         const dataset = ctx.params.dataset || ctx.meta.dataset;
 
-        if (!uri) uuidv4();
+        // Ensure the slug does not contain special characters
+        if (slug) slug = createSlug(slug, { lang: 'en', custom: { '.': '.', '/': '/' } });
 
-        if (await this.actions.exist({ uri, dataset }, { parentCtx: ctx })) {
-          throw new Error(`Cannot create named graph as it already exists`);
-        }
+        // Find an URI that does not already exists
+        let uri;
+        let counter = 0;
+        do {
+          if (slug) {
+            if (counter > 0) {
+              counter += 1;
+              uri = urlJoin(baseUrl, slug + counter);
+            } else {
+              uri = urlJoin(baseUrl, slug);
+            }
+          } else {
+            uri = urlJoin(baseUrl, uuidv4());
+          }
+        } while (await this.actions.exist({ uri, dataset }, { parentCtx: ctx }));
 
         await ctx.call('triplestore.update', {
           query: `INSERT DATA { GRAPH <${uri}> {} }`,

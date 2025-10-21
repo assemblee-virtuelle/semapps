@@ -1,7 +1,6 @@
 import urlJoin from 'url-join';
 import path from 'path';
-import { arrayOf } from '@semapps/ldp';
-
+import { arrayOf, Registration } from '@semapps/ldp';
 import {
   parseUrl,
   parseHeader,
@@ -12,7 +11,6 @@ import {
   parseFile,
   saveDatasetMeta
 } from '@semapps/middlewares';
-
 import { ServiceSchema } from 'moleculer';
 import { FULL_ACTOR_TYPES } from '../../../constants.ts';
 
@@ -35,12 +33,10 @@ const ApiService = {
       await this.broker.call('api.addRoute', { route: this.getBoxesRoute(path.join(basePath, `/:actorSlug`)) });
     } else {
       // If some actor containers are already registered, add the corresponding API routes
-      const registeredContainers = await this.broker.call('ldp.registry.list');
-      for (const container of Object.values(registeredContainers)) {
-        // @ts-expect-error TS(18046): 'container' is of type 'unknown'.
-        if (arrayOf(container.acceptedTypes).some(type => Object.values(FULL_ACTOR_TYPES).includes(type))) {
+      const registrations: { [name: string]: Registration } = await this.broker.call('ldp.registry.list');
+      for (const registration of Object.values(registrations)) {
+        if (arrayOf(registration.acceptedTypes).some(type => Object.values(FULL_ACTOR_TYPES).includes(type))) {
           await this.broker.call('api.addRoute', {
-            // @ts-expect-error TS(18046): 'container' is of type 'unknown'.
             route: this.getBoxesRoute(path.join(basePath, `${container.fullPath}/:actorSlug`))
           });
         }
@@ -87,8 +83,7 @@ const ApiService = {
   events: {
     'ldp.registry.registered': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'container' does not exist on type 'Optio... Remove this comment to see the full error message
-        const { container } = ctx.params;
+        const { registration } = ctx.params;
         const { pathname: basePath } = new URL(this.settings.baseUri);
         const resourcesWithContainerPath = await this.broker.call('ldp.getSetting', {
           key: 'resourcesWithContainerPath'
@@ -96,10 +91,10 @@ const ApiService = {
         if (
           !this.settings.podProvider &&
           resourcesWithContainerPath &&
-          arrayOf(container.acceptedTypes).some(type => Object.values(FULL_ACTOR_TYPES).includes(type))
+          arrayOf(registration.acceptedTypes).some(type => Object.values(FULL_ACTOR_TYPES).includes(type))
         ) {
           await ctx.call('api.addRoute', {
-            route: this.getBoxesRoute(path.join(basePath, `${container.fullPath}/:actorSlug`))
+            route: this.getBoxesRoute(path.join(basePath, `${registration.fullPath}/:actorSlug`))
           });
         }
       }

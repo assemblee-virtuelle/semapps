@@ -100,25 +100,10 @@ const SynchronizerService = {
 
               // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ matc... Remove this comment to see the full error message
               if (this.settings.attachToLocalContainers) {
-                let containerUri;
-
-                // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ matc... Remove this comment to see the full error message
-                if (this.settings.podProvider) {
-                  // If this is a Pod provider, try to find the container with the type-registrations service
-                  [containerUri] = await ctx.call('type-registrations.findContainersUris', {
-                    type,
-                    webId: recipientUri
-                  });
-                } else {
-                  // Otherwise try to find it with the LdpRegistry
-                  const container = await ctx.call('ldp.registry.getByType', { type });
-                  if (container) {
-                    containerUri = await ctx.call('ldp.registry.getUri', {
-                      path: container.path,
-                      webId: recipientUri
-                    });
-                  }
-                }
+                const containerUri = await ctx.call('ldp.registry.getUri', {
+                  type,
+                  webId: recipientUri
+                });
 
                 if (containerUri) {
                   await ctx.call('ldp.container.attach', { containerUri, resourceUri, webId: recipientUri });
