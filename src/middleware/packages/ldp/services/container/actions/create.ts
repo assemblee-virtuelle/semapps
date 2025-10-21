@@ -6,11 +6,11 @@ const Schema = {
     containerUri: { type: 'string' },
     title: { type: 'string', optional: true },
     description: { type: 'string', optional: true },
-    options: { type: 'object', optional: true },
+    registration: { type: 'object', optional: true },
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
-    const { containerUri, title, description, options } = ctx.params;
+    const { containerUri, title, description, registration } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     await ctx.call('triplestore.insert', {
@@ -24,7 +24,7 @@ const Schema = {
       webId: 'system'
     });
 
-    ctx.emit('ldp.container.created', { containerUri, options, webId });
+    ctx.emit('ldp.container.created', { containerUri, registration, webId });
   }
 } satisfies ActionSchema;
 

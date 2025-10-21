@@ -57,7 +57,7 @@ const ControlledResourceMixin = {
           await ctx.call('ldp.resource.create', {
             resourceUri,
             resource: { '@id': resourceUri, ...resource },
-            options: this.registration,
+            registration: this.registration,
             webId: 'system'
           });
 

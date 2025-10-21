@@ -13,11 +13,11 @@ const Schema = {
     containerUri: { type: 'string' },
     title: { type: 'string', optional: true },
     description: { type: 'string', optional: true },
-    options: { type: 'object', optional: true },
+    registration: { type: 'object', optional: true },
     webId: { type: 'string', optional: true } // Required in Pod provider config
   },
   async handler(ctx) {
-    const { containerUri, title, description, options, webId } = ctx.params;
+    const { containerUri, title, description, registration, webId } = ctx.params;
 
     const exists = await ctx.call('ldp.container.exist', { containerUri });
 
@@ -47,7 +47,7 @@ const Schema = {
         if (!parentExists) {
           // Recursively create the parent containers, without title/description/permissions
           await this.actions.createAndAttach(
-            { containerUri: parentContainerUri, options: { permissions: {} }, webId },
+            { containerUri: parentContainerUri, registration: { permissions: {} }, webId },
             { parentCtx: ctx }
           );
         }
@@ -59,7 +59,7 @@ const Schema = {
           containerUri,
           title,
           description,
-          options,
+          registration,
           webId: this.settings.podProvider ? webId : 'system'
         },
         { parentCtx: ctx }

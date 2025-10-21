@@ -190,21 +190,21 @@ const TypeIndexService = {
   events: {
     'ldp.container.created': {
       async handler(ctx) {
-        const { containerUri, options, webId } = ctx.params;
+        const { containerUri, registration, webId } = ctx.params;
 
-        if (options) {
-          const serviceName = `${options.typeIndex === 'private' ? 'private' : 'public'}-type-index`;
+        if (registration && registration.acceptedTypes) {
+          const serviceName = `${registration.typeIndex === 'private' ? 'private' : 'public'}-type-index`;
 
           await this.broker.waitForServices([serviceName]);
           await ctx.call(`${serviceName}.waitForCreation`, { webId });
 
           await this.actions.register(
             {
-              types: arrayOf(options?.acceptedTypes),
+              types: arrayOf(registration.acceptedTypes),
               uri: containerUri,
               webId,
               isContainer: true,
-              isPrivate: options.typeIndex === 'private'
+              isPrivate: registration.typeIndex === 'private'
             },
             { parentCtx: ctx }
           );
@@ -213,22 +213,22 @@ const TypeIndexService = {
     },
     'ldp.resource.created': {
       async handler(ctx) {
-        const { resourceUri, options, webId } = ctx.params;
+        const { resourceUri, registration, webId } = ctx.params;
 
         // When a controlled resource is created, we pass the registration as a parameter
-        if (options) {
-          const serviceName = `${options.typeIndex === 'private' ? 'private' : 'public'}-type-index`;
+        if (registration && registration.acceptedTypes) {
+          const serviceName = `${registration.typeIndex === 'private' ? 'private' : 'public'}-type-index`;
 
           await this.broker.waitForServices([serviceName]);
           await ctx.call(`${serviceName}.waitForCreation`, { webId });
 
           await this.actions.register(
             {
-              types: arrayOf(options?.acceptedTypes),
+              types: arrayOf(registration.acceptedTypes),
               uri: resourceUri,
               webId,
               isContainer: false,
-              isPrivate: options.typeIndex === 'private'
+              isPrivate: registration.typeIndex === 'private'
             },
             { parentCtx: ctx }
           );

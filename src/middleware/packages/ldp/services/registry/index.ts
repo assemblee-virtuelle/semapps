@@ -53,7 +53,7 @@ const LdpRegistrySchema = {
 
         await this.broker.call('ldp.container.createAndAttach', {
           containerUri,
-          options: registration,
+          registration,
           webId
         });
 

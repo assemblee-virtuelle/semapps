@@ -75,11 +75,12 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
           case 'ldp.resource.create': {
             // On start, resource permissions are passed as parameters because the registry is not up yet
             let permissions;
-            if (ctx.params.options) {
-              permissions = ctx.params.options?.permissions || defaultContainerOptions.permissions;
+            if (ctx.params.registration) {
+              // Use the permissions param (and not newResourcesPermission) because this is for controlled resources
+              permissions = ctx.params.registration?.permissions || defaultContainerOptions.permissions;
             } else {
-              const options = await ctx.call('ldp.registry.getByUri', { resourceUri: ctx.params.resourceUri });
-              permissions = options?.newResourcesPermissions || defaultContainerOptions.permissions;
+              const registration = await ctx.call('ldp.registry.getByUri', { resourceUri: ctx.params.resourceUri });
+              permissions = registration?.newResourcesPermissions || defaultContainerOptions.permissions;
             }
 
             // We must add the permissions before inserting the resource
@@ -103,11 +104,11 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
           case 'ldp.container.create': {
             // On start, container permissions are passed as parameters because the registry is not up yet
             let permissions;
-            if (ctx.params.options) {
-              permissions = ctx.params.options?.permissions || defaultContainerOptions.permissions;
+            if (ctx.params.registration) {
+              permissions = ctx.params.registration?.permissions || defaultContainerOptions.permissions;
             } else {
-              const options = await ctx.call('ldp.registry.getByUri', { containerUri: ctx.params.containerUri });
-              permissions = options?.permissions || defaultContainerOptions.permissions;
+              const registration = await ctx.call('ldp.registry.getByUri', { containerUri: ctx.params.containerUri });
+              permissions = registration?.permissions || defaultContainerOptions.permissions;
             }
 
             await ctx.call(
