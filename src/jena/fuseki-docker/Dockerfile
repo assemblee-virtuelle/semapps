@@ -21,7 +21,7 @@ RUN apk add --update nodejs npm pwgen bash curl ca-certificates procps && rm -rf
 
 MAINTAINER Niko PLP <info@parlepeuple.fr>
 
-ENV JAVA_MX_RAM="4G"
+ENV JAVA_MX_RAM="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75"
 
 # Update below according to https://jena.apache.org/download/ and
 # corresponding *.tar.gz.sha512 from https://www.apache.org/dist/jena/binaries/
