@@ -17,7 +17,7 @@ services:
       - '3030'
     environment:
       ADMIN_PASSWORD: 'admin'
-      JAVA_MX_RAM: '4G'
+      JAVA_MX_RAM: '-XX:+UseContainerSupport -XX:MaxRAMPercentage=75'
 
   fuseki_compact:
     build:
