@@ -4,8 +4,8 @@ var $bkNnK$rdfjsdatamodel = require("@rdfjs/data-model");
 var $bkNnK$sparqljs = require("sparqljs");
 var $bkNnK$cryptojsmd5 = require("crypto-js/md5");
 var $bkNnK$reactadmin = require("react-admin");
-var $bkNnK$urljoin = require("url-join");
 var $bkNnK$jwtdecode = require("jwt-decode");
+var $bkNnK$urljoin = require("url-join");
 var $bkNnK$httplinkheader = require("http-link-header");
 var $bkNnK$changecase = require("change-case");
 var $bkNnK$react = require("react");
@@ -1039,14 +1039,22 @@ var $ceaafb56f75454f0$export$2e2bcd8739ae039 = $ceaafb56f75454f0$var$updateMetho
 
 
 
+
 /*
  * HTTP client used by all calls in data provider and auth provider
  * Do proxy calls if a proxy endpoint is available and the server is different from the auth server
  */ const $341dff85fe619d85$var$httpClient = (dataServers)=>(url, options = {})=>{
         if (!url) throw new Error(`No URL provided on httpClient call`);
+        const token = localStorage.getItem('token');
+        let webId = localStorage.getItem('webId');
+        if (!webId) {
+            const payload = (0, ($parcel$interopDefault($bkNnK$jwtdecode)))(token);
+            webId = payload.webId || payload.webid; // Currently we must deal with both formats
+            localStorage.setItem('webId', webId);
+        }
         const authServerKey = (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)('authServer', dataServers);
         const serverKey = (0, $59a07b932dae8600$export$2e2bcd8739ae039)(url, dataServers);
-        const useProxy = serverKey !== authServerKey && dataServers[authServerKey]?.proxyUrl && dataServers[serverKey]?.noProxy !== true;
+        const useProxy = serverKey !== authServerKey && dataServers[webId]?.proxyUrl && dataServers[serverKey]?.noProxy !== true;
         if (!options.headers) options.headers = new Headers();
         switch(options.method){
             case 'POST':
@@ -1072,19 +1080,16 @@ var $ceaafb56f75454f0$export$2e2bcd8739ae039 = $ceaafb56f75454f0$var$updateMetho
                 else formData.append('body', options.body);
             }
             // Post to proxy endpoint with multipart/form-data format
-            return (0, $bkNnK$reactadmin.fetchUtils).fetchJson(dataServers[authServerKey].proxyUrl, {
+            return (0, $bkNnK$reactadmin.fetchUtils).fetchJson(dataServers[webId].proxyUrl, {
                 method: 'POST',
                 headers: new Headers({
-                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                    Authorization: `Bearer ${token}`
                 }),
                 body: formData
             });
         }
         // Add token if the server is the same as the auth server
-        if (serverKey === authServerKey) {
-            const token = localStorage.getItem('token');
-            if (token) options.headers.set('Authorization', `Bearer ${token}`);
-        }
+        if (token && serverKey === authServerKey) options.headers.set('Authorization', `Bearer ${token}`);
         return (0, $bkNnK$reactadmin.fetchUtils).fetchJson(url, options);
     };
 var $341dff85fe619d85$export$2e2bcd8739ae039 = $341dff85fe619d85$var$httpClient;

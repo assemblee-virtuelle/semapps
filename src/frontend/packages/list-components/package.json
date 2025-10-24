@@ -1,6 +1,6 @@
 {
   "name": "@semapps/list-components",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "React-Admin list components for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -16,7 +16,7 @@
     "watch": "nodemon --ext ts,tsx,js --watch src --exec 'yarn build'"
   },
   "dependencies": {
-    "@semapps/semantic-data-provider": "1.1.4",
+    "@semapps/semantic-data-provider": "1.1.5",
     "react-masonry-css": "^1.0.14"
   },
   "peerDependencies": {

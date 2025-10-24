@@ -4,8 +4,8 @@ import $fj9kP$rdfjsdatamodel, {triple as $fj9kP$triple, variable as $fj9kP$varia
 import {Generator as $fj9kP$Generator} from "sparqljs";
 import $fj9kP$cryptojsmd5 from "crypto-js/md5";
 import {fetchUtils as $fj9kP$fetchUtils, useDataProvider as $fj9kP$useDataProvider, DataProviderContext as $fj9kP$DataProviderContext, useRecordContext as $fj9kP$useRecordContext, useGetList as $fj9kP$useGetList, ArrayInput as $fj9kP$ArrayInput, SimpleFormIterator as $fj9kP$SimpleFormIterator, TextInput as $fj9kP$TextInput} from "react-admin";
-import $fj9kP$urljoin from "url-join";
 import $fj9kP$jwtdecode from "jwt-decode";
+import $fj9kP$urljoin from "url-join";
 import $fj9kP$httplinkheader from "http-link-header";
 import {capitalCase as $fj9kP$capitalCase} from "change-case";
 import $fj9kP$react, {useState as $fj9kP$useState, useEffect as $fj9kP$useEffect, useMemo as $fj9kP$useMemo, useCallback as $fj9kP$useCallback, useContext as $fj9kP$useContext} from "react";
@@ -985,14 +985,22 @@ var $c5031381f4dfc62d$export$2e2bcd8739ae039 = $c5031381f4dfc62d$var$updateMetho
 
 
 
+
 /*
  * HTTP client used by all calls in data provider and auth provider
  * Do proxy calls if a proxy endpoint is available and the server is different from the auth server
  */ const $22b4895a4ca7d626$var$httpClient = (dataServers)=>(url, options = {})=>{
         if (!url) throw new Error(`No URL provided on httpClient call`);
+        const token = localStorage.getItem('token');
+        let webId = localStorage.getItem('webId');
+        if (!webId) {
+            const payload = (0, $fj9kP$jwtdecode)(token);
+            webId = payload.webId || payload.webid; // Currently we must deal with both formats
+            localStorage.setItem('webId', webId);
+        }
         const authServerKey = (0, $8326b88c1a913ca9$export$2e2bcd8739ae039)('authServer', dataServers);
         const serverKey = (0, $47e21ee81eed09a6$export$2e2bcd8739ae039)(url, dataServers);
-        const useProxy = serverKey !== authServerKey && dataServers[authServerKey]?.proxyUrl && dataServers[serverKey]?.noProxy !== true;
+        const useProxy = serverKey !== authServerKey && dataServers[webId]?.proxyUrl && dataServers[serverKey]?.noProxy !== true;
         if (!options.headers) options.headers = new Headers();
         switch(options.method){
             case 'POST':
@@ -1018,19 +1026,16 @@ var $c5031381f4dfc62d$export$2e2bcd8739ae039 = $c5031381f4dfc62d$var$updateMetho
                 else formData.append('body', options.body);
             }
             // Post to proxy endpoint with multipart/form-data format
-            return (0, $fj9kP$fetchUtils).fetchJson(dataServers[authServerKey].proxyUrl, {
+            return (0, $fj9kP$fetchUtils).fetchJson(dataServers[webId].proxyUrl, {
                 method: 'POST',
                 headers: new Headers({
-                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                    Authorization: `Bearer ${token}`
                 }),
                 body: formData
             });
         }
         // Add token if the server is the same as the auth server
-        if (serverKey === authServerKey) {
-            const token = localStorage.getItem('token');
-            if (token) options.headers.set('Authorization', `Bearer ${token}`);
-        }
+        if (token && serverKey === authServerKey) options.headers.set('Authorization', `Bearer ${token}`);
         return (0, $fj9kP$fetchUtils).fetchJson(url, options);
     };
 var $22b4895a4ca7d626$export$2e2bcd8739ae039 = $22b4895a4ca7d626$var$httpClient;
