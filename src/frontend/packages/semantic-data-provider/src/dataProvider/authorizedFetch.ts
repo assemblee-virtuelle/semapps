@@ -1,4 +1,5 @@
 import { fetchUtils } from 'react-admin';
+import jwtDecode from 'jwt-decode';
 import getServerKeyFromUri from './utils/getServerKeyFromUri';
 import getServerKeyFromType from './utils/getServerKeyFromType';
 
@@ -7,13 +8,23 @@ import getServerKeyFromType from './utils/getServerKeyFromType';
  * Do proxy calls if a proxy endpoint is available and the server is different from the auth server
  */
 const httpClient =
-  (dataServers: any) => (url: any, options = {}) => {
+  (dataServers: any) =>
+  (url: any, options = {}) => {
     if (!url) throw new Error(`No URL provided on httpClient call`);
+
+    const token = localStorage.getItem('token');
+    let webId = localStorage.getItem('webId');
+
+    if (token && !webId) {
+      const payload: { [k: string]: string | number } = jwtDecode(token);
+      webId = (payload.webId || payload.webid) as string; // Currently we must deal with both formats
+      localStorage.setItem('webId', webId);
+    }
 
     const authServerKey = getServerKeyFromType('authServer', dataServers);
     const serverKey = getServerKeyFromUri(url, dataServers);
     const useProxy =
-      serverKey !== authServerKey && dataServers[authServerKey]?.proxyUrl && dataServers[serverKey]?.noProxy !== true;
+      serverKey !== authServerKey && webId && dataServers[webId]?.proxyUrl && dataServers[serverKey]?.noProxy !== true;
 
     // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
     if (!options.headers) options.headers = new Headers();
@@ -61,17 +72,17 @@ const httpClient =
       }
 
       // Post to proxy endpoint with multipart/form-data format
-      return fetchUtils.fetchJson(dataServers[authServerKey].proxyUrl, {
+      return fetchUtils.fetchJson(dataServers[webId!].proxyUrl, {
         method: 'POST',
         headers: new Headers({
-          Authorization: `Bearer ${localStorage.getItem('token')}`
+          Authorization: `Bearer ${token}`
         }),
         body: formData
       });
     }
+
     // Add token if the server is the same as the auth server
     if (serverKey === authServerKey) {
-      const token = localStorage.getItem('token');
       // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
       if (token) options.headers.set('Authorization', `Bearer ${token}`);
     }
