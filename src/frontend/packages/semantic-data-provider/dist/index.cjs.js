@@ -1046,15 +1046,18 @@ var $ceaafb56f75454f0$export$2e2bcd8739ae039 = $ceaafb56f75454f0$var$updateMetho
  */ const $341dff85fe619d85$var$httpClient = (dataServers)=>(url, options = {})=>{
         if (!url) throw new Error(`No URL provided on httpClient call`);
         const token = localStorage.getItem('token');
-        let webId = localStorage.getItem('webId');
-        if (!webId) {
-            const payload = (0, ($parcel$interopDefault($bkNnK$jwtdecode)))(token);
-            webId = payload.webId || payload.webid; // Currently we must deal with both formats
-            localStorage.setItem('webId', webId);
+        let webId;
+        if (token) {
+            webId = localStorage.getItem('webId');
+            if (!webId) {
+                const payload = (0, ($parcel$interopDefault($bkNnK$jwtdecode)))(token);
+                webId = payload.webId || payload.webid; // Currently we must deal with both formats
+                localStorage.setItem('webId', webId);
+            }
         }
         const authServerKey = (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)('authServer', dataServers);
         const serverKey = (0, $59a07b932dae8600$export$2e2bcd8739ae039)(url, dataServers);
-        const useProxy = serverKey !== authServerKey && dataServers[webId]?.proxyUrl && dataServers[serverKey]?.noProxy !== true;
+        const useProxy = serverKey !== authServerKey && webId && dataServers[webId]?.proxyUrl && dataServers[serverKey]?.noProxy !== true;
         if (!options.headers) options.headers = new Headers();
         switch(options.method){
             case 'POST':
