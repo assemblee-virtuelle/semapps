@@ -14,7 +14,7 @@ const httpClient =
     const authServerKey = getServerKeyFromType('authServer', dataServers);
     const serverKey = getServerKeyFromUri(url, dataServers);
     const useProxy =
-      serverKey !== authServerKey && dataServers[authServerKey]?.proxyUrl && dataServers[serverKey]?.noProxy !== true;
+      serverKey !== authServerKey && dataServers.user?.proxyUrl && dataServers[serverKey]?.noProxy !== true;
 
     if (!options.headers) options.headers = new Headers();
 
@@ -51,7 +51,7 @@ const httpClient =
       }
 
       // Post to proxy endpoint with multipart/form-data format
-      return fetchUtils.fetchJson(dataServers[authServerKey].proxyUrl, {
+      return fetchUtils.fetchJson(dataServers.user.proxyUrl, {
         method: 'POST',
         headers: new Headers({
           Authorization: `Bearer ${localStorage.getItem('token')}`
