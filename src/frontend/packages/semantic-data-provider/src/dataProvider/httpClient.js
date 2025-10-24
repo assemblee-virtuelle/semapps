@@ -13,18 +13,21 @@ const httpClient =
     if (!url) throw new Error(`No URL provided on httpClient call`);
 
     const token = localStorage.getItem('token');
-    let webId = localStorage.getItem('webId');
+    let webId;
 
-    if (!webId) {
-      const payload = jwtDecode(token);
-      webId = payload.webId || payload.webid; // Currently we must deal with both formats
-      localStorage.setItem('webId', webId);
+    if (token) {
+      webId = localStorage.getItem('webId');
+      if (!webId) {
+        const payload = jwtDecode(token);
+        webId = payload.webId || payload.webid; // Currently we must deal with both formats
+        localStorage.setItem('webId', webId);
+      }
     }
 
     const authServerKey = getServerKeyFromType('authServer', dataServers);
     const serverKey = getServerKeyFromUri(url, dataServers);
     const useProxy =
-      serverKey !== authServerKey && dataServers[webId]?.proxyUrl && dataServers[serverKey]?.noProxy !== true;
+      serverKey !== authServerKey && webId && dataServers[webId]?.proxyUrl && dataServers[serverKey]?.noProxy !== true;
 
     if (!options.headers) options.headers = new Headers();
 
