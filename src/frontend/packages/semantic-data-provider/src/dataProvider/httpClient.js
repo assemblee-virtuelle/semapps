@@ -1,4 +1,5 @@
 import { fetchUtils } from 'react-admin';
+import jwtDecode from 'jwt-decode';
 import getServerKeyFromUri from './utils/getServerKeyFromUri';
 import getServerKeyFromType from './utils/getServerKeyFromType';
 
@@ -11,10 +12,19 @@ const httpClient =
   (url, options = {}) => {
     if (!url) throw new Error(`No URL provided on httpClient call`);
 
+    const token = localStorage.getItem('token');
+    let webId = localStorage.getItem('webId');
+
+    if (!webId) {
+      const payload = jwtDecode(token);
+      webId = payload.webId || payload.webid; // Currently we must deal with both formats
+      localStorage.setItem('webId', webId);
+    }
+
     const authServerKey = getServerKeyFromType('authServer', dataServers);
     const serverKey = getServerKeyFromUri(url, dataServers);
     const useProxy =
-      serverKey !== authServerKey && dataServers[authServerKey]?.proxyUrl && dataServers[serverKey]?.noProxy !== true;
+      serverKey !== authServerKey && dataServers[webId]?.proxyUrl && dataServers[serverKey]?.noProxy !== true;
 
     if (!options.headers) options.headers = new Headers();
 
@@ -51,18 +61,18 @@ const httpClient =
       }
 
       // Post to proxy endpoint with multipart/form-data format
-      return fetchUtils.fetchJson(dataServers[authServerKey].proxyUrl, {
+      return fetchUtils.fetchJson(dataServers[webId].proxyUrl, {
         method: 'POST',
         headers: new Headers({
-          Authorization: `Bearer ${localStorage.getItem('token')}`
+          Authorization: `Bearer ${token}`
         }),
         body: formData
       });
     }
+
     // Add token if the server is the same as the auth server
-    if (serverKey === authServerKey) {
-      const token = localStorage.getItem('token');
-      if (token) options.headers.set('Authorization', `Bearer ${token}`);
+    if (token && serverKey === authServerKey) {
+      options.headers.set('Authorization', `Bearer ${token}`);
     }
     return fetchUtils.fetchJson(url, options);
   };
