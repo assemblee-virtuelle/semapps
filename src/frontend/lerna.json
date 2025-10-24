@@ -4,6 +4,8 @@
   "useNx": true,
   "packages": ["packages/*", "templates/**"],
   "command": {
-    "version": {}
+    "version": {
+      "allowBranch": ["master", "next", "1.1.x"]
+    }
   }
 }
