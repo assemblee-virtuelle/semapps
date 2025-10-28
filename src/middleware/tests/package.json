@@ -36,10 +36,9 @@
     "moleculer": "^0.14.35",
     "moleculer-web": "^0.10.7",
     "node-fetch": "^2.6.6",
-    "rdf-data-model": "^1.0.0",
     "supertest": "^4.0.2",
     "url-join": "^4.0.1",
-    "wait-for-expect": "^3.0.2"
+    "wait-for-expect": "^4.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.28.0",

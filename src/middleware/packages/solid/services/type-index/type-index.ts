@@ -23,7 +23,7 @@ const TypeIndexService = {
       params: {
         types: { type: 'array' },
         uri: { type: 'string' },
-        webId: { type: 'string' },
+        webId: { type: 'string', optional: true },
         isContainer: { type: 'boolean', default: true },
         isPrivate: { type: 'boolean', default: false }
       },
@@ -53,7 +53,7 @@ const TypeIndexService = {
                     rdf.namedNode(type)
                   )
                 ),
-                webId
+                webId: isWebId(webId) ? webId : 'system'
               });
             }
           } else {
@@ -88,7 +88,7 @@ const TypeIndexService = {
                   )
                 )
               ],
-              webId
+              webId: isWebId(webId) ? webId : 'system'
             },
             { parentCtx: ctx }
           );
@@ -106,7 +106,7 @@ const TypeIndexService = {
         webId: { type: 'string', optional: true },
         isPrivate: { type: 'boolean', optional: true }
       },
-      cache: true,
+      // cache: true,
       async handler(ctx) {
         const { uri, webId, isPrivate } = ctx.params;
 
@@ -147,7 +147,7 @@ const TypeIndexService = {
         isContainer: { type: 'boolean', optional: true },
         isPrivate: { type: 'boolean', optional: true }
       },
-      cache: true,
+      // cache: true,
       async handler(ctx) {
         const { type, webId, isContainer, isPrivate } = ctx.params;
 
@@ -188,29 +188,6 @@ const TypeIndexService = {
     }
   },
   events: {
-    'ldp.container.created': {
-      async handler(ctx) {
-        const { containerUri, registration, webId } = ctx.params;
-
-        if (registration && registration.acceptedTypes) {
-          const serviceName = `${registration.typeIndex === 'private' ? 'private' : 'public'}-type-index`;
-
-          await this.broker.waitForServices([serviceName]);
-          await ctx.call(`${serviceName}.waitForCreation`, { webId });
-
-          await this.actions.register(
-            {
-              types: arrayOf(registration.acceptedTypes),
-              uri: containerUri,
-              webId,
-              isContainer: true,
-              isPrivate: registration.typeIndex === 'private'
-            },
-            { parentCtx: ctx }
-          );
-        }
-      }
-    },
     'ldp.resource.created': {
       async handler(ctx) {
         const { resourceUri, registration, webId } = ctx.params;

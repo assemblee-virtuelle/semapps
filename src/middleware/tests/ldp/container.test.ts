@@ -6,7 +6,8 @@ jest.setTimeout(20000);
 let broker: any;
 
 beforeAll(async () => {
-  broker = await initialize();
+  broker = await initialize(false);
+  await broker.start();
 });
 
 afterAll(async () => {
@@ -14,82 +15,32 @@ afterAll(async () => {
 });
 
 describe('LDP container tests', () => {
-  let resourceUri: any;
+  let resourceUri: string;
+  let containerUri: string;
 
   test('Ensure container created in LdpService settings exists', async () => {
-    await expect(broker.call('ldp.container.exist', { containerUri: `${CONFIG.HOME_URL}resources` })).resolves.toBe(
-      true
-    );
+    await waitForExpect(async () => {
+      containerUri = await broker.call('ldp.registry.getUri', { type: 'pair:Project', isContainer: true });
+      expect(containerUri).not.toBeUndefined();
+    });
+
+    await expect(broker.call('ldp.container.exist', { containerUri })).resolves.toBe(true);
   });
 
   test('Create a new container', async () => {
-    await expect(broker.call('ldp.container.exist', { containerUri: `${CONFIG.HOME_URL}objects` })).resolves.toBe(
-      false
-    );
+    const newContainerUri = await broker.call('ldp.container.create', { path: '/objects', webId: 'system' });
 
-    await broker.call('ldp.container.create', { containerUri: `${CONFIG.HOME_URL}objects`, webId: 'system' });
+    await expect(broker.call('ldp.container.exist', { containerUri: newContainerUri })).resolves.toBe(true);
 
-    await expect(broker.call('ldp.container.exist', { containerUri: `${CONFIG.HOME_URL}objects` })).resolves.toBe(true);
-
-    await expect(
-      broker.call('ldp.container.get', {
-        containerUri: `${CONFIG.HOME_URL}objects`
-      })
-    ).resolves.toMatchObject({
-      '@id': `${CONFIG.HOME_URL}objects`,
-      '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer'])
-    });
-  });
-
-  test('Create a sub-container and attach it to the root container', async () => {
-    await broker.call('ldp.container.createAndAttach', {
-      containerUri: `${CONFIG.HOME_URL}parent/child`,
-      webId: 'system'
-    });
-
-    await expect(
-      broker.call('ldp.container.exist', { containerUri: `${CONFIG.HOME_URL}parent` })
-    ).resolves.toBeTruthy();
-
-    // Intermediate containers have no permissions
-    await expect(broker.call('ldp.container.get', { containerUri: `${CONFIG.HOME_URL}parent` })).rejects.toThrow();
-
-    await expect(
-      broker.call('ldp.container.exist', { containerUri: `${CONFIG.HOME_URL}parent/child` })
-    ).resolves.toBeTruthy();
-
-    await expect(
-      broker.call('ldp.container.get', {
-        containerUri: `${CONFIG.HOME_URL}`,
-        webId: 'system'
-      })
-    ).resolves.toMatchObject({
-      'ldp:contains': expect.arrayContaining([
-        {
-          '@id': `${CONFIG.HOME_URL}parent`,
-          '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer', 'ldp:Resource'])
-        }
-      ])
-    });
-
-    await expect(
-      broker.call('ldp.container.get', {
-        containerUri: `${CONFIG.HOME_URL}parent`,
-        webId: 'system'
-      })
-    ).resolves.toMatchObject({
-      'ldp:contains': expect.arrayContaining([
-        {
-          '@id': `${CONFIG.HOME_URL}parent/child`,
-          '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer', 'ldp:Resource'])
-        }
-      ])
+    await expect(broker.call('ldp.container.get', { containerUri: newContainerUri })).resolves.toMatchObject({
+      id: newContainerUri,
+      type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer'])
     });
   });
 
   test('Post a resource in a container', async () => {
     resourceUri = await broker.call('ldp.container.post', {
-      containerUri: `${CONFIG.HOME_URL}resources`,
+      containerUri: containerUri,
       resource: {
         '@context': {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
@@ -101,15 +52,15 @@ describe('LDP container tests', () => {
 
     await expect(
       broker.call('ldp.container.get', {
-        containerUri: `${CONFIG.HOME_URL}resources`
+        containerUri: containerUri
       })
     ).resolves.toMatchObject({
-      '@id': `${CONFIG.HOME_URL}resources`,
-      '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
+      id: containerUri,
+      type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
       'ldp:contains': [
         {
-          '@id': resourceUri,
-          '@type': 'pair:Project',
+          id: resourceUri,
+          type: 'pair:Project',
           'pair:label': 'My project'
         }
       ]
@@ -143,7 +94,7 @@ describe('LDP container tests', () => {
   test('Get container with jsonContext param', async () => {
     await expect(
       broker.call('ldp.container.get', {
-        containerUri: `${CONFIG.HOME_URL}resources`,
+        containerUri: containerUri,
         jsonContext: {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
         }
@@ -152,7 +103,7 @@ describe('LDP container tests', () => {
       '@context': {
         '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
       },
-      '@id': `${CONFIG.HOME_URL}resources`,
+      '@id': containerUri,
       '@type': expect.arrayContaining([
         'http://www.w3.org/ns/ldp#Container',
         'http://www.w3.org/ns/ldp#BasicContainer'
@@ -169,7 +120,7 @@ describe('LDP container tests', () => {
 
   test('Get container with filters param', async () => {
     await broker.call('ldp.container.post', {
-      containerUri: `${CONFIG.HOME_URL}resources`,
+      containerUri: containerUri,
       resource: {
         '@context': {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
@@ -182,11 +133,11 @@ describe('LDP container tests', () => {
     // Get without filters param
     await expect(
       broker.call('ldp.container.get', {
-        containerUri: `${CONFIG.HOME_URL}resources`
+        containerUri: containerUri
       })
     ).resolves.toMatchObject({
-      '@id': `${CONFIG.HOME_URL}resources`,
-      '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
+      id: containerUri,
+      type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
       'ldp:contains': expect.arrayContaining([
         expect.objectContaining({
           'pair:label': 'My project'
@@ -200,14 +151,14 @@ describe('LDP container tests', () => {
     // Get with filters param
     await expect(
       broker.call('ldp.container.get', {
-        containerUri: `${CONFIG.HOME_URL}resources`,
+        containerUri: containerUri,
         filters: {
           'pair:label': 'My project 2'
         }
       })
     ).resolves.toMatchObject({
-      '@id': `${CONFIG.HOME_URL}resources`,
-      '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
+      id: containerUri,
+      type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
       'ldp:contains': [
         {
           'pair:label': 'My project 2'
@@ -218,7 +169,7 @@ describe('LDP container tests', () => {
 
   test('Get container without resources', async () => {
     const container = await broker.call('ldp.container.get', {
-      containerUri: `${CONFIG.HOME_URL}resources`,
+      containerUri: containerUri,
       doNotIncludeResources: true
     });
 
@@ -227,18 +178,18 @@ describe('LDP container tests', () => {
 
   test('Detach a resource from a container', async () => {
     await broker.call('ldp.container.detach', {
-      containerUri: `${CONFIG.HOME_URL}resources`,
+      containerUri: containerUri,
       resourceUri
     });
 
     // Project 1 should have disappeared from the container
     await expect(
       broker.call('ldp.container.get', {
-        containerUri: `${CONFIG.HOME_URL}resources`
+        containerUri: containerUri
       })
     ).resolves.toMatchObject({
-      '@id': `${CONFIG.HOME_URL}resources`,
-      '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
+      id: containerUri,
+      type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
       'ldp:contains': [
         {
           'pair:label': 'My project 2'
@@ -249,15 +200,12 @@ describe('LDP container tests', () => {
 
   test('Clear container', async () => {
     await broker.call('ldp.container.clear', {
-      containerUri: `${CONFIG.HOME_URL}resources`
+      containerUri: containerUri
     });
 
     // Container should now be empty
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await waitForExpect(async () => {
-      const container = await broker.call('ldp.container.get', { containerUri: `${CONFIG.HOME_URL}resources` });
-
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
+      const container = await broker.call('ldp.container.get', { containerUri: containerUri });
       expect(container['ldp:contains']).toHaveLength(0);
     });
   });

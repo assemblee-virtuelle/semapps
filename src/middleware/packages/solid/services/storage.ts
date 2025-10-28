@@ -1,56 +1,59 @@
 import urlJoin from 'url-join';
-import rdf from '@rdfjs/data-model';
 import { pim } from '@semapps/ontologies';
 import { ServiceSchema } from 'moleculer';
+import { getWebIdFromUri } from '@semapps/ldp';
 
 const SolidStorageSchema = {
   name: 'solid-storage' as const,
   settings: {
-    baseUrl: null,
-    pathName: 'data'
+    baseUrl: null
   },
-  dependencies: ['ontologies', 'ldp.registry'],
+  dependencies: ['ontologies'],
   async started() {
     if (!this.settings.baseUrl) throw new Error('The baseUrl setting of the solid-storage service is required');
 
     await this.broker.call('ontologies.register', pim);
-
-    // Register root container for the storage (/:username/data/)
-    // Do not await or we will have a circular dependency with the LdpRegistryService
-    this.broker.call('ldp.registry.register', {
-      path: '/',
-      excludeFromMirror: true,
-      permissions: {},
-      newResourcesPermissions: {}
-    });
   },
   actions: {
     create: {
+      params: {
+        username: { type: 'string' }
+      },
       async handler(ctx) {
         const { username } = ctx.params;
-        if (!username) throw new Error('Cannot create Solid storage without a username');
 
         await ctx.call('triplestore.dataset.create', {
           dataset: username,
           secure: false // TODO Remove when we switch to Fuseki 5
         });
 
-        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
+        const webId = urlJoin(this.settings.baseUrl, username);
+        const storageUrl = await ctx.call('ldp.container.create', { path: '/data', webId });
+
         ctx.meta.dataset = username;
 
-        // Create the storage root container so that the LdpRegistryService can create the default containers
-        const storageRootUri = urlJoin(this.settings.baseUrl, username, this.settings.pathName);
-        await ctx.call('ldp.container.create', { containerUri: storageRootUri, webId: 'system' });
-
-        return storageRootUri;
+        return storageUrl;
       }
     },
 
-    getUrl: {
+    getBaseUrl: {
+      params: {
+        webId: { type: 'string' }
+      },
       async handler(ctx) {
         const { webId } = ctx.params;
-        // This is faster, but later we should use the 'pim:storage' property of the webId
-        return urlJoin(webId, this.settings.pathName);
+        return getWebIdFromUri(webId);
+      }
+    },
+
+    getRootContainerUri: {
+      params: {
+        webId: { type: 'string' }
+      },
+      async handler(ctx) {
+        const { webId } = ctx.params;
+        const webIdData = await ctx.call('ldp.resource.get', { resourceUri: webId });
+        return webIdData?.['pim:storage'];
       }
     }
   },
@@ -58,29 +61,12 @@ const SolidStorageSchema = {
     'auth.registered': {
       async handler(ctx) {
         const { webId } = ctx.params;
-        this.logger.info('Storage event registration entered. WebId', webId);
 
-        const storageUrl = await this.actions.getUrl({ webId }, { parentCtx: ctx });
-        this.logger.info('Storage URL is', storageUrl, 'Patching to webId doc');
-
-        // Attach the storage URL to the webId
-        await ctx.call('ldp.resource.patch', {
-          resourceUri: webId,
-          triplesToAdd: [
-            rdf.quad(
-              rdf.namedNode(webId),
-              rdf.namedNode('http://www.w3.org/ns/pim/space#storage'),
-              rdf.namedNode(storageUrl)
-            )
-          ],
-          webId: 'system'
-        });
-
-        this.logger.info('Storage URL patched. Now adding rights to store');
+        const rootContainerUri = await this.actions.getRootContainerUri({ webId }, { parentCtx: ctx });
 
         // Give full rights to user on his storage
         await ctx.call('webacl.resource.addRights', {
-          resourceUri: storageUrl,
+          resourceUri: rootContainerUri,
           additionalRights: {
             user: {
               uri: webId,
@@ -99,8 +85,19 @@ const SolidStorageSchema = {
           },
           webId: 'system'
         });
+      }
+    },
+    'ldp.container.created': {
+      async handler(ctx) {
+        const { containerUri, webId } = ctx.params;
 
-        this.logger.info('ACL rights added to ', storageUrl);
+        const rootContainerUri = await this.actions.getRootContainerUri({ webId }, { parentCtx: ctx });
+
+        await ctx.call('ldp.container.attach', {
+          containerUri: rootContainerUri,
+          resourceUri: containerUri,
+          webId: 'system'
+        });
       }
     }
   }

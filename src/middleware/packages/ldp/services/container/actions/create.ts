@@ -3,15 +3,24 @@ import { ActionSchema } from 'moleculer';
 const Schema = {
   visibility: 'public',
   params: {
-    containerUri: { type: 'string' },
+    path: { type: 'string', optional: true },
     title: { type: 'string', optional: true },
     description: { type: 'string', optional: true },
     registration: { type: 'object', optional: true },
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
-    const { containerUri, title, description, registration } = ctx.params;
+    let { path, title, description, registration } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
+
+    const baseUrl = this.settings.podProvider
+      ? await this.broker.call('solid-storage.getBaseUrl', { webId })
+      : this.settings.baseUrl;
+
+    const containerUri = await this.broker.call('triplestore.named-graph.create', {
+      baseUrl,
+      slug: this.settings.allowSlugs ? path || registration.path : undefined
+    });
 
     await ctx.call('triplestore.insert', {
       resource: {
@@ -25,6 +34,8 @@ const Schema = {
     });
 
     ctx.emit('ldp.container.created', { containerUri, registration, webId });
+
+    return containerUri;
   }
 } satisfies ActionSchema;
 

@@ -40,3 +40,11 @@ export interface Registration {
   controlledActions?: ControlledActions;
   typeIndex?: 'private' | 'public';
 }
+
+export interface LdpRegistryServiceSettings {
+  baseUrl?: string;
+  containers: Registration[];
+  defaultOptions: Partial<Registration>;
+  allowSlugs: boolean;
+  podProvider: boolean;
+}

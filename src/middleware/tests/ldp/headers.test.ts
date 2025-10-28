@@ -1,14 +1,46 @@
 import urlJoin from 'url-join';
 import { parse as parseLinkHeader } from 'http-link-header';
+import { ServiceBroker } from 'moleculer';
+import waitForExpect from 'wait-for-expect';
+import { ControlledContainerMixin } from '@semapps/ldp';
 import { fetchServer } from '../utils.ts';
 import initialize from './initialize.ts';
 import * as CONFIG from '../config.ts';
 
 jest.setTimeout(20000);
-let broker: any;
+let broker: ServiceBroker;
 
 beforeAll(async () => {
-  broker = await initialize();
+  broker = await initialize(false);
+
+  broker.createService({
+    name: 'event',
+    mixins: [ControlledContainerMixin],
+    settings: {
+      path: '/events',
+      acceptedTypes: ['pair:Event'],
+      permissions: {
+        anon: {
+          read: true,
+          write: true
+        }
+      }
+    },
+    actions: {
+      getHeaderLinks: {
+        handler() {
+          return [
+            {
+              uri: 'http://foo.bar',
+              rel: 'http://foo.baz'
+            }
+          ];
+        }
+      }
+    }
+  });
+
+  await broker.start();
 });
 
 afterAll(async () => {
@@ -16,9 +48,16 @@ afterAll(async () => {
 });
 
 describe('Headers handling of LDP server', () => {
+  let placesContainerUri: string;
+  let eventsContainerUri: string;
+
   test('Get headers', async () => {
-    // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-    const { headers: postHeaders } = await fetchServer(urlJoin(CONFIG.HOME_URL, 'places'), {
+    await waitForExpect(async () => {
+      placesContainerUri = await broker.call('ldp.registry.getUri', { type: 'pair:Place', isContainer: true });
+      expect(placesContainerUri).not.toBeUndefined();
+    });
+
+    const { headers: postHeaders } = await fetchServer(placesContainerUri, {
       method: 'POST',
       body: {
         '@type': 'pair:Place',
@@ -30,25 +69,26 @@ describe('Headers handling of LDP server', () => {
     // @ts-expect-error TS(2345): Argument of type 'string | null' is not assignable... Remove this comment to see the full error message
     const resourcePath = new URL(resourceUri).pathname;
 
-    const { headers } = await fetchServer(resourceUri, {
-      method: 'HEAD'
-    });
+    const { headers } = await fetchServer(resourceUri, { method: 'HEAD' });
 
     // @ts-expect-error TS(2345): Argument of type 'string | null' is not assignable... Remove this comment to see the full error message
     const parsedLinks = parseLinkHeader(headers.get('link'));
 
     expect(parsedLinks.refs).toMatchObject([
       {
-        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-        uri: urlJoin(CONFIG.HOME_URL, '_acl', resourcePath),
+        uri: urlJoin(CONFIG.HOME_URL!, '_acl', resourcePath),
         rel: 'acl'
       }
     ]);
   });
 
   test('Get container-specific headers', async () => {
-    // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-    const { headers: postHeaders } = await fetchServer(urlJoin(CONFIG.HOME_URL, 'pair', 'event'), {
+    await waitForExpect(async () => {
+      eventsContainerUri = await broker.call('ldp.registry.getUri', { type: 'pair:Event', isContainer: true });
+      expect(eventsContainerUri).not.toBeUndefined();
+    });
+
+    const { headers: postHeaders } = await fetchServer(eventsContainerUri, {
       method: 'POST',
       body: {
         '@type': 'pair:Event',
@@ -60,17 +100,13 @@ describe('Headers handling of LDP server', () => {
     // @ts-expect-error TS(2345): Argument of type 'string | null' is not assignable... Remove this comment to see the full error message
     const resourcePath = new URL(resourceUri).pathname;
 
-    const { headers } = await fetchServer(resourceUri, {
-      method: 'HEAD'
-    });
+    const { headers } = await fetchServer(resourceUri, { method: 'HEAD' });
 
     // @ts-expect-error TS(2345): Argument of type 'string | null' is not assignable... Remove this comment to see the full error message
     const parsedLinks = parseLinkHeader(headers.get('link'));
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(parsedLinks.refs).toMatchObject([
-      // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-      { uri: urlJoin(CONFIG.HOME_URL, '_acl', resourcePath), rel: 'acl' },
+      { uri: urlJoin(CONFIG.HOME_URL!, '_acl', resourcePath), rel: 'acl' },
       { uri: 'http://foo.bar', rel: 'http://foo.baz' }
     ]);
   });

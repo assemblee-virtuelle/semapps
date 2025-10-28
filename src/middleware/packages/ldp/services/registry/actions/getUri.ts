@@ -12,14 +12,9 @@ const GetUriAction = {
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
-    const { type, isContainer, typeIndex, webId } = ctx.params;
+    const { type, isContainer, webId } = ctx.params;
 
-    const [uri] = (await ctx.call('type-index.getUris', {
-      type,
-      isContainer,
-      isPrivate: typeIndex === 'private',
-      webId
-    })) as string[];
+    const [uri] = (await ctx.call('type-index.getUris', { type, isContainer, webId })) as string[];
 
     return uri;
   }

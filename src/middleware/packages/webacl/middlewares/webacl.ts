@@ -101,31 +101,31 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
             break;
           }
 
-          case 'ldp.container.create': {
-            // On start, container permissions are passed as parameters because the registry is not up yet
-            let permissions;
-            if (ctx.params.registration) {
-              permissions = ctx.params.registration?.permissions || defaultContainerOptions.permissions;
-            } else {
-              const registration = await ctx.call('ldp.registry.getByUri', { containerUri: ctx.params.containerUri });
-              permissions = registration?.permissions || defaultContainerOptions.permissions;
-            }
+          // case 'ldp.container.create': {
+          //   // On start, container permissions are passed as parameters because the registry is not up yet
+          //   let permissions;
+          //   if (ctx.params.registration) {
+          //     permissions = ctx.params.registration?.permissions || defaultContainerOptions.permissions;
+          //   } else {
+          //     const registration = await ctx.call('ldp.registry.getByUri', { containerUri: ctx.params.containerUri });
+          //     permissions = registration?.permissions || defaultContainerOptions.permissions;
+          //   }
 
-            await ctx.call(
-              'webacl.resource.addRights',
-              {
-                resourceUri: ctx.params.containerUri,
-                newRights: typeof permissions === 'function' ? permissions(webId, ctx) : permissions,
-                webId: 'system'
-              },
-              {
-                meta: {
-                  skipObjectsWatcher: true
-                }
-              }
-            );
-            break;
-          }
+          //   await ctx.call(
+          //     'webacl.resource.addRights',
+          //     {
+          //       resourceUri: ctx.params.containerUri,
+          //       newRights: typeof permissions === 'function' ? permissions(webId, ctx) : permissions,
+          //       webId: 'system'
+          //     },
+          //     {
+          //       meta: {
+          //         skipObjectsWatcher: true
+          //       }
+          //     }
+          //   );
+          //   break;
+          // }
 
           default:
             break;
@@ -152,17 +152,17 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
                 }
               );
               break;
-            case 'ldp.container.create':
-              await ctx.call(
-                'webacl.resource.deleteAllRights',
-                { resourceUri: ctx.params.containerUri },
-                {
-                  meta: {
-                    skipObjectsWatcher: true
-                  }
-                }
-              );
-              break;
+            // case 'ldp.container.create':
+            //   await ctx.call(
+            //     'webacl.resource.deleteAllRights',
+            //     { resourceUri: ctx.params.containerUri },
+            //     {
+            //       meta: {
+            //         skipObjectsWatcher: true
+            //       }
+            //     }
+            //   );
+            //   break;
             default:
               break;
           }
@@ -173,6 +173,34 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
          * AFTER HOOKS
          */
         switch (action.name) {
+          case 'ldp.container.create': {
+            const containerUri = actionReturnValue;
+
+            // On start, container permissions are passed as parameters because the registry is not up yet
+            let permissions;
+            if (ctx.params.registration) {
+              permissions = ctx.params.registration?.permissions || defaultContainerOptions.permissions;
+            } else {
+              const registration = await ctx.call('ldp.registry.getByUri', { containerUri });
+              permissions = registration?.permissions || defaultContainerOptions.permissions;
+            }
+
+            await ctx.call(
+              'webacl.resource.addRights',
+              {
+                resourceUri: containerUri,
+                newRights: typeof permissions === 'function' ? permissions(webId, ctx) : permissions,
+                webId: 'system'
+              },
+              {
+                meta: {
+                  skipObjectsWatcher: true
+                }
+              }
+            );
+            break;
+          }
+
           case 'ldp.resource.delete':
             await ctx.call(
               'webacl.resource.deleteAllRights',

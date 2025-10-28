@@ -1,5 +1,4 @@
-// @ts-expect-error TS(7016): Could not find a declaration file for module 'rdf-... Remove this comment to see the full error message
-import { triple, namedNode } from 'rdf-data-model';
+import rdf from '@rdfjs/data-model';
 import waitForExpect from 'wait-for-expect';
 import initialize from './initialize.ts';
 
@@ -61,10 +60,10 @@ describe('An inference is added between server1 et server2', () => {
     await server1.call('ldp.resource.patch', {
       resourceUri: resourceUri1,
       triplesToAdd: [
-        triple(
-          namedNode(resourceUri1),
-          namedNode('http://virtual-assembly.org/ontologies/pair#hasInspired'),
-          namedNode(resourceUri2)
+        rdf.quad(
+          rdf.namedNode(resourceUri1),
+          rdf.namedNode('http://virtual-assembly.org/ontologies/pair#hasInspired'),
+          rdf.namedNode(resourceUri2)
         )
       ]
     });
@@ -104,7 +103,6 @@ describe('An inference is added between server1 et server2', () => {
     await server2.call('ldp.resource.delete', { resourceUri: resourceUri2 });
 
     await waitForExpect(async () => {
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(server1.call('ldp.resource.get', { resourceUri: resourceUri1 })).resolves.not.toHaveProperty(
         'pair:hasPart'
       );

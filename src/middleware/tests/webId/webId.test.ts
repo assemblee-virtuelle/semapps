@@ -1,5 +1,5 @@
 import path from 'path';
-import { ServiceBroker, ServiceSchema } from 'moleculer';
+import { ServiceBroker } from 'moleculer';
 import { CoreService } from '@semapps/core';
 import { fileURLToPath } from 'url';
 import * as CONFIG from '../config.ts';
@@ -64,7 +64,6 @@ describe('WebId user creation', () => {
     };
 
     const webId = await broker.call('webid.createWebId', profileData);
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(webId).toBe(`${CONFIG.HOME_URL}users/${profileData.nick}`);
   }, 20000);
 });

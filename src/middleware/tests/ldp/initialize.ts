@@ -5,7 +5,6 @@ import { CoreService } from '@semapps/core';
 import { as, pair, petr, solid, vcard } from '@semapps/ontologies';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { AuthLocalService } from '@semapps/auth';
-import { ControlledContainerMixin } from '@semapps/ldp';
 import { fileURLToPath } from 'url';
 import * as CONFIG from '../config.ts';
 import { dropDataset } from '../utils.ts';
@@ -23,31 +22,27 @@ const permissions = {
 const containers = [
   {
     path: '/resources',
-    permissions
-  },
-  {
-    path: '/resources2',
-    permissions
-  },
-  {
-    path: '/organizations',
+    acceptedTypes: ['pair:Project'],
     permissions
   },
   {
     path: '/places',
+    acceptedTypes: ['pair:Place'],
     permissions
   },
   {
     path: '/themes',
+    acceptedTypes: ['pair:Theme'],
     permissions
   },
   {
     path: '/files',
+    acceptedTypes: ['semapps:File'],
     permissions
   }
 ];
 
-const initialize = async (allowSlugs = true) => {
+const initialize = async (allowSlugs = true): Promise<ServiceBroker> => {
   await dropDataset(CONFIG.MAIN_DATASET);
 
   const uploadsPath = pathJoin(__dirname, '../uploads');
@@ -79,7 +74,7 @@ const initialize = async (allowSlugs = true) => {
         mainDataset: CONFIG.MAIN_DATASET,
         secure: false // TODO Remove when we move to Fuseki 5
       },
-      containers: [],
+      containers,
       ontologies: [as, pair, petr, solid, vcard],
       activitypub: false,
       mirror: false,
@@ -99,27 +94,6 @@ const initialize = async (allowSlugs = true) => {
       baseUrl: CONFIG.HOME_URL,
       jwtPath: path.resolve(__dirname, '../jwt'),
       accountsDataset: CONFIG.SETTINGS_DATASET
-    }
-  });
-
-  broker.createService({
-    name: 'event' as const,
-    mixins: [ControlledContainerMixin],
-    settings: {
-      acceptedTypes: ['pair:Event'],
-      permissions
-    },
-    actions: {
-      getHeaderLinks: {
-        handler() {
-          return [
-            {
-              uri: 'http://foo.bar',
-              rel: 'http://foo.baz'
-            }
-          ];
-        }
-      }
     }
   });
 

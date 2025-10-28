@@ -27,7 +27,7 @@ const Schema = {
     if ((!this.settings.resourcesWithContainerPath || !containerUri) && !isContainer) {
       // Use the root container URI
       containerUri = this.settings.podProvider
-        ? await ctx.call('solid-storage.getUrl', { webId: urlJoin(this.settings.baseUrl, ctx.meta.dataset) })
+        ? await ctx.call('solid-storage.getBaseUrl', { webId: urlJoin(this.settings.baseUrl, ctx.meta.dataset) })
         : this.settings.baseUrl;
     }
 

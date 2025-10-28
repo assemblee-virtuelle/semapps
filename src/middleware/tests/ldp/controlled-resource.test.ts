@@ -1,9 +1,10 @@
 import { ControlledResourceMixin } from '@semapps/ldp';
+import { ServiceBroker } from 'moleculer';
 import initialize from './initialize.ts';
 import { fetchServer } from '../utils.ts';
 
 jest.setTimeout(50000);
-let broker: any;
+let broker: ServiceBroker;
 
 describe.each([false, true])('ControlledResourceMixin with allowSlugs: %s', (allowSlugs: boolean) => {
   beforeAll(async () => {

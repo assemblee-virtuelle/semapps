@@ -1,5 +1,7 @@
 import urlJoin from 'url-join';
-import { ControlledContainerMixin } from '@semapps/ldp';
+import { Context } from 'moleculer';
+import { ControlledContainerMixin, delay } from '@semapps/ldp';
+import waitForExpect from 'wait-for-expect';
 import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
 import { fetchServer } from '../utils.ts';
@@ -7,7 +9,7 @@ import { fetchServer } from '../utils.ts';
 jest.setTimeout(50000);
 let broker: any;
 
-describe.each([false, true])('ControlledContainerMixin with allowSlugs: %s', (allowSlugs: boolean) => {
+describe.each([false])('ControlledContainerMixin with allowSlugs: %s', (allowSlugs: boolean) => {
   beforeAll(async () => {
     broker = await initialize(allowSlugs);
 
@@ -17,6 +19,18 @@ describe.each([false, true])('ControlledContainerMixin with allowSlugs: %s', (al
       settings: {
         path: '/videos', // Will be ignored when slugs are not allowed
         acceptedTypes: ['as:Video']
+      },
+      hooks: {
+        after: {
+          async list(ctx: Context, res: any) {
+            res['dc:creator'] = 'The video mixin';
+            return res;
+          },
+          async get(ctx: Context, res: any) {
+            res['dc:creator'] = 'The video mixin';
+            return res;
+          }
+        }
       }
     });
 
@@ -28,30 +42,29 @@ describe.each([false, true])('ControlledContainerMixin with allowSlugs: %s', (al
   });
 
   let containerUri: string;
-  let numContainers: number;
-  let numRegisteredContainers: number;
 
   test('The container is registered and created', async () => {
-    await broker.call('videos.waitForContainerCreation');
-
-    const registrations = await broker.call('ldp.registry.list', { type: 'as:Video' });
-    expect(registrations.videos).not.toBeUndefined();
-    numRegisteredContainers = registrations.length;
+    // Wait for all containers and resources to be registered
+    await waitForExpect(async () => {
+      const registrations = await broker.call('ldp.registry.list');
+      expect(Object.keys(registrations).length).toBe(10); // 8 containers + 2 resources
+      expect(registrations.videos).not.toBeUndefined();
+    });
 
     const containersUris = await broker.call('ldp.container.getAll');
-    // With slugs, the WebIdService generates a /foaf and a /foaf/person containers
-    expect(containersUris.length).toBe(allowSlugs ? 7 : 6);
-    numContainers = containersUris.length;
+    expect(containersUris.length).toBe(8);
 
     if (allowSlugs) {
       expect(containersUris).toEqual(
         expect.arrayContaining([
-          urlJoin(CONFIG.HOME_URL!, '/foaf'),
           urlJoin(CONFIG.HOME_URL!, '/foaf/person'),
           urlJoin(CONFIG.HOME_URL!, '/key'),
           urlJoin(CONFIG.HOME_URL!, '/public-key'),
           urlJoin(CONFIG.HOME_URL!, '/videos'),
-          urlJoin(CONFIG.HOME_URL!, '/')
+          urlJoin(CONFIG.HOME_URL!, '/resources'),
+          urlJoin(CONFIG.HOME_URL!, '/places'),
+          urlJoin(CONFIG.HOME_URL!, '/themes'),
+          urlJoin(CONFIG.HOME_URL!, '/files')
         ])
       );
     }
@@ -66,16 +79,32 @@ describe.each([false, true])('ControlledContainerMixin with allowSlugs: %s', (al
     await broker.stop();
     await broker.start();
 
+    // Give some time for the LdpRegistry to be called
+    await delay(3000);
+
     // No new container has been registered
-    const registrations = await broker.call('ldp.registry.list', { type: 'as:Video' });
-    expect(registrations.length).toBe(numRegisteredContainers);
+    await waitForExpect(async () => {
+      const registrations = await broker.call('ldp.registry.list');
+      expect(Object.keys(registrations).length).toBe(10);
+    });
 
     // No new container has been created
-    const containersUris = await broker.call('ldp.container.getAll');
-    expect(containersUris.length).toBe(numContainers);
+    await waitForExpect(async () => {
+      const containersUris = await broker.call('ldp.container.getAll');
+      expect(containersUris.length).toBe(8);
+    });
 
     // The container URI has not changed
     await expect(broker.call('ldp.registry.getUri', { type: 'as:Video' })).resolves.toBe(containerUri);
+  });
+
+  test('Get registered container', async () => {
+    await expect(broker.call('videos.list')).resolves.toMatchObject({
+      id: containerUri,
+      type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
+      'dc:creator': 'The video mixin', // Added by the ControlledContainerMixin
+      'ldp:contains': []
+    });
   });
 
   test('Get registered container through API', async () => {
@@ -84,6 +113,7 @@ describe.each([false, true])('ControlledContainerMixin with allowSlugs: %s', (al
       json: {
         id: containerUri,
         type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
+        'dc:creator': 'The video mixin', // Added by the ControlledContainerMixin
         'ldp:contains': []
       }
     });

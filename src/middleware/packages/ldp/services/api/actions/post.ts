@@ -24,6 +24,7 @@ export default async function post(this: any, ctx: any) {
           input: ctx.meta.rawBody,
           options: { format: contentType }
         });
+        delete resource.id;
       }
 
       resourceUri = await ctx.call(controlledActions.post || 'ldp.container.post', {

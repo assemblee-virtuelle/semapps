@@ -5,12 +5,13 @@ import GetUriAction from './actions/getUri.ts';
 import ListAction from './actions/list.ts';
 import RegisterAction from './actions/register.ts';
 import defaultOptions from './defaultOptions.ts';
-import { Registration } from '../../types.ts';
+import { arrayOf } from '../../utils.ts';
+import { Registration, LdpRegistryServiceSettings } from '../../types.ts';
 
-const LdpRegistrySchema = {
+const LdpRegistryService = {
   name: 'ldp.registry' as const,
   settings: {
-    baseUrl: null,
+    baseUrl: undefined,
     containers: [],
     defaultOptions,
     allowSlugs: true,
@@ -30,61 +31,15 @@ const LdpRegistrySchema = {
       // The auth.account service is a dependency only in POD provider config
       await this.broker.waitForServices(['auth.account']);
     }
-    for (let container of this.settings.containers) {
-      // Ensure backward compatibility
-      if (typeof container === 'string') container = { path: container };
-      // We await each container registration so they happen in order (root container first)git
-      await this.actions.register(container);
-    }
+    this.registerAll();
   },
   methods: {
-    async createContainer(registration: Registration, webId) {
-      try {
-        this.logger.info(`Creating container ${registration.name}...`);
-
-        const baseUrl = this.settings.podProvider
-          ? await this.broker.call('solid-storage.getUrl', { webId })
-          : this.settings.baseUrl;
-
-        const containerUri = await this.broker.call('triplestore.named-graph.create', {
-          baseUrl,
-          slug: this.settings.allowSlugs ? registration.path : undefined
-        });
-
-        await this.broker.call('ldp.container.createAndAttach', {
-          containerUri,
-          registration,
-          webId
-        });
-
-        return containerUri;
-      } catch (error) {
-        this.logger.warn(`Could not create container ${registration.name}...`);
+    async registerAll() {
+      for (let container of this.settings.containers) {
+        // We await each registration so they happen in order
+        await this.actions.register(container);
       }
     }
-    // async createResource(registration: Registration, webId) {
-    //   try {
-    //     this.logger.info(`Creating resource ${registration.name}...`);
-
-    //     const baseUrl = this.settings.podProvider
-    //       ? await this.broker.call('solid-storage.getUrl', { webId })
-    //       : this.settings.baseUrl;
-
-    //     const resourceUri = await this.broker.call('triplestore.named-graph.create', {
-    //       baseUrl,
-    //       slug: this.settings.allowSlugs ? registration.path : undefined
-    //     });
-
-    //     await this.broker.call('ldp.resource.create', {
-    //       resourceUri,
-    //       resource: { '@id': resourceUri, '@type': registration.acceptedTypes },
-    //       permissions: registration.permissions,
-    //       webId: 'system'
-    //     });
-    //   } catch (error) {
-    //     this.logger.warn(`Could not create resource ${registration.name}...`);
-    //   }
-    // }
   },
   events: {
     'auth.registered': {
@@ -92,24 +47,34 @@ const LdpRegistrySchema = {
         const { webId } = ctx.params;
         if (this.settings.podProvider) {
           for (const registration of Object.values(this.registrations as { [name: string]: Registration })) {
+            // Controlled resources are created by the mixin
             if (registration.isContainer) {
-              await this.createContainer(registration, webId);
-            } /*else {
-              await this.createResource(registration, webId);
-            }*/
+              const containerUri = await ctx.call('ldp.container.create', {
+                registration,
+                webId
+              });
+
+              await ctx.call('type-index.register', {
+                types: arrayOf(registration.acceptedTypes),
+                uri: containerUri,
+                webId,
+                isContainer: true,
+                isPrivate: registration.typeIndex === 'private'
+              });
+            }
           }
         }
       }
     }
   }
-} satisfies ServiceSchema;
+} satisfies ServiceSchema<LdpRegistryServiceSettings>;
 
-export default LdpRegistrySchema;
+export default LdpRegistryService;
 
 declare global {
   export namespace Moleculer {
     export interface AllServices {
-      [LdpRegistrySchema.name]: typeof LdpRegistrySchema;
+      [LdpRegistryService.name]: typeof LdpRegistryService;
     }
   }
 }

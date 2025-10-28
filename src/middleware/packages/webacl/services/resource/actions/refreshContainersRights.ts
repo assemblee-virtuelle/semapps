@@ -12,7 +12,7 @@ export const action = {
     for (const { permissions, path } of Object.values(containers)) {
       if (permissions) {
         const baseUrl = this.settings.podProvider
-          ? await ctx.call('solid-storage.getUrl', { webId })
+          ? await ctx.call('solid-storage.getBaseUrl', { webId })
           : this.settings.baseUrl;
 
         const containerUri = urlJoin(baseUrl, path);

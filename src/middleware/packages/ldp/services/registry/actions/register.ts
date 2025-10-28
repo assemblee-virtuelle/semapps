@@ -10,7 +10,6 @@ const RegisterAction = {
     path: { type: 'string', optional: true },
     accept: { type: 'string', optional: true },
     acceptedTypes: { type: 'multi', rules: [{ type: 'array' }, { type: 'string' }], optional: true },
-    shapeTreeUri: { type: 'string', optional: true },
     excludeFromMirror: { type: 'boolean', optional: true },
     activateTombstones: { type: 'boolean', default: true },
     permissions: { type: 'multi', rules: [{ type: 'object' }, { type: 'function' }], optional: true },
@@ -21,22 +20,6 @@ const RegisterAction = {
   },
   async handler(ctx) {
     let registration: Registration = { ...this.settings.defaultOptions, ...ctx.params };
-
-    // Find the type from the shape tree if necessary
-    if (!registration.acceptedTypes && registration.shapeTreeUri) {
-      const services = await this.broker.call('$node.services');
-      if (!services.some((s: any) => s.name === 'shape-trees') && !services.some((s: any) => s.name === 'shacl'))
-        throw new Error('If you use shapeTreeUri in container options, you need the shape-trees and shacl service');
-
-      try {
-        const shapeUri = await ctx.call('shape-trees.getShapeUri', { resourceUri: registration.shapeTreeUri });
-        const [shapeType] = await ctx.call('shacl.getTypes', { resourceUri: shapeUri });
-        registration.acceptedTypes = shapeType;
-      } catch (e) {
-        // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
-        throw new Error(`Could not get type from shape ${registration.shapeTreeUri}. Error: ${e.message}`);
-      }
-    }
 
     registration.acceptedTypes =
       registration.acceptedTypes &&
@@ -63,7 +46,14 @@ const RegisterAction = {
       if (uri) {
         this.logger.info(`Container for type ${registration.acceptedTypes} already exists, skipping...`);
       } else {
-        await this.createContainer(registration);
+        const containerUri = await ctx.call('ldp.container.create', { registration });
+
+        await ctx.call('type-index.register', {
+          types: arrayOf(registration.acceptedTypes),
+          uri: containerUri,
+          isContainer: true,
+          isPrivate: registration.typeIndex === 'private'
+        });
       }
     }
 

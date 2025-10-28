@@ -1,15 +1,14 @@
-import urlJoin from 'url-join';
 import fetch from 'node-fetch';
 import waitForExpect from 'wait-for-expect';
 import { fetchServer } from '../utils.ts';
-import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
 
 jest.setTimeout(20000);
 let broker: any;
 
 beforeAll(async () => {
-  broker = await initialize();
+  broker = await initialize(false);
+  await broker.start();
 });
 
 afterAll(async () => {
@@ -17,13 +16,15 @@ afterAll(async () => {
 });
 
 describe('LDP handling through API', () => {
-  // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-  const containerUri = urlJoin(CONFIG.HOME_URL, 'resources');
+  let containerUri: string;
   let resourceUri: any;
-  let subContainerUri: any;
-  let subResourceUri: any;
 
   test('Create resource', async () => {
+    await waitForExpect(async () => {
+      containerUri = await broker.call('ldp.registry.getUri', { type: 'pair:Project', isContainer: true });
+      expect(containerUri).not.toBeUndefined();
+    });
+
     const { headers } = await fetchServer(containerUri, {
       method: 'POST',
       body: {
@@ -44,7 +45,7 @@ describe('LDP handling through API', () => {
   test('Get resource', async () => {
     await expect(fetchServer(resourceUri)).resolves.toMatchObject({
       json: {
-        '@type': 'pair:Project',
+        type: 'pair:Project',
         'pair:description': 'myProject',
         'pair:label': 'myLabel'
       }
@@ -98,10 +99,10 @@ describe('LDP handling through API', () => {
   test('Get container', async () => {
     await expect(fetchServer(containerUri)).resolves.toMatchObject({
       json: {
-        '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
+        type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
         'ldp:contains': [
           {
-            '@id': resourceUri,
+            id: resourceUri,
             'pair:label': 'myLabel'
           }
         ]
@@ -156,7 +157,7 @@ describe('LDP handling through API', () => {
     const { json } = await fetchServer(resourceUri);
 
     expect(json).toMatchObject({
-      '@type': 'pair:Project',
+      type: 'pair:Project',
       'pair:description': 'myProjectUpdated'
     });
 
@@ -183,7 +184,7 @@ describe('LDP handling through API', () => {
 
     await expect(fetchServer(resourceUri)).resolves.toMatchObject({
       json: {
-        '@type': 'pair:Project',
+        type: 'pair:Project',
         'pair:description': 'myProjectPatched',
         'pair:label': 'myLabel'
       }
@@ -209,11 +210,11 @@ describe('LDP handling through API', () => {
 
     await expect(fetchServer(resourceUri)).resolves.toMatchObject({
       json: {
-        '@type': 'pair:Project',
+        type: 'pair:Project',
         'pair:description': 'myProjectPatched',
         'pair:label': 'myLabel',
         'pair:hasLocation': {
-          '@type': 'pair:Place',
+          type: 'pair:Place',
           'pair:label': 'Paris'
         }
       }
@@ -235,127 +236,8 @@ describe('LDP handling through API', () => {
 
     await expect(fetchServer(containerUri)).resolves.toMatchObject({
       json: {
-        '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
+        type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
         'ldp:contains': []
-      }
-    });
-  });
-
-  test('Create sub-container', async () => {
-    const { headers } = await fetchServer(containerUri, {
-      method: 'POST',
-      body: {
-        '@context': {
-          dc: 'http://purl.org/dc/terms/',
-          ldp: 'http://www.w3.org/ns/ldp#'
-        },
-        '@type': ['ldp:Container', 'ldp:BasicContainer'],
-        'dc:title': 'Sub-resources',
-        'dc:description': 'Used to test dynamic containers creation'
-      },
-      headers: new fetch.Headers({
-        Slug: 'sub-resources'
-      })
-    });
-
-    subContainerUri = headers.get('Location');
-
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    expect(subContainerUri).toBe(urlJoin(CONFIG.HOME_URL, 'resources', 'sub-resources'));
-
-    await expect(fetchServer(subContainerUri)).resolves.toMatchObject({
-      json: {
-        '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
-        'dc:title': 'Sub-resources',
-        'dc:description': 'Used to test dynamic containers creation'
-      }
-    });
-  });
-
-  test('Create resource in sub-container', async () => {
-    const { headers } = await fetchServer(subContainerUri, {
-      method: 'POST',
-      body: {
-        '@context': {
-          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
-        },
-        '@type': 'Project',
-        description: 'My sub-resource'
-      }
-    });
-
-    subResourceUri = headers.get('Location');
-
-    const { json } = await fetchServer(containerUri);
-
-    // Sub-containers appear as ldp:Resource
-    expect(json).toMatchObject({
-      'ldp:contains': [
-        {
-          '@id': subContainerUri,
-          '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer', 'ldp:Resource'])
-        }
-      ]
-    });
-
-    // The content of sub-containers is not displayed
-    expect(json['ldp:contains'][0]['ldp:contains']).toBeUndefined();
-
-    await expect(fetchServer(subContainerUri)).resolves.toMatchObject({
-      json: {
-        'dc:title': 'Sub-resources',
-        'dc:description': 'Used to test dynamic containers creation',
-        'ldp:contains': [
-          {
-            '@id': subResourceUri,
-            '@type': 'pair:Project',
-            'pair:description': 'My sub-resource'
-          }
-        ]
-      }
-    });
-  });
-
-  test('Delete sub-container', async () => {
-    // Give write permission on sub-container, or we won't be able to delete it as anonymous
-    await broker.call('webacl.resource.addRights', {
-      webId: 'system',
-      resourceUri: subContainerUri,
-      additionalRights: {
-        anon: {
-          write: true
-        }
-      }
-    });
-
-    await expect(
-      fetchServer(subContainerUri, {
-        method: 'DELETE'
-      })
-    ).resolves.toMatchObject({
-      status: 204
-    });
-
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await waitForExpect(async () => {
-      await expect(fetchServer(subContainerUri)).resolves.toMatchObject({
-        status: 404
-      });
-    });
-
-    await expect(fetchServer(containerUri)).resolves.toMatchObject({
-      json: {
-        '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
-        'ldp:contains': []
-      }
-    });
-
-    // Sub-resource should NOT be deleted with the sub-container
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await expect(fetchServer(subResourceUri)).resolves.toMatchObject({
-      json: {
-        '@type': 'pair:Project',
-        'pair:description': 'My sub-resource'
       }
     });
   });

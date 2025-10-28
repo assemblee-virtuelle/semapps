@@ -17,13 +17,13 @@ const GetByUriAction = {
       throw new Error('The param containerUri or resourceUri must be provided to ldp.registry.getByUri');
     }
 
-    let types = await ctx.call('type-index.getTypes', {
+    let types: string[] = await ctx.call('type-index.getTypes', {
       uri: containerUri || resourceUri,
       webId: this.settings.podProvider ? getWebIdFromUri(containerUri) : undefined
     });
 
     // If this a resource, check if its container is registered
-    if (!types && resourceUri) {
+    if (types.length === 0 && resourceUri) {
       [containerUri] = await ctx.call('ldp.resource.getContainers', { resourceUri });
 
       if (containerUri) {
