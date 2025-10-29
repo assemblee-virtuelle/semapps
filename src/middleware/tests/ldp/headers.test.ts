@@ -52,6 +52,7 @@ describe('Headers handling of LDP server', () => {
   let eventsContainerUri: string;
 
   test('Get headers', async () => {
+    // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
       placesContainerUri = await broker.call('ldp.registry.getUri', { type: 'pair:Place', isContainer: true });
       expect(placesContainerUri).not.toBeUndefined();
@@ -83,6 +84,7 @@ describe('Headers handling of LDP server', () => {
   });
 
   test('Get container-specific headers', async () => {
+    // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
       eventsContainerUri = await broker.call('ldp.registry.getUri', { type: 'pair:Event', isContainer: true });
       expect(eventsContainerUri).not.toBeUndefined();

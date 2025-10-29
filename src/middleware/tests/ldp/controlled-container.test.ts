@@ -1,6 +1,6 @@
 import urlJoin from 'url-join';
 import { Context } from 'moleculer';
-import { ControlledContainerMixin, delay } from '@semapps/ldp';
+import { ControlledContainerMixin, delay, Registration } from '@semapps/ldp';
 import waitForExpect from 'wait-for-expect';
 import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
@@ -45,10 +45,11 @@ describe.each([false])('ControlledContainerMixin with allowSlugs: %s', (allowSlu
 
   test('The container is registered and created', async () => {
     // Wait for all containers and resources to be registered
+    // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
-      const registrations = await broker.call('ldp.registry.list');
-      expect(Object.keys(registrations).length).toBe(10); // 8 containers + 2 resources
-      expect(registrations.videos).not.toBeUndefined();
+      const registrations: Registration[] = await broker.call('ldp.registry.list');
+      expect(registrations).toBe(10); // 8 containers + 2 resources
+      expect(registrations.find(r => r.name === 'videos')).not.toBeUndefined();
     });
 
     const containersUris = await broker.call('ldp.container.getAll');
@@ -83,12 +84,14 @@ describe.each([false])('ControlledContainerMixin with allowSlugs: %s', (allowSlu
     await delay(3000);
 
     // No new container has been registered
+    // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
-      const registrations = await broker.call('ldp.registry.list');
-      expect(Object.keys(registrations).length).toBe(10);
+      const registrations: Registration[] = await broker.call('ldp.registry.list');
+      expect(registrations.length).toBe(10);
     });
 
     // No new container has been created
+    // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
       const containersUris = await broker.call('ldp.container.getAll');
       expect(containersUris.length).toBe(8);

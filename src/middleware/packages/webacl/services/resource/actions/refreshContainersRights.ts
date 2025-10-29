@@ -7,9 +7,9 @@ export const action = {
   async handler(ctx) {
     const { webId } = ctx.params;
 
-    const containers: { [name: string]: Registration } = await ctx.call('ldp.registry.list');
+    const registrations: Registration[] = await ctx.call('ldp.registry.list');
 
-    for (const { permissions, path } of Object.values(containers)) {
+    for (const { permissions, path } of registrations) {
       if (permissions) {
         const baseUrl = this.settings.podProvider
           ? await ctx.call('solid-storage.getBaseUrl', { webId })

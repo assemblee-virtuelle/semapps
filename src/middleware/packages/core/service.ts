@@ -1,26 +1,19 @@
 import path from 'path';
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import ApiGatewayService, { Errors as E } from 'moleculer-web';
-import { ActivityPubService, FULL_ACTOR_TYPES } from '@semapps/activitypub';
+import { ActivityPubService } from '@semapps/activitypub';
 import { JsonLdService } from '@semapps/jsonld';
 import { LdpService, DocumentTaggerMixin } from '@semapps/ldp';
 import { OntologiesService } from '@semapps/ontologies';
 import { SparqlEndpointService } from '@semapps/sparql-endpoint';
 import { TripleStoreService } from '@semapps/triplestore';
-import { TypeIndexService } from '@semapps/solid';
-import { VoidService } from '@semapps/void';
+import { TypeIndexService, StorageService } from '@semapps/solid';
 import { WebAclService } from '@semapps/webacl';
 import { WebfingerService } from '@semapps/webfinger';
 import { KeysService, SignatureService } from '@semapps/crypto';
 import { WebIdService } from '@semapps/webid';
 import { ServiceSchema } from 'moleculer';
 import { CoreServiceSettings } from './serviceTypes.js';
-
-const botsContainer = {
-  path: '/as/application',
-  acceptedTypes: [FULL_ACTOR_TYPES.APPLICATION],
-  readOnly: true
-};
 
 const CoreService = {
   name: 'core' as const,
@@ -31,7 +24,6 @@ const CoreService = {
       url: undefined,
       user: undefined,
       password: undefined,
-      mainDataset: undefined,
       fusekiBase: undefined
     },
     // Optional
@@ -61,6 +53,7 @@ const CoreService = {
         // Type support for settings could be given, once moleculer type definitions improve...
         settings: {
           baseUri: baseUrl,
+          podProvider: true,
           ...this.settings.activitypub
         }
       });
@@ -134,13 +127,23 @@ const CoreService = {
         mixins: this.settings.ldp.documentTagger !== false ? [DocumentTaggerMixin, LdpService] : [LdpService],
         settings: {
           baseUrl,
-          containers: containers || [botsContainer],
+          containers,
+          podProvider: true,
           ...this.settings.ldp
         }
       });
     }
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: any[]; settings: any; ... Remove this comment to see the full error message
+    this.broker.createService({
+      mixins: [StorageService],
+      settings: {
+        baseUrl
+      }
+    });
+
     if (this.settings.typeIndex !== false) {
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: any[]; settings: any; ... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [TypeIndexService],
         settings: {
@@ -165,6 +168,7 @@ const CoreService = {
         mixins: [WebIdService],
         settings: {
           baseUrl,
+          podProvider: true,
           ...this.settings.webid
         }
       });
@@ -176,6 +180,7 @@ const CoreService = {
         mixins: [KeysService],
         settings: {
           actorsKeyPairsDir: path.resolve(baseDir, './actors'),
+          podProvider: true,
           ...this.settings.keys
         }
       });
@@ -186,6 +191,7 @@ const CoreService = {
       this.broker.createService({
         mixins: [SparqlEndpointService],
         settings: {
+          podProvider: true,
           defaultAccept: 'application/ld+json',
           ...this.settings.sparqlEndpoint
         }
@@ -214,23 +220,13 @@ const CoreService = {
       });
     }
 
-    if (this.settings.void !== false) {
-      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "void"; settin... Remove this comment to see the full error message
-      this.broker.createService({
-        mixins: [VoidService],
-        settings: {
-          baseUrl,
-          ...this.settings.void
-        }
-      });
-    }
-
     if (this.settings.webacl !== false) {
       // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "webacl"; sett... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [WebAclService],
         settings: {
           baseUrl,
+          podProvider: true,
           ...this.settings.webacl
         }
       });

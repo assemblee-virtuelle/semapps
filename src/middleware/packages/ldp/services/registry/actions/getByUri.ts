@@ -19,7 +19,7 @@ const GetByUriAction = {
 
     let types: string[] = await ctx.call('type-index.getTypes', {
       uri: containerUri || resourceUri,
-      webId: this.settings.podProvider ? getWebIdFromUri(containerUri) : undefined
+      webId: getWebIdFromUri(containerUri || resourceUri)
     });
 
     // If this a resource, check if its container is registered
@@ -30,7 +30,7 @@ const GetByUriAction = {
         types = await ctx.call('type-index.getTypes', {
           uri: containerUri,
           isContainer: true,
-          webId: this.settings.podProvider ? getWebIdFromUri(containerUri) : undefined
+          webId: getWebIdFromUri(containerUri)
         });
       }
     }

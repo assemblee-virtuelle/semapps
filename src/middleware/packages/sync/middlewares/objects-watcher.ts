@@ -1,4 +1,5 @@
 import { PUBLIC_URI, ACTIVITY_TYPES } from '@semapps/activitypub';
+import { Registration } from '@semapps/ldp';
 
 const handledLdpActions = ['ldp.container.post', 'ldp.resource.put', 'ldp.resource.patch', 'ldp.resource.delete'];
 
@@ -95,12 +96,11 @@ const ObjectsWatcherMiddleware = (config = {}) => {
         relayActor = await broker.call('activitypub.relay.getActor');
       }
 
-      const containers = await broker.call('ldp.registry.list');
-      for (const container of Object.values(containers)) {
-        // @ts-expect-error TS(18046): 'container' is of type 'unknown'.
-        if (container.excludeFromMirror === true && !excludedContainersPathRegex.includes(container.pathRegex)) {
-          // @ts-expect-error TS(18046): 'container' is of type 'unknown'.
-          excludedContainersPathRegex.push(container.pathRegex);
+      const registrations: Registration[] = await broker.call('ldp.registry.list');
+      for (const registration of registrations) {
+        // TODO stop using pathRegex
+        if (registration.excludeFromMirror === true && !excludedContainersPathRegex.includes(registration.pathRegex)) {
+          excludedContainersPathRegex.push(registration.pathRegex);
         }
       }
 

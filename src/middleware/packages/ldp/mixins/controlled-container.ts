@@ -17,7 +17,7 @@ const ControlledContainerMixin = {
   async started() {
     const { path, controlledActions, ...rest } = this.settings;
 
-    await this.broker.call('ldp.registry.register', {
+    this.registration = {
       path,
       name: this.name,
       isContainer: true,
@@ -33,7 +33,9 @@ const ControlledContainerMixin = {
         ...this.settings.controlledActions
       },
       ...rest
-    });
+    };
+
+    await this.broker.call('ldp.registry.register', this.registration);
   },
   actions: {
     post: {
@@ -92,7 +94,7 @@ const ControlledContainerMixin = {
 
     create: {
       handler(ctx) {
-        return ctx.call('ldp.resource.create', ctx.params);
+        return ctx.call('ldp.resource.create', { registration: this.registration, ...ctx.params });
       }
     },
 

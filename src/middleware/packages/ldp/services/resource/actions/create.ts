@@ -53,7 +53,7 @@ const Schema = {
       (controlledActions && controlledActions.get) || 'ldp.resource.get',
       {
         resourceUri,
-        webId: 'system' // Avoid errors if the resource creator has no read rights
+        webId
       },
       { meta: { $cache: false } }
     );

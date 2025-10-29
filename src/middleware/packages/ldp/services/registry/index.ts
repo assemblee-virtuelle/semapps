@@ -5,7 +5,6 @@ import GetUriAction from './actions/getUri.ts';
 import ListAction from './actions/list.ts';
 import RegisterAction from './actions/register.ts';
 import defaultOptions from './defaultOptions.ts';
-import { arrayOf } from '../../utils.ts';
 import { Registration, LdpRegistryServiceSettings } from '../../types.ts';
 
 const LdpRegistryService = {
@@ -26,44 +25,13 @@ const LdpRegistryService = {
     register: RegisterAction
   },
   async started() {
-    this.registrations = {} as { [name: string]: Registration };
-    if (this.settings.podProvider) {
-      // The auth.account service is a dependency only in POD provider config
-      await this.broker.waitForServices(['auth.account']);
-    }
+    this.registrations = [] as Registration[];
     this.registerAll();
   },
   methods: {
     async registerAll() {
-      for (let container of this.settings.containers) {
-        // We await each registration so they happen in order
-        await this.actions.register(container);
-      }
-    }
-  },
-  events: {
-    'auth.registered': {
-      async handler(ctx) {
-        const { webId } = ctx.params;
-        if (this.settings.podProvider) {
-          for (const registration of Object.values(this.registrations as { [name: string]: Registration })) {
-            // Controlled resources are created by the mixin
-            if (registration.isContainer) {
-              const containerUri = await ctx.call('ldp.container.create', {
-                registration,
-                webId
-              });
-
-              await ctx.call('type-index.register', {
-                types: arrayOf(registration.acceptedTypes),
-                uri: containerUri,
-                webId,
-                isContainer: true,
-                isPrivate: registration.typeIndex === 'private'
-              });
-            }
-          }
-        }
+      for (const registration of this.settings.containers) {
+        await this.actions.register(registration);
       }
     }
   }

@@ -29,6 +29,7 @@ describe('Binary handling of LDP server', () => {
   let containerUri: string;
 
   test('Post image to container', async () => {
+    // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
       containerUri = await broker.call('ldp.registry.getUri', { type: 'semapps:File', isContainer: true });
       expect(containerUri).not.toBeUndefined();
@@ -45,7 +46,7 @@ describe('Binary handling of LDP server', () => {
     fileUri = headers.get('Location');
     expect(fileUri).not.toBeNull();
 
-    filePath = fileUri.replace(CONFIG.HOME_URL!, '');
+    filePath = fileUri!.replace(CONFIG.HOME_URL!, '');
     fileName = getSlugFromUri(fileUri);
 
     expect(fs.existsSync(pathJoin(__dirname, '../uploads', filePath))).toBeTruthy();

@@ -1,5 +1,4 @@
 import { ActionSchema } from 'moleculer';
-import { arrayOf } from '../../../utils.ts';
 import { Registration } from '../../../types.ts';
 
 const RegisterAction = {
@@ -32,33 +31,8 @@ const RegisterAction = {
       key => (registration[key] === undefined || registration[key] === null) && delete registration[key]
     );
 
-    // Create the container
-    // In Pod provider mode, the container is created when a new user is created
-    if (registration.isContainer && !this.settings.podProvider) {
-      await this.broker.waitForServices(['type-index']);
-
-      let [uri] = (await ctx.call('type-index.getUris', {
-        type: arrayOf(registration.acceptedTypes)[0],
-        isContainer: true,
-        isPrivate: registration.typeIndex === 'private'
-      })) as string[];
-
-      if (uri) {
-        this.logger.info(`Container for type ${registration.acceptedTypes} already exists, skipping...`);
-      } else {
-        const containerUri = await ctx.call('ldp.container.create', { registration });
-
-        await ctx.call('type-index.register', {
-          types: arrayOf(registration.acceptedTypes),
-          uri: containerUri,
-          isContainer: true,
-          isPrivate: registration.typeIndex === 'private'
-        });
-      }
-    }
-
-    // Save the options
-    this.registrations[registration.name] = registration;
+    // Keep in memory
+    this.registrations.push(registration);
 
     ctx.emit('ldp.registry.registered', { registration }, { meta: { webId: null, dataset: null } });
 

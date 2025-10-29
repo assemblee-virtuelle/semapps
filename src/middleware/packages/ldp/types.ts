@@ -37,8 +37,8 @@ export interface Registration {
   excludeFromMirror?: boolean;
   permissions?: WacPermissionFunction | WacPermissionObject;
   newResourcesPermissions?: WacPermissionFunction | WacPermissionObject;
-  controlledActions?: ControlledActions;
-  typeIndex?: 'private' | 'public';
+  controlledActions: ControlledActions;
+  typeIndex: 'private' | 'public';
 }
 
 export interface LdpRegistryServiceSettings {

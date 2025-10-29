@@ -23,19 +23,19 @@ const PublicTypeIndexService = {
         const { webId } = ctx.params;
         const resourceUri = res;
 
-        if (isWebId(webId)) {
-          await ctx.call('ldp.resource.patch', {
-            resourceUri: webId,
-            triplesToAdd: [
-              rdf.quad(
-                rdf.namedNode(webId),
-                rdf.namedNode('http://www.w3.org/ns/solid/terms#publicTypeIndex'),
-                rdf.namedNode(resourceUri)
-              )
-            ],
-            webId
-          });
-        }
+        await ctx.call('ldp.resource.patch', {
+          resourceUri: webId,
+          triplesToAdd: [
+            rdf.quad(
+              rdf.namedNode(webId),
+              rdf.namedNode('http://www.w3.org/ns/solid/terms#publicTypeIndex'),
+              rdf.namedNode(resourceUri)
+            )
+          ],
+          webId
+        });
+
+        return res;
       }
     }
   }

@@ -13,9 +13,7 @@ const GetByTypesAction = {
     const { types } = ctx.params;
     const expandedTypes = await ctx.call('jsonld.parser.expandTypes', { types });
 
-    return Object.values(this.registrations).find(registration =>
-      expandedTypes.some((t: any) => arrayOf(registration.acceptedTypes).includes(t))
-    );
+    return this.registrations.find(r => expandedTypes.some((t: any) => arrayOf(r.acceptedTypes).includes(t)));
   }
 } satisfies ActionSchema;
 

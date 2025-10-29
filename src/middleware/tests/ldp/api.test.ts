@@ -20,6 +20,7 @@ describe('LDP handling through API', () => {
   let resourceUri: any;
 
   test('Create resource', async () => {
+    // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
       containerUri = await broker.call('ldp.registry.getUri', { type: 'pair:Project', isContainer: true });
       expect(containerUri).not.toBeUndefined();

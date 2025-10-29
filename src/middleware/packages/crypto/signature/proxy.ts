@@ -152,11 +152,10 @@ const ProxyService = {
   events: {
     'auth.registered': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
         if (this.settings.podProvider) {
           const services = await ctx.call('$node.services');
-          if (services.filter((s: any) => s.name === 'activitypub.actor')) {
+          if (services.some((s: any) => s.name === 'activitypub.actor')) {
             await ctx.call('activitypub.actor.addEndpoint', {
               actorUri: webId,
               predicate: 'https://www.w3.org/ns/activitystreams#proxyUrl',

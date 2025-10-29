@@ -250,10 +250,10 @@ const VoidSchema = {
   methods: {
     async getContainers(ctx) {
       const { baseUrl } = this.settings;
-      const registrations = (await ctx.call('ldp.registry.list')) as { [name: string]: Registration };
+      const registrations: Registration[] = await ctx.call('ldp.registry.list');
 
       const res = await Promise.all(
-        Object.values(registrations)
+        registrations
           .filter(c => c.acceptedTypes)
           .map(async c => {
             const partition = {

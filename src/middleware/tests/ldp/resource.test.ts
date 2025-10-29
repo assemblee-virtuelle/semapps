@@ -1,13 +1,23 @@
 import rdf from '@rdfjs/data-model';
 import waitForExpect from 'wait-for-expect';
+import { ActionParamSchema, CallingOptions, ServiceBroker } from 'moleculer';
 import initialize from './initialize.ts';
 
 jest.setTimeout(50000);
-let broker: any;
+let broker: ServiceBroker;
+let webId: string;
+let dataset: string;
+let callAsAlice: (actionName: string, params: ActionParamSchema, options?: CallingOptions) => Promise<any>;
 
 beforeAll(async () => {
-  broker = await initialize(false);
+  broker = await initialize(true);
   await broker.start();
+  ({ webId, dataset } = (await broker.call('solid-storage.create', { username: 'alice' })) as {
+    webId: string;
+    dataset: string;
+  });
+  callAsAlice = (actionName, params, options = {}) =>
+    broker.call(actionName, params, { ...options, meta: { ...options.meta, webId, dataset } });
 });
 
 afterAll(async () => {
@@ -21,12 +31,13 @@ describe('Resource CRUD operations', () => {
   let project1Uri: string;
 
   test('Post resource in container', async () => {
+    // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
-      containerUri = await broker.call('ldp.registry.getUri', { type: 'pair:Project', isContainer: true });
+      containerUri = await callAsAlice('ldp.registry.getUri', { type: 'pair:Project', isContainer: true });
       expect(containerUri).not.toBeUndefined();
     });
 
-    project1Uri = await broker.call('ldp.container.post', {
+    project1Uri = await callAsAlice('ldp.container.post', {
       containerUri,
       resource: {
         '@context': {
@@ -54,7 +65,7 @@ describe('Resource CRUD operations', () => {
   });
 
   test('Get resource', async () => {
-    project1 = await broker.call('ldp.resource.get', { resourceUri: project1Uri });
+    project1 = await callAsAlice('ldp.resource.get', { resourceUri: project1Uri });
 
     expect(project1).toMatchObject({
       id: project1Uri,
@@ -70,7 +81,7 @@ describe('Resource CRUD operations', () => {
   });
 
   test('Put resource', async () => {
-    await broker.call('ldp.resource.put', {
+    await callAsAlice('ldp.resource.put', {
       resource: {
         '@context': {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
@@ -86,7 +97,7 @@ describe('Resource CRUD operations', () => {
       }
     });
 
-    const updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1Uri });
+    const updatedProject = await callAsAlice('ldp.resource.get', { resourceUri: project1Uri });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -119,9 +130,9 @@ describe('Resource CRUD operations', () => {
         }
       ]
     };
-    await broker.call('ldp.resource.put', { resource: resourceUpdated });
+    await callAsAlice('ldp.resource.put', { resource: resourceUpdated });
 
-    let updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1Uri });
+    let updatedProject = await callAsAlice('ldp.resource.get', { resourceUri: project1Uri });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -144,9 +155,9 @@ describe('Resource CRUD operations', () => {
       }
     ];
 
-    await broker.call('ldp.resource.put', { resource: resourceUpdated });
+    await callAsAlice('ldp.resource.put', { resource: resourceUpdated });
 
-    updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1Uri });
+    updatedProject = await callAsAlice('ldp.resource.get', { resourceUri: project1Uri });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -168,9 +179,9 @@ describe('Resource CRUD operations', () => {
       }
     ];
 
-    await broker.call('ldp.resource.put', { resource: resourceUpdated });
+    await callAsAlice('ldp.resource.put', { resource: resourceUpdated });
 
-    updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1Uri });
+    updatedProject = await callAsAlice('ldp.resource.get', { resourceUri: project1Uri });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -200,9 +211,9 @@ describe('Resource CRUD operations', () => {
       }
     ];
 
-    await broker.call('ldp.resource.put', { resource: resourceUpdated });
+    await callAsAlice('ldp.resource.put', { resource: resourceUpdated });
 
-    updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1Uri });
+    updatedProject = await callAsAlice('ldp.resource.get', { resourceUri: project1Uri });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -225,9 +236,9 @@ describe('Resource CRUD operations', () => {
       }
     ];
 
-    await broker.call('ldp.resource.put', { resource: resourceUpdated });
+    await callAsAlice('ldp.resource.put', { resource: resourceUpdated });
 
-    updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1Uri });
+    updatedProject = await callAsAlice('ldp.resource.get', { resourceUri: project1Uri });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -247,9 +258,9 @@ describe('Resource CRUD operations', () => {
     // @ts-expect-error TS(2322): Type 'undefined' is not assignable to type '{ labe... Remove this comment to see the full error message
     resourceUpdated.hasLocation = undefined;
 
-    await broker.call('ldp.resource.put', { resource: resourceUpdated });
+    await callAsAlice('ldp.resource.put', { resource: resourceUpdated });
 
-    updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1Uri });
+    updatedProject = await callAsAlice('ldp.resource.get', { resourceUri: project1Uri });
 
     expect(updatedProject['pair:hasLocation']).toBeUndefined();
 
@@ -258,9 +269,9 @@ describe('Resource CRUD operations', () => {
       { 'petr:endingTime': '2021-10-07T09:40:56.131Z', 'petr:startingTime': '2021-10-07T06:40:56.123Z' }
     ];
 
-    await broker.call('ldp.resource.put', { resource: resourceUpdated });
+    await callAsAlice('ldp.resource.put', { resource: resourceUpdated });
 
-    updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1Uri });
+    updatedProject = await callAsAlice('ldp.resource.get', { resourceUri: project1Uri });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -276,9 +287,9 @@ describe('Resource CRUD operations', () => {
       { 'petr:startingTime': '2021-10-07T10:44:54.883Z', 'petr:endingTime': '2021-10-07T16:44:54.888Z' }
     ];
 
-    await broker.call('ldp.resource.put', { resource: resourceUpdated });
+    await callAsAlice('ldp.resource.put', { resource: resourceUpdated });
 
-    updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1Uri });
+    updatedProject = await callAsAlice('ldp.resource.get', { resourceUri: project1Uri });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -305,12 +316,12 @@ describe('Resource CRUD operations', () => {
       }
     };
 
-    const resourceUri = await broker.call('ldp.container.post', {
+    const resourceUri = await callAsAlice('ldp.container.post', {
       resource: resourceToPost,
       containerUri
     });
 
-    project2 = await broker.call('ldp.resource.get', { resourceUri });
+    project2 = await callAsAlice('ldp.resource.get', { resourceUri });
 
     expect(project2).toMatchObject({
       'pair:hasLocation': {
@@ -337,12 +348,12 @@ describe('Resource CRUD operations', () => {
       }
     ];
 
-    const resourceUri3 = await broker.call('ldp.container.post', {
+    const resourceUri3 = await callAsAlice('ldp.container.post', {
       resource: resourceToPost,
       containerUri
     });
 
-    const project3 = await broker.call('ldp.resource.get', { resourceUri: resourceUri3 });
+    const project3 = await callAsAlice('ldp.resource.get', { resourceUri: resourceUri3 });
 
     expect(project3).toMatchObject({
       'pair:hasLocation': [
@@ -377,12 +388,12 @@ describe('Resource CRUD operations', () => {
       }
     ];
 
-    const resourceUri4 = await broker.call('ldp.container.post', {
+    const resourceUri4 = await callAsAlice('ldp.container.post', {
       resource: resourceToPost,
       containerUri
     });
 
-    const project4 = await broker.call('ldp.resource.get', { resourceUri: resourceUri4 });
+    const project4 = await callAsAlice('ldp.resource.get', { resourceUri: resourceUri4 });
 
     expect(project4).toMatchObject({
       'pair:hasLocation': [
@@ -425,9 +436,9 @@ describe('Resource CRUD operations', () => {
       ]
     };
 
-    await broker.call('ldp.resource.put', { resource: resourceUpdated });
+    await callAsAlice('ldp.resource.put', { resource: resourceUpdated });
 
-    let updatedProject = await broker.call('ldp.resource.get', { resourceUri: project2.id });
+    let updatedProject = await callAsAlice('ldp.resource.get', { resourceUri: project2.id });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -462,9 +473,9 @@ describe('Resource CRUD operations', () => {
       }
     ];
 
-    await broker.call('ldp.resource.put', { resource: resourceUpdated });
+    await callAsAlice('ldp.resource.put', { resource: resourceUpdated });
 
-    updatedProject = await broker.call('ldp.resource.get', { resourceUri: project2.id });
+    updatedProject = await callAsAlice('ldp.resource.get', { resourceUri: project2.id });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -479,9 +490,9 @@ describe('Resource CRUD operations', () => {
 
   // Ensure dereferenced resources with IDs are not deleted by PUT
   test('PUT resource with ID', async () => {
-    const themeContainerUri = await broker.call('ldp.registry.getUri', { type: 'pair:Theme', isContainer: true });
+    const themeContainerUri = await callAsAlice('ldp.registry.getUri', { type: 'pair:Theme', isContainer: true });
 
-    const themeUri = await broker.call('ldp.container.post', {
+    const themeUri = await callAsAlice('ldp.container.post', {
       containerUri: themeContainerUri,
       resource: {
         '@context': {
@@ -494,7 +505,7 @@ describe('Resource CRUD operations', () => {
     });
 
     // Add a relation to the theme
-    await broker.call('ldp.resource.put', {
+    await callAsAlice('ldp.resource.put', {
       resource: {
         '@context': {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
@@ -509,7 +520,7 @@ describe('Resource CRUD operations', () => {
     });
 
     // Remove the relation to the theme
-    await broker.call('ldp.resource.put', {
+    await callAsAlice('ldp.resource.put', {
       resource: {
         '@context': {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
@@ -521,7 +532,7 @@ describe('Resource CRUD operations', () => {
     });
 
     // Ensure the theme has not been deleted
-    const theme = await broker.call('ldp.resource.get', { resourceUri: themeUri });
+    const theme = await callAsAlice('ldp.resource.get', { resourceUri: themeUri });
 
     expect(theme).toMatchObject({
       id: themeUri,
@@ -531,7 +542,7 @@ describe('Resource CRUD operations', () => {
   });
 
   test('PATCH resource', async () => {
-    const projectUri = await broker.call('ldp.container.post', {
+    const projectUri = await callAsAlice('ldp.container.post', {
       containerUri,
       resource: {
         '@context': {
@@ -543,7 +554,7 @@ describe('Resource CRUD operations', () => {
       slug: 'SemApps'
     });
 
-    await broker.call('ldp.resource.patch', {
+    await callAsAlice('ldp.resource.patch', {
       resourceUri: projectUri,
       triplesToAdd: [
         rdf.quad(
@@ -566,7 +577,7 @@ describe('Resource CRUD operations', () => {
       ]
     });
 
-    const project = await broker.call('ldp.resource.get', { resourceUri: projectUri });
+    const project = await callAsAlice('ldp.resource.get', { resourceUri: projectUri });
 
     expect(project).toMatchObject({
       id: projectUri,
@@ -576,7 +587,7 @@ describe('Resource CRUD operations', () => {
   });
 
   test('PATCH resource with blank nodes', async () => {
-    const projectUri = await broker.call('ldp.container.post', {
+    const projectUri = await callAsAlice('ldp.container.post', {
       containerUri,
       resource: {
         '@context': {
@@ -588,7 +599,7 @@ describe('Resource CRUD operations', () => {
       slug: 'ActivityPods'
     });
 
-    await broker.call('ldp.resource.patch', {
+    await callAsAlice('ldp.resource.patch', {
       resourceUri: projectUri,
       triplesToAdd: [
         rdf.quad(
@@ -609,7 +620,7 @@ describe('Resource CRUD operations', () => {
       ]
     });
 
-    let project = await broker.call('ldp.resource.get', { resourceUri: projectUri });
+    let project = await callAsAlice('ldp.resource.get', { resourceUri: projectUri });
 
     expect(project).toMatchObject({
       id: projectUri,
@@ -620,7 +631,7 @@ describe('Resource CRUD operations', () => {
       }
     });
 
-    await broker.call('ldp.resource.patch', {
+    await callAsAlice('ldp.resource.patch', {
       resourceUri: projectUri,
       triplesToAdd: [
         rdf.quad(
@@ -641,7 +652,7 @@ describe('Resource CRUD operations', () => {
       ]
     });
 
-    project = await broker.call('ldp.resource.get', { resourceUri: projectUri });
+    project = await callAsAlice('ldp.resource.get', { resourceUri: projectUri });
 
     expect(project).toMatchObject({
       id: projectUri,
@@ -660,10 +671,10 @@ describe('Resource CRUD operations', () => {
   }, 20000);
 
   test('Delete resource', async () => {
-    await broker.call('ldp.resource.delete', {
+    await callAsAlice('ldp.resource.delete', {
       resourceUri: project1Uri
     });
 
-    await expect(broker.call('ldp.resource.get', { resourceUri: project1Uri })).rejects.toThrow(`not found`);
+    await expect(callAsAlice('ldp.resource.get', { resourceUri: project1Uri })).rejects.toThrow(`not found`);
   });
 });

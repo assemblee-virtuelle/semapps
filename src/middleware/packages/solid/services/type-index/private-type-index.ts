@@ -1,4 +1,4 @@
-import { ControlledResourceMixin, isWebId } from '@semapps/ldp';
+import { ControlledResourceMixin } from '@semapps/ldp';
 import rdf from '@rdfjs/data-model';
 import { ServiceSchema } from 'moleculer';
 
@@ -19,10 +19,10 @@ const PrivateTypeIndexService = {
         const { webId } = ctx.params;
         const resourceUri = res;
 
-        if (isWebId(webId)) {
-          await this.broker.waitForServices('solid-preferences-file');
-          const preferencesUri = await ctx.call('solid-preferences-file.getUri', { webId });
-
+        // Attach to preferences file, if available
+        const services = await ctx.call<ServiceSchema[]>('$node.services');
+        if (services.some(s => s.name === 'solid-preferences-file')) {
+          const preferencesUri: string = await ctx.call('solid-preferences-file.getUri', { webId });
           if (preferencesUri) {
             await ctx.call('solid-preferences-file.patch', {
               triplesToAdd: [
@@ -36,6 +36,8 @@ const PrivateTypeIndexService = {
             });
           }
         }
+
+        return res;
       }
     }
   }

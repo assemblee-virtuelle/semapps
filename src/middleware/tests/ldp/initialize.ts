@@ -43,7 +43,8 @@ const containers = [
 ];
 
 const initialize = async (allowSlugs = true): Promise<ServiceBroker> => {
-  await dropDataset(CONFIG.MAIN_DATASET);
+  await dropDataset('alice');
+  await dropDataset(CONFIG.SETTINGS_DATASET);
 
   const uploadsPath = pathJoin(__dirname, '../uploads');
   if (fs.existsSync(uploadsPath)) {
@@ -71,14 +72,11 @@ const initialize = async (allowSlugs = true): Promise<ServiceBroker> => {
         url: CONFIG.SPARQL_ENDPOINT,
         user: CONFIG.JENA_USER,
         password: CONFIG.JENA_PASSWORD,
-        mainDataset: CONFIG.MAIN_DATASET,
         secure: false // TODO Remove when we move to Fuseki 5
       },
       containers,
       ontologies: [as, pair, petr, solid, vcard],
       activitypub: false,
-      mirror: false,
-      void: false,
       webfinger: false,
       webid: false,
       ldp: {
@@ -92,6 +90,7 @@ const initialize = async (allowSlugs = true): Promise<ServiceBroker> => {
     mixins: [AuthLocalService],
     settings: {
       baseUrl: CONFIG.HOME_URL,
+      podProvider: true,
       jwtPath: path.resolve(__dirname, '../jwt'),
       accountsDataset: CONFIG.SETTINGS_DATASET
     }

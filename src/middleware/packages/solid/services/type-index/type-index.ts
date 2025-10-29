@@ -28,7 +28,8 @@ const TypeIndexService = {
         isPrivate: { type: 'boolean', default: false }
       },
       async handler(ctx) {
-        let { types, uri, webId, isContainer, isPrivate } = ctx.params;
+        let { types, uri, isContainer, isPrivate } = ctx.params;
+        const webId = ctx.params.webId || ctx.meta.webId;
 
         const expandedTypes: string[] = await ctx.call('jsonld.parser.expandTypes', { types });
         const oldExpandedTypes: string[] = await this.actions.getTypes({ uri, webId, isPrivate });
@@ -108,7 +109,8 @@ const TypeIndexService = {
       },
       // cache: true,
       async handler(ctx) {
-        const { uri, webId, isPrivate } = ctx.params;
+        const { uri, isPrivate } = ctx.params;
+        const webId = ctx.params.webId || ctx.meta.webId;
 
         // If isPrivate is not defined, search in both type indexes
         let typeIndexUris = [];
@@ -149,7 +151,8 @@ const TypeIndexService = {
       },
       // cache: true,
       async handler(ctx) {
-        const { type, webId, isContainer, isPrivate } = ctx.params;
+        const { type, isContainer, isPrivate } = ctx.params;
+        const webId = ctx.params.webId || ctx.meta.webId;
 
         const [expandedType] = (await ctx.call('jsonld.parser.expandTypes', { types: [type] })) as string[];
 
@@ -180,36 +183,10 @@ const TypeIndexService = {
             }
           `,
           webId: 'system',
-          dataset: isWebId(webId) ? getDatasetFromUri(webId) : undefined
+          dataset: getDatasetFromUri(webId)
         });
 
         return results.map((r: any) => r.uri.value);
-      }
-    }
-  },
-  events: {
-    'ldp.resource.created': {
-      async handler(ctx) {
-        const { resourceUri, registration, webId } = ctx.params;
-
-        // When a controlled resource is created, we pass the registration as a parameter
-        if (registration && registration.acceptedTypes) {
-          const serviceName = `${registration.typeIndex === 'private' ? 'private' : 'public'}-type-index`;
-
-          await this.broker.waitForServices([serviceName]);
-          await ctx.call(`${serviceName}.waitForCreation`, { webId });
-
-          await this.actions.register(
-            {
-              types: arrayOf(registration.acceptedTypes),
-              uri: resourceUri,
-              webId,
-              isContainer: false,
-              isPrivate: registration.typeIndex === 'private'
-            },
-            { parentCtx: ctx }
-          );
-        }
       }
     }
   }

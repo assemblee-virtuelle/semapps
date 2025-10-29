@@ -20,6 +20,7 @@ const ControlledResourceMixin = {
       acceptedTypes: getType(initialValue),
       isContainer: false,
       controlledActions: {
+        create: `${this.name}.create`,
         get: `${this.name}.get`,
         patch: `${this.name}.patch`,
         ...controlledActions
@@ -27,48 +28,48 @@ const ControlledResourceMixin = {
       typeIndex
     };
 
-    const podProvider = await this.broker.call('ldp.getSetting', { key: 'podProvider' });
-    if (!podProvider) {
-      // Do not await to avoid a circular dependency (for the public/private type indexes)
-      this.actions.create({});
-    }
-
     // Do not await to avoid a circular dependency (for the public/private type indexes)
     this.broker.call('ldp.registry.register', this.registration);
   },
   actions: {
     create: {
+      params: {
+        webId: { type: 'string', optional: true }
+      },
       async handler(ctx) {
-        const { webId } = ctx.params;
+        const webId = ctx.params.webId || ctx.meta.webId;
 
-        const resourceExist = await this.actions.exist({ webId }, { parentCtx: ctx });
+        let resourceUri = await this.actions.getUri({ webId }, { parentCtx: ctx });
 
-        if (!resourceExist) {
+        if (!resourceUri) {
           let resource = this.settings.initialValue;
 
-          const baseUrl = await ctx.call('ldp.getSetting', { key: 'baseUrl' });
+          const baseUrl = await ctx.call('solid-storage.getBaseUrl', { webId });
           const allowSlugs = await ctx.call('ldp.getSetting', { key: 'allowSlugs' });
-          const resourceUri = await ctx.call('triplestore.named-graph.create', {
+          resourceUri = await ctx.call('triplestore.named-graph.create', {
             baseUrl,
             slug: allowSlugs ? this.settings.slug : undefined
           });
 
-          // We pass the registration as a parameter so that the TypeIndexService can get them back in the ldp.resource.created event
           await ctx.call('ldp.resource.create', {
             resourceUri,
             resource: { '@id': resourceUri, ...resource },
             registration: this.registration,
-            webId: 'system'
+            webId
           });
-
-          return resourceUri;
         }
+
+        return resourceUri;
       }
     },
 
     getUri: {
+      params: {
+        webId: { type: 'string', optional: true }
+      },
       async handler(ctx) {
-        const { webId } = ctx.params;
+        const webId = ctx.params.webId || ctx.meta.webId;
+
         const expandedTypes = await ctx.call('jsonld.parser.expandTypes', {
           types: arrayOf(getType(this.settings.initialValue))
         });
@@ -82,7 +83,7 @@ const ControlledResourceMixin = {
               }
             }
           `,
-          dataset: isWebId(webId) ? getDatasetFromUri(webId) : undefined
+          dataset: getDatasetFromUri(webId)
         });
 
         return results[0]?.resourceUri.value;
@@ -90,16 +91,22 @@ const ControlledResourceMixin = {
     },
 
     exist: {
+      params: {
+        webId: { type: 'string', optional: true }
+      },
       async handler(ctx) {
-        const { webId } = ctx.params;
+        const webId = ctx.params.webId || ctx.meta.webId;
         const resourceUri = await this.actions.getUri({ webId }, { parentCtx: ctx });
         return !!resourceUri;
       }
     },
 
     get: {
+      params: {
+        webId: { type: 'string', optional: true }
+      },
       async handler(ctx) {
-        const { webId } = ctx.params;
+        const webId = ctx.params.webId || ctx.meta.webId;
         const resourceUri = await this.actions.getUri({ webId }, { parentCtx: ctx });
         if (!resourceUri) throw new MoleculerError('Not found', 404, 'NOT_FOUND');
         return await ctx.call('ldp.resource.get', { resourceUri, ...ctx.params });
@@ -107,8 +114,11 @@ const ControlledResourceMixin = {
     },
 
     patch: {
+      params: {
+        webId: { type: 'string', optional: true }
+      },
       async handler(ctx) {
-        const { webId } = ctx.params;
+        const webId = ctx.params.webId || ctx.meta.webId;
         const resourceUri = await this.actions.getUri({ webId }, { parentCtx: ctx });
         if (!resourceUri) throw new MoleculerError('Not found', 404, 'NOT_FOUND');
         return await ctx.call('ldp.resource.patch', { resourceUri, ...ctx.params });
@@ -116,30 +126,23 @@ const ControlledResourceMixin = {
     },
 
     waitForCreation: {
+      params: {
+        webId: { type: 'string', optional: true }
+      },
       async handler(ctx) {
-        const { webId } = ctx.params;
+        const webId = ctx.params.webId || ctx.meta.webId;
         let resourceUri;
         let attempts = 0;
 
         do {
           attempts += 1;
           if (attempts > 1) await delay(1000);
-          resourceUri = await this.actions.getUri({ webId });
+          resourceUri = await this.actions.getUri({ webId }, { parentCtx: ctx });
         } while (!resourceUri || attempts > 30);
 
         if (!resourceUri) throw new Error(`Resource still had not been created after 30s`);
 
         return resourceUri;
-      }
-    }
-  },
-  events: {
-    'auth.registered': {
-      async handler(ctx) {
-        if (this.settings.podProvider) {
-          const { webId } = ctx.params;
-          await this.actions.create({ webId });
-        }
       }
     }
   }

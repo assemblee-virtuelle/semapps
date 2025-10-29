@@ -14,10 +14,10 @@ const Schema = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     const baseUrl = this.settings.podProvider
-      ? await this.broker.call('solid-storage.getBaseUrl', { webId })
+      ? await ctx.call('solid-storage.getBaseUrl', { webId })
       : this.settings.baseUrl;
 
-    const containerUri = await this.broker.call('triplestore.named-graph.create', {
+    const containerUri = await ctx.call('triplestore.named-graph.create', {
       baseUrl,
       slug: this.settings.allowSlugs ? path || registration.path : undefined
     });

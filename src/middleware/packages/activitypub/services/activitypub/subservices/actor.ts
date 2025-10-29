@@ -124,7 +124,7 @@ const ActorService = {
                     patterns: [
                       {
                         type: 'graph',
-                        name: namedNode(actorUri),
+                        name: rdf.namedNode(actorUri),
                         triples: [
                           rdf.quad(
                             rdf.namedNode(actorUri),
@@ -217,7 +217,6 @@ const ActorService = {
 
     'auth.registered': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
         await this.actions.appendActorData({ actorUri: webId }, { parentCtx: ctx });
       }

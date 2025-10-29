@@ -19,6 +19,7 @@ describe('LDP container tests', () => {
   let containerUri: string;
 
   test('Ensure container created in LdpService settings exists', async () => {
+    // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
       containerUri = await broker.call('ldp.registry.getUri', { type: 'pair:Project', isContainer: true });
       expect(containerUri).not.toBeUndefined();
@@ -204,6 +205,7 @@ describe('LDP container tests', () => {
     });
 
     // Container should now be empty
+    // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
       const container = await broker.call('ldp.container.get', { containerUri: containerUri });
       expect(container['ldp:contains']).toHaveLength(0);

@@ -56,14 +56,16 @@ const SparqlEndpointService = {
   events: {
     'auth.registered': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
         if (this.settings.podProvider) {
-          await ctx.call('activitypub.actor.addEndpoint', {
-            actorUri: webId,
-            predicate: 'http://rdfs.org/ns/void#sparqlEndpoint',
-            endpoint: urlJoin(webId, 'sparql')
-          });
+          const services = await ctx.call('$node.services');
+          if (services.some((s: any) => s.name === 'activitypub.actor')) {
+            await ctx.call('activitypub.actor.addEndpoint', {
+              actorUri: webId,
+              predicate: 'http://rdfs.org/ns/void#sparqlEndpoint',
+              endpoint: urlJoin(webId, 'sparql')
+            });
+          }
         }
       }
     }

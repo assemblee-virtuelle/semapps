@@ -1,7 +1,7 @@
 import urlJoin from 'url-join';
-import { pim } from '@semapps/ontologies';
 import { ServiceSchema } from 'moleculer';
-import { getWebIdFromUri } from '@semapps/ldp';
+import { pim } from '@semapps/ontologies';
+import { getWebIdFromUri, Registration, arrayOf } from '@semapps/ldp';
 
 const SolidStorageSchema = {
   name: 'solid-storage' as const,
@@ -27,12 +27,87 @@ const SolidStorageSchema = {
           secure: false // TODO Remove when we switch to Fuseki 5
         });
 
-        const webId = urlJoin(this.settings.baseUrl, username);
-        const storageUrl = await ctx.call('ldp.container.create', { path: '/data', webId });
-
         ctx.meta.dataset = username;
 
-        return storageUrl;
+        const webId = urlJoin(this.settings.baseUrl, username);
+
+        const rootContainerUri = await ctx.call('ldp.container.create', { path: '/data', webId });
+
+        // Create WebID
+        await ctx.call('webid.create', {
+          resourceUri: webId,
+          resource: {
+            '@id': webId,
+            '@type': 'foaf:Person',
+            'foaf:nick': username,
+            'pim:storage': rootContainerUri,
+            'solid:oidcIssuer': this.settings.baseUrl.replace(/\/$/, '') // Remove trailing slash if it exists
+          },
+          webId
+        });
+
+        // Create controlled resources (we do that first so that types indexes are created)
+        const resourceRegistrations: Registration[] = await ctx.call('ldp.registry.list', { isContainer: false });
+        for (const resourceRegistration of Object.values(resourceRegistrations)) {
+          const { controlledActions } = resourceRegistration;
+
+          const resourceUri = await ctx.call(controlledActions.create, { webId });
+
+          await ctx.call('type-index.register', {
+            types: arrayOf(resourceRegistration.acceptedTypes),
+            uri: resourceUri,
+            webId,
+            isContainer: false,
+            isPrivate: resourceRegistration.typeIndex === 'private'
+          });
+        }
+
+        // Create containers from registry
+        const containerRegistrations: Registration[] = await ctx.call('ldp.registry.list', { isContainer: true });
+        for (const containerRegistration of Object.values(containerRegistrations)) {
+          const containerUri = await ctx.call('ldp.container.create', {
+            registration: containerRegistration,
+            webId
+          });
+
+          await ctx.call('ldp.container.attach', {
+            containerUri: rootContainerUri,
+            resourceUri: containerUri,
+            webId: 'system'
+          });
+
+          await ctx.call('type-index.register', {
+            types: arrayOf(containerRegistration.acceptedTypes),
+            uri: containerUri,
+            webId,
+            isContainer: true,
+            isPrivate: containerRegistration.typeIndex === 'private'
+          });
+        }
+
+        // Create account
+        await ctx.call('auth.account.create', {
+          username,
+          webId
+        });
+
+        // Give full rights on all containers
+        await ctx.call('webacl.resource.addRights', {
+          resourceUri: rootContainerUri,
+          additionalRights: {
+            user: {
+              uri: webId,
+              read: true,
+              write: true,
+              control: true
+            }
+          },
+          webId: 'system'
+        });
+
+        ctx.emit('solid-storage.created', { webId });
+
+        return { webId, username, rootContainerUri };
       }
     },
 
@@ -54,50 +129,6 @@ const SolidStorageSchema = {
         const { webId } = ctx.params;
         const webIdData = await ctx.call('ldp.resource.get', { resourceUri: webId });
         return webIdData?.['pim:storage'];
-      }
-    }
-  },
-  events: {
-    'auth.registered': {
-      async handler(ctx) {
-        const { webId } = ctx.params;
-
-        const rootContainerUri = await this.actions.getRootContainerUri({ webId }, { parentCtx: ctx });
-
-        // Give full rights to user on his storage
-        await ctx.call('webacl.resource.addRights', {
-          resourceUri: rootContainerUri,
-          additionalRights: {
-            user: {
-              uri: webId,
-              read: true,
-              write: true,
-              control: true
-            },
-            default: {
-              user: {
-                uri: webId,
-                read: true,
-                write: true,
-                control: true
-              }
-            }
-          },
-          webId: 'system'
-        });
-      }
-    },
-    'ldp.container.created': {
-      async handler(ctx) {
-        const { containerUri, webId } = ctx.params;
-
-        const rootContainerUri = await this.actions.getRootContainerUri({ webId }, { parentCtx: ctx });
-
-        await ctx.call('ldp.container.attach', {
-          containerUri: rootContainerUri,
-          resourceUri: containerUri,
-          webId: 'system'
-        });
       }
     }
   }

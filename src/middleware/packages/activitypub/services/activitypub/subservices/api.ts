@@ -33,11 +33,12 @@ const ApiService = {
       await this.broker.call('api.addRoute', { route: this.getBoxesRoute(path.join(basePath, `/:actorSlug`)) });
     } else {
       // If some actor containers are already registered, add the corresponding API routes
-      const registrations: { [name: string]: Registration } = await this.broker.call('ldp.registry.list');
-      for (const registration of Object.values(registrations)) {
+      const registrations: Registration[] = await this.broker.call('ldp.registry.list');
+      for (const registration of registrations) {
         if (arrayOf(registration.acceptedTypes).some(type => Object.values(FULL_ACTOR_TYPES).includes(type))) {
+          // TODO Don't use full path anymore
           await this.broker.call('api.addRoute', {
-            route: this.getBoxesRoute(path.join(basePath, `${container.fullPath}/:actorSlug`))
+            route: this.getBoxesRoute(path.join(basePath, `${registration.fullPath}/:actorSlug`))
           });
         }
       }
