@@ -29,7 +29,6 @@ export interface Registration {
   name: string;
   isContainer: boolean;
   path?: string;
-  accept?: string; // Check if this is still used
   acceptedTypes?: string | string[];
   shapeTreeUri?: string;
   readOnly?: boolean;

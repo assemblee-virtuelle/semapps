@@ -1,4 +1,4 @@
-import { ControlledResourceMixin, isWebId } from '@semapps/ldp';
+import { ControlledResourceMixin, getWebIdFromUri } from '@semapps/ldp';
 import rdf from '@rdfjs/data-model';
 import { ServiceSchema } from 'moleculer';
 
@@ -6,10 +6,8 @@ const PublicTypeIndexService = {
   name: 'public-type-index' as const,
   mixins: [ControlledResourceMixin],
   settings: {
-    slug: 'public-type-index',
-    initialValue: {
-      '@type': ['solid:TypeIndex', 'solid:ListedDocument']
-    },
+    path: 'public-type-index',
+    acceptedTypes: ['solid:TypeIndex', 'solid:ListedDocument'],
     permissions: {
       anon: {
         read: true
@@ -20,14 +18,14 @@ const PublicTypeIndexService = {
   hooks: {
     after: {
       async create(ctx, res) {
-        const { webId } = ctx.params;
-        const resourceUri = res;
+        const { resourceUri } = res;
+        const webId = getWebIdFromUri(resourceUri);
 
         await ctx.call('ldp.resource.patch', {
           resourceUri: webId,
           triplesToAdd: [
             rdf.quad(
-              rdf.namedNode(webId),
+              rdf.namedNode(webId!),
               rdf.namedNode('http://www.w3.org/ns/solid/terms#publicTypeIndex'),
               rdf.namedNode(resourceUri)
             )

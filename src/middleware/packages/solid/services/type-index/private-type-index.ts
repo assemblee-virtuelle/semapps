@@ -1,4 +1,4 @@
-import { ControlledResourceMixin } from '@semapps/ldp';
+import { ControlledResourceMixin, getWebIdFromUri } from '@semapps/ldp';
 import rdf from '@rdfjs/data-model';
 import { ServiceSchema } from 'moleculer';
 
@@ -6,21 +6,19 @@ const PrivateTypeIndexService = {
   name: 'private-type-index' as const,
   mixins: [ControlledResourceMixin],
   settings: {
-    slug: 'private-type-index',
-    initialValue: {
-      '@type': ['solid:TypeIndex', 'solid:UnlistedDocument']
-    },
+    path: 'private-type-index',
+    acceptedTypes: ['solid:TypeIndex', 'solid:UnlistedDocument'],
     permissions: {},
     typeIndex: 'private'
   },
   hooks: {
     after: {
       async create(ctx, res) {
-        const { webId } = ctx.params;
-        const resourceUri = res;
+        const { resourceUri } = res;
+        const webId = getWebIdFromUri(resourceUri);
 
         // Attach to preferences file, if available
-        const services = await ctx.call<ServiceSchema[]>('$node.services');
+        const services: ServiceSchema[] = await ctx.call('$node.services');
         if (services.some(s => s.name === 'solid-preferences-file')) {
           const preferencesUri: string = await ctx.call('solid-preferences-file.getUri', { webId });
           if (preferencesUri) {

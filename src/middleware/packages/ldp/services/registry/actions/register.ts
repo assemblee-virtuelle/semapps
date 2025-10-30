@@ -7,7 +7,6 @@ const RegisterAction = {
     name: { type: 'string', optional: true },
     isContainer: { type: 'boolean', default: true },
     path: { type: 'string', optional: true },
-    accept: { type: 'string', optional: true },
     acceptedTypes: { type: 'multi', rules: [{ type: 'array' }, { type: 'string' }], optional: true },
     excludeFromMirror: { type: 'boolean', optional: true },
     activateTombstones: { type: 'boolean', default: true },

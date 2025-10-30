@@ -52,7 +52,27 @@ const SolidStorageSchema = {
         for (const resourceRegistration of Object.values(resourceRegistrations)) {
           const { controlledActions } = resourceRegistration;
 
-          const resourceUri = await ctx.call(controlledActions.create, { webId });
+          const baseUrl = await this.actions.getBaseUrl({ webId }, { parentCtx: ctx });
+          const allowSlugs = await ctx.call('ldp.getSetting', { key: 'allowSlugs' });
+
+          // TODO Put this inside the ldp.resource.create action
+          const resourceUri = await ctx.call('triplestore.named-graph.create', {
+            baseUrl,
+            slug: allowSlugs ? this.settings.slug : undefined
+          });
+
+          await ctx.call(controlledActions.create, {
+            resourceUri,
+            resource: { '@id': resourceUri, '@type': resourceRegistration.acceptedTypes },
+            registration: resourceRegistration,
+            webId: 'system'
+          });
+
+          await ctx.call('ldp.container.attach', {
+            containerUri: rootContainerUri,
+            resourceUri,
+            webId: 'system'
+          });
 
           await ctx.call('type-index.register', {
             types: arrayOf(resourceRegistration.acceptedTypes),

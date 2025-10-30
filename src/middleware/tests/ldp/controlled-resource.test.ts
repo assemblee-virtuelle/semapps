@@ -15,11 +15,8 @@ describe.each([false, true])('ControlledResourceMixin with allowSlugs: %s', (all
       name: 'address-book',
       mixins: [ControlledResourceMixin],
       settings: {
-        slug: 'address-book',
-        initialValue: {
-          '@type': 'vcard:AddressBook',
-          'vcard:title': 'My address book'
-        },
+        path: 'address-book',
+        acceptedTypes: ['vcard:AddressBook'],
         permissions: {
           anon: {
             read: true
@@ -54,7 +51,6 @@ describe.each([false, true])('ControlledResourceMixin with allowSlugs: %s', (all
 
     await expect(alice.call('address-book.get')).resolves.toMatchObject({
       type: 'vcard:AddressBook',
-      'vcard:title': 'My address book',
       'vcard:note': 'This is added by the service'
     });
   });
@@ -64,7 +60,6 @@ describe.each([false, true])('ControlledResourceMixin with allowSlugs: %s', (all
       status: 200,
       json: {
         type: 'vcard:AddressBook',
-        'vcard:title': 'My address book',
         'vcard:note': 'This is added by the service'
       }
     });

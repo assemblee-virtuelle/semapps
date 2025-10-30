@@ -1,23 +1,24 @@
 import { ServiceSchema, Errors } from 'moleculer';
-import { arrayOf, delay, getDatasetFromUri, getType } from '../utils.ts';
+import { delay, getDatasetFromUri } from '../utils.ts';
 
 const { MoleculerError } = Errors;
 
 const ControlledResourceMixin = {
   settings: {
-    slug: null,
-    initialValue: {},
+    path: null,
+    acceptedTypes: null,
     permissions: {},
     controlledActions: {},
     typeIndex: 'public'
   },
   dependencies: ['ldp'],
   async started() {
-    const { initialValue, permissions, controlledActions, typeIndex } = this.settings;
+    const { path, acceptedTypes, permissions, controlledActions, typeIndex } = this.settings;
 
-    this.registration = {
+    this.registration = await this.broker.call('ldp.registry.register', {
       name: this.name,
-      acceptedTypes: getType(initialValue),
+      path,
+      acceptedTypes,
       isContainer: false,
       permissions,
       controlledActions: {
@@ -27,40 +28,12 @@ const ControlledResourceMixin = {
         ...controlledActions
       },
       typeIndex
-    };
-
-    // Do not await to avoid a circular dependency (for the public/private type indexes)
-    this.broker.call('ldp.registry.register', this.registration);
+    });
   },
   actions: {
     create: {
-      params: {
-        webId: { type: 'string', optional: true }
-      },
       async handler(ctx) {
-        const webId = ctx.params.webId || ctx.meta.webId;
-
-        let resourceUri = await this.actions.getUri({ webId }, { parentCtx: ctx });
-
-        if (!resourceUri) {
-          let resource = this.settings.initialValue;
-
-          const baseUrl = await ctx.call('solid-storage.getBaseUrl', { webId });
-          const allowSlugs = await ctx.call('ldp.getSetting', { key: 'allowSlugs' });
-          resourceUri = await ctx.call('triplestore.named-graph.create', {
-            baseUrl,
-            slug: allowSlugs ? this.settings.slug : undefined
-          });
-
-          await ctx.call('ldp.resource.create', {
-            resourceUri,
-            resource: { '@id': resourceUri, ...resource },
-            registration: this.registration,
-            webId: 'system'
-          });
-        }
-
-        return resourceUri;
+        return await ctx.call('ldp.resource.create', ctx.params);
       }
     },
 
@@ -71,9 +44,7 @@ const ControlledResourceMixin = {
       async handler(ctx) {
         const webId = ctx.params.webId || ctx.meta.webId;
 
-        const expandedTypes = await ctx.call('jsonld.parser.expandTypes', {
-          types: arrayOf(getType(this.settings.initialValue))
-        });
+        const expandedTypes = await ctx.call('jsonld.parser.expandTypes', { types: this.settings.acceptedTypes });
 
         const results = await ctx.call('triplestore.query', {
           query: `
