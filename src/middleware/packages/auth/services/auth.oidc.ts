@@ -17,7 +17,6 @@ const AuthOIDCService = {
     jwtPath: null,
     registrationAllowed: true,
     reservedUsernames: [],
-    webIdSelection: [],
     // SSO-specific settings
     sessionSecret: 's€m@pps',
     selectSsoData: null,

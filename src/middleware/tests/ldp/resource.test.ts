@@ -2,7 +2,7 @@ import rdf from '@rdfjs/data-model';
 import waitForExpect from 'wait-for-expect';
 import { ServiceBroker } from 'moleculer';
 import initialize from './initialize.ts';
-import { createStorage } from '../utils.ts';
+import { createAccount } from '../utils.ts';
 
 jest.setTimeout(50000);
 let broker: ServiceBroker;
@@ -11,7 +11,7 @@ let alice: any;
 beforeAll(async () => {
   broker = await initialize(true);
   await broker.start();
-  alice = await createStorage(broker, 'alice');
+  alice = await createAccount(broker, 'alice');
 });
 
 afterAll(async () => {

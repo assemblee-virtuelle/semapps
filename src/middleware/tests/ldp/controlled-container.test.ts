@@ -3,7 +3,7 @@ import { Context, ServiceBroker } from 'moleculer';
 import { ControlledContainerMixin, delay, Registration } from '@semapps/ldp';
 import waitForExpect from 'wait-for-expect';
 import initialize from './initialize.ts';
-import { fetchServer, createStorage } from '../utils.ts';
+import { fetchServer, createAccount } from '../utils.ts';
 
 jest.setTimeout(50000);
 let broker: ServiceBroker;
@@ -45,7 +45,7 @@ describe.each([false, true])('ControlledContainerMixin with allowSlugs: %s', (al
     });
 
     await broker.start();
-    alice = await createStorage(broker, 'alice');
+    alice = await createAccount(broker, 'alice');
   });
 
   afterAll(async () => {
@@ -70,7 +70,7 @@ describe.each([false, true])('ControlledContainerMixin with allowSlugs: %s', (al
     if (allowSlugs) {
       expect(containersUris).toEqual(
         expect.arrayContaining([
-          urlJoin(alice.webId, '/foaf/person'),
+          urlJoin(alice.webId, '/users'),
           urlJoin(alice.webId, '/key'),
           urlJoin(alice.webId, '/public-key'),
           urlJoin(alice.webId, '/videos'),

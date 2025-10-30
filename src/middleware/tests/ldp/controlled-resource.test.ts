@@ -1,7 +1,7 @@
 import { ControlledResourceMixin } from '@semapps/ldp';
 import { ServiceBroker } from 'moleculer';
 import initialize from './initialize.ts';
-import { fetchServer, createStorage } from '../utils.ts';
+import { fetchServer, createAccount } from '../utils.ts';
 
 jest.setTimeout(50000);
 let broker: ServiceBroker;
@@ -34,7 +34,7 @@ describe.each([false, true])('ControlledResourceMixin with allowSlugs: %s', (all
     });
 
     await broker.start();
-    alice = await createStorage(broker, 'alice');
+    alice = await createAccount(broker, 'alice');
   });
 
   afterAll(async () => {

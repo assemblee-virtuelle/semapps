@@ -1,8 +1,9 @@
 import urlJoin from 'url-join';
 import fetch from 'node-fetch';
 import Redis from 'ioredis';
-import * as CONFIG from './config.ts';
 import { ActionParamSchema, CallingOptions, ServiceBroker } from 'moleculer';
+import { Account } from '@semapps/auth';
+import * as CONFIG from './config.ts';
 
 export const listDatasets = async () => {
   const response = await fetch(`${CONFIG.SPARQL_ENDPOINT}$/datasets`, {
@@ -87,8 +88,8 @@ export const fetchServer = (url: any, options = {}) => {
     });
 };
 
-export const createStorage = async (broker: ServiceBroker, username: string) => {
-  const { webId } = (await broker.call('solid-storage.create', { username })) as { webId: string };
+export const createAccount = async (broker: ServiceBroker, username: string) => {
+  const { webId }: Account = await broker.call('auth.account.create', { username });
 
   const call = (actionName: string, params: ActionParamSchema = {}, options: CallingOptions = {}) =>
     broker.call(actionName, params, { ...options, meta: { ...options.meta, webId, dataset: username } });
@@ -103,7 +104,7 @@ export const createStorage = async (broker: ServiceBroker, username: string) => 
 export const clearQueue = async (queueServiceUrl: any) => {
   // Clear queue
   const redisClient = new Redis(queueServiceUrl);
-  const result = await redisClient.flushdb();
+  await redisClient.flushdb();
   redisClient.disconnect();
 };
 

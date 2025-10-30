@@ -5,7 +5,7 @@ import { ServiceBroker } from 'moleculer';
 import path, { join as pathJoin } from 'path';
 import { getSlugFromUri } from '@semapps/ldp';
 import { fileURLToPath } from 'url';
-import { fetchServer, createStorage } from '../utils.ts';
+import { fetchServer, createAccount } from '../utils.ts';
 import initialize from './initialize.ts';
 import * as CONFIG from '../config.ts';
 
@@ -18,7 +18,7 @@ let alice: any;
 beforeAll(async () => {
   broker = await initialize(false);
   await broker.start();
-  alice = await createStorage(broker, 'alice');
+  alice = await createAccount(broker, 'alice');
 });
 
 afterAll(async () => {

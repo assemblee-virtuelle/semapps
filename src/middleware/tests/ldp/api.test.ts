@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 import waitForExpect from 'wait-for-expect';
 import { ServiceBroker } from 'moleculer';
-import { createStorage, fetchServer } from '../utils.ts';
+import { createAccount, fetchServer } from '../utils.ts';
 import initialize from './initialize.ts';
 
 jest.setTimeout(20000);
@@ -11,7 +11,7 @@ let alice: any;
 beforeAll(async () => {
   broker = await initialize(false);
   await broker.start();
-  alice = await createStorage(broker, 'alice');
+  alice = await createAccount(broker, 'alice');
 });
 
 afterAll(async () => {

@@ -69,8 +69,6 @@ const AuthMixin = {
     reservedUsernames: [],
     minPasswordLength: 1,
     minUsernameLength: 1,
-    webIdSelection: [],
-    accountSelection: [],
     accountsDataset: 'settings',
     podProvider: false
   },
@@ -236,25 +234,6 @@ const AuthMixin = {
     },
     getApiRoutes() {
       throw new Error('getApiRoutes must be implemented by the service');
-    },
-    pickWebIdData(data) {
-      if (this.settings.webIdSelection.length > 0) {
-        return Object.fromEntries(
-          this.settings.webIdSelection.filter((key: any) => key in data).map((key: any) => [key, data[key]])
-        );
-      } else {
-        // TODO do not return anything if webIdSelection is empty, to conform with pickAccountData
-        return data || {};
-      }
-    },
-    pickAccountData(data) {
-      if (this.settings.accountSelection.length > 0) {
-        return Object.fromEntries(
-          this.settings.accountSelection.filter((key: any) => key in data).map((key: any) => [key, data[key]])
-        );
-      } else {
-        return {};
-      }
     }
   }
 } satisfies Partial<ServiceSchema>;

@@ -5,6 +5,7 @@ import AuthAccountService from './services/account.ts';
 import AuthJWTService from './services/jwt.ts';
 import AuthMigrationService from './services/migration.ts';
 import AuthMailService from './services/mail.ts';
+import { Account } from './types.ts';
 
 export {
   AuthCASService,
@@ -13,5 +14,6 @@ export {
   AuthAccountService,
   AuthJWTService,
   AuthMigrationService,
-  AuthMailService
+  AuthMailService,
+  Account
 };

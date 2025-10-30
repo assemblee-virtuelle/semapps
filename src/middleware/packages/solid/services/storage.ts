@@ -15,6 +15,10 @@ const SolidStorageSchema = {
     await this.broker.call('ontologies.register', pim);
   },
   actions: {
+    /**
+     * Create the dataset, the WebID and the root container
+     * Create also the controlled resources and containers, attach them to the root container and register them with the type index
+     */
     create: {
       params: {
         username: { type: 'string' }
@@ -106,12 +110,6 @@ const SolidStorageSchema = {
           });
         }
 
-        // Create account
-        await ctx.call('auth.account.create', {
-          username,
-          webId
-        });
-
         // Give full rights on all containers
         await ctx.call('webacl.resource.addRights', {
           resourceUri: rootContainerUri,
@@ -136,7 +134,7 @@ const SolidStorageSchema = {
 
         ctx.emit('solid-storage.created', { webId });
 
-        return { webId, username, rootContainerUri };
+        return { webId, rootContainerUri };
       }
     },
 
