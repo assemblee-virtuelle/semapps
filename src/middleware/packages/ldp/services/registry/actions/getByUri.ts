@@ -2,7 +2,7 @@ import { ActionSchema } from 'moleculer';
 import { getWebIdFromUri } from '../../../utils.ts';
 
 /**
- * Find the container options for a container or resource URI
+ * Find the registration for a container or resource URI
  */
 const GetByUriAction = {
   visibility: 'public',
@@ -36,9 +36,9 @@ const GetByUriAction = {
     }
 
     if (types) {
-      const containerOptions = await this.actions.getByTypes({ types }, { parentCtx: ctx });
+      const registration = await this.actions.getByTypes({ types }, { parentCtx: ctx });
 
-      return { ...this.settings.defaultOptions, ...containerOptions };
+      return { ...this.settings.defaultOptions, ...registration };
     } else {
       return this.settings.defaultOptions;
     }

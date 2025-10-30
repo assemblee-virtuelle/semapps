@@ -1,13 +1,17 @@
 import waitForExpect from 'wait-for-expect';
+import { ServiceBroker } from 'moleculer';
 import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
+import { createStorage } from '../utils.ts';
 
 jest.setTimeout(20000);
-let broker: any;
+let broker: ServiceBroker;
+let alice: any;
 
 beforeAll(async () => {
   broker = await initialize(false);
   await broker.start();
+  alice = await createStorage(broker, 'alice');
 });
 
 afterAll(async () => {
@@ -21,26 +25,26 @@ describe('LDP container tests', () => {
   test('Ensure container created in LdpService settings exists', async () => {
     // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
-      containerUri = await broker.call('ldp.registry.getUri', { type: 'pair:Project', isContainer: true });
+      containerUri = await alice.call('ldp.registry.getUri', { type: 'pair:Project', isContainer: true });
       expect(containerUri).not.toBeUndefined();
     });
 
-    await expect(broker.call('ldp.container.exist', { containerUri })).resolves.toBe(true);
+    await expect(alice.call('ldp.container.exist', { containerUri })).resolves.toBe(true);
   });
 
   test('Create a new container', async () => {
-    const newContainerUri = await broker.call('ldp.container.create', { path: '/objects', webId: 'system' });
+    const newContainerUri = await alice.call('ldp.container.create', { path: '/objects' });
 
-    await expect(broker.call('ldp.container.exist', { containerUri: newContainerUri })).resolves.toBe(true);
+    await expect(alice.call('ldp.container.exist', { containerUri: newContainerUri })).resolves.toBe(true);
 
-    await expect(broker.call('ldp.container.get', { containerUri: newContainerUri })).resolves.toMatchObject({
+    await expect(alice.call('ldp.container.get', { containerUri: newContainerUri })).resolves.toMatchObject({
       id: newContainerUri,
       type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer'])
     });
   });
 
   test('Post a resource in a container', async () => {
-    resourceUri = await broker.call('ldp.container.post', {
+    resourceUri = await alice.call('ldp.container.post', {
       containerUri: containerUri,
       resource: {
         '@context': {
@@ -52,7 +56,7 @@ describe('LDP container tests', () => {
     });
 
     await expect(
-      broker.call('ldp.container.get', {
+      alice.call('ldp.container.get', {
         containerUri: containerUri
       })
     ).resolves.toMatchObject({
@@ -70,7 +74,7 @@ describe('LDP container tests', () => {
 
   test('Post a resource in a non-existing container', async () => {
     await expect(
-      broker.call('ldp.container.post', {
+      alice.call('ldp.container.post', {
         containerUri: `${CONFIG.HOME_URL}unknownContainer`,
         resource: {
           '@context': {
@@ -85,7 +89,7 @@ describe('LDP container tests', () => {
 
   test('Attach a resource to a non-existing container', async () => {
     await expect(
-      broker.call('ldp.container.attach', {
+      alice.call('ldp.container.attach', {
         containerUri: `${CONFIG.HOME_URL}unknownContainer`,
         resourceUri
       })
@@ -94,7 +98,7 @@ describe('LDP container tests', () => {
 
   test('Get container with jsonContext param', async () => {
     await expect(
-      broker.call('ldp.container.get', {
+      alice.call('ldp.container.get', {
         containerUri: containerUri,
         jsonContext: {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
@@ -120,7 +124,7 @@ describe('LDP container tests', () => {
   });
 
   test('Get container with filters param', async () => {
-    await broker.call('ldp.container.post', {
+    await alice.call('ldp.container.post', {
       containerUri: containerUri,
       resource: {
         '@context': {
@@ -133,7 +137,7 @@ describe('LDP container tests', () => {
 
     // Get without filters param
     await expect(
-      broker.call('ldp.container.get', {
+      alice.call('ldp.container.get', {
         containerUri: containerUri
       })
     ).resolves.toMatchObject({
@@ -151,7 +155,7 @@ describe('LDP container tests', () => {
 
     // Get with filters param
     await expect(
-      broker.call('ldp.container.get', {
+      alice.call('ldp.container.get', {
         containerUri: containerUri,
         filters: {
           'pair:label': 'My project 2'
@@ -169,7 +173,7 @@ describe('LDP container tests', () => {
   });
 
   test('Get container without resources', async () => {
-    const container = await broker.call('ldp.container.get', {
+    const container = await alice.call('ldp.container.get', {
       containerUri: containerUri,
       doNotIncludeResources: true
     });
@@ -178,14 +182,14 @@ describe('LDP container tests', () => {
   });
 
   test('Detach a resource from a container', async () => {
-    await broker.call('ldp.container.detach', {
+    await alice.call('ldp.container.detach', {
       containerUri: containerUri,
       resourceUri
     });
 
     // Project 1 should have disappeared from the container
     await expect(
-      broker.call('ldp.container.get', {
+      alice.call('ldp.container.get', {
         containerUri: containerUri
       })
     ).resolves.toMatchObject({
@@ -200,14 +204,14 @@ describe('LDP container tests', () => {
   });
 
   test('Clear container', async () => {
-    await broker.call('ldp.container.clear', {
+    await alice.call('ldp.container.clear', {
       containerUri: containerUri
     });
 
     // Container should now be empty
     // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
-      const container = await broker.call('ldp.container.get', { containerUri: containerUri });
+      const container = await alice.call('ldp.container.get', { containerUri: containerUri });
       expect(container['ldp:contains']).toHaveLength(0);
     });
   });

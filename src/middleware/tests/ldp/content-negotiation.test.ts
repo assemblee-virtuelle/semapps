@@ -1,15 +1,18 @@
 import fetch from 'node-fetch';
 import waitForExpect from 'wait-for-expect';
+import { ServiceBroker } from 'moleculer';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { fetchServer } from '../utils.ts';
+import { fetchServer, createStorage } from '../utils.ts';
 import initialize from './initialize.ts';
 
 jest.setTimeout(20000);
-let broker: any;
+let broker: ServiceBroker;
+let alice: any;
 
 beforeAll(async () => {
   broker = await initialize(false);
   await broker.start();
+  alice = await createStorage(broker, 'alice');
 });
 
 afterAll(async () => {
@@ -26,7 +29,7 @@ describe('Content negotiation', () => {
   test('Post resource in JSON-LD', async () => {
     // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
-      containerUri = await broker.call('ldp.registry.getUri', { type: 'pair:Project', isContainer: true });
+      containerUri = await alice.call('ldp.registry.getUri', { type: 'pair:Project', isContainer: true });
       expect(containerUri).not.toBeUndefined();
     });
 
@@ -134,7 +137,7 @@ describe('Content negotiation', () => {
 
     project2Uri = headers.get('Location');
 
-    const project2 = await broker.call('ldp.resource.get', {
+    const project2 = await alice.call('ldp.resource.get', {
       resourceUri: project2Uri
     });
     expect(project2).toMatchObject({
@@ -160,7 +163,7 @@ describe('Content negotiation', () => {
 
     project3Uri = headers.get('Location');
 
-    const project2 = await broker.call('ldp.resource.get', {
+    const project2 = await alice.call('ldp.resource.get', {
       resourceUri: project3Uri
     });
     expect(project2).toMatchObject({
@@ -186,7 +189,7 @@ describe('Content negotiation', () => {
 
     expect(status).toBe(204);
 
-    const project2 = await broker.call('ldp.resource.get', {
+    const project2 = await alice.call('ldp.resource.get', {
       resourceUri: project2Uri
     });
     expect(project2).toMatchObject({
@@ -212,7 +215,7 @@ describe('Content negotiation', () => {
 
     expect(status).toBe(204);
 
-    const project3 = await broker.call('ldp.resource.get', {
+    const project3 = await alice.call('ldp.resource.get', {
       resourceUri: project3Uri
     });
     expect(project3).toMatchObject({
@@ -244,7 +247,7 @@ describe('Content negotiation', () => {
 
     project4Uri = headers.get('Location');
 
-    const project4 = await broker.call('ldp.resource.get', {
+    const project4 = await alice.call('ldp.resource.get', {
       resourceUri: project4Uri
     });
 

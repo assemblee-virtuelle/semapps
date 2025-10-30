@@ -3,7 +3,7 @@ import { ActionSchema } from 'moleculer';
 const ListAction = {
   visibility: 'public',
   params: {
-    isContainer: 'boolean'
+    isContainer: { type: 'boolean', optional: true }
   },
   handler(ctx) {
     const { isContainer } = ctx.params;

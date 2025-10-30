@@ -1,5 +1,5 @@
 import { ServiceSchema, Errors } from 'moleculer';
-import { arrayOf, delay, getDatasetFromUri, getType, isWebId } from '../utils.ts';
+import { arrayOf, delay, getDatasetFromUri, getType } from '../utils.ts';
 
 const { MoleculerError } = Errors;
 
@@ -13,12 +13,13 @@ const ControlledResourceMixin = {
   },
   dependencies: ['ldp'],
   async started() {
-    const { initialValue, controlledActions, typeIndex } = this.settings;
+    const { initialValue, permissions, controlledActions, typeIndex } = this.settings;
 
     this.registration = {
       name: this.name,
       acceptedTypes: getType(initialValue),
       isContainer: false,
+      permissions,
       controlledActions: {
         create: `${this.name}.create`,
         get: `${this.name}.get`,
@@ -55,7 +56,7 @@ const ControlledResourceMixin = {
             resourceUri,
             resource: { '@id': resourceUri, ...resource },
             registration: this.registration,
-            webId
+            webId: 'system'
           });
         }
 
@@ -92,22 +93,24 @@ const ControlledResourceMixin = {
 
     exist: {
       params: {
+        resourceUri: { type: 'string', optional: true },
         webId: { type: 'string', optional: true }
       },
       async handler(ctx) {
         const webId = ctx.params.webId || ctx.meta.webId;
-        const resourceUri = await this.actions.getUri({ webId }, { parentCtx: ctx });
+        const resourceUri = ctx.params.resourceUri || (await this.actions.getUri({ webId }, { parentCtx: ctx }));
         return !!resourceUri;
       }
     },
 
     get: {
       params: {
+        resourceUri: { type: 'string', optional: true },
         webId: { type: 'string', optional: true }
       },
       async handler(ctx) {
         const webId = ctx.params.webId || ctx.meta.webId;
-        const resourceUri = await this.actions.getUri({ webId }, { parentCtx: ctx });
+        const resourceUri = ctx.params.resourceUri || (await this.actions.getUri({ webId }, { parentCtx: ctx }));
         if (!resourceUri) throw new MoleculerError('Not found', 404, 'NOT_FOUND');
         return await ctx.call('ldp.resource.get', { resourceUri, ...ctx.params });
       }
@@ -115,11 +118,12 @@ const ControlledResourceMixin = {
 
     patch: {
       params: {
+        resourceUri: { type: 'string', optional: true },
         webId: { type: 'string', optional: true }
       },
       async handler(ctx) {
         const webId = ctx.params.webId || ctx.meta.webId;
-        const resourceUri = await this.actions.getUri({ webId }, { parentCtx: ctx });
+        const resourceUri = ctx.params.resourceUri || (await this.actions.getUri({ webId }, { parentCtx: ctx }));
         if (!resourceUri) throw new MoleculerError('Not found', 404, 'NOT_FOUND');
         return await ctx.call('ldp.resource.patch', { resourceUri, ...ctx.params });
       }

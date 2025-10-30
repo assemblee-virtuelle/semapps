@@ -1,10 +1,11 @@
 import { ControlledResourceMixin } from '@semapps/ldp';
 import { ServiceBroker } from 'moleculer';
 import initialize from './initialize.ts';
-import { fetchServer } from '../utils.ts';
+import { fetchServer, createStorage } from '../utils.ts';
 
 jest.setTimeout(50000);
 let broker: ServiceBroker;
+let alice: any;
 
 describe.each([false, true])('ControlledResourceMixin with allowSlugs: %s', (allowSlugs: boolean) => {
   beforeAll(async () => {
@@ -36,6 +37,7 @@ describe.each([false, true])('ControlledResourceMixin with allowSlugs: %s', (all
     });
 
     await broker.start();
+    alice = await createStorage(broker, 'alice');
   });
 
   afterAll(async () => {
@@ -45,12 +47,12 @@ describe.each([false, true])('ControlledResourceMixin with allowSlugs: %s', (all
   let controlledResourceUri: string;
 
   test('Get the controlled resource', async () => {
-    await broker.call('address-book.waitForCreation');
+    await alice.call('address-book.waitForCreation');
 
-    controlledResourceUri = await broker.call('address-book.getUri');
+    controlledResourceUri = await alice.call('address-book.getUri');
     expect(controlledResourceUri).not.toBeUndefined();
 
-    await expect(broker.call('address-book.get')).resolves.toMatchObject({
+    await expect(alice.call('address-book.get')).resolves.toMatchObject({
       type: 'vcard:AddressBook',
       'vcard:title': 'My address book',
       'vcard:note': 'This is added by the service'

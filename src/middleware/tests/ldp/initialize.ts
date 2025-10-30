@@ -2,7 +2,7 @@ import { ServiceBroker } from 'moleculer';
 import fs from 'fs';
 import path, { join as pathJoin } from 'path';
 import { CoreService } from '@semapps/core';
-import { as, pair, petr, solid, vcard } from '@semapps/ontologies';
+import { as, pair, petr, semapps, solid, vcard } from '@semapps/ontologies';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { AuthLocalService } from '@semapps/auth';
 import { fileURLToPath } from 'url';
@@ -75,7 +75,7 @@ const initialize = async (allowSlugs = true): Promise<ServiceBroker> => {
         secure: false // TODO Remove when we move to Fuseki 5
       },
       containers,
-      ontologies: [as, pair, petr, solid, vcard],
+      ontologies: [as, pair, petr, solid, vcard, semapps],
       activitypub: false,
       webfinger: false,
       webid: false,

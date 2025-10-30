@@ -2,6 +2,7 @@ import urlJoin from 'url-join';
 import fetch from 'node-fetch';
 import Redis from 'ioredis';
 import * as CONFIG from './config.ts';
+import { ActionParamSchema, CallingOptions, ServiceBroker } from 'moleculer';
 
 export const listDatasets = async () => {
   const response = await fetch(`${CONFIG.SPARQL_ENDPOINT}$/datasets`, {
@@ -84,6 +85,19 @@ export const fetchServer = (url: any, options = {}) => {
       }
       return Promise.resolve({ status, statusText, headers, body, json });
     });
+};
+
+export const createStorage = async (broker: ServiceBroker, username: string) => {
+  const { webId } = (await broker.call('solid-storage.create', { username })) as { webId: string };
+
+  const call = (actionName: string, params: ActionParamSchema = {}, options: CallingOptions = {}) =>
+    broker.call(actionName, params, { ...options, meta: { ...options.meta, webId, dataset: username } });
+
+  return {
+    webId,
+    username,
+    call
+  };
 };
 
 export const clearQueue = async (queueServiceUrl: any) => {

@@ -54,7 +54,7 @@ const TypeIndexService = {
                     rdf.namedNode(type)
                   )
                 ),
-                webId: isWebId(webId) ? webId : 'system'
+                webId: 'system'
               });
             }
           } else {
@@ -89,7 +89,7 @@ const TypeIndexService = {
                   )
                 )
               ],
-              webId: isWebId(webId) ? webId : 'system'
+              webId: 'system'
             },
             { parentCtx: ctx }
           );

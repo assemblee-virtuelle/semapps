@@ -2,7 +2,7 @@ import { ActionSchema } from 'moleculer';
 import { arrayOf } from '../../../utils.ts';
 
 /**
- * Find the container options for a resource type
+ * Find the registration for a resource type
  */
 const GetByTypesAction = {
   visibility: 'public',

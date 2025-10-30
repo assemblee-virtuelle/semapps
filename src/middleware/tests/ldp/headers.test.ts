@@ -3,12 +3,13 @@ import { parse as parseLinkHeader } from 'http-link-header';
 import { ServiceBroker } from 'moleculer';
 import waitForExpect from 'wait-for-expect';
 import { ControlledContainerMixin } from '@semapps/ldp';
-import { fetchServer } from '../utils.ts';
+import { fetchServer, createStorage } from '../utils.ts';
 import initialize from './initialize.ts';
 import * as CONFIG from '../config.ts';
 
 jest.setTimeout(20000);
 let broker: ServiceBroker;
+let alice: any;
 
 beforeAll(async () => {
   broker = await initialize(false);
@@ -41,6 +42,7 @@ beforeAll(async () => {
   });
 
   await broker.start();
+  alice = await createStorage(broker, 'alice');
 });
 
 afterAll(async () => {
@@ -54,7 +56,7 @@ describe('Headers handling of LDP server', () => {
   test('Get headers', async () => {
     // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
-      placesContainerUri = await broker.call('ldp.registry.getUri', { type: 'pair:Place', isContainer: true });
+      placesContainerUri = await alice.call('ldp.registry.getUri', { type: 'pair:Place', isContainer: true });
       expect(placesContainerUri).not.toBeUndefined();
     });
 
@@ -86,7 +88,7 @@ describe('Headers handling of LDP server', () => {
   test('Get container-specific headers', async () => {
     // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
-      eventsContainerUri = await broker.call('ldp.registry.getUri', { type: 'pair:Event', isContainer: true });
+      eventsContainerUri = await alice.call('ldp.registry.getUri', { type: 'pair:Event', isContainer: true });
       expect(eventsContainerUri).not.toBeUndefined();
     });
 

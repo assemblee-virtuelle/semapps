@@ -27,9 +27,10 @@ const SolidStorageSchema = {
           secure: false // TODO Remove when we switch to Fuseki 5
         });
 
-        ctx.meta.dataset = username;
-
         const webId = urlJoin(this.settings.baseUrl, username);
+
+        ctx.meta.dataset = username;
+        ctx.meta.webId = webId;
 
         const rootContainerUri = await ctx.call('ldp.container.create', { path: '/data', webId });
 
@@ -100,6 +101,14 @@ const SolidStorageSchema = {
               read: true,
               write: true,
               control: true
+            },
+            default: {
+              user: {
+                uri: webId,
+                read: true,
+                write: true,
+                control: true
+              }
             }
           },
           webId: 'system'

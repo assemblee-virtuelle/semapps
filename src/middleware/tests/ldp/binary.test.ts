@@ -1,21 +1,24 @@
 import fetch from 'node-fetch';
 import waitForExpect from 'wait-for-expect';
 import fs from 'fs';
+import { ServiceBroker } from 'moleculer';
 import path, { join as pathJoin } from 'path';
 import { getSlugFromUri } from '@semapps/ldp';
 import { fileURLToPath } from 'url';
-import { fetchServer } from '../utils.ts';
+import { fetchServer, createStorage } from '../utils.ts';
 import initialize from './initialize.ts';
 import * as CONFIG from '../config.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 jest.setTimeout(20000);
-let broker: any;
+let broker: ServiceBroker;
+let alice: any;
 
 beforeAll(async () => {
   broker = await initialize(false);
   await broker.start();
+  alice = await createStorage(broker, 'alice');
 });
 
 afterAll(async () => {
@@ -31,7 +34,7 @@ describe('Binary handling of LDP server', () => {
   test('Post image to container', async () => {
     // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
-      containerUri = await broker.call('ldp.registry.getUri', { type: 'semapps:File', isContainer: true });
+      containerUri = await alice.call('ldp.registry.getUri', { type: 'semapps:File', isContainer: true });
       expect(containerUri).not.toBeUndefined();
     });
 
@@ -82,7 +85,7 @@ describe('Binary handling of LDP server', () => {
   });
 
   test('Get image as resource (via Moleculer action)', async () => {
-    await expect(broker.call('ldp.resource.get', { resourceUri: fileUri })).resolves.toMatchObject({
+    await expect(alice.call('ldp.resource.get', { resourceUri: fileUri })).resolves.toMatchObject({
       id: fileUri,
       type: 'semapps:File',
       'semapps:fileName': fileName,

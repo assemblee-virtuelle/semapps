@@ -1,14 +1,17 @@
 import fetch from 'node-fetch';
 import waitForExpect from 'wait-for-expect';
-import { fetchServer } from '../utils.ts';
+import { ServiceBroker } from 'moleculer';
+import { createStorage, fetchServer } from '../utils.ts';
 import initialize from './initialize.ts';
 
 jest.setTimeout(20000);
-let broker: any;
+let broker: ServiceBroker;
+let alice: any;
 
 beforeAll(async () => {
   broker = await initialize(false);
   await broker.start();
+  alice = await createStorage(broker, 'alice');
 });
 
 afterAll(async () => {
@@ -22,7 +25,7 @@ describe('LDP handling through API', () => {
   test('Create resource', async () => {
     // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
-      containerUri = await broker.call('ldp.registry.getUri', { type: 'pair:Project', isContainer: true });
+      containerUri = await alice.call('ldp.registry.getUri', { type: 'pair:Project', isContainer: true });
       expect(containerUri).not.toBeUndefined();
     });
 
