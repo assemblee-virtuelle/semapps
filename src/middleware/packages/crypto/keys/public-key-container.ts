@@ -15,7 +15,7 @@ const KeysPublicContainerSchema = {
   mixins: [ControlledContainerMixin],
   settings: {
     path: '/public-key',
-    acceptedTypes: Object.values(KEY_TYPES),
+    types: Object.values(KEY_TYPES),
     permissions: (webId: any, ctx: any) => {
       // If no pod provider, the container is shared, so any user can append.
       return {

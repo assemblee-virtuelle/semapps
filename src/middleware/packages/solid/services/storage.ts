@@ -63,7 +63,7 @@ const SolidStorageSchema = {
 
           await ctx.call(controlledActions.create, {
             resourceUri,
-            resource: { '@id': resourceUri, '@type': resourceRegistration.acceptedTypes },
+            resource: { '@id': resourceUri, '@type': resourceRegistration.types },
             registration: resourceRegistration,
             webId: 'system'
           });
@@ -75,7 +75,7 @@ const SolidStorageSchema = {
           });
 
           await ctx.call('type-index.register', {
-            types: arrayOf(resourceRegistration.acceptedTypes),
+            types: arrayOf(resourceRegistration.types),
             uri: resourceUri,
             webId,
             isContainer: false,
@@ -98,7 +98,7 @@ const SolidStorageSchema = {
           });
 
           await ctx.call('type-index.register', {
-            types: arrayOf(containerRegistration.acceptedTypes),
+            types: arrayOf(containerRegistration.types),
             uri: containerUri,
             webId,
             isContainer: true,

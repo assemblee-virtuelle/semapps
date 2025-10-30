@@ -7,7 +7,7 @@ const SolidPreferencesFileSchema = {
   name: 'solid-preferences-file' as const,
   mixins: [ControlledResourceMixin],
   settings: {
-    acceptedTypes: ['pim:ConfigurationFile'],
+    types: ['pim:ConfigurationFile'],
     permissions: {}
   },
   dependencies: ['ontologies'],

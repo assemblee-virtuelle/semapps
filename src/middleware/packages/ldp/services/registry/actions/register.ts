@@ -7,7 +7,7 @@ const RegisterAction = {
     name: { type: 'string', optional: true },
     isContainer: { type: 'boolean', default: true },
     path: { type: 'string', optional: true },
-    acceptedTypes: { type: 'multi', rules: [{ type: 'array' }, { type: 'string' }], optional: true },
+    types: { type: 'multi', rules: [{ type: 'array' }, { type: 'string' }], optional: true },
     excludeFromMirror: { type: 'boolean', optional: true },
     activateTombstones: { type: 'boolean', default: true },
     permissions: { type: 'multi', rules: [{ type: 'object' }, { type: 'function' }], optional: true },
@@ -19,9 +19,8 @@ const RegisterAction = {
   async handler(ctx) {
     let registration: Registration = { ...this.settings.defaultOptions, ...ctx.params };
 
-    registration.acceptedTypes =
-      registration.acceptedTypes &&
-      (await ctx.call('jsonld.parser.expandTypes', { types: registration.acceptedTypes }));
+    registration.types =
+      registration.types && (await ctx.call('jsonld.parser.expandTypes', { types: registration.types }));
 
     if (!registration.name && registration.path) registration.name = registration.path;
 

@@ -28,7 +28,7 @@ const Schema = {
     // Channel properties (to be overridden)
     channelType: null, // E.g. 'WebhookChannel2023',
     typePredicate: null, // E.g. 'notify:WebhookChannel2023', defaults to `notify:${this.settings.channelType}`,
-    acceptedTypes: [], // E.g. ['notify:WebhookChannel2023'],
+    types: [], // E.g. ['notify:WebhookChannel2023'],
     sendOrReceive: null, // Either 'send' or 'receive' (will set `sendTo` or `receiveFrom` URIs).
 
     baseUrl: null,
@@ -58,7 +58,7 @@ const Schema = {
       throw new Error('The setting `sendOrReceive` must be set to `send` or `receive`, depending on channelType.');
     if (!this.settings.channelType) throw new Error('The setting channelType must be set (e.g. `WebhookChannel2023`).');
     if (!this.settings.typePredicate) this.settings.typePredicate = `notify:${this.settings.channelType}`;
-    if (this.settings.acceptedTypes?.length <= 0) this.settings.acceptedTypes = [this.settings.typePredicate];
+    if (this.settings.types?.length <= 0) this.settings.types = [this.settings.typePredicate];
   },
   async started() {
     const { channelType } = this.settings;
@@ -86,8 +86,8 @@ const Schema = {
         const { webId } = ctx.meta;
 
         // TODO: Use ldo objects; This will only check for the json type and not parse json-ld variants...
-        if (!this.settings.acceptedTypes.includes(type) && this.settings.channelType !== type)
-          throw new Error(`Only one of ${this.settings.acceptedTypes} is accepted on this endpoint`);
+        if (!this.settings.types.includes(type) && this.settings.channelType !== type)
+          throw new Error(`Only one of ${this.settings.types} is accepted on this endpoint`);
 
         // Ensure topic exist (LDP resource, container or collection)
         const exists = await ctx.call('ldp.resource.exist', {

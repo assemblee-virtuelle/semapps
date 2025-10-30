@@ -18,7 +18,7 @@ describe.each([false, true])('ControlledContainerMixin with allowSlugs: %s', (al
       mixins: [ControlledContainerMixin],
       settings: {
         path: '/videos', // Will be ignored when slugs are not allowed
-        acceptedTypes: ['as:Video'],
+        types: ['as:Video'],
         permissions: {
           anon: {
             read: true // We want to be able to fetch the container anonymously

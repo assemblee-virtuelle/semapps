@@ -16,7 +16,7 @@ const ActivityService = {
     podProvider: false,
     // ControlledContainerMixin settings
     path: '/as/activity',
-    acceptedTypes: Object.values(FULL_ACTIVITY_TYPES),
+    types: Object.values(FULL_ACTIVITY_TYPES),
     permissions: {},
     newResourcesPermissions: {},
     readOnly: true,

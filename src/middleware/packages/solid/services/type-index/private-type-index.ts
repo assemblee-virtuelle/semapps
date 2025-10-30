@@ -7,7 +7,7 @@ const PrivateTypeIndexService = {
   mixins: [ControlledResourceMixin],
   settings: {
     path: 'private-type-index',
-    acceptedTypes: ['solid:TypeIndex', 'solid:UnlistedDocument'],
+    types: ['solid:TypeIndex', 'solid:UnlistedDocument'],
     permissions: {},
     typeIndex: 'private'
   },

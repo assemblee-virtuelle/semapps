@@ -29,7 +29,7 @@ export interface Registration {
   name: string;
   isContainer: boolean;
   path?: string;
-  acceptedTypes?: string | string[];
+  types?: string | string[];
   shapeTreeUri?: string;
   readOnly?: boolean;
   activateTombstones?: boolean;

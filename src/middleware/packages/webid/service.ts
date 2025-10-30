@@ -11,7 +11,7 @@ const WebIdService = {
     podProvider: false,
     // ControlledContainerMixin
     path: '/foaf/person',
-    acceptedTypes: ['http://xmlns.com/foaf/0.1/Person'],
+    types: ['http://xmlns.com/foaf/0.1/Person'],
     // DereferenceMixin
     dereferencePlan: [
       {

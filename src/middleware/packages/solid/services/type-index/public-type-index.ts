@@ -7,7 +7,7 @@ const PublicTypeIndexService = {
   mixins: [ControlledResourceMixin],
   settings: {
     path: 'public-type-index',
-    acceptedTypes: ['solid:TypeIndex', 'solid:ListedDocument'],
+    types: ['solid:TypeIndex', 'solid:ListedDocument'],
     permissions: {
       anon: {
         read: true

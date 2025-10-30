@@ -19,7 +19,7 @@ beforeAll(async () => {
     mixins: [ControlledContainerMixin],
     settings: {
       path: '/events',
-      acceptedTypes: ['pair:Event'],
+      types: ['pair:Event'],
       permissions: {
         anon: {
           read: true,

@@ -65,7 +65,7 @@ module.exports = {
 
 ### Configure the LDP containers
 
-The containers for actors and objects are handled through the LDP service. You need to define containers with ActivityStreams's actors and objects in the `acceptedTypes`. Alternatively, you can load the default containers from the `@semapps/activitypub` package as below:
+The containers for actors and objects are handled through the LDP service. You need to define containers with ActivityStreams's actors and objects in the `types`. Alternatively, you can load the default containers from the `@semapps/activitypub` package as below:
 
 ```js
 const { LdpService } = require('@semapps/ldp');

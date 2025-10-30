@@ -19,11 +19,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const containers = [
   {
     path: '/resources',
-    acceptedTypes: ['pair:Resource']
+    types: ['pair:Resource']
   },
   {
     path: '/protected-resources',
-    acceptedTypes: ['pair:Resource'],
+    types: ['pair:Resource'],
     permissions: {},
     newResourcesPermissions: {}
   }
@@ -89,7 +89,7 @@ const initialize = async (
       },
       webid: {
         path: '/as/actor',
-        acceptedTypes: [FULL_ACTOR_TYPES.PERSON, FULL_ACTOR_TYPES.APPLICATION]
+        types: [FULL_ACTOR_TYPES.PERSON, FULL_ACTOR_TYPES.APPLICATION]
       }
     }
   });

@@ -16,7 +16,7 @@ describe.each([false, true])('ControlledResourceMixin with allowSlugs: %s', (all
       mixins: [ControlledResourceMixin],
       settings: {
         path: 'address-book',
-        acceptedTypes: ['vcard:AddressBook'],
+        types: ['vcard:AddressBook'],
         permissions: {
           anon: {
             read: true

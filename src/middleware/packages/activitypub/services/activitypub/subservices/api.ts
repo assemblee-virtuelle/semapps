@@ -35,7 +35,7 @@ const ApiService = {
       // If some actor containers are already registered, add the corresponding API routes
       const registrations: Registration[] = await this.broker.call('ldp.registry.list');
       for (const registration of registrations) {
-        if (arrayOf(registration.acceptedTypes).some(type => Object.values(FULL_ACTOR_TYPES).includes(type))) {
+        if (arrayOf(registration.types).some(type => Object.values(FULL_ACTOR_TYPES).includes(type))) {
           // TODO Don't use full path anymore
           await this.broker.call('api.addRoute', {
             route: this.getBoxesRoute(path.join(basePath, `${registration.fullPath}/:actorSlug`))
@@ -92,7 +92,7 @@ const ApiService = {
         if (
           !this.settings.podProvider &&
           resourcesWithContainerPath &&
-          arrayOf(registration.acceptedTypes).some(type => Object.values(FULL_ACTOR_TYPES).includes(type))
+          arrayOf(registration.types).some(type => Object.values(FULL_ACTOR_TYPES).includes(type))
         ) {
           await ctx.call('api.addRoute', {
             route: this.getBoxesRoute(path.join(basePath, `${registration.fullPath}/:actorSlug`))

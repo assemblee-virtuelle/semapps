@@ -14,7 +14,7 @@ const CollectionService = {
     podProvider: false,
     // ControlledContainerMixin settings
     path: '/as/collection',
-    acceptedTypes: [
+    types: [
       'https://www.w3.org/ns/activitystreams#Collection',
       'https://www.w3.org/ns/activitystreams#OrderedCollection'
     ],

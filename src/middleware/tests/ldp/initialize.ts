@@ -22,22 +22,22 @@ const permissions = {
 const containers = [
   {
     path: '/resources',
-    acceptedTypes: ['pair:Project'],
+    types: ['pair:Project'],
     permissions
   },
   {
     path: '/places',
-    acceptedTypes: ['pair:Place'],
+    types: ['pair:Place'],
     permissions
   },
   {
     path: '/themes',
-    acceptedTypes: ['pair:Theme'],
+    types: ['pair:Theme'],
     permissions
   },
   {
     path: '/files',
-    acceptedTypes: ['semapps:File'],
+    types: ['semapps:File'],
     permissions
   }
 ];

@@ -4,7 +4,7 @@ import { arrayOf, delay, getParentContainerUri } from '../utils.ts';
 const ControlledContainerMixin = {
   settings: {
     path: null,
-    acceptedTypes: null,
+    types: null,
     permissions: null,
     newResourcesPermissions: null,
     controlledActions: {},
@@ -123,7 +123,7 @@ const ControlledContainerMixin = {
     getContainerUri: {
       async handler(ctx) {
         return await ctx.call('ldp.registry.getUri', {
-          type: arrayOf(this.settings.acceptedTypes)[0],
+          type: arrayOf(this.settings.types)[0],
           webId: ctx.params?.webId || ctx.meta?.webId
         });
       }

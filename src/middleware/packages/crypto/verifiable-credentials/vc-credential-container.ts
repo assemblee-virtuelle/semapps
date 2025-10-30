@@ -19,7 +19,7 @@ const VCCredentialsContainer = {
     path: null,
     excludeFromMirror: true,
     activateTombstones: false,
-    acceptedTypes: ['https://www.w3.org/2018/credentials#VerifiableCredential'],
+    types: ['https://www.w3.org/2018/credentials#VerifiableCredential'],
     typeIndex: 'private',
     podProvider: null,
     permissions: (webId: any, ctx: any) => {

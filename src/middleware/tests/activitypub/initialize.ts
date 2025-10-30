@@ -15,7 +15,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const containers = [
   {
     path: '/as/object',
-    acceptedTypes: Object.values(FULL_OBJECT_TYPES)
+    types: Object.values(FULL_OBJECT_TYPES)
   }
 ];
 
@@ -66,7 +66,7 @@ const initialize = async (port: any, mainDataset: any, accountsDataset: any, que
       },
       webid: {
         path: '/as/actor',
-        acceptedTypes: Object.values(FULL_ACTOR_TYPES)
+        types: Object.values(FULL_ACTOR_TYPES)
       }
     }
   });

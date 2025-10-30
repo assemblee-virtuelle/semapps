@@ -254,11 +254,11 @@ const VoidSchema = {
 
       const res = await Promise.all(
         registrations
-          .filter(c => c.acceptedTypes)
+          .filter(c => c.types)
           .map(async c => {
             const partition = {
               'http://rdfs.org/ns/void#uriSpace': urlJoin(baseUrl, c.path),
-              'http://rdfs.org/ns/void#class': arrayOf(c.acceptedTypes)
+              'http://rdfs.org/ns/void#class': arrayOf(c.types)
             };
             // @ts-expect-error TS(18046): 'c' is of type 'unknown'.
             if (c.excludeFromMirror) partition['http://semapps.org/ns/core#doNotMirror'] = true;

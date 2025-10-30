@@ -6,19 +6,19 @@ const { MoleculerError } = Errors;
 const ControlledResourceMixin = {
   settings: {
     path: null,
-    acceptedTypes: null,
+    types: null,
     permissions: {},
     controlledActions: {},
     typeIndex: 'public'
   },
   dependencies: ['ldp'],
   async started() {
-    const { path, acceptedTypes, permissions, controlledActions, typeIndex } = this.settings;
+    const { path, types, permissions, controlledActions, typeIndex } = this.settings;
 
     this.registration = await this.broker.call('ldp.registry.register', {
       name: this.name,
       path,
-      acceptedTypes,
+      types,
       isContainer: false,
       permissions,
       controlledActions: {
@@ -44,7 +44,7 @@ const ControlledResourceMixin = {
       async handler(ctx) {
         const webId = ctx.params.webId || ctx.meta.webId;
 
-        const expandedTypes = await ctx.call('jsonld.parser.expandTypes', { types: this.settings.acceptedTypes });
+        const expandedTypes = await ctx.call('jsonld.parser.expandTypes', { types: this.settings.types });
 
         const results = await ctx.call('triplestore.query', {
           query: `
