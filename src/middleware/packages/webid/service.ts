@@ -1,6 +1,7 @@
 import { foaf, schema } from '@semapps/ontologies';
-import { ControlledResourceMixin, DereferenceMixin, getDatasetFromUri } from '@semapps/ldp';
+import { ControlledResourceMixin, DereferenceMixin } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
+import getRedirectRoute from './routes/getRedirectRoute.ts';
 
 const WebIdService = {
   name: 'webid' as const,
@@ -22,30 +23,24 @@ const WebIdService = {
       { property: 'assertionMethod' }
     ]
   },
-  dependencies: ['ontologies'],
+  dependencies: ['ontologies', 'api', 'ldp'],
   async started() {
     await this.broker.call('ontologies.register', foaf);
     await this.broker.call('ontologies.register', schema);
+
+    const basePath: string = await this.broker.call('ldp.getBasePath');
+
+    await this.broker.call('api.addRoute', { route: getRedirectRoute(basePath) });
+  },
+  actions: {
+    redirectToWebId: {
+      async handler(ctx) {
+        const webId = await ctx.call('webid.getUri');
+        ctx.meta.$statusCode = 301;
+        ctx.meta.$location = webId;
+      }
+    }
   }
-  // actions: {
-  //   get: {
-  //     handler(ctx) {
-  //       // Always get WebID as system and on the correct dataset, since they are public
-  //       return ctx.call(
-  //         'ldp.resource.get',
-  //         {
-  //           ...ctx.params,
-  //           webId: 'system'
-  //         },
-  //         {
-  //           meta: {
-  //             dataset: this.settings.podProvider ? getDatasetFromUri(ctx.params.resourceUri) : undefined
-  //           }
-  //         }
-  //       );
-  //     }
-  //   }
-  // }
 } satisfies ServiceSchema;
 
 export default WebIdService;

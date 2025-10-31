@@ -31,12 +31,10 @@ export const dropDataset = (dataset: any) =>
     }
   });
 
-export const fetchServer = (url: any, options = {}) => {
+export const fetchServer = (url: string, options: fetch.RequestInit = {}) => {
   if (!url) throw new Error('No url provided to fetchServer');
-  // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
   if (!options.headers) options.headers = new fetch.Headers();
 
-  // @ts-expect-error TS(2339): Property 'method' does not exist on type '{}'.
   switch (options.method) {
     case 'POST':
     case 'PATCH':
@@ -57,16 +55,12 @@ export const fetchServer = (url: any, options = {}) => {
 
   // @ts-expect-error TS(2339): Property 'body' does not exist on type '{}'.
   if (options.body && options.headers.get('Content-Type').includes('json')) {
-    // @ts-expect-error TS(2339): Property 'body' does not exist on type '{}'.
     options.body = JSON.stringify(options.body);
   }
 
   return fetch(url, {
-    // @ts-expect-error TS(2339): Property 'method' does not exist on type '{}'.
     method: options.method || 'GET',
-    // @ts-expect-error TS(2339): Property 'body' does not exist on type '{}'.
     body: options.body,
-    // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
     headers: options.headers
   })
     .then(response =>

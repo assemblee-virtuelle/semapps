@@ -7,6 +7,7 @@
   "dependencies": {
     "@semapps/activitypub": "1.2.0",
     "@semapps/ldp": "1.2.0",
+    "@semapps/middleware": "1.2.0",
     "@semapps/mime-types": "1.2.0",
     "@semapps/ontologies": "1.2.0",
     "url-join": "^4.0.1"
