@@ -2,7 +2,7 @@ import urlJoin from 'url-join';
 import rdf from '@rdfjs/data-model';
 import { ServiceSchema } from 'moleculer';
 import { pim } from '@semapps/ontologies';
-import { getWebIdFromUri, Registration, arrayOf } from '@semapps/ldp';
+import { Registration, arrayOf } from '@semapps/ldp';
 
 const SolidStorageSchema = {
   name: 'solid-storage' as const,
@@ -160,28 +160,17 @@ const SolidStorageSchema = {
 
     getBaseUrl: {
       params: {
-        webId: { type: 'string', optional: true },
         username: { type: 'string', optional: true }
       },
       async handler(ctx) {
-        const { webId, username } = ctx.params;
-        if (username) {
-          return urlJoin(this.settings.baseUrl, username);
-        } else if (webId) {
-          return getWebIdFromUri(webId);
-        } else {
-          throw new Error(`The webId or username param is required`);
-        }
+        const username = ctx.params.username || ctx.meta.dataset;
+        return urlJoin(this.settings.baseUrl, username);
       }
     },
 
     getRootContainerUri: {
-      params: {
-        webId: { type: 'string' }
-      },
       async handler(ctx) {
-        const { webId } = ctx.params;
-        const webIdData = await ctx.call('ldp.resource.get', { resourceUri: webId });
+        const webIdData = await ctx.call('webid.get');
         return webIdData?.['pim:storage'];
       }
     }

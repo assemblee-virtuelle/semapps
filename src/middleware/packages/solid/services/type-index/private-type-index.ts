@@ -1,4 +1,4 @@
-import { ControlledResourceMixin, getWebIdFromUri } from '@semapps/ldp';
+import { ControlledResourceMixin } from '@semapps/ldp';
 import rdf from '@rdfjs/data-model';
 import { ServiceSchema } from 'moleculer';
 

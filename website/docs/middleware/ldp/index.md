@@ -81,14 +81,13 @@ module.exports = {
 The following options can be set for each container, or they can be set in the `defaultContainerOptions` settings.
 
 | Property                  | Type                                    | Default       | Description                                                                                                                                                                 |
-| ------------------------- | --------------------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ------------------------- | --------------------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- |
 | `accept`                  | `String`                                | "text/turtle" | Type to return (`application/ld+json`, `text/turtle` or `application/n-triples`)                                                                                            |
 | `types`                   | `Array`                                 |               | RDF classes accepted in this container. This is not enforced but used by some services to identify containers.                                                              |
 | `excludeFromMirror`       | `Boolean`                               | false         | If true, other servers will not be able to [mirror](../sync/mirror) this container.                                                                                         |
 | `activateTombstones`      | `Boolean`                               | true          | If true, and if the ActivityPubService setting is also true, [Tombstones](https://www.w3.org/TR/activitypub/#delete-activity-outbox) will replace deleted resources.        |
 | `permissions`             | `Object \| (webId, ctx) => Permissions` |               | If the WebACL service is activated, permissions of the container itself. For the permissions object shape, see [`webacl.resource.addRights`](resource.md#addrights) action. |
-| `newResourcesPermissions` | `Object \| (webId, ctx) => Permissions` |               | If the WebACL service is activated, permissions for new resources. [See the docs here](../webacl/index.md#default-permissions-for-new-resources)                            |
-| `readOnly`                | `Boolean`                               | false         | Do not set `POST`, `PATCH`, `PUT` and `DELETE` routes for the container and its resources                                                                                   |
+| `newResourcesPermissions` | `Object \| (webId, ctx) => Permissions` |               | If the WebACL service is activated, permissions for new resources. [See the docs here](../webacl/index.md#default-permissions-for-new-resources)                            |     |
 | `preferredView`           | `String`                                |               | A part of the final URL for redirecting to the preferred view of the resource (see below).                                                                                  |
 | `controlledActions`       | `Object`                                |               | Use custom actions instead of the LDP ones (post, list, get, create, put, patch, delete). Used by the [ControlledContainerMixin](controlled-container)                      |
 
@@ -103,8 +102,6 @@ These catch-all routes are automatically added to the `ApiGateway` service.
 | `PUT`    | `ldp.resource.put`    | -                      |
 | `PATCH`  | `ldp.resource.patch`  | `ldp.container.patch`  |
 | `DELETE` | `ldp.resource.delete` | `ldp.container.delete` |
-
-> Note: If the `readOnly` container option is set (see above), only `GET` routes are added.
 
 ## Redirecting to a frontend app
 

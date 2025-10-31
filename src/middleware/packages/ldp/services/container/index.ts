@@ -1,5 +1,4 @@
 import { ServiceSchema } from 'moleculer';
-import urlJoin from 'url-join';
 import attachAction from './actions/attach.ts';
 import clearAction from './actions/clear.ts';
 import createAction from './actions/create.ts';
@@ -37,13 +36,6 @@ const LdpContainerSchema = {
     isEmpty: isEmptyAction,
     post: postAction,
     patch: patchAction
-  },
-  methods: {
-    async getBaseUrl(ctx) {
-      return this.settings.podProvider
-        ? await ctx.call('solid-storage.getBaseUrl', { webId: urlJoin(this.settings.baseUrl, ctx.meta.dataset) })
-        : this.settings.baseUrl;
-    }
   },
   hooks: {
     before: {

@@ -1,6 +1,6 @@
 import { ActionSchema } from 'moleculer';
 
-const Schema = {
+const CreateAction = {
   visibility: 'public',
   params: {
     path: { type: 'string', optional: true },
@@ -11,9 +11,7 @@ const Schema = {
   async handler(ctx) {
     let { path, title, description, registration } = ctx.params;
 
-    const baseUrl = this.settings.podProvider
-      ? await ctx.call('solid-storage.getBaseUrl', { username: ctx.meta.dataset })
-      : this.settings.baseUrl;
+    const baseUrl = await ctx.call('solid-storage.getBaseUrl');
 
     const containerUri = await ctx.call('triplestore.named-graph.create', {
       baseUrl,
@@ -37,4 +35,4 @@ const Schema = {
   }
 } satisfies ActionSchema;
 
-export default Schema;
+export default CreateAction;

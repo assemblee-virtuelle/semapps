@@ -1,6 +1,6 @@
 import urlJoin from 'url-join';
 import { ActionSchema } from 'moleculer';
-import { Registration } from '@semapps/ldp';
+import { getDatasetFromUri, Registration } from '@semapps/ldp';
 
 export const action = {
   visibility: 'public',
@@ -11,9 +11,7 @@ export const action = {
 
     for (const { permissions, path } of registrations) {
       if (permissions) {
-        const baseUrl = this.settings.podProvider
-          ? await ctx.call('solid-storage.getBaseUrl', { webId })
-          : this.settings.baseUrl;
+        const baseUrl = await ctx.call('solid-storage.getBaseUrl', { username: getDatasetFromUri(webId) });
 
         const containerUri = urlJoin(baseUrl, path);
 

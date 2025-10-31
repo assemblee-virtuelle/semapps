@@ -8,7 +8,6 @@ const ControlledContainerMixin = {
     permissions: null,
     newResourcesPermissions: null,
     controlledActions: {},
-    readOnly: false,
     excludeFromMirror: false,
     activateTombstones: true,
     typeIndex: undefined

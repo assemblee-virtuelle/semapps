@@ -1,7 +1,6 @@
 import { Registration } from '../../types.ts';
 
 const Schema = {
-  readOnly: false,
   isContainer: true,
   excludeFromMirror: false,
   typeIndex: 'public',

@@ -97,7 +97,9 @@ const getDatasetFromUri = (uri: any) => {
   }
 };
 
-// Transforms "http://localhost:3000/alice/data" to "http://localhost:3000/alice"
+/**
+ * @deprecated Does not work anymore
+ */
 const getWebIdFromUri = (uri: any) => {
   const path = getPathFromUri(uri);
   if (path) {

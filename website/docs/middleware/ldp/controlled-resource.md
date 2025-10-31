@@ -17,8 +17,7 @@ module.exports = {
       '@type': 'vcard:AddressBook',
       'vcard:title': 'My address book'
     },
-    permissions: {},
-    readOnly: false
+    permissions: {}
   }
 };
 ```
@@ -27,12 +26,11 @@ module.exports = {
 
 All settings relative to this mixin should be set in a `imageProcessor` key.
 
-| Property       | Type      | Default | Description                                                                    |
-| -------------- | --------- | ------- | ------------------------------------------------------------------------------ |
-| `path`         | `String`  |         | If not specified, or if the `allowSlugs` setting is false, a UUID will be used |
-| `initialValue` | `Object`  | {}      | Value for the resources to be created                                          |
-| `permissions`  | `Object`  | {}      | Permissions to be applied                                                      |
-| `readOnly`     | `Boolean` | false   | If true, it will not be possible to call the PUT/PATCH method on this resource |
+| Property       | Type     | Default | Description                                                                    |
+| -------------- | -------- | ------- | ------------------------------------------------------------------------------ |
+| `path`         | `String` |         | If not specified, or if the `allowSlugs` setting is false, a UUID will be used |
+| `initialValue` | `Object` | {}      | Value for the resources to be created                                          |
+| `permissions`  | `Object` | {}      | Permissions to be applied                                                      |
 
 ## Actions
 

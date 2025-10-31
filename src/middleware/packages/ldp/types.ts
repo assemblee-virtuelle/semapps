@@ -31,7 +31,6 @@ export interface Registration {
   path?: string;
   types?: string | string[];
   shapeTreeUri?: string;
-  readOnly?: boolean;
   activateTombstones?: boolean;
   excludeFromMirror?: boolean;
   permissions?: WacPermissionFunction | WacPermissionObject;

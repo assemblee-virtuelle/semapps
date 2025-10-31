@@ -13,7 +13,6 @@ const RegisterAction = {
     permissions: { type: 'multi', rules: [{ type: 'object' }, { type: 'function' }], optional: true },
     newResourcesPermissions: { type: 'multi', rules: [{ type: 'object' }, { type: 'function' }], optional: true },
     controlledActions: { type: 'object', optional: true },
-    readOnly: { type: 'boolean', optional: true },
     typeIndex: { type: 'string', optional: true }
   },
   async handler(ctx) {

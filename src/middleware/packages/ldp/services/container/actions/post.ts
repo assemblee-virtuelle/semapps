@@ -5,7 +5,7 @@ import { cleanUndefined } from '../../../utils.ts';
 
 const { MoleculerError } = Errors;
 
-const Schema = {
+const PostAction = {
   visibility: 'public',
   params: {
     containerUri: {
@@ -81,7 +81,7 @@ const Schema = {
     }
 
     const resourceUri = await ctx.call('triplestore.named-graph.create', {
-      baseUrl: await this.getBaseUrl(ctx),
+      baseUrl: await ctx.call('solid-storage.getBaseUrl'),
       slug: this.settings.allowSlugs ? slug : undefined
     });
 
@@ -158,4 +158,4 @@ const Schema = {
   }
 } satisfies ActionSchema;
 
-export default Schema;
+export default PostAction;
