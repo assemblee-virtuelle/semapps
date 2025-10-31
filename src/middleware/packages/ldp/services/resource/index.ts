@@ -16,7 +16,6 @@ const LdpResourceSchema = {
   name: 'ldp.resource' as const,
   settings: {
     baseUrl: null,
-    podProvider: false,
     preferredViewForResource: null,
     allowSlugs: true,
     binary: {
@@ -40,13 +39,13 @@ const LdpResourceSchema = {
   hooks: {
     before: {
       '*'(ctx) {
-        // @ts-expect-error TS(2339): Property 'podProvider' does not exist on type 'str... Remove this comment to see the full error message
-        if (this.settings.podProvider && !ctx.meta.dataset) {
+        if (!ctx.meta.dataset) {
           // If we have a pod provider, guess the dataset from the URI
           const uri =
             ctx.params.resourceUri || (ctx.params.resource && (ctx.params.resource.id || ctx.params.resource['@id']));
           // @ts-expect-error TS(2339): Property 'baseUrl' does not exist on type 'string ... Remove this comment to see the full error message
           if (uri && uri.startsWith(this.settings.baseUrl)) {
+            this.logger.warn(`No dataset found when calling ${ctx.action.name} with URI ${uri}`);
             ctx.meta.dataset = getDatasetFromUri(uri);
           }
         }

@@ -7,7 +7,7 @@ import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { AuthLocalService } from '@semapps/auth';
 import { fileURLToPath } from 'url';
 import * as CONFIG from '../config.ts';
-import { dropDataset } from '../utils.ts';
+import { listDatasets, dropDataset } from '../utils.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -43,8 +43,10 @@ const containers = [
 ];
 
 const initialize = async (allowSlugs = true): Promise<ServiceBroker> => {
-  await dropDataset('alice');
-  await dropDataset(CONFIG.SETTINGS_DATASET);
+  const datasets: string[] = await listDatasets();
+  for (let dataset of datasets) {
+    await dropDataset(dataset);
+  }
 
   const uploadsPath = pathJoin(__dirname, '../uploads');
   if (fs.existsSync(uploadsPath)) {

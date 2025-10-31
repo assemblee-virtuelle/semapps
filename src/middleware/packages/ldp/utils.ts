@@ -86,7 +86,7 @@ const getPathFromUri = (uri: any) => {
   }
 };
 
-// Transforms "http://localhost:3000/alice/data" to "alice"
+// Transforms "http://localhost:3000/alice/{uuid}" to "alice"
 const getDatasetFromUri = (uri: any) => {
   const path = getPathFromUri(uri);
   if (path) {

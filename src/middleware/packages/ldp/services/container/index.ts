@@ -14,11 +14,10 @@ import postAction from './actions/post.ts';
 import patchAction from './actions/patch.ts';
 import { getDatasetFromUri } from '../../utils.ts';
 
-const LdpContainerSchema = {
+const LdpContainerService = {
   name: 'ldp.container' as const,
   settings: {
     baseUrl: null,
-    podProvider: false,
     allowSlugs: true
   },
   dependencies: ['triplestore', 'jsonld'],
@@ -41,14 +40,12 @@ const LdpContainerSchema = {
     before: {
       '*'(ctx) {
         if (
-          // @ts-expect-error TS(2339): Property 'podProvider' does not exist on type 'str... Remove this comment to see the full error message
-          this.settings.podProvider &&
           !ctx.meta.dataset &&
           ctx.params.containerUri &&
           // @ts-expect-error TS(2339): Property 'baseUrl' does not exist on type 'string ... Remove this comment to see the full error message
           ctx.params.containerUri.startsWith(this.settings.baseUrl)
         ) {
-          // this.logger.warn(`No dataset found when calling ${ctx.action.name} with URI ${ctx.params.containerUri}`);
+          this.logger.warn(`No dataset found when calling ${ctx.action.name} with URI ${ctx.params.containerUri}`);
           ctx.meta.dataset = getDatasetFromUri(ctx.params.containerUri);
         }
       }
@@ -56,12 +53,12 @@ const LdpContainerSchema = {
   }
 } satisfies ServiceSchema;
 
-export default LdpContainerSchema;
+export default LdpContainerService;
 
 declare global {
   export namespace Moleculer {
     export interface AllServices {
-      [LdpContainerSchema.name]: typeof LdpContainerSchema;
+      [LdpContainerService.name]: typeof LdpContainerService;
     }
   }
 }

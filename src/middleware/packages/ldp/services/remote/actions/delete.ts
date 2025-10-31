@@ -1,6 +1,6 @@
 import { ActionSchema } from 'moleculer';
 
-const Schema = {
+const DeleteAction = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -16,14 +16,12 @@ const Schema = {
       );
     }
 
-    if (this.settings.podProvider) {
-      if (!webId || webId === 'system' || webId === 'anon') {
-        throw new Error(`Cannot delete remote resource in cache without a webId (Provided: ${webId})`);
-      }
-      const account = await ctx.call('auth.account.findByWebId', { webId });
-      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
-      ctx.meta.dataset = account.username;
+    if (!webId || webId === 'system' || webId === 'anon') {
+      throw new Error(`Cannot delete remote resource in cache without a webId (Provided: ${webId})`);
     }
+    const account = await ctx.call('auth.account.findByWebId', { webId });
+    // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
+    ctx.meta.dataset = account.username;
 
     const exist = await ctx.call('triplestore.named-graph.exist', { uri: resourceUri });
     if (!exist) throw new Error(`No named graph found with resource ${resourceUri} (webId: ${webId})`);
@@ -34,8 +32,8 @@ const Schema = {
     await ctx.call('triplestore.named-graph.delete', { uri: resourceUri });
 
     // Detach from all containers
-    const containers = await ctx.call('ldp.resource.getContainers', { resourceUri });
-    for (const containerUri of containers) {
+    const containersUris: string[] = await ctx.call('ldp.resource.getContainers', { resourceUri });
+    for (const containerUri of containersUris) {
       await ctx.call('ldp.container.detach', { containerUri, resourceUri, webId: 'system' });
     }
 
@@ -54,4 +52,4 @@ const Schema = {
   }
 } satisfies ActionSchema;
 
-export default Schema;
+export default DeleteAction;

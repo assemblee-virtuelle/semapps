@@ -54,10 +54,7 @@ const InboxService = {
         if (!account) throw new E.NotFoundError();
         if (account.deletedAt) throw new MoleculerError(`User does not exist anymore`, 410, 'GONE');
 
-        if (this.settings.podProvider) {
-          // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
-          ctx.meta.dataset = account.username;
-        }
+        ctx.meta.dataset = account.username;
 
         // We want the next operations to be done by the system
         // TODO check if we can avoid this, as this is a bad practice

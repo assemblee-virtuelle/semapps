@@ -44,5 +44,4 @@ export interface LdpRegistryServiceSettings {
   containers: Registration[];
   defaultOptions: Partial<Registration>;
   allowSlugs: boolean;
-  podProvider: boolean;
 }

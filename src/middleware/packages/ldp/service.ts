@@ -14,7 +14,6 @@ const LdpSchema = {
   settings: {
     baseUrl: null,
     containers: [],
-    podProvider: false,
     defaultContainerOptions: {},
     preferredViewForResource: null,
     allowSlugs: true,
@@ -24,7 +23,7 @@ const LdpSchema = {
   },
   dependencies: ['ldp.container', 'ldp.resource', 'ldp.registry', 'ontologies', 'jsonld'],
   async created() {
-    const { baseUrl, containers, podProvider, defaultContainerOptions, preferredViewForResource, allowSlugs, binary } =
+    const { baseUrl, containers, defaultContainerOptions, preferredViewForResource, allowSlugs, binary } =
       this.settings;
 
     // @ts-expect-error TS(2322): Type '{ name: "ldp.container"; settings: { baseUrl... Remove this comment to see the full error message
@@ -32,7 +31,6 @@ const LdpSchema = {
       mixins: [LdpContainerService],
       settings: {
         baseUrl,
-        podProvider,
         allowSlugs
       },
       hooks: this.schema.hooksContainer || {}
@@ -43,7 +41,6 @@ const LdpSchema = {
       mixins: [LdpResourceService],
       settings: {
         baseUrl,
-        podProvider,
         preferredViewForResource,
         allowSlugs,
         binary
@@ -55,20 +52,17 @@ const LdpSchema = {
     this.broker.createService({
       mixins: [LdpRemoteService],
       settings: {
-        baseUrl,
-        podProvider
+        baseUrl
       }
     });
 
-    // @ts-expect-error TS(2322): Type '{ name: "ldp.registry"; settings: { baseUrl:... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [LdpRegistryService],
       settings: {
         baseUrl,
         containers,
         allowSlugs,
-        defaultOptions: defaultContainerOptions,
-        podProvider
+        defaultOptions: defaultContainerOptions
       }
     });
 
@@ -76,8 +70,7 @@ const LdpSchema = {
     this.broker.createService({
       mixins: [LdpApiService],
       settings: {
-        baseUrl,
-        podProvider
+        baseUrl
       }
     });
 

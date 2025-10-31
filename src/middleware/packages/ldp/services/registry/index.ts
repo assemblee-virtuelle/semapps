@@ -13,8 +13,7 @@ const LdpRegistryService = {
     baseUrl: undefined,
     containers: [],
     defaultOptions,
-    allowSlugs: true,
-    podProvider: false
+    allowSlugs: true
   },
   dependencies: ['ldp.container', 'api'],
   actions: {

@@ -1,7 +1,6 @@
 import { ActionSchema } from 'moleculer';
-import { getContainerFromUri } from '../../../utils.ts';
 
-const Schema = {
+const GetContainersAction = {
   visibility: 'public',
   params: {
     resourceUri: 'string',
@@ -10,15 +9,6 @@ const Schema = {
   async handler(ctx) {
     const { resourceUri } = ctx.params;
     const dataset = ctx.params.dataset || ctx.meta.dataset;
-
-    // In the POD provider config, the root container with actors is not a real LDP container
-    // Because we have chosen not to use a common dataset for this kind of data
-    // So we use the deprecated getContainerFromUri to find the container
-    // TODO store actors in a proper LDP container, with its own dataset ?
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-    if (this.settings.podProvider && `${getContainerFromUri(resourceUri)}/` === this.settings.baseUrl) {
-      return [getContainerFromUri(resourceUri)];
-    }
 
     const result = await ctx.call('triplestore.query', {
       query: `
@@ -38,4 +28,4 @@ const Schema = {
   }
 } satisfies ActionSchema;
 
-export default Schema;
+export default GetContainersAction;

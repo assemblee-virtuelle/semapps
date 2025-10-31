@@ -46,7 +46,7 @@ const Schema = {
       };
     }
 
-    if (!dataset && this.settings.podProvider) {
+    if (!dataset) {
       if (!webId) {
         throw new Error(`In Pod provider config, a webId or dataset param must be provided to ldp.remote.store`);
       }
