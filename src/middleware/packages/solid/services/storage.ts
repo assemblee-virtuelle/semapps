@@ -1,4 +1,5 @@
 import urlJoin from 'url-join';
+import rdf from '@rdfjs/data-model';
 import { ServiceSchema } from 'moleculer';
 import { pim } from '@semapps/ontologies';
 import { getWebIdFromUri, Registration, arrayOf } from '@semapps/ldp';
@@ -25,44 +26,29 @@ const SolidStorageSchema = {
       },
       async handler(ctx) {
         const { username } = ctx.params;
+        ctx.meta.dataset = username;
 
         await ctx.call('triplestore.dataset.create', {
           dataset: username,
           secure: false // TODO Remove when we switch to Fuseki 5
         });
 
-        const webId = urlJoin(this.settings.baseUrl, username);
+        const allowSlugs = await ctx.call('ldp.getSetting', { key: 'allowSlugs' });
+        const baseUrl = await this.actions.getBaseUrl({ username }, { parentCtx: ctx });
 
-        ctx.meta.dataset = username;
-        ctx.meta.webId = webId;
+        const rootContainerUri: string = await ctx.call('ldp.container.create', { path: '/data' });
 
-        const rootContainerUri = await ctx.call('ldp.container.create', { path: '/data', webId });
+        let resourcesUris: Record<string, string> = {};
 
-        // Create WebID
-        await ctx.call('webid.create', {
-          resourceUri: webId,
-          resource: {
-            '@id': webId,
-            '@type': 'foaf:Person',
-            'foaf:nick': username,
-            'pim:storage': rootContainerUri,
-            'solid:oidcIssuer': this.settings.baseUrl.replace(/\/$/, '') // Remove trailing slash if it exists
-          },
-          webId
-        });
-
-        // Create controlled resources (we do that first so that types indexes are created)
+        // Create controlled resources by priority (first webId, then type indexes, then other resources)
         const resourceRegistrations: Registration[] = await ctx.call('ldp.registry.list', { isContainer: false });
-        for (const resourceRegistration of Object.values(resourceRegistrations)) {
+        for (const resourceRegistration of resourceRegistrations) {
           const { controlledActions } = resourceRegistration;
 
-          const baseUrl = await this.actions.getBaseUrl({ webId }, { parentCtx: ctx });
-          const allowSlugs = await ctx.call('ldp.getSetting', { key: 'allowSlugs' });
-
           // TODO Put this inside the ldp.resource.create action
-          const resourceUri = await ctx.call('triplestore.named-graph.create', {
+          const resourceUri: string = await ctx.call('triplestore.named-graph.create', {
             baseUrl,
-            slug: allowSlugs ? this.settings.slug : undefined
+            slug: allowSlugs ? resourceRegistration.path : undefined
           });
 
           await ctx.call(controlledActions.create, {
@@ -78,6 +64,40 @@ const SolidStorageSchema = {
             webId: 'system'
           });
 
+          resourcesUris[resourceRegistration.name] = resourceUri;
+        }
+
+        const webId = resourcesUris.webid;
+        ctx.meta.webId = webId;
+
+        // Add other properties to the WebID
+        await ctx.call('webid.patch', {
+          resourceUri: webId,
+          triplesToAdd: [
+            rdf.quad(
+              rdf.namedNode(webId),
+              rdf.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+              rdf.namedNode('http://xmlns.com/foaf/0.1/Person')
+            ),
+            rdf.quad(rdf.namedNode(webId), rdf.namedNode('http://xmlns.com/foaf/0.1/nick'), rdf.literal(username)),
+            rdf.quad(
+              rdf.namedNode(webId),
+              rdf.namedNode('http://www.w3.org/ns/pim/space#storage'),
+              rdf.namedNode(rootContainerUri)
+            ),
+            rdf.quad(
+              rdf.namedNode(webId),
+              rdf.namedNode('http://www.w3.org/ns/solid/terms#oidcIssuer'),
+              rdf.namedNode(this.settings.baseUrl.replace(/\/$/, ''))
+            )
+          ],
+          webId: 'system'
+        });
+
+        // Now the WebID is created, register the resources with the type index
+        for (const resourceRegistration of resourceRegistrations) {
+          const resourceUri = resourcesUris[resourceRegistration.name];
+
           await ctx.call('type-index.register', {
             types: arrayOf(resourceRegistration.types),
             uri: resourceUri,
@@ -89,7 +109,7 @@ const SolidStorageSchema = {
 
         // Create containers from registry
         const containerRegistrations: Registration[] = await ctx.call('ldp.registry.list', { isContainer: true });
-        for (const containerRegistration of Object.values(containerRegistrations)) {
+        for (const containerRegistration of containerRegistrations) {
           const containerUri = await ctx.call('ldp.container.create', {
             registration: containerRegistration,
             webId
@@ -140,11 +160,18 @@ const SolidStorageSchema = {
 
     getBaseUrl: {
       params: {
-        webId: { type: 'string' }
+        webId: { type: 'string', optional: true },
+        username: { type: 'string', optional: true }
       },
       async handler(ctx) {
-        const { webId } = ctx.params;
-        return getWebIdFromUri(webId);
+        const { webId, username } = ctx.params;
+        if (username) {
+          return urlJoin(this.settings.baseUrl, username);
+        } else if (webId) {
+          return getWebIdFromUri(webId);
+        } else {
+          throw new Error(`The webId or username param is required`);
+        }
       }
     },
 

@@ -60,25 +60,24 @@ describe.each([false, true])('ControlledContainerMixin with allowSlugs: %s', (al
     // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
       const registrations: Registration[] = await alice.call('ldp.registry.list');
-      expect(registrations).toHaveLength(10); // 8 containers + 2 resources
+      expect(registrations).toHaveLength(10); // 7 containers + 3 resources
       expect(registrations.find(r => r.name === 'videos')).not.toBeUndefined();
     });
 
     const containersUris = await alice.call('ldp.container.getAll');
-    expect(containersUris).toHaveLength(9); // 8 containers + root container
+    expect(containersUris).toHaveLength(8); // 7 containers + root container
 
     if (allowSlugs) {
       expect(containersUris).toEqual(
         expect.arrayContaining([
-          urlJoin(alice.webId, '/users'),
-          urlJoin(alice.webId, '/key'),
-          urlJoin(alice.webId, '/public-key'),
-          urlJoin(alice.webId, '/videos'),
-          urlJoin(alice.webId, '/resources'),
-          urlJoin(alice.webId, '/places'),
-          urlJoin(alice.webId, '/themes'),
-          urlJoin(alice.webId, '/files'),
-          urlJoin(alice.webId, '/data')
+          urlJoin(alice.baseUrl, '/key'),
+          urlJoin(alice.baseUrl, '/public-key'),
+          urlJoin(alice.baseUrl, '/videos'),
+          urlJoin(alice.baseUrl, '/resources'),
+          urlJoin(alice.baseUrl, '/places'),
+          urlJoin(alice.baseUrl, '/themes'),
+          urlJoin(alice.baseUrl, '/files'),
+          urlJoin(alice.baseUrl, '/data')
         ])
       );
     }
@@ -107,7 +106,7 @@ describe.each([false, true])('ControlledContainerMixin with allowSlugs: %s', (al
     // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
       const containersUris = await alice.call('ldp.container.getAll');
-      expect(containersUris).toHaveLength(9);
+      expect(containersUris).toHaveLength(8);
     });
 
     // The container URI has not changed

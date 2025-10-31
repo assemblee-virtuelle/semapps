@@ -14,21 +14,22 @@ const SolidPreferencesFileSchema = {
   async started() {
     await this.broker.call('ontologies.register', pim);
   },
-  hooks: {
-    after: {
-      async create(ctx, res) {
+  events: {
+    'webid.created': {
+      async handler(ctx) {
+        const { resourceUri: webId } = ctx.params;
+        const preferencesUri = await this.actions.waitForCreation({}, { parentCtx: ctx });
         await ctx.call('ldp.resource.patch', {
-          resourceUri: ctx.params.webId,
+          resourceUri: webId,
           triplesToAdd: [
             rdf.quad(
-              rdf.namedNode(ctx.params.webId),
+              rdf.namedNode(webId),
               rdf.namedNode('http://www.w3.org/ns/pim/space#preferencesFile'),
-              rdf.namedNode(res)
+              rdf.namedNode(preferencesUri)
             )
           ],
           webId: 'system'
         });
-        return res;
       }
     }
   }

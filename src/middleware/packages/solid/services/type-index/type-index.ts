@@ -32,7 +32,7 @@ const TypeIndexService = {
         const webId = ctx.params.webId || ctx.meta.webId;
 
         const expandedTypes: string[] = await ctx.call('jsonld.parser.expandTypes', { types });
-        const oldExpandedTypes: string[] = await this.actions.getTypes({ uri, webId, isPrivate });
+        const oldExpandedTypes: string[] = await this.actions.getTypes({ uri, isPrivate }, { parentCtx: ctx });
 
         const typeIndexUri = await ctx.call(`${isPrivate ? 'private' : 'public'}-type-index.getUri`, { webId });
 
@@ -104,20 +104,18 @@ const TypeIndexService = {
       visibility: 'public',
       params: {
         uri: { type: 'string' },
-        webId: { type: 'string', optional: true },
         isPrivate: { type: 'boolean', optional: true }
       },
       // cache: true,
       async handler(ctx) {
         const { uri, isPrivate } = ctx.params;
-        const webId = ctx.params.webId || ctx.meta.webId;
 
         // If isPrivate is not defined, search in both type indexes
         let typeIndexUris = [];
         if (isPrivate === false || isPrivate === undefined)
-          typeIndexUris.push(await ctx.call(`public-type-index.getUri`, { webId }));
+          typeIndexUris.push(await ctx.call(`public-type-index.getUri`));
         if (isPrivate === true || isPrivate === undefined)
-          typeIndexUris.push(await ctx.call(`private-type-index.getUri`, { webId }));
+          typeIndexUris.push(await ctx.call(`private-type-index.getUri`));
 
         const results = await ctx.call('triplestore.query', {
           query: `
@@ -133,8 +131,7 @@ const TypeIndexService = {
               }
             }
           `,
-          webId: 'system',
-          dataset: isWebId(webId) ? getDatasetFromUri(webId) : undefined
+          webId: 'system'
         });
 
         return arrayOf(results).map((r: any) => r.type.value);
@@ -145,23 +142,21 @@ const TypeIndexService = {
       visibility: 'public',
       params: {
         type: { type: 'string' },
-        webId: { type: 'string', optional: true },
         isContainer: { type: 'boolean', optional: true },
         isPrivate: { type: 'boolean', optional: true }
       },
       // cache: true,
       async handler(ctx) {
         const { type, isContainer, isPrivate } = ctx.params;
-        const webId = ctx.params.webId || ctx.meta.webId;
 
         const [expandedType] = (await ctx.call('jsonld.parser.expandTypes', { types: [type] })) as string[];
 
         // If isPrivate is not defined, search in both type indexes
         let typeIndexUris = [];
         if (isPrivate === false || isPrivate === undefined)
-          typeIndexUris.push(await ctx.call(`public-type-index.getUri`, { webId }));
+          typeIndexUris.push(await ctx.call(`public-type-index.getUri`));
         if (isPrivate === true || isPrivate === undefined)
-          typeIndexUris.push(await ctx.call(`private-type-index.getUri`, { webId }));
+          typeIndexUris.push(await ctx.call(`private-type-index.getUri`));
 
         // If isContainer is not defined, look for both containers and single resources
         let instancePredicates = [];
@@ -182,8 +177,7 @@ const TypeIndexService = {
               }
             }
           `,
-          webId: 'system',
-          dataset: getDatasetFromUri(webId)
+          webId: 'system'
         });
 
         return results.map((r: any) => r.uri.value);

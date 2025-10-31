@@ -15,7 +15,6 @@ const Schema = {
 
     // If resource exists but we don't want tombstones, check the resource type
     if (exist && !acceptTombstones) {
-      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       const types = await this.actions.getTypes({ resourceUri }, { parentCtx: ctx });
       if (types.includes('https://www.w3.org/ns/activitystreams#Tombstone')) return false;
     }

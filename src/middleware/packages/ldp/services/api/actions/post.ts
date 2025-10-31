@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'mime... Remove this comment to see the full error message
 import mime from 'mime-types';
 import { Errors } from 'moleculer';
+import { getDatasetFromUri } from '../../../utils.ts';
 
 const { MoleculerError } = Errors;
 
@@ -12,6 +13,7 @@ export default async function post(this: any, ctx: any) {
     let { username, slugParts, ...resource } = ctx.params;
 
     const containerUri = this.getUriFromSlugParts(slugParts, username);
+    ctx.meta.dataset = getDatasetFromUri(containerUri);
 
     let resourceUri;
     const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });

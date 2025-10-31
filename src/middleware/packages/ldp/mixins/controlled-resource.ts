@@ -1,5 +1,5 @@
 import { ServiceSchema, Errors } from 'moleculer';
-import { delay, getDatasetFromUri } from '../utils.ts';
+import { delay } from '../utils.ts';
 
 const { MoleculerError } = Errors;
 
@@ -33,17 +33,14 @@ const ControlledResourceMixin = {
   actions: {
     create: {
       async handler(ctx) {
-        return await ctx.call('ldp.resource.create', ctx.params);
+        const res = await ctx.call('ldp.resource.create', ctx.params);
+        ctx.emit(`${this.name}.created`, res);
+        return res;
       }
     },
 
     getUri: {
-      params: {
-        webId: { type: 'string', optional: true }
-      },
       async handler(ctx) {
-        const webId = ctx.params.webId || ctx.meta.webId;
-
         const expandedTypes = await ctx.call('jsonld.parser.expandTypes', { types: this.settings.types });
 
         const results = await ctx.call('triplestore.query', {
@@ -54,8 +51,7 @@ const ControlledResourceMixin = {
                 ?resourceUri a ${expandedTypes.map(t => `<${t}>`).join(', ')} .
               }
             }
-          `,
-          dataset: getDatasetFromUri(webId)
+          `
         });
 
         return results[0]?.resourceUri.value;
@@ -64,55 +60,39 @@ const ControlledResourceMixin = {
 
     exist: {
       params: {
-        resourceUri: { type: 'string', optional: true },
-        webId: { type: 'string', optional: true }
+        resourceUri: { type: 'string', optional: true }
       },
       async handler(ctx) {
-        const webId = ctx.params.webId || ctx.meta.webId;
-        const resourceUri = ctx.params.resourceUri || (await this.actions.getUri({ webId }, { parentCtx: ctx }));
+        const resourceUri = ctx.params.resourceUri || (await this.actions.getUri({}, { parentCtx: ctx }));
         return !!resourceUri;
       }
     },
 
     get: {
-      params: {
-        resourceUri: { type: 'string', optional: true },
-        webId: { type: 'string', optional: true }
-      },
       async handler(ctx) {
-        const webId = ctx.params.webId || ctx.meta.webId;
-        const resourceUri = ctx.params.resourceUri || (await this.actions.getUri({ webId }, { parentCtx: ctx }));
+        const resourceUri = ctx.params.resourceUri || (await this.actions.getUri({}, { parentCtx: ctx }));
         if (!resourceUri) throw new MoleculerError('Not found', 404, 'NOT_FOUND');
         return await ctx.call('ldp.resource.get', { resourceUri, ...ctx.params });
       }
     },
 
     patch: {
-      params: {
-        resourceUri: { type: 'string', optional: true },
-        webId: { type: 'string', optional: true }
-      },
       async handler(ctx) {
-        const webId = ctx.params.webId || ctx.meta.webId;
-        const resourceUri = ctx.params.resourceUri || (await this.actions.getUri({ webId }, { parentCtx: ctx }));
+        const resourceUri = ctx.params.resourceUri || (await this.actions.getUri({}, { parentCtx: ctx }));
         if (!resourceUri) throw new MoleculerError('Not found', 404, 'NOT_FOUND');
         return await ctx.call('ldp.resource.patch', { resourceUri, ...ctx.params });
       }
     },
 
     waitForCreation: {
-      params: {
-        webId: { type: 'string', optional: true }
-      },
       async handler(ctx) {
-        const webId = ctx.params.webId || ctx.meta.webId;
         let resourceUri;
         let attempts = 0;
 
         do {
           attempts += 1;
           if (attempts > 1) await delay(1000);
-          resourceUri = await this.actions.getUri({ webId }, { parentCtx: ctx });
+          resourceUri = await this.actions.getUri({}, { parentCtx: ctx });
         } while (!resourceUri || attempts > 30);
 
         if (!resourceUri) throw new Error(`Resource still had not been created after 30s`);

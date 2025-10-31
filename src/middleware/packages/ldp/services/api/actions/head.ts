@@ -1,7 +1,11 @@
+import { getDatasetFromUri } from '../../../utils.ts';
+
 export default async function head(this: any, ctx: any) {
   try {
     const { username, slugParts } = ctx.params;
     const uri = this.getUriFromSlugParts(slugParts, username);
+
+    ctx.meta.dataset = getDatasetFromUri(uri);
 
     const linkHeader = await ctx.call('ldp.link-header.get', { uri });
 

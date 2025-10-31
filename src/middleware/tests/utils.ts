@@ -94,8 +94,11 @@ export const createAccount = async (broker: ServiceBroker, username: string) => 
   const call = (actionName: string, params: ActionParamSchema = {}, options: CallingOptions = {}) =>
     broker.call(actionName, params, { ...options, meta: { ...options.meta, webId, dataset: username } });
 
+  const baseUrl = await broker.call('solid-storage.getBaseUrl', { username });
+
   return {
     webId,
+    baseUrl,
     username,
     call
   };

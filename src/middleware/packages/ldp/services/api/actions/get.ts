@@ -1,7 +1,7 @@
 import fs from 'fs';
-import { MIME_TYPES } from '@semapps/mime-types';
-import { cleanUndefined, parseJson } from '../../../utils.ts';
 import { Errors } from 'moleculer';
+import { MIME_TYPES } from '@semapps/mime-types';
+import { cleanUndefined, getDatasetFromUri, parseJson } from '../../../utils.ts';
 
 const { MoleculerError } = Errors;
 
@@ -10,6 +10,8 @@ export default async function get(this: any, ctx: any) {
     const { username, slugParts } = ctx.params;
 
     const uri = this.getUriFromSlugParts(slugParts, username);
+    ctx.meta.dataset = getDatasetFromUri(uri);
+
     const types = await ctx.call('ldp.resource.getTypes', { resourceUri: uri });
 
     let res;

@@ -1,5 +1,4 @@
 import { ActionSchema } from 'moleculer';
-import { getWebIdFromUri } from '../../../utils.ts';
 
 /**
  * Find the registration for a container or resource URI
@@ -17,10 +16,7 @@ const GetByUriAction = {
       throw new Error('The param containerUri or resourceUri must be provided to ldp.registry.getByUri');
     }
 
-    let types: string[] = await ctx.call('type-index.getTypes', {
-      uri: containerUri || resourceUri,
-      webId: getWebIdFromUri(containerUri || resourceUri)
-    });
+    let types: string[] = await ctx.call('type-index.getTypes', { uri: containerUri || resourceUri });
 
     // If this a resource, check if its container is registered
     if (types.length === 0 && resourceUri) {
@@ -29,8 +25,7 @@ const GetByUriAction = {
       if (containerUri) {
         types = await ctx.call('type-index.getTypes', {
           uri: containerUri,
-          isContainer: true,
-          webId: getWebIdFromUri(containerUri)
+          isContainer: true
         });
       }
     }

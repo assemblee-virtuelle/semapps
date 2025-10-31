@@ -6,36 +6,29 @@ const PrivateTypeIndexService = {
   name: 'private-type-index' as const,
   mixins: [ControlledResourceMixin],
   settings: {
-    path: 'private-type-index',
+    path: '/private-type-index',
     types: ['solid:TypeIndex', 'solid:UnlistedDocument'],
     permissions: {},
     typeIndex: 'private'
   },
-  hooks: {
-    after: {
-      async create(ctx, res) {
-        const { resourceUri } = res;
-        const webId = getWebIdFromUri(resourceUri);
+  events: {
+    'solid-preferences-file.created': {
+      async handler(ctx) {
+        const { resourceUri: preferencesUri } = ctx.params;
+        const typeIndexUri = await this.actions.waitForCreation({}, { parentCtx: ctx });
 
-        // Attach to preferences file, if available
-        const services: ServiceSchema[] = await ctx.call('$node.services');
-        if (services.some(s => s.name === 'solid-preferences-file')) {
-          const preferencesUri: string = await ctx.call('solid-preferences-file.getUri', { webId });
-          if (preferencesUri) {
-            await ctx.call('solid-preferences-file.patch', {
-              triplesToAdd: [
-                rdf.quad(
-                  rdf.namedNode(preferencesUri),
-                  rdf.namedNode('http://www.w3.org/ns/solid/terms#privateTypeIndex'),
-                  rdf.namedNode(resourceUri)
-                )
-              ],
-              webId
-            });
-          }
+        if (preferencesUri) {
+          await ctx.call('solid-preferences-file.patch', {
+            triplesToAdd: [
+              rdf.quad(
+                rdf.namedNode(preferencesUri),
+                rdf.namedNode('http://www.w3.org/ns/solid/terms#privateTypeIndex'),
+                rdf.namedNode(typeIndexUri)
+              )
+            ],
+            webId: 'system'
+          });
         }
-
-        return res;
       }
     }
   }
