@@ -1,13 +1,20 @@
-import * as CONFIG from '../config.ts';
+import waitForExpect from 'wait-for-expect';
+import { ServiceBroker } from 'moleculer';
+import { getAclUriFromResourceUri } from '@semapps/webacl';
 import initialize from './initialize.ts';
+import { createAccount } from '../utils.ts';
 
 jest.setTimeout(20000);
-const ALICE_WEBID = 'http://localhost:3000/alice';
+
 const BOB_WEBID = 'http://localhost:3000/bob';
-let broker: any;
+const CRAIG_WEBID = 'http://localhost:3000/craig';
+let broker: ServiceBroker;
+let alice: any;
 
 beforeAll(async () => {
   broker = await initialize();
+  await broker.start();
+  alice = await createAccount(broker, 'alice');
 });
 
 afterAll(async () => {
@@ -15,112 +22,36 @@ afterAll(async () => {
 });
 
 describe('Test various actions of the webacl.resource service', () => {
-  const containerUri = `${CONFIG.HOME_URL}resources2`; // Container with no default permissions
-  let resourceUri: any;
+  let containerUri: string;
+  let resourceUri: string;
 
-  test('Alice see her rights correctly', async () => {
-    resourceUri = await broker.call('ldp.container.post', {
+  test('Bob see his rights correctly', async () => {
+    // @ts-expect-error This expression is not callable
+    await waitForExpect(async () => {
+      // Container with no default permissions
+      containerUri = await alice.call('ldp.registry.getUri', { type: 'as:Video', isContainer: true });
+      expect(containerUri).not.toBeUndefined();
+    });
+
+    resourceUri = await alice.call('ldp.container.post', {
       containerUri,
       resource: {
         type: 'Event',
         name: 'My event #1'
-      },
-      webId: 'system'
+      }
     });
 
-    await broker.call('webacl.resource.addRights', {
+    await alice.call('webacl.resource.addRights', {
       resourceUri,
       additionalRights: {
         anon: { read: true },
-        user: { uri: ALICE_WEBID, read: true, write: true, control: true }
-      },
-      webId: 'system'
-    });
-
-    await expect(
-      broker.call('webacl.resource.hasRights', {
-        resourceUri,
-        webId: ALICE_WEBID
-      })
-    ).resolves.toMatchObject({
-      read: true,
-      append: false, // Even if we have given acl:Write permission, acl:Append is not given
-      write: true,
-      control: true
-    });
-
-    const rights = await broker.call('webacl.resource.getRights', { resourceUri, webId: ALICE_WEBID });
-
-    expect(rights['@graph']).toHaveLength(3);
-
-    expect(rights).toMatchObject({
-      '@graph': expect.arrayContaining([
-        expect.objectContaining({
-          '@id': '#Read',
-          '@type': 'acl:Authorization',
-          'acl:accessTo': resourceUri,
-          'acl:agent': ALICE_WEBID,
-          'acl:agentClass': 'foaf:Agent',
-          'acl:mode': 'acl:Read'
-        }),
-        expect.objectContaining({
-          '@id': '#Write',
-          '@type': 'acl:Authorization',
-          'acl:accessTo': resourceUri,
-          'acl:agent': ALICE_WEBID,
-          'acl:mode': 'acl:Write'
-        }),
-        expect.objectContaining({
-          '@id': '#Control',
-          '@type': 'acl:Authorization',
-          'acl:accessTo': resourceUri,
-          'acl:agent': ALICE_WEBID,
-          'acl:mode': 'acl:Control'
-        })
-      ])
-    });
-  });
-
-  test('Anonymous user cannot see Alice rights', async () => {
-    const rights = await broker.call('webacl.resource.getRights', { resourceUri });
-
-    await expect(
-      broker.call('webacl.resource.hasRights', {
-        resourceUri
-      })
-    ).resolves.toMatchObject({
-      read: true,
-      append: false,
-      write: false,
-      control: false
-    });
-
-    expect(rights['@graph']).toHaveLength(1);
-
-    expect(rights).toMatchObject({
-      '@graph': expect.arrayContaining([
-        expect.objectContaining({
-          '@id': '#Read',
-          '@type': 'acl:Authorization',
-          'acl:accessTo': resourceUri,
-          'acl:agentClass': 'foaf:Agent',
-          'acl:mode': 'acl:Read'
-        })
-      ])
-    });
-  });
-
-  test('Bob can see his rights but not Alice rights', async () => {
-    await broker.call('webacl.resource.addRights', {
-      resourceUri,
-      additionalRights: {
         user: { uri: BOB_WEBID, read: true, write: true }
       },
       webId: 'system'
     });
 
     await expect(
-      broker.call('webacl.resource.hasRights', {
+      alice.call('webacl.resource.hasRights', {
         resourceUri,
         webId: BOB_WEBID
       })
@@ -131,26 +62,160 @@ describe('Test various actions of the webacl.resource service', () => {
       control: false
     });
 
-    const rights = await broker.call('webacl.resource.getRights', { resourceUri, webId: BOB_WEBID });
+    const rights = await alice.call('webacl.resource.getRights', { resourceUri, webId: BOB_WEBID });
+    const baseUri = rights['@context']['@base'];
 
     expect(rights['@graph']).toHaveLength(2);
 
     expect(rights).toMatchObject({
       '@graph': expect.arrayContaining([
         expect.objectContaining({
-          '@id': '#Read',
           '@type': 'acl:Authorization',
+          '@id': `${baseUri}#Read`,
           'acl:accessTo': resourceUri,
           'acl:agent': BOB_WEBID,
           'acl:agentClass': 'foaf:Agent',
           'acl:mode': 'acl:Read'
         }),
         expect.objectContaining({
-          '@id': '#Write',
           '@type': 'acl:Authorization',
+          '@id': `${baseUri}#Write`,
           'acl:accessTo': resourceUri,
           'acl:agent': BOB_WEBID,
           'acl:mode': 'acl:Write'
+        })
+      ])
+    });
+  });
+
+  test('With control right, Bob also see Alice rights', async () => {
+    await alice.call('webacl.resource.addRights', {
+      resourceUri,
+      additionalRights: {
+        anon: { read: true },
+        user: { uri: BOB_WEBID, control: true }
+      },
+      webId: 'system'
+    });
+
+    await expect(
+      alice.call('webacl.resource.hasRights', {
+        resourceUri,
+        webId: BOB_WEBID
+      })
+    ).resolves.toMatchObject({
+      read: true,
+      append: false,
+      write: true,
+      control: true
+    });
+
+    const rights = await alice.call('webacl.resource.getRights', { resourceUri, webId: BOB_WEBID });
+    const baseUri = rights['@context']['@base'];
+
+    expect(rights['@graph']).toHaveLength(6);
+
+    expect(rights).toMatchObject({
+      '@graph': expect.arrayContaining([
+        expect.objectContaining({
+          '@type': 'acl:Authorization',
+          '@id': `${baseUri}#Read`,
+          'acl:mode': 'acl:Read',
+          'acl:accessTo': resourceUri,
+          'acl:agent': expect.arrayContaining([BOB_WEBID, alice.webId]),
+          'acl:agentClass': 'foaf:Agent'
+        }),
+        expect.objectContaining({
+          '@type': 'acl:Authorization',
+          '@id': `${baseUri}#Write`,
+          'acl:mode': 'acl:Write',
+          'acl:accessTo': resourceUri,
+          'acl:agent': BOB_WEBID
+        }),
+        expect.objectContaining({
+          '@type': 'acl:Authorization',
+          '@id': `${baseUri}#Control`,
+          'acl:mode': 'acl:Control',
+          'acl:accessTo': resourceUri,
+          'acl:agent': BOB_WEBID
+        })
+      ])
+    });
+  });
+
+  test('Anonymous user cannot see Bob rights', async () => {
+    await expect(
+      alice.call('webacl.resource.hasRights', {
+        resourceUri,
+        webId: 'anon'
+      })
+    ).resolves.toMatchObject({
+      read: true,
+      append: false,
+      write: false,
+      control: false
+    });
+
+    const rights = await alice.call('webacl.resource.getRights', { resourceUri, webId: 'anon' });
+    const baseUri = rights['@context']['@base'];
+
+    expect(rights['@graph']).toHaveLength(1);
+
+    expect(rights).toMatchObject({
+      '@graph': expect.arrayContaining([
+        expect.objectContaining({
+          '@type': 'acl:Authorization',
+          '@id': `${baseUri}#Read`,
+          'acl:mode': 'acl:Read',
+          'acl:accessTo': resourceUri,
+          'acl:agentClass': 'foaf:Agent'
+        })
+      ])
+    });
+  });
+
+  test('Craig can see his rights but not Bob rights', async () => {
+    await alice.call('webacl.resource.addRights', {
+      resourceUri,
+      additionalRights: {
+        user: { uri: CRAIG_WEBID, read: true, write: true }
+      },
+      webId: 'system'
+    });
+
+    await expect(
+      alice.call('webacl.resource.hasRights', {
+        resourceUri,
+        webId: CRAIG_WEBID
+      })
+    ).resolves.toMatchObject({
+      read: true,
+      append: false, // Even if we have given acl:Write permission, acl:Append is not given
+      write: true,
+      control: false
+    });
+
+    const rights = await alice.call('webacl.resource.getRights', { resourceUri, webId: CRAIG_WEBID });
+    const baseUri = rights['@context']['@base'];
+
+    expect(rights['@graph']).toHaveLength(2);
+
+    expect(rights).toMatchObject({
+      '@graph': expect.arrayContaining([
+        expect.objectContaining({
+          '@type': 'acl:Authorization',
+          '@id': `${baseUri}#Read`,
+          'acl:mode': 'acl:Read',
+          'acl:accessTo': resourceUri,
+          'acl:agent': CRAIG_WEBID,
+          'acl:agentClass': 'foaf:Agent'
+        }),
+        expect.objectContaining({
+          '@type': 'acl:Authorization',
+          '@id': `${baseUri}#Write`,
+          'acl:mode': 'acl:Write',
+          'acl:accessTo': resourceUri,
+          'acl:agent': CRAIG_WEBID
         })
       ])
     });
@@ -158,51 +223,51 @@ describe('Test various actions of the webacl.resource service', () => {
 
   test('Resource is public according to isPublic action', async () => {
     await expect(
-      broker.call('webacl.resource.isPublic', {
+      alice.call('webacl.resource.isPublic', {
         resourceUri
       })
     ).resolves.toBeTruthy();
   });
 
-  test('Alice and Bob is returned by getUsersWithReadRights action', async () => {
+  test('Bob and Craig is returned by getUsersWithReadRights action', async () => {
     await expect(
-      broker.call('webacl.resource.getUsersWithReadRights', {
+      alice.call('webacl.resource.getUsersWithReadRights', {
         resourceUri
       })
-    ).resolves.toContain(ALICE_WEBID, BOB_WEBID);
+    ).resolves.toEqual(expect.arrayContaining([BOB_WEBID, CRAIG_WEBID, alice.webId]));
   });
 
-  test('Remove write permission for Bob', async () => {
-    await broker.call('webacl.resource.removeRights', {
+  test('Remove write permission for Craig', async () => {
+    await alice.call('webacl.resource.removeRights', {
       resourceUri,
       rights: {
-        user: { uri: BOB_WEBID, write: true }
+        user: { uri: CRAIG_WEBID, write: true }
       },
-      webId: ALICE_WEBID // Alice has acl:Control permission
+      webId: BOB_WEBID // Bob has acl:Control permission
     });
 
     await expect(
-      broker.call('webacl.resource.hasRights', {
+      alice.call('webacl.resource.hasRights', {
         resourceUri,
-        webId: BOB_WEBID
+        webId: CRAIG_WEBID
       })
     ).resolves.toMatchObject({
-      read: true, // Bob still has acl:Read permission
+      read: true, // Craig still has acl:Read permission
       append: false,
       write: false,
       control: false
     });
   });
 
-  test('Remove all permissions for Alice', async () => {
-    await broker.call('webacl.resource.deleteAllUserRights', {
-      webId: ALICE_WEBID
+  test('Remove all permissions for Bob', async () => {
+    await alice.call('webacl.resource.deleteAllUserRights', {
+      webId: BOB_WEBID
     });
 
     await expect(
-      broker.call('webacl.resource.hasRights', {
+      alice.call('webacl.resource.hasRights', {
         resourceUri,
-        webId: ALICE_WEBID
+        webId: BOB_WEBID
       })
     ).resolves.toMatchObject({
       read: true, // There still is anonymous acl:Read right
@@ -213,13 +278,12 @@ describe('Test various actions of the webacl.resource service', () => {
   });
 
   test('Remove all permissions for resource', async () => {
-    await broker.call('webacl.resource.deleteAllRights', {
+    await alice.call('webacl.resource.deleteAllRights', {
       resourceUri
     });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(
-      broker.call('webacl.resource.hasRights', {
+      alice.call('webacl.resource.hasRights', {
         resourceUri,
         webId: 'anon'
       })

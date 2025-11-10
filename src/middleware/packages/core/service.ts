@@ -168,7 +168,6 @@ const CoreService = {
         mixins: [WebIdService],
         settings: {
           baseUrl,
-          podProvider: true,
           ...this.settings.webid
         }
       });

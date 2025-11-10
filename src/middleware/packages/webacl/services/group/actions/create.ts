@@ -8,10 +8,12 @@ const { MoleculerError } = Errors;
 
 export const api = async function api(ctx: any) {
   if (!ctx.meta.headers?.slug) throw new MoleculerError('needs a slug in your POST (json)', 400, 'BAD_REQUEST');
-  if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;
+
+  // TODO See if this is not already done by a middleware
+  ctx.meta.dataset = ctx.params.username;
 
   const { groupUri } = await ctx.call('webacl.group.create', {
-    groupSlug: this.settings.podProvider ? `${ctx.params.username}/${ctx.meta.headers.slug}` : ctx.meta.headers.slug
+    groupSlug: `${ctx.params.username}/${ctx.meta.headers.slug}`
   });
 
   ctx.meta.$responseHeaders = {

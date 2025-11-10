@@ -1,7 +1,9 @@
 import { ActionSchema } from 'moleculer';
 
 export const api = async function api(ctx: any) {
-  if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;
+  // TODO See if this is not already done by a middleware
+  ctx.meta.dataset = ctx.params.username;
+
   return await ctx.call('webacl.group.getGroups', {});
 };
 

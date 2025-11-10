@@ -1,8 +1,9 @@
 import urlJoin from 'url-join';
 import { ActionSchema } from 'moleculer';
 import { getDatasetFromUri, Registration } from '@semapps/ldp';
+import { WacPermission, WacPermissionObject } from '../../../types.ts';
 
-export const action = {
+const RefreshContainersRightsAction = {
   visibility: 'public',
   async handler(ctx) {
     const { webId } = ctx.params;
@@ -11,18 +12,16 @@ export const action = {
 
     for (const { permissions, path } of registrations) {
       if (permissions) {
-        const baseUrl = await ctx.call('solid-storage.getBaseUrl', { username: getDatasetFromUri(webId) });
+        const baseUrl: string = await ctx.call('solid-storage.getBaseUrl', { username: getDatasetFromUri(webId) });
 
-        const containerUri = urlJoin(baseUrl, path);
+        const containerUri = urlJoin(baseUrl, path!);
 
-        const containerRights =
-          typeof permissions === 'function'
-            ? permissions(this.settings.podProvider ? webId : 'system', ctx)
-            : permissions;
+        const containerRights: WacPermissionObject =
+          typeof permissions === 'function' ? permissions(webId, ctx) : permissions;
 
         this.logger.info(`Refreshing rights for container ${containerUri}...`);
 
-        const publicPermissions = await ctx.call('webacl.resource.hasRights', {
+        const publicPermissions: WacPermission = await ctx.call('webacl.resource.hasRights', {
           resourceUri: containerUri,
           rights: { read: true },
           webId: 'anon'
@@ -57,3 +56,5 @@ export const action = {
     }
   }
 } satisfies ActionSchema;
+
+export default RefreshContainersRightsAction;

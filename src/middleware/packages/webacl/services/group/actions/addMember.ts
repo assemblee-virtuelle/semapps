@@ -6,10 +6,12 @@ const { MoleculerError } = Errors;
 
 export const api = async function api(ctx: any) {
   if (!ctx.params.memberUri) throw new MoleculerError('needs a memberUri in your PATCH (json)', 400, 'BAD_REQUEST');
-  if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;
+
+  // TODO See if this is not already done by a middleware
+  ctx.meta.dataset = ctx.params.username;
 
   await ctx.call('webacl.group.addMember', {
-    groupSlug: this.settings.podProvider ? `${ctx.params.username}/${ctx.params.id}` : ctx.params.id,
+    groupSlug: `${ctx.params.username}/${ctx.params.id}`,
     memberUri: ctx.params.memberUri
   });
 

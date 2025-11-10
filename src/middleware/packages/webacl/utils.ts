@@ -86,7 +86,7 @@ const getAuthorizationNode = async (
   resourceAclUri: any,
   mode: any,
   graphName: any,
-  searchForDefault: any
+  searchForDefault?: any
 ) => {
   const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX acl: <http://www.w3.org/ns/auth/acl#>\n${AUTHORIZATION_NODE_QUERY(
     mode,

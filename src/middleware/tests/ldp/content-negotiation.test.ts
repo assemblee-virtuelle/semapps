@@ -21,10 +21,10 @@ afterAll(async () => {
 
 describe('Content negotiation', () => {
   let containerUri: string;
-  let projectUri: string | null;
-  let project2Uri: string | null;
-  let project3Uri: string | null;
-  let project4Uri: string | null;
+  let projectUri: string;
+  let project2Uri: string;
+  let project3Uri: string;
+  let project4Uri: string;
 
   test('Post resource in JSON-LD', async () => {
     // @ts-expect-error This expression is not callable
@@ -45,7 +45,7 @@ describe('Content negotiation', () => {
       }
     });
 
-    projectUri = headers.get('Location');
+    projectUri = headers.get('Location')!;
 
     expect(projectUri).not.toBeNull();
   });
@@ -135,7 +135,7 @@ describe('Content negotiation', () => {
 
     expect(status).toBe(201);
 
-    project2Uri = headers.get('Location');
+    project2Uri = headers.get('Location')!;
 
     const project2 = await alice.call('ldp.resource.get', {
       resourceUri: project2Uri
@@ -161,7 +161,7 @@ describe('Content negotiation', () => {
 
     expect(status).toBe(201);
 
-    project3Uri = headers.get('Location');
+    project3Uri = headers.get('Location')!;
 
     const project2 = await alice.call('ldp.resource.get', {
       resourceUri: project3Uri
@@ -245,7 +245,7 @@ describe('Content negotiation', () => {
 
     expect(status).toBe(201);
 
-    project4Uri = headers.get('Location');
+    project4Uri = headers.get('Location')!;
 
     const project4 = await alice.call('ldp.resource.get', {
       resourceUri: project4Uri

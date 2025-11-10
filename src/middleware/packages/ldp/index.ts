@@ -16,9 +16,9 @@ import SpecialEndpointMixin from './mixins/special-endpoint.ts';
 import OrphanFilesDeletionMixin from './mixins/orphan-files-deletion.ts';
 import defaultContainerOptions from './services/registry/defaultOptions.ts';
 import LdpAdapter from './adapter.ts';
-import { Registration } from './types.ts';
 
 export * from './utils.ts';
+export * from './types.ts';
 export {
   LdpService,
   LdpCacheService,
@@ -37,6 +37,5 @@ export {
   SpecialEndpointMixin,
   OrphanFilesDeletionMixin,
   defaultContainerOptions,
-  LdpAdapter,
-  Registration
+  LdpAdapter
 };

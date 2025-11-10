@@ -1,6 +1,5 @@
 import urlJoin from 'url-join';
-import { defaultContainerOptions } from '@semapps/ldp';
-import { getSlugFromUri } from '../utils.ts';
+import { defaultContainerOptions, getDatasetFromUri, isWebId } from '@semapps/ldp';
 
 const modifyActions = [
   'ldp.resource.create',
@@ -57,7 +56,7 @@ const addRightsToNewUser = async (ctx: any, userUri: any) => {
 /**
  * Middleware that ensures that requests are conforming ACL records.
  */
-const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://semapps.org/webacl' }: any) => ({
+const WebAclMiddleware = ({ baseUrl, graphName = 'http://semapps.org/webacl' }: any) => ({
   name: 'WebAclMiddleware' as const,
   async started() {
     if (!baseUrl) throw new Error('The baseUrl config is missing for the WebACL middleware');
@@ -227,8 +226,8 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
           case 'ldp.remote.store': {
             const resourceUri = ctx.params.resourceUri || ctx.params.resource.id || ctx.params.resource['@id'];
             // When a remote resource is stored locally, give read permission to the logged user
-            if (webId && webId !== 'system' && webId !== 'anon') {
-              const dataset = podProvider ? getSlugFromUri(webId) : undefined;
+            if (isWebId(webId)) {
+              const dataset = getDatasetFromUri(webId);
               await ctx.call(
                 'webacl.resource.addRights',
                 {
@@ -291,17 +290,16 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
       };
     } else if (tripleStoreActions.includes(action.name)) {
       return async (ctx: any) => {
-        if (podProvider) {
-          const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-          const dataset = ctx.params.dataset || ctx.meta.dataset;
+        const webId = ctx.params.webId || ctx.meta.webId || 'anon';
+        const dataset = ctx.params.dataset || ctx.meta.dataset;
 
-          if (!dataset) throw new Error(`The dataset param or meta is missing when calling ${action.name}`);
+        if (!dataset) throw new Error(`The dataset param or meta is missing when calling ${action.name}`);
 
-          // If the webId is the owner of the Pod, bypass WAC checks
-          if (urlJoin(baseUrl, dataset) === webId) {
-            ctx.params.webId = 'system';
-          }
+        // If the webId is the owner of the Pod, bypass WAC checks
+        if (urlJoin(baseUrl, dataset) === webId) {
+          ctx.params.webId = 'system';
         }
+
         return next(ctx);
       };
     }

@@ -5,6 +5,10 @@ import { ActionParamSchema, CallingOptions, ServiceBroker } from 'moleculer';
 import { Account } from '@semapps/auth';
 import * as CONFIG from './config.ts';
 
+type FetchOptions = Omit<fetch.RequestInit, 'body'> & {
+  body?: ArrayBuffer | ArrayBufferView | ReadableStream | string | URLSearchParams | FormData | object;
+};
+
 export const listDatasets = async () => {
   const response = await fetch(`${CONFIG.SPARQL_ENDPOINT}$/datasets`, {
     headers: {
@@ -31,7 +35,7 @@ export const dropDataset = (dataset: any) =>
     }
   });
 
-export const fetchServer = (url: string, options: fetch.RequestInit = {}) => {
+export const fetchServer = (url: string, options: FetchOptions = {}) => {
   if (!url) throw new Error('No url provided to fetchServer');
   if (!options.headers) options.headers = new fetch.Headers();
 
@@ -60,7 +64,7 @@ export const fetchServer = (url: string, options: fetch.RequestInit = {}) => {
 
   return fetch(url, {
     method: options.method || 'GET',
-    body: options.body,
+    body: options.body as fetch.BodyInit,
     headers: options.headers
   })
     .then(response =>

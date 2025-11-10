@@ -1,17 +1,17 @@
 import urlJoin from 'url-join';
-import { ServiceSchema, defineAction, Errors } from 'moleculer';
+import { ServiceSchema, Errors } from 'moleculer';
 import * as addRights from './actions/addRights.ts';
-import * as awaitReadRight from './actions/awaitReadRight.ts';
-import * as deleteAllRights from './actions/deleteAllRights.ts';
-import * as deleteAllUserRights from './actions/deleteAllUserRights.ts';
-import * as getLink from './actions/getLink.ts';
 import * as getRights from './actions/getRights.ts';
-import * as getUsersWithReadRights from './actions/getUsersWithReadRights.ts';
 import * as hasRights from './actions/hasRights.ts';
-import * as isPublic from './actions/isPublic.ts';
-import * as refreshContainersRights from './actions/refreshContainersRights.ts';
-import * as removeRights from './actions/removeRights.ts';
 import * as setRights from './actions/setRights.ts';
+import awaitReadRight from './actions/awaitReadRight.ts';
+import deleteAllRights from './actions/deleteAllRights.ts';
+import deleteAllUserRights from './actions/deleteAllUserRights.ts';
+import getLink from './actions/getLink.ts';
+import getUsersWithReadRights from './actions/getUsersWithReadRights.ts';
+import isPublic from './actions/isPublic.ts';
+import refreshContainersRights from './actions/refreshContainersRights.ts';
+import removeRights from './actions/removeRights.ts';
 
 import {
   getAuthorizationNode,
@@ -40,12 +40,11 @@ const filterAclsOnlyAgent = (acl: any) => agentPredicates.includes(acl.p.value);
  * - The nested json format as used in "additionalRights" (https://semapps.org/docs/middleware/webacl/resource#addrights)
  *  - organized by user, group, anon, anyUser. See the documentation for the details.
  */
-const WebaclResourceSchema = {
+const WebaclResourceService = {
   name: 'webacl.resource' as const,
   settings: {
     baseUrl: null,
-    graphName: null,
-    podProvider: false
+    graphName: null
   },
   dependencies: ['triplestore', 'jsonld', 'ldp.link-header'],
   started() {
@@ -54,28 +53,29 @@ const WebaclResourceSchema = {
   },
   actions: {
     addRights: addRights.action,
-    awaitReadRight: awaitReadRight.action,
-    deleteAllRights: deleteAllRights.action,
-    deleteAllUserRights: deleteAllUserRights.action,
-    getLink: getLink.action,
     getRights: getRights.action,
     hasRights: hasRights.action,
-    isPublic: isPublic.action,
-    getUsersWithReadRights: getUsersWithReadRights.action,
-    refreshContainersRights: refreshContainersRights.action,
-    removeRights: removeRights.action,
     setRights: setRights.action,
     // Actions accessible through the API
     api_addRights: addRights.api,
     api_hasRights: hasRights.api,
     api_getRights: getRights.api,
-    api_setRights: setRights.api
+    api_setRights: setRights.api,
+    // Other utils
+    awaitReadRight,
+    deleteAllRights,
+    deleteAllUserRights,
+    getLink,
+    isPublic,
+    getUsersWithReadRights,
+    refreshContainersRights,
+    removeRights
   },
   hooks: {
     before: {
       '*'(ctx) {
-        // @ts-expect-error TS(2339): Property 'podProvider' does not exist on type 'str... Remove this comment to see the full error message
-        if (this.settings.podProvider && !ctx.meta.dataset && ctx.params.resourceUri) {
+        if (!ctx.meta.dataset && ctx.params.resourceUri) {
+          this.logger.warn(`No dataset found when calling ${ctx.action.name} with URI ${ctx.params.resourceUri}`);
           ctx.meta.dataset = getDatasetFromUri(ctx.params.resourceUri);
         }
       }
@@ -153,12 +153,12 @@ const WebaclResourceSchema = {
   }
 } satisfies ServiceSchema;
 
-export default WebaclResourceSchema;
+export default WebaclResourceService;
 
 declare global {
   export namespace Moleculer {
     export interface AllServices {
-      [WebaclResourceSchema.name]: typeof WebaclResourceSchema;
+      [WebaclResourceService.name]: typeof WebaclResourceService;
     }
   }
 }
