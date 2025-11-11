@@ -11,27 +11,16 @@ import { KEY_TYPES } from '../constants.ts';
  * Container to store the private keys of actors.
  *
  * Watch out with permissions. This should be strictly limited to the owner and privileged apps.
- * @type {import('moleculer').ServiceSchema}
  */
-const KeysContainerSchema = {
+const PrivateKeysContainerService = {
   name: 'keys.container' as const,
   mixins: [ControlledContainerMixin],
   settings: {
     path: '/key',
     types: Object.values(KEY_TYPES),
-    permissions: (webId: any, ctx: any) => {
-      // If not a pod provider, the container is shared, so any user can append.
-      return {
-        anyUser: {
-          // Warning! ctx.service is the LdpContainerService. The WebAclMiddleware calls this function. This creates confusion.
-          read: !ctx.service.settings.podProvider,
-          append: !ctx.service.settings.podProvider
-        }
-      };
-    },
+    permissions: {},
     newResourcesPermissions: (webId: any) => {
       if (webId === 'anon' || webId === 'system') throw new Error('Key resource must be created for registered webId.');
-
       return {
         user: {
           uri: webId,
@@ -53,7 +42,7 @@ const KeysContainerSchema = {
   },
   actions: {
     forbidden: {
-      async handler(ctx) {
+      async handler() {
         throw new E.ForbiddenError();
       }
     },
@@ -69,10 +58,12 @@ const KeysContainerSchema = {
        *
        */
       async handler(ctx) {
-        const resource = await ctx.call('ldp.resource.get', {
-          ...ctx.params,
-          jsonContext: ['https://w3id.org/security/multikey/v1', ...(await ctx.call('jsonld.context.get'))]
+        const jsonContext = await ctx.call('jsonld.context.merge', {
+          a: ['https://w3id.org/security/multikey/v1'],
+          b: await ctx.call('jsonld.context.get')
         });
+
+        const resource: any = await ctx.call('ldp.resource.get', { ...ctx.params, jsonContext });
 
         // Make type `Multikey` only, to comply with spec.
         if (arrayOf(resource.type).includes('sec:Multikey') || arrayOf(resource.type).includes('Multikey')) {
@@ -86,12 +77,12 @@ const KeysContainerSchema = {
   }
 } satisfies ServiceSchema;
 
-export default KeysContainerSchema;
+export default PrivateKeysContainerService;
 
 declare global {
   export namespace Moleculer {
     export interface AllServices {
-      [KeysContainerSchema.name]: typeof KeysContainerSchema;
+      [PrivateKeysContainerService.name]: typeof PrivateKeysContainerService;
     }
   }
 }

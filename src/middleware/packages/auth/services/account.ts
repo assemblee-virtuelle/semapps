@@ -84,6 +84,8 @@ const AuthAccountService = {
 
         const { webId }: { webId: string } = await ctx.call('solid-storage.create', { username });
 
+        ctx.emit('auth.account.created', { webId, username });
+
         return await this._create(ctx, {
           uuid,
           username,

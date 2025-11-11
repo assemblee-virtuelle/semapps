@@ -1,5 +1,6 @@
 import path from 'path';
 import urlJoin from 'url-join';
+import { Account } from '@semapps/auth';
 import { parseHeader, parseFile, saveDatasetMeta } from '@semapps/middlewares';
 import fetch from 'node-fetch';
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
@@ -17,29 +18,21 @@ const stream2buffer = (stream: any) => {
 
 const ProxyService = {
   name: 'signature.proxy' as const,
-  settings: {
-    podProvider: false
-  },
   dependencies: ['api', 'ldp'],
   async started() {
-    const basePath = await this.broker.call('ldp.getBasePath');
+    const basePath: string = await this.broker.call('ldp.getBasePath');
 
-    const routeConfig = {
-      name: 'proxy-endpoint',
-      authorization: true,
-      authentication: false,
-      aliases: {
-        'POST /': [parseHeader, parseFile, saveDatasetMeta, 'signature.proxy.api_query'] // parseFile handles multipart/form-data
+    await this.broker.call('api.addRoute', {
+      route: {
+        name: 'proxy-endpoint',
+        path: path.join(basePath, '/:username([^/.][^/]+)/proxy'),
+        authorization: true,
+        authentication: false,
+        aliases: {
+          'POST /': [parseHeader, parseFile, saveDatasetMeta, 'signature.proxy.api_query'] // parseFile handles multipart/form-data
+        }
       }
-    };
-
-    if (this.settings.podProvider) {
-      await this.broker.call('api.addRoute', {
-        route: { path: path.join(basePath, '/:username([^/.][^/]+)/proxy'), ...routeConfig }
-      });
-    } else {
-      await this.broker.call('api.addRoute', { route: { path: path.join(basePath, '/proxy'), ...routeConfig } });
-    }
+    });
   },
   actions: {
     api_query: {
@@ -50,10 +43,8 @@ const ProxyService = {
         const actorUri = ctx.meta.webId;
 
         // Only user can query his own proxy URL
-        if (this.settings.podProvider) {
-          const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
-          if (account.username !== ctx.params.username) throw new E.ForbiddenError();
-        }
+        const account: Account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
+        if (account.username !== ctx.params.username) throw new E.ForbiddenError();
 
         // If a file is uploaded, convert it to a Buffer
         const body =

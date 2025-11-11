@@ -1,4 +1,6 @@
 import { MIME_TYPES } from '@semapps/mime-types';
+import { VerifiableCredentialsService } from '@semapps/crypto';
+import { ServiceBroker } from 'moleculer';
 import path from 'node:path';
 import initialize from './initialize.ts';
 
@@ -9,8 +11,7 @@ const getChallengeFrom = async (actor: any) => {
   return challenge;
 };
 
-/** @type {import('moleculer').ServiceBroker} */
-let broker: any;
+let broker: ServiceBroker;
 
 let baseUrl;
 let vcApiEndpoint: any;
@@ -18,7 +19,7 @@ let alice: any;
 let bob: any;
 let craig: any;
 
-const setUpUser = async (broker: any, username: any) => {
+const setUpUser = async (broker: ServiceBroker, username: any) => {
   const user = await broker.call('auth.signup', {
     username,
     email: `${username}@test.example`,
@@ -48,8 +49,8 @@ const setUpUser = async (broker: any, username: any) => {
   return user;
 };
 
-const setUp = async (withOldKeyStore: any) => {
-  ({ broker, baseUrl } = await initialize(3000, withOldKeyStore));
+const setUp = async () => {
+  broker = await initialize(3000);
   vcApiEndpoint = path.join(baseUrl, 'vc/v0.3/');
   alice = await setUpUser(broker, 'alice');
   bob = await setUpUser(broker, 'bob');
@@ -64,6 +65,30 @@ describe('verifiable credentials', () => {
   beforeAll(async () => {
     // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
     await setUp();
+
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "crypto.vc"; d... Remove this comment to see the full error message
+    broker.createService({
+      mixins: [VerifiableCredentialsService],
+      settings: {
+        podProvider: false
+      }
+    });
+
+    broker.waitForServices(
+      [
+        'core',
+        'auth',
+        'webid',
+        'triplestore',
+        'keys',
+        'keys.container',
+        'keys.public-container',
+        'keys.migration',
+        'crypto.vc'
+      ],
+      5_000
+    );
+
     await broker.call('crypto.vc.issuer.credential-container.waitForContainerCreation');
   });
 

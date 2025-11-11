@@ -8,25 +8,15 @@ import { KEY_TYPES } from '../constants.ts';
 /**
  * Container to store the public keys of actors only.
  * Anonymous read is allowed by default.
- *
  */
-const KeysPublicContainerSchema = {
+const PublicKeysService = {
   name: 'keys.public-container' as const,
   mixins: [ControlledContainerMixin],
   settings: {
     path: '/public-key',
     types: Object.values(KEY_TYPES),
-    permissions: (webId: any, ctx: any) => {
-      // If no pod provider, the container is shared, so any user can append.
-      return {
-        anyUser: {
-          read: true,
-          // Warning! ctx.service is the LdpContainerService. The WebAclMiddleware calls this function. This creates confusion.
-          append: !ctx.service.settings.podProvider
-        }
-      };
-    },
-    newResourcesPermissions: (webId: any) => {
+    permissions: {},
+    newResourcesPermissions: (webId: string) => {
       if (webId === 'anon' || webId === 'system') throw new Error('Key resource must be created for registered webId.');
 
       return {
@@ -53,7 +43,7 @@ const KeysPublicContainerSchema = {
 
   actions: {
     forbidden: {
-      async handler(ctx) {
+      handler() {
         throw new E.ForbiddenError();
       }
     }
@@ -65,14 +55,13 @@ const KeysPublicContainerSchema = {
       async delete(ctx) {
         const { resourceUri } = ctx.params;
 
-        const privateKeyId = ctx.call('keys.findPrivateKeyUri', { publicKeyUri: resourceUri });
+        const privateKeyUri: string = await ctx.call('keys.findPrivateKeyUri', { publicKeyUri: resourceUri });
 
         await ctx.call('ldp.resource.patch', {
-          resourceUri: privateKeyId,
+          resourceUri: privateKeyUri,
           triplesToRemove: [
             rdf.quad(
-              // @ts-expect-error TS(2345): Argument of type 'Promisify<any>' is not assignabl... Remove this comment to see the full error message
-              rdf.namedNode(privateKeyId),
+              rdf.namedNode(privateKeyUri),
               rdf.namedNode('http://www.w3.org/2000/01/rdf-schema#seeAlso'),
               rdf.namedNode(resourceUri)
             )
@@ -83,12 +72,12 @@ const KeysPublicContainerSchema = {
   }
 } satisfies ServiceSchema;
 
-export default KeysPublicContainerSchema;
+export default PublicKeysService;
 
 declare global {
   export namespace Moleculer {
     export interface AllServices {
-      [KeysPublicContainerSchema.name]: typeof KeysPublicContainerSchema;
+      [PublicKeysService.name]: typeof PublicKeysService;
     }
   }
 }

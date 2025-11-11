@@ -2,6 +2,7 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import { ActionSchema, Errors } from 'moleculer';
 import { cleanUndefined } from '../../../utils.ts';
+import { Registration } from '../../../types.ts';
 
 const { MoleculerError } = Errors;
 
@@ -111,7 +112,7 @@ const PostAction = {
           webId
         });
       } else {
-        const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
+        const { controlledActions }: Registration = await ctx.call('ldp.registry.getByUri', { containerUri });
 
         // Change relative URIs to full URIs
         const resourceWithBase = resource['@graph']

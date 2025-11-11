@@ -1,5 +1,5 @@
 import { foaf, schema } from '@semapps/ontologies';
-import { ControlledResourceMixin, DereferenceMixin } from '@semapps/ldp';
+import { ControlledResourceMixin, DereferenceMixin, waitForResource } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
 import getRedirectRoute from './routes/getRedirectRoute.ts';
 
@@ -38,6 +38,19 @@ const WebIdService = {
         const webId = await ctx.call('webid.getUri');
         ctx.meta.$statusCode = 301;
         ctx.meta.$location = webId;
+      }
+    },
+    awaitCreateComplete: {
+      async handler(ctx) {
+        const { additionalKeys = [], delayMs = 1000, maxTries = 20 } = ctx.params;
+        const keysToCheck = ['publicKey', ...additionalKeys];
+
+        return await waitForResource(
+          delayMs,
+          keysToCheck,
+          maxTries,
+          async () => await this.actions.get({}, { parentCtx: ctx, meta: { $cache: false } })
+        );
       }
     }
   }

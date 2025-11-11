@@ -123,6 +123,7 @@ const ControlledContainerMixin = {
       async handler(ctx) {
         return await ctx.call('ldp.registry.getUri', {
           type: arrayOf(this.settings.types)[0],
+          isPrivate: this.settings.typeIndex === 'private',
           webId: ctx.params?.webId || ctx.meta?.webId
         });
       }
