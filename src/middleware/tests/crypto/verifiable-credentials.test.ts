@@ -81,8 +81,8 @@ describe('verifiable credentials', () => {
         'webid',
         'triplestore',
         'keys',
-        'keys.container',
-        'keys.public-container',
+        'private-keys-container',
+        'public-keys-container',
         'keys.migration',
         'crypto.vc'
       ],

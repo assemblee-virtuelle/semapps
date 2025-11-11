@@ -7,8 +7,8 @@ import * as Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
 import { ServiceSchema } from 'moleculer';
 import { arrayOf } from '../utils/utils.ts';
 import { KEY_TYPES } from '../constants.ts';
-import PrivateKeyContainerService from './key-container.ts';
-import PublicKeyContainerService from './public-key-container.ts';
+import PrivateKeyContainerService from './private-keys-container.ts';
+import PublicKeyContainerService from './public-keys-container.ts';
 
 /**
  * Service for managing keys (creating, storing, retrieving).
@@ -23,7 +23,7 @@ import PublicKeyContainerService from './public-key-container.ts';
  */
 const KeysService = {
   name: 'keys' as const,
-  dependencies: ['ontologies', 'keys.container', 'keys.public-container'],
+  dependencies: ['ontologies', 'private-keys-container', 'public-keys-container'],
   created() {
     // Start keys-container and public-keys-container services.
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "keys.containe... Remove this comment to see the full error message
@@ -54,7 +54,7 @@ const KeysService = {
         const webId = ctx.params.webId || ctx.meta.webId;
 
         // Get the key container, to search by type.
-        const container: any = await ctx.call('keys.container.list', { webId });
+        const container: any = await ctx.call('private-keys-container.list', { webId });
 
         // Because edd2519 multikeys are allowed to have one key only, we filter like that.
         // TODO: We only support those keys anyways. If we support other ones in the future,
@@ -106,7 +106,7 @@ const KeysService = {
         return await Promise.all(
           publicKeys.map(async key => {
             const publicKeyId = key.id || key['@id'];
-            return await ctx.call('keys.container.get', {
+            return await ctx.call('private-keys-container.get', {
               resourceUri: await this.actions.findPrivateKeyUri({ publicKeyUri: publicKeyId }, { parentCtx: ctx }),
               webId
             });
@@ -136,7 +136,7 @@ const KeysService = {
         // Note: Key purposes are not regarded, as they are currently not used.
         const keyObject =
           ctx.params.keyObject || keyId
-            ? await ctx.call('keys.container.get', { resourceUri: keyId, webId })
+            ? await ctx.call('private-keys-container.get', { resourceUri: keyId, webId })
             : (await ctx.call('keys.getOrCreateWebIdKeys', { webId, keyType }))[0];
 
         // We need the key object to have the public key's id, so it is resolvable.
@@ -178,7 +178,7 @@ const KeysService = {
           owner: webId,
           controller: webId
         };
-        const keyUri = await ctx.call('keys.container.post', {
+        const keyUri = await ctx.call('private-keys-container.post', {
           webId,
           resource: keyObject
         });
@@ -396,7 +396,7 @@ const KeysService = {
         const publicKeyObject = await this.actions.getPublicKeyObject({ keyObject }, { parentCtx: ctx });
 
         // Then, store it in the `/public-key` container.
-        const publicKeyUri: string = await ctx.call('keys.public-container.post', {
+        const publicKeyUri: string = await ctx.call('public-keys-container.post', {
           resource: publicKeyObject,
           webId
         });
@@ -431,10 +431,10 @@ const KeysService = {
         const webId = ctx.params.webId || ctx.meta.webId;
         const keyObject = ctx.params.keyObject || (await ctx.call('ldp.resource.get', { resourceUri, webId }));
 
-        await ctx.call('keys.container.delete', { resourceUri, webId });
+        await ctx.call('private-keys-container.delete', { resourceUri, webId });
         // Delete corresponding public key in the `public-key` container, if present.
         if (keyObject['rdfs:seeAlso']) {
-          // Don't call `keys.public-container.delete`
+          // Don't call `public-keys-container.delete`
           // because that will try to delete the private key reference (which we deleted already).
           await ctx.call('ldp.resource.delete', { resourceUri: keyObject['rdfs:seeAlso'], webId });
         }
@@ -453,7 +453,7 @@ const KeysService = {
       },
       async handler(ctx) {
         const { webId } = ctx.params;
-        const keys: any = await ctx.call('keys.container.list', { webId });
+        const keys: any = await ctx.call('private-keys-container.list', { webId });
         for (const key of keys['ldp:contains']) {
           await ctx.call('keys.delete', { resourceUri: key.id, webId });
         }
@@ -585,19 +585,19 @@ const KeysService = {
         const { webId } = ctx.params;
 
         // Wait for the key containers to be created.
-        const keyContainerUri = await ctx.call('keys.container.getContainerUri', { webId }, { parentCtx: ctx });
+        const keyContainerUri = await ctx.call('private-keys-container.getContainerUri', { webId }, { parentCtx: ctx });
         const publicKeyContainerUri = await ctx.call(
-          'keys.public-container.getContainerUri',
+          'public-keys-container.getContainerUri',
           { webId },
           { parentCtx: ctx }
         );
         await ctx.call(
-          'keys.container.waitForContainerCreation',
+          'private-keys-container.waitForContainerCreation',
           { containerUri: keyContainerUri },
           { parentCtx: ctx }
         );
         await ctx.call(
-          'keys.container.waitForContainerCreation',
+          'private-keys-container.waitForContainerCreation',
           { containerUri: publicKeyContainerUri },
           { parentCtx: ctx }
         );

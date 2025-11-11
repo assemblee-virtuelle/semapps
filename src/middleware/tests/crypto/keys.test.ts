@@ -15,7 +15,7 @@ const setUp = async () => {
   await broker.start();
 
   broker.waitForServices(
-    ['core', 'auth', 'webid', 'triplestore', 'keys', 'keys.container', 'keys.public-container'],
+    ['core', 'auth', 'webid', 'triplestore', 'keys', 'private-keys-container', 'public-keys-container'],
     5_000
   );
 
@@ -121,7 +121,7 @@ describe('Keys management', () => {
       ).toBeTruthy();
 
       // Expect publicKey to be present in `/public-keys` container.
-      const publicKey = await alice.call('keys.public-container.get', { resourceUri: newKeyPair['rdfs:seeAlso'] });
+      const publicKey = await alice.call('public-keys-container.get', { resourceUri: newKeyPair['rdfs:seeAlso'] });
       expect(publicKey).toBeTruthy();
       expect(publicKey.publicKeyPem).toBe(newKeyPair.publicKeyPem);
       expect(publicKey.owner).toBe(alice.webId);
@@ -133,7 +133,7 @@ describe('Keys management', () => {
       expect(keyPair).toBeTruthy();
 
       await expect(
-        alice.call('keys.container.get', { resourceUri: keyPair['@id'] || keyPair.id, webId: 'anon' })
+        alice.call('private-keys-container.get', { resourceUri: keyPair['@id'] || keyPair.id, webId: 'anon' })
       ).rejects.toThrow('Forbidden');
     });
 
@@ -145,7 +145,7 @@ describe('Keys management', () => {
         attachToWebId: false
       });
 
-      const publicKey = await alice.call('keys.container.get', { resourceUri: keyPair['rdfs:seeAlso'] });
+      const publicKey = await alice.call('private-keys-container.get', { resourceUri: keyPair['rdfs:seeAlso'] });
       expect(publicKey).toBeTruthy();
 
       // Should not be present in webId.
@@ -214,7 +214,7 @@ describe('Keys management', () => {
       const [keyPair] = await alice.call('keys.getByType', { keyType: KEY_TYPES.ED25519 });
       expect(keyPair['rdfs:seeAlso']).toBeDefined();
 
-      const publicKey = await alice.call('keys.public-container.get', { resourceUri: keyPair['rdfs:seeAlso'] });
+      const publicKey = await alice.call('public-keys-container.get', { resourceUri: keyPair['rdfs:seeAlso'] });
       expect(publicKey.publicKeyMultibase).toBe(keyPair.publicKeyMultibase);
       expect(publicKey.secretKeyMultibase).toBeUndefined();
     });
@@ -297,7 +297,7 @@ describe('Keys management', () => {
       ).toBeTruthy();
 
       // Expect publicKey to be present in `/public-keys` container.
-      const publicKey = await alice.call('keys.public-container.get', { resourceUri: newKeyPair['rdfs:seeAlso'] });
+      const publicKey = await alice.call('public-keys-container.get', { resourceUri: newKeyPair['rdfs:seeAlso'] });
       expect(publicKey).toBeTruthy();
       expect(publicKey.publicKeyMultibase).toBe(newKeyPair.publicKeyMultibase);
       expect(publicKey.owner).toBe(alice.webId);
@@ -309,7 +309,7 @@ describe('Keys management', () => {
       expect(keyPair).toBeTruthy();
 
       await expect(
-        alice.call('keys.container.get', {
+        alice.call('private-keys-container.get', {
           resourceUri: keyPair.id || keyPair['@id'],
           webId: 'anon'
         })

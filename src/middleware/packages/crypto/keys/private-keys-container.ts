@@ -13,7 +13,7 @@ import { KEY_TYPES } from '../constants.ts';
  * Watch out with permissions. This should be strictly limited to the owner and privileged apps.
  */
 const PrivateKeysContainerService = {
-  name: 'keys.container' as const,
+  name: 'private-keys-container' as const,
   mixins: [ControlledContainerMixin],
   settings: {
     path: '/key',
@@ -34,9 +34,9 @@ const PrivateKeysContainerService = {
     typeIndex: 'private',
     // Disallow PATCH & PUT, to prevent keys from being overwritten
     controlledActions: {
-      get: 'keys.container.get', // Returns key object with context and type required by Multikey spec.
-      put: 'keys.container.forbidden',
-      patch: 'keys.container.forbidden',
+      get: 'private-keys-container.get', // Returns key object with context and type required by Multikey spec.
+      put: 'private-keys-container.forbidden',
+      patch: 'private-keys-container.forbidden',
       delete: 'keys.delete'
     }
   },

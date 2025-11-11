@@ -10,7 +10,7 @@ import { KEY_TYPES } from '../constants.ts';
  * Anonymous read is allowed by default.
  */
 const PublicKeysService = {
-  name: 'keys.public-container' as const,
+  name: 'public-keys-container' as const,
   mixins: [ControlledContainerMixin],
   settings: {
     path: '/public-key',
@@ -35,9 +35,9 @@ const PublicKeysService = {
     typeIndex: 'public',
     // Disallow PATCH & PUT, to prevent keys from being overwritten
     controlledActions: {
-      get: 'keys.container.get', // Returns key object with context and type required by Multikey spec.
-      put: 'keys.public-container.forbidden',
-      patch: 'keys.public-container.forbidden'
+      get: 'private-keys-container.get', // Returns key object with context and type required by Multikey spec.
+      put: 'public-keys-container.forbidden',
+      patch: 'public-keys-container.forbidden'
     }
   },
 
