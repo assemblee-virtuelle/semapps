@@ -24,7 +24,7 @@ const {
  * WARNING: Changing things here can have security implications.
  */
 const DataIntegrityService = {
-  name: 'crypto.vc.data-integrity' as const,
+  name: 'vc.data-integrity' as const,
   dependencies: ['ldp', 'api'],
 
   async started() {

@@ -26,7 +26,7 @@ const {
  * WARNING: Changing things here can have security implications.
  */
 const HolderService = {
-  name: 'crypto.vc.holder' as const,
+  name: 'vc.holder' as const,
   dependencies: ['jsonld', 'jsonld.context'],
   async started() {
     this.documentLoader = async (url: any, options: any) => {
@@ -121,7 +121,7 @@ const HolderService = {
 
         if (!presentationParam.id && ctx.params.options.persist)
           await ctx.call(
-            'crypto.vc.holder.presentation-container.put',
+            'vc.presentations-container.put',
             { resource: signedPresentation, webId: 'system' },
             { meta: { skipEmitEvent: true } }
           );
@@ -135,13 +135,13 @@ const HolderService = {
     /** Creates an ldp resource from the presentation and sets rights. */
     async createPresentationResource(presentation, noAnonRead, webId) {
       // Post presentation to container (will add metadata).
-      const resourceUri = await this.broker.call('crypto.vc.holder.presentation-container.post', {
+      const resourceUri = await this.broker.call('vc.presentations-container.post', {
         resource: presentation,
         webId
       });
 
       // Get the presentation resource.
-      const resource = await this.broker.call('crypto.vc.holder.presentation-container.get', {
+      const resource = await this.broker.call('vc.presentations-container.get', {
         resourceUri,
         webId: 'system'
       });

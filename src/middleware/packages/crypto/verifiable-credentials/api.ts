@@ -22,7 +22,7 @@ const middlewares = [saveDatasetMeta, parseHeader, negotiateAccept, negotiateCon
  * WARNING: Changing things here can have security implications
  */
 const ApiService = {
-  name: 'crypto.vc.api' as const,
+  name: 'vc.api' as const,
   dependencies: ['api', 'ldp'],
   async started() {
     const basePath: string = await this.broker.call('ldp.getBasePath');
@@ -35,8 +35,8 @@ const ApiService = {
         path: path.join(apiPath, 'credentials'),
         authentication: true,
         aliases: {
-          'POST /verify': [...middlewares, 'crypto.vc.verifier.verifyVC'],
-          'POST /issue': [...middlewares, 'crypto.vc.issuer.createVC']
+          'POST /verify': [...middlewares, 'vc.verifier.verifyVC'],
+          'POST /issue': [...middlewares, 'vc.issuer.createVC']
         }
       }
     });
@@ -48,9 +48,9 @@ const ApiService = {
         path: path.join(apiPath, 'presentations'),
         authentication: true,
         aliases: {
-          'POST /': [...middlewares, 'crypto.vc.holder.createPresentation'],
-          'POST /verify': [...middlewares, 'crypto.vc.verifier.verifyPresentation'],
-          'POST /verify-capability': [...middlewares, 'crypto.vc.verifier.verifyCapabilityPresentation']
+          'POST /': [...middlewares, 'vc.holder.createPresentation'],
+          'POST /verify': [...middlewares, 'vc.verifier.verifyPresentation'],
+          'POST /verify-capability': [...middlewares, 'vc.verifier.verifyCapabilityPresentation']
         }
       }
     });
@@ -63,7 +63,7 @@ const ApiService = {
         authorization: false,
         authentication: false,
         aliases: {
-          'POST /': [...middlewares, 'crypto.vc.presentation.challenge.create']
+          'POST /': [...middlewares, 'vc.challenge.create']
         }
       }
     });
@@ -75,8 +75,8 @@ const ApiService = {
         path: path.join(apiPath, 'data-integrity'),
         authentication: true,
         aliases: {
-          'POST /verify': [...middlewares, 'crypto.vc.data-integrity.verifyObject'],
-          'POST /sign': [...middlewares, 'crypto.vc.data-integrity.signObject']
+          'POST /verify': [...middlewares, 'vc.data-integrity.verifyObject'],
+          'POST /sign': [...middlewares, 'vc.data-integrity.signObject']
         }
       }
     });

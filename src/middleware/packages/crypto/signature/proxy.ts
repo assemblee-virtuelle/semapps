@@ -84,7 +84,7 @@ const ProxyService = {
       async handler(ctx) {
         let { url, method, headers, body, actorUri } = ctx.params;
 
-        const signatureHeaders = await ctx.call('signature.generateSignatureHeaders', {
+        const signatureHeaders: any = await ctx.call('signature.generateSignatureHeaders', {
           url,
           method,
           body,
@@ -141,18 +141,16 @@ const ProxyService = {
     }
   },
   events: {
-    'auth.registered': {
-      async handler(ctx) {
+    'auth.account.created': {
+      async handler(ctx: any) {
         const { webId } = ctx.params;
-        if (this.settings.podProvider) {
-          const services = await ctx.call('$node.services');
-          if (services.some((s: any) => s.name === 'activitypub.actor')) {
-            await ctx.call('activitypub.actor.addEndpoint', {
-              actorUri: webId,
-              predicate: 'https://www.w3.org/ns/activitystreams#proxyUrl',
-              endpoint: urlJoin(webId, 'proxy')
-            });
-          }
+        const services = await ctx.call('$node.services');
+        if (services.some((s: any) => s.name === 'activitypub.actor')) {
+          await ctx.call('activitypub.actor.addEndpoint', {
+            actorUri: webId,
+            predicate: 'https://www.w3.org/ns/activitystreams#proxyUrl',
+            endpoint: urlJoin(webId, 'proxy')
+          });
         }
       }
     }

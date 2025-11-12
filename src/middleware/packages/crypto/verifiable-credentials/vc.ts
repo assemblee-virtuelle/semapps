@@ -26,31 +26,31 @@ import ChallengeService from './challenge.ts';
  * WARNING: Changing things here can have security implications.
  */
 const VCService = {
-  name: 'crypto.vc' as const,
+  name: 'vc' as const,
   dependencies: ['ontologies'],
   settings: {
     enableApi: true
   },
   created() {
     const { enableApi } = this.settings;
-    // @ts-expect-error TS(2322): Type '{ name: "crypto.vc.issuer"; settings: { podP... Remove this comment to see the full error message
+    // @ts-expect-error TS(2322): Type '{ name: "vc.issuer"; settings: { podP... Remove this comment to see the full error message
     this.broker.createService({ mixins: [IssuerService] });
-    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "vc.guard"; de... Remove this comment to see the full error message
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "vc.authorizer"; de... Remove this comment to see the full error message
     this.broker.createService({ mixins: [AuthorizerService] });
-    // @ts-expect-error TS(2322): Type '{ name: "crypto.vc.holder"; dependencies: st... Remove this comment to see the full error message
+    // @ts-expect-error TS(2322): Type '{ name: "vc.holder"; dependencies: st... Remove this comment to see the full error message
     this.broker.createService({ mixins: [HolderService] });
-    // @ts-expect-error TS(2322): Type '{ name: "crypto.vc.verifier"; dependencies: ... Remove this comment to see the full error message
+    // @ts-expect-error TS(2322): Type '{ name: "vc.verifier"; dependencies: ... Remove this comment to see the full error message
     this.broker.createService({ mixins: [VerifierService] });
-    // @ts-expect-error TS(2322): Type '{ name: "crypto.vc.data-integrity"; dependen... Remove this comment to see the full error message
+    // @ts-expect-error TS(2322): Type '{ name: "vc.data-integrity"; dependen... Remove this comment to see the full error message
     this.broker.createService({ mixins: [DataIntegrityService] });
-    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "crypto.vc.pre... Remove this comment to see the full error message
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "vc.pre... Remove this comment to see the full error message
     this.broker.createService({ mixins: [ChallengeService] });
-    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "crypto.vc.hol... Remove this comment to see the full error message
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "vc.hol... Remove this comment to see the full error message
     this.broker.createService({ mixins: [PresentationsContainerService] });
-    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "crypto.vc.iss... Remove this comment to see the full error message
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "vc.iss... Remove this comment to see the full error message
     this.broker.createService({ mixins: [CredentialsContainerService] });
 
-    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "crypto.vc.api... Remove this comment to see the full error message
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "vc.api... Remove this comment to see the full error message
     if (enableApi) this.broker.createService({ mixins: [ApiService] });
   },
   async started() {

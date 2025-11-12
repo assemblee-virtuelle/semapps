@@ -104,7 +104,7 @@ const ActivitypubSideEffectsSchema = {
 
       // Dereference capability, if necessary.
       if (typeof retActivity.capability === 'string') {
-        retActivity.capability = await this.broker.call('crypto.vc.holder.presentation-container.get', {
+        retActivity.capability = await this.broker.call('vc.presentations-container.get', {
           resourceUri: retActivity.capability
         });
       }
@@ -121,7 +121,7 @@ const ActivitypubSideEffectsSchema = {
       }
 
       // Verify cryptographic and capability-related properties.
-      const { verified, error } = await this.broker.call('crypto.vc.verifier.verifyCapabilityPresentation', {
+      const { verified, error } = await this.broker.call('vc.verifier.verifyCapabilityPresentation', {
         verifiablePresentation: retActivity.capability
       });
 

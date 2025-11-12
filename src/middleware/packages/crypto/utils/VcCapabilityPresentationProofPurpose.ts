@@ -1,4 +1,4 @@
-import { arrayOf, deepStrictEqual } from '../utils/utils.ts';
+import { arrayOf } from './utils.ts';
 
 const {
   purposes: { AuthenticationProofPurpose }

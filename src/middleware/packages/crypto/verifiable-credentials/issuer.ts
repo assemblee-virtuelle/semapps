@@ -19,7 +19,7 @@ const {
  * WARNING: Changing things here can have security implications.
  */
 const IssuerService = {
-  name: 'crypto.vc.issuer' as const,
+  name: 'vc.issuer' as const,
   async started() {
     this.documentLoader = async (url: any, options: any) => {
       return await this.broker.call('jsonld.document-loader.loadWithCache', { url, options });
@@ -122,7 +122,7 @@ const IssuerService = {
         // Update resource to add the signatures, if the id had not been set.
         if (!receivedCredential.id)
           await ctx.call(
-            'crypto.vc.issuer.credential-container.put',
+            'vc.credentials-container.put',
             { resource: signedCredential, webId: 'system' },
             { meta: { skipEmitEvent: true } }
           );
@@ -134,13 +134,13 @@ const IssuerService = {
   methods: {
     /** Creates an ldp resource from the presentation and sets rights. */
     async createCredentialResource(ctx, credential, noAnonRead, webId) {
-      const resourceUri = await ctx.call('crypto.vc.issuer.credential-container.post', {
+      const resourceUri = await ctx.call('vc.credentials-container.post', {
         resource: credential,
         webId
       });
 
       // Get the presentation resource.
-      const resource = await ctx.call('crypto.vc.issuer.credential-container.get', {
+      const resource = await ctx.call('vc.credentials-container.get', {
         resourceUri,
         jsonContext: credentialsContext,
         webId: 'system'

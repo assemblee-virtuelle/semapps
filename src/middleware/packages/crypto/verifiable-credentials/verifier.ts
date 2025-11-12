@@ -5,8 +5,8 @@ import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
 // @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import * as vc from '@digitalbazaar/vc';
 import { ServiceSchema } from 'moleculer';
-import VCCapabilityPresentationProofPurpose from './VcCapabilityPresentationProofPurpose.ts';
-import VCPurpose from './VcPurpose.ts';
+import VCCapabilityPresentationProofPurpose from '../utils/VcCapabilityPresentationProofPurpose.ts';
+import VCPurpose from '../utils/VcPurpose.ts';
 import { arrayOf } from '../utils/utils.ts';
 
 const {
@@ -20,7 +20,7 @@ const {
  * WARNING: Changing things here can have security implications.
  */
 const VerifierService = {
-  name: 'crypto.vc.verifier' as const,
+  name: 'vc.verifier' as const,
   dependencies: ['ldp', 'jsonld'],
   async started() {
     this.documentLoader = async (url: any, options: any) => {
@@ -106,7 +106,7 @@ const VerifierService = {
 
         try {
           if (!unsignedPresentation || challenge) {
-            const challengeValidationResult = await ctx.call('crypto.vc.presentation.challenge.validate', {
+            const challengeValidationResult: any = await ctx.call('vc.challenge.validate', {
               challenge
             });
             if (!challengeValidationResult.valid) {

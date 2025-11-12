@@ -8,7 +8,7 @@ import { ServiceSchema } from 'moleculer';
  * Challenges are kept in memory and are valid for up to 5 minutes or until they are used.
  */
 const ChallengeService = {
-  name: 'crypto.vc.presentation.challenge' as const,
+  name: 'vc.challenge' as const,
   settings: {
     /** Milliseconds challenges should be valid for. @default 5 minutes */
     challengeExpirationMs: 5 * 60 * 1000
@@ -85,7 +85,7 @@ const ChallengeService = {
         this.broker.call('timer.set', {
           key: 'challengeCleanup',
           time: Date.now() + this.settings.challengeExpirationMs,
-          actionName: 'crypto.vc.presentation.challenge.cleanElapsed',
+          actionName: 'vc.challenge.cleanElapsed',
           repeat: this.settings.challengeExpirationMs
         });
       } else {

@@ -12,7 +12,7 @@ import { credentialsContext, credentialsContextNoGraphProof } from '../constants
  * WARNING: Changing things here can have security implications.
  */
 const PresentationsContainerService = {
-  name: 'crypto.vc.holder.presentation-container' as const,
+  name: 'vc.presentations-container' as const,
   mixins: [ControlledContainerMixin],
   settings: {
     path: '/presentations',

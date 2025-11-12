@@ -9,7 +9,7 @@ import { credentialsContext, credentialsContextNoGraphProof } from '../constants
  * WARNING: Changing things here can have security implications.
  */
 const VCCredentialsContainer = {
-  name: 'crypto.vc.issuer.credential-container' as const,
+  name: 'vc.credentials-container' as const,
   mixins: [ControlledContainerMixin],
   dependencies: ['ontologies'],
   settings: {

@@ -20,13 +20,13 @@ let craig: any;
 beforeAll(async () => {
   broker = await initialize(3000);
 
-  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "crypto.vc"; d... Remove this comment to see the full error message
+  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "vc"; d... Remove this comment to see the full error message
   broker.createService({ mixins: [VerifiableCredentialsService] });
 
   await broker.start();
 
   broker.waitForServices(
-    ['core', 'auth', 'webid', 'triplestore', 'keys', 'private-keys-container', 'public-keys-container', 'crypto.vc'],
+    ['core', 'auth', 'webid', 'triplestore', 'keys', 'private-keys-container', 'public-keys-container', 'vc'],
     5_000
   );
 
@@ -39,7 +39,7 @@ beforeAll(async () => {
   craig.vcApiEndpoint = path.join(craig.baseUrl, 'vc/v0.3/');
 
   await alice.call('webid.awaitCreateComplete');
-  await alice.call('crypto.vc.issuer.credential-container.waitForContainerCreation');
+  await alice.call('vc.credentials-container.waitForContainerCreation');
 });
 
 afterAll(async () => {
@@ -294,7 +294,7 @@ describe('Verifiable credentials', () => {
         }
       });
 
-      const validationResult = await alice.call('crypto.vc.verifier.verifyCapabilityPresentation', {
+      const validationResult = await alice.call('vc.verifier.verifyCapabilityPresentation', {
         verifiablePresentation: presentation
       });
 
@@ -380,7 +380,7 @@ describe('Verifiable credentials', () => {
         }
       });
 
-      const validationResult = await alice.call('crypto.vc.verifier.verifyCapabilityPresentation', {
+      const validationResult = await alice.call('vc.verifier.verifyCapabilityPresentation', {
         verifiablePresentation
       });
 
@@ -414,7 +414,7 @@ describe('Verifiable credentials', () => {
         }
       });
 
-      const validationResult = await alice.call('crypto.vc.verifier.verifyCapabilityPresentation', {
+      const validationResult = await alice.call('vc.verifier.verifyCapabilityPresentation', {
         verifiablePresentation
       });
 
@@ -468,7 +468,7 @@ describe('Verifiable credentials', () => {
         }
       });
 
-      const validationResult = await alice.call('crypto.vc.verifier.verifyCapabilityPresentation', {
+      const validationResult = await alice.call('vc.verifier.verifyCapabilityPresentation', {
         verifiablePresentation
       });
 

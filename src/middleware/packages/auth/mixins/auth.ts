@@ -201,9 +201,7 @@ const AuthMixin = {
       // We do not use the VC-JOSE spec to sign and envelop presentations. Instead we go
       // with embedded signatures. This way, the signature persists within the resource.
 
-      const hasCapabilityService = ctx.broker.registry.actions.isAvailable(
-        'crypto.vc.verifier.verifyCapabilityPresentation'
-      );
+      const hasCapabilityService = ctx.broker.registry.actions.isAvailable('vc.verifier.verifyCapabilityPresentation');
       if (!hasCapabilityService) return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
 
       // Decode JTW to JSON.
@@ -215,7 +213,7 @@ const AuthMixin = {
         verified: isCapSignatureVerified,
         presentation: verifiedPresentation,
         presentationResult
-      } = await ctx.call('crypto.vc.verifier.verifyCapabilityPresentation', {
+      } = await ctx.call('vc.verifier.verifyCapabilityPresentation', {
         verifiablePresentation: decodedToken,
         options: {
           maxChainLength: ctx.params.route.opts.maxChainLength

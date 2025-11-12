@@ -29,7 +29,7 @@ const hasValidCapability = async (ctx: any, resourceUri: any, mode: any) => {
 };
 
 const AuthorizerService = {
-  name: 'vc.guard' as const,
+  name: 'vc.authorizer' as const,
   dependencies: ['permissions'],
   async started() {
     await this.broker.call('permissions.addAuthorizer', { actionName: `${this.name}.hasPermission` });
