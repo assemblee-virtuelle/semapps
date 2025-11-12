@@ -10,29 +10,17 @@ import { credentialsContext, credentialsContextNoGraphProof } from '../constants
  * provide an unsigned presentation with an id that can be signed as well.
  *
  * WARNING: Changing things here can have security implications.
- *
- * @type {import('moleculer').ServiceSchema}
  */
-const VCPresentationContainer = {
+const PresentationsContainerService = {
   name: 'crypto.vc.holder.presentation-container' as const,
   mixins: [ControlledContainerMixin],
   settings: {
-    path: null,
+    path: '/presentations',
     excludeFromMirror: true,
     activateTombstones: false,
     types: ['https://www.w3.org/2018/credentials#VerifiablePresentation'],
     typeIndex: 'private',
-    podProvider: null,
-    permissions: (webId: any, ctx: any) => {
-      // If not a pod provider, the container is shared, so any user can append.
-      return {
-        anyUser: {
-          // Caution. Here, `ctx.service` is the LdpContainerService. Because this function is called by the WebAclMiddleware.
-          read: !ctx.service.settings.podProvider,
-          append: !ctx.service.settings.podProvider
-        }
-      };
-    },
+    permissions: {},
     newResourcesPermissions: {}
   },
   /**
@@ -43,12 +31,11 @@ const VCPresentationContainer = {
   actions: {
     get: {
       async handler(ctx) {
-        const resource = await ctx.call('ldp.resource.get', {
+        const resource: any = await ctx.call('ldp.resource.get', {
           ...ctx.params,
           jsonContext: credentialsContextNoGraphProof
         });
         ctx.meta.$responseHeaders = {
-          // @ts-expect-error TS(2339): Property '$responseHeaders' does not exist on type... Remove this comment to see the full error message
           ...ctx.meta.$responseHeaders,
           'Cache-Control': 'private, max-age=300, immutable'
         };
@@ -88,7 +75,7 @@ const VCPresentationContainer = {
 
     list: {
       async handler(ctx) {
-        const container = await ctx.call('ldp.container.get', {
+        const container: any = await ctx.call('ldp.container.get', {
           ...ctx.params,
           jsonContext: credentialsContextNoGraphProof
         });
@@ -98,12 +85,12 @@ const VCPresentationContainer = {
   }
 } satisfies ServiceSchema;
 
-export default VCPresentationContainer;
+export default PresentationsContainerService;
 
 declare global {
   export namespace Moleculer {
     export interface AllServices {
-      [VCPresentationContainer.name]: typeof VCPresentationContainer;
+      [PresentationsContainerService.name]: typeof PresentationsContainerService;
     }
   }
 }

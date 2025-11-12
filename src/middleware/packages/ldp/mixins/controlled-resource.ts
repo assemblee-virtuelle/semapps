@@ -20,7 +20,7 @@ const ControlledResourceMixin = {
       path,
       types,
       isContainer: false,
-      permissions,
+      newResourcesPermissions: permissions,
       controlledActions: {
         create: `${this.name}.create`,
         get: `${this.name}.get`,

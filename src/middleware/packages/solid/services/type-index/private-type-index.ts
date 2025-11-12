@@ -1,6 +1,6 @@
 import { ControlledResourceMixin } from '@semapps/ldp';
 import rdf from '@rdfjs/data-model';
-import { ServiceSchema } from 'moleculer';
+import { ServiceSchema, Context } from 'moleculer';
 
 const PrivateTypeIndexService = {
   name: 'private-type-index' as const,
@@ -13,7 +13,7 @@ const PrivateTypeIndexService = {
   },
   events: {
     'solid-preferences-file.created': {
-      async handler(ctx) {
+      async handler(ctx: Context<any>) {
         const { resourceUri: preferencesUri } = ctx.params;
         const typeIndexUri = await this.actions.waitForCreation({}, { parentCtx: ctx });
 

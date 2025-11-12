@@ -1,4 +1,5 @@
 import { ActionSchema } from 'moleculer';
+import { TypeRegistration } from '@semapps/solid';
 
 /**
  * Find the registration for a container or resource URI
@@ -16,22 +17,25 @@ const GetByUriAction = {
       throw new Error('The param containerUri or resourceUri must be provided to ldp.registry.getByUri');
     }
 
-    let types: string[] = await ctx.call('type-index.getTypes', { uri: containerUri || resourceUri });
+    let typeRegistration: TypeRegistration = await ctx.call('type-index.getByUri', {
+      uri: containerUri || resourceUri,
+      isContainer: !!containerUri
+    });
 
     // If this a resource, check if its container is registered
-    if (types.length === 0 && resourceUri) {
+    if (!typeRegistration && resourceUri) {
       [containerUri] = await ctx.call('ldp.resource.getContainers', { resourceUri });
 
       if (containerUri) {
-        types = await ctx.call('type-index.getTypes', {
-          uri: containerUri,
-          isContainer: true
-        });
+        typeRegistration = await ctx.call('type-index.getByUri', { uri: containerUri, isContainer: true });
       }
     }
 
-    if (types) {
-      const registration = await this.actions.getByTypes({ types }, { parentCtx: ctx });
+    if (typeRegistration) {
+      const registration = await this.actions.getByTypes(
+        { types: typeRegistration.types, isPrivate: typeRegistration.isPrivate },
+        { parentCtx: ctx }
+      );
 
       return { ...this.settings.defaultOptions, ...registration };
     } else {

@@ -1,5 +1,5 @@
-import DataIntegrityService from './data-integrity-service.ts';
-import VerifiableCredentialsService from './vc-service.ts';
+import DataIntegrityService from './data-integrity.ts';
+import VerifiableCredentialsService from './vc.ts';
 import VCPurpose from './VcPurpose.ts';
 import VCCapabilityPresentationProofPurpose from './VcCapabilityPresentationProofPurpose.ts';
 

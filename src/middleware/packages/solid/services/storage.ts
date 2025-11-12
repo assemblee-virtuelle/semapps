@@ -152,8 +152,6 @@ const SolidStorageSchema = {
           webId: 'system'
         });
 
-        ctx.emit('solid-storage.created', { webId });
-
         return { webId, rootContainerUri };
       }
     },

@@ -16,7 +16,7 @@ const RegisterAction = {
     typeIndex: { type: 'string', optional: true }
   },
   async handler(ctx) {
-    let registration: Registration = { ...this.settings.defaultOptions, ...ctx.params };
+    let registration: Registration = ctx.params;
 
     registration.types =
       registration.types && (await ctx.call('jsonld.parser.expandTypes', { types: registration.types }));
@@ -29,7 +29,7 @@ const RegisterAction = {
     );
 
     // Keep in memory
-    this.registrations.push(registration);
+    this.registrations.push({ ...this.settings.defaultOptions, ...ctx.params });
 
     ctx.emit('ldp.registry.registered', { registration }, { meta: { webId: null, dataset: null } });
 

@@ -1,6 +1,6 @@
 import { ControlledResourceMixin } from '@semapps/ldp';
 import rdf from '@rdfjs/data-model';
-import { ServiceSchema } from 'moleculer';
+import { ServiceSchema, Context } from 'moleculer';
 
 const PublicTypeIndexService = {
   name: 'public-type-index' as const,
@@ -17,7 +17,7 @@ const PublicTypeIndexService = {
   },
   events: {
     'webid.created': {
-      async handler(ctx) {
+      async handler(ctx: Context<any>) {
         const { resourceUri: webId } = ctx.params;
         const typeIndexUri = await this.actions.waitForCreation({}, { parentCtx: ctx });
 

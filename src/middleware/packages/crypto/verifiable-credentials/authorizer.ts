@@ -28,9 +28,9 @@ const hasValidCapability = async (ctx: any, resourceUri: any, mode: any) => {
   return true;
 };
 
-const VcGuardSchema = {
+const AuthorizerService = {
   name: 'vc.guard' as const,
-  dependencies: 'permissions',
+  dependencies: ['permissions'],
   async started() {
     await this.broker.call('permissions.addAuthorizer', { actionName: `${this.name}.hasPermission` });
   },
@@ -38,8 +38,6 @@ const VcGuardSchema = {
     hasPermission: {
       async handler(ctx) {
         const { uri, mode } = ctx.params;
-
-        // @ts-expect-error TS(2339): Property 'authorization' does not exist on type '{... Remove this comment to see the full error message
         if (ctx.meta.authorization?.capabilityPresentation) {
           if (await hasValidCapability(ctx, uri, mode)) {
             return true;
@@ -52,12 +50,12 @@ const VcGuardSchema = {
   }
 } satisfies ServiceSchema;
 
-export default VcGuardSchema;
+export default AuthorizerService;
 
 declare global {
   export namespace Moleculer {
     export interface AllServices {
-      [VcGuardSchema.name]: typeof VcGuardSchema;
+      [AuthorizerService.name]: typeof AuthorizerService;
     }
   }
 }

@@ -6,7 +6,6 @@ import { ServiceSchema } from 'moleculer';
  * Challenges can be used to created Verifiable Presentations (VC).
  *
  * Challenges are kept in memory and are valid for up to 5 minutes or until they are used.
- * @type {import('moleculer').ServiceSchema}
  */
 const ChallengeService = {
   name: 'crypto.vc.presentation.challenge' as const,

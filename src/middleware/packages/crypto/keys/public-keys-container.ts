@@ -1,5 +1,5 @@
 import rdf from '@rdfjs/data-model';
-import { ControlledContainerMixin } from '@semapps/ldp';
+import { ControlledContainerMixin, arrayOf } from '@semapps/ldp';
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
 import { ServiceSchema } from 'moleculer';
@@ -16,33 +16,51 @@ const PublicKeysService = {
     path: '/public-key',
     types: Object.values(KEY_TYPES),
     permissions: {},
-    newResourcesPermissions: (webId: string) => {
-      if (webId === 'anon' || webId === 'system') throw new Error('Key resource must be created for registered webId.');
-
-      return {
-        anon: {
-          read: true
-        },
-        user: {
-          uri: webId,
-          read: true,
-          write: true,
-          control: true
-        }
-      };
+    newResourcesPermissions: {
+      anon: {
+        read: true
+      }
     },
     excludeFromMirror: false,
-    typeIndex: 'public',
-    // Disallow PATCH & PUT, to prevent keys from being overwritten
-    controlledActions: {
-      get: 'private-keys-container.get', // Returns key object with context and type required by Multikey spec.
-      put: 'public-keys-container.forbidden',
-      patch: 'public-keys-container.forbidden'
-    }
+    typeIndex: 'public'
   },
 
   actions: {
-    forbidden: {
+    get: {
+      /**
+       * Get action that sets the multikey context and multikey type for those keys correctly. This is required by the spec.
+       * See:
+       * - https://www.w3.org/TR/controller-document/#json-ld-context
+       * - https://www.w3.org/TR/controller-document/#Multikey
+       *
+       * This Action is used by the public key container as well.
+       *
+       */
+      async handler(ctx) {
+        const jsonContext = await ctx.call('jsonld.context.merge', {
+          a: ['https://w3id.org/security/multikey/v1'],
+          b: await ctx.call('jsonld.context.get')
+        });
+
+        const resource: any = await ctx.call('ldp.resource.get', { ...ctx.params, jsonContext });
+
+        // Make type `Multikey` only, to comply with spec.
+        if (arrayOf(resource.type).includes('sec:Multikey') || arrayOf(resource.type).includes('Multikey')) {
+          // Type must be Multikey only
+          resource.type = 'Multikey';
+        }
+
+        return resource;
+      }
+    },
+
+    put: {
+      handler() {
+        throw new E.ForbiddenError();
+      }
+    },
+
+    patch: {
       handler() {
         throw new E.ForbiddenError();
       }

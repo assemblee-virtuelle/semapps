@@ -1,9 +1,16 @@
-import { parseHeader, parseRawBody, negotiateAccept, negotiateContentType, parseJson } from '@semapps/middlewares';
+import {
+  parseHeader,
+  parseRawBody,
+  negotiateAccept,
+  negotiateContentType,
+  parseJson,
+  saveDatasetMeta
+} from '@semapps/middlewares';
 import path from 'node:path';
 import { ServiceSchema } from 'moleculer';
 import { VC_API_PATH } from '../constants.ts';
 
-const middlewares = [parseHeader, negotiateAccept, negotiateContentType, parseRawBody, parseJson];
+const middlewares = [saveDatasetMeta, parseHeader, negotiateAccept, negotiateContentType, parseRawBody, parseJson];
 
 /**
  *
@@ -12,24 +19,14 @@ const middlewares = [parseHeader, negotiateAccept, negotiateContentType, parseRa
  * This service implements (parts of) the
  * [VC API spec](https://w3c-ccg.github.io/vc-api/) v0.3.
  *
- * WARNING: Changing things here can have security implications.
- *
- * @type {import('moleculer').ServiceSchema}
+ * WARNING: Changing things here can have security implications
  */
-const VCApiService = {
+const ApiService = {
   name: 'crypto.vc.api' as const,
   dependencies: ['api', 'ldp'],
-  settings: {
-    podProvider: null
-  },
-  created() {
-    if (this.settings.podProvider === null) {
-      throw new Error('No pod provider set.');
-    }
-  },
   async started() {
-    const basePath = await this.broker.call('ldp.getBasePath');
-    const apiPath = path.join(basePath, this.settings.podProvider ? '/:username([^/.][^/]+)' : '', VC_API_PATH);
+    const basePath: string = await this.broker.call('ldp.getBasePath');
+    const apiPath = path.join(basePath, '/:username([^/.][^/]+)', VC_API_PATH);
 
     // Credential routes.
     await this.broker.call('api.addRoute', {
@@ -86,12 +83,12 @@ const VCApiService = {
   }
 } satisfies ServiceSchema;
 
-export default VCApiService;
+export default ApiService;
 
 declare global {
   export namespace Moleculer {
     export interface AllServices {
-      [VCApiService.name]: typeof VCApiService;
+      [ApiService.name]: typeof ApiService;
     }
   }
 }

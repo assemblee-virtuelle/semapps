@@ -20,8 +20,6 @@ const setUp = async () => {
   );
 
   alice = await createAccount(broker, 'alice');
-
-  await alice.call('webid.awaitCreateComplete');
 };
 
 afterAll(async () => {

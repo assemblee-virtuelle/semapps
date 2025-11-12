@@ -178,10 +178,7 @@ const KeysService = {
           owner: webId,
           controller: webId
         };
-        const keyUri = await ctx.call('private-keys-container.post', {
-          webId,
-          resource: keyObject
-        });
+        const keyUri = await ctx.call('private-keys-container.post', { resource: keyObject });
         keyObject.id = keyUri;
 
         if (publishKey || attachToWebId) {
@@ -584,23 +581,11 @@ const KeysService = {
       async handler(ctx: any) {
         const { webId } = ctx.params;
 
-        // Wait for the key containers to be created.
-        const keyContainerUri = await ctx.call('private-keys-container.getContainerUri', { webId }, { parentCtx: ctx });
-        const publicKeyContainerUri = await ctx.call(
-          'public-keys-container.getContainerUri',
-          { webId },
-          { parentCtx: ctx }
-        );
-        await ctx.call(
-          'private-keys-container.waitForContainerCreation',
-          { containerUri: keyContainerUri },
-          { parentCtx: ctx }
-        );
-        await ctx.call(
-          'private-keys-container.waitForContainerCreation',
-          { containerUri: publicKeyContainerUri },
-          { parentCtx: ctx }
-        );
+        // Wait for the keys containers to be created.
+        const privateKeysContainerUri = await ctx.call('private-keys-container.getContainerUri', { webId });
+        const publicKeysContainerUri = await ctx.call('public-keys-container.getContainerUri', { webId });
+        await ctx.call('private-keys-container.waitForContainerCreation', { containerUri: privateKeysContainerUri });
+        await ctx.call('public-keys-container.waitForContainerCreation', { containerUri: publicKeysContainerUri });
 
         // Create, publish and attach keys to the webId.
         await Promise.all([

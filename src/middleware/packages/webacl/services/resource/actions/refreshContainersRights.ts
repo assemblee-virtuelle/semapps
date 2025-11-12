@@ -17,7 +17,7 @@ const RefreshContainersRightsAction = {
         const containerUri = urlJoin(baseUrl, path!);
 
         const containerRights: WacPermissionObject =
-          typeof permissions === 'function' ? permissions(webId, ctx) : permissions;
+          typeof permissions === 'function' ? permissions(webId) : permissions;
 
         this.logger.info(`Refreshing rights for container ${containerUri}...`);
 

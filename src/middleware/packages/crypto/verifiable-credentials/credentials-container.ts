@@ -1,50 +1,25 @@
-import path from 'node:path';
 import { ControlledContainerMixin } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
-import { credentialsContext, credentialsContextNoGraphProof, VC_API_PATH } from '../constants.ts';
+import { credentialsContext, credentialsContextNoGraphProof } from '../constants.ts';
 
 /**
  * Container for Verifiable Credentials. Posting to this container will create a new VC.
  * The issuance is not handled in this service but in the {@link VCIssuerService}.
  *
  * WARNING: Changing things here can have security implications.
- *
- * @type {import('moleculer').ServiceSchema}
  */
 const VCCredentialsContainer = {
   name: 'crypto.vc.issuer.credential-container' as const,
   mixins: [ControlledContainerMixin],
   dependencies: ['ontologies'],
   settings: {
-    path: null,
+    path: '/credentials',
     excludeFromMirror: true,
     activateTombstones: false,
     types: ['https://www.w3.org/2018/credentials#VerifiableCredential'],
     typeIndex: 'private',
-    podProvider: null,
-    permissions: (webId: any, ctx: any) => {
-      // If not a pod provider, the container is shared, so any user can append (not read arbitrary VCs though).
-      return {
-        anyUser: {
-          // Caution. Here, `ctx.service` is the LdpContainerService. Because this function is called by the WebAclMiddleware.
-          read: !ctx.service.settings.podProvider,
-          append: !ctx.service.settings.podProvider
-        }
-      };
-    },
-    newResourcesPermissions: (webId: any) => {
-      if (webId === 'anon') throw new Error('Credential resource must be created for registered webId.');
-      if (webId === 'system') return {};
-
-      return {
-        user: {
-          uri: webId,
-          read: true,
-          write: true,
-          control: true
-        }
-      };
-    }
+    permissions: {},
+    newResourcesPermissions: {}
   },
   /**
    * The actions below have their `@context` replaced.
@@ -54,15 +29,14 @@ const VCCredentialsContainer = {
   actions: {
     get: {
       async handler(ctx) {
-        const resource = await ctx.call('ldp.resource.get', {
+        const resource: any = await ctx.call('ldp.resource.get', {
           ...ctx.params,
           jsonContext: credentialsContextNoGraphProof
         });
-        ctx.meta.$responseHeaders = {
-          // @ts-expect-error TS(2339): Property '$responseHeaders' does not exist on type... Remove this comment to see the full error message
-          ...ctx.meta.$responseHeaders,
-          'Cache-Control': 'private, max-age=300, immutable'
-        };
+        // ctx.meta.$responseHeaders = {
+        //   ...ctx.meta.$responseHeaders,
+        //   'Cache-Control': 'private, max-age=300, immutable'
+        // };
         return { ...resource, '@context': credentialsContext };
       }
     },
@@ -96,7 +70,7 @@ const VCCredentialsContainer = {
 
     list: {
       async handler(ctx) {
-        const container = await ctx.call('ldp.container.get', {
+        const container: any = await ctx.call('ldp.container.get', {
           ...ctx.params,
           jsonContext: credentialsContextNoGraphProof
         });

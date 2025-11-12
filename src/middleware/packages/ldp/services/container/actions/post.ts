@@ -112,7 +112,7 @@ const PostAction = {
           webId
         });
       } else {
-        const { controlledActions }: Registration = await ctx.call('ldp.registry.getByUri', { containerUri });
+        const registration: Registration = await ctx.call('ldp.registry.getByUri', { containerUri });
 
         // Change relative URIs to full URIs
         const resourceWithBase = resource['@graph']
@@ -122,9 +122,10 @@ const PostAction = {
             })
           : { ...resource, '@id': resourceUri };
 
-        await ctx.call(controlledActions.create || 'ldp.resource.create', {
+        await ctx.call(registration?.controlledActions?.create || 'ldp.resource.create', {
           resource: resourceWithBase,
           resourceUri,
+          registration,
           webId
         });
       }

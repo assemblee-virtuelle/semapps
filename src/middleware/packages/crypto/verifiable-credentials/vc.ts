@@ -1,15 +1,14 @@
-// @ts-expect-error TS(2305): Module '"@semapps/ontologies"' has no exported mem... Remove this comment to see the full error message
 import { did, cred } from '@semapps/ontologies';
 import { ServiceSchema } from 'moleculer';
-import VCAuthorizerService from './vc-authorizer-service.ts';
-import VCHolderService from './vc-holder-service.ts';
-import VCIssuerService from './vc-issuer-service.ts';
-import VCVerifierService from './vc-verifier-service.ts';
-import DataIntegrityService from './data-integrity-service.ts';
-import VCApiService from './vc-api-service.ts';
-import VCCredentialContainer from './vc-credential-container.ts';
-import VCPresentationContainer from './vc-presentation-container.ts';
-import ChallengeService from './challenge-service.ts';
+import AuthorizerService from './authorizer.ts';
+import HolderService from './holder.ts';
+import IssuerService from './issuer.ts';
+import VerifierService from './verifier.ts';
+import DataIntegrityService from './data-integrity.ts';
+import ApiService from './api.ts';
+import CredentialsContainerService from './credentials-container.ts';
+import PresentationsContainerService from './presentations-container.ts';
+import ChallengeService from './challenge.ts';
 
 /**
  * Root service for Verifiable Credential and the VC API.
@@ -25,43 +24,34 @@ import ChallengeService from './challenge-service.ts';
  * are implemented.
  *
  * WARNING: Changing things here can have security implications.
- *
- * @type {import('moleculer').ServiceSchema}
  */
 const VCService = {
   name: 'crypto.vc' as const,
   dependencies: ['ontologies'],
   settings: {
-    podProvider: false,
     enableApi: true
   },
   created() {
-    const { enableApi, podProvider } = this.settings;
+    const { enableApi } = this.settings;
     // @ts-expect-error TS(2322): Type '{ name: "crypto.vc.issuer"; settings: { podP... Remove this comment to see the full error message
-    this.broker.createService({ mixins: [VCIssuerService] });
+    this.broker.createService({ mixins: [IssuerService] });
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "vc.guard"; de... Remove this comment to see the full error message
-    this.broker.createService({ mixins: [VCAuthorizerService] });
+    this.broker.createService({ mixins: [AuthorizerService] });
     // @ts-expect-error TS(2322): Type '{ name: "crypto.vc.holder"; dependencies: st... Remove this comment to see the full error message
-    this.broker.createService({ mixins: [VCHolderService] });
+    this.broker.createService({ mixins: [HolderService] });
     // @ts-expect-error TS(2322): Type '{ name: "crypto.vc.verifier"; dependencies: ... Remove this comment to see the full error message
-    this.broker.createService({ mixins: [VCVerifierService] });
+    this.broker.createService({ mixins: [VerifierService] });
     // @ts-expect-error TS(2322): Type '{ name: "crypto.vc.data-integrity"; dependen... Remove this comment to see the full error message
     this.broker.createService({ mixins: [DataIntegrityService] });
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "crypto.vc.pre... Remove this comment to see the full error message
     this.broker.createService({ mixins: [ChallengeService] });
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "crypto.vc.hol... Remove this comment to see the full error message
-    this.broker.createService({
-      mixins: [VCPresentationContainer],
-      settings: { path: 'presentations', podProvider }
-    });
+    this.broker.createService({ mixins: [PresentationsContainerService] });
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "crypto.vc.iss... Remove this comment to see the full error message
-    this.broker.createService({
-      mixins: [VCCredentialContainer],
-      settings: { path: 'credentials', podProvider }
-    });
+    this.broker.createService({ mixins: [CredentialsContainerService] });
 
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "crypto.vc.api... Remove this comment to see the full error message
-    if (enableApi) this.broker.createService({ mixins: [VCApiService], settings: { podProvider } });
+    if (enableApi) this.broker.createService({ mixins: [ApiService] });
   },
   async started() {
     this.broker.call('ontologies.register', did);

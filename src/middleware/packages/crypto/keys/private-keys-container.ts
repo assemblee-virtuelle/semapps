@@ -19,34 +19,14 @@ const PrivateKeysContainerService = {
     path: '/key',
     types: Object.values(KEY_TYPES),
     permissions: {},
-    newResourcesPermissions: (webId: any) => {
-      if (webId === 'anon' || webId === 'system') throw new Error('Key resource must be created for registered webId.');
-      return {
-        user: {
-          uri: webId,
-          read: true,
-          write: true,
-          control: true
-        }
-      };
-    },
+    newResourcesPermissions: {},
     excludeFromMirror: true,
     typeIndex: 'private',
-    // Disallow PATCH & PUT, to prevent keys from being overwritten
     controlledActions: {
-      get: 'private-keys-container.get', // Returns key object with context and type required by Multikey spec.
-      put: 'private-keys-container.forbidden',
-      patch: 'private-keys-container.forbidden',
       delete: 'keys.delete'
     }
   },
   actions: {
-    forbidden: {
-      async handler() {
-        throw new E.ForbiddenError();
-      }
-    },
-
     get: {
       /**
        * Get action that sets the multikey context and multikey type for those keys correctly. This is required by the spec.
@@ -72,6 +52,18 @@ const PrivateKeysContainerService = {
         }
 
         return resource;
+      }
+    },
+
+    put: {
+      handler() {
+        throw new E.ForbiddenError();
+      }
+    },
+
+    patch: {
+      handler() {
+        throw new E.ForbiddenError();
       }
     }
   }

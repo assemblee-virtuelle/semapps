@@ -24,10 +24,8 @@ const {
  * For more information see the VC API spec
  *
  * WARNING: Changing things here can have security implications.
- *
- * @type {import('moleculer').ServiceSchema}
  */
-const VCHolderService = {
+const HolderService = {
   name: 'crypto.vc.holder' as const,
   dependencies: ['jsonld', 'jsonld.context'],
   async started() {
@@ -71,15 +69,15 @@ const VCHolderService = {
         const {
           presentation: presentationParam,
           options: { challenge, domain, proofPurpose = 'assertionMethod' },
-          // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
           webId = ctx.meta.webId,
           keyObject = undefined,
           keyId = undefined,
           noAnonRead = false
         } = ctx.params;
+
         const purpose = new AuthenticationProofPurpose({ term: proofPurpose, challenge, domain });
 
-        const key = await ctx.call('keys.getMultikey', {
+        const key: any = await ctx.call('keys.getMultikey', {
           webId,
           keyObject,
           keyId,
@@ -171,12 +169,12 @@ const VCHolderService = {
   }
 } satisfies ServiceSchema;
 
-export default VCHolderService;
+export default HolderService;
 
 declare global {
   export namespace Moleculer {
     export interface AllServices {
-      [VCHolderService.name]: typeof VCHolderService;
+      [HolderService.name]: typeof HolderService;
     }
   }
 }

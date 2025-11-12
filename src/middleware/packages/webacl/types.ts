@@ -1,5 +1,3 @@
-import { Context } from 'moleculer';
-
 export interface WacPermission {
   read: boolean;
   write: boolean;
@@ -20,4 +18,4 @@ export interface WacPermissionObject {
   };
 }
 
-export type WacPermissionFunction = (webId: string, ctx?: Context) => WacPermissionObject;
+export type WacPermissionFunction = (webId: string) => WacPermissionObject;

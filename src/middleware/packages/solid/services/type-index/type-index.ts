@@ -1,9 +1,10 @@
 import rdf from '@rdfjs/data-model';
-import { arrayOf, getDatasetFromUri, getSlugFromUri, isWebId } from '@semapps/ldp';
+import { arrayOf, getSlugFromUri } from '@semapps/ldp';
 import { solid, skos, apods } from '@semapps/ontologies';
 import { ServiceSchema } from 'moleculer';
 import PublicTypeIndexService from './public-type-index.ts';
 import PrivateTypeIndexService from './private-type-index.ts';
+import { TypeRegistration } from '../../types.ts';
 
 const TypeIndexService = {
   name: 'type-index' as const,
@@ -31,15 +32,20 @@ const TypeIndexService = {
         let { types, uri, isContainer, isPrivate } = ctx.params;
         const webId = ctx.params.webId || ctx.meta.webId;
 
+        const existingRegistration: TypeRegistration = await this.actions.getByUri(
+          { uri, isPrivate },
+          { parentCtx: ctx }
+        );
+
         const expandedTypes: string[] = await ctx.call('jsonld.parser.expandTypes', { types });
-        const oldExpandedTypes: string[] = await this.actions.getTypes({ uri, isPrivate }, { parentCtx: ctx });
 
         const typeIndexUri = await ctx.call(`${isPrivate ? 'private' : 'public'}-type-index.getUri`, { webId });
 
         // Use a hash based on the URI (which should be unique !)
         const typeRegistrationUri = `${typeIndexUri}#${getSlugFromUri(uri)}`;
 
-        if (oldExpandedTypes.length > 0) {
+        if (existingRegistration) {
+          const oldExpandedTypes = existingRegistration.types; // Types are already expanded
           const newExpandedTypes = expandedTypes.filter((t: any) => !oldExpandedTypes.includes(t));
 
           if (newExpandedTypes.length > 0) {
@@ -100,7 +106,7 @@ const TypeIndexService = {
       }
     },
 
-    getTypes: {
+    getByUri: {
       visibility: 'public',
       params: {
         uri: { type: 'string' },
@@ -120,11 +126,13 @@ const TypeIndexService = {
         const results = await ctx.call('triplestore.query', {
           query: `
             PREFIX solid: <http://www.w3.org/ns/solid/terms#>
-            SELECT ?type
+            SELECT ?type ?indexType ?instancePredicate
             WHERE {
               VALUES ?typeIndexUri { ${typeIndexUris.map(typeIndexUri => `<${typeIndexUri}>`).join(' ')} }
               VALUES ?instancePredicate { solid:instanceContainer solid:instance }
+              VALUES ?indexType { solid:ListedDocument solid:UnlistedDocument }
               GRAPH ?typeIndexUri {
+                ?typeIndexUri a ?indexType .
                 ?typeRegistrationUri a solid:TypeRegistration .
                 ?typeRegistrationUri solid:forClass ?type .
                 ?typeRegistrationUri ?instancePredicate <${uri}> .
@@ -134,7 +142,15 @@ const TypeIndexService = {
           webId: 'system'
         });
 
-        return arrayOf(results).map((r: any) => r.type.value);
+        if (arrayOf(results).length > 0) {
+          return {
+            types: arrayOf(results).map((r: any) => r.type.value),
+            uri,
+            isPrivate: arrayOf(results)[0].indexType.value === 'http://www.w3.org/ns/solid/terms#UnlistedDocument',
+            isContainer:
+              arrayOf(results)[0].instancePredicate.value === 'http://www.w3.org/ns/solid/terms#instanceContainer'
+          } as TypeRegistration;
+        }
       }
     },
 

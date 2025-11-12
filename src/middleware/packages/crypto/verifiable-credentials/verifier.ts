@@ -18,10 +18,8 @@ const {
  * as well as verifying Capabilities created with Verifiable Credentials.
  *
  * WARNING: Changing things here can have security implications.
- *
- * @type {import('moleculer').ServiceSchema}
  */
-const VCPresentationService = {
+const VerifierService = {
   name: 'crypto.vc.verifier' as const,
   dependencies: ['ldp', 'jsonld'],
   async started() {
@@ -123,9 +121,7 @@ const VCPresentationService = {
             ctx.params.presentationPurpose ||
             new AuthenticationProofPurpose({ term: term || 'assertionMethod', challenge, domain });
 
-          const suite = new DataIntegrityProof({
-            cryptosuite
-          });
+          const suite = new DataIntegrityProof({ cryptosuite });
 
           const verificationResult = await vc.verify({
             presentation,
@@ -138,7 +134,7 @@ const VCPresentationService = {
           });
           return verificationResult;
         } catch (e) {
-          this.logger.error('Error verifying presentation:', e);
+          this.logger.warn('Error verifying presentation:', e);
           // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
           return { verified: false, error: e.message };
         }
@@ -157,7 +153,6 @@ const VCPresentationService = {
           type: 'object',
           default: {},
           params: {
-            // @ts-expect-error TS(2322): Type '{ type: "number"; default: number; }' is not... Remove this comment to see the full error message
             maxChainLength: { type: 'number', default: 2 },
             challenge: { type: 'string', optional: true },
             domain: { type: 'string', optional: true }
@@ -206,12 +201,12 @@ const VCPresentationService = {
   }
 } satisfies ServiceSchema;
 
-export default VCPresentationService;
+export default VerifierService;
 
 declare global {
   export namespace Moleculer {
     export interface AllServices {
-      [VCPresentationService.name]: typeof VCPresentationService;
+      [VerifierService.name]: typeof VerifierService;
     }
   }
 }

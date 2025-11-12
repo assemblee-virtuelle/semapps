@@ -22,8 +22,6 @@ const {
  * Currently, the only supported suite is the eddsa-rdfc-2022-cryptosuite.
  *
  * WARNING: Changing things here can have security implications.
- *
- * @type {import('moleculer').ServiceSchema}
  */
 const DataIntegrityService = {
   name: 'crypto.vc.data-integrity' as const,
@@ -89,19 +87,19 @@ const DataIntegrityService = {
           object,
           options: { proofPurpose: method = 'assertionMethod' } = {},
           purpose = new AssertionProofPurpose({ term: method }),
-          // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
           webId = ctx.meta.webId,
           keyObject = undefined,
           keyId = undefined
         } = ctx.params;
 
-        const key = await ctx.call('keys.getMultikey', {
+        const key: any = await ctx.call('keys.getMultikey', {
           webId,
           keyObject,
           keyId,
           keyType: KEY_TYPES.ED25519,
           withPrivateKey: true
         });
+
         // The library requires the key to have the type field set to `Multikey` only.
         const signingKeyInstance = await Ed25519Multikey.from({ ...key, type: 'Multikey' });
 

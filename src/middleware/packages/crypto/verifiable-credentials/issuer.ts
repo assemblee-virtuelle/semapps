@@ -1,15 +1,11 @@
-import { MIME_TYPES } from '@semapps/mime-types';
-
 // @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import { cryptosuite } from '@digitalbazaar/eddsa-rdfc-2022-cryptosuite';
 // @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
 // @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import * as vc from '@digitalbazaar/vc';
-
 // @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import * as Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
-
 import { ServiceSchema } from 'moleculer';
 import { KEY_TYPES, credentialsContext } from '../constants.ts';
 
@@ -21,21 +17,14 @@ const {
  * Service for verifying, reading, and revoking Verifiable Credentials.
  *
  * WARNING: Changing things here can have security implications.
- *
- * @type {import('moleculer').ServiceSchema}
  */
-const VCCredentialService = {
+const IssuerService = {
   name: 'crypto.vc.issuer' as const,
-  settings: {
-    podProvider: null
-  },
-
   async started() {
     this.documentLoader = async (url: any, options: any) => {
       return await this.broker.call('jsonld.document-loader.loadWithCache', { url, options });
     };
   },
-
   actions: {
     /**
      * # Create a Verifiable Credential.
@@ -87,7 +76,6 @@ const VCCredentialService = {
         const {
           credential: receivedCredential,
           options: { proofPurpose = 'assertionMethod' },
-          // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
           webId = ctx.meta.webId,
           noAnonRead = false,
           purpose = new AssertionProofPurpose({ term: proofPurpose }),
@@ -115,7 +103,7 @@ const VCCredentialService = {
         // Create the VC resource, if the id is not set.
         const credentialResource = credential.id
           ? credential
-          : await this.createCredentialResource(credential, noAnonRead, webId);
+          : await this.createCredentialResource(ctx, credential, noAnonRead, webId);
 
         // Get signature suite
         const suite = new DataIntegrityProof({
@@ -145,14 +133,14 @@ const VCCredentialService = {
   },
   methods: {
     /** Creates an ldp resource from the presentation and sets rights. */
-    async createCredentialResource(credential, noAnonRead, webId) {
-      const resourceUri = await this.broker.call('crypto.vc.issuer.credential-container.post', {
+    async createCredentialResource(ctx, credential, noAnonRead, webId) {
+      const resourceUri = await ctx.call('crypto.vc.issuer.credential-container.post', {
         resource: credential,
         webId
       });
 
       // Get the presentation resource.
-      const resource = await this.broker.call('crypto.vc.issuer.credential-container.get', {
+      const resource = await ctx.call('crypto.vc.issuer.credential-container.get', {
         resourceUri,
         jsonContext: credentialsContext,
         webId: 'system'
@@ -161,16 +149,9 @@ const VCCredentialService = {
       // Set resource rights.
       if (!noAnonRead) {
         // Add anonymous read rights to VC resource and control rights to holder.
-        await this.broker.call('webacl.resource.addRights', {
+        await ctx.call('webacl.resource.addRights', {
           resourceUri,
-          additionalRights: { anon: { read: true }, user: { uri: webId, control: true, read: true, write: true } },
-          webId: 'system'
-        });
-      } else {
-        // Add user control rights only.
-        await this.broker.call('webacl.resource.addRights', {
-          resourceUri,
-          additionalRights: { user: { uri: webId, control: true, read: true, write: true } },
+          additionalRights: { anon: { read: true } },
           webId: 'system'
         });
       }
@@ -180,12 +161,12 @@ const VCCredentialService = {
   }
 } satisfies ServiceSchema;
 
-export default VCCredentialService;
+export default IssuerService;
 
 declare global {
   export namespace Moleculer {
     export interface AllServices {
-      [VCCredentialService.name]: typeof VCCredentialService;
+      [IssuerService.name]: typeof IssuerService;
     }
   }
 }

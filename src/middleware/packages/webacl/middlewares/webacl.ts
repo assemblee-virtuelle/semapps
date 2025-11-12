@@ -72,14 +72,13 @@ const WebAclMiddleware = ({ baseUrl, graphName = 'http://semapps.org/webacl' }: 
          */
         switch (action.name) {
           case 'ldp.resource.create': {
-            // On start, resource permissions are passed as parameters because the registry is not up yet
             let permissions;
             if (ctx.params.registration) {
-              // Use the permissions param (and not newResourcesPermission) because this is for controlled resources
-              permissions = ctx.params.registration?.permissions || defaultContainerOptions.permissions;
+              permissions =
+                ctx.params.registration?.newResourcesPermissions || defaultContainerOptions.newResourcesPermissions;
             } else {
               const registration = await ctx.call('ldp.registry.getByUri', { resourceUri: ctx.params.resourceUri });
-              permissions = registration?.newResourcesPermissions || defaultContainerOptions.permissions;
+              permissions = registration?.newResourcesPermissions || defaultContainerOptions.newResourcesPermissions;
             }
 
             // We must add the permissions before inserting the resource
@@ -88,7 +87,7 @@ const WebAclMiddleware = ({ baseUrl, graphName = 'http://semapps.org/webacl' }: 
               {
                 webId: 'system',
                 resourceUri: ctx.params.resourceUri,
-                newRights: typeof permissions === 'function' ? permissions(webId, ctx) : permissions
+                newRights: typeof permissions === 'function' ? permissions(webId) : permissions
               },
               {
                 meta: {
@@ -125,17 +124,6 @@ const WebAclMiddleware = ({ baseUrl, graphName = 'http://semapps.org/webacl' }: 
                 }
               );
               break;
-            // case 'ldp.container.create':
-            //   await ctx.call(
-            //     'webacl.resource.deleteAllRights',
-            //     { resourceUri: ctx.params.containerUri },
-            //     {
-            //       meta: {
-            //         skipObjectsWatcher: true
-            //       }
-            //     }
-            //   );
-            //   break;
             default:
               break;
           }
@@ -149,7 +137,6 @@ const WebAclMiddleware = ({ baseUrl, graphName = 'http://semapps.org/webacl' }: 
           case 'ldp.container.create': {
             const containerUri = actionReturnValue;
 
-            // On start, container permissions are passed as parameters because the registry is not up yet
             let permissions;
             if (ctx.params.registration) {
               permissions = ctx.params.registration?.permissions || defaultContainerOptions.permissions;
@@ -162,7 +149,7 @@ const WebAclMiddleware = ({ baseUrl, graphName = 'http://semapps.org/webacl' }: 
               'webacl.resource.addRights',
               {
                 resourceUri: containerUri,
-                newRights: typeof permissions === 'function' ? permissions(webId, ctx) : permissions,
+                newRights: typeof permissions === 'function' ? permissions(webId) : permissions,
                 webId: 'system'
               },
               {

@@ -6,6 +6,7 @@ import PreferencesFileService from './services/preferences-file.ts';
 import StorageService from './services/storage.ts';
 import TypeIndexService from './services/type-index/type-index.ts';
 
+export * from './types.ts';
 export {
   AuthorizerService,
   EndpointService,

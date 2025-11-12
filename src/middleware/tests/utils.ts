@@ -35,7 +35,7 @@ export const dropDataset = (dataset: any) =>
     }
   });
 
-export const fetchServer = (url: string, options: FetchOptions = {}) => {
+export const fetchServer = async (url: string, options: FetchOptions = {}) => {
   if (!url) throw new Error('No url provided to fetchServer');
   if (!options.headers) options.headers = new fetch.Headers();
 
@@ -89,16 +89,31 @@ export const fetchServer = (url: string, options: FetchOptions = {}) => {
 export const createAccount = async (broker: ServiceBroker, username: string) => {
   const { webId }: Account = await broker.call('auth.account.create', { username });
 
-  const call = (actionName: string, params: ActionParamSchema = {}, options: CallingOptions = {}) =>
+  const callAsUser = (actionName: string, params: ActionParamSchema = {}, options: CallingOptions = {}) =>
     broker.call(actionName, params, { ...options, meta: { ...options.meta, webId, dataset: username } });
 
   const baseUrl = await broker.call('solid-storage.getBaseUrl', { username });
 
+  const token = await broker.call('auth.jwt.generateServerSignedToken', { payload: { webId } });
+
+  const fetchAsUser = async (url: string, options: FetchOptions = {}) =>
+    fetchServer(url, {
+      ...options,
+      headers: new fetch.Headers({ ...options?.headers, Authorization: `Bearer ${token}` })
+    });
+
+  // Ensure keys are created and attached to the WebID (this is a side-effect of the auth.account.created event)
+  // If we don't do that, tests may be stopped before the keys are created and this may generate errors
+  // Note: See if we can avoid this because it increases some of the tests time by 30-50%
+  await callAsUser('webid.awaitCreateComplete');
+
   return {
     webId,
+    token,
     baseUrl,
     username,
-    call
+    call: callAsUser,
+    fetch: fetchAsUser
   };
 };
 

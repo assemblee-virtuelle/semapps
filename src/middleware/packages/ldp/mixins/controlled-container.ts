@@ -10,7 +10,7 @@ const ControlledContainerMixin = {
     controlledActions: {},
     excludeFromMirror: false,
     activateTombstones: true,
-    typeIndex: undefined
+    typeIndex: 'public'
   },
   dependencies: ['ldp'],
   async started() {
