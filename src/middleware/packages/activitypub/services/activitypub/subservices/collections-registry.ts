@@ -1,15 +1,14 @@
 import urlJoin from 'url-join';
 import rdf from '@rdfjs/data-model';
-import { MIME_TYPES } from '@semapps/mime-types';
-import { getWebIdFromUri, arrayOf } from '@semapps/ldp';
-import { ServiceSchema } from 'moleculer';
-import { ACTOR_TYPES, FULL_ACTOR_TYPES, AS_PREFIX } from '../../../constants.ts';
+import { Account } from '@semapps/auth';
+import { arrayOf } from '@semapps/ldp';
+import { ServiceSchema, Context } from 'moleculer';
+import { AS_PREFIX } from '../../../constants.ts';
 
 const CollectionsRegistryService = {
   name: 'activitypub.collections-registry' as const,
   settings: {
-    baseUri: null,
-    podProvider: false
+    baseUri: null
   },
   dependencies: ['triplestore', 'ldp'],
   async started() {
@@ -69,8 +68,7 @@ const CollectionsRegistryService = {
               'semapps:sortPredicate': sortPredicate,
               'semapps:sortOrder': sortOrder
             },
-            contentType: MIME_TYPES.JSON,
-            webId: this.settings.podProvider ? getWebIdFromUri(objectUri) : 'system',
+            webId: 'system',
             permissions // Handled by the WebAclMiddleware, if present
           });
 
@@ -117,26 +115,29 @@ const CollectionsRegistryService = {
         for (const collection of this.registeredCollections) {
           this.logger.info(`Looking for containers with types: ${JSON.stringify(collection.attachToTypes)}`);
 
-          const accounts = await this.broker.call('auth.account.find');
-          const datasets = this.settings.podProvider ? accounts.map((a: any) => a.username) : [undefined];
+          const accounts: Account[] = await ctx.call('auth.account.find');
 
-          for (let dataset of datasets) {
-            // Find all containers where we want to attach this collection
-            const containers = await ctx.call('ldp.registry.getByTypes', { types: collection.attachToTypes, dataset });
-            for (const container of Object.values(containers)) {
-              // @ts-expect-error TS(18046): 'container' is of type 'unknown'.
-              const containerUri = urlJoin(this.settings.baseUri, container.fullPath);
-              this.logger.info(`Looking for resources in container ${containerUri}`);
-              const resources = await ctx.call('ldp.container.getUris', { containerUri });
-              for (const resourceUri of resources) {
-                await this.actions.createAndAttachCollection(
-                  {
-                    objectUri: resourceUri,
-                    collection
-                  },
-                  { parentCtx: ctx }
-                );
-              }
+          for (const { webId, username: dataset } of accounts) {
+            ctx.meta.dataset = dataset;
+            ctx.meta.webId = webId;
+
+            // Find the container for resources of this type
+            const containerUri: string = await ctx.call('ldp.registry.getUri', {
+              type: arrayOf(collection.attachToTypes)[0],
+              isContainer: true
+            });
+
+            this.logger.info(`Looking for resources in container ${containerUri}`);
+
+            const resourcesUris: string[] = await ctx.call('ldp.container.getUris', { containerUri });
+            for (const resourceUri of resourcesUris) {
+              await this.actions.createAndAttachCollection(
+                {
+                  objectUri: resourceUri,
+                  collection
+                },
+                { parentCtx: ctx }
+              );
             }
           }
         }
@@ -145,7 +146,7 @@ const CollectionsRegistryService = {
 
     updateCollectionsOptions: {
       async handler(ctx) {
-        let { collection, dataset } = ctx.params;
+        let { collection, dataset: chosenDataset } = ctx.params;
         let { attachPredicate, ordered, summary, dereferenceItems, itemsPerPage, sortPredicate, sortOrder } =
           collection || {};
 
@@ -154,19 +155,19 @@ const CollectionsRegistryService = {
           sortPredicate && (await ctx.call('jsonld.parser.expandPredicate', { predicate: sortPredicate }));
         sortOrder = sortOrder && (await ctx.call('jsonld.parser.expandPredicate', { predicate: sortOrder }));
 
-        const accounts = await this.broker.call('auth.account.find');
-        const datasets = dataset
-          ? [dataset]
-          : this.settings.podProvider
-            ? accounts.map((a: any) => a.username)
-            : [undefined];
+        const accounts: Account[] = await this.broker.call('auth.account.find', {
+          query: chosenDataset ? { username: chosenDataset } : {}
+        });
 
-        for (dataset of datasets) {
+        for (const { webId, username: dataset } of accounts) {
+          ctx.meta.dataset = dataset;
+          ctx.meta.webId = webId;
+
           this.logger.info(
             `Getting all collections in dataset ${dataset} attached with predicate ${attachPredicate}...`
           );
 
-          const results = await ctx.call('triplestore.query', {
+          const results: any = await ctx.call('triplestore.query', {
             query: `
               SELECT ?collectionUri
               WHERE {
@@ -175,12 +176,11 @@ const CollectionsRegistryService = {
                 }
               }
             `,
-            webId: 'system',
-            dataset
+            webId: 'system'
           });
 
           for (const collectionUri of results.map((r: any) => r.collectionUri.value)) {
-            if (this.isLocalObject(collectionUri, urlJoin(this.settings.baseUri, dataset))) {
+            if (!(await ctx.call('ldp.remote.isRemote', { resourceUri: collectionUri }))) {
               this.logger.info(`Updating options of ${collectionUri}...`);
               await ctx.call('triplestore.update', {
                 query: `
@@ -238,30 +238,8 @@ const CollectionsRegistryService = {
           )
         : [];
     },
-    isActor(types) {
-      return arrayOf(types).some(type =>
-        [...Object.values(ACTOR_TYPES), ...Object.values(FULL_ACTOR_TYPES)].includes(type)
-      );
-    },
     hasTypeChanged(oldData, newData) {
       return JSON.stringify(newData.type || newData['@type']) !== JSON.stringify(oldData.type || oldData['@type']);
-    },
-    isLocalObject(uri, actorUri) {
-      if (this.settings.podProvider) {
-        const { origin, pathname } = new URL(actorUri);
-        const aclBase = `${origin}/_acl${pathname}`; // URL of type http://localhost:3000/_acl/alice
-        const aclGroupBase = `${origin}/_groups${pathname}`; // URL of type http://localhost:3000/_groups/alice
-        return (
-          uri === actorUri ||
-          uri.startsWith(`${actorUri}/`) ||
-          uri === aclBase ||
-          uri.startsWith(`${aclBase}/`) ||
-          uri === aclGroupBase ||
-          uri.startsWith(`${aclGroupBase}/`)
-        );
-      } else {
-        return uri.startsWith(this.settings.baseUri);
-      }
     }
   },
   events: {
@@ -270,12 +248,7 @@ const CollectionsRegistryService = {
         const { resourceUri, newData } = ctx.params;
         const collections = this.getCollectionsByType(newData.type || newData['@type']);
         for (const collection of collections) {
-          if (this.isActor(newData.type || newData['@type'])) {
-            // If the resource is an actor, use the resource URI as the webId
-            await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection }, { parentCtx: ctx });
-          } else {
-            await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection }, { parentCtx: ctx });
-          }
+          await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection }, { parentCtx: ctx });
         }
       }
     },
@@ -287,12 +260,7 @@ const CollectionsRegistryService = {
         if (this.hasTypeChanged(oldData, newData)) {
           const collections = this.getCollectionsByType(newData.type || newData['@type']);
           for (const collection of collections) {
-            if (this.isActor(newData.type || newData['@type'])) {
-              // If the resource is an actor, use the resource URI as the webId
-              await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection }, { parentCtx: ctx });
-            } else {
-              await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection }, { parentCtx: ctx });
-            }
+            await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection }, { parentCtx: ctx });
           }
         }
       }
@@ -306,18 +274,10 @@ const CollectionsRegistryService = {
             if (triple.predicate.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
               const collections = this.getCollectionsByType(triple.object.value);
               for (const collection of collections) {
-                if (this.isActor(triple.object.value)) {
-                  // If the resource is an actor, use the resource URI as the webId
-                  await this.actions.createAndAttachCollection(
-                    { objectUri: resourceUri, collection },
-                    { parentCtx: ctx }
-                  );
-                } else {
-                  await this.actions.createAndAttachCollection(
-                    { objectUri: resourceUri, collection },
-                    { parentCtx: ctx }
-                  );
-                }
+                await this.actions.createAndAttachCollection(
+                  { objectUri: resourceUri, collection },
+                  { parentCtx: ctx }
+                );
               }
             }
           }
@@ -326,8 +286,7 @@ const CollectionsRegistryService = {
     },
 
     'ldp.resource.deleted': {
-      async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'oldData' does not exist on type 'Optiona... Remove this comment to see the full error message
+      async handler(ctx: Context<any>) {
         const { oldData } = ctx.params;
         const collections = this.getCollectionsByType(oldData.type || oldData['@type']);
         for (const collection of collections) {

@@ -69,13 +69,11 @@ const AuthMixin = {
     reservedUsernames: [],
     minPasswordLength: 1,
     minUsernameLength: 1,
-    accountsDataset: 'settings',
-    podProvider: false
+    accountsDataset: 'settings'
   },
   dependencies: ['api'],
   async created() {
-    const { jwtPath, reservedUsernames, minPasswordLength, minUsernameLength, accountsDataset, podProvider } =
-      this.settings;
+    const { jwtPath, reservedUsernames, minPasswordLength, minUsernameLength, accountsDataset } = this.settings;
 
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "auth.jwt"; se... Remove this comment to see the full error message
     this.broker.createService({

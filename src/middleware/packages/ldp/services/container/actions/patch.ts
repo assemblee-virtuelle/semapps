@@ -114,12 +114,7 @@ const Schema = {
       }
     }
     if (!ctx.meta.skipEmitEvent) {
-      ctx.emit(
-        'ldp.container.patched',
-        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
-        { containerUri, resourcesAdded, resourcesRemoved, dataset: ctx.meta.dataset },
-        { meta: { webId: null, dataset: null } }
-      );
+      ctx.emit('ldp.container.patched', { containerUri, resourcesAdded, resourcesRemoved, dataset: ctx.meta.dataset });
     }
   }
 } satisfies ActionSchema;

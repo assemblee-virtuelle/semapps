@@ -11,7 +11,6 @@ const CollectionService = {
   name: 'activitypub.collection' as const,
   mixins: [ControlledContainerMixin],
   settings: {
-    podProvider: false,
     // ControlledContainerMixin settings
     path: '/as/collection',
     types: [
@@ -103,7 +102,7 @@ const CollectionService = {
           ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
         }
 
-        await this.actions.waitForContainerCreation({ containerUri: ctx.params.containerUri });
+        await this.actions.waitForContainerCreation({ containerUri: ctx.params.containerUri }, { parentCtx: ctx });
 
         const ordered = arrayOf(ctx.params.resource.type).includes('OrderedCollection');
 
@@ -145,7 +144,7 @@ const CollectionService = {
               }
             }
           `,
-          dataset: this.getCollectionDataset(collectionUri),
+          dataset: getDatasetFromUri(collectionUri),
           webId: 'system'
         });
         return Number(res[0].count.value) === 0;
@@ -173,7 +172,7 @@ const CollectionService = {
               }
             }
           `,
-          dataset: this.getCollectionDataset(collectionUri),
+          dataset: getDatasetFromUri(collectionUri),
           webId: 'system'
         });
       }
@@ -209,7 +208,7 @@ const CollectionService = {
               }
             }
           `,
-          dataset: this.getCollectionDataset(collectionUri),
+          dataset: getDatasetFromUri(collectionUri),
           webId: 'system'
         });
 
@@ -243,7 +242,7 @@ const CollectionService = {
               }
             }
           `,
-          dataset: this.getCollectionDataset(collectionUri),
+          dataset: getDatasetFromUri(collectionUri),
           webId: 'system'
         });
 
@@ -281,7 +280,7 @@ const CollectionService = {
               }
             } 
           `,
-          dataset: this.getCollectionDataset(collectionUri),
+          dataset: getDatasetFromUri(collectionUri),
           webId: 'system'
         });
       }
@@ -310,18 +309,12 @@ const CollectionService = {
               }
             }
           `,
-          dataset: this.getCollectionDataset(collectionUri),
+          dataset: getDatasetFromUri(collectionUri),
           webId: 'system'
         });
 
         return results.length > 0 ? results[0].actorUri.value : null;
       }
-    }
-  },
-  methods: {
-    getCollectionDataset(collectionUri) {
-      if (!this.settings.podProvider) return undefined;
-      return getDatasetFromUri(collectionUri);
     }
   }
 } satisfies ServiceSchema;

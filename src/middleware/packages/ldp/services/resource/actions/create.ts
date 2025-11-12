@@ -67,7 +67,7 @@ const Schema = {
     };
 
     if (!ctx.meta.skipEmitEvent) {
-      ctx.emit('ldp.resource.created', returnValues, { meta: { webId: null, dataset: null } });
+      ctx.emit('ldp.resource.created', returnValues);
     }
 
     return returnValues;

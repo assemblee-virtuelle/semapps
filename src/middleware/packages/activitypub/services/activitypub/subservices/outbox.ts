@@ -1,8 +1,9 @@
 import fetch from 'node-fetch';
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
+import { Account } from '@semapps/auth';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { getType, arrayOf } from '@semapps/ldp';
+import { getType, arrayOf, getDatasetFromUri } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
 import { collectionPermissionsWithAnonRead, getSlugFromUri } from '../../../utils.ts';
 import { ACTOR_TYPES } from '../../../constants.ts';
@@ -25,7 +26,6 @@ const OutboxService = {
   mixins: [AwaitActivityMixin],
   settings: {
     baseUri: null,
-    podProvider: false,
     collectionOptions: {
       path: '/outbox',
       attachToTypes: Object.values(ACTOR_TYPES),
@@ -66,9 +66,8 @@ const OutboxService = {
           );
         }
 
-        if (this.settings.podProvider) {
-          ctx.meta.dataset = getSlugFromUri(actorUri);
-        }
+        // TODO Handle this with middleware
+        ctx.meta.dataset = getDatasetFromUri(collectionUri);
 
         if (!activity['@context']) {
           activity['@context'] = await ctx.call('jsonld.context.get');
@@ -77,7 +76,6 @@ const OutboxService = {
         // Wrap object in Create activity, if necessary
         activity = await ctx.call('activitypub.object.wrap', { activity });
 
-        // @ts-expect-error TS(2339): Property 'doNotProcessObject' does not exist on ty... Remove this comment to see the full error message
         if (!ctx.meta.doNotProcessObject && transient !== true) {
           // Process object create, update or delete
           // and return an activity with the object ID
@@ -204,10 +202,10 @@ const OutboxService = {
 
       for (const recipientUri of recipients) {
         try {
-          const account = await this.broker.call('auth.account.findByWebId', { webId: recipientUri });
+          const account: Account = await this.broker.call('auth.account.findByWebId', { webId: recipientUri });
           if (!account) throw new Error(`No account found with webId ${recipientUri}`);
 
-          const dataset = this.settings.podProvider ? account.username : undefined;
+          const dataset = account.username;
 
           const recipientInbox = await this.broker.call(
             'activitypub.actor.getCollectionUri',
@@ -230,24 +228,22 @@ const OutboxService = {
               { meta: { dataset } }
             );
 
-            if (this.settings.podProvider) {
-              // Store the activity in the dataset of the recipient
-              await this.broker.call('ldp.remote.store', {
-                resource: activity,
-                keepInSync: false, // Activities are immutable
-                webId: recipientUri,
-                dataset
-              });
+            // Store the activity in the dataset of the recipient
+            await this.broker.call('ldp.remote.store', {
+              resource: activity,
+              keepInSync: false, // Activities are immutable
+              webId: recipientUri,
+              dataset
+            });
 
-              await this.broker.call(
-                'activitypub.activity.attach',
-                {
-                  resourceUri: activity.id,
-                  webId: recipientUri
-                },
-                { meta: { dataset } }
-              );
-            }
+            await this.broker.call(
+              'activitypub.activity.attach',
+              {
+                resourceUri: activity.id,
+                webId: recipientUri
+              },
+              { meta: { dataset } }
+            );
           } else {
             // If the activity is transient, pass the full object
             // This will be used in particular for Solid notifications

@@ -1,15 +1,13 @@
-// @ts-expect-error TS(7016): Could not find a declaration file for module 'fs-e... Remove this comment to see the full error message
-import fse from 'fs-extra';
 import path from 'path';
-import urlJoin from 'url-join';
 import { ServiceBroker } from 'moleculer';
 import { AuthLocalService } from '@semapps/auth';
+import { solid } from '@semapps/ontologies';
 import { CoreService } from '@semapps/core';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
-import { FULL_OBJECT_TYPES, FULL_ACTOR_TYPES } from '@semapps/activitypub';
+import { FULL_OBJECT_TYPES } from '@semapps/activitypub';
 import { fileURLToPath } from 'url';
 import * as CONFIG from '../config.ts';
-import { dropDataset, clearQueue } from '../utils.ts';
+import { clearQueue } from '../utils.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const containers = [
@@ -19,16 +17,15 @@ const containers = [
   }
 ];
 
-const initialize = async (port: any, mainDataset: any, accountsDataset: any, queueServiceDb = 0) => {
+const initialize = async (number: number) => {
+  const port = 3000 + number;
   const baseUrl = `http://localhost:${port}/`;
-  const queueServiceUrl = `redis://localhost:6379/${queueServiceDb}`;
+  const queueServiceUrl = `redis://localhost:6379/${number}`;
 
-  await dropDataset(mainDataset);
-  await dropDataset(accountsDataset);
   await clearQueue(queueServiceUrl);
 
   const broker = new ServiceBroker({
-    nodeID: `server${port}`,
+    nodeID: `server${number}`,
     // @ts-expect-error TS(2322): Type '{ name: string; created(broker: any): void; ... Remove this comment to see the full error message
     middlewares: [CacherMiddleware(CONFIG.ACTIVATE_CACHE), WebAclMiddleware({ baseUrl })],
     logger: {
@@ -39,11 +36,8 @@ const initialize = async (port: any, mainDataset: any, accountsDataset: any, que
     }
   });
 
-  // Remove all actors keys
-  await fse.emptyDir(path.resolve(__dirname, './actors'));
-
-  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "core"; settin... Remove this comment to see the full error message
   broker.createService({
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "core"; settin... Remove this comment to see the full error message
     mixins: [CoreService],
     settings: {
       baseUrl,
@@ -52,10 +46,10 @@ const initialize = async (port: any, mainDataset: any, accountsDataset: any, que
         url: CONFIG.SPARQL_ENDPOINT,
         user: CONFIG.JENA_USER,
         password: CONFIG.JENA_PASSWORD,
-        mainDataset,
         secure: false // TODO Remove when we move to Fuseki 5
       },
       containers,
+      ontologies: [solid],
       void: false,
       mirror: false,
       activitypub: {
@@ -63,11 +57,11 @@ const initialize = async (port: any, mainDataset: any, accountsDataset: any, que
       },
       api: {
         port
-      },
-      webid: {
-        path: '/as/actor',
-        types: Object.values(FULL_ACTOR_TYPES)
       }
+      // webid: {
+      //   path: '/as/actor',
+      //   types: Object.values(FULL_ACTOR_TYPES)
+      // }
     }
   });
 
@@ -77,50 +71,48 @@ const initialize = async (port: any, mainDataset: any, accountsDataset: any, que
     settings: {
       baseUrl,
       jwtPath: path.resolve(__dirname, './jwt'),
-      accountsDataset,
+      accountsDataset: `settings${number}`,
       mail: false
     }
   });
 
-  await broker.start();
-
-  // setting some write permission on the containers for anonymous user, which is the one that will be used in the tests.
-  await broker.call('webacl.resource.addRights', {
-    webId: 'system',
-    resourceUri: urlJoin(baseUrl, 'as/object'),
-    additionalRights: {
-      anon: {
-        write: true
-      }
-    }
-  });
-  await broker.call('webacl.resource.addRights', {
-    webId: 'system',
-    resourceUri: urlJoin(baseUrl, 'as/actor'),
-    additionalRights: {
-      anon: {
-        write: true
-      }
-    }
-  });
-  await broker.call('webacl.resource.addRights', {
-    webId: 'system',
-    resourceUri: urlJoin(baseUrl, 'as/activity'),
-    additionalRights: {
-      anon: {
-        write: true
-      }
-    }
-  });
-  await broker.call('webacl.resource.addRights', {
-    webId: 'system',
-    resourceUri: urlJoin(baseUrl, 'as/collection'),
-    additionalRights: {
-      anon: {
-        write: true
-      }
-    }
-  });
+  // // setting some write permission on the containers for anonymous user, which is the one that will be used in the tests.
+  // await broker.call('webacl.resource.addRights', {
+  //   webId: 'system',
+  //   resourceUri: urlJoin(baseUrl, 'as/object'),
+  //   additionalRights: {
+  //     anon: {
+  //       write: true
+  //     }
+  //   }
+  // });
+  // await broker.call('webacl.resource.addRights', {
+  //   webId: 'system',
+  //   resourceUri: urlJoin(baseUrl, 'as/actor'),
+  //   additionalRights: {
+  //     anon: {
+  //       write: true
+  //     }
+  //   }
+  // });
+  // await broker.call('webacl.resource.addRights', {
+  //   webId: 'system',
+  //   resourceUri: urlJoin(baseUrl, 'as/activity'),
+  //   additionalRights: {
+  //     anon: {
+  //       write: true
+  //     }
+  //   }
+  // });
+  // await broker.call('webacl.resource.addRights', {
+  //   webId: 'system',
+  //   resourceUri: urlJoin(baseUrl, 'as/collection'),
+  //   additionalRights: {
+  //     anon: {
+  //       write: true
+  //     }
+  //   }
+  // });
 
   return broker;
 };

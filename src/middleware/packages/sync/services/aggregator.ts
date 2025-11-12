@@ -14,7 +14,6 @@ const AggregatorSchema = {
     this.broker.createService({
       mixins: [SynchronizerService],
       settings: {
-        podProvider: false,
         synchronizeContainers: false,
         attachToLocalContainers: true
       }

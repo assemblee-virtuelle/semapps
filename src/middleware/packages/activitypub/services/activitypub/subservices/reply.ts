@@ -10,7 +10,6 @@ const ReplyService = {
   mixins: [ActivitiesHandlerMixin],
   settings: {
     baseUri: null,
-    podProvider: false,
     collectionOptions: {
       path: '/replies',
       attachPredicate: 'https://www.w3.org/ns/activitystreams#replies',
@@ -142,21 +141,17 @@ const ReplyService = {
   },
   methods: {
     isLocalObject(uri, actorUri) {
-      if (this.settings.podProvider) {
-        const { origin, pathname } = new URL(actorUri);
-        const aclBase = `${origin}/_acl${pathname}`; // URL of type http://localhost:3000/_acl/alice
-        const aclGroupBase = `${origin}/_groups${pathname}`; // URL of type http://localhost:3000/_groups/alice
-        return (
-          uri === actorUri ||
-          uri.startsWith(`${actorUri}/`) ||
-          uri === aclBase ||
-          uri.startsWith(`${aclBase}/`) ||
-          uri === aclGroupBase ||
-          uri.startsWith(`${aclGroupBase}/`)
-        );
-      } else {
-        return uri.startsWith(this.settings.baseUri);
-      }
+      const { origin, pathname } = new URL(actorUri);
+      const aclBase = `${origin}/_acl${pathname}`; // URL of type http://localhost:3000/_acl/alice
+      const aclGroupBase = `${origin}/_groups${pathname}`; // URL of type http://localhost:3000/_groups/alice
+      return (
+        uri === actorUri ||
+        uri.startsWith(`${actorUri}/`) ||
+        uri === aclBase ||
+        uri.startsWith(`${aclBase}/`) ||
+        uri === aclGroupBase ||
+        uri.startsWith(`${aclGroupBase}/`)
+      );
     }
   }
 } satisfies ServiceSchema;

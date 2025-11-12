@@ -1,6 +1,6 @@
 import { ServiceSchema } from 'moleculer';
 import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
-import { ACTIVITY_TYPES, OBJECT_TYPES } from '../../../constants.ts';
+import { ACTIVITY_TYPES } from '../../../constants.ts';
 import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
 import matchActivity from '../../../utils/matchActivity.ts';
 
@@ -9,7 +9,6 @@ const ShareService = {
   mixins: [ActivitiesHandlerMixin],
   settings: {
     baseUri: null,
-    podProvider: false,
     collectionOptions: {
       path: '/shares',
       attachPredicate: 'https://www.w3.org/ns/activitystreams#shares',

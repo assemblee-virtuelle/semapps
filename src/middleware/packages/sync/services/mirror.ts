@@ -26,7 +26,6 @@ const MirrorSchema = {
     this.broker.createService({
       mixins: [SynchronizerService],
       settings: {
-        podProvider: false,
         synchronizeContainers: true,
         attachToLocalContainers: false
       }
@@ -47,7 +46,6 @@ const MirrorSchema = {
     mirror: {
       visibility: 'public',
       params: {
-        // @ts-expect-error TS(2322): Type '{ type: "string"; optional: false; }' is not... Remove this comment to see the full error message
         serverUrl: { type: 'string', optional: false }
       },
       async handler(ctx) {

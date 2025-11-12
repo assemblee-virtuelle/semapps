@@ -21,7 +21,6 @@ const ActivityPubService = {
   name: 'activitypub' as const,
   settings: {
     baseUri: null,
-    podProvider: false,
     activitiesPath: '/as/activity',
     collectionsPath: '/as/collection',
     activateTombstones: true,
@@ -30,128 +29,77 @@ const ActivityPubService = {
   },
   dependencies: ['api', 'ontologies'],
   created() {
-    const {
-      baseUri,
-      podProvider,
-      activitiesPath,
-      collectionsPath,
-      selectActorData,
-      queueServiceUrl,
-      activateTombstones
-    } = this.settings;
+    const { baseUri, activitiesPath, collectionsPath, selectActorData, queueServiceUrl, activateTombstones } =
+      this.settings;
 
     // @ts-expect-error TS(2345): Argument of type '{ mixins: any[]; settings: { pod... Remove this comment to see the full error message
     this.broker.createService({
-      mixins: [SideEffectsService, queueServiceUrl ? QueueMixin(queueServiceUrl) : FakeQueueMixin],
-      settings: { podProvider }
+      mixins: [SideEffectsService, queueServiceUrl ? QueueMixin(queueServiceUrl) : FakeQueueMixin]
     });
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: any[]; settings: { pod... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [CollectionService],
-      settings: {
-        podProvider,
-        path: collectionsPath
-      }
+      settings: { path: collectionsPath }
     });
 
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub.c... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [CollectionsRegistryService],
-      settings: {
-        baseUri,
-        podProvider
-      }
+      settings: { baseUri }
     });
 
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub.a... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [ActorService],
-      settings: {
-        baseUri,
-        selectActorData,
-        podProvider
-      }
-    });
-
-    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub.a... Remove this comment to see the full error message
-    this.broker.createService({
-      mixins: [ApiService],
-      settings: {
-        baseUri,
-        podProvider
-      }
+      settings: { baseUri, selectActorData }
     });
 
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub.o... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [ObjectService],
-      settings: {
-        baseUri,
-        podProvider,
-        activateTombstones
-      }
+      settings: { baseUri, activateTombstones }
     });
 
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub.a... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [ActivityService],
-      settings: {
-        baseUri,
-        podProvider,
-        path: activitiesPath
-      }
+      settings: { baseUri, path: activitiesPath }
     });
 
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub.f... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [FollowService],
-      settings: {
-        baseUri
-      }
+      settings: { baseUri }
     });
 
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub.i... Remove this comment to see the full error message
     this.broker.createService({
-      mixins: [InboxService],
-      settings: {
-        podProvider
-      }
+      mixins: [InboxService]
     });
 
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub.l... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [LikeService],
-      settings: {
-        baseUri,
-        podProvider
-      }
+      settings: { baseUri }
     });
 
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub.s... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [ShareService],
-      settings: {
-        baseUri,
-        podProvider
-      }
+      settings: { baseUri }
     });
 
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub.r... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [ReplyService],
-      settings: {
-        baseUri,
-        podProvider
-      }
+      settings: { baseUri }
     });
 
     // @ts-expect-error TS(2345): Argument of type '{ mixins: any[]; settings: { bas... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [OutboxService, queueServiceUrl ? QueueMixin(queueServiceUrl) : FakeQueueMixin],
-      settings: {
-        baseUri,
-        podProvider
-      }
+      settings: { baseUri }
     });
   },
   async started() {

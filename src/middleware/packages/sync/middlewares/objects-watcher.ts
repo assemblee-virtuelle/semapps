@@ -12,7 +12,7 @@ const handledWacActions = [
 
 const ObjectsWatcherMiddleware = (config = {}) => {
   // @ts-expect-error TS(2339): Property 'baseUrl' does not exist on type '{}'.
-  const { baseUrl, podProvider = false, postWithoutRecipients = false, transientActivities = false } = config;
+  const { baseUrl, postWithoutRecipients = false, transientActivities = false } = config;
   let relayActor: any;
   let excludedContainersPathRegex: any = [];
   let initialized = false;
@@ -23,21 +23,14 @@ const ObjectsWatcherMiddleware = (config = {}) => {
   const isHandled = (actionName: any) => {
     // In a Pod provider config, we want to handle only LDP-related actions
     // The AnnouncerService takes care of resources sharing with other users
-    if (podProvider) {
-      return handledLdpActions.includes(actionName);
-    } else {
-      return handledLdpActions.includes(actionName) || handledWacActions.includes(actionName);
-    }
+    return handledLdpActions.includes(actionName);
   };
 
   /** Get owner WebID of resource (by looking at the slash URI). */
   const getActor = async (ctx: any, resourceUri: any) => {
-    if (podProvider) {
-      const url = new URL(resourceUri);
-      const podOwnerUri = `${url.origin}/${url.pathname.split('/')[1]}`;
-      return await ctx.call('activitypub.actor.awaitCreateComplete', { actorUri: podOwnerUri });
-    }
-    return relayActor;
+    const url = new URL(resourceUri);
+    const podOwnerUri = `${url.origin}/${url.pathname.split('/')[1]}`;
+    return await ctx.call('activitypub.actor.awaitCreateComplete', { actorUri: podOwnerUri });
   };
 
   const clearWebAclCache = async (ctx: any, resourceUri: any, containerUri: any) => {
@@ -91,11 +84,6 @@ const ObjectsWatcherMiddleware = (config = {}) => {
   return {
     name: 'ObjectsWatcherMiddleware',
     async started(broker: any) {
-      if (!podProvider) {
-        await broker.waitForServices('activitypub.relay');
-        relayActor = await broker.call('activitypub.relay.getActor');
-      }
-
       const registrations: Registration[] = await broker.call('ldp.registry.list');
       for (const registration of registrations) {
         // TODO stop using pathRegex
@@ -183,7 +171,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
               oldRecipients = await getRecipients(ctx, ctx.params.resourceUri);
               break;
 
-            case 'webacl.resource.deleteAllRights':
+            case 'webacl.resource.deleteAllRights': {
               // Ensure the resource has not already been deleted (this action is used by the WebAclMiddleware when resources are deleted)
               const containerExist = await ctx.call('ldp.container.exist', { containerUri: ctx.params.resourceUri });
               const resourceExist = await ctx.call('ldp.resource.exist', {
@@ -195,6 +183,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
                 oldRecipients = await getRecipients(ctx, ctx.params.resourceUri);
               }
               break;
+            }
           }
 
           /*

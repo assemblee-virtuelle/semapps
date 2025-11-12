@@ -6,6 +6,7 @@
   "author": "Virtual Assembly",
   "dependencies": {
     "@rdfjs/data-model": "2.1.1",
+    "@semapps/auth": "1.2.0",
     "@semapps/crypto": "1.2.0",
     "@semapps/ldp": "1.2.0",
     "@semapps/middlewares": "1.2.0",

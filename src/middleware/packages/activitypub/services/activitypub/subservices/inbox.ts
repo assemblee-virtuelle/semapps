@@ -11,7 +11,6 @@ const InboxService = {
   name: 'activitypub.inbox' as const,
   mixins: [AwaitActivityMixin],
   settings: {
-    podProvider: false,
     collectionOptions: {
       path: '/inbox',
       attachToTypes: Object.values(ACTOR_TYPES),
@@ -112,7 +111,7 @@ const InboxService = {
           // Attach the activity to the activities container, in order to use the container options
           await ctx.call('activitypub.activity.attach', {
             resourceUri: activity.id,
-            webId: this.settings.podProvider ? inboxOwner : 'system'
+            webId: inboxOwner
           });
 
           // Attach the activity to the inbox

@@ -53,7 +53,6 @@ const CoreService = {
         // Type support for settings could be given, once moleculer type definitions improve...
         settings: {
           baseUri: baseUrl,
-          podProvider: true,
           ...this.settings.activitypub
         }
       });
@@ -128,7 +127,6 @@ const CoreService = {
         settings: {
           baseUrl,
           containers,
-          podProvider: true,
           ...this.settings.ldp
         }
       });
@@ -179,7 +177,6 @@ const CoreService = {
         mixins: [KeysService],
         settings: {
           actorsKeyPairsDir: path.resolve(baseDir, './actors'),
-          podProvider: true,
           ...this.settings.keys
         }
       });
@@ -190,7 +187,6 @@ const CoreService = {
       this.broker.createService({
         mixins: [SparqlEndpointService],
         settings: {
-          podProvider: true,
           defaultAccept: 'application/ld+json',
           ...this.settings.sparqlEndpoint
         }
@@ -225,7 +221,6 @@ const CoreService = {
         mixins: [WebAclService],
         settings: {
           baseUrl,
-          podProvider: true,
           ...this.settings.webacl
         }
       });

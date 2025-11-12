@@ -7,8 +7,7 @@ const blankNodesQuery = buildBlankNodesQuery(4);
 export default {
   name: 'migration-2-0-0',
   settings: {
-    baseUrl: undefined,
-    podProvider: false
+    baseUrl: undefined
   },
   created() {
     if (!this.settings.baseUrl) {
@@ -38,12 +37,9 @@ export default {
         await this.actions.moveContainerToNamedGraph({ containerUri }, { parentCtx: ctx });
       }
 
-      if (this.settings.podProvider) {
-        // Move WebID (not linked from a container)
-        // @ts-expect-error
-        const webId = urlJoin(this.settings.baseUrl, ctx.meta.dataset);
-        await this.actions.moveResourceToNamedGraph({ resourceUri: webId }, { parentCtx: ctx });
-      }
+      // Move WebID (not linked from a container)
+      const webId = urlJoin(this.settings.baseUrl, ctx.meta.dataset);
+      await this.actions.moveResourceToNamedGraph({ resourceUri: webId }, { parentCtx: ctx });
 
       // Delete orphan blank nodes from default graph
       await ctx.call('triplestore.update', {
@@ -201,7 +197,7 @@ export default {
       const { dataset } = ctx.params;
       ctx.meta.dataset = dataset || ctx.meta.dataset;
 
-      if (this.settings.podProvider) ctx.meta.webId = urlJoin(this.settings.baseUrl, ctx.meta.dataset);
+      ctx.meta.webId = urlJoin(this.settings.baseUrl, ctx.meta.dataset);
 
       const result = await ctx.call('triplestore.query', {
         query: `
@@ -245,8 +241,7 @@ export default {
       const { dataset } = ctx.params;
 
       ctx.meta.dataset = dataset || ctx.meta.dataset;
-
-      if (this.settings.podProvider) ctx.meta.webId = urlJoin(this.settings.baseUrl, ctx.meta.dataset);
+      ctx.meta.webId = urlJoin(this.settings.baseUrl, ctx.meta.dataset);
 
       const result = await ctx.call('triplestore.query', {
         query: `

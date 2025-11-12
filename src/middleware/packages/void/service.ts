@@ -192,9 +192,9 @@ const VoidSchema = {
           o: literal(this.settings.baseUrl)
         });
 
-        const services = await ctx.call('$node.services');
+        const services: ServiceSchema[] = await ctx.call('$node.services');
         const hasSparql =
-          services.filter((s: any) => s.name === 'sparqlEndpoint').length > 0
+          services.filter(s => s.name === 'sparqlEndpoint').length > 0
             ? urlJoin(this.settings.baseUrl, 'sparql')
             : undefined;
         if (hasSparql)

@@ -92,7 +92,6 @@ const initialize = async (allowSlugs = true): Promise<ServiceBroker> => {
     mixins: [AuthLocalService],
     settings: {
       baseUrl: CONFIG.HOME_URL,
-      podProvider: true,
       jwtPath: path.resolve(__dirname, '../jwt'),
       accountsDataset: CONFIG.SETTINGS_DATASET
     }

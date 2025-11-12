@@ -6,7 +6,6 @@ const ObjectService = {
   name: 'activitypub.object' as const,
   settings: {
     baseUri: null,
-    podProvider: false,
     activateTombstones: true
   },
   dependencies: ['ldp.resource'],

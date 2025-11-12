@@ -1,4 +1,4 @@
-import { ServiceSchema } from 'moleculer';
+import { Service, ServiceSchema } from 'moleculer';
 import deleteAction from './actions/delete.ts';
 import getAction from './actions/get.ts';
 import getNetworkAction from './actions/getNetwork.ts';
@@ -28,8 +28,8 @@ const LdpRemoteSchema = {
   },
   methods: {
     async proxyAvailable() {
-      const services = await this.broker.call('$node.services');
-      return services.some((s: any) => s.name === 'signature.proxy');
+      const services: ServiceSchema[] = await this.broker.call('$node.services');
+      return services.some(s => s.name === 'signature.proxy');
     }
   }
 } satisfies ServiceSchema;

@@ -12,7 +12,6 @@ const ActivityService = {
   mixins: [ControlledContainerMixin, ActivitiesHandlerMixin],
   settings: {
     baseUri: null,
-    podProvider: false,
     // ControlledContainerMixin settings
     path: '/as/activity',
     types: Object.values(FULL_ACTIVITY_TYPES),

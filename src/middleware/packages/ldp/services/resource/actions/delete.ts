@@ -60,9 +60,8 @@ const Schema = {
 
     ctx.call('triplestore.deleteOrphanBlankNodes');
 
-    // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
     if (!ctx.meta.skipEmitEvent) {
-      ctx.emit('ldp.resource.deleted', returnValues, { meta: { webId: null, dataset: null } });
+      ctx.emit('ldp.resource.deleted', returnValues);
     }
 
     return returnValues;

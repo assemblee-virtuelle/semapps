@@ -9,7 +9,7 @@ type FetchOptions = Omit<fetch.RequestInit, 'body'> & {
   body?: ArrayBuffer | ArrayBufferView | ReadableStream | string | URLSearchParams | FormData | object;
 };
 
-export const listDatasets = async () => {
+export const listDatasets = async (): Promise<string[]> => {
   const response = await fetch(`${CONFIG.SPARQL_ENDPOINT}$/datasets`, {
     headers: {
       Authorization: `Basic ${Buffer.from(`${CONFIG.JENA_USER}:${CONFIG.JENA_PASSWORD}`).toString('base64')}`
@@ -24,7 +24,7 @@ export const listDatasets = async () => {
   }
 };
 
-export const dropDataset = (dataset: any) =>
+export const dropDataset = (dataset: string) =>
   // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
   fetch(urlJoin(CONFIG.SPARQL_ENDPOINT, dataset, 'update'), {
     method: 'POST',
@@ -34,6 +34,13 @@ export const dropDataset = (dataset: any) =>
       Authorization: `Basic ${Buffer.from(`${CONFIG.JENA_USER}:${CONFIG.JENA_PASSWORD}`).toString('base64')}`
     }
   });
+
+export const dropAllDatasets = async () => {
+  const datasets = await listDatasets();
+  for (let dataset of datasets) {
+    await dropDataset(dataset);
+  }
+};
 
 export const fetchServer = async (url: string, options: FetchOptions = {}) => {
   if (!url) throw new Error('No url provided to fetchServer');
@@ -117,7 +124,7 @@ export const createAccount = async (broker: ServiceBroker, username: string) => 
   };
 };
 
-export const clearQueue = async (queueServiceUrl: any) => {
+export const clearQueue = async (queueServiceUrl: string) => {
   // Clear queue
   const redisClient = new Redis(queueServiceUrl);
   await redisClient.flushdb();

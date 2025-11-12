@@ -1,4 +1,5 @@
 import { sanitizeSparqlUri } from '@semapps/triplestore';
+import { getDatasetFromUri } from '@semapps/ldp';
 import { ActionSchema, Errors } from 'moleculer';
 import { getValueFromDataType } from '../../../../../utils.ts';
 
@@ -310,7 +311,7 @@ const Schema = {
 
     // Get dataset here since we can't call the method from internal functions
     // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-    const dataset = this.getCollectionDataset(collectionUri);
+    const dataset = getDatasetFromUri(collectionUri);
 
     sanitizeSparqlUri(collectionUri);
     sanitizeSparqlUri(beforeEq);

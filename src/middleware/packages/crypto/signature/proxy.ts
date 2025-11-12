@@ -144,8 +144,8 @@ const ProxyService = {
     'auth.account.created': {
       async handler(ctx: any) {
         const { webId } = ctx.params;
-        const services = await ctx.call('$node.services');
-        if (services.some((s: any) => s.name === 'activitypub.actor')) {
+        const services: ServiceSchema[] = await ctx.call('$node.services');
+        if (services.some(s => s.name === 'activitypub.actor')) {
           await ctx.call('activitypub.actor.addEndpoint', {
             actorUri: webId,
             predicate: 'https://www.w3.org/ns/activitystreams#proxyUrl',
