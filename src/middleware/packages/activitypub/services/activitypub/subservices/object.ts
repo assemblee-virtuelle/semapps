@@ -1,7 +1,6 @@
-import { getType } from '@semapps/ldp';
-import { ServiceSchema } from 'moleculer';
+import { arrayOf, getType, Registration } from '@semapps/ldp';
+import { ServiceSchema, Context } from 'moleculer';
 import { OBJECT_TYPES, ACTIVITY_TYPES } from '../../../constants.ts';
-import { arrayOf } from '../../../utils.ts';
 
 const ObjectService = {
   name: 'activitypub.object' as const,
@@ -58,24 +57,18 @@ const ObjectService = {
             // If the object passed is an URI, this is an announcement and there is nothing to process
             if (typeof activity.object === 'string') break;
 
-            const types = arrayOf(activity.object['@type'] || activity.object.type);
+            const types = arrayOf(getType(activity.object));
 
-            const [containerUri] = (await ctx.call('type-index.getUris', {
-              type: types[0],
-              isContainer: true,
-              webId: actorUri
-            })) as string[];
+            const containerUri: string = await ctx.call('ldp.registry.getUri', { type: types[0], isContainer: true });
 
             if (!containerUri)
-              throw new Error(
-                `Cannot create resource of type "${types.join(', ')}", no matching containers were found!`
-              );
+              throw new Error(`Cannot create resource of type "${types.join(', ')}", no matching container found!`);
 
             // Find if the container is controlled
-            const container = await ctx.call('ldp.registry.getByTypes', { types });
+            const registration: Registration = await ctx.call('ldp.registry.getByTypes', { types });
 
             objectUri = await ctx.call(
-              container?.controlledActions?.post || 'ldp.container.post',
+              registration?.controlledActions?.post || 'ldp.container.post',
               {
                 containerUri,
                 resource: activity.object,
@@ -96,10 +89,10 @@ const ObjectService = {
 
             objectUri = activity.object['@id'] || activity.object.id;
 
-            const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri: objectUri });
+            const registration: Registration = await ctx.call('ldp.registry.getByUri', { resourceUri: objectUri });
 
             await ctx.call(
-              controlledActions?.put || 'ldp.resource.put',
+              registration?.controlledActions?.put || 'ldp.resource.put',
               {
                 resource: activity.object,
                 webId: actorUri
@@ -119,10 +112,10 @@ const ObjectService = {
               const resourceUri = typeof activity.object === 'string' ? activity.object : activity.object.id;
               // If the resource is already deleted, it means it was an announcement
               if (await ctx.call('ldp.resource.exist', { resourceUri, webId: 'system' })) {
-                const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri });
+                const registration: Registration = await ctx.call('ldp.registry.getByUri', { resourceUri });
 
                 await ctx.call(
-                  controlledActions?.delete || 'ldp.resource.delete',
+                  registration?.controlledActions?.delete || 'ldp.resource.delete',
                   { resourceUri, webId: actorUri },
                   {
                     meta: {
@@ -186,7 +179,7 @@ const ObjectService = {
   },
   events: {
     'ldp.resource.deleted': {
-      async handler(ctx) {
+      async handler(ctx: Context<any>) {
         // Check if tombstones are globally activated
         if (this.settings.activateTombstones) {
           const { resourceUri, containersUris, oldData, dataset } = ctx.params;
@@ -194,13 +187,12 @@ const ObjectService = {
           // If the resource was in no container, skip...
           if (containersUris.length > 0) {
             // Check if tombstones are activated for this specific container
-            const containerOptions = await ctx.call('ldp.registry.getByUri', {
+            const registration: Registration = await ctx.call('ldp.registry.getByUri', {
               containerUri: containersUris[0],
               dataset
             });
 
-            // @ts-expect-error TS(2339): Property 'activateTombstones' does not exist on ty... Remove this comment to see the full error message
-            if (containerOptions.activateTombstones !== false && ctx.meta.activateTombstones !== false) {
+            if (registration.activateTombstones !== false && ctx.meta.activateTombstones !== false) {
               const formerType = oldData.type || oldData['@type'];
               await this.actions.createTombstone({ resourceUri, formerType }, { meta: { dataset }, parentCtx: ctx });
             }

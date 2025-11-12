@@ -100,9 +100,6 @@ const TypeIndexService = {
             { parentCtx: ctx }
           );
         }
-
-        // Invalidate the whole cache
-        if (this.broker.cacher) await this.broker.cacher.clean(`type-index.**`);
       }
     },
 
@@ -112,7 +109,6 @@ const TypeIndexService = {
         uri: { type: 'string' },
         isPrivate: { type: 'boolean', optional: true }
       },
-      // cache: true,
       async handler(ctx) {
         const { uri, isPrivate } = ctx.params;
 
@@ -154,14 +150,13 @@ const TypeIndexService = {
       }
     },
 
-    getUris: {
+    getByType: {
       visibility: 'public',
       params: {
         type: { type: 'string' },
         isContainer: { type: 'boolean', optional: true },
         isPrivate: { type: 'boolean', optional: true }
       },
-      // cache: true,
       async handler(ctx) {
         const { type, isContainer, isPrivate } = ctx.params;
 
@@ -182,13 +177,15 @@ const TypeIndexService = {
         const results = await ctx.call('triplestore.query', {
           query: `
             PREFIX solid: <http://www.w3.org/ns/solid/terms#>
-            SELECT ?uri
+            SELECT ?uri ?type ?indexType ?instancePredicate
             WHERE {
               VALUES ?typeIndexUri { ${typeIndexUris.map(uri => `<${uri}>`).join(' ')} }
               VALUES ?instancePredicate { ${instancePredicates.join(' ')} }
+              VALUES ?indexType { solid:ListedDocument solid:UnlistedDocument }
               GRAPH ?typeIndexUri {
+                ?typeIndexUri a ?indexType .
                 ?typeRegistrationUri a solid:TypeRegistration .
-                ?typeRegistrationUri solid:forClass <${expandedType}> .
+                ?typeRegistrationUri solid:forClass <${expandedType}>, ?type .
                 ?typeRegistrationUri ?instancePredicate ?uri
               }
             }
@@ -196,7 +193,13 @@ const TypeIndexService = {
           webId: 'system'
         });
 
-        return results.map((r: any) => r.uri.value);
+        return {
+          types: arrayOf(results).map((r: any) => r.type.value),
+          uri: arrayOf(results)[0].uri.value,
+          isPrivate: arrayOf(results)[0].indexType.value === 'http://www.w3.org/ns/solid/terms#UnlistedDocument',
+          isContainer:
+            arrayOf(results)[0].instancePredicate.value === 'http://www.w3.org/ns/solid/terms#instanceContainer'
+        } as TypeRegistration;
       }
     }
   }

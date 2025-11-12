@@ -25,6 +25,7 @@ const RegisterAction = {
 
     // Ignore undefined options
     Object.keys(registration).forEach(
+      // @ts-expect-error
       key => (registration[key] === undefined || registration[key] === null) && delete registration[key]
     );
 
