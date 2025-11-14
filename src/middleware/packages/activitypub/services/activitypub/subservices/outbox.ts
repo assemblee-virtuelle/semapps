@@ -3,11 +3,12 @@ import fetch from 'node-fetch';
 import { Errors as E } from 'moleculer-web';
 import { Account } from '@semapps/auth';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { getType, arrayOf, getDatasetFromUri } from '@semapps/ldp';
+import { getType, arrayOf, getDatasetFromUri, isWebId } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
-import { collectionPermissionsWithAnonRead, getSlugFromUri } from '../../../utils.ts';
+import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
 import { ACTOR_TYPES } from '../../../constants.ts';
 import AwaitActivityMixin from '../../../mixins/await-activity.ts';
+import ControlledCollectionMixin from '../../../mixins/controlled-collection.ts';
 
 const queueOptions =
   process.env.NODE_ENV === 'test'
@@ -23,30 +24,47 @@ const queueOptions =
 
 const OutboxService = {
   name: 'activitypub.outbox' as const,
-  mixins: [AwaitActivityMixin],
+  mixins: [ControlledCollectionMixin, AwaitActivityMixin],
   settings: {
     baseUri: null,
-    collectionOptions: {
-      path: '/outbox',
-      attachToTypes: Object.values(ACTOR_TYPES),
-      attachPredicate: 'https://www.w3.org/ns/activitystreams#outbox',
-      ordered: true,
-      itemsPerPage: 10,
-      dereferenceItems: true,
-      sortPredicate: 'as:published',
-      sortOrder: 'semapps:DescOrder',
-      permissions: collectionPermissionsWithAnonRead
-    }
-  },
-  dependencies: ['activitypub.object', 'activitypub.collection', 'activitypub.collections-registry'],
-  async started() {
-    await this.broker.call('activitypub.collections-registry.register', this.settings.collectionOptions);
+    path: '/outbox',
+    attachToTypes: Object.values(ACTOR_TYPES),
+    attachPredicate: 'https://www.w3.org/ns/activitystreams#outbox',
+    ordered: true,
+    itemsPerPage: 10,
+    dereferenceItems: true,
+    sortPredicate: 'as:published',
+    sortOrder: 'semapps:DescOrder',
+    permissions: collectionPermissionsWithAnonRead
   },
   actions: {
+    apiPost: {
+      async handler(ctx) {
+        let { collectionUri, payload } = ctx.params;
+
+        const activity: any = await this.actions.post({ collectionUri, ...payload }, { parentCtx: ctx });
+
+        ctx.meta.$responseHeaders = {
+          Location: activity.id || activity['@id'],
+          'Content-Length': 0
+        };
+        // We need to set this also here (in addition to above) or we get a Moleculer warning
+        ctx.meta.$location = activity.id || activity['@id'];
+        ctx.meta.$statusCode = 201;
+      }
+    },
     post: {
       async handler(ctx) {
         let { collectionUri, username, transient, ...activity } = ctx.params;
+        const webId = ctx.params.webId || ctx.meta.webId || 'anon';
+
         let activityUri;
+
+        // If the collection URI is not provided, find it from the webId (may happen if this action is called directly)
+        if (!collectionUri) {
+          if (!isWebId(webId)) throw Error(`If containerUri is not provided, a webId is required. Provided: ${webId}`);
+          collectionUri = await this.actions.getUri({ objectUri: webId }, { parentCtx: ctx });
+        }
 
         const collectionExists = await ctx.call('activitypub.collection.exist', { resourceUri: collectionUri });
         if (!collectionExists) {
@@ -137,7 +155,7 @@ const OutboxService = {
 
         const localRecipients = [];
         const remoteRecipients = [];
-        const recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
+        const recipients: string[] = await ctx.call('activitypub.activity.getRecipients', { activity });
 
         for (const recipientUri of recipients) {
           if (this.isLocalActor(recipientUri)) {
@@ -248,19 +266,16 @@ const OutboxService = {
             // If the activity is transient, pass the full object
             // This will be used in particular for Solid notifications
             // which will send the full activity to the listeners
-            this.broker.emit(
-              'activitypub.collection.added',
-              {
-                collectionUri: recipientInbox,
-                item: activity
-              },
-              { meta: { webId: null, dataset: null } }
-            );
+            this.broker.emit('activitypub.collection.added', {
+              collectionUri: recipientInbox,
+              item: activity
+            });
           }
 
           success.push(recipientUri);
         } catch (e) {
           // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
+          console.error(e);
           this.logger.warn(`Error when posting activity to local actor ${recipientUri}: ${e.message}`);
           failures.push(recipientUri);
         }
@@ -278,15 +293,21 @@ const OutboxService = {
       async process(job: any) {
         const { activity, recipientUri } = job.data;
 
+        const dataset = getDatasetFromUri(activity.actor);
+
         // During tests, do not do post to remote servers
         if (process.env.NODE_ENV === 'test' && !recipientUri.startsWith('http://localhost')) return;
 
         // @ts-expect-error TS(7022): 'recipientInbox' implicitly has type 'any' because... Remove this comment to see the full error message
-        const recipientInbox = await this.broker.call('activitypub.actor.getCollectionUri', {
-          actorUri: recipientUri,
-          predicate: 'inbox',
-          webId: 'system'
-        });
+        const recipientInbox = await this.broker.call(
+          'activitypub.actor.getCollectionUri',
+          {
+            actorUri: recipientUri,
+            predicate: 'inbox',
+            webId: 'system'
+          },
+          { meta: { dataset } }
+        );
 
         if (!recipientInbox) {
           throw new Error(`Error when posting activity to remote actor ${recipientUri}: no inbox attached`);
@@ -295,12 +316,16 @@ const OutboxService = {
         const body = JSON.stringify(activity);
 
         // @ts-expect-error TS(7022): 'signatureHeaders' implicitly has type 'any' becau... Remove this comment to see the full error message
-        const signatureHeaders = await this.broker.call('signature.generateSignatureHeaders', {
-          url: recipientInbox,
-          method: 'POST',
-          body,
-          actorUri: activity.actor
-        });
+        const signatureHeaders = await this.broker.call(
+          'signature.generateSignatureHeaders',
+          {
+            url: recipientInbox,
+            method: 'POST',
+            body,
+            actorUri: activity.actor
+          },
+          { meta: { dataset } }
+        );
 
         // @ts-expect-error TS(7022): 'response' implicitly has type 'any' because it do... Remove this comment to see the full error message
         const response = await fetch(recipientInbox, {

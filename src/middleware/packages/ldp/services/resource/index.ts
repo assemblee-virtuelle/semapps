@@ -45,7 +45,7 @@ const LdpResourceSchema = {
             ctx.params.resourceUri || (ctx.params.resource && (ctx.params.resource.id || ctx.params.resource['@id']));
           // @ts-expect-error TS(2339): Property 'baseUrl' does not exist on type 'string ... Remove this comment to see the full error message
           if (uri && uri.startsWith(this.settings.baseUrl)) {
-            this.logger.warn(`No dataset found when calling ${ctx.action.name} with URI ${uri}`);
+            console.error(`No dataset found when calling ${ctx.action.name} with URI ${uri}`);
             ctx.meta.dataset = getDatasetFromUri(uri);
           }
         }

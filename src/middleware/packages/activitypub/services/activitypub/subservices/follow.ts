@@ -2,6 +2,7 @@ import { ServiceSchema } from 'moleculer';
 import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
 import { ACTIVITY_TYPES, ACTOR_TYPES } from '../../../constants.ts';
 import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
+import { CollectionRegistration } from '../../../types.ts';
 
 const FollowService = {
   name: 'activitypub.follow' as const,
@@ -15,7 +16,7 @@ const FollowService = {
       ordered: false,
       dereferenceItems: false,
       permissions: collectionPermissionsWithAnonRead
-    },
+    } as CollectionRegistration,
     followingCollectionOptions: {
       path: '/following',
       attachToTypes: Object.values(ACTOR_TYPES),
@@ -23,7 +24,7 @@ const FollowService = {
       ordered: false,
       dereferenceItems: false,
       permissions: collectionPermissionsWithAnonRead
-    }
+    } as CollectionRegistration
   },
   dependencies: ['activitypub.outbox', 'activitypub.collection'],
   async started() {

@@ -13,6 +13,7 @@
     "@semapps/mime-types": "1.2.0",
     "@semapps/ontologies": "1.2.0",
     "@semapps/triplestore": "1.2.0",
+    "@semapps/webacl": "1.2.0",
     "handlebars": "^4.7.7",
     "moleculer-bull": "^0.2.5",
     "moleculer-db": "^0.8.16",

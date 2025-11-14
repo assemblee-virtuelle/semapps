@@ -9,27 +9,28 @@ const NamedGraphService = {
   actions: {
     create: {
       async handler(ctx) {
-        let { baseUrl, slug } = ctx.params;
+        let { baseUrl, slug, uri } = ctx.params;
         const dataset = ctx.params.dataset || ctx.meta.dataset;
 
-        // Ensure the slug does not contain special characters
-        if (slug) slug = createSlug(slug, { lang: 'en', custom: { '.': '.', '/': '/' } });
+        if (!uri) {
+          // Ensure the slug does not contain special characters
+          if (slug) slug = createSlug(slug, { lang: 'en', custom: { '.': '.', '/': '/' } });
 
-        // Find an URI that does not already exists
-        let uri;
-        let counter = 0;
-        do {
-          if (slug) {
-            if (counter > 0) {
-              counter += 1;
-              uri = urlJoin(baseUrl, slug + counter);
+          // Find an URI that does not already exists
+          let counter = 0;
+          do {
+            if (slug) {
+              if (counter > 0) {
+                counter += 1;
+                uri = urlJoin(baseUrl, slug + counter);
+              } else {
+                uri = urlJoin(baseUrl, slug);
+              }
             } else {
-              uri = urlJoin(baseUrl, slug);
+              uri = urlJoin(baseUrl, uuidv4());
             }
-          } else {
-            uri = urlJoin(baseUrl, uuidv4());
-          }
-        } while (await this.actions.exist({ uri, dataset }, { parentCtx: ctx }));
+          } while (await this.actions.exist({ uri, dataset }, { parentCtx: ctx }));
+        }
 
         await ctx.call('triplestore.update', {
           query: `INSERT DATA { GRAPH <${uri}> {} }`,

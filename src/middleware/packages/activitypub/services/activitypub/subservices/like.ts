@@ -2,6 +2,7 @@ import { ServiceSchema } from 'moleculer';
 import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
 import { ACTIVITY_TYPES, ACTOR_TYPES } from '../../../constants.ts';
 import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
+import { CollectionRegistration } from '../../../types.ts';
 
 const LikeService = {
   name: 'activitypub.like' as const,
@@ -14,7 +15,7 @@ const LikeService = {
       ordered: false,
       dereferenceItems: false,
       permissions: collectionPermissionsWithAnonRead
-    },
+    } as CollectionRegistration,
     likedCollectionOptions: {
       path: '/liked',
       attachToTypes: Object.values(ACTOR_TYPES),
@@ -22,7 +23,7 @@ const LikeService = {
       ordered: false,
       dereferenceItems: false,
       permissions: collectionPermissionsWithAnonRead
-    }
+    } as CollectionRegistration
   },
   dependencies: ['activitypub.outbox', 'activitypub.collection'],
   async started() {

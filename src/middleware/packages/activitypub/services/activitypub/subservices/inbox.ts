@@ -4,33 +4,47 @@ import { ServiceSchema, Errors } from 'moleculer';
 import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
 import { ACTOR_TYPES } from '../../../constants.ts';
 import AwaitActivityMixin from '../../../mixins/await-activity.ts';
+import ControlledCollectionMixin from '../../../mixins/controlled-collection.ts';
 
 const { MoleculerError } = Errors;
 
 const InboxService = {
   name: 'activitypub.inbox' as const,
-  mixins: [AwaitActivityMixin],
+  mixins: [ControlledCollectionMixin, AwaitActivityMixin],
   settings: {
-    collectionOptions: {
-      path: '/inbox',
-      attachToTypes: Object.values(ACTOR_TYPES),
-      attachPredicate: 'http://www.w3.org/ns/ldp#inbox',
-      ordered: true,
-      itemsPerPage: 10,
-      dereferenceItems: true,
-      sortPredicate: 'as:published',
-      sortOrder: 'semapps:DescOrder',
-      permissions: collectionPermissionsWithAnonRead
-    }
-  },
-  dependencies: ['activitypub.collection', 'activitypub.collections-registry'],
-  async started() {
-    await this.broker.call('activitypub.collections-registry.register', this.settings.collectionOptions);
+    path: '/inbox',
+    attachToTypes: Object.values(ACTOR_TYPES),
+    attachPredicate: 'http://www.w3.org/ns/ldp#inbox',
+    ordered: true,
+    itemsPerPage: 10,
+    dereferenceItems: true,
+    sortPredicate: 'as:published',
+    sortOrder: 'semapps:DescOrder',
+    permissions: collectionPermissionsWithAnonRead
   },
   actions: {
+    apiPost: {
+      async handler(ctx) {
+        let { collectionUri, payload } = ctx.params;
+
+        await ctx.call('activitypub.inbox.post', {
+          collectionUri,
+          ...payload
+        });
+
+        ctx.meta.$statusCode = 202;
+      }
+    },
     post: {
       async handler(ctx) {
-        const { collectionUri, ...activity } = ctx.params;
+        let { collectionUri, ...activity } = ctx.params;
+        const webId = ctx.params.webId || ctx.meta.webId || 'anon';
+
+        // If the collection URI is not provided, find it from the webId (may happen if this action is called directly)
+        if (!collectionUri) {
+          if (!isWebId(webId)) throw Error(`If containerUri is not provided, a webId is required. Provided: ${webId}`);
+          collectionUri = await this.actions.getUri({ objectUri: webId }, { parentCtx: ctx });
+        }
 
         if (!collectionUri || !collectionUri.startsWith('http')) {
           throw new Error(`The collectionUri ${collectionUri} is not a valid URL`);

@@ -1,9 +1,10 @@
 import urlJoin from 'url-join';
 import rdf from '@rdfjs/data-model';
 import { Account } from '@semapps/auth';
-import { arrayOf } from '@semapps/ldp';
+import { arrayOf, getDatasetFromUri } from '@semapps/ldp';
 import { ServiceSchema, Context } from 'moleculer';
 import { AS_PREFIX } from '../../../constants.ts';
+import { CollectionRegistration } from '../../../types.ts';
 
 const CollectionsRegistryService = {
   name: 'activitypub.collections-registry' as const,
@@ -18,7 +19,7 @@ const CollectionsRegistryService = {
   actions: {
     register: {
       async handler(ctx) {
-        let { path, name, attachToTypes, ...options } = ctx.params;
+        let { path, name, ...options } = ctx.params;
         if (!name) name = path;
 
         // Ignore undefined options
@@ -27,7 +28,9 @@ const CollectionsRegistryService = {
         );
 
         // Persist the collection in memory
-        this.registeredCollections.push({ path, name, attachToTypes, ...options });
+        this.registeredCollections.push({ path, name, ...options });
+
+        return { path, name, ...options };
       }
     },
 
@@ -50,16 +53,17 @@ const CollectionsRegistryService = {
           sortPredicate,
           sortOrder,
           permissions
-        } = collection || {};
-        const collectionUri = urlJoin(objectUri, path);
+        } = collection as CollectionRegistration;
 
-        const exists = await ctx.call('activitypub.collection.exist', { resourceUri: collectionUri });
-        if (!exists && !this.collectionsInCreation.includes(collectionUri)) {
+        const collectionTempId = objectUri + attachPredicate;
+        let collectionUri = await this.actions.getCollectionUri({ objectUri, attachPredicate }, { parentCtx: ctx });
+
+        if (!collectionUri && !this.collectionsInCreation.includes(collectionTempId)) {
           // Prevent race conditions by keeping the collections being created in memory
-          this.collectionsInCreation.push(collectionUri);
+          this.collectionsInCreation.push(collectionTempId);
 
           // Create the collection
-          await ctx.call('activitypub.collection.post', {
+          collectionUri = await ctx.call('activitypub.collection.post', {
             resource: {
               type: ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
               summary,
@@ -68,6 +72,7 @@ const CollectionsRegistryService = {
               'semapps:sortPredicate': sortPredicate,
               'semapps:sortOrder': sortOrder
             },
+            slug: (await ctx.call('ldp.getSetting', { key: 'allowSlugs' })) ? path : undefined,
             webId: 'system',
             permissions // Handled by the WebAclMiddleware, if present
           });
@@ -90,7 +95,7 @@ const CollectionsRegistryService = {
           );
 
           // Now the collection has been created, we can remove it (this way we don't use too much memory)
-          this.collectionsInCreation = this.collectionsInCreation.filter((c: any) => c !== collectionUri);
+          this.collectionsInCreation = this.collectionsInCreation.filter((c: any) => c !== collectionTempId);
         }
 
         return collectionUri;
@@ -107,6 +112,61 @@ const CollectionsRegistryService = {
           // Delete the collection
           await ctx.call('activitypub.collection.delete', { resourceUri, webId: 'system' });
         }
+      }
+    },
+
+    getCollectionUri: {
+      params: {
+        objectUri: { type: 'string' },
+        attachPredicate: { type: 'string' }
+      },
+      async handler(ctx) {
+        const { objectUri, attachPredicate } = ctx.params;
+
+        const results: any = await ctx.call('triplestore.query', {
+          query: `
+            SELECT ?collectionUri
+            WHERE {
+              GRAPH <${objectUri}> {
+                <${objectUri}> <${attachPredicate}> ?collectionUri
+              }
+            }
+          `,
+          dataset: getDatasetFromUri(objectUri),
+          webId: 'system'
+        });
+
+        return results[0]?.collectionUri?.value;
+      }
+    },
+
+    getByUri: {
+      params: {
+        collectionUri: { type: 'string' }
+      },
+      async handler(ctx) {
+        const { collectionUri } = ctx.params;
+
+        const results: any = await ctx.call('triplestore.query', {
+          query: `
+            SELECT ?objectUri ?attachPredicate ?type
+            WHERE {
+              GRAPH ?objectUri {
+                ?objectUri ?attachPredicate <${collectionUri}> .
+                FILTER ( ?attachPredicate != <http://www.w3.org/ns/ldp#contains> )
+              }
+            }
+          `,
+          dataset: getDatasetFromUri(collectionUri),
+          webId: 'system'
+        });
+
+        const attachPredicate = arrayOf(results)[0]?.attachPredicate.value;
+
+        // Find the first registration that match the attach predicate and the object type(s)
+        return this.registeredCollections.find(
+          (reg: CollectionRegistration) => reg.attachPredicate === attachPredicate
+        );
       }
     },
 

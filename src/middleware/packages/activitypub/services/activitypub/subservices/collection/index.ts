@@ -4,6 +4,7 @@ import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import { Errors as E } from 'moleculer-web';
 import { ServiceSchema, Errors } from 'moleculer';
 import getAction from './actions/get.ts';
+import { CollectionRegistration } from '../../../../types.ts';
 
 const { MoleculerError } = Errors;
 
@@ -253,8 +254,28 @@ const CollectionService = {
       }
     },
 
-    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resourceUr... Remove this comment to see the full error message
     get: getAction,
+
+    postOnResource: {
+      async handler(ctx) {
+        const { resourceUri: collectionUri, payload } = ctx.params;
+
+        const collectionRegistration: CollectionRegistration = await ctx.call(
+          'activitypub.collections-registry.getByUri',
+          { collectionUri }
+        );
+
+        // Check if the collection has a special handling for POST
+        if (collectionRegistration?.controlledActions?.post) {
+          await ctx.call(collectionRegistration.controlledActions.post, {
+            collectionUri,
+            payload
+          });
+        } else {
+          throw new E.ForbiddenError();
+        }
+      }
+    },
 
     clear: {
       /*

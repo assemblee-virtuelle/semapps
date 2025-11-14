@@ -1,3 +1,5 @@
+// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
+import { Errors as E } from 'moleculer-web';
 import { ServiceSchema } from 'moleculer';
 import { arrayOf, delay, getParentContainerUri } from '../utils.ts';
 
@@ -29,6 +31,7 @@ const ControlledContainerMixin = {
         patch: `${this.name}.patch`,
         put: `${this.name}.put`,
         delete: `${this.name}.delete`,
+        postOnResource: `${this.name}.postOnResource`,
         ...this.settings.controlledActions
       },
       ...rest
@@ -110,6 +113,13 @@ const ControlledContainerMixin = {
     delete: {
       handler(ctx) {
         return ctx.call('ldp.resource.delete', ctx.params);
+      }
+    },
+
+    postOnResource: {
+      handler() {
+        // By default, LDP does not allow to POST on resources
+        throw new E.ForbiddenError();
       }
     },
 

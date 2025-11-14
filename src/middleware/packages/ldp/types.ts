@@ -4,11 +4,12 @@ interface ControlledActions {
   post: string;
   list: string;
   get: string;
-  getHeaderLinks: string;
   create: string;
   patch: string;
   put: string;
   delete: string;
+  getHeaderLinks: string;
+  postOnResource: string;
 }
 
 export interface Registration {

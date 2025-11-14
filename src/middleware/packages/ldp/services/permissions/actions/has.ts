@@ -17,7 +17,6 @@ const Schema = {
 
     if (webId === 'system') return true;
 
-    // @ts-expect-error TS(2488): Type 'string | number | boolean | any[] | Record<a... Remove this comment to see the full error message
     for (const authorizer of this.authorizers) {
       const result = await ctx.call(authorizer.actionName, { uri, type, mode, webId });
 

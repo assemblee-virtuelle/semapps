@@ -1,7 +1,7 @@
 import urlJoin from 'url-join';
 import fetch from 'node-fetch';
 import Redis from 'ioredis';
-import { ActionParamSchema, CallingOptions, ServiceBroker } from 'moleculer';
+import { ActionParamSchema, CallingOptions, ServiceBroker, ServiceSchema } from 'moleculer';
 import { Account } from '@semapps/auth';
 import * as CONFIG from './config.ts';
 
@@ -114,13 +114,20 @@ export const createAccount = async (broker: ServiceBroker, username: string) => 
   // Note: See if we can avoid this because it increases some of the tests time by 30-50%
   await callAsUser('webid.awaitCreateComplete');
 
+  // Get outbox if ActivityPub service is enabled
+  const services: ServiceSchema[] = await broker.call('$node.services');
+  const outbox =
+    services.some(s => s.name === 'activitypub') &&
+    (await callAsUser('activitypub.outbox.getUri', { objectUri: webId }));
+
   return {
     webId,
     token,
     baseUrl,
     username,
     call: callAsUser,
-    fetch: fetchAsUser
+    fetch: fetchAsUser,
+    outbox
   };
 };
 

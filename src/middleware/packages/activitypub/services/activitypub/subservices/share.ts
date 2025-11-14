@@ -3,6 +3,7 @@ import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
 import { ACTIVITY_TYPES } from '../../../constants.ts';
 import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
 import matchActivity from '../../../utils/matchActivity.ts';
+import { CollectionRegistration } from '../../../types.ts';
 
 const ShareService = {
   name: 'activitypub.share' as const,
@@ -15,7 +16,7 @@ const ShareService = {
       ordered: false,
       dereferenceItems: false,
       permissions: collectionPermissionsWithAnonRead
-    }
+    } as CollectionRegistration
   },
   dependencies: ['activitypub.outbox', 'activitypub.collection'],
   actions: {

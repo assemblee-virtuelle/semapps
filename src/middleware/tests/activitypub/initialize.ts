@@ -55,6 +55,9 @@ const initialize = async (number: number) => {
       activitypub: {
         queueServiceUrl
       },
+      ldp: {
+        allowSlugs: true
+      },
       api: {
         port
       }

@@ -3,6 +3,7 @@ import ActivityPubMigrationService from './services/migration.ts';
 import ActivityMappingService from './services/activity-mapping.ts';
 import RelayService from './services/relay.ts';
 import BotMixin from './mixins/bot.ts';
+import ControlledCollectionMixin from './mixins/controlled-collection.ts';
 import ActivitiesHandlerMixin from './mixins/activities-handler.ts';
 import matchActivity from './utils/matchActivity.ts';
 import containers from './containers.ts';
@@ -14,6 +15,7 @@ export {
   ActivityMappingService,
   RelayService,
   BotMixin,
+  ControlledCollectionMixin,
   ActivitiesHandlerMixin,
   matchActivity,
   containers
