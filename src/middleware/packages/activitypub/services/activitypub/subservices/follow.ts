@@ -8,7 +8,6 @@ const FollowService = {
   name: 'activitypub.follow' as const,
   mixins: [ActivitiesHandlerMixin],
   settings: {
-    baseUri: null,
     followersCollectionOptions: {
       path: '/followers',
       attachToTypes: Object.values(ACTOR_TYPES),
@@ -36,10 +35,7 @@ const FollowService = {
       async handler(ctx) {
         const { follower, following } = ctx.params;
 
-        if (!this.isLocalActor(follower))
-          throw new Error('The method activitypub.follow.isFollowing currently only works with local actors');
-
-        const actor = await ctx.call('activitypub.actor.get', { actorUri: follower });
+        const actor: any = await ctx.call('activitypub.actor.get', { actorUri: follower });
         return await ctx.call('activitypub.collection.includes', {
           collectionUri: actor.following,
           itemUri: following
@@ -175,11 +171,6 @@ const FollowService = {
           });
         }
       }
-    }
-  },
-  methods: {
-    isLocalActor(uri) {
-      return uri.startsWith(this.settings.baseUri);
     }
   }
 } satisfies ServiceSchema;

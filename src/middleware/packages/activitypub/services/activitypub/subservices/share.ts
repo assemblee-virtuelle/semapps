@@ -9,7 +9,6 @@ const ShareService = {
   name: 'activitypub.share' as const,
   mixins: [ActivitiesHandlerMixin],
   settings: {
-    baseUri: null,
     collectionOptions: {
       path: '/shares',
       attachPredicate: 'https://www.w3.org/ns/activitystreams#shares',

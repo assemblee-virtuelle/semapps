@@ -8,9 +8,6 @@ import { CollectionRegistration } from '../../../types.ts';
 
 const CollectionsRegistryService = {
   name: 'activitypub.collections-registry' as const,
-  settings: {
-    baseUri: null
-  },
   dependencies: ['triplestore', 'ldp'],
   async started() {
     this.registeredCollections = [];

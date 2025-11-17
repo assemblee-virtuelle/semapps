@@ -10,7 +10,6 @@ const ReplyService = {
   name: 'activitypub.reply' as const,
   mixins: [ActivitiesHandlerMixin],
   settings: {
-    baseUri: null,
     collectionOptions: {
       path: '/replies',
       attachPredicate: 'https://www.w3.org/ns/activitystreams#replies',

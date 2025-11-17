@@ -52,7 +52,7 @@ const CoreService = {
         mixins: [ActivityPubService],
         // Type support for settings could be given, once moleculer type definitions improve...
         settings: {
-          baseUri: baseUrl,
+          baseUrl,
           ...this.settings.activitypub
         }
       });
@@ -107,7 +107,7 @@ const CoreService = {
       this.broker.createService({
         mixins: [JsonLdService],
         settings: {
-          baseUri: baseUrl,
+          baseUrl,
           ...this.settings.jsonld
         }
       });

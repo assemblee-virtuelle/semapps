@@ -25,7 +25,7 @@ const OutboxService = {
   name: 'activitypub.outbox' as const,
   mixins: [AwaitActivityMixin],
   settings: {
-    baseUri: null,
+    baseUrl: null,
     collectionOptions: {
       path: '/outbox',
       attachToTypes: Object.values(ACTOR_TYPES),
@@ -193,7 +193,7 @@ const OutboxService = {
   },
   methods: {
     isLocalActor(uri) {
-      return uri.startsWith(this.settings.baseUri);
+      return uri.startsWith(this.settings.baseUrl);
     },
     // TODO put this in the activitypub.inbox service
     async localPost(recipients, activityToPost) {

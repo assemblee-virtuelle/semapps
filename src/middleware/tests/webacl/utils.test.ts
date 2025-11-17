@@ -63,7 +63,7 @@ describe('Test various actions of the webacl.resource service', () => {
     });
 
     const rights = await alice.call('webacl.resource.getRights', { resourceUri, webId: BOB_WEBID });
-    const baseUri = rights['@context']['@base'];
+    const baseUrl = rights['@context']['@base'];
 
     expect(rights['@graph']).toHaveLength(2);
 
@@ -71,7 +71,7 @@ describe('Test various actions of the webacl.resource service', () => {
       '@graph': expect.arrayContaining([
         expect.objectContaining({
           '@type': 'acl:Authorization',
-          '@id': `${baseUri}#Read`,
+          '@id': `${baseUrl}#Read`,
           'acl:accessTo': resourceUri,
           'acl:agent': BOB_WEBID,
           'acl:agentClass': 'foaf:Agent',
@@ -79,7 +79,7 @@ describe('Test various actions of the webacl.resource service', () => {
         }),
         expect.objectContaining({
           '@type': 'acl:Authorization',
-          '@id': `${baseUri}#Write`,
+          '@id': `${baseUrl}#Write`,
           'acl:accessTo': resourceUri,
           'acl:agent': BOB_WEBID,
           'acl:mode': 'acl:Write'
@@ -111,7 +111,7 @@ describe('Test various actions of the webacl.resource service', () => {
     });
 
     const rights = await alice.call('webacl.resource.getRights', { resourceUri, webId: BOB_WEBID });
-    const baseUri = rights['@context']['@base'];
+    const baseUrl = rights['@context']['@base'];
 
     expect(rights['@graph']).toHaveLength(6);
 
@@ -119,7 +119,7 @@ describe('Test various actions of the webacl.resource service', () => {
       '@graph': expect.arrayContaining([
         expect.objectContaining({
           '@type': 'acl:Authorization',
-          '@id': `${baseUri}#Read`,
+          '@id': `${baseUrl}#Read`,
           'acl:mode': 'acl:Read',
           'acl:accessTo': resourceUri,
           'acl:agent': expect.arrayContaining([BOB_WEBID, alice.webId]),
@@ -127,14 +127,14 @@ describe('Test various actions of the webacl.resource service', () => {
         }),
         expect.objectContaining({
           '@type': 'acl:Authorization',
-          '@id': `${baseUri}#Write`,
+          '@id': `${baseUrl}#Write`,
           'acl:mode': 'acl:Write',
           'acl:accessTo': resourceUri,
           'acl:agent': BOB_WEBID
         }),
         expect.objectContaining({
           '@type': 'acl:Authorization',
-          '@id': `${baseUri}#Control`,
+          '@id': `${baseUrl}#Control`,
           'acl:mode': 'acl:Control',
           'acl:accessTo': resourceUri,
           'acl:agent': BOB_WEBID
@@ -157,7 +157,7 @@ describe('Test various actions of the webacl.resource service', () => {
     });
 
     const rights = await alice.call('webacl.resource.getRights', { resourceUri, webId: 'anon' });
-    const baseUri = rights['@context']['@base'];
+    const baseUrl = rights['@context']['@base'];
 
     expect(rights['@graph']).toHaveLength(1);
 
@@ -165,7 +165,7 @@ describe('Test various actions of the webacl.resource service', () => {
       '@graph': expect.arrayContaining([
         expect.objectContaining({
           '@type': 'acl:Authorization',
-          '@id': `${baseUri}#Read`,
+          '@id': `${baseUrl}#Read`,
           'acl:mode': 'acl:Read',
           'acl:accessTo': resourceUri,
           'acl:agentClass': 'foaf:Agent'
@@ -196,7 +196,7 @@ describe('Test various actions of the webacl.resource service', () => {
     });
 
     const rights = await alice.call('webacl.resource.getRights', { resourceUri, webId: CRAIG_WEBID });
-    const baseUri = rights['@context']['@base'];
+    const baseUrl = rights['@context']['@base'];
 
     expect(rights['@graph']).toHaveLength(2);
 
@@ -204,7 +204,7 @@ describe('Test various actions of the webacl.resource service', () => {
       '@graph': expect.arrayContaining([
         expect.objectContaining({
           '@type': 'acl:Authorization',
-          '@id': `${baseUri}#Read`,
+          '@id': `${baseUrl}#Read`,
           'acl:mode': 'acl:Read',
           'acl:accessTo': resourceUri,
           'acl:agent': CRAIG_WEBID,
@@ -212,7 +212,7 @@ describe('Test various actions of the webacl.resource service', () => {
         }),
         expect.objectContaining({
           '@type': 'acl:Authorization',
-          '@id': `${baseUri}#Write`,
+          '@id': `${baseUrl}#Write`,
           'acl:mode': 'acl:Write',
           'acl:accessTo': resourceUri,
           'acl:agent': CRAIG_WEBID

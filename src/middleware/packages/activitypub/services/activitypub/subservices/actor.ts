@@ -9,10 +9,6 @@ import { waitForResource } from '../../../utils.ts';
 const ActorService = {
   name: 'activitypub.actor' as const,
   dependencies: ['activitypub.collection', 'ldp', 'signature'],
-  settings: {
-    baseUri: null,
-    selectActorData: null
-  },
   actions: {
     get: {
       async handler(ctx) {

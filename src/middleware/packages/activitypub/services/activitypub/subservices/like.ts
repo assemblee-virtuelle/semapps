@@ -8,7 +8,6 @@ const LikeService = {
   name: 'activitypub.like' as const,
   mixins: [ActivitiesHandlerMixin],
   settings: {
-    baseUri: null,
     likesCollectionOptions: {
       path: '/likes',
       attachPredicate: 'https://www.w3.org/ns/activitystreams#likes',

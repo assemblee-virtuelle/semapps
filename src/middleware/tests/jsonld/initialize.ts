@@ -27,7 +27,7 @@ export default async (cacher: any, persistRegistry: any) => {
   broker.createService({
     mixins: [JsonLdService],
     settings: {
-      baseUri: CONFIG.HOME_URL,
+      baseUrl: CONFIG.HOME_URL,
       // Fake contexts to avoid validation errors
       cachedContextFiles: [
         {

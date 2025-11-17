@@ -5,7 +5,6 @@ import { OBJECT_TYPES, ACTIVITY_TYPES } from '../../../constants.ts';
 const ObjectService = {
   name: 'activitypub.object' as const,
   settings: {
-    baseUri: null,
     activateTombstones: true
   },
   dependencies: ['ldp.resource'],
