@@ -8,7 +8,6 @@ import { ServiceSchema } from 'moleculer';
 import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
 import { ACTOR_TYPES } from '../../../constants.ts';
 import AwaitActivityMixin from '../../../mixins/await-activity.ts';
-import ControlledCollectionMixin from '../../../mixins/controlled-collection.ts';
 
 const queueOptions =
   process.env.NODE_ENV === 'test'
@@ -24,35 +23,29 @@ const queueOptions =
 
 const OutboxService = {
   name: 'activitypub.outbox' as const,
-  mixins: [ControlledCollectionMixin, AwaitActivityMixin],
+  mixins: [AwaitActivityMixin],
   settings: {
     baseUri: null,
-    path: '/outbox',
-    attachToTypes: Object.values(ACTOR_TYPES),
-    attachPredicate: 'https://www.w3.org/ns/activitystreams#outbox',
-    ordered: true,
-    itemsPerPage: 10,
-    dereferenceItems: true,
-    sortPredicate: 'as:published',
-    sortOrder: 'semapps:DescOrder',
-    permissions: collectionPermissionsWithAnonRead
+    collectionOptions: {
+      path: '/outbox',
+      attachToTypes: Object.values(ACTOR_TYPES),
+      attachPredicate: 'https://www.w3.org/ns/activitystreams#outbox',
+      ordered: true,
+      itemsPerPage: 10,
+      dereferenceItems: true,
+      sortPredicate: 'as:published',
+      sortOrder: 'semapps:DescOrder',
+      permissions: collectionPermissionsWithAnonRead,
+      controlledActions: {
+        post: 'activitypub.api.outbox'
+      }
+    }
+  },
+  dependencies: ['activitypub.collections-registry'],
+  async started() {
+    await this.broker.call('activitypub.collections-registry.register', this.settings.collectionOptions);
   },
   actions: {
-    apiPost: {
-      async handler(ctx) {
-        let { collectionUri, payload } = ctx.params;
-
-        const activity: any = await this.actions.post({ collectionUri, ...payload }, { parentCtx: ctx });
-
-        ctx.meta.$responseHeaders = {
-          Location: activity.id || activity['@id'],
-          'Content-Length': 0
-        };
-        // We need to set this also here (in addition to above) or we get a Moleculer warning
-        ctx.meta.$location = activity.id || activity['@id'];
-        ctx.meta.$statusCode = 201;
-      }
-    },
     post: {
       async handler(ctx) {
         let { collectionUri, username, transient, ...activity } = ctx.params;

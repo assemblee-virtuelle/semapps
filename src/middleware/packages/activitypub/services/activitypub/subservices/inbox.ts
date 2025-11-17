@@ -1,40 +1,37 @@
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
 import { ServiceSchema, Errors } from 'moleculer';
+import { isWebId } from '@semapps/ldp';
 import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
 import { ACTOR_TYPES } from '../../../constants.ts';
 import AwaitActivityMixin from '../../../mixins/await-activity.ts';
-import ControlledCollectionMixin from '../../../mixins/controlled-collection.ts';
 
 const { MoleculerError } = Errors;
 
 const InboxService = {
   name: 'activitypub.inbox' as const,
-  mixins: [ControlledCollectionMixin, AwaitActivityMixin],
+  mixins: [AwaitActivityMixin],
   settings: {
-    path: '/inbox',
-    attachToTypes: Object.values(ACTOR_TYPES),
-    attachPredicate: 'http://www.w3.org/ns/ldp#inbox',
-    ordered: true,
-    itemsPerPage: 10,
-    dereferenceItems: true,
-    sortPredicate: 'as:published',
-    sortOrder: 'semapps:DescOrder',
-    permissions: collectionPermissionsWithAnonRead
+    collectionOptions: {
+      path: '/inbox',
+      attachToTypes: Object.values(ACTOR_TYPES),
+      attachPredicate: 'http://www.w3.org/ns/ldp#inbox',
+      ordered: true,
+      itemsPerPage: 10,
+      dereferenceItems: true,
+      sortPredicate: 'as:published',
+      sortOrder: 'semapps:DescOrder',
+      permissions: collectionPermissionsWithAnonRead,
+      controlledActions: {
+        post: 'activitypub.api.inbox'
+      }
+    }
+  },
+  dependencies: ['activitypub.collections-registry'],
+  async started() {
+    await this.broker.call('activitypub.collections-registry.register', this.settings.collectionOptions);
   },
   actions: {
-    apiPost: {
-      async handler(ctx) {
-        let { collectionUri, payload } = ctx.params;
-
-        await ctx.call('activitypub.inbox.post', {
-          collectionUri,
-          ...payload
-        });
-
-        ctx.meta.$statusCode = 202;
-      }
-    },
     post: {
       async handler(ctx) {
         let { collectionUri, ...activity } = ctx.params;
@@ -93,7 +90,6 @@ const InboxService = {
           const { isValid: validSignature } = await ctx.call('signature.verifyHttpSignature', {
             url: collectionUri,
             method: 'POST',
-            // @ts-expect-error TS(2339): Property 'originalHeaders' does not exist on type ... Remove this comment to see the full error message
             headers: ctx.meta.originalHeaders
           });
 

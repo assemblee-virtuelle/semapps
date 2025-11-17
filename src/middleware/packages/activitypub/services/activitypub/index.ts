@@ -39,6 +39,11 @@ const ActivityPubService = {
 
     // @ts-expect-error TS(2345): Argument of type '{ mixins: any[]; settings: { pod... Remove this comment to see the full error message
     this.broker.createService({
+      mixins: [ApiService]
+    });
+
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: any[]; settings: { pod... Remove this comment to see the full error message
+    this.broker.createService({
       mixins: [CollectionService],
       settings: { path: collectionsPath }
     });

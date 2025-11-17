@@ -34,7 +34,7 @@ const LikeService = {
       async handler(ctx) {
         const { actorUri, objectUri } = ctx.params;
 
-        const actor = await ctx.call('activitypub.actor.get', { actorUri });
+        const actor: any = await ctx.call('activitypub.actor.get', { actorUri });
 
         // If a liked collection is attached to the actor, attach the object
         if (actor.liked) {
@@ -66,7 +66,7 @@ const LikeService = {
       async handler(ctx) {
         const { actorUri, objectUri } = ctx.params;
 
-        const actor = await ctx.call('activitypub.actor.get', { actorUri });
+        const actor: any = await ctx.call('activitypub.actor.get', { actorUri });
 
         // If a liked collection is attached to the actor, detach the object
         if (actor.liked) {
@@ -82,7 +82,7 @@ const LikeService = {
       async handler(ctx) {
         const { actorUri, objectUri } = ctx.params;
 
-        const object = await ctx.call('activitypub.object.get', { objectUri, actorUri });
+        const object: any = await ctx.call('activitypub.object.get', { objectUri, actorUri });
 
         // If a likes collection is attached to the object, detach the actor
         if (object.likes) {
