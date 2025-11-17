@@ -45,6 +45,7 @@ describe.each([1, 2])('With %i server(s), post to outbox', (numServers: number) 
     });
 
     // Get outbox as self
+    // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
       const outboxMenu = await alice.call('activitypub.collection.get', { resourceUri: alice.outbox });
       const outbox = await alice.call('activitypub.collection.get', {
@@ -64,6 +65,7 @@ describe.each([1, 2])('With %i server(s), post to outbox', (numServers: number) 
     });
 
     // Get outbox as anonymous
+    // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
       const outboxMenu = await alice.call('activitypub.collection.get', {
         resourceUri: alice.outbox,
@@ -97,6 +99,7 @@ describe.each([1, 2])('With %i server(s), post to outbox', (numServers: number) 
     });
 
     // Get outbox as Bob
+    // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
       const outboxMenu = await alice.call('activitypub.collection.get', {
         resourceUri: alice.outbox,
@@ -121,6 +124,7 @@ describe.each([1, 2])('With %i server(s), post to outbox', (numServers: number) 
     });
 
     // Get outbox as anonymous
+    // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
       const outboxMenu = await alice.call('activitypub.collection.get', {
         resourceUri: alice.outbox,
@@ -147,6 +151,7 @@ describe.each([1, 2])('With %i server(s), post to outbox', (numServers: number) 
     });
 
     // Get outbox as Bob
+    // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
       const outboxMenu = await alice.call('activitypub.collection.get', {
         resourceUri: alice.outbox,
@@ -169,6 +174,7 @@ describe.each([1, 2])('With %i server(s), post to outbox', (numServers: number) 
     });
 
     // Get outbox as anonymous
+    // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
       const outboxMenu = await alice.call('activitypub.collection.get', {
         resourceUri: alice.outbox,
@@ -206,6 +212,7 @@ describe.each([1, 2])('With %i server(s), post to outbox', (numServers: number) 
     expect(objectPrivateFirst?.id).toBe(activityUpdatedForFriend.object.id);
 
     // Get outbox as Bob
+    // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
       const outboxMenu = await alice.call('activitypub.collection.get', {
         resourceUri: alice.outbox,
@@ -256,7 +263,8 @@ describe.each([1, 2])('With %i server(s), post to outbox', (numServers: number) 
     });
     expect(objectPrivateFirst.id).toBe(activityUpdatedForPublic.object.id);
 
-    // Get outbox as anon.
+    // Get outbox as anon
+    // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
       const outboxMenu = await alice.call('activitypub.collection.get', {
         resourceUri: alice.outbox,

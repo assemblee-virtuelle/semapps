@@ -1,5 +1,5 @@
 import urlJoin from 'url-join';
-import fetch from 'node-fetch';
+import fetch, { HeaderInit } from 'node-fetch';
 import Redis from 'ioredis';
 import { ActionParamSchema, CallingOptions, ServiceBroker, ServiceSchema } from 'moleculer';
 import { Account } from '@semapps/auth';
@@ -103,32 +103,44 @@ export const createAccount = async (broker: ServiceBroker, username: string) => 
 
   const token = await broker.call('auth.jwt.generateServerSignedToken', { payload: { webId } });
 
-  const fetchAsUser = async (url: string, options: FetchOptions = {}) =>
-    fetchServer(url, {
-      ...options,
-      headers: new fetch.Headers({ ...options?.headers, Authorization: `Bearer ${token}` })
-    });
+  const fetchAsUser = async (url: string, options: FetchOptions = {}) => {
+    let headers;
+    if (options.headers) {
+      headers = options.headers;
+      headers.set('Authorization', `Bearer ${token}`);
+    } else {
+      headers = new fetch.Headers({ Authorization: `Bearer ${token}` });
+    }
+    return fetchServer(url, { ...options, headers });
+  };
 
   // Ensure keys are created and attached to the WebID (this is a side-effect of the auth.account.created event)
   // If we don't do that, tests may be stopped before the keys are created and this may generate errors
   // Note: See if we can avoid this because it increases some of the tests time by 30-50%
   await callAsUser('webid.awaitCreateComplete');
 
-  // Get outbox if ActivityPub service is enabled
-  const services: ServiceSchema[] = await broker.call('$node.services');
-  const outbox =
-    services.some(s => s.name === 'activitypub') &&
-    (await callAsUser('activitypub.outbox.getUri', { objectUri: webId }));
-
-  return {
+  let returnValues = {
     webId,
     token,
     baseUrl,
     username,
     call: callAsUser,
-    fetch: fetchAsUser,
-    outbox
+    fetch: fetchAsUser
   };
+
+  // Add more resources if ActivityPub services is enabled
+  const services: ServiceSchema[] = await broker.call('$node.services');
+  if (services.some(s => s.name === 'activitypub')) {
+    const actor = await callAsUser('activitypub.actor.awaitCreateComplete', { actorUri: webId });
+
+    returnValues.inbox = actor.inbox;
+    returnValues.outbox = actor.outbox;
+    returnValues.followers = actor.followers;
+    returnValues.following = actor.following;
+    returnValues.liked = actor.liked;
+  }
+
+  return returnValues;
 };
 
 export const clearQueue = async (queueServiceUrl: string) => {

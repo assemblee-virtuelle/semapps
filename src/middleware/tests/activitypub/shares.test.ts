@@ -1,48 +1,40 @@
 import waitForExpect from 'wait-for-expect';
+import { ServiceBroker } from 'moleculer';
 import { OBJECT_TYPES, ACTIVITY_TYPES, PUBLIC_URI } from '@semapps/activitypub';
 import initialize from './initialize.ts';
+import { dropAllDatasets, createAccount } from '../utils.ts';
 
-jest.setTimeout(50000);
-const NUM_USERS = 2;
+jest.setTimeout(50_000);
 
-describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', (mode: any) => {
-  let broker: any;
-  const actors: any = [];
-  let alice: any;
-  let bob: any;
-  let aliceMessageUri: any;
+let brokers: ServiceBroker[] = [];
+let alice: any;
+let bob: any;
+
+describe.each([1, 2])('With %i server(s), post to outbox', (numServers: number) => {
+  let aliceMessageUri: string;
   let publicShareActivity: any;
+  let sharesCollectionUri: any;
+
   beforeAll(async () => {
-    if (mode === 'single-server') {
-      broker = await initialize(3000, 'testData', 'settings');
+    await dropAllDatasets();
+
+    for (let i = 1; i <= numServers; i++) {
+      brokers[i] = await initialize(i);
+      await brokers[i].start();
+    }
+
+    if (numServers === 1) {
+      alice = await createAccount(brokers[1], 'alice');
+      bob = await createAccount(brokers[1], 'bob');
     } else {
-      broker = [];
+      alice = await createAccount(brokers[1], 'alice');
+      bob = await createAccount(brokers[2], 'bob');
     }
-
-    for (let i = 1; i <= NUM_USERS; i++) {
-      if (mode === 'multi-server') {
-        broker[i] = await initialize(3000 + i, `testData${i}`, `settings${i}`, i);
-      } else {
-        broker[i] = broker;
-      }
-      const { webId } = await broker[i].call('auth.signup', require(`./data/actor${i}.json`));
-      actors[i] = await broker[i].call('activitypub.actor.awaitCreateComplete', { actorUri: webId });
-      actors[i].call = (actionName: any, params: any, options = {}) =>
-        // @ts-expect-error TS(2339): Property 'meta' does not exist on type '{}'.
-        broker[i].call(actionName, params, { ...options, meta: { ...options.meta, webId } });
-    }
-
-    alice = actors[1];
-    bob = actors[2];
   });
 
   afterAll(async () => {
-    if (mode === 'multi-server') {
-      for (let i = 1; i <= NUM_USERS; i++) {
-        await broker[i].stop();
-      }
-    } else {
-      await broker.stop();
+    for (let i = 1; i <= numServers; i++) {
+      if (brokers[i]) await brokers[i].stop();
     }
   });
 
@@ -51,40 +43,34 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
       collectionUri: alice.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: OBJECT_TYPES.NOTE,
-      attributedTo: alice.id,
+      attributedTo: alice.webId,
       content: 'Hello world',
-      to: [bob.id, PUBLIC_URI]
+      to: [bob.webId, PUBLIC_URI]
     });
 
     aliceMessageUri = createActivity.object.id;
-
-    const privateShareActivity = await bob.call('activitypub.outbox.post', {
-      collectionUri: bob.outbox,
-      '@context': 'https://www.w3.org/ns/activitystreams',
-      type: ACTIVITY_TYPES.ANNOUNCE,
-      object: aliceMessageUri,
-      to: alice.id
-    });
 
     publicShareActivity = await bob.call('activitypub.outbox.post', {
       collectionUri: bob.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: ACTIVITY_TYPES.ANNOUNCE,
       object: aliceMessageUri,
-      to: [alice.id, PUBLIC_URI]
+      to: [alice.webId, PUBLIC_URI]
     });
 
     // Ensure the /shares collection has been created
+    // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
-      await expect(alice.call('ldp.resource.get', { resourceUri: aliceMessageUri })).resolves.toMatchObject({
-        shares: `${aliceMessageUri}/shares`
-      });
+      const aliceMessage = await alice.call('ldp.resource.get', { resourceUri: aliceMessageUri });
+      expect(aliceMessage.shares).not.toBeUndefined();
+      sharesCollectionUri = aliceMessage.shares;
     });
 
     // Ensure only the public announce activity has been added to the /shares collection
+    // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
       await expect(
-        alice.call('activitypub.collection.get', { resourceUri: `${aliceMessageUri}/shares` })
+        alice.call('activitypub.collection.get', { resourceUri: sharesCollectionUri })
       ).resolves.toMatchObject({
         type: 'Collection',
         items: publicShareActivity.id
@@ -98,14 +84,14 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange shares', 
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: ACTIVITY_TYPES.UNDO,
       object: publicShareActivity.id,
-      to: alice.id
+      to: alice.webId
     });
 
     // Ensure the public announce activity has been removed from the /shares collection
+    // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(
-        alice.call('activitypub.collection.get', { resourceUri: `${aliceMessageUri}/shares` })
+        alice.call('activitypub.collection.get', { resourceUri: sharesCollectionUri })
       ).resolves.not.toMatchObject({
         items: publicShareActivity.id
       });

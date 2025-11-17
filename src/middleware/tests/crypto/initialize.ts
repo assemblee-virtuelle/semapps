@@ -56,7 +56,7 @@ const initialize = async (port: number) => {
     mixins: [AuthLocalService],
     settings: {
       baseUrl,
-      jwtPath: path.resolve(__dirname, './jwt'),
+      jwtPath: path.resolve(__dirname, '../jwt'),
       accountsDataset: CONFIG.SETTINGS_DATASET
     }
   });

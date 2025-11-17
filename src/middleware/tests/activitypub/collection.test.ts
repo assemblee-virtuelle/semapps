@@ -1,36 +1,45 @@
 import urlJoin from 'url-join';
+import { ServiceBroker } from 'moleculer';
 import initialize from './initialize.ts';
 import * as CONFIG from '../config.ts';
+import { createAccount, dropAllDatasets } from '../utils.ts';
 
-jest.setTimeout(50000);
-let broker: any;
+jest.setTimeout(70000);
+
+let broker: ServiceBroker;
+let alice: any;
 
 beforeAll(async () => {
-  broker = await initialize(3000, 'testData', 'settings');
+  await dropAllDatasets();
+  broker = await initialize(1);
+  await broker.start();
+  alice = await createAccount(broker, 'alice');
 });
 
 afterAll(async () => {
-  if (broker) await broker.stop();
+  await broker.stop();
 });
 
 describe('Collections', () => {
   const items: any = [];
-  let collectionUri: any;
-  let orderedCollectionUri: any;
-  let cursorBasedCollectionUri: any;
+  let containerUri: string;
+  let collectionUri: string;
+  let orderedCollectionUri: string;
+  let cursorBasedCollectionUri: string;
 
   beforeAll(async () => {
+    containerUri = await alice.call('ldp.registry.getUri', { type: 'as:Note', isContainer: true });
+
     // Create test items
     for (let i = 0; i < 10; i++) {
       items.push(
-        await broker.call('ldp.container.post', {
-          // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-          containerUri: urlJoin(CONFIG.HOME_URL, 'as/object'),
+        await alice.call('ldp.container.post', {
+          containerUri,
           resource: {
             '@context': 'https://www.w3.org/ns/activitystreams',
             '@type': 'Note',
             name: `Note #${i}`,
-            content: `Contenu de ma note #${i}`,
+            content: `Content of my note #${i}`,
             published: `2021-01-0${i + 1}T00:00:00.000Z`
           }
         })
@@ -38,7 +47,7 @@ describe('Collections', () => {
     }
 
     // Create collection for basic tests
-    collectionUri = await broker.call('activitypub.collection.post', {
+    collectionUri = await alice.call('activitypub.collection.post', {
       resource: {
         type: 'Collection',
         summary: 'My non-ordered collection'
@@ -47,7 +56,7 @@ describe('Collections', () => {
     });
 
     // Create ordered collection
-    orderedCollectionUri = await broker.call('activitypub.collection.post', {
+    orderedCollectionUri = await alice.call('activitypub.collection.post', {
       resource: {
         type: ['Collection', 'OrderedCollection'],
         summary: 'My ordered collection',
@@ -57,7 +66,7 @@ describe('Collections', () => {
     });
 
     // Create collection for cursor tests
-    cursorBasedCollectionUri = await broker.call('activitypub.collection.post', {
+    cursorBasedCollectionUri = await alice.call('activitypub.collection.post', {
       resource: {
         type: 'Collection',
         summary: 'Cursor test collection',
@@ -67,23 +76,23 @@ describe('Collections', () => {
     });
 
     // Add items to cursor based collection
-    await broker.call('activitypub.collection.add', {
+    await alice.call('activitypub.collection.add', {
       collectionUri: cursorBasedCollectionUri,
       item: items[0]
     });
-    await broker.call('activitypub.collection.add', {
+    await alice.call('activitypub.collection.add', {
       collectionUri: cursorBasedCollectionUri,
       item: items[1]
     });
   });
 
   test('Collection exists', async () => {
-    const collectionExist = await broker.call('activitypub.collection.exist', {
+    const collectionExist = await alice.call('activitypub.collection.exist', {
       resourceUri: collectionUri
     });
     expect(collectionExist).toBeTruthy();
 
-    const collection = await broker.call('activitypub.collection.get', { resourceUri: collectionUri });
+    const collection = await alice.call('activitypub.collection.get', { resourceUri: collectionUri });
     expect(collection).toMatchObject({
       id: collectionUri,
       type: 'Collection',
@@ -93,7 +102,7 @@ describe('Collections', () => {
   });
 
   test('Get collection with custom jsonContext', async () => {
-    const collection = await broker.call('activitypub.collection.get', {
+    const collection = await alice.call('activitypub.collection.get', {
       resourceUri: collectionUri,
       jsonContext: { as: 'https://www.w3.org/ns/activitystreams#' }
     });
@@ -107,12 +116,12 @@ describe('Collections', () => {
   });
 
   test('Ordered collection exists', async () => {
-    const collectionExist = await broker.call('activitypub.collection.exist', {
+    const collectionExist = await alice.call('activitypub.collection.exist', {
       resourceUri: orderedCollectionUri
     });
     expect(collectionExist).toBeTruthy();
 
-    const collection = await broker.call('activitypub.collection.get', {
+    const collection = await alice.call('activitypub.collection.get', {
       resourceUri: orderedCollectionUri
     });
     expect(collection).toMatchObject({
@@ -126,12 +135,12 @@ describe('Collections', () => {
   });
 
   test('Add and remove item from collection', async () => {
-    await broker.call('activitypub.collection.add', {
+    await alice.call('activitypub.collection.add', {
       collectionUri,
       item: items[0]
     });
 
-    let collection = await broker.call('activitypub.collection.get', {
+    let collection = await alice.call('activitypub.collection.get', {
       resourceUri: collectionUri
     });
 
@@ -142,12 +151,12 @@ describe('Collections', () => {
       items: items[0]
     });
 
-    await broker.call('activitypub.collection.remove', {
+    await alice.call('activitypub.collection.remove', {
       collectionUri,
       item: items[0]
     });
 
-    collection = await broker.call('activitypub.collection.get', {
+    collection = await alice.call('activitypub.collection.get', {
       resourceUri: collectionUri
     });
 
@@ -162,7 +171,7 @@ describe('Collections', () => {
   });
 
   test('Get collection with dereference items', async () => {
-    const collectionWithDereferenceUri = await broker.call('activitypub.collection.post', {
+    const collectionWithDereferenceUri = await alice.call('activitypub.collection.post', {
       resource: {
         type: 'Collection',
         summary: 'My non-ordered collection with dereferenceItems: true',
@@ -171,12 +180,12 @@ describe('Collections', () => {
       webId: 'system'
     });
 
-    await broker.call('activitypub.collection.add', {
+    await alice.call('activitypub.collection.add', {
       collectionUri: collectionWithDereferenceUri,
       item: items[0]
     });
 
-    const collection = await broker.call('activitypub.collection.get', {
+    const collection = await alice.call('activitypub.collection.get', {
       resourceUri: collectionWithDereferenceUri
     });
 
@@ -187,34 +196,34 @@ describe('Collections', () => {
       items: {
         id: items[0],
         type: 'Note',
-        content: 'Contenu de ma note #0',
+        content: 'Content of my note #0',
         name: 'Note #0'
       }
     });
   });
 
   test('Items are sorted in descending order (default)', async () => {
-    await broker.call('activitypub.collection.add', {
+    await alice.call('activitypub.collection.add', {
       collectionUri: orderedCollectionUri,
       item: items[4]
     });
 
-    await broker.call('activitypub.collection.add', {
+    await alice.call('activitypub.collection.add', {
       collectionUri: orderedCollectionUri,
       item: items[0]
     });
 
-    await broker.call('activitypub.collection.add', {
+    await alice.call('activitypub.collection.add', {
       collectionUri: orderedCollectionUri,
       item: items[2]
     });
 
-    await broker.call('activitypub.collection.add', {
+    await alice.call('activitypub.collection.add', {
       collectionUri: orderedCollectionUri,
       item: items[6]
     });
 
-    const collection = await broker.call('activitypub.collection.get', {
+    const collection = await alice.call('activitypub.collection.get', {
       resourceUri: orderedCollectionUri
     });
 
@@ -225,7 +234,7 @@ describe('Collections', () => {
   });
 
   test('Items are sorted in ascending order', async () => {
-    const ascOrderedCollectionUri = await broker.call('activitypub.collection.post', {
+    const ascOrderedCollectionUri = await alice.call('activitypub.collection.post', {
       resource: {
         type: ['Collection', 'OrderedCollection'],
         summary: 'My asc-ordered collection',
@@ -235,27 +244,27 @@ describe('Collections', () => {
       webId: 'system'
     });
 
-    await broker.call('activitypub.collection.add', {
+    await alice.call('activitypub.collection.add', {
       collectionUri: ascOrderedCollectionUri,
       item: items[4]
     });
 
-    await broker.call('activitypub.collection.add', {
+    await alice.call('activitypub.collection.add', {
       collectionUri: ascOrderedCollectionUri,
       item: items[0]
     });
 
-    await broker.call('activitypub.collection.add', {
+    await alice.call('activitypub.collection.add', {
       collectionUri: ascOrderedCollectionUri,
       item: items[2]
     });
 
-    await broker.call('activitypub.collection.add', {
+    await alice.call('activitypub.collection.add', {
       collectionUri: ascOrderedCollectionUri,
       item: items[6]
     });
 
-    const collection = await broker.call('activitypub.collection.get', {
+    const collection = await alice.call('activitypub.collection.get', {
       resourceUri: ascOrderedCollectionUri
     });
 
@@ -270,7 +279,7 @@ describe('Collections', () => {
 
     beforeAll(async () => {
       // Create collection for pagination tests
-      paginatedCollectionUri = await broker.call('activitypub.collection.post', {
+      paginatedCollectionUri = await alice.call('activitypub.collection.post', {
         resource: {
           type: 'Collection',
           summary: 'My paginated collection',
@@ -281,7 +290,7 @@ describe('Collections', () => {
 
       // Add all items to test pagination
       for (let i = 0; i < 10; i++) {
-        await broker.call('activitypub.collection.add', {
+        await alice.call('activitypub.collection.add', {
           collectionUri: paginatedCollectionUri,
           item: items[i]
         });
@@ -289,7 +298,7 @@ describe('Collections', () => {
     });
 
     test('Should return first and last page links for unpaginated request', async () => {
-      const collection = await broker.call('activitypub.collection.get', {
+      const collection = await alice.call('activitypub.collection.get', {
         resourceUri: paginatedCollectionUri
       });
 
@@ -301,7 +310,7 @@ describe('Collections', () => {
     });
 
     test('Should navigate forward with afterEq cursor', async () => {
-      const collection = await broker.call('activitypub.collection.get', {
+      const collection = await alice.call('activitypub.collection.get', {
         resourceUri: paginatedCollectionUri,
         afterEq: items[9]
       });
@@ -317,7 +326,7 @@ describe('Collections', () => {
     });
 
     test('Should navigate backward with beforeEq cursor', async () => {
-      const collection = await broker.call('activitypub.collection.get', {
+      const collection = await alice.call('activitypub.collection.get', {
         resourceUri: paginatedCollectionUri,
         beforeEq: items[5]
       });
@@ -334,7 +343,7 @@ describe('Collections', () => {
 
     describe('Edge Cases', () => {
       test('Should handle empty collection', async () => {
-        const emptyCollectionUri = await broker.call('activitypub.collection.post', {
+        const emptyCollectionUri = await alice.call('activitypub.collection.post', {
           resource: {
             type: 'Collection',
             summary: 'Empty collection',
@@ -343,7 +352,7 @@ describe('Collections', () => {
           webId: 'system'
         });
 
-        const collection = await broker.call('activitypub.collection.get', {
+        const collection = await alice.call('activitypub.collection.get', {
           resourceUri: emptyCollectionUri
         });
 
@@ -358,7 +367,7 @@ describe('Collections', () => {
       });
 
       test('Should handle collection with exactly itemsPerPage items', async () => {
-        const exactCollectionUri = await broker.call('activitypub.collection.post', {
+        const exactCollectionUri = await alice.call('activitypub.collection.post', {
           resource: {
             type: 'Collection',
             summary: 'Exact size collection',
@@ -369,13 +378,13 @@ describe('Collections', () => {
 
         // Add exactly 4 items
         for (let i = 0; i < 4; i++) {
-          await broker.call('activitypub.collection.add', {
+          await alice.call('activitypub.collection.add', {
             collectionUri: exactCollectionUri,
             item: items[i]
           });
         }
 
-        const collection = await broker.call('activitypub.collection.get', {
+        const collection = await alice.call('activitypub.collection.get', {
           resourceUri: exactCollectionUri,
           afterEq: items[3]
         });
@@ -390,7 +399,7 @@ describe('Collections', () => {
 
       test('Should handle last page with remaining items', async () => {
         // Get last page of main paginated collection (should have 2 items)
-        const collection = await broker.call('activitypub.collection.get', {
+        const collection = await alice.call('activitypub.collection.get', {
           resourceUri: paginatedCollectionUri,
           afterEq: items[1]
         });
@@ -408,7 +417,7 @@ describe('Collections', () => {
         let seenItems = new Set();
 
         while (cursor) {
-          const page = await broker.call('activitypub.collection.get', {
+          const page = await alice.call('activitypub.collection.get', {
             resourceUri: paginatedCollectionUri,
             afterEq: cursor
           });
@@ -435,19 +444,19 @@ describe('Collections', () => {
 
       test('Should handle navigation between pages consistently', async () => {
         // Forward navigation
-        const firstPage = await broker.call('activitypub.collection.get', {
+        const firstPage = await alice.call('activitypub.collection.get', {
           resourceUri: paginatedCollectionUri,
           afterEq: items[9]
         });
 
         // Get the next page
-        const nextPage = await broker.call('activitypub.collection.get', {
+        const nextPage = await alice.call('activitypub.collection.get', {
           resourceUri: paginatedCollectionUri,
           afterEq: items[5]
         });
 
         // Navigate back
-        const prevPage = await broker.call('activitypub.collection.get', {
+        const prevPage = await alice.call('activitypub.collection.get', {
           resourceUri: paginatedCollectionUri,
           beforeEq: new URL(nextPage.prev).searchParams.get('beforeEq')
         });
@@ -463,7 +472,7 @@ describe('Collections', () => {
       // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
       const nonExistentUri = urlJoin(CONFIG.HOME_URL, 'as/collection/non-existent');
       await expect(
-        broker.call('activitypub.collection.get', {
+        alice.call('activitypub.collection.get', {
           resourceUri: nonExistentUri
         })
       ).rejects.toThrow('not found');
@@ -473,7 +482,7 @@ describe('Collections', () => {
       // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
       const invalidCursorUri = urlJoin(CONFIG.HOME_URL, 'as/object/non-existent');
       await expect(
-        broker.call('activitypub.collection.get', {
+        alice.call('activitypub.collection.get', {
           resourceUri: cursorBasedCollectionUri,
           afterEq: invalidCursorUri
         })
@@ -482,7 +491,7 @@ describe('Collections', () => {
 
     test('Should reject when both beforeEq and afterEq are provided', async () => {
       await expect(
-        broker.call('activitypub.collection.get', {
+        alice.call('activitypub.collection.get', {
           resourceUri: cursorBasedCollectionUri,
           beforeEq: items[0],
           afterEq: items[1]
@@ -492,9 +501,8 @@ describe('Collections', () => {
 
     test('Should handle malformed collection URI', async () => {
       const malformedUri = 'not-a-valid-uri';
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       await expect(
-        broker.call('activitypub.collection.get', {
+        alice.call('activitypub.collection.get', {
           resourceUri: malformedUri
         })
       ).rejects.toThrow();

@@ -250,7 +250,7 @@ const InferenceSchema = {
 
         // Dealing with remotes
 
-        // remote relationships are sent to relay actor of remote server
+        // Remote relationships are sent to remote server
         if (this.settings.offerToRemoteServers) {
           for (const triple of addRemotes) {
             await this.broker.call('inference.remote.offerInference', {
@@ -308,7 +308,7 @@ const InferenceSchema = {
 
         // Dealing with remotes
 
-        // remote relationships are sent to relay actor of remote server
+        // Remote relationships are sent to remote server
         if (this.settings.offerToRemoteServers) {
           for (const triple of addRemotes) {
             await this.broker.call('inference.remote.offerInference', {

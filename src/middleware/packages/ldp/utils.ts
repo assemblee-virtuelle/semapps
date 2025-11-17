@@ -74,9 +74,6 @@ const getSlugFromUri = (uri: any) => uri.match(new RegExp(`.*/(.*)`))[1];
 /** @deprecated Use the ldp.resource.getContainers action instead */
 const getContainerFromUri = (uri: any) => uri.match(new RegExp(`(.*)/.*`))[1];
 
-const getParentContainerUri = (uri: any) => uri.match(new RegExp(`(.*)/.*`))[1];
-const getParentContainerPath = (path: any) => path.match(new RegExp(`(.*)/.*`))[1];
-
 const getPathFromUri = (uri: any) => {
   try {
     const urlObject = new URL(uri);
@@ -184,8 +181,6 @@ export {
   isObject,
   getSlugFromUri,
   getContainerFromUri,
-  getParentContainerUri,
-  getParentContainerPath,
   getDatasetFromUri,
   getWebIdFromUri,
   getId,

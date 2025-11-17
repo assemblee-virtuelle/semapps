@@ -10,6 +10,7 @@ import * as CONFIG from '../config.ts';
 import { clearQueue } from '../utils.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 const containers = [
   {
     path: '/as/object',
@@ -73,7 +74,7 @@ const initialize = async (number: number) => {
     mixins: [AuthLocalService],
     settings: {
       baseUrl,
-      jwtPath: path.resolve(__dirname, './jwt'),
+      jwtPath: path.resolve(__dirname, '../jwt'),
       accountsDataset: `settings${number}`,
       mail: false
     }

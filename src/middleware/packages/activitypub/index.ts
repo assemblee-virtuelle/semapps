@@ -1,7 +1,6 @@
 import ActivityPubService from './services/activitypub/index.ts';
 import ActivityPubMigrationService from './services/migration.ts';
 import ActivityMappingService from './services/activity-mapping.ts';
-import RelayService from './services/relay.ts';
 import BotMixin from './mixins/bot.ts';
 import ControlledCollectionMixin from './mixins/controlled-collection.ts';
 import ActivitiesHandlerMixin from './mixins/activities-handler.ts';
@@ -13,7 +12,6 @@ export {
   ActivityPubService,
   ActivityPubMigrationService,
   ActivityMappingService,
-  RelayService,
   BotMixin,
   ControlledCollectionMixin,
   ActivitiesHandlerMixin,

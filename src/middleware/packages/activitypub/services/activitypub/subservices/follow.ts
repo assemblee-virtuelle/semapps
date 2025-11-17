@@ -32,64 +32,6 @@ const FollowService = {
     await this.broker.call('activitypub.collections-registry.register', this.settings.followingCollectionOptions);
   },
   actions: {
-    addFollower: {
-      async handler(ctx) {
-        const { follower, following } = ctx.params;
-
-        if (this.isLocalActor(following)) {
-          const actor = await ctx.call('activitypub.actor.get', { actorUri: following });
-          if (actor.followers) {
-            await ctx.call('activitypub.collection.add', {
-              collectionUri: actor.followers,
-              item: follower
-            });
-          }
-        }
-
-        // Add reverse relation
-        if (this.isLocalActor(follower)) {
-          const actor = await ctx.call('activitypub.actor.get', { actorUri: follower });
-          if (actor.following) {
-            await ctx.call('activitypub.collection.add', {
-              collectionUri: actor.following,
-              item: following
-            });
-          }
-        }
-
-        ctx.emit('activitypub.follow.added', { follower, following }, { meta: { webId: null, dataset: null } });
-      }
-    },
-
-    removeFollower: {
-      async handler(ctx) {
-        const { follower, following } = ctx.params;
-
-        if (this.isLocalActor(following)) {
-          const actor = await ctx.call('activitypub.actor.get', { actorUri: following });
-          if (actor.followers) {
-            await ctx.call('activitypub.collection.remove', {
-              collectionUri: actor.followers,
-              item: follower
-            });
-          }
-        }
-
-        // Add reverse relation
-        if (this.isLocalActor(follower)) {
-          const actor = await ctx.call('activitypub.actor.get', { actorUri: follower });
-          if (actor.following) {
-            await ctx.call('activitypub.collection.remove', {
-              collectionUri: actor.following,
-              item: following
-            });
-          }
-        }
-
-        ctx.emit('activitypub.follow.removed', { follower, following }, { meta: { webId: null, dataset: null } });
-      }
-    },
-
     isFollowing: {
       async handler(ctx) {
         const { follower, following } = ctx.params;
@@ -144,28 +86,26 @@ const FollowService = {
       match: {
         type: ACTIVITY_TYPES.FOLLOW
       },
-      async onReceive(ctx: any, activity: any) {
+      async onReceive(ctx: any, activity: any, recipientUri: string) {
         const { '@context': context, ...activityObject } = activity;
-        const actor = await ctx.call('activitypub.actor.get', { actorUri: activity.object });
 
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
-        await this.actions.addFollower(
-          {
-            follower: activity.actor,
-            following: activity.object
-          },
-          { parentCtx: ctx }
-        );
+        const recipient = await ctx.call('activitypub.actor.get', { actorUri: recipientUri });
 
-        // TODO don't accept Follow request if actor doesn't have followers/following collections
-        await ctx.call('activitypub.outbox.post', {
-          collectionUri: actor.outbox,
-          '@context': 'https://www.w3.org/ns/activitystreams',
-          actor: activity.object,
-          type: ACTIVITY_TYPES.ACCEPT,
-          object: activityObject,
-          to: activity.actor
-        });
+        if (recipient.followers) {
+          await ctx.call('activitypub.collection.add', {
+            collectionUri: recipient.followers,
+            item: activity.actor
+          });
+
+          await ctx.call('activitypub.outbox.post', {
+            collectionUri: recipient.outbox,
+            '@context': 'https://www.w3.org/ns/activitystreams',
+            actor: activity.object,
+            type: ACTIVITY_TYPES.ACCEPT,
+            object: activityObject,
+            to: activity.actor
+          });
+        }
       }
     },
     acceptFollow: {
@@ -175,15 +115,16 @@ const FollowService = {
           type: ACTIVITY_TYPES.FOLLOW
         }
       },
-      async onReceive(ctx: any, activity: any) {
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
-        await this.actions.addFollower(
-          {
-            follower: activity.object.actor,
-            following: activity.object.object
-          },
-          { parentCtx: ctx }
-        );
+      async onReceive(ctx: any, activity: any, recipientUri: string) {
+        const recipient = await ctx.call('activitypub.actor.get', { actorUri: recipientUri });
+
+        if (recipient.following) {
+          // TODO Check that the recipient is indeed in the emitter's followers list ?
+          await ctx.call('activitypub.collection.add', {
+            collectionUri: recipient.following,
+            item: activity.actor
+          });
+        }
       }
     },
     undoFollow: {
@@ -193,25 +134,25 @@ const FollowService = {
           type: ACTIVITY_TYPES.FOLLOW
         }
       },
-      async onEmit(ctx: any, activity: any) {
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
-        await this.actions.removeFollower(
-          {
-            follower: activity.object.actor || activity.actor,
-            following: activity.object.object
-          },
-          { parentCtx: ctx }
-        );
+      async onEmit(ctx: any, activity: any, emitterUri: string) {
+        const emitter = await ctx.call('activitypub.actor.get', { actorUri: emitterUri });
+
+        if (emitter.following) {
+          await ctx.call('activitypub.collection.remove', {
+            collectionUri: emitter.following,
+            item: activity.object.object
+          });
+        }
       },
-      async onReceive(ctx: any, activity: any) {
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
-        await this.actions.removeFollower(
-          {
-            follower: activity.object.actor || activity.actor,
-            following: activity.object.object
-          },
-          { parentCtx: ctx }
-        );
+      async onReceive(ctx: any, activity: any, recipientUri: string) {
+        const recipient = await ctx.call('activitypub.actor.get', { actorUri: recipientUri });
+
+        if (recipient.followers) {
+          await ctx.call('activitypub.collection.remove', {
+            collectionUri: recipient.followers,
+            item: activity.actor
+          });
+        }
       }
     },
     undoAcceptFollow: {
@@ -224,15 +165,15 @@ const FollowService = {
           }
         }
       },
-      async onReceive(ctx: any, activity: any) {
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
-        await this.actions.removeFollower(
-          {
-            follower: activity.object.object.actor || activity.actor,
-            following: activity.object.object.object
-          },
-          { parentCtx: ctx }
-        );
+      async onReceive(ctx: any, activity: any, recipientUri: string) {
+        const recipient = await ctx.call('activitypub.actor.get', { actorUri: recipientUri });
+
+        if (recipient.following) {
+          await ctx.call('activitypub.collection.remove', {
+            collectionUri: recipient.following,
+            item: activity.actor
+          });
+        }
       }
     }
   },

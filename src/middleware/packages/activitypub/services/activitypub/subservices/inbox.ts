@@ -104,14 +104,6 @@ const InboxService = {
 
         // TODO check activity is valid
 
-        try {
-          await this.broker.call('activitypub.side-effects.processInbox', { activity, recipients: [inboxOwner] });
-        } catch (e) {
-          // If some processors failed, log error message but don't stop
-          // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
-          this.logger.error(e.message);
-        }
-
         // If this is a transient activity, we have no way to retrieve it
         // so do not store it in the inbox (Mastodon works the same way)
         if (activity.id && !activity.id.includes('#')) {
@@ -145,6 +137,14 @@ const InboxService = {
             },
             { meta: { webId: null, dataset: null } }
           );
+        }
+
+        try {
+          await this.broker.call('activitypub.side-effects.processInbox', { activity, recipients: [inboxOwner] });
+        } catch (e) {
+          // If some processors failed, log error message but don't stop
+          // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
+          this.logger.error(e.message);
         }
 
         ctx.emit(

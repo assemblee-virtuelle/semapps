@@ -1,7 +1,7 @@
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
 import { ServiceSchema } from 'moleculer';
-import { arrayOf, delay, getParentContainerUri } from '../utils.ts';
+import { arrayOf, delay } from '../utils.ts';
 
 const ControlledContainerMixin = {
   settings: {
@@ -142,7 +142,6 @@ const ControlledContainerMixin = {
       async handler(ctx) {
         let { containerUri } = ctx.params;
         let containerExist;
-        let containerAttached;
 
         if (!containerUri) {
           containerUri = await this.actions.getContainerUri(
@@ -156,21 +155,7 @@ const ControlledContainerMixin = {
           containerExist = await ctx.call('ldp.container.exist', { containerUri });
         } while (!containerExist);
 
-        const parentContainerUri = getParentContainerUri(containerUri);
-        const parentContainerExist = await ctx.call('ldp.container.exist', { containerUri: parentContainerUri });
-
-        // If a parent container exist, check that the child container has been attached
-        // Otherwise, it may fail
-        if (parentContainerExist) {
-          do {
-            if (containerAttached === false) await delay(1000);
-            containerAttached = await ctx.call('ldp.container.includes', {
-              containerUri: parentContainerUri,
-              resourceUri: containerUri,
-              webId: 'system'
-            });
-          } while (!containerAttached);
-        }
+        return containerUri;
       }
     }
   }

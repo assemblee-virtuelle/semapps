@@ -124,28 +124,6 @@ Additionally, the ActivityPub services will append all the ActivityPub-specific 
 
 The following events are emitted by the different ActivityPub sub-services.
 
-### `activitypub.follow.added`
-
-Sent after an actor follows another one.
-
-##### Payload
-
-| Property    | Type     | Description                     |
-| ----------- | -------- | ------------------------------- |
-| `follower`  | `String` | URI of the actor being followed |
-| `following` | `String` | URI of the actor following      |
-
-### `activitypub.follow.removed`
-
-Sent after an actor stops following another one.
-
-##### Payload
-
-| Property    | Type     | Description                                 |
-| ----------- | -------- | ------------------------------------------- |
-| `follower`  | `String` | URI of the actor not being followed anymore |
-| `following` | `String` | URI of the actor following                  |
-
 ### `activitypub.inbox.received`
 
 Sent after an actor receives an activity in his inbox.

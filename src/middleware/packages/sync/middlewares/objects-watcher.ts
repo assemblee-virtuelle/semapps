@@ -13,7 +13,6 @@ const handledWacActions = [
 const ObjectsWatcherMiddleware = (config = {}) => {
   // @ts-expect-error TS(2339): Property 'baseUrl' does not exist on type '{}'.
   const { baseUrl, postWithoutRecipients = false, transientActivities = false } = config;
-  let relayActor: any;
   let excludedContainersPathRegex: any = [];
   let initialized = false;
   let cacherActivated = false;
@@ -99,7 +98,6 @@ const ObjectsWatcherMiddleware = (config = {}) => {
       if (isHandled(action.name)) {
         return async (ctx: any) => {
           // Don't handle actions until middleware is fully started
-          // Otherwise, the creation of the relay actor calls the middleware before it started
           if (!initialized) return await next(ctx);
 
           if (ctx.meta.skipObjectsWatcher === true) return await next(ctx);

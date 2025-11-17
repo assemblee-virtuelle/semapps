@@ -209,15 +209,6 @@ const OutboxService = {
       const success = [];
       const failures = [];
 
-      try {
-        await this.broker.call('activitypub.side-effects.processInbox', { activity: activityToPost, recipients });
-      } catch (e) {
-        console.error(e);
-        // If some processors failed, log error message but don't stop
-        // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
-        this.logger.error(e.message);
-      }
-
       for (const recipientUri of recipients) {
         try {
           const account: Account = await this.broker.call('auth.account.findByWebId', { webId: recipientUri });
@@ -275,10 +266,18 @@ const OutboxService = {
           success.push(recipientUri);
         } catch (e) {
           // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
-          console.error(e);
           this.logger.warn(`Error when posting activity to local actor ${recipientUri}: ${e.message}`);
           failures.push(recipientUri);
         }
+      }
+
+      try {
+        await this.broker.call('activitypub.side-effects.processInbox', { activity: activityToPost, recipients });
+      } catch (e) {
+        console.error(e);
+        // If some processors failed, log error message but don't stop
+        // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
+        this.logger.error(e.message);
       }
 
       this.broker.emit('activitypub.inbox.received', { activity: activityToPost, recipients, local: true });
@@ -289,7 +288,6 @@ const OutboxService = {
   queues: {
     remotePost: {
       name: '*',
-      // @ts-expect-error TS(7023): 'process' implicitly has return type 'any' because... Remove this comment to see the full error message
       async process(job: any) {
         const { activity, recipientUri } = job.data;
 
@@ -298,7 +296,6 @@ const OutboxService = {
         // During tests, do not do post to remote servers
         if (process.env.NODE_ENV === 'test' && !recipientUri.startsWith('http://localhost')) return;
 
-        // @ts-expect-error TS(7022): 'recipientInbox' implicitly has type 'any' because... Remove this comment to see the full error message
         const recipientInbox = await this.broker.call(
           'activitypub.actor.getCollectionUri',
           {
@@ -315,8 +312,7 @@ const OutboxService = {
 
         const body = JSON.stringify(activity);
 
-        // @ts-expect-error TS(7022): 'signatureHeaders' implicitly has type 'any' becau... Remove this comment to see the full error message
-        const signatureHeaders = await this.broker.call(
+        const signatureHeaders: any = await this.broker.call(
           'signature.generateSignatureHeaders',
           {
             url: recipientInbox,
@@ -327,7 +323,6 @@ const OutboxService = {
           { meta: { dataset } }
         );
 
-        // @ts-expect-error TS(7022): 'response' implicitly has type 'any' because it do... Remove this comment to see the full error message
         const response = await fetch(recipientInbox, {
           method: 'POST',
           headers: {

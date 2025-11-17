@@ -1,6 +1,5 @@
 import urlJoin from 'url-join';
 import { ServiceBroker } from 'moleculer';
-
 import initialize from './initialize.ts';
 import { createAccount, dropAllDatasets } from '../utils.ts';
 

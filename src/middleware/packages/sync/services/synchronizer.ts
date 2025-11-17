@@ -6,55 +6,18 @@ const SynchronizerService = {
   name: 'synchronizer' as const,
   mixins: [ActivitiesHandlerMixin],
   settings: {
-    podProvider: false,
     synchronizeContainers: true,
     attachToLocalContainers: false
   },
-  async started() {
-    if (!this.settings.podProvider) {
-      await this.broker.waitForServices('activitypub.relay');
-      this.relayActor = await this.broker.call('activitypub.relay.getActor');
-    }
-  },
   methods: {
     async isValid(activity, recipientUri) {
-      if (this.settings.podProvider) {
-        const account = await this.broker.call('auth.account.findByWebId', { webId: recipientUri });
-        if (!account) {
-          this.logger.warn(`No local Pod found for webId ${recipientUri}`);
-          return false;
-        } else {
-          // TODO Check that emitter is in contacts ?
-          return true;
-        }
+      const account = await this.broker.call('auth.account.findByWebId', { webId: recipientUri });
+      if (!account) {
+        this.logger.warn(`No local Pod found for webId ${recipientUri}`);
+        return false;
       } else {
-        // Check that the recipient is the relay actor
-        if (recipientUri !== this.relayActor.id) return false;
-
-        // Check that the activity emitter is being followed by the relay actor
-        return await this.broker.call('activitypub.follow.isFollowing', {
-          follower: recipientUri,
-          following: activity.actor
-        });
-      }
-    },
-    // Return true if the resource is on the same server as the actor
-    isLocal(url, actorUri) {
-      if (this.settings.podProvider) {
-        const { origin, pathname } = new URL(actorUri);
-        const aclBase = `${origin}/_acl${pathname}`; // URL of type http://localhost:3000/_acl/alice
-        const aclGroupBase = `${origin}/_groups${pathname}`; // URL of type http://localhost:3000/_groups/alice
-        return (
-          url === actorUri ||
-          url.startsWith(`${actorUri}/`) ||
-          url === aclBase ||
-          url.startsWith(`${aclBase}/`) ||
-          url === aclGroupBase ||
-          url.startsWith(`${aclGroupBase}/`)
-        );
-      } else {
-        const { origin } = new URL(actorUri);
-        return url.startsWith(origin);
+        // TODO Check that emitter is in contacts ?
+        return true;
       }
     }
   },
@@ -63,15 +26,14 @@ const SynchronizerService = {
       match: {
         type: ACTIVITY_TYPES.CREATE
       },
-      async onReceive(ctx: any, activity: any, recipientUri: any) {
+      async onReceive(ctx: any, activity: any, recipientUri: string) {
         // @ts-expect-error TS(2339): Property 'isValid' does not exist on type '{ match... Remove this comment to see the full error message
         if (await this.isValid(activity, recipientUri)) {
           for (let resource of arrayOf(activity.object)) {
             const resourceUri = typeof resource === 'string' ? resource : resource['@id'] || resource.id;
 
             // Ignore if the resource is on the same server
-            // @ts-expect-error TS(2339): Property 'isLocal' does not exist on type '{ match... Remove this comment to see the full error message
-            if (!this.isLocal(resourceUri, recipientUri)) {
+            if (await ctx.call('ldp.remote.isRemote', { resourceUri })) {
               resource = await ctx.call(
                 'ldp.remote.store',
                 typeof resource === 'string'
