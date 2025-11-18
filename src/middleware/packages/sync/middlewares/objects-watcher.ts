@@ -1,5 +1,4 @@
 import { PUBLIC_URI, ACTIVITY_TYPES } from '@semapps/activitypub';
-import { Registration } from '@semapps/ldp';
 
 const handledLdpActions = ['ldp.container.post', 'ldp.resource.put', 'ldp.resource.patch', 'ldp.resource.delete'];
 
@@ -13,7 +12,6 @@ const handledWacActions = [
 const ObjectsWatcherMiddleware = (config = {}) => {
   // @ts-expect-error TS(2339): Property 'baseUrl' does not exist on type '{}'.
   const { baseUrl, postWithoutRecipients = false, transientActivities = false } = config;
-  let excludedContainersPathRegex: any = [];
   let initialized = false;
   let cacherActivated = false;
 
@@ -55,13 +53,6 @@ const ObjectsWatcherMiddleware = (config = {}) => {
     return recipients;
   };
 
-  const isExcluded = (containersUris: any) => {
-    return containersUris.some((uri: any) =>
-      // @ts-expect-error TS(7006): Parameter 'pathRegex' implicitly has an 'any' type... Remove this comment to see the full error message
-      excludedContainersPathRegex.some(pathRegex => pathRegex.test(new URL(uri).pathname))
-    );
-  };
-
   const outboxPost = async (ctx: any, resourceUri: any, recipients: any, activity: any) => {
     if (recipients.length > 0 || postWithoutRecipients) {
       const actor = await getActor(ctx, resourceUri);
@@ -82,18 +73,6 @@ const ObjectsWatcherMiddleware = (config = {}) => {
 
   return {
     name: 'ObjectsWatcherMiddleware',
-    async started(broker: any) {
-      const registrations: Registration[] = await broker.call('ldp.registry.list');
-      for (const registration of registrations) {
-        // TODO stop using pathRegex
-        if (registration.excludeFromMirror === true && !excludedContainersPathRegex.includes(registration.pathRegex)) {
-          excludedContainersPathRegex.push(registration.pathRegex);
-        }
-      }
-
-      initialized = true;
-      cacherActivated = !!broker.cacher;
-    },
     localAction: (next: any, action: any) => {
       if (isHandled(action.name)) {
         return async (ctx: any) => {
@@ -143,11 +122,6 @@ const ObjectsWatcherMiddleware = (config = {}) => {
 
           // We never want to watch remote resources
           if (resourceUri && (await ctx.call('ldp.remote.isRemote', { resourceUri }))) return await next(ctx);
-
-          const containers = containerUri
-            ? [containerUri]
-            : await ctx.call('ldp.resource.getContainers', { resourceUri });
-          if (isExcluded(containers)) return await next(ctx);
 
           /*
            * BEFORE HOOKS
@@ -328,18 +302,6 @@ const ObjectsWatcherMiddleware = (config = {}) => {
       }
 
       // Do not use the middleware for this action
-      return next;
-    },
-    localEvent(next: any, event: any) {
-      if (event.name === 'ldp.registry.registered') {
-        return async (ctx: any) => {
-          const { container } = ctx.params;
-          if (container.excludeFromMirror === true && !excludedContainersPathRegex.includes(container.pathRegex)) {
-            excludedContainersPathRegex.push(container.pathRegex);
-          }
-          return next(ctx);
-        };
-      }
       return next;
     }
   };

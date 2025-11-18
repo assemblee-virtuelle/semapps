@@ -1,7 +1,7 @@
 import urlJoin from 'url-join';
 import { ActionSchema } from 'moleculer';
 
-const Schema = {
+const IsRemoteAction = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -16,7 +16,7 @@ const Schema = {
       return true;
     } else if (resourceUri.startsWith(urlJoin(this.settings.baseUrl, '/.'))) {
       // For special URLs starting with a dot (such as /.well-known), don't check datasets
-      return true;
+      return false;
     } else {
       // If the resource is on the same server, it may be on a different storage
       if (!dataset) {
@@ -30,4 +30,4 @@ const Schema = {
   }
 } satisfies ActionSchema;
 
-export default Schema;
+export default IsRemoteAction;

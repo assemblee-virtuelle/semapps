@@ -1,6 +1,5 @@
 import urlJoin from 'url-join';
 import rdf from '@rdfjs/data-model';
-
 import {
   parseUrl,
   parseHeader,
@@ -9,10 +8,9 @@ import {
   negotiateContentType,
   parseJson
 } from '@semapps/middlewares';
-
 import { ServiceSchema } from 'moleculer';
 
-const Schema = {
+const SpecialEndpointMixin = {
   settings: {
     baseUrl: null,
     settingsDataset: null,
@@ -103,4 +101,4 @@ const Schema = {
   }
 } satisfies Partial<ServiceSchema>;
 
-export default Schema;
+export default SpecialEndpointMixin;
