@@ -7,6 +7,7 @@ import matchActivity from './utils/matchActivity.ts';
 import containers from './containers.ts';
 
 export * from './constants.ts';
+export * from './types.ts';
 export {
   ActivityPubService,
   ActivityPubMigrationService,

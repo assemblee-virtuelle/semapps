@@ -9,6 +9,7 @@ import getRdfPrefixesAction from './actions/getRdfPrefixes.ts';
 import listAction from './actions/list.ts';
 import prefixToUriAction from './actions/prefixToUri.ts';
 import registerAction from './actions/register.ts';
+import { Ontology } from './types.ts';
 
 const OntologiesSchema = {
   name: 'ontologies' as const,
@@ -28,7 +29,7 @@ const OntologiesSchema = {
     }
   },
   async started() {
-    this.ontologies = {};
+    this.ontologies = {} as { [key: string]: Ontology };
     await this.registerAll();
   },
   actions: {
@@ -39,14 +40,13 @@ const OntologiesSchema = {
     getRdfPrefixes: getRdfPrefixesAction,
     list: listAction,
     prefixToUri: prefixToUriAction,
-    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { prefix: st... Remove this comment to see the full error message
     register: registerAction
   },
   methods: {
     async registerAll() {
       if (this.settings.persistRegistry) {
         await this.broker.waitForServices(['ontologies.registry']);
-        const persistedOntologies = await this.broker.call('ontologies.registry.list');
+        const persistedOntologies: { [key: string]: Ontology } = await this.broker.call('ontologies.registry.list');
         this.ontologies = { ...this.ontologies, ...persistedOntologies };
       }
       for (const ontology of this.settings.ontologies) {

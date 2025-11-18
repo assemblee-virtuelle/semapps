@@ -1,4 +1,3 @@
-import path from 'path';
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import ApiGatewayService, { Errors as E } from 'moleculer-web';
 import { ActivityPubService } from '@semapps/activitypub';
@@ -13,13 +12,12 @@ import { WebfingerService } from '@semapps/webfinger';
 import { KeysService, SignatureService } from '@semapps/crypto';
 import { WebIdService } from '@semapps/webid';
 import { ServiceSchema } from 'moleculer';
-import { CoreServiceSettings } from './serviceTypes.js';
+import { CoreServiceSettings } from './serviceTypes.ts';
 
 const CoreService = {
   name: 'core' as const,
   settings: {
     baseUrl: undefined,
-    baseDir: undefined,
     triplestore: {
       url: undefined,
       user: undefined,
@@ -44,7 +42,7 @@ const CoreService = {
     webid: {}
   },
   created() {
-    const { baseUrl, baseDir, triplestore, containers, ontologies } = this.settings;
+    const { baseUrl, triplestore, containers, ontologies } = this.settings;
 
     if (this.settings.activitypub !== false) {
       // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub";... Remove this comment to see the full error message
@@ -176,7 +174,6 @@ const CoreService = {
       this.broker.createService({
         mixins: [KeysService],
         settings: {
-          actorsKeyPairsDir: path.resolve(baseDir, './actors'),
           ...this.settings.keys
         }
       });

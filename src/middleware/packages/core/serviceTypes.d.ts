@@ -1,8 +1,8 @@
 import { Context, ServiceSettingSchema } from 'moleculer';
+import { Ontology } from '@semapps/ontologies';
 
 export interface CoreServiceSettings extends ServiceSettingSchema {
   baseUrl?: string;
-  baseDir?: string;
   triplestore: {
     url?: string;
     user?: string;
@@ -13,7 +13,7 @@ export interface CoreServiceSettings extends ServiceSettingSchema {
   };
   // Optional
   containers?: string;
-  ontologies?: string;
+  ontologies?: Ontology[];
   // Services configurations, no typings yet.
   activitypub: object | boolean;
   api: object | boolean;
