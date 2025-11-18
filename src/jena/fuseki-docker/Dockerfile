@@ -57,7 +57,7 @@ RUN     curl -sSL --fail $ASF_ARCHIVE/jena/binaries/apache-jena-fuseki-$FUSEKI_V
 RUN chmod 755  /jena-fuseki/fuseki-server
 
 # GCO: 2025.11.18 (Tuning Gco) RUN sed -i 's/JVM_ARGS=${JVM_ARGS:--Xmx4G}/JVM_ARGS=${JVM_ARGS:--Xmx${JAVA_MX_RAM}}\nexport LOG4J_FORMAT_MSG_NO_LOOKUPS=true/g' /jena-fuseki/fuseki-server 
-RUN sed -i 's/JVM_ARGS=${JVM_ARGS:--Xmx4G}/JVM_ARGS=${JVM_ARGS:-XX:InitialRAMPercentage=50.0 -XX:MaxRAMPercentage=80.0}\nexport LOG4J_FORMAT_MSG_NO_LOOKUPS=true/g' /jena-fuseki/fuseki-server 
+RUN sed -i 's/JVM_ARGS=${JVM_ARGS:--Xmx4G}/JVM_ARGS=${JVM_ARGS: -XX:+UseContainerSupport -XX:InitialRAMPercentage=50.0 -XX:MaxRAMPercentage=80.0}\nexport LOG4J_FORMAT_MSG_NO_LOOKUPS=true/g' /jena-fuseki/fuseki-server 
 
 RUN echo "$JENA_SHA512  jena.tar.gz" > jena.tar.gz.sha512
 
