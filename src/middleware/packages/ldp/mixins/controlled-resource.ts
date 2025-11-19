@@ -72,7 +72,7 @@ const ControlledResourceMixin = {
       async handler(ctx) {
         const resourceUri = ctx.params.resourceUri || (await this.actions.getUri({}, { parentCtx: ctx }));
         if (!resourceUri) throw new MoleculerError('Not found', 404, 'NOT_FOUND');
-        return await ctx.call('ldp.resource.get', { resourceUri, ...ctx.params });
+        return await ctx.call('ldp.resource.get', { ...ctx.params, resourceUri });
       }
     },
 
@@ -80,7 +80,7 @@ const ControlledResourceMixin = {
       async handler(ctx) {
         const resourceUri = ctx.params.resourceUri || (await this.actions.getUri({}, { parentCtx: ctx }));
         if (!resourceUri) throw new MoleculerError('Not found', 404, 'NOT_FOUND');
-        return await ctx.call('ldp.resource.patch', { resourceUri, ...ctx.params });
+        return await ctx.call('ldp.resource.patch', { ...ctx.params, resourceUri });
       }
     },
 

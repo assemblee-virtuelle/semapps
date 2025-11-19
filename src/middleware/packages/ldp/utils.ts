@@ -94,22 +94,6 @@ const getDatasetFromUri = (uri: any) => {
   }
 };
 
-/**
- * @deprecated Does not work anymore
- */
-const getWebIdFromUri = (uri: any) => {
-  const path = getPathFromUri(uri);
-  if (path) {
-    const parts = path.split('/');
-    if (parts.length > 1) {
-      const urlObject = new URL(uri);
-      return `${urlObject.origin}/${parts[1]}`;
-    }
-  } else {
-    throw new Error(`${uri} is not a valid URL`);
-  }
-};
-
 const getId = (resource: any) => resource.id || resource['@id'];
 const getType = (resource: any) => resource.type || resource['@type'];
 
@@ -182,7 +166,6 @@ export {
   getSlugFromUri,
   getContainerFromUri,
   getDatasetFromUri,
-  getWebIdFromUri,
   getId,
   getType,
   hasType,

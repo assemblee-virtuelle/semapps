@@ -1,5 +1,5 @@
 import urlJoin from 'url-join';
-import fetch, { HeaderInit } from 'node-fetch';
+import fetch from 'node-fetch';
 import Redis from 'ioredis';
 import { ActionParamSchema, CallingOptions, ServiceBroker, ServiceSchema } from 'moleculer';
 import { Account } from '@semapps/auth';

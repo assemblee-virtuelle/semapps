@@ -146,10 +146,12 @@ const ProxyService = {
         const { webId } = ctx.params;
         const services: ServiceSchema[] = await ctx.call('$node.services');
         if (services.some(s => s.name === 'activitypub.actor')) {
+          const baseUrl = await ctx.call('solid-storage.getBaseUrl');
+
           await ctx.call('activitypub.actor.addEndpoint', {
             actorUri: webId,
             predicate: 'https://www.w3.org/ns/activitystreams#proxyUrl',
-            endpoint: urlJoin(webId, 'proxy')
+            endpoint: urlJoin(baseUrl, 'proxy')
           });
         }
       }

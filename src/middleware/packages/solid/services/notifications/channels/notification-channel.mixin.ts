@@ -7,7 +7,7 @@ import rdf from '@rdfjs/data-model';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
 import { v4 as uuidV4 } from 'uuid';
 import moment from 'moment';
-import { ServiceSchema } from 'moleculer';
+import { Context, ServiceSchema } from 'moleculer';
 import { WacPermission } from '@semapps/webacl';
 import { Account } from '@semapps/auth';
 
@@ -183,7 +183,9 @@ const Schema = {
     'ldp.resource.patched': {
       async handler(ctx) {
         const { resourceUri } = ctx.params;
-        this.onResourceEvent(resourceUri, ACTIVITY_TYPES.UPDATE, await this.getModified(resourceUri));
+        // We must get the resource because the 'ldp.resource.patched' event does not send it
+        const resource: any = await ctx.call('ldp.resource.get', { resourceUri, webId: 'system' });
+        this.onResourceEvent(resourceUri, ACTIVITY_TYPES.UPDATE, resource?.['dc:modified']);
       }
     },
 
@@ -226,10 +228,6 @@ const Schema = {
     }
   },
   methods: {
-    async getModified(resourceUri) {
-      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-      return await this.broker.call('ldp.resource.get', { resourceUri, webId: 'system' })?.['dc:modified'];
-    },
     getMatchingChannels(topic) {
       const now = new Date();
       const matchedChannels = this.channels
@@ -283,17 +281,21 @@ const Schema = {
     },
     async loadChannelsFromDb({ removeOldChannels }) {
       const accounts: Account[] = await this.broker.call('auth.account.find');
-      for (const { webId } of accounts) {
+      for (const { webId, username } of accounts) {
         this.logger.debug(`Loading notification channels of ${webId}...`);
         try {
-          const container = await this.actions.list({ webId });
+          const container = await this.actions.list({ webId: 'system' }, { meta: { dataset: username } });
           for (const channel of arrayOf(container['ldp:contains'])) {
             // Remove channels where endAt is in the past.
             if (removeOldChannels && channel['notify:endAt'] < new Date()) {
-              this.broker.call('ldp.resource.delete', {
-                resourceUri: channel.id || channel['@id'],
-                webId: 'system'
-              });
+              this.broker.call(
+                'ldp.resource.delete',
+                {
+                  resourceUri: channel.id || channel['@id'],
+                  webId: 'system'
+                },
+                { meta: { dataset: username } }
+              );
               continue;
             }
 

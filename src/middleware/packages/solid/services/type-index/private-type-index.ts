@@ -19,6 +19,7 @@ const PrivateTypeIndexService = {
 
         if (preferencesUri) {
           await ctx.call('solid-preferences-file.patch', {
+            resourceUri: preferencesUri,
             triplesToAdd: [
               rdf.quad(
                 rdf.namedNode(preferencesUri),

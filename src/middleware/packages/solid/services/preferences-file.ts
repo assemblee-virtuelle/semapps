@@ -7,6 +7,7 @@ const SolidPreferencesFileSchema = {
   name: 'solid-preferences-file' as const,
   mixins: [ControlledResourceMixin],
   settings: {
+    path: '/preferences-file',
     types: ['pim:ConfigurationFile'],
     permissions: {}
   },
@@ -16,7 +17,7 @@ const SolidPreferencesFileSchema = {
   },
   events: {
     'webid.created': {
-      async handler(ctx) {
+      async handler(ctx: any) {
         const { resourceUri: webId } = ctx.params;
         const preferencesUri = await this.actions.waitForCreation({}, { parentCtx: ctx });
         await ctx.call('ldp.resource.patch', {
