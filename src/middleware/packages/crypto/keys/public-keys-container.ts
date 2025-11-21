@@ -21,7 +21,7 @@ const PublicKeysService = {
         read: true
       }
     },
-    excludeFromMirror: false,
+    excludeFromMirror: true,
     typeIndex: 'public'
   },
 

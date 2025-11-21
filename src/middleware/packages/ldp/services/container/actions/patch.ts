@@ -74,8 +74,7 @@ const Schema = {
             try {
               await ctx.call('ldp.remote.store', {
                 resourceUri,
-                keepInSync: true,
-                webId
+                keepInSync: true
               });
 
               // Now if the import went well, we can retry the attach

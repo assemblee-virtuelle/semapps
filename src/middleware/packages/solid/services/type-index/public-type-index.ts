@@ -13,7 +13,10 @@ const PublicTypeIndexService = {
         read: true
       }
     },
-    typeIndex: 'public'
+    typeIndex: 'public',
+    // Use a SPARQL query to find the resource URI.
+    // This is necessary for the type indexes, otherwise we have an infinite loop
+    sparqlQuery: true
   },
   events: {
     'webid.created': {

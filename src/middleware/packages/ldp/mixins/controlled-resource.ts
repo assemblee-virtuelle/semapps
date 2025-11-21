@@ -1,5 +1,5 @@
 import { ServiceSchema, Errors } from 'moleculer';
-import { delay } from '../utils.ts';
+import { arrayOf, delay } from '../utils.ts';
 
 const { MoleculerError } = Errors;
 
@@ -9,7 +9,11 @@ const ControlledResourceMixin = {
     types: null,
     permissions: {},
     controlledActions: {},
-    typeIndex: 'public'
+    typeIndex: 'public',
+    // If true, a SPARQL query will be used to find the resource URI
+    // This is necessary for the type indexes, otherwise we have an infinite loop
+    // However this shouldn't be used in other case as it may return wrong URIs
+    sparqlQuery: false
   },
   dependencies: ['ldp'],
   async started() {
@@ -41,20 +45,28 @@ const ControlledResourceMixin = {
 
     getUri: {
       async handler(ctx) {
-        const expandedTypes = await ctx.call('jsonld.parser.expandTypes', { types: this.settings.types });
+        if (this.settings.sparqlQuery) {
+          const expandedTypes = await ctx.call('jsonld.parser.expandTypes', { types: this.settings.types });
 
-        const results = await ctx.call('triplestore.query', {
-          query: `
-            SELECT ?resourceUri
-            WHERE {
-              GRAPH ?resourceUri {
-                ?resourceUri a ${expandedTypes.map(t => `<${t}>`).join(', ')} .
+          const results = await ctx.call('triplestore.query', {
+            query: `
+              SELECT ?resourceUri
+              WHERE {
+                GRAPH ?resourceUri {
+                  ?resourceUri a ${expandedTypes.map(t => `<${t}>`).join(', ')} .
+                }
               }
-            }
-          `
-        });
+            `
+          });
 
-        return results[0]?.resourceUri.value;
+          return results[0]?.resourceUri.value;
+        } else {
+          return await ctx.call('ldp.registry.getUri', {
+            type: arrayOf(this.settings.types)[0],
+            isContainer: false,
+            isPrivate: this.settings.typeIndex === 'private'
+          });
+        }
       }
     },
 
@@ -81,6 +93,17 @@ const ControlledResourceMixin = {
         const resourceUri = ctx.params.resourceUri || (await this.actions.getUri({}, { parentCtx: ctx }));
         if (!resourceUri) throw new MoleculerError('Not found', 404, 'NOT_FOUND');
         return await ctx.call('ldp.resource.patch', { ...ctx.params, resourceUri });
+      }
+    },
+
+    put: {
+      async handler(ctx) {
+        const resourceUri = ctx.params.resource.id || (await this.actions.getUri({}, { parentCtx: ctx }));
+        if (!resourceUri) throw new MoleculerError('Not found', 404, 'NOT_FOUND');
+        return await ctx.call('ldp.resource.put', {
+          ...ctx.params,
+          resource: { ...ctx.params.resource, id: resourceUri }
+        });
       }
     },
 

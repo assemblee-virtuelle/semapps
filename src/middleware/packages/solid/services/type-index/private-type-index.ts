@@ -9,7 +9,10 @@ const PrivateTypeIndexService = {
     path: '/private-type-index',
     types: ['solid:TypeIndex', 'solid:UnlistedDocument'],
     permissions: {},
-    typeIndex: 'private'
+    typeIndex: 'private',
+    // Use a SPARQL query to find the resource URI.
+    // This is necessary for the type indexes, otherwise we have an infinite loop
+    sparqlQuery: true
   },
   events: {
     'solid-preferences-file.created': {

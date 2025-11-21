@@ -174,7 +174,7 @@ const TypeIndexService = {
         if (isContainer === true || isContainer === undefined) instancePredicates.push('solid:instanceContainer');
         if (isContainer === false || isContainer === undefined) instancePredicates.push('solid:instance');
 
-        const results = await ctx.call('triplestore.query', {
+        const results: any = await ctx.call('triplestore.query', {
           query: `
             PREFIX solid: <http://www.w3.org/ns/solid/terms#>
             SELECT ?uri ?type ?indexType ?instancePredicate
@@ -193,13 +193,15 @@ const TypeIndexService = {
           webId: 'system'
         });
 
-        return {
-          types: arrayOf(results).map((r: any) => r.type.value),
-          uri: arrayOf(results)[0].uri.value,
-          isPrivate: arrayOf(results)[0].indexType.value === 'http://www.w3.org/ns/solid/terms#UnlistedDocument',
-          isContainer:
-            arrayOf(results)[0].instancePredicate.value === 'http://www.w3.org/ns/solid/terms#instanceContainer'
-        } as TypeRegistration;
+        if (results.length > 0) {
+          return {
+            types: arrayOf(results).map((r: any) => r.type.value),
+            uri: arrayOf(results)[0].uri.value,
+            isPrivate: arrayOf(results)[0].indexType.value === 'http://www.w3.org/ns/solid/terms#UnlistedDocument',
+            isContainer:
+              arrayOf(results)[0].instancePredicate.value === 'http://www.w3.org/ns/solid/terms#instanceContainer'
+          } as TypeRegistration;
+        }
       }
     }
   }

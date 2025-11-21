@@ -37,14 +37,8 @@ const SynchronizerService = {
               resource = await ctx.call(
                 'ldp.remote.store',
                 typeof resource === 'string'
-                  ? {
-                      resourceUri: resource,
-                      webId: recipientUri
-                    }
-                  : {
-                      resource: { '@context': activity['@context'], ...resource },
-                      webId: recipientUri
-                    }
+                  ? { resourceUri: resource }
+                  : { resource: { '@context': activity['@context'], ...resource } }
               );
 
               const type = resource['@type'] || resource.type;
@@ -92,14 +86,8 @@ const SynchronizerService = {
             resource = await ctx.call(
               'ldp.remote.store',
               typeof resource === 'string'
-                ? {
-                    resourceUri: resource,
-                    webId: recipientUri
-                  }
-                : {
-                    resource: { '@context': activity['@context'], ...resource },
-                    webId: recipientUri
-                  }
+                ? { resourceUri: resource }
+                : { resource: { '@context': activity['@context'], ...resource } }
             );
           }
         }

@@ -11,7 +11,6 @@ const Schema = {
   async handler(ctx) {
     const { uri, type, mode } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-
     // If no authorizers have been registered, assume user can access everything
     if (this.authorizers.length === 0) return true;
 

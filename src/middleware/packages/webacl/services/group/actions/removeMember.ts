@@ -8,9 +8,6 @@ export const api = async function api(ctx: any) {
   if (!ctx.params.deleteUserUri)
     throw new MoleculerError('needs a deleteUserUri in your POST (json)', 400, 'BAD_REQUEST');
 
-  // TODO See if this is not already done by a middleware
-  ctx.meta.dataset = ctx.params.username;
-
   await ctx.call('webacl.group.removeMember', {
     groupSlug: `${ctx.params.username}/${ctx.params.id}`,
     memberUri: ctx.params.deleteUserUri

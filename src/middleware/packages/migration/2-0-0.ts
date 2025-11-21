@@ -223,11 +223,7 @@ export default {
         const activityWithId = objectCurrentToId(activity);
 
         if (await ctx.call('ldp.remote.isRemote', { resourceUri: activityUri })) {
-          await ctx.call('ldp.remote.store', {
-            resource: activityWithId,
-            webId: ctx.meta.webId,
-            dataset: ctx.meta.dataset
-          });
+          await ctx.call('ldp.remote.store', { resource: activityWithId });
         } else {
           await ctx.call('activitypub.activity.put', { resource: activityWithId });
         }

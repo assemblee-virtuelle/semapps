@@ -15,7 +15,7 @@ const CreateAction = {
 
     const containerUri = await ctx.call('triplestore.named-graph.create', {
       baseUrl,
-      slug: this.settings.allowSlugs ? path || registration.path : undefined
+      slug: this.settings.allowSlugs ? path || registration?.path : undefined
     });
 
     await ctx.call('triplestore.insert', {

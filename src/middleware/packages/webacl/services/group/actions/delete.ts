@@ -6,9 +6,6 @@ import { removeAgentGroupOrAgentFromAuthorizations } from '../../../utils.ts';
 const { MoleculerError } = Errors;
 
 export const api = async function api(ctx: any) {
-  // TODO See if this is not already done by a middleware
-  ctx.meta.dataset = ctx.params.username;
-
   await ctx.call('webacl.group.delete', { groupSlug: `${ctx.params.username}/${ctx.params.id}` });
 
   ctx.meta.$statusCode = 204;

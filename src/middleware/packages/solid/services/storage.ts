@@ -168,7 +168,7 @@ const SolidStorageSchema = {
 
     getRootContainerUri: {
       async handler(ctx) {
-        const webIdData = await ctx.call('webid.get');
+        const webIdData: any = await ctx.call('webid.get');
         return webIdData?.['pim:storage'];
       }
     }

@@ -5,9 +5,6 @@ import { ActionSchema, Errors } from 'moleculer';
 const { MoleculerError } = Errors;
 
 export const api = async function api(ctx: any) {
-  // TODO See if this is not already done by a middleware
-  ctx.meta.dataset = ctx.params.username;
-
   return await ctx.call('webacl.group.getMembers', { groupSlug: `${ctx.params.username}/${ctx.params.id}` });
 };
 

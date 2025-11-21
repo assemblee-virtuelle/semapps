@@ -231,12 +231,14 @@ const OutboxService = {
             );
 
             // Store the activity in the dataset of the recipient
-            await this.broker.call('ldp.remote.store', {
-              resource: activity,
-              keepInSync: false, // Activities are immutable
-              webId: recipientUri,
-              dataset
-            });
+            await this.broker.call(
+              'ldp.remote.store',
+              {
+                resource: activity,
+                keepInSync: false // Activities are immutable
+              },
+              { meta: { dataset } }
+            );
 
             await this.broker.call(
               'activitypub.activity.attach',

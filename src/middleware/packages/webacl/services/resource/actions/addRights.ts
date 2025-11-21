@@ -15,7 +15,7 @@ const { MoleculerError } = Errors;
 export const api = {
   async handler(ctx) {
     const contentType = ctx.meta.headers['content-type'];
-    let { slugParts } = ctx.params;
+    let { username, slugParts } = ctx.params;
 
     if (!contentType || (contentType !== MIME_TYPES.JSON && contentType !== MIME_TYPES.TURTLE))
       throw new MoleculerError(`Content type not supported : ${contentType}`, 400, 'BAD_REQUEST');
@@ -28,7 +28,7 @@ export const api = {
     if (!slugParts || slugParts.length === 0) slugParts = ['/'];
 
     await ctx.call('webacl.resource.addRights', {
-      resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
+      resourceUri: urlJoin(this.settings.baseUrl, username, ...slugParts),
       addedRights
     });
 

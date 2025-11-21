@@ -73,7 +73,7 @@ const WebaclResourceService = {
   },
   hooks: {
     before: {
-      '*'(ctx) {
+      '*'(ctx: any) {
         if (!ctx.meta.dataset && ctx.params.resourceUri) {
           this.logger.warn(`No dataset found when calling ${ctx.action.name} with URI ${ctx.params.resourceUri}`);
           ctx.meta.dataset = getDatasetFromUri(ctx.params.resourceUri);
@@ -110,13 +110,9 @@ const WebaclResourceService = {
 
       const document = [];
 
-      // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
       document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', graphName)));
-      // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
       document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', graphName)));
-      // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
       document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', graphName)));
-      // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
       document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName)));
 
       if (isContainer) {

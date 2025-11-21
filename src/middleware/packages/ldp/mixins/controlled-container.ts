@@ -41,16 +41,18 @@ const ControlledContainerMixin = {
     post: {
       async handler(ctx) {
         if (!ctx.params.containerUri) {
-          ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
+          ctx.params.containerUri = await this.actions.getContainerUri({}, { parentCtx: ctx });
         }
-        return await ctx.call('ldp.container.post', ctx.params);
+        return await ctx.call('ldp.container.post', ctx.params, {
+          meta: { skipObjectsWatcher: this.settings.excludeFromMirror }
+        });
       }
     },
 
     list: {
       async handler(ctx) {
         if (!ctx.params.containerUri) {
-          ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
+          ctx.params.containerUri = await this.actions.getContainerUri({}, { parentCtx: ctx });
         }
         return ctx.call('ldp.container.get', ctx.params);
       }
@@ -59,7 +61,7 @@ const ControlledContainerMixin = {
     attach: {
       async handler(ctx) {
         if (!ctx.params.containerUri) {
-          ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
+          ctx.params.containerUri = await this.actions.getContainerUri({}, { parentCtx: ctx });
         }
         return ctx.call('ldp.container.attach', ctx.params);
       }
@@ -68,7 +70,7 @@ const ControlledContainerMixin = {
     detach: {
       async handler(ctx) {
         if (!ctx.params.containerUri) {
-          ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
+          ctx.params.containerUri = await this.actions.getContainerUri({}, { parentCtx: ctx });
         }
         return ctx.call('ldp.container.detach', ctx.params);
       }
@@ -100,19 +102,25 @@ const ControlledContainerMixin = {
 
     patch: {
       handler(ctx) {
-        return ctx.call('ldp.resource.patch', ctx.params);
+        return ctx.call('ldp.resource.patch', ctx.params, {
+          meta: { skipObjectsWatcher: this.settings.excludeFromMirror }
+        });
       }
     },
 
     put: {
       handler(ctx) {
-        return ctx.call('ldp.resource.put', ctx.params);
+        return ctx.call('ldp.resource.put', ctx.params, {
+          meta: { skipObjectsWatcher: this.settings.excludeFromMirror }
+        });
       }
     },
 
     delete: {
       handler(ctx) {
-        return ctx.call('ldp.resource.delete', ctx.params);
+        return ctx.call('ldp.resource.delete', ctx.params, {
+          meta: { skipObjectsWatcher: this.settings.excludeFromMirror }
+        });
       }
     },
 
@@ -133,6 +141,7 @@ const ControlledContainerMixin = {
       async handler(ctx) {
         return await ctx.call('ldp.registry.getUri', {
           type: arrayOf(this.settings.types)[0],
+          isContainer: true,
           isPrivate: this.settings.typeIndex === 'private'
         });
       }

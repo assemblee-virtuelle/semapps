@@ -106,8 +106,7 @@ const InboxService = {
           // Save the remote activity in the local triple store
           await ctx.call('ldp.remote.store', {
             resource: activity,
-            keepInSync: false, // Activities are immutable
-            webId: inboxOwner
+            keepInSync: false // Activities are immutable
           });
 
           // Attach the activity to the activities container, in order to use the container options

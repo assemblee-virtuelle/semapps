@@ -1,6 +1,13 @@
 import path from 'path';
 
-import { parseHeader, parseRawBody, negotiateContentType, negotiateAccept, parseJson } from '@semapps/middlewares';
+import {
+  parseHeader,
+  parseRawBody,
+  negotiateContentType,
+  negotiateAccept,
+  parseJson,
+  saveDatasetMeta
+} from '@semapps/middlewares';
 
 const onError = (req: any, res: any, err: any) => {
   const { type, code, message, data, name } = err;
@@ -11,11 +18,11 @@ const onError = (req: any, res: any, err: any) => {
 };
 
 const getRoutes = (basePath: string) => {
-  const middlewares = [parseHeader, negotiateContentType, negotiateAccept, parseRawBody, parseJson];
+  const middlewares = [parseHeader, negotiateContentType, negotiateAccept, parseRawBody, parseJson, saveDatasetMeta];
 
   return [
     {
-      path: path.join(basePath, '/_acl'),
+      path: path.join(basePath, '/_acl/:username([^/._][^/]+)'),
       name: 'acl',
       authorization: false,
       authentication: true,

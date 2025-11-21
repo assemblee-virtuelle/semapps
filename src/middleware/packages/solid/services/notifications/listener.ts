@@ -56,7 +56,7 @@ const SolidNotificationsListenerSchema = {
       async handler(ctx) {
         const { resourceUri, actionName } = ctx.params;
 
-        const appActor = await ctx.call('app.get');
+        const appActor: any = await ctx.call('app.get');
 
         // Check if a listener already exist
         const existingListener = this.listeners.find(

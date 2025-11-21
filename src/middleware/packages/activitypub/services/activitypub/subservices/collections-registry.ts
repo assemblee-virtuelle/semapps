@@ -60,19 +60,27 @@ const CollectionsRegistryService = {
           this.collectionsInCreation.push(collectionTempId);
 
           // Create the collection
-          collectionUri = await ctx.call('activitypub.collection.post', {
-            resource: {
-              type: ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
-              summary,
-              'semapps:dereferenceItems': dereferenceItems,
-              'semapps:itemsPerPage': itemsPerPage,
-              'semapps:sortPredicate': sortPredicate,
-              'semapps:sortOrder': sortOrder
+          collectionUri = await ctx.call(
+            'activitypub.collection.post',
+            {
+              resource: {
+                type: ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
+                summary,
+                'semapps:dereferenceItems': dereferenceItems,
+                'semapps:itemsPerPage': itemsPerPage,
+                'semapps:sortPredicate': sortPredicate,
+                'semapps:sortOrder': sortOrder
+              },
+              slug: (await ctx.call('ldp.getSetting', { key: 'allowSlugs' })) ? path : undefined,
+              webId: 'system',
+              permissions // Handled by the WebAclMiddleware, if present
             },
-            slug: (await ctx.call('ldp.getSetting', { key: 'allowSlugs' })) ? path : undefined,
-            webId: 'system',
-            permissions // Handled by the WebAclMiddleware, if present
-          });
+            {
+              meta: {
+                skipObjectsWatcher: true // We don't want to trigger a Create activity
+              }
+            }
+          );
 
           // Attach it to the object
           await ctx.call(
@@ -86,7 +94,7 @@ const CollectionsRegistryService = {
             },
             {
               meta: {
-                skipObjectsWatcher: true // We don't want to trigger an Update
+                skipObjectsWatcher: true // We don't want to trigger an Update activity
               }
             }
           );

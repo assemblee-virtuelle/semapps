@@ -167,7 +167,7 @@ async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: an
 export const api = {
   async handler(ctx) {
     const { accept } = ctx.meta.headers;
-    let { slugParts } = ctx.params;
+    let { username, slugParts } = ctx.params;
 
     if (accept && accept !== MIME_TYPES.JSON && accept !== MIME_TYPES.TURTLE)
       throw new MoleculerError(`Accept not supported : ${accept}`, 400, 'ACCEPT_NOT_SUPPORTED');
@@ -176,7 +176,7 @@ export const api = {
     if (!slugParts || slugParts.length === 0) slugParts = ['/'];
 
     return await ctx.call('webacl.resource.getRights', {
-      resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
+      resourceUri: urlJoin(this.settings.baseUrl, username, ...slugParts),
       accept
     });
   }

@@ -11,22 +11,15 @@ const DeleteAction = {
     const webId = ctx.params.webId || ctx.meta.webId;
 
     if (!(await this.actions.isRemote({ resourceUri }, { parentCtx: ctx }))) {
-      throw new Error(
-        `The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId} / dataset ${ctx.meta.dataset})`
-      );
+      throw new Error(`The resourceUri param must be remote. Provided: ${resourceUri} (dataset ${ctx.meta.dataset})`);
     }
 
-    if (!webId || webId === 'system' || webId === 'anon') {
-      throw new Error(`Cannot delete remote resource in cache without a webId (Provided: ${webId})`);
-    }
-    const account = await ctx.call('auth.account.findByWebId', { webId });
-    // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
-    ctx.meta.dataset = account.username;
+    await ctx.call('permissions.check', { uri: resourceUri, type: 'resource', mode: 'acl:Write', webId });
 
     const exist = await ctx.call('triplestore.named-graph.exist', { uri: resourceUri });
-    if (!exist) throw new Error(`No named graph found with resource ${resourceUri} (webId: ${webId})`);
+    if (!exist) throw new Error(`No named graph found with resource ${resourceUri} (dataset: ${ctx.meta.dataset})`);
 
-    const oldData = await this.actions.getStored({ resourceUri, webId }, { parentCtx: ctx });
+    const oldData = await this.actions.getStored({ resourceUri, webId: 'system' }, { parentCtx: ctx });
 
     await ctx.call('triplestore.named-graph.clear', { uri: resourceUri });
     await ctx.call('triplestore.named-graph.delete', { uri: resourceUri });
@@ -45,7 +38,7 @@ const DeleteAction = {
     };
 
     if (!ctx.meta.skipEmitEvent) {
-      ctx.emit('ldp.remote.deleted', returnValues, { meta: { webId: null, dataset: null } });
+      ctx.emit('ldp.remote.deleted', returnValues);
     }
 
     return returnValues;

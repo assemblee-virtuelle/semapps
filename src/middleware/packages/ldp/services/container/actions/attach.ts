@@ -17,7 +17,7 @@ const Schema = {
     const { containerUri, resourceUri } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-    const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri, webId });
+    const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri, webId: 'system' });
     if (!resourceExists) {
       const childContainerExists = await this.actions.exist({ containerUri: resourceUri }, { parentCtx: ctx });
       if (!childContainerExists) {
@@ -25,7 +25,7 @@ const Schema = {
       }
     }
 
-    const containerExists = await this.actions.exist({ containerUri, webId }, { parentCtx: ctx });
+    const containerExists = await this.actions.exist({ containerUri, webId: 'system' }, { parentCtx: ctx });
     if (!containerExists) throw new Error(`Cannot attach to a non-existing container: ${containerUri}`);
 
     await ctx.call('triplestore.update', {
@@ -47,7 +47,6 @@ const Schema = {
       dataset: ctx.meta.dataset
     };
 
-    // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
     if (!ctx.meta.skipEmitEvent) {
       ctx.emit('ldp.container.attached', returnValues, { meta: { webId: null, dataset: null } });
     }
