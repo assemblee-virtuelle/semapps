@@ -108,8 +108,7 @@ const PostAction = {
         await ctx.call('ldp.container.create', {
           containerUri: resourceUri,
           title: expandedResource['http://purl.org/dc/terms/title']?.[0]['@value'],
-          description: expandedResource['http://purl.org/dc/terms/description']?.[0]['@value'],
-          webId
+          description: expandedResource['http://purl.org/dc/terms/description']?.[0]['@value']
         });
       } else {
         const registration: Registration = await ctx.call('ldp.registry.getByUri', { containerUri });

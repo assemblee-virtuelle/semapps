@@ -7,9 +7,10 @@ import rdf from '@rdfjs/data-model';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
 import { v4 as uuidV4 } from 'uuid';
 import moment from 'moment';
-import { Context, ServiceSchema } from 'moleculer';
+import { ServiceSchema } from 'moleculer';
 import { WacPermission } from '@semapps/webacl';
 import { Account } from '@semapps/auth';
+import { NotificationChannel } from '../../../types.ts';
 
 /**
  * Solid Notification Channel mixin.
@@ -70,7 +71,7 @@ const Schema = {
       object: rdf.namedNode(urlJoin(this.settings.baseUrl, '.notifications', channelType))
     });
 
-    this.channels = [];
+    this.channels = [] as NotificationChannel[];
 
     // Do not await all channels to be loaded
     this.loadChannelsFromDb({ removeOldChannels: true });
@@ -86,12 +87,14 @@ const Schema = {
         const sendToParam = ctx.params.sendTo || ctx.params['notify:sendTo'];
         const { webId } = ctx.meta;
 
+        ctx.meta.dataset = getDatasetFromUri(topic);
+
         // TODO: Use ldo objects; This will only check for the json type and not parse json-ld variants...
         if (!this.settings.types.includes(type) && this.settings.channelType !== type)
           throw new Error(`Only one of ${this.settings.types} is accepted on this endpoint`);
 
         // Ensure topic exist (LDP resource, container or collection)
-        const exists = await ctx.call('ldp.resource.exist', {
+        const exists: boolean = await ctx.call('ldp.resource.exist', {
           resourceUri: topic,
           webId: 'system'
         });
@@ -107,9 +110,7 @@ const Schema = {
         if (!rights.read) throw new E.ForbiddenError('You need acl:Read rights on the resource');
 
         // Find container URI from topic (must be stored on same Pod)
-        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-        const topicWebId = urlJoin(this.settings.baseUrl, getDatasetFromUri(topic));
-        const channelContainerUri = await this.actions.getContainerUri({ webId: topicWebId }, { parentCtx: ctx });
+        const channelContainerUri = await this.actions.getContainerUri({}, { parentCtx: ctx });
 
         // Create receiveFrom URI if needed (e.g. for web sockets).
         const receiveFrom =
@@ -137,8 +138,8 @@ const Schema = {
           topic,
           sendTo,
           receiveFrom,
-          webId: topicWebId
-        };
+          webId: await ctx.call('webid.getUri') // TODO Verify if keeping track of the storage's webId is needed
+        } as NotificationChannel;
         this.channels.push(channel);
         this.onChannelCreated(channel);
 
@@ -167,21 +168,21 @@ const Schema = {
   },
   events: {
     'ldp.resource.created': {
-      async handler(ctx) {
+      async handler(ctx: any) {
         const { resourceUri, newData } = ctx.params;
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.CREATE, newData['dc:modified']);
       }
     },
 
     'ldp.resource.updated': {
-      async handler(ctx) {
+      async handler(ctx: any) {
         const { resourceUri, newData } = ctx.params;
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.UPDATE, newData['dc:modified']);
       }
     },
 
     'ldp.resource.patched': {
-      async handler(ctx) {
+      async handler(ctx: any) {
         const { resourceUri } = ctx.params;
         // We must get the resource because the 'ldp.resource.patched' event does not send it
         const resource: any = await ctx.call('ldp.resource.get', { resourceUri, webId: 'system' });
@@ -190,28 +191,28 @@ const Schema = {
     },
 
     'ldp.resource.deleted': {
-      async handler(ctx) {
+      async handler(ctx: any) {
         const { resourceUri } = ctx.params;
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.DELETE, new Date().toISOString());
       }
     },
 
     'ldp.container.attached': {
-      async handler(ctx) {
+      async handler(ctx: any) {
         const { containerUri, resourceUri } = ctx.params;
         this.onContainerOrCollectionEvent(containerUri, resourceUri, ACTIVITY_TYPES.ADD);
       }
     },
 
     'ldp.container.detached': {
-      async handler(ctx) {
+      async handler(ctx: any) {
         const { containerUri, resourceUri } = ctx.params;
         this.onContainerOrCollectionEvent(containerUri, resourceUri, ACTIVITY_TYPES.REMOVE);
       }
     },
 
     'activitypub.collection.added': {
-      async handler(ctx) {
+      async handler(ctx: any) {
         const { collectionUri, itemUri, item } = ctx.params;
         // Mastodon sometimes send unfetchable activities (like `Accept` activities)
         // In this case, we receive the activity as `item` and `itemUri` is undefined
@@ -221,7 +222,7 @@ const Schema = {
     },
 
     'activitypub.collection.removed': {
-      async handler(ctx) {
+      async handler(ctx: any) {
         const { collectionUri, itemUri } = ctx.params;
         this.onContainerOrCollectionEvent(collectionUri, itemUri, ACTIVITY_TYPES.REMOVE);
       }
@@ -319,20 +320,20 @@ const Schema = {
     },
     // METHODS TO IMPLEMENT by implementing service.
     //
-    async onEvent(channel, activity) {
+    async onEvent(channel: NotificationChannel, activity: any) {
       // This will be called for each channel when its topic changed.
       // The activity is to be sent to the subscriber by the implementing service.
       // Please add `published: new Date().toISOString()` to the activity when you send it.
       throw new Error('Not implemented. Please implement this method in your service.');
     },
-    async createReceiveFromUri(topic, webId) {
+    async createReceiveFromUri(topic: string, webId: string) {
       // Create a random URI to be registered for `receiveFrom` for a new channel under `this.channels`.
       throw new Error('Not implemented. Please implement this method in your service.');
     },
-    onChannelCreated(channel) {
+    onChannelCreated(channel: NotificationChannel) {
       // Do nothing by default. Can be overridden.
     },
-    onChannelDeleted(channel) {
+    onChannelDeleted(channel: NotificationChannel) {
       // Do nothing by default. Can be overridden.
     }
   },
@@ -342,9 +343,9 @@ const Schema = {
       delete(ctx, res) {
         const { resourceUri } = ctx.params;
         // @ts-expect-error TS(2339): Property 'find' does not exist on type 'string | A... Remove this comment to see the full error message
-        const channel = this.channels.find((c: any) => c.id === resourceUri);
+        const channel = this.channels.find((c: NotificationChannel) => c.id === resourceUri);
         // @ts-expect-error TS(2339): Property 'filter' does not exist on type 'string |... Remove this comment to see the full error message
-        this.channels = this.channels.filter((c: any) => c.id !== resourceUri);
+        this.channels = this.channels.filter((c: NotificationChannel) => c.id !== resourceUri);
         // @ts-expect-error TS(2349): This expression is not callable.
         this.onChannelDeleted(channel);
         return res;

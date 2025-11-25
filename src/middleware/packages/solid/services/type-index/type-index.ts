@@ -24,13 +24,11 @@ const TypeIndexService = {
       params: {
         types: { type: 'array' },
         uri: { type: 'string' },
-        webId: { type: 'string', optional: true },
         isContainer: { type: 'boolean', default: true },
         isPrivate: { type: 'boolean', default: false }
       },
       async handler(ctx) {
         let { types, uri, isContainer, isPrivate } = ctx.params;
-        const webId = ctx.params.webId || ctx.meta.webId;
 
         const existingRegistration: TypeRegistration = await this.actions.getByUri(
           { uri, isPrivate },
@@ -39,7 +37,7 @@ const TypeIndexService = {
 
         const expandedTypes: string[] = await ctx.call('jsonld.parser.expandTypes', { types });
 
-        const typeIndexUri = await ctx.call(`${isPrivate ? 'private' : 'public'}-type-index.getUri`, { webId });
+        const typeIndexUri = await ctx.call(`${isPrivate ? 'private' : 'public'}-type-index.getUri`);
 
         // Use a hash based on the URI (which should be unique !)
         const typeRegistrationUri = `${typeIndexUri}#${getSlugFromUri(uri)}`;

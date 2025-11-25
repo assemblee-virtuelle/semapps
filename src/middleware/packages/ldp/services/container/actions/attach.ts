@@ -7,15 +7,10 @@ const Schema = {
   visibility: 'public',
   params: {
     containerUri: { type: 'string' },
-    resourceUri: { type: 'string' },
-    webId: {
-      type: 'string',
-      optional: true
-    }
+    resourceUri: { type: 'string' }
   },
   async handler(ctx) {
     const { containerUri, resourceUri } = ctx.params;
-    const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri, webId: 'system' });
     if (!resourceExists) {
@@ -43,12 +38,11 @@ const Schema = {
     const returnValues = {
       containerUri,
       resourceUri,
-      webId,
       dataset: ctx.meta.dataset
     };
 
     if (!ctx.meta.skipEmitEvent) {
-      ctx.emit('ldp.container.attached', returnValues, { meta: { webId: null, dataset: null } });
+      ctx.emit('ldp.container.attached', returnValues);
     }
 
     return returnValues;

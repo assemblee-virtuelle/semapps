@@ -110,10 +110,7 @@ const SolidStorageSchema = {
         // Create containers from registry
         const containerRegistrations: Registration[] = await ctx.call('ldp.registry.list', { isContainer: true });
         for (const containerRegistration of containerRegistrations) {
-          const containerUri = await ctx.call('ldp.container.create', {
-            registration: containerRegistration,
-            webId
-          });
+          const containerUri = await ctx.call('ldp.container.create', { registration: containerRegistration });
 
           await ctx.call('ldp.container.attach', {
             containerUri: rootContainerUri,
