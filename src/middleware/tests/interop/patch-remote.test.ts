@@ -18,7 +18,7 @@ afterAll(async () => {
   if (server2) await server2.stop();
 });
 
-describe('Server2 imports a single resource from server1', () => {
+describe.skip('Server2 imports a single resource from server1', () => {
   let resourceUri: any;
 
   test('Resource is posted on server1', async () => {

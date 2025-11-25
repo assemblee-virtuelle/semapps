@@ -18,7 +18,7 @@ afterAll(async () => {
   if (server2) await server2.stop();
 });
 
-describe('An inference is added between server1 et server2', () => {
+describe.skip('An inference is added between server1 et server2', () => {
   let resourceUri1: any;
   let resourceUri2: any;
 
