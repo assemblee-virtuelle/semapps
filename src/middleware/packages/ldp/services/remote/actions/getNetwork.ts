@@ -43,9 +43,7 @@ const Schema = {
       if (response.ok) {
         return response.body;
       } else {
-        throw new MoleculerError(
-          `Error when fetching ${resourceUri} with actor ${webId}. Error ${response.status}: ${response.statusText}`
-        );
+        throw new MoleculerError(response.statusText, response.status);
       }
     } else {
       const response = await fetch(resourceUri, { headers });
