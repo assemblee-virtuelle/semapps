@@ -150,7 +150,7 @@ const AuthAccountService = {
       /** Overwrite find method, to filter accounts with tombstone. */
       async handler(ctx) {
         /** @type {object[]} */
-        const accounts = await this._find(ctx, ctx.params);
+        const accounts: Account[] = await this._find(ctx, ctx.params);
         return accounts.filter((account: any) => !account.deletedAt);
       }
     },
@@ -158,7 +158,7 @@ const AuthAccountService = {
     findByUsername: {
       async handler(ctx) {
         const { username } = ctx.params;
-        const accounts = await this._find(ctx, { query: { username } });
+        const accounts: Account[] = await this._find(ctx, { query: { username } });
         return accounts.length > 0 ? accounts[0] : null;
       }
     },
@@ -166,7 +166,7 @@ const AuthAccountService = {
     findByWebId: {
       async handler(ctx) {
         const { webId } = ctx.params;
-        const accounts = await this._find(ctx, { query: { webId } });
+        const accounts: Account[] = await this._find(ctx, { query: { webId } });
         return accounts.length > 0 ? accounts[0] : null;
       }
     },
@@ -174,7 +174,7 @@ const AuthAccountService = {
     findByEmail: {
       async handler(ctx) {
         const { email } = ctx.params;
-        const accounts = await this._find(ctx, { query: { email } });
+        const accounts: Account[] = await this._find(ctx, { query: { email } });
         return accounts.length > 0 ? accounts[0] : null;
       }
     },
@@ -214,7 +214,7 @@ const AuthAccountService = {
       async handler(ctx) {
         const { webId } = ctx.params;
         const resetPasswordToken = await this.generateResetPasswordToken();
-        const account = await ctx.call('auth.account.findByWebId', { webId });
+        const account: Account = await ctx.call('auth.account.findByWebId', { webId });
 
         await this._update(ctx, {
           '@id': account['@id'],

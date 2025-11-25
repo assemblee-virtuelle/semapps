@@ -56,7 +56,6 @@ const ObjectsWatcherMiddleware = (config: MiddlewareConfig = {}): Middleware => 
       const actor: any = await ctx.call('webid.get'); // Get actor based on ctx.meta.dataset
 
       if (actor.outbox) {
-        console.log('outbox post', actor.outbox, activity, recipients);
         return await ctx.call(
           'activitypub.outbox.post',
           {

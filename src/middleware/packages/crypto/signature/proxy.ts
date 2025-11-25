@@ -25,7 +25,7 @@ const ProxyService = {
     await this.broker.call('api.addRoute', {
       route: {
         name: 'proxy-endpoint',
-        path: path.join(basePath, '/:username([^/.][^/]+)/proxy'),
+        path: path.join(basePath, '/:username([^/._][^/]+)/proxy'),
         authorization: true,
         authentication: false,
         aliases: {

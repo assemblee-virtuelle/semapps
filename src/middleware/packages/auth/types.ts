@@ -5,4 +5,5 @@ export interface Account {
   resetPasswordToken?: string;
   email: string;
   webId: string;
+  version?: string;
 }

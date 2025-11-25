@@ -26,7 +26,7 @@ const ApiService = {
   dependencies: ['api', 'ldp'],
   async started() {
     const basePath: string = await this.broker.call('ldp.getBasePath');
-    const apiPath = path.join(basePath, '/:username([^/.][^/]+)', VC_API_PATH);
+    const apiPath = path.join(basePath, '/:username([^/._][^/]+)', VC_API_PATH);
 
     // Credential routes.
     await this.broker.call('api.addRoute', {

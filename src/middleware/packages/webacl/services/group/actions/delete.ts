@@ -2,6 +2,7 @@ import urlJoin from 'url-join';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import { ActionSchema, Errors } from 'moleculer';
 import { removeAgentGroupOrAgentFromAuthorizations } from '../../../utils.ts';
+import { WacPermission } from '../../../types.ts';
 
 const { MoleculerError } = Errors;
 
@@ -24,13 +25,12 @@ export const action = {
 
     if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');
 
-    // @ts-expect-error TS(2345): Argument of type 'TypeFromSchemaParam<{ type: "str... Remove this comment to see the full error message
     if (!groupUri) groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
 
     // TODO: check that the group exists ?
 
     if (webId !== 'system') {
-      const groupRights = await ctx.call('webacl.resource.hasRights', {
+      const groupRights: WacPermission = await ctx.call('webacl.resource.hasRights', {
         resourceUri: groupUri,
         rights: {
           write: true

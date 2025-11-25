@@ -3,6 +3,7 @@ import createSlug from 'speakingurl';
 import urlJoin from 'url-join';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import { ActionSchema, Errors } from 'moleculer';
+import { WacPermissionObject } from '../../../types.ts';
 
 const { MoleculerError } = Errors;
 
@@ -35,7 +36,6 @@ export const action = {
 
     if (!groupUri) {
       groupSlug = createSlug(groupSlug, { lang: 'fr', custom: { '.': '.', '/': '/' } });
-      // @ts-expect-error TS(2345): Argument of type 'TypeFromSchemaParam<{ type: "str... Remove this comment to see the full error message
       groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
     }
 
@@ -43,20 +43,17 @@ export const action = {
       throw new MoleculerError('Group already exists', 400, 'BAD_REQUEST');
     }
 
-    const newRights = {};
+    const newRights: WacPermissionObject = {};
     if (webId === 'anon') {
-      // @ts-expect-error TS(2339): Property 'anon' does not exist on type '{}'.
       newRights.anon = {
         read: true,
         write: true
       };
     } else if (webId === 'system') {
-      // @ts-expect-error TS(2339): Property 'anon' does not exist on type '{}'.
       newRights.anon = {
         read: true
       };
     } else {
-      // @ts-expect-error TS(2339): Property 'user' does not exist on type '{}'.
       newRights.user = {
         uri: webId,
         read: true,

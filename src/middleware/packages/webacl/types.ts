@@ -1,8 +1,8 @@
 export interface WacPermission {
-  read: boolean;
-  write: boolean;
-  append: boolean;
-  control: boolean;
+  read?: boolean;
+  write?: boolean;
+  append?: boolean;
+  control?: boolean;
 }
 
 export interface WacPermissionObject {

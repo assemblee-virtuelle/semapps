@@ -16,7 +16,7 @@ const SparqlEndpointService = {
     await this.broker.call('ontologies.register', voidOntology);
     const basePath: string = await this.broker.call('ldp.getBasePath');
     await this.broker.call('api.addRoute', {
-      route: getRoute(path.join(basePath, '/:username([^/.][^/]+)/sparql')),
+      route: getRoute(path.join(basePath, '/:username([^/._][^/]+)/sparql')),
       toBottom: false
     });
   },

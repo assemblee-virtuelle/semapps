@@ -25,7 +25,7 @@ function getCatchAllRoute(basePath: string) {
 
   return {
     name: 'ldp',
-    path: path.join(basePath, '/:username([^/.][^/]+)/:slugParts*'),
+    path: path.join(basePath, '/:username([^/._][^/]+)/:slugParts*'),
     // Disable the body parsers so that we can parse the body ourselves
     // (Moleculer-web doesn't handle non-JSON bodies, so we must do it)
     bodyParsers: false,
