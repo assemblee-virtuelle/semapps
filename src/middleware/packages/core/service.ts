@@ -36,7 +36,6 @@ const CoreService = {
     signature: {},
     sparqlEndpoint: {},
     typeIndex: {},
-    void: {},
     webacl: {},
     webfinger: {},
     webid: {}

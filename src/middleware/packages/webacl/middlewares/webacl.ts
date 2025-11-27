@@ -1,62 +1,22 @@
 import urlJoin from 'url-join';
-import { defaultContainerOptions, getDatasetFromUri, isWebId } from '@semapps/ldp';
+import { defaultContainerOptions } from '@semapps/ldp';
+import { Middleware } from 'moleculer';
 
 const modifyActions = [
   'ldp.resource.create',
   'ldp.container.create',
   'activitypub.collection.post',
   'activitypub.object.createTombstone',
-  'webid.createWebId',
-  'ldp.remote.store',
   'ldp.remote.delete',
   'ldp.resource.delete'
 ];
 
 const tripleStoreActions = ['triplestore.insert', 'triplestore.query', 'triplestore.update', 'triplestore.dropAll'];
 
-const addRightsToNewUser = async (ctx: any, userUri: any) => {
-  // Manually add the permissions for the user resource now that we have its webId
-  // First delete the default permissions added by the middleware when we called ldp.resource.create
-  await ctx.call(
-    'webacl.resource.deleteAllRights',
-    { resourceUri: userUri },
-    { meta: { webId: 'system', skipObjectsWatcher: true } }
-  );
-
-  // TODO find the permissions to set from the users container
-  // const { newResourcesPermissions } = await ctx.call('ldp.registry.getByUri', { resourceUri: userUri });
-  // const newRights =
-  //   typeof newResourcesPermissions === 'function' ? newResourcesPermissions(userUri) : newResourcesPermissions;
-
-  await ctx.call(
-    'webacl.resource.addRights',
-    {
-      webId: 'system',
-      resourceUri: userUri,
-      newRights: {
-        anon: {
-          read: true
-        },
-        user: {
-          uri: userUri,
-          read: true,
-          write: true,
-          control: true
-        }
-      }
-    },
-    {
-      meta: {
-        skipObjectsWatcher: true
-      }
-    }
-  );
-};
-
 /**
  * Middleware that ensures that requests are conforming ACL records.
  */
-const WebAclMiddleware = ({ baseUrl, graphName = 'http://semapps.org/webacl' }: any) => ({
+const WebAclMiddleware = ({ baseUrl }: { baseUrl: string }): Middleware => ({
   name: 'WebAclMiddleware' as const,
   async started() {
     if (!baseUrl) throw new Error('The baseUrl config is missing for the WebACL middleware');
@@ -185,10 +145,6 @@ const WebAclMiddleware = ({ baseUrl, graphName = 'http://semapps.org/webacl' }: 
             );
             break;
 
-          case 'webid.createWebId':
-            await addRightsToNewUser(ctx, actionReturnValue);
-            break;
-
           case 'activitypub.object.createTombstone':
             // Tombstones should be public
             await ctx.call(
@@ -209,29 +165,6 @@ const WebAclMiddleware = ({ baseUrl, graphName = 'http://semapps.org/webacl' }: 
               }
             );
             break;
-
-          case 'ldp.remote.store': {
-            const resourceUri = ctx.params.resourceUri || ctx.params.resource.id || ctx.params.resource['@id'];
-            // When a remote resource is stored locally, give read permission to the logged user
-            if (isWebId(webId)) {
-              const dataset = getDatasetFromUri(webId);
-              await ctx.call(
-                'webacl.resource.addRights',
-                {
-                  resourceUri,
-                  newRights: {
-                    user: {
-                      uri: webId,
-                      read: true
-                    }
-                  },
-                  webId: 'system'
-                },
-                { meta: { dataset, skipObjectsWatcher: true } }
-              );
-            }
-            break;
-          }
 
           case 'activitypub.collection.post': {
             // If a `permissions` param is passed when creating the collection, delete the permissions added before creation

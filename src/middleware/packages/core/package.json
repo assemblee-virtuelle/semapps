@@ -13,7 +13,6 @@
     "@semapps/solid": "1.2.0",
     "@semapps/sparql-endpoint": "1.2.0",
     "@semapps/triplestore": "1.2.0",
-    "@semapps/void": "1.2.0",
     "@semapps/webacl": "1.2.0",
     "@semapps/webfinger": "1.2.0",
     "@semapps/webid": "1.2.0",

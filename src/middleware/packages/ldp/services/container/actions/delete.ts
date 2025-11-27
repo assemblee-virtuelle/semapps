@@ -28,8 +28,8 @@ const Schema = {
     await ctx.call('triplestore.named-graph.delete', { uri: containerUri });
 
     // Detach the container from parent containers after deletion, otherwise the permissions may fail
-    const parentContainers = await ctx.call('ldp.resource.getContainers', { resourceUri: containerUri });
-    for (const parentContainerUri of parentContainers) {
+    const parentContainersUris: string[] = await ctx.call('ldp.resource.getContainers', { resourceUri: containerUri });
+    for (const parentContainerUri of parentContainersUris) {
       await ctx.call('ldp.container.detach', {
         containerUri: parentContainerUri,
         resourceUri: containerUri,
@@ -43,9 +43,8 @@ const Schema = {
       webId
     };
 
-    // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
     if (!ctx.meta.skipEmitEvent) {
-      ctx.emit('ldp.container.deleted', returnValues, { meta: { webId: null, dataset: null } });
+      ctx.emit('ldp.container.deleted', returnValues);
     }
 
     return returnValues;

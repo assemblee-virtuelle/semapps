@@ -9,7 +9,8 @@ const SolidPreferencesFileSchema = {
   settings: {
     path: '/preferences-file',
     types: ['pim:ConfigurationFile'],
-    permissions: {}
+    permissions: {},
+    typeIndex: 'private'
   },
   dependencies: ['ontologies'],
   async started() {

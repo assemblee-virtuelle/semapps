@@ -21,7 +21,6 @@ export interface CoreServiceSettings extends ServiceSettingSchema {
   ldp: object | boolean;
   signature: object | boolean;
   sparqlEndpoint: object | boolean;
-  void: object | boolean;
   webacl: object | boolean;
   webfinger: object | boolean;
 }
