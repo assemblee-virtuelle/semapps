@@ -6,17 +6,18 @@ import DbService from 'moleculer-db';
 import { TripleStoreAdapter } from '@semapps/triplestore';
 import crypto from 'crypto';
 import { ServiceSchema } from 'moleculer';
+import { Account } from '../types.ts';
 
 // Taken from https://stackoverflow.com/a/9204568/7900695
 const emailRegexp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const AuthAccountSchema = {
+const AuthAccountService = {
   name: 'auth.account' as const,
   mixins: [DbService],
   adapter: new TripleStoreAdapter({ type: 'AuthAccount', dataset: 'settings' }),
   settings: {
     idField: '@id',
-    reservedUsernames: ['relay'],
+    reservedUsernames: [],
     minPasswordLength: 1,
     minUsernameLength: 1
   },
@@ -24,7 +25,7 @@ const AuthAccountSchema = {
   actions: {
     create: {
       async handler(ctx) {
-        let { uuid, username, password, email, webId, ...rest } = ctx.params;
+        let { uuid, username, password, email } = ctx.params;
 
         // FORMAT AND VERIFY PASSWORD
 
@@ -81,14 +82,19 @@ const AuthAccountSchema = {
           throw new Error('You must provide at least a username or an email address');
         }
 
-        return await this._create(ctx, {
-          ...rest,
+        const { webId }: { webId: string } = await ctx.call('solid-storage.create', { username });
+
+        const returnValues = await this._create(ctx, {
           uuid,
           username,
           email,
           hashedPassword: password,
           webId
         });
+
+        ctx.emit('auth.account.created', { webId, username });
+
+        return returnValues;
       }
     },
 
@@ -110,7 +116,7 @@ const AuthAccountSchema = {
         // If the username includes a @, assume it is an email
         const query = username.includes('@') ? { email: username } : { username };
 
-        const accounts = await this._find(ctx, { query });
+        const accounts: Account[] = await this._find(ctx, { query });
 
         if (accounts.length > 0) {
           const passwordMatch = await this.comparePassword(password, accounts[0].hashedPassword);
@@ -144,7 +150,7 @@ const AuthAccountSchema = {
       /** Overwrite find method, to filter accounts with tombstone. */
       async handler(ctx) {
         /** @type {object[]} */
-        const accounts = await this._find(ctx, ctx.params);
+        const accounts: Account[] = await this._find(ctx, ctx.params);
         return accounts.filter((account: any) => !account.deletedAt);
       }
     },
@@ -152,7 +158,7 @@ const AuthAccountSchema = {
     findByUsername: {
       async handler(ctx) {
         const { username } = ctx.params;
-        const accounts = await this._find(ctx, { query: { username } });
+        const accounts: Account[] = await this._find(ctx, { query: { username } });
         return accounts.length > 0 ? accounts[0] : null;
       }
     },
@@ -160,7 +166,7 @@ const AuthAccountSchema = {
     findByWebId: {
       async handler(ctx) {
         const { webId } = ctx.params;
-        const accounts = await this._find(ctx, { query: { webId } });
+        const accounts: Account[] = await this._find(ctx, { query: { webId } });
         return accounts.length > 0 ? accounts[0] : null;
       }
     },
@@ -168,7 +174,7 @@ const AuthAccountSchema = {
     findByEmail: {
       async handler(ctx) {
         const { email } = ctx.params;
-        const accounts = await this._find(ctx, { query: { email } });
+        const accounts: Account[] = await this._find(ctx, { query: { email } });
         return accounts.length > 0 ? accounts[0] : null;
       }
     },
@@ -177,7 +183,7 @@ const AuthAccountSchema = {
       async handler(ctx) {
         const { webId, password } = ctx.params;
         const hashedPassword = await this.hashPassword(password);
-        const account = await ctx.call('auth.account.findByWebId', { webId });
+        const account: Account = await ctx.call('auth.account.findByWebId', { webId });
 
         return await this._update(ctx, {
           '@id': account['@id'],
@@ -190,7 +196,7 @@ const AuthAccountSchema = {
       async handler(ctx) {
         const { webId, token, password } = ctx.params;
         const hashedPassword = await this.hashPassword(password);
-        const account = await ctx.call('auth.account.findByWebId', { webId });
+        const account: Account = await ctx.call('auth.account.findByWebId', { webId });
 
         if (account.resetPasswordToken !== token) {
           throw new Error('auth.password.invalid_reset_token');
@@ -208,7 +214,7 @@ const AuthAccountSchema = {
       async handler(ctx) {
         const { webId } = ctx.params;
         const resetPasswordToken = await this.generateResetPasswordToken();
-        const account = await ctx.call('auth.account.findByWebId', { webId });
+        const account: Account = await ctx.call('auth.account.findByWebId', { webId });
 
         await this._update(ctx, {
           '@id': account['@id'],
@@ -222,7 +228,7 @@ const AuthAccountSchema = {
     findDatasetByWebId: {
       async handler(ctx) {
         const webId = ctx.params.webId || ctx.meta.webId;
-        const account = await ctx.call('auth.account.findByWebId', { webId });
+        const account: Account = await ctx.call('auth.account.findByWebId', { webId });
         return account?.username;
       }
     },
@@ -231,11 +237,10 @@ const AuthAccountSchema = {
       async handler(ctx) {
         const { webId } = ctx.meta;
 
-        const account = await ctx.call('auth.account.findByWebId', { webId });
+        const account: Account = await ctx.call('auth.account.findByWebId', { webId });
 
         return {
-          email: account.email,
-          preferredLocale: account.preferredLocale
+          email: account.email
         };
       }
     },
@@ -243,9 +248,8 @@ const AuthAccountSchema = {
     updateAccountSettings: {
       async handler(ctx) {
         const { currentPassword, email, newPassword } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const { webId } = ctx.meta;
-        const account = await ctx.call('auth.account.findByWebId', { webId });
+        const account: Account = await ctx.call('auth.account.findByWebId', { webId });
         const passwordMatch = await this.comparePassword(currentPassword, account.hashedPassword);
         let params = {};
 
@@ -277,7 +281,7 @@ const AuthAccountSchema = {
     deleteByWebId: {
       async handler(ctx) {
         const { webId } = ctx.params;
-        const account = await ctx.call('auth.account.findByWebId', { webId });
+        const account: Account = await ctx.call('auth.account.findByWebId', { webId });
 
         if (account) {
           await this._remove(ctx, { id: account['@id'] });
@@ -292,7 +296,7 @@ const AuthAccountSchema = {
       // Remove email and password from an account, set deletedAt timestamp.
       async handler(ctx) {
         const { webId } = ctx.params;
-        const account = await ctx.call('auth.account.findByWebId', { webId });
+        const account: Account = await ctx.call('auth.account.findByWebId', { webId });
 
         return await this._update(ctx, {
           // Set all values to undefined...
@@ -368,12 +372,12 @@ const AuthAccountSchema = {
   }
 } satisfies ServiceSchema;
 
-export default AuthAccountSchema;
+export default AuthAccountService;
 
 declare global {
   export namespace Moleculer {
     export interface AllServices {
-      [AuthAccountSchema.name]: typeof AuthAccountSchema;
+      [AuthAccountService.name]: typeof AuthAccountService;
     }
   }
 }

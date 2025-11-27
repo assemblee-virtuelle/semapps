@@ -1,4 +1,5 @@
 import { sanitizeSparqlUri } from '@semapps/triplestore';
+import { getDatasetFromUri } from '@semapps/ldp';
 import { ActionSchema, Errors } from 'moleculer';
 import { getValueFromDataType } from '../../../../../utils.ts';
 
@@ -286,7 +287,7 @@ function formatResponse(
   };
 }
 
-const Schema = {
+const GetAction = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -309,8 +310,7 @@ const Schema = {
     await ctx.call('permissions.check', { uri: collectionUri, type: 'resource', mode: 'acl:Read', webId });
 
     // Get dataset here since we can't call the method from internal functions
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-    const dataset = this.getCollectionDataset(collectionUri);
+    const dataset = getDatasetFromUri(collectionUri);
 
     sanitizeSparqlUri(collectionUri);
     sanitizeSparqlUri(beforeEq);
@@ -362,4 +362,4 @@ const Schema = {
   }
 } satisfies ActionSchema;
 
-export default Schema;
+export default GetAction;

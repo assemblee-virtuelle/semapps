@@ -45,6 +45,8 @@ const isURL = (value: any) => (typeof value === 'string' || value instanceof Str
 const isURI = (value: any) =>
   (typeof value === 'string' || value instanceof String) && (value.startsWith('http') || value.startsWith('urn:'));
 
+const isWebId = (value: any) => value !== 'system' && value !== 'anon' && isURL(value);
+
 const buildFiltersQuery = (filters: any) => {
   let query = '';
   if (filters) {
@@ -72,9 +74,6 @@ const getSlugFromUri = (uri: any) => uri.match(new RegExp(`.*/(.*)`))[1];
 /** @deprecated Use the ldp.resource.getContainers action instead */
 const getContainerFromUri = (uri: any) => uri.match(new RegExp(`(.*)/.*`))[1];
 
-const getParentContainerUri = (uri: any) => uri.match(new RegExp(`(.*)/.*`))[1];
-const getParentContainerPath = (path: any) => path.match(new RegExp(`(.*)/.*`))[1];
-
 const getPathFromUri = (uri: any) => {
   try {
     const urlObject = new URL(uri);
@@ -84,8 +83,8 @@ const getPathFromUri = (uri: any) => {
   }
 };
 
-// Transforms "http://localhost:3000/alice/data" to "alice"
-const getDatasetFromUri = (uri: any) => {
+// Transforms "http://localhost:3000/alice/{uuid}" to "alice"
+const getDatasetFromUri = (uri: string): string | undefined => {
   const path = getPathFromUri(uri);
   if (path) {
     const parts = path.split('/');
@@ -95,18 +94,11 @@ const getDatasetFromUri = (uri: any) => {
   }
 };
 
-// Transforms "http://localhost:3000/alice/data" to "http://localhost:3000/alice"
-const getWebIdFromUri = (uri: any) => {
-  const path = getPathFromUri(uri);
-  if (path) {
-    const parts = path.split('/');
-    if (parts.length > 1) {
-      const urlObject = new URL(uri);
-      return `${urlObject.origin}/${parts[1]}`;
-    }
-  } else {
-    throw new Error(`${uri} is not a valid URL`);
-  }
+// Transforms "http://localhost:3000/alice/{uuid}" to "http://localhost:3000/alice"
+const getBaseUrlFromUri = (uri: string): string => {
+  const { origin } = new URL(uri);
+  const dataset = getDatasetFromUri(uri);
+  return urlJoin(origin, dataset!);
 };
 
 const getId = (resource: any) => resource.id || resource['@id'];
@@ -176,13 +168,12 @@ export {
   buildFiltersQuery,
   isURL,
   isURI,
+  isWebId,
   isObject,
   getSlugFromUri,
   getContainerFromUri,
-  getParentContainerUri,
-  getParentContainerPath,
   getDatasetFromUri,
-  getWebIdFromUri,
+  getBaseUrlFromUri,
   getId,
   getType,
   hasType,

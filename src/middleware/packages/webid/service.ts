@@ -1,18 +1,20 @@
-import urlJoin from 'url-join';
 import { foaf, schema } from '@semapps/ontologies';
-import { ControlledContainerMixin, DereferenceMixin, getDatasetFromUri } from '@semapps/ldp';
+import { ControlledResourceMixin, DereferenceMixin, waitForResource } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
+import getRedirectRoute from './routes/getRedirectRoute.ts';
 
 const WebIdService = {
   name: 'webid' as const,
-  mixins: [ControlledContainerMixin, DereferenceMixin],
+  mixins: [ControlledResourceMixin, DereferenceMixin],
   settings: {
-    baseUrl: null,
-    podProvider: false,
-    // ControlledContainerMixin
-    path: '/foaf/person',
-    acceptedTypes: ['http://xmlns.com/foaf/0.1/Person'],
-    podsContainer: false,
+    path: '/webid',
+    types: ['http://xmlns.com/foaf/0.1/Agent'],
+    permissions: {
+      anon: {
+        read: true
+      }
+    },
+    typeIndex: 'public',
     // DereferenceMixin
     dereferencePlan: [
       {
@@ -21,93 +23,34 @@ const WebIdService = {
       { property: 'assertionMethod' }
     ]
   },
-  dependencies: ['ldp.resource', 'ontologies'],
-  async created() {
-    if (!this.settings.baseUrl) throw new Error('The baseUrl setting is required for webId service.');
-  },
+  dependencies: ['ontologies', 'api', 'ldp'],
   async started() {
     await this.broker.call('ontologies.register', foaf);
     await this.broker.call('ontologies.register', schema);
+
+    const basePath: string = await this.broker.call('ldp.getBasePath');
+
+    await this.broker.call('api.addRoute', { route: getRedirectRoute(basePath) });
   },
   actions: {
-    get: {
-      handler(ctx) {
-        // Always get WebID as system and on the correct dataset, since they are public
-        return ctx.call(
-          'ldp.resource.get',
-          {
-            ...ctx.params,
-            webId: 'system'
-          },
-          {
-            meta: {
-              dataset: this.settings.podProvider ? getDatasetFromUri(ctx.params.resourceUri) : undefined
-            }
-          }
-        );
+    redirectToWebId: {
+      async handler(ctx) {
+        const webId = await ctx.call('webid.getUri');
+        ctx.meta.$statusCode = 301;
+        ctx.meta.$location = webId;
       }
     },
-
-    createWebId: {
-      /**
-       * This should only be called after the user has been authenticated
-       */
+    awaitCreateComplete: {
       async handler(ctx) {
-        let { email, nick, name, familyName, homepage, ...rest } = ctx.params;
+        const { additionalKeys = [], delayMs = 1000, maxTries = 20 } = ctx.params;
+        const keysToCheck = ['publicKey', ...additionalKeys];
 
-        if (!nick && email) {
-          nick = email.split('@')[0].toLowerCase();
-        }
-
-        let webId;
-
-        const resource = {
-          '@type': 'foaf:Person',
-          'foaf:nick': nick,
-          'foaf:email': email,
-          'foaf:name': name,
-          'foaf:familyName': familyName,
-          'foaf:homepage': homepage,
-          ...rest
-        };
-
-        if (this.settings.podProvider) {
-          // In Pod provider config, there is no LDP container for the webId, so we must create it directly
-          webId = urlJoin(this.settings.baseUrl, nick);
-          await this.actions.create(
-            {
-              resource: {
-                '@id': webId,
-                ...resource
-              },
-              resourceUri: webId,
-              webId: 'system'
-            },
-            { parentCtx: ctx }
-          );
-        } else {
-          if (!this.settings.path) throw new Error('The path setting is required');
-          webId = await this.actions.post(
-            {
-              resource,
-              slug: nick,
-              webId: 'system'
-            },
-            { parentCtx: ctx }
-          );
-        }
-
-        const webIdData = await this.actions.get(
-          {
-            resourceUri: webId,
-            webId: 'system'
-          },
-          { parentCtx: ctx }
+        return await waitForResource(
+          delayMs,
+          keysToCheck,
+          maxTries,
+          async () => await this.actions.get({}, { parentCtx: ctx, meta: { $cache: false } })
         );
-
-        ctx.emit('webid.created', webIdData, { meta: { webId: null, dataset: null } });
-
-        return webId;
       }
     }
   }

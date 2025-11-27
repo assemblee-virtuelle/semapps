@@ -1,10 +1,11 @@
 import fetch from 'node-fetch';
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
+import { Account } from '@semapps/auth';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { getType, arrayOf } from '@semapps/ldp';
+import { getType, arrayOf, getDatasetFromUri, isWebId } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
-import { collectionPermissionsWithAnonRead, getSlugFromUri } from '../../../utils.ts';
+import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
 import { ACTOR_TYPES } from '../../../constants.ts';
 import AwaitActivityMixin from '../../../mixins/await-activity.ts';
 
@@ -24,8 +25,7 @@ const OutboxService = {
   name: 'activitypub.outbox' as const,
   mixins: [AwaitActivityMixin],
   settings: {
-    baseUri: null,
-    podProvider: false,
+    baseUrl: null,
     collectionOptions: {
       path: '/outbox',
       attachToTypes: Object.values(ACTOR_TYPES),
@@ -35,10 +35,13 @@ const OutboxService = {
       dereferenceItems: true,
       sortPredicate: 'as:published',
       sortOrder: 'semapps:DescOrder',
-      permissions: collectionPermissionsWithAnonRead
+      permissions: collectionPermissionsWithAnonRead,
+      controlledActions: {
+        post: 'activitypub.api.outbox'
+      }
     }
   },
-  dependencies: ['activitypub.object', 'activitypub.collection', 'activitypub.collections-registry'],
+  dependencies: ['activitypub.collections-registry'],
   async started() {
     await this.broker.call('activitypub.collections-registry.register', this.settings.collectionOptions);
   },
@@ -46,7 +49,15 @@ const OutboxService = {
     post: {
       async handler(ctx) {
         let { collectionUri, username, transient, ...activity } = ctx.params;
+        const webId = ctx.params.webId || ctx.meta.webId || 'anon';
+
         let activityUri;
+
+        // If the collection URI is not provided, find it from the webId (may happen if this action is called directly)
+        if (!collectionUri) {
+          if (!isWebId(webId)) throw Error(`If containerUri is not provided, a webId is required. Provided: ${webId}`);
+          collectionUri = await this.actions.getUri({ objectUri: webId }, { parentCtx: ctx });
+        }
 
         const collectionExists = await ctx.call('activitypub.collection.exist', { resourceUri: collectionUri });
         if (!collectionExists) {
@@ -66,9 +77,8 @@ const OutboxService = {
           );
         }
 
-        if (this.settings.podProvider) {
-          ctx.meta.dataset = getSlugFromUri(actorUri);
-        }
+        // TODO Handle this with middleware
+        ctx.meta.dataset = getDatasetFromUri(collectionUri);
 
         if (!activity['@context']) {
           activity['@context'] = await ctx.call('jsonld.context.get');
@@ -77,7 +87,6 @@ const OutboxService = {
         // Wrap object in Create activity, if necessary
         activity = await ctx.call('activitypub.object.wrap', { activity });
 
-        // @ts-expect-error TS(2339): Property 'doNotProcessObject' does not exist on ty... Remove this comment to see the full error message
         if (!ctx.meta.doNotProcessObject && transient !== true) {
           // Process object create, update or delete
           // and return an activity with the object ID
@@ -139,7 +148,7 @@ const OutboxService = {
 
         const localRecipients = [];
         const remoteRecipients = [];
-        const recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
+        const recipients: string[] = await ctx.call('activitypub.activity.getRecipients', { activity });
 
         for (const recipientUri of recipients) {
           if (this.isLocalActor(recipientUri)) {
@@ -184,7 +193,7 @@ const OutboxService = {
   },
   methods: {
     isLocalActor(uri) {
-      return uri.startsWith(this.settings.baseUri);
+      return uri.startsWith(this.settings.baseUrl);
     },
     // TODO put this in the activitypub.inbox service
     async localPost(recipients, activityToPost) {
@@ -193,21 +202,12 @@ const OutboxService = {
       const success = [];
       const failures = [];
 
-      try {
-        await this.broker.call('activitypub.side-effects.processInbox', { activity: activityToPost, recipients });
-      } catch (e) {
-        console.error(e);
-        // If some processors failed, log error message but don't stop
-        // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
-        this.logger.error(e.message);
-      }
-
       for (const recipientUri of recipients) {
         try {
-          const account = await this.broker.call('auth.account.findByWebId', { webId: recipientUri });
+          const account: Account = await this.broker.call('auth.account.findByWebId', { webId: recipientUri });
           if (!account) throw new Error(`No account found with webId ${recipientUri}`);
 
-          const dataset = this.settings.podProvider ? account.username : undefined;
+          const dataset = account.username;
 
           const recipientInbox = await this.broker.call(
             'activitypub.actor.getCollectionUri',
@@ -230,36 +230,32 @@ const OutboxService = {
               { meta: { dataset } }
             );
 
-            if (this.settings.podProvider) {
-              // Store the activity in the dataset of the recipient
-              await this.broker.call('ldp.remote.store', {
+            // Store the activity in the dataset of the recipient
+            await this.broker.call(
+              'ldp.remote.store',
+              {
                 resource: activity,
-                keepInSync: false, // Activities are immutable
-                webId: recipientUri,
-                dataset
-              });
+                keepInSync: false // Activities are immutable
+              },
+              { meta: { dataset } }
+            );
 
-              await this.broker.call(
-                'activitypub.activity.attach',
-                {
-                  resourceUri: activity.id,
-                  webId: recipientUri
-                },
-                { meta: { dataset } }
-              );
-            }
+            await this.broker.call(
+              'activitypub.activity.attach',
+              {
+                resourceUri: activity.id,
+                webId: recipientUri
+              },
+              { meta: { dataset } }
+            );
           } else {
             // If the activity is transient, pass the full object
             // This will be used in particular for Solid notifications
             // which will send the full activity to the listeners
-            this.broker.emit(
-              'activitypub.collection.added',
-              {
-                collectionUri: recipientInbox,
-                item: activity
-              },
-              { meta: { webId: null, dataset: null } }
-            );
+            this.broker.emit('activitypub.collection.added', {
+              collectionUri: recipientInbox,
+              item: activity
+            });
           }
 
           success.push(recipientUri);
@@ -270,6 +266,15 @@ const OutboxService = {
         }
       }
 
+      try {
+        await this.broker.call('activitypub.side-effects.processInbox', { activity: activityToPost, recipients });
+      } catch (e) {
+        console.error(e);
+        // If some processors failed, log error message but don't stop
+        // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
+        this.logger.error(e.message);
+      }
+
       this.broker.emit('activitypub.inbox.received', { activity: activityToPost, recipients, local: true });
 
       return { success, failures };
@@ -278,19 +283,23 @@ const OutboxService = {
   queues: {
     remotePost: {
       name: '*',
-      // @ts-expect-error TS(7023): 'process' implicitly has return type 'any' because... Remove this comment to see the full error message
       async process(job: any) {
         const { activity, recipientUri } = job.data;
+
+        const dataset = getDatasetFromUri(activity.actor);
 
         // During tests, do not do post to remote servers
         if (process.env.NODE_ENV === 'test' && !recipientUri.startsWith('http://localhost')) return;
 
-        // @ts-expect-error TS(7022): 'recipientInbox' implicitly has type 'any' because... Remove this comment to see the full error message
-        const recipientInbox = await this.broker.call('activitypub.actor.getCollectionUri', {
-          actorUri: recipientUri,
-          predicate: 'inbox',
-          webId: 'system'
-        });
+        const recipientInbox = await this.broker.call(
+          'activitypub.actor.getCollectionUri',
+          {
+            actorUri: recipientUri,
+            predicate: 'inbox',
+            webId: 'system'
+          },
+          { meta: { dataset } }
+        );
 
         if (!recipientInbox) {
           throw new Error(`Error when posting activity to remote actor ${recipientUri}: no inbox attached`);
@@ -298,15 +307,17 @@ const OutboxService = {
 
         const body = JSON.stringify(activity);
 
-        // @ts-expect-error TS(7022): 'signatureHeaders' implicitly has type 'any' becau... Remove this comment to see the full error message
-        const signatureHeaders = await this.broker.call('signature.generateSignatureHeaders', {
-          url: recipientInbox,
-          method: 'POST',
-          body,
-          actorUri: activity.actor
-        });
+        const signatureHeaders: any = await this.broker.call(
+          'signature.generateSignatureHeaders',
+          {
+            url: recipientInbox,
+            method: 'POST',
+            body,
+            actorUri: activity.actor
+          },
+          { meta: { dataset } }
+        );
 
-        // @ts-expect-error TS(7022): 'response' implicitly has type 'any' because it do... Remove this comment to see the full error message
         const response = await fetch(recipientInbox, {
           method: 'POST',
           headers: {

@@ -1,7 +1,6 @@
 import { ActionSchema } from 'moleculer';
 
 export const api = async function api(ctx: any) {
-  if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;
   return await ctx.call('webacl.group.getGroups', {});
 };
 
@@ -11,7 +10,6 @@ export const action = {
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     let groups;

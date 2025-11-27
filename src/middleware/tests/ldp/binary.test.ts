@@ -1,20 +1,24 @@
 import fetch from 'node-fetch';
+import waitForExpect from 'wait-for-expect';
 import fs from 'fs';
+import { ServiceBroker } from 'moleculer';
 import path, { join as pathJoin } from 'path';
-import urlJoin from 'url-join';
 import { getSlugFromUri } from '@semapps/ldp';
 import { fileURLToPath } from 'url';
-import { fetchServer } from '../utils.ts';
+import { fetchServer, createAccount } from '../utils.ts';
 import initialize from './initialize.ts';
 import * as CONFIG from '../config.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 jest.setTimeout(20000);
-let broker: any;
+let broker: ServiceBroker;
+let alice: any;
 
 beforeAll(async () => {
-  broker = await initialize();
+  broker = await initialize(false);
+  await broker.start();
+  alice = await createAccount(broker, 'alice');
 });
 
 afterAll(async () => {
@@ -22,40 +26,43 @@ afterAll(async () => {
 });
 
 describe('Binary handling of LDP server', () => {
-  let fileUri: any;
-  let filePath: any;
-  let fileName: any;
+  let fileUri: string | null;
+  let filePath: string | null;
+  let fileName: string | null;
+  let containerUri: string;
 
   test('Post image to container', async () => {
+    // @ts-expect-error This expression is not callable
+    await waitForExpect(async () => {
+      containerUri = await alice.call('ldp.registry.getUri', { type: 'semapps:File', isContainer: true });
+      expect(containerUri).not.toBeUndefined();
+    });
+
     const readStream = fs.createReadStream(pathJoin(__dirname, 'av-icon.png'));
 
-    // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-    const { headers } = await fetchServer(urlJoin(CONFIG.HOME_URL, 'files'), {
+    const { headers } = await fetchServer(containerUri, {
       method: 'POST',
       body: readStream,
-      headers: new fetch.Headers({
-        'Content-Type': 'image/png'
-      })
+      headers: new fetch.Headers({ 'Content-Type': 'image/png' })
     });
 
     fileUri = headers.get('Location');
     expect(fileUri).not.toBeNull();
 
-    filePath = fileUri.replace(CONFIG.HOME_URL, '');
+    filePath = fileUri!.replace(CONFIG.HOME_URL!, '');
     fileName = getSlugFromUri(fileUri);
 
     expect(fs.existsSync(pathJoin(__dirname, '../uploads', filePath))).toBeTruthy();
   });
 
   test('Get container', async () => {
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await expect(fetchServer(urlJoin(CONFIG.HOME_URL, 'files'))).resolves.toMatchObject({
+    await expect(fetchServer(containerUri)).resolves.toMatchObject({
       json: {
-        '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
+        type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
         'ldp:contains': [
           {
-            '@id': fileUri,
-            '@type': 'semapps:File',
+            id: fileUri,
+            type: 'semapps:File',
             'semapps:fileName': fileName,
             'semapps:localPath': `uploads/${filePath}`,
             'semapps:mimeType': 'image/png'
@@ -67,9 +74,7 @@ describe('Binary handling of LDP server', () => {
 
   test('Get image as binary (via API)', async () => {
     const { headers, body } = await fetchServer(fileUri, {
-      headers: new fetch.Headers({
-        Accept: '*/*'
-      })
+      headers: new fetch.Headers({ Accept: '*/*' })
     });
 
     expect(headers.get('Content-Length')).toBe('3181');
@@ -80,9 +85,9 @@ describe('Binary handling of LDP server', () => {
   });
 
   test('Get image as resource (via Moleculer action)', async () => {
-    await expect(broker.call('ldp.resource.get', { resourceUri: fileUri })).resolves.toMatchObject({
-      '@id': fileUri,
-      '@type': 'semapps:File',
+    await expect(alice.call('ldp.resource.get', { resourceUri: fileUri })).resolves.toMatchObject({
+      id: fileUri,
+      type: 'semapps:File',
       'semapps:fileName': fileName,
       'semapps:localPath': `uploads/${filePath}`,
       'semapps:mimeType': 'image/png'
@@ -100,15 +105,11 @@ describe('Binary handling of LDP server', () => {
 
     expect(fs.existsSync(pathJoin(__dirname, '../uploads/files/av-icon.png'))).toBeFalsy();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await expect(fetchServer(fileUri)).resolves.toMatchObject({
-      status: 404
-    });
+    await expect(fetchServer(fileUri)).resolves.toMatchObject({ status: 404 });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await expect(fetchServer(urlJoin(CONFIG.HOME_URL, 'files'))).resolves.toMatchObject({
+    await expect(fetchServer(containerUri)).resolves.toMatchObject({
       json: {
-        '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
+        type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
         'ldp:contains': []
       }
     });

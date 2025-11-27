@@ -14,7 +14,6 @@ const Schema = {
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
     if (!(await this.actions.has(ctx.params, { parentCtx: ctx }))) {
       throw new MoleculerError('Forbidden', 403, 'ACCESS_DENIED');
     }

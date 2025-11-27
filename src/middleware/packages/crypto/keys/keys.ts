@@ -7,12 +7,8 @@ import * as Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
 import { ServiceSchema } from 'moleculer';
 import { arrayOf } from '../utils/utils.ts';
 import { KEY_TYPES } from '../constants.ts';
-import KeyContainerService from './key-container.ts';
-import PublicKeyContainerService from './public-key-container.ts';
-import MigrationService from './migration.ts';
-import { KeyPairService } from '../signature/index.ts';
-
-/** @type {import('@digitalbazaar/ed25519-multikey')} */
+import PrivateKeyContainerService from './private-keys-container.ts';
+import PublicKeyContainerService from './public-keys-container.ts';
 
 /**
  * Service for managing keys (creating, storing, retrieving).
@@ -24,55 +20,24 @@ import { KeyPairService } from '../signature/index.ts';
  * that format by ActivityPub. Therefore, we use two different key store formats here...
  *
  * If key access times become an issue some time, we can create custom queries.
- * @type {import('moleculer').ServiceSchema}
  */
 const KeysService = {
   name: 'keys' as const,
-  settings: {
-    podProvider: false,
-    actorsKeyPairsDir: null
-  },
-  dependencies: ['ontologies', 'keys.container', 'keys.public-container', 'signature.keypair', 'keys.migration'],
-  async created() {
+  dependencies: ['ontologies', 'private-keys-container', 'public-keys-container'],
+  created() {
     // Start keys-container and public-keys-container services.
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "keys.containe... Remove this comment to see the full error message
     this.broker.createService({
-      mixins: [KeyContainerService],
-      settings: {
-        podProvider: this.settings.podProvider
-      }
+      mixins: [PrivateKeyContainerService]
     });
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "keys.public-c... Remove this comment to see the full error message
     this.broker.createService({
-      mixins: [PublicKeyContainerService],
-      settings: {
-        podProvider: this.settings.podProvider
-      }
-    });
-    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "keys.migratio... Remove this comment to see the full error message
-    this.broker.createService({
-      mixins: [MigrationService],
-      settings: {
-        podProvider: this.settings.podProvider,
-        actorsKeyPairsDir: this.settings.actorsKeyPairsDir
-      }
-    });
-
-    // Legacy service.
-    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "signature.key... Remove this comment to see the full error message
-    this.broker.createService({
-      mixins: [KeyPairService],
-      settings: {
-        actorsKeyPairsDir: this.settings.actorsKeyPairsDir
-      }
+      mixins: [PublicKeyContainerService]
     });
   },
   async started() {
     await this.waitForServices('ontologies');
     this.broker.call('ontologies.register', sec);
-
-    await this.waitForServices('keys.migration');
-    this.isMigrated = await this.broker.call('keys.migration.isMigrated');
   },
   actions: {
     /**
@@ -89,7 +54,7 @@ const KeysService = {
         const webId = ctx.params.webId || ctx.meta.webId;
 
         // Get the key container, to search by type.
-        const container = await ctx.call('keys.container.list', { webId });
+        const container: any = await ctx.call('private-keys-container.list', { webId });
 
         // Because edd2519 multikeys are allowed to have one key only, we filter like that.
         // TODO: We only support those keys anyways. If we support other ones in the future,
@@ -120,7 +85,7 @@ const KeysService = {
       },
       async handler(ctx) {
         const { keyType, webId } = ctx.params;
-        const webIdDoc = await ctx.call('webid.get', { resourceUri: webId, webId: 'system' });
+        const webIdDoc: any = await ctx.call('webid.get', { resourceUri: webId, webId: 'system' });
 
         // RSA keys are stored in `publicKey` field, everything else in `assertionMethod`
         const publicKeys =
@@ -141,7 +106,7 @@ const KeysService = {
         return await Promise.all(
           publicKeys.map(async key => {
             const publicKeyId = key.id || key['@id'];
-            return await ctx.call('keys.container.get', {
+            return await ctx.call('private-keys-container.get', {
               resourceUri: await this.actions.findPrivateKeyUri({ publicKeyUri: publicKeyId }, { parentCtx: ctx }),
               webId
             });
@@ -171,7 +136,7 @@ const KeysService = {
         // Note: Key purposes are not regarded, as they are currently not used.
         const keyObject =
           ctx.params.keyObject || keyId
-            ? await ctx.call('keys.container.get', { resourceUri: keyId, webId })
+            ? await ctx.call('private-keys-container.get', { resourceUri: keyId, webId })
             : (await ctx.call('keys.getOrCreateWebIdKeys', { webId, keyType }))[0];
 
         // We need the key object to have the public key's id, so it is resolvable.
@@ -213,10 +178,7 @@ const KeysService = {
           owner: webId,
           controller: webId
         };
-        const keyUri = await ctx.call('keys.container.post', {
-          webId,
-          resource: keyObject
-        });
+        const keyUri = await ctx.call('private-keys-container.post', { resource: keyObject });
         keyObject.id = keyUri;
 
         if (publishKey || attachToWebId) {
@@ -349,7 +311,7 @@ const KeysService = {
           ? keyObject['rdfs:seeAlso']
           : await this.actions.publishPublicKeyLocally({ keyObject, webId }, { parentCtx: ctx });
 
-        const webIdDocument = await ctx.call('webid.get', {
+        const webIdDocument: any = await ctx.call('webid.get', {
           resourceUri: webId,
           webId: webId
         });
@@ -431,9 +393,9 @@ const KeysService = {
         const publicKeyObject = await this.actions.getPublicKeyObject({ keyObject }, { parentCtx: ctx });
 
         // Then, store it in the `/public-key` container.
-        const publicKeyUri = await ctx.call('keys.public-container.post', {
+        const publicKeyUri: string = await ctx.call('public-keys-container.post', {
           resource: publicKeyObject,
-          webId: webId
+          webId
         });
 
         // Then, add a `rdfs:seeAlso` reference in the `/key` container.
@@ -466,10 +428,10 @@ const KeysService = {
         const webId = ctx.params.webId || ctx.meta.webId;
         const keyObject = ctx.params.keyObject || (await ctx.call('ldp.resource.get', { resourceUri, webId }));
 
-        await ctx.call('keys.container.delete', { resourceUri, webId });
+        await ctx.call('private-keys-container.delete', { resourceUri, webId });
         // Delete corresponding public key in the `public-key` container, if present.
         if (keyObject['rdfs:seeAlso']) {
-          // Don't call `keys.public-container.delete`
+          // Don't call `public-keys-container.delete`
           // because that will try to delete the private key reference (which we deleted already).
           await ctx.call('ldp.resource.delete', { resourceUri: keyObject['rdfs:seeAlso'], webId });
         }
@@ -488,7 +450,7 @@ const KeysService = {
       },
       async handler(ctx) {
         const { webId } = ctx.params;
-        const keys = await ctx.call('keys.container.list', { webId });
+        const keys: any = await ctx.call('private-keys-container.list', { webId });
         for (const key of keys['ldp:contains']) {
           await ctx.call('keys.delete', { resourceUri: key.id, webId });
         }
@@ -598,7 +560,7 @@ const KeysService = {
       async handler(ctx) {
         const { publicKeyUri } = ctx.params;
 
-        const queryResult = await ctx.call('triplestore.query', {
+        const queryResult: any = await ctx.call('triplestore.query', {
           query: `
             SELECT ?privateKey 
             WHERE {
@@ -614,52 +576,16 @@ const KeysService = {
       }
     }
   },
-  methods: {},
-  hooks: {
-    before: {
-      '*': function checkMigration(ctx) {
-        if (!this.isMigrated && !ctx.meta.skipMigrationCheck) {
-          throw new Error(
-            'The keys were not migrated to db storage yet. Please run `keys.migration.migrateKeysToDb` and use the deprecated `signature.keypair` service for now.'
-          );
-        }
-      }
-    }
-  },
   events: {
-    'keys.migration.migrated': {
-      async handler() {
-        this.isMigrated = true;
-      }
-    },
-
-    'auth.registered': {
-      async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
+    'auth.account.created': {
+      async handler(ctx: any) {
         const { webId } = ctx.params;
 
-        if (!this.isMigrated) {
-          // Key creation will be handled by legacy service.
-          return;
-        }
-
-        // Wait for the key containers to be created.
-        const keyContainerUri = await ctx.call('keys.container.getContainerUri', { webId }, { parentCtx: ctx });
-        const publicKeyContainerUri = await ctx.call(
-          'keys.public-container.getContainerUri',
-          { webId },
-          { parentCtx: ctx }
-        );
-        await ctx.call(
-          'keys.container.waitForContainerCreation',
-          { containerUri: keyContainerUri },
-          { parentCtx: ctx }
-        );
-        await ctx.call(
-          'keys.container.waitForContainerCreation',
-          { containerUri: publicKeyContainerUri },
-          { parentCtx: ctx }
-        );
+        // Wait for the keys containers to be created.
+        const privateKeysContainerUri = await ctx.call('private-keys-container.getContainerUri', { webId });
+        const publicKeysContainerUri = await ctx.call('public-keys-container.getContainerUri', { webId });
+        await ctx.call('private-keys-container.waitForContainerCreation', { containerUri: privateKeysContainerUri });
+        await ctx.call('public-keys-container.waitForContainerCreation', { containerUri: publicKeysContainerUri });
 
         // Create, publish and attach keys to the webId.
         await Promise.all([

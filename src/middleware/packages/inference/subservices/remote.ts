@@ -14,10 +14,6 @@ const InferenceRemoteSchema = {
     acceptFromRemoteServers: true,
     offerToRemoteServers: true
   },
-  dependencies: ['activitypub.relay'],
-  async started() {
-    this.relayActor = await this.broker.call('activitypub.relay.getActor');
-  },
   actions: {
     offerInference: {
       visibility: 'public',
@@ -25,7 +21,6 @@ const InferenceRemoteSchema = {
         subject: { type: 'string', optional: false },
         predicate: { type: 'string', optional: false },
         object: { type: 'string', optional: false },
-        // @ts-expect-error TS(2322): Type '{ type: "boolean"; optional: false; }' is no... Remove this comment to see the full error message
         add: { type: 'boolean', optional: false }
       },
       async handler(ctx) {

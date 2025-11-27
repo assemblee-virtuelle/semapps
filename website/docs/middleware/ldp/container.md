@@ -231,7 +231,7 @@ If the resource being patched is a remote resource, it will be stored locally (w
 | `slug`         | `String` |                     | Specific ID tu use for URI instead generated UUID |
 | `webId`        | `String` | Logged user's webId | User doing the action                             |
 
-The `slug` parameter is ignored if the `resourcesWithContainerPath` setting is `false`.
+The `slug` parameter is ignored if the `allowSlugs` setting is `false`.
 
 ##### Return
 

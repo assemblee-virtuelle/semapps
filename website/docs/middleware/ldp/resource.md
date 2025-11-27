@@ -64,22 +64,6 @@ Delete the whole resource and detach it from its container
 
 `Boolean`
 
-### `generateId`
-
-Finds an unique ID for a resource
-
-##### Parameters
-
-| Property       | Type      | Default      | Description                                          |
-| -------------- | --------- | ------------ | ---------------------------------------------------- |
-| `containerUri` | `String`  | **required** | URI of the container where to create the resource    |
-| `slug`         | `String`  |              | Preferred slug (will be "slugified")                 |
-| `isContainer`  | `Boolean` | `false`      | Set to true if you want to generate a container's ID |
-
-##### Return values
-
-Full available URI
-
 ### `get`
 
 - Get a resource by its URI

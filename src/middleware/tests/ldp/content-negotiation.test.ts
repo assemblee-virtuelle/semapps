@@ -1,15 +1,18 @@
-import urlJoin from 'url-join';
 import fetch from 'node-fetch';
+import waitForExpect from 'wait-for-expect';
+import { ServiceBroker } from 'moleculer';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { fetchServer } from '../utils.ts';
-import * as CONFIG from '../config.ts';
+import { fetchServer, createAccount } from '../utils.ts';
 import initialize from './initialize.ts';
 
 jest.setTimeout(20000);
-let broker: any;
+let broker: ServiceBroker;
+let alice: any;
 
 beforeAll(async () => {
-  broker = await initialize();
+  broker = await initialize(false);
+  await broker.start();
+  alice = await createAccount(broker, 'alice');
 });
 
 afterAll(async () => {
@@ -17,14 +20,19 @@ afterAll(async () => {
 });
 
 describe('Content negotiation', () => {
-  // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-  const containerUri = urlJoin(CONFIG.HOME_URL, 'resources');
-  let projectUri: any;
-  let project2Uri: any;
-  let project3Uri: any;
-  let project4Uri: any;
+  let containerUri: string;
+  let projectUri: string;
+  let project2Uri: string;
+  let project3Uri: string;
+  let project4Uri: string;
 
   test('Post resource in JSON-LD', async () => {
+    // @ts-expect-error This expression is not callable
+    await waitForExpect(async () => {
+      containerUri = await alice.call('ldp.registry.getUri', { type: 'pair:Project', isContainer: true });
+      expect(containerUri).not.toBeUndefined();
+    });
+
     const { headers } = await fetchServer(containerUri, {
       method: 'POST',
       body: {
@@ -37,7 +45,7 @@ describe('Content negotiation', () => {
       }
     });
 
-    projectUri = headers.get('Location');
+    projectUri = headers.get('Location')!;
 
     expect(projectUri).not.toBeNull();
   });
@@ -49,9 +57,9 @@ describe('Content negotiation', () => {
       })
     });
 
-    expect(body).toMatch(new RegExp(`<${projectUri}> a pair:Project`));
-    expect(body).toMatch(new RegExp(`pair:description.*"myProject"`));
-    expect(body).toMatch(new RegExp(`pair:label.*"myLabel"`));
+    expect(body).toMatch(new RegExp(`pair:label "myLabel"`));
+    expect(body).toMatch(new RegExp(`a pair:Project`));
+    expect(body).toMatch(new RegExp(`pair:description "myProject"`));
   });
 
   test('Get resource in N-Triples format', async () => {
@@ -79,12 +87,12 @@ describe('Content negotiation', () => {
       })
     });
 
-    expect(body).toMatch(new RegExp(`<${containerUri}> a ldp:Container, ldp:BasicContainer`));
+    expect(body).toMatch(new RegExp(`a ldp:Container, ldp:BasicContainer`));
     expect(body).toMatch(new RegExp(`ldp:contains <${projectUri}>`));
 
-    expect(body).toMatch(new RegExp(`<${projectUri}> a pair:Project`));
-    expect(body).toMatch(new RegExp(`pair:description.*"myProject"`));
-    expect(body).toMatch(new RegExp(`pair:label.*"myLabel"`));
+    expect(body).toMatch(new RegExp(`a pair:Project`));
+    expect(body).toMatch(new RegExp(`pair:description "myProject"`));
+    expect(body).toMatch(new RegExp(`pair:label "myLabel"`));
   });
 
   test('Get container in N-Triples format', async () => {
@@ -127,15 +135,14 @@ describe('Content negotiation', () => {
 
     expect(status).toBe(201);
 
-    project2Uri = headers.get('Location');
+    project2Uri = headers.get('Location')!;
 
-    const project2 = await broker.call('ldp.resource.get', {
+    const project2 = await alice.call('ldp.resource.get', {
       resourceUri: project2Uri
     });
     expect(project2).toMatchObject({
-      '@context': 'http://localhost:3000/.well-known/context.jsonld',
-      '@id': project2Uri,
-      '@type': 'pair:Project',
+      id: project2Uri,
+      type: 'pair:Project',
       'pair:label': 'myProject 2'
     });
   });
@@ -154,15 +161,14 @@ describe('Content negotiation', () => {
 
     expect(status).toBe(201);
 
-    project3Uri = headers.get('Location');
+    project3Uri = headers.get('Location')!;
 
-    const project2 = await broker.call('ldp.resource.get', {
+    const project2 = await alice.call('ldp.resource.get', {
       resourceUri: project3Uri
     });
     expect(project2).toMatchObject({
-      '@context': 'http://localhost:3000/.well-known/context.jsonld',
-      '@id': project3Uri,
-      '@type': 'pair:Project',
+      id: project3Uri,
+      type: 'pair:Project',
       'pair:label': 'myProject 3'
     });
   });
@@ -183,13 +189,12 @@ describe('Content negotiation', () => {
 
     expect(status).toBe(204);
 
-    const project2 = await broker.call('ldp.resource.get', {
+    const project2 = await alice.call('ldp.resource.get', {
       resourceUri: project2Uri
     });
     expect(project2).toMatchObject({
-      '@context': 'http://localhost:3000/.well-known/context.jsonld',
-      '@id': project2Uri,
-      '@type': 'pair:Project',
+      id: project2Uri,
+      type: 'pair:Project',
       'pair:label': 'myProject 2 - updated',
       'pair:description': 'A description'
     });
@@ -210,13 +215,12 @@ describe('Content negotiation', () => {
 
     expect(status).toBe(204);
 
-    const project3 = await broker.call('ldp.resource.get', {
+    const project3 = await alice.call('ldp.resource.get', {
       resourceUri: project3Uri
     });
     expect(project3).toMatchObject({
-      '@context': 'http://localhost:3000/.well-known/context.jsonld',
-      '@id': project3Uri,
-      '@type': 'pair:Project',
+      id: project3Uri,
+      type: 'pair:Project',
       'pair:label': 'myProject 3 - updated',
       'pair:description': 'A description'
     });
@@ -241,20 +245,19 @@ describe('Content negotiation', () => {
 
     expect(status).toBe(201);
 
-    project4Uri = headers.get('Location');
+    project4Uri = headers.get('Location')!;
 
-    const project4 = await broker.call('ldp.resource.get', {
+    const project4 = await alice.call('ldp.resource.get', {
       resourceUri: project4Uri
     });
 
     // In JSON-LD, blank nodes are automatically embedded
     expect(project4).toMatchObject({
-      '@context': 'http://localhost:3000/.well-known/context.jsonld',
-      '@id': project4Uri,
-      '@type': 'pair:Project',
+      id: project4Uri,
+      type: 'pair:Project',
       'pair:hasPart': {
-        '@id': `${project4Uri}#task1`,
-        '@type': 'pair:Task',
+        id: `${project4Uri}#task1`,
+        type: 'pair:Task',
         'pair:label': 'myTask 1'
       },
       'pair:label': 'myProject 4'
@@ -268,10 +271,9 @@ describe('Content negotiation', () => {
       })
     });
 
-    expect(body).toMatch(new RegExp(`<${project4Uri}> a pair:Project`));
+    expect(body).toMatch(new RegExp(`a pair:Project`));
     expect(body).toMatch(new RegExp(`pair:label "myProject 4"`));
-    expect(body).toMatch(new RegExp(`<${project4Uri}#task1> a pair:Task`));
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
+    expect(body).toMatch(new RegExp(`a pair:Task`));
     expect(body).toMatch(new RegExp(`pair:label "myTask 1"`));
   });
 });

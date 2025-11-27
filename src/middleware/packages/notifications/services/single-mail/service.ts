@@ -2,7 +2,7 @@ import urlJoin from 'url-join';
 import path from 'path';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'mole... Remove this comment to see the full error message
 import MailService from 'moleculer-mail';
-import { getSlugFromUri } from '@semapps/ldp';
+import { getDatasetFromUri } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
 import { fileURLToPath } from 'url';
 
@@ -17,7 +17,6 @@ const SingleMailNotificationsService = {
     defaultFrontUrl: null,
     color: '#E2003B',
     delay: 0,
-    podProvider: false,
     // See moleculer-mail doc https://github.com/moleculerjs/moleculer-addons/tree/master/packages/moleculer-mail
     templateFolder: path.join(__dirname, '../../templates'),
     from: null,
@@ -27,7 +26,6 @@ const SingleMailNotificationsService = {
   events: {
     'activitypub.inbox.received': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'activity' does not exist on type 'Option... Remove this comment to see the full error message
         const { activity, recipients } = ctx.params;
 
         if (this.settings.delay) {
@@ -38,10 +36,8 @@ const SingleMailNotificationsService = {
           const account = await ctx.call('auth.account.findByWebId', { webId: recipientUri });
 
           if (account) {
-            // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
             ctx.meta.webId = recipientUri;
-            // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
-            ctx.meta.dataset = this.settings.podProvider ? getSlugFromUri(recipientUri) : undefined;
+            ctx.meta.dataset = getDatasetFromUri(recipientUri);
 
             const locale = account?.preferredLocale || this.settings.defaultLocale;
             const notification = await ctx.call('activity-mapping.map', { activity, locale });

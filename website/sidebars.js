@@ -59,7 +59,7 @@ module.exports = {
         'middleware/ldp/registry',
         'middleware/ldp/permissions',
         'middleware/ldp/controlled-container',
-        'middleware/ldp/single-resource-container',
+        'middleware/ldp/controlled-resource',
         'middleware/ldp/document-tagger',
         'middleware/ldp/image-processor',
         'middleware/ldp/dereference'
@@ -76,8 +76,7 @@ module.exports = {
       },
       items: [
         'middleware/solid/pod',
-        'middleware/solid/type-indexes',
-        'middleware/solid/type-registrations',
+        'middleware/solid/type-index',
         'middleware/solid/notifications-provider',
         'middleware/solid/notifications-listener'
       ]

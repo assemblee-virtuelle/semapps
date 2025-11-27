@@ -22,7 +22,6 @@ const TripleStoreService = {
     url: null,
     user: null,
     password: null,
-    mainDataset: null,
     fusekiBase: null,
     // Sub-services customization
     dataset: {},

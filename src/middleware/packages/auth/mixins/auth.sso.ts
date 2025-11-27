@@ -6,6 +6,7 @@ import AuthMixin from './auth.ts';
 import saveRedirectUrl from '../middlewares/saveRedirectUrl.ts';
 import redirectToFront from '../middlewares/redirectToFront.ts';
 import localLogout from '../middlewares/localLogout.ts';
+import { Account } from '../types.ts';
 
 const AuthSSOMixin = {
   mixins: [AuthMixin],
@@ -14,7 +15,6 @@ const AuthSSOMixin = {
     jwtPath: null,
     registrationAllowed: true,
     reservedUsernames: [],
-    webIdSelection: [],
     // SSO-specific settings
     sessionSecret: 's€m@pps',
     selectSsoData: null
@@ -27,43 +27,33 @@ const AuthSSOMixin = {
         const profileData = this.settings.selectSsoData ? await this.settings.selectSsoData(ssoData) : ssoData;
 
         // TODO use UUID to identify unique accounts with SSO
-        const existingAccounts = await ctx.call('auth.account.find', { query: { email: profileData.email } });
+        const existingAccounts: Account[] = await ctx.call('auth.account.find', {
+          query: { email: profileData.email }
+        });
 
-        let accountData;
-        let webId;
+        let webId: string;
         let newUser;
         if (existingAccounts.length > 0) {
-          accountData = existingAccounts[0];
-          webId = accountData.webId;
+          webId = existingAccounts[0].webId;
           newUser = false;
 
           // TODO update account with recent profileData information
 
-          ctx.emit('auth.connected', { webId, accountData, ssoData }, { meta: { webId: null, dataset: null } });
+          ctx.emit('auth.connected', { webId }, { meta: { webId: null, dataset: null } });
         } else {
           if (!this.settings.registrationAllowed) {
             throw new Error('registration.not-allowed');
           }
 
-          accountData = await ctx.call('auth.account.create', {
+          ({ webId } = (await ctx.call('auth.account.create', {
             uuid: profileData.uuid,
             email: profileData.email,
             username: profileData.username
-          });
-          webId = await ctx.call(
-            'webid.createWebId',
-            this.pickWebIdData({ nick: accountData.username, ...profileData })
-          );
+          })) as Account);
+
           newUser = true;
 
-          // Link the webId with the account
-          await ctx.call('auth.account.attachWebId', { accountUri: accountData['@id'], webId });
-
-          ctx.emit(
-            'auth.registered',
-            { webId, profileData, accountData, ssoData },
-            { meta: { webId: null, dataset: null } }
-          );
+          ctx.emit('auth.registered', { webId }, { meta: { webId: null, dataset: null } });
         }
 
         const token = await ctx.call('auth.jwt.generateServerSignedToken', { payload: { webId } });

@@ -1,6 +1,13 @@
 import path from 'path';
 
-import { parseHeader, parseRawBody, negotiateContentType, negotiateAccept, parseJson } from '@semapps/middlewares';
+import {
+  parseHeader,
+  parseRawBody,
+  negotiateContentType,
+  negotiateAccept,
+  parseJson,
+  saveDatasetMeta
+} from '@semapps/middlewares';
 
 const onError = (req: any, res: any, err: any) => {
   const { type, code, message, data, name } = err;
@@ -10,12 +17,12 @@ const onError = (req: any, res: any, err: any) => {
   res.end(JSON.stringify({ type, code, message, data, name }));
 };
 
-const getRoutes = (basePath: any, podProvider: any) => {
-  const middlewares = [parseHeader, negotiateContentType, negotiateAccept, parseRawBody, parseJson];
+const getRoutes = (basePath: string) => {
+  const middlewares = [parseHeader, negotiateContentType, negotiateAccept, parseRawBody, parseJson, saveDatasetMeta];
 
   return [
     {
-      path: path.join(basePath, '/_acl'),
+      path: path.join(basePath, '/_acl/:username([^/._][^/]+)'),
       name: 'acl',
       authorization: false,
       authentication: true,
@@ -40,7 +47,7 @@ const getRoutes = (basePath: any, podProvider: any) => {
       onError
     },
     {
-      path: path.join(basePath, podProvider ? '/_groups/:username([^/._][^/]+)' : '/_groups'),
+      path: path.join(basePath, '/_groups/:username([^/._][^/]+)'),
       name: 'acl-groups',
       authorization: false,
       authentication: true,

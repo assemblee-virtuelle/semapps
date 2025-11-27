@@ -12,27 +12,29 @@ import {
 
 const { MoleculerError } = Errors;
 
-export const api = async function api(ctx: any) {
-  const contentType = ctx.meta.headers['content-type'];
-  let { slugParts } = ctx.params;
+export const api = {
+  async handler(ctx) {
+    const contentType = ctx.meta.headers['content-type'];
+    let { username, slugParts } = ctx.params;
 
-  if (!contentType || (contentType !== MIME_TYPES.JSON && contentType !== MIME_TYPES.TURTLE))
-    throw new MoleculerError(`Content type not supported : ${contentType}`, 400, 'BAD_REQUEST');
+    if (!contentType || (contentType !== MIME_TYPES.JSON && contentType !== MIME_TYPES.TURTLE))
+      throw new MoleculerError(`Content type not supported : ${contentType}`, 400, 'BAD_REQUEST');
 
-  const newRights = await convertBodyToTriples(ctx.meta.rawBody, contentType);
-  // @ts-expect-error TS(18046): 'newRights' is of type 'unknown'.
-  if (newRights.length === 0) throw new MoleculerError('PUT rights cannot be empty', 400, 'BAD_REQUEST');
+    const newRights = await convertBodyToTriples(ctx.meta.rawBody, contentType);
+    // @ts-expect-error TS(18046): 'newRights' is of type 'unknown'.
+    if (newRights.length === 0) throw new MoleculerError('PUT rights cannot be empty', 400, 'BAD_REQUEST');
 
-  // This is the root container
-  if (!slugParts || slugParts.length === 0) slugParts = ['/'];
+    // This is the root container
+    if (!slugParts || slugParts.length === 0) slugParts = ['/'];
 
-  await ctx.call('webacl.resource.setRights', {
-    resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
-    newRights
-  });
+    await ctx.call('webacl.resource.setRights', {
+      resourceUri: urlJoin(this.settings.baseUrl, username, ...slugParts),
+      newRights
+    });
 
-  ctx.meta.$statusCode = 204;
-};
+    ctx.meta.$statusCode = 204;
+  }
+} satisfies ActionSchema;
 
 export const action = {
   visibility: 'public',
@@ -141,7 +143,6 @@ export const action = {
     const returnValues = {
       uri: resourceUri,
       webId,
-      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       dataset: ctx.meta.dataset,
       created: false,
       isContainer,
@@ -151,7 +152,9 @@ export const action = {
       addDefaultPublicRead,
       removeDefaultPublicRead
     };
+
     ctx.emit('webacl.resource.updated', returnValues, { meta: { webId: null, dataset: null } });
+
     return returnValues;
   }
 } satisfies ActionSchema;

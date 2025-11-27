@@ -1,13 +1,17 @@
-// @ts-expect-error TS(7016): Could not find a declaration file for module 'rdf-... Remove this comment to see the full error message
-import { quad, namedNode, blankNode, literal } from 'rdf-data-model';
-import * as CONFIG from '../config.ts';
+import rdf from '@rdfjs/data-model';
+import waitForExpect from 'wait-for-expect';
+import { ServiceBroker } from 'moleculer';
 import initialize from './initialize.ts';
+import { createAccount } from '../utils.ts';
 
 jest.setTimeout(50000);
-let broker: any;
+let broker: ServiceBroker;
+let alice: any;
 
 beforeAll(async () => {
-  broker = await initialize();
+  broker = await initialize(true);
+  await broker.start();
+  alice = await createAccount(broker, 'alice');
 });
 
 afterAll(async () => {
@@ -17,9 +21,18 @@ afterAll(async () => {
 describe('Resource CRUD operations', () => {
   let project1: any;
   let project2: any;
+  let containerUri: string;
+  let project1Uri: string;
 
   test('Post resource in container', async () => {
-    project1Uri = await broker.call('ldp.container.post', {
+    // @ts-expect-error This expression is not callable
+    await waitForExpect(async () => {
+      containerUri = await alice.call('ldp.registry.getUri', { type: 'pair:Project', isContainer: true });
+      expect(containerUri).not.toBeUndefined();
+    });
+
+    project1Uri = await alice.call('ldp.container.post', {
+      containerUri,
       resource: {
         '@context': {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
@@ -39,21 +52,18 @@ describe('Resource CRUD operations', () => {
           label: 'Paris',
           description: 'The place to be'
         }
-      },
-      containerUri: `${CONFIG.HOME_URL}resources`
+      }
     });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(project1Uri).toBeDefined();
   });
 
   test('Get resource', async () => {
-    project1 = await broker.call('ldp.resource.get', { resourceUri: project1Uri });
+    project1 = await alice.call('ldp.resource.get', { resourceUri: project1Uri });
 
     expect(project1).toMatchObject({
-      '@context': 'http://localhost:3000/.well-known/context.jsonld',
-      '@id': project1['@id'],
-      '@type': 'pair:Project',
+      id: project1Uri,
+      type: 'pair:Project',
       'pair:affiliates': expect.arrayContaining([
         'http://localhost:3000/users/guillaume',
         'http://localhost:3000/users/sebastien'
@@ -65,12 +75,12 @@ describe('Resource CRUD operations', () => {
   });
 
   test('Put resource', async () => {
-    await broker.call('ldp.resource.put', {
+    await alice.call('ldp.resource.put', {
       resource: {
         '@context': {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
         },
-        '@id': project1['@id'],
+        '@id': project1Uri,
         description: 'myProjectUpdatedAgain',
         affiliates: {
           '@id': 'http://localhost:3000/users/pierre'
@@ -81,7 +91,7 @@ describe('Resource CRUD operations', () => {
       }
     });
 
-    const updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
+    const updatedProject = await alice.call('ldp.resource.get', { resourceUri: project1Uri });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -100,7 +110,7 @@ describe('Resource CRUD operations', () => {
         petr: 'https://data.petr-msb.data-players.com/ontology#',
         '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
       },
-      '@id': project1['@id'],
+      '@id': project1Uri,
       description: 'myProjectUpdatedAgain',
       affiliates: {
         '@id': 'http://localhost:3000/users/pierre'
@@ -114,9 +124,9 @@ describe('Resource CRUD operations', () => {
         }
       ]
     };
-    await broker.call('ldp.resource.put', { resource: resourceUpdated });
+    await alice.call('ldp.resource.put', { resource: resourceUpdated });
 
-    let updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
+    let updatedProject = await alice.call('ldp.resource.get', { resourceUri: project1Uri });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -139,9 +149,9 @@ describe('Resource CRUD operations', () => {
       }
     ];
 
-    await broker.call('ldp.resource.put', { resource: resourceUpdated });
+    await alice.call('ldp.resource.put', { resource: resourceUpdated });
 
-    updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
+    updatedProject = await alice.call('ldp.resource.get', { resourceUri: project1Uri });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -163,9 +173,9 @@ describe('Resource CRUD operations', () => {
       }
     ];
 
-    await broker.call('ldp.resource.put', { resource: resourceUpdated });
+    await alice.call('ldp.resource.put', { resource: resourceUpdated });
 
-    updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
+    updatedProject = await alice.call('ldp.resource.get', { resourceUri: project1Uri });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -195,9 +205,9 @@ describe('Resource CRUD operations', () => {
       }
     ];
 
-    await broker.call('ldp.resource.put', { resource: resourceUpdated });
+    await alice.call('ldp.resource.put', { resource: resourceUpdated });
 
-    updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
+    updatedProject = await alice.call('ldp.resource.get', { resourceUri: project1Uri });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -220,9 +230,9 @@ describe('Resource CRUD operations', () => {
       }
     ];
 
-    await broker.call('ldp.resource.put', { resource: resourceUpdated });
+    await alice.call('ldp.resource.put', { resource: resourceUpdated });
 
-    updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
+    updatedProject = await alice.call('ldp.resource.get', { resourceUri: project1Uri });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -242,9 +252,9 @@ describe('Resource CRUD operations', () => {
     // @ts-expect-error TS(2322): Type 'undefined' is not assignable to type '{ labe... Remove this comment to see the full error message
     resourceUpdated.hasLocation = undefined;
 
-    await broker.call('ldp.resource.put', { resource: resourceUpdated });
+    await alice.call('ldp.resource.put', { resource: resourceUpdated });
 
-    updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
+    updatedProject = await alice.call('ldp.resource.get', { resourceUri: project1Uri });
 
     expect(updatedProject['pair:hasLocation']).toBeUndefined();
 
@@ -253,9 +263,9 @@ describe('Resource CRUD operations', () => {
       { 'petr:endingTime': '2021-10-07T09:40:56.131Z', 'petr:startingTime': '2021-10-07T06:40:56.123Z' }
     ];
 
-    await broker.call('ldp.resource.put', { resource: resourceUpdated });
+    await alice.call('ldp.resource.put', { resource: resourceUpdated });
 
-    updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
+    updatedProject = await alice.call('ldp.resource.get', { resourceUri: project1Uri });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -271,9 +281,9 @@ describe('Resource CRUD operations', () => {
       { 'petr:startingTime': '2021-10-07T10:44:54.883Z', 'petr:endingTime': '2021-10-07T16:44:54.888Z' }
     ];
 
-    await broker.call('ldp.resource.put', { resource: resourceUpdated });
+    await alice.call('ldp.resource.put', { resource: resourceUpdated });
 
-    updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'] });
+    updatedProject = await alice.call('ldp.resource.get', { resourceUri: project1Uri });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -300,12 +310,12 @@ describe('Resource CRUD operations', () => {
       }
     };
 
-    const resourceUri = await broker.call('ldp.container.post', {
+    const resourceUri = await alice.call('ldp.container.post', {
       resource: resourceToPost,
-      containerUri: `${CONFIG.HOME_URL}resources2`
+      containerUri
     });
 
-    project2 = await broker.call('ldp.resource.get', { resourceUri });
+    project2 = await alice.call('ldp.resource.get', { resourceUri });
 
     expect(project2).toMatchObject({
       'pair:hasLocation': {
@@ -332,12 +342,12 @@ describe('Resource CRUD operations', () => {
       }
     ];
 
-    const resourceUri3 = await broker.call('ldp.container.post', {
+    const resourceUri3 = await alice.call('ldp.container.post', {
       resource: resourceToPost,
-      containerUri: `${CONFIG.HOME_URL}resources2`
+      containerUri
     });
 
-    const project3 = await broker.call('ldp.resource.get', { resourceUri: resourceUri3 });
+    const project3 = await alice.call('ldp.resource.get', { resourceUri: resourceUri3 });
 
     expect(project3).toMatchObject({
       'pair:hasLocation': [
@@ -372,12 +382,12 @@ describe('Resource CRUD operations', () => {
       }
     ];
 
-    const resourceUri4 = await broker.call('ldp.container.post', {
+    const resourceUri4 = await alice.call('ldp.container.post', {
       resource: resourceToPost,
-      containerUri: `${CONFIG.HOME_URL}resources2`
+      containerUri
     });
 
-    const project4 = await broker.call('ldp.resource.get', { resourceUri: resourceUri4 });
+    const project4 = await alice.call('ldp.resource.get', { resourceUri: resourceUri4 });
 
     expect(project4).toMatchObject({
       'pair:hasLocation': [
@@ -402,7 +412,7 @@ describe('Resource CRUD operations', () => {
       '@context': {
         '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
       },
-      '@id': project2['@id'],
+      '@id': project2.id,
       description: 'myProjectUpdatedAgain',
       hasLocation: [
         {
@@ -420,9 +430,9 @@ describe('Resource CRUD operations', () => {
       ]
     };
 
-    await broker.call('ldp.resource.put', { resource: resourceUpdated });
+    await alice.call('ldp.resource.put', { resource: resourceUpdated });
 
-    let updatedProject = await broker.call('ldp.resource.get', { resourceUri: project2['@id'] });
+    let updatedProject = await alice.call('ldp.resource.get', { resourceUri: project2.id });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -457,9 +467,9 @@ describe('Resource CRUD operations', () => {
       }
     ];
 
-    await broker.call('ldp.resource.put', { resource: resourceUpdated });
+    await alice.call('ldp.resource.put', { resource: resourceUpdated });
 
-    updatedProject = await broker.call('ldp.resource.get', { resourceUri: project2['@id'] });
+    updatedProject = await alice.call('ldp.resource.get', { resourceUri: project2.id });
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
@@ -474,8 +484,10 @@ describe('Resource CRUD operations', () => {
 
   // Ensure dereferenced resources with IDs are not deleted by PUT
   test('PUT resource with ID', async () => {
-    const themeUri = await broker.call('ldp.container.post', {
-      containerUri: 'http://localhost:3000/themes',
+    const themeContainerUri = await alice.call('ldp.registry.getUri', { type: 'pair:Theme', isContainer: true });
+
+    const themeUri = await alice.call('ldp.container.post', {
+      containerUri: themeContainerUri,
       resource: {
         '@context': {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
@@ -487,13 +499,13 @@ describe('Resource CRUD operations', () => {
     });
 
     // Add a relation to the theme
-    await broker.call('ldp.resource.put', {
+    await alice.call('ldp.resource.put', {
       resource: {
         '@context': {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
         },
         '@type': 'Project',
-        '@id': project1['@id'],
+        '@id': project1Uri,
         label: 'myTitle',
         hasTopic: {
           '@id': themeUri
@@ -502,30 +514,30 @@ describe('Resource CRUD operations', () => {
     });
 
     // Remove the relation to the theme
-    await broker.call('ldp.resource.put', {
+    await alice.call('ldp.resource.put', {
       resource: {
         '@context': {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
         },
         '@type': 'Project',
-        '@id': project1['@id'],
+        '@id': project1Uri,
         label: 'myTitle'
       }
     });
 
     // Ensure the theme has not been deleted
-    const theme = await broker.call('ldp.resource.get', { resourceUri: themeUri });
+    const theme = await alice.call('ldp.resource.get', { resourceUri: themeUri });
 
     expect(theme).toMatchObject({
-      '@id': themeUri,
-      '@type': 'pair:Theme',
+      id: themeUri,
+      type: 'pair:Theme',
       'pair:label': 'Permaculture'
     });
   });
 
   test('PATCH resource', async () => {
-    const projectUri = await broker.call('ldp.container.post', {
-      containerUri: `${CONFIG.HOME_URL}resources`,
+    const projectUri = await alice.call('ldp.container.post', {
+      containerUri,
       resource: {
         '@context': {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
@@ -536,37 +548,41 @@ describe('Resource CRUD operations', () => {
       slug: 'SemApps'
     });
 
-    await broker.call('ldp.resource.patch', {
+    await alice.call('ldp.resource.patch', {
       resourceUri: projectUri,
       triplesToAdd: [
-        quad(namedNode(projectUri), namedNode('http://virtual-assembly.org/ontologies/pair#label'), literal('SemApps')),
-        quad(
-          namedNode(projectUri),
-          namedNode('http://virtual-assembly.org/ontologies/pair#comment'),
-          literal('An open source toolbox to help you easily build semantic web applications')
+        rdf.quad(
+          rdf.namedNode(projectUri),
+          rdf.namedNode('http://virtual-assembly.org/ontologies/pair#label'),
+          rdf.literal('SemApps')
+        ),
+        rdf.quad(
+          rdf.namedNode(projectUri),
+          rdf.namedNode('http://virtual-assembly.org/ontologies/pair#comment'),
+          rdf.literal('An open source toolbox to help you easily build semantic web applications')
         )
       ],
       triplesToRemove: [
-        quad(
-          namedNode(projectUri),
-          namedNode('http://virtual-assembly.org/ontologies/pair#label'),
-          literal('SemanticApps')
+        rdf.quad(
+          rdf.namedNode(projectUri),
+          rdf.namedNode('http://virtual-assembly.org/ontologies/pair#label'),
+          rdf.literal('SemanticApps')
         )
       ]
     });
 
-    const project = await broker.call('ldp.resource.get', { resourceUri: projectUri });
+    const project = await alice.call('ldp.resource.get', { resourceUri: projectUri });
 
     expect(project).toMatchObject({
-      '@id': projectUri,
+      id: projectUri,
       'pair:label': 'SemApps',
       'pair:comment': 'An open source toolbox to help you easily build semantic web applications'
     });
   });
 
   test('PATCH resource with blank nodes', async () => {
-    const projectUri = await broker.call('ldp.container.post', {
-      containerUri: `${CONFIG.HOME_URL}resources`,
+    const projectUri = await alice.call('ldp.container.post', {
+      containerUri,
       resource: {
         '@context': {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
@@ -577,63 +593,71 @@ describe('Resource CRUD operations', () => {
       slug: 'ActivityPods'
     });
 
-    await broker.call('ldp.resource.patch', {
+    await alice.call('ldp.resource.patch', {
       resourceUri: projectUri,
       triplesToAdd: [
-        quad(
-          namedNode(projectUri),
-          namedNode('http://virtual-assembly.org/ontologies/pair#hasLocation'),
-          blankNode('b_0')
+        rdf.quad(
+          rdf.namedNode(projectUri),
+          rdf.namedNode('http://virtual-assembly.org/ontologies/pair#hasLocation'),
+          rdf.blankNode('b_0')
         ),
-        quad(
-          blankNode('b_0'),
-          namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-          namedNode('http://virtual-assembly.org/ontologies/pair#Place')
+        rdf.quad(
+          rdf.blankNode('b_0'),
+          rdf.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+          rdf.namedNode('http://virtual-assembly.org/ontologies/pair#Place')
         ),
-        quad(blankNode('b_0'), namedNode('http://virtual-assembly.org/ontologies/pair#label'), literal('Paris'))
+        rdf.quad(
+          rdf.blankNode('b_0'),
+          rdf.namedNode('http://virtual-assembly.org/ontologies/pair#label'),
+          rdf.literal('Paris')
+        )
       ]
     });
 
-    let project = await broker.call('ldp.resource.get', { resourceUri: projectUri });
+    let project = await alice.call('ldp.resource.get', { resourceUri: projectUri });
 
     expect(project).toMatchObject({
-      '@id': projectUri,
+      id: projectUri,
       'pair:label': 'ActivityPods',
       'pair:hasLocation': {
-        '@type': 'pair:Place',
+        type: 'pair:Place',
         'pair:label': 'Paris'
       }
     });
 
-    await broker.call('ldp.resource.patch', {
+    await alice.call('ldp.resource.patch', {
       resourceUri: projectUri,
       triplesToAdd: [
-        quad(
-          namedNode(projectUri),
-          namedNode('http://virtual-assembly.org/ontologies/pair#hasLocation'),
-          blankNode('b_0')
+        rdf.quad(
+          rdf.namedNode(projectUri),
+          rdf.namedNode('http://virtual-assembly.org/ontologies/pair#hasLocation'),
+          rdf.blankNode('b_0')
         ),
-        quad(
-          blankNode('b_0'),
-          namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-          namedNode('http://virtual-assembly.org/ontologies/pair#Place')
+        rdf.quad(
+          rdf.blankNode('b_0'),
+          rdf.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+          rdf.namedNode('http://virtual-assembly.org/ontologies/pair#Place')
         ),
-        quad(blankNode('b_0'), namedNode('http://virtual-assembly.org/ontologies/pair#label'), literal('Compiègne'))
+        rdf.quad(
+          rdf.blankNode('b_0'),
+          rdf.namedNode('http://virtual-assembly.org/ontologies/pair#label'),
+          rdf.literal('Compiègne')
+        )
       ]
     });
 
-    project = await broker.call('ldp.resource.get', { resourceUri: projectUri });
+    project = await alice.call('ldp.resource.get', { resourceUri: projectUri });
 
     expect(project).toMatchObject({
-      '@id': projectUri,
+      id: projectUri,
       'pair:label': 'ActivityPods',
       'pair:hasLocation': expect.arrayContaining([
         {
-          '@type': 'pair:Place',
+          type: 'pair:Place',
           'pair:label': 'Paris'
         },
         {
-          '@type': 'pair:Place',
+          type: 'pair:Place',
           'pair:label': 'Compiègne'
         }
       ])
@@ -641,11 +665,10 @@ describe('Resource CRUD operations', () => {
   }, 20000);
 
   test('Delete resource', async () => {
-    await broker.call('ldp.resource.delete', {
-      resourceUri: project1['@id']
+    await alice.call('ldp.resource.delete', {
+      resourceUri: project1Uri
     });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await expect(broker.call('ldp.resource.get', { resourceUri: project1['@id'] })).rejects.toThrow(`not found`);
+    await expect(alice.call('ldp.resource.get', { resourceUri: project1Uri })).rejects.toThrow(`not found`);
   });
 });

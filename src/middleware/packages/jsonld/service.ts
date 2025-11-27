@@ -8,25 +8,25 @@ import JsonLdParserService from './services/parser/index.ts';
 const JsonldSchema = {
   name: 'jsonld' as const,
   settings: {
-    baseUri: null,
+    baseUrl: null,
     localContextPath: '.well-known/context.jsonld',
     cachedContextFiles: []
   },
   dependencies: ['ontologies'],
   async created() {
-    const { baseUri, localContextPath, cachedContextFiles } = this.settings;
+    const { baseUrl, localContextPath, cachedContextFiles } = this.settings;
 
-    if (!baseUri || !localContextPath) {
-      throw new Error('The baseUri and localContextPath settings are required');
+    if (!baseUrl || !localContextPath) {
+      throw new Error('The baseUrl and localContextPath settings are required');
     }
 
     let localContextUri;
     if (localContextPath.startsWith('.well-known') || localContextPath.startsWith('/.well-known')) {
       // For /.well-known URIs, use the root path
-      const { origin } = new URL(baseUri);
+      const { origin } = new URL(baseUrl);
       localContextUri = urlJoin(origin, localContextPath);
     } else {
-      localContextUri = urlJoin(baseUri, localContextPath);
+      localContextUri = urlJoin(baseUrl, localContextPath);
     }
 
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "jsonld.docume... Remove this comment to see the full error message
@@ -40,7 +40,6 @@ const JsonldSchema = {
 
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "jsonld.contex... Remove this comment to see the full error message
     this.broker.createService({
-      // @ts-expect-error TS(2322): Type '{ name: "jsonld.context"; settings: { localC... Remove this comment to see the full error message
       mixins: [JsonLdContextService],
       settings: {
         localContextUri

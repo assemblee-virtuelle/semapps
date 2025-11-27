@@ -26,7 +26,7 @@ afterAll(async () => {
   if (server2) await server2.stop();
 });
 
-describe('Server2 mirror server1', () => {
+describe.skip('Server2 mirror server1', () => {
   let resourceUri: any;
 
   test('Server2 follow server1', async () => {

@@ -56,7 +56,7 @@ const SolidNotificationsListenerSchema = {
       async handler(ctx) {
         const { resourceUri, actionName } = ctx.params;
 
-        const appActor = await ctx.call('app.get');
+        const appActor: any = await ctx.call('app.get');
 
         // Check if a listener already exist
         const existingListener = this.listeners.find(
@@ -165,7 +165,6 @@ const SolidNotificationsListenerSchema = {
           } catch (e) {
             // Ignore errors that the actions may generate (otherwise 404 errors will be considered as non-existing webhooks)
           }
-          // @ts-expect-error TS(2339): Property '$statusCode' does not exist on type '{}'... Remove this comment to see the full error message
           ctx.meta.$statusCode = 200;
         } else {
           throw new MoleculerError(`No webhook found with URL ${webhookUrl}`, 404, 'NOT_FOUND');

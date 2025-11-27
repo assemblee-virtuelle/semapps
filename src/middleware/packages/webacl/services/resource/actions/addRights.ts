@@ -1,6 +1,5 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import urlJoin from 'url-join';
-
 import { ActionSchema, Errors } from 'moleculer';
 import {
   getAclUriFromResourceUri,
@@ -13,27 +12,29 @@ import {
 
 const { MoleculerError } = Errors;
 
-export const api = async function api(ctx: any) {
-  const contentType = ctx.meta.headers['content-type'];
-  let { slugParts } = ctx.params;
+export const api = {
+  async handler(ctx) {
+    const contentType = ctx.meta.headers['content-type'];
+    let { username, slugParts } = ctx.params;
 
-  if (!contentType || (contentType !== MIME_TYPES.JSON && contentType !== MIME_TYPES.TURTLE))
-    throw new MoleculerError(`Content type not supported : ${contentType}`, 400, 'BAD_REQUEST');
+    if (!contentType || (contentType !== MIME_TYPES.JSON && contentType !== MIME_TYPES.TURTLE))
+      throw new MoleculerError(`Content type not supported : ${contentType}`, 400, 'BAD_REQUEST');
 
-  const addedRights = await convertBodyToTriples(ctx.meta.rawBody, contentType);
-  // @ts-expect-error TS(18046): 'addedRights' is of type 'unknown'.
-  if (addedRights.length === 0) throw new MoleculerError('Nothing to add', 400, 'BAD_REQUEST');
+    const addedRights = await convertBodyToTriples(ctx.meta.rawBody, contentType);
+    // @ts-expect-error TS(18046): 'addedRights' is of type 'unknown'.
+    if (addedRights.length === 0) throw new MoleculerError('Nothing to add', 400, 'BAD_REQUEST');
 
-  // This is the root container
-  if (!slugParts || slugParts.length === 0) slugParts = ['/'];
+    // This is the root container
+    if (!slugParts || slugParts.length === 0) slugParts = ['/'];
 
-  await ctx.call('webacl.resource.addRights', {
-    resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
-    addedRights
-  });
+    await ctx.call('webacl.resource.addRights', {
+      resourceUri: urlJoin(this.settings.baseUrl, username, ...slugParts),
+      addedRights
+    });
 
-  ctx.meta.$statusCode = 204;
-};
+    ctx.meta.$statusCode = 204;
+  }
+} satisfies ActionSchema;
 
 export const action = {
   visibility: 'public',
@@ -154,7 +155,6 @@ export const action = {
 
     const returnValues = {
       uri: resourceUri,
-      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       dataset: ctx.meta.dataset,
       webId,
       created: false,
@@ -163,7 +163,9 @@ export const action = {
       addPublicRead,
       addDefaultPublicRead
     };
+
     ctx.emit('webacl.resource.updated', returnValues, { meta: { webId: null, dataset: null } });
+
     return returnValues;
   }
 } satisfies ActionSchema;

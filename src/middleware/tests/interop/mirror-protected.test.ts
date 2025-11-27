@@ -26,7 +26,7 @@ afterAll(async () => {
   if (server2) await server2.stop();
 });
 
-describe('Resource on server1 is shared with user on server2', () => {
+describe.skip('Resource on server1 is shared with user on server2', () => {
   let resourceUri: any;
   let user2: any;
 

@@ -1,5 +1,5 @@
 import path from 'path';
-import { ServiceBroker, ServiceSchema } from 'moleculer';
+import { ServiceBroker } from 'moleculer';
 import ApiGatewayService from 'moleculer-web';
 import { JsonLdService } from '@semapps/jsonld';
 import { OntologiesService } from '@semapps/ontologies';
@@ -27,7 +27,7 @@ export default async (cacher: any, persistRegistry: any) => {
   broker.createService({
     mixins: [JsonLdService],
     settings: {
-      baseUri: CONFIG.HOME_URL,
+      baseUrl: CONFIG.HOME_URL,
       // Fake contexts to avoid validation errors
       cachedContextFiles: [
         {

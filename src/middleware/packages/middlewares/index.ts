@@ -131,7 +131,7 @@ const parseFile = (req: any, res: any, next: any) => {
 
   const contentType = req.$ctx.meta.headers['content-type'];
 
-  if (!handledMimeTypes.includes(contentType) && (req.method === 'POST' || req.method === 'PUT')) {
+  if (contentType && !handledMimeTypes.includes(contentType) && (req.method === 'POST' || req.method === 'PUT')) {
     if (contentType.includes('multipart/form-data')) {
       const busboy = new Busboy({ headers: req.$ctx.meta.headers });
       const files: any = [];
@@ -176,22 +176,19 @@ const saveDatasetMeta = (req: any, res: any, next: any) => {
   next();
 };
 
-/** @type {(msg: string) => never} */
-const throw400 = (msg: any) => {
+const throw400 = (msg: string): never => {
   throw new MoleculerError(msg, 400, 'BAD_REQUEST', { status: 'Bad Request', text: msg });
 };
 
-/** @type {(msg: string) => never} */
-const throw403 = (msg: any) => {
+const throw403 = (msg: string): never => {
   throw new MoleculerError('Forbidden', 403, 'ACCESS_DENIED', { status: 'Forbidden', text: msg });
 };
 
-/** @type {(msg: string) => never} */
-const throw404 = (msg: any) => {
+const throw404 = (msg: string): never => {
   throw new MoleculerError('Forbidden', 404, 'NOT_FOUND', { status: 'Not found', text: msg });
 };
 
-const throw500 = (msg: any) => {
+const throw500 = (msg: string): never => {
   throw new MoleculerError(msg, 500, 'INTERNAL_SERVER_ERROR', { status: 'Server Error', text: msg });
 };
 

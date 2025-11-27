@@ -5,4 +5,5 @@ import WebAclMiddleware from './middlewares/webacl.ts';
 import CacherMiddleware from './middlewares/cacher.ts';
 
 export * from './utils.ts';
+export * from './types.ts';
 export { GroupsManagerBot, AuthorizerBot, WebAclService, WebAclMiddleware, CacherMiddleware };

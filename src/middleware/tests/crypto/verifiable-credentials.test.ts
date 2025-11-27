@@ -1,117 +1,99 @@
-import { MIME_TYPES } from '@semapps/mime-types';
+import { credentialsContext, VerifiableCredentialsService } from '@semapps/crypto';
+import { ServiceBroker } from 'moleculer';
 import path from 'node:path';
 import initialize from './initialize.ts';
+import { createAccount } from '../utils.ts';
 
 jest.setTimeout(45_000);
 
 const getChallengeFrom = async (actor: any) => {
-  const { challenge } = await actor.fetch(path.join(vcApiEndpoint, 'challenges'), { method: 'POST' });
-  return challenge;
+  const { json } = await actor.fetch(path.join(actor.vcApiEndpoint, 'challenges'), { method: 'POST' });
+  return json.challenge;
 };
 
-/** @type {import('moleculer').ServiceBroker} */
-let broker: any;
+let broker: ServiceBroker;
 
-let baseUrl;
-let vcApiEndpoint: any;
 let alice: any;
 let bob: any;
 let craig: any;
 
-const setUpUser = async (broker: any, username: any) => {
-  const user = await broker.call('auth.signup', {
-    username,
-    email: `${username}@test.example`,
-    password: 'test',
-    name: username
-  });
-  user.webIdDoc = await broker.call('ldp.resource.get', {
-    resourceUri: user.webId,
-    webId: 'system'
-  });
+beforeAll(async () => {
+  broker = await initialize(3000);
 
-  user.fetch = async (uri: any, init: any) => {
-    return await fetch(uri, {
-      ...init,
-      headers: {
-        'content-type': MIME_TYPES.JSON,
-        ...init?.headers,
-        Authorization: `Bearer ${user.token}`
-      }
-    })
-      .then(response => {
-        return response.json();
-      })
-      .catch(() => null);
-  };
+  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "vc"; d... Remove this comment to see the full error message
+  broker.createService({ mixins: [VerifiableCredentialsService] });
 
-  return user;
-};
+  await broker.start();
 
-const setUp = async (withOldKeyStore: any) => {
-  ({ broker, baseUrl } = await initialize(3000, withOldKeyStore));
-  vcApiEndpoint = path.join(baseUrl, 'vc/v0.3/');
-  alice = await setUpUser(broker, 'alice');
-  bob = await setUpUser(broker, 'bob');
-  craig = await setUpUser(broker, 'craig');
-};
+  broker.waitForServices(
+    ['core', 'auth', 'webid', 'triplestore', 'keys', 'private-keys-container', 'public-keys-container', 'vc'],
+    5_000
+  );
+
+  alice = await createAccount(broker, 'alice');
+  bob = await createAccount(broker, 'bob');
+  craig = await createAccount(broker, 'craig');
+
+  alice.vcApiEndpoint = path.join(alice.baseUrl, 'vc/v0.3/');
+  bob.vcApiEndpoint = path.join(bob.baseUrl, 'vc/v0.3/');
+  craig.vcApiEndpoint = path.join(craig.baseUrl, 'vc/v0.3/');
+
+  await alice.call('webid.awaitCreateComplete');
+  await alice.call('vc.credentials-container.waitForContainerCreation');
+});
 
 afterAll(async () => {
   if (broker) await broker.stop();
 });
 
-describe('verifiable credentials', () => {
-  beforeAll(async () => {
-    // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
-    await setUp();
-    await broker.call('crypto.vc.issuer.credential-container.waitForContainerCreation');
-  });
-
-  describe('object integrity', () => {
-    test('object is signed and verifiable', async () => {
+describe('Verifiable credentials', () => {
+  describe('Data integrity service', () => {
+    test('Object is signed and verifiable', async () => {
       const object = {
         '@context': { name: 'urn:some:name' },
         name: 'Signed object'
       };
-      const signedObject = await alice.fetch(path.join(vcApiEndpoint, 'data-integrity/sign'), {
+
+      const { json: signedObject } = await alice.fetch(path.join(alice.vcApiEndpoint, 'data-integrity/sign'), {
         method: 'POST',
-        body: JSON.stringify({ object })
+        body: { object }
       });
 
-      const validationResult = await alice.fetch(path.join(vcApiEndpoint, 'data-integrity/verify'), {
+      const { json: validationResult } = await alice.fetch(path.join(alice.vcApiEndpoint, 'data-integrity/verify'), {
         method: 'POST',
-        body: JSON.stringify({ object: signedObject })
+        body: { object: signedObject }
       });
 
       expect(validationResult.verified).toBeTruthy();
     });
 
-    test('modified object verification fails', async () => {
+    test('Modified object verification fails', async () => {
       const object = {
         '@context': { name: 'urn:some:name' },
         name: 'Signed object'
       };
-      const signedObject = await alice.fetch(path.join(vcApiEndpoint, 'data-integrity/sign'), {
+
+      const { json: signedObject } = await alice.fetch(path.join(alice.vcApiEndpoint, 'data-integrity/sign'), {
         method: 'POST',
-        body: JSON.stringify({ object })
+        body: { object }
       });
 
       signedObject.name = 'Modified object';
 
-      const validationResult = await alice.fetch(path.join(vcApiEndpoint, 'data-integrity/verify'), {
+      const { json: validationResult } = await alice.fetch(path.join(alice.vcApiEndpoint, 'data-integrity/verify'), {
         method: 'POST',
-        body: JSON.stringify({ object: signedObject })
+        body: { object: signedObject }
       });
 
       expect(validationResult.verified).toBe(false);
     });
   });
 
-  describe('credentials', () => {
-    test('credential is signed and verifiable', async () => {
-      const verifiableCredential = await alice.fetch(path.join(vcApiEndpoint, 'credentials/issue'), {
+  describe('Credentials', () => {
+    test('Credential is signed and verifiable', async () => {
+      const { json: verifiableCredential } = await alice.fetch(path.join(alice.vcApiEndpoint, 'credentials/issue'), {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           credential: {
             name: 'Test Suite Credential',
             description: 'This is a test suite credential.',
@@ -119,21 +101,21 @@ describe('verifiable credentials', () => {
               description: 'This is a credentialSubject'
             }
           }
-        })
+        }
       });
 
-      const validationResult = await alice.fetch(path.join(vcApiEndpoint, 'credentials/verify'), {
+      const { json: validationResult } = await alice.fetch(path.join(alice.vcApiEndpoint, 'credentials/verify'), {
         method: 'POST',
-        body: JSON.stringify({ verifiableCredential })
+        body: { verifiableCredential }
       });
 
       expect(validationResult.verified).toBe(true);
     });
 
-    test('verifying modified credential fails', async () => {
-      const verifiableCredential = await alice.fetch(path.join(vcApiEndpoint, 'credentials/issue'), {
+    test('Verifying modified credential fails', async () => {
+      const { json: verifiableCredential } = await alice.fetch(path.join(alice.vcApiEndpoint, 'credentials/issue'), {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           credential: {
             name: 'Test Suite Credential',
             description: 'This is a test suite credential.',
@@ -141,25 +123,25 @@ describe('verifiable credentials', () => {
               description: 'This is a credentialSubject'
             }
           }
-        })
+        }
       });
       expect(verifiableCredential.type).not.toBe('VALIDATION_ERROR');
 
       delete verifiableCredential.credentialSubject.description;
 
-      const validationResult = await alice.fetch(path.join(vcApiEndpoint, 'credentials/verify'), {
+      const { json: validationResult } = await alice.fetch(path.join(alice.vcApiEndpoint, 'credentials/verify'), {
         method: 'POST',
-        body: JSON.stringify({ verifiableCredential })
+        body: { verifiableCredential }
       });
-      expect(validationResult.type).not.toBe('VALIDATION_ERROR');
 
+      expect(validationResult.type).not.toBe('VALIDATION_ERROR');
       expect(validationResult.verified).toBe(false);
     });
 
-    test('presentation is signed and verifiable', async () => {
-      const credential = await alice.fetch(path.join(vcApiEndpoint, 'credentials/issue'), {
+    test('Presentation is signed and verifiable', async () => {
+      const { json: credential } = await alice.fetch(path.join(alice.vcApiEndpoint, 'credentials/issue'), {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           credential: {
             name: 'Test Suite Credential',
             description: 'This is a test suite credential.',
@@ -168,35 +150,35 @@ describe('verifiable credentials', () => {
               description: 'This is a credentialSubject'
             }
           }
-        })
+        }
       });
 
-      const verifiablePresentation = await bob.fetch(path.join(vcApiEndpoint, 'presentations'), {
+      const { json: verifiablePresentation } = await bob.fetch(path.join(bob.vcApiEndpoint, 'presentations'), {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           presentation: {
             verifiableCredential: [credential]
           },
           options: {
             challenge: await getChallengeFrom(alice)
           }
-        })
+        }
       });
 
       expect(verifiablePresentation.code).toBeUndefined();
 
-      const validationResult = await alice.fetch(path.join(vcApiEndpoint, 'presentations/verify'), {
+      const { json: validationResult } = await alice.fetch(path.join(alice.vcApiEndpoint, 'presentations/verify'), {
         method: 'POST',
-        body: JSON.stringify({ verifiablePresentation })
+        body: { verifiablePresentation }
       });
 
       expect(validationResult.verified).toBe(true);
     });
 
-    test('verifying unsigned presentation fails', async () => {
-      const credential = await alice.fetch(path.join(vcApiEndpoint, 'credentials/issue'), {
+    test('Verifying unsigned presentation fails', async () => {
+      const { json: credential } = await alice.fetch(path.join(alice.vcApiEndpoint, 'credentials/issue'), {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           credential: {
             name: 'Test Suite Credential',
             description: 'This is a test suite credential.',
@@ -205,36 +187,36 @@ describe('verifiable credentials', () => {
               description: 'This is a credentialSubject'
             }
           }
-        })
+        }
       });
       expect(credential.type).not.toBe('VALIDATION_ERROR');
 
-      const verifiablePresentation = await bob.fetch(path.join(vcApiEndpoint, 'presentations'), {
+      const { json: verifiablePresentation } = await bob.fetch(path.join(bob.vcApiEndpoint, 'presentations'), {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           presentation: {
             verifiableCredential: [credential]
           },
           options: {
             challenge: await getChallengeFrom(alice)
           }
-        })
+        }
       });
       expect(verifiablePresentation.type).not.toBe('VALIDATION_ERROR');
       delete verifiablePresentation.proof;
 
-      const validationResult = await alice.fetch(path.join(vcApiEndpoint, 'presentations/verify'), {
+      const { json: validationResult } = await alice.fetch(path.join(alice.vcApiEndpoint, 'presentations/verify'), {
         method: 'POST',
-        body: JSON.stringify({ verifiablePresentation })
+        body: { verifiablePresentation }
       });
 
       expect(validationResult.verified).toBe(false);
     });
 
-    test('verifying modified presentation fails', async () => {
-      const credential = await alice.fetch(path.join(vcApiEndpoint, 'credentials/issue'), {
+    test('Verifying modified presentation fails', async () => {
+      const { json: credential } = await alice.fetch(path.join(alice.vcApiEndpoint, 'credentials/issue'), {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           credential: {
             name: 'Test Suite Credential',
             description: 'This is a test suite credential.',
@@ -243,39 +225,39 @@ describe('verifiable credentials', () => {
               description: 'This is a credentialSubject'
             }
           }
-        })
+        }
       });
       expect(credential.type).not.toBe('VALIDATION_ERROR');
 
-      const verifiablePresentation = await bob.fetch(path.join(vcApiEndpoint, 'presentations'), {
+      const { json: verifiablePresentation } = await bob.fetch(path.join(bob.vcApiEndpoint, 'presentations'), {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           presentation: {
             verifiableCredential: [credential]
           },
           options: {
             challenge: await getChallengeFrom(alice)
           }
-        })
+        }
       });
       expect(verifiablePresentation.type).not.toBe('VALIDATION_ERROR');
 
       verifiablePresentation.verifiableCredential[0].credentialSubject.description = 'Modified!';
 
-      const validationResult = await alice.fetch(path.join(vcApiEndpoint, 'presentations/verify'), {
+      const { json: validationResult } = await alice.fetch(path.join(alice.vcApiEndpoint, 'presentations/verify'), {
         method: 'POST',
-        body: JSON.stringify({ verifiablePresentation })
+        body: { verifiablePresentation }
       });
 
       expect(validationResult.verified).toBe(false);
     });
   });
 
-  describe('capabilities', () => {
-    test('first and second capability are created and presentation is verifiable', async () => {
-      const firstCapability = await alice.fetch(path.join(vcApiEndpoint, 'credentials/issue'), {
+  describe('Capabilities', () => {
+    test('First and second capability are created and presentation is verifiable', async () => {
+      const { json: firstCapability } = await alice.fetch(path.join(alice.vcApiEndpoint, 'credentials/issue'), {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           credential: {
             name: 'First capability',
             credentialSubject: {
@@ -283,12 +265,12 @@ describe('verifiable credentials', () => {
               description: 'A transferable capability.'
             }
           }
-        })
+        }
       });
 
-      const secondCapability = await bob.fetch(path.join(vcApiEndpoint, 'credentials/issue'), {
+      const { json: secondCapability } = await bob.fetch(path.join(bob.vcApiEndpoint, 'credentials/issue'), {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           credential: {
             name: 'Second capability',
             credentialSubject: {
@@ -296,12 +278,12 @@ describe('verifiable credentials', () => {
               description: 'A transferable capability.'
             }
           }
-        })
+        }
       });
 
-      const presentation = await craig.fetch(path.join(vcApiEndpoint, 'presentations'), {
+      const { json: presentation } = await craig.fetch(path.join(craig.vcApiEndpoint, 'presentations'), {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           presentation: {
             verifiableCredential: [firstCapability, secondCapability],
             description: 'Hey, Alice! Bob gave me this capability.'
@@ -309,22 +291,20 @@ describe('verifiable credentials', () => {
           options: {
             challenge: await getChallengeFrom(alice)
           }
-        })
+        }
       });
 
-      const validationResult = await broker.call(
-        'crypto.vc.verifier.verifyCapabilityPresentation',
-        { verifiablePresentation: presentation },
-        { meta: { webId: alice.webId } }
-      );
+      const validationResult = await alice.call('vc.verifier.verifyCapabilityPresentation', {
+        verifiablePresentation: presentation
+      });
 
       expect(validationResult.verified).toBeTruthy();
     });
 
-    test('capability is open / has no credentialSubject and transferable', async () => {
-      const firstCapability = await alice.fetch(path.join(vcApiEndpoint, 'credentials/issue'), {
+    test('Capability is open / has no credentialSubject and transferable', async () => {
+      const { json: firstCapability } = await alice.fetch(path.join(alice.vcApiEndpoint, 'credentials/issue'), {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           credential: {
             name: 'First capability',
             credentialSubject: {
@@ -332,12 +312,12 @@ describe('verifiable credentials', () => {
               description: 'An open capability.'
             }
           }
-        })
+        }
       });
 
-      const verifiablePresentation = await craig.fetch(path.join(vcApiEndpoint, 'presentations'), {
+      const { json: verifiablePresentation } = await craig.fetch(path.join(craig.vcApiEndpoint, 'presentations'), {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           presentation: {
             verifiableCredential: [firstCapability],
             description: 'Hey, you gave me that invite link.'
@@ -345,21 +325,21 @@ describe('verifiable credentials', () => {
           options: {
             challenge: await getChallengeFrom(alice)
           }
-        })
+        }
       });
 
-      const validationResult = await alice.fetch(path.join(vcApiEndpoint, 'presentations/verify'), {
+      const { json: validationResult } = await alice.fetch(path.join(alice.vcApiEndpoint, 'presentations/verify'), {
         method: 'POST',
-        body: JSON.stringify({ verifiablePresentation })
+        body: { verifiablePresentation }
       });
 
       expect(validationResult.verified).toBeTruthy();
     });
 
-    test('second capability is deleted and presentation invalid.', async () => {
-      const firstCapability = await alice.fetch(path.join(vcApiEndpoint, 'credentials/issue'), {
+    test('Second capability is deleted and presentation invalid.', async () => {
+      const { json: firstCapability } = await alice.fetch(path.join(alice.vcApiEndpoint, 'credentials/issue'), {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           credential: {
             name: 'First capability',
             credentialSubject: {
@@ -367,12 +347,12 @@ describe('verifiable credentials', () => {
               description: 'A transferable capability.'
             }
           }
-        })
+        }
       });
 
-      const secondCapability = await bob.fetch(path.join(vcApiEndpoint, 'credentials/issue'), {
+      const { json: secondCapability } = await bob.fetch(path.join(bob.vcApiEndpoint, 'credentials/issue'), {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           credential: {
             name: 'Second capability',
             credentialSubject: {
@@ -380,16 +360,16 @@ describe('verifiable credentials', () => {
               description: 'A transferable capability.'
             }
           }
-        })
+        }
       });
 
       await bob.fetch(secondCapability.id, {
         method: 'DELETE'
       });
 
-      const verifiablePresentation = await craig.fetch(path.join(vcApiEndpoint, 'presentations'), {
+      const { json: verifiablePresentation } = await craig.fetch(path.join(craig.vcApiEndpoint, 'presentations'), {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           presentation: {
             verifiableCredential: [firstCapability, secondCapability],
             description: 'Hey, Alice! Bob gave me this capability.'
@@ -397,22 +377,20 @@ describe('verifiable credentials', () => {
           options: {
             challenge: await getChallengeFrom(alice)
           }
-        })
+        }
       });
 
-      const validationResult = await broker.call(
-        'crypto.vc.verifier.verifyCapabilityPresentation',
-        { verifiablePresentation },
-        { meta: { webId: alice.webId } }
-      );
+      const validationResult = await alice.call('vc.verifier.verifyCapabilityPresentation', {
+        verifiablePresentation
+      });
 
       expect(validationResult.verified).toBe(false);
     });
 
-    test('capability not invoked by holder invalid', async () => {
-      const firstCapability = await alice.fetch(path.join(vcApiEndpoint, 'credentials/issue'), {
+    test('Capability not invoked by holder invalid', async () => {
+      const { json: firstCapability } = await alice.fetch(path.join(alice.vcApiEndpoint, 'credentials/issue'), {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           credential: {
             name: 'First capability',
             credentialSubject: {
@@ -420,12 +398,12 @@ describe('verifiable credentials', () => {
               description: 'A transferable capability.'
             }
           }
-        })
+        }
       });
 
-      const verifiablePresentation = await craig.fetch(path.join(vcApiEndpoint, 'presentations'), {
+      const { json: verifiablePresentation } = await craig.fetch(path.join(craig.vcApiEndpoint, 'presentations'), {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           presentation: {
             verifiableCredential: [firstCapability],
             description: 'Hey, Alice! Bob gave me this capability.'
@@ -433,14 +411,12 @@ describe('verifiable credentials', () => {
           options: {
             challenge: await getChallengeFrom(alice)
           }
-        })
+        }
       });
 
-      const validationResult = await broker.call(
-        'crypto.vc.verifier.verifyCapabilityPresentation',
-        { verifiablePresentation },
-        { meta: { webId: alice.webId } }
-      );
+      const validationResult = await alice.call('vc.verifier.verifyCapabilityPresentation', {
+        verifiablePresentation
+      });
 
       expect(validationResult.verified).toBe(false);
       expect(validationResult.error?.errors?.[0].message).toMatch(
@@ -448,14 +424,10 @@ describe('verifiable credentials', () => {
       );
     });
 
-    test('non-linked chain is invalid', async () => {
-      const allCreds = await alice.fetch(path.join(vcApiEndpoint, 'credentials'), {
-        method: 'GET'
-      });
-
-      const firstCapability = await alice.fetch(path.join(vcApiEndpoint, 'credentials/issue'), {
+    test('Non-linked chain is invalid', async () => {
+      const { json: firstCapability } = await alice.fetch(path.join(alice.vcApiEndpoint, 'credentials/issue'), {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           credential: {
             name: 'First capability',
             credentialSubject: {
@@ -463,12 +435,12 @@ describe('verifiable credentials', () => {
               description: 'A transferable capability.'
             }
           }
-        })
+        }
       });
 
-      const secondCapability = await craig.fetch(path.join(vcApiEndpoint, 'credentials/issue'), {
+      const { json: secondCapability } = await craig.fetch(path.join(craig.vcApiEndpoint, 'credentials/issue'), {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           credential: {
             name: 'Second capability',
             credentialSubject: {
@@ -477,12 +449,15 @@ describe('verifiable credentials', () => {
               description: 'A transferable capability.'
             }
           }
-        })
+        }
       });
 
-      const verifiablePresentation = await craig.fetch(path.join(vcApiEndpoint, 'presentations'), {
+      // This test fails because of https://github.com/assemblee-virtuelle/semapps/issues/1426
+      expect(secondCapability).not.toMatchObject({ name: 'Error' });
+
+      const { json: verifiablePresentation } = await craig.fetch(path.join(craig.vcApiEndpoint, 'presentations'), {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           presentation: {
             verifiableCredential: [firstCapability, secondCapability],
             description: 'Hey, Alice! Bob gave me this capability.'
@@ -490,16 +465,13 @@ describe('verifiable credentials', () => {
           options: {
             challenge: await getChallengeFrom(alice)
           }
-        })
+        }
       });
 
-      const validationResult = await broker.call(
-        'crypto.vc.verifier.verifyCapabilityPresentation',
-        { verifiablePresentation },
-        { meta: { webId: alice.webId } }
-      );
+      const validationResult = await alice.call('vc.verifier.verifyCapabilityPresentation', {
+        verifiablePresentation
+      });
 
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(validationResult.verified).toBeFalsy();
     });
   });

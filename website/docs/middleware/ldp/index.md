@@ -65,30 +65,29 @@ module.exports = {
 
 ## Settings
 
-| Property                     | Type       | Default                     | Description                                                              |
-| ---------------------------- | ---------- | --------------------------- | ------------------------------------------------------------------------ |
-| `baseUrl`                    | `String`   | **required**                | Base URL of the LDP server                                               |
-| `containers`                 | `[Object]` | **required**                | List of containers to set up, with their options (see below)             |
-| `defaultContainerOptions`    | `[Object]` |                             | Default options for all containers (see below)                           |
-| `mirrorGraphName`            | `String`   | "http://semapps.org/mirror" | Name of the RDF graph where to store mirrored data                       |
-| `podProvider`                | `Boolean`  | false                       | Set to true if your server is a POD provider                             |
-| `preferredViewForResource`   | `Function` |                             | Function called to generate a redirect to the preferred view (see below) |
-| `resourcesWithContainerPath` | `Boolean`  | true                        | If true, the URI of all new resources will include the container path    |
-| `binary.maxSize`             | `String`   | "50Mb"                      | The maximum size allowed for uploaded binaries                           |
+| Property                   | Type       | Default                     | Description                                                              |
+| -------------------------- | ---------- | --------------------------- | ------------------------------------------------------------------------ |
+| `baseUrl`                  | `String`   | **required**                | Base URL of the LDP server                                               |
+| `containers`               | `[Object]` | **required**                | List of containers to set up, with their options (see below)             |
+| `defaultContainerOptions`  | `[Object]` |                             | Default options for all containers (see below)                           |
+| `mirrorGraphName`          | `String`   | "http://semapps.org/mirror" | Name of the RDF graph where to store mirrored data                       |
+| `podProvider`              | `Boolean`  | false                       | Set to true if your server is a POD provider                             |
+| `preferredViewForResource` | `Function` |                             | Function called to generate a redirect to the preferred view (see below) |
+| `allowSlugs`               | `Boolean`  | true                        | If false, slugs will be ignored and UUIDs will be used everywhere        |
+| `binary.maxSize`           | `String`   | "50Mb"                      | The maximum size allowed for uploaded binaries                           |
 
 ## Container options
 
 The following options can be set for each container, or they can be set in the `defaultContainerOptions` settings.
 
 | Property                  | Type                                    | Default       | Description                                                                                                                                                                 |
-| ------------------------- | --------------------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ------------------------- | --------------------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- |
 | `accept`                  | `String`                                | "text/turtle" | Type to return (`application/ld+json`, `text/turtle` or `application/n-triples`)                                                                                            |
-| `acceptedTypes`           | `Array`                                 |               | RDF classes accepted in this container. This is not enforced but used by some services to identify containers.                                                              |
+| `types`                   | `Array`                                 |               | RDF classes accepted in this container. This is not enforced but used by some services to identify containers.                                                              |
 | `excludeFromMirror`       | `Boolean`                               | false         | If true, other servers will not be able to [mirror](../sync/mirror) this container.                                                                                         |
 | `activateTombstones`      | `Boolean`                               | true          | If true, and if the ActivityPubService setting is also true, [Tombstones](https://www.w3.org/TR/activitypub/#delete-activity-outbox) will replace deleted resources.        |
 | `permissions`             | `Object \| (webId, ctx) => Permissions` |               | If the WebACL service is activated, permissions of the container itself. For the permissions object shape, see [`webacl.resource.addRights`](resource.md#addrights) action. |
-| `newResourcesPermissions` | `Object \| (webId, ctx) => Permissions` |               | If the WebACL service is activated, permissions for new resources. [See the docs here](../webacl/index.md#default-permissions-for-new-resources)                            |
-| `readOnly`                | `Boolean`                               | false         | Do not set `POST`, `PATCH`, `PUT` and `DELETE` routes for the container and its resources                                                                                   |
+| `newResourcesPermissions` | `Object \| (webId, ctx) => Permissions` |               | If the WebACL service is activated, permissions for new resources. [See the docs here](../webacl/index.md#default-permissions-for-new-resources)                            |     |
 | `preferredView`           | `String`                                |               | A part of the final URL for redirecting to the preferred view of the resource (see below).                                                                                  |
 | `controlledActions`       | `Object`                                |               | Use custom actions instead of the LDP ones (post, list, get, create, put, patch, delete). Used by the [ControlledContainerMixin](controlled-container)                      |
 
@@ -103,8 +102,6 @@ These catch-all routes are automatically added to the `ApiGateway` service.
 | `PUT`    | `ldp.resource.put`    | -                      |
 | `PATCH`  | `ldp.resource.patch`  | `ldp.container.patch`  |
 | `DELETE` | `ldp.resource.delete` | `ldp.container.delete` |
-
-> Note: If the `readOnly` container option is set (see above), only `GET` routes are added.
 
 ## Redirecting to a frontend app
 

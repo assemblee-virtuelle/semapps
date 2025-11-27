@@ -11,13 +11,11 @@ const Schema = {
   async handler(ctx) {
     const { uri, type, mode } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-
     // If no authorizers have been registered, assume user can access everything
     if (this.authorizers.length === 0) return true;
 
     if (webId === 'system') return true;
 
-    // @ts-expect-error TS(2488): Type 'string | number | boolean | any[] | Record<a... Remove this comment to see the full error message
     for (const authorizer of this.authorizers) {
       const result = await ctx.call(authorizer.actionName, { uri, type, mode, webId });
 

@@ -15,7 +15,7 @@ module.exports = {
   mixins: [ControlledContainerMixin, OrphanFilesDeletionMixin],
   settings: {
     path: '/files',
-    acceptedTypes: ['semapps:File'],
+    types: ['semapps:File'],
     orphanFilesDeletion: {
       cronJob: {
         // Optional, can be set to false

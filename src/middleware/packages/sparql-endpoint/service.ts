@@ -1,26 +1,24 @@
 import path from 'path';
 import urlJoin from 'url-join';
-import { ServiceSchema } from 'moleculer';
+import { Account } from '@semapps/auth';
+import { voidOntology } from '@semapps/ontologies';
+import { ServiceSchema, Context } from 'moleculer';
 import getRoute from './getRoute.ts';
 
 const SparqlEndpointService = {
   name: 'sparqlEndpoint' as const,
   settings: {
     defaultAccept: 'text/turtle',
-    ignoreAcl: false,
-    podProvider: false
+    ignoreAcl: false
   },
-  dependencies: ['triplestore', 'api', 'ldp'],
+  dependencies: ['triplestore', 'api', 'ldp', 'ontologies'],
   async started() {
-    const basePath = await this.broker.call('ldp.getBasePath');
-    if (this.settings.podProvider) {
-      await this.broker.call('api.addRoute', {
-        route: getRoute(path.join(basePath, '/:username([^/.][^/]+)/sparql')),
-        toBottom: false
-      });
-    } else {
-      await this.broker.call('api.addRoute', { route: getRoute(path.join(basePath, '/sparql')), toBottom: false });
-    }
+    await this.broker.call('ontologies.register', voidOntology);
+    const basePath: string = await this.broker.call('ldp.getBasePath');
+    await this.broker.call('api.addRoute', {
+      route: getRoute(path.join(basePath, '/:username([^/._][^/]+)/sparql')),
+      toBottom: false
+    });
   },
   actions: {
     query: {
@@ -28,19 +26,17 @@ const SparqlEndpointService = {
         const query = ctx.params.query || ctx.meta.rawBody;
         const accept = ctx.params.accept || ctx.meta.headers?.accept || this.settings.defaultAccept;
 
-        if (this.settings.podProvider) {
-          const [account] = await ctx.call('auth.account.find', { query: { username: ctx.params.username } });
-          if (!account) throw new Error(`No account found with username ${ctx.params.username}`);
+        const [account]: Account[] = await ctx.call('auth.account.find', { query: { username: ctx.params.username } });
+        if (!account) throw new Error(`No account found with username ${ctx.params.username}`);
 
-          if (account.webId !== ctx.meta.webId && account.webId !== ctx.meta.impersonatedUser) {
-            throw new Error(`You can only query your own SPARQL endpoint`);
-          }
+        if (account.webId !== ctx.meta.webId && account.webId !== ctx.meta.impersonatedUser) {
+          throw new Error(`You can only query your own SPARQL endpoint`);
         }
 
         const response = await ctx.call('triplestore.query', {
           query,
           accept,
-          dataset: this.settings.podProvider ? ctx.params.username : undefined,
+          dataset: ctx.params.username,
           // In Pod provider config, query as system when the Pod owner is querying his own data
           webId: this.settings.ignoreAcl ? 'system' : ctx.meta.webId
         });
@@ -54,15 +50,16 @@ const SparqlEndpointService = {
     }
   },
   events: {
-    'auth.registered': {
-      async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
+    'auth.account.created': {
+      async handler(ctx: Context<{ webId: string }>) {
         const { webId } = ctx.params;
-        if (this.settings.podProvider) {
+        const services: ServiceSchema[] = await ctx.call('$node.services');
+        if (services.some(s => s.name === 'activitypub.actor')) {
+          const baseUrl: string = await ctx.call('solid-storage.getBaseUrl');
           await ctx.call('activitypub.actor.addEndpoint', {
             actorUri: webId,
             predicate: 'http://rdfs.org/ns/void#sparqlEndpoint',
-            endpoint: urlJoin(webId, 'sparql')
+            endpoint: urlJoin(baseUrl, 'sparql')
           });
         }
       }

@@ -2,10 +2,11 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import { ActionSchema, Errors } from 'moleculer';
 import { cleanUndefined } from '../../../utils.ts';
+import { Registration } from '../../../types.ts';
 
 const { MoleculerError } = Errors;
 
-const Schema = {
+const PostAction = {
   visibility: 'public',
   params: {
     containerUri: {
@@ -30,14 +31,10 @@ const Schema = {
     webId: {
       type: 'string',
       optional: true
-    },
-    forcedResourceUri: {
-      type: 'string',
-      optional: true
     }
   },
   async handler(ctx) {
-    let { resource, containerUri, slug, contentType, file, forcedResourceUri } = ctx.params;
+    let { resource, containerUri, slug, contentType, file } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     let isContainer = false;
     let expandedResource;
@@ -84,12 +81,10 @@ const Schema = {
       );
     }
 
-    // The forcedResourceUri param allows Moleculer service to bypass URI generation
-    // It is used by ActivityStreams collections to provide URIs like {actorUri}/inbox
-    // TODO Use UUIDs for containers and collections https://github.com/assemblee-virtuelle/semapps/issues/1266
-    const resourceUri =
-      forcedResourceUri || (await ctx.call('ldp.resource.generateId', { containerUri, slug, isContainer }));
-    await ctx.call('triplestore.named-graph.create', { uri: resourceUri });
+    const resourceUri = await ctx.call('triplestore.named-graph.create', {
+      baseUrl: await ctx.call('solid-storage.getBaseUrl'),
+      slug: this.settings.allowSlugs ? slug : undefined
+    });
 
     // We must add this first, otherwise side effects will not find the container of the created resource
     // But this create race conditions, especially when testing, since uncreated resources are linked to containers
@@ -113,11 +108,10 @@ const Schema = {
         await ctx.call('ldp.container.create', {
           containerUri: resourceUri,
           title: expandedResource['http://purl.org/dc/terms/title']?.[0]['@value'],
-          description: expandedResource['http://purl.org/dc/terms/description']?.[0]['@value'],
-          webId
+          description: expandedResource['http://purl.org/dc/terms/description']?.[0]['@value']
         });
       } else {
-        const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
+        const registration: Registration = await ctx.call('ldp.registry.getByUri', { containerUri });
 
         // Change relative URIs to full URIs
         const resourceWithBase = resource['@graph']
@@ -127,9 +121,10 @@ const Schema = {
             })
           : { ...resource, '@id': resourceUri };
 
-        await ctx.call(controlledActions.create || 'ldp.resource.create', {
+        await ctx.call(registration?.controlledActions?.create || 'ldp.resource.create', {
           resource: resourceWithBase,
           resourceUri,
+          registration,
           webId
         });
       }
@@ -148,7 +143,6 @@ const Schema = {
       throw e;
     }
 
-    // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
     if (!ctx.meta.skipEmitEvent) {
       ctx.emit(
         'ldp.container.attached',
@@ -165,4 +159,4 @@ const Schema = {
   }
 } satisfies ActionSchema;
 
-export default Schema;
+export default PostAction;

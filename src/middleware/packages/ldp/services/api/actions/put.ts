@@ -1,5 +1,6 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import { Errors } from 'moleculer';
+import { getDatasetFromUri } from '../../../utils.ts';
 
 const { MoleculerError } = Errors;
 
@@ -7,6 +8,8 @@ export default async function post(this: any, ctx: any) {
   let { username, slugParts, ...resource } = ctx.params;
 
   const resourceUri = this.getUriFromSlugParts(slugParts, username);
+  ctx.meta.dataset = getDatasetFromUri(resourceUri);
+
   const resourceId = resource['@id'] || resource.id;
 
   if (!resourceId) {
@@ -38,7 +41,7 @@ export default async function post(this: any, ctx: any) {
     };
   } catch (e) {
     // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
-    if (!e.code || (e.code < 400 && e.code >= 500)) console.error(e);
+    console.error(e);
     // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
     ctx.meta.$statusCode = e.code || 500;
     // @ts-expect-error TS(18046): 'e' is of type 'unknown'.

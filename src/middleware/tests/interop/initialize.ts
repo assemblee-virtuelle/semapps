@@ -2,8 +2,7 @@
 import fse from 'fs-extra';
 import path from 'path';
 import urlJoin from 'url-join';
-import Redis from 'ioredis';
-import { ServiceBroker, ServiceSchema } from 'moleculer';
+import { ServiceBroker } from 'moleculer';
 import { FULL_ACTOR_TYPES, RelayService } from '@semapps/activitypub';
 import { AuthLocalService } from '@semapps/auth';
 import { CoreService } from '@semapps/core';
@@ -20,22 +19,22 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const containers = [
   {
     path: '/resources',
-    acceptedTypes: ['pair:Resource']
+    types: ['pair:Resource']
   },
   {
     path: '/protected-resources',
-    acceptedTypes: ['pair:Resource'],
+    types: ['pair:Resource'],
     permissions: {},
     newResourcesPermissions: {}
   }
 ];
 
 const initialize = async (
-  port: any,
-  mainDataset: any,
-  accountsDataset: any,
-  queueServiceDb: any,
-  serverToMirror: any
+  port: number,
+  mainDataset: string,
+  accountsDataset: string,
+  queueServiceDb: number,
+  serverToMirror: string
 ) => {
   const queueServiceUrl = `redis://localhost:6379/${queueServiceDb}`;
 
@@ -67,8 +66,8 @@ const initialize = async (
     }
   });
 
-  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "core"; settin... Remove this comment to see the full error message
   broker.createService({
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "core"; settin... Remove this comment to see the full error message
     mixins: [CoreService],
     settings: {
       baseUrl,
@@ -90,7 +89,7 @@ const initialize = async (
       },
       webid: {
         path: '/as/actor',
-        acceptedTypes: [FULL_ACTOR_TYPES.PERSON, FULL_ACTOR_TYPES.APPLICATION]
+        types: [FULL_ACTOR_TYPES.PERSON, FULL_ACTOR_TYPES.APPLICATION]
       }
     }
   });

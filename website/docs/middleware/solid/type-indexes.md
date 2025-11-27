@@ -1,5 +1,5 @@
 ---
-title: TypeIndexesService
+title: TypeIndexService
 ---
 
 This service automatically create a public [TypeIndex](https://github.com/solid/type-indexes) after a user creation, and it attaches it to its WebID with the `solid:publicTypeIndex` predicate. It will also automatically [register a type](./type-registrations.md#register) for every [controlled LDP container](../ldp/controlled-container.md).
@@ -8,30 +8,32 @@ This service automatically create a public [TypeIndex](https://github.com/solid/
 
 The following service actions are available:
 
-### `createAndAttachToWebId`
+### `getContainersUris`
 
-Create a public TypeIndex and attach it to the given WebID.
-
-##### Parameters
-
-| Property | Type  | Default      | Description                      |
-| -------- | ----- | ------------ | -------------------------------- |
-| `webId`  | `URI` | **required** | WebID to attach the TypeIndex to |
-
-### `findByWebID`
-
-Get the URL of the Pod attached with the provided WebID
+Get the URIs of all LDP containers associated with a given type.
 
 ##### Parameters
 
-| Property | Type  | Default      | Description                        |
-| -------- | ----- | ------------ | ---------------------------------- |
-| `webId`  | `URI` | **required** | WebID the TypeIndex is attached to |
+| Property | Type  | Default      | Description                                          |
+| -------- | ----- | ------------ | ---------------------------------------------------- |
+| `type`   | `URI` | **required** | The type to look for (can be prefixed or a full URI) |
+| `webId`  | `URI` | **required** | WebID of the user with the TypeIndex                 |
 
 ##### Return
 
-The URI of the public TypeIndex
+An array of LDP containers URIs.
 
-### `migrate`
+### `getTypes`
 
-Go through all existing accounts, create public TypeIndexes, and generate TypeRegistrations for all controlled LDP containers.
+Get the types associated with a given LDP container.
+
+##### Parameters
+
+| Property       | Type  | Default      | Description                          |
+| -------------- | ----- | ------------ | ------------------------------------ |
+| `containerUri` | `URI` | **required** | The URI of the container to look for |
+| `webId`        | `URI` | **required** | WebID of the user with the TypeIndex |
+
+##### Return
+
+A TypeRegistration

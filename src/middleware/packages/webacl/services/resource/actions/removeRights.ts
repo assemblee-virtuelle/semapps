@@ -1,9 +1,7 @@
-import { ActionSchema, Errors } from 'moleculer';
+import { ActionSchema } from 'moleculer';
 import { getAclUriFromResourceUri, processRights, FULL_AGENTCLASS_URI, FULL_FOAF_AGENT } from '../../../utils.ts';
 
-const { MoleculerError } = Errors;
-
-export const action = {
+const RemoveRightsAction = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string', optional: false },
@@ -58,7 +56,6 @@ export const action = {
       {
         uri: resourceUri,
         webId,
-        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
         dataset: ctx.meta.dataset,
         isContainer,
         defaultRightsUpdated,
@@ -69,3 +66,5 @@ export const action = {
     );
   }
 } satisfies ActionSchema;
+
+export default RemoveRightsAction;

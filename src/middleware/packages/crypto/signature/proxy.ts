@@ -1,5 +1,6 @@
 import path from 'path';
 import urlJoin from 'url-join';
+import { Account } from '@semapps/auth';
 import { parseHeader, parseFile, saveDatasetMeta } from '@semapps/middlewares';
 import fetch from 'node-fetch';
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
@@ -17,29 +18,21 @@ const stream2buffer = (stream: any) => {
 
 const ProxyService = {
   name: 'signature.proxy' as const,
-  settings: {
-    podProvider: false
-  },
   dependencies: ['api', 'ldp'],
   async started() {
-    const basePath = await this.broker.call('ldp.getBasePath');
+    const basePath: string = await this.broker.call('ldp.getBasePath');
 
-    const routeConfig = {
-      name: 'proxy-endpoint',
-      authorization: true,
-      authentication: false,
-      aliases: {
-        'POST /': [parseHeader, parseFile, saveDatasetMeta, 'signature.proxy.api_query'] // parseFile handles multipart/form-data
+    await this.broker.call('api.addRoute', {
+      route: {
+        name: 'proxy-endpoint',
+        path: path.join(basePath, '/:username([^/._][^/]+)/proxy'),
+        authorization: true,
+        authentication: false,
+        aliases: {
+          'POST /': [parseHeader, parseFile, saveDatasetMeta, 'signature.proxy.api_query'] // parseFile handles multipart/form-data
+        }
       }
-    };
-
-    if (this.settings.podProvider) {
-      await this.broker.call('api.addRoute', {
-        route: { path: path.join(basePath, '/:username([^/.][^/]+)/proxy'), ...routeConfig }
-      });
-    } else {
-      await this.broker.call('api.addRoute', { route: { path: path.join(basePath, '/proxy'), ...routeConfig } });
-    }
+    });
   },
   actions: {
     api_query: {
@@ -50,10 +43,8 @@ const ProxyService = {
         const actorUri = ctx.meta.webId;
 
         // Only user can query his own proxy URL
-        if (this.settings.podProvider) {
-          const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
-          if (account.username !== ctx.params.username) throw new E.ForbiddenError();
-        }
+        const account: Account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
+        if (account.username !== ctx.params.username) throw new E.ForbiddenError();
 
         // If a file is uploaded, convert it to a Buffer
         const body =
@@ -93,7 +84,7 @@ const ProxyService = {
       async handler(ctx) {
         let { url, method, headers, body, actorUri } = ctx.params;
 
-        const signatureHeaders = await ctx.call('signature.generateSignatureHeaders', {
+        const signatureHeaders: any = await ctx.call('signature.generateSignatureHeaders', {
           url,
           method,
           body,
@@ -150,19 +141,18 @@ const ProxyService = {
     }
   },
   events: {
-    'auth.registered': {
-      async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
+    'auth.account.created': {
+      async handler(ctx: any) {
         const { webId } = ctx.params;
-        if (this.settings.podProvider) {
-          const services = await ctx.call('$node.services');
-          if (services.filter((s: any) => s.name === 'activitypub.actor')) {
-            await ctx.call('activitypub.actor.addEndpoint', {
-              actorUri: webId,
-              predicate: 'https://www.w3.org/ns/activitystreams#proxyUrl',
-              endpoint: urlJoin(webId, 'proxy')
-            });
-          }
+        const services: ServiceSchema[] = await ctx.call('$node.services');
+        if (services.some(s => s.name === 'activitypub.actor')) {
+          const baseUrl = await ctx.call('solid-storage.getBaseUrl');
+
+          await ctx.call('activitypub.actor.addEndpoint', {
+            actorUri: webId,
+            predicate: 'https://www.w3.org/ns/activitystreams#proxyUrl',
+            endpoint: urlJoin(baseUrl, 'proxy')
+          });
         }
       }
     }

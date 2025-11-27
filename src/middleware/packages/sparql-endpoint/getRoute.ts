@@ -8,7 +8,7 @@ import {
 
 const middlewares = [parseHeader, negotiateAccept, negotiateContentType, parseRawBody, saveDatasetMeta];
 
-function getRoute(path: any) {
+function getRoute(path: string) {
   return {
     path,
     name: 'sparql-endpoint',
