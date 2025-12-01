@@ -19,7 +19,7 @@ const SpecialEndpointMixin = {
       initialData: {}
     }
   },
-  dependencies: ['api', 'ldp'],
+  dependencies: ['api', 'ldp', 'type-index'],
   async started() {
     if (!this.settings.baseUrl) throw new Error(`The baseUrl must be specified for service ${this.name}`);
     if (!this.settings.settingsDataset)

@@ -38,7 +38,8 @@
     "node-fetch": "^2.6.6",
     "supertest": "^4.0.2",
     "url-join": "^4.0.1",
-    "wait-for-expect": "^4.0.0"
+    "wait-for-expect": "^4.0.0",
+    "ws": "^8.17.0"
   },
   "devDependencies": {
     "@babel/core": "^7.28.0",
@@ -48,6 +49,7 @@
     "@jest/globals": "^30.0.5",
     "@types/ioredis": "^4.27.0",
     "@types/jest": "^30.0.0",
+    "@types/ws": "^8.18.1",
     "babel-jest": "^30.0.5",
     "babel-plugin-transform-import-meta": "^2.3.3",
     "babel-preset-vite": "^1.1.3"

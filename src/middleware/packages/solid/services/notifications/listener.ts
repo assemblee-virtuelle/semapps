@@ -21,7 +21,7 @@ const SolidNotificationsListenerSchema = {
     // DbService settings
     idField: '@id'
   },
-  dependencies: ['api', 'app', 'ontologies'],
+  dependencies: ['api', 'ontologies'],
   async started() {
     if (!this.settings.baseUrl) throw new Error(`The baseUrl setting is required`);
 
@@ -55,8 +55,7 @@ const SolidNotificationsListenerSchema = {
     register: {
       async handler(ctx) {
         const { resourceUri, actionName } = ctx.params;
-
-        const appActor: any = await ctx.call('app.get');
+        const webId = ctx.params.webId || ctx.meta.webId;
 
         // Check if a listener already exist
         const existingListener = this.listeners.find(
@@ -68,7 +67,7 @@ const SolidNotificationsListenerSchema = {
             // Check if channel still exist. If not, it will throw an error.
             await ctx.call('ldp.remote.get', {
               resourceUri: existingListener.channelUri,
-              webId: appActor.id,
+              webId,
               strategy: 'networkOnly'
             });
 
@@ -138,7 +137,7 @@ const SolidNotificationsListenerSchema = {
             'notify:topic': resourceUri,
             'notify:sendTo': webhookUrl
           }),
-          actorUri: appActor.id
+          actorUri: webId
         });
 
         // Keep track of the channel URI, to be able to check if it still exists

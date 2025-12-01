@@ -47,7 +47,6 @@ const CoreService = {
       // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub";... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [ActivityPubService],
-        // Type support for settings could be given, once moleculer type definitions improve...
         settings: {
           baseUrl,
           ...this.settings.activitypub

@@ -4,6 +4,7 @@ import Redis from 'ioredis';
 import { ActionParamSchema, CallingOptions, ServiceBroker, ServiceSchema } from 'moleculer';
 import { Account } from '@semapps/auth';
 import * as CONFIG from './config.ts';
+import { delay } from '@semapps/ldp';
 
 type FetchOptions = Omit<fetch.RequestInit, 'body'> & {
   body?: ArrayBuffer | ArrayBufferView | ReadableStream | string | URLSearchParams | FormData | object;
@@ -114,10 +115,19 @@ export const createAccount = async (broker: ServiceBroker, username: string) => 
     return fetchServer(url, { ...options, headers });
   };
 
+  const getContainerUri = async (type: string) => {
+    let containerUri: string;
+    do {
+      containerUri = (await callAsUser('ldp.registry.getUri', { type, isContainer: true })) as string;
+      if (!containerUri) await delay(500);
+    } while (!containerUri);
+    return containerUri;
+  };
+
   // Ensure keys are created and attached to the WebID (this is a side-effect of the auth.account.created event)
   // If we don't do that, tests may be stopped before the keys are created and this may generate errors
   // Note: See if we can avoid this because it increases some of the tests time by 30-50%
-  await callAsUser('webid.awaitCreateComplete');
+  const userData: any = await callAsUser('webid.awaitCreateComplete');
 
   let returnValues = {
     webId,
@@ -125,7 +135,9 @@ export const createAccount = async (broker: ServiceBroker, username: string) => 
     baseUrl,
     username,
     call: callAsUser,
-    fetch: fetchAsUser
+    fetch: fetchAsUser,
+    getContainerUri,
+    ...userData
   };
 
   // Add more resources if ActivityPub services is enabled

@@ -5,6 +5,7 @@ import NotificationsListenerService from './services/notifications/listener.ts';
 import PreferencesFileService from './services/preferences-file.ts';
 import StorageService from './services/storage.ts';
 import TypeIndexService from './services/type-index/type-index.ts';
+import WebSocketMixin from './mixins/websocket.ts';
 
 export * from './types.ts';
 export {
@@ -14,5 +15,6 @@ export {
   NotificationsListenerService,
   PreferencesFileService,
   StorageService,
-  TypeIndexService
+  TypeIndexService,
+  WebSocketMixin
 };

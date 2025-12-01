@@ -62,10 +62,6 @@ const initialize = async (number: number) => {
       api: {
         port
       }
-      // webid: {
-      //   path: '/as/actor',
-      //   types: Object.values(FULL_ACTOR_TYPES)
-      // }
     }
   });
 
