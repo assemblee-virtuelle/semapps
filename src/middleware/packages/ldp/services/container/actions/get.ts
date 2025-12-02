@@ -1,6 +1,7 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import { ActionSchema, Errors } from 'moleculer';
 import { buildFiltersQuery, isContainer, cleanUndefined, arrayOf } from '../../../utils.ts';
+import { Registration } from '../../../types.ts';
 
 const { MoleculerError } = Errors;
 
@@ -26,7 +27,7 @@ const Schema = {
     if (accept && accept !== MIME_TYPES.JSON)
       throw new Error(`The ldp.container.get action now only support JSON-LD. Provided: ${accept}`);
 
-    let containerResults = await ctx.call('triplestore.query', {
+    let containerResults: any = await ctx.call('triplestore.query', {
       query: `
         ${await ctx.call('ontologies.getRdfPrefixes')}
         CONSTRUCT  {
@@ -49,7 +50,7 @@ const Schema = {
     if (!doNotIncludeResources) {
       const filtersQuery = buildFiltersQuery(filters);
 
-      const resourcesResults = await ctx.call('triplestore.query', {
+      const resourcesResults: any = await ctx.call('triplestore.query', {
         query: `
           ${await ctx.call('ontologies.getRdfPrefixes')}
           SELECT ?s1
@@ -66,14 +67,14 @@ const Schema = {
 
       const resourcesUris = resourcesResults?.map((node: any) => node.s1.value);
 
-      const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
+      const { controlledActions }: Registration = await ctx.call('ldp.registry.getByUri', { containerUri });
 
       // Request each resources (in parallel)
       containerResults['http://www.w3.org/ns/ldp#contains'] = await Promise.all(
         arrayOf(resourcesUris).flatMap(async resourceUri => {
           try {
             // We pass the accept/jsonContext parameters only if they are explicit
-            const resource = await ctx.call(
+            const resource: any = await ctx.call(
               controlledActions?.get || 'ldp.resource.get',
               cleanUndefined({
                 resourceUri,
@@ -105,7 +106,7 @@ const Schema = {
       );
     }
 
-    let compactResults = await ctx.call('jsonld.parser.compact', {
+    let compactResults: any = await ctx.call('jsonld.parser.compact', {
       input: containerResults,
       context: jsonContext || (await ctx.call('jsonld.context.get'))
     });
