@@ -2,12 +2,14 @@ import { ServiceBroker } from 'moleculer';
 import fs from 'fs';
 import path, { join as pathJoin } from 'path';
 import { CoreService } from '@semapps/core';
+import { FsBinaryAdapter } from '@semapps/ldp';
 import { as, pair, petr, semapps, solid, vcard } from '@semapps/ontologies';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { AuthLocalService } from '@semapps/auth';
 import { fileURLToPath } from 'url';
 import * as CONFIG from '../config.ts';
 import { listDatasets, dropDataset } from '../utils.ts';
+import { FusekiAdapter } from '@semapps/triplestore';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -37,7 +39,7 @@ const containers = [
   },
   {
     path: '/files',
-    types: ['semapps:File'],
+    types: ['https://www.w3.org/ns/iana/media-types/application/octet-stream#Resource'],
     permissions
   }
 ];
@@ -64,6 +66,13 @@ const initialize = async (allowSlugs = true): Promise<ServiceBroker> => {
     }
   });
 
+  // Temporary solution until the TripleStoreService refactoring is finished
+  const fusekiAdapter = new FusekiAdapter({
+    url: CONFIG.SPARQL_ENDPOINT,
+    user: CONFIG.JENA_USER,
+    password: CONFIG.JENA_PASSWORD
+  });
+
   broker.createService({
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "core"; settin... Remove this comment to see the full error message
     mixins: [CoreService],
@@ -82,7 +91,13 @@ const initialize = async (allowSlugs = true): Promise<ServiceBroker> => {
       webfinger: false,
       webid: false,
       ldp: {
-        allowSlugs
+        allowSlugs,
+        binaryAdapter: new FsBinaryAdapter({
+          rootDir: uploadsPath,
+          baseUrl: CONFIG.HOME_URL!,
+          maxSize: '80Mb',
+          tripleStoreAdapter: fusekiAdapter
+        })
       }
     }
   });

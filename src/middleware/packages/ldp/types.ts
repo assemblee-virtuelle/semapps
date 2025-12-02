@@ -1,6 +1,6 @@
 import { WacPermissionObject, WacPermissionFunction } from '@semapps/webacl';
 
-interface ControlledActions {
+export interface ControlledActions {
   post: string;
   list: string;
   get: string;
@@ -31,4 +31,11 @@ export interface LdpRegistryServiceSettings {
   containers: Registration[];
   defaultOptions: Partial<Registration>;
   allowSlugs: boolean;
+}
+
+export interface Binary {
+  file: Buffer;
+  mimeType: string;
+  size: number;
+  time: Date;
 }

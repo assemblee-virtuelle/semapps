@@ -81,10 +81,16 @@ const PostAction = {
       );
     }
 
-    const resourceUri = await ctx.call('triplestore.named-graph.create', {
-      baseUrl: await ctx.call('solid-storage.getBaseUrl'),
-      slug: this.settings.allowSlugs ? slug : undefined
-    });
+    let resourceUri: string;
+
+    if (file) {
+      resourceUri = await ctx.call('ldp.binary.store', { file });
+    } else {
+      resourceUri = await ctx.call('triplestore.named-graph.create', {
+        baseUrl: await ctx.call('solid-storage.getBaseUrl'),
+        slug: this.settings.allowSlugs ? slug : undefined
+      });
+    }
 
     // We must add this first, otherwise side effects will not find the container of the created resource
     // But this create race conditions, especially when testing, since uncreated resources are linked to containers
@@ -101,10 +107,8 @@ const PostAction = {
 
     try {
       if (file) {
-        resource = await ctx.call('ldp.resource.upload', { resourceUri, file });
-      }
-
-      if (isContainer) {
+        // Do nothing. The binary has already been uploaded.
+      } else if (isContainer) {
         await ctx.call('ldp.container.create', {
           containerUri: resourceUri,
           title: expandedResource['http://purl.org/dc/terms/title']?.[0]['@value'],

@@ -1,11 +1,10 @@
 import fetch from 'node-fetch';
-import waitForExpect from 'wait-for-expect';
 import fs from 'fs';
 import { ServiceBroker } from 'moleculer';
 import path, { join as pathJoin } from 'path';
-import { getSlugFromUri } from '@semapps/ldp';
+import { Binary } from '@semapps/ldp';
 import { fileURLToPath } from 'url';
-import { fetchServer, createAccount } from '../utils.ts';
+import { createAccount } from '../utils.ts';
 import initialize from './initialize.ts';
 import * as CONFIG from '../config.ts';
 
@@ -26,46 +25,56 @@ afterAll(async () => {
 });
 
 describe('Binary handling of LDP server', () => {
-  let fileUri: string | null;
+  let fileUri: string;
   let filePath: string | null;
-  let fileName: string | null;
+  let binary: Binary;
   let containerUri: string;
 
   test('Post image to container', async () => {
-    // @ts-expect-error This expression is not callable
-    await waitForExpect(async () => {
-      containerUri = await alice.call('ldp.registry.getUri', { type: 'semapps:File', isContainer: true });
-      expect(containerUri).not.toBeUndefined();
-    });
+    containerUri = await alice.getContainerUri(
+      'https://www.w3.org/ns/iana/media-types/application/octet-stream#Resource'
+    );
 
     const readStream = fs.createReadStream(pathJoin(__dirname, 'av-icon.png'));
 
-    const { headers } = await fetchServer(containerUri, {
+    const { headers } = await alice.fetch(containerUri, {
       method: 'POST',
       body: readStream,
       headers: new fetch.Headers({ 'Content-Type': 'image/png' })
     });
 
-    fileUri = headers.get('Location');
+    fileUri = headers.get('Location')!;
     expect(fileUri).not.toBeNull();
 
     filePath = fileUri!.replace(CONFIG.HOME_URL!, '');
-    fileName = getSlugFromUri(fileUri);
 
     expect(fs.existsSync(pathJoin(__dirname, '../uploads', filePath))).toBeTruthy();
   });
 
+  test('Get binary', async () => {
+    binary = await alice.call('ldp.binary.get', { resourceUri: fileUri });
+
+    expect(binary).toMatchObject({
+      file: expect.anything(),
+      mimeType: 'image/png',
+      size: 3181,
+      time: expect.anything()
+    });
+  });
+
   test('Get container', async () => {
-    await expect(fetchServer(containerUri)).resolves.toMatchObject({
+    await expect(alice.fetch(containerUri)).resolves.toMatchObject({
       json: {
         type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
         'ldp:contains': [
           {
             id: fileUri,
-            type: 'semapps:File',
-            'semapps:fileName': fileName,
-            'semapps:localPath': `uploads/${filePath}`,
-            'semapps:mimeType': 'image/png'
+            type: expect.arrayContaining([
+              'https://www.w3.org/ns/iana/media-types/application/octet-stream#Resource',
+              'https://www.w3.org/ns/iana/media-types/image/png#Resource'
+            ]),
+            'stat:size': '3181',
+            'stat:mtime': binary.time.toISOString()
           }
         ]
       }
@@ -73,7 +82,7 @@ describe('Binary handling of LDP server', () => {
   });
 
   test('Get image as binary (via API)', async () => {
-    const { headers, body } = await fetchServer(fileUri, {
+    const { headers, body } = await alice.fetch(fileUri, {
       headers: new fetch.Headers({ Accept: '*/*' })
     });
 
@@ -87,16 +96,18 @@ describe('Binary handling of LDP server', () => {
   test('Get image as resource (via Moleculer action)', async () => {
     await expect(alice.call('ldp.resource.get', { resourceUri: fileUri })).resolves.toMatchObject({
       id: fileUri,
-      type: 'semapps:File',
-      'semapps:fileName': fileName,
-      'semapps:localPath': `uploads/${filePath}`,
-      'semapps:mimeType': 'image/png'
+      type: expect.arrayContaining([
+        'https://www.w3.org/ns/iana/media-types/application/octet-stream#Resource',
+        'https://www.w3.org/ns/iana/media-types/image/png#Resource'
+      ]),
+      'stat:size': '3181',
+      'stat:mtime': binary.time.toISOString()
     });
   });
 
   test('Delete image', async () => {
     await expect(
-      fetchServer(fileUri, {
+      alice.fetch(fileUri, {
         method: 'DELETE'
       })
     ).resolves.toMatchObject({
@@ -105,9 +116,9 @@ describe('Binary handling of LDP server', () => {
 
     expect(fs.existsSync(pathJoin(__dirname, '../uploads/files/av-icon.png'))).toBeFalsy();
 
-    await expect(fetchServer(fileUri)).resolves.toMatchObject({ status: 404 });
+    await expect(alice.fetch(fileUri)).resolves.toMatchObject({ status: 404 });
 
-    await expect(fetchServer(containerUri)).resolves.toMatchObject({
+    await expect(alice.fetch(containerUri)).resolves.toMatchObject({
       json: {
         type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
         'ldp:contains': []

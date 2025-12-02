@@ -1,7 +1,7 @@
-import fs from 'fs';
 import { Errors } from 'moleculer';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { cleanUndefined, getDatasetFromUri, parseJson } from '../../../utils.ts';
+import { Binary } from '../../../types.ts';
 
 const { MoleculerError } = Errors;
 
@@ -40,6 +40,29 @@ export default async function get(this: any, ctx: any) {
         if (!ctx.meta.$responseHeaders) ctx.meta.$responseHeaders = {};
         ctx.meta.$responseHeaders['Preference-Applied'] = 'return=representation';
       }
+    } else if (
+      types.includes('https://www.w3.org/ns/iana/media-types/application/octet-stream#Resource') &&
+      ![MIME_TYPES.JSON, MIME_TYPES.TURTLE, MIME_TYPES.TRIPLE].includes(ctx.meta.originalHeaders?.accept)
+    ) {
+      /*
+       * LDP BINARY
+       */
+
+      try {
+        const binary: Binary = await ctx.call('ldp.binary.get', { resourceUri: uri });
+
+        ctx.meta.$responseType = binary.mimeType;
+        // Since files are currently immutable, we set a maximum browser cache age
+        // We do that after the file is read, otherwise the error 404 will be cached by the browser
+        ctx.meta.$responseHeaders = {
+          'Cache-Control': 'public, max-age=31536000',
+          Vary: 'Accept'
+        };
+
+        return binary.file;
+      } catch (e) {
+        throw new MoleculerError('File Not found', 404, 'NOT_FOUND');
+      }
     } else {
       /*
        * LDP RESOURCE
@@ -63,36 +86,13 @@ export default async function get(this: any, ctx: any) {
         }
       }
 
-      // If the resource is a file and no semantic encoding was requested, return it
-      if (
-        types.includes('http://semapps.org/ns/core#File') &&
-        ![MIME_TYPES.JSON, MIME_TYPES.TURTLE, MIME_TYPES.TRIPLE].includes(ctx.meta.originalHeaders?.accept)
-      ) {
-        try {
-          // Get the file as JSON-LD to get its metadata
-          res = await ctx.call(controlledActions.get || 'ldp.resource.get', { resourceUri: uri });
-
-          const file = fs.readFileSync(res['semapps:localPath']);
-          ctx.meta.$responseType = res['semapps:mimeType'];
-          // Since files are currently immutable, we set a maximum browser cache age
-          // We do that after the file is read, otherwise the error 404 will be cached by the browser
-          ctx.meta.$responseHeaders = {
-            'Cache-Control': 'public, max-age=31536000',
-            Vary: 'Accept'
-          };
-          return file;
-        } catch (e) {
-          throw new MoleculerError('File Not found', 404, 'NOT_FOUND');
-        }
-      } else {
-        res = await ctx.call(
-          controlledActions.get || 'ldp.resource.get',
-          cleanUndefined({
-            resourceUri: uri,
-            jsonContext: parseJson(ctx.meta.headers?.jsonldcontext)
-          })
-        );
-      }
+      res = await ctx.call(
+        controlledActions.get || 'ldp.resource.get',
+        cleanUndefined({
+          resourceUri: uri,
+          jsonContext: parseJson(ctx.meta.headers?.jsonldcontext)
+        })
+      );
     }
 
     if (ctx.meta.headers.accept && ctx.meta.headers.accept !== MIME_TYPES.JSON) {

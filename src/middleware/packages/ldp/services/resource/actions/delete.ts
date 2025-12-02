@@ -1,4 +1,3 @@
-import fs from 'fs';
 import { ActionSchema } from 'moleculer';
 
 const Schema = {
@@ -19,7 +18,7 @@ const Schema = {
 
     // Save the current data, to be able to send it through the event
     // If the resource does not exist, it will throw a 404 error
-    const oldData = await ctx.call(
+    const oldData: any = await ctx.call(
       'ldp.resource.get',
       {
         resourceUri,
@@ -37,14 +36,14 @@ const Schema = {
     await ctx.call('triplestore.named-graph.delete', { uri: resourceUri });
 
     // We must detach the resource from the containers after deletion, otherwise the permissions may fail
-    const containersUris = await ctx.call('ldp.resource.getContainers', { resourceUri });
+    const containersUris: string[] = await ctx.call('ldp.resource.getContainers', { resourceUri });
     for (const containerUri of containersUris) {
       await ctx.call('ldp.container.detach', { containerUri, resourceUri, webId: 'system' });
     }
 
-    if (oldData.type === 'semapps:File') {
+    if (await ctx.call('ldp.binary.isBinary', { resourceUri })) {
       try {
-        fs.unlinkSync(oldData['semapps:localPath']);
+        await ctx.call('ldp.binary.delete', { resourceUri });
       } catch (e) {
         // Ignore errors (file may have been deleted already)
       }

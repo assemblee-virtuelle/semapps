@@ -17,10 +17,7 @@ const LdpResourceSchema = {
   settings: {
     baseUrl: null,
     preferredViewForResource: null,
-    allowSlugs: true,
-    binary: {
-      maxSize: '50Mb'
-    }
+    allowSlugs: true
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
