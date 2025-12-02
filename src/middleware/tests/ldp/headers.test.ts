@@ -1,7 +1,6 @@
 import urlJoin from 'url-join';
 import { parse as parseLinkHeader } from 'http-link-header';
 import { ServiceBroker } from 'moleculer';
-import waitForExpect from 'wait-for-expect';
 import { ControlledContainerMixin } from '@semapps/ldp';
 import { fetchServer, createAccount } from '../utils.ts';
 import initialize from './initialize.ts';
@@ -54,11 +53,7 @@ describe('Headers handling of LDP server', () => {
   let eventsContainerUri: string;
 
   test('Get headers', async () => {
-    // @ts-expect-error This expression is not callable
-    await waitForExpect(async () => {
-      placesContainerUri = await alice.call('ldp.registry.getUri', { type: 'pair:Place', isContainer: true });
-      expect(placesContainerUri).not.toBeUndefined();
-    });
+    placesContainerUri = await alice.getContainerUri('pair:Place');
 
     const { headers: postHeaders } = await fetchServer(placesContainerUri, {
       method: 'POST',
@@ -86,11 +81,7 @@ describe('Headers handling of LDP server', () => {
   });
 
   test('Get container-specific headers', async () => {
-    // @ts-expect-error This expression is not callable
-    await waitForExpect(async () => {
-      eventsContainerUri = await alice.call('ldp.registry.getUri', { type: 'pair:Event', isContainer: true });
-      expect(eventsContainerUri).not.toBeUndefined();
-    });
+    eventsContainerUri = await alice.getContainerUri('pair:Event');
 
     const { headers: postHeaders } = await fetchServer(eventsContainerUri, {
       method: 'POST',

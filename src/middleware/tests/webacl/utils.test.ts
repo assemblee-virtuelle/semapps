@@ -1,6 +1,4 @@
-import waitForExpect from 'wait-for-expect';
 import { ServiceBroker } from 'moleculer';
-import { getAclUriFromResourceUri } from '@semapps/webacl';
 import initialize from './initialize.ts';
 import { createAccount } from '../utils.ts';
 
@@ -26,12 +24,7 @@ describe('Test various actions of the webacl.resource service', () => {
   let resourceUri: string;
 
   test('Bob see his rights correctly', async () => {
-    // @ts-expect-error This expression is not callable
-    await waitForExpect(async () => {
-      // Container with no default permissions
-      containerUri = await alice.call('ldp.registry.getUri', { type: 'as:Video', isContainer: true });
-      expect(containerUri).not.toBeUndefined();
-    });
+    containerUri = await alice.getContainerUri('as:Video');
 
     resourceUri = await alice.call('ldp.container.post', {
       containerUri,

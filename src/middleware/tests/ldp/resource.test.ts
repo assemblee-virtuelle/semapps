@@ -1,5 +1,4 @@
 import rdf from '@rdfjs/data-model';
-import waitForExpect from 'wait-for-expect';
 import { ServiceBroker } from 'moleculer';
 import initialize from './initialize.ts';
 import { createAccount } from '../utils.ts';
@@ -25,11 +24,7 @@ describe('Resource CRUD operations', () => {
   let project1Uri: string;
 
   test('Post resource in container', async () => {
-    // @ts-expect-error This expression is not callable
-    await waitForExpect(async () => {
-      containerUri = await alice.call('ldp.registry.getUri', { type: 'pair:Project', isContainer: true });
-      expect(containerUri).not.toBeUndefined();
-    });
+    containerUri = await alice.getContainerUri('pair:Project');
 
     project1Uri = await alice.call('ldp.container.post', {
       containerUri,
@@ -484,7 +479,7 @@ describe('Resource CRUD operations', () => {
 
   // Ensure dereferenced resources with IDs are not deleted by PUT
   test('PUT resource with ID', async () => {
-    const themeContainerUri = await alice.call('ldp.registry.getUri', { type: 'pair:Theme', isContainer: true });
+    const themeContainerUri = await alice.getContainerUri('pair:Theme');
 
     const themeUri = await alice.call('ldp.container.post', {
       containerUri: themeContainerUri,

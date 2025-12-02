@@ -25,6 +25,7 @@
     "rdf-parse": "^1.7.0",
     "sharp": "^0.31.2",
     "sparqljs": "^3.5.2",
+    "sparqljson-parse": "^1.5.1",
     "speakingurl": "^14.0.1",
     "streamify-string": "^1.0.1",
     "url-join": "^4.0.1",
@@ -42,5 +43,12 @@
   "main": "./index.ts",
   "peerDependencies": {
     "moleculer": "^0.14.35"
+  },
+  "devDependencies": {
+    "@types/bytes": "^3.1.2",
+    "@types/mime-types": "^2.1.4",
+    "@types/uuid": "^9.0.1",
+    "@types/rdfjs__data-model": "^2.0.9",
+    "@rdfjs/types": "2.0.1"
   }
 }

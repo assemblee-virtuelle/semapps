@@ -1,5 +1,4 @@
 import fetch from 'node-fetch';
-import waitForExpect from 'wait-for-expect';
 import { ServiceBroker } from 'moleculer';
 import { createAccount, fetchServer } from '../utils.ts';
 import initialize from './initialize.ts';
@@ -23,11 +22,7 @@ describe('LDP handling through API', () => {
   let resourceUri: any;
 
   test('Create resource', async () => {
-    // @ts-expect-error This expression is not callable
-    await waitForExpect(async () => {
-      containerUri = await alice.call('ldp.registry.getUri', { type: 'pair:Project', isContainer: true });
-      expect(containerUri).not.toBeUndefined();
-    });
+    containerUri = await alice.getContainerUri('pair:Project');
 
     const { headers } = await fetchServer(containerUri, {
       method: 'POST',

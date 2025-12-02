@@ -1,4 +1,3 @@
-// @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
 import { v4 as uuidv4 } from 'uuid';
 import createSlug from 'speakingurl';
 import urlJoin from 'url-join';

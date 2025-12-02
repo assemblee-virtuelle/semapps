@@ -26,7 +26,7 @@ describe('Collections API', () => {
   let localContext: any;
 
   test('Create resources', async () => {
-    const notesContainerUri = await alice.call('ldp.registry.getUri', { type: 'as:Note', isContainer: true });
+    const notesContainerUri = await alice.getContainerUri('as:Note');
 
     for (let i = 0; i < 10; i++) {
       items.push(

@@ -5,7 +5,7 @@ import { getSlugFromUri, getContainerFromUri } from '../../../utils.ts';
 
 const { MoleculerError } = Errors;
 
-const Schema = {
+const UploadAction = {
   visibility: 'public',
   params: {
     resourceUri: 'string',
@@ -48,4 +48,4 @@ const Schema = {
   }
 } satisfies ActionSchema;
 
-export default Schema;
+export default UploadAction;

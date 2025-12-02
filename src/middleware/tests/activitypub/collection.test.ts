@@ -28,7 +28,7 @@ describe('Collections', () => {
   let cursorBasedCollectionUri: string;
 
   beforeAll(async () => {
-    containerUri = await alice.call('ldp.registry.getUri', { type: 'as:Note', isContainer: true });
+    containerUri = await alice.getContainerUri('as:Note');
 
     // Create test items
     for (let i = 0; i < 10; i++) {

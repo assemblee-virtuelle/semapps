@@ -1,7 +1,6 @@
 import urlJoin from 'url-join';
 import { getSlugFromUri } from '@semapps/ldp';
 import { ServiceBroker } from 'moleculer';
-import waitForExpect from 'wait-for-expect';
 import { fetchServer, createAccount } from '../utils.ts';
 import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
@@ -25,11 +24,7 @@ describe('middleware CRUD resource with perms', () => {
   let resourceUri: string;
 
   test('A call to ldp.container.post fails if anonymous user, because container access denied', async () => {
-    // @ts-expect-error This expression is not callable
-    await waitForExpect(async () => {
-      containerUri = await alice.call('ldp.registry.getUri', { type: 'as:Article', isContainer: true });
-      expect(containerUri).not.toBeUndefined();
-    });
+    containerUri = await alice.getContainerUri('as:Article');
 
     await expect(
       alice.call('ldp.container.post', {

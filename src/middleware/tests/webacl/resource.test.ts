@@ -25,12 +25,7 @@ describe('Permissions check on a specific resource', () => {
   let resourceUri: string;
 
   test('Get/patch/put/delete resource without permission', async () => {
-    // @ts-expect-error This expression is not callable
-    await waitForExpect(async () => {
-      // Container with no default permissions
-      containerUri = await alice.call('ldp.registry.getUri', { type: 'as:Video', isContainer: true });
-      expect(containerUri).not.toBeUndefined();
-    });
+    containerUri = await alice.getContainerUri('as:Video');
 
     // When posting as system, no permissions are given on the resource
     resourceUri = await alice.call('ldp.container.post', {

@@ -23,11 +23,7 @@ describe('LDP container tests', () => {
   let containerUri: string;
 
   test('Ensure container created in LdpService settings exists', async () => {
-    // @ts-expect-error This expression is not callable
-    await waitForExpect(async () => {
-      containerUri = await alice.call('ldp.registry.getUri', { type: 'pair:Project', isContainer: true });
-      expect(containerUri).not.toBeUndefined();
-    });
+    containerUri = await alice.getContainerUri('pair:Project');
 
     await expect(alice.call('ldp.container.exist', { containerUri })).resolves.toBe(true);
   });

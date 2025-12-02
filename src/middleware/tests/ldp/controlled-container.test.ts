@@ -82,7 +82,7 @@ describe.each([false, true])('ControlledContainerMixin with allowSlugs: %s', (al
       );
     }
 
-    containerUri = await alice.call('ldp.registry.getUri', { type: 'as:Video' });
+    containerUri = await alice.getContainerUri('as:Video');
     expect(containerUri).not.toBeUndefined();
 
     await expect(alice.call('ldp.container.exist', { containerUri })).resolves.toBe(true);

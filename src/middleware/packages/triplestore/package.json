@@ -25,6 +25,10 @@
   "peerDependencies": {
     "moleculer": "^0.14.35"
   },
+  "devDependencies": {
+    "@types/speakingurl": "^13.0.6",
+    "@types/uuid": "^9.0.1"
+  },
   "gitHead": "06cb2decdab424e8686a5d77cc3364fbf1912439",
   "engines": {
     "node": ">=22.10.0"
