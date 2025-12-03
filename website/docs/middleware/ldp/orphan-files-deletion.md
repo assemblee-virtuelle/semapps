@@ -32,6 +32,6 @@ module.exports = {
 
 All settings relative to this mixin should be set in a `orphanFilesDeletion` key.
 
-| Property  | Type     | Default                                             | Description                                                                          |
-| --------- | -------- | --------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| `cronJob` | `Object` | { time: "0 0 4 \* \* \*", timeZone: "Europe/Paris"} | Optional cronJob settings { time, timeZone }. Can be set to false to disable cronjob |
+| Property  | Type     | Default                                               | Description                                                                          |
+| --------- | -------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `cronJob` | `Object` | `{ time: "0 0 4 \* \* \*", timeZone: "Europe/Paris"}` | Optional cronJob settings { time, timeZone }. Can be set to false to disable cronjob |
