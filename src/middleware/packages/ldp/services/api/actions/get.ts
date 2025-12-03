@@ -7,7 +7,7 @@ const { MoleculerError } = Errors;
 
 export default async function get(this: any, ctx: any) {
   try {
-    const { username, slugParts } = ctx.params;
+    const { username, slugParts, page } = ctx.params;
 
     const uri = this.getUriFromSlugParts(slugParts, username);
     ctx.meta.dataset = getDatasetFromUri(uri);
@@ -23,16 +23,27 @@ export default async function get(this: any, ctx: any) {
 
       const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri: uri });
 
+      let doNotIncludeResources = false;
+      let maxPerPage;
+
       // See https://www.w3.org/TR/ldp/#prefer-parameters
-      const doNotIncludeResources =
-        ctx.meta.headers?.prefer === 'return=representation; include="http://www.w3.org/ns/ldp#PreferMinimalContainer"';
+      if (ctx.meta.headers?.prefer) {
+        doNotIncludeResources = ctx.meta.headers.prefer.includes(
+          'include="http://www.w3.org/ns/ldp#PreferMinimalContainer"'
+        );
+
+        const regexResults = /max-member-count="(\d+)"/.exec(ctx.meta.headers.prefer);
+        maxPerPage = regexResults?.[1] && parseInt(regexResults[1]);
+      }
 
       res = await ctx.call(
         controlledActions?.list || 'ldp.container.get',
         cleanUndefined({
           containerUri: uri,
           jsonContext: parseJson(ctx.meta.headers?.jsonldcontext),
-          doNotIncludeResources
+          doNotIncludeResources,
+          maxPerPage,
+          page: page && parseInt(page, 10)
         })
       );
 
