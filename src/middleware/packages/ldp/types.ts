@@ -38,7 +38,7 @@ export interface Binary {
   file: Buffer;
   mimeType: string;
   size: number;
-  time: Date;
+  time?: Date;
 }
 
 export interface BinaryAdapterInterface {
