@@ -1,4 +1,7 @@
+import path from 'path';
+import fs from 'fs';
 import { ServiceSchema } from 'moleculer';
+import { IBindings } from 'sparqljson-parse';
 import urlJoin from 'url-join';
 import { Account } from '@semapps/auth';
 import { arrayOf } from '@semapps/ldp';
@@ -11,12 +14,12 @@ export default {
   name: 'migration-2-0-0',
   mixins: [MigrationService],
   settings: {
-    baseUrl: undefined
+    baseUrl: undefined,
+    baseDir: undefined
   },
   created() {
-    if (!this.settings.baseUrl) {
-      throw new Error('The baseUrl setting is mandatory');
-    }
+    if (!this.settings.baseUrl) throw new Error('The baseUrl setting is mandatory');
+    if (!this.settings.baseDir) throw new Error('The baseDir setting is mandatory');
   },
   actions: {
     migrate: {
@@ -40,6 +43,7 @@ export default {
           await this.actions.migrateCurrentPredicate({ dataset }, { parentCtx: ctx });
           await this.actions.migratePseudoIds({ dataset }, { parentCtx: ctx });
           await this.actions.attachAllContainersToRootContainer({ dataset }, { parentCtx: ctx });
+          await this.actions.migrateBinaries({ dataset }, { parentCtx: ctx });
 
           await this.actions.migrateSingleResourcesContainer(
             {
@@ -247,32 +251,38 @@ export default {
             webId: 'system'
           });
 
-          const baseUrl = await ctx.call('solid-storage.getBaseUrl');
-          newResourceUri = await ctx.call('triplestore.named-graph.create', { baseUrl });
+          if (resource['@type'] === 'http://semapps.org/ns/core#File') {
+            // Binaries will be moved in the migrateBinaries action below
+            // We don't want to migrate them twice because the RedirectService would not work
+            this.logger.info(`Resource ${oldResourceUri} is a binary, skipping...`);
+          } else {
+            const baseUrl = await ctx.call('solid-storage.getBaseUrl');
+            newResourceUri = await ctx.call('triplestore.named-graph.create', { baseUrl });
 
-          await ctx.call('triplestore.insert', {
-            resource: this.changeId(resource, oldResourceUri, newResourceUri),
-            graphName: newResourceUri,
-            webId: 'system'
-          });
+            await ctx.call('triplestore.insert', {
+              resource: this.changeId(resource, oldResourceUri, newResourceUri),
+              graphName: newResourceUri,
+              webId: 'system'
+            });
 
-          await ctx.call('redirect.set', { oldUri: oldResourceUri, newUri: newResourceUri });
+            await ctx.call('redirect.set', { oldUri: oldResourceUri, newUri: newResourceUri });
 
-          // Replace all references to resource with new URI
-          await this.actions.updateReferences({ oldUri: oldResourceUri, newUri: newResourceUri }, { parentCtx: ctx });
+            // Replace all references to resource with new URI
+            await this.actions.updateReferences({ oldUri: oldResourceUri, newUri: newResourceUri }, { parentCtx: ctx });
 
-          this.logger.info(`Deleting resource ${oldResourceUri} from default graph...`);
+            this.logger.info(`Deleting resource ${oldResourceUri} from default graph...`);
 
-          // Delete resource (orphan blank nodes will be deleted at the end)
-          await ctx.call('triplestore.update', {
-            query: `
-              DELETE
-              WHERE {
-                <${oldResourceUri}> ?p1 ?s1 .
-              }
-            `,
-            webId: 'system'
-          });
+            // Delete resource (orphan blank nodes will be deleted at the end)
+            await ctx.call('triplestore.update', {
+              query: `
+                DELETE
+                WHERE {
+                  <${oldResourceUri}> ?p1 ?s1 .
+                }
+              `,
+              webId: 'system'
+            });
+          }
         }
 
         return newResourceUri;
@@ -487,6 +497,9 @@ export default {
         }
       }
     },
+    /**
+     * Must be called *after* the migrateAllContainers action
+     */
     attachAllContainersToRootContainer: {
       async handler(ctx) {
         const { dataset } = ctx.params;
@@ -499,6 +512,59 @@ export default {
           if (containerUri !== rootContainerUri) {
             await ctx.call('ldp.container.attach', { containerUri: rootContainerUri, resourceUri: containerUri });
           }
+        }
+      }
+    },
+    /**
+     * Must be called *after* the migrateAllContainers action
+     */
+    migrateBinaries: {
+      async handler(ctx) {
+        const { dataset } = ctx.params;
+        ctx.meta.dataset = dataset || ctx.meta.dataset;
+
+        // Files have not been moved to the named graph (we skipped them in the migrateResource action)
+        const results: IBindings[] = await ctx.call('triplestore.query', {
+          query: `
+            PREFIX semapps: <http://semapps.org/ns/core#>
+            SELECT ?fileUri ?localPath ?mimeType
+            WHERE {
+              ?fileUri a semapps:File .
+              ?fileUri semapps:localPath ?localPath .
+              ?fileUri semapps:mimeType ?mimeType .
+            }
+          `,
+          webId: 'system'
+        });
+
+        for (const result of results) {
+          const oldFileUri = result.fileUri.value;
+          const localPath = result.localPath.value;
+          const mimeType = result.mimeType.value;
+
+          this.logger.info(`Migrating file ${oldFileUri}...`);
+
+          const oldFilePath = path.join(this.settings.baseDir, localPath);
+          const stream = fs.createReadStream(oldFilePath);
+
+          const newFileUri = await ctx.call('ldp.binary.store', { stream, mimeType });
+
+          await ctx.call('redirect.set', { oldUri: oldFileUri, newUri: newFileUri });
+
+          await this.actions.updateReferences({ oldUri: oldFileUri, newUri: newFileUri }, { parentCtx: ctx });
+
+          fs.unlinkSync(oldFilePath);
+
+          // Delete the old file from the default graph
+          await ctx.call('triplestore.update', {
+            query: `
+              DELETE
+              WHERE {
+                <${oldFileUri}> ?p1 ?s1 .
+              }
+            `,
+            webId: 'system'
+          });
         }
       }
     }

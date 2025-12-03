@@ -84,7 +84,7 @@ const PostAction = {
     let resourceUri: string;
 
     if (file) {
-      resourceUri = await ctx.call('ldp.binary.store', { file });
+      resourceUri = await ctx.call('ldp.binary.store', { stream: file.readableStream, mimeType: file.mimetype });
     } else {
       resourceUri = await ctx.call('triplestore.named-graph.create', {
         baseUrl: await ctx.call('solid-storage.getBaseUrl'),

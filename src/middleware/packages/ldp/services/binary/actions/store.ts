@@ -3,12 +3,13 @@ import { ActionSchema } from 'moleculer';
 const StoreAction = {
   visibility: 'public',
   params: {
-    file: { type: 'object', optional: true }
+    stream: { type: 'object' },
+    mimeType: { type: 'string' }
   },
   async handler(ctx) {
-    const { file } = ctx.params;
+    const { stream, mimeType } = ctx.params;
 
-    const resourceUri = await this.settings.adapter.storeBinary(file.readableStream, file.mimetype, ctx.meta.dataset);
+    const resourceUri = await this.settings.adapter.storeBinary(stream, mimeType, ctx.meta.dataset);
 
     return resourceUri;
   }
