@@ -15,9 +15,7 @@ import DisassemblyMixin from './mixins/disassembly.ts';
 import SpecialEndpointMixin from './mixins/special-endpoint.ts';
 import OrphanFilesDeletionMixin from './mixins/orphan-files-deletion.ts';
 import defaultContainerOptions from './services/registry/defaultOptions.ts';
-import BaseBinaryAdapter from './binary/base-adapter.ts';
-import FsBinaryAdapter from './binary/fs-adapter.ts';
-import LdpAdapter from './adapter.ts';
+import FsBinaryAdapter from './adapters/fs-binary-adapter.ts';
 
 export * from './utils.ts';
 export * from './types.ts';
@@ -39,7 +37,5 @@ export {
   SpecialEndpointMixin,
   OrphanFilesDeletionMixin,
   defaultContainerOptions,
-  LdpAdapter,
-  BaseBinaryAdapter,
   FsBinaryAdapter
 };

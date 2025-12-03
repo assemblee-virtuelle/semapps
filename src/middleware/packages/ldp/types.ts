@@ -1,3 +1,4 @@
+import { Readable } from 'stream';
 import { WacPermissionObject, WacPermissionFunction } from '@semapps/webacl';
 
 export interface ControlledActions {
@@ -38,4 +39,12 @@ export interface Binary {
   mimeType: string;
   size: number;
   time: Date;
+}
+
+export interface BinaryAdapterInterface {
+  name: string;
+  storeBinary(stream: Readable, mimeType: string, dataset: string): Promise<string>;
+  isBinary(uri: string): Promise<boolean>;
+  getBinary(uri: string): Promise<Binary>;
+  deleteBinary(uri: string): Promise<void>;
 }

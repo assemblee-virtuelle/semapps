@@ -7,9 +7,8 @@ import urlJoin from 'url-join';
 import { Errors, ServiceBroker } from 'moleculer';
 import { v4 as uuidv4 } from 'uuid';
 import { AdapterInterface } from '@semapps/triplestore/adapters/base.ts';
-import BaseBinaryAdapter from './base-adapter.ts';
 import { getDatasetFromUri, getSlugFromUri } from '../utils.ts';
-import { Binary } from '../types.ts';
+import { Binary, BinaryAdapterInterface } from '../types.ts';
 
 const { MoleculerError } = Errors;
 
@@ -32,26 +31,25 @@ const streamToFile = (inputStream: Readable, filePath: string, maxSize: string |
   });
 };
 
-interface FsBinaryAdapterSettings {
-  rootDir: string;
-  baseUrl: string;
-  maxSize: string | number;
-  tripleStoreAdapter: AdapterInterface;
-}
+const createDirectoryIfNotExist = (dirPath: string): void => {
+  if (!fs.existsSync(dirPath)) {
+    process.umask(0);
+    fs.mkdirSync(dirPath, { recursive: true, mode: 0o0777 });
+  }
+};
 
-export class FsBinaryAdapter extends BaseBinaryAdapter {
+class FsBinaryAdapter implements BinaryAdapterInterface {
   name: 'filesystem';
 
   private settings: FsBinaryAdapterSettings;
 
   constructor(settings: FsBinaryAdapterSettings) {
-    super();
     this.name = 'filesystem';
     this.settings = settings;
   }
 
   async init({ broker } = { broker: ServiceBroker }) {
-    this.createDirectoryIfNotExist(this.settings.rootDir);
+    createDirectoryIfNotExist(this.settings.rootDir);
 
     // Temporary solution. The adapter should be initialized through the TripleStoreService
     await this.settings.tripleStoreAdapter.init({ broker });
@@ -59,7 +57,7 @@ export class FsBinaryAdapter extends BaseBinaryAdapter {
 
   async storeBinary(stream: Readable, mimeType: string, dataset: string): Promise<string> {
     const dirPath = path.join(this.settings.rootDir, dataset);
-    this.createDirectoryIfNotExist(dirPath);
+    createDirectoryIfNotExist(dirPath);
 
     // Replace with this.createNamedGraph() ?
     const uuid = uuidv4();
@@ -166,13 +164,13 @@ export class FsBinaryAdapter extends BaseBinaryAdapter {
     const dataset = getDatasetFromUri(uri);
     return path.join(this.settings.rootDir, dataset!, uuid);
   }
+}
 
-  private createDirectoryIfNotExist(path: string): void {
-    if (!fs.existsSync(path)) {
-      process.umask(0);
-      fs.mkdirSync(path, { recursive: true, mode: 0o0777 });
-    }
-  }
+interface FsBinaryAdapterSettings {
+  rootDir: string;
+  baseUrl: string;
+  maxSize: string | number;
+  tripleStoreAdapter: AdapterInterface;
 }
 
 export default FsBinaryAdapter;

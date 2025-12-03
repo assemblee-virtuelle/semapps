@@ -51,7 +51,7 @@ describe('Binary handling of LDP server', () => {
     expect(fs.existsSync(pathJoin(__dirname, '../uploads', filePath))).toBeTruthy();
   });
 
-  test('Get binary', async () => {
+  test('Get binary (via Moleculer action)', async () => {
     binary = await alice.call('ldp.binary.get', { resourceUri: fileUri });
 
     expect(binary).toMatchObject({
@@ -62,7 +62,7 @@ describe('Binary handling of LDP server', () => {
     });
   });
 
-  test('Get container', async () => {
+  test('Get container (via API)', async () => {
     await expect(alice.fetch(containerUri)).resolves.toMatchObject({
       json: {
         type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
@@ -93,6 +93,22 @@ describe('Binary handling of LDP server', () => {
     expect(body).toContain('PNG');
   });
 
+  test('Get image as resource (via API)', async () => {
+    const { json } = await alice.fetch(fileUri, {
+      headers: new fetch.Headers({ Accept: 'application/ld+json' })
+    });
+
+    expect(json).toMatchObject({
+      id: fileUri,
+      type: expect.arrayContaining([
+        'https://www.w3.org/ns/iana/media-types/application/octet-stream#Resource',
+        'https://www.w3.org/ns/iana/media-types/image/png#Resource'
+      ]),
+      'stat:size': '3181',
+      'stat:mtime': binary.time.toISOString()
+    });
+  });
+
   test('Get image as resource (via Moleculer action)', async () => {
     await expect(alice.call('ldp.resource.get', { resourceUri: fileUri })).resolves.toMatchObject({
       id: fileUri,
@@ -105,7 +121,7 @@ describe('Binary handling of LDP server', () => {
     });
   });
 
-  test('Delete image', async () => {
+  test('Delete image (via API)', async () => {
     await expect(
       alice.fetch(fileUri, {
         method: 'DELETE'
