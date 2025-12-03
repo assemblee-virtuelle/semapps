@@ -32,13 +32,13 @@ module.exports = {
 
 All settings relative to this mixin should be set in a `imageProcessor` key.
 
-| Property    | Type      | Default                 | Description                                                                             |
-| ----------- | --------- | ----------------------- | --------------------------------------------------------------------------------------- |
-| `maxWidth`  | `Integer` | 1900                    | Reduce all images whose width is larger than this number                                |
-| `maxHeight` | `Integer` | 1000                    | Reduce all images whose height is larger than this number                               |
-| `jpeg`      | `Object`  | { quality: 85 }         | See sharp [jpeg](https://sharp.pixelplumbing.com/api-output#jpeg) for available options |
-| `png`       | `Object`  | { compressionLevel: 8 } | See sharp [png](https://sharp.pixelplumbing.com/api-output#png) for available options   |
-| `webp`      | `Object`  | { quality: 85 }         | See sharp [webp](https://sharp.pixelplumbing.com/api-output#webp) for available options |
+| Property    | Type      | Default                   | Description                                                                             |
+| ----------- | --------- | ------------------------- | --------------------------------------------------------------------------------------- |
+| `maxWidth`  | `Integer` | 1900                      | Reduce all images whose width is larger than this number                                |
+| `maxHeight` | `Integer` | 1000                      | Reduce all images whose height is larger than this number                               |
+| `jpeg`      | `Object`  | `{ quality: 85 }`         | See sharp [jpeg](https://sharp.pixelplumbing.com/api-output#jpeg) for available options |
+| `png`       | `Object`  | `{ compressionLevel: 8 }` | See sharp [png](https://sharp.pixelplumbing.com/api-output#png) for available options   |
+| `webp`      | `Object`  | `{ quality: 85 }`         | See sharp [webp](https://sharp.pixelplumbing.com/api-output#webp) for available options |
 
 ### Actions
 
