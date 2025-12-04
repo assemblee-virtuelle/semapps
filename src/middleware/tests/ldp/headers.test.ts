@@ -63,14 +63,12 @@ describe('Headers handling of LDP server', () => {
       }
     });
 
-    const resourceUri = postHeaders.get('Location');
-    // @ts-expect-error TS(2345): Argument of type 'string | null' is not assignable... Remove this comment to see the full error message
+    const resourceUri = postHeaders.get('Location')!;
     const resourcePath = new URL(resourceUri).pathname;
 
     const { headers } = await fetchServer(resourceUri, { method: 'HEAD' });
 
-    // @ts-expect-error TS(2345): Argument of type 'string | null' is not assignable... Remove this comment to see the full error message
-    const parsedLinks = parseLinkHeader(headers.get('link'));
+    const parsedLinks = parseLinkHeader(headers.get('link')!);
 
     expect(parsedLinks.refs).toMatchObject([
       {
@@ -91,14 +89,12 @@ describe('Headers handling of LDP server', () => {
       }
     });
 
-    const resourceUri = postHeaders.get('Location');
-    // @ts-expect-error TS(2345): Argument of type 'string | null' is not assignable... Remove this comment to see the full error message
+    const resourceUri = postHeaders.get('Location')!;
     const resourcePath = new URL(resourceUri).pathname;
 
     const { headers } = await fetchServer(resourceUri, { method: 'HEAD' });
 
-    // @ts-expect-error TS(2345): Argument of type 'string | null' is not assignable... Remove this comment to see the full error message
-    const parsedLinks = parseLinkHeader(headers.get('link'));
+    const parsedLinks = parseLinkHeader(headers.get('link')!);
 
     expect(parsedLinks.refs).toMatchObject([
       { uri: urlJoin(CONFIG.HOME_URL!, '_acl', resourcePath), rel: 'acl' },

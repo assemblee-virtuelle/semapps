@@ -138,7 +138,9 @@ describe('LDP handling through API', () => {
     });
 
     expect(json['ldp:contains']).toBeUndefined();
-    expect(headers.get('Preference-Applied')).toBe('return=representation');
+    expect(headers.get('Preference-Applied')).toBe(
+      'return=representation; include="http://www.w3.org/ns/ldp#PreferMinimalContainer"'
+    );
   });
 
   test('Replace resource', async () => {
