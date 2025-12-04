@@ -3,11 +3,12 @@ import fetch from 'node-fetch';
 import Redis from 'ioredis';
 import { ActionParamSchema, CallingOptions, ServiceBroker, ServiceSchema } from 'moleculer';
 import { Account } from '@semapps/auth';
-import * as CONFIG from './config.ts';
 import { delay } from '@semapps/ldp';
+import * as CONFIG from './config.ts';
 
 type FetchOptions = Omit<fetch.RequestInit, 'body'> & {
   body?: ArrayBuffer | ArrayBufferView | ReadableStream | string | URLSearchParams | FormData | object;
+  headers?: fetch.Headers;
 };
 
 export const listDatasets = async (): Promise<string[]> => {
@@ -51,16 +52,13 @@ export const fetchServer = async (url: string, options: FetchOptions = {}) => {
     case 'POST':
     case 'PATCH':
     case 'PUT':
-      // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
       if (!options.headers.has('Accept')) options.headers.set('Accept', 'application/ld+json');
-      // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
       if (!options.headers.has('Content-Type')) options.headers.set('Content-Type', 'application/ld+json');
       break;
     case 'DELETE':
       break;
     case 'GET':
     default:
-      // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
       if (!options.headers.has('Accept')) options.headers.set('Accept', 'application/ld+json');
       break;
   }

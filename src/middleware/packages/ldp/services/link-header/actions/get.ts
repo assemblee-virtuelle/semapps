@@ -6,7 +6,7 @@ const GetAction = {
   visibility: 'public',
   params: {
     uri: { type: 'string' },
-    additionalLinks: { type: 'array' }
+    additionalLinks: { type: 'array', optional: true }
   },
   async handler(ctx) {
     const { uri, additionalLinks } = ctx.params;
