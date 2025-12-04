@@ -117,5 +117,47 @@ describe('LDP paging tests', () => {
         ...page3['ldp:contains'].map((r: any) => r.id)
       ]).toEqual(expect.arrayContaining(resourcesUris));
     });
+
+    test('Get container with paging and sorting', async () => {
+      const { json: container1 } = await alice.fetch(containerUri, {
+        headers: new fetch.Headers({
+          Prefer:
+            'return=representation; max-member-count="2"; sort-predicate="http://virtual-assembly.org/ontologies/pair#startDate"'
+        })
+      });
+      expect(container1['ldp:contains']).toHaveLength(2);
+      expect(container1['ldp:contains'][0]['pair:label']).toBe('Project #1');
+      expect(container1['ldp:contains'][1]['pair:label']).toBe('Project #2');
+
+      const { json: container2 } = await alice.fetch(containerUri, {
+        headers: new fetch.Headers({
+          Prefer:
+            'return=representation; max-member-count="2"; sort-predicate="http://virtual-assembly.org/ontologies/pair#startDate"; sort-order="ASC"'
+        })
+      });
+      expect(container2['ldp:contains']).toHaveLength(2);
+      expect(container2['ldp:contains'][0]['pair:label']).toBe('Project #1');
+      expect(container2['ldp:contains'][1]['pair:label']).toBe('Project #2');
+
+      const { json: container3 } = await alice.fetch(containerUri, {
+        headers: new fetch.Headers({
+          Prefer:
+            'return=representation; max-member-count="2"; sort-predicate="http://virtual-assembly.org/ontologies/pair#startDate"; sort-order="DESC"'
+        })
+      });
+      expect(container3['ldp:contains']).toHaveLength(2);
+      expect(container3['ldp:contains'][0]['pair:label']).toBe('Project #5');
+      expect(container3['ldp:contains'][1]['pair:label']).toBe('Project #4');
+
+      // We can use a prefix if the ontology is known by the server
+      const { json: container4 } = await alice.fetch(containerUri, {
+        headers: new fetch.Headers({
+          Prefer: 'return=representation; max-member-count="2"; sort-predicate="pair:startDate"; sort-order="DESC"'
+        })
+      });
+      expect(container4['ldp:contains']).toHaveLength(2);
+      expect(container4['ldp:contains'][0]['pair:label']).toBe('Project #5');
+      expect(container4['ldp:contains'][1]['pair:label']).toBe('Project #4');
+    });
   });
 });

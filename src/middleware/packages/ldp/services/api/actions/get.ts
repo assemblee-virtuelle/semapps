@@ -24,7 +24,9 @@ export default async function get(this: any, ctx: any) {
       const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri: uri });
 
       let doNotIncludeResources = false;
-      let maxPerPage;
+      let maxPerPage: number | undefined;
+      let sortPredicate: string | undefined;
+      let sortOrder: string | undefined;
 
       // See https://www.w3.org/TR/ldp/#prefer-parameters
       if (ctx.meta.headers?.prefer) {
@@ -32,8 +34,14 @@ export default async function get(this: any, ctx: any) {
           'include="http://www.w3.org/ns/ldp#PreferMinimalContainer"'
         );
 
-        const regexResults = /max-member-count="(\d+)"/.exec(ctx.meta.headers.prefer);
-        maxPerPage = regexResults?.[1] && parseInt(regexResults[1]);
+        let regexResults = /max-member-count="(\d+)"/.exec(ctx.meta.headers.prefer);
+        maxPerPage = regexResults?.[1] ? parseInt(regexResults[1]) : undefined;
+
+        regexResults = /sort-predicate="([^"]+)"/.exec(ctx.meta.headers.prefer);
+        sortPredicate = regexResults?.[1];
+
+        regexResults = /sort-order="([ASC|asc|DESC|desc]+)"/.exec(ctx.meta.headers.prefer);
+        sortOrder = regexResults?.[1] ? regexResults?.[1].toUpperCase() : 'ASC';
       }
 
       res = await ctx.call(
@@ -43,7 +51,9 @@ export default async function get(this: any, ctx: any) {
           jsonContext: parseJson(ctx.meta.headers?.jsonldcontext),
           doNotIncludeResources,
           maxPerPage,
-          page: page && parseInt(page, 10)
+          page: page && parseInt(page, 10),
+          sortPredicate,
+          sortOrder
         })
       );
 

@@ -82,6 +82,10 @@ const Schema = {
         `
         : '';
 
+      // Transform the prefixed predicate to a full URI if necessary
+      const expandedSortPredicate =
+        sortPredicate && (await ctx.call('jsonld.parser.expandPredicate', { predicate: sortPredicate }));
+
       const resourcesResults: any = await ctx.call('triplestore.query', {
         query: `
           ${await ctx.call('ontologies.getRdfPrefixes')}
@@ -91,7 +95,7 @@ const Schema = {
               <${containerUri}> <http://www.w3.org/ns/ldp#contains> ?s1 .
             }
             ${filtersQuery}
-            ${sortPredicate ? `GRAPH ?s1 { ?s1 <${sortPredicate}> ?sortValue }` : ''}
+            ${sortPredicate ? `GRAPH ?s1 { ?s1 <${expandedSortPredicate}> ?sortValue }` : ''}
           }
           ${sortPredicate ? `ORDER BY ${sortOrder}(?sortValue)` : ''}
           ${limitQuery}
