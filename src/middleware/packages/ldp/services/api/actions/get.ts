@@ -7,7 +7,8 @@ const { MoleculerError } = Errors;
 
 export default async function get(this: any, ctx: any) {
   try {
-    const { username, slugParts, page } = ctx.params;
+    let { username, slugParts, page } = ctx.params;
+    page = page ? parseInt(page, 10) : 1;
 
     const uri = this.getUriFromSlugParts(slugParts, username);
     ctx.meta.dataset = getDatasetFromUri(uri);
@@ -15,6 +16,7 @@ export default async function get(this: any, ctx: any) {
     const types = await ctx.call('ldp.resource.getTypes', { resourceUri: uri });
 
     let res;
+    let links = [];
 
     if (types.includes('http://www.w3.org/ns/ldp#Container')) {
       /*
@@ -37,6 +39,17 @@ export default async function get(this: any, ctx: any) {
         let regexResults = /max-member-count="(\d+)"/.exec(ctx.meta.headers.prefer);
         maxPerPage = regexResults?.[1] ? parseInt(regexResults[1]) : undefined;
 
+        if (maxPerPage) {
+          links.push({ uri: 'http://www.w3.org/ns/ldp#Page', rel: 'type' });
+          links.push({ uri: `${uri}?page=${1}`, rel: 'first' });
+
+          const resourcesUris = await ctx.call('ldp.container.getUris', { containerUri: uri });
+          const numPages = Math.ceil(resourcesUris.length / maxPerPage);
+          if (numPages > page) links.push({ uri: `${uri}?page=${page + 1}`, rel: 'next' });
+          if (page > 1) links.push({ uri: `${uri}?page=${page - 1}`, rel: 'prev' });
+          if (numPages > 1) links.push({ uri: `${uri}?page=${numPages}`, rel: 'last' });
+        }
+
         regexResults = /sort-predicate="([^"]+)"/.exec(ctx.meta.headers.prefer);
         sortPredicate = regexResults?.[1];
 
@@ -51,13 +64,13 @@ export default async function get(this: any, ctx: any) {
           jsonContext: parseJson(ctx.meta.headers?.jsonldcontext),
           doNotIncludeResources,
           maxPerPage,
-          page: page && parseInt(page, 10),
+          page: page === 1 ? undefined : page,
           sortPredicate,
           sortOrder
         })
       );
 
-      if (doNotIncludeResources) {
+      if (doNotIncludeResources || maxPerPage || sortPredicate) {
         if (!ctx.meta.$responseHeaders) ctx.meta.$responseHeaders = {};
         ctx.meta.$responseHeaders['Preference-Applied'] = 'return=representation';
       }
@@ -121,7 +134,7 @@ export default async function get(this: any, ctx: any) {
     }
 
     if (!ctx.meta.$responseHeaders) ctx.meta.$responseHeaders = {};
-    ctx.meta.$responseHeaders.Link = await ctx.call('ldp.link-header.get', { uri });
+    ctx.meta.$responseHeaders.Link = await ctx.call('ldp.link-header.get', { uri, additionalLinks: links });
 
     // Hack to make our servers work with Mastodon servers, which expect a special profile
     if (ctx.meta.$responseType === 'application/ld+json')

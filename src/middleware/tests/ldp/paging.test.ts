@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
 import { ServiceBroker } from 'moleculer';
+import { parse as parseLinkHeader } from 'http-link-header';
 import initialize from './initialize.ts';
 import { createAccount } from '../utils.ts';
 
@@ -88,27 +89,97 @@ describe('LDP paging tests', () => {
 
   describe('Get through API', () => {
     test('Get container with paging', async () => {
-      const { json: page1 } = await alice.fetch(containerUri, {
+      const { json: page1, headers: headers1 } = await alice.fetch(containerUri, {
         headers: new fetch.Headers({
           Prefer: 'return=representation; max-member-count="2"'
         })
       });
       expect(page1['ldp:contains']).toHaveLength(2);
 
-      const { json: page2 } = await alice.fetch(`${containerUri}?page=2`, {
+      let parsedLinks = parseLinkHeader(headers1.get('link')!);
+      expect(parsedLinks.refs).toEqual(
+        expect.arrayContaining([
+          {
+            uri: 'http://www.w3.org/ns/ldp#Page',
+            rel: 'type'
+          },
+          {
+            uri: `${containerUri}?page=1`,
+            rel: 'first'
+          },
+          {
+            uri: `${containerUri}?page=2`,
+            rel: 'next'
+          },
+          {
+            uri: `${containerUri}?page=3`,
+            rel: 'last'
+          }
+        ])
+      );
+
+      const { json: page2, headers: headers2 } = await alice.fetch(`${containerUri}?page=2`, {
         headers: new fetch.Headers({
           Prefer: 'return=representation; max-member-count="2"'
         })
       });
       expect(page2['ldp:contains']).toHaveLength(2);
 
+      parsedLinks = parseLinkHeader(headers2.get('link')!);
+      expect(parsedLinks.refs).toEqual(
+        expect.arrayContaining([
+          {
+            uri: 'http://www.w3.org/ns/ldp#Page',
+            rel: 'type'
+          },
+          {
+            uri: `${containerUri}?page=1`,
+            rel: 'first'
+          },
+          {
+            uri: `${containerUri}?page=1`,
+            rel: 'prev'
+          },
+          {
+            uri: `${containerUri}?page=3`,
+            rel: 'next'
+          },
+          {
+            uri: `${containerUri}?page=3`,
+            rel: 'last'
+          }
+        ])
+      );
+
       // The last page only has a single resource
-      const { json: page3 } = await alice.fetch(`${containerUri}?page=3`, {
+      const { json: page3, headers: headers3 } = await alice.fetch(`${containerUri}?page=3`, {
         headers: new fetch.Headers({
           Prefer: 'return=representation; max-member-count="2"'
         })
       });
       expect(page3['ldp:contains']).toHaveLength(1);
+
+      parsedLinks = parseLinkHeader(headers3.get('link')!);
+      expect(parsedLinks.refs).toEqual(
+        expect.arrayContaining([
+          {
+            uri: 'http://www.w3.org/ns/ldp#Page',
+            rel: 'type'
+          },
+          {
+            uri: `${containerUri}?page=1`,
+            rel: 'first'
+          },
+          {
+            uri: `${containerUri}?page=2`,
+            rel: 'prev'
+          },
+          {
+            uri: `${containerUri}?page=3`,
+            rel: 'last'
+          }
+        ])
+      );
 
       // All resources are in the 3 pages
       expect([
