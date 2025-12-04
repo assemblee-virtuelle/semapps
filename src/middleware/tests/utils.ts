@@ -71,6 +71,7 @@ export const fetchServer = async (url: string, options: FetchOptions = {}) => {
   }
 
   return fetch(url, {
+    ...options,
     method: options.method || 'GET',
     body: options.body as fetch.BodyInit,
     headers: options.headers

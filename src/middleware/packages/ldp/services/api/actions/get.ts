@@ -8,7 +8,6 @@ const { MoleculerError } = Errors;
 export default async function get(this: any, ctx: any) {
   try {
     let { username, slugParts, page } = ctx.params;
-    page = page ? parseInt(page, 10) : 1;
 
     const uri = this.getUriFromSlugParts(slugParts, username);
     ctx.meta.dataset = getDatasetFromUri(uri);
@@ -40,14 +39,25 @@ export default async function get(this: any, ctx: any) {
         maxPerPage = regexResults?.[1] ? parseInt(regexResults[1]) : undefined;
 
         if (maxPerPage) {
-          links.push({ uri: 'http://www.w3.org/ns/ldp#Page', rel: 'type' });
-          links.push({ uri: `${uri}?page=${1}`, rel: 'first' });
+          if (!page) {
+            // If a paging is requested, but the page number is not provided, redirect to first page
+            ctx.meta.$statusCode = 303;
+            ctx.meta.$location = `${uri}?page=1`;
+            ctx.meta.$responseHeaders = { 'Content-Length': 0 };
+            return;
+          } else {
+            page = parseInt(page, 10);
 
-          const resourcesUris = await ctx.call('ldp.container.getUris', { containerUri: uri });
-          const numPages = Math.ceil(resourcesUris.length / maxPerPage);
-          if (numPages > page) links.push({ uri: `${uri}?page=${page + 1}`, rel: 'next' });
-          if (page > 1) links.push({ uri: `${uri}?page=${page - 1}`, rel: 'prev' });
-          if (numPages > 1) links.push({ uri: `${uri}?page=${numPages}`, rel: 'last' });
+            links.push({ uri: 'http://www.w3.org/ns/ldp#Page', rel: 'type' });
+            links.push({ uri: `${uri}?page=1`, rel: 'first' });
+
+            const resourcesUris = await ctx.call('ldp.container.getUris', { containerUri: uri });
+            const numPages = Math.ceil(resourcesUris.length / maxPerPage);
+
+            if (numPages > page) links.push({ uri: `${uri}?page=${page + 1}`, rel: 'next' });
+            if (page > 1) links.push({ uri: `${uri}?page=${page - 1}`, rel: 'prev' });
+            if (numPages > 1) links.push({ uri: `${uri}?page=${numPages}`, rel: 'last' });
+          }
         }
 
         regexResults = /sort-predicate="([^"]+)"/.exec(ctx.meta.headers.prefer);
@@ -64,7 +74,7 @@ export default async function get(this: any, ctx: any) {
           jsonContext: parseJson(ctx.meta.headers?.jsonldcontext),
           doNotIncludeResources,
           maxPerPage,
-          page: page === 1 ? undefined : page,
+          page: maxPerPage ? page : undefined,
           sortPredicate,
           sortOrder
         })
@@ -72,7 +82,7 @@ export default async function get(this: any, ctx: any) {
 
       if (doNotIncludeResources || maxPerPage || sortPredicate) {
         if (!ctx.meta.$responseHeaders) ctx.meta.$responseHeaders = {};
-        ctx.meta.$responseHeaders['Preference-Applied'] = 'return=representation';
+        ctx.meta.$responseHeaders['Preference-Applied'] = ctx.meta.headers.prefer;
       }
     } else {
       /*

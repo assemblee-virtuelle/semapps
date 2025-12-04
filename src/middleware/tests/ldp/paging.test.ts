@@ -89,12 +89,25 @@ describe('LDP paging tests', () => {
 
   describe('Get through API', () => {
     test('Get container with paging', async () => {
+      // First fetch without automatic redirect, to ensure the redirection is correct
+      const { status, statusText, headers } = await alice.fetch(containerUri, {
+        headers: new fetch.Headers({
+          Prefer: 'return=representation; max-member-count="2"'
+        }),
+        redirect: 'manual'
+      });
+
+      expect(status).toBe(303);
+      expect(statusText).toBe('See Other');
+      expect(headers.get('location')).toBe(`${containerUri}?page=1`);
+
       const { json: page1, headers: headers1 } = await alice.fetch(containerUri, {
         headers: new fetch.Headers({
           Prefer: 'return=representation; max-member-count="2"'
         })
       });
       expect(page1['ldp:contains']).toHaveLength(2);
+      expect(headers1.get('Preference-Applied')).toBe('return=representation; max-member-count="2"');
 
       let parsedLinks = parseLinkHeader(headers1.get('link')!);
       expect(parsedLinks.refs).toEqual(
@@ -190,7 +203,7 @@ describe('LDP paging tests', () => {
     });
 
     test('Get container with paging and sorting', async () => {
-      const { json: container1 } = await alice.fetch(containerUri, {
+      const { json: container1, headers } = await alice.fetch(containerUri, {
         headers: new fetch.Headers({
           Prefer:
             'return=representation; max-member-count="2"; sort-predicate="http://virtual-assembly.org/ontologies/pair#startDate"'
@@ -199,6 +212,9 @@ describe('LDP paging tests', () => {
       expect(container1['ldp:contains']).toHaveLength(2);
       expect(container1['ldp:contains'][0]['pair:label']).toBe('Project #1');
       expect(container1['ldp:contains'][1]['pair:label']).toBe('Project #2');
+      expect(headers.get('Preference-Applied')).toBe(
+        'return=representation; max-member-count="2"; sort-predicate="http://virtual-assembly.org/ontologies/pair#startDate"'
+      );
 
       const { json: container2 } = await alice.fetch(containerUri, {
         headers: new fetch.Headers({
