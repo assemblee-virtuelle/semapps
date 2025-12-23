@@ -1,7 +1,9 @@
-import { parseHeader, negotiateAccept, parseSparql, saveDatasetMeta } from '@semapps/middlewares';
-const middlewares = [parseHeader, parseSparql, negotiateAccept, saveDatasetMeta];
+import { parseHeader, negotiateAccept, parseSparql, saveDatasetMeta, checkUsernameExists } from '@semapps/middlewares';
 
-function getRoute(path: any) {
+function getRoute(path: any, podProvider: boolean) {
+  const middlewares = [parseHeader, parseSparql, negotiateAccept, saveDatasetMeta];
+  if (podProvider) middlewares.unshift(checkUsernameExists);
+
   return {
     path,
     name: 'sparql-endpoint',

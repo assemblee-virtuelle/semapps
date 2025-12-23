@@ -9,7 +9,8 @@ import {
   parseJson,
   parseTurtle,
   parseFile,
-  saveDatasetMeta
+  saveDatasetMeta,
+  checkUsernameExists
 } from '@semapps/middlewares';
 
 const transformRouteParamsToSlugParts = (req: any, res: any, next: any) => {
@@ -26,7 +27,8 @@ const transformRouteParamsToSlugParts = (req: any, res: any, next: any) => {
 };
 
 function getPodsRoute(basePath: any) {
-  const middlewares = [
+  let middlewares = [
+    checkUsernameExists,
     parseUrl,
     parseHeader,
     negotiateContentType,

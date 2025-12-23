@@ -1,6 +1,6 @@
 import path from 'path';
 import urlJoin from 'url-join';
-import { parseHeader, parseFile, saveDatasetMeta } from '@semapps/middlewares';
+import { parseHeader, parseFile, saveDatasetMeta, checkUsernameExists } from '@semapps/middlewares';
 import fetch from 'node-fetch';
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
@@ -24,12 +24,15 @@ const ProxyService = {
   async started() {
     const basePath = await this.broker.call('ldp.getBasePath');
 
+    let middlewares = [parseHeader, parseFile, saveDatasetMeta];
+    if (this.settings.podProvider) middlewares.unshift(checkUsernameExists);
+
     const routeConfig = {
       name: 'proxy-endpoint',
       authorization: true,
       authentication: false,
       aliases: {
-        'POST /': [parseHeader, parseFile, saveDatasetMeta, 'signature.proxy.api_query'] // parseFile handles multipart/form-data
+        'POST /': [...middlewares, 'signature.proxy.api_query'] // parseFile handles multipart/form-data
       }
     };
 
