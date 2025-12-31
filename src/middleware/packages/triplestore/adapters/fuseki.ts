@@ -1,5 +1,7 @@
 import fetch from 'node-fetch';
 import urlJoin from 'url-join';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
+import { v4 as uuidv4 } from 'uuid';
 import { SparqlJsonParser } from 'sparqljson-parse';
 import { throw403, throw500, throw404 } from '@semapps/middlewares';
 import { Errors } from 'moleculer';
@@ -12,9 +14,9 @@ export default class FusekiAdapter extends BaseAdapter {
   name = 'fuseki';
 
   private settings: {
-    url: string, // The URL of the Fuseki server
-    user: string, // The username for the Fuseki server
-    password: string // The password for the Fuseki server
+    url: string; // The URL of the Fuseki server
+    user: string; // The username for the Fuseki server
+    password: string; // The password for the Fuseki server
   };
 
   private sparqlJsonParser: SparqlJsonParser;
@@ -31,14 +33,22 @@ export default class FusekiAdapter extends BaseAdapter {
   /*
    * Fetch the given URL with the given method, body and headers
    * Intended to be used internally to call the Fuseki server
-   * 
+   *
    * @param url - The URL to fetch
    * @param method - The method to use (default is POST)
    * @param body - The body to send (default is undefined)
    * @param headers - The headers to send (default is Accept: application/json, and the authorization header)
    * @returns The response from the URL
    */
-  async fetch(url:string, { operation = 'unknown operation', method = 'POST', body, headers }: { operation?: string, method?: string, body?: any, headers?: any }) {
+  async fetch(
+    url: string,
+    {
+      operation = 'unknown operation',
+      method = 'POST',
+      body,
+      headers
+    }: { operation?: string; method?: string; body?: any; headers?: any }
+  ) {
     const response = await fetch(url, {
       method,
       body,
@@ -57,7 +67,9 @@ export default class FusekiAdapter extends BaseAdapter {
       } else if (response.status === 404) {
         throw404(`Fuseki ${operation} failed: ${text}\nURL: ${url}\nQuery: ${body}`);
       } else {
-        throw500(`Fuseki ${operation} failed: Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}. Query: ${body}`);
+        throw500(
+          `Fuseki ${operation} failed: Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}. Query: ${body}`
+        );
       }
     }
 
@@ -94,7 +106,7 @@ export default class FusekiAdapter extends BaseAdapter {
       operation: 'update',
       body: query,
       headers: {
-        'Content-Type': 'application/sparql-update',
+        'Content-Type': 'application/sparql-update'
       }
     });
   }
@@ -112,7 +124,7 @@ export default class FusekiAdapter extends BaseAdapter {
   async createDataset(dataset: string) {
     await this.fetch(urlJoin(this.settings.url, '$/datasets') + `?dbName=${dataset}&dbType=tdb2`, {
       operation: 'createDataset',
-      method: 'POST',
+      method: 'POST'
     });
     await this.waitForDatasetCreation(dataset);
     this.getLogger().info(`Fuseki dataset created: ${dataset}`);
@@ -121,7 +133,7 @@ export default class FusekiAdapter extends BaseAdapter {
   async datasetExists(dataset: string): Promise<boolean> {
     try {
       const response = await this.fetch(urlJoin(this.settings.url, '$/datasets/', dataset), {
-        operation: 'datasetExists',
+        operation: 'datasetExists'
       });
       return response.status === 200;
     } catch (error) {
@@ -151,13 +163,46 @@ export default class FusekiAdapter extends BaseAdapter {
   async backupDataset(dataset: string) {
     // Ask Fuseki to backup the given dataset
     const response = await this.fetch(urlJoin(this.settings.url, '$/backup', dataset), {
-      operation: 'backupDataset',
+      operation: 'backupDataset'
     });
 
     // Wait for backup to complete
     const { taskId } = await response.json();
     await this.waitForTaskCompletion(taskId);
     this.getLogger().info(`Fuseki dataset backed up: ${dataset}`);
+  }
+
+  // No fuseki related operation here as empty named graphs are not maintained by fuseki
+  // Inserting data into a non-existent named graph will create it
+  // Simply return the graph URI
+  async createNamedGraph(dataset: string, graphUri?: string) {
+    // TODO : use the base URI of the app for the graph URI
+    return graphUri || `http://semapps.org/graph/${uuidv4()}`;
+  }
+
+  // Always consider a named graph exists as fuseki does not maintain empty named graphs
+  // And inserting data into a non-existent named graph will create it
+  async namedGraphExists(dataset: string, graphUri: string) {
+    return true;
+  }
+
+  async clearNamedGraph(dataset: string, graphUri: string) {
+    // Use deleteNamedGraph to clear the named graph, as fuseki does not maintain empty named graphs
+    this.getLogger().info(
+      `Clearing fuseki named graph: ${graphUri}, using deleteNamedGraph operation as fuseki wouldn't maintain an empty named graph...`
+    );
+    await this.deleteNamedGraph(dataset, graphUri);
+  }
+
+  async deleteNamedGraph(dataset: string, graphUri: string) {
+    await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
+      operation: 'deleteNamedGraph',
+      body: `DROP GRAPH <${graphUri}>`,
+      headers: {
+        'Content-Type': 'application/sparql-update'
+      }
+    });
+    this.getLogger().info(`Fuseki named graph deleted: ${graphUri}`);
   }
 
   async waitForDatasetCreation(dataset: string) {
@@ -182,4 +227,4 @@ export default class FusekiAdapter extends BaseAdapter {
       }
     } while (!task || !task.finished);
   }
-} 
+}

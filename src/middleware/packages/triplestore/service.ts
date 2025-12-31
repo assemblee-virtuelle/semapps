@@ -49,6 +49,7 @@ const TripleStoreService = {
         mixins: [NamedGraphService],
         settings: {
           defaultDataset,
+          adapter,
           ...namedGraph
         }
       });

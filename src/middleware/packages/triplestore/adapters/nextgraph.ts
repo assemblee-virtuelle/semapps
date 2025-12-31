@@ -238,6 +238,62 @@ export default class NextGraphAdapter extends BaseAdapter {
     throw new Error('Backup not implemented for NextGraph');
   }
 
+  async createNamedGraph(dataset: string, graphUri?: string): Promise<string> {
+    if (graphUri) {
+      throw new Error('Explicit graph URI is not supported for NextGraph');
+    }
+    let session;
+    try {
+      session = await this.openSession(dataset);
+      const protectedRepoId = session.protected_store_id.substring(2, 46);
+      return await ng.doc_create(session.session_id, 'Graph', 'data:graph', 'store', 'protected', protectedRepoId);
+    } catch (error) {
+      throw new Error(`NextGraph createNamedGraph failed: ${error}\nDataset: ${dataset}`);
+    } finally {
+      this.closeSession(session);
+    }
+  }
+
+  async namedGraphExists(dataset: string, graphUri: string): Promise<boolean> {
+    try {
+      await this.query(dataset, `ASK { GRAPH <${graphUri}> { ?s ?p ?o } }`);
+      return true;
+    } catch (error) {
+      const messages = [`Graph ${graphUri} not found in dataset`, 'Invalid graph_name (too short) in parse_graph_name'];
+      if (messages.some(message => (error as Error).message.includes(message))) {
+        return false;
+      }
+      throw new Error(`NextGraph namedGraphExists failed: ${error}\nGraph URI: ${graphUri}`);
+    }
+  }
+
+  async clearNamedGraph(dataset: string, graphUri: string): Promise<void> {
+    let session;
+    try {
+      session = await this.openSession(dataset);
+      await ng.sparql_update(session.session_id, 'DELETE WHERE { ?s ?p ?o }', graphUri);
+    } catch (error) {
+      throw new Error(`NextGraph clearNamedGraph failed: ${error}\nDataset: ${dataset}\nGraph URI: ${graphUri}`);
+    } finally {
+      this.closeSession(session);
+    }
+    // await ng.sparql_update(session_id, "DELETE WHERE { ?s ?p ?o }", nuri);
+    // await this.update(dataset, `DELETE { ?s ?p ?o } WHERE { GRAPH <${graphUri}> { ?s ?p ?o } }`);
+    // throw new Error('Clear named graph not implemented for NextGraph');
+  }
+
+  async deleteNamedGraph(dataset: string, graphUri: string): Promise<void> {
+    let session;
+    try {
+      session = await this.openSession(dataset);
+      await ng.sparql_update(session.session_id, `DROP GRAPH <${graphUri}>`);
+    } catch (error) {
+      throw new Error(`NextGraph deleteNamedGraph failed: ${error}\nDataset: ${dataset}\nGraph URI: ${graphUri}`);
+    } finally {
+      this.closeSession(session);
+    }
+  }
+
   async openSession(dataset: string) {
     try {
       const userId = await this.getUserIdForDataset(dataset);

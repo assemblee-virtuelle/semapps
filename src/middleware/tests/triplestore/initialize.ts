@@ -37,13 +37,13 @@ export default async triplestore => {
   if (triplestore === 'ng') {
     // TODO : Environmentalize the nextgraph settings.
     adapter = new NextGraphAdapter({
-      adminUserId: 'XOct97tUc-ccyFUGe5sDUkHyXdTQ7LtGW1RVyYZzIYgA',
+      adminUserId: 'XOct97tUc-ccyFUGe5sDUkHyXdTQ7LtGW1RVyYZzIYgA', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
       mappingsNuri:
-        'did:ng:o:5ZwPgEib6okmEbVlWRJVfGUNnbdtmQpC_x1uTy9wjcoA:v:asrmmGCr1WTq3oAGkgtVwUxsJgA5MIsV2FIYhDRyPagA',
-      serverPeerId: 'zT_iEzpHeO5znVU9ZYcvenJjb8pWrRWFzEO6eUE_SrAA',
-      adminUserKey: 'dwtQ9wWEovJwv6_3VArHKHRyr_zLAuR2_bFB1LiLfqEA',
-      clientPeerKey: 'ryv9v1Y3jJqdQYH-_rMxGTGyDtC_eOaA0a4ibRLhmX4A',
-      serverAddr: '127.0.0.1:14400'
+        'did:ng:o:5ZwPgEib6okmEbVlWRJVfGUNnbdtmQpC_x1uTy9wjcoA:v:asrmmGCr1WTq3oAGkgtVwUxsJgA5MIsV2FIYhDRyPagA', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
+      serverPeerId: 'zT_iEzpHeO5znVU9ZYcvenJjb8pWrRWFzEO6eUE_SrAA', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
+      adminUserKey: 'dwtQ9wWEovJwv6_3VArHKHRyr_zLAuR2_bFB1LiLfqEA', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
+      clientPeerKey: 'ryv9v1Y3jJqdQYH-_rMxGTGyDtC_eOaA0a4ibRLhmX4A', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
+      serverAddr: '127.0.0.1:14400' // TODO : Environmentalize the nextgraph settings. Even though this value is the genric one for the nextgraph broker
     });
   } else if (triplestore === 'fuseki') {
     adapter = new FusekiAdapter({
